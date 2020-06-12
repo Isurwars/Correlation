@@ -24,7 +24,7 @@ std::string _in_file_name_  = "";
 std::string _out_file_name_ = "";
 double _r_cut_    = 20.0;
 double _bin_w_    = 0.05;
-double _bond_len_ = 1.15;
+double _bond_len_ = 1.20;
 
 void PrintHelp()
 {
@@ -55,7 +55,7 @@ void PrintHelp()
       "The ideal bond length is the sum of covalent radii of the two atoms.\n"
       "Our criteria is the following:\n"
       "0.6 * Sum_radii < distance < bond_length * Sum_radii.\n"
-      "By default the upper limit is set to 1.15, as a rule of thumb.\n"
+      "By default the upper limit is set to 1.20, as a rule of thumb.\n"
       "The default should work for most crystalline materials, and covalent\n"
       "non-crystalline materials.\n"
       "Amorphous and liquids should increase this parameter to match the\n"
@@ -136,6 +136,7 @@ void ArgParser(int argc, char ** argv)
 int main(int argc, char ** argv)
 {
     Cell MyCell; // Struture to be analized
+    std::list<Atom>::iterator MyAtom;
 
     /*
      * Parse the argumets provided as input
@@ -164,14 +165,28 @@ int main(int argc, char ** argv)
      * in the structure. A supercell method is used to create the images
      * in all directions up to _r_cut_ distance.
      */
-    MyCell.RDF(_r_cut_);
+    MyCell.RDF(_r_cut_, _bond_len_);
+
+    /*
+     * This functions calculate the angle between every atom, and all pairs
+     * of bonded atoms, the bonded atoms are calculated in Cell::RDF and it
+     * must be called first.
+     */
+    MyCell.BAD();
 
     /*
      * This function use the distances to calculate J(r) and g(r).
      * The _r_cut_ parameters is the maximum distance,
      * the _bin_w_ parameter is the bin width to be used.
      */
-    MyCell.Histogram(_r_cut_, _bin_w_, _out_file_name_);
+    MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
+
+    /*
+     * This function use the angles to calculate the BAD.
+     * The theta_max parameters is the maximum angle to compute,
+     * the _bin_w_ parameter is the bin width to be used.
+     */
+    MyCell.BAD_Histogram(_out_file_name_);
 
     return 0;
 } // main

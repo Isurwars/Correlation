@@ -5,13 +5,13 @@
 #include <array>
 #include <vector>
 #include <cmath>
+#include <map>
+#include <numeric>
 
 #include "Atom.h"
 #include "Cell.h"
+#include "Constants.h"
 
-const double pi      = 3.141592653589793238463;
-const double rad2deg = 57.29577951308232087679;
-const double deg2rad = 0.017453292519943295769;
 
 /*
  * Generic function to find if an element of any type exists in vector,
@@ -54,19 +54,19 @@ Cell::Cell()
 };
 
 // Lattice vector constructor
-void Cell::SetFromVectors(std::array<double, 3> v1, std::array<double, 3> v2, std::array<double, 3> v3)
+void Cell::SetFromVectors(std::vector<double> v1, std::vector<double> v2, std::vector<double> v3)
 {
     double v1_n, v2_n, v3_n, aux, a, b, c;
 
-    v1_n = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
-    v2_n = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
-    v3_n = sqrt(v3[0] * v3[0] + v3[1] * v3[1] + v3[2] * v3[2]);
-    aux  = v2[0] * v3[0] + v2[1] * v3[1] + v2[2] * v3[2];
-    a    = acos(aux / (v2_n * v3_n)) * rad2deg;
-    aux  = v1[0] * v3[0] + v1[1] * v3[1] + v1[2] * v3[2];
-    b    = acos(aux / (v1_n * v3_n)) * rad2deg;
-    aux  = v2[0] * v1[0] + v2[1] * v1[1] + v2[2] * v1[2];
-    c    = acos(aux / (v2_n * v1_n)) * rad2deg;
+    v1_n = sqrt(std::inner_product(v1.begin(), v1.end(), v1.begin(), 0));
+    v2_n = sqrt(std::inner_product(v2.begin(), v2.end(), v2.begin(), 0));
+    v3_n = sqrt(std::inner_product(v3.begin(), v3.end(), v3.begin(), 0));
+    aux  = std::inner_product(v2.begin(), v2.end(), v3.begin(), 0);
+    a    = acos(aux / (v2_n * v3_n)) * constants::rad2deg;
+    aux  = std::inner_product(v1.begin(), v1.end(), v3.begin(), 0);
+    b    = acos(aux / (v1_n * v3_n)) * constants::rad2deg;
+    aux  = std::inner_product(v2.begin(), v2.end(), v1.begin(), 0);
+    c    = acos(aux / (v2_n * v1_n)) * constants::rad2deg;
     this->lattice_parameters = { v1_n, v2_n, v3_n, a, b, c };
     this->atoms    = { };
     this->elements = { };
@@ -80,9 +80,9 @@ void Cell::SetLatticeVectors()
     double A     = this->lattice_parameters[0];
     double B     = this->lattice_parameters[1];
     double C     = this->lattice_parameters[2];
-    double alpha = this->lattice_parameters[3] * deg2rad;
-    double beta  = this->lattice_parameters[4] * deg2rad;
-    double gamma = this->lattice_parameters[5] * deg2rad;
+    double alpha = this->lattice_parameters[3] * constants::deg2rad;
+    double beta  = this->lattice_parameters[4] * constants::deg2rad;
+    double gamma = this->lattice_parameters[5] * constants::deg2rad;
 
     this->v_a_ = { A,
                    0.0,
@@ -173,13 +173,48 @@ void Cell::CorrectFracPositions()
     }
 } // Cell::CorrectFracPositions
 
+// Populate Bond_length matrix
+void Cell::PopulateBondLength(double Bond_Factor)
+{
+    std::list<Atom>::iterator MyAtom;
+    std::pair<bool, int> MyId;
+    int i, j;
+    double aux;
+
+    // Number of elements in the Cell
+    const int n = this->elements.size();
+    // Matrix of Bond length nxn initialize as zeros
+    std::vector<std::vector<double> > temp_matrix(n, std::vector<double>(n, 0.0));
+
+    // Iterate in Atoms list to assignate the id in the matrix to every atom.
+    for (MyAtom = this->atoms.begin();
+      MyAtom != this->atoms.end();
+      MyAtom++)
+    {
+        MyId = findInVector(this->elements, MyAtom->element);
+        MyAtom->element_id = MyId.second;
+    }
+
+    for (i = 0; i < n; i++) {
+        aux = Covalent_Radii(this->elements[i]);
+        for (j = 0; j < n; j++) {
+            temp_matrix[i][j] = (aux + Covalent_Radii(this->elements[j])) * Bond_Factor;
+        }
+    }
+    this->bond_length = temp_matrix;
+}// Cell::PopulateBondlength
+
 // RDF Calculation
-void Cell::RDF(double r_cut)
+void Cell::RDF(double r_cut, double bond_len)
 {
     std::list<Atom>::iterator atom_A;
     std::list<Atom>::iterator atom_B;
     Atom img_atom;
     int id_A, id_B, i, j, k, i_, j_, k_;
+    double aux_dist;
+
+    // Create Bond distance Matrix and element_ids
+    this->PopulateBondLength(bond_len);
     // Number of elements in the Cell
     const int n = this->elements.size();
     // This matrix store the distances between different types of elements,
@@ -229,7 +264,11 @@ void Cell::RDF(double r_cut)
                             img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
                             img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
                             img_atom.position[2] += k * this->v_c()[2];
-                            temp_dist[id_A][id_B].push_back(atom_A->Distance(img_atom));
+                            aux_dist = atom_A->Distance(img_atom);
+                            temp_dist[id_A][id_B].push_back(aux_dist);
+                            if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                                atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                            }
                         }
                     }
                 }
@@ -239,7 +278,55 @@ void Cell::RDF(double r_cut)
     this->Distances = temp_dist;
 } // Cell::RDF
 
-void Cell::Histogram(double r_cut, double bin_width, std::string filename)
+void Cell::BAD(bool degree)
+{
+    std::list<Atom>::iterator MyAtom;
+    std::vector<Atom_Img>::iterator atom_A, atom_B;
+    int i, j;
+    double factor = 1.0;
+
+    if (degree) factor = constants::rad2deg;
+
+    // NxNxN Tensor to contain the BAD
+    const int n = this->elements.size();
+    std::vector<std::vector<std::vector<std::vector<double> > > > temp_bad(n,
+      std::vector<std::vector<std::vector<double> > >(n, std::vector<std::vector<double> >(n,
+      std::vector<double>(0))));
+
+    /*
+     * This is the main loop to calculate the angles between every three atoms.
+     * The connected atoms are calculated in Cell::RDF, and MUST be called first.
+     *
+     * The first loop iterates in every atom in the cell.
+     * The second and third loop iterate in the connected atoms in every atom instance.
+     * These three loops populate a 3D tensor of vectors, the indexi of the Tensor
+     * represent the three indexi of the elemenet in Cell::elements.
+     *
+     * By default the angle is returned in degrees.
+     */
+    for (MyAtom = this->atoms.begin();
+      MyAtom != this->atoms.end();
+      MyAtom++)
+    {
+        for (atom_A = MyAtom->bonded_atoms.begin();
+          atom_A != MyAtom->bonded_atoms.end();
+          atom_A++)
+        {
+            for (atom_B = MyAtom->bonded_atoms.begin();
+              atom_B != MyAtom->bonded_atoms.end();
+              atom_B++)
+            {
+                if (atom_A->position != atom_B->position) {
+                    temp_bad[atom_A->element_id][MyAtom->element_id][atom_B->element_id].push_back(MyAtom->GetAngle(*
+                      atom_A, *atom_B) * factor);
+                }
+            }
+        }
+    }
+    this->Angles = temp_bad;
+}// Cell::BAD
+
+void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 {
     int n_, m_, i, j, col, row;
     int n = this->Distances.size();
@@ -310,7 +397,7 @@ void Cell::Histogram(double r_cut, double bin_width, std::string filename)
     double rho_0 = num_atoms / this->volume;
     for (col = 1; col < n_; col++) {
         for (row = 1; row < m_; row++) {
-            temp_hist[col][row] /= 4 * pi * rho_0 * temp_hist[0][row] * temp_hist[0][row];
+            temp_hist[col][row] /= 4 * constants::pi * rho_0 * temp_hist[0][row] * temp_hist[0][row];
         }
     }
 
@@ -332,4 +419,76 @@ void Cell::Histogram(double r_cut, double bin_width, std::string filename)
         out_file2 << std::endl;
     }
     out_file2.close();
-}// Cell::histogram
+}// Cell::RDF_histogram
+
+void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_width)
+{
+    int n_, m_, i, j, k, h, col, row;
+    int n = this->elements.size();
+
+    /*
+     * The number of columns in the output file is:
+     *         n       x      (n+1)! / [2 x (n-1)!]
+     * Central atom        Combination with repetition
+     *                         of n in groups of 2
+     * it's reduced to n x (n+1) x n /2
+     * one extra column is added for Theta (angle)
+     */
+
+    n_ = 1 + (n * n * (n + 1) / 2);
+    // from 0 to 180 degrees rows
+    m_ = 181;
+    // Matrix to store the Histograms n_ columns, m_ rows
+    std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
+    // Fill the theta values of the histogram
+    for (i = 0; i < m_; i++) {
+        temp_hist[0][i] = i * bin_width;
+    }
+    col = 0;
+
+
+    // Quadruple loop to iterate in the angle 3D tensor.
+    for (i = 0; i < n; i++) {         // i iterates over all central atoms
+        for (j = 0; j < n; j++) {     // j iterates over all initial atoms
+            for (k = j; k < n; k++) { // k iterates only over half + 1 of the spectrum
+                col++;
+                for (std::vector<double>::iterator it = this->Angles[j][i][k].begin();
+                  it != this->Angles[j][i][k].end(); it++)
+                {
+                    row = floor(*it / bin_width);
+                    if (row < m_) {
+                        temp_hist[col][row]++;
+                    }
+                }
+                if ((i == j) && (i == k)) {
+                    for (h = 0; h < m_; h++) {
+                        temp_hist[col][h] /= 2.0;
+                    }
+                }
+            }
+        }
+    }
+
+
+    this->g_theta = temp_hist;
+
+    std::ofstream out_file(filename + "_BAD.csv");
+    out_file << "theta,";
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            for (k = j; k < n; k++) {
+                out_file << this->elements[j] << "-" << this->elements[i] << "-" << this->elements[k] << ",";
+            }
+        }
+    }
+    out_file << std::endl;
+
+    for (i = 0; i < m_; i++) {
+        for (j = 0; j < n_; j++) {
+            out_file << temp_hist[j][i] << ",";
+        }
+        out_file << std::endl;
+    }
+
+    out_file.close();
+}// Cell::BAD_Histogram

@@ -1,18 +1,22 @@
 #ifndef _ATOM_H_
 #define _ATOM_H_
 
+struct Atom_Img {
+    int                   element_id;
+    std::array<double, 3> position;
+};
+
 
 class Atom {
     // This object represent every atom in the group of atoms
 private:
     int number;
-    std::list<double> bond_distances;
-    std::list<double> bonded_atoms;
-
     static int NumOfAtoms;
 public:
     std::string element;
+    int element_id;
     std::array<double, 3> position;
+    std::vector<Atom_Img> bonded_atoms;
     // Seters & Geters
     int GetNumber()
     {
@@ -32,6 +36,10 @@ public:
         return NumOfAtoms;
     };
     double Distance(const Atom&);
+    // Produce a minimal structure to compute the bond angle.
+    Atom_Img GetImage();
+    // Get the angle between to other atom (Atom_Img) and this object
+    double GetAngle(Atom_Img, Atom_Img);
 };
 
 #endif /* end of include guard: _ATOM_H_ */

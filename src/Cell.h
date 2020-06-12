@@ -16,27 +16,39 @@ public:
     std::list<Atom> atoms;
     // List of elements in Cell
     std::vector<std::string> elements;
-    // Tensor of Distances
+    // Matrix of Bond-lengths
+    std::vector<std::vector<double> > bond_length;
+    // 3D Tensor of Distances
     std::vector<std::vector<std::vector<double> > > Distances;
+    // 4D Tensor of Angles
+    std::vector<std::vector<std::vector<std::vector<double> > > > Angles;
     // Matrix of J(r) Histograms
     std::vector<std::vector<double> > J;
     // Matrix of g(r) Histograms
     std::vector<std::vector<double> > g;
+    // Matrix of g(r) Histograms
+    std::vector<std::vector<double> > g_theta;
     // Volume of the cell
     double volume;
     // Standar Constructors
     Cell(std::array<double, 6>);
     Cell();
     // Lattice Vectors
-    void SetFromVectors(std::array<double, 3>, std::array<double, 3>, std::array<double, 3>);
+    void SetFromVectors(std::vector<double>, std::vector<double>, std::vector<double>);
     void SetLatticeVectors();
     // In Cell corrected positions
     void CorrectPositions();
     void CorrectFracPositions();
-    // RDF calculation (max distamce between atoms)
-    void RDF(double);
+    // Populate the Bond length Matrix
+    void PopulateBondLength(double);
+    // RDF calculation (max distance between atoms)
+    void RDF(double, double);
+    // Bond-Angle Calulation ()
+    void BAD(bool = true);
     // RDF Histograms  (max distance between atoms, bin width)
-    void Histogram(double, double, std::string);
+    void RDF_Histogram(std::string, double = 20.0, double = 0.05);
+    // BAD Histograms ()
+    void BAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors
     std::array<double, 3> v_a()
     {
