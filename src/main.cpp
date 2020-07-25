@@ -4,6 +4,8 @@
 #include <array>    // Handle the array of parameters
 #include <vector>   // Most of the output is stored in vectors
 #include <getopt.h> // For the argument parsing
+#include <string>   // String manipulation and algorithms
+#include <algorithm>// for_each
 
 #include "Atom.h"      // Atom Class
 #include "Cell.h"      // Cell Class
@@ -13,12 +15,27 @@
  * Currenly filesystem is not fully implemented in gcc 10.1.
  * This is an ugly hack to try to make this code compatible
  * in Linux, Windows and Mac.
- * THIS SHOULD HAVE BEEN ADDED SINCE 2017!!!, NOT A SINGLE
- * COMPILER HAS ADDED FILESYSTEM SUPPORT YET!!!.
+ * THIS SHOULD HAVE BEEN IMPLEMENTED SINCE 2017!!!, NOT A
+ * SINGLE COMPILER HAS ADDED FILESYSTEM SUPPORT YET!!!.
  * Hope this is not requiered in the future.
+ * #include <filesystem>
+ * namespace fs = std::filesystem;
  */
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
+std::pair<std::string, std::string> GetExtension(std::string filename)
+{
+    std::pair<std::string, std::string> result;
+    size_t i = filename.rfind('.', filename.length());
+
+    if (i != std::string::npos) {
+        result.first  = filename.substr(0, i);
+        result.second = filename.substr(i, filename.length() - 1);
+        return result;
+    }
+
+    result.first  = filename;
+    result.second = "";
+    return result;
+}
 
 std::string _in_file_name_  = "";
 std::string _out_file_name_ = "";
@@ -128,8 +145,6 @@ void ArgParser(int argc, char ** argv)
         exit(1);
     } else {
         _in_file_name_ = argv[optind];
-        if (_out_file_name_ == "")
-            _out_file_name_ = fs::path(_in_file_name_).stem().string();
     }
 } // ProcessArgs
 
@@ -137,6 +152,7 @@ int main(int argc, char ** argv)
 {
     Cell MyCell; // Struture to be analized
     std::list<Atom>::iterator MyAtom;
+    std::pair<std::string, std::string> file_ext;
 
     /*
      * Parse the argumets provided as input
@@ -144,9 +160,11 @@ int main(int argc, char ** argv)
     ArgParser(argc, argv);
 
     /*
-     * Let's read the structure file
+     * Read the structure file
      */
-    std::string MyExt = fs::path(_in_file_name_).extension().string();
+    file_ext = GetExtension(_in_file_name_);
+    if (_out_file_name_ == "") _out_file_name_ = file_ext.first;
+    std::string MyExt = file_ext.second;
     // convert extension back to lower case
     std::for_each(MyExt.begin(), MyExt.end(), [](char & c){
         c = ::tolower(c);
