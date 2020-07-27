@@ -8,75 +8,89 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
+This projects is designed to be compatible with GNU Compiler Collection (GCC).
 ```
 Windows:
 
-The project needs libstc++-6.dll, this is included in MinGW and Msys2.
+There are several (GCC) implementations for Windows, developers recommend the following implementations:
+
+MinGW: http://www.mingw.org/
+
+MSYS2: https://www.msys2.org/
+
+Pre-Compiled binary for Windows 10 is present in the /bin/ folder.
 ```
+
+```
+Unix:
+
+The code was tested with Ubuntu and Debian, but it should work on other distros.
+```
+
+
+```
+MacOS:
+
+MacOS is currently not supported. (Major priority for 1.0 release)
+Clang , the default c/c++ compiler,  doesn't compile even with some c++17 flags activated.
+```
+
+
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+For compiling you should have GCC environment correctly installed on the system.
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+To compile the program:
 
 ```
-until finished
+make all
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+And then to clean the precompiled objects files:
+
+```
+make clean
+```
+
+The newly compiled program is located in the bin folder.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Three Atomistic Structure Files are included for testing.
+
+You can run all three tests with the command:
+
+```
+make tests
+```
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
+The first test include one of the structure file for amorphous palladium as published by Rodríguez et al. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.100.024422
+
+To run this test you could run:
+```
+make test1
+```
+or
 
 ```
-Give an example
+./bin/correlarion.exe ./test/test_1/aPd.cell
 ```
 
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
+Three result(s) file(s) should be generated in the same directory as the input fil(aPd.cell).
+These Coma Separeted Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Atom](https://atom.io/) - A hackable text editor for the 21st Century
+* [MSYS2](https://www.msys2.org/) - Software Distribution and Building Platform for Windows
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **Isaías Rodríguez** - *Initial work* - [PurpleBooth](https://github.com/Isurwars)
 
 ## License
 
@@ -84,6 +98,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* DGAPA, UNAM for the Postdoctoral Fellowship and their continuous support in the past years.
