@@ -282,7 +282,6 @@ void Cell::BAD(bool degree)
 {
     std::list<Atom>::iterator MyAtom;
     std::vector<Atom_Img>::iterator atom_A, atom_B;
-    int i, j;
     double factor = 1.0;
 
     if (degree) factor = constants::rad2deg;

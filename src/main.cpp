@@ -41,7 +41,7 @@ std::string _in_file_name_  = "";
 std::string _out_file_name_ = "";
 double _r_cut_    = 20.0;
 double _bin_w_    = 0.05;
-double _bond_len_ = 1.20;
+double _bond_len_ = 1.42;
 
 void PrintHelp()
 {
@@ -93,7 +93,6 @@ void PrintHelp()
 
 void ArgParser(int argc, char ** argv)
 {
-    int index;
     const char * const short_opts = "r:b:o:w:h";
     const option long_opts[]      = {
         { "r_cut",       required_argument, nullptr, 'r' },
@@ -144,7 +143,11 @@ void ArgParser(int argc, char ** argv)
         std::cout << "Only one structure file most be provided." << '\n';
         exit(1);
     } else {
-        _in_file_name_ = argv[optind];
+        if (argc > 1) {
+            _in_file_name_ = argv[optind];
+        } else {
+            PrintHelp();
+        }
     }
 } // ProcessArgs
 
@@ -177,6 +180,7 @@ int main(int argc, char ** argv)
         std::cout << "File: " << MyExt << "currently not supported." << '\n';
         PrintHelp();
     }
+    std::cout << "File " << _in_file_name_ << "opened successfully." << '\n';
 
     /*
      * This function calculate the distances from every atom to every
@@ -197,6 +201,7 @@ int main(int argc, char ** argv)
      * The _r_cut_ parameters is the maximum distance,
      * the _bin_w_ parameter is the bin width to be used.
      */
+    std::cout << "Writing output files: " << _out_file_name_ << '\n';
     MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
 
     /*
