@@ -90,7 +90,7 @@ These Coma Separeted Values files can then be analyzed with your favorite tool l
 
 ## Authors
 
-* **Isaías Rodríguez** - *Initial work* - [PurpleBooth](https://github.com/Isurwars)
+* **Isaías Rodríguez** - *Initial work* - [Isurwars](https://github.com/Isurwars)
 
 ## License
 
