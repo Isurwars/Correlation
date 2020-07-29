@@ -84,7 +84,6 @@ Cell read_CAR(std::string file_name)
                 tempCell.SetLatticeVectors();
             }
             if (std::regex_search(line, match, regex_atom)) {
-                std::cout << match.str(12).data() << '\n';
                 Atom tempAtom(match.str(12).data(),
                   { std::stod(match.str(3).data()),
                     std::stod(match.str(5).data()),
