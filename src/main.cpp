@@ -177,10 +177,10 @@ int main(int argc, char ** argv)
     } else if (MyExt == ".cell") {
         MyCell = read_CELL(_in_file_name_);
     } else {
-        std::cout << "File: " << MyExt << "currently not supported." << '\n';
+        std::cout << "File: " << MyExt << " currently not supported." << '\n';
         PrintHelp();
     }
-    std::cout << "File " << _in_file_name_ << "opened successfully." << '\n';
+    std::cout << "File " << _in_file_name_ << " opened successfully." << '\n';
 
     /*
      * This function calculate the distances from every atom to every

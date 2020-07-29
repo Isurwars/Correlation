@@ -66,7 +66,11 @@ Cell read_CAR(std::string file_name)
       "(\\d+)"
       "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
       "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[A-Z]+)"
+      "(\\s\\d+)"
+      "(\\s+[a-z]+)"
+      "(\\s+[A-Z][a-z]?)");
 
     if (myfile.is_open()) {
         while (std::getline(myfile, line)) {
@@ -80,7 +84,7 @@ Cell read_CAR(std::string file_name)
                 tempCell.SetLatticeVectors();
             }
             if (std::regex_search(line, match, regex_atom)) {
-                Atom tempAtom(match.str(1).data(),
+                Atom tempAtom(match.str(12).data(),
                   { std::stod(match.str(3).data()),
                     std::stod(match.str(5).data()),
                     std::stod(match.str(7).data()) });
