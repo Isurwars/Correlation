@@ -49,6 +49,7 @@ Atom_Img Atom::GetImage()
     Atom_Img temp_img;
 
     temp_img.element_id = this->element_id;
+    temp_img.atom_id    = this->number;
     temp_img.position   = this->position;
     return temp_img;
 }
@@ -65,9 +66,9 @@ double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B)
     vB = { atom_B.position[0] - this->position[0],
            atom_B.position[1] - this->position[1],
            atom_B.position[2] - this->position[2] };
-    vA_  = sqrt(std::inner_product(vA.begin(), vA.end(), vA.begin(), 0));
-    vB_  = sqrt(std::inner_product(vB.begin(), vB.end(), vB.begin(), 0));
-    aux  = std::inner_product(vA.begin(), vA.end(), vB.begin(), 0);
+    vA_  = sqrt(vA[0] * vA[0] + vA[1] * vA[1] + vA[2] * vA[2]);
+    vB_  = sqrt(vB[0] * vB[0] + vB[1] * vB[1] + vB[2] * vB[2]);
+    aux  = vA[0] * vB[0] + vA[1] * vB[1] + vA[2] * vB[2];
     aux /= vA_ * vB_;
     if (aux > 1.0) aux = 1.0;
     if (aux < -1.0) aux = -1.0;

@@ -315,7 +315,7 @@ void Cell::BAD(bool degree)
               atom_B != MyAtom->bonded_atoms.end();
               atom_B++)
             {
-                if (atom_A->position != atom_B->position) {
+                if (atom_A->atom_id != atom_B->atom_id) {
                     temp_bad[atom_A->element_id][MyAtom->element_id][atom_B->element_id].push_back(MyAtom->GetAngle(*
                       atom_A, *atom_B) * factor);
                 }

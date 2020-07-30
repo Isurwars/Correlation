@@ -35,13 +35,16 @@ $(BIN_DIR) $(OBJ_DIR):
 clean:
 	$(RM) $(OBJ_DIR)
 
-tests: test1 test2 test3
+tests: test1 test2 test3 test4
 
 test1: $(TST_DIR)/test_1/aPd.cell
 	$(EXE) $(TST_DIR)/test_1/aPd.cell
 
-test2: $(TST_DIR)/test_2/Si.car
-	$(EXE) $(TST_DIR)/test_2/Si.car
+test2: $(TST_DIR)/test_2/xSi.car
+	$(EXE) $(TST_DIR)/test_2/xSi.car
 
-test3: $(TST_DIR)/test_3/PdH.car
-	$(EXE) $(TST_DIR)/test_3/PdH.car
+test3: $(TST_DIR)/test_3/aPdH.car
+	$(EXE) $(TST_DIR)/test_3/aPdH.car
+
+test4: $(TST_DIR)/test_4/graphite.car
+	$(EXE) $(TST_DIR)/test_4/graphite.car

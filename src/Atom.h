@@ -3,6 +3,7 @@
 
 struct Atom_Img {
     int                   element_id;
+    int                   atom_id;
     std::array<double, 3> position;
 };
 
