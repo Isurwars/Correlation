@@ -19,9 +19,11 @@ public:
     // Matrix of Bond-lengths
     std::vector<std::vector<double> > bond_length;
     // 3D Tensor of Distances
-    std::vector<std::vector<std::vector<double> > > Distances;
+    std::vector<std::vector<std::vector<double> > > distances;
+    // 3D Tensor of Coordination Numbers
+    std::vector<std::vector<std::vector<int> > > coordination;
     // 4D Tensor of Angles
-    std::vector<std::vector<std::vector<std::vector<double> > > > Angles;
+    std::vector<std::vector<std::vector<std::vector<double> > > > angles;
     // Matrix of J(r) Histograms
     std::vector<std::vector<double> > J;
     // Matrix of g(r) Histograms
@@ -43,10 +45,14 @@ public:
     void PopulateBondLength(double);
     // RDF calculation (max distance between atoms)
     void RDF(double, double);
+    // Coordination Numbers Calculation
+    void CN();
     // Bond-Angle Calulation ()
     void BAD(bool = true);
     // RDF Histograms  (max distance between atoms, bin width)
     void RDF_Histogram(std::string, double = 20.0, double = 0.05);
+    // CN Histograms ()
+    void CN_Histogram(std::string);
     // BAD Histograms ()
     void BAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors

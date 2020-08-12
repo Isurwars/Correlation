@@ -275,8 +275,46 @@ void Cell::RDF(double r_cut, double bond_len)
             }
         }
     }
-    this->Distances = temp_dist;
+    this->distances = temp_dist;
 } // Cell::RDF
+
+void Cell::CN()
+{
+    int max_CN = 0;
+    int i;
+    std::list<Atom>::iterator MyAtom;
+    std::vector<Atom_Img>::iterator atom_A;
+
+    // Search for the maximum number of bonds in the cell
+    for (MyAtom = this->atoms.begin();
+      MyAtom != this->atoms.end();
+      MyAtom++)
+    {
+        if (max_CN < int(MyAtom->bonded_atoms.size())) max_CN = int(MyAtom->bonded_atoms.size());
+    }
+    const int n = this->elements.size();
+    const int m = max_CN + 2;
+    // Create the Tensor nXnXm and initialize with zeros
+    std::vector<std::vector<std::vector<int> > > temp_cn(n, std::vector<std::vector<int> >(n,
+      std::vector<int>(m, 0)));
+    // Search for the number of bonds per atom per element
+    for (MyAtom = this->atoms.begin();
+      MyAtom != this->atoms.end();
+      MyAtom++)
+    {
+        std::vector<int> aux(n, 0);
+        for (atom_A = MyAtom->bonded_atoms.begin();
+          atom_A != MyAtom->bonded_atoms.end();
+          atom_A++)
+        {
+            aux[atom_A->element_id]++;
+        }
+        for (i = 0; i < n; i++) {
+            temp_cn[MyAtom->element_id][i][aux[i]]++;
+        }
+    }
+    this->coordination = temp_cn;
+}// Cell::CN
 
 void Cell::BAD(bool degree)
 {
@@ -322,13 +360,13 @@ void Cell::BAD(bool degree)
             }
         }
     }
-    this->Angles = temp_bad;
+    this->angles = temp_bad;
 }// Cell::BAD
 
 void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 {
     int n_, m_, i, j, col, row;
-    int n = this->Distances.size();
+    int n = this->distances.size();
 
     m_ = ceil(r_cut / bin_width) + 1;
     n_ = n * (n + 1) / 2 + 1;
@@ -343,8 +381,8 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
             col++;
-            for (std::vector<double>::iterator it = this->Distances[i][j].begin();
-              it != this->Distances[i][j].end(); it++)
+            for (std::vector<double>::iterator it = this->distances[i][j].begin();
+              it != this->distances[i][j].end(); it++)
             {
                 row = floor(*it / bin_width);
                 if (row < m_) {
@@ -420,6 +458,46 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     out_file2.close();
 }// Cell::RDF_histogram
 
+void Cell::CN_Histogram(std::string filename)
+{
+    int n_, m_, i, j, col;
+    int n = this->elements.size();
+
+    n_ = n * n + 1;
+    m_ = this->coordination[0][0].size();
+
+    std::vector<std::vector<int> > temp_hist(n_, std::vector<int>(m_, 0));
+    // Fill the r values of the histogram
+    for (i = 0; i < m_; i++) {
+        temp_hist[0][i] = i;
+    }
+    col = 1;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            temp_hist[col] = this->coordination[i][j];
+            col++;
+        }
+    }
+
+
+    std::ofstream out_file2(filename + "_CN.csv");
+    out_file2 << "#,";
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            out_file2 << this->elements[i] << "-" << this->elements[j] << ",";
+        }
+    }
+    out_file2 << std::endl;
+
+    for (i = 0; i < m_; i++) {
+        for (j = 0; j < n_; j++) {
+            out_file2 << temp_hist[j][i] << ",";
+        }
+        out_file2 << std::endl;
+    }
+    out_file2.close();
+}// Cell::CN_histogram
+
 void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
     int n_, m_, i, j, k, h, col, row;
@@ -451,8 +529,8 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
         for (j = 0; j < n; j++) {     // j iterates over all initial atoms
             for (k = j; k < n; k++) { // k iterates only over half + 1 of the spectrum
                 col++;
-                for (std::vector<double>::iterator it = this->Angles[j][i][k].begin();
-                  it != this->Angles[j][i][k].end(); it++)
+                for (std::vector<double>::iterator it = this->angles[j][i][k].begin();
+                  it != this->angles[j][i][k].end(); it++)
                 {
                     row = floor(*it / bin_width);
                     if (row < m_) {

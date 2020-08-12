@@ -190,6 +190,12 @@ int main(int argc, char ** argv)
     MyCell.RDF(_r_cut_, _bond_len_);
 
     /*
+     * This function calculate the partial coordination number for pair of
+     * elements. Bonded Atoms use the same parameters for BAD.
+     */
+    MyCell.CN();
+
+    /*
      * This functions calculate the angle between every atom, and all pairs
      * of bonded atoms, the bonded atoms are calculated in Cell::RDF and it
      * must be called first.
@@ -203,6 +209,7 @@ int main(int argc, char ** argv)
      */
     std::cout << "Writing output files: " << _out_file_name_ << '\n';
     MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
+    MyCell.CN_Histogram(_out_file_name_);
 
     /*
      * This function use the angles to calculate the BAD.
