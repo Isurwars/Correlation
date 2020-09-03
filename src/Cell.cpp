@@ -205,7 +205,7 @@ void Cell::PopulateBondLength(double Bond_Factor)
 }// Cell::PopulateBondlength
 
 // RDF Calculation
-void Cell::RDF(double r_cut, double bond_len)
+void Cell::RDF(double r_cut)
 {
     std::list<Atom>::iterator atom_A;
     std::list<Atom>::iterator atom_B;
@@ -213,8 +213,6 @@ void Cell::RDF(double r_cut, double bond_len)
     int id_A, id_B, i, j, k, i_, j_, k_;
     double aux_dist;
 
-    // Create Bond distance Matrix and element_ids
-    this->PopulateBondLength(bond_len);
     // Number of elements in the Cell
     const int n = this->elements.size();
     // This matrix store the distances between different types of elements,

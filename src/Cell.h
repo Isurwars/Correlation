@@ -44,7 +44,7 @@ public:
     // Populate the Bond length Matrix
     void PopulateBondLength(double);
     // RDF calculation (max distance between atoms)
-    void RDF(double, double);
+    void RDF(double);
     // Coordination Numbers Calculation
     void CN();
     // Bond-Angle Calulation ()

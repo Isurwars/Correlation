@@ -37,55 +37,80 @@ std::pair<std::string, std::string> GetExtension(std::string filename)
     return result;
 }
 
-std::string _in_file_name_  = "";
-std::string _out_file_name_ = "";
-double _r_cut_    = 20.0;
-double _bin_w_    = 0.05;
-double _bond_len_ = 1.42;
+std::string _in_file_name_   = "";
+std::string _out_file_name_  = "";
+std::string _bond_file_name_ = "";
+bool _bond_in_file_  = false;
+double _r_cut_       = 20.0;
+double _bin_w_       = 0.05;
+double _bond_par_    = 1.3;
+double _angle_bin_w_ = 1.0;
 
 void PrintHelp()
 {
     const std::string help_txt = "CORRELATION\n"
       "DESCRIPTION:\n"
-      "This program calculates the main correlation functions of a material:\n"
-      "- Radial Distribution Function (J(r)).\n"
-      "- Pair Distribution Function (g(r)).\n"
-      "- Bond Angle Distribution (BAD).\n\n"
+      "  This program calculates the main correlation functions of a material:\n"
+      "    - Radial Distribution Function (J(r)).\n"
+      "    - Pair Distribution Function (g(r)).\n"
+      "    - Coordination Number (CN).\n"
+      "    - Bond Angle Distribution (BAD).\n\n"
       "USAGE:\n"
-      "The minimal argument is a structure file, this program requires a file\n"
-      "that contains atom positions, crystal structure and composition.\n"
-      " Valid structure files are:\n"
-      "- *.CAR   Materials Studio structure file.\n"
-      "- *.CELL  CASTEP structure file.\n"
-      "- *.CIF   Crystallographic Information File.\n\n"
+      "  The minimal argument is a structure file, this program requires a file\n"
+      "  that contains atom positions, crystal structure and composition.\n"
+      "  Valid structure files are:\n"
+      "    -*.CAR   Materials Studio structure file.\n"
+      "    -*.CELL  CASTEP structure file.\n"
+      "    -*.CIF   Crystallographic Information File.\n\n"
       "OPTIONS:\n"
-      "-h, --help\n"
-      "Display this help text.\n\n"
-      "-r, --r_cut\n"
-      "Maximum radios to calculate J(r) and g(r), by default it's set to 2 nm.\n"
-      "The maximum recomended radius is the smallest of the periodic boundary\n"
-      "conditions (PBC), anything above the smallest PBC can be affected by\n"
-      "periodic interactions.\n\n"
-      "-w, --bin_width\n"
-      "Width of the histograms bins, default set to 0.005 nm.\n\n"
-      "-b, --bond_length\n"
-      "The ideal bond length is the sum of covalent radii of the two atoms.\n"
-      "Our criteria is the following:\n"
-      "0.6 * Sum_radii < distance < bond_length * Sum_radii.\n"
-      "By default the upper limit is set to 1.20, as a rule of thumb.\n"
-      "The default should work for most crystalline materials, and covalent\n"
-      "non-crystalline materials.\n"
-      "Amorphous and liquids should increase this parameter to match the\n"
-      "desired distance to cut_off the bonds\n\n"
-      "-o, --out_file\n"
-      "The output file name, by default the input seed name will be used.\n\n"
+      "    HELP OPTIONS:"
+      "      -h, --help\n"
+      "        Display this help text.\n\n"
+      "    RADIAL OPTIONS:"
+      "      -r, --r_cut\n"
+      "        Maximum radious to calculate J(r) and g(r), the default radious\n"
+      "        it's set to 2 nm. The maximum recomended radius is the same as\n"
+      "        smallest of the periodic boundary conditions (PBC), anything\n"
+      "        above the smallest PBC can be affected by periodic interactions.\n\n"
+      "      -w, --bin_width\n"
+      "        Width of the histograms for g(r) and J(r), the default is 0.05 nm.\n\n"
+      "    BOND-ANGLE OPTIONS:"
+      "      -a, --angle_bin_width\n"
+      "        Width of the histograms for the BAD, default set to 1.0°.\n\n"
+      "      -b, --bond_parameter\n"
+      "        The ideal covalent bond length is the sum of covalent radii\n"
+      "        of the two atoms. The criteria used to consider to atoms bonded\n"
+      "        is the following:\n"
+      "            0.6 * Sum_radii < distance < bond_parameter * Sum_radii.\n"
+      "        By default the bond_parameter is set to 1.30, as a rule of thumb.\n"
+      "        The default should work for most crystalline materials,\n"
+      "        as well as most covalent non-crystalline materials.\n"
+      "        Amorphous and liquids should increase the bond_parameter to match\n"
+      "        the desired distance to cut_off the bonds. \n"
+      "        A bond_parameter of 1.42 is recomended for amorphous materials.\n\n"
+      "      -i, --in_bond_file"
+      "        The input file with the bond distances for every pair of elements\n"
+      "        in the corresponding input structure. The file should have the\n"
+      "        following format:\n"
+      "             Si Si  2.29\n"
+      "             Mg Mg  2.85\n"
+      "             C  C   1.55\n"
+      "             C  Si  1.86\n"
+      "             Si Mg  2.57\n"
+      "             C  Mg  2.07\n"
+      "        If any of the pairs is missing in the input file, the corresponding\n"
+      "        bond distance will be set using the bond_parameter(1.30 by default).\n\n"
+      "    OUTPUT OPTIONS:"
+      "      -o, --out_file\n"
+      "        The output file name, by default the input seed name will be used.\n\n"
       "CREATOR:\n"
-      "This program was created by PhD. Isaias Rodriguez Aguirre in May 2020.\n"
-      "e-mail: isurwars@gmail.com\n"
-      "This software was created during a Posdoctoral fellowship in IIM-UNAM.\n"
-      "Thanks to DGAPA-UNAM for my financial support during my posdoctoral.\n"
-      "And their continious support as part of the projects: IN104617 and \n"
-      "IN116520.\n";
+      "  This program was created by PhD. Isaias Rodriguez Aguirre September 2020.\n"
+      "  e-mail: isurwars@gmail.com\n"
+      "ACKNOWLEDGMENTS:\n"
+      "  This software was created during a Posdoctoral fellowship in IIM-UNAM.\n"
+      "  Thanks to DGAPA-UNAM for the financial support during my posdoctoral.\n"
+      "  And their continious support as part of the projects: IN104617 and \n"
+      "  IN116520.\n";
     std::cout << help_txt;
 
     exit(1);
@@ -95,12 +120,14 @@ void ArgParser(int argc, char ** argv)
 {
     const char * const short_opts = "r:b:o:w:h";
     const option long_opts[]      = {
-        { "r_cut",       required_argument, nullptr, 'r' },
-        { "bond_length", required_argument, nullptr, 'b' },
-        { "out_file",    required_argument, nullptr, 'o' },
-        { "bin_width",   required_argument, nullptr, 'w' },
-        { "help",        no_argument,       nullptr, 'h' },
-        { nullptr,       no_argument,       nullptr, 0   }
+        { "angle_bin_width", required_argument, nullptr, 'a' },
+        { "bond_parameter",  required_argument, nullptr, 'b' },
+        { "help",            no_argument,       nullptr, 'h' },
+        { "in_bond_file",    required_argument, nullptr, 'i' },
+        { "out_file",        required_argument, nullptr, 'o' },
+        { "r_cut",           required_argument, nullptr, 'r' },
+        { "bin_width",       required_argument, nullptr, 'w' },
+        { nullptr,           no_argument,       nullptr, 0   }
     };
 
     while (true) {
@@ -110,26 +137,28 @@ void ArgParser(int argc, char ** argv)
             break;
 
         switch (opt) {
-            case 'r': // -r ot --r_cut
-                _r_cut_ = std::stof(optarg);
+            case 'a': // -a or --angle_bin_width
+                _angle_bin_w_ = std::stof(optarg);
                 break;
-
-            case 'b': // -b or --bond_length
-                _bond_len_ = std::stof(optarg);
+            case 'b': // -b or --bond_parameter
+                _bond_par_ = std::stof(optarg);
                 break;
-
-            case 'o': // -o or --out_file
-                _out_file_name_ = optarg;
-                break;
-
-            case 'w': // -w or -- bin_width
-                _bin_w_ = std::stof(optarg);
-                break;
-
             case 'h': // -h or --help
                 PrintHelp();
                 break;
-
+            case 'i': // -i or --in_bond_file
+                _bond_in_file_   = true;
+                _bond_file_name_ = optarg;
+                break;
+            case 'o': // -o or --out_file
+                _out_file_name_ = optarg;
+                break;
+            case 'r': // -r ot --r_cut
+                _r_cut_ = std::stof(optarg);
+                break;
+            case 'w': // -w or -- bin_width
+                _bin_w_ = std::stof(optarg);
+                break;
             case '?': // Unrecognized option
                 /* getopt_long already printed an error message. */
                 exit(1);
@@ -182,12 +211,18 @@ int main(int argc, char ** argv)
     }
     std::cout << "File " << _in_file_name_ << " opened successfully." << '\n';
 
+    // Create Bond distance Matrix and element_ids
+    MyCell.PopulateBondLength(_bond_par_);
+    if (_bond_in_file_) {
+        /*Read the Bond Distances from the external file*/
+    }
+
     /*
      * This function calculate the distances from every atom to every
      * in the structure. A supercell method is used to create the images
      * in all directions up to _r_cut_ distance.
      */
-    MyCell.RDF(_r_cut_, _bond_len_);
+    MyCell.RDF(_r_cut_);
 
     /*
      * This function calculate the partial coordination number for pair of
@@ -216,7 +251,7 @@ int main(int argc, char ** argv)
      * The theta_max parameters is the maximum angle to compute,
      * the _bin_w_ parameter is the bin width to be used.
      */
-    MyCell.BAD_Histogram(_out_file_name_);
+    MyCell.BAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
 
     return 0;
 } // main
