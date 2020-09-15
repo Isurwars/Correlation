@@ -68,7 +68,7 @@ void PrintHelp()
       "        Display this help text.\n\n"
       "    RADIAL OPTIONS:"
       "      -r, --r_cut\n"
-      "        Maximum radious to calculate J(r) and g(r), the default radious\n"
+      "        Maximum radius to calculate J(r) and g(r), the default radius\n"
       "        it's set to 2 nm. The maximum recomended radius is the same as\n"
       "        smallest of the periodic boundary conditions (PBC), anything\n"
       "        above the smallest PBC can be affected by periodic interactions.\n\n"

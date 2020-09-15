@@ -263,9 +263,11 @@ void Cell::RDF(double r_cut)
                             img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
                             img_atom.position[2] += k * this->v_c()[2];
                             aux_dist = atom_A->Distance(img_atom);
-                            temp_dist[id_A][id_B].push_back(aux_dist);
-                            if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
-                                atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                            if (aux_dist <= r_cut) {
+                                temp_dist[id_A][id_B].push_back(aux_dist);
+                                if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                                    atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                                }
                             }
                         }
                     }
@@ -499,6 +501,7 @@ void Cell::CN_Histogram(std::string filename)
 void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
     int n_, m_, i, j, k, h, col, row;
+    double norm;
     int n = this->elements.size();
 
     /*
@@ -511,8 +514,8 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
      */
 
     n_ = 1 + (n * n * (n + 1) / 2);
-    // from 0 to 180 degrees rows
-    m_ = 181;
+    // from 0 to theta_cut degrees rows
+    m_ = std::round(theta_cut / bin_width) + 1;
     // Matrix to store the Histograms n_ columns, m_ rows
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the theta values of the histogram
@@ -541,6 +544,21 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
                     }
                 }
             }
+        }
+    }
+    // Double loop to find normalize factor
+    norm = 0.0;
+    for (i = 1; i < n_; i++) {
+        for (j = 0; j < m_; j++) {
+            norm += temp_hist[i][j];
+        }
+    }
+    norm *= bin_width;
+
+    // Double loop to normalize BAD_Histogram
+    for (i = 1; i < n_; i++) {
+        for (j = 0; j < m_; j++) {
+            temp_hist[i][j] /= norm;
         }
     }
 

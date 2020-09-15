@@ -48,3 +48,9 @@ test3: $(TST_DIR)/test_3/aPdH.car
 
 test4: $(TST_DIR)/test_4/graphite.car
 	$(EXE) $(TST_DIR)/test_4/graphite.car
+
+test5: $(TST_DIR)/test_5/aPdH_3144.car
+	$(EXE) $(TST_DIR)/test_5/aPdH_3144.car
+
+test6: $(TST_DIR)/test_6/aPdH_25152.car
+	$(EXE) $(TST_DIR)/test_6/aPdH_25152.car
