@@ -44,7 +44,7 @@ test2: $(TST_DIR)/test_2/xSi.car
 	$(EXE) $(TST_DIR)/test_2/xSi.car
 
 test3: $(TST_DIR)/test_3/aPdH.car
-	$(EXE) $(TST_DIR)/test_3/aPdH.car
+	$(EXE) -i $(TST_DIR)/test_3/aPdH.dat $(TST_DIR)/test_3/aPdH.car
 
 test4: $(TST_DIR)/test_4/graphite.car
 	$(EXE) $(TST_DIR)/test_4/graphite.car

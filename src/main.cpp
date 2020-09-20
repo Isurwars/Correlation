@@ -92,12 +92,12 @@ void PrintHelp()
       "        The input file with the bond distances for every pair of elements\n"
       "        in the corresponding input structure. The file should have the\n"
       "        following format:\n"
-      "             Si Si  2.29\n"
-      "             Mg Mg  2.85\n"
-      "             C  C   1.55\n"
-      "             C  Si  1.86\n"
-      "             Si Mg  2.57\n"
-      "             C  Mg  2.07\n"
+      "             Si Si 2.29\n"
+      "             Mg Mg 2.85\n"
+      "             C  C  1.55\n"
+      "             C  Si 1.86\n"
+      "             Si Mg 2.57\n"
+      "             C  Mg 2.07\n"
       "        If any of the pairs is missing in the input file, the corresponding\n"
       "        bond distance will be set using the bond_parameter(1.30 by default).\n\n"
       "    OUTPUT OPTIONS:"
@@ -118,7 +118,7 @@ void PrintHelp()
 
 void ArgParser(int argc, char ** argv)
 {
-    const char * const short_opts = "r:b:o:w:h";
+    const char * const short_opts = "a:b:h:i:o:r:w";
     const option long_opts[]      = {
         { "angle_bin_width", required_argument, nullptr, 'a' },
         { "bond_parameter",  required_argument, nullptr, 'b' },
@@ -215,6 +215,7 @@ int main(int argc, char ** argv)
     MyCell.PopulateBondLength(_bond_par_);
     if (_bond_in_file_) {
         /*Read the Bond Distances from the external file*/
+        MyCell.read_BOND(_bond_file_name_);
     }
 
     /*

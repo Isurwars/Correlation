@@ -6,6 +6,7 @@
 #include <vector>
 #include <cmath>
 #include <map>
+#include <regex>
 #include <numeric>
 
 #include "Atom.h"
@@ -204,6 +205,62 @@ void Cell::PopulateBondLength(double Bond_Factor)
     this->bond_length = temp_matrix;
 }// Cell::PopulateBondlength
 
+void Cell::read_BOND(std::string file_name)
+{
+    /*
+     * This functions read de in_bond_file to populate the bond_length Tensor.
+     * The format of the file should be:
+     * element_B element_A distance(in Angstroms)
+     *
+     * For example:
+     *
+     * Si Si 2.29
+     * Mg Mg 2.85
+     * C  C  1.55
+     * C  Si 1.86
+     * Si Mg 2.57
+     * C  Mg 2.07
+     *
+     * Any nissing pair of elements will use the bond_parameter as a default.
+     */
+    std::ifstream myfile(file_name);
+    std::string line;
+    std::smatch match;
+    std::pair<bool, int> MyIdA, MyIdB;
+    int i, j;
+    double dist;
+
+    /*
+     * Every line should have two elements and a bond length separeted by spaces:
+     *
+     * element_A element_B bond_length
+     */
+
+    std::regex regex_bond("^([A-Z][a-z]?)"
+      "(\\s+)"
+      "([A-Z][a-z]?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+
+    if (myfile.is_open()) {
+        /* Check if tje file is open */
+        while (std::getline(myfile, line)) {
+            /* Begin reading line by line */
+            if (std::regex_search(line, match, regex_bond)) {
+                /* Bond found */
+                MyIdA = findInVector(this->elements, std::string(match.str(1).data()));
+                if (MyIdA.first) i = MyIdA.second;
+                MyIdB = findInVector(this->elements, std::string(match.str(3).data()));
+                if (MyIdB.first) j = MyIdB.second;
+                dist = std::stof(match.str(4).data());
+                if (MyIdA.first && MyIdB.first) {
+                    this->bond_length[i][j] = dist;
+                    this->bond_length[j][i] = dist;
+                }
+            }
+        }
+    }
+} // read_BOND
+
 // RDF Calculation
 void Cell::RDF(double r_cut)
 {
@@ -212,6 +269,10 @@ void Cell::RDF(double r_cut)
     Atom img_atom;
     int id_A, id_B, i, j, k, i_, j_, k_;
     double aux_dist;
+    double progress = 0.0;
+    double h_       = 1.0 / this->atoms.size();
+    int barWidth    = 50;
+    int pos         = 0;
 
     // Number of elements in the Cell
     const int n = this->elements.size();
@@ -246,6 +307,18 @@ void Cell::RDF(double r_cut)
       atom_A != this->atoms.end();
       atom_A++)
     {
+        progress += h_;
+        if (barWidth * progress > pos) {
+            std::cout << "[";
+            for (int i = 0; i < barWidth; ++i) {
+                if (i < pos) std::cout << "=";
+                else if (i == pos) std::cout << ">";
+                else std::cout << " ";
+            }
+            std::cout << "] " << int(progress * 100.0) << " %\r";
+            std::cout.flush();
+            pos = std::round(barWidth * progress);
+        }
         id_A = findInVector(this->elements, atom_A->element).second;
         for (atom_B = this->atoms.begin();
           atom_B != this->atoms.end();
@@ -275,6 +348,7 @@ void Cell::RDF(double r_cut)
             }
         }
     }
+    std::cout << "[==================================================] 100 %" << '\n';
     this->distances = temp_dist;
 } // Cell::RDF
 

@@ -43,6 +43,8 @@ public:
     void CorrectFracPositions();
     // Populate the Bond length Matrix
     void PopulateBondLength(double);
+    //  Read Bond File
+    void read_BOND(std::string);
     // RDF calculation (max distance between atoms)
     void RDF(double);
     // Coordination Numbers Calculation
