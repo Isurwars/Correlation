@@ -541,7 +541,7 @@ void Cell::CN_Histogram(std::string filename)
     m_ = this->coordination[0][0].size();
 
     std::vector<std::vector<int> > temp_hist(n_, std::vector<int>(m_, 0));
-    // Fill the r values of the histogram
+    // Fill the numer of bonds values of the histogram
     for (i = 0; i < m_; i++) {
         temp_hist[0][i] = i;
     }
@@ -557,8 +557,8 @@ void Cell::CN_Histogram(std::string filename)
     std::ofstream out_file2(filename + "_CN.csv");
     out_file2 << "#,";
     for (i = 0; i < n; i++) {
-        for (j = i; j < n; j++) {
-            out_file2 << this->elements[i] << "-" << this->elements[j] << ",";
+        for (j = 0; j < n; j++) {
+            out_file2 << this->elements[j] << " around " << this->elements[i] << ",";
         }
     }
     out_file2 << std::endl;
