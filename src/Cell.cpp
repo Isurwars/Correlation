@@ -589,7 +589,7 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
 
     n_ = 1 + (n * n * (n + 1) / 2);
     // from 0 to theta_cut degrees rows
-    m_ = std::round(theta_cut / bin_width) + 1;
+    m_ = std::round(theta_cut / bin_width) + 2;
     // Matrix to store the Histograms n_ columns, m_ rows
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the theta values of the histogram
@@ -607,7 +607,7 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
                 for (std::vector<double>::iterator it = this->angles[j][i][k].begin();
                   it != this->angles[j][i][k].end(); it++)
                 {
-                    row = floor(*it / bin_width);
+                    row = round(*it / bin_width);
                     if (row < m_) {
                         temp_hist[col][row]++;
                     }

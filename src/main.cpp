@@ -118,7 +118,7 @@ void PrintHelp()
 
 void ArgParser(int argc, char ** argv)
 {
-    const char * const short_opts = "a:b:h:i:o:r:w";
+    const char * const short_opts = "a:b:hi:o:r:w";
     const option long_opts[]      = {
         { "angle_bin_width", required_argument, nullptr, 'a' },
         { "bond_parameter",  required_argument, nullptr, 'b' },
