@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <array>
 #include <regex>
 
 #include "Atom.h"
