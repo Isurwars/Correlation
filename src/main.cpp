@@ -54,7 +54,7 @@ void PrintHelp()
       "    - Radial Distribution Function (J(r)).\n"
       "    - Pair Distribution Function (g(r)).\n"
       "    - Coordination Number (CN).\n"
-      "    - Bond Angle Distribution (BAD).\n\n"
+      "    - Plane-Angle Distribution (PAD).\n\n"
       "USAGE:\n"
       "  The minimal argument is a structure file, this program requires a file\n"
       "  that contains atom positions, crystal structure and composition.\n"
@@ -76,7 +76,7 @@ void PrintHelp()
       "        Width of the histograms for g(r) and J(r), the default is 0.05 nm.\n\n"
       "    BOND-ANGLE OPTIONS:"
       "      -a, --angle_bin_width\n"
-      "        Width of the histograms for the BAD, default set to 1.0°.\n\n"
+      "        Width of the histograms for the PAD, default set to 1.0°.\n\n"
       "      -b, --bond_parameter\n"
       "        The ideal covalent bond length is the sum of covalent radii\n"
       "        of the two atoms. The criteria used to consider to atoms bonded\n"
@@ -227,7 +227,7 @@ int main(int argc, char ** argv)
 
     /*
      * This function calculate the partial coordination number for pair of
-     * elements. Bonded Atoms use the same parameters for BAD.
+     * elements. Bonded Atoms use the same parameters for PAD.
      */
     MyCell.CN();
 
@@ -236,7 +236,7 @@ int main(int argc, char ** argv)
      * of bonded atoms, the bonded atoms are calculated in Cell::RDF and it
      * must be called first.
      */
-    MyCell.BAD();
+    MyCell.PAD();
 
     /*
      * This function use the distances to calculate J(r) and g(r).
@@ -248,11 +248,11 @@ int main(int argc, char ** argv)
     MyCell.CN_Histogram(_out_file_name_);
 
     /*
-     * This function use the angles to calculate the BAD.
+     * This function use the angles to calculate the PAD.
      * The theta_max parameters is the maximum angle to compute,
      * the _bin_w_ parameter is the bin width to be used.
      */
-    MyCell.BAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
+    MyCell.PAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
 
     return 0;
 } // main

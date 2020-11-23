@@ -50,13 +50,13 @@ public:
     // Coordination Numbers Calculation
     void CN();
     // Bond-Angle Calulation ()
-    void BAD(bool = true);
+    void PAD(bool = true);
     // RDF Histograms  (max distance between atoms, bin width)
     void RDF_Histogram(std::string, double = 20.0, double = 0.05);
     // CN Histograms ()
     void CN_Histogram(std::string);
-    // BAD Histograms ()
-    void BAD_Histogram(std::string, double = 180.0, double = 1.0);
+    // PAD Histograms ()
+    void PAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors
     std::array<double, 3> v_a()
     {

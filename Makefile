@@ -17,7 +17,7 @@ CC			 := g++
 CPPFLAGS := -Iinclude -std=c++17
 CFLAGS   := -Wall
 LDFLAGS  := -Llib
-LDLIBS   := -lm -static-libgcc -static-libstdc++
+LDLIBS   := -lm -static-libstdc++
 
 .PHONY: all clean
 

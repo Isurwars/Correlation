@@ -390,7 +390,7 @@ void Cell::CN()
     this->coordination = temp_cn;
 }// Cell::CN
 
-void Cell::BAD(bool degree)
+void Cell::PAD(bool degree)
 {
     std::list<Atom>::iterator MyAtom;
     std::vector<Atom_Img>::iterator atom_A, atom_B;
@@ -398,9 +398,9 @@ void Cell::BAD(bool degree)
 
     if (degree) factor = constants::rad2deg;
 
-    // NxNxN Tensor to contain the BAD
+    // NxNxN Tensor to contain the PAD
     const int n = this->elements.size();
-    std::vector<std::vector<std::vector<std::vector<double> > > > temp_bad(n,
+    std::vector<std::vector<std::vector<std::vector<double> > > > temp_pad(n,
       std::vector<std::vector<std::vector<double> > >(n, std::vector<std::vector<double> >(n,
       std::vector<double>(0))));
 
@@ -428,14 +428,14 @@ void Cell::BAD(bool degree)
               atom_B++)
             {
                 if (atom_A->atom_id != atom_B->atom_id) {
-                    temp_bad[atom_A->element_id][MyAtom->element_id][atom_B->element_id].push_back(MyAtom->GetAngle(*
+                    temp_pad[atom_A->element_id][MyAtom->element_id][atom_B->element_id].push_back(MyAtom->GetAngle(*
                       atom_A, *atom_B) * factor);
                 }
             }
         }
     }
-    this->angles = temp_bad;
-}// Cell::BAD
+    this->angles = temp_pad;
+}// Cell::PAD
 
 void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 {
@@ -458,7 +458,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
             for (std::vector<double>::iterator it = this->distances[i][j].begin();
               it != this->distances[i][j].end(); it++)
             {
-                row = floor(*it / bin_width);
+                row = ceil(*it / bin_width);
                 if (row < m_) {
                     temp_hist[col][row]++;
                     if (i != j) temp_hist[col][row]++;
@@ -572,7 +572,7 @@ void Cell::CN_Histogram(std::string filename)
     out_file2.close();
 }// Cell::CN_histogram
 
-void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_width)
+void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
     int n_, m_, i, j, k, h, col, row;
     double norm;
@@ -629,7 +629,7 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
     }
     norm *= bin_width;
 
-    // Double loop to normalize BAD_Histogram
+    // Double loop to normalize PAD_Histogram
     for (i = 1; i < n_; i++) {
         for (j = 0; j < m_; j++) {
             temp_hist[i][j] /= norm;
@@ -639,7 +639,7 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
 
     this->g_theta = temp_hist;
 
-    std::ofstream out_file(filename + "_BAD.csv");
+    std::ofstream out_file(filename + "_PAD.csv");
     out_file << "theta,";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
@@ -658,4 +658,4 @@ void Cell::BAD_Histogram(std::string filename, double theta_cut, double bin_widt
     }
 
     out_file.close();
-}// Cell::BAD_Histogram
+}// Cell::PAD_Histogram
