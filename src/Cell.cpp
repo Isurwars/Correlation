@@ -442,13 +442,13 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     int n_, m_, i, j, col, row;
     int n = this->distances.size();
 
-    m_ = ceil(r_cut / bin_width) + 1;
+    m_ = ceil(r_cut / bin_width);
     n_ = n * (n + 1) / 2 + 1;
 
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the r values of the histogram
     for (i = 0; i < m_; i++) {
-        temp_hist[0][i] = i * bin_width;
+        temp_hist[0][i] = (i + 0.5) * bin_width;
     }
     col = 0;
     // Triple loop to iterate in the distances tensor.
@@ -458,7 +458,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
             for (std::vector<double>::iterator it = this->distances[i][j].begin();
               it != this->distances[i][j].end(); it++)
             {
-                row = ceil(*it / bin_width);
+                row = floor(*it / bin_width);
                 if (row < m_) {
                     temp_hist[col][row]++;
                     if (i != j) temp_hist[col][row]++;
@@ -589,12 +589,12 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
 
     n_ = 1 + (n * n * (n + 1) / 2);
     // from 0 to theta_cut degrees rows
-    m_ = std::round(theta_cut / bin_width) + 2;
+    m_ = std::round(theta_cut / bin_width);
     // Matrix to store the Histograms n_ columns, m_ rows
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the theta values of the histogram
     for (i = 0; i < m_; i++) {
-        temp_hist[0][i] = i * bin_width;
+        temp_hist[0][i] = (i + 0.5) * bin_width;
     }
     col = 0;
 
@@ -607,7 +607,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
                 for (std::vector<double>::iterator it = this->angles[j][i][k].begin();
                   it != this->angles[j][i][k].end(); it++)
                 {
-                    row = round(*it / bin_width);
+                    row = floor(*it / bin_width);
                     if (row < m_) {
                         temp_hist[col][row]++;
                     }
