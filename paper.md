@@ -51,11 +51,14 @@ With these limitations in mind, we decided to create a software that could calcu
 The structure factor is one of the most useful tools in analyzing the scattering patterns obtained from X-ray, electron and neutron diffraction experiments of crystalline, disordered and amorphous materials.
 The Fourier transform of the scattering intensity given by the structure factor $S(Q)$, yields the pair-distribution function $g(r)$ defined by:
 $$
-G(r) = 4\pi\rho_0(g(r)-1)=\frac{2}{\pi}\int_{0}^{\inf} Q[S(Q)-Q]sin(Qr)dQ,
+G(r) = 4\pi\rho_0(g(r)-1)=\frac{2}{\pi}\int_{0}^{\inf} Q[S(Q)-1]sin(Qr)dQ,
 $$
 where $G(r)$ is the reduced pair-distribution function.
-The pair-distribution function (PDF) is like a distance map inside the material, the $g(r)$ function gives the probability of finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF}.
+
 ![Schematic plot of the Pair Distribution Function for an amorphous metallic alloy. \label{fig:RDF}](./Images/Fig1.png){ width=75% }
+**Figure 1:** Schematic depiction of the first and second neighbors coordination spheres for an amorphous metallic alloy and the corresponding pair-distribution function $g(r)$.
+
+The pair-distribution function (PDF) could also be seen like a distance map inside the material, the $g(r)$ function gives the probability of finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF}.
 
 
 # Acknowledgements
