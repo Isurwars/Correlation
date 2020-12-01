@@ -60,7 +60,7 @@ where $G(r)$ is the reduced pair-distribution function.
 
 The pair-distribution function (PDF) could also be seen like a distance map inside the material, the $g(r)$ function gives the probability of finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF}.
 
-The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \ro 0$(for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ become zero. The main advantage of the PDF, and the related functions, is that they emphasize the short-range order of a material.
+The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 0$ (for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ become zero. The main advantage of the PDF, and the related functions, is that they emphasize the short-range order of a material.
 
 ### Reduced pair-distribution function $G(r)$
 
