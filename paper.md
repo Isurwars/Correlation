@@ -44,17 +44,21 @@ However, the use of these tools has been limited, either by a prohibiting cost, 
 With these limitations in mind, we decided to create a software that could calculate the correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as we could.
 
 
-# Figures
+# Theory
 
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png)
-and referenced from text using \autoref{fig:example}.
+## Pair Corralation Function
+
+
+as can be seen in \autoref{fig:RDF}.
+
+![Schematic plot of the Pair Distribution Function for an amorphous metallic alloy. \label{fig:RDF}](\Images\RDF.png)
+
 
 # Acknowledgements
 
 I.R. acknowledge PAPIIT, DGAPA-UNAM for his posdoctoral fellowship.
 D.H.R. acknowledge Consejo Nacional de Ciencia y Tecnología (CONACyT) for supporting his graduate studies.
-A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617 and IN116520. 
+A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617 and IN116520.
 M. T. Vázquez and O. Jiménez provided the information requested.
 A. López and A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.
 Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM.
