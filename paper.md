@@ -46,11 +46,14 @@ With these limitations in mind, we decided to create a software that could calcu
 
 # Theory
 
-## Pair Corralation Function
+## Pair Correlation Functions
 
-
-
-
+The structure factor is one of the most useful tools in analyzing the scattering patterns obtained from X-ray, electron and neutron diffraction experiments of crystalline, disordered and amorphous materials.
+The Fourier transform of the scattering intensity given by the structure factor $S(Q)$, yields the atomic pair distribution function $g(r)$ defined by:
+$$
+G(r) = 4\pi\rho_0(g(r)-1)=\frac{2}{\pi}\int_{0}^{\inf} Q[S(Q)-Q]sin(Qr)dQ,
+$$
+where $G(r)$ is the reduced pair distribution function.
 ![Schematic plot of the Pair Distribution Function for an amorphous metallic alloy. \label{fig:RDF}](./Images/Fig1.png)
 
 as can be seen in \autoref{fig:RDF}.
