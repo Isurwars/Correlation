@@ -50,15 +50,21 @@ With these limitations in mind, we decided to create a software that could calcu
 
 The structure factor is one of the most useful tools in analyzing the scattering patterns obtained from X-ray, electron and neutron diffraction experiments of crystalline, disordered and amorphous materials.
 The Fourier transform of the scattering intensity given by the structure factor $S(Q)$, yields the pair-distribution function $g(r)$ defined by:
-$$
+
+\begin{equation}\label{eq:PDF}
 G(r) = 4\pi\rho_0(g(r)-1)=\frac{2}{\pi}\int_{0}^{\inf} Q[S(Q)-1]sin(Qr)dQ,
-$$
+\end{equation}
 where $G(r)$ is the reduced pair-distribution function.
 
 ![Schematic depiction of the first and second neighbors coordination spheres for an amorphous metallic alloy and the corresponding pair-distribution function. \label{fig:RDF}](./Images/Fig1.png){ width=75% }
 
 The pair-distribution function (PDF) could also be seen like a distance map inside the material, the $g(r)$ function gives the probability of finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF}.
 
+The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \ro 0$(for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ become zero. The main advantage of the PDF, and the related functions, is that they emphasize the short-range order of a material.
+
+### Reduced pair-distribution function $G(r)$
+
+One of the most used pair correlation function is the reduced pair-distribution function ($G(r)$), because it can be easily obtained by the Fourier transform of the structure factor as seen in \autoref{eq:PDF}.
 
 # Acknowledgements
 
