@@ -29,7 +29,7 @@ bibliography: paper.bib
 
 # Summary
 
-Pair Correlation Functions (g(r)), Radial Distribution Functions (J(r)), Plane-Angle Distributions (g(θ)) and Coordination Numbers (CN) have been widely used to characterize liquid and amorphous materials [1-3] and, in particular, Bulk Metallic Glasses [4,5].
+Pair Correlation Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Plane-Angle Distributions ($g(\theta)$) and Coordination Numbers (CN) have been widely used to characterize liquid and amorphous materials [@waseda_structure_1980, @elliott_physics_1986, @valladares_new_2011] and, in particular, Bulk Metallic Glasses [@miller_bulk_2007, @galvan-colin_short-range_2015].
 
 Correlation is an Open-Source software designed by our group to analyze liquid structures and amorphous solids; the software is user-friendly, and easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standard fashion. We propose to substitute the term “Bond-Angle Distribution” by the also frequently used “Plane-Angle Distribution” since in condensed matter, proximity does not necessarily imply bonding. The software is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP and ONETEP (CELL), LAMMPS (XYZ) and VASP (OUTCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output is exported in comma-separated value files (CSV), to further analyze the results.
 
