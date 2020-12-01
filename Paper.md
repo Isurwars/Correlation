@@ -26,12 +26,6 @@ affiliations:
 date: 30 November 2020
 bibliography: paper.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
----
-
 # Summary
 
 Pair Correlation Functions (g(r)), Radial Distribution Functions (J(r)), Plane-Angle Distributions (g(θ)) and Coordination Numbers (CN) have been widely used to characterize liquid and amorphous materials [1-3] and, in particular, Bulk Metallic Glasses [4,5].
