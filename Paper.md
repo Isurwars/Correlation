@@ -35,8 +35,13 @@ Correlation is an Open-Source software designed by our group to analyze liquid s
 
 # Introduction
 
-## Pair Correlation Function
+For almost a century since J.D. Bernal attempt at molecular theory of liquid structure, correlation functions have been the bridge to compare theoretical calculations with experimental measurements in the study of disordered materials.
 
+As time goes by the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represents the structure of materials has steadily increase.
+To answer this need, there has been several tools developed to calculate some of the most used correlations functions like: pair correlation function, radial distribution function and plane angle distributions.
+However, the use of these tools has been limited, either by a prohibiting cost, been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or being specific to an specific software.
+
+With these limitations in mind, we decided to create a software that could calculate the correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as we could.
 
 
 Single dollars ($) are required for inline mathematics e.g. $f(x) = e^{\pi/x}$
