@@ -55,7 +55,8 @@ G(r) = 4\pi\rho_0(g(r)-1)=\frac{2}{\pi}\int_{0}^{\inf} Q[S(Q)-1]sin(Qr)dQ,
 $$
 where $G(r)$ is the reduced pair-distribution function.
 
-![Schematic plot of the Pair Distribution Function for an amorphous metallic alloy. \label{fig:RDF}](./Images/Fig1.png){ width=75% }
+![Schematic PDF \label{fig:RDF}](./Images/Fig1.png){ width=75% }
+
 **Figure 1:** Schematic depiction of the first and second neighbors coordination spheres for an amorphous metallic alloy and the corresponding pair-distribution function $g(r)$.
 
 The pair-distribution function (PDF) could also be seen like a distance map inside the material, the $g(r)$ function gives the probability of finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF}.
