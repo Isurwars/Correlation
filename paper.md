@@ -1,3 +1,4 @@
+---
 title: ' Correlation: An Analyzing Tool for Liquids and for Amorphous Solids'
 tags:
   - C++
@@ -25,7 +26,7 @@ affiliations:
    index: 2
 date: 30 November 2020
 bibliography: paper.bib
-
+---
 
 # Summary
 
