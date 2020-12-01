@@ -26,6 +26,7 @@ affiliations:
 date: 30 November 2020
 bibliography: paper.bib
 
+
 # Summary
 
 Pair Correlation Functions (g(r)), Radial Distribution Functions (J(r)), Plane-Angle Distributions (g(θ)) and Coordination Numbers (CN) have been widely used to characterize liquid and amorphous materials [1-3] and, in particular, Bulk Metallic Glasses [4,5].
