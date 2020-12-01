@@ -51,7 +51,7 @@ With these limitations in mind, we decided to create a software that could calcu
 
 
 
-![Schematic plot of the Pair Distribution Function for an amorphous metallic alloy. \label{fig:RDF}](Images/RDF.png)
+![Schematic plot of the Pair Distribution Function for an amorphous metallic alloy. \label{fig:RDF}](./Images/RDF.png)
 
 as can be seen in \autoref{fig:RDF}.
 
