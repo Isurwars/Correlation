@@ -7,9 +7,9 @@ tags:
   - Pair Correlation Function
   - Plane-Angle Distribution
 authors:
-  - name: Isaías Rodríguez]
+  - name: Isaías Rodríguez
     orcid: 0000-0002-4359-2742
-    affiliation: "1" # (Multiple affiliations must be quoted)
+    affiliation: 1
   - name: Renela M. Valladares
     affiliation: 2
   - name: Alexander Valladares
@@ -18,7 +18,6 @@ authors:
     affiliation: 1
   - name: Ariel A. Valladares
     affiliation: 1
-
 affiliations:
  - name: Instituto de Investigaciones en Materiales, Universidad Nacional Autónoma de México
    index: 1
