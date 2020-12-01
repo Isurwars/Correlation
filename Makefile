@@ -34,6 +34,7 @@ $(BIN_DIR) $(OBJ_DIR):
 
 clean:
 	$(RM) $(OBJ_DIR)
+	$(RM) $(EXE)
 
 tests: test1 test2 test3 test4
 
