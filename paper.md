@@ -64,13 +64,28 @@ The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 
 
 ### Reduced pair-distribution function $G(r)$
 
-One of the most widely used pair correlation function is the reduced pair-distribution function. This is defined as $G(r) = 4\pi \rho_0 (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair-distribution function (rPDF) oscillates around zero as $r \to infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
+One of the most widely used pair correlation function is the reduced pair-distribution function. This is defined as $G(r) = 4\pi \rho_0 (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair-distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
 
 While the PDF ($g(r)$) has an intuitive geometric definition, the rPDF ($G(r)$) can be directly obtained by a Fourier transformation of the structure factor ($S(Q)$) as can be seen in \autoref(eq:PDF), this close relation with the experimental data explains the popularity that this function has. Also, it has an other advantage over other correlation functions, like PDF ($g(r)$) as the numerical density $\rho_0 = N/V$ should be estimated to normalize the other correlation functions. This is not necessary in rPDF ($G(r)$), on the contrary this information is already contained in $G(r)$ as the slope of the function as $r \to 0$.
 
 All of these advantages for the analysis of experimental measurements, are not true for theoretical simulations, as the numerical density ($\rho_0$) could be directly obtained by a simple division of the number of the particles and the volume of the cell, while the mapping of the $Q$ vector in the structure factor ($S(Q)$) increase in difficulty as the cell volume increase, as it's the case in disordered, amorphous and liquids.
 
 ### Radial distribution function $J(r)$
+
+The last pair correlation function we discuss is also one of the most physical intuituve, The PDF, $g(r)$ is related to de Radial Distribution Function (RDF) by:
+
+\begin{equation}\label{eq:RDF}
+J(r) = 4\pi r^{2} \rho_0 g(r).
+\end{equation}
+
+The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms of an spherical shell with inner radius $r$ and a thickness of $dr$ around every atom as depicted in \autoref(fig:RDF). For example the coordination number, or the number of neighbors ($CN$), is given by:
+
+\begin{equation}\label{eq:RDF}
+CN = \int_{r_1}^{r_2} J(r) dr,
+\end{equation}
+
+where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shell in question.  
+
 
 # Acknowledgements
 
