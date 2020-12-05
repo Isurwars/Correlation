@@ -97,7 +97,7 @@ In particular, the Bond-Angle Distribution $f(\theta)$ has been used to characte
 
 # Benchmarks
 
-![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=80% }
+![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=70% }
 
 
 In order to assess the performance of **Correlation**, we calculate the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compare the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016], to test **Correlation** in Amorphous and Liquids materials we selected amorphous palladim [@rodriguez_emergence_2019], amorphous palladium hydride [rodriguez_calculo_2019] and liquid Bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we choose to compare them with the code developed by U. Santiago as part of his PhD thesis in the workgroup of Prof. Valladares [@santiago_simulacion_2011].
