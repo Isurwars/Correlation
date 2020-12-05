@@ -97,9 +97,11 @@ In particular, the Bond-Angle Distribution $f(\theta)$ has been used to characte
 
 # Benchmarks
 
+![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=80% }
+
+
 In order to assess the performance of **Correlation**, we calculate the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compare the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016], to test **Correlation** in Amorphous and Liquids materials we selected amorphous palladim [@rodriguez_emergence_2019], amorphous palladium hydride [rodriguez_calculo_2019] and liquid Bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we choose to compare them with the code developed by U. Santiago as part of his PhD thesis in the workgroup of Prof. Valladares [@santiago_simulacion_2011].
 
-![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=85% }
 
 The results of these benchmarks are shown in Figure \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as test 1 to 5. The last estructure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark Memory and CPU performance in an structure with thousands of atoms.
 
@@ -107,7 +109,7 @@ The results of these benchmarks are shown in Figure \autoref{fig:RDF-PAD}, and t
 
 **Correlation** is a lightweight, modular software that can be use in HPC and adapted to analyze the main correlation functions used to characterize: crystalline, amorphous and liquids.
 
-**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015, @galvan-colin_ab_2016, @mata-pinzon_superconductivity_2016] as well as several PhD Thesis [@santiago_simulacion_2011, @romero-rangel_simulaciones_2014, @mejia-mendoza_estudio_2014, @galvan-colin_atomic_2016, @mata-pinzon_propiedades_2016, @rodriguez_calculo_2019]. And our workgroup will continue to support and enrich the software for the foreseeable future. We are open to receive suggestions that further improve the functionality of the software. 
+**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015, @galvan-colin_ab_2016, @mata-pinzon_superconductivity_2016] as well as several PhD Thesis [@santiago_simulacion_2011, @romero-rangel_simulaciones_2014, @mejia-mendoza_estudio_2014, @galvan-colin_atomic_2016, @mata-pinzon_propiedades_2016, @rodriguez_calculo_2019]. And our workgroup will continue to support and enrich the software for the foreseeable future. We are open to receive suggestions that further improve the functionality of the software.
 
 # Acknowledgements
 
