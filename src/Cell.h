@@ -24,12 +24,14 @@ public:
     std::vector<std::vector<std::vector<int> > > coordination;
     // 4D Tensor of Angles
     std::vector<std::vector<std::vector<std::vector<double> > > > angles;
-    // Matrix of J(r) Histograms
-    std::vector<std::vector<double> > J;
     // Matrix of g(r) Histograms
     std::vector<std::vector<double> > g;
-    // Matrix of g(r) Histograms
-    std::vector<std::vector<double> > g_theta;
+    // Matrix of J(r) Histograms
+    std::vector<std::vector<double> > J;
+    // Matrix of G(r) Histograms
+    std::vector<std::vector<double> > G;
+    // Matrix of f(theta) Histograms
+    std::vector<std::vector<double> > f_theta;
     // Volume of the cell
     double volume;
     // Standar Constructors
@@ -48,13 +50,13 @@ public:
     // RDF calculation (max distance between atoms)
     void RDF(double);
     // Coordination Numbers Calculation
-    void CN();
+    void Nc();
     // Bond-Angle Calulation ()
     void PAD(bool = true);
     // RDF Histograms  (max distance between atoms, bin width)
     void RDF_Histogram(std::string, double = 20.0, double = 0.05);
-    // CN Histograms ()
-    void CN_Histogram(std::string);
+    // Nc Histograms ()
+    void Nc_Histogram(std::string);
     // PAD Histograms ()
     void PAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors

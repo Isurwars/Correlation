@@ -29,20 +29,19 @@ bibliography: paper.bib
 
 # Summary
 
-Pair Correlation Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Plane-Angle Distributions ($g(\theta)$) and Coordination Numbers (CN) have been widely used to characterize liquid and amorphous materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular, Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
-
-Correlation is an Open-Source software designed by our group to analyze liquid structures and amorphous solids; the software is user-friendly, and easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standard fashion. We propose to substitute the term “Bond-Angle Distribution” by the also frequently used “Plane-Angle Distribution” since in condensed matter, proximity does not necessarily imply bonding. The software is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP and ONETEP (CELL), LAMMPS (XYZ) and VASP (OUTCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output is exported in comma-separated value files (CSV), to further analyze the results.
-
-# Introduction
-
 For almost a century since J.D. Bernal attempt at molecular theory of liquid structure [@bernal_attempt_1937], correlation functions have been the bridge to compare theoretical calculations with experimental measurements in the study of disordered materials.
+
+Pair-Distribution Function($g(r)$), Radial Distribution Function ($J(r)$), Plane-Angle Distribution ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular, Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
+
+Correlation is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. Correlation is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP and ONETEP (CELL), LAMMPS (XYZ) and VASP (OUTCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output of every single correlation function is exported in it's own individual comma-separated value file (CSV), to further analyze the results.
+
+# Statement of Need
 
 As time goes by the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represents the structure of materials has steadily increase.
 To answer this need, there has been several tools developed to calculate some of the most used correlations functions like: pair correlation function, radial distribution function and plane angle distributions.
-However, the use of these tools has been limited, either by a prohibiting cost, been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or being specific to an specific software.
+However, the use of these tools has been limited, either by a prohibiting cost, been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or being specialized to an specific material simulation software.
 
 With these limitations in mind, we decided to create a software that could calculate the correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as we could.
-
 
 # Mathematical Background
 
@@ -72,7 +71,7 @@ All of these advantages for the analysis of experimental measurements, are not t
 
 ### Radial distribution function $J(r)$
 
-The last pair correlation function we discuss is also one of the most physical intuituve, The PDF, $g(r)$ is related to de Radial Distribution Function (RDF) by:
+The last pair correlation function we discuss is also one of the most physical intuitive, The PDF, $g(r)$ is related to de Radial Distribution Function (RDF) by:
 
 \begin{equation}\label{eq:RDF}
 J(r) = 4\pi r^{2} \rho_0 g(r).
@@ -85,6 +84,19 @@ CN = \int_{r_1}^{r_2} J(r) dr,
 \end{equation}
 
 where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shell in question.  
+
+## Plane-Angle Distribution
+
+The use of higher order correlation functions to analyze the structure of liquids and amorphous solids has been proposed in the literature [@hafner_triplet_1982, @galvan-colin_ab_2016], trying to reproduce the success obtained by J.D. Bernal in the analysis of the structure of liquids [@bernal_bakerian_1964].
+
+In particular, the Bond-Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures[@galvan-colin_short-range_2015, @galvan-colin_ab_2016, @mata-pinzon_superconductivity_2016]. We propose to substitute the term “Bond-Angle Distribution” by the also frequently used “Plane-Angle Distribution” since in condensed matter, proximity does not necessarily imply bonding.
+
+# Benchmarks
+
+In order to verify Correlation, we calculate the PDF and PAD for two well known structures, and compare the results with the commercially available software Forcite included in the Materials Studio suite[@materials_2016], to calculate the PAD of the Amorphous and Liquids materials we compare them with the code developed by U. Santiago as part of his PhD thesis in the workgroup of Dr. Valladares [@santiago_simulacion_2011].
+
+![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
+
 
 
 # Acknowledgements

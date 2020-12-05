@@ -1,7 +1,9 @@
 ifeq ($(OS),Windows_NT)
-RM = del /q
+RM = del
+RMDIR = rmdir /S /Q
 else
 RM = rm -rf
+RMDIR = rm -rf
 endif
 
 SRC_DIR := src
@@ -33,25 +35,24 @@ $(BIN_DIR) $(OBJ_DIR):
 	mkdir $@
 
 clean:
-	$(RM) $(OBJ_DIR)
-	$(RM) $(EXE)
+	$(RMDIR) $(OBJ_DIR)
 
-tests: test1 test2 test3 test4
+tests: test1 test2 test3 test4 test5
 
-test1: $(TST_DIR)/test_1/aPd.cell
-	$(EXE) $(TST_DIR)/test_1/aPd.cell
+test1: $(TST_DIR)/test_1/xSi.car
+	$(EXE) $(TST_DIR)/test_1/xSi.car
 
-test2: $(TST_DIR)/test_2/xSi.car
-	$(EXE) $(TST_DIR)/test_2/xSi.car
+test2: $(TST_DIR)/test_2/Graphene.car
+	$(EXE) $(TST_DIR)/test_2/Graphene.car
 
-test3: $(TST_DIR)/test_3/aPdH.car
-	$(EXE) -i $(TST_DIR)/test_3/aPdH.dat $(TST_DIR)/test_3/aPdH.car
+test3: $(TST_DIR)/test_3/aPd.cell
+	$(EXE) $(TST_DIR)/test_3/aPd.cell
 
-test4: $(TST_DIR)/test_4/graphite.car
-	$(EXE) $(TST_DIR)/test_4/graphite.car
+test4: $(TST_DIR)/test_4/aPdH.car
+	$(EXE) -i $(TST_DIR)/test_4/aPdH.dat $(TST_DIR)/test_4/aPdH.car
 
-test5: $(TST_DIR)/test_5/aPdH_3144.car
-	$(EXE) $(TST_DIR)/test_5/aPdH_3144.car
+test5: $(TST_DIR)/test_5/lBi.car
+	$(EXE) $(TST_DIR)/test_5/lBi.car
 
-test6: $(TST_DIR)/test_6/aPdH_25152.car
-	$(EXE) $(TST_DIR)/test_6/aPdH_25152.car
+test6: $(TST_DIR)/test_6/aPdH_3144.car
+	$(EXE) $(TST_DIR)/test_6/aPdH_3144.car

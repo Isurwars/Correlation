@@ -8,7 +8,7 @@
 
 #include "Atom.h"
 #include "Cell.h"
-// All of functions of Class Atom
+// All the functions in Class Atom
 int Atom::NumOfAtoms = 0;
 
 void Atom::SetAll(std::string ele, std::array<double, 3> pos)
@@ -17,7 +17,7 @@ void Atom::SetAll(std::string ele, std::array<double, 3> pos)
     this->position = pos;
 }
 
-// Complete constructor for the object Atom
+// Complete constructor for the Atom object
 Atom::Atom(std::string ele, std::array<double, 3> pos)
 {
     this->element  = ele;
@@ -26,7 +26,7 @@ Atom::Atom(std::string ele, std::array<double, 3> pos)
     Atom::NumOfAtoms++;
 }
 
-// Default constructor for the object Atom
+// Default constructor for the Atom object
 Atom::Atom()
 {
     this->element  = "H";
@@ -35,7 +35,7 @@ Atom::Atom()
     Atom::NumOfAtoms++;
 }
 
-// Distance to other atom
+// Distance to the other atom
 double Atom::Distance(const Atom& other_atom)
 {
     return sqrt(pow(this->position[0] - other_atom.position[0], 2)
@@ -43,7 +43,7 @@ double Atom::Distance(const Atom& other_atom)
              + pow(this->position[2] - other_atom.position[2], 2));
 }
 
-// GetImage
+// Get Image
 Atom_Img Atom::GetImage()
 {
     Atom_Img temp_img;

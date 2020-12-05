@@ -15,8 +15,8 @@
 
 
 /*
- * Generic function to find if an element of any type exists in vector,
- * if true, then return the index.
+ * Generic function to find if an element of any type exists in a vector,
+ * if true, then returns the index.
  */
 template <typename T>
 std::pair<bool, int> findInVector(const std::vector<T> & vecOfElements, const T  & element)
@@ -75,7 +75,7 @@ void Cell::SetFromVectors(std::vector<double> v1, std::vector<double> v2, std::v
 };
 
 
-// This calculate the lattice vectors from the lattice parameters.
+// Calculate the lattice vectors from the lattice parameters.
 void Cell::SetLatticeVectors()
 {
     double A     = this->lattice_parameters[0];
@@ -104,7 +104,7 @@ void Cell::SetLatticeVectors()
       + this->v_c_[2] * (this->v_a_[0] * this->v_b_[1] - this->v_a_[1] * this->v_b_[0]));
 }
 
-// This correct the initial position to in-cell positions
+// Correct the initial positions to in-cell positions
 void Cell::CorrectPositions()
 {
     double i, j, k;
@@ -148,7 +148,7 @@ void Cell::CorrectPositions()
     }
 } // Cell::CorrectPositions
 
-// This correct the frac position to absolute positions
+// Correct the fractional positions to absolute positions
 void Cell::CorrectFracPositions()
 {
     double i, j, k;
@@ -184,10 +184,10 @@ void Cell::PopulateBondLength(double Bond_Factor)
 
     // Number of elements in the Cell
     const int n = this->elements.size();
-    // Matrix of Bond length nxn initialize as zeros
+    // Initialize Bond length matrix (nxn) as zeros
     std::vector<std::vector<double> > temp_matrix(n, std::vector<double>(n, 0.0));
 
-    // Iterate in Atoms list to assignate the id in the matrix to every atom.
+    // Iterate in Atoms list to assign the id in the matrix to every atom.
     for (MyAtom = this->atoms.begin();
       MyAtom != this->atoms.end();
       MyAtom++)
@@ -208,8 +208,8 @@ void Cell::PopulateBondLength(double Bond_Factor)
 void Cell::read_BOND(std::string file_name)
 {
     /*
-     * This functions read de in_bond_file to populate the bond_length Tensor.
-     * The format of the file should be:
+     * This function reads the in_bond_file to populate the bond_length Tensor.
+     * The file should be in the format:
      * element_B element_A distance(in Angstroms)
      *
      * For example:
@@ -221,7 +221,7 @@ void Cell::read_BOND(std::string file_name)
      * Si Mg 2.57
      * C  Mg 2.07
      *
-     * Any nissing pair of elements will use the bond_parameter as a default.
+     * Any missing pair of elements will use the bond_parameter as a default.
      */
     std::ifstream myfile(file_name);
     std::string line;
@@ -242,9 +242,9 @@ void Cell::read_BOND(std::string file_name)
       "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
     if (myfile.is_open()) {
-        /* Check if tje file is open */
+        /* Check if the file is open */
         while (std::getline(myfile, line)) {
-            /* Begin reading line by line */
+            /* Read line by line */
             if (std::regex_search(line, match, regex_bond)) {
                 /* Bond found */
                 MyIdA = findInVector(this->elements, std::string(match.str(1).data()));
@@ -276,32 +276,32 @@ void Cell::RDF(double r_cut)
 
     // Number of elements in the Cell
     const int n = this->elements.size();
-    // This matrix store the distances between different types of elements,
-    // there are at most n*n partials, off-diagonal partials are simetrical.
+    // This matrix stores the distances between different types of elements,
+    // there are at most nxn partials, off-diagonal partials are symmetric.
     std::vector<std::vector<std::vector<double> > > temp_dist(n, std::vector<std::vector<double> >(n,
       std::vector<double>(0)));
 
-    // Let´s correct the atom positions to be inside the cell.
+    // Correct the atom positions to be inside the cell.
     this->CorrectPositions();
 
-    //  We need to create a big enough supercell to cover a r_cut sphere.
+    //  We need to create a big enough supercell to cover a sphere of radius r_cut.
     k_ = ceil(r_cut / this->v_c()[2]);
     j_ = ceil(r_cut / this->v_b()[1]);
     i_ = ceil(r_cut / this->v_a()[0]);
 
     /*
-     * This is the main loop in RDF we need to iterate between all atoms
+     * This is the main loop in RDF, we need to iterate between all atoms
      * in the cell to all the atoms in the supercell created above.
      *
-     * This loop is the most time consuming of the code, scaling as n^2.
+     * This loop is the most time-consuming part of the code, scaling as n^2.
      *
-     * We can reduce this time in half by only iterating A>B and duplicating
-     * the distance because distance between atom_A and atom_B is the same as
-     * the distance between atom_B to atom_A.
+     * We reduce the computation time in half by only iterating for A>B and
+     * duplicating the distance because distance from atom_A to atom_B is
+     * equal to the distance from atom_B to atom_A.
      *
-     * This code can also be improved by paralelization because each iteration
-     * is completly independant to the others, so changing to a for_each is
-     * desired to further improve this code.
+     * This code can also be improved through paralellization because each
+     * iteration is independent of the others, so changing to a for_each is
+     * desired to improve this code further.
      */
     for (atom_A = this->atoms.begin();
       atom_A != this->atoms.end();
@@ -324,7 +324,7 @@ void Cell::RDF(double r_cut)
           atom_B != this->atoms.end();
           atom_B++)
         {
-            // Not include self interactions
+            // Excluding self-interactions
             if (atom_A->GetNumber() != atom_B->GetNumber()) {
                 id_B     = findInVector(this->elements, atom_B->element).second;
                 img_atom = *atom_B;
@@ -352,9 +352,9 @@ void Cell::RDF(double r_cut)
     this->distances = temp_dist;
 } // Cell::RDF
 
-void Cell::CN()
+void Cell::Nc()
 {
-    int max_CN = 0;
+    int max_Nc = 0;
     int i;
     std::list<Atom>::iterator MyAtom;
     std::vector<Atom_Img>::iterator atom_A;
@@ -364,12 +364,12 @@ void Cell::CN()
       MyAtom != this->atoms.end();
       MyAtom++)
     {
-        if (max_CN < int(MyAtom->bonded_atoms.size())) max_CN = int(MyAtom->bonded_atoms.size());
+        if (max_Nc < int(MyAtom->bonded_atoms.size())) max_Nc = int(MyAtom->bonded_atoms.size());
     }
     const int n = this->elements.size();
-    const int m = max_CN + 2;
-    // Create the Tensor nXnXm and initialize with zeros
-    std::vector<std::vector<std::vector<int> > > temp_cn(n, std::vector<std::vector<int> >(n,
+    const int m = max_Nc + 2;
+    // Create the Tensor nxnxm and initialize it with zeros
+    std::vector<std::vector<std::vector<int> > > temp_nc(n, std::vector<std::vector<int> >(n,
       std::vector<int>(m, 0)));
     // Search for the number of bonds per atom per element
     for (MyAtom = this->atoms.begin();
@@ -384,11 +384,11 @@ void Cell::CN()
             aux[atom_A->element_id]++;
         }
         for (i = 0; i < n; i++) {
-            temp_cn[MyAtom->element_id][i][aux[i]]++;
+            temp_nc[MyAtom->element_id][i][aux[i]]++;
         }
     }
-    this->coordination = temp_cn;
-}// Cell::CN
+    this->coordination = temp_nc;
+}// Cell::Nc
 
 void Cell::PAD(bool degree)
 {
@@ -398,22 +398,22 @@ void Cell::PAD(bool degree)
 
     if (degree) factor = constants::rad2deg;
 
-    // NxNxN Tensor to contain the PAD
+    // NxNxN Tensor to store the PAD
     const int n = this->elements.size();
     std::vector<std::vector<std::vector<std::vector<double> > > > temp_pad(n,
       std::vector<std::vector<std::vector<double> > >(n, std::vector<std::vector<double> >(n,
       std::vector<double>(0))));
 
     /*
-     * This is the main loop to calculate the angles between every three atoms.
+     * This is the main loop to calculate the angles formed by every three atoms.
      * The connected atoms are calculated in Cell::RDF, and MUST be called first.
      *
-     * The first loop iterates in every atom in the cell.
-     * The second and third loop iterate in the connected atoms in every atom instance.
-     * These three loops populate a 3D tensor of vectors, the indexi of the Tensor
-     * represent the three indexi of the elemenet in Cell::elements.
+     * The first loop iterates over every atom in the cell.
+     * The second and third loop iterate over the connected atoms in every atom instance.
+     * These three loops populate a 3D tensor of vectors, the indices of the Tensor
+     * represent the three indices of the element in Cell::elements.
      *
-     * By default the angle is returned in degrees.
+     * By default the angle returned is given in degrees.
      */
     for (MyAtom = this->atoms.begin();
       MyAtom != this->atoms.end();
@@ -451,7 +451,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
         temp_hist[0][i] = (i + 0.5) * bin_width;
     }
     col = 0;
-    // Triple loop to iterate in the distances tensor.
+    // Triple loop to iterate over the distances tensor.
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
             col++;
@@ -468,7 +468,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     }
 
     /*
-     * We need to scale the histograms by the factor: 1 / (#atoms * bin_width)
+     * Scale the histograms by the factor: 1 / (#atoms * bin_width)
      */
     double num_atoms = this->atoms.size();
     double w_factor  = num_atoms * bin_width;
@@ -501,7 +501,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     out_file.close();
 
     /*
-     * We calclate g(r) with the inverse of the J(r) definition:
+     * Calculate g(r) with the inverse of the J(r) definition:
      * J(r) = 4 * pi * r^2 * rho_0 * g(r)
      */
     // numeric density
@@ -530,9 +530,39 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
         out_file2 << std::endl;
     }
     out_file2.close();
+
+    /*
+     * We calclate G(r) with the definition:
+     * G(r) = 4 * pi * r * rho_0 * [g(r) - 1]
+     */
+
+    for (col = 1; col < n_; col++) {
+        for (row = 1; row < m_; row++) {
+            temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row] * (temp_hist[col][row] - 1);
+        }
+    }
+
+    this->G = temp_hist;
+
+    std::ofstream out_file3(filename + "_G_.csv");
+    out_file3 << "r,";
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            out_file3 << this->elements[i] << "-" << this->elements[j] << ",";
+        }
+    }
+    out_file3 << std::endl;
+
+    for (i = 0; i < m_; i++) {
+        for (j = 0; j < n_; j++) {
+            out_file3 << temp_hist[j][i] << ",";
+        }
+        out_file3 << std::endl;
+    }
+    out_file3.close();
 }// Cell::RDF_histogram
 
-void Cell::CN_Histogram(std::string filename)
+void Cell::Nc_Histogram(std::string filename)
 {
     int n_, m_, i, j, col;
     int n = this->elements.size();
@@ -541,7 +571,7 @@ void Cell::CN_Histogram(std::string filename)
     m_ = this->coordination[0][0].size();
 
     std::vector<std::vector<int> > temp_hist(n_, std::vector<int>(m_, 0));
-    // Fill the numer of bonds values of the histogram
+    // Fill the number of bonds values of the histogram
     for (i = 0; i < m_; i++) {
         temp_hist[0][i] = i;
     }
@@ -554,7 +584,7 @@ void Cell::CN_Histogram(std::string filename)
     }
 
 
-    std::ofstream out_file2(filename + "_CN.csv");
+    std::ofstream out_file2(filename + "_Nc.csv");
     out_file2 << "#,";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
@@ -570,7 +600,7 @@ void Cell::CN_Histogram(std::string filename)
         out_file2 << std::endl;
     }
     out_file2.close();
-}// Cell::CN_histogram
+}// Cell::Nc_histogram
 
 void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
@@ -597,9 +627,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
         temp_hist[0][i] = (i + 0.5) * bin_width;
     }
     col = 0;
-
-
-    // Quadruple loop to iterate in the angle 3D tensor.
+    // Quadruple loop to iterate over the 3D angle tensor.
     for (i = 0; i < n; i++) {         // i iterates over all central atoms
         for (j = 0; j < n; j++) {     // j iterates over all initial atoms
             for (k = j; k < n; k++) { // k iterates only over half + 1 of the spectrum
@@ -612,7 +640,8 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
                         temp_hist[col][row]++;
                     }
                 }
-                if ((i == j) && (i == k)) {
+                // Remove double count when j == k
+                if (j == k) {
                     for (h = 0; h < m_; h++) {
                         temp_hist[col][h] /= 2.0;
                     }
@@ -620,7 +649,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
             }
         }
     }
-    // Double loop to find normalize factor
+    // Double loop to find normalization factor
     norm = 0.0;
     for (i = 1; i < n_; i++) {
         for (j = 0; j < m_; j++) {
@@ -636,8 +665,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
         }
     }
 
-
-    this->g_theta = temp_hist;
+    this->f_theta = temp_hist;
 
     std::ofstream out_file(filename + "_PAD.csv");
     out_file << "theta,";

@@ -5,7 +5,7 @@
 /*
  * We define a simple function that returns the covalent radii.
  * Covalent Radii definitions in Angstroms.
- * Based in the following sources:
+ * Based on the following sources:
  * Molecular single-bond Covalent Radii for elements 1-118.
  * Pyykko, P. and Atsumi, M., DOI: 10.1002/chem.200800987
  * Colvant Radii revisited, Cordero B, et al.

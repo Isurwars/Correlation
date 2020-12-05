@@ -31,8 +31,8 @@ std::pair<bool, int> findInVector(const std::vector<T> & vecOfElements, const T 
 Cell read_CAR(std::string file_name)
 {
     /*
-     * This function reads a CAR file, it returns a list of atoms objects
-     * with the element, number and position inside, it also returns the
+     * This function reads a CAR file and returns a list of atoms objects
+     * with the element, number and position inside. It also returns the
      * cell parameters (a, b, c, alpha, beta and gamma) for the periodic
      * repetition of the cell.
      */
@@ -43,7 +43,7 @@ Cell read_CAR(std::string file_name)
 
     /*
      * CAR file is CASE SENSITIVE, and has a strict policy for position
-     * and spacing this simplify the reading of the file by external codes.
+     * and spacing, this simplifies the reading of the file by external codes.
      */
 
     /*
@@ -59,8 +59,8 @@ Cell read_CAR(std::string file_name)
       "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
     /*
-     * The atoms start with the element symbol, First letter in UPPERCASE,
-     * second optional letter in lowercase followed by a identifing integer.
+     * The atoms start with the element symbol, the first letter is UPPERCASE,
+     * a second optional letter is lowercase, followed by a identifing integer.
      * Then the absolute coordinates (x, y, z) in Angstroms.
      */
     std::regex regex_atom("^([A-Z][a-z]?)"
@@ -102,8 +102,8 @@ Cell read_CAR(std::string file_name)
 Cell read_CELL(std::string file_name)
 {
     /*
-     * This function reads a CELL file, it returns a list of atoms objects
-     * with the element, number and position inside, it also returns the
+     * This function reads a CELL file and returns a list of atoms objects
+     * with the element, number and position inside. It also returns the
      * cell parameters (a, b, c, alpha, beta and gamma) for the periodic
      * repetition of the cell.
      */
@@ -115,29 +115,29 @@ Cell read_CELL(std::string file_name)
 
     /*
      * CELL files are CasE InSenSitiVE. The file is separeted in "BLOCKS".
-     * The order of the BLOCKS are not mandatory, and most of the BLOCKS
-     * are optional, while some are mutal exclusive.
-     * Inside the block the data is stored in an strict order, both in
+     * Ordering the BLOCKS is not mandatory, and most of the BLOCKS
+     * are optional, while some are mutally exclusive.
+     * Inside the BLOCK the data is stored in a strict order, both in
      * position and separation, so we can use regex to read the data inside
      * the BLOCKS, and deal with the disorder between BLOCKS in a different
      * approach.
      */
 
     /*
-     * BLOCK start with %BLOCK "something", CasE InSenSitiVE
+     * BLOCK starts with %BLOCK "something", CasE InSenSitiVE
      */
     std::regex regex_block("^(%block)\\s+"
       "([^\n\r]+)", std::regex::icase);
 
     /*
-     * BLOCK end with %ENDBLOCK "something", CasE InSenSitiVE
+     * BLOCK ends with %ENDBLOCK "something", CasE InSenSitiVE
      */
     std::regex regex_endblock("^(%endblock)\\s+"
       "([^\n\r]+)", std::regex::icase);
 
 
     /*
-     * There are two lattice block, mutal exclusive:
+     * There are two lattice block, mutally exclusive:
      * - LATTICE_CART
      *   The three lattice vectors are provided in a 3x3 matrix:
      *   v_ai  v_aj  v_ak
@@ -157,9 +157,9 @@ Cell read_CELL(std::string file_name)
       "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
     /*
-     * Atoms has two options: absolute coordinates and relative coordinates,
-     * both  of them has the following structure:
-     * Element Symbol, x, Y, Z
+     * Atoms have two options: absolute coordinates and relative coordinates,
+     * both of them have the following structure:
+     * Element Symbol, X, Y, Z
      */
     std::regex regex_positions_abs("(positions_abs)", std::regex::icase);
     std::regex regex_positions_frac("(positions_frac)", std::regex::icase);
@@ -169,9 +169,9 @@ Cell read_CELL(std::string file_name)
       "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
     if (myfile.is_open()) {
-        /* Check if tje file is open */
+        /* Check if the file is open */
         while (std::getline(myfile, line)) {
-            /* Begin reading line by line */
+            /* Read line by line */
             if (std::regex_search(line, match, regex_block)) {
                 /* BLOCK found */
                 if (std::regex_search(line, match, regex_lattice_cart)) {
@@ -249,11 +249,11 @@ Cell read_CELL(std::string file_name)
 Cell read_CIF(std::string file_name)
 {
     /*
-     * This is a Stub for reading a CIF file and return and empthy cell.
-     * Since most of the CIF files are used for crystalline materials
-     * we not only need to read the file, but also calculate the correct
-     * positions of the images in the cell and that no atom is duplicated
-     * by the different symmetries.
+     * This is a Stub for reading a CIF file and return and empty cell.
+     * Since CIF files are mostly used for crystalline materials we don't
+     * only need to read the file, but we also need to calculate the correct
+     * positions of the images in the cell and to verify that no atom is
+     * multiply accounted for, due to the different symmetries.
      * This will be implemented AFTER the bond angle is finished.
      */
     std::ifstream myfile(file_name);

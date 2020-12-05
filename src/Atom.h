@@ -1,6 +1,7 @@
 #ifndef _ATOM_H_
 #define _ATOM_H_
 
+// Minimal structure that represents an atom
 struct Atom_Img {
     int                   element_id;
     int                   atom_id;
@@ -9,7 +10,7 @@ struct Atom_Img {
 
 
 class Atom {
-    // This object represent every atom in the group of atoms
+    // This object represents every atom in the cell
 private:
     int number;
     static int NumOfAtoms;
@@ -18,7 +19,7 @@ public:
     int element_id;
     std::array<double, 3> position;
     std::vector<Atom_Img> bonded_atoms;
-    // Seters & Geters
+    // Setters & Getters
     int GetNumber()
     {
         return number;
@@ -39,7 +40,7 @@ public:
     double Distance(const Atom&);
     // Produce a minimal structure to compute the bond angle.
     Atom_Img GetImage();
-    // Get the angle between to other atom (Atom_Img) and this object
+    // Get the angle between other atom (Atom_Img) and this object
     double GetAngle(Atom_Img, Atom_Img);
 };
 

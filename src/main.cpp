@@ -17,7 +17,7 @@
  * in Linux, Windows and Mac.
  * THIS SHOULD HAVE BEEN IMPLEMENTED SINCE 2017!!!, NOT A
  * SINGLE COMPILER HAS ADDED FILESYSTEM SUPPORT YET!!!.
- * Hope this is not requiered in the future.
+ * Hope this is no longer requiered in the future.
  * #include <filesystem>
  * namespace fs = std::filesystem;
  */
@@ -58,7 +58,7 @@ void PrintHelp()
       "USAGE:\n"
       "  The minimal argument is a structure file, this program requires a file\n"
       "  that contains atom positions, crystal structure and composition.\n"
-      "  Valid structure files are:\n"
+      "  Supported structure files are:\n"
       "    -*.CAR   Materials Studio structure file.\n"
       "    -*.CELL  CASTEP structure file.\n"
       "    -*.CIF   Crystallographic Information File.\n\n"
@@ -68,10 +68,10 @@ void PrintHelp()
       "        Display this help text.\n\n"
       "    RADIAL OPTIONS:"
       "      -r, --r_cut\n"
-      "        Maximum radius to calculate J(r) and g(r), the default radius\n"
-      "        it's set to 2 nm. The maximum recomended radius is the same as\n"
-      "        smallest of the periodic boundary conditions (PBC), anything\n"
-      "        above the smallest PBC can be affected by periodic interactions.\n\n"
+      "        Cutoff radius in the calculation of g(r), G(r) and J(r). The default\n"
+      "        radius it's set to 2 nm. The maximum recomended radius is the same as\n"
+      "        shortest length of the periodic boundary conditions (PBC), anything\n"
+      "        above this PBC value can be affected by periodic interactions.\n\n"
       "      -w, --bin_width\n"
       "        Width of the histograms for g(r) and J(r), the default is 0.05 nm.\n\n"
       "    BOND-ANGLE OPTIONS:"
@@ -79,14 +79,14 @@ void PrintHelp()
       "        Width of the histograms for the PAD, default set to 1.0°.\n\n"
       "      -b, --bond_parameter\n"
       "        The ideal covalent bond length is the sum of covalent radii\n"
-      "        of the two atoms. The criteria used to consider to atoms bonded\n"
+      "        of the two atoms. The criterion used to consider atoms as bonded\n"
       "        is the following:\n"
       "            0.6 * Sum_radii < distance < bond_parameter * Sum_radii.\n"
       "        By default the bond_parameter is set to 1.30, as a rule of thumb.\n"
       "        The default should work for most crystalline materials,\n"
       "        as well as most covalent non-crystalline materials.\n"
-      "        Amorphous and liquids should increase the bond_parameter to match\n"
-      "        the desired distance to cut_off the bonds. \n"
+      "        For amorphous and liquid materials the bond_parameter should be\n"
+      "        increased to match the desired distance to cut_off the bonds. \n"
       "        A bond_parameter of 1.42 is recomended for amorphous materials.\n\n"
       "      -i, --in_bond_file"
       "        The input file with the bond distances for every pair of elements\n"
@@ -104,13 +104,13 @@ void PrintHelp()
       "      -o, --out_file\n"
       "        The output file name, by default the input seed name will be used.\n\n"
       "CREATOR:\n"
-      "  This program was created by PhD. Isaias Rodriguez Aguirre September 2020.\n"
+      "  This program was created by PhD. Isaias Rodriguez Aguirre, November 2020.\n"
       "  e-mail: isurwars@gmail.com\n"
       "ACKNOWLEDGMENTS:\n"
       "  This software was created during a Posdoctoral fellowship in IIM-UNAM.\n"
-      "  Thanks to DGAPA-UNAM for the financial support during my posdoctoral.\n"
-      "  And their continious support as part of the projects: IN104617 and \n"
-      "  IN116520.\n";
+      "  Thanks to DGAPA-UNAM for the financial support during my fellowship.\n"
+      "  And their continious support as part of the Workgroup projects with IDs:\n"
+      "  IN104617 and IN116520.\n";
     std::cout << help_txt;
 
     exit(1);
@@ -187,7 +187,7 @@ int main(int argc, char ** argv)
     std::pair<std::string, std::string> file_ext;
 
     /*
-     * Parse the argumets provided as input
+     * Parse the input argumets provided
      */
     ArgParser(argc, argv);
 
@@ -197,7 +197,7 @@ int main(int argc, char ** argv)
     file_ext = GetExtension(_in_file_name_);
     if (_out_file_name_ == "") _out_file_name_ = file_ext.first;
     std::string MyExt = file_ext.second;
-    // convert extension back to lower case
+    // Convert extension back to lower case
     std::for_each(MyExt.begin(), MyExt.end(), [](char & c){
         c = ::tolower(c);
     });
@@ -219,37 +219,37 @@ int main(int argc, char ** argv)
     }
 
     /*
-     * This function calculate the distances from every atom to every
+     * This function calculates the distances between every pair of atoms
      * in the structure. A supercell method is used to create the images
      * in all directions up to _r_cut_ distance.
      */
     MyCell.RDF(_r_cut_);
 
     /*
-     * This function calculate the partial coordination number for pair of
+     * This function calculates the partial coordination number for pairs of
      * elements. Bonded Atoms use the same parameters for PAD.
      */
-    MyCell.CN();
+    MyCell.Nc();
 
     /*
-     * This functions calculate the angle between every atom, and all pairs
-     * of bonded atoms, the bonded atoms are calculated in Cell::RDF and it
+     * This function calculates the angle between every atom and all pairs
+     * of bonded atoms. The bonded atoms are calculated in Cell::RDF and it
      * must be called first.
      */
     MyCell.PAD();
 
     /*
-     * This function use the distances to calculate J(r) and g(r).
-     * The _r_cut_ parameters is the maximum distance,
+     * This function uses the distances to calculate g(r), G(r) and J(r).
+     * The _r_cut_ parameter is the cutoff distance,
      * the _bin_w_ parameter is the bin width to be used.
      */
     std::cout << "Writing output files: " << _out_file_name_ << '\n';
     MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
-    MyCell.CN_Histogram(_out_file_name_);
+    MyCell.Nc_Histogram(_out_file_name_);
 
     /*
-     * This function use the angles to calculate the PAD.
-     * The theta_max parameters is the maximum angle to compute,
+     * This function uses the angles to calculate the PAD.
+     * The theta_max parameter is the maximum angle to compute,
      * the _bin_w_ parameter is the bin width to be used.
      */
     MyCell.PAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
