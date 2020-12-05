@@ -16,6 +16,8 @@ authors:
     affiliation: 2
   - name: David Hinojosa-Romero
     affiliation: 1
+  - name: Ulises Santiago
+    affiliation: 3
   - name: Ariel A. Valladares
     affiliation: 1
 affiliations:
@@ -23,6 +25,8 @@ affiliations:
    index: 1
  - name: Facultad de Ciencias, Universidad Nacional Autónoma de México
    index: 2
+ - name: Department of Physics and Astronomy, The University of Texas at San Antonio
+   index: 3
 date: 30 November 2020
 bibliography: paper.bib
 ---
@@ -33,7 +37,7 @@ For almost a century since J.D. Bernal attempt at molecular theory of liquid str
 
 Pair-Distribution Function($g(r)$), Radial Distribution Function ($J(r)$), Plane-Angle Distribution ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular, Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
 
-Correlation is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. Correlation is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP and ONETEP (CELL), LAMMPS (XYZ) and VASP (OUTCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output of every single correlation function is exported in it's own individual comma-separated value file (CSV), to further analyze the results.
+**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP and ONETEP (CELL), LAMMPS (XYZ) and VASP (OUTCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output of every single correlation function is exported in it's own individual comma-separated value file (CSV), to further analyze the results.
 
 # Statement of Need
 
@@ -93,11 +97,17 @@ In particular, the Bond-Angle Distribution $f(\theta)$ has been used to characte
 
 # Benchmarks
 
-In order to verify Correlation, we calculate the PDF and PAD for two well known structures, and compare the results with the commercially available software Forcite included in the Materials Studio suite[@materials_2016], to calculate the PAD of the Amorphous and Liquids materials we compare them with the code developed by U. Santiago as part of his PhD thesis in the workgroup of Dr. Valladares [@santiago_simulacion_2011].
+In order to assess the performance of **Correlation**, we calculate the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compare the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016], to test **Correlation** in Amorphous and Liquids materials we selected amorphous palladim [@rodriguez_emergence_2019], amorphous palladium hydride [rodriguez_calculo_2019] and liquid Bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we choose to compare them with the code developed by U. Santiago as part of his PhD thesis in the workgroup of Prof. Valladares [@santiago_simulacion_2011].
 
-![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
+![Pair Distribution Functions $g(r)$ on the left, Plane-Angle Distributions on the right for: crystalline silicon, Graphene Layer, amorphous Palladim, amourphous Palladium Hydride and liquid Bismuth. Correlation in gray, Forcite in black, Plane-Angles in red \label{fig:RDF-PAD}](./Images/Fig2.png){ width=85% }
 
+The results of these benchmarks are shown in Figure \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as test 1 to 5. The last estructure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark Memory and CPU performance in an structure with thousands of atoms.
 
+# Conclusion & Perspective
+
+**Correlation** is a lightweight, modular software that can be use in HPC and adapted to analyze the main correlation functions used to characterize: crystalline, amorphous and liquids.
+
+**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015, @galvan-colin_ab_2016, @mata-pinzon_superconductivity_2016] as well as several PhD Thesis [@santiago_simulacion_2011, @romero-rangel_simulaciones_2014, @mejia-mendoza_estudio_2014, @galvan-colin_atomic_2016, @mata-pinzon_propiedades_2016, @rodriguez_calculo_2019]. And our workgroup will continue to support and enrich the software for the foreseeable future. We are open to receive suggestions that further improve the functionality of the software. 
 
 # Acknowledgements
 
@@ -107,5 +117,6 @@ A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to car
 M. T. Vázquez and O. Jiménez provided the information requested.
 A. López and A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.
 Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM.
+I.R. would like to express his gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Villareal and A. de Leon, for their time invested in testing the code, as well as the structures provided for benchmarks and tests.
 
 # References
