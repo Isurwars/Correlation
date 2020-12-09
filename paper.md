@@ -29,6 +29,7 @@ affiliations:
    index: 3
 date: 30 November 2020
 bibliography: paper.bib
+csl: american-physics-society.csl
 ---
 
 # Summary
@@ -69,7 +70,7 @@ The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 
 
 One of the most widely used pair correlation function is the reduced pair distribution function. This is defined as $G(r) = 4\pi \rho_0 (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
 
-While the PDF ($g(r)$) has an intuitive geometric definition, the rPDF ($G(r)$) can be directly obtained by a Fourier transform of the structure factor ($S(Q)$) as can be seen in \autoref(eq:PDF); this close relation with the experimental data explains the popularity that this function has. Also, it has another advantage over other correlation functions [like PDF ($g(r)$)] as the numerical density $\rho_0 = N/V$ needs to be estimated in order to normalize the functions. This is not necessary in rPDF ($G(r)$); where this information is already contained in $G(r)$ as the slope of the function when $r \to 0$.
+While the PDF ($g(r)$) has an intuitive geometric definition, the rPDF ($G(r)$) can be directly obtained by a Fourier transform of the structure factor ($S(Q)$) as can be seen in \autoref{eq:PDF}; this close relation with the experimental data explains the popularity that this function has. Also, it has another advantage over other correlation functions [like PDF ($g(r)$)] as the numerical density $\rho_0 = N/V$ needs to be estimated in order to normalize the functions. This is not necessary in rPDF ($G(r)$); where this information is already contained in $G(r)$ as the slope of the function when $r \to 0$.
 
 ### Radial distribution function $J(r)$
 
@@ -79,7 +80,7 @@ The last correlation function we shall discuss is also one of the most physicall
 J(r) = 4\pi r^{2} \rho_0 g(r).
 \end{equation}
 
-The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms in a spherical shell with inner radius $r$ and thickness $dr$ around every atom as depicted in \autoref(fig:RDF). For example, the coordination number, or the number of neighbors ($n_c$), is given by:
+The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms in a spherical shell with inner radius $r$ and thickness $dr$ around every atom as depicted in \autoref{fig:RDF}. For example, the coordination number, or the number of neighbors ($n_c$), is given by:
 
 \begin{equation}\label{eq:RDF}
 n_c = \int_{r_1}^{r_2} J(r) dr,
@@ -89,9 +90,9 @@ where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shel
 
 ## Plane Angle Distribution
 
-The use of higher order correlation functions to analyze the structure of liquids and amorphous solids has been proposed in the literature [@hafner_triplet_1982, @galvan-colin_ab_2016], trying to reproduce the success obtained by Bernal in the analysis of the structure of liquids [@bernal_bakerian_1964].
+The use of higher order correlation functions to analyze the structure of liquids and amorphous solids has been proposed in the literature [@hafner_triplet_1982; @galvan-colin_ab_2016], trying to reproduce the success obtained by Bernal in the analysis of the structure of liquids [@bernal_bakerian_1964].
 
-In particular, the Plane Angle Distribution, also known as the Bond-Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures [@galvan-colin_short-range_2015, @galvan-colin_ab_2016, @mata-pinzon_superconductivity_2016]. Here we propose to substitute the term “Bond Angle Distribution”, (BAD), by the term “Plane Angle Distribution”, (PAD), also frequently used, since in condensed matter, proximity does not necessarily imply bonding.
+In particular, the Plane Angle Distribution, also known as the Bond-Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016]. Here we propose to substitute the term “Bond Angle Distribution”, (BAD), by the term “Plane Angle Distribution”, (PAD), also frequently used, since in condensed matter, proximity does not necessarily imply bonding.
 
 # Benchmarks
 
@@ -107,7 +108,7 @@ The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the stru
 
 **Correlation** is a lightweight, modular software that can be used in HPC and adapted to analyze the main correlation functions used to characterize: crystalline, amorphous solids and liquids.
 
-**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015, @galvan-colin_ab_2016, @mata-pinzon_superconductivity_2016] as well as several PhD Theses [@santiago_simulacion_2011, @romero-rangel_simulaciones_2014, @mejia-mendoza_estudio_2014, @galvan-colin_atomic_2016, @mata-pinzon_propiedades_2016, @rodriguez_calculo_2019] developed in our group. We will continue to support and enrich the software in the foreseeable future. We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the first author, I.R: isurwars@ciencias.unam.mx
+**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several PhD Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] developed in our group. We will continue to support and enrich the software in the foreseeable future. We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the first author, I.R: isurwars@ciencias.unam.mx
 
 # Acknowledgements
 
