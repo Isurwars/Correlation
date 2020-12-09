@@ -37,15 +37,15 @@ For almost a century, since Bernal's attempts at a molecular theory of liquid st
 
 Pair-Distribution Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Plane-Angle Distributions ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
 
-**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT), LAMMPS (dump.atom) and VASP (POSCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output of every single correlation function is exported to the corresponding comma-separated value file (CSV), to further analyze the results.
+**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT), LAMMPS (dump.atom) and VASP (POSCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical and first-principles simulations. At the end, the output of every single correlation function is exported to the corresponding comma-separated value file (CSV), to further analyze the results.
 
 # Statement of Need
 
-As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represents the structure of materials has steadily increase.
-To answer this need, there has been several tools developed to calculate some of the most used correlations functions like: pair distribution functions, radial distribution functions and plane angle distributions.
+As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represent the structure of materials has steadily increased.
+To answer this need, there have been several tools developed to calculate some of the most used correlation functions like: pair distribution functions, radial distribution functions and plane angle distributions.
 However, the use of these tools has been limited, either by a prohibiting cost, been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or by being specialized to an specific material simulation.
 
-With these limitations in mind, we decided to create a software that could calculate the correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as posible.
+With these limitations in mind, we decided to create a software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as possible.
 
 # Mathematical Background
 
@@ -63,23 +63,23 @@ where $G(r)$ is the reduced pair distribution function (rPDF) which will be disc
 
 The pair distribution function could also be seen like a distance map inside the material, the $g(r)$ function gives the probability of finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF}.
 
-The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 0$ (for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ become zero. The main advantage of the PDF, and the related functions, is that they emphasize the short-range order of a material.
+The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 0$ (for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ becomes zero. The main advantage of the PDF and the related functions, is that they emphasize the short-range order of a material.
 
 ### Reduced pair distribution function $G(r)$
 
 One of the most widely used pair correlation function is the reduced pair distribution function. This is defined as $G(r) = 4\pi \rho_0 (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
 
-While the PDF ($g(r)$) has an intuitive geometric definition, the rPDF ($G(r)$) can be directly obtained by a Fourier transformation of the structure factor ($S(Q)$) as can be seen in \autoref(eq:PDF); this close relation with the experimental data explains the popularity that this function has. Also, it has another advantage over other correlation functions [like PDF ($g(r)$)] as the numerical density $\rho_0 = N/V$ should be estimated to normalize the functions. This is not necessary in rPDF ($G(r)$); on the contrary this information is already contained in $G(r)$ as the slope of the function when $r \to 0$.
+While the PDF ($g(r)$) has an intuitive geometric definition, the rPDF ($G(r)$) can be directly obtained by a Fourier transforma of the structure factor ($S(Q)$) as can be seen in \autoref(eq:PDF); this close relation with the experimental data explains the popularity that this function has. Also, it has another advantage over other correlation functions [like PDF ($g(r)$)] as the numerical density $\rho_0 = N/V$ need be estimated in order to normalize the functions. This is not necessary in rPDF ($G(r)$); o where this information is already contained in $G(r)$ as the slope of the function when $r \to 0$.
 
 ### Radial distribution function $J(r)$
 
-The last correlation function we discuss is also one of the most physically intuitive, the RDF, $J(r)$ is related to de Pair Distribution Function (PDF) by:
+The last correlation function we shall discuss is also one of the most physically intuitive, the RDF, $J(r)$ is related to de Pair Distribution Function (PDF) by:
 
 \begin{equation}\label{eq:RDF}
 J(r) = 4\pi r^{2} \rho_0 g(r).
 \end{equation}
 
-The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms of an spherical shell with inner radius $r$ and a thickness of $dr$ around every atom as depicted in \autoref(fig:RDF). For example the coordination number, or the number of neighbors ($n_c$), is given by:
+The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms in a spherical shell with inner radius $r$ and a thickness of $dr$ around every atom as depicted in \autoref(fig:RDF). For example, the coordination number, or the number of neighbors ($n_c$), is given by:
 
 \begin{equation}\label{eq:RDF}
 n_c = \int_{r_1}^{r_2} J(r) dr,
