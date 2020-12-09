@@ -1,4 +1,6 @@
 # **Correlation**: An Analyzing Tool for Liquids and for Amorphous Solids
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4313127.svg)](https://doi.org/10.5281/zenodo.4313127)
+
 
 **Correlation** is an analyzing tool of correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (.CAR), CASTEP(.CELL), ONETEP(*.DAT), LAAMPS(.XYZ),etc...  
 
