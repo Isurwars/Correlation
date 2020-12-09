@@ -95,13 +95,13 @@ In particular, the Plane Angle Distribution, also known as the Bond-Angle Distri
 
 # Benchmarks
 
-![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between **Correlation** and Forcite as can be seen in all PDFs. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=80% }
+![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between **Correlation** and Forcite as can be seen in all PDFs. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
 
 
 In order to assess the performance of **Correlation**, we calculate the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compare the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016], to test **Correlation** in amorphous and liquid materials we selected amorphous palladium [@rodriguez_emergence_2019], amorphous palladium hydride [rodriguez_calculo_2019] and liquid bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we chose to compare them with the code developed by U. Santiago within our group. [@santiago_simulacion_2011].
 
 
-The results of these benchmarks are shown in Figure \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as tests 1 to 5. The last structure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark Memory and CPU performance in an structure with thousands of atoms.
+The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as tests 1 to 5. The last structure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark Memory and CPU performance in an structure with thousands of atoms.
 
 # Conclusion & Perspective
 
