@@ -33,17 +33,17 @@ bibliography: paper.bib
 
 # Summary
 
-For almost a century since J.D. Bernal attempt at molecular theory of liquid structure [@bernal_attempt_1937], correlation functions have been the bridge to compare theoretical calculations with experimental measurements in the study of disordered materials.
+For almost a century, since J.D. Bernal attempts at a molecular theory of liquid structure [@bernal_attempt_1937], correlation functions have been the bridge to compare theoretical calculations with experimental measurements in the study of disordered materials.
 
-Pair-Distribution Function($g(r)$), Radial Distribution Function ($J(r)$), Plane-Angle Distribution ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular, Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
+Pair-Distribution Function($g(r)$), Radial Distribution Function ($J(r)$), Plane-Angle Distribution ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
 
-**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP and ONETEP (CELL), LAMMPS (XYZ) and VASP (OUTCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output of every single correlation function is exported in it's own individual comma-separated value file (CSV), to further analyze the results.
+**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design make it easy to integrate in High-throughput computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT), LAMMPS (XYZ) and VASP (POSCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical simulations and first-principles simulations. At the end, the output of every single correlation function is exported in it's own individual comma-separated value file (CSV), to further analyze the results.
 
 # Statement of Need
 
-As time goes by the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represents the structure of materials has steadily increase.
+As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represents the structure of materials has steadily increase.
 To answer this need, there has been several tools developed to calculate some of the most used correlations functions like: pair correlation function, radial distribution function and plane angle distributions.
-However, the use of these tools has been limited, either by a prohibiting cost, been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or being specialized to an specific material simulation software.
+However, the use of these tools has been limited, either by a prohibiting cost, been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or being specialized to an specific material simulation.
 
 With these limitations in mind, we decided to create a software that could calculate the correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as we could.
 

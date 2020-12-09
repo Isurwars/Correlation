@@ -205,6 +205,8 @@ int main(int argc, char ** argv)
         MyCell = read_CAR(_in_file_name_);
     } else if (MyExt == ".cell") {
         MyCell = read_CELL(_in_file_name_);
+    } else if (MyExt == ".dat") {
+        MyCell = read_ONETEP_DAT(_in_file_name_);
     } else {
         std::cout << "File: " << MyExt << " currently not supported." << '\n';
         PrintHelp();

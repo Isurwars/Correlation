@@ -48,8 +48,8 @@ test2: $(TST_DIR)/test_2/Graphene.car
 test3: $(TST_DIR)/test_3/aPd.cell
 	$(EXE) $(TST_DIR)/test_3/aPd.cell
 
-test4: $(TST_DIR)/test_4/aPdH.car
-	$(EXE) -i $(TST_DIR)/test_4/aPdH.dat $(TST_DIR)/test_4/aPdH.car
+test4: $(TST_DIR)/test_4/aPdH.dat
+	$(EXE) -i $(TST_DIR)/test_4/aPdH.txt $(TST_DIR)/test_4/aPdH.dat
 
 test5: $(TST_DIR)/test_5/lBi.car
 	$(EXE) $(TST_DIR)/test_5/lBi.car

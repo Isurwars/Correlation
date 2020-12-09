@@ -1,6 +1,6 @@
-# Material Correlation Tool
+# **Correlation**: An Analyzing Tool for Liquids and for Amorphous Solids
 
-Analyzing tool of correlation functions and correlation related properties for atomistic structure files of DMoL3 (.CAR), CASTEP(.CELL), etc...
+**Correlation** is an analyzing tool of correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (.CAR), CASTEP(.CELL), ONETEP(*.DAT), LAAMPS(.XYZ),etc...  
 
 ## Getting Started
 
@@ -96,6 +96,12 @@ These Coma Separeted Values files can then be analyzed with your favorite tool l
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-## Acknowledgments
+# Acknowledgments
 
-* DGAPA, UNAM for the Postdoctoral Fellowship and their continuous support in the past years.
+I.R. acknowledge PAPIIT, DGAPA-UNAM for his posdoctoral fellowship.
+D.H.R. acknowledge Consejo Nacional de Ciencia y Tecnología (CONACyT) for supporting his graduate studies.
+A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617 and IN116520.
+M. T. Vázquez and O. Jiménez provided the information requested.
+A. López and A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.
+Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM.
+I.R. would like to express his gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Villareal and A. de Leon, for their time invested in testing the code, as well as the structures provided for benchmarks and tests.
