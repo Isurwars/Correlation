@@ -5,7 +5,7 @@ tags:
   - Materials
   - Molecular dynamics
   - Pair Correlation Function
-  - Plane-Angle Distribution
+  - Plane Angle Distribution
 authors:
   - name: Isaías Rodríguez
     orcid: 0000-0002-4359-2742
@@ -92,14 +92,14 @@ where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shel
 
 The use of higher order correlation functions to analyze the structure of liquids and amorphous solids has been proposed in the literature [@hafner_triplet_1982; @galvan-colin_ab_2016], trying to reproduce the success obtained by Bernal in the analysis of the structure of liquids [@bernal_bakerian_1964].
 
-In particular, the Plane Angle Distribution, also known as the Bond-Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016]. Here we propose to substitute the term “Bond Angle Distribution”, (BAD), by the term “Plane Angle Distribution”, (PAD), also frequently used, since in condensed matter, proximity does not necessarily imply bonding.
+In particular, the Plane Angle Distribution, also known as the Bond Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016]. Here we propose to substitute the term “Bond Angle Distribution”, (BAD), by the term “Plane Angle Distribution”, (PAD), also frequently used, since in condensed matter, proximity does not necessarily imply bonding.
 
 # Benchmarks
 
 ![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between **Correlation** and Forcite as can be seen in all PDFs. Figures (a) to (d) indicate that the coincidence in the two results overlap completely. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
 
 
-In order to assess the performance of **Correlation**, we calculated the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compared the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016]; to test **Correlation** in amorphous and liquid materials we selected amorphous palladium [@rodriguez_emergence_2019], amorphous palladium hydride [rodriguez_calculo_2019] and liquid bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we chose to compare them with the code developed by U. Santiago within our group. [@santiago_simulacion_2011].
+In order to assess the performance of **Correlation**, we calculated the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compared the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016]; to test **Correlation** in amorphous and liquid materials we selected amorphous palladium [@rodriguez_emergence_2019], amorphous palladium hydride [@rodriguez_calculo_2019] and liquid bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we chose to compare them with the code developed by U. Santiago within our group. [@santiago_simulacion_2011].
 
 
 The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as tests 1 to 5. The last structure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark memory and CPU performance in a structure with thousands of atoms.
