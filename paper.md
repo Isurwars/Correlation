@@ -25,7 +25,7 @@ affiliations:
    index: 1
  - name: Facultad de Ciencias, Universidad Nacional Autónoma de México
    index: 2
- - name: Department of Physics and Astronomy, The University of Texas at San Antonio
+ - name: Department of Computational and Systems Biology, University of Pittsburgh
    index: 3
 date: 30 November 2020
 bibliography: paper.bib
@@ -92,7 +92,7 @@ where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shel
 
 The use of higher order correlation functions to analyze the structure of liquids and amorphous solids has been proposed in the literature [@hafner_triplet_1982; @galvan-colin_ab_2016], trying to reproduce the success obtained by Bernal in the analysis of the structure of liquids [@bernal_bakerian_1964].
 
-In particular, the Plane Angle Distribution, also known as the Bond Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016]. Here we propose to substitute the term “Bond Angle Distribution”, (BAD), by the term “Plane Angle Distribution”, (PAD), also frequently used, since in condensed matter, proximity does not necessarily imply bonding.
+In particular, the Plane Angle Distribution, also known as the Bond Angle Distribution $f(\theta)$ has been used to characterize the short-range order of amorphous and liquid structures [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016]. Here we propose to substitute the term “Bond Angle Distribution” (BAD), by the term “Plane Angle Distribution” (PAD), also frequently used, since in condensed matter, proximity does not necessarily imply bonding.
 
 # Benchmarks
 
@@ -118,6 +118,6 @@ A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to car
 M. T. Vázquez and O. Jiménez provided the information requested.
 A. López and A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.
 Simulations were partially carried out at the Supercomputing Center of DGTIC-UNAM.
-I.R. would like to express his gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Villareal and A. de Leon, for the time invested in testing the code, as well as the structures provided for benchmarks and tests.
+We would like to express our gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Villarreal and A. de León, for the time invested in testing the code, as well as the structures provided for benchmarks and tests.
 
 # References
