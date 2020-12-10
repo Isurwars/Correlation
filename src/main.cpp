@@ -61,7 +61,7 @@ void PrintHelp()
       "  Supported structure files are:\n"
       "    -*.CAR   Materials Studio structure file.\n"
       "    -*.CELL  CASTEP structure file.\n"
-      "    -*.CIF   Crystallographic Information File.\n\n"
+      "    -*.dat   ONETEP structure file.\n\n"
       "OPTIONS:\n"
       "    HELP OPTIONS:"
       "      -h, --help\n"

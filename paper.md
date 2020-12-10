@@ -1,5 +1,5 @@
 ---
-title: ' Correlation: An Analyzing Tool for Liquids and for Amorphous Solids'
+title: 'Correlation: An Analyzing Tool for Liquids and for Amorphous Solids'
 tags:
   - C++
   - Materials
@@ -29,7 +29,7 @@ affiliations:
    index: 3
 date: 30 November 2020
 bibliography: paper.bib
-csl: american-physics-society.csl
+csl: aps.csl
 ---
 
 # Summary
@@ -82,7 +82,7 @@ J(r) = 4\pi r^{2} \rho_0 g(r).
 
 The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms in a spherical shell with inner radius $r$ and thickness $dr$ around every atom as depicted in \autoref{fig:RDF}. For example, the coordination number, or the number of neighbors ($n_c$), is given by:
 
-\begin{equation}\label{eq:RDF}
+\begin{equation}\label{eq:CN}
 n_c = \int_{r_1}^{r_2} J(r) dr,
 \end{equation}
 
