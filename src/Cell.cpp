@@ -340,6 +340,35 @@ void Cell::RDF(double r_cut)
                                 temp_dist[id_A][id_B].push_back(aux_dist);
                                 if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
                                     atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                                    if (aux_dist < 0.1) {
+                                        std::cout << std::endl << "ERROR: The atoms:" << std::endl
+                                                  << atom_A->element << "_" << atom_A->GetNumber()
+                                                  << " in position ("
+                                                  << atom_A->position[0] << ", "
+                                                  << atom_A->position[1] << ", "
+                                                  << atom_A->position[2] << ")," << std::endl
+                                                  << atom_B->element << "_" << atom_B->GetNumber()
+                                                  << " in position ("
+                                                  << img_atom.position[0] << ", "
+                                                  << img_atom.position[1] << ", "
+                                                  << img_atom.position[2] << ")." << std::endl
+                                                  << "Have a distance less than 10 pm." << std::endl;
+                                        exit(1);
+                                    }
+                                    if (aux_dist < 0.5) {
+                                        std::cout << std::endl << "WARNING: The atoms:" << std::endl
+                                                  << atom_A->element << "_" << atom_A->GetNumber()
+                                                  << " in position ("
+                                                  << atom_A->position[0] << ", "
+                                                  << atom_A->position[1] << ", "
+                                                  << atom_A->position[2] << ")," << std::endl
+                                                  << atom_B->element << "_" << atom_B->GetNumber()
+                                                  << " in position ("
+                                                  << img_atom.position[0] << ", "
+                                                  << img_atom.position[1] << ", "
+                                                  << img_atom.position[2] << ")." << std::endl
+                                                  << "Have a distance less than the Bohr Radius." << std::endl;
+                                    }
                                 }
                             }
                         }
@@ -348,7 +377,7 @@ void Cell::RDF(double r_cut)
             }
         }
     }
-    std::cout << "[==================================================] 100 %" << '\n';
+    std::cout << "[==================================================] 100 %" << std::endl;
     this->distances = temp_dist;
 } // Cell::RDF
 

@@ -95,6 +95,14 @@ Cell read_CAR(std::string file_name)
                 }
             }
         }
+    } else {
+        std::cout << "Unable to read file: "
+                  << file_name
+                  << " ("
+                  << strerror(errno)
+                  << ")."
+                  << std::endl;
+        exit(1);
     }
     return tempCell;
 } // read_CAR
@@ -241,6 +249,14 @@ Cell read_CELL(std::string file_name)
                 }
             }
         }
+    } else {
+        std::cout << "Unable to read file: "
+                  << file_name
+                  << " ("
+                  << strerror(errno)
+                  << ")."
+                  << std::endl;
+        exit(1);
     }
     if (frac_flag) tempCell.CorrectFracPositions();
     return tempCell;
@@ -407,6 +423,14 @@ Cell read_ONETEP_DAT(std::string file_name)
                 }
             }
         }
+    } else {
+        std::cout << "Unable to read file: "
+                  << file_name
+                  << " ("
+                  << strerror(errno)
+                  << ")."
+                  << std::endl;
+        exit(1);
     }
     if (frac_flag) tempCell.CorrectFracPositions();
     return tempCell;
