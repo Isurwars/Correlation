@@ -1,0 +1,7 @@
+## V1.0 rc 2
+
+- Added configure and Makefile.in, generated with GNU autotools.
+- If the standard configure, make, make install procedure fails,
+  the old Makefile is included as Makefile.old and is recommended
+  to be renamed to Makefile and use the command: make all.
+- AUTHORS and Changelog files now included.  

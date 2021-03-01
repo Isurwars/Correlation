@@ -219,7 +219,7 @@ void ArgParser(int argc, char ** argv)
             PrintHelp();
         }
     }
-} // ProcessArgs
+} // ArgParser
 
 int main(int argc, char ** argv)
 {
@@ -297,5 +297,6 @@ int main(int argc, char ** argv)
      */
     MyCell.PAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
 
+    std::cout << "Job in " << _in_file_name_ << " finished succesfully." << '\n';
     return 0;
 } // main
