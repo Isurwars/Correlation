@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = $(top_builddir)/bin/correlation$(EXEEXT)
+bin_PROGRAMS = $(BIN_DIR)/correlation$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -98,18 +98,16 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am___top_builddir__bin_correlation_OBJECTS =  \
-	__top_builddir__bin_correlation-Atom.$(OBJEXT) \
-	__top_builddir__bin_correlation-Cell.$(OBJEXT) \
-	__top_builddir__bin_correlation-Constants.$(OBJEXT) \
-	__top_builddir__bin_correlation-ReadFiles.$(OBJEXT) \
-	__top_builddir__bin_correlation-main.$(OBJEXT)
-__top_builddir__bin_correlation_OBJECTS =  \
-	$(am___top_builddir__bin_correlation_OBJECTS)
-__top_builddir__bin_correlation_LDADD = $(LDADD)
-__top_builddir__bin_correlation_LINK = $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(__top_builddir__bin_correlation_LDFLAGS) \
-	$(LDFLAGS) -o $@
+am___BIN_DIR__correlation_OBJECTS =  \
+	__BIN_DIR__correlation-Atom.$(OBJEXT) \
+	__BIN_DIR__correlation-Cell.$(OBJEXT) \
+	__BIN_DIR__correlation-Constants.$(OBJEXT) \
+	__BIN_DIR__correlation-ReadFiles.$(OBJEXT) \
+	__BIN_DIR__correlation-main.$(OBJEXT)
+__BIN_DIR__correlation_OBJECTS = $(am___BIN_DIR__correlation_OBJECTS)
+__BIN_DIR__correlation_LDADD = $(LDADD)
+__BIN_DIR__correlation_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(__BIN_DIR__correlation_LDFLAGS) $(LDFLAGS) -o $@
 am__dirstamp = $(am__leading_dot)dirstamp
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -126,12 +124,11 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade =  \
-	./$(DEPDIR)/__top_builddir__bin_correlation-Atom.Po \
-	./$(DEPDIR)/__top_builddir__bin_correlation-Cell.Po \
-	./$(DEPDIR)/__top_builddir__bin_correlation-Constants.Po \
-	./$(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Po \
-	./$(DEPDIR)/__top_builddir__bin_correlation-main.Po
+am__depfiles_remade = ./$(DEPDIR)/__BIN_DIR__correlation-Atom.Po \
+	./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po \
+	./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po \
+	./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po \
+	./$(DEPDIR)/__BIN_DIR__correlation-main.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -150,8 +147,8 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(__top_builddir__bin_correlation_SOURCES)
-DIST_SOURCES = $(__top_builddir__bin_correlation_SOURCES)
+SOURCES = $(__BIN_DIR__correlation_SOURCES)
+DIST_SOURCES = $(__BIN_DIR__correlation_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -263,9 +260,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-__top_builddir__bin_correlation_SOURCES = Atom.cpp Cell.cpp Constants.cpp ReadFiles.cpp main.cpp
-__top_builddir__bin_correlation_CPPFLAGS = -Iinclude -std=c++17
-__top_builddir__bin_correlation_LDFLAGS = -lm -static-libstdc++
+BIN_DIR = $(top_builddir)/bin
+# correlation Source Files
+__BIN_DIR__correlation_SOURCES = Atom.cpp Cell.cpp Constants.cpp ReadFiles.cpp main.cpp
+# correlation ld flags
+__BIN_DIR__correlation_CPPFLAGS = -Iinclude -std=c++17
+__BIN_DIR__correlation_LDFLAGS = -lm -static-libstdc++
 all: all-am
 
 .SUFFIXES:
@@ -341,13 +341,13 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-$(top_builddir)/bin/$(am__dirstamp):
-	@$(MKDIR_P) $(top_builddir)/bin
-	@: > $(top_builddir)/bin/$(am__dirstamp)
+$(BIN_DIR)/$(am__dirstamp):
+	@$(MKDIR_P) $(BIN_DIR)
+	@: > $(BIN_DIR)/$(am__dirstamp)
 
-$(top_builddir)/bin/correlation$(EXEEXT): $(__top_builddir__bin_correlation_OBJECTS) $(__top_builddir__bin_correlation_DEPENDENCIES) $(EXTRA___top_builddir__bin_correlation_DEPENDENCIES) $(top_builddir)/bin/$(am__dirstamp)
-	@rm -f $(top_builddir)/bin/correlation$(EXEEXT)
-	$(AM_V_CXXLD)$(__top_builddir__bin_correlation_LINK) $(__top_builddir__bin_correlation_OBJECTS) $(__top_builddir__bin_correlation_LDADD) $(LIBS)
+$(BIN_DIR)/correlation$(EXEEXT): $(__BIN_DIR__correlation_OBJECTS) $(__BIN_DIR__correlation_DEPENDENCIES) $(EXTRA___BIN_DIR__correlation_DEPENDENCIES) $(BIN_DIR)/$(am__dirstamp)
+	@rm -f $(BIN_DIR)/correlation$(EXEEXT)
+	$(AM_V_CXXLD)$(__BIN_DIR__correlation_LINK) $(__BIN_DIR__correlation_OBJECTS) $(__BIN_DIR__correlation_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -355,11 +355,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__top_builddir__bin_correlation-Atom.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__top_builddir__bin_correlation-Cell.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__top_builddir__bin_correlation-Constants.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__top_builddir__bin_correlation-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-Atom.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-main.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -381,75 +381,75 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-__top_builddir__bin_correlation-Atom.o: Atom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-Atom.o -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-Atom.Tpo -c -o __top_builddir__bin_correlation-Atom.o `test -f 'Atom.cpp' || echo '$(srcdir)/'`Atom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-Atom.Tpo $(DEPDIR)/__top_builddir__bin_correlation-Atom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Atom.cpp' object='__top_builddir__bin_correlation-Atom.o' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-Atom.o: Atom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Atom.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Atom.Tpo -c -o __BIN_DIR__correlation-Atom.o `test -f 'Atom.cpp' || echo '$(srcdir)/'`Atom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Atom.Tpo $(DEPDIR)/__BIN_DIR__correlation-Atom.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Atom.cpp' object='__BIN_DIR__correlation-Atom.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-Atom.o `test -f 'Atom.cpp' || echo '$(srcdir)/'`Atom.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Atom.o `test -f 'Atom.cpp' || echo '$(srcdir)/'`Atom.cpp
 
-__top_builddir__bin_correlation-Atom.obj: Atom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-Atom.obj -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-Atom.Tpo -c -o __top_builddir__bin_correlation-Atom.obj `if test -f 'Atom.cpp'; then $(CYGPATH_W) 'Atom.cpp'; else $(CYGPATH_W) '$(srcdir)/Atom.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-Atom.Tpo $(DEPDIR)/__top_builddir__bin_correlation-Atom.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Atom.cpp' object='__top_builddir__bin_correlation-Atom.obj' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-Atom.obj: Atom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Atom.obj -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Atom.Tpo -c -o __BIN_DIR__correlation-Atom.obj `if test -f 'Atom.cpp'; then $(CYGPATH_W) 'Atom.cpp'; else $(CYGPATH_W) '$(srcdir)/Atom.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Atom.Tpo $(DEPDIR)/__BIN_DIR__correlation-Atom.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Atom.cpp' object='__BIN_DIR__correlation-Atom.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-Atom.obj `if test -f 'Atom.cpp'; then $(CYGPATH_W) 'Atom.cpp'; else $(CYGPATH_W) '$(srcdir)/Atom.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Atom.obj `if test -f 'Atom.cpp'; then $(CYGPATH_W) 'Atom.cpp'; else $(CYGPATH_W) '$(srcdir)/Atom.cpp'; fi`
 
-__top_builddir__bin_correlation-Cell.o: Cell.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-Cell.o -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-Cell.Tpo -c -o __top_builddir__bin_correlation-Cell.o `test -f 'Cell.cpp' || echo '$(srcdir)/'`Cell.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-Cell.Tpo $(DEPDIR)/__top_builddir__bin_correlation-Cell.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Cell.cpp' object='__top_builddir__bin_correlation-Cell.o' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-Cell.o: Cell.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Cell.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Cell.Tpo -c -o __BIN_DIR__correlation-Cell.o `test -f 'Cell.cpp' || echo '$(srcdir)/'`Cell.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Cell.Tpo $(DEPDIR)/__BIN_DIR__correlation-Cell.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Cell.cpp' object='__BIN_DIR__correlation-Cell.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-Cell.o `test -f 'Cell.cpp' || echo '$(srcdir)/'`Cell.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Cell.o `test -f 'Cell.cpp' || echo '$(srcdir)/'`Cell.cpp
 
-__top_builddir__bin_correlation-Cell.obj: Cell.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-Cell.obj -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-Cell.Tpo -c -o __top_builddir__bin_correlation-Cell.obj `if test -f 'Cell.cpp'; then $(CYGPATH_W) 'Cell.cpp'; else $(CYGPATH_W) '$(srcdir)/Cell.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-Cell.Tpo $(DEPDIR)/__top_builddir__bin_correlation-Cell.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Cell.cpp' object='__top_builddir__bin_correlation-Cell.obj' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-Cell.obj: Cell.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Cell.obj -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Cell.Tpo -c -o __BIN_DIR__correlation-Cell.obj `if test -f 'Cell.cpp'; then $(CYGPATH_W) 'Cell.cpp'; else $(CYGPATH_W) '$(srcdir)/Cell.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Cell.Tpo $(DEPDIR)/__BIN_DIR__correlation-Cell.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Cell.cpp' object='__BIN_DIR__correlation-Cell.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-Cell.obj `if test -f 'Cell.cpp'; then $(CYGPATH_W) 'Cell.cpp'; else $(CYGPATH_W) '$(srcdir)/Cell.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Cell.obj `if test -f 'Cell.cpp'; then $(CYGPATH_W) 'Cell.cpp'; else $(CYGPATH_W) '$(srcdir)/Cell.cpp'; fi`
 
-__top_builddir__bin_correlation-Constants.o: Constants.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-Constants.o -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-Constants.Tpo -c -o __top_builddir__bin_correlation-Constants.o `test -f 'Constants.cpp' || echo '$(srcdir)/'`Constants.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-Constants.Tpo $(DEPDIR)/__top_builddir__bin_correlation-Constants.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Constants.cpp' object='__top_builddir__bin_correlation-Constants.o' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-Constants.o: Constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Constants.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Constants.Tpo -c -o __BIN_DIR__correlation-Constants.o `test -f 'Constants.cpp' || echo '$(srcdir)/'`Constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Constants.Tpo $(DEPDIR)/__BIN_DIR__correlation-Constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Constants.cpp' object='__BIN_DIR__correlation-Constants.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-Constants.o `test -f 'Constants.cpp' || echo '$(srcdir)/'`Constants.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Constants.o `test -f 'Constants.cpp' || echo '$(srcdir)/'`Constants.cpp
 
-__top_builddir__bin_correlation-Constants.obj: Constants.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-Constants.obj -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-Constants.Tpo -c -o __top_builddir__bin_correlation-Constants.obj `if test -f 'Constants.cpp'; then $(CYGPATH_W) 'Constants.cpp'; else $(CYGPATH_W) '$(srcdir)/Constants.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-Constants.Tpo $(DEPDIR)/__top_builddir__bin_correlation-Constants.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Constants.cpp' object='__top_builddir__bin_correlation-Constants.obj' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-Constants.obj: Constants.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Constants.obj -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Constants.Tpo -c -o __BIN_DIR__correlation-Constants.obj `if test -f 'Constants.cpp'; then $(CYGPATH_W) 'Constants.cpp'; else $(CYGPATH_W) '$(srcdir)/Constants.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Constants.Tpo $(DEPDIR)/__BIN_DIR__correlation-Constants.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Constants.cpp' object='__BIN_DIR__correlation-Constants.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-Constants.obj `if test -f 'Constants.cpp'; then $(CYGPATH_W) 'Constants.cpp'; else $(CYGPATH_W) '$(srcdir)/Constants.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Constants.obj `if test -f 'Constants.cpp'; then $(CYGPATH_W) 'Constants.cpp'; else $(CYGPATH_W) '$(srcdir)/Constants.cpp'; fi`
 
-__top_builddir__bin_correlation-ReadFiles.o: ReadFiles.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-ReadFiles.o -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Tpo -c -o __top_builddir__bin_correlation-ReadFiles.o `test -f 'ReadFiles.cpp' || echo '$(srcdir)/'`ReadFiles.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Tpo $(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ReadFiles.cpp' object='__top_builddir__bin_correlation-ReadFiles.o' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-ReadFiles.o: ReadFiles.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-ReadFiles.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Tpo -c -o __BIN_DIR__correlation-ReadFiles.o `test -f 'ReadFiles.cpp' || echo '$(srcdir)/'`ReadFiles.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Tpo $(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ReadFiles.cpp' object='__BIN_DIR__correlation-ReadFiles.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-ReadFiles.o `test -f 'ReadFiles.cpp' || echo '$(srcdir)/'`ReadFiles.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-ReadFiles.o `test -f 'ReadFiles.cpp' || echo '$(srcdir)/'`ReadFiles.cpp
 
-__top_builddir__bin_correlation-ReadFiles.obj: ReadFiles.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-ReadFiles.obj -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Tpo -c -o __top_builddir__bin_correlation-ReadFiles.obj `if test -f 'ReadFiles.cpp'; then $(CYGPATH_W) 'ReadFiles.cpp'; else $(CYGPATH_W) '$(srcdir)/ReadFiles.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Tpo $(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ReadFiles.cpp' object='__top_builddir__bin_correlation-ReadFiles.obj' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-ReadFiles.obj: ReadFiles.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-ReadFiles.obj -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Tpo -c -o __BIN_DIR__correlation-ReadFiles.obj `if test -f 'ReadFiles.cpp'; then $(CYGPATH_W) 'ReadFiles.cpp'; else $(CYGPATH_W) '$(srcdir)/ReadFiles.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Tpo $(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ReadFiles.cpp' object='__BIN_DIR__correlation-ReadFiles.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-ReadFiles.obj `if test -f 'ReadFiles.cpp'; then $(CYGPATH_W) 'ReadFiles.cpp'; else $(CYGPATH_W) '$(srcdir)/ReadFiles.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-ReadFiles.obj `if test -f 'ReadFiles.cpp'; then $(CYGPATH_W) 'ReadFiles.cpp'; else $(CYGPATH_W) '$(srcdir)/ReadFiles.cpp'; fi`
 
-__top_builddir__bin_correlation-main.o: main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-main.o -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-main.Tpo -c -o __top_builddir__bin_correlation-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-main.Tpo $(DEPDIR)/__top_builddir__bin_correlation-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='main.cpp' object='__top_builddir__bin_correlation-main.o' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-main.o: main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-main.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-main.Tpo -c -o __BIN_DIR__correlation-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-main.Tpo $(DEPDIR)/__BIN_DIR__correlation-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='main.cpp' object='__BIN_DIR__correlation-main.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
 
-__top_builddir__bin_correlation-main.obj: main.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __top_builddir__bin_correlation-main.obj -MD -MP -MF $(DEPDIR)/__top_builddir__bin_correlation-main.Tpo -c -o __top_builddir__bin_correlation-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__top_builddir__bin_correlation-main.Tpo $(DEPDIR)/__top_builddir__bin_correlation-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='main.cpp' object='__top_builddir__bin_correlation-main.obj' libtool=no @AMDEPBACKSLASH@
+__BIN_DIR__correlation-main.obj: main.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-main.obj -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-main.Tpo -c -o __BIN_DIR__correlation-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-main.Tpo $(DEPDIR)/__BIN_DIR__correlation-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='main.cpp' object='__BIN_DIR__correlation-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__top_builddir__bin_correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __top_builddir__bin_correlation-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-main.obj `if test -f 'main.cpp'; then $(CYGPATH_W) 'main.cpp'; else $(CYGPATH_W) '$(srcdir)/main.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -569,7 +569,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(top_builddir)/bin/$(am__dirstamp)" || rm -f $(top_builddir)/bin/$(am__dirstamp)
+	-test -z "$(BIN_DIR)/$(am__dirstamp)" || rm -f $(BIN_DIR)/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -579,11 +579,11 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-Atom.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-Cell.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-Constants.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-main.Po
+		-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Atom.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-main.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -629,11 +629,11 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-Atom.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-Cell.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-Constants.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-ReadFiles.Po
-	-rm -f ./$(DEPDIR)/__top_builddir__bin_correlation-main.Po
+		-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Atom.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-main.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

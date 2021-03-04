@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <algorithm>
 #include <list>
 #include <array>
@@ -470,6 +471,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 {
     int n_, m_, i, j, col, row;
     int n = this->distances.size();
+    std::string header;
 
     m_ = ceil(r_cut / bin_width);
     n_ = n * (n + 1) / 2 + 1;
@@ -513,17 +515,19 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     this->J = temp_hist;
 
     std::ofstream out_file(filename + "_J.csv");
-    out_file << "r,";
+    std::setprecision(6);
+    out_file << std::setw(11) << "r,";
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
-            out_file << this->elements[i] << "-" << this->elements[j] << ",";
+            header = this->elements[i] + "-" + this->elements[j] + ",";
+            out_file << std::setw(11) << header;
         }
     }
-    out_file << std::endl;
+    out_file << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file << temp_hist[j][i] << ",";
+            out_file << std::setw(10) << temp_hist[j][i] << ",";
         }
         out_file << std::endl;
     }
@@ -544,17 +548,19 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     this->g = temp_hist;
 
     std::ofstream out_file2(filename + "_g.csv");
-    out_file2 << "r,";
+    std::setprecision(6);
+    out_file2 << std::setw(11) << "r,";
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
-            out_file2 << this->elements[i] << "-" << this->elements[j] << ",";
+            header = this->elements[i] + "-" + this->elements[j] + ",";
+            out_file2 << std::setw(11) << header;
         }
     }
-    out_file2 << std::endl;
+    out_file2 << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file2 << temp_hist[j][i] << ",";
+            out_file2 << std::setw(10) << temp_hist[j][i] << ",";
         }
         out_file2 << std::endl;
     }
@@ -574,17 +580,19 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     this->G = temp_hist;
 
     std::ofstream out_file3(filename + "_G_.csv");
-    out_file3 << "r,";
+    std::setprecision(6);
+    out_file3 << std::setw(11) << "r,";
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
-            out_file3 << this->elements[i] << "-" << this->elements[j] << ",";
+            header = this->elements[i] + "-" + this->elements[j] + ",";
+            out_file3 << std::setw(11) << header;
         }
     }
-    out_file3 << std::endl;
+    out_file3 << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file3 << temp_hist[j][i] << ",";
+            out_file3 << std::setw(10) << temp_hist[j][i] << ",";
         }
         out_file3 << std::endl;
     }
@@ -595,6 +603,7 @@ void Cell::Nc_Histogram(std::string filename)
 {
     int n_, m_, i, j, col;
     int n = this->elements.size();
+    std::string header;
 
     n_ = n * n + 1;
     m_ = this->coordination[0][0].size();
@@ -614,17 +623,19 @@ void Cell::Nc_Histogram(std::string filename)
 
 
     std::ofstream out_file2(filename + "_Nc.csv");
-    out_file2 << "#,";
+    std::setprecision(6);
+    out_file2 << std::setw(13) << "#,";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            out_file2 << this->elements[j] << " around " << this->elements[i] << ",";
+            header = this->elements[j] + " around " + this->elements[i] + ",";
+            out_file2 << std::setw(13) << header;
         }
     }
-    out_file2 << std::endl;
+    out_file2 << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file2 << temp_hist[j][i] << ",";
+            out_file2 << std::setw(12) << temp_hist[j][i] << ",";
         }
         out_file2 << std::endl;
     }
@@ -636,6 +647,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
     int n_, m_, i, j, k, h, col, row;
     double norm;
     int n = this->elements.size();
+    std::string header;
 
     /*
      * The number of columns in the output file is:
@@ -695,21 +707,22 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
     }
 
     this->f_theta = temp_hist;
-
     std::ofstream out_file(filename + "_PAD.csv");
-    out_file << "theta,";
+    std::setprecision(6);
+    out_file << std::setw(11) << "theta,";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             for (k = j; k < n; k++) {
-                out_file << this->elements[j] << "-" << this->elements[i] << "-" << this->elements[k] << ",";
+                header = this->elements[j] + "-" + this->elements[i] + "-" + this->elements[k] + ",";
+                out_file << std::setw(11) << header;
             }
         }
     }
-    out_file << std::endl;
+    out_file << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file << temp_hist[j][i] << ",";
+            out_file << std::setw(10) << temp_hist[j][i] << ",";
         }
         out_file << std::endl;
     }

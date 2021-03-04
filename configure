@@ -615,6 +615,7 @@ PACKAGE_STRING='correlation 1.0'
 PACKAGE_BUGREPORT='isurwars@gmail.com'
 PACKAGE_URL=''
 
+ac_unique_file="src/main.cpp"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -2153,6 +2154,8 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+
+# init automake
 am__api_version='1.16'
 
 
@@ -2756,6 +2759,14 @@ END
   fi
 fi
 
+
+# Minimum Autoconf version required.
+
+
+# srcdir location.
+
+
+# We need a CPP compiler.
 
 
 
@@ -3579,7 +3590,8 @@ else
 fi
 
 
-ac_config_files="$ac_config_files  Makefile src/Makefile"
+
+ac_config_files="$ac_config_files Makefile src/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -4318,9 +4330,8 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-    "") CONFIG_FILES="$CONFIG_FILES " ;;
-    "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

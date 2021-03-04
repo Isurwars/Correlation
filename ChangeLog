@@ -1,7 +1,25 @@
-## V1.0 rc 2
+# Changelog
+All notable changes to this project will be documented in this file.
 
-- Added configure and Makefile.in, generated with GNU autotools.
-- If the standard configure, make, make install procedure fails,
-  the old Makefile is included as Makefile.old and is recommended
-  to be renamed to Makefile and use the command: make all.
-- AUTHORS and Changelog files now included.  
+## [1.0.0 rc3] - 2021-03-04
+
+### Added
+- Tests now check validity of the results.
+- Test 7 (make test7), also known as an stress test has been incorporated.
+  This test should take several minutes and a large amount of RAM.
+- Added a new option to clean the test directory (make clean-test)
+
+### Modify
+- clean-local option now leaves a working Makefile and the Binary.
+  This modification should help with testing, while keeping a clean
+  directory.
+- cleanall option now replace clean-local
+
+## [1.0.0 rc2] - 2021-02-28
+
+### Added
+- configure and Makefile.in, generated with GNU autotools.
+- AUTHORS and Changelog files now included.
+
+### Modify
+- Old Makefile is included as Makefile.old

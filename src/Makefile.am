@@ -1,4 +1,8 @@
-bin_PROGRAMS = $(top_builddir)/bin/correlation
-__top_builddir__bin_correlation_SOURCES = Atom.cpp Cell.cpp Constants.cpp ReadFiles.cpp main.cpp
-__top_builddir__bin_correlation_CPPFLAGS = -Iinclude -std=c++17
-__top_builddir__bin_correlation_LDFLAGS = -lm -static-libstdc++
+BIN_DIR = $(top_builddir)/bin
+# Build correlation
+bin_PROGRAMS = $(BIN_DIR)/correlation
+# correlation Source Files
+__BIN_DIR__correlation_SOURCES = Atom.cpp Cell.cpp Constants.cpp ReadFiles.cpp main.cpp
+# correlation ld flags
+__BIN_DIR__correlation_CPPFLAGS = -Iinclude -std=c++17
+__BIN_DIR__correlation_LDFLAGS = -lm -static-libstdc++
