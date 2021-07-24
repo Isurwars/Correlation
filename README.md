@@ -1,88 +1,223 @@
 # **Correlation**: An Analyzing Tool for Liquids and for Amorphous Solids
 [![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288)
 
+**Correlation** is an analyzing tool of correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAAMPS(*.XYZ),etc...  
 
-**Correlation** is an analyzing tool of correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (.CAR), CASTEP(.CELL), ONETEP(*.DAT), LAAMPS(.XYZ),etc...  
+## Usage
+---
+```
+    USAGE: correlation [OPTIONS] [input_file]
 
-## Getting Started
+    	The minimal argument is a structure file, this program requires a file
+    	that contains atom positions, crystal structure and composition.
+    	Supported structure files are:
+    		-*.CAR   Materials Studio structure file.
+    		-*.CELL  CASTEP structure file.
+    		-*.DAT   ONETEP structure file.
+    		-*.XYZ   LAAMPS structure file.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+    	OPTIONS:
+    		HELP OPTIONS
+    			-h, --help
+    				Display this help text.
+
+    		RADIAL OPTIONS:
+    			-r, --r_cut
+    				Cutoff radius in the calculation of g(r), G(r) and J(r). The default
+    				radius it's set to 2 nm. The maximum recomended radius is the same as
+    				the shortest length of the lattice parameters of the cell, anything
+    				above this PBC value can be affected by periodic interactions.		
+    			-w, --bin_width
+    				Width of the histograms for g(r) and J(r), the default is 0.05 nm.
+
+    		BOND-ANGLE OPTIONS:
+    			-a, --angle_bin_width
+    				Width of the histograms for the PAD, default set to 1.0°.
+    			-b, --bond_parameter
+    				The ideal covalent bond length is the sum of covalent radii
+    				of the two atoms. The criterion used to consider atoms as bonded
+    				is the following:
+    					0.6 * Sum_radii < distance < bond_parameter * Sum_radii.
+    				By default the bond_parameter is set to 1.30, as a rule of thumb.
+    				The default should work for most crystalline materials,
+    				as well as most covalent non-crystalline materials.
+    				For amorphous and liquid materials the bond_parameter should be
+    				increased to match the desired distance to cut_off the bonds.
+    				A bond_parameter of 1.42 is recomended for amorphous materials.
+    			-i, --in_bond_file
+    				The input file with the bond distances for every pair of elements
+    				in the corresponding input structure. The file should have the
+    				following format:
+    					Si Si 2.29
+    					Mg Mg 2.85
+    					C  C  1.55
+    					C  Si 1.86
+    					Si Mg 2.57
+    					C  Mg 2.07
+    				If any of the pairs is missing in the input file, the corresponding
+    				bond distance will be set using the bond_parameter(1.30 by default).
+
+    		OUTPUT OPTIONS:
+    			-o, --out_file
+    				The output file name, by default the input seed name will be used.
+```
+
+## Installation
+---
+
+**Correlation** is written in C++17 and is designed to be compatible with GNU Compiler Collection (GCC) v7.0 or superior.
 
 ### Prerequisites
 
-This projects is designed to be compatible with GNU Compiler Collection (GCC).
+The following steps are required for the correct compilation of **Correlation** project.
+
+#### Windows
+---
+
+There are several (GCC) implementations for Windows, developers recommend the MSYS2 implementation:
+
+Installing MSYS2:
 ```
-Windows:
-
-There are several (GCC) implementations for Windows, developers recommend the following implementations:
-
-MinGW: http://www.mingw.org/
-
 MSYS2: https://www.msys2.org/
-
-Pre-Compiled binary for Windows 10 is present in the /bin/ folder.
 ```
-
+Updating MSYS2:
 ```
-Unix:
-
-The code was tested with Ubuntu and Debian, but it should work on other distros.
+pacman -Syu
 ```
-
-
+Installing GCC and other developer  tools:
 ```
-MacOS:
-
-MacOS is currently not supported. (Major priority for 1.0 release)
-Clang , the default c/c++ compiler,  doesn't compile even with some c++17 flags activated.
+pacman -S --needed base-devel mingw-w64-x86_64-toolchain
 ```
-
-
-
-### Installing
-
-For compiling you should have GCC environment correctly installed on the system.
-
-To compile the program:
+Installing GNU Autotools:
 
 ```
-make all
+pacman -S automake autoconf libtool
 ```
 
-And then to clean the precompiled objects files:
+#### Unix
+---
+
+The code was tested with in 18.04, Debian 8.11 and MX Linux 19.3 but it should work on other distros.
+
+Installing GCC:
 
 ```
-make clean
+sudo apt install build-essential
+```
+Installing GNU Autotools:
+
+```
+sudo apt install automake autoconf libtool
 ```
 
-The newly compiled program is located in the bin folder.
+#### MacOS
+---
+
+The code was tested with MacOS 10.15 Catalina, with Clang 11.0.0 compilers.
+
+Installing Clang:
+
+```
+xcode-select --install
+```
+
+Installing GNU Autotools:
+```
+brew install automake autoconf libtool
+```
+### Installing **Correlation**
+---
+
+For compiling you should have GC or Clang compilers, and GNU Autotools correctly installed on the system.
+
+Some systems may require the configure script to have the execute permission:
+
+```
+chmod +x configure
+chmod +x install-sh
+```
+Execute the configure script:
+```
+./configure
+```
+Compile the code with make command:
+```
+make
+```
+Install the software in the standar binary location:
+```
+make install
+```
 
 ## Running the tests
+---
+A series of test are included in the project:
 
-Three Atomistic Structure Files are included for testing.
+1. Silicon crystal structure as published by Alvarez, *et al.* https://doi.org/10.1016/S0022-3093(01)01005-5
+2. Graphene layer supercell modified from Romero, *et al.* https://doi.org/10.1016/j.jnoncrysol.2004.03.031
+3. Amorphous palladium as published by Rodríguez, *et al.* https://journals.aps.org/prb/abstract/10.1103/PhysRevB.100.024422
+4. Amorphous palladium hydride as published by Rodríguez, *et al.* https://arxiv.org/abs/2012.02934
+5. Liquid bismuth as reported by F.  B. Quiroga in her undergraduate thesis. Private communication.
+6. Amorphous palladium hydride supercell created from Rodríguez, *et al.* https://arxiv.org/abs/2012.02934
 
-You can run all three tests with the command:
-
+To execute all of these tests execute the following command:
 ```
 make tests
 ```
 
-### Break down into end to end tests
+### Execute single test
 
-The first test include one of the structure file for amorphous palladium as published by Rodríguez et al. https://journals.aps.org/prb/abstract/10.1103/PhysRevB.100.024422
-
-To run this test you could run:
+To run a single test instead, for example to execute test 3,  you should run:
 ```
-make test1
+make test3
 ```
 or
 
 ```
-./bin/correlarion.exe ./test/test_1/aPd.cell
+correlation ./test/test_3/aPd.cell
 ```
 
-Three result(s) file(s) should be generated in the same directory as the input fil(aPd.cell).
-These Coma Separeted Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...
+
+If the test are executed successfully several message like this one should appear for every single test performed:
+```
+"----------------------------------------------------------"
+" Test 3: rPDF (G_) successfully calculated."
+"----------------------------------------------------------"
+```
+Five result(s) file(s) should be generated in the same directory as the input file(aPd.cell) as Coma Separeted Values files (*.CSV).
+
+1. Pair Distribution Function [**g**] ("*_g.CSV").
+2. Radial Distribution Function [**J**] ("*_J.CSV").
+3. Reduced Radial Distribution Function [**G**] ("*_G.CSV").
+4. Coordination Number [**Nc**] ("*_Nc.CSV").
+5. Plane Angle Distribution [**PAD**] ("*_PAD.CSV").
+
+These Coma Separated Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...
+
+For example:
+
+![Pair Correlation Function of amorphous palladium](Images/Test3_g.png)
+
+### Stress test
+
+A file is included as an stress test to **Correlation** in a particular machine, this test should take several minutes to execute and may require several GB of RAM to successfully compute the correlation functions.
+
+These are the results for palladium deuteride reported by Rodríguez, *et al.* https://arxiv.org/abs/2012.02934
+
+```
+make test7
+```
+
+
+
+### [OPTIONAL CLEANING  COMMAND]
+---
+
+In order to have a clean project folder to upload to GitHub we added the optional step to clean the project folder automatically with the following command:
+
+```
+make clean-all
+```
 
 ## Built With
 
@@ -92,7 +227,12 @@ These Coma Separeted Values files can then be analyzed with your favorite tool l
 
 ## Authors
 
-* **Isaías Rodríguez** - *Initial work* - [Isurwars](https://github.com/Isurwars)
+* **Isaías Rodríguez** - *Corresponding Author* - [Isurwars](https://github.com/Isurwars) <isurwars@gmail.com>
+* **Renela M. Valladares**    <renelavalladares@gmail.com>
+* **Alexander Valladares**    <valladar@ciencias.unam.mx>
+* **David Hinojosa-Romero**   <david18_hr@ciencias.unam.mx>
+* **Ulises Santiago**
+* **Ariel A. Valladares**     <valladar@unam.mx>
 
 ## License
 

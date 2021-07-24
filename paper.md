@@ -38,15 +38,20 @@ For almost a century, since Bernal's attempts at a molecular theory of liquid st
 
 Pair Distribution Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Plane Angle Distributions ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
 
-**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design makes it easy to integrate in High-Throughput Computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT) and VASP (POSCAR) structure files. The code can handle up to 25,000 atoms, so it can be used to analyze both classical and first-principles simulations. At the end, the output of every single correlation function is exported to the corresponding comma-separated value file (CSV), to further analyze the results.
+**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design makes it easy to integrate in High-Throughput Computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT) and VASP (POSCAR) structure files. The code can handle up to 100,000 atoms, so it can be used to analyze both classical and first-principles simulations. At the end, the output of every single correlation function is exported to the corresponding comma-separated value file (CSV), to further analyze the results.
 
 # Statement of Need
 
 As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represent the structure of materials has steadily increased.
-To answer this need, there have been several tools developed to calculate some of the most used correlation functions like: pair distribution functions, radial distribution functions and plane angle distributions.
-However, the use of these tools has been limited, either by a prohibiting cost, or has been restricted to private academic groups, or geopolitical limitations introduced by the licensing, or by being specially designed to an specific software for material simulation.
+To answer this need, there have been several tools developed to calculate some of the most used correlation functions like: pair distribution functions, radial distribution functions, and plane angle distributions, here we present an incomplete list of these tools:
+-	**Forcite Plus**: Forcite Plus is part of the Materials Studio suite [@materials_2016], the program includes analyzing tools to compute structure properties like RDF and PAD.
+-	**PTRAJ/CPPTRAJ**: A tool designed to analyze Amber Molecular Dynamics trajectories and related properties including RDF and time correlation functions, included in the AmbarTools suite [@roe_ptraj_2013].
+-	**VASPKIT**: A post-processing tool for VASP calculated data [@VASPKIT-2021], the code includes tools to analyze structural properties and dynamics trajectories.
+-	[**rdfpy**](https://github.com/by256/rdfpy): An open Python library for fast computation of 2D and 3D radial distribution functions of crystalline structures in the Crystallographic Information File (CIF).
+-	[**RadialDistributionFunction **](https://github.com/RaulPPelaez/RadialDistributionFunction): Computes the Radial Distribution Function (RDF) of a group of positions in a file, averages it for all snapshots in the file, atom positions must be in a custom format.
 
-With these limitations in mind, we decided to create a software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as possible.
+However, the use of these tools has been limited, either by a prohibiting cost (**Forcite Plus**), or has been restricted to private academic groups, or geopolitical limitations introduced by the licensing (**CASTEP** postprocessing tools), or by being specially designed to specific software for material simulation (**PTRAJ/CPPTRAJ**, **VASPKIT**), or by having a narrow scope of input formats and correlation functions calculated (**rdfpy**, **RadialDistributionFunction **).
+With these limitations in mind, we decided to create software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as possible.
 
 # Mathematical Background
 
@@ -106,9 +111,16 @@ The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the stru
 
 # Conclusion & Perspective
 
-**Correlation** is a lightweight, modular software that can be used in HPC and adapted to analyze the main correlation functions used to characterize: crystalline, amorphous solids and liquids.
+**Correlation** is a lightweight, modular software that can be used in HTC and adapted to analyze the main correlation functions used to characterize: crystalline, amorphous solids, and liquids.
 
-**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several PhD Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] developed in our group. We will continue to support and enrich the software in the foreseeable future. We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the first author, I.R: isurwars@ciencias.unam.mx
+**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several Ph.D. Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] developed in our group.
+We will continue to support and enrich the software in the foreseeable future, here we list the features planned to be added in the future:
+-	Support for different kinds of output files like hdf5 standard.
+-	Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
+-	Inclusion of structure factor and x-ray diffraction, to facilitate the comparison with experimental results.
+-	Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
+
+We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the GitHub: [Correlation](https://github.com/Isurwars/Correlation), or to the email of the first author, I.R: [isurwars@ciencias.unam.mx]( isurwars@ciencias.unam.mx)
 
 # Acknowledgements
 

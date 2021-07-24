@@ -66,7 +66,7 @@ void PrintHelp()
       "    HELP OPTIONS:"
       "      -h, --help\n"
       "        Display this help text.\n\n"
-      "    RADIAL OPTIONS:"
+      "    RADIAL OPTIONS:\n"
       "      -r, --r_cut\n"
       "        Cutoff radius in the calculation of g(r), G(r) and J(r). The default\n"
       "        radius it's set to 2 nm. The maximum recomended radius is the same as\n"
@@ -74,7 +74,7 @@ void PrintHelp()
       "        above this PBC value can be affected by periodic interactions.\n\n"
       "      -w, --bin_width\n"
       "        Width of the histograms for g(r) and J(r), the default is 0.05 nm.\n\n"
-      "    BOND-ANGLE OPTIONS:"
+      "    BOND-ANGLE OPTIONS:\n"
       "      -a, --angle_bin_width\n"
       "        Width of the histograms for the PAD, default set to 1.0°.\n\n"
       "      -b, --bond_parameter\n"
@@ -100,7 +100,7 @@ void PrintHelp()
       "             C  Mg 2.07\n"
       "        If any of the pairs is missing in the input file, the corresponding\n"
       "        bond distance will be set using the bond_parameter(1.30 by default).\n\n"
-      "    OUTPUT OPTIONS:"
+      "    OUTPUT OPTIONS:\n"
       "      -o, --out_file\n"
       "        The output file name, by default the input seed name will be used.\n\n"
       "CREATOR:\n"
@@ -138,10 +138,30 @@ void ArgParser(int argc, char ** argv)
 
         switch (opt) {
             case 'a': // -a or --angle_bin_width
-                _angle_bin_w_ = std::stof(optarg);
+                try{
+                    _angle_bin_w_ = std::stof(optarg);
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Invalid input argument: '"
+                              << optarg
+                              << "' in angle_bin_width parameter '-a' "
+                              << "(Real number expected)."
+                              << std::endl;
+                    exit(1);
+                }
                 break;
             case 'b': // -b or --bond_parameter
-                _bond_par_ = std::stof(optarg);
+                try{
+                    _bond_par_ = std::stof(optarg);
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Invalid input argument: '"
+                              << optarg
+                              << "' in bond_parameter '-b' "
+                              << "(Real number expected)."
+                              << std::endl;
+                    exit(1);
+                }
                 break;
             case 'h': // -h or --help
                 PrintHelp();
@@ -154,10 +174,31 @@ void ArgParser(int argc, char ** argv)
                 _out_file_name_ = optarg;
                 break;
             case 'r': // -r ot --r_cut
-                _r_cut_ = std::stof(optarg);
+                try{
+                    _r_cut_ = std::stof(optarg);
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Invalid input argument: '"
+                              << optarg
+                              << "' in r_cut parameter '-r' "
+                              << "(Real number expected)."
+                              << std::endl;
+                    exit(1);
+                }
                 break;
             case 'w': // -w or -- bin_width
-                _bin_w_ = std::stof(optarg);
+
+                try{
+                    _bin_w_ = std::stof(optarg);
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Invalid input: '"
+                              << optarg
+                              << "' in bin_width parameter 'w' "
+                              << "(Real number expected)."
+                              << std::endl;
+                    exit(1);
+                }
                 break;
             case '?': // Unrecognized option
                 /* getopt_long already printed an error message. */
@@ -169,7 +210,7 @@ void ArgParser(int argc, char ** argv)
         }
     }
     if (optind < argc - 1) {
-        std::cout << "Only one structure file most be provided." << '\n';
+        std::cout << "Only one structure file most be provided." << std::endl;
         exit(1);
     } else {
         if (argc > 1) {
@@ -178,7 +219,7 @@ void ArgParser(int argc, char ** argv)
             PrintHelp();
         }
     }
-} // ProcessArgs
+} // ArgParser
 
 int main(int argc, char ** argv)
 {
@@ -208,10 +249,10 @@ int main(int argc, char ** argv)
     } else if (MyExt == ".dat") {
         MyCell = read_ONETEP_DAT(_in_file_name_);
     } else {
-        std::cout << "File: " << MyExt << " currently not supported." << '\n';
+        std::cout << "File: " << MyExt << " currently not supported." << std::endl;
         PrintHelp();
     }
-    std::cout << "File " << _in_file_name_ << " opened successfully." << '\n';
+    std::cout << "File " << _in_file_name_ << " opened successfully." << std::endl;
 
     // Create Bond distance Matrix and element_ids
     MyCell.PopulateBondLength(_bond_par_);
@@ -245,7 +286,7 @@ int main(int argc, char ** argv)
      * The _r_cut_ parameter is the cutoff distance,
      * the _bin_w_ parameter is the bin width to be used.
      */
-    std::cout << "Writing output files: " << _out_file_name_ << '\n';
+    std::cout << "Writing output files: " << _out_file_name_ << std::endl;
     MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
     MyCell.Nc_Histogram(_out_file_name_);
 
@@ -256,5 +297,6 @@ int main(int argc, char ** argv)
      */
     MyCell.PAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
 
+    std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
     return 0;
 } // main
