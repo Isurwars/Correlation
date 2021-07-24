@@ -74,11 +74,11 @@ The pair distribution function could also be seen like a distance map inside the
 
 The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 0$ (for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ becomes zero. The main advantage of the PDF and the related functions, is that they emphasize the short-range order of a material.
 
-![Schematic depiction of the first and second neighbor’s coordination spheres for an amorphous metallic alloy and the corresponding pair distribution function. Design inspired by J. M. Ziman, Models of disorder (Cambridge University Press, 1979). \label{fig:RDF}](./Images/Fig1.png){ width=75% }
-
 ### Reduced pair distribution function $G(r)$
 
 One of the most widely used pair correlation function is the reduced pair distribution function. This is defined as $G(r) = 4\pi \rho_0 (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
+
+![Schematic depiction of the first and second neighbor’s coordination spheres for an amorphous metallic alloy and the corresponding pair distribution function. Design inspired by J. M. Ziman, Models of disorder (Cambridge University Press, 1979). \label{fig:RDF}](./Images/Fig1.png){ width=75% }
 
 While the PDF ($g(r)$) has an intuitive geometric definition, the rPDF ($G(r)$) can be directly obtained by a Fourier transform of the structure factor ($S(Q)$) as can be seen in \autoref{eq:PDF}; this close relation with the experimental data explains the popularity that this function has. Also, it has another advantage over other correlation functions [like PDF ($g(r)$)] as the numerical density $\rho_0 = N/V$ needs to be estimated in order to normalize the functions. This is not necessary in rPDF ($G(r)$); where this information is already contained in $G(r)$ as the slope of the function when $r \to 0$.
 
