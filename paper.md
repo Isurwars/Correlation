@@ -70,11 +70,11 @@ G(r) = 4\pi\rho_0(g(r)-1)=\frac{2}{\pi}\int_{0}^{\infty} Q[S(Q)-1]sin(Qr)dQ,
 \end{equation}
 where $G(r)$ is the reduced pair distribution function (rPDF) which will be discussed next.
 
-![Schematic depiction of the first and second neighbor’s coordination spheres for an amorphous metallic alloy and the corresponding pair distribution function. Design inspired by J. M. Ziman, Models of disorder (Cambridge University Press, 1979). \label{fig:RDF}](./Images/Fig1.png){ width=75% }
-
 The pair distribution function could also be seen like a distance map inside the material, the $g(r)$ function gives how feasible is finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF} [@ziman_models_1979].
 
 The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 0$ (for $r$ shorter than the distance of the closest approach of pair of atoms), $g(r)$ becomes zero. The main advantage of the PDF and the related functions, is that they emphasize the short-range order of a material.
+
+![Schematic depiction of the first and second neighbor’s coordination spheres for an amorphous metallic alloy and the corresponding pair distribution function. Design inspired by J. M. Ziman, Models of disorder (Cambridge University Press, 1979). \label{fig:RDF}](./Images/Fig1.png){ width=75% }
 
 ### Reduced pair distribution function $G(r)$
 
