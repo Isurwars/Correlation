@@ -44,11 +44,16 @@ Pair Distribution Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Pl
 
 As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represent the structure of materials has steadily increased.
 To answer this need, there have been several tools developed to calculate some of the most used correlation functions like: pair distribution functions, radial distribution functions, and plane angle distributions, here we present an incomplete list of these tools:
--	**Forcite Plus**: Forcite Plus is part of the Materials Studio suite [@materials_2016], the program includes analyzing tools to compute structure properties like RDF and PAD.
--	**PTRAJ/CPPTRAJ**: A tool designed to analyze Amber Molecular Dynamics trajectories and related properties including RDF and time correlation functions, included in the AmbarTools suite [@roe_ptraj_2013].
--	**VASPKIT**: A post-processing tool for VASP calculated data [@VASPKIT-2021], the code includes tools to analyze structural properties and dynamics trajectories.
--	[**rdfpy**](https://github.com/by256/rdfpy): An open Python library for fast computation of 2D and 3D radial distribution functions of crystalline structures in the Crystallographic Information File (CIF).
--	[**RadialDistributionFunction **](https://github.com/RaulPPelaez/RadialDistributionFunction): Computes the Radial Distribution Function (RDF) of a group of positions in a file, averages it for all snapshots in the file, atom positions must be in a custom format.
+
+*	**Forcite Plus**: Forcite Plus is part of the Materials Studio suite [@materials_2016], the program includes analyzing tools to compute structure properties like RDF and PAD.
+
+*	**PTRAJ/CPPTRAJ**: A tool designed to analyze Amber Molecular Dynamics trajectories and related properties including RDF and time correlation functions, included in the AmbarTools suite [@roe_ptraj_2013].
+
+*	**VASPKIT**: A post-processing tool for VASP calculated data [@VASPKIT-2021], the code includes tools to analyze structural properties and dynamics trajectories.
+
+*	[**rdfpy**](https://github.com/by256/rdfpy): An open Python library for fast computation of 2D and 3D radial distribution functions of crystalline structures in the Crystallographic Information File (CIF).
+
+*	[**RadialDistributionFunction **](https://github.com/RaulPPelaez/RadialDistributionFunction): Computes the Radial Distribution Function (RDF) of a group of positions in a file, averages it for all snapshots in the file, atom positions must be in a custom format.
 
 However, the use of these tools has been limited, either by a prohibiting cost (**Forcite Plus**), or has been restricted to private academic groups, or geopolitical limitations introduced by the licensing (**CASTEP** postprocessing tools), or by being specially designed to specific software for material simulation (**PTRAJ/CPPTRAJ**, **VASPKIT**), or by having a narrow scope of input formats and correlation functions calculated (**rdfpy**, **RadialDistributionFunction **).
 With these limitations in mind, we decided to create software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as possible.
