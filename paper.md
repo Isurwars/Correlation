@@ -120,10 +120,14 @@ The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the stru
 
 **Correlation** software has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several Ph.D. Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] developed in our group.
 We will continue to support and enrich the software in the foreseeable future, here we list the features planned to be added in the future:
--	Support for different kinds of output files like hdf5 standard.
--	Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
--	Inclusion of structure factor and x-ray diffraction, to facilitate the comparison with experimental results.
--	Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
+
+*	Support for different kinds of output files like hdf5 standard.
+
+*	Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
+
+*	Inclusion of structure factor and x-ray diffraction, to facilitate the comparison with experimental results.
+
+*	Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
 
 We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the GitHub: [Correlation](https://github.com/Isurwars/Correlation), or to the email of the first author, I.R: [isurwars@ciencias.unam.mx]( isurwars@ciencias.unam.mx)
 
