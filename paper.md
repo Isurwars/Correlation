@@ -42,8 +42,8 @@ Pair Distribution Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Pl
 
 # Statement of Need
 
-As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate the correlation functions that represent the structure of materials has steadily increased.
-To answer this need, there have been several tools developed to calculate some of the most used correlation functions like: pair distribution functions, radial distribution functions, and plane angle distributions, here we present an incomplete list of these tools:
+As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate correlation functions that represent the structure of materials has steadily increased.
+To answer this need, there have been several tools developed to calculate some of the more used correlation functions like: pair distribution functions, radial distribution functions, and plane angle distributions. Here, we present an incomplete list of these tools:
 
 *	**Forcite Plus**: Forcite Plus is part of the Materials Studio suite [@materials_2016], the program includes analyzing tools to compute structure properties like RDF and PAD.
 
@@ -56,7 +56,7 @@ To answer this need, there have been several tools developed to calculate some o
 *	[**RadialDistributionFunction **](https://github.com/RaulPPelaez/RadialDistributionFunction): Computes the Radial Distribution Function (RDF) of a group of positions in a file, averages it for all snapshots in the file, atom positions must be in a custom format.
 
 However, the use of these tools has been limited, either by a prohibiting cost (**Forcite Plus**), or has been restricted to private academic groups, or geopolitical limitations introduced by the licensing (**CASTEP** postprocessing tools), or by being specially designed to specific software for material simulation (**PTRAJ/CPPTRAJ**, **VASPKIT**), or by having a narrow scope of input formats and correlation functions calculated (**rdfpy**, **RadialDistributionFunction **).
-With these limitations in mind, we decided to create software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions. While making the software accessible to as many people as possible.
+With these limitations in mind, we decided to develop software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions, while making the software accessible to as many people as possible.
 
 # Mathematical Background
 
@@ -116,16 +116,16 @@ The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the stru
 
 # Conclusion & Perspective
 
-**Correlation** is a lightweight, modular software that can be used in HTC and adapted to analyze the main correlation functions used to characterize: crystalline, amorphous solids, and liquids.
+**Correlation** is a lightweight, modular software that can be used in HTC and adapted to analyze the main correlation functions used to characterize crystalline and amorphous solids, as well as liquids.
 
-**Correlation** software has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several Ph.D. Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] developed in our group.
-We will continue to support and enrich the software in the foreseeable future, here we list the features planned to be added in the future:
+**Correlation** has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several Ph.D. Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] done in our group.
+We will continue to support and enrich the software in the foreseeable future. Here we list the features planned to be added in the future:
 
-*	Support for different kinds of output files like hdf5 standard.
+*	Support for additional output files, like hdf5 standard.
 
 *	Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
 
-*	Inclusion of structure factor and x-ray diffraction, to facilitate the comparison with experimental results.
+*	Inclusion of structure factors and x-ray diffraction, to facilitate the comparison with experimental results.
 
 *	Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
 
