@@ -297,6 +297,6 @@ int main(int argc, char ** argv)
      */
     MyCell.PAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
 
-    std::cout << "Job in " << _in_file_name_ << " finished succesfully." << '\n';
+    std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
     return 0;
 } // main

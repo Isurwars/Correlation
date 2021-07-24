@@ -7,7 +7,7 @@
 ---
 ```
     USAGE: correlation [OPTIONS] [input_file]
-    
+
     	The minimal argument is a structure file, this program requires a file
     	that contains atom positions, crystal structure and composition.
     	Supported structure files are:
@@ -15,21 +15,21 @@
     		-*.CELL  CASTEP structure file.
     		-*.DAT   ONETEP structure file.
     		-*.XYZ   LAAMPS structure file.
-    		
+
     	OPTIONS:
     		HELP OPTIONS
     			-h, --help
     				Display this help text.
-    				
+
     		RADIAL OPTIONS:
     			-r, --r_cut
     				Cutoff radius in the calculation of g(r), G(r) and J(r). The default
     				radius it's set to 2 nm. The maximum recomended radius is the same as
-    				shortest length of the periodic boundary conditions (PBC), anything
+    				the shortest length of the lattice parameters of the cell, anything
     				above this PBC value can be affected by periodic interactions.		
     			-w, --bin_width
     				Width of the histograms for g(r) and J(r), the default is 0.05 nm.
-    				
+
     		BOND-ANGLE OPTIONS:
     			-a, --angle_bin_width
     				Width of the histograms for the PAD, default set to 1.0°.
@@ -56,7 +56,7 @@
     					C  Mg 2.07
     				If any of the pairs is missing in the input file, the corresponding
     				bond distance will be set using the bond_parameter(1.30 by default).
-    				
+
     		OUTPUT OPTIONS:
     			-o, --out_file
     				The output file name, by default the input seed name will be used.
@@ -65,7 +65,7 @@
 ## Installation
 ---
 
-**Correlation** is written in C++17 and is designed to be compatible with GNU Compiler Collection (GCC) v7.0 or superior. 
+**Correlation** is written in C++17 and is designed to be compatible with GNU Compiler Collection (GCC) v7.0 or superior.
 
 ### Prerequisites
 
@@ -130,7 +130,7 @@ brew install automake autoconf libtool
 
 For compiling you should have GC or Clang compilers, and GNU Autotools correctly installed on the system.
 
-Some systems may require the configure script to have the execute permision:
+Some systems may require the configure script to have the execute permission:
 
 ```
 chmod +x configure
@@ -157,7 +157,7 @@ A series of test are included in the project:
 2. Graphene layer supercell modified from Romero, *et al.* https://doi.org/10.1016/j.jnoncrysol.2004.03.031
 3. Amorphous palladium as published by Rodríguez, *et al.* https://journals.aps.org/prb/abstract/10.1103/PhysRevB.100.024422
 4. Amorphous palladium hydride as published by Rodríguez, *et al.* https://arxiv.org/abs/2012.02934
-5. Liquid bismuth as obtained by F.  B. Quiroga in her undergraduate thesis, obtained in a private communication.
+5. Liquid bismuth as reported by F.  B. Quiroga in her undergraduate thesis. Private communication.
 6. Amorphous palladium hydride supercell created from Rodríguez, *et al.* https://arxiv.org/abs/2012.02934
 
 To execute all of these tests execute the following command:
@@ -169,12 +169,12 @@ make tests
 
 To run a single test instead, for example to execute test 3,  you should run:
 ```
-make test3 
+make test3
 ```
 or
 
 ```
-correlarion ./test/test_3/aPd.cell
+correlation ./test/test_3/aPd.cell
 ```
 
 
@@ -202,8 +202,10 @@ For example:
 
 A file is included as an stress test to **Correlation** in a particular machine, this test should take several minutes to execute and may require several GB of RAM to successfully compute the correlation functions.
 
+These are the results for palladium deuteride reported by Rodríguez, *et al.* https://arxiv.org/abs/2012.02934
+
 ```
-make test7 
+make test7
 ```
 
 
@@ -211,7 +213,7 @@ make test7
 ### [OPTIONAL CLEANING  COMMAND]
 ---
 
-In order to have a clean project folder to upload to GitHub we added the optional step to clean the project folder automatically with the following command: 
+In order to have a clean project folder to upload to GitHub we added the optional step to clean the project folder automatically with the following command:
 
 ```
 make clean-all

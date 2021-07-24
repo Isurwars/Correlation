@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0 rc5] - 2021-07-23
+- Several Typos in the project were corrected.
+- Added units to the output files.
+- Corrected paper.md to comply with reviewers corrections.
+
+## [1.0.0 rc4] - 2021-04-11
+- Major revision to README file
+- Minor bugs corrections in main.cpp and Makefile.am
+
 ## [1.0.0 rc3] - 2021-03-04
 
 ### Added
