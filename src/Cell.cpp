@@ -642,6 +642,16 @@ void Cell::Nc_Histogram(std::string filename)
     out_file2.close();
 }// Cell::Nc_histogram
 
+void Cell::SQ(std::string filename, double r_cut, double bin_width)
+{
+    int n_, m_, i, j, col;
+    int n = this->elements.size();
+    std::string header;
+
+    n_ = n * n + 1;
+    m_ = this->coordination[0][0].size();
+}// Cell::SQ
+
 void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
     int n_, m_, i, j, k, h, col, row;

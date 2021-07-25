@@ -30,6 +30,8 @@ public:
     std::vector<std::vector<double> > J;
     // Matrix of G(r) Histograms
     std::vector<std::vector<double> > G;
+    // Matrix of S(Q) Histograms
+    std::vector<std::vector<double> > S;
     // Matrix of f(theta) Histograms
     std::vector<std::vector<double> > f_theta;
     // Volume of the cell
@@ -57,6 +59,8 @@ public:
     void RDF_Histogram(std::string, double = 20.0, double = 0.05);
     // Nc Histograms ()
     void Nc_Histogram(std::string);
+    // Structure Factor Calculation
+    void SQ(std::string, double = 20.0, double = 0.1571);
     // PAD Histograms ()
     void PAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors
