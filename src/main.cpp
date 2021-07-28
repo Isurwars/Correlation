@@ -43,6 +43,7 @@ std::string _bond_file_name_ = "";
 bool _bond_in_file_  = false;
 double _r_cut_       = 20.0;
 double _bin_w_       = 0.05;
+double _q_bin_w_     = 0.15707963;
 double _bond_par_    = 1.3;
 double _angle_bin_w_ = 1.0;
 
@@ -118,7 +119,7 @@ void PrintHelp()
 
 void ArgParser(int argc, char ** argv)
 {
-    const char * const short_opts = "a:b:hi:o:r:w";
+    const char * const short_opts = "a:b:hi:o:r:w:";
     const option long_opts[]      = {
         { "angle_bin_width", required_argument, nullptr, 'a' },
         { "bond_parameter",  required_argument, nullptr, 'b' },
@@ -187,14 +188,13 @@ void ArgParser(int argc, char ** argv)
                 }
                 break;
             case 'w': // -w or -- bin_width
-
                 try{
                     _bin_w_ = std::stof(optarg);
                 }
                 catch (const std::exception& e) {
-                    std::cout << "Invalid input: '"
+                    std::cout << "Invalid input argument: '"
                               << optarg
-                              << "' in bin_width parameter 'w' "
+                              << "' in bin_width parameter '-w' "
                               << "(Real number expected)."
                               << std::endl;
                     exit(1);

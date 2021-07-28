@@ -397,7 +397,7 @@ clean-local: clean-test
 ###################################################################
 ## Create pristine directories to match exactly distributed files
 ###################################################################
-cleanall: distclean
+clean-all: distclean
 	@rm -f config.status config.log configure~
 	@rm -rf autom4te.cache/
 	@rm -f aclocal.m4 Makefile

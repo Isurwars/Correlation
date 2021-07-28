@@ -1187,7 +1187,7 @@ clean-local: clean-test
 
 ###################################################################
 ###################################################################
-cleanall: distclean
+clean-all: distclean
 	@rm -f config.status config.log configure~
 	@rm -rf autom4te.cache/
 	@rm -f aclocal.m4 Makefile

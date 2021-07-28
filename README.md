@@ -1,8 +1,8 @@
-# **Correlation**: An Analyzing Tool for Liquids and for Amorphous Solids
 ![](Images/Banner.png)
-[![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288)
+# **Correlation**: An Analysis Tool for Liquids and for Amorphous Solids
+[![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288)[![Version]( https://img.shields.io/badge/version-1.0.0(RC6)-green)]( https://img.shields.io/badge/version-1.0.0(RC6)-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 
-**Correlation** is an analyzing tool of correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAAMPS(*.XYZ),etc...  
+**Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...  
 
 ## Usage
 ---
@@ -15,7 +15,7 @@
     		-*.CAR   Materials Studio structure file.
     		-*.CELL  CASTEP structure file.
     		-*.DAT   ONETEP structure file.
-    		-*.XYZ   LAAMPS structure file.
+    		-*.XYZ   LAMMPS structure file.
 
     	OPTIONS:
     		HELP OPTIONS
@@ -98,7 +98,7 @@ pacman -S automake autoconf libtool
 #### Unix
 ---
 
-The code was tested with in 18.04, Debian 8.11 and MX Linux 19.3 but it should work on other distros.
+The code was tested with in Ubuntu 18.04, Debian 8.11 and MX Linux 19.3 but it should work on other distros.
 
 Installing GCC:
 
@@ -129,7 +129,7 @@ brew install automake autoconf libtool
 ### Installing **Correlation**
 ---
 
-For compiling you should have GC or Clang compilers, and GNU Autotools correctly installed on the system.
+For compiling you should have GCC or Clang compilers, and GNU Autotools correctly installed on the system.
 
 Some systems may require the configure script to have the execute permission:
 
@@ -145,7 +145,7 @@ Compile the code with make command:
 ```
 make
 ```
-Install the software in the standar binary location:
+Install the software in the standard binary location:
 ```
 make install
 ```
@@ -185,7 +185,7 @@ If the test are executed successfully several message like this one should appea
 " Test 3: rPDF (G_) successfully calculated."
 "----------------------------------------------------------"
 ```
-Five result(s) file(s) should be generated in the same directory as the input file(aPd.cell) as Coma Separeted Values files (*.CSV).
+Five result(s) file(s) should be generated in the same directory as the input file(aPd.cell) as Comma Separeted Values files (*.CSV).
 
 1. Pair Distribution Function [**g**] ("*_g.CSV").
 2. Radial Distribution Function [**J**] ("*_J.CSV").
@@ -193,7 +193,7 @@ Five result(s) file(s) should be generated in the same directory as the input fi
 4. Coordination Number [**Nc**] ("*_Nc.CSV").
 5. Plane Angle Distribution [**PAD**] ("*_PAD.CSV").
 
-These Coma Separated Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...
+These Comma Separated Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...
 
 For example:
 
@@ -237,11 +237,24 @@ make clean-all
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+# Planned future features
+
+We will continue to support and enrich the software in the foreseeable future. Here we list the features planned to be added in the future:
+
+*	Support for additional output files, like hdf5 standard.
+
+*	Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
+
+*	Inclusion of structure factors and x-ray diffraction, to facilitate the comparison with experimental results.
+
+*	Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
+
 
 # Acknowledgments
 
-I.R. acknowledge PAPIIT, DGAPA-UNAM for his posdoctoral fellowship.
+I.R. acknowledge PAPIIT, DGAPA-UNAM for his postdoctoral fellowship.
 D.H.R. acknowledge Consejo Nacional de Ciencia y Tecnología (CONACyT) for supporting his graduate studies.
 A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617 and IN116520.
 M. T. Vázquez and O. Jiménez provided the information requested.

@@ -1,5 +1,5 @@
 ---
-title: 'Correlation: An Analyzing Tool for Liquids and for Amorphous Solids'
+title: 'Correlation: An Analysis Tool for Liquids and for Amorphous Solids'
 tags:
   - C++
   - Materials

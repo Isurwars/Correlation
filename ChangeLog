@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0 rc6] - 2021-07-28
+- Added Contributing guidelines.
+- Added Code of Conduct.
+- Fixed several typos in the README and paper.
+- Fixed a bug in Bin Width option (-w, --bin_width).
+- Fixed the command "make clean-all" to match the README.
+
 ## [1.0.0 rc5] - 2021-07-23
 - Several Typos in the project were corrected.
 - Added units to the output files.
