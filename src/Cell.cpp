@@ -642,6 +642,29 @@ void Cell::Nc_Histogram(std::string filename)
     out_file2.close();
 }// Cell::Nc_histogram
 
+void Cell::SQ(std::string filename, double r_cut, double q_bin_width)
+{
+    int n_, m_, i, j, col;
+    int n = this->elements.size();
+    std::string header;
+
+    n_ = n * n + 1;
+    m_ = this->G[0].size();
+
+    /*
+     * The structure factor S(q) is calculated with:
+     * S(q) = 1 + 4*pi*rho_0*(q^-1)*\int{ dr r*sin(qr)*[g(r) - 1]
+     * or S(q) = 1 + (q^{-1})*\int{dr sin(q * r) * G(r)}
+     */
+
+
+    std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
+    // Fill the q values of the histogram
+    for (i = 0; i < m_; i++) {
+        temp_hist[0][i] = (i + 0.5) * q_bin_width;
+    }
+}// Cell::SQ
+
 void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
     int n_, m_, i, j, k, h, col, row;
