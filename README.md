@@ -1,6 +1,6 @@
 ![](Images/Banner.png)
 # **Correlation**: An Analysis Tool for Liquids and for Amorphous Solids
-[![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288)[![Version]( https://img.shields.io/badge/version-1.0.0(RC6)-green)]( https://img.shields.io/badge/version-1.0.0(RC6)-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
+[![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288) [![Version]( https://img.shields.io/badge/version-1.0.0(RC6)-green)]( https://img.shields.io/badge/version-1.0.0(RC6)-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 
 **Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...  
 
