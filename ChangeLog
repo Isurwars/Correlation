@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0 rc7] - 2021-08-01
+- Fixed a bug in reduced Pair Distribution Function (rPDF) (G(r))
+  in alloys (pure element structures unaffected).
+- Added weighing to the calculated properties, related to the above bug.
+- Added units to Comma Separated Values (CSV) files.
+- Actualized the test archives to match the new headings with units.
+
+
 ## [1.0.0 rc6] - 2021-07-28
 - Added Contributing guidelines.
 - Added Code of Conduct.
