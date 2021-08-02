@@ -16,6 +16,8 @@ public:
     std::list<Atom> atoms;
     // List of elements in Cell
     std::vector<std::string> elements;
+    // List with the number of atoms of each kind of elements in Cell
+    std::vector<int> element_numbers;
     // Matrix of Bond-lengths
     std::vector<std::vector<double> > bond_length;
     // 3D Tensor of Distances

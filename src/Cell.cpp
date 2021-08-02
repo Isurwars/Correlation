@@ -112,11 +112,15 @@ void Cell::CorrectPositions()
     int i_, j_, k_, m;
     std::array<double, 3> aux_pos;
     std::list<Atom>::iterator MyAtom;
+    // Store the number of atoms per element
+    std::vector<int> temp_num_atoms(this->elements.size(), 0);
+
 
     for (MyAtom = this->atoms.begin();
       MyAtom != this->atoms.end();
       MyAtom++)
     {
+        temp_num_atoms[MyAtom->element_id]++;
         aux_pos = MyAtom->position;
         k       = aux_pos[2] / this->v_c_[2];
         for (m = 0; m < 3; m++) {
@@ -147,6 +151,8 @@ void Cell::CorrectPositions()
             MyAtom->position[m] -= (i_ * this->v_a_[m] + j_ * this->v_b_[m] + k_ * this->v_c_[m]);
         }
     }
+
+    this->element_numbers = temp_num_atoms;
 } // Cell::CorrectPositions
 
 // Correct the fractional positions to absolute positions
@@ -476,6 +482,12 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     m_ = ceil(r_cut / bin_width);
     n_ = n * (n + 1) / 2 + 1;
 
+    /*
+     * w_ij is the weighting factor for the partial of G_ij
+     * w_ij = (#atoms_i * #atoms_j)/total_number_atoms^2
+     */
+    std::vector<double> w_ij(n_, 1.0);
+
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the r values of the histogram
     for (i = 0; i < m_; i++) {
@@ -554,6 +566,8 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
         for (j = i; j < n; j++) {
             header = this->elements[i] + "-" + this->elements[j] + ",";
             out_file2 << std::setw(11) << header;
+            w_ij[i + j + 1] = 2.0 * this->element_numbers[i] * this->element_numbers[j] / ( num_atoms * num_atoms);
+            if (i == j) w_ij[i + j + 1] *= 0.5;
         }
     }
     out_file2 << std::endl << std::fixed;
@@ -573,7 +587,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 
     for (col = 1; col < n_; col++) {
         for (row = 1; row < m_; row++) {
-            temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row] * (temp_hist[col][row] - 1);
+            temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row] * (temp_hist[col][row] - w_ij[col]);
         }
     }
 
@@ -624,7 +638,7 @@ void Cell::Nc_Histogram(std::string filename)
 
     std::ofstream out_file2(filename + "_Nc.csv");
     std::setprecision(6);
-    out_file2 << std::setw(13) << "Number (),";
+    out_file2 << std::setw(13) << "Number (#),";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             header = this->elements[j] + " around " + this->elements[i] + ",";
