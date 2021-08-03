@@ -18,6 +18,8 @@ public:
     std::vector<std::string> elements;
     // List with the number of atoms of each kind of elements in Cell
     std::vector<int> element_numbers;
+    // List of weights for partials funcions
+    std::vector<double> w_ij;
     // Matrix of Bond-lengths
     std::vector<std::vector<double> > bond_length;
     // 3D Tensor of Distances

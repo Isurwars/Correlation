@@ -291,6 +291,13 @@ int main(int argc, char ** argv)
     MyCell.Nc_Histogram(_out_file_name_);
 
     /*
+     * This function calculate S(Q) as the Fourier Transform of G(r).
+     * The _r_cut_ parameter is the cutoff distance in r-space,
+     * the _q_bin_w_ parameter is the bin width to be used in q-space.
+     */
+    MyCell.SQ(_out_file_name_, _r_cut_, _q_bin_w_);
+
+    /*
      * This function uses the angles to calculate the PAD.
      * The theta_max parameter is the maximum angle to compute,
      * the _bin_w_ parameter is the bin width to be used.
