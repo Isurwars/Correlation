@@ -16,7 +16,7 @@ test1:
 	@echo "--------------------------------------------------"
 	@echo " Running test 1: (Crystalline Silicon)"
 	@echo "--------------------------------------------------"
-	$(EXE) $(TST_DIR)/test_1/xSi.car
+	$(EXE) -a 0.1 $(TST_DIR)/test_1/xSi.car
 	@diff $(TST_DIR)/test_1/xSi_G_.csv $(TST_DIR)/test_1/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -73,7 +73,7 @@ test2:
 	@echo "--------------------------------------------------"
 	@echo " Running test 2 : (Graphene Single-Layer)"
 	@echo "--------------------------------------------------"
-	$(EXE) $(TST_DIR)/test_2/Graphene.car
+	$(EXE) -b 1.3 $(TST_DIR)/test_2/Graphene.car
 	@diff $(TST_DIR)/test_2/Graphene_G_.csv $(TST_DIR)/test_2/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -131,7 +131,7 @@ test3:
 	@echo "--------------------------------------------------"
 	@echo " Running test 3 : (Amorphous Palladium)"
 	@echo "--------------------------------------------------"
-	$(EXE) $(TST_DIR)/test_3/aPd.cell
+	$(EXE) -q 0.1 $(TST_DIR)/test_3/aPd.cell
 	@diff $(TST_DIR)/test_3/aPd_G_.csv $(TST_DIR)/test_3/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -247,7 +247,7 @@ test5:
 	@echo "--------------------------------------------------"
 	@echo " Running test 5 : (Liquid Bismuth)\n"
 	@echo "--------------------------------------------------"
-	$(EXE) $(TST_DIR)/test_5/lBi.car
+	$(EXE) -w 0.02 $(TST_DIR)/test_5/lBi.car
 	@diff $(TST_DIR)/test_5/lBi_G_.csv $(TST_DIR)/test_5/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -305,7 +305,7 @@ test6:
 	@echo "--------------------------------------------------"
 	@echo " Running test 6 : (3000+ atoms)\n"
 	@echo "--------------------------------------------------"
-	$(EXE) $(TST_DIR)/test_6/aPdH_3144.car
+	$(EXE) -r 30.0 $(TST_DIR)/test_6/aPdH_3144.car
 	@diff $(TST_DIR)/test_6/aPdH_3144_G_.csv $(TST_DIR)/test_6/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \

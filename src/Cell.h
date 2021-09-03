@@ -64,7 +64,7 @@ public:
     // Nc Histograms ()
     void Nc_Histogram(std::string);
     // Structure Factor Calculation
-    void SQ(std::string, double = 20.0, double = 0.1571);
+    void SQ(std::string, double = 0.1571, double = 0.05, double = 20.0);
     // PAD Histograms ()
     void PAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors

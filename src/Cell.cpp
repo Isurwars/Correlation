@@ -14,7 +14,6 @@
 #include "Cell.h"
 #include "Constants.h"
 
-
 /*
  * Generic function to find if an element of any type exists in a vector,
  * if true, then returns the index.
@@ -23,6 +22,7 @@ template <typename T>
 std::pair<bool, int> findInVector(const std::vector<T> & vecOfElements, const T  & element)
 {
     std::pair<bool, int> result;
+
     // Find given element in vector
     auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
 
@@ -661,12 +661,13 @@ void Cell::Nc_Histogram(std::string filename)
     out_file2.close();
 }// Cell::Nc_histogram
 
-void Cell::SQ(std::string filename, double r_cut, double q_bin_width)
+void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut)
 {
     int n_, m_, i, j, row, col;
     int n = this->elements.size();
     std::string header;
-    double Trapz = 0.0;
+    double Trapz     = 0.0;
+    double num_atoms = this->atoms.size();
 
     n_ = this->G.size();
     m_ = this->G[0].size();
@@ -680,14 +681,19 @@ void Cell::SQ(std::string filename, double r_cut, double q_bin_width)
 
     // Fill the q values of the histogram
     for (i = 0; i < m_; i++) {
-        temp_S[0][i] = (i + 0.0) * q_bin_width;
+        temp_S[0][i] = 1.0 + (i + 0.0) * q_bin_width;
     }
+    double aux = 4 * constants::pi * this->atoms.size() / this->volume;
 
     /*
      * Double loop on q (rows) and G_ij (cols)
      */
-
     for (col = 1; col < n_; col++) {
+        Trapz = 0.0;
+        for (i = 1; i < m_; i++) {
+            Trapz += this->G[col][i] / this->G[0][i];
+        }
+        temp_S[col][0] = this->w_ij[col] + Trapz * bin_width;
         for (row = 1; row < m_; row++) {
             /*
              * Integration with Trapezoidal_rule
@@ -697,7 +703,7 @@ void Cell::SQ(std::string filename, double r_cut, double q_bin_width)
                 Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
             }
             Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
-            Trapz *= q_bin_width / temp_S[0][row];
+            Trapz *= bin_width / temp_S[0][row];
             temp_S[col][row] = this->w_ij[col] + Trapz;
         }
     }
@@ -790,7 +796,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
 
     this->f_theta = temp_hist;
     std::ofstream out_file(filename + "_PAD.csv");
-    std::setprecision(6);
+    std::setprecision(5);
     out_file << std::setw(13) << "theta (°),";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
