@@ -2,7 +2,16 @@
 # **Correlation**: An Analysis Tool for Liquids and for Amorphous Solids
 [![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288)[![Version]( https://img.shields.io/badge/version-1.0.0(RC6)-green)]( https://img.shields.io/badge/version-1.0.0(RC6)-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 
-**Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...  
+**Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...
+
+This program calculates the main correlation functions of a material:
+ - Radial Distribution Function (J(r)).
+ - Pair Distribution Function (g(r)).
+ - Reduced Pair Distribution Function (G(r)).
+ - Coordination Number (CN).
+ - Plane-Angle Distribution (PAD).
+ - Structure Factor (S(Q)).
+
 
 ## Usage
 ---
@@ -30,6 +39,10 @@
     				above this PBC value can be affected by periodic interactions.		
     			-w, --bin_width
     				Width of the histograms for g(r) and J(r), the default is 0.05 nm.
+
+        STRUCTURE FACTOR OPTIONS:
+          -q, --q_bin_width
+            Width of the histograms for S(Q), the default is 0.157079 nm^()-1.)
 
     		BOND-ANGLE OPTIONS:
     			-a, --angle_bin_width

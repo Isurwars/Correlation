@@ -17,8 +17,10 @@ All notable changes to this project will be documented in this file.
   -i was already in test 4,
   -w in test 5,
   -r in test 6.
-  - Fixed padding in output files (purely cosmetic).
-  - Fixed Tests to match new padding and options (see above).
+- Fixed padding in output files (purely cosmetic).
+- Fixed Tests to match new padding and options (see above).
+- Update to documentation: README.md, paper.md and command line help
+  to reflect current functionality.
 
 ## [1.0.0 rc7] - 2021-08-01
 - Fixed a bug in reduced Pair Distribution Function (rPDF) (G(r))

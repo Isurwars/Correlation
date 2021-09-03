@@ -66,9 +66,8 @@ The structure factor is one of the most useful tools in analyzing the scattering
 The Fourier transform of the scattering intensity given by the structure factor $S(Q)$, yields the pair distribution function (PDF) $g(r)$ defined by:
 
 \begin{equation}\label{eq:PDF}
-G(r) = 4\pi\rho_0 r(g(r)-1)=\frac{2}{\pi}\int_{0}^{\infty} Q[S(Q)-1]sin(Qr)dQ,
+g(r) - 1= \frac{1}{2 \pi^2 \rho_0 r}\int_{0}^{\infty} Q[S(Q)-1]sin(Qr)dQ,
 \end{equation}
-where $G(r)$ is the reduced pair distribution function (rPDF) which will be discussed next.
 
 The pair distribution function could also be seen like a distance map inside the material, the $g(r)$ function gives how feasible is finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF} [@ziman_models_1979].
 
@@ -76,7 +75,7 @@ The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 
 
 ### Reduced pair distribution function $G(r)$
 
-One of the most widely used pair correlation function is the reduced pair distribution function. This is defined as $G(r) = 4\pi \rho_0 r (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
+One of the most widely used pair correlation function is the reduced pair distribution function (rPDF), also known in the literature as differential pair distribution function ($D(r)$). This function is defined as $D(r) = G(r) = 4\pi \rho_0 r (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
 
 ![Schematic depiction of the first and second neighbor’s coordination spheres for an amorphous metallic alloy and the corresponding pair distribution function. Design inspired by J. M. Ziman, Models of disorder (Cambridge University Press, 1979). \label{fig:RDF}](./Images/Fig1.png){ width=75% }
 

@@ -41,6 +41,7 @@ std::string _in_file_name_   = "";
 std::string _out_file_name_  = "";
 std::string _bond_file_name_ = "";
 bool _bond_in_file_  = false;
+bool _normalize_     = false;
 double _r_cut_       = 20.0;
 double _bin_w_       = 0.05;
 double _q_bin_w_     = 0.1570796326;
@@ -54,9 +55,11 @@ void PrintHelp()
       "  This program calculates the main correlation functions of a material:\n"
       "    - Radial Distribution Function (J(r)).\n"
       "    - Pair Distribution Function (g(r)).\n"
+      "    - Reduced Pair Distribution Function (G(r)).\n"
       "    - Coordination Number (CN).\n"
       "    - Plane-Angle Distribution (PAD).\n\n"
-      "USAGE:\n"
+      "    - Structure Factor (S(Q)).\n"
+      "USAGE: correlation [OPTIONS] [input_file]\n"
       "  The minimal argument is a structure file, this program requires a file\n"
       "  that contains atom positions, crystal structure and composition.\n"
       "  Supported structure files are:\n"
