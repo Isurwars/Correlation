@@ -473,20 +473,39 @@ void Cell::PAD(bool degree)
     this->angles = temp_pad;
 }// Cell::PAD
 
-void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
+void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width, bool normalize)
 {
     int n_, m_, i, j, col, row;
     int n = this->distances.size();
     std::string header;
+    double num_atoms = this->atoms.size();
 
     m_ = ceil(r_cut / bin_width);
     n_ = n * (n + 1) / 2 + 1;
 
     /*
      * w_ij is the weighting factor for the partial of G_ij
+     * There are to normalization commonly used:
+     *     - HHS(Atlas) normalization, commonly used by
+     *       experimental scientist.
+     *     - Ashcroft - Waseda normalization, commonly
+     *       used by theoretical scientist.
+     * By default we use Ashcroft normalization:
+     * w_ij = c_i * c_j (Product of the numeric concentrations)
      * w_ij = (#atoms_i * #atoms_j)/total_number_atoms^2
+     * We offer the option to normalize to HHS by using the
+     * -n, --normalize option.
      */
     std::vector<double> temp_w_ij(n_, 1.0);
+
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            temp_w_ij[i + j + 1] = 2.0 * this->element_numbers[i] * this->element_numbers[j] / ( num_atoms * num_atoms);
+            if (i == j) temp_w_ij[i + j + 1] *= 0.5;
+        }
+    }
+    this->w_ij = temp_w_ij;
+
 
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the r values of the histogram
@@ -513,9 +532,12 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     /*
      * Scale the histograms by the factor: 1 / (#atoms * bin_width)
      */
-    double num_atoms = this->atoms.size();
-    double w_factor  = num_atoms * bin_width;
+
+    double w_factor = num_atoms * bin_width;
     for (i = 1; i < n_; i++) {
+        if (normalize) {
+            w_factor = num_atoms * bin_width * this->w_ij[i];
+        }
         std::transform(temp_hist[i].begin(),
           temp_hist[i].end(),
           temp_hist[i].begin(),
@@ -562,15 +584,16 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     std::ofstream out_file2(filename + "_g.csv");
     std::setprecision(6);
     out_file2 << std::setw(13) << "r (Å),";
+
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
             header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
             out_file2 << std::setw(13) << header;
-            temp_w_ij[i + j + 1] = 2.0 * this->element_numbers[i] * this->element_numbers[j] / ( num_atoms * num_atoms);
-            if (i == j) temp_w_ij[i + j + 1] *= 0.5;
+            if (normalize) {
+                temp_w_ij[i + j + 1] = 1.0;
+            }
         }
     }
-    this->w_ij = temp_w_ij;
     out_file2 << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
@@ -661,7 +684,7 @@ void Cell::Nc_Histogram(std::string filename)
     out_file2.close();
 }// Cell::Nc_histogram
 
-void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut)
+void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize)
 {
     int n_, m_, i, j, row, col;
     int n = this->elements.size();
@@ -671,6 +694,10 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
 
     n_ = this->G.size();
     m_ = this->G[0].size();
+    std::vector<double> temp_w_ij(n_, 1.0);
+    if (!normalize) {
+        temp_w_ij = this->w_ij;
+    }
 
     /*
      * The structure factor S(q) is calculated with:
@@ -693,7 +720,7 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
         for (i = 1; i < m_; i++) {
             Trapz += this->G[col][i] / this->G[0][i];
         }
-        temp_S[col][0] = this->w_ij[col] + Trapz * bin_width;
+        temp_S[col][0] = temp_w_ij[col] + Trapz * bin_width;
         for (row = 1; row < m_; row++) {
             /*
              * Integration with Trapezoidal_rule
@@ -704,7 +731,7 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
             }
             Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
             Trapz *= bin_width / temp_S[0][row];
-            temp_S[col][row] = this->w_ij[col] + Trapz;
+            temp_S[col][row] = temp_w_ij[col] + Trapz;
         }
     }
 

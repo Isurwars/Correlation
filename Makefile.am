@@ -368,6 +368,15 @@ test7:
 	@echo " Stress Test successfully completed."
 	@echo "--------------------------------------------------"
 
+test8:
+	@echo "--------------------------------------------------"
+	@echo " Stress Test 2: (Amorphous Palladium Gold Hydrogen)"
+	@echo "--------------------------------------------------"
+	$(EXE) -r 40.0 $(TST_DIR)/test_8/aPdAuH-stress.car
+	@echo "--------------------------------------------------"
+	@echo " Stress Test 2 successfully completed."
+	@echo "--------------------------------------------------"
+
 
 ###################################################################
 ## Clean testing mess to match exactly distributed files

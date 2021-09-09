@@ -71,6 +71,9 @@ void PrintHelp()
       "      -h, --help\n"
       "        Display this help text.\n\n"
       "    RADIAL OPTIONS:\n"
+      "      -n, --normalize"
+      "        Used to switch between weighted partials (default), or normalize"
+      "        all the partials to 1 when r tends to inf."
       "      -r, --r_cut\n"
       "        Cutoff radius in the calculation of g(r), G(r) and J(r). The default\n"
       "        radius it's set to 2 nm. The maximum recomended radius is the same as\n"
@@ -125,12 +128,13 @@ void PrintHelp()
 
 void ArgParser(int argc, char ** argv)
 {
-    const char * const short_opts = "a:b:hi:o:q:r:w:";
+    const char * const short_opts = "a:b:hi:no:q:r:w:";
     const option long_opts[]      = {
         { "angle_bin_width", required_argument, nullptr, 'a' },
         { "bond_parameter",  required_argument, nullptr, 'b' },
         { "help",            no_argument,       nullptr, 'h' },
         { "in_bond_file",    required_argument, nullptr, 'i' },
+        { "normalize",       no_argument,       nullptr, 'n' },
         { "out_file",        required_argument, nullptr, 'o' },
         { "q_bin_width",     required_argument, nullptr, 'q' },
         { "r_cut",           required_argument, nullptr, 'r' },
@@ -177,6 +181,9 @@ void ArgParser(int argc, char ** argv)
             case 'i': // -i or --in_bond_file
                 _bond_in_file_   = true;
                 _bond_file_name_ = optarg;
+                break;
+            case 'n': // -n or --normalize
+                _normalize_ = true;
                 break;
             case 'o': // -o or --out_file
                 _out_file_name_ = optarg;
@@ -307,7 +314,7 @@ int main(int argc, char ** argv)
      * the _bin_w_ parameter is the bin width to be used.
      */
     std::cout << "Writing output files: " << _out_file_name_ << std::endl;
-    MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
+    MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
     MyCell.Nc_Histogram(_out_file_name_);
 
     /*
@@ -315,7 +322,7 @@ int main(int argc, char ** argv)
      * The _r_cut_ parameter is the cutoff distance in r-space,
      * the _q_bin_w_ parameter is the bin width to be used in q-space.
      */
-    MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _r_cut_);
+    MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _r_cut_, _normalize_);
 
     /*
      * This function uses the angles to calculate the PAD.

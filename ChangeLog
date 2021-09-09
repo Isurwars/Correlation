@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0 rc9] 2021-06-09
+- Added test 8, an structure of amorphous Palladium-Gold-Hydrogen,
+  the structure was provided by Alejandro de Leon and Salvador Villareal.
+  This new test should take at least 1 hour and require more RAM.
+- Added new option '-n'/"--normalize", this parameter change between
+  weighted partials (defualt), or normalized partials.
+
 ## [1.0.0 rc8] - 2021-09-02
 - Temporal Fix to S(Q) weird behavior for small Q. (0<=Q<1)
   Because of the abnormal results for small Q, and in the process of
