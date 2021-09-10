@@ -11,23 +11,27 @@ authors:
     orcid: 0000-0002-4359-2742
     affiliation: 1
   - name: Renela M. Valladares
+    orcid: 0000-0002-3819-2226
     affiliation: 2
   - name: Alexander Valladares
     affiliation: 2
   - name: David Hinojosa-Romero
+    orcid: 0000-0002-8686-965X
     affiliation: 1
   - name: Ulises Santiago
+    orcid: 0000-0003-2259-5984
     affiliation: 3
   - name: Ariel A. Valladares
+    orcid: 0000-0003-1505-2244
     affiliation: 1
 affiliations:
- - name: Instituto de Investigaciones en Materiales, Universidad Nacional Autónoma de México
+ - name:  Departamento de Materia Condensada, Instituto de Investigaciones en Materiales, Universidad Nacional Autónoma de México, Coyoacán, Ciudad de México, México.
    index: 1
- - name: Facultad de Ciencias, Universidad Nacional Autónoma de México
+ - name:  Departamento de Física, Facultad de Ciencias, Universidad Nacional Autónoma de México, Coyoacán, Ciudad de México, México.
    index: 2
- - name: Department of Computational and Systems Biology, University of Pittsburgh
+ - name: Department of Computational and Systems Biology, University of Pittsburgh School of Medicine, Pittsburgh, Pennsylvania, USA.
    index: 3
-date: 30 November 2020
+date: 09 September 2021
 bibliography: paper.bib
 csl: aps.csl
 ---
@@ -66,9 +70,8 @@ The structure factor is one of the most useful tools in analyzing the scattering
 The Fourier transform of the scattering intensity given by the structure factor $S(Q)$, yields the pair distribution function (PDF) $g(r)$ defined by:
 
 \begin{equation}\label{eq:PDF}
-G(r) = 4\pi\rho_0 r(g(r)-1)=\frac{2}{\pi}\int_{0}^{\infty} Q[S(Q)-1]sin(Qr)dQ,
+g(r) - 1= \frac{1}{2 \pi^2 \rho_0 r}\int_{0}^{\infty} Q[S(Q)-1]sin(Qr)dQ,
 \end{equation}
-where $G(r)$ is the reduced pair distribution function (rPDF) which will be discussed next.
 
 The pair distribution function could also be seen like a distance map inside the material, the $g(r)$ function gives how feasible is finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF} [@ziman_models_1979].
 
@@ -76,7 +79,7 @@ The PDF is normalized so that, as $r \to \infty$, $g(r) \to 1$, Also, as $r \to 
 
 ### Reduced pair distribution function $G(r)$
 
-One of the most widely used pair correlation function is the reduced pair distribution function. This is defined as $G(r) = 4\pi \rho_0 r (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
+One of the most widely used pair correlation function is the reduced pair distribution function (rPDF), also known in the literature as differential pair distribution function ($D(r)$). This function is defined as $G(r) = 4\pi \rho_0 r (g(r)-1)$. From this definition, and the previously discussed tendency at large $r$ of the PDF, it's clear that the reduced pair distribution function (rPDF) oscillates around zero as $r \to \infty$. It also becomes evident that as $r \to 0$ (for $r$ smaller than the closest pair of atoms), the rPDF behaves like $-4\pi \rho_0$.
 
 ![Schematic depiction of the first and second neighbor’s coordination spheres for an amorphous metallic alloy and the corresponding pair distribution function. Design inspired by J. M. Ziman, Models of disorder (Cambridge University Press, 1979). \label{fig:RDF}](./Images/Fig1.png){ width=75% }
 
@@ -106,13 +109,12 @@ In particular, the Plane Angle Distribution, also known as the Bond Angle Distri
 
 # Benchmarks
 
-![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between **Correlation** and Forcite as can be seen in all PDFs. Figures (a) to (d) indicate that the coincidence in the two results overlap completely. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
-
-
 In order to assess the performance of **Correlation**, we calculated the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compared the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016]; to test **Correlation** in amorphous and liquid materials we selected amorphous palladium [@rodriguez_emergence_2019], amorphous palladium hydride [@rodriguez_calculo_2019] and liquid bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we chose to compare them with the code developed by U. Santiago within our group. [@santiago_simulacion_2011].
 
 
 The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as tests 1 to 5. The last structure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark memory and CPU performance in a structure with thousands of atoms.
+
+![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between **Correlation** and Forcite as can be seen in all PDFs. Figures (a) to (d) indicate that the coincidence in the two results overlap completely. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
 
 # Conclusion & Perspective
 
