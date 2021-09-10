@@ -34,8 +34,8 @@ This program calculates the main correlation functions of a material:
     				Display this help text.
 
     		RADIAL OPTIONS:
-       -n, --normalize
-        Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
+          -n, --normalize
+            Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
     			-r, --r_cut
     				Cutoff radius in the calculation of g(r), G(r) and J(r). The default
     				radius it's set to 2 nm. The maximum recommended radius is the same as
