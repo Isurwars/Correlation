@@ -1,6 +1,7 @@
 ![](Images/Banner.png)
 # **Correlation**: An Analysis Tool for Liquids and for Amorphous Solids
-[![DOI](https://zenodo.org/badge/266740288.svg)](https://zenodo.org/badge/latestdoi/266740288)[![Version]( https://img.shields.io/badge/version-1.0.0(RC6)-green)]( https://img.shields.io/badge/version-1.0.0(RC6)-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5499455.svg)](https://doi.org/10.5281/zenodo.5499455)[![Version]( https://img.shields.io/badge/version-1.0.0-green)]( https://img.shields.io/badge/version-1.0.0-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 
 **Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...
 
@@ -32,9 +33,11 @@ This program calculates the main correlation functions of a material:
     				Display this help text.
 
     		RADIAL OPTIONS:
+          -n, --normalize
+            Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
     			-r, --r_cut
     				Cutoff radius in the calculation of g(r), G(r) and J(r). The default
-    				radius it's set to 2 nm. The maximum recomended radius is the same as
+    				radius it's set to 2 nm. The maximum recommended radius is the same as
     				the shortest length of the lattice parameters of the cell, anything
     				above this PBC value can be affected by periodic interactions.		
     			-w, --bin_width
