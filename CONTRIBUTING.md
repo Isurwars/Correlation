@@ -48,3 +48,8 @@ In case you have created a patch for an existing bug in **Correlation**, follow 
 
 ## License
 By contributing to **Correlation**, you agree that your contributions will be licensed under the MIT License.
+
+## Attribution
+
+This Contributing guidelines is adapted from the [Ruby on Rails](https://rubyonrails.org/) contributing guidelines available at
+[CONTRIBUTING.md](https://github.com/rails/rails/blob/main/CONTRIBUTING.md).

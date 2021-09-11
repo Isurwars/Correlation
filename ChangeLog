@@ -1,6 +1,42 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.0 rc9] 2021-06-09
+- Added test 8, an structure of amorphous Palladium-Gold-Hydrogen,
+  the structure was provided by Alejandro de Leon and Salvador Villareal.
+  This new test should take at least 1 hour and require more RAM.
+- Added new option '-n'/"--normalize", this parameter change between
+  weighted partials (default), or normalized partials.
+
+## [1.0.0 rc8] - 2021-09-02
+- Temporal Fix to S(Q) weird behavior for small Q. (0<=Q<1)
+  Because of the abnormal results for small Q, and in the process of
+  getting better results for small Q, we decided to remove the unreliable
+  information for this segment, now we report for Q above 1.0.
+- Added -q/--q_bin_width parameter in order to further personalize the
+  structure factor options.
+- Updated the "aPdH.cell" file, in order to correctly reflect the
+  structure of the article.
+- Added arguments to tests in the Makefile:
+  -a in test 1,
+  -b in test 2,
+  -q in test 3,
+  -i was already in test 4,
+  -w in test 5,
+  -r in test 6.
+- Fixed padding in output files (purely cosmetic).
+- Fixed Tests to match new padding and options (see above).
+- Update to documentation: README.md, paper.md and command line help
+  to reflect current functionality.
+
+## [1.0.0 rc7] - 2021-08-01
+- Fixed a bug in reduced Pair Distribution Function (rPDF) (G(r))
+  in alloys (pure element structures unaffected).
+- Added weighing to the calculated properties, related to the above bug.
+- Added units to Comma Separated Values (CSV) files.
+- Actualized the test archives to match the new headings with units.
+
+
 ## [1.0.0 rc6] - 2021-07-28
 - Added Contributing guidelines.
 - Added Code of Conduct.

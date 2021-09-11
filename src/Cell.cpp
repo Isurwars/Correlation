@@ -14,7 +14,6 @@
 #include "Cell.h"
 #include "Constants.h"
 
-
 /*
  * Generic function to find if an element of any type exists in a vector,
  * if true, then returns the index.
@@ -23,6 +22,7 @@ template <typename T>
 std::pair<bool, int> findInVector(const std::vector<T> & vecOfElements, const T  & element)
 {
     std::pair<bool, int> result;
+
     // Find given element in vector
     auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
 
@@ -112,11 +112,15 @@ void Cell::CorrectPositions()
     int i_, j_, k_, m;
     std::array<double, 3> aux_pos;
     std::list<Atom>::iterator MyAtom;
+    // Store the number of atoms per element
+    std::vector<int> temp_num_atoms(this->elements.size(), 0);
+
 
     for (MyAtom = this->atoms.begin();
       MyAtom != this->atoms.end();
       MyAtom++)
     {
+        temp_num_atoms[MyAtom->element_id]++;
         aux_pos = MyAtom->position;
         k       = aux_pos[2] / this->v_c_[2];
         for (m = 0; m < 3; m++) {
@@ -147,6 +151,8 @@ void Cell::CorrectPositions()
             MyAtom->position[m] -= (i_ * this->v_a_[m] + j_ * this->v_b_[m] + k_ * this->v_c_[m]);
         }
     }
+
+    this->element_numbers = temp_num_atoms;
 } // Cell::CorrectPositions
 
 // Correct the fractional positions to absolute positions
@@ -467,14 +473,39 @@ void Cell::PAD(bool degree)
     this->angles = temp_pad;
 }// Cell::PAD
 
-void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
+void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width, bool normalize)
 {
     int n_, m_, i, j, col, row;
     int n = this->distances.size();
     std::string header;
+    double num_atoms = this->atoms.size();
 
     m_ = ceil(r_cut / bin_width);
     n_ = n * (n + 1) / 2 + 1;
+
+    /*
+     * w_ij is the weighting factor for the partial of G_ij
+     * There are to normalization commonly used:
+     *     - HHS(Atlas) normalization, commonly used by
+     *       experimental scientist.
+     *     - Ashcroft - Waseda normalization, commonly
+     *       used by theoretical scientist.
+     * By default we use Ashcroft normalization:
+     * w_ij = c_i * c_j (Product of the numeric concentrations)
+     * w_ij = (#atoms_i * #atoms_j)/total_number_atoms^2
+     * We offer the option to normalize to HHS by using the
+     * -n, --normalize option.
+     */
+    std::vector<double> temp_w_ij(n_, 1.0);
+
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            temp_w_ij[i + j + 1] = 2.0 * this->element_numbers[i] * this->element_numbers[j] / ( num_atoms * num_atoms);
+            if (i == j) temp_w_ij[i + j + 1] *= 0.5;
+        }
+    }
+    this->w_ij = temp_w_ij;
+
 
     std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the r values of the histogram
@@ -501,9 +532,12 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
     /*
      * Scale the histograms by the factor: 1 / (#atoms * bin_width)
      */
-    double num_atoms = this->atoms.size();
-    double w_factor  = num_atoms * bin_width;
+
+    double w_factor = num_atoms * bin_width;
     for (i = 1; i < n_; i++) {
+        if (normalize) {
+            w_factor = num_atoms * bin_width * this->w_ij[i];
+        }
         std::transform(temp_hist[i].begin(),
           temp_hist[i].end(),
           temp_hist[i].begin(),
@@ -516,18 +550,18 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 
     std::ofstream out_file(filename + "_J.csv");
     std::setprecision(6);
-    out_file << std::setw(11) << "r (Å),";
+    out_file << std::setw(13) << "r (Å),";
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
-            header = this->elements[i] + "-" + this->elements[j] + ",";
-            out_file << std::setw(11) << header;
+            header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
+            out_file << std::setw(13) << header;
         }
     }
     out_file << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file << std::setw(10) << temp_hist[j][i] << ",";
+            out_file << std::setw(11) << temp_hist[j][i] << ",";
         }
         out_file << std::endl;
     }
@@ -549,18 +583,22 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 
     std::ofstream out_file2(filename + "_g.csv");
     std::setprecision(6);
-    out_file2 << std::setw(11) << "r (Å),";
+    out_file2 << std::setw(13) << "r (Å),";
+
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
-            header = this->elements[i] + "-" + this->elements[j] + ",";
-            out_file2 << std::setw(11) << header;
+            header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
+            out_file2 << std::setw(13) << header;
+            if (normalize) {
+                temp_w_ij[i + j + 1] = 1.0;
+            }
         }
     }
     out_file2 << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file2 << std::setw(10) << temp_hist[j][i] << ",";
+            out_file2 << std::setw(11) << temp_hist[j][i] << ",";
         }
         out_file2 << std::endl;
     }
@@ -568,12 +606,16 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 
     /*
      * We calclate G(r) with the definition:
-     * G(r) = 4 * pi * r * rho_0 * [g(r) - 1]
+     * G(r) = 4 * pi * r * rho_0 * [g(r) - 1];
+     *
+     * Weighted partials are calculated with:
+     * G_ij = 4 * pi * r * rho_0 * [g_ij(r) - w_ij]
      */
 
     for (col = 1; col < n_; col++) {
         for (row = 1; row < m_; row++) {
-            temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row] * (temp_hist[col][row] - 1);
+            temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row]
+              * (temp_hist[col][row] - temp_w_ij[col]);
         }
     }
 
@@ -581,18 +623,18 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width)
 
     std::ofstream out_file3(filename + "_G_.csv");
     std::setprecision(6);
-    out_file3 << std::setw(11) << "r (Å),";
+    out_file3 << std::setw(13) << "r (Å),";
     for (i = 0; i < n; i++) {
         for (j = i; j < n; j++) {
-            header = this->elements[i] + "-" + this->elements[j] + ",";
-            out_file3 << std::setw(11) << header;
+            header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
+            out_file3 << std::setw(13) << header;
         }
     }
     out_file3 << std::endl << std::fixed;
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file3 << std::setw(10) << temp_hist[j][i] << ",";
+            out_file3 << std::setw(11) << temp_hist[j][i] << ",";
         }
         out_file3 << std::endl;
     }
@@ -624,7 +666,7 @@ void Cell::Nc_Histogram(std::string filename)
 
     std::ofstream out_file2(filename + "_Nc.csv");
     std::setprecision(6);
-    out_file2 << std::setw(13) << "Number (),";
+    out_file2 << std::setw(13) << "Number (#),";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             header = this->elements[j] + " around " + this->elements[i] + ",";
@@ -642,27 +684,77 @@ void Cell::Nc_Histogram(std::string filename)
     out_file2.close();
 }// Cell::Nc_histogram
 
-void Cell::SQ(std::string filename, double r_cut, double q_bin_width)
+void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize)
 {
-    int n_, m_, i, j, col;
+    int n_, m_, i, j, row, col;
     int n = this->elements.size();
     std::string header;
+    double Trapz     = 0.0;
+    double num_atoms = this->atoms.size();
 
-    n_ = n * n + 1;
+    n_ = this->G.size();
     m_ = this->G[0].size();
+    std::vector<double> temp_w_ij(n_, 1.0);
+    if (!normalize) {
+        temp_w_ij = this->w_ij;
+    }
 
     /*
      * The structure factor S(q) is calculated with:
      * S(q) = 1 + 4*pi*rho_0*(q^-1)*\int{ dr r*sin(qr)*[g(r) - 1]
      * or S(q) = 1 + (q^{-1})*\int{dr sin(q * r) * G(r)}
      */
+    std::vector<std::vector<double> > temp_S(n_, std::vector<double>(m_, 0));
 
-
-    std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
     // Fill the q values of the histogram
     for (i = 0; i < m_; i++) {
-        temp_hist[0][i] = (i + 0.5) * q_bin_width;
+        temp_S[0][i] = 1.0 + (i + 0.0) * q_bin_width;
     }
+    double aux = 4 * constants::pi * this->atoms.size() / this->volume;
+
+    /*
+     * Double loop on q (rows) and G_ij (cols)
+     */
+    for (col = 1; col < n_; col++) {
+        Trapz = 0.0;
+        for (i = 1; i < m_; i++) {
+            Trapz += this->G[col][i] / this->G[0][i];
+        }
+        temp_S[col][0] = temp_w_ij[col] + Trapz * bin_width;
+        for (row = 1; row < m_; row++) {
+            /*
+             * Integration with Trapezoidal_rule
+             */
+            Trapz = 0.0;
+            for (i = 1; i < (m_ - 1); i++) {
+                Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
+            }
+            Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
+            Trapz *= bin_width / temp_S[0][row];
+            temp_S[col][row] = temp_w_ij[col] + Trapz;
+        }
+    }
+
+    this->S = temp_S;
+
+    std::ofstream out_file(filename + "_S_q.csv");
+    std::setprecision(6);
+    out_file << std::setw(13) << "q (1/Å),";
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            header = this->elements[i] + "-" + this->elements[j] + " (Å),";
+            out_file << std::setw(13) << header;
+        }
+    }
+    out_file << std::endl << std::fixed;
+
+    for (i = 0; i < m_; i++) {
+        for (j = 0; j < n_; j++) {
+            out_file << std::setw(11) << temp_S[j][i] << ",";
+        }
+        out_file << std::endl;
+    }
+    out_file.close();
 }// Cell::SQ
 
 void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
@@ -731,13 +823,13 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
 
     this->f_theta = temp_hist;
     std::ofstream out_file(filename + "_PAD.csv");
-    std::setprecision(6);
-    out_file << std::setw(11) << "theta (°),";
+    std::setprecision(5);
+    out_file << std::setw(13) << "theta (°),";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             for (k = j; k < n; k++) {
                 header = this->elements[j] + "-" + this->elements[i] + "-" + this->elements[k] + ",";
-                out_file << std::setw(11) << header;
+                out_file << std::setw(12) << header;
             }
         }
     }
@@ -745,7 +837,7 @@ void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_widt
 
     for (i = 0; i < m_; i++) {
         for (j = 0; j < n_; j++) {
-            out_file << std::setw(10) << temp_hist[j][i] << ",";
+            out_file << std::setw(11) << temp_hist[j][i] << ",";
         }
         out_file << std::endl;
     }

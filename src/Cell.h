@@ -16,6 +16,10 @@ public:
     std::list<Atom> atoms;
     // List of elements in Cell
     std::vector<std::string> elements;
+    // List with the number of atoms of each kind of elements in Cell
+    std::vector<int> element_numbers;
+    // List of weights for partials funcions
+    std::vector<double> w_ij;
     // Matrix of Bond-lengths
     std::vector<std::vector<double> > bond_length;
     // 3D Tensor of Distances
@@ -56,11 +60,11 @@ public:
     // Bond-Angle Calulation ()
     void PAD(bool = true);
     // RDF Histograms  (max distance between atoms, bin width)
-    void RDF_Histogram(std::string, double = 20.0, double = 0.05);
+    void RDF_Histogram(std::string, double = 20.0, double = 0.05, bool = false);
     // Nc Histograms ()
     void Nc_Histogram(std::string);
     // Structure Factor Calculation
-    void SQ(std::string, double = 20.0, double = 0.1571);
+    void SQ(std::string, double = 0.1571, double = 0.05, double = 20.0, bool = false);
     // PAD Histograms ()
     void PAD_Histogram(std::string, double = 180.0, double = 1.0);
     // Read Only Lattive Vectors

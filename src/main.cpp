@@ -41,9 +41,10 @@ std::string _in_file_name_   = "";
 std::string _out_file_name_  = "";
 std::string _bond_file_name_ = "";
 bool _bond_in_file_  = false;
+bool _normalize_     = false;
 double _r_cut_       = 20.0;
 double _bin_w_       = 0.05;
-double _q_bin_w_     = 0.15707963;
+double _q_bin_w_     = 0.1570796326;
 double _bond_par_    = 1.3;
 double _angle_bin_w_ = 1.0;
 
@@ -54,9 +55,11 @@ void PrintHelp()
       "  This program calculates the main correlation functions of a material:\n"
       "    - Radial Distribution Function (J(r)).\n"
       "    - Pair Distribution Function (g(r)).\n"
+      "    - Reduced Pair Distribution Function (G(r)).\n"
       "    - Coordination Number (CN).\n"
       "    - Plane-Angle Distribution (PAD).\n\n"
-      "USAGE:\n"
+      "    - Structure Factor (S(Q)).\n"
+      "USAGE: correlation [OPTIONS] [input_file]\n"
       "  The minimal argument is a structure file, this program requires a file\n"
       "  that contains atom positions, crystal structure and composition.\n"
       "  Supported structure files are:\n"
@@ -68,13 +71,19 @@ void PrintHelp()
       "      -h, --help\n"
       "        Display this help text.\n\n"
       "    RADIAL OPTIONS:\n"
+      "      -n, --normalize"
+      "        Used to switch between weighted partials (default), or normalize"
+      "        all the partials to 1 when r tends to infinity"
       "      -r, --r_cut\n"
       "        Cutoff radius in the calculation of g(r), G(r) and J(r). The default\n"
-      "        radius it's set to 2 nm. The maximum recomended radius is the same as\n"
+      "        radius it's set to 2 nm. The maximum recommended radius is the same as\n"
       "        shortest length of the periodic boundary conditions (PBC), anything\n"
       "        above this PBC value can be affected by periodic interactions.\n\n"
       "      -w, --bin_width\n"
       "        Width of the histograms for g(r) and J(r), the default is 0.05 nm.\n\n"
+      "    STRUCTURE FACTOR OPTIONS:\n"
+      "      -q, --q_bin_width\n"
+      "        Width of the histograms for S(Q), the default is 0.157079 nm^()-1.)\n\n"
       "    BOND-ANGLE OPTIONS:\n"
       "      -a, --angle_bin_width\n"
       "        Width of the histograms for the PAD, default set to 1.0°.\n\n"
@@ -119,13 +128,15 @@ void PrintHelp()
 
 void ArgParser(int argc, char ** argv)
 {
-    const char * const short_opts = "a:b:hi:o:r:w:";
+    const char * const short_opts = "a:b:hi:no:q:r:w:";
     const option long_opts[]      = {
         { "angle_bin_width", required_argument, nullptr, 'a' },
         { "bond_parameter",  required_argument, nullptr, 'b' },
         { "help",            no_argument,       nullptr, 'h' },
         { "in_bond_file",    required_argument, nullptr, 'i' },
+        { "normalize",       no_argument,       nullptr, 'n' },
         { "out_file",        required_argument, nullptr, 'o' },
+        { "q_bin_width",     required_argument, nullptr, 'q' },
         { "r_cut",           required_argument, nullptr, 'r' },
         { "bin_width",       required_argument, nullptr, 'w' },
         { nullptr,           no_argument,       nullptr, 0   }
@@ -171,8 +182,24 @@ void ArgParser(int argc, char ** argv)
                 _bond_in_file_   = true;
                 _bond_file_name_ = optarg;
                 break;
+            case 'n': // -n or --normalize
+                _normalize_ = true;
+                break;
             case 'o': // -o or --out_file
                 _out_file_name_ = optarg;
+                break;
+            case 'q': // -q or --q_bin_width
+                try{
+                    _q_bin_w_ = std::stof(optarg);
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Invalid input argument: '"
+                              << optarg
+                              << "' in q_bin_width parameter '-q' "
+                              << "(Real number expected)."
+                              << std::endl;
+                    exit(1);
+                }
                 break;
             case 'r': // -r ot --r_cut
                 try{
@@ -187,7 +214,7 @@ void ArgParser(int argc, char ** argv)
                     exit(1);
                 }
                 break;
-            case 'w': // -w or -- bin_width
+            case 'w': // -w or --bin_width
                 try{
                     _bin_w_ = std::stof(optarg);
                 }
@@ -287,8 +314,15 @@ int main(int argc, char ** argv)
      * the _bin_w_ parameter is the bin width to be used.
      */
     std::cout << "Writing output files: " << _out_file_name_ << std::endl;
-    MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_);
+    MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
     MyCell.Nc_Histogram(_out_file_name_);
+
+    /*
+     * This function calculate S(Q) as the Fourier Transform of G(r).
+     * The _r_cut_ parameter is the cutoff distance in r-space,
+     * the _q_bin_w_ parameter is the bin width to be used in q-space.
+     */
+    MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _r_cut_, _normalize_);
 
     /*
      * This function uses the angles to calculate the PAD.
