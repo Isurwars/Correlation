@@ -1,7 +1,9 @@
 ![](Images/Banner.png)
 # **Correlation**: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5499455.svg)](https://doi.org/10.5281/zenodo.5499455)[![Version]( https://img.shields.io/badge/version-1.0.0-green)]( https://img.shields.io/badge/version-1.0.0-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5501541.svg)](https://doi.org/10.5281/zenodo.5501541)[![Version]( https://img.shields.io/badge/version-1.0.1-green)]( https://img.shields.io/badge/version-1.0.1-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 
 **Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...
 
@@ -33,8 +35,8 @@ This program calculates the main correlation functions of a material:
     				Display this help text.
 
     		RADIAL OPTIONS:
-          -n, --normalize
-            Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
+       -n, --normalize
+        Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
     			-r, --r_cut
     				Cutoff radius in the calculation of g(r), G(r) and J(r). The default
     				radius it's set to 2 nm. The maximum recommended radius is the same as
@@ -43,9 +45,9 @@ This program calculates the main correlation functions of a material:
     			-w, --bin_width
     				Width of the histograms for g(r) and J(r), the default is 0.05 nm.
 
-        STRUCTURE FACTOR OPTIONS:
-          -q, --q_bin_width
-            Width of the histograms for S(Q), the default is 0.157079 nm^()-1.)
+      STRUCTURE FACTOR OPTIONS:
+       -q, --q_bin_width
+        Width of the histograms for S(Q), the default is 0.157079 nm^()-1.)
 
     		BOND-ANGLE OPTIONS:
     			-a, --angle_bin_width
