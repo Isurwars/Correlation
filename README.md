@@ -1,9 +1,7 @@
 ![](Images/Banner.png)
 # **Correlation**: An Analysis Tool for Liquids and for Amorphous Solids
 
-
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5501541.svg)](https://doi.org/10.5281/zenodo.5501541)[![Version]( https://img.shields.io/badge/version-1.0.1-green)]( https://img.shields.io/badge/version-1.0.1-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5499455.svg)](https://doi.org/10.5281/zenodo.5499455)[![Version]( https://img.shields.io/badge/version-1.0.0-green)]( https://img.shields.io/badge/version-1.0.0-green) [![License]( https://img.shields.io/badge/license-MIT-brightgreen)]( https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
 
 **Correlation** is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (*.CAR), CASTEP(*.CELL), ONETEP(*.DAT), LAMMPS(*.XYZ),etc...
 
@@ -21,64 +19,64 @@ This program calculates the main correlation functions of a material:
 ```
     USAGE: correlation [OPTIONS] [input_file]
 
-    	The minimal argument is a structure file, this program requires a file
-    	that contains atom positions, crystal structure and composition.
-    	Supported structure files are:
-    		-*.CAR   Materials Studio structure file.
-    		-*.CELL  CASTEP structure file.
-    		-*.DAT   ONETEP structure file.
-    		-*.XYZ   LAMMPS structure file.
+      The minimal argument is a structure file, this program requires a file
+      that contains atom positions, crystal structure and composition.
+      Supported structure files are:
+        -*.CAR   Materials Studio structure file.
+        -*.CELL  CASTEP structure file.
+        -*.DAT   ONETEP structure file.
+        -*.XYZ   LAMMPS structure file.
 
-    	OPTIONS:
-    		HELP OPTIONS
-    			-h, --help
-    				Display this help text.
+      OPTIONS:
+        HELP OPTIONS
+          -h, --help
+            Display this help text.
 
-    		RADIAL OPTIONS:
-       -n, --normalize
-        Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
-    			-r, --r_cut
-    				Cutoff radius in the calculation of g(r), G(r) and J(r). The default
-    				radius it's set to 2 nm. The maximum recommended radius is the same as
-    				the shortest length of the lattice parameters of the cell, anything
-    				above this PBC value can be affected by periodic interactions.		
-    			-w, --bin_width
-    				Width of the histograms for g(r) and J(r), the default is 0.05 nm.
+        RADIAL OPTIONS:
+          -n, --normalize
+            Used to switch between weighted partials (default), or normalize all the partials to 1 when r tends to infinity.
+          -r, --r_cut
+            Cutoff radius in the calculation of g(r), G(r) and J(r). The default
+            radius it's set to 2 nm. The maximum recommended radius is the same as
+            the shortest length of the lattice parameters of the cell, anything
+            above this PBC value can be affected by periodic interactions.		
+          -w, --bin_width
+            Width of the histograms for g(r) and J(r), the default is 0.05 nm.
 
-      STRUCTURE FACTOR OPTIONS:
-       -q, --q_bin_width
-        Width of the histograms for S(Q), the default is 0.157079 nm^()-1.)
+        STRUCTURE FACTOR OPTIONS:
+          -q, --q_bin_width
+            Width of the histograms for S(Q), the default is 0.157079 nm^()-1.)
 
-    		BOND-ANGLE OPTIONS:
-    			-a, --angle_bin_width
-    				Width of the histograms for the PAD, default set to 1.0°.
-    			-b, --bond_parameter
-    				The ideal covalent bond length is the sum of covalent radii
-    				of the two atoms. The criterion used to consider atoms as bonded
-    				is the following:
-    					0.6 * Sum_radii < distance < bond_parameter * Sum_radii.
-    				By default the bond_parameter is set to 1.30, as a rule of thumb.
-    				The default should work for most crystalline materials,
-    				as well as most covalent non-crystalline materials.
-    				For amorphous and liquid materials the bond_parameter should be
-    				increased to match the desired distance to cut_off the bonds.
-    				A bond_parameter of 1.42 is recomended for amorphous materials.
-    			-i, --in_bond_file
-    				The input file with the bond distances for every pair of elements
-    				in the corresponding input structure. The file should have the
-    				following format:
-    					Si Si 2.29
-    					Mg Mg 2.85
-    					C  C  1.55
-    					C  Si 1.86
-    					Si Mg 2.57
-    					C  Mg 2.07
-    				If any of the pairs is missing in the input file, the corresponding
-    				bond distance will be set using the bond_parameter(1.30 by default).
+        BOND-ANGLE OPTIONS:
+          -a, --angle_bin_width
+            Width of the histograms for the PAD, default set to 1.0°.
+          -b, --bond_parameter
+            The ideal covalent bond length is the sum of covalent radii
+            of the two atoms. The criterion used to consider atoms as bonded
+            is the following:
+              0.6 * Sum_radii < distance < bond_parameter * Sum_radii.
+            By default the bond_parameter is set to 1.30, as a rule of thumb.
+            The default should work for most crystalline materials,
+            as well as most covalent non-crystalline materials.
+            For amorphous and liquid materials the bond_parameter should be
+            increased to match the desired distance to cut_off the bonds.
+            A bond_parameter of 1.42 is recomended for amorphous materials.
+          -i, --in_bond_file
+            The input file with the bond distances for every pair of elements
+            in the corresponding input structure. The file should have the
+            following format:
+              Si Si 2.29
+              Mg Mg 2.85
+              C  C  1.55
+              C  Si 1.86
+              Si Mg 2.57
+              C  Mg 2.07
+            If any of the pairs is missing in the input file, the corresponding
+            bond distance will be set using the bond_parameter(1.30 by default).
 
-    		OUTPUT OPTIONS:
-    			-o, --out_file
-    				The output file name, by default the input seed name will be used.
+        OUTPUT OPTIONS:
+          -o, --out_file
+            The output file name, by default the input seed name will be used.
 ```
 
 ## Installation
