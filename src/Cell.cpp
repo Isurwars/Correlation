@@ -708,30 +708,32 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
 
     // Fill the q values of the histogram
     for (i = 0; i < m_; i++) {
-        temp_S[0][i] = 1.0 + (i + 0.0) * q_bin_width;
+        temp_S[0][i] = 0.0 + (i + 0.0) * q_bin_width;
     }
-    double aux = 4 * constants::pi * this->atoms.size() / this->volume;
+    double rho_0 = this->atoms.size() / this->volume;
+    double aux   = 4 * constants::pi * rho_0;
 
     /*
      * Double loop on q (rows) and G_ij (cols)
      */
     for (col = 1; col < n_; col++) {
-        Trapz = 0.0;
-        for (i = 1; i < m_; i++) {
-            Trapz += this->G[col][i] / this->G[0][i];
-        }
-        temp_S[col][0] = temp_w_ij[col] + Trapz * bin_width;
-        for (row = 1; row < m_; row++) {
+        for (row = 0; row < m_; row++) {
             /*
              * Integration with Trapezoidal_rule
              */
             Trapz = 0.0;
-            for (i = 1; i < (m_ - 1); i++) {
-                Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
+            if (temp_S[0][row] < 0.2) {
+                for (i = 1; i < m_; i++) {
+                    Trapz += (1 - 0.5 * pow(temp_S[0][row] * this->g[0][i], 2)) * this->g[col][i];
+                }
+                temp_S[col][row] = temp_w_ij[col] + Trapz * bin_width * rho_0;
+            } else {
+                for (i = 1; i < (m_ - 1); i++) {
+                    Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
+                }
+                Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
+                temp_S[col][row] = temp_w_ij[col] + Trapz * (bin_width / temp_S[0][row]);
             }
-            Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
-            Trapz *= bin_width / temp_S[0][row];
-            temp_S[col][row] = temp_w_ij[col] + Trapz;
         }
     }
 
