@@ -1,7 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## [1.0.2] 2021-09-17
+- Minor style corrections to paper.md and README.md.
 
-## [1.0.0 rc9] 2021-06-09
+## [1.0.1] 2021-09-11
+- Minor fix to paper.md to correct a compile error from whedon.
+
+## [1.0.0] 2021-09-06
+- First official release.
+
+## [1.0.0 rc9] 2021-09-06
 - Added test 8, an structure of amorphous Palladium-Gold-Hydrogen,
   the structure was provided by Alejandro de Leon and Salvador Villareal.
   This new test should take at least 1 hour and require more RAM.
