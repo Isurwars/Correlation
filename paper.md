@@ -1,5 +1,5 @@
 ---
-title: 'Correlation: An Analysis Tool for Liquids and for Amorphous Solids'
+title: "Correlation: An Analysis Tool for Liquids and for Amorphous Solids"
 tags:
   - C++
   - Materials
@@ -25,12 +25,12 @@ authors:
     orcid: 0000-0003-1505-2244
     affiliation: 1
 affiliations:
- - name:  Departamento de Materia Condensada, Instituto de Investigaciones en Materiales, Universidad Nacional Autónoma de México, Coyoacán, Ciudad de México, México.
-   index: 1
- - name:  Departamento de Física, Facultad de Ciencias, Universidad Nacional Autónoma de México, Coyoacán, Ciudad de México, México.
-   index: 2
- - name: Department of Computational and Systems Biology, University of Pittsburgh School of Medicine, Pittsburgh, Pennsylvania, USA.
-   index: 3
+  - name: Departamento de Materia Condensada, Instituto de Investigaciones en Materiales, Universidad Nacional Autónoma de México, Coyoacán, Ciudad de México, México.
+    index: 1
+  - name: Departamento de Física, Facultad de Ciencias, Universidad Nacional Autónoma de México, Coyoacán, Ciudad de México, México.
+    index: 2
+  - name: Department of Computational and Systems Biology, University of Pittsburgh School of Medicine, Pittsburgh, Pennsylvania, USA.
+    index: 3
 date: 09 September 2021
 bibliography: paper.bib
 csl: aps.csl
@@ -42,24 +42,24 @@ For almost a century, since Bernal's attempts at a molecular theory of liquid st
 
 Pair Distribution Functions ($g(r)$), Radial Distribution Functions ($J(r)$), Plane Angle Distributions ($g(\theta)$) and Coordination Numbers ($n_c$) have been widely used to characterize amorphous and liquid materials [@waseda_structure_1980; @elliott_physics_1986; @valladares_new_2011] and, in particular Bulk Metallic Glasses [@miller_bulk_2007; @galvan-colin_short-range_2015].
 
-**Correlation** is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design makes it easy to integrate in High-Throughput Computing (HTC) to process structures with a large number of constituents in a standardized fashion. **Correlation** is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT) and VASP (POSCAR) structure files. The code can handle up to 100,000 atoms, so it can be used to analyze both classical and first-principles simulations. At the end, the output of every single correlation function is exported to the corresponding comma-separated value file (CSV), to further analyze the results.
+`Correlation` is an Open-Source software designed to analyze liquid structures and amorphous solids; the software is user-friendly, the modular design makes it easy to integrate in High-Throughput Computing (HTC) to process structures with a large number of constituents in a standardized fashion. `Correlation` is ready to be used in Windows, Linux and Mac. Currently, we support DMol3 (CAR), CASTEP (CELL), ONETEP (DAT) and VASP (POSCAR) structure files. The code can handle up to 100,000 atoms, so it can be used to analyze both classical and first-principles simulations. At the end, the output of every single correlation function is exported to the corresponding comma-separated value file (CSV), to further analyze the results.
 
 # Statement of Need
 
 As time goes by, the number of atoms in theoretical calculations has grown from a few dozens to hundreds of thousands of atoms, and with this increment the complexity to calculate correlation functions that represent the structure of materials has steadily increased.
 To answer this need, there have been several tools developed to calculate some of the more used correlation functions like: pair distribution functions, radial distribution functions, and plane angle distributions. Here, we present an incomplete list of these tools:
 
-*	**Forcite Plus**: Forcite Plus is part of the Materials Studio suite [@materials_2016], the program includes analyzing tools to compute structure properties like RDF and PAD.
+- **Forcite Plus**: Forcite Plus is part of the Materials Studio suite [@materials_2016], the program includes analyzing tools to compute structure properties like RDF and PAD.
 
-*	**PTRAJ/CPPTRAJ**: A tool designed to analyze Amber Molecular Dynamics trajectories and related properties including RDF and time correlation functions, included in the AmbarTools suite [@roe_ptraj_2013].
+- **PTRAJ/CPPTRAJ**: A tool designed to analyze Amber Molecular Dynamics trajectories and related properties including RDF and time correlation functions, included in the AmbarTools suite [@roe_ptraj_2013].
 
-*	**VASPKIT**: A post-processing tool for VASP calculated data [@VASPKIT-2021], the code includes tools to analyze structural properties and dynamics trajectories.
+- **VASPKIT**: A post-processing tool for VASP calculated data [@VASPKIT-2021], the code includes tools to analyze structural properties and dynamics trajectories.
 
-*	[**rdfpy**](https://github.com/by256/rdfpy): An open Python library for fast computation of 2D and 3D radial distribution functions of crystalline structures in the Crystallographic Information File (CIF).
+- [**rdfpy**](https://github.com/by256/rdfpy): An open Python library for fast computation of 2D and 3D radial distribution functions of crystalline structures in the Crystallographic Information File (CIF).
 
-*	[**RadialDistributionFunction **](https://github.com/RaulPPelaez/RadialDistributionFunction): Computes the Radial Distribution Function (RDF) of a group of positions in a file, averages it for all snapshots in the file, atom positions must be in a custom format.
+- [**RadialDistributionFunction **](https://github.com/RaulPPelaez/RadialDistributionFunction): Computes the Radial Distribution Function (RDF) of a group of positions in a file, averages it for all snapshots in the file, atom positions must be in a custom format.
 
-However, the use of these tools has been limited, either by a prohibiting cost (**Forcite Plus**), or has been restricted to private academic groups, or geopolitical limitations introduced by the licensing (**CASTEP** postprocessing tools), or by being specially designed to specific software for material simulation (**PTRAJ/CPPTRAJ**, **VASPKIT**), or by having a narrow scope of input formats and correlation functions calculated (**rdfpy**, **RadialDistributionFunction **).
+However, the use of these tools has been limited, either by a prohibiting cost (**Forcite Plus**), or has been restricted to private academic groups, or geopolitical limitations introduced by the licensing (**CASTEP** postprocessing tools), or by being specially designed to specific software for material simulation (**PTRAJ/CPPTRAJ**, **VASPKIT**), or by having a narrow scope of input formats and correlation functions calculated (**rdfpy**, **RadialDistributionFunction**).
 With these limitations in mind, we decided to develop software that could calculate several correlation functions of materials, as well as the more interesting properties derived from these functions, while making the software accessible to as many people as possible.
 
 # Mathematical Background
@@ -70,7 +70,7 @@ The structure factor is one of the most useful tools in analyzing the scattering
 The Fourier transform of the scattering intensity given by the structure factor $S(Q)$, yields the pair distribution function (PDF) $g(r)$ defined by:
 
 \begin{equation}\label{eq:PDF}
-g(r) - 1= \frac{1}{2 \pi^2 \rho_0 r}\int_{0}^{\infty} Q[S(Q)-1]sin(Qr)dQ,
+g(r) - 1= \frac{1}{2 \pi^2 \rho*0 r}\int*{0}^{\infty} Q[S(Q)-1]\sin(Qr)dQ,
 \end{equation}
 
 The pair distribution function could also be seen like a distance map inside the material, the $g(r)$ function gives how feasible is finding two atoms separated by the distance ($r$) as can be seen in \autoref{fig:RDF} [@ziman_models_1979].
@@ -96,10 +96,10 @@ J(r) = 4\pi r^{2} \rho_0 g(r).
 The RDF has the useful property that the quantity $J(r)dr$ gives the number of atoms in a spherical shell with inner radius $r$ and thickness $dr$ around every atom as depicted in \autoref{fig:RDF}. For example, the coordination number, or the number of neighbors ($n_c$), is given by:
 
 \begin{equation}\label{eq:CN}
-n_c = \int_{r_1}^{r_2} J(r) dr,
+n*c = \int*{r_1}^{r_2} J(r) dr,
 \end{equation}
 
-where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shells in question.  
+where $r_1$ and $r_2$ define the RDF peak corresponding to the coordination shells in question.
 
 ## Plane Angle Distribution
 
@@ -109,29 +109,28 @@ In particular, the Plane Angle Distribution, also known as the Bond Angle Distri
 
 # Benchmarks
 
-In order to assess the performance of **Correlation**, we calculated the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compared the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016]; to test **Correlation** in amorphous and liquid materials we selected amorphous palladium [@rodriguez_emergence_2019], amorphous palladium hydride [@rodriguez_calculo_2019] and liquid bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we chose to compare them with the code developed by U. Santiago within our group. [@santiago_simulacion_2011].
-
+In order to assess the performance of ´Correlation´, we calculated the PDF and PAD for two well known structures (Crystalline Silicon and a Graphene Layer), and compared the results with the commercially available software Forcite included in the Materials Studio suite [@materials_2016]; to test `Correlation` in amorphous and liquid materials we selected amorphous palladium [@rodriguez_emergence_2019], amorphous palladium hydride [@rodriguez_calculo_2019] and liquid bismuth. Because of the complexity to calculate PAD of amorphous and liquids in Forcite, we chose to compare them with the code developed by U. Santiago within our group. [@santiago_simulacion_2011].
 
 The results of these benchmarks are shown in \autoref{fig:RDF-PAD}, and the structures used to calculate these figures are included in the code as tests 1 to 5. The last structure included as test 6 is a 2x2x2 supercell of amorphous palladium hydride included in test 4, to benchmark memory and CPU performance in a structure with thousands of atoms.
 
-![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between **Correlation** and Forcite as can be seen in all PDFs. Figures (a) to (d) indicate that the coincidence in the two results overlap completely. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
+![Pair Distribution Functions $g(r)$ on the left, Plane Angle Distributions on the right for: crystalline silicon, graphene Layer, amorphous palladium, amorphous palladium hydride and liquid bismuth. Correlation in gray, Forcite in black, Plane Angles in red. Similarity is remarkable between `Correlation` and Forcite as can be seen in all PDFs. Figures (a) to (d) indicate that the coincidence in the two results overlap completely. \label{fig:RDF-PAD}](./Images/Fig2.png){ width=75% }
 
 # Conclusion & Perspective
 
-**Correlation** is a lightweight, modular software that can be used in HTC and adapted to analyze the main correlation functions used to characterize crystalline and amorphous solids, as well as liquids.
+`Correlation` is a lightweight, modular software that can be used in HTC and adapted to analyze the main correlation functions used to characterize crystalline and amorphous solids, as well as liquids.
 
-**Correlation** has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several Ph.D. Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] done in our group.
+`Correlation` has been used in previously published work [@galvan-colin_short-range_2015; @galvan-colin_ab_2016; @mata-pinzon_superconductivity_2016] as well as several Ph.D. Theses [@santiago_simulacion_2011; @romero-rangel_simulaciones_2014; @mejia-mendoza_estudio_2014; @galvan-colin_atomic_2016; @mata-pinzon_propiedades_2016; @rodriguez_calculo_2019] done in our group.
 We will continue to support and enrich the software in the foreseeable future. Here we list the features planned to be added in the future:
 
-*	Support for additional output files, like hdf5 standard.
+- Support for additional output files, like hdf5 standard.
 
-*	Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
+- Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
 
-*	Inclusion of structure factors and x-ray diffraction, to facilitate the comparison with experimental results.
+- Inclusion of structure factors and x-ray diffraction, to facilitate the comparison with experimental results.
 
-*	Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
+- Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
 
-We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the GitHub: [Correlation](https://github.com/Isurwars/Correlation), or to the email of the first author, I.R: [isurwars@ciencias.unam.mx]( isurwars@ciencias.unam.mx)
+We are open to receive suggestions that would further improve the functionality of the software. Address all comments and observations to the GitHub: [Correlation](https://github.com/Isurwars/Correlation), or to the email of the first author, I.R: [isurwars@ciencias.unam.mx](isurwars@ciencias.unam.mx)
 
 # Acknowledgements
 
