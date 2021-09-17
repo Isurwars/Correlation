@@ -2,7 +2,7 @@
 
 # `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5501541.svg)](https://doi.org/10.5281/zenodo.5501541) [![Version](https://img.shields.io/badge/version-1.0.1-green)](https://img.shields.io/badge/version-1.0.1-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![status](https://joss.theoj.org/papers/7d5240007263a90d59d97ab464598991/status.svg)](https://joss.theoj.org/papers/7d5240007263a90d59d97ab464598991)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5501541.svg)](https://doi.org/10.5281/zenodo.5501541) [![Version](https://img.shields.io/badge/version-1.0.2-green)](https://img.shields.io/badge/version-1.0.2-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![status](https://joss.theoj.org/papers/7d5240007263a90d59d97ab464598991/status.svg)](https://joss.theoj.org/papers/7d5240007263a90d59d97ab464598991)
 
 `Correlation` is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (_.CAR), CASTEP(_.CELL), ONETEP(_.DAT), LAMMPS(_.XYZ),etc...
 
