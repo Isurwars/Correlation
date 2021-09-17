@@ -759,6 +759,87 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
     out_file.close();
 }// Cell::SQ
 
+void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width)
+{
+    int n_, m_, i, j, k, col, row;
+    double norm, aux;
+    int n = this->elements.size();
+    std::string header;
+
+    m_ = ceil((theta_max - theta_min) / bin_width);
+    n_ = n * (n + 1) / 2 + 1;
+
+    std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
+    // Fill the r values of the histogram
+    for (i = 0; i < m_; i++) {
+        temp_hist[0][i] = theta_min + i * bin_width;
+    }
+    col = 0;
+    // Triple loop to iterate over the distances tensor.
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            col++;
+            for (std::vector<double>::iterator it = this->distances[i][j].begin();
+              it != this->distances[i][j].end(); it++)
+            {
+                /*
+                 * Bragg's Law
+                 * n * lambda = 2d sin(theta)
+                 * theta = asin((n * lambda) / (2 * d))
+                 */
+                aux = lambda / (*it * 2.0);
+                k   = 1;
+                std::cout << "d:" << *it << '\n';
+                while ((k * aux) <= 1.0) {
+                    row = floor(((2 * constants::rad2deg * asin(k * aux)) - theta_min) / bin_width);
+                    //                    std::cout << 2 * constants::rad2deg * asin(k * aux) << '\n';
+                    k++;
+                    if (0 <= row && row < m_) {
+                        temp_hist[col][row]++;
+                        if (i != j) temp_hist[col][row]++;
+                    }
+                }
+            }
+        }
+    }
+
+    // Double loop to find normalization factor
+    norm = 0.0;
+    for (i = 1; i < n_; i++) {
+        for (j = 0; j < m_; j++) {
+            norm = std::max(temp_hist[i][j], norm);
+        }
+    }
+    norm *= 0.01;
+    // Double loop to normalize PAD_Histogram
+    for (i = 1; i < n_; i++) {
+        for (j = 0; j < m_; j++) {
+            temp_hist[i][j] /= norm;
+        }
+    }
+
+    this->X = temp_hist;
+    std::ofstream out_file(filename + "_XRD.csv");
+    std::setprecision(5);
+    out_file << std::setw(13) << "2-theta (°),";
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            header = this->elements[i] + "-" + this->elements[j] + " (%),";
+            out_file << std::setw(13) << header;
+        }
+    }
+    out_file << std::endl << std::fixed;
+
+    for (i = 0; i < m_; i++) {
+        for (j = 0; j < n_; j++) {
+            out_file << std::setw(12) << temp_hist[j][i] << ",";
+        }
+        out_file << std::endl;
+    }
+
+    out_file.close();
+}// Cell:XRD
+
 void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {
     int n_, m_, i, j, k, h, col, row;
