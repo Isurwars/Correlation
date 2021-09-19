@@ -316,13 +316,13 @@ void Cell::RDF(double r_cut)
     {
         progress += h_;
         if (barWidth * progress > pos) {
-            std::cout << "[";
+            std::cout << "\r[";
             for (int i = 0; i < barWidth; ++i) {
                 if (i < pos) std::cout << "=";
                 else if (i == pos) std::cout << ">";
                 else std::cout << " ";
             }
-            std::cout << "] " << int(progress * 100.0) << " %\r";
+            std::cout << "] " << int(progress * 100.0) << " %";
             std::cout.flush();
             pos = std::round(barWidth * progress);
         }
@@ -384,7 +384,7 @@ void Cell::RDF(double r_cut)
             }
         }
     }
-    std::cout << "[==================================================] 100 %" << std::endl;
+    std::cout << "\r[==================================================] 100 %" << std::endl;
     this->distances = temp_dist;
 } // Cell::RDF
 
@@ -708,30 +708,32 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
 
     // Fill the q values of the histogram
     for (i = 0; i < m_; i++) {
-        temp_S[0][i] = 1.0 + (i + 0.0) * q_bin_width;
+        temp_S[0][i] = 0.0 + (i + 0.0) * q_bin_width;
     }
-    double aux = 4 * constants::pi * this->atoms.size() / this->volume;
+    double rho_0 = this->atoms.size() / this->volume;
+    double aux   = 4 * constants::pi * rho_0;
 
     /*
      * Double loop on q (rows) and G_ij (cols)
      */
     for (col = 1; col < n_; col++) {
-        Trapz = 0.0;
-        for (i = 1; i < m_; i++) {
-            Trapz += this->G[col][i] / this->G[0][i];
-        }
-        temp_S[col][0] = temp_w_ij[col] + Trapz * bin_width;
-        for (row = 1; row < m_; row++) {
+        for (row = 0; row < m_; row++) {
             /*
              * Integration with Trapezoidal_rule
              */
             Trapz = 0.0;
-            for (i = 1; i < (m_ - 1); i++) {
-                Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
+            if (temp_S[0][row] < 0.2) {
+                for (i = 1; i < m_; i++) {
+                    Trapz += (1 - 0.5 * pow(temp_S[0][row] * this->g[0][i], 2)) * this->g[col][i];
+                }
+                temp_S[col][row] = temp_w_ij[col] + Trapz * bin_width * rho_0;
+            } else {
+                for (i = 1; i < (m_ - 1); i++) {
+                    Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
+                }
+                Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
+                temp_S[col][row] = temp_w_ij[col] + Trapz * (bin_width / temp_S[0][row]);
             }
-            Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
-            Trapz *= bin_width / temp_S[0][row];
-            temp_S[col][row] = temp_w_ij[col] + Trapz;
         }
     }
 
@@ -756,6 +758,86 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
     }
     out_file.close();
 }// Cell::SQ
+
+void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width)
+{
+    int n_, m_, i, j, k, col, row;
+    double norm, aux;
+    int n = this->elements.size();
+    std::string header;
+
+    m_ = ceil((theta_max - theta_min) / bin_width);
+    n_ = n * (n + 1) / 2 + 1;
+
+    std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
+    // Fill the r values of the histogram
+    for (i = 0; i < m_; i++) {
+        temp_hist[0][i] = theta_min + i * bin_width;
+    }
+    col = 0;
+    // Triple loop to iterate over the distances tensor.
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            col++;
+            for (std::vector<double>::iterator it = this->distances[i][j].begin();
+              it != this->distances[i][j].end(); it++)
+            {
+                /*
+                 * Bragg's Law
+                 * n * lambda = 2d sin(theta)
+                 * theta = asin((n * lambda) / (2 * d))
+                 */
+                aux = lambda / (*it * 2.0);
+                k   = 1;
+                std::cout << "d:" << *it << std::endl;
+                while ((k * aux) <= 1.0) {
+                    row = floor(((2 * constants::rad2deg * asin(k * aux)) - theta_min) / bin_width);
+                    k++;
+                    if (0 <= row && row < m_) {
+                        temp_hist[col][row]++;
+                        if (i != j) temp_hist[col][row]++;
+                    }
+                }
+            }
+        }
+    }
+
+    // Double loop to find normalization factor
+    norm = 0.0;
+    for (i = 1; i < n_; i++) {
+        for (j = 0; j < m_; j++) {
+            norm = std::max(temp_hist[i][j], norm);
+        }
+    }
+    norm *= 0.01;
+    // Double loop to normalize PAD_Histogram
+    for (i = 1; i < n_; i++) {
+        for (j = 0; j < m_; j++) {
+            temp_hist[i][j] /= norm;
+        }
+    }
+
+    this->X = temp_hist;
+    std::ofstream out_file(filename + "_XRD.csv");
+    std::setprecision(5);
+    out_file << std::setw(13) << "2-theta (°),";
+    for (i = 0; i < n; i++) {
+        for (j = i; j < n; j++) {
+            header = this->elements[i] + "-" + this->elements[j] + " (%),";
+            out_file << std::setw(13) << header;
+        }
+    }
+    out_file << std::endl << std::fixed;
+
+    for (i = 0; i < m_; i++) {
+        for (j = 0; j < n_; j++) {
+            out_file << std::setw(12) << temp_hist[j][i] << ",";
+        }
+        out_file << std::endl;
+    }
+
+    out_file.close();
+}// Cell:XRD
 
 void Cell::PAD_Histogram(std::string filename, double theta_cut, double bin_width)
 {

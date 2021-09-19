@@ -324,6 +324,8 @@ int main(int argc, char ** argv)
      */
     MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _r_cut_, _normalize_);
 
+    //    MyCell.XRD(_out_file_name_, 1.5406, 5.0, 90.0, 0.05);
+
     /*
      * This function uses the angles to calculate the PAD.
      * The theta_max parameter is the maximum angle to compute,
