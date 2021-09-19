@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 ## [1.0.2] 2021-09-17
 - Minor style corrections to paper.md and README.md.
+- Updated DOI for JOSS paper.
 
 ## [1.0.1] 2021-09-11
 - Minor fix to paper.md to correct a compile error from whedon.
