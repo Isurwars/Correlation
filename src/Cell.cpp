@@ -316,13 +316,13 @@ void Cell::RDF(double r_cut)
     {
         progress += h_;
         if (barWidth * progress > pos) {
-            std::cout << "[";
+            std::cout << "\r[";
             for (int i = 0; i < barWidth; ++i) {
                 if (i < pos) std::cout << "=";
                 else if (i == pos) std::cout << ">";
                 else std::cout << " ";
             }
-            std::cout << "] " << int(progress * 100.0) << " %\r";
+            std::cout << "] " << int(progress * 100.0) << " %";
             std::cout.flush();
             pos = std::round(barWidth * progress);
         }
@@ -384,7 +384,7 @@ void Cell::RDF(double r_cut)
             }
         }
     }
-    std::cout << "[==================================================] 100 %" << std::endl;
+    std::cout << "\r[==================================================] 100 %" << std::endl;
     this->distances = temp_dist;
 } // Cell::RDF
 
@@ -789,10 +789,9 @@ void Cell::XRD(std::string filename, double lambda, double theta_min, double the
                  */
                 aux = lambda / (*it * 2.0);
                 k   = 1;
-                std::cout << "d:" << *it << '\n';
+                std::cout << "d:" << *it << std::endl;
                 while ((k * aux) <= 1.0) {
                     row = floor(((2 * constants::rad2deg * asin(k * aux)) - theta_min) / bin_width);
-                    //                    std::cout << 2 * constants::rad2deg * asin(k * aux) << '\n';
                     k++;
                     if (0 <= row && row < m_) {
                         temp_hist[col][row]++;
