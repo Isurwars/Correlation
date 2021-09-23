@@ -55,6 +55,10 @@ public:
     void PopulateBondLength(double);
     //  Read Bond File
     void read_BOND(std::string);
+    // Update Progress Bar
+    void UpdateProgressBar(double);
+    // Calculate Distances MultiThreading
+    void RDF_MP();
     // RDF calculation (max distance between atoms)
     void RDF(double);
     // Coordination Numbers Calculation
