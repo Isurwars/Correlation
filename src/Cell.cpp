@@ -268,6 +268,133 @@ void Cell::read_BOND(std::string file_name)
     }
 } // read_BOND
 
+// Cell::UpdateProgressBar
+void Cell::UpdateProgressBar(double pos)
+{
+    int barWidth = 50;
+    int progress = round(pos * barWidth);
+    std::cout << "\r[";
+
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < progress) std::cout << "=";
+        else if (i == progress) std::cout << ">";
+        else std::cout << " ";
+    }
+    std::cout << "] " << int(pos * 100.0) << " %";
+    std::cout.flush();
+}// Cell::UpdateProgressBar
+
+// Cell::RDF_MultiThreading
+void Cell::RDF_MP(double r_cut)
+{
+    std::list<Atom>::iterator atom_A;
+    std::list<Atom>::iterator atom_B;
+    int id_A, id_B, i, j, k, i_, j_, k_;
+    double aux_dist;
+    double h_       = 1.0 / this->atoms.size();
+    double progress = 0.0;
+
+
+    // Number of elements in the Cell
+    const int n = this->elements.size();
+    // This matrix stores the distances between different types of elements,
+    // there are at most nxn partials, off-diagonal partials are symmetric.
+    std::vector<std::vector<std::vector<double> > > temp_dist(n, std::vector<std::vector<double> >(n,
+      std::vector<double>(0)));
+
+    // Correct the atom positions to be inside the cell.
+    this->CorrectPositions();
+
+    /*  Our cell is big enought to be divided at least 2 times by the r_cut
+     *  in at least of of it's dimensions
+     */
+
+    k_ = ceil(r_cut / this->v_c()[2]);
+    j_ = ceil(r_cut / this->v_b()[1]);
+    i_ = ceil(r_cut / this->v_a()[0]);
+
+    /*
+     * This is the main loop in RDF, we need to iterate between all atoms
+     * in the cell to all the atoms in the supercell created above.
+     *
+     * This loop is the most time-consuming part of the code, scaling as n^2.
+     *
+     * We reduce the computation time in half by only iterating for A>B and
+     * duplicating the distance because distance from atom_A to atom_B is
+     * equal to the distance from atom_B to atom_A.
+     *
+     * This code can also be improved through paralellization because each
+     * iteration is independent of the others, so changing to a for_each is
+     * desired to improve this code further.
+     */
+    for (atom_A = this->atoms.begin();
+      atom_A != this->atoms.end();
+      atom_A++)
+    {
+        progress += h_;
+        this->UpdateProgressBar(progress);
+        id_A = findInVector(this->elements, atom_A->element).second;
+        for (atom_B = this->atoms.begin();
+          atom_B != this->atoms.end();
+          atom_B++)
+        {
+            // Excluding self-interactions
+            if (atom_A->GetNumber() != atom_B->GetNumber()) {
+                id_B     = findInVector(this->elements, atom_B->element).second;
+                img_atom = *atom_B;
+                for (i = -i_; i <= i_; i++) {
+                    for (j = -j_; j <= j_; j++) {
+                        for (k = -k_; k <= k_; k++) {
+                            img_atom.position     = atom_B->position;
+                            img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
+                            img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
+                            img_atom.position[2] += k * this->v_c()[2];
+                            aux_dist = atom_A->Distance(img_atom);
+                            if (aux_dist <= r_cut) {
+                                temp_dist[id_A][id_B].push_back(aux_dist);
+                                if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                                    atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                                    if (aux_dist < 0.1) {
+                                        std::cout << std::endl << "ERROR: The atoms:" << std::endl
+                                                  << atom_A->element << "_" << atom_A->GetNumber()
+                                                  << " in position ("
+                                                  << atom_A->position[0] << ", "
+                                                  << atom_A->position[1] << ", "
+                                                  << atom_A->position[2] << ")," << std::endl
+                                                  << atom_B->element << "_" << atom_B->GetNumber()
+                                                  << " in position ("
+                                                  << img_atom.position[0] << ", "
+                                                  << img_atom.position[1] << ", "
+                                                  << img_atom.position[2] << ")." << std::endl
+                                                  << "Have a distance less than 10 pm." << std::endl;
+                                        exit(1);
+                                    }
+                                    if (aux_dist < 0.5) {
+                                        std::cout << std::endl << "WARNING: The atoms:" << std::endl
+                                                  << atom_A->element << "_" << atom_A->GetNumber()
+                                                  << " in position ("
+                                                  << atom_A->position[0] << ", "
+                                                  << atom_A->position[1] << ", "
+                                                  << atom_A->position[2] << ")," << std::endl
+                                                  << atom_B->element << "_" << atom_B->GetNumber()
+                                                  << " in position ("
+                                                  << img_atom.position[0] << ", "
+                                                  << img_atom.position[1] << ", "
+                                                  << img_atom.position[2] << ")." << std::endl
+                                                  << "Have a distance less than the Bohr Radius." << std::endl;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "\r[==================================================] 100 %" << std::endl;
+    this->distances = temp_dist;
+}// Cell::RDF_MultiThreading
+
 // RDF Calculation
 void Cell::RDF(double r_cut)
 {
@@ -276,10 +403,9 @@ void Cell::RDF(double r_cut)
     Atom img_atom;
     int id_A, id_B, i, j, k, i_, j_, k_;
     double aux_dist;
-    double progress = 0.0;
     double h_       = 1.0 / this->atoms.size();
-    int barWidth    = 50;
-    int pos         = 0;
+    double progress = 0.0;
+
 
     // Number of elements in the Cell
     const int n = this->elements.size();
@@ -315,17 +441,7 @@ void Cell::RDF(double r_cut)
       atom_A++)
     {
         progress += h_;
-        if (barWidth * progress > pos) {
-            std::cout << "\r[";
-            for (int i = 0; i < barWidth; ++i) {
-                if (i < pos) std::cout << "=";
-                else if (i == pos) std::cout << ">";
-                else std::cout << " ";
-            }
-            std::cout << "] " << int(progress * 100.0) << " %";
-            std::cout.flush();
-            pos = std::round(barWidth * progress);
-        }
+        this->UpdateProgressBar(progress);
         id_A = findInVector(this->elements, atom_A->element).second;
         for (atom_B = this->atoms.begin();
           atom_B != this->atoms.end();
