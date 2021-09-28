@@ -289,6 +289,7 @@ void Cell::RDF_MP(double r_cut)
 {
     std::list<Atom>::iterator atom_A;
     std::list<Atom>::iterator atom_B;
+    Atom img_atom;
     int id_A, id_B, i, j, k, i_, j_, k_;
     double aux_dist;
     double h_       = 1.0 / this->atoms.size();
@@ -306,12 +307,17 @@ void Cell::RDF_MP(double r_cut)
     this->CorrectPositions();
 
     /*  Our cell is big enought to be divided at least 2 times by the r_cut
-     *  in at least of of it's dimensions
+     *  in at least one of it's dimensions. This Cell is now our MegaCell,
+     *  and we can divide this MegaCell in smaller cells.
+     *  We then can calculate the partial distance matrix by only looking
+     *  to each individual cell and it's neighbours in a 3x3x3
+     *  supercell created by concatenations of the smallers cells.
      */
 
-    k_ = ceil(r_cut / this->v_c()[2]);
-    j_ = ceil(r_cut / this->v_b()[1]);
-    i_ = ceil(r_cut / this->v_a()[0]);
+    k_ = ceil(this->v_c()[2] / r_cut);
+    j_ = ceil(this->v_b()[1] / r_cut);
+    i_ = ceil(this->v_a()[0] / r_cut);
+
 
     /*
      * This is the main loop in RDF, we need to iterate between all atoms
