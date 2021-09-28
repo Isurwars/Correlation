@@ -58,7 +58,7 @@ public:
     // Update Progress Bar
     void UpdateProgressBar(double);
     // Calculate Distances MultiThreading
-    void RDF_MP();
+    void RDF_MP(double);
     // RDF calculation (max distance between atoms)
     void RDF(double);
     // Coordination Numbers Calculation
