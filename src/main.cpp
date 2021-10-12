@@ -299,7 +299,7 @@ int main(int argc, char ** argv)
      * This function calculates the partial coordination number for pairs of
      * elements. Bonded Atoms use the same parameters for PAD.
      */
-    MyCell.Nc();
+    MyCell.CoordinationNumber();
 
     /*
      * This function calculates the angle between every atom and all pairs
@@ -315,7 +315,7 @@ int main(int argc, char ** argv)
      */
     std::cout << "Writing output files: " << _out_file_name_ << std::endl;
     MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
-    MyCell.Nc_Histogram(_out_file_name_);
+    MyCell.CoordinationNumber_Histogram(_out_file_name_);
 
     /*
      * This function calculate S(Q) as the Fourier Transform of G(r).

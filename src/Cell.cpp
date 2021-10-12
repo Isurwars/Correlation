@@ -510,7 +510,7 @@ void Cell::RDF(double r_cut)
     this->distances = temp_dist;
 } // Cell::RDF
 
-void Cell::Nc()
+void Cell::CoordinationNumber()
 {
     int max_Nc = 0;
     int i;
@@ -546,7 +546,7 @@ void Cell::Nc()
         }
     }
     this->coordination = temp_nc;
-}// Cell::Nc
+}// Cell::CoordinationNumber
 
 void Cell::PAD(bool degree)
 {
@@ -763,7 +763,7 @@ void Cell::RDF_Histogram(std::string filename, double r_cut, double bin_width, b
     out_file3.close();
 }// Cell::RDF_histogram
 
-void Cell::Nc_Histogram(std::string filename)
+void Cell::CoordinationNumber_Histogram(std::string filename)
 {
     int n_, m_, i, j, col;
     int n = this->elements.size();
@@ -786,12 +786,12 @@ void Cell::Nc_Histogram(std::string filename)
     }
 
 
-    std::ofstream out_file2(filename + "_Nc.csv");
+    std::ofstream out_file2(filename + "_Z.csv");
     std::setprecision(6);
     out_file2 << std::setw(13) << "Number (#),";
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
-            header = this->elements[j] + " around " + this->elements[i] + ",";
+            header = this->elements[i] + " by " + this->elements[j] + ",";
             out_file2 << std::setw(13) << header;
         }
     }
@@ -804,7 +804,7 @@ void Cell::Nc_Histogram(std::string filename)
         out_file2 << std::endl;
     }
     out_file2.close();
-}// Cell::Nc_histogram
+}// Cell::CoordinationNumber_histogram
 
 void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize)
 {

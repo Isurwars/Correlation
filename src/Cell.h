@@ -62,13 +62,13 @@ public:
     // RDF calculation (max distance between atoms)
     void RDF(double);
     // Coordination Numbers Calculation
-    void Nc();
+    void CoordinationNumber();
     // Bond-Angle Calulation ()
     void PAD(bool = true);
     // RDF Histograms  (max distance between atoms, bin width)
     void RDF_Histogram(std::string, double = 20.0, double = 0.05, bool = false);
     // Nc Histograms ()
-    void Nc_Histogram(std::string);
+    void CoordinationNumber_Histogram(std::string);
     // Structure Factor Calculation
     void SQ(std::string, double = 0.1571, double = 0.05, double = 20.0, bool = false);
     // XRD Calculation
