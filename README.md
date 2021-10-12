@@ -164,6 +164,12 @@ brew install automake autoconf libtool
 
 For compiling you should have GCC or Clang compilers, and GNU Autotools correctly installed on the system.
 
+First adjust the configure to your local enviroment with:
+
+```
+autoreconf
+```
+
 Some systems may require the configure script to have the execute permission:
 
 ```

@@ -12,6 +12,8 @@ Atom_Img	.\src\Atom.h	/^struct Atom_Img {$/;"	s
 Cell	.\src\Cell.cpp	/^Cell::Cell()$/;"	f	class:Cell
 Cell	.\src\Cell.cpp	/^Cell::Cell(std::array<double, 6> lat)$/;"	f	class:Cell
 Cell	.\src\Cell.h	/^class Cell {$/;"	c
+CoordinationNumber	.\src\Cell.cpp	/^void Cell::CoordinationNumber()$/;"	f	class:Cell
+CoordinationNumber_Histogram	.\src\Cell.cpp	/^void Cell::CoordinationNumber_Histogram(std::string filename)$/;"	f	class:Cell
 CorrectFracPositions	.\src\Cell.cpp	/^void Cell::CorrectFracPositions()$/;"	f	class:Cell
 CorrectPositions	.\src\Cell.cpp	/^void Cell::CorrectPositions()$/;"	f	class:Cell
 Covalent_Radii	.\src\Constants.cpp	/^double Covalent_Radii(std::string element)$/;"	f
@@ -23,8 +25,6 @@ GetImage	.\src\Atom.cpp	/^Atom_Img Atom::GetImage()$/;"	f	class:Atom
 GetNumber	.\src\Atom.h	/^    int GetNumber()$/;"	f	class:Atom
 GetNumberOfAtoms	.\src\Atom.h	/^    static int GetNumberOfAtoms()$/;"	f	class:Atom
 J	.\src\Cell.h	/^    std::vector<std::vector<double> > J;$/;"	m	class:Cell
-Nc	.\src\Cell.cpp	/^void Cell::Nc()$/;"	f	class:Cell
-Nc_Histogram	.\src\Cell.cpp	/^void Cell::Nc_Histogram(std::string filename)$/;"	f	class:Cell
 NumOfAtoms	.\src\Atom.cpp	/^int Atom::NumOfAtoms = 0;$/;"	m	class:Atom	file:
 NumOfAtoms	.\src\Atom.h	/^    static int NumOfAtoms;$/;"	m	class:Atom
 PAD	.\src\Cell.cpp	/^void Cell::PAD(bool degree)$/;"	f	class:Cell
