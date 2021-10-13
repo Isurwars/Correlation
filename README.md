@@ -172,7 +172,7 @@ autoconf
 automake --add-missing
 ```
 
-Some UNIX systems may require that configure scripts have the execute permision with the following commands:
+Some UNIX systems may require that configure scripts to be executable by the user, you can add the right to execute with the following commands:
 
 ```
 chmod +x configure
