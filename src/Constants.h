@@ -1,6 +1,8 @@
-#ifndef _CONS_H_
-#define _CONS_H_
-
+#ifndef SRC_CONSTANTS_H_
+#define SRC_CONSTANTS_H_
+/*
+Copyright [2021] <@isurwars>
+*/
 #include <string>
 
 /*
@@ -8,9 +10,9 @@
  */
 
 namespace constants {
-constexpr double pi { 3.141592653589793238463 };      // PI value
-constexpr double rad2deg { 57.29577951308232087679 }; // RADIANS -> DEGREES
-constexpr double deg2rad { 0.017453292519943295769 }; // DEGREES -> RADIANS
+constexpr double pi { 3.141592653589793238463 };       // PI value
+constexpr double rad2deg { 57.29577951308232087679 };  // RADIANS -> DEGREES
+constexpr double deg2rad { 0.017453292519943295769 };  // DEGREES -> RADIANS
 }
 
 /*
@@ -26,4 +28,4 @@ double
 Covalent_Radii(std::string);
 
 
-#endif /* end of include guard: _CONS_H_ */
+#endif  // SRC_CONSTANTS_H_

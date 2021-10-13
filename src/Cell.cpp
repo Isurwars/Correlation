@@ -1,3 +1,6 @@
+/*
+Copyright [2021] <@isurwars>
+*/
 #include "Cell.h"
 
 #include <algorithm>

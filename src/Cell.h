@@ -1,6 +1,8 @@
 #ifndef _CELL_H_
 #define _CELL_H_
-
+/*
+Copyright [2021] <@isurwars>
+*/
 #include <array>
 #include <list>
 #include <string>
