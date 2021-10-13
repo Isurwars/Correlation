@@ -1,17 +1,14 @@
-#include <iostream>
+#include "Cell.h"
+
+#include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
-#include <algorithm>
-#include <list>
-#include <array>
-#include <vector>
-#include <cmath>
+#include <iostream>
 #include <map>
-#include <regex>
 #include <numeric>
+#include <regex>
 
-#include "Atom.h"
-#include "Cell.h"
 #include "Constants.h"
 
 /*

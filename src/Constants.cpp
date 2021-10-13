@@ -1,6 +1,4 @@
 #include "Constants.h"
-#include <string>
-
 
 /*
  * We define a simple function that returns the covalent radii.

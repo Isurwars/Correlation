@@ -1,11 +1,11 @@
 // This program calculate correlation functions for a group of atoms
+#include <algorithm>// for_each
+#include <array>    // Handle the array of parameters
+#include <getopt.h> // For the argument parsing
 #include <iostream> // Standar IO library
 #include <list>     // To handle the list of atoms
-#include <array>    // Handle the array of parameters
-#include <vector>   // Most of the output is stored in vectors
-#include <getopt.h> // For the argument parsing
 #include <string>   // String manipulation and algorithms
-#include <algorithm>// for_each
+// #include <vector>   // Most of the output is stored in vectors
 
 #include "Atom.h"      // Atom Class
 #include "Cell.h"      // Cell Class
