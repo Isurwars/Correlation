@@ -1,12 +1,10 @@
+#include "Atom.h"
+
+#include <cmath>
 #include <iostream>
 #include <list>
-#include <array>
-#include <vector>
-#include <cmath>
-#include <string>
 #include <numeric>
 
-#include "Atom.h"
 #include "Cell.h"
 // All the functions in Class Atom
 int Atom::NumOfAtoms = 0;

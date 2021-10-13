@@ -1,11 +1,12 @@
-#include <iostream>
-#include <fstream>
-#include <list>
+#include "ReadFiles.h"
+
 #include <array>
+#include <fstream>
+#include <iostream>
+#include <list>
 #include <regex>
 
 #include "Atom.h"
-#include "Cell.h"
 
 /*
  * Generic function to find if an element of any type exists in vector,

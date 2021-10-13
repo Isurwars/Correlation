@@ -164,13 +164,15 @@ brew install automake autoconf libtool
 
 For compiling you should have GCC or Clang compilers, and GNU Autotools correctly installed on the system.
 
-First adjust the configure to your local enviroment with:
+First, lets adjust the configure file to match your local environment with the following commands:
 
 ```
-autoreconf
+aclocal
+autoconf
+automake --add-missing
 ```
 
-Some systems may require the configure script to have the execute permission:
+Some UNIX systems may require that configure scripts have the execute permision with the following commands:
 
 ```
 chmod +x configure
@@ -241,7 +243,7 @@ Five result(s) file(s) should be generated in the same directory as the input fi
 1. Pair Distribution Function [**g**]("*_g.CSV").
 2. Radial Distribution Function [**J**]("*_J.CSV").
 3. Reduced Radial Distribution Function [**G**]("*_G.CSV").
-4. Coordination Number [**Nc**]("*_Nc.CSV").
+4. Coordination Number [**Z**]("*_Z.CSV").
 5. Plane Angle Distribution [**PAD**]("*_PAD.CSV").
 
 These Comma Separated Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...

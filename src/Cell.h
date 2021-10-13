@@ -1,6 +1,13 @@
 #ifndef _CELL_H_
 #define _CELL_H_
 
+#include <array>
+#include <list>
+#include <string>
+#include <vector>
+
+#include "Atom.h"
+
 class Cell {
     // This object contains the lattice parameters,
     // and the atoms that compose the material

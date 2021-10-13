@@ -1,6 +1,11 @@
 #ifndef _ATOM_H_
 #define _ATOM_H_
 
+#include <array>
+#include <string>
+#include <vector>
+
+
 // Minimal structure that represents an atom
 struct Atom_Img {
     int                   element_id;

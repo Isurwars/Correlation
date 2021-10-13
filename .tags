@@ -45,7 +45,7 @@ X	.\src\Cell.h	/^    std::vector<std::vector<double> > X;$/;"	m	class:Cell
 XRD	.\src\Cell.cpp	/^void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width)$/;"	f	class:Cell
 _ATOM_H_	.\src\Atom.h	2;"	d
 _CELL_H_	.\src\Cell.h	2;"	d
-_CONS_H_	.\src\Constants.h	3;"	d
+_CONS_H_	.\src\Constants.h	2;"	d
 _READ_H_	.\src\ReadFiles.h	2;"	d
 _angle_bin_w_	.\src\main.cpp	/^double _angle_bin_w_ = 1.0;$/;"	v
 _bin_w_	.\src\main.cpp	/^double _bin_w_       = 0.05;$/;"	v

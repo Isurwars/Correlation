@@ -48,14 +48,14 @@ test1:
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
   fi
-	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_1/xSi_Nc.csv $(TST_DIR)/test_1/Nc.csv; \
+	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_1/xSi_Z.csv $(TST_DIR)/test_1/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
-		echo " Test 1: Coordination Number (Nc) successfully calculated."; \
+		echo " Test 1: Coordination Number (Z) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
 	else \
 		echo "----------------------------------------------------------"; \
-		echo " Warning: Coordination Number (Nc) different from expected."; \
+		echo " Warning: Coordination Number (Z) different from expected."; \
 		echo "----------------------------------------------------------"; \
 	fi
 	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_1/xSi_PAD.csv $(TST_DIR)/test_1/PAD.csv; \
@@ -105,14 +105,14 @@ test2:
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
   fi
-	@diff --strip-trailing-cr $(TST_DIR)/test_2/Graphene_Nc.csv $(TST_DIR)/test_2/Nc.csv; \
+	@diff --strip-trailing-cr $(TST_DIR)/test_2/Graphene_Z.csv $(TST_DIR)/test_2/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
-		echo " Test 2: Coordination Number (Nc) successfully calculated."; \
+		echo " Test 2: Coordination Number (Z) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
 	else \
 		echo "----------------------------------------------------------"; \
-		echo " Warning: Coordination Number (Nc) different from expected."; \
+		echo " Warning: Coordination Number (Z) different from expected."; \
 		echo "----------------------------------------------------------"; \
 	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_2/Graphene_PAD.csv $(TST_DIR)/test_2/PAD.csv; \
@@ -163,14 +163,14 @@ test3:
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
   fi
-	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_Nc.csv $(TST_DIR)/test_3/Nc.csv; \
+	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_Z.csv $(TST_DIR)/test_3/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
-		echo " Test 3: Coordination Number (Nc) successfully calculated."; \
+		echo " Test 3: Coordination Number (Z) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
 	else \
 		echo "----------------------------------------------------------"; \
-		echo " Warning: Coordination Number (Nc) different from expected."; \
+		echo " Warning: Coordination Number (Z) different from expected."; \
 		echo "----------------------------------------------------------"; \
 	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_PAD.csv $(TST_DIR)/test_3/PAD.csv; \
@@ -221,14 +221,14 @@ test4:
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
   fi
-	@diff --strip-trailing-cr $(TST_DIR)/test_4/aPdH_Nc.csv $(TST_DIR)/test_4/Nc.csv; \
+	@diff --strip-trailing-cr $(TST_DIR)/test_4/aPdH_Z.csv $(TST_DIR)/test_4/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
-		echo " Test 4: Coordination Number (Nc) successfully calculated."; \
+		echo " Test 4: Coordination Number (Z) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
 	else \
 		echo "----------------------------------------------------------"; \
-		echo " Warning: Coordination Number (Nc) different from expected."; \
+		echo " Warning: Coordination Number (Z) different from expected."; \
 		echo "----------------------------------------------------------"; \
 	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_4/aPdH_PAD.csv $(TST_DIR)/test_4/PAD.csv; \
@@ -279,14 +279,14 @@ test5:
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
   fi
-	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_Nc.csv $(TST_DIR)/test_5/Nc.csv; \
+	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_Z.csv $(TST_DIR)/test_5/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
-		echo " Test 5: Coordination Number (Nc) successfully calculated."; \
+		echo " Test 5: Coordination Number (Z) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
 	else \
 		echo "----------------------------------------------------------"; \
-		echo " Warning: Coordination Number (Nc) different from expected."; \
+		echo " Warning: Coordination Number (Z) different from expected."; \
 		echo "----------------------------------------------------------"; \
 	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_PAD.csv $(TST_DIR)/test_5/PAD.csv; \
@@ -337,14 +337,14 @@ test6:
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
   fi
-	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_Nc.csv $(TST_DIR)/test_6/Nc.csv; \
+	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_Z.csv $(TST_DIR)/test_6/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
-		echo " Test 6: Coordination Number (Nc) successfully calculated."; \
+		echo " Test 6: Coordination Number (Z) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
 	else \
 		echo "----------------------------------------------------------"; \
-		echo " Warning: Coordination Number (Nc) different from expected."; \
+		echo " Warning: Coordination Number (Z) different from expected."; \
 		echo "----------------------------------------------------------"; \
 	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_PAD.csv $(TST_DIR)/test_6/PAD.csv; \

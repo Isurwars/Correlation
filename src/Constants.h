@@ -1,6 +1,7 @@
-#include <string>
 #ifndef _CONS_H_
-# define _CONS_H_
+#define _CONS_H_
+
+#include <string>
 
 /*
  * Constants definitions
