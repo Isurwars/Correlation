@@ -1,6 +1,6 @@
 /*
-Copyright [2021] <@isurwars>
-*/
+ * Copyright [2021] <@isurwars>
+ */
 #include "ReadFiles.h"
 
 #include <array>
@@ -18,22 +18,20 @@ Copyright [2021] <@isurwars>
  * if true, then return the index.
  */
 template <typename T>
-std::pair<bool, int> findInVector(
-  const std::vector<T> & vecOfElements,
-  const T  & element
-  ) {
-    std::pair<bool, int> result;
-    // Find given element in vector
-    auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
+std::pair<bool, int> findInVector(const std::vector<T> & vecOfElements,
+    const T                                            & element)                                 {
+  std::pair<bool, int> result;
+  // Find given element in vector
+  auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
 
-    if (it != vecOfElements.end()) {
-      result.second = std::distance(vecOfElements.begin(), it);
-      result.first  = true;
-    } else {
-      result.first  = false;
-      result.second = -1;
-    }
-    return result;
+  if (it != vecOfElements.end()) {
+    result.second = std::distance(vecOfElements.begin(), it);
+    result.first  = true;
+  } else {
+    result.first  = false;
+    result.second = -1;
+  }
+  return result;
 }  // findInVector
 
 Cell read_CAR(std::string file_name) {
@@ -58,12 +56,12 @@ Cell read_CAR(std::string file_name) {
    * six lattice parameters: A, B, C, alpha, beta, gamma.
    */
   std::regex regex_parameters("(^!?PBC)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   /*
    * The atoms start with the element symbol, the first letter is UPPERCASE,
@@ -71,14 +69,14 @@ Cell read_CAR(std::string file_name) {
    * Then the absolute coordinates (x, y, z) in Angstroms.
    */
   std::regex regex_atom("^([A-Z][a-z]?)"
-    "(\\d+)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[A-Z]+)"
-    "(\\s\\d+)"
-    "(\\s+[a-z]+\\s+)"
-    "([A-Z][a-z]?)");
+      "(\\d+)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[A-Z]+)"
+      "(\\s\\d+)"
+      "(\\s+[a-z]+\\s+)"
+      "([A-Z][a-z]?)");
 
   if (myfile.is_open()) {
     while (std::getline(myfile, line)) {
@@ -93,12 +91,12 @@ Cell read_CAR(std::string file_name) {
       }
       if (std::regex_search(line, match, regex_atom)) {
         Atom tempAtom(match.str(12).data(),
-          { std::stod(match.str(3).data()),
-            std::stod(match.str(5).data()),
-            std::stod(match.str(7).data()) });
+            { std::stod(match.str(3).data()),
+              std::stod(match.str(5).data()),
+              std::stod(match.str(7).data()) });
         tempCell.atoms.push_back(tempAtom);
         if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-            tempCell.elements.push_back(tempAtom.element);
+          tempCell.elements.push_back(tempAtom.element);
         }
       }
     }
@@ -141,13 +139,13 @@ Cell read_CELL(std::string file_name) {
    * BLOCK starts with %BLOCK "something", CasE InSenSitiVE
    */
   std::regex regex_block("^(%block)\\s+"
-    "([^\n\r]+)", std::regex::icase);
+      "([^\n\r]+)", std::regex::icase);
 
   /*
    * BLOCK ends with %ENDBLOCK "something", CasE InSenSitiVE
    */
   std::regex regex_endblock("^(%endblock)\\s+"
-    "([^\n\r]+)", std::regex::icase);
+      "([^\n\r]+)", std::regex::icase);
 
 
   /*
@@ -167,8 +165,8 @@ Cell read_CELL(std::string file_name) {
   std::regex regex_lattice_cart("(lattice_cart)", std::regex::icase);
   std::regex regex_lattice_abc("(lattice_abc)", std::regex::icase);
   std::regex regex_lattice("(\\s*[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   /*
    * Atoms have two options: absolute coordinates and relative coordinates,
@@ -178,9 +176,9 @@ Cell read_CELL(std::string file_name) {
   std::regex regex_positions_abs("(positions_abs)", std::regex::icase);
   std::regex regex_positions_frac("(positions_frac)", std::regex::icase);
   std::regex regex_atom("([A-Z][a-z]?)" "([a-z]?[0-9]?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   if (myfile.is_open()) {
     /* Check if the file is open */
@@ -202,23 +200,21 @@ Cell read_CELL(std::string file_name) {
             }
           }
           tempCell.SetFromVectors({ aux_v[0][0], aux_v[0][1], aux_v[0][2] },
-            { aux_v[1][0], aux_v[1][1], aux_v[1][2] },
-            { aux_v[2][0], aux_v[2][1], aux_v[2][2] });
+              { aux_v[1][0], aux_v[1][1], aux_v[1][2] },
+              { aux_v[2][0], aux_v[2][1], aux_v[2][2] });
         }
         if (std::regex_search(line, match, regex_lattice_abc)) {
           /* LATTICE_ABC case.*/
           int index = 0;
-          std::array<double, 6> auxABC;
           while (!std::regex_search(line, match, regex_endblock)) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_lattice)) {
-              auxABC[0 + 3 * index] = std::stof(match.str(1).data());
-              auxABC[1 + 3 * index] = std::stof(match.str(3).data());
-              auxABC[2 + 3 * index] = std::stof(match.str(5).data());
+              tempCell.lattice_parameters[0 + 3 * index] = std::stof(match.str(1).data());
+              tempCell.lattice_parameters[1 + 3 * index] = std::stof(match.str(3).data());
+              tempCell.lattice_parameters[2 + 3 * index] = std::stof(match.str(5).data());
               index++;
             }
           }
-          tempCell.lattice_parameters = auxABC;
           tempCell.SetLatticeVectors();
         }
         if (std::regex_search(line, match, regex_positions_frac)) {
@@ -228,12 +224,12 @@ Cell read_CELL(std::string file_name) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()),
-                  std::stod(match.str(5).data()),
-                  std::stod(match.str(7).data()) });
+                  { std::stod(match.str(3).data()),
+                    std::stod(match.str(5).data()),
+                    std::stod(match.str(7).data()) });
               tempCell.atoms.push_back(tempAtom);
               if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-                  tempCell.elements.push_back(tempAtom.element);
+                tempCell.elements.push_back(tempAtom.element);
               }
             }
           }
@@ -245,12 +241,12 @@ Cell read_CELL(std::string file_name) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()),
-                  std::stod(match.str(5).data()),
-                  std::stod(match.str(7).data()) });
+                  { std::stod(match.str(3).data()),
+                    std::stod(match.str(5).data()),
+                    std::stod(match.str(7).data()) });
               tempCell.atoms.push_back(tempAtom);
               if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-                  tempCell.elements.push_back(tempAtom.element);
+                tempCell.elements.push_back(tempAtom.element);
               }
             }
           }
@@ -281,8 +277,8 @@ Cell read_ONETEP_DAT(std::string file_name) {
   std::string line;
   std::smatch match;
   Cell tempCell;
-  bool frac_flag    = false;
-  double p_f = 0.52918;
+  bool frac_flag = false;
+  double p_f     = 0.52918;
 
   /*
    * CELL files are CasE InSenSitiVE. The file is separeted in "BLOCKS".
@@ -298,13 +294,13 @@ Cell read_ONETEP_DAT(std::string file_name) {
    * BLOCK starts with %BLOCK "something", CasE InSenSitiVE
    */
   std::regex regex_block("^(%block)\\s+"
-    "([^\n\r]+)", std::regex::icase);
+      "([^\n\r]+)", std::regex::icase);
 
   /*
    * BLOCK ends with %ENDBLOCK "something", CasE InSenSitiVE
    */
   std::regex regex_endblock("^(%endblock)\\s+"
-    "([^\n\r]+)", std::regex::icase);
+      "([^\n\r]+)", std::regex::icase);
 
 
   /*
@@ -324,8 +320,8 @@ Cell read_ONETEP_DAT(std::string file_name) {
   std::regex regex_lattice_cart("(lattice_cart)", std::regex::icase);
   std::regex regex_lattice_abc("(lattice_abc)", std::regex::icase);
   std::regex regex_lattice("(\\s*[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   /*
    * Onetep default distance units is a0, we need to know if we should
@@ -341,9 +337,9 @@ Cell read_ONETEP_DAT(std::string file_name) {
   std::regex regex_positions_abs("(positions_abs)", std::regex::icase);
   std::regex regex_positions_frac("(positions_frac)", std::regex::icase);
   std::regex regex_atom("([A-Z][a-z]?)" "([a-z]?[0-9]?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
-    "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)"
+      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   if (myfile.is_open()) {
     /* Check if the file is open */
@@ -368,26 +364,24 @@ Cell read_ONETEP_DAT(std::string file_name) {
             }
           }
           tempCell.SetFromVectors({ aux_v[0][0], aux_v[0][1], aux_v[0][2] },
-            { aux_v[1][0], aux_v[1][1], aux_v[1][2] },
-            { aux_v[2][0], aux_v[2][1], aux_v[2][2] });
+              { aux_v[1][0], aux_v[1][1], aux_v[1][2] },
+              { aux_v[2][0], aux_v[2][1], aux_v[2][2] });
         }
         if (std::regex_search(line, match, regex_lattice_abc)) {
           /* LATTICE_ABC case.*/
           int index = 0;
-          std::array<double, 6> auxABC;
           while (!std::regex_search(line, match, regex_endblock)) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_ang)) {
-                p_f = 1.0;
+              p_f = 1.0;
             }
             if (std::regex_search(line, match, regex_lattice)) {
-                auxABC[0 + 3 * index] = std::stof(match.str(1).data()) * p_f;
-                auxABC[1 + 3 * index] = std::stof(match.str(3).data()) * p_f;
-                auxABC[2 + 3 * index] = std::stof(match.str(5).data()) * p_f;
-                index++;
+              tempCell.lattice_parameters[0 + 3 * index] = std::stof(match.str(1).data()) * p_f;
+              tempCell.lattice_parameters[1 + 3 * index] = std::stof(match.str(3).data()) * p_f;
+              tempCell.lattice_parameters[2 + 3 * index] = std::stof(match.str(5).data()) * p_f;
+              index++;
             }
           }
-          tempCell.lattice_parameters = auxABC;
           tempCell.SetLatticeVectors();
         }
         if (std::regex_search(line, match, regex_positions_frac)) {
@@ -400,9 +394,9 @@ Cell read_ONETEP_DAT(std::string file_name) {
             }
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()) * p_f,
-                  std::stod(match.str(5).data()) * p_f,
-                  std::stod(match.str(7).data()) * p_f });
+                  { std::stod(match.str(3).data()) * p_f,
+                    std::stod(match.str(5).data()) * p_f,
+                    std::stod(match.str(7).data()) * p_f });
               tempCell.atoms.push_back(tempAtom);
               if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
                 tempCell.elements.push_back(tempAtom.element);
@@ -420,9 +414,9 @@ Cell read_ONETEP_DAT(std::string file_name) {
             }
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()) * p_f,
-                  std::stod(match.str(5).data()) * p_f,
-                  std::stod(match.str(7).data()) * p_f });
+                  { std::stod(match.str(3).data()) * p_f,
+                    std::stod(match.str(5).data()) * p_f,
+                    std::stod(match.str(7).data()) * p_f });
               tempCell.atoms.push_back(tempAtom);
               if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
                 tempCell.elements.push_back(tempAtom.element);

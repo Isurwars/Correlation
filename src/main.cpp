@@ -1,15 +1,15 @@
 // This program calculate correlation functions for a group of atoms
-#include <algorithm>// for_each
+#include <algorithm>  // for_each
 #include <array>    // Handle the array of parameters
-#include <getopt.h> // For the argument parsing
-#include <iostream> // Standar IO library
+#include <getopt.h>  // For the argument parsing
+#include <iostream>  // Standar IO library
 #include <list>     // To handle the list of atoms
 #include <string>   // String manipulation and algorithms
 // #include <vector>   // Most of the output is stored in vectors
 
 #include "Atom.h"      // Atom Class
 #include "Cell.h"      // Cell Class
-#include "ReadFiles.h" // File reading and parsing
+#include "ReadFiles.h"  // File reading and parsing
 
 /*
  * Currenly filesystem is not fully implemented in gcc 10.1.
@@ -21,20 +21,19 @@
  * #include <filesystem>
  * namespace fs = std::filesystem;
  */
-std::pair<std::string, std::string> GetExtension(std::string filename)
-{
-    std::pair<std::string, std::string> result;
-    size_t i = filename.rfind('.', filename.length());
+std::pair<std::string, std::string> GetExtension(std::string filename) {
+  std::pair<std::string, std::string> result;
+  size_t i = filename.rfind('.', filename.length());
 
-    if (i != std::string::npos) {
-        result.first  = filename.substr(0, i);
-        result.second = filename.substr(i, filename.length() - 1);
-        return result;
-    }
-
-    result.first  = filename;
-    result.second = "";
+  if (i != std::string::npos) {
+    result.first  = filename.substr(0, i);
+    result.second = filename.substr(i, filename.length() - 1);
     return result;
+  }
+
+  result.first  = filename;
+  result.second = "";
+  return result;
 }
 
 std::string _in_file_name_   = "";
@@ -48,9 +47,8 @@ double _q_bin_w_     = 0.1570796326;
 double _bond_par_    = 1.3;
 double _angle_bin_w_ = 1.0;
 
-void PrintHelp()
-{
-    const std::string help_txt = "CORRELATION\n"
+void PrintHelp() {
+  const std::string help_txt = "CORRELATION\n"
       "DESCRIPTION:\n"
       "  This program calculates the main correlation functions of a material:\n"
       "    - Radial Distribution Function (J(r)).\n"
@@ -121,218 +119,216 @@ void PrintHelp()
       "  Thanks to DGAPA-UNAM for the financial support during my fellowship.\n"
       "  And their continious support as part of the Workgroup projects with IDs:\n"
       "  IN104617 and IN116520.\n";
-    std::cout << help_txt;
+  std::cout << help_txt;
 
+  exit(1);
+}  // PrintHelp
+
+void ArgParser(int argc, char ** argv) {
+  const char * const short_opts = "a:b:hi:no:q:r:w:";
+  const option long_opts[]      = {
+    { "angle_bin_width", required_argument, nullptr, 'a' },
+    { "bond_parameter",  required_argument, nullptr, 'b' },
+    { "help",            no_argument,       nullptr, 'h' },
+    { "in_bond_file",    required_argument, nullptr, 'i' },
+    { "normalize",       no_argument,       nullptr, 'n' },
+    { "out_file",        required_argument, nullptr, 'o' },
+    { "q_bin_width",     required_argument, nullptr, 'q' },
+    { "r_cut",           required_argument, nullptr, 'r' },
+    { "bin_width",       required_argument, nullptr, 'w' },
+    { nullptr,           no_argument,       nullptr, 0   }
+  };
+
+  while (true) {
+    const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
+
+    if (opt == -1)
+      break;
+
+    switch (opt) {
+        case 'a':     // -a or --angle_bin_width
+          try{
+            _angle_bin_w_ = std::stof(optarg);
+          }
+          catch (const std::exception& e) {
+            std::cout << "Invalid input argument: '"
+                      << optarg
+                      << "' in angle_bin_width parameter '-a' "
+                      << "(Real number expected)."
+                      << std::endl;
+            exit(1);
+          }
+          break;
+        case 'b':     // -b or --bond_parameter
+          try{
+            _bond_par_ = std::stof(optarg);
+          }
+          catch (const std::exception& e) {
+            std::cout << "Invalid input argument: '"
+                      << optarg
+                      << "' in bond_parameter '-b' "
+                      << "(Real number expected)."
+                      << std::endl;
+            exit(1);
+          }
+          break;
+        case 'h':     // -h or --help
+          PrintHelp();
+          break;
+        case 'i':     // -i or --in_bond_file
+          _bond_in_file_   = true;
+          _bond_file_name_ = optarg;
+          break;
+        case 'n':     // -n or --normalize
+          _normalize_ = true;
+          break;
+        case 'o':     // -o or --out_file
+          _out_file_name_ = optarg;
+          break;
+        case 'q':     // -q or --q_bin_width
+          try{
+            _q_bin_w_ = std::stof(optarg);
+          }
+          catch (const std::exception& e) {
+            std::cout << "Invalid input argument: '"
+                      << optarg
+                      << "' in q_bin_width parameter '-q' "
+                      << "(Real number expected)."
+                      << std::endl;
+            exit(1);
+          }
+          break;
+        case 'r':     // -r ot --r_cut
+          try{
+            _r_cut_ = std::stof(optarg);
+          }
+          catch (const std::exception& e) {
+            std::cout << "Invalid input argument: '"
+                      << optarg
+                      << "' in r_cut parameter '-r' "
+                      << "(Real number expected)."
+                      << std::endl;
+            exit(1);
+          }
+          break;
+        case 'w':     // -w or --bin_width
+          try{
+            _bin_w_ = std::stof(optarg);
+          }
+          catch (const std::exception& e) {
+            std::cout << "Invalid input argument: '"
+                      << optarg
+                      << "' in bin_width parameter '-w' "
+                      << "(Real number expected)."
+                      << std::endl;
+            exit(1);
+          }
+          break;
+        case '?':     // Unrecognized option
+          /* getopt_long already printed an error message. */
+          exit(1);
+          break;
+
+        default:
+          break;
+    }
+  }
+  if (optind < argc - 1) {
+    std::cout << "Only one structure file most be provided." << std::endl;
     exit(1);
-} // PrintHelp
-
-void ArgParser(int argc, char ** argv)
-{
-    const char * const short_opts = "a:b:hi:no:q:r:w:";
-    const option long_opts[]      = {
-        { "angle_bin_width", required_argument, nullptr, 'a' },
-        { "bond_parameter",  required_argument, nullptr, 'b' },
-        { "help",            no_argument,       nullptr, 'h' },
-        { "in_bond_file",    required_argument, nullptr, 'i' },
-        { "normalize",       no_argument,       nullptr, 'n' },
-        { "out_file",        required_argument, nullptr, 'o' },
-        { "q_bin_width",     required_argument, nullptr, 'q' },
-        { "r_cut",           required_argument, nullptr, 'r' },
-        { "bin_width",       required_argument, nullptr, 'w' },
-        { nullptr,           no_argument,       nullptr, 0   }
-    };
-
-    while (true) {
-        const auto opt = getopt_long(argc, argv, short_opts, long_opts, nullptr);
-
-        if (opt == -1)
-            break;
-
-        switch (opt) {
-            case 'a': // -a or --angle_bin_width
-                try{
-                    _angle_bin_w_ = std::stof(optarg);
-                }
-                catch (const std::exception& e) {
-                    std::cout << "Invalid input argument: '"
-                              << optarg
-                              << "' in angle_bin_width parameter '-a' "
-                              << "(Real number expected)."
-                              << std::endl;
-                    exit(1);
-                }
-                break;
-            case 'b': // -b or --bond_parameter
-                try{
-                    _bond_par_ = std::stof(optarg);
-                }
-                catch (const std::exception& e) {
-                    std::cout << "Invalid input argument: '"
-                              << optarg
-                              << "' in bond_parameter '-b' "
-                              << "(Real number expected)."
-                              << std::endl;
-                    exit(1);
-                }
-                break;
-            case 'h': // -h or --help
-                PrintHelp();
-                break;
-            case 'i': // -i or --in_bond_file
-                _bond_in_file_   = true;
-                _bond_file_name_ = optarg;
-                break;
-            case 'n': // -n or --normalize
-                _normalize_ = true;
-                break;
-            case 'o': // -o or --out_file
-                _out_file_name_ = optarg;
-                break;
-            case 'q': // -q or --q_bin_width
-                try{
-                    _q_bin_w_ = std::stof(optarg);
-                }
-                catch (const std::exception& e) {
-                    std::cout << "Invalid input argument: '"
-                              << optarg
-                              << "' in q_bin_width parameter '-q' "
-                              << "(Real number expected)."
-                              << std::endl;
-                    exit(1);
-                }
-                break;
-            case 'r': // -r ot --r_cut
-                try{
-                    _r_cut_ = std::stof(optarg);
-                }
-                catch (const std::exception& e) {
-                    std::cout << "Invalid input argument: '"
-                              << optarg
-                              << "' in r_cut parameter '-r' "
-                              << "(Real number expected)."
-                              << std::endl;
-                    exit(1);
-                }
-                break;
-            case 'w': // -w or --bin_width
-                try{
-                    _bin_w_ = std::stof(optarg);
-                }
-                catch (const std::exception& e) {
-                    std::cout << "Invalid input argument: '"
-                              << optarg
-                              << "' in bin_width parameter '-w' "
-                              << "(Real number expected)."
-                              << std::endl;
-                    exit(1);
-                }
-                break;
-            case '?': // Unrecognized option
-                /* getopt_long already printed an error message. */
-                exit(1);
-                break;
-
-            default:
-                break;
-        }
-    }
-    if (optind < argc - 1) {
-        std::cout << "Only one structure file most be provided." << std::endl;
-        exit(1);
+  } else {
+    if (argc > 1) {
+      _in_file_name_ = argv[optind];
     } else {
-        if (argc > 1) {
-            _in_file_name_ = argv[optind];
-        } else {
-            PrintHelp();
-        }
+      PrintHelp();
     }
-} // ArgParser
+  }
+}  // ArgParser
 
-int main(int argc, char ** argv)
-{
-    Cell MyCell; // Struture to be analized
-    std::list<Atom>::iterator MyAtom;
-    std::pair<std::string, std::string> file_ext;
+int main(int argc, char ** argv) {
+  Cell MyCell;   // Struture to be analized
+  std::list<Atom>::iterator MyAtom;
+  std::pair<std::string, std::string> file_ext;
 
-    /*
-     * Parse the input argumets provided
-     */
-    ArgParser(argc, argv);
+  /*
+   * Parse the input argumets provided
+   */
+  ArgParser(argc, argv);
 
-    /*
-     * Read the structure file
-     */
-    file_ext = GetExtension(_in_file_name_);
-    if (_out_file_name_ == "") _out_file_name_ = file_ext.first;
-    std::string MyExt = file_ext.second;
-    // Convert extension back to lower case
-    std::for_each(MyExt.begin(), MyExt.end(), [](char & c){
-        c = ::tolower(c);
-    });
-    if (MyExt == ".car") {
-        MyCell = read_CAR(_in_file_name_);
-    } else if (MyExt == ".cell") {
-        MyCell = read_CELL(_in_file_name_);
-    } else if (MyExt == ".dat") {
-        MyCell = read_ONETEP_DAT(_in_file_name_);
-    } else {
-        std::cout << "File: " << MyExt << " currently not supported." << std::endl;
-        PrintHelp();
-    }
-    std::cout << "File " << _in_file_name_ << " opened successfully." << std::endl;
+  /*
+   * Read the structure file
+   */
+  file_ext = GetExtension(_in_file_name_);
+  if (_out_file_name_ == "") _out_file_name_ = file_ext.first;
+  std::string MyExt = file_ext.second;
+  // Convert extension back to lower case
+  std::for_each(MyExt.begin(), MyExt.end(), [](char & c) {
+    c = ::tolower(c);
+  });
+  if (MyExt == ".car") {
+    MyCell = read_CAR(_in_file_name_);
+  } else if (MyExt == ".cell") {
+    MyCell = read_CELL(_in_file_name_);
+  } else if (MyExt == ".dat") {
+    MyCell = read_ONETEP_DAT(_in_file_name_);
+  } else {
+    std::cout << "File: " << MyExt << " currently not supported." << std::endl;
+    PrintHelp();
+  }
+  std::cout << "File " << _in_file_name_ << " opened successfully." << std::endl;
 
-    // Create Bond distance Matrix and element_ids
-    MyCell.PopulateBondLength(_bond_par_);
-    if (_bond_in_file_) {
-        /*Read the Bond Distances from the external file*/
-        MyCell.read_BOND(_bond_file_name_);
-    }
+  // Create Bond distance Matrix and element_ids
+  MyCell.PopulateBondLength(_bond_par_);
+  if (_bond_in_file_) {
+    /*Read the Bond Distances from the external file*/
+    MyCell.ReadBOND(_bond_file_name_);
+  }
 
-    /*
-     * This function calculates the distances between every pair of atoms
-     * in the structure. A supercell method is used to create the images
-     * in all directions up to _r_cut_ distance.
-     */
-    MyCell.RDF(_r_cut_);
+  /*
+   * This function calculates the distances between every pair of atoms
+   * in the structure. A supercell method is used to create the images
+   * in all directions up to _r_cut_ distance.
+   */
+  MyCell.RDF(_r_cut_);
 
-    /*
-     * This function calculates the partial coordination number for pairs of
-     * elements. Bonded Atoms use the same parameters for PAD.
-     */
-    MyCell.CoordinationNumber();
+  /*
+   * This function calculates the partial coordination number for pairs of
+   * elements. Bonded Atoms use the same parameters for PAD.
+   */
+  MyCell.CoordinationNumber();
 
-    /*
-     * This function calculates the angle between every atom and all pairs
-     * of bonded atoms. The bonded atoms are calculated in Cell::RDF and it
-     * must be called first.
-     */
-    MyCell.PAD();
+  /*
+   * This function calculates the angle between every atom and all pairs
+   * of bonded atoms. The bonded atoms are calculated in Cell::RDF and it
+   * must be called first.
+   */
+  MyCell.PAD();
 
-    /*
-     * This function uses the distances to calculate g(r), G(r) and J(r).
-     * The _r_cut_ parameter is the cutoff distance,
-     * the _bin_w_ parameter is the bin width to be used.
-     */
-    std::cout << "Writing output files: " << _out_file_name_ << std::endl;
-    MyCell.RDF_Histogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
-    MyCell.CoordinationNumber_Histogram(_out_file_name_);
+  /*
+   * This function uses the distances to calculate g(r), G(r) and J(r).
+   * The _r_cut_ parameter is the cutoff distance,
+   * the _bin_w_ parameter is the bin width to be used.
+   */
+  std::cout << "Writing output files: " << _out_file_name_ << std::endl;
+  MyCell.RDFHistogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
+  MyCell.CoordinationNumberHistogram(_out_file_name_);
 
-    /*
-     * This function calculate S(Q) as the Fourier Transform of G(r).
-     * The _r_cut_ parameter is the cutoff distance in r-space,
-     * the _q_bin_w_ parameter is the bin width to be used in q-space.
-     */
-    MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _r_cut_, _normalize_);
+  /*
+   * This function calculate S(Q) as the Fourier Transform of G(r).
+   * The _r_cut_ parameter is the cutoff distance in r-space,
+   * the _q_bin_w_ parameter is the bin width to be used in q-space.
+   */
+  MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _r_cut_, _normalize_);
 
-    //    MyCell.XRD(_out_file_name_, 1.5406, 5.0, 90.0, 0.05);
+  //    MyCell.XRD(_out_file_name_, 1.5406, 5.0, 90.0, 0.05);
 
-    /*
-     * This function uses the angles to calculate the PAD.
-     * The theta_max parameter is the maximum angle to compute,
-     * the _bin_w_ parameter is the bin width to be used.
-     */
-    MyCell.PAD_Histogram(_out_file_name_, 180.0, _angle_bin_w_);
+  /*
+   * This function uses the angles to calculate the PAD.
+   * The theta_max parameter is the maximum angle to compute,
+   * the _bin_w_ parameter is the bin width to be used.
+   */
+  MyCell.PADHistogram(_out_file_name_, 180.0, _angle_bin_w_);
 
-    std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
-    return 0;
-} // main
+  std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
+  return 0;
+}  // main
