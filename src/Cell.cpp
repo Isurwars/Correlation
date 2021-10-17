@@ -1,5 +1,19 @@
-/*
- * Copyright [2021] <@isurwars>
+/* ---------------------------------------------------------------------
+ * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
+ * Copyright (c) 2013-2021 Isaías Rodríguez <isurwars@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the MIT License version as published in:
+ * https://github.com/Isurwars/Correlation/blob/main/LICENSE
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ * ----------------------------------------------------------------------
  */
 #include "Cell.h"
 
@@ -19,7 +33,7 @@
  * Generic function to find if an element of any type exists in a vector,
  * if true, then returns the index.
  */
-template <typename T> std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements, const T& element) {
+template<typename T> std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements, const T& element) {
   std::pair<bool, int> result;
 
   // Find given element in vector
@@ -33,7 +47,7 @@ template <typename T> std::pair<bool, int> findInVector(const std::vector<T>& ve
     result.second = -1;
   }
   return result;
-}  // findInVector
+}                  // findInVector
 
 // Lattice parameters constructor
 Cell::Cell(std::array<double, 6> lat) {
@@ -53,8 +67,8 @@ Cell::Cell() {
 
 // Lattice vector constructor
 void Cell::SetFromVectors(std::vector<double> v1,
-    std::vector<double>                       v2,
-    std::vector<double>                       v3) {
+  std::vector<double>                         v2,
+  std::vector<double>                         v3) {
   double v1_n, v2_n, v3_n, aux, a, b, c;
 
   v1_n = sqrt(std::inner_product(v1.begin(), v1.end(), v1.begin(), 0));
@@ -90,29 +104,29 @@ void Cell::SetLatticeVectors() {
   this->v_c_ = { C * cos(beta),
                  C * (cos(alpha) - cos(beta) * cos(gamma)) / sin(gamma),
                  C * sqrt(1
-                     - pow(cos(alpha), 2)
-                     - pow(cos(beta), 2)
-                     - pow(cos(gamma), 2)
-                     + 2 * cos(alpha) * cos(beta) * cos(gamma))
+                   - pow(cos(alpha), 2)
+                   - pow(cos(beta), 2)
+                   - pow(cos(gamma), 2)
+                   + 2 * cos(alpha) * cos(beta) * cos(gamma))
                  / sin(gamma) };
   this->volume = (this->v_c_[0] * (this->v_a_[1] * this->v_b_[2] - this->v_a_[2] * this->v_b_[1])
-      - this->v_c_[1] * (this->v_a_[0] * this->v_b_[2] - this->v_a_[2] * this->v_b_[0])
-      + this->v_c_[2] * (this->v_a_[0] * this->v_b_[1] - this->v_a_[1] * this->v_b_[0]));
+    - this->v_c_[1] * (this->v_a_[0] * this->v_b_[2] - this->v_a_[2] * this->v_b_[0])
+    + this->v_c_[2] * (this->v_a_[0] * this->v_b_[1] - this->v_a_[1] * this->v_b_[0]));
 }
 
 // Correct the initial positions to in-cell positions
 void Cell::CorrectPositions() {
   double i, j, k;
-  int i_, j_, k_, m;
-  std::array<double, 3> aux_pos;
+  int    i_, j_, k_, m;
+  std::array<double, 3>     aux_pos;
   std::list<Atom>::iterator MyAtom;
   // Store the number of atoms per element
   std::vector<int> temp_num_atoms(this->elements.size(), 0);
 
 
   for (MyAtom = this->atoms.begin();
-      MyAtom != this->atoms.end();
-      MyAtom++) {
+    MyAtom != this->atoms.end();
+    MyAtom++) {
     temp_num_atoms[MyAtom->element_id]++;
     aux_pos = MyAtom->position;
     k       = aux_pos[2] / this->v_c_[2];
@@ -154,29 +168,29 @@ void Cell::CorrectFracPositions() {
   std::list<Atom>::iterator MyAtom;
 
   for (MyAtom = this->atoms.begin();
-      MyAtom != this->atoms.end();
-      MyAtom++) {
+    MyAtom != this->atoms.end();
+    MyAtom++) {
     i = MyAtom->position[0];
     j = MyAtom->position[1];
     k = MyAtom->position[2];
 
     MyAtom->position[0] = (i * this->v_a_[0]
-        + j * this->v_b_[0]
-        + k * this->v_c_[0]);
+      + j * this->v_b_[0]
+      + k * this->v_c_[0]);
     MyAtom->position[1] = (i * this->v_a_[1]
-        + j * this->v_b_[1]
-        + k * this->v_c_[1]);
+      + j * this->v_b_[1]
+      + k * this->v_c_[1]);
     MyAtom->position[2] = (i * this->v_a_[2]
-        + j * this->v_b_[2]
-        + k * this->v_c_[2]);
+      + j * this->v_b_[2]
+      + k * this->v_c_[2]);
   }
 }  // Cell::CorrectFracPositions
 
 // Populate Bond_length matrix
 void Cell::PopulateBondLength(double Bond_Factor) {
   std::list<Atom>::iterator MyAtom;
-  std::pair<bool, int> MyId;
-  int i, j;
+  std::pair<bool, int>      MyId;
+  int    i, j;
   double aux;
 
   // Number of elements in the Cell
@@ -186,8 +200,8 @@ void Cell::PopulateBondLength(double Bond_Factor) {
 
   // Iterate in Atoms list to assign the id in the matrix to every atom.
   for (MyAtom = this->atoms.begin();
-      MyAtom != this->atoms.end();
-      MyAtom++) {
+    MyAtom != this->atoms.end();
+    MyAtom++) {
     MyId = findInVector(this->elements, MyAtom->element);
     MyAtom->element_id = MyId.second;
   }
@@ -218,11 +232,11 @@ void Cell::ReadBOND(std::string file_name) {
    *
    * Any missing pair of elements will use the bond_parameter as a default.
    */
-  std::ifstream myfile(file_name);
-  std::string line;
-  std::smatch match;
+  std::ifstream        myfile(file_name);
+  std::string          line;
+  std::smatch          match;
   std::pair<bool, int> MyIdA, MyIdB;
-  int i, j;
+  int    i, j;
   double dist;
 
   /*
@@ -232,9 +246,9 @@ void Cell::ReadBOND(std::string file_name) {
    */
 
   std::regex regex_bond("^([A-Z][a-z]?)"
-      "(\\s+)"
-      "([A-Z][a-z]?)"
-      "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+                        "(\\s+)"
+                        "([A-Z][a-z]?)"
+                        "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   if (myfile.is_open()) {
     /* Check if the file is open */
@@ -279,12 +293,12 @@ void Cell::UpdateProgressBar(double pos) {
   std::cout.flush();
 }  // Cell::UpdateProgressBar
 
-// Cell::RDFMultiThreading
-void Cell::RDFMultiThreading(double r_cut) {
+// Cell::DistancePopulationMultiThreading
+void Cell::DistancePopulationMultiThreading(double r_cut) {
   std::list<Atom>::iterator atom_A;
   std::list<Atom>::iterator atom_B;
-  Atom img_atom;
-  int id_A, id_B, i, j, k, i_, j_, k_;
+  Atom   img_atom;
+  int    id_A, id_B, i, j, k, i_, j_, k_;
   double aux_dist;
   double h_       = 1.0 / this->atoms.size();
   double progress = 0.0;
@@ -295,7 +309,7 @@ void Cell::RDFMultiThreading(double r_cut) {
   // This matrix stores the distances between different types of elements,
   // there are at most nxn partials, off-diagonal partials are symmetric.
   std::vector<std::vector<std::vector<double> > > temp_dist(n, std::vector<std::vector<double> >(n,
-      std::vector<double>(0)));
+    std::vector<double>(0)));
 
   // Correct the atom positions to be inside the cell.
   this->CorrectPositions();
@@ -328,14 +342,14 @@ void Cell::RDFMultiThreading(double r_cut) {
    * desired to improve this code further.
    */
   for (atom_A = this->atoms.begin();
-      atom_A != this->atoms.end();
-      atom_A++) {
+    atom_A != this->atoms.end();
+    atom_A++) {
     progress += h_;
     this->UpdateProgressBar(progress);
     id_A = findInVector(this->elements, atom_A->element).second;
     for (atom_B = this->atoms.begin();
-        atom_B != this->atoms.end();
-        atom_B++) {
+      atom_B != this->atoms.end();
+      atom_B++) {
       // Excluding self-interactions
       if (atom_A->GetNumber() != atom_B->GetNumber()) {
         id_B     = findInVector(this->elements, atom_B->element).second;
@@ -347,7 +361,7 @@ void Cell::RDFMultiThreading(double r_cut) {
               img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
               img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
               img_atom.position[2] += k * this->v_c()[2];
-              aux_dist = atom_A->Distance(img_atom);
+              aux_dist              = atom_A->Distance(img_atom);
               if (aux_dist <= r_cut) {
                 temp_dist[id_A][id_B].push_back(aux_dist);
                 if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
@@ -391,14 +405,14 @@ void Cell::RDFMultiThreading(double r_cut) {
   }
   std::cout << "\r[==================================================] 100 %" << std::endl;
   this->distances = temp_dist;
-}  // Cell::RDFMultiThreading
+}  // Cell::DistancePopulationMultiThreading
 
-// RDF Calculation
-void Cell::RDF(double r_cut) {
+// DistancePopulation
+void Cell::DistancePopulation(double r_cut) {
   std::list<Atom>::iterator atom_A;
   std::list<Atom>::iterator atom_B;
-  Atom img_atom;
-  int id_A, id_B, i, j, k, i_, j_, k_;
+  Atom   img_atom;
+  int    id_A, id_B, i, j, k, i_, j_, k_;
   double aux_dist;
   double h_       = 1.0 / this->atoms.size();
   double progress = 0.0;
@@ -409,7 +423,7 @@ void Cell::RDF(double r_cut) {
   // This matrix stores the distances between different types of elements,
   // there are at most nxn partials, off-diagonal partials are symmetric.
   std::vector<std::vector<std::vector<double> > > temp_dist(n, std::vector<std::vector<double> >(n,
-      std::vector<double>(0)));
+    std::vector<double>(0)));
 
   // Correct the atom positions to be inside the cell.
   this->CorrectPositions();
@@ -434,14 +448,14 @@ void Cell::RDF(double r_cut) {
    * desired to improve this code further.
    */
   for (atom_A = this->atoms.begin();
-      atom_A != this->atoms.end();
-      atom_A++) {
+    atom_A != this->atoms.end();
+    atom_A++) {
     progress += h_;
     this->UpdateProgressBar(progress);
     id_A = findInVector(this->elements, atom_A->element).second;
     for (atom_B = this->atoms.begin();
-        atom_B != this->atoms.end();
-        atom_B++) {
+      atom_B != this->atoms.end();
+      atom_B++) {
       // Excluding self-interactions
       if (atom_A->GetNumber() != atom_B->GetNumber()) {
         id_B     = findInVector(this->elements, atom_B->element).second;
@@ -453,7 +467,7 @@ void Cell::RDF(double r_cut) {
               img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
               img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
               img_atom.position[2] += k * this->v_c()[2];
-              aux_dist = atom_A->Distance(img_atom);
+              aux_dist              = atom_A->Distance(img_atom);
               if (aux_dist <= r_cut) {
                 temp_dist[id_A][id_B].push_back(aux_dist);
                 if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
@@ -502,13 +516,13 @@ void Cell::RDF(double r_cut) {
 void Cell::CoordinationNumber() {
   int max_Nc = 0;
   int i;
-  std::list<Atom>::iterator MyAtom;
+  std::list<Atom>::iterator       MyAtom;
   std::vector<Atom_Img>::iterator atom_A;
 
   // Search for the maximum number of bonds in the cell
   for (MyAtom = this->atoms.begin();
-      MyAtom != this->atoms.end();
-      MyAtom++) {
+    MyAtom != this->atoms.end();
+    MyAtom++) {
     if (max_Nc < static_cast<int>(MyAtom->bonded_atoms.size())) {
       max_Nc = static_cast<int>(MyAtom->bonded_atoms.size());
     }
@@ -517,15 +531,15 @@ void Cell::CoordinationNumber() {
   const int m = max_Nc + 2;
   // Create the Tensor nxnxm and initialize it with zeros
   std::vector<std::vector<std::vector<int> > > temp_nc(n, std::vector<std::vector<int> >(n,
-      std::vector<int>(m, 0)));
+    std::vector<int>(m, 0)));
   // Search for the number of bonds per atom per element
   for (MyAtom = this->atoms.begin();
-      MyAtom != this->atoms.end();
-      MyAtom++) {
+    MyAtom != this->atoms.end();
+    MyAtom++) {
     std::vector<int> aux(n, 0);
     for (atom_A = MyAtom->bonded_atoms.begin();
-        atom_A != MyAtom->bonded_atoms.end();
-        atom_A++) {
+      atom_A != MyAtom->bonded_atoms.end();
+      atom_A++) {
       aux[atom_A->element_id]++;
     }
     for (i = 0; i < n; i++) {
@@ -536,7 +550,7 @@ void Cell::CoordinationNumber() {
 }  // Cell::CoordinationNumber
 
 void Cell::PAD(bool degree) {
-  std::list<Atom>::iterator MyAtom;
+  std::list<Atom>::iterator       MyAtom;
   std::vector<Atom_Img>::iterator atom_A, atom_B;
   double factor = 1.0;
 
@@ -547,8 +561,8 @@ void Cell::PAD(bool degree) {
   // NxNxN Tensor to store the PAD
   const int n = this->elements.size();
   std::vector<std::vector<std::vector<std::vector<double> > > > temp_pad(n,
-      std::vector<std::vector<std::vector<double> > >(n, std::vector<std::vector<double> >(n,
-      std::vector<double>(0))));
+    std::vector<std::vector<std::vector<double> > >(n, std::vector<std::vector<double> >(n,
+    std::vector<double>(0))));
 
   /*
    * This is the main loop to calculate the angles formed by every three atoms.
@@ -562,17 +576,17 @@ void Cell::PAD(bool degree) {
    * By default the angle returned is given in degrees.
    */
   for (MyAtom = this->atoms.begin();
-      MyAtom != this->atoms.end();
-      MyAtom++) {
+    MyAtom != this->atoms.end();
+    MyAtom++) {
     for (atom_A = MyAtom->bonded_atoms.begin();
-        atom_A != MyAtom->bonded_atoms.end();
-        atom_A++) {
+      atom_A != MyAtom->bonded_atoms.end();
+      atom_A++) {
       for (atom_B = MyAtom->bonded_atoms.begin();
-          atom_B != MyAtom->bonded_atoms.end();
-          atom_B++) {
+        atom_B != MyAtom->bonded_atoms.end();
+        atom_B++) {
         if (atom_A->atom_id != atom_B->atom_id) {
           temp_pad[atom_A->element_id][MyAtom->element_id][atom_B->element_id].push_back(MyAtom->GetAngle(*
-              atom_A, *atom_B) * factor);
+            atom_A, *atom_B) * factor);
         }
       }
     }
@@ -581,10 +595,10 @@ void Cell::PAD(bool degree) {
 }  // Cell::PAD
 
 void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bool normalize) {
-  int n_, m_, i, j, col, row;
-  int n = this->distances.size();
+  int         n_, m_, i, j, col, row;
+  int         n = this->distances.size();
   std::string header;
-  double num_atoms = this->atoms.size();
+  double      num_atoms = this->atoms.size();
 
   m_ = ceil(r_cut / bin_width);
   n_ = n * (n + 1) / 2 + 1;
@@ -614,7 +628,6 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
   }
   this->w_ij = temp_w_ij;
 
-
   std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
   // Fill the r values of the histogram
   for (i = 0; i < m_; i++) {
@@ -626,7 +639,7 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
     for (j = i; j < n; j++) {
       col++;
       for (std::vector<double>::iterator it = this->distances[i][j].begin();
-          it != this->distances[i][j].end(); it++) {
+        it != this->distances[i][j].end(); it++) {
         row = floor(*it / bin_width);
         if (row < m_) {
           temp_hist[col][row]++;
@@ -648,9 +661,9 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
       w_factor = num_atoms * bin_width * this->w_ij[i];
     }
     std::transform(temp_hist[i].begin(),
-        temp_hist[i].end(),
-        temp_hist[i].begin(),
-        [&w_factor](auto& c) {
+      temp_hist[i].end(),
+      temp_hist[i].begin(),
+      [&w_factor](auto& c) {
       return c / w_factor;
     });
   }
@@ -724,7 +737,7 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
   for (col = 1; col < n_; col++) {
     for (row = 1; row < m_; row++) {
       temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row]
-          * (temp_hist[col][row] - temp_w_ij[col]);
+        * (temp_hist[col][row] - temp_w_ij[col]);
     }
   }
 
@@ -751,8 +764,8 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
 }  // Cell::RDFHistogram
 
 void Cell::CoordinationNumberHistogram(std::string filename) {
-  int n_, m_, i, j, col;
-  int n = this->elements.size();
+  int         n_, m_, i, j, col;
+  int         n = this->elements.size();
   std::string header;
 
   n_ = n * n + 1;
@@ -793,11 +806,11 @@ void Cell::CoordinationNumberHistogram(std::string filename) {
 }  // Cell::CoordinationNumberHistogram
 
 void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize) {
-  int n_, m_, i, j, row, col;
-  int n = this->elements.size();
+  int         n_, m_, i, j, row, col;
+  int         n = this->elements.size();
   std::string header;
-  double Trapz     = 0.0;
-  double num_atoms = this->atoms.size();
+  double      Trapz     = 0.0;
+  double      num_atoms = this->atoms.size();
 
   n_ = this->G.size();
   m_ = this->G[0].size();
@@ -838,7 +851,7 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
         for (i = 1; i < (m_ - 1); i++) {
           Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
         }
-        Trapz += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
+        Trapz           += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
         temp_S[col][row] = temp_w_ij[col] + Trapz * (bin_width / temp_S[0][row]);
       }
     }
@@ -867,9 +880,9 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
 }  // Cell::SQ
 
 void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width) {
-  int n_, m_, i, j, k, col, row;
-  double norm, aux;
-  int n = this->elements.size();
+  int         n_, m_, i, j, k, col, row;
+  double      norm, aux;
+  int         n = this->elements.size();
   std::string header;
 
   m_ = ceil((theta_max - theta_min) / bin_width);
@@ -886,7 +899,7 @@ void Cell::XRD(std::string filename, double lambda, double theta_min, double the
     for (j = i; j < n; j++) {
       col++;
       for (std::vector<double>::iterator it = this->distances[i][j].begin();
-          it != this->distances[i][j].end(); it++) {
+        it != this->distances[i][j].end(); it++) {
         /*
          * Bragg's Law
          * n * lambda = 2d sin(theta)
@@ -947,9 +960,9 @@ void Cell::XRD(std::string filename, double lambda, double theta_min, double the
 }  // Cell:XRD
 
 void Cell::PADHistogram(std::string filename, double theta_cut, double bin_width) {
-  int n_, m_, i, j, k, h, col, row;
-  double norm;
-  int n = this->elements.size();
+  int         n_, m_, i, j, k, h, col, row;
+  double      norm;
+  int         n = this->elements.size();
   std::string header;
 
   /*
@@ -972,12 +985,15 @@ void Cell::PADHistogram(std::string filename, double theta_cut, double bin_width
   }
   col = 0;
   // Quadruple loop to iterate over the 3D angle tensor.
-  for (i = 0; i < n; i++) {     // i iterates over all central atoms
-    for (j = 0; j < n; j++) {   // j iterates over all initial atoms
-      for (k = j; k < n; k++) {  // k iterates only over half + 1 of the spectrum
+  for (i = 0; i < n; i++) {
+    // i iterates over all central atoms
+    for (j = 0; j < n; j++) {
+      // j iterates over all initial atoms
+      for (k = j; k < n; k++) {
+        // k iterates only over half + 1 of the spectrum
         col++;
         for (std::vector<double>::iterator it = this->angles[j][i][k].begin();
-            it != this->angles[j][i][k].end(); it++) {
+          it != this->angles[j][i][k].end(); it++) {
           row = floor(*it / bin_width);
           if (row < m_) {
             temp_hist[col][row]++;

@@ -3,10 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.3] 2021-10-12
 - Major refactor of the code in preparation for MultiThreading.
-- The code now comply with google c++ style.
+- The code now comply with google c++ style guidelines.
 - Modify the name for the Coordination Number (Z).
 - Modify the labels in the coordination number file (Z)to comply
-  with the standard atom A sorrounded by atoms B: A by B.
+  with the standard atom A surrounded by atoms B: A by B.
 
 ## [1.0.2] 2021-09-17
 - Minor style corrections to paper.md and README.md.
