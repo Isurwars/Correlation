@@ -408,7 +408,7 @@ void Cell::DistancePopulationMultiThreading(double r_cut) {
 }  // Cell::DistancePopulationMultiThreading
 
 // DistancePopulation
-void Cell::DistancePopulation(double r_cut) {
+void Cell::DistancePopulation(double r_cut, bool self_interaction) {
   std::list<Atom>::iterator atom_A;
   std::list<Atom>::iterator atom_B;
   Atom   img_atom;
@@ -432,6 +432,9 @@ void Cell::DistancePopulation(double r_cut) {
   k_ = ceil(r_cut / this->v_c()[2]);
   j_ = ceil(r_cut / this->v_b()[1]);
   i_ = ceil(r_cut / this->v_a()[0]);
+
+  // force self_interaction in case of a small supercell
+  if (k_ * j_ * i_ > 1) self_interaction = true;
 
   /*
    * This is the main loop in RDF, we need to iterate between all atoms
@@ -500,6 +503,61 @@ void Cell::DistancePopulation(double r_cut) {
                               << img_atom.position[1] << ", "
                               << img_atom.position[2] << ")." << std::endl
                               << "Have a distance less than the Bohr Radius." << std::endl;
+                  }
+                } else if (aux_dist <= 1.5 * this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                  atom_A->second_shell_atoms.push_back(img_atom.GetImage());
+                }
+              }
+            }
+          }
+        }
+      } else if (self_interaction) {
+        id_B     = findInVector(this->elements, atom_B->element).second;
+        img_atom = *atom_B;
+        for (i = -i_; i <= i_; i++) {
+          for (j = -j_; j <= j_; j++) {
+            for (k = -k_; k <= k_; k++) {
+              img_atom.position     = atom_B->position;
+              img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
+              img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
+              img_atom.position[2] += k * this->v_c()[2];
+              aux_dist              = atom_A->Distance(img_atom);
+              if (aux_dist > 0) {
+                if (aux_dist <= r_cut) {
+                  temp_dist[id_A][id_B].push_back(aux_dist);
+                  if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                    atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                    if (aux_dist < 0.1) {
+                      std::cout << std::endl << "ERROR: The atoms:" << std::endl
+                                << atom_A->element << "_" << atom_A->GetID()
+                                << " in position ("
+                                << atom_A->position[0] << ", "
+                                << atom_A->position[1] << ", "
+                                << atom_A->position[2] << ")," << std::endl
+                                << atom_B->element << "_" << atom_B->GetID()
+                                << " in position ("
+                                << img_atom.position[0] << ", "
+                                << img_atom.position[1] << ", "
+                                << img_atom.position[2] << ")." << std::endl
+                                << "Have a distance less than 10 pm." << std::endl;
+                      exit(1);
+                    }
+                    if (aux_dist < 0.5) {
+                      std::cout << std::endl << "WARNING: The atoms:" << std::endl
+                                << atom_A->element << "_" << atom_A->GetID()
+                                << " in position ("
+                                << atom_A->position[0] << ", "
+                                << atom_A->position[1] << ", "
+                                << atom_A->position[2] << ")," << std::endl
+                                << atom_B->element << "_" << atom_B->GetID()
+                                << " in position ("
+                                << img_atom.position[0] << ", "
+                                << img_atom.position[1] << ", "
+                                << img_atom.position[2] << ")." << std::endl
+                                << "Have a distance less than the Bohr Radius." << std::endl;
+                    }
+                  } else if (aux_dist <= 1.5 * this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                    atom_A->second_shell_atoms.push_back(img_atom.GetImage());
                   }
                 }
               }
@@ -806,15 +864,25 @@ void Cell::CoordinationNumberHistogram(std::string filename) {
 }  // Cell::CoordinationNumberHistogram
 
 void Cell::VoronoiIndex(std::string filename) {
-  int         n_, m_, i, j, row, col;
-  int         n = this->elements.size();
-  std::string header;
-  double      num_atoms = this->atoms.size();
-  std::list<Atom>::iterator atom_A;
-  std::list<Atom>::iterator atom_B;
+  // int         n_, m_, i, j, row, col;
+  // int         n = this->elements.size();
+  // std::string header;
+  // double      num_atoms = this->atoms.size();
+  std::list<Atom>::iterator       atom_A;
+  std::list<Atom>::iterator       atom_B;
+  std::vector<Atom_Img>::iterator atom_it;
+  std::vector<int> atom_A_ids;
+  std::vector<int> atom_B_ids;
+  std::vector<int> atom_intersection;
 
   for (atom_A = this->atoms.begin(); atom_A != this->atoms.end(); atom_A++) {
-    std::cout << atom_A->GetID() << std::endl;
+    atom_A_ids = atom_A->GetBondedAtomsID();
+    std::sort(atom_A_ids.begin(), atom_A_ids.end());
+    std::cout << "A " << atom_A->GetID() << ": (";
+    for (auto A_id : atom_A_ids) {
+      std::cout << A_id << ", ";
+    }
+    std::cout << " )" << std::endl;
   }
 }  // Cell::Voronoi
 

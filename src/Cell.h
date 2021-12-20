@@ -89,7 +89,7 @@ class Cell {
   // Calculate Distances MultiThreading
   void DistancePopulationMultiThreading(double);
   // Calculate Distances (max distance between atoms)
-  void DistancePopulation(double);
+  void DistancePopulation(double, bool);
   // Coordination Numbers Calculation
   void CoordinationNumber();
   // Bond-Angle Calulation ()

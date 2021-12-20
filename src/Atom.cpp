@@ -86,3 +86,16 @@ double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {
   if (aux < -1.0) aux = -1.0;
   return acos(aux);
 }  // Get Bond Angle
+
+// Get a vector containing the IDs of all bonded atoms
+std::vector<int> Atom::GetBondedAtomsID() {
+  std::vector<Atom_Img>::iterator atom_it;
+  int n_ = this->bonded_atoms.size();
+  std::vector<int> atoms_ids;
+  for (atom_it = this->bonded_atoms.begin();
+    atom_it != this->bonded_atoms.end();
+    atom_it++) {
+    atoms_ids.push_back(atom_it->atom_id);
+  }
+  return atoms_ids;
+}  // GetBondedAtomsID

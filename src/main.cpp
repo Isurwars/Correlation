@@ -56,13 +56,14 @@ std::pair<std::string, std::string> GetExtension(std::string filename) {
 inline std::string _in_file_name_   = "";
 inline std::string _out_file_name_  = "";
 inline std::string _bond_file_name_ = "";
-bool   _bond_in_file_ = false;
-bool   _normalize_    = false;
-double _r_cut_        = 20.0;
-double _bin_w_        = 0.05;
-double _q_bin_w_      = 0.1570796326;
-double _bond_par_     = 1.3;
-double _angle_bin_w_  = 1.0;
+bool   _bond_in_file_     = false;
+bool   _normalize_        = false;
+bool   _self_interaction_ = false;
+double _r_cut_            = 20.0;
+double _bin_w_            = 0.05;
+double _q_bin_w_          = 0.1570796326;
+double _bond_par_         = 1.3;
+double _angle_bin_w_      = 1.0;
 
 void PrintHelp() {
   const std::string help_txt = "CORRELATION\n"
@@ -306,7 +307,7 @@ int main(int argc, char* *argv) {
    * in the structure. A supercell method is used to create the images
    * in all directions up to _r_cut_ distance.
    */
-  MyCell.DistancePopulation(_r_cut_);
+  MyCell.DistancePopulation(_r_cut_, _self_interaction_);
 
   /*
    * This function calculates the partial coordination number for pairs of
@@ -329,7 +330,7 @@ int main(int argc, char* *argv) {
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;
   MyCell.RDFHistogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
   MyCell.CoordinationNumberHistogram(_out_file_name_);
-  MyCell.VoronoiIndex(_out_file_name_);
+  // MyCell.VoronoiIndex(_out_file_name_);
   /*
    * This function calculate S(Q) as the Fourier Transform of G(r).
    * The _r_cut_ parameter is the cutoff distance in r-space,

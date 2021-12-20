@@ -18,11 +18,12 @@ CorrectFracPositions	.\src\Cell.cpp	/^void Cell::CorrectFracPositions() {$/;"	f	
 CorrectPositions	.\src\Cell.cpp	/^void Cell::CorrectPositions() {$/;"	f	class:Cell
 Covalent_Radii	.\src\Constants.cpp	/^double Covalent_Radii(std::string element) {$/;"	f
 Distance	.\src\Atom.cpp	/^double Atom::Distance(const Atom& other_atom) {$/;"	f	class:Atom
-DistancePopulation	.\src\Cell.cpp	/^void Cell::DistancePopulation(double r_cut) {$/;"	f	class:Cell
+DistancePopulation	.\src\Cell.cpp	/^void Cell::DistancePopulation(double r_cut, bool self_interaction) {$/;"	f	class:Cell
 DistancePopulationMultiThreading	.\src\Cell.cpp	/^void Cell::DistancePopulationMultiThreading(double r_cut) {$/;"	f	class:Cell
 G	.\src\Cell.h	/^  std::vector < std::vector < double >> G;$/;"	m	class:Cell
 GaussianKernel	.\src\Smoothing.cpp	/^std::vector<double> GaussianKernel(double r0, std::vector<double> r_vals, double sigma) {$/;"	f
 GetAngle	.\src\Atom.cpp	/^double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {$/;"	f	class:Atom
+GetBondedAtomsID	.\src\Atom.cpp	/^std::vector<int> Atom::GetBondedAtomsID() {$/;"	f	class:Atom
 GetExtension	.\src\main.cpp	/^std::pair<std::string, std::string> GetExtension(std::string filename) {$/;"	f
 GetID	.\src\Atom.h	/^  int GetID() { return id; }$/;"	f	class:Atom
 GetImage	.\src\Atom.cpp	/^Atom_Img Atom::GetImage() {$/;"	f	class:Atom
@@ -52,27 +53,28 @@ UpdateProgressBar	.\src\Cell.cpp	/^void Cell::UpdateProgressBar(double pos) {$/;
 VoronoiIndex	.\src\Cell.cpp	/^void Cell::VoronoiIndex(std::string filename) {$/;"	f	class:Cell
 X	.\src\Cell.h	/^  std::vector < std::vector < double >> X;$/;"	m	class:Cell
 XRD	.\src\Cell.cpp	/^void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width) {$/;"	f	class:Cell
-_angle_bin_w_	.\src\main.cpp	/^double _angle_bin_w_  = 1.0;$/;"	v
-_bin_w_	.\src\main.cpp	/^double _bin_w_        = 0.05;$/;"	v
+_angle_bin_w_	.\src\main.cpp	/^double _angle_bin_w_      = 1.0;$/;"	v
+_bin_w_	.\src\main.cpp	/^double _bin_w_            = 0.05;$/;"	v
 _bond_file_name_	.\src\main.cpp	/^inline std::string _bond_file_name_ = "";$/;"	v
-_bond_in_file_	.\src\main.cpp	/^bool   _bond_in_file_ = false;$/;"	v
-_bond_par_	.\src\main.cpp	/^double _bond_par_     = 1.3;$/;"	v
+_bond_in_file_	.\src\main.cpp	/^bool   _bond_in_file_     = false;$/;"	v
+_bond_par_	.\src\main.cpp	/^double _bond_par_         = 1.3;$/;"	v
 _in_file_name_	.\src\main.cpp	/^inline std::string _in_file_name_   = "";$/;"	v
-_normalize_	.\src\main.cpp	/^bool   _normalize_    = false;$/;"	v
+_normalize_	.\src\main.cpp	/^bool   _normalize_        = false;$/;"	v
 _out_file_name_	.\src\main.cpp	/^inline std::string _out_file_name_  = "";$/;"	v
-_q_bin_w_	.\src\main.cpp	/^double _q_bin_w_      = 0.1570796326;$/;"	v
-_r_cut_	.\src\main.cpp	/^double _r_cut_        = 20.0;$/;"	v
+_q_bin_w_	.\src\main.cpp	/^double _q_bin_w_          = 0.1570796326;$/;"	v
+_r_cut_	.\src\main.cpp	/^double _r_cut_            = 20.0;$/;"	v
+_self_interaction_	.\src\main.cpp	/^bool   _self_interaction_ = false;$/;"	v
 angles	.\src\Cell.h	/^  std::vector < std::vector < std::vector < std::vector < double >> >> angles;$/;"	m	class:Cell
-atom_id	.\src\Atom.h	/^  int atom_id;$/;"	m	struct:Atom_Img
+atom_id	.\src\Atom.h	/^  int                   atom_id;$/;"	m	struct:Atom_Img
 atoms	.\src\Cell.h	/^  std::list < Atom > atoms;$/;"	m	class:Cell
 bond_length	.\src\Cell.h	/^  std::vector < std::vector < double >> bond_length;$/;"	m	class:Cell
-bonded_atoms	.\src\Atom.h	/^  std::vector < Atom_Img > bonded_atoms;$/;"	m	class:Atom
+bonded_atoms	.\src\Atom.h	/^  std::vector<Atom_Img> bonded_atoms;$/;"	m	class:Atom
 constants	.\src\Constants.h	/^namespace constants {$/;"	n
 coordination	.\src\Cell.h	/^  std::vector < std::vector < std::vector < int >> > coordination;$/;"	m	class:Cell
 distances	.\src\Cell.h	/^  std::vector < std::vector < std::vector < double >> > distances;$/;"	m	class:Cell
 element	.\src\Atom.h	/^  std::string element;$/;"	m	class:Atom
-element_id	.\src\Atom.h	/^  int         element_id;$/;"	m	class:Atom
-element_id	.\src\Atom.h	/^  int element_id;$/;"	m	struct:Atom_Img
+element_id	.\src\Atom.h	/^  int                   element_id;$/;"	m	struct:Atom_Img
+element_id	.\src\Atom.h	/^  int element_id;$/;"	m	class:Atom
 element_numbers	.\src\Cell.h	/^  std::vector < int > element_numbers;$/;"	m	class:Cell
 elements	.\src\Cell.h	/^  std::vector < std::string > elements;$/;"	m	class:Cell
 f_theta	.\src\Cell.h	/^  std::vector < std::vector < double >> f_theta;$/;"	m	class:Cell
@@ -80,15 +82,16 @@ findInVector	.\src\Cell.cpp	/^template<typename T> std::pair<bool, int> findInVe
 findInVector	.\src\ReadFiles.cpp	/^std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements,$/;"	f
 fwhm2sigma	.\src\Smoothing.cpp	/^double fwhm2sigma(double fwhm) {$/;"	f
 g	.\src\Cell.h	/^  std::vector < std::vector < double >> g;$/;"	m	class:Cell
-id	.\src\Atom.h	/^  int        id;$/;"	m	class:Atom
+id	.\src\Atom.h	/^  int id;$/;"	m	class:Atom
 lattice_parameters	.\src\Cell.h	/^  std::array < double, 6 > lattice_parameters;$/;"	m	class:Cell
 main	.\src\main.cpp	/^int main(int argc, char* *argv) {$/;"	f
-position	.\src\Atom.h	/^  std::array < double, 3 > position;$/;"	m	class:Atom
-position	.\src\Atom.h	/^  std::array < double, 3 > position;$/;"	m	struct:Atom_Img
+position	.\src\Atom.h	/^  std::array<double, 3> position;$/;"	m	class:Atom
+position	.\src\Atom.h	/^  std::array<double, 3> position;$/;"	m	struct:Atom_Img
 read_CAR	.\src\ReadFiles.cpp	/^Cell read_CAR(std::string file_name) {$/;"	f
 read_CELL	.\src\ReadFiles.cpp	/^Cell read_CELL(std::string file_name) {$/;"	f
 read_CIF	.\src\ReadFiles.cpp	/^Cell read_CIF(std::string file_name) {$/;"	f
 read_ONETEP_DAT	.\src\ReadFiles.cpp	/^Cell read_ONETEP_DAT(std::string file_name) {$/;"	f
+second_shell_atoms	.\src\Atom.h	/^  std::vector<Atom_Img> second_shell_atoms;$/;"	m	class:Atom
 sigma2fwhm	.\src\Smoothing.cpp	/^double sigma2fwhm(double sigma) {$/;"	f
 v_a	.\src\Cell.h	/^  std::array < double, 3 > v_a() {$/;"	f	class:Cell
 v_a_	.\src\Cell.h	/^  std::array < double, 3 > v_a_;$/;"	m	class:Cell
