@@ -101,6 +101,8 @@ class Cell {
     bool   = false);
   // Nc Histograms ()
   void CoordinationNumberHistogram(std::string);
+  // VoronoiIndex()
+  void VoronoiIndex(std::string);
   // Structure Factor Calculation
   void SQ(std::string,
     double = 0.1571,
@@ -118,13 +120,13 @@ class Cell {
   // Read Only Lattive Vectors
   std::array < double, 3 > v_a() {
     return v_a_;
-  }
+  };
   std::array < double, 3 > v_b() {
     return v_b_;
-  }
+  };
   std::array < double, 3 > v_c() {
     return v_c_;
-  }
+  };
 };
 
 #endif  // SRC_CELL_H_

@@ -103,6 +103,7 @@ am___BIN_DIR__correlation_OBJECTS =  \
 	__BIN_DIR__correlation-Cell.$(OBJEXT) \
 	__BIN_DIR__correlation-Constants.$(OBJEXT) \
 	__BIN_DIR__correlation-ReadFiles.$(OBJEXT) \
+	__BIN_DIR__correlation-Smoothing.$(OBJEXT) \
 	__BIN_DIR__correlation-main.$(OBJEXT)
 __BIN_DIR__correlation_OBJECTS = $(am___BIN_DIR__correlation_OBJECTS)
 __BIN_DIR__correlation_LDADD = $(LDADD)
@@ -128,6 +129,7 @@ am__depfiles_remade = ./$(DEPDIR)/__BIN_DIR__correlation-Atom.Po \
 	./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po \
 	./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po \
 	./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po \
+	./$(DEPDIR)/__BIN_DIR__correlation-Smoothing.Po \
 	./$(DEPDIR)/__BIN_DIR__correlation-main.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -262,7 +264,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 BIN_DIR = $(top_builddir)/bin
 # correlation Source Files
-__BIN_DIR__correlation_SOURCES = Atom.cpp Cell.cpp Constants.cpp ReadFiles.cpp main.cpp
+__BIN_DIR__correlation_SOURCES = Atom.cpp Cell.cpp Constants.cpp ReadFiles.cpp Smoothing.cpp main.cpp
 # correlation ld flags
 __BIN_DIR__correlation_CPPFLAGS = -Iinclude -std=c++17
 __BIN_DIR__correlation_LDFLAGS = -lm
@@ -359,6 +361,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-Smoothing.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/__BIN_DIR__correlation-main.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -436,6 +439,20 @@ __BIN_DIR__correlation-ReadFiles.obj: ReadFiles.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ReadFiles.cpp' object='__BIN_DIR__correlation-ReadFiles.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-ReadFiles.obj `if test -f 'ReadFiles.cpp'; then $(CYGPATH_W) 'ReadFiles.cpp'; else $(CYGPATH_W) '$(srcdir)/ReadFiles.cpp'; fi`
+
+__BIN_DIR__correlation-Smoothing.o: Smoothing.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Smoothing.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Smoothing.Tpo -c -o __BIN_DIR__correlation-Smoothing.o `test -f 'Smoothing.cpp' || echo '$(srcdir)/'`Smoothing.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Smoothing.Tpo $(DEPDIR)/__BIN_DIR__correlation-Smoothing.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Smoothing.cpp' object='__BIN_DIR__correlation-Smoothing.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Smoothing.o `test -f 'Smoothing.cpp' || echo '$(srcdir)/'`Smoothing.cpp
+
+__BIN_DIR__correlation-Smoothing.obj: Smoothing.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-Smoothing.obj -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-Smoothing.Tpo -c -o __BIN_DIR__correlation-Smoothing.obj `if test -f 'Smoothing.cpp'; then $(CYGPATH_W) 'Smoothing.cpp'; else $(CYGPATH_W) '$(srcdir)/Smoothing.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/__BIN_DIR__correlation-Smoothing.Tpo $(DEPDIR)/__BIN_DIR__correlation-Smoothing.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Smoothing.cpp' object='__BIN_DIR__correlation-Smoothing.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o __BIN_DIR__correlation-Smoothing.obj `if test -f 'Smoothing.cpp'; then $(CYGPATH_W) 'Smoothing.cpp'; else $(CYGPATH_W) '$(srcdir)/Smoothing.cpp'; fi`
 
 __BIN_DIR__correlation-main.o: main.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(__BIN_DIR__correlation_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT __BIN_DIR__correlation-main.o -MD -MP -MF $(DEPDIR)/__BIN_DIR__correlation-main.Tpo -c -o __BIN_DIR__correlation-main.o `test -f 'main.cpp' || echo '$(srcdir)/'`main.cpp
@@ -583,6 +600,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Smoothing.Po
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-main.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -633,6 +651,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Cell.Po
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Constants.Po
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-ReadFiles.Po
+	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-Smoothing.Po
 	-rm -f ./$(DEPDIR)/__BIN_DIR__correlation-main.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

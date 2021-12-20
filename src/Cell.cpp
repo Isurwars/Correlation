@@ -351,7 +351,7 @@ void Cell::DistancePopulationMultiThreading(double r_cut) {
       atom_B != this->atoms.end();
       atom_B++) {
       // Excluding self-interactions
-      if (atom_A->GetNumber() != atom_B->GetNumber()) {
+      if (atom_A->GetID() != atom_B->GetID()) {
         id_B     = findInVector(this->elements, atom_B->element).second;
         img_atom = *atom_B;
         for (i = -i_; i <= i_; i++) {
@@ -368,12 +368,12 @@ void Cell::DistancePopulationMultiThreading(double r_cut) {
                   atom_A->bonded_atoms.push_back(img_atom.GetImage());
                   if (aux_dist < 0.1) {
                     std::cout << std::endl << "ERROR: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetNumber()
+                              << atom_A->element << "_" << atom_A->GetID()
                               << " in position ("
                               << atom_A->position[0] << ", "
                               << atom_A->position[1] << ", "
                               << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetNumber()
+                              << atom_B->element << "_" << atom_B->GetID()
                               << " in position ("
                               << img_atom.position[0] << ", "
                               << img_atom.position[1] << ", "
@@ -383,12 +383,12 @@ void Cell::DistancePopulationMultiThreading(double r_cut) {
                   }
                   if (aux_dist < 0.5) {
                     std::cout << std::endl << "WARNING: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetNumber()
+                              << atom_A->element << "_" << atom_A->GetID()
                               << " in position ("
                               << atom_A->position[0] << ", "
                               << atom_A->position[1] << ", "
                               << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetNumber()
+                              << atom_B->element << "_" << atom_B->GetID()
                               << " in position ("
                               << img_atom.position[0] << ", "
                               << img_atom.position[1] << ", "
@@ -457,7 +457,7 @@ void Cell::DistancePopulation(double r_cut) {
       atom_B != this->atoms.end();
       atom_B++) {
       // Excluding self-interactions
-      if (atom_A->GetNumber() != atom_B->GetNumber()) {
+      if (atom_A->GetID() != atom_B->GetID()) {
         id_B     = findInVector(this->elements, atom_B->element).second;
         img_atom = *atom_B;
         for (i = -i_; i <= i_; i++) {
@@ -474,12 +474,12 @@ void Cell::DistancePopulation(double r_cut) {
                   atom_A->bonded_atoms.push_back(img_atom.GetImage());
                   if (aux_dist < 0.1) {
                     std::cout << std::endl << "ERROR: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetNumber()
+                              << atom_A->element << "_" << atom_A->GetID()
                               << " in position ("
                               << atom_A->position[0] << ", "
                               << atom_A->position[1] << ", "
                               << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetNumber()
+                              << atom_B->element << "_" << atom_B->GetID()
                               << " in position ("
                               << img_atom.position[0] << ", "
                               << img_atom.position[1] << ", "
@@ -489,12 +489,12 @@ void Cell::DistancePopulation(double r_cut) {
                   }
                   if (aux_dist < 0.5) {
                     std::cout << std::endl << "WARNING: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetNumber()
+                              << atom_A->element << "_" << atom_A->GetID()
                               << " in position ("
                               << atom_A->position[0] << ", "
                               << atom_A->position[1] << ", "
                               << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetNumber()
+                              << atom_B->element << "_" << atom_B->GetID()
                               << " in position ("
                               << img_atom.position[0] << ", "
                               << img_atom.position[1] << ", "
@@ -600,7 +600,7 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
   std::string header;
   double      num_atoms = this->atoms.size();
 
-  m_ = ceil(r_cut / bin_width);
+  m_ = floor(r_cut / bin_width);
   n_ = n * (n + 1) / 2 + 1;
 
   /*
@@ -804,6 +804,19 @@ void Cell::CoordinationNumberHistogram(std::string filename) {
   }
   out_file2.close();
 }  // Cell::CoordinationNumberHistogram
+
+void Cell::VoronoiIndex(std::string filename) {
+  int         n_, m_, i, j, row, col;
+  int         n = this->elements.size();
+  std::string header;
+  double      num_atoms = this->atoms.size();
+  std::list<Atom>::iterator atom_A;
+  std::list<Atom>::iterator atom_B;
+
+  for (atom_A = this->atoms.begin(); atom_A != this->atoms.end(); atom_A++) {
+    std::cout << atom_A->GetID() << std::endl;
+  }
+}  // Cell::Voronoi
 
 void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize) {
   int         n_, m_, i, j, row, col;

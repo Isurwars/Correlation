@@ -32,7 +32,7 @@ struct Atom_Img {
 class Atom {
   // This object represents every atom in the cell
  private:
-  int        number;
+  int        id;
   static int NumOfAtoms;
 
  public:
@@ -42,9 +42,9 @@ class Atom {
   std::vector < Atom_Img > bonded_atoms;
 
   // Setters & Getters
-  int GetNumber() { return number; }
+  int GetID() { return id; }
 
-  void SetNumber(int num) { this->number = num; }
+  void SetID(int num) { this->id = num; }
 
   // Constructors
   Atom(std::string, std::array < double, 3 >);

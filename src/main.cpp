@@ -26,6 +26,7 @@
 #include "Atom.h"       // Atom Class
 #include "Cell.h"       // Cell Class
 #include "ReadFiles.h"  // File reading and parsing
+#include "Smoothing.h"  // Smoothing functions
 
 /*
  * Currenly filesystem is not fully implemented in gcc 10.1.
@@ -328,7 +329,7 @@ int main(int argc, char* *argv) {
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;
   MyCell.RDFHistogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
   MyCell.CoordinationNumberHistogram(_out_file_name_);
-
+  MyCell.VoronoiIndex(_out_file_name_);
   /*
    * This function calculate S(Q) as the Fourier Transform of G(r).
    * The _r_cut_ parameter is the cutoff distance in r-space,
@@ -347,4 +348,6 @@ int main(int argc, char* *argv) {
 
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
   return 0;
+
+  std::vector<double> aux(MyCell.g.size(), 0);
 }  // main

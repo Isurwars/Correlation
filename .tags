@@ -21,12 +21,14 @@ Distance	.\src\Atom.cpp	/^double Atom::Distance(const Atom& other_atom) {$/;"	f	
 DistancePopulation	.\src\Cell.cpp	/^void Cell::DistancePopulation(double r_cut) {$/;"	f	class:Cell
 DistancePopulationMultiThreading	.\src\Cell.cpp	/^void Cell::DistancePopulationMultiThreading(double r_cut) {$/;"	f	class:Cell
 G	.\src\Cell.h	/^  std::vector < std::vector < double >> G;$/;"	m	class:Cell
+GaussianKernel	.\src\Smoothing.cpp	/^std::vector<double> GaussianKernel(double r0, std::vector<double> r_vals, double sigma) {$/;"	f
 GetAngle	.\src\Atom.cpp	/^double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {$/;"	f	class:Atom
 GetExtension	.\src\main.cpp	/^std::pair<std::string, std::string> GetExtension(std::string filename) {$/;"	f
+GetID	.\src\Atom.h	/^  int GetID() { return id; }$/;"	f	class:Atom
 GetImage	.\src\Atom.cpp	/^Atom_Img Atom::GetImage() {$/;"	f	class:Atom
-GetNumber	.\src\Atom.h	/^  int GetNumber() { return number; }$/;"	f	class:Atom
 GetNumberOfAtoms	.\src\Atom.h	/^  static int GetNumberOfAtoms() { return NumOfAtoms; }$/;"	f	class:Atom
 J	.\src\Cell.h	/^  std::vector < std::vector < double >> J;$/;"	m	class:Cell
+KernelSmoothing	.\src\Smoothing.cpp	/^std::vector<double> KernelSmoothing(std::vector<double> r,$/;"	f
 NumOfAtoms	.\src\Atom.cpp	/^int Atom::NumOfAtoms = 0;$/;"	m	class:Atom	file:
 NumOfAtoms	.\src\Atom.h	/^  static int NumOfAtoms;$/;"	m	class:Atom
 PAD	.\src\Cell.cpp	/^void Cell::PAD(bool degree) {$/;"	f	class:Cell
@@ -41,11 +43,13 @@ SRC_ATOM_H_	.\src\Atom.h	2;"	d
 SRC_CELL_H_	.\src\Cell.h	2;"	d
 SRC_CONSTANTS_H_	.\src\Constants.h	2;"	d
 SRC_READFILES_H_	.\src\ReadFiles.h	2;"	d
+SRC_SMOOTHING_H_	.\src\Smoothing.h	2;"	d
 SetAll	.\src\Atom.cpp	/^void Atom::SetAll(std::string ele, std::array<double, 3> pos) {$/;"	f	class:Atom
 SetFromVectors	.\src\Cell.cpp	/^void Cell::SetFromVectors(std::vector<double> v1,$/;"	f	class:Cell
+SetID	.\src\Atom.h	/^  void SetID(int num) { this->id = num; }$/;"	f	class:Atom
 SetLatticeVectors	.\src\Cell.cpp	/^void Cell::SetLatticeVectors() {$/;"	f	class:Cell
-SetNumber	.\src\Atom.h	/^  void SetNumber(int num) { this->number = num; }$/;"	f	class:Atom
 UpdateProgressBar	.\src\Cell.cpp	/^void Cell::UpdateProgressBar(double pos) {$/;"	f	class:Cell
+VoronoiIndex	.\src\Cell.cpp	/^void Cell::VoronoiIndex(std::string filename) {$/;"	f	class:Cell
 X	.\src\Cell.h	/^  std::vector < std::vector < double >> X;$/;"	m	class:Cell
 XRD	.\src\Cell.cpp	/^void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width) {$/;"	f	class:Cell
 _angle_bin_w_	.\src\main.cpp	/^double _angle_bin_w_  = 1.0;$/;"	v
@@ -74,16 +78,18 @@ elements	.\src\Cell.h	/^  std::vector < std::string > elements;$/;"	m	class:Cell
 f_theta	.\src\Cell.h	/^  std::vector < std::vector < double >> f_theta;$/;"	m	class:Cell
 findInVector	.\src\Cell.cpp	/^template<typename T> std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements, const T& element) {$/;"	f
 findInVector	.\src\ReadFiles.cpp	/^std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements,$/;"	f
+fwhm2sigma	.\src\Smoothing.cpp	/^double fwhm2sigma(double fwhm) {$/;"	f
 g	.\src\Cell.h	/^  std::vector < std::vector < double >> g;$/;"	m	class:Cell
+id	.\src\Atom.h	/^  int        id;$/;"	m	class:Atom
 lattice_parameters	.\src\Cell.h	/^  std::array < double, 6 > lattice_parameters;$/;"	m	class:Cell
 main	.\src\main.cpp	/^int main(int argc, char* *argv) {$/;"	f
-number	.\src\Atom.h	/^  int        number;$/;"	m	class:Atom
 position	.\src\Atom.h	/^  std::array < double, 3 > position;$/;"	m	class:Atom
 position	.\src\Atom.h	/^  std::array < double, 3 > position;$/;"	m	struct:Atom_Img
 read_CAR	.\src\ReadFiles.cpp	/^Cell read_CAR(std::string file_name) {$/;"	f
 read_CELL	.\src\ReadFiles.cpp	/^Cell read_CELL(std::string file_name) {$/;"	f
 read_CIF	.\src\ReadFiles.cpp	/^Cell read_CIF(std::string file_name) {$/;"	f
 read_ONETEP_DAT	.\src\ReadFiles.cpp	/^Cell read_ONETEP_DAT(std::string file_name) {$/;"	f
+sigma2fwhm	.\src\Smoothing.cpp	/^double sigma2fwhm(double sigma) {$/;"	f
 v_a	.\src\Cell.h	/^  std::array < double, 3 > v_a() {$/;"	f	class:Cell
 v_a_	.\src\Cell.h	/^  std::array < double, 3 > v_a_;$/;"	m	class:Cell
 v_b	.\src\Cell.h	/^  std::array < double, 3 > v_b() {$/;"	f	class:Cell

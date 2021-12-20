@@ -36,7 +36,7 @@ void Atom::SetAll(std::string ele, std::array<double, 3> pos) {
 Atom::Atom(std::string ele, std::array<double, 3> pos) {
   this->element  = ele;
   this->position = pos;
-  this->number   = Atom::NumOfAtoms;
+  this->id       = Atom::NumOfAtoms;
   Atom::NumOfAtoms++;
 }
 
@@ -44,7 +44,7 @@ Atom::Atom(std::string ele, std::array<double, 3> pos) {
 Atom::Atom() {
   this->element  = "H";
   this->position = { 0.0, 0.0, 0.0 };
-  this->number   = Atom::NumOfAtoms;
+  this->id       = Atom::NumOfAtoms;
   Atom::NumOfAtoms++;
 }
 
@@ -60,7 +60,7 @@ Atom_Img Atom::GetImage() {
   Atom_Img temp_img;
 
   temp_img.element_id = this->element_id;
-  temp_img.atom_id    = this->number;
+  temp_img.atom_id    = this->id;
   temp_img.position   = this->position;
   return temp_img;
 }
