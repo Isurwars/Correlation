@@ -21,7 +21,12 @@
 
 double sigma2fwhm(double);
 double fwhm2sigma(double);
-std::vector < double > GaussianKernel(double, std::vector < double >, double);
-std::vector < double > KernelSmoothing(std::vector < double >, std::vector < double >, std::vector < double >);
+std::vector < double > GaussianKernel(std::vector < double >,
+  double,
+  double);
+std::vector < double > KernelSmoothing(std::vector < double >,
+  std::vector < double >,
+  double = 0.1,
+  int    = 1);
 
 #endif  // SRC_SMOOTHING_H_

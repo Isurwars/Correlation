@@ -329,6 +329,7 @@ int main(int argc, char* *argv) {
    */
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;
   MyCell.RDFHistogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
+  MyCell.RDFSmoothing(_out_file_name_, 2 * _bin_w_);
   MyCell.CoordinationNumberHistogram(_out_file_name_);
   // MyCell.VoronoiIndex(_out_file_name_);
   /*

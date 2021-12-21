@@ -65,6 +65,8 @@ class Cell {
   std::vector < std::vector < double >> X;
   // Matrix of f(theta) Histograms
   std::vector < std::vector < double >> f_theta;
+  // Matrix of g(r) Histograms
+  std::vector < std::vector < double >> g_smoothed;
   // Volume of the cell
   double volume;
 
@@ -99,6 +101,8 @@ class Cell {
     double = 20.0,
     double = 0.05,
     bool   = false);
+  // RDF Smoothing (sigma)
+  void RDFSmoothing(std::string, double);
   // Nc Histograms ()
   void CoordinationNumberHistogram(std::string);
   // VoronoiIndex()

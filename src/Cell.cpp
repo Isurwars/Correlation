@@ -28,6 +28,7 @@
 #include <utility>
 
 #include "Constants.h"
+#include "Smoothing.h"
 
 /*
  * Generic function to find if an element of any type exists in a vector,
@@ -434,7 +435,7 @@ void Cell::DistancePopulation(double r_cut, bool self_interaction) {
   i_ = ceil(r_cut / this->v_a()[0]);
 
   // force self_interaction in case of a small supercell
-  if (k_ * j_ * i_ > 1) self_interaction = true;
+  if (k_ * j_ * i_ > 8) self_interaction = true;
 
   /*
    * This is the main loop in RDF, we need to iterate between all atoms
@@ -820,6 +821,46 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
   }
   out_file3.close();
 }  // Cell::RDFHistogram
+
+void Cell::RDFSmoothing(std::string filename, double sigma) {
+  int         n_, m_, i, j, col, row;
+  std::string header;
+  int         n = this->elements.size();
+  // n_: number of columns in the histogram
+  n_ = this->g.size();
+  // m_: number of rows in the histogram
+  m_ = this->g[0].size();
+  // Array of smoothed histograms
+  std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
+  /* Smoothing Loop */
+  for (row = 0; row < m_; row++) {
+    temp_hist[0][row] = this->g[0][row];
+  }
+  for (col = 1; col < n_; col++) {
+    temp_hist[col] = KernelSmoothing(temp_hist[0], this->g[col], sigma, 1);
+  }
+
+  /* printing loop */
+  this->g_smoothed = temp_hist;
+
+  std::ofstream out_file(filename + "_g_smoothed.csv");
+  std::setprecision(6);
+  out_file << std::setw(13) << "r (Å),";
+  for (i = 0; i < n; i++) {
+    for (j = i; j < n; j++) {
+      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
+      out_file << std::setw(13) << header;
+    }
+  }
+  out_file << std::endl << std::fixed;
+  for (i = 0; i < m_; i++) {
+    for (j = 0; j < n_; j++) {
+      out_file << std::setw(11) << temp_hist[j][i] << ",";
+    }
+    out_file << std::endl;
+  }
+  out_file.close();
+}  // Cell::RDFSmoothing
 
 void Cell::CoordinationNumberHistogram(std::string filename) {
   int         n_, m_, i, j, col;
