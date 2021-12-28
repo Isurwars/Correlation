@@ -822,7 +822,7 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
   out_file3.close();
 }  // Cell::RDFHistogram
 
-void Cell::RDFSmoothing(std::string filename, double sigma) {
+void Cell::RDFSmoothing(std::string filename, double sigma, int _kernel_) {
   int         n_, m_, i, j, col, row;
   std::string header;
   int         n = this->elements.size();
@@ -837,7 +837,7 @@ void Cell::RDFSmoothing(std::string filename, double sigma) {
     temp_hist[0][row] = this->g[0][row];
   }
   for (col = 1; col < n_; col++) {
-    temp_hist[col] = KernelSmoothing(temp_hist[0], this->g[col], sigma, 1);
+    temp_hist[col] = KernelSmoothing(temp_hist[0], this->g[col], sigma, _kernel_);
   }
 
   /* printing loop */

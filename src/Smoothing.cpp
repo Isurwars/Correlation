@@ -17,6 +17,7 @@
  */
 #include "Smoothing.h"
 
+#include <iostream>
 #include <cmath>
 
 /*
@@ -42,24 +43,30 @@ template<typename T> std::vector<T> NormalizeVector(const std::vector<T>& v) {
   return DivideVectorByScalar(v, VectorSum(v));
 }  // NormalizeVector
 
-double sigma2fwhm(double sigma) {
-  // Sigma to Full Width Half Maximum
-  return sigma * sqrt(8 * log(2));
-}
-
-double fwhm2sigma(double fwhm) {
-  // Full Width Half Maximum to Sigma
-  return fwhm / sqrt(8 * log(2));
-}
-
 std::vector<double> GaussianKernel(std::vector<double> r_vals, double r0, double sigma) {
-  // Gaussian Kernel
+  // Normalized Gaussian Kernel
   int    i;
   double a = 1 / (2 * sigma);
   double b = -2 * a * a;
   std::vector<double> aux(r_vals.size(), 0);
   for (i = 0; i < r_vals.size(); i++) {
     aux[i] = a * exp(b * pow(r_vals[i] - r0, 2));
+  }
+  return aux;
+}  // GaussianKernel
+
+std::vector<double> BumpKernel(std::vector<double> r_vals, double r0, double radius) {
+  // Bump Function
+  int    i;
+  double x;
+  std::vector<double> aux(r_vals.size(), 0);
+  for (i = 0; i < r_vals.size(); i++) {
+    x = (r_vals[i] - r0) / radius;
+    if (abs(x) < 1) {
+      aux[i] = exp(-1 / (1 - pow(x, 2)));
+    } else {
+      aux[i] = 0.0;
+    }
   }
   return aux;
 }
@@ -77,6 +84,9 @@ std::vector<double> KernelSmoothing(std::vector<double> r,
   for (i = 0; i < n_; i++) {
     if (_kernel_ == 1) {
       kernel_at_pos = GaussianKernel(r, r[i], sigma);
+      kernel_at_pos = NormalizeVector(kernel_at_pos);
+    } else if (_kernel_ == 2) {
+      kernel_at_pos = BumpKernel(r, r[i], sigma);
       kernel_at_pos = NormalizeVector(kernel_at_pos);
     }
     for (j = 0; j < n_; j++) {

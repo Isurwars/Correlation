@@ -102,7 +102,7 @@ class Cell {
     double = 0.05,
     bool   = false);
   // RDF Smoothing (sigma)
-  void RDFSmoothing(std::string, double);
+  void RDFSmoothing(std::string, double, int = 1);
   // Nc Histograms ()
   void CoordinationNumberHistogram(std::string);
   // VoronoiIndex()

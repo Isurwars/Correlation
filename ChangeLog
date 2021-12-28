@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] 2021-12-21
+- Added support for self interactions, important for crystals.
+- Added Smoothing option: Kernel Smoothing with Gaussian Kernel.
+- Added initial support for Voronoi and Voronoi index. (Road to 1.1)
+
 ## [1.0.3] 2021-10-12
 - Major refactor of the code in preparation for MultiThreading.
 - The code now comply with google c++ style guidelines.

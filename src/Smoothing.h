@@ -19,11 +19,14 @@
  */
 #include <vector>
 
-double sigma2fwhm(double);
-double fwhm2sigma(double);
 std::vector < double > GaussianKernel(std::vector < double >,
   double,
   double);
+
+std::vector < double > BumpKernel(std::vector < double >,
+  double,
+  double);
+
 std::vector < double > KernelSmoothing(std::vector < double >,
   std::vector < double >,
   double = 0.1,

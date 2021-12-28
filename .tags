@@ -9,6 +9,7 @@ Atom	.\src\Atom.cpp	/^Atom::Atom() {$/;"	f	class:Atom
 Atom	.\src\Atom.cpp	/^Atom::Atom(std::string ele, std::array<double, 3> pos) {$/;"	f	class:Atom
 Atom	.\src\Atom.h	/^class Atom {$/;"	c
 Atom_Img	.\src\Atom.h	/^struct Atom_Img {$/;"	s
+BumpKernel	.\src\Smoothing.cpp	/^std::vector<double> BumpKernel(std::vector<double> r_vals, double r0, double radius) {$/;"	f
 Cell	.\src\Cell.cpp	/^Cell::Cell() {$/;"	f	class:Cell
 Cell	.\src\Cell.cpp	/^Cell::Cell(std::array<double, 6> lat) {$/;"	f	class:Cell
 Cell	.\src\Cell.h	/^class Cell {$/;"	c
@@ -25,7 +26,6 @@ G	.\src\Cell.h	/^  std::vector < std::vector < double >> G;$/;"	m	class:Cell
 GaussianKernel	.\src\Smoothing.cpp	/^std::vector<double> GaussianKernel(std::vector<double> r_vals, double r0, double sigma) {$/;"	f
 GetAngle	.\src\Atom.cpp	/^double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {$/;"	f	class:Atom
 GetBondedAtomsID	.\src\Atom.cpp	/^std::vector<int> Atom::GetBondedAtomsID() {$/;"	f	class:Atom
-GetExtension	.\src\main.cpp	/^std::pair<std::string, std::string> GetExtension(std::string filename) {$/;"	f
 GetID	.\src\Atom.h	/^  int GetID() { return id; }$/;"	f	class:Atom
 GetImage	.\src\Atom.cpp	/^Atom_Img Atom::GetImage() {$/;"	f	class:Atom
 GetNumberOfAtoms	.\src\Atom.h	/^  static int GetNumberOfAtoms() { return NumOfAtoms; }$/;"	f	class:Atom
@@ -39,7 +39,7 @@ PADHistogram	.\src\Cell.cpp	/^void Cell::PADHistogram(std::string filename, doub
 PopulateBondLength	.\src\Cell.cpp	/^void Cell::PopulateBondLength(double Bond_Factor) {$/;"	f	class:Cell
 PrintHelp	.\src\main.cpp	/^void PrintHelp() {$/;"	f
 RDFHistogram	.\src\Cell.cpp	/^void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bool normalize) {$/;"	f	class:Cell
-RDFSmoothing	.\src\Cell.cpp	/^void Cell::RDFSmoothing(std::string filename, double sigma) {$/;"	f	class:Cell
+RDFSmoothing	.\src\Cell.cpp	/^void Cell::RDFSmoothing(std::string filename, double sigma, int _kernel_) {$/;"	f	class:Cell
 ReadBOND	.\src\Cell.cpp	/^void Cell::ReadBOND(std::string file_name) {$/;"	f	class:Cell
 S	.\src\Cell.h	/^  std::vector < std::vector < double >> S;$/;"	m	class:Cell
 SQ	.\src\Cell.cpp	/^void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize) {$/;"	f	class:Cell
@@ -63,11 +63,14 @@ _bond_file_name_	.\src\main.cpp	/^inline std::string _bond_file_name_ = "";$/;"	
 _bond_in_file_	.\src\main.cpp	/^bool   _bond_in_file_     = false;$/;"	v
 _bond_par_	.\src\main.cpp	/^double _bond_par_         = 1.3;$/;"	v
 _in_file_name_	.\src\main.cpp	/^inline std::string _in_file_name_   = "";$/;"	v
+_kernel_	.\src\main.cpp	/^int    _kernel_           = 1;$/;"	v
 _normalize_	.\src\main.cpp	/^bool   _normalize_        = false;$/;"	v
 _out_file_name_	.\src\main.cpp	/^inline std::string _out_file_name_  = "";$/;"	v
 _q_bin_w_	.\src\main.cpp	/^double _q_bin_w_          = 0.1570796326;$/;"	v
 _r_cut_	.\src\main.cpp	/^double _r_cut_            = 20.0;$/;"	v
 _self_interaction_	.\src\main.cpp	/^bool   _self_interaction_ = false;$/;"	v
+_smooth_sigma_	.\src\main.cpp	/^double _smooth_sigma_     = 0.1;$/;"	v
+_smoothing_	.\src\main.cpp	/^bool   _smoothing_        = true;$/;"	v
 angles	.\src\Cell.h	/^  std::vector < std::vector < std::vector < std::vector < double >> >> angles;$/;"	m	class:Cell
 atom_id	.\src\Atom.h	/^  int                   atom_id;$/;"	m	struct:Atom_Img
 atoms	.\src\Cell.h	/^  std::list < Atom > atoms;$/;"	m	class:Cell
@@ -84,7 +87,6 @@ elements	.\src\Cell.h	/^  std::vector < std::string > elements;$/;"	m	class:Cell
 f_theta	.\src\Cell.h	/^  std::vector < std::vector < double >> f_theta;$/;"	m	class:Cell
 findInVector	.\src\Cell.cpp	/^template<typename T> std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements, const T& element) {$/;"	f
 findInVector	.\src\ReadFiles.cpp	/^std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements,$/;"	f
-fwhm2sigma	.\src\Smoothing.cpp	/^double fwhm2sigma(double fwhm) {$/;"	f
 g	.\src\Cell.h	/^  std::vector < std::vector < double >> g;$/;"	m	class:Cell
 g_smoothed	.\src\Cell.h	/^  std::vector < std::vector < double >> g_smoothed;$/;"	m	class:Cell
 id	.\src\Atom.h	/^  int id;$/;"	m	class:Atom
@@ -97,7 +99,6 @@ read_CELL	.\src\ReadFiles.cpp	/^Cell read_CELL(std::string file_name) {$/;"	f
 read_CIF	.\src\ReadFiles.cpp	/^Cell read_CIF(std::string file_name) {$/;"	f
 read_ONETEP_DAT	.\src\ReadFiles.cpp	/^Cell read_ONETEP_DAT(std::string file_name) {$/;"	f
 second_shell_atoms	.\src\Atom.h	/^  std::vector<Atom_Img> second_shell_atoms;$/;"	m	class:Atom
-sigma2fwhm	.\src\Smoothing.cpp	/^double sigma2fwhm(double sigma) {$/;"	f
 v_a	.\src\Cell.h	/^  std::array < double, 3 > v_a() {$/;"	f	class:Cell
 v_a_	.\src\Cell.h	/^  std::array < double, 3 > v_a_;$/;"	m	class:Cell
 v_b	.\src\Cell.h	/^  std::array < double, 3 > v_b() {$/;"	f	class:Cell
