@@ -23,6 +23,7 @@ DistancePopulation	.\src\Cell.cpp	/^void Cell::DistancePopulation(double r_cut, 
 DistancePopulationMultiThreading	.\src\Cell.cpp	/^void Cell::DistancePopulationMultiThreading(double r_cut) {$/;"	f	class:Cell
 DivideVectorByScalar	.\src\Smoothing.cpp	/^template<typename T> std::vector<T> DivideVectorByScalar(const std::vector<T>& v, T k) {$/;"	f
 G	.\src\Cell.h	/^  std::vector < std::vector < double >> G;$/;"	m	class:Cell
+G_smoothed	.\src\Cell.h	/^  std::vector < std::vector < double >> G_smoothed;$/;"	m	class:Cell
 GaussianKernel	.\src\Smoothing.cpp	/^std::vector<double> GaussianKernel(std::vector<double> r_vals, double r0, double sigma) {$/;"	f
 GetAngle	.\src\Atom.cpp	/^double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {$/;"	f	class:Atom
 GetBondedAtomsID	.\src\Atom.cpp	/^std::vector<int> Atom::GetBondedAtomsID() {$/;"	f	class:Atom
@@ -30,6 +31,7 @@ GetID	.\src\Atom.h	/^  int GetID() { return id; }$/;"	f	class:Atom
 GetImage	.\src\Atom.cpp	/^Atom_Img Atom::GetImage() {$/;"	f	class:Atom
 GetNumberOfAtoms	.\src\Atom.h	/^  static int GetNumberOfAtoms() { return NumOfAtoms; }$/;"	f	class:Atom
 J	.\src\Cell.h	/^  std::vector < std::vector < double >> J;$/;"	m	class:Cell
+J_smoothed	.\src\Cell.h	/^  std::vector < std::vector < double >> J_smoothed;$/;"	m	class:Cell
 KernelSmoothing	.\src\Smoothing.cpp	/^std::vector<double> KernelSmoothing(std::vector<double> r,$/;"	f
 NormalizeVector	.\src\Smoothing.cpp	/^template<typename T> std::vector<T> NormalizeVector(const std::vector<T>& v) {$/;"	f
 NumOfAtoms	.\src\Atom.cpp	/^int Atom::NumOfAtoms = 0;$/;"	m	class:Atom	file:
@@ -70,7 +72,7 @@ _q_bin_w_	.\src\main.cpp	/^double _q_bin_w_          = 0.1570796326;$/;"	v
 _r_cut_	.\src\main.cpp	/^double _r_cut_            = 20.0;$/;"	v
 _self_interaction_	.\src\main.cpp	/^bool   _self_interaction_ = false;$/;"	v
 _smooth_sigma_	.\src\main.cpp	/^double _smooth_sigma_     = 0.1;$/;"	v
-_smoothing_	.\src\main.cpp	/^bool   _smoothing_        = true;$/;"	v
+_smoothing_	.\src\main.cpp	/^bool   _smoothing_        = false;$/;"	v
 angles	.\src\Cell.h	/^  std::vector < std::vector < std::vector < std::vector < double >> >> angles;$/;"	m	class:Cell
 atom_id	.\src\Atom.h	/^  int                   atom_id;$/;"	m	struct:Atom_Img
 atoms	.\src\Cell.h	/^  std::list < Atom > atoms;$/;"	m	class:Cell

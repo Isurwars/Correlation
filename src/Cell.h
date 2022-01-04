@@ -66,7 +66,11 @@ class Cell {
   // Matrix of f(theta) Histograms
   std::vector < std::vector < double >> f_theta;
   // Matrix of g(r) Histograms
+  std::vector < std::vector < double >> J_smoothed;
+  // Matrix of g(r) Histograms
   std::vector < std::vector < double >> g_smoothed;
+  // Matrix of g(r) Histograms
+  std::vector < std::vector < double >> G_smoothed;
   // Volume of the cell
   double volume;
 

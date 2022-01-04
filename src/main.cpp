@@ -35,7 +35,7 @@ inline std::string _bond_file_name_ = "";
 bool   _bond_in_file_     = false;
 bool   _normalize_        = false;
 bool   _self_interaction_ = false;
-bool   _smoothing_        = true;
+bool   _smoothing_        = false;
 double _r_cut_            = 20.0;
 double _bin_w_            = 0.05;
 double _q_bin_w_          = 0.1570796326;
@@ -118,8 +118,8 @@ void PrintHelp() {
                                "          3: Triweight kernel.\n"
                                "      -K, --kernel_sigma\n"
                                "        Width of the smoothing kernel, by default 0.1.\n"
-                               "      -S, --no-smoothing\n"
-                               "        Smoothing is enabled by default,this keyword turn it off.\n\n"
+                               "      -S, --smoothing\n"
+                               "        Smoothing is disabled by default, this option enable smoothing\n\n"
                                "CREATOR:\n"
                                "  This program was created by PhD. Isaias Rodriguez Aguirre, November 2020.\n"
                                "  e-mail: isurwars@gmail.com\n"
@@ -147,7 +147,7 @@ void ArgParser(int argc, char* *argv) {
     { "q_bin_width",      required_argument, nullptr, 'q' },
     { "r_cut",            required_argument, nullptr, 'r' },
     { "self_interaction", no_argument,       nullptr, 's' },
-    { "no_smoothing",     no_argument,       nullptr, 'S' },
+    { "smoothing",        no_argument,       nullptr, 'S' },
     { "bin_width",        required_argument, nullptr, 'w' },
     { nullptr,            no_argument,       nullptr, 0   }
   };
@@ -232,8 +232,8 @@ void ArgParser(int argc, char* *argv) {
       case 's':       // -s or --self_interaction
         _self_interaction_ = true;
         break;
-      case 'S':       // -S or --no_smoothing
-        _smoothing_ = false;
+      case 'S':       // -S or --smoothing
+        _smoothing_ = true;
         break;
       case 'w':       // -w or --bin_width
         try {
@@ -282,9 +282,11 @@ int main(int argc, char* *argv) {
   /*
    * Read the structure file
    */
-  std::filesystem::path my_path { _in_file_name_ };
-  if (_out_file_name_ == "") _out_file_name_ = my_path.stem();
-  std::string MyExt = my_path.extension();
+  std::filesystem::path _in_file_ { _in_file_name_ };
+  std::filesystem::path my_path;
+  (my_path = _in_file_name_).remove_filename();
+  if (_out_file_name_ == "") _out_file_name_ = my_path / _in_file_.stem();
+  std::string MyExt = _in_file_.extension();
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char& c) {
     c = ::tolower(c);

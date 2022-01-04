@@ -2,8 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.0.4] 2021-12-21
-- Added support for self interactions, important for crystals.
+- Added support for self interactions, important for small crystals.
+- Switch to std::filesystem to generate paths.
 - Added Smoothing option: Kernel Smoothing with Gaussian Kernel.
+- Added BumpKernel as second option, more kernels will be added.
+- Added Total correlation functions (previously only partials were reported).
 - Added initial support for Voronoi and Voronoi index. (Road to 1.1)
 
 ## [1.0.3] 2021-10-12
