@@ -22,46 +22,27 @@
 #include <iostream>     // Standar IO library
 #include <list>         // To handle the list of atoms
 #include <string>       // String manipulation and algorithms
+#include <filesystem>   // Getting extension, making subdirectories
 
 #include "Atom.h"       // Atom Class
 #include "Cell.h"       // Cell Class
 #include "ReadFiles.h"  // File reading and parsing
-
-/*
- * Currenly filesystem is not fully implemented in gcc 10.1.
- * This is an ugly hack to try to make this code compatible
- * in Linux, Windows and Mac.
- * THIS SHOULD HAVE BEEN IMPLEMENTED SINCE 2017!!!, NOT A
- * SINGLE COMPILER HAS ADDED FILESYSTEM SUPPORT YET!!!.
- * Hope this is no longer requiered in the future.
- * #include <filesystem>
- * namespace fs = std::filesystem;
- */
-std::pair<std::string, std::string> GetExtension(std::string filename) {
-  std::pair<std::string, std::string> result;
-  size_t i = filename.rfind('.', filename.length());
-
-  if (i != std::string::npos) {
-    result.first  = filename.substr(0, i);
-    result.second = filename.substr(i, filename.length() - 1);
-    return result;
-  }
-
-  result.first  = filename;
-  result.second = "";
-  return result;
-}
+#include "Smoothing.h"  // Smoothing functions
 
 inline std::string _in_file_name_   = "";
 inline std::string _out_file_name_  = "";
 inline std::string _bond_file_name_ = "";
-bool   _bond_in_file_ = false;
-bool   _normalize_    = false;
-double _r_cut_        = 20.0;
-double _bin_w_        = 0.05;
-double _q_bin_w_      = 0.1570796326;
-double _bond_par_     = 1.3;
-double _angle_bin_w_  = 1.0;
+bool   _bond_in_file_     = false;
+bool   _normalize_        = false;
+bool   _self_interaction_ = false;
+bool   _smoothing_        = false;
+double _r_cut_            = 20.0;
+double _bin_w_            = 0.05;
+double _q_bin_w_          = 0.1570796326;
+double _bond_par_         = 1.3;
+double _angle_bin_w_      = 1.0;
+double _smooth_sigma_     = 0.1;
+int    _kernel_           = 1;
 
 void PrintHelp() {
   const std::string help_txt = "CORRELATION\n"
@@ -93,6 +74,8 @@ void PrintHelp() {
                                "        radius it's set to 2 nm. The maximum recommended radius is the same as\n"
                                "        shortest length of the periodic boundary conditions (PBC), anything\n"
                                "        above this PBC value can be affected by periodic interactions.\n\n"
+                               "      -s, --self_interaction\n"
+                               "        Include self-interactions, by default false.\n"
                                "      -w, --bin_width\n"
                                "        Width of the histograms for g(r) and J(r), the default is 0.05 nm.\n\n"
                                "    STRUCTURE FACTOR OPTIONS:\n"
@@ -127,6 +110,16 @@ void PrintHelp() {
                                "    OUTPUT OPTIONS:\n"
                                "      -o, --out_file\n"
                                "        The output file name, by default the input seed name will be used.\n\n"
+                               "    SMOOTHING OPTIONS:\n"
+                               "      -k, --kernel\n"
+                               "        Smoothing kernel selector (Default: 1):\n"
+                               "          1: Gaussian kernel.\n"
+                               "          2: Bump Function kernel.\n"
+                               "          3: Triweight kernel.\n"
+                               "      -K, --kernel_sigma\n"
+                               "        Width of the smoothing kernel, by default 0.1.\n"
+                               "      -S, --smoothing\n"
+                               "        Smoothing is disabled by default, this option enable smoothing\n\n"
                                "CREATOR:\n"
                                "  This program was created by PhD. Isaias Rodriguez Aguirre, November 2020.\n"
                                "  e-mail: isurwars@gmail.com\n"
@@ -141,18 +134,22 @@ void PrintHelp() {
 }  // PrintHelp
 
 void ArgParser(int argc, char* *argv) {
-  const char* const short_opts  = "a:b:hi:no:q:r:w:";
+  const char* const short_opts  = "a:b:hi:k:K:no:q:r:sSw:";
   const option      long_opts[] = {
-    { "angle_bin_width", required_argument, nullptr, 'a' },
-    { "bond_parameter",  required_argument, nullptr, 'b' },
-    { "help",            no_argument,       nullptr, 'h' },
-    { "in_bond_file",    required_argument, nullptr, 'i' },
-    { "normalize",       no_argument,       nullptr, 'n' },
-    { "out_file",        required_argument, nullptr, 'o' },
-    { "q_bin_width",     required_argument, nullptr, 'q' },
-    { "r_cut",           required_argument, nullptr, 'r' },
-    { "bin_width",       required_argument, nullptr, 'w' },
-    { nullptr,           no_argument,       nullptr, 0   }
+    { "angle_bin_width",  required_argument, nullptr, 'a' },
+    { "bond_parameter",   required_argument, nullptr, 'b' },
+    { "help",             no_argument,       nullptr, 'h' },
+    { "in_bond_file",     required_argument, nullptr, 'i' },
+    { "kernel",           required_argument, nullptr, 'k' },
+    { "kernel_sigma",     required_argument, nullptr, 'K' },
+    { "normalize",        no_argument,       nullptr, 'n' },
+    { "out_file",         required_argument, nullptr, 'o' },
+    { "q_bin_width",      required_argument, nullptr, 'q' },
+    { "r_cut",            required_argument, nullptr, 'r' },
+    { "self_interaction", no_argument,       nullptr, 's' },
+    { "smoothing",        no_argument,       nullptr, 'S' },
+    { "bin_width",        required_argument, nullptr, 'w' },
+    { nullptr,            no_argument,       nullptr, 0   }
   };
 
   while (true) {
@@ -195,6 +192,11 @@ void ArgParser(int argc, char* *argv) {
         _bond_in_file_   = true;
         _bond_file_name_ = optarg;
         break;
+      case 'k':       // -k or --kernel
+        _kernel_ = std::stoi(optarg);
+        break;
+      case 'K':       // -K or --kernel_sigma
+        _smooth_sigma_ = std::stof(optarg);
       case 'n':       // -n or --normalize
         _normalize_ = true;
         break;
@@ -214,7 +216,7 @@ void ArgParser(int argc, char* *argv) {
           exit(1);
         }
         break;
-      case 'r':       // -r ot --r_cut
+      case 'r':       // -r or --r_cut
         try {
           _r_cut_ = std::stof(optarg);
         }
@@ -226,6 +228,12 @@ void ArgParser(int argc, char* *argv) {
                     << std::endl;
           exit(1);
         }
+        break;
+      case 's':       // -s or --self_interaction
+        _self_interaction_ = true;
+        break;
+      case 'S':       // -S or --smoothing
+        _smoothing_ = true;
         break;
       case 'w':       // -w or --bin_width
         try {
@@ -274,9 +282,11 @@ int main(int argc, char* *argv) {
   /*
    * Read the structure file
    */
-  file_ext = GetExtension(_in_file_name_);
-  if (_out_file_name_ == "") _out_file_name_ = file_ext.first;
-  std::string MyExt = file_ext.second;
+  std::filesystem::path _in_file_ { _in_file_name_ };
+  std::filesystem::path my_path;
+  (my_path = _in_file_name_).remove_filename();
+  if (_out_file_name_ == "") _out_file_name_ = my_path / _in_file_.stem();
+  std::string MyExt = _in_file_.extension();
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char& c) {
     c = ::tolower(c);
@@ -305,7 +315,7 @@ int main(int argc, char* *argv) {
    * in the structure. A supercell method is used to create the images
    * in all directions up to _r_cut_ distance.
    */
-  MyCell.DistancePopulation(_r_cut_);
+  MyCell.DistancePopulation(_r_cut_, _self_interaction_);
 
   /*
    * This function calculates the partial coordination number for pairs of
@@ -328,7 +338,7 @@ int main(int argc, char* *argv) {
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;
   MyCell.RDFHistogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
   MyCell.CoordinationNumberHistogram(_out_file_name_);
-
+  // MyCell.VoronoiIndex(_out_file_name_);
   /*
    * This function calculate S(Q) as the Fourier Transform of G(r).
    * The _r_cut_ parameter is the cutoff distance in r-space,
@@ -345,6 +355,13 @@ int main(int argc, char* *argv) {
    */
   MyCell.PADHistogram(_out_file_name_, 180.0, _angle_bin_w_);
 
+  if (_smoothing_) {
+    std::cout << "Writing smoothing output files: " << _out_file_name_ << std::endl;
+    MyCell.RDFSmoothing(_out_file_name_, _smooth_sigma_, 2);
+  }
+
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
   return 0;
+
+  std::vector<double> aux(MyCell.g.size(), 0);
 }  // main

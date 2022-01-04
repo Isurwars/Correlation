@@ -2,7 +2,7 @@
 
 # `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-1.0.2-green)](https://img.shields.io/badge/version-1.0.2-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-1.0.4-green)](https://img.shields.io/badge/version-1.0.4-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
 `Correlation` is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (_.CAR), CASTEP(_.CELL), ONETEP(_.DAT), LAMMPS(_.XYZ),etc...
 
@@ -43,6 +43,8 @@ This program calculates the main correlation functions of a material:
             radius it's set to 2 nm. The maximum recommended radius is the same as
             the shortest length of the lattice parameters of the cell, anything
             above this PBC value can be affected by periodic interactions.
+          -s, --self_interaction
+            Include self-interactions, by default false.
           -w, --bin_width
             Width of the histograms for g(r) and J(r), the default is 0.05 nm.
 
@@ -80,6 +82,18 @@ This program calculates the main correlation functions of a material:
         OUTPUT OPTIONS:
           -o, --out_file
             The output file name, by default the input seed name will be used.
+
+        SMOOTHING OPTIONS:
+          -k, --kernel
+            Smoothing kernel selector (Default: 1):
+              1: Gaussian kernel.
+              2: Bump Function kernel.
+              3: Triweight kernel.
+          -K, --kernel_sigma
+            Width of the smoothing kernel, by default 0.1.
+          -S, --smoothing
+            Smoothing is disabled by default, this option enable smoothing.
+
 ```
 
 ## Installation

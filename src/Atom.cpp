@@ -36,7 +36,7 @@ void Atom::SetAll(std::string ele, std::array<double, 3> pos) {
 Atom::Atom(std::string ele, std::array<double, 3> pos) {
   this->element  = ele;
   this->position = pos;
-  this->number   = Atom::NumOfAtoms;
+  this->id       = Atom::NumOfAtoms;
   Atom::NumOfAtoms++;
 }
 
@@ -44,7 +44,7 @@ Atom::Atom(std::string ele, std::array<double, 3> pos) {
 Atom::Atom() {
   this->element  = "H";
   this->position = { 0.0, 0.0, 0.0 };
-  this->number   = Atom::NumOfAtoms;
+  this->id       = Atom::NumOfAtoms;
   Atom::NumOfAtoms++;
 }
 
@@ -60,7 +60,7 @@ Atom_Img Atom::GetImage() {
   Atom_Img temp_img;
 
   temp_img.element_id = this->element_id;
-  temp_img.atom_id    = this->number;
+  temp_img.atom_id    = this->id;
   temp_img.position   = this->position;
   return temp_img;
 }
@@ -86,3 +86,16 @@ double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {
   if (aux < -1.0) aux = -1.0;
   return acos(aux);
 }  // Get Bond Angle
+
+// Get a vector containing the IDs of all bonded atoms
+std::vector<int> Atom::GetBondedAtomsID() {
+  std::vector<Atom_Img>::iterator atom_it;
+  int n_ = this->bonded_atoms.size();
+  std::vector<int> atoms_ids;
+  for (atom_it = this->bonded_atoms.begin();
+    atom_it != this->bonded_atoms.end();
+    atom_it++) {
+    atoms_ids.push_back(atom_it->atom_id);
+  }
+  return atoms_ids;
+}  // GetBondedAtomsID

@@ -65,6 +65,12 @@ class Cell {
   std::vector < std::vector < double >> X;
   // Matrix of f(theta) Histograms
   std::vector < std::vector < double >> f_theta;
+  // Matrix of g(r) Histograms
+  std::vector < std::vector < double >> J_smoothed;
+  // Matrix of g(r) Histograms
+  std::vector < std::vector < double >> g_smoothed;
+  // Matrix of g(r) Histograms
+  std::vector < std::vector < double >> G_smoothed;
   // Volume of the cell
   double volume;
 
@@ -89,7 +95,7 @@ class Cell {
   // Calculate Distances MultiThreading
   void DistancePopulationMultiThreading(double);
   // Calculate Distances (max distance between atoms)
-  void DistancePopulation(double);
+  void DistancePopulation(double, bool);
   // Coordination Numbers Calculation
   void CoordinationNumber();
   // Bond-Angle Calulation ()
@@ -99,8 +105,12 @@ class Cell {
     double = 20.0,
     double = 0.05,
     bool   = false);
+  // RDF Smoothing (sigma)
+  void RDFSmoothing(std::string, double, int = 1);
   // Nc Histograms ()
   void CoordinationNumberHistogram(std::string);
+  // VoronoiIndex()
+  void VoronoiIndex(std::string);
   // Structure Factor Calculation
   void SQ(std::string,
     double = 0.1571,
@@ -118,13 +128,13 @@ class Cell {
   // Read Only Lattive Vectors
   std::array < double, 3 > v_a() {
     return v_a_;
-  }
+  };
   std::array < double, 3 > v_b() {
     return v_b_;
-  }
+  };
   std::array < double, 3 > v_c() {
     return v_c_;
-  }
+  };
 };
 
 #endif  // SRC_CELL_H_
