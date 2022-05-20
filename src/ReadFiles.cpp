@@ -24,6 +24,8 @@
 #include <regex>
 #include <utility>
 #include <vector>
+#include <cerrno>
+#include <cstring>
 
 #include "Atom.h"
 
@@ -117,7 +119,7 @@ Cell read_CAR(std::string file_name) {
     std::cout << "Unable to read file: "
               << file_name
               << " ("
-              << strerror(errno)
+              << std::strerror(errno)
               << ")."
               << std::endl;
     exit(1);
@@ -269,7 +271,7 @@ Cell read_CELL(std::string file_name) {
     std::cout << "Unable to read file: "
               << file_name
               << " ("
-              << strerror(errno)
+              << std::strerror(errno)
               << ")."
               << std::endl;
     exit(1);
@@ -441,7 +443,7 @@ Cell read_ONETEP_DAT(std::string file_name) {
     std::cout << "Unable to read file: "
               << file_name
               << " ("
-              << strerror(errno)
+              << std::strerror(errno)
               << ")."
               << std::endl;
     exit(1);
