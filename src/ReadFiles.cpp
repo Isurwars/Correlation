@@ -22,6 +22,7 @@
 #include <iostream>
 #include <list>
 #include <regex>
+#include <string.h>
 #include <utility>
 #include <vector>
 

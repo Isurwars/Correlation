@@ -142,17 +142,31 @@ pacman -S automake autoconf libtool
 
 The code was tested with in Ubuntu 18.04, Debian 8.11 and MX Linux 19.3 but it should work on other distros.
 
-Installing GCC:
+Installing GCC Debian / Ubuntu:
 
 ```
 sudo apt install build-essential
 ```
 
-Installing GNU Autotools:
+Installing GCC Arch / Manjaro
+
+```
+sudo pacman -Sy base-devel
+```
+
+
+Installing GNU Autotools Debian / Ubuntu:
 
 ```
 sudo apt install automake autoconf libtool
 ```
+
+Installing GNU Autotools Arch / Manjaro:
+
+```
+sudo pacman -Sy automake autoconf
+```
+
 
 #### MacOS
 
@@ -178,13 +192,22 @@ brew install automake autoconf libtool
 
 For compiling you should have GCC or Clang compilers, and GNU Autotools correctly installed on the system.
 
-First, lets adjust the configure file to match your local environment with the following commands:
+First, lets adjust the configure file to match your local environment.
+
+You have to options, the first option is with the following commands:
 
 ```
 aclocal
 autoconf
 automake --add-missing
 ```
+
+Or the recommendeed way is run the following command instead:
+
+```
+autoreconf
+```
+
 
 Some UNIX systems may require that configure scripts to be executable by the user, you can add the right to execute with the following commands:
 
