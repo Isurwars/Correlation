@@ -302,14 +302,12 @@ int main(int argc, char* *argv) {
     PrintHelp();
   }
   std::cout << "File " << _in_file_name_ << " opened successfully." << std::endl;
-
   // Create Bond distance Matrix and element_ids
   MyCell.PopulateBondLength(_bond_par_);
   if (_bond_in_file_) {
     /*Read the Bond Distances from the external file*/
     MyCell.ReadBOND(_bond_file_name_);
   }
-
   /*
    * This function calculates the distances between every pair of atoms
    * in the structure. A supercell method is used to create the images
@@ -363,5 +361,5 @@ int main(int argc, char* *argv) {
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
   return 0;
 
-  std::vector<double> aux(MyCell.g.size(), 0);
+  std::vector<double> aux(MyCell.g().size(), 0);
 }  // main

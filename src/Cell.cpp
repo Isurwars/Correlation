@@ -24,9 +24,11 @@
 #include <iostream>
 #include <map>
 #include <numeric>
+#include <ostream>
 #include <regex>
 #include <utility>
 
+#include "Atom.h"
 #include "Constants.h"
 #include "Smoothing.h"
 
@@ -52,17 +54,17 @@ template<typename T> std::pair<bool, int> findInVector(const std::vector<T>& vec
 
 // Lattice parameters constructor
 Cell::Cell(std::array<double, 6> lat) {
-  this->lattice_parameters = lat;
-  this->atoms    = { };
-  this->elements = { };
+  this->SetLatticeParameters(lat);
+  this->SetAtoms({ });
+  this->SetElements({ });
   this->SetLatticeVectors();
 }
 
 // Default constructor
 Cell::Cell() {
-  this->lattice_parameters = { 1.0, 1.0, 1.0, 90, 90, 90 };
-  this->atoms    = { };
-  this->elements = { };
+  this->SetLatticeParameters({ 1.0, 1.0, 1.0, 90, 90, 90 });
+  this->SetAtoms({ });
+  this->SetElements({ });
   this->SetLatticeVectors();
 }
 
@@ -81,20 +83,21 @@ void Cell::SetFromVectors(std::vector<double> v1,
   b    = acos(aux / (v1_n * v3_n)) * constants::rad2deg;
   aux  = std::inner_product(v2.begin(), v2.end(), v1.begin(), 0);
   c    = acos(aux / (v2_n * v1_n)) * constants::rad2deg;
-  this->lattice_parameters = { v1_n, v2_n, v3_n, a, b, c };
-  this->atoms    = { };
-  this->elements = { };
+  this->SetLatticeParameters({ v1_n, v2_n, v3_n, a, b, c });
+  this->SetAtoms({ });
+  this->SetElements( { });
   this->SetLatticeVectors();
 }
 
 // Calculate the lattice vectors from the lattice parameters.
 void Cell::SetLatticeVectors() {
-  double A     = this->lattice_parameters[0];
-  double B     = this->lattice_parameters[1];
-  double C     = this->lattice_parameters[2];
-  double alpha = this->lattice_parameters[3] * constants::deg2rad;
-  double beta  = this->lattice_parameters[4] * constants::deg2rad;
-  double gamma = this->lattice_parameters[5] * constants::deg2rad;
+  std::array<double, 6> lat = this->lattice_parameters();
+  double A     = lat[0];
+  double B     = lat[1];
+  double C     = lat[2];
+  double alpha = lat[3] * constants::deg2rad;
+  double beta  = lat[4] * constants::deg2rad;
+  double gamma = lat[5] * constants::deg2rad;
 
   this->v_a_ = { A,
                  0.0,
@@ -118,23 +121,21 @@ void Cell::SetLatticeVectors() {
 // Correct the initial positions to in-cell positions
 void Cell::CorrectPositions() {
   double i, j, k;
-  int    i_, j_, k_, m;
-  std::array<double, 3>     aux_pos;
+  int i_, j_, k_, m;
+  std::array<double, 3> aux_pos;
   std::list<Atom>::iterator MyAtom;
   // Store the number of atoms per element
-  std::vector<int> temp_num_atoms(this->elements.size(), 0);
+  std::vector<int> temp_num_atoms(this->elements().size(), 0);
 
-
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
-    temp_num_atoms[MyAtom->element_id]++;
-    aux_pos = MyAtom->position;
-    k       = aux_pos[2] / this->v_c_[2];
+  for (MyAtom = this->_atoms_.begin();
+       MyAtom != this->_atoms_.end();
+       MyAtom++) {
+    temp_num_atoms[MyAtom->element_id()]++;
+    aux_pos = MyAtom->position();
+    k = aux_pos[2] / this->v_c_[2];
     for (m = 0; m < 3; m++) {
       aux_pos[m] -= k * this->v_c_[m];
     }
-
     j = aux_pos[1] / this->v_b_[1];
     for (m = 0; m < 3; m++) {
       aux_pos[m] -= j * this->v_b_[m];
@@ -156,34 +157,30 @@ void Cell::CorrectPositions() {
       k_ = trunc(k) - 1;
     }
     for (m = 0; m < 3; m++) {
-      MyAtom->position[m] -= (i_ * this->v_a_[m] + j_ * this->v_b_[m] + k_ * this->v_c_[m]);
+      aux_pos[m] = MyAtom->position()[m] - (i_ * this->v_a_[m] + j_ * this->v_b_[m] + k_ * this->v_c_[m]);
     }
+    MyAtom->SetPosition(aux_pos);
   }
-
-  this->element_numbers = temp_num_atoms;
+  this->SetElementsNumbers(temp_num_atoms);
 }  // Cell::CorrectPositions
 
 // Correct the fractional positions to absolute positions
 void Cell::CorrectFracPositions() {
   double i, j, k;
   std::list<Atom>::iterator MyAtom;
+  std::array<double, 3> aux_pos;
 
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
-    i = MyAtom->position[0];
-    j = MyAtom->position[1];
-    k = MyAtom->position[2];
-
-    MyAtom->position[0] = (i * this->v_a_[0]
-      + j * this->v_b_[0]
-      + k * this->v_c_[0]);
-    MyAtom->position[1] = (i * this->v_a_[1]
-      + j * this->v_b_[1]
-      + k * this->v_c_[1]);
-    MyAtom->position[2] = (i * this->v_a_[2]
-      + j * this->v_b_[2]
-      + k * this->v_c_[2]);
+  for (MyAtom = this->_atoms_.begin();
+       MyAtom != this->_atoms_.end();
+       MyAtom++) {
+    aux_pos = MyAtom->position();
+    i = aux_pos[0];
+    j = aux_pos[1];
+    k = aux_pos[2];
+    aux_pos[0] = (i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0]);
+    aux_pos[1] = (i * this->v_a_[1] + j * this->v_b_[1] + k * this->v_c_[1]);
+    aux_pos[2] = (i * this->v_a_[2] + j * this->v_b_[2] + k * this->v_c_[2]);
+    MyAtom->SetPosition(aux_pos);
   }
 }  // Cell::CorrectFracPositions
 
@@ -195,22 +192,22 @@ void Cell::PopulateBondLength(double Bond_Factor) {
   double aux;
 
   // Number of elements in the Cell
-  const int n = this->elements.size();
+  const int n = this->elements().size();
   // Initialize Bond length matrix (nxn) as zeros
   std::vector<std::vector<double> > temp_matrix(n, std::vector<double>(n, 0.0));
 
   // Iterate in Atoms list to assign the id in the matrix to every atom.
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
-    MyId = findInVector(this->elements, MyAtom->element);
-    MyAtom->element_id = MyId.second;
+  for (MyAtom = this->_atoms_.begin();
+       MyAtom != this->_atoms_.end();
+       MyAtom++) {
+    MyId = findInVector(this->elements(), MyAtom->element());
+    MyAtom->SetElementId(MyId.second);
   }
 
   for (i = 0; i < n; i++) {
-    aux = Covalent_Radii(this->elements[i]);
+    aux = Covalent_Radii(this->elements()[i]);
     for (j = 0; j < n; j++) {
-      temp_matrix[i][j] = (aux + Covalent_Radii(this->elements[j])) * Bond_Factor;
+      temp_matrix[i][j] = (aux + Covalent_Radii(this->elements()[j])) * Bond_Factor;
     }
   }
   this->bond_length = temp_matrix;
@@ -257,11 +254,11 @@ void Cell::ReadBOND(std::string file_name) {
       /* Read line by line */
       if (std::regex_search(line, match, regex_bond)) {
         /* Bond found */
-        MyIdA = findInVector(this->elements, std::string(match.str(1).data()));
+        MyIdA = findInVector(this->elements(), std::string(match.str(1).data()));
         if (MyIdA.first) {
           i = MyIdA.second;
         }
-        MyIdB = findInVector(this->elements, std::string(match.str(3).data()));
+        MyIdB = findInVector(this->elements(), std::string(match.str(3).data()));
         if (MyIdB.first) {
           j = MyIdB.second;
         }
@@ -298,15 +295,16 @@ void Cell::UpdateProgressBar(double pos) {
 void Cell::DistancePopulationMultiThreading(double r_cut) {
   std::list<Atom>::iterator atom_A;
   std::list<Atom>::iterator atom_B;
-  Atom   img_atom;
-  int    id_A, id_B, i, j, k, i_, j_, k_;
+  std::array<double, 3> aux_pos;
+  Atom img_atom;
+  int id_A, id_B, i, j, k, i_, j_, k_;
   double aux_dist;
-  double h_       = 1.0 / this->atoms.size();
+  double h_ = 1.0 / this->atoms().size();
   double progress = 0.0;
 
 
   // Number of elements in the Cell
-  const int n = this->elements.size();
+  const int n = this->elements().size();
   // This matrix stores the distances between different types of elements,
   // there are at most nxn partials, off-diagonal partials are symmetric.
   std::vector<std::vector<std::vector<double> > > temp_dist(n, std::vector<std::vector<double> >(n,
@@ -342,58 +340,59 @@ void Cell::DistancePopulationMultiThreading(double r_cut) {
    * iteration is independent of the others, so changing to a for_each is
    * desired to improve this code further.
    */
-  for (atom_A = this->atoms.begin();
-    atom_A != this->atoms.end();
-    atom_A++) {
+  for (atom_A = this->_atoms_.begin();
+       atom_A != this->_atoms_.end();
+       atom_A++) {
     progress += h_;
     this->UpdateProgressBar(progress);
-    id_A = findInVector(this->elements, atom_A->element).second;
-    for (atom_B = this->atoms.begin();
-      atom_B != this->atoms.end();
-      atom_B++) {
+    id_A = findInVector(this->elements(), atom_A->element()).second;
+    for (atom_B = this->_atoms_.begin();
+         atom_B != this->_atoms_.end();
+         atom_B++) {
       // Excluding self-interactions
       if (atom_A->GetID() != atom_B->GetID()) {
-        id_B     = findInVector(this->elements, atom_B->element).second;
+        id_B     = findInVector(this->elements(), atom_B->element()).second;
         img_atom = *atom_B;
         for (i = -i_; i <= i_; i++) {
           for (j = -j_; j <= j_; j++) {
             for (k = -k_; k <= k_; k++) {
-              img_atom.position     = atom_B->position;
-              img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
-              img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
-              img_atom.position[2] += k * this->v_c()[2];
-              aux_dist              = atom_A->Distance(img_atom);
+              aux_pos = atom_B->position();
+              aux_pos[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
+              aux_pos[1] += j * this->v_b()[1] + k * this->v_c()[1];
+              aux_pos[2] += k * this->v_c()[2];
+              img_atom.SetPosition(aux_pos);
+              aux_dist = atom_A->Distance(img_atom);
               if (aux_dist <= r_cut) {
                 temp_dist[id_A][id_B].push_back(aux_dist);
-                if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
-                  atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                if (aux_dist <= this->bond_length[atom_A->element_id()][img_atom.element_id()]) {
+                  atom_A->AddBondedAtom(img_atom.GetImage());
                   if (aux_dist < 0.1) {
                     std::cout << std::endl << "ERROR: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetID()
+                              << atom_A->element() << "_" << atom_A->GetID()
                               << " in position ("
-                              << atom_A->position[0] << ", "
-                              << atom_A->position[1] << ", "
-                              << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetID()
+                              << atom_A->position()[0] << ", "
+                              << atom_A->position()[1] << ", "
+                              << atom_A->position()[2] << ")," << std::endl
+                              << atom_B->element() << "_" << atom_B->GetID()
                               << " in position ("
-                              << img_atom.position[0] << ", "
-                              << img_atom.position[1] << ", "
-                              << img_atom.position[2] << ")." << std::endl
+                              << img_atom.position()[0] << ", "
+                              << img_atom.position()[1] << ", "
+                              << img_atom.position()[2] << ")." << std::endl
                               << "Have a distance less than 10 pm." << std::endl;
                     exit(1);
                   }
                   if (aux_dist < 0.5) {
                     std::cout << std::endl << "WARNING: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetID()
+                              << atom_A->element() << "_" << atom_A->GetID()
                               << " in position ("
-                              << atom_A->position[0] << ", "
-                              << atom_A->position[1] << ", "
-                              << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetID()
+                              << atom_A->position()[0] << ", "
+                              << atom_A->position()[1] << ", "
+                              << atom_A->position()[2] << ")," << std::endl
+                              << atom_B->element() << "_" << atom_B->GetID()
                               << " in position ("
-                              << img_atom.position[0] << ", "
-                              << img_atom.position[1] << ", "
-                              << img_atom.position[2] << ")." << std::endl
+                              << img_atom.position()[0] << ", "
+                              << img_atom.position()[1] << ", "
+                              << img_atom.position()[2] << ")." << std::endl
                               << "Have a distance less than the Bohr Radius." << std::endl;
                   }
                 }
@@ -412,15 +411,16 @@ void Cell::DistancePopulationMultiThreading(double r_cut) {
 void Cell::DistancePopulation(double r_cut, bool self_interaction) {
   std::list<Atom>::iterator atom_A;
   std::list<Atom>::iterator atom_B;
+  std::array<double, 3> aux_pos;
   Atom   img_atom;
   int    id_A, id_B, i, j, k, i_, j_, k_;
   double aux_dist;
-  double h_       = 1.0 / this->atoms.size();
+  double h_ = 1.0 / this->_atoms_.size();
   double progress = 0.0;
 
 
   // Number of elements in the Cell
-  const int n = this->elements.size();
+  const int n = this->_elements_.size();
   // This matrix stores the distances between different types of elements,
   // there are at most nxn partials, off-diagonal partials are symmetric.
   std::vector<std::vector<std::vector<double> > > temp_dist(n, std::vector<std::vector<double> >(n,
@@ -430,9 +430,9 @@ void Cell::DistancePopulation(double r_cut, bool self_interaction) {
   this->CorrectPositions();
 
   //  We need to create a big enough supercell to cover a sphere of radius r_cut.
-  k_ = ceil(r_cut / this->v_c()[2]);
-  j_ = ceil(r_cut / this->v_b()[1]);
-  i_ = ceil(r_cut / this->v_a()[0]);
+  k_ = ceil(r_cut / this->v_c_[2]);
+  j_ = ceil(r_cut / this->v_b_[1]);
+  i_ = ceil(r_cut / this->v_a_[0]);
 
   // force self_interaction in case of a small supercell
   if (k_ * j_ * i_ > 8) self_interaction = true;
@@ -444,68 +444,69 @@ void Cell::DistancePopulation(double r_cut, bool self_interaction) {
    * This loop is the most time-consuming part of the code, scaling as n^2.
    *
    * We reduce the computation time in half by only iterating for A>B and
-   * duplicating the distance because distance from atom_A to atom_B is
-   * equal to the distance from atom_B to atom_A.
+   * duplicating the entry in the distances list because distance from
+   * atom_A to atom_B is equal to the distance from atom_B to atom_A.
    *
    * This code can also be improved through paralellization because each
    * iteration is independent of the others, so changing to a for_each is
    * desired to improve this code further.
    */
-  for (atom_A = this->atoms.begin();
-    atom_A != this->atoms.end();
-    atom_A++) {
+  for (atom_A = this->_atoms_.begin();
+       atom_A != this->_atoms_.end();
+       atom_A++) {
     progress += h_;
     this->UpdateProgressBar(progress);
-    id_A = findInVector(this->elements, atom_A->element).second;
-    for (atom_B = this->atoms.begin();
-      atom_B != this->atoms.end();
-      atom_B++) {
+    id_A = findInVector(this->elements(), atom_A->element()).second;
+    for (atom_B = this->_atoms_.begin();
+         atom_B != this->_atoms_.end();
+         atom_B++) {
       // Excluding self-interactions
       if (atom_A->GetID() != atom_B->GetID()) {
-        id_B     = findInVector(this->elements, atom_B->element).second;
+        id_B     = findInVector(this->elements(), atom_B->element()).second;
         img_atom = *atom_B;
         for (i = -i_; i <= i_; i++) {
           for (j = -j_; j <= j_; j++) {
             for (k = -k_; k <= k_; k++) {
-              img_atom.position     = atom_B->position;
-              img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
-              img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
-              img_atom.position[2] += k * this->v_c()[2];
-              aux_dist              = atom_A->Distance(img_atom);
+              aux_pos = atom_B->position();
+              aux_pos[0] += i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0];
+              aux_pos[1] += j * this->v_b_[1] + k * this->v_c_[1];
+              aux_pos[2] += k * this->v_c_[2];
+              img_atom.SetPosition(aux_pos);
+              aux_dist = atom_A->Distance(img_atom);
               if (aux_dist <= r_cut) {
                 temp_dist[id_A][id_B].push_back(aux_dist);
-                if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
-                  atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                if (aux_dist <= this->bond_length[atom_A->element_id()][img_atom.element_id()]) {
+                  atom_A->AddBondedAtom(img_atom.GetImage());
                   if (aux_dist < 0.1) {
                     std::cout << std::endl << "ERROR: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetID()
+                              << atom_A->element() << "_" << atom_A->GetID()
                               << " in position ("
-                              << atom_A->position[0] << ", "
-                              << atom_A->position[1] << ", "
-                              << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetID()
+                              << atom_A->position()[0] << ", "
+                              << atom_A->position()[1] << ", "
+                              << atom_A->position()[2] << ")," << std::endl
+                              << atom_B->element() << "_" << atom_B->GetID()
                               << " in position ("
-                              << img_atom.position[0] << ", "
-                              << img_atom.position[1] << ", "
-                              << img_atom.position[2] << ")." << std::endl
-                              << "Have a distance less than 10 pm." << std::endl;
+                              << img_atom.position()[0] << ", "
+                              << img_atom.position()[1] << ", "
+                              << img_atom.position()[2] << ")." << std::endl
+                              << "Have a distance less than 10 pm." << i << j << k << std::endl;
                     exit(1);
                   }
                   if (aux_dist < 0.5) {
                     std::cout << std::endl << "WARNING: The atoms:" << std::endl
-                              << atom_A->element << "_" << atom_A->GetID()
+                              << atom_A->element() << "_" << atom_A->GetID()
                               << " in position ("
-                              << atom_A->position[0] << ", "
-                              << atom_A->position[1] << ", "
-                              << atom_A->position[2] << ")," << std::endl
-                              << atom_B->element << "_" << atom_B->GetID()
+                              << atom_A->position()[0] << ", "
+                              << atom_A->position()[1] << ", "
+                              << atom_A->position()[2] << ")," << std::endl
+                              << atom_B->element() << "_" << atom_B->GetID()
                               << " in position ("
-                              << img_atom.position[0] << ", "
-                              << img_atom.position[1] << ", "
-                              << img_atom.position[2] << ")." << std::endl
+                              << img_atom.position()[0] << ", "
+                              << img_atom.position()[1] << ", "
+                              << img_atom.position()[2] << ")." << std::endl
                               << "Have a distance less than the Bohr Radius." << std::endl;
                   }
-                } else if (aux_dist <= 1.5 * this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                } else if (aux_dist <= 1.5 * this->bond_length[atom_A->element_id()][img_atom.element_id()]) {
                   atom_A->second_shell_atoms.push_back(img_atom.GetImage());
                 }
               }
@@ -513,51 +514,52 @@ void Cell::DistancePopulation(double r_cut, bool self_interaction) {
           }
         }
       } else if (self_interaction) {
-        id_B     = findInVector(this->elements, atom_B->element).second;
+        id_B     = findInVector(this->_elements_, atom_B->element()).second;
         img_atom = *atom_B;
         for (i = -i_; i <= i_; i++) {
           for (j = -j_; j <= j_; j++) {
             for (k = -k_; k <= k_; k++) {
-              img_atom.position     = atom_B->position;
-              img_atom.position[0] += i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
-              img_atom.position[1] += j * this->v_b()[1] + k * this->v_c()[1];
-              img_atom.position[2] += k * this->v_c()[2];
-              aux_dist              = atom_A->Distance(img_atom);
+              aux_pos = atom_B->position();
+              aux_pos[0] += i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0];
+              aux_pos[1] += j * this->v_b_[1] + k * this->v_c_[1];
+              aux_pos[2] += k * this->v_c_[2];
+              img_atom.SetPosition(aux_pos);
+              aux_dist = atom_A->Distance(img_atom);
               if (aux_dist > 0) {
                 if (aux_dist <= r_cut) {
                   temp_dist[id_A][id_B].push_back(aux_dist);
-                  if (aux_dist <= this->bond_length[atom_A->element_id][img_atom.element_id]) {
-                    atom_A->bonded_atoms.push_back(img_atom.GetImage());
+                  if (aux_dist <= this->bond_length[atom_A->element_id()][img_atom.element_id()]) {
+                    atom_A->AddBondedAtom(img_atom.GetImage());
                     if (aux_dist < 0.1) {
                       std::cout << std::endl << "ERROR: The atoms:" << std::endl
-                                << atom_A->element << "_" << atom_A->GetID()
+                                << atom_A->element() << "_" << atom_A->GetID()
                                 << " in position ("
-                                << atom_A->position[0] << ", "
-                                << atom_A->position[1] << ", "
-                                << atom_A->position[2] << ")," << std::endl
-                                << atom_B->element << "_" << atom_B->GetID()
+                                << atom_A->position()[0] << ", "
+                                << atom_A->position()[1] << ", "
+                                << atom_A->position()[2] << ")," << std::endl
+                                << atom_B->element() << "_" << atom_B->GetID()
                                 << " in position ("
-                                << img_atom.position[0] << ", "
-                                << img_atom.position[1] << ", "
-                                << img_atom.position[2] << ")." << std::endl
+                                << img_atom.position()[0] << ", "
+                                << img_atom.position()[1] << ", "
+                                << img_atom.position()[2] << ")." << std::endl
                                 << "Have a distance less than 10 pm." << std::endl;
                       exit(1);
                     }
                     if (aux_dist < 0.5) {
                       std::cout << std::endl << "WARNING: The atoms:" << std::endl
-                                << atom_A->element << "_" << atom_A->GetID()
+                                << atom_A->element() << "_" << atom_A->GetID()
                                 << " in position ("
-                                << atom_A->position[0] << ", "
-                                << atom_A->position[1] << ", "
-                                << atom_A->position[2] << ")," << std::endl
-                                << atom_B->element << "_" << atom_B->GetID()
+                                << atom_A->position()[0] << ", "
+                                << atom_A->position()[1] << ", "
+                                << atom_A->position()[2] << ")," << std::endl
+                                << atom_B->element() << "_" << atom_B->GetID()
                                 << " in position ("
-                                << img_atom.position[0] << ", "
-                                << img_atom.position[1] << ", "
-                                << img_atom.position[2] << ")." << std::endl
+                                << img_atom.position()[0] << ", "
+                                << img_atom.position()[1] << ", "
+                                << img_atom.position()[2] << ")." << std::endl
                                 << "Have a distance less than the Bohr Radius." << std::endl;
                     }
-                  } else if (aux_dist <= 1.5 * this->bond_length[atom_A->element_id][img_atom.element_id]) {
+                  } else if (aux_dist <= 1.5 * this->bond_length[atom_A->element_id()][img_atom.element_id()]) {
                     atom_A->second_shell_atoms.push_back(img_atom.GetImage());
                   }
                 }
@@ -579,37 +581,38 @@ void Cell::CoordinationNumber() {
   std::vector<Atom_Img>::iterator atom_A;
 
   // Search for the maximum number of bonds in the cell
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
-    if (max_Nc < static_cast<int>(MyAtom->bonded_atoms.size())) {
-      max_Nc = static_cast<int>(MyAtom->bonded_atoms.size());
+  for (MyAtom = this->_atoms_.begin();
+       MyAtom != this->_atoms_.end();
+       MyAtom++) {
+    if (max_Nc < static_cast<int>(MyAtom->bonded_atoms().size())) {
+      max_Nc = static_cast<int>(MyAtom->bonded_atoms().size());
     }
   }
-  const int n = this->elements.size();
+  const int n = this->elements().size();
   const int m = max_Nc + 2;
   // Create the Tensor nx(n+1)xm and initialize it with zeros
   std::vector<std::vector<std::vector<int> > > temp_nc(n, std::vector<std::vector<int> >(n + 1,
     std::vector<int>(m, 0)));
   // Search for the number of bonds per atom per element
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
+  for (MyAtom = this->_atoms_.begin();
+       MyAtom != this->_atoms_.end();
+       MyAtom++) {
     std::vector<int> aux(n, 0);
-    for (atom_A = MyAtom->bonded_atoms.begin();
-      atom_A != MyAtom->bonded_atoms.end();
-      atom_A++) {
+    std::vector<Atom_Img> bon_aux = MyAtom->bonded_atoms();
+    for (atom_A = bon_aux.begin();
+         atom_A != bon_aux.end();
+         atom_A++) {
       aux[atom_A->element_id]++;
     }
     for (i = 0; i < n; i++) {
-      temp_nc[MyAtom->element_id][i][aux[i]]++;
+      temp_nc[MyAtom->element_id()][i][aux[i]]++;
     }
   }
   // Add total coordination per atom
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
-    temp_nc[MyAtom->element_id][n][MyAtom->bonded_atoms.size()]++;
+  for (MyAtom = this->_atoms_.begin();
+       MyAtom != this->_atoms_.end();
+       MyAtom++) {
+    temp_nc[MyAtom->element_id()][n][MyAtom->bonded_atoms().size()]++;
   }
 
   this->coordination = temp_nc;
@@ -625,10 +628,11 @@ void Cell::PAD(bool degree) {
   }
 
   // NxNxN Tensor to store the PAD
-  const int n = this->elements.size();
+  const int n = this->elements().size();
   std::vector<std::vector<std::vector<std::vector<double> > > > temp_pad(n,
     std::vector<std::vector<std::vector<double> > >(n, std::vector<std::vector<double> >(n,
     std::vector<double>(0))));
+  std::vector<Atom_Img> bon_aux;
 
   /*
    * This is the main loop to calculate the angles formed by every three atoms.
@@ -641,17 +645,16 @@ void Cell::PAD(bool degree) {
    *
    * By default the angle returned is given in degrees.
    */
-  for (MyAtom = this->atoms.begin();
-    MyAtom != this->atoms.end();
-    MyAtom++) {
-    for (atom_A = MyAtom->bonded_atoms.begin();
-      atom_A != MyAtom->bonded_atoms.end();
-      atom_A++) {
-      for (atom_B = MyAtom->bonded_atoms.begin();
-        atom_B != MyAtom->bonded_atoms.end();
-        atom_B++) {
+  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end(); MyAtom++) {
+    bon_aux = MyAtom->bonded_atoms();
+    for (atom_A = bon_aux.begin();
+         atom_A != bon_aux.end();
+         atom_A++) {
+      for (atom_B = bon_aux.begin();
+           atom_B != bon_aux.end();
+           atom_B++) {
         if (atom_A->atom_id != atom_B->atom_id) {
-          temp_pad[atom_A->element_id][MyAtom->element_id][atom_B->element_id].push_back(MyAtom->GetAngle(*
+          temp_pad[atom_A->element_id][MyAtom->element_id()][atom_B->element_id].push_back(MyAtom->GetAngle(*
             atom_A, *atom_B) * factor);
         }
       }
@@ -664,7 +667,7 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
   int         n_, m_, i, j, col, row;
   int         n = this->distances.size();
   std::string header;
-  double      num_atoms = this->atoms.size();
+  double      num_atoms = this->atoms().size();
 
   /* m_: the number of rows is given by:
    * the cut radius/bin width
@@ -694,7 +697,7 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
 
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      temp_w_ij[i + j + 1] = 2.0 * this->element_numbers[i] * this->element_numbers[j] / (num_atoms * num_atoms);
+      temp_w_ij[i + j + 1] = 2.0 * this->element_numbers()[i] * this->element_numbers()[j] / (num_atoms * num_atoms);
       if (i == j) {
         temp_w_ij[i + j + 1] *= 0.5;
       }
@@ -749,22 +752,21 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
     });
   }
 
-  this->J = temp_hist;
+  this->_J_ = temp_hist;
 
   std::ofstream out_file(filename + "_J.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "r (Å),";
+  out_file << std::setprecision(6) << std::setw(13) << "r (Å),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (1/Å),";
+      out_file << std::setprecision(6) << std::setw(13) << header;
     }
   }
-  out_file << std::setw(12) << "J(r)," << std::endl << std::fixed;
+  out_file << std::setprecision(6) << std::setw(12) << "J(r)," << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -783,26 +785,25 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
     }
   }
 
-  this->g = temp_hist;
+  this->_g_ = temp_hist;
 
   out_file.open(filename + "_g.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "r (Å),";
+  out_file << std::setprecision(6) << std::setw(13) << "r (Å),";
 
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (1/Å),";
+      out_file << std::setprecision(6) << std::setw(13) << header;
       if (normalize) {
         temp_w_ij[i + j + 1] = 1.0;
       }
     }
   }
-  out_file << std::setw(12) << "g(r)," << std::endl << std::fixed;
+  out_file << std::setprecision(6) << std::setw(12) << "g(r)," << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -824,22 +825,21 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
     }
   }
 
-  this->G = temp_hist;
+  this->_G_ = temp_hist;
 
   out_file.open(filename + "_G_.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "r (Å),";
+  out_file << std::setprecision(6) << std::setw(13) << "r (Å),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (1/Å),";
+      out_file << std::setprecision(6) << std::setw(13) << header;
     }
   }
-  out_file << std::setw(12) << "G(r)," << std::endl << std::fixed;
+  out_file << std::setprecision(6) << std::setw(12) << "G(r)," << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -850,38 +850,37 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width, bo
 void Cell::RDFSmoothing(std::string filename, double sigma, int _kernel_) {
   int         n_, m_, i, j, col, row;
   std::string header;
-  int         n = this->elements.size();
+  int         n = this->elements().size();
   // n_: number of columns in the histogram
-  n_ = this->g.size();
+  n_ = this->_g_.size();
   // m_: number of rows in the histogram
-  m_ = this->g[0].size();
+  m_ = this->_g_[0].size();
 
   // Array of smoothed histograms
   std::vector<std::vector<double> > temp_hist(n_, std::vector<double>(m_, 0));
   /* Smoothing Loop */
   for (row = 0; row < m_; row++) {
-    temp_hist[0][row] = this->J[0][row];
+    temp_hist[0][row] = this->_J_[0][row];
   }
   for (col = 1; col < n_; col++) {
-    temp_hist[col] = KernelSmoothing(temp_hist[0], this->J[col], sigma, _kernel_);
+    temp_hist[col] = KernelSmoothing(temp_hist[0], this->_J_[col], sigma, _kernel_);
   }
 
   /* printing loop */
-  this->J_smoothed = temp_hist;
+  this->_J_smoothed_ = temp_hist;
 
   std::ofstream out_file(filename + "_J_smoothed.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "r (Å),";
+  out_file << std::setprecision(6) << std::setw(13) << "r (Å),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (1/Å),";
+      out_file << std::setprecision(6) << std::setw(13) << header;
     }
   }
-  out_file << std::setw(12) << "J(r)," << std::endl << std::fixed;
+  out_file << std::setprecision(6) << std::setw(12) << "J(r)," << std::endl << std::fixed;
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -890,28 +889,27 @@ void Cell::RDFSmoothing(std::string filename, double sigma, int _kernel_) {
 
   /* Smoothing Loop */
   for (row = 0; row < m_; row++) {
-    temp_hist[0][row] = this->g[0][row];
+    temp_hist[0][row] = this->_g_[0][row];
   }
   for (col = 1; col < n_; col++) {
-    temp_hist[col] = KernelSmoothing(temp_hist[0], this->g[col], sigma, _kernel_);
+    temp_hist[col] = KernelSmoothing(temp_hist[0], this->_g_[col], sigma, _kernel_);
   }
 
   /* printing loop */
-  this->g_smoothed = temp_hist;
+  this->_g_smoothed_ = temp_hist;
 
   out_file.open(filename + "_g_smoothed.csv");
-  std::setprecision(6);
   out_file << std::setw(13) << "r (Å),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (1/Å),";
+      out_file << std::setprecision(6) << std::setw(13) << header;
     }
   }
-  out_file << std::setw(12) << "g(r)," << std::endl << std::fixed;
+  out_file << std::setprecision(6) << std::setw(12) << "g(r)," << std::endl << std::fixed;
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -920,28 +918,27 @@ void Cell::RDFSmoothing(std::string filename, double sigma, int _kernel_) {
 
   /* Smoothing Loop */
   for (row = 0; row < m_; row++) {
-    temp_hist[0][row] = this->G[0][row];
+    temp_hist[0][row] = this->_G_[0][row];
   }
   for (col = 1; col < n_; col++) {
-    temp_hist[col] = KernelSmoothing(temp_hist[0], this->G[col], sigma, _kernel_);
+    temp_hist[col] = KernelSmoothing(temp_hist[0], this->_G_[col], sigma, _kernel_);
   }
 
   /* printing loop */
-  this->g_smoothed = temp_hist;
+  this->_g_smoothed_ = temp_hist;
 
   out_file.open(filename + "_G__smoothed.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "r (Å),";
+  out_file << std::setprecision(6) << std::setw(13) << "r (Å),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (1/Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (1/Å),";
+      out_file << std::setprecision(6) << std::setw(13) << header;
     }
   }
   out_file << std::setw(12) << "G(r)," << std::endl << std::fixed;
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -951,7 +948,7 @@ void Cell::RDFSmoothing(std::string filename, double sigma, int _kernel_) {
 
 void Cell::CoordinationNumberHistogram(std::string filename) {
   int         n_, m_, i, j, col, row;
-  int         n = this->elements.size();
+  int         n = this->elements().size();
   std::string header;
 
   /* cols:
@@ -983,25 +980,23 @@ void Cell::CoordinationNumberHistogram(std::string filename) {
     col++;
   }
 
-
   std::ofstream out_file(filename + "_Z.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "Number (#),";
+  out_file <<  std::setprecision(6) << std::setw(13) << "Number (#),";
   for (i = 0; i < n; i++) {
     for (j = 0; j < n; j++) {
-      header = this->elements[i] + " by " + this->elements[j] + ",";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + " by " + this->elements()[j] + ",";
+      out_file << std::setprecision(6) << std::setw(13) << header;
     }
   }
   for (i = 0; i < n; i++) {
-    header = this->elements[i] + " by any" + ",";
-    out_file << std::setw(13) << header;
+    header = this->elements()[i] + " by any" + ",";
+    out_file << std::setprecision(6) << std::setw(13) << header;
   }
   out_file << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(12) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(12) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -1021,7 +1016,9 @@ void Cell::VoronoiIndex(std::string filename) {
   std::vector<int> atom_B_ids;
   std::vector<int> atom_intersection;
 
-  for (atom_A = this->atoms.begin(); atom_A != this->atoms.end(); atom_A++) {
+  for (atom_A = this->_atoms_.begin();
+       atom_A != this->_atoms_.end();
+       atom_A++) {
     atom_A_ids = atom_A->GetBondedAtomsID();
     std::sort(atom_A_ids.begin(), atom_A_ids.end());
     std::cout << "A " << atom_A->GetID() << ": (";
@@ -1034,13 +1031,13 @@ void Cell::VoronoiIndex(std::string filename) {
 
 void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double r_cut, bool normalize) {
   int         n_, m_, i, j, row, col;
-  int         n = this->elements.size();
+  int         n = this->elements().size();
   std::string header;
   double      Trapz     = 0.0;
-  double      num_atoms = this->atoms.size();
+  double      num_atoms = this->atoms().size();
 
-  n_ = this->G.size();
-  m_ = this->G[0].size();
+  n_ = this->_G_.size();
+  m_ = this->_G_[0].size();
   std::vector<double> temp_w_ij(n_, 1.0);
   if (!normalize) {
     temp_w_ij = this->w_ij;
@@ -1057,7 +1054,7 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
   for (i = 0; i < m_; i++) {
     temp_S[0][i] = 0.0 + (i + 0.0) * q_bin_width;
   }
-  double rho_0 = this->atoms.size() / this->volume;
+  double rho_0 = this->atoms().size() / this->volume;
   double aux   = 4 * constants::pi * rho_0;
 
   /*
@@ -1071,35 +1068,34 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
       Trapz = 0.0;
       if (temp_S[0][row] < 0.2) {
         for (i = 1; i < m_; i++) {
-          Trapz += (1 - 0.5 * pow(temp_S[0][row] * this->g[0][i], 2)) * this->g[col][i];
+          Trapz += (1 - 0.5 * pow(temp_S[0][row] * this->_g_[0][i], 2)) * this->_g_[col][i];
         }
         temp_S[col][row] = temp_w_ij[col] + Trapz * bin_width * rho_0;
       } else {
         for (i = 1; i < (m_ - 1); i++) {
-          Trapz += std::sin(temp_S[0][row] * this->G[0][i]) * this->G[col][i];
+          Trapz += std::sin(temp_S[0][row] * this->_G_[0][i]) * this->_G_[col][i];
         }
-        Trapz           += 0.5 * std::sin(temp_S[0][row] * this->G[0][m_ - 1]) * this->G[col][m_ - 1];
+        Trapz           += 0.5 * std::sin(temp_S[0][row] * this->_G_[0][m_ - 1]) * this->_G_[col][m_ - 1];
         temp_S[col][row] = temp_w_ij[col] + Trapz * (bin_width / temp_S[0][row]);
       }
     }
   }
 
-  this->S = temp_S;
+  this->_S_ = temp_S;
 
   std::ofstream out_file(filename + "_S_q.csv");
-  std::setprecision(6);
-  out_file << std::setw(13) << "q (1/Å),";
+  out_file << std::setprecision(5) << std::setw(13) << "q (1/Å),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (Å),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (Å),";
+      out_file << std::setprecision(5) << std::setw(13) << header;
     }
   }
   out_file << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(11) << temp_S[j][i] << ",";
+      out_file << std::setprecision(5) << std::setw(11) << temp_S[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -1109,7 +1105,7 @@ void Cell::SQ(std::string filename, double q_bin_width, double bin_width, double
 void Cell::XRD(std::string filename, double lambda, double theta_min, double theta_max, double bin_width) {
   int         n_, m_, i, j, k, col, row;
   double      norm, aux;
-  int         n = this->elements.size();
+  int         n = this->elements().size();
   std::string header;
 
   m_ = ceil((theta_max - theta_min) / bin_width);
@@ -1164,21 +1160,20 @@ void Cell::XRD(std::string filename, double lambda, double theta_min, double the
     }
   }
 
-  this->X = temp_hist;
+  this->_X_ = temp_hist;
   std::ofstream out_file(filename + "_XRD.csv");
-  std::setprecision(5);
-  out_file << std::setw(13) << "2-theta (°),";
+  out_file << std::setprecision(5) << std::setw(13) << "2-theta (°),";
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
-      header = this->elements[i] + "-" + this->elements[j] + " (%),";
-      out_file << std::setw(13) << header;
+      header = this->elements()[i] + "-" + this->elements()[j] + " (%),";
+      out_file << std::setprecision(5) << std::setw(13) << header;
     }
   }
   out_file << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_; j++) {
-      out_file << std::setw(12) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(5) << std::setw(12) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }
@@ -1189,7 +1184,7 @@ void Cell::XRD(std::string filename, double lambda, double theta_min, double the
 void Cell::PADHistogram(std::string filename, double theta_cut, double bin_width) {
   int         n_, m_, i, j, k, h, col, row;
   double      norm;
-  int         n = this->elements.size();
+  int         n = this->elements().size();
   std::string header;
 
   /*
@@ -1258,23 +1253,22 @@ void Cell::PADHistogram(std::string filename, double theta_cut, double bin_width
     }
   }
 
-  this->f_theta = temp_hist;
+  this->_f_theta_ = temp_hist;
   std::ofstream out_file(filename + "_PAD.csv");
-  std::setprecision(5);
-  out_file << std::setw(13) << "theta (°),";
+  out_file << std::setprecision(6) << std::setw(13) << "theta (°),";
   for (i = 0; i < n; i++) {
     for (j = 0; j < n; j++) {
       for (k = j; k < n; k++) {
-        header = this->elements[j] + "-" + this->elements[i] + "-" + this->elements[k] + ",";
-        out_file << std::setw(12) << header;
+        header = this->elements()[j] + "-" + this->elements()[i] + "-" + this->elements()[k] + ",";
+        out_file << std::setprecision(6) << std::setw(12) << header;
       }
     }
   }
-  out_file << std::setw(12) << "f(theta)," << std::endl << std::fixed;
+  out_file << std::setprecision(6) << std::setw(12) << "f(theta)," << std::endl << std::fixed;
 
   for (i = 0; i < m_; i++) {
     for (j = 0; j < n_ + 1; j++) {
-      out_file << std::setw(11) << temp_hist[j][i] << ",";
+      out_file << std::setprecision(6) << std::setw(11) << temp_hist[j][i] << ",";
     }
     out_file << std::endl;
   }

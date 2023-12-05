@@ -62,7 +62,7 @@ std::vector<double> BumpKernel(std::vector<double> r_vals, double r0, double rad
   std::vector<double> aux(r_vals.size(), 0);
   for (i = 0; i < r_vals.size(); i++) {
     x = (r_vals[i] - r0) / radius;
-    if (abs(x) < 1) {
+    if (std::abs(x) < 1) {
       aux[i] = exp(-1 / (1 - pow(x, 2)));
     } else {
       aux[i] = 0.0;
