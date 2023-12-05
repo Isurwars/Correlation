@@ -29,40 +29,69 @@ struct Atom_Img {
   std::array<double, 3> position;
 };
 
-
 class Atom {
-  // This object represents every atom in the cell
+  /* ---------------------------------------------------------------------
+  * This object represents every atom in the cell.
+  *
+  * The atributes consist of:
+  * ID (Unique Identifier),
+  * Element (string and id),
+  * Postion (array of three doubles),
+  * Bonded Atoms (Images of the bonded atoms)
+  *
+  * As well as several methods to calculate distance between pairs of atoms,
+  * and angle between terns of atoms
+  * ---------------------------------------------
+  */
  private:
   int id;
+  std::array<double, 3> _position_;
+  std::vector<Atom_Img> _bonded_atoms_;
+  int _element_id_;
+  std::string _element_;
   static int NumOfAtoms;
 
  public:
-  std::string element;
-  int element_id;
-  std::array<double, 3> position;
-  std::vector<Atom_Img> bonded_atoms;
   std::vector<Atom_Img> second_shell_atoms;
 
-  // Setters & Getters
-  int GetID() { return id; }
-  void SetID(int num) { this->id = num; }
+  //-------------------------------------------------------------//
+  //---------------------- Constructors  ------------------------//
+  //-------------------------------------------------------------//
 
-  // Constructors
   Atom(std::string, std::array<double, 3>);
   Atom();
   void SetAll(std::string, std::array<double, 3>);
 
-  // Default functions for the object Atom
+  //-------------------------------------------------------------//
+  //-------------------- Setters & Getters ----------------------//
+  //-------------------------------------------------------------//
+
+  int GetID() { return this->id; }
+  void SetID(int num) { this->id = num; }
+
+  std::array<double, 3> position() { return this->_position_; }
+  void SetPosition(std::array<double, 3> pos) { this->_position_ = pos; }
+
+  std::vector<Atom_Img> bonded_atoms() { return this->_bonded_atoms_; }
+  std::vector<int> GetBondedAtomsID();
+  void AddBondedAtom(Atom_Img);
+
+  int element_id() { return this->_element_id_; }
+  void SetElementId(int ele_id) { this->_element_id_ = ele_id; }
+
+  std::string element() { return this->_element_; }
+  void SetElement(std::string ele) { this->_element_ = ele; }
+
   static int GetNumberOfAtoms() { return NumOfAtoms; }
-  double Distance(const Atom&);
+
+
+  // Default functions for the object Atom
+  double Distance(Atom&);
 
   // Produce a minimal structure to compute the bond angle.
   Atom_Img GetImage();
 
   // Get the angle between other atom (Atom_Img) and this object
   double GetAngle(Atom_Img, Atom_Img);
-
-  // Get bonded atoms id
-  std::vector<int> GetBondedAtomsID();
 };
 #endif  // SRC_ATOM_H_

@@ -21,6 +21,7 @@
 #include <fstream>
 #include <iostream>
 #include <list>
+#include <ostream>
 #include <regex>
 #include <string.h>
 #include <utility>
@@ -47,7 +48,8 @@ std::pair<bool, int> findInVector(const std::vector<T>& vecOfElements,
     result.second = -1;
   }
   return result;
-}  // findInVector
+} // findInVector
+
 Cell read_CAR(std::string file_name) {
   /*
    * This function reads a CAR file and returns a list of atoms objects
@@ -56,6 +58,7 @@ Cell read_CAR(std::string file_name) {
    * repetition of the cell.
    */
   std::ifstream myfile(file_name);
+  std::array<double, 6> lat;
   std::string   line;
   Cell        tempCell;
   std::smatch match;
@@ -95,22 +98,22 @@ Cell read_CAR(std::string file_name) {
   if (myfile.is_open()) {
     while (std::getline(myfile, line)) {
       if (std::regex_search(line, match, regex_parameters)) {
-        tempCell.lattice_parameters[0] = std::stod(match.str(2).data());
-        tempCell.lattice_parameters[1] = std::stod(match.str(4).data());
-        tempCell.lattice_parameters[2] = std::stod(match.str(6).data());
-        tempCell.lattice_parameters[3] = std::stod(match.str(8).data());
-        tempCell.lattice_parameters[4] = std::stod(match.str(10).data());
-        tempCell.lattice_parameters[5] = std::stod(match.str(12).data());
+        lat[0] = std::stod(match.str(2).data());
+        lat[1] = std::stod(match.str(4).data());
+        lat[2] = std::stod(match.str(6).data());
+        lat[3] = std::stod(match.str(8).data());
+        lat[4] = std::stod(match.str(10).data());
+        lat[5] = std::stod(match.str(12).data());
+        tempCell.SetLatticeParameters(lat);
         tempCell.SetLatticeVectors();
       }
       if (std::regex_search(line, match, regex_atom)) {
-        Atom tempAtom(match.str(12).data(),
-          { std::stod(match.str(3).data()),
-            std::stod(match.str(5).data()),
-            std::stod(match.str(7).data()) });
-        tempCell.atoms.push_back(tempAtom);
-        if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-          tempCell.elements.push_back(tempAtom.element);
+        Atom tempAtom(match.str(12).data(), {std::stod(match.str(3).data()),
+                                             std::stod(match.str(5).data()),
+                                             std::stod(match.str(7).data())});
+        tempCell.AddAtom(tempAtom);
+        if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
+          tempCell.AddElement(tempAtom.element());
         }
       }
     }
@@ -134,7 +137,8 @@ Cell read_CELL(std::string file_name) {
    */
   std::ifstream myfile(file_name);
   std::string   line;
-  std::smatch   match;
+  std::smatch match;
+  std::array<double, 6> lat;
   Cell tempCell;
   bool frac_flag = false;
 
@@ -222,9 +226,10 @@ Cell read_CELL(std::string file_name) {
           while (!std::regex_search(line, match, regex_endblock)) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_lattice)) {
-              tempCell.lattice_parameters[0 + 3 * index] = std::stof(match.str(1).data());
-              tempCell.lattice_parameters[1 + 3 * index] = std::stof(match.str(3).data());
-              tempCell.lattice_parameters[2 + 3 * index] = std::stof(match.str(5).data());
+              lat[0 + 3 * index] = std::stof(match.str(1).data());
+              lat[1 + 3 * index] = std::stof(match.str(3).data());
+              lat[2 + 3 * index] = std::stof(match.str(5).data());
+              tempCell.SetLatticeParameters(lat);
               index++;
             }
           }
@@ -237,12 +242,12 @@ Cell read_CELL(std::string file_name) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()),
-                  std::stod(match.str(5).data()),
-                  std::stod(match.str(7).data()) });
-              tempCell.atoms.push_back(tempAtom);
-              if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-                tempCell.elements.push_back(tempAtom.element);
+                            {std::stod(match.str(3).data()),
+                             std::stod(match.str(5).data()),
+                             std::stod(match.str(7).data())});
+              tempCell.AddAtom(tempAtom);
+              if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
+                tempCell.AddElement(tempAtom.element());
               }
             }
           }
@@ -254,12 +259,12 @@ Cell read_CELL(std::string file_name) {
             std::getline(myfile, line);
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()),
-                  std::stod(match.str(5).data()),
-                  std::stod(match.str(7).data()) });
-              tempCell.atoms.push_back(tempAtom);
-              if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-                tempCell.elements.push_back(tempAtom.element);
+                            {std::stod(match.str(3).data()),
+                             std::stod(match.str(5).data()),
+                             std::stod(match.str(7).data())});
+              tempCell.AddAtom(tempAtom);
+              if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
+                tempCell.AddElement(tempAtom.element());
               }
             }
           }
@@ -287,7 +292,8 @@ Cell read_ONETEP_DAT(std::string file_name) {
    */
   std::ifstream myfile(file_name);
   std::string   line;
-  std::smatch   match;
+  std::smatch match;
+  std::array<double, 6> lat;
   Cell   tempCell;
   bool   frac_flag = false;
   double p_f       = 0.52918;
@@ -388,9 +394,10 @@ Cell read_ONETEP_DAT(std::string file_name) {
               p_f = 1.0;
             }
             if (std::regex_search(line, match, regex_lattice)) {
-              tempCell.lattice_parameters[0 + 3 * index] = std::stof(match.str(1).data()) * p_f;
-              tempCell.lattice_parameters[1 + 3 * index] = std::stof(match.str(3).data()) * p_f;
-              tempCell.lattice_parameters[2 + 3 * index] = std::stof(match.str(5).data()) * p_f;
+              lat[0 + 3 * index] = std::stof(match.str(1).data()) * p_f;
+              lat[1 + 3 * index] = std::stof(match.str(3).data()) * p_f;
+              lat[2 + 3 * index] = std::stof(match.str(5).data()) * p_f;
+              tempCell.SetLatticeParameters(lat);
               index++;
             }
           }
@@ -406,12 +413,12 @@ Cell read_ONETEP_DAT(std::string file_name) {
             }
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()) * p_f,
-                  std::stod(match.str(5).data()) * p_f,
-                  std::stod(match.str(7).data()) * p_f });
-              tempCell.atoms.push_back(tempAtom);
-              if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-                tempCell.elements.push_back(tempAtom.element);
+                            {std::stod(match.str(3).data()) * p_f,
+                             std::stod(match.str(5).data()) * p_f,
+                             std::stod(match.str(7).data()) * p_f});
+              tempCell.AddAtom(tempAtom);
+              if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
+                tempCell.AddElement(tempAtom.element());
               }
             }
           }
@@ -426,12 +433,12 @@ Cell read_ONETEP_DAT(std::string file_name) {
             }
             if (std::regex_search(line, match, regex_atom)) {
               Atom tempAtom(match.str(1).data(),
-                { std::stod(match.str(3).data()) * p_f,
-                  std::stod(match.str(5).data()) * p_f,
-                  std::stod(match.str(7).data()) * p_f });
-              tempCell.atoms.push_back(tempAtom);
-              if (!(findInVector(tempCell.elements, tempAtom.element).first)) {
-                tempCell.elements.push_back(tempAtom.element);
+                            {std::stod(match.str(3).data()) * p_f,
+                             std::stod(match.str(5).data()) * p_f,
+                             std::stod(match.str(7).data()) * p_f});
+              tempCell.AddAtom(tempAtom);
+              if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
+                tempCell.AddElement(tempAtom.element());
               }
             }
           }
