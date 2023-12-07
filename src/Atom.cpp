@@ -22,30 +22,33 @@
 #include <list>
 #include <numeric>
 
-// All the functions in Class Atom
 int Atom::NumOfAtoms = 0;
 
+//-------------------------------------------------------------//
+//---------------------- Constructors  ------------------------//
+//-------------------------------------------------------------//
 void Atom::SetAll(std::string ele, std::array<double, 3> pos) {
   this->_element_  = ele;
   this->_position_ = pos;
 }
-
 // Complete constructor for the Atom object
 Atom::Atom(std::string ele, std::array<double, 3> pos) {
   this->_element_  = ele;
   this->_position_ = pos;
-  this->id       = Atom::NumOfAtoms;
+  this->id = Atom::NumOfAtoms;
   Atom::NumOfAtoms++;
 }
-
 // Default constructor for the Atom object
 Atom::Atom() {
   this->_element_  = "H";
   this->_position_ = { 0.0, 0.0, 0.0 };
-  this->id       = Atom::NumOfAtoms;
+  this->id = Atom::NumOfAtoms;
   Atom::NumOfAtoms++;
 }
 
+//-------------------------------------------------------------//
+//------------------------- Methods ---------------------------//
+//-------------------------------------------------------------//
 // Distance to the other atom
 double Atom::Distance(Atom &other_atom) {
   std::array<double, 3> b_pos = other_atom.position();
