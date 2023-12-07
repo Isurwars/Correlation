@@ -81,16 +81,16 @@ class Atom {
 
   std::string element() { return this->_element_; }
   void SetElement(std::string ele) { this->_element_ = ele; }
-
   static int GetNumberOfAtoms() { return NumOfAtoms; }
 
+  //-------------------------------------------------------------//
+  //------------------------- Methods ---------------------------//
+  //-------------------------------------------------------------//
 
   // Default functions for the object Atom
   double Distance(Atom&);
-
   // Produce a minimal structure to compute the bond angle.
   Atom_Img GetImage();
-
   // Get the angle between other atom (Atom_Img) and this object
   double GetAngle(Atom_Img, Atom_Img);
 };
