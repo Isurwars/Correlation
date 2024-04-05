@@ -285,7 +285,7 @@ int main(int argc, char* *argv) {
   std::filesystem::path _in_file_ { _in_file_name_ };
   std::filesystem::path my_path;
   (my_path = _in_file_name_).remove_filename();
-  if (_out_file_name_ == "") _out_file_name_ = my_path / _in_file_.stem();
+  if (_out_file_name_ == "") _out_file_name_ = my_path / _in_file_.stem().generic_string();
   std::string MyExt = _in_file_.extension();
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char& c) {
