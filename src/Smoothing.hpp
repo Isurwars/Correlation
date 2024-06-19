@@ -1,8 +1,8 @@
-#ifndef SRC_READFILES_H_
-#define SRC_READFILES_H_
+#ifndef SRC_SMOOTHING_H_
+#define SRC_SMOOTHING_H_
 /* ---------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2021 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -17,13 +17,20 @@
  * SOFTWARE.
  * ----------------------------------------------------------------------
  */
-#include <string>
+#include <vector>
 
-#include "Cell.h"
+// Function declarations
 
-Cell read_CAR(std::string);
-Cell read_CELL(std::string);
-Cell read_ONETEP_DAT(std::string);
-Cell read_CIF(std::string);
+std::vector<double> GaussianKernel(const std::vector<double> &r_vals, double r0,
+                                   double sigma);
 
-#endif  // SRC_READFILES_H_
+std::vector<double> BumpKernel(const std::vector<double> &r_vals, double r0,
+                               double radius);
+
+std::vector<double> KernelSmoothing(const std::vector<double> &r,
+                                    const std::vector<double> &y, double sigma,
+                                    int _kernel_);
+
+#include "Templates.tpp" // Include template definitions
+
+#endif // SMOOTHING_H

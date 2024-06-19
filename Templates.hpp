@@ -1,8 +1,8 @@
-#ifndef SRC_SMOOTHING_H_
-#define SRC_SMOOTHING_H_
+#ifndef SRC_TEMPLATES_H_
+#define SRC_TEMPLATES_H_
 /* ---------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2021 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -19,17 +19,15 @@
  */
 #include <vector>
 
-std::vector < double > GaussianKernel(std::vector < double >,
-  double,
-  double);
+// Function declarations
 
-std::vector < double > BumpKernel(std::vector < double >,
-  double,
-  double);
+template <typename T>
+std::vector<T> DivideVectorByScalar(const std::vector<T> &v, T k);
 
-std::vector < double > KernelSmoothing(std::vector < double >,
-  std::vector < double >,
-  double = 0.1,
-  int    = 1);
+template <typename T> T VectorSum(const std::vector<T> &v);
 
-#endif  // SRC_SMOOTHING_H_
+template <typename T> std::vector<T> NormalizeVector(const std::vector<T> &v);
+
+template <typename T>
+std::pair<bool, int> findInVector(const std::vector<T> &vecOfElements,
+                                  const T &element);
