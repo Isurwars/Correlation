@@ -2,7 +2,7 @@
 #define SRC_CONSTANTS_H_
 /* ---------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2021 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -24,10 +24,10 @@
  */
 
 namespace constants {
-  constexpr double pi { 3.141592653589793238463 };      // PI value
-  constexpr double rad2deg { 57.29577951308232087679 }; // RADIANS -> DEGREES
-  constexpr double deg2rad { 0.017453292519943295769 }; // DEGREES -> RADIANS
-}
+constexpr double pi{3.141592653589793238463};      // PI value
+constexpr double rad2deg{57.29577951308232087679}; // RADIANS -> DEGREES
+constexpr double deg2rad{0.017453292519943295769}; // DEGREES -> RADIANS
+} // namespace constants
 
 /*
  * Covalent Radii definitions in Angstroms.
@@ -38,6 +38,6 @@ namespace constants {
  * DOI: 10.1039/b801115j
  */
 
-double Covalent_Radii(std::string);
+double Covalent_Radii(std::string_view);
 
-#endif  // SRC_CONSTANTS_H_
+#endif // SRC_CONSTANTS_H_
