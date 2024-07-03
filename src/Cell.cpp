@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
@@ -8,17 +8,18 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * ----------------------------------------------------------------------
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
  */
 #include "Cell.hpp"
 
 #include <algorithm>
 #include <cmath>
+#include <execution> // For parallel execution policies
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -32,7 +33,6 @@
 #include "Constants.hpp"
 #include "Smoothing.hpp"
 #include "Templates.hpp"
-
 
 // Lattice parameters constructor
 Cell::Cell(std::array<double, 6> lat) {
@@ -72,7 +72,7 @@ void Cell::SetFromVectors(std::vector<double> v1, std::vector<double> v2,
 
 // Calculate the lattice vectors from the lattice parameters.
 void Cell::SetLatticeVectors() {
-  std::array<double, 6> lat = this->lattice_parameters();
+  const std::array<double, 6> &lat = this->lattice_parameters();
   double A = lat[0];
   double B = lat[1];
   double C = lat[2];
@@ -80,92 +80,94 @@ void Cell::SetLatticeVectors() {
   double beta = lat[4] * constants::deg2rad;
   double gamma = lat[5] * constants::deg2rad;
 
+  double c_a = cos(alpha);
+  double c_b = cos(beta);
+  double c_g = cos(gamma);
+  double s_g = sin(gamma);
+
   this->v_a_ = {A, 0.0, 0.0};
-  this->v_b_ = {B * cos(gamma), B * sin(gamma), 0.0};
+  this->v_b_ = {B * c_g, B * s_g, 0.0};
   this->v_c_ = {
-      C * cos(beta), C * (cos(alpha) - cos(beta) * cos(gamma)) / sin(gamma),
-      C *
-          sqrt(1 - pow(cos(alpha), 2) - pow(cos(beta), 2) - pow(cos(gamma), 2) +
-               2 * cos(alpha) * cos(beta) * cos(gamma)) /
-          sin(gamma)};
+      C * c_b, C * (c_a - c_b * c_g) / s_g,
+      C * sqrt(1 - c_a * c_a - c_b * c_b - c_g * c_g + 2 * c_a * c_b * c_g) /
+          s_g};
+
   this->volume =
-      (this->v_c_[0] *
-           (this->v_a_[1] * this->v_b_[2] - this->v_a_[2] * this->v_b_[1]) -
-       this->v_c_[1] *
-           (this->v_a_[0] * this->v_b_[2] - this->v_a_[2] * this->v_b_[0]) +
-       this->v_c_[2] *
-           (this->v_a_[0] * this->v_b_[1] - this->v_a_[1] * this->v_b_[0]));
+      this->v_a_[0] *
+          (this->v_b_[1] * this->v_c_[2] - this->v_b_[2] * this->v_c_[1]) -
+      this->v_a_[1] *
+          (this->v_b_[0] * this->v_c_[2] - this->v_b_[2] * this->v_c_[0]) +
+      this->v_a_[2] *
+          (this->v_b_[0] * this->v_c_[1] - this->v_b_[1] * this->v_c_[0]);
 }
 
 // Correct the initial positions to in-cell positions
 void Cell::CorrectPositions() {
-  int i_, j_, k_, m;
   std::array<double, 3> aux_pos;
-  std::list<Atom>::iterator MyAtom;
-  // Store the number of atoms per element
   std::vector<int> temp_num_atoms(this->elements().size(), 0);
 
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
-       ++MyAtom) {
-    double i, j, k;
-    temp_num_atoms[MyAtom->element_id()]++;
-    aux_pos = MyAtom->position();
-    k = aux_pos[2] / this->v_c_[2];
-    for (m = 0; m < 3; m++) {
+  for (auto &MyAtom : this->_atoms_) {
+    temp_num_atoms[MyAtom.element_id()]++;
+    aux_pos = MyAtom.position();
+
+    // Adjust position along the c-axis
+    double k = aux_pos[2] / this->v_c_[2];
+    for (int m = 0; m < 3; ++m) {
       aux_pos[m] -= k * this->v_c_[m];
     }
-    j = aux_pos[1] / this->v_b_[1];
-    for (m = 0; m < 3; m++) {
+
+    // Adjust position along the b-axis
+    double j = aux_pos[1] / this->v_b_[1];
+    for (int m = 0; m < 3; ++m) {
       aux_pos[m] -= j * this->v_b_[m];
     }
-    i = aux_pos[0] / this->v_a_[0];
-    if (i >= -0.000000000000001) {
-      i_ = trunc(i);
-    } else {
-      i_ = trunc(i) - 1;
-    }
-    if (j >= -0.000000000000001) {
-      j_ = trunc(j);
-    } else {
-      j_ = trunc(j) - 1;
-    }
-    if (k >= -0.000000000000001) {
-      k_ = trunc(k);
-    } else {
-      k_ = trunc(k) - 1;
-    }
-    for (m = 0; m < 3; m++) {
+
+    // Adjust position along the a-axis
+    double i = aux_pos[0] / this->v_a_[0];
+
+    // Determine the integer indices
+    int i_ = (i >= -1e-15) ? static_cast<int>(std::trunc(i))
+                           : static_cast<int>(std::trunc(i)) - 1;
+    int j_ = (j >= -1e-15) ? static_cast<int>(std::trunc(j))
+                           : static_cast<int>(std::trunc(j)) - 1;
+    int k_ = (k >= -1e-15) ? static_cast<int>(std::trunc(k))
+                           : static_cast<int>(std::trunc(k)) - 1;
+
+    // Correct the position
+    for (int m = 0; m < 3; ++m) {
       aux_pos[m] =
-          MyAtom->position()[m] -
+          MyAtom.position()[m] -
           (i_ * this->v_a_[m] + j_ * this->v_b_[m] + k_ * this->v_c_[m]);
     }
-    MyAtom->SetPosition(aux_pos);
+
+    // Set the new position
+    MyAtom.SetPosition(aux_pos);
   }
+
+  // Update the number of atoms per element
   this->SetElementsNumbers(temp_num_atoms);
 } // Cell::CorrectPositions
 
 // Correct the fractional positions to absolute positions
 void Cell::CorrectFracPositions() {
-  std::list<Atom>::iterator MyAtom;
   std::array<double, 3> aux_pos;
 
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
-       ++MyAtom) {
-    double i, j, k;
-    aux_pos = MyAtom->position();
-    i = aux_pos[0];
-    j = aux_pos[1];
-    k = aux_pos[2];
-    aux_pos[0] = (i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0]);
-    aux_pos[1] = (i * this->v_a_[1] + j * this->v_b_[1] + k * this->v_c_[1]);
-    aux_pos[2] = (i * this->v_a_[2] + j * this->v_b_[2] + k * this->v_c_[2]);
-    MyAtom->SetPosition(aux_pos);
+  for (auto &MyAtom : this->_atoms_) {
+    aux_pos = MyAtom.position();
+    double i = aux_pos[0];
+    double j = aux_pos[1];
+    double k = aux_pos[2];
+
+    aux_pos[0] = i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0];
+    aux_pos[1] = i * this->v_a_[1] + j * this->v_b_[1] + k * this->v_c_[1];
+    aux_pos[2] = i * this->v_a_[2] + j * this->v_b_[2] + k * this->v_c_[2];
+
+    MyAtom.SetPosition(aux_pos);
   }
 } // Cell::CorrectFracPositions
 
 // Populate Bond_length matrix
 void Cell::PopulateBondLength(double Bond_Factor) {
-  std::list<Atom>::iterator MyAtom;
   std::pair<bool, int> MyId;
   int i, j;
 
@@ -175,10 +177,9 @@ void Cell::PopulateBondLength(double Bond_Factor) {
   std::vector<std::vector<double>> temp_matrix(n, std::vector<double>(n, 0.0));
 
   // Iterate in Atoms list to assign the id in the matrix to every atom.
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
-       ++MyAtom) {
-    MyId = findInVector(this->elements(), MyAtom->element());
-    MyAtom->SetElementId(MyId.second);
+  for (auto &MyAtom : this->_atoms_) {
+    MyId = findInVector(this->elements(), MyAtom.element());
+    MyAtom.SetElementId(MyId.second);
   }
 
   for (i = 0; i < n; i++) {
@@ -271,125 +272,8 @@ void Cell::UpdateProgressBar(double pos) {
   std::cout.flush();
 } // Cell::UpdateProgressBar
 
-// Cell::DistancePopulationMultiThreading
-void Cell::DistancePopulationMultiThreading(double r_cut) {
-  std::list<Atom>::iterator atom_A;
-  std::list<Atom>::iterator atom_B;
-  std::array<double, 3> aux_pos;
-  Atom img_atom;
-  int i, j, k, i_, j_, k_;
-  double aux_dist;
-  double h_ = 1.0 / this->atoms().size();
-  double progress = 0.0;
-
-  // Number of elements in the Cell
-  const int n = this->elements().size();
-  // This matrix stores the distances between different types of elements,
-  // there are at most nxn partials, off-diagonal partials are symmetric.
-  std::vector<std::vector<std::vector<double>>> temp_dist(
-      n, std::vector<std::vector<double>>(n, std::vector<double>(0)));
-
-  // Correct the atom positions to be inside the cell.
-  this->CorrectPositions();
-
-  /*  Our cell is big enought to be divided at least 2 times by the r_cut
-   *  in at least one of it's dimensions. This Cell is now our MegaCell,
-   *  and we can divide this MegaCell in smaller cells.
-   *  We then can calculate the partial distance matrix by only looking
-   *  to each individual cell and it's neighbours in a 3x3x3
-   *  supercell created by concatenations of the smallers cells.
-   */
-
-  k_ = ceil(this->v_c()[2] / r_cut);
-  j_ = ceil(this->v_b()[1] / r_cut);
-  i_ = ceil(this->v_a()[0] / r_cut);
-
-  /*
-   * This is the main loop in RDF, we need to iterate between all atoms
-   * in the cell to all the atoms in the supercell created above.
-   *
-   * This loop is the most time-consuming part of the code, scaling as n^2.
-   *
-   * We reduce the computation time in half by only iterating for A>B and
-   * duplicating the distance because distance from atom_A to atom_B is
-   * equal to the distance from atom_B to atom_A.
-   *
-   * This code can also be improved through paralellization because each
-   * iteration is independent of the others, so changing to a for_each is
-   * desired to improve this code further.
-   */
-  for (atom_A = this->_atoms_.begin(); atom_A != this->_atoms_.end();
-       ++atom_A) {
-    progress += h_;
-    this->UpdateProgressBar(progress);
-    int id_A = findInVector(this->elements(), atom_A->element()).second;
-    for (atom_B = this->_atoms_.begin(); atom_B != this->_atoms_.end();
-         ++atom_B) {
-      // Excluding self-interactions
-      if (atom_A->GetID() != atom_B->GetID()) {
-        int id_B = findInVector(this->elements(), atom_B->element()).second;
-        img_atom = *atom_B;
-        for (i = -i_; i <= i_; i++) {
-          for (j = -j_; j <= j_; j++) {
-            for (k = -k_; k <= k_; k++) {
-              aux_pos = atom_B->position();
-              aux_pos[0] +=
-                  i * this->v_a()[0] + j * this->v_b()[0] + k * this->v_c()[0];
-              aux_pos[1] += j * this->v_b()[1] + k * this->v_c()[1];
-              aux_pos[2] += k * this->v_c()[2];
-              img_atom.SetPosition(aux_pos);
-              aux_dist = atom_A->Distance(img_atom);
-              if (aux_dist <= r_cut) {
-                temp_dist[id_A][id_B].push_back(aux_dist);
-                if (aux_dist <= this->bond_length[atom_A->element_id()]
-                                                 [img_atom.element_id()]) {
-                  atom_A->AddBondedAtom(img_atom.GetImage());
-                  if (aux_dist < 0.1) {
-                    std::cout << std::endl
-                              << "ERROR: The atoms:" << std::endl
-                              << atom_A->element() << "_" << atom_A->GetID()
-                              << " in position (" << atom_A->position()[0]
-                              << ", " << atom_A->position()[1] << ", "
-                              << atom_A->position()[2] << ")," << std::endl
-                              << atom_B->element() << "_" << atom_B->GetID()
-                              << " in position (" << img_atom.position()[0]
-                              << ", " << img_atom.position()[1] << ", "
-                              << img_atom.position()[2] << ")." << std::endl
-                              << "Have a distance less than 10 pm."
-                              << std::endl;
-                    exit(1);
-                  }
-                  if (aux_dist < 0.5) {
-                    std::cout << std::endl
-                              << "WARNING: The atoms:" << std::endl
-                              << atom_A->element() << "_" << atom_A->GetID()
-                              << " in position (" << atom_A->position()[0]
-                              << ", " << atom_A->position()[1] << ", "
-                              << atom_A->position()[2] << ")," << std::endl
-                              << atom_B->element() << "_" << atom_B->GetID()
-                              << " in position (" << img_atom.position()[0]
-                              << ", " << img_atom.position()[1] << ", "
-                              << img_atom.position()[2] << ")." << std::endl
-                              << "Have a distance less than the Bohr Radius."
-                              << std::endl;
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  std::cout << "\r[==================================================] 100 %"
-            << std::endl;
-  this->distances = temp_dist;
-} // Cell::DistancePopulationMultiThreading
-
 // DistancePopulation
 void Cell::DistancePopulation(double r_cut, bool self_interaction) {
-  std::list<Atom>::iterator atom_A;
-  std::list<Atom>::iterator atom_B;
   std::array<double, 3> aux_pos;
   Atom img_atom;
   int i, j, k, i_, j_, k_;
@@ -399,164 +283,102 @@ void Cell::DistancePopulation(double r_cut, bool self_interaction) {
 
   // Number of elements in the Cell
   const int n = this->_elements_.size();
-  // This matrix stores the distances between different types of elements,
-  // there are at most nxn partials, off-diagonal partials are symmetric.
+  // This matrix stores the distances between different types of elements
   std::vector<std::vector<std::vector<double>>> temp_dist(
-      n, std::vector<std::vector<double>>(n, std::vector<double>(0)));
+      n, std::vector<std::vector<double>>(n));
 
-  // Correct the atom positions to be inside the cell.
+  // Correct the atom positions to be inside the cell
   this->CorrectPositions();
 
-  //  We need to create a big enough supercell to cover a sphere of radius
-  //  r_cut.
+  // Calculate supercell dimensions
   k_ = ceil(r_cut / this->v_c_[2]);
   j_ = ceil(r_cut / this->v_b_[1]);
   i_ = ceil(r_cut / this->v_a_[0]);
 
-  // force self_interaction in case of a small supercell
+  // Force self_interaction in case of a small supercell
   if (k_ * j_ * i_ > 8)
     self_interaction = true;
 
   /*
-   * This is the main loop in RDF, we need to iterate between all atoms
-   * in the cell to all the atoms in the supercell created above.
+   * This is the main loop to calculate the distance formed by every two atoms.
    *
-   * This loop is the most time-consuming part of the code, scaling as n^2.
+   * The first loop iterates over every atom in the cell.
+   * The second loop iterate over every atom in a SuperCell.
+   * This is by far the most demanding cicle of the entire program and it is
+   * currently in parallelization process.
    *
-   * We reduce the computation time in half by only iterating for A>B and
-   * duplicating the entry in the distances list because distance from
-   * atom_A to atom_B is equal to the distance from atom_B to atom_A.
-   *
-   * This code can also be improved through paralellization because each
-   * iteration is independent of the others, so changing to a for_each is
-   * desired to improve this code further.
+   * This loop can be further optimize by applying a Divide&Conquer Algorithm,
+   * However the code needs a major refactor, and is one of the main objectives
+   * For V2.0
    */
-  for (atom_A = this->_atoms_.begin(); atom_A != this->_atoms_.end();
-       ++atom_A) {
-    int id_A, id_B;
-    progress += h_;
-    this->UpdateProgressBar(progress);
-    id_A = findInVector(this->elements(), atom_A->element()).second;
-    for (atom_B = this->_atoms_.begin(); atom_B != this->_atoms_.end();
-         ++atom_B) {
-      // Excluding self-interactions
-      if (atom_A->GetID() != atom_B->GetID()) {
-        id_B = findInVector(this->elements(), atom_B->element()).second;
-        img_atom = *atom_B;
+  auto calculate_distances = [&](Atom &atom_A) {
+    int id_A = findInVector(this->_elements_, atom_A.element()).second;
+    for (Atom &atom_B : this->_atoms_) {
+      if (atom_A.GetID() != atom_B.GetID() || self_interaction) {
+        int id_B = findInVector(this->_elements_, atom_B.element()).second;
+        img_atom = atom_B;
         for (i = -i_; i <= i_; i++) {
           for (j = -j_; j <= j_; j++) {
             for (k = -k_; k <= k_; k++) {
-              aux_pos = atom_B->position();
+              aux_pos = atom_B.position();
               aux_pos[0] +=
                   i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0];
               aux_pos[1] += j * this->v_b_[1] + k * this->v_c_[1];
               aux_pos[2] += k * this->v_c_[2];
               img_atom.SetPosition(aux_pos);
-              aux_dist = atom_A->Distance(img_atom);
+              aux_dist = atom_A.Distance(img_atom);
               if (aux_dist <= r_cut) {
-                temp_dist[id_A][id_B].push_back(aux_dist);
-                if (aux_dist <= this->bond_length[atom_A->element_id()]
+                // ignore self-interaction
+                if (aux_dist == 0 && (atom_A.GetID() == atom_B.GetID())) {
+                  continue;
+                }
+                // check for atoms collitions
+                if (aux_dist < 0.1) {
+                  std::cerr << "\nERROR: The atoms:\n"
+                            << atom_A.element() << "_" << atom_A.GetID()
+                            << " in position (" << atom_A.position()[0] << ", "
+                            << atom_A.position()[1] << ", "
+                            << atom_A.position()[2] << "),\n"
+                            << atom_B.element() << "_" << atom_B.GetID()
+                            << " in position (" << img_atom.position()[0]
+                            << ", " << img_atom.position()[1] << ", "
+                            << img_atom.position()[2] << ").\n"
+                            << "Have a distance less than 10 pm.\n";
+                  exit(1);
+                }
+                if (aux_dist < 0.5) {
+                  std::cerr << "\nWARNING: The atoms:\n"
+                            << atom_A.element() << "_" << atom_A.GetID()
+                            << " in position (" << atom_A.position()[0] << ", "
+                            << atom_A.position()[1] << ", "
+                            << atom_A.position()[2] << "),\n"
+                            << atom_B.element() << "_" << atom_B.GetID()
+                            << " in position (" << img_atom.position()[0]
+                            << ", " << img_atom.position()[1] << ", "
+                            << img_atom.position()[2] << ").\n"
+                            << "Have a distance less than the Bohr Radius.\n";
+                }
+                // If bonded, add it to bond vector
+                if (aux_dist <= this->bond_length[atom_A.element_id()]
                                                  [img_atom.element_id()]) {
-                  atom_A->AddBondedAtom(img_atom.GetImage());
-                  if (aux_dist < 0.1) {
-                    std::cout << std::endl
-                              << "ERROR: The atoms:" << std::endl
-                              << atom_A->element() << "_" << atom_A->GetID()
-                              << " in position (" << atom_A->position()[0]
-                              << ", " << atom_A->position()[1] << ", "
-                              << atom_A->position()[2] << ")," << std::endl
-                              << atom_B->element() << "_" << atom_B->GetID()
-                              << " in position (" << img_atom.position()[0]
-                              << ", " << img_atom.position()[1] << ", "
-                              << img_atom.position()[2] << ")." << std::endl
-                              << "Have a distance less than 10 pm." << i << j
-                              << k << std::endl;
-                    exit(1);
-                  }
-                  if (aux_dist < 0.5) {
-                    std::cout << std::endl
-                              << "WARNING: The atoms:" << std::endl
-                              << atom_A->element() << "_" << atom_A->GetID()
-                              << " in position (" << atom_A->position()[0]
-                              << ", " << atom_A->position()[1] << ", "
-                              << atom_A->position()[2] << ")," << std::endl
-                              << atom_B->element() << "_" << atom_B->GetID()
-                              << " in position (" << img_atom.position()[0]
-                              << ", " << img_atom.position()[1] << ", "
-                              << img_atom.position()[2] << ")." << std::endl
-                              << "Have a distance less than the Bohr Radius."
-                              << std::endl;
-                  }
-                } else if (aux_dist <=
-                           1.5 * this->bond_length[atom_A->element_id()]
-                                                  [img_atom.element_id()]) {
-                  atom_A->second_shell_atoms.push_back(img_atom.GetImage());
+                  atom_A.AddBondedAtom(img_atom.GetImage());
                 }
-              }
-            }
-          }
-        }
-      } else if (self_interaction) {
-        id_B = findInVector(this->_elements_, atom_B->element()).second;
-        img_atom = *atom_B;
-        for (i = -i_; i <= i_; i++) {
-          for (j = -j_; j <= j_; j++) {
-            for (k = -k_; k <= k_; k++) {
-              aux_pos = atom_B->position();
-              aux_pos[0] +=
-                  i * this->v_a_[0] + j * this->v_b_[0] + k * this->v_c_[0];
-              aux_pos[1] += j * this->v_b_[1] + k * this->v_c_[1];
-              aux_pos[2] += k * this->v_c_[2];
-              img_atom.SetPosition(aux_pos);
-              aux_dist = atom_A->Distance(img_atom);
-              if (aux_dist > 0) {
-                if (aux_dist <= r_cut) {
-                  temp_dist[id_A][id_B].push_back(aux_dist);
-                  if (aux_dist <= this->bond_length[atom_A->element_id()]
-                                                   [img_atom.element_id()]) {
-                    atom_A->AddBondedAtom(img_atom.GetImage());
-                    if (aux_dist < 0.1) {
-                      std::cout << std::endl
-                                << "ERROR: The atoms:" << std::endl
-                                << atom_A->element() << "_" << atom_A->GetID()
-                                << " in position (" << atom_A->position()[0]
-                                << ", " << atom_A->position()[1] << ", "
-                                << atom_A->position()[2] << ")," << std::endl
-                                << atom_B->element() << "_" << atom_B->GetID()
-                                << " in position (" << img_atom.position()[0]
-                                << ", " << img_atom.position()[1] << ", "
-                                << img_atom.position()[2] << ")." << std::endl
-                                << "Have a distance less than 10 pm."
-                                << std::endl;
-                      exit(1);
-                    }
-                    if (aux_dist < 0.5) {
-                      std::cout << std::endl
-                                << "WARNING: The atoms:" << std::endl
-                                << atom_A->element() << "_" << atom_A->GetID()
-                                << " in position (" << atom_A->position()[0]
-                                << ", " << atom_A->position()[1] << ", "
-                                << atom_A->position()[2] << ")," << std::endl
-                                << atom_B->element() << "_" << atom_B->GetID()
-                                << " in position (" << img_atom.position()[0]
-                                << ", " << img_atom.position()[1] << ", "
-                                << img_atom.position()[2] << ")." << std::endl
-                                << "Have a distance less than the Bohr Radius."
-                                << std::endl;
-                    }
-                  } else if (aux_dist <=
-                             1.5 * this->bond_length[atom_A->element_id()]
-                                                    [img_atom.element_id()]) {
-                    atom_A->second_shell_atoms.push_back(img_atom.GetImage());
-                  }
-                }
+                // Add distance to matrix
+                temp_dist[id_A][id_B].push_back(aux_dist);
               }
             }
           }
         }
       }
     }
-  }
+    progress += h_;
+    this->UpdateProgressBar(progress);
+  };
+
+  // Parallelize the main loop
+  std::for_each(std::execution::par, std::begin(this->_atoms_),
+                std::end(this->_atoms_), calculate_distances);
+
   std::cout << "\r[==================================================] 100 %"
             << std::endl;
   this->distances = temp_dist;
@@ -565,14 +387,11 @@ void Cell::DistancePopulation(double r_cut, bool self_interaction) {
 void Cell::CoordinationNumber() {
   int max_Nc = 0;
   int i;
-  std::list<Atom>::iterator MyAtom;
-  std::vector<Atom_Img>::iterator atom_A;
 
   // Search for the maximum number of bonds in the cell
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
-       ++MyAtom) {
-    if (max_Nc < static_cast<int>(MyAtom->bonded_atoms().size())) {
-      max_Nc = static_cast<int>(MyAtom->bonded_atoms().size());
+  for (auto &MyAtom : this->_atoms_) {
+    if (max_Nc < static_cast<int>(MyAtom.bonded_atoms().size())) {
+      max_Nc = static_cast<int>(MyAtom.bonded_atoms().size());
     }
   }
   const int n = this->elements().size();
@@ -581,11 +400,11 @@ void Cell::CoordinationNumber() {
   std::vector<std::vector<std::vector<int>>> temp_nc(
       n, std::vector<std::vector<int>>(n + 1, std::vector<int>(m, 0)));
   // Search for the number of bonds per atom per element
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
+  for (auto MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
        ++MyAtom) {
     std::vector<int> aux(n, 0);
     std::vector<Atom_Img> bon_aux = MyAtom->bonded_atoms();
-    for (atom_A = bon_aux.begin(); atom_A != bon_aux.end(); ++atom_A) {
+    for (auto atom_A = bon_aux.begin(); atom_A != bon_aux.end(); ++atom_A) {
       aux[atom_A->element_id]++;
     }
     for (i = 0; i < n; i++) {
@@ -593,7 +412,7 @@ void Cell::CoordinationNumber() {
     }
   }
   // Add total coordination per atom
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
+  for (auto MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
        ++MyAtom) {
     temp_nc[MyAtom->element_id()][n][MyAtom->bonded_atoms().size()]++;
   }
@@ -602,8 +421,6 @@ void Cell::CoordinationNumber() {
 } // Cell::CoordinationNumber
 
 void Cell::PAD(bool degree) {
-  std::list<Atom>::iterator MyAtom;
-  std::vector<Atom_Img>::iterator atom_A, atom_B;
   double factor = 1.0;
 
   if (degree) {
@@ -615,8 +432,6 @@ void Cell::PAD(bool degree) {
   std::vector<std::vector<std::vector<std::vector<double>>>> temp_pad(
       n, std::vector<std::vector<std::vector<double>>>(
              n, std::vector<std::vector<double>>(n, std::vector<double>(0))));
-  std::vector<Atom_Img> bon_aux;
-
   /*
    * This is the main loop to calculate the angles formed by every three atoms.
    * The connected atoms are calculated in Cell::RDF, and MUST be called first.
@@ -628,14 +443,13 @@ void Cell::PAD(bool degree) {
    *
    * By default the angle returned is given in degrees.
    */
-  for (MyAtom = this->_atoms_.begin(); MyAtom != this->_atoms_.end();
-       ++MyAtom) {
-    bon_aux = MyAtom->bonded_atoms();
-    for (atom_A = bon_aux.begin(); atom_A != bon_aux.end(); ++atom_A) {
-      for (atom_B = bon_aux.begin(); atom_B != bon_aux.end(); ++atom_B) {
-        if (atom_A->atom_id != atom_B->atom_id) {
-          temp_pad[atom_A->element_id][MyAtom->element_id()][atom_B->element_id]
-              .push_back(MyAtom->GetAngle(*atom_A, *atom_B) * factor);
+  for (auto &MyAtom : this->_atoms_) {
+    std::vector<Atom_Img> bon_aux = MyAtom.bonded_atoms();
+    for (auto &atom_A : bon_aux) {
+      for (auto &atom_B : bon_aux) {
+        if (atom_A.atom_id != atom_B.atom_id) {
+          temp_pad[atom_A.element_id][MyAtom.element_id()][atom_B.element_id]
+              .push_back(MyAtom.GetAngle(atom_A, atom_B) * factor);
         }
       }
     }
@@ -698,9 +512,8 @@ void Cell::RDFHistogram(std::string filename, double r_cut, double bin_width,
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       col++;
-      for (std::vector<double>::iterator it = this->distances[i][j].begin();
-           it != this->distances[i][j].end(); ++it) {
-        row = floor(*it / bin_width);
+      for (const auto &it : this->distances[i][j]) {
+        row = floor(it / bin_width);
         if (row < m_) {
           temp_hist[col][row]++;
           if (i != j) {
@@ -1001,21 +814,10 @@ void Cell::CoordinationNumberHistogram(std::string filename) {
 } // Cell::CoordinationNumberHistogram
 
 void Cell::VoronoiIndex() {
-  // int         n_, m_, i, j, row, col;
-  // int         n = this->elements.size();
-  // std::string header;
-  // double      num_atoms = this->atoms.size();
-  std::list<Atom>::iterator atom_A;
-  // std::list<Atom>::iterator       atom_B;
-  // std::vector<Atom_Img>::iterator atom_it;
-  // std::vector<int> atom_B_ids;
-  // std::vector<int> atom_intersection;
-
-  for (atom_A = this->_atoms_.begin(); atom_A != this->_atoms_.end();
-       ++atom_A) {
-    std::vector<int> atom_A_ids = atom_A->GetBondedAtomsID();
+  for (auto &atom_A : this->_atoms_) {
+    std::vector<int> atom_A_ids = atom_A.GetBondedAtomsID();
     std::sort(atom_A_ids.begin(), atom_A_ids.end());
-    std::cout << "A " << atom_A->GetID() << ": (";
+    std::cout << "A " << atom_A.GetID() << ": (";
     for (auto A_id : atom_A_ids) {
       std::cout << A_id << ", ";
     }
@@ -1119,16 +921,15 @@ void Cell::XRD(std::string filename, double lambda, double theta_min,
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       col++;
-      for (std::vector<double>::iterator it = this->distances[i][j].begin();
-           it != this->distances[i][j].end(); ++it) {
+      for (const auto &it : this->distances[i][j]) {
         /*
          * Bragg's Law
          * n * lambda = 2d sin(theta)
          * theta = asin((n * lambda) / (2 * d))
          */
-        aux = lambda / (*it * 2.0);
+        aux = lambda / (it * 2.0);
         k = 1;
-        std::cout << "d:" << *it << std::endl;
+        std::cout << "d:" << it << std::endl;
         while ((k * aux) <= 1.0) {
           row = floor(((2 * constants::rad2deg * asin(k * aux)) - theta_min) /
                       bin_width);
@@ -1216,9 +1017,8 @@ void Cell::PADHistogram(std::string filename, double theta_cut,
       for (k = j; k < n; k++) {
         // k iterates only over half + 1 of the spectrum
         col++;
-        for (std::vector<double>::iterator it = this->angles[j][i][k].begin();
-             it != this->angles[j][i][k].end(); ++it) {
-          row = floor(*it / bin_width);
+        for (const auto &it : this->angles[j][i][k]) {
+          row = floor(it / bin_width);
           if (row < m_) {
             temp_hist[col][row]++;
           }

@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
@@ -8,12 +8,12 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * ----------------------------------------------------------------------
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
  */
 #include <getopt.h> // For the argument parsing
 
@@ -41,7 +41,7 @@ double _bin_w_ = 0.05;
 double _q_bin_w_ = 0.1570796326;
 double _bond_par_ = 1.3;
 double _angle_bin_w_ = 1.0;
-double _smooth_sigma_ = 0.1;
+double _smooth_sigma_ = 0.081;
 int _kernel_ = 1;
 
 void PrintHelp() {
@@ -135,7 +135,10 @@ void PrintHelp() {
       "          2: Bump Function kernel.\n"
       "          3: Triweight kernel.\n"
       "      -K, --kernel_sigma\n"
-      "        Width of the smoothing kernel, by default 0.1.\n"
+      "        Width of the smoothing kernel, by default 0.081.\n"
+      "        The recommended values for sigma are:\n"
+      "        Gaussian Kernel: 0.081\n"
+      "        Bump Kernel: 0.19\n"
       "      -S, --smoothing\n"
       "        Smoothing is disabled by default, this option enable "
       "smoothing\n\n"
@@ -363,7 +366,7 @@ int main(int argc, char **argv) {
   if (_smoothing_) {
     std::cout << "Writing smoothing output files: " << _out_file_name_
               << std::endl;
-    MyCell.RDFSmoothing(_out_file_name_, _smooth_sigma_, 2);
+    MyCell.RDFSmoothing(_out_file_name_, _smooth_sigma_, _kernel_);
   }
 
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
