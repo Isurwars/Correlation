@@ -1,6 +1,6 @@
 #ifndef SRC_CELL_H_
 #define SRC_CELL_H_
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
@@ -10,12 +10,12 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * ----------------------------------------------------------------------
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
  */
 #include <array>
 #include <list>
@@ -37,7 +37,7 @@ private:
   // Lattice Parameters
   std::array<double, 6> _lattice_parameters_;
   // List of atoms in the Cell
-  std::list<Atom> _atoms_;
+  std::vector<Atom> _atoms_;
   // List of elements in Cell
   std::vector<std::string> _elements_;
   // List with the number of atoms of each kind of elements in Cell
@@ -74,16 +74,16 @@ private:
   double volume;
 
 public:
-  //-------------------------------------------------------------//
-  //---------------------- Constructors  ------------------------//
-  //-------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
+  //----------------------------- Constructors ------------------------------//
+  //-------------------------------------------------------------------------//
 
   explicit Cell(std::array<double, 6>);
   Cell();
 
-  //-------------------------------------------------------------//
-  //-------------------- Setters & Getters ----------------------//
-  //-------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
+  //--------------------------- Setters & Getters ---------------------------//
+  //-------------------------------------------------------------------------//
 
   // Lattice Parameters
   std::array<double, 6> lattice_parameters() {
@@ -95,13 +95,13 @@ public:
   void SetFromVectors(std::vector<double>, std::vector<double>,
                       std::vector<double>);
   // Lattice Vectors
-  std::array<double, 3> v_a() { return v_a_; };
-  std::array<double, 3> v_b() { return v_b_; };
-  std::array<double, 3> v_c() { return v_c_; };
+  const std::array<double, 3> &v_a() { return v_a_; };
+  const std::array<double, 3> &v_b() { return v_b_; };
+  const std::array<double, 3> &v_c() { return v_c_; };
   void SetLatticeVectors();
   // Atoms
-  std::list<Atom> atoms() { return this->_atoms_; }
-  void SetAtoms(const std::list<Atom> &ats) { this->_atoms_ = ats; }
+  std::vector<Atom> atoms() { return this->_atoms_; }
+  void SetAtoms(const std::vector<Atom> &ats) { this->_atoms_ = ats; }
   void AddAtom(Atom at) { this->_atoms_.push_back(at); }
   // Elements
   std::vector<std::string> elements() { return this->_elements_; }
@@ -125,9 +125,9 @@ public:
   std::vector<std::vector<double>> g_smoothed() { return this->_g_smoothed_; }
   std::vector<std::vector<double>> G_smoothed() { return this->_G_smoothed_; }
 
-  //-------------------------------------------------------------//
-  //------------------------- Methods ---------------------------//
-  //-------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
+  //------------------------------- Methods ---------------------------------//
+  //-------------------------------------------------------------------------//
 
   // In Cell corrected positions
   void CorrectPositions();
@@ -138,8 +138,6 @@ public:
   void ReadBOND(std::string);
   // Update Progress Bar
   void UpdateProgressBar(double);
-  // Calculate Distances MultiThreading
-  void DistancePopulationMultiThreading(double);
   // Calculate Distances (max distance between atoms)
   void DistancePopulation(double, bool);
   // Coordination Numbers Calculation

@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
@@ -8,12 +8,12 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * ----------------------------------------------------------------------
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
  */
 #include "Atom.hpp"
 
@@ -24,9 +24,9 @@
 
 int Atom::NumOfAtoms = 0;
 
-//-------------------------------------------------------------//
-//---------------------- Constructors  ------------------------//
-//-------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//------------------------------ Constructors -------------------------------//
+//---------------------------------------------------------------------------//
 void Atom::SetAll(std::string ele, std::array<double, 3> pos) {
   this->_element_ = ele;
   this->_position_ = pos;
@@ -46,9 +46,9 @@ Atom::Atom() {
   Atom::NumOfAtoms++;
 }
 
-//-------------------------------------------------------------//
-//------------------------- Methods ---------------------------//
-//-------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//--------------------------------- Methods ----------------------------------//
+//----------------------------------------------------------------------------//
 // Distance to the other atom
 double Atom::Distance(Atom &other_atom) {
   std::array<double, 3> b_pos = other_atom.position();

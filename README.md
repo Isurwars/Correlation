@@ -90,7 +90,7 @@ This program calculates the main correlation functions of a material:
               2: Bump Function kernel.
               3: Triweight kernel.
           -K, --kernel_sigma
-            Width of the smoothing kernel, by default 0.1.
+            Width of the smoothing kernel, by default 0.081.
           -S, --smoothing
             Smoothing is disabled by default, this option enable smoothing.
 

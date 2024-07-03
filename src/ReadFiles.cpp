@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
@@ -8,12 +8,12 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * ----------------------------------------------------------------------
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
  */
 #include "ReadFiles.hpp"
 
@@ -31,7 +31,6 @@
 
 #include "Atom.hpp"
 #include "Templates.hpp"
-
 
 Cell read_CAR(std::string file_name) {
   /*
@@ -441,12 +440,13 @@ Cell read_ONETEP_DAT(std::string file_name) {
 } // read_ONETEP_DAT
 Cell read_CIF(std::string file_name) {
   /*
-   * This is a Stub for reading a CIF file and return and empty cell.
-   * Since CIF files are mostly used for crystalline materials we don't
-   * only need to read the file, but we also need to calculate the correct
-   * positions of the images in the cell and to verify that no atom is
-   * multiply accounted for, due to the different symmetries.
-   * This will be implemented AFTER the bond angle is finished.
+   * This is a Stub for reading a CIF file and return and empty cell. Since
+   * CIF files are mostly used for crystalline materials we don't only need
+   * to read the file, but we also need to calculate the correct positions of
+   * the images in the cell and to verify that no atom is multiply accounted
+   * for, due to the different symmetries.
+   *
+   * This will be implemented in V1.2.
    */
   std::ifstream myfile(file_name);
   // std::string   line;

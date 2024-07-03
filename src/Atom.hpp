@@ -1,7 +1,6 @@
 #ifndef SRC_ATOM_H_
 #define SRC_ATOM_H_
-
-/* ---------------------------------------------------------------------
+/* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
  *
@@ -11,12 +10,12 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- * ----------------------------------------------------------------------
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ * ----------------------------------------------------------------------------
  */
 #include <array>
 #include <string>
@@ -30,10 +29,11 @@ struct Atom_Img {
 };
 
 class Atom {
-  /* ---------------------------------------------------------------------
+  /* --------------------------------------------------------------------------
    * This object represents every atom in the cell.
    *
    * The atributes consist of:
+   *
    * ID (Unique Identifier),
    * Element (string and id),
    * Postion (array of three doubles),
@@ -41,7 +41,7 @@ class Atom {
    *
    * As well as several methods to calculate distance between pairs of atoms,
    * and angle between terns of atoms
-   * ---------------------------------------------
+   * --------------------------------------------------------------------------
    */
 private:
   int id;
@@ -52,19 +52,17 @@ private:
   static int NumOfAtoms;
 
 public:
-  std::vector<Atom_Img> second_shell_atoms;
-
-  //-------------------------------------------------------------//
-  //---------------------- Constructors  ------------------------//
-  //-------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
+  //----------------------------- Constructors ------------------------------//
+  //-------------------------------------------------------------------------//
 
   Atom(std::string, std::array<double, 3>);
   Atom();
   void SetAll(std::string, std::array<double, 3>);
 
-  //-------------------------------------------------------------//
-  //-------------------- Setters & Getters ----------------------//
-  //-------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
+  //--------------------------- Setters & Getters ---------------------------//
+  //-------------------------------------------------------------------------//
 
   int GetID() { return this->id; }
   void SetID(int num) { this->id = num; }
@@ -83,9 +81,9 @@ public:
   void SetElement(const std::string &ele) { this->_element_ = ele; }
   static int GetNumberOfAtoms() { return NumOfAtoms; }
 
-  //-------------------------------------------------------------//
-  //------------------------- Methods ---------------------------//
-  //-------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
+  //------------------------------- Methods ---------------------------------//
+  //-------------------------------------------------------------------------//
 
   // Default functions for the object Atom
   double Distance(Atom &);
