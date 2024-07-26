@@ -24,10 +24,11 @@
 #include <list>       // To handle the list of atoms
 #include <string>     // String manipulation and algorithms
 
-#include "Atom.hpp"      // Atom Class
-#include "Cell.hpp"      // Cell Class
-#include "ReadFiles.hpp" // File reading and parsing
-#include "Smoothing.hpp" // Smoothing functions
+#include "Atom.hpp"       // Atom Class
+#include "Cell.hpp"       // Cell Class
+#include "ReadFiles.hpp"  // File reading and parsing
+#include "Smoothing.hpp"  // Smoothing functions
+#include "WriteFiles.hpp" // Write Output files
 
 inline std::string _in_file_name_ = "";
 inline std::string _out_file_name_ = "";
@@ -37,10 +38,10 @@ bool _normalize_ = false;
 bool _self_interaction_ = false;
 bool _smoothing_ = false;
 double _r_cut_ = 20.0;
-double _bin_w_ = 0.05;
-double _q_bin_w_ = 0.1570796326;
+double _bin_w_ = 0.050000;
+double _q_bin_w_ = 0.050000;
 double _bond_par_ = 1.3;
-double _angle_bin_w_ = 1.0;
+double _angle_bin_w_ = 1.00000;
 double _smooth_sigma_ = 0.081;
 int _kernel_ = 1;
 
@@ -301,11 +302,11 @@ int main(int argc, char **argv) {
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char &c) { c = ::tolower(c); });
   if (MyExt == ".car") {
-    MyCell = read_CAR(_in_file_name_);
+    MyCell = readCar(_in_file_name_);
   } else if (MyExt == ".cell") {
-    MyCell = read_CELL(_in_file_name_);
+    MyCell = readCell(_in_file_name_);
   } else if (MyExt == ".dat") {
-    MyCell = read_ONETEP_DAT(_in_file_name_);
+    MyCell = readOnetepDat(_in_file_name_);
   } else {
     std::cout << "File: " << MyExt << " currently not supported." << std::endl;
     PrintHelp();
@@ -313,61 +314,78 @@ int main(int argc, char **argv) {
   std::cout << "File " << _in_file_name_ << " opened successfully."
             << std::endl;
   // Create Bond distance Matrix and element_ids
-  MyCell.PopulateBondLength(_bond_par_);
+  MyCell.populateBondLength(_bond_par_);
   if (_bond_in_file_) {
     /*Read the Bond Distances from the external file*/
-    MyCell.ReadBOND(_bond_file_name_);
+    MyCell.readBond(_bond_file_name_);
   }
   /*
    * This function calculates the distances between every pair of atoms
    * in the structure. A supercell method is used to create the images
    * in all directions up to _r_cut_ distance.
    */
-  MyCell.DistancePopulation(_r_cut_, _self_interaction_);
+  MyCell.distancePopulation(_r_cut_, _self_interaction_);
 
   /*
    * This function calculates the partial coordination number for pairs of
    * elements. Bonded Atoms use the same parameters for PAD.
    */
-  MyCell.CoordinationNumber();
+  MyCell.coorcinationNumber();
 
   /*
    * This function calculates the angle between every atom and all pairs
    * of bonded atoms. The bonded atoms are calculated in Cell::RDF and it
    * must be called first.
    */
-  MyCell.PAD();
+  MyCell.planeAnglePopulation();
 
   /*
    * This function uses the distances to calculate g(r), G(r) and J(r).
    * The _r_cut_ parameter is the cutoff distance,
    * the _bin_w_ parameter is the bin width to be used.
    */
-  std::cout << "Writing output files: " << _out_file_name_ << std::endl;
-  MyCell.RDFHistogram(_out_file_name_, _r_cut_, _bin_w_, _normalize_);
-  MyCell.CoordinationNumberHistogram(_out_file_name_);
-  // MyCell.VoronoiIndex(_out_file_name_);
-  /*
-   * This function calculate S(Q) as the Fourier Transform of G(r).
-   * The _r_cut_ parameter is the cutoff distance in r-space,
-   * the _q_bin_w_ parameter is the bin width to be used in q-space.
-   */
-  MyCell.SQ(_out_file_name_, _q_bin_w_, _bin_w_, _normalize_);
-
-  //    MyCell.XRD(_out_file_name_, 1.5406, 5.0, 90.0, 0.05);
+  std::cout << "Calculating Coordination Functions: " << _out_file_name_
+            << std::endl;
+  MyCell.radialDistributionFunctions(_r_cut_, _bin_w_, _normalize_);
 
   /*
    * This function uses the angles to calculate the PAD.
    * The theta_max parameter is the maximum angle to compute,
    * the _bin_w_ parameter is the bin width to be used.
    */
-  MyCell.PADHistogram(_out_file_name_, 180.0, _angle_bin_w_);
+  MyCell.planeAngleDistribution(180.0, _angle_bin_w_);
+
+  /*
+   * This function calculate S(Q) as the Fourier Transform of G(r).
+   * The _r_cut_ parameter is the cutoff distance in r-space,
+   * the _q_bin_w_ parameter is the bin width to be used in q-space.
+   */
+  MyCell.SQ(20.0, _q_bin_w_, _normalize_);
+
+  /*
+   * This function calculate XRD with bragg equation.
+   * The lambda parameter is the wavelenght of the X-ray, default is 1.5406,
+   * corresponding to Cu K_alpha.
+   * The theta_min and theta_max parameters are the range to be calculated.
+   * The bin_width paramater is the bin width to be used in theta.
+   *
+   * WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!!
+   *
+   * This function is currently being tested and results should be taken
+   * with a grain of salt!
+   *
+   * WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!!
+   *
+   */
+  MyCell.XRD(1.5406, 10.0, 90.0, 0.2);
 
   if (_smoothing_) {
-    std::cout << "Writing smoothing output files: " << _out_file_name_
-              << std::endl;
-    MyCell.RDFSmoothing(_out_file_name_, _smooth_sigma_, _kernel_);
+    std::cout << "Smoothing... " << std::endl;
+    MyCell.Smoothing(_smooth_sigma_, _kernel_);
   }
+
+  std::cout << "Writing output files: " << _out_file_name_ << std::endl;
+  WriteCSV(MyCell, _out_file_name_, _smoothing_);
 
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
   return 0;

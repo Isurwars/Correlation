@@ -31,6 +31,6 @@ template <typename T> T VectorSum(const std::vector<T> &v);
 template <typename T> std::vector<T> NormalizeVector(const std::vector<T> &v);
 
 template <typename T>
-std::pair<bool, int> findInVector(const std::vector<T> &vecOfElements,
+std::pair<bool, int> findInVector(const std::vector<T> &vec,
                                   const T &element);
-#endif
+#endif // SRC_TEMPLATES_H_

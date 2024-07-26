@@ -18,8 +18,8 @@
 #include "Smoothing.hpp"
 #include <cmath> // For exp and pow
 
-std::vector<double> GaussianKernel(const std::vector<double> &r_vals, double r0,
-                                   double sigma) {
+std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
+                                        double r0, double sigma) {
   // Normalized Gaussian Kernel
   double a = 1 / (std::sqrt(2 * M_PI) * sigma);
   double b = -1 / (2 * sigma * sigma);
@@ -30,8 +30,8 @@ std::vector<double> GaussianKernel(const std::vector<double> &r_vals, double r0,
   return aux;
 } // GaussianKernel
 
-std::vector<double> BumpKernel(const std::vector<double> &r_vals, double r0,
-                               double radius) {
+std::vector<double> BumpKernel(const std::vector<double> &r_vals,
+                                    double r0, double radius) {
   // Bump Function
   std::vector<double> aux(r_vals.size(), 0);
   for (std::size_t i = 0; i < r_vals.size(); ++i) {
@@ -47,7 +47,7 @@ std::vector<double> BumpKernel(const std::vector<double> &r_vals, double r0,
 
 // Triweight Kernel function
 std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-                                    double r0, double radius) {
+                                         double r0, double radius) {
   std::vector<double> aux(r_vals.size(), 0);
   constexpr double factor = 35.0 / 32.0;
 

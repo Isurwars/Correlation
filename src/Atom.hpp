@@ -49,7 +49,7 @@ private:
   std::vector<Atom_Img> _bonded_atoms_;
   int _element_id_;
   std::string _element_;
-  static int NumOfAtoms;
+  static int _num_of_atoms_;
 
 public:
   //-------------------------------------------------------------------------//
@@ -58,38 +58,38 @@ public:
 
   Atom(std::string, std::array<double, 3>);
   Atom();
-  void SetAll(std::string, std::array<double, 3>);
+  void setAll(std::string, std::array<double, 3>);
 
   //-------------------------------------------------------------------------//
   //--------------------------- Setters & Getters ---------------------------//
   //-------------------------------------------------------------------------//
 
-  int GetID() { return this->id; }
-  void SetID(int num) { this->id = num; }
+  int getID() { return this->id; }
+  void setID(int num) { this->id = num; }
 
   std::array<double, 3> position() { return this->_position_; }
-  void SetPosition(std::array<double, 3> pos) { this->_position_ = pos; }
+  void setPosition(std::array<double, 3> pos) { this->_position_ = pos; }
 
   std::vector<Atom_Img> bonded_atoms() { return this->_bonded_atoms_; }
-  std::vector<int> GetBondedAtomsID();
-  void AddBondedAtom(Atom_Img);
+  std::vector<int> getBondedAtomsID();
+  void addBondedAtom(Atom_Img);
 
   int element_id() { return this->_element_id_; }
-  void SetElementId(int ele_id) { this->_element_id_ = ele_id; }
+  void setElementID(int ele_id) { this->_element_id_ = ele_id; }
 
   std::string element() { return this->_element_; }
-  void SetElement(const std::string &ele) { this->_element_ = ele; }
-  static int GetNumberOfAtoms() { return NumOfAtoms; }
+  void setElement(const std::string &ele) { this->_element_ = ele; }
+  static int getNumberOfAtoms() { return _num_of_atoms_; }
 
   //-------------------------------------------------------------------------//
   //------------------------------- Methods ---------------------------------//
   //-------------------------------------------------------------------------//
 
   // Default functions for the object Atom
-  double Distance(Atom &);
+  double distance(Atom &);
   // Produce a minimal structure to compute the bond angle.
-  Atom_Img GetImage();
-  // Get the angle between other atom (Atom_Img) and this object
-  double GetAngle(Atom_Img, Atom_Img);
+  Atom_Img getImage();
+  // get the angle between other atom (Atom_Img) and this object
+  double getAngle(Atom_Img, Atom_Img);
 };
 #endif // SRC_ATOM_H_

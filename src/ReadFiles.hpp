@@ -24,9 +24,9 @@
 //---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
-Cell read_CAR(std::string);
-Cell read_CELL(std::string);
-Cell read_ONETEP_DAT(std::string);
-Cell read_CIF(std::string);
+Cell readCar(std::string);
+Cell readCell(std::string);
+Cell readOnetepDat(std::string);
+Cell readCif(std::string);
 
 #endif // SRC_READFILES_H_

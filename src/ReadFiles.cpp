@@ -32,7 +32,7 @@
 #include "Atom.hpp"
 #include "Templates.hpp"
 
-Cell read_CAR(std::string file_name) {
+Cell readCar(std::string file_name) {
   /*
    * This function reads a CAR file and returns a list of atoms objects
    * with the element, number and position inside. It also returns the
@@ -86,16 +86,16 @@ Cell read_CAR(std::string file_name) {
         lat[3] = std::stod(match.str(8).data());
         lat[4] = std::stod(match.str(10).data());
         lat[5] = std::stod(match.str(12).data());
-        tempCell.SetLatticeParameters(lat);
-        tempCell.SetLatticeVectors();
+        tempCell.setLatticeParameters(lat);
+        tempCell.setLatticeVectors();
       }
       if (std::regex_search(line, match, regex_atom)) {
         Atom tempAtom(match.str(12).data(), {std::stod(match.str(3).data()),
                                              std::stod(match.str(5).data()),
                                              std::stod(match.str(7).data())});
-        tempCell.AddAtom(tempAtom);
+        tempCell.addAtom(tempAtom);
         if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
-          tempCell.AddElement(tempAtom.element());
+          tempCell.addElement(tempAtom.element());
         }
       }
     }
@@ -105,8 +105,8 @@ Cell read_CAR(std::string file_name) {
     exit(1);
   }
   return tempCell;
-} // read_CAR
-Cell read_CELL(std::string file_name) {
+} // readCar
+Cell readCell(std::string file_name) {
   /*
    * This function reads a CELL file and returns a list of atoms objects
    * with the element, number and position inside. It also returns the
@@ -197,7 +197,7 @@ Cell read_CELL(std::string file_name) {
               i++;
             }
           }
-          tempCell.SetFromVectors({aux_v[0][0], aux_v[0][1], aux_v[0][2]},
+          tempCell.setFromVectors({aux_v[0][0], aux_v[0][1], aux_v[0][2]},
                                   {aux_v[1][0], aux_v[1][1], aux_v[1][2]},
                                   {aux_v[2][0], aux_v[2][1], aux_v[2][2]});
         }
@@ -210,11 +210,11 @@ Cell read_CELL(std::string file_name) {
               lat[0 + 3 * i] = std::stof(match.str(1).data());
               lat[1 + 3 * i] = std::stof(match.str(3).data());
               lat[2 + 3 * i] = std::stof(match.str(5).data());
-              tempCell.SetLatticeParameters(lat);
+              tempCell.setLatticeParameters(lat);
               i++;
             }
           }
-          tempCell.SetLatticeVectors();
+          tempCell.setLatticeVectors();
         }
         if (std::regex_search(line, match, regex_positions_frac)) {
           /* POSITIONS_FRAC case.*/
@@ -226,10 +226,10 @@ Cell read_CELL(std::string file_name) {
                             {std::stod(match.str(3).data()),
                              std::stod(match.str(5).data()),
                              std::stod(match.str(7).data())});
-              tempCell.AddAtom(tempAtom);
+              tempCell.addAtom(tempAtom);
               if (!(findInVector(tempCell.elements(), tempAtom.element())
                         .first)) {
-                tempCell.AddElement(tempAtom.element());
+                tempCell.addElement(tempAtom.element());
               }
             }
           }
@@ -244,10 +244,10 @@ Cell read_CELL(std::string file_name) {
                             {std::stod(match.str(3).data()),
                              std::stod(match.str(5).data()),
                              std::stod(match.str(7).data())});
-              tempCell.AddAtom(tempAtom);
+              tempCell.addAtom(tempAtom);
               if (!(findInVector(tempCell.elements(), tempAtom.element())
                         .first)) {
-                tempCell.AddElement(tempAtom.element());
+                tempCell.addElement(tempAtom.element());
               }
             }
           }
@@ -260,10 +260,10 @@ Cell read_CELL(std::string file_name) {
     exit(1);
   }
   if (frac_flag)
-    tempCell.CorrectFracPositions();
+    tempCell.correctFracPositions();
   return tempCell;
-} // read_CELL
-Cell read_ONETEP_DAT(std::string file_name) {
+} // readCell
+Cell readOnetepDat(std::string file_name) {
   /*
    * This function reads a CELL file and returns a list of atoms objects
    * with the element, number and position inside. It also returns the
@@ -363,7 +363,7 @@ Cell read_ONETEP_DAT(std::string file_name) {
               i++;
             }
           }
-          tempCell.SetFromVectors({aux_v[0][0], aux_v[0][1], aux_v[0][2]},
+          tempCell.setFromVectors({aux_v[0][0], aux_v[0][1], aux_v[0][2]},
                                   {aux_v[1][0], aux_v[1][1], aux_v[1][2]},
                                   {aux_v[2][0], aux_v[2][1], aux_v[2][2]});
         }
@@ -379,11 +379,11 @@ Cell read_ONETEP_DAT(std::string file_name) {
               lat[0 + 3 * i] = std::stof(match.str(1).data()) * p_f;
               lat[1 + 3 * i] = std::stof(match.str(3).data()) * p_f;
               lat[2 + 3 * i] = std::stof(match.str(5).data()) * p_f;
-              tempCell.SetLatticeParameters(lat);
+              tempCell.setLatticeParameters(lat);
               i++;
             }
           }
-          tempCell.SetLatticeVectors();
+          tempCell.setLatticeVectors();
         }
         if (std::regex_search(line, match, regex_positions_frac)) {
           /* POSITIONS_FRAC case.*/
@@ -398,10 +398,10 @@ Cell read_ONETEP_DAT(std::string file_name) {
                             {std::stod(match.str(3).data()) * p_f,
                              std::stod(match.str(5).data()) * p_f,
                              std::stod(match.str(7).data()) * p_f});
-              tempCell.AddAtom(tempAtom);
+              tempCell.addAtom(tempAtom);
               if (!(findInVector(tempCell.elements(), tempAtom.element())
                         .first)) {
-                tempCell.AddElement(tempAtom.element());
+                tempCell.addElement(tempAtom.element());
               }
             }
           }
@@ -419,10 +419,10 @@ Cell read_ONETEP_DAT(std::string file_name) {
                             {std::stod(match.str(3).data()) * p_f,
                              std::stod(match.str(5).data()) * p_f,
                              std::stod(match.str(7).data()) * p_f});
-              tempCell.AddAtom(tempAtom);
+              tempCell.addAtom(tempAtom);
               if (!(findInVector(tempCell.elements(), tempAtom.element())
                         .first)) {
-                tempCell.AddElement(tempAtom.element());
+                tempCell.addElement(tempAtom.element());
               }
             }
           }
@@ -435,10 +435,10 @@ Cell read_ONETEP_DAT(std::string file_name) {
     exit(1);
   }
   if (frac_flag)
-    tempCell.CorrectFracPositions();
+    tempCell.correctFracPositions();
   return tempCell;
-} // read_ONETEP_DAT
-Cell read_CIF(std::string file_name) {
+} // readOnetepDat
+Cell readCif(std::string file_name) {
   /*
    * This is a Stub for reading a CIF file and return and empty cell. Since
    * CIF files are mostly used for crystalline materials we don't only need
@@ -454,4 +454,4 @@ Cell read_CIF(std::string file_name) {
   // std::smatch match;
 
   return tempCell;
-} // read_CIF
+} // readCif
