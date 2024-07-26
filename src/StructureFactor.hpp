@@ -1,5 +1,5 @@
-#ifndef SRC_TEMPLATES_H_
-#define SRC_TEMPLATES_H_
+#ifndef SRC_STRUCTURE_FACTOR_H_
+#define SRC_STRUCTURE_FACTOR_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
@@ -17,20 +17,21 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
+#include <cmath>
+#include <string>
 #include <vector>
 
 //---------------------------------------------------------------------------//
-//-------------------------------- Methods ----------------------------------//
+//------------------------------- Methods -----------------------------------//
 //---------------------------------------------------------------------------//
 
-template <typename T>
-std::vector<T> DivideVectorByScalar(const std::vector<T> &v, T k);
-
-template <typename T> T VectorSum(const std::vector<T> &v);
-
-template <typename T> std::vector<T> NormalizeVector(const std::vector<T> &v);
-
-template <typename T>
-std::pair<bool, int> findInVector(const std::vector<T> &vec,
-                                  const T &element);
-#endif // SRC_TEMPLATES_H_
+// Sinc Function, sin(x)/x
+double sinc(double);
+// Gaussian Function a*exp (-b * (x / 4Pi)**2)
+double gaussian(double, double, double);
+// Atomic Form Factor
+double atomicFormFactor(double, std::string_view);
+// Average Scattering Factor
+double avrgAtomicScatteringFactor(std::vector<double>, std::string_view);
+double avrgScatteringFactor(std::vector<double>, std::vector<std::string>);
+#endif // SRC_STRUCTURE_FACTOR_H_

@@ -1,5 +1,5 @@
-#ifndef SRC_TEMPLATES_H_
-#define SRC_TEMPLATES_H_
+#ifndef SRC_WRITE_FILES_H_
+#define SRC_WRITE_FILES_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
@@ -17,20 +17,15 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include <vector>
+#include <string>
 
-//---------------------------------------------------------------------------//
-//-------------------------------- Methods ----------------------------------//
-//---------------------------------------------------------------------------//
+#include "Cell.hpp"      // Cell actions
 
-template <typename T>
-std::vector<T> DivideVectorByScalar(const std::vector<T> &v, T k);
+//-------------------------------------------------------------------------//
+//------------------------------- Methods ---------------------------------//
+//-------------------------------------------------------------------------//
 
-template <typename T> T VectorSum(const std::vector<T> &v);
+// Write CSV (Cell, out_file_name, Smoothing)
+void WriteCSV(Cell, std::string, bool = false);
 
-template <typename T> std::vector<T> NormalizeVector(const std::vector<T> &v);
-
-template <typename T>
-std::pair<bool, int> findInVector(const std::vector<T> &vec,
-                                  const T &element);
-#endif // SRC_TEMPLATES_H_
+#endif // SRC_WRITE_FILES_H_

@@ -23,18 +23,18 @@
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
 
-std::vector<double> GaussianKernel(const std::vector<double> &r_vals, double r0,
-                                   double sigma);
+std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
+                                        double r0, double sigma);
 
-std::vector<double> BumpKernel(const std::vector<double> &r_vals, double r0,
-                               double radius);
-
-std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
+std::vector<double> BumpKernel(const std::vector<double> &r_vals,
                                     double r0, double radius);
 
+std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
+                                         double r0, double radius);
+
 std::vector<double> KernelSmoothing(const std::vector<double> &r,
-                                    const std::vector<double> &y, double sigma,
-                                    int _kernel_);
+                                         const std::vector<double> &y,
+                                         double sigma, int _kernel_);
 
 #include "Templates.tpp" // Include template definitions
 

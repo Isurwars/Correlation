@@ -21,9 +21,13 @@
 #include <cmath>     // For exp and pow
 #include <numeric>   // For std::accumulate
 
-/*
- * Functions over vectors
- */
+//---------------------------------------------------------------------------//
+//------------------------- Functions over Vectors --------------------------//
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+//---------------------------- Divide by Scalar -----------------------------//
+//---------------------------------------------------------------------------//
 template <typename T>
 std::vector<T> DivideVectorByScalar(const std::vector<T> &v, T k) {
   std::vector<T> aux(v.size());
@@ -33,32 +37,33 @@ std::vector<T> DivideVectorByScalar(const std::vector<T> &v, T k) {
   return aux;
 } // DivideVectorByScalar
 
+//---------------------------------------------------------------------------//
+//----------------------------- Sum over Vector -----------------------------//
+//---------------------------------------------------------------------------//
 template <typename T> T VectorSum(const std::vector<T> &v) {
   return std::accumulate(v.begin(), v.end(), T());
 } // VectorSum
 
+
+//---------------------------------------------------------------------------//
+//----------------------------- Normalize Vector ----------------------------//
+//---------------------------------------------------------------------------//
 template <typename T> std::vector<T> NormalizeVector(const std::vector<T> &v) {
   return DivideVectorByScalar(v, VectorSum(v));
 } // NormalizeVector
 
-/*
+/*---------------------------------------------------------------------------//
  * Generic function to find if an element of any type exists in a vector,
  * if true, then returns the index.
+ *---------------------------------------------------------------------------//
  */
 template <typename T>
-std::pair<bool, int> findInVector(const std::vector<T> &vecOfElements,
-                                  const T &element) {
-  std::pair<bool, int> result;
-
-  // Find given element in vector
-  auto it = std::find(vecOfElements.begin(), vecOfElements.end(), element);
-
-  if (it != vecOfElements.end()) {
-    result.second = std::distance(vecOfElements.begin(), it);
-    result.first = true;
-  } else {
-    result.first = false;
-    result.second = -1;
-  }
-  return result;
-} // findInVector
+std::pair<bool, int> findInVector(const std::vector<T>& vec, const T& element) {
+    auto it = std::find(vec.begin(), vec.end(), element);
+    if (it != vec.end()) {
+        return {true, std::distance(vec.begin(), it)};
+    } else {
+        return {false, -1};
+    }
+}
+ // findInVector

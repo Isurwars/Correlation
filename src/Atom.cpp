@@ -22,12 +22,12 @@
 #include <list>
 #include <numeric>
 
-int Atom::NumOfAtoms = 0;
+int Atom::_num_of_atoms_ = 0;
 
 //---------------------------------------------------------------------------//
 //------------------------------ Constructors -------------------------------//
 //---------------------------------------------------------------------------//
-void Atom::SetAll(std::string ele, std::array<double, 3> pos) {
+void Atom::setAll(std::string ele, std::array<double, 3> pos) {
   this->_element_ = ele;
   this->_position_ = pos;
 }
@@ -35,22 +35,22 @@ void Atom::SetAll(std::string ele, std::array<double, 3> pos) {
 Atom::Atom(std::string ele, std::array<double, 3> pos) {
   this->_element_ = ele;
   this->_position_ = pos;
-  this->id = Atom::NumOfAtoms;
-  Atom::NumOfAtoms++;
+  this->id = Atom::_num_of_atoms_;
+  Atom::_num_of_atoms_++;
 }
 // Default constructor for the Atom object
 Atom::Atom() {
   this->_element_ = "H";
   this->_position_ = {0.0, 0.0, 0.0};
-  this->id = Atom::NumOfAtoms;
-  Atom::NumOfAtoms++;
+  this->id = Atom::_num_of_atoms_;
+  Atom::_num_of_atoms_++;
 }
 
 //----------------------------------------------------------------------------//
 //--------------------------------- Methods ----------------------------------//
 //----------------------------------------------------------------------------//
 // Distance to the other atom
-double Atom::Distance(Atom &other_atom) {
+double Atom::distance(Atom &other_atom) {
   std::array<double, 3> b_pos = other_atom.position();
   return sqrt(pow(this->_position_[0] - b_pos[0], 2) +
               pow(this->_position_[1] - b_pos[1], 2) +
@@ -58,7 +58,7 @@ double Atom::Distance(Atom &other_atom) {
 }
 
 // Get Image
-Atom_Img Atom::GetImage() {
+Atom_Img Atom::getImage() {
   Atom_Img temp_img;
 
   temp_img.element_id = this->_element_id_;
@@ -68,7 +68,7 @@ Atom_Img Atom::GetImage() {
 }
 
 // Get Bond Angle
-double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {
+double Atom::getAngle(Atom_Img atom_A, Atom_Img atom_B) {
   std::vector<double> vA, vB;
   double vA_, vB_, aux;
 
@@ -91,12 +91,12 @@ double Atom::GetAngle(Atom_Img atom_A, Atom_Img atom_B) {
   return acos(aux);
 } // Get Bond Angle
 
-void Atom::AddBondedAtom(Atom_Img atom_A) {
+void Atom::addBondedAtom(Atom_Img atom_A) {
   this->_bonded_atoms_.push_back(atom_A);
 } // Add Bonded Atom
 
 // Get a vector containing the IDs of all bonded atoms
-std::vector<int> Atom::GetBondedAtomsID() {
+std::vector<int> Atom::getBondedAtomsID() {
   std::vector<Atom_Img>::iterator atom_it;
   // int n_ = this->_bonded_atoms_.size();
   std::vector<int> atoms_ids;
@@ -105,4 +105,4 @@ std::vector<int> Atom::GetBondedAtomsID() {
     atoms_ids.push_back(atom_it->atom_id);
   }
   return atoms_ids;
-} // GetBondedAtomsID
+} // getBondedAtomsID

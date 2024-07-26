@@ -31,9 +31,9 @@ class Cell {
 
 private:
   // Cell Vectors private modification, public read with getter
-  std::array<double, 3> v_a_;
-  std::array<double, 3> v_b_;
-  std::array<double, 3> v_c_;
+  std::array<double, 3> _v_a_;
+  std::array<double, 3> _v_b_;
+  std::array<double, 3> _v_c_;
   // Lattice Parameters
   std::array<double, 6> _lattice_parameters_;
   // List of atoms in the Cell
@@ -43,33 +43,39 @@ private:
   // List with the number of atoms of each kind of elements in Cell
   std::vector<int> _element_numbers_;
   // List of weights for partials funcions
-  std::vector<double> w_ij;
+  std::vector<double> _w_ij_;
   // Matrix of Bond-lengths
-  std::vector<std::vector<double>> bond_length;
+  std::vector<std::vector<double>> _bond_length_;
   // 3D Tensor of Distances
-  std::vector<std::vector<std::vector<double>>> distances;
-  // 3D Tensor of Coordination Numbers
-  std::vector<std::vector<std::vector<int>>> coordination;
+  std::vector<std::vector<std::vector<double>>> _distances_;
   // 4D Tensor of Angles
-  std::vector<std::vector<std::vector<std::vector<double>>>> angles;
+  std::vector<std::vector<std::vector<std::vector<double>>>> _angles_;
   // Matrix of g(r) Histograms
   std::vector<std::vector<double>> _g_;
   // Matrix of J(r) Histograms
   std::vector<std::vector<double>> _J_;
   // Matrix of G(r) Histograms
   std::vector<std::vector<double>> _G_;
+  // Matrix of f(theta) Histograms
+  std::vector<std::vector<double>> _F_;
   // Matrix of S(Q) Histograms
   std::vector<std::vector<double>> _S_;
   // Matrix of XRD Histograms
   std::vector<std::vector<double>> _X_;
-  // Matrix of f(theta) Histograms
-  std::vector<std::vector<double>> _f_theta_;
-  // Matrix of g(r) Histograms
+  // Matrix of Coordination Number Histograms
+  std::vector<std::vector<int>> _Z_;
+  // Matrix of J(r) Smoothed Histograms
   std::vector<std::vector<double>> _J_smoothed_;
-  // Matrix of g(r) Histograms
+  // Matrix of g(r) Smoothed Histograms
   std::vector<std::vector<double>> _g_smoothed_;
-  // Matrix of g(r) Histograms
+  // Matrix of G(r) Smoothed Histograms
   std::vector<std::vector<double>> _G_smoothed_;
+  // Matrix of f(theta) Smoothed Histograms
+  std::vector<std::vector<double>> _F_smoothed_;
+  // Matrix of S(Q) Smoothed Histograms
+  std::vector<std::vector<double>> _S_smoothed_;
+  // Matrix of XRD Smoothed Histograms
+  std::vector<std::vector<double>> _X_smoothed_;
   // Volume of the cell
   double volume;
 
@@ -84,81 +90,82 @@ public:
   //-------------------------------------------------------------------------//
   //--------------------------- Setters & Getters ---------------------------//
   //-------------------------------------------------------------------------//
-
   // Lattice Parameters
   std::array<double, 6> lattice_parameters() {
     return this->_lattice_parameters_;
   }
-  void SetLatticeParameters(std::array<double, 6> lat) {
+  void setLatticeParameters(std::array<double, 6> lat) {
     this->_lattice_parameters_ = lat;
   }
-  void SetFromVectors(std::vector<double>, std::vector<double>,
+  void setFromVectors(std::vector<double>, std::vector<double>,
                       std::vector<double>);
   // Lattice Vectors
-  const std::array<double, 3> &v_a() { return v_a_; };
-  const std::array<double, 3> &v_b() { return v_b_; };
-  const std::array<double, 3> &v_c() { return v_c_; };
-  void SetLatticeVectors();
+  const std::array<double, 3> &v_a() { return _v_a_; };
+  const std::array<double, 3> &v_b() { return _v_b_; };
+  const std::array<double, 3> &v_c() { return _v_c_; };
+  void setLatticeVectors();
   // Atoms
   std::vector<Atom> atoms() { return this->_atoms_; }
-  void SetAtoms(const std::vector<Atom> &ats) { this->_atoms_ = ats; }
-  void AddAtom(Atom at) { this->_atoms_.push_back(at); }
+  void setAtoms(const std::vector<Atom> &ats) { this->_atoms_ = ats; }
+  void addAtom(Atom at) { this->_atoms_.push_back(at); }
   // Elements
   std::vector<std::string> elements() { return this->_elements_; }
   std::vector<int> element_numbers() { return this->_element_numbers_; }
-  void SetElements(const std::vector<std::string> &ele) {
+  void setElements(const std::vector<std::string> &ele) {
     this->_elements_ = ele;
   }
-  void SetElementsNumbers(const std::vector<int> &ele) {
+  void setElementsNumbers(const std::vector<int> &ele) {
     this->_element_numbers_ = ele;
   }
-  void AddElement(std::string ele) { this->_elements_.push_back(ele); }
-  void AddElementNumber(int ele) { this->_element_numbers_.push_back(ele); }
+  void addElement(std::string ele) { this->_elements_.push_back(ele); }
+  void addElementNumber(int ele) { this->_element_numbers_.push_back(ele); }
+  // Distances
+  int distancesSize() { return this->_distances_.size(); }
   // Distribution Functions
   std::vector<std::vector<double>> g() { return this->_g_; }
   std::vector<std::vector<double>> J() { return this->_J_; }
   std::vector<std::vector<double>> G() { return this->_G_; }
+  std::vector<std::vector<double>> F() { return this->_F_; }
   std::vector<std::vector<double>> S() { return this->_S_; }
   std::vector<std::vector<double>> X() { return this->_X_; }
-  std::vector<std::vector<double>> f_theta() { return this->_f_theta_; }
+  std::vector<std::vector<int>> Z() { return this->_Z_; }
   std::vector<std::vector<double>> J_smoothed() { return this->_J_smoothed_; }
   std::vector<std::vector<double>> g_smoothed() { return this->_g_smoothed_; }
   std::vector<std::vector<double>> G_smoothed() { return this->_G_smoothed_; }
+  std::vector<std::vector<double>> F_smoothed() { return this->_F_smoothed_; }
+  std::vector<std::vector<double>> S_smoothed() { return this->_S_smoothed_; }
+  std::vector<std::vector<double>> X_smoothed() { return this->_X_smoothed_; }
 
   //-------------------------------------------------------------------------//
   //------------------------------- Methods ---------------------------------//
   //-------------------------------------------------------------------------//
-
   // In Cell corrected positions
-  void CorrectPositions();
-  void CorrectFracPositions();
+  void correctPositions();
+  void correctFracPositions();
   // Populate the Bond length Matrix
-  void PopulateBondLength(double);
+  void populateBondLength(double);
   //  Read Bond File
-  void ReadBOND(std::string);
+  void readBond(std::string);
   // Update Progress Bar
-  void UpdateProgressBar(double);
+  void updateProgressBar(double);
   // Calculate Distances (max distance between atoms)
-  void DistancePopulation(double, bool);
+  void distancePopulation(double, bool);
   // Coordination Numbers Calculation
-  void CoordinationNumber();
-  // Bond-Angle Calulation ()
-  void PAD(bool = true);
-  // RDF Histograms  (max distance between atoms, bin width)
-  void RDFHistogram(std::string, double = 20.0, double = 0.05, bool = false);
-  // RDF Smoothing (sigma)
-  void RDFSmoothing(std::string, double, int = 1);
-  // Nc Histograms ()
-  void CoordinationNumberHistogram(std::string);
-  // VoronoiIndex()
-  void VoronoiIndex();
+  void coorcinationNumber();
+  // Bond-Angle Calulation (degrees=true, radian=false)
+  void planeAnglePopulation(bool = true);
+  // RDF Histograms  (max distance between atoms, bin width, normalize)
+  void radialDistributionFunctions(double = 20.0, double = 0.05, bool = false);
+  // PAD Histograms (max angle, bin width)
+  void planeAngleDistribution(double = 180.0, double = 1.0);
   // Structure Factor Calculation
-  void SQ(std::string, double = 0.1571, double = 0.05, bool = false);
+  void SQ(double = 25.0, double = 0.05, bool = false);
+  void SQExact(double = 0.05, double = 0.05, bool = false);
   // XRD Calculation
-  void XRD(std::string, double = 1.5406, double = 5.0, double = 90.0,
-           double = 1.0);
-  // PAD Histograms ()
-  void PADHistogram(std::string, double = 180.0, double = 1.0);
+  void XRD(double = 1.5406, double = 5.0, double = 90.0, double = 1.0);
+  // RDF Smoothing (sigma)
+  void Smoothing(double, int = 1);
+  // VoronoiIndex()
+  void voronoiIndex();
 };
-
 #endif // SRC_CELL_H_

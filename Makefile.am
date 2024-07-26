@@ -23,31 +23,31 @@ test1:
 		echo "----------------------------------------------------------"; \
 		echo " Test 1: PDF (g) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo "  Warning: PDF (g) different from expected."; \
 		echo "--------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_1/xSi_J.csv $(TST_DIR)/test_1/J.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 1: RDF (J) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_1/xSi_G_.csv $(TST_DIR)/test_1/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 1: rPDF (G) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: rPDF (G) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_1/xSi_Z.csv $(TST_DIR)/test_1/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -80,31 +80,31 @@ test2:
 		echo "----------------------------------------------------------"; \
 		echo " Test 2: PDF (g) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo "  Warning: PDF (g) different from expected."; \
 		echo "--------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_2/Graphene_J.csv $(TST_DIR)/test_2/J.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 2: RDF (J) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr --strip-trailing-cr $(TST_DIR)/test_2/Graphene_G_.csv $(TST_DIR)/test_2/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 2: rPDF (G) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: rPDF (G) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_2/Graphene_Z.csv $(TST_DIR)/test_2/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -131,38 +131,38 @@ test3:
 	@echo "--------------------------------------------------"
 	@echo " Running test 3 : (Amorphous Palladium)"
 	@echo "--------------------------------------------------"
-	$(EXE) -q 0.1 $(TST_DIR)/test_3/aPd.cell
+	$(EXE) -q 0.1 -S $(TST_DIR)/test_3/aPd.cell
 	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_g.csv $(TST_DIR)/test_3/g.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo "----------------------------------------------------------"; \
 		echo " Test 3: PDF (g) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo "  Warning: PDF (g) different from expected."; \
 		echo "--------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_J.csv $(TST_DIR)/test_3/J.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 3: RDF (J) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_G_.csv $(TST_DIR)/test_3/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 3: rPDF (G) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: rPDF (G) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_3/aPd_Z.csv $(TST_DIR)/test_3/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -196,31 +196,31 @@ test4:
 		echo "----------------------------------------------------------"; \
 		echo " Test 4: PDF (g) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo "  Warning: PDF (g) different from expected."; \
 		echo "--------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_4/aPdH_J.csv $(TST_DIR)/test_4/J.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 4: RDF (J) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_4/aPdH_G_.csv $(TST_DIR)/test_4/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 4: rPDF (G) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: rPDF (G) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_4/aPdH_Z.csv $(TST_DIR)/test_4/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -254,31 +254,31 @@ test5:
 		echo "----------------------------------------------------------"; \
 		echo " Test 5: PDF (g) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo "  Warning: PDF (g) different from expected."; \
 		echo "--------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_J.csv $(TST_DIR)/test_5/J.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 5: RDF (J) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_G_.csv $(TST_DIR)/test_5/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 5: rPDF (G) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: rPDF (G) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_Z.csv $(TST_DIR)/test_5/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -312,31 +312,31 @@ test6:
 		echo "----------------------------------------------------------"; \
 		echo " Test 6: PDF (g) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo "  Warning: PDF (g) different from expected."; \
 		echo "--------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_J.csv $(TST_DIR)/test_6/J.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 6: RDF (J) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: RDF (J) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_G_.csv $(TST_DIR)/test_6/G_.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
 		echo " Test 6: rPDF (G) successfully calculated."; \
 		echo "----------------------------------------------------------"; \
-  else \
+	else \
 		echo "----------------------------------------------------------"; \
 		echo " Warning: rPDF (G) different from expected."; \
 		echo "----------------------------------------------------------"; \
-  fi
+	fi
 	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_Z.csv $(TST_DIR)/test_6/Z.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
