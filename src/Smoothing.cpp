@@ -16,12 +16,15 @@
  * ----------------------------------------------------------------------------
  */
 #include "Smoothing.hpp"
+
 #include <cmath> // For exp and pow
+
+#include "Constants.hpp"
 
 std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
                                         double r0, double sigma) {
   // Normalized Gaussian Kernel
-  double a = 1 / (std::sqrt(2 * M_PI) * sigma);
+  double a = 1 / (std::sqrt(2 * constants::pi) * sigma);
   double b = -1 / (2 * sigma * sigma);
   std::vector<double> aux(r_vals.size());
   for (std::size_t i = 0; i < r_vals.size(); ++i) {
