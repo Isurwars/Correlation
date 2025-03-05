@@ -2,7 +2,7 @@
 #define SRC_SMOOTHING_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -24,17 +24,17 @@
 //---------------------------------------------------------------------------//
 
 std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
-                                        double r0, double sigma);
+					double r0, double sigma);
 
 std::vector<double> BumpKernel(const std::vector<double> &r_vals,
-                                    double r0, double radius);
+				    double r0, double radius);
 
 std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-                                         double r0, double radius);
+					 double r0, double radius);
 
 std::vector<double> KernelSmoothing(const std::vector<double> &r,
-                                         const std::vector<double> &y,
-                                         double sigma, int _kernel_);
+					 const std::vector<double> &y,
+					 double sigma, int _kernel_);
 
 #include "Templates.tpp" // Include template definitions
 

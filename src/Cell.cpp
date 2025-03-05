@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -56,7 +56,7 @@ Cell::Cell(std::array<double, 6> lat) {
 
 // Lattice vector constructor
 void Cell::setFromVectors(std::vector<double> v1, std::vector<double> v2,
-                          std::vector<double> v3) {
+			  std::vector<double> v3) {
   double v1_n, v2_n, v3_n, aux, a, b, c;
 
   v1_n = sqrt(std::inner_product(v1.begin(), v1.end(), v1.begin(), 0));
@@ -101,15 +101,15 @@ void Cell::setLatticeVectors() {
   this->_v_c_ = {
       C * c_b, C * (c_a - c_b * c_g) / s_g,
       C * sqrt(1 - c_a * c_a - c_b * c_b - c_g * c_g + 2 * c_a * c_b * c_g) /
-          s_g};
+	  s_g};
 
   this->volume =
       this->_v_a_[0] *
-          (this->_v_b_[1] * this->_v_c_[2] - this->_v_b_[2] * this->_v_c_[1]) -
+	  (this->_v_b_[1] * this->_v_c_[2] - this->_v_b_[2] * this->_v_c_[1]) -
       this->_v_a_[1] *
-          (this->_v_b_[0] * this->_v_c_[2] - this->_v_b_[2] * this->_v_c_[0]) +
+	  (this->_v_b_[0] * this->_v_c_[2] - this->_v_b_[2] * this->_v_c_[0]) +
       this->_v_a_[2] *
-          (this->_v_b_[0] * this->_v_c_[1] - this->_v_b_[1] * this->_v_c_[0]);
+	  (this->_v_b_[0] * this->_v_c_[1] - this->_v_b_[1] * this->_v_c_[0]);
 } // Cell::setLatticeVectors
 
 //---------------------------------------------------------------------------//
@@ -140,17 +140,17 @@ void Cell::correctPositions() {
 
     // Determine the integer indices
     int i_ = (i >= -1e-15) ? static_cast<int>(std::trunc(i))
-                           : static_cast<int>(std::trunc(i)) - 1;
+			   : static_cast<int>(std::trunc(i)) - 1;
     int j_ = (j >= -1e-15) ? static_cast<int>(std::trunc(j))
-                           : static_cast<int>(std::trunc(j)) - 1;
+			   : static_cast<int>(std::trunc(j)) - 1;
     int k_ = (k >= -1e-15) ? static_cast<int>(std::trunc(k))
-                           : static_cast<int>(std::trunc(k)) - 1;
+			   : static_cast<int>(std::trunc(k)) - 1;
 
     // Correct the position
     for (int m = 0; m < 3; ++m) {
       aux_pos[m] =
-          MyAtom.position()[m] -
-          (i_ * this->_v_a_[m] + j_ * this->_v_b_[m] + k_ * this->_v_c_[m]);
+	  MyAtom.position()[m] -
+	  (i_ * this->_v_a_[m] + j_ * this->_v_b_[m] + k_ * this->_v_c_[m]);
     }
 
     // Set the new position
@@ -201,7 +201,7 @@ void Cell::populateBondLength(double Bond_Factor) {
     double aux = covalentRadii(this->elements()[i]);
     for (int j = 0; j < n; j++) {
       temp_matrix[i][j] =
-          (aux + covalentRadii(this->elements()[j])) * Bond_Factor;
+	  (aux + covalentRadii(this->elements()[j])) * Bond_Factor;
     }
   }
   this->_bond_length_ = temp_matrix;
@@ -238,9 +238,9 @@ void Cell::readBond(std::string file_name) {
    */
 
   std::regex regex_bond("^([A-Z][a-z]?)"
-                        "(\\s+)"
-                        "([A-Z][a-z]?)"
-                        "(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+			"(\\s+)"
+			"([A-Z][a-z]?)"
+			"(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
 
   if (myfile.is_open()) {
     /* Check if the file is open */
@@ -248,24 +248,24 @@ void Cell::readBond(std::string file_name) {
     while (std::getline(myfile, line)) {
       /* Read line by line */
       if (std::regex_search(line, match, regex_bond)) {
-        /* Bond found */
-        int i, j;
-        double dist;
-        MyIdA =
-            findInVector(this->elements(), std::string(match.str(1).data()));
-        if (MyIdA.first) {
-          i = MyIdA.second;
-        }
-        MyIdB =
-            findInVector(this->elements(), std::string(match.str(3).data()));
-        if (MyIdB.first) {
-          j = MyIdB.second;
-        }
-        dist = std::stof(match.str(4).data());
-        if (MyIdA.first && MyIdB.first) {
-          this->_bond_length_[i][j] = dist;
-          this->_bond_length_[j][i] = dist;
-        }
+	/* Bond found */
+	int i, j;
+	double dist;
+	MyIdA =
+	    findInVector(this->elements(), std::string(match.str(1).data()));
+	if (MyIdA.first) {
+	  i = MyIdA.second;
+	}
+	MyIdB =
+	    findInVector(this->elements(), std::string(match.str(3).data()));
+	if (MyIdB.first) {
+	  j = MyIdB.second;
+	}
+	dist = std::stof(match.str(4).data());
+	if (MyIdA.first && MyIdB.first) {
+	  this->_bond_length_[i][j] = dist;
+	  this->_bond_length_[j][i] = dist;
+	}
       }
     }
   }
@@ -341,60 +341,60 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
     int id_A = findInVector(this->_elements_, atom_A.element()).second;
     for (Atom &atom_B : this->_atoms_) {
       if (atom_A.getID() != atom_B.getID() || self_interaction) {
-        int id_B = findInVector(this->_elements_, atom_B.element()).second;
-        img_atom = atom_B;
-        for (i = -i_; i <= i_; i++) {
-          for (j = -j_; j <= j_; j++) {
-            for (k = -k_; k <= k_; k++) {
-              aux_pos = atom_B.position();
-              aux_pos[0] +=
-                  i * this->_v_a_[0] + j * this->_v_b_[0] + k * this->_v_c_[0];
-              aux_pos[1] += j * this->_v_b_[1] + k * this->_v_c_[1];
-              aux_pos[2] += k * this->_v_c_[2];
-              img_atom.setPosition(aux_pos);
-              aux_dist = atom_A.distance(img_atom);
-              if (aux_dist <= r_cut) {
-                // ignore self-interaction
-                if (aux_dist == 0 && (atom_A.getID() == atom_B.getID())) {
-                  continue;
-                }
-                // check for atoms collitions
-                if (aux_dist < 0.1) {
-                  std::cerr << "\nERROR: The atoms:\n"
-                            << atom_A.element() << "_" << atom_A.getID()
-                            << " in position (" << atom_A.position()[0] << ", "
-                            << atom_A.position()[1] << ", "
-                            << atom_A.position()[2] << "),\n"
-                            << atom_B.element() << "_" << atom_B.getID()
-                            << " in position (" << img_atom.position()[0]
-                            << ", " << img_atom.position()[1] << ", "
-                            << img_atom.position()[2] << ").\n"
-                            << "Have a distance less than 10 pm.\n";
-                  exit(1);
-                }
-                if (aux_dist < 0.5) {
-                  std::cerr << "\nWARNING: The atoms:\n"
-                            << atom_A.element() << "_" << atom_A.getID()
-                            << " in position (" << atom_A.position()[0] << ", "
-                            << atom_A.position()[1] << ", "
-                            << atom_A.position()[2] << "),\n"
-                            << atom_B.element() << "_" << atom_B.getID()
-                            << " in position (" << img_atom.position()[0]
-                            << ", " << img_atom.position()[1] << ", "
-                            << img_atom.position()[2] << ").\n"
-                            << "Have a distance less than the Bohr Radius.\n";
-                }
-                // If bonded, add it to bond vector
-                if (aux_dist <= this->_bond_length_[atom_A.element_id()]
-                                                   [img_atom.element_id()]) {
-                  atom_A.addBondedAtom(img_atom.getImage());
-                }
-                // Add distance to matrix
-                temp_dist[id_A][id_B].push_back(aux_dist);
-              }
-            }
-          }
-        }
+	int id_B = findInVector(this->_elements_, atom_B.element()).second;
+	img_atom = atom_B;
+	for (i = -i_; i <= i_; i++) {
+	  for (j = -j_; j <= j_; j++) {
+	    for (k = -k_; k <= k_; k++) {
+	      aux_pos = atom_B.position();
+	      aux_pos[0] +=
+		  i * this->_v_a_[0] + j * this->_v_b_[0] + k * this->_v_c_[0];
+	      aux_pos[1] += j * this->_v_b_[1] + k * this->_v_c_[1];
+	      aux_pos[2] += k * this->_v_c_[2];
+	      img_atom.setPosition(aux_pos);
+	      aux_dist = atom_A.distance(img_atom);
+	      if (aux_dist <= r_cut) {
+		// ignore self-interaction
+		if (aux_dist == 0 && (atom_A.getID() == atom_B.getID())) {
+		  continue;
+		}
+		// check for atoms collitions
+		if (aux_dist < 0.1) {
+		  std::cerr << "\nERROR: The atoms:\n"
+			    << atom_A.element() << "_" << atom_A.getID()
+			    << " in position (" << atom_A.position()[0] << ", "
+			    << atom_A.position()[1] << ", "
+			    << atom_A.position()[2] << "),\n"
+			    << atom_B.element() << "_" << atom_B.getID()
+			    << " in position (" << img_atom.position()[0]
+			    << ", " << img_atom.position()[1] << ", "
+			    << img_atom.position()[2] << ").\n"
+			    << "Have a distance less than 10 pm.\n";
+		  exit(1);
+		}
+		if (aux_dist < 0.5) {
+		  std::cerr << "\nWARNING: The atoms:\n"
+			    << atom_A.element() << "_" << atom_A.getID()
+			    << " in position (" << atom_A.position()[0] << ", "
+			    << atom_A.position()[1] << ", "
+			    << atom_A.position()[2] << "),\n"
+			    << atom_B.element() << "_" << atom_B.getID()
+			    << " in position (" << img_atom.position()[0]
+			    << ", " << img_atom.position()[1] << ", "
+			    << img_atom.position()[2] << ").\n"
+			    << "Have a distance less than the Bohr Radius.\n";
+		}
+		// If bonded, add it to bond vector
+		if (aux_dist <= this->_bond_length_[atom_A.element_id()]
+						   [img_atom.element_id()]) {
+		  atom_A.addBondedAtom(img_atom.getImage());
+		}
+		// Add distance to matrix
+		temp_dist[id_A][id_B].push_back(aux_dist);
+	      }
+	    }
+	  }
+	}
       }
     }
     progress += h_;
@@ -403,7 +403,7 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
 
   // Parallelize the main loop
   std::for_each(std::execution::par, std::begin(this->_atoms_),
-                std::end(this->_atoms_), calculate_distances);
+		std::end(this->_atoms_), calculate_distances);
   this->updateProgressBar(1.0);
   this->_distances_ = temp_dist;
 } // Cell::distancePopulation
@@ -487,7 +487,7 @@ void Cell::planeAnglePopulation(bool degree) {
   const int n = this->elements().size();
   std::vector<std::vector<std::vector<std::vector<double>>>> temp_pad(
       n, std::vector<std::vector<std::vector<double>>>(
-             n, std::vector<std::vector<double>>(n, std::vector<double>(0))));
+	     n, std::vector<std::vector<double>>(n, std::vector<double>(0))));
   /*
    * This is the main loop to calculate the angles formed by every three atoms.
    * The connected atoms are calculated in Cell::RDF, and MUST be called first.
@@ -503,10 +503,10 @@ void Cell::planeAnglePopulation(bool degree) {
     std::vector<Atom_Img> bon_aux = MyAtom.bonded_atoms();
     for (auto &atom_A : bon_aux) {
       for (auto &atom_B : bon_aux) {
-        if (atom_A.atom_id != atom_B.atom_id) {
-          temp_pad[atom_A.element_id][MyAtom.element_id()][atom_B.element_id]
-              .push_back(MyAtom.getAngle(atom_A, atom_B) * factor);
-        }
+	if (atom_A.atom_id != atom_B.atom_id) {
+	  temp_pad[atom_A.element_id][MyAtom.element_id()][atom_B.element_id]
+	      .push_back(MyAtom.getAngle(atom_A, atom_B) * factor);
+	}
       }
     }
   }
@@ -517,7 +517,7 @@ void Cell::planeAnglePopulation(bool degree) {
 //--------------------- Radial Distribution Functions -----------------------//
 //---------------------------------------------------------------------------//
 void Cell::radialDistributionFunctions(double r_cut, double bin_width,
-                                       bool normalize) {
+				       bool normalize) {
   int n_, m_, i, j, col, row;
   int n = this->_distances_.size();
   std::string header;
@@ -552,10 +552,10 @@ void Cell::radialDistributionFunctions(double r_cut, double bin_width,
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       temp_w_ij[i + j + 1] = 2.0 * this->element_numbers()[i] *
-                             this->element_numbers()[j] /
-                             (num_atoms * num_atoms);
+			     this->element_numbers()[j] /
+			     (num_atoms * num_atoms);
       if (i == j) {
-        temp_w_ij[i + j + 1] *= 0.5;
+	temp_w_ij[i + j + 1] *= 0.5;
       }
     }
   }
@@ -572,13 +572,13 @@ void Cell::radialDistributionFunctions(double r_cut, double bin_width,
     for (j = i; j < n; j++) {
       col++;
       for (const auto &it : this->_distances_[i][j]) {
-        row = floor(it / bin_width);
-        if (row < m_) {
-          temp_hist[col][row]++;
-          if (i != j) {
-            temp_hist[col][row]++;
-          }
-        }
+	row = floor(it / bin_width);
+	if (row < m_) {
+	  temp_hist[col][row]++;
+	  if (i != j) {
+	    temp_hist[col][row]++;
+	  }
+	}
       }
     }
   }
@@ -600,8 +600,8 @@ void Cell::radialDistributionFunctions(double r_cut, double bin_width,
       w_factor = num_atoms * bin_width * this->_w_ij_[i];
     }
     std::transform(temp_hist[i].begin(), temp_hist[i].end(),
-                   temp_hist[i].begin(),
-                   [&w_factor](const auto &c) { return c / w_factor; });
+		   temp_hist[i].begin(),
+		   [&w_factor](const auto &c) { return c / w_factor; });
   }
 
   this->_J_ = temp_hist;
@@ -615,7 +615,7 @@ void Cell::radialDistributionFunctions(double r_cut, double bin_width,
   for (col = 1; col < n_; col++) {
     for (row = 1; row < m_; row++) {
       temp_hist[col][row] /=
-          4 * constants::pi * rho_0 * temp_hist[0][row] * temp_hist[0][row];
+	  4 * constants::pi * rho_0 * temp_hist[0][row] * temp_hist[0][row];
     }
   }
 
@@ -632,10 +632,10 @@ void Cell::radialDistributionFunctions(double r_cut, double bin_width,
   for (col = 1; col < n_; col++) {
     for (row = 1; row < m_; row++) {
       if (normalize) {
-        temp_w_ij[i + j + 1] = 1.0;
+	temp_w_ij[i + j + 1] = 1.0;
       }
       temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row] *
-                            (temp_hist[col][row] - temp_w_ij[col]);
+			    (temp_hist[col][row] - temp_w_ij[col]);
     }
   }
   this->_G_ = temp_hist;
@@ -664,7 +664,7 @@ void Cell::planeAngleDistribution(double theta_cut, double bin_width) {
   m_ = std::round(theta_cut / bin_width);
   // Matrix to store the Histograms n_ + 1 columns, m_ rows
   std::vector<std::vector<double>> temp_hist(n_ + 1,
-                                             std::vector<double>(m_, 0.0));
+					     std::vector<double>(m_, 0.0));
   // Fill the theta values of the histogram
   for (i = 0; i < m_; i++) {
     temp_hist[0][i] = (i + 0.5) * bin_width;
@@ -676,20 +676,20 @@ void Cell::planeAngleDistribution(double theta_cut, double bin_width) {
     for (j = 0; j < n; j++) {
       // j iterates over all initial atoms
       for (k = j; k < n; k++) {
-        // k iterates only over half + 1 of the spectrum
-        col++;
-        for (const auto &it : this->_angles_[j][i][k]) {
-          row = floor(it / bin_width);
-          if (row < m_) {
-            temp_hist[col][row]++;
-          }
-        }
-        // Remove double count when j == k
-        if (j == k) {
-          for (h = 0; h < m_; h++) {
-            temp_hist[col][h] /= 2.0;
-          }
-        }
+	// k iterates only over half + 1 of the spectrum
+	col++;
+	for (const auto &it : this->_angles_[j][i][k]) {
+	  row = floor(it / bin_width);
+	  if (row < m_) {
+	    temp_hist[col][row]++;
+	  }
+	}
+	// Remove double count when j == k
+	if (j == k) {
+	  for (h = 0; h < m_; h++) {
+	    temp_hist[col][h] /= 2.0;
+	  }
+	}
       }
     }
   }
@@ -722,19 +722,43 @@ void Cell::planeAngleDistribution(double theta_cut, double bin_width) {
 //---------------------------------- S(Q) -----------------------------------//
 //---------------------------------------------------------------------------//
 void Cell::SQ(double q_max, double q_bin_width, bool normalize) {
-  int row, col, i;
+  int row, col, i, j, n_, m_;
   double sum;
-  int n_ = this->_w_ij_.size();
+  int n = this->_distances_.size();
+  int num_atoms = this->atoms().size();
+
+  /* m_: the number of rows is given by:
+   * the cut q / q bin width
+   */
+  m_ = std::round(q_max / q_bin_width);
+  /* n_: the number of columns is given by:
+   * The combination n atoms taken in pairs,
+   * plus one column for r,
+   * plus one column for the total S(Q)
+   */
+  n_ = n * (n + 1) / 2 + 1 + 1;
+
   std::vector<double> temp_w_ij(n_, 1.0);
+  col = 0;
   if (!normalize) {
-    temp_w_ij = this->_w_ij_;
+    for (i = 0; i < n; i++) {
+      for (j = i; j < n; j++) {
+	col++;
+	temp_w_ij[col] = 2.0 * this->element_numbers()[i] *
+			       this->element_numbers()[j] /
+			       (num_atoms * num_atoms);
+	if (i == j) {
+	  temp_w_ij[col] *= 0.5;
+	}
+      }
+    }
+    this->_w_ij_ = temp_w_ij;
   }
-  int m_ = std::round(q_max / q_bin_width) + 1;
   int m = this->_G_[0].size();
   /*
    * The structure factor S(q) is calculated with:
    * S(q) = 1 + 4*pi*rho_0*(q^-1)*\int{ dr r*sin(q * r)*[g(r) - 1]
-   * or S(q) = 1 + \int{dr sinc(q * r) * r * G(r)}
+<   * or S(q) = 1 + \int{dr sinc(q * r) * r * G(r)}
    */
   std::vector<std::vector<double>> temp_S(n_, std::vector<double>(m_, 0));
 
@@ -747,27 +771,50 @@ void Cell::SQ(double q_max, double q_bin_width, bool normalize) {
     for (row = 0; row < m_; ++row) {
       sum = 0;
       for (i = 0; i < m - 1; ++i) {
-        sum += sinc(temp_S[0][row] * this->_G_[0][i]) * this->_G_[col][i] *
-               this->_G_[0][i];
+	sum += sinc(temp_S[0][row] * this->_G_[0][i]) * this->_G_[col][i] *
+	       this->_G_[0][i];
       }
-      sum += 0.5 * sinc(temp_S[0][row] * this->_G_[0][i]) * this->_G_[col][i] *
-             this->_G_[0][i];
-      temp_S[col][row] = 1 + sum * dr;
+      sum -= 0.5 * sinc(temp_S[0][row] * this->_G_[0][m - 1]) *
+	     this->_G_[col][m - 1] * this->_G_[0][m - 1];
+      temp_S[col][row] = temp_w_ij[col] + sum * dr;
     }
   }
   this->_S_ = temp_S;
 } // Cell::SQ
 
+//---------------------------------------------------------------------------//
+//------------------------------- S(Q) Exact --------------------------------//
+//---------------------------------------------------------------------------//
 void Cell::SQExact(double q_max, double q_bin_width, bool normalize) {
-  int row, col, i, j;
+  int row, col, i, j, n_, m_;
   double sum, f_i, f_j, f;
-  int n_ = this->_w_ij_.size();
+  int n = this->_distances_.size();
+  int num_atoms = this->atoms().size();
+
+  /* m_: the number of rows is given by:
+   * the cut q / q bin width
+   */
+  m_ = std::round(q_max / q_bin_width);
+  /* n_: the number of columns is given by:
+   * The combination n atoms taken in pairs,
+   * plus one column for r,
+   * plus one column for the total S(Q)
+   */
+  n_ = n * (n + 1) / 2 + 1 + 1;
   std::vector<double> temp_w_ij(n_, 1.0);
   if (!normalize) {
-    temp_w_ij = this->_w_ij_;
+    for (i = 0; i < n; i++) {
+      for (j = i; j < n; j++) {
+	temp_w_ij[i + j + 1] = 2.0 * this->element_numbers()[i] *
+			       this->element_numbers()[j] /
+			       (num_atoms * num_atoms);
+	if (i == j) {
+	  temp_w_ij[i + j + 1] *= 0.5;
+	}
+      }
+    }
+    this->_w_ij_ = temp_w_ij;
   }
-  int m_ = std::round(q_max / q_bin_width) + 1;
-  int n = this->_elements_.size();
   /*
    * The structure factor S(q) is calculated with:
    * S(q) = 1 + 4*pi*rho_0*(q^-1)*\int{ dr r*sin(q * r)*[g(r) - 1]
@@ -788,16 +835,23 @@ void Cell::SQExact(double q_max, double q_bin_width, bool normalize) {
     for (j = i; j < n; j++) {
       col++;
       for (row = 0; row < m_; ++row) {
-        sum = 0.0;
-        for (const auto &it : this->_distances_[i][j]) {
-          sum += sinc(temp_S[0][row] * it);
-        }
-        // calculate atomic form factors
-        f_i = atomicFormFactor(temp_S[0][row], this->_elements_[i]);
-        f_j = atomicFormFactor(temp_S[0][row], this->_elements_[j]);
-        temp_S[col][row] =
-            temp_w_ij[col] + sum * f_i * f_j / (this->_atoms_.size() * f * f);
+	sum = 0.0;
+	for (const auto &it : this->_distances_[i][j]) {
+	  sum += cos(temp_S[0][row] * it);
+	}
+	// calculate atomic form factors
+	f_i = atomicFormFactor(temp_S[0][row], this->_elements_[i]);
+	f_j = atomicFormFactor(temp_S[0][row], this->_elements_[j]);
+	temp_S[col][row] = temp_w_ij[i + j + 1] +
+			   sum * f_i * f_j / (this->_atoms_.size() * f * f);
       }
+    }
+  }
+
+  // Calculate total S(Q)
+  for (j = 0; j < m_; j++) {
+    for (i = 1; i < n_ - 1; i++) {
+      temp_S[n_ - 1][j] += temp_S[i][j];
     }
   }
 
@@ -808,7 +862,7 @@ void Cell::SQExact(double q_max, double q_bin_width, bool normalize) {
 //----------------------------------- XRD -----------------------------------//
 //---------------------------------------------------------------------------//
 void Cell::XRD(double lambda, double theta_min, double theta_max,
-               double bin_width) {
+	       double bin_width) {
   int n_, m_, i, j, k, col, row;
   double norm, aux;
   int n = this->elements().size();
@@ -828,24 +882,24 @@ void Cell::XRD(double lambda, double theta_min, double theta_max,
     for (j = i; j < n; j++) {
       col++;
       for (const auto &it : this->_distances_[i][j]) {
-        /*
-         * Bragg's Law
-         * n * lambda = 2d sin(theta)
-         * theta = asin((n * lambda) / (2 * d))
-         */
-        aux = lambda / (it * 2.0);
-        k = 1;
-        while (k < 3) {
-          row = floor(((2 * constants::rad2deg * asin(k * aux)) - theta_min) /
-                      bin_width);
-          k++;
-          if ((0 <= row) && (row < m_)) {
-            temp_hist[col][row]++;
-            if (i != j) {
-              temp_hist[col][row]++;
-            }
-          }
-        }
+	/*
+	 * Bragg's Law
+	 * n * lambda = 2d sin(theta)
+	 * theta = asin((n * lambda) / (2 * d))
+	 */
+	aux = lambda / (it * 2.0);
+	k = 1;
+	while (k < 3) {
+	  row = floor(((2 * constants::rad2deg * asin(k * aux)) - theta_min) /
+		      bin_width);
+	  k++;
+	  if ((0 <= row) && (row < m_)) {
+	    temp_hist[col][row]++;
+	    if (i != j) {
+	      temp_hist[col][row]++;
+	    }
+	  }
+	}
       }
     }
   }
@@ -886,7 +940,7 @@ void Cell::Smoothing(double sigma, int _kernel_) {
   }
   for (col = 1; col < n_; col++) {
     temp_hist[col] =
-        KernelSmoothing(temp_hist[0], this->_J_[col], sigma, _kernel_);
+	KernelSmoothing(temp_hist[0], this->_J_[col], sigma, _kernel_);
   }
   this->_J_smoothed_ = temp_hist;
 
@@ -896,7 +950,7 @@ void Cell::Smoothing(double sigma, int _kernel_) {
   }
   for (col = 1; col < n_; col++) {
     temp_hist[col] =
-        KernelSmoothing(temp_hist[0], this->_g_[col], sigma, _kernel_);
+	KernelSmoothing(temp_hist[0], this->_g_[col], sigma, _kernel_);
   }
   this->_g_smoothed_ = temp_hist;
 
@@ -906,7 +960,7 @@ void Cell::Smoothing(double sigma, int _kernel_) {
   }
   for (col = 1; col < n_; col++) {
     temp_hist[col] =
-        KernelSmoothing(temp_hist[0], this->_G_[col], sigma, _kernel_);
+	KernelSmoothing(temp_hist[0], this->_G_[col], sigma, _kernel_);
   }
   this->_G_smoothed_ = temp_hist;
 
@@ -925,7 +979,7 @@ void Cell::Smoothing(double sigma, int _kernel_) {
   }
   for (col = 1; col < n_; col++) {
     temp_hist[col] =
-        KernelSmoothing(temp_hist[0], this->_F_[col], sigma, _kernel_);
+	KernelSmoothing(temp_hist[0], this->_F_[col], sigma, _kernel_);
   }
   this->_F_smoothed_ = temp_hist;
 
@@ -944,7 +998,7 @@ void Cell::Smoothing(double sigma, int _kernel_) {
   }
   for (col = 1; col < n_; col++) {
     temp_hist[col] =
-        KernelSmoothing(temp_hist[0], this->_S_[col], sigma, _kernel_);
+	KernelSmoothing(temp_hist[0], this->_S_[col], sigma, _kernel_);
   }
   this->_S_smoothed_ = temp_hist;
 
@@ -963,7 +1017,7 @@ void Cell::Smoothing(double sigma, int _kernel_) {
   }
   for (col = 1; col < n_; col++) {
     temp_hist[col] =
-        KernelSmoothing(temp_hist[0], this->_X_[col], sigma, _kernel_);
+	KernelSmoothing(temp_hist[0], this->_X_[col], sigma, _kernel_);
   }
   this->_X_smoothed_ = temp_hist;
 

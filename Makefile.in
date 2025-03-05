@@ -1048,7 +1048,7 @@ test5:
 	@echo "--------------------------------------------------"
 	@echo " Running test 5 : (Liquid Bismuth)\n"
 	@echo "--------------------------------------------------"
-	$(EXE) -w 0.02 $(TST_DIR)/test_5/lBi.car
+	$(EXE) -q 0.02 $(TST_DIR)/test_5/lBi.car
 	@diff --strip-trailing-cr $(TST_DIR)/test_5/lBi_g.csv $(TST_DIR)/test_5/g.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \
@@ -1105,7 +1105,7 @@ test6:
 	@echo "--------------------------------------------------"
 	@echo " Running test 6 : (3000+ atoms)\n"
 	@echo "--------------------------------------------------"
-	$(EXE) -r 30.0 $(TST_DIR)/test_6/aPdH_3144.car
+	$(EXE) -R 30.0 $(TST_DIR)/test_6/aPdH_3144.car
 	@diff --strip-trailing-cr $(TST_DIR)/test_6/aPdH_3144_g.csv $(TST_DIR)/test_6/g.csv; \
 	RETVAL=$$?; \
 	if [ $$RETVAL -eq 0 ]; then \

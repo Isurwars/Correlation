@@ -2,7 +2,7 @@
 #define SRC_READFILES_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -28,5 +28,6 @@ Cell readCar(std::string);
 Cell readCell(std::string);
 Cell readOnetepDat(std::string);
 Cell readCif(std::string);
+Cell readLammpsDump(std::string);
 
 #endif // SRC_READFILES_H_

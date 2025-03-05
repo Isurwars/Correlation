@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -61,9 +61,9 @@ template <typename T>
 std::pair<bool, int> findInVector(const std::vector<T>& vec, const T& element) {
     auto it = std::find(vec.begin(), vec.end(), element);
     if (it != vec.end()) {
-        return {true, std::distance(vec.begin(), it)};
+	return {true, std::distance(vec.begin(), it)};
     } else {
-        return {false, -1};
+	return {false, -1};
     }
 }
  // findInVector

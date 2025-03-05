@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -22,7 +22,7 @@
 #include "Constants.hpp"
 
 std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
-                                        double r0, double sigma) {
+					double r0, double sigma) {
   // Normalized Gaussian Kernel
   double a = 1 / (std::sqrt(2 * constants::pi) * sigma);
   double b = -1 / (2 * sigma * sigma);
@@ -34,7 +34,7 @@ std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
 } // GaussianKernel
 
 std::vector<double> BumpKernel(const std::vector<double> &r_vals,
-                                    double r0, double radius) {
+				    double r0, double radius) {
   // Bump Function
   std::vector<double> aux(r_vals.size(), 0);
   for (std::size_t i = 0; i < r_vals.size(); ++i) {
@@ -50,7 +50,7 @@ std::vector<double> BumpKernel(const std::vector<double> &r_vals,
 
 // Triweight Kernel function
 std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-                                         double r0, double radius) {
+					 double r0, double radius) {
   std::vector<double> aux(r_vals.size(), 0);
   constexpr double factor = 35.0 / 32.0;
 
@@ -67,8 +67,8 @@ std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
 }
 
 std::vector<double> KernelSmoothing(const std::vector<double> &r,
-                                    const std::vector<double> &y, double sigma,
-                                    int _kernel_) {
+				    const std::vector<double> &y, double sigma,
+				    int _kernel_) {
   // Kernel Smoothing
   int n_ = r.size();
   std::vector<double> kernel_at_pos(n_, 0);
