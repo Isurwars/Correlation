@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -53,8 +53,8 @@ Atom::Atom() {
 double Atom::distance(Atom &other_atom) {
   std::array<double, 3> b_pos = other_atom.position();
   return sqrt(pow(this->_position_[0] - b_pos[0], 2) +
-              pow(this->_position_[1] - b_pos[1], 2) +
-              pow(this->_position_[2] - b_pos[2], 2));
+	      pow(this->_position_[1] - b_pos[1], 2) +
+	      pow(this->_position_[2] - b_pos[2], 2));
 }
 
 // Get Image
@@ -73,11 +73,11 @@ double Atom::getAngle(Atom_Img atom_A, Atom_Img atom_B) {
   double vA_, vB_, aux;
 
   vA = {atom_A.position[0] - this->_position_[0],
-        atom_A.position[1] - this->_position_[1],
-        atom_A.position[2] - this->_position_[2]};
+	atom_A.position[1] - this->_position_[1],
+	atom_A.position[2] - this->_position_[2]};
   vB = {atom_B.position[0] - this->_position_[0],
-        atom_B.position[1] - this->_position_[1],
-        atom_B.position[2] - this->_position_[2]};
+	atom_B.position[1] - this->_position_[1],
+	atom_B.position[2] - this->_position_[2]};
   vA_ = sqrt(vA[0] * vA[0] + vA[1] * vA[1] + vA[2] * vA[2]);
   vB_ = sqrt(vB[0] * vB[0] + vB[1] * vB[1] + vB[2] * vB[2]);
   aux = vA[0] * vB[0] + vA[1] * vB[1] + vA[2] * vB[2];

@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -39,7 +39,8 @@ bool _self_interaction_ = false;
 bool _smoothing_ = false;
 double _r_cut_ = 20.0;
 double _bin_w_ = 0.050000;
-double _q_bin_w_ = 0.050000;
+double _q_bin_w_ = 0.15707963267949;
+double _q_cut_ = 180.0;
 double _bond_par_ = 1.3;
 double _angle_bin_w_ = 1.00000;
 double _smooth_sigma_ = 0.081;
@@ -74,7 +75,7 @@ void PrintHelp() {
       "        Used to switch between weighted partials (default), or "
       "normalize\n"
       "        all the partials to 1 when r tends to infinity\n"
-      "      -r, --r_cut\n"
+      "      -R, --r_cut\n"
       "        Cutoff radius in the calculation of g(r), G(r) and J(r). The "
       "default\n"
       "        radius it's set to 2 nm. The maximum recommended radius is the "
@@ -85,13 +86,15 @@ void PrintHelp() {
       "interactions.\n\n"
       "      -s, --self_interaction\n"
       "        Include self-interactions, by default false.\n"
-      "      -w, --bin_width\n"
+      "      -r, --r_bin_width\n"
       "        Width of the histograms for g(r) and J(r), the default is 0.05 "
       "nm.\n\n"
       "    STRUCTURE FACTOR OPTIONS:\n"
       "      -q, --q_bin_width\n"
       "        Width of the histograms for S(Q), the default is 0.157079 "
-      "nm^()-1.)\n\n"
+      "nm^(-1).\n\n"
+      "      -Q, --q_cut\n "
+      "        Max vector Q for S(Q), the default is 180.0.\n\n"
       "    BOND-ANGLE OPTIONS:\n"
       "      -a, --angle_bin_width\n"
       "        Width of the histograms for the PAD, default set to 1.0°.\n\n"
@@ -160,7 +163,7 @@ void PrintHelp() {
 } // PrintHelp
 
 void ArgParser(int argc, char **argv) {
-  const char *const short_opts = "a:b:hi:k:K:no:q:r:sSw:";
+  const char *const short_opts = "a:b:hi:k:K:no:q:Q:r:R:sS";
   const option long_opts[] = {
       {"angle_bin_width", required_argument, nullptr, 'a'},
       {"bond_parameter", required_argument, nullptr, 'b'},
@@ -171,10 +174,11 @@ void ArgParser(int argc, char **argv) {
       {"normalize", no_argument, nullptr, 'n'},
       {"out_file", required_argument, nullptr, 'o'},
       {"q_bin_width", required_argument, nullptr, 'q'},
-      {"r_cut", required_argument, nullptr, 'r'},
+      {"q_cut", required_argument, nullptr, 'Q'},
+      {"r_bin_width", required_argument, nullptr, 'r'},
+      {"r_cut", required_argument, nullptr, 'R'},
       {"self_interaction", no_argument, nullptr, 's'},
       {"smoothing", no_argument, nullptr, 'S'},
-      {"bin_width", required_argument, nullptr, 'w'},
       {nullptr, no_argument, nullptr, 0}};
 
   while (true) {
@@ -186,22 +190,22 @@ void ArgParser(int argc, char **argv) {
     switch (opt) {
     case 'a': // -a or --angle_bin_width
       try {
-        _angle_bin_w_ = std::stof(optarg);
+	_angle_bin_w_ = std::stof(optarg);
       } catch (const std::exception &e) {
-        std::cout << "Invalid input argument: '" << optarg
-                  << "' in angle_bin_width parameter '-a' "
-                  << "(Real number expected)." << std::endl;
-        exit(1);
+	std::cout << "Invalid input argument: '" << optarg
+		  << "' in angle_bin_width parameter '-a' "
+		  << "(Real number expected)." << std::endl;
+	exit(1);
       }
       break;
     case 'b': // -b or --bond_parameter
       try {
-        _bond_par_ = std::stof(optarg);
+	_bond_par_ = std::stof(optarg);
       } catch (const std::exception &e) {
-        std::cout << "Invalid input argument: '" << optarg
-                  << "' in bond_parameter '-b' "
-                  << "(Real number expected)." << std::endl;
-        exit(1);
+	std::cout << "Invalid input argument: '" << optarg
+		  << "' in bond_parameter '-b' "
+		  << "(Real number expected)." << std::endl;
+	exit(1);
       }
       break;
     case 'h': // -h or --help
@@ -225,22 +229,42 @@ void ArgParser(int argc, char **argv) {
       break;
     case 'q': // -q or --q_bin_width
       try {
-        _q_bin_w_ = std::stof(optarg);
+	_q_bin_w_ = std::stof(optarg);
       } catch (const std::exception &e) {
-        std::cout << "Invalid input argument: '" << optarg
-                  << "' in q_bin_width parameter '-q' "
-                  << "(Real number expected)." << std::endl;
-        exit(1);
+	std::cout << "Invalid input argument: '" << optarg
+		  << "' in q_bin_width parameter '-q' "
+		  << "(Real number expected)." << std::endl;
+	exit(1);
       }
       break;
-    case 'r': // -r or --r_cut
+    case 'Q': // -Q or --q_cut
       try {
-        _r_cut_ = std::stof(optarg);
+	_q_cut_ = std::stof(optarg);
       } catch (const std::exception &e) {
-        std::cout << "Invalid input argument: '" << optarg
-                  << "' in r_cut parameter '-r' "
-                  << "(Real number expected)." << std::endl;
-        exit(1);
+	std::cout << "Invalid input argument: '" << optarg
+		  << "' in q_cut parameter '-Q' "
+		  << "(Real number expected)." << std::endl;
+	exit(1);
+      }
+      break;
+    case 'r': // -r or --r_bin_width
+      try {
+	_bin_w_ = std::stof(optarg);
+      } catch (const std::exception &e) {
+	std::cout << "Invalid input argument: '" << optarg
+		  << "' in bin_width parameter '-w' "
+		  << "(Real number expected)." << std::endl;
+	exit(1);
+      }
+      break;
+    case 'R': // -R or --r_cut
+      try {
+	_r_cut_ = std::stof(optarg);
+      } catch (const std::exception &e) {
+	std::cout << "Invalid input argument: '" << optarg
+		  << "' in r_cut parameter '-r' "
+		  << "(Real number expected)." << std::endl;
+	exit(1);
       }
       break;
     case 's': // -s or --self_interaction
@@ -248,16 +272,6 @@ void ArgParser(int argc, char **argv) {
       break;
     case 'S': // -S or --smoothing
       _smoothing_ = true;
-      break;
-    case 'w': // -w or --bin_width
-      try {
-        _bin_w_ = std::stof(optarg);
-      } catch (const std::exception &e) {
-        std::cout << "Invalid input argument: '" << optarg
-                  << "' in bin_width parameter '-w' "
-                  << "(Real number expected)." << std::endl;
-        exit(1);
-      }
       break;
     case '?': // Unrecognized option
       /* getopt_long already printed an error message. */
@@ -297,22 +311,26 @@ int main(int argc, char **argv) {
   std::filesystem::path my_path;
   (my_path = _in_file_name_).remove_filename();
   if (_out_file_name_ == "")
-    _out_file_name_ = my_path / _in_file_.stem().generic_string();
-  std::string MyExt = _in_file_.extension();
+    _out_file_name_ =
+	my_path.generic_string() + "/" + _in_file_.stem().generic_string();
+  std::string MyExt = _in_file_.extension().generic_string();
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char &c) { c = ::tolower(c); });
   if (MyExt == ".car") {
+    std::cout << "Reading CAR file: " << _in_file_name_ << std::endl;
     MyCell = readCar(_in_file_name_);
   } else if (MyExt == ".cell") {
+    std::cout << "Reading CELL file: " << _in_file_name_ << std::endl;
     MyCell = readCell(_in_file_name_);
   } else if (MyExt == ".dat") {
+    std::cout << "Reading DAT file: " << _in_file_name_ << std::endl;
     MyCell = readOnetepDat(_in_file_name_);
   } else {
     std::cout << "File: " << MyExt << " currently not supported." << std::endl;
     PrintHelp();
   }
   std::cout << "File " << _in_file_name_ << " opened successfully."
-            << std::endl;
+	    << std::endl;
   // Create Bond distance Matrix and element_ids
   MyCell.populateBondLength(_bond_par_);
   if (_bond_in_file_) {
@@ -345,7 +363,7 @@ int main(int argc, char **argv) {
    * the _bin_w_ parameter is the bin width to be used.
    */
   std::cout << "Calculating Coordination Functions: " << _out_file_name_
-            << std::endl;
+	    << std::endl;
   MyCell.radialDistributionFunctions(_r_cut_, _bin_w_, _normalize_);
 
   /*
@@ -360,7 +378,8 @@ int main(int argc, char **argv) {
    * The _r_cut_ parameter is the cutoff distance in r-space,
    * the _q_bin_w_ parameter is the bin width to be used in q-space.
    */
-  MyCell.SQ(20.0, _q_bin_w_, _normalize_);
+  MyCell.SQ(_q_cut_, _q_bin_w_, _normalize_);
+  // MyCell.SQExact(_q_cut_, _q_bin_w_, _normalize_);
 
   /*
    * This function calculate XRD with bragg equation.

@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -63,7 +63,7 @@ double atomicFormFactor(double q, std::string_view element) {
 //-------------------- Average Atomic Scattering Factor ---------------------//
 //---------------------------------------------------------------------------//
 double avrgAtomicScatteringFactor(std::vector<double> q_,
-                                     std::string_view element) {
+				     std::string_view element) {
   int n = q_.size();
   std::vector<double> aux(n);
   std::vector<double> param = atomicFormFactorParameters(element);
@@ -82,7 +82,7 @@ double avrgAtomicScatteringFactor(std::vector<double> q_,
 //------------------------ Average Scattering Factor ------------------------//
 //---------------------------------------------------------------------------//
 double avrgScatteringFactor(std::vector<double> q_,
-                              std::vector<std::string> elements) {
+			      std::vector<std::string> elements) {
   int n_ = elements.size();
   double aux = 0.0;
   for (int i = 0; i < n_; ++i) {

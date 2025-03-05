@@ -2,7 +2,7 @@
 #define SRC_TEMPLATES_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -32,5 +32,5 @@ template <typename T> std::vector<T> NormalizeVector(const std::vector<T> &v);
 
 template <typename T>
 std::pair<bool, int> findInVector(const std::vector<T> &vec,
-                                  const T &element);
+				  const T &element);
 #endif // SRC_TEMPLATES_H_

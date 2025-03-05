@@ -2,7 +2,7 @@
 #define SRC_CELL_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2024 Isaías Rodríguez <isurwars@gmail.com>
+ * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the MIT License version as published in:
@@ -98,7 +98,7 @@ public:
     this->_lattice_parameters_ = lat;
   }
   void setFromVectors(std::vector<double>, std::vector<double>,
-                      std::vector<double>);
+		      std::vector<double>);
   // Lattice Vectors
   const std::array<double, 3> &v_a() { return _v_a_; };
   const std::array<double, 3> &v_b() { return _v_b_; };
@@ -159,7 +159,7 @@ public:
   // PAD Histograms (max angle, bin width)
   void planeAngleDistribution(double = 180.0, double = 1.0);
   // Structure Factor Calculation
-  void SQ(double = 25.0, double = 0.05, bool = false);
+  void SQ(double = 25.0, double = 0.0, bool = false);
   void SQExact(double = 0.05, double = 0.05, bool = false);
   // XRD Calculation
   void XRD(double = 1.5406, double = 5.0, double = 90.0, double = 1.0);
