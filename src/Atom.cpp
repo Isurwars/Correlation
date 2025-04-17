@@ -52,28 +52,30 @@ Atom::Atom() {
 //----------------------------------------------------------------------------//
 // Distance to the other atom
 double Atom::distance(const Atom &other_atom) const {
-  return std::hypot(this->position_[0] - other_atom.position_[0],
-                   this->position_[1] - other_atom.position_[1],
-                   this->position_[2] - other_atom.position_[2]);
+  return std::hypot(this->_position_[0] - other_atom._position_[0],
+                   this->_position_[1] - other_atom._position_[1],
+                   this->_position_[2] - other_atom._position_[2]);
 }
 
 // Get Image
-void Atom::getImage(Atom_Img& img) const {
-  img.element_id = this->element_id_;
+Atom_Img Atom::getImage() const {
+  Atom_Img img;
+  img.element_id = this->_element_id_;
   img.atom_id = this->id;
-  img.position = this->position_;
+  img.position = this->_position_;
+  return img;
 }
 
 // Get Bond Angle
 double Atom::getAngle(const Atom_Img& atom_A, const Atom_Img& atom_B) const {
   // Use const references to avoid unnecessary copies
-  const std::vector<double>& pos_A = atom_A.position;
-  const std::vector<double>& pos_B = atom_B.position;
-  const std::vector<double>& pos_C = this->_position_;
+  const std::array<double, 3> pos_A = atom_A.position;
+  const std::array<double, 3> pos_B = atom_B.position;
+  const std::array<double, 3> pos_C = this->_position_;
 
   // Calculate the vectors representing the bonds
-  std::vector<double> vA = {pos_A[0] - pos_C[0], pos_A[1] - pos_C[1], pos_A[2] - pos_C[2]};
-  std::vector<double> vB = {pos_B[0] - pos_C[0], pos_B[1] - pos_C[1], pos_B[2] - pos_C[2]};
+  std::array<double, 3> vA = {pos_A[0] - pos_C[0], pos_A[1] - pos_C[1], pos_A[2] - pos_C[2]};
+  std::array<double, 3> vB = {pos_B[0] - pos_C[0], pos_B[1] - pos_C[1], pos_B[2] - pos_C[2]};
 
   // Calculate the magnitudes of the vectors
   double vA_ = std::sqrt(vA[0] * vA[0] + vA[1] * vA[1] + vA[2] * vA[2]);
@@ -95,7 +97,7 @@ double Atom::getAngle(const Atom_Img& atom_A, const Atom_Img& atom_B) const {
 
 void Atom::addBondedAtom(const Atom_Img& atom_A) {
   try {
-    this->bonded_atoms_.push_back(atom_A);
+    this->_bonded_atoms_.push_back(atom_A);
   } catch (const std::bad_alloc& e) {
     throw std::runtime_error("Memory allocation failed in addBondedAtom: " + std::string(e.what()));
   }
@@ -103,8 +105,8 @@ void Atom::addBondedAtom(const Atom_Img& atom_A) {
 
 // Get a vector containing the IDs of all bonded atoms
 std::vector<int> Atom::getBondedAtomsID() const {
-  std::vector<int> atoms_ids(this->bonded_atoms_.size());
-  std::transform(this->bonded_atoms_.begin(), this->bonded_atoms_.end(), atoms_ids.begin(),
+  std::vector<int> atoms_ids(this->_bonded_atoms_.size());
+  std::transform(this->_bonded_atoms_.begin(), this->_bonded_atoms_.end(), atoms_ids.begin(),
                  [](const Atom_Img& atom_img) { return atom_img.atom_id; });
   return atoms_ids;
 } // getBondedAtomsID

@@ -71,8 +71,8 @@ public:
   void setPosition(std::array<double, 3> pos) { this->_position_ = pos; }
 
   std::vector<Atom_Img> bonded_atoms() { return this->_bonded_atoms_; }
-  std::vector<int> getBondedAtomsID();
-  void addBondedAtom(Atom_Img);
+  std::vector<int> getBondedAtomsID() const;
+  void addBondedAtom(const Atom_Img&);
 
   int element_id() { return this->_element_id_; }
   void setElementID(int ele_id) { this->_element_id_ = ele_id; }
@@ -86,10 +86,10 @@ public:
   //-------------------------------------------------------------------------//
 
   // Default functions for the object Atom
-  double distance(Atom &);
+  double distance(const Atom&) const;
   // Produce a minimal structure to compute the bond angle.
-  Atom_Img getImage();
+  Atom_Img getImage() const;
   // get the angle between other atom (Atom_Img) and this object
-  double getAngle(Atom_Img, Atom_Img);
+  double getAngle(const Atom_Img&, const Atom_Img&) const;
 };
 #endif // SRC_ATOM_H_
