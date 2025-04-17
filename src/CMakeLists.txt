@@ -1,11 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
 project(correlation)
 
 include_directories(../include)
-
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(correlation
     Atom.cpp
@@ -17,5 +14,3 @@ add_executable(correlation
     WriteFiles.cpp
     main.cpp
 )
-
-target_link_libraries(correlation m)
