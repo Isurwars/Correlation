@@ -15,7 +15,7 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include "Constants.hpp"
+#include "../include/Constants.hpp"
 
 /*
  * We define a simple function that returns the covalent radii.

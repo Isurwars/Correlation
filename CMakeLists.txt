@@ -1,23 +1,51 @@
-cmake_minimum_required(VERSION 3.20)
-project(Correlation)
+cmake_minimum_required(VERSION 3.14)
+project(Correlation VERSION 1.1 LANGUAGES CXX)
+
+# Set default install path (customize this path)
+set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
 
 # Enable C++23
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Find and link TBB (critical for PSTL parallel execution)
-find_package(TBB REQUIRED COMPONENTS tbb tbbmalloc)  # Include both TBB components
+# Find TBB (critical for PSTL)
+find_package(TBB REQUIRED COMPONENTS tbb tbbmalloc)
 
-# Define PSTL's TBB backend explicitly (required for some compilers)
-add_compile_definitions(_PSTL_PAR_BACKEND_TBB)  # Force PSTL to use TBB
+# Include directory for headers
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-include_directories(src)
+# Add src subdirectory
 add_subdirectory(src)
 
-# Link TBB to your target
-target_link_libraries(correlation PRIVATE
-    TBB::tbb
-    TBB::tbbmalloc  # Include if using scalable memory allocation
+
+#-----------------------------------------------------------
+# Testing setup (using doctest)
+#-----------------------------------------------------------
+# Enable testing framework
+enable_testing()
+
+include(FetchContent)
+FetchContent_Declare(
+  GoogleTest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
 )
 
-install(TARGETS correlation DESTINATION bin)
+# Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(GoogleTest)
+
+add_subdirectory(tests)
+
+
+#-----------------------------------------------------------
+# Install setup
+#-----------------------------------------------------------
+
+# Install rules (executable)
+install(TARGETS correlation
+    RUNTIME DESTINATION bin
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+)

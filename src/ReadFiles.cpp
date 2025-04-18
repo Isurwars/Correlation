@@ -15,7 +15,7 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include "ReadFiles.hpp"
+#include "../include/ReadFiles.hpp"
 
 #include <array>
 #include <cerrno>
@@ -29,8 +29,8 @@
 #include <utility>
 #include <vector>
 
-#include "Atom.hpp"
-#include "Templates.hpp"
+#include "../include/Atom.hpp"
+#include "../include/Templates.hpp"
 
 Cell readCar(std::string file_name) {
   /*

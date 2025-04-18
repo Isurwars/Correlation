@@ -15,7 +15,7 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include "Cell.hpp"
+#include "../include/Cell.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -28,11 +28,11 @@
 #include <regex>
 #include <utility>
 
-#include "Atom.hpp"
-#include "Constants.hpp"
-#include "Smoothing.hpp"
-#include "StructureFactor.hpp"
-#include "Templates.hpp"
+#include "../include/Atom.hpp"
+#include "../include/Constants.hpp"
+#include "../include/Smoothing.hpp"
+#include "../include/StructureFactor.hpp"
+#include "../include/Templates.hpp"
 
 //---------------------------------------------------------------------------//
 //---------------------------- Cell Constructors ----------------------------//

@@ -15,11 +15,11 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include "Smoothing.hpp"
+#include "../include/Smoothing.hpp"
 
 #include <cmath> // For exp and pow
 
-#include "Constants.hpp"
+#include "../include/Constants.hpp"
 
 std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
 					double r0, double sigma) {

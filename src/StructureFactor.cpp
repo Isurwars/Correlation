@@ -15,11 +15,11 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include "StructureFactor.hpp"
+#include "../include/StructureFactor.hpp"
 
 #include <numeric>
 
-#include "Constants.hpp"
+#include "../include/Constants.hpp"
 
 //---------------------------------------------------------------------------//
 //---------------------------------- Sinc -----------------------------------//

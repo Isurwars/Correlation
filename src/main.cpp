@@ -24,11 +24,11 @@
 #include <list>       // To handle the list of atoms
 #include <string>     // String manipulation and algorithms
 
-#include "Atom.hpp"       // Atom Class
-#include "Cell.hpp"       // Cell Class
-#include "ReadFiles.hpp"  // File reading and parsing
-#include "Smoothing.hpp"  // Smoothing functions
-#include "WriteFiles.hpp" // Write Output files
+#include "../include/Atom.hpp"       // Atom Class
+#include "../include/Cell.hpp"       // Cell Class
+#include "../include/ReadFiles.hpp"  // File reading and parsing
+#include "../include/Smoothing.hpp"  // Smoothing functions
+#include "../include/WriteFiles.hpp" // Write Output files
 
 inline std::string _in_file_name_ = "";
 inline std::string _out_file_name_ = "";
