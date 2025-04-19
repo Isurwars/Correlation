@@ -1,9 +1,26 @@
-add_executable(atom_test
-  Atom_test.cpp
-  ../src/Atom.cpp
-)
+# Find testing framework
+find_package(GTest REQUIRED)
 
-target_link_libraries(atom_test PRIVATE correlation_lib GTest::gtest_main)
+# Find all test source files
+file(GLOB TEST_SOURCES "*.cpp")
 
-include(GoogleTest)
-gtest_discover_tests(atom_test)
+# Create and register tests
+foreach(test_source ${TEST_SOURCES})
+    get_filename_component(test_name ${test_source} NAME_WE)
+
+    add_executable(${test_name} ${test_source})
+
+    target_link_libraries(${test_name} PRIVATE
+	correlation_lib
+	GTest::GTest
+	GTest::Main
+	TBB::tbb
+	TBB::tbbmalloc
+    )
+
+    target_include_directories(${test_name} PRIVATE
+	${PROJECT_SOURCE_DIR}/include
+    )
+
+    add_test(NAME ${test_name} COMMAND ${test_name})
+endforeach()

@@ -304,8 +304,8 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
   Atom img_atom;
   int i, j, k, i_, j_, k_;
   double aux_dist;
-  double h_ = 1.0 / this->_atoms_.size();
-  double progress = 0.0;
+  //double h_ = 1.0 / this->_atoms_.size();
+  //double progress = 0.0;
 
   // Number of elements in the Cell
   const int n = this->_elements_.size();
@@ -397,21 +397,21 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
 	}
       }
     }
-    progress += h_;
-    this->updateProgressBar(progress);
+    //progress += h_;
+    //this->updateProgressBar(progress);
   };
 
   // Parallelize the main loop
   std::for_each(std::execution::par, std::begin(this->_atoms_),
 		std::end(this->_atoms_), calculate_distances);
-  this->updateProgressBar(1.0);
+  //this->updateProgressBar(1.0);
   this->_distances_ = temp_dist;
 } // Cell::distancePopulation
 
 //---------------------------------------------------------------------------//
 //--------------------------- Coordination Number ---------------------------//
 //---------------------------------------------------------------------------//
-void Cell::coorcinationNumber() {
+void Cell::coordinationNumber() {
   int i, j;
   // Step 1: Find the maximum number of bonds in the cell
   int max_Nc = 0;

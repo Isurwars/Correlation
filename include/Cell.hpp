@@ -104,6 +104,8 @@ public:
   const std::array<double, 3> &v_b() { return _v_b_; };
   const std::array<double, 3> &v_c() { return _v_c_; };
   void setLatticeVectors();
+  // Volume
+  double getVolume() { return this->volume; }
   // Atoms
   std::vector<Atom> atoms() { return this->_atoms_; }
   void setAtoms(const std::vector<Atom> &ats) { this->_atoms_ = ats; }
@@ -121,6 +123,8 @@ public:
   void addElementNumber(int ele) { this->_element_numbers_.push_back(ele); }
   // Distances
   int distancesSize() { return this->_distances_.size(); }
+  // Bonds
+  std::vector<std::vector<double>> bond_length() { return this->_bond_length_; }
   // Distribution Functions
   std::vector<std::vector<double>> g() { return this->_g_; }
   std::vector<std::vector<double>> J() { return this->_J_; }
@@ -151,7 +155,7 @@ public:
   // Calculate Distances (max distance between atoms)
   void distancePopulation(double, bool);
   // Coordination Numbers Calculation
-  void coorcinationNumber();
+  void coordinationNumber();
   // Bond-Angle Calulation (degrees=true, radian=false)
   void planeAnglePopulation(bool = true);
   // RDF Histograms  (max distance between atoms, bin width, normalize)

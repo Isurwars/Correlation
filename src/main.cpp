@@ -348,7 +348,7 @@ int main(int argc, char **argv) {
    * This function calculates the partial coordination number for pairs of
    * elements. Bonded Atoms use the same parameters for PAD.
    */
-  MyCell.coorcinationNumber();
+  MyCell.coordinationNumber();
 
   /*
    * This function calculates the angle between every atom and all pairs
