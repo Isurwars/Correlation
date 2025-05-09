@@ -331,12 +331,13 @@ int main(int argc, char **argv) {
   }
   std::cout << "File " << _in_file_name_ << " opened successfully."
 	    << std::endl;
-  // Create Bond distance Matrix and element_ids
+  // Create Bond distance Matrix
   MyCell.populateBondLength(_bond_par_);
   if (_bond_in_file_) {
     /*Read the Bond Distances from the external file*/
-    MyCell.readBond(_bond_file_name_);
+    MyCell.setBondLength(readBond(_bond_file_name_, MyCell));
   }
+
   /*
    * This function calculates the distances between every pair of atoms
    * in the structure. A supercell method is used to create the images

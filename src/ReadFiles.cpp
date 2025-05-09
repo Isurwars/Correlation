@@ -25,12 +25,69 @@
 #include <list>
 #include <ostream>
 #include <regex>
-#include <string.h>
+#include <string>
 #include <utility>
 #include <vector>
 
-#include "../include/Atom.hpp"
-#include "../include/Templates.hpp"
+//---------------------------------------------------------------------------//
+//----------------------------- Read Bonds File -----------------------------//
+//---------------------------------------------------------------------------//
+std::vector<std::vector<double>> readBond(std::string file_name, Cell cell) {
+  /*
+   * This function reads the in_bond_file to populate the _bond_length_ Tensor.
+   * The file should be in the format:
+   * element_B element_A distance(in Angstroms)
+   *
+   * For example:
+   *
+   * Si Si 2.29
+   * Mg Mg 2.85
+   * C  C  1.55
+   * C  Si 1.86
+   * Si Mg 2.57
+   * C  Mg 2.07
+   *
+   * Any missing pair of elements will use the bond_parameter as a default.
+   */
+  std::ifstream myfile(file_name);
+  std::smatch match;
+  std::vector<std::string> elements = cell.elements();
+  std::vector<std::vector<double>> bonds = cell.bond_length();
+  /*
+   * Every line should have two elements and a bond length separeted by spaces:
+   *
+   * element_A element_B _bond_length_
+   */
+
+  std::regex regex_bond("^([A-Z][a-z]?)"
+			"(\\s+)"
+			"([A-Z][a-z]?)"
+			"(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
+
+  if (myfile.is_open()) {
+    /* Check if the file is open */
+    std::string line;
+    while (std::getline(myfile, line)) {
+      /* Read line by line */
+      if (std::regex_search(line, match, regex_bond)) {
+	/* Bond found */
+	int i, j;
+	std::pair<bool, int> IdA = findInVector(elements, std::string(match.str(1).data()));
+	if (IdA.first)
+	  i = IdA.second;
+	std::pair<bool, int> IdB = findInVector(elements, std::string(match.str(1).data()));
+	if (IdB.first)
+	  j = IdB.second;
+	double dist = std::stof(match.str(4).data());
+	if (IdA.first && IdB.first) {
+	  bonds[i][j] = dist;
+	  bonds[j][i] = dist;
+	}
+      }
+    }
+  }
+  return bonds;
+} // readBond
 
 Cell readCar(std::string file_name) {
   /*

@@ -1,5 +1,5 @@
-#ifndef SRC_ATOM_H_
-#define SRC_ATOM_H_
+#ifndef INCLUDE_ATOM_H_
+#define INCLUDE_ATOM_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
@@ -18,15 +18,9 @@
  * ----------------------------------------------------------------------------
  */
 #include <array>
+#include <atomic>
 #include <string>
 #include <vector>
-
-// Minimal structure that represents an atom
-struct Atom_Img {
-  int element_id;
-  int atom_id;
-  std::array<double, 3> position;
-};
 
 class Atom {
   /* --------------------------------------------------------------------------
@@ -46,16 +40,16 @@ class Atom {
 private:
   int id;
   std::array<double, 3> _position_;
-  std::vector<Atom_Img> _bonded_atoms_;
-  int _element_id_;
+  std::vector<Atom> _bonded_atoms_;
   std::string _element_;
-  static int _num_of_atoms_;
+  int _element_id_;
 
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
-
+  Atom(std::string, std::array<double, 3>, int, int);
+  Atom(std::string, std::array<double, 3>, int);
   Atom(std::string, std::array<double, 3>);
   Atom();
   void setAll(std::string, std::array<double, 3>);
@@ -70,26 +64,25 @@ public:
   std::array<double, 3> position() { return this->_position_; }
   void setPosition(std::array<double, 3> pos) { this->_position_ = pos; }
 
-  std::vector<Atom_Img> bonded_atoms() { return this->_bonded_atoms_; }
-  std::vector<int> getBondedAtomsID() const;
-  void addBondedAtom(const Atom_Img&);
-
-  int element_id() { return this->_element_id_; }
-  void setElementID(int ele_id) { this->_element_id_ = ele_id; }
+  std::vector<Atom> bonded_atoms() { return this->_bonded_atoms_; }
+  std::vector<int> getBondedAtomsID();
+  void addBondedAtom(const Atom &);
 
   std::string element() { return this->_element_; }
   void setElement(const std::string &ele) { this->_element_ = ele; }
-  static int getNumberOfAtoms() { return _num_of_atoms_; }
+
+  int getElementID() { return this->_element_id_; }
+  void setElementID(int num) { this->_element_id_ = num; }
 
   //-------------------------------------------------------------------------//
   //------------------------------- Methods ---------------------------------//
   //-------------------------------------------------------------------------//
 
   // Default functions for the object Atom
-  double distance(const Atom&) const;
+  double distance(const Atom &) const;
   // Produce a minimal structure to compute the bond angle.
-  Atom_Img getImage() const;
+  // Atom_Img getImage() const;
   // get the angle between other atom (Atom_Img) and this object
-  double getAngle(const Atom_Img&, const Atom_Img&) const;
+  double getAngle(Atom &, Atom &);
 };
-#endif // SRC_ATOM_H_
+#endif // INCLUDE_ATOM_H_

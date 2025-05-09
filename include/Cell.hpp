@@ -94,9 +94,6 @@ public:
   std::array<double, 6> lattice_parameters() {
     return this->_lattice_parameters_;
   }
-  void setLatticeParameters(std::array<double, 6> lat) {
-    this->_lattice_parameters_ = lat;
-  }
   void setFromVectors(std::vector<double>, std::vector<double>,
 		      std::vector<double>);
   // Lattice Vectors
@@ -104,12 +101,14 @@ public:
   const std::array<double, 3> &v_b() { return _v_b_; };
   const std::array<double, 3> &v_c() { return _v_c_; };
   void setLatticeVectors();
+  void setLatticeParameters(std::array<double, 6>);
   // Volume
   double getVolume() { return this->volume; }
   // Atoms
   std::vector<Atom> atoms() { return this->_atoms_; }
-  void setAtoms(const std::vector<Atom> &ats) { this->_atoms_ = ats; }
-  void addAtom(Atom at) { this->_atoms_.push_back(at); }
+  void addAtom(Atom);
+  void setAtoms(std::vector<Atom>);
+  int getElementID(std::string);
   // Elements
   std::vector<std::string> elements() { return this->_elements_; }
   std::vector<int> element_numbers() { return this->_element_numbers_; }
@@ -125,6 +124,9 @@ public:
   int distancesSize() { return this->_distances_.size(); }
   // Bonds
   std::vector<std::vector<double>> bond_length() { return this->_bond_length_; }
+  void setBondLength(const std::vector<std::vector<double>> &bonds) {
+    this->_bond_length_ = bonds;
+  }
   // Distribution Functions
   std::vector<std::vector<double>> g() { return this->_g_; }
   std::vector<std::vector<double>> J() { return this->_J_; }
@@ -143,13 +145,15 @@ public:
   //-------------------------------------------------------------------------//
   //------------------------------- Methods ---------------------------------//
   //-------------------------------------------------------------------------//
+  // Populate element_id in all  atoms
+  void populateElementID();
+  // Populate element_numbers
+  void populateElementNumbers();
   // In Cell corrected positions
   void correctPositions();
   void correctFracPositions();
   // Populate the Bond length Matrix
   void populateBondLength(double);
-  //  Read Bond File
-  void readBond(std::string);
   // Update Progress Bar
   void updateProgressBar(double);
   // Calculate Distances (max distance between atoms)
@@ -164,7 +168,7 @@ public:
   void planeAngleDistribution(double = 180.0, double = 1.0);
   // Structure Factor Calculation
   void SQ(double = 25.0, double = 0.0, bool = false);
-  void SQExact(double = 0.05, double = 0.05, bool = false);
+  // void SQExact(double = 0.05, double = 0.05, bool = false);
   // XRD Calculation
   void XRD(double = 1.5406, double = 5.0, double = 90.0, double = 1.0);
   // RDF Smoothing (sigma)

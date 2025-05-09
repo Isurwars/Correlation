@@ -3,6 +3,7 @@ add_library(correlation_lib STATIC
     Atom.cpp
     Cell.cpp
     Constants.cpp
+    LinearAlgebra.cpp
     ReadFiles.cpp
     Smoothing.cpp
     StructureFactor.cpp
@@ -14,6 +15,7 @@ add_executable(correlation
     Atom.cpp
     Cell.cpp
     Constants.cpp
+    LinearAlgebra.cpp
     ReadFiles.cpp
     Smoothing.cpp
     StructureFactor.cpp

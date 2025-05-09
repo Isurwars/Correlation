@@ -19,11 +19,14 @@
  */
 #include <string>
 
-#include "Cell.hpp"
+#include "../include/Atom.hpp"
+#include "../include/Cell.hpp"
+#include "../include/Templates.hpp"
 
 //---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
+std::vector<std::vector<double>> readBond(std::string, Cell);
 Cell readCar(std::string);
 Cell readCell(std::string);
 Cell readOnetepDat(std::string);

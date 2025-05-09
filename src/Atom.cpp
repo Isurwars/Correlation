@@ -23,8 +23,6 @@
 #include <list>
 #include <numeric>
 
-int Atom::_num_of_atoms_ = 0;
-
 //---------------------------------------------------------------------------//
 //------------------------------ Constructors -------------------------------//
 //---------------------------------------------------------------------------//
@@ -32,19 +30,34 @@ void Atom::setAll(std::string ele, std::array<double, 3> pos) {
   this->_element_ = ele;
   this->_position_ = pos;
 }
-// Complete constructor for the Atom object
+
+// FULL constructor for the Atom object
+Atom::Atom(std::string ele, std::array<double, 3> pos, int id, int ele_id) {
+  this->_element_ = ele;
+  this->_position_ = pos;
+  this->id = id;
+  this->_element_id_ = ele_id;
+}
+
+// No FULL constructor for the Atom object
+Atom::Atom(std::string ele, std::array<double, 3> pos, int id) {
+  this->_element_ = ele;
+  this->_position_ = pos;
+  this->id = id;
+}
+
+// No ID constructor for the Atom object
 Atom::Atom(std::string ele, std::array<double, 3> pos) {
   this->_element_ = ele;
   this->_position_ = pos;
-  this->id = Atom::_num_of_atoms_;
-  Atom::_num_of_atoms_++;
+  this->id = -1;
 }
+
 // Default constructor for the Atom object
 Atom::Atom() {
   this->_element_ = "H";
   this->_position_ = {0.0, 0.0, 0.0};
-  this->id = Atom::_num_of_atoms_;
-  Atom::_num_of_atoms_++;
+  this->id = -1;
 }
 
 //----------------------------------------------------------------------------//
@@ -58,19 +71,21 @@ double Atom::distance(const Atom &other_atom) const {
 }
 
 // Get Image
+/*
 Atom_Img Atom::getImage() const {
   Atom_Img img;
-  img.element_id = this->_element_id_;
+  img.element = this->_element_;
   img.atom_id = this->id;
   img.position = this->_position_;
   return img;
 }
+ */
 
 // Get Bond Angle
-double Atom::getAngle(const Atom_Img &atom_A, const Atom_Img &atom_B) const {
+double Atom::getAngle(Atom &atom_A, Atom &atom_B) {
   // Use const references to avoid unnecessary copies
-  const std::array<double, 3> pos_A = atom_A.position;
-  const std::array<double, 3> pos_B = atom_B.position;
+  const std::array<double, 3> pos_A = atom_A.position();
+  const std::array<double, 3> pos_B = atom_B.position();
   const std::array<double, 3> pos_C = this->_position_;
 
   // Calculate the vectors representing the bonds
@@ -97,7 +112,7 @@ double Atom::getAngle(const Atom_Img &atom_A, const Atom_Img &atom_B) const {
   return std::acos(aux);
 } // Get Bond Angle
 
-void Atom::addBondedAtom(const Atom_Img &atom_A) {
+void Atom::addBondedAtom(const Atom &atom_A) {
   try {
     this->_bonded_atoms_.push_back(atom_A);
   } catch (const std::bad_alloc &e) {
@@ -107,10 +122,10 @@ void Atom::addBondedAtom(const Atom_Img &atom_A) {
 } // addBondedAtom
 
 // Get a vector containing the IDs of all bonded atoms
-std::vector<int> Atom::getBondedAtomsID() const {
+std::vector<int> Atom::getBondedAtomsID() {
   std::vector<int> atoms_ids(this->_bonded_atoms_.size());
   std::transform(this->_bonded_atoms_.begin(), this->_bonded_atoms_.end(),
 		 atoms_ids.begin(),
-		 [](const Atom_Img &atom_img) { return atom_img.atom_id; });
+		 [](Atom &atom_img) { return atom_img.getID(); });
   return atoms_ids;
 } // getBondedAtomsID

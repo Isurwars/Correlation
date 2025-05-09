@@ -23,6 +23,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <numeric>
 #include <ostream>
 #include <regex>
@@ -30,6 +31,7 @@
 
 #include "../include/Atom.hpp"
 #include "../include/Constants.hpp"
+#include "../include/LinearAlgebra.hpp"
 #include "../include/Smoothing.hpp"
 #include "../include/StructureFactor.hpp"
 #include "../include/Templates.hpp"
@@ -112,53 +114,96 @@ void Cell::setLatticeVectors() {
 	  (this->_v_b_[0] * this->_v_c_[1] - this->_v_b_[1] * this->_v_c_[0]);
 } // Cell::setLatticeVectors
 
+void Cell::setLatticeParameters(std::array<double, 6> lat) {
+  this->_lattice_parameters_ = lat;
+  this->setLatticeVectors();
+} // Cell::setLatticeparameters
+
+//---------------------------------------------------------------------------//
+//---------------------------------  Atoms  ---------------------------------//
+//---------------------------------------------------------------------------//
+void Cell::addAtom(Atom at) {
+  at.setID(this->_atoms_.size());
+  auto ele_id = findIndex(this->_elements_, at.element());
+  if (!ele_id.has_value())
+    this->addElement(at.element());
+  this->_atoms_.push_back(at);
+} // Cell::addAtom
+
+void Cell::setAtoms(std::vector<Atom> ats) {
+  this->_atoms_.clear();
+  for (auto &at : ats) {
+    at.setID(this->_atoms_.size());
+    this->_atoms_.push_back(at);
+  }
+} // Cell::setAtoms
+
+//---------------------------------------------------------------------------//
+//-------------------------------- Elements ---------------------------------//
+//---------------------------------------------------------------------------//
+void Cell::populateElementID() {
+
+  // Create a lookup map for O(1) element ID access
+  std::unordered_map<std::string, int> element_index_map;
+  element_index_map.reserve(_elements_.size());
+
+  // Build element index map once
+  for (size_t i = 0; i < this->_elements_.size(); ++i) {
+    element_index_map[this->_elements_[i]] = i;
+  }
+
+  // Assign element IDs using the map
+  for (Atom &atom : this->_atoms_) {
+    const auto &element = atom.element();
+    const auto it = element_index_map.find(element);
+
+    if (it == element_index_map.end()) {
+      throw std::runtime_error("Element '" + element +
+			       "' not found in elements list");
+    }
+
+    atom.setElementID(it->second);
+  }
+} // Cell::populateElementID
+
+void Cell::populateElementNumbers() {
+  std::vector<int> temp_num_atoms(this->elements().size(), 0);
+  this->populateElementID();
+  for (auto &atom : this->_atoms_) {
+    temp_num_atoms[atom.getElementID()]++;
+  }
+  this->setElementsNumbers(temp_num_atoms);
+} // Cell::populateElementNumbers
+
 //---------------------------------------------------------------------------//
 //---------------------------  Correct Positions ----------------------------//
 //---------------------------------------------------------------------------//
 void Cell::correctPositions() {
-  std::array<double, 3> aux_pos;
-  std::vector<int> temp_num_atoms(this->elements().size(), 0);
+
+  // Create lattice matrix
+  Matrix3D L = {{{this->_v_a_[0], this->_v_b_[0], this->_v_c_[0]},
+		 {this->_v_a_[1], this->_v_b_[1], this->_v_c_[1]},
+		 {this->_v_a_[2], this->_v_b_[2], this->_v_c_[2]}}};
+  Matrix3D L_inv = invertMatrix(L);
 
   for (auto &MyAtom : this->_atoms_) {
-    temp_num_atoms[MyAtom.element_id()]++;
-    aux_pos = MyAtom.position();
+    Vector3D pos = {
+	{MyAtom.position()[0], MyAtom.position()[1], MyAtom.position()[2]}};
 
-    // Adjust position along the c-axis
-    double k = aux_pos[2] / this->_v_c_[2];
+    // Convert to fractional coordinates
+    Vector3D frac = matrixVectorMultiply(L_inv, pos);
+
+    // Wrap fractional coordinates to [0, 1)
     for (int m = 0; m < 3; ++m) {
-      aux_pos[m] -= k * this->_v_c_[m];
+      frac.data[m] -= std::floor(frac.data[m]);
     }
 
-    // Adjust position along the b-axis
-    double j = aux_pos[1] / this->_v_b_[1];
-    for (int m = 0; m < 3; ++m) {
-      aux_pos[m] -= j * this->_v_b_[m];
-    }
+    // Convert back to Cartesian coordinates
+    Vector3D corrected_pos = matrixVectorMultiply(L, frac);
 
-    // Adjust position along the a-axis
-    double i = aux_pos[0] / this->_v_a_[0];
-
-    // Determine the integer indices
-    int i_ = (i >= -1e-15) ? static_cast<int>(std::trunc(i))
-			   : static_cast<int>(std::trunc(i)) - 1;
-    int j_ = (j >= -1e-15) ? static_cast<int>(std::trunc(j))
-			   : static_cast<int>(std::trunc(j)) - 1;
-    int k_ = (k >= -1e-15) ? static_cast<int>(std::trunc(k))
-			   : static_cast<int>(std::trunc(k)) - 1;
-
-    // Correct the position
-    for (int m = 0; m < 3; ++m) {
-      aux_pos[m] =
-	  MyAtom.position()[m] -
-	  (i_ * this->_v_a_[m] + j_ * this->_v_b_[m] + k_ * this->_v_c_[m]);
-    }
-
-    // Set the new position
-    MyAtom.setPosition(aux_pos);
+    MyAtom.setPosition(
+	{corrected_pos.data[0], corrected_pos.data[1], corrected_pos.data[2]});
   }
-
-  // Update the number of atoms per element
-  this->setElementsNumbers(temp_num_atoms);
 } // Cell::CorrectPositions
 
 //---------------------------------------------------------------------------//
@@ -169,9 +214,9 @@ void Cell::correctFracPositions() {
 
   for (auto &MyAtom : this->_atoms_) {
     aux_pos = MyAtom.position();
-    double i = aux_pos[0];
-    double j = aux_pos[1];
-    double k = aux_pos[2];
+    double i = aux_pos[0] - std::floor(aux_pos[0]);
+    double j = aux_pos[1] - std::floor(aux_pos[1]);
+    double k = aux_pos[2] - std::floor(aux_pos[2]);
     aux_pos[0] = i * this->_v_a_[0] + j * this->_v_b_[0] + k * this->_v_c_[0];
     aux_pos[1] = i * this->_v_a_[1] + j * this->_v_b_[1] + k * this->_v_c_[1];
     aux_pos[2] = i * this->_v_a_[2] + j * this->_v_b_[2] + k * this->_v_c_[2];
@@ -184,18 +229,10 @@ void Cell::correctFracPositions() {
 //-------------------------- Populate Bond Length ---------------------------//
 //---------------------------------------------------------------------------//
 void Cell::populateBondLength(double Bond_Factor) {
-  std::pair<bool, int> MyId;
-
   // Number of elements in the Cell
   const int n = this->elements().size();
   // Initialize Bond length matrix (nxn) as zeros
   std::vector<std::vector<double>> temp_matrix(n, std::vector<double>(n, 0.0));
-
-  // Iterate in Atoms list to assign the id in the matrix to every atom.
-  for (auto &MyAtom : this->_atoms_) {
-    MyId = findInVector(this->elements(), MyAtom.element());
-    MyAtom.setElementID(MyId.second);
-  }
 
   for (int i = 0; i < n; i++) {
     double aux = covalentRadii(this->elements()[i]);
@@ -208,309 +245,274 @@ void Cell::populateBondLength(double Bond_Factor) {
 } // Cell::populateBondlength
 
 //---------------------------------------------------------------------------//
-//----------------------------- Read Bonds File -----------------------------//
-//---------------------------------------------------------------------------//
-void Cell::readBond(std::string file_name) {
-  /*
-   * This function reads the in_bond_file to populate the _bond_length_ Tensor.
-   * The file should be in the format:
-   * element_B element_A distance(in Angstroms)
-   *
-   * For example:
-   *
-   * Si Si 2.29
-   * Mg Mg 2.85
-   * C  C  1.55
-   * C  Si 1.86
-   * Si Mg 2.57
-   * C  Mg 2.07
-   *
-   * Any missing pair of elements will use the bond_parameter as a default.
-   */
-  std::ifstream myfile(file_name);
-  std::smatch match;
-  std::pair<bool, int> MyIdA, MyIdB;
-
-  /*
-   * Every line should have two elements and a bond length separeted by spaces:
-   *
-   * element_A element_B _bond_length_
-   */
-
-  std::regex regex_bond("^([A-Z][a-z]?)"
-			"(\\s+)"
-			"([A-Z][a-z]?)"
-			"(\\s+[-+]?[0-9]+[.]?[0-9]*([eE][-+]?[0-9]+)?)");
-
-  if (myfile.is_open()) {
-    /* Check if the file is open */
-    std::string line;
-    while (std::getline(myfile, line)) {
-      /* Read line by line */
-      if (std::regex_search(line, match, regex_bond)) {
-	/* Bond found */
-	int i, j;
-	double dist;
-	MyIdA =
-	    findInVector(this->elements(), std::string(match.str(1).data()));
-	if (MyIdA.first) {
-	  i = MyIdA.second;
-	}
-	MyIdB =
-	    findInVector(this->elements(), std::string(match.str(3).data()));
-	if (MyIdB.first) {
-	  j = MyIdB.second;
-	}
-	dist = std::stof(match.str(4).data());
-	if (MyIdA.first && MyIdB.first) {
-	  this->_bond_length_[i][j] = dist;
-	  this->_bond_length_[j][i] = dist;
-	}
-      }
-    }
-  }
-} // readBond
-
-//---------------------------------------------------------------------------//
-//--------------------------- Update Progress Bar ---------------------------//
-//---------------------------------------------------------------------------//
-void Cell::updateProgressBar(double pos) {
-  int barWidth = 50;
-  int progress = round(pos * barWidth);
-  std::cout << "\r[";
-
-  for (int i = 0; i < barWidth; ++i) {
-    if (i < progress) {
-      std::cout << "=";
-    } else if (i == progress) {
-      std::cout << ">";
-    } else {
-      std::cout << " ";
-    }
-  }
-  std::cout << "] " << int(pos * 100.0) << " %";
-  if (pos == 1.0) {
-    std::cout << std::endl;
-  } else {
-    std::cout.flush();
-  }
-} // Cell::updateProgressBar
-
-//---------------------------------------------------------------------------//
 //--------------------------- Distance Population ---------------------------//
 //---------------------------------------------------------------------------//
 void Cell::distancePopulation(double r_cut, bool self_interaction) {
-  std::array<double, 3> aux_pos;
-  Atom img_atom;
-  int i, j, k, i_, j_, k_;
-  double aux_dist;
-  //double h_ = 1.0 / this->_atoms_.size();
-  //double progress = 0.0;
+  // Validate inputs
+  if (r_cut <= 0)
+    throw std::invalid_argument("r_cut must be positive");
+  if (this->_v_a_.empty() || this->_v_b_.empty() || this->_v_c_.empty())
+    throw std::logic_error("Cell vectors not initialized");
 
-  // Number of elements in the Cell
-  const int n = this->_elements_.size();
-  // This matrix stores the distances between different types of elements
+  const size_t n = this->_elements_.size();
   std::vector<std::vector<std::vector<double>>> temp_dist(
       n, std::vector<std::vector<double>>(n));
+  const double r_cut_sq = r_cut * r_cut;
 
-  // Correct the atom positions to be inside the cell
+  if (this->_bond_length_.empty())
+    this->populateBondLength(1.2);
+
+  this->populateElementNumbers();
   this->correctPositions();
 
   // Calculate supercell dimensions
-  k_ = ceil(r_cut / this->_v_c_[2]);
-  j_ = ceil(r_cut / this->_v_b_[1]);
-  i_ = ceil(r_cut / this->_v_a_[0]);
+  int k_ = ceil(r_cut / this->_v_c_[2]);
+  int j_ = ceil(r_cut / this->_v_b_[1]);
+  int i_ = ceil(r_cut / this->_v_a_[0]);
 
   // Force self_interaction in case of a small supercell
   if (k_ * j_ * i_ > 8)
     self_interaction = true;
 
-  /*
-   * This is the main loop to calculate the distance formed by every two atoms.
-   *
-   * The first loop iterates over every atom in the cell.
-   * The second loop iterate over every atom in a SuperCell.
-   * This is by far the most demanding cicle of the entire program and it is
-   * currently in parallelization process.
-   *
-   * This loop can be further optimize by applying a Divide&Conquer Algorithm,
-   * However the code needs a major refactor, and is one of the main objectives
-   * For V2.0
-   */
-  auto calculate_distances = [&](Atom &atom_A) {
-    int id_A = findInVector(this->_elements_, atom_A.element()).second;
-    for (Atom &atom_B : this->_atoms_) {
-      if (atom_A.getID() != atom_B.getID() || self_interaction) {
-	int id_B = findInVector(this->_elements_, atom_B.element()).second;
-	img_atom = atom_B;
-	for (i = -i_; i <= i_; i++) {
-	  for (j = -j_; j <= j_; j++) {
-	    for (k = -k_; k <= k_; k++) {
-	      aux_pos = atom_B.position();
-	      aux_pos[0] +=
-		  i * this->_v_a_[0] + j * this->_v_b_[0] + k * this->_v_c_[0];
-	      aux_pos[1] += j * this->_v_b_[1] + k * this->_v_c_[1];
-	      aux_pos[2] += k * this->_v_c_[2];
-	      img_atom.setPosition(aux_pos);
-	      aux_dist = atom_A.distance(img_atom);
-	      if (aux_dist <= r_cut) {
-		// ignore self-interaction
-		if (aux_dist == 0 && (atom_A.getID() == atom_B.getID())) {
-		  continue;
-		}
-		// check for atoms collitions
-		if (aux_dist < 0.1) {
-		  std::cerr << "\nERROR: The atoms:\n"
-			    << atom_A.element() << "_" << atom_A.getID()
-			    << " in position (" << atom_A.position()[0] << ", "
-			    << atom_A.position()[1] << ", "
-			    << atom_A.position()[2] << "),\n"
-			    << atom_B.element() << "_" << atom_B.getID()
-			    << " in position (" << img_atom.position()[0]
-			    << ", " << img_atom.position()[1] << ", "
-			    << img_atom.position()[2] << ").\n"
-			    << "Have a distance less than 10 pm.\n";
-		  exit(1);
-		}
-		if (aux_dist < 0.5) {
-		  std::cerr << "\nWARNING: The atoms:\n"
-			    << atom_A.element() << "_" << atom_A.getID()
-			    << " in position (" << atom_A.position()[0] << ", "
-			    << atom_A.position()[1] << ", "
-			    << atom_A.position()[2] << "),\n"
-			    << atom_B.element() << "_" << atom_B.getID()
-			    << " in position (" << img_atom.position()[0]
-			    << ", " << img_atom.position()[1] << ", "
-			    << img_atom.position()[2] << ").\n"
-			    << "Have a distance less than the Bohr Radius.\n";
-		}
-		// If bonded, add it to bond vector
-		if (aux_dist <= this->_bond_length_[atom_A.element_id()]
-						   [img_atom.element_id()]) {
-		  atom_A.addBondedAtom(img_atom.getImage());
-		}
-		// Add distance to matrix
-		temp_dist[id_A][id_B].push_back(aux_dist);
-	      }
-	    }
-	  }
-	}
+  // Precompute displacements
+  std::vector<std::array<double, 3>> displacements;
+  for (int i = -i_; i <= i_; ++i) {
+    for (int j = -j_; j <= j_; ++j) {
+      for (int k = -k_; k <= k_; ++k) {
+	displacements.push_back(
+	    {i * this->_v_a_[0] + j * this->_v_b_[0] + k * this->_v_c_[0],
+	     i * this->_v_a_[1] + j * this->_v_b_[1] + k * this->_v_c_[1],
+	     i * this->_v_a_[2] + j * this->_v_b_[2] + k * this->_v_c_[2]});
       }
     }
-    //progress += h_;
-    //this->updateProgressBar(progress);
+  }
+
+  // Thread-safe error handling
+  std::vector<std::mutex> global_mutex(n);
+  std::exception_ptr async_exception = nullptr;
+
+  auto process_atom = [&](Atom &atom_A) {
+    try {
+      const int id_A = atom_A.getElementID();
+
+      for (Atom &atom_B : this->_atoms_) {
+	if (&atom_A == &atom_B && !self_interaction)
+	  continue;
+
+	const int id_B = atom_B.getElementID();
+	const auto &pos_B = atom_B.position();
+
+	for (const auto &disp : displacements) {
+	  const std::array<double, 3> img_pos = {
+	      pos_B[0] + disp[0], pos_B[1] + disp[1], pos_B[2] + disp[2]};
+
+	  const double dx = atom_A.position()[0] - img_pos[0];
+	  const double dy = atom_A.position()[1] - img_pos[1];
+	  const double dz = atom_A.position()[2] - img_pos[2];
+	  const double dist_sq = dx * dx + dy * dy + dz * dz;
+
+	  if (dist_sq > r_cut_sq)
+	    continue;
+
+	  const double dist = std::sqrt(dist_sq);
+
+	  // Ignore self-interaction
+	  if (dist == 0 && (atom_A.getID() == atom_B.getID()))
+	    continue;
+
+	  // Collitions checks
+	  if (dist < 0.1) {
+	    std::cerr << "\nERROR: The atoms:\n"
+		      << atom_A.element() << "_" << atom_A.getID()
+		      << " in position (" << atom_A.position()[0] << ", "
+		      << atom_A.position()[1] << ", " << atom_A.position()[2]
+		      << "),\n"
+		      << atom_B.element() << "_" << atom_B.getID()
+		      << " in position (" << img_pos[0] << ", " << img_pos[1]
+		      << ", " << img_pos[2] << ").\n"
+		      << "Have a distance less than 10 pm.\n";
+	    exit(1);
+	  }
+	  if (dist < 0.5) {
+	    std::cerr << "\nWARNING: The atoms:\n"
+		      << atom_A.element() << "_" << atom_A.getID()
+		      << " in position (" << atom_A.position()[0] << ", "
+		      << atom_A.position()[1] << ", " << atom_A.position()[2]
+		      << "),\n"
+		      << atom_B.element() << "_" << atom_B.getID()
+		      << " in position (" << img_pos[0] << ", " << img_pos[1]
+		      << ", " << img_pos[2] << ").\n"
+		      << "Have a distance less than the Bohr Radius.\n";
+	  }
+
+	  // Thread-safe bond addition
+	  if (dist <= _bond_length_[id_A][id_B]) {
+	    std::lock_guard<std::mutex> lock(global_mutex[id_A]);
+	    atom_A.addBondedAtom(
+		Atom(atom_B.element(), img_pos, atom_B.getID(), id_B));
+	  }
+
+	  // Thread-safe distance recording
+	  std::lock_guard<std::mutex> lock(global_mutex[id_A]);
+	  temp_dist[id_A][id_B].push_back(dist);
+	}
+      }
+    } catch (...) {
+      async_exception = std::current_exception();
+    }
   };
 
-  // Parallelize the main loop
-  std::for_each(std::execution::par, std::begin(this->_atoms_),
-		std::end(this->_atoms_), calculate_distances);
-  //this->updateProgressBar(1.0);
-  this->_distances_ = temp_dist;
+  // Parallel execution with exception propagation
+  std::for_each(std::execution::par, _atoms_.begin(), _atoms_.end(),
+		process_atom);
+
+  if (async_exception) {
+    std::rethrow_exception(async_exception);
+  }
+
+  this->_distances_ = std::move(temp_dist);
 } // Cell::distancePopulation
 
 //---------------------------------------------------------------------------//
 //--------------------------- Coordination Number ---------------------------//
 //---------------------------------------------------------------------------//
 void Cell::coordinationNumber() {
-  int i, j;
-  // Step 1: Find the maximum number of bonds in the cell
+  const size_t num_elements = this->_distances_.size();
+  if (num_elements == 0)
+    throw std::logic_error("No elements in cell");
+  const size_t num_atoms = this->_atoms_.size();
+  if (num_atoms == 0)
+    throw std::logic_error("No atoms in cell");
+
+  // Step 1: Find maximum coordination number
   int max_Nc = 0;
-  for (auto &MyAtom : this->_atoms_) {
-    max_Nc = std::max(max_Nc, static_cast<int>(MyAtom.bonded_atoms().size()));
+  for (auto &atom : this->_atoms_) {
+    max_Nc = std::max(max_Nc, static_cast<int>(atom.bonded_atoms().size()));
   }
 
-  // Step 2: Initialize the 3D tensor nx(n+1)xm with zeros
-  const int n = this->elements().size();
-  const int m = max_Nc + 2;
-  std::vector<std::vector<std::vector<int>>> temp_nc(
-      n, std::vector<std::vector<int>>(n + 1, std::vector<int>(m, 0)));
+  // Step 2: Initialize 3D tensor [element][element/total][coordination]
+  const size_t coordination_bins = max_Nc + 2;
 
-  // Step 3: Search for the number of bonds per atom per element
-  for (auto &MyAtom : this->_atoms_) {
-    std::vector<int> aux(n, 0);
-    std::vector<Atom_Img> bon_aux = MyAtom.bonded_atoms();
-    for (auto atom_A = bon_aux.begin(); atom_A != bon_aux.end(); ++atom_A) {
-      aux[atom_A->element_id]++;
+  // Dimensions: [element][target (elements + total)][coordination count]
+  using ElementHist = std::vector<std::vector<int>>;
+  std::vector<ElementHist> temp_nc(
+      num_elements,
+      ElementHist(num_elements + 1, std::vector<int>(coordination_bins, 0)));
+
+  // Step 3: Build coordination histogram
+  for (auto &atom : this->_atoms_) {
+    const size_t element_id = atom.getElementID();
+    std::vector<int> element_counts(num_elements, 0);
+
+    // Count bonded atoms per element
+    for (auto &bonded_atom : atom.bonded_atoms()) {
+      const size_t bonded_element_id = bonded_atom.getElementID();
+      element_counts[bonded_element_id]++;
     }
-    for (int i = 0; i < n; i++) {
-      temp_nc[MyAtom.element_id()][i][aux[i]]++;
+
+    // Update histograms
+    for (size_t target_element = 0; target_element < num_elements;
+	 ++target_element) {
+      const int count = element_counts[target_element];
+      temp_nc[element_id][target_element][count]++;
+    }
+
+    // Update total coordination count
+    const int total_coord = atom.bonded_atoms().size();
+    temp_nc[element_id][num_elements][total_coord]++;
+  }
+
+  // Step 4: Flatten into 2D histogram matrix
+  const size_t num_columns = num_elements * num_elements + num_elements + 1;
+  const size_t num_rows = coordination_bins;
+
+  std::vector<std::vector<int>> coordination_hist(
+      num_columns, std::vector<int>(num_rows, 0));
+
+  // Fill coordination number header (first column)
+  for (size_t coord = 0; coord < num_rows; ++coord) {
+    coordination_hist[0][coord] = coord;
+  }
+
+  // Fill element-element interactions
+  size_t hist_column = 1;
+  for (size_t elem_i = 0; elem_i < num_elements; ++elem_i) {
+    for (size_t elem_j = 0; elem_j < num_elements; ++elem_j) {
+      coordination_hist[hist_column++] = temp_nc[elem_i][elem_j];
     }
   }
-  // Step 4: Add total coordination per atom
-  for (auto &MyAtom : this->_atoms_) {
-    temp_nc[MyAtom.element_id()][n][MyAtom.bonded_atoms().size()]++;
+
+  // Fill element totals
+  for (size_t elem = 0; elem < num_elements; ++elem) {
+    coordination_hist[hist_column++] = temp_nc[elem][num_elements];
   }
 
-  /* cols:
-   * every element by every other element n*n
-   * plus every element total n
-   * plus one row for number of neighbours
-   */
-  int n_ = n * n + n + 1;
-  /* rows:
-   * from 0 neighbours to n neighbours
-   */
-  int m_ = temp_nc[0][0].size();
-
-  std::vector<std::vector<int>> temp_hist(n_, std::vector<int>(m_, 0));
-  // Fill the first n*n number of bonds values of the histogram
-  for (i = 0; i < m_; i++) {
-    temp_hist[0][i] = i;
-  }
-  int col = 1;
-  for (i = 0; i < n; i++) {
-    for (j = 0; j < n; j++) {
-      temp_hist[col] = temp_nc[i][j];
-      col++;
-    }
-  }
-  // fill the last n columns
-  for (i = 0; i < n; i++) {
-    temp_hist[col] = temp_nc[i][n];
-    col++;
-  }
-
-  this->_Z_ = temp_hist;
+  _Z_ = std::move(coordination_hist);
 } // Cell::coorcinationNumber
 
 //---------------------------------------------------------------------------//
 //------------------------- Plane Angle Population --------------------------//
 //---------------------------------------------------------------------------//
 void Cell::planeAnglePopulation(bool degree) {
-  double factor = 1.0;
+  const double conversion_factor = degree ? constants::rad2deg : 1.0;
 
-  if (degree) {
-    factor = constants::rad2deg;
-  }
+  const size_t num_elements = this->elements().size();
+  if (num_elements == 0)
+    throw std::logic_error("No elements in cell");
+  if (this->_atoms_.size() == 0)
+    throw std::logic_error("No atoms in cell");
 
+  // Clear previous angles and reserve space
   // NxNxN Tensor to store the planeAnglePopulation
-  const int n = this->elements().size();
-  std::vector<std::vector<std::vector<std::vector<double>>>> temp_pad(
-      n, std::vector<std::vector<std::vector<double>>>(
-	     n, std::vector<std::vector<double>>(n, std::vector<double>(0))));
+  using AngleStorage =
+      std::vector<std::vector<std::vector<std::vector<double>>>>;
+  AngleStorage temp_angles(
+      num_elements,
+      std::vector<std::vector<std::vector<double>>>(
+	  num_elements, std::vector<std::vector<double>>(num_elements)));
+
   /*
-   * This is the main loop to calculate the angles formed by every three atoms.
-   * The connected atoms are calculated in Cell::RDF, and MUST be called first.
+   * This is the main loop to calculate the angles formed by every three
+   * atoms. The connected atoms are calculated in Cell::distancepopulation,
+   * and MUST be called first.
    *
    * The first loop iterates over every atom in the cell.
    * The second and third loop iterate over the connected atoms in every atom
-   * instance. These three loops populate a 3D tensor of vectors, the indices of
-   * the Tensor represent the three indices of the element in Cell::elements.
+   * instance. These three loops populate a 3D tensor of vectors, the indices
+   * of the Tensor represent the three indices of the element in
+   * Cell::elements.
    *
    * By default the angle returned is given in degrees.
    */
-  for (auto &MyAtom : this->_atoms_) {
-    std::vector<Atom_Img> bon_aux = MyAtom.bonded_atoms();
-    for (auto &atom_A : bon_aux) {
-      for (auto &atom_B : bon_aux) {
-	if (atom_A.atom_id != atom_B.atom_id) {
-	  temp_pad[atom_A.element_id][MyAtom.element_id()][atom_B.element_id]
-	      .push_back(MyAtom.getAngle(atom_A, atom_B) * factor);
+
+  for (size_t atom_idx = 0; atom_idx < this->_atoms_.size(); ++atom_idx) {
+    Atom &central_atom = this->_atoms_[atom_idx];
+    std::vector<Atom> bonded = central_atom.bonded_atoms();
+    const size_t central_elem = central_atom.getElementID();
+
+    // Use indices to avoid duplicate pairs
+    for (size_t i = 0; i < bonded.size(); ++i) {
+      Atom &atom_a = bonded[i];
+      const size_t elem_a = atom_a.getElementID();
+
+      for (size_t j = i + 1; j < bonded.size(); ++j) {
+	Atom &atom_b = bonded[j];
+	const size_t elem_b = atom_b.getElementID();
+
+	// Calculate angle and store in both element order permutations
+	try {
+	  const double angle =
+	      central_atom.getAngle(atom_a, atom_b) * conversion_factor;
+	  temp_angles[elem_a][central_elem][elem_b].push_back(angle);
+	  temp_angles[elem_b][central_elem][elem_a].push_back(angle);
+	} catch (const std::invalid_argument &e) {
+	  std::cerr << "Angle calculation error: " << e.what() << " for atoms "
+		    << atom_a.getID() << " and " << atom_b.getID() << '\n';
 	}
       }
     }
   }
-  this->_angles_ = temp_pad;
+  this->_angles_ = std::move(temp_angles);
 } // Cell::planeAnglePopulation
 
 //---------------------------------------------------------------------------//
@@ -518,24 +520,31 @@ void Cell::planeAnglePopulation(bool degree) {
 //---------------------------------------------------------------------------//
 void Cell::radialDistributionFunctions(double r_cut, double bin_width,
 				       bool normalize) {
-  int n_, m_, i, j, col, row;
-  int n = this->_distances_.size();
-  std::string header;
-  int num_atoms = this->atoms().size();
+  // Validate input parameters
+  if (bin_width <= 0)
+    throw std::invalid_argument("Bin width must be positive");
+  if (r_cut <= 0)
+    throw std::invalid_argument("Cutoff radius must be positive");
+  if (this->volume <= 0)
+    throw std::logic_error("Cell volume must be positive");
 
-  /* m_: the number of rows is given by:
-   * the cut radius/bin width
-   */
-  m_ = floor(r_cut / bin_width);
-  /* n_: the number of columns is given by:
-   * The combination n atoms taken in pairs,
-   * plus one column for r,
-   * plus one column for the total pair distribution
-   */
-  n_ = n * (n + 1) / 2 + 1 + 1;
+  const size_t num_elements = this->_elements_.size();
+  if (num_elements == 0)
+    throw std::logic_error("No elements in cell");
+  const size_t num_atoms = this->_atoms_.size();
+  if (num_atoms == 0)
+    throw std::logic_error("No atoms in cell");
+
+  // Calculate basic parameters
+  const size_t num_bins = static_cast<size_t>(std::floor(r_cut / bin_width));
+  const size_t num_pairs = num_elements * (num_elements + 1) / 2;
+  const size_t num_columns = num_pairs + 2; // +1 for r, +1 for total
+
+  // Initialize weight factors with default value 1.0 (for normalization)
+  std::vector<double> weight_factors(num_columns, 1.0);
 
   /*
-   * _w_ij_ is the weighting factor for the partial of G_ij
+   * _w_ij_ is the weighting factor for the partial of g_ij
    * There are to normalization commonly used:
    *     - HHS(Atlas) normalization, commonly used by
    *       experimental scientist.
@@ -547,108 +556,121 @@ void Cell::radialDistributionFunctions(double r_cut, double bin_width,
    * We offer the option to normalize to HHS by using the
    * -n, --normalize option.
    */
-  std::vector<double> temp_w_ij(n_, 1.0);
 
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      temp_w_ij[i + j + 1] = 2.0 * this->element_numbers()[i] *
-			     this->element_numbers()[j] /
-			     (num_atoms * num_atoms);
-      if (i == j) {
-	temp_w_ij[i + j + 1] *= 0.5;
+  // Calculate Ashcroft weights if needed
+  if (!normalize) {
+    const double norm_factor = 1.0 / (num_atoms * num_atoms);
+    size_t weight_index = 1; // Start after r column
+
+    for (size_t i = 0; i < num_elements; ++i) {
+      const double ni = element_numbers()[i];
+      for (size_t j = i; j < num_elements; ++j) {
+	const double nj = element_numbers()[j];
+	double weight = 2.0 * ni * nj * norm_factor;
+	if (i == j)
+	  weight *= 0.5;
+	weight_factors[weight_index++] = weight;
       }
     }
   }
-  this->_w_ij_ = temp_w_ij;
+  this->_w_ij_ = weight_factors;
 
-  std::vector<std::vector<double>> temp_hist(n_, std::vector<double>(m_, 0));
-  // Fill the r values of the histogram
-  for (i = 0; i < m_; i++) {
-    temp_hist[0][i] = (i + 0.5) * bin_width;
+  // Initialize histogram with r values in first row
+  std::vector<std::vector<double>> histogram(
+      num_columns, std::vector<double>(num_bins, 0.0));
+  for (size_t bin = 0; bin < num_bins; ++bin) {
+    histogram[0][bin] = (bin + 0.5) * bin_width;
   }
-  col = 0;
-  // Triple loop to iterate over the distances tensor.
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      col++;
-      for (const auto &it : this->_distances_[i][j]) {
-	row = floor(it / bin_width);
-	if (row < m_) {
-	  temp_hist[col][row]++;
-	  if (i != j) {
-	    temp_hist[col][row]++;
-	  }
-	}
+
+  // Fill distance histogram
+  size_t current_column = 1;
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = i; j < num_elements; ++j) {
+      for (const auto &distance : this->_distances_[i][j]) {
+	if (distance >= r_cut)
+	  continue;
+
+	const size_t bin = static_cast<size_t>(distance / bin_width);
+	if (bin >= num_bins)
+	  continue;
+
+	// Count both i-j and j-i pairs unless same element
+	histogram[current_column][bin] += (i == j) ? 1.0 : 2.0;
       }
+      current_column++;
     }
   }
 
   // Calculate total Radial Distribution Function
-  for (j = 0; j < m_; j++) {
-    for (i = 1; i < n_ - 1; i++) {
-      temp_hist[n_ - 1][j] += temp_hist[i][j];
+  auto &total_dist = histogram.back();
+  for (size_t col = 1; col < num_columns - 1; ++col) {
+    for (size_t bin = 0; bin < num_bins; ++bin) {
+      total_dist[bin] += histogram[col][bin];
     }
   }
 
-  /*
-   * Scale the histograms by the factor: 1 / (#atoms * bin_width)
-   */
+  // Normalize histogram
+  const double volume_factor = 4.0 * constants::pi * (num_atoms / this->volume);
+  const double norm_factor = 1.0 / (num_atoms * bin_width);
 
-  double w_factor = num_atoms * bin_width;
-  for (i = 1; i < n_; i++) {
-    if (normalize) {
-      w_factor = num_atoms * bin_width * this->_w_ij_[i];
+  for (size_t col = 1; col < num_columns; ++col) {
+    const double weight = normalize ? 1.0 : weight_factors[col];
+    const double scaling = norm_factor / weight;
+
+    for (size_t bin = 0; bin < num_bins; ++bin) {
+      histogram[col][bin] *= scaling;
     }
-    std::transform(temp_hist[i].begin(), temp_hist[i].end(),
-		   temp_hist[i].begin(),
-		   [&w_factor](const auto &c) { return c / w_factor; });
   }
-
-  this->_J_ = temp_hist;
+  this->_J_ = histogram;
 
   /*
    * Calculate g(r) with the inverse of the J(r) definition:
    * J(r) = 4 * pi * r^2 * rho_0 * g(r)
-   */
-  // numeric density
-  double rho_0 = num_atoms / this->volume;
-  for (col = 1; col < n_; col++) {
-    for (row = 1; row < m_; row++) {
-      temp_hist[col][row] /=
-	  4 * constants::pi * rho_0 * temp_hist[0][row] * temp_hist[0][row];
-    }
-  }
-
-  this->_g_ = temp_hist;
-
-  /*
    * We calculate G(r) with the definition:
-   * G(r) = 4 * pi * r * rho_0 * [g(r) - 1];
-   *
-   * Weighted partials are calculated with:
    * G_ij = 4 * pi * r * rho_0 * [g_ij(r) - _w_ij_]
    */
 
-  for (col = 1; col < n_; col++) {
-    for (row = 1; row < m_; row++) {
-      if (normalize) {
-	temp_w_ij[i + j + 1] = 1.0;
+  // Calculate g(r) and G(r)
+  std::vector<std::vector<double>> g_r = histogram;
+  std::vector<std::vector<double>> G_r = histogram;
+
+  for (size_t col = 1; col < num_columns; ++col) {
+    for (size_t bin = 0; bin < num_bins; ++bin) {
+      const double r = histogram[0][bin];
+      const double r_sq = r * r;
+
+      // Avoid division by zero for first bin
+      if (r_sq < std::numeric_limits<double>::epsilon()) {
+	g_r[col][bin] = 0.0;
+	G_r[col][bin] = 0.0;
+	continue;
       }
-      temp_hist[col][row] = 4 * constants::pi * rho_0 * temp_hist[0][row] *
-			    (temp_hist[col][row] - temp_w_ij[col]);
+
+      // Calculate g(r)
+      g_r[col][bin] /= volume_factor * r_sq;
+
+      // Calculate G(r)
+      const double reference = normalize ? 1.0 : weight_factors[col];
+      G_r[col][bin] = volume_factor * r * (g_r[col][bin] - reference);
     }
   }
-  this->_G_ = temp_hist;
+
+  this->_g_ = std::move(g_r);
+  this->_G_ = std::move(G_r);
+
 } // Cell::radialDistributionFunctions
 
 //---------------------------------------------------------------------------//
 //------------------------ Plane Angle Distribution -------------------------//
 //---------------------------------------------------------------------------//
 void Cell::planeAngleDistribution(double theta_cut, double bin_width) {
-  int n_, m_, i, j, k, h, col, row;
-  double norm;
-  int n = this->elements().size();
-  std::string header;
+  // Validate input parameters
+  if (bin_width <= 0.0) {
+    throw std::invalid_argument("Bin width must be positive");
+  }
+  if (theta_cut <= 0.0) {
+    throw std::invalid_argument("Theta cutoff must be positive");
+  }
 
   /*
    * The number of columns in the output file is:
@@ -658,205 +680,152 @@ void Cell::planeAngleDistribution(double theta_cut, double bin_width) {
    * it's reduced to n x (n+1) x n /2
    * one extra column is added for Theta (angle)
    */
+  const size_t num_elements = this->_elements_.size();
+  const size_t num_bins = static_cast<size_t>(theta_cut / bin_width);
+  const size_t num_combinations =
+      num_elements * num_elements * (num_elements + 1) / 2;
+  const size_t num_columns = 1 + num_combinations + 1; // [theta] + combinations
 
-  n_ = 1 + (n * n * (n + 1) / 2);
-  // from 0 to theta_cut degrees rows
-  m_ = std::round(theta_cut / bin_width);
-  // Matrix to store the Histograms n_ + 1 columns, m_ rows
-  std::vector<std::vector<double>> temp_hist(n_ + 1,
-					     std::vector<double>(m_, 0.0));
-  // Fill the theta values of the histogram
-  for (i = 0; i < m_; i++) {
-    temp_hist[0][i] = (i + 0.5) * bin_width;
+  // Initialize histogram with theta bins in first column
+  std::vector<std::vector<double>> histogram(
+      num_columns, std::vector<double>(num_bins, 0.0));
+
+  // Fill theta values
+  for (size_t bin = 0; bin < num_bins; ++bin) {
+    histogram[0][bin] = (bin + 0.5) * bin_width;
   }
-  col = 0;
-  // Quadruple loop to iterate over the 3D angle tensor.
-  for (i = 0; i < n; i++) {
-    // i iterates over all central atoms
-    for (j = 0; j < n; j++) {
-      // j iterates over all initial atoms
-      for (k = j; k < n; k++) {
-	// k iterates only over half + 1 of the spectrum
-	col++;
-	for (const auto &it : this->_angles_[j][i][k]) {
-	  row = floor(it / bin_width);
-	  if (row < m_) {
-	    temp_hist[col][row]++;
+
+  // Fill angle counts
+  size_t current_column = 1;
+  for (size_t central_elem = 0; central_elem < num_elements; ++central_elem) {
+    for (size_t elem_j = 0; elem_j < num_elements; ++elem_j) {
+      for (size_t elem_k = elem_j; elem_k < num_elements; ++elem_k) {
+	for (const double angle :
+	     this->_angles_[central_elem][elem_j][elem_k]) {
+	  if (angle >= theta_cut)
+	    continue;
+
+	  const size_t bin = static_cast<size_t>(angle / bin_width);
+	  if (bin < num_bins) {
+	    histogram[current_column][bin] += 1.0;
 	  }
 	}
-	// Remove double count when j == k
-	if (j == k) {
-	  for (h = 0; h < m_; h++) {
-	    temp_hist[col][h] /= 2.0;
-	  }
-	}
+	current_column++;
       }
     }
   }
-  // Double loop to find normalization factor
-  norm = 0.0;
-  for (i = 1; i < n_; i++) {
-    for (j = 0; j < m_; j++) {
-      norm += temp_hist[i][j];
-    }
-  }
-  norm *= bin_width;
 
-  // Double loop to normalize PADHistogram
-  for (i = 1; i < n_; i++) {
-    for (j = 0; j < m_; j++) {
-      temp_hist[i][j] /= norm;
+  // Calculate normalization factor
+  double normalization = 0.0;
+  for (size_t col = 1; col <= num_combinations; ++col) {
+    for (size_t bin = 0; bin < num_bins; ++bin) {
+      normalization += histogram[col][bin];
+    }
+  }
+  normalization *= bin_width;
+
+  // Handle zero normalization case
+  if (normalization < std::numeric_limits<double>::epsilon()) {
+    this->_F_ = std::move(histogram);
+    return;
+  }
+
+  // Normalize and calculate total distribution
+  for (size_t col = 1; col <= num_combinations; ++col) {
+    for (size_t bin = 0; bin < num_bins; ++bin) {
+      histogram[col][bin] /= normalization;
+      histogram.back()[bin] += histogram[col][bin];
     }
   }
 
-  // Double loop to calculate total PADHistogram
-  for (i = 1; i < n_; i++) {
-    for (j = 0; j < m_; j++) {
-      temp_hist[n_][j] += temp_hist[i][j];
-    }
-  }
-  this->_F_ = temp_hist;
+  this->_F_ = std::move(histogram);
 } // Cell::planeAngleDistribution
 
 //---------------------------------------------------------------------------//
 //---------------------------------- S(Q) -----------------------------------//
 //---------------------------------------------------------------------------//
 void Cell::SQ(double q_max, double q_bin_width, bool normalize) {
-  int row, col, i, j, n_, m_;
-  double sum;
-  int n = this->_distances_.size();
-  int num_atoms = this->atoms().size();
+  // Validate input parameters
+  if (q_max <= 0.0)
+    throw std::invalid_argument("q_max must be positive");
+  if (q_bin_width <= 0.0)
+    throw std::invalid_argument("q_bin_width must be positive");
+  if (this->_G_.empty() || this->_G_[0].empty())
+    throw std::logic_error("G(r) data not initialized");
 
-  /* m_: the number of rows is given by:
-   * the cut q / q bin width
-   */
-  m_ = std::round(q_max / q_bin_width);
   /* n_: the number of columns is given by:
    * The combination n atoms taken in pairs,
    * plus one column for r,
    * plus one column for the total S(Q)
    */
-  n_ = n * (n + 1) / 2 + 1 + 1;
+  const size_t num_elements = this->_elements_.size();
+  const size_t num_atoms = this->_atoms_.size();
+  const size_t num_q_bins =
+      static_cast<size_t>(std::round(q_max / q_bin_width));
+  const size_t num_columns = 1 + (num_elements * (num_elements + 1)) / 2 + 1;
 
-  std::vector<double> temp_w_ij(n_, 1.0);
-  col = 0;
+  // Initialize weights and S(Q) matrix
+  std::vector<double> weights(num_columns, 1.0);
+  std::vector<std::vector<double>> S_q(num_columns,
+				       std::vector<double>(num_q_bins, 0.0));
+
+  // Calculate weights if not normalized
   if (!normalize) {
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-	col++;
-	temp_w_ij[col] = 2.0 * this->element_numbers()[i] *
-			       this->element_numbers()[j] /
-			       (num_atoms * num_atoms);
-	if (i == j) {
-	  temp_w_ij[col] *= 0.5;
-	}
-      }
-    }
-    this->_w_ij_ = temp_w_ij;
-  }
-  int m = this->_G_[0].size();
-  /*
-   * The structure factor S(q) is calculated with:
-   * S(q) = 1 + 4*pi*rho_0*(q^-1)*\int{ dr r*sin(q * r)*[g(r) - 1]
-<   * or S(q) = 1 + \int{dr sinc(q * r) * r * G(r)}
-   */
-  std::vector<std::vector<double>> temp_S(n_, std::vector<double>(m_, 0));
+    const double norm_factor = 1.0 / (num_atoms * num_atoms);
+    size_t weight_idx = 1;
 
-  // Fill the q values of the histogram
-  for (row = 0; row < m_; ++row) {
-    temp_S[0][row] = row * q_bin_width;
-  }
-  double dr = this->_G_[0][1] - this->_G_[0][0];
-  for (col = 1; col < n_; ++col) {
-    for (row = 0; row < m_; ++row) {
-      sum = 0;
-      for (i = 0; i < m - 1; ++i) {
-	sum += sinc(temp_S[0][row] * this->_G_[0][i]) * this->_G_[col][i] *
-	       this->_G_[0][i];
+    for (size_t i = 0; i < num_elements; ++i) {
+      const double ni = element_numbers()[i];
+      for (size_t j = i; j < num_elements; ++j) {
+	double weight = 2.0 * ni * element_numbers()[j] * norm_factor;
+	if (i == j)
+	  weight *= 0.5;
+	weights[weight_idx++] = weight;
       }
-      sum -= 0.5 * sinc(temp_S[0][row] * this->_G_[0][m - 1]) *
-	     this->_G_[col][m - 1] * this->_G_[0][m - 1];
-      temp_S[col][row] = temp_w_ij[col] + sum * dr;
+    }
+    _w_ij_ = weights;
+  }
+
+  // Initialize q values using std::transform
+  std::generate(S_q[0].begin(), S_q[0].end(),
+		[n = 0, q_bin_width]() mutable { return (n++) * q_bin_width; });
+
+  // Get integration parameters
+  const auto &r_values = this->_G_[0];
+  const double dr = r_values[1] - r_values[0];
+  const size_t num_r_points = r_values.size();
+
+  // Lambda for sinc function computation
+  auto safe_sinc = [](double x) {
+    return std::abs(x) < 1e-8 ? 1.0 : std::sin(x) / x;
+  };
+
+  // Main computation loop
+  for (size_t col = 1; col < num_columns; ++col) {
+    for (size_t q_idx = 0; q_idx < num_q_bins; ++q_idx) {
+      const double q = S_q[0][q_idx];
+      double integral = 0.0;
+
+      // Sequential integration
+      for (size_t r_idx = 0; r_idx < num_r_points - 1; ++r_idx) {
+	const double r = r_values[r_idx];
+	/*
+	 * The structure factor S(q) is calculated with:
+	 * S(q) = 1 + \int{dr sinc(q * r) * r * G(r)}
+	 */
+	const double term = safe_sinc(q * r) * r * this->_G_[col][r_idx];
+	integral += (r_idx == 0 ? 0.5 * term : term);
+      }
+
+      // Add last term with 0.5 weight
+      const double last_term = safe_sinc(q * r_values.back()) *
+			       r_values.back() * this->_G_[col].back();
+      S_q[col][q_idx] = weights[col] + (integral + 0.5 * last_term) * dr;
     }
   }
-  this->_S_ = temp_S;
+
+  this->_S_ = std::move(S_q);
 } // Cell::SQ
-
-//---------------------------------------------------------------------------//
-//------------------------------- S(Q) Exact --------------------------------//
-//---------------------------------------------------------------------------//
-void Cell::SQExact(double q_max, double q_bin_width, bool normalize) {
-  int row, col, i, j, n_, m_;
-  double sum, f_i, f_j, f;
-  int n = this->_distances_.size();
-  int num_atoms = this->atoms().size();
-
-  /* m_: the number of rows is given by:
-   * the cut q / q bin width
-   */
-  m_ = std::round(q_max / q_bin_width);
-  /* n_: the number of columns is given by:
-   * The combination n atoms taken in pairs,
-   * plus one column for r,
-   * plus one column for the total S(Q)
-   */
-  n_ = n * (n + 1) / 2 + 1 + 1;
-  std::vector<double> temp_w_ij(n_, 1.0);
-  if (!normalize) {
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-	temp_w_ij[i + j + 1] = 2.0 * this->element_numbers()[i] *
-			       this->element_numbers()[j] /
-			       (num_atoms * num_atoms);
-	if (i == j) {
-	  temp_w_ij[i + j + 1] *= 0.5;
-	}
-      }
-    }
-    this->_w_ij_ = temp_w_ij;
-  }
-  /*
-   * The structure factor S(q) is calculated with:
-   * S(q) = 1 + 4*pi*rho_0*(q^-1)*\int{ dr r*sin(q * r)*[g(r) - 1]
-   * or S(q) = 1 + (q^{-1})*\int{dr sin(q * r) * G(r)}
-   */
-  std::vector<std::vector<double>> temp_S(n_, std::vector<double>(m_, 0));
-
-  // Fill the q values of the histogram
-  for (row = 0; row < m_; ++row) {
-    temp_S[0][row] = row * q_bin_width;
-  }
-
-  // calculate average scattering factor
-  f = avrgScatteringFactor(temp_S[0], this->_elements_);
-  col = 0;
-  // Quadruple loop to iterate over the distances tensor.
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      col++;
-      for (row = 0; row < m_; ++row) {
-	sum = 0.0;
-	for (const auto &it : this->_distances_[i][j]) {
-	  sum += cos(temp_S[0][row] * it);
-	}
-	// calculate atomic form factors
-	f_i = atomicFormFactor(temp_S[0][row], this->_elements_[i]);
-	f_j = atomicFormFactor(temp_S[0][row], this->_elements_[j]);
-	temp_S[col][row] = temp_w_ij[i + j + 1] +
-			   sum * f_i * f_j / (this->_atoms_.size() * f * f);
-      }
-    }
-  }
-
-  // Calculate total S(Q)
-  for (j = 0; j < m_; j++) {
-    for (i = 1; i < n_ - 1; i++) {
-      temp_S[n_ - 1][j] += temp_S[i][j];
-    }
-  }
-
-  this->_S_ = temp_S;
-} // Cell::SQexact
 
 //---------------------------------------------------------------------------//
 //----------------------------------- XRD -----------------------------------//
@@ -922,9 +891,9 @@ void Cell::XRD(double lambda, double theta_min, double theta_max,
   this->_X_ = temp_hist;
 } // Cell:XRD
 
-//---------------------------------------------------------------------------//
-//-------------------------------- Smoothing --------------------------------//
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//------------------------------- Smoothing --------------------------------//
+//--------------------------------------------------------------------------//
 void Cell::Smoothing(double sigma, int _kernel_) {
   int n_, m_, col, row;
 
@@ -1023,9 +992,9 @@ void Cell::Smoothing(double sigma, int _kernel_) {
 
 } // Cell::RDFSmoothing
 
-//---------------------------------------------------------------------------//
-//------------------------------ Voronoi Index ------------------------------//
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//------------------------------ Voronoi Index -----------------------------//
+//--------------------------------------------------------------------------//
 void Cell::voronoiIndex() {
   /*
    * This function is currently and STUB and gives a rought stimate

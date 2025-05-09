@@ -1,5 +1,5 @@
-#ifndef SRC_SMOOTHING_H_
-#define SRC_SMOOTHING_H_
+#ifndef INCLUDE_LINEAR_ALGEBRA_H_
+#define INCLUDE_LINEAR_ALGEBRA_H_
 /* ----------------------------------------------------------------------------
  * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
  * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
@@ -17,24 +17,23 @@
  * IN THE SOFTWARE.
  * ----------------------------------------------------------------------------
  */
-#include <vector>
-#include "../include/Templates.hpp"
+#include <array>
 
-//---------------------------------------------------------------------------//
-//-------------------------------- Methods ----------------------------------//
-//---------------------------------------------------------------------------//
+struct Matrix3D {
+  double data[3][3];
+};
 
-std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
-					double r0, double sigma);
+struct Vector3D {
+  double data[3];
+};
 
-std::vector<double> BumpKernel(const std::vector<double> &r_vals,
-				    double r0, double radius);
+// Matrix inversion for 3x3 matrices
+Matrix3D invertMatrix(const Matrix3D &mat);
 
-std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-					 double r0, double radius);
+// Matrix-vector multiplication
+Vector3D matrixVectorMultiply(const Matrix3D &mat, const Vector3D &vec);
 
-std::vector<double> KernelSmoothing(const std::vector<double> &r,
-					 const std::vector<double> &y,
-					 double sigma, int _kernel_);
+// Vector subtraction
+Vector3D vectorSubtract(const Vector3D &a, const Vector3D &b);
 
-#endif // SMOOTHING_H
+#endif // INCLUDE_LINEAR_ALGEBRA_H_
