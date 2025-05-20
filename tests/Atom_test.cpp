@@ -1,25 +1,14 @@
 #ifndef GTEST_ATOM_CPP
 #define GTEST_ATOM_CPP
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
-#include <gtest/gtest.h>
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "../include/Atom.hpp"
 #include "../include/Constants.hpp"
+#include <gtest/gtest.h>
+
+using Position = std::array<double, 3>;
 
 //----------------------------------------------------------------------------//
 //------------------------------ Constructor Tests ---------------------------//
@@ -28,18 +17,21 @@
 TEST(AtomTests, DefaultConstructorSetsBasicProperties) {
   Atom atom;
 
-  std::array<double, 3> expected_pos{0.0, 0.0, 0.0};
-  EXPECT_EQ(atom.position(), expected_pos);
-
+  Position pos{0.0, 0.0, 0.0};
+  for (std::size_t i = 0; i < 3; ++i) {
+    EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
+  }
   Atom another_atom;
-  EXPECT_EQ(atom.getID(), another_atom.getID());
+  EXPECT_EQ(atom.id(), another_atom.id());
 }
 
 TEST(AtomTests, ParameterizedConstructorSetsProperties) {
-  Atom atom("O", {1.0, 2.5, -3.0});
+  Position pos{1.0, 2.5, -3.0};
+  Atom atom("O", pos);
 
-  std::array<double, 3> expected_pos{1.0, 2.5, -3.0};
-  EXPECT_EQ(atom.position(), expected_pos);
+  for (std::size_t i = 0; i < 3; ++i) {
+    EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
+  }
 }
 
 //----------------------------------------------------------------------------//
@@ -67,18 +59,20 @@ TEST(AtomTests, AddBondedAtomUpdatesList) {
   Atom atom_b("H", {1.0, 0.0, 0.0}, 123);
 
   atom_a.addBondedAtom(atom_b);
-  std::vector<int> bonded_ids = atom_a.getBondedAtomsID();
+  std::vector<Atom> bonded = atom_a.bonded_atoms();
 
-  ASSERT_EQ(bonded_ids.size(), 1);
-  EXPECT_EQ(bonded_ids[0], 123);
+  ASSERT_EQ(bonded.size(), 1);
+  EXPECT_EQ(bonded[0].id(), 123);
 }
 
 TEST(AtomTests, SetAllUpdatesProperties) {
   Atom atom;
   atom.setAll("Fe", {2.0, 3.0, 4.0});
 
-  std::array<double, 3> expected_pos{2.0, 3.0, 4.0};
-  EXPECT_EQ(atom.position(), expected_pos);
+  Position pos{2.0, 3.0, 4.0};
+  for (std::size_t i = 0; i < 3; ++i) {
+    EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
+  }
 }
 
 TEST(AtomTests, BondAngleHandlesZeroVectorsGracefully) {

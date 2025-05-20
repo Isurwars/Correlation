@@ -1,24 +1,10 @@
-#ifndef SRC_TEMPLATES_H_
-#define SRC_TEMPLATES_H_
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
+#ifndef INCLUDE_TEMPLATES_HPP_
+#define INCLUDE_TEMPLATES_HPP_
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include <algorithm> // For std::find
-#include <cmath>     // For exp and pow
 #include <numeric>   // For std::accumulate
 #include <optional>  // For std::optional
 #include <vector>    // For std::vector
@@ -71,10 +57,10 @@ std::pair<bool, int> findInVector(const std::vector<T> &vec, const T &element) {
 //---------------------------------------------------------------------------//
 template <typename T>
 constexpr std::optional<std::size_t> findIndex(const std::vector<T> &vec,
-					       const T &value) {
+                 const T &value) {
   const auto it = std::find(vec.cbegin(), vec.cend(), value);
   return (it != vec.cend()) ? std::optional(std::distance(vec.cbegin(), it))
-			    : std::nullopt;
+          : std::nullopt;
 } // findIndex//---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
@@ -91,6 +77,6 @@ std::pair<bool, int> findInVector(const std::vector<T> &vec, const T &element);
 
 template <typename T>
 constexpr std::optional<std::size_t> findIndex(const std::vector<T> &vec,
-					       const T &value);
+                 const T &value);
 
-#endif // SRC_TEMPLATES_H_
+#endif // INCLUDE_TEMPLATES_HPP_

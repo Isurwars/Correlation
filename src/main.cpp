@@ -1,33 +1,16 @@
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include <getopt.h> // For the argument parsing
 
 #include <algorithm>  // for_each
-#include <array>      // Handle the array of parameters
 #include <filesystem> // Getting extension, making subdirectories
 #include <iostream>   // Standar IO library
-#include <list>       // To handle the list of atoms
 #include <string>     // String manipulation and algorithms
 
-#include "../include/Atom.hpp"       // Atom Class
 #include "../include/Cell.hpp"       // Cell Class
 #include "../include/ReadFiles.hpp"  // File reading and parsing
-#include "../include/Smoothing.hpp"  // Smoothing functions
 #include "../include/WriteFiles.hpp" // Write Output files
 
 inline std::string _in_file_name_ = "";
@@ -190,22 +173,22 @@ void ArgParser(int argc, char **argv) {
     switch (opt) {
     case 'a': // -a or --angle_bin_width
       try {
-	_angle_bin_w_ = std::stof(optarg);
+        _angle_bin_w_ = std::stof(optarg);
       } catch (const std::exception &e) {
-	std::cout << "Invalid input argument: '" << optarg
-		  << "' in angle_bin_width parameter '-a' "
-		  << "(Real number expected)." << std::endl;
-	exit(1);
+        std::cout << "Invalid input argument: '" << optarg
+                  << "' in angle_bin_width parameter '-a' "
+                  << "(Real number expected)." << std::endl;
+        exit(1);
       }
       break;
     case 'b': // -b or --bond_parameter
       try {
-	_bond_par_ = std::stof(optarg);
+        _bond_par_ = std::stof(optarg);
       } catch (const std::exception &e) {
-	std::cout << "Invalid input argument: '" << optarg
-		  << "' in bond_parameter '-b' "
-		  << "(Real number expected)." << std::endl;
-	exit(1);
+        std::cout << "Invalid input argument: '" << optarg
+                  << "' in bond_parameter '-b' "
+                  << "(Real number expected)." << std::endl;
+        exit(1);
       }
       break;
     case 'h': // -h or --help
@@ -229,42 +212,42 @@ void ArgParser(int argc, char **argv) {
       break;
     case 'q': // -q or --q_bin_width
       try {
-	_q_bin_w_ = std::stof(optarg);
+        _q_bin_w_ = std::stof(optarg);
       } catch (const std::exception &e) {
-	std::cout << "Invalid input argument: '" << optarg
-		  << "' in q_bin_width parameter '-q' "
-		  << "(Real number expected)." << std::endl;
-	exit(1);
+        std::cout << "Invalid input argument: '" << optarg
+                  << "' in q_bin_width parameter '-q' "
+                  << "(Real number expected)." << std::endl;
+        exit(1);
       }
       break;
     case 'Q': // -Q or --q_cut
       try {
-	_q_cut_ = std::stof(optarg);
+        _q_cut_ = std::stof(optarg);
       } catch (const std::exception &e) {
-	std::cout << "Invalid input argument: '" << optarg
-		  << "' in q_cut parameter '-Q' "
-		  << "(Real number expected)." << std::endl;
-	exit(1);
+        std::cout << "Invalid input argument: '" << optarg
+                  << "' in q_cut parameter '-Q' "
+                  << "(Real number expected)." << std::endl;
+        exit(1);
       }
       break;
     case 'r': // -r or --r_bin_width
       try {
-	_bin_w_ = std::stof(optarg);
+        _bin_w_ = std::stof(optarg);
       } catch (const std::exception &e) {
-	std::cout << "Invalid input argument: '" << optarg
-		  << "' in bin_width parameter '-w' "
-		  << "(Real number expected)." << std::endl;
-	exit(1);
+        std::cout << "Invalid input argument: '" << optarg
+                  << "' in bin_width parameter '-w' "
+                  << "(Real number expected)." << std::endl;
+        exit(1);
       }
       break;
     case 'R': // -R or --r_cut
       try {
-	_r_cut_ = std::stof(optarg);
+        _r_cut_ = std::stof(optarg);
       } catch (const std::exception &e) {
-	std::cout << "Invalid input argument: '" << optarg
-		  << "' in r_cut parameter '-r' "
-		  << "(Real number expected)." << std::endl;
-	exit(1);
+        std::cout << "Invalid input argument: '" << optarg
+                  << "' in r_cut parameter '-r' "
+                  << "(Real number expected)." << std::endl;
+        exit(1);
       }
       break;
     case 's': // -s or --self_interaction
@@ -312,7 +295,7 @@ int main(int argc, char **argv) {
   (my_path = _in_file_name_).remove_filename();
   if (_out_file_name_ == "")
     _out_file_name_ =
-	my_path.generic_string() + "/" + _in_file_.stem().generic_string();
+        my_path.generic_string() + "/" + _in_file_.stem().generic_string();
   std::string MyExt = _in_file_.extension().generic_string();
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char &c) { c = ::tolower(c); });
@@ -330,7 +313,7 @@ int main(int argc, char **argv) {
     PrintHelp();
   }
   std::cout << "File " << _in_file_name_ << " opened successfully."
-	    << std::endl;
+            << std::endl;
   // Create Bond distance Matrix
   MyCell.populateBondLength(_bond_par_);
   if (_bond_in_file_) {
@@ -364,26 +347,26 @@ int main(int argc, char **argv) {
    * the _bin_w_ parameter is the bin width to be used.
    */
   std::cout << "Calculating Coordination Functions: " << _out_file_name_
-	    << std::endl;
-  MyCell.radialDistributionFunctions(_r_cut_, _bin_w_, _normalize_);
+            << std::endl;
+  MyCell.calculateRDF(_r_cut_, _bin_w_, _normalize_);
 
   /*
    * This function uses the angles to calculate the PAD.
    * The theta_max parameter is the maximum angle to compute,
    * the _bin_w_ parameter is the bin width to be used.
    */
-  MyCell.planeAngleDistribution(180.0, _angle_bin_w_);
+  MyCell.calculatePAD(180.0, _angle_bin_w_);
 
   /*
    * This function calculate S(Q) as the Fourier Transform of G(r).
    * The _r_cut_ parameter is the cutoff distance in r-space,
    * the _q_bin_w_ parameter is the bin width to be used in q-space.
    */
-  MyCell.SQ(_q_cut_, _q_bin_w_, _normalize_);
-  // MyCell.SQExact(_q_cut_, _q_bin_w_, _normalize_);
+  MyCell.calculateSQ(_q_cut_, _q_bin_w_, _normalize_);
+  // MyCell.calculateSQExact(_q_cut_, _q_bin_w_, _normalize_);
 
   /*
-   * This function calculate XRD with bragg equation.
+   * This function calculate calculateXRD with bragg equation.
    * The lambda parameter is the wavelenght of the X-ray, default is 1.5406,
    * corresponding to Cu K_alpha.
    * The theta_min and theta_max parameters are the range to be calculated.
@@ -397,7 +380,7 @@ int main(int argc, char **argv) {
    * WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!!
    *
    */
-  MyCell.XRD(1.5406, 10.0, 90.0, 0.2);
+  MyCell.calculateXRD(1.5406, 10.0, 90.0, 0.2);
 
   if (_smoothing_) {
     std::cout << "Smoothing... " << std::endl;

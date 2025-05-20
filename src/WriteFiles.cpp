@@ -1,20 +1,7 @@
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -27,8 +14,8 @@
 
 template <typename T>
 void write2DVectorToCSV(const std::vector<std::vector<T>> &vec,
-			const std::string &filename,
-			const std::string &header = "") {
+      const std::string &filename,
+      const std::string &header = "") {
   std::ofstream file(filename);
   int rows = vec[0].size();
   int cols = vec.size();
@@ -43,7 +30,7 @@ void write2DVectorToCSV(const std::vector<std::vector<T>> &vec,
     for (int i = 0; i < cols; ++i) {
       file << std::setw(12) << std::right << vec[i][j];
       if (i < cols - 1) {
-	file << ",";
+  file << ",";
       }
     }
     file << std::endl;
@@ -65,7 +52,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   std::stringstream header;
   std::vector<std::vector<double>> temp_hist;
   std::vector<std::vector<int>> temp_hist_int;
-  int i, j, k, n = cell.distancesSize();
+  int i, j, k, n = cell.distances().size();
 
   //-------------------------------------------------------------------------//
   //------------------------------- Writing J -------------------------------//
@@ -75,7 +62,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       header << std::right << std::setw(14)
-	     << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
+       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
     }
   }
   header << std::right << std::setw(12) << "J(r)";
@@ -92,7 +79,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       header << std::right << std::setw(14)
-	     << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
+       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
     }
   }
   header << std::right << std::setw(12) << "g(r)";
@@ -109,7 +96,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       header << std::right << std::setw(14)
-	     << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
+       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
     }
   }
   header << std::right << std::setw(12) << "G(r)";
@@ -126,9 +113,9 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = 0; j < n; j++) {
       for (k = j; k < n; k++) {
-	header << std::right << std::setw(13)
-	       << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
-		      cell.elements()[k] + ",";
+  header << std::right << std::setw(13)
+         << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
+          cell.elements()[k] + ",";
       }
     }
   }
@@ -146,7 +133,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = 0; j < n; j++) {
       header << std::right << std::setw(13)
-	     << cell.elements()[i] + " by " + cell.elements()[j] + ",";
+       << cell.elements()[i] + " by " + cell.elements()[j] + ",";
     }
   }
   for (i = 0; i < n; i++) {
@@ -168,7 +155,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       header << std::right << std::setw(12)
-	     << cell.elements()[i] + "-" + cell.elements()[j] + " (Å),";
+       << cell.elements()[i] + "-" + cell.elements()[j] + " (Å),";
     }
   }
   header << std::right << std::setw(12) << "S(Q)";
@@ -185,7 +172,7 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
   for (i = 0; i < n; i++) {
     for (j = i; j < n; j++) {
       header << std::right << std::setw(12)
-	     << cell.elements()[i] + "-" + cell.elements()[j] + " (%),";
+       << cell.elements()[i] + "-" + cell.elements()[j] + " (%),";
     }
   }
   header << std::right << std::setw(12) << "XRD";
@@ -202,8 +189,8 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
     header << std::right << std::setw(14) << "r (Å),";
     for (i = 0; i < n; i++) {
       for (j = i; j < n; j++) {
-	header << std::right << std::setw(14)
-	       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
+  header << std::right << std::setw(14)
+         << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
       }
     }
     header << std::right << std::setw(12) << "J(r)";
@@ -219,8 +206,8 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
     header << std::right << std::setw(14) << "r (Å),";
     for (i = 0; i < n; i++) {
       for (j = i; j < n; j++) {
-	header << std::right << std::setw(14)
-	       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
+  header << std::right << std::setw(14)
+         << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
       }
     }
     header << std::right << std::setw(12) << "g(r)";
@@ -236,8 +223,8 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
     header << std::right << std::setw(14) << "r (Å),";
     for (i = 0; i < n; i++) {
       for (j = i; j < n; j++) {
-	header << std::right << std::setw(14)
-	       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
+  header << std::right << std::setw(14)
+         << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
       }
     }
     header << std::right << std::setw(12) << "G(r)";
@@ -253,11 +240,11 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
     header << std::right << std::setw(14) << "theta (°),";
     for (i = 0; i < n; i++) {
       for (j = 0; j < n; j++) {
-	for (k = j; k < n; k++) {
-	  header << std::right << std::setw(13)
-		 << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
-			cell.elements()[k] + ",";
-	}
+  for (k = j; k < n; k++) {
+    header << std::right << std::setw(13)
+     << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
+      cell.elements()[k] + ",";
+  }
       }
     }
     header << std::right << std::setw(12) << "F(theta)";
@@ -273,8 +260,8 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
     header << std::right << std::setw(13) << "q (1/Å),";
     for (i = 0; i < n; i++) {
       for (j = i; j < n; j++) {
-	header << std::right << std::setw(12)
-	       << cell.elements()[i] + "-" + cell.elements()[j] + " (Å),";
+  header << std::right << std::setw(12)
+         << cell.elements()[i] + "-" + cell.elements()[j] + " (Å),";
       }
     }
     header << std::right << std::setw(12) << "S(Q)";
@@ -290,8 +277,8 @@ void WriteCSV(Cell cell, std::string filename, bool smoothing) {
     header << std::right << std::setw(13) << "2-theta (°),";
     for (i = 0; i < n; i++) {
       for (j = i; j < n; j++) {
-	header << std::right << std::setw(12)
-	       << cell.elements()[i] + "-" + cell.elements()[j] + " (%),";
+  header << std::right << std::setw(12)
+         << cell.elements()[i] + "-" + cell.elements()[j] + " (%),";
       }
     }
     header << std::right << std::setw(12) << "XRD";

@@ -1,40 +1,26 @@
-#ifndef SRC_SMOOTHING_H_
-#define SRC_SMOOTHING_H_
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
+#ifndef INCLUDE_SMOOTHING_HPP_
+#define INCLUDE_SMOOTHING_HPP_
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include <vector>
-#include "../include/Templates.hpp"
 
 //---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
 
 std::vector<double> GaussianKernel(const std::vector<double> &r_vals,
-					double r0, double sigma);
+          double r0, double sigma);
 
 std::vector<double> BumpKernel(const std::vector<double> &r_vals,
-				    double r0, double radius);
+            double r0, double radius);
 
 std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-					 double r0, double radius);
+           double r0, double radius);
 
 std::vector<double> KernelSmoothing(const std::vector<double> &r,
-					 const std::vector<double> &y,
-					 double sigma, int _kernel_);
+           const std::vector<double> &y,
+           double sigma, int _kernel_);
 
-#endif // SMOOTHING_H
+#endif // INCLUDE_SMOOTHING_HPP

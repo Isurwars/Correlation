@@ -1,98 +1,61 @@
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "../include/Atom.hpp"
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
-#include <list>
-#include <numeric>
 
 //---------------------------------------------------------------------------//
 //------------------------------ Constructors -------------------------------//
 //---------------------------------------------------------------------------//
-void Atom::setAll(std::string ele, std::array<double, 3> pos) {
-  this->_element_ = ele;
-  this->_position_ = pos;
-}
 
-// FULL constructor for the Atom object
-Atom::Atom(std::string ele, std::array<double, 3> pos, int id, int ele_id) {
-  this->_element_ = ele;
-  this->_position_ = pos;
-  this->id = id;
-  this->_element_id_ = ele_id;
-}
+Atom::Atom(std::string element, Vector3D pos, int id,
+           int element_id)
+    : id_{id}, position_{pos}, element_{std::move(element)},
+      element_id_{element_id} {}
 
-// No FULL constructor for the Atom object
-Atom::Atom(std::string ele, std::array<double, 3> pos, int id) {
-  this->_element_ = ele;
-  this->_position_ = pos;
-  this->id = id;
-}
+Atom::Atom(std::string element, Vector3D pos, int id)
+    : Atom(std::move(element), pos, id, -1) {}
 
-// No ID constructor for the Atom object
-Atom::Atom(std::string ele, std::array<double, 3> pos) {
-  this->_element_ = ele;
-  this->_position_ = pos;
-  this->id = -1;
-}
+Atom::Atom(std::string element, Vector3D pos)
+    : Atom(std::move(element), pos, -1, -1) {}
 
-// Default constructor for the Atom object
-Atom::Atom() {
-  this->_element_ = "H";
-  this->_position_ = {0.0, 0.0, 0.0};
-  this->id = -1;
-}
+Atom::Atom() : Atom("H", {0.0, 0.0, 0.0}, -1, -1) {}
 
+//---------------------------------------------------------------------------//
+//-------------------------------- Accessors --------------------------------//
+//---------------------------------------------------------------------------//
+
+void Atom::addBondedAtom(const Atom &atom_A) {
+    bonded_atoms_.push_back(atom_A);
+} // addBondedAtom
+
+void Atom::setAll(std::string ele, Vector3D pos) {
+  element_ = ele;
+  position_ = pos;
+}
 //----------------------------------------------------------------------------//
 //--------------------------------- Methods ----------------------------------//
 //----------------------------------------------------------------------------//
 // Distance to the other atom
 double Atom::distance(const Atom &other_atom) const {
-  return std::hypot(this->_position_[0] - other_atom._position_[0],
-		    this->_position_[1] - other_atom._position_[1],
-		    this->_position_[2] - other_atom._position_[2]);
+  return std::hypot(position_[0] - other_atom.position_[0],
+                    position_[1] - other_atom.position_[1],
+                    position_[2] - other_atom.position_[2]);
 }
-
-// Get Image
-/*
-Atom_Img Atom::getImage() const {
-  Atom_Img img;
-  img.element = this->_element_;
-  img.atom_id = this->id;
-  img.position = this->_position_;
-  return img;
-}
- */
 
 // Get Bond Angle
-double Atom::getAngle(Atom &atom_A, Atom &atom_B) {
+double Atom::getAngle(const Atom &atom_A, const Atom &atom_B) const {
   // Use const references to avoid unnecessary copies
-  const std::array<double, 3> pos_A = atom_A.position();
-  const std::array<double, 3> pos_B = atom_B.position();
-  const std::array<double, 3> pos_C = this->_position_;
+  const Vector3D pos_A = atom_A.position();
+  const Vector3D pos_B = atom_B.position();
+  const Vector3D pos_C = position_;
 
   // Calculate the vectors representing the bonds
-  std::array<double, 3> vA = {pos_A[0] - pos_C[0], pos_A[1] - pos_C[1],
-			      pos_A[2] - pos_C[2]};
-  std::array<double, 3> vB = {pos_B[0] - pos_C[0], pos_B[1] - pos_C[1],
-			      pos_B[2] - pos_C[2]};
+  Vector3D vA = {pos_A[0] - pos_C[0], pos_A[1] - pos_C[1], pos_A[2] - pos_C[2]};
+  Vector3D vB = {pos_B[0] - pos_C[0], pos_B[1] - pos_C[1], pos_B[2] - pos_C[2]};
 
   // Calculate the magnitudes of the vectors
   double vA_ = std::sqrt(vA[0] * vA[0] + vA[1] * vA[1] + vA[2] * vA[2]);
@@ -111,21 +74,3 @@ double Atom::getAngle(Atom &atom_A, Atom &atom_B) {
 
   return std::acos(aux);
 } // Get Bond Angle
-
-void Atom::addBondedAtom(const Atom &atom_A) {
-  try {
-    this->_bonded_atoms_.push_back(atom_A);
-  } catch (const std::bad_alloc &e) {
-    throw std::runtime_error("Memory allocation failed in addBondedAtom: " +
-			     std::string(e.what()));
-  }
-} // addBondedAtom
-
-// Get a vector containing the IDs of all bonded atoms
-std::vector<int> Atom::getBondedAtomsID() {
-  std::vector<int> atoms_ids(this->_bonded_atoms_.size());
-  std::transform(this->_bonded_atoms_.begin(), this->_bonded_atoms_.end(),
-		 atoms_ids.begin(),
-		 [](Atom &atom_img) { return atom_img.getID(); });
-  return atoms_ids;
-} // getBondedAtomsID

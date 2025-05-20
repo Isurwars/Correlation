@@ -1,27 +1,13 @@
 #ifndef GTEST_CELL_CPP
 #define GTEST_CELL_CPP
-/* ----------------------------------------------------------------------------
- * Correlation: An Analysis Tool for Liquids and for Amorphous Solids
- * Copyright (c) 2013-2025 Isaías Rodríguez <isurwars@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the MIT License version as published in:
- * https://github.com/Isurwars/Correlation/blob/main/LICENSE
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- * ----------------------------------------------------------------------------
- */
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "../include/Atom.hpp"
 #include "../include/Cell.hpp"
 #include <array>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <vector>
 
 // Fixture for common test setup
@@ -29,7 +15,7 @@ class CellTest : public ::testing::Test {
 protected:
   void SetUp() override {
     cubicCell.setLatticeParameters({4.0, 4.0, 4.0, 90, 90, 90});
-    cubicCell.setLatticeVectors();
+    cubicCell.calculateLatticeVectors();
   }
 
   Cell cubicCell;
@@ -45,15 +31,15 @@ TEST_F(CellTest, DefaultConstructor) {
 }
 
 void AssertArrayNear(const std::array<double, 3> &vec1,
-		     const std::array<double, 3> &vec2,
-		     double abs_error = 1e-6) {
+                     const std::array<double, 3> &vec2,
+                     double abs_error = 1e-6) {
   for (size_t i = 0; i < vec1.size(); ++i) {
     EXPECT_NEAR(vec1[i], vec2[i], abs_error) << "at index " << i;
   }
 }
 
 TEST_F(CellTest, LatticeVectorCalculation) {
-  ASSERT_NEAR(cubicCell.getVolume(), 64.0, 1e-6);
+  ASSERT_NEAR(cubicCell.volume(), 64.0, 1e-6);
   AssertArrayNear(cubicCell.v_a(), (std::array<double, 3>{4.0, 0.0, 0.0}));
   AssertArrayNear(cubicCell.v_b(), (std::array<double, 3>{0.0, 4.0, 0.0}));
   AssertArrayNear(cubicCell.v_c(), (std::array<double, 3>{0.0, 0.0, 4.0}));
@@ -64,10 +50,9 @@ TEST_F(CellTest, LatticeVectorCalculation) {
 //----------------------------------------------------------------------------//
 TEST(CellPositionTest, PositionWrapping) {
   Cell PosWarCell({10.0, 10.0, 10.0, 90, 90, 90});
-  PosWarCell.setLatticeVectors();
+  PosWarCell.calculateLatticeVectors();
   std::vector<Atom> atoms{Atom("H", {12.0, -3.0, 5.0}, 0)};
   PosWarCell.setAtoms(atoms);
-  PosWarCell.setElements({"H"});
   PosWarCell.populateBondLength(1.2);
   PosWarCell.correctPositions();
 
@@ -79,10 +64,9 @@ TEST(CellPositionTest, PositionWrapping) {
 
 TEST(CellPositionTest, FractionalConversion) {
   Cell FracCell({10.0, 10.0, 10.0, 90, 90, 90});
-  FracCell.setLatticeVectors();
+  FracCell.calculateLatticeVectors();
   std::vector<Atom> atoms{Atom("O", {0.5, 0.5, 0.5}, 0)};
   FracCell.setAtoms(atoms);
-  FracCell.setElements({"O"});
   FracCell.populateBondLength(1.2);
   FracCell.correctFracPositions();
 
@@ -97,7 +81,7 @@ TEST(CellPositionTest, FractionalConversion) {
 //----------------------------------------------------------------------------//
 TEST(CellBondTest, BondLengthPopulation) {
   Cell BondCell({14.0, 14.0, 14.0, 90, 90, 90});
-  BondCell.setElements({"Si", "O"});
+  BondCell.setElements({"O", "Si"});
   BondCell.populateBondLength(1.2);
 
   const auto &bondMatrix = BondCell.bond_length();
@@ -108,9 +92,8 @@ TEST(CellBondTest, BondLengthPopulation) {
 TEST(CellBondTest, DistancePopulation) {
   Cell DistCell({14.0, 14.0, 14.0, 90, 90, 90});
   std::vector<Atom> atoms{Atom("Si", {1.0, 1.0, 1.0}, 0),
-			  Atom("O", {2.5, 1.0, 1.0}, 1)};
+                          Atom("O", {2.5, 1.0, 1.0}, 1)};
   DistCell.setAtoms(atoms);
-  DistCell.setElements({"Si", "O"});
   DistCell.populateBondLength(1.2);
   DistCell.correctPositions();
   DistCell.distancePopulation(5.0, true);
@@ -130,12 +113,11 @@ TEST(CoordinationErrorTest, ThrowsOnEmptyCell) {
 
 TEST(CellCoordinationTest, CoordinationCounting) {
   Cell CoordCell({25.0, 20.0, 20.0, 90, 90, 90});
-  CoordCell.setLatticeVectors();
+  CoordCell.calculateLatticeVectors();
   std::vector<Atom> atoms{Atom("C", {5.0, 2.5, 2.5}, 0),
-			  Atom("H", {4.5, 2.5, 2.5}, 1),
-			  Atom("H", {5.5, 2.5, 2.5}, 2)};
+                          Atom("H", {4.5, 2.5, 2.5}, 1),
+                          Atom("H", {5.5, 2.5, 2.5}, 2)};
   CoordCell.setAtoms(atoms);
-  CoordCell.setElements({"C", "H"});
   CoordCell.populateBondLength(1.2);
   CoordCell.correctPositions();
   CoordCell.distancePopulation(9.0, true);
@@ -153,52 +135,45 @@ TEST(CellCoordinationTest, CoordinationCounting) {
 TEST(RDFErrorTest, ThrowsOnInvalidBinWidth) {
   Cell validCell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
   // Test various invalid bin widths
-  EXPECT_THROW(validCell.radialDistributionFunctions(5.0, 0.0, false),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell.calculateRDF(5.0, 0.0, false), std::invalid_argument);
 
-  EXPECT_THROW(validCell.radialDistributionFunctions(5.0, -0.1, false),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell.calculateRDF(5.0, -0.1, false), std::invalid_argument);
 }
 
 TEST(RDFErrorTest, ThrowsOnInvalidRCut) {
   Cell validCell2({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
   // Test various invalid cutoff radii
-  EXPECT_THROW(validCell2.radialDistributionFunctions(0.0, 0.1, false),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell2.calculateRDF(0.0, 0.1, false), std::invalid_argument);
 
-  EXPECT_THROW(validCell2.radialDistributionFunctions(-2.5, 0.1, false),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell2.calculateRDF(-2.5, 0.1, false),
+               std::invalid_argument);
 }
 
 TEST(RDFErrorTest, ThrowsOnInvalidVolume) {
   // Test various invalid volume scenarios
   Cell cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   // Negative volume
-  EXPECT_THROW(cell.radialDistributionFunctions(3.0, 0.1, false),
-	       std::logic_error);
+  EXPECT_THROW(cell.calculateRDF(3.0, 0.1, false), std::logic_error);
 
   Cell cell2({0.0, 0.0, 0.0, 90.0, 90.0, 90.0});
   // Zero volume
-  EXPECT_THROW(cell.radialDistributionFunctions(3.0, 0.1, false),
-	       std::logic_error);
+  EXPECT_THROW(cell.calculateRDF(3.0, 0.1, false), std::logic_error);
 }
 
 TEST(RDFErrorTest, ThrowsOnEmptyCell) {
   Cell empty_cell;
   // No atoms added
-  EXPECT_THROW(empty_cell.radialDistributionFunctions(2.0, 0.1, false),
-	       std::logic_error);
+  EXPECT_THROW(empty_cell.calculateRDF(2.0, 0.1, false), std::logic_error);
 }
 TEST(CellRDFTest, BasicRDFCalculation) {
   Cell RDFCell({4.0, 15.0, 15.0, 90, 90, 90});
   std::vector<Atom> atoms{Atom("Ar", {1.5, 2.5, 2.5}, 0),
-			  Atom("Ar", {2.5, 2.5, 2.5}, 1)};
+                          Atom("Ar", {2.5, 2.5, 2.5}, 1)};
   RDFCell.setAtoms(atoms);
-  RDFCell.setElements({"Ar"});
   RDFCell.populateBondLength(1.2);
   RDFCell.correctPositions();
   RDFCell.distancePopulation(5.0, true);
-  RDFCell.radialDistributionFunctions(6.0, 0.2);
+  RDFCell.calculateRDF(6.0, 0.2);
 
   const auto &rdf = RDFCell.g();
 
@@ -214,26 +189,21 @@ TEST(CellRDFTest, BasicRDFCalculation) {
 TEST(PADErrorTest, ThrowsOnInvalidBinWidth) {
   Cell validCell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
   // Test various invalid bin widths
-  EXPECT_THROW(validCell.planeAngleDistribution(20.0, -1.0),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell.calculatePAD(20.0, -1.0), std::invalid_argument);
 
-  EXPECT_THROW(validCell.planeAngleDistribution(20.0, 0.0),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell.calculatePAD(20.0, 0.0), std::invalid_argument);
 }
 
 TEST(PADErrorTest, ThrowsOnInvalidThetaCut) {
   Cell validCell2({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
   // Test various invalid bin widths
-  EXPECT_THROW(validCell2.planeAngleDistribution(-20.0, 1.0),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell2.calculatePAD(-20.0, 1.0), std::invalid_argument);
 
-  EXPECT_THROW(validCell2.planeAngleDistribution(0.0, 1.0),
-	       std::invalid_argument);
+  EXPECT_THROW(validCell2.calculatePAD(0.0, 1.0), std::invalid_argument);
 }
 
 TEST(PADTest, BasicAngleCalculation) {
   Cell waterCell({25.0, 20.0, 20.0, 90, 90, 90});
-  waterCell.setElements({"O", "H"});
 
   // Create water molecule-like structure
   waterCell.addAtom(Atom("O", {0, 0, 0}, 0));
@@ -245,34 +215,32 @@ TEST(PADTest, BasicAngleCalculation) {
   waterCell.distancePopulation(2.0, true);
   // Calculate plane angles
   waterCell.planeAnglePopulation(true);
-  waterCell.planeAngleDistribution();
+  waterCell.calculatePAD();
+
   const auto &angles = waterCell.F();
 
   ASSERT_GT(angles[angles.size() - 1][120], 0);
 }
 
-TEST(SQTest, KnownCrystalStructure) {
+TEST(calculateSQTest, KnownCrystalStructure) {
   Cell fccCell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
   std::vector<Atom> atoms{
       Atom("Pd", {0.0, 0.0, 0.0}, 0), Atom("Pd", {2.0, 2.0, 0.0}, 1),
       Atom("Pd", {0.0, 2.0, 2.0}, 2), Atom("Pd", {2.0, 0.0, 2.0}, 3)};
   fccCell.setAtoms(atoms);
-  fccCell.setElements({"Pd"});
   fccCell.populateBondLength(1.2);
   fccCell.distancePopulation(8.0, true);
-  fccCell.radialDistributionFunctions(8.0, 0.01);
-  fccCell.SQ(10.0, 0.01);
+  fccCell.calculateRDF(8.0, 0.01);
+  fccCell.calculateSQ(10.0, 0.01);
 
   const auto &g = fccCell.g();
 
-  for (size_t col = 0; col < g[0].size(); ++col) {
-    for (size_t row = 0; row < g.size(); ++row) {
-      std::cout << g[row][col] << " ";
-    }
-    std::cout << '\n';
-  }
-
-
+  //  for (size_t col = 0; col < g[0].size(); ++col) {
+  //    for (size_t row = 0; row < g.size(); ++row) {
+  //      std::cout << g[row][col] << " ";
+  //    }
+  //    std::cout << '\n';
+  //  }
 
   // Verify first peak position matches expectation
   // EXPECT_NEAR(cell.S_q()[0][first_peak_bin], expected_value, tolerance);
