@@ -166,7 +166,7 @@ sudo cmake --install .
             Width of the smoothing kernel, by default 0.081.
           -S, --smoothing
             Smoothing is disabled by default, this option enable smoothing.
-
+```
 
 
 ## Built With
