@@ -14,7 +14,7 @@ using Position = std::array<double, 3>;
 //------------------------------ Constructor Tests ---------------------------//
 //----------------------------------------------------------------------------//
 
-TEST(AtomTests, DefaultConstructorSetsBasicProperties) {
+TEST(AtomConstructorTest, DefaultConstructorSetsBasicProperties) {
   Atom atom;
 
   Position pos{0.0, 0.0, 0.0};
@@ -25,7 +25,7 @@ TEST(AtomTests, DefaultConstructorSetsBasicProperties) {
   EXPECT_EQ(atom.id(), another_atom.id());
 }
 
-TEST(AtomTests, ParameterizedConstructorSetsProperties) {
+TEST(AtomConstructorTest, ParameterizedConstructorSetsProperties) {
   Position pos{1.0, 2.5, -3.0};
   Atom atom("O", pos);
 
@@ -38,14 +38,14 @@ TEST(AtomTests, ParameterizedConstructorSetsProperties) {
 //-------------------------------- Method Tests ------------------------------//
 //----------------------------------------------------------------------------//
 
-TEST(AtomTests, DistanceCalculationIsAccurate) {
+TEST(AtomMethodTests, DistanceCalculationIsAccurate) {
   Atom a1("H", {0.0, 0.0, 0.0}, 0);
   Atom a2("H", {3.0, 4.0, 0.0}, 1);
 
   EXPECT_NEAR(a1.distance(a2), 5.0, 1e-6);
 }
 
-TEST(AtomTests, BondAngleCalculationHandlesBasicCases) {
+TEST(AtomMethodTests, BondAngleCalculationHandlesBasicCases) {
   Atom center("C", {0.0, 0.0, 0.0}, 0);
   Atom a("H", {1.0, 0.0, 0.0}, 1);
   Atom b("H", {0.0, 1.0, 0.0}, 2);
@@ -54,7 +54,7 @@ TEST(AtomTests, BondAngleCalculationHandlesBasicCases) {
   EXPECT_NEAR(angle, constants::pi / 2, 1e-6);
 }
 
-TEST(AtomTests, AddBondedAtomUpdatesList) {
+TEST(AtomMethodTests, AddBondedAtomUpdatesList) {
   Atom atom_a("H", {0.2, 0.0, 0.0}, 0);
   Atom atom_b("H", {1.0, 0.0, 0.0}, 123);
 
@@ -65,7 +65,7 @@ TEST(AtomTests, AddBondedAtomUpdatesList) {
   EXPECT_EQ(bonded[0].id(), 123);
 }
 
-TEST(AtomTests, SetAllUpdatesProperties) {
+TEST(AtomMethodTests, SetAllUpdatesProperties) {
   Atom atom;
   atom.setAll("Fe", {2.0, 3.0, 4.0});
 
@@ -75,7 +75,7 @@ TEST(AtomTests, SetAllUpdatesProperties) {
   }
 }
 
-TEST(AtomTests, BondAngleHandlesZeroVectorsGracefully) {
+TEST(AtomMethodTests, BondAngleHandlesZeroVectorsGracefully) {
   Atom center("C", {0.0, 0.0, 0.0});
   Atom a("H", {0.0, 0.0, 0.0});
   Atom b("H", {0.0, 0.0, 0.0});

@@ -141,9 +141,6 @@ Cell readCar(std::string file_name) {
                                              std::stod(match.str(5).data()),
                                              std::stod(match.str(7).data())});
         tempCell.addAtom(tempAtom);
-        if (!(findInVector(tempCell.elements(), tempAtom.element()).first)) {
-          tempCell.addElement(tempAtom.element());
-        }
       }
     }
   } else {

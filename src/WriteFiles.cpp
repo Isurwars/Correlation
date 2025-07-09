@@ -1,290 +1,190 @@
 // Correlation - Liquid and Amorphous Solid Analysis Tool
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+#include "../include/WriteFiles.hpp"
+
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 
-#include "../include/WriteFiles.hpp"
-
 //---------------------------------------------------------------------------//
-//------------------------------- Templates ---------------------------------//
+//------------------------------ Core Implementation ------------------------//
 //---------------------------------------------------------------------------//
 
-template <typename T>
-void write2DVectorToCSV(const std::vector<std::vector<T>> &vec,
-      const std::string &filename,
-      const std::string &header = "") {
-  std::ofstream file(filename);
-  int rows = vec[0].size();
-  int cols = vec.size();
-  if (!file.is_open()) {
-    std::cerr << "Error: Could not open the file for writing." << std::endl;
-    return;
+// Helper structure for output configuration
+struct OutputConfig {
+  std::string_view name;
+  std::string_view suffix;
+  std::function<std::vector<std::vector<double>>(const DistributionFunctions &)>
+      get_data;
+  std::function<std::string(const Cell &)> header_gen;
+};
+
+// Header generators
+std::string pair_header(const Cell &cell, std::string unit,
+                        std::string quantity) {
+  std::stringstream ss;
+  const int n = cell.elements().size();
+  ss << std::right << std::setw(14) << "r (Å),";
+  for (int i = 0; i < n; ++i) {
+    for (int j = i; j < n; ++j) {
+      ss << std::right << std::setw(14)
+         << cell.elements()[i] + "-" + cell.elements()[j] + " " + unit << ",";
+    }
   }
-  file << std::fixed << std::setprecision(5);
-  file << header << std::endl;
-  // Set precision for floating-point numbers
-  for (int j = 0; j < rows; ++j) {
-    for (int i = 0; i < cols; ++i) {
-      file << std::setw(12) << std::right << vec[i][j];
-      if (i < cols - 1) {
-  file << ",";
+  ss << std::right << std::setw(12) << quantity;
+  return ss.str();
+}
+
+std::string angle_header(const Cell &cell, std::string unit,
+                         std::string quantity) {
+  std::stringstream ss;
+  const int n = cell.elements().size();
+  ss << std::right << std::setw(14) << "theta (deg),";
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      for (int k = j; k < n; ++k) {
+        ss << std::right << std::setw(13)
+           << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
+                  cell.elements()[k] + " " + unit
+           << ",";
       }
     }
-    file << std::endl;
+  }
+  ss << std::right << std::setw(12) << quantity;
+  return ss.str();
+}
+
+std::string coordination_header(const Cell &cell) {
+  std::stringstream ss;
+  const int n = cell.elements().size();
+  ss << std::right << std::setw(14) << "Counts (#),";
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < n; ++j) {
+      ss << std::right << std::setw(14)
+         << cell.elements()[i] + " by " + cell.elements()[j] + ",";
+    }
+  }
+  for (int i = 0; i < n; i++) {
+    ss << std::right << std::setw(13) << cell.elements()[i] << " by any";
+    if (i < n - 1)
+      ss << ",";
   }
 
-  file.close();
-  file.clear();
+  return ss.str();
+}
+
+// Output configurations
+const std::array<OutputConfig, 7> base_configs = {{
+    {"J(r)", "_J.csv", [](auto &df) { return df.J(); },
+     [](auto &cell) { return pair_header(cell, "(Å⁻¹)", "J(r) (Å⁻¹)"); }},
+
+    {"g(r)", "_g.csv", [](auto &df) { return df.g(); },
+     [](auto &cell) { return pair_header(cell, "(Å⁻¹)", "g(r) (Å⁻¹)"); }},
+
+    {"G(r)", "_G.csv", [](auto &df) { return df.G(); },
+     [](auto &cell) { return pair_header(cell, "(Å⁻¹)", "G(r) (Å⁻¹)"); }},
+
+    {"F(theta)", "_PAD.csv", [](auto &df) { return df.F(); },
+     [](auto &cell) {
+       return angle_header(cell, "(deg⁻¹)", "F(theta) (deg⁻¹)");
+     }},
+
+    {"S(Q)", "_S.csv", [](auto &df) { return df.S(); },
+     [](auto &cell) { return pair_header(cell, "(Å)", "S(q) (Å)"); }},
+
+    {"XRD", "_XRD.csv", [](auto &df) { return df.X(); },
+     [](auto &cell) { return pair_header(cell, "(deg)", "XRD (deg⁻¹)"); }},
+
+    {"Coordination", "_Z.csv", [](auto &df) { return df.Z(); },
+     coordination_header},
+}};
+
+const std::array<OutputConfig, 5> smoothed_configs = {
+    {{"J(r) smoothed", "_J_smoothed.csv",
+      [](auto &df) { return df.J_smoothed(); },
+      [](auto &cell) { return pair_header(cell, "(Å⁻¹)", "J(r) (Å⁻¹)"); }},
+
+     {"g(r) smoothed", "_g_smoothed.csv",
+      [](auto &df) { return df.g_smoothed(); },
+      [](auto &cell) { return pair_header(cell, "(Å⁻¹)", "g(r) (Å⁻¹)"); }},
+
+     {"G(r) smoothed", "_G_smoothed.csv",
+      [](auto &df) { return df.G_smoothed(); },
+      [](auto &cell) { return pair_header(cell, "(Å⁻¹)", "G(r) (Å⁻¹)"); }},
+
+     {"F(theta) smoothed", "_PAD_smoothed.csv",
+      [](auto &df) { return df.F_smoothed(); },
+      [](auto &cell) {
+        return angle_header(cell, "(deg⁻¹)", "F(theta) (deg⁻¹)");
+      }},
+
+     {"S(Q) smoothed", "_S_smoothed.csv",
+      [](auto &df) { return df.S_smoothed(); },
+      [](auto &cell) { return pair_header(cell, "(Å)", "S(q) Å"); }}}};
+
+template <typename T>
+void write_impl(const std::vector<std::vector<T>> &data,
+                const std::string &filename, const std::string &header) {
+  std::ofstream file(filename, std::ios::binary);
   if (!file) {
-    std::cerr << "Error: Could not close the file properly." << std::endl;
+    throw std::runtime_error("Failed to open file: " + filename);
+  }
+
+  // Write UTF-8 BOM
+  const unsigned char bom[] = {0xEF, 0xBB, 0xBF};
+  file.write(reinterpret_cast<const char *>(bom), sizeof(bom));
+  file << std::fixed << std::setprecision(5);
+  file << header << '\n';
+
+  for (size_t j = 0; j < data[0].size(); ++j) {
+    for (size_t i = 0; i < data.size(); ++i) {
+      file << std::setw(12) << std::right << data[i][j];
+      if (i < data.size() - 1)
+        file << ",";
+    }
+    file << '\n';
+  }
+
+  if (!file) {
+    throw std::runtime_error("Error writing to file: " + filename);
   }
 }
 
 //---------------------------------------------------------------------------//
-//-------------------------------- Methods ----------------------------------//
+//------------------------------- Write CSV ---------------------------------//
 //---------------------------------------------------------------------------//
 
-// Write CSV Histograms (Cell, out_file, Smoothing)
-void WriteCSV(Cell cell, std::string filename, bool smoothing) {
-  std::stringstream header;
-  std::vector<std::vector<double>> temp_hist;
-  std::vector<std::vector<int>> temp_hist_int;
-  int i, j, k, n = cell.distances().size();
+void WriteCSV(const DistributionFunctions &df, const std::string &base_path,
+              bool smoothed) {
+  const auto &cell = df.cell();
+  const int n = cell.elements().size();
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Writing J -------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist = cell.J();
-  header << std::right << std::setw(14) << "r (Å),";
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      header << std::right << std::setw(14)
-       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
+  // Write base distributions
+  for (const auto &config : base_configs) {
+    try {
+      const auto data = config.get_data(df);
+      const std::string filename = base_path + std::string(config.suffix);
+      write_impl(data, filename, config.header_gen(cell));
+      std::cout << "Writing " << config.name << '\n';
+    } catch (const std::exception &e) {
+      std::cerr << "Error writing " << config.name << ": " << e.what() << '\n';
     }
   }
-  header << std::right << std::setw(12) << "J(r)";
-  write2DVectorToCSV(temp_hist, filename + "_J.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing J(r)" << std::endl;
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Writing g -------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist = cell.g();
-  header << std::right << std::setw(14) << "r (Å),";
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      header << std::right << std::setw(14)
-       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
-    }
-  }
-  header << std::right << std::setw(12) << "g(r)";
-  write2DVectorToCSV(temp_hist, filename + "_g.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing g(r)" << std::endl;
-
-  //-------------------------------------------------------------------------//
-  //------------------------------- Writing G -------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist = cell.G();
-  header << std::right << std::setw(14) << "r (Å),";
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      header << std::right << std::setw(14)
-       << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å),";
-    }
-  }
-  header << std::right << std::setw(12) << "G(r)";
-  write2DVectorToCSV(temp_hist, filename + "_G_.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing G(r)" << std::endl;
-
-  //-------------------------------------------------------------------------//
-  //------------------------------ Writing PAD ------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist = cell.F();
-  header << std::right << std::setw(14) << "theta (°),";
-  for (i = 0; i < n; i++) {
-    for (j = 0; j < n; j++) {
-      for (k = j; k < n; k++) {
-  header << std::right << std::setw(13)
-         << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
-          cell.elements()[k] + ",";
+  // Write smoothed versions if requested
+  if (smoothed) {
+    for (const auto &config : smoothed_configs) {
+      try {
+        const auto data = config.get_data(df);
+        const std::string filename = base_path + std::string(config.suffix);
+        write_impl(data, filename, config.header_gen(cell));
+        std::cout << "Writing " << config.name << '\n';
+      } catch (const std::exception &e) {
+        std::cerr << "Error writing " << config.name << ": " << e.what()
+                  << '\n';
       }
     }
   }
-  header << std::right << std::setw(12) << "F(theta)";
-  write2DVectorToCSV(temp_hist, filename + "_PAD.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing F(theta)" << std::endl;
-
-  //-------------------------------------------------------------------------//
-  //------------------------------- Writing Z -------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist_int = cell.Z();
-  header << std::right << std::setw(13) << "Number (#),";
-  for (i = 0; i < n; i++) {
-    for (j = 0; j < n; j++) {
-      header << std::right << std::setw(13)
-       << cell.elements()[i] + " by " + cell.elements()[j] + ",";
-    }
-  }
-  for (i = 0; i < n; i++) {
-    header << std::right << std::setw(12) << cell.elements()[i] + "  by any";
-    if (i < n - 1) {
-      header << ",";
-    }
-  }
-  write2DVectorToCSV(temp_hist_int, filename + "_Z.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing Coordination Number (Z)" << std::endl;
-
-  //-------------------------------------------------------------------------//
-  //------------------------------ Writing SQ -------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist = cell.S();
-  header << std::right << std::setw(13) << "q (1/Å),";
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      header << std::right << std::setw(12)
-       << cell.elements()[i] + "-" + cell.elements()[j] + " (Å),";
-    }
-  }
-  header << std::right << std::setw(12) << "S(Q)";
-  write2DVectorToCSV(temp_hist, filename + "_S.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing S(Q)" << std::endl;
-
-  //-------------------------------------------------------------------------//
-  //------------------------------ Writing XRD ------------------------------//
-  //-------------------------------------------------------------------------//
-  temp_hist = cell.X();
-  header << std::right << std::setw(13) << "2-theta (°),";
-  for (i = 0; i < n; i++) {
-    for (j = i; j < n; j++) {
-      header << std::right << std::setw(12)
-       << cell.elements()[i] + "-" + cell.elements()[j] + " (%),";
-    }
-  }
-  header << std::right << std::setw(12) << "XRD";
-  write2DVectorToCSV(temp_hist, filename + "_XRD.csv", header.str());
-  header.str("");
-  header.clear();
-  std::cout << "Writing XRD(2theta)" << std::endl;
-
-  if (smoothing) {
-    //-----------------------------------------------------------------------//
-    //-------------------------- Writing smoothed J -------------------------//
-    //-----------------------------------------------------------------------//
-    temp_hist = cell.J_smoothed();
-    header << std::right << std::setw(14) << "r (Å),";
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-  header << std::right << std::setw(14)
-         << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
-      }
-    }
-    header << std::right << std::setw(12) << "J(r)";
-    write2DVectorToCSV(temp_hist, filename + "_J_smoothed.csv", header.str());
-    header.str("");
-    header.clear();
-    std::cout << "Writing J(r) smoothed" << std::endl;
-
-    //-----------------------------------------------------------------------//
-    //-------------------------- Writing smoothed g -------------------------//
-    //-----------------------------------------------------------------------//
-    temp_hist = cell.g_smoothed();
-    header << std::right << std::setw(14) << "r (Å),";
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-  header << std::right << std::setw(14)
-         << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
-      }
-    }
-    header << std::right << std::setw(12) << "g(r)";
-    write2DVectorToCSV(temp_hist, filename + "_g_smoothed.csv", header.str());
-    header.str("");
-    header.clear();
-    std::cout << "Writing g(r) smoothed" << std::endl;
-
-    //-----------------------------------------------------------------------//
-    //-------------------------- Writing smoothed G -------------------------//
-    //-----------------------------------------------------------------------//
-    temp_hist = cell.G_smoothed();
-    header << std::right << std::setw(14) << "r (Å),";
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-  header << std::right << std::setw(14)
-         << cell.elements()[i] + "-" + cell.elements()[j] + " (1/Å), ";
-      }
-    }
-    header << std::right << std::setw(12) << "G(r)";
-    write2DVectorToCSV(temp_hist, filename + "_G_smoothed_.csv", header.str());
-    header.str("");
-    header.clear();
-    std::cout << "Writing G(r) smoothed" << std::endl;
-
-    //-----------------------------------------------------------------------//
-    //------------------------ Writing smoothed PAD -------------------------//
-    //-----------------------------------------------------------------------//
-    temp_hist = cell.F_smoothed();
-    header << std::right << std::setw(14) << "theta (°),";
-    for (i = 0; i < n; i++) {
-      for (j = 0; j < n; j++) {
-  for (k = j; k < n; k++) {
-    header << std::right << std::setw(13)
-     << cell.elements()[j] + "-" + cell.elements()[i] + "-" +
-      cell.elements()[k] + ",";
-  }
-      }
-    }
-    header << std::right << std::setw(12) << "F(theta)";
-    write2DVectorToCSV(temp_hist, filename + "_PAD_smoothed.csv", header.str());
-    header.str("");
-    header.clear();
-    std::cout << "Writing F(theta) smoothed" << std::endl;
-
-    //-----------------------------------------------------------------------//
-    //------------------------ Writing smoothed S(q) ------------------------//
-    //-----------------------------------------------------------------------//
-    temp_hist = cell.S_smoothed();
-    header << std::right << std::setw(13) << "q (1/Å),";
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-  header << std::right << std::setw(12)
-         << cell.elements()[i] + "-" + cell.elements()[j] + " (Å),";
-      }
-    }
-    header << std::right << std::setw(12) << "S(Q)";
-    write2DVectorToCSV(temp_hist, filename + "_S_smoothed.csv", header.str());
-    header.str("");
-    header.clear();
-    std::cout << "Writing S(Q) smoothed" << std::endl;
-
-    //-----------------------------------------------------------------------//
-    //------------------------ Writing smoothed XRD -------------------------//
-    //-----------------------------------------------------------------------//
-    temp_hist = cell.X();
-    header << std::right << std::setw(13) << "2-theta (°),";
-    for (i = 0; i < n; i++) {
-      for (j = i; j < n; j++) {
-  header << std::right << std::setw(12)
-         << cell.elements()[i] + "-" + cell.elements()[j] + " (%),";
-      }
-    }
-    header << std::right << std::setw(12) << "XRD";
-    write2DVectorToCSV(temp_hist, filename + "_XRD_smoothed.csv", header.str());
-    header.str("");
-    header.clear();
-    std::cout << "Writing XRD(2 theta) smoothed" << std::endl;
-  }
-};
+}

@@ -6,13 +6,14 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include <string>
 
-#include "Cell.hpp"      // Cell actions
+#include "DistributionFunctions.hpp"
 
 //-------------------------------------------------------------------------//
 //------------------------------- Methods ---------------------------------//
 //-------------------------------------------------------------------------//
 
-// Write CSV (Cell, out_file_name, Smoothing)
-void WriteCSV(Cell, std::string, bool = false);
+// Write CSV (DistributionFunctions, out_file_name, Smoothing)
+void WriteCSV(const DistributionFunctions &, const std::string &,
+              const bool = false);
 
 #endif // INCLUDE_WRITE_FILES_HPP_

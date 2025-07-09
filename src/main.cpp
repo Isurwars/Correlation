@@ -291,11 +291,14 @@ int main(int argc, char **argv) {
    * Read the structure file
    */
   std::filesystem::path _in_file_{_in_file_name_};
-  std::filesystem::path my_path;
-  (my_path = _in_file_name_).remove_filename();
-  if (_out_file_name_ == "")
-    _out_file_name_ =
-        my_path.generic_string() + "/" + _in_file_.stem().generic_string();
+  std::filesystem::path _out_file_;
+  std::filesystem::path _in_path_ = _in_file_.parent_path();
+
+  if (_out_file_name_.empty()) {
+    _out_file_ = _in_path_ / _in_file_.stem();
+    _out_file_name_ = _out_file_.generic_string();
+  }
+
   std::string MyExt = _in_file_.extension().generic_string();
   // Convert extension back to lower case
   std::for_each(MyExt.begin(), MyExt.end(), [](char &c) { c = ::tolower(c); });
@@ -320,26 +323,30 @@ int main(int argc, char **argv) {
     /*Read the Bond Distances from the external file*/
     MyCell.setBondLength(readBond(_bond_file_name_, MyCell));
   }
-
+  std::cout << "Bond lenght populated correctly" << std::endl;
+  MyCell.populateElementID();
+  std::cout << "Element IDs populated correctly" << std::endl;
   /*
    * This function calculates the distances between every pair of atoms
    * in the structure. A supercell method is used to create the images
    * in all directions up to _r_cut_ distance.
    */
   MyCell.distancePopulation(_r_cut_, _self_interaction_);
-
-  /*
-   * This function calculates the partial coordination number for pairs of
-   * elements. Bonded Atoms use the same parameters for PAD.
-   */
-  MyCell.coordinationNumber();
-
+  std::cout << "Distance tensor populated correctly" << std::endl;
   /*
    * This function calculates the angle between every atom and all pairs
    * of bonded atoms. The bonded atoms are calculated in Cell::RDF and it
    * must be called first.
    */
   MyCell.planeAnglePopulation();
+  std::cout << "Angle tensorpopulated correctly" << std::endl;
+
+  DistributionFunctions MyDF(MyCell);
+  /*
+   * This function calculates the partial coordination number for pairs of
+   * elements. Bonded Atoms use the same parameters for PAD.
+   */
+  MyDF.coordinationNumber();
 
   /*
    * This function uses the distances to calculate g(r), G(r) and J(r).
@@ -348,21 +355,21 @@ int main(int argc, char **argv) {
    */
   std::cout << "Calculating Coordination Functions: " << _out_file_name_
             << std::endl;
-  MyCell.calculateRDF(_r_cut_, _bin_w_, _normalize_);
+  MyDF.calculateRDF(_r_cut_, _bin_w_, _normalize_);
 
   /*
    * This function uses the angles to calculate the PAD.
    * The theta_max parameter is the maximum angle to compute,
    * the _bin_w_ parameter is the bin width to be used.
    */
-  MyCell.calculatePAD(180.0, _angle_bin_w_);
+  MyDF.calculatePAD(180.0, _angle_bin_w_);
 
   /*
    * This function calculate S(Q) as the Fourier Transform of G(r).
    * The _r_cut_ parameter is the cutoff distance in r-space,
    * the _q_bin_w_ parameter is the bin width to be used in q-space.
    */
-  MyCell.calculateSQ(_q_cut_, _q_bin_w_, _normalize_);
+  MyDF.calculateSQ(_q_cut_, _q_bin_w_, _normalize_);
   // MyCell.calculateSQExact(_q_cut_, _q_bin_w_, _normalize_);
 
   /*
@@ -380,18 +387,18 @@ int main(int argc, char **argv) {
    * WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!! WARNING!!!
    *
    */
-  MyCell.calculateXRD(1.5406, 10.0, 90.0, 0.2);
+  MyDF.calculateXRD(1.5406, 10.0, 90.0, 0.2);
 
   if (_smoothing_) {
     std::cout << "Smoothing... " << std::endl;
-    MyCell.Smoothing(_smooth_sigma_, _kernel_);
+    MyDF.Smoothing(_smooth_sigma_, _kernel_);
   }
 
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;
-  WriteCSV(MyCell, _out_file_name_, _smoothing_);
+  WriteCSV(MyDF, _out_file_name_, _smoothing_);
 
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
   return 0;
 
-  std::vector<double> aux(MyCell.g().size(), 0);
+  std::vector<double> aux(MyDF.g().size(), 0);
 } // main

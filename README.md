@@ -6,14 +6,87 @@
 
 `Correlation` is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (_.CAR), CASTEP(_.CELL), ONETEP(_.DAT), LAMMPS(_.XYZ),etc...
 
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Build Instructions](#build-instructions)
+- [Usage](#usage)
+- [License](#license)
+- [Authors](#authors)
+- [Acknowledgments](#acknowledgments)
+
+## Features
+
 This program calculates the main correlation functions of a material:
 
-- Radial Distribution Function (J(r)).
-- Pair Distribution Function (g(r)).
-- Reduced Pair Distribution Function (G(r)).
-- Coordination Number (CN).
-- Plane-Angle Distribution (PAD).
-- Structure Factor (S(Q)).
+- Radial Distribution Function (J(r))
+- Pair Distribution Function (g(r))
+- Reduced Pair Distribution Function (G(r))
+- Coordination Number (CN)
+- Plane-Angle Distribution (PAD)
+- Structure Factor (S(Q))
+
+Supports structure files from:
+- DMoL3 (`.CAR`)
+- CASTEP (`.CELL`)
+- ONETEP (`.DAT`)
+- LAMMPS (`.XYZ`)
+
+
+## Installation
+
+### Prerequisites
+
+#### Windows
+
+There are several (GCC) implementations for Windows.
+WE recommend the MSYS2 implementation:
+
+Installing MSYS2:
+```
+MSYS2: https://www.msys2.org/
+```
+
+Using MSYS2 (recommended):
+```
+pacman -Syu
+pacman -S --needed base-devel mingw-w64-x86_64-toolchain
+pacman -S cmake tbb git
+```
+
+#### Linux
+##### Debian/Ubuntu:
+
+```
+sudo apt update
+sudo apt install build-essential cmake tbb git
+```
+
+##### Arch/Manjaro:
+```
+sudo pacman -Syu
+sudo pacman base-devel cmake tbb git
+```
+
+#### MacOS
+```
+xcode-select --install
+brew install cmake tbb git
+```
+
+### Building from Source
+```
+# Clean build and compile
+rm -rf build && mkdir build && cd build
+cmake ..
+cmake --build .
+
+# Install system-wide (optional)
+sudo cmake --install .
+```
+
+
 
 ## Usage
 
@@ -94,224 +167,11 @@ This program calculates the main correlation functions of a material:
           -S, --smoothing
             Smoothing is disabled by default, this option enable smoothing.
 
-```
 
-## Installation
-
----
-
-`Correlation` is written in C++17 and is designed to be compatible with GNU Compiler Collection (GCC) v7.0 or superior.
-
-### Prerequisites
-
-The following steps are required for the correct compilation of `Correlation` project.
-
-#### Windows
-
----
-
-There are several (GCC) implementations for Windows, developers recommend the MSYS2 implementation:
-
-Installing MSYS2:
-
-```
-MSYS2: https://www.msys2.org/
-```
-
-Updating MSYS2:
-
-```
-pacman -Syu
-```
-
-Installing GCC and other developer tools:
-
-```
-pacman -S --needed base-devel mingw-w64-x86_64-toolchain
-```
-
-Installing GNU Autotools:
-
-```
-pacman -S automake autoconf libtool
-```
-
-#### Unix
-
----
-
-The code was tested with in Ubuntu 18.04, Debian 8.11 and MX Linux 19.3 but it should work on other distros.
-
-Installing GCC Debian / Ubuntu:
-
-```
-sudo apt install build-essential
-```
-
-Installing GCC Arch / Manjaro
-
-```
-sudo pacman -Sy base-devel
-```
-
-
-Installing GNU Autotools Debian / Ubuntu:
-
-```
-sudo apt install automake autoconf libtool
-```
-
-Installing GNU Autotools Arch / Manjaro:
-
-```
-sudo pacman -Sy automake autoconf
-```
-
-
-#### MacOS
-
----
-
-The code was tested with MacOS 10.15 Catalina, with Clang 11.0.0 compilers.
-
-Installing Clang:
-
-```
-xcode-select --install
-```
-
-Installing GNU Autotools:
-
-```
-brew install automake autoconf libtool
-```
-
-### Installing `Correlation`
-
----
-
-For compiling you should have GCC or Clang compilers, and GNU Autotools correctly installed on the system.
-
-First, lets adjust the configure file to match your local environment.
-
-You have to options, the first option is with the following commands:
-
-```
-aclocal
-autoconf
-automake --add-missing
-```
-
-Or the recommendeed way is run the following command instead:
-
-```
-autoreconf
-```
-
-
-Some UNIX systems may require that configure scripts to be executable by the user, you can add the right to execute with the following commands:
-
-```
-chmod +x configure
-chmod +x install-sh
-```
-
-Execute the configure script:
-
-```
-./configure
-```
-
-Compile the code with make command:
-
-```
-make
-```
-
-Install the software in the standard binary location:
-
-```
-make install
-```
-
-## Running the tests
-
----
-
-A series of test are included in the project:
-
-1. Silicon crystal structure as published by Alvarez, _et al._ https://doi.org/10.1016/S0022-3093(01)01005-5
-2. Graphene layer supercell modified from Romero, _et al._ https://doi.org/10.1016/j.jnoncrysol.2004.03.031
-3. Amorphous palladium as published by Rodríguez, _et al._ https://journals.aps.org/prb/abstract/10.1103/PhysRevB.100.024422
-4. Amorphous palladium hydride as published by Rodríguez, _et al._ https://arxiv.org/abs/2012.02934
-5. Liquid bismuth as reported by F. B. Quiroga in her undergraduate thesis. Private communication.
-6. Amorphous palladium hydride supercell created from Rodríguez, _et al._ https://arxiv.org/abs/2012.02934
-
-To execute all of these tests execute the following command:
-
-```
-make tests
-```
-
-### Execute single test
-
-To run a single test instead, for example to execute test 3, you should run:
-
-```
-make test3
-```
-
-or
-
-```
-correlation ./test/test_3/aPd.cell
-```
-
-If the test are executed successfully several message like this one should appear for every single test performed:
-
-```
-"----------------------------------------------------------"
-" Test 3: rPDF (G_) successfully calculated."
-"----------------------------------------------------------"
-```
-
-Five result(s) file(s) should be generated in the same directory as the input file(aPd.cell) as Comma Separeted Values files (\*.CSV).
-
-1. Pair Distribution Function [**g**]("*_g.CSV").
-2. Radial Distribution Function [**J**]("*_J.CSV").
-3. Reduced Radial Distribution Function [**G**]("*_G.CSV").
-4. Coordination Number [**Z**]("*_Z.CSV").
-5. Plane Angle Distribution [**PAD**]("*_PAD.CSV").
-
-These Comma Separated Values files can then be analyzed with your favorite tool like: LibreOffice Math, Office Excel, OriginPro, etc...
-
-For example:
-
-![Pair Correlation Function of amorphous palladium](Images/Test3_g.png)
-
-### Stress test
-
-A file is included as an stress test to `Correlation` in a particular machine, this test should take several minutes to execute and may require several GB of RAM to successfully compute the correlation functions.
-
-These are the results for palladium deuteride reported by Rodríguez, _et al._ https://arxiv.org/abs/2012.02934
-
-```
-make test7
-```
-
-### [OPTIONAL CLEANING COMMAND]
-
----
-
-In order to have a clean project folder to upload to GitHub we added the optional step to clean the project folder automatically with the following command:
-
-```
-make clean-all
-```
 
 ## Built With
 
-- [Atom](https://atom.io/) - A hackable text editor for the 21st Century
+- [emacs](https://www.gnu.org/software/emacs/) - An extensible, customizable, free/libre text editor — and more.
 - [MSYS2](https://www.msys2.org/) - Software Distribution and Building Platform for Windows
 
 ## Authors
@@ -327,17 +187,11 @@ make clean-all
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-# Planned future features
-
-We will continue to support and enrich the software in the foreseeable future. Here we list the features planned to be added in the future:
 
 - Support for additional output files, like hdf5 standard.
 
 - Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
 
-- Inclusion of structure factors and x-ray diffraction, to facilitate the comparison with experimental results.
-
-- Parallelization of the main loop, to further improve the code by switching to a ‘divide-and-conquer paradigm.
 
 # Acknowledgments
 

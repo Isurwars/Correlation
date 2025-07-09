@@ -38,32 +38,6 @@ private:
   std::vector<std::vector<std::vector<double>>> distances_;
   // 4D Tensor of Angles
   std::vector<std::vector<std::vector<std::vector<double>>>> angles_;
-  // Matrix of g(r) Histograms
-  std::vector<std::vector<double>> g_;
-  // Matrix of J(r) Histograms
-  std::vector<std::vector<double>> J_;
-  // Matrix of G(r) Histograms
-  std::vector<std::vector<double>> G_;
-  // Matrix of f(theta) Histograms
-  std::vector<std::vector<double>> F_;
-  // Matrix of S(Q) Histograms
-  std::vector<std::vector<double>> S_;
-  // Matrix of calculateXRD Histograms
-  std::vector<std::vector<double>> X_;
-  // Matrix of Coordination Number Histograms
-  std::vector<std::vector<int>> Z_;
-  // Matrix of J(r) Smoothed Histograms
-  std::vector<std::vector<double>> J_smoothed_;
-  // Matrix of g(r) Smoothed Histograms
-  std::vector<std::vector<double>> g_smoothed_;
-  // Matrix of G(r) Smoothed Histograms
-  std::vector<std::vector<double>> G_smoothed_;
-  // Matrix of f(theta) Smoothed Histograms
-  std::vector<std::vector<double>> F_smoothed_;
-  // Matrix of S(Q) Smoothed Histograms
-  std::vector<std::vector<double>> S_smoothed_;
-  // Matrix of calculateXRD Smoothed Histograms
-  std::vector<std::vector<double>> X_smoothed_;
 
 public:
   //-------------------------------------------------------------------------//
@@ -108,6 +82,10 @@ public:
   void setElementsNumbers(const std::vector<int> &e) { element_numbers_ = e; }
   void calculateElementNumbers();
 
+  // Weigth factos
+  const std::vector<double> &w_ij() const { return w_ij_; }
+  void setWeightFactors(const std::vector<double> &w) { w_ij_ = w; }
+
   // Distances
   const std::vector<std::vector<std::vector<double>>> &distances() const {
     return distances_;
@@ -127,60 +105,24 @@ public:
     bond_length_ = bonds;
   }
 
-  // Distribution Functions
-  const std::vector<std::vector<double>> &g() const { return g_; }
-  const std::vector<std::vector<double>> &J() const { return J_; }
-  const std::vector<std::vector<double>> &G() const { return G_; }
-  const std::vector<std::vector<double>> &F() const { return F_; }
-  const std::vector<std::vector<double>> &S() const { return S_; }
-  const std::vector<std::vector<double>> &X() const { return X_; }
-  const std::vector<std::vector<int>> &Z() const { return Z_; }
-  const std::vector<std::vector<double>> &J_smoothed() const {
-    return J_smoothed_;
-  }
-  const std::vector<std::vector<double>> &g_smoothed() const {
-    return g_smoothed_;
-  }
-  const std::vector<std::vector<double>> &G_smoothed() const {
-    return G_smoothed_;
-  }
-  const std::vector<std::vector<double>> &F_smoothed() const {
-    return F_smoothed_;
-  }
-  const std::vector<std::vector<double>> &S_smoothed() const {
-    return S_smoothed_;
-  }
-  const std::vector<std::vector<double>> &X_smoothed() const {
-    return X_smoothed_;
-  }
-
   //-------------------------------------------------------------------------//
   //------------------------------- Methods ---------------------------------//
   //-------------------------------------------------------------------------//
+
+  // element_id
+  const int element_id(const std::string &);
   // Populate element_id in all  atoms
   void populateElementID();
-  // In Cell corrected positions
-  void correctPositions();
-  void correctFracPositions();
   // Populate the Bond length Matrix
   void populateBondLength(double);
+  // Correct atom positions
+  void correctPositions();
+  void correctFracPositions();
   // Calculate Distances (max distance between atoms)
   void distancePopulation(double, bool);
   // Coordination Numbers Calculation
   void coordinationNumber();
   // Bond-Angle Calulation (degrees=true, radian=false)
   void planeAnglePopulation(bool = true);
-  // RDF Histograms  (max distance between atoms, bin width, normalize)
-  void calculateRDF(double = 20.0, double = 0.05, bool = false);
-  // PAD Histograms (max angle, bin width)
-  void calculatePAD(double = 180.0, double = 1.0);
-  // Structure Factor Calculation
-  void calculateSQ(double = 25.0, double = 0.0, bool = false);
-  // calculateXRD Calculation
-  void calculateXRD(double = 1.5406, double = 5.0, double = 90.0, double = 1.0);
-  // RDF Smoothing (sigma)
-  void Smoothing(double, int = 1);
-  // VoronoiIndex()
-  void voronoiIndex();
 };
 #endif // INCLUDE_CELL_HPP_
