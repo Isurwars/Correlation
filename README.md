@@ -187,13 +187,7 @@ sudo cmake --install .
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
-
-- Support for additional output files, like hdf5 standard.
-
-- Inclusion of other correlation functions like Velocity Correlation Functions, to further improve the analysis of liquids and phase transitions.
-
-
-# Acknowledgments
+## Acknowledgments
 
 I.R. acknowledge PAPIIT, DGAPA-UNAM for his postdoctoral fellowship.
 D.H.R. acknowledge Consejo Nacional de Ciencia y Tecnología (CONACyT) for supporting his graduate studies.
