@@ -82,8 +82,10 @@ Clean build and compile
 rm -rf build && mkdir build && cd build
 cmake ..
 cmake --build .
+```
 
 Install system-wide (optional)
+
 ```
 sudo cmake --install .
 ```
