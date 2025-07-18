@@ -235,9 +235,4 @@ TEST(CellBondTest, DistancePopulation) {
   EXPECT_GT(DistCell.atoms()[1].bonded_atoms().size(), 0);
 }
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}
-
 #endif // GTEST_CELL_CPP

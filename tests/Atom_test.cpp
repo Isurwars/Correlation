@@ -6,9 +6,8 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "../include/Atom.hpp"
 #include "../include/Constants.hpp"
+#include "../include/LinearAlgebra.hpp"
 #include <gtest/gtest.h>
-
-using Position = std::array<double, 3>;
 
 //----------------------------------------------------------------------------//
 //------------------------------ Constructor Tests ---------------------------//
@@ -17,7 +16,7 @@ using Position = std::array<double, 3>;
 TEST(AtomConstructorTest, DefaultConstructorSetsBasicProperties) {
   Atom atom;
 
-  Position pos{0.0, 0.0, 0.0};
+  Vector3D pos{0.0, 0.0, 0.0};
   for (std::size_t i = 0; i < 3; ++i) {
     EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
   }
@@ -26,7 +25,7 @@ TEST(AtomConstructorTest, DefaultConstructorSetsBasicProperties) {
 }
 
 TEST(AtomConstructorTest, ParameterizedConstructorSetsProperties) {
-  Position pos{1.0, 2.5, -3.0};
+  Vector3D pos{1.0, 2.5, -3.0};
   Atom atom("O", pos);
 
   for (std::size_t i = 0; i < 3; ++i) {
@@ -69,7 +68,7 @@ TEST(AtomMethodTests, SetAllUpdatesProperties) {
   Atom atom;
   atom.setAll("Fe", {2.0, 3.0, 4.0});
 
-  Position pos{2.0, 3.0, 4.0};
+  Vector3D pos{2.0, 3.0, 4.0};
   for (std::size_t i = 0; i < 3; ++i) {
     EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
   }
