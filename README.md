@@ -10,7 +10,7 @@
 - [Features](#features)
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
-  - [Build Instructions](#build-instructions)
+  - [Build Instructions](#building)
 - [Usage](#usage)
 - [License](#license)
 - [Authors](#authors)
@@ -75,7 +75,7 @@ xcode-select --install
 brew install cmake tbb git
 ```
 
-### Building from Source
+### Building
 ```
 # Clean build and compile
 rm -rf build && mkdir build && cd build
