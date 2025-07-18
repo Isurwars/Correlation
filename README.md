@@ -74,11 +74,7 @@ xcode-select --install
 brew install cmake tbb git
 ```
 
-<<<<<<< HEAD
 ### Build
-=======
-### Building
->>>>>>> 9cb413257f4b7adfa28b875a42c201a8951e5b4b
 
 #### Clone the repository:
 
