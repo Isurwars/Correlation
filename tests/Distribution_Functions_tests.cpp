@@ -143,26 +143,9 @@ TEST(calculateSQTest, KnownCrystalStructure) {
   fcc_actions.calculateRDF(20.0, 0.05);
   fcc_actions.calculateSQ(25.0, 0.05, 9.0);
 
-//  const auto &g = fcc_actions.g();
-
-//  for (size_t col = 0; col < g[0].size(); ++col) {
-//    for (size_t row = 0; row < g.size(); ++row) {
-//      std::cout << g[row][col] << " ";
-//    }
-//    std::cout << '\n';
-//  }
-
-//  const auto &s = fcc_actions.S();
-
-//  for (size_t col = 0; col < s[0].size(); ++col) {
-//    for (size_t row = 0; row < s.size(); ++row) {
-//      std::cout << s[row][col] << " ";
-//    }
-//    std::cout << '\n';
-//  }
-
   // Verify first peak position matches expectation
-  // EXPECT_NEAR(cell.S_q()[0][first_peak_bin], expected_value, tolerance);
+  EXPECT_NEAR(fcc_actions.g()[1][56], 38.29, 0.1);
+  EXPECT_NEAR(fcc_actions.S()[1][87], 2.46184, 0.1);
 }
 
 #endif // GTEST_DISTRIBUTION_FUNCTIONS_CPP
