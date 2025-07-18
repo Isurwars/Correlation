@@ -10,7 +10,7 @@
 - [Features](#features)
 - [Installation](#installation)
   - [Prerequisites](#prerequisites)
-  - [Build Instructions](#building)
+  - [Build Instructions](#build)
 - [Usage](#usage)
 - [License](#license)
 - [Authors](#authors)
@@ -74,7 +74,7 @@ xcode-select --install
 brew install cmake tbb git
 ```
 
-### Building from source
+### Build
 
 #### Clone the repository:
 
@@ -112,7 +112,7 @@ sudo cmake --install .
 ---
 
 
-## Built With
+## Built with
 
 - [emacs](https://www.gnu.org/software/emacs/) - An extensible, customizable, free/libre text editor — and more.
 - [MSYS2](https://www.msys2.org/) - Software Distribution and Building Platform for Windows
@@ -120,6 +120,7 @@ sudo cmake --install .
 ## Authors
 
 - **Isaías Rodríguez** - _Corresponding Author_ - [Isurwars](https://github.com/Isurwars) <isurwars@gmail.com>
+- **Salvador Villareal Lopez Rebuelta** <salvadorvillarreallr@gmail.com>
 - **Renela M. Valladares** <renelavalladares@gmail.com>
 - **Alexander Valladares** <valladar@ciencias.unam.mx>
 - **David Hinojosa-Romero** <david18_hr@ciencias.unam.mx>
