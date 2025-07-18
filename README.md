@@ -76,13 +76,15 @@ brew install cmake tbb git
 ```
 
 ### Building
+
+Clean build and compile
 ```
-# Clean build and compile
 rm -rf build && mkdir build && cd build
 cmake ..
 cmake --build .
 
-# Install system-wide (optional)
+Install system-wide (optional)
+```
 sudo cmake --install .
 ```
 
