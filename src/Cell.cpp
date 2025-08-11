@@ -97,7 +97,7 @@ void Cell::calculateLatticeVectors() {
   v_c_ = {
       C * c_b, C * (c_a - c_b * c_g) / s_g,
       C * sqrt(1 - c_a * c_a - c_b * c_b - c_g * c_g + 2 * c_a * c_b * c_g) /
-        s_g};
+          s_g};
   calculateVolume();
 } // Cell::setLatticeVectors
 
