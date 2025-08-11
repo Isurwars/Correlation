@@ -144,7 +144,7 @@
                   <text variable="container-title" form="short" text-case="title"/>
                   <group delimiter=", ">
                      <text variable="volume" font-weight="bold"/>
-                     <group delimiter=" "><!-- TODO: Change to page-first when Zotero supports it -->
+                     <group delimiter=" ">
                         <text variable="page" form="short"/>
                         <text macro="year-date" prefix="(" suffix=")"/>
                      </group>
