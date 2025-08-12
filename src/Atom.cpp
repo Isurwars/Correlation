@@ -11,8 +11,7 @@
 //------------------------------ Constructors -------------------------------//
 //---------------------------------------------------------------------------//
 
-Atom::Atom(std::string element, Vector3D pos, int id,
-           int element_id)
+Atom::Atom(std::string element, Vector3D pos, int id, int element_id)
     : id_{id}, position_{pos}, element_{std::move(element)},
       element_id_{element_id} {}
 
@@ -29,10 +28,10 @@ Atom::Atom() : Atom("H", {0.0, 0.0, 0.0}, -1, -1) {}
 //---------------------------------------------------------------------------//
 
 void Atom::addBondedAtom(const Atom &atom_A) {
-    bonded_atoms_.push_back(atom_A);
+  bonded_atoms_.push_back(atom_A);
 } // addBondedAtom
 
-void Atom::setAll(std::string ele, Vector3D pos) {
+void Atom::resetPositionAndElement(std::string ele, Vector3D pos) {
   element_ = ele;
   position_ = pos;
 }
@@ -47,30 +46,30 @@ double Atom::distance(const Atom &other_atom) const {
 }
 
 // Get Bond Angle
-double Atom::getAngle(const Atom &atom_A, const Atom &atom_B) const {
+double Atom::angle(const Atom &atom_A, const Atom &atom_B) const {
   // Use const references to avoid unnecessary copies
-  const Vector3D pos_A = atom_A.position();
-  const Vector3D pos_B = atom_B.position();
-  const Vector3D pos_C = position_;
+  const Vector3D &pos_A = atom_A.position();
+  const Vector3D &pos_B = atom_B.position();
+  const Vector3D &pos_C = position_;
 
   // Calculate the vectors representing the bonds
-  Vector3D vA = {pos_A[0] - pos_C[0], pos_A[1] - pos_C[1], pos_A[2] - pos_C[2]};
-  Vector3D vB = {pos_B[0] - pos_C[0], pos_B[1] - pos_C[1], pos_B[2] - pos_C[2]};
+  Vector3D vA = pos_A - pos_C;
+  Vector3D vB = pos_B - pos_C;
 
   // Calculate the magnitudes of the vectors
-  double vA_ = std::sqrt(vA[0] * vA[0] + vA[1] * vA[1] + vA[2] * vA[2]);
-  double vB_ = std::sqrt(vB[0] * vB[0] + vB[1] * vB[1] + vB[2] * vB[2]);
+  double norm_A = norm(vA);
+  double norm_B = norm(vB);
 
   // Handle zero magnitude vectors
-  if (vA_ == 0.0 || vB_ == 0.0) {
+  if (norm_A == 0.0 || norm_B == 0.0) {
     return 0.0; // Or throw an exception, depending on desired behavior
   }
 
   // Calculate the dot product and normalize
-  double aux = (vA[0] * vB[0] + vA[1] * vB[1] + vA[2] * vB[2]) / (vA_ * vB_);
+  double cos_theta = (vA * vB) / (norm_A * norm_B);
 
   // Clamp the value to the valid range [-1, 1]
-  aux = std::clamp(aux, -1.0, 1.0);
+  cos_theta = std::clamp(cos_theta, -1.0, 1.0);
 
-  return std::acos(aux);
+  return std::acos(cos_theta);
 } // Get Bond Angle

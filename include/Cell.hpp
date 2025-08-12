@@ -53,7 +53,9 @@ public:
   //-------------------------------------------------------------------------//
 
   // Lattice Parameters
-  std::array<double, 6> lattice_parameters() { return lattice_parameters_; }
+  const std::array<double, 6> &lattice_parameters() const {
+    return lattice_parameters_;
+  }
   void setLatticeParameters(std::array<double, 6>);
 
   // Lattice Vectors

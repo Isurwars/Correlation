@@ -13,8 +13,12 @@ using Vector3D = std::array<double, 3>;
 //----------------------------- Vector Operators ----------------------------//
 //---------------------------------------------------------------------------//
 
-double dot(const Vector3D&, const Vector3D&);
-double norm(const Vector3D&);
+Vector3D operator+(const Vector3D &a, const Vector3D &b);
+Vector3D operator-(const Vector3D &a, const Vector3D &b);
+double operator*(const Vector3D &a, const Vector3D &b);
+double dot(const Vector3D &, const Vector3D &);
+double norm(const Vector3D &);
+Vector3D cross(const Vector3D &, const Vector3D &);
 
 //---------------------------------------------------------------------------//
 //----------------------------- Matrix Operators ----------------------------//

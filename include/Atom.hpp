@@ -38,12 +38,12 @@ public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
-  explicit Atom(std::string, std::array<double, 3>, int, int);
-  explicit Atom(std::string, std::array<double, 3>, int);
-  explicit Atom(std::string, std::array<double, 3>);
+  explicit Atom(std::string, Vector3D, int, int);
+  explicit Atom(std::string, Vector3D, int);
+  explicit Atom(std::string, Vector3D);
   explicit Atom();
 
-  void setAll(std::string, Vector3D);
+  void resetPositionAndElement(std::string, Vector3D);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -52,11 +52,11 @@ public:
   int id() const { return id_; }
   void setID(int num) { id_ = num; }
 
-  const Vector3D position() const { return position_; }
+  const Vector3D &position() const { return position_; }
   void setPosition(Vector3D pos) { position_ = pos; }
 
-  const std::vector<Atom> bonded_atoms() const { return bonded_atoms_; }
-  void setBondedAtom( const std::vector<Atom> &a) {bonded_atoms_ = a;}
+  const std::vector<Atom> &bonded_atoms() const { return bonded_atoms_; }
+  void setBondedAtoms(const std::vector<Atom> &a) { bonded_atoms_ = a; }
   void addBondedAtom(const Atom &);
 
   const std::string &element() const { return element_; }
@@ -73,6 +73,6 @@ public:
   [[nodiscard]] double distance(const Atom &) const;
 
   // get the angle formed between two other Atoms and this Central Atom
-  [[nodiscard]] double getAngle(const Atom &, const Atom &) const;
+  [[nodiscard]] double angle(const Atom &, const Atom &) const;
 };
 #endif // INCLUDE_ATOM_HPP_

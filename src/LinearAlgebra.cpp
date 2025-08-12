@@ -10,10 +10,27 @@
 //----------------------------- Vector Operators ----------------------------//
 //---------------------------------------------------------------------------//
 
-double dot(const Vector3D &a, const Vector3D &b) {
+Vector3D operator+(const Vector3D &a, const Vector3D &b) {
+  return {a[0] + b[0], a[1] + b[1], a[2] + b[2]};
+}
+
+Vector3D operator-(const Vector3D &a, const Vector3D &b) {
+  return {a[0] - b[0], a[1] - b[1], a[2] - b[2]};
+}
+
+double operator*(const Vector3D &a, const Vector3D &b) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-} // dot
+}
+Vector3D operator-(const Vector3D &a, const Vector3D &b);
+
+double dot(const Vector3D &a, const Vector3D &b) { return a * b; }
+
 double norm(const Vector3D &a) { return std::sqrt(dot(a, a)); }
+
+Vector3D cross(const Vector3D &a, const Vector3D &b) {
+  return {a[1] * b[2] - a[2] * b[1], a[0] * b[2] - a[2] * b[0],
+          a[0] * b[1] - a[1] * b[0]};
+}
 
 //---------------------------------------------------------------------------//
 //----------------------------- Matrix Operators ----------------------------//

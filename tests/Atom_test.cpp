@@ -49,7 +49,7 @@ TEST(AtomMethodTests, BondAngleCalculationHandlesBasicCases) {
   Atom a("H", {1.0, 0.0, 0.0}, 1);
   Atom b("H", {0.0, 1.0, 0.0}, 2);
 
-  double angle = center.getAngle(a, b);
+  double angle = center.angle(a, b);
   EXPECT_NEAR(angle, constants::pi / 2, 1e-6);
 }
 
@@ -66,7 +66,7 @@ TEST(AtomMethodTests, AddBondedAtomUpdatesList) {
 
 TEST(AtomMethodTests, SetAllUpdatesProperties) {
   Atom atom;
-  atom.setAll("Fe", {2.0, 3.0, 4.0});
+  atom.resetPositionAndElement("Fe", {2.0, 3.0, 4.0});
 
   Vector3D pos{2.0, 3.0, 4.0};
   for (std::size_t i = 0; i < 3; ++i) {
@@ -79,7 +79,7 @@ TEST(AtomMethodTests, BondAngleHandlesZeroVectorsGracefully) {
   Atom a("H", {0.0, 0.0, 0.0});
   Atom b("H", {0.0, 0.0, 0.0});
 
-  double angle = center.getAngle(a, b);
+  double angle = center.angle(a, b);
   EXPECT_DOUBLE_EQ(angle, 0.0);
 }
 

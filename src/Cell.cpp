@@ -92,12 +92,19 @@ void Cell::calculateLatticeVectors() {
   double c_g = cos(gamma);
   double s_g = sin(gamma);
 
+  const double term_under_sqrt =
+      1 - c_a * c_a - c_b * c_b - c_g * c_g + 2 * c_a * c_b * c_g;
+
+  if (term_under_sqrt <
+      1e-12) { // Use a small epsilon to handle floating-point inaccuracies
+    throw std::invalid_argument(
+        "Invalid lattice parameters; non-positive volume.");
+  }
+
   v_a_ = {A, 0.0, 0.0};
   v_b_ = {B * c_g, B * s_g, 0.0};
-  v_c_ = {
-      C * c_b, C * (c_a - c_b * c_g) / s_g,
-      C * sqrt(1 - c_a * c_a - c_b * c_b - c_g * c_g + 2 * c_a * c_b * c_g) /
-          s_g};
+  v_c_ = {C * c_b, C * (c_a - c_b * c_g) / s_g,
+          C * std::sqrt(term_under_sqrt) / s_g};
   calculateVolume();
 } // Cell::setLatticeVectors
 
@@ -105,9 +112,7 @@ void Cell::calculateLatticeVectors() {
 //----------------------------- Calculate Volume ----------------------------//
 //---------------------------------------------------------------------------//
 void Cell::calculateVolume() {
-  volume_ = v_a_[0] * (v_b_[1] * v_c_[2] - v_b_[2] * v_c_[1]) -
-            v_a_[1] * (v_b_[0] * v_c_[2] - v_b_[2] * v_c_[0]) +
-            v_a_[2] * (v_b_[0] * v_c_[1] - v_b_[1] * v_c_[0]);
+  volume_ = v_a_ * cross(v_b_, v_c_);
 
   if (volume_ <= 1e-8)
     throw std::logic_error("Cell volume must be positive");
@@ -428,7 +433,7 @@ void Cell::planeAnglePopulation(bool degree) {
         // Calculate angle and store in both element order permutations
         try {
           const double angle =
-              central_atom.getAngle(atom_a, atom_b) * conversion_factor;
+              central_atom.angle(atom_a, atom_b) * conversion_factor;
           temp_angles[elem_a][central_elem][elem_b].push_back(angle);
           temp_angles[elem_b][central_elem][elem_a].push_back(angle);
         } catch (const std::invalid_argument &e) {
