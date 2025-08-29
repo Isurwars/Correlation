@@ -1,151 +1,165 @@
-#ifndef GTEST_DISTRIBUTION_FUNCTIONS_CPP
-#define GTEST_DISTRIBUTION_FUNCTIONS_CPP
-// Correlation - Liquid and Amorphous Solid Analysis Tool
+4 // Correlation - Liquid and Amorphous Solid Analysis Tool
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include <gtest/gtest.h>
-#include <vector>
-
 #include "../include/Atom.hpp"
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
-//----------------------------------------------------------------------------//
-//------------------------- Coordination Number Tests ------------------------//
-//----------------------------------------------------------------------------/
-TEST(CoordinationErrorTest, ThrowsOnEmptyCell) {
-  Cell empty_cell;
-  DistributionFunctions empty_actions(empty_cell);
-  // No atoms added
-  EXPECT_THROW(empty_actions.coordinationNumber(), std::logic_error);
-}
+#include <algorithm> // For std::max_element
+#include <gtest/gtest.h>
+#include <iterator> // For std::distance
+#include <vector>
 
-TEST(CellCoordinationTest, CoordinationCounting) {
-  Cell coord_cell({25.0, 20.0, 20.0, 90, 90, 90});
-  coord_cell.calculateLatticeVectors();
-  std::vector<Atom> atoms{Atom("C", {5.0, 2.5, 2.5}, 0),
-                          Atom("H", {4.5, 2.5, 2.5}, 1),
-                          Atom("H", {5.5, 2.5, 2.5}, 2)};
-  coord_cell.setAtoms(atoms);
-  coord_cell.populateBondLength(1.2);
-  coord_cell.correctPositions();
-  coord_cell.distancePopulation(9.0, true);
-  DistributionFunctions coord_actions(coord_cell);
-  coord_actions.coordinationNumber();
+    namespace correlation::testing {
 
-  const auto coordHist = coord_actions.Z();
+  // A single test fixture for all DistributionFunctions tests.
+  class DistributionFunctionsTest : public ::testing::Test {};
 
-  EXPECT_EQ(coordHist[2][2], 1);
-  EXPECT_EQ(coordHist[3][1], 2);
-}
+  //----------------------------------------------------------------------------//
+  //------------------------- Coordination Number Tests
+  //------------------------//
+  //----------------------------------------------------------------------------//
+  TEST_F(DistributionFunctionsTest, CoordinationNumberThrowsOnEmptyCell) {
+    // Arrange
+    Cell empty_cell;
+    DistributionFunctions actions(empty_cell);
 
-//----------------------------------------------------------------------------//
-//--------------------------- RDF Calculation Tests --------------------------//
-//----------------------------------------------------------------------------//
-TEST(RDFErrorTest, ThrowsOnInvalidBinWidth) {
-  Cell valid_cell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
-  DistributionFunctions valid(valid_cell);
-  // Test various invalid bin widths
-  EXPECT_THROW(valid.calculateRDF(5.0, 0.0, false), std::invalid_argument);
+    // Act & Assert
+    EXPECT_THROW(actions.coordinationNumber(), std::logic_error);
+  }
 
-  EXPECT_THROW(valid.calculateRDF(5.0, -0.1, false), std::invalid_argument);
-}
+  TEST_F(DistributionFunctionsTest, CoordinationNumberCountsCorrectly) {
+    // Arrange: A central Carbon with two Hydrogen neighbors.
+    Cell cell({25.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    cell.calculateLatticeVectors();
+    std::vector<Atom> atoms{Atom("C", {5.0, 2.5, 2.5}, 0),
+                            Atom("H", {4.5, 2.5, 2.5}, 1),
+                            Atom("H", {5.5, 2.5, 2.5}, 2)};
+    cell.setAtoms(atoms);
+    cell.populateBondLength(1.2);
+    cell.correctPositions();
+    cell.distancePopulation(5.0, true);
+    DistributionFunctions actions(cell);
 
-TEST(RDFErrorTest, ThrowsOnInvalidRCut) {
-  Cell valid_cell_2({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
-  DistributionFunctions valid2(valid_cell_2);
-  // Test various invalid cutoff radii
-  EXPECT_THROW(valid2.calculateRDF(0.0, 0.1, false), std::invalid_argument);
+    // Act
+    actions.coordinationNumber();
+    const auto &coord_hist = actions.Z();
 
-  EXPECT_THROW(valid2.calculateRDF(-2.5, 0.1, false), std::invalid_argument);
-}
+    // Assert:
+    EXPECT_EQ(coord_hist[2][2], 1);
+    EXPECT_EQ(coord_hist[3][1], 2);
+  }
 
-TEST(RDFErrorTest, ThrowsOnEmptyCell) {
-  Cell empty_cell;
-  DistributionFunctions error_actions(empty_cell);
-  // No atoms added
-  EXPECT_THROW(error_actions.calculateRDF(2.0, 0.1, false), std::logic_error);
-}
+  //----------------------------------------------------------------------------//
+  //--------------------------- RDF Calculation Tests
+  //--------------------------//
+  //----------------------------------------------------------------------------//
+  TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
+    // Arrange
+    Cell cell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
+    DistributionFunctions actions(cell);
 
-TEST(CellRDFTest, BasicRDFCalculation) {
-  Cell RDF_cell({4.0, 15.0, 15.0, 90, 90, 90});
-  std::vector<Atom> atoms{Atom("Ar", {1.5, 2.5, 2.5}, 0),
-                          Atom("Ar", {2.5, 2.5, 2.5}, 1)};
-  RDF_cell.setAtoms(atoms);
-  RDF_cell.populateBondLength(1.2);
-  RDF_cell.correctPositions();
-  RDF_cell.distancePopulation(5.0, true);
-  DistributionFunctions RDF_actions(RDF_cell);
-  RDF_actions.calculateRDF(6.0, 0.2);
+    // Act & Assert for various invalid inputs
+    EXPECT_THROW(actions.calculateRDF(5.0, 0.0, false), std::invalid_argument);
+    EXPECT_THROW(actions.calculateRDF(5.0, -0.1, false), std::invalid_argument);
+    EXPECT_THROW(actions.calculateRDF(0.0, 0.1, false), std::invalid_argument);
+    EXPECT_THROW(actions.calculateRDF(-2.5, 0.1, false), std::invalid_argument);
+  }
 
-  const auto &rdf = RDF_actions.g();
+  TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnEmptyCell) {
+    // Arrange
+    Cell empty_cell;
+    DistributionFunctions actions(empty_cell);
 
-  EXPECT_GT(rdf[1][5], 1.0);
-  EXPECT_GT(rdf[1][15], 1.0);
-  EXPECT_GT(rdf[1][20], 1.0);
-  EXPECT_GT(rdf[1][25], 1.0);
-}
+    // Act & Assert
+    EXPECT_THROW(actions.calculateRDF(2.0, 0.1, false), std::logic_error);
+  }
 
-//----------------------------------------------------------------------------//
-//---------------------------- Plane Angles Tests ----------------------------//
-//----------------------------------------------------------------------------//
-TEST(PADErrorTest, ThrowsOnInvalidBinWidth) {
-  Cell valid_cell_3({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
-  DistributionFunctions valid(valid_cell_3);
-  // Test various invalid bin widths
-  EXPECT_THROW(valid.calculatePAD(20.0, -1.0), std::invalid_argument);
+  TEST_F(DistributionFunctionsTest, RDFPeakPositionIsCorrect) {
+    // Arrange: Two atoms exactly 1.0 unit apart.
+    Cell cell({15.0, 15.0, 15.0, 90.0, 90.0, 90.0});
+    std::vector<Atom> atoms{Atom("Ar", {5.0, 5.0, 5.0}, 0),
+                            Atom("Ar", {6.0, 5.0, 5.0}, 1)};
+    cell.setAtoms(atoms);
+    cell.distancePopulation(5.0, true);
+    DistributionFunctions actions(cell);
+    const double bin_width = 0.2;
 
-  EXPECT_THROW(valid.calculatePAD(20.0, 0.0), std::invalid_argument);
-}
+    // Act
+    actions.calculateRDF(6.0, bin_width);
+    const auto &rdf = actions.g();
+    const auto &total_rdf =
+        rdf.back(); // Assuming the last entry is the total g(r)
 
-TEST(PADErrorTest, ThrowsOnInvalidThetaCut) {
-  Cell valid_cell_4({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
-  DistributionFunctions valid_2(valid_cell_4);
-  // Test various invalid bin widths
-  EXPECT_THROW(valid_2.calculatePAD(-20.0, 1.0), std::invalid_argument);
+    // Assert: Find the peak of the RDF and verify its position.
+    // The distance is 1.0, so the peak should be in bin 1.0 / 0.2 = 5.
+    auto max_it = std::max_element(total_rdf.begin(), total_rdf.end());
+    size_t peak_index = std::distance(total_rdf.begin(), max_it);
 
-  EXPECT_THROW(valid_2.calculatePAD(0.0, 1.0), std::invalid_argument);
-}
+    EXPECT_EQ(peak_index, 5);
+  }
 
-TEST(PADTest, BasicAngleCalculation) {
-  Cell water_cell({25.0, 20.0, 20.0, 90, 90, 90});
+  //----------------------------------------------------------------------------//
+  //---------------------------- PAD Calculation Tests
+  //-------------------------//
+  //----------------------------------------------------------------------------//
+  TEST_F(DistributionFunctionsTest, CalculatePADThrowsOnInvalidParameters) {
+    // Arrange
+    Cell cell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
+    DistributionFunctions actions(cell);
 
-  // Create water molecule-like structure
-  water_cell.addAtom(Atom("O", {0, 0, 0}, 0));
-  water_cell.addAtom(Atom("H", {1, 0, 0}, 1));
-  water_cell.addAtom(Atom("H", {-0.5, 0.866, 0}, 2));
+    // Act & Assert
+    EXPECT_THROW(actions.calculatePAD(20.0, -1.0), std::invalid_argument);
+    EXPECT_THROW(actions.calculatePAD(20.0, 0.0), std::invalid_argument);
+    EXPECT_THROW(actions.calculatePAD(-20.0, 1.0), std::invalid_argument);
+    EXPECT_THROW(actions.calculatePAD(0.0, 1.0), std::invalid_argument);
+  }
 
-  // Calculate bonds first
-  water_cell.populateBondLength(1.2);
-  water_cell.distancePopulation(2.0, true);
-  water_cell.planeAnglePopulation(true);
+  TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWaterMolecule) {
+    // Arrange: A water-like structure with a known 120-degree angle.
+    Cell cell({25.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    cell.addAtom(Atom("O", {0.0, 0.0, 0.0}, 0));
+    cell.addAtom(Atom("H", {1.0, 0.0, 0.0}, 1)); // H-O-H angle is 120 deg
+    cell.addAtom(Atom("H", {-0.5, 0.866, 0.0}, 2));
+    cell.distancePopulation(2.0, true);
+    cell.planeAnglePopulation(true);
+    DistributionFunctions actions(cell);
 
-  // Calculate plane angles
-  DistributionFunctions water_actions(water_cell);
-  water_actions.calculatePAD();
+    // Act
+    actions.calculatePAD(180.0, 1.0); // Use 1-degree bins
+    const auto &pad = actions.F();
+    const auto &h_o_h_pad =
+        pad.back(); // Assuming last is total or relevant partial
 
-  const auto &angles = water_actions.F();
+    // Assert: The peak of the angle distribution should be at 120 degrees.
+    auto max_it = std::max_element(h_o_h_pad.begin(), h_o_h_pad.end());
+    size_t peak_index = std::distance(h_o_h_pad.begin(), max_it);
 
-  ASSERT_GT(angles[angles.size() - 1][120], 0);
-}
+    EXPECT_EQ(peak_index, 120);
+  }
 
-TEST(calculateSQTest, KnownCrystalStructure) {
-  Cell fcc_cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
-  std::vector<Atom> atoms{
-      Atom("Pd", {0.0, 0.0, 0.0}, 0), Atom("Pd", {2.0, 2.0, 0.0}, 1),
-      Atom("Pd", {0.0, 2.0, 2.0}, 2), Atom("Pd", {2.0, 0.0, 2.0}, 3)};
-  fcc_cell.setAtoms(atoms);
-  fcc_cell.populateBondLength(1.2);
-  fcc_cell.distancePopulation(20.0, true);
+  //----------------------------------------------------------------------------//
+  //---------------------------- SQ Calculation Tests
+  //--------------------------//
+  //----------------------------------------------------------------------------//
+  TEST_F(DistributionFunctionsTest, CalculateSQMatchesKnownFCCStructure) {
+    // Arrange: A simple FCC cell of Palladium.
+    Cell fcc_cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
+    std::vector<Atom> atoms{
+        Atom("Pd", {0.0, 0.0, 0.0}, 0), Atom("Pd", {2.0, 2.0, 0.0}, 1),
+        Atom("Pd", {0.0, 2.0, 2.0}, 2), Atom("Pd", {2.0, 0.0, 2.0}, 3)};
+    fcc_cell.setAtoms(atoms);
+    fcc_cell.distancePopulation(20.0, true);
+    DistributionFunctions actions(fcc_cell);
 
-  // Cell ACTIONS
-  DistributionFunctions fcc_actions(fcc_cell);
-  fcc_actions.calculateRDF(20.0, 0.05);
-  fcc_actions.calculateSQ(25.0, 0.05, 9.0);
+    // Act
+    actions.calculateRDF(20.0, 0.05);
+    actions.calculateSQ(25.0, 0.05, 9.0);
 
-  // Verify first peak position matches expectation
-  EXPECT_NEAR(fcc_actions.g()[1][56], 38.29, 0.1);
-  EXPECT_NEAR(fcc_actions.S()[1][87], 2.46184, 0.1);
-}
+    // Assert: Check against known, pre-calculated values for this structure.
+    // This serves as a regression test.
+    EXPECT_NEAR(actions.g().back()[56], 38.29, 0.1);
+    EXPECT_NEAR(actions.S().back()[87], 2.46184, 0.1);
+  }
 
-#endif // GTEST_DISTRIBUTION_FUNCTIONS_CPP
+} // namespace correlation::testing

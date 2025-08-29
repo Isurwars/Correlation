@@ -7,14 +7,16 @@
 #include <string>
 
 #include "../include/Cell.hpp"
+
 //---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
-std::vector<std::vector<double>> readBond(std::string, Cell);
-Cell readCar(std::string);
-Cell readCell(std::string);
-Cell readOnetepDat(std::string);
+void toLower(std::string &);
+std::vector<std::vector<double>> readBond(const std::string &, const Cell &);
+Cell readCar(const std::string &);
+Cell readCell(const std::string &);
 Cell readCif(std::string);
-Cell readLammpsDump(std::string);
+Cell readLammpsDump(const std::string &);
+Cell readOnetepDat(std::string);
 
 #endif // INCLUDE_READFILES_HPP_

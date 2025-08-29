@@ -1,86 +1,121 @@
-#ifndef GTEST_ATOM_CPP
-#define GTEST_ATOM_CPP
 // Correlation - Liquid and Amorphous Solid Analysis Tool
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
 #include "../include/Atom.hpp"
 #include "../include/Constants.hpp"
 #include "../include/LinearAlgebra.hpp"
 #include <gtest/gtest.h>
 
+// Use a namespace to encapsulate tests and avoid polluting the global scope.
+namespace correlation::testing {
+
+// Use a test fixture for all tests related to the Atom class.
+class AtomTest : public ::testing::Test {};
+
 //----------------------------------------------------------------------------//
 //------------------------------ Constructor Tests ---------------------------//
 //----------------------------------------------------------------------------//
 
-TEST(AtomConstructorTest, DefaultConstructorSetsBasicProperties) {
+TEST_F(AtomTest, DefaultConstructorInitializesToDefaultState) {
+  // Arrange & Act
   Atom atom;
-
-  Vector3D pos{0.0, 0.0, 0.0};
-  for (std::size_t i = 0; i < 3; ++i) {
-    EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
-  }
   Atom another_atom;
-  EXPECT_EQ(atom.id(), another_atom.id());
+
+  // Assert
+  EXPECT_DOUBLE_EQ(atom.position()[0], 0.0);
+  EXPECT_DOUBLE_EQ(atom.position()[1], 0.0);
+  EXPECT_DOUBLE_EQ(atom.position()[2], 0.0);
+  EXPECT_EQ(atom.id(),
+            another_atom.id()); // Verifies deterministic ID generation
 }
 
-TEST(AtomConstructorTest, ParameterizedConstructorSetsProperties) {
-  Vector3D pos{1.0, 2.5, -3.0};
-  Atom atom("O", pos);
+TEST_F(AtomTest, ParameterizedConstructorSetsPropertiesCorrectly) {
+  // Arrange
+  const Vector3D expected_pos{1.0, 2.5, -3.0};
 
-  for (std::size_t i = 0; i < 3; ++i) {
-    EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
-  }
+  // Act
+  const Atom atom("O", expected_pos);
+
+  // Assert
+  EXPECT_EQ(atom.element(), "O");
+  EXPECT_NEAR(atom.position()[0], expected_pos[0], 1E-8);
+  EXPECT_NEAR(atom.position()[1], expected_pos[1], 1E-8);
+  EXPECT_NEAR(atom.position()[2], expected_pos[2], 1E-8);
 }
 
 //----------------------------------------------------------------------------//
 //-------------------------------- Method Tests ------------------------------//
 //----------------------------------------------------------------------------//
 
-TEST(AtomMethodTests, DistanceCalculationIsAccurate) {
-  Atom a1("H", {0.0, 0.0, 0.0}, 0);
-  Atom a2("H", {3.0, 4.0, 0.0}, 1);
+TEST_F(AtomTest, DistanceCalculatesCorrectEuclideanDistance) {
+  // Arrange: A classic 3-4-5 right triangle for an easy-to-verify distance.
+  const Atom atom1("H", {0.0, 0.0, 0.0});
+  const Atom atom2("H", {3.0, 4.0, 0.0});
 
-  EXPECT_NEAR(a1.distance(a2), 5.0, 1e-6);
+  // Act
+  const double distance = atom1.distance(atom2);
+
+  // Assert
+  EXPECT_NEAR(distance, 5.0, 1e-6);
 }
 
-TEST(AtomMethodTests, BondAngleCalculationHandlesBasicCases) {
-  Atom center("C", {0.0, 0.0, 0.0}, 0);
-  Atom a("H", {1.0, 0.0, 0.0}, 1);
-  Atom b("H", {0.0, 1.0, 0.0}, 2);
+TEST_F(AtomTest, AngleCalculatesNinetyDegreeAngle) {
+  // Arrange
+  const Atom center_atom("C", {0.0, 0.0, 0.0});
+  const Atom neighbor_a("H", {1.0, 0.0, 0.0}); // Vector along X-axis
+  const Atom neighbor_b("H", {0.0, 1.0, 0.0}); // Vector along Y-axis
 
-  double angle = center.angle(a, b);
-  EXPECT_NEAR(angle, constants::pi / 2, 1e-6);
+  // Act
+  const double angle = center_atom.angle(neighbor_a, neighbor_b);
+
+  // Assert
+  EXPECT_NEAR(angle, constants::pi / 2.0, 1e-6);
 }
 
-TEST(AtomMethodTests, AddBondedAtomUpdatesList) {
-  Atom atom_a("H", {0.2, 0.0, 0.0}, 0);
-  Atom atom_b("H", {1.0, 0.0, 0.0}, 123);
+TEST_F(AtomTest, AddBondedAtomUpdatesBondedList) {
+  // Arrange
+  Atom atom_a("H", {0.0, 0.0, 0.0});
+  const Atom atom_b("O", {1.0, 0.0, 0.0}, 123); // Give it a distinct ID
 
+  // Act
   atom_a.addBondedAtom(atom_b);
-  std::vector<Atom> bonded = atom_a.bonded_atoms();
+  const auto bonded_atoms = atom_a.bonded_atoms();
 
-  ASSERT_EQ(bonded.size(), 1);
-  EXPECT_EQ(bonded[0].id(), 123);
+  // Assert
+  ASSERT_EQ(bonded_atoms.size(), 1);
+  EXPECT_EQ(bonded_atoms[0].id(), 123);
+  EXPECT_EQ(bonded_atoms[0].element(), "O");
 }
 
-TEST(AtomMethodTests, SetAllUpdatesProperties) {
-  Atom atom;
-  atom.resetPositionAndElement("Fe", {2.0, 3.0, 4.0});
+TEST_F(AtomTest, ResetPositionAndElementUpdatesProperties) {
+  // Arrange
+  Atom atom; // Starts with default properties
+  const Vector3D new_pos{2.0, 3.0, 4.0};
 
-  Vector3D pos{2.0, 3.0, 4.0};
-  for (std::size_t i = 0; i < 3; ++i) {
-    EXPECT_NEAR(atom.position()[i], pos[i], 1E-8);
-  }
+  // Act
+  atom.resetPositionAndElement("Fe", new_pos);
+
+  // Assert
+  EXPECT_EQ(atom.element(), "Fe");
+  EXPECT_NEAR(atom.position()[0], new_pos[0], 1E-8);
+  EXPECT_NEAR(atom.position()[1], new_pos[1], 1E-8);
+  EXPECT_NEAR(atom.position()[2], new_pos[2], 1E-8);
 }
 
-TEST(AtomMethodTests, BondAngleHandlesZeroVectorsGracefully) {
-  Atom center("C", {0.0, 0.0, 0.0});
-  Atom a("H", {0.0, 0.0, 0.0});
-  Atom b("H", {0.0, 0.0, 0.0});
+TEST_F(AtomTest, AngleHandlesCoincidentAtomsGracefully) {
+  // Arrange: All atoms are at the origin, creating zero vectors.
+  const Atom center_atom("C", {0.0, 0.0, 0.0});
+  const Atom neighbor_a("H", {0.0, 0.0, 0.0});
+  const Atom neighbor_b("H", {0.0, 0.0, 0.0});
 
-  double angle = center.angle(a, b);
+  // Act
+  const double angle = center_atom.angle(neighbor_a, neighbor_b);
+
+  // Assert: The angle for zero vectors is undefined; returning 0.0 is a
+  // reasonable way to handle this edge case.
   EXPECT_DOUBLE_EQ(angle, 0.0);
 }
 
-#endif // GTEST_ATOM_CPP
+} // namespace correlation::testing

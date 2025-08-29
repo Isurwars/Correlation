@@ -21,7 +21,6 @@ Vector3D operator-(const Vector3D &a, const Vector3D &b) {
 double operator*(const Vector3D &a, const Vector3D &b) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
-Vector3D operator-(const Vector3D &a, const Vector3D &b);
 
 double dot(const Vector3D &a, const Vector3D &b) { return a * b; }
 

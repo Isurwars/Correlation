@@ -106,7 +106,7 @@ void Cell::calculateLatticeVectors() {
   v_c_ = {C * c_b, C * (c_a - c_b * c_g) / s_g,
           C * std::sqrt(term_under_sqrt) / s_g};
   calculateVolume();
-} // Cell::setLatticeVectors
+} // Cell::calculateLatticeVectors
 
 //---------------------------------------------------------------------------//
 //----------------------------- Calculate Volume ----------------------------//
@@ -149,7 +149,6 @@ void Cell::addElement(const std::string &ele) {
   // Only insert if element doesn't already exist
   if (it == elements_.end() || *it != ele)
     elements_.insert(it, ele);
-
 } // Cell::addElement
 
 const int Cell::element_id(const std::string &ele) {
