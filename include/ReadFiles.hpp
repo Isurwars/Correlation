@@ -12,10 +12,12 @@
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
 void toLower(std::string &);
+static std::string cleanToken(std::string);
+static void replaceAll(std::string &, const std::string &, const std::string &);
 std::vector<std::vector<double>> readBond(const std::string &, const Cell &);
 Cell readCar(const std::string &);
 Cell readCell(const std::string &);
-Cell readCif(std::string);
+Cell readCif(const std::string &);
 Cell readLammpsDump(const std::string &);
 Cell readOnetepDat(std::string);
 
