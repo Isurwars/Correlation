@@ -33,7 +33,7 @@ TEST_F(AtomTest, DefaultConstructorInitializesToDefaultState) {
 
 TEST_F(AtomTest, ParameterizedConstructorSetsPropertiesCorrectly) {
   // Arrange
-  const Vector3D expected_pos{1.0, 2.5, -3.0};
+  const linalg::Vector3<double> expected_pos{1.0, 2.5, -3.0};
 
   // Act
   const Atom atom("O", expected_pos);
@@ -92,7 +92,7 @@ TEST_F(AtomTest, AddBondedAtomUpdatesBondedList) {
 TEST_F(AtomTest, ResetPositionAndElementUpdatesProperties) {
   // Arrange
   Atom atom; // Starts with default properties
-  const Vector3D new_pos{2.0, 3.0, 4.0};
+  const linalg::Vector3<double> new_pos{2.0, 3.0, 4.0};
 
   // Act
   atom.resetPositionAndElement("Fe", new_pos);

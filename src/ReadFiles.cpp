@@ -51,8 +51,9 @@ static void replaceAll(std::string &str, const std::string &from,
 }
 
 // Helper to apply a symmetry operation string like '-x, y+1/2, z'
-static Vector3D applySymmetry(const std::string &op, const Vector3D &v) {
-  Vector3D result = {0.0, 0.0, 0.0};
+static linalg::Vector3<double> applySymmetry(const std::string &op,
+                                             const linalg::Vector3<double> &v) {
+  linalg::Vector3<double> result = {0.0, 0.0, 0.0};
   std::stringstream ss(op);
   std::string component;
   int i = 0;
@@ -414,9 +415,9 @@ Cell readCif(const std::string &file_name) {
               std::remove_if(element.begin(), element.end(), ::isdigit),
               element.end());
 
-          Vector3D pos = {std::stod(cleanToken(tokens[x_idx])),
-                          std::stod(cleanToken(tokens[y_idx])),
-                          std::stod(cleanToken(tokens[z_idx]))};
+          linalg::Vector3<double> pos = {std::stod(cleanToken(tokens[x_idx])),
+                                         std::stod(cleanToken(tokens[y_idx])),
+                                         std::stod(cleanToken(tokens[z_idx]))};
           asymmetric_atoms.emplace_back(element, pos);
         } else {
           // End of loop data
@@ -456,7 +457,7 @@ Cell readCif(const std::string &file_name) {
 
   for (const auto &atom : asymmetric_atoms) {
     for (const auto &op : symmetry_ops) {
-      Vector3D frac_pos = applySymmetry(op, atom.position());
+      linalg::Vector3<double> frac_pos = applySymmetry(op, atom.position());
 
       // Normalize fractional coordinates to be within [0, 1)
       frac_pos[0] = std::fmod(frac_pos[0], 1.0);
@@ -472,9 +473,10 @@ Cell readCif(const std::string &file_name) {
       // Avoid adding duplicate atoms with a small tolerance
       bool exists = false;
       for (const auto &final_atom : final_atoms) {
-        Vector3D diff = {std::abs(final_atom.position()[0] - frac_pos[0]),
-                         std::abs(final_atom.position()[1] - frac_pos[1]),
-                         std::abs(final_atom.position()[2] - frac_pos[2])};
+        linalg::Vector3<double> diff = {
+            std::abs(final_atom.position()[0] - frac_pos[0]),
+            std::abs(final_atom.position()[1] - frac_pos[1]),
+            std::abs(final_atom.position()[2] - frac_pos[2])};
         // Check periodic boundary difference
         if (diff[0] > 0.5)
           diff[0] = 1.0 - diff[0];

@@ -11,7 +11,8 @@
 
 namespace correlation::testing {
 
-void AssertVectorNear(const Vector3D &vec1, const Vector3D &vec2,
+void AssertVectorNear(const linalg::Vector3<double> &vec1,
+                      const linalg::Vector3<double> &vec2,
                       double abs_error = 1e-6) {
   EXPECT_NEAR(vec1[0], vec2[0], abs_error) << "at component x";
   EXPECT_NEAR(vec1[1], vec2[1], abs_error) << "at component y";
@@ -94,8 +95,8 @@ TEST_F(CellTest, VolumeCalculationForNonOrthogonalCellIsCorrect) {
 
 TEST_F(CellTest, ConstructorThrowsOnInvalidLatticeVector) {
   // Arrange
-  const Vector3D zero_vec = {0.0, 0.0, 0.0};
-  const Vector3D valid_vec = {1.0, 0.0, 0.0};
+  const linalg::Vector3<double> zero_vec = {0.0, 0.0, 0.0};
+  const linalg::Vector3<double> valid_vec = {1.0, 0.0, 0.0};
 
   // Act & Assert
   EXPECT_THROW(Cell(zero_vec, valid_vec, valid_vec), std::invalid_argument);

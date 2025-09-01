@@ -11,14 +11,15 @@
 //------------------------------ Constructors -------------------------------//
 //---------------------------------------------------------------------------//
 
-Atom::Atom(std::string element, Vector3D pos, int id, int element_id)
+Atom::Atom(std::string element, linalg::Vector3<double> pos, int id,
+           int element_id)
     : id_{id}, position_{pos}, element_{std::move(element)},
       element_id_{element_id} {}
 
-Atom::Atom(std::string element, Vector3D pos, int id)
+Atom::Atom(std::string element, linalg::Vector3<double> pos, int id)
     : Atom(std::move(element), pos, id, -1) {}
 
-Atom::Atom(std::string element, Vector3D pos)
+Atom::Atom(std::string element, linalg::Vector3<double> pos)
     : Atom(std::move(element), pos, -1, -1) {}
 
 Atom::Atom() : Atom("H", {0.0, 0.0, 0.0}, -1, -1) {}
@@ -31,7 +32,8 @@ void Atom::addBondedAtom(const Atom &atom_A) {
   bonded_atoms_.push_back(atom_A);
 } // addBondedAtom
 
-void Atom::resetPositionAndElement(std::string ele, Vector3D pos) {
+void Atom::resetPositionAndElement(std::string ele,
+                                   linalg::Vector3<double> pos) {
   element_ = ele;
   position_ = pos;
 }
@@ -48,13 +50,13 @@ double Atom::distance(const Atom &other_atom) const {
 // Get Bond Angle
 double Atom::angle(const Atom &atom_A, const Atom &atom_B) const {
   // Use const references to avoid unnecessary copies
-  const Vector3D &pos_A = atom_A.position();
-  const Vector3D &pos_B = atom_B.position();
-  const Vector3D &pos_C = position_;
+  const linalg::Vector3<double> &pos_A = atom_A.position();
+  const linalg::Vector3<double> &pos_B = atom_B.position();
+  const linalg::Vector3<double> &pos_C = position_;
 
   // Calculate the vectors representing the bonds
-  Vector3D vA = pos_A - pos_C;
-  Vector3D vB = pos_B - pos_C;
+  linalg::Vector3<double> vA = pos_A - pos_C;
+  linalg::Vector3<double> vB = pos_B - pos_C;
 
   // Calculate the magnitudes of the vectors
   double norm_A = norm(vA);
@@ -66,7 +68,7 @@ double Atom::angle(const Atom &atom_A, const Atom &atom_B) const {
   }
 
   // Calculate the dot product and normalize
-  double cos_theta = (vA * vB) / (norm_A * norm_B);
+  double cos_theta = (dot(vA, vB)) / (norm_A * norm_B);
 
   // Clamp the value to the valid range [-1, 1]
   cos_theta = std::clamp(cos_theta, -1.0, 1.0);

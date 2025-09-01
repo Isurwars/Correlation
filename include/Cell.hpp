@@ -17,9 +17,9 @@ class Cell {
 
 private:
   // Cell Vectors private modification, public read with getter
-  Vector3D v_a_;
-  Vector3D v_b_;
-  Vector3D v_c_;
+  linalg::Vector3<double> v_a_;
+  linalg::Vector3<double> v_b_;
+  linalg::Vector3<double> v_c_;
   // Lattice Parameters
   std::array<double, 6> lattice_parameters_;
   // Volume of the cell
@@ -45,7 +45,9 @@ public:
   //-------------------------------------------------------------------------//
 
   explicit Cell(const std::array<double, 6> &);
-  explicit Cell(const Vector3D &, const Vector3D &, const Vector3D &);
+  explicit Cell(const linalg::Vector3<double> &,
+                const linalg::Vector3<double> &,
+                const linalg::Vector3<double> &);
   explicit Cell();
 
   //-------------------------------------------------------------------------//
@@ -59,9 +61,9 @@ public:
   void setLatticeParameters(std::array<double, 6>);
 
   // Lattice Vectors
-  const Vector3D &v_a() const { return v_a_; };
-  const Vector3D &v_b() const { return v_b_; };
-  const Vector3D &v_c() const { return v_c_; };
+  const linalg::Vector3<double> &v_a() const { return v_a_; };
+  const linalg::Vector3<double> &v_b() const { return v_b_; };
+  const linalg::Vector3<double> &v_c() const { return v_c_; };
   void calculateLatticeVectors();
 
   // Volume

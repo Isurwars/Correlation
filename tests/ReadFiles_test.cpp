@@ -30,8 +30,9 @@ void replaceAll(std::string &str, const std::string &from,
   }
 }
 
-Vector3D applySymmetry(const std::string &op, const Vector3D &v) {
-  Vector3D result = {0.0, 0.0, 0.0};
+linalg::Vector3<double> applySymmetry(const std::string &op,
+                                      const linalg::Vector3<double> &v) {
+  linalg::Vector3<double> result = {0.0, 0.0, 0.0};
   std::stringstream ss(op);
   std::string component;
   int i = 0;
@@ -234,8 +235,8 @@ TEST_F(ReadFilesTest, CleanTokenHandlesUncertaintyAndWhitespace) {
 }
 
 TEST_F(ReadFilesTest, ApplySymmetryPerformsCorrectTransformations) {
-  Vector3D v = {0.1, 0.2, 0.3};
-  Vector3D result;
+  linalg::Vector3<double> v = {0.1, 0.2, 0.3};
+  linalg::Vector3<double> result;
 
   result = applySymmetry("x, y, z", v);
   EXPECT_NEAR(result[0], 0.1, 1e-6);
@@ -274,7 +275,7 @@ TEST_F(ReadFilesTest, ParsesCifFileCorrectly) {
     if (atom.element() == "Na" && norm(atom.position()) < 1e-4) {
       na_origin_found = true;
     }
-    Vector3D expected_cl_pos = {2.82, 2.82, 2.82};
+    linalg::Vector3<double> expected_cl_pos = {2.82, 2.82, 2.82};
     if (atom.element() == "Cl" &&
         norm(atom.position() - expected_cl_pos) < 1e-4) {
       cl_center_found = true;

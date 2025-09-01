@@ -28,7 +28,7 @@ class Atom {
 
 private:
   int id_;
-  Vector3D position_;
+  linalg::Vector3<double> position_;
   std::vector<Atom> bonded_atoms_;
   std::string element_;
   int element_id_;
@@ -37,12 +37,12 @@ public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
-  explicit Atom(std::string, Vector3D, int, int);
-  explicit Atom(std::string, Vector3D, int);
-  explicit Atom(std::string, Vector3D);
+  explicit Atom(std::string, linalg::Vector3<double>, int, int);
+  explicit Atom(std::string, linalg::Vector3<double>, int);
+  explicit Atom(std::string, linalg::Vector3<double>);
   explicit Atom();
 
-  void resetPositionAndElement(std::string, Vector3D);
+  void resetPositionAndElement(std::string, linalg::Vector3<double>);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -51,8 +51,8 @@ public:
   int id() const { return id_; }
   void setID(int num) { id_ = num; }
 
-  const Vector3D &position() const { return position_; }
-  void setPosition(Vector3D pos) { position_ = pos; }
+  const linalg::Vector3<double> &position() const { return position_; }
+  void setPosition(linalg::Vector3<double> pos) { position_ = pos; }
 
   const std::vector<Atom> &bonded_atoms() const { return bonded_atoms_; }
   void setBondedAtoms(const std::vector<Atom> &a) { bonded_atoms_ = a; }

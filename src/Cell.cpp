@@ -37,7 +37,8 @@ Cell::Cell(const std::array<double, 6> &lat)
 }
 
 // Lattice vector constructor
-Cell::Cell(const Vector3D &v1, const Vector3D &v2, const Vector3D &v3)
+Cell::Cell(const linalg::Vector3<double> &v1, const linalg::Vector3<double> &v2,
+           const linalg::Vector3<double> &v3)
     : atoms_{}, elements_{}, element_numbers_{}, volume_{0.0} {
 
   const double a = norm(v1);
@@ -112,7 +113,7 @@ void Cell::calculateLatticeVectors() {
 //----------------------------- Calculate Volume ----------------------------//
 //---------------------------------------------------------------------------//
 void Cell::calculateVolume() {
-  volume_ = v_a_ * cross(v_b_, v_c_);
+  volume_ = dot(v_a_, cross(v_b_, v_c_));
 
   if (volume_ <= 1e-8)
     throw std::logic_error("Cell volume must be positive");
@@ -194,17 +195,17 @@ void Cell::calculateElementNumbers() {
 void Cell::correctPositions() {
 
   // Create lattice matrix
-  Matrix3D L = {{{v_a_[0], v_b_[0], v_c_[0]},
-                 {v_a_[1], v_b_[1], v_c_[1]},
-                 {v_a_[2], v_b_[2], v_c_[2]}}};
-  Matrix3D L_inv = invertMatrix(L);
+  linalg::Matrix3<double> L = {{v_a_.x(), v_b_.x(), v_c_.x()},
+                               {v_a_.y(), v_b_.y(), v_c_.y()},
+                               {v_a_.z(), v_b_.z(), v_c_.z()}};
+  linalg::Matrix3<double> L_inv = invertMatrix(L);
 
   for (auto &MyAtom : atoms_) {
-    Vector3D pos = {
-        {MyAtom.position()[0], MyAtom.position()[1], MyAtom.position()[2]}};
+    linalg::Vector3<double> pos = {MyAtom.position().x(), MyAtom.position().y(),
+                                   MyAtom.position().z()};
 
     // Convert to fractional coordinates
-    Vector3D frac = matrixVectorMultiply(L_inv, pos);
+    linalg::Vector3<double> frac = matrixVectorMultiply(L_inv, pos);
 
     // Wrap fractional coordinates to [0, 1)
     for (int m = 0; m < 3; ++m) {
@@ -212,9 +213,10 @@ void Cell::correctPositions() {
     }
 
     // Convert back to Cartesian coordinates
-    Vector3D corrected_pos = matrixVectorMultiply(L, frac);
+    linalg::Vector3<double> corrected_pos = matrixVectorMultiply(L, frac);
 
-    MyAtom.setPosition({corrected_pos[0], corrected_pos[1], corrected_pos[2]});
+    MyAtom.setPosition(
+        {corrected_pos.x(), corrected_pos.y(), corrected_pos.z()});
   }
 } // Cell::CorrectPositions
 
@@ -222,16 +224,14 @@ void Cell::correctPositions() {
 //----------------------- Correct Fractional Positions ----------------------//
 //---------------------------------------------------------------------------//
 void Cell::correctFracPositions() {
-  Vector3D pos;
+  linalg::Vector3<double> pos;
 
   for (auto &MyAtom : atoms_) {
     pos = MyAtom.position();
-    double i = pos[0] - std::floor(pos[0]);
-    double j = pos[1] - std::floor(pos[1]);
-    double k = pos[2] - std::floor(pos[2]);
-    pos[0] = i * v_a_[0] + j * v_b_[0] + k * v_c_[0];
-    pos[1] = i * v_a_[1] + j * v_b_[1] + k * v_c_[1];
-    pos[2] = i * v_a_[2] + j * v_b_[2] + k * v_c_[2];
+    double i = pos.x() - std::floor(pos.x());
+    double j = pos.y() - std::floor(pos.y());
+    double k = pos.z() - std::floor(pos.z());
+    pos = i * v_a_ + j * v_b_ + k * v_c_;
 
     MyAtom.setPosition(pos);
   }
@@ -281,22 +281,20 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
   correctPositions();
 
   // Calculate supercell dimensions
-  int k_ = ceil(r_cut / v_c_[2]);
-  int j_ = ceil(r_cut / v_b_[1]);
-  int i_ = ceil(r_cut / v_a_[0]);
+  int k_ = ceil(r_cut / v_c_.z());
+  int j_ = ceil(r_cut / v_b_.y());
+  int i_ = ceil(r_cut / v_a_.x());
 
   // Force self_interaction in case of a small supercell
   if (k_ * j_ * i_ > 8)
     self_interaction = true;
 
   // Precompute displacements
-  std::vector<Vector3D> displacements;
+  std::vector<linalg::Vector3<double>> displacements;
   for (int i = -i_; i <= i_; ++i) {
     for (int j = -j_; j <= j_; ++j) {
       for (int k = -k_; k <= k_; ++k) {
-        displacements.push_back({i * v_a_[0] + j * v_b_[0] + k * v_c_[0],
-                                 i * v_a_[1] + j * v_b_[1] + k * v_c_[1],
-                                 i * v_a_[2] + j * v_b_[2] + k * v_c_[2]});
+        displacements.push_back(i * v_a_ + j * v_b_ + k * v_c_);
       }
     }
   }
@@ -317,18 +315,8 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
         const auto &pos_B = atom_B.position();
 
         for (const auto &disp : displacements) {
-          const Vector3D img_pos = {pos_B[0] + disp[0], pos_B[1] + disp[1],
-                                    pos_B[2] + disp[2]};
-
-          const double dx = atom_A.position()[0] - img_pos[0];
-          const double dy = atom_A.position()[1] - img_pos[1];
-          const double dz = atom_A.position()[2] - img_pos[2];
-          const double dist_sq = dx * dx + dy * dy + dz * dz;
-
-          if (dist_sq > r_cut_sq)
-            continue;
-
-          const double dist = std::sqrt(dist_sq);
+          const linalg::Vector3<double> img_pos = pos_B + disp;
+          const double dist = norm(atom_A.position() - img_pos);
 
           // Ignore self-interaction
           if (dist == 0 && (atom_A.id() == atom_B.id()))
@@ -344,12 +332,12 @@ void Cell::distancePopulation(double r_cut, bool self_interaction) {
           if (dist < 0.5) {
             std::cerr << "\nWARNING: The atoms:\n"
                       << atom_A.element() << "_" << atom_A.id()
-                      << " in position (" << atom_A.position()[0] << ", "
-                      << atom_A.position()[1] << ", " << atom_A.position()[2]
+                      << " in position (" << atom_A.position().x() << ", "
+                      << atom_A.position().y() << ", " << atom_A.position().z()
                       << "),\n"
                       << atom_B.element() << "_" << atom_B.id()
-                      << " in position (" << img_pos[0] << ", " << img_pos[1]
-                      << ", " << img_pos[2] << ").\n"
+                      << " in position (" << img_pos.x() << ", " << img_pos.y()
+                      << ", " << img_pos.z() << ").\n"
                       << "Have a distance less than the Bohr Radius.\n";
           }
 
