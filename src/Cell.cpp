@@ -51,9 +51,9 @@ Cell::Cell(const linalg::Vector3<double> &v1, const linalg::Vector3<double> &v2,
   }
 
   // Compute angles (degrees) between lattice vectors
-  const double alpha = std::acos(dot(v2, v3) / (b * c)) * constants::rad2deg;
-  const double beta = std::acos(dot(v1, v3) / (a * c)) * constants::rad2deg;
-  const double gamma = std::acos(dot(v1, v2) / (a * b)) * constants::rad2deg;
+  const double alpha = std::acos((v2 * v3) / (b * c)) * constants::rad2deg;
+  const double beta = std::acos((v1 * v3) / (a * c)) * constants::rad2deg;
+  const double gamma = std::acos((v1 * v2) / (a * b)) * constants::rad2deg;
 
   lattice_parameters_ = {a, b, c, alpha, beta, gamma};
   v_a_ = v1;
@@ -113,7 +113,7 @@ void Cell::calculateLatticeVectors() {
 //----------------------------- Calculate Volume ----------------------------//
 //---------------------------------------------------------------------------//
 void Cell::calculateVolume() {
-  volume_ = dot(v_a_, cross(v_b_, v_c_));
+  volume_ = (v_a_ * cross(v_b_, v_c_));
 
   if (volume_ <= 1e-8)
     throw std::logic_error("Cell volume must be positive");

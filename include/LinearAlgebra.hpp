@@ -71,6 +71,11 @@ public:
     return *this;
   }
 
+  // dot product
+  constexpr T operator*(const Vector3 &rhs) const noexcept {
+    return data_[0] * rhs[0] + data_[1] * rhs[1] + data_[2] * rhs[2];
+  }
+
   constexpr std::array<T, 3> array() const noexcept { return data_; }
 
 private:
@@ -116,7 +121,7 @@ private:
 // -----------------------------------------------------------------------------
 template <typename T>
 constexpr T dot(const Vector3<T> &a, const Vector3<T> &b) noexcept {
-  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  return a * b;
 }
 
 template <typename T>
@@ -126,7 +131,7 @@ constexpr Vector3<T> cross(const Vector3<T> &a, const Vector3<T> &b) noexcept {
 }
 
 template <typename T> constexpr T norm(const Vector3<T> &v) noexcept {
-  return std::sqrt(dot(v, v));
+  return std::sqrt(v * v);
 }
 
 template <typename T> constexpr T determinant(const Matrix3<T> &m) noexcept {
@@ -159,7 +164,7 @@ template <typename T> constexpr Matrix3<T> invertMatrix(const Matrix3<T> &m) {
 template <typename T>
 constexpr Vector3<T> matrixVectorMultiply(const Matrix3<T> &m,
                                           const Vector3<T> &v) noexcept {
-  return {dot(m[0], v), dot(m[1], v), dot(m[2], v)};
+  return {m[0] * v, m[1] * v, m[2] * v};
 }
 } // namespace linalg
 #endif // INCLUDE_LINEAR_ALGEBRA_HPP_

@@ -68,7 +68,7 @@ double Atom::angle(const Atom &atom_A, const Atom &atom_B) const {
   }
 
   // Calculate the dot product and normalize
-  double cos_theta = (dot(vA, vB)) / (norm_A * norm_B);
+  double cos_theta = (vA * vB) / (norm_A * norm_B);
 
   // Clamp the value to the valid range [-1, 1]
   cos_theta = std::clamp(cos_theta, -1.0, 1.0);
