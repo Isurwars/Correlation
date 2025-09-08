@@ -12,6 +12,7 @@
 #include "../include/Cell.hpp"       // Cell Class
 #include "../include/FileIO.hpp"     // File reading and parsing
 #include "../include/FileWriter.hpp" // Write Output files
+#include "../include/Smoothing.hpp"
 
 inline std::string _in_file_name_ = "";
 inline std::string _out_file_name_ = "";
@@ -27,7 +28,7 @@ double _q_cut_ = 180.0;
 double _bond_par_ = 1.3;
 double _angle_bin_w_ = 1.00000;
 double _smooth_sigma_ = 0.081;
-int _kernel_ = 1;
+KernelType _kernel_ = KernelType::Gaussian;
 
 void PrintHelp() {
   const std::string help_txt =
@@ -199,7 +200,12 @@ void ArgParser(int argc, char **argv) {
       _bond_file_name_ = optarg;
       break;
     case 'k': // -k or --kernel
-      _kernel_ = std::stoi(optarg);
+      if (std::stoi(optarg) == 3) {
+        _kernel_ = KernelType::Triweight;
+      }
+      if (std::stoi(optarg) == 2) {
+        _kernel_ = KernelType::Bump;
+      }
       break;
     case 'K': // -K or --kernel_sigma
       _smooth_sigma_ = std::stof(optarg);
@@ -370,7 +376,7 @@ int main(int argc, char **argv) {
 
   if (_smoothing_) {
     std::cout << "Smoothing... " << std::endl;
-    MyDF.smoothAll(_smooth_sigma_);
+    MyDF.smoothAll(_smooth_sigma_, _kernel_);
   }
 
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;

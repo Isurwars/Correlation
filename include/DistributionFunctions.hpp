@@ -11,6 +11,7 @@
 
 #include "Cell.hpp"
 #include "NeighborList.hpp"
+#include "Smoothing.hpp"
 
 // A structure to hold all data related to a single histogram.
 // This includes the x-axis values (bins) and the y-axis values for
@@ -75,8 +76,8 @@ public:
    * @param name The name of the histogram to smooth (e.g., "g(r)").
    * @param sigma The standard deviation (width) of the Gaussian kernel.
    */
-  void smooth(const std::string &name, double sigma);
-  void smoothAll(double sigma);
+  void smooth(const std::string &, double, KernelType);
+  void smoothAll(double, KernelType = KernelType::Gaussian);
 
   // Provides a list of keys for all computed histograms.
   std::vector<std::string> getAvailableHistograms() const;

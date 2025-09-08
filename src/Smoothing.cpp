@@ -5,76 +5,93 @@
 #include "../include/Smoothing.hpp"
 
 #include <cmath>
+#include <numeric> // For std::accumulate
+#include <stdexcept>
+#include <vector>
 
 #include "../include/Constants.hpp"
-#include "../include/Templates.hpp"
 
-std::vector<double> GaussianKernel(const std::vector<double> &r_vals, double r0,
-                                   double sigma) {
-  // Normalized Gaussian Kernel
-  double a = 1 / (std::sqrt(2 * constants::pi) * sigma);
-  double b = -1 / (2 * sigma * sigma);
-  std::vector<double> aux(r_vals.size());
-  for (std::size_t i = 0; i < r_vals.size(); ++i) {
-    aux[i] = a * std::exp(b * std::pow(r_vals[i] - r0, 2));
+namespace { // Anonymous namespace for internal linkage
+
+// A helper function to generate a normalized kernel vector centered at zero.
+std::vector<double> generateKernel(size_t size, double dx, double sigma,
+                                   KernelType type) {
+  std::vector<double> kernel(size);
+  const double center = static_cast<double>(size - 1) / 2.0;
+
+  if (type == KernelType::Gaussian) {
+    const double a = 1.0 / (std::sqrt(2 * constants::pi) * sigma);
+    const double b = -1.0 / (2.0 * sigma * sigma);
+    for (size_t i = 0; i < size; ++i) {
+      const double x = (static_cast<double>(i) - center) * dx;
+      kernel[i] = a * std::exp(b * x * x);
+    }
+  } else if (type == KernelType::Triweight) {
+    constexpr double factor = 35.0 / 32.0;
+    for (size_t i = 0; i < size; ++i) {
+      const double u = ((static_cast<double>(i) - center) * dx) / sigma;
+      if (std::abs(u) <= 1.0) {
+        const double u2 = u * u;
+        kernel[i] = factor * std::pow(1 - u2, 3);
+      } else {
+        kernel[i] = 0.0;
+      }
+    }
+  } else {
+    // Note: The Bump kernel is less common for smoothing and often not
+    // practical due to its sharp cutoff. Gaussian and Triweight are standard.
+    // If needed, it could be implemented here similarly.
+    throw std::invalid_argument("Unsupported kernel type for smoothing.");
   }
-  return aux;
-} // GaussianKernel
 
-std::vector<double> BumpKernel(const std::vector<double> &r_vals, double r0,
-                               double radius) {
-  // Bump Function
-  std::vector<double> aux(r_vals.size(), 0);
-  for (std::size_t i = 0; i < r_vals.size(); ++i) {
-    double x = (r_vals[i] - r0) / radius;
-    if (std::abs(x) < 1) {
-      aux[i] = std::exp(-1 / (1 - std::pow(x, 2)));
-    } else {
-      aux[i] = 0.0;
+  // Normalize the discrete kernel to ensure the sum of its elements is 1.
+  const double sum = std::accumulate(kernel.begin(), kernel.end(), 0.0);
+  if (sum > 1e-9) {
+    for (double &val : kernel) {
+      val /= sum;
     }
   }
-  return aux;
+  return kernel;
 }
-
-// Triweight Kernel function
-std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-                                    double r0, double radius) {
-  std::vector<double> aux(r_vals.size(), 0);
-  constexpr double factor = 35.0 / 32.0;
-
-  for (std::size_t i = 0; i < r_vals.size(); ++i) {
-    double u = (r_vals[i] - r0) / radius;
-    if (std::abs(u) <= 1) {
-      double u2 = u * u;
-      aux[i] = factor * std::pow(1 - u2, 3);
-    } else {
-      aux[i] = 0.0;
-    }
-  }
-  return aux;
-}
+} // namespace
 
 std::vector<double> KernelSmoothing(const std::vector<double> &r,
                                     const std::vector<double> &y, double sigma,
-                                    int _kernel_) {
-  // Kernel Smoothing
-  int n_ = r.size();
-  std::vector<double> kernel_at_pos(n_, 0);
-  std::vector<double> smoothed(n_, 0);
-  for (int i = 0; i < n_; i++) {
-    if (_kernel_ == 1) {
-      kernel_at_pos = GaussianKernel(r, r[i], sigma);
-      kernel_at_pos = NormalizeVector(kernel_at_pos);
-    } else if (_kernel_ == 2) {
-      kernel_at_pos = BumpKernel(r, r[i], sigma);
-      kernel_at_pos = NormalizeVector(kernel_at_pos);
-    } else if (_kernel_ == 3) {
-      kernel_at_pos = TriweightKernel(r, r[i], sigma);
-      kernel_at_pos = NormalizeVector(kernel_at_pos);
-    }
-    for (int j = 0; j < n_; j++) {
-      smoothed[i] += kernel_at_pos[j] * y[j];
+                                    KernelType type) {
+  if (r.size() != y.size() || r.empty()) {
+    return {}; // Return empty vector for invalid input
+  }
+
+  const size_t n = r.size();
+  const double dx = (n > 1) ? (r[1] - r[0]) : 0;
+  if (dx <= 0) {
+    throw std::invalid_argument(
+        "Input 'r' must be uniformly increasing for smoothing.");
+  }
+
+  // Determine the practical size of the kernel (e.g., 3-4 standard deviations
+  // for a Gaussian). This is a major optimization.
+  const size_t kernel_radius =
+      std::min(n / 2, static_cast<size_t>(4.0 * sigma / dx));
+  const size_t kernel_size = 2 * kernel_radius + 1;
+
+  const auto kernel = generateKernel(kernel_size, dx, sigma, type);
+  std::vector<double> smoothed(n, 0.0);
+
+  // Apply the convolution. This loop is now much more efficient.
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < kernel_size; ++j) {
+      // Find the corresponding index in the data array 'y'
+      const long long data_idx = static_cast<long long>(i) +
+                                 static_cast<long long>(j) -
+                                 static_cast<long long>(kernel_radius);
+
+      // Handle boundary conditions (points near the start/end of the data)
+      if (data_idx >= 0 && data_idx < static_cast<long long>(n)) {
+        smoothed[i] += y[data_idx] * kernel[j];
+      }
     }
   }
+
   return smoothed;
-} // Kernel Smoothing
+}

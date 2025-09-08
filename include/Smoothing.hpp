@@ -7,21 +7,24 @@
 
 #include <vector>
 
-//---------------------------------------------------------------------------//
-//-------------------------------- Methods ----------------------------------//
-//---------------------------------------------------------------------------//
+// Enum class for type-safe selection of kernel types.
+// This prevents passing invalid integer values.
+enum class KernelType { Gaussian, Bump, Triweight };
 
-std::vector<double> GaussianKernel(const std::vector<double> &r_vals, double r0,
-                                   double sigma);
-
-std::vector<double> BumpKernel(const std::vector<double> &r_vals, double r0,
-                               double radius);
-
-std::vector<double> TriweightKernel(const std::vector<double> &r_vals,
-                                    double r0, double radius);
-
+/**
+ * @brief Applies kernel smoothing to a data series.
+ *
+ * This function convolves a given kernel with the input data `y` to produce a
+ * smoothed version.
+ *
+ * @param r The independent variable values (x-axis).
+ * @param y The dependent variable values (y-axis) to be smoothed.
+ * @param sigma The bandwidth (standard deviation for Gaussian) of the kernel.
+ * @param type The type of kernel to use for smoothing.
+ * @return A vector containing the smoothed data.
+ */
 std::vector<double> KernelSmoothing(const std::vector<double> &r,
                                     const std::vector<double> &y, double sigma,
-                                    int _kernel_);
+                                    KernelType type = KernelType::Gaussian);
 
 #endif // INCLUDE_SMOOTHING_HPP
