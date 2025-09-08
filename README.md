@@ -149,13 +149,14 @@ This command will:
 ## Command-Line Options
 
 | Option | Long Option | Argument | Description | Default |
+|--------|-------------|----------|-------------|---------|
 | -h | --help | - | Display the help text and exit. | - |
 | -o | --out_file | <path> | The base name for output files.| Input filename |
 | -R | --r_cut | <float> | Cutoff radius for RDF calculations (in Angstroms). | 20.0 |
 | -r | --r_bin_width | <float> | Width of the histogram bins for RDFs (in Angstroms). | 0.05 |
 | -a | --angle_bin_width | <float> | Width of the histogram bins for PAD (in degrees). | 1.0 |
 | -S | --smoothing | - | Enable kernel smoothing on all calculated distributions. | Disabled |
-| -k | --kernel | <int> | Smoothing kernel type: 1=Gaussian, 2=Bump, 3=Triweight. | 0 (Gaussian) |
+| -k | --kernel | <int> | Smoothing kernel type: 1=Gaussian, 2=Bump, 3=Triweight. | 1 (Gaussian) |
 | -K | --kernel_sigma | <float> | Width (sigma) of the smoothing kernel. | 0.081 |
 
 
