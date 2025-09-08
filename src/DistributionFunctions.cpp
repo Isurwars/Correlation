@@ -16,13 +16,34 @@
 //------------------------------- Constructor -------------------------------//
 //---------------------------------------------------------------------------//
 
-DistributionFunctions::DistributionFunctions(const Cell &cell,
-                                             const NeighborList &neighbors)
-    : cell_(cell), neighbors_(neighbors) {}
+DistributionFunctions::DistributionFunctions(const Cell &cell, double cutoff,
+                                             double bond_factor = 1.2)
+    : cell_(cell), neighbors_(nullptr), current_cutoff_(0.0),
+      bond_factor_(bond_factor) {
+  if (cutoff > 0.0) {
+    ensureNeighborsComputed(cutoff);
+  }
+}
 
 //--------------------------------------------------------------------------//
 //---------------------------- Helper Functions ----------------------------//
 //--------------------------------------------------------------------------//
+
+const Histogram &
+DistributionFunctions::getHistogram(const std::string &name) const {
+  auto it = histograms_.find(name);
+  if (it == histograms_.end()) {
+    throw std::out_of_range("Histogram with name '" + name + "' not found.");
+  }
+  return it->second;
+}
+
+void DistributionFunctions::ensureNeighborsComputed(double r_cut) {
+  if (!neighbors_ || r_cut > current_cutoff_) {
+    neighbors_ = std::make_unique<NeighborList>(cell_, r_cut, bond_factor_);
+    current_cutoff_ = r_cut;
+  }
+}
 
 std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
   std::vector<std::string> keys;
@@ -86,7 +107,7 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
       auto &partial_hist = J_r.partials[key];
       partial_hist.assign(num_bins, 0.0);
 
-      for (const auto &dist : neighbors_.distances()[i][j]) {
+      for (const auto &dist : neighbors_->distances()[i][j]) {
         if (dist < r_cut) {
           size_t bin = static_cast<size_t>(dist / bin_width);
           if (bin < num_bins) {
@@ -166,7 +187,7 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
         auto &partial_hist = f_theta.partials[key];
         partial_hist.assign(num_bins, 0.0);
 
-        for (const auto &angle_rad : neighbors_.angles()[j][i][k]) {
+        for (const auto &angle_rad : neighbors_->angles()[j][i][k]) {
           double angle_deg = angle_rad * constants::rad2deg;
           if (angle_deg < theta_cut) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);

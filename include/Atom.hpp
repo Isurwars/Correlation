@@ -46,10 +46,9 @@ public:
   //-------------------------------------------------------------------------//
   explicit Atom() = default;
 
-  explicit Atom(Element element, linalg::Vector3<double> pos, AtomID id,
-                ElementID element_id) noexcept
-      : element_(std::move(element)), position_(pos), id_(id),
-        element_id_(element_id) {}
+  explicit Atom(Element element, linalg::Vector3<double> pos,
+                AtomID id) noexcept
+      : element_(std::move(element)), position_(pos), id_(id) {}
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -64,14 +63,12 @@ public:
   const Element &element() const { return element_; }
   void setElement(const Element &ele) { element_ = ele; }
 
-  int element_id() const { return element_id_.value; }
-  void setElementID(int num) { element_id_.value = num; }
+  int element_id() const { return element_.id.value; }
 
 private:
   AtomID id_;
   linalg::Vector3<double> position_;
   Element element_;
-  ElementID element_id_;
 };
 
 /**

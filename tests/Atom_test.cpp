@@ -29,7 +29,7 @@ TEST_F(AtomTest, ParameterizedConstructorSetsProperties) {
   const AtomID expected_id = {123};
 
   // Act
-  const Atom atom(element, expected_pos, expected_id, {0});
+  const Atom atom(element, expected_pos, expected_id);
 
   // Assert
   EXPECT_EQ(atom.element().symbol, "O");
@@ -43,8 +43,8 @@ TEST_F(AtomTest, ParameterizedConstructorSetsProperties) {
 TEST_F(AtomTest, DistanceFunctionCalculatesCorrectly) {
   // Arrange: A classic 3-4-5 right triangle.
   const Element element = {"H", {0}};
-  const Atom atom1(element, {0.0, 0.0, 0.0}, {0}, {0});
-  const Atom atom2(element, {3.0, 4.0, 0.0}, {1}, {0});
+  const Atom atom1(element, {0.0, 0.0, 0.0}, {0});
+  const Atom atom2(element, {3.0, 4.0, 0.0}, {1});
 
   // Act
   const double d = distance(atom1, atom2);
@@ -57,9 +57,9 @@ TEST_F(AtomTest, AngleFunctionCalculatesNinetyDegrees) {
   // Arrange
   const Element element_c = {"C", {0}};
   const Element element_h = {"H", {1}};
-  const Atom center(element_c, {0.0, 0.0, 0.0}, {0}, {0});
-  const Atom neighbor_a(element_h, {1.0, 0.0, 0.0}, {1}, {1}); // Along X-axis
-  const Atom neighbor_b(element_h, {0.0, 1.0, 0.0}, {2}, {2}); // Along Y-axis
+  const Atom center(element_c, {0.0, 0.0, 0.0}, {0});
+  const Atom neighbor_a(element_h, {1.0, 0.0, 0.0}, {1}); // Along X-axis
+  const Atom neighbor_b(element_h, {0.0, 1.0, 0.0}, {2}); // Along Y-axis
 
   // Act
   const double calculated_angle = angle(center, neighbor_a, neighbor_b);
@@ -71,9 +71,9 @@ TEST_F(AtomTest, AngleFunctionCalculatesNinetyDegrees) {
 TEST_F(AtomTest, AngleFunctionHandlesCollinearAtoms) {
   // Arrange
   const Element element = {"O", {0}};
-  const Atom center(element, {0.0, 0.0, 0.0}, {0}, {0});
-  const Atom neighbor_a(element, {1.0, 0.0, 0.0}, {1}, {1});
-  const Atom neighbor_b(element, {-1.0, 0.0, 0.0}, {2}, {2}); // 180 degrees
+  const Atom center(element, {0.0, 0.0, 0.0}, {0});
+  const Atom neighbor_a(element, {1.0, 0.0, 0.0}, {1});
+  const Atom neighbor_b(element, {-1.0, 0.0, 0.0}, {2}); // 180 degrees
 
   // Act
   const double calculated_angle = angle(center, neighbor_a, neighbor_b);
@@ -85,8 +85,8 @@ TEST_F(AtomTest, AngleFunctionHandlesCollinearAtoms) {
 TEST_F(AtomTest, AngleFunctionHandlesCoincidentAtoms) {
   // Arrange: All atoms at the same position.
   const Element element = {"C", {0}};
-  const Atom center(element, {0.0, 0.0, 0.0}, {0}, {0});
-  const Atom neighbor_a(element, {0.0, 0.0, 0.0}, {1}, {0});
+  const Atom center(element, {0.0, 0.0, 0.0}, {0});
+  const Atom neighbor_a(element, {0.0, 0.0, 0.0}, {1});
 
   // Act
   const double calculated_angle = angle(center, neighbor_a, center);

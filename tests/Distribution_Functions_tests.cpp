@@ -46,8 +46,7 @@ protected:
 
 TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
   // Arrange
-  auto neighbors_ = NeighborList(cell_);
-  DistributionFunctions df(cell_, neighbors_);
+  DistributionFunctions df(cell_, 5.0, 1.2);
 
   // Act & Assert
   EXPECT_THROW(df.calculateRDF(5.0, 0.0), std::invalid_argument);
@@ -56,8 +55,7 @@ TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
 
 TEST_F(DistributionFunctionsTest, RDFPeakPositionIsCorrect) {
   // Arrange
-  auto neighbors_ = NeighborList(cell_);
-  DistributionFunctions df(cell_, neighbors_);
+  DistributionFunctions df(cell_, 5.0, 1.2);
   const double bin_width = 0.1;
   const double expected_distance = 1.5;
 
@@ -82,8 +80,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
   water_cell.addAtom("H", {1.0, 0.0, 0.0});
   water_cell.addAtom("H",
                      {std::cos(1.916), std::sin(1.916), 0.0}); // ~109.5 deg
-  auto neighbors_ = NeighborList(water_cell);
-  DistributionFunctions df(water_cell, neighbors_);
+  DistributionFunctions df(water_cell, 5.0, 1.2);
   const double bin_width = 1.0; // 1-degree bins
 
   // Act
@@ -106,8 +103,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
 
 TEST_F(DistributionFunctionsTest, SmoothAllUpdatesSmoothedPartials) {
   // Arrange
-  auto neighbors_ = NeighborList(cell_);
-  DistributionFunctions df(cell_, neighbors_);
+  DistributionFunctions df(cell_, 5.0, 1.2);
   df.calculateRDF(5.0, 0.1);
 
   // Act

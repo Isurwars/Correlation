@@ -61,9 +61,9 @@ protected:
 
 TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  Cell si_cell = FileIO::readCar("si_crystal.car");
-  NeighborList neighbors(si_cell);
-  DistributionFunctions df(si_cell, neighbors);
+  FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
+  Cell si_cell = FileIO::readStructure("si_crystal.car", type);
+  DistributionFunctions df(si_cell, 20.0, 1.2);
 
   // Act
   const double rdf_bin = 0.05;

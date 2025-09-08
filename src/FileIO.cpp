@@ -9,6 +9,7 @@
 #include <cerrno>
 #include <cmath>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -17,18 +18,33 @@
 #include <string>
 #include <vector>
 
+// Anonymous namespace to keep helper functions and structs private to this
+// file.
+namespace {
+
+// --- Helper Struct for CIF Symmetry Operations ---
+struct SymmetryOp {
+  linalg::Matrix3<double> rotation{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+  linalg::Vector3<double> translation{0, 0, 0};
+
+  // Applies the operation: new_pos = rotation * old_pos + translation
+  linalg::Vector3<double> apply(const linalg::Vector3<double> &pos) const {
+    return rotation * pos + translation;
+  }
+};
+
 //---------------------------------------------------------------------------//
 //---------------------------- Helper Funcitons -----------------------------//
 //---------------------------------------------------------------------------//
 
 // Helper to send all UPPERCASE to lowercase
-void FileIO::toLower(std::string &s) {
+void toLower(std::string &s) {
   std::transform(s.begin(), s.end(), s.begin(),
                  [](unsigned char c) { return std::tolower(c); });
 }
 
 // Helper to trim whitespace and remove trailing parentheses with uncertainties
-std::string FileIO::cleanCifValue(std::string str) {
+std::string cleanCifValue(std::string str) {
   // Trim leading whitespace
   str.erase(0, str.find_first_not_of(" \t\n\r"));
   // Trim trailing whitespace
@@ -47,8 +63,7 @@ std::string FileIO::cleanCifValue(std::string str) {
 }
 
 // Parses a single component of a symmetry string like "-y+1/2"
-void FileIO::parseSymmetryComponent(std::string comp_str, int row,
-                                    SymmetryOp &op) {
+void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &op) {
   comp_str.erase(std::remove_if(comp_str.begin(), comp_str.end(), ::isspace),
                  comp_str.end());
 
@@ -96,8 +111,8 @@ void FileIO::parseSymmetryComponent(std::string comp_str, int row,
 }
 
 // Parses a full symmetry operation string like 'x, y, z+1/2'
-FileIO::SymmetryOp FileIO::parseSymmetryString(const std::string &op_str) {
-  FileIO::SymmetryOp op;
+SymmetryOp parseSymmetryString(const std::string &op_str) {
+  SymmetryOp op;
   // Set rotation to zero initially
   op.rotation = linalg::Matrix3<double>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
   std::stringstream ss(op_str);
@@ -112,7 +127,7 @@ FileIO::SymmetryOp FileIO::parseSymmetryString(const std::string &op_str) {
 }
 
 // A more robust tokenizer that handles quoted strings with spaces
-std::vector<std::string> FileIO::tokenizeCifLine(const std::string &line) {
+std::vector<std::string> tokenizeCifLine(const std::string &line) {
   std::vector<std::string> tokens;
   std::string current_token;
   char quote_char = '\0';
@@ -155,7 +170,7 @@ std::vector<std::string> FileIO::tokenizeCifLine(const std::string &line) {
 //--------------------------------- METHODS ---------------------------------//
 //---------------------------------------------------------------------------//
 
-Cell FileIO::readCar(const std::string &file_name) {
+Cell readCar(const std::string &file_name) {
   /*
    * This function reads a CAR file and returns a list of atoms objects
    * with the element, number and position inside. It also returns the
@@ -215,7 +230,7 @@ Cell FileIO::readCar(const std::string &file_name) {
   return tempCell;
 } // readCar
 
-Cell FileIO::readCell(const std::string &file_name) {
+Cell readCell(const std::string &file_name) {
   /*
    * This function reads a CELL file and returns a list of atoms objects
    * with the element, number and position inside. It also returns the
@@ -315,7 +330,7 @@ Cell FileIO::readCell(const std::string &file_name) {
   return tempCell;
 } // readCell
 
-Cell FileIO::readCif(const std::string &file_name) {
+Cell readCif(const std::string &file_name) {
   std::ifstream file(file_name);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open CIF file: " + file_name);
@@ -564,7 +579,7 @@ Cell readLammpsDump(const std::string &file_name) {
   return tempCell;
 } // readLammpsDump
 
-Cell FileIO::readOnetepDat(const std::string &file_name) {
+Cell readOnetepDat(const std::string &file_name) {
   /*
    * This is a Stub for reading a ONETEP file and return and empty cell.
    */
@@ -575,3 +590,40 @@ Cell FileIO::readOnetepDat(const std::string &file_name) {
 
   return tempCell;
 } // readOnetepDat
+
+} // anonymous namespace
+
+namespace FileIO {
+
+FileType determineFileType(const std::string &filename) {
+  std::string ext = std::filesystem::path(filename).extension().string();
+  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+  if (ext == ".car")
+    return FileIO::FileType::Car;
+  if (ext == ".cell")
+    return FileIO::FileType::Cell;
+  if (ext == ".dat")
+    return FileIO::FileType::OnetepDat;
+  if (ext == ".cif")
+    return FileIO::FileType::Cif;
+
+  throw std::runtime_error("Unsupported file extension: " + ext);
+}
+
+Cell readStructure(const std::string &filename, FileType type) {
+  switch (type) {
+  case FileType::Car:
+    return readCar(filename);
+  case FileType::Cif:
+    return readCif(filename);
+  case FileType::Cell:
+    return readCell(filename);
+  case FileType::OnetepDat:
+    return readOnetepDat(filename);
+  default:
+    throw std::invalid_argument("Unknown file type specified.");
+  }
+}
+
+} // namespace FileIO

@@ -7,18 +7,15 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <omp.h>
 #include <stdexcept>
 #include <vector>
 
-#include "../include/Constants.hpp"
 #include "../include/PhysicalData.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-
 NeighborList::NeighborList(const Cell &cell, double cutoff, double bond_factor)
     : cell_(cell), cutoff_sq_(cutoff * cutoff), bond_factor_(bond_factor) {
   if (cutoff <= 0) {

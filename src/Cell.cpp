@@ -130,7 +130,7 @@ Atom &Cell::addAtom(const std::string &symbol,
       });
 
   AtomID new_atom_id{static_cast<std::uint32_t>(atoms_.size())};
-  atoms_.emplace_back(*element_it, position, new_atom_id, element_id);
+  atoms_.emplace_back(*element_it, position, new_atom_id);
   return atoms_.back();
 }
 

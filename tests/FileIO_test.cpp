@@ -73,7 +73,8 @@ protected:
 
 TEST_F(FileIOTest, ReadCarFileCorrectly) {
   // Arrange & Act
-  Cell result_cell = FileIO::readCar("test.car");
+  FileIO::FileType type = FileIO::determineFileType("test.car");
+  Cell result_cell = FileIO::readStructure("test.car", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -101,7 +102,8 @@ TEST_F(FileIOTest, ReadCarFileCorrectly) {
 
 TEST_F(FileIOTest, ReadCellFileCorrectly) {
   // Arrange & Act
-  Cell result_cell = FileIO::readCell("test.cell");
+  FileIO::FileType type = FileIO::determineFileType("test.cell");
+  Cell result_cell = FileIO::readStructure("test.cell", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -129,7 +131,8 @@ TEST_F(FileIOTest, ReadCellFileCorrectly) {
 
 TEST_F(FileIOTest, ReadCifFileCorrectly) {
   // Arrange & Act
-  Cell result_cell = FileIO::readCif("test.cif");
+  FileIO::FileType type = FileIO::determineFileType("test.cif");
+  Cell result_cell = FileIO::readStructure("test.cif", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
