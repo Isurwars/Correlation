@@ -4,7 +4,9 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-1.0.4-green)](https://img.shields.io/badge/version-1.0.4-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
-`Correlation` is an analysis tool for correlation functions and correlation related properties of materials. In particular, for atomistic structure files of heavily used material simulation software like: DMoL3 (_.CAR), CASTEP(_.CELL), ONETEP(_.DAT), LAMMPS(_.XYZ),etc...
+`Correlation` is a high-performance, user-friendly tool for calculating and analyzing the structural properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, and crystalline structures.
+
+The software computes key correlation functions from atomic coordinate files and exports the results in clean, ready-to-plot CSV files, making it easy to integrate into scientific workflows.
 
 ## Table of Contents
 - [Features](#features)
@@ -16,9 +18,9 @@
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
 
-## Features
+## Key Features
 
-Correlation calculates essential correlation functions for material analysis:
+Comprehensive Analysis: Calculates a full suite of standard correlation functions:
 
 - Radial Distribution Function (J(r))
 - Pair Distribution Function (g(r))
@@ -33,12 +35,20 @@ Supports structure files from:
 - ONETEP (`.DAT`)
 - LAMMPS (`.XYZ`)
 
+High Performance: The core calculation loops are parallelized using modern C++ techniques, enabling the analysis of systems with hundreds of thousands of atoms.
 
-## Installation
+Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clean up noisy data for better presentation and analysis.
+
+## Quick Start: Installation
 
 ### Prerequisites
 
-#### Windows (MSYS2 recommended)
+- A modern C++ compiler (c++20 support required)
+- CMake (version 3.20+)
+- git
+- Intel TBB (for parallelization)
+
+### Windows (MSYS2 recommended)
 
 Installing MSYS2:
 ```
@@ -53,28 +63,28 @@ pacman -S --needed base-devel mingw-w64-x86_64-toolchain
 pacman -S cmake tbb git
 ```
 
-#### Linux (Debian/Ubuntu):
+### Linux (Debian/Ubuntu):
 
 ```bash
 sudo apt update
 sudo apt install build-essential cmake tbb git
 ```
 
-#### Linux (Arch/Manjaro):
+### Linux (Arch/Manjaro):
 
 ```bash
 sudo pacman -Syu
 sudo pacman base-devel cmake tbb git
 ```
 
-#### MacOS:
+### MacOS:
 
 ```bash
 xcode-select --install
 brew install cmake tbb git
 ```
 
-### Build
+### Build Instructions
 
 #### Clone the repository:
 
@@ -108,8 +118,45 @@ sudo cmake --install .
 
 ## Usage
 
----
----
+The program is run from the command line, with the only required argument being the input structure file.
+
+### Basic Command
+
+```bash
+./build/correlation <path_to_your_file>
+```
+### For example, to analyze a silicon structure:
+
+```bash
+./build/correlation silicon.car
+```
+This will run the analysis with default parameters and create output files (e.g., silicon_g.csv, silicon_PAD.csv) in the same directory as the input file.
+
+### Example with Options
+
+This will run the analysis with default parameters and create output files (e.g., silicon_g.csv, silicon_PAD.csv) in the same directory as the input file.
+```bash
+./build/correlation -R 10.0 -r 0.02 -S -K 0.05 -o si_run_1 si_crystal.car
+```
+This command will:
+
+- Set the radial cutoff (-R) to 10.0 Å.
+- Set the RDF bin width (-r) to 0.02 Å.
+- Enable smoothing (-S).
+- Set the smoothing kernel width (-K) to 0.05.
+- Set the output file base name (-o) to si_run_1.
+
+## Command-Line Options
+
+| Option | Long Option | Argument | Description | Default |
+| -h | --help | - | Display the help text and exit. | - |
+| -o | --out_file | <path> | The base name for output files.| Input filename |
+| -R | --r_cut | <float> | Cutoff radius for RDF calculations (in Angstroms). | 20.0 |
+| -r | --r_bin_width | <float> | Width of the histogram bins for RDFs (in Angstroms). | 0.05 |
+| -a | --angle_bin_width | <float> | Width of the histogram bins for PAD (in degrees). | 1.0 |
+| -S | --smoothing | - | Enable kernel smoothing on all calculated distributions. | Disabled |
+| -k | --kernel | <int> | Smoothing kernel type: 1=Gaussian, 2=Bump, 3=Triweight. 0 (Gaussian) |
+| -K | --kernel_sigma | <float> | Width (sigma) of the smoothing kernel. | 0.081 |
 
 
 ## Built with
