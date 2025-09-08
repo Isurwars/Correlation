@@ -9,11 +9,16 @@
 The software computes key correlation functions from atomic coordinate files and exports the results in clean, ready-to-plot CSV files, making it easy to integrate into scientific workflows.
 
 ## Table of Contents
-- [Features](#features)
-- [Installation](#installation)
+- [Key Features](#key-features)
+- [Quick Start: Installation](#quick-start-installation)
   - [Prerequisites](#prerequisites)
-  - [Build Instructions](#build)
+  - [Windows](#windows)
+  - [Linux (Debian/Ubuntu)](#linux-debian-ubuntu)
+  - [Linux (Arch/Manjaro)](#linux-arch-manjaro)
+  - [MacOS](#macos)
+  - [Build Instructions](#build-instructions)
 - [Usage](#usage)
+- [Command-Line Options](#command-line-options)
 - [License](#license)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
@@ -48,7 +53,7 @@ Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clea
 - git
 - Intel TBB (for parallelization)
 
-### Windows (MSYS2 recommended)
+### Windows
 
 Installing MSYS2:
 ```
