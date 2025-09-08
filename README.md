@@ -188,7 +188,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 I.R. acknowledge PAPIIT, DGAPA-UNAM for his postdoctoral fellowship.
 D.H.R. acknowledge Consejo Nacional de Ciencia y Tecnología (CONACyT) for supporting his graduate studies.
-A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617 and IN116520.
+A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617, IN116520 and IIN118223.
 M. T. Vázquez and O. Jiménez provided the information requested.
 A. López and A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.
 Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM.

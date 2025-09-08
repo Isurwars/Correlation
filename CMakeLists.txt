@@ -1,56 +1,54 @@
 cmake_minimum_required(VERSION 3.20)
-project(Correlation VERSION 1.1 LANGUAGES CXX)
+project(Correlation VERSION 1.2 LANGUAGES CXX)
 
-# Set default install path (customize this path)
+# Set the C++ standard as a target property, not a global variable.
+set(CXX_STANDARD 23)
+
+# Set default install path
 set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
 
-# Enable C++23
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-# Find TBB (critical for PSTL)
+# Find dependencies
 find_package(TBB REQUIRED COMPONENTS tbb tbbmalloc)
-# Find Slint
-find_package(Slint REQUIRED)  # Add Slint package
+find_package(Slint REQUIRED)
 
 #-----------------------------------------------------------
-# Library and executable setup
+# Library setup
 #-----------------------------------------------------------
 
-# Collect source files
-file(GLOB_RECURSE ALL_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
-# Filter out main.cpp for the library
-list(FILTER ALL_SOURCES EXCLUDE REGEX ".*main\\.cpp$")
+# Add sources to library
+add_library(correlation_lib STATIC
+    src/Cell.cpp
+    src/DistributionFunctions.cpp
+    src/FileIO.cpp
+    src/FileWriter.cpp
+    src/NeighborList.cpp
+    src/ProgramOptions.cpp
+    src/Smoothing.cpp
+    src/StructureFactor.cpp
+)
 
-# Create STATIC library
-add_library(correlation_lib STATIC ${ALL_SOURCES})
+# Include directories
+target_include_directories(correlation_lib PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include> # Path when installed
+)
 
-# Link libraries to executable
+target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
+target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
+
+# Link dependencies to libraries
 target_link_libraries(correlation_lib PRIVATE
     TBB::tbb
     TBB::tbbmalloc
 )
 
-# Define executable with just main.cpp
+#------------------------------------------------------------------
+# Executable Target (correlation)
+#------------------------------------------------------------------
 add_executable(correlation src/main.cpp)
 
-# Link libraries to executable
-target_link_libraries(correlation PRIVATE
-    correlation_lib
-)
-
-# Set PSTL backend
-target_compile_definitions(correlation_lib PRIVATE _PSTL_PAR_BACKEND_TBB)
-target_compile_definitions(correlation PRIVATE _PSTL_PAR_BACKEND_TBB)
-
-# Include directories
-target_include_directories(correlation_lib PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-)
-target_include_directories(correlation PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
-)
+# Link correlation_lib to correlation
+target_link_libraries(correlation PRIVATE correlation_lib)
 
 #-----------------------------------------------------------
 # Testing setup (using GoogleTest)
@@ -66,40 +64,35 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-# Collect test sources
-file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "tests/*.cpp")
+# Explicitly list test sources.
+add_executable(correlation_tests
+    tests/Atom_test.cpp
+    tests/Cell_test.cpp
+    tests/Distribution_Functions_tests.cpp
+    tests/FileIO_test.cpp
+    tests/FileWriter_test.cpp
+    tests/NeighborList_test.cpp
+)
 
-
-# Create single test executable
-add_executable(correlation_tests ${TEST_SOURCES})
-
-# Link with dependencies
+# The test executable also links to the library and inherits its properties.
 target_link_libraries(correlation_tests PRIVATE
     correlation_lib
     gtest_main
 )
 
-# Add include directories
-target_include_directories(correlation_tests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
-)
-
-# Add PSTL definition
-target_compile_definitions(correlation_tests PRIVATE _PSTL_PAR_BACKEND_TBB)
-
-# Discover and add all tests
 include(GoogleTest)
-gtest_discover_tests(correlation_tests
-    EXTRA_ARGS --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/
-)
+gtest_discover_tests(correlation_tests)
 
 #-----------------------------------------------------------
 # Install setup
 #-----------------------------------------------------------
 
-# Install rules (executable)
-install(TARGETS correlation
+# Install the executable and the library.
+install(TARGETS correlation correlation_lib
     RUNTIME DESTINATION bin
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
 )
+
+# Install the public headers so that other projects can use this library.
+install(DIRECTORY include/ DESTINATION include)
