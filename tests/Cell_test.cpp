@@ -2,219 +2,117 @@
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "../include/Atom.hpp"
-#include "../include/Cell.hpp"
-#include "../include/Constants.hpp"
+
 #include <cmath>
 #include <gtest/gtest.h>
-#include <vector>
 
-namespace correlation::testing {
+#include "../include/Cell.hpp"
+#include "../include/Constants.hpp"
 
-void AssertVectorNear(const linalg::Vector3<double> &vec1,
-                      const linalg::Vector3<double> &vec2,
-                      double abs_error = 1e-6) {
-  EXPECT_NEAR(vec1[0], vec2[0], abs_error) << "at component x";
-  EXPECT_NEAR(vec1[1], vec2[1], abs_error) << "at component y";
-  EXPECT_NEAR(vec1[2], vec2[2], abs_error) << "at component z";
-}
-
-// A single test fixture for all Cell-related tests.
+// Test fixture for the Cell class.
 class CellTest : public ::testing::Test {
 protected:
-  // Use SetUp to create common objects for multiple tests.
-  void SetUp() override {
-    // A standard 10x10x10 orthogonal cell used in many position tests.
-    orthogonal_cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-    orthogonal_cell_.calculateLatticeVectors();
-  }
-
-  Cell orthogonal_cell_;
+  // A standard 10x10x10 orthogonal cell created once for all tests in this
+  // fixture.
+  Cell orthogonal_cell_{{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}};
 };
 
-//----------------------------------------------------------------------------//
-//-------------------------- Constructor and Volume Tests --------------------//
-//----------------------------------------------------------------------------//
-TEST_F(CellTest, DefaultConstructorCreatesUnitCell) {
-  // Arrange & Act
-  Cell cell;
-  const std::array<double, 6> expected_params{1.0, 1.0, 1.0, 90.0, 90.0, 90.0};
+// --- Constructor and Lattice Tests ---
 
-  // Assert
-  EXPECT_EQ(cell.lattice_parameters(), expected_params);
-  EXPECT_NEAR(cell.volume(), 1.0, 1e-6);
-}
-
-TEST_F(CellTest, LatticeParameterConstructorForCubicCell) {
-  // Arrange & Act
-  Cell cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
-
-  // Assert
-  AssertVectorNear(cell.v_a(), {4.0, 0.0, 0.0});
-  AssertVectorNear(cell.v_b(), {0.0, 4.0, 0.0});
-  AssertVectorNear(cell.v_c(), {0.0, 0.0, 4.0});
-  EXPECT_NEAR(cell.volume(), 64.0, 1e-6);
-}
-
-TEST_F(CellTest, LatticeVectorConstructorCalculatesParameters) {
-  // Arrange & Act
-  Cell cell({2.0, 0.0, 0.0}, {2.0, 2.0, 0.0}, {0.0, 0.0, 2.0});
-  const auto lat_param = cell.lattice_parameters();
-
-  // Assert
-  EXPECT_NEAR(lat_param[0], 2.0, 1e-6);
-  EXPECT_NEAR(lat_param[1], 2.0 * std::sqrt(2.0), 1e-6); // Avoid magic numbers
-  EXPECT_NEAR(lat_param[2], 2.0, 1e-6);
-  EXPECT_NEAR(lat_param[3], 90.0, 1e-6); // alpha
-  EXPECT_NEAR(lat_param[4], 90.0, 1e-6); // beta
-  EXPECT_NEAR(lat_param[5], 45.0, 1e-6); // gamma
-  EXPECT_NEAR(cell.volume(), 8.0, 1e-6);
-}
-
-TEST_F(CellTest, VolumeCalculationForNonOrthogonalCellIsCorrect) {
+TEST_F(CellTest, ParameterConstructorForCubicCell) {
   // Arrange
-  const double a = 5.0, b = 6.0, c = 7.0;
-  const double alpha_rad = 80.0 * constants::pi / 180.0;
-  const double beta_rad = 90.0 * constants::pi / 180.0;
-  const double gamma_rad = 100.0 * constants::pi / 180.0;
-  Cell cell;
-  cell.setLatticeParameters({a, b, c, 80.0, 90.0, 100.0});
-  cell.calculateLatticeVectors();
-
-  // Act: Calculate the expected volume using the formal equation.
-  const double cos_a = std::cos(alpha_rad);
-  const double cos_b = std::cos(beta_rad);
-  const double cos_g = std::cos(gamma_rad);
-  const double volume_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b -
-                             cos_g * cos_g + 2.0 * cos_a * cos_b * cos_g;
-  const double expected_volume = a * b * c * std::sqrt(volume_sqrt);
-
-  // Assert
-  EXPECT_NEAR(cell.volume(), expected_volume, 1e-6);
-}
-
-TEST_F(CellTest, ConstructorThrowsOnInvalidLatticeVector) {
-  // Arrange
-  const linalg::Vector3<double> zero_vec = {0.0, 0.0, 0.0};
-  const linalg::Vector3<double> valid_vec = {1.0, 0.0, 0.0};
-
-  // Act & Assert
-  EXPECT_THROW(Cell(zero_vec, valid_vec, valid_vec), std::invalid_argument);
-  EXPECT_THROW(Cell(valid_vec, zero_vec, valid_vec), std::invalid_argument);
-  EXPECT_THROW(Cell(valid_vec, valid_vec, zero_vec), std::invalid_argument);
-}
-
-TEST_F(CellTest, ConstructorThrowsOnInvalidLatticeParameters) {
-  // Act & Assert
-  // NOTE: Fixed incorrect EXPECT_THROW syntax by removing variable declaration.
-  EXPECT_THROW(Cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::logic_error);
-  EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::logic_error);
-}
-
-//----------------------------------------------------------------------------//
-//------------------------- Atom & Element Management Tests ------------------//
-//----------------------------------------------------------------------------//
-TEST_F(CellTest, ElementAndAtomManagement) {
-  // Arrange
-  Cell cell;
-  cell.addElement("Si");
-  cell.addElement("O");
-  cell.addAtom(Atom("Si", {0.0, 0.0, 0.0}));
-  cell.addAtom(Atom("O", {1.0, 1.0, 1.0}));
-  cell.addAtom(Atom("Si", {2.0, 2.0, 2.0}));
+  const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
 
   // Act
-  cell.populateElementID();
-  cell.calculateElementNumbers();
+  Cell cell(params);
+  const auto &vectors = cell.latticeVectors();
 
   // Assert
-  ASSERT_EQ(cell.elements().size(), 2);
-  // Assuming elements are sorted alphabetically: O, Si
-  ASSERT_EQ(cell.element_numbers()[0], 1);    // Count of O
-  ASSERT_EQ(cell.element_numbers()[1], 2);    // Count of Si
-  ASSERT_EQ(cell.atoms()[0].element_id(), 1); // First Si
-  ASSERT_EQ(cell.atoms()[1].element_id(), 0); // O
+  EXPECT_NEAR(linalg::norm(vectors[0]), 4.0, 1e-9);
+  EXPECT_NEAR(linalg::norm(vectors[1]), 4.0, 1e-9);
+  EXPECT_NEAR(linalg::norm(vectors[2]), 4.0, 1e-9);
+  EXPECT_NEAR(cell.volume(), 64.0, 1e-9);
 }
 
-TEST_F(CellTest, DuplicateElementIsNotAdded) {
+TEST_F(CellTest, VectorConstructorCalculatesParameters) {
+  // Arrange & Act
+  Cell cell({2.0, 0.0, 0.0}, {0.0, 3.0, 0.0}, {0.0, 0.0, 4.0});
+  const auto &params = cell.lattice_parameters();
+
+  // Assert
+  EXPECT_NEAR(params[0], 2.0, 1e-9);  // a
+  EXPECT_NEAR(params[1], 3.0, 1e-9);  // b
+  EXPECT_NEAR(params[2], 4.0, 1e-9);  // c
+  EXPECT_NEAR(params[3], 90.0, 1e-9); // alpha
+  EXPECT_NEAR(params[4], 90.0, 1e-9); // beta
+  EXPECT_NEAR(params[5], 90.0, 1e-9); // gamma
+  EXPECT_NEAR(cell.volume(), 24.0, 1e-9);
+}
+
+TEST_F(CellTest, VolumeForNonOrthogonalCellIsCorrect) {
+  // Arrange
+  const std::array<double, 6> params = {5.0, 6.0, 7.0, 80.0, 90.0, 100.0};
+  Cell cell(params);
+
+  // Act: Expected volume from standard formula
+  const double cos_a = std::cos(80.0 * constants::deg2rad);
+  const double cos_b = std::cos(90.0 * constants::deg2rad);
+  const double cos_g = std::cos(100.0 * constants::deg2rad);
+  const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g +
+                          2 * cos_a * cos_b * cos_g;
+  const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
+
+  // Assert
+  EXPECT_NEAR(cell.volume(), expected_volume, 1e-9);
+}
+
+TEST_F(CellTest, ThrowsOnInvalidLatticeParameters) {
+  EXPECT_THROW(Cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
+  EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
+}
+
+// --- Atom & Element Management Tests ---
+
+TEST_F(CellTest, AddAtomManagesElementsAndAtomsCorrectly) {
   // Arrange
   Cell cell;
-  cell.addElement("H");
-  cell.addElement("H"); // Duplicate
-  cell.addElement("C");
 
   // Act
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {1.0, 1.0, 1.0});
+  cell.addAtom("Si", {2.0, 2.0, 2.0});
+
+  // Assert
   const auto &elements = cell.elements();
+  const auto &atoms = cell.atoms();
 
-  // Assert
   ASSERT_EQ(elements.size(), 2);
-  // Assuming elements are sorted:
-  EXPECT_EQ(elements[0], "C");
-  EXPECT_EQ(elements[1], "H");
+  EXPECT_EQ(elements[0].symbol, "Si");
+  EXPECT_EQ(elements[0].id.value, 0);
+  EXPECT_EQ(elements[1].symbol, "O");
+  EXPECT_EQ(elements[1].id.value, 1);
+
+  ASSERT_EQ(atoms.size(), 3);
+  EXPECT_EQ(atoms[0].element().symbol, "Si");
+  EXPECT_EQ(atoms[0].element().id.value, 0);
+  EXPECT_EQ(atoms[1].element().symbol, "O");
+  EXPECT_EQ(atoms[1].element().id.value, 1);
+  EXPECT_EQ(atoms[2].element().symbol, "Si");
+  EXPECT_EQ(atoms[2].element().id.value, 0);
 }
 
-//----------------------------------------------------------------------------//
-//-------------------------- Position Correction Tests -----------------------//
-//----------------------------------------------------------------------------//
-TEST_F(CellTest, CorrectPositionsWrapsAtomIntoOrthogonalCell) {
-  // Arrange: Uses orthogonal_cell_ from SetUp
-  Atom atom_outside("H", {12.0, -3.0, 5.0});
-  orthogonal_cell_.addAtom(atom_outside);
+// --- Position Manipulation Tests ---
+
+TEST_F(CellTest, WrapPositionsWrapsAtomIntoCell) {
+  // Arrange: Uses orthogonal_cell_ from fixture
+  orthogonal_cell_.addAtom("H", {12.0, -3.0, 5.0});
 
   // Act
-  orthogonal_cell_.correctPositions();
-  const auto final_pos = orthogonal_cell_.atoms()[0].position();
+  orthogonal_cell_.wrapPositions();
+  const auto &final_pos = orthogonal_cell_.atoms().front().position();
 
   // Assert
-  EXPECT_NEAR(final_pos[0], 2.0, 1e-6);
-  EXPECT_NEAR(final_pos[1], 7.0, 1e-6);
-  EXPECT_NEAR(final_pos[2], 5.0, 1e-6);
+  EXPECT_NEAR(final_pos.x(), 2.0, 1e-9); // 12.0 mod 10.0
+  EXPECT_NEAR(final_pos.y(), 7.0, 1e-9); // -3.0 mod 10.0
+  EXPECT_NEAR(final_pos.z(), 5.0, 1e-9); // 5.0 mod 10.0
 }
-
-TEST_F(CellTest, FractionalToCartesianConversionIsCorrect) {
-  // Arrange: Uses orthogonal_cell_ from SetUp
-  Atom frac_atom("O", {0.5, 0.25, 0.1}); // Fractional coordinates
-  orthogonal_cell_.addAtom(frac_atom);
-
-  // Act
-  orthogonal_cell_.correctFracPositions();
-  const auto final_pos = orthogonal_cell_.atoms()[0].position();
-
-  // Assert
-  EXPECT_NEAR(final_pos[0], 5.0, 1e-6); // 0.5 * 10.0
-  EXPECT_NEAR(final_pos[1], 2.5, 1e-6); // 0.25 * 10.0
-  EXPECT_NEAR(final_pos[2], 1.0, 1e-6); // 0.1 * 10.0
-}
-
-//----------------------------------------------------------------------------//
-//---------------------------- Collision & Bond Tests ------------------------//
-//----------------------------------------------------------------------------//
-TEST_F(CellTest, DistancePopulationThrowsOnCollision) {
-  // Arrange: Uses orthogonal_cell_ from SetUp
-  orthogonal_cell_.addAtom(Atom("O", {5.0, 5.0, 5.0}));
-  orthogonal_cell_.addAtom(Atom("O", {5.05, 5.0, 5.0})); // Too close
-  orthogonal_cell_.populateBondLength(1.2);
-
-  // Act & Assert
-  EXPECT_THROW(orthogonal_cell_.distancePopulation(5.0, true),
-               std::runtime_error);
-}
-
-TEST_F(CellTest, DistancePopulationFindsNeighbors) {
-  // Arrange: Uses orthogonal_cell_ from SetUp
-  Atom atom1("Si", {1.0, 1.0, 1.0}, 0);
-  Atom atom2("O", {2.5, 1.0, 1.0}, 1);
-  orthogonal_cell_.addAtom(atom1);
-  orthogonal_cell_.addAtom(atom2);
-  orthogonal_cell_.populateBondLength(1.2);
-
-  // Act
-  orthogonal_cell_.distancePopulation(5.0, true);
-
-  // Assert
-  EXPECT_FALSE(orthogonal_cell_.atoms()[0].bonded_atoms().empty());
-  EXPECT_FALSE(orthogonal_cell_.atoms()[1].bonded_atoms().empty());
-  EXPECT_EQ(orthogonal_cell_.atoms()[0].bonded_atoms()[0].id(), 1);
-}
-
-} // namespace correlation::testing

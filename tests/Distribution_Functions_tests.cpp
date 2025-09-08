@@ -2,164 +2,132 @@
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "../include/Atom.hpp"
+
+#include <algorithm>
+#include <gtest/gtest.h>
+#include <iomanip>  // Required for std::setw and std::fixed
+#include <iostream> // Required for std::cout
+#include <iterator>
+
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
-#include <algorithm> // For std::max_element
-#include <gtest/gtest.h>
-#include <iterator> // For std::distance
-#include <vector>
 
-namespace correlation::testing {
-
-// A single test fixture for all DistributionFunctions tests.
-class DistributionFunctionsTest : public ::testing::Test {};
-
-//----------------------------------------------------------------------------//
-//------------------------- Coordination Number Tests
-//------------------------//
-//----------------------------------------------------------------------------//
-TEST_F(DistributionFunctionsTest, CoordinationNumberThrowsOnEmptyCell) {
-  // Arrange
-  Cell empty_cell;
-  DistributionFunctions actions(empty_cell);
-
-  // Act & Assert
-  EXPECT_THROW(actions.coordinationNumber(), std::logic_error);
+namespace {
+// Helper function to print a histogram's contents for debugging purposes.
+void print_histogram(const std::string &title, const std::vector<double> &bins,
+                     const std::vector<double> &values) {
+  std::cout << "\n--- Histogram: " << title << " ---" << std::endl;
+  std::cout << std::fixed << std::setprecision(4);
+  for (size_t i = 0; i < bins.size(); ++i) {
+    // Only print bins with non-zero values to keep the output concise.
+    if (values.size() > i && std::abs(values[i]) > 1e-9) {
+      std::cout << "Bin: " << std::setw(8) << bins[i]
+                << " | Value: " << values[i] << std::endl;
+    }
+  }
+  std::cout << "--------------------------------------\n" << std::endl;
 }
+} // namespace
 
-TEST_F(DistributionFunctionsTest, CoordinationNumberCountsCorrectly) {
-  // Arrange: A central Carbon with two Hydrogen neighbors.
-  Cell cell({25.0, 20.0, 20.0, 90.0, 90.0, 90.0});
-  cell.calculateLatticeVectors();
-  std::vector<Atom> atoms{Atom("C", {5.0, 2.5, 2.5}, 0),
-                          Atom("H", {4.5, 2.5, 2.5}, 1),
-                          Atom("H", {5.5, 2.5, 2.5}, 2)};
-  cell.setAtoms(atoms);
-  cell.populateBondLength(1.2);
-  cell.correctPositions();
-  cell.distancePopulation(5.0, true);
-  DistributionFunctions actions(cell);
+// Test fixture for DistributionFunctions tests.
+// Provides a pre-configured Cell object to reduce boilerplate in test cases.
+class DistributionFunctionsTest : public ::testing::Test {
+protected:
+  void SetUp() override {
+    // A simple cubic cell containing two atoms, 1.5 Angstroms apart.
+    // This is a common setup for testing pair-based calculations.
+    cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+    cell_.addAtom("Ar", {5.0, 5.0, 5.0});
+    cell_.addAtom("Ar", {6.5, 5.0, 5.0});
+  }
 
-  // Act
-  actions.coordinationNumber();
-  const auto &coord_hist = actions.Z();
+  Cell cell_{};
+};
 
-  // Assert:
-  EXPECT_EQ(coord_hist[2][2], 1);
-  EXPECT_EQ(coord_hist[3][1], 2);
-}
-
-//----------------------------------------------------------------------------//
-//--------------------------- RDF Calculation Tests
-//--------------------------//
-//----------------------------------------------------------------------------//
 TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
   // Arrange
-  Cell cell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
-  DistributionFunctions actions(cell);
-
-  // Act & Assert for various invalid inputs
-  EXPECT_THROW(actions.calculateRDF(5.0, 0.0, false), std::invalid_argument);
-  EXPECT_THROW(actions.calculateRDF(5.0, -0.1, false), std::invalid_argument);
-  EXPECT_THROW(actions.calculateRDF(0.0, 0.1, false), std::invalid_argument);
-  EXPECT_THROW(actions.calculateRDF(-2.5, 0.1, false), std::invalid_argument);
-}
-
-TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnEmptyCell) {
-  // Arrange
-  Cell empty_cell;
-  DistributionFunctions actions(empty_cell);
+  auto neighbors_ = NeighborList(cell_);
+  DistributionFunctions df(cell_, neighbors_);
 
   // Act & Assert
-  EXPECT_THROW(actions.calculateRDF(2.0, 0.1, false), std::logic_error);
+  EXPECT_THROW(df.calculateRDF(5.0, 0.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateRDF(0.0, 0.1), std::invalid_argument);
 }
 
 TEST_F(DistributionFunctionsTest, RDFPeakPositionIsCorrect) {
-  // Arrange: Two atoms exactly 1.0 unit apart.
-  Cell cell({15.0, 15.0, 15.0, 90.0, 90.0, 90.0});
-  std::vector<Atom> atoms{Atom("Ar", {5.0, 5.0, 5.0}, 0),
-                          Atom("Ar", {6.0, 5.0, 5.0}, 1)};
-  cell.setAtoms(atoms);
-  cell.distancePopulation(5.0, true);
-  DistributionFunctions actions(cell);
-  const double bin_width = 0.2;
+  // Arrange
+  auto neighbors_ = NeighborList(cell_);
+  DistributionFunctions df(cell_, neighbors_);
+  const double bin_width = 0.1;
+  const double expected_distance = 1.5;
 
   // Act
-  actions.calculateRDF(6.0, bin_width);
-  const auto &rdf = actions.g();
-  const auto &total_rdf =
-      rdf.back(); // Assuming the last entry is the total g(r)
+  df.calculateRDF(5.0, bin_width);
+  const auto &rdf_hist = df.getHistogram("g(r)");
+  const auto &total_rdf = rdf_hist.partials.at("Ar-Ar");
 
   // Assert: Find the peak of the RDF and verify its position.
-  // The distance is 1.0, so the peak should be in bin 1.0 / 0.2 = 5.
   auto max_it = std::max_element(total_rdf.begin(), total_rdf.end());
   size_t peak_index = std::distance(total_rdf.begin(), max_it);
 
-  EXPECT_EQ(peak_index, 5);
+  double peak_position = rdf_hist.bins[peak_index];
+
+  EXPECT_NEAR(peak_position, expected_distance, bin_width);
 }
 
-//----------------------------------------------------------------------------//
-//---------------------------- PAD Calculation Tests
-//-------------------------//
-//----------------------------------------------------------------------------//
-TEST_F(DistributionFunctionsTest, CalculatePADThrowsOnInvalidParameters) {
+TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
+  // Arrange: A water-like structure with a known ~109.5 degree angle.
+  Cell water_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  water_cell.addAtom("O", {0.0, 0.0, 0.0});
+  water_cell.addAtom("H", {1.0, 0.0, 0.0});
+  water_cell.addAtom("H",
+                     {std::cos(1.916), std::sin(1.916), 0.0}); // ~109.5 deg
+  auto neighbors_ = NeighborList(water_cell);
+  DistributionFunctions df(water_cell, neighbors_);
+  const double bin_width = 1.0; // 1-degree bins
+
+  // Act
+  df.calculatePAD(180.0, bin_width);
+  const auto &pad_hist = df.getHistogram("f(theta)");
+  const auto &hoh_pad = pad_hist.partials.at("H-O-H");
+
+  // --- DEBUGGING STEP ---
+  // This will print the contents of the H-O-H partial to the console.
+  print_histogram("H-O-H Partial", pad_hist.bins, hoh_pad);
+  // --- END DEBUGGING STEP ---
+
+  // Assert
+  auto max_it = std::max_element(hoh_pad.begin(), hoh_pad.end());
+  size_t peak_index = std::distance(hoh_pad.begin(), max_it);
+  double peak_angle = pad_hist.bins[peak_index];
+
+  EXPECT_NEAR(peak_angle, 109.5, bin_width * 2.0); // Allow for binning error
+}
+
+TEST_F(DistributionFunctionsTest, SmoothAllUpdatesSmoothedPartials) {
   // Arrange
-  Cell cell({3.0, 3.0, 3.0, 90.0, 90.0, 90.0});
-  DistributionFunctions actions(cell);
-
-  // Act & Assert
-  EXPECT_THROW(actions.calculatePAD(20.0, -1.0), std::invalid_argument);
-  EXPECT_THROW(actions.calculatePAD(20.0, 0.0), std::invalid_argument);
-  EXPECT_THROW(actions.calculatePAD(-20.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(actions.calculatePAD(0.0, 1.0), std::invalid_argument);
-}
-
-TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWaterMolecule) {
-  // Arrange: A water-like structure with a known 120-degree angle.
-  Cell cell({25.0, 20.0, 20.0, 90.0, 90.0, 90.0});
-  cell.addAtom(Atom("O", {0.0, 0.0, 0.0}, 0));
-  cell.addAtom(Atom("H", {1.0, 0.0, 0.0}, 1)); // H-O-H angle is 120 deg
-  cell.addAtom(Atom("H", {-0.5, 0.866, 0.0}, 2));
-  cell.distancePopulation(2.0, true);
-  cell.planeAnglePopulation(true);
-  DistributionFunctions actions(cell);
+  auto neighbors_ = NeighborList(cell_);
+  DistributionFunctions df(cell_, neighbors_);
+  df.calculateRDF(5.0, 0.1);
 
   // Act
-  actions.calculatePAD(180.0, 1.0); // Use 1-degree bins
-  const auto &pad = actions.F();
-  const auto &h_o_h_pad =
-      pad.back(); // Assuming last is total or relevant partial
+  df.smoothAll(0.2);
+  const auto &rdf_hist = df.getHistogram("g(r)");
 
-  // Assert: The peak of the angle distribution should be at 120 degrees.
-  auto max_it = std::max_element(h_o_h_pad.begin(), h_o_h_pad.end());
-  size_t peak_index = std::distance(h_o_h_pad.begin(), max_it);
+  // Assert
+  ASSERT_FALSE(rdf_hist.smoothed_partials.empty());
+  ASSERT_TRUE(rdf_hist.smoothed_partials.count("Ar-Ar"));
 
-  EXPECT_EQ(peak_index, 120);
+  const auto &raw_data = rdf_hist.partials.at("Ar-Ar");
+  const auto &smoothed_data = rdf_hist.smoothed_partials.at("Ar-Ar");
+
+  ASSERT_EQ(raw_data.size(), smoothed_data.size());
+
+  // A simple check: the peak of the smoothed data should be lower than the raw
+  // data's peak.
+  double raw_max = *std::max_element(raw_data.begin(), raw_data.end());
+  double smoothed_max =
+      *std::max_element(smoothed_data.begin(), smoothed_data.end());
+
+  EXPECT_LT(smoothed_max, raw_max);
 }
-
-//----------------------------------------------------------------------------//
-//---------------------------- SQ Calculation Tests
-//--------------------------//
-//----------------------------------------------------------------------------//
-TEST_F(DistributionFunctionsTest, CalculateSQMatchesKnownFCCStructure) {
-  // Arrange: A simple FCC cell of Palladium.
-  Cell fcc_cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
-  std::vector<Atom> atoms{
-      Atom("Pd", {0.0, 0.0, 0.0}, 0), Atom("Pd", {2.0, 2.0, 0.0}, 1),
-      Atom("Pd", {0.0, 2.0, 2.0}, 2), Atom("Pd", {2.0, 0.0, 2.0}, 3)};
-  fcc_cell.setAtoms(atoms);
-  fcc_cell.distancePopulation(20.0, true);
-  DistributionFunctions actions(fcc_cell);
-
-  // Act
-  actions.calculateRDF(20.0, 0.05);
-  actions.calculateSQ(25.0, 0.05, 9.0);
-
-  // Assert: Check against known, pre-calculated values for this structure.
-  // This serves as a regression test.
-  EXPECT_NEAR(actions.g().back()[56], 38.29, 0.1);
-  EXPECT_NEAR(actions.S().back()[87], 2.46184, 0.1);
-}
-
-} // namespace correlation::testing

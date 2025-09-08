@@ -4,74 +4,107 @@
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include <string>
-#include <vector>
 
-#include "../include/LinearAlgebra.hpp"
+#include <algorithm>
+#include <cstdint>
+#include <string>
+
+#include "LinearAlgebra.hpp"
+
+struct AtomID {
+  std::uint32_t value;
+  linalg::Vector3<int> offset = {0, 0, 0};
+  // Allow comparison and use as a key in maps if needed.
+  constexpr bool operator==(const AtomID other) const {
+    return value == other.value;
+  };
+};
+
+struct ElementID {
+  int value;
+  constexpr bool operator==(const ElementID other) const {
+    return value == other.value;
+  };
+};
+
+struct Element {
+  std::string symbol;
+  ElementID id{-1};
+  // double mass{0.0}; // Could be added in the future
+};
+
+struct Neighbor {
+  AtomID index;
+  double distance;
+  linalg::Vector3<double> r_ij; // Displacement vector
+};
 
 class Atom {
-  /* --------------------------------------------------------------------------
-   * This object represents every atom in the cell.
-   *
-   * The atributes consist of:
-   *
-   * ID (Unique Identifier),
-   * Element (string and id),
-   * Postion (array of three doubles),
-   * Bonded Atoms (Images of the bonded atoms)
-   * Element ID (id of element in Cell._elements)
-   *
-   * As well as several methods to calculate distance between pairs of atoms,
-   * and angle between terns of atoms
-   * --------------------------------------------------------------------------
-   */
-
-private:
-  int id_;
-  linalg::Vector3<double> position_;
-  std::vector<Atom> bonded_atoms_;
-  std::string element_;
-  int element_id_;
-
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
-  explicit Atom(std::string, linalg::Vector3<double>, int, int);
-  explicit Atom(std::string, linalg::Vector3<double>, int);
-  explicit Atom(std::string, linalg::Vector3<double>);
-  explicit Atom();
+  explicit Atom() = default;
 
-  void resetPositionAndElement(std::string, linalg::Vector3<double>);
+  explicit Atom(Element element, linalg::Vector3<double> pos, AtomID id,
+                ElementID element_id) noexcept
+      : element_(std::move(element)), position_(pos), id_(id),
+        element_id_(element_id) {}
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
 
-  int id() const { return id_; }
-  void setID(int num) { id_ = num; }
+  AtomID id() const noexcept { return id_; }
+  void setID(std::uint32_t num) { id_.value = num; }
 
-  const linalg::Vector3<double> &position() const { return position_; }
+  const linalg::Vector3<double> &position() const noexcept { return position_; }
   void setPosition(linalg::Vector3<double> pos) { position_ = pos; }
 
-  const std::vector<Atom> &bonded_atoms() const { return bonded_atoms_; }
-  void setBondedAtoms(const std::vector<Atom> &a) { bonded_atoms_ = a; }
-  void addBondedAtom(const Atom &);
+  const Element &element() const { return element_; }
+  void setElement(const Element &ele) { element_ = ele; }
 
-  const std::string &element() const { return element_; }
-  void setElement(const std::string &ele) { element_ = ele; }
+  int element_id() const { return element_id_.value; }
+  void setElementID(int num) { element_id_.value = num; }
 
-  int element_id() const { return element_id_; }
-  void setElementID(int num) { element_id_ = num; }
-
-  //-------------------------------------------------------------------------//
-  //------------------------------- Methods ---------------------------------//
-  //-------------------------------------------------------------------------//
-
-  // Default functions for the object Atom
-  [[nodiscard]] double distance(const Atom &) const;
-
-  // get the angle formed between two other Atoms and this Central Atom
-  [[nodiscard]] double angle(const Atom &, const Atom &) const;
+private:
+  AtomID id_;
+  linalg::Vector3<double> position_;
+  Element element_;
+  ElementID element_id_;
 };
+
+/**
+ * @brief Calculates the Euclidean distance between two atoms.
+ */
+inline double distance(const Atom &a, const Atom &b) noexcept {
+  return linalg::norm(a.position() - b.position());
+}
+
+/**
+ * @brief Calculates the angle (in radians) formed by three atoms.
+ * @param center The atom at the vertex of the angle.
+ * @param a One of the outer atoms.
+ * @param b The other outer atom.
+ * @return The angle in radians, or 0.0 if vectors are collinear or zero.
+ */
+inline double angle(const Atom &center, const Atom &a, const Atom &b) noexcept {
+  const linalg::Vector3<double> vA = a.position() - center.position();
+  const linalg::Vector3<double> vB = b.position() - center.position();
+
+  const double norm_sq_A = linalg::dot(vA, vA);
+  const double norm_sq_B = linalg::dot(vB, vB);
+
+  if (norm_sq_A == 0.0 || norm_sq_B == 0.0) {
+    return 0.0;
+  }
+
+  double cos_theta = linalg::dot(vA, vB) / std::sqrt(norm_sq_A * norm_sq_B);
+
+  // Clamp for numerical stability
+  cos_theta = std::clamp(cos_theta, -1.0, 1.0);
+
+  return std::acos(cos_theta);
+}
+
 #endif // INCLUDE_ATOM_HPP_

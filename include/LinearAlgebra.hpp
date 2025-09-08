@@ -95,21 +95,34 @@ operator*(Scalar s, const Vector3<T> &v) noexcept {
 template <typename T> class Matrix3 {
 public:
   using value_type = T;
-
+  // Constructors
   constexpr Matrix3() noexcept { data_.fill(Vector3<T>{0, 0, 0}); }
   constexpr Matrix3(const Vector3<T> &c0, const Vector3<T> &c1,
                     const Vector3<T> &c2) noexcept
       : data_{c0, c1, c2} {}
-
+  // Column access
   constexpr const Vector3<T> &operator[](std::size_t c) const noexcept {
     return data_[c];
   }
   constexpr Vector3<T> &operator[](std::size_t c) noexcept { return data_[c]; }
 
+  // Element access (row, col)
+  constexpr T operator()(std::size_t r, std::size_t c) const noexcept {
+    return data_[c][r];
+  }
+  constexpr T &operator()(std::size_t r, std::size_t c) noexcept {
+    return data_[c][r];
+  }
+
   constexpr std::array<std::array<T, 3>, 3> array() const noexcept {
     return {{{data_[0][0], data_[1][0], data_[2][0]},
              {data_[0][1], data_[1][1], data_[2][1]},
              {data_[0][2], data_[1][2], data_[2][2]}}};
+  }
+  constexpr Vector3<T> operator*(const Vector3<T> v) const noexcept {
+    return {data_[0][0] * v.x() + data_[0][1] * v.y() + data_[0][2] * v.z(),
+            data_[1][0] * v.x() + data_[1][1] * v.y() + data_[1][2] * v.z(),
+            data_[2][0] * v.x() + data_[2][1] * v.y() + data_[2][2] * v.z()};
   }
 
 private:
@@ -117,30 +130,37 @@ private:
 };
 
 // -----------------------------------------------------------------------------
-//  Free functions  –  drop-in API
+//  Functions
 // -----------------------------------------------------------------------------
+
+// Vector dot product
 template <typename T>
 constexpr T dot(const Vector3<T> &a, const Vector3<T> &b) noexcept {
   return a * b;
 }
-
+// Vector cross product
 template <typename T>
 constexpr Vector3<T> cross(const Vector3<T> &a, const Vector3<T> &b) noexcept {
   return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
           a[0] * b[1] - a[1] * b[0]};
 }
-
+// Vector norm_sq
+template <typename T> constexpr T norm_sq(const Vector3<T> &v) noexcept {
+  return v * v;
+}
+// Vector norm
 template <typename T> constexpr T norm(const Vector3<T> &v) noexcept {
   return std::sqrt(v * v);
 }
 
+// Matrix determinant
 template <typename T> constexpr T determinant(const Matrix3<T> &m) noexcept {
   return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
          m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
          m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 }
-
-template <typename T> constexpr Matrix3<T> invertMatrix(const Matrix3<T> &m) {
+// Matrix invert
+template <typename T> constexpr Matrix3<T> invert(const Matrix3<T> &m) {
   T det = determinant(m);
   if (det == T{0})
     throw std::runtime_error("singular matrix");
@@ -161,10 +181,34 @@ template <typename T> constexpr Matrix3<T> invertMatrix(const Matrix3<T> &m) {
   return Matrix3<T>(c0 * inv, c1 * inv, c2 * inv);
 }
 
+// Matrix transpose
 template <typename T>
-constexpr Vector3<T> matrixVectorMultiply(const Matrix3<T> &m,
-                                          const Vector3<T> &v) noexcept {
-  return {m[0] * v, m[1] * v, m[2] * v};
+constexpr Matrix3<T> transpose(const Matrix3<T> &m) noexcept {
+  return Matrix3<T>({m(0, 0), m(1, 0), m(2, 0)}, // New col 0 is old row 0
+                    {m(0, 1), m(1, 1), m(2, 1)}, // New col 1 is old row 1
+                    {m(0, 2), m(1, 2), m(2, 2)}  // New col 2 is old row 2
+  );
 }
+
+// Matrix-Vector product
+template <typename T>
+constexpr Vector3<T> operator*(const Matrix3<T> &m,
+                               const Vector3<T> &v) noexcept {
+  // For column-major matrix: Result = col0*v.x + col1*v.y + col2*v.z
+  Vector3<T> res;
+  res += m[0] * v.x();
+  res += m[1] * v.y();
+  res += m[2] * v.z();
+  return res;
+}
+
+// Matrix-Matrix product
+template <typename T>
+constexpr Matrix3<T> operator*(const Matrix3<T> &a,
+                               const Matrix3<T> &b) noexcept {
+  // Result column 'j' is the product of matrix 'a' and column 'j' of matrix 'b'
+  return Matrix3<T>(a * b[0], a * b[1], a * b[2]);
+}
+
 } // namespace linalg
 #endif // INCLUDE_LINEAR_ALGEBRA_HPP_

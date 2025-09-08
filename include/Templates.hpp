@@ -4,10 +4,11 @@
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include <algorithm> // For std::find
-#include <numeric>   // For std::accumulate
-#include <optional>  // For std::optional
-#include <vector>    // For std::vector
+
+#include <algorithm>
+#include <numeric>
+#include <optional>
+#include <vector>
 
 //---------------------------------------------------------------------------//
 //------------------------- Functions over Vectors --------------------------//
@@ -57,10 +58,10 @@ std::pair<bool, int> findInVector(const std::vector<T> &vec, const T &element) {
 //---------------------------------------------------------------------------//
 template <typename T>
 constexpr std::optional<std::size_t> findIndex(const std::vector<T> &vec,
-                 const T &value) {
+                                               const T &value) {
   const auto it = std::find(vec.cbegin(), vec.cend(), value);
   return (it != vec.cend()) ? std::optional(std::distance(vec.cbegin(), it))
-          : std::nullopt;
+                            : std::nullopt;
 } // findIndex//---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//
 //---------------------------------------------------------------------------//
@@ -77,6 +78,6 @@ std::pair<bool, int> findInVector(const std::vector<T> &vec, const T &element);
 
 template <typename T>
 constexpr std::optional<std::size_t> findIndex(const std::vector<T> &vec,
-                 const T &value);
+                                               const T &value);
 
 #endif // INCLUDE_TEMPLATES_HPP_

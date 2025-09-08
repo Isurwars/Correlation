@@ -10,8 +10,8 @@
 #include <string>     // String manipulation and algorithms
 
 #include "../include/Cell.hpp"       // Cell Class
-#include "../include/ReadFiles.hpp"  // File reading and parsing
-#include "../include/WriteFiles.hpp" // Write Output files
+#include "../include/FileIO.hpp"     // File reading and parsing
+#include "../include/FileWriter.hpp" // Write Output files
 
 inline std::string _in_file_name_ = "";
 inline std::string _out_file_name_ = "";
@@ -304,49 +304,28 @@ int main(int argc, char **argv) {
   std::for_each(MyExt.begin(), MyExt.end(), [](char &c) { c = ::tolower(c); });
   if (MyExt == ".car") {
     std::cout << "Reading CAR file: " << _in_file_name_ << std::endl;
-    MyCell = readCar(_in_file_name_);
+    MyCell = FileIO::readCar(_in_file_name_);
   } else if (MyExt == ".cell") {
-    std::cout << "Reading CELL file: " << _in_file_name_ << std::endl;
-    MyCell = readCell(_in_file_name_);
+    std::cout << "Reading CELL file:" << _in_file_name_ << std::endl;
+    MyCell = FileIO::readCell(_in_file_name_);
   } else if (MyExt == ".dat") {
     std::cout << "Reading DAT file: " << _in_file_name_ << std::endl;
-    MyCell = readOnetepDat(_in_file_name_);
+    MyCell = FileIO::readOnetepDat(_in_file_name_);
   } else {
     std::cout << "File: " << MyExt << " currently not supported." << std::endl;
     PrintHelp();
   }
   std::cout << "File " << _in_file_name_ << " opened successfully."
             << std::endl;
-  // Create Bond distance Matrix
-  MyCell.populateBondLength(_bond_par_);
-  if (_bond_in_file_) {
-    /*Read the Bond Distances from the external file*/
-    MyCell.setBondLength(readBond(_bond_file_name_, MyCell));
-  }
-  std::cout << "Bond lenght populated correctly" << std::endl;
-  MyCell.populateElementID();
-  std::cout << "Element IDs populated correctly" << std::endl;
   /*
    * This function calculates the distances between every pair of atoms
    * in the structure. A supercell method is used to create the images
    * in all directions up to _r_cut_ distance.
    */
-  MyCell.distancePopulation(_r_cut_, _self_interaction_);
+  NeighborList MyNeighbor = NeighborList(MyCell);
   std::cout << "Distance tensor populated correctly" << std::endl;
-  /*
-   * This function calculates the angle between every atom and all pairs
-   * of bonded atoms. The bonded atoms are calculated in Cell::RDF and it
-   * must be called first.
-   */
-  MyCell.planeAnglePopulation();
-  std::cout << "Angle tensorpopulated correctly" << std::endl;
 
-  DistributionFunctions MyDF(MyCell);
-  /*
-   * This function calculates the partial coordination number for pairs of
-   * elements. Bonded Atoms use the same parameters for PAD.
-   */
-  MyDF.coordinationNumber();
+  DistributionFunctions MyDF(MyCell, MyNeighbor);
 
   /*
    * This function uses the distances to calculate g(r), G(r) and J(r).
@@ -391,14 +370,14 @@ int main(int argc, char **argv) {
 
   if (_smoothing_) {
     std::cout << "Smoothing... " << std::endl;
-    MyDF.Smoothing(_smooth_sigma_, _kernel_);
+    MyDF.smoothAll(_smooth_sigma_);
   }
 
   std::cout << "Writing output files: " << _out_file_name_ << std::endl;
-  WriteCSV(MyDF, _out_file_name_, _smoothing_);
+  FileWriter MyFileWriter = FileWriter(MyDF);
+  MyFileWriter.writeAllCSVs(_out_file_name_, _smoothing_);
 
   std::cout << "Job in " << _in_file_name_ << " finished successfully." << '\n';
   return 0;
 
-  std::vector<double> aux(MyDF.g().size(), 0);
 } // main

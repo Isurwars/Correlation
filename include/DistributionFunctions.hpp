@@ -4,100 +4,95 @@
 // Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "../include/Cell.hpp"
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include "Cell.hpp"
+#include "NeighborList.hpp"
+
+// A structure to hold all data related to a single histogram.
+// This includes the x-axis values (bins) and the y-axis values for
+// both the raw and smoothed data.
+struct Histogram {
+  std::vector<double> bins;
+  // Maps a partial key (e.g., "Si-O" or "Total") to its histogram values
+  std::map<std::string, std::vector<double>> partials;
+  std::map<std::string, std::vector<double>> smoothed_partials;
+};
 
 class DistributionFunctions {
-private:
-  // Cell
-  Cell cell_;
-  // Matrix of g(r) Histograms
-  std::vector<std::vector<double>> g_;
-  // Matrix of J(r) Histograms
-  std::vector<std::vector<double>> J_;
-  // Matrix of G(r) Histograms
-  std::vector<std::vector<double>> G_;
-  // Matrix of f(theta) Histograms
-  std::vector<std::vector<double>> F_;
-  // Matrix of S(Q) Histograms
-  std::vector<std::vector<double>> S_;
-  // Matrix of calculateXRD Histograms
-  std::vector<std::vector<double>> X_;
-  // Matrix of Coordination Number Histograms
-  std::vector<std::vector<double>> Z_;
-  // Matrix of J(r) Smoothed Histograms
-  std::vector<std::vector<double>> J_smoothed_;
-  // Matrix of g(r) Smoothed Histograms
-  std::vector<std::vector<double>> g_smoothed_;
-  // Matrix of G(r) Smoothed Histograms
-  std::vector<std::vector<double>> G_smoothed_;
-  // Matrix of f(theta) Smoothed Histograms
-  std::vector<std::vector<double>> F_smoothed_;
-  // Matrix of S(Q) Smoothed Histograms
-  std::vector<std::vector<double>> S_smoothed_;
-  // Matrix of calculateXRD Smoothed Histograms
-  std::vector<std::vector<double>> X_smoothed_;
-
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
 
-  explicit DistributionFunctions(const Cell &);
+  explicit DistributionFunctions(const Cell &cell,
+                                 const NeighborList &neighbors);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
-
-  // Cell
   const Cell &cell() const { return cell_; }
-  void setCell(const Cell &c) { cell_ = c; }
 
-  // Distribution Functions
-  const std::vector<std::vector<double>> &g() const { return g_; }
-  const std::vector<std::vector<double>> &J() const { return J_; }
-  const std::vector<std::vector<double>> &G() const { return G_; }
-  const std::vector<std::vector<double>> &F() const { return F_; }
-  const std::vector<std::vector<double>> &S() const { return S_; }
-  const std::vector<std::vector<double>> &X() const { return X_; }
-  const std::vector<std::vector<double>> &Z() const { return Z_; }
-  const std::vector<std::vector<double>> &J_smoothed() const {
-    return J_smoothed_;
+  /**
+   * @brief Access a specific calculated histogram by name.
+   * @param name The name of the distribution function (e.g., "g(r)", "S(Q)").
+   * @return A const reference to the Histogram data.
+   * @throws std::out_of_range if the name is not found.
+   */
+  const Histogram &getHistogram(const std::string &name) const {
+    if (histograms_.count(name) == 0) {
+      throw std::out_of_range("Histogram not found: " + name);
+    }
+    return histograms_.at(name);
   }
-  const std::vector<std::vector<double>> &g_smoothed() const {
-    return g_smoothed_;
-  }
-  const std::vector<std::vector<double>> &G_smoothed() const {
-    return G_smoothed_;
-  }
-  const std::vector<std::vector<double>> &F_smoothed() const {
-    return F_smoothed_;
-  }
-  const std::vector<std::vector<double>> &S_smoothed() const {
-    return S_smoothed_;
-  }
-  const std::vector<std::vector<double>> &X_smoothed() const {
-    return X_smoothed_;
+
+  const std::map<std::string, Histogram> &getAllHistograms() const {
+    return histograms_;
   }
 
   //-------------------------------------------------------------------------//
-  //------------------------------- Methods ---------------------------------//
+  //--------------------------- Calculation Methods -------------------------//
   //-------------------------------------------------------------------------//
 
-  // Coordination Number
-  void coordinationNumber();
-  // RDF Histograms  (max distance between atoms, bin width, normalize)
-  void calculateRDF(double = 20.0, double = 0.05, bool = false);
-  // PAD Histograms (max angle, bin width)
-  void calculatePAD(double = 180.0, double = 1.0);
-  // Structure Factor Calculation
-  void calculateSQ(double = 25.0, double = 0.0, double = 8.0, bool = false);
-  // Structure Factor Calculation
-  void calculateSQDirac(double = 25.0, double = 0.0, bool = false);
-  // calculateXRD Calculation
-  void calculateXRD(double = 1.5406, double = 5.0, double = 90.0, double = 1.0);
-  // RDF Smoothing (sigma)
-  void Smoothing(double, int = 1);
-  // VoronoiIndex()
-  void voronoiIndex();
+  void calculateCoordinationNumber();
+
+  void calculateRDF(double r_cut = 20.0, double bin_width = 0.05,
+                    bool normalize = false);
+
+  void calculatePAD(double theta_cut = 180.0, double bin_width = 1.0);
+
+  void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
+                   double r_integration_max = 8.0);
+
+  void calculateXRD(double lambda = 1.5406, double theta_min = 5.0,
+                    double theta_max = 90.0, double bin_width = 1.0);
+
+  /**
+   * @brief Applies kernel smoothing to a specified distribution function.
+   * @param name The name of the histogram to smooth (e.g., "g(r)").
+   * @param sigma The standard deviation (width) of the Gaussian kernel.
+   */
+  void smooth(const std::string &name, double sigma);
+  void smoothAll(double sigma);
+
+  // Provides a list of keys for all computed histograms.
+  std::vector<std::string> getAvailableHistograms() const;
+
+private:
+  // Helper to create a key for partial maps (e.g., "Si-O")
+  std::string getPartialKey(int type1, int type2) const;
+
+  const Cell &cell_;
+  const NeighborList &neighbors_;
+
+  // A map to store all calculated histograms by name.
+  // This is more flexible and scalable than individual member variables.
+  std::map<std::string, Histogram> histograms_;
+
+  // Stores coordination number data separately as it's not a typical histogram
+  std::vector<std::vector<double>> coordination_data_;
 };
 #endif // INCLUDE_DISTRIBUTION_FUNCTIONS_HPP_

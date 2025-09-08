@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "../include/Constants.hpp"
+#include "../include/PhysicalData.hpp"
 
 //---------------------------------------------------------------------------//
 //---------------------------------- Sinc -----------------------------------//
@@ -38,7 +39,7 @@ double alphaWeightFactor(double x, double a, double b) {
 //--------------------------- Atomic Form Factor  ---------------------------//
 //---------------------------------------------------------------------------//
 double atomicFormFactor(double q, std::string &element) {
-  std::vector<double> param = atomicFormFactorParameters(element);
+  std::vector<double> param = AtomicFormFactors::get(element);
   double sum = 0.0;
   for (int i = 0; i < 4; ++i) {
     sum += gaussian(q, param[i * 2], param[i * 2 + 1]);
@@ -50,12 +51,12 @@ double atomicFormFactor(double q, std::string &element) {
 //-------------------- Average Atomic Scattering Factor ---------------------//
 //---------------------------------------------------------------------------//
 double avrgAtomicScattering(const std::vector<double> &q_values,
-          std::string &element) {
+                            std::string &element) {
   const size_t num_points = q_values.size();
   if (num_points == 0)
     return 0.0; // Handle empty input
 
-  const std::vector<double> parameters = atomicFormFactorParameters(element);
+  const std::vector<double> parameters = AtomicFormFactors::get(element);
 
   double total_sum = 0.0;
 
@@ -79,7 +80,7 @@ double avrgAtomicScattering(const std::vector<double> &q_values,
 //------------------------ Average Scattering Factor ------------------------//
 //---------------------------------------------------------------------------//
 double avrgScatteringFactor(std::vector<double> q_,
-          std::vector<std::string> elements) {
+                            std::vector<std::string> elements) {
   int n_ = elements.size();
   double aux = 0.0;
   for (int i = 0; i < n_; ++i) {
