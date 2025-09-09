@@ -72,6 +72,7 @@ public:
 private:
   void ensureNeighborsComputed(double r_cut);
   std::string getPartialKey(int type1, int type2) const;
+  void calculateAshcroftWeights();
 
   const Cell &cell_;
   std::unique_ptr<StructureAnalyzer> neighbors_;
@@ -79,5 +80,6 @@ private:
   double bond_factor_{1.2};
 
   std::map<std::string, Histogram> histograms_;
+  std::map<std::string, double> ashcroft_weights_;
 };
 #endif // INCLUDE_DISTRIBUTION_FUNCTIONS_HPP_

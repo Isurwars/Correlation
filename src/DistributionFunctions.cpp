@@ -24,6 +24,7 @@ DistributionFunctions::DistributionFunctions(const Cell &cell, double cutoff,
   if (cutoff > 0.0) {
     ensureNeighborsComputed(cutoff);
   }
+  calculateAshcroftWeights();
 }
 
 //--------------------------------------------------------------------------//
@@ -62,6 +63,42 @@ std::string DistributionFunctions::getPartialKey(int type1, int type2) const {
   if (type1 > type2)
     std::swap(type1, type2);
   return elements[type1].symbol + "-" + elements[type2].symbol;
+}
+
+void DistributionFunctions::calculateAshcroftWeights() {
+  const auto &atoms = cell_.atoms();
+  const double num_atoms = static_cast<double>(atoms.size());
+  if (num_atoms < 1)
+    return;
+
+  // 1. Count the number of atoms for each element symbol.
+  std::map<std::string, int> element_counts;
+  for (const auto &atom : atoms) {
+    element_counts[atom.element().symbol]++;
+  }
+
+  // 2. Get the list of unique elements present.
+  const auto &elements = cell_.elements();
+
+  // 3. Calculate w_ij = (N_i * N_j) / N_total^2 for all pairs.
+  // This is the concentration-based weighting factor.
+  for (size_t i = 0; i < elements.size(); ++i) {
+    for (size_t j = i; j < elements.size(); ++j) {
+      const auto &element_i = elements[i];
+      const auto &element_j = elements[j];
+
+      const double count_i =
+          static_cast<double>(element_counts.at(element_i.symbol));
+      const double count_j =
+          static_cast<double>(element_counts.at(element_j.symbol));
+
+      const double weight = (count_i * count_j) / (num_atoms * num_atoms);
+
+      // Get the canonical key (e.g., "Si-O", not "O-Si")
+      std::string key = getPartialKey(element_i.id.value, element_j.id.value);
+      ashcroft_weights_[key] = weight;
+    }
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -192,8 +229,6 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
   // --- Normalization and Calculation of g(r) and G(r) ---
   const double total_rho = num_atoms / cell_.volume();
 
-  // TODO: Implement Ashcroft-Waseda weighting if normalize is false
-
   for (auto const &[key, J_partial] : J_r.partials) {
     g_r.partials[key].assign(num_bins, 0.0);
     G_r.partials[key].assign(num_bins, 0.0);
@@ -205,6 +240,13 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
 
       double norm_factor =
           4.0 * constants::pi * r * r * total_rho * bin_width * num_atoms;
+      if (!normalize) {
+        // Ashcroft-Waseda weighting (default).
+        // This is the physically correct normalization for a partial g_ij(r)
+        // based on the concentrations of species i and j.
+        double weight = (key == "Total") ? 1.0 : ashcroft_weights_.at(key);
+        norm_factor *= weight;
+      }
       if (norm_factor > 1e-9) {
         g_r.partials[key][i] = J_partial[i] / norm_factor;
       }
