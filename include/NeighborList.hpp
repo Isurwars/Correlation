@@ -10,7 +10,7 @@
 #include "Cell.hpp"
 
 /**
- * @class NeighborList
+ * @class StructureAnalyzer
  * @brief Computes and stores pairwise distances and bond angles in tensors
  * indexed by element type.
  *
@@ -19,7 +19,7 @@
  * (tensors) suitable for calculating partial distribution functions.
  * The distance and angle calculation loops are parallelized with OpenMP.
  */
-class NeighborList {
+class StructureAnalyzer {
 public:
   using NeighborTensor = std::vector<std::vector<Neighbor>>;
   using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
@@ -33,8 +33,8 @@ public:
    * @param bond_factor A factor to multiply with the sum of covalent radii to
    * determine if two atoms are bonded.
    */
-  explicit NeighborList(const Cell &cell, double cutoff = 20.0,
-                        double bond_factor = 1.2);
+  explicit StructureAnalyzer(const Cell &cell, double cutoff = 20.0,
+                             double bond_factor = 1.2);
 
   // --- Accessors for the computed data tensors ---
   const DistanceTensor &distances() const { return distance_tensor_; }

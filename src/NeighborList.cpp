@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/NeighborList.hpp"
+#include "../include/StructureAnalyzer.hpp"
 
 #include <algorithm>
 #include <cmath>
-#include <omp.h>
+#include <execution>
+#include <mutex>
+#include <numeric>
 #include <stdexcept>
 #include <vector>
 
@@ -16,7 +18,8 @@
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-NeighborList::NeighborList(const Cell &cell, double cutoff, double bond_factor)
+StructureAnalyzer::StructureAnalyzer(const Cell &cell, double cutoff,
+                                     double bond_factor)
     : cell_(cell), cutoff_sq_(cutoff * cutoff), bond_factor_(bond_factor) {
   if (cutoff <= 0) {
     throw std::invalid_argument("Cutoff distance must be positive.");
@@ -45,7 +48,7 @@ NeighborList::NeighborList(const Cell &cell, double cutoff, double bond_factor)
 //--------------------------------- Methods ---------------------------------//
 //---------------------------------------------------------------------------//
 
-void NeighborList::precomputeBondCutoffs() {
+void StructureAnalyzer::precomputeBondCutoffs() {
   const auto &elements = cell_.elements();
   const size_t num_elements = elements.size();
   auto placeholder = std::vector<double>(num_elements);
@@ -63,7 +66,7 @@ void NeighborList::precomputeBondCutoffs() {
   }
 }
 
-void NeighborList::computeDistances() {
+void StructureAnalyzer::computeDistances() {
   const std::vector<Atom> &atoms = cell_.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell_.elements().size();
@@ -90,84 +93,92 @@ void NeighborList::computeDistances() {
       }
     }
   }
+  // A mutex is used to safely merge results from multiple threads.
+  // This is the direct replacement for the '#pragma omp critical' directive.
+  std::mutex results_mutex;
 
-// --- Main computation loop, parallelized with OpenMP ---
-#pragma omp parallel
-  {
-    // Thread-local storage to avoid race conditions
-    DistanceTensor distance_tensor_local(
-        num_elements, std::vector<std::vector<double>>(num_elements));
-    NeighborTensor neighbor_tensor_local(atom_count);
-    std::vector<std::vector<Neighbor>> neighbors_local(atom_count);
+  // Create a vector of indices [0, 1, 2, ..., atom_count-1] to iterate over.
+  // This is a common pattern for using standard algorithms on an index-based
+  // loop.
+  std::vector<size_t> atom_indices(atom_count);
+  std::iota(atom_indices.begin(), atom_indices.end(), 0);
 
-// Using dynamic scheduling as pairs might have different computation times
-#pragma omp for schedule(dynamic)
-    for (size_t i = 0; i < atom_count; ++i) {
-      const Atom &atom_A = atoms[i];
-      const int type_A = atom_A.element_id();
+  // Use std::for_each with a parallel execution policy. The loop body is a
+  // lambda.
+  std::for_each(
+      std::execution::par, atom_indices.begin(), atom_indices.end(),
+      [&](size_t i) {
+        // These containers are created within the lambda, making them naturally
+        // "thread-local" for each task executed by the parallel algorithm.
+        DistanceTensor distance_tensor_local(
+            num_elements, std::vector<std::vector<double>>(num_elements));
+        NeighborTensor neighbor_tensor_local(atom_count);
 
-      // Iterate over unique pairs (j>=i)
-      for (size_t j = i; j < atom_count; ++j) {
-        const Atom &atom_B = atoms[j];
-        const int type_B = atom_B.element_id();
-        const double max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
+        const Atom &atom_A = atoms[i];
+        const int type_A = atom_A.element_id();
 
-        // Check against all periodic images of atom B
-        for (const auto &disp : displacements) {
-          linalg::Vector3<double> r_ij =
-              atom_B.position() + disp - atom_A.position();
-          double d_sq = linalg::norm_sq(r_ij);
+        // Iterate over unique pairs (j>=i)
+        for (size_t j = i; j < atom_count; ++j) {
+          const Atom &atom_B = atoms[j];
+          const int type_B = atom_B.element_id();
+          const double max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
 
-          // If within cutoff (and not a self-interaction at zero distance)
-          if (d_sq > 1e-9 && d_sq < cutoff_sq_) {
-            double dist = std::sqrt(d_sq);
+          // Check against all periodic images of atom B
+          for (const auto &disp : displacements) {
+            linalg::Vector3<double> r_ij =
+                atom_B.position() + disp - atom_A.position();
+            double d_sq = linalg::norm_sq(r_ij);
 
-            // 1. Populate the local Distance Tensor
-            distance_tensor_local[type_A][type_B].push_back(dist);
-            if (i != j && type_A != type_B) {
-              distance_tensor_local[type_B][type_A].push_back(dist);
-            } else if (i == j &&
-                       type_A != type_B) { // Should not happen but for safety
-              distance_tensor_local[type_B][type_A].push_back(dist);
-            }
+            if (d_sq > 1e-9 && d_sq < cutoff_sq_) {
+              double dist = std::sqrt(d_sq);
 
-            // 2. Populate the local Neighbor Tensor (if bonded)
-            if (d_sq <= max_bond_dist_sq) {
-              // A non-zero displacement vector means it's a periodic image,
-              // so we can "bond" an atom to its own image.
-              // If disp is zero, we must ensure i != j.
-              if (i != j || linalg::norm_sq(disp) > 1e-9) {
-                neighbor_tensor_local[i].push_back({atom_B.id(), dist, r_ij});
-                if (i != j) {
-                  neighbor_tensor_local[j].push_back({atom_A.id(), dist, r_ij});
+              distance_tensor_local[type_A][type_B].push_back(dist);
+              if (i != j && type_A != type_B) {
+                distance_tensor_local[type_B][type_A].push_back(dist);
+              } else if (i == j && type_A != type_B) {
+                distance_tensor_local[type_B][type_A].push_back(dist);
+              }
+
+              if (d_sq <= max_bond_dist_sq) {
+                if (i != j || linalg::norm_sq(disp) > 1e-9) {
+                  neighbor_tensor_local[i].push_back({atom_B.id(), dist, r_ij});
+                  if (i != j) {
+                    neighbor_tensor_local[j].push_back(
+                        {atom_A.id(), dist, -1.0 * r_ij});
+                  }
                 }
               }
             }
           }
         }
-      }
-    }
 
-// Merge thread-local results into the main tensors under a critical section
-#pragma omp critical
-    {
-      for (size_t i = 0; i < num_elements; ++i) {
-        for (size_t j = 0; j < num_elements; ++j) {
-          distance_tensor_[i][j].insert(distance_tensor_[i][j].end(),
-                                        distance_tensor_local[i][j].begin(),
-                                        distance_tensor_local[i][j].end());
+        // --- Reduction Step ---
+        // Lock the mutex to ensure only one thread at a time modifies the
+        // shared member variables (distance_tensor_ and neighbor_tensor_).
+        // std::lock_guard automatically unlocks the mutex when it goes out of
+        // scope.
+        std::lock_guard<std::mutex> lock(results_mutex);
+        for (size_t type1 = 0; type1 < num_elements; ++type1) {
+          for (size_t type2 = 0; type2 < num_elements; ++type2) {
+            if (!distance_tensor_local[type1][type2].empty()) {
+              distance_tensor_[type1][type2].insert(
+                  distance_tensor_[type1][type2].end(),
+                  distance_tensor_local[type1][type2].begin(),
+                  distance_tensor_local[type1][type2].end());
+            }
+          }
         }
-      }
-      for (size_t i = 0; i < atom_count; ++i) {
-        neighbor_tensor_[i].insert(neighbor_tensor_[i].end(),
-                                   neighbor_tensor_local[i].begin(),
-                                   neighbor_tensor_local[i].end());
-      }
-    }
-  }
+        for (size_t atom_idx = 0; atom_idx < atom_count; ++atom_idx) {
+          if (!neighbor_tensor_local[atom_idx].empty()) {
+            neighbor_tensor_[atom_idx].insert(
+                neighbor_tensor_[atom_idx].end(),
+                neighbor_tensor_local[atom_idx].begin(),
+                neighbor_tensor_local[atom_idx].end());
+          }
+        }
+      }); // End of parallel std::for_each
 }
-
-void NeighborList::computeAngles() {
+void StructureAnalyzer::computeAngles() {
   const auto &all_neighbors = neighbor_tensor_;
   const auto &atoms = cell_.atoms();
   const size_t atom_count = atoms.size();

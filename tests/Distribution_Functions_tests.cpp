@@ -127,3 +127,44 @@ TEST_F(DistributionFunctionsTest, SmoothAllUpdatesSmoothedPartials) {
 
   EXPECT_LT(smoothed_max, raw_max);
 }
+
+TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
+  // Arrange: Create a structure with a known, simple coordination environment.
+  Cell test_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  // A central "C" atom
+  test_cell.addAtom("C", {10.0, 10.0, 10.0});
+  // Four "H" atoms tetrahedrally coordinated around the "C"
+  test_cell.addAtom("H", {11.0, 10.0, 10.0});
+  test_cell.addAtom("H", {10.0, 11.0, 10.0});
+  test_cell.addAtom("H", {10.0, 10.0, 11.0});
+  test_cell.addAtom("H", {10.5, 10.5, 10.5}); // Not a perfect tetrahedron
+  // A lone "O" atom, not bonded to anything
+  test_cell.addAtom("O", {15.0, 15.0, 15.0});
+
+  // A cutoff that includes the C-H bonds but excludes everything else.
+  // The C-H distance is 1.0, C-O is ~8.6
+  DistributionFunctions df(test_cell, 3.0, 1.2);
+
+  // Act
+  df.calculateCoordinationNumber();
+  const auto &cn_hist = df.getHistogram("CN");
+
+  // Assert C-H coordination
+  const auto &c_h_cn = cn_hist.partials.at("C-H");
+  // There is 1 Carbon atom, and it has 4 Hydrogen neighbors.
+  // So, the histogram should have a value of 1 at bin 4.
+  EXPECT_EQ(c_h_cn.size(), 5); // Bins for CN=0,1,2,3,4
+  EXPECT_EQ(c_h_cn[4], 1);
+  EXPECT_EQ(c_h_cn[0] + c_h_cn[1] + c_h_cn[2] + c_h_cn[3], 0);
+
+  // Assert H-C coordination
+  const auto &h_c_cn = cn_hist.partials.at("H-C");
+  // There are 4 Hydrogen atoms, and each has 1 Carbon neighbor.
+  // So, the histogram should have a value of 4 at bin 1.
+  EXPECT_EQ(h_c_cn.size(), 5); // Must be padded to the max CN
+  EXPECT_EQ(h_c_cn[1], 4);
+  EXPECT_EQ(h_c_cn[0] + h_c_cn[2] + h_c_cn[3] + h_c_cn[4], 0);
+
+  // Assert that non-bonded pairs do not appear or are empty.
+  EXPECT_EQ(cn_hist.partials.count("C-O"), 0);
+}

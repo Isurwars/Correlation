@@ -112,10 +112,10 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   // Assert: Part 3 - Check that all expected files were created
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g_smoothed.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J_smoothed.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_smoothed.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G_smoothed.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD_smoothed.csv"));
 }

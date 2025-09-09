@@ -69,8 +69,9 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
   // A simple map to associate internal histogram names with desired file
   // suffixes.
   const std::map<std::string, std::string> file_map = {
-      {"g(r)", "_g.csv"},       {"J(r)", "_J.csv"}, {"G(r)", "_G.csv"},
-      {"f(theta)", "_PAD.csv"}, {"S(Q)", "_S.csv"}, {"XRD", "_XRD.csv"}};
+      {"g(r)", "_g.csv"},       {"J(r)", "_J.csv"}, {"G(r)", "__G.csv"},
+      {"f(theta)", "_PAD.csv"}, {"S(Q)", "_S.csv"}, {"XRD", "_XRD.csv"},
+      {"CN", "_CN.csv"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

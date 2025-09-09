@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <numeric>
 #include <stdexcept>
 
 #include "../include/Constants.hpp"
@@ -40,7 +41,8 @@ DistributionFunctions::getHistogram(const std::string &name) const {
 
 void DistributionFunctions::ensureNeighborsComputed(double r_cut) {
   if (!neighbors_ || r_cut > current_cutoff_) {
-    neighbors_ = std::make_unique<NeighborList>(cell_, r_cut, bond_factor_);
+    neighbors_ =
+        std::make_unique<StructureAnalyzer>(cell_, r_cut, bond_factor_);
     current_cutoff_ = r_cut;
   }
 }
@@ -67,7 +69,65 @@ std::string DistributionFunctions::getPartialKey(int type1, int type2) const {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateCoordinationNumber() {
-  // Modernized implementation would go here...
+  if (!neighbors_) {
+    throw std::logic_error(
+        "Cannot calculate Coordination Number. Neighbor list has not been "
+        "computed.");
+  }
+
+  const auto &atoms = cell_.atoms();
+  const auto &all_neighbors = neighbors_->neighbors();
+
+  // Stores the distribution of neighbors for each partial pair.
+  // Key: "Central-Neighbor" (e.g. "Si-O"), Value: histogram vector.
+  // The index of the vector is the CN, the value is the number of central atoms
+  // with that CN. e.g., partial_dists["Si-O"][4] = count of Si atoms with 4 O
+  // neighbors.
+  std::map<std::string, std::vector<int>> partial_dists;
+  size_t max_cn = 0; // Track the maximum CN found to size the final histogram.
+
+  // 1. Iterate through each central atom to find its specific neighbor counts.
+  for (size_t i = 0; i < atoms.size(); ++i) {
+    const auto &central_atom = atoms[i];
+    const std::string &central_symbol = central_atom.element().symbol;
+
+    // Count neighbors of this specific atom, grouped by their element type.
+    std::map<std::string, int> neighbor_counts_for_this_atom;
+    for (const auto &neighbor : all_neighbors[i]) {
+      const auto &neighbor_atom = atoms[neighbor.index.value];
+      neighbor_counts_for_this_atom[neighbor_atom.element().symbol]++;
+    }
+
+    // 2. Tally these counts in the main distribution maps.
+    for (const auto &[neighbor_symbol, count] : neighbor_counts_for_this_atom) {
+      std::string key = central_symbol + "-" + neighbor_symbol;
+      if (static_cast<size_t>(count) >= partial_dists[key].size()) {
+        // Automatically resize the vector if we find a larger CN.
+        partial_dists[key].resize(count + 1, 0);
+      }
+      partial_dists[key][count]++;
+      if (static_cast<size_t>(count) > max_cn) {
+        max_cn = count;
+      }
+    }
+  }
+
+  // 3. Assemble the final Histogram object.
+  Histogram cn_histogram;
+  const size_t num_bins = max_cn + 1;
+
+  // The bins are the integer coordination numbers [0, 1, 2, ...].
+  cn_histogram.bins.resize(num_bins);
+  std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), 0.0);
+
+  // 4. Populate the final partials, padding with zeros for a consistent size.
+  for (auto &[key, dist_vector] : partial_dists) {
+    dist_vector.resize(num_bins, 0); // Pad with zeros up to max_cn.
+    cn_histogram.partials[key].assign(dist_vector.begin(), dist_vector.end());
+  }
+
+  // 5. Store the completed histogram in the main map.
+  histograms_["CN"] = std::move(cn_histogram);
 }
 
 void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
@@ -204,11 +264,13 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
   auto &total_f = f_theta.partials["Total"];
   total_f.assign(num_bins, 0.0);
   double total_counts = 0;
+
   for (const auto &[key, partial] : f_theta.partials) {
     if (key != "Total") {
-      for (double count : partial) {
-        total_counts += count;
-      }
+      // Accumulate the sum of the inner vector 'partial' and add it to the
+      // total
+      total_counts =
+          std::accumulate(partial.begin(), partial.end(), total_counts);
     }
   }
 

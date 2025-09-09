@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
               << " atoms." << std::endl;
 
     // 3. Perform the correlation function calculations.
-    // The DistributionFunctions class now manages its own NeighborList.
+    // The DistributionFunctions class now manages its own StructureAnalyzer.
     DistributionFunctions df(main_cell, opts.r_cut, opts.bond_factor);
 
     std::cout << "Calculating Radial Distribution Functions..." << std::endl;

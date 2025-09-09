@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "Cell.hpp"
-#include "NeighborList.hpp"
 #include "Smoothing.hpp"
+#include "StructureAnalyzer.hpp"
 
 // A structure to hold all data related to a single histogram.
 struct Histogram {
@@ -74,7 +74,7 @@ private:
   std::string getPartialKey(int type1, int type2) const;
 
   const Cell &cell_;
-  std::unique_ptr<NeighborList> neighbors_;
+  std::unique_ptr<StructureAnalyzer> neighbors_;
   double current_cutoff_{-1.0};
   double bond_factor_{1.2};
 

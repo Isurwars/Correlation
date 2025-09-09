@@ -21,7 +21,7 @@ add_library(correlation_lib STATIC
     src/DistributionFunctions.cpp
     src/FileIO.cpp
     src/FileWriter.cpp
-    src/NeighborList.cpp
+    src/StructureAnalyzer.cpp
     src/ProgramOptions.cpp
     src/Smoothing.cpp
     src/StructureFactor.cpp
@@ -71,7 +71,7 @@ add_executable(correlation_tests
     tests/Distribution_Functions_tests.cpp
     tests/FileIO_test.cpp
     tests/FileWriter_test.cpp
-    tests/NeighborList_test.cpp
+    tests/StructureAnalyzer_test.cpp
 )
 
 # The test executable also links to the library and inherits its properties.
