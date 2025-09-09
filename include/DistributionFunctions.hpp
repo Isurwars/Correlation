@@ -17,6 +17,7 @@
 // A structure to hold all data related to a single histogram.
 struct Histogram {
   std::vector<double> bins;
+  std::string bin_label;
   // Maps a partial key (e.g., "Si-O" or "Total") to its histogram values
   std::map<std::string, std::vector<double>> partials;
   std::map<std::string, std::vector<double>> smoothed_partials;

@@ -92,7 +92,10 @@ void DistributionFunctions::calculateAshcroftWeights() {
       const double count_j =
           static_cast<double>(element_counts.at(element_j.symbol));
 
-      const double weight = (count_i * count_j) / (num_atoms * num_atoms);
+      double weight = (count_i * count_j) / (num_atoms * num_atoms);
+      if (i != j) {
+        weight *= 2.0;
+      }
 
       // Get the canonical key (e.g., "Si-O", not "O-Si")
       std::string key = getPartialKey(element_i.id.value, element_j.id.value);
@@ -152,6 +155,7 @@ void DistributionFunctions::calculateCoordinationNumber() {
   // 3. Assemble the final Histogram object.
   Histogram cn_histogram;
   const size_t num_bins = max_cn + 1;
+  cn_histogram.bin_label = "# neighbors";
 
   // The bins are the integer coordination numbers [0, 1, 2, ...].
   cn_histogram.bins.resize(num_bins);
@@ -189,6 +193,9 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
   J_r.bins.resize(num_bins);
   g_r.bins.resize(num_bins);
   G_r.bins.resize(num_bins);
+  J_r.bin_label = "r";
+  g_r.bin_label = "r";
+  G_r.bin_label = "r";
 
   for (size_t i = 0; i < num_bins; ++i) {
     const double r = (i + 0.5) * bin_width;
@@ -208,7 +215,7 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
         if (dist < r_cut) {
           size_t bin = static_cast<size_t>(dist / bin_width);
           if (bin < num_bins) {
-            partial_hist[bin] += (i == j) ? 1.0 : 2.0;
+            partial_hist[bin] += 2.0;
           }
         }
       }
@@ -228,27 +235,25 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
 
   // --- Normalization and Calculation of g(r) and G(r) ---
   const double total_rho = num_atoms / cell_.volume();
-
+  const double norm_factor =
+      4.0 * constants::pi * total_rho * bin_width * num_atoms;
   for (auto const &[key, J_partial] : J_r.partials) {
     g_r.partials[key].assign(num_bins, 0.0);
     G_r.partials[key].assign(num_bins, 0.0);
-
+    double weight = (key == "Total") ? 1.0 : ashcroft_weights_.at(key);
     for (size_t i = 0; i < num_bins; ++i) {
       const double r = J_r.bins[i];
       if (r < 1e-9)
         continue;
 
-      double norm_factor =
-          4.0 * constants::pi * r * r * total_rho * bin_width * num_atoms;
+      double local_factor = r * r * norm_factor;
+
       if (!normalize) {
-        // Ashcroft-Waseda weighting (default).
-        // This is the physically correct normalization for a partial g_ij(r)
-        // based on the concentrations of species i and j.
-        double weight = (key == "Total") ? 1.0 : ashcroft_weights_.at(key);
-        norm_factor *= weight;
+        local_factor *= weight;
       }
+
       if (norm_factor > 1e-9) {
-        g_r.partials[key][i] = J_partial[i] / norm_factor;
+        g_r.partials[key][i] = J_partial[i] / local_factor;
       }
 
       G_r.partials[key][i] =
@@ -275,6 +280,7 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
   const size_t num_bins = static_cast<size_t>(theta_cut / bin_width);
 
   Histogram f_theta;
+  f_theta.bin_label = "theta";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_theta.bins[i] = (i + 0.5) * bin_width;
@@ -385,6 +391,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
 
   // 2. Setup S(Q) Histogram with Q=0 handling
   Histogram s_q_hist;
+  s_q_hist.bin_label = "Q";
   const size_t num_q_bins =
       static_cast<size_t>(std::floor(q_max / q_bin_width));
   s_q_hist.bins.resize(num_q_bins);

@@ -10,7 +10,6 @@
 #include <iterator>
 
 #include "../include/Cell.hpp"
-#include "../include/Constants.hpp"
 #include "../include/DistributionFunctions.hpp"
 
 namespace {
@@ -26,7 +25,7 @@ void print_histogram(const std::string &title, const std::vector<double> &bins,
                 << " | Value: " << values[i] << std::endl;
     }
   }
-  std::cout << "--------------------------------------\n" << std::endl;
+  std::cout << "--------------.------------------------\n" << std::endl;
 }
 } // namespace
 

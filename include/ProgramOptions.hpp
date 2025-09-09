@@ -17,7 +17,7 @@ struct ProgramOptions {
   bool normalize = false;
   bool smoothing = false;
   double r_cut = 20.0;
-  double r_bin_width = 0.05;
+  double r_bin_width = 0.02;
   double q_cut = 180.0;
   double q_bin_width = 0.157;
   double angle_bin_width = 1.0;

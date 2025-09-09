@@ -41,7 +41,7 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
 
   // --- Write Header ---
   // The header is now generated dynamically from the keys of the data map.
-  file << std::setw(12) << std::right << "Bins,";
+  file << std::setw(12) << std::right << hist.bin_label << ",";
   for (size_t i = 0; i < keys.size(); ++i) {
     file << std::setw(12) << std::right << keys[i]
          << (i == keys.size() - 1 ? "" : ",");

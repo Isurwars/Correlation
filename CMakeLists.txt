@@ -88,11 +88,6 @@ gtest_discover_tests(correlation_tests)
 #-----------------------------------------------------------
 
 # Install the executable and the library.
-install(TARGETS correlation correlation_lib
+install(TARGETS correlation
     RUNTIME DESTINATION bin
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
 )
-
-# Install the public headers so that other projects can use this library.
-install(DIRECTORY include/ DESTINATION include)

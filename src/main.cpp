@@ -29,9 +29,14 @@ int main(int argc, char **argv) {
 
     std::cout << "Calculating Radial Distribution Functions..." << std::endl;
     df.calculateRDF(opts.r_cut, opts.r_bin_width, opts.normalize);
-
     std::cout << "Calculating Plane Angle Distribution..." << std::endl;
     df.calculatePAD(180.0, opts.angle_bin_width);
+
+    std::cout << "Calculating Structure Factor..." << std::endl;
+    df.calculateSQ(20.0, 0.02);
+
+    std::cout << "Calculating Coordinations..." << std::endl;
+    df.calculateCoordinationNumber();
 
     // 4. Apply smoothing if requested by the user.
     if (opts.smoothing) {
