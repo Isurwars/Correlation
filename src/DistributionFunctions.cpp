@@ -359,10 +359,88 @@ void DistributionFunctions::smoothAll(double sigma, KernelType kernel) {
   }
 }
 
-// Placeholder for other functions - they would be modernized similarly
 void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
                                         double r_integration_max) {
-  // Modernized implementation would go here...
+  // 1. Input Validation & Dependency Check
+  if (q_bin_width <= 0 || q_max <= 0) {
+    throw std::invalid_argument("Q-space parameters must be positive.");
+  }
+  if (r_integration_max <= 0) {
+    throw std::invalid_argument("Integration cutoff must be positive.");
+  }
+  if (histograms_.find("g(r)") == histograms_.end()) {
+    throw std::logic_error(
+        "Cannot calculate S(Q). Please calculate g(r) first by calling "
+        "calculateRDF().");
+  }
+
+  const auto &g_r_hist = histograms_.at("g(r)");
+  const auto &r_bins = g_r_hist.bins;
+  if (r_bins.size() < 2) {
+    throw std::logic_error("Insufficient r-bins for integration.");
+  }
+
+  const double dr = r_bins[1] - r_bins[0];
+  const double total_rho = cell_.atomCount() / cell_.volume();
+
+  // 2. Setup S(Q) Histogram with Q=0 handling
+  Histogram s_q_hist;
+  const size_t num_q_bins =
+      static_cast<size_t>(std::floor(q_max / q_bin_width));
+  s_q_hist.bins.resize(num_q_bins);
+  for (size_t i = 0; i < num_q_bins; ++i) {
+    s_q_hist.bins[i] = (i + 0.5) * q_bin_width; // Use bin centers
+  }
+
+  // 3. Precompute integration terms and find integration limit
+  size_t j_max = r_bins.size();
+  for (size_t j = 0; j < r_bins.size(); ++j) {
+    if (r_bins[j] > r_integration_max) {
+      j_max = j;
+      break;
+    }
+  }
+
+  // 4. Iterate over all partials
+  for (const auto &[key, g_r_partial] : g_r_hist.partials) {
+    auto &s_q_partial = s_q_hist.partials[key];
+    s_q_partial.assign(num_q_bins, 0.0);
+
+    // Precompute integration terms for this partial
+    std::vector<double> integrand(j_max);
+    for (size_t j = 0; j < j_max; ++j) {
+      const double r = r_bins[j];
+      integrand[j] = r * (g_r_partial[j] - 1.0) * dr;
+    }
+
+    // 5. Calculate S(Q) for each Q bin
+    for (size_t i = 0; i < num_q_bins; ++i) {
+      const double Q = s_q_hist.bins[i];
+      double integral = 0.0;
+
+      // Numerical integration
+      for (size_t j = 0; j < j_max; ++j) {
+        const double r = r_bins[j];
+        integral += integrand[j] * std::sin(Q * r);
+      }
+
+      // Handle Q=0 case using limit
+      if (Q < 1e-8) {
+        // S(0) = 1 + 4πρ ∫ r² (g(r) - 1) dr
+        double q0_integral = 0.0;
+        for (size_t j = 0; j < j_max; ++j) {
+          const double r = r_bins[j];
+          q0_integral += r * r * (g_r_partial[j] - 1.0) * dr;
+        }
+        s_q_partial[i] = 1.0 + 4.0 * M_PI * total_rho * q0_integral;
+      } else {
+        s_q_partial[i] = 1.0 + (4.0 * M_PI * total_rho / Q) * integral;
+      }
+    }
+  }
+
+  // 6. Store the result
+  histograms_["S(Q)"] = std::move(s_q_hist);
 }
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {

@@ -5,11 +5,12 @@
 
 #include <algorithm>
 #include <gtest/gtest.h>
-#include <iomanip>  // Required for std::setw and std::fixed
-#include <iostream> // Required for std::cout
+#include <iomanip>
+#include <iostream>
 #include <iterator>
 
 #include "../include/Cell.hpp"
+#include "../include/Constants.hpp"
 #include "../include/DistributionFunctions.hpp"
 
 namespace {
@@ -167,4 +168,34 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
 
   // Assert that non-bonded pairs do not appear or are empty.
   EXPECT_EQ(cn_hist.partials.count("C-O"), 0);
+}
+
+TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
+  // Arrange
+  // Using the fixture's cell with two Ar atoms 1.5 Å apart.
+  DistributionFunctions df(cell_, 10.0, 1.2);
+  const double q_bin_width = 0.01;
+  const double expected_peak_q = 0.7; // 2.0 * constants::pi / 1.5; // ~4.18
+
+  // Act
+  // S(Q) depends on g(r), so we must calculate it first.
+  df.calculateRDF(10.0, 0.01);
+  df.calculateSQ(10.0, q_bin_width, 8.0);
+  const auto &g_hist = df.getHistogram("g(r)");
+  const auto &total_g = g_hist.partials.at("Total");
+
+  const auto &sq_hist = df.getHistogram("S(Q)");
+  const auto &total_sq = sq_hist.partials.at("Total");
+
+  // Assert: Find the peak of S(Q) and verify its position.
+  // We'll ignore the very first few bins as S(Q) can be noisy at Q->0.
+  auto search_start = total_sq.begin() + 5;
+  auto max_it = std::max_element(search_start, total_sq.end());
+  size_t peak_index = std::distance(total_sq.begin(), max_it);
+
+  double peak_position = sq_hist.bins[peak_index];
+
+  // The peak should be near 2*pi/r
+  EXPECT_NEAR(peak_position, expected_peak_q,
+              q_bin_width * 5.0); // Allow a generous tolerance
 }
