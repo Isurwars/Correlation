@@ -24,7 +24,6 @@ add_library(correlation_lib STATIC
     src/StructureAnalyzer.cpp
     src/ProgramOptions.cpp
     src/Smoothing.cpp
-    src/StructureFactor.cpp
 )
 
 # Include directories

@@ -7,10 +7,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <execution>
-#include <mutex>
 #include <numeric>
 #include <stdexcept>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_for_each.h>
 #include <vector>
 
 #include "../include/PhysicalData.hpp"
@@ -71,10 +71,10 @@ void StructureAnalyzer::precomputeBondCutoffs() {
 }
 
 void StructureAnalyzer::computeDistances() {
-  const std::vector<Atom> &atoms = cell_.atoms();
+  const auto &atoms = cell_.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell_.elements().size();
-  const linalg::Matrix3<double> &lattice = cell_.latticeVectors();
+  const auto &lattice = cell_.latticeVectors();
 
   linalg::Vector3<double> box_sidelengths = {linalg::norm(lattice[0]),
                                              linalg::norm(lattice[1]),
@@ -86,10 +86,6 @@ void StructureAnalyzer::computeDistances() {
   int nz =
       static_cast<int>(std::ceil(std::sqrt(cutoff_sq_) / box_sidelengths.z()));
 
-  if (nx + ny + nz > 8) {
-    ignore_periodic_self_interactions_ = false;
-  }
-
   std::vector<linalg::Vector3<double>> displacements;
   for (int i = -nx; i <= nx; ++i) {
     for (int j = -ny; j <= ny; ++j) {
@@ -100,47 +96,43 @@ void StructureAnalyzer::computeDistances() {
     }
   }
 
-  std::mutex results_mutex;
   std::vector<size_t> atom_indices(atom_count);
   std::iota(atom_indices.begin(), atom_indices.end(), 0);
 
-  std::for_each(
-      std::execution::par, atom_indices.begin(), atom_indices.end(),
-      [&](size_t i) {
-        DistanceTensor distance_local(
-            num_elements, std::vector<std::vector<double>>(num_elements));
-        NeighborTensor neighbor_local(atom_count);
+  // lock-free calculation phase.
+  tbb::enumerable_thread_specific<ThreadLocalResults> ets(num_elements,
+                                                          atom_count);
 
-        const Atom &atom_A = atoms[i];
+  tbb::parallel_for_each(
+      atom_indices.begin(), atom_indices.end(), [&](size_t i) {
+        // Each thread gets its own private copy of the results structure.
+        ThreadLocalResults &local_results = ets.local();
+        auto &distance_local = local_results.distance_tensor_local;
+        auto &neighbor_local = local_results.neighbor_tensor_local;
+
+        const auto &atom_A = atoms[i];
         const int type_A = atom_A.element_id();
+
         for (size_t j = i; j < atom_count; ++j) {
-          const Atom &atom_B = atoms[j];
+          if (i == j && ignore_periodic_self_interactions_) {
+            continue;
+          }
+          const auto &atom_B = atoms[j];
           const int type_B = atom_B.element_id();
           const double max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
 
           for (const auto &disp : displacements) {
-            // --- SUGGESTION: Improved Self-Interaction Logic ---
-            // This is a more robust way to handle all self-interaction cases.
-
-            // 1. Identify the "true" self-interaction (atom with itself in the
-            //    same cell) and ALWAYS skip it.
             if (i == j && linalg::norm_sq(disp) < 1e-9) {
               continue;
             }
-
-            // 2. Identify "periodic" self-interactions (atom with its own
-            //    image) and skip if the flag is set.
             if (i == j && ignore_periodic_self_interactions_) {
               continue;
             }
-            // --- END SUGGESTION ---
 
             linalg::Vector3<double> r_ij =
                 atom_B.position() + disp - atom_A.position();
             double d_sq = linalg::norm_sq(r_ij);
 
-            // Now that the zero-distance case is handled explicitly, we only
-            // need to check against the cutoff.
             if (d_sq < cutoff_sq_) {
               double dist = std::sqrt(d_sq);
               distance_local[type_A][type_B].push_back(dist);
@@ -148,8 +140,6 @@ void StructureAnalyzer::computeDistances() {
                 distance_local[type_B][type_A].push_back(dist);
               }
 
-              // The bonding condition is now simpler because the i==j, disp==0
-              // case is impossible to reach.
               if (d_sq <= max_bond_dist_sq) {
                 neighbor_local[i].push_back({atom_B.id(), dist, r_ij});
                 if (i != j) {
@@ -159,42 +149,46 @@ void StructureAnalyzer::computeDistances() {
             }
           }
         }
-        // Reduction step: lock and merge results
-        std::lock_guard<std::mutex> lock(results_mutex);
-        for (size_t it1 = 0; it1 < num_elements; ++it1) {
-          for (size_t it2 = 0; it2 < num_elements; ++it2) {
-            distance_tensor_[it1][it2].insert(distance_tensor_[it1][it2].end(),
-                                              distance_local[it1][it2].begin(),
-                                              distance_local[it1][it2].end());
-          }
-        }
-        for (size_t it1 = 0; it1 < atom_count; ++it1) {
-          neighbor_tensor_[it1].insert(neighbor_tensor_[it1].end(),
-                                       neighbor_local[it1].begin(),
-                                       neighbor_local[it1].end());
-        }
       });
+
+  // OPTIMIZATION: Final reduction step is lock-free and efficient.
+  for (auto &local_results : ets) {
+    for (size_t i = 0; i < num_elements; ++i) {
+      for (size_t j = 0; j < num_elements; ++j) {
+        distance_tensor_[i][j].insert(
+            distance_tensor_[i][j].end(),
+            local_results.distance_tensor_local[i][j].begin(),
+            local_results.distance_tensor_local[i][j].end());
+      }
+    }
+    for (size_t i = 0; i < atom_count; ++i) {
+      neighbor_tensor_[i].insert(neighbor_tensor_[i].end(),
+                                 local_results.neighbor_tensor_local[i].begin(),
+                                 local_results.neighbor_tensor_local[i].end());
+    }
+  }
 }
 
 void StructureAnalyzer::computeAngles() {
-  const auto &all_neighbors = neighbor_tensor_;
   const auto &atoms = cell_.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell_.elements().size();
 
-  std::mutex angle_mutex;
   std::vector<size_t> atom_indices(atom_count);
   std::iota(atom_indices.begin(), atom_indices.end(), 0);
 
-  std::for_each(
-      std::execution::par, atom_indices.begin(), atom_indices.end(),
-      [&](size_t i) {
-        AngleTensor angle_tensor_local(
-            num_elements,
-            std::vector<std::vector<std::vector<double>>>(
-                num_elements, std::vector<std::vector<double>>(num_elements)));
+  // OPTIMIZATION: Use TBB's thread-specific storage for angles.
+  tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
+    return AngleTensor(
+        num_elements,
+        std::vector<std::vector<std::vector<double>>>(
+            num_elements, std::vector<std::vector<double>>(num_elements)));
+  });
 
-        const auto &central_atom_neighbors = all_neighbors[i];
+  tbb::parallel_for_each(
+      atom_indices.begin(), atom_indices.end(), [&](size_t i) {
+        AngleTensor &angle_tensor_local = ets.local();
+        const auto &central_atom_neighbors = neighbor_tensor_[i];
         if (central_atom_neighbors.size() < 2)
           return;
 
@@ -223,18 +217,18 @@ void StructureAnalyzer::computeAngles() {
             }
           }
         }
-
-        // Reduction step: Lock the mutex and merge the local results
-        std::lock_guard<std::mutex> lock(angle_mutex);
-        for (size_t i_elem = 0; i_elem < num_elements; ++i_elem) {
-          for (size_t j_elem = 0; j_elem < num_elements; ++j_elem) {
-            for (size_t k_elem = 0; k_elem < num_elements; ++k_elem) {
-              angle_tensor_[i_elem][j_elem][k_elem].insert(
-                  angle_tensor_[i_elem][j_elem][k_elem].end(),
-                  angle_tensor_local[i_elem][j_elem][k_elem].begin(),
-                  angle_tensor_local[i_elem][j_elem][k_elem].end());
-            }
-          }
-        }
       });
+
+  // OPTIMIZATION: Final reduction step for angles.
+  for (auto &local_angles : ets) {
+    for (size_t i = 0; i < num_elements; ++i) {
+      for (size_t j = 0; j < num_elements; ++j) {
+        for (size_t k = 0; k < num_elements; ++k) {
+          angle_tensor_[i][j][k].insert(angle_tensor_[i][j][k].end(),
+                                        local_angles[i][j][k].begin(),
+                                        local_angles[i][j][k].end());
+        }
+      }
+    }
+  }
 }

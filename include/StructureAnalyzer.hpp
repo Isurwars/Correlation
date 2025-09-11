@@ -26,13 +26,31 @@ public:
   using AngleTensor =
       std::vector<std::vector<std::vector<std::vector<double>>>>;
 
+  // A helper struct to hold the thread-local results
+  struct ThreadLocalResults {
+    DistanceTensor distance_tensor_local;
+    NeighborTensor neighbor_tensor_local;
+    AngleTensor angle_tensor_local;
+
+    // Constructor to initialize the tensors with the correct dimensions
+    ThreadLocalResults(size_t num_elements, size_t atom_count)
+        : distance_tensor_local(num_elements,
+                                std::vector<std::vector<double>>(num_elements)),
+          neighbor_tensor_local(atom_count),
+          angle_tensor_local(num_elements,
+                             std::vector<std::vector<std::vector<double>>>(
+                                 num_elements, std::vector<std::vector<double>>(
+                                                   num_elements))) {}
+  };
+
   /**
    * @brief Computes all distances and angles within the cutoff radius.
    * @param cell The cell containing the atoms and lattice information.
    * @param cutoff The maximum distance to search for neighbors.
    * @param bond_factor A factor to multiply with the sum of covalent radii to
    * determine if two atoms are bonded.
-   * @param ignore_pbc If true, periodic boundary conditions will be ignored.
+   * @param ignore_periodic_self_interactions If true the periodic self
+   * interactions will be ignored.
    */
   explicit StructureAnalyzer(const Cell &cell, double cutoff = 20.0,
                              double bond_factor = 1.2,
