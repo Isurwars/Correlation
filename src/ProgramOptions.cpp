@@ -114,7 +114,7 @@ ProgramOptions ProgramOptions::parse(int argc, char **argv) {
       else
         opts.smoothing_kernel = KernelType::Gaussian;
     } else if (arg == "-n" || arg == "--normalize") {
-      opts.normalize = true;
+      opts.normalize = false;
     } else if (arg.rfind("-", 0) != 0) { // Doesn't start with '-'
       opts.input_file = arg;
     } else {

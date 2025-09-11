@@ -14,7 +14,7 @@
 struct ProgramOptions {
   std::string input_file;
   std::string output_file_base;
-  bool normalize = false;
+  bool normalize = true;
   bool smoothing = false;
   double r_cut = 20.0;
   double r_bin_width = 0.02;

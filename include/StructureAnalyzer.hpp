@@ -32,9 +32,11 @@ public:
    * @param cutoff The maximum distance to search for neighbors.
    * @param bond_factor A factor to multiply with the sum of covalent radii to
    * determine if two atoms are bonded.
+   * @param ignore_pbc If true, periodic boundary conditions will be ignored.
    */
   explicit StructureAnalyzer(const Cell &cell, double cutoff = 20.0,
-                             double bond_factor = 1.2);
+                             double bond_factor = 1.2,
+                             bool ignore_periodic_self_interactions = true);
 
   // --- Accessors for the computed data tensors ---
   const DistanceTensor &distances() const { return distance_tensor_; }
@@ -45,6 +47,7 @@ private:
   const Cell &cell_;
   double cutoff_sq_;
   double bond_factor_;
+  bool ignore_periodic_self_interactions_;
 
   NeighborTensor neighbor_tensor_;
   DistanceTensor distance_tensor_;

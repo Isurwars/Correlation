@@ -4,8 +4,9 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "../include/Smoothing.hpp"
 
+#include <algorithm>
 #include <cmath>
-#include <numeric> // For std::accumulate
+#include <numeric>
 #include <stdexcept>
 #include <vector>
 
@@ -38,9 +39,6 @@ std::vector<double> generateKernel(size_t size, double dx, double sigma,
       }
     }
   } else {
-    // Note: The Bump kernel is less common for smoothing and often not
-    // practical due to its sharp cutoff. Gaussian and Triweight are standard.
-    // If needed, it could be implemented here similarly.
     throw std::invalid_argument("Unsupported kernel type for smoothing.");
   }
 
@@ -69,8 +67,6 @@ std::vector<double> KernelSmoothing(const std::vector<double> &r,
         "Input 'r' must be uniformly increasing for smoothing.");
   }
 
-  // Determine the practical size of the kernel (e.g., 3-4 standard deviations
-  // for a Gaussian). This is a major optimization.
   const size_t kernel_radius =
       std::min(n / 2, static_cast<size_t>(4.0 * sigma / dx));
   const size_t kernel_size = 2 * kernel_radius + 1;
@@ -78,18 +74,17 @@ std::vector<double> KernelSmoothing(const std::vector<double> &r,
   const auto kernel = generateKernel(kernel_size, dx, sigma, type);
   std::vector<double> smoothed(n, 0.0);
 
-  // Apply the convolution. This loop is now much more efficient.
+  // Apply the convolution.
   for (size_t i = 0; i < n; ++i) {
     for (size_t j = 0; j < kernel_size; ++j) {
-      // Find the corresponding index in the data array 'y'
       const long long data_idx = static_cast<long long>(i) +
                                  static_cast<long long>(j) -
                                  static_cast<long long>(kernel_radius);
 
       // Handle boundary conditions (points near the start/end of the data)
-      if (data_idx >= 0 && data_idx < static_cast<long long>(n)) {
-        smoothed[i] += y[data_idx] * kernel[j];
-      }
+      const long long clamped_idx = std::clamp<long long>(data_idx, 0, n - 1);
+
+      smoothed[i] += y[clamped_idx] * kernel[j];
     }
   }
 

@@ -105,6 +105,31 @@ void DistributionFunctions::calculateAshcroftWeights() {
 }
 
 //---------------------------------------------------------------------------//
+//---------------------------- Smoothing Methods ----------------------------//
+//---------------------------------------------------------------------------//
+void DistributionFunctions::smooth(const std::string &name, double sigma,
+                                   KernelType kernel) {
+  if (histograms_.find(name) == histograms_.end()) {
+    throw std::runtime_error("Histogram '" + name +
+                             "' not found for smoothing.");
+  }
+
+  auto &hist = histograms_.at(name);
+  hist.smoothed_partials.clear();
+
+  for (const auto &[key, partial_values] : hist.partials) {
+    hist.smoothed_partials[key] =
+        KernelSmoothing(hist.bins, partial_values, sigma, kernel);
+  }
+}
+
+void DistributionFunctions::smoothAll(double sigma, KernelType kernel) {
+  for (const auto &[name, histogram] : histograms_) {
+    smooth(name, sigma, kernel);
+  }
+}
+
+//---------------------------------------------------------------------------//
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
@@ -338,31 +363,6 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
     }
   }
   histograms_["f(theta)"] = std::move(f_theta);
-}
-
-void DistributionFunctions::smooth(const std::string &name, double sigma,
-                                   KernelType kernel) {
-  if (histograms_.find(name) == histograms_.end()) {
-    throw std::runtime_error("Histogram '" + name +
-                             "' not found for smoothing.");
-  }
-  auto &hist = histograms_.at(name);
-  hist.smoothed_partials.clear();
-
-  for (const auto &[key, partial_values] : hist.partials) {
-    hist.smoothed_partials[key] =
-        KernelSmoothing(hist.bins, partial_values, sigma, kernel);
-  }
-}
-
-void DistributionFunctions::smoothAll(double sigma, KernelType kernel) {
-  // This method provides a convenient way to smooth all histograms
-  // by iterating through the map and calling the single-histogram
-  // 'smooth' method on each one.
-  for (const auto &[name, histogram] : histograms_) {
-    // The 'name' is the key from the map (e.g., "g(r)")
-    smooth(name, sigma, kernel);
-  }
 }
 
 void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,

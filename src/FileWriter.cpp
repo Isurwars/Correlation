@@ -23,7 +23,6 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
       use_smoothed_data ? hist.smoothed_partials : hist.partials;
 
   if (partials_to_write.empty() || hist.bins.empty()) {
-    // Don't write files for empty or uncalculated histograms
     return;
   }
 
