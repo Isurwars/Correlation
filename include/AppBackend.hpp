@@ -17,7 +17,7 @@ class AppBackend {
 public:
   AppBackend();
   void load_file(const std::string &path);
-  void run_analysis();
+  void run_analysis(const ProgramOptions &options);
 
 private:
   void analysis_thread_func();
