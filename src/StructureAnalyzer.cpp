@@ -86,6 +86,10 @@ void StructureAnalyzer::computeDistances() {
   int nz =
       static_cast<int>(std::ceil(std::sqrt(cutoff_sq_) / box_sidelengths.z()));
 
+  if (nx + ny + nz > 8) {
+    ignore_periodic_self_interactions_ = false;
+  }
+
   std::vector<linalg::Vector3<double>> displacements;
   for (int i = -nx; i <= nx; ++i) {
     for (int j = -ny; j <= ny; ++j) {

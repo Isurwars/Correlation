@@ -1,0 +1,65 @@
+import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, ProgressIndicator, ScrollView, GroupBox } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    // Callbacks that the UI invokes on the C++ side
+    callback load_file(string);
+    callback run_analysis();
+
+    // Properties that C++ updates to change the UI
+    in-out property <string> status_text: "Please load a structure file.";
+    in-out property <string> in_file_text: "../examples/a-PdSi/a-PdSi.car";
+    in-out property <float> progress: 0.0;
+    in-out property <bool> analysis_running: false;
+    
+    width: 600px;
+    height: 400px;
+    title: "Correlation Analysis Tool";
+
+    VerticalBox {
+        padding: 10px;
+        spacing: 10px;
+
+        GroupBox {
+            title: "1. Input File";
+            HorizontalBox {
+                VerticalBox{
+                spacing: 5px;
+                LineEdit {
+                    read-only: true;
+                    text: status_text;
+                }
+                LineEdit {
+                    placeholder-text: in_file_text;
+                    text: in_file_text;
+                    edited(s) => {
+                        in_file_text = s;
+                    }
+                }
+
+                }                
+                Button {
+                    text: "Load File...";
+                    enabled: !analysis_running;
+                    clicked => {
+                       load_file(in_file_text);
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            title: "2. Run Analysis";
+            VerticalBox {
+                spacing: 5px;
+                Button {
+                    text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
+                    enabled: !analysis_running;
+                    clicked => { run_analysis(); }
+                }
+                ProgressIndicator {
+                    progress: progress;
+                }
+            }
+        }
+    }
+}
