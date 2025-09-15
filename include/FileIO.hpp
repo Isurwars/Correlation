@@ -1,9 +1,9 @@
-#ifndef INCLUDE_FILEIO_HPP_
-#define INCLUDE_FILEIO_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <string>
 
@@ -43,5 +43,3 @@ Cell readStructure(const std::string &filename, FileType type);
 FileType determineFileType(const std::string &filename);
 
 } // namespace FileIO
-
-#endif // INCLUDE_FILEIO_HPP_

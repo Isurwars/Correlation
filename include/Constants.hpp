@@ -1,9 +1,9 @@
-#ifndef INCLUDE_CONSTANTS_HPP_
-#define INCLUDE_CONSTANTS_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 /**
  * @namespace constants
@@ -16,5 +16,3 @@ constexpr double pi =
 constexpr double rad2deg = 180.0 / pi; // RADIANS -> DEGREES
 constexpr double deg2rad = pi / 180.0; // DEGREES -> RADIANS
 } // namespace constants
-
-#endif // INCLUDE_CONSTANTS_HPP_

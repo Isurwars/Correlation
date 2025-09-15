@@ -31,8 +31,6 @@ export component AppWindow inherits Window {
         // Main content area, wrapped in a scroll view
         ScrollView {
             VerticalBox {
-                spacing: 10px;
-
                 GroupBox {
                     title: "1. Input File";
                     HorizontalBox {
@@ -42,17 +40,23 @@ export component AppWindow inherits Window {
                             LineEdit {
                                 placeholder-text: in_file_text;
                                 text: in_file_text;
-                                edited(s) => { in_file_text = s; }
+                                edited(s) => {
+                                    in_file_text = s;
+                                }
                             }
                         }
+
                         Button {
                             text: "Load File...";
                             enabled: !analysis_running;
-                            clicked => { load_file(in_file_text); }
+                            clicked => {
+                                load_file(in_file_text);
+                                status_text = "File: " + in_file_text + " loaded succesfully.";
+                            }
                         }
                     }
                 }
-                
+
                 GroupBox {
                     title: "2. Analysis Options";
                     VerticalBox {
@@ -61,39 +65,63 @@ export component AppWindow inherits Window {
                             spacing: 10px;
                             VerticalBox {
                                 spacing: 5px;
-                                Text { text: "Radial Cutoff (r_cut)"; }
+                                Text {
+                                    text: "Radial Cutoff (r_cut)";
+                                }
+
                                 LineEdit {
                                     text: r_cut;
-                                    edited(s) => { r_cut = s.to-float(); }
+                                    edited(s) => {
+                                        r_cut = s.to-float();
+                                    }
                                 }
                             }
+
                             VerticalBox {
                                 spacing: 5px;
-                                Text { text: "RDF Bin Width"; }
+                                Text {
+                                    text: "RDF Bin Width";
+                                }
+
                                 LineEdit {
                                     text: r_bin_width;
-                                    edited(s) => { r_bin_width = s.to-float(); }
+                                    edited(s) => {
+                                        r_bin_width = s.to-float();
+                                    }
                                 }
                             }
+
                             VerticalBox {
                                 spacing: 5px;
-                                Text { text: "Bond Factor"; }
+                                Text {
+                                    text: "Bond Factor";
+                                }
+
                                 LineEdit {
                                     text: bond_factor;
-                                    edited(s) => { bond_factor = s.to-float(); }
+                                    edited(s) => {
+                                        bond_factor = s.to-float();
+                                    }
                                 }
                             }
                         }
+
                         HorizontalBox {
                             spacing: 10px;
                             VerticalBox {
                                 spacing: 5px;
-                                Text { text: "Angle Bin Width"; }
+                                Text {
+                                    text: "Angle Bin Width";
+                                }
+
                                 LineEdit {
                                     text: angle_bin_width;
-                                    edited(s) => { angle_bin_width = s.to-float(); }
+                                    edited(s) => {
+                                        angle_bin_width = s.to-float();
+                                    }
                                 }
                             }
+
                             VerticalBox {
                                 spacing: 5px;
                                 CheckBox {
@@ -105,25 +133,37 @@ export component AppWindow inherits Window {
                                 }
                             }
                         }
+
                         HorizontalBox {
                             spacing: 10px;
                             VerticalBox {
                                 spacing: 5px;
-                                Text { text: "Smoothing Sigma"; }
+                                Text {
+                                    text: "Smoothing Sigma";
+                                }
+
                                 LineEdit {
                                     enabled: smoothing;
                                     text: smoothing_sigma;
-                                    edited(s) => { smoothing_sigma = s.to-float(); }
+                                    edited(s) => {
+                                        smoothing_sigma = s.to-float();
+                                    }
                                 }
                             }
+
                             VerticalBox {
                                 spacing: 5px;
-                                Text { text: "Smoothing Kernel"; }
+                                Text {
+                                    text: "Smoothing Kernel";
+                                }
+
                                 ComboBox {
                                     enabled: smoothing;
                                     model: ["Gaussian", "Bump", "Triweight"];
                                     current-index: smoothing_kernel;
-                                    selected(i) => { smoothing_kernel = i.to-float(); }
+                                    selected(i) => {
+                                        smoothing_kernel = i.to-float();
+                                    }
                                 }
                             }
                         }
@@ -137,19 +177,18 @@ export component AppWindow inherits Window {
                         Button {
                             text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
                             enabled: !analysis_running;
-                            clicked => { run_analysis(); }
-                        }
-                        ProgressIndicator {
-                            progress: progress;
+                            clicked => {
+                                status_text = "Running Analysis...";
+                                run_analysis();
+                                status_text = "Analysis ended.";
+                            }
                         }
                     }
                 }
             }
         }
-        
-        // Status bar at the bottom using standard widgets
+
         HorizontalBox {
-            padding-top: 5px;
             LineEdit {
                 read-only: true;
                 text: status_text;

@@ -1,10 +1,9 @@
-#ifndef INCLUDE_FILEWRITER_HPP_
-#define INCLUDE_FILEWRITER_HPP_
-
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <string>
 
@@ -55,5 +54,3 @@ private:
 
   const DistributionFunctions &df_;
 };
-
-#endif // INCLUDE_FILEWRITER_HPP_

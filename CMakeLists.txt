@@ -38,7 +38,6 @@ add_library(correlation_lib STATIC
     src/FileWriter.cpp
     src/StructureAnalyzer.cpp
     src/ProgramOptions.cpp
-    src/Smoothing.cpp
 )
 
 # Include directories

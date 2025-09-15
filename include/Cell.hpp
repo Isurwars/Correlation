@@ -1,9 +1,9 @@
-#ifndef INCLUDE_CELL_HPP_
-#define INCLUDE_CELL_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <array>
 #include <optional>
@@ -104,4 +104,3 @@ private:
   std::vector<Atom> atoms_;
   std::vector<Element> elements_;
 };
-#endif // INCLUDE_CELL_HPP_

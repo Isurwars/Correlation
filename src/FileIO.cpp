@@ -1,5 +1,5 @@
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "../include/FileIO.hpp"
@@ -39,7 +39,7 @@ struct SymmetryOp {
 // Helper to send all UPPERCASE to lowercase
 void toLower(std::string &s) {
   std::ranges::transform(s, s.begin(),
-                 [](unsigned char c) { return std::tolower(c); });
+                         [](unsigned char c) { return std::tolower(c); });
 }
 
 // Helper to trim whitespace and remove trailing parentheses with uncertainties

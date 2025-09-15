@@ -1,9 +1,9 @@
-#ifndef INCLUDE_DISTRIBUTION_FUNCTIONS_HPP_
-#define INCLUDE_DISTRIBUTION_FUNCTIONS_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <map>
 #include <memory>
@@ -83,4 +83,3 @@ private:
   std::map<std::string, Histogram> histograms_;
   std::map<std::string, double> ashcroft_weights_;
 };
-#endif // INCLUDE_DISTRIBUTION_FUNCTIONS_HPP_

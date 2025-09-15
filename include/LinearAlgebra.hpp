@@ -1,9 +1,10 @@
-#ifndef INCLUDE_LINEAR_ALGEBRA_HPP_
-#define INCLUDE_LINEAR_ALGEBRA_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
+
 #include <array>
 #include <cmath>
 #include <stdexcept>
@@ -211,4 +212,3 @@ constexpr Matrix3<T> operator*(const Matrix3<T> &a,
 }
 
 } // namespace linalg
-#endif // INCLUDE_LINEAR_ALGEBRA_HPP_

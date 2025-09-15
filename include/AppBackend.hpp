@@ -1,9 +1,9 @@
-#ifndef APP_BACKEND_HPP_
-#define APP_BACKEND_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <memory>
 
@@ -26,5 +26,3 @@ private:
   ProgramOptions options_;
   std::unique_ptr<DistributionFunctions> df_;
 };
-
-#endif // APP_BACKEND_HPP_

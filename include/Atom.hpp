@@ -1,9 +1,9 @@
-#ifndef INCLUDE_ATOM_HPP_
-#define INCLUDE_ATOM_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <algorithm>
 #include <cstdint>
@@ -103,5 +103,3 @@ inline double angle(const Atom &center, const Atom &a, const Atom &b) noexcept {
 
   return std::acos(cos_theta);
 }
-
-#endif // INCLUDE_ATOM_HPP_

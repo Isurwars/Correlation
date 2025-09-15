@@ -1,9 +1,9 @@
-#ifndef INCLUDE_PHYSICALDATA_HPP_
-#define INCLUDE_PHYSICALDATA_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -372,5 +372,3 @@ public:
 private:
   AtomicFormFactors() = default;
 };
-
-#endif // INCLUDE_PHYSICALDATA_HPP_

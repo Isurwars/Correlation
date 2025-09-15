@@ -1,9 +1,9 @@
-#ifndef INCLUDE_STRUCTUREANALIZER_HPP_
-#define INCLUDE_STRUCTUREANALIZER_HPP_
 // Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright (c) 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
 
 #include <vector>
 
@@ -92,5 +92,3 @@ private:
    */
   void computeAngles();
 };
-
-#endif // INCLUDE_STRUCTUREANALYZER_HPP_
