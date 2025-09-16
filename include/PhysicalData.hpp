@@ -11,6 +11,18 @@
 #include <vector>
 
 /**
+ * @namespace constants
+ * @brief Defines universal mathematical and physical constants.
+ */
+namespace constants {
+// Use the standard library's high-precision pi from C++20
+constexpr double pi =
+    3.1415926535897932384626433832795028841971693993751058209749445923078164062;
+constexpr double rad2deg = 180.0 / pi; // RADIANS -> DEGREES
+constexpr double deg2rad = pi / 180.0; // DEGREES -> RADIANS
+} // namespace constants
+
+/**
  * @class CovalentRadii
  * @brief Provides a static database of covalent radii for chemical elements.
  * Data from Pyykko, P. et al., DOI: 10.1002/chem.200800987 and Cordero, B. et
