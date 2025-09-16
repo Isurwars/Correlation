@@ -53,6 +53,16 @@ inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
         kernel[i] = 0.0;
       }
     }
+  } else if (type == KernelType::Bump) {
+    for (size_t i = 0; i < size; ++i) {
+      const double u = ((static_cast<double>(i) - center) * dx) / sigma;
+      if (std::abs(u) < 1.0) {
+        const double u2 = u * u;
+        kernel[i] = std::exp(-1.0 / (1.0 - u2));
+      } else {
+        kernel[i] = 0.0;
+      }
+    }
   } else {
     throw std::invalid_argument("Unsupported kernel type for smoothing.");
   }

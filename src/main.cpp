@@ -5,6 +5,7 @@
 
 #include "../include/AppBackend.hpp"
 #include "../include/PortableFileDialogs.hpp"
+
 #include "app_window.h"
 
 std::unique_ptr<pfd::open_file> current_file_dialog;
