@@ -8,8 +8,8 @@
 #include <cmath>
 
 #include "../include/Atom.hpp"
-#include "../include/Constants.hpp"
 #include "../include/LinearAlgebra.hpp"
+#include "../include/PhysicalData.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//

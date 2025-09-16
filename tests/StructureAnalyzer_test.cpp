@@ -7,7 +7,7 @@
 
 #include "../include/Atom.hpp"
 #include "../include/Cell.hpp"
-#include "../include/Constants.hpp"
+#include "../include/PhysicalData.hpp"
 #include "../include/StructureAnalyzer.hpp"
 
 // A test fixture for StructureAnalyzer tests.

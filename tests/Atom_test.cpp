@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 
 #include "../include/Atom.hpp"
-#include "../include/Constants.hpp"
+#include "../include/PhysicalData.hpp"
 
 // Test fixture for the Atom class and related free functions.
 class AtomTest : public ::testing::Test {};

@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "../include/Cell.hpp"
-#include "../include/Constants.hpp"
+#include "../include/PhysicalData.hpp"
 
 // Test fixture for the Cell class.
 class CellTest : public ::testing::Test {
