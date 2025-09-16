@@ -5,7 +5,6 @@ export component AppWindow inherits Window {
     callback run_analysis();
     callback browse_file();
     callback check_file_dialog_status();
-    callback load_file(string);
 
     // Properties that C++ updates to change the UI
     in-out property <string> status_text: "Please load a structure file.";
@@ -29,7 +28,7 @@ export component AppWindow inherits Window {
 
     timer := Timer {
         interval: 200ms;
-        running: false;
+        running: timer_running;
         triggered() => {
             check_file_dialog_status();
         }
@@ -45,32 +44,11 @@ export component AppWindow inherits Window {
                 GroupBox {
                     title: "1. Input File";
                     HorizontalBox {
-                        spacing: 10px;
-                        VerticalBox {
-                            spacing: 5px;
-                            LineEdit {
-                                placeholder-text: in_file_text;
-                                text: in_file_text;
-                                edited(s) => {
-                                    in_file_text = s;
-                                }
-                            }
-                        }
-
                         Button {
                             text: "Browse...";
                             enabled: !analysis_running;
                             clicked => {
                                 browse_file();
-                            }
-                        }
-
-                        Button {
-                            text: "Load File...";
-                            enabled: !analysis_running;
-                            clicked => {
-                                load_file(in_file_text);
-                                status_text = "File: " + in_file_text + " loaded succesfully.";
                             }
                         }
                     }

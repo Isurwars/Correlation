@@ -15,11 +15,6 @@ int main() {
   // Create an instance of our application backend
   AppBackend backend;
 
-  // Set up the callbacks from the UI to our C++ backend
-  ui->on_load_file([&](const slint::SharedString &path) {
-    backend.load_file(static_cast<std::string>(path));
-  });
-
   ui->on_run_analysis([&]() {
     // Create a ProgramOptions object from the UI properties
     ProgramOptions options;
@@ -66,6 +61,13 @@ int main() {
       auto selection = current_file_dialog->result();
       if (!selection.empty()) {
         ui->set_in_file_text(slint::SharedString(selection[0]));
+        // Now that a file is selected, load it automatically.
+        backend.load_file(selection[0]);
+        ui->set_status_text("File: " + slint::SharedString(selection[0]) +
+                            " loaded successfully.");
+      } else {
+        // Handle the case where the user canceled the dialog
+        ui->set_status_text("File selection cancelled.");
       }
       // The dialog is finished, stop the timer and reset the unique_ptr
       ui->set_timer_running(false);
