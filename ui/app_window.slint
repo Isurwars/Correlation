@@ -3,6 +3,8 @@ import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, ProgressIndicat
 export component AppWindow inherits Window {
     // Callbacks that the UI invokes on the C++ side
     callback run_analysis();
+    callback browse_file();
+    callback check_file_dialog_status();
     callback load_file(string);
 
     // Properties that C++ updates to change the UI
@@ -10,6 +12,7 @@ export component AppWindow inherits Window {
     in-out property <string> in_file_text: "../examples/a-PdSi/a-PdSi.car";
     in-out property <float> progress: 0.0;
     in-out property <bool> analysis_running: false;
+    in-out property <bool> timer_running: false;
 
     // User-configurable options, now exposed to the UI
     in-out property <float> r_cut: 20.0;
@@ -23,6 +26,14 @@ export component AppWindow inherits Window {
     width: 600px;
     height: 800px;
     title: "Correlation Analysis Tool";
+
+    timer := Timer {
+        interval: 200ms;
+        running: false;
+        triggered() => {
+            check_file_dialog_status();
+        }
+    }
 
     VerticalBox {
         padding: 10px;
@@ -43,6 +54,14 @@ export component AppWindow inherits Window {
                                 edited(s) => {
                                     in_file_text = s;
                                 }
+                            }
+                        }
+
+                        Button {
+                            text: "Browse...";
+                            enabled: !analysis_running;
+                            clicked => {
+                                browse_file();
                             }
                         }
 
