@@ -155,7 +155,6 @@ void StructureAnalyzer::computeDistances() {
         }
       });
 
-  // OPTIMIZATION: Final reduction step is lock-free and efficient.
   for (auto &local_results : ets) {
     for (size_t i = 0; i < num_elements; ++i) {
       for (size_t j = 0; j < num_elements; ++j) {

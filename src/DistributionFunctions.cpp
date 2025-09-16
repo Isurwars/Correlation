@@ -366,7 +366,8 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
 }
 
 void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
-                                        double r_integration_max) {
+                                        double r_integration_max,
+                                        bool normalize) {
   // 1. Input Validation & Dependency Check
   if (q_bin_width <= 0 || q_max <= 0) {
     throw std::invalid_argument("Q-space parameters must be positive.");
@@ -412,12 +413,16 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
   for (const auto &[key, g_r_partial] : g_r_hist.partials) {
     auto &s_q_partial = s_q_hist.partials[key];
     s_q_partial.assign(num_q_bins, 0.0);
+    double weight = 1.0;
+    if (!normalize) {
+      weight = ashcroft_weights_[key];
+    }
 
     // Precompute integration terms for this partial
     std::vector<double> integrand(j_max);
     for (size_t j = 0; j < j_max; ++j) {
       const double r = r_bins[j];
-      integrand[j] = r * (g_r_partial[j] - 1.0) * dr;
+      integrand[j] = r * (g_r_partial[j] - weight) * dr;
     }
 
     // 5. Calculate S(Q) for each Q bin

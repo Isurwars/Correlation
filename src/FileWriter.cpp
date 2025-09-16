@@ -39,7 +39,6 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
   std::sort(keys.begin(), keys.end());
 
   // --- Write Header ---
-  // The header is now generated dynamically from the keys of the data map.
   file << std::setw(12) << std::right << hist.bin_label << ",";
   for (size_t i = 0; i < keys.size(); ++i) {
     file << std::setw(12) << std::right << keys[i]
@@ -48,7 +47,6 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
   file << '\n';
 
   // --- Write Data Rows ---
-  // This approach iterates row-by-row, which is more memory-efficient.
   const size_t num_rows = hist.bins.size();
   for (size_t i = 0; i < num_rows; ++i) {
     file << std::fixed << std::setprecision(5) << std::setw(12) << std::right
@@ -65,8 +63,6 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
 
 void FileWriter::writeAllCSVs(const std::string &base_path,
                               bool write_smoothed) const {
-  // A simple map to associate internal histogram names with desired file
-  // suffixes.
   const std::map<std::string, std::string> file_map = {
       {"g(r)", "_g.csv"},       {"J(r)", "_J.csv"}, {"G(r)", "__G.csv"},
       {"f(theta)", "_PAD.csv"}, {"S(Q)", "_S.csv"}, {"XRD", "_XRD.csv"},

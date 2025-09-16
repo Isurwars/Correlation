@@ -42,7 +42,7 @@ void AppBackend::run_analysis(const ProgramOptions &options) {
     df_->calculateCoordinationNumber();
     df_->calculateRDF(options.r_cut, options.r_bin_width, options.normalize);
     df_->calculatePAD(180.0, options.angle_bin_width);
-    df_->calculateSQ(20.0, 0.02);
+    df_->calculateSQ(20.0, 0.02, options.normalize);
     if (options.smoothing) {
       df_->smoothAll(options.smoothing_sigma, options.smoothing_kernel);
     }

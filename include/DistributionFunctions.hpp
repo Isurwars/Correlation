@@ -61,7 +61,7 @@ public:
   void calculatePAD(double theta_cut = 180.0, double bin_width = 1.0);
 
   void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
-                   double r_integration_max = 8.0);
+                   double r_integration_max = 8.0, bool normalize = false);
 
   void calculateXRD(double lambda = 1.5406, double theta_min = 5.0,
                     double theta_max = 90.0, double bin_width = 1.0);

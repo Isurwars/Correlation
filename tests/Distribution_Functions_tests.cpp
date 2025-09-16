@@ -178,8 +178,8 @@ TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
 
   // Act
   // S(Q) depends on g(r), so we must calculate it first.
-  df.calculateRDF(10.0, 0.01);
-  df.calculateSQ(10.0, q_bin_width, 8.0);
+  df.calculateRDF(10.0, 0.01, true);
+  df.calculateSQ(10.0, q_bin_width, 8.0, true);
   const auto &g_hist = df.getHistogram("g(r)");
   const auto &total_g = g_hist.partials.at("Total");
 
