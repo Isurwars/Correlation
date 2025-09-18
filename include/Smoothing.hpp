@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include <set>
 #include <stdexcept>
 #include <vector>
 

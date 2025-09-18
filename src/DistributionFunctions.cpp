@@ -444,9 +444,9 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
           const double r = r_bins[j];
           q0_integral += r * r * (g_r_partial[j] - 1.0) * dr;
         }
-        s_q_partial[i] = 1.0 + 4.0 * M_PI * total_rho * q0_integral;
+        s_q_partial[i] = 1.0 + 4.0 * constants::pi * total_rho * q0_integral;
       } else {
-        s_q_partial[i] = 1.0 + (4.0 * M_PI * total_rho / Q) * integral;
+        s_q_partial[i] = 1.0 + (4.0 * constants::pi * total_rho / Q) * integral;
       }
     }
   }

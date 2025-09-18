@@ -5,7 +5,6 @@
 //  Modified Version Copyright © 2025 Isaías Rodríguez (isurwars@gmail.com)
 //  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law.
-
 #pragma once
 
 #if _WIN32
@@ -448,9 +447,6 @@ static inline bool is_directory(std::string const &path) {
 #if _WIN32
   auto attr = GetFileAttributesA(path.c_str());
   return attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY);
-#elif __EMSCRIPTEN__
-  // TODO
-  return false;
 #else
   struct stat s;
   return stat(path.c_str(), &s) == 0 && S_ISDIR(s.st_mode);
@@ -647,8 +643,8 @@ inline bool internal::executor::kill() {
       }
   }
 #elif __EMSCRIPTEN__ || __NX__
-  // FIXME: do something
-  return false; // cannot kill
+  stop();
+  return true;
 #else
   ::kill(m_pid, SIGKILL);
 #endif

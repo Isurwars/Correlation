@@ -52,41 +52,39 @@ Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clea
 - CMake (version 3.20+)
 - git
 - Intel TBB (for parallelization)
+- Slint (for GUI)
 
 ### Windows
 
-Installing MSYS2:
+Installing MSVC:
 ```
-https://www.msys2.org/
+https://visualstudio.microsoft.com/downloads/
 ```
 
-Install prerequisites:
-
-```bash
-pacman -Syu
-pacman -S --needed base-devel mingw-w64-x86_64-toolchain
-pacman -S cmake tbb git
+Installing Rust:
+```
+https://www.rust-lang.org/tools/install
 ```
 
 ### Linux (Debian/Ubuntu):
 
 ```bash
 sudo apt update
-sudo apt install build-essential cmake tbb git
+sudo apt install build-essential cmake tbb git rust
 ```
 
 ### Linux (Arch/Manjaro):
 
 ```bash
 sudo pacman -Syu
-sudo pacman base-devel cmake tbb git
+sudo pacman base-devel cmake tbb git rust
 ```
 
 ### MacOS:
 
 ```bash
 xcode-select --install
-brew install cmake tbb git
+brew install cmake tbb git rustup
 ```
 
 ### Build Instructions
@@ -94,7 +92,7 @@ brew install cmake tbb git
 #### Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/correlation.git
+git clone https://github.com/isurwars/correlation.git
 cd correlation
 ```
 

@@ -3,6 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#if defined(_WIN32)
+#define NOMINMAX // Prevents Windows.h from defining min and max macros
+#include <Windows.h>
+#endif
+
 #include "../include/AppBackend.hpp"
 #include "../include/PortableFileDialogs.hpp"
 
@@ -81,3 +86,10 @@ int main() {
 
   return 0;
 }
+
+#if _WIN32
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                   LPSTR lpCmdLine, int nCmdShow) {
+  return main();
+}
+#endif

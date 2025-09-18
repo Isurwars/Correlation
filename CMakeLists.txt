@@ -7,9 +7,19 @@ set(CXX_STANDARD 23)
 # Set default install path
 set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
 
-# Find dependencies
-find_package(TBB REQUIRED COMPONENTS tbb tbbmalloc)
 
+# Find dependencies
+find_package(TBB QUIET COMPONENTS tbb tbbmalloc)
+if (NOT TBB_FOUND)
+  message("TBB could not be located. Downloading it from GitHub and building it locally.")
+  include(FetchContent)
+  FetchContent_Declare(
+    TBB
+    GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
+    GIT_TAG v2022.2.0
+  )
+  FetchContent_MakeAvailable(TBB)
+endif()
 
 find_package(Slint QUIET)
 if (NOT Slint_FOUND)
@@ -50,10 +60,16 @@ target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
 #------------------------------------------------------------------
 # Executable Target (correlation)
 #------------------------------------------------------------------
+if (WIN32)
+add_executable(correlation WIN32
+  src/main.cpp
+  src/AppBackend.cpp)
+else()
 add_executable(correlation
   src/main.cpp
-  src/AppBackend.cpp
-)
+  src/AppBackend.cpp)
+endif()
+
 
 # Link correlation_lib to correlation
 target_link_libraries(correlation
@@ -70,6 +86,12 @@ slint_target_sources(correlation
   ui/app_window.slint
 )
 
+if (WIN32)
+    add_custom_command(
+      TARGET correlation POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:correlation>
+      $<TARGET_FILE_DIR:correlation> COMMAND_EXPAND_LISTS)
+endif()
 #-----------------------------------------------------------
 # Testing setup (using GoogleTest)
 #-----------------------------------------------------------
@@ -100,8 +122,15 @@ target_link_libraries(correlation_tests PRIVATE
     gtest_main
 )
 
+if (WIN32)
+    add_custom_command(
+      TARGET correlation_tests POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:correlation_tests>
+      $<TARGET_FILE_DIR:correlation_tests> COMMAND_EXPAND_LISTS)
+endif()
+
 include(GoogleTest)
-gtest_discover_tests(correlation_tests)
+gtest_discover_tests(correlation_tests TEST_DISCOVERY_TIMEOUT 300)
 
 #-----------------------------------------------------------
 # Install setup
