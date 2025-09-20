@@ -1,4 +1,4 @@
 CompileFlags:
-  Add: [-I/home/isurwars/Projects/Correlation/build/]
+  Add: [-I./build/]
 FileExtensions:
   .h: cpp
