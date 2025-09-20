@@ -38,6 +38,17 @@ public:
    */
   explicit Cell(const std::array<double, 6> &params);
 
+  // Move constructor
+  Cell(Cell &&other) noexcept;
+
+  // Move assignment operator
+  Cell &operator=(Cell &&other) noexcept;
+
+  // The copy constructor and assignment operator can be explicitly defaulted,
+  // or implicitly generated if no other special member functions are declared.
+  Cell(const Cell &) = default;
+  Cell &operator=(const Cell &) = default;
+
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//

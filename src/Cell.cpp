@@ -23,6 +23,32 @@ Cell::Cell(const std::array<double, 6> &params) {
   setLatticeParameters(params);
 }
 
+// Move Constructor
+Cell::Cell(Cell &&other) noexcept
+    : lattice_vectors_(std::move(other.lattice_vectors_)),
+      inverse_lattice_vectors_(std::move(other.inverse_lattice_vectors_)),
+      lattice_parameters_(std::move(other.lattice_parameters_)),
+      volume_(std::move(other.volume_)), atoms_(std::move(other.atoms_)),
+      elements_(std::move(other.elements_)) {
+
+  // The source object 'other' is now in a valid but unspecified state.
+  // Its resources have been "stolen" by the new object.
+}
+
+// Move Assignment Operator
+Cell &Cell::operator=(Cell &&other) noexcept {
+  if (this != &other) {
+    // Transfer resources from 'other' to 'this'
+    lattice_vectors_ = std::move(other.lattice_vectors_);
+    inverse_lattice_vectors_ = std::move(other.inverse_lattice_vectors_);
+    lattice_parameters_ = std::move(other.lattice_parameters_);
+    volume_ = std::move(other.volume_);
+    atoms_ = std::move(other.atoms_);
+    elements_ = std::move(other.elements_);
+  }
+  return *this;
+}
+
 //---------------------------------------------------------------------------//
 //-------------------------------- Accessors --------------------------------//
 //---------------------------------------------------------------------------//
