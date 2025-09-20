@@ -8,6 +8,10 @@
 #include <string>
 #include <vector>
 
+//---------------------------------------------------------------------------//
+//------------------------------- Constructors ------------------------------//
+//---------------------------------------------------------------------------//
+
 AppController::AppController(AppWindow &ui, AppBackend &backend)
     : ui_(ui), backend_(backend) {
 
@@ -16,6 +20,10 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   ui_.on_browse_file([this]() { handleBrowseFile(); });
   ui_.on_check_file_dialog_status([this]() { handleCheckFileDialogStatus(); });
 }
+
+//---------------------------------------------------------------------------//
+//--------------------------------- Methods ---------------------------------//
+//---------------------------------------------------------------------------//
 
 void AppController::handleRunAnalysis() {
   // Create a ProgramOptions object from the UI properties

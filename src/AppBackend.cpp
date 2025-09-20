@@ -10,7 +10,15 @@
 #include "../include/FileIO.hpp"
 #include "../include/FileWriter.hpp"
 
+//---------------------------------------------------------------------------//
+//------------------------------- Constructors ------------------------------//
+//---------------------------------------------------------------------------//
+
 AppBackend::AppBackend() {}
+
+//---------------------------------------------------------------------------//
+//--------------------------------- Methods ---------------------------------//
+//---------------------------------------------------------------------------//
 
 void AppBackend::load_file(const std::string &path) {
   try {
@@ -27,7 +35,6 @@ void AppBackend::load_file(const std::string &path) {
   }
 }
 
-// Modified to accept ProgramOptions
 void AppBackend::run_analysis(const ProgramOptions &options) {
   if (!cell_) {
     return;

@@ -12,17 +12,23 @@
 #include "ProgramOptions.hpp"
 
 // This class holds the application state and logic.
-// The Slint UI will interact with this object.
+
 class AppBackend {
 public:
+  // Constructor to set up the UI and backend references
   AppBackend();
+
+  // Member functions
   void load_file(const std::string &path);
   void run_analysis(const ProgramOptions &options);
 
 private:
+  // Member functions
   void analysis_thread_func();
 
+  // Pointers to the Cell and DF
   std::unique_ptr<Cell> cell_;
-  ProgramOptions options_;
   std::unique_ptr<DistributionFunctions> df_;
+
+  ProgramOptions options_;
 };
