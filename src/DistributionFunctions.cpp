@@ -366,10 +366,10 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
 
   for (const auto &[key, partial] : f_theta.partials) {
     if (key != "Total") {
-      // Accumulate the sum of the inner vector 'partial' and add it to the
-      // total
-      total_counts =
-          std::accumulate(partial.begin(), partial.end(), total_counts);
+      for (size_t i = 0; i < num_bins; ++i) {
+        total_f[i] += partial[i];
+        total_counts += partial[i];
+      }
     }
   }
 

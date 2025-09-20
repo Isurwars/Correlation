@@ -8,7 +8,7 @@ export component AppWindow inherits Window {
 
     // Properties that C++ updates to change the UI
     in-out property <string> status_text: "Please load a structure file.";
-    in-out property <string> in_file_text: "../examples/a-PdSi/a-PdSi.car";
+    in-out property <string> in_file_text: "";
     in-out property <float> progress: 0.0;
     in-out property <bool> analysis_running: false;
     in-out property <bool> timer_running: false;
@@ -38,148 +38,140 @@ export component AppWindow inherits Window {
         padding: 10px;
         spacing: 10px;
 
-        // Main content area, wrapped in a scroll view
-        ScrollView {
-            VerticalBox {
-                GroupBox {
-                    title: "1. Input File";
+        VerticalBox {
+            GroupBox {
+                title: "1. Input File";
+                Button {
+                    text: "Load Structure File";
+                    enabled: !analysis_running;
+                    clicked => {
+                        browse_file();
+                    }
+                }
+            }
+
+            GroupBox {
+                title: "2. Analysis Options";
+                VerticalBox {
+                    spacing: 10px;
                     HorizontalBox {
-                        Button {
-                            text: "Load Structure File";
-                            enabled: !analysis_running;
-                            clicked => {
-                                browse_file();
-                            }
-                        }
-                    }
-                }
-
-                GroupBox {
-                    title: "2. Analysis Options";
-                    VerticalBox {
                         spacing: 10px;
-                        HorizontalBox {
-                            spacing: 10px;
-                            VerticalBox {
-                                spacing: 5px;
-                                Text {
-                                    text: "Radial Cutoff (r_cut)";
-                                }
-
-                                LineEdit {
-                                    text: r_cut;
-                                    edited(s) => {
-                                        r_cut = s.to-float();
-                                    }
-                                }
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "Radial Cutoff (Å)";
                             }
 
-                            VerticalBox {
-                                spacing: 5px;
-                                Text {
-                                    text: "RDF Bin Width";
-                                }
-
-                                LineEdit {
-                                    text: r_bin_width;
-                                    edited(s) => {
-                                        r_bin_width = s.to-float();
-                                    }
-                                }
-                            }
-
-                            VerticalBox {
-                                spacing: 5px;
-                                Text {
-                                    text: "Bond Factor";
-                                }
-
-                                LineEdit {
-                                    text: bond_factor;
-                                    edited(s) => {
-                                        bond_factor = s.to-float();
-                                    }
+                            LineEdit {
+                                text: r_cut;
+                                edited(s) => {
+                                    r_cut = s.to-float();
                                 }
                             }
                         }
 
-                        HorizontalBox {
-                            spacing: 10px;
-                            VerticalBox {
-                                spacing: 5px;
-                                Text {
-                                    text: "Angle Bin Width";
-                                }
-
-                                LineEdit {
-                                    text: angle_bin_width;
-                                    edited(s) => {
-                                        angle_bin_width = s.to-float();
-                                    }
-                                }
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "RDF Bin Width (Å)";
                             }
 
-                            VerticalBox {
-                                spacing: 5px;
-                                CheckBox {
-                                    text: "Enable Smoothing";
-                                    checked: smoothing;
-                                    toggled => {
-                                        smoothing = !smoothing;
-                                    }
+                            LineEdit {
+                                text: r_bin_width;
+                                edited(s) => {
+                                    r_bin_width = s.to-float();
                                 }
                             }
                         }
 
-                        HorizontalBox {
-                            spacing: 10px;
-                            VerticalBox {
-                                spacing: 5px;
-                                Text {
-                                    text: "Smoothing Sigma";
-                                }
-
-                                LineEdit {
-                                    enabled: smoothing;
-                                    text: smoothing_sigma;
-                                    edited(s) => {
-                                        smoothing_sigma = s.to-float();
-                                    }
-                                }
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "Bond Parameter";
                             }
 
-                            VerticalBox {
-                                spacing: 5px;
-                                Text {
-                                    text: "Smoothing Kernel";
+                            LineEdit {
+                                text: bond_factor;
+                                edited(s) => {
+                                    bond_factor = s.to-float();
                                 }
+                            }
+                        }
+                    }
 
-                                ComboBox {
-                                    enabled: smoothing;
-                                    model: ["Gaussian", "Bump", "Triweight"];
-                                    current-index: smoothing_kernel;
-                                    selected(i) => {
-                                        smoothing_kernel = i.to-float();
-                                    }
+                    HorizontalBox {
+                        spacing: 10px;
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "Angle Bin Width (°)";
+                            }
+
+                            LineEdit {
+                                text: angle_bin_width;
+                                edited(s) => {
+                                    angle_bin_width = s.to-float();
+                                }
+                            }
+                        }
+
+                        VerticalBox {
+                            spacing: 5px;
+                            CheckBox {
+                                text: "Enable Smoothing";
+                                checked: smoothing;
+                                toggled => {
+                                    smoothing = !smoothing;
+                                }
+                            }
+                        }
+                    }
+
+                    HorizontalBox {
+                        spacing: 10px;
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "Smoothing Sigma";
+                            }
+
+                            LineEdit {
+                                enabled: smoothing;
+                                text: smoothing_sigma;
+                                edited(s) => {
+                                    smoothing_sigma = s.to-float();
+                                }
+                            }
+                        }
+
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "Smoothing Kernel";
+                            }
+
+                            ComboBox {
+                                enabled: smoothing;
+                                model: ["Gaussian", "Bump", "Triweight"];
+                                current-index: smoothing_kernel;
+                                selected(i) => {
+                                    smoothing_kernel = i.to-float();
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                GroupBox {
-                    title: "3. Run Analysis";
-                    VerticalBox {
-                        spacing: 5px;
-                        Button {
-                            text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
-                            enabled: !analysis_running;
-                            clicked => {
-                                status_text = "Running Analysis...";
-                                run_analysis();
-                                status_text = "Analysis ended.";
-                            }
-                        }
+            GroupBox {
+                title: "3. Run Analysis";
+                Button {
+                    text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
+                    enabled: !analysis_running;
+                    clicked => {
+                        status_text = "Running Analysis...";
+                        run_analysis();
+                        status_text = "Analysis ended.";
                     }
                 }
             }
