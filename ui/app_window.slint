@@ -28,6 +28,8 @@ export component AppWindow inherits Window {
     width: 600px;
     height: 800px;
     title: "Correlation Analysis Tool";
+    property <image> logo-icon: @image-url("../Images/Logo.png");
+    icon: logo-icon;
 
     timer := Timer {
         interval: 200ms;
