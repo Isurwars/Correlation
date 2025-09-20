@@ -27,6 +27,32 @@ DistributionFunctions::DistributionFunctions(const Cell &cell, double cutoff,
   calculateAshcroftWeights();
 }
 
+// Move Constructor
+DistributionFunctions::DistributionFunctions(
+    DistributionFunctions &&other) noexcept
+    : cell_(other.cell_), neighbors_(std::move(other.neighbors_)),
+      current_cutoff_(other.current_cutoff_), bond_factor_(other.bond_factor_),
+      histograms_(std::move(other.histograms_)),
+      ashcroft_weights_(std::move(other.ashcroft_weights_)) {
+
+  other.current_cutoff_ = -1.0;
+}
+
+// Move Assignment Operator
+DistributionFunctions &
+DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
+  if (this != &other) {
+    neighbors_ = std::move(other.neighbors_);
+    current_cutoff_ = other.current_cutoff_;
+    bond_factor_ = other.bond_factor_;
+    histograms_ = std::move(other.histograms_);
+    ashcroft_weights_ = std::move(other.ashcroft_weights_);
+
+    other.current_cutoff_ = -1.0;
+  }
+  return *this;
+}
+
 //--------------------------------------------------------------------------//
 //---------------------------- Helper Functions ----------------------------//
 //--------------------------------------------------------------------------//

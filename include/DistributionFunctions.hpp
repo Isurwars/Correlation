@@ -31,6 +31,12 @@ public:
 
   explicit DistributionFunctions(const Cell &, double, double);
 
+  // Move constructor
+  DistributionFunctions(DistributionFunctions &&other) noexcept;
+
+  // Move assignment operator
+  DistributionFunctions &operator=(DistributionFunctions &&other) noexcept;
+
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
