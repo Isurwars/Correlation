@@ -129,9 +129,6 @@ void StructureAnalyzer::computeDistances() {
             if (i == j && linalg::norm_sq(disp) < 1e-9) {
               continue;
             }
-            if (i == j && ignore_periodic_self_interactions_) {
-              continue;
-            }
 
             linalg::Vector3<double> r_ij =
                 atom_B.position() + disp - atom_A.position();

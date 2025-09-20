@@ -39,21 +39,19 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
   std::sort(keys.begin(), keys.end());
 
   // --- Write Header ---
-  file << std::setw(12) << std::right << hist.bin_label << ",";
+  file << hist.bin_label << ",";
   for (size_t i = 0; i < keys.size(); ++i) {
-    file << std::setw(12) << std::right << keys[i]
-         << (i == keys.size() - 1 ? "" : ",");
+    file << keys[i] << (i == keys.size() - 1 ? "" : ",");
   }
   file << '\n';
 
   // --- Write Data Rows ---
   const size_t num_rows = hist.bins.size();
   for (size_t i = 0; i < num_rows; ++i) {
-    file << std::fixed << std::setprecision(5) << std::setw(12) << std::right
-         << hist.bins[i] << ",";
+    file << std::fixed << std::setprecision(5) << hist.bins[i] << ",";
     for (size_t j = 0; j < keys.size(); ++j) {
       // Use .at() to access map elements by key
-      file << std::setw(12) << std::right << partials_to_write.at(keys[j])[i]
+      file << partials_to_write.at(keys[j])[i]
            << (j == keys.size() - 1 ? "" : ",");
     }
     file << '\n';
