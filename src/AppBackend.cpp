@@ -42,14 +42,15 @@ void AppBackend::run_analysis(const ProgramOptions &options) {
 
   try {
     // Create the DistributionFunctions object
-    df_ = std::make_unique<DistributionFunctions>(*cell_, options.r_cut,
+    df_ = std::make_unique<DistributionFunctions>(*cell_, options.r_max,
                                                   options.bond_factor);
 
     // --- Run calculations sequentially and report progress ---
     df_->calculateCoordinationNumber();
-    df_->calculateRDF(options.r_cut, options.r_bin_width, options.normalize);
-    df_->calculatePAD(180.0, options.angle_bin_width);
-    df_->calculateSQ(20.0, 0.02, options.normalize);
+    df_->calculateRDF(options.r_max, options.r_bin_width, options.normalize);
+    df_->calculatePAD(options.angle_max, options.angle_bin_width);
+    df_->calculateSQ(options.q_max, options.q_bin_width, options.r_max,
+                     options.normalize);
     if (options.smoothing) {
       df_->smoothAll(options.smoothing_sigma, options.smoothing_kernel);
     }

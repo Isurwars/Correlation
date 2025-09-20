@@ -14,8 +14,11 @@ export component AppWindow inherits Window {
     in-out property <bool> timer_running: false;
 
     // User-configurable options, now exposed to the UI
-    in-out property <float> r_cut: 20.0;
+    in-out property <float> r_max: 20.0;
     in-out property <float> r_bin_width: 0.02;
+    in-out property <float> q_max: 20.0;
+    in-out property <float> q_bin_width: 0.02;
+    in-out property <float> angle_max: 180.0;
     in-out property <float> angle_bin_width: 1.0;
     in-out property <float> bond_factor: 1.2;
     in-out property <bool> smoothing: false;
@@ -59,13 +62,13 @@ export component AppWindow inherits Window {
                         VerticalBox {
                             spacing: 5px;
                             Text {
-                                text: "Radial Cutoff (Å)";
+                                text: "RDF Max r (Å)";
                             }
 
                             LineEdit {
-                                text: r_cut;
+                                text: r_max;
                                 edited(s) => {
-                                    r_cut = s.to-float();
+                                    r_max = s.to-float();
                                 }
                             }
                         }
@@ -104,7 +107,21 @@ export component AppWindow inherits Window {
                         VerticalBox {
                             spacing: 5px;
                             Text {
-                                text: "Angle Bin Width (°)";
+                                text: "PAD Max Angle (°)";
+                            }
+
+                            LineEdit {
+                                text: angle_max;
+                                edited(s) => {
+                                    angle_max = s.to-float();
+                                }
+                            }
+                        }
+
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "PAD Bin Width (°)";
                             }
 
                             LineEdit {
@@ -114,7 +131,41 @@ export component AppWindow inherits Window {
                                 }
                             }
                         }
+                    }
 
+                    HorizontalBox {
+                        spacing: 10px;
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "S(Q) Max Q (Å⁻¹)";
+                            }
+
+                            LineEdit {
+                                text: q_max;
+                                edited(s) => {
+                                    q_max = s.to-float();
+                                }
+                            }
+                        }
+
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "S(Q) Bin Width (Å⁻¹)";
+                            }
+
+                            LineEdit {
+                                text: q_bin_width;
+                                edited(s) => {
+                                    q_bin_width = s.to-float();
+                                }
+                            }
+                        }
+                    }
+
+                    HorizontalBox {
+                        spacing: 10px;
                         VerticalBox {
                             spacing: 5px;
                             CheckBox {
@@ -125,10 +176,7 @@ export component AppWindow inherits Window {
                                 }
                             }
                         }
-                    }
 
-                    HorizontalBox {
-                        spacing: 10px;
                         VerticalBox {
                             spacing: 5px;
                             Text {

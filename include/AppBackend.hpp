@@ -9,9 +9,23 @@
 
 #include "Cell.hpp"
 #include "DistributionFunctions.hpp"
-#include "ProgramOptions.hpp"
 
-// This class holds the application state and logic.
+// Encapsulates all command-line configurable options for the application.
+struct ProgramOptions {
+  std::string input_file;
+  std::string output_file_base;
+  bool normalize = true;
+  bool smoothing = false;
+  double r_max = 20.0;
+  double r_bin_width = 0.02;
+  double q_max = 20.0;
+  double q_bin_width = 0.02;
+  double angle_max = 180.0;
+  double angle_bin_width = 1.0;
+  double smoothing_sigma = 0.081;
+  double bond_factor = 1.2;
+  KernelType smoothing_kernel = KernelType::Gaussian;
+};
 
 class AppBackend {
 public:

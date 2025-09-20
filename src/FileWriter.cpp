@@ -56,7 +56,6 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
     }
     file << '\n';
   }
-  std::cout << "Successfully wrote to file: " << filename << std::endl;
 }
 
 void FileWriter::writeAllCSVs(const std::string &base_path,

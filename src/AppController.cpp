@@ -5,6 +5,7 @@
 
 #include "../include/AppController.hpp"
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -28,11 +29,17 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
 void AppController::handleRunAnalysis() {
   // Create a ProgramOptions object from the UI properties
   ProgramOptions options;
-  const std::string input_path = ui_.get_in_file_text().data();
-  options.input_file = input_path;
-  options.output_file_base = input_path;
-  options.r_cut = ui_.get_r_cut();
+  const std::string input_path_str = ui_.get_in_file_text().data();
+  std::filesystem::path full_path(input_path_str);
+  const std::string output_path_base =
+      full_path.parent_path().string() + "/" + full_path.stem().string();
+  options.input_file = input_path_str;
+  options.output_file_base = output_path_base;
+  options.r_max = ui_.get_r_max();
   options.r_bin_width = ui_.get_r_bin_width();
+  options.q_max = ui_.get_q_max();
+  options.q_bin_width = ui_.get_q_bin_width();
+  options.angle_max = ui_.get_angle_max();
   options.angle_bin_width = ui_.get_angle_bin_width();
   options.bond_factor = ui_.get_bond_factor();
   options.smoothing = ui_.get_smoothing();

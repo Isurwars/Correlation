@@ -222,11 +222,11 @@ void DistributionFunctions::calculateCoordinationNumber() {
   histograms_["CN"] = std::move(cn_histogram);
 }
 
-void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
+void DistributionFunctions::calculateRDF(double r_max, double r_bin_width,
                                          bool normalize) {
-  if (bin_width <= 0)
+  if (r_bin_width <= 0)
     throw std::invalid_argument("Bin width must be positive.");
-  if (r_cut <= 0)
+  if (r_max <= 0)
     throw std::invalid_argument("Cutoff radius must be positive.");
   if (cell_.volume() <= 1e-9)
     throw std::logic_error("Cell volume must be positive.");
@@ -237,7 +237,7 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
   if (num_atoms == 0)
     return;
 
-  const size_t num_bins = static_cast<size_t>(std::floor(r_cut / bin_width));
+  const size_t num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
 
   // Initialize histograms
   Histogram J_r, g_r, G_r;
@@ -249,7 +249,7 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
   G_r.bin_label = "r";
 
   for (size_t i = 0; i < num_bins; ++i) {
-    const double r = (i + 0.5) * bin_width;
+    const double r = (i + 0.5) * r_bin_width;
     J_r.bins[i] = r;
     g_r.bins[i] = r;
     G_r.bins[i] = r;
@@ -263,8 +263,8 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
       partial_hist.assign(num_bins, 0.0);
 
       for (const auto &dist : neighbors_->distances()[i][j]) {
-        if (dist < r_cut) {
-          size_t bin = static_cast<size_t>(dist / bin_width);
+        if (dist < r_max) {
+          size_t bin = static_cast<size_t>(dist / r_bin_width);
           if (bin < num_bins) {
             partial_hist[bin] += 2.0;
           }
@@ -287,7 +287,7 @@ void DistributionFunctions::calculateRDF(double r_cut, double bin_width,
   // --- Normalization and Calculation of g(r) and G(r) ---
   const double total_rho = num_atoms / cell_.volume();
   const double norm_factor =
-      4.0 * constants::pi * total_rho * bin_width * num_atoms;
+      4.0 * constants::pi * total_rho * r_bin_width * num_atoms;
   for (auto const &[key, J_partial] : J_r.partials) {
     g_r.partials[key].assign(num_bins, 0.0);
     G_r.partials[key].assign(num_bins, 0.0);
@@ -407,6 +407,9 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
         "calculateRDF().");
   }
 
+  // Clip r_max to [0.0, 10.0]
+  double r_max = r_integration_max > 10.0 ? 10.0 : r_integration_max;
+
   const auto &g_r_hist = histograms_.at("g(r)");
   const auto &r_bins = g_r_hist.bins;
   if (r_bins.size() < 2) {
@@ -429,7 +432,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
   // 3. Precompute integration terms and find integration limit
   size_t j_max = r_bins.size();
   for (size_t j = 0; j < r_bins.size(); ++j) {
-    if (r_bins[j] > r_integration_max) {
+    if (r_bins[j] > r_max) {
       j_max = j;
       break;
     }
@@ -448,7 +451,14 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
     std::vector<double> integrand(j_max);
     for (size_t j = 0; j < j_max; ++j) {
       const double r = r_bins[j];
-      integrand[j] = r * (g_r_partial[j] - weight) * dr;
+      double window = 1.0;
+      if (r > r_max * 0.8) {
+        double x = (r - 0.8 * r_max) / (0.2 * r_max);
+        window = std::sin(constants::pi * x / 2.0);
+      }
+
+      // Apply the window function to the integrand
+      integrand[j] = r * (g_r_partial[j] - weight) * window * dr;
     }
 
     // 5. Calculate S(Q) for each Q bin
