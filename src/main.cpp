@@ -8,6 +8,8 @@
 #include <Windows.h>
 #endif
 
+#include <string>
+
 #include "../include/AppBackend.hpp"
 #include "../include/PortableFileDialogs.hpp"
 
@@ -21,24 +23,31 @@ int main() {
   // Create an instance of our application backend
   AppBackend backend;
 
-  ui->on_run_analysis([&]() {
-    // Create a ProgramOptions object from the UI properties
-    ProgramOptions options;
-    options.input_file = ui->get_in_file_text().data();
-    options.output_file_base = options.input_file;
-    options.r_cut = ui->get_r_cut();
-    options.r_bin_width = ui->get_r_bin_width();
-    options.angle_bin_width = ui->get_angle_bin_width();
-    options.bond_factor = ui->get_bond_factor();
-    options.smoothing = ui->get_smoothing();
-    options.smoothing_sigma = ui->get_smoothing_sigma();
-    options.smoothing_kernel =
-        static_cast<KernelType>(ui->get_smoothing_kernel());
+  ui->on_run_analysis([&backend, &ui]() {
+    try {
+      // Create a ProgramOptions object from the UI properties
+      ProgramOptions options;
+      const std::string input_path = ui->get_in_file_text().data();
+      options.input_file = input_path;
+      options.output_file_base = input_path;
+      options.r_cut = ui->get_r_cut();
+      options.r_bin_width = ui->get_r_bin_width();
+      options.angle_bin_width = ui->get_angle_bin_width();
+      options.bond_factor = ui->get_bond_factor();
+      options.smoothing = ui->get_smoothing();
+      options.smoothing_sigma = ui->get_smoothing_sigma();
+      options.smoothing_kernel =
+          static_cast<KernelType>(ui->get_smoothing_kernel());
 
-    backend.run_analysis(options);
+      backend.run_analysis(options);
+      ui->set_status_text("Analysis ended successfully.");
+    } catch (const std::exception &e) {
+      ui->set_status_text(
+          slint::SharedString("Error: " + std::string(e.what())));
+    }
   });
 
-  ui->on_browse_file([&]() {
+  ui->on_browse_file([&ui]() {
     // Define the file filters
     std::vector<std::string> filters = {"Supported Structure Files",
                                         "*.car *.cell *.cif *.dat",
@@ -60,17 +69,23 @@ int main() {
     ui->set_timer_running(true);
   });
 
-  ui->on_check_file_dialog_status([&]() {
+  ui->on_check_file_dialog_status([&backend, &ui]() {
     // Check if the dialog is ready without blocking
     if (current_file_dialog && current_file_dialog->ready(0)) {
       // Dialog is ready, get the result
       auto selection = current_file_dialog->result();
       if (!selection.empty()) {
-        ui->set_in_file_text(slint::SharedString(selection[0]));
-        // Now that a file is selected, load it automatically.
-        backend.load_file(selection[0]);
-        ui->set_status_text("File: " + slint::SharedString(selection[0]) +
-                            " loaded successfully.");
+        try {
+          // Use std::string constructor for safety
+          std::string selected_path = selection[0];
+          ui->set_in_file_text(slint::SharedString(selected_path));
+          backend.load_file(selected_path);
+          ui->set_status_text("File: " + slint::SharedString(selected_path) +
+                              " loaded successfully.");
+        } catch (const std::exception &e) {
+          ui->set_status_text(slint::SharedString("Error loading file: " +
+                                                  std::string(e.what())));
+        }
       } else {
         // Handle the case where the user canceled the dialog
         ui->set_status_text("File selection cancelled.");
