@@ -3,6 +3,7 @@ project(Correlation VERSION 1.3 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set default install path
 set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
