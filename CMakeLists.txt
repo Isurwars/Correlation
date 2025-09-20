@@ -63,11 +63,15 @@ target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
 if (WIN32)
 add_executable(correlation WIN32
   src/main.cpp
-  src/AppBackend.cpp)
+  src/AppBackend.cpp
+  src/AppController.cpp
+)
 else()
 add_executable(correlation
   src/main.cpp
-  src/AppBackend.cpp)
+  src/AppBackend.cpp
+  src/AppController.cpp
+)
 endif()
 
 
