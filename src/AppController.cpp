@@ -3,6 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#if defined(_WIN32)
+#define NOMINMAX
+#include <Windows.h>
+#endif
+
 #include "../include/AppController.hpp"
 
 #include <filesystem>
