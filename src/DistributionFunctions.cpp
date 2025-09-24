@@ -66,11 +66,11 @@ DistributionFunctions::getHistogram(const std::string &name) const {
   return it->second;
 }
 
-void DistributionFunctions::ensureNeighborsComputed(double r_cut) {
-  if (!neighbors_ || r_cut > current_cutoff_) {
+void DistributionFunctions::ensureNeighborsComputed(double r_max) {
+  if (!neighbors_ || r_max > current_cutoff_) {
     neighbors_ =
-        std::make_unique<StructureAnalyzer>(cell_, r_cut, bond_factor_);
-    current_cutoff_ = r_cut;
+        std::make_unique<StructureAnalyzer>(cell_, r_max, bond_factor_);
+    current_cutoff_ = r_max;
   }
 }
 

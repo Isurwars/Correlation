@@ -30,7 +30,6 @@ struct ElementID {
 struct Element {
   std::string symbol;
   ElementID id{-1};
-  // double mass{0.0}; // Could be added in the future
 };
 
 struct Neighbor {

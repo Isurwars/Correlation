@@ -61,10 +61,10 @@ public:
 
   void calculateCoordinationNumber();
 
-  void calculateRDF(double r_cut = 20.0, double bin_width = 0.05,
+  void calculateRDF(double r_max = 20.0, double bin_width = 0.05,
                     bool normalize = false);
 
-  void calculatePAD(double theta_cut = 180.0, double bin_width = 1.0);
+  void calculatePAD(double theta_max = 180.0, double bin_width = 1.0);
 
   void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
                    double r_integration_max = 8.0, bool normalize = false);

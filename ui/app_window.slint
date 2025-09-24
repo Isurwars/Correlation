@@ -12,6 +12,8 @@ export component AppWindow inherits Window {
     in-out property <float> progress: 0.0;
     in-out property <bool> analysis_running: false;
     in-out property <bool> timer_running: false;
+    in-out property <bool> text_opacity: true;
+    in-out property <bool> text_timer_running: true;
 
     // User-configurable options, now exposed to the UI
     in-out property <float> r_max: 20.0;
@@ -30,6 +32,7 @@ export component AppWindow inherits Window {
     title: "Correlation Analysis Tool";
     property <image> logo-icon: @image-url("../Images/Logo.png");
     icon: logo-icon;
+    default-font-size: 12px;
 
     timer := Timer {
         interval: 200ms;
@@ -39,18 +42,35 @@ export component AppWindow inherits Window {
         }
     }
 
+    text_timer := Timer {
+        interval: 1s;
+        running: text_timer_running;
+        triggered() => {
+            text_opacity = !text_opacity;
+        }
+    }
+
     VerticalBox {
-        padding: 10px;
-        spacing: 10px;
+        padding: 5px;
+        spacing: 50px;
 
         VerticalBox {
             GroupBox {
                 title: "1. Input File";
-                Button {
-                    text: "Load Structure File";
-                    enabled: !analysis_running;
-                    clicked => {
-                        browse_file();
+                VerticalBox {
+                    Button {
+                        text: "Load Structure File";
+                        enabled: !analysis_running;
+                        clicked => {
+                            browse_file();
+                        }
+                    }
+
+                    Text {
+                        height: 20px;
+                        text: status_text;
+                        opacity: text_opacity ? 1.0 : 0.0;
+                        animate opacity { duration: 500ms; }
                     }
                 }
             }
@@ -224,13 +244,6 @@ export component AppWindow inherits Window {
                         status_text = "Analysis ended.";
                     }
                 }
-            }
-        }
-
-        HorizontalBox {
-            LineEdit {
-                read-only: true;
-                text: status_text;
             }
         }
     }
