@@ -10,6 +10,7 @@
 #if _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
+#include <set>
 #endif
 #include <commdlg.h>
 #include <future> // std::async
