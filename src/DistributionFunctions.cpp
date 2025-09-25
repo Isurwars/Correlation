@@ -205,7 +205,7 @@ void DistributionFunctions::calculateCoordinationNumber() {
 
   // 3. Assemble the final Histogram object.
   Histogram cn_histogram;
-  const size_t num_bins = max_cn + 1;
+  const size_t num_bins = max_cn + 2;
   cn_histogram.bin_label = "# neighbors";
 
   // The bins are the integer coordination numbers [0, 1, 2, ...].

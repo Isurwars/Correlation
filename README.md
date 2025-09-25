@@ -25,7 +25,8 @@ The software computes key correlation functions from atomic coordinate files and
 
 ## Key Features
 
-Comprehensive Analysis: Calculates a full suite of standard correlation functions:
+Comprehensive Analysis: Calculates a full suite of standard correlation
+functions:
 
 - Radial Distribution Function (J(r))
 - Pair Distribution Function (g(r))

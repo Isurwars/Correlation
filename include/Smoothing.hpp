@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
-#include <set>
 #include <stdexcept>
 #include <vector>
 
@@ -93,7 +92,8 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
   }
 
   const size_t kernel_radius =
-      std::min(n / 2, static_cast<size_t>(4.0 * sigma / dx));
+      std::max(static_cast<size_t>(1),
+               std::min(n / 2, static_cast<size_t>(4.0 * sigma)));
   const size_t kernel_size = 2 * kernel_radius + 1;
 
   const auto kernel = generateKernel(kernel_size, dx, sigma, type);
