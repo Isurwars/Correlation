@@ -40,15 +40,15 @@ void AppController::handleRunAnalysis() {
       full_path.parent_path().string() + "/" + full_path.stem().string();
   options.input_file = input_path_str;
   options.output_file_base = output_path_base;
-  options.r_max = ui_.get_r_max();
-  options.r_bin_width = ui_.get_r_bin_width();
-  options.q_max = ui_.get_q_max();
-  options.q_bin_width = ui_.get_q_bin_width();
-  options.angle_max = ui_.get_angle_max();
-  options.angle_bin_width = ui_.get_angle_bin_width();
-  options.bond_factor = ui_.get_bond_factor();
+  options.r_max = std::stof(ui_.get_r_max().data());
+  options.r_bin_width = std::stof(ui_.get_r_bin_width().data());
+  options.q_max = std::stof(ui_.get_q_max().data());
+  options.q_bin_width = std::stof(ui_.get_q_bin_width().data());
+  options.angle_max = std::stof(ui_.get_angle_max().data());
+  options.angle_bin_width = std::stof(ui_.get_angle_bin_width().data());
+  options.bond_factor = std::stof(ui_.get_bond_factor().data());
   options.smoothing = ui_.get_smoothing();
-  options.smoothing_sigma = ui_.get_smoothing_sigma();
+  options.smoothing_sigma = std::stof(ui_.get_smoothing_sigma().data());
   options.smoothing_kernel =
       static_cast<KernelType>(ui_.get_smoothing_kernel());
 

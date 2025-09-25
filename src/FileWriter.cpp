@@ -58,6 +58,60 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
   }
 }
 
+void FileWriter::writeCombinedHistogramToCSV(const std::string &filename,
+                                             const Histogram &hist) const {
+  if (hist.partials.empty() || hist.bins.empty()) {
+    return;
+  }
+
+  std::ofstream file(filename);
+  if (!file) {
+    throw std::runtime_error("Failed to open file for writing: " + filename);
+  }
+
+  // Get sorted keys for both raw and smoothed data
+  std::vector<std::string> raw_keys;
+  for (const auto &[key, val] : hist.partials) {
+    raw_keys.push_back(key);
+  }
+  std::sort(raw_keys.begin(), raw_keys.end());
+
+  std::vector<std::string> smoothed_keys;
+  for (const auto &[key, val] : hist.smoothed_partials) {
+    smoothed_keys.push_back(key);
+  }
+  std::sort(smoothed_keys.begin(), smoothed_keys.end());
+
+  // --- Write Header ---
+  file << hist.bin_label;
+  // Write headers for raw data
+  for (const auto &key : raw_keys) {
+    file << "," << key;
+  }
+  // Write headers for smoothed data
+  for (const auto &key : smoothed_keys) {
+    file << "," << key << "_smoothed";
+  }
+  file << '\n';
+
+  // --- Write Data Rows ---
+  const size_t num_rows = hist.bins.size();
+  for (size_t i = 0; i < num_rows; ++i) {
+    file << std::fixed << std::setprecision(5) << hist.bins[i];
+
+    // Write raw data
+    for (const auto &key : raw_keys) {
+      file << "," << hist.partials.at(key)[i];
+    }
+
+    // Write smoothed data
+    for (const auto &key : smoothed_keys) {
+      file << "," << hist.smoothed_partials.at(key)[i];
+    }
+    file << '\n';
+  }
+}
+
 void FileWriter::writeAllCSVs(const std::string &base_path,
                               bool write_smoothed) const {
   const std::map<std::string, std::string> file_map = {
@@ -69,18 +123,12 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
     try {
       const auto &hist = df_.getHistogram(name);
 
-      // Write the raw (non-smoothed) data
-      std::string filename = base_path + suffix;
-      writeHistogramToCSV(filename, hist, false);
-
-      // If requested, write the smoothed data to a separate file
       if (write_smoothed && !hist.smoothed_partials.empty()) {
-        std::string smoothed_suffix = suffix;
-        // Insert "_smoothed" before the file extension (e.g., _g.csv ->
-        // _g_smoothed.csv)
-        smoothed_suffix.insert(suffix.rfind('.'), "_smoothed");
-        std::string smoothed_filename = base_path + smoothed_suffix;
-        writeHistogramToCSV(smoothed_filename, hist, true);
+        std::string filename = base_path + suffix;
+        writeCombinedHistogramToCSV(filename, hist);
+      } else {
+        std::string filename = base_path + suffix;
+        writeHistogramToCSV(filename, hist, false);
       }
 
     } catch (const std::out_of_range &) {

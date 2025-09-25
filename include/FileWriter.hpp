@@ -52,5 +52,14 @@ private:
   void writeHistogramToCSV(const std::string &filename, const Histogram &hist,
                            bool use_smoothed_data) const;
 
+  /**
+   * @brief The core implementation for writing a single histogram
+   * and it's smoothed histograms to a single CSV file.
+   * @param filename The full path of the file to write.
+   * @param hist The Histogram data structure to write.
+   */
+  void writeCombinedHistogramToCSV(const std::string &filename,
+                                   const Histogram &hist) const;
+
   const DistributionFunctions &df_;
 };

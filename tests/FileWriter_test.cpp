@@ -114,8 +114,4 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g_smoothed.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J_smoothed.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G_smoothed.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD_smoothed.csv"));
 }

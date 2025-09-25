@@ -22,7 +22,7 @@ struct ProgramOptions {
   double q_bin_width = 0.02;
   double angle_max = 180.0;
   double angle_bin_width = 1.0;
-  double smoothing_sigma = 1.5;
+  double smoothing_sigma = 3.0;
   double bond_factor = 1.2;
   KernelType smoothing_kernel = KernelType::Gaussian;
 };

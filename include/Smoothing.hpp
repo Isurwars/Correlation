@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <numeric>
 #include <stdexcept>
 #include <vector>
@@ -91,12 +92,16 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
         "Input 'r' must be uniformly increasing for smoothing.");
   }
 
-  const size_t kernel_radius =
-      std::max(static_cast<size_t>(1),
-               std::min(n / 2, static_cast<size_t>(4.0 * sigma)));
+  const size_t max_kernel_radius = n / 2; // Prevent kernel larger than data
+  const double max_sigma = static_cast<float>(n) / 15;
+  size_t kernel_radius = static_cast<size_t>(4.0 * sigma / dx);
+  kernel_radius = std::min(kernel_radius, max_kernel_radius);
+
   const size_t kernel_size = 2 * kernel_radius + 1;
 
-  const auto kernel = generateKernel(kernel_size, dx, sigma, type);
+  const double scaled_sigma = std::min(sigma * dx, max_sigma);
+
+  const auto kernel = generateKernel(kernel_size, dx, scaled_sigma, type);
   std::vector<double> smoothed(n, 0.0);
 
   // Apply the convolution.

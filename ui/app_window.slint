@@ -16,15 +16,15 @@ export component AppWindow inherits Window {
     in-out property <bool> text_timer_running: true;
 
     // User-configurable options, now exposed to the UI
-    in-out property <float> r_max: 20.0;
-    in-out property <float> r_bin_width: 0.02;
-    in-out property <float> q_max: 20.0;
-    in-out property <float> q_bin_width: 0.02;
-    in-out property <float> angle_max: 180.0;
-    in-out property <float> angle_bin_width: 1.0;
-    in-out property <float> bond_factor: 1.2;
+    in-out property <string> r_max: "20.0";
+    in-out property <string> r_bin_width: "0.02";
+    in-out property <string> q_max: "20.0";
+    in-out property <string> q_bin_width: "0.02";
+    in-out property <string> angle_max: "180.0";
+    in-out property <string> angle_bin_width: "1.0";
+    in-out property <string> bond_factor: "1.2";
     in-out property <bool> smoothing: false;
-    in-out property <float> smoothing_sigma: 1.5;
+    in-out property <string> smoothing_sigma: "3.0";
     in-out property <int> smoothing_kernel: 0;
 
     width: 600px;

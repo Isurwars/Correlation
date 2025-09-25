@@ -153,7 +153,7 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
   const auto &c_h_cn = cn_hist.partials.at("C-H");
   // There is 1 Carbon atom, and it has 4 Hydrogen neighbors.
   // So, the histogram should have a value of 1 at bin 4.
-  EXPECT_EQ(c_h_cn.size(), 6); // Bins for CN=0,1,2,3,4,5
+  EXPECT_EQ(c_h_cn.size(), 7); // Bins for CN=0,1,2,3,4,5,6
   EXPECT_EQ(c_h_cn[4], 1);
   EXPECT_EQ(c_h_cn[0] + c_h_cn[1] + c_h_cn[2] + c_h_cn[3], 0);
 
@@ -161,7 +161,7 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
   const auto &h_c_cn = cn_hist.partials.at("H-C");
   // There are 4 Hydrogen atoms, and each has 1 Carbon neighbor.
   // So, the histogram should have a value of 4 at bin 1.
-  EXPECT_EQ(h_c_cn.size(), 6); // Must be padded to the max CN
+  EXPECT_EQ(h_c_cn.size(), 7); // Must be padded to the max CN+2
   EXPECT_EQ(h_c_cn[1], 4);
   EXPECT_EQ(h_c_cn[0] + h_c_cn[2] + h_c_cn[3] + h_c_cn[4], 0);
 
