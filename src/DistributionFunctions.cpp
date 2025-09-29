@@ -276,9 +276,10 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width,
   // Calculate total J(r)
   auto &total_J = J_r.partials["Total"];
   total_J.assign(num_bins, 0.0);
-  for (const auto &[key, partial] : J_r.partials) {
+  for (auto &[key, partial] : J_r.partials) {
     if (key != "Total") {
       for (size_t i = 0; i < num_bins; ++i) {
+        partial[i] *= r_bin_width;
         total_J[i] += partial[i];
       }
     }
@@ -286,8 +287,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width,
 
   // --- Normalization and Calculation of g(r) and G(r) ---
   const double total_rho = num_atoms / cell_.volume();
-  const double norm_factor =
-      4.0 * constants::pi * total_rho * r_bin_width * num_atoms;
+  const double norm_factor = 4.0 * constants::pi * total_rho * num_atoms;
   for (auto const &[key, J_partial] : J_r.partials) {
     g_r.partials[key].assign(num_bins, 0.0);
     G_r.partials[key].assign(num_bins, 0.0);

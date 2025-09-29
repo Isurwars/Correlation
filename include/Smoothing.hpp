@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
 #include <numeric>
 #include <stdexcept>
 #include <vector>
@@ -26,7 +25,8 @@ enum class KernelType { Gaussian, Bump, Triweight };
  *
  * @param r The independent variable values (x-axis).
  * @param y The dependent variable values (y-axis) to be smoothed.
- * @param sigma The bandwidth (standard deviation for Gaussian) of the kernel.
+ * @param sigma The bandwidth (standard deviation for Gaussian) of the kernel,
+ * in the same units as the 'r' bins (e.g., Å or degrees).
  * @param type The type of kernel to use for smoothing.
  * @return A vector containing the smoothed data.
  */
@@ -34,18 +34,22 @@ enum class KernelType { Gaussian, Bump, Triweight };
 inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
                                           KernelType type) {
   std::vector<double> kernel(size);
+  // Center of the discrete kernel in bin index units.
   const double center = static_cast<double>(size - 1) / 2.0;
 
   if (type == KernelType::Gaussian) {
+    // 1 / (sigma * sqrt(2*pi))
     const double a = 1.0 / (std::sqrt(2 * constants::pi) * sigma);
     const double b = -1.0 / (2.0 * sigma * sigma);
     for (size_t i = 0; i < size; ++i) {
+      // Calculate x in distance units (r units)
       const double x = (static_cast<double>(i) - center) * dx;
       kernel[i] = a * std::exp(b * x * x);
     }
   } else if (type == KernelType::Triweight) {
     constexpr double factor = 35.0 / 32.0;
     for (size_t i = 0; i < size; ++i) {
+      // Calculate u (distance normalized by sigma)
       const double u = ((static_cast<double>(i) - center) * dx) / sigma;
       if (std::abs(u) <= 1.0) {
         const double u2 = u * u;
@@ -56,6 +60,7 @@ inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
     }
   } else if (type == KernelType::Bump) {
     for (size_t i = 0; i < size; ++i) {
+      // Calculate u (distance normalized by sigma)
       const double u = ((static_cast<double>(i) - center) * dx) / sigma;
       if (std::abs(u) < 1.0) {
         const double u2 = u * u;
@@ -84,6 +89,9 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
   if (r.size() != y.size() || r.empty()) {
     return {}; // Return empty vector for invalid input
   }
+  if (sigma <= 0.0) {
+    throw std::invalid_argument("Smoothing sigma must be positive.");
+  }
 
   const size_t n = r.size();
   const double dx = (n > 1) ? (r[1] - r[0]) : 0;
@@ -92,16 +100,24 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
         "Input 'r' must be uniformly increasing for smoothing.");
   }
 
-  const size_t max_kernel_radius = n / 2; // Prevent kernel larger than data
-  const double max_sigma = static_cast<float>(n) / 15;
-  size_t kernel_radius = static_cast<size_t>(4.0 * sigma / dx);
-  kernel_radius = std::min(kernel_radius, max_kernel_radius);
+  // Calculate the kernel radius in bins by dividing the physical sigma by dx.
+  // We use 4.0 * sigma to cover approximately 99.99% of the Gaussian area.
+  size_t kernel_radius_bins = static_cast<size_t>(4.0 * sigma / dx);
+
+  // Clamp the radius to prevent the kernel from exceeding half the data size.
+  const size_t max_kernel_radius = n / 2;
+  size_t kernel_radius = std::min(kernel_radius_bins, max_kernel_radius);
+
+  // Ensure a minimum kernel size (3 bins: -1, 0, +1) if sigma is very small.
+  if (kernel_radius == 0) {
+    kernel_radius = 1;
+  }
 
   const size_t kernel_size = 2 * kernel_radius + 1;
 
-  const double scaled_sigma = std::min(sigma * dx, max_sigma);
-
-  const auto kernel = generateKernel(kernel_size, dx, scaled_sigma, type);
+  // Pass the original physical sigma (in distance units) to the kernel
+  // generator.
+  const auto kernel = generateKernel(kernel_size, dx, sigma, type);
   std::vector<double> smoothed(n, 0.0);
 
   // Apply the convolution.
@@ -111,7 +127,9 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
                                  static_cast<long long>(j) -
                                  static_cast<long long>(kernel_radius);
 
-      // Handle boundary conditions (points near the start/end of the data)
+      // Handle boundary conditions: clamp the index to [0, n-1].
+      // This ensures safe access and uses the boundary values for convolution
+      // with kernel points outside the data range.
       const long long clamped_idx = std::clamp<long long>(data_idx, 0, n - 1);
 
       smoothed[i] += y[clamped_idx] * kernel[j];
