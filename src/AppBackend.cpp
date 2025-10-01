@@ -47,10 +47,9 @@ void AppBackend::run_analysis(const ProgramOptions &options) {
 
     // --- Run calculations sequentially and report progress ---
     df_->calculateCoordinationNumber();
-    df_->calculateRDF(options.r_max, options.r_bin_width, options.normalize);
+    df_->calculateRDF(options.r_max, options.r_bin_width);
     df_->calculatePAD(options.angle_max, options.angle_bin_width);
-    df_->calculateSQ(options.q_max, options.q_bin_width, options.r_max,
-                     options.normalize);
+    df_->calculateSQ(options.q_max, options.q_bin_width, options.r_int_max);
     if (options.smoothing) {
       df_->smoothAll(options.smoothing_sigma, options.smoothing_kernel);
     }

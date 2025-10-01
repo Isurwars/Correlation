@@ -20,10 +20,11 @@ struct ProgramOptions {
   double r_bin_width = 0.02;
   double q_max = 20.0;
   double q_bin_width = 0.02;
+  double r_int_max = 10.0;
   double angle_max = 180.0;
   double angle_bin_width = 1.0;
-  double smoothing_sigma = 3.0;
   double bond_factor = 1.2;
+  double smoothing_sigma = 0.1;
   KernelType smoothing_kernel = KernelType::Gaussian;
 };
 

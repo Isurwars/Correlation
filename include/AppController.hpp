@@ -24,6 +24,10 @@ private:
   // Handle to the file dialog, moved here from main.cpp
   std::unique_ptr<pfd::open_file> current_file_dialog_;
 
+  // options helper functions
+  void handleOptionstoUI(AppWindow &ui);
+  ProgramOptions handleOptionsfromUI(AppWindow &ui);
+
   // Member functions for the UI callbacks
   void handleRunAnalysis();
   void handleBrowseFile();

@@ -60,14 +60,19 @@ public:
   //-------------------------------------------------------------------------//
 
   void calculateCoordinationNumber();
-
-  void calculateRDF(double r_max = 20.0, double bin_width = 0.05,
-                    bool normalize = false);
+  /**
+   * @brief Calculates the radial distribution function g(r)
+   * @param r_max Maximum radius to calculate up to
+   * @param r_bin_width Width of each bin in Angstroms
+   * @throws std::invalid_argument if parameters are invalid
+   * @throws std::logic_error if cell volume is invalid
+   */
+  void calculateRDF(double r_max = 20.0, double bin_width = 0.05);
 
   void calculatePAD(double theta_max = 180.0, double bin_width = 1.0);
 
   void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
-                   double r_integration_max = 8.0, bool normalize = false);
+                   double r_integration_max = 8.0);
 
   void calculateXRD(double lambda = 1.5406, double theta_min = 5.0,
                     double theta_max = 90.0, double bin_width = 1.0);

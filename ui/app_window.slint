@@ -8,7 +8,6 @@ export component AppWindow inherits Window {
 
     // Properties that C++ updates to change the UI
     in-out property <string> status_text: "Please load a structure file.";
-    in-out property <string> in_file_text: "";
     in-out property <float> progress: 0.0;
     in-out property <bool> analysis_running: false;
     in-out property <bool> timer_running: false;
@@ -16,16 +15,19 @@ export component AppWindow inherits Window {
     in-out property <bool> text_timer_running: true;
 
     // User-configurable options, now exposed to the UI
-    in-out property <string> r_max: "20.0";
-    in-out property <string> r_bin_width: "0.02";
-    in-out property <string> q_max: "20.0";
-    in-out property <string> q_bin_width: "0.02";
-    in-out property <string> angle_max: "180.0";
-    in-out property <string> angle_bin_width: "1.0";
-    in-out property <string> bond_factor: "1.2";
-    in-out property <bool> smoothing: false;
-    in-out property <string> smoothing_sigma: "3.0";
-    in-out property <int> smoothing_kernel: 0;
+    in-out property <string> in_file_text;
+    in-out property <bool> normalize;
+    in-out property <bool> smoothing;
+    in-out property <string> r_max;
+    in-out property <string> r_bin_width;
+    in-out property <string> q_max;
+    in-out property <string> q_bin_width;
+    in-out property <string> r_int_max;
+    in-out property <string> angle_max;
+    in-out property <string> angle_bin_width;
+    in-out property <string> bond_factor;
+    in-out property <string> smoothing_sigma;
+    in-out property <int> smoothing_kernel;
 
     width: 600px;
     height: 800px;
@@ -181,6 +183,20 @@ export component AppWindow inherits Window {
                                 text: q_bin_width;
                                 edited(s) => {
                                     q_bin_width = s.to-float();
+                                }
+                            }
+                        }
+
+                        VerticalBox {
+                            spacing: 5px;
+                            Text {
+                                text: "r Max to integrate (Å)";
+                            }
+
+                            LineEdit {
+                                text: r_int_max;
+                                edited(s) => {
+                                    r_int_max = s.to-float();
                                 }
                             }
                         }
