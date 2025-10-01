@@ -92,6 +92,15 @@ std::string DistributionFunctions::getPartialKey(int type1, int type2) const {
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
+std::string DistributionFunctions::getInversePartialKey(int type1,
+                                                        int type2) const {
+  const auto &elements = cell_.elements();
+  // Ensure consistent ordering for pairs (e.g., Si-O is same as O-Si)
+  if (type1 < type2)
+    std::swap(type1, type2);
+  return elements[type1].symbol + "-" + elements[type2].symbol;
+}
+
 void DistributionFunctions::calculateAshcroftWeights() {
   const auto &atoms = cell_.atoms();
   if (atoms.empty()) {
@@ -259,7 +268,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
   const size_t num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
   const double V = cell_.volume();
   const double dr = r_bin_width;
-  const double rho_0 = num_atoms / V; // Total number density
+  const double rho_0 = num_atoms / V;
 
   // Initialize histograms
   Histogram H_r, g_r, G_r, J_r; // H_r stores the raw counts H_ij(r)
@@ -299,7 +308,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
       }
       // Since StructureAnalyzer stores distances once per unique pair (i-j),
       // we must double the counts here to get the total pair count H_ij(r).
-      if (i != j) {
+      if (i == j) {
         for (size_t k = 0; k < num_bins; ++k) {
           partial_hist[k] *= 2.0;
         }
@@ -311,6 +320,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
       std::string key = getPartialKey(i, j);
+      std::string inversekey = getInversePartialKey(i, j);
 
       const std::string &sym_i = elements[i].symbol;
       const std::string &sym_j = elements[j].symbol;
@@ -318,17 +328,17 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
       const double Ni = element_counts.at(sym_i);
       const double Nj = element_counts.at(sym_j);
 
-      const auto &H_ij = H_r.partials.at(key); // Raw pair count H_ij(r)
+      const auto &H_ij = H_r.partials.at(key);
 
       g_r.partials[key].assign(num_bins, 0.0);
       G_r.partials[key].assign(num_bins, 0.0);
       J_r.partials[key].assign(num_bins, 0.0);
+      J_r.partials[inversekey].assign(num_bins, 0.0);
 
       // Normalization constant for g_ij(r): V / (4*pi*dr*N*N)
-      const double g_norm_constant =
-          (V) / (4.0 * constants::pi * dr * num_atoms * num_atoms);
+      const double g_norm_constant = (V) / (4.0 * constants::pi * dr * Ni * Nj);
       const double rho_j = Nj / V;
-      const double w_ij = ashcroft_weights_[key];
+
       for (size_t k = 0; k < num_bins; ++k) {
         const double r = g_r.bins[k];
         if (r < 1e-9)
@@ -342,10 +352,12 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
         // 3b. Calculate J_ij(r) (The RDF) = H_ij / (Ni * dr)
         // This is the number of j atoms around an i atom, per unit distance.
         J_r.partials[key][k] = H / (Ni * dr);
+        // This is the number of i atoms around an j atom, per unit distance.
+        J_r.partials[inversekey][k] = H / (Nj * dr);
 
         // 3c. Calculate G_ij(r) = 4*pi*rho_j*r*(g_ij(r)-1)
         G_r.partials[key][k] =
-            4.0 * constants::pi * rho_j * r * (g_r.partials[key][k] - w_ij);
+            4.0 * constants::pi * rho_j * r * (g_r.partials[key][k] - 1.0);
       }
     }
   }
@@ -359,8 +371,10 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
     if (key == "Total")
       continue;
 
+    double weight = ashcroft_weights_.at(key);
+
     for (size_t k = 0; k < num_bins; ++k) {
-      total_g[k] += g_partial[k];
+      total_g[k] += g_partial[k] * weight;
     }
   }
 
@@ -559,7 +573,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
         window = std::sin(constants::pi * x / 2.0);
       }
 
-      integrand_term[j] = r * ((g_r_partial[j] / weight) - 1.0) * window * dr;
+      integrand_term[j] = r * (g_r_partial[j] - 1.0) * window * dr;
     }
 
     // 5. Calculate S_ij(Q) for each Q bin

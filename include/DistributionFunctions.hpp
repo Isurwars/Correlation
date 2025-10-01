@@ -84,6 +84,7 @@ public:
 private:
   void ensureNeighborsComputed(double r_cut);
   std::string getPartialKey(int type1, int type2) const;
+  std::string getInversePartialKey(int type1, int type2) const;
   void calculateAshcroftWeights();
 
   const Cell &cell_;
