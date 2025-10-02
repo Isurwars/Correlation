@@ -150,13 +150,16 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
     throw std::runtime_error("Histogram '" + name +
                              "' not found for smoothing.");
   }
+  4
 
-  auto &hist = histograms_.at(name);
+      auto &hist = histograms_.at(name);
   hist.smoothed_partials.clear();
 
   for (const auto &[key, partial_values] : hist.partials) {
+    const double dx = hist.bins[1] - hist.bins[0];
+    const double min_sigma = std::max(dx, sigma);
     hist.smoothed_partials[key] =
-        KernelSmoothing(hist.bins, partial_values, sigma, kernel);
+        KernelSmoothing(hist.bins, partial_values, min_sigma, kernel);
   }
 }
 
@@ -524,7 +527,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
   // 2. Setup S(Q) Histogram
   Histogram s_q_hist;
   s_q_hist.bin_label = "Q";
-  const double q_min = 1.0;
+  const double q_min = 0.2;
   const size_t num_q_bins =
       static_cast<size_t>(std::floor((q_max - q_min) / q_bin_width));
 
@@ -562,7 +565,6 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
 
     auto &s_q_partial = s_q_hist.partials[key];
     s_q_partial.assign(num_q_bins, 0.0);
-
     // Precompute windowed integrand terms: r * (g(r) - 1) * Window(r) * dr
     std::vector<double> integrand_term(j_max);
     for (size_t j = 0; j < j_max; ++j) {
@@ -570,7 +572,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
       double window = 1.0;
       if (r > r_max * 0.8) {
         const double x = (r - 0.8 * r_max) / (0.2 * r_max);
-        window = std::sin(constants::pi * x / 2.0);
+        window = std::cos(constants::pi * x / 2.0);
       }
 
       integrand_term[j] = r * (g_r_partial[j] - 1.0) * window * dr;
