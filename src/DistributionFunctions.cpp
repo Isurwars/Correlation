@@ -150,9 +150,8 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
     throw std::runtime_error("Histogram '" + name +
                              "' not found for smoothing.");
   }
-  4
 
-      auto &hist = histograms_.at(name);
+  auto &hist = histograms_.at(name);
   hist.smoothed_partials.clear();
 
   for (const auto &[key, partial_values] : hist.partials) {

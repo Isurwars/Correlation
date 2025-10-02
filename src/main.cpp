@@ -5,6 +5,7 @@
 
 #if defined(_WIN32)
 #define NOMINMAX
+#define IDI_ICON1 101
 #include <Windows.h>
 #endif
 
@@ -14,6 +15,12 @@
 #include "app_window.h"
 
 int main() {
+
+#if defined(_WIN32)
+  // Load the icon from the application's resource file
+  HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
+#endif
+
   auto ui = AppWindow::create();
   AppBackend backend;
 

@@ -66,6 +66,7 @@ add_executable(correlation WIN32
   src/main.cpp
   src/AppBackend.cpp
   src/AppController.cpp
+  resource.rc
 )
 else()
 add_executable(correlation
@@ -145,3 +146,19 @@ gtest_discover_tests(correlation_tests TEST_DISCOVERY_TIMEOUT 300)
 install(TARGETS correlation
     RUNTIME DESTINATION bin
 )
+
+# -----------------------------------------------------------
+# Install setup for Linux Desktop Integration
+# -----------------------------------------------------------
+if (NOT WIN32)
+    # 1. Install the Icon (adjust path if you use a different icon directory)
+    install(FILES "${PROJECT_SOURCE_DIR}/Images/Logo.png"
+            DESTINATION share/icons/hicolor/scalable/apps
+            RENAME correlation.png)
+
+    # 2. Configure and Install the .desktop file
+    configure_file("${PROJECT_SOURCE_DIR}/correlation.desktop"
+                   "${PROJECT_BINARY_DIR}/correlation.desktop" COPYONLY)
+    install(FILES "${PROJECT_BINARY_DIR}/correlation.desktop"
+            DESTINATION share/applications)
+endif()
