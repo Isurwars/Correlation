@@ -89,6 +89,7 @@ void AppController::handleRunAnalysis() {
   ProgramOptions opt = handleOptionsfromUI(ui_);
   // run analysis
   backend_.run_analysis(opt);
+  ui_.set_analysis_status_text("Analysis ended.");
 }
 
 void AppController::handleBrowseFile() {
@@ -119,10 +120,10 @@ void AppController::handleCheckFileDialogStatus() {
     if (!selection.empty()) {
       ui_.set_in_file_text(slint::SharedString(selection[0]));
       backend_.load_file(selection[0]);
-      ui_.set_status_text("File: " + slint::SharedString(selection[0]) +
-                          " loaded successfully.");
+      ui_.set_file_status_text("File: " + slint::SharedString(selection[0]) +
+                               " loaded successfully.");
     } else {
-      ui_.set_status_text("File selection cancelled.");
+      ui_.set_file_status_text("File selection cancelled.");
     }
     ui_.set_timer_running(false);
     current_file_dialog_.reset();

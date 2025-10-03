@@ -1,13 +1,17 @@
-import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, ProgressIndicator, ScrollView, GroupBox, ComboBox } from "std-widgets.slint";
+import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, GroupBox, ComboBox } from "std-widgets.slint";
+import { ToolTipArea } from "tooltip.slint";
+
 
 export component AppWindow inherits Window {
+
     // Callbacks that the UI invokes on the C++ side
     callback run_analysis();
     callback browse_file();
     callback check_file_dialog_status();
 
     // Properties that C++ updates to change the UI
-    in-out property <string> status_text: "Please load a structure file.";
+    in-out property <string> file_status_text: "Please load a structure file.";
+    in-out property <string> analysis_status_text: "";
     in-out property <float> progress: 0.0;
     in-out property <bool> analysis_running: false;
     in-out property <bool> timer_running: false;
@@ -28,7 +32,6 @@ export component AppWindow inherits Window {
     in-out property <string> bond_factor;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
-
     width: 600px;
     height: 800px;
     title: "Correlation Analysis Tool";
@@ -57,22 +60,28 @@ export component AppWindow inherits Window {
         spacing: 50px;
 
         VerticalBox {
-            GroupBox {
-                title: "1. Input File";
-                VerticalBox {
-                    Button {
-                        text: "Load Structure File";
-                        enabled: !analysis_running;
-                        clicked => {
-                            browse_file();
+            ToolTipArea {
+                text: "Load a structure file";
+                text_width: 120px;
+                GroupBox {
+                    title: "1. Input File";
+                    width: parent.width;
+                    height: parent.height;
+                    VerticalBox {
+                        Button {
+                            text: "Load a structure file";
+                            enabled: !analysis_running;
+                            clicked => {
+                                browse_file();
+                            }
                         }
-                    }
 
-                    Text {
-                        height: 20px;
-                        text: status_text;
-                        opacity: text_opacity ? 1.0 : 0.0;
-                        animate opacity { duration: 500ms; }
+                        Text {
+                            height: 20px;
+                            text: file_status_text;
+                            opacity: text_opacity ? 1.0 : 0.0;
+                            animate opacity { duration: 500ms; }
+                        }
                     }
                 }
             }
@@ -255,9 +264,9 @@ export component AppWindow inherits Window {
                     text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
                     enabled: !analysis_running;
                     clicked => {
-                        status_text = "Running Analysis...";
+                        analysis_status_text = "Running Analysis...";
                         run_analysis();
-                        status_text = "Analysis ended.";
+                        analysis_status_text = "Analysis ended.";
                     }
                 }
             }
