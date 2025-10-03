@@ -1,10 +1,12 @@
 import { Palette } from "std-widgets.slint";
 
 export component ToolTip inherits Window {
-    in property <string> text;
+    in property <string> text <=> text_element.text;
     in property <bool> user_is_hovering;
-    in property <length> text_width;
 
+    always-on-top: true;
+    padding: 5px;
+    z: 100;
     Rectangle {
         visible: user_is_hovering;
         opacity: user_is_hovering ? 1.0 : 0.0;
@@ -14,32 +16,17 @@ export component ToolTip inherits Window {
         }
         background: Palette.accent-foreground;
         border-radius: 3px;
-        height: 30px;
-        width: text_width + 10px;
+        border-width: 1px;
+        border-color: Palette.accent-background;
 
-        Text {
-            text: text;
+        text_element := Text {
+            width: parent.width - 10px;
+            height: parent.height - 10px;
             color: Palette.accent-background;
-            width: text_width;
             font-size: root.default-font-size * 0.9;
-            horizontal-alignment: center;
+            horizontal-alignment: left;
             vertical-alignment: top;
             wrap: word-wrap;
         }
-    }
-}
-
-export component ToolTipArea inherits TouchArea {
-    preferred-height: 100%;
-    preferred-width: 100%;
-    in property <string> text;
-    in property <length> text_width;
-    ToolTip {
-        text: root.text;
-        user_is_hovering: root.has-hover;
-        text_width: root.text_width;
-        x: root.mouse-x + 30px;
-        y: root.mouse-y + 30px;
-        z: 100;
     }
 }

@@ -1,5 +1,6 @@
 import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, GroupBox, ComboBox } from "std-widgets.slint";
-import { ToolTipArea } from "tooltip.slint";
+import { ToolTip } from "tooltip.slint";
+
 
 
 export component AppWindow inherits Window {
@@ -60,9 +61,8 @@ export component AppWindow inherits Window {
         spacing: 50px;
 
         VerticalBox {
-            ToolTipArea {
-                text: "Load a structure file";
-                text_width: 120px;
+            file_area := TouchArea {
+
                 GroupBox {
                     title: "1. Input File";
                     width: parent.width;
@@ -92,44 +92,50 @@ export component AppWindow inherits Window {
                     spacing: 10px;
                     HorizontalBox {
                         spacing: 10px;
-                        VerticalBox {
-                            spacing: 5px;
-                            Text {
-                                text: "RDF Max r (Å)";
-                            }
+                        r_max_area := TouchArea {
+                            VerticalBox {
+                                spacing: 5px;
+                                Text {
+                                    text: "RDF Max r (Å)";
+                                }
 
-                            LineEdit {
-                                text: r_max;
-                                edited(s) => {
-                                    r_max = s.to-float();
+                                LineEdit {
+                                    text: r_max;
+                                    edited(s) => {
+                                        r_max = s.to-float();
+                                    }
                                 }
                             }
                         }
 
-                        VerticalBox {
-                            spacing: 5px;
-                            Text {
-                                text: "RDF Bin Width (Å)";
-                            }
+                        r_bin_area := TouchArea {
+                            VerticalBox {
+                                spacing: 5px;
+                                Text {
+                                    text: "RDF Bin Width (Å)";
+                                }
 
-                            LineEdit {
-                                text: r_bin_width;
-                                edited(s) => {
-                                    r_bin_width = s.to-float();
+                                LineEdit {
+                                    text: r_bin_width;
+                                    edited(s) => {
+                                        r_bin_width = s.to-float();
+                                    }
                                 }
                             }
                         }
 
-                        VerticalBox {
-                            spacing: 5px;
-                            Text {
-                                text: "Bond Parameter";
-                            }
+                        bond_area := TouchArea {
+                            VerticalBox {
+                                spacing: 5px;
+                                Text {
+                                    text: "Bond Parameter";
+                                }
 
-                            LineEdit {
-                                text: bond_factor;
-                                edited(s) => {
-                                    bond_factor = s.to-float();
+                                LineEdit {
+                                    text: bond_factor;
+                                    edited(s) => {
+                                        bond_factor = s.to-float();
+                                    }
                                 }
                             }
                         }
@@ -271,5 +277,41 @@ export component AppWindow inherits Window {
                 }
             }
         }
+    }
+
+    file_tip := ToolTip {
+        x: file_area.mouse_x + 30px;
+        y: file_area.mouse_y + 30px;
+        text: "Load a structure file";
+        user_is_hovering: file_area.has-hover;
+        width: 125px;
+        height: 25px;
+    }
+
+    r_max_tip := ToolTip {
+        x: r_max_area.mouse-x + 45px;
+        y: r_max_area.mouse_y + 262px;
+        text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)).\nThe recommended max radius is 20 Å.";
+        user_is_hovering: r_max_area.has-hover;
+        width: 230px;
+        height: 60px;
+    }
+
+    r_bin_tip := ToolTip {
+        x: r_bin_area.mouse-x + 230px;
+        y: r_bin_area.mouse_y + 262px;
+        text: "Bin width used to calculate the histograms for the Radial Distribution \nFunctions (g(r), J(r), G(r)).\nThe recommended bin is 0.02 Å.";
+        user_is_hovering: r_bin_area.has-hover;
+        width: 230px;
+        height: 75px;
+    }
+
+    bond_tip := ToolTip {
+        x: bond_area.mouse-x + 160px;
+        y: bond_area.mouse_y + 262px;
+        text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows:\nb = (max_bond_distance)/\n       (sum_of_covalent_radii).\nThe default bond parameter is 1.2.";
+        user_is_hovering: bond_area.has-hover;
+        width: 225px;
+        height: 105px;
     }
 }
