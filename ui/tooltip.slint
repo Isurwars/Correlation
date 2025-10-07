@@ -5,8 +5,8 @@ export component ToolTip inherits Window {
     in property <bool> user_is_hovering;
 
     always-on-top: true;
-    padding: 5px;
     z: 100;
+    visible: user_is_hovering;
     Rectangle {
         visible: user_is_hovering;
         opacity: user_is_hovering ? 1.0 : 0.0;
