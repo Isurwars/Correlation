@@ -34,6 +34,16 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
 //--------------------------------- Helpers ---------------------------------//
 //---------------------------------------------------------------------------//
 
+// Safe conversion helper
+float safe_stof(const slint::SharedString &s, float default_value) {
+  try {
+    return std::stof(s.data());
+  } catch (const std::exception &e) {
+    // Optionally, log the error or update a UI status message
+    return default_value;
+  }
+}
+
 void AppController::handleOptionstoUI(AppWindow &ui) {
   ProgramOptions opt;
   ui.set_in_file_text(slint::SharedString(opt.input_file));
@@ -66,15 +76,17 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.output_file_base = output_path_base;
   opt.normalize = ui_.get_normalize();
   opt.smoothing = ui_.get_smoothing();
-  opt.r_max = std::stof(ui_.get_r_max().data());
-  opt.r_bin_width = std::stof(ui_.get_r_bin_width().data());
-  opt.q_max = std::stof(ui_.get_q_max().data());
-  opt.q_bin_width = std::stof(ui_.get_q_bin_width().data());
-  opt.r_int_max = std::stof(ui_.get_r_int_max().data());
-  opt.angle_max = std::stof(ui_.get_angle_max().data());
-  opt.angle_bin_width = std::stof(ui_.get_angle_bin_width().data());
-  opt.bond_factor = std::stof(ui_.get_bond_factor().data());
-  opt.smoothing_sigma = std::stof(ui_.get_smoothing_sigma().data());
+  opt.r_max = safe_stof(ui_.get_r_max(), opt.r_max);
+  opt.r_bin_width = safe_stof(ui_.get_r_bin_width(), opt.r_bin_width);
+  opt.q_max = safe_stof(ui_.get_q_max(), opt.q_max);
+  opt.q_bin_width = safe_stof(ui_.get_q_bin_width(), opt.q_bin_width);
+  opt.r_int_max = safe_stof(ui_.get_r_int_max(), opt.r_int_max);
+  opt.angle_max = safe_stof(ui_.get_angle_max(), opt.angle_max);
+  opt.angle_bin_width =
+      safe_stof(ui_.get_angle_bin_width(), opt.angle_bin_width);
+  opt.bond_factor = safe_stof(ui_.get_bond_factor(), opt.bond_factor);
+  opt.smoothing_sigma =
+      safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
 
   return opt;
