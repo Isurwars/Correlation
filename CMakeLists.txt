@@ -89,7 +89,7 @@ target_include_directories(correlation PRIVATE
 )
 
 slint_target_sources(correlation
-  ui/app_window.slint
+  ui/AppWindow.slint
 )
 
 if (WIN32)

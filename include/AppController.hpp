@@ -8,8 +8,8 @@
 #include <memory>
 
 #include "AppBackend.hpp"
+#include "AppWindow.h"
 #include "PortableFileDialogs.hpp"
-#include "app_window.h"
 
 class AppController {
 public:

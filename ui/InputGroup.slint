@@ -1,0 +1,42 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2025 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { VerticalBox, LineEdit } from "std-widgets.slint";
+import { ToolTip } from "ToolTip.slint";
+
+export component InputGroup inherits TouchArea {
+    // Input properties
+    in property <string> label_text;
+    in-out property <string> value_text;
+    in property <string> unit_text: "";
+    in property <string> tooltip_text;
+    in property <length> window_x;
+    in property <length> window_y;
+
+    // Internal state for the tooltip
+    width: 100%;
+    VerticalBox {
+        Text {
+            text: label_text + (root.unit_text != "" ? " (" + root.unit_text + ")" : "");
+        }
+
+        LineEdit {
+            text: value_text;
+            edited(s) => {
+                // Assuming the original logic of auto-conversion to float in C++ is desired
+                // In a true implementation, conversion would happen in C++ after button click.
+                value_text = s;
+            }
+        }
+    }
+
+    // Embed the tooltip logic directly
+    ToolTip {
+        x: window_x + 20px;
+        y: window_y + 20px;
+        text: tooltip_text;
+        user_is_hovering: root.has-hover;
+    }
+}

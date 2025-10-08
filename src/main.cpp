@@ -12,7 +12,7 @@
 #include "../include/AppBackend.hpp"
 #include "../include/AppController.hpp"
 
-#include "app_window.h"
+#include "AppWindow.h"
 
 int main() {
 
