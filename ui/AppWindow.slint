@@ -1,4 +1,5 @@
 import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, GroupBox, ComboBox } from "std-widgets.slint";
+import {InputGroup} from "InputGroup.slint";
 import { ToolTip } from "ToolTip.slint";
 
 
@@ -93,128 +94,56 @@ export component AppWindow inherits Window {
                     padding: 0px;
                     spacing: 0px;
                     HorizontalBox {
-                        r_max_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "RDF Max r (Å)";
-                                }
-
-                                LineEdit {
-                                    text: r_max;
-                                    edited(s) => {
-                                        r_max = s.to-float();
-                                    }
-                                }
-                            }
+                        r_max_area := InputGroup {
+                            label_text: "RDF Max r";
+                            unit_text: "Å";
+                            value_text: r_max;
                         }
 
-                        r_bin_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "RDF Bin Width (Å)";
-                                }
-
-                                LineEdit {
-                                    text: r_bin_width;
-                                    edited(s) => {
-                                        r_bin_width = s.to-float();
-                                    }
-                                }
-                            }
+                        r_bin_area := InputGroup {
+                            label_text: "RDF Bin Width";
+                            unit_text: "Å";
+                            value_text: r_bin_width;
                         }
 
-                        bond_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "Bond Parameter";
-                                }
-
-                                LineEdit {
-                                    text: bond_factor;
-                                    edited(s) => {
-                                        bond_factor = s.to-float();
-                                    }
-                                }
-                            }
+                        bond_area := InputGroup {
+                            label_text: "Bond Parameter";
+                            value_text: bond_factor;
                         }
                     }
 
                     HorizontalBox {
-                        theta_max_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "PAD Max Angle (°)";
-                                }
-
-                                LineEdit {
-                                    text: angle_max;
-                                    edited(s) => {
-                                        angle_max = s.to-float();
-                                    }
-                                }
-                            }
+                        theta_max_area := InputGroup {
+                            label_text: "PAD Max Angle";
+                            unit_text: "°";
+                            value_text: angle_max;
                         }
 
-                        theta_bin_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "PAD Bin Width (°)";
-                                }
-
-                                LineEdit {
-                                    text: angle_bin_width;
-                                    edited(s) => {
-                                        angle_bin_width = s.to-float();
-                                    }
-                                }
-                            }
+                        theta_bin_area := InputGroup {
+                            label_text: "PAD Bin Width";
+                            unit_text: "°";
+                            value_text: angle_bin_width;
                         }
                     }
 
                     HorizontalBox {
-                        s_max_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "S(Q) Max Q (Å⁻¹)";
-                                }
-
-                                LineEdit {
-                                    text: q_max;
-                                    edited(s) => {
-                                        q_max = s.to-float();
-                                    }
-                                }
-                            }
+                        s_max_area := InputGroup {
+                            label_text: "Max Q";
+                            unit_text: "Å⁻¹";
+                            value_text: q_max;
                         }
 
-                        s_bin_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "S(Q) Bin Width (Å⁻¹)";
-                                }
+                        s_bin_area := InputGroup {
 
-                                LineEdit {
-                                    text: q_bin_width;
-                                    edited(s) => {
-                                        q_bin_width = s.to-float();
-                                    }
-                                }
-                            }
+                            label_text: "S(Q) Bin Width";
+                            unit_text: "Å⁻¹";
+                            value_text: q_bin_width;
                         }
 
-                        r_int_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "Max r for the FFT (Å)";
-                                }
-
-                                LineEdit {
-                                    text: r_int_max;
-                                    edited(s) => {
-                                        r_int_max = s.to-float();
-                                    }
-                                }
-                            }
+                        r_int_area := InputGroup {
+                            label_text: "Max r for the FT";
+                            unit_text: "Å";
+                            value_text: r_int_max;
                         }
                     }
 
@@ -231,20 +160,10 @@ export component AppWindow inherits Window {
                             }
                         }
 
-                        sigma_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "Smoothing Sigma";
-                                }
-
-                                LineEdit {
-                                    enabled: smoothing;
-                                    text: smoothing_sigma;
-                                    edited(s) => {
-                                        smoothing_sigma = s.to-float();
-                                    }
-                                }
-                            }
+                        sigma_area := InputGroup {
+                            label_text: "Smoothing Sigma";
+                            enabled_input: smoothing;
+                            value_text: smoothing_sigma;
                         }
 
                         kernel_area := TouchArea {
