@@ -123,13 +123,8 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
     try {
       const auto &hist = df_.getHistogram(name);
 
-      if (write_smoothed && !hist.smoothed_partials.empty()) {
-        std::string filename = base_path + suffix;
-        writeCombinedHistogramToCSV(filename, hist);
-      } else {
-        std::string filename = base_path + suffix;
-        writeHistogramToCSV(filename, hist, false);
-      }
+      std::string filename = base_path + suffix;
+      writeCombinedHistogramToCSV(filename, hist);
 
     } catch (const std::out_of_range &) {
       // This is not an error; it just means the histogram wasn't calculated.

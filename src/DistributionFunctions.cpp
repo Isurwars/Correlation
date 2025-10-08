@@ -526,9 +526,8 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
   // 2. Setup S(Q) Histogram
   Histogram s_q_hist;
   s_q_hist.bin_label = "Q";
-  const double q_min = 0.2;
   const size_t num_q_bins =
-      static_cast<size_t>(std::floor((q_max - q_min) / q_bin_width));
+      static_cast<size_t>(std::floor(q_max / q_bin_width));
 
   if (num_q_bins == 0) {
     throw std::invalid_argument(
@@ -537,7 +536,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
 
   s_q_hist.bins.resize(num_q_bins);
   for (size_t i = 0; i < num_q_bins; ++i) {
-    s_q_hist.bins[i] = q_min + (i + 0.5) * q_bin_width;
+    s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
   }
 
   // 3. Find integration limit in r-bins
