@@ -1,6 +1,7 @@
 import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, GroupBox, ComboBox } from "std-widgets.slint";
 import {InputGroup} from "InputGroup.slint";
 import { ToolTip } from "ToolTip.slint";
+import { Theme } from "Theme.slint";
 
 
 
@@ -34,12 +35,17 @@ export component AppWindow inherits Window {
     in-out property <string> bond_factor;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
+
+    // Theme
     width: 600px;
     height: 800px;
-    title: "Correlation Analysis Tool";
+    background: Theme.window-background;
+    default-font-size: Theme.font-size-regular;
+    default-font-family: Theme.font-family;
+    default-font-weight: Theme.font-weight-regular;
     property <image> logo-icon: @image-url("../Images/Logo.png");
     icon: logo-icon;
-    default-font-size: 12px;
+    title: "Correlation Analysis Tool";
 
     timer := Timer {
         interval: 200ms;
@@ -219,7 +225,7 @@ export component AppWindow inherits Window {
         y: window_area.mouse_y + 20px;
         text: "Load a structure file";
         user_is_hovering: file_area.has-hover;
-        width: 125px;
+        width: 135px;
         height: 25px;
     }
 
@@ -228,8 +234,8 @@ export component AppWindow inherits Window {
         y: window_area.mouse_y + 20px;
         text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)).\nThe recommended max radius is 20 Å.";
         user_is_hovering: r_max_area.has-hover;
-        width: 230px;
-        height: 60px;
+        width: 260px;
+        height: 55px;
     }
 
     r_bin_tip := ToolTip {
@@ -237,17 +243,17 @@ export component AppWindow inherits Window {
         y: window_area.mouse_y + 20px;
         text: "Bin width used to calculate the histograms for the Radial Distribution \nFunctions (g(r), J(r), G(r)).\nThe recommended bin is 0.02 Å.";
         user_is_hovering: r_bin_area.has-hover;
-        width: 230px;
-        height: 75px;
+        width: 250px;
+        height: 70px;
     }
 
     bond_tip := ToolTip {
         x: window_area.mouse_x - 235px;
         y: window_area.mouse_y + 20px;
-        text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows:\nb = (max_bond_distance)/\n       (sum_of_covalent_radii).\nThe default bond parameter is 1.2.";
+        text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows:\nb = (max_bond_distance)/\n    (sum_of_covalent_radii).\nThe default bond parameter is 1.2.";
         user_is_hovering: bond_area.has-hover;
         width: 225px;
-        height: 105px;
+        height: 100px;
     }
 
     theta_max_tip := ToolTip {
@@ -256,7 +262,7 @@ export component AppWindow inherits Window {
         text: "Maximum angle to calculate the Plane-Angle Distribution (F(θ)).\nThe recommended max angle is 180°.";
         user_is_hovering: theta_max_area.has-hover;
         width: 230px;
-        height: 60px;
+        height: 55px;
     }
 
     theta_bin_tip := ToolTip {
@@ -265,7 +271,7 @@ export component AppWindow inherits Window {
         text: "Bin width used to calculate the histograms for the Plane-Angle Distribution.\nThe recommended bin is 1.0°.";
         user_is_hovering: theta_bin_area.has-hover;
         width: 180px;
-        height: 75px;
+        height: 70px;
     }
 
     s_max_tip := ToolTip {
@@ -273,8 +279,8 @@ export component AppWindow inherits Window {
         y: window_area.mouse_y + 20px;
         text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)).\nThe recommended max scattering vector is 20.0 Å⁻¹";
         user_is_hovering: s_max_area.has-hover;
-        width: 215px;
-        height: 75px;
+        width: 245px;
+        height: 70px;
     }
 
     s_bin_tip := ToolTip {
@@ -282,8 +288,8 @@ export component AppWindow inherits Window {
         y: window_area.mouse_y + 20px;
         text: "Bin width used to calculate the histograms for the Structure Factor.\nThe recommended bin is 0.02 Å⁻¹.";
         user_is_hovering: s_bin_area.has-hover;
-        width: 165px;
-        height: 90px;
+        width: 225px;
+        height: 55px;
     }
 
     r_int_tip := ToolTip {
@@ -291,8 +297,8 @@ export component AppWindow inherits Window {
         y: window_area.mouse_y + 20px;
         text: "Maximum radius for the Fourier Transform of the g(r) used to\ncalculate the Structure Factor.\nThe recommended max radius is 10.0 Å";
         user_is_hovering: r_int_area.has-hover;
-        width: 205px;
-        height: 90px;
+        width: 225px;
+        height: 70px;
     }
 
     smooth_tip := ToolTip {
@@ -301,7 +307,7 @@ export component AppWindow inherits Window {
         text: "Enable the smoothing of the\ndistribution functions.";
         user_is_hovering: smooth_area.has-hover;
         width: 175px;
-        height: 45px;
+        height: 40px;
     }
 
     sigma_tip := ToolTip {
@@ -310,15 +316,15 @@ export component AppWindow inherits Window {
         text: "Sigma to be used for the smoothing\nof the distribution functions.\nThe recommended  sigma is 0.01.";
         user_is_hovering: sigma_area.has-hover;
         width: 220px;
-        height: 60px;
+        height: 55px;
     }
 
     kernel_tip := ToolTip {
-        x: window_area.mouse_x - 250px;
+        x: window_area.mouse_x - 270px;
         y: window_area.mouse_y + 20px;
         text: "The kernel used by the kernel smoother.\nThe recommended kernel is the Gaussian kernel.";
         user_is_hovering: kernel_area.has-hover;
-        width: 240px;
-        height: 60px;
+        width: 260px;
+        height: 55px;
     }
 }
