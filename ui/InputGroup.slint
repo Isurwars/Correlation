@@ -3,26 +3,44 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-import { VerticalBox, LineEdit } from "std-widgets.slint";
+import { LineEdit } from "std-widgets.slint";
+import { Theme } from "Theme.slint";
+
 
 export component InputGroup inherits TouchArea {
-    // Input properties
-    in property <string> label_text;
-    in-out property <string> value_text;
-    in property <string> unit_text: "";
-    in property <bool> enabled_input;
+    in-out property <string> value_text <=> edit.text;
 
-    VerticalBox {
-        Text {
-            text: label_text + (root.unit_text != "" ? " (" + root.unit_text + ")" : "");
+    in property <string> label_text;
+    in property <string> unit_text: "";
+    in property <bool> enabled_input: true;
+
+    property <bool> is_focused: false;
+    property <bool> is_label_floating: is_focused || !value_text.is-empty;
+
+    Rectangle {
+        height: 1.5 * Theme.size-small;
+
+        edit := LineEdit {
+            x: Theme.spacing-medium;
+            y: Theme.spacing-medium;
+            width: parent.width - 2 * Theme.spacing-medium;
+            height: Theme.size-small;
+            enabled: enabled_input;
+
+            changed has-focus => {
+                is_focused = self.has-focus;
+            }
         }
 
-        LineEdit {
-            enabled: enabled_input;
-            text: value_text;
-            edited(s) => {
-                value_text = s;
-            }
+        Text {
+            text: label_text + (unit_text != "" ? " (" + unit_text + ")" : "");
+            color: is_label_floating ? Theme.foreground-pressed : Theme.foreground;
+            font-size: is_label_floating ? Theme.font-size-regular : Theme.font-size-medium;
+            x: Theme.spacing-medium;
+            y: is_label_floating ? -Theme.spacing-regular : Theme.spacing-medium;
+            animate y { duration: Theme.duration-regular; }
+            animate font-size { duration: Theme.duration-regular; }
+            animate color { duration: Theme.duration-regular; }
         }
     }
 }

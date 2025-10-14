@@ -94,97 +94,93 @@ export component AppWindow inherits Window {
                 }
             }
 
-            GroupBox {
-                title: "2. Analysis Options";
-                VerticalBox {
-                    padding: 0px;
-                    spacing: 0px;
-                    HorizontalBox {
-                        r_max_area := InputGroup {
-                            label_text: "RDF Max r";
-                            unit_text: "Å";
-                            value_text: r_max;
-                        }
-
-                        r_bin_area := InputGroup {
-                            label_text: "RDF Bin Width";
-                            unit_text: "Å";
-                            value_text: r_bin_width;
-                        }
-
-                        bond_area := InputGroup {
-                            label_text: "Bond Parameter";
-                            value_text: bond_factor;
-                        }
+            GridLayout {
+                padding: 10px;
+                spacing: 10px;
+                Row {
+                    r_max_area := InputGroup {
+                        label_text: "RDF Max r";
+                        unit_text: "Å";
+                        value_text <=> r_max;
                     }
 
-                    HorizontalBox {
-                        theta_max_area := InputGroup {
-                            label_text: "PAD Max Angle";
-                            unit_text: "°";
-                            value_text: angle_max;
-                        }
-
-                        theta_bin_area := InputGroup {
-                            label_text: "PAD Bin Width";
-                            unit_text: "°";
-                            value_text: angle_bin_width;
-                        }
+                    r_bin_area := InputGroup {
+                        label_text: "RDF Bin Width";
+                        unit_text: "Å";
+                        value_text <=> r_bin_width;
                     }
 
-                    HorizontalBox {
-                        s_max_area := InputGroup {
-                            label_text: "Max Q";
-                            unit_text: "Å⁻¹";
-                            value_text: q_max;
-                        }
+                    bond_area := InputGroup {
+                        label_text: "Bond Parameter";
+                        value_text <=> bond_factor;
+                    }
+                }
 
-                        s_bin_area := InputGroup {
-
-                            label_text: "S(Q) Bin Width";
-                            unit_text: "Å⁻¹";
-                            value_text: q_bin_width;
-                        }
-
-                        r_int_area := InputGroup {
-                            label_text: "Max r for the FT";
-                            unit_text: "Å";
-                            value_text: r_int_max;
-                        }
+                Row {
+                    theta_max_area := InputGroup {
+                        label_text: "PAD Max Angle";
+                        unit_text: "°";
+                        value_text <=> angle_max;
                     }
 
-                    HorizontalBox {
-                        smooth_area := TouchArea {
-                            VerticalBox {
-                                CheckBox {
-                                    text: "Enable Smoothing";
-                                    checked: smoothing;
-                                    toggled => {
-                                        smoothing = !smoothing;
-                                    }
+                    theta_bin_area := InputGroup {
+                        label_text: "PAD Bin Width";
+                        unit_text: "°";
+                        value_text <=> angle_bin_width;
+                    }
+                }
+
+                Row {
+                    s_max_area := InputGroup {
+                        label_text: "Max Q";
+                        unit_text: "Å⁻¹";
+                        value_text <=> q_max;
+                    }
+
+                    s_bin_area := InputGroup {
+                        label_text: "S(Q) Bin Width";
+                        unit_text: "Å⁻¹";
+                        value_text: q_bin_width;
+                    }
+
+                    r_int_area := InputGroup {
+                        label_text: "Max r for the FT";
+                        unit_text: "Å";
+                        value_text: r_int_max;
+                    }
+                }
+
+                Row {
+                    smooth_area := TouchArea {
+                        VerticalBox {
+                            CheckBox {
+                                text: "Enable Smoothing";
+                                checked: smoothing;
+                                toggled => {
+                                    smoothing = !smoothing;
                                 }
                             }
                         }
+                    }
 
-                        sigma_area := InputGroup {
-                            label_text: "Smoothing Sigma";
-                            enabled_input: smoothing;
-                            value_text: smoothing_sigma;
-                        }
+                    sigma_area := InputGroup {
+                        label_text: "Smoothing Sigma";
+                        enabled_input: smoothing;
+                        value_text <=> smoothing_sigma;
+                    }
 
-                        kernel_area := TouchArea {
-                            VerticalBox {
-                                Text {
-                                    text: "Smoothing Kernel";
-                                }
+                    kernel_area := TouchArea {
+                        VerticalBox {
+                            Text {
+                                text: "Smoothing Kernel";
+                            }
 
-                                ComboBox {
-                                    enabled: smoothing;
-                                    model: ["Gaussian", "Bump", "Triweight"];
-                                    current-index: smoothing_kernel;
-                                    selected(i) => {
-                                        smoothing_kernel = i.to-float();
-                                    }
+                            ComboBox {
+                                enabled: smoothing;
+                                model: ["Gaussian", "Bump", "Triweight"];
+                                current-index: smoothing_kernel;
+                                selected(i) => {
+                                    smoothing_kernel = i.to-float();
                                 }
                             }
                         }
