@@ -37,8 +37,8 @@ export component AppWindow inherits Window {
     in-out property <int> smoothing_kernel;
 
     // Theme
-    width: 600px;
-    height: 800px;
+    width: 550px;
+    height: 600px;
     background: Theme.window-background;
     default-font-size: Theme.font-size-regular;
     default-font-family: Theme.font-family;
@@ -96,7 +96,7 @@ export component AppWindow inherits Window {
 
             GridLayout {
                 padding: 10px;
-                spacing: 10px;
+                spacing: 0px;
                 Row {
                     r_max_area := InputGroup {
                         label_text: "RDF Max r";

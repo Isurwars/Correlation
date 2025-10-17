@@ -34,7 +34,7 @@ public:
   AppBackend();
 
   // Member functions
-  void load_file(const std::string &path);
+  std::string load_file(const std::string &path);
   void run_analysis(const ProgramOptions &options);
 
 private:

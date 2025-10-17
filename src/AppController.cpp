@@ -127,16 +127,18 @@ void AppController::handleBrowseFile() {
 }
 
 void AppController::handleCheckFileDialogStatus() {
+  std::string message = "File selection cancelled.";
   if (current_file_dialog_ && current_file_dialog_->ready(0)) {
     auto selection = current_file_dialog_->result();
     if (!selection.empty()) {
       ui_.set_in_file_text(slint::SharedString(selection[0]));
-      backend_.load_file(selection[0]);
-      ui_.set_file_status_text("File: " + slint::SharedString(selection[0]) +
-                               " loaded successfully.");
-    } else {
-      ui_.set_file_status_text("File selection cancelled.");
+      try {
+        message = backend_.load_file(selection[0]);
+      } catch (const std::exception &e) {
+        message = "Error loading file: " + std::string(e.what());
+      }
     }
+    ui_.set_file_status_text(slint::SharedString(message));
     ui_.set_timer_running(false);
     current_file_dialog_.reset();
   }

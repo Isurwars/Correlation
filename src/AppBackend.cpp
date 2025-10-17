@@ -20,19 +20,15 @@ AppBackend::AppBackend() {}
 //--------------------------------- Methods ---------------------------------//
 //---------------------------------------------------------------------------//
 
-void AppBackend::load_file(const std::string &path) {
-  try {
-    FileIO::FileType type = FileIO::determineFileType(path);
-    cell_ = std::make_unique<Cell>(FileIO::readStructure(path, type));
-    options_.input_file = path;
-    options_.output_file_base = path;
+std::string AppBackend::load_file(const std::string &path) {
 
-    std::string status =
-        "Loaded " + std::to_string(cell_->atomCount()) + " atoms from " + path;
+  FileIO::FileType type = FileIO::determineFileType(path);
+  cell_ = std::make_unique<Cell>(FileIO::readStructure(path, type));
+  options_.input_file = path;
+  options_.output_file_base = path;
 
-  } catch (const std::exception &e) {
-    std::cerr << "Error loading file: " << e.what() << std::endl;
-  }
+  return "Loaded " + std::to_string(cell_->atomCount()) + " atoms from:\n" +
+         path;
 }
 
 void AppBackend::run_analysis(const ProgramOptions &options) {
