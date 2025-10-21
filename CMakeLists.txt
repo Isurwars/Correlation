@@ -31,7 +31,7 @@ if (NOT Slint_FOUND)
   FetchContent_Declare(
     Slint
     GIT_REPOSITORY https://github.com/slint-ui/slint.git
-    GIT_TAG release/1
+    GIT_TAG v1.13.1
     SOURCE_SUBDIR api/cpp
   )
   FetchContent_MakeAvailable(Slint)
@@ -112,6 +112,7 @@ slint_target_sources(correlation
 
 # Call the helper function to bundle DLLs on Windows
 bundle_windows_dlls(correlation)
+
 #-----------------------------------------------------------
 # Testing setup (using GoogleTest)
 #-----------------------------------------------------------
@@ -146,7 +147,7 @@ target_link_libraries(correlation_tests PRIVATE
 bundle_windows_dlls(correlation_tests)
 
 include(GoogleTest)
-gtest_discover_tests(correlation_tests TEST_DISCOVERY_TIMEOUT 300)
+gtest_discover_tests(correlation_tests DISCOVERY_TIMEOUT 60)
 
 #-----------------------------------------------------------
 # Install setup
