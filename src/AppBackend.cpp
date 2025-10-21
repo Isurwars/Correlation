@@ -22,6 +22,9 @@ AppBackend::AppBackend() {}
 
 std::string AppBackend::load_file(const std::string &path) {
 
+  std::string display_path = path;
+  std::replace(display_path.begin(), display_path.end(), '\\', '/');
+
   FileIO::FileType type = FileIO::determineFileType(path);
   cell_ = std::make_unique<Cell>(FileIO::readStructure(path, type));
 
@@ -29,7 +32,7 @@ std::string AppBackend::load_file(const std::string &path) {
   options_.output_file_base = path;
 
   return "Loaded " + std::to_string(cell_->atomCount()) + " atoms from:\n" +
-         path;
+         display_path;
 }
 
 void AppBackend::run_analysis(const ProgramOptions &options) {

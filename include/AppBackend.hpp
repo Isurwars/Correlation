@@ -26,6 +26,7 @@ struct ProgramOptions {
   double bond_factor = 1.2;
   double smoothing_sigma = 0.1;
   KernelType smoothing_kernel = KernelType::Gaussian;
+  std::vector<std::vector<double>> bond_cutoffs_sq_;
 };
 
 class AppBackend {
