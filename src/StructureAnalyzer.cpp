@@ -13,17 +13,14 @@
 #include <tbb/parallel_for_each.h>
 #include <vector>
 
-#include "../include/PhysicalData.hpp"
-
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-StructureAnalyzer::StructureAnalyzer(const Cell &cell, double cutoff,
-                                     double bond_factor,
+StructureAnalyzer::StructureAnalyzer(Cell &cell, double cutoff,
                                      bool ignore_periodic_self_interactions)
     // Use the member initializer list for all members for correctness and
     // efficiency.
-    : cell_(cell), cutoff_sq_(cutoff * cutoff), bond_factor_(bond_factor),
+    : cell_(cell), cutoff_sq_(cutoff * cutoff),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
   if (cutoff <= 0) {
     throw std::invalid_argument("Cutoff distance must be positive.");
@@ -43,7 +40,6 @@ StructureAnalyzer::StructureAnalyzer(const Cell &cell, double cutoff,
   neighbor_tensor_.resize(cell.atomCount());
 
   // The constructor orchestrates the computation
-  precomputeBondCutoffs();
   computeDistances();
   computeAngles();
 }
@@ -51,24 +47,6 @@ StructureAnalyzer::StructureAnalyzer(const Cell &cell, double cutoff,
 //---------------------------------------------------------------------------//
 //--------------------------------- Methods ---------------------------------//
 //---------------------------------------------------------------------------//
-
-void StructureAnalyzer::precomputeBondCutoffs() {
-  const auto &elements = cell_.elements();
-  const size_t num_elements = elements.size();
-  auto placeholder = std::vector<double>(num_elements);
-  bond_cutoffs_sq_.resize(num_elements, placeholder);
-
-  for (size_t i = 0; i < num_elements; ++i) {
-    const double radius_A = CovalentRadii::get(elements[i].symbol);
-    for (size_t j = i; j < num_elements; ++j) {
-      const double radius_B = CovalentRadii::get(elements[j].symbol);
-      const double max_bond_dist = (radius_A + radius_B) * bond_factor_;
-      const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
-      bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
-      bond_cutoffs_sq_[j][i] = max_bond_dist_sq;
-    }
-  }
-}
 
 void StructureAnalyzer::computeDistances() {
   const auto &atoms = cell_.atoms();
@@ -123,7 +101,8 @@ void StructureAnalyzer::computeDistances() {
           }
           const auto &atom_B = atoms[j];
           const int type_B = atom_B.element_id();
-          const double max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
+          const double max_bond_dist_sq =
+              cell_.getBondCutoffsSq(type_A, type_B);
 
           for (const auto &disp : displacements) {
             if (i == j && linalg::norm_sq(disp) < 1e-9) {

@@ -52,8 +52,7 @@ public:
    * @param ignore_periodic_self_interactions If true the periodic self
    * interactions will be ignored.
    */
-  explicit StructureAnalyzer(const Cell &cell, double cutoff = 20.0,
-                             double bond_factor = 1.2,
+  explicit StructureAnalyzer(Cell &cell, double cutoff = 20.0,
                              bool ignore_periodic_self_interactions = true);
 
   // --- Accessors for the computed data tensors ---
@@ -62,21 +61,14 @@ public:
   const NeighborTensor &neighbors() const { return neighbor_tensor_; }
 
 private:
-  const Cell &cell_;
+  Cell &cell_;
   double cutoff_sq_;
-  double bond_factor_;
+
   bool ignore_periodic_self_interactions_;
 
   NeighborTensor neighbor_tensor_;
   DistanceTensor distance_tensor_;
   AngleTensor angle_tensor_;
-  std::vector<std::vector<double>> bond_cutoffs_sq_;
-
-  /**
-   * @brief Pre-calculates the squared bond cutoff distances for every pair of
-   * element types.
-   */
-  void precomputeBondCutoffs();
 
   /**
    * @brief Computes pairwise distances and identifies bonded neighbors.

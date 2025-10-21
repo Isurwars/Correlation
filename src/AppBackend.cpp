@@ -24,6 +24,7 @@ std::string AppBackend::load_file(const std::string &path) {
 
   FileIO::FileType type = FileIO::determineFileType(path);
   cell_ = std::make_unique<Cell>(FileIO::readStructure(path, type));
+
   options_.input_file = path;
   options_.output_file_base = path;
 

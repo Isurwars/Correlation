@@ -29,7 +29,7 @@ public:
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
 
-  explicit DistributionFunctions(const Cell &, double, double);
+  explicit DistributionFunctions(Cell &, double, double);
 
   // Move constructor
   DistributionFunctions(DistributionFunctions &&other) noexcept;
@@ -87,10 +87,9 @@ private:
   std::string getInversePartialKey(int type1, int type2) const;
   void calculateAshcroftWeights();
 
-  const Cell &cell_;
+  Cell &cell_;
   std::unique_ptr<StructureAnalyzer> neighbors_;
   double current_cutoff_{-1.0};
-  double bond_factor_{1.2};
 
   std::map<std::string, Histogram> histograms_;
   std::map<std::string, double> ashcroft_weights_;

@@ -9,7 +9,6 @@ import { Theme } from "Theme.slint";
 
 export component InputGroup inherits TouchArea {
     in-out property <string> value_text <=> edit.text;
-
     in property <string> label_text;
     in property <string> unit_text: "";
     in property <bool> enabled_input: true;
@@ -17,6 +16,8 @@ export component InputGroup inherits TouchArea {
     property <bool> is_focused: false;
     property <bool> is_label_floating: is_focused || !value_text.is-empty;
 
+    preferred-width: Theme.size-big;
+    preferred-height: Theme.spacing-medium;
     Rectangle {
         height: 1.5 * Theme.size-small;
 

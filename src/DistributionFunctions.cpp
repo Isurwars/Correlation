@@ -17,10 +17,10 @@
 //------------------------------- Constructor -------------------------------//
 //---------------------------------------------------------------------------//
 
-DistributionFunctions::DistributionFunctions(const Cell &cell, double cutoff,
+DistributionFunctions::DistributionFunctions(Cell &cell, double cutoff,
                                              double bond_factor)
-    : cell_(cell), neighbors_(nullptr), current_cutoff_(0.0),
-      bond_factor_(bond_factor) {
+    : cell_(cell), neighbors_(nullptr), current_cutoff_(0.0) {
+  cell_.setBondFactor(bond_factor);
   if (cutoff > 0.0) {
     ensureNeighborsComputed(cutoff);
   }
@@ -31,7 +31,7 @@ DistributionFunctions::DistributionFunctions(const Cell &cell, double cutoff,
 DistributionFunctions::DistributionFunctions(
     DistributionFunctions &&other) noexcept
     : cell_(other.cell_), neighbors_(std::move(other.neighbors_)),
-      current_cutoff_(other.current_cutoff_), bond_factor_(other.bond_factor_),
+      current_cutoff_(other.current_cutoff_),
       histograms_(std::move(other.histograms_)),
       ashcroft_weights_(std::move(other.ashcroft_weights_)) {
 
@@ -44,7 +44,6 @@ DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
   if (this != &other) {
     neighbors_ = std::move(other.neighbors_);
     current_cutoff_ = other.current_cutoff_;
-    bond_factor_ = other.bond_factor_;
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
 
@@ -68,8 +67,7 @@ DistributionFunctions::getHistogram(const std::string &name) const {
 
 void DistributionFunctions::ensureNeighborsComputed(double r_max) {
   if (!neighbors_ || r_max > current_cutoff_) {
-    neighbors_ =
-        std::make_unique<StructureAnalyzer>(cell_, r_max, bond_factor_);
+    neighbors_ = std::make_unique<StructureAnalyzer>(cell_, r_max, true);
     current_cutoff_ = r_max;
   }
 }

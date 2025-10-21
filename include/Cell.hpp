@@ -71,6 +71,9 @@ public:
   const std::vector<Atom> &atoms() const noexcept { return atoms_; }
   // Elements
   const std::vector<Element> &elements() const { return elements_; }
+  // Bond Factor
+  void setBondFactor(double b) { bond_factor_ = b; }
+  double getBondFactor() { return bond_factor_; }
 
   size_t atomCount() const noexcept { return atoms_.size(); }
   bool isEmpty() const noexcept { return atoms_.empty(); }
@@ -83,6 +86,7 @@ public:
    */
   std::optional<Element> findElement(const std::string &symbol) const;
 
+  double getBondCutoffsSq(int, int) const;
   // --- Mutating Commands ---
 
   /**
@@ -102,6 +106,12 @@ public:
    */
   void wrapPositions();
 
+  /**
+   * @brief Pre-calculates the squared bond cutoff distances for every pair of
+   * element types.
+   */
+  void precomputeBondCutoffs() const;
+
 private:
   void updateLattice(const linalg::Matrix3<double> &new_lattice);
   void updateLatticeParametersFromVectors();
@@ -111,7 +121,9 @@ private:
   linalg::Matrix3<double> inverse_lattice_vectors_;
   std::array<double, 6> lattice_parameters_;
   double volume_{0.0};
+  double bond_factor_{1.2};
 
   std::vector<Atom> atoms_;
   std::vector<Element> elements_;
+  mutable std::vector<std::vector<double>> bond_cutoffs_sq_;
 };
