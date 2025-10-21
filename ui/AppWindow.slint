@@ -19,7 +19,6 @@ export component AppWindow inherits Window {
     in-out property <bool> analysis_running: false;
     in-out property <bool> timer_running: false;
     in-out property <bool> text_opacity: true;
-    in-out property <bool> text_timer_running: true;
 
     // User-configurable options, now exposed to the UI
     in-out property <string> in_file_text;
@@ -55,48 +54,43 @@ export component AppWindow inherits Window {
         }
     }
 
-    text_timer := Timer {
-        interval: 1s;
-        running: text_timer_running;
-        triggered() => {
-            text_opacity = !text_opacity;
-        }
-    }
-
     window_area := TouchArea {
 
         VerticalBox {
-            padding: 10px;
-            spacing: 0px;
             file_area := TouchArea {
-
+                width: parent.width;
+                height: parent.height / 4;
                 GroupBox {
-                    title: "1. Input File";
                     width: parent.width;
                     height: parent.height;
+                    title: "1. Input File";
                     VerticalBox {
-                        padding: 10px;
                         Button {
                             text: "Load a structure file";
-                            enabled: !analysis_running;
                             clicked => {
                                 browse_file();
                             }
                         }
 
                         Text {
-                            height: 40px;
                             text: file_status_text;
-                            opacity: text_opacity ? 1.0 : 0.0;
-                            animate opacity { duration: 500ms; }
                         }
                     }
                 }
             }
 
             GridLayout {
-                padding: 10px;
-                spacing: 0px;
+                padding: Theme.spacing-regular;
+                spacing: Theme.spacing-medium;
+                width: parent.width;
+                height: parent.height / 2;
+                Row {
+                    Text {
+                        text: "2. Options";
+                        height: Theme.size-small;
+                    }
+                }
+
                 Row {
                     r_max_area := InputGroup {
                         label_text: "RDF Max r";
@@ -189,14 +183,15 @@ export component AppWindow inherits Window {
             }
 
             analysis_area := TouchArea {
+                width: parent.width;
+                height: parent.height / 4;
                 GroupBox {
                     width: parent.width;
                     height: parent.height;
+
                     title: "3. Run Analysis";
                     VerticalBox {
-                        padding: 10px;
                         Button {
-
                             text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
                             enabled: !analysis_running;
                             clicked => {
@@ -207,7 +202,6 @@ export component AppWindow inherits Window {
                         }
 
                         Text {
-                            height: 20px;
                             text: analysis_status_text;
                         }
                     }

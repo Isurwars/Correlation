@@ -122,7 +122,6 @@ void AppController::handleBrowseFile() {
       "Select a structure file", "", filters, pfd::opt::multiselect);
 
   ui_.set_timer_running(true);
-  ui_.set_text_timer_running(false);
   ui_.set_text_opacity(true);
 }
 
