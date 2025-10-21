@@ -8,7 +8,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set default install path
 set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
 
-
+# -----------------------------------------------------------
+# Dependencies
+# -----------------------------------------------------------
 # Find dependencies
 find_package(TBB QUIET COMPONENTS tbb tbbmalloc)
 if (NOT TBB_FOUND)
@@ -34,6 +36,24 @@ if (NOT Slint_FOUND)
   )
   FetchContent_MakeAvailable(Slint)
 endif (NOT Slint_FOUND)
+
+
+# -----------------------------------------------------------
+# Helper Function for Bundling DLLs on Windows
+# -----------------------------------------------------------
+function(bundle_windows_dlls target_name)
+    if(WIN32)
+        add_custom_command(
+            TARGET ${target_name} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:${target_name}>
+            $<TARGET_FILE_DIR:${target_name}>
+            COMMAND_EXPAND_LISTS
+            COMMENT "Copying runtime DLLs for ${target_name}"
+        )
+    endif()
+endfunction()
+
 
 #-----------------------------------------------------------
 # Library setup
@@ -61,19 +81,17 @@ target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
 #------------------------------------------------------------------
 # Executable Target (correlation)
 #------------------------------------------------------------------
+set(CORRELATION_SOURCES
+    src/main.cpp
+    src/AppBackend.cpp
+    src/AppController.cpp
+)
+
 if (WIN32)
-add_executable(correlation WIN32
-  src/main.cpp
-  src/AppBackend.cpp
-  src/AppController.cpp
-  resource.rc
-)
+    list(APPEND CORRELATION_SOURCES resource.rc)
+    add_executable(correlation WIN32 ${CORRELATION_SOURCES})
 else()
-add_executable(correlation
-  src/main.cpp
-  src/AppBackend.cpp
-  src/AppController.cpp
-)
+    add_executable(correlation ${CORRELATION_SOURCES})
 endif()
 
 
@@ -92,12 +110,8 @@ slint_target_sources(correlation
   ui/AppWindow.slint
 )
 
-if (WIN32)
-    add_custom_command(
-      TARGET correlation POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:correlation>
-      $<TARGET_FILE_DIR:correlation> COMMAND_EXPAND_LISTS)
-endif()
+# Call the helper function to bundle DLLs on Windows
+bundle_windows_dlls(correlation)
 #-----------------------------------------------------------
 # Testing setup (using GoogleTest)
 #-----------------------------------------------------------
@@ -128,12 +142,8 @@ target_link_libraries(correlation_tests PRIVATE
     gtest_main
 )
 
-if (WIN32)
-    add_custom_command(
-      TARGET correlation_tests POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:correlation_tests>
-      $<TARGET_FILE_DIR:correlation_tests> COMMAND_EXPAND_LISTS)
-endif()
+# Call the helper function to bundle DLLs on Windows
+bundle_windows_dlls(correlation_tests)
 
 include(GoogleTest)
 gtest_discover_tests(correlation_tests TEST_DISCOVERY_TIMEOUT 300)
@@ -158,7 +168,8 @@ if (NOT WIN32)
 
     # 2. Configure and Install the .desktop file
     configure_file("${PROJECT_SOURCE_DIR}/correlation.desktop"
-                   "${PROJECT_BINARY_DIR}/correlation.desktop" COPYONLY)
+                   "${PROJECT_BINARY_DIR}/correlation.desktop"
+                   COPYONLY)
     install(FILES "${PROJECT_BINARY_DIR}/correlation.desktop"
             DESTINATION share/applications)
 endif()
