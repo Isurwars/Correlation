@@ -34,9 +34,13 @@ public:
   // Constructor to set up the UI and backend references
   AppBackend();
 
+  // Accesors
+  void setOptions(ProgramOptions opt) { options_ = opt; }
+  ProgramOptions options() { return options_; }
+
   // Member functions
   std::string load_file(const std::string &path);
-  void run_analysis(const ProgramOptions &options);
+  void run_analysis();
 
 private:
   // Member functions

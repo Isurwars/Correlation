@@ -45,7 +45,7 @@ float safe_stof(const slint::SharedString &s, float default_value) {
 }
 
 void AppController::handleOptionstoUI(AppWindow &ui) {
-  ProgramOptions opt;
+  ProgramOptions opt = backend_.options();
   ui.set_in_file_text(slint::SharedString(opt.input_file));
   ui.set_normalize(opt.normalize);
   ui.set_smoothing(opt.smoothing);
@@ -98,9 +98,10 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
 void AppController::handleRunAnalysis() {
   // Create a ProgramOptions object from the UI properties
-  ProgramOptions opt = handleOptionsfromUI(ui_);
+  backend_.setOptions(handleOptionsfromUI(ui_));
+
   // run analysis
-  backend_.run_analysis(opt);
+  backend_.run_analysis();
   ui_.set_analysis_status_text("Analysis ended.");
 }
 

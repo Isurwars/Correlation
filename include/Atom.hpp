@@ -35,7 +35,7 @@ struct Element {
 struct Neighbor {
   AtomID index;
   double distance;
-  linalg::Vector3<double> r_ij; // Displacement vector
+  linalg::Vector3<double> r_ij;
 };
 
 class Atom {

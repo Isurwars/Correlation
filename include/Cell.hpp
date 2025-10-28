@@ -86,8 +86,22 @@ public:
    */
   std::optional<Element> findElement(const std::string &symbol) const;
 
-  double getBondCutoffsSq(int, int) const;
-  // --- Mutating Commands ---
+  /**
+   * @brief get a bond cut off fot two given elements.
+   *@param elementID
+   *@param elementID
+   **/
+  double getBondCutoffsSq(int, int);
+
+  //-------------------------------------------------------------------------//
+  //-------------------------------- Methods --------------------------------//
+  //-------------------------------------------------------------------------//
+
+  /**
+   * @brief Pre-calculates the squared bond cutoff distances for every pair of
+   * element types.
+   */
+  void precomputeBondCutoffs();
 
   /**
    * @brief Adds a new atom to the cell.
@@ -106,12 +120,6 @@ public:
    */
   void wrapPositions();
 
-  /**
-   * @brief Pre-calculates the squared bond cutoff distances for every pair of
-   * element types.
-   */
-  void precomputeBondCutoffs() const;
-
 private:
   void updateLattice(const linalg::Matrix3<double> &new_lattice);
   void updateLatticeParametersFromVectors();
@@ -122,8 +130,7 @@ private:
   std::array<double, 6> lattice_parameters_;
   double volume_{0.0};
   double bond_factor_{1.2};
-
   std::vector<Atom> atoms_;
   std::vector<Element> elements_;
-  mutable std::vector<std::vector<double>> bond_cutoffs_sq_;
+  std::vector<std::vector<double>> bond_cutoffs_sq_;
 };
