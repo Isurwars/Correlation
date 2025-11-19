@@ -87,11 +87,11 @@ public:
   std::optional<Element> findElement(const std::string &symbol) const;
 
   /**
-   * @brief get a bond cut off fot two given elements.
+   * @brief get a bond cut off for two given elements.
    *@param elementID
    *@param elementID
    **/
-  double getBondCutoffsSq(int, int);
+  double getBondCutoff(int, int);
 
   //-------------------------------------------------------------------------//
   //-------------------------------- Methods --------------------------------//

@@ -149,10 +149,10 @@ std::optional<Element> Cell::findElement(const std::string &symbol) const {
   return std::nullopt;
 }
 
-double Cell::getBondCutoffsSq(int Type_A, int Type_B) {
+double Cell::getBondCutoff(int Type_A, int Type_B) {
   if (bond_cutoffs_sq_.empty())
     precomputeBondCutoffs();
-  return bond_cutoffs_sq_[Type_A][Type_B];
+  return sqrt(bond_cutoffs_sq_[Type_A][Type_B]);
 }
 
 ElementID Cell::getOrRegisterElement(const std::string &symbol) {

@@ -24,9 +24,13 @@ private:
   // Handle to the file dialog, moved here from main.cpp
   std::unique_ptr<pfd::open_file> current_file_dialog_;
 
-  // options helper functions
+  // functions to handle options
   void handleOptionstoUI(AppWindow &ui);
   ProgramOptions handleOptionsfromUI(AppWindow &ui);
+
+  // functios to handle Bond_Cutoffs_Sq_
+  void setBondCutoffs(AppWindow &ui);
+  std::vector<std::vector<double>> getBondCutoffs(AppWindow &ui);
 
   // Member functions for the UI callbacks
   void handleRunAnalysis();

@@ -6,8 +6,7 @@ import { Theme } from "Theme.slint";
 
 
 export component AppWindow inherits Window {
-
-    // Callbacks that the UI invokes on the C++ side
+    // Callback that the UI invokes on the C++ side
     callback run_analysis();
     callback browse_file();
     callback check_file_dialog_status();
@@ -36,8 +35,8 @@ export component AppWindow inherits Window {
     in-out property <int> smoothing_kernel;
 
     // Theme
-    width: 550px;
-    height: 600px;
+    preferred-width: 600px;
+    preferred-height: 600px;
     background: Theme.window-background;
     default-font-size: Theme.font-size-regular;
     default-font-family: Theme.font-family;
@@ -55,39 +54,45 @@ export component AppWindow inherits Window {
     }
 
     window_area := TouchArea {
-
         VerticalBox {
-            file_area := TouchArea {
-                width: parent.width;
-                height: parent.height / 4;
-                GroupBox {
-                    width: parent.width;
-                    height: parent.height;
-                    title: "1. Input File";
-                    VerticalBox {
+            GridLayout {
+                padding: Theme.spacing-regular;
+                spacing: Theme.spacing-medium;
+                preferred-width: 600px;
+                preferred-height: 200px;
+                Row {
+                    Text {
+                        text: "1. Input File";
+                        color: Theme.foreground;
+                    }
+                }
+
+                Row {
+                    file_area := TouchArea {
+                        colspan: 3;
+                        width: 500px;
+                        height: 150px;
                         Button {
                             text: "Load a structure file";
                             clicked => {
                                 browse_file();
                             }
                         }
-
-                        Text {
-                            text: file_status_text;
-                        }
                     }
                 }
-            }
 
-            GridLayout {
-                padding: Theme.spacing-regular;
-                spacing: Theme.spacing-medium;
-                width: parent.width;
-                height: parent.height / 2;
+                Row {
+                    Text {
+                        text: file_status_text;
+                        color: Theme.foreground;
+                        colspan: 3;
+                    }
+                }
+
                 Row {
                     Text {
                         text: "2. Options";
-                        height: Theme.size-small;
+                        color: Theme.foreground;
                     }
                 }
 
@@ -167,6 +172,7 @@ export component AppWindow inherits Window {
                         VerticalBox {
                             Text {
                                 text: "Smoothing Kernel";
+                                color: Theme.foreground;
                             }
 
                             ComboBox {
@@ -183,8 +189,8 @@ export component AppWindow inherits Window {
             }
 
             analysis_area := TouchArea {
-                width: parent.width;
-                height: parent.height / 4;
+                preferred-width: 600px;
+                preferred-height: 150px;
                 GroupBox {
                     width: parent.width;
                     height: parent.height;
@@ -203,6 +209,7 @@ export component AppWindow inherits Window {
 
                         Text {
                             text: analysis_status_text;
+                            color: Theme.foreground;
                         }
                     }
                 }

@@ -101,9 +101,8 @@ void StructureAnalyzer::computeDistances() {
           }
           const auto &atom_B = atoms[j];
           const int type_B = atom_B.element_id();
-          const double max_bond_dist_sq =
-              cell_.getBondCutoffsSq(type_A, type_B);
-
+          const double max_bond_dist = cell_.getBondCutoff(type_A, type_B);
+          const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
           for (const auto &disp : displacements) {
             if (i == j && linalg::norm_sq(disp) < 1e-9) {
               continue;
