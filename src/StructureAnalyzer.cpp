@@ -36,7 +36,8 @@ StructureAnalyzer::StructureAnalyzer(Cell &cell, double cutoff,
   angle_tensor_.resize(
       num_elements,
       std::vector<std::vector<std::vector<double>>>(
-          num_elements, std::vector<std::vector<double>>(num_elements)));
+          num_elements, std::vector<std::vector<double>>(
+                            num_elements, std::vector<double>())));
   neighbor_tensor_.resize(cell.atomCount());
 
   // The constructor orchestrates the computation
@@ -150,61 +151,37 @@ void StructureAnalyzer::computeDistances() {
 void StructureAnalyzer::computeAngles() {
   const auto &atoms = cell_.atoms();
   const size_t atom_count = atoms.size();
-  const size_t num_elements = cell_.elements().size();
 
-  std::vector<size_t> atom_indices(atom_count);
-  std::iota(atom_indices.begin(), atom_indices.end(), 0);
+  // Serial loop over all atoms
+  for (size_t i = 0; i < atom_count; ++i) {
+    const auto &central_atom_neighbors = neighbor_tensor_[i];
 
-  // OPTIMIZATION: Use TBB's thread-specific storage for angles.
-  tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
-    return AngleTensor(
-        num_elements,
-        std::vector<std::vector<std::vector<double>>>(
-            num_elements, std::vector<std::vector<double>>(num_elements)));
-  });
+    // Skip if the central atom has fewer than two neighbors to form an angle
+    if (central_atom_neighbors.size() < 2)
+      continue;
 
-  tbb::parallel_for_each(
-      atom_indices.begin(), atom_indices.end(), [&](size_t i) {
-        AngleTensor &angle_tensor_local = ets.local();
-        const auto &central_atom_neighbors = neighbor_tensor_[i];
-        if (central_atom_neighbors.size() < 2)
-          return;
+    const int type_central = atoms[i].element_id();
 
-        const int type_central = atoms[i].element_id();
+    // Loop over all unique pairs of neighbors (j, k)
+    for (size_t j = 0; j < central_atom_neighbors.size(); ++j) {
+      for (size_t k = j + 1; k < central_atom_neighbors.size(); ++k) {
+        const auto &neighbor1 = central_atom_neighbors[j];
+        const auto &neighbor2 = central_atom_neighbors[k];
 
-        for (size_t j = 0; j < central_atom_neighbors.size(); ++j) {
-          for (size_t k = j + 1; k < central_atom_neighbors.size(); ++k) {
-            const auto &neighbor1 = central_atom_neighbors[j];
-            const auto &neighbor2 = central_atom_neighbors[k];
+        const int type1 = atoms[neighbor1.index.value].element_id();
+        const int type2 = atoms[neighbor2.index.value].element_id();
 
-            const int type1 = atoms[neighbor1.index.value].element_id();
-            const int type2 = atoms[neighbor2.index.value].element_id();
+        const auto &v1 = neighbor1.r_ij;
+        const auto &v2 = neighbor2.r_ij;
 
-            const auto &v1 = neighbor1.r_ij;
-            const auto &v2 = neighbor2.r_ij;
-
-            double cos_theta =
-                linalg::dot(v1, v2) / (neighbor1.distance * neighbor2.distance);
-            cos_theta = std::clamp(cos_theta, -1.0, 1.0);
-            double angle_rad = std::acos(cos_theta);
-
-            angle_tensor_local[type1][type_central][type2].push_back(angle_rad);
-            if (type1 != type2) {
-              angle_tensor_local[type2][type_central][type1].push_back(
-                  angle_rad);
-            }
-          }
-        }
-      });
-
-  // OPTIMIZATION: Final reduction step for angles.
-  for (auto &local_angles : ets) {
-    for (size_t i = 0; i < num_elements; ++i) {
-      for (size_t j = 0; j < num_elements; ++j) {
-        for (size_t k = 0; k < num_elements; ++k) {
-          angle_tensor_[i][j][k].insert(angle_tensor_[i][j][k].end(),
-                                        local_angles[i][j][k].begin(),
-                                        local_angles[i][j][k].end());
+        // Calculate angle
+        double cos_theta =
+            linalg::dot(v1, v2) / (neighbor1.distance * neighbor2.distance);
+        cos_theta = std::clamp(cos_theta, -1.0, 1.0);
+        double angle_rad = std::acos(cos_theta);
+        angle_tensor_[type1][type_central][type2].push_back(angle_rad);
+        if (type1 != type2) {
+          angle_tensor_[type2][type_central][type1].push_back(angle_rad);
         }
       }
     }

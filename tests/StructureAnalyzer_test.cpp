@@ -86,3 +86,45 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAnglesForWater) {
   // The calculated angle should match the known value.
   EXPECT_NEAR(hoh_angles[0] * constants::rad2deg, bond_angle_deg, 1e-4);
 }
+
+TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
+  // Arrange: Setup a system where the angle calculation requires the Minimum
+  // Image Convention. Central atom B (index 1) at (0.5, 0.5, 0.5). Neighbor A
+  // (index 0) at (3.5, 0.5, 0.5) -> PBC vector B->A is (-1.0, 0.0, 0.0).
+  // Neighbor C (index 2) at (0.5, 3.5, 0.5) -> PBC vector B->C is (0.0, -1.0,
+  // 0.0). The resulting angle A-B-C must be 90 degrees (pi/2 radians).
+
+  const double side_length = 4.0;
+  const double cutoff =
+      1.1; // Cutoff > bond length (1.0) and < box half-side (2.0)
+  // Calculate pi/2 explicitly using acos(-1.0) = pi.
+  const double expected_angle_rad = std::acos(-1.0) / 2.0;
+
+  Cell pbc_cell({side_length, side_length, side_length, 90.0, 90.0, 90.0});
+
+  pbc_cell.addAtom("C", {3.5, 0.5, 0.5}); // Atom A
+  pbc_cell.addAtom("C", {0.5, 0.5, 0.5}); // Atom B (Central)
+  pbc_cell.addAtom("O", {0.5, 3.5, 0.5}); // Atom C
+
+  // Act: Calculate neighbors and angles.
+  StructureAnalyzer analyzer(pbc_cell, cutoff);
+  const auto &angles = analyzer.angles();
+
+  // Assert
+  // Retrieve the element ID for indexing (should be 0).
+  const int c_id = pbc_cell.findElement("C")->id.value;
+  ASSERT_EQ(c_id, 0);
+
+  // Retrieve the element ID for indexing (should be 0).
+  const int o_id = pbc_cell.findElement("O")->id.value;
+  ASSERT_EQ(o_id, 1);
+
+  // The angle is stored in the [C][C][O] slot.
+  const auto &cco_angles = angles[c_id][c_id][o_id];
+
+  // There must be exactly one angle calculated (A-B-C).
+  ASSERT_EQ(cco_angles.size(), 1);
+
+  // The calculated angle should be pi/2 radians.
+  EXPECT_NEAR(cco_angles[0], expected_angle_rad, 1e-6);
+}
