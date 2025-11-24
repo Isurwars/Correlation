@@ -16,10 +16,10 @@ export component InputGroup inherits TouchArea {
     property <bool> is_focused: false;
     property <bool> is_label_floating: is_focused || !value_text.is-empty;
 
-    preferred-width: Theme.size-big;
-    preferred-height: Theme.spacing-medium;
+    min-width: Theme.size-medium;
+    min-height: Theme.size-regular;
     Rectangle {
-        height: 1.5 * Theme.size-small;
+        min-height: Theme.size-regular;
 
         edit := LineEdit {
             x: Theme.spacing-medium;

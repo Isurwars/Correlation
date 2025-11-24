@@ -94,17 +94,21 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   // Neighbor C (index 2) at (0.5, 3.5, 0.5) -> PBC vector B->C is (0.0, -1.0,
   // 0.0). The resulting angle A-B-C must be 90 degrees (pi/2 radians).
 
-  const double side_length = 4.0;
-  const double cutoff =
-      1.1; // Cutoff > bond length (1.0) and < box half-side (2.0)
+  const double side_length = 10.0;
+  const double cutoff = 2.0; 
   // Calculate pi/2 explicitly using acos(-1.0) = pi.
   const double expected_angle_rad = std::acos(-1.0) / 2.0;
 
   Cell pbc_cell({side_length, side_length, side_length, 90.0, 90.0, 90.0});
 
-  pbc_cell.addAtom("C", {3.5, 0.5, 0.5}); // Atom A
+  // B (Central) at (0.5, 0.5, 0.5)
+  // A at (9.0, 0.5, 0.5) -> Wrapped dist to B is 1.5
+  // C at (0.5, 9.0, 0.5) -> Wrapped dist to B is 1.5
+  // Dist A-C is sqrt(1.5^2 + 1.5^2) = 2.12 > bond_cutoff (~1.85)
+  
+  pbc_cell.addAtom("C", {9.0, 0.5, 0.5}); // Atom A
   pbc_cell.addAtom("C", {0.5, 0.5, 0.5}); // Atom B (Central)
-  pbc_cell.addAtom("O", {0.5, 3.5, 0.5}); // Atom C
+  pbc_cell.addAtom("O", {0.5, 9.0, 0.5}); // Atom C
 
   // Act: Calculate neighbors and angles.
   StructureAnalyzer analyzer(pbc_cell, cutoff);

@@ -444,7 +444,7 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
 
         for (const auto &angle_rad : neighbors_->angles()[j][i][k]) {
           double angle_deg = angle_rad * constants::rad2deg;
-          if (angle_deg < theta_cut) {
+          if (angle_deg <= theta_cut) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
             if (bin < num_bins) {
               partial_hist[bin]++;

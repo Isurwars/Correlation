@@ -25,6 +25,22 @@ StructureAnalyzer::StructureAnalyzer(Cell &cell, double cutoff,
   if (cutoff <= 0) {
     throw std::invalid_argument("Cutoff distance must be positive.");
   }
+
+  // Ensure cutoff covers the largest bond distance
+  const auto &elements = cell.elements();
+  double max_bond_dist = 0.0;
+  for (size_t i = 0; i < elements.size(); ++i) {
+    for (size_t j = i; j < elements.size(); ++j) {
+      max_bond_dist = std::max(max_bond_dist,
+                               cell.getBondCutoff(elements[i].id.value,
+                                                  elements[j].id.value));
+    }
+  }
+  if (cutoff < max_bond_dist) {
+    cutoff = max_bond_dist;
+    cutoff_sq_ = cutoff * cutoff;
+  }
+
   if (cell.isEmpty()) {
     return; // Nothing to compute for an empty cell
   }
@@ -152,38 +168,69 @@ void StructureAnalyzer::computeAngles() {
   const auto &atoms = cell_.atoms();
   const size_t atom_count = atoms.size();
 
-  // Serial loop over all atoms
-  for (size_t i = 0; i < atom_count; ++i) {
-    const auto &central_atom_neighbors = neighbor_tensor_[i];
+  const size_t num_elements = cell_.elements().size();
+  using AngleTensor =
+      std::vector<std::vector<std::vector<std::vector<double>>>>;
 
-    // Skip if the central atom has fewer than two neighbors to form an angle
-    if (central_atom_neighbors.size() < 2)
-      continue;
+  // Initialize thread-local storage
+  tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
+    return AngleTensor(num_elements,
+                       std::vector<std::vector<std::vector<double>>>(
+                           num_elements, std::vector<std::vector<double>>(
+                                             num_elements)));
+  });
 
-    const int type_central = atoms[i].element_id();
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, atom_count),
+      [&](const tbb::blocked_range<size_t> &r) {
+        auto &local_tensor = ets.local();
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          const auto &central_atom_neighbors = neighbor_tensor_[i];
 
-    // Loop over all unique pairs of neighbors (j, k)
-    for (size_t j = 0; j < central_atom_neighbors.size(); ++j) {
-      for (size_t k = j + 1; k < central_atom_neighbors.size(); ++k) {
-        const auto &neighbor1 = central_atom_neighbors[j];
-        const auto &neighbor2 = central_atom_neighbors[k];
+          // Skip if the central atom has fewer than two neighbors to form an
+          // angle
+          if (central_atom_neighbors.size() < 2)
+            continue;
 
-        const int type1 = atoms[neighbor1.index.value].element_id();
-        const int type2 = atoms[neighbor2.index.value].element_id();
+          const int type_central = atoms[i].element_id();
 
-        const auto &v1 = neighbor1.r_ij;
-        const auto &v2 = neighbor2.r_ij;
+          // Loop over all unique pairs of neighbors (j, k)
+          for (size_t j = 0; j < central_atom_neighbors.size(); ++j) {
+            for (size_t k = j + 1; k < central_atom_neighbors.size(); ++k) {
+              const auto &neighbor1 = central_atom_neighbors[j];
+              const auto &neighbor2 = central_atom_neighbors[k];
 
-        // Calculate angle
-        double cos_theta =
-            linalg::dot(v1, v2) / (neighbor1.distance * neighbor2.distance);
-        cos_theta = std::clamp(cos_theta, -1.0, 1.0);
-        double angle_rad = std::acos(cos_theta);
-        angle_tensor_[type1][type_central][type2].push_back(angle_rad);
-        if (type1 != type2) {
-          angle_tensor_[type2][type_central][type1].push_back(angle_rad);
+              const int type1 = atoms[neighbor1.index.value].element_id();
+              const int type2 = atoms[neighbor2.index.value].element_id();
+
+              const auto &v1 = neighbor1.r_ij;
+              const auto &v2 = neighbor2.r_ij;
+
+              // Calculate angle
+              double cos_theta = linalg::dot(v1, v2) /
+                                 (neighbor1.distance * neighbor2.distance);
+              cos_theta = std::clamp(cos_theta, -1.0, 1.0);
+              double angle_rad = std::acos(cos_theta);
+              local_tensor[type1][type_central][type2].push_back(angle_rad);
+              if (type1 != type2) {
+                local_tensor[type2][type_central][type1].push_back(angle_rad);
+              }
+            }
+          }
+        }
+      });
+
+  // Merge results
+  for (const auto &local_tensor : ets) {
+    for (size_t i = 0; i < num_elements; ++i) {
+      for (size_t j = 0; j < num_elements; ++j) {
+        for (size_t k = 0; k < num_elements; ++k) {
+          angle_tensor_[i][j][k].insert(angle_tensor_[i][j][k].end(),
+                                        local_tensor[i][j][k].begin(),
+                                        local_tensor[i][j][k].end());
         }
       }
     }
   }
 }
+

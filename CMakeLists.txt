@@ -135,6 +135,8 @@ add_executable(correlation_tests
     tests/FileIO_test.cpp
     tests/FileWriter_test.cpp
     tests/StructureAnalyzer_test.cpp
+    tests/Angle_Reproduction_tests.cpp
+
 )
 
 # The test executable also links to the library and inherits its properties.
