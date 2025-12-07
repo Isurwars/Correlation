@@ -136,6 +136,8 @@ add_executable(correlation_tests
     tests/FileWriter_test.cpp
     tests/StructureAnalyzer_test.cpp
     tests/Angle_Reproduction_tests.cpp
+    tests/PAD_tests.cpp
+
 
 )
 

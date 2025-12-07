@@ -444,8 +444,16 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
 
         for (const auto &angle_rad : neighbors_->angles()[j][i][k]) {
           double angle_deg = angle_rad * constants::rad2deg;
-          if (angle_deg <= theta_cut) {
+          
+          // Allow for small epsilon tolerance in case angle slightly exceeds theta due to limited precision
+          if (angle_deg <= theta_cut + 1e-5) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
+            
+            // Handle edge case where angle falls exactly on the upper bound of the last bin
+            if (bin == num_bins && bin > 0) {
+                 bin = num_bins - 1;
+            }
+            
             if (bin < num_bins) {
               partial_hist[bin]++;
             }
@@ -479,9 +487,6 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
   for (auto &[key, partial] : f_theta.partials) {
     for (size_t i = 0; i < num_bins; ++i) {
       partial[i] *= normalization_factor;
-      if (key != "Total") {
-        total_f[i] += partial[i];
-      }
     }
   }
   histograms_["f(theta)"] = std::move(f_theta);

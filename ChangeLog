@@ -1,6 +1,43 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.3] 2025-12-04
+
+### Added
+- Angle reproduction tests and example structure file.
+- FiraCode fonts support.
+- Feedback mechanism from backend to App.
+- LabeledEdit component and InputGroup to AppWindow.
+- Theme support.
+- ToolTips for most parameters in the GUI.
+- Application icon for Windows and Linux.
+- Logo to window component.
+- All parameters are now available in the GUI.
+- Move semantics for DistributionFunction and Cell objects.
+- Portable file dialogs support.
+
+### Changed
+- Refined UI layout and responsiveness.
+- Moved App logic to a new AppController object.
+- Moved Bond Distance matrix to the Cell object.
+- Reimplemented Bump kernel in Smoothing header.
+- Moved constants to PhysicalData header.
+- Reduced ProgramOptions to a single header file.
+- Updated UI and Backend initialization.
+
+### Fixed
+- Multiple fixes for Windows compilation and CMake configuration (MSVC 2022).
+- Corrections for Path handling in Windows.
+- Fixes to Smoothing for PAD, CN, and when bin width/sigma were problematic.
+- Fixes to g(r), J(r), G(r), and S(Q) calculations.
+- Fixed Total PAD not being calculated.
+- Fixed global path to app_window.h.
+
+### Removed
+- Removed code for writing histograms.
+- Removed min Q for S(Q) calculation and CSV writers.
+- Removed redundant code and old constants header references.
+
 ## [1.2] 2025-09-15
 - Several improvements were made to the code in order to modernize
 and incorporate new features.
