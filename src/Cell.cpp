@@ -125,8 +125,7 @@ void Cell::updateLatticeParametersFromVectors() {
 
 void Cell::precomputeBondCutoffs() {
   const size_t num_elements = elements_.size();
-  std::vector<double> placeholder = std::vector<double>(num_elements);
-  bond_cutoffs_sq_.resize(num_elements, placeholder);
+  bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
 
   for (size_t i = 0; i < num_elements; ++i) {
     const double radius_A = CovalentRadii::get(elements_[i].symbol);

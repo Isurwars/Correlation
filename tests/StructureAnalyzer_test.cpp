@@ -132,3 +132,169 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   // The calculated angle should be pi/2 radians.
   EXPECT_NEAR(cco_angles[0], expected_angle_rad, 1e-6);
 }
+
+
+TEST_F(StructureAnalyzerTest, FindsNoNeighborsForIsolatedAtom) {
+  // Arrange: Create a large cell with a single atom.
+  Cell large_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  large_cell.addAtom("Ar", {10.0, 10.0, 10.0});
+  // Use default bond factor.
+
+  // Act: Calculate neighbors with a moderate cutoff.
+  StructureAnalyzer analyzer(large_cell,5.0);
+  const auto &neighbors = analyzer.neighbors();
+
+  // Assert: The single atom should have no neighbors.
+  ASSERT_FALSE(neighbors.empty()); // The vector itself has size 1 (for 1 atom)
+  ASSERT_TRUE(neighbors[0].empty());
+}
+
+TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
+  // Arrange: Place two atoms at a specific distance.
+  Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});
+  cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0
+  
+  // Ar covalent radius = 0.96.
+  // Bond threshold = (0.96 + 0.96) * bond_factor.
+  // 1.92 * bond_factor.
+  // To include 3.0, bond_factor > 3.0 / 1.92 = 1.5625.
+  // To exclude 3.0, bond_factor < 1.5625.
+
+  // Case 1: Bond Factor Sufficiently Large -> Neighbors Found
+  {
+    cell.setBondFactor(1.6); // Threshold ~ 3.072
+    StructureAnalyzer analyzer(cell, 3.1);
+    const auto &neighbors = analyzer.neighbors();
+    ASSERT_EQ(neighbors.size(), 2);
+    ASSERT_EQ(neighbors[0].size(), 1);
+    EXPECT_EQ(neighbors[0][0].index.value, 1);
+    EXPECT_NEAR(neighbors[0][0].distance, 3.0, 1e-6);
+  }
+
+  // Case 2: Bond Factor Too Small -> No Neighbors (even if Spatial Cutoff allows)
+  {
+    cell.setBondFactor(1.5); // Threshold ~ 2.88
+    StructureAnalyzer analyzer(cell, 3.1); // Spatial cutoff 3.1 is > 3.0
+    const auto &neighbors = analyzer.neighbors();
+    ASSERT_EQ(neighbors.size(), 2);
+    // Should be empty because they are not "bonded"
+    EXPECT_TRUE(neighbors[0].empty());
+    EXPECT_TRUE(neighbors[1].empty());
+  }
+}
+
+TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
+  // Arrange: Create a random system of atoms.
+  Cell random_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  random_cell.addAtom("Ar", {1.0, 1.0, 1.0}); // A
+  random_cell.addAtom("Ar", {2.0, 2.0, 2.0}); // B (Dist ~1.73)
+  random_cell.addAtom("Ar", {8.0, 8.0, 8.0}); // C
+  random_cell.addAtom("Ar", {1.5, 1.5, 1.5}); // D (Dist to A ~0.866)
+  
+  // Ar radius 0.96. Sum = 1.92. 
+  // Dist A-B = 1.73 < 1.92. Should be bonded with default bond_factor 1.2?
+  // 1.92 * 1.2 = 2.304.
+  // So A-B should be neighbors.
+  // A-D should be neighbors.
+  random_cell.setBondFactor(1.2); 
+
+  // Act
+  StructureAnalyzer analyzer(random_cell, 3.0);
+  const auto &neighbors = analyzer.neighbors();
+
+  // Assert: Check symmetry for all pairs.
+  for (size_t i = 0; i < neighbors.size(); ++i) {
+    for (const auto &neighbor : neighbors[i]) {
+      size_t j = neighbor.index.value;
+      
+      // If i sees j, then j must see i
+      bool found_reverse = false;
+      for (const auto &reverse_neighbor : neighbors[j]) {
+        if (reverse_neighbor.index.value == i) {
+          found_reverse = true;
+          // Distances must match
+          EXPECT_NEAR(reverse_neighbor.distance, neighbor.distance, 1e-6);
+          // Vectors must be opposite (r_ij = j - i)
+          EXPECT_NEAR(reverse_neighbor.r_ij.x(), -neighbor.r_ij.x(), 1e-6);
+          EXPECT_NEAR(reverse_neighbor.r_ij.y(), -neighbor.r_ij.y(), 1e-6);
+          EXPECT_NEAR(reverse_neighbor.r_ij.z(), -neighbor.r_ij.z(), 1e-6);
+          break;
+        }
+      }
+      EXPECT_TRUE(found_reverse) << "Symmetry broken: Atom " << i << " sees " << j << " but " << j << " does not see " << i;
+    }
+  }
+}
+
+TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
+  // Arrange: Small cell where an atom might see its own image.
+  // Cell size 2.5. (Smaller than 3.0 to safely fit within typical bonding check?)
+  // Let's use 2.5.
+  // Atom at (1.25, 1.25, 1.25).
+  // Images at distance 2.5.
+  // Ar diam = 1.92. 
+  // Need bond factor such that 2.5 is a "bond".
+  // 1.92 * 1.4 = 2.688 > 2.5.
+  
+  Cell small_cell({2.5, 2.5, 2.5, 90.0, 90.0, 90.0});
+  small_cell.addAtom("Ar", {1.25, 1.25, 1.25});
+  small_cell.setBondFactor(1.4);
+
+  // Case 1: Ignore Periodic Self Interactions = true (Reference default)
+  {
+    StructureAnalyzer analyzer(small_cell, 3.0, true);
+    const auto &neighbors = analyzer.neighbors();
+    ASSERT_EQ(neighbors.size(), 1);
+    // Should NOT see itself
+    EXPECT_TRUE(neighbors[0].empty());
+  }
+
+  // Case 2: Ignore Periodic Self Interactions = false
+  {
+    StructureAnalyzer analyzer(small_cell, 3.0, false);
+    const auto &neighbors = analyzer.neighbors();
+    ASSERT_EQ(neighbors.size(), 1);
+    
+    // In a 3x3x3 grid, nearest neighbors are the 6 face-sharing images at d=2.5.
+    // Next nearest: sqrt(2.5^2 + 2.5^2) = 3.53 > 3.0 (cutoff).
+    // So exactly 6 neighbors expected.
+    EXPECT_EQ(neighbors[0].size(), 6);
+    for(const auto& n : neighbors[0]) {
+        EXPECT_NEAR(n.distance, 2.5, 1e-6);
+    }
+  }
+}
+
+TEST_F(StructureAnalyzerTest, TriangleMoleculeConnectivity) {
+  // Arrange: Create 3 atoms in an equilateral triangle.
+  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  
+  // Equilateral triangle with side length 2.0
+  // Covalent radius Ar = 0.96 -> Bond cutoff = 1.92 * 1.2 = 2.304.
+  // Distance 2.0 < 2.304, so they should be connected.
+  
+  const double d = 2.0;
+  const double h = std::sqrt(d*d - (d/2)*(d/2)); // sqrt(3)
+  
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});             // A
+  cell.addAtom("Ar", {5.0 + d, 5.0, 5.0});         // B
+  cell.addAtom("Ar", {5.0 + d/2, 5.0 + h, 5.0});   // C
+
+  cell.setBondFactor(1.2);
+
+  // Act
+  StructureAnalyzer analyzer(cell, 3.0);
+  const auto &neighbors = analyzer.neighbors();
+
+  // Assert
+  ASSERT_EQ(neighbors.size(), 3);
+
+  // Each atom should see exactly 2 neighbors (the other two vertices)
+  for (size_t i = 0; i < 3; ++i) {
+    ASSERT_EQ(neighbors[i].size(), 2) << "Atom " << i << " does not have 2 neighbors";
+    for (const auto& n : neighbors[i]) {
+        EXPECT_NEAR(n.distance, d, 1e-6);
+    }
+  }
+}

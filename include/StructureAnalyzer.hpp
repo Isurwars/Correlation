@@ -47,8 +47,6 @@ public:
    * @brief Computes all distances and angles within the cutoff radius.
    * @param cell The cell containing the atoms and lattice information.
    * @param cutoff The maximum distance to search for neighbors.
-   * @param bond_factor A factor to multiply with the sum of covalent radii to
-   * determine if two atoms are bonded.
    * @param ignore_periodic_self_interactions If true the periodic self
    * interactions will be ignored.
    */

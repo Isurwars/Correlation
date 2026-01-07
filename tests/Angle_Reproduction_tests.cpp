@@ -31,10 +31,6 @@ TEST_F(AngleReproductionTest, MissingAnglesWhenCutoffIsTooSmall) {
     {
         StructureAnalyzer analyzer(cell_, 0.9);
         const auto& angles = analyzer.angles();
-        // angles[type][center][type]
-        // We expect empty because cutoff < distance
-        // But wait, StructureAnalyzer might throw if cutoff is too small? No.
-        
         // Check if any angles are found
         bool found = false;
         for(const auto& t1 : angles) {
@@ -52,12 +48,6 @@ TEST_F(AngleReproductionTest, MissingAnglesWhenCutoffIsTooSmall) {
     {
         StructureAnalyzer analyzer(cell_, 1.1);
         const auto& angles = analyzer.angles();
-        
-        // Find Si (center)
-        // We need to know element IDs.
-        // Si is usually heavier, maybe index 1? 
-        // Let's just iterate and find 90 degrees.
-        
         bool found = false;
         for(const auto& t1 : angles) {
             for(const auto& center : t1) {
@@ -75,20 +65,11 @@ TEST_F(AngleReproductionTest, MissingAnglesWhenCutoffIsTooSmall) {
 }
 
 TEST_F(AngleReproductionTest, PBCAngleDetection) {
-    // Atom A at 0.1
-    // Atom B (center) at 9.9 (wrapped) -> effectively -0.1
-    // Atom C at 9.9 (wrapped) but different axis?
-    
-    // Let's put Center at 0.5, 0.5, 0.5
-    // Neighbor 1 at 9.6, 0.5, 0.5 (distance 0.9 across boundary)
-    // Neighbor 2 at 0.5, 9.6, 0.5 (distance 0.9 across boundary)
-    // Angle should be 90 degrees.
-    
     cell_.addAtom("Si", {0.5, 0.5, 0.5});
     cell_.addAtom("O", {9.6, 0.5, 0.5});
     cell_.addAtom("O", {0.5, 9.6, 0.5});
     
-    StructureAnalyzer analyzer(cell_, 1.5); // Cutoff > 0.9
+    StructureAnalyzer analyzer(cell_, 1.2);
     
     bool found = false;
     const auto& angles = analyzer.angles();
@@ -104,4 +85,38 @@ TEST_F(AngleReproductionTest, PBCAngleDetection) {
         }
     }
     EXPECT_TRUE(found) << "Should find 90 degree angle across PBC";
+}
+
+TEST_F(AngleReproductionTest, SiTetrahedron_4Atoms) {
+    cell_.addAtom("Si", {5.0, 5.0, 5.0});       // Center
+    cell_.addAtom("Si", {6.0, 6.0, 6.0});       // Neighbor 1 (1,1,1)
+    cell_.addAtom("Si", {6.0, 4.0, 4.0});       // Neighbor 2 (1,-1,-1)
+    cell_.addAtom("Si", {4.0, 6.0, 4.0});       // Neighbor 3 (-1,1,-1)
+    cell_.addAtom("Si", {4.0, 4.0, 6.0});       // Neighbor 4 (-1,-1,1)
+
+    // With 4 neighbors, we have C(4,2) = 6 angles.
+    // Neighbors are at dist sqrt(3) ~ 1.73.
+    // N-N dist is sqrt(8) ~ 2.82.
+    // Si radius 1.16. Bond cutoff ~ 2.78. 
+    // Thus neighbors are NOT connected to each other.
+    
+    StructureAnalyzer analyzer(cell_, 3.0);
+    const auto& angles = analyzer.angles();
+
+    int angle_count = 0;
+    for(const auto& t1 : angles) {
+        for(const auto& center : t1) {
+            for(const auto& t2 : center) {
+                for(double angle : t2) {
+                    double degrees = angle * 180.0 / M_PI;
+                    // std::cout << "Angle: " << degrees << " degrees\n";
+                    // Expected angle is acos(-1/3) ~ 109.47 degrees
+                    if(std::abs(degrees - 109.47) < 1.0) {
+                        angle_count++;
+                    }
+                }
+            }
+        }
+    }
+    EXPECT_EQ(angle_count, 6) << "Should find exactly 6 angles of ~109.47 degrees for a standard Si tetrahedron";
 }

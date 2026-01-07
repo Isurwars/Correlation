@@ -88,10 +88,8 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
   const auto &pad_hist = df.getHistogram("f(theta)");
   const auto &hoh_pad = pad_hist.partials.at("H-O-H");
 
-  // --- DEBUGGING STEP ---
-  // This will print the contents of the H-O-H partial to the console.
+
   print_histogram("H-O-H Partial", pad_hist.bins, hoh_pad);
-  // --- END DEBUGGING STEP ---
 
   // Assert
   auto max_it = std::max_element(hoh_pad.begin(), hoh_pad.end());

@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.5] 2026-01-06
+
+### Added
+- Comprehensive neighbor detection tests in `StructureAnalyzer_test.cpp`:
+    - `FindsNoNeighborsForIsolatedAtom`: Validates isolation of single atoms.
+    - `FindsNeighborsBasedOnBondCutoff`: Ensures bond radius + bond factor logic is strictly followed.
+    - `EnforcesNeighborSymmetry`: Checks that neighbor lists are symmetric (A sees B => B sees A).
+    - `HandlesPeriodicSelfInteractions`: Verifies self-interaction logic across periodic boundaries.
+    - `TriangleMoleculeConnectivity`: Validates connectivity in cyclic triangular structures.
+- New `SiTetrahedron_5Atoms` test case in `Angle_Reproduction_tests.cpp`:
+    - Simulates a full Silicon tetrahedron (1 center + 4 neighbors).
+    - Verifies exact count of 6 tetrahedral angles (109.47°).
+    - Explicitly checks for 0 "other" (unexpected) angles.
+- New `BondCutoffPopulationCorrectness` test in `Cell_test.cpp` to verify `bond_cutoffs_sq_` management.
+
+### Fixed
+- **Critical Bug**: `Cell::setBondFactor` now properly clears the cached `bond_cutoffs_sq_`, ensuring that runtime changes to the bond factor (e.g., during tests) are immediately applied.
+- **Data Consistency**: Verified Covalent Radii in `PhysicalData.hpp` against Pyykkö (2009) data. Reverted Bismuth (Bi) radius from 1.50 Å to 1.51 Å to maintain consistency with the dataset.
+- Fixed `ctest` configuration issues related to missing `DartConfiguration.tcl` by ensuring proper CMake regeneration.
+
 ## [1.3] 2025-12-04
 
 ### Added

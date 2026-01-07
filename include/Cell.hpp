@@ -72,7 +72,10 @@ public:
   // Elements
   const std::vector<Element> &elements() const { return elements_; }
   // Bond Factor
-  void setBondFactor(double b) { bond_factor_ = b; }
+  void setBondFactor(double b) { 
+    bond_factor_ = b; 
+    bond_cutoffs_sq_.clear();
+  }
   double getBondFactor() { return bond_factor_; }
 
   size_t atomCount() const noexcept { return atoms_.size(); }

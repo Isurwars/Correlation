@@ -116,3 +116,32 @@ TEST_F(CellTest, WrapPositionsWrapsAtomIntoCell) {
   EXPECT_NEAR(final_pos.y(), 7.0, 1e-9); // -3.0 mod 10.0
   EXPECT_NEAR(final_pos.z(), 5.0, 1e-9); // 5.0 mod 10.0
 }
+
+TEST_F(CellTest, BondCutoffPopulationCorrectness) {
+  // Arrange
+  Cell cell;
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {0.0, 0.0, 0.0});
+  
+  const double rSi = CovalentRadii::get("Si"); // 1.16
+  const double rO = CovalentRadii::get("O");   // 0.63
+  
+  // Element IDs: Si=0, O=1
+  const int idSi = 0;
+  const int idO = 1;
+
+  // Case 1: Default Bond Factor (1.2)
+  cell.setBondFactor(1.2);
+  // Expected for Si-Si: (1.16 + 1.16) * 1.2 = 2.784
+  // Expected for Si-O:  (1.16 + 0.63) * 1.2 = 2.148
+  // Expected for O-O:   (0.63 + 0.63) * 1.2 = 1.512
+  
+  EXPECT_NEAR(cell.getBondCutoff(idSi, idSi), (rSi + rSi) * 1.2, 1e-6);
+  EXPECT_NEAR(cell.getBondCutoff(idSi, idO),  (rSi + rO) * 1.2, 1e-6);
+  EXPECT_NEAR(cell.getBondCutoff(idO, idO),   (rO + rO) * 1.2, 1e-6);
+
+  // Case 2: Update Bond Factor
+  cell.setBondFactor(1.5);
+  // Verify cache was cleared and values updated
+  EXPECT_NEAR(cell.getBondCutoff(idSi, idO), (rSi + rO) * 1.5, 1e-6);
+}

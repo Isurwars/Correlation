@@ -53,10 +53,6 @@ TEST_F(PADTest, LinearGeometry180) {
     auto& si = cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
     cell_.addAtom("O", {11.0, 10.0, 10.0});
     
-    // Debug: Check bond cutoff is sufficient
-    // We need element IDs.
-    // Assuming 0=O, 1=Si (based on insertion order? No, map order).
-    // Let's rely on cell internals or just trust if getBondCutoff works.
     int id_O = cell_.findElement("O")->id.value;
     int id_Si = cell_.findElement("Si")->id.value;
     double cutoff = cell_.getBondCutoff(id_O, id_Si);
@@ -190,14 +186,8 @@ TEST_F(PADTest, TetrahedralAngle) {
 
 // 3. Symmetry & Multi-Species
 TEST_F(PADTest, SymmetryAndSorting) {
-    // A-B-C should partial B-A-C (or A-B-C sorted) or similar? 
-    // Implementation uses "Type1-Center-Type2" key.
-    // If we have O-Si-N, is it stored as N-Si-O or O-Si-N?
-    // It should be canonical.
-    
     cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
     cell_.addAtom("O", {11.0, 10.0, 10.0});
-    // Add Nitrogen
     cell_.addAtom("N", {10.0, 11.0, 10.0}); // 90 degrees
     
     DistributionFunctions df(cell_, 1.5, 1.3);
