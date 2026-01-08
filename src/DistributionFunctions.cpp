@@ -196,7 +196,7 @@ void DistributionFunctions::calculateCoordinationNumber() {
     // Count neighbors of this specific atom, grouped by their element type.
     std::map<std::string, int> neighbor_counts_for_this_atom;
     for (const auto &neighbor : all_neighbors[i]) {
-      const auto &neighbor_atom = atoms[neighbor.index.value];
+      const auto &neighbor_atom = atoms[neighbor.index];
       neighbor_counts_for_this_atom[neighbor_atom.element().symbol]++;
     }
 

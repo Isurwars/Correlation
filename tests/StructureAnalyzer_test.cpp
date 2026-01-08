@@ -115,12 +115,9 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   const auto &angles = analyzer.angles();
 
   // Assert
-  // Retrieve the element ID for indexing (should be 0).
   const int c_id = pbc_cell.findElement("C")->id.value;
-  ASSERT_EQ(c_id, 0);
-
-  // Retrieve the element ID for indexing (should be 0).
   const int o_id = pbc_cell.findElement("O")->id.value;
+  ASSERT_EQ(c_id, 0);
   ASSERT_EQ(o_id, 1);
 
   // The angle is stored in the [C][C][O] slot.
@@ -168,7 +165,7 @@ TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 2);
     ASSERT_EQ(neighbors[0].size(), 1);
-    EXPECT_EQ(neighbors[0][0].index.value, 1);
+    EXPECT_EQ(neighbors[0][0].index, 1);
     EXPECT_NEAR(neighbors[0][0].distance, 3.0, 1e-6);
   }
 
@@ -206,12 +203,12 @@ TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
   // Assert: Check symmetry for all pairs.
   for (size_t i = 0; i < neighbors.size(); ++i) {
     for (const auto &neighbor : neighbors[i]) {
-      size_t j = neighbor.index.value;
+      size_t j = neighbor.index;
       
       // If i sees j, then j must see i
       bool found_reverse = false;
       for (const auto &reverse_neighbor : neighbors[j]) {
-        if (reverse_neighbor.index.value == i) {
+        if (reverse_neighbor.index == i) {
           found_reverse = true;
           // Distances must match
           EXPECT_NEAR(reverse_neighbor.distance, neighbor.distance, 1e-6);

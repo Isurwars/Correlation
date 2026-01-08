@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.5] 2026-01-06
+## [1.5] 2026-01-07
+
+### Refactor
+- Fused `Angle_Reproduction_tests.cpp` and `PAD_tests.cpp` into a single `tests/AngleTests.cpp` file for better organization.
+- Refactored `AtomID` from a struct to a simple `std::uint32_t` alias, removing the unused `offset` field to simplify the codebase.
+- Updated `Atom::setID` and all `AtomID` usages (e.g., removing `.value` accesses) to match the new type definition.
 
 ### Added
 - Comprehensive neighbor detection tests in `StructureAnalyzer_test.cpp`:

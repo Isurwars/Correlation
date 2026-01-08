@@ -200,8 +200,8 @@ void StructureAnalyzer::computeAngles() {
               const auto &neighbor1 = central_atom_neighbors[j];
               const auto &neighbor2 = central_atom_neighbors[k];
 
-              const int type1 = atoms[neighbor1.index.value].element_id();
-              const int type2 = atoms[neighbor2.index.value].element_id();
+              const int type1 = atoms[neighbor1.index].element_id();
+              const int type2 = atoms[neighbor2.index].element_id();
 
               const auto &v1 = neighbor1.r_ij;
               const auto &v2 = neighbor2.r_ij;

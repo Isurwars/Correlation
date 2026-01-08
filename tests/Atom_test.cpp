@@ -16,7 +16,7 @@ TEST_F(AtomTest, DefaultConstructorInitializesCorrectly) {
   const Atom atom{};
 
   // Assert
-  EXPECT_EQ(atom.id().value, 0);
+  EXPECT_EQ(atom.id(), 0);
   EXPECT_EQ(atom.element().symbol, "");
   EXPECT_EQ(atom.element().id.value, -1);
   EXPECT_DOUBLE_EQ(linalg::norm(atom.position()), 0.0);
@@ -26,7 +26,7 @@ TEST_F(AtomTest, ParameterizedConstructorSetsProperties) {
   // Arrange
   const Element element = {"O", {1}};
   const linalg::Vector3<double> expected_pos = {1.0, 2.5, -3.0};
-  const AtomID expected_id = {123};
+  const AtomID expected_id = 123;
 
   // Act
   const Atom atom(element, expected_pos, expected_id);
@@ -34,7 +34,7 @@ TEST_F(AtomTest, ParameterizedConstructorSetsProperties) {
   // Assert
   EXPECT_EQ(atom.element().symbol, "O");
   EXPECT_EQ(atom.element().id.value, 1);
-  EXPECT_EQ(atom.id().value, 123);
+  EXPECT_EQ(atom.id(), 123);
   EXPECT_NEAR(atom.position().x(), expected_pos.x(), 1e-9);
   EXPECT_NEAR(atom.position().y(), expected_pos.y(), 1e-9);
   EXPECT_NEAR(atom.position().z(), expected_pos.z(), 1e-9);

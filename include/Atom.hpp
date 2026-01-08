@@ -11,14 +11,7 @@
 
 #include "LinearAlgebra.hpp"
 
-struct AtomID {
-  std::uint32_t value;
-  linalg::Vector3<int> offset = {0, 0, 0};
-  // Allow comparison and use as a key in maps if needed.
-  constexpr bool operator==(const AtomID other) const {
-    return value == other.value;
-  };
-};
+using AtomID = std::uint32_t;
 
 struct ElementID {
   int value;
@@ -54,7 +47,7 @@ public:
   //-------------------------------------------------------------------------//
 
   AtomID id() const noexcept { return id_; }
-  void setID(std::uint32_t num) { id_.value = num; }
+  void setID(std::uint32_t num) { id_ = num; }
 
   const linalg::Vector3<double> &position() const noexcept { return position_; }
   void setPosition(linalg::Vector3<double> pos) { position_ = pos; }
