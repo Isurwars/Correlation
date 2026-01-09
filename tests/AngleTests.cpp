@@ -126,6 +126,72 @@ TEST_F(AngleReproductionTest, SiTetrahedron_4Atoms) {
     EXPECT_EQ(angle_count, 6) << "Should find exactly 6 angles of ~109.47 degrees for a standard Si tetrahedron";
 }
 
+TEST_F(AngleReproductionTest, Icosahedron_13Atoms) {
+    cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
+    
+    double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+    // Vertices of icosahedron (edge length 2) relative to center
+    std::vector<std::vector<double>> verts = {
+        {0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+        {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+        {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}
+    };
+    
+    for(const auto& v : verts) {
+        cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
+    }
+    
+    // Cutoff ~ 2.5 covers bonds (1.902, 2.0) but avoids next-nearest (3.236)
+    StructureAnalyzer analyzer(cell_, 2.5);
+    const auto& angles = analyzer.angles();
+    
+    int count_63 = 0;  // Center-Edge (approx 63.43)
+    int count_116 = 0; // Center-Diagonal (approx 116.57)
+    int count_180 = 0; // Center-Opposite (180.0)
+    int count_60 = 0;  // Surface-Triangle (60.0)
+    int count_108 = 0; // Surface-Pentagon (108.0)
+    int count_58 = 0;  // Surface-Center (approx 58.28)
+    
+    int total_angles = 0;
+    
+    for(const auto& t1 : angles) {
+        for(const auto& center : t1) {
+            for(const auto& t2 : center) {
+                for(double angle : t2) {
+                    double deg = angle * 180.0 / M_PI;
+                    total_angles++;
+                    
+                    if(std::abs(deg - 63.43) < 1.0) count_63++;
+                    else if(std::abs(deg - 116.57) < 1.0) count_116++;
+                    else if(std::abs(deg - 180.0) < 1.0) count_180++;
+                    else if(std::abs(deg - 60.0) < 1.0) count_60++;
+                    else if(std::abs(deg - 108.0) < 1.0) count_108++;
+                    else if(std::abs(deg - 58.28) < 1.0) count_58++;
+                }
+            }
+        }
+    }
+    
+    // Diagnosis output if needed
+    if (total_angles != 246) {
+        std::cout << "Found " << total_angles << " angles.\n";
+        std::cout << "63: " << count_63 << "\n";
+        std::cout << "116: " << count_116 << "\n";
+        std::cout << "180: " << count_180 << "\n";
+        std::cout << "60: " << count_60 << "\n";
+        std::cout << "108: " << count_108 << "\n";
+        std::cout << "58: " << count_58 << "\n";
+    }
+
+    EXPECT_EQ(count_63, 30) << "Should find 30 Center-Edge angles (~63.4 deg)";
+    EXPECT_EQ(count_116, 30) << "Should find 30 Center-Diagonal angles (~116.6 deg)";
+    EXPECT_EQ(count_180, 6) << "Should find 6 Center-Opposite angles (180 deg)";
+    EXPECT_EQ(count_60, 60) << "Should find 60 Surface-Triangle angles (60 deg)";
+    EXPECT_EQ(count_108, 60) << "Should find 60 Surface-Pentagon angles (108 deg)";
+    EXPECT_EQ(count_58, 60) << "Should find 60 Surface-Center angles (Center-S-Neighbor, ~58.3 deg)";
+    EXPECT_EQ(total_angles, 246) << "Total angles should be 246";
+}
+
 // ============================================================================
 // Part 2: Plane Angle Distribution (PAD) Tests
 // ============================================================================
