@@ -1,5 +1,13 @@
-import { VerticalBox, HorizontalBox, Button, LineEdit, CheckBox, GroupBox, ComboBox } from "std-widgets.slint";
-import {InputGroup} from "InputGroup.slint";
+import {
+    VerticalBox,
+    HorizontalBox,
+    Button,
+    LineEdit,
+    CheckBox,
+    GroupBox,
+    ComboBox,
+} from "std-widgets.slint";
+import { InputGroup } from "InputGroup.slint";
 import { ToolTip } from "ToolTip.slint";
 import { Theme } from "Theme.slint";
 
@@ -36,8 +44,8 @@ export component AppWindow inherits Window {
 
     // Theme
     min-width: 500px;
-    min-height: 500px;
-    preferred-width: 600px;
+    min-height: 580px;
+    preferred-width: 500px;
     preferred-height: 600px;
     background: Theme.window-background;
     default-font-size: Theme.font-size-regular;
@@ -56,170 +64,133 @@ export component AppWindow inherits Window {
     }
 
     window_area := TouchArea {
-        VerticalBox {
-            GridLayout {
-                padding: Theme.spacing-regular;
-                spacing: Theme.spacing-regular;
-                preferred-width: 600px;
-                preferred-height: 600px;
-                Row {
-                    Text {
-                        preferred-width: 550px;
-                        text: "1. Input File";
-                        color: Theme.foreground;
-                        colspan: 3;
-                    }
-                }
-
-                Row {
+        VerticalLayout {
+            padding: Theme.spacing-large;
+            GroupBox {
+                title: "1. Input File";
+                VerticalLayout {
+                    spacing: Theme.spacing-medium;
                     file_area := TouchArea {
-                        colspan: 3;
-                        preferred-width: 550px;
-                        preferred-height: 150px;
-                        max-height: 150px;
+                        min-height: 80px;
                         Button {
-                            height: parent.height;
-                            width: parent.width;
+                            height: 100%;
+                            width: 100%;
                             text: "Load a structure file";
                             clicked => {
                                 browse_file();
                             }
                         }
                     }
-                }
 
-                Row {
                     Text {
-                        preferred-width: 550px;
                         text: file_status_text;
                         color: Theme.foreground;
-                        colspan: 3;
+                        wrap: word-wrap;
                     }
                 }
+            }
 
-                Row {
-                    Text {
-                        min-height: Theme.size-regular;
-                        text: "2. Options";
-                        color: Theme.foreground;
-                    }
-                }
+            GroupBox {
+                title: "2. Options";
+                VerticalLayout {
+                    HorizontalLayout {
+                        r_max_area := InputGroup {
+                            label_text: "RDF Max r";
+                            unit_text: "Å";
+                            value_text <=> r_max;
+                        }
 
-                Row {
-                    r_max_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "RDF Max r";
-                        unit_text: "Å";
-                        value_text <=> r_max;
-                    }
+                        r_bin_area := InputGroup {
+                            label_text: "RDF Bin Width";
+                            unit_text: "Å";
+                            value_text <=> r_bin_width;
+                        }
 
-                    r_bin_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "RDF Bin Width";
-                        unit_text: "Å";
-                        value_text <=> r_bin_width;
-                    }
-
-                    bond_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "Bond Parameter";
-                        value_text <=> bond_factor;
-                    }
-                }
-
-                Row {
-                    theta_max_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "PAD Max Angle";
-                        unit_text: "°";
-                        value_text <=> angle_max;
+                        bond_area := InputGroup {
+                            label_text: "Bond Parameter";
+                            value_text <=> bond_factor;
+                        }
                     }
 
-                    theta_bin_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "PAD Bin Width";
-                        unit_text: "°";
-                        value_text <=> angle_bin_width;
-                    }
-                }
+                    HorizontalLayout {
+                        theta_max_area := InputGroup {
+                            label_text: "PAD Max Angle";
+                            unit_text: "°";
+                            value_text <=> angle_max;
+                        }
 
-                Row {
-                    s_max_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "Max Q";
-                        unit_text: "Å⁻¹";
-                        value_text <=> q_max;
+                        theta_bin_area := InputGroup {
+                            label_text: "PAD Bin Width";
+                            unit_text: "°";
+                            value_text <=> angle_bin_width;
+                        }
                     }
 
-                    s_bin_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "S(Q) Bin Width";
-                        unit_text: "Å⁻¹";
-                        value_text: q_bin_width;
+                    HorizontalLayout {
+                        s_max_area := InputGroup {
+                            label_text: "Max Q";
+                            unit_text: "Å⁻¹";
+                            value_text <=> q_max;
+                        }
+
+                        s_bin_area := InputGroup {
+                            label_text: "S(Q) Bin Width";
+                            unit_text: "Å⁻¹";
+                            value_text: q_bin_width;
+                        }
+
+                        r_int_area := InputGroup {
+                            label_text: "Max r for the FFT";
+                            unit_text: "Å";
+                            value_text: r_int_max;
+                        }
                     }
 
-                    r_int_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "Max r for the FFT";
-                        unit_text: "Å";
-                        value_text: r_int_max;
-                    }
-                }
+                    HorizontalLayout {
+                        smooth_area := TouchArea {
+                            min-height: Theme.size-regular;
+                            VerticalBox {
+                                CheckBox {
+                                    text: "Enable Smoothing";
+                                    checked: smoothing;
+                                    toggled => {
+                                        smoothing = !smoothing;
+                                    }
+                                }
+                            }
+                        }
 
-                Row {
-                    smooth_area := TouchArea {
-                        min-height: Theme.size-regular;
-                        VerticalBox {
-                            CheckBox {
-                                text: "Enable Smoothing";
-                                checked: smoothing;
-                                toggled => {
-                                    smoothing = !smoothing;
+                        sigma_area := InputGroup {
+                            label_text: "Smoothing Sigma";
+                            enabled_input: smoothing;
+                            value_text <=> smoothing_sigma;
+                        }
+
+                        kernel_area := TouchArea {
+                            min-height: Theme.size-regular;
+                            VerticalBox {
+                                ComboBox {
+                                    enabled: smoothing;
+                                    model: ["Gaussian", "Bump", "Triweight"];
+                                    current-index: smoothing_kernel;
+                                    selected(i) => {
+                                        smoothing_kernel = i.to-float();
+                                    }
                                 }
                             }
                         }
                     }
-
-                    sigma_area := InputGroup {
-                        min-height: Theme.size-regular;
-                        label_text: "Smoothing Sigma";
-                        enabled_input: smoothing;
-                        value_text <=> smoothing_sigma;
-                    }
-
-                    kernel_area := TouchArea {
-                        min-height: Theme.size-regular;
-
-                        ComboBox {
-                            enabled: smoothing;
-                            model: ["Gaussian", "Bump", "Triweight"];
-                            current-index: smoothing_kernel;
-                            selected(i) => {
-                                smoothing_kernel = i.to-float();
-                            }
-                        }
-                    }
                 }
+            }
 
-                Row {
-                    Text {
-                        preferred-width: 550px;
-                        text: "3. Run Analysis";
-                        color: Theme.foreground;
-                        colspan: 3;
-                    }
-                }
-
-                Row {
-
+            GroupBox {
+                title: "3. Run Analysis";
+                VerticalLayout {
                     analysis_area := TouchArea {
-                        colspan: 3;
-                        preferred-width: 550px;
-                        preferred-height: 150px;
-                        max-height: 150px;
+                        min-height: 80px;
                         Button {
-                            height: parent.height;
-                            width: parent.width;
+                            height: 100%;
+                            width: 100%;
                             text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
                             enabled: !analysis_running;
                             clicked => {
@@ -229,14 +200,11 @@ export component AppWindow inherits Window {
                             }
                         }
                     }
-                }
 
-                Row {
                     Text {
-                        preferred-width: 550px;
                         text: analysis_status_text;
                         color: Theme.foreground;
-                        colspan: 3;
+                        wrap: word-wrap;
                     }
                 }
             }

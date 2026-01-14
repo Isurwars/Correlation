@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.6] 2026-01-13
+
+### Added
+- Icosahedron Angle Test in `tests/AngleTests.cpp`.
+- Missing color definitions to `ui/Theme.slint`.
+
+### Changed
+- Refactored `ui/AppWindow.slint` to use `VerticalLayout` and `GroupBox` for better UI organization.
+- Updated project version to 1.6 in `CMakeLists.txt`.
+
+### Fixed
+- Fixed unit conversion error in `ui/AppWindow.slint`.
+- Fixed "Unknown property max-height" error in `ui/AppWindow.slint`.
+
 ## [1.5] 2026-01-07
 
 ### Refactor

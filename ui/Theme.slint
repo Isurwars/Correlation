@@ -1,5 +1,4 @@
 import "fonts/FiraCode-Bold.ttf";
-import "fonts/FiraCode-Bold.ttf";
 
 export global Theme {
     // brushes
@@ -16,6 +15,17 @@ export global Theme {
     out property <brush> foreground-selected: root.background-regular;
     out property <brush> foreground-selected-hover: root.foreground-selected.darker(0.2);
     out property <brush> foreground-selected-pressed: root.foreground-selected.darker(0.4);
+
+    // Semantic Colors
+    out property <brush> primary: #3B82F6;
+    out property <brush> secondary: #64748B;
+    out property <brush> accent: #0EA5E9;
+    out property <brush> destructive: #EF4444;
+    out property <brush> success: #22C55E;
+    out property <brush> warning: #EAB308;
+    out property <brush> white: #FFFFFF;
+    out property <brush> black: #000000;
+    out property <brush> transparent: Colors.transparent;
 
     // durations
     out property <duration> duration-fast: 100ms;
