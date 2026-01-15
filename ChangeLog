@@ -7,10 +7,13 @@ All notable changes to this project will be documented in this file.
 - Refactored entire UI to use **Material Design** components.
 - Integrated `material-1.0` Slint library for premium aesthetics.
 - Added Material Design `FilledButton`, `CheckBox`, `OutlinedCard`, and `DropDownMenu`.
+- Added `slint-config.json` for centralized `@material` library mapping.
 
 ### Changed
 - Replaced standard widgets with Material equivalents in `ui/AppWindow.slint`.
-- Improved tooltip text distribution in `ToolTip.slint`.
+- Updated `ui/AppWindow.slint` to use `@material` imports via `slint-config.json`.
+- Improved tooltip text distribution and typography in `ToolTip.slint`.
+- Adjusted `ToolTip` positioning in `AppWindow.slint` for improved layout.
 - Updated project version to 1.7 in `CMakeLists.txt`.
 
 ### Fixed
