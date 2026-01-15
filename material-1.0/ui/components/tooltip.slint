@@ -14,8 +14,7 @@ export component ToolTip {
         border_radius: 4px;
         background: MaterialPalette.inverse_surface;
 
-        layout := HorizontalLayout {
-            max_width: 220px;
+        layout := VerticalLayout {
             padding_top: 4px;
             padding_bottom: 4px;
             padding_left: 8px;
@@ -23,11 +22,12 @@ export component ToolTip {
 
             MaterialText {
                 text: root.text;
-                max_width: 220px;
+                max-width: 220px;
                 vertical_alignment: center;
                 color: MaterialPalette.inverse_on_surface;
-                style: MaterialTypography.body_small;
+                style: MaterialTypography.body_medium;
                 wrap: word-wrap;
+                overflow: clip;
             }
         }
     }

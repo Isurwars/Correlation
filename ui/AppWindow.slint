@@ -11,7 +11,7 @@ import {
     OutlinedCard,
     MaterialText,
     ToolTip,
-} from "../material-1.0/material.slint";
+} from "@material";
 
 
 export component AppWindow inherits Window {
@@ -285,7 +285,7 @@ export component AppWindow inherits Window {
     }
 
     ToolTip {
-        x: window_area.mouse_x - 235px;
+        x: window_area.mouse_x - 240px;
         y: window_area.mouse_y + 20px;
         text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows: b = (max_bond_distance)/ (sum_of_covalent_radii). The default bond parameter is 1.2.";
         visible: bond_area.has-hover;
@@ -299,7 +299,7 @@ export component AppWindow inherits Window {
     }
 
     ToolTip {
-        x: window_area.mouse_x - 190px;
+        x: window_area.mouse_x - 240px;
         y: window_area.mouse_y + 20px;
         text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
         visible: theta_bin_area.has-hover;
@@ -320,7 +320,7 @@ export component AppWindow inherits Window {
     }
 
     ToolTip {
-        x: window_area.mouse_x - 215px;
+        x: window_area.mouse_x - 240px;
         y: window_area.mouse_y + 20px;
         text: "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å";
         visible: r_int_area.has-hover;
@@ -341,7 +341,7 @@ export component AppWindow inherits Window {
     }
 
     ToolTip {
-        x: window_area.mouse_x - 270px;
+        x: window_area.mouse_x - 240px;
         y: window_area.mouse_y + 20px;
         text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
         visible: kernel_area.has-hover;
