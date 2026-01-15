@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.7] 2026-01-14
+
+### Added
+- Refactored entire UI to use **Material Design** components.
+- Integrated `material-1.0` Slint library for premium aesthetics.
+- Added Material Design `FilledButton`, `CheckBox`, `OutlinedCard`, and `DropDownMenu`.
+
+### Changed
+- Replaced standard widgets with Material equivalents in `ui/AppWindow.slint`.
+- Improved tooltip text distribution in `ToolTip.slint`.
+- Updated project version to 1.7 in `CMakeLists.txt`.
+
+### Fixed
+- Fixed export errors for `MaterialPalette` and `CheckBoxTile` in `material.slint`.
+- Fixed functionality of `DropDownMenu` for Smoothing Kernel selection.
+- Fixed deprecated `rotation-angle` property in `date_picker.slint` (replaced with `transform-rotation`).
+- Cleaned up redundant `ui/Theme.slint` and `ui/InputGroup.slint` (functionality moved to Material Design).
+
 ## [1.6] 2026-01-13
 
 ### Added

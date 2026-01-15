@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.6 LANGUAGES CXX)
+project(Correlation VERSION 1.7 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
@@ -108,6 +108,7 @@ target_include_directories(correlation PRIVATE
 
 slint_target_sources(correlation
   ui/AppWindow.slint
+  LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/material-1.0/material.slint
 )
 
 # Call the helper function to bundle DLLs on Windows

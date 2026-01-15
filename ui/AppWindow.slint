@@ -1,16 +1,17 @@
 import {
-    VerticalBox,
-    HorizontalBox,
-    Button,
-    LineEdit,
-    CheckBox,
-    GroupBox,
-    ComboBox,
-} from "std-widgets.slint";
-import { InputGroup } from "InputGroup.slint";
-import { ToolTip } from "ToolTip.slint";
-import { Theme } from "Theme.slint";
-
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledButton,
+    CheckBoxTile,
+    CheckState,
+    TextField,
+    DropDownMenu,
+    MenuItem,
+    OutlinedCard,
+    MaterialText,
+    ToolTip,
+} from "../material-1.0/material.slint";
 
 
 export component AppWindow inherits Window {
@@ -27,7 +28,7 @@ export component AppWindow inherits Window {
     in-out property <bool> timer_running: false;
     in-out property <bool> text_opacity: true;
 
-    // User-configurable options, now exposed to the UI
+    // User-configurable options
     in-out property <string> in_file_text;
     in-out property <bool> normalize;
     in-out property <bool> smoothing;
@@ -42,15 +43,11 @@ export component AppWindow inherits Window {
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
 
-    // Theme
-    min-width: 500px;
-    min-height: 580px;
-    preferred-width: 500px;
-    preferred-height: 600px;
-    background: Theme.window-background;
-    default-font-size: Theme.font-size-regular;
-    default-font-family: Theme.font-family;
-    default-font-weight: Theme.font-weight-regular;
+    preferred-width: 650px;
+    preferred-height: 750px;
+    background: MaterialPalette.background;
+    default-font-size: MaterialTypography.body_small.font_size;
+    default-font-weight: MaterialTypography.body_small.font_weight;
     property <image> logo-icon: @image-url("../Images/Logo.png");
     icon: logo-icon;
     title: "Correlation Analysis Tool";
@@ -65,14 +62,21 @@ export component AppWindow inherits Window {
 
     window_area := TouchArea {
         VerticalLayout {
-            padding: Theme.spacing-large;
-            GroupBox {
-                title: "1. Input File";
+            padding: MaterialStyleMetrics.padding_16;
+            spacing: MaterialStyleMetrics.spacing_16;
+
+            OutlinedCard {
                 VerticalLayout {
-                    spacing: Theme.spacing-medium;
+                    padding: MaterialStyleMetrics.padding_16;
+                    spacing: MaterialStyleMetrics.spacing_12;
+                    MaterialText {
+                        text: "1. Input File";
+                        style: MaterialTypography.title_medium;
+                    }
+
                     file_area := TouchArea {
-                        min-height: 80px;
-                        Button {
+                        min-height: 50px;
+                        FilledButton {
                             height: 100%;
                             width: 100%;
                             text: "Load a structure file";
@@ -84,111 +88,159 @@ export component AppWindow inherits Window {
 
                     Text {
                         text: file_status_text;
-                        color: Theme.foreground;
+                        color: MaterialPalette.on_surface;
                         wrap: word-wrap;
                     }
                 }
             }
 
-            GroupBox {
-                title: "2. Options";
+            OutlinedCard {
                 VerticalLayout {
+                    padding: MaterialStyleMetrics.padding_16;
+                    spacing: MaterialStyleMetrics.spacing_12;
+                    MaterialText {
+                        text: "2. Options";
+                        style: MaterialTypography.title_medium;
+                    }
+
                     HorizontalLayout {
-                        r_max_area := InputGroup {
-                            label_text: "RDF Max r";
-                            unit_text: "Å";
-                            value_text <=> r_max;
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        r_max_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "RDF Max r (Å)";
+                                text <=> r_max;
+                            }
                         }
 
-                        r_bin_area := InputGroup {
-                            label_text: "RDF Bin Width";
-                            unit_text: "Å";
-                            value_text <=> r_bin_width;
+                        r_bin_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "RDF Bin Width (Å)";
+                                text <=> r_bin_width;
+                            }
                         }
 
-                        bond_area := InputGroup {
-                            label_text: "Bond Parameter";
-                            value_text <=> bond_factor;
+                        bond_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "Bond Parameter";
+                                text <=> bond_factor;
+                            }
                         }
                     }
 
                     HorizontalLayout {
-                        theta_max_area := InputGroup {
-                            label_text: "PAD Max Angle";
-                            unit_text: "°";
-                            value_text <=> angle_max;
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        theta_max_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "PAD Max Angle (°)";
+                                text <=> angle_max;
+                            }
                         }
 
-                        theta_bin_area := InputGroup {
-                            label_text: "PAD Bin Width";
-                            unit_text: "°";
-                            value_text <=> angle_bin_width;
-                        }
-                    }
-
-                    HorizontalLayout {
-                        s_max_area := InputGroup {
-                            label_text: "Max Q";
-                            unit_text: "Å⁻¹";
-                            value_text <=> q_max;
-                        }
-
-                        s_bin_area := InputGroup {
-                            label_text: "S(Q) Bin Width";
-                            unit_text: "Å⁻¹";
-                            value_text: q_bin_width;
-                        }
-
-                        r_int_area := InputGroup {
-                            label_text: "Max r for the FFT";
-                            unit_text: "Å";
-                            value_text: r_int_max;
+                        theta_bin_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "PAD Bin Width (°)";
+                                text <=> angle_bin_width;
+                            }
                         }
                     }
 
                     HorizontalLayout {
-                        smooth_area := TouchArea {
-                            min-height: Theme.size-regular;
-                            VerticalBox {
-                                CheckBox {
-                                    text: "Enable Smoothing";
-                                    checked: smoothing;
-                                    toggled => {
-                                        smoothing = !smoothing;
-                                    }
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        s_max_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "Max Q (Å⁻¹)";
+                                text <=> q_max;
+                            }
+                        }
+
+                        s_bin_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "S(Q) Bin Width (Å⁻¹)";
+                                text: q_bin_width;
+                                edited(s) => {
+                                    q_bin_width = s;
                                 }
                             }
                         }
 
-                        sigma_area := InputGroup {
-                            label_text: "Smoothing Sigma";
-                            enabled_input: smoothing;
-                            value_text <=> smoothing_sigma;
+                        r_int_area := TouchArea {
+                            horizontal-stretch: 1;
+                            TextField {
+                                width: 100%;
+                                label: "Max r for the FFT (Å)";
+                                text: r_int_max;
+                                edited(s) => {
+                                    r_int_max = s;
+                                }
+                            }
+                        }
+                    }
+
+                    HorizontalLayout {
+                        spacing: MaterialStyleMetrics.spacing_8;
+
+                        smooth_area := TouchArea {
+                            CheckBoxTile {
+                                text: "Enable Smoothing";
+                                check_state: smoothing ? CheckState.checked : CheckState.unchecked;
+                                checked_state_changed(s) => {
+                                    smoothing = (s == CheckState.checked);
+                                }
+                            }
+                        }
+
+                        sigma_area := TouchArea {
+                            TextField {
+                                width: 100%;
+                                label: "Smoothing Sigma";
+                                enabled: smoothing;
+                                text <=> smoothing_sigma;
+                            }
                         }
 
                         kernel_area := TouchArea {
-                            min-height: Theme.size-regular;
-                            VerticalBox {
-                                ComboBox {
-                                    enabled: smoothing;
-                                    model: ["Gaussian", "Bump", "Triweight"];
-                                    current-index: smoothing_kernel;
-                                    selected(i) => {
-                                        smoothing_kernel = i.to-float();
-                                    }
-                                }
+                            DropDownMenu {
+                                width: 100%;
+                                enabled: smoothing;
+                                label: "Smoothing Kernel";
+                                items: [
+                                    { text: "Gaussian", enabled: true },
+                                    { text: "Bump", enabled: true },
+                                    { text: "Triweight", enabled: true }
+                                ];
+                                current-index <=> smoothing_kernel;
                             }
                         }
                     }
                 }
             }
 
-            GroupBox {
-                title: "3. Run Analysis";
+            OutlinedCard {
                 VerticalLayout {
+                    padding: MaterialStyleMetrics.padding_16;
+                    spacing: MaterialStyleMetrics.spacing_12;
+                    MaterialText {
+                        text: "3. Run Analysis";
+                        style: MaterialTypography.title_medium;
+                    }
+
                     analysis_area := TouchArea {
-                        min-height: 80px;
-                        Button {
+                        min-height: 50px;
+                        FilledButton {
                             height: 100%;
                             width: 100%;
                             text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
@@ -203,7 +255,7 @@ export component AppWindow inherits Window {
 
                     Text {
                         text: analysis_status_text;
-                        color: Theme.foreground;
+                        color: MaterialPalette.on_surface;
                         wrap: word-wrap;
                     }
                 }
@@ -211,111 +263,87 @@ export component AppWindow inherits Window {
         }
     }
 
-    file_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
         text: "Load a structure file";
-        user_is_hovering: file_area.has-hover;
-        width: 135px;
-        height: 25px;
+        visible: file_area.has-hover;
     }
 
-    r_max_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)).\nThe recommended max radius is 20 Å.";
-        user_is_hovering: r_max_area.has-hover;
-        width: 260px;
-        height: 55px;
+        text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
+        visible: r_max_area.has-hover;
     }
 
-    r_bin_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Bin width used to calculate the histograms for the Radial Distribution \nFunctions (g(r), J(r), G(r)).\nThe recommended bin is 0.02 Å.";
-        user_is_hovering: r_bin_area.has-hover;
-        width: 250px;
-        height: 70px;
+        text: "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å.";
+        visible: r_bin_area.has-hover;
     }
 
-    bond_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x - 235px;
         y: window_area.mouse_y + 20px;
-        text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows:\nb = (max_bond_distance)/\n    (sum_of_covalent_radii).\nThe default bond parameter is 1.2.";
-        user_is_hovering: bond_area.has-hover;
-        width: 225px;
-        height: 100px;
+        text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows: b = (max_bond_distance)/ (sum_of_covalent_radii). The default bond parameter is 1.2.";
+        visible: bond_area.has-hover;
     }
 
-    theta_max_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Maximum angle to calculate the Plane-Angle Distribution (F(θ)).\nThe recommended max angle is 180°.";
-        user_is_hovering: theta_max_area.has-hover;
-        width: 230px;
-        height: 55px;
+        text: "Maximum angle to calculate the Plane-Angle Distribution (F(θ)). The recommended max angle is 180°.";
+        visible: theta_max_area.has-hover;
     }
 
-    theta_bin_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x - 190px;
         y: window_area.mouse_y + 20px;
-        text: "Bin width used to calculate the histograms for the Plane-Angle Distribution.\nThe recommended bin is 1.0°.";
-        user_is_hovering: theta_bin_area.has-hover;
-        width: 180px;
-        height: 70px;
+        text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
+        visible: theta_bin_area.has-hover;
     }
 
-    s_max_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)).\nThe recommended max scattering vector is 20.0 Å⁻¹";
-        user_is_hovering: s_max_area.has-hover;
-        width: 245px;
-        height: 70px;
+        text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹";
+        visible: s_max_area.has-hover;
     }
 
-    s_bin_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Bin width used to calculate the histograms for the Structure Factor.\nThe recommended bin is 0.02 Å⁻¹.";
-        user_is_hovering: s_bin_area.has-hover;
-        width: 225px;
-        height: 55px;
+        text: "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹.";
+        visible: s_bin_area.has-hover;
     }
 
-    r_int_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x - 215px;
         y: window_area.mouse_y + 20px;
-        text: "Maximum radius for the Fourier Transform of the g(r) used to\ncalculate the Structure Factor.\nThe recommended max radius is 10.0 Å";
-        user_is_hovering: r_int_area.has-hover;
-        width: 225px;
-        height: 70px;
+        text: "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å";
+        visible: r_int_area.has-hover;
     }
 
-    smooth_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Enable the smoothing of the\ndistribution functions.";
-        user_is_hovering: smooth_area.has-hover;
-        width: 175px;
-        height: 40px;
+        text: "Enable the smoothing of the distribution functions.";
+        visible: smooth_area.has-hover;
     }
 
-    sigma_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x + 20px;
         y: window_area.mouse_y + 20px;
-        text: "Sigma to be used for the smoothing\nof the distribution functions.\nThe recommended  sigma is 0.01.";
-        user_is_hovering: sigma_area.has-hover;
-        width: 220px;
-        height: 55px;
+        text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
+        visible: sigma_area.has-hover;
     }
 
-    kernel_tip := ToolTip {
+    ToolTip {
         x: window_area.mouse_x - 270px;
         y: window_area.mouse_y + 20px;
-        text: "The kernel used by the kernel smoother.\nThe recommended kernel is the Gaussian kernel.";
-        user_is_hovering: kernel_area.has-hover;
-        width: 260px;
-        height: 55px;
+        text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
+        visible: kernel_area.has-hover;
     }
 }
