@@ -1,7 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8] 2026-01-18
+
+### Added
+- New **Bond Cutoffs** section in the UI for element-specific distance control.
+- Dynamic **Atom Counts** display after loading a structure file.
+- Support for setting and applying user-defined bond cutoffs per element pair.
+- Integrated tooltips directly into UI components for better contextual help.
+
+### Changed
+- Reorganized `AppWindow.slint` into a guided 5-step workflow using `OutlinedCard`.
+- Updated `AppBackend` and `AppController` to handle element-specific bond cutoff logic.
+- Improved UI responsiveness and layout clarity by grouping related parameters.
+- Updated project version to 1.8 in `CMakeLists.txt`.
+
 ## [1.7] 2026-01-14
+
 
 ### Added
 - Refactored entire UI to use **Material Design** components.
