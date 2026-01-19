@@ -31,12 +31,65 @@ std::string AppBackend::load_file(const std::string &path) {
          display_path;
 }
 
+std::map<std::string, int> AppBackend::getAtomCounts() const {
+  std::map<std::string, int> counts;
+  if (!cell_)
+    return counts;
+  for (const auto &atom : cell_->atoms()) {
+    counts[atom.element().symbol]++;
+  }
+  return counts;
+}
+
+std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
+  if (!cell_)
+    return {};
+  cell_->precomputeBondCutoffs();
+  // We need the raw squared cutoffs or the actual distances?
+  // The UI wants distances.
+  const size_t num_elements = cell_->elements().size();
+  std::vector<std::vector<double>> cutoffs(num_elements,
+                                           std::vector<double>(num_elements));
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = 0; j < num_elements; ++j) {
+      cutoffs[i][j] = cell_->getBondCutoff(i, j);
+    }
+  }
+  return cutoffs;
+}
+
+double AppBackend::getBondCutoff(int type1, int type2) {
+  if (!cell_)
+    return 0.0;
+  return cell_->getBondCutoff(type1, type2);
+}
+
+void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
+  if (!cell_)
+    return;
+  // Convert distances back to squared cutoffs for the Cell
+  const size_t num_elements = cell_->elements().size();
+  std::vector<std::vector<double>> cutoffs_sq(
+      num_elements, std::vector<double>(num_elements));
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = 0; j < num_elements; ++j) {
+      cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
+    }
+  }
+  cell_->setBondCutoffs(cutoffs_sq);
+}
+
 void AppBackend::run_analysis() {
   if (!cell_) {
     return;
   }
 
   try {
+    // Apply custom bond cutoffs if they were set in options
+    if (!options_.bond_cutoffs_sq_.empty()) {
+      cell_->setBondCutoffs(options_.bond_cutoffs_sq_);
+    }
+
     // Create the DistributionFunctions object
     df_ = std::make_unique<DistributionFunctions>(*cell_, options_.r_max,
                                                   options_.bond_factor);

@@ -89,6 +89,16 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
 
+  // Handle Bond Cutoffs
+  auto cutoffs = getBondCutoffs(ui_);
+  size_t n = cutoffs.size();
+  opt.bond_cutoffs_sq_.resize(n, std::vector<double>(n));
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      opt.bond_cutoffs_sq_[i][j] = cutoffs[i][j] * cutoffs[i][j];
+    }
+  }
+
   return opt;
 };
 
@@ -140,6 +150,67 @@ void AppController::handleCheckFileDialogStatus() {
     }
     ui_.set_file_status_text(slint::SharedString(message));
     ui_.set_timer_running(false);
+    
+    // Populate atom counts and bond cutoffs in UI
+    if (!selection.empty()) {
+      ui_.set_file_loaded(true);
+      
+      // Atom Counts
+      auto atom_counts_map = backend_.getAtomCounts();
+      auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
+      for (const auto& [symbol, count] : atom_counts_map) {
+          slint_atom_counts->push_back({slint::SharedString(symbol), count});
+      }
+      ui_.set_atom_counts(slint_atom_counts);
+
+      // Bond Cutoffs
+      setBondCutoffs(ui_);
+    }
+
     current_file_dialog_.reset();
   }
+}
+
+void AppController::setBondCutoffs(AppWindow &ui) {
+  auto recommended = backend_.getRecommendedBondCutoffs();
+  auto elements = backend_.cell()->elements();
+  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
+
+  for (size_t i = 0; i < elements.size(); ++i) {
+    for (size_t j = i; j < elements.size(); ++j) {
+      slint_cutoffs->push_back({
+          slint::SharedString(elements[i].symbol),
+          slint::SharedString(elements[j].symbol),
+          slint::SharedString(std::format("{:.2f}", recommended[i][j]))
+      });
+    }
+  }
+  ui.set_bond_cutoffs(slint_cutoffs);
+}
+
+std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
+  auto slint_cutoffs = ui.get_bond_cutoffs();
+  if (!backend_.cell()) return {};
+  auto elements = backend_.cell()->elements();
+  size_t num_elements = elements.size();
+  std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements, 0.0));
+
+  for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
+    auto item = slint_cutoffs->row_data(k).value();
+    std::string s1 = item.element1.data();
+    std::string s2 = item.element2.data();
+    double dist = std::stod(item.distance.data());
+
+    int i = -1, j = -1;
+    for (size_t e = 0; e < num_elements; ++e) {
+      if (elements[e].symbol == s1) i = (int)e;
+      if (elements[e].symbol == s2) j = (int)e;
+    }
+
+    if (i != -1 && j != -1) {
+      cutoffs[i][j] = dist;
+      cutoffs[j][i] = dist;
+    }
+  }
+  return cutoffs;
 }

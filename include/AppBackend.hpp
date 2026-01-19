@@ -37,10 +37,15 @@ public:
   // Accesors
   void setOptions(ProgramOptions opt) { options_ = opt; }
   ProgramOptions options() { return options_; }
+  const std::unique_ptr<Cell> &cell() const { return cell_; }
 
   // Member functions
   std::string load_file(const std::string &path);
   void run_analysis();
+  std::map<std::string, int> getAtomCounts() const;
+  std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
+  double getBondCutoff(int, int);
+  void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
 
 private:
   // Member functions

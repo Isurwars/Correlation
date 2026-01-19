@@ -13,6 +13,16 @@ import {
     ToolTip,
 } from "@material";
 
+export struct AtomCount {
+    symbol: string,
+    count: int,
+}
+
+export struct BondCutoff {
+    element1: string,
+    element2: string,
+    distance: string,
+}
 
 export component AppWindow inherits Window {
     // Callback that the UI invokes on the C++ side
@@ -27,6 +37,11 @@ export component AppWindow inherits Window {
     in-out property <bool> analysis_running: false;
     in-out property <bool> timer_running: false;
     in-out property <bool> text_opacity: true;
+    in-out property <bool> file_loaded: false;
+
+    // Data for the UI
+    in-out property <[AtomCount]> atom_counts: [];
+    in-out property <[BondCutoff]> bond_cutoffs: [];
 
     // User-configurable options
     in-out property <string> in_file_text;
@@ -84,6 +99,13 @@ export component AppWindow inherits Window {
                                 browse_file();
                             }
                         }
+
+                        ToolTip {
+                            x: 20px;
+                            y: 20px;
+                            text: "Load a structure file";
+                            visible: parent.has-hover;
+                        }
                     }
 
                     Text {
@@ -94,12 +116,38 @@ export component AppWindow inherits Window {
                 }
             }
 
-            OutlinedCard {
+            if (file_loaded): OutlinedCard {
                 VerticalLayout {
                     padding: MaterialStyleMetrics.padding_16;
                     spacing: MaterialStyleMetrics.spacing_12;
                     MaterialText {
-                        text: "2. Options";
+                        text: "2. File Info";
+                        style: MaterialTypography.title_medium;
+                    }
+
+                    VerticalLayout {
+                        spacing: MaterialStyleMetrics.spacing_4;
+                        for info in atom_counts: HorizontalLayout {
+                            MaterialText {
+                                text: info.symbol + ":";
+                                horizontal-stretch: 1;
+                            }
+
+                            MaterialText {
+                                text: info.count;
+                                horizontal-alignment: right;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (file_loaded): OutlinedCard {
+                VerticalLayout {
+                    padding: MaterialStyleMetrics.padding_16;
+                    spacing: MaterialStyleMetrics.spacing_12;
+                    MaterialText {
+                        text: "3. Options";
                         style: MaterialTypography.title_medium;
                     }
 
@@ -112,6 +160,13 @@ export component AppWindow inherits Window {
                                 label: "RDF Max r (Å)";
                                 text <=> r_max;
                             }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
+                                visible: parent.has-hover;
+                            }
                         }
 
                         r_bin_area := TouchArea {
@@ -121,6 +176,13 @@ export component AppWindow inherits Window {
                                 label: "RDF Bin Width (Å)";
                                 text <=> r_bin_width;
                             }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å.";
+                                visible: parent.has-hover;
+                            }
                         }
 
                         bond_area := TouchArea {
@@ -129,6 +191,13 @@ export component AppWindow inherits Window {
                                 width: 100%;
                                 label: "Bond Parameter";
                                 text <=> bond_factor;
+                            }
+
+                            ToolTip {
+                                x: -240px;
+                                y: 20px;
+                                text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows: b = (max_bond_distance)/ (sum_of_covalent_radii). The default bond parameter is 1.2.";
+                                visible: parent.has-hover;
                             }
                         }
                     }
@@ -142,6 +211,13 @@ export component AppWindow inherits Window {
                                 label: "PAD Max Angle (°)";
                                 text <=> angle_max;
                             }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Maximum angle to calculate the Plane-Angle Distribution (F(θ)). The recommended max angle is 180°.";
+                                visible: parent.has-hover;
+                            }
                         }
 
                         theta_bin_area := TouchArea {
@@ -150,6 +226,13 @@ export component AppWindow inherits Window {
                                 width: 100%;
                                 label: "PAD Bin Width (°)";
                                 text <=> angle_bin_width;
+                            }
+
+                            ToolTip {
+                                x: -240px;
+                                y: 20px;
+                                text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
+                                visible: parent.has-hover;
                             }
                         }
                     }
@@ -163,6 +246,13 @@ export component AppWindow inherits Window {
                                 label: "Max Q (Å⁻¹)";
                                 text <=> q_max;
                             }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹";
+                                visible: parent.has-hover;
+                            }
                         }
 
                         s_bin_area := TouchArea {
@@ -170,10 +260,17 @@ export component AppWindow inherits Window {
                             TextField {
                                 width: 100%;
                                 label: "S(Q) Bin Width (Å⁻¹)";
-                                text: q_bin_width;
+                                text <=> q_bin_width;
                                 edited(s) => {
                                     q_bin_width = s;
                                 }
+                            }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹.";
+                                visible: parent.has-hover;
                             }
                         }
 
@@ -182,10 +279,17 @@ export component AppWindow inherits Window {
                             TextField {
                                 width: 100%;
                                 label: "Max r for the FFT (Å)";
-                                text: r_int_max;
+                                text <=> r_int_max;
                                 edited(s) => {
                                     r_int_max = s;
                                 }
+                            }
+
+                            ToolTip {
+                                x: -240px;
+                                y: 20px;
+                                text: "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å";
+                                visible: parent.has-hover;
                             }
                         }
                     }
@@ -201,6 +305,13 @@ export component AppWindow inherits Window {
                                     smoothing = (s == CheckState.checked);
                                 }
                             }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Enable the smoothing of the distribution functions.";
+                                visible: parent.has-hover;
+                            }
                         }
 
                         sigma_area := TouchArea {
@@ -209,6 +320,13 @@ export component AppWindow inherits Window {
                                 label: "Smoothing Sigma";
                                 enabled: smoothing;
                                 text <=> smoothing_sigma;
+                            }
+
+                            ToolTip {
+                                x: 20px;
+                                y: 20px;
+                                text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
+                                visible: parent.has-hover;
                             }
                         }
 
@@ -224,17 +342,55 @@ export component AppWindow inherits Window {
                                 ];
                                 current-index <=> smoothing_kernel;
                             }
+
+                            ToolTip {
+                                x: -240px;
+                                y: 20px;
+                                text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
+                                visible: parent.has-hover;
+                            }
                         }
                     }
                 }
             }
 
-            OutlinedCard {
+            if (file_loaded): OutlinedCard {
                 VerticalLayout {
                     padding: MaterialStyleMetrics.padding_16;
                     spacing: MaterialStyleMetrics.spacing_12;
                     MaterialText {
-                        text: "3. Run Analysis";
+                        text: "4. Bond Cutoffs (Å)";
+                        style: MaterialTypography.title_medium;
+                    }
+
+                    VerticalLayout {
+                        spacing: MaterialStyleMetrics.spacing_8;
+                        for cutoff[i] in bond_cutoffs: HorizontalLayout {
+                            spacing: MaterialStyleMetrics.spacing_8;
+                            MaterialText {
+                                text: cutoff.element1 + " - " + cutoff.element2 + ":";
+                                vertical-alignment: center;
+                                horizontal-stretch: 1;
+                            }
+
+                            TextField {
+                                width: 80px;
+                                text: cutoff.distance;
+                                edited(s) => {
+                                    cutoff.distance = s;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (file_loaded): OutlinedCard {
+                VerticalLayout {
+                    padding: MaterialStyleMetrics.padding_16;
+                    spacing: MaterialStyleMetrics.spacing_12;
+                    MaterialText {
+                        text: "5. Run Analysis";
                         style: MaterialTypography.title_medium;
                     }
 
@@ -261,89 +417,5 @@ export component AppWindow inherits Window {
                 }
             }
         }
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Load a structure file";
-        visible: file_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
-        visible: r_max_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å.";
-        visible: r_bin_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x - 240px;
-        y: window_area.mouse_y + 20px;
-        text: "Bond factor used to determine if two atoms are bonded. The bond parameter is calculated as follows: b = (max_bond_distance)/ (sum_of_covalent_radii). The default bond parameter is 1.2.";
-        visible: bond_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Maximum angle to calculate the Plane-Angle Distribution (F(θ)). The recommended max angle is 180°.";
-        visible: theta_max_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x - 240px;
-        y: window_area.mouse_y + 20px;
-        text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
-        visible: theta_bin_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹";
-        visible: s_max_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹.";
-        visible: s_bin_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x - 240px;
-        y: window_area.mouse_y + 20px;
-        text: "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å";
-        visible: r_int_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Enable the smoothing of the distribution functions.";
-        visible: smooth_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x + 20px;
-        y: window_area.mouse_y + 20px;
-        text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
-        visible: sigma_area.has-hover;
-    }
-
-    ToolTip {
-        x: window_area.mouse_x - 240px;
-        y: window_area.mouse_y + 20px;
-        text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
-        visible: kernel_area.has-hover;
     }
 }
