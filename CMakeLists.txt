@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.8 LANGUAGES CXX)
+project(Correlation VERSION 1.8.1 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)

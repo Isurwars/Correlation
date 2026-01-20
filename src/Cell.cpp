@@ -131,7 +131,7 @@ void Cell::precomputeBondCutoffs() {
     const double radius_A = CovalentRadii::get(elements_[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
       const double radius_B = CovalentRadii::get(elements_[j].symbol);
-      const double max_bond_dist = (radius_A + radius_B) * bond_factor_;
+      const double max_bond_dist = (radius_A + radius_B) * 1.2;
       const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
       bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
       bond_cutoffs_sq_[j][i] = max_bond_dist_sq;

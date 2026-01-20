@@ -63,7 +63,7 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell si_cell = FileIO::readStructure("si_crystal.car", type);
-  DistributionFunctions df(si_cell, 20.0, 1.2);
+  DistributionFunctions df(si_cell, 20.0);
 
   // Act
   const double rdf_bin = 0.05;

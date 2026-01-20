@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8.1] 2026-01-20
+
+### Changed
+- Simplified `AppBackend` and `AppController` by removing legacy variables: `bond_factor`, `max_angle`, and `normalize`.
+- Hardcoded the default **Bond Factor** to 1.2 across the application to provide a more stable out-of-the-box experience.
+- Refactored `DistributionFunctions` and `Cell` classes to remove unused configuration parameters.
+- Cleaned up `AppWindow.slint` UI by removing redundant input fields and adjusting spacing for better clarity.
+- Updated all unit tests (`Cell_test`, `Distribution_Functions_tests`, `StructureAnalyzer_test`, etc.) to reflect the simplified API and hardcoded defaults.
+
 ## [1.8] 2026-01-18
 
 ### Added

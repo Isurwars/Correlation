@@ -165,6 +165,7 @@ export component AppWindow inherits Window {
                             }
                         }
                     }
+
                     HorizontalLayout {
                         spacing: MaterialStyleMetrics.spacing_8;
                         s_max_area := TouchArea {
@@ -214,20 +215,19 @@ export component AppWindow inherits Window {
                         }
                     }
 
-
-
                     HorizontalLayout {
                         spacing: MaterialStyleMetrics.spacing_8;
 
                         smooth_area := TouchArea {
                             width: 33%;
-                            HorizontalLayout{
+                            HorizontalLayout {
                                 padding: MaterialStyleMetrics.padding_4;
                                 Text {
                                     vertical-alignment: center;
                                     text: "Enable Smoothing";
                                     width: 60%;
                                 }
+
                                 CheckBox {
                                     width: 20%;
                                     check_state: smoothing ? CheckState.checked : CheckState.unchecked;
@@ -353,7 +353,6 @@ export component AppWindow inherits Window {
             text: "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å.";
             visible: r_bin_area.has-hover;
         }
-
 
         ToolTip {
             x: window_area.mouse-x + 20px;

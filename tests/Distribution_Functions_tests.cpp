@@ -46,7 +46,7 @@ protected:
 
 TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
   // Arrange
-  DistributionFunctions df(cell_, 5.0, 1.2);
+  DistributionFunctions df(cell_, 5.0);
 
   // Act & Assert
   EXPECT_THROW(df.calculateRDF(5.0, 0.0), std::invalid_argument);
@@ -55,7 +55,7 @@ TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
 
 TEST_F(DistributionFunctionsTest, RDFPeakPositionIsCorrect) {
   // Arrange
-  DistributionFunctions df(cell_, 5.0, 1.2);
+  DistributionFunctions df(cell_, 5.0);
   const double bin_width = 0.1;
   const double expected_distance = 1.5;
 
@@ -80,16 +80,13 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
   water_cell.addAtom("H", {1.0, 0.0, 0.0});
   water_cell.addAtom("H",
                      {std::cos(1.916), std::sin(1.916), 0.0}); // ~109.5 deg
-  DistributionFunctions df(water_cell, 5.0, 1.2);
+  DistributionFunctions df(water_cell, 5.0);
   const double bin_width = 1.0; // 1-degree bins
 
   // Act
   df.calculatePAD(180.0, bin_width);
   const auto &pad_hist = df.getHistogram("f(theta)");
   const auto &hoh_pad = pad_hist.partials.at("H-O-H");
-
-
-  print_histogram("H-O-H Partial", pad_hist.bins, hoh_pad);
 
   // Assert
   auto max_it = std::max_element(hoh_pad.begin(), hoh_pad.end());
@@ -101,7 +98,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
 
 TEST_F(DistributionFunctionsTest, SmoothAllUpdatesSmoothedPartials) {
   // Arrange
-  DistributionFunctions df(cell_, 5.0, 1.2);
+  DistributionFunctions df(cell_, 5.0);
   df.calculateRDF(5.0, 0.1);
 
   // Act
@@ -141,7 +138,7 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
 
   // A cutoff that includes the C-H bonds but excludes everything else.
   // The C-H distance is 1.0, C-O is ~8.6
-  DistributionFunctions df(test_cell, 3.0, 1.2);
+  DistributionFunctions df(test_cell, 3.0);
 
   // Act
   df.calculateCoordinationNumber();
@@ -170,7 +167,7 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
 TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
   // Arrange
   // Using the fixture's cell with two Ar atoms 1.5 Å apart.
-  DistributionFunctions df(cell_, 10.0, 1.2);
+  DistributionFunctions df(cell_, 10.0);
   const double q_bin_width = 0.01;
   const double expected_peak_q = 0.7; // 2.0 * constants::pi / 1.5; // ~4.18
 

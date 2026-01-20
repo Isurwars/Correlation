@@ -130,8 +130,7 @@ TEST_F(CellTest, BondCutoffPopulationCorrectness) {
   const int idSi = 0;
   const int idO = 1;
 
-  // Case 1: Default Bond Factor (1.2)
-  cell.setBondFactor(1.2);
+  // Default Bond Factor (1.2)
   // Expected for Si-Si: (1.16 + 1.16) * 1.2 = 2.784
   // Expected for Si-O:  (1.16 + 0.63) * 1.2 = 2.148
   // Expected for O-O:   (0.63 + 0.63) * 1.2 = 1.512
@@ -139,9 +138,4 @@ TEST_F(CellTest, BondCutoffPopulationCorrectness) {
   EXPECT_NEAR(cell.getBondCutoff(idSi, idSi), (rSi + rSi) * 1.2, 1e-6);
   EXPECT_NEAR(cell.getBondCutoff(idSi, idO),  (rSi + rO) * 1.2, 1e-6);
   EXPECT_NEAR(cell.getBondCutoff(idO, idO),   (rO + rO) * 1.2, 1e-6);
-
-  // Case 2: Update Bond Factor
-  cell.setBondFactor(1.5);
-  // Verify cache was cleared and values updated
-  EXPECT_NEAR(cell.getBondCutoff(idSi, idO), (rSi + rO) * 1.5, 1e-6);
 }

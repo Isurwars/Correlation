@@ -29,7 +29,7 @@ public:
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
 
-  explicit DistributionFunctions(Cell &, double, double);
+  explicit DistributionFunctions(Cell &, double);
 
   // Move constructor
   DistributionFunctions(DistributionFunctions &&other) noexcept;

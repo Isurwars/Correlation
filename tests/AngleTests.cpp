@@ -206,7 +206,6 @@ protected:
     void SetUp() override {
         // Large box to avoid PBC issues by default
         cell_ = Cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0}); 
-        cell_.setBondFactor(1.3); // Standard bond factor
     }
     Cell cell_;
 };
@@ -216,13 +215,13 @@ TEST_F(PADTest, EmptyCellThrows) {
     // Current implementation throws explicitly if atoms are empty in calculateAshcroftWeights
     // or implicitly via other checks.
     EXPECT_THROW({
-        DistributionFunctions df(cell_, 5.0, 1.3);
+        DistributionFunctions df(cell_, 5.0);
     }, std::invalid_argument);
 }
 
 TEST_F(PADTest, SingleAtomNoAngles) {
     cell_.addAtom("Si", {10.0, 10.0, 10.0});
-    DistributionFunctions df(cell_, 5.0, 1.3);
+    DistributionFunctions df(cell_, 5.0);
     df.calculatePAD(180.0, 1.0);
     // Might have partials created but empty, or just no "f(theta)" if logic handles it.
     // Actually implementation might create partials if atoms exist but no angles found.
@@ -258,7 +257,7 @@ TEST_F(PADTest, LinearGeometry180) {
     EXPECT_EQ(neighbors[1].size(), 2) << "Si should have 2 neighbors (O atoms)";
 
     // Bond length 1.0. Cutoff needs to be > 1.0
-    DistributionFunctions df(cell_, 1.5, 1.3);
+    DistributionFunctions df(cell_, 1.5);
     // Use 180.0 now that we fixed the binning logic
     df.calculatePAD(180.0, 1.0); 
     
@@ -296,7 +295,7 @@ TEST_F(PADTest, RightAngle90) {
     cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
     cell_.addAtom("O", {11.0, 10.0, 10.0});
     
-    DistributionFunctions df(cell_, 1.5, 1.3);
+    DistributionFunctions df(cell_, 1.5);
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -324,7 +323,7 @@ TEST_F(PADTest, EquilateralTriangle60) {
     cell_.addAtom("O", {11.0, 10.0, 10.0});
     cell_.addAtom("O", {10.5, 10.0 + std::sqrt(3.0)/2.0, 10.0});
     
-    DistributionFunctions df(cell_, 1.5, 1.3);
+    DistributionFunctions df(cell_, 1.5);
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -356,7 +355,7 @@ TEST_F(PADTest, TetrahedralAngle) {
     cell_.addAtom("O", {10.0 + L, 10.0 + L, 10.0 + L});
     cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
     
-    DistributionFunctions df(cell_, 1.5, 1.3); // Distance is 1.0
+    DistributionFunctions df(cell_, 1.5); // Distance is 1.0
     df.calculatePAD(180.0, 0.5); // Finer bins
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -381,7 +380,7 @@ TEST_F(PADTest, SymmetryAndSorting) {
     cell_.addAtom("O", {11.0, 10.0, 10.0});
     cell_.addAtom("N", {10.0, 11.0, 10.0}); // 90 degrees
     
-    DistributionFunctions df(cell_, 1.5, 1.3);
+    DistributionFunctions df(cell_, 1.5);
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -409,7 +408,7 @@ TEST_F(PADTest, FullNormalizationCheck) {
     cell_.addAtom("O", {10.0 - L, 10.0 + L, 10.0 - L});
     cell_.addAtom("O", {10.0 - L, 10.0 - L, 10.0 + L});
     
-    DistributionFunctions df(cell_, 1.5, 1.1);
+    DistributionFunctions df(cell_, 1.5);
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");

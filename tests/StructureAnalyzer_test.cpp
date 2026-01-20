@@ -147,35 +147,30 @@ TEST_F(StructureAnalyzerTest, FindsNoNeighborsForIsolatedAtom) {
 }
 
 TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
-  // Arrange: Place two atoms at a specific distance.
-  Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0
-  
-  // Ar covalent radius = 0.96.
-  // Bond threshold = (0.96 + 0.96) * bond_factor.
-  // 1.92 * bond_factor.
-  // To include 3.0, bond_factor > 3.0 / 1.92 = 1.5625.
-  // To exclude 3.0, bond_factor < 1.5625.
+  // Ar covalent radius = 0.96. Sum = 1.92.
+  // Bond threshold = 1.92 * 1.2 = 2.304.
 
-  // Case 1: Bond Factor Sufficiently Large -> Neighbors Found
+  // Case 1: Within bond threshold -> Neighbors Found
   {
-    cell.setBondFactor(1.6); // Threshold ~ 3.072
+    Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    cell.addAtom("Ar", {5.0, 5.0, 5.0});
+    cell.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance = 2.0 < 2.304
     StructureAnalyzer analyzer(cell, 3.1);
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 2);
     ASSERT_EQ(neighbors[0].size(), 1);
     EXPECT_EQ(neighbors[0][0].index, 1);
-    EXPECT_NEAR(neighbors[0][0].distance, 3.0, 1e-6);
+    EXPECT_NEAR(neighbors[0][0].distance, 2.0, 1e-6);
   }
 
-  // Case 2: Bond Factor Too Small -> No Neighbors (even if Spatial Cutoff allows)
+  // Case 2: Out of bond threshold -> No Neighbors
   {
-    cell.setBondFactor(1.5); // Threshold ~ 2.88
-    StructureAnalyzer analyzer(cell, 3.1); // Spatial cutoff 3.1 is > 3.0
+    Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    cell.addAtom("Ar", {5.0, 5.0, 5.0});
+    cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0 > 2.304
+    StructureAnalyzer analyzer(cell, 3.5);
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 2);
-    // Should be empty because they are not "bonded"
     EXPECT_TRUE(neighbors[0].empty());
     EXPECT_TRUE(neighbors[1].empty());
   }
@@ -192,10 +187,9 @@ TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
   // Ar radius 0.96. Sum = 1.92. 
   // Dist A-B = 1.73 < 1.92. Should be bonded with default bond_factor 1.2?
   // 1.92 * 1.2 = 2.304.
+  // 1.92 * 1.2 = 2.304.
   // So A-B should be neighbors.
   // A-D should be neighbors.
-  random_cell.setBondFactor(1.2); 
-
   // Act
   StructureAnalyzer analyzer(random_cell, 3.0);
   const auto &neighbors = analyzer.neighbors();
@@ -225,18 +219,11 @@ TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
 }
 
 TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
-  // Arrange: Small cell where an atom might see its own image.
-  // Cell size 2.5. (Smaller than 3.0 to safely fit within typical bonding check?)
-  // Let's use 2.5.
-  // Atom at (1.25, 1.25, 1.25).
-  // Images at distance 2.5.
-  // Ar diam = 1.92. 
-  // Need bond factor such that 2.5 is a "bond".
-  // 1.92 * 1.4 = 2.688 > 2.5.
+  // 1.92 * 1.2 = 2.304.
+  // We need images to be within the bond threshold. Let's use image distance = 2.0.
   
-  Cell small_cell({2.5, 2.5, 2.5, 90.0, 90.0, 90.0});
-  small_cell.addAtom("Ar", {1.25, 1.25, 1.25});
-  small_cell.setBondFactor(1.4);
+  Cell small_cell({2.0, 2.0, 2.0, 90.0, 90.0, 90.0});
+  small_cell.addAtom("Ar", {1.0, 1.0, 1.0});
 
   // Case 1: Ignore Periodic Self Interactions = true (Reference default)
   {
@@ -253,12 +240,11 @@ TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 1);
     
-    // In a 3x3x3 grid, nearest neighbors are the 6 face-sharing images at d=2.5.
-    // Next nearest: sqrt(2.5^2 + 2.5^2) = 3.53 > 3.0 (cutoff).
-    // So exactly 6 neighbors expected.
+    // In a cubic cell with side 2.0, nearest images are 6 face-sharing images at d=2.0.
+    // 2.0 < 2.304, so they should be found as bonded neighbors.
     EXPECT_EQ(neighbors[0].size(), 6);
     for(const auto& n : neighbors[0]) {
-        EXPECT_NEAR(n.distance, 2.5, 1e-6);
+        EXPECT_NEAR(n.distance, 2.0, 1e-6);
     }
   }
 }
@@ -277,8 +263,6 @@ TEST_F(StructureAnalyzerTest, TriangleMoleculeConnectivity) {
   cell.addAtom("Ar", {5.0, 5.0, 5.0});             // A
   cell.addAtom("Ar", {5.0 + d, 5.0, 5.0});         // B
   cell.addAtom("Ar", {5.0 + d/2, 5.0 + h, 5.0});   // C
-
-  cell.setBondFactor(1.2);
 
   // Act
   StructureAnalyzer analyzer(cell, 3.0);

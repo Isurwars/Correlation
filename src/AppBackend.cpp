@@ -91,13 +91,12 @@ void AppBackend::run_analysis() {
     }
 
     // Create the DistributionFunctions object
-    df_ = std::make_unique<DistributionFunctions>(*cell_, options_.r_max,
-                                                  options_.bond_factor);
+    df_ = std::make_unique<DistributionFunctions>(*cell_, options_.r_max);
 
     // --- Run calculations sequentially and report progress ---
     df_->calculateCoordinationNumber();
     df_->calculateRDF(options_.r_max, options_.r_bin_width);
-    df_->calculatePAD(options_.angle_max, options_.angle_bin_width);
+    df_->calculatePAD(180.0, options_.angle_bin_width);
     df_->calculateSQ(options_.q_max, options_.q_bin_width, options_.r_int_max);
     if (options_.smoothing) {
       df_->smoothAll(options_.smoothing_sigma, options_.smoothing_kernel);

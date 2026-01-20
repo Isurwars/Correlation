@@ -71,13 +71,6 @@ public:
   const std::vector<Atom> &atoms() const noexcept { return atoms_; }
   // Elements
   const std::vector<Element> &elements() const { return elements_; }
-  // Bond Factor
-  void setBondFactor(double b) { 
-    bond_factor_ = b; 
-    bond_cutoffs_sq_.clear();
-  }
-  double getBondFactor() { return bond_factor_; }
-
   size_t atomCount() const noexcept { return atoms_.size(); }
   bool isEmpty() const noexcept { return atoms_.empty(); }
 
@@ -136,7 +129,6 @@ private:
   linalg::Matrix3<double> inverse_lattice_vectors_;
   std::array<double, 6> lattice_parameters_;
   double volume_{0.0};
-  double bond_factor_{1.2};
   std::vector<Atom> atoms_;
   std::vector<Element> elements_;
   std::vector<std::vector<double>> bond_cutoffs_sq_;

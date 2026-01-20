@@ -17,10 +17,8 @@
 //------------------------------- Constructor -------------------------------//
 //---------------------------------------------------------------------------//
 
-DistributionFunctions::DistributionFunctions(Cell &cell, double cutoff,
-                                             double bond_factor)
+DistributionFunctions::DistributionFunctions(Cell &cell, double cutoff)
     : cell_(cell), neighbors_(nullptr), current_cutoff_(0.0) {
-  cell_.setBondFactor(bond_factor);
   if (cutoff > 0.0) {
     ensureNeighborsComputed(cutoff);
   }
