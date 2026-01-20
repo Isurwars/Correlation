@@ -47,7 +47,6 @@ float safe_stof(const slint::SharedString &s, float default_value) {
 void AppController::handleOptionstoUI(AppWindow &ui) {
   ProgramOptions opt = backend_.options();
   ui.set_in_file_text(slint::SharedString(opt.input_file));
-  ui.set_normalize(opt.normalize);
   ui.set_smoothing(opt.smoothing);
   ui.set_r_max(slint::SharedString(std::format("{:.2f}", opt.r_max)));
   ui.set_r_bin_width(
@@ -56,11 +55,8 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_q_bin_width(
       slint::SharedString(std::format("{:.2f}", opt.q_bin_width)));
   ui.set_r_int_max(slint::SharedString(std::format("{:.2f}", opt.r_int_max)));
-  ui.set_angle_max(slint::SharedString(std::format("{:.2f}", opt.angle_max)));
   ui.set_angle_bin_width(
       slint::SharedString(std::format("{:.2f}", opt.angle_bin_width)));
-  ui.set_bond_factor(
-      slint::SharedString(std::format("{:.2f}", opt.bond_factor)));
   ui.set_smoothing_sigma(
       slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
   ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
@@ -74,17 +70,14 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
       full_path.parent_path().string() + "/" + full_path.stem().string();
   opt.input_file = input_path_str;
   opt.output_file_base = output_path_base;
-  opt.normalize = ui_.get_normalize();
   opt.smoothing = ui_.get_smoothing();
   opt.r_max = safe_stof(ui_.get_r_max(), opt.r_max);
   opt.r_bin_width = safe_stof(ui_.get_r_bin_width(), opt.r_bin_width);
   opt.q_max = safe_stof(ui_.get_q_max(), opt.q_max);
   opt.q_bin_width = safe_stof(ui_.get_q_bin_width(), opt.q_bin_width);
   opt.r_int_max = safe_stof(ui_.get_r_int_max(), opt.r_int_max);
-  opt.angle_max = safe_stof(ui_.get_angle_max(), opt.angle_max);
   opt.angle_bin_width =
       safe_stof(ui_.get_angle_bin_width(), opt.angle_bin_width);
-  opt.bond_factor = safe_stof(ui_.get_bond_factor(), opt.bond_factor);
   opt.smoothing_sigma =
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());

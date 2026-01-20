@@ -24,7 +24,8 @@ export component DropDownMenu {
     property <string> text <=> text_field.text;
 
     min_width: text_field.min_width;
-    min_height: text_field.min_height;
+    min_height: MaterialStyleMetrics.size_40;
+    preferred_height: MaterialStyleMetrics.size_40;
     forward_focus: text_field; accessible-role: combobox;
     accessible_enabled: root.enabled;
     accessible_expandable: true;
@@ -120,6 +121,18 @@ export component DropDownMenu {
     }
 
     changed current_index => {
+        root.update_text(root.current_index);
+    }
+
+    changed items => {
+        root.update_text(root.current_index);
+    }
+
+    changed visible => {
+        root.update_text(root.current_index);
+    }
+
+    changed enabled => {
         root.update_text(root.current_index);
     }
 }
