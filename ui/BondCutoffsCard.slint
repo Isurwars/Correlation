@@ -1,0 +1,46 @@
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    TextField,
+    OutlinedCard,
+    MaterialText,
+} from "@material";
+import { BondCutoff } from "Types.slint";
+
+export component BondCutoffsCard inherits OutlinedCard {
+    in property <bool> file_loaded;
+    in-out property <[BondCutoff]> bond_cutoffs;
+
+    visible: root.file_loaded;
+    VerticalLayout {
+        padding: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_12;
+        MaterialText {
+            text: "4. Bond Cutoffs (Å)";
+            style: MaterialTypography.title_medium;
+        }
+
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            for cutoff[i] in root.bond_cutoffs: HorizontalLayout {
+                alignment: center;
+                spacing: MaterialStyleMetrics.spacing_8;
+                MaterialText {
+                    min-width: 120px;
+                    text: cutoff.element1 + " - " + cutoff.element2 + ":";
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+
+                TextField {
+                    min-width: 180px;
+                    text: cutoff.distance;
+                    label: "Cutoff (Å)";
+                    edited(s) => {
+                        root.bond_cutoffs[i].distance = s;
+                    }
+                }
+            }
+        }
+    }
+}

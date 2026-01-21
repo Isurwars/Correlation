@@ -1,0 +1,35 @@
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledButton,
+    OutlinedCard,
+    MaterialText,
+} from "@material";
+
+export component InputFileCard inherits OutlinedCard {
+    callback browse_file();
+    
+    // Export hover state for tooltip
+    out property <bool> file_area_has_hover: file_area.has-hover;
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_12;
+        MaterialText {
+            text: "1. Input File";
+            style: MaterialTypography.title_medium;
+        }
+
+        file_area := TouchArea {
+            min-height: 50px;
+            FilledButton {
+                height: 100%;
+                width: 100%;
+                text: "Load a structure file";
+                clicked => {
+                    root.browse_file();
+                }
+            }
+        }
+    }
+}

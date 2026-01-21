@@ -1,0 +1,46 @@
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    OutlinedCard,
+    MaterialText,
+} from "@material";
+import { AtomCount } from "Types.slint";
+
+export component FileInfoCard inherits OutlinedCard {
+    in-out property <string> file_status_text;
+    in property <bool> file_loaded;
+    in property <[AtomCount]> atom_counts;
+
+    visible: root.file_loaded;
+    VerticalLayout {
+        padding: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_12;
+        MaterialText {
+            text: "2. File Info";
+            style: MaterialTypography.title_medium;
+        }
+
+        VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            Text {
+                text: root.file_status_text;
+                color: MaterialPalette.on_surface;
+                wrap: word-wrap;
+            }
+
+            for info in root.atom_counts: HorizontalLayout {
+                MaterialText {
+                    text: info.symbol + ":";
+                    horizontal-stretch: 1;
+                }
+
+                MaterialText {
+                    text: info.count;
+                    horizontal-alignment: right;
+                }
+            }
+        }
+    }
+}

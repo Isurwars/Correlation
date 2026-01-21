@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.8.2] 2026-01-21
+
+### Fixed
+- Fixed tooltip positioning by ensuring the `AppToolTips` container is correctly anchored and sized in `AppWindow.slint`.
+- Fixed a property name typo in `AppWindow.slint`.
+
+### Changed
+- Refined `AppToolTips` component to inherit from `Rectangle` with a transparent background to ensure coordinate consistency.
+- Improved tooltip aesthetics by adjusting maximum text width to 190px and enabling horizontal center alignment in the Material tooltip component.
+- Updated project version to 1.8.2 in `CMakeLists.txt`.
+
 ## [1.8.1] 2026-01-20
 
 ### Changed

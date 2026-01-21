@@ -1,0 +1,155 @@
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    CheckBox,
+    CheckState,
+    TextField,
+    DropDownMenu,
+    OutlinedCard,
+    MaterialText,
+} from "@material";
+
+export component OptionsCard inherits OutlinedCard {
+    in property <bool> file_loaded;
+    in-out property <string> r_max;
+    in-out property <string> r_bin_width;
+    in-out property <string> q_max;
+    in-out property <string> q_bin_width;
+    in-out property <string> r_int_max;
+    in-out property <string> angle_bin_width;
+    in-out property <bool> smoothing;
+    in-out property <string> smoothing_sigma;
+    in-out property <int> smoothing_kernel;
+
+    // Hover states for tooltips
+    out property <bool> r_max_has_hover: r_max_area.has-hover;
+    out property <bool> r_bin_has_hover: r_bin_area.has-hover;
+    out property <bool> q_max_has_hover: q_max_area.has-hover;
+    out property <bool> r_int_has_hover: r_int_area.has-hover;
+    out property <bool> theta_bin_has_hover: theta_bin_area.has-hover;
+    out property <bool> q_bin_has_hover: q_bin_area.has-hover;
+    out property <bool> smooth_has_hover: smooth_area.has-hover;
+    out property <bool> sigma_has_hover: sigma_area.has-hover;
+    out property <bool> kernel_has_hover: kernel_area.has-hover;
+
+    visible: root.file_loaded;
+    VerticalLayout {
+        padding: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_12;
+        MaterialText {
+            text: "3. Options";
+            style: MaterialTypography.title_medium;
+        }
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            r_max_area := TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    width: 100%;
+                    label: "RDF Max r (Å)";
+                    text <=> root.r_max;
+                }
+            }
+
+            r_bin_area := TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    width: 100%;
+                    label: "RDF Bin Width (Å)";
+                    text <=> root.r_bin_width;
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            q_max_area := TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    width: 100%;
+                    label: "Max Q (Å⁻¹)";
+                    text <=> root.q_max;
+                }
+            }
+
+            r_int_area := TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    width: 100%;
+                    label: "Max r for the FFT (Å)";
+                    text <=> root.r_int_max;
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            theta_bin_area := TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    width: 100%;
+                    label: "PAD Bin Width (°)";
+                    text <=> root.angle_bin_width;
+                }
+            }
+
+            q_bin_area := TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    width: 100%;
+                    label: "S(Q) Bin Width (Å⁻¹)";
+                    text <=> root.q_bin_width;
+                }
+            }
+        }
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            smooth_area := TouchArea {
+                width: 33%;
+                HorizontalLayout {
+                    padding: MaterialStyleMetrics.padding_4;
+                    Text {
+                        vertical-alignment: center;
+                        text: "Enable Smoothing";
+                        width: 60%;
+                    }
+
+                    CheckBox {
+                        width: 20%;
+                        check_state: root.smoothing ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.smoothing = (s == CheckState.checked);
+                        }
+                    }
+                }
+            }
+
+            sigma_area := TouchArea {
+                TextField {
+                    width: 100%;
+                    label: "Smoothing Sigma";
+                    enabled: root.smoothing;
+                    text <=> root.smoothing_sigma;
+                }
+            }
+
+            kernel_area := TouchArea {
+                DropDownMenu {
+                    width: 100%;
+                    enabled: root.smoothing;
+                    label: "Smoothing Kernel";
+                    items: [
+                        { text: "Gaussian", enabled: true },
+                        { text: "Bump", enabled: true },
+                        { text: "Triweight", enabled: true }
+                    ];
+                    current-index <=> root.smoothing_kernel;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,89 @@
+import { ToolTip } from "@material";
+
+export component AppToolTips inherits Rectangle {
+    in property <length> mouse_x;
+    in property <length> mouse_y;
+    background: transparent;
+    
+    // Hover states for each tooltip
+    in property <bool> file_hover;
+    in property <bool> r_max_hover;
+    in property <bool> r_bin_hover;
+    in property <bool> q_max_hover;
+    in property <bool> theta_bin_hover;
+    in property <bool> q_bin_hover;
+    in property <bool> r_int_hover;
+    in property <bool> smooth_hover;
+    in property <bool> sigma_hover;
+    in property <bool> kernel_hover;
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Load a structure file";
+        visible: file_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
+        visible: r_max_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å.";
+        visible: r_bin_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹";
+        visible: q_max_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
+        visible: theta_bin_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹.";
+        visible: q_bin_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å";
+        visible: r_int_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Enable the smoothing of the distribution functions.";
+        visible: smooth_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
+        visible: sigma_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
+        visible: kernel_hover;
+    }
+}

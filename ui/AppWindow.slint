@@ -2,27 +2,17 @@ import {
     MaterialPalette,
     MaterialStyleMetrics,
     MaterialTypography,
-    FilledButton,
-    CheckBox,
-    CheckState,
-    TextField,
-    DropDownMenu,
-    MenuItem,
-    OutlinedCard,
-    MaterialText,
-    ToolTip,
 } from "@material";
 
-export struct AtomCount {
-    symbol: string,
-    count: int,
-}
+import { AtomCount, BondCutoff } from "Types.slint";
+import { InputFileCard } from "InputFileCard.slint";
+import { FileInfoCard } from "FileInfoCard.slint"; 
+import { OptionsCard } from "OptionsCard.slint";
+import { BondCutoffsCard } from "BondCutoffsCard.slint";
+import { RunAnalysisCard } from "RunAnalysisCard.slint";
+import { AppToolTips } from "AppToolTips.slint";
 
-export struct BondCutoff {
-    element1: string,
-    element2: string,
-    distance: string,
-}
+export { AtomCount, BondCutoff }
 
 export component AppWindow inherits Window {
     // Callback that the UI invokes on the C++ side
@@ -79,328 +69,65 @@ export component AppWindow inherits Window {
             padding: MaterialStyleMetrics.padding_16;
             spacing: MaterialStyleMetrics.spacing_16;
 
-            OutlinedCard {
-                VerticalLayout {
-                    padding: MaterialStyleMetrics.padding_16;
-                    spacing: MaterialStyleMetrics.spacing_12;
-                    MaterialText {
-                        text: "1. Input File";
-                        style: MaterialTypography.title_medium;
-                    }
-
-                    file_area := TouchArea {
-                        min-height: 50px;
-                        FilledButton {
-                            height: 100%;
-                            width: 100%;
-                            text: "Load a structure file";
-                            clicked => {
-                                browse_file();
-                            }
-                        }
-                    }
-
-                    Text {
-                        text: file_status_text;
-                        color: MaterialPalette.on_surface;
-                        wrap: word-wrap;
-                    }
+            input_card := InputFileCard {
+                browse_file => {
+                    root.browse_file();
                 }
             }
 
-            OutlinedCard {
-                visible: file_loaded;
-                VerticalLayout {
-                    padding: MaterialStyleMetrics.padding_16;
-                    spacing: MaterialStyleMetrics.spacing_12;
-                    MaterialText {
-                        text: "2. File Info";
-                        style: MaterialTypography.title_medium;
-                    }
-
-                    VerticalLayout {
-                        spacing: MaterialStyleMetrics.spacing_4;
-                        for info in atom_counts: HorizontalLayout {
-                            MaterialText {
-                                text: info.symbol + ":";
-                                horizontal-stretch: 1;
-                            }
-
-                            MaterialText {
-                                text: info.count;
-                                horizontal-alignment: right;
-                            }
-                        }
-                    }
-                }
+            FileInfoCard {
+                file_status_text <=> root.file_status_text;
+                file_loaded: root.file_loaded;
+                atom_counts: root.atom_counts;
             }
 
-            OutlinedCard {
-                visible: file_loaded;
-                VerticalLayout {
-                    padding: MaterialStyleMetrics.padding_16;
-                    spacing: MaterialStyleMetrics.spacing_12;
-                    MaterialText {
-                        text: "3. Options";
-                        style: MaterialTypography.title_medium;
-                    }
-
-                    HorizontalLayout {
-                        spacing: MaterialStyleMetrics.spacing_8;
-                        r_max_area := TouchArea {
-                            horizontal-stretch: 1;
-                            TextField {
-                                width: 100%;
-                                label: "RDF Max r (Å)";
-                                text <=> r_max;
-                            }
-                        }
-
-                        r_bin_area := TouchArea {
-                            horizontal-stretch: 1;
-                            TextField {
-                                width: 100%;
-                                label: "RDF Bin Width (Å)";
-                                text <=> r_bin_width;
-                            }
-                        }
-                    }
-
-                    HorizontalLayout {
-                        spacing: MaterialStyleMetrics.spacing_8;
-                        s_max_area := TouchArea {
-                            horizontal-stretch: 1;
-                            TextField {
-                                width: 100%;
-                                label: "Max Q (Å⁻¹)";
-                                text <=> q_max;
-                            }
-                        }
-
-                        r_int_area := TouchArea {
-                            horizontal-stretch: 1;
-                            TextField {
-                                width: 100%;
-                                label: "Max r for the FFT (Å)";
-                                text <=> r_int_max;
-                                edited(s) => {
-                                    r_int_max = s;
-                                }
-                            }
-                        }
-                    }
-
-                    HorizontalLayout {
-                        spacing: MaterialStyleMetrics.spacing_8;
-
-                        theta_bin_area := TouchArea {
-                            horizontal-stretch: 1;
-                            TextField {
-                                width: 100%;
-                                label: "PAD Bin Width (°)";
-                                text <=> angle_bin_width;
-                            }
-                        }
-
-                        s_bin_area := TouchArea {
-                            horizontal-stretch: 1;
-                            TextField {
-                                width: 100%;
-                                label: "S(Q) Bin Width (Å⁻¹)";
-                                text <=> q_bin_width;
-                                edited(s) => {
-                                    q_bin_width = s;
-                                }
-                            }
-                        }
-                    }
-
-                    HorizontalLayout {
-                        spacing: MaterialStyleMetrics.spacing_8;
-
-                        smooth_area := TouchArea {
-                            width: 33%;
-                            HorizontalLayout {
-                                padding: MaterialStyleMetrics.padding_4;
-                                Text {
-                                    vertical-alignment: center;
-                                    text: "Enable Smoothing";
-                                    width: 60%;
-                                }
-
-                                CheckBox {
-                                    width: 20%;
-                                    check_state: smoothing ? CheckState.checked : CheckState.unchecked;
-                                    checked_state_changed(s) => {
-                                        smoothing = (s == CheckState.checked);
-                                    }
-                                }
-                            }
-                        }
-
-                        sigma_area := TouchArea {
-                            TextField {
-                                width: 100%;
-                                label: "Smoothing Sigma";
-                                enabled: smoothing;
-                                text <=> smoothing_sigma;
-                            }
-                        }
-
-                        kernel_area := TouchArea {
-                            DropDownMenu {
-                                width: 100%;
-                                enabled: smoothing;
-                                label: "Smoothing Kernel";
-                                items: [
-                                    { text: "Gaussian", enabled: true },
-                                    { text: "Bump", enabled: true },
-                                    { text: "Triweight", enabled: true }
-                                ];
-                                current-index <=> smoothing_kernel;
-                            }
-                        }
-                    }
-                }
+            options_card := OptionsCard {
+                file_loaded: root.file_loaded;
+                r_max <=> root.r_max;
+                r_bin_width <=> root.r_bin_width;
+                q_max <=> root.q_max;
+                q_bin_width <=> root.q_bin_width;
+                r_int_max <=> root.r_int_max;
+                angle_bin_width <=> root.angle_bin_width;
+                smoothing <=> root.smoothing;
+                smoothing_sigma <=> root.smoothing_sigma;
+                smoothing_kernel <=> root.smoothing_kernel;
             }
 
-            OutlinedCard {
-                visible: file_loaded;
-                VerticalLayout {
-                    padding: MaterialStyleMetrics.padding_16;
-                    spacing: MaterialStyleMetrics.spacing_12;
-                    MaterialText {
-                        text: "4. Bond Cutoffs (Å)";
-                        style: MaterialTypography.title_medium;
-                    }
-
-                    VerticalLayout {
-                        spacing: MaterialStyleMetrics.spacing_8;
-                        for cutoff[i] in bond_cutoffs: HorizontalLayout {
-                            alignment: center;
-                            spacing: MaterialStyleMetrics.spacing_8;
-                            MaterialText {
-                                min-width: 120px;
-                                text: cutoff.element1 + " - " + cutoff.element2 + ":";
-                                vertical-alignment: center;
-                                horizontal-stretch: 1;
-                            }
-
-                            TextField {
-                                min-width: 180px;
-                                text: cutoff.distance;
-                                label: "Cutoff (Å)";
-                                edited(s) => {
-                                    cutoff.distance = s;
-                                }
-                            }
-                        }
-                    }
-                }
+            BondCutoffsCard {
+                file_loaded: root.file_loaded;
+                bond_cutoffs <=> root.bond_cutoffs;
             }
 
-            OutlinedCard {
-                visible: file_loaded;
-                VerticalLayout {
-                    padding: MaterialStyleMetrics.padding_16;
-                    spacing: MaterialStyleMetrics.spacing_12;
-                    MaterialText {
-                        text: "5. Run Analysis";
-                        style: MaterialTypography.title_medium;
-                    }
-
-                    analysis_area := TouchArea {
-                        min-height: 50px;
-                        FilledButton {
-                            height: 100%;
-                            width: 100%;
-                            text: analysis_running ? "Analysis in Progress..." : "Run Analysis";
-                            enabled: !analysis_running;
-                            clicked => {
-                                analysis_status_text = "Running Analysis...";
-                                run_analysis();
-                                analysis_status_text = "Analysis ended.";
-                            }
-                        }
-                    }
-
-                    Text {
-                        text: analysis_status_text;
-                        color: MaterialPalette.on_surface;
-                        wrap: word-wrap;
-                    }
+            analysis_card := RunAnalysisCard {
+                file_loaded: root.file_loaded;
+                analysis_running: root.analysis_running;
+                analysis_status_text <=> root.analysis_status_text;
+                run_analysis => {
+                    root.analysis_status_text = "Running Analysis...";
+                    root.run_analysis();
+                    root.analysis_status_text = "Analysis ended.";
                 }
             }
         }
 
-        ToolTip {
-            x: window_area.mouse-x + 20px;
-            y: window_area.mouse-y + 20px;
-            text: "Load a structure file";
-            visible: file_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x + 20px;
-            y: window_area.mouse-y + 20px;
-            text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
-            visible: r_max_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x - 240px;
-            y: window_area.mouse-y + 20px;
-            text: "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å.";
-            visible: r_bin_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x + 20px;
-            y: window_area.mouse-y + 20px;
-            text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹";
-            visible: s_max_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x + 20px;
-            y: window_area.mouse-y + 20px;
-            text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
-            visible: theta_bin_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x - 240px;
-            y: window_area.mouse-y + 20px;
-            text: "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹.";
-            visible: s_bin_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x - 240px;
-            y: window_area.mouse-y + 20px;
-            text: "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å";
-            visible: r_int_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x + 20px;
-            y: window_area.mouse-y + 20px;
-            text: "Enable the smoothing of the distribution functions.";
-            visible: smooth_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x + 20px;
-            y: window_area.mouse-y + 20px;
-            text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
-            visible: sigma_area.has-hover;
-        }
-
-        ToolTip {
-            x: window_area.mouse-x - 240px;
-            y: window_area.mouse-y + 20px;
-            text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
-            visible: kernel_area.has-hover;
+        AppToolTips {
+            x: 0;
+            y: 0;
+            width: 100%;
+            height: 100%;
+            mouse_x: window_area.mouse-x;
+            mouse_y: window_area.mouse-y;
+            file_hover: input_card.file_area_has_hover;
+            r_max_hover: options_card.r_max_has_hover;
+            r_bin_hover: options_card.r_bin_has_hover;
+            q_max_hover: options_card.q_max_has_hover;
+            theta_bin_hover: options_card.theta_bin_has_hover;
+            q_bin_hover: options_card.q_bin_has_hover;
+            r_int_hover: options_card.r_int_has_hover;
+            smooth_hover: options_card.smooth_has_hover;
+            sigma_hover: options_card.sigma_has_hover;
+            kernel_hover: options_card.kernel_has_hover;
         }
     }
 }

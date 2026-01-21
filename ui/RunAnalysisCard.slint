@@ -1,0 +1,47 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledButton,
+    OutlinedCard,
+    MaterialText,
+} from "@material";
+
+export component RunAnalysisCard inherits OutlinedCard {
+    in property <bool> file_loaded;
+    in property <bool> analysis_running;
+    in-out property <string> analysis_status_text;
+    callback run_analysis();
+
+    // Hover state for tooltip
+    out property <bool> analysis_area_has_hover: analysis_area.has-hover;
+
+    visible: root.file_loaded;
+    VerticalLayout {
+        padding: MaterialStyleMetrics.padding_16;
+        spacing: MaterialStyleMetrics.spacing_12;
+        MaterialText {
+            text: "5. Run Analysis";
+            style: MaterialTypography.title_medium;
+        }
+
+        analysis_area := TouchArea {
+            min-height: 50px;
+            FilledButton {
+                height: 100%;
+                width: 100%;
+                text: root.analysis_running ? "Analysis in Progress..." : "Run Analysis";
+                enabled: !root.analysis_running;
+                clicked => {
+                    root.run_analysis();
+                }
+            }
+        }
+
+        Text {
+            text: root.analysis_status_text;
+            color: MaterialPalette.on_surface;
+            wrap: word-wrap;
+        }
+    }
+}
