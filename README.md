@@ -2,7 +2,7 @@
 
 # `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-1.0.4-green)](https://img.shields.io/badge/version-1.0.4-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-1.8.2-green)](https://img.shields.io/badge/version-1.8.2-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
 `Correlation` is a high-performance, user-friendly tool for calculating and analyzing the structural properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, and crystalline structures.
 
@@ -18,7 +18,6 @@ The software computes key correlation functions from atomic coordinate files and
   - [MacOS](#macos)
   - [Build Instructions](#build-instructions)
 - [Usage](#usage)
-- [Command-Line Options](#command-line-options)
 - [License](#license)
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
@@ -122,53 +121,34 @@ sudo cmake --install .
 
 ## Usage
 
-The program is run from the command line, with the only required argument being the input structure file.
-
-### Basic Command
+`Correlation` features an intuitive graphical user interface (GUI) to guide you through the analysis process. To start the application, run the executable:
 
 ```bash
-./build/correlation <path_to_your_file>
+./build/correlation
 ```
-### For example, to analyze a silicon structure:
 
-```bash
-./build/correlation silicon.car
-```
-This will run the analysis with default parameters and create output files (e.g., silicon_g.csv, silicon_PAD.csv) in the same directory as the input file.
+### 1. Load a Structure File
+Click the **"Load a structure file"** button in the **Input File** card. This opens a file dialog to select your material structure. Supported formats include `.car`, `.cell`, `.dat`, and `.xyz`.
 
-### Example with Options
+### 2. File Information
+Once a file is loaded, the **File Info** card displays the total atom count and the breakdown by element type.
 
-This will run the analysis with default parameters and create output files (e.g., silicon_g.csv, silicon_PAD.csv) in the same directory as the input file.
-```bash
-./build/correlation -R 10.0 -r 0.02 -S -K 0.05 -o si_run_1 si_crystal.car
-```
-This command will:
+### 3. Configure Analysis Options
+Adjust the calculation parameters in the **Options** card:
+- **RDF Max r & Bin Width:** Set the maximum radius ($r_{max}$) and the bin width for Radial Distribution Functions.
+- **Max Q & S(Q) Bin Width:** Set the maximum scattering vector ($Q_{max}$) and the bin width for the Structure Factor.
+- **FFT Max r:** Set the maximum integration radius for the Fourier Transform.
+- **PAD Bin Width:** Set the bin width for the Plane-Angle Distribution.
+- **Smoothing:** Enable kernel smoothing and select the kernel type (Gaussian, Bump, or Triweight) and sigma value.
 
-- Set the radial cutoff (-R) to 10.0 Å.
-- Set the RDF bin width (-r) to 0.02 Å.
-- Enable smoothing (-S).
-- Set the smoothing kernel width (-K) to 0.05.
-- Set the output file base name (-o) to si_run_1.
+### 4. Bond Cutoffs
+The **Bond Cutoffs** card allows you to review and manually adjust the distances used to define atomic bonds, which are used for coordination number and angle calculations.
 
-## Command-Line Options
-
-| Option | Long Option | Argument | Description | Default |
-|--------|-------------|----------|-------------|---------|
-| -h | --help | - | Display the help text and exit. | - |
-| -o | --out_file | <path> | The base name for the output files.| Input filename |
-| -r | --r_bin_width | <float> | Width of the histogram bins for RDFs (in Angstroms). | 0.05 |
-| -R | --r_cut | <float> | Cutoff radius for RDF calculations (in Angstroms). | 20.0 |
-| -a | --angle_bin_width | <float> | Width of the histogram bins for PAD (in degrees). | 1.0 |
-| -b | --bond_parameter | <float> | Bond parameter factor. (determines bond by distance) | 1.2 |
-| -S | --smoothing | - | Enable kernel smoothing on all calculated distributions. | Disabled |
-| -k | --kernel_sigma | <float> | Width (sigma) of the smoothing kernel. | 0.081 |
-| -K | --kernel | <int> | Smoothing kernel type: 1=Gaussian, 2=Bump, 3=Triweight. | 1 (Gaussian) |
-
-
+### 5. Run Analysis
+Click the **"Run Analysis"** button to start the computations. Progress and status updates will be displayed, and results will be saved as CSV files in the same directory as the input structure file.
 ## Built with
 
 - [emacs](https://www.gnu.org/software/emacs/) - An extensible, customizable, free/libre text editor — and more.
-- [MSYS2](https://www.msys2.org/) - Software Distribution and Building Platform for Windows
 
 ## Authors
 
