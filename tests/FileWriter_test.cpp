@@ -13,6 +13,7 @@
 #include "../include/DistributionFunctions.hpp"
 #include "../include/FileIO.hpp"
 #include "../include/FileWriter.hpp"
+#include <highfive/highfive.hpp>
 
 // Test fixture for FileWriter integration tests.
 class FileWriterTest : public ::testing::Test {
@@ -48,6 +49,7 @@ protected:
     std::remove("test_si_J_smoothed.csv");
     std::remove("test_si_G_smoothed.csv");
     std::remove("test_si_PAD_smoothed.csv");
+    std::remove("test_si.h5");
   }
 
   // Helper to check if a file exists and is not empty.
@@ -114,4 +116,36 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
+}
+
+TEST_F(FileWriterTest, WritesHDF5File) {
+  // Arrange
+  FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
+  Cell si_cell = FileIO::readStructure("si_crystal.car", type);
+  DistributionFunctions df(si_cell, 5.0); // Use smaller r_max for faster test
+
+  df.calculateRDF(5.0, 0.1);
+  df.calculatePAD(180.0, 2.0);
+
+  FileWriter writer(df);
+  writer.writeHDF("test_si.h5");
+
+  // Assert
+  ASSERT_TRUE(fileExistsAndIsNotEmpty("test_si.h5"));
+
+  // Verify content using HighFive
+  HighFive::File file("test_si.h5", HighFive::File::ReadOnly);
+  EXPECT_TRUE(file.exist("g(r)"));
+  EXPECT_TRUE(file.exist("f(theta)"));
+
+  HighFive::Group g_group = file.getGroup("g(r)");
+  EXPECT_TRUE(g_group.exist("bins"));
+  EXPECT_TRUE(g_group.exist("raw"));
+  EXPECT_TRUE(g_group.getGroup("raw").exist("Si-Si"));
+
+  // Check attribute
+  EXPECT_TRUE(g_group.hasAttribute("bin_label"));
+  std::string label;
+  g_group.getAttribute("bin_label").read(label);
+  EXPECT_EQ(label, "r (Å)");
 }

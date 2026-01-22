@@ -40,6 +40,12 @@ public:
   void writeAllCSVs(const std::string &base_path,
                     bool write_smoothed = false) const;
 
+  /**
+   * @brief Writes all available histograms to a single HDF5 file.
+   * @param filename The full path of the HDF5 file to write.
+   */
+  void writeHDF(const std::string &filename) const;
+
 private:
   /**
    * @brief The core implementation for writing a single histogram

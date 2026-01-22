@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.0] 2026-01-22
+
+### Added
+- Migrated data output to HDF5 format (via `.h5` files), providing a consolidated and more efficient alternative to multiple CSV files.
+- Integrated **HighFive** (v2.10.1) for modern C++ HDF5 support.
+
+### Fixed
+- Resolved CMake configuration error ("Compatibility with CMake < 3.5 has been removed") by updating HighFive and setting `CMAKE_POLICY_VERSION_MINIMUM` to 3.5.
+- Fixed a UI initialization bug where the "Gaussian" smoothing kernel was not correctly displayed in the dropdown on startup.
+
+### Changed
+- Refactored `OptionsCard.slint` to set **Smoothing** to be always enabled by default, simplifying the UI and ensures consistent analysis results.
+- Updated project version to 1.9.0 in `CMakeLists.txt`.
+
 ## [1.8.2] 2026-01-21
 
 ### Fixed

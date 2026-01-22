@@ -18,9 +18,11 @@ export component AppToolTips inherits Rectangle {
     in property <bool> theta_bin_hover;
     in property <bool> q_bin_hover;
     in property <bool> r_int_hover;
-    in property <bool> smooth_hover;
+
     in property <bool> sigma_hover;
     in property <bool> kernel_hover;
+    in property <bool> hdf5_hover;
+    in property <bool> csv_hover;
 
     ToolTip {
         x: mouse_x + 20px;
@@ -74,13 +76,6 @@ export component AppToolTips inherits Rectangle {
     ToolTip {
         x: mouse_x + 20px;
         y: mouse_y + 20px;
-        text: "Enable the smoothing of the distribution functions.";
-        visible: smooth_hover;
-    }
-
-    ToolTip {
-        x: mouse_x + 20px;
-        y: mouse_y + 20px;
         text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
         visible: sigma_hover;
     }
@@ -90,5 +85,19 @@ export component AppToolTips inherits Rectangle {
         y: mouse_y + 20px;
         text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
         visible: kernel_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "If enabled, the results will be exported to a single HDF5 file in addition to the CSV files.";
+        visible: hdf5_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "If enabled, the results will be exported as CSV files.";
+        visible: csv_hover;
     }
 }

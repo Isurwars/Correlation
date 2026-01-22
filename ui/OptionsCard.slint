@@ -22,7 +22,9 @@ export component OptionsCard inherits OutlinedCard {
     in-out property <string> q_bin_width;
     in-out property <string> r_int_max;
     in-out property <string> angle_bin_width;
-    in-out property <bool> smoothing;
+    in-out property <bool> smoothing: true;
+    in-out property <bool> use_hdf5: true;
+    in-out property <bool> use_csv: true;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
 
@@ -33,7 +35,7 @@ export component OptionsCard inherits OutlinedCard {
     out property <bool> r_int_has_hover: r_int_area.has-hover;
     out property <bool> theta_bin_has_hover: theta_bin_area.has-hover;
     out property <bool> q_bin_has_hover: q_bin_area.has-hover;
-    out property <bool> smooth_has_hover: smooth_area.has-hover;
+
     out property <bool> sigma_has_hover: sigma_area.has-hover;
     out property <bool> kernel_has_hover: kernel_area.has-hover;
 
@@ -113,31 +115,13 @@ export component OptionsCard inherits OutlinedCard {
         HorizontalLayout {
             spacing: MaterialStyleMetrics.spacing_8;
 
-            smooth_area := TouchArea {
-                width: 33%;
-                HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_4;
-                    Text {
-                        vertical-alignment: center;
-                        text: "Enable Smoothing";
-                        width: 60%;
-                    }
-
-                    CheckBox {
-                        width: 20%;
-                        check_state: root.smoothing ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.smoothing = (s == CheckState.checked);
-                        }
-                    }
-                }
-            }
+            // Smoothing toggle removed and set to always on
 
             sigma_area := TouchArea {
                 TextField {
                     width: 100%;
                     label: "Smoothing Sigma";
-                    enabled: root.smoothing;
+                    // enabled: root.smoothing; // Always enabled now
                     text <=> root.smoothing_sigma;
                 }
             }
@@ -145,7 +129,7 @@ export component OptionsCard inherits OutlinedCard {
             kernel_area := TouchArea {
                 DropDownMenu {
                     width: 100%;
-                    enabled: root.smoothing;
+                    // enabled: root.smoothing; // Always enabled now
                     label: "Smoothing Kernel";
                     items: [
                         { text: "Gaussian", enabled: true },

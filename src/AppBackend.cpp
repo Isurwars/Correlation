@@ -14,7 +14,7 @@
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
 
-AppBackend::AppBackend() { ProgramOptions options_; }
+AppBackend::AppBackend() {}
 
 //---------------------------------------------------------------------------//
 //--------------------------------- Methods ---------------------------------//
@@ -103,7 +103,12 @@ void AppBackend::run_analysis() {
     }
     // --- Write results ---
     FileWriter writer(*df_);
-    writer.writeAllCSVs(options_.output_file_base, options_.smoothing);
+    if (options_.use_csv) {
+      writer.writeAllCSVs(options_.output_file_base, options_.smoothing);
+    }
+    if (options_.use_hdf5) {
+      writer.writeHDF(options_.output_file_base + ".h5");
+    }
 
   } catch (const std::exception &e) {
     std::cerr << "Error during analysis: " << e.what() << std::endl;

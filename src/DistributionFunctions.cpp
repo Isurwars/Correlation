@@ -274,10 +274,10 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
   g_r.bins.resize(num_bins);
   G_r.bins.resize(num_bins);
   J_r.bins.resize(num_bins);
-  H_r.bin_label = "r";
-  g_r.bin_label = "r";
-  G_r.bin_label = "r";
-  J_r.bin_label = "r";
+  H_r.bin_label = "r (Å)";
+  g_r.bin_label = "r (Å)";
+  G_r.bin_label = "r (Å)";
+  J_r.bin_label = "r (Å)";
 
   for (size_t i = 0; i < num_bins; ++i) {
     const double r = (i + 0.5) * r_bin_width;
@@ -425,7 +425,7 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
   const size_t num_bins = static_cast<size_t>(theta_cut / bin_width);
 
   Histogram f_theta;
-  f_theta.bin_label = "theta";
+  f_theta.bin_label = "theta (°)";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_theta.bins[i] = (i + 0.5) * bin_width;
@@ -526,7 +526,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
 
   // 2. Setup S(Q) Histogram
   Histogram s_q_hist;
-  s_q_hist.bin_label = "Q";
+  s_q_hist.bin_label = "Q (Å⁻¹)";
   const size_t num_q_bins =
       static_cast<size_t>(std::floor(q_max / q_bin_width));
 

@@ -4,7 +4,8 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.8.2 LANGUAGES CXX)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+project(Correlation VERSION 1.9.0 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
@@ -41,6 +42,52 @@ if (NOT Slint_FOUND)
   )
   FetchContent_MakeAvailable(Slint)
 endif (NOT Slint_FOUND)
+
+# HDF5 dependency
+find_package(HDF5 QUIET COMPONENTS CXX)
+if (NOT HDF5_FOUND)
+  message("HDF5 could not be located. Downloading it from GitHub and building it locally.")
+  include(FetchContent)
+  # HDF5 options for FetchContent
+  set(HDF5_BUILD_CPP_LIB ON CACHE BOOL "Build HDF5 C++ Library" FORCE)
+  set(HDF5_BUILD_EXAMPLES OFF CACHE BOOL "Build HDF5 Examples" FORCE)
+  set(HDF5_BUILD_HL_LIB OFF CACHE BOOL "Build HDF5 High Level Library" FORCE)
+  set(HDF5_BUILD_TOOLS OFF CACHE BOOL "Build HDF5 Tools" FORCE)
+  set(HDF5_BUILD_FORTRAN OFF CACHE BOOL "Build HDF5 Fortran" FORCE)
+  set(HDF5_BUILD_JAVA OFF CACHE BOOL "Build HDF5 Java" FORCE)
+  set(BUILD_TESTING OFF CACHE BOOL "Build HDF5 Tests" FORCE)
+  set(HDF5_PACK_EXAMPLES OFF CACHE BOOL "Pack HDF5 Examples" FORCE)
+  
+  FetchContent_Declare(
+    HDF5
+    GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
+    GIT_TAG hdf5_1.14.3
+  )
+  FetchContent_MakeAvailable(HDF5)
+  
+  # HighFive looks for HDF5 targets. If we build from source, we might need to alias them
+  # to match what find_package would provide if HighFive expects HDF5::HDF5
+  if(NOT TARGET HDF5::HDF5)
+    if(TARGET hdf5_cpp-shared)
+      add_library(HDF5::HDF5 ALIAS hdf5_cpp-shared)
+    elseif(TARGET hdf5_cpp-static)
+      add_library(HDF5::HDF5 ALIAS hdf5_cpp-static)
+    endif()
+  endif()
+endif()
+
+set(HIGHFIVE_USE_BOOST OFF CACHE BOOL "Do not use Boost")
+set(HIGHFIVE_EXAMPLES OFF CACHE BOOL "Do not build examples")
+set(HIGHFIVE_UNIT_TESTS OFF CACHE BOOL "Do not build tests")
+set(HIGHFIVE_USE_INSTALL OFF CACHE BOOL "Do not use install")
+
+include(FetchContent)
+FetchContent_Declare(
+  HighFive
+  GIT_REPOSITORY https://github.com/highfive-devs/highfive.git
+  GIT_TAG v2.10.1
+)
+FetchContent_MakeAvailable(HighFive)
 
 
 # -----------------------------------------------------------
@@ -81,7 +128,8 @@ target_include_directories(correlation_lib PUBLIC
 
 target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
-target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
+target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc HDF5::HDF5)
+target_link_libraries(correlation_lib PUBLIC HighFive)
 
 #------------------------------------------------------------------
 # Executable Target (correlation)

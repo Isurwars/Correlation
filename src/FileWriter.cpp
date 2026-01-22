@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include <highfive/highfive.hpp>
+
 FileWriter::FileWriter(const DistributionFunctions &df) : df_(df) {}
 
 void FileWriter::writeHistogramToCSV(const std::string &filename,
@@ -91,5 +93,48 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
       std::cerr << "Error writing file for '" << name << "': " << e.what()
                 << std::endl;
     }
+  }
+}
+
+void FileWriter::writeHDF(const std::string &filename) const {
+  try {
+    HighFive::File file(filename, HighFive::File::ReadWrite |
+                                      HighFive::File::Create |
+                                      HighFive::File::Truncate);
+
+    for (const auto &[name, hist] : df_.getAllHistograms()) {
+      if (hist.partials.empty() || hist.bins.empty()) {
+        continue;
+      }
+
+      // Create a group for each histogram (e.g., "g(r)")
+      // Replace '/' with '_' in name to avoid HDF5 path issues
+      std::string group_name = name;
+      std::replace(group_name.begin(), group_name.end(), '/', '_');
+      HighFive::Group group = file.createGroup(group_name);
+
+      // Store bins as a dataset
+      group.createDataSet("bins", hist.bins);
+      // Add attribute for bin label
+      group.createAttribute<std::string>("bin_label",
+                                         HighFive::DataSpace::From(hist.bin_label))
+          .write(hist.bin_label);
+
+      // Store raw partials
+      HighFive::Group raw_group = group.createGroup("raw");
+      for (const auto &[key, data] : hist.partials) {
+        raw_group.createDataSet(key, data);
+      }
+
+      // Store smoothed partials if any
+      if (!hist.smoothed_partials.empty()) {
+        HighFive::Group smoothed_group = group.createGroup("smoothed");
+        for (const auto &[key, data] : hist.smoothed_partials) {
+          smoothed_group.createDataSet(key, data);
+        }
+      }
+    }
+  } catch (const HighFive::Exception &err) {
+    throw std::runtime_error("HDF5 Error: " + std::string(err.what()));
   }
 }

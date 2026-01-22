@@ -40,7 +40,9 @@ export component AppWindow inherits Window {
 
     // User-configurable options
     in-out property <string> in_file_text;
-    in-out property <bool> smoothing;
+    in-out property <bool> smoothing: true;
+    in-out property <bool> use_hdf5: true;
+    in-out property <bool> use_csv: true;
     in-out property <string> r_max;
     in-out property <string> r_bin_width;
     in-out property <string> q_max;
@@ -48,12 +50,12 @@ export component AppWindow inherits Window {
     in-out property <string> r_int_max;
     in-out property <string> angle_bin_width;
     in-out property <string> smoothing_sigma;
-    in-out property <int> smoothing_kernel: 0;
+    in-out property <int> smoothing_kernel: -1;
 
     preferred-width: 500px;
-    preferred-height: file_loaded ? (800px + bond_cutoffs.length * 50px) : 170px;
+    preferred-height: file_loaded ? (840px + bond_cutoffs.length * 50px) : 170px;
     min-width: 500px;
-    min-height: file_loaded ? (800px + bond_cutoffs.length * 50px) : 170px;
+    min-height: file_loaded ? (840px + bond_cutoffs.length * 50px) : 170px;
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
@@ -108,6 +110,8 @@ export component AppWindow inherits Window {
                 file_loaded: root.file_loaded;
                 analysis_running: root.analysis_running;
                 analysis_status_text <=> root.analysis_status_text;
+                use_csv <=> root.use_csv;
+                use_hdf5 <=> root.use_hdf5;
                 run_analysis => {
                     root.analysis_status_text = "Running Analysis...";
                     root.run_analysis();
@@ -130,9 +134,11 @@ export component AppWindow inherits Window {
             theta_bin_hover: options_card.theta_bin_has_hover;
             q_bin_hover: options_card.q_bin_has_hover;
             r_int_hover: options_card.r_int_has_hover;
-            smooth_hover: options_card.smooth_has_hover;
+
             sigma_hover: options_card.sigma_has_hover;
             kernel_hover: options_card.kernel_has_hover;
+            hdf5_hover: analysis_card.hdf5_area_has_hover;
+            csv_hover: analysis_card.csv_area_has_hover;
         }
     }
 }
