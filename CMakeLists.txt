@@ -4,7 +4,6 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 project(Correlation VERSION 1.9.0 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
@@ -25,7 +24,7 @@ if (NOT TBB_FOUND)
   FetchContent_Declare(
     TBB
     GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
-    GIT_TAG v2022.2.0
+    GIT_TAG v2022.3.0
   )
   FetchContent_MakeAvailable(TBB)
 endif()
@@ -37,7 +36,7 @@ if (NOT Slint_FOUND)
   FetchContent_Declare(
     Slint
     GIT_REPOSITORY https://github.com/slint-ui/slint.git
-    GIT_TAG v1.13.1
+    GIT_TAG v1.14.1
     SOURCE_SUBDIR api/cpp
   )
   FetchContent_MakeAvailable(Slint)
@@ -61,7 +60,7 @@ if (NOT HDF5_FOUND)
   FetchContent_Declare(
     HDF5
     GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
-    GIT_TAG hdf5_1.14.3
+    GIT_TAG hdf5_2.0.0
   )
   FetchContent_MakeAvailable(HDF5)
   
@@ -85,7 +84,7 @@ include(FetchContent)
 FetchContent_Declare(
   HighFive
   GIT_REPOSITORY https://github.com/highfive-devs/highfive.git
-  GIT_TAG v2.10.1
+  GIT_TAG v3.3.0
 )
 FetchContent_MakeAvailable(HighFive)
 
