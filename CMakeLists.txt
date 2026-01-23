@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.9.0 LANGUAGES CXX)
+project(Correlation VERSION 1.9.1 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
@@ -79,6 +79,7 @@ set(HIGHFIVE_USE_BOOST OFF CACHE BOOL "Do not use Boost")
 set(HIGHFIVE_EXAMPLES OFF CACHE BOOL "Do not build examples")
 set(HIGHFIVE_UNIT_TESTS OFF CACHE BOOL "Do not build tests")
 set(HIGHFIVE_USE_INSTALL OFF CACHE BOOL "Do not use install")
+set(HIGHFIVE_FIND_HDF5 OFF CACHE BOOL "Do not let HighFive find HDF5" FORCE)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -127,8 +128,8 @@ target_include_directories(correlation_lib PUBLIC
 
 target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
-target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc HDF5::HDF5)
-target_link_libraries(correlation_lib PUBLIC HighFive)
+target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
+target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5)
 
 #------------------------------------------------------------------
 # Executable Target (correlation)
@@ -157,6 +158,9 @@ target_link_libraries(correlation
 target_include_directories(correlation PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+# Set the style for Slint
+set_property(GLOBAL PROPERTY SLINT_STYLE "material")
 
 slint_target_sources(correlation
   ui/AppWindow.slint
@@ -196,6 +200,7 @@ target_link_libraries(correlation_tests PRIVATE
     correlation_lib
     gtest_main
 )
+target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
 
 # Call the helper function to bundle DLLs on Windows
 bundle_windows_dlls(correlation_tests)
