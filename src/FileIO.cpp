@@ -590,6 +590,66 @@ Cell readOnetepDat(const std::string &file_name) {
   return tempCell;
 } // readOnetepDat
 
+std::vector<Cell> readArc(const std::string &file_name) {
+  std::ifstream myfile(file_name);
+  if (!myfile.is_open()) {
+    throw std::runtime_error("Unable to read file: " + file_name + " (" +
+                             std::strerror(errno) + ").");
+  }
+
+  std::vector<Cell> frames;
+  Cell tempCell;
+  std::string line;
+
+  while (std::getline(myfile, line)) {
+    // Ignore empty lines or comment lines
+    if (line.empty() || line[0] == '!') {
+      continue;
+    }
+
+    std::stringstream line_stream(line);
+    std::string first_token;
+    line_stream >> first_token;
+
+    if (first_token == "end") {
+      if (!tempCell.isEmpty()) {
+        frames.push_back(std::move(tempCell));
+        tempCell = Cell(); // Reset for next frame
+      }
+      continue;
+    }
+
+    if (first_token == "PBC") {
+      std::array<double, 6> lat;
+      if (line_stream >> lat[0] >> lat[1] >> lat[2] >> lat[3] >> lat[4] >>
+          lat[5]) {
+        tempCell.setLatticeParameters(lat);
+      }
+      continue;
+    }
+
+    if (first_token == "PBC=OFF") {
+      std::array<double, 6> lat = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
+      tempCell.setLatticeParameters(lat);
+      continue;
+    }
+
+    // Attempt to parse atom
+    // Reset stream to start of line
+    line_stream.clear();
+    line_stream.seekg(0);
+
+    std::string u1, u5, u6, u7, element;
+    double x, y, z;
+
+    if (line_stream >> u1 >> x >> y >> z >> u5 >> u6 >> u7 >> element) {
+      tempCell.addAtom(element, {x, y, z});
+    }
+  }
+
+  return frames;
+} // readArc
+
 } // anonymous namespace
 
 namespace FileIO {
@@ -602,10 +662,10 @@ FileType determineFileType(const std::string &filename) {
     return FileIO::FileType::Car;
   if (ext == ".cell")
     return FileIO::FileType::Cell;
-  if (ext == ".dat")
-    return FileIO::FileType::OnetepDat;
   if (ext == ".cif")
     return FileIO::FileType::Cif;
+  if (ext == ".arc")
+    return FileIO::FileType::Arc;
 
   throw std::runtime_error("Unsupported file extension: " + ext);
 }
@@ -620,8 +680,21 @@ Cell readStructure(const std::string &filename, FileType type) {
     return readCell(filename);
   case FileType::OnetepDat:
     return readOnetepDat(filename);
+  case FileType::Arc:
+    throw std::runtime_error("ARC files are trajectories, use readTrajectory.");
   default:
     throw std::invalid_argument("Unknown file type specified.");
+  }
+}
+
+Trajectory readTrajectory(const std::string &filename, FileType type) {
+  switch (type) {
+  case FileType::Arc: {
+    std::vector<Cell> frames = readArc(filename);
+    return Trajectory(frames, 1.0); // Default time_step 1.0 for now
+  }
+  default:
+    throw std::runtime_error("Unsupported trajectory format.");
   }
 }
 

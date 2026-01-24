@@ -8,6 +8,7 @@
 #include <string>
 
 #include "Cell.hpp"
+#include "Trajectory.hpp"
 
 // The FileIO namespace encapsulates all functionality related to reading and
 // writing structure files.
@@ -15,7 +16,7 @@ namespace FileIO {
 
 // A type-safe enum to specify the format of a structure file.
 // This is more robust than using raw string extensions.
-enum class FileType { Car, Cell, Cif, OnetepDat, Unknown };
+enum class FileType { Car, Cell, Cif, OnetepDat, Arc, Unknown };
 
 // --- Main Public Interface ---
 
@@ -32,6 +33,19 @@ enum class FileType { Car, Cell, Cif, OnetepDat, Unknown };
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
 Cell readStructure(const std::string &filename, FileType type);
+
+/**
+ * @brief Reads a trajectory from a file.
+ *
+ * This function reads a series of frames from a file (e.g., ARC) and returns
+ * a Trajectory object.
+ *
+ * @param filename The path to the trajectory file.
+ * @param type The format of the file.
+ * @return A Trajectory object.
+ * @throws std::runtime_error if the file cannot be opened or is malformed.
+ */
+Trajectory readTrajectory(const std::string &filename, FileType type);
 
 /**
  * @brief Determines the FileType from a given filename extension.

@@ -118,6 +118,7 @@ add_library(correlation_lib STATIC
     src/FileIO.cpp
     src/FileWriter.cpp
     src/StructureAnalyzer.cpp
+    src/Trajectory.cpp
 )
 
 # Include directories

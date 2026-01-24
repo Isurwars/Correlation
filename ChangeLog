@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 ## [1.9.1] 2026-01-23
 
+
+### Added
+- Added support for reading ARC trajectory files (`.arc`).
+- Implemented `Trajectory` class for handling multi-frame simulations.
+- Added `readTrajectory` function to `FileIO`.
+- Added unit tests for ARC file reading and duplicate frame handling.
+
 ### Fixed
 - Fixed compilation issues on Windows.
 

@@ -44,10 +44,12 @@ protected:
     std::remove("test_si_g.csv");
     std::remove("test_si_J.csv");
     std::remove("test_si_G.csv");
+    std::remove("test_si__G.csv");
     std::remove("test_si_PAD.csv");
     std::remove("test_si_g_smoothed.csv");
     std::remove("test_si_J_smoothed.csv");
     std::remove("test_si_G_smoothed.csv");
+    std::remove("test_si__G_smoothed.csv");
     std::remove("test_si_PAD_smoothed.csv");
     std::remove("test_si.h5");
   }

@@ -57,6 +57,57 @@ protected:
     cif_file << "loop_\n_symmetry_equiv_pos_as_xyz\n 'x, y, z'\n";
     cif_file << "loop_\n";
     cif_file.close();
+
+    // Create a temporary ARC file
+    std::ofstream arc_file("test.arc");
+    ASSERT_TRUE(arc_file.is_open());
+    arc_file << "!BIOSYM archive 3\n";
+    arc_file << "PBC=ON\n"; // Frame 1 Lattice
+    // Typically in ARC, lattice follows PBC keyword with values.
+    // Assuming readArc handles "PBC" followed by values.
+    // Based on my implementation: "PBC" token triggers reading 6 doubles.
+    // So "PBC" must be on the line.
+    
+    // Frame 1
+    arc_file << "PBC 10.0 10.0 10.0 90.0 90.0 90.0\n";
+    arc_file << "C1      1.00  1.00  1.00 XXXX 1      xx      C    0.000\n";
+    arc_file << "end\n";
+    arc_file << "end\n"; // Frame 1 end (my parser consumes 'end', if we have atoms, it pushes frame)
+    
+    // Frame 2
+    arc_file << "!DATE ...\n";
+    arc_file << "PBC 11.0 11.0 11.0 90.0 90.0 90.0\n";
+    arc_file << "C1      2.00  2.00  2.00 XXXX 1      xx      C    0.000\n";
+    arc_file << "end\n";
+    arc_file << "end\n";
+    arc_file.close();
+
+    // Create a temporary ARC file with duplicate frames
+    std::ofstream arc_dup_file("test_identical.arc");
+    ASSERT_TRUE(arc_dup_file.is_open());
+    arc_dup_file << "!BIOSYM archive 3\n";
+    arc_dup_file << "PBC=ON\n";
+
+    // Frame 1
+    arc_dup_file << "PBC 10.0 10.0 10.0 90.0 90.0 90.0\n";
+    arc_dup_file << "C1      1.00  1.00  1.00 XXXX 1      xx      C    0.000\n";
+    arc_dup_file << "end\n";
+    arc_dup_file << "end\n";
+
+    // Frame 2
+    arc_dup_file << "!DATE ...\n";
+    arc_dup_file << "PBC 11.0 11.0 11.0 90.0 90.0 90.0\n";
+    arc_dup_file << "C1      2.00  2.00  2.00 XXXX 1      xx      C    0.000\n";
+    arc_dup_file << "end\n";
+    arc_dup_file << "end\n";
+
+    // Frame 3 (Identical to Frame 2)
+    arc_dup_file << "!DATE ...\n";
+    arc_dup_file << "PBC 11.0 11.0 11.0 90.0 90.0 90.0\n";
+    arc_dup_file << "C1      2.00  2.00  2.00 XXXX 1      xx      C    0.000\n";
+    arc_dup_file << "end\n";
+    arc_dup_file << "end\n";
+    arc_dup_file.close();
   }
 
   // This function runs after each test to clean up temporary files.
@@ -64,6 +115,8 @@ protected:
     remove("test.car");
     remove("test.cell");
     remove("test.cif");
+    remove("test.arc");
+    remove("test_identical.arc");
   }
 };
 
@@ -162,4 +215,55 @@ TEST_F(FileIOTest, ReadCifFileCorrectly) {
       << "Did not find the original Na atom at (0,0,0)";
   EXPECT_TRUE(cl_center_found)
       << "Did not find the original Cl atom at the cell center";
+}
+
+TEST_F(FileIOTest, ReadArcFileCorrectly) {
+  FileIO::FileType type = FileIO::determineFileType("test.arc");
+  EXPECT_EQ(type, FileIO::FileType::Arc);
+
+  Trajectory traj = FileIO::readTrajectory("test.arc", type);
+  
+  const auto& frames = traj.getFrames();
+  ASSERT_EQ(frames.size(), 2);
+
+  // Check Frame 1
+  const auto& f1 = frames[0];
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0);
+  ASSERT_EQ(f1.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0);
+
+  // Check Frame 2
+  const auto& f2 = frames[1];
+  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 11.0);
+  ASSERT_EQ(f2.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 2.0);
+}
+
+TEST_F(FileIOTest, ReadArcFileDuplicatedFrames) {
+  FileIO::FileType type = FileIO::determineFileType("test_identical.arc");
+  EXPECT_EQ(type, FileIO::FileType::Arc);
+
+  Trajectory traj = FileIO::readTrajectory("test_identical.arc", type);
+
+  const auto& frames = traj.getFrames();
+  ASSERT_EQ(frames.size(), 3);
+
+  // Check Frame 1
+  EXPECT_DOUBLE_EQ(frames[0].lattice_parameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(frames[0].atoms()[0].position().x(), 1.0);
+
+  // Check Frame 2
+  EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], 11.0);
+  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
+
+  // Check Frame 3
+  EXPECT_DOUBLE_EQ(frames[2].lattice_parameters()[0], 11.0);
+  EXPECT_DOUBLE_EQ(frames[2].atoms()[0].position().x(), 2.0);
+
+  // Verify Frame 2 and Frame 3 are identical in content
+  EXPECT_EQ(frames[1].atoms().size(), frames[2].atoms().size());
+  EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], frames[2].lattice_parameters()[0]);
+  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), frames[2].atoms()[0].position().x());
+  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().y(), frames[2].atoms()[0].position().y());
+  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().z(), frames[2].atoms()[0].position().z());
 }
