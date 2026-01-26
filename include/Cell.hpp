@@ -103,6 +103,18 @@ public:
    */
   void wrapPositions();
 
+  /**
+   * @brief Sets the energy of the cell frame.
+   * @param energy The energy value.
+   */
+  void setEnergy(double energy) { energy_ = energy; }
+
+  /**
+   * @brief Gets the energy of the cell frame.
+   * @return The energy value.
+   */
+  double getEnergy() const { return energy_; }
+
 private:
   void updateLattice(const linalg::Matrix3<double> &new_lattice);
   void updateLatticeParametersFromVectors();
@@ -112,6 +124,7 @@ private:
   linalg::Matrix3<double> inverse_lattice_vectors_;
   std::array<double, 6> lattice_parameters_;
   double volume_{0.0};
+  double energy_{0.0};
   std::vector<Atom> atoms_;
   std::vector<Element> elements_;
 };

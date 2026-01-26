@@ -28,8 +28,8 @@ Cell::Cell(Cell &&other) noexcept
     : lattice_vectors_(std::move(other.lattice_vectors_)),
       inverse_lattice_vectors_(std::move(other.inverse_lattice_vectors_)),
       lattice_parameters_(std::move(other.lattice_parameters_)),
-      volume_(std::move(other.volume_)), atoms_(std::move(other.atoms_)),
-      elements_(std::move(other.elements_)) {}
+      volume_(std::move(other.volume_)), energy_(std::move(other.energy_)),
+      atoms_(std::move(other.atoms_)), elements_(std::move(other.elements_)) {}
 
 // Move Assignment Operator
 Cell &Cell::operator=(Cell &&other) noexcept {
@@ -38,6 +38,7 @@ Cell &Cell::operator=(Cell &&other) noexcept {
     inverse_lattice_vectors_ = std::move(other.inverse_lattice_vectors_);
     lattice_parameters_ = std::move(other.lattice_parameters_);
     volume_ = std::move(other.volume_);
+    energy_ = std::move(other.energy_);
     atoms_ = std::move(other.atoms_);
     elements_ = std::move(other.elements_);
   }

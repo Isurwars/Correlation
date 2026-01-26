@@ -44,6 +44,13 @@ public:
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
     bond_cutoffs_sq_ = cutoffs;
   }
+
+  /**
+   * @brief Removes consecutive duplicated frames from the trajectory.
+   * Frames are considered duplicates if all atom positions are identical
+   * (within a small tolerance).
+   */
+  void removeDuplicatedFrames();
   
   /**
    * @brief Pre-calculates the squared bond cutoff distances for every pair of

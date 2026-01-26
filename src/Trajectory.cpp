@@ -90,3 +90,45 @@ double Trajectory::getBondCutoff(int type1, int type2) {
       
   return std::sqrt(bond_cutoffs_sq_[type1][type2]);
 }
+void Trajectory::removeDuplicatedFrames() {
+  if (frames_.size() < 2) {
+    return;
+  }
+
+  std::vector<Cell> unique_frames;
+  unique_frames.reserve(frames_.size());
+  unique_frames.push_back(frames_[0]);
+
+  const double epsilon = 1e-5; // Tolerance for position comparison
+
+  for (size_t i = 1; i < frames_.size(); ++i) {
+    const auto &current_frame = frames_[i];
+    const auto &last_unique_frame = unique_frames.back();
+
+    bool is_duplicate = true;
+
+    // Check atom count
+    if (current_frame.atomCount() != last_unique_frame.atomCount()) {
+      is_duplicate = false;
+    } else {
+      // Check positions
+      const auto &current_atoms = current_frame.atoms();
+      const auto &last_atoms = last_unique_frame.atoms();
+
+      for (size_t j = 0; j < current_atoms.size(); ++j) {
+        if (linalg::norm(current_atoms[j].position() - last_atoms[j].position()) > epsilon) {
+          is_duplicate = false;
+          break;
+        }
+      }
+    }
+
+    if (!is_duplicate) {
+      unique_frames.push_back(current_frame);
+    }
+  }
+
+  if (unique_frames.size() < frames_.size()) {
+      frames_ = std::move(unique_frames);
+  }
+}

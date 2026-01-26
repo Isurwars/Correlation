@@ -634,6 +634,22 @@ std::vector<Cell> readArc(const std::string &file_name) {
       continue;
     }
 
+    if (first_token == "PBC=ON") {
+        continue;
+    }
+
+    // Check if it is a single token line (Energy)
+    std::string second_token;
+    if (!(line_stream >> second_token)) {
+      try {
+        double energy = std::stod(first_token);
+        tempCell.setEnergy(energy);
+        continue;
+      } catch (...) {
+        // Not a number, move on
+      }
+    }
+
     // Attempt to parse atom
     // Reset stream to start of line
     line_stream.clear();

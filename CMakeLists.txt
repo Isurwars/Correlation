@@ -196,6 +196,7 @@ add_executable(correlation_tests
     tests/StructureAnalyzer_test.cpp
     tests/AngleTests.cpp
     tests/TrajectoryAnalyzer_test.cpp
+    tests/TrajectoryRevision_test.cpp
 )
 
 # The test executable also links to the library and inherits its properties.
