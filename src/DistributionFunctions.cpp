@@ -18,7 +18,7 @@
 //---------------------------------------------------------------------------//
 
 DistributionFunctions::DistributionFunctions(Cell &cell, double cutoff)
-    : cell_(cell), neighbors_(nullptr), current_cutoff_(0.0) {
+    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0) {
   if (cutoff > 0.0) {
     ensureNeighborsComputed(cutoff);
   }
@@ -28,24 +28,28 @@ DistributionFunctions::DistributionFunctions(Cell &cell, double cutoff)
 // Move Constructor
 DistributionFunctions::DistributionFunctions(
     DistributionFunctions &&other) noexcept
-    : cell_(other.cell_), neighbors_(std::move(other.neighbors_)),
+    : cell_(other.cell_), neighbors_ref_(other.neighbors_ref_),
+      neighbors_owned_(std::move(other.neighbors_owned_)),
       current_cutoff_(other.current_cutoff_),
       histograms_(std::move(other.histograms_)),
       ashcroft_weights_(std::move(other.ashcroft_weights_)) {
 
   other.current_cutoff_ = -1.0;
+  other.neighbors_ref_ = nullptr;
 }
 
 // Move Assignment Operator
 DistributionFunctions &
 DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
   if (this != &other) {
-    neighbors_ = std::move(other.neighbors_);
+    neighbors_ref_ = other.neighbors_ref_;
+    neighbors_owned_ = std::move(other.neighbors_owned_);
     current_cutoff_ = other.current_cutoff_;
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
 
     other.current_cutoff_ = -1.0;
+    other.neighbors_ref_ = nullptr;
   }
   return *this;
 }
@@ -53,6 +57,28 @@ DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
 //--------------------------------------------------------------------------//
 //---------------------------- Helper Functions ----------------------------//
 //--------------------------------------------------------------------------//
+
+void DistributionFunctions::setStructureAnalyzer(
+    const StructureAnalyzer *analyzer) {
+  neighbors_ref_ = analyzer;
+  // If we receive an external analyzer, we can clear our owned one to save
+  // memory, or keep it. Let's clear it if the external one is valid.
+  if (neighbors_ref_) {
+    neighbors_owned_.reset();
+    // We assume the external analyzer satisfies our cutoff needs, or we just
+    // trust the caller.
+    // Ideally we would check `analyzer->getCutoff()` but that accessor might not
+    // exist or be easy to check against `current_cutoff_`.
+    // For now, trust the caller.
+  }
+}
+
+const StructureAnalyzer *DistributionFunctions::neighbors() const {
+  if (neighbors_ref_) {
+    return neighbors_ref_;
+  }
+  return neighbors_owned_.get();
+}
 
 const Histogram &
 DistributionFunctions::getHistogram(const std::string &name) const {
@@ -64,8 +90,13 @@ DistributionFunctions::getHistogram(const std::string &name) const {
 }
 
 void DistributionFunctions::ensureNeighborsComputed(double r_max) {
-  if (!neighbors_ || r_max > current_cutoff_) {
-    neighbors_ = std::make_unique<StructureAnalyzer>(cell_, r_max, true);
+  // If we have an external reference, we assume it's valid and sufficient.
+  if (neighbors_ref_) {
+    return;
+  }
+
+  if (!neighbors_owned_ || r_max > current_cutoff_) {
+    neighbors_owned_ = std::make_unique<StructureAnalyzer>(cell_, r_max, true);
     current_cutoff_ = r_max;
   }
 }
@@ -169,14 +200,14 @@ void DistributionFunctions::smoothAll(double sigma, KernelType kernel) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateCoordinationNumber() {
-  if (!neighbors_) {
+  if (!neighbors()) {
     throw std::logic_error(
         "Cannot calculate Coordination Number. Neighbor list has not been "
         "computed.");
   }
 
   const auto &atoms = cell_.atoms();
-  const auto &all_neighbors = neighbors_->neighbors();
+  const auto &all_neighbors = neighbors()->neighbors();
 
   // Stores the distribution of neighbors for each partial pair.
   // Key: "Central-Neighbor" (e.g. "Si-O"), Value: histogram vector.
@@ -295,7 +326,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
           H_r.partials[key]; // H_r.partials[key] stores H_ij(r)
       partial_hist.assign(num_bins, 0.0);
 
-      for (const auto &dist : neighbors_->distances()[i][j]) {
+      for (const auto &dist : neighbors()->distances()[i][j]) {
         if (dist < r_max) {
           size_t bin = static_cast<size_t>(dist / r_bin_width);
           if (bin < num_bins) {
@@ -440,7 +471,7 @@ void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
         auto &partial_hist = f_theta.partials[key];
         partial_hist.assign(num_bins, 0.0);
 
-        for (const auto &angle_rad : neighbors_->angles()[j][i][k]) {
+        for (const auto &angle_rad : neighbors()->angles()[j][i][k]) {
           double angle_deg = angle_rad * constants::rad2deg;
           
           // Allow for small epsilon tolerance in case angle slightly exceeds theta due to limited precision

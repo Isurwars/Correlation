@@ -5,9 +5,12 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 
-#include "Cell.hpp"
+#include "Smoothing.hpp"
+#include "Trajectory.hpp"
+#include "TrajectoryAnalyzer.hpp"
 #include "DistributionFunctions.hpp"
 
 // Encapsulates all command-line configurable options for the application.
@@ -36,7 +39,12 @@ public:
   // Accesors
   void setOptions(const ProgramOptions &opt) { options_ = opt; }
   ProgramOptions options() { return options_; }
-  const std::unique_ptr<Cell> &cell() const { return cell_; }
+  const Cell *cell() const {
+    if (trajectory_ && !trajectory_->getFrames().empty()) {
+      return &trajectory_->getFrames()[0];
+    }
+    return nullptr;
+  }
 
   // Member functions
   std::string load_file(const std::string &path);
@@ -50,8 +58,9 @@ private:
   // Member functions
   void analysis_thread_func();
 
-  // Pointers to the Cell and DF
-  std::unique_ptr<Cell> cell_;
+  // Pointers to the Trajectory and DF
+  std::unique_ptr<Trajectory> trajectory_;
+  std::unique_ptr<TrajectoryAnalyzer> trajectory_analyzer_;
   std::unique_ptr<DistributionFunctions> df_;
 
   ProgramOptions options_;

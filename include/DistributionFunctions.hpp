@@ -81,14 +81,18 @@ public:
               KernelType kernel = KernelType::Gaussian);
   void smoothAll(double sigma, KernelType kernel = KernelType::Gaussian);
 
+  void setStructureAnalyzer(const StructureAnalyzer *analyzer);
+
 private:
+  const StructureAnalyzer *neighbors() const;
   void ensureNeighborsComputed(double r_cut);
   std::string getPartialKey(int type1, int type2) const;
   std::string getInversePartialKey(int type1, int type2) const;
   void calculateAshcroftWeights();
 
   Cell &cell_;
-  std::unique_ptr<StructureAnalyzer> neighbors_;
+  const StructureAnalyzer *neighbors_ref_{nullptr};
+  std::unique_ptr<StructureAnalyzer> neighbors_owned_;
   double current_cutoff_{-1.0};
 
   std::map<std::string, Histogram> histograms_;
