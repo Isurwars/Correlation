@@ -97,6 +97,25 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
 }
 
 void FileWriter::writeHDF(const std::string &filename) const {
+  // Define metadata structure
+  struct FunctionMetadata {
+    std::string bin_unit;
+    std::string data_unit;
+    std::string description;
+  };
+
+  // Metadata mapping
+  const std::map<std::string, FunctionMetadata> metadata_map = {
+      {"g(r)", {"Angstrom", "Angstrom^-1", "Radial Distribution Function"}},
+      {"J(r)",
+       {"Angstrom", "Angstrom^-1", "Radial Distribution of Electron Density"}},
+      {"G(r)",
+       {"Angstrom", "Angstrom^-1", "Reduced Radial Distribution Function"}},
+      {"f(theta)", {"Degrees", "degree^-1", "Bond Angle Distribution"}},
+      {"S(Q)", {"inverse Angstrom", "arbitrary units", "Structure Factor"}},
+      {"XRD", {"Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
+      {"CN", {"Angstrom", "Count", "Coordination Number"}}};
+
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
                                       HighFive::File::Create |
@@ -107,30 +126,65 @@ void FileWriter::writeHDF(const std::string &filename) const {
         continue;
       }
 
-      // Create a group for each histogram (e.g., "g(r)")
-      // Replace '/' with '_' in name to avoid HDF5 path issues
+      // Sanitize group name: replace '(' with '_' and remove ')'
       std::string group_name = name;
+      std::replace(group_name.begin(), group_name.end(), '(', '_');
+      group_name.erase(std::remove(group_name.begin(), group_name.end(), ')'),
+                       group_name.end());
+      
+      // Also replace '/' with '_' just in case
       std::replace(group_name.begin(), group_name.end(), '/', '_');
+
       HighFive::Group group = file.createGroup(group_name);
 
+      // Get metadata if available
+      std::string bin_unit = "arbitrary units";
+      std::string data_unit = "arbitrary units";
+      std::string description = "";
+
+      if (metadata_map.count(name)) {
+        const auto &meta = metadata_map.at(name);
+        bin_unit = meta.bin_unit;
+        data_unit = meta.data_unit;
+        description = meta.description;
+      }
+
+      // Add description attribute to the group
+      if (!description.empty()) {
+        group.createAttribute<std::string>(
+                 "description", HighFive::DataSpace::From(description))
+            .write(description);
+      }
+
       // Store bins as a dataset
-      group.createDataSet("bins", hist.bins);
-      // Add attribute for bin label
-      group.createAttribute<std::string>("bin_label",
-                                         HighFive::DataSpace::From(hist.bin_label))
+      HighFive::DataSet bins_ds = group.createDataSet("bins", hist.bins);
+      // Add units to bins
+      bins_ds.createAttribute<std::string>("units",
+                                           HighFive::DataSpace::From(bin_unit))
+          .write(bin_unit);
+      
+      // Add attribute for bin label (legacy but useful)
+      group.createAttribute<std::string>(
+               "bin_label", HighFive::DataSpace::From(hist.bin_label))
           .write(hist.bin_label);
 
       // Store raw partials
       HighFive::Group raw_group = group.createGroup("raw");
       for (const auto &[key, data] : hist.partials) {
-        raw_group.createDataSet(key, data);
+        HighFive::DataSet ds = raw_group.createDataSet(key, data);
+        ds.createAttribute<std::string>("units",
+                                        HighFive::DataSpace::From(data_unit))
+            .write(data_unit);
       }
 
       // Store smoothed partials if any
       if (!hist.smoothed_partials.empty()) {
         HighFive::Group smoothed_group = group.createGroup("smoothed");
         for (const auto &[key, data] : hist.smoothed_partials) {
-          smoothed_group.createDataSet(key, data);
+          HighFive::DataSet ds = smoothed_group.createDataSet(key, data);
+          ds.createAttribute<std::string>("units",
+                                          HighFive::DataSpace::From(data_unit))
+              .write(data_unit);
         }
       }
     }

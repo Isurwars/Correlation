@@ -184,6 +184,29 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
 
   // Assert that non-bonded pairs do not appear or are empty.
   EXPECT_EQ(cn_hist.partials.count("C-O"), 0);
+
+  // Assert Element-Any columns
+  // C-Any: equivalent to C-H since C only has H neighbors
+  ASSERT_TRUE(cn_hist.partials.count("C-Any"));
+  const auto &c_any = cn_hist.partials.at("C-Any");
+  EXPECT_EQ(c_any[4], 1);
+
+  // H-Any: equivalent to H-C since H only has C neighbors
+  ASSERT_TRUE(cn_hist.partials.count("H-Any"));
+  const auto &h_any = cn_hist.partials.at("H-Any");
+  EXPECT_EQ(h_any[1], 4);
+  
+  // O-Any: O has no neighbors, so no partials started with O-.
+  // Thus O-Any should not be created.
+  EXPECT_EQ(cn_hist.partials.count("O-Any"), 0);
+
+  // Assert Any-Any column: Sum of all Element-Any columns
+  // Bin 4: from C-Any (1)
+  // Bin 1: from H-Any (4)
+  ASSERT_TRUE(cn_hist.partials.count("Any-Any"));
+  const auto &any_any = cn_hist.partials.at("Any-Any");
+  EXPECT_EQ(any_any[4], 1);
+  EXPECT_EQ(any_any[1], 4);
 }
 
 TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {

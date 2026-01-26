@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.4] 2026-01-26
+ 
+ ### Added
+ - Added `Element-Any` and `Any-Any` columns to the Coordination Number (CN) distribution for aggregated neighbor counting.
+ - Added descriptions and unit metadata to HDF5 output groups and datasets.
+ 
+ ### Changed
+ - Improved HDF5 internal structure by sanitizing group names (e.g., removing parentheses) and adding consistent unit attributes (`Angstrom`, `Angstrom^-1`, etc.).
+ - Updated project version to 1.9.4 in `CMakeLists.txt`.
+
 ## [1.9.3] 2026-01-26
 
 ### Changed

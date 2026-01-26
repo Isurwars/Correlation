@@ -148,13 +148,34 @@ TEST_F(FileWriterTest, WritesHDF5File) {
 
   // Verify content using HighFive
   HighFive::File file("test_si.h5", HighFive::File::ReadOnly);
-  EXPECT_TRUE(file.exist("g(r)"));
-  EXPECT_TRUE(file.exist("f(theta)"));
+  EXPECT_TRUE(file.exist("g_r"));
+  EXPECT_TRUE(file.exist("f_theta"));
 
-  HighFive::Group g_group = file.getGroup("g(r)");
+  HighFive::Group g_group = file.getGroup("g_r");
   EXPECT_TRUE(g_group.exist("bins"));
   EXPECT_TRUE(g_group.exist("raw"));
   EXPECT_TRUE(g_group.getGroup("raw").exist("Si-Si"));
+
+  // Check group description
+  EXPECT_TRUE(g_group.hasAttribute("description"));
+  std::string description;
+  g_group.getAttribute("description").read(description);
+  EXPECT_EQ(description, "Radial Distribution Function");
+
+  // Check bin units
+  HighFive::DataSet bins_ds = g_group.getDataSet("bins");
+  EXPECT_TRUE(bins_ds.hasAttribute("units"));
+  std::string bin_units;
+  bins_ds.getAttribute("units").read(bin_units);
+  EXPECT_EQ(bin_units, "Angstrom");
+
+  // Check data units
+  HighFive::Group raw_group = g_group.getGroup("raw");
+  HighFive::DataSet si_si_ds = raw_group.getDataSet("Si-Si");
+  EXPECT_TRUE(si_si_ds.hasAttribute("units"));
+  std::string data_units;
+  si_si_ds.getAttribute("units").read(data_units);
+  EXPECT_EQ(data_units, "Angstrom^-1");
 
   // Check attribute
   EXPECT_TRUE(g_group.hasAttribute("bin_label"));

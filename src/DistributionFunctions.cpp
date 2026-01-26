@@ -266,6 +266,37 @@ void DistributionFunctions::calculateCoordinationNumber() {
     cn_histogram.partials[key].assign(dist_vector.begin(), dist_vector.end());
   }
 
+  // 5. Calculate and add "Element-Any" columns
+  const auto &elements = cell_.elements();
+  std::vector<double> any_any_dist(num_bins, 0.0);
+
+  for (const auto &elem : elements) {
+    std::string element_any_key = elem.symbol + "-Any";
+    std::vector<double> element_any_dist(num_bins, 0.0);
+    bool found_any = false;
+
+    // Sum all partials where the central atom is 'elem'
+    for (const auto &[key, dist_vector] : cn_histogram.partials) {
+      if (key.rfind(elem.symbol + "-", 0) == 0) { // Check if key starts with "Symbol-"
+         found_any = true;
+         for (size_t b = 0; b < num_bins; ++b) {
+           element_any_dist[b] += dist_vector[b];
+         }
+      }
+    }
+    
+    if (found_any) {
+        cn_histogram.partials[element_any_key] = element_any_dist;
+        // Accumulate to Any-Any
+        for (size_t b = 0; b < num_bins; ++b) {
+            any_any_dist[b] += element_any_dist[b];
+        }
+    }
+  }
+
+  // 6. Add "Any-Any" column
+  cn_histogram.partials["Any-Any"] = any_any_dist;
+
   // 5. Store the completed histogram in the main map.
   histograms_["CN"] = std::move(cn_histogram);
 }
