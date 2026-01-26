@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/Trajectory.hpp"
+#include "Trajectory.hpp"
 #include <stdexcept>
 
 Trajectory::Trajectory() : time_step_(1.0) {}

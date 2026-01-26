@@ -2,7 +2,7 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "../include/FileIO.hpp"
+#include "FileIO.hpp"
 
 #include <algorithm>
 #include <array>

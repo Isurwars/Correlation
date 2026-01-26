@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "../include/PhysicalData.hpp"
+#include "PhysicalData.hpp"
 
 // Enum class for type-safe selection of kernel types.
 // This prevents passing invalid integer values.

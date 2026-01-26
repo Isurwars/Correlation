@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/FileWriter.hpp"
+#include "FileWriter.hpp"
 
 #include <algorithm>
 #include <fstream>

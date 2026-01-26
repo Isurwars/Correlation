@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/DistributionFunctions.hpp"
+#include "DistributionFunctions.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <stdexcept>
 
-#include "../include/PhysicalData.hpp"
-#include "../include/Smoothing.hpp"
+#include "PhysicalData.hpp"
+#include "Smoothing.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructor -------------------------------//

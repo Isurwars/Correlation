@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/AppBackend.hpp"
+#include "AppBackend.hpp"
 
 #include <iostream>
 
-#include "../include/FileIO.hpp"
-#include "../include/FileWriter.hpp"
+#include "FileIO.hpp"
+#include "FileWriter.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//

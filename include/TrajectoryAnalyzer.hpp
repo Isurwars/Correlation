@@ -13,11 +13,16 @@
 
 class TrajectoryAnalyzer {
 public:
+  //-------------------------------------------------------------------------//
+  //----------------------------- Constructors ------------------------------//
+  //-------------------------------------------------------------------------//
   TrajectoryAnalyzer(Trajectory &trajectory, double neighbor_cutoff,
                      const std::vector<std::vector<double>> &bond_cutoffs,
                      bool ignore_periodic_self_interactions = true);
 
-  // Accessors
+  //-------------------------------------------------------------------------//
+  //------------------------------- Accessors -------------------------------//
+  //-------------------------------------------------------------------------//
   const std::vector<std::unique_ptr<StructureAnalyzer>> &getAnalyzers() const {
     return analyzers_;
   }

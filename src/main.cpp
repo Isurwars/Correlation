@@ -9,8 +9,8 @@
 #include <Windows.h>
 #endif
 
-#include "../include/AppBackend.hpp"
-#include "../include/AppController.hpp"
+#include "AppBackend.hpp"
+#include "AppController.hpp"
 
 #include "AppWindow.h"
 

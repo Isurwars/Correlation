@@ -34,7 +34,7 @@ public:
   AppBackend();
 
   // Accesors
-  void setOptions(ProgramOptions opt) { options_ = opt; }
+  void setOptions(const ProgramOptions &opt) { options_ = opt; }
   ProgramOptions options() { return options_; }
   const std::unique_ptr<Cell> &cell() const { return cell_; }
 

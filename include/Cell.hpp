@@ -84,10 +84,10 @@ public:
 
   /**
    * @brief get a bond cut off for two given elements.
-   *@param elementID
-   *@param elementID
+   *@param type1
+   *@param type2
    **/
-  double getBondCutoff(int, int);
+  double getBondCutoff(int type1, int type2);
 
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
     bond_cutoffs_sq_ = cutoffs;

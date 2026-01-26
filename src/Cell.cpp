@@ -2,14 +2,14 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "../include/Cell.hpp"
+#include "Cell.hpp"
 
 #include <algorithm>
 #include <cmath>
 
-#include "../include/Atom.hpp"
-#include "../include/LinearAlgebra.hpp"
-#include "../include/PhysicalData.hpp"
+#include "Atom.hpp"
+#include "LinearAlgebra.hpp"
+#include "PhysicalData.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
