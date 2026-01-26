@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.9.1 LANGUAGES CXX)
+project(Correlation VERSION 1.9.2 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
@@ -119,6 +119,7 @@ add_library(correlation_lib STATIC
     src/FileWriter.cpp
     src/StructureAnalyzer.cpp
     src/Trajectory.cpp
+    src/TrajectoryAnalyzer.cpp
 )
 
 # Include directories
@@ -194,6 +195,7 @@ add_executable(correlation_tests
     tests/FileWriter_test.cpp
     tests/StructureAnalyzer_test.cpp
     tests/AngleTests.cpp
+    tests/TrajectoryAnalyzer_test.cpp
 )
 
 # The test executable also links to the library and inherits its properties.

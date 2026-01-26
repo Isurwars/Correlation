@@ -34,6 +34,7 @@ public:
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
+  std::vector<Cell> &getFrames() { return frames_; }
   const std::vector<Cell> &getFrames() const { return frames_; }
   size_t getFrameCount() const { return frames_.size(); }
   double getTimeStep() const { return time_step_; }
