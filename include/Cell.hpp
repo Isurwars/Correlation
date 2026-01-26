@@ -82,26 +82,9 @@ public:
    */
   std::optional<Element> findElement(const std::string &symbol) const;
 
-  /**
-   * @brief get a bond cut off for two given elements.
-   *@param type1
-   *@param type2
-   **/
-  double getBondCutoff(int type1, int type2);
-
-  void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
-    bond_cutoffs_sq_ = cutoffs;
-  }
-
   //-------------------------------------------------------------------------//
   //-------------------------------- Methods --------------------------------//
   //-------------------------------------------------------------------------//
-
-  /**
-   * @brief Pre-calculates the squared bond cutoff distances for every pair of
-   * element types.
-   */
-  void precomputeBondCutoffs();
 
   /**
    * @brief Adds a new atom to the cell.
@@ -131,5 +114,4 @@ private:
   double volume_{0.0};
   std::vector<Atom> atoms_;
   std::vector<Element> elements_;
-  std::vector<std::vector<double>> bond_cutoffs_sq_;
 };

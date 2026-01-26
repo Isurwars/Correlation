@@ -17,9 +17,16 @@
 //------------------------------- Constructor -------------------------------//
 //---------------------------------------------------------------------------//
 
-DistributionFunctions::DistributionFunctions(Cell &cell, double cutoff)
-    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0) {
+DistributionFunctions::DistributionFunctions(
+    Cell &cell, double cutoff,
+    const std::vector<std::vector<double>> &bond_cutoffs)
+    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0),
+      bond_cutoffs_sq_(bond_cutoffs) {
   if (cutoff > 0.0) {
+    if (bond_cutoffs.empty()) {
+      throw std::invalid_argument(
+          "Bond cutoffs must be provided if cutoff > 0.0");
+    }
     ensureNeighborsComputed(cutoff);
   }
   calculateAshcroftWeights();
@@ -96,7 +103,8 @@ void DistributionFunctions::ensureNeighborsComputed(double r_max) {
   }
 
   if (!neighbors_owned_ || r_max > current_cutoff_) {
-    neighbors_owned_ = std::make_unique<StructureAnalyzer>(cell_, r_max, true);
+    neighbors_owned_ = std::make_unique<StructureAnalyzer>(
+        cell_, r_max, bond_cutoffs_sq_, true);
     current_cutoff_ = r_max;
   }
 }

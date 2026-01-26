@@ -19,7 +19,7 @@ struct ProgramOptions {
   std::string output_file_base;
   bool smoothing = true;
   bool use_hdf5 = true;
-  bool use_csv = true;
+  bool use_csv = false;
   double r_max = 20.0;
   double r_bin_width = 0.02;
   double q_max = 20.0;

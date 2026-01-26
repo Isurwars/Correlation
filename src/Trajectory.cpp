@@ -5,6 +5,8 @@
 
 #include "Trajectory.hpp"
 #include <stdexcept>
+#include <cmath>
+#include "PhysicalData.hpp"
 
 Trajectory::Trajectory() : time_step_(1.0) {}
 
@@ -58,4 +60,33 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
           std::to_string(i) + ". Expected " + ref_sym + ", but got " + new_sym);
     }
   }
+}
+
+void Trajectory::precomputeBondCutoffs() {
+  if (frames_.empty()) return;
+  
+  const auto& elements = frames_[0].elements();
+  const size_t num_elements = elements.size();
+  bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
+
+  for (size_t i = 0; i < num_elements; ++i) {
+    const double radius_A = CovalentRadii::get(elements[i].symbol);
+    for (size_t j = i; j < num_elements; ++j) {
+      const double radius_B = CovalentRadii::get(elements[j].symbol);
+      const double max_bond_dist = (radius_A + radius_B) * 1.2;
+      const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
+      bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
+      bond_cutoffs_sq_[j][i] = max_bond_dist_sq;
+    }
+  }
+}
+
+double Trajectory::getBondCutoff(int type1, int type2) {
+  if (bond_cutoffs_sq_.empty())
+    precomputeBondCutoffs();
+    
+  if (bond_cutoffs_sq_.empty() || type1 >= bond_cutoffs_sq_.size() || type2 >= bond_cutoffs_sq_.size())
+      return 0.0;
+      
+  return std::sqrt(bond_cutoffs_sq_[type1][type2]);
 }

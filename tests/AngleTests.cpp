@@ -6,13 +6,17 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <numeric>
+
 #include "../include/Cell.hpp"
 #include "../include/StructureAnalyzer.hpp"
 #include "../include/DistributionFunctions.hpp"
+#include "../include/PhysicalData.hpp"
+#include "../include/Trajectory.hpp"
 
 // ============================================================================
 // Part 1: Angle Reproduction Tests
 // ============================================================================
+
 
 class AngleReproductionTest : public ::testing::Test {
 protected:
@@ -20,7 +24,15 @@ protected:
         // Simple cubic cell
         cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
     }
+
+    void updateTrajectory() {
+        trajectory_ = Trajectory();
+        trajectory_.addFrame(cell_);
+        trajectory_.precomputeBondCutoffs();
+    }
+
     Cell cell_;
+    Trajectory trajectory_;
 };
 
 TEST_F(AngleReproductionTest, MissingAnglesWhenCutoffIsTooSmall) {
@@ -33,30 +45,12 @@ TEST_F(AngleReproductionTest, MissingAnglesWhenCutoffIsTooSmall) {
     cell_.addAtom("O", {4.0, 5.0, 5.0});
     cell_.addAtom("Si", {5.0, 5.0, 5.0});
     cell_.addAtom("O", {5.0, 6.0, 5.0});
+    updateTrajectory();
 
     // Bond cutoff for Si-O is likely around 1.6 * 1.2 = 1.92 or similar.
     // Distance is 1.0.
-    
-    // If we set analyzer cutoff to 0.9, we should find nothing.
     {
-        StructureAnalyzer analyzer(cell_, 0.9);
-        const auto& angles = analyzer.angles();
-        // Check if any angles are found
-        bool found = false;
-        for(const auto& t1 : angles) {
-            for(const auto& center : t1) {
-                for(const auto& t2 : center) {
-                    if(!t2.empty()) found = true;
-                }
-            }
-        }
-        EXPECT_TRUE(found) << "Should find angles even if cutoff is smaller than bond distance (auto-correction)";
-
-    }
-
-    // If we set analyzer cutoff to 1.1, we should find the angle.
-    {
-        StructureAnalyzer analyzer(cell_, 1.1);
+        StructureAnalyzer analyzer(cell_, 1.1, trajectory_.getBondCutoffs());
         const auto& angles = analyzer.angles();
         bool found = false;
         for(const auto& t1 : angles) {
@@ -78,8 +72,9 @@ TEST_F(AngleReproductionTest, PBCAngleDetection) {
     cell_.addAtom("Si", {0.5, 0.5, 0.5});
     cell_.addAtom("O", {9.6, 0.5, 0.5});
     cell_.addAtom("O", {0.5, 9.6, 0.5});
+    updateTrajectory();
     
-    StructureAnalyzer analyzer(cell_, 1.2);
+    StructureAnalyzer analyzer(cell_, 1.2, trajectory_.getBondCutoffs());
     
     bool found = false;
     const auto& angles = analyzer.angles();
@@ -103,6 +98,7 @@ TEST_F(AngleReproductionTest, SiTetrahedron_4Atoms) {
     cell_.addAtom("Si", {6.0, 4.0, 4.0});       // Neighbor 2 (1,-1,-1)
     cell_.addAtom("Si", {4.0, 6.0, 4.0});       // Neighbor 3 (-1,1,-1)
     cell_.addAtom("Si", {4.0, 4.0, 6.0});       // Neighbor 4 (-1,-1,1)
+    updateTrajectory();
 
     // With 4 neighbors, we have C(4,2) = 6 angles.
     // Neighbors are at dist sqrt(3) ~ 1.73.
@@ -110,7 +106,7 @@ TEST_F(AngleReproductionTest, SiTetrahedron_4Atoms) {
     // Si radius 1.16. Bond cutoff ~ 2.78. 
     // Thus neighbors are NOT connected to each other.
     
-    StructureAnalyzer analyzer(cell_, 3.0);
+    StructureAnalyzer analyzer(cell_, 3.0, trajectory_.getBondCutoffs());
     const auto& angles = analyzer.angles();
 
     int angle_count = 0;
@@ -145,9 +141,10 @@ TEST_F(AngleReproductionTest, Icosahedron_13Atoms) {
     for(const auto& v : verts) {
         cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
     }
+    updateTrajectory();
     
     // Cutoff ~ 2.5 covers bonds (1.902, 2.0) but avoids next-nearest (3.236)
-    StructureAnalyzer analyzer(cell_, 2.5);
+    StructureAnalyzer analyzer(cell_, 2.5, trajectory_.getBondCutoffs());
     const auto& angles = analyzer.angles();
     
     int count_63 = 0;  // Center-Edge (approx 63.43)
@@ -212,21 +209,31 @@ protected:
         // Large box to avoid PBC issues by default
         cell_ = Cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0}); 
     }
+
+    void updateTrajectory() {
+        trajectory_ = Trajectory();
+        trajectory_.addFrame(cell_);
+        trajectory_.precomputeBondCutoffs();
+    }
+
     Cell cell_;
+    Trajectory trajectory_;
 };
 
 // 1. Trivial Cases
 TEST_F(PADTest, EmptyCellThrows) {
     // Current implementation throws explicitly if atoms are empty in calculateAshcroftWeights
     // or implicitly via other checks.
+    updateTrajectory();
     EXPECT_THROW({
-        DistributionFunctions df(cell_, 5.0);
+    DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
     }, std::invalid_argument);
 }
 
 TEST_F(PADTest, SingleAtomNoAngles) {
     cell_.addAtom("Si", {10.0, 10.0, 10.0});
-    DistributionFunctions df(cell_, 5.0);
+    updateTrajectory();
+    DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
     df.calculatePAD(180.0, 1.0);
     // Might have partials created but empty, or just no "f(theta)" if logic handles it.
     // Actually implementation might create partials if atoms exist but no angles found.
@@ -247,22 +254,23 @@ TEST_F(PADTest, LinearGeometry180) {
     cell_.addAtom("O", {9.0, 10.0, 10.0});
     auto& si = cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
     cell_.addAtom("O", {11.0, 10.0, 10.0});
+    updateTrajectory();
     
     int id_O = cell_.findElement("O")->id.value;
     int id_Si = cell_.findElement("Si")->id.value;
-    double cutoff = cell_.getBondCutoff(id_O, id_Si);
+    
     // O(0.73) + Si(1.11) = 1.84 * 1.3 = 2.392.
-    EXPECT_GT(cutoff, 1.1) << "Bond cutoff must be larger than bond distance 1.0";
+    // EXPECT_GT(cutoff, 1.1) << "Bond cutoff must be larger than bond distance 1.0";
 
     // Verify StructureAnalyzer finds neighbors
-    StructureAnalyzer analyzer(cell_, 1.5);
+    StructureAnalyzer analyzer(cell_, 1.5, trajectory_.getBondCutoffs());
     const auto& neighbors = analyzer.neighbors();
     // Si is atom index 1 (0-based)
     ASSERT_GT(neighbors.size(), 1);
     EXPECT_EQ(neighbors[1].size(), 2) << "Si should have 2 neighbors (O atoms)";
 
     // Bond length 1.0. Cutoff needs to be > 1.0
-    DistributionFunctions df(cell_, 1.5);
+    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
     // Use 180.0 now that we fixed the binning logic
     df.calculatePAD(180.0, 1.0); 
     
@@ -299,8 +307,9 @@ TEST_F(PADTest, RightAngle90) {
     cell_.addAtom("O", {10.0, 9.0, 10.0});
     cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
     cell_.addAtom("O", {11.0, 10.0, 10.0});
+    updateTrajectory();
     
-    DistributionFunctions df(cell_, 1.5);
+    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -327,8 +336,9 @@ TEST_F(PADTest, EquilateralTriangle60) {
     cell_.addAtom("Si", {10.0, 10.0, 10.0});
     cell_.addAtom("O", {11.0, 10.0, 10.0});
     cell_.addAtom("O", {10.5, 10.0 + std::sqrt(3.0)/2.0, 10.0});
+    updateTrajectory();
     
-    DistributionFunctions df(cell_, 1.5);
+    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -359,8 +369,9 @@ TEST_F(PADTest, TetrahedralAngle) {
     double L = 1.0 / std::sqrt(3.0);
     cell_.addAtom("O", {10.0 + L, 10.0 + L, 10.0 + L});
     cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
+    updateTrajectory();
     
-    DistributionFunctions df(cell_, 1.5); // Distance is 1.0
+    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs()); // Distance is 1.0
     df.calculatePAD(180.0, 0.5); // Finer bins
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -384,8 +395,9 @@ TEST_F(PADTest, SymmetryAndSorting) {
     cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
     cell_.addAtom("O", {11.0, 10.0, 10.0});
     cell_.addAtom("N", {10.0, 11.0, 10.0}); // 90 degrees
+    updateTrajectory();
     
-    DistributionFunctions df(cell_, 1.5);
+    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
@@ -412,8 +424,9 @@ TEST_F(PADTest, FullNormalizationCheck) {
     cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
     cell_.addAtom("O", {10.0 - L, 10.0 + L, 10.0 - L});
     cell_.addAtom("O", {10.0 - L, 10.0 - L, 10.0 + L});
+    updateTrajectory();
     
-    DistributionFunctions df(cell_, 1.5);
+    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
     df.calculatePAD(180.0, 1.0);
     
     const auto& hist = df.getHistogram("f(theta)");

@@ -123,22 +123,6 @@ void Cell::updateLatticeParametersFromVectors() {
 //--------------------------------- Methods ---------------------------------//
 //---------------------------------------------------------------------------//
 
-void Cell::precomputeBondCutoffs() {
-  const size_t num_elements = elements_.size();
-  bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
-
-  for (size_t i = 0; i < num_elements; ++i) {
-    const double radius_A = CovalentRadii::get(elements_[i].symbol);
-    for (size_t j = i; j < num_elements; ++j) {
-      const double radius_B = CovalentRadii::get(elements_[j].symbol);
-      const double max_bond_dist = (radius_A + radius_B) * 1.2;
-      const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
-      bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
-      bond_cutoffs_sq_[j][i] = max_bond_dist_sq;
-    }
-  }
-}
-
 std::optional<Element> Cell::findElement(const std::string &symbol) const {
   auto it = std::find_if(elements_.begin(), elements_.end(),
                          [&](const Element &e) { return e.symbol == symbol; });
@@ -146,12 +130,6 @@ std::optional<Element> Cell::findElement(const std::string &symbol) const {
     return *it;
   }
   return std::nullopt;
-}
-
-double Cell::getBondCutoff(int Type_A, int Type_B) {
-  if (bond_cutoffs_sq_.empty())
-    precomputeBondCutoffs();
-  return sqrt(bond_cutoffs_sq_[Type_A][Type_B]);
 }
 
 ElementID Cell::getOrRegisterElement(const std::string &symbol) {

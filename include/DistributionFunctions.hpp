@@ -29,7 +29,9 @@ public:
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
 
-  explicit DistributionFunctions(Cell &, double);
+  explicit DistributionFunctions(
+      Cell &, double = 0.0,
+      const std::vector<std::vector<double>> & = {});
 
   // Move constructor
   DistributionFunctions(DistributionFunctions &&other) noexcept;
@@ -94,6 +96,7 @@ private:
   const StructureAnalyzer *neighbors_ref_{nullptr};
   std::unique_ptr<StructureAnalyzer> neighbors_owned_;
   double current_cutoff_{-1.0};
+  std::vector<std::vector<double>> bond_cutoffs_sq_;
 
   std::map<std::string, Histogram> histograms_;
   std::map<std::string, double> ashcroft_weights_;

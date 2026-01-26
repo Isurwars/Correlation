@@ -7,13 +7,16 @@
 #include <cstdio>    // For std::remove
 #include <fstream>
 #include <gtest/gtest.h>
+#include <highfive/highfive.hpp>
 #include <iterator> // For std::distance
 
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
 #include "../include/FileIO.hpp"
 #include "../include/FileWriter.hpp"
-#include <highfive/highfive.hpp>
+#include "../include/Trajectory.hpp"
+
+#include "../include/PhysicalData.hpp"
 
 // Test fixture for FileWriter integration tests.
 class FileWriterTest : public ::testing::Test {
@@ -67,7 +70,11 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell si_cell = FileIO::readStructure("si_crystal.car", type);
-  DistributionFunctions df(si_cell, 20.0);
+  Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  DistributionFunctions df(si_cell, 20.0, trajectory.getBondCutoffs());
 
   // Act
   const double rdf_bin = 0.05;
@@ -124,7 +131,11 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell si_cell = FileIO::readStructure("si_crystal.car", type);
-  DistributionFunctions df(si_cell, 5.0); // Use smaller r_max for faster test
+  Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+  
+  DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffs()); // Use smaller r_max for faster test
 
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(180.0, 2.0);

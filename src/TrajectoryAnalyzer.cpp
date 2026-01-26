@@ -19,10 +19,7 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
   analyzers_.reserve(frames.size());
 
   for (auto &cell : frames) {
-    if (!bond_cutoffs.empty()) {
-      cell.setBondCutoffs(bond_cutoffs);
-    }
     analyzers_.push_back(std::make_unique<StructureAnalyzer>(
-        cell, neighbor_cutoff, ignore_periodic_self_interactions));
+        cell, neighbor_cutoff, bond_cutoffs, ignore_periodic_self_interactions));
   }
 }

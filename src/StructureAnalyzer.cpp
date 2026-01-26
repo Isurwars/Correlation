@@ -16,11 +16,14 @@
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-StructureAnalyzer::StructureAnalyzer(Cell &cell, double cutoff,
-                                     bool ignore_periodic_self_interactions)
+StructureAnalyzer::StructureAnalyzer(
+    Cell &cell, double cutoff,
+    const std::vector<std::vector<double>> &bond_cutoffs_sq,
+    bool ignore_periodic_self_interactions)
     // Use the member initializer list for all members for correctness and
     // efficiency.
     : cell_(cell), cutoff_sq_(cutoff * cutoff),
+      bond_cutoffs_sq_(bond_cutoffs_sq),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
   if (cutoff <= 0) {
     throw std::invalid_argument("Cutoff distance must be positive.");
@@ -31,9 +34,12 @@ StructureAnalyzer::StructureAnalyzer(Cell &cell, double cutoff,
   double max_bond_dist = 0.0;
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
-      max_bond_dist = std::max(max_bond_dist,
-                               cell.getBondCutoff(elements[i].id.value,
-                                                  elements[j].id.value));
+      // Find element indices in the cutoff matrix
+      // Assuming bond_cutoffs_sq indices match element indices in frame
+      // This assumption holds if trajectory validation works.
+      if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
+           max_bond_dist = std::max(max_bond_dist, std::sqrt(bond_cutoffs_sq[i][j]));
+      }
     }
   }
   if (cutoff < max_bond_dist) {
@@ -118,8 +124,10 @@ void StructureAnalyzer::computeDistances() {
           }
           const auto &atom_B = atoms[j];
           const int type_B = atom_B.element_id();
-          const double max_bond_dist = cell_.getBondCutoff(type_A, type_B);
-          const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
+          double max_bond_dist_sq = 0.0;
+          if (type_A < bond_cutoffs_sq_.size() && type_B < bond_cutoffs_sq_[type_A].size()) {
+               max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
+          }
           for (const auto &disp : displacements) {
             if (i == j && linalg::norm_sq(disp) < 1e-9) {
               continue;

@@ -11,6 +11,9 @@
 
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
+#include <vector>
+#include "../include/PhysicalData.hpp"
+#include "../include/Trajectory.hpp"
 
 namespace {
 // Helper function to print a histogram's contents for debugging purposes.
@@ -41,12 +44,26 @@ protected:
     cell_.addAtom("Ar", {6.5, 5.0, 5.0});
   }
 
+  void updateTrajectory() {
+      trajectory_ = Trajectory();
+      trajectory_.addFrame(cell_);
+      trajectory_.precomputeBondCutoffs();
+  }
+
+  void updateTrajectory(const Cell& cell) {
+      trajectory_ = Trajectory();
+      trajectory_.addFrame(cell);
+      trajectory_.precomputeBondCutoffs();
+  }
+
   Cell cell_{};
+  Trajectory trajectory_;
 };
 
 TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
   // Arrange
-  DistributionFunctions df(cell_, 5.0);
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
 
   // Act & Assert
   EXPECT_THROW(df.calculateRDF(5.0, 0.0), std::invalid_argument);
@@ -55,7 +72,8 @@ TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
 
 TEST_F(DistributionFunctionsTest, RDFPeakPositionIsCorrect) {
   // Arrange
-  DistributionFunctions df(cell_, 5.0);
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
   const double bin_width = 0.1;
   const double expected_distance = 1.5;
 
@@ -80,7 +98,9 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
   water_cell.addAtom("H", {1.0, 0.0, 0.0});
   water_cell.addAtom("H",
                      {std::cos(1.916), std::sin(1.916), 0.0}); // ~109.5 deg
-  DistributionFunctions df(water_cell, 5.0);
+  
+  updateTrajectory(water_cell);
+  DistributionFunctions df(water_cell, 5.0, trajectory_.getBondCutoffs());
   const double bin_width = 1.0; // 1-degree bins
 
   // Act
@@ -98,7 +118,8 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
 
 TEST_F(DistributionFunctionsTest, SmoothAllUpdatesSmoothedPartials) {
   // Arrange
-  DistributionFunctions df(cell_, 5.0);
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
   df.calculateRDF(5.0, 0.1);
 
   // Act
@@ -138,7 +159,8 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
 
   // A cutoff that includes the C-H bonds but excludes everything else.
   // The C-H distance is 1.0, C-O is ~8.6
-  DistributionFunctions df(test_cell, 3.0);
+  updateTrajectory(test_cell);
+  DistributionFunctions df(test_cell, 3.0, trajectory_.getBondCutoffs());
 
   // Act
   df.calculateCoordinationNumber();
@@ -167,7 +189,8 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
 TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
   // Arrange
   // Using the fixture's cell with two Ar atoms 1.5 Å apart.
-  DistributionFunctions df(cell_, 10.0);
+  updateTrajectory();
+  DistributionFunctions df(cell_, 10.0, trajectory_.getBondCutoffs());
   const double q_bin_width = 0.01;
   const double expected_peak_q = 0.7; // 2.0 * constants::pi / 1.5; // ~4.18
 
