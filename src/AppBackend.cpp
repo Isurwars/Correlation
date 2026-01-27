@@ -44,7 +44,7 @@ std::string AppBackend::load_file(const std::string &path) {
       atom_count = trajectory_->getFrames()[0].atomCount();
   }
   
-  return "Loaded " + std::to_string(atom_count) + " atoms from:\n" +
+  return "File loaded: " +
          display_path;
 }
 
@@ -57,6 +57,18 @@ std::map<std::string, int> AppBackend::getAtomCounts() const {
     counts[atom.element().symbol]++;
   }
   return counts;
+}
+
+int AppBackend::getFrameCount() const {
+  if (!trajectory_)
+    return 0;
+  return trajectory_->getFrames().size();
+}
+
+int AppBackend::getTotalAtomCount() const {
+  if (!trajectory_ || trajectory_->getFrames().empty())
+    return 0;
+  return trajectory_->getFrames()[0].atomCount();
 }
 
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
@@ -117,9 +129,17 @@ void AppBackend::run_analysis() {
        }
     }
     const auto& active_cutoffs = !options_.bond_cutoffs_sq_.empty() ? options_.bond_cutoffs_sq_ : trajectory_->getBondCutoffs();
-    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(*trajectory_, options_.r_max, active_cutoffs);
-    Cell& first_frame = trajectory_->getFrames()[0];
-    df_ = std::make_unique<DistributionFunctions>(first_frame, 0.0, active_cutoffs);
+    
+    // Ensure min_frame is within bounds
+    size_t start_f = options_.min_frame;
+    if (start_f >= trajectory_->getFrames().size()) start_f = 0; // Default to 0 if out of bounds
+
+    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(*trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame);
+    
+    // Use the first frame of the selected range for partials reference
+    Cell& first_analyzed_frame = trajectory_->getFrames()[start_f];
+    df_ = std::make_unique<DistributionFunctions>(first_analyzed_frame, 0.0, active_cutoffs);
+    
     if (!trajectory_analyzer_->getAnalyzers().empty()) {
         df_->setStructureAnalyzer(trajectory_analyzer_->getAnalyzers()[0].get());
     }

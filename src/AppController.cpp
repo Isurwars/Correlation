@@ -62,6 +62,13 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_smoothing_sigma(
       slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
   ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
+  
+  ui.set_min_frame(slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
+  if (opt.max_frame == -1) {
+      ui.set_max_frame("End");
+  } else {
+      ui.set_max_frame(slint::SharedString(std::to_string(opt.max_frame)));
+  }
 };
 
 ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
@@ -85,6 +92,26 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.smoothing_sigma =
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
+
+  // Frame Selection
+  try {
+      std::string min_s = ui_.get_min_frame().data();
+      opt.min_frame = std::stoi(min_s) - 1; // UI is 1-based
+      if (opt.min_frame < 0) opt.min_frame = 0;
+  } catch (...) {
+      opt.min_frame = 0;
+  }
+
+  try {
+      std::string max_s = ui_.get_max_frame().data();
+      if (max_s == "End" || max_s.empty()) {
+          opt.max_frame = -1;
+      } else {
+          opt.max_frame = std::stoi(max_s);
+      }
+  } catch (...) {
+      opt.max_frame = -1;
+  }
 
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs(ui_);
@@ -114,9 +141,11 @@ void AppController::handleRunAnalysis() {
 
 void AppController::handleBrowseFile() {
   std::vector<std::string> filters = {"Supported Structure Files",
-                                      "*.car *.cell *.cif *.dat",
+                                      "*arc *.car *.cell *.cif *.dat",
                                       "Materials Studio CAR",
                                       "*.car",
+                                      "Materials Studio ARC",
+                                      "*.arc",
                                       "CASTEP CELL",
                                       "*.cell",
                                       "CIF files",
@@ -162,6 +191,10 @@ void AppController::handleCheckFileDialogStatus() {
 
       // Bond Cutoffs
       setBondCutoffs(ui_);
+
+      // File Info
+      ui_.set_num_frames(backend_.getFrameCount());
+      ui_.set_total_atoms(backend_.getTotalAtomCount());
     }
 
     current_file_dialog_.reset();

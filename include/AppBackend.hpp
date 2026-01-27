@@ -28,6 +28,8 @@ struct ProgramOptions {
   double angle_bin_width = 1.0;
   double smoothing_sigma = 0.1;
   KernelType smoothing_kernel = KernelType::Gaussian;
+  int min_frame = 0;
+  int max_frame = -1;
   std::vector<std::vector<double>> bond_cutoffs_sq_;
 };
 
@@ -50,6 +52,8 @@ public:
   std::string load_file(const std::string &path);
   void run_analysis();
   std::map<std::string, int> getAtomCounts() const;
+  int getFrameCount() const;
+  int getTotalAtomCount() const;
   std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
   double getBondCutoff(int, int);
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);

@@ -15,9 +15,11 @@ import { AtomCount } from "Types.slint";
 export component FileInfoCard inherits OutlinedCard {
     in-out property <string> file_status_text;
     in property <bool> file_loaded;
+    in property <int> num_frames;
+    in property <int> total_atoms;
     in property <[AtomCount]> atom_counts;
 
-    visible: root.file_loaded;
+    opacity: root.file_loaded ? 1.0 : 0.5;
     VerticalLayout {
         padding: MaterialStyleMetrics.padding_16;
         spacing: MaterialStyleMetrics.spacing_12;
@@ -33,6 +35,35 @@ export component FileInfoCard inherits OutlinedCard {
                 text: root.file_status_text;
                 color: MaterialPalette.on_surface;
                 wrap: word-wrap;
+            }
+
+            HorizontalLayout {
+                MaterialText {
+                    text: "Frames:";
+                    horizontal-stretch: 1;
+                }
+
+                MaterialText {
+                    text: root.num_frames;
+                    horizontal-alignment: right;
+                }
+            }
+
+            HorizontalLayout {
+                MaterialText {
+                    text: "Total Atoms:";
+                    horizontal-stretch: 1;
+                }
+
+                MaterialText {
+                    text: root.total_atoms;
+                    horizontal-alignment: right;
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
             }
 
             for info in root.atom_counts: HorizontalLayout {

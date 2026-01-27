@@ -16,12 +16,11 @@ export component BondCutoffsCard inherits OutlinedCard {
     in property <bool> file_loaded;
     in-out property <[BondCutoff]> bond_cutoffs;
 
-    visible: root.file_loaded;
     VerticalLayout {
         padding: MaterialStyleMetrics.padding_16;
         spacing: MaterialStyleMetrics.spacing_12;
         MaterialText {
-            text: "4. Bond Cutoffs (Å)";
+            text: "3. Bond Cutoffs (Å)";
             style: MaterialTypography.title_medium;
         }
 
@@ -38,6 +37,7 @@ export component BondCutoffsCard inherits OutlinedCard {
                 }
 
                 TextField {
+                    enabled: root.file_loaded;
                     min-width: 180px;
                     text: cutoff.distance;
                     label: "Cutoff (Å)";

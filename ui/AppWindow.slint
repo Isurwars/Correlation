@@ -35,6 +35,8 @@ export component AppWindow inherits Window {
     in-out property <bool> file_loaded: false;
 
     // Data for the UI
+    in-out property <int> num_frames: 0;
+    in-out property <int> total_atoms: 0;
     in-out property <[AtomCount]> atom_counts: [];
     in-out property <[BondCutoff]> bond_cutoffs: [];
 
@@ -51,11 +53,13 @@ export component AppWindow inherits Window {
     in-out property <string> angle_bin_width;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel: -1;
+    in-out property <string> min_frame: "1";
+    in-out property <string> max_frame: "End";
 
-    preferred-width: 500px;
-    preferred-height: file_loaded ? (840px + bond_cutoffs.length * 50px) : 170px;
-    min-width: 500px;
-    min-height: file_loaded ? (840px + bond_cutoffs.length * 50px) : 170px;
+    preferred-width: 800px;
+    preferred-height: 550px + bond_cutoffs.length * 25px;
+    min-width: 700px;
+    min-height: 500px + bond_cutoffs.length * 25px;
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
@@ -72,50 +76,63 @@ export component AppWindow inherits Window {
     }
 
     window_area := TouchArea {
-        VerticalLayout {
-            padding: MaterialStyleMetrics.padding_16;
-            spacing: MaterialStyleMetrics.spacing_16;
+        HorizontalLayout {
+            padding: MaterialStyleMetrics.padding_4;
+            spacing: MaterialStyleMetrics.spacing_4;
 
-            input_card := InputFileCard {
-                browse_file => {
-                    root.browse_file();
+            VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_16;
+                width: 49%;
+                input_card := InputFileCard {
+                    browse_file => {
+                        root.browse_file();
+                    }
+                }
+
+                FileInfoCard {
+                    file_status_text <=> root.file_status_text;
+                    file_loaded: root.file_loaded;
+                    num_frames: root.num_frames;
+                    total_atoms: root.total_atoms;
+                    atom_counts: root.atom_counts;
+                }
+
+                BondCutoffsCard {
+                    file_loaded: root.file_loaded;
+                    bond_cutoffs <=> root.bond_cutoffs;
                 }
             }
 
-            FileInfoCard {
-                file_status_text <=> root.file_status_text;
-                file_loaded: root.file_loaded;
-                atom_counts: root.atom_counts;
-            }
+            VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_16;
+                width: 49%;
 
-            options_card := OptionsCard {
-                file_loaded: root.file_loaded;
-                r_max <=> root.r_max;
-                r_bin_width <=> root.r_bin_width;
-                q_max <=> root.q_max;
-                q_bin_width <=> root.q_bin_width;
-                r_int_max <=> root.r_int_max;
-                angle_bin_width <=> root.angle_bin_width;
-                smoothing <=> root.smoothing;
-                smoothing_sigma <=> root.smoothing_sigma;
-                smoothing_kernel <=> root.smoothing_kernel;
-            }
+                options_card := OptionsCard {
+                    file_loaded: root.file_loaded;
+                    r_max <=> root.r_max;
+                    r_bin_width <=> root.r_bin_width;
+                    q_max <=> root.q_max;
+                    q_bin_width <=> root.q_bin_width;
+                    r_int_max <=> root.r_int_max;
+                    angle_bin_width <=> root.angle_bin_width;
+                    smoothing <=> root.smoothing;
+                    smoothing_sigma <=> root.smoothing_sigma;
+                    smoothing_kernel <=> root.smoothing_kernel;
+                }
 
-            BondCutoffsCard {
-                file_loaded: root.file_loaded;
-                bond_cutoffs <=> root.bond_cutoffs;
-            }
-
-            analysis_card := RunAnalysisCard {
-                file_loaded: root.file_loaded;
-                analysis_running: root.analysis_running;
-                analysis_status_text <=> root.analysis_status_text;
-                use_csv <=> root.use_csv;
-                use_hdf5 <=> root.use_hdf5;
-                run_analysis => {
-                    root.analysis_status_text = "Running Analysis...";
-                    root.run_analysis();
-                    root.analysis_status_text = "Analysis ended.";
+                analysis_card := RunAnalysisCard {
+                    file_loaded: root.file_loaded;
+                    analysis_running: root.analysis_running;
+                    analysis_status_text <=> root.analysis_status_text;
+                    use_csv <=> root.use_csv;
+                    use_hdf5 <=> root.use_hdf5;
+                    min_frame <=> root.min_frame;
+                    max_frame <=> root.max_frame;
+                    run_analysis => {
+                        root.analysis_status_text = "Running Analysis...";
+                        root.run_analysis();
+                        root.analysis_status_text = "Analysis ended.";
+                    }
                 }
             }
         }
@@ -134,7 +151,6 @@ export component AppWindow inherits Window {
             theta_bin_hover: options_card.theta_bin_has_hover;
             q_bin_hover: options_card.q_bin_has_hover;
             r_int_hover: options_card.r_int_has_hover;
-
             sigma_hover: options_card.sigma_has_hover;
             kernel_hover: options_card.kernel_has_hover;
             hdf5_hover: analysis_card.hdf5_area_has_hover;

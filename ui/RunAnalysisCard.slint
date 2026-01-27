@@ -12,6 +12,7 @@ import {
     MaterialText,
     CheckBox,
     CheckState,
+    TextField,
 } from "@material";
 
 export component RunAnalysisCard inherits OutlinedCard {
@@ -20,6 +21,8 @@ export component RunAnalysisCard inherits OutlinedCard {
     in-out property <string> analysis_status_text;
     in-out property <bool> use_csv: true;
     in-out property <bool> use_hdf5: true;
+    in-out property <string> min_frame;
+    in-out property <string> max_frame;
     callback run_analysis();
 
     // Hover state for tooltip
@@ -27,7 +30,6 @@ export component RunAnalysisCard inherits OutlinedCard {
     out property <bool> hdf5_area_has_hover: hdf5_area.has-hover;
     out property <bool> csv_area_has_hover: csv_area.has-hover;
 
-    visible: root.file_loaded;
     VerticalLayout {
         padding: MaterialStyleMetrics.padding_16;
         spacing: MaterialStyleMetrics.spacing_12;
@@ -49,6 +51,7 @@ export component RunAnalysisCard inherits OutlinedCard {
                     }
 
                     CheckBox {
+                        enabled: root.file_loaded;
                         width: 20%;
                         check_state: root.use_csv ? CheckState.checked : CheckState.unchecked;
                         checked_state_changed(s) => {
@@ -69,6 +72,7 @@ export component RunAnalysisCard inherits OutlinedCard {
                     }
 
                     CheckBox {
+                        enabled: root.file_loaded;
                         width: 20%;
                         check_state: root.use_hdf5 ? CheckState.checked : CheckState.unchecked;
                         checked_state_changed(s) => {
@@ -79,23 +83,40 @@ export component RunAnalysisCard inherits OutlinedCard {
             }
         }
 
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Min Frame";
+                    text <=> root.min_frame;
+                }
+            }
+
+            TouchArea {
+                horizontal-stretch: 1;
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Max Frame";
+                    text <=> root.max_frame;
+                }
+            }
+        }
+
         analysis_area := TouchArea {
             min-height: 50px;
             FilledButton {
                 height: 100%;
                 width: 100%;
                 text: root.analysis_running ? "Analysis in Progress..." : "Run Analysis";
-                enabled: !root.analysis_running;
+                enabled: root.file_loaded && !root.analysis_running;
                 clicked => {
                     root.run_analysis();
                 }
             }
-        }
-
-        Text {
-            text: root.analysis_status_text;
-            color: MaterialPalette.on_surface;
-            wrap: word-wrap;
         }
     }
 }
