@@ -85,6 +85,24 @@ public:
 
   void setStructureAnalyzer(const StructureAnalyzer *analyzer);
 
+  //-------------------------------------------------------------------------//
+  //----------------------------- Accumulation ------------------------------//
+  //-------------------------------------------------------------------------//
+  
+  /**
+   * @brief Adds the histograms from another DistributionFunctions object to this one.
+   *        Used for averaging over multiple frames.
+   * @param other The other DistributionFunctions object to add.
+   */
+  void add(const DistributionFunctions &other);
+
+  /**
+   * @brief Scales all histograms in this object by a factor.
+   *        Used for normalizing averaged distributions.
+   * @param factor The scaling factor.
+   */
+  void scale(double factor);
+
 private:
   const StructureAnalyzer *neighbors() const;
   void ensureNeighborsComputed(double r_cut);

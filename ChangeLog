@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.5] 2026-01-26
+
+### Added
+- Implemented trajectory averaging to calculate mean distributions over selected frames.
+- Added controls for frame range selection (Minimum/Maximum Frame).
+- Enhanced `FileInfoCard` to show detailed file statistics: frame count, element types/counts, and total atoms.
+
+### Changed
+- Refined `AppWindow` layout to a two-column design for better use of screen space.
+- Improved component visibility: inactive UI elements are now disabled instead of hidden.
+- Refactored `DistributionFunctions` to support histogram accumulation.
+- Refactored test suite to utilize the `Trajectory` object for consistent frame handling.
+
+### Fixed
+- Fixed a syntax error in `src/main.cpp`.
+
 ## [1.9.4] 2026-01-26
  
  ### Added

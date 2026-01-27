@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.9.4 LANGUAGES CXX)
+project(Correlation VERSION 1.9.5 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)

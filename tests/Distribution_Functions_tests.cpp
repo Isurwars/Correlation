@@ -240,3 +240,43 @@ TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
   EXPECT_NEAR(peak_position, expected_peak_q,
               q_bin_width * 5.0); // Allow a generous tolerance
 }
+
+TEST_F(DistributionFunctionsTest, AccumulationAndScalingWorks) {
+  // Arrange: Create two different cells
+  Cell cell1 = cell_; // Default cell from fixture (Ar pair at 1.5)
+  
+  Cell cell2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell2.addAtom("Ar", {5.0, 5.0, 5.0});
+  cell2.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance 2.0
+  
+  Trajectory traj1; traj1.addFrame(cell1); traj1.precomputeBondCutoffs();
+  Trajectory traj2; traj2.addFrame(cell2); traj2.precomputeBondCutoffs();
+  
+  DistributionFunctions df1(cell1, 5.0, traj1.getBondCutoffs());
+  DistributionFunctions df2(cell2, 5.0, traj2.getBondCutoffs());
+  
+  // Calculate RDF for both
+  df1.calculateRDF(5.0, 0.1);
+  df2.calculateRDF(5.0, 0.1);
+  
+  const auto& h1 = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+  const auto& h2 = df2.getHistogram("g(r)").partials.at("Ar-Ar");
+  
+  // Expected average
+  std::vector<double> expected(h1.size());
+  for(size_t i=0; i<h1.size(); ++i) {
+      expected[i] = (h1[i] + h2[i]) / 2.0;
+  }
+  
+  // Act: Add df2 to df1 and scale
+  df1.add(df2);
+  df1.scale(0.5);
+  
+  const auto& h_avg = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+  
+  // Assert
+  ASSERT_EQ(h_avg.size(), expected.size());
+  for(size_t i=0; i<h_avg.size(); ++i) {
+      EXPECT_NEAR(h_avg[i], expected[i], 1e-9);
+  }
+}

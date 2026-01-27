@@ -683,3 +683,59 @@ void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {
   // Modernized implementation would go here...
 }
+
+//---------------------------------------------------------------------------//
+//----------------------------- Accumulation --------------------------------//
+//---------------------------------------------------------------------------//
+
+void DistributionFunctions::add(const DistributionFunctions &other) {
+  // Iterate over all histograms in the other object
+  for (const auto &[name, other_hist] : other.histograms_) {
+    // Check if this object has the corresponding histogram
+    auto it = histograms_.find(name);
+    if (it == histograms_.end()) {
+      // If not found, copy it entirely (e.g. if this is the first accumulation 
+      // but it shouldn't happen if we initialize with one frame)
+      histograms_[name] = other_hist;
+      continue;
+    }
+
+    auto &this_hist = it->second;
+
+    // Consistency check (optional but recommended)
+    if (this_hist.bins.size() != other_hist.bins.size()) {
+       continue; // Cannot add incompatible histograms
+    }
+
+    // Accumulate Partials
+    for (const auto &[key, other_partial] : other_hist.partials) {
+      if (this_hist.partials.find(key) == this_hist.partials.end()) {
+        this_hist.partials[key] = other_partial;
+      } else {
+        auto &this_partial = this_hist.partials[key];
+        for (size_t i = 0; i < this_partial.size(); ++i) {
+          this_partial[i] += other_partial[i];
+        }
+      }
+    }
+    
+    // Clear smoothed partials as they are no longer valid after accumulation
+    this_hist.smoothed_partials.clear();
+  }
+}
+
+void DistributionFunctions::scale(double factor) {
+  for (auto &[name, hist] : histograms_) {
+    for (auto &[key, partial] : hist.partials) {
+      for (size_t i = 0; i < partial.size(); ++i) {
+        partial[i] *= factor;
+      }
+    }
+    // Also scale smoothed partials if they exist (though they shouldn't if we just accumulated)
+    for (auto &[key, smoothed_partial] : hist.smoothed_partials) {
+        for (size_t i = 0; i < smoothed_partial.size(); ++i) {
+            smoothed_partial[i] *= factor;
+        }
+    }
+  }
+}
