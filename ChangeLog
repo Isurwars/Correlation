@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Refactored test suite to utilize the `Trajectory` object for consistent frame handling.
 
 ### Fixed
+- Re-implemented HDF5 dimension scales using the HDF5 High Level (HL) C API to resolve missing `makeScale` support in the C++ wrapper.
 - Fixed a syntax error in `src/main.cpp`.
 
 ## [1.9.4] 2026-01-26

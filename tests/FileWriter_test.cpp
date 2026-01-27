@@ -182,4 +182,14 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   std::string label;
   g_group.getAttribute("bin_label").read(label);
   EXPECT_EQ(label, "r (Å)");
+
+  // Verify Dimension Scale attributes strictly manually, as HighFive helpers might be missing
+  // Check that bins has CLASS = DIMENSION_SCALE
+  EXPECT_TRUE(bins_ds.hasAttribute("CLASS"));
+  std::string ds_class;
+  bins_ds.getAttribute("CLASS").read(ds_class);
+  EXPECT_EQ(ds_class, "DIMENSION_SCALE");
+
+  // Check that data has DIMENSION_LIST
+  EXPECT_TRUE(si_si_ds.hasAttribute("DIMENSION_LIST"));
 }

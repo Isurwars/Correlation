@@ -15,6 +15,7 @@
 #include <vector>
 
 #include <highfive/highfive.hpp>
+#include <H5DSpublic.h>
 
 FileWriter::FileWriter(const DistributionFunctions &df) : df_(df) {}
 
@@ -158,6 +159,13 @@ void FileWriter::writeHDF(const std::string &filename) const {
 
       // Store bins as a dataset
       HighFive::DataSet bins_ds = group.createDataSet("bins", hist.bins);
+      
+      // Make it a dimension scale using C API
+      std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
+      if (H5DSset_scale(bins_ds.getId(), dim_label.c_str()) < 0) {
+          std::cerr << "Warning: Failed to set dimension scale for " << group_name << std::endl;
+      }
+
       // Add units to bins
       bins_ds.createAttribute<std::string>("units",
                                            HighFive::DataSpace::From(bin_unit))
@@ -175,6 +183,10 @@ void FileWriter::writeHDF(const std::string &filename) const {
         ds.createAttribute<std::string>("units",
                                         HighFive::DataSpace::From(data_unit))
             .write(data_unit);
+        // Attach scale using C API
+        if (H5DSattach_scale(ds.getId(), bins_ds.getId(), 0) < 0) {
+             std::cerr << "Warning: Failed to attach dimension scale for " << key << std::endl;
+        }
       }
 
       // Store smoothed partials if any
@@ -185,6 +197,10 @@ void FileWriter::writeHDF(const std::string &filename) const {
           ds.createAttribute<std::string>("units",
                                           HighFive::DataSpace::From(data_unit))
               .write(data_unit);
+          // Attach scale using C API
+          if (H5DSattach_scale(ds.getId(), bins_ds.getId(), 0) < 0) {
+               std::cerr << "Warning: Failed to attach dimension scale for " << key << " (smoothed)" << std::endl;
+          }
         }
       }
     }
