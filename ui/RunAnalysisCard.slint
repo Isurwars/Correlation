@@ -18,12 +18,15 @@ import {
 export component RunAnalysisCard inherits OutlinedCard {
     in property <bool> file_loaded;
     in property <bool> analysis_running;
+    in property <bool> analysis_done;
+    in property <float> progress;
     in-out property <string> analysis_status_text;
     in-out property <bool> use_csv: true;
     in-out property <bool> use_hdf5: true;
     in-out property <string> min_frame;
     in-out property <string> max_frame;
     callback run_analysis();
+    callback write_files();
 
     // Hover state for tooltip
     out property <bool> analysis_area_has_hover: analysis_area.has-hover;
@@ -31,11 +34,11 @@ export component RunAnalysisCard inherits OutlinedCard {
     out property <bool> csv_area_has_hover: csv_area.has-hover;
 
     VerticalLayout {
-        padding: MaterialStyleMetrics.padding_16;
-        spacing: MaterialStyleMetrics.spacing_12;
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
         MaterialText {
             text: "5. Run Analysis";
-            style: MaterialTypography.title_medium;
+            style: MaterialTypography.title_small;
         }
 
         HorizontalLayout {
@@ -106,15 +109,50 @@ export component RunAnalysisCard inherits OutlinedCard {
             }
         }
 
-        analysis_area := TouchArea {
-            min-height: 50px;
-            FilledButton {
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            analysis_area := TouchArea {
+                min-height: 40px;
+                horizontal-stretch: 1;
+                FilledButton {
+                    height: 100%;
+                    width: 100%;
+                    text: root.analysis_running ? "Analysis in Progress..." : "Run Analysis";
+                    enabled: root.file_loaded && !root.analysis_running;
+                    clicked => {
+                        root.run_analysis();
+                    }
+                }
+            }
+
+            write_area := TouchArea {
+                min-height: 40px;
+                horizontal-stretch: 1;
+                FilledButton {
+                    height: 100%;
+                    width: 100%;
+                    text: "Write Files";
+                    enabled: root.analysis_done && !root.analysis_running;
+                    clicked => {
+                        root.write_files();
+                    }
+                }
+            }
+        }
+
+        if (root.analysis_running): Rectangle {
+            height: 4px;
+            width: 100%;
+            background: MaterialPalette.surface;
+            Rectangle {
+                x: 0;
+                y: 0;
                 height: 100%;
-                width: 100%;
-                text: root.analysis_running ? "Analysis in Progress..." : "Run Analysis";
-                enabled: root.file_loaded && !root.analysis_running;
-                clicked => {
-                    root.run_analysis();
+                width: root.progress * parent.width;
+                background: MaterialPalette.primary;
+                animate width {
+                    duration: 250ms;
+                    easing: ease-out;
                 }
             }
         }

@@ -133,6 +133,7 @@ void AppBackend::run_analysis() {
     // Ensure min_frame is within bounds
     size_t start_f = options_.min_frame;
     if (start_f >= trajectory_->getFrames().size()) start_f = 0; // Default to 0 if out of bounds
+    if (progress_callback_) progress_callback_(0.0f);
 
     trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(*trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame);
     
@@ -145,6 +146,7 @@ void AppBackend::run_analysis() {
         return;
     }
     
+    if (progress_callback_) progress_callback_(1.0f / (float)analyzers.size());
     // 1. Calculate for the first frame (which df_ is already bound to)
     df_->setStructureAnalyzer(analyzers[0].get());
     df_->calculateCoordinationNumber();
@@ -167,6 +169,10 @@ void AppBackend::run_analysis() {
         frame_df.calculateSQ(options_.q_max, options_.q_bin_width, options_.r_int_max);
         
         df_->add(frame_df);
+        
+        if (progress_callback_) {
+             progress_callback_((float)(i + 1) / (float)analyzers.size());
+        }
     }
     
     // 3. Average
@@ -177,6 +183,19 @@ void AppBackend::run_analysis() {
     if (options_.smoothing) {
       df_->smoothAll(options_.smoothing_sigma, options_.smoothing_kernel);
     }
+
+  } catch (const std::exception &e) {
+    std::cerr << "Error during analysis: " << e.what() << std::endl;
+  }
+}
+
+void AppBackend::write_files() {
+  if (!df_) {
+     std::cerr << "No analysis data to write." << std::endl;
+     return;
+  }
+
+  try {
     // --- Write results ---
     FileWriter writer(*df_);
     if (options_.use_csv) {
@@ -185,8 +204,8 @@ void AppBackend::run_analysis() {
     if (options_.use_hdf5) {
       writer.writeHDF(options_.output_file_base + ".h5");
     }
-
+    std::cout << "Files writen to: " << options_.output_file_base << std::endl;
   } catch (const std::exception &e) {
-    std::cerr << "Error during analysis: " << e.what() << std::endl;
+    std::cerr << "Error during file writing: " << e.what() << std::endl;
   }
 }

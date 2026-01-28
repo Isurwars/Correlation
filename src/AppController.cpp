@@ -26,8 +26,15 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
 
   // Connect the UI signals to the controller's member functions
   ui_.on_run_analysis([this]() { handleRunAnalysis(); });
+  ui_.on_write_files([this]() { handleWriteFiles(); });
   ui_.on_browse_file([this]() { handleBrowseFile(); });
   ui_.on_check_file_dialog_status([this]() { handleCheckFileDialogStatus(); });
+}
+
+AppController::~AppController() {
+    if (analysis_thread_.joinable()) {
+        analysis_thread_.join();
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -130,13 +137,52 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 //--------------------------------- Methods ---------------------------------//
 //---------------------------------------------------------------------------//
 
+void AppController::updateProgress(float p) {
+    if (p < 0.0f) p = 0.0f;
+    if (p > 1.0f) p = 1.0f;
+    slint::invoke_from_event_loop([=, this]() {
+        ui_.set_progress(p);
+    });
+}
+
 void AppController::handleRunAnalysis() {
+  ui_.set_analysis_done(false); // Reset done state
+  ui_.set_analysis_running(true);
+  ui_.set_progress(0.0f);
+  ui_.set_analysis_status_text("Running Analysis...");
+
   // Create a ProgramOptions object from the UI properties
   backend_.setOptions(handleOptionsfromUI(ui_));
+  
+  // Set the progress callback
+  backend_.setProgressCallback([this](float p) {
+      updateProgress(p);
+  });
 
-  // run analysis
-  backend_.run_analysis();
-  ui_.set_analysis_status_text("Analysis ended.");
+  // run analysis in a separate thread
+  if (analysis_thread_.joinable()) {
+      analysis_thread_.join();
+  }
+  
+  analysis_thread_ = std::thread([this]() {
+      backend_.run_analysis();
+      
+      slint::invoke_from_event_loop([this]() {
+          ui_.set_analysis_running(false);
+          ui_.set_analysis_status_text("Analysis ended.");
+          ui_.set_analysis_done(true);
+          ui_.set_progress(1.0f);
+      });
+  });
+  
+  // Detach or move is not enough, we need to keep the thread object alive.
+  // We keep it as a member variable.
+}
+
+void AppController::handleWriteFiles() {
+  backend_.setOptions(handleOptionsfromUI(ui_));
+  backend_.write_files();
+  ui_.set_analysis_status_text("Files Written.");
 }
 
 void AppController::handleBrowseFile() {

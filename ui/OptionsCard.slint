@@ -40,15 +40,15 @@ export component OptionsCard inherits OutlinedCard {
     out property <bool> kernel_has_hover: kernel_area.has-hover;
 
     VerticalLayout {
-        padding: MaterialStyleMetrics.padding_16;
-        spacing: MaterialStyleMetrics.spacing_12;
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
         MaterialText {
             text: "4. Options";
-            style: MaterialTypography.title_medium;
+            style: MaterialTypography.title_small;
         }
 
         HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_4;
             r_max_area := TouchArea {
                 horizontal-stretch: 1;
                 TextField {

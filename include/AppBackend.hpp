@@ -7,6 +7,7 @@
 
 #include <map>
 #include <memory>
+#include <functional>
 
 #include "Smoothing.hpp"
 #include "Trajectory.hpp"
@@ -51,12 +52,16 @@ public:
   // Member functions
   std::string load_file(const std::string &path);
   void run_analysis();
+  void write_files();
   std::map<std::string, int> getAtomCounts() const;
   int getFrameCount() const;
   int getTotalAtomCount() const;
   std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
   double getBondCutoff(int, int);
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
+
+  // Callbacks
+  void setProgressCallback(std::function<void(float)> cb) { progress_callback_ = cb; }
 
 private:
   // Member functions
@@ -68,4 +73,5 @@ private:
   std::unique_ptr<DistributionFunctions> df_;
 
   ProgramOptions options_;
+  std::function<void(float)> progress_callback_;
 };

@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.6] 2026-01-27
+
+### Added
+- Implemented asynchronous analysis to prevent the GUI from freezing during calculations.
+- Added a progress bar to visualize analysis status.
+- Separated "Analyze" and "Write Files" into distinct actions.
+
+### Fixed
+- Fixed implicit capture of `this` warning in `AppController.cpp` (C++20).
+
 ## [1.9.5] 2026-01-26
 
 ### Added

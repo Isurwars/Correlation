@@ -18,15 +18,15 @@ export component InputFileCard inherits OutlinedCard {
     out property <bool> file_area_has_hover: file_area.has-hover;
 
     VerticalLayout {
-        padding: MaterialStyleMetrics.padding_16;
-        spacing: MaterialStyleMetrics.spacing_12;
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
         MaterialText {
             text: "1. Input File";
-            style: MaterialTypography.title_medium;
+            style: MaterialTypography.title_small;
         }
 
         file_area := TouchArea {
-            min-height: 50px;
+            min-height: 40px;
             FilledButton {
                 height: 100%;
                 width: 100%;
