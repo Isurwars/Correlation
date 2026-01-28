@@ -1,4 +1,5 @@
 .cache
+.venv
 .vs
 .vscode
 compile_commands.json
