@@ -151,7 +151,7 @@ void AppBackend::run_analysis() {
     df_->setStructureAnalyzer(analyzers[0].get());
     df_->calculateCoordinationNumber();
     df_->calculateRDF(options_.r_max, options_.r_bin_width);
-    df_->calculatePAD(180.0, options_.angle_bin_width);
+    df_->calculatePAD(options_.angle_bin_width);
     df_->calculateSQ(options_.q_max, options_.q_bin_width, options_.r_int_max);
     
     // 2. Accumulate for subsequent frames
@@ -165,7 +165,7 @@ void AppBackend::run_analysis() {
         
         frame_df.calculateCoordinationNumber();
         frame_df.calculateRDF(options_.r_max, options_.r_bin_width);
-        frame_df.calculatePAD(180.0, options_.angle_bin_width);
+        frame_df.calculatePAD(options_.angle_bin_width);
         frame_df.calculateSQ(options_.q_max, options_.q_bin_width, options_.r_int_max);
         
         df_->add(frame_df);

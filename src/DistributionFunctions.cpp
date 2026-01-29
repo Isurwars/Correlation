@@ -476,23 +476,19 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
 //----------------------------- Calculation PAD -----------------------------//
 //---------------------------------------------------------------------------//
 
-void DistributionFunctions::calculatePAD(double theta_cut, double bin_width) {
+void DistributionFunctions::calculatePAD(double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
-  if (theta_cut <= 0) {
-    throw std::invalid_argument("Theta cutoff must be positive");
-  }
-  if (theta_cut > 180.0) {
-    throw std::invalid_argument("Theta cutoff cannot exceed 180 degrees");
-  }
+  
+  const double theta_cut = 180.0;
 
   const auto &elements = cell_.elements();
   const size_t num_elements = elements.size();
   if (num_elements == 0)
     return;
 
-  const size_t num_bins = static_cast<size_t>(theta_cut / bin_width);
+  const size_t num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
   Histogram f_theta;
   f_theta.bin_label = "theta (°)";

@@ -195,8 +195,7 @@ void StructureAnalyzer::computeAngles() {
         for (size_t i = r.begin(); i != r.end(); ++i) {
           const auto &central_atom_neighbors = neighbor_tensor_[i];
 
-          // Skip if the central atom has fewer than two neighbors to form an
-          // angle
+          // Skip if the central atom has fewer than two neighbors
           if (central_atom_neighbors.size() < 2)
             continue;
 

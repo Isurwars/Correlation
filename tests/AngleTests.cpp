@@ -234,7 +234,7 @@ TEST_F(PADTest, SingleAtomNoAngles) {
     cell_.addAtom("Si", {10.0, 10.0, 10.0});
     updateTrajectory();
     DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
-    df.calculatePAD(180.0, 1.0);
+    df.calculatePAD(1.0);
     // Might have partials created but empty, or just no "f(theta)" if logic handles it.
     // Actually implementation might create partials if atoms exist but no angles found.
     // Let's check total counts.
@@ -272,7 +272,7 @@ TEST_F(PADTest, LinearGeometry180) {
     // Bond length 1.0. Cutoff needs to be > 1.0
     DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
     // Use 180.0 now that we fixed the binning logic
-    df.calculatePAD(180.0, 1.0); 
+    df.calculatePAD(1.0); 
     
     const auto& hist = df.getHistogram("f(theta)");
     // Should have O-Si-O peak at 180
@@ -310,7 +310,7 @@ TEST_F(PADTest, RightAngle90) {
     updateTrajectory();
     
     DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
-    df.calculatePAD(180.0, 1.0);
+    df.calculatePAD(1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
     ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
@@ -339,7 +339,7 @@ TEST_F(PADTest, EquilateralTriangle60) {
     updateTrajectory();
     
     DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
-    df.calculatePAD(180.0, 1.0);
+    df.calculatePAD(1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
     // Should have O-Si-O
@@ -372,7 +372,7 @@ TEST_F(PADTest, TetrahedralAngle) {
     updateTrajectory();
     
     DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs()); // Distance is 1.0
-    df.calculatePAD(180.0, 0.5); // Finer bins
+    df.calculatePAD(0.5); // Finer bins
     
     const auto& hist = df.getHistogram("f(theta)");
     const auto& partial = hist.partials.at("O-Si-O");
@@ -398,7 +398,7 @@ TEST_F(PADTest, SymmetryAndSorting) {
     updateTrajectory();
     
     DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
-    df.calculatePAD(180.0, 1.0);
+    df.calculatePAD(1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
     
@@ -427,7 +427,7 @@ TEST_F(PADTest, FullNormalizationCheck) {
     updateTrajectory();
     
     DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
-    df.calculatePAD(180.0, 1.0);
+    df.calculatePAD(1.0);
     
     const auto& hist = df.getHistogram("f(theta)");
     

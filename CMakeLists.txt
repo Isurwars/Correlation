@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.9.6 LANGUAGES CXX)
+project(Correlation VERSION 1.9.7 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
@@ -14,125 +14,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
 
 # -----------------------------------------------------------
-# Dependencies
+# Utils & Dependencies
 # -----------------------------------------------------------
-# Find dependencies
-find_package(TBB QUIET COMPONENTS tbb tbbmalloc)
-if (NOT TBB_FOUND)
-  message("TBB could not be located. Downloading it from GitHub and building it locally.")
-  include(FetchContent)
-  FetchContent_Declare(
-    TBB
-    GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
-    GIT_TAG v2022.3.0
-  )
-  FetchContent_MakeAvailable(TBB)
-endif()
-
-find_package(Slint QUIET)
-if (NOT Slint_FOUND)
-  message("Slint could not be located in the CMake module search path. Downloading it from Git and building it locally")
-  include(FetchContent)
-  FetchContent_Declare(
-    Slint
-    GIT_REPOSITORY https://github.com/slint-ui/slint.git
-    GIT_TAG v1.14.1
-    SOURCE_SUBDIR api/cpp
-  )
-  FetchContent_MakeAvailable(Slint)
-endif (NOT Slint_FOUND)
-
-# HDF5 dependency
-find_package(HDF5 QUIET COMPONENTS CXX HL)
-if (NOT HDF5_FOUND)
-  message("HDF5 could not be located. Downloading it from GitHub and building it locally.")
-  include(FetchContent)
-  # HDF5 options for FetchContent
-  set(HDF5_BUILD_CPP_LIB ON CACHE BOOL "Build HDF5 C++ Library" FORCE)
-  set(HDF5_BUILD_EXAMPLES OFF CACHE BOOL "Build HDF5 Examples" FORCE)
-  set(HDF5_BUILD_HL_LIB ON CACHE BOOL "Build HDF5 High Level Library" FORCE)
-  set(HDF5_BUILD_TOOLS OFF CACHE BOOL "Build HDF5 Tools" FORCE)
-  set(HDF5_BUILD_FORTRAN OFF CACHE BOOL "Build HDF5 Fortran" FORCE)
-  set(HDF5_BUILD_JAVA OFF CACHE BOOL "Build HDF5 Java" FORCE)
-  set(BUILD_TESTING OFF CACHE BOOL "Build HDF5 Tests" FORCE)
-  set(HDF5_PACK_EXAMPLES OFF CACHE BOOL "Pack HDF5 Examples" FORCE)
-  
-  FetchContent_Declare(
-    HDF5
-    GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
-    GIT_TAG hdf5_2.0.0
-  )
-  FetchContent_MakeAvailable(HDF5)
-  
-  # HighFive looks for HDF5 targets. If we build from source, we might need to alias them
-  # to match what find_package would provide if HighFive expects HDF5::HDF5
-  if(NOT TARGET HDF5::HDF5)
-    if(TARGET hdf5_cpp-shared)
-      add_library(HDF5::HDF5 ALIAS hdf5_cpp-shared)
-    elseif(TARGET hdf5_cpp-static)
-      add_library(HDF5::HDF5 ALIAS hdf5_cpp-static)
-    endif()
-    if(TARGET hdf5_hl-shared)
-      add_library(HDF5::HDF5_HL ALIAS hdf5_hl-shared)
-    elseif(TARGET hdf5_hl-static)
-      add_library(HDF5::HDF5_HL ALIAS hdf5_hl-static)
-    endif()
-  endif()
-endif()
-
-# Ensure HDF5::HDF5_HL is available
-if(NOT TARGET HDF5::HDF5_HL)
-  message(STATUS "Attempting to find HDF5 HL target to alias...")
-  if(TARGET hdf5::hdf5_hl-static)
-     add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl-static)
-  elseif(TARGET hdf5::hdf5_hl-shared)
-     add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl-shared)
-  elseif(TARGET hdf5::hdf5_hl)
-     add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl)
-  elseif(TARGET hdf5_hl-static)
-     add_library(HDF5::HDF5_HL ALIAS hdf5_hl-static)
-  elseif(TARGET hdf5_hl-shared)
-     add_library(HDF5::HDF5_HL ALIAS hdf5_hl-shared)
-  endif()
-  
-  if(TARGET HDF5::HDF5_HL)
-      message(STATUS "HDF5::HDF5_HL aliased successfully")
-  else()
-      message(WARNING "Could not find HDF5 HL target to alias (hdf5::hdf5_hl, etc). Linking might fail.")
-  endif()
-endif()
-
-set(HIGHFIVE_USE_BOOST OFF CACHE BOOL "Do not use Boost")
-set(HIGHFIVE_EXAMPLES OFF CACHE BOOL "Do not build examples")
-set(HIGHFIVE_UNIT_TESTS OFF CACHE BOOL "Do not build tests")
-set(HIGHFIVE_USE_INSTALL OFF CACHE BOOL "Do not use install")
-set(HIGHFIVE_FIND_HDF5 OFF CACHE BOOL "Do not let HighFive find HDF5" FORCE)
-
-include(FetchContent)
-FetchContent_Declare(
-  HighFive
-  GIT_REPOSITORY https://github.com/highfive-devs/highfive.git
-  GIT_TAG v3.3.0
-)
-FetchContent_MakeAvailable(HighFive)
-
-
-# -----------------------------------------------------------
-# Helper Function for Bundling DLLs on Windows
-# -----------------------------------------------------------
-function(bundle_windows_dlls target_name)
-    if(WIN32)
-        add_custom_command(
-            TARGET ${target_name} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_RUNTIME_DLLS:${target_name}>
-            $<TARGET_FILE_DIR:${target_name}>
-            COMMAND_EXPAND_LISTS
-            COMMENT "Copying runtime DLLs for ${target_name}"
-        )
-    endif()
-endfunction()
-
+include(cmake/Utils.cmake)
+include(cmake/Dependencies.cmake)
 
 #-----------------------------------------------------------
 # Library setup
@@ -200,44 +85,9 @@ slint_target_sources(correlation
 bundle_windows_dlls(correlation)
 
 #-----------------------------------------------------------
-# Testing setup (using GoogleTest)
+# Testing
 #-----------------------------------------------------------
-enable_testing()
-
-# Modern GoogleTest fetch
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG v1.16.0
-)
-FetchContent_MakeAvailable(googletest)
-
-# Explicitly list test sources.
-add_executable(correlation_tests
-    tests/Atom_test.cpp
-    tests/Cell_test.cpp
-    tests/Distribution_Functions_tests.cpp
-    tests/FileIO_test.cpp
-    tests/FileWriter_test.cpp
-    tests/StructureAnalyzer_test.cpp
-    tests/AngleTests.cpp
-    tests/TrajectoryAnalyzer_test.cpp
-    tests/TrajectoryRevision_test.cpp
-)
-
-# The test executable also links to the library and inherits its properties.
-target_link_libraries(correlation_tests PRIVATE
-    correlation_lib
-    gtest_main
-)
-target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
-
-# Call the helper function to bundle DLLs on Windows
-bundle_windows_dlls(correlation_tests)
-
-include(GoogleTest)
-gtest_discover_tests(correlation_tests DISCOVERY_TIMEOUT 60)
+add_subdirectory(tests)
 
 #-----------------------------------------------------------
 # Install setup

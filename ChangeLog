@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.7] 2026-01-29
+
+### Changed
+- Removed `theta_cut` argument from `calculatePAD` (fixed to 180°).
+- Refactored `CMakeLists.txt` to modularize dependencies and tests.
 ## [1.9.6] 2026-01-27
 
 ### Added

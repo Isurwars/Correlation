@@ -104,7 +104,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
   const double bin_width = 1.0; // 1-degree bins
 
   // Act
-  df.calculatePAD(180.0, bin_width);
+  df.calculatePAD(bin_width);
   const auto &pad_hist = df.getHistogram("f(theta)");
   const auto &hoh_pad = pad_hist.partials.at("H-O-H");
 

@@ -80,7 +80,7 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   const double rdf_bin = 0.05;
   const double pad_bin = 1.0;
   df.calculateRDF(20.0, rdf_bin);
-  df.calculatePAD(180.0, pad_bin);
+  df.calculatePAD(pad_bin);
   df.smoothAll(0.1);
 
   FileWriter writer(df);
@@ -138,7 +138,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffs()); // Use smaller r_max for faster test
 
   df.calculateRDF(5.0, 0.1);
-  df.calculatePAD(180.0, 2.0);
+  df.calculatePAD(2.0);
 
   FileWriter writer(df);
   writer.writeHDF("test_si.h5");
