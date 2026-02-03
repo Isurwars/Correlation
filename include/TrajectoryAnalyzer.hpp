@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 
+#include <functional>
 #include "StructureAnalyzer.hpp"
 #include "Trajectory.hpp"
 
@@ -19,7 +20,8 @@ public:
   TrajectoryAnalyzer(Trajectory &trajectory, double neighbor_cutoff,
                      const std::vector<std::vector<double>> &bond_cutoffs,
                      size_t start_frame = 0, long long end_frame = -1,
-                     bool ignore_periodic_self_interactions = true);
+                     bool ignore_periodic_self_interactions = true,
+                     std::function<void(float)> progress_callback = nullptr);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//

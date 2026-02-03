@@ -135,54 +135,31 @@ void AppBackend::run_analysis() {
     if (start_f >= trajectory_->getFrames().size()) start_f = 0; // Default to 0 if out of bounds
     if (progress_callback_) progress_callback_(0.0f);
 
-    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(*trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame);
-    
-    // Use the first frame of the selected range for partials reference
-    Cell& first_analyzed_frame = trajectory_->getFrames()[start_f];
-    df_ = std::make_unique<DistributionFunctions>(first_analyzed_frame, 0.0, active_cutoffs);
-    
-    const auto& analyzers = trajectory_analyzer_->getAnalyzers();
-    if (analyzers.empty()) {
-        return;
-    }
-    
-    if (progress_callback_) progress_callback_(1.0f / (float)analyzers.size());
-    // 1. Calculate for the first frame (which df_ is already bound to)
-    df_->setStructureAnalyzer(analyzers[0].get());
-    df_->calculateCoordinationNumber();
-    df_->calculateRDF(options_.r_max, options_.r_bin_width);
-    df_->calculatePAD(options_.angle_bin_width);
-    df_->calculateSQ(options_.q_max, options_.q_bin_width, options_.r_int_max);
-    
-    // 2. Accumulate for subsequent frames
-    for (size_t i = 1; i < analyzers.size(); ++i) {
-        // Create temporary DF for this frame
-        // Note: We need the corresponding Cell. 
-        // TrajectoryAnalyzer frames start at start_f.
-        Cell& frame = trajectory_->getFrames()[start_f + i];
-        DistributionFunctions frame_df(frame, 0.0, active_cutoffs);
-        frame_df.setStructureAnalyzer(analyzers[i].get());
-        
-        frame_df.calculateCoordinationNumber();
-        frame_df.calculateRDF(options_.r_max, options_.r_bin_width);
-        frame_df.calculatePAD(options_.angle_bin_width);
-        frame_df.calculateSQ(options_.q_max, options_.q_bin_width, options_.r_int_max);
-        
-        df_->add(frame_df);
-        
-        if (progress_callback_) {
-             progress_callback_((float)(i + 1) / (float)analyzers.size());
-        }
-    }
-    
-    // 3. Average
-    if (analyzers.size() > 1) {
-        df_->scale(1.0 / static_cast<double>(analyzers.size()));
-    }
+    // Define progress callbacks
+    auto cb_structure = [this](float p) {
+        if (progress_callback_) progress_callback_(p * 0.7f);
+    };
 
-    if (options_.smoothing) {
-      df_->smoothAll(options_.smoothing_sigma, options_.smoothing_kernel);
-    }
+    auto cb_dist = [this](float p) {
+        if (progress_callback_) progress_callback_(0.7f + p * 0.3f);
+    };
+
+    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(*trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame, true, cb_structure);
+    
+    // Prepare settings
+    AnalysisSettings settings;
+    settings.r_max = options_.r_max;
+    settings.r_bin_width = options_.r_bin_width;
+    settings.q_max = options_.q_max;
+    settings.q_bin_width = options_.q_bin_width;
+    settings.r_int_max = options_.r_int_max;
+    settings.angle_bin_width = options_.angle_bin_width;
+    settings.smoothing = options_.smoothing;
+    settings.smoothing_sigma = options_.smoothing_sigma;
+    settings.smoothing_kernel = options_.smoothing_kernel;
+
+    // Run parallel analysis
+    df_ = DistributionFunctions::computeMean(*trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 
   } catch (const std::exception &e) {
     std::cerr << "Error during analysis: " << e.what() << std::endl;

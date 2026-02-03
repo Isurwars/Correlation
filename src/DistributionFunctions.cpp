@@ -12,6 +12,12 @@
 
 #include "PhysicalData.hpp"
 #include "Smoothing.hpp"
+#include "Trajectory.hpp"
+#include "TrajectoryAnalyzer.hpp"
+
+#include <atomic>
+#include <future>
+#include <mutex>
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructor -------------------------------//
@@ -734,4 +740,95 @@ void DistributionFunctions::scale(double factor) {
         }
     }
   }
+}
+
+//---------------------------------------------------------------------------//
+//----------------------------- Mean Calculation ----------------------------//
+//---------------------------------------------------------------------------//
+
+std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
+    Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+    size_t start_frame, const AnalysisSettings &settings,
+    std::function<void(float)> progress_callback) {
+
+  const auto &analyzers = analyzer.getAnalyzers();
+  if (analyzers.empty()) {
+    return nullptr;
+  }
+
+  const size_t num_frames = analyzers.size();
+  std::vector<std::unique_ptr<DistributionFunctions>> results(num_frames);
+  std::vector<std::future<void>> futures;
+  
+  // Retrieve bond cutoffs from the analyzer.
+  // Note: TrajectoryAnalyzer uses same cutoffs for all frames usually.
+  auto bond_cutoffs = analyzer.getBondCutoffs();
+
+  // Mutex for progress callback (if needed, though atomic is better for count)
+  std::mutex callback_mutex;
+  std::atomic<size_t> completed_frames{0};
+
+  for (size_t i = 0; i < num_frames; ++i) {
+    futures.push_back(std::async(std::launch::async, [&, i]() {
+      size_t frame_idx = start_frame + i;
+      if (frame_idx >= trajectory.getFrames().size()) {
+          // Should not happen if TrajectoryAnalyzer was constructed correctly
+          return;
+      }
+      
+      Cell &frame = trajectory.getFrames()[frame_idx];
+      
+      //Create DF for this frame
+      auto frame_df = std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
+      frame_df->setStructureAnalyzer(analyzers[i].get());
+      
+      frame_df->calculateCoordinationNumber();
+      frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
+      if (settings.angle_bin_width > 0) {
+        frame_df->calculatePAD(settings.angle_bin_width);
+      }
+      if (settings.q_max > 0) {
+        frame_df->calculateSQ(settings.q_max, settings.q_bin_width, settings.r_int_max);
+      }
+      
+      results[i] = std::move(frame_df);
+      
+      size_t current_completed = ++completed_frames;
+      if (progress_callback) {
+          // Avoid flooding the callback, update maybe every 1% or just simple throttle?
+          // Or lock.
+          std::lock_guard<std::mutex> lock(callback_mutex);
+          progress_callback(static_cast<float>(current_completed) / static_cast<float>(num_frames));
+      }
+    }));
+  }
+
+  // Wait for all tasks
+  for (auto &f : futures) {
+    if (f.valid()) {
+        f.get();
+    }
+  }
+
+  // Accumulate results
+  if (results.empty() || !results[0]) {
+      return nullptr;
+  }
+  
+  auto &final_df = results[0];
+  for (size_t i = 1; i < num_frames; ++i) {
+      if (results[i]) {
+          final_df->add(*results[i]);
+      }
+  }
+  
+  if (num_frames > 1) {
+      final_df->scale(1.0 / static_cast<double>(num_frames));
+  }
+  
+  if (settings.smoothing) {
+      final_df->smoothAll(settings.smoothing_sigma, settings.smoothing_kernel);
+  }
+  
+  return std::move(final_df);
 }

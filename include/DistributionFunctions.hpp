@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -13,6 +14,21 @@
 #include "Cell.hpp"
 #include "Smoothing.hpp"
 #include "StructureAnalyzer.hpp"
+
+class Trajectory;
+class TrajectoryAnalyzer;
+
+struct AnalysisSettings {
+  double r_max = 20.0;
+  double r_bin_width = 0.02;
+  double q_max = 20.0;
+  double q_bin_width = 0.02;
+  double r_int_max = 10.0;
+  double angle_bin_width = 1.0;
+  bool smoothing = true;
+  double smoothing_sigma = 0.1;
+  KernelType smoothing_kernel = KernelType::Gaussian;
+};
 
 // A structure to hold all data related to a single histogram.
 struct Histogram {
@@ -102,6 +118,15 @@ public:
    * @param factor The scaling factor.
    */
   void scale(double factor);
+
+  /**
+   * @brief Computes the mean distribution functions over a trajectory.
+   *        Uses parallel execution to speed up calculation.
+   */
+  static std::unique_ptr<DistributionFunctions> computeMean(
+      Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+      size_t start_frame, const AnalysisSettings &settings,
+      std::function<void(float)> progress_callback = nullptr);
 
 private:
   const StructureAnalyzer *neighbors() const;

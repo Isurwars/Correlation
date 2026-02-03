@@ -426,7 +426,12 @@ TEST_F(PADTest, FullNormalizationCheck) {
     cell_.addAtom("O", {10.0 - L, 10.0 - L, 10.0 + L});
     updateTrajectory();
     
-    DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffs());
+    // Custom bond cutoffs to avoid O-O bonds (distance ~1.63) which would create extra angles
+    auto cutoffs = trajectory_.getBondCutoffs();
+    int id_O = cell_.findElement("O")->id.value;
+    cutoffs[id_O][id_O] = 1.44;
+
+    DistributionFunctions df(cell_, 1.5, cutoffs);
     df.calculatePAD(1.0);
     
     const auto& hist = df.getHistogram("f(theta)");

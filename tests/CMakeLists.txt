@@ -1,7 +1,7 @@
 #-----------------------------------------------------------
 # Testing setup (using GoogleTest)
 #-----------------------------------------------------------
-enable_testing()
+
 include(GoogleTest)
 
 # Explicitly list test sources.
@@ -20,7 +20,8 @@ add_executable(correlation_tests
 # The test executable also links to the library and inherits its properties.
 target_link_libraries(correlation_tests PRIVATE
     correlation_lib
-    gtest_main
+    GTest::gtest
+    GTest::gtest_main
 )
 target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
 

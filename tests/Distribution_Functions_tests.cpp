@@ -14,6 +14,7 @@
 #include <vector>
 #include "../include/PhysicalData.hpp"
 #include "../include/Trajectory.hpp"
+#include "../include/TrajectoryAnalyzer.hpp"
 
 namespace {
 // Helper function to print a histogram's contents for debugging purposes.
@@ -278,5 +279,53 @@ TEST_F(DistributionFunctionsTest, AccumulationAndScalingWorks) {
   ASSERT_EQ(h_avg.size(), expected.size());
   for(size_t i=0; i<h_avg.size(); ++i) {
       EXPECT_NEAR(h_avg[i], expected[i], 1e-9);
+  }
+}
+
+TEST_F(DistributionFunctionsTest, ComputeMeanMatchesSequential) {
+  // Arrange
+  Cell cell1 = cell_; 
+  Cell cell2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell2.addAtom("Ar", {5.0, 5.0, 5.0});
+  cell2.addAtom("Ar", {7.0, 5.0, 5.0});
+  
+  Trajectory traj; 
+  traj.addFrame(cell1); 
+  traj.addFrame(cell2);
+  traj.precomputeBondCutoffs();
+  
+  std::vector<std::vector<double>> cutoffs = traj.getBondCutoffs();
+  
+  TrajectoryAnalyzer analyzer(traj, 10.0, cutoffs);
+  
+  AnalysisSettings settings;
+  settings.r_max = 5.0;
+  settings.r_bin_width = 0.1;
+  settings.smoothing = false; // Disable smoothing to compare raw values easily
+  settings.angle_bin_width = 1.0;
+  settings.q_max = 10.0;
+  
+  // Act
+  auto result = DistributionFunctions::computeMean(traj, analyzer, 0, settings);
+  
+  // Manual calculation for comparison
+  DistributionFunctions df1(cell1, 0.0, cutoffs);
+  df1.setStructureAnalyzer(analyzer.getAnalyzers()[0].get());
+  df1.calculateRDF(5.0, 0.1);
+  
+  DistributionFunctions df2(cell2, 0.0, cutoffs);
+  df2.setStructureAnalyzer(analyzer.getAnalyzers()[1].get());
+  df2.calculateRDF(5.0, 0.1);
+  
+  df1.add(df2);
+  df1.scale(0.5);
+  
+  // Assert
+  const auto& h_auto = result->getHistogram("g(r)").partials.at("Ar-Ar");
+  const auto& h_manual = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+  
+  ASSERT_EQ(h_auto.size(), h_manual.size());
+  for(size_t i=0; i<h_auto.size(); ++i) {
+      EXPECT_NEAR(h_auto[i], h_manual[i], 1e-9);
   }
 }
