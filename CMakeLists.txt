@@ -63,10 +63,14 @@ endif()
 
 
 # Link correlation_lib to correlation
-target_link_libraries(correlation
-  correlation_lib
-  Slint::Slint
-)
+set(CORRELATION_LIBS correlation_lib Slint::Slint)
+
+if (WIN32)
+    list(APPEND CORRELATION_LIBS Imm32 Comctl32)
+endif()
+
+target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})
+
 
 # Add the include directory for the generated slint header
 target_include_directories(correlation PRIVATE
