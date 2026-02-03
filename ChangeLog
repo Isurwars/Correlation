@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.9.8] 2026-02-02
+
+### Added
+- Added "START" and "END" keywords to Min/Max Frame selection for easier trajectory range handling.
+
+### Fixed
+- Corrected PAD (Plane Angle Distribution) calculations to match v1.0.4 results.
+
 ## [1.9.7] 2026-01-29
 
 ### Changed

@@ -93,7 +93,7 @@ export component RunAnalysisCard inherits OutlinedCard {
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
-                    label: "Min Frame";
+                    label: "Start Frame";
                     text <=> root.min_frame;
                 }
             }
@@ -103,7 +103,7 @@ export component RunAnalysisCard inherits OutlinedCard {
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
-                    label: "Max Frame";
+                    label: "End Frame";
                     text <=> root.max_frame;
                 }
             }

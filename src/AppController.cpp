@@ -100,10 +100,27 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
 
+  // Helper lambda for case-insensitive comparison
+  auto to_lower = [](const std::string &s) {
+      std::string data = s;
+      std::transform(data.begin(), data.end(), data.begin(),
+                     [](unsigned char c) { return std::tolower(c); });
+      return data;
+  };
+
   // Frame Selection
   try {
       std::string min_s = ui_.get_min_frame().data();
-      opt.min_frame = std::stoi(min_s) - 1; // UI is 1-based
+      std::string min_s_lower = to_lower(min_s);
+      
+      if (min_s_lower == "start") {
+           opt.min_frame = 0;
+      } else if (min_s_lower == "end") {
+           opt.min_frame = backend_.getFrameCount() - 1;
+           if (opt.min_frame < 0) opt.min_frame = 0;
+      } else {
+           opt.min_frame = std::stoi(min_s) - 1; // UI is 1-based
+      }
       if (opt.min_frame < 0) opt.min_frame = 0;
   } catch (...) {
       opt.min_frame = 0;
@@ -111,8 +128,18 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
   try {
       std::string max_s = ui_.get_max_frame().data();
-      if (max_s == "End" || max_s.empty()) {
+      std::string max_s_lower = to_lower(max_s);
+
+      if (max_s_lower == "end" || max_s.empty()) {
           opt.max_frame = -1;
+      } else if (max_s_lower == "start") {
+          opt.max_frame = 1; // 1-based index 1 -> frame 0 in 0-based, but max_frame is usually exclusive or handled as count? 
+                             // Wait, TrajectoryAnalyzer uses it as `end_frame`. 
+                             // If I want "frame 1" (0-index) only, I likely want start=0, end=1.
+                             // Input "1" -> stoi("1") -> 1. 
+                             // In TrajectoryAnalyzer: effective_end = 1. loop i=0; i<1. Correct.
+                             // So "START" should map to 1.
+          opt.max_frame = 1; 
       } else {
           opt.max_frame = std::stoi(max_s);
       }
