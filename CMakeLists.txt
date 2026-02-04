@@ -67,7 +67,7 @@ endif()
 set(CORRELATION_LIBS correlation_lib Slint::Slint)
 
 if (WIN32)
-    list(APPEND CORRELATION_LIBS Imm32 Comctl32)
+    list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme)
 endif()
 
 target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})
@@ -85,9 +85,6 @@ slint_target_sources(correlation
   ui/AppWindow.slint
   LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/material-1.0/material.slint
 )
-
-# Call the helper function to bundle DLLs on Windows
-bundle_windows_dlls(correlation)
 
 #-----------------------------------------------------------
 # Testing

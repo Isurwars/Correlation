@@ -3,6 +3,9 @@
 # -----------------------------------------------------------
 include(FetchContent)
 
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force static libraries" FORCE)
+set(TBB_USE_STATIC_LIBS ON CACHE BOOL "Use static TBB libraries" FORCE)
+
 # 1. TBB
 find_package(TBB QUIET)
 if (TBB_FOUND)
@@ -47,6 +50,12 @@ else()
   set(HDF5_BUILD_JAVA OFF CACHE BOOL "Build HDF5 Java" FORCE)
   set(BUILD_TESTING OFF CACHE BOOL "Build HDF5 Tests" FORCE)
   set(HDF5_PACK_EXAMPLES OFF CACHE BOOL "Pack HDF5 Examples" FORCE)
+  # Static specific options
+  set(HDF5_BUILD_SHARED_LIBS OFF CACHE BOOL "Build HDF5 Shared Library" FORCE)
+  set(HDF5_USE_STATIC_LIBRARIES ON CACHE BOOL "Use HDF5 Static Libraries" FORCE)
+  set(HDF5_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build HDF5 Static Tools" FORCE)
+  set(H5_HAVE_C99_COMPLEX_NUMBERS OFF CACHE BOOL "Disable C99 Complex numbers for MSVC" FORCE)
+
 
   FetchContent_Declare(
     HDF5
