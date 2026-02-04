@@ -1,3 +1,8 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
 #include <gtest/gtest.h>
 #include "../include/TrajectoryAnalyzer.hpp"
 #include "../include/Trajectory.hpp"

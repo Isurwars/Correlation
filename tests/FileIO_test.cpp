@@ -246,24 +246,13 @@ TEST_F(FileIOTest, ReadArcFileDuplicatedFrames) {
   Trajectory traj = FileIO::readTrajectory("test_identical.arc", type);
 
   const auto& frames = traj.getFrames();
-  ASSERT_EQ(frames.size(), 3);
+  ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
   EXPECT_DOUBLE_EQ(frames[0].lattice_parameters()[0], 10.0);
   EXPECT_DOUBLE_EQ(frames[0].atoms()[0].position().x(), 1.0);
 
-  // Check Frame 2
+  // Check Frame 2 (Previously Frame 2 & 3 were identical, so we just have one of them)
   EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], 11.0);
   EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
-
-  // Check Frame 3
-  EXPECT_DOUBLE_EQ(frames[2].lattice_parameters()[0], 11.0);
-  EXPECT_DOUBLE_EQ(frames[2].atoms()[0].position().x(), 2.0);
-
-  // Verify Frame 2 and Frame 3 are identical in content
-  EXPECT_EQ(frames[1].atoms().size(), frames[2].atoms().size());
-  EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], frames[2].lattice_parameters()[0]);
-  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), frames[2].atoms()[0].position().x());
-  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().y(), frames[2].atoms()[0].position().y());
-  EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().z(), frames[2].atoms()[0].position().z());
 }

@@ -71,6 +71,8 @@ public:
   }
   
   const std::vector<std::vector<double>>& getBondCutoffs() const { return bond_cutoffs_sq_; }
+  
+  size_t getRemovedFrameCount() const { return removed_frames_count_; }
 
 private:
   void validateFrame(const Cell &new_frame) const;
@@ -79,4 +81,5 @@ private:
   // Stores calculate velocities Vector<Atom<Vector<Velocity>>>
   std::vector<std::vector<linalg::Vector3<double>>> velocities_; 
   double time_step_;
+  size_t removed_frames_count_{0};
 };

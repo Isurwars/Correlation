@@ -17,6 +17,7 @@ Trajectory::Trajectory(std::vector<Cell> frames, double time_step)
     for (size_t i = 1; i < frames_.size(); ++i) {
       validateFrame(frames_[i]);
     }
+    removeDuplicatedFrames();
   }
 }
 
@@ -129,6 +130,7 @@ void Trajectory::removeDuplicatedFrames() {
   }
 
   if (unique_frames.size() < frames_.size()) {
+      removed_frames_count_ = frames_.size() - unique_frames.size();
       frames_ = std::move(unique_frames);
   }
 }

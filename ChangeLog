@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Implemented Velocity Autocorrelation Function (VACF) calculation.
 - Added `velocities_` storage and calculation to `Trajectory`.
 - Added `DynamicsAnalyzer` class for computing dynamic properties (VACF, Normalized VACF).
+
+### Changed
+- Added missing license headers to project files.
 ## [1.9.8] 2026-02-02
 
 ### Added

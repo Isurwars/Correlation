@@ -44,8 +44,13 @@ std::string AppBackend::load_file(const std::string &path) {
       atom_count = trajectory_->getFrames()[0].atomCount();
   }
   
-  return "File loaded: " +
-         display_path;
+  
+  
+  std::string msg = "File loaded: " + display_path;
+  if (trajectory_->getRemovedFrameCount() > 0) {
+      msg += "\nRemoving " + std::to_string(trajectory_->getRemovedFrameCount()) + " repeated frames";
+  }
+  return msg;
 }
 
 std::map<std::string, int> AppBackend::getAtomCounts() const {
