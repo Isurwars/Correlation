@@ -38,7 +38,7 @@ export component BondCutoffsCard inherits OutlinedCard {
 
                 TextField {
                     enabled: root.file_loaded;
-                    min-width: 140px;
+                    min-width: 100px;
                     text: cutoff.distance;
                     label: "Cutoff (Å)";
                     edited(s) => {

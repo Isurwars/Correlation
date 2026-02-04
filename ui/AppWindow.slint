@@ -39,6 +39,7 @@ export component AppWindow inherits Window {
     // Data for the UI
     in-out property <int> num_frames: 0;
     in-out property <int> total_atoms: 0;
+    in-out property <int> removed_frames_count: 0;
     in-out property <[AtomCount]> atom_counts: [];
     in-out property <[BondCutoff]> bond_cutoffs: [];
 
@@ -96,6 +97,7 @@ export component AppWindow inherits Window {
                     file_loaded: root.file_loaded;
                     num_frames: root.num_frames;
                     total_atoms: root.total_atoms;
+                    removed_frames_count: root.removed_frames_count;
                     atom_counts: root.atom_counts;
                 }
 

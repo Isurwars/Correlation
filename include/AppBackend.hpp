@@ -56,6 +56,7 @@ public:
   std::map<std::string, int> getAtomCounts() const;
   int getFrameCount() const;
   int getTotalAtomCount() const;
+  size_t getRemovedFrameCount() const;
   std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
   double getBondCutoff(int, int);
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);

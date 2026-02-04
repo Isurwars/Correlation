@@ -279,6 +279,7 @@ void AppController::handleCheckFileDialogStatus() {
       // File Info
       ui_.set_num_frames(backend_.getFrameCount());
       ui_.set_total_atoms(backend_.getTotalAtomCount());
+      ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
     }
 
     current_file_dialog_.reset();

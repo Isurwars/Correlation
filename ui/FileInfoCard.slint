@@ -17,6 +17,7 @@ export component FileInfoCard inherits OutlinedCard {
     in property <bool> file_loaded;
     in property <int> num_frames;
     in property <int> total_atoms;
+    in property <int> removed_frames_count;
     in property <[AtomCount]> atom_counts;
 
     opacity: root.file_loaded ? 1.0 : 0.5;
@@ -58,6 +59,20 @@ export component FileInfoCard inherits OutlinedCard {
                 MaterialText {
                     text: root.total_atoms;
                     horizontal-alignment: right;
+                }
+            }
+
+            if (root.removed_frames_count > 0): HorizontalLayout {
+                MaterialText {
+                    text: "Removed Frames:";
+                    horizontal-stretch: 1;
+                    color: MaterialPalette.error;
+                }
+
+                MaterialText {
+                    text: root.removed_frames_count;
+                    horizontal-alignment: right;
+                    color: MaterialPalette.error;
                 }
             }
 

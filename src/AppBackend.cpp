@@ -47,9 +47,6 @@ std::string AppBackend::load_file(const std::string &path) {
   
   
   std::string msg = "File loaded: " + display_path;
-  if (trajectory_->getRemovedFrameCount() > 0) {
-      msg += "\nRemoving " + std::to_string(trajectory_->getRemovedFrameCount()) + " repeated frames";
-  }
   return msg;
 }
 
@@ -74,6 +71,12 @@ int AppBackend::getTotalAtomCount() const {
   if (!trajectory_ || trajectory_->getFrames().empty())
     return 0;
   return trajectory_->getFrames()[0].atomCount();
+}
+
+size_t AppBackend::getRemovedFrameCount() const {
+  if (!trajectory_)
+    return 0;
+  return trajectory_->getRemovedFrameCount();
 }
 
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {

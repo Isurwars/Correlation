@@ -1,15 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.9.9] 2026-02-03
+## [1.9.9] 2026-02-04
 
 ### Added
 - Implemented Velocity Autocorrelation Function (VACF) calculation.
 - Added `velocities_` storage and calculation to `Trajectory`.
 - Added `DynamicsAnalyzer` class for computing dynamic properties (VACF, Normalized VACF).
+- Automatic detection and removal of repeated frames during trajectory initialization.
 
 ### Changed
 - Added missing license headers to project files.
+- UI: Highlighted removed frames in red for better visibility.
 ## [1.9.8] 2026-02-02
 
 ### Added
