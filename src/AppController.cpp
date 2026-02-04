@@ -82,11 +82,11 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   ProgramOptions opt;
   const std::string input_path_str = ui_.get_in_file_text().data();
   std::filesystem::path full_path(input_path_str);
-  const std::string output_path_base =
-      full_path.parent_path().string() + "/" + full_path.stem().string();
+  std::filesystem::path output_path =
+      full_path.parent_path() / full_path.stem();
   opt.input_file = input_path_str;
-  opt.output_file_base = output_path_base;
-  opt.smoothing = true; // Smoothing is now always on by default
+  opt.output_file_base = output_path.make_preferred().string();
+  opt.smoothing = true;
   opt.use_hdf5 = ui_.get_use_hdf5();
   opt.use_csv = ui_.get_use_csv();
   opt.r_max = safe_stof(ui_.get_r_max(), opt.r_max);
