@@ -132,3 +132,57 @@ void Trajectory::removeDuplicatedFrames() {
       frames_ = std::move(unique_frames);
   }
 }
+
+void Trajectory::calculateVelocities() {
+  if (frames_.size() < 2) return;
+  size_t num_frames = frames_.size();
+  size_t num_atoms = frames_[0].atoms().size();
+  
+  velocities_.assign(num_frames, std::vector<linalg::Vector3<double>>(num_atoms));
+
+  if (time_step_ <= 0.0) return; // Cannot calculate valid velocities
+
+  for (size_t t = 0; t < num_frames; ++t) {
+      // Determine simulation box for PBC (using current frame)
+      const auto& lattice = frames_[t].latticeVectors();
+      linalg::Vector3<double> box = {lattice[0][0], lattice[1][1], lattice[2][2]};
+      // Check if box is valid (not zero), otherwise disable PBC correction
+      bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
+
+      // Helper lambda to get minimum image displacement
+      auto displacement = [&](const linalg::Vector3<double>& r2, const linalg::Vector3<double>& r1) {
+          linalg::Vector3<double> dr = r2 - r1;
+          if (use_pbc) {
+              if (dr[0] > box[0] * 0.5) dr[0] -= box[0];
+              if (dr[0] < -box[0] * 0.5) dr[0] += box[0];
+              if (dr[1] > box[1] * 0.5) dr[1] -= box[1];
+              if (dr[1] < -box[1] * 0.5) dr[1] += box[1];
+              if (dr[2] > box[2] * 0.5) dr[2] -= box[2];
+              if (dr[2] < -box[2] * 0.5) dr[2] += box[2];
+          }
+          return dr;
+      };
+
+      for (size_t i = 0; i < num_atoms; ++i) {
+          if (t == 0) {
+              // Forward difference for the first frame
+              // v(0) = (r(1) - r(0)) / dt
+              const auto& r0 = frames_[0].atoms()[i].position();
+              const auto& r1 = frames_[1].atoms()[i].position();
+              velocities_[t][i] = displacement(r1, r0) / time_step_;
+          } else if (t == num_frames - 1) {
+              // Backward difference for the last frame
+              // v(N) = (r(N) - r(N-1)) / dt
+              const auto& rN = frames_[num_frames - 1].atoms()[i].position();
+              const auto& rN_1 = frames_[num_frames - 2].atoms()[i].position();
+              velocities_[t][i] = displacement(rN, rN_1) / time_step_;
+          } else {
+              // Central difference for internal frames
+              // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
+              const auto& r_next = frames_[t + 1].atoms()[i].position();
+              const auto& r_prev = frames_[t - 1].atoms()[i].position();
+              velocities_[t][i] = displacement(r_next, r_prev) / (2.0 * time_step_);
+          }
+      }
+  }
+}

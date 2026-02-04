@@ -57,6 +57,18 @@ public:
    * element types using the elements from the first frame.
    */
   void precomputeBondCutoffs();
+
+  /**
+   * @brief Calculates velocities for all atoms in the trajectory using
+   * finite differences, accounting for periodic boundary conditions.
+   * Assumes constant time step.
+   * Populates the internal velocities_ vector.
+   */
+  void calculateVelocities();
+
+  const std::vector<std::vector<linalg::Vector3<double>>> &getVelocities() const {
+      return velocities_;
+  }
   
   const std::vector<std::vector<double>>& getBondCutoffs() const { return bond_cutoffs_sq_; }
 
@@ -64,5 +76,7 @@ private:
   void validateFrame(const Cell &new_frame) const;
   std::vector<Cell> frames_;
   std::vector<std::vector<double>> bond_cutoffs_sq_;
+  // Stores calculate velocities Vector<Atom<Vector<Velocity>>>
+  std::vector<std::vector<linalg::Vector3<double>>> velocities_; 
   double time_step_;
 };

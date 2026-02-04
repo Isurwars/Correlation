@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 1.9.8 LANGUAGES CXX)
+project(Correlation VERSION 1.9.9 LANGUAGES CXX)
 
 # Set the C++ standard as a target property, not a global variable.
 set(CXX_STANDARD 23)
@@ -27,6 +27,7 @@ include(cmake/Dependencies.cmake)
 add_library(correlation_lib STATIC
     src/Cell.cpp
     src/DistributionFunctions.cpp
+    src/DynamicsAnalyzer.cpp
     src/FileIO.cpp
     src/FileWriter.cpp
     src/StructureAnalyzer.cpp

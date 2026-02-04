@@ -11,6 +11,7 @@ add_executable(correlation_tests
     Distribution_Functions_tests.cpp
     FileIO_test.cpp
     FileWriter_test.cpp
+    DynamicsAnalyzer_test.cpp
     StructureAnalyzer_test.cpp
     AngleTests.cpp
     TrajectoryAnalyzer_test.cpp
