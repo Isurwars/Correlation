@@ -13,6 +13,7 @@ import {
     CheckBox,
     CheckState,
     TextField,
+    LinearProgressIndicator,
 } from "@material";
 
 export component RunAnalysisCard inherits OutlinedCard {
@@ -111,6 +112,15 @@ export component RunAnalysisCard inherits OutlinedCard {
 
         HorizontalLayout {
             spacing: MaterialStyleMetrics.spacing_8;
+            LinearProgressIndicator {
+                width: 100%;
+                progress: root.progress;
+                indeterminate: false;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
             analysis_area := TouchArea {
                 min-height: 40px;
                 horizontal-stretch: 1;
@@ -136,23 +146,6 @@ export component RunAnalysisCard inherits OutlinedCard {
                     clicked => {
                         root.write_files();
                     }
-                }
-            }
-        }
-
-        if (root.analysis_running): Rectangle {
-            height: 4px;
-            width: 100%;
-            background: MaterialPalette.surface;
-            Rectangle {
-                x: 0;
-                y: 0;
-                height: 100%;
-                width: root.progress * parent.width;
-                background: MaterialPalette.primary;
-                animate width {
-                    duration: 250ms;
-                    easing: ease-out;
                 }
             }
         }

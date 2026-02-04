@@ -208,8 +208,19 @@ void AppController::handleRunAnalysis() {
 
 void AppController::handleWriteFiles() {
   backend_.setOptions(handleOptionsfromUI(ui_));
-  backend_.write_files();
-  ui_.set_analysis_status_text("Files Written.");
+  
+  std::string default_path = backend_.options().output_file_base;
+  
+  current_save_dialog_ = std::make_unique<pfd::save_file>(
+      "Select Output File Name",
+      default_path,
+      std::vector<std::string>{"All Files", "*"},
+      pfd::opt::none
+  );
+
+  ui_.set_timer_running(true);
+  ui_.set_text_opacity(true);
+  ui_.set_analysis_status_text("Selecting output file...");
 }
 
 void AppController::handleBrowseFile() {
@@ -236,8 +247,8 @@ void AppController::handleBrowseFile() {
 }
 
 void AppController::handleCheckFileDialogStatus() {
-  std::string message = "File selection cancelled.";
   if (current_file_dialog_ && current_file_dialog_->ready(0)) {
+    std::string message = "File selection cancelled.";
     auto selection = current_file_dialog_->result();
     if (!selection.empty()) {
       ui_.set_in_file_text(slint::SharedString(selection[0]));
@@ -271,6 +282,26 @@ void AppController::handleCheckFileDialogStatus() {
     }
 
     current_file_dialog_.reset();
+  }
+
+  if (current_save_dialog_ && current_save_dialog_->ready(0)) {
+      std::string result = current_save_dialog_->result();
+      if (!result.empty()) {
+          std::filesystem::path p(result);
+          if (p.has_extension()) {
+              p.replace_extension("");
+          }
+           
+          ProgramOptions opts = handleOptionsfromUI(ui_);
+          opts.output_file_base = p.string();
+          backend_.setOptions(opts);
+          backend_.write_files();
+          ui_.set_analysis_status_text("Files Written.");
+      } else {
+          ui_.set_analysis_status_text("Save cancelled.");
+      }
+      ui_.set_timer_running(false);
+      current_save_dialog_.reset();
   }
 }
 

@@ -25,6 +25,7 @@ private:
 
   // Handle to the file dialog, moved here from main.cpp
   std::unique_ptr<pfd::open_file> current_file_dialog_;
+  std::unique_ptr<pfd::save_file> current_save_dialog_;
   
   // Analysis thread
   std::thread analysis_thread_;
