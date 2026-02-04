@@ -33,6 +33,7 @@ public:
   const std::vector<Cell> &getFrames() const { return frames_; }
   size_t getFrameCount() const { return frames_.size(); }
   double getTimeStep() const { return time_step_; }
+  void setTimeStep(double dt) { time_step_ = dt; }
   
   /**
    * @brief get a bond cut off for two given elements.

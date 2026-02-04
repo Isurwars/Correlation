@@ -42,6 +42,7 @@ export component AppWindow inherits Window {
     in-out property <int> removed_frames_count: 0;
     in-out property <[AtomCount]> atom_counts: [];
     in-out property <[BondCutoff]> bond_cutoffs: [];
+    in-out property <string> time_step: "1.0";
 
     // User-configurable options
     in-out property <string> in_file_text;
@@ -99,6 +100,7 @@ export component AppWindow inherits Window {
                     total_atoms: root.total_atoms;
                     removed_frames_count: root.removed_frames_count;
                     atom_counts: root.atom_counts;
+                    time_step <=> root.time_step;
                 }
 
                 BondCutoffsCard {

@@ -79,6 +79,12 @@ size_t AppBackend::getRemovedFrameCount() const {
   return trajectory_->getRemovedFrameCount();
 }
 
+double AppBackend::getTimeStep() const {
+  if (!trajectory_)
+    return 1.0;
+  return trajectory_->getTimeStep();
+}
+
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   if (!trajectory_ || trajectory_->getFrames().empty())
     return {};
@@ -141,6 +147,9 @@ void AppBackend::run_analysis() {
     // Ensure min_frame is within bounds
     size_t start_f = options_.min_frame;
     if (start_f >= trajectory_->getFrames().size()) start_f = 0; // Default to 0 if out of bounds
+    
+    trajectory_->setTimeStep(options_.time_step);
+    
     if (progress_callback_) progress_callback_(0.0f);
 
     // Define progress callbacks

@@ -31,6 +31,7 @@ struct ProgramOptions {
   KernelType smoothing_kernel = KernelType::Gaussian;
   int min_frame = 0;
   int max_frame = -1;
+  double time_step = 1.0;
   std::vector<std::vector<double>> bond_cutoffs_sq_;
 };
 
@@ -57,6 +58,7 @@ public:
   int getFrameCount() const;
   int getTotalAtomCount() const;
   size_t getRemovedFrameCount() const;
+  double getTimeStep() const;
   std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
   double getBondCutoff(int, int);
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);

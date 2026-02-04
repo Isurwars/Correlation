@@ -19,6 +19,7 @@ export component FileInfoCard inherits OutlinedCard {
     in property <int> total_atoms;
     in property <int> removed_frames_count;
     in property <[AtomCount]> atom_counts;
+    in-out property <string> time_step;
 
     opacity: root.file_loaded ? 1.0 : 0.5;
     VerticalLayout {

@@ -76,6 +76,7 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   } else {
       ui.set_max_frame(slint::SharedString(std::to_string(opt.max_frame)));
   }
+  ui.set_time_step(slint::SharedString(std::format("{:.2f}", opt.time_step)));
 };
 
 ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
@@ -146,6 +147,8 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   } catch (...) {
       opt.max_frame = -1;
   }
+
+  opt.time_step = safe_stof(ui_.get_time_step(), opt.time_step);
 
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs(ui_);
@@ -280,6 +283,7 @@ void AppController::handleCheckFileDialogStatus() {
       ui_.set_num_frames(backend_.getFrameCount());
       ui_.set_total_atoms(backend_.getTotalAtomCount());
       ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
+      ui_.set_time_step(slint::SharedString(std::format("{:.2f}", backend_.getTimeStep())));
     }
 
     current_file_dialog_.reset();
