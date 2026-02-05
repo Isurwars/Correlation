@@ -14,6 +14,7 @@
 #include "Smoothing.hpp"
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
+#include "DynamicsAnalyzer.hpp"
 
 #include <atomic>
 #include <future>
@@ -560,6 +561,46 @@ void DistributionFunctions::calculatePAD(double bin_width) {
     }
   }
   histograms_["f(theta)"] = std::move(f_theta);
+}
+
+//---------------------------------------------------------------------------//
+//----------------------------- Calculation VACF ----------------------------//
+//---------------------------------------------------------------------------//
+
+void DistributionFunctions::calculateVACF(const Trajectory &traj, int max_correlation_frames) {
+  const auto &velocities = traj.getVelocities();
+  if (velocities.empty()) {
+      // If velocities are not calculated, we cannot proceed. 
+      // It is the caller's responsibility to ensure velocities are present.
+      return; 
+  }
+
+  // Calculate Raw VACF
+  std::vector<double> raw_vacf = DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames);
+  if (raw_vacf.empty()) return;
+
+  size_t num_frames = raw_vacf.size();
+  double dt = traj.getTimeStep();
+
+  Histogram vacf_hist;
+  vacf_hist.bin_label = "Time";
+  vacf_hist.bins.resize(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+      vacf_hist.bins[i] = i * dt;
+  }
+  
+  vacf_hist.partials["Total"] = raw_vacf;
+  histograms_["VACF"] = std::move(vacf_hist);
+  
+  // Calculate Normalized VACF
+  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(traj, max_correlation_frames);
+  if (!norm_vacf.empty()) {
+      Histogram norm_vacf_hist;
+      norm_vacf_hist.bin_label = "Time";
+      norm_vacf_hist.bins = histograms_["VACF"].bins;
+      norm_vacf_hist.partials["Total"] = norm_vacf;
+      histograms_["Normalized VACF"] = std::move(norm_vacf_hist);
+  }
 }
 
 //---------------------------------------------------------------------------//

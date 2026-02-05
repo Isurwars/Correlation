@@ -178,6 +178,14 @@ void AppBackend::run_analysis() {
     // Run parallel analysis
     df_ = DistributionFunctions::computeMean(*trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 
+    if (df_) {
+        // Ensure velocities are calculated for VACF
+        if (trajectory_->getVelocities().empty()) {
+             trajectory_->calculateVelocities();
+        }
+        df_->calculateVACF(*trajectory_);
+    }
+
   } catch (const std::exception &e) {
     std::cerr << "Error during analysis: " << e.what() << std::endl;
   }

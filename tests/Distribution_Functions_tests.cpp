@@ -282,6 +282,7 @@ TEST_F(DistributionFunctionsTest, AccumulationAndScalingWorks) {
   }
 }
 
+
 TEST_F(DistributionFunctionsTest, ComputeMeanMatchesSequential) {
   // Arrange
   Cell cell1 = cell_; 
@@ -328,4 +329,40 @@ TEST_F(DistributionFunctionsTest, ComputeMeanMatchesSequential) {
   for(size_t i=0; i<h_auto.size(); ++i) {
       EXPECT_NEAR(h_auto[i], h_manual[i], 1e-9);
   }
+}
+
+TEST_F(DistributionFunctionsTest, CalculateVACFReturnsCorrectValues) {
+  // Arrange
+  Cell c1({10,10,10,90,90,90}); c1.addAtom("Ar", {0,0,0});
+  Cell c2({10,10,10,90,90,90}); c2.addAtom("Ar", {1,0,0});
+  Cell c3({10,10,10,90,90,90}); c3.addAtom("Ar", {2,0,0});
+  
+  Trajectory traj;
+  traj.addFrame(c1); traj.addFrame(c2); traj.addFrame(c3);
+  traj.setTimeStep(1.0);
+  traj.calculateVelocities();
+  
+  // Dummy cutoffs
+  std::vector<std::vector<double>> cutoffs = {{0.0}};
+  DistributionFunctions df(c1, 0.0, cutoffs);
+  
+  // Act
+  df.calculateVACF(traj, 2);
+  
+  // Assert
+  ASSERT_NO_THROW(df.getHistogram("VACF"));
+  const auto& hist = df.getHistogram("VACF");
+  const auto& total = hist.partials.at("Total");
+  
+  // With constant velocity (1,0,0), VACF should be constant 1.0
+  EXPECT_EQ(total.size(), 3); 
+  EXPECT_NEAR(total[0], 1.0, 1e-6);
+  EXPECT_NEAR(total[1], 1.0, 1e-6);
+  
+  // Check Normalized VACF
+  ASSERT_NO_THROW(df.getHistogram("Normalized VACF"));
+  const auto& norm_hist = df.getHistogram("Normalized VACF");
+  const auto& norm_total = norm_hist.partials.at("Total");
+  EXPECT_NEAR(norm_total[0], 1.0, 1e-6);
+  EXPECT_NEAR(norm_total[1], 1.0, 1e-6);
 }

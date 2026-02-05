@@ -89,6 +89,12 @@ public:
 
   void calculatePAD(double bin_width = 1.0);
 
+  /**
+   * @brief Calculates the Velocity Autocorrelation Function (VACF).
+   * @param max_correlation_frames Maximum lag frames. -1 uses default (half trajectory).
+   */
+  void calculateVACF(const Trajectory &traj, int max_correlation_frames = -1);
+
   void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
                    double r_integration_max = 8.0);
 
