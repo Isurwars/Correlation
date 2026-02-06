@@ -78,9 +78,6 @@ target_include_directories(correlation PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-# Set the style for Slint
-set_property(GLOBAL PROPERTY SLINT_STYLE "material")
-
 slint_target_sources(correlation
   ui/AppWindow.slint
   LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/material-1.0/material.slint
