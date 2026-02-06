@@ -33,9 +33,9 @@ export component FileInfoCard inherits OutlinedCard {
         VerticalLayout {
             spacing: MaterialStyleMetrics.spacing_4;
 
-            Text {
+            MaterialText {
                 text: root.file_status_text;
-                color: MaterialPalette.on_surface;
+                horizontal-stretch: 1;
                 wrap: word-wrap;
             }
 

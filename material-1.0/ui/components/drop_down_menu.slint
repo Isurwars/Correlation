@@ -23,14 +23,18 @@ export component DropDownMenu {
     property <int> max_displayed_items: 6;
     property <string> text <=> text_field.text;
 
-    min_width: text_field.min_width;
+    min_width: text_field.min_width - MaterialStyleMetrics.size_40;
+    preferred_width: text_field.preferred_width - MaterialStyleMetrics.size_38;
     min_height: MaterialStyleMetrics.size_40;
     preferred_height: MaterialStyleMetrics.size_40;
-    forward_focus: text_field; accessible-role: combobox;
+    forward_focus: text_field;
+    accessible-role: combobox;
     accessible_enabled: root.enabled;
     accessible_expandable: true;
     accessible_value <=> text_field.text;
-    accessible_action_expand => { menu.show(); }
+    accessible_action_expand => {
+        menu.show();
+    }
 
     text_field := TextField {
         width: 100%;
@@ -84,7 +88,7 @@ export component DropDownMenu {
             }
 
             Rectangle {
-                width: 100%;
+                width: root.width;
                 height: min(max(root.item_height, items.length * root.item_height), root.max_displayed_items * root.item_height);
                 background: MaterialPalette.surface_container;
 
@@ -116,7 +120,6 @@ export component DropDownMenu {
             text_field.text = "";
             return;
         }
-
         text_field.text = root.items[index].text;
     }
 

@@ -88,14 +88,14 @@ export component AppToolTips inherits Rectangle {
     }
 
     ToolTip {
-        x: mouse_x + 20px;
+        x: mouse_x - 240px;
         y: mouse_y + 20px;
-        text: "If enabled, the results will be exported to a single HDF5 file in addition to the CSV files.";
+        text: "If enabled, the results will be exported to a single HDF5 file.";
         visible: hdf5_hover;
     }
 
     ToolTip {
-        x: mouse_x + 20px;
+        x: mouse_x - 240px;
         y: mouse_y + 20px;
         text: "If enabled, the results will be exported as CSV files.";
         visible: csv_hover;

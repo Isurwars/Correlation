@@ -17,7 +17,7 @@ component BaseCard {
 
     forward_focus: state_layer;
 
-    if root.has_elevation : Elevation {
+    if root.has_elevation: Elevation {
         width: 100%;
         height: 100%;
         border_radius: background_layer.border_radius;
@@ -26,7 +26,7 @@ component BaseCard {
 
     background_layer := Rectangle {
         background: root.background;
-        border_radius: MaterialStyleMetrics.border_radius_12;
+        border_radius: MaterialStyleMetrics.border_radius_2;
         border_width: root.border_width;
         border_color: root.border_color;
     }
@@ -45,7 +45,7 @@ component BaseCard {
 
     Rectangle {
         clip: true;
-        border_radius: MaterialStyleMetrics.border_radius_12;
+        border_radius: MaterialStyleMetrics.border_radius_2;
 
         @children
     }
@@ -59,7 +59,9 @@ export component ElevatedCard {
     forward_focus: base;
     accessible-role: button;
     accessible-enabled: root.clickable;
-    accessible-action-default => { base.clicked(); }
+    accessible-action-default => {
+        base.clicked();
+    }
 
     base := BaseCard {
         width: 100%;
@@ -79,7 +81,9 @@ export component FilledCard {
     forward_focus: base;
     accessible-role: button;
     accessible-enabled: root.clickable;
-    accessible-action-default => { base.clicked(); }
+    accessible-action-default => {
+        base.clicked();
+    }
 
     base := BaseCard {
         width: 100%;
@@ -98,7 +102,9 @@ export component OutlinedCard {
     forward_focus: base;
     accessible-role: button;
     accessible-enabled: root.clickable;
-    accessible-action-default => { base.clicked(); }
+    accessible-action-default => {
+        base.clicked();
+    }
 
     base := BaseCard {
         width: 100%;
