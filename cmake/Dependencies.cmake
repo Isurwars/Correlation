@@ -25,6 +25,7 @@ find_package(Slint QUIET)
 if(Slint_FOUND)
   message(STATUS "Found Slint: ${Slint_DIR} (Version: ${Slint_VERSION})")
 else()
+  set(SLINT_STYLE "material-dark" CACHE STRING "Slint style to use")
   message(STATUS "Slint not found. Downloading Slint from GitHub...")
   FetchContent_Declare(
     Slint
