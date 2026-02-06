@@ -282,7 +282,7 @@ protected:
 #if _WIN32
   static int CALLBACK bffcallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM pData);
 #if PFD_HAS_IFILEDIALOG
-  std::string select_folder_vista(IFileDialog *ifd, bool force_path);
+  std::string select_folder_vista(IFileDialog *ifd, bool force_path, HWND parent_window);
 #endif
 
   std::wstring m_wtitle;
@@ -983,9 +983,10 @@ inline internal::file_dialog::file_dialog(
     filter_list += std::regex_replace(filters[i + 1], whitespace, ";") + '\0';
   }
   filter_list += '\0';
+  HWND parent_hwnd = GetActiveWindow();
 
   m_async->start_func([this, in_type, title, default_path, filter_list,
-                       options](int *exit_code) -> std::string {
+                       options, parent_hwnd](int *exit_code) -> std::string {
     (void)exit_code;
     m_wtitle = internal::str2wstr(title);
     m_wdefault_path = internal::str2wstr(default_path);
@@ -1013,7 +1014,7 @@ inline internal::file_dialog::file_dialog(
         // In case CoCreateInstance fails (which it should not), try legacy
         // approach
         if (SUCCEEDED(hr))
-          return select_folder_vista(ifd, options & opt::force_path);
+          return select_folder_vista(ifd, options & opt::force_path, parent_hwnd);
       }
 #endif
 
@@ -1045,7 +1046,7 @@ inline internal::file_dialog::file_dialog(
     OPENFILENAMEW ofn;
     memset(&ofn, 0, sizeof(ofn));
     ofn.lStructSize = sizeof(OPENFILENAMEW);
-    ofn.hwndOwner = GetActiveWindow();
+    ofn.hwndOwner = parent_hwnd;
 
     ofn.lpstrFilter = wfilter_list.c_str();
 
@@ -1308,7 +1309,8 @@ inline int CALLBACK internal::file_dialog::bffcallback(HWND hwnd, UINT uMsg,
 
 #if PFD_HAS_IFILEDIALOG
 inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd,
-                                                              bool force_path) {
+                                                              bool force_path,
+                                                              HWND parent_window) {
   std::string result;
 
   IShellItem *folder;
@@ -1343,7 +1345,7 @@ inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd,
   ifd->SetOptions(FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM);
   ifd->SetTitle(m_wtitle.c_str());
 
-  hr = ifd->Show(GetActiveWindow());
+  hr = ifd->Show(parent_window);
   if (SUCCEEDED(hr)) {
     IShellItem *item;
     hr = ifd->GetResult(&item);
@@ -1540,13 +1542,15 @@ inline message::message(std::string const &title, std::string const &text,
   m_mappings[IDRETRY] = button::retry;
   m_mappings[IDIGNORE] = button::ignore;
 
-  m_async->start_func([text, title, style](int *exit_code) -> std::string {
+  HWND parent_hwnd = GetActiveWindow();
+
+  m_async->start_func([text, title, style, parent_hwnd](int *exit_code) -> std::string {
     auto wtext = internal::str2wstr(text);
     auto wtitle = internal::str2wstr(title);
     // Apply new visual style (required for all Windows versions)
     new_style_context ctx;
     *exit_code =
-        MessageBoxW(GetActiveWindow(), wtext.c_str(), wtitle.c_str(), style);
+        MessageBoxW(parent_hwnd, wtext.c_str(), wtitle.c_str(), style);
     return "";
   });
 
