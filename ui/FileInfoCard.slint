@@ -41,6 +41,7 @@ export component FileInfoCard inherits OutlinedCard {
             }
 
             HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
                 MaterialText {
                     text: "Frames:";
                     horizontal-stretch: 1;
@@ -53,6 +54,7 @@ export component FileInfoCard inherits OutlinedCard {
             }
 
             HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
                 MaterialText {
                     text: "Total Atoms:";
                     horizontal-stretch: 1;
@@ -65,6 +67,7 @@ export component FileInfoCard inherits OutlinedCard {
             }
 
             if (root.removed_frames_count > 0): HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
                 MaterialText {
                     text: "Removed Frames:";
                     horizontal-stretch: 1;
@@ -84,10 +87,12 @@ export component FileInfoCard inherits OutlinedCard {
             }
 
             if (root.num_frames > 0): HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
                 TextField {
                     label: "Time Step (fs)";
                     horizontal-stretch: 1;
                     text <=> root.time_step;
+                    height: MaterialStyleMetrics.size_40;
                 }
             }
 
@@ -97,6 +102,7 @@ export component FileInfoCard inherits OutlinedCard {
             }
 
             for info in root.atom_counts: HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
                 MaterialText {
                     text: info.symbol + ":";
                     horizontal-stretch: 1;
