@@ -40,17 +40,17 @@ export component BaseButton inherits StateLayerArea {
         spacing: root.spacing;
         alignment: center;
 
-        if root.has_icon || root.has_avatar : VerticalLayout {
+        if root.has_icon || root.has_avatar: VerticalLayout {
             alignment: center;
 
-            if root.has_avatar && root.avatar_size > 0 : Avatar {
+            if root.has_avatar && root.avatar_size > 0: Avatar {
                 width: root.avatar_size;
                 height: self.width;
                 image: root.avatar_icon;
                 background: root.avatar_background;
             }
 
-            if root.has_icon : Icon {
+            if root.has_icon: Icon {
                 source: root.icon;
                 colorize: root.icon_color;
                 opacity: root.enabled ? 100% : 38%;
@@ -58,13 +58,14 @@ export component BaseButton inherits StateLayerArea {
             }
         }
 
-        if root.text != "" : MaterialText {
+        if root.text != "": MaterialText {
             text: root.text;
             style: MaterialTypography.label_large;
             color: root.color;
             opacity: root.enabled ? 100% : 38%;
             overflow: clip;
             vertical_alignment: center;
+            horizontal_alignment: center;
         }
 
         @children

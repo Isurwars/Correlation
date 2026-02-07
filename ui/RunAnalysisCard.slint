@@ -127,7 +127,7 @@ export component RunAnalysisCard inherits OutlinedCard {
                 FilledButton {
                     height: 100%;
                     width: 100%;
-                    text: root.analysis_running ? "Analysis in Progress..." : "Run Analysis";
+                    text: root.analysis_running ? "In Progress..." : "Run Analysis";
                     enabled: root.file_loaded && !root.analysis_running;
                     clicked => {
                         root.run_analysis();

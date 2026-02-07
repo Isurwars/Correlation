@@ -62,8 +62,8 @@ export component AppWindow inherits Window {
 
     preferred-width: 600px;
     preferred-height: 570px + bond_cutoffs.length * 25px;
-    min-width: 550px;
-    min-height: 520px + bond_cutoffs.length * 25px;
+    min-width: 580px;
+    min-height: 550px + bond_cutoffs.length * 25px;
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
@@ -85,7 +85,8 @@ export component AppWindow inherits Window {
             spacing: MaterialStyleMetrics.spacing_4;
 
             VerticalLayout {
-                width: 210px;
+                width: 230px;
+                padding: MaterialStyleMetrics.padding_4;
                 spacing: MaterialStyleMetrics.spacing_8;
                 input_card := InputFileCard {
                     browse_file => {
@@ -111,6 +112,7 @@ export component AppWindow inherits Window {
 
             VerticalLayout {
                 min-width: 300px;
+                padding: MaterialStyleMetrics.padding_4;
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 options_card := OptionsCard {

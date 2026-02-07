@@ -78,7 +78,8 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
   const std::map<std::string, std::string> file_map = {
       {"g(r)", "_g.csv"},       {"J(r)", "_J.csv"}, {"G(r)", "__G.csv"},
       {"f(theta)", "_PAD.csv"}, {"S(Q)", "_S.csv"}, {"XRD", "_XRD.csv"},
-      {"CN", "_CN.csv"}};
+      {"CN", "_CN.csv"}, {"VACF", "_VACF.csv"},
+      {"Normalized VACF", "_VACF_norm.csv"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {
@@ -115,7 +116,10 @@ void FileWriter::writeHDF(const std::string &filename) const {
       {"f(theta)", {"Degrees", "degree^-1", "Bond Angle Distribution"}},
       {"S(Q)", {"inverse Angstrom", "arbitrary units", "Structure Factor"}},
       {"XRD", {"Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
-      {"CN", {"Angstrom", "Count", "Coordination Number"}}};
+      {"CN", {"Angstrom", "Count", "Coordination Number"}},
+      {"VACF", {"fs", "Angstrom^2/fs^2", "Velocity Autocorrelation Function"}},
+      {"Normalized VACF",
+       {"fs", "normalized", "Normalized Velocity Autocorrelation Function"}}};
 
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
@@ -135,6 +139,8 @@ void FileWriter::writeHDF(const std::string &filename) const {
       
       // Also replace '/' with '_' just in case
       std::replace(group_name.begin(), group_name.end(), '/', '_');
+      // Replace spaces with underscores
+      std::replace(group_name.begin(), group_name.end(), ' ', '_');
 
       HighFive::Group group = file.createGroup(group_name);
 

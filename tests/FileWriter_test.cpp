@@ -55,6 +55,7 @@ protected:
     std::remove("test_si__G_smoothed.csv");
     std::remove("test_si_PAD_smoothed.csv");
     std::remove("test_si.h5");
+    std::remove("test_vacf.h5");
   }
 
   // Helper to check if a file exists and is not empty.
@@ -193,3 +194,81 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   // Check that data has DIMENSION_LIST
   EXPECT_TRUE(si_si_ds.hasAttribute("DIMENSION_LIST"));
 }
+
+TEST_F(FileWriterTest, WritesVACFMetadata) {
+  // Arrange
+  FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
+  Cell frame1 = FileIO::readStructure("si_crystal.car", type);
+  
+  // Create frame2 with same lattice
+  auto lv = frame1.latticeVectors();
+  Cell frame2(lv[0], lv[1], lv[2]);
+
+  // Modify frame2 slightly to create velocity
+  for (const auto &atom : frame1.atoms()) {
+    auto pos = atom.position();
+    pos.x() += 0.1;
+    frame2.addAtom(atom.element().symbol, pos);
+  }
+
+  Trajectory trajectory;
+  trajectory.addFrame(frame1);
+  trajectory.addFrame(frame2);
+  trajectory.setTimeStep(1.0); // 1 fs
+  trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
+  trajectory.calculateVelocities();
+
+  DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffs());
+  df.calculateVACF(trajectory, 1);
+
+  FileWriter writer(df);
+  writer.writeHDF("test_vacf.h5");
+
+  // Assert
+  ASSERT_TRUE(fileExistsAndIsNotEmpty("test_vacf.h5"));
+  HighFive::File file("test_vacf.h5", HighFive::File::ReadOnly);
+
+  // Check VACF
+  EXPECT_TRUE(file.exist("VACF"));
+  HighFive::Group vacf_group = file.getGroup("VACF");
+
+  // Description
+  EXPECT_TRUE(vacf_group.hasAttribute("description"));
+  std::string description;
+  vacf_group.getAttribute("description").read(description);
+  EXPECT_EQ(description, "Velocity Autocorrelation Function");
+
+  // Bin units
+  HighFive::DataSet bins_ds = vacf_group.getDataSet("bins");
+  EXPECT_TRUE(bins_ds.hasAttribute("units"));
+  std::string bin_units;
+  bins_ds.getAttribute("units").read(bin_units);
+  EXPECT_EQ(bin_units, "fs");
+
+  // Data units
+  HighFive::Group raw_group = vacf_group.getGroup("raw");
+  HighFive::DataSet total_ds = raw_group.getDataSet("Total");
+  EXPECT_TRUE(total_ds.hasAttribute("units"));
+  std::string data_units;
+  total_ds.getAttribute("units").read(data_units);
+  EXPECT_EQ(data_units, "Angstrom^2/fs^2");
+
+  // Check Normalized VACF
+  EXPECT_TRUE(file.exist("Normalized_VACF"));
+  HighFive::Group norm_vacf_group = file.getGroup("Normalized_VACF");
+
+  // Description
+  EXPECT_TRUE(norm_vacf_group.hasAttribute("description"));
+  std::string norm_desc;
+  norm_vacf_group.getAttribute("description").read(norm_desc);
+  EXPECT_EQ(norm_desc, "Normalized Velocity Autocorrelation Function");
+
+  // Data units
+  HighFive::Group norm_raw_group = norm_vacf_group.getGroup("raw");
+  HighFive::DataSet norm_total_ds = norm_raw_group.getDataSet("Total");
+  EXPECT_TRUE(norm_total_ds.hasAttribute("units"));
+  std::string norm_data_units;
+  norm_total_ds.getAttribute("units").read(norm_data_units);
+  EXPECT_EQ(norm_data_units, "normalized");
+}
+

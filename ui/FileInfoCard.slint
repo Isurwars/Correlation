@@ -9,6 +9,7 @@ import {
     MaterialPalette,
     OutlinedCard,
     MaterialText,
+    TextField,
 } from "@material";
 import { AtomCount } from "Types.slint";
 
@@ -74,6 +75,19 @@ export component FileInfoCard inherits OutlinedCard {
                     text: root.removed_frames_count;
                     horizontal-alignment: right;
                     color: MaterialPalette.error;
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            if (root.num_frames > 0): HorizontalLayout {
+                TextField {
+                    label: "Time Step (fs)";
+                    horizontal-stretch: 1;
+                    text <=> root.time_step;
                 }
             }
 
