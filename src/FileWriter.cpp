@@ -109,16 +109,16 @@ void FileWriter::writeHDF(const std::string &filename) const {
 
   // Metadata mapping
   const std::map<std::string, FunctionMetadata> metadata_map = {
-      {"g(r)", {"r (Angstrom)", "Angstrom", "Angstrom^-1", "Radial Distribution Function"}},
+      {"g(r)", {"r (Å)", "Å", "Å^-1", "Radial Distribution Function"}},
       {"J(r)",
-       {"r (Angstrom)", "Angstrom", "Angstrom^-1", "Radial Distribution of Electron Density"}},
+       {"r (Å)", "Å", "Å^-1", "Radial Distribution of Electron Density"}},
       {"G(r)",
-       {"r (Angstrom)", "Angstrom", "Angstrom^-1", "Reduced Radial Distribution Function"}},
+       {"r (Å)", "Å", "Å^-1", "Reduced Radial Distribution Function"}},
       {"f(theta)", {"theta (angle)", "Degrees", "degree^-1", "Bond Angle Distribution"}},
-      {"S(Q)", {"q (Angstrom^-1)", "inverse Angstrom", "arbitrary units", "Structure Factor"}},
+      {"S(Q)", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
       {"XRD", {"2theta", "Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
       {"CN", {"counts", "neighbors", "Count", "Coordination Number"}},
-      {"VACF", {"Time (fs)", "fs", "Angstrom^2/fs^2", "Velocity Autocorrelation Function"}},
+      {"VACF", {"Time (fs)", "fs", "Å^2/fs^2", "Velocity Autocorrelation Function"}},
       {"Normalized VACF",
        {"Time (fs)", "fs", "normalized", "Normalized Velocity Autocorrelation Function"}}};
 
@@ -172,8 +172,38 @@ void FileWriter::writeHDF(const std::string &filename) const {
             .write(description);
       }
 
-      // Store bins as a dataset
-      HighFive::DataSet bins_ds = group.createDataSet("bins", hist.bins);
+      // Store raw partials
+      for (const auto &[key, data] : hist.partials) {
+        // Create (N, 1) datasource for column vector
+        HighFive::DataSpace dataspace({data.size(), 1});
+        HighFive::DataSet ds = group.createDataSet(key, dataspace, HighFive::create_datatype<double>());
+        ds.write_raw(data.data()); // Use write_raw to bypass dimension check for (N) vs (N, 1)
+        
+        ds.createAttribute<std::string>("units",
+                                        HighFive::DataSpace::From(data_unit))
+            .write(data_unit);
+      }
+
+      // Store smoothed partials if any
+      if (!hist.smoothed_partials.empty()) {
+        for (const auto &[key, data] : hist.smoothed_partials) {
+          std::string smoothed_key = key + "_smoothed";
+          // Create (N, 1) datasource for column vector
+          HighFive::DataSpace dataspace({data.size(), 1});
+          HighFive::DataSet ds = group.createDataSet(smoothed_key, dataspace, HighFive::create_datatype<double>());
+          ds.write_raw(data.data()); // Use write_raw
+
+          ds.createAttribute<std::string>("units",
+                                          HighFive::DataSpace::From(data_unit))
+              .write(data_unit);
+        }
+      }
+
+      // Store bins as a dataset - WRITTEN LAST to hopefully appear first in LIFO readers
+      // Create (N, 1) datasource for column vector
+      HighFive::DataSpace user_bins_dataspace({hist.bins.size(), 1});
+      HighFive::DataSet bins_ds = group.createDataSet("bins", user_bins_dataspace, HighFive::create_datatype<double>());
+      bins_ds.write_raw(hist.bins.data()); // Use write_raw
       
       // Make it a dimension scale using C API
       if (H5DSset_scale(bins_ds.getId(), dim_label.c_str()) < 0) {
@@ -190,31 +220,16 @@ void FileWriter::writeHDF(const std::string &filename) const {
                "bin_label", HighFive::DataSpace::From(dim_label))
           .write(dim_label);
 
-      // Store raw partials
-      for (const auto &[key, data] : hist.partials) {
-        HighFive::DataSet ds = group.createDataSet(key, data);
-        ds.createAttribute<std::string>("units",
-                                        HighFive::DataSpace::From(data_unit))
-            .write(data_unit);
-        // Attach scale using C API
-        if (H5DSattach_scale(ds.getId(), bins_ds.getId(), 0) < 0) {
-             std::cerr << "Warning: Failed to attach dimension scale for " << key << std::endl;
-        }
-      }
-
-      // Store smoothed partials if any
-      if (!hist.smoothed_partials.empty()) {
-        for (const auto &[key, data] : hist.smoothed_partials) {
-          std::string smoothed_key = key + "_smoothed";
-          HighFive::DataSet ds = group.createDataSet(smoothed_key, data);
-          ds.createAttribute<std::string>("units",
-                                          HighFive::DataSpace::From(data_unit))
-              .write(data_unit);
-          // Attach scale using C API
+      // Attach scales to all previously created datasets
+      // We have to iterate again or keep track of them. 
+      // Since we just created them, let's iterate over the group's children to attach scales
+      for (const auto& ds_name : group.listObjectNames()) {
+          if (ds_name == "bins") continue;
+          
+          HighFive::DataSet ds = group.getDataSet(ds_name);
           if (H5DSattach_scale(ds.getId(), bins_ds.getId(), 0) < 0) {
-               std::cerr << "Warning: Failed to attach dimension scale for " << smoothed_key << std::endl;
+               std::cerr << "Warning: Failed to attach dimension scale for " << ds_name << std::endl;
           }
-        }
       }
     }
   } catch (const HighFive::Exception &err) {

@@ -167,14 +167,14 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   EXPECT_TRUE(bins_ds.hasAttribute("units"));
   std::string bin_units;
   bins_ds.getAttribute("units").read(bin_units);
-  EXPECT_EQ(bin_units, "Angstrom");
+  EXPECT_EQ(bin_units, "Å");
 
   // Check data units
   HighFive::DataSet si_si_ds = g_group.getDataSet("Si-Si");
   EXPECT_TRUE(si_si_ds.hasAttribute("units"));
   std::string data_units;
   si_si_ds.getAttribute("units").read(data_units);
-  EXPECT_EQ(data_units, "Angstrom^-1");
+  EXPECT_EQ(data_units, "Å^-1");
 
   // Check attribute
   EXPECT_TRUE(g_group.hasAttribute("bin_label"));
@@ -248,7 +248,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   EXPECT_TRUE(total_ds.hasAttribute("units"));
   std::string data_units;
   total_ds.getAttribute("units").read(data_units);
-  EXPECT_EQ(data_units, "Angstrom^2/fs^2");
+  EXPECT_EQ(data_units, "Å^2/fs^2");
 
   // Check Normalized VACF
   EXPECT_TRUE(file.exist("Normalized_VACF"));
@@ -267,4 +267,5 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   norm_total_ds.getAttribute("units").read(norm_data_units);
   EXPECT_EQ(norm_data_units, "normalized");
 }
+
 
