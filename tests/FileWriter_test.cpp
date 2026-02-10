@@ -154,8 +154,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
 
   HighFive::Group g_group = file.getGroup("g_r");
   EXPECT_TRUE(g_group.exist("bins"));
-  EXPECT_TRUE(g_group.exist("raw"));
-  EXPECT_TRUE(g_group.getGroup("raw").exist("Si-Si"));
+  EXPECT_TRUE(g_group.exist("Si-Si"));
 
   // Check group description
   EXPECT_TRUE(g_group.hasAttribute("description"));
@@ -171,8 +170,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   EXPECT_EQ(bin_units, "Angstrom");
 
   // Check data units
-  HighFive::Group raw_group = g_group.getGroup("raw");
-  HighFive::DataSet si_si_ds = raw_group.getDataSet("Si-Si");
+  HighFive::DataSet si_si_ds = g_group.getDataSet("Si-Si");
   EXPECT_TRUE(si_si_ds.hasAttribute("units"));
   std::string data_units;
   si_si_ds.getAttribute("units").read(data_units);
@@ -246,8 +244,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   EXPECT_EQ(bin_units, "fs");
 
   // Data units
-  HighFive::Group raw_group = vacf_group.getGroup("raw");
-  HighFive::DataSet total_ds = raw_group.getDataSet("Total");
+  HighFive::DataSet total_ds = vacf_group.getDataSet("Total");
   EXPECT_TRUE(total_ds.hasAttribute("units"));
   std::string data_units;
   total_ds.getAttribute("units").read(data_units);
@@ -264,8 +261,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   EXPECT_EQ(norm_desc, "Normalized Velocity Autocorrelation Function");
 
   // Data units
-  HighFive::Group norm_raw_group = norm_vacf_group.getGroup("raw");
-  HighFive::DataSet norm_total_ds = norm_raw_group.getDataSet("Total");
+  HighFive::DataSet norm_total_ds = norm_vacf_group.getDataSet("Total");
   EXPECT_TRUE(norm_total_ds.hasAttribute("units"));
   std::string norm_data_units;
   norm_total_ds.getAttribute("units").read(norm_data_units);

@@ -183,9 +183,8 @@ void FileWriter::writeHDF(const std::string &filename) const {
           .write(hist.bin_label);
 
       // Store raw partials
-      HighFive::Group raw_group = group.createGroup("raw");
       for (const auto &[key, data] : hist.partials) {
-        HighFive::DataSet ds = raw_group.createDataSet(key, data);
+        HighFive::DataSet ds = group.createDataSet(key, data);
         ds.createAttribute<std::string>("units",
                                         HighFive::DataSpace::From(data_unit))
             .write(data_unit);
@@ -197,15 +196,15 @@ void FileWriter::writeHDF(const std::string &filename) const {
 
       // Store smoothed partials if any
       if (!hist.smoothed_partials.empty()) {
-        HighFive::Group smoothed_group = group.createGroup("smoothed");
         for (const auto &[key, data] : hist.smoothed_partials) {
-          HighFive::DataSet ds = smoothed_group.createDataSet(key, data);
+          std::string smoothed_key = key + "_smoothed";
+          HighFive::DataSet ds = group.createDataSet(smoothed_key, data);
           ds.createAttribute<std::string>("units",
                                           HighFive::DataSpace::From(data_unit))
               .write(data_unit);
           // Attach scale using C API
           if (H5DSattach_scale(ds.getId(), bins_ds.getId(), 0) < 0) {
-               std::cerr << "Warning: Failed to attach dimension scale for " << key << " (smoothed)" << std::endl;
+               std::cerr << "Warning: Failed to attach dimension scale for " << smoothed_key << std::endl;
           }
         }
       }
