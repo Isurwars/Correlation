@@ -11,6 +11,7 @@ import {
     MaterialText,
 } from "@material";
 import { BondCutoff } from "Types.slint";
+import { ScrollView } from "@material";
 
 export component BondCutoffsCard inherits OutlinedCard {
     in property <bool> file_loaded;
@@ -24,26 +25,32 @@ export component BondCutoffsCard inherits OutlinedCard {
             style: MaterialTypography.title_small;
         }
 
-        VerticalLayout {
-            spacing: MaterialStyleMetrics.spacing_4;
-            padding: MaterialStyleMetrics.padding_4;
-            for cutoff[i] in root.bond_cutoffs: HorizontalLayout {
-                alignment: center;
+        ScrollView {
+            vertical-stretch: 0;
+            height: min(list_layout.preferred-height, 150px);
+            viewport-height: list_layout.preferred-height;
+            viewport-width: list_layout.preferred-width;
+            list_layout := VerticalLayout {
                 spacing: MaterialStyleMetrics.spacing_4;
-                MaterialText {
-                    min-width: 80px;
-                    text: cutoff.element1 + " - " + cutoff.element2 + ":";
-                    vertical-alignment: center;
-                    horizontal-stretch: 1;
-                }
+                padding: MaterialStyleMetrics.padding_4;
+                for cutoff[i] in root.bond_cutoffs: HorizontalLayout {
+                    alignment: center;
+                    spacing: MaterialStyleMetrics.spacing_4;
+                    MaterialText {
+                        min-width: 80px;
+                        text: cutoff.element1 + " - " + cutoff.element2 + ":";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
 
-                TextField {
-                    enabled: root.file_loaded;
-                    min-width: 100px;
-                    text: cutoff.distance;
-                    label: "Cutoff (Å)";
-                    edited(s) => {
-                        root.bond_cutoffs[i].distance = s;
+                    TextField {
+                        enabled: root.file_loaded;
+                        min-width: 100px;
+                        text: cutoff.distance;
+                        label: "Cutoff (Å)";
+                        edited(s) => {
+                            root.bond_cutoffs[i].distance = s;
+                        }
                     }
                 }
             }
