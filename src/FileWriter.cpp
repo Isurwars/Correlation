@@ -101,7 +101,7 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
 void FileWriter::writeHDF(const std::string &filename) const {
   // Define metadata structure
   struct FunctionMetadata {
-    std::string bin_label; // Added bin_label
+    std::string bin_label;
     std::string bin_unit;
     std::string data_unit;
     std::string description;
@@ -172,12 +172,14 @@ void FileWriter::writeHDF(const std::string &filename) const {
             .write(description);
       }
 
+      HighFive::DataSet bins_ds = group.createDataSet("bins", hist.bins);
+      bins_ds.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
+      bins_ds.createAttribute<std::string>("long_name", HighFive::DataSpace::From(dim_label)).write(dim_label);
+      
+
       // Store raw partials
       for (const auto &[key, data] : hist.partials) {
-        // Create (N, 1) datasource for column vector
-        HighFive::DataSpace dataspace({data.size(), 1});
-        HighFive::DataSet ds = group.createDataSet(key, dataspace, HighFive::create_datatype<double>());
-        ds.write_raw(data.data()); // Use write_raw to bypass dimension check for (N) vs (N, 1)
+        HighFive::DataSet ds = group.createDataSet(key, data);
         
         ds.createAttribute<std::string>("units",
                                         HighFive::DataSpace::From(data_unit))
@@ -188,10 +190,7 @@ void FileWriter::writeHDF(const std::string &filename) const {
       if (!hist.smoothed_partials.empty()) {
         for (const auto &[key, data] : hist.smoothed_partials) {
           std::string smoothed_key = key + "_smoothed";
-          // Create (N, 1) datasource for column vector
-          HighFive::DataSpace dataspace({data.size(), 1});
-          HighFive::DataSet ds = group.createDataSet(smoothed_key, dataspace, HighFive::create_datatype<double>());
-          ds.write_raw(data.data()); // Use write_raw
+          HighFive::DataSet ds = group.createDataSet(smoothed_key, data);
 
           ds.createAttribute<std::string>("units",
                                           HighFive::DataSpace::From(data_unit))
@@ -199,21 +198,10 @@ void FileWriter::writeHDF(const std::string &filename) const {
         }
       }
 
-      // Store bins as a dataset - WRITTEN LAST to hopefully appear first in LIFO readers
-      // Create (N, 1) datasource for column vector
-      HighFive::DataSpace user_bins_dataspace({hist.bins.size(), 1});
-      HighFive::DataSet bins_ds = group.createDataSet("bins", user_bins_dataspace, HighFive::create_datatype<double>());
-      bins_ds.write_raw(hist.bins.data()); // Use write_raw
-      
       // Make it a dimension scale using C API
       if (H5DSset_scale(bins_ds.getId(), dim_label.c_str()) < 0) {
           std::cerr << "Warning: Failed to set dimension scale for " << group_name << std::endl;
       }
-
-      // Add units to bins
-      bins_ds.createAttribute<std::string>("units",
-                                           HighFive::DataSpace::From(bin_unit))
-          .write(bin_unit);
       
       // Add attribute for bin label (legacy but useful)
       group.createAttribute<std::string>(
