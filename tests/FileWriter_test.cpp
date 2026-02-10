@@ -153,8 +153,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   EXPECT_TRUE(file.exist("f_theta"));
 
   HighFive::Group g_group = file.getGroup("g_r");
-  EXPECT_TRUE(g_group.exist("bins"));
-  EXPECT_TRUE(g_group.exist("Si-Si"));
+  EXPECT_TRUE(g_group.exist("data"));
 
   // Check group description
   EXPECT_TRUE(g_group.hasAttribute("description"));
@@ -162,35 +161,32 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   g_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Radial Distribution Function");
 
+  // Get the data dataset
+  HighFive::DataSet data_ds = g_group.getDataSet("data");
+
   // Check bin units
-  HighFive::DataSet bins_ds = g_group.getDataSet("bins");
-  EXPECT_TRUE(bins_ds.hasAttribute("units"));
+  EXPECT_TRUE(data_ds.hasAttribute("bin_units"));
   std::string bin_units;
-  bins_ds.getAttribute("units").read(bin_units);
+  data_ds.getAttribute("bin_units").read(bin_units);
   EXPECT_EQ(bin_units, "Å");
 
   // Check data units
-  HighFive::DataSet si_si_ds = g_group.getDataSet("Si-Si");
-  EXPECT_TRUE(si_si_ds.hasAttribute("units"));
+  EXPECT_TRUE(data_ds.hasAttribute("units"));
   std::string data_units;
-  si_si_ds.getAttribute("units").read(data_units);
+  data_ds.getAttribute("units").read(data_units);
   EXPECT_EQ(data_units, "Å^-1");
 
-  // Check attribute
-  EXPECT_TRUE(g_group.hasAttribute("bin_label"));
+  // Check bin label
+  EXPECT_TRUE(data_ds.hasAttribute("bin_label"));
   std::string label;
-  g_group.getAttribute("bin_label").read(label);
+  data_ds.getAttribute("bin_label").read(label);
   EXPECT_EQ(label, "r (Å)");
 
-  // Verify Dimension Scale attributes strictly manually, as HighFive helpers might be missing
-  // Check that bins has CLASS = DIMENSION_SCALE
-  EXPECT_TRUE(bins_ds.hasAttribute("CLASS"));
-  std::string ds_class;
-  bins_ds.getAttribute("CLASS").read(ds_class);
-  EXPECT_EQ(ds_class, "DIMENSION_SCALE");
-
-  // Check that data has DIMENSION_LIST
-  EXPECT_TRUE(si_si_ds.hasAttribute("DIMENSION_LIST"));
+  // Check column names
+  EXPECT_TRUE(data_ds.hasAttribute("column_names"));
+  // Note: HighFive reads vector<string> attributes as a single read call if type matches
+  // However, dependent on HighFive version, we might need to be careful.
+  // The simplest check is just existence for now, or reading it back.
 }
 
 TEST_F(FileWriterTest, WritesVACFMetadata) {
@@ -236,18 +232,20 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   vacf_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Velocity Autocorrelation Function");
 
+  // Check data dataset exists
+  EXPECT_TRUE(vacf_group.exist("data"));
+  HighFive::DataSet vacf_ds = vacf_group.getDataSet("data");
+
   // Bin units
-  HighFive::DataSet bins_ds = vacf_group.getDataSet("bins");
-  EXPECT_TRUE(bins_ds.hasAttribute("units"));
+  EXPECT_TRUE(vacf_ds.hasAttribute("bin_units"));
   std::string bin_units;
-  bins_ds.getAttribute("units").read(bin_units);
+  vacf_ds.getAttribute("bin_units").read(bin_units);
   EXPECT_EQ(bin_units, "fs");
 
   // Data units
-  HighFive::DataSet total_ds = vacf_group.getDataSet("Total");
-  EXPECT_TRUE(total_ds.hasAttribute("units"));
+  EXPECT_TRUE(vacf_ds.hasAttribute("units"));
   std::string data_units;
-  total_ds.getAttribute("units").read(data_units);
+  vacf_ds.getAttribute("units").read(data_units);
   EXPECT_EQ(data_units, "Å^2/fs^2");
 
   // Check Normalized VACF
@@ -260,11 +258,14 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   norm_vacf_group.getAttribute("description").read(norm_desc);
   EXPECT_EQ(norm_desc, "Normalized Velocity Autocorrelation Function");
 
+  // Check data dataset exists
+  EXPECT_TRUE(norm_vacf_group.exist("data"));
+  HighFive::DataSet norm_vacf_ds = norm_vacf_group.getDataSet("data");
+
   // Data units
-  HighFive::DataSet norm_total_ds = norm_vacf_group.getDataSet("Total");
-  EXPECT_TRUE(norm_total_ds.hasAttribute("units"));
+  EXPECT_TRUE(norm_vacf_ds.hasAttribute("units"));
   std::string norm_data_units;
-  norm_total_ds.getAttribute("units").read(norm_data_units);
+  norm_vacf_ds.getAttribute("units").read(norm_data_units);
   EXPECT_EQ(norm_data_units, "normalized");
 }
 

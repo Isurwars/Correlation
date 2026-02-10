@@ -172,53 +172,72 @@ void FileWriter::writeHDF(const std::string &filename) const {
             .write(description);
       }
 
-      HighFive::DataSet bins_ds = group.createDataSet("bins", hist.bins);
-      bins_ds.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
-      bins_ds.createAttribute<std::string>("long_name", HighFive::DataSpace::From(dim_label)).write(dim_label);
-      
-
-      // Store raw partials
-      for (const auto &[key, data] : hist.partials) {
-        HighFive::DataSet ds = group.createDataSet(key, data);
-        
-        ds.createAttribute<std::string>("units",
-                                        HighFive::DataSpace::From(data_unit))
-            .write(data_unit);
+      // Prepare headers
+      std::vector<std::string> headers;
+      // Start with bins
+      headers.push_back(hist.bin_label);
+      // Then raw data keys
+      std::vector<std::string> raw_keys;
+      for (const auto &[key, _] : hist.partials) {
+        raw_keys.push_back(key);
       }
+      std::sort(raw_keys.begin(), raw_keys.end());
+      headers.insert(headers.end(), raw_keys.begin(), raw_keys.end());
 
-      // Store smoothed partials if any
+      // Then smoothed data keys
+      std::vector<std::string> smoothed_keys;
       if (!hist.smoothed_partials.empty()) {
-        for (const auto &[key, data] : hist.smoothed_partials) {
-          std::string smoothed_key = key + "_smoothed";
-          HighFive::DataSet ds = group.createDataSet(smoothed_key, data);
-
-          ds.createAttribute<std::string>("units",
-                                          HighFive::DataSpace::From(data_unit))
-              .write(data_unit);
+        for (const auto &[key, _] : hist.smoothed_partials) {
+          smoothed_keys.push_back(key + "_smoothed");
         }
-      }
-
-      // Make it a dimension scale using C API
-      if (H5DSset_scale(bins_ds.getId(), dim_label.c_str()) < 0) {
-          std::cerr << "Warning: Failed to set dimension scale for " << group_name << std::endl;
+        std::sort(smoothed_keys.begin(), smoothed_keys.end());
+        headers.insert(headers.end(), smoothed_keys.begin(), smoothed_keys.end());
       }
       
-      // Add attribute for bin label (legacy but useful)
-      group.createAttribute<std::string>(
-               "bin_label", HighFive::DataSpace::From(dim_label))
-          .write(dim_label);
-
-      // Attach scales to all previously created datasets
-      // We have to iterate again or keep track of them. 
-      // Since we just created them, let's iterate over the group's children to attach scales
-      for (const auto& ds_name : group.listObjectNames()) {
-          if (ds_name == "bins") continue;
+      // Determine dimensions
+      size_t n_rows = hist.bins.size();
+      size_t n_cols = headers.size();
+      
+      // Create and fill 2D data structure
+      std::vector<std::vector<double>> data(n_rows, std::vector<double>(n_cols));
+      
+      for (size_t i = 0; i < n_rows; ++i) {
+          size_t col = 0;
+          // Col 0: bins
+          data[i][col++] = hist.bins[i];
           
-          HighFive::DataSet ds = group.getDataSet(ds_name);
-          if (H5DSattach_scale(ds.getId(), bins_ds.getId(), 0) < 0) {
-               std::cerr << "Warning: Failed to attach dimension scale for " << ds_name << std::endl;
+          // Next cols: raw data
+          for (const auto &key : raw_keys) {
+              data[i][col++] = hist.partials.at(key)[i];
+          }
+          
+          // Next cols: smoothed data
+          if (!hist.smoothed_partials.empty()) {
+              // Extract smoothed keys without suffix for lookup
+              for (const auto &s_key : smoothed_keys) {
+                  // remove "_smoothed" suffix
+                  std::string original_key = s_key.substr(0, s_key.size() - 9); 
+                  data[i][col++] = hist.smoothed_partials.at(original_key)[i];
+              }
           }
       }
+      
+      // Create Dataset
+      HighFive::DataSet ds = group.createDataSet("data", data);
+      
+      // Add attributes
+      ds.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
+      
+      // Try to write headers as attribute - vector of strings support varies, let's try standard way
+      try {
+           ds.createAttribute<std::string>("column_names", HighFive::DataSpace::From(headers)).write(headers);
+      } catch (const HighFive::Exception& e) {
+           std::cerr << "Warning: Could not write column_names attribute for " << group_name << ": " << e.what() << std::endl;
+      }
+      
+      // Add bin label attribute
+      ds.createAttribute<std::string>("bin_label", HighFive::DataSpace::From(dim_label)).write(dim_label);
+      ds.createAttribute<std::string>("bin_units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
     }
   } catch (const HighFive::Exception &err) {
     throw std::runtime_error("HDF5 Error: " + std::string(err.what()));
