@@ -227,11 +227,13 @@ void FileWriter::writeHDF(const std::string &filename) const {
 
           // Add attributes
           if (col == 0) {
-             ds.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
-             ds.createAttribute<std::string>("long_name", HighFive::DataSpace::From(dim_label)).write(dim_label);
+             ds.createAttribute<std::string>("Long Name", HighFive::DataSpace::From(dim_label)).write(dim_label);
+             ds.createAttribute<std::string>("Units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
+             ds.createAttribute<std::string>("Comments", HighFive::DataSpace::From(dim_label)).write(dim_label);
           } else {
-             ds.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
-             ds.createAttribute<std::string>("long_name", HighFive::DataSpace::From(headers[col])).write(headers[col]);
+             ds.createAttribute<std::string>("Long Name", HighFive::DataSpace::From(headers[col])).write(headers[col]);
+             ds.createAttribute<std::string>("Units", HighFive::DataSpace::From(data_unit)).write(data_unit);
+             ds.createAttribute<std::string>("Comments", HighFive::DataSpace::From(headers[col])).write(headers[col]);
           }
       }
     }
