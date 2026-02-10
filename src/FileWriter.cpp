@@ -101,6 +101,7 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
 void FileWriter::writeHDF(const std::string &filename) const {
   // Define metadata structure
   struct FunctionMetadata {
+    std::string bin_label; // Added bin_label
     std::string bin_unit;
     std::string data_unit;
     std::string description;
@@ -108,18 +109,18 @@ void FileWriter::writeHDF(const std::string &filename) const {
 
   // Metadata mapping
   const std::map<std::string, FunctionMetadata> metadata_map = {
-      {"g(r)", {"Angstrom", "Angstrom^-1", "Radial Distribution Function"}},
+      {"g(r)", {"r (Angstrom)", "Angstrom", "Angstrom^-1", "Radial Distribution Function"}},
       {"J(r)",
-       {"Angstrom", "Angstrom^-1", "Radial Distribution of Electron Density"}},
+       {"r (Angstrom)", "Angstrom", "Angstrom^-1", "Radial Distribution of Electron Density"}},
       {"G(r)",
-       {"Angstrom", "Angstrom^-1", "Reduced Radial Distribution Function"}},
-      {"f(theta)", {"Degrees", "degree^-1", "Bond Angle Distribution"}},
-      {"S(Q)", {"inverse Angstrom", "arbitrary units", "Structure Factor"}},
-      {"XRD", {"Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
-      {"CN", {"Angstrom", "Count", "Coordination Number"}},
-      {"VACF", {"fs", "Angstrom^2/fs^2", "Velocity Autocorrelation Function"}},
+       {"r (Angstrom)", "Angstrom", "Angstrom^-1", "Reduced Radial Distribution Function"}},
+      {"f(theta)", {"theta (angle)", "Degrees", "degree^-1", "Bond Angle Distribution"}},
+      {"S(Q)", {"q (Angstrom^-1)", "inverse Angstrom", "arbitrary units", "Structure Factor"}},
+      {"XRD", {"2theta", "Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
+      {"CN", {"counts", "neighbors", "Count", "Coordination Number"}},
+      {"VACF", {"Time (fs)", "fs", "Angstrom^2/fs^2", "Velocity Autocorrelation Function"}},
       {"Normalized VACF",
-       {"fs", "normalized", "Normalized Velocity Autocorrelation Function"}}};
+       {"Time (fs)", "fs", "normalized", "Normalized Velocity Autocorrelation Function"}}};
 
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
@@ -142,18 +143,26 @@ void FileWriter::writeHDF(const std::string &filename) const {
       // Replace spaces with underscores
       std::replace(group_name.begin(), group_name.end(), ' ', '_');
 
-      HighFive::Group group = file.createGroup(group_name);
+      // Create a property list for group creation
+      HighFive::GroupCreateProps props;
+      props.add(HighFive::LinkCreationOrder(HighFive::CreationOrder::Tracked | HighFive::CreationOrder::Indexed));
+
+      HighFive::Group group = file.createGroup(group_name, props);
 
       // Get metadata if available
       std::string bin_unit = "arbitrary units";
       std::string data_unit = "arbitrary units";
       std::string description = "";
+      std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
 
       if (metadata_map.count(name)) {
         const auto &meta = metadata_map.at(name);
         bin_unit = meta.bin_unit;
         data_unit = meta.data_unit;
         description = meta.description;
+        if (!meta.bin_label.empty()) {
+            dim_label = meta.bin_label;
+        }
       }
 
       // Add description attribute to the group
@@ -167,7 +176,6 @@ void FileWriter::writeHDF(const std::string &filename) const {
       HighFive::DataSet bins_ds = group.createDataSet("bins", hist.bins);
       
       // Make it a dimension scale using C API
-      std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
       if (H5DSset_scale(bins_ds.getId(), dim_label.c_str()) < 0) {
           std::cerr << "Warning: Failed to set dimension scale for " << group_name << std::endl;
       }
@@ -179,8 +187,8 @@ void FileWriter::writeHDF(const std::string &filename) const {
       
       // Add attribute for bin label (legacy but useful)
       group.createAttribute<std::string>(
-               "bin_label", HighFive::DataSpace::From(hist.bin_label))
-          .write(hist.bin_label);
+               "bin_label", HighFive::DataSpace::From(dim_label))
+          .write(dim_label);
 
       // Store raw partials
       for (const auto &[key, data] : hist.partials) {
