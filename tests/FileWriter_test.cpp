@@ -153,7 +153,8 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   EXPECT_TRUE(file.exist("f_theta"));
 
   HighFive::Group g_group = file.getGroup("g_r");
-  EXPECT_TRUE(g_group.exist("data"));
+  // The old "data" dataset should not exist anymore
+  EXPECT_FALSE(g_group.exist("data"));
 
   // Check group description
   EXPECT_TRUE(g_group.hasAttribute("description"));
@@ -161,32 +162,43 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   g_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Radial Distribution Function");
 
-  // Get the data dataset
-  HighFive::DataSet data_ds = g_group.getDataSet("data");
+  // Check for expected datasets (prefixed names)
+  // For Si crystal, we expect "r (Å)" (bin) and "Si-Si" (raw)
+  // Cleaned up names:
+  // "r (Å)" -> "r__Å_" -> "00_r__Å_"
+  // "Si-Si" -> "01_Si-Si"
+  
+  // Note: sanitize logic in FileWriter replaces '(', ')', '/', ' ' with '_'
+  // "r (Å)" -> "r__Å_"
+  std::string bin_ds_name = "00_r__Å_";
+  std::string data_ds_name = "01_Si-Si";
 
-  // Check bin units
-  EXPECT_TRUE(data_ds.hasAttribute("bin_units"));
+  EXPECT_TRUE(g_group.exist(bin_ds_name));
+  EXPECT_TRUE(g_group.exist(data_ds_name));
+
+  // Verify bin dataset attributes
+  HighFive::DataSet bin_ds = g_group.getDataSet(bin_ds_name);
+  EXPECT_TRUE(bin_ds.hasAttribute("units"));
   std::string bin_units;
-  data_ds.getAttribute("bin_units").read(bin_units);
+  bin_ds.getAttribute("units").read(bin_units);
   EXPECT_EQ(bin_units, "Å");
+  
+  EXPECT_TRUE(bin_ds.hasAttribute("long_name"));
+  std::string bin_label;
+  bin_ds.getAttribute("long_name").read(bin_label);
+  EXPECT_EQ(bin_label, "r (Å)");
 
-  // Check data units
+  // Verify data dataset attributes
+  HighFive::DataSet data_ds = g_group.getDataSet(data_ds_name);
   EXPECT_TRUE(data_ds.hasAttribute("units"));
   std::string data_units;
   data_ds.getAttribute("units").read(data_units);
   EXPECT_EQ(data_units, "Å^-1");
 
-  // Check bin label
-  EXPECT_TRUE(data_ds.hasAttribute("bin_label"));
-  std::string label;
-  data_ds.getAttribute("bin_label").read(label);
-  EXPECT_EQ(label, "r (Å)");
-
-  // Check column names
-  EXPECT_TRUE(data_ds.hasAttribute("column_names"));
-  // Note: HighFive reads vector<string> attributes as a single read call if type matches
-  // However, dependent on HighFive version, we might need to be careful.
-  // The simplest check is just existence for now, or reading it back.
+  EXPECT_TRUE(data_ds.hasAttribute("long_name"));
+  std::string data_label;
+  data_ds.getAttribute("long_name").read(data_label);
+  EXPECT_EQ(data_label, "Si-Si");
 }
 
 TEST_F(FileWriterTest, WritesVACFMetadata) {
@@ -232,17 +244,25 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   vacf_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Velocity Autocorrelation Function");
 
-  // Check data dataset exists
-  EXPECT_TRUE(vacf_group.exist("data"));
-  HighFive::DataSet vacf_ds = vacf_group.getDataSet("data");
-
-  // Bin units
-  EXPECT_TRUE(vacf_ds.hasAttribute("bin_units"));
+  // Check data dataset no longer exists
+  EXPECT_FALSE(vacf_group.exist("data"));
+  
+  // Check new datasets
+  // "Time" -> "00_Time"
+  // "VACF" -> "Total" -> "01_Total"
+  std::string time_ds_name = "00_Time";
+  std::string vacf_ds_name = "01_Total";
+  
+  EXPECT_TRUE(vacf_group.exist(time_ds_name));
+  EXPECT_TRUE(vacf_group.exist(vacf_ds_name));
+  
+  HighFive::DataSet time_ds = vacf_group.getDataSet(time_ds_name);
+  EXPECT_TRUE(time_ds.hasAttribute("units"));
   std::string bin_units;
-  vacf_ds.getAttribute("bin_units").read(bin_units);
+  time_ds.getAttribute("units").read(bin_units);
   EXPECT_EQ(bin_units, "fs");
 
-  // Data units
+  HighFive::DataSet vacf_ds = vacf_group.getDataSet(vacf_ds_name);
   EXPECT_TRUE(vacf_ds.hasAttribute("units"));
   std::string data_units;
   vacf_ds.getAttribute("units").read(data_units);
@@ -258,9 +278,13 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   norm_vacf_group.getAttribute("description").read(norm_desc);
   EXPECT_EQ(norm_desc, "Normalized Velocity Autocorrelation Function");
 
-  // Check data dataset exists
-  EXPECT_TRUE(norm_vacf_group.exist("data"));
-  HighFive::DataSet norm_vacf_ds = norm_vacf_group.getDataSet("data");
+  // Check new datasets
+  // "Time" -> "00_Time"
+  // "Normalized VACF" -> "Total" -> "01_Total"
+  std::string norm_vacf_name = "01_Total";
+  
+  EXPECT_TRUE(norm_vacf_group.exist(norm_vacf_name));
+  HighFive::DataSet norm_vacf_ds = norm_vacf_group.getDataSet(norm_vacf_name);
 
   // Data units
   EXPECT_TRUE(norm_vacf_ds.hasAttribute("units"));

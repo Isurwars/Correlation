@@ -172,7 +172,7 @@ void FileWriter::writeHDF(const std::string &filename) const {
             .write(description);
       }
 
-      // Prepare headers
+      // Prepare headers and data keys
       std::vector<std::string> headers;
       // Start with bins
       headers.push_back(hist.bin_label);
@@ -197,47 +197,43 @@ void FileWriter::writeHDF(const std::string &filename) const {
       // Determine dimensions
       size_t n_rows = hist.bins.size();
       size_t n_cols = headers.size();
-      
-      // Create and fill 2D data structure
-      std::vector<std::vector<double>> data(n_rows, std::vector<double>(n_cols));
-      
-      for (size_t i = 0; i < n_rows; ++i) {
-          size_t col = 0;
-          // Col 0: bins
-          data[i][col++] = hist.bins[i];
-          
-          // Next cols: raw data
-          for (const auto &key : raw_keys) {
-              data[i][col++] = hist.partials.at(key)[i];
+
+      for (size_t col = 0; col < n_cols; ++col) {
+          std::string col_name = headers[col];
+          // Sanitize column name
+          std::replace(col_name.begin(), col_name.end(), '(', '_');
+          std::replace(col_name.begin(), col_name.end(), ')', '_');
+          std::replace(col_name.begin(), col_name.end(), '/', '_');
+          std::replace(col_name.begin(), col_name.end(), ' ', '_');
+
+          // Add prefix
+          std::stringstream ss;
+          ss << std::setw(2) << std::setfill('0') << col << "_" << col_name;
+          std::string dataset_name = ss.str();
+
+          std::vector<double> col_data(n_rows);
+          if (col == 0) {
+              col_data = hist.bins;
+          } else if (col <= raw_keys.size()) {
+               col_data = hist.partials.at(raw_keys[col - 1]);
+          } else {
+               std::string original_key = smoothed_keys[col - 1 - raw_keys.size()];
+               // remove "_smoothed" suffix for lookup
+               original_key = original_key.substr(0, original_key.size() - 9);
+               col_data = hist.smoothed_partials.at(original_key);
           }
-          
-          // Next cols: smoothed data
-          if (!hist.smoothed_partials.empty()) {
-              // Extract smoothed keys without suffix for lookup
-              for (const auto &s_key : smoothed_keys) {
-                  // remove "_smoothed" suffix
-                  std::string original_key = s_key.substr(0, s_key.size() - 9); 
-                  data[i][col++] = hist.smoothed_partials.at(original_key)[i];
-              }
+
+          HighFive::DataSet ds = group.createDataSet(dataset_name, col_data);
+
+          // Add attributes
+          if (col == 0) {
+             ds.createAttribute<std::string>("units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
+             ds.createAttribute<std::string>("long_name", HighFive::DataSpace::From(dim_label)).write(dim_label);
+          } else {
+             ds.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
+             ds.createAttribute<std::string>("long_name", HighFive::DataSpace::From(headers[col])).write(headers[col]);
           }
       }
-      
-      // Create Dataset
-      HighFive::DataSet ds = group.createDataSet("data", data);
-      
-      // Add attributes
-      ds.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
-      
-      // Try to write headers as attribute - vector of strings support varies, let's try standard way
-      try {
-           ds.createAttribute<std::string>("column_names", HighFive::DataSpace::From(headers)).write(headers);
-      } catch (const HighFive::Exception& e) {
-           std::cerr << "Warning: Could not write column_names attribute for " << group_name << ": " << e.what() << std::endl;
-      }
-      
-      // Add bin label attribute
-      ds.createAttribute<std::string>("bin_label", HighFive::DataSpace::From(dim_label)).write(dim_label);
-      ds.createAttribute<std::string>("bin_units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
     }
   } catch (const HighFive::Exception &err) {
     throw std::runtime_error("HDF5 Error: " + std::string(err.what()));
