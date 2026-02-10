@@ -89,6 +89,7 @@ export component AppWindow inherits Window {
                 padding: MaterialStyleMetrics.padding_4;
                 spacing: MaterialStyleMetrics.spacing_8;
                 input_card := InputFileCard {
+                    enabled: !root.timer_running;
                     browse_file => {
                         root.browse_file();
                     }

@@ -16,6 +16,7 @@ export component InputFileCard inherits OutlinedCard {
     
     // Export hover state for tooltip
     out property <bool> file_area_has_hover: file_area.has-hover;
+    in property <bool> enabled: true;
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
@@ -28,6 +29,7 @@ export component InputFileCard inherits OutlinedCard {
         file_area := TouchArea {
             min-height: 40px;
             FilledButton {
+                enabled: root.enabled;
                 height: 100%;
                 width: 100%;
                 text: "Load a structure file";
