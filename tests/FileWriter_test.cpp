@@ -178,27 +178,37 @@ TEST_F(FileWriterTest, WritesHDF5File) {
 
   // Verify bin dataset attributes
   HighFive::DataSet bin_ds = g_group.getDataSet(bin_ds_name);
-  EXPECT_TRUE(bin_ds.hasAttribute("units"));
+  EXPECT_TRUE(bin_ds.hasAttribute("Units"));
   std::string bin_units;
-  bin_ds.getAttribute("units").read(bin_units);
+  bin_ds.getAttribute("Units").read(bin_units);
   EXPECT_EQ(bin_units, "Å");
   
-  EXPECT_TRUE(bin_ds.hasAttribute("long_name"));
+  EXPECT_TRUE(bin_ds.hasAttribute("Long Name"));
   std::string bin_label;
-  bin_ds.getAttribute("long_name").read(bin_label);
+  bin_ds.getAttribute("Long Name").read(bin_label);
   EXPECT_EQ(bin_label, "r (Å)");
+
+  EXPECT_TRUE(bin_ds.hasAttribute("Comments"));
+  std::string bin_comment;
+  bin_ds.getAttribute("Comments").read(bin_comment);
+  EXPECT_EQ(bin_comment, "r (Å)");
 
   // Verify data dataset attributes
   HighFive::DataSet data_ds = g_group.getDataSet(data_ds_name);
-  EXPECT_TRUE(data_ds.hasAttribute("units"));
+  EXPECT_TRUE(data_ds.hasAttribute("Units"));
   std::string data_units;
-  data_ds.getAttribute("units").read(data_units);
+  data_ds.getAttribute("Units").read(data_units);
   EXPECT_EQ(data_units, "Å^-1");
 
-  EXPECT_TRUE(data_ds.hasAttribute("long_name"));
+  EXPECT_TRUE(data_ds.hasAttribute("Long Name"));
   std::string data_label;
-  data_ds.getAttribute("long_name").read(data_label);
+  data_ds.getAttribute("Long Name").read(data_label);
   EXPECT_EQ(data_label, "Si-Si");
+
+  EXPECT_TRUE(data_ds.hasAttribute("Comments"));
+  std::string data_comment;
+  data_ds.getAttribute("Comments").read(data_comment);
+  EXPECT_EQ(data_comment, "Si-Si");
 }
 
 TEST_F(FileWriterTest, WritesVACFMetadata) {
@@ -257,15 +267,15 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   EXPECT_TRUE(vacf_group.exist(vacf_ds_name));
   
   HighFive::DataSet time_ds = vacf_group.getDataSet(time_ds_name);
-  EXPECT_TRUE(time_ds.hasAttribute("units"));
+  EXPECT_TRUE(time_ds.hasAttribute("Units"));
   std::string bin_units;
-  time_ds.getAttribute("units").read(bin_units);
+  time_ds.getAttribute("Units").read(bin_units);
   EXPECT_EQ(bin_units, "fs");
 
   HighFive::DataSet vacf_ds = vacf_group.getDataSet(vacf_ds_name);
-  EXPECT_TRUE(vacf_ds.hasAttribute("units"));
+  EXPECT_TRUE(vacf_ds.hasAttribute("Units"));
   std::string data_units;
-  vacf_ds.getAttribute("units").read(data_units);
+  vacf_ds.getAttribute("Units").read(data_units);
   EXPECT_EQ(data_units, "Å^2/fs^2");
 
   // Check Normalized VACF
@@ -287,9 +297,9 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   HighFive::DataSet norm_vacf_ds = norm_vacf_group.getDataSet(norm_vacf_name);
 
   // Data units
-  EXPECT_TRUE(norm_vacf_ds.hasAttribute("units"));
+  EXPECT_TRUE(norm_vacf_ds.hasAttribute("Units"));
   std::string norm_data_units;
-  norm_vacf_ds.getAttribute("units").read(norm_data_units);
+  norm_vacf_ds.getAttribute("Units").read(norm_data_units);
   EXPECT_EQ(norm_data_units, "normalized");
 }
 

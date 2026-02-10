@@ -230,10 +230,46 @@ void FileWriter::writeHDF(const std::string &filename) const {
              ds.createAttribute<std::string>("Long Name", HighFive::DataSpace::From(dim_label)).write(dim_label);
              ds.createAttribute<std::string>("Units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
              ds.createAttribute<std::string>("Comments", HighFive::DataSpace::From(dim_label)).write(dim_label);
+
+             // Make this a dimension scale
+             herr_t status = H5DSset_scale(ds.getId(), dim_label.c_str());
+             if (status < 0) {
+                 std::cerr << "Warning: Failed to set dimension scale for " << dataset_name << std::endl;
+             }
           } else {
              ds.createAttribute<std::string>("Long Name", HighFive::DataSpace::From(headers[col])).write(headers[col]);
              ds.createAttribute<std::string>("Units", HighFive::DataSpace::From(data_unit)).write(data_unit);
              ds.createAttribute<std::string>("Comments", HighFive::DataSpace::From(headers[col])).write(headers[col]);
+
+             // Attach the bin dimension scale (col 0) to this dataset
+             // Re-open the bin dataset to get its ID. 
+             // Since we are in a loop, we can construct the name of the 0th dataset.
+             std::stringstream ss_bin;
+             ss_bin << std::setw(2) << std::setfill('0') << 0 << "_" << headers[0]; 
+             // Actually, we can just keep the hid_t of the bin dataset if we are careful, 
+             // but HighFive::DataSet might close it when it goes out of scope if we don't keep it alive.
+             // Easier to just open it again or store the ID if we can ensure it's valid.
+             // Given the scope, ds for col=0 is gone. Let's retrieve it from the group.
+             
+             // Re-construct the bin dataset name (it's always index 0)
+             // We need to sanitize the bin label same as we did before
+             std::string bin_col_name = headers[0];
+             std::replace(bin_col_name.begin(), bin_col_name.end(), '(', '_');
+             std::replace(bin_col_name.begin(), bin_col_name.end(), ')', '_');
+             std::replace(bin_col_name.begin(), bin_col_name.end(), '/', '_');
+             std::replace(bin_col_name.begin(), bin_col_name.end(), ' ', '_');
+             
+             std::stringstream ss0;
+             ss0 << "00_" << bin_col_name;
+             std::string bin_ds_name = ss0.str();
+
+             if (group.exist(bin_ds_name)) {
+                 HighFive::DataSet bin_ds = group.getDataSet(bin_ds_name);
+                 herr_t status = H5DSattach_scale(ds.getId(), bin_ds.getId(), 0);
+                 if (status < 0) {
+                    std::cerr << "Warning: Failed to attach dimension scale for " << dataset_name << std::endl;
+                 }
+             }
           }
       }
     }
