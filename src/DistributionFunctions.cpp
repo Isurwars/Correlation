@@ -632,14 +632,46 @@ void DistributionFunctions::calculateVDOS() {
   double dt = vacf_hist.bins[1] - vacf_hist.bins[0];
 
   // Calculate VDOS
-  auto [frequencies, intensities] =
+  auto [frequencies, intensities_real, intensities_imag] =
       DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
+
+  // Combine real (positive frequencies) and imaginary (negative frequencies)
+  // parts
+  // We want to store:
+  // -f : imaginary part
+  // +f : real part
+  // 0 : real part (DC component)
+
+  size_t num_points = frequencies.size();
+  size_t total_points = 2 * num_points - 1; // 0 is shared
+
+  std::vector<double> combined_frequencies;
+  std::vector<double> combined_intensities;
+  combined_frequencies.reserve(total_points);
+  combined_intensities.reserve(total_points);
+
+  // Add negative frequencies (Imaginary part)
+  // Frequencies come as 0, df, 2df...
+  // We want to add -(N-1)df, -(N-2)df ... -df.
+  // We skip 0 here because 0 is usually purely real in VDOS context (sum of
+  // vacf), or we can decide how to handle it. Usually VDOS at 0 is diffusion.
+  // Let's stick to the plan: f < 0 is imaginary.
+  for (size_t i = num_points - 1; i > 0; --i) {
+    combined_frequencies.push_back(-frequencies[i]);
+    combined_intensities.push_back(intensities_imag[i]);
+  }
+
+  // Add positive frequencies (Real part)
+  for (size_t i = 0; i < num_points; ++i) {
+    combined_frequencies.push_back(frequencies[i]);
+    combined_intensities.push_back(intensities_real[i]);
+  }
 
   // Store in Histogram
   Histogram vdos_hist;
   vdos_hist.bin_label = "Frequency (THz)";
-  vdos_hist.bins = frequencies;
-  vdos_hist.partials["Total"] = intensities;
+  vdos_hist.bins = combined_frequencies;
+  vdos_hist.partials["Total"] = combined_intensities;
 
   histograms_["VDOS"] = std::move(vdos_hist);
 }

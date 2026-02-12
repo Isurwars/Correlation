@@ -14,7 +14,9 @@
 
 class AppController {
 public:
-  // Constructor to set up the UI and backend references
+  //-------------------------------------------------------------------------//
+  //----------------------------- Constructors ------------------------------//
+  //-------------------------------------------------------------------------//
   AppController(AppWindow &ui, AppBackend &backend);
   ~AppController();
 
@@ -41,7 +43,9 @@ private:
   void setBondCutoffs(AppWindow &ui);
   std::vector<std::vector<double>> getBondCutoffs(AppWindow &ui);
 
-  // Member functions for the UI callbacks
+  //-------------------------------------------------------------------------//
+  //-------------------------------- Methods --------------------------------//
+  //-------------------------------------------------------------------------//
   void handleRunAnalysis();
   void handleWriteFiles();
   void handleBrowseFile();

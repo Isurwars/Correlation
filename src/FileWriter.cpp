@@ -17,61 +17,15 @@
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
 
+//---------------------------------------------------------------------------//
+//------------------------------- Constructors ------------------------------//
+//---------------------------------------------------------------------------//
+
 FileWriter::FileWriter(const DistributionFunctions &df) : df_(df) {}
 
-void FileWriter::writeHistogramToCSV(const std::string &filename,
-                                     const Histogram &hist) const {
-  if (hist.partials.empty() || hist.bins.empty()) {
-    return;
-  }
-
-  std::ofstream file(filename);
-  if (!file) {
-    throw std::runtime_error("Failed to open file for writing: " + filename);
-  }
-
-  // Get sorted keys for both raw and smoothed data
-  std::vector<std::string> raw_keys;
-  for (const auto &[key, val] : hist.partials) {
-    raw_keys.push_back(key);
-  }
-  std::sort(raw_keys.begin(), raw_keys.end());
-
-  std::vector<std::string> smoothed_keys;
-  for (const auto &[key, val] : hist.smoothed_partials) {
-    smoothed_keys.push_back(key);
-  }
-  std::sort(smoothed_keys.begin(), smoothed_keys.end());
-
-  // --- Write Header ---
-  file << hist.bin_label;
-  // Write headers for raw data
-  for (const auto &key : raw_keys) {
-    file << "," << key;
-  }
-  // Write headers for smoothed data
-  for (const auto &key : smoothed_keys) {
-    file << "," << key << "_smoothed";
-  }
-  file << '\n';
-
-  // --- Write Data Rows ---
-  const size_t num_rows = hist.bins.size();
-  for (size_t i = 0; i < num_rows; ++i) {
-    file << std::fixed << std::setprecision(5) << hist.bins[i];
-
-    // Write raw data
-    for (const auto &key : raw_keys) {
-      file << "," << hist.partials.at(key)[i];
-    }
-
-    // Write smoothed data
-    for (const auto &key : smoothed_keys) {
-      file << "," << hist.smoothed_partials.at(key)[i];
-    }
-    file << '\n';
-  }
-}
+//---------------------------------------------------------------------------//
+//---------------------------------- Methods --------------------------------//
+//---------------------------------------------------------------------------//
 
 void FileWriter::writeAllCSVs(const std::string &base_path,
                               bool write_smoothed) const {
@@ -307,5 +261,63 @@ void FileWriter::writeHDF(const std::string &filename) const {
     }
   } catch (const HighFive::Exception &err) {
     throw std::runtime_error("HDF5 Error: " + std::string(err.what()));
+  }
+}
+
+//---------------------------------------------------------------------------//
+//----------------------------- Private Methods -----------------------------//
+//---------------------------------------------------------------------------//
+
+void FileWriter::writeHistogramToCSV(const std::string &filename,
+                                     const Histogram &hist) const {
+  if (hist.partials.empty() || hist.bins.empty()) {
+    return;
+  }
+
+  std::ofstream file(filename);
+  if (!file) {
+    throw std::runtime_error("Failed to open file for writing: " + filename);
+  }
+
+  // Get sorted keys for both raw and smoothed data
+  std::vector<std::string> raw_keys;
+  for (const auto &[key, val] : hist.partials) {
+    raw_keys.push_back(key);
+  }
+  std::sort(raw_keys.begin(), raw_keys.end());
+
+  std::vector<std::string> smoothed_keys;
+  for (const auto &[key, val] : hist.smoothed_partials) {
+    smoothed_keys.push_back(key);
+  }
+  std::sort(smoothed_keys.begin(), smoothed_keys.end());
+
+  // --- Write Header ---
+  file << hist.bin_label;
+  // Write headers for raw data
+  for (const auto &key : raw_keys) {
+    file << "," << key;
+  }
+  // Write headers for smoothed data
+  for (const auto &key : smoothed_keys) {
+    file << "," << key << "_smoothed";
+  }
+  file << '\n';
+
+  // --- Write Data Rows ---
+  const size_t num_rows = hist.bins.size();
+  for (size_t i = 0; i < num_rows; ++i) {
+    file << std::fixed << std::setprecision(5) << hist.bins[i];
+
+    // Write raw data
+    for (const auto &key : raw_keys) {
+      file << "," << hist.partials.at(key)[i];
+    }
+
+    // Write smoothed data
+    for (const auto &key : smoothed_keys) {
+      file << "," << hist.smoothed_partials.at(key)[i];
+    }
+    file << '\n';
   }
 }

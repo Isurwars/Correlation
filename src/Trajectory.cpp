@@ -8,6 +8,10 @@
 #include <cmath>
 #include <stdexcept>
 
+//---------------------------------------------------------------------------//
+//----------------------------- Constructors --------------------------------//
+//---------------------------------------------------------------------------//
+
 Trajectory::Trajectory() : time_step_(1.0) {}
 
 Trajectory::Trajectory(std::vector<Cell> frames, double time_step)
@@ -21,46 +25,30 @@ Trajectory::Trajectory(std::vector<Cell> frames, double time_step)
   }
 }
 
+//---------------------------------------------------------------------------//
+//------------------------------- Accessors ---------------------------------//
+//---------------------------------------------------------------------------//
+
+double Trajectory::getBondCutoff(int type1, int type2) {
+  if (bond_cutoffs_sq_.empty())
+    precomputeBondCutoffs();
+
+  if (bond_cutoffs_sq_.empty() || type1 >= bond_cutoffs_sq_.size() ||
+      type2 >= bond_cutoffs_sq_.size())
+    return 0.0;
+
+  return std::sqrt(bond_cutoffs_sq_[type1][type2]);
+}
+
+//---------------------------------------------------------------------------//
+//-------------------------------- Methods ----------------------------------//
+//---------------------------------------------------------------------------//
+
 void Trajectory::addFrame(const Cell &frame) {
   if (!frames_.empty()) {
     validateFrame(frame);
   }
   frames_.push_back(frame);
-}
-
-void Trajectory::validateFrame(const Cell &new_frame) const {
-  if (frames_.empty()) {
-    return;
-  }
-
-  const Cell &reference = frames_[0];
-
-  if (new_frame.atomCount() != reference.atomCount()) {
-    throw std::runtime_error(
-        "Frame validation failed: Atom count mismatch. Expected " +
-        std::to_string(reference.atomCount()) + ", but got " +
-        std::to_string(new_frame.atomCount()));
-  }
-
-  // We should also ideally check if the atom types match in strict order,
-  // but for now, we rely on count consistency.
-  // Warning: If element registration order differs, elementIDs might differ
-  // even if symbols are same. Check symbols.
-  const auto &ref_atoms = reference.atoms();
-  const auto &new_atoms = new_frame.atoms();
-  const auto &ref_elements = reference.elements();
-  const auto &new_elements = new_frame.elements();
-
-  for (size_t i = 0; i < ref_atoms.size(); ++i) {
-    const std::string &ref_sym = ref_elements[ref_atoms[i].element_id()].symbol;
-    const std::string &new_sym = new_elements[new_atoms[i].element_id()].symbol;
-
-    if (ref_sym != new_sym) {
-      throw std::runtime_error(
-          "Frame validation failed: Atom symbol mismatch at index " +
-          std::to_string(i) + ". Expected " + ref_sym + ", but got " + new_sym);
-    }
-  }
 }
 
 void Trajectory::precomputeBondCutoffs() {
@@ -83,16 +71,6 @@ void Trajectory::precomputeBondCutoffs() {
   }
 }
 
-double Trajectory::getBondCutoff(int type1, int type2) {
-  if (bond_cutoffs_sq_.empty())
-    precomputeBondCutoffs();
-
-  if (bond_cutoffs_sq_.empty() || type1 >= bond_cutoffs_sq_.size() ||
-      type2 >= bond_cutoffs_sq_.size())
-    return 0.0;
-
-  return std::sqrt(bond_cutoffs_sq_[type1][type2]);
-}
 void Trajectory::removeDuplicatedFrames() {
   if (frames_.size() < 2) {
     return;
@@ -198,6 +176,45 @@ void Trajectory::calculateVelocities() {
         const auto &r_prev = frames_[t - 1].atoms()[i].position();
         velocities_[t][i] = displacement(r_next, r_prev) / (2.0 * time_step_);
       }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+//--------------------------- Private Methods -------------------------------//
+//---------------------------------------------------------------------------//
+
+void Trajectory::validateFrame(const Cell &new_frame) const {
+  if (frames_.empty()) {
+    return;
+  }
+
+  const Cell &reference = frames_[0];
+
+  if (new_frame.atomCount() != reference.atomCount()) {
+    throw std::runtime_error(
+        "Frame validation failed: Atom count mismatch. Expected " +
+        std::to_string(reference.atomCount()) + ", but got " +
+        std::to_string(new_frame.atomCount()));
+  }
+
+  // We should also ideally check if the atom types match in strict order,
+  // but for now, we rely on count consistency.
+  // Warning: If element registration order differs, elementIDs might differ
+  // even if symbols are same. Check symbols.
+  const auto &ref_atoms = reference.atoms();
+  const auto &new_atoms = new_frame.atoms();
+  const auto &ref_elements = reference.elements();
+  const auto &new_elements = new_frame.elements();
+
+  for (size_t i = 0; i < ref_atoms.size(); ++i) {
+    const std::string &ref_sym = ref_elements[ref_atoms[i].element_id()].symbol;
+    const std::string &new_sym = new_elements[new_atoms[i].element_id()].symbol;
+
+    if (ref_sym != new_sym) {
+      throw std::runtime_error(
+          "Frame validation failed: Atom symbol mismatch at index " +
+          std::to_string(i) + ". Expected " + ref_sym + ", but got " + new_sym);
     }
   }
 }

@@ -38,7 +38,7 @@ AppController::~AppController() {
 }
 
 //---------------------------------------------------------------------------//
-//--------------------------------- Helpers ---------------------------------//
+//----------------------------- Private Methods -----------------------------//
 //---------------------------------------------------------------------------//
 
 // Safe conversion helper
@@ -49,6 +49,14 @@ float safe_stof(const slint::SharedString &s, float default_value) {
     // Optionally, log the error or update a UI status message
     return default_value;
   }
+}
+
+void AppController::updateProgress(float p) {
+  if (p < 0.0f)
+    p = 0.0f;
+  if (p > 1.0f)
+    p = 1.0f;
+  slint::invoke_from_event_loop([=, this]() { ui_.set_progress(p); });
 }
 
 void AppController::handleOptionstoUI(AppWindow &ui) {
@@ -167,17 +175,56 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   return opt;
 };
 
-//---------------------------------------------------------------------------//
-//--------------------------------- Methods ---------------------------------//
-//---------------------------------------------------------------------------//
+void AppController::setBondCutoffs(AppWindow &ui) {
+  auto recommended = backend_.getRecommendedBondCutoffs();
+  auto elements = backend_.cell()->elements();
+  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
 
-void AppController::updateProgress(float p) {
-  if (p < 0.0f)
-    p = 0.0f;
-  if (p > 1.0f)
-    p = 1.0f;
-  slint::invoke_from_event_loop([=, this]() { ui_.set_progress(p); });
+  for (size_t i = 0; i < elements.size(); ++i) {
+    for (size_t j = i; j < elements.size(); ++j) {
+      slint_cutoffs->push_back(
+          {slint::SharedString(elements[i].symbol),
+           slint::SharedString(elements[j].symbol),
+           slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
+    }
+  }
+  ui.set_bond_cutoffs(slint_cutoffs);
 }
+
+std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
+  auto slint_cutoffs = ui.get_bond_cutoffs();
+  if (!backend_.cell())
+    return {};
+  auto elements = backend_.cell()->elements();
+  size_t num_elements = elements.size();
+  std::vector<std::vector<double>> cutoffs(
+      num_elements, std::vector<double>(num_elements, 0.0));
+
+  for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
+    auto item = slint_cutoffs->row_data(k).value();
+    std::string s1 = item.element1.data();
+    std::string s2 = item.element2.data();
+    double dist = std::stod(item.distance.data());
+
+    int i = -1, j = -1;
+    for (size_t e = 0; e < num_elements; ++e) {
+      if (elements[e].symbol == s1)
+        i = (int)e;
+      if (elements[e].symbol == s2)
+        j = (int)e;
+    }
+
+    if (i != -1 && j != -1) {
+      cutoffs[i][j] = dist;
+      cutoffs[j][i] = dist;
+    }
+  }
+  return cutoffs;
+}
+
+//---------------------------------------------------------------------------//
+//---------------------------------- Methods --------------------------------//
+//---------------------------------------------------------------------------//
 
 void AppController::handleRunAnalysis() {
   ui_.set_analysis_done(false); // Reset done state
@@ -310,51 +357,4 @@ void AppController::handleCheckFileDialogStatus() {
     ui_.set_timer_running(false);
     current_save_dialog_.reset();
   }
-}
-
-void AppController::setBondCutoffs(AppWindow &ui) {
-  auto recommended = backend_.getRecommendedBondCutoffs();
-  auto elements = backend_.cell()->elements();
-  auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-
-  for (size_t i = 0; i < elements.size(); ++i) {
-    for (size_t j = i; j < elements.size(); ++j) {
-      slint_cutoffs->push_back(
-          {slint::SharedString(elements[i].symbol),
-           slint::SharedString(elements[j].symbol),
-           slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
-    }
-  }
-  ui.set_bond_cutoffs(slint_cutoffs);
-}
-
-std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
-  auto slint_cutoffs = ui.get_bond_cutoffs();
-  if (!backend_.cell())
-    return {};
-  auto elements = backend_.cell()->elements();
-  size_t num_elements = elements.size();
-  std::vector<std::vector<double>> cutoffs(
-      num_elements, std::vector<double>(num_elements, 0.0));
-
-  for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
-    auto item = slint_cutoffs->row_data(k).value();
-    std::string s1 = item.element1.data();
-    std::string s2 = item.element2.data();
-    double dist = std::stod(item.distance.data());
-
-    int i = -1, j = -1;
-    for (size_t e = 0; e < num_elements; ++e) {
-      if (elements[e].symbol == s1)
-        i = (int)e;
-      if (elements[e].symbol == s2)
-        j = (int)e;
-    }
-
-    if (i != -1 && j != -1) {
-      cutoffs[i][j] = dist;
-      cutoffs[j][i] = dist;
-    }
-  }
-  return cutoffs;
 }

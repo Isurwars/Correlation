@@ -37,10 +37,14 @@ struct ProgramOptions {
 
 class AppBackend {
 public:
-  // Constructor to set up the UI and backend references
+  //-------------------------------------------------------------------------//
+  //----------------------------- Constructors ------------------------------//
+  //-------------------------------------------------------------------------//
   AppBackend();
 
-  // Accesors
+  //-------------------------------------------------------------------------//
+  //------------------------------- Accessors -------------------------------//
+  //-------------------------------------------------------------------------//
   void setOptions(const ProgramOptions &opt) { options_ = opt; }
   ProgramOptions options() { return options_; }
   const Cell *cell() const {
@@ -50,7 +54,9 @@ public:
     return nullptr;
   }
 
-  // Member functions
+  //-------------------------------------------------------------------------//
+  //-------------------------------- Methods --------------------------------//
+  //-------------------------------------------------------------------------//
   std::string load_file(const std::string &path);
   void run_analysis();
   void write_files();

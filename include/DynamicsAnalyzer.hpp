@@ -6,10 +6,14 @@
 #pragma once
 
 #include "Trajectory.hpp"
+#include <tuple>
 #include <vector>
 
 class DynamicsAnalyzer {
 public:
+  //-------------------------------------------------------------------------//
+  //--------------------------- Calculation Methods -------------------------//
+  //-------------------------------------------------------------------------//
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
    *
@@ -38,14 +42,15 @@ public:
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
    *
-   * VDOS(omega) = \int_0^\infty VACF(t) * cos(omega * t) dt
+   * Real part (Cosine Transform): \int_0^\infty VACF(t) * cos(omega * t) dt
+   * Imaginary part (Sine Transform): \int_0^\infty VACF(t) * sin(omega * t) dt
    *
    * @param vacf The Velocity Autocorrelation Function.
    * @param dt The time step between frames (in femtoseconds).
    * @param params Optional parameters for windowing/padding.
-   * @return A pair of vectors: {frequencies (THz), intensities (arbitrary
-   * units)}.
+   * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
    */
-  static std::pair<std::vector<double>, std::vector<double>>
+  static std::tuple<std::vector<double>, std::vector<double>,
+                    std::vector<double>>
   calculateVDOS(const std::vector<double> &vacf, double dt);
 };

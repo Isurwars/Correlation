@@ -6,6 +6,10 @@
 #include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
 
+//---------------------------------------------------------------------------//
+//--------------------------- Calculation Methods ---------------------------//
+//---------------------------------------------------------------------------//
+
 std::vector<double>
 DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
                                 int max_correlation_frames) {
@@ -69,7 +73,7 @@ DynamicsAnalyzer::calculateNormalizedVACF(const Trajectory &traj,
   return vacf;
 }
 
-std::pair<std::vector<double>, std::vector<double>>
+std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
 DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   if (vacf.empty()) {
     return {};
@@ -91,13 +95,15 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   double d_nu = nyquist_thz / num_freq_points; // Frequency step in THz
 
   std::vector<double> frequencies(num_freq_points);
-  std::vector<double> intensities(num_freq_points);
+  std::vector<double> intensities_real(num_freq_points);
+  std::vector<double> intensities_imag(num_freq_points);
 
   for (size_t k = 0; k < num_freq_points; ++k) {
     double nu = k * d_nu; // Frequency in THz
     frequencies[k] = nu;
 
-    double integral = 0.0;
+    double integral_real = 0.0;
+    double integral_imag = 0.0;
 
     // Trapezoidal integration
     for (size_t i = 0; i < num_frames; ++i) {
@@ -116,16 +122,22 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
       // So arg = 2 * pi * nu * t * 0.001
       double arg = 2.0 * constants::pi * nu * t * 0.001;
 
-      double term = val * std::cos(arg);
+      double term_real = val * std::cos(arg);
+      double term_imag = val * std::sin(arg);
 
       if (i == 0 || i == num_frames - 1) {
-        integral += 0.5 * term;
+        integral_real += 0.5 * term_real;
+        integral_imag += 0.5 * term_imag;
       } else {
-        integral += term;
+        integral_real += term_real;
+        integral_imag += term_imag;
       }
     }
-    intensities[k] = integral * dt;
+    // Multiply by frequency to sharpen high-frequency features (and suppress
+    // DC)
+    intensities_real[k] = integral_real * dt;
+    intensities_imag[k] = integral_imag * dt;
   }
 
-  return {frequencies, intensities};
+  return {frequencies, intensities_real, intensities_imag};
 }

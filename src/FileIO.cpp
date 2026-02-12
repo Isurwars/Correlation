@@ -670,6 +670,10 @@ std::vector<Cell> readArc(const std::string &file_name) {
 
 namespace FileIO {
 
+//---------------------------------------------------------------------------//
+//----------------------------- Public Methods ------------------------------//
+//---------------------------------------------------------------------------//
+
 FileType determineFileType(const std::string &filename) {
   std::string ext = std::filesystem::path(filename).extension().string();
   std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);

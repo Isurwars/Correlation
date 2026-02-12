@@ -17,37 +17,8 @@
 AppBackend::AppBackend() {}
 
 //---------------------------------------------------------------------------//
-//--------------------------------- Methods ---------------------------------//
+//--------------------------------- Accessors -------------------------------//
 //---------------------------------------------------------------------------//
-std::string AppBackend::load_file(const std::string &path) {
-  std::string display_path = path;
-  std::replace(display_path.begin(), display_path.end(), '\\', '/');
-  FileIO::FileType type = FileIO::determineFileType(path);
-
-  // For now, loading a single structure file starts a new trajectory with 1
-  // frame. Ideally, FileIO::readTrajectory could handle this, but readStructure
-  // returns a Cell. We can wrap it.
-
-  if (type == FileIO::FileType::Arc) {
-    trajectory_ =
-        std::make_unique<Trajectory>(FileIO::readTrajectory(path, type));
-  } else {
-    trajectory_ = std::make_unique<Trajectory>();
-    trajectory_->addFrame(FileIO::readStructure(path, type));
-  }
-
-  options_.input_file = path;
-  options_.output_file_base = path;
-
-  // Return info from the first frame
-  size_t atom_count = 0;
-  if (!trajectory_->getFrames().empty()) {
-    atom_count = trajectory_->getFrames()[0].atomCount();
-  }
-
-  std::string msg = "File loaded: " + display_path;
-  return msg;
-}
 
 std::map<std::string, int> AppBackend::getAtomCounts() const {
   std::map<std::string, int> counts;
@@ -128,6 +99,40 @@ void AppBackend::setBondCutoffs(
   }
 
   trajectory_->setBondCutoffs(cutoffs_sq);
+}
+
+//---------------------------------------------------------------------------//
+//---------------------------------- Methods --------------------------------//
+//---------------------------------------------------------------------------//
+
+std::string AppBackend::load_file(const std::string &path) {
+  std::string display_path = path;
+  std::replace(display_path.begin(), display_path.end(), '\\', '/');
+  FileIO::FileType type = FileIO::determineFileType(path);
+
+  // For now, loading a single structure file starts a new trajectory with 1
+  // frame. Ideally, FileIO::readTrajectory could handle this, but readStructure
+  // returns a Cell. We can wrap it.
+
+  if (type == FileIO::FileType::Arc) {
+    trajectory_ =
+        std::make_unique<Trajectory>(FileIO::readTrajectory(path, type));
+  } else {
+    trajectory_ = std::make_unique<Trajectory>();
+    trajectory_->addFrame(FileIO::readStructure(path, type));
+  }
+
+  options_.input_file = path;
+  options_.output_file_base = path;
+
+  // Return info from the first frame
+  size_t atom_count = 0;
+  if (!trajectory_->getFrames().empty()) {
+    atom_count = trajectory_->getFrames()[0].atomCount();
+  }
+
+  std::string msg = "File loaded: " + display_path;
+  return msg;
 }
 
 void AppBackend::run_analysis() {
@@ -226,4 +231,9 @@ void AppBackend::write_files() {
   } catch (const std::exception &e) {
     std::cerr << "Error during file writing: " << e.what() << std::endl;
   }
+}
+
+void AppBackend::analysis_thread_func() {
+  // Implementation of analysis thread if needed, currently inline in
+  // run_analysis or managed by AppController
 }
