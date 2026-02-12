@@ -58,6 +58,7 @@ protected:
     std::remove("test_vacf.h5");
     std::remove("test_vacf_new.h5");
     std::remove("test_vacf_vdos.h5");
+    std::remove("test_vacf_vdos_VDOS.csv");
   }
 
   // Helper to check if a file exists and is not empty.
@@ -243,6 +244,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   std::string filename = "test_vacf_new.h5";
   writer.writeHDF(filename);
 
+
   // Assert
   ASSERT_TRUE(fileExistsAndIsNotEmpty(filename));
   {
@@ -312,6 +314,8 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   
   std::string vdos_filename = "test_vacf_vdos.h5";
   writer.writeHDF(vdos_filename); 
+  writer.writeAllCSVs("test_vacf_vdos", true);
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_vacf_vdos_VDOS.csv")); 
   
   // Re-open to check VDOS
   HighFive::File file_vdos(vdos_filename, HighFive::File::ReadOnly);

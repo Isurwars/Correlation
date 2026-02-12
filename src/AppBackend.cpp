@@ -184,6 +184,11 @@ void AppBackend::run_analysis() {
              trajectory_->calculateVelocities();
         }
         df_->calculateVACF(*trajectory_);
+        try {
+            df_->calculateVDOS();
+        } catch (const std::exception &e) {
+            std::cerr << "VDOS calculation failed: " << e.what() << std::endl;
+        }
     }
 
   } catch (const std::exception &e) {
