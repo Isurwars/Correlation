@@ -120,7 +120,8 @@ void FileWriter::writeHDF(const std::string &filename) const {
       {"CN", {"counts", "neighbors", "Count", "Coordination Number"}},
       {"VACF", {"Time (fs)", "fs", "Å^2/fs^2", "Velocity Autocorrelation Function"}},
       {"Normalized VACF",
-       {"Time (fs)", "fs", "normalized", "Normalized Velocity Autocorrelation Function"}}};
+       {"Time (fs)", "fs", "normalized", "Normalized Velocity Autocorrelation Function"}},
+      {"VDOS", {"Frequency (THz)", "THz", "arbitrary units", "Vibrational Density of States"}}};
 
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |

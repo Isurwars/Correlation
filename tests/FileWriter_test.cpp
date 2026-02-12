@@ -56,6 +56,8 @@ protected:
     std::remove("test_si_PAD_smoothed.csv");
     std::remove("test_si.h5");
     std::remove("test_vacf.h5");
+    std::remove("test_vacf_new.h5");
+    std::remove("test_vacf_vdos.h5");
   }
 
   // Helper to check if a file exists and is not empty.
@@ -238,11 +240,13 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   df.calculateVACF(trajectory, 1);
 
   FileWriter writer(df);
-  writer.writeHDF("test_vacf.h5");
+  std::string filename = "test_vacf_new.h5";
+  writer.writeHDF(filename);
 
   // Assert
-  ASSERT_TRUE(fileExistsAndIsNotEmpty("test_vacf.h5"));
-  HighFive::File file("test_vacf.h5", HighFive::File::ReadOnly);
+  ASSERT_TRUE(fileExistsAndIsNotEmpty(filename));
+  {
+  HighFive::File file(filename, HighFive::File::ReadOnly);
 
   // Check VACF
   EXPECT_TRUE(file.exist("VACF"));
@@ -301,6 +305,29 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   std::string norm_data_units;
   norm_vacf_ds.getAttribute("Units").read(norm_data_units);
   EXPECT_EQ(norm_data_units, "normalized");
+  } // Close file
+
+  // Calculate and Check VDOS
+  df.calculateVDOS();
+  
+  std::string vdos_filename = "test_vacf_vdos.h5";
+  writer.writeHDF(vdos_filename); 
+  
+  // Re-open to check VDOS
+  HighFive::File file_vdos(vdos_filename, HighFive::File::ReadOnly);
+  EXPECT_TRUE(file_vdos.exist("VDOS"));
+  HighFive::Group vdos_group = file_vdos.getGroup("VDOS");
+  
+  EXPECT_TRUE(vdos_group.hasAttribute("description"));
+  std::string vdos_desc;
+  vdos_group.getAttribute("description").read(vdos_desc);
+  EXPECT_EQ(vdos_desc, "Vibrational Density of States");
+  
+  std::string vdos_freq_name = "00_Frequency__THz_";
+  std::string vdos_val_name = "01_Total";
+  
+  EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
+  EXPECT_TRUE(vdos_group.exist(vdos_val_name));
 }
 
 

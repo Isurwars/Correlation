@@ -65,13 +65,44 @@ TEST(DynamicsAnalyzerTest, CalculatesVACFFromExampletraj) {
     
     ASSERT_EQ(norm_vacf.size(), max_lag + 1);
     EXPECT_NEAR(norm_vacf[0], 1.0, 1e-5) << "Normalized VACF should start at 1.0";
+}
+
+TEST(DynamicsAnalyzerTest, CalculatesVDOSCorrectly) {
+    // 1. Create synthetic VACF data: a simple cosine wave
+    // v(t) = cos(2 * pi * f0 * t)
+    // VDOS should show a peak at f0
     
-    // Check decay (statistical nature means it won't strictly decrease, but should generally drop)
-    // For a liquid, it eventually decorrelates.
-    // Just print the first few values for sanity check in logs
-    std::cout << "VACF[0-5]: ";
-    for(int i=0; i<=5 && i < (int)norm_vacf.size(); ++i) {
-        std::cout << norm_vacf[i] << " ";
+    double dt = 1.0; // 1 fs
+    double f0 = 10.0; // 10 THz frequency
+    size_t num_frames = 1000; // 1 ps total time
+    
+    std::vector<double> vacf(num_frames);
+    const double PI = 3.14159265358979323846;
+    
+    for(size_t i=0; i<num_frames; ++i) {
+        double t = i * dt;
+        // f0 is in THz (10^12 Hz), t in fs (10^-15 s). product is 10^-3
+        // cos(2 * pi * f0 * 10^12 * t * 10^-15) = cos(2 * pi * f0 * t * 0.001)
+        vacf[i] = std::cos(2.0 * PI * f0 * t * 0.001);
     }
-    std::cout << std::endl;
+    
+    // 2. Calculate VDOS
+    auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf, dt);
+    
+    ASSERT_FALSE(frequencies.empty());
+    ASSERT_EQ(frequencies.size(), intensities.size());
+    
+    // 3. Find peak
+    auto max_it = std::max_element(intensities.begin(), intensities.end());
+    size_t peak_idx = std::distance(intensities.begin(), max_it);
+    double peak_freq = frequencies[peak_idx];
+    
+    // 4. Verify peak location
+    // The resolution depends on total time. d_nu ~ 1/T_max = 1/1ps = 1 THz?
+    // Actually resolution is determined by how we sampled the frequency axis in calculateVDOS
+    // We used 2000 points for Nyquist. Nyquist for dt=1fs is 500 THz.
+    // So d_nu = 500 / 2000 = 0.25 THz.
+    // 10 THz should be well resolved.
+    
+    EXPECT_NEAR(peak_freq, f0, 0.5) << "VDOS Peak should be near the source frequency";
 }

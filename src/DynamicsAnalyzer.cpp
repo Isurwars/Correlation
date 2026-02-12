@@ -61,3 +61,82 @@ std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(const Trajectory &
     }
     return vacf;
 }
+
+std::pair<std::vector<double>, std::vector<double>> DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
+    if (vacf.empty()) {
+        return {};
+    }
+
+    size_t num_frames = vacf.size();
+    double t_max = (num_frames - 1) * dt; // Total time of correlation
+    
+    // Define frequency range
+    // Max frequency (Nyquist) is 1 / (2 * dt)
+    // But we are interested in physical vibrations, usually up to ~100 THz or ~3000 cm^-1
+    // dt is in fs. 1 fs = 10^-15 s.
+    // 1 THz = 10^12 Hz.
+    // Nyquist freq in THz = 1 / (2 * dt * 10^-15) * 10^-12 = 1000 / (2 * dt)
+    
+    double nyquist_thz = 1000.0 / (2.0 * dt);
+    
+    // Number of frequency points. Let's make it high resolution.
+    size_t num_freq_points = 2000; 
+    double d_nu = nyquist_thz / num_freq_points; // Frequency step in THz
+
+    std::vector<double> frequencies(num_freq_points);
+    std::vector<double> intensities(num_freq_points);
+
+    // PI constant
+    const double PI = 3.14159265358979323846;
+
+    for (size_t k = 0; k < num_freq_points; ++k) {
+        double nu = k * d_nu; // Frequency in THz
+        frequencies[k] = nu;
+        
+        double integral = 0.0;
+        
+        // Trapezoidal integration
+        for (size_t i = 0; i < num_frames; ++i) {
+            double t = i * dt; // Time in fs
+            double val = vacf[i];
+
+            // Apply Hann Window to reduce spectral leakage
+            // W(t) = 0.5 * (1 + cos(pi * t / t_max))
+            // Note: standard Hann window is usually defined for windowing data before FFT.
+            // Here we want to damp the tail of VACF to 0. 
+            // W(n) = 0.5 * (1 - cos(2*pi*n/(N-1))). This brings ends to 0.
+            // Our VACF starts at 1, so we don't want to damp the start.
+            // We want a window that goes from 1 at t=0 to 0 at t=t_max.
+            // A common choice is the "half Cosine" window or just scaling.
+            // Let's use a function that decays to 0: W(t) = exp(-t/tau) or similar?
+            // Or simpler: Parzen window or just a Hann window applied to the correlation lag.
+            // The standard window for VACF is often the "Damped" approach or just truncation if long enough.
+            // Let's use a window that smooths the truncation at t_max.
+            // W(t) = (sin(pi * (t + t_max)/(2*t_max))) doesn't look right.
+            // Let's stick to a simple Hann-like window that starts at 1 and goes to 0?
+            // Actually, for half-sided correlation (0 to t_max), we can use:
+            // W(t) = 0.5 * (1 + cos(pi * t / t_max))
+            // At t=0, cos(0)=1, W=1. At t=t_max, cos(pi)=-1, W=0. Perfect.
+            
+            double window = 0.5 * (1.0 + std::cos(PI * t / t_max));
+            val *= window;
+
+            // Cosine transform term: cos(2 * pi * nu * t)
+            // nu is in THz (10^12/s), t in fs (10^-15 s).
+            // nu * t = (10^12) * (10^-15) = 10^-3
+            // So arg = 2 * pi * nu * t * 0.001
+            double arg = 2.0 * PI * nu * t * 0.001;
+            
+            double term = val * std::cos(arg);
+
+            if (i == 0 || i == num_frames - 1) {
+                integral += 0.5 * term;
+            } else {
+                integral += term;
+            }
+        }
+        intensities[k] = integral * dt;
+    }
+
+    return {frequencies, intensities};
+}

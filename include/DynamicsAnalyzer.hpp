@@ -30,4 +30,16 @@ public:
    * @return A vector containing the normalized VACF values.
    */
   static std::vector<double> calculateNormalizedVACF(const Trajectory &traj, int max_correlation_frames);
+
+  /**
+   * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
+   * 
+   * VDOS(omega) = \int_0^\infty VACF(t) * cos(omega * t) dt
+   * 
+   * @param vacf The Velocity Autocorrelation Function.
+   * @param dt The time step between frames (in femtoseconds).
+   * @param params Optional parameters for windowing/padding.
+   * @return A pair of vectors: {frequencies (THz), intensities (arbitrary units)}.
+   */
+  static std::pair<std::vector<double>, std::vector<double>> calculateVDOS(const std::vector<double> &vacf, double dt);
 };

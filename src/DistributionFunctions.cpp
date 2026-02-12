@@ -604,6 +604,38 @@ void DistributionFunctions::calculateVACF(const Trajectory &traj, int max_correl
 }
 
 //---------------------------------------------------------------------------//
+//----------------------------- Calculation VDOS ----------------------------//
+//---------------------------------------------------------------------------//
+
+void DistributionFunctions::calculateVDOS() {
+    if (histograms_.find("VACF") == histograms_.end()) {
+        throw std::logic_error("Cannot calculate VDOS. Please calculate VACF first.");
+    }
+    
+    // Get VACF data
+    const auto &vacf_hist = histograms_.at("VACF");
+    const auto &vacf_data = vacf_hist.partials.at("Total");
+    
+    if (vacf_data.size() < 2) {
+         throw std::logic_error("VACF data is too short for VDOS calculation.");
+    }
+    
+    // Calculate dt from bins
+    double dt = vacf_hist.bins[1] - vacf_hist.bins[0];
+    
+    // Calculate VDOS
+    auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
+    
+    // Store in Histogram
+    Histogram vdos_hist;
+    vdos_hist.bin_label = "Frequency (THz)";
+    vdos_hist.bins = frequencies;
+    vdos_hist.partials["Total"] = intensities;
+    
+    histograms_["VDOS"] = std::move(vdos_hist);
+}
+
+//---------------------------------------------------------------------------//
 //---------------------------- Calculation S(Q) -----------------------------//
 //---------------------------------------------------------------------------//
 
