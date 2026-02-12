@@ -1,4 +1,2 @@
 CompileFlags:
   Add: [-I./build/]
-FileExtensions:
-  .h: cpp

@@ -39,7 +39,7 @@ struct SymmetryOp {
 // Helper to send all UPPERCASE to lowercase
 void toLower(std::string &s) {
   std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
+                 [](unsigned char c) { return std::tolower(c); });
 }
 
 // Helper to trim whitespace and remove trailing parentheses with uncertainties
@@ -635,7 +635,7 @@ std::vector<Cell> readArc(const std::string &file_name) {
     }
 
     if (first_token == "PBC=ON") {
-        continue;
+      continue;
     }
 
     // Check if it is a single token line (Energy)

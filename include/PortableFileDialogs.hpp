@@ -282,7 +282,8 @@ protected:
 #if _WIN32
   static int CALLBACK bffcallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM pData);
 #if PFD_HAS_IFILEDIALOG
-  std::string select_folder_vista(IFileDialog *ifd, bool force_path, HWND parent_window);
+  std::string select_folder_vista(IFileDialog *ifd, bool force_path,
+                                  HWND parent_window);
 #endif
 
   std::wstring m_wtitle;
@@ -985,8 +986,8 @@ inline internal::file_dialog::file_dialog(
   filter_list += '\0';
   HWND parent_hwnd = GetActiveWindow();
 
-  m_async->start_func([this, in_type, title, default_path, filter_list,
-                       options, parent_hwnd](int *exit_code) -> std::string {
+  m_async->start_func([this, in_type, title, default_path, filter_list, options,
+                       parent_hwnd](int *exit_code) -> std::string {
     (void)exit_code;
     m_wtitle = internal::str2wstr(title);
     m_wdefault_path = internal::str2wstr(default_path);
@@ -1014,7 +1015,8 @@ inline internal::file_dialog::file_dialog(
         // In case CoCreateInstance fails (which it should not), try legacy
         // approach
         if (SUCCEEDED(hr))
-          return select_folder_vista(ifd, options & opt::force_path, parent_hwnd);
+          return select_folder_vista(ifd, options & opt::force_path,
+                                     parent_hwnd);
       }
 #endif
 
@@ -1308,9 +1310,9 @@ inline int CALLBACK internal::file_dialog::bffcallback(HWND hwnd, UINT uMsg,
 }
 
 #if PFD_HAS_IFILEDIALOG
-inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd,
-                                                              bool force_path,
-                                                              HWND parent_window) {
+inline std::string
+internal::file_dialog::select_folder_vista(IFileDialog *ifd, bool force_path,
+                                           HWND parent_window) {
   std::string result;
 
   IShellItem *folder;
@@ -1544,13 +1546,13 @@ inline message::message(std::string const &title, std::string const &text,
 
   HWND parent_hwnd = GetActiveWindow();
 
-  m_async->start_func([text, title, style, parent_hwnd](int *exit_code) -> std::string {
+  m_async->start_func([text, title, style,
+                       parent_hwnd](int *exit_code) -> std::string {
     auto wtext = internal::str2wstr(text);
     auto wtitle = internal::str2wstr(title);
     // Apply new visual style (required for all Windows versions)
     new_style_context ctx;
-    *exit_code =
-        MessageBoxW(parent_hwnd, wtext.c_str(), wtitle.c_str(), style);
+    *exit_code = MessageBoxW(parent_hwnd, wtext.c_str(), wtitle.c_str(), style);
     return "";
   });
 

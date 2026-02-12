@@ -38,7 +38,8 @@ StructureAnalyzer::StructureAnalyzer(
       // Assuming bond_cutoffs_sq indices match element indices in frame
       // This assumption holds if trajectory validation works.
       if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
-           max_bond_dist = std::max(max_bond_dist, std::sqrt(bond_cutoffs_sq[i][j]));
+        max_bond_dist =
+            std::max(max_bond_dist, std::sqrt(bond_cutoffs_sq[i][j]));
       }
     }
   }
@@ -125,8 +126,9 @@ void StructureAnalyzer::computeDistances() {
           const auto &atom_B = atoms[j];
           const int type_B = atom_B.element_id();
           double max_bond_dist_sq = 0.0;
-          if (type_A < bond_cutoffs_sq_.size() && type_B < bond_cutoffs_sq_[type_A].size()) {
-               max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
+          if (type_A < bond_cutoffs_sq_.size() &&
+              type_B < bond_cutoffs_sq_[type_A].size()) {
+            max_bond_dist_sq = bond_cutoffs_sq_[type_A][type_B];
           }
           for (const auto &disp : displacements) {
             if (i == j && linalg::norm_sq(disp) < 1e-9) {
@@ -182,10 +184,10 @@ void StructureAnalyzer::computeAngles() {
 
   // Initialize thread-local storage
   tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
-    return AngleTensor(num_elements,
-                       std::vector<std::vector<std::vector<double>>>(
-                           num_elements, std::vector<std::vector<double>>(
-                                             num_elements)));
+    return AngleTensor(
+        num_elements,
+        std::vector<std::vector<std::vector<double>>>(
+            num_elements, std::vector<std::vector<double>>(num_elements)));
   });
 
   tbb::parallel_for(
@@ -240,4 +242,3 @@ void StructureAnalyzer::computeAngles() {
     }
   }
 }
-

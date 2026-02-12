@@ -24,35 +24,34 @@ std::string AppBackend::load_file(const std::string &path) {
   std::replace(display_path.begin(), display_path.end(), '\\', '/');
   FileIO::FileType type = FileIO::determineFileType(path);
 
-  // For now, loading a single structure file starts a new trajectory with 1 frame.
-  // Ideally, FileIO::readTrajectory could handle this, but readStructure returns a Cell.
-  // We can wrap it.
-  
+  // For now, loading a single structure file starts a new trajectory with 1
+  // frame. Ideally, FileIO::readTrajectory could handle this, but readStructure
+  // returns a Cell. We can wrap it.
+
   if (type == FileIO::FileType::Arc) {
-      trajectory_ = std::make_unique<Trajectory>(FileIO::readTrajectory(path, type));
+    trajectory_ =
+        std::make_unique<Trajectory>(FileIO::readTrajectory(path, type));
   } else {
-      trajectory_ = std::make_unique<Trajectory>();
-      trajectory_->addFrame(FileIO::readStructure(path, type));
+    trajectory_ = std::make_unique<Trajectory>();
+    trajectory_->addFrame(FileIO::readStructure(path, type));
   }
-  
+
   options_.input_file = path;
   options_.output_file_base = path;
-  
+
   // Return info from the first frame
   size_t atom_count = 0;
   if (!trajectory_->getFrames().empty()) {
-      atom_count = trajectory_->getFrames()[0].atomCount();
+    atom_count = trajectory_->getFrames()[0].atomCount();
   }
-  
-  
-  
+
   std::string msg = "File loaded: " + display_path;
   return msg;
 }
 
 std::map<std::string, int> AppBackend::getAtomCounts() const {
   std::map<std::string, int> counts;
-  const Cell* c = cell();
+  const Cell *c = cell();
   if (!c)
     return counts;
   for (const auto &atom : c->atoms()) {
@@ -88,18 +87,18 @@ double AppBackend::getTimeStep() const {
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   if (!trajectory_ || trajectory_->getFrames().empty())
     return {};
-    
+
   // Precompute on the trajectory (which updates its internal cache)
   trajectory_->precomputeBondCutoffs();
 
-  const Cell& c = trajectory_->getFrames()[0];
+  const Cell &c = trajectory_->getFrames()[0];
   const size_t num_elements = c.elements().size();
   std::vector<std::vector<double>> cutoffs(num_elements,
                                            std::vector<double>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
-       // getBondCutoff uses indices.
-       cutoffs[i][j] = trajectory_->getBondCutoff(i, j);
+      // getBondCutoff uses indices.
+      cutoffs[i][j] = trajectory_->getBondCutoff(i, j);
     }
   }
   return cutoffs;
@@ -107,15 +106,18 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
 
 double AppBackend::getBondCutoff(int type1, int type2) {
   if (!trajectory_)
-      return 0.0;
+    return 0.0;
   return trajectory_->getBondCutoff(type1, type2);
 }
 
-void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
-  if (!trajectory_) return;
-  
+void AppBackend::setBondCutoffs(
+    const std::vector<std::vector<double>> &cutoffs) {
+  if (!trajectory_)
+    return;
+
   // Calculate squared cutoffs
-  if (trajectory_->getFrames().empty()) return;
+  if (trajectory_->getFrames().empty())
+    return;
   const size_t num_elements = trajectory_->getFrames()[0].elements().size();
   std::vector<std::vector<double>> cutoffs_sq(
       num_elements, std::vector<double>(num_elements));
@@ -124,7 +126,7 @@ void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs)
       cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
     }
   }
-  
+
   trajectory_->setBondCutoffs(cutoffs_sq);
 }
 
@@ -136,33 +138,41 @@ void AppBackend::run_analysis() {
   try {
     // Apply custom bond cutoffs if they were set in options
     if (!options_.bond_cutoffs_sq_.empty()) {
-       trajectory_->setBondCutoffs(options_.bond_cutoffs_sq_);
+      trajectory_->setBondCutoffs(options_.bond_cutoffs_sq_);
     } else {
       if (trajectory_->getBondCutoffs().empty()) {
-           trajectory_->precomputeBondCutoffs();
-       }
+        trajectory_->precomputeBondCutoffs();
+      }
     }
-    const auto& active_cutoffs = !options_.bond_cutoffs_sq_.empty() ? options_.bond_cutoffs_sq_ : trajectory_->getBondCutoffs();
-    
+    const auto &active_cutoffs = !options_.bond_cutoffs_sq_.empty()
+                                     ? options_.bond_cutoffs_sq_
+                                     : trajectory_->getBondCutoffs();
+
     // Ensure min_frame is within bounds
     size_t start_f = options_.min_frame;
-    if (start_f >= trajectory_->getFrames().size()) start_f = 0; // Default to 0 if out of bounds
-    
+    if (start_f >= trajectory_->getFrames().size())
+      start_f = 0; // Default to 0 if out of bounds
+
     trajectory_->setTimeStep(options_.time_step);
-    
-    if (progress_callback_) progress_callback_(0.0f);
+
+    if (progress_callback_)
+      progress_callback_(0.0f);
 
     // Define progress callbacks
     auto cb_structure = [this](float p) {
-        if (progress_callback_) progress_callback_(p * 0.7f);
+      if (progress_callback_)
+        progress_callback_(p * 0.7f);
     };
 
     auto cb_dist = [this](float p) {
-        if (progress_callback_) progress_callback_(0.7f + p * 0.3f);
+      if (progress_callback_)
+        progress_callback_(0.7f + p * 0.3f);
     };
 
-    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(*trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame, true, cb_structure);
-    
+    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(
+        *trajectory_, options_.r_max, active_cutoffs, start_f,
+        options_.max_frame, true, cb_structure);
+
     // Prepare settings
     AnalysisSettings settings;
     settings.r_max = options_.r_max;
@@ -176,19 +186,20 @@ void AppBackend::run_analysis() {
     settings.smoothing_kernel = options_.smoothing_kernel;
 
     // Run parallel analysis
-    df_ = DistributionFunctions::computeMean(*trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
+    df_ = DistributionFunctions::computeMean(
+        *trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 
     if (df_) {
-        // Ensure velocities are calculated for VACF
-        if (trajectory_->getVelocities().empty()) {
-             trajectory_->calculateVelocities();
-        }
-        df_->calculateVACF(*trajectory_);
-        try {
-            df_->calculateVDOS();
-        } catch (const std::exception &e) {
-            std::cerr << "VDOS calculation failed: " << e.what() << std::endl;
-        }
+      // Ensure velocities are calculated for VACF
+      if (trajectory_->getVelocities().empty()) {
+        trajectory_->calculateVelocities();
+      }
+      df_->calculateVACF(*trajectory_);
+      try {
+        df_->calculateVDOS();
+      } catch (const std::exception &e) {
+        std::cerr << "VDOS calculation failed: " << e.what() << std::endl;
+      }
     }
 
   } catch (const std::exception &e) {
@@ -198,8 +209,8 @@ void AppBackend::run_analysis() {
 
 void AppBackend::write_files() {
   if (!df_) {
-     std::cerr << "No analysis data to write." << std::endl;
-     return;
+    std::cerr << "No analysis data to write." << std::endl;
+    return;
   }
 
   try {

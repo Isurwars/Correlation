@@ -4,9 +4,9 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "Trajectory.hpp"
-#include <stdexcept>
-#include <cmath>
 #include "PhysicalData.hpp"
+#include <cmath>
+#include <stdexcept>
 
 Trajectory::Trajectory() : time_step_(1.0) {}
 
@@ -56,7 +56,7 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
     const std::string &new_sym = new_elements[new_atoms[i].element_id()].symbol;
 
     if (ref_sym != new_sym) {
-       throw std::runtime_error(
+      throw std::runtime_error(
           "Frame validation failed: Atom symbol mismatch at index " +
           std::to_string(i) + ". Expected " + ref_sym + ", but got " + new_sym);
     }
@@ -64,9 +64,10 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
 }
 
 void Trajectory::precomputeBondCutoffs() {
-  if (frames_.empty()) return;
-  
-  const auto& elements = frames_[0].elements();
+  if (frames_.empty())
+    return;
+
+  const auto &elements = frames_[0].elements();
   const size_t num_elements = elements.size();
   bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
 
@@ -85,10 +86,11 @@ void Trajectory::precomputeBondCutoffs() {
 double Trajectory::getBondCutoff(int type1, int type2) {
   if (bond_cutoffs_sq_.empty())
     precomputeBondCutoffs();
-    
-  if (bond_cutoffs_sq_.empty() || type1 >= bond_cutoffs_sq_.size() || type2 >= bond_cutoffs_sq_.size())
-      return 0.0;
-      
+
+  if (bond_cutoffs_sq_.empty() || type1 >= bond_cutoffs_sq_.size() ||
+      type2 >= bond_cutoffs_sq_.size())
+    return 0.0;
+
   return std::sqrt(bond_cutoffs_sq_[type1][type2]);
 }
 void Trajectory::removeDuplicatedFrames() {
@@ -117,7 +119,8 @@ void Trajectory::removeDuplicatedFrames() {
       const auto &last_atoms = last_unique_frame.atoms();
 
       for (size_t j = 0; j < current_atoms.size(); ++j) {
-        if (linalg::norm(current_atoms[j].position() - last_atoms[j].position()) > epsilon) {
+        if (linalg::norm(current_atoms[j].position() -
+                         last_atoms[j].position()) > epsilon) {
           is_duplicate = false;
           break;
         }
@@ -130,61 +133,71 @@ void Trajectory::removeDuplicatedFrames() {
   }
 
   if (unique_frames.size() < frames_.size()) {
-      removed_frames_count_ = frames_.size() - unique_frames.size();
-      frames_ = std::move(unique_frames);
+    removed_frames_count_ = frames_.size() - unique_frames.size();
+    frames_ = std::move(unique_frames);
   }
 }
 
 void Trajectory::calculateVelocities() {
-  if (frames_.size() < 2) return;
+  if (frames_.size() < 2)
+    return;
   size_t num_frames = frames_.size();
   size_t num_atoms = frames_[0].atoms().size();
-  
-  velocities_.assign(num_frames, std::vector<linalg::Vector3<double>>(num_atoms));
 
-  if (time_step_ <= 0.0) return; // Cannot calculate valid velocities
+  velocities_.assign(num_frames,
+                     std::vector<linalg::Vector3<double>>(num_atoms));
+
+  if (time_step_ <= 0.0)
+    return; // Cannot calculate valid velocities
 
   for (size_t t = 0; t < num_frames; ++t) {
-      // Determine simulation box for PBC (using current frame)
-      const auto& lattice = frames_[t].latticeVectors();
-      linalg::Vector3<double> box = {lattice[0][0], lattice[1][1], lattice[2][2]};
-      // Check if box is valid (not zero), otherwise disable PBC correction
-      bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
+    // Determine simulation box for PBC (using current frame)
+    const auto &lattice = frames_[t].latticeVectors();
+    linalg::Vector3<double> box = {lattice[0][0], lattice[1][1], lattice[2][2]};
+    // Check if box is valid (not zero), otherwise disable PBC correction
+    bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
 
-      // Helper lambda to get minimum image displacement
-      auto displacement = [&](const linalg::Vector3<double>& r2, const linalg::Vector3<double>& r1) {
-          linalg::Vector3<double> dr = r2 - r1;
-          if (use_pbc) {
-              if (dr[0] > box[0] * 0.5) dr[0] -= box[0];
-              if (dr[0] < -box[0] * 0.5) dr[0] += box[0];
-              if (dr[1] > box[1] * 0.5) dr[1] -= box[1];
-              if (dr[1] < -box[1] * 0.5) dr[1] += box[1];
-              if (dr[2] > box[2] * 0.5) dr[2] -= box[2];
-              if (dr[2] < -box[2] * 0.5) dr[2] += box[2];
-          }
-          return dr;
-      };
-
-      for (size_t i = 0; i < num_atoms; ++i) {
-          if (t == 0) {
-              // Forward difference for the first frame
-              // v(0) = (r(1) - r(0)) / dt
-              const auto& r0 = frames_[0].atoms()[i].position();
-              const auto& r1 = frames_[1].atoms()[i].position();
-              velocities_[t][i] = displacement(r1, r0) / time_step_;
-          } else if (t == num_frames - 1) {
-              // Backward difference for the last frame
-              // v(N) = (r(N) - r(N-1)) / dt
-              const auto& rN = frames_[num_frames - 1].atoms()[i].position();
-              const auto& rN_1 = frames_[num_frames - 2].atoms()[i].position();
-              velocities_[t][i] = displacement(rN, rN_1) / time_step_;
-          } else {
-              // Central difference for internal frames
-              // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
-              const auto& r_next = frames_[t + 1].atoms()[i].position();
-              const auto& r_prev = frames_[t - 1].atoms()[i].position();
-              velocities_[t][i] = displacement(r_next, r_prev) / (2.0 * time_step_);
-          }
+    // Helper lambda to get minimum image displacement
+    auto displacement = [&](const linalg::Vector3<double> &r2,
+                            const linalg::Vector3<double> &r1) {
+      linalg::Vector3<double> dr = r2 - r1;
+      if (use_pbc) {
+        if (dr[0] > box[0] * 0.5)
+          dr[0] -= box[0];
+        if (dr[0] < -box[0] * 0.5)
+          dr[0] += box[0];
+        if (dr[1] > box[1] * 0.5)
+          dr[1] -= box[1];
+        if (dr[1] < -box[1] * 0.5)
+          dr[1] += box[1];
+        if (dr[2] > box[2] * 0.5)
+          dr[2] -= box[2];
+        if (dr[2] < -box[2] * 0.5)
+          dr[2] += box[2];
       }
+      return dr;
+    };
+
+    for (size_t i = 0; i < num_atoms; ++i) {
+      if (t == 0) {
+        // Forward difference for the first frame
+        // v(0) = (r(1) - r(0)) / dt
+        const auto &r0 = frames_[0].atoms()[i].position();
+        const auto &r1 = frames_[1].atoms()[i].position();
+        velocities_[t][i] = displacement(r1, r0) / time_step_;
+      } else if (t == num_frames - 1) {
+        // Backward difference for the last frame
+        // v(N) = (r(N) - r(N-1)) / dt
+        const auto &rN = frames_[num_frames - 1].atoms()[i].position();
+        const auto &rN_1 = frames_[num_frames - 2].atoms()[i].position();
+        velocities_[t][i] = displacement(rN, rN_1) / time_step_;
+      } else {
+        // Central difference for internal frames
+        // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
+        const auto &r_next = frames_[t + 1].atoms()[i].position();
+        const auto &r_prev = frames_[t - 1].atoms()[i].position();
+        velocities_[t][i] = displacement(r_next, r_prev) / (2.0 * time_step_);
+      }
+    }
   }
 }

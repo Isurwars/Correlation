@@ -10,11 +10,11 @@
 #include <numeric>
 #include <stdexcept>
 
+#include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
 #include "Smoothing.hpp"
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
-#include "DynamicsAnalyzer.hpp"
 
 #include <atomic>
 #include <future>
@@ -81,9 +81,9 @@ void DistributionFunctions::setStructureAnalyzer(
     neighbors_owned_.reset();
     // We assume the external analyzer satisfies our cutoff needs, or we just
     // trust the caller.
-    // Ideally we would check `analyzer->getCutoff()` but that accessor might not
-    // exist or be easy to check against `current_cutoff_`.
-    // For now, trust the caller.
+    // Ideally we would check `analyzer->getCutoff()` but that accessor might
+    // not exist or be easy to check against `current_cutoff_`. For now, trust
+    // the caller.
   }
 }
 
@@ -284,20 +284,21 @@ void DistributionFunctions::calculateCoordinationNumber() {
 
     // Sum all partials where the central atom is 'elem'
     for (const auto &[key, dist_vector] : cn_histogram.partials) {
-      if (key.rfind(elem.symbol + "-", 0) == 0) { // Check if key starts with "Symbol-"
-         found_any = true;
-         for (size_t b = 0; b < num_bins; ++b) {
-           element_any_dist[b] += dist_vector[b];
-         }
+      if (key.rfind(elem.symbol + "-", 0) ==
+          0) { // Check if key starts with "Symbol-"
+        found_any = true;
+        for (size_t b = 0; b < num_bins; ++b) {
+          element_any_dist[b] += dist_vector[b];
+        }
       }
     }
-    
+
     if (found_any) {
-        cn_histogram.partials[element_any_key] = element_any_dist;
-        // Accumulate to Any-Any
-        for (size_t b = 0; b < num_bins; ++b) {
-            any_any_dist[b] += element_any_dist[b];
-        }
+      cn_histogram.partials[element_any_key] = element_any_dist;
+      // Accumulate to Any-Any
+      for (size_t b = 0; b < num_bins; ++b) {
+        any_any_dist[b] += element_any_dist[b];
+      }
     }
   }
 
@@ -487,7 +488,7 @@ void DistributionFunctions::calculatePAD(double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
-  
+
   const double theta_cut = 180.0;
 
   const auto &elements = cell_.elements();
@@ -515,16 +516,18 @@ void DistributionFunctions::calculatePAD(double bin_width) {
 
         for (const auto &angle_rad : neighbors()->angles()[j][i][k]) {
           double angle_deg = angle_rad * constants::rad2deg;
-          
-          // Allow for small epsilon tolerance in case angle slightly exceeds theta due to limited precision
+
+          // Allow for small epsilon tolerance in case angle slightly exceeds
+          // theta due to limited precision
           if (angle_deg <= theta_cut + 1e-5) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
-            
-            // Handle edge case where angle falls exactly on the upper bound of the last bin
+
+            // Handle edge case where angle falls exactly on the upper bound of
+            // the last bin
             if (bin == num_bins && bin > 0) {
-                 bin = num_bins - 1;
+              bin = num_bins - 1;
             }
-            
+
             if (bin < num_bins) {
               partial_hist[bin]++;
             }
@@ -567,17 +570,20 @@ void DistributionFunctions::calculatePAD(double bin_width) {
 //----------------------------- Calculation VACF ----------------------------//
 //---------------------------------------------------------------------------//
 
-void DistributionFunctions::calculateVACF(const Trajectory &traj, int max_correlation_frames) {
+void DistributionFunctions::calculateVACF(const Trajectory &traj,
+                                          int max_correlation_frames) {
   const auto &velocities = traj.getVelocities();
   if (velocities.empty()) {
-      // If velocities are not calculated, we cannot proceed. 
-      // It is the caller's responsibility to ensure velocities are present.
-      return; 
+    // If velocities are not calculated, we cannot proceed.
+    // It is the caller's responsibility to ensure velocities are present.
+    return;
   }
 
   // Calculate Raw VACF
-  std::vector<double> raw_vacf = DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames);
-  if (raw_vacf.empty()) return;
+  std::vector<double> raw_vacf =
+      DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames);
+  if (raw_vacf.empty())
+    return;
 
   size_t num_frames = raw_vacf.size();
   double dt = traj.getTimeStep();
@@ -586,20 +592,21 @@ void DistributionFunctions::calculateVACF(const Trajectory &traj, int max_correl
   vacf_hist.bin_label = "Time";
   vacf_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-      vacf_hist.bins[i] = i * dt;
+    vacf_hist.bins[i] = i * dt;
   }
-  
+
   vacf_hist.partials["Total"] = raw_vacf;
   histograms_["VACF"] = std::move(vacf_hist);
-  
+
   // Calculate Normalized VACF
-  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(traj, max_correlation_frames);
+  std::vector<double> norm_vacf =
+      DynamicsAnalyzer::calculateNormalizedVACF(traj, max_correlation_frames);
   if (!norm_vacf.empty()) {
-      Histogram norm_vacf_hist;
-      norm_vacf_hist.bin_label = "Time";
-      norm_vacf_hist.bins = histograms_["VACF"].bins;
-      norm_vacf_hist.partials["Total"] = norm_vacf;
-      histograms_["Normalized VACF"] = std::move(norm_vacf_hist);
+    Histogram norm_vacf_hist;
+    norm_vacf_hist.bin_label = "Time";
+    norm_vacf_hist.bins = histograms_["VACF"].bins;
+    norm_vacf_hist.partials["Total"] = norm_vacf;
+    histograms_["Normalized VACF"] = std::move(norm_vacf_hist);
   }
 }
 
@@ -608,31 +615,33 @@ void DistributionFunctions::calculateVACF(const Trajectory &traj, int max_correl
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateVDOS() {
-    if (histograms_.find("VACF") == histograms_.end()) {
-        throw std::logic_error("Cannot calculate VDOS. Please calculate VACF first.");
-    }
-    
-    // Get VACF data
-    const auto &vacf_hist = histograms_.at("VACF");
-    const auto &vacf_data = vacf_hist.partials.at("Total");
-    
-    if (vacf_data.size() < 2) {
-         throw std::logic_error("VACF data is too short for VDOS calculation.");
-    }
-    
-    // Calculate dt from bins
-    double dt = vacf_hist.bins[1] - vacf_hist.bins[0];
-    
-    // Calculate VDOS
-    auto [frequencies, intensities] = DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
-    
-    // Store in Histogram
-    Histogram vdos_hist;
-    vdos_hist.bin_label = "Frequency (THz)";
-    vdos_hist.bins = frequencies;
-    vdos_hist.partials["Total"] = intensities;
-    
-    histograms_["VDOS"] = std::move(vdos_hist);
+  if (histograms_.find("VACF") == histograms_.end()) {
+    throw std::logic_error(
+        "Cannot calculate VDOS. Please calculate VACF first.");
+  }
+
+  // Get VACF data
+  const auto &vacf_hist = histograms_.at("VACF");
+  const auto &vacf_data = vacf_hist.partials.at("Total");
+
+  if (vacf_data.size() < 2) {
+    throw std::logic_error("VACF data is too short for VDOS calculation.");
+  }
+
+  // Calculate dt from bins
+  double dt = vacf_hist.bins[1] - vacf_hist.bins[0];
+
+  // Calculate VDOS
+  auto [frequencies, intensities] =
+      DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
+
+  // Store in Histogram
+  Histogram vdos_hist;
+  vdos_hist.bin_label = "Frequency (THz)";
+  vdos_hist.bins = frequencies;
+  vdos_hist.partials["Total"] = intensities;
+
+  histograms_["VDOS"] = std::move(vdos_hist);
 }
 
 //---------------------------------------------------------------------------//
@@ -769,7 +778,7 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
     // Check if this object has the corresponding histogram
     auto it = histograms_.find(name);
     if (it == histograms_.end()) {
-      // If not found, copy it entirely (e.g. if this is the first accumulation 
+      // If not found, copy it entirely (e.g. if this is the first accumulation
       // but it shouldn't happen if we initialize with one frame)
       histograms_[name] = other_hist;
       continue;
@@ -779,7 +788,7 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
 
     // Consistency check (optional but recommended)
     if (this_hist.bins.size() != other_hist.bins.size()) {
-       continue; // Cannot add incompatible histograms
+      continue; // Cannot add incompatible histograms
     }
 
     // Accumulate Partials
@@ -793,7 +802,7 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
         }
       }
     }
-    
+
     // Clear smoothed partials as they are no longer valid after accumulation
     this_hist.smoothed_partials.clear();
   }
@@ -806,11 +815,12 @@ void DistributionFunctions::scale(double factor) {
         partial[i] *= factor;
       }
     }
-    // Also scale smoothed partials if they exist (though they shouldn't if we just accumulated)
+    // Also scale smoothed partials if they exist (though they shouldn't if we
+    // just accumulated)
     for (auto &[key, smoothed_partial] : hist.smoothed_partials) {
-        for (size_t i = 0; i < smoothed_partial.size(); ++i) {
-            smoothed_partial[i] *= factor;
-        }
+      for (size_t i = 0; i < smoothed_partial.size(); ++i) {
+        smoothed_partial[i] *= factor;
+      }
     }
   }
 }
@@ -832,7 +842,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   const size_t num_frames = analyzers.size();
   std::vector<std::unique_ptr<DistributionFunctions>> results(num_frames);
   std::vector<std::future<void>> futures;
-  
+
   // Retrieve bond cutoffs from the analyzer.
   // Note: TrajectoryAnalyzer uses same cutoffs for all frames usually.
   auto bond_cutoffs = analyzer.getBondCutoffs();
@@ -845,33 +855,36 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     futures.push_back(std::async(std::launch::async, [&, i]() {
       size_t frame_idx = start_frame + i;
       if (frame_idx >= trajectory.getFrames().size()) {
-          // Should not happen if TrajectoryAnalyzer was constructed correctly
-          return;
+        // Should not happen if TrajectoryAnalyzer was constructed correctly
+        return;
       }
-      
+
       Cell &frame = trajectory.getFrames()[frame_idx];
-      
-      //Create DF for this frame
-      auto frame_df = std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
+
+      // Create DF for this frame
+      auto frame_df =
+          std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
       frame_df->setStructureAnalyzer(analyzers[i].get());
-      
+
       frame_df->calculateCoordinationNumber();
       frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
       if (settings.angle_bin_width > 0) {
         frame_df->calculatePAD(settings.angle_bin_width);
       }
       if (settings.q_max > 0) {
-        frame_df->calculateSQ(settings.q_max, settings.q_bin_width, settings.r_int_max);
+        frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
+                              settings.r_int_max);
       }
-      
+
       results[i] = std::move(frame_df);
-      
+
       size_t current_completed = ++completed_frames;
       if (progress_callback) {
-          // Avoid flooding the callback, update maybe every 1% or just simple throttle?
-          // Or lock.
-          std::lock_guard<std::mutex> lock(callback_mutex);
-          progress_callback(static_cast<float>(current_completed) / static_cast<float>(num_frames));
+        // Avoid flooding the callback, update maybe every 1% or just simple
+        // throttle? Or lock.
+        std::lock_guard<std::mutex> lock(callback_mutex);
+        progress_callback(static_cast<float>(current_completed) /
+                          static_cast<float>(num_frames));
       }
     }));
   }
@@ -879,29 +892,29 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   // Wait for all tasks
   for (auto &f : futures) {
     if (f.valid()) {
-        f.get();
+      f.get();
     }
   }
 
   // Accumulate results
   if (results.empty() || !results[0]) {
-      return nullptr;
+    return nullptr;
   }
-  
+
   auto &final_df = results[0];
   for (size_t i = 1; i < num_frames; ++i) {
-      if (results[i]) {
-          final_df->add(*results[i]);
-      }
+    if (results[i]) {
+      final_df->add(*results[i]);
+    }
   }
-  
+
   if (num_frames > 1) {
-      final_df->scale(1.0 / static_cast<double>(num_frames));
+    final_df->scale(1.0 / static_cast<double>(num_frames));
   }
-  
+
   if (settings.smoothing) {
-      final_df->smoothAll(settings.smoothing_sigma, settings.smoothing_kernel);
+    final_df->smoothAll(settings.smoothing_sigma, settings.smoothing_kernel);
   }
-  
+
   return std::move(final_df);
 }

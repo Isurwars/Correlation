@@ -8,9 +8,9 @@
 #include <memory>
 #include <vector>
 
-#include <functional>
 #include "StructureAnalyzer.hpp"
 #include "Trajectory.hpp"
+#include <functional>
 
 class TrajectoryAnalyzer {
 public:
@@ -29,7 +29,7 @@ public:
   const std::vector<std::unique_ptr<StructureAnalyzer>> &getAnalyzers() const {
     return analyzers_;
   }
-  
+
   double getTimeStep() const { return time_step_; }
   double getNeighborCutoff() const { return neighbor_cutoff_; }
   const std::vector<std::vector<double>> &getBondCutoffs() const {

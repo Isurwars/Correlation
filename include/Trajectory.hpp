@@ -34,7 +34,7 @@ public:
   size_t getFrameCount() const { return frames_.size(); }
   double getTimeStep() const { return time_step_; }
   void setTimeStep(double dt) { time_step_ = dt; }
-  
+
   /**
    * @brief get a bond cut off for two given elements.
    *@param type1
@@ -52,7 +52,7 @@ public:
    * (within a small tolerance).
    */
   void removeDuplicatedFrames();
-  
+
   /**
    * @brief Pre-calculates the squared bond cutoff distances for every pair of
    * element types using the elements from the first frame.
@@ -67,12 +67,15 @@ public:
    */
   void calculateVelocities();
 
-  const std::vector<std::vector<linalg::Vector3<double>>> &getVelocities() const {
-      return velocities_;
+  const std::vector<std::vector<linalg::Vector3<double>>> &
+  getVelocities() const {
+    return velocities_;
   }
-  
-  const std::vector<std::vector<double>>& getBondCutoffs() const { return bond_cutoffs_sq_; }
-  
+
+  const std::vector<std::vector<double>> &getBondCutoffs() const {
+    return bond_cutoffs_sq_;
+  }
+
   size_t getRemovedFrameCount() const { return removed_frames_count_; }
 
 private:
@@ -80,7 +83,7 @@ private:
   std::vector<Cell> frames_;
   std::vector<std::vector<double>> bond_cutoffs_sq_;
   // Stores calculate velocities Vector<Atom<Vector<Velocity>>>
-  std::vector<std::vector<linalg::Vector3<double>>> velocities_; 
+  std::vector<std::vector<linalg::Vector3<double>>> velocities_;
   double time_step_;
   size_t removed_frames_count_{0};
 };

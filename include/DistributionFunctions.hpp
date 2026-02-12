@@ -45,9 +45,8 @@ public:
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
 
-  explicit DistributionFunctions(
-      Cell &, double = 0.0,
-      const std::vector<std::vector<double>> & = {});
+  explicit DistributionFunctions(Cell &, double = 0.0,
+                                 const std::vector<std::vector<double>> & = {});
 
   // Move constructor
   DistributionFunctions(DistributionFunctions &&other) noexcept;
@@ -91,7 +90,8 @@ public:
 
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
-   * @param max_correlation_frames Maximum lag frames. -1 uses default (half trajectory).
+   * @param max_correlation_frames Maximum lag frames. -1 uses default (half
+   * trajectory).
    */
   void calculateVACF(const Trajectory &traj, int max_correlation_frames = -1);
 
@@ -112,10 +112,10 @@ public:
   //-------------------------------------------------------------------------//
   //----------------------------- Accumulation ------------------------------//
   //-------------------------------------------------------------------------//
-  
+
   /**
-   * @brief Adds the histograms from another DistributionFunctions object to this one.
-   *        Used for averaging over multiple frames.
+   * @brief Adds the histograms from another DistributionFunctions object to
+   * this one. Used for averaging over multiple frames.
    * @param other The other DistributionFunctions object to add.
    */
   void add(const DistributionFunctions &other);
@@ -131,10 +131,10 @@ public:
    * @brief Computes the mean distribution functions over a trajectory.
    *        Uses parallel execution to speed up calculation.
    */
-  static std::unique_ptr<DistributionFunctions> computeMean(
-      Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-      size_t start_frame, const AnalysisSettings &settings,
-      std::function<void(float)> progress_callback = nullptr);
+  static std::unique_ptr<DistributionFunctions>
+  computeMean(Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+              size_t start_frame, const AnalysisSettings &settings,
+              std::function<void(float)> progress_callback = nullptr);
 
 private:
   const StructureAnalyzer *neighbors() const;

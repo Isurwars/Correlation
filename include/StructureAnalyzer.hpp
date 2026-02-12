@@ -50,9 +50,10 @@ public:
    * @param ignore_periodic_self_interactions If true the periodic self
    * interactions will be ignored.
    */
-  explicit StructureAnalyzer(Cell &cell, double cutoff,
-                             const std::vector<std::vector<double>> &bond_cutoffs_sq,
-                             bool ignore_periodic_self_interactions = true);
+  explicit StructureAnalyzer(
+      Cell &cell, double cutoff,
+      const std::vector<std::vector<double>> &bond_cutoffs_sq,
+      bool ignore_periodic_self_interactions = true);
 
   // --- Accessors for the computed data tensors ---
   const DistanceTensor &distances() const { return distance_tensor_; }

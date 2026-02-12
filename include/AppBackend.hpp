@@ -5,14 +5,14 @@
 
 #pragma once
 
+#include <functional>
 #include <map>
 #include <memory>
-#include <functional>
 
+#include "DistributionFunctions.hpp"
 #include "Smoothing.hpp"
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
-#include "DistributionFunctions.hpp"
 
 // Encapsulates all command-line configurable options for the application.
 struct ProgramOptions {
@@ -64,7 +64,9 @@ public:
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
 
   // Callbacks
-  void setProgressCallback(std::function<void(float)> cb) { progress_callback_ = cb; }
+  void setProgressCallback(std::function<void(float)> cb) {
+    progress_callback_ = cb;
+  }
 
 private:
   // Member functions

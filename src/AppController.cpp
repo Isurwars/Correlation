@@ -32,9 +32,9 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
 }
 
 AppController::~AppController() {
-    if (analysis_thread_.joinable()) {
-        analysis_thread_.join();
-    }
+  if (analysis_thread_.joinable()) {
+    analysis_thread_.join();
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -69,12 +69,13 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_smoothing_sigma(
       slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
   ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
-  
-  ui.set_min_frame(slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
+
+  ui.set_min_frame(
+      slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
   if (opt.max_frame == -1) {
-      ui.set_max_frame("End");
+    ui.set_max_frame("End");
   } else {
-      ui.set_max_frame(slint::SharedString(std::to_string(opt.max_frame)));
+    ui.set_max_frame(slint::SharedString(std::to_string(opt.max_frame)));
   }
   ui.set_time_step(slint::SharedString(std::format("{:.2f}", opt.time_step)));
 };
@@ -103,49 +104,52 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
   // Helper lambda for case-insensitive comparison
   auto to_lower = [](const std::string &s) {
-      std::string data = s;
-      std::transform(data.begin(), data.end(), data.begin(),
-                     [](unsigned char c) { return std::tolower(c); });
-      return data;
+    std::string data = s;
+    std::transform(data.begin(), data.end(), data.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return data;
   };
 
   // Frame Selection
   try {
-      std::string min_s = ui_.get_min_frame().data();
-      std::string min_s_lower = to_lower(min_s);
-      
-      if (min_s_lower == "start") {
-           opt.min_frame = 0;
-      } else if (min_s_lower == "end") {
-           opt.min_frame = backend_.getFrameCount() - 1;
-           if (opt.min_frame < 0) opt.min_frame = 0;
-      } else {
-           opt.min_frame = std::stoi(min_s) - 1; // UI is 1-based
-      }
-      if (opt.min_frame < 0) opt.min_frame = 0;
-  } catch (...) {
+    std::string min_s = ui_.get_min_frame().data();
+    std::string min_s_lower = to_lower(min_s);
+
+    if (min_s_lower == "start") {
       opt.min_frame = 0;
+    } else if (min_s_lower == "end") {
+      opt.min_frame = backend_.getFrameCount() - 1;
+      if (opt.min_frame < 0)
+        opt.min_frame = 0;
+    } else {
+      opt.min_frame = std::stoi(min_s) - 1; // UI is 1-based
+    }
+    if (opt.min_frame < 0)
+      opt.min_frame = 0;
+  } catch (...) {
+    opt.min_frame = 0;
   }
 
   try {
-      std::string max_s = ui_.get_max_frame().data();
-      std::string max_s_lower = to_lower(max_s);
+    std::string max_s = ui_.get_max_frame().data();
+    std::string max_s_lower = to_lower(max_s);
 
-      if (max_s_lower == "end" || max_s.empty()) {
-          opt.max_frame = -1;
-      } else if (max_s_lower == "start") {
-          opt.max_frame = 1; // 1-based index 1 -> frame 0 in 0-based, but max_frame is usually exclusive or handled as count? 
-                             // Wait, TrajectoryAnalyzer uses it as `end_frame`. 
-                             // If I want "frame 1" (0-index) only, I likely want start=0, end=1.
-                             // Input "1" -> stoi("1") -> 1. 
-                             // In TrajectoryAnalyzer: effective_end = 1. loop i=0; i<1. Correct.
-                             // So "START" should map to 1.
-          opt.max_frame = 1; 
-      } else {
-          opt.max_frame = std::stoi(max_s);
-      }
-  } catch (...) {
+    if (max_s_lower == "end" || max_s.empty()) {
       opt.max_frame = -1;
+    } else if (max_s_lower == "start") {
+      opt.max_frame =
+          1; // 1-based index 1 -> frame 0 in 0-based, but max_frame is usually
+             // exclusive or handled as count? Wait, TrajectoryAnalyzer uses it
+             // as `end_frame`. If I want "frame 1" (0-index) only, I likely
+             // want start=0, end=1. Input "1" -> stoi("1") -> 1. In
+             // TrajectoryAnalyzer: effective_end = 1. loop i=0; i<1. Correct.
+             // So "START" should map to 1.
+      opt.max_frame = 1;
+    } else {
+      opt.max_frame = std::stoi(max_s);
+    }
+  } catch (...) {
+    opt.max_frame = -1;
   }
 
   opt.time_step = safe_stof(ui_.get_time_step(), opt.time_step);
@@ -168,11 +172,11 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 //---------------------------------------------------------------------------//
 
 void AppController::updateProgress(float p) {
-    if (p < 0.0f) p = 0.0f;
-    if (p > 1.0f) p = 1.0f;
-    slint::invoke_from_event_loop([=, this]() {
-        ui_.set_progress(p);
-    });
+  if (p < 0.0f)
+    p = 0.0f;
+  if (p > 1.0f)
+    p = 1.0f;
+  slint::invoke_from_event_loop([=, this]() { ui_.set_progress(p); });
 }
 
 void AppController::handleRunAnalysis() {
@@ -183,43 +187,38 @@ void AppController::handleRunAnalysis() {
 
   // Create a ProgramOptions object from the UI properties
   backend_.setOptions(handleOptionsfromUI(ui_));
-  
+
   // Set the progress callback
-  backend_.setProgressCallback([this](float p) {
-      updateProgress(p);
-  });
+  backend_.setProgressCallback([this](float p) { updateProgress(p); });
 
   // run analysis in a separate thread
   if (analysis_thread_.joinable()) {
-      analysis_thread_.join();
+    analysis_thread_.join();
   }
-  
+
   analysis_thread_ = std::thread([this]() {
-      backend_.run_analysis();
-      
-      slint::invoke_from_event_loop([this]() {
-          ui_.set_analysis_running(false);
-          ui_.set_analysis_status_text("Analysis ended.");
-          ui_.set_analysis_done(true);
-          ui_.set_progress(1.0f);
-      });
+    backend_.run_analysis();
+
+    slint::invoke_from_event_loop([this]() {
+      ui_.set_analysis_running(false);
+      ui_.set_analysis_status_text("Analysis ended.");
+      ui_.set_analysis_done(true);
+      ui_.set_progress(1.0f);
+    });
   });
-  
+
   // Detach or move is not enough, we need to keep the thread object alive.
   // We keep it as a member variable.
 }
 
 void AppController::handleWriteFiles() {
   backend_.setOptions(handleOptionsfromUI(ui_));
-  
+
   std::string default_path = backend_.options().output_file_base;
-  
+
   current_save_dialog_ = std::make_unique<pfd::save_file>(
-      "Select Output File Name",
-      default_path,
-      std::vector<std::string>{"All Files", "*"},
-      pfd::opt::none
-  );
+      "Select Output File Name", default_path,
+      std::vector<std::string>{"All Files", "*"}, pfd::opt::none);
 
   ui_.set_timer_running(true);
   ui_.set_text_opacity(true);
@@ -263,16 +262,17 @@ void AppController::handleCheckFileDialogStatus() {
     }
     ui_.set_file_status_text(slint::SharedString(message));
     ui_.set_timer_running(false);
-    
+
     // Populate atom counts and bond cutoffs in UI
     if (!selection.empty()) {
       ui_.set_file_loaded(true);
-      
+
       // Atom Counts
       auto atom_counts_map = backend_.getAtomCounts();
-      auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
-      for (const auto& [symbol, count] : atom_counts_map) {
-          slint_atom_counts->push_back({slint::SharedString(symbol), count});
+      auto slint_atom_counts =
+          std::make_shared<slint::VectorModel<AtomCount>>();
+      for (const auto &[symbol, count] : atom_counts_map) {
+        slint_atom_counts->push_back({slint::SharedString(symbol), count});
       }
       ui_.set_atom_counts(slint_atom_counts);
 
@@ -282,31 +282,33 @@ void AppController::handleCheckFileDialogStatus() {
       // File Info
       ui_.set_num_frames(backend_.getFrameCount());
       ui_.set_total_atoms(backend_.getTotalAtomCount());
-      ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
-      ui_.set_time_step(slint::SharedString(std::format("{:.2f}", backend_.getTimeStep())));
+      ui_.set_removed_frames_count(
+          static_cast<int>(backend_.getRemovedFrameCount()));
+      ui_.set_time_step(
+          slint::SharedString(std::format("{:.2f}", backend_.getTimeStep())));
     }
 
     current_file_dialog_.reset();
   }
 
   if (current_save_dialog_ && current_save_dialog_->ready(0)) {
-      std::string result = current_save_dialog_->result();
-      if (!result.empty()) {
-          std::filesystem::path p(result);
-          if (p.has_extension()) {
-              p.replace_extension("");
-          }
-           
-          ProgramOptions opts = handleOptionsfromUI(ui_);
-          opts.output_file_base = p.string();
-          backend_.setOptions(opts);
-          backend_.write_files();
-          ui_.set_analysis_status_text("Files Written.");
-      } else {
-          ui_.set_analysis_status_text("Save cancelled.");
+    std::string result = current_save_dialog_->result();
+    if (!result.empty()) {
+      std::filesystem::path p(result);
+      if (p.has_extension()) {
+        p.replace_extension("");
       }
-      ui_.set_timer_running(false);
-      current_save_dialog_.reset();
+
+      ProgramOptions opts = handleOptionsfromUI(ui_);
+      opts.output_file_base = p.string();
+      backend_.setOptions(opts);
+      backend_.write_files();
+      ui_.set_analysis_status_text("Files Written.");
+    } else {
+      ui_.set_analysis_status_text("Save cancelled.");
+    }
+    ui_.set_timer_running(false);
+    current_save_dialog_.reset();
   }
 }
 
@@ -317,11 +319,10 @@ void AppController::setBondCutoffs(AppWindow &ui) {
 
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
-      slint_cutoffs->push_back({
-          slint::SharedString(elements[i].symbol),
-          slint::SharedString(elements[j].symbol),
-          slint::SharedString(std::format("{:.2f}", recommended[i][j]))
-      });
+      slint_cutoffs->push_back(
+          {slint::SharedString(elements[i].symbol),
+           slint::SharedString(elements[j].symbol),
+           slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
     }
   }
   ui.set_bond_cutoffs(slint_cutoffs);
@@ -329,10 +330,12 @@ void AppController::setBondCutoffs(AppWindow &ui) {
 
 std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
   auto slint_cutoffs = ui.get_bond_cutoffs();
-  if (!backend_.cell()) return {};
+  if (!backend_.cell())
+    return {};
   auto elements = backend_.cell()->elements();
   size_t num_elements = elements.size();
-  std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements, 0.0));
+  std::vector<std::vector<double>> cutoffs(
+      num_elements, std::vector<double>(num_elements, 0.0));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto item = slint_cutoffs->row_data(k).value();
@@ -342,8 +345,10 @@ std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
 
     int i = -1, j = -1;
     for (size_t e = 0; e < num_elements; ++e) {
-      if (elements[e].symbol == s1) i = (int)e;
-      if (elements[e].symbol == s2) j = (int)e;
+      if (elements[e].symbol == s1)
+        i = (int)e;
+      if (elements[e].symbol == s2)
+        j = (int)e;
     }
 
     if (i != -1 && j != -1) {
