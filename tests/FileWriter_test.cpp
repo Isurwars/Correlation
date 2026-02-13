@@ -16,8 +16,6 @@
 #include "../include/FileWriter.hpp"
 #include "../include/Trajectory.hpp"
 
-#include "../include/PhysicalData.hpp"
-
 // Test fixture for FileWriter integration tests.
 class FileWriterTest : public ::testing::Test {
 protected:
