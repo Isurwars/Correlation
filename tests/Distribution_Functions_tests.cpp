@@ -336,12 +336,15 @@ TEST_F(DistributionFunctionsTest, ComputeMeanMatchesSequential) {
 
 TEST_F(DistributionFunctionsTest, CalculateVACFReturnsCorrectValues) {
   // Arrange
-  Cell c1({10, 10, 10, 90, 90, 90});
+  Cell c1({20, 20, 20, 90, 90, 90});
   c1.addAtom("Ar", {0, 0, 0});
-  Cell c2({10, 10, 10, 90, 90, 90});
+  c1.addAtom("Ar", {10, 0, 0});
+  Cell c2({20, 20, 20, 90, 90, 90});
   c2.addAtom("Ar", {1, 0, 0});
-  Cell c3({10, 10, 10, 90, 90, 90});
+  c2.addAtom("Ar", {9, 0, 0});
+  Cell c3({20, 20, 20, 90, 90, 90});
   c3.addAtom("Ar", {2, 0, 0});
+  c3.addAtom("Ar", {8, 0, 0});
 
   Trajectory traj;
   traj.addFrame(c1);

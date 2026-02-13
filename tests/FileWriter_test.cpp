@@ -224,9 +224,13 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   Cell frame2(lv[0], lv[1], lv[2]);
 
   // Modify frame2 slightly to create velocity
+  // Use alternating signs to ensure zero net momentum (approx) for CoM removal
+  // test
+  int sign = 1;
   for (const auto &atom : frame1.atoms()) {
     auto pos = atom.position();
-    pos.x() += 0.1;
+    pos.x() += 0.1 * sign;
+    sign *= -1;
     frame2.addAtom(atom.element().symbol, pos);
   }
 
@@ -327,14 +331,14 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   EXPECT_EQ(vdos_desc, "Vibrational Density of States");
 
   std::string vdos_freq_name = "00_Frequency__THz_";
-  std::string vdos_val_name = "01_Total";
+  std::string vdos_val_name = "03_Total";
 
   EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
   EXPECT_TRUE(vdos_group.exist(vdos_val_name));
 
   // Check new units in HDF5
-  std::string vdos_cm_name = "02_Frequency__cm-1_";
-  std::string vdos_mev_name = "03_Frequency__meV_";
+  std::string vdos_cm_name = "01_Frequency__cm-1_";
+  std::string vdos_mev_name = "02_Frequency__meV_";
 
   EXPECT_TRUE(vdos_group.exist(vdos_cm_name));
   EXPECT_TRUE(vdos_group.exist(vdos_mev_name));

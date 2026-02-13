@@ -22,10 +22,42 @@ DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   size_t num_frames = velocities.size();
   size_t num_atoms = velocities[0].size();
 
-  // Clamp max correlation frames
   if (max_correlation_frames < 0 ||
       static_cast<size_t>(max_correlation_frames) >= num_frames) {
     max_correlation_frames = static_cast<int>(num_frames) - 1;
+  }
+
+  // Get masses for COM removal
+  const auto &frames = traj.getFrames();
+  if (frames.empty())
+    return {};
+  const auto &atoms = frames[0].atoms();
+  std::vector<double> masses(num_atoms);
+  double total_mass = 0.0;
+  for (size_t i = 0; i < num_atoms; ++i) {
+    try {
+      masses[i] = AtomicMasses::get(atoms[i].element().symbol);
+    } catch (const std::out_of_range &) {
+      // Fallback if mass not found (shouldn't happen for standard elements)
+      masses[i] = 1.0;
+    }
+    total_mass += masses[i];
+  }
+
+  // Create corrected velocities (COM removed)
+  std::vector<std::vector<linalg::Vector3<double>>> corrected_velocities =
+      velocities;
+
+  for (size_t t = 0; t < num_frames; ++t) {
+    linalg::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
+    for (size_t i = 0; i < num_atoms; ++i) {
+      momentum_sum += corrected_velocities[t][i] * masses[i];
+    }
+    linalg::Vector3<double> v_com = momentum_sum / total_mass;
+
+    for (size_t i = 0; i < num_atoms; ++i) {
+      corrected_velocities[t][i] -= v_com;
+    }
   }
 
   std::vector<double> vacf(max_correlation_frames + 1, 0.0);
@@ -41,8 +73,8 @@ DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
       if (t_plus_lag < num_frames) {
         double dot_product_sum = 0.0;
         for (size_t i = 0; i < num_atoms; ++i) {
-          dot_product_sum +=
-              linalg::dot(velocities[t0][i], velocities[t_plus_lag][i]);
+          dot_product_sum += linalg::dot(corrected_velocities[t0][i],
+                                         corrected_velocities[t_plus_lag][i]);
         }
         vacf[lag] += dot_product_sum;
         counts[lag]++;
@@ -133,8 +165,6 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
         integral_imag += term_imag;
       }
     }
-    // Multiply by frequency to sharpen high-frequency features (and suppress
-    // DC)
     intensities_real[k] = integral_real * dt;
     intensities_imag[k] = integral_imag * dt;
   }
