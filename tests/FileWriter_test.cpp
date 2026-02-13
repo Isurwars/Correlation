@@ -138,8 +138,10 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
-  
-  DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffs()); // Use smaller r_max for faster test
+
+  DistributionFunctions df(
+      si_cell, 5.0,
+      trajectory.getBondCutoffs()); // Use smaller r_max for faster test
 
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);
@@ -170,7 +172,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   // Cleaned up names:
   // "r (Å)" -> "r__Å_" -> "00_r__Å_"
   // "Si-Si" -> "01_Si-Si"
-  
+
   // Note: sanitize logic in FileWriter replaces '(', ')', '/', ' ' with '_'
   // "r (Å)" -> "r__Å_"
   std::string bin_ds_name = "00_r__Å_";
@@ -185,7 +187,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   std::string bin_units;
   bin_ds.getAttribute("Units").read(bin_units);
   EXPECT_EQ(bin_units, "Å");
-  
+
   EXPECT_TRUE(bin_ds.hasAttribute("Long Name"));
   std::string bin_label;
   bin_ds.getAttribute("Long Name").read(bin_label);
@@ -218,7 +220,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell frame1 = FileIO::readStructure("si_crystal.car", type);
-  
+
   // Create frame2 with same lattice
   auto lv = frame1.latticeVectors();
   Cell frame2(lv[0], lv[1], lv[2]);
@@ -233,7 +235,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   Trajectory trajectory;
   trajectory.addFrame(frame1);
   trajectory.addFrame(frame2);
-  trajectory.setTimeStep(1.0); // 1 fs
+  trajectory.setTimeStep(1.0);        // 1 fs
   trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
   trajectory.calculateVelocities();
 
@@ -244,94 +246,110 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   std::string filename = "test_vacf_new.h5";
   writer.writeHDF(filename);
 
-
   // Assert
   ASSERT_TRUE(fileExistsAndIsNotEmpty(filename));
   {
-  HighFive::File file(filename, HighFive::File::ReadOnly);
+    HighFive::File file(filename, HighFive::File::ReadOnly);
 
-  // Check VACF
-  EXPECT_TRUE(file.exist("VACF"));
-  HighFive::Group vacf_group = file.getGroup("VACF");
+    // Check VACF
+    EXPECT_TRUE(file.exist("VACF"));
+    HighFive::Group vacf_group = file.getGroup("VACF");
 
-  // Description
-  EXPECT_TRUE(vacf_group.hasAttribute("description"));
-  std::string description;
-  vacf_group.getAttribute("description").read(description);
-  EXPECT_EQ(description, "Velocity Autocorrelation Function");
+    // Description
+    EXPECT_TRUE(vacf_group.hasAttribute("description"));
+    std::string description;
+    vacf_group.getAttribute("description").read(description);
+    EXPECT_EQ(description, "Velocity Autocorrelation Function");
 
-  // Check data dataset no longer exists
-  EXPECT_FALSE(vacf_group.exist("data"));
-  
-  // Check new datasets
-  // "Time" -> "00_Time"
-  // "VACF" -> "Total" -> "01_Total"
-  std::string time_ds_name = "00_Time";
-  std::string vacf_ds_name = "01_Total";
-  
-  EXPECT_TRUE(vacf_group.exist(time_ds_name));
-  EXPECT_TRUE(vacf_group.exist(vacf_ds_name));
-  
-  HighFive::DataSet time_ds = vacf_group.getDataSet(time_ds_name);
-  EXPECT_TRUE(time_ds.hasAttribute("Units"));
-  std::string bin_units;
-  time_ds.getAttribute("Units").read(bin_units);
-  EXPECT_EQ(bin_units, "fs");
+    // Check data dataset no longer exists
+    EXPECT_FALSE(vacf_group.exist("data"));
 
-  HighFive::DataSet vacf_ds = vacf_group.getDataSet(vacf_ds_name);
-  EXPECT_TRUE(vacf_ds.hasAttribute("Units"));
-  std::string data_units;
-  vacf_ds.getAttribute("Units").read(data_units);
-  EXPECT_EQ(data_units, "Å^2/fs^2");
+    // Check new datasets
+    // "Time" -> "00_Time"
+    // "VACF" -> "Total" -> "01_Total"
+    std::string time_ds_name = "00_Time";
+    std::string vacf_ds_name = "01_Total";
 
-  // Check Normalized VACF
-  EXPECT_TRUE(file.exist("Normalized_VACF"));
-  HighFive::Group norm_vacf_group = file.getGroup("Normalized_VACF");
+    EXPECT_TRUE(vacf_group.exist(time_ds_name));
+    EXPECT_TRUE(vacf_group.exist(vacf_ds_name));
 
-  // Description
-  EXPECT_TRUE(norm_vacf_group.hasAttribute("description"));
-  std::string norm_desc;
-  norm_vacf_group.getAttribute("description").read(norm_desc);
-  EXPECT_EQ(norm_desc, "Normalized Velocity Autocorrelation Function");
+    HighFive::DataSet time_ds = vacf_group.getDataSet(time_ds_name);
+    EXPECT_TRUE(time_ds.hasAttribute("Units"));
+    std::string bin_units;
+    time_ds.getAttribute("Units").read(bin_units);
+    EXPECT_EQ(bin_units, "fs");
 
-  // Check new datasets
-  // "Time" -> "00_Time"
-  // "Normalized VACF" -> "Total" -> "01_Total"
-  std::string norm_vacf_name = "01_Total";
-  
-  EXPECT_TRUE(norm_vacf_group.exist(norm_vacf_name));
-  HighFive::DataSet norm_vacf_ds = norm_vacf_group.getDataSet(norm_vacf_name);
+    HighFive::DataSet vacf_ds = vacf_group.getDataSet(vacf_ds_name);
+    EXPECT_TRUE(vacf_ds.hasAttribute("Units"));
+    std::string data_units;
+    vacf_ds.getAttribute("Units").read(data_units);
+    EXPECT_EQ(data_units, "Å^2/fs^2");
 
-  // Data units
-  EXPECT_TRUE(norm_vacf_ds.hasAttribute("Units"));
-  std::string norm_data_units;
-  norm_vacf_ds.getAttribute("Units").read(norm_data_units);
-  EXPECT_EQ(norm_data_units, "normalized");
+    // Check Normalized VACF
+    EXPECT_TRUE(file.exist("Normalized_VACF"));
+    HighFive::Group norm_vacf_group = file.getGroup("Normalized_VACF");
+
+    // Description
+    EXPECT_TRUE(norm_vacf_group.hasAttribute("description"));
+    std::string norm_desc;
+    norm_vacf_group.getAttribute("description").read(norm_desc);
+    EXPECT_EQ(norm_desc, "Normalized Velocity Autocorrelation Function");
+
+    // Check new datasets
+    // "Time" -> "00_Time"
+    // "Normalized VACF" -> "Total" -> "01_Total"
+    std::string norm_vacf_name = "01_Total";
+
+    EXPECT_TRUE(norm_vacf_group.exist(norm_vacf_name));
+    HighFive::DataSet norm_vacf_ds = norm_vacf_group.getDataSet(norm_vacf_name);
+
+    // Data units
+    EXPECT_TRUE(norm_vacf_ds.hasAttribute("Units"));
+    std::string norm_data_units;
+    norm_vacf_ds.getAttribute("Units").read(norm_data_units);
+    EXPECT_EQ(norm_data_units, "normalized");
   } // Close file
 
   // Calculate and Check VDOS
   df.calculateVDOS();
-  
+
   std::string vdos_filename = "test_vacf_vdos.h5";
-  writer.writeHDF(vdos_filename); 
+  writer.writeHDF(vdos_filename);
   writer.writeAllCSVs("test_vacf_vdos", true);
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_vacf_vdos_VDOS.csv")); 
-  
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_vacf_vdos_VDOS.csv"));
+
   // Re-open to check VDOS
   HighFive::File file_vdos(vdos_filename, HighFive::File::ReadOnly);
   EXPECT_TRUE(file_vdos.exist("VDOS"));
   HighFive::Group vdos_group = file_vdos.getGroup("VDOS");
-  
+
   EXPECT_TRUE(vdos_group.hasAttribute("description"));
   std::string vdos_desc;
   vdos_group.getAttribute("description").read(vdos_desc);
   EXPECT_EQ(vdos_desc, "Vibrational Density of States");
-  
+
   std::string vdos_freq_name = "00_Frequency__THz_";
   std::string vdos_val_name = "01_Total";
-  
+
   EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
   EXPECT_TRUE(vdos_group.exist(vdos_val_name));
+
+  // Check new units in HDF5
+  std::string vdos_cm_name = "02_Frequency__cm-1_";
+  std::string vdos_mev_name = "03_Frequency__meV_";
+
+  EXPECT_TRUE(vdos_group.exist(vdos_cm_name));
+  EXPECT_TRUE(vdos_group.exist(vdos_mev_name));
+
+  HighFive::DataSet vdos_cm_ds = vdos_group.getDataSet(vdos_cm_name);
+  EXPECT_TRUE(vdos_cm_ds.hasAttribute("Units"));
+  std::string cm_units;
+  vdos_cm_ds.getAttribute("Units").read(cm_units);
+  EXPECT_EQ(cm_units, "cm^-1");
+
+  HighFive::DataSet vdos_mev_ds = vdos_group.getDataSet(vdos_mev_name);
+  EXPECT_TRUE(vdos_mev_ds.hasAttribute("Units"));
+  std::string mev_units;
+  vdos_mev_ds.getAttribute("Units").read(mev_units);
+  EXPECT_EQ(mev_units, "meV");
 }
-
-

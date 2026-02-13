@@ -646,8 +646,12 @@ void DistributionFunctions::calculateVDOS() {
   size_t total_points = 2 * num_points - 1; // 0 is shared
 
   std::vector<double> combined_frequencies;
+  std::vector<double> combined_frequencies_cmInv;
+  std::vector<double> combined_frequencies_meV;
   std::vector<double> combined_intensities;
   combined_frequencies.reserve(total_points);
+  combined_frequencies_cmInv.reserve(total_points);
+  combined_frequencies_meV.reserve(total_points);
   combined_intensities.reserve(total_points);
 
   // Add negative frequencies (Imaginary part)
@@ -658,12 +662,18 @@ void DistributionFunctions::calculateVDOS() {
   // Let's stick to the plan: f < 0 is imaginary.
   for (size_t i = num_points - 1; i > 0; --i) {
     combined_frequencies.push_back(-frequencies[i]);
+    combined_frequencies_cmInv.push_back(-frequencies[i] *
+                                         constants::THz_to_cmInv);
+    combined_frequencies_meV.push_back(-frequencies[i] * constants::THz_to_meV);
     combined_intensities.push_back(intensities_imag[i]);
   }
 
   // Add positive frequencies (Real part)
   for (size_t i = 0; i < num_points; ++i) {
     combined_frequencies.push_back(frequencies[i]);
+    combined_frequencies_cmInv.push_back(frequencies[i] *
+                                         constants::THz_to_cmInv);
+    combined_frequencies_meV.push_back(frequencies[i] * constants::THz_to_meV);
     combined_intensities.push_back(intensities_real[i]);
   }
 
@@ -672,6 +682,8 @@ void DistributionFunctions::calculateVDOS() {
   vdos_hist.bin_label = "Frequency (THz)";
   vdos_hist.bins = combined_frequencies;
   vdos_hist.partials["Total"] = combined_intensities;
+  vdos_hist.partials["Frequency (cm-1)"] = combined_frequencies_cmInv;
+  vdos_hist.partials["Frequency (meV)"] = combined_frequencies_meV;
 
   histograms_["VDOS"] = std::move(vdos_hist);
 }

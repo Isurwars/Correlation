@@ -11,10 +11,10 @@
 
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
-#include <vector>
 #include "../include/PhysicalData.hpp"
 #include "../include/Trajectory.hpp"
 #include "../include/TrajectoryAnalyzer.hpp"
+#include <vector>
 
 namespace {
 // Helper function to print a histogram's contents for debugging purposes.
@@ -46,15 +46,15 @@ protected:
   }
 
   void updateTrajectory() {
-      trajectory_ = Trajectory();
-      trajectory_.addFrame(cell_);
-      trajectory_.precomputeBondCutoffs();
+    trajectory_ = Trajectory();
+    trajectory_.addFrame(cell_);
+    trajectory_.precomputeBondCutoffs();
   }
 
-  void updateTrajectory(const Cell& cell) {
-      trajectory_ = Trajectory();
-      trajectory_.addFrame(cell);
-      trajectory_.precomputeBondCutoffs();
+  void updateTrajectory(const Cell &cell) {
+    trajectory_ = Trajectory();
+    trajectory_.addFrame(cell);
+    trajectory_.precomputeBondCutoffs();
   }
 
   Cell cell_{};
@@ -99,7 +99,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
   water_cell.addAtom("H", {1.0, 0.0, 0.0});
   water_cell.addAtom("H",
                      {std::cos(1.916), std::sin(1.916), 0.0}); // ~109.5 deg
-  
+
   updateTrajectory(water_cell);
   DistributionFunctions df(water_cell, 5.0, trajectory_.getBondCutoffs());
   const double bin_width = 1.0; // 1-degree bins
@@ -196,7 +196,7 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
   ASSERT_TRUE(cn_hist.partials.count("H-Any"));
   const auto &h_any = cn_hist.partials.at("H-Any");
   EXPECT_EQ(h_any[1], 4);
-  
+
   // O-Any: O has no neighbors, so no partials started with O-.
   // Thus O-Any should not be created.
   EXPECT_EQ(cn_hist.partials.count("O-Any"), 0);
@@ -245,124 +245,180 @@ TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
 TEST_F(DistributionFunctionsTest, AccumulationAndScalingWorks) {
   // Arrange: Create two different cells
   Cell cell1 = cell_; // Default cell from fixture (Ar pair at 1.5)
-  
+
   Cell cell2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell2.addAtom("Ar", {5.0, 5.0, 5.0});
   cell2.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance 2.0
-  
-  Trajectory traj1; traj1.addFrame(cell1); traj1.precomputeBondCutoffs();
-  Trajectory traj2; traj2.addFrame(cell2); traj2.precomputeBondCutoffs();
-  
+
+  Trajectory traj1;
+  traj1.addFrame(cell1);
+  traj1.precomputeBondCutoffs();
+  Trajectory traj2;
+  traj2.addFrame(cell2);
+  traj2.precomputeBondCutoffs();
+
   DistributionFunctions df1(cell1, 5.0, traj1.getBondCutoffs());
   DistributionFunctions df2(cell2, 5.0, traj2.getBondCutoffs());
-  
+
   // Calculate RDF for both
   df1.calculateRDF(5.0, 0.1);
   df2.calculateRDF(5.0, 0.1);
-  
-  const auto& h1 = df1.getHistogram("g(r)").partials.at("Ar-Ar");
-  const auto& h2 = df2.getHistogram("g(r)").partials.at("Ar-Ar");
-  
+
+  const auto &h1 = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+  const auto &h2 = df2.getHistogram("g(r)").partials.at("Ar-Ar");
+
   // Expected average
   std::vector<double> expected(h1.size());
-  for(size_t i=0; i<h1.size(); ++i) {
-      expected[i] = (h1[i] + h2[i]) / 2.0;
+  for (size_t i = 0; i < h1.size(); ++i) {
+    expected[i] = (h1[i] + h2[i]) / 2.0;
   }
-  
+
   // Act: Add df2 to df1 and scale
   df1.add(df2);
   df1.scale(0.5);
-  
-  const auto& h_avg = df1.getHistogram("g(r)").partials.at("Ar-Ar");
-  
+
+  const auto &h_avg = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+
   // Assert
   ASSERT_EQ(h_avg.size(), expected.size());
-  for(size_t i=0; i<h_avg.size(); ++i) {
-      EXPECT_NEAR(h_avg[i], expected[i], 1e-9);
+  for (size_t i = 0; i < h_avg.size(); ++i) {
+    EXPECT_NEAR(h_avg[i], expected[i], 1e-9);
   }
 }
 
-
 TEST_F(DistributionFunctionsTest, ComputeMeanMatchesSequential) {
   // Arrange
-  Cell cell1 = cell_; 
+  Cell cell1 = cell_;
   Cell cell2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell2.addAtom("Ar", {5.0, 5.0, 5.0});
   cell2.addAtom("Ar", {7.0, 5.0, 5.0});
-  
-  Trajectory traj; 
-  traj.addFrame(cell1); 
+
+  Trajectory traj;
+  traj.addFrame(cell1);
   traj.addFrame(cell2);
   traj.precomputeBondCutoffs();
-  
+
   std::vector<std::vector<double>> cutoffs = traj.getBondCutoffs();
-  
+
   TrajectoryAnalyzer analyzer(traj, 10.0, cutoffs);
-  
+
   AnalysisSettings settings;
   settings.r_max = 5.0;
   settings.r_bin_width = 0.1;
   settings.smoothing = false; // Disable smoothing to compare raw values easily
   settings.angle_bin_width = 1.0;
   settings.q_max = 10.0;
-  
+
   // Act
   auto result = DistributionFunctions::computeMean(traj, analyzer, 0, settings);
-  
+
   // Manual calculation for comparison
   DistributionFunctions df1(cell1, 0.0, cutoffs);
   df1.setStructureAnalyzer(analyzer.getAnalyzers()[0].get());
   df1.calculateRDF(5.0, 0.1);
-  
+
   DistributionFunctions df2(cell2, 0.0, cutoffs);
   df2.setStructureAnalyzer(analyzer.getAnalyzers()[1].get());
   df2.calculateRDF(5.0, 0.1);
-  
+
   df1.add(df2);
   df1.scale(0.5);
-  
+
   // Assert
-  const auto& h_auto = result->getHistogram("g(r)").partials.at("Ar-Ar");
-  const auto& h_manual = df1.getHistogram("g(r)").partials.at("Ar-Ar");
-  
+  const auto &h_auto = result->getHistogram("g(r)").partials.at("Ar-Ar");
+  const auto &h_manual = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+
   ASSERT_EQ(h_auto.size(), h_manual.size());
-  for(size_t i=0; i<h_auto.size(); ++i) {
-      EXPECT_NEAR(h_auto[i], h_manual[i], 1e-9);
+  for (size_t i = 0; i < h_auto.size(); ++i) {
+    EXPECT_NEAR(h_auto[i], h_manual[i], 1e-9);
   }
 }
 
 TEST_F(DistributionFunctionsTest, CalculateVACFReturnsCorrectValues) {
   // Arrange
-  Cell c1({10,10,10,90,90,90}); c1.addAtom("Ar", {0,0,0});
-  Cell c2({10,10,10,90,90,90}); c2.addAtom("Ar", {1,0,0});
-  Cell c3({10,10,10,90,90,90}); c3.addAtom("Ar", {2,0,0});
-  
+  Cell c1({10, 10, 10, 90, 90, 90});
+  c1.addAtom("Ar", {0, 0, 0});
+  Cell c2({10, 10, 10, 90, 90, 90});
+  c2.addAtom("Ar", {1, 0, 0});
+  Cell c3({10, 10, 10, 90, 90, 90});
+  c3.addAtom("Ar", {2, 0, 0});
+
   Trajectory traj;
-  traj.addFrame(c1); traj.addFrame(c2); traj.addFrame(c3);
+  traj.addFrame(c1);
+  traj.addFrame(c2);
+  traj.addFrame(c3);
   traj.setTimeStep(1.0);
   traj.calculateVelocities();
-  
+
   // Dummy cutoffs
   std::vector<std::vector<double>> cutoffs = {{0.0}};
   DistributionFunctions df(c1, 0.0, cutoffs);
-  
+
   // Act
   df.calculateVACF(traj, 2);
-  
+
   // Assert
   ASSERT_NO_THROW(df.getHistogram("VACF"));
-  const auto& hist = df.getHistogram("VACF");
-  const auto& total = hist.partials.at("Total");
-  
+  const auto &hist = df.getHistogram("VACF");
+  const auto &total = hist.partials.at("Total");
+
   // With constant velocity (1,0,0), VACF should be constant 1.0
-  EXPECT_EQ(total.size(), 3); 
+  EXPECT_EQ(total.size(), 3);
   EXPECT_NEAR(total[0], 1.0, 1e-6);
   EXPECT_NEAR(total[1], 1.0, 1e-6);
-  
+
   // Check Normalized VACF
   ASSERT_NO_THROW(df.getHistogram("Normalized VACF"));
-  const auto& norm_hist = df.getHistogram("Normalized VACF");
-  const auto& norm_total = norm_hist.partials.at("Total");
+  const auto &norm_hist = df.getHistogram("Normalized VACF");
+  const auto &norm_total = norm_hist.partials.at("Total");
   EXPECT_NEAR(norm_total[0], 1.0, 1e-6);
   EXPECT_NEAR(norm_total[1], 1.0, 1e-6);
+}
+
+TEST_F(DistributionFunctionsTest, CalculateVDOSGeneratesExtraUnits) {
+  // Arrange
+  Cell c1({10, 10, 10, 90, 90, 90});
+  c1.addAtom("Ar", {0, 0, 0});
+  Trajectory traj;
+  traj.addFrame(c1);
+  traj.addFrame(c1); // 2 frames needed minimum
+  traj.setTimeStep(1.0);
+  traj.calculateVelocities();
+
+  // Dummy cutoffs
+  std::vector<std::vector<double>> cutoffs = {{0.0}};
+  DistributionFunctions df(c1, 0.0, cutoffs);
+
+  df.calculateVACF(traj, 1);
+
+  // Act
+  df.calculateVDOS();
+
+  // Assert
+  ASSERT_NO_THROW(df.getHistogram("VDOS"));
+  const auto &hist = df.getHistogram("VDOS");
+
+  EXPECT_TRUE(hist.partials.count("Frequency (cm-1)"));
+  EXPECT_TRUE(hist.partials.count("Frequency (meV)"));
+
+  const auto &freq_thz = hist.bins; // Bins are Frequency (THz)
+  const auto &freq_cm = hist.partials.at("Frequency (cm-1)");
+  const auto &freq_mev = hist.partials.at("Frequency (meV)");
+
+  ASSERT_EQ(freq_thz.size(), freq_cm.size());
+  ASSERT_EQ(freq_thz.size(), freq_mev.size());
+
+  // Check conversion factors for a non-zero frequency point
+  // Index 0 is usually 0 frequency or negative max depending on implementation
+  // Let's check a point
+  if (freq_thz.size() > 1) {
+    // Find a non-zero frequency
+    for (size_t i = 0; i < freq_thz.size(); ++i) {
+      if (std::abs(freq_thz[i]) > 1e-6) {
+        EXPECT_NEAR(freq_cm[i], freq_thz[i] * constants::THz_to_cmInv, 1e-5);
+        EXPECT_NEAR(freq_mev[i], freq_thz[i] * constants::THz_to_meV, 1e-5);
+        break;
+      }
+    }
+  }
 }

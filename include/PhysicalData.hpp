@@ -18,8 +18,10 @@ namespace constants {
 // Use the standard library's high-precision pi from C++20
 constexpr double pi =
     3.1415926535897932384626433832795028841971693993751058209749445923078164062;
-constexpr double rad2deg = 180.0 / pi; // RADIANS -> DEGREES
-constexpr double deg2rad = pi / 180.0; // DEGREES -> RADIANS
+constexpr double rad2deg = 180.0 / pi;    // RADIANS -> DEGREES
+constexpr double deg2rad = pi / 180.0;    // DEGREES -> RADIANS
+constexpr double THz_to_cmInv = 33.35641; // THz -> cm^-1
+constexpr double THz_to_meV = 4.135667;   // THz -> meV
 } // namespace constants
 
 /**

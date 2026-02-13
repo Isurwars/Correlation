@@ -87,7 +87,12 @@ void FileWriter::writeHDF(const std::string &filename) const {
         "Normalized Velocity Autocorrelation Function"}},
       {"VDOS",
        {"Frequency (THz)", "THz", "arbitrary units",
-        "Vibrational Density of States"}}};
+        "Vibrational Density of States"}},
+      {"Frequency (cm-1)",
+       {"Frequency (cm-1)", "cm^-1", "arbitrary units",
+        "Frequency in wavenumbers"}},
+      {"Frequency (meV)",
+       {"Frequency (meV)", "meV", "arbitrary units", "Frequency in meV"}}};
 
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
