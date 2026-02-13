@@ -10,7 +10,7 @@
 #include "../include/PhysicalData.hpp"
 
 // Test fixture for the Cell class.
-class CellTest : public ::testing::Test {
+class Test02_Cell : public ::testing::Test {
 protected:
   // A standard 10x10x10 orthogonal cell created once for all tests in this
   // fixture.
@@ -19,7 +19,18 @@ protected:
 
 // --- Constructor and Lattice Tests ---
 
-TEST_F(CellTest, ParameterConstructorForCubicCell) {
+TEST_F(Test02_Cell, DefaultConstructorInitializesCorrectly) {
+  // Arrange & Act
+  Cell cell;
+
+  // Assert
+  EXPECT_TRUE(cell.isEmpty());
+  EXPECT_EQ(cell.atomCount(), 0);
+  EXPECT_EQ(cell.volume(), 0.0);
+  EXPECT_DOUBLE_EQ(cell.getEnergy(), 0.0);
+}
+
+TEST_F(Test02_Cell, ParameterConstructorForCubicCell) {
   // Arrange
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
 
@@ -34,7 +45,7 @@ TEST_F(CellTest, ParameterConstructorForCubicCell) {
   EXPECT_NEAR(cell.volume(), 64.0, 1e-9);
 }
 
-TEST_F(CellTest, VectorConstructorCalculatesParameters) {
+TEST_F(Test02_Cell, VectorConstructorCalculatesParameters) {
   // Arrange & Act
   Cell cell({2.0, 0.0, 0.0}, {0.0, 3.0, 0.0}, {0.0, 0.0, 4.0});
   const auto &params = cell.lattice_parameters();
@@ -49,7 +60,7 @@ TEST_F(CellTest, VectorConstructorCalculatesParameters) {
   EXPECT_NEAR(cell.volume(), 24.0, 1e-9);
 }
 
-TEST_F(CellTest, VolumeForNonOrthogonalCellIsCorrect) {
+TEST_F(Test02_Cell, VolumeForNonOrthogonalCellIsCorrect) {
   // Arrange
   const std::array<double, 6> params = {5.0, 6.0, 7.0, 80.0, 90.0, 100.0};
   Cell cell(params);
@@ -66,14 +77,69 @@ TEST_F(CellTest, VolumeForNonOrthogonalCellIsCorrect) {
   EXPECT_NEAR(cell.volume(), expected_volume, 1e-9);
 }
 
-TEST_F(CellTest, ThrowsOnInvalidLatticeParameters) {
+TEST_F(Test02_Cell, ThrowsOnInvalidLatticeParameters) {
   EXPECT_THROW(Cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
   EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
+  EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
+}
+
+TEST_F(Test02_Cell, RuleOfFiveWorksCorrectly) {
+  // Arrange
+  const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
+  Cell cell(params);
+  cell.addAtom("H", {0.5, 0.5, 0.5});
+  cell.setEnergy(1.23);
+
+  // Copy Constructor
+  Cell cell_copy(cell);
+  EXPECT_EQ(cell_copy.volume(), cell.volume());
+  EXPECT_EQ(cell_copy.atomCount(), cell.atomCount());
+  EXPECT_DOUBLE_EQ(cell_copy.getEnergy(), 1.23);
+
+  // Copy Assignment
+  Cell cell_assigned;
+  cell_assigned = cell;
+  EXPECT_EQ(cell_assigned.volume(), cell.volume());
+  EXPECT_EQ(cell_assigned.atomCount(), cell.atomCount());
+  EXPECT_DOUBLE_EQ(cell_assigned.getEnergy(), 1.23);
+
+  // Move Constructor
+  Cell cell_moved(std::move(cell_copy));
+  EXPECT_EQ(cell_moved.volume(), cell.volume());
+  EXPECT_EQ(cell_moved.atomCount(), cell.atomCount());
+  EXPECT_DOUBLE_EQ(cell_moved.getEnergy(), 1.23);
+
+  // Move Assignment
+  Cell cell_move_assigned;
+  cell_move_assigned = std::move(cell_assigned);
+  EXPECT_EQ(cell_move_assigned.volume(), cell.volume());
+  EXPECT_EQ(cell_move_assigned.atomCount(), cell.atomCount());
+  EXPECT_DOUBLE_EQ(cell_move_assigned.getEnergy(), 1.23);
+}
+
+TEST_F(Test02_Cell, AccessorsWorkCorrectly) {
+  // Arrange
+  Cell cell;
+  // Test setLatticeParameters
+  const std::array<double, 6> params = {10.0, 10.0, 10.0, 90.0, 90.0, 90.0};
+  cell.setLatticeParameters(params);
+
+  // Assert Lattice Parameters and Volume
+  EXPECT_NEAR(cell.volume(), 1000.0, 1e-9);
+
+  // Test Inverse Lattice Vectors (Identity for 10x10x10 cube should be close to
+  // diag(0.1, 0.1, 0.1))
+  const auto &inv_vecs = cell.inverseLatticeVectors();
+  EXPECT_NEAR(inv_vecs[0][0], 0.1, 1e-9);
+
+  // Test Energy
+  cell.setEnergy(-13.6);
+  EXPECT_DOUBLE_EQ(cell.getEnergy(), -13.6);
 }
 
 // --- Atom & Element Management Tests ---
 
-TEST_F(CellTest, AddAtomManagesElementsAndAtomsCorrectly) {
+TEST_F(Test02_Cell, AddAtomManagesElementsAndAtomsCorrectly) {
   // Arrange
   Cell cell;
 
@@ -99,11 +165,27 @@ TEST_F(CellTest, AddAtomManagesElementsAndAtomsCorrectly) {
   EXPECT_EQ(atoms[1].element().id.value, 1);
   EXPECT_EQ(atoms[2].element().symbol, "Si");
   EXPECT_EQ(atoms[2].element().id.value, 0);
+  EXPECT_EQ(atoms[2].element().id.value, 0);
+}
+
+TEST_F(Test02_Cell, FindElementWorksCorrectly) {
+  // Arrange
+  Cell cell;
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+
+  // Act
+  auto element_opt = cell.findElement("Si");
+  auto missing_opt = cell.findElement("Au");
+
+  // Assert
+  ASSERT_TRUE(element_opt.has_value());
+  EXPECT_EQ(element_opt->symbol, "Si");
+  EXPECT_FALSE(missing_opt.has_value());
 }
 
 // --- Position Manipulation Tests ---
 
-TEST_F(CellTest, WrapPositionsWrapsAtomIntoCell) {
+TEST_F(Test02_Cell, WrapPositionsWrapsAtomIntoCell) {
   // Arrange: Uses orthogonal_cell_ from fixture
   orthogonal_cell_.addAtom("H", {12.0, -3.0, 5.0});
 
@@ -116,6 +198,3 @@ TEST_F(CellTest, WrapPositionsWrapsAtomIntoCell) {
   EXPECT_NEAR(final_pos.y(), 7.0, 1e-9); // -3.0 mod 10.0
   EXPECT_NEAR(final_pos.z(), 5.0, 1e-9); // 5.0 mod 10.0
 }
-
-// BondCutoff tests removed as functionality moved to Trajectory
-

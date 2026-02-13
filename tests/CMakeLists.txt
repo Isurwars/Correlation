@@ -11,8 +11,8 @@ include(GoogleTest)
 
 # Explicitly list test sources.
 add_executable(correlation_tests
-    Atom_test.cpp
-    Cell_test.cpp
+    Test01_Atom.cpp
+    Test02_Cell.cpp
     Distribution_Functions_tests.cpp
     FileIO_test.cpp
     FileWriter_test.cpp
