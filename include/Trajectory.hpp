@@ -39,10 +39,19 @@ public:
    * @brief get a bond cut off for two given elements.
    *@param type1
    *@param type2
+   *@return The linear bond cutoff distance.
    **/
   double getBondCutoff(int type1, int type2);
 
-  void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
+  /**
+   * @brief get a squared bond cut off for two given elements.
+   *@param type1
+   *@param type2
+   *@return The squared bond cutoff distance.
+   **/
+  double getBondCutoffSQ(int type1, int type2);
+
+  void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) {
     bond_cutoffs_sq_ = cutoffs;
   }
 
@@ -72,7 +81,7 @@ public:
     return velocities_;
   }
 
-  const std::vector<std::vector<double>> &getBondCutoffs() const {
+  const std::vector<std::vector<double>> &getBondCutoffsSQ() const {
     return bond_cutoffs_sq_;
   }
 

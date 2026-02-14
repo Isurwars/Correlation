@@ -13,6 +13,7 @@ include(GoogleTest)
 add_executable(correlation_tests
     Test01_Atom.cpp
     Test02_Cell.cpp
+    Test03_Trajectory.cpp
     Distribution_Functions_tests.cpp
     FileIO_test.cpp
     FileWriter_test.cpp
@@ -20,7 +21,6 @@ add_executable(correlation_tests
     StructureAnalyzer_test.cpp
     AngleTests.cpp
     TrajectoryAnalyzer_test.cpp
-    TrajectoryRevision_test.cpp
 )
 
 # The test executable also links to the library and inherits its properties.

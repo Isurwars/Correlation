@@ -5,8 +5,6 @@
 
 #include "TrajectoryAnalyzer.hpp"
 
-#include <iostream>
-
 TrajectoryAnalyzer::TrajectoryAnalyzer(
     Trajectory &trajectory, double neighbor_cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame,

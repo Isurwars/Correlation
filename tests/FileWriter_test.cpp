@@ -76,7 +76,7 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  DistributionFunctions df(si_cell, 20.0, trajectory.getBondCutoffs());
+  DistributionFunctions df(si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
   const double rdf_bin = 0.05;
@@ -139,7 +139,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
 
   DistributionFunctions df(
       si_cell, 5.0,
-      trajectory.getBondCutoffs()); // Use smaller r_max for faster test
+      trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);
@@ -241,7 +241,7 @@ TEST_F(FileWriterTest, WritesVACFMetadata) {
   trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
   trajectory.calculateVelocities();
 
-  DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffs());
+  DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffsSQ());
   df.calculateVACF(trajectory, 1);
 
   FileWriter writer(df);

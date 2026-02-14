@@ -32,7 +32,7 @@ public:
 
   double getTimeStep() const { return time_step_; }
   double getNeighborCutoff() const { return neighbor_cutoff_; }
-  const std::vector<std::vector<double>> &getBondCutoffs() const {
+  const std::vector<std::vector<double>> &getBondCutoffsSQ() const {
     return bond_cutoffs_;
   }
   bool getIgnorePeriodicSelfInteractions() const {

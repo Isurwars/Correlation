@@ -3,24 +3,24 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/StructureAnalyzer.hpp"
-#include <gtest/gtest.h>
-#include <vector>
 #include "../include/Atom.hpp"
 #include "../include/Cell.hpp"
 #include "../include/PhysicalData.hpp"
+#include "../include/StructureAnalyzer.hpp"
 #include "../include/Trajectory.hpp"
+#include <gtest/gtest.h>
+#include <vector>
 
 // A test fixture for StructureAnalyzer tests.
 class StructureAnalyzerTest : public ::testing::Test {
 protected:
-    Trajectory trajectory_;
-    
-    void updateTrajectory(const Cell& cell) {
-        trajectory_ = Trajectory();
-        trajectory_.addFrame(cell);
-        trajectory_.precomputeBondCutoffs();
-    }
+  Trajectory trajectory_;
+
+  void updateTrajectory(const Cell &cell) {
+    trajectory_ = Trajectory();
+    trajectory_.addFrame(cell);
+    trajectory_.precomputeBondCutoffs();
+  }
 };
 
 TEST_F(StructureAnalyzerTest, FindsCorrectNeighborsForSilicon) {
@@ -44,7 +44,7 @@ TEST_F(StructureAnalyzerTest, FindsCorrectNeighborsForSilicon) {
   // Act: Calculate neighbors with a cutoff just beyond the first neighbor
   // shell. The first nearest neighbor distance in Si is (sqrt(3)/4)*a
   // approx 2.35 Å.
-  StructureAnalyzer neighbors(si_cell, 3.0, trajectory_.getBondCutoffs());
+  StructureAnalyzer neighbors(si_cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &neighborMatrix = neighbors.neighbors();
   const auto &atoms = si_cell.atoms();
 
@@ -77,7 +77,7 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAnglesForWater) {
   updateTrajectory(water_cell);
 
   // Act: Calculate neighbors and angles.
-  StructureAnalyzer neighbors(water_cell, 3.0, trajectory_.getBondCutoffs());
+  StructureAnalyzer neighbors(water_cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &angles = neighbors.angles();
 
   // Assert: We need to get the element IDs to index the angle tensor correctly.
@@ -106,7 +106,7 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   // 0.0). The resulting angle A-B-C must be 90 degrees (pi/2 radians).
 
   const double side_length = 10.0;
-  const double cutoff = 2.0; 
+  const double cutoff = 2.0;
   // Calculate pi/2 explicitly using acos(-1.0) = pi.
   const double expected_angle_rad = std::acos(-1.0) / 2.0;
 
@@ -116,14 +116,14 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   // A at (9.0, 0.5, 0.5) -> Wrapped dist to B is 1.5
   // C at (0.5, 9.0, 0.5) -> Wrapped dist to B is 1.5
   // Dist A-C is sqrt(1.5^2 + 1.5^2) = 2.12 > bond_cutoff (~1.85)
-  
+
   pbc_cell.addAtom("C", {9.0, 0.5, 0.5}); // Atom A
   pbc_cell.addAtom("C", {0.5, 0.5, 0.5}); // Atom B (Central)
   pbc_cell.addAtom("O", {0.5, 9.0, 0.5}); // Atom C
   updateTrajectory(pbc_cell);
 
   // Act: Calculate neighbors and angles.
-  StructureAnalyzer analyzer(pbc_cell, cutoff, trajectory_.getBondCutoffs());
+  StructureAnalyzer analyzer(pbc_cell, cutoff, trajectory_.getBondCutoffsSQ());
   const auto &angles = analyzer.angles();
 
   // Assert
@@ -142,7 +142,6 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   EXPECT_NEAR(cco_angles[0], expected_angle_rad, 1e-6);
 }
 
-
 TEST_F(StructureAnalyzerTest, FindsNoNeighborsForIsolatedAtom) {
   // Arrange: Create a large cell with a single atom.
   Cell large_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
@@ -151,7 +150,7 @@ TEST_F(StructureAnalyzerTest, FindsNoNeighborsForIsolatedAtom) {
   // Use default bond factor.
 
   // Act: Calculate neighbors with a moderate cutoff.
-  StructureAnalyzer analyzer(large_cell,5.0, trajectory_.getBondCutoffs());
+  StructureAnalyzer analyzer(large_cell, 5.0, trajectory_.getBondCutoffsSQ());
   const auto &neighbors = analyzer.neighbors();
 
   // Assert: The single atom should have no neighbors.
@@ -169,7 +168,7 @@ TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
     cell.addAtom("Ar", {5.0, 5.0, 5.0});
     cell.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance = 2.0 < 2.304
     updateTrajectory(cell);
-    StructureAnalyzer analyzer(cell, 3.1, trajectory_.getBondCutoffs());
+    StructureAnalyzer analyzer(cell, 3.1, trajectory_.getBondCutoffsSQ());
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 2);
     ASSERT_EQ(neighbors[0].size(), 1);
@@ -183,7 +182,7 @@ TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
     cell.addAtom("Ar", {5.0, 5.0, 5.0});
     cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0 > 2.304
     updateTrajectory(cell);
-    StructureAnalyzer analyzer(cell, 3.5, trajectory_.getBondCutoffs());
+    StructureAnalyzer analyzer(cell, 3.5, trajectory_.getBondCutoffsSQ());
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 2);
     EXPECT_TRUE(neighbors[0].empty());
@@ -199,22 +198,22 @@ TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
   random_cell.addAtom("Ar", {8.0, 8.0, 8.0}); // C
   random_cell.addAtom("Ar", {1.5, 1.5, 1.5}); // D (Dist to A ~0.866)
   updateTrajectory(random_cell);
-  
-  // Ar radius 0.96. Sum = 1.92. 
+
+  // Ar radius 0.96. Sum = 1.92.
   // Dist A-B = 1.73 < 1.92. Should be bonded with default bond_factor 1.2?
   // 1.92 * 1.2 = 2.304.
   // 1.92 * 1.2 = 2.304.
   // So A-B should be neighbors.
   // A-D should be neighbors.
   // Act
-  StructureAnalyzer analyzer(random_cell, 3.0, trajectory_.getBondCutoffs());
+  StructureAnalyzer analyzer(random_cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &neighbors = analyzer.neighbors();
 
   // Assert: Check symmetry for all pairs.
   for (size_t i = 0; i < neighbors.size(); ++i) {
     for (const auto &neighbor : neighbors[i]) {
       size_t j = neighbor.index;
-      
+
       // If i sees j, then j must see i
       bool found_reverse = false;
       for (const auto &reverse_neighbor : neighbors[j]) {
@@ -229,22 +228,25 @@ TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
           break;
         }
       }
-      EXPECT_TRUE(found_reverse) << "Symmetry broken: Atom " << i << " sees " << j << " but " << j << " does not see " << i;
+      EXPECT_TRUE(found_reverse) << "Symmetry broken: Atom " << i << " sees "
+                                 << j << " but " << j << " does not see " << i;
     }
   }
 }
 
 TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
   // 1.92 * 1.2 = 2.304.
-  // We need images to be within the bond threshold. Let's use image distance = 2.0.
-  
+  // We need images to be within the bond threshold. Let's use image distance
+  // = 2.0.
+
   Cell small_cell({2.0, 2.0, 2.0, 90.0, 90.0, 90.0});
   small_cell.addAtom("Ar", {1.0, 1.0, 1.0});
   updateTrajectory(small_cell);
 
   // Case 1: Ignore Periodic Self Interactions = true (Reference default)
   {
-    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffs(), true);
+    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(),
+                               true);
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 1);
     // Should NOT see itself
@@ -253,15 +255,16 @@ TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
 
   // Case 2: Ignore Periodic Self Interactions = false
   {
-    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffs(), false);
+    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(),
+                               false);
     const auto &neighbors = analyzer.neighbors();
     ASSERT_EQ(neighbors.size(), 1);
-    
-    // In a cubic cell with side 2.0, nearest images are 6 face-sharing images at d=2.0.
-    // 2.0 < 2.304, so they should be found as bonded neighbors.
+
+    // In a cubic cell with side 2.0, nearest images are 6 face-sharing images
+    // at d=2.0. 2.0 < 2.304, so they should be found as bonded neighbors.
     EXPECT_EQ(neighbors[0].size(), 6);
-    for(const auto& n : neighbors[0]) {
-        EXPECT_NEAR(n.distance, 2.0, 1e-6);
+    for (const auto &n : neighbors[0]) {
+      EXPECT_NEAR(n.distance, 2.0, 1e-6);
     }
   }
 }
@@ -269,21 +272,21 @@ TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
 TEST_F(StructureAnalyzerTest, TriangleMoleculeConnectivity) {
   // Arrange: Create 3 atoms in an equilateral triangle.
   Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  
+
   // Equilateral triangle with side length 2.0
   // Covalent radius Ar = 0.96 -> Bond cutoff = 1.92 * 1.2 = 2.304.
   // Distance 2.0 < 2.304, so they should be connected.
-  
+
   const double d = 2.0;
-  const double h = std::sqrt(d*d - (d/2)*(d/2)); // sqrt(3)
-  
+  const double h = std::sqrt(d * d - (d / 2) * (d / 2)); // sqrt(3)
+
   cell.addAtom("Ar", {5.0, 5.0, 5.0});             // A
   cell.addAtom("Ar", {5.0 + d, 5.0, 5.0});         // B
-  cell.addAtom("Ar", {5.0 + d/2, 5.0 + h, 5.0});   // C
+  cell.addAtom("Ar", {5.0 + d / 2, 5.0 + h, 5.0}); // C
   updateTrajectory(cell);
 
   // Act
-  StructureAnalyzer analyzer(cell, 3.0, trajectory_.getBondCutoffs());
+  StructureAnalyzer analyzer(cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &neighbors = analyzer.neighbors();
 
   // Assert
@@ -291,9 +294,10 @@ TEST_F(StructureAnalyzerTest, TriangleMoleculeConnectivity) {
 
   // Each atom should see exactly 2 neighbors (the other two vertices)
   for (size_t i = 0; i < 3; ++i) {
-    ASSERT_EQ(neighbors[i].size(), 2) << "Atom " << i << " does not have 2 neighbors";
-    for (const auto& n : neighbors[i]) {
-        EXPECT_NEAR(n.distance, d, 1e-6);
+    ASSERT_EQ(neighbors[i].size(), 2)
+        << "Atom " << i << " does not have 2 neighbors";
+    for (const auto &n : neighbors[i]) {
+      EXPECT_NEAR(n.distance, d, 1e-6);
     }
   }
 }

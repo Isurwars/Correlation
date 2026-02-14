@@ -64,7 +64,7 @@ protected:
 TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
   // Arrange
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Act & Assert
   EXPECT_THROW(df.calculateRDF(5.0, 0.0), std::invalid_argument);
@@ -74,7 +74,7 @@ TEST_F(DistributionFunctionsTest, CalculateRDFThrowsOnInvalidParameters) {
 TEST_F(DistributionFunctionsTest, RDFPeakPositionIsCorrect) {
   // Arrange
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   const double bin_width = 0.1;
   const double expected_distance = 1.5;
 
@@ -101,7 +101,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
                      {std::cos(1.916), std::sin(1.916), 0.0}); // ~109.5 deg
 
   updateTrajectory(water_cell);
-  DistributionFunctions df(water_cell, 5.0, trajectory_.getBondCutoffs());
+  DistributionFunctions df(water_cell, 5.0, trajectory_.getBondCutoffsSQ());
   const double bin_width = 1.0; // 1-degree bins
 
   // Act
@@ -120,7 +120,7 @@ TEST_F(DistributionFunctionsTest, PADPeakPositionIsCorrectForWater) {
 TEST_F(DistributionFunctionsTest, SmoothAllUpdatesSmoothedPartials) {
   // Arrange
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffs());
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df.calculateRDF(5.0, 0.1);
 
   // Act
@@ -161,7 +161,7 @@ TEST_F(DistributionFunctionsTest, CoordinationNumberDistributionIsCorrect) {
   // A cutoff that includes the C-H bonds but excludes everything else.
   // The C-H distance is 1.0, C-O is ~8.6
   updateTrajectory(test_cell);
-  DistributionFunctions df(test_cell, 3.0, trajectory_.getBondCutoffs());
+  DistributionFunctions df(test_cell, 3.0, trajectory_.getBondCutoffsSQ());
 
   // Act
   df.calculateCoordinationNumber();
@@ -214,7 +214,7 @@ TEST_F(DistributionFunctionsTest, SQPeakPositionIsCorrect) {
   // Arrange
   // Using the fixture's cell with two Ar atoms 1.5 Å apart.
   updateTrajectory();
-  DistributionFunctions df(cell_, 10.0, trajectory_.getBondCutoffs());
+  DistributionFunctions df(cell_, 10.0, trajectory_.getBondCutoffsSQ());
   const double q_bin_width = 0.01;
   const double expected_peak_q = 0.7; // 2.0 * constants::pi / 1.5; // ~4.18
 
@@ -257,8 +257,8 @@ TEST_F(DistributionFunctionsTest, AccumulationAndScalingWorks) {
   traj2.addFrame(cell2);
   traj2.precomputeBondCutoffs();
 
-  DistributionFunctions df1(cell1, 5.0, traj1.getBondCutoffs());
-  DistributionFunctions df2(cell2, 5.0, traj2.getBondCutoffs());
+  DistributionFunctions df1(cell1, 5.0, traj1.getBondCutoffsSQ());
+  DistributionFunctions df2(cell2, 5.0, traj2.getBondCutoffsSQ());
 
   // Calculate RDF for both
   df1.calculateRDF(5.0, 0.1);
@@ -298,7 +298,7 @@ TEST_F(DistributionFunctionsTest, ComputeMeanMatchesSequential) {
   traj.addFrame(cell2);
   traj.precomputeBondCutoffs();
 
-  std::vector<std::vector<double>> cutoffs = traj.getBondCutoffs();
+  std::vector<std::vector<double>> cutoffs = traj.getBondCutoffsSQ();
 
   TrajectoryAnalyzer analyzer(traj, 10.0, cutoffs);
 

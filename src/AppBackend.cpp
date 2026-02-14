@@ -98,7 +98,7 @@ void AppBackend::setBondCutoffs(
     }
   }
 
-  trajectory_->setBondCutoffs(cutoffs_sq);
+  trajectory_->setBondCutoffsSQ(cutoffs_sq);
 }
 
 //---------------------------------------------------------------------------//
@@ -143,15 +143,15 @@ void AppBackend::run_analysis() {
   try {
     // Apply custom bond cutoffs if they were set in options
     if (!options_.bond_cutoffs_sq_.empty()) {
-      trajectory_->setBondCutoffs(options_.bond_cutoffs_sq_);
+      trajectory_->setBondCutoffsSQ(options_.bond_cutoffs_sq_);
     } else {
-      if (trajectory_->getBondCutoffs().empty()) {
+      if (trajectory_->getBondCutoffsSQ().empty()) {
         trajectory_->precomputeBondCutoffs();
       }
     }
     const auto &active_cutoffs = !options_.bond_cutoffs_sq_.empty()
                                      ? options_.bond_cutoffs_sq_
-                                     : trajectory_->getBondCutoffs();
+                                     : trajectory_->getBondCutoffsSQ();
 
     // Ensure min_frame is within bounds
     size_t start_f = options_.min_frame;

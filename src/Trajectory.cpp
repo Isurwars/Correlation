@@ -29,7 +29,7 @@ Trajectory::Trajectory(std::vector<Cell> frames, double time_step)
 //------------------------------- Accessors ---------------------------------//
 //---------------------------------------------------------------------------//
 
-double Trajectory::getBondCutoff(int type1, int type2) {
+double Trajectory::getBondCutoffSQ(int type1, int type2) {
   if (bond_cutoffs_sq_.empty())
     precomputeBondCutoffs();
 
@@ -37,7 +37,11 @@ double Trajectory::getBondCutoff(int type1, int type2) {
       type2 >= bond_cutoffs_sq_.size())
     return 0.0;
 
-  return std::sqrt(bond_cutoffs_sq_[type1][type2]);
+  return bond_cutoffs_sq_[type1][type2];
+}
+
+double Trajectory::getBondCutoff(int type1, int type2) {
+  return std::sqrt(getBondCutoffSQ(type1, type2));
 }
 
 //---------------------------------------------------------------------------//

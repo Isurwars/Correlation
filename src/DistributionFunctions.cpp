@@ -889,7 +889,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
 
   // Retrieve bond cutoffs from the analyzer.
   // Note: TrajectoryAnalyzer uses same cutoffs for all frames usually.
-  auto bond_cutoffs = analyzer.getBondCutoffs();
+  auto bond_cutoffs = analyzer.getBondCutoffsSQ();
 
   // Mutex for progress callback (if needed, though atomic is better for count)
   std::mutex callback_mutex;
