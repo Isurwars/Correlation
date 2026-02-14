@@ -12,7 +12,8 @@
 #include <vector>
 
 // A test fixture for StructureAnalyzer tests.
-class StructureAnalyzerTest : public ::testing::Test {
+// A test fixture for StructureAnalyzer tests.
+class Test04_StructureAnalyzer : public ::testing::Test {
 protected:
   Trajectory trajectory_;
 
@@ -23,7 +24,8 @@ protected:
   }
 };
 
-TEST_F(StructureAnalyzerTest, FindsCorrectNeighborsForSilicon) {
+TEST_F(Test04_StructureAnalyzer, FindsCorrectNeighborsForSilicon) {
+  // ... (existing test content)
   // Arrange: Create an 8-atom conventional unit cell of Silicon.
   // The diamond lattice structure is a robust test for neighbor finding.
   const double lattice_const = 5.43; // Angstroms
@@ -62,7 +64,54 @@ TEST_F(StructureAnalyzerTest, FindsCorrectNeighborsForSilicon) {
   }
 }
 
-TEST_F(StructureAnalyzerTest, CalculatesCorrectAnglesForWater) {
+TEST_F(Test04_StructureAnalyzer, DistancesTensorIsCorrect) {
+  // Arrange: Create a simple 2-atom system
+  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Ar", {0.0, 0.0, 0.0});
+  cell.addAtom("Ar", {3.0, 0.0, 0.0});
+  updateTrajectory(cell);
+
+  // Act: Calculate distances
+  // Cutoff 5.0 covers the 3.0 distance
+  StructureAnalyzer analyzer(cell, 5.0, trajectory_.getBondCutoffsSQ());
+  const auto &distances = analyzer.distances();
+
+  // Assert Same Species
+  int id_Ar = cell.findElement("Ar")->id.value;
+  ASSERT_EQ(id_Ar, 0);
+
+  // StructureAnalyzer stores unique pairs for same-species (i < j logic)
+  // So for 2 Ar atoms, we expect 1 distance in [Ar][Ar]
+  ASSERT_GT(distances.size(), 0);
+  const auto &ar_ar_dists = distances[id_Ar][id_Ar];
+  EXPECT_EQ(ar_ar_dists.size(), 1);
+  EXPECT_NEAR(ar_ar_dists[0], 3.0, 1e-6);
+
+  // Arrange Mixed Species
+  Cell mixed_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  mixed_cell.addAtom("Ar", {0.0, 0.0, 0.0});
+  mixed_cell.addAtom("Xe", {0.0, 4.0, 0.0});
+  updateTrajectory(mixed_cell);
+
+  StructureAnalyzer mixed_analyzer(mixed_cell, 5.0,
+                                   trajectory_.getBondCutoffsSQ());
+  const auto &mixed_distances = mixed_analyzer.distances();
+
+  int id_Ar_m = mixed_cell.findElement("Ar")->id.value;
+  int id_Xe_m = mixed_cell.findElement("Xe")->id.value;
+
+  // StructureAnalyzer stores symmetric pairs for different species
+  // So we expect 1 in [Ar][Xe] and 1 in [Xe][Ar]
+  const auto &ar_xe_dists = mixed_distances[id_Ar_m][id_Xe_m];
+  const auto &xe_ar_dists = mixed_distances[id_Xe_m][id_Ar_m];
+
+  EXPECT_EQ(ar_xe_dists.size(), 1);
+  EXPECT_EQ(xe_ar_dists.size(), 1);
+  EXPECT_NEAR(ar_xe_dists[0], 4.0, 1e-6);
+  EXPECT_NEAR(xe_ar_dists[0], 4.0, 1e-6);
+}
+
+TEST_F(Test04_StructureAnalyzer, CalculatesCorrectAnglesForWater) {
   // Arrange: Create a single water molecule with a known bond angle.
   Cell water_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   const double bond_length = 0.957;    // Angstroms
@@ -98,7 +147,7 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAnglesForWater) {
   EXPECT_NEAR(hoh_angles[0] * constants::rad2deg, bond_angle_deg, 1e-4);
 }
 
-TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
+TEST_F(Test04_StructureAnalyzer, CalculatesCorrectAngleWithPBC) {
   // Arrange: Setup a system where the angle calculation requires the Minimum
   // Image Convention. Central atom B (index 1) at (0.5, 0.5, 0.5). Neighbor A
   // (index 0) at (3.5, 0.5, 0.5) -> PBC vector B->A is (-1.0, 0.0, 0.0).
@@ -142,7 +191,7 @@ TEST_F(StructureAnalyzerTest, CalculatesCorrectAngleWithPBC) {
   EXPECT_NEAR(cco_angles[0], expected_angle_rad, 1e-6);
 }
 
-TEST_F(StructureAnalyzerTest, FindsNoNeighborsForIsolatedAtom) {
+TEST_F(Test04_StructureAnalyzer, FindsNoNeighborsForIsolatedAtom) {
   // Arrange: Create a large cell with a single atom.
   Cell large_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   large_cell.addAtom("Ar", {10.0, 10.0, 10.0});
@@ -158,7 +207,7 @@ TEST_F(StructureAnalyzerTest, FindsNoNeighborsForIsolatedAtom) {
   ASSERT_TRUE(neighbors[0].empty());
 }
 
-TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
+TEST_F(Test04_StructureAnalyzer, FindsNeighborsBasedOnBondCutoff) {
   // Ar covalent radius = 0.96. Sum = 1.92.
   // Bond threshold = 1.92 * 1.2 = 2.304.
 
@@ -190,7 +239,7 @@ TEST_F(StructureAnalyzerTest, FindsNeighborsBasedOnBondCutoff) {
   }
 }
 
-TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
+TEST_F(Test04_StructureAnalyzer, EnforcesNeighborSymmetry) {
   // Arrange: Create a random system of atoms.
   Cell random_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   random_cell.addAtom("Ar", {1.0, 1.0, 1.0}); // A
@@ -234,7 +283,7 @@ TEST_F(StructureAnalyzerTest, EnforcesNeighborSymmetry) {
   }
 }
 
-TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
+TEST_F(Test04_StructureAnalyzer, HandlesPeriodicSelfInteractions) {
   // 1.92 * 1.2 = 2.304.
   // We need images to be within the bond threshold. Let's use image distance
   // = 2.0.
@@ -269,7 +318,7 @@ TEST_F(StructureAnalyzerTest, HandlesPeriodicSelfInteractions) {
   }
 }
 
-TEST_F(StructureAnalyzerTest, TriangleMoleculeConnectivity) {
+TEST_F(Test04_StructureAnalyzer, TriangleMoleculeConnectivity) {
   // Arrange: Create 3 atoms in an equilateral triangle.
   Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
 
