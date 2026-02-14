@@ -20,7 +20,7 @@ add_executable(correlation_tests
     DynamicsAnalyzer_test.cpp
     Test04_StructureAnalyzer.cpp
     AngleTests.cpp
-    TrajectoryAnalyzer_test.cpp
+    Test05_TrajectoryAnalyzer.cpp
 )
 
 # The test executable also links to the library and inherits its properties.
