@@ -75,15 +75,8 @@ DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
 void DistributionFunctions::setStructureAnalyzer(
     const StructureAnalyzer *analyzer) {
   neighbors_ref_ = analyzer;
-  // If we receive an external analyzer, we can clear our owned one to save
-  // memory, or keep it. Let's clear it if the external one is valid.
   if (neighbors_ref_) {
     neighbors_owned_.reset();
-    // We assume the external analyzer satisfies our cutoff needs, or we just
-    // trust the caller.
-    // Ideally we would check `analyzer->getCutoff()` but that accessor might
-    // not exist or be easy to check against `current_cutoff_`. For now, trust
-    // the caller.
   }
 }
 
@@ -755,10 +748,25 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
     if (key == "Total") {
       continue;
     }
-    // Ashcroft Weights
+    // Faber-Ziman normalization logic
+    // ashcroft_weights_[key] = (2 * ci * cj) for i != j, and (ci * ci) for i ==
+    // j. We need sqrt(ci * cj) for the factors in the sum.
     double weight = ashcroft_weights_[key];
-    // Faber-Ziman normalization
-    double composition_sqroot_factor = std::sqrt(weight);
+    double composition_sqroot_factor;
+    bool is_identical = false;
+
+    size_t dash_pos = key.find('-');
+    if (dash_pos != std::string::npos) {
+      std::string sym1 = key.substr(0, dash_pos);
+      std::string sym2 = key.substr(dash_pos + 1);
+      is_identical = (sym1 == sym2);
+    }
+
+    if (is_identical) {
+      composition_sqroot_factor = std::sqrt(weight);
+    } else {
+      composition_sqroot_factor = std::sqrt(weight / 2.0);
+    }
 
     auto &s_q_partial = s_q_hist.partials[key];
     s_q_partial.assign(num_q_bins, 0.0);
@@ -788,7 +796,7 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
       }
 
       // Delta function: 1.0 for S_ii(Q), 0.0 for S_ij(Q) (i != j)
-      double delta_ij = (key.find('-') == key.rfind('-')) ? 1.0 : 0.0;
+      double delta_ij = is_identical ? 1.0 : 0.0;
 
       // S_ij(Q) = delta_ij + (4*pi*rho_total*sqrt(c_i*c_j)/Q) * Integral[...]
       s_q_partial[i] = delta_ij + (4.0 * constants::pi * total_rho *
@@ -809,7 +817,114 @@ void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
 
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {
-  // Modernized implementation would go here...
+  if (bin_width <= 0) {
+    throw std::invalid_argument("Bin width must be positive.");
+  }
+  if (histograms_.find("g(r)") == histograms_.end()) {
+    throw std::logic_error(
+        "Cannot calculate XRD. Please calculate g(r) first by calling "
+        "calculateRDF().");
+  }
+
+  const auto &g_r_hist = histograms_.at("g(r)");
+  const auto &r_bins = g_r_hist.bins;
+  const double dr = r_bins[1] - r_bins[0];
+  const double total_rho = cell_.atomCount() / cell_.volume();
+  const double max_r = r_bins.back();
+
+  // Setup XRD Histogram
+  size_t num_bins =
+      static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
+  Histogram xrd_hist;
+  xrd_hist.bin_label = "2Theta (°)";
+  xrd_hist.bins.resize(num_bins);
+  std::vector<double> intensities(num_bins, 0.0);
+
+  // Helper lambda to calculate atomic form factor f(Q)
+  auto get_f_Q = [](const std::string &symbol, double Q) -> double {
+    const auto &coeffs = AtomicFormFactors::get(symbol);
+    // coeffs: a1, b1, a2, b2, a3, b3, a4, b4, c
+    double s = Q / (4.0 * constants::pi);
+    double s2 = s * s;
+    double f = coeffs[8]; // c
+    for (size_t i = 0; i < 4; ++i) {
+      f += coeffs[2 * i] * std::exp(-coeffs[2 * i + 1] * s2);
+    }
+    return f;
+  };
+
+  // Precompute integrand term r*(g(r)-1) for each partial
+  std::map<std::string, std::vector<double>> partial_integrands;
+  for (const auto &[key, g_partial] : g_r_hist.partials) {
+    if (key == "Total")
+      continue;
+    partial_integrands[key].resize(g_partial.size());
+    for (size_t k = 0; k < g_partial.size(); ++k) {
+      // Windowing could be added here similar to calculateSQ
+      partial_integrands[key][k] = r_bins[k] * (g_partial[k] - 1.0) * dr;
+    }
+  }
+
+  // Pre-calculate composition factors
+  // We need c_alpha for the self-scattering term
+  std::map<std::string, double> concentrations;
+  for (const auto &elem : cell_.elements()) {
+    double count = 0;
+    for (const auto &atom : cell_.atoms()) {
+      if (atom.element().symbol == elem.symbol)
+        count++;
+    }
+    concentrations[elem.symbol] = count / cell_.atomCount();
+  }
+
+  for (size_t i = 0; i < num_bins; ++i) {
+    double two_theta = theta_min + i * bin_width;
+    xrd_hist.bins[i] = two_theta;
+
+    double theta_rad = (two_theta / 2.0) * constants::deg2rad;
+    double Q = 4.0 * constants::pi * std::sin(theta_rad) / lambda;
+
+    if (Q < 1e-6) {
+      intensities[i] = 0.0;
+      continue;
+    }
+
+    double I_Q = 0.0;
+
+    // 1. Self-scattering term: Sum(c_i * f_i^2)
+    for (const auto &[sym, c] : concentrations) {
+      double f = get_f_Q(sym, Q);
+      I_Q += c * f * f;
+    }
+
+    // 2. Pair terms
+    for (const auto &[key, integrands] : partial_integrands) {
+      double weight = ashcroft_weights_.at(key); // c_i * c_j * (2 if i!=j)
+
+      // Parse symbols
+      size_t dash_pos = key.find('-');
+      std::string sym1 = key.substr(0, dash_pos);
+      std::string sym2 = key.substr(dash_pos + 1);
+
+      double f1 = get_f_Q(sym1, Q);
+      double f2 = get_f_Q(sym2, Q);
+
+      // Integral: Integral(r(g-1)sin(Qr)dr)
+      double integral = 0.0;
+      for (size_t k = 0; k < integrands.size(); ++k) {
+        integral += integrands[k] * std::sin(Q * r_bins[k]);
+      }
+
+      // Add contribution: weight * f1 * f2 * 4*pi*rho/Q * integral
+      I_Q +=
+          weight * f1 * f2 * (4.0 * constants::pi * total_rho / Q) * integral;
+    }
+
+    intensities[i] = I_Q;
+  }
+
+  xrd_hist.partials["Total"] = std::move(intensities);
+  histograms_["XRD"] = std::move(xrd_hist);
 }
 
 //---------------------------------------------------------------------------//

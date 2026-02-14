@@ -14,7 +14,7 @@ add_executable(correlation_tests
     Test01_Atom.cpp
     Test02_Cell.cpp
     Test03_Trajectory.cpp
-    Distribution_Functions_tests.cpp
+    Test06_DistributionFunctions.cpp
     FileIO_test.cpp
     FileWriter_test.cpp
     DynamicsAnalyzer_test.cpp
