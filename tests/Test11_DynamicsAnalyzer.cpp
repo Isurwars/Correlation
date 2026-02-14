@@ -15,13 +15,10 @@
 // We need to locate the l-Bi.arc file
 const std::string EXAMPLE_FILE = "examples/l-Bi/l-Bi.arc";
 
-TEST(DynamicsAnalyzerTest, CalculatesVACFFromExampletraj) {
+TEST(Test11_DynamicsAnalyzer, CalculatesVACFFromExampletraj) {
   // 1. Locate the file
   std::filesystem::path file_path = std::filesystem::absolute(EXAMPLE_FILE);
 
-  // If running from build/, we might need to go up one level or adjust path
-  // logic Usually standard CMake test layout puts us in build/tests or similar.
-  // Let's try to find it relative to current path or project root.
   if (!std::filesystem::exists(file_path)) {
     // Try going up levels if not found
     file_path = std::filesystem::path("../" + EXAMPLE_FILE);
@@ -69,7 +66,7 @@ TEST(DynamicsAnalyzerTest, CalculatesVACFFromExampletraj) {
   EXPECT_NEAR(norm_vacf[0], 1.0, 1e-5) << "Normalized VACF should start at 1.0";
 }
 
-TEST(DynamicsAnalyzerTest, CalculatesVDOSCorrectly) {
+TEST(Test11_DynamicsAnalyzer, CalculatesVDOSCorrectly) {
   // 1. Create synthetic VACF data: a simple cosine wave
   // v(t) = cos(2 * pi * f0 * t)
   // VDOS should show a peak at f0
@@ -103,11 +100,6 @@ TEST(DynamicsAnalyzerTest, CalculatesVDOSCorrectly) {
   double peak_freq = frequencies[peak_idx];
 
   // 4. Verify peak location
-  // The resolution depends on total time. d_nu ~ 1/T_max = 1/1ps = 1 THz?
-  // Actually resolution is determined by how we sampled the frequency axis in
-  // calculateVDOS We used 2000 points for Nyquist. Nyquist for dt=1fs is 500
-  // THz. So d_nu = 500 / 2000 = 0.25 THz. 10 THz should be well resolved.
-
   EXPECT_NEAR(peak_freq, f0, 0.5)
       << "VDOS Peak should be near the source frequency";
 }
