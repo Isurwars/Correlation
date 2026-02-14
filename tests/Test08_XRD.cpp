@@ -1,0 +1,50 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#include <gtest/gtest.h>
+#include <vector>
+
+#include "../include/Cell.hpp"
+#include "../include/DistributionFunctions.hpp"
+#include "../include/Trajectory.hpp"
+
+// Test fixture for XRD tests.
+class Test08_XRD : public ::testing::Test {
+protected:
+  void SetUp() override {
+    // A simple cubic cell containing two atoms
+    cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+    cell_.addAtom("Ar", {5.0, 5.0, 5.0});
+    cell_.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5
+  }
+
+  void updateTrajectory() {
+    trajectory_ = Trajectory();
+    trajectory_.addFrame(cell_);
+    trajectory_.precomputeBondCutoffs();
+  }
+
+  Cell cell_{};
+  Trajectory trajectory_;
+};
+
+TEST_F(Test08_XRD, CalculateXRD) {
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+
+  // Needs RDF first
+  df.calculateRDF(5.0, 0.05);
+
+  // Calling calculateXRD
+  df.calculateXRD(1.5406, 5.0, 90.0, 0.5);
+
+  EXPECT_NO_THROW(df.getHistogram("XRD"));
+  const auto &hist = df.getHistogram("XRD");
+  EXPECT_FALSE(hist.bins.empty());
+
+  // Check bins range
+  EXPECT_GE(hist.bins.front(), 5.0);
+  EXPECT_LE(hist.bins.back(), 90.0);
+}

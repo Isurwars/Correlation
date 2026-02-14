@@ -14,13 +14,16 @@ add_executable(correlation_tests
     Test01_Atom.cpp
     Test02_Cell.cpp
     Test03_Trajectory.cpp
-    Test06_DistributionFunctions.cpp
-    FileIO_test.cpp
-    FileWriter_test.cpp
-    DynamicsAnalyzer_test.cpp
     Test04_StructureAnalyzer.cpp
-    AngleTests.cpp
     Test05_TrajectoryAnalyzer.cpp
+    Test06_RDF.cpp
+    Test07_SQ.cpp
+    Test08_XRD.cpp
+    Test09_PAD.cpp
+    Test10_VACF.cpp
+    FileWriter_test.cpp
+    FileIO_test.cpp
+    DynamicsAnalyzer_test.cpp
 )
 
 # The test executable also links to the library and inherits its properties.
