@@ -22,8 +22,9 @@ add_executable(correlation_tests
     Test09_PAD.cpp
     Test10_VACF.cpp
     Test11_DynamicsAnalyzer.cpp
-    FileWriter_test.cpp
-    FileIO_test.cpp
+    Test12_FileIO.cpp
+    Test13_FileWriter.cpp
+    Test14_vDoS.cpp
 )
 
 # The test executable also links to the library and inherits its properties.

@@ -8,7 +8,7 @@
 #include "../include/TrajectoryAnalyzer.hpp"
 #include <gtest/gtest.h>
 
-TEST(TrajectoryAnalyzerTest, BasicUsage) {
+TEST(Test05_TrajectoryAnalyzer, BasicUsage) {
   // Create a dummy cell
   Cell cell;
   cell.setLatticeParameters({10, 10, 10, 90, 90, 90});

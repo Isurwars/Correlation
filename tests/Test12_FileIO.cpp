@@ -14,7 +14,7 @@
 // This fixture handles the creation and cleanup of temporary files needed for
 // tests, ensuring that tests are self-contained and do not rely on external
 // data files.
-class FileIOTest : public ::testing::Test {
+class Test12_FileIO : public ::testing::Test {
 protected:
   // This function runs before each test to create temporary files.
   void SetUp() override {
@@ -67,13 +67,14 @@ protected:
     // Assuming readArc handles "PBC" followed by values.
     // Based on my implementation: "PBC" token triggers reading 6 doubles.
     // So "PBC" must be on the line.
-    
+
     // Frame 1
     arc_file << "PBC 10.0 10.0 10.0 90.0 90.0 90.0\n";
     arc_file << "C1      1.00  1.00  1.00 XXXX 1      xx      C    0.000\n";
     arc_file << "end\n";
-    arc_file << "end\n"; // Frame 1 end (my parser consumes 'end', if we have atoms, it pushes frame)
-    
+    arc_file << "end\n"; // Frame 1 end (my parser consumes 'end', if we have
+                         // atoms, it pushes frame)
+
     // Frame 2
     arc_file << "!DATE ...\n";
     arc_file << "PBC 11.0 11.0 11.0 90.0 90.0 90.0\n";
@@ -124,7 +125,7 @@ protected:
 //--------------------------------- Test Cases -------------------------------//
 //----------------------------------------------------------------------------//
 
-TEST_F(FileIOTest, ReadCarFileCorrectly) {
+TEST_F(Test12_FileIO, ReadCarFileCorrectly) {
   // Arrange & Act
   FileIO::FileType type = FileIO::determineFileType("test.car");
   Cell result_cell = FileIO::readStructure("test.car", type);
@@ -153,7 +154,7 @@ TEST_F(FileIOTest, ReadCarFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.5);
 }
 
-TEST_F(FileIOTest, ReadCellFileCorrectly) {
+TEST_F(Test12_FileIO, ReadCellFileCorrectly) {
   // Arrange & Act
   FileIO::FileType type = FileIO::determineFileType("test.cell");
   Cell result_cell = FileIO::readStructure("test.cell", type);
@@ -182,7 +183,7 @@ TEST_F(FileIOTest, ReadCellFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.6);
 }
 
-TEST_F(FileIOTest, ReadCifFileCorrectly) {
+TEST_F(Test12_FileIO, ReadCifFileCorrectly) {
   // Arrange & Act
   FileIO::FileType type = FileIO::determineFileType("test.cif");
   Cell result_cell = FileIO::readStructure("test.cif", type);
@@ -217,42 +218,43 @@ TEST_F(FileIOTest, ReadCifFileCorrectly) {
       << "Did not find the original Cl atom at the cell center";
 }
 
-TEST_F(FileIOTest, ReadArcFileCorrectly) {
+TEST_F(Test12_FileIO, ReadArcFileCorrectly) {
   FileIO::FileType type = FileIO::determineFileType("test.arc");
   EXPECT_EQ(type, FileIO::FileType::Arc);
 
   Trajectory traj = FileIO::readTrajectory("test.arc", type);
-  
-  const auto& frames = traj.getFrames();
+
+  const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
-  const auto& f1 = frames[0];
+  const auto &f1 = frames[0];
   EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0);
   ASSERT_EQ(f1.atomCount(), 1);
   EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0);
 
   // Check Frame 2
-  const auto& f2 = frames[1];
+  const auto &f2 = frames[1];
   EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 11.0);
   ASSERT_EQ(f2.atomCount(), 1);
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 2.0);
 }
 
-TEST_F(FileIOTest, ReadArcFileDuplicatedFrames) {
+TEST_F(Test12_FileIO, ReadArcFileDuplicatedFrames) {
   FileIO::FileType type = FileIO::determineFileType("test_identical.arc");
   EXPECT_EQ(type, FileIO::FileType::Arc);
 
   Trajectory traj = FileIO::readTrajectory("test_identical.arc", type);
 
-  const auto& frames = traj.getFrames();
+  const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
   EXPECT_DOUBLE_EQ(frames[0].lattice_parameters()[0], 10.0);
   EXPECT_DOUBLE_EQ(frames[0].atoms()[0].position().x(), 1.0);
 
-  // Check Frame 2 (Previously Frame 2 & 3 were identical, so we just have one of them)
+  // Check Frame 2 (Previously Frame 2 & 3 were identical, so we just have one
+  // of them)
   EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], 11.0);
   EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
 }

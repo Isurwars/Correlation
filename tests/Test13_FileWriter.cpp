@@ -17,7 +17,7 @@
 #include "../include/Trajectory.hpp"
 
 // Test fixture for FileWriter integration tests.
-class FileWriterTest : public ::testing::Test {
+class Test13_FileWriter : public ::testing::Test {
 protected:
   void SetUp() override {
     // Create a temporary CAR file for an 8-atom Silicon crystal.
@@ -68,7 +68,7 @@ protected:
   }
 };
 
-TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
+TEST_F(Test13_FileWriter, CalculatesAndWritesSiliconDistributions) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell si_cell = FileIO::readStructure("si_crystal.car", type);
@@ -129,7 +129,7 @@ TEST_F(FileWriterTest, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 
-TEST_F(FileWriterTest, WritesHDF5File) {
+TEST_F(Test13_FileWriter, WritesHDF5File) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell si_cell = FileIO::readStructure("si_crystal.car", type);
@@ -214,7 +214,7 @@ TEST_F(FileWriterTest, WritesHDF5File) {
   EXPECT_EQ(data_comment, "Si-Si");
 }
 
-TEST_F(FileWriterTest, WritesVACFMetadata) {
+TEST_F(Test13_FileWriter, WritesVACFMetadata) {
   // Arrange
   FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
   Cell frame1 = FileIO::readStructure("si_crystal.car", type);
