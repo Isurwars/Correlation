@@ -14,6 +14,10 @@ namespace linalg {
 // -----------------------------------------------------------------------------
 //  Vector3  –  lightweight, constexpr, stack-based
 // -----------------------------------------------------------------------------
+/**
+ * @class Vector3
+ * @brief A lightweight, constexpr, stack-based 3D vector.
+ */
 template <typename T> class Vector3 {
 public:
   using value_type = T;
@@ -93,6 +97,11 @@ operator*(Scalar s, const Vector3<T> &v) noexcept {
 // -----------------------------------------------------------------------------
 //  Matrix3  –  column-major storage
 // -----------------------------------------------------------------------------
+/**
+ * @class Matrix3
+ * @brief A lightweight, constexpr, stack-based 3x3 matrix.
+ * Uses column-major storage.
+ */
 template <typename T> class Matrix3 {
 public:
   using value_type = T;

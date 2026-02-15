@@ -12,12 +12,29 @@
 #include "AppWindow.h"
 #include "PortableFileDialogs.hpp"
 
+/**
+ * @brief Controller class for the application.
+ *
+ * This class handles the interaction between the User Interface (AppWindow)
+ * and the logic Backend (AppBackend). It manages event handling, threading for
+ * analysis, and data synchronization between UI and Backend.
+ */
 class AppController {
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
+
+  /**
+   * @brief Constructs the AppController.
+   * @param ui Reference to the main application window.
+   * @param backend Reference to the application backend.
+   */
   AppController(AppWindow &ui, AppBackend &backend);
+
+  /**
+   * @brief Destructor. Ensures analysis threads are joined before destruction.
+   */
   ~AppController();
 
 private:
@@ -46,8 +63,29 @@ private:
   //-------------------------------------------------------------------------//
   //-------------------------------- Methods --------------------------------//
   //-------------------------------------------------------------------------//
+
+  /**
+   * @brief Handles the "Run Analysis" signal from the UI.
+   * Starts the analysis in a separate thread.
+   */
   void handleRunAnalysis();
+
+  /**
+   * @brief Handles the "Write Files" signal from the UI.
+   * Opens a save file dialog to select the output location.
+   */
   void handleWriteFiles();
+
+  /**
+   * @brief Handles the "Browse File" signal from the UI.
+   * Opens an open file dialog to select the input trajectory/structure.
+   */
   void handleBrowseFile();
+
+  /**
+   * @brief Periodic check for file dialog status.
+   * Since file dialogs might be non-blocking or running in a separate
+   * process/thread, this method checks if they have returned a result.
+   */
   void handleCheckFileDialogStatus();
 };

@@ -111,8 +111,8 @@ std::string AppBackend::load_file(const std::string &path) {
   FileIO::FileType type = FileIO::determineFileType(path);
 
   // For now, loading a single structure file starts a new trajectory with 1
-  // frame. Ideally, FileIO::readTrajectory could handle this, but readStructure
-  // returns a Cell. We can wrap it.
+  // frame. The determineFileType helper is used to dispatch to the correct
+  // reader.
 
   if (type == FileIO::FileType::Arc) {
     trajectory_ =
@@ -137,6 +137,7 @@ std::string AppBackend::load_file(const std::string &path) {
 
 void AppBackend::run_analysis() {
   if (!trajectory_ || trajectory_->getFrames().empty()) {
+    std::cerr << "Analysis aborted: No trajectory loaded." << std::endl;
     return;
   }
 
@@ -149,6 +150,8 @@ void AppBackend::run_analysis() {
         trajectory_->precomputeBondCutoffs();
       }
     }
+    // Determine which cutoffs to use: explicit overrides or precomputed
+    // defaults.
     const auto &active_cutoffs = !options_.bond_cutoffs_sq_.empty()
                                      ? options_.bond_cutoffs_sq_
                                      : trajectory_->getBondCutoffsSQ();
@@ -174,6 +177,8 @@ void AppBackend::run_analysis() {
         progress_callback_(0.7f + p * 0.3f);
     };
 
+    // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
+    // structural analysis
     trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(
         *trajectory_, options_.r_max, active_cutoffs, start_f,
         options_.max_frame, true, cb_structure);
@@ -190,7 +195,8 @@ void AppBackend::run_analysis() {
     settings.smoothing_sigma = options_.smoothing_sigma;
     settings.smoothing_kernel = options_.smoothing_kernel;
 
-    // Run parallel analysis
+    // Run parallel analysis to compute distribution functions
+    // This accumulates results from all processed frames.
     df_ = DistributionFunctions::computeMean(
         *trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 

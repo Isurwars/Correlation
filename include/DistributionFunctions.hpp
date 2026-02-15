@@ -39,19 +39,45 @@ struct Histogram {
   std::map<std::string, std::vector<double>> smoothed_partials;
 };
 
+/**
+ * @brief Manages the calculation and storage of various distribution functions.
+ *
+ * This class includes methods for calculating:
+ * - Radial Distribution Functions (RDF) g(r), J(r), G(r)
+ * - Plane and Angle Distributions (PAD)
+ * - Validation Autocorrelation Function (VACF)
+ * - Vibrational Density of States (VDOS)
+ * - Structure Factor S(Q)
+ * - X-Ray Diffraction (XRD) patterns
+ *
+ * It acts as a container for all analysis results associated with a Cell or
+ * Trajectory.
+ */
 class DistributionFunctions {
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
 
-  explicit DistributionFunctions(Cell &, double = 0.0,
-                                 const std::vector<std::vector<double>> & = {});
+  /**
+   * @brief Constructs a DistributionFunctions object.
+   * @param cell Reference to the cell (structure) being analyzed.
+   * @param cutoff Optional cutoff radius for neighbor calculations (if not pre
+   * computed).
+   * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
+   */
+  explicit DistributionFunctions(
+      Cell &cell, double cutoff = 0.0,
+      const std::vector<std::vector<double>> &bond_cutoffs = {});
 
-  // Move constructor
+  /**
+   * @brief Move constructor.
+   */
   DistributionFunctions(DistributionFunctions &&other) noexcept;
 
-  // Move assignment operator
+  /**
+   * @brief Move assignment operator.
+   */
   DistributionFunctions &operator=(DistributionFunctions &&other) noexcept;
 
   //-------------------------------------------------------------------------//
@@ -76,6 +102,10 @@ public:
   //--------------------------- Calculation Methods -------------------------//
   //-------------------------------------------------------------------------//
 
+  /**
+   * @brief Calculates the Coordination Number (CN) distribution.
+   * Requires that neighbors have been computed.
+   */
   void calculateCoordinationNumber();
   /**
    * @brief Calculates the radial distribution function g(r)
@@ -86,6 +116,10 @@ public:
    */
   void calculateRDF(double r_max = 20.0, double bin_width = 0.05);
 
+  /**
+   * @brief Calculates the Plane Angle Distribution (PAD).
+   * @param bin_width Width of angular bins in degrees.
+   */
   void calculatePAD(double bin_width = 1.0);
 
   /**
@@ -95,16 +129,46 @@ public:
    */
   void calculateVACF(const Trajectory &traj, int max_correlation_frames = -1);
 
+  /**
+   * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
+   * Requires calculateVACF to be called first.
+   */
   void calculateVDOS();
 
+  /**
+   * @brief Calculates the Structure Factor S(Q).
+   * @param q_max Maximum Scattering Vector Q.
+   * @param q_bin_width Bin width for Q.
+   * @param r_integration_max Maximum r to use in the Fourier transform
+   * integration.
+   */
   void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
                    double r_integration_max = 8.0);
 
+  /**
+   * @brief Calculates the XRD pattern.
+   * @param lambda X-ray wavelength in Angstroms.
+   * @param theta_min Minimum 2-theta angle.
+   * @param theta_max Maximum 2-theta angle.
+   * @param bin_width Bin width for 2-theta.
+   */
   void calculateXRD(double lambda = 1.5406, double theta_min = 5.0,
                     double theta_max = 90.0, double bin_width = 1.0);
 
+  /**
+   * @brief Smooths a specific histogram.
+   * @param name Name of the histogram (e.g., "g(r)").
+   * @param sigma Smoothing width.
+   * @param kernel The smoothing kernel type.
+   */
   void smooth(const std::string &name, double sigma,
               KernelType kernel = KernelType::Gaussian);
+
+  /**
+   * @brief Smooths all available histograms.
+   * @param sigma Smoothing width.
+   * @param kernel The smoothing kernel type.
+   */
   void smoothAll(double sigma, KernelType kernel = KernelType::Gaussian);
 
   void setStructureAnalyzer(const StructureAnalyzer *analyzer);

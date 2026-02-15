@@ -174,6 +174,8 @@ void DistributionFunctions::calculateAshcroftWeights() {
       ashcroft_weights_[key] = weight;
     }
   }
+  // These weights are crucial for the Faber-Ziman formalism in S(Q)
+  // calculation.
 }
 
 //---------------------------------------------------------------------------//
@@ -983,7 +985,6 @@ void DistributionFunctions::scale(double factor) {
     }
   }
 }
-
 //---------------------------------------------------------------------------//
 //----------------------------- Mean Calculation ----------------------------//
 //---------------------------------------------------------------------------//
@@ -1006,7 +1007,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   // Note: TrajectoryAnalyzer uses same cutoffs for all frames usually.
   auto bond_cutoffs = analyzer.getBondCutoffsSQ();
 
-  // Mutex for progress callback (if needed, though atomic is better for count)
+  // Mutex for progress callback (if needed, though atomic is better for
+  // count)
   std::mutex callback_mutex;
   std::atomic<size_t> completed_frames{0};
 
@@ -1014,7 +1016,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     futures.push_back(std::async(std::launch::async, [&, i]() {
       size_t frame_idx = start_frame + i;
       if (frame_idx >= trajectory.getFrames().size()) {
-        // Should not happen if TrajectoryAnalyzer was constructed correctly
+        // Should not happen if TrajectoryAnalyzer was constructed
+        // correctly
         return;
       }
 
@@ -1039,8 +1042,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
 
       size_t current_completed = ++completed_frames;
       if (progress_callback) {
-        // Avoid flooding the callback, update maybe every 1% or just simple
-        // throttle? Or lock.
+        // Avoid flooding the callback, update maybe every 1% or just
+        // simple throttle? Or lock.
         std::lock_guard<std::mutex> lock(callback_mutex);
         progress_callback(static_cast<float>(current_completed) /
                           static_cast<float>(num_frames));

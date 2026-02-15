@@ -105,7 +105,9 @@ void StructureAnalyzer::computeDistances() {
   std::vector<size_t> atom_indices(atom_count);
   std::iota(atom_indices.begin(), atom_indices.end(), 0);
 
-  // lock-free calculation phase.
+  // lock-free calculation phase using TBB.
+  // We use enumerable_thread_specific to give each thread its own local results
+  // storage, avoiding mutex contention.
   tbb::enumerable_thread_specific<ThreadLocalResults> ets(num_elements,
                                                           atom_count);
 

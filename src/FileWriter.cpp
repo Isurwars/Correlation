@@ -99,6 +99,7 @@ void FileWriter::writeHDF(const std::string &filename) const {
                                       HighFive::File::Create |
                                       HighFive::File::Truncate);
 
+    // Iterate over all calculated histograms and write them as HDF5 groups
     for (const auto &[name, hist] : df_.getAllHistograms()) {
       if (hist.partials.empty() || hist.bins.empty()) {
         continue;

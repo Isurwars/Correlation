@@ -63,7 +63,8 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
   const double cos_g = std::cos(gamma);
   const double sin_g = std::sin(gamma);
 
-  // Standard conversion from lattice parameters to vectors
+  // Standard conversion from lattice parameters (lengths and angles) to lattice
+  // vectors. We align 'a' with the x-axis, and 'b' in the xy-plane.
   linalg::Vector3<double> v_a = {a, 0.0, 0.0};
   linalg::Vector3<double> v_b = {b * cos_g, b * sin_g, 0.0};
   linalg::Vector3<double> v_c = {

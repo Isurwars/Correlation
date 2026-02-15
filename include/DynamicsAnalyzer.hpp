@@ -9,6 +9,12 @@
 #include <tuple>
 #include <vector>
 
+/**
+ * @brief Static class providing dynamics analysis methods.
+ *
+ * This class contains stateless static methods for calculating time-dependent
+ * properties like VACF and VDOS from Trajectory data.
+ */
 class DynamicsAnalyzer {
 public:
   //-------------------------------------------------------------------------//

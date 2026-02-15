@@ -33,7 +33,7 @@ struct SymmetryOp {
 };
 
 //---------------------------------------------------------------------------//
-//---------------------------- Helper Funcitons -----------------------------//
+//---------------------------- Helper Functions -----------------------------//
 //---------------------------------------------------------------------------//
 
 // Helper to send all UPPERCASE to lowercase
@@ -352,6 +352,8 @@ Cell readCif(const std::string &file_name) {
   ParseState state = ParseState::GLOBAL;
   std::vector<std::string> loop_headers;
 
+  // Read the CIF file line by line
+  // We use a state machine approach to handle loops and global data blocks.
   while (std::getline(file, line)) {
     // Trim leading whitespace
     line.erase(0, line.find_first_not_of(" \t\n\r"));
@@ -526,7 +528,11 @@ Cell readLammpsDump(const std::string &file_name) {
   std::string line;
   int num_atoms = 0;
 
-  // Read the file line by line
+  // Read the LAMMPS dump file line by line.
+  // We look for "ITEM: TIMESTEP" to identify frames.
+  // Note: This reader currently only keeps the LAST frame found in the file,
+  // effectively treating it as a single structure reader if used via
+  // readStructure.
   while (std::getline(myfile, line)) {
     // Find the beginning of a new timestep block
     if (line.find("ITEM: TIMESTEP") != std::string::npos) {

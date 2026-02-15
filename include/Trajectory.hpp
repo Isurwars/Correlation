@@ -88,6 +88,9 @@ public:
   size_t getRemovedFrameCount() const { return removed_frames_count_; }
 
 private:
+  //-------------------------------------------------------------------------//
+  //--------------------------- Private Methods -----------------------------//
+  //-------------------------------------------------------------------------//
   void validateFrame(const Cell &new_frame) const;
   std::vector<Cell> frames_;
   std::vector<std::vector<double>> bond_cutoffs_sq_;

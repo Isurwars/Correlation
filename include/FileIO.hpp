@@ -18,7 +18,9 @@ namespace FileIO {
 // This is more robust than using raw string extensions.
 enum class FileType { Car, Cell, Cif, OnetepDat, Arc, Unknown };
 
-// --- Main Public Interface ---
+//---------------------------------------------------------------------------//
+//-------------------------- Main Public Interface --------------------------//
+//---------------------------------------------------------------------------//
 
 /**
  * @brief Reads an atomic structure from a file.

@@ -24,7 +24,8 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   // default options to UI
   handleOptionstoUI(ui_);
 
-  // Connect the UI signals to the controller's member functions
+  // Connect the UI signals to the controller's member functions.
+  // We use lambdas to capture 'this' and call the appropriate method.
   ui_.on_run_analysis([this]() { handleRunAnalysis(); });
   ui_.on_write_files([this]() { handleWriteFiles(); });
   ui_.on_browse_file([this]() { handleBrowseFile(); });
@@ -110,6 +111,12 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
 
+  // Frame Selection Logic:
+  // - "Start" maps to 0
+  // - "End" maps to the last frame index (or -1 for max_frame to indicate
+  // 'all')
+  // - Numeric values are 1-based in UI, converted to 0-based for backend.
+
   // Helper lambda for case-insensitive comparison
   auto to_lower = [](const std::string &s) {
     std::string data = s;
@@ -145,13 +152,9 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     if (max_s_lower == "end" || max_s.empty()) {
       opt.max_frame = -1;
     } else if (max_s_lower == "start") {
-      opt.max_frame =
-          1; // 1-based index 1 -> frame 0 in 0-based, but max_frame is usually
-             // exclusive or handled as count? Wait, TrajectoryAnalyzer uses it
-             // as `end_frame`. If I want "frame 1" (0-index) only, I likely
-             // want start=0, end=1. Input "1" -> stoi("1") -> 1. In
-             // TrajectoryAnalyzer: effective_end = 1. loop i=0; i<1. Correct.
-             // So "START" should map to 1.
+      opt.max_frame = 1; // 1-based index 1 -> implies reading only the first
+                         // frame. In TrajectoryAnalyzer loop: i < max_frame. So
+                         // max_frame=1 means process frame 0 only.
       opt.max_frame = 1;
     } else {
       opt.max_frame = std::stoi(max_s);

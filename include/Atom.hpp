@@ -25,19 +25,37 @@ struct Element {
   ElementID id{-1};
 };
 
+/**
+ * @brief Represents a neighbor atom in a neighbor list.
+ */
 struct Neighbor {
-  AtomID index;
-  double distance;
-  linalg::Vector3<double> r_ij;
+  AtomID index;                 ///< Index of the neighbor in the atom list
+  double distance;              ///< Distance to the neighbor
+  linalg::Vector3<double> r_ij; ///< Vector from central atom to neighbor
 };
 
+/**
+ * @brief Represents an atom in the simulation cell.
+ *
+ * Stores the element type, position, and unique ID of the atom.
+ */
 class Atom {
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
+
+  /**
+   * @brief Default constructor.
+   */
   explicit Atom() = default;
 
+  /**
+   * @brief Parameterized constructor.
+   * @param element The element type of the atom.
+   * @param pos The position vector of the atom.
+   * @param id The unique ID of the atom.
+   */
   explicit Atom(Element element, linalg::Vector3<double> pos,
                 AtomID id) noexcept
       : element_(std::move(element)), position_(pos), id_(id) {}
@@ -46,15 +64,31 @@ public:
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
 
+  /**
+   * @brief Gets the unique ID of the atom.
+   * @return The atom ID.
+   */
   AtomID id() const noexcept { return id_; }
   void setID(std::uint32_t num) { id_ = num; }
 
+  /**
+   * @brief Gets the position of the atom.
+   * @return A const reference to the position vector.
+   */
   const linalg::Vector3<double> &position() const noexcept { return position_; }
   void setPosition(linalg::Vector3<double> pos) { position_ = pos; }
 
+  /**
+   * @brief Gets the element type of the atom.
+   * @return A const reference to the Element struct.
+   */
   const Element &element() const { return element_; }
   void setElement(const Element &ele) { element_ = ele; }
 
+  /**
+   * @brief Gets the integer ID of the element type.
+   * @return The element ID value.
+   */
   int element_id() const { return element_.id.value; }
 
 private:

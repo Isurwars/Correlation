@@ -54,6 +54,10 @@ public:
   void writeHDF(const std::string &filename) const;
 
 private:
+  //-------------------------------------------------------------------------//
+  //------------------------------ Helpers ----------------------------------//
+  //-------------------------------------------------------------------------//
+
   /**
    * @brief The core implementation for writing a single histogram
    * and it's smoothed histograms to a single CSV file.
