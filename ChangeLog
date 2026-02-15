@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0 RC1] 2026-02-14
+
+### Added
+- Implemented **Vibrational Density of States (VDOS)** calculation and analysis.
+- Added `Cm-1` and `meV` units for VDOS.
+- Added ClangFormat configuration and `clangd` setup.
+- Added VDOS data writing to HDF5.
+- Added scrollbar to `BondCutoffsCard`.
+
+### Changed
+- Reordered source code in multiple files to match header structure.
+- Updated HDF5 writing to use 2D matrices for columns.
+- Flattened the HDF5 file writer structure.
+- GUI updated for multi element structures.
+
+### Fixed
+- Fixed HDF5 X-axis linkage and dimension scales.
+- Fixed HDF5 MSVC compilation issues.
+- Fixed HDF5 metadata and column ordering.
+- Disable load button when dialog is open.
+
 ## [1.9.9] 2026-02-04
 
 ### Added
