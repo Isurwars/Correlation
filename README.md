@@ -33,6 +33,9 @@ functions:
 - Coordination Number (CN)
 - Plane-Angle Distribution (PAD)
 - Structure Factor (S(Q))
+- Velocity Autocorrelation Function (VACF)
+- Vibrational Density of States (VDOS)
+
 
 Supports structure files from:
 - DMoL3 (`.CAR`)
@@ -56,35 +59,35 @@ Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clea
 
 ### Windows
 
-Installing MSVC:
-```
-https://visualstudio.microsoft.com/downloads/
-```
+1.  **Install Visual Studio**: Download and install [Visual Studio](https://visualstudio.microsoft.com/downloads/) with the "Desktop development with C++" workload. This includes the MSVC compiler and CMake.
+2.  **Install Rust**: Download and install Rust from [rust-lang.org](https://www.rust-lang.org/tools/install).
+3.  **Install Git**: Download and install Git from [git-scm.com](https://git-scm.com/download/win).
 
-Installing Rust:
-```
-https://www.rust-lang.org/tools/install
-```
-
-### Linux (Debian/Ubuntu):
+### Linux (Debian/Ubuntu)
 
 ```bash
 sudo apt update
-sudo apt install build-essential cmake tbb git rust
+sudo apt install build-essential cmake git rustc cargo
+# Optional: Install TBB and HDF5 if you prefer system libs over fetching
+sudo apt install libtbb-dev libhdf5-dev
 ```
 
-### Linux (Arch/Manjaro):
+### Linux (Arch/Manjaro)
 
 ```bash
 sudo pacman -Syu
-sudo pacman base-devel cmake tbb git rust
+sudo pacman -S base-devel cmake git rust
+# Optional: Install TBB and HDF5 if you prefer system libs over fetching
+sudo pacman -S intel-tbb hdf5
 ```
 
-### MacOS:
+### MacOS
 
 ```bash
 xcode-select --install
-brew install cmake tbb git rustup
+brew install cmake git rustup
+# Optional: Install TBB and HDF5 if you prefer system libs over fetching
+brew install tbb hdf5
 ```
 
 ### Build Instructions
@@ -145,7 +148,11 @@ Adjust the calculation parameters in the **Options** card:
 The **Bond Cutoffs** card allows you to review and manually adjust the distances used to define atomic bonds, which are used for coordination number and angle calculations.
 
 ### 5. Run Analysis
-Click the **"Run Analysis"** button to start the computations. Progress and status updates will be displayed, and results will be saved as CSV files in the same directory as the input structure file.
+Configure the final output and execution settings in the **Run Analysis** card:
+-   **Export Format**: Choose to export results as **CSV** (for easy plotting) or **HDF5** (for large datasets/archival).
+-   **Frame Selection**: Specify the **Start Frame** and **End Frame** to analyze a specific subset of your trajectory.
+-   **Run Analysis**: Click the **"Run Analysis"** button to start the computations. Progress will be displayed in the bar below.
+-   **Write Files**: Once the analysis is complete, click **"Write Files"** to save the results to disk.
 ## Built with
 
 - [emacs](https://www.gnu.org/software/emacs/) - An extensible, customizable, free/libre text editor — and more.
