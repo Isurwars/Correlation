@@ -12,7 +12,12 @@ import {
     DropDownMenu,
     OutlinedCard,
     MaterialText,
+    Icon,
+    Icons,
+    MaterialPalette,
+    ScrollView,
 } from "@material";
+import { BondCutoff } from "Types.slint";
 
 export component OptionsCard inherits OutlinedCard {
     in property <bool> file_loaded;
@@ -27,7 +32,22 @@ export component OptionsCard inherits OutlinedCard {
     in-out property <bool> use_csv: true;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
+    in-out property <[BondCutoff]> bond_cutoffs;
+    
+    // Toggle stats for groups
+    property <bool> rdf_expanded: false;
+    property <bool> sq_expanded: false;
+    property <bool> angle_expanded: false;
+    property <bool> smoothing_expanded: false;
+    property <bool> bond_cutoffs_expanded: false;
 
+    // Toggle height for groups
+    property <length> rdf_height: rdf_expanded ? 100px : 0px;
+    property <length> sq_height: sq_expanded ? 150px : 0px;
+    property <length> angle_height: angle_expanded ? 50px : 0px;
+    property <length> smoothing_height: smoothing_expanded ? 100px : 0px;
+    property <length> bond_cutoffs_height: bond_cutoffs_expanded ? 150px : 0px;
+  
     // Hover states for tooltips
     out property <bool> r_max_has_hover: r_max_area.has-hover;
     out property <bool> r_bin_has_hover: r_bin_area.has-hover;
@@ -40,15 +60,55 @@ export component OptionsCard inherits OutlinedCard {
     out property <bool> kernel_has_hover: kernel_area.has-hover;
 
     VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_8;
+        padding: MaterialStyleMetrics.spacing_4;
         spacing: MaterialStyleMetrics.spacing_4;
+        alignment: space-around;
         MaterialText {
-            text: "4. Options";
+            text: "Options";
             style: MaterialTypography.title_small;
         }
+        
+        // 1. Radial Distribution Group
+        TouchArea {
+            height: 48px;
+            layout := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.rdf_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                }
 
-        HorizontalLayout {
+                MaterialText {
+                    text: "Radial Distribution";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.rdf_expanded = !root.rdf_expanded;
+            }
+        }
+
+        VerticalLayout {
+            height: root.rdf_height;
+            opacity: root.rdf_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8; // Indent content
             r_max_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
@@ -68,14 +128,62 @@ export component OptionsCard inherits OutlinedCard {
             }
         }
 
-        HorizontalLayout {
+        // 2. Structure Factor Group
+        TouchArea {
+            height: 48px;
+            layout2 := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.sq_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                }
+
+                MaterialText {
+                    text: "Structure Factor";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.sq_expanded = !root.sq_expanded;
+            }
+        }
+
+        VerticalLayout {
+            height: root.sq_height;
+            opacity: root.sq_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
             q_max_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
                     label: "Max Q (Å⁻¹)";
                     text <=> root.q_max;
+                }
+            }
+
+            q_bin_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "S(Q) Bin Width (Å⁻¹)";
+                    text <=> root.q_bin_width;
                 }
             }
 
@@ -89,9 +197,47 @@ export component OptionsCard inherits OutlinedCard {
             }
         }
 
-        HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_8;
+        // 3. Bond Angle Group
+        TouchArea {
+            height: 48px;
+            layout3 := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.angle_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                }
 
+                MaterialText {
+                    text: "Bond Angle";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.angle_expanded = !root.angle_expanded;
+            }
+        }
+
+        VerticalLayout {
+            height: root.angle_height;
+            opacity: root.angle_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
             theta_bin_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
@@ -100,20 +246,49 @@ export component OptionsCard inherits OutlinedCard {
                     text <=> root.angle_bin_width;
                 }
             }
+        }
 
-            q_bin_area := TouchArea {
-                TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "S(Q) Bin Width (Å⁻¹)";
-                    text <=> root.q_bin_width;
+        // 4. Smoothing Group
+        TouchArea {
+            height: 48px;
+            layout4 := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.smoothing_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
                 }
+
+                MaterialText {
+                    text: "Smoothing";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.smoothing_expanded = !root.smoothing_expanded;
             }
         }
 
-        HorizontalLayout {
+        VerticalLayout {
+            height: root.smoothing_height;
+            opacity: root.smoothing_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             spacing: MaterialStyleMetrics.spacing_8;
-            padding_top: MaterialStyleMetrics.spacing_2;
+            padding_left: MaterialStyleMetrics.spacing_8;
             sigma_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
@@ -134,6 +309,80 @@ export component OptionsCard inherits OutlinedCard {
                         { text: "Triweight", enabled: true }
                     ];
                     current-index <=> root.smoothing_kernel;
+                }
+            }
+        }
+
+        // 5. Bond Cutoffs Group
+        TouchArea {
+            height: 48px;
+            layout5 := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.bond_cutoffs_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                }
+
+                MaterialText {
+                    text: "Bond Cutoffs";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.bond_cutoffs_expanded = !root.bond_cutoffs_expanded;
+            }
+        }
+
+        VerticalLayout {
+            height: root.bond_cutoffs_height;
+            opacity: root.bond_cutoffs_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            ScrollView {
+                vertical-stretch: 0;
+                height: min(list_layout.preferred-height, root.bond_cutoffs_height);
+                viewport-height: list_layout.preferred-height;
+                viewport-width: list_layout.preferred-width;
+                list_layout := VerticalLayout {
+                    spacing: MaterialStyleMetrics.spacing_4;
+                    padding: MaterialStyleMetrics.padding_4;
+                    for cutoff[i] in root.bond_cutoffs: HorizontalLayout {
+                        alignment: center;
+                        spacing: MaterialStyleMetrics.spacing_4;
+                        MaterialText {
+                            min-width: 80px;
+                            text: cutoff.element1 + " - " + cutoff.element2 + ":";
+                            vertical-alignment: center;
+                            horizontal-stretch: 1;
+                        }
+
+                        TextField {
+                            enabled: root.file_loaded;
+                            min-width: 100px;
+                            text: cutoff.distance;
+                            label: "Cutoff (Å)";
+                            edited(s) => {
+                                root.bond_cutoffs[i].distance = s;
+                            }
+                        }
+                    }
                 }
             }
         }
