@@ -336,6 +336,11 @@ void AppController::handleCheckFileDialogStatus() {
           static_cast<int>(backend_.getRemovedFrameCount()));
       ui_.set_time_step(
           slint::SharedString(std::format("{:.2f}", backend_.getTimeStep())));
+
+      // Update Run Analysis Card Frame Info
+      ui_.set_min_frame("1");
+      ui_.set_max_frame(
+          slint::SharedString(std::to_string(backend_.getFrameCount())));
     }
 
     current_file_dialog_.reset();

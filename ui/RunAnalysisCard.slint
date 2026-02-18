@@ -14,6 +14,7 @@ import {
     CheckState,
     TextField,
     LinearProgressIndicator,
+    Icons,
 } from "@material";
 
 export component RunAnalysisCard inherits OutlinedCard {
@@ -26,6 +27,7 @@ export component RunAnalysisCard inherits OutlinedCard {
     in-out property <bool> use_hdf5: true;
     in-out property <string> min_frame;
     in-out property <string> max_frame;
+    in-out property <bool> advanced_options_visible: false;
     callback run_analysis();
     callback write_files();
 
@@ -37,9 +39,14 @@ export component RunAnalysisCard inherits OutlinedCard {
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: 0px;
-        MaterialText {
-            text: "Run Analysis";
-            style: MaterialTypography.title_small;
+        FilledButton {
+            height: 40px;
+            width: 90%;
+            text: "Options";
+            icon: root.advanced_options_visible ? Icons.arrow_right : Icons.arrow_left;
+            clicked => {
+                root.advanced_options_visible = !root.advanced_options_visible;
+            }
         }
 
         // Export Options Block

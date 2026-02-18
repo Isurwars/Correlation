@@ -63,10 +63,6 @@ export component OptionsCard inherits OutlinedCard {
         padding: MaterialStyleMetrics.spacing_4;
         spacing: MaterialStyleMetrics.spacing_4;
         alignment: space-around;
-        MaterialText {
-            text: "Advanced Options";
-            style: MaterialTypography.title_small;
-        }
         
         // 1. Radial Distribution Group
         TouchArea {
@@ -367,7 +363,7 @@ export component OptionsCard inherits OutlinedCard {
                         alignment: center;
                         spacing: MaterialStyleMetrics.spacing_4;
                         MaterialText {
-                            min-width: 80px;
+                            min-width: 75px;
                             text: cutoff.element1 + " - " + cutoff.element2 + ":";
                             vertical-alignment: center;
                             horizontal-stretch: 1;
@@ -375,7 +371,7 @@ export component OptionsCard inherits OutlinedCard {
 
                         TextField {
                             enabled: root.file_loaded;
-                            min-width: 100px;
+                            min-width: 95px;
                             text: cutoff.distance;
                             label: "Cutoff (Å)";
                             edited(s) => {
