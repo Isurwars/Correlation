@@ -60,7 +60,7 @@ export component AppWindow inherits Window {
     in-out property <string> min_frame: "1";
     in-out property <string> max_frame: "End";
 
-    width: 840px;
+    width: 680px;
     height: max(100px + file_info_card.preferred-height, 50px + options_card.preferred-height);
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
@@ -83,9 +83,9 @@ export component AppWindow inherits Window {
 
             // 1. Sidebar: Input & File Info
             VerticalLayout {
-                width: 260px; // Slim fixed sidebar
+                width: 190px;
                 padding-right: MaterialStyleMetrics.padding_4;
-                spacing: MaterialStyleMetrics.spacing_8;
+                spacing: MaterialStyleMetrics.spacing_4;
 
                 input_card := InputFileCard {
                     enabled: !root.timer_running;
@@ -118,7 +118,7 @@ export component AppWindow inherits Window {
 
             // 2. Center: Analysis Options
             VerticalLayout {
-                min-width: 240px;
+                min-width: 220px;
                 horizontal-stretch: 1; // Flexible width
                 padding-left: MaterialStyleMetrics.padding_4;
                 padding-right: MaterialStyleMetrics.padding_4;
@@ -147,7 +147,7 @@ export component AppWindow inherits Window {
 
             // 3. Right: Output & Run
             VerticalLayout {
-                width: 300px; // Fixed width increased
+                width: 200px; // Fixed width increased
                 padding-left: MaterialStyleMetrics.padding_4;
                 spacing: MaterialStyleMetrics.spacing_8;
 

@@ -35,7 +35,7 @@ export component OptionsCard inherits OutlinedCard {
     in-out property <[BondCutoff]> bond_cutoffs;
     
     // Toggle stats for groups
-    property <bool> rdf_expanded: false;
+    property <bool> rdf_expanded: true;
     property <bool> sq_expanded: false;
     property <bool> angle_expanded: false;
     property <bool> smoothing_expanded: false;
@@ -64,7 +64,7 @@ export component OptionsCard inherits OutlinedCard {
         spacing: MaterialStyleMetrics.spacing_4;
         alignment: space-around;
         MaterialText {
-            text: "Options";
+            text: "Advanced Options";
             style: MaterialTypography.title_small;
         }
         
@@ -112,7 +112,7 @@ export component OptionsCard inherits OutlinedCard {
             r_max_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "RDF Max r (Å)";
                     text <=> root.r_max;
                 }
@@ -121,7 +121,7 @@ export component OptionsCard inherits OutlinedCard {
             r_bin_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "RDF Bin Width (Å)";
                     text <=> root.r_bin_width;
                 }
@@ -172,7 +172,7 @@ export component OptionsCard inherits OutlinedCard {
             q_max_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "Max Q (Å⁻¹)";
                     text <=> root.q_max;
                 }
@@ -181,7 +181,7 @@ export component OptionsCard inherits OutlinedCard {
             q_bin_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "S(Q) Bin Width (Å⁻¹)";
                     text <=> root.q_bin_width;
                 }
@@ -190,7 +190,7 @@ export component OptionsCard inherits OutlinedCard {
             r_int_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "Max r for the FFT (Å)";
                     text <=> root.r_int_max;
                 }
@@ -241,7 +241,7 @@ export component OptionsCard inherits OutlinedCard {
             theta_bin_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "PAD Bin Width (°)";
                     text <=> root.angle_bin_width;
                 }
@@ -292,7 +292,7 @@ export component OptionsCard inherits OutlinedCard {
             sigma_area := TouchArea {
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "Smoothing Sigma";
                     text <=> root.smoothing_sigma;
                 }
@@ -301,7 +301,7 @@ export component OptionsCard inherits OutlinedCard {
             kernel_area := TouchArea {
                 DropDownMenu {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "Smoothing Kernel";
                     items: [
                         { text: "Gaussian", enabled: true },

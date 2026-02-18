@@ -14,6 +14,7 @@ import {
 import { AtomCount } from "Types.slint";
 
 export component FileInfoCard inherits OutlinedCard {
+    visible: root.file_loaded;
     in-out property <string> file_status_text;
     in property <bool> file_loaded;
     in property <int> num_frames;
@@ -22,7 +23,7 @@ export component FileInfoCard inherits OutlinedCard {
     in property <[AtomCount]> atom_counts;
     in-out property <string> time_step;
 
-    opacity: root.file_loaded ? 1.0 : 0.5;
+    height: root.file_loaded ? root.preferred-height : 0px;
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;

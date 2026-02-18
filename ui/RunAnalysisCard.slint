@@ -36,27 +36,27 @@ export component RunAnalysisCard inherits OutlinedCard {
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_4;
+        spacing: 0px;
         MaterialText {
             text: "Run Analysis";
             style: MaterialTypography.title_small;
         }
 
-        HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_8;
+        // Export Options Block
+        VerticalLayout {
+            spacing: 0px;
             csv_area := TouchArea {
-                horizontal-stretch: 1;
+                height: 32px;
                 HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_4;
+                    padding: 0px;
                     MaterialText {
                         vertical-alignment: center;
                         text: "Export as CSV";
-                        width: 70%;
+                        horizontal-stretch: 1;
                     }
 
                     CheckBox {
                         enabled: root.file_loaded;
-                        width: 20%;
                         check_state: root.use_csv ? CheckState.checked : CheckState.unchecked;
                         checked_state_changed(s) => {
                             root.use_csv = (s == CheckState.checked);
@@ -66,18 +66,17 @@ export component RunAnalysisCard inherits OutlinedCard {
             }
 
             hdf5_area := TouchArea {
-                horizontal-stretch: 1;
+                height: 32px;
                 HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_4;
+                    padding: 0px;
                     MaterialText {
                         vertical-alignment: center;
                         text: "Export as HDF5";
-                        width: 70%;
+                        horizontal-stretch: 1;
                     }
 
                     CheckBox {
                         enabled: root.file_loaded;
-                        width: 20%;
                         check_state: root.use_hdf5 ? CheckState.checked : CheckState.unchecked;
                         checked_state_changed(s) => {
                             root.use_hdf5 = (s == CheckState.checked);
@@ -87,45 +86,42 @@ export component RunAnalysisCard inherits OutlinedCard {
             }
         }
 
-        HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_8;
+        // Frame Range Block
+        VerticalLayout {
+            spacing: 0px;
             TouchArea {
-                horizontal-stretch: 1;
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "Start Frame";
                     text <=> root.min_frame;
                 }
             }
 
             TouchArea {
-                horizontal-stretch: 1;
                 TextField {
                     enabled: root.file_loaded;
-                    width: 100%;
+                    width: 90%;
                     label: "End Frame";
                     text <=> root.max_frame;
                 }
             }
         }
 
-        HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_8;
+        // Action Buttons and Progress Bar Block
+        VerticalLayout {
+            spacing: 0px;
+            padding: 0px;
             LinearProgressIndicator {
                 width: 100%;
                 progress: root.progress;
                 indeterminate: false;
             }
-        }
 
-        HorizontalLayout {
-            spacing: MaterialStyleMetrics.spacing_8;
             analysis_area := TouchArea {
                 min-height: 40px;
-                horizontal-stretch: 1;
                 FilledButton {
-                    height: 100%;
+                    height: 40px;
                     width: 100%;
                     text: root.analysis_running ? "In Progress..." : "Run Analysis";
                     enabled: root.file_loaded && !root.analysis_running;
@@ -137,9 +133,8 @@ export component RunAnalysisCard inherits OutlinedCard {
 
             write_area := TouchArea {
                 min-height: 40px;
-                horizontal-stretch: 1;
                 FilledButton {
-                    height: 100%;
+                    height: 40px;
                     width: 100%;
                     text: "Write Files";
                     enabled: root.analysis_done && !root.analysis_running;

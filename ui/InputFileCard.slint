@@ -30,9 +30,9 @@ export component InputFileCard inherits OutlinedCard {
             min-height: 40px;
             FilledButton {
                 enabled: root.enabled;
-                height: 100%;
+                height: 40px;
                 width: 100%;
-                text: "Load a structure file";
+                text: "Load structure file";
                 clicked => {
                     root.browse_file();
                 }
