@@ -8,7 +8,7 @@ import {
     MaterialStyleMetrics,
     MaterialTypography,
     FilledButton,
-    OutlinedCard,
+    FilledCard,
     MaterialText,
     CheckBox,
     CheckState,
@@ -17,7 +17,7 @@ import {
     Icons,
 } from "@material";
 
-export component RunAnalysisCard inherits OutlinedCard {
+export component RunAnalysisCard inherits FilledCard {
     in property <bool> file_loaded;
     in property <bool> analysis_running;
     in property <bool> analysis_done;

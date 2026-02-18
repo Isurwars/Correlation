@@ -7,13 +7,13 @@ import {
     MaterialStyleMetrics,
     MaterialTypography,
     MaterialPalette,
-    OutlinedCard,
+    FilledCard,
     MaterialText,
     TextField,
 } from "@material";
 import { AtomCount } from "Types.slint";
 
-export component FileInfoCard inherits OutlinedCard {
+export component FileInfoCard inherits FilledCard {
     visible: root.file_loaded;
     in-out property <string> file_status_text;
     in property <bool> file_loaded;

@@ -10,7 +10,7 @@ import {
     CheckState,
     TextField,
     DropDownMenu,
-    OutlinedCard,
+    FilledCard,
     MaterialText,
     Icon,
     Icons,
@@ -19,7 +19,7 @@ import {
 } from "@material";
 import { BondCutoff } from "Types.slint";
 
-export component OptionsCard inherits OutlinedCard {
+export component OptionsCard inherits FilledCard {
     in property <bool> file_loaded;
     in-out property <string> r_max;
     in-out property <string> r_bin_width;
