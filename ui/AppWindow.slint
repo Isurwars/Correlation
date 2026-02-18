@@ -124,12 +124,6 @@ export component AppWindow inherits Window {
                 }
             }
 
-            // Separator
-            Rectangle {
-                width: root.file_loaded ? 1px : 0px;
-                background: MaterialPalette.outline_variant;
-            }
-
             // 2. Center: Analysis Options
             VerticalLayout {
                 horizontal-stretch: 0;
@@ -164,13 +158,6 @@ export component AppWindow inherits Window {
                     smoothing_kernel <=> root.smoothing_kernel;
                     bond_cutoffs <=> root.bond_cutoffs;
                 }
-            }
-
-            // Separator
-            Rectangle {
-                width: root.file_loaded ? 1px : 0px;
-                background: MaterialPalette.outline_variant;
-                visible: root.show_advanced_options;
             }
 
             // 3. Right: Output & Run
