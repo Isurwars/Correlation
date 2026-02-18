@@ -143,7 +143,7 @@ export component RunAnalysisCard inherits FilledCard {
                 FilledButton {
                     height: 40px;
                     width: 100%;
-                    text: "Write Files";
+                    text: "Save Files";
                     enabled: root.analysis_done && !root.analysis_running;
                     clicked => {
                         root.write_files();

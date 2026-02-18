@@ -62,7 +62,7 @@ export component AppWindow inherits Window {
 
     property <bool> show_advanced_options: false;
     property <bool> show_run_analysis_card: root.file_loaded;
-    property <length> window_width: (root.show_run_analysis_card ? 420px : 195px) + (root.show_advanced_options ? 220px : 0px);
+    property <length> window_width: (root.show_run_analysis_card ? 398px : 198px) + (root.show_advanced_options ? 220px : 0px);
     property <length> window_height: root.file_loaded ? max(100px + file_info_card.preferred-height, 50px + options_card.preferred-height) : (input_card.preferred-height + 8px);
 
     width: root.window_width;
@@ -92,12 +92,12 @@ export component AppWindow inherits Window {
     window_area := TouchArea {
         HorizontalLayout {
             padding: MaterialStyleMetrics.padding_4;
-            spacing: MaterialStyleMetrics.spacing_4;
+            spacing: 0px; // Reduced from spacing_4 (8px) to 0px to reduce gap
 
             // 1. Sidebar: Input & File Info
             VerticalLayout {
                 width: 190px;
-                padding-right: MaterialStyleMetrics.padding_4;
+                padding-right: 0px; // Removed padding to reduce gap
                 spacing: MaterialStyleMetrics.spacing_4;
 
                 input_card := InputFileCard {
@@ -129,7 +129,7 @@ export component AppWindow inherits Window {
                 horizontal-stretch: 0;
                 width: root.show_advanced_options ? 220px : 0px;
                 padding-left: root.show_advanced_options ? MaterialStyleMetrics.padding_4 : 0px;
-                padding-right: root.show_advanced_options ? MaterialStyleMetrics.padding_4 : 0px;
+                padding-right: 0px; // Removed padding to reduce gap
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 animate width {
