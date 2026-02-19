@@ -45,7 +45,7 @@ export component OptionsCard inherits FilledCard {
     property <length> sq_height: sq_expanded ? 150px : 0px;
     property <length> angle_height: angle_expanded ? 50px : 0px;
     property <length> smoothing_height: smoothing_expanded ? 100px : 0px;
-    property <length> bond_cutoffs_height: bond_cutoffs_expanded ? 150px : 0px;
+    property <length> bond_cutoffs_height: bond_cutoffs_expanded ? min(150px, root.bond_cutoffs.length * 50px) : 0px;
   
     // Hover states for tooltips
     out property <bool> r_max_has_hover: r_max_area.has-hover;
