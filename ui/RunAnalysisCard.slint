@@ -15,6 +15,7 @@ import {
     TextField,
     LinearProgressIndicator,
     Icons,
+    Icon,
 } from "@material";
 import { FileInfoCard } from "FileInfoCard.slint";
 
@@ -42,13 +43,37 @@ export component RunAnalysisCard inherits FilledCard {
         spacing: MaterialStyleMetrics.spacing_4;
 
         VerticalLayout {
-            FilledButton {
+            TouchArea {
                 width: 100%;
-                background: #d6d690;
-                text: "Options";
-                icon: root.advanced_options_visible ? Icons.arrow_left : Icons.arrow_right;
+                height: 40px;
+                mouse-cursor: pointer;
                 clicked => {
                     root.advanced_options_visible = !root.advanced_options_visible;
+                }
+                Rectangle {
+                    background: #d6d690;
+                    border-radius: MaterialStyleMetrics.border_radius_8;
+                    HorizontalLayout {
+                        alignment: center;
+                        spacing: 8px;
+                        padding-left: 16px;
+                        padding-right: 16px;
+                        MaterialText {
+                            text: "Options";
+                            vertical-alignment: center;
+                            style: MaterialTypography.label_large;
+                            color: black;
+                        }
+
+                        Icon {
+                            y: 8px;
+                            source: root.advanced_options_visible ? Icons.arrow_left : Icons.arrow_right;
+                            width: 25px;
+                            height: 25px;
+                            vertical-alignment: center;
+                            colorize: black;
+                        }
+                    }
                 }
             }
         }
