@@ -42,6 +42,7 @@ export component RunAnalysisCard inherits FilledCard {
         FilledButton {
             height: 40px;
             width: 90%;
+            background: #d6d690;
             text: "Options";
             icon: root.advanced_options_visible ? Icons.arrow_right : Icons.arrow_left;
             clicked => {
@@ -130,6 +131,7 @@ export component RunAnalysisCard inherits FilledCard {
                 FilledButton {
                     height: 40px;
                     width: 100%;
+                    background: #50b050;
                     text: root.analysis_running ? "In Progress..." : "Run Analysis";
                     enabled: root.file_loaded && !root.analysis_running;
                     clicked => {
@@ -143,7 +145,7 @@ export component RunAnalysisCard inherits FilledCard {
                 FilledButton {
                     height: 40px;
                     width: 100%;
-                    text: "Save Files";
+                    text: "Save";
                     enabled: root.analysis_done && !root.analysis_running;
                     clicked => {
                         root.write_files();

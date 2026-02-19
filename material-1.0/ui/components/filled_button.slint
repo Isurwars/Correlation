@@ -13,6 +13,9 @@ export component FilledButton {
     in property <string> tooltip <=> base.tooltip;
     in property <bool> enabled <=> base.enabled;
 
+    // Optional background color override
+    in property <brush> background: MaterialPalette.primary;
+
     callback clicked <=> base.clicked;
 
     accessible-role: button;
@@ -24,7 +27,7 @@ export component FilledButton {
 
     elevation := Elevation {
         border_radius: MaterialStyleMetrics.border_radius_8;
-        background: MaterialPalette.primary;
+        background: root.background;
         width: 100%;
         height: 100%;
     }
