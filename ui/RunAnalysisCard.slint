@@ -16,6 +16,7 @@ import {
     LinearProgressIndicator,
     Icons,
 } from "@material";
+import { FileInfoCard } from "FileInfoCard.slint";
 
 export component RunAnalysisCard inherits FilledCard {
     in property <bool> file_loaded;
@@ -27,7 +28,7 @@ export component RunAnalysisCard inherits FilledCard {
     in-out property <bool> use_hdf5: true;
     in-out property <string> min_frame;
     in-out property <string> max_frame;
-    in-out property <bool> advanced_options_visible: false;
+    in-out property <bool> advanced_options_visible;
     callback run_analysis();
     callback write_files();
 
@@ -38,23 +39,24 @@ export component RunAnalysisCard inherits FilledCard {
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
-        spacing: 0px;
-        FilledButton {
-            height: 40px;
-            width: 90%;
-            background: #d6d690;
-            text: "Options";
-            icon: root.advanced_options_visible ? Icons.arrow_left : Icons.arrow_right;
-            clicked => {
-                root.advanced_options_visible = !root.advanced_options_visible;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        VerticalLayout {
+            FilledButton {
+                width: 100%;
+                background: #d6d690;
+                text: "Options";
+                icon: root.advanced_options_visible ? Icons.arrow_left : Icons.arrow_right;
+                clicked => {
+                    root.advanced_options_visible = !root.advanced_options_visible;
+                }
             }
         }
 
-        // Export Options Block
-        VerticalLayout {
-            spacing: 0px;
+        // Export Options
+
+            VerticalLayout {
             csv_area := TouchArea {
-                height: 32px;
                 HorizontalLayout {
                     padding: 0px;
                     MaterialText {
@@ -74,7 +76,6 @@ export component RunAnalysisCard inherits FilledCard {
             }
 
             hdf5_area := TouchArea {
-                height: 32px;
                 HorizontalLayout {
                     padding: 0px;
                     MaterialText {
@@ -94,32 +95,30 @@ export component RunAnalysisCard inherits FilledCard {
             }
         }
 
-        // Frame Range Block
-        VerticalLayout {
-            spacing: 0px;
+        // Frame Range
+
+            VerticalLayout {
             TouchArea {
-                TextField {
+                start_frame := TextField {
                     enabled: root.file_loaded;
-                    width: 90%;
+                    width: 100%;
                     label: "Start Frame";
                     text <=> root.min_frame;
                 }
             }
 
             TouchArea {
-                TextField {
+                end_frame := TextField {
                     enabled: root.file_loaded;
-                    width: 90%;
+                    width: 100%;
                     label: "End Frame";
                     text <=> root.max_frame;
                 }
             }
         }
 
-        // Action Buttons and Progress Bar Block
-        VerticalLayout {
-            spacing: 0px;
-            padding: 0px;
+        // Action Buttons and Progress Bar
+            VerticalLayout {
             LinearProgressIndicator {
                 width: 100%;
                 progress: root.progress;
@@ -127,9 +126,7 @@ export component RunAnalysisCard inherits FilledCard {
             }
 
             analysis_area := TouchArea {
-                min-height: 40px;
                 FilledButton {
-                    height: 40px;
                     width: 100%;
                     background: #50b050;
                     text: root.analysis_running ? "In Progress..." : "Run Analysis";
@@ -141,9 +138,7 @@ export component RunAnalysisCard inherits FilledCard {
             }
 
             write_area := TouchArea {
-                min-height: 40px;
                 FilledButton {
-                    height: 40px;
                     width: 100%;
                     text: "Save";
                     enabled: root.analysis_done && !root.analysis_running;
