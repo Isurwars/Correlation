@@ -34,11 +34,11 @@ export component OptionsCard inherits FilledCard {
     in-out property <[BondCutoff]> bond_cutoffs;
     
     // Toggle stats for groups
-    property <bool> rdf_expanded: true;
-    property <bool> sq_expanded: false;
-    property <bool> angle_expanded: false;
-    property <bool> smoothing_expanded: false;
-    property <bool> bond_cutoffs_expanded: false;
+    in-out property <bool> rdf_expanded: false;
+    in-out property <bool> sq_expanded: false;
+    in-out property <bool> angle_expanded: false;
+    in-out property <bool> smoothing_expanded: false;
+    in-out property <bool> bond_cutoffs_expanded: false;
 
     // Toggle height for groups
     property <length> rdf_height: rdf_expanded ? 100px : 0px;
@@ -71,6 +71,7 @@ export component OptionsCard inherits FilledCard {
                 padding_left: MaterialStyleMetrics.spacing_4;
                 padding_right: MaterialStyleMetrics.spacing_4;
                 Icon {
+                    y: 12px;
                     colorize: MaterialPalette.on_surface_variant;
                     height: 24px;
                     width: 24px;
@@ -129,6 +130,7 @@ export component OptionsCard inherits FilledCard {
                 padding_left: MaterialStyleMetrics.spacing_4;
                 padding_right: MaterialStyleMetrics.spacing_4;
                 Icon {
+                    y: 12px;
                     colorize: MaterialPalette.on_surface_variant;
                     height: 24px;
                     width: 24px;
@@ -195,6 +197,7 @@ export component OptionsCard inherits FilledCard {
                 padding_left: MaterialStyleMetrics.spacing_4;
                 padding_right: MaterialStyleMetrics.spacing_4;
                 Icon {
+                    y: 12px;
                     colorize: MaterialPalette.on_surface_variant;
                     height: 24px;
                     width: 24px;
@@ -245,6 +248,7 @@ export component OptionsCard inherits FilledCard {
                 padding_left: MaterialStyleMetrics.spacing_4;
                 padding_right: MaterialStyleMetrics.spacing_4;
                 Icon {
+                    y: 12px;
                     colorize: MaterialPalette.on_surface_variant;
                     height: 24px;
                     width: 24px;
@@ -308,6 +312,7 @@ export component OptionsCard inherits FilledCard {
                 padding_left: MaterialStyleMetrics.spacing_4;
                 padding_right: MaterialStyleMetrics.spacing_4;
                 Icon {
+                    y: 12px;
                     colorize: MaterialPalette.on_surface_variant;
                     height: 24px;
                     width: 24px;

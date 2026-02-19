@@ -32,6 +32,7 @@ export component RunAnalysisCard inherits FilledCard {
     in-out property <bool> advanced_options_visible;
     callback run_analysis();
     callback write_files();
+    callback options_toggled(bool);
 
     // Hover state for tooltip
     out property <bool> analysis_area_has_hover: analysis_area.has-hover;
@@ -49,6 +50,7 @@ export component RunAnalysisCard inherits FilledCard {
                 mouse-cursor: pointer;
                 clicked => {
                     root.advanced_options_visible = !root.advanced_options_visible;
+                    root.options_toggled(root.advanced_options_visible);
                 }
                 Rectangle {
                     background: #d6d690;
