@@ -83,6 +83,8 @@ slint_target_sources(correlation
   LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/material-1.0/material.slint
 )
 
+set_property(TARGET correlation PROPERTY SLINT_EMBED_RESOURCES "embed-files")
+
 #-----------------------------------------------------------
 # Testing
 #-----------------------------------------------------------
