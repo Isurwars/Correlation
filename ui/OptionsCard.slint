@@ -20,7 +20,6 @@ import {
 import { BondCutoff } from "Types.slint";
 
 export component OptionsCard inherits FilledCard {
-    in property <bool> file_loaded;
     in-out property <string> r_max;
     in-out property <string> r_bin_width;
     in-out property <string> q_max;
@@ -107,7 +106,6 @@ export component OptionsCard inherits FilledCard {
             padding_left: MaterialStyleMetrics.spacing_8; // Indent content
             r_max_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "RDF Max r (Å)";
                     text <=> root.r_max;
@@ -116,7 +114,6 @@ export component OptionsCard inherits FilledCard {
 
             r_bin_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "RDF Bin Width (Å)";
                     text <=> root.r_bin_width;
@@ -167,7 +164,6 @@ export component OptionsCard inherits FilledCard {
             padding_left: MaterialStyleMetrics.spacing_8;
             q_max_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "Max Q (Å⁻¹)";
                     text <=> root.q_max;
@@ -176,7 +172,6 @@ export component OptionsCard inherits FilledCard {
 
             q_bin_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "S(Q) Bin Width (Å⁻¹)";
                     text <=> root.q_bin_width;
@@ -185,7 +180,6 @@ export component OptionsCard inherits FilledCard {
 
             r_int_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "Max r for the FFT (Å)";
                     text <=> root.r_int_max;
@@ -236,7 +230,6 @@ export component OptionsCard inherits FilledCard {
             padding_left: MaterialStyleMetrics.spacing_8;
             theta_bin_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "PAD Bin Width (°)";
                     text <=> root.angle_bin_width;
@@ -287,7 +280,6 @@ export component OptionsCard inherits FilledCard {
             padding_left: MaterialStyleMetrics.spacing_8;
             sigma_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "Smoothing Sigma";
                     text <=> root.smoothing_sigma;
@@ -296,7 +288,6 @@ export component OptionsCard inherits FilledCard {
 
             kernel_area := TouchArea {
                 DropDownMenu {
-                    enabled: root.file_loaded;
                     width: 90%;
                     label: "Smoothing Kernel";
                     items: [
@@ -370,7 +361,6 @@ export component OptionsCard inherits FilledCard {
                         }
 
                         TextField {
-                            enabled: root.file_loaded;
                             min-width: 95px;
                             text: cutoff.distance;
                             label: "Cutoff (Å)";

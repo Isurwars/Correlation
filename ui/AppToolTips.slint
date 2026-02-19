@@ -32,6 +32,20 @@ export component AppToolTips inherits Rectangle {
     }
 
     ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "If enabled, the results will be exported to a single HDF5 file.";
+        visible: hdf5_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "If enabled, the results will be exported as CSV files.";
+        visible: csv_hover;
+    }
+
+    ToolTip {
         x: mouse_x + 20px;
         y: mouse_y + 20px;
         text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
@@ -85,19 +99,5 @@ export component AppToolTips inherits Rectangle {
         y: mouse_y + 20px;
         text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
         visible: kernel_hover;
-    }
-
-    ToolTip {
-        x: mouse_x - 240px;
-        y: mouse_y + 20px;
-        text: "If enabled, the results will be exported to a single HDF5 file.";
-        visible: hdf5_hover;
-    }
-
-    ToolTip {
-        x: mouse_x - 240px;
-        y: mouse_y + 20px;
-        text: "If enabled, the results will be exported as CSV files.";
-        visible: csv_hover;
     }
 }
