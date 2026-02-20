@@ -566,7 +566,9 @@ void DistributionFunctions::calculatePAD(double bin_width) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateVACF(const Trajectory &traj,
-                                          int max_correlation_frames) {
+                                          int max_correlation_frames,
+                                          size_t start_frame,
+                                          size_t end_frame) {
   const auto &velocities = traj.getVelocities();
   if (velocities.empty()) {
     // If velocities are not calculated, we cannot proceed.
@@ -575,8 +577,8 @@ void DistributionFunctions::calculateVACF(const Trajectory &traj,
   }
 
   // Calculate Raw VACF
-  std::vector<double> raw_vacf =
-      DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames);
+  std::vector<double> raw_vacf = DynamicsAnalyzer::calculateVACF(
+      traj, max_correlation_frames, start_frame, end_frame);
   if (raw_vacf.empty())
     return;
 
@@ -594,8 +596,8 @@ void DistributionFunctions::calculateVACF(const Trajectory &traj,
   histograms_["VACF"] = std::move(vacf_hist);
 
   // Calculate Normalized VACF
-  std::vector<double> norm_vacf =
-      DynamicsAnalyzer::calculateNormalizedVACF(traj, max_correlation_frames);
+  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(
+      traj, max_correlation_frames, start_frame, end_frame);
   if (!norm_vacf.empty()) {
     Histogram norm_vacf_hist;
     norm_vacf_hist.bin_label = "Time";

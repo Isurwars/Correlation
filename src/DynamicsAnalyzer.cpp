@@ -14,17 +14,26 @@
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
-std::vector<double>
-DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
-                                int max_correlation_frames) {
+std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
+                                                    int max_correlation_frames,
+                                                    size_t start_frame,
+                                                    size_t end_frame) {
   const auto &velocities = traj.getVelocities();
 
   if (velocities.empty()) {
     return {};
   }
 
-  size_t num_frames = velocities.size();
+  size_t total_frames = velocities.size();
   size_t num_atoms = velocities[0].size();
+
+  start_frame = std::min(start_frame, total_frames > 0 ? total_frames - 1 : 0);
+  end_frame = std::min(end_frame, total_frames);
+  if (start_frame >= end_frame) {
+    return {};
+  }
+
+  size_t num_frames = end_frame - start_frame;
 
   if (max_correlation_frames < 0 ||
       static_cast<size_t>(max_correlation_frames) >= num_frames) {
@@ -35,32 +44,33 @@ DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   const auto &frames = traj.getFrames();
   if (frames.empty())
     return {};
-  const auto &atoms = frames[0].atoms();
+  // Use the structure at start_frame for consistent masses
+  const auto &atoms = frames[start_frame].atoms();
   std::vector<double> masses(num_atoms);
   double total_mass = 0.0;
   for (size_t i = 0; i < num_atoms; ++i) {
     try {
       masses[i] = AtomicMasses::get(atoms[i].element().symbol);
     } catch (const std::out_of_range &) {
-      // Fallback if mass not found (shouldn't happen for standard elements)
       masses[i] = 1.0;
     }
     total_mass += masses[i];
   }
 
-  // Create corrected velocities (COM removed)
+  // Create corrected velocities (COM removed) mapped relative to start_frame
   std::vector<std::vector<linalg::Vector3<double>>> atom_velocities(
       num_atoms, std::vector<linalg::Vector3<double>>(num_frames));
 
   for (size_t t = 0; t < num_frames; ++t) {
+    const size_t traj_t = start_frame + t;
     linalg::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
     for (size_t i = 0; i < num_atoms; ++i) {
-      momentum_sum += velocities[t][i] * masses[i];
+      momentum_sum += velocities[traj_t][i] * masses[i];
     }
     linalg::Vector3<double> v_com = momentum_sum / total_mass;
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      atom_velocities[i][t] = velocities[t][i] - v_com;
+      atom_velocities[i][t] = velocities[traj_t][i] - v_com;
     }
   }
 
@@ -108,10 +118,11 @@ DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   return vacf;
 }
 
-std::vector<double>
-DynamicsAnalyzer::calculateNormalizedVACF(const Trajectory &traj,
-                                          int max_correlation_frames) {
-  std::vector<double> vacf = calculateVACF(traj, max_correlation_frames);
+std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(
+    const Trajectory &traj, int max_correlation_frames, size_t start_frame,
+    size_t end_frame) {
+  std::vector<double> vacf =
+      calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (!vacf.empty() && vacf[0] != 0.0) {
     double normalization_factor = 1.0 / vacf[0];
     for (double &val : vacf) {

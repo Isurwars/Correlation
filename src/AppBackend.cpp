@@ -205,7 +205,7 @@ void AppBackend::run_analysis() {
       if (trajectory_->getVelocities().empty()) {
         trajectory_->calculateVelocities();
       }
-      df_->calculateVACF(*trajectory_);
+      df_->calculateVACF(*trajectory_, -1, start_f, options_.max_frame);
       try {
         df_->calculateVDOS();
       } catch (const std::exception &e) {

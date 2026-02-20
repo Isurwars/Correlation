@@ -31,8 +31,10 @@ public:
    * @return A vector containing the VACF values for lag times 0 to
    * max_correlation_frames.
    */
-  static std::vector<double> calculateVACF(const Trajectory &traj,
-                                           int max_correlation_frames);
+  static std::vector<double>
+  calculateVACF(const Trajectory &traj, int max_correlation_frames,
+                size_t start_frame = 0,
+                size_t end_frame = static_cast<size_t>(-1));
 
   /**
    * @brief Calculates the Normalized Velocity Autocorrelation Function.
@@ -43,7 +45,9 @@ public:
    * @return A vector containing the normalized VACF values.
    */
   static std::vector<double>
-  calculateNormalizedVACF(const Trajectory &traj, int max_correlation_frames);
+  calculateNormalizedVACF(const Trajectory &traj, int max_correlation_frames,
+                          size_t start_frame = 0,
+                          size_t end_frame = static_cast<size_t>(-1));
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
