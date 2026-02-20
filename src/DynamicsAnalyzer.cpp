@@ -5,6 +5,10 @@
 
 #include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
+#include <algorithm>
+#include <execution>
+#include <mutex>
+#include <numeric>
 
 //---------------------------------------------------------------------------//
 //--------------------------- Calculation Methods ---------------------------//
@@ -44,43 +48,55 @@ DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
     total_mass += masses[i];
   }
 
-  // Create corrected velocities (COM removed)
-  std::vector<std::vector<linalg::Vector3<double>>> corrected_velocities =
-      velocities;
+  // Create corrected velocities (COM removed), transposed to [atom][frame]
+  std::vector<std::vector<linalg::Vector3<double>>> atom_velocities(
+      num_atoms, std::vector<linalg::Vector3<double>>(num_frames));
 
   for (size_t t = 0; t < num_frames; ++t) {
     linalg::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
     for (size_t i = 0; i < num_atoms; ++i) {
-      momentum_sum += corrected_velocities[t][i] * masses[i];
+      momentum_sum += velocities[t][i] * masses[i];
     }
     linalg::Vector3<double> v_com = momentum_sum / total_mass;
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      corrected_velocities[t][i] -= v_com;
+      atom_velocities[i][t] = velocities[t][i] - v_com;
     }
   }
 
   std::vector<double> vacf(max_correlation_frames + 1, 0.0);
   std::vector<int> counts(max_correlation_frames + 1, 0);
 
-  // Iterate over time origins (t0)
-  // To get good statistics, we can average over all possible start times for
-  // each lag
-  for (size_t t0 = 0; t0 < num_frames; ++t0) {
-    for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-      size_t t_plus_lag = t0 + lag;
-
-      if (t_plus_lag < num_frames) {
-        double dot_product_sum = 0.0;
-        for (size_t i = 0; i < num_atoms; ++i) {
-          dot_product_sum += linalg::dot(corrected_velocities[t0][i],
-                                         corrected_velocities[t_plus_lag][i]);
-        }
-        vacf[lag] += dot_product_sum;
-        counts[lag]++;
-      }
-    }
+  // Count time origins per lag analytically
+  for (int lag = 0; lag <= max_correlation_frames; ++lag) {
+    counts[lag] = num_frames - lag;
   }
+
+  // Parallel computation over atoms
+  std::vector<size_t> atom_indices(num_atoms);
+  std::iota(atom_indices.begin(), atom_indices.end(), 0);
+
+  std::mutex vacf_mutex;
+
+  std::for_each(
+      std::execution::par, atom_indices.begin(), atom_indices.end(),
+      [&](size_t i) {
+        std::vector<double> local_vacf(max_correlation_frames + 1, 0.0);
+        const auto &v_i = atom_velocities[i];
+
+        for (size_t t0 = 0; t0 < num_frames; ++t0) {
+          int max_lag = std::min(max_correlation_frames,
+                                 static_cast<int>(num_frames - 1 - t0));
+          for (int lag = 0; lag <= max_lag; ++lag) {
+            local_vacf[lag] += linalg::dot(v_i[t0], v_i[t0 + lag]);
+          }
+        }
+
+        std::lock_guard<std::mutex> lock(vacf_mutex);
+        for (int lag = 0; lag <= max_correlation_frames; ++lag) {
+          vacf[lag] += local_vacf[lag];
+        }
+      });
 
   // Normalize by number of time origins and number of atoms
   for (int lag = 0; lag <= max_correlation_frames; ++lag) {
@@ -130,44 +146,51 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   std::vector<double> intensities_real(num_freq_points);
   std::vector<double> intensities_imag(num_freq_points);
 
-  for (size_t k = 0; k < num_freq_points; ++k) {
-    double nu = k * d_nu; // Frequency in THz
-    frequencies[k] = nu;
-
-    double integral_real = 0.0;
-    double integral_imag = 0.0;
-
-    // Trapezoidal integration
-    for (size_t i = 0; i < num_frames; ++i) {
-      double t = i * dt; // Time in fs
-      double val = vacf[i];
-
-      // Apply Hann Window to reduce spectral leakage
-      // W(t) = 0.5 * (1 + cos(pi * t / t_max))
-
-      double window = 0.5 * (1.0 + std::cos(constants::pi * t / t_max));
-      val *= window;
-
-      // Cosine transform term: cos(2 * pi * nu * t)
-      // nu is in THz (10^12/s), t in fs (10^-15 s).
-      // nu * t = (10^12) * (10^-15) = 10^-3
-      // So arg = 2 * pi * nu * t * 0.001
-      double arg = 2.0 * constants::pi * nu * t * 0.001;
-
-      double term_real = val * std::cos(arg);
-      double term_imag = val * std::sin(arg);
-
-      if (i == 0 || i == num_frames - 1) {
-        integral_real += 0.5 * term_real;
-        integral_imag += 0.5 * term_imag;
-      } else {
-        integral_real += term_real;
-        integral_imag += term_imag;
-      }
-    }
-    intensities_real[k] = integral_real * dt;
-    intensities_imag[k] = integral_imag * dt;
+  // Pre-calculate windowed VACF
+  std::vector<double> windowed_vacf(num_frames);
+  for (size_t i = 0; i < num_frames; ++i) {
+    double t = i * dt;
+    double window = 0.5 * (1.0 + std::cos(constants::pi * t / t_max));
+    windowed_vacf[i] = vacf[i] * window;
   }
+
+  std::vector<size_t> freq_indices(num_freq_points);
+  std::iota(freq_indices.begin(), freq_indices.end(), 0);
+
+  std::for_each(
+      std::execution::par, freq_indices.begin(), freq_indices.end(),
+      [&](size_t k) {
+        double nu = k * d_nu; // Frequency in THz
+        frequencies[k] = nu;
+
+        double integral_real = 0.0;
+        double integral_imag = 0.0;
+
+        // Trapezoidal integration
+        for (size_t i = 0; i < num_frames; ++i) {
+          double t = i * dt; // Time in fs
+          double val = windowed_vacf[i];
+
+          // Cosine transform term: cos(2 * pi * nu * t)
+          // nu is in THz (10^12/s), t in fs (10^-15 s).
+          // nu * t = (10^12) * (10^-15) = 10^-3
+          // So arg = 2 * pi * nu * t * 0.001
+          double arg = 2.0 * constants::pi * nu * t * 0.001;
+
+          double term_real = val * std::cos(arg);
+          double term_imag = val * std::sin(arg);
+
+          if (i == 0 || i == num_frames - 1) {
+            integral_real += 0.5 * term_real;
+            integral_imag += 0.5 * term_imag;
+          } else {
+            integral_real += term_real;
+            integral_imag += term_imag;
+          }
+        }
+        intensities_real[k] = integral_real * dt;
+        intensities_imag[k] = integral_imag * dt;
+      });
 
   return {frequencies, intensities_real, intensities_imag};
 }
