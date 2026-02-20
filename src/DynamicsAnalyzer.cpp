@@ -48,7 +48,7 @@ DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
     total_mass += masses[i];
   }
 
-  // Create corrected velocities (COM removed), transposed to [atom][frame]
+  // Create corrected velocities (COM removed)
   std::vector<std::vector<linalg::Vector3<double>>> atom_velocities(
       num_atoms, std::vector<linalg::Vector3<double>>(num_frames));
 
@@ -148,9 +148,12 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
 
   // Pre-calculate windowed VACF
   std::vector<double> windowed_vacf(num_frames);
+  // Define standard deviation for the Gaussian window (e.g., stopping at 3
+  // sigma at t_max)
+  double sigma = t_max >= 1e-6 ? t_max / 3.0 : 1.0;
   for (size_t i = 0; i < num_frames; ++i) {
     double t = i * dt;
-    double window = 0.5 * (1.0 + std::cos(constants::pi * t / t_max));
+    double window = std::exp(-0.5 * std::pow(t / sigma, 2.0));
     windowed_vacf[i] = vacf[i] * window;
   }
 
@@ -166,30 +169,93 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
         double integral_real = 0.0;
         double integral_imag = 0.0;
 
-        // Trapezoidal integration
-        for (size_t i = 0; i < num_frames; ++i) {
-          double t = i * dt; // Time in fs
-          double val = windowed_vacf[i];
+        // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
+        // scale)
+        double theta = 2.0 * constants::pi * nu * dt * 0.001;
 
-          // Cosine transform term: cos(2 * pi * nu * t)
-          // nu is in THz (10^12/s), t in fs (10^-15 s).
-          // nu * t = (10^12) * (10^-15) = 10^-3
-          // So arg = 2 * pi * nu * t * 0.001
-          double arg = 2.0 * constants::pi * nu * t * 0.001;
+        if (std::abs(theta) < 1e-6) {
+          for (size_t i = 0; i < num_frames; ++i) {
+            double val = windowed_vacf[i];
+            double arg = theta * i;
 
-          double term_real = val * std::cos(arg);
-          double term_imag = val * std::sin(arg);
+            double term_real = val * std::cos(arg);
 
-          if (i == 0 || i == num_frames - 1) {
-            integral_real += 0.5 * term_real;
-            integral_imag += 0.5 * term_imag;
-          } else {
-            integral_real += term_real;
-            integral_imag += term_imag;
+            if (i == 0 || i == num_frames - 1) {
+              integral_real += 0.5 * term_real;
+            } else {
+              integral_real += term_real;
+            }
+          }
+          integral_real *= dt;
+        } else {
+          double theta2 = theta * theta;
+          double theta3 = theta2 * theta;
+          double sin_theta = std::sin(theta);
+          double cos_theta = std::cos(theta);
+
+          double alpha = 1.0 / theta + sin_theta * cos_theta / theta2 -
+                         2.0 * sin_theta * sin_theta / theta3;
+          double beta = 2.0 * ((1.0 + cos_theta * cos_theta) / theta2 -
+                               2.0 * sin_theta * cos_theta / theta3);
+          double gamma = 4.0 * (sin_theta / theta3 - cos_theta / theta2);
+
+          size_t two_N =
+              (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
+          if (two_N < 0)
+            two_N = 0;
+
+          double f_0 = windowed_vacf[0];
+          double f_2N = windowed_vacf[two_N];
+
+          double arg_2N = theta * two_N;
+
+          double sum_odd_cos = 0.0, sum_odd_sin = 0.0;
+          for (size_t i = 1; i < two_N; i += 2) {
+            double arg = theta * i;
+            sum_odd_cos += windowed_vacf[i] * std::cos(arg);
+            sum_odd_sin += windowed_vacf[i] * std::sin(arg);
+          }
+
+          double sum_even_cos = 0.0, sum_even_sin = 0.0;
+          for (size_t i = 2; i < two_N; i += 2) {
+            double arg = theta * i;
+            sum_even_cos += windowed_vacf[i] * std::cos(arg);
+            sum_even_sin += windowed_vacf[i] * std::sin(arg);
+          }
+
+          double even_cos_trapz =
+              sum_even_cos +
+              0.5 * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N));
+          double even_sin_trapz =
+              sum_even_sin +
+              0.5 * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N));
+
+          double bound_cos = f_2N * std::sin(arg_2N);
+          double bound_sin = f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N);
+
+          integral_real = dt * (alpha * bound_cos + beta * even_cos_trapz +
+                                gamma * sum_odd_cos);
+          integral_imag = dt * (alpha * bound_sin + beta * even_sin_trapz +
+                                gamma * sum_odd_sin);
+
+          if (num_frames % 2 == 0 && num_frames > 1) {
+            double val1 = windowed_vacf[num_frames - 2];
+            double val2 = windowed_vacf[num_frames - 1];
+
+            double arg1 = theta * (num_frames - 2);
+            double arg2 = theta * (num_frames - 1);
+
+            integral_real +=
+                0.5 * dt * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
+            integral_imag +=
+                0.5 * dt * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
           }
         }
-        intensities_real[k] = integral_real * dt;
-        intensities_imag[k] = integral_imag * dt;
+
+        double damping =
+            std::exp(-0.5 * std::pow(nu / (0.5 * nyquist_thz), 2.0));
+        intensities_real[k] = integral_real * damping;
+        intensities_imag[k] = integral_imag * damping;
       });
 
   return {frequencies, intensities_real, intensities_imag};
