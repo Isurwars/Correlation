@@ -107,3 +107,50 @@ TEST_F(Test10_VACF, CalculateVACF_WithFrameRange) {
   EXPECT_NEAR(vacf[2], 1.0, 1e-6);
   EXPECT_NEAR(vacf[3], 1.0, 1e-6);
 }
+
+TEST_F(Test10_VACF, CalculateVACF_GasLike) {
+  Trajectory tGas;
+  tGas.setTimeStep(1.0);
+
+  // We want to simulate a gas-like behavior where VACF decays exponentially
+  // without negative regions. We'll provide a sequence of positions such that
+  // the central-difference velocity decreases strictly. r(0) = 0.0 r(1) = 1.0
+  // r(2) = 1.75
+  // r(3) = 2.25
+  // r(4) = 2.5
+  // r(5) = 2.625
+  // r(6) = 2.6875
+  // r(7) = 2.71875
+  // r(8) = 2.734375
+
+  std::vector<double> positions = {0.0,   1.0,    1.75,    2.25,    2.5,
+                                   2.625, 2.6875, 2.71875, 2.734375};
+
+  for (double x : positions) {
+    Cell c({10, 10, 10, 90, 90, 90});
+    c.addAtom("Ar", {x, 0.0, 0.0});
+    c.addAtom("Ar", {-x, 0.0, 0.0}); // To balance COM
+    tGas.addFrame(c);
+  }
+  tGas.calculateVelocities();
+
+  Cell base_cell({10, 10, 10, 90, 90, 90});
+  base_cell.addAtom("Ar", {0, 0, 0});
+  base_cell.addAtom("Ar", {0, 0, 0});
+  DistributionFunctions df(base_cell, 0.0, {{0.0}});
+
+  df.calculateVACF(tGas, 4); // Calculate up to 4 lags
+  EXPECT_NO_THROW(df.getHistogram("Normalized VACF"));
+
+  const auto &vacf = df.getHistogram("Normalized VACF").partials.at("Total");
+
+  // Since velocities strictly decrease, the normalized VACF should strictly
+  // decrease but remain positive (gas-like monotonic decay).
+  EXPECT_GT(vacf.size(), 4);
+  EXPECT_NEAR(vacf[0], 1.0, 1e-6);
+  EXPECT_LT(vacf[1], vacf[0]);
+  EXPECT_LT(vacf[2], vacf[1]);
+  EXPECT_LT(vacf[3], vacf[2]);
+  EXPECT_LT(vacf[4], vacf[3]);
+  EXPECT_GT(vacf[4], 0.0);
+}
