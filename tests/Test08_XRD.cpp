@@ -48,3 +48,42 @@ TEST_F(Test08_XRD, CalculateXRD) {
   EXPECT_GE(hist.bins.front(), 5.0);
   EXPECT_LE(hist.bins.back(), 90.0);
 }
+
+TEST_F(Test08_XRD, CalculateXRD_ThrowsIfNoRDF) {
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+
+  // Calling calculateXRD before calculateRDF should throw
+  EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, 0.5), std::logic_error);
+}
+
+TEST_F(Test08_XRD, CalculateXRD_InvalidBinWidth) {
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+
+  df.calculateRDF(5.0, 0.05);
+
+  // Calling calculateXRD with invalid bin width should throw
+  EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, 0.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, -0.5), std::invalid_argument);
+}
+
+TEST_F(Test08_XRD, CalculateXRD_IntensityIsZeroAtThetaZero) {
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+
+  // Needs RDF first
+  df.calculateRDF(5.0, 0.05);
+
+  // Calling calculateXRD with range starting at 0.0
+  df.calculateXRD(1.5406, 0.0, 10.0, 0.5);
+
+  EXPECT_NO_THROW(df.getHistogram("XRD"));
+  const auto &hist = df.getHistogram("XRD");
+  const auto &intensities = hist.partials.at("Total");
+
+  // Since Q(theta=0) = 0, Q < 1e-6 will branch and intensity should be exactly
+  // 0.0
+  EXPECT_EQ(hist.bins.front(), 0.0);
+  EXPECT_DOUBLE_EQ(intensities.front(), 0.0);
+}
