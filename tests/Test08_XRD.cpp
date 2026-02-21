@@ -115,12 +115,18 @@ TEST_F(Test08_XRD, CalculateXRDCubicCell) {
 
   const auto &total_intensity = hist.partials.at("Total");
   double max_intensity = 0.0;
-  for (double val : total_intensity) {
-    if (val > max_intensity) {
-      max_intensity = val;
+  double max_theta = 0.0;
+  for (size_t i = 0; i < total_intensity.size(); ++i) {
+    if (hist.bins[i] > 15.0 && total_intensity[i] > max_intensity) {
+      max_intensity = total_intensity[i];
+      max_theta = hist.bins[i];
     }
   }
 
   // We expect non-zero max intensity due to Bragg scattering
   EXPECT_GT(max_intensity, 0.0);
+
+  // For a Simple Cubic cell with a = 3.0 A and Cu K-alpha (1.5406 A)
+  // the first peak (100) should be at 2*theta ~ 29.75 degrees
+  EXPECT_NEAR(max_theta, 29.75, 1.0);
 }
