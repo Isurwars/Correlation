@@ -87,3 +87,40 @@ TEST_F(Test08_XRD, CalculateXRD_IntensityIsZeroAtThetaZero) {
   EXPECT_EQ(hist.bins.front(), 0.0);
   EXPECT_DOUBLE_EQ(intensities.front(), 0.0);
 }
+
+TEST_F(Test08_XRD, CalculateXRDCubicCell) {
+  // Simple cubic cell a = 3.0, 3x3x3 supercell
+  Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
+  for (int x = 0; x < 2; ++x) {
+    for (int y = 0; y < 2; ++y) {
+      for (int z = 0; z < 2; ++z) {
+        cubic_cell.addAtom("Ar", {x * 3.0, y * 3.0, z * 3.0});
+      }
+    }
+  }
+
+  Trajectory traj;
+  traj.addFrame(cubic_cell);
+  traj.precomputeBondCutoffs();
+
+  DistributionFunctions df(cubic_cell, 4.5, traj.getBondCutoffsSQ());
+  df.calculateRDF(4.5, 0.05);
+
+  // Calculate XRD for Cu K-alpha
+  df.calculateXRD(1.5406, 10.0, 90.0, 0.1);
+
+  EXPECT_NO_THROW(df.getHistogram("XRD"));
+  const auto &hist = df.getHistogram("XRD");
+  EXPECT_FALSE(hist.bins.empty());
+
+  const auto &total_intensity = hist.partials.at("Total");
+  double max_intensity = 0.0;
+  for (double val : total_intensity) {
+    if (val > max_intensity) {
+      max_intensity = val;
+    }
+  }
+
+  // We expect non-zero max intensity due to Bragg scattering
+  EXPECT_GT(max_intensity, 0.0);
+}
