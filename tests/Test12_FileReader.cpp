@@ -109,15 +109,38 @@ protected:
     arc_dup_file << "end\n";
     arc_dup_file << "end\n";
     arc_dup_file.close();
+
+    // Create a temporary LAMMPS dump file
+    std::ofstream dump_file("test.dump");
+    ASSERT_TRUE(dump_file.is_open());
+    dump_file << "ITEM: TIMESTEP\n";
+    dump_file << "100\n";
+    dump_file << "ITEM: NUMBER OF ATOMS\n";
+    dump_file << "2\n";
+    dump_file << "ITEM: BOX BOUNDS pp pp pp\n";
+    dump_file << "0.0 10.0\n";
+    dump_file << "0.0 11.0\n";
+    dump_file << "0.0 12.0\n";
+    dump_file << "ITEM: ATOMS id type x y z\n";
+    dump_file << "1 1 1.0 2.0 3.0\n";
+    dump_file << "2 2 4.0 5.0 6.0\n";
+    dump_file.close();
+
+    // Create a temporary ONETEP .dat file
+    std::ofstream dat_file("test.dat");
+    ASSERT_TRUE(dat_file.is_open());
+    dat_file << "Stub file contents\n";
+    dat_file.close();
   }
 
-  // This function runs after each test to clean up temporary files.
   void TearDown() override {
     remove("test.car");
     remove("test.cell");
     remove("test.cif");
     remove("test.arc");
     remove("test_identical.arc");
+    remove("test.dump");
+    remove("test.dat");
   }
 };
 
@@ -241,7 +264,8 @@ TEST_F(Test12_FileReader, ReadArcFileCorrectly) {
 }
 
 TEST_F(Test12_FileReader, ReadArcFileDuplicatedFrames) {
-  FileReader::FileType type = FileReader::determineFileType("test_identical.arc");
+  FileReader::FileType type =
+      FileReader::determineFileType("test_identical.arc");
   EXPECT_EQ(type, FileReader::FileType::Arc);
 
   Trajectory traj = FileReader::readTrajectory("test_identical.arc", type);
@@ -257,4 +281,39 @@ TEST_F(Test12_FileReader, ReadArcFileDuplicatedFrames) {
   // of them)
   EXPECT_DOUBLE_EQ(frames[1].lattice_parameters()[0], 11.0);
   EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
+}
+
+TEST_F(Test12_FileReader, ReadLammpsDumpCorrectly) {
+  // Arrange & Act
+  FileReader::FileType type = FileReader::determineFileType("test.dump");
+  Cell result_cell = FileReader::readStructure("test.dump", type);
+
+  // Assert: Check lattice parameters
+  const auto &params = result_cell.lattice_parameters();
+  EXPECT_DOUBLE_EQ(params[0], 10.0);
+  EXPECT_DOUBLE_EQ(params[1], 11.0);
+  EXPECT_DOUBLE_EQ(params[2], 12.0);
+
+  // Assert: Check atoms
+  const auto &atoms = result_cell.atoms();
+  ASSERT_EQ(atoms.size(), 2);
+
+  EXPECT_EQ(atoms[0].element().symbol, "1");
+  EXPECT_DOUBLE_EQ(atoms[0].position().x(), 1.0);
+  EXPECT_DOUBLE_EQ(atoms[0].position().y(), 2.0);
+  EXPECT_DOUBLE_EQ(atoms[0].position().z(), 3.0);
+
+  EXPECT_EQ(atoms[1].element().symbol, "2");
+  EXPECT_DOUBLE_EQ(atoms[1].position().x(), 4.0);
+  EXPECT_DOUBLE_EQ(atoms[1].position().y(), 5.0);
+  EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.0);
+}
+
+TEST_F(Test12_FileReader, ReadOnetepDatCorrectly) {
+  // Arrange & Act
+  FileReader::FileType type = FileReader::determineFileType("test.dat");
+  Cell result_cell = FileReader::readStructure("test.dat", type);
+
+  // Assert: Check that it returns an empty Cell as it is a stub
+  EXPECT_TRUE(result_cell.isEmpty());
 }
