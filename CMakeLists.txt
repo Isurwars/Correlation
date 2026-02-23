@@ -35,7 +35,13 @@ add_library(correlation_lib STATIC
     src/calculators/SQCalculator.cpp
     src/calculators/XRDCalculator.cpp
     src/DynamicsAnalyzer.cpp
-    src/FileIO.cpp
+    src/FileReader.cpp
+    src/readers/ArcReader.cpp
+    src/readers/CarReader.cpp
+    src/readers/CellReader.cpp
+    src/readers/CifReader.cpp
+    src/readers/LammpsDumpReader.cpp
+    src/readers/OnetepDatReader.cpp
     src/FileWriter.cpp
     src/StructureAnalyzer.cpp
     src/Trajectory.cpp

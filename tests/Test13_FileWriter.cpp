@@ -12,7 +12,7 @@
 
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
-#include "../include/FileIO.hpp"
+#include "../include/FileReader.hpp"
 #include "../include/FileWriter.hpp"
 #include "../include/Trajectory.hpp"
 
@@ -70,8 +70,8 @@ protected:
 
 TEST_F(Test13_FileWriter, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
-  Cell si_cell = FileIO::readStructure("si_crystal.car", type);
+  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
+  Cell si_cell = FileReader::readStructure("si_crystal.car", type);
   Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -131,8 +131,8 @@ TEST_F(Test13_FileWriter, CalculatesAndWritesSiliconDistributions) {
 
 TEST_F(Test13_FileWriter, WritesHDF5File) {
   // Arrange
-  FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
-  Cell si_cell = FileIO::readStructure("si_crystal.car", type);
+  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
+  Cell si_cell = FileReader::readStructure("si_crystal.car", type);
   Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -216,8 +216,8 @@ TEST_F(Test13_FileWriter, WritesHDF5File) {
 
 TEST_F(Test13_FileWriter, WritesVACFMetadata) {
   // Arrange
-  FileIO::FileType type = FileIO::determineFileType("si_crystal.car");
-  Cell frame1 = FileIO::readStructure("si_crystal.car", type);
+  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
+  Cell frame1 = FileReader::readStructure("si_crystal.car", type);
 
   // Create frame2 with same lattice
   auto lv = frame1.latticeVectors();

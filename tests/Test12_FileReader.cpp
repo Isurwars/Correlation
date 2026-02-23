@@ -7,14 +7,14 @@
 #include <gtest/gtest.h>
 
 #include "../include/Cell.hpp"
-#include "../include/FileIO.hpp"
+#include "../include/FileReader.hpp"
 #include "../include/LinearAlgebra.hpp"
 
 // A single test fixture for all File I/O related tests.
 // This fixture handles the creation and cleanup of temporary files needed for
 // tests, ensuring that tests are self-contained and do not rely on external
 // data files.
-class Test12_FileIO : public ::testing::Test {
+class Test12_FileReader : public ::testing::Test {
 protected:
   // This function runs before each test to create temporary files.
   void SetUp() override {
@@ -125,10 +125,10 @@ protected:
 //--------------------------------- Test Cases -------------------------------//
 //----------------------------------------------------------------------------//
 
-TEST_F(Test12_FileIO, ReadCarFileCorrectly) {
+TEST_F(Test12_FileReader, ReadCarFileCorrectly) {
   // Arrange & Act
-  FileIO::FileType type = FileIO::determineFileType("test.car");
-  Cell result_cell = FileIO::readStructure("test.car", type);
+  FileReader::FileType type = FileReader::determineFileType("test.car");
+  Cell result_cell = FileReader::readStructure("test.car", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -154,10 +154,10 @@ TEST_F(Test12_FileIO, ReadCarFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.5);
 }
 
-TEST_F(Test12_FileIO, ReadCellFileCorrectly) {
+TEST_F(Test12_FileReader, ReadCellFileCorrectly) {
   // Arrange & Act
-  FileIO::FileType type = FileIO::determineFileType("test.cell");
-  Cell result_cell = FileIO::readStructure("test.cell", type);
+  FileReader::FileType type = FileReader::determineFileType("test.cell");
+  Cell result_cell = FileReader::readStructure("test.cell", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -183,10 +183,10 @@ TEST_F(Test12_FileIO, ReadCellFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.6);
 }
 
-TEST_F(Test12_FileIO, ReadCifFileCorrectly) {
+TEST_F(Test12_FileReader, ReadCifFileCorrectly) {
   // Arrange & Act
-  FileIO::FileType type = FileIO::determineFileType("test.cif");
-  Cell result_cell = FileIO::readStructure("test.cif", type);
+  FileReader::FileType type = FileReader::determineFileType("test.cif");
+  Cell result_cell = FileReader::readStructure("test.cif", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -218,11 +218,11 @@ TEST_F(Test12_FileIO, ReadCifFileCorrectly) {
       << "Did not find the original Cl atom at the cell center";
 }
 
-TEST_F(Test12_FileIO, ReadArcFileCorrectly) {
-  FileIO::FileType type = FileIO::determineFileType("test.arc");
-  EXPECT_EQ(type, FileIO::FileType::Arc);
+TEST_F(Test12_FileReader, ReadArcFileCorrectly) {
+  FileReader::FileType type = FileReader::determineFileType("test.arc");
+  EXPECT_EQ(type, FileReader::FileType::Arc);
 
-  Trajectory traj = FileIO::readTrajectory("test.arc", type);
+  Trajectory traj = FileReader::readTrajectory("test.arc", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
@@ -240,11 +240,11 @@ TEST_F(Test12_FileIO, ReadArcFileCorrectly) {
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 2.0);
 }
 
-TEST_F(Test12_FileIO, ReadArcFileDuplicatedFrames) {
-  FileIO::FileType type = FileIO::determineFileType("test_identical.arc");
-  EXPECT_EQ(type, FileIO::FileType::Arc);
+TEST_F(Test12_FileReader, ReadArcFileDuplicatedFrames) {
+  FileReader::FileType type = FileReader::determineFileType("test_identical.arc");
+  EXPECT_EQ(type, FileReader::FileType::Arc);
 
-  Trajectory traj = FileIO::readTrajectory("test_identical.arc", type);
+  Trajectory traj = FileReader::readTrajectory("test_identical.arc", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);

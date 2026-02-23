@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "../include/DynamicsAnalyzer.hpp"
-#include "../include/FileIO.hpp"
+#include "../include/FileReader.hpp"
 #include "../include/Trajectory.hpp"
 
 // Assuming the test is run from the build directory or project root
@@ -32,7 +32,7 @@ TEST(Test11_DynamicsAnalyzer, CalculatesVACFFromExampletraj) {
 
   // 2. Read Trajectory
   Trajectory traj =
-      FileIO::readTrajectory(file_path.string(), FileIO::FileType::Arc);
+      FileReader::readTrajectory(file_path.string(), FileReader::FileType::Arc);
   ASSERT_GT(traj.getFrameCount(), 0) << "Trajectory should not be empty";
 
   // 3. Calculate Velocities

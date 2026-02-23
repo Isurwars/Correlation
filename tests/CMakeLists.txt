@@ -22,7 +22,7 @@ add_executable(correlation_tests
     Test09_PAD.cpp
     Test10_VACF.cpp
     Test11_DynamicsAnalyzer.cpp
-    Test12_FileIO.cpp
+    Test12_FileReader.cpp
     Test13_FileWriter.cpp
     Test14_vDoS.cpp
 )

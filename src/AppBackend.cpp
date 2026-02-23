@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "FileIO.hpp"
+#include "FileReader.hpp"
 #include "FileWriter.hpp"
 
 //---------------------------------------------------------------------------//
@@ -108,18 +108,18 @@ void AppBackend::setBondCutoffs(
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;
   std::replace(display_path.begin(), display_path.end(), '\\', '/');
-  FileIO::FileType type = FileIO::determineFileType(path);
+  FileReader::FileType type = FileReader::determineFileType(path);
 
   // For now, loading a single structure file starts a new trajectory with 1
   // frame. The determineFileType helper is used to dispatch to the correct
   // reader.
 
-  if (type == FileIO::FileType::Arc) {
+  if (type == FileReader::FileType::Arc) {
     trajectory_ =
-        std::make_unique<Trajectory>(FileIO::readTrajectory(path, type));
+        std::make_unique<Trajectory>(FileReader::readTrajectory(path, type));
   } else {
     trajectory_ = std::make_unique<Trajectory>();
-    trajectory_->addFrame(FileIO::readStructure(path, type));
+    trajectory_->addFrame(FileReader::readStructure(path, type));
   }
 
   options_.input_file = path;
