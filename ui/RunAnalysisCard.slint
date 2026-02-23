@@ -43,135 +43,129 @@ export component RunAnalysisCard inherits FilledCard {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
 
-        VerticalLayout {
-            TouchArea {
-                width: 100%;
-                height: 40px;
-                mouse-cursor: pointer;
-                clicked => {
-                    root.advanced_options_visible = !root.advanced_options_visible;
-                    root.options_toggled(root.advanced_options_visible);
-                }
-                Rectangle {
-                    background: #d6d690;
-                    border-radius: MaterialStyleMetrics.border_radius_8;
-                    HorizontalLayout {
-                        alignment: center;
-                        spacing: 8px;
-                        padding-left: 16px;
-                        padding-right: 16px;
-                        MaterialText {
-                            text: "Options";
-                            vertical-alignment: center;
-                            style: MaterialTypography.label_large;
-                            color: black;
-                        }
-
-                        Icon {
-                            y: 8px;
-                            source: root.advanced_options_visible ? Icons.arrow_left : Icons.arrow_right;
-                            width: 25px;
-                            height: 25px;
-                            vertical-alignment: center;
-                            colorize: black;
-                        }
-                    }
-                }
+        TouchArea {
+            width: 100%;
+            height: 40px;
+            mouse-cursor: pointer;
+            clicked => {
+                root.advanced_options_visible = !root.advanced_options_visible;
+                root.options_toggled(root.advanced_options_visible);
             }
-        }
-
-        // Export Options
-
-            VerticalLayout {
-            csv_area := TouchArea {
+            Rectangle {
+                background: #d6d690;
+                border-radius: MaterialStyleMetrics.border_radius_8;
                 HorizontalLayout {
-                    padding: 0px;
+                    alignment: center;
+                    spacing: 8px;
+                    padding-left: 16px;
+                    padding-right: 16px;
                     MaterialText {
+                        text: "Options";
                         vertical-alignment: center;
-                        text: "Export as CSV";
-                        horizontal-stretch: 1;
+                        style: MaterialTypography.label_large;
+                        color: black;
                     }
 
-                    CheckBox {
-                        enabled: root.file_loaded;
-                        check_state: root.use_csv ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.use_csv = (s == CheckState.checked);
-                        }
-                    }
-                }
-            }
-
-            hdf5_area := TouchArea {
-                HorizontalLayout {
-                    padding: 0px;
-                    MaterialText {
+                    Icon {
+                        y: 8px;
+                        source: root.advanced_options_visible ? Icons.arrow_left : Icons.arrow_right;
+                        width: 25px;
+                        height: 25px;
                         vertical-alignment: center;
-                        text: "Export as HDF5";
-                        horizontal-stretch: 1;
-                    }
-
-                    CheckBox {
-                        enabled: root.file_loaded;
-                        check_state: root.use_hdf5 ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.use_hdf5 = (s == CheckState.checked);
-                        }
+                        colorize: black;
                     }
                 }
             }
         }
 
         // Frame Range
-
-            VerticalLayout {
             TouchArea {
-                start_frame := TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "Start Frame";
-                    text <=> root.min_frame;
-                }
+            start_frame := TextField {
+                enabled: root.file_loaded;
+                width: 100%;
+                label: "Start Frame";
+                text <=> root.min_frame;
             }
+        }
 
-            TouchArea {
-                end_frame := TextField {
-                    enabled: root.file_loaded;
-                    width: 100%;
-                    label: "End Frame";
-                    text <=> root.max_frame;
-                }
+        TouchArea {
+            end_frame := TextField {
+                enabled: root.file_loaded;
+                width: 100%;
+                label: "End Frame";
+                text <=> root.max_frame;
             }
         }
 
         // Action Buttons and Progress Bar
-            VerticalLayout {
-            LinearProgressIndicator {
-                width: 100%;
-                progress: root.progress;
-                indeterminate: false;
-            }
 
-            analysis_area := TouchArea {
-                FilledButton {
-                    width: 100%;
-                    background: #70d270;
-                    text: root.analysis_running ? "In Progress..." : "Run Analysis";
-                    enabled: root.file_loaded && !root.analysis_running;
-                    clicked => {
-                        root.run_analysis();
+            LinearProgressIndicator {
+            width: 100%;
+            height: 8px;
+            progress: root.progress;
+            indeterminate: false;
+        }
+
+        analysis_area := TouchArea {
+            FilledButton {
+                width: 100%;
+                background: #70d270;
+                text: root.analysis_running ? "In Progress..." : "Run Analysis";
+                enabled: root.file_loaded && !root.analysis_running;
+                clicked => {
+                    root.run_analysis();
+                }
+            }
+        }
+
+        // Export Options
+
+            csv_area := TouchArea {
+            HorizontalLayout {
+                padding: 0px;
+                MaterialText {
+                    vertical-alignment: center;
+                    text: "Export as CSV";
+                    horizontal-stretch: 1;
+                }
+
+                CheckBox {
+                    enabled: root.file_loaded;
+                    check_state: root.use_csv ? CheckState.checked : CheckState.unchecked;
+                    checked_state_changed(s) => {
+                        root.use_csv = (s == CheckState.checked);
                     }
                 }
             }
+        }
 
-            write_area := TouchArea {
-                FilledButton {
-                    width: 100%;
-                    text: "Save";
-                    enabled: root.analysis_done && !root.analysis_running;
-                    clicked => {
-                        root.write_files();
+        hdf5_area := TouchArea {
+            HorizontalLayout {
+                padding: 0px;
+                MaterialText {
+                    vertical-alignment: center;
+                    text: "Export as HDF5";
+                    horizontal-stretch: 1;
+                }
+
+                CheckBox {
+                    enabled: root.file_loaded;
+                    check_state: root.use_hdf5 ? CheckState.checked : CheckState.unchecked;
+                    checked_state_changed(s) => {
+                        root.use_hdf5 = (s == CheckState.checked);
                     }
+                }
+            }
+        }
+
+        write_area := TouchArea {
+            FilledButton {
+                width: 100%;
+                background: #e57373;
+                text: "Save";
+                enabled: root.analysis_done && !root.analysis_running;
+                clicked => {
+                    root.write_files();
                 }
             }
         }

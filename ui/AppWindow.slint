@@ -62,7 +62,7 @@ export component AppWindow inherits Window {
 
     property <bool> show_advanced_options: false;
     property <length> window_width: (root.file_loaded ? 392px : 198px) + (root.show_advanced_options ? 220px : 0px);
-    property <length> window_height: root.file_loaded ? max(100px + file_info_card.preferred-height, 50px + options_card.preferred-height) : (input_card.preferred-height + 16px);
+    property <length> window_height: root.file_loaded ? max(110px + file_info_card.preferred-height, 60px + options_card.preferred-height) : (input_card.preferred-height + 16px);
 
     width: root.window_width;
     title: "Correlation";
