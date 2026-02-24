@@ -41,8 +41,7 @@ struct AppDefaults {
 };
 
 /**
- * @brief Encapsulates all command-line configurable options for the
- * application.
+ * @brief Encapsulates all configurable options for the application.
  */
 struct ProgramOptions {
   std::string input_file;
