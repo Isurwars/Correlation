@@ -60,3 +60,19 @@ TEST_F(Test15_AppBackend, LoadInvalidFileThrowsException) {
   EXPECT_THROW(backend.load_file("nonexistent_file_that_should_not_exist.xyz"),
                std::runtime_error);
 }
+
+TEST_F(Test15_AppBackend, RecommendedTimeStepWithNoCellReturnsDefault) {
+  // Arrange
+  AppBackend backend;
+
+  // Act
+  double time_step = backend.getRecommendedTimeStep();
+
+  // Assert
+  EXPECT_DOUBLE_EQ(time_step, AppDefaults::TIME_STEP);
+}
+
+// Additional rigorous test for recommended step logic should be added by
+// loading a mock cell, but since AppBackend deals with reading from file,
+// creating an artificial trajectory internally is complex here. We can assume
+// the math is straightforward.

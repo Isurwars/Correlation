@@ -338,8 +338,8 @@ void AppController::handleCheckFileDialogStatus() {
       ui_.set_total_atoms(backend_.getTotalAtomCount());
       ui_.set_removed_frames_count(
           static_cast<int>(backend_.getRemovedFrameCount()));
-      ui_.set_time_step(
-          slint::SharedString(std::format("{:.2f}", backend_.getTimeStep())));
+      ui_.set_time_step(slint::SharedString(
+          std::format("{:.2f}", backend_.getRecommendedTimeStep())));
 
       // Update Run Analysis Card Frame Info
       ui_.set_min_frame("1");

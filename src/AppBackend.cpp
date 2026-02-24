@@ -9,6 +9,9 @@
 
 #include "FileReader.hpp"
 #include "FileWriter.hpp"
+#include "PhysicalData.hpp"
+#include <cmath>
+#include <limits>
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -53,6 +56,34 @@ double AppBackend::getTimeStep() const {
   if (!trajectory_)
     return 1.0;
   return trajectory_->getTimeStep();
+}
+
+double AppBackend::getRecommendedTimeStep() const {
+  const Cell *c = cell();
+  if (!c || c->elements().empty()) {
+    return AppDefaults::TIME_STEP;
+  }
+
+  double min_mass = std::numeric_limits<double>::max();
+  bool found = false;
+
+  for (const auto &element : c->elements()) {
+    try {
+      double mass = AtomicMasses::get(element.symbol);
+      if (mass < min_mass) {
+        min_mass = mass;
+        found = true;
+      }
+    } catch (const std::out_of_range &) {
+      // Ignore unknown elements for this calculation
+    }
+  }
+
+  if (found && min_mass > 0.0) {
+    return std::sqrt(9.0 * min_mass / 5.0);
+  }
+
+  return AppDefaults::TIME_STEP;
 }
 
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {

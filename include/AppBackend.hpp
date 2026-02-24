@@ -169,6 +169,13 @@ public:
   [[nodiscard]] double getTimeStep() const;
 
   /**
+   * @brief Calculates a recommended time step in fs based on the smallest
+   * atomic mass. Uses formula: sqrt(9 * Minimal_mass / 5)
+   * @return Recommended time step in femtoseconds.
+   */
+  [[nodiscard]] double getRecommendedTimeStep() const;
+
+  /**
    * @brief Calculates recommended bond cutoffs based on the first pair density
    * minimum.
    * @return A matrix of cutoffs where entry [i][j] is the cutoff for pair i-j.
