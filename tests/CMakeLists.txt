@@ -25,6 +25,10 @@ add_executable(correlation_tests
     Test12_FileReader.cpp
     Test13_FileWriter.cpp
     Test14_vDoS.cpp
+    Test15_AppBackend.cpp
+    Test16_AppController.cpp
+    ../src/AppBackend.cpp
+    ../src/AppController.cpp
 )
 
 # The test executable also links to the library and inherits its properties.
@@ -32,8 +36,18 @@ target_link_libraries(correlation_tests PRIVATE
     correlation_lib
     GTest::gtest
     GTest::gtest_main
+    Slint::Slint
 )
 target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
+
+# Add slint target sources for AppWindow
+slint_target_sources(correlation_tests
+    ../ui/AppWindow.slint
+    LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../material-1.0/material.slint
+)
+target_include_directories(correlation_tests PRIVATE
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 # Call the helper function to bundle DLLs on Windows
 bundle_windows_dlls(correlation_tests)
