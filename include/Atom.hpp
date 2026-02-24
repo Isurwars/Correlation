@@ -68,28 +68,30 @@ public:
    * @brief Gets the unique ID of the atom.
    * @return The atom ID.
    */
-  AtomID id() const noexcept { return id_; }
+  [[nodiscard]] AtomID id() const noexcept { return id_; }
   void setID(std::uint32_t num) { id_ = num; }
 
   /**
    * @brief Gets the position of the atom.
    * @return A const reference to the position vector.
    */
-  const linalg::Vector3<double> &position() const noexcept { return position_; }
+  [[nodiscard]] const linalg::Vector3<double> &position() const noexcept {
+    return position_;
+  }
   void setPosition(linalg::Vector3<double> pos) { position_ = pos; }
 
   /**
    * @brief Gets the element type of the atom.
    * @return A const reference to the Element struct.
    */
-  const Element &element() const { return element_; }
+  [[nodiscard]] const Element &element() const { return element_; }
   void setElement(const Element &ele) { element_ = ele; }
 
   /**
    * @brief Gets the integer ID of the element type.
    * @return The element ID value.
    */
-  int element_id() const { return element_.id.value; }
+  [[nodiscard]] int element_id() const { return element_.id.value; }
 
 private:
   AtomID id_;
@@ -100,7 +102,7 @@ private:
 /**
  * @brief Calculates the Euclidean distance between two atoms.
  */
-inline double distance(const Atom &a, const Atom &b) noexcept {
+[[nodiscard]] inline double distance(const Atom &a, const Atom &b) noexcept {
   return linalg::norm(a.position() - b.position());
 }
 
@@ -111,7 +113,8 @@ inline double distance(const Atom &a, const Atom &b) noexcept {
  * @param b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
-inline double angle(const Atom &center, const Atom &a, const Atom &b) noexcept {
+[[nodiscard]] inline double angle(const Atom &center, const Atom &a,
+                                  const Atom &b) noexcept {
   const linalg::Vector3<double> vA = a.position() - center.position();
   const linalg::Vector3<double> vB = b.position() - center.position();
 

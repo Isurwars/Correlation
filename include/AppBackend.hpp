@@ -15,7 +15,34 @@
 #include "TrajectoryAnalyzer.hpp"
 
 /**
- * @brief Encapsulates all command-line configurable options for the application.
+ * @brief Default values and messages for the application.
+ */
+struct AppDefaults {
+  static constexpr double R_MAX = 20.0;
+  static constexpr double R_BIN_WIDTH = 0.02;
+  static constexpr double Q_MAX = 20.0;
+  static constexpr double Q_BIN_WIDTH = 0.02;
+  static constexpr double R_INT_MAX = 10.0;
+  static constexpr double ANGLE_BIN_WIDTH = 1.0;
+  static constexpr double SMOOTHING_SIGMA = 0.1;
+  static constexpr decltype(KernelType::Gaussian) SMOOTHING_KERNEL =
+      KernelType::Gaussian;
+  static constexpr double TIME_STEP = 1.0;
+
+  static constexpr const char *MSG_RUNNING_ANALYSIS = "Running Analysis...";
+  static constexpr const char *MSG_ANALYSIS_ENDED = "Analysis ended.";
+  static constexpr const char *MSG_SELECTING_OUTPUT =
+      "Selecting output file...";
+  static constexpr const char *MSG_FILE_SELECTION_CANCELLED =
+      "File selection cancelled.";
+  static constexpr const char *MSG_ERROR_LOADING = "Error loading file: ";
+  static constexpr const char *MSG_FILES_WRITTEN = "Files Written.";
+  static constexpr const char *MSG_SAVE_CANCELLED = "Save cancelled.";
+};
+
+/**
+ * @brief Encapsulates all command-line configurable options for the
+ * application.
  */
 struct ProgramOptions {
   std::string input_file;
@@ -23,17 +50,17 @@ struct ProgramOptions {
   bool smoothing = true;
   bool use_hdf5 = true;
   bool use_csv = false;
-  double r_max = 20.0;
-  double r_bin_width = 0.02;
-  double q_max = 20.0;
-  double q_bin_width = 0.02;
-  double r_int_max = 10.0;
-  double angle_bin_width = 1.0;
-  double smoothing_sigma = 0.1;
-  KernelType smoothing_kernel = KernelType::Gaussian;
+  double r_max = AppDefaults::R_MAX;
+  double r_bin_width = AppDefaults::R_BIN_WIDTH;
+  double q_max = AppDefaults::Q_MAX;
+  double q_bin_width = AppDefaults::Q_BIN_WIDTH;
+  double r_int_max = AppDefaults::R_INT_MAX;
+  double angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;
+  double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;
+  KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL;
   int min_frame = 0;
   int max_frame = -1;
-  double time_step = 1.0;
+  double time_step = AppDefaults::TIME_STEP;
   std::vector<std::vector<double>> bond_cutoffs_sq_;
 };
 
@@ -41,8 +68,8 @@ struct ProgramOptions {
  * @brief The main backend class for the application.
  *
  * This class orchestrates the loading of files, setting of options, running of
- * analyses, and writing of results. It acts as the bridge between the UI/Controller
- * and the core data/analysis logic.
+ * analyses, and writing of results. It acts as the bridge between the
+ * UI/Controller and the core data/analysis logic.
  */
 class AppBackend {
 public:
@@ -69,13 +96,13 @@ public:
    * @brief Gets the current program options.
    * @return Copy of the current options.
    */
-  ProgramOptions options() { return options_; }
+  [[nodiscard]] ProgramOptions options() const { return options_; }
 
   /**
    * @brief Gets a pointer to the current cell (first frame of trajectory).
    * @return Pointer to the Cell, or nullptr if no trajectory loaded.
    */
-  const Cell *cell() const {
+  [[nodiscard]] const Cell *cell() const {
     if (trajectory_ && !trajectory_->getFrames().empty()) {
       return &trajectory_->getFrames()[0];
     }
@@ -89,12 +116,14 @@ public:
   /**
    * @brief Loads a file from a given path.
    * @param path Absolute path to the file.
-   * @return A status message indicating success or details about the loaded file.
+   * @return A status message indicating success or details about the loaded
+   * file.
    */
   std::string load_file(const std::string &path);
 
   /**
-   * @brief Runs the analysis based on the current options and loaded trajectory.
+   * @brief Runs the analysis based on the current options and loaded
+   * trajectory.
    *
    * This method performs the following:
    * 1. Sets up bond cutoffs and time steps.
@@ -105,7 +134,8 @@ public:
   void run_analysis();
 
   /**
-   * @brief Writes the analysis results to files (CSV, HDF5) as specified in options.
+   * @brief Writes the analysis results to files (CSV, HDF5) as specified in
+   * options.
    */
   void write_files();
 
@@ -113,37 +143,39 @@ public:
    * @brief Gets the atom counts for the current structure.
    * @return A map of Element Symbol -> Count.
    */
-  std::map<std::string, int> getAtomCounts() const;
+  [[nodiscard]] std::map<std::string, int> getAtomCounts() const;
 
   /**
    * @brief Gets the total number of frames in the trajectory.
    * @return Number of frames.
    */
-  int getFrameCount() const;
+  [[nodiscard]] int getFrameCount() const;
 
   /**
    * @brief Gets the total number of atoms in the first frame.
    * @return Number of atoms.
    */
-  int getTotalAtomCount() const;
+  [[nodiscard]] int getTotalAtomCount() const;
 
   /**
    * @brief Gets the count of frames removed/skipped during loading/processing.
    * @return Number of removed frames.
    */
-  size_t getRemovedFrameCount() const;
+  [[nodiscard]] size_t getRemovedFrameCount() const;
 
   /**
    * @brief Gets the time step of the trajectory.
    * @return Time step in femtoseconds.
    */
-  double getTimeStep() const;
+  [[nodiscard]] double getTimeStep() const;
 
   /**
-   * @brief Calculates recommended bond cutoffs based on the first pair density minimum.
+   * @brief Calculates recommended bond cutoffs based on the first pair density
+   * minimum.
    * @return A matrix of cutoffs where entry [i][j] is the cutoff for pair i-j.
    */
-  std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
+  [[nodiscard]] std::vector<std::vector<double>>
+  getRecommendedBondCutoffs() const;
 
   /**
    * @brief Gets the bond cutoff for a specific pair of element types.
@@ -151,7 +183,7 @@ public:
    * @param type2 Index of the second element type.
    * @return The cutoff distance.
    */
-  double getBondCutoff(int type1, int type2);
+  [[nodiscard]] double getBondCutoff(int type1, int type2);
 
   /**
    * @brief Sets the bond cutoffs to be used in analysis.

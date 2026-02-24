@@ -64,7 +64,7 @@ public:
    * @brief Gets the lattice parameters (a, b, c, alpha, beta, gamma).
    * @return Array of 6 doubles containing the parameters.
    */
-  const std::array<double, 6> &lattice_parameters() const {
+  [[nodiscard]] const std::array<double, 6> &lattice_parameters() const {
     return lattice_parameters_;
   }
 
@@ -75,24 +75,29 @@ public:
   void setLatticeParameters(std::array<double, 6>);
 
   // Lattice Vectors
-  const linalg::Matrix3<double> &latticeVectors() const noexcept {
+  [[nodiscard]] const linalg::Matrix3<double> &latticeVectors() const noexcept {
     return lattice_vectors_;
   }
-  const linalg::Matrix3<double> &inverseLatticeVectors() const noexcept {
+  [[nodiscard]] const linalg::Matrix3<double> &
+  inverseLatticeVectors() const noexcept {
     return inverse_lattice_vectors_;
   }
 
   // Volume
-  const double &volume() const noexcept { return volume_; }
+  [[nodiscard]] const double &volume() const noexcept { return volume_; }
 
   // Atoms
-  const std::vector<Atom> &atoms() const noexcept { return atoms_; }
+  [[nodiscard]] const std::vector<Atom> &atoms() const noexcept {
+    return atoms_;
+  }
 
   // Elements
-  const std::vector<Element> &elements() const { return elements_; }
+  [[nodiscard]] const std::vector<Element> &elements() const {
+    return elements_;
+  }
 
-  size_t atomCount() const noexcept { return atoms_.size(); }
-  bool isEmpty() const noexcept { return atoms_.empty(); }
+  [[nodiscard]] size_t atomCount() const noexcept { return atoms_.size(); }
+  [[nodiscard]] bool isEmpty() const noexcept { return atoms_.empty(); }
 
   /**
    * @brief Finds the Element properties for a given element symbol.
@@ -100,7 +105,8 @@ public:
    * @return An optional containing the Element struct if found, otherwise
    * std::nullopt.
    */
-  std::optional<Element> findElement(const std::string &symbol) const;
+  [[nodiscard]] std::optional<Element>
+  findElement(const std::string &symbol) const;
 
   //-------------------------------------------------------------------------//
   //-------------------------------- Methods --------------------------------//
@@ -133,7 +139,7 @@ public:
    * @brief Gets the energy of the cell frame.
    * @return The energy value.
    */
-  double getEnergy() const { return energy_; }
+  [[nodiscard]] double getEnergy() const { return energy_; }
 
 private:
   void updateLattice(const linalg::Matrix3<double> &new_lattice);

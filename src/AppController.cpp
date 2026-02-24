@@ -233,7 +233,8 @@ void AppController::handleRunAnalysis() {
   ui_.set_analysis_done(false); // Reset done state
   ui_.set_analysis_running(true);
   ui_.set_progress(0.0f);
-  ui_.set_analysis_status_text("Running Analysis...");
+  ui_.set_analysis_status_text(
+      slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));
 
   // Create a ProgramOptions object from the UI properties
   backend_.setOptions(handleOptionsfromUI(ui_));
@@ -251,7 +252,8 @@ void AppController::handleRunAnalysis() {
 
     slint::invoke_from_event_loop([this]() {
       ui_.set_analysis_running(false);
-      ui_.set_analysis_status_text("Analysis ended.");
+      ui_.set_analysis_status_text(
+          slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
       ui_.set_analysis_done(true);
       ui_.set_progress(1.0f);
     });
@@ -272,7 +274,8 @@ void AppController::handleWriteFiles() {
 
   ui_.set_timer_running(true);
   ui_.set_text_opacity(true);
-  ui_.set_analysis_status_text("Selecting output file...");
+  ui_.set_analysis_status_text(
+      slint::SharedString(AppDefaults::MSG_SELECTING_OUTPUT));
 }
 
 void AppController::handleBrowseFile() {
@@ -300,14 +303,15 @@ void AppController::handleBrowseFile() {
 
 void AppController::handleCheckFileDialogStatus() {
   if (current_file_dialog_ && current_file_dialog_->ready(0)) {
-    std::string message = "File selection cancelled.";
+    std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
     auto selection = current_file_dialog_->result();
     if (!selection.empty()) {
       ui_.set_in_file_text(slint::SharedString(selection[0]));
       try {
         message = backend_.load_file(selection[0]);
       } catch (const std::exception &e) {
-        message = "Error loading file: " + std::string(e.what());
+        message =
+            std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
       }
     }
     ui_.set_file_status_text(slint::SharedString(message));
@@ -358,9 +362,11 @@ void AppController::handleCheckFileDialogStatus() {
       opts.output_file_base = p.string();
       backend_.setOptions(opts);
       backend_.write_files();
-      ui_.set_analysis_status_text("Files Written.");
+      ui_.set_analysis_status_text(
+          slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
     } else {
-      ui_.set_analysis_status_text("Save cancelled.");
+      ui_.set_analysis_status_text(
+          slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
     }
     ui_.set_timer_running(false);
     current_save_dialog_.reset();

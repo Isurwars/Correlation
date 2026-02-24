@@ -29,10 +29,10 @@ public:
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
-  std::vector<Cell> &getFrames() { return frames_; }
-  const std::vector<Cell> &getFrames() const { return frames_; }
-  size_t getFrameCount() const { return frames_.size(); }
-  double getTimeStep() const { return time_step_; }
+  [[nodiscard]] std::vector<Cell> &getFrames() { return frames_; }
+  [[nodiscard]] const std::vector<Cell> &getFrames() const { return frames_; }
+  [[nodiscard]] size_t getFrameCount() const { return frames_.size(); }
+  [[nodiscard]] double getTimeStep() const { return time_step_; }
   void setTimeStep(double dt) { time_step_ = dt; }
 
   /**
@@ -41,7 +41,7 @@ public:
    *@param type2
    *@return The linear bond cutoff distance.
    **/
-  double getBondCutoff(int type1, int type2);
+  [[nodiscard]] double getBondCutoff(int type1, int type2);
 
   /**
    * @brief get a squared bond cut off for two given elements.
@@ -49,7 +49,7 @@ public:
    *@param type2
    *@return The squared bond cutoff distance.
    **/
-  double getBondCutoffSQ(int type1, int type2);
+  [[nodiscard]] double getBondCutoffSQ(int type1, int type2);
 
   void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) {
     bond_cutoffs_sq_ = cutoffs;
@@ -76,16 +76,19 @@ public:
    */
   void calculateVelocities();
 
-  const std::vector<std::vector<linalg::Vector3<double>>> &
+  [[nodiscard]] const std::vector<std::vector<linalg::Vector3<double>>> &
   getVelocities() const {
     return velocities_;
   }
 
-  const std::vector<std::vector<double>> &getBondCutoffsSQ() const {
+  [[nodiscard]] const std::vector<std::vector<double>> &
+  getBondCutoffsSQ() const {
     return bond_cutoffs_sq_;
   }
 
-  size_t getRemovedFrameCount() const { return removed_frames_count_; }
+  [[nodiscard]] size_t getRemovedFrameCount() const {
+    return removed_frames_count_;
+  }
 
 private:
   //-------------------------------------------------------------------------//
