@@ -106,7 +106,7 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   return cutoffs;
 }
 
-double AppBackend::getBondCutoff(int type1, int type2) {
+double AppBackend::getBondCutoff(int type1, int type2) const {
   if (!trajectory_)
     return 0.0;
   return trajectory_->getBondCutoff(type1, type2);
@@ -166,10 +166,11 @@ std::string AppBackend::load_file(const std::string &path) {
   return msg;
 }
 
-void AppBackend::run_analysis() {
+std::string AppBackend::run_analysis() {
   if (!trajectory_ || trajectory_->getFrames().empty()) {
-    std::cerr << "Analysis aborted: No trajectory loaded." << std::endl;
-    return;
+    std::string err = AppDefaults::MSG_ANALYSIS_ABORTED;
+    std::cerr << err << std::endl;
+    return err;
   }
 
   try {
@@ -245,14 +246,18 @@ void AppBackend::run_analysis() {
     }
 
   } catch (const std::exception &e) {
-    std::cerr << "Error during analysis: " << e.what() << std::endl;
+    std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + e.what();
+    std::cerr << err << std::endl;
+    return err;
   }
+  return "";
 }
 
-void AppBackend::write_files() {
+std::string AppBackend::write_files() {
   if (!df_) {
-    std::cerr << "No analysis data to write." << std::endl;
-    return;
+    std::string err = AppDefaults::MSG_NO_DATA_TO_WRITE;
+    std::cerr << err << std::endl;
+    return err;
   }
 
   try {
@@ -266,8 +271,11 @@ void AppBackend::write_files() {
     }
     std::cout << "Files writen to: " << options_.output_file_base << std::endl;
   } catch (const std::exception &e) {
-    std::cerr << "Error during file writing: " << e.what() << std::endl;
+    std::string err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
+    std::cerr << err << std::endl;
+    return err;
   }
+  return "";
 }
 
 void AppBackend::analysis_thread_func() {

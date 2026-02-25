@@ -38,6 +38,13 @@ struct AppDefaults {
   static constexpr const char *MSG_ERROR_LOADING = "Error loading file: ";
   static constexpr const char *MSG_FILES_WRITTEN = "Files Written.";
   static constexpr const char *MSG_SAVE_CANCELLED = "Save cancelled.";
+  static constexpr const char *MSG_ANALYSIS_ABORTED =
+      "Analysis aborted: No trajectory loaded.";
+  static constexpr const char *MSG_ERROR_ANALYSIS = "Error during analysis: ";
+  static constexpr const char *MSG_ERROR_WRITING =
+      "Error during file writing: ";
+  static constexpr const char *MSG_NO_DATA_TO_WRITE =
+      "No analysis data to write.";
 };
 
 /**
@@ -129,14 +136,20 @@ public:
    * 2. Initializes the TrajectoryAnalyzer.
    * 3. Computes the mean Distribution Functions (RDF, ADF, etc.).
    * 4. Calculates VACF and VDOS if applicable.
+   *
+   * @return A string containing an error message if the analysis failed, or an
+   * empty string if successful.
    */
-  void run_analysis();
+  [[nodiscard]] std::string run_analysis();
 
   /**
    * @brief Writes the analysis results to files (CSV, HDF5) as specified in
    * options.
+   *
+   * @return A string containing an error message if the writing failed, or an
+   * empty string if successful.
    */
-  void write_files();
+  [[nodiscard]] std::string write_files();
 
   /**
    * @brief Gets the atom counts for the current structure.
@@ -189,7 +202,7 @@ public:
    * @param type2 Index of the second element type.
    * @return The cutoff distance.
    */
-  [[nodiscard]] double getBondCutoff(int type1, int type2);
+  [[nodiscard]] double getBondCutoff(int type1, int type2) const;
 
   /**
    * @brief Sets the bond cutoffs to be used in analysis.

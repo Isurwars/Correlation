@@ -41,7 +41,7 @@ public:
    *@param type2
    *@return The linear bond cutoff distance.
    **/
-  [[nodiscard]] double getBondCutoff(int type1, int type2);
+  [[nodiscard]] double getBondCutoff(int type1, int type2) const;
 
   /**
    * @brief get a squared bond cut off for two given elements.
@@ -49,7 +49,7 @@ public:
    *@param type2
    *@return The squared bond cutoff distance.
    **/
-  [[nodiscard]] double getBondCutoffSQ(int type1, int type2);
+  [[nodiscard]] double getBondCutoffSQ(int type1, int type2) const;
 
   void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) {
     bond_cutoffs_sq_ = cutoffs;
@@ -66,7 +66,7 @@ public:
    * @brief Pre-calculates the squared bond cutoff distances for every pair of
    * element types using the elements from the first frame.
    */
-  void precomputeBondCutoffs();
+  void precomputeBondCutoffs() const;
 
   /**
    * @brief Calculates velocities for all atoms in the trajectory using
@@ -96,7 +96,7 @@ private:
   //-------------------------------------------------------------------------//
   void validateFrame(const Cell &new_frame) const;
   std::vector<Cell> frames_;
-  std::vector<std::vector<double>> bond_cutoffs_sq_;
+  mutable std::vector<std::vector<double>> bond_cutoffs_sq_;
   // Stores calculate velocities Vector<Atom<Vector<Velocity>>>
   std::vector<std::vector<linalg::Vector3<double>>> velocities_;
   double time_step_;

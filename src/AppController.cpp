@@ -248,12 +248,16 @@ void AppController::handleRunAnalysis() {
   }
 
   analysis_thread_ = std::thread([this]() {
-    backend_.run_analysis();
+    std::string err = backend_.run_analysis();
 
-    slint::invoke_from_event_loop([this]() {
+    slint::invoke_from_event_loop([this, err]() {
       ui_.set_analysis_running(false);
-      ui_.set_analysis_status_text(
-          slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
+      if (err.empty()) {
+        ui_.set_analysis_status_text(
+            slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
+      } else {
+        ui_.set_analysis_status_text(slint::SharedString(err));
+      }
       ui_.set_analysis_done(true);
       ui_.set_progress(1.0f);
     });
@@ -361,9 +365,13 @@ void AppController::handleCheckFileDialogStatus() {
       ProgramOptions opts = handleOptionsfromUI(ui_);
       opts.output_file_base = p.string();
       backend_.setOptions(opts);
-      backend_.write_files();
-      ui_.set_analysis_status_text(
-          slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
+      std::string err = backend_.write_files();
+      if (err.empty()) {
+        ui_.set_analysis_status_text(
+            slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
+      } else {
+        ui_.set_analysis_status_text(slint::SharedString(err));
+      }
     } else {
       ui_.set_analysis_status_text(
           slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));

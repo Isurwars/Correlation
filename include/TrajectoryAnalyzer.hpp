@@ -30,12 +30,13 @@ public:
     return analyzers_;
   }
 
-  double getTimeStep() const { return time_step_; }
-  double getNeighborCutoff() const { return neighbor_cutoff_; }
-  const std::vector<std::vector<double>> &getBondCutoffsSQ() const {
+  [[nodiscard]] double getTimeStep() const { return time_step_; }
+  [[nodiscard]] double getNeighborCutoff() const { return neighbor_cutoff_; }
+  [[nodiscard]] const std::vector<std::vector<double>> &
+  getBondCutoffsSQ() const {
     return bond_cutoffs_;
   }
-  bool getIgnorePeriodicSelfInteractions() const {
+  [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const {
     return ignore_periodic_self_interactions_;
   }
 
