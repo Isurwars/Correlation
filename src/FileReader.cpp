@@ -10,6 +10,7 @@
 
 #include "readers/ArcReader.hpp"
 #include "readers/CarReader.hpp"
+#include "readers/CastepMdReader.hpp"
 #include "readers/CellReader.hpp"
 #include "readers/CifReader.hpp"
 #include "readers/LammpsDumpReader.hpp"
@@ -33,6 +34,8 @@ FileType determineFileType(const std::string &filename) {
     return FileType::LammpsDump;
   if (ext == ".dat")
     return FileType::OnetepDat;
+  if (ext == ".md")
+    return FileType::CastepMd;
 
   throw std::runtime_error("Unsupported file extension: " + ext);
 }
@@ -51,6 +54,9 @@ Cell readStructure(const std::string &filename, FileType type) {
     return LammpsDumpReader::read(filename);
   case FileType::Arc:
     throw std::runtime_error("ARC files are trajectories, use readTrajectory.");
+  case FileType::CastepMd:
+    throw std::runtime_error(
+        "CASTEP .md files are trajectories, use readTrajectory.");
   default:
     throw std::invalid_argument("Unknown file type specified.");
   }
@@ -60,6 +66,10 @@ Trajectory readTrajectory(const std::string &filename, FileType type) {
   switch (type) {
   case FileType::Arc: {
     std::vector<Cell> frames = ArcReader::read(filename);
+    return Trajectory(frames, 1.0); // Default time_step 1.0 for now
+  }
+  case FileType::CastepMd: {
+    std::vector<Cell> frames = CastepMdReader::read(filename);
     return Trajectory(frames, 1.0); // Default time_step 1.0 for now
   }
   default:

@@ -39,6 +39,7 @@ add_library(correlation_lib STATIC
     src/readers/ArcReader.cpp
     src/readers/CarReader.cpp
     src/readers/CellReader.cpp
+    src/readers/CastepMdReader.cpp
     src/readers/CifReader.cpp
     src/readers/LammpsDumpReader.cpp
     src/readers/OnetepDatReader.cpp

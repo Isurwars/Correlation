@@ -15,7 +15,16 @@
 namespace FileReader {
 
 // A type-safe enum to specify the format of a structure file.
-enum class FileType { Car, Cell, Cif, OnetepDat, Arc, LammpsDump, Unknown };
+enum class FileType {
+  Car,
+  Cell,
+  Cif,
+  OnetepDat,
+  Arc,
+  LammpsDump,
+  CastepMd,
+  Unknown
+};
 
 /**
  * @brief Reads an atomic structure from a file.

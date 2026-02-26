@@ -131,6 +131,44 @@ protected:
     ASSERT_TRUE(dat_file.is_open());
     dat_file << "Stub file contents\n";
     dat_file.close();
+
+    // Create a temporary CASTEP .md file
+    std::ofstream md_file("test.md");
+    ASSERT_TRUE(md_file.is_open());
+    md_file
+        << " BEGIN header\n\n This is 8 atom cubic Si cell\n END header\n\n";
+    md_file << "               0.00000000E+000\n";
+    md_file << "              -3.18206146E+001     -3.18108683E+001      "
+               "9.74270683E-003  <-- E\n";
+    md_file << "                9.27876841E-04                                 "
+               "           <-- T\n";
+    md_file << "                5.85402338E-06                                 "
+               "           <-- P\n";
+    md_file << "               1.00000000E+001      0.00000000E+000      "
+               "0.00000000E+000  <-- h\n";
+    md_file << "               0.00000000E+000      1.10000000E+001      "
+               "0.00000000E+000  <-- h\n";
+    md_file << "               0.00000000E+000      0.00000000E+000      "
+               "1.20000000E+001  <-- h\n";
+    md_file << " Si     1      1.00000000E+000      2.00000000E+000      "
+               "3.00000000E+000  <-- R\n";
+    md_file << " Si     2      4.00000000E+000      5.00000000E+000      "
+               "6.00000000E+000  <-- R\n";
+    md_file << "\n";
+    md_file << "               1.00000000E+000\n";
+    md_file << "              -3.18206146E+001     -3.18108683E+001      "
+               "9.74270683E-003  <-- E\n";
+    md_file << "               1.00000000E+001      0.00000000E+000      "
+               "0.00000000E+000  <-- h\n";
+    md_file << "               0.00000000E+000      1.10000000E+001      "
+               "0.00000000E+000  <-- h\n";
+    md_file << "               0.00000000E+000      0.00000000E+000      "
+               "1.20000000E+001  <-- h\n";
+    md_file << " Si     1      1.10000000E+000      2.10000000E+000      "
+               "3.10000000E+000  <-- R\n";
+    md_file << " Si     2      4.10000000E+000      5.10000000E+000      "
+               "6.10000000E+000  <-- R\n";
+    md_file.close();
   }
 
   void TearDown() override {
@@ -141,6 +179,7 @@ protected:
     remove("test_identical.arc");
     remove("test.dump");
     remove("test.dat");
+    remove("test.md");
   }
 };
 
@@ -316,4 +355,33 @@ TEST_F(Test12_FileReader, ReadOnetepDatCorrectly) {
 
   // Assert: Check that it returns an empty Cell as it is a stub
   EXPECT_TRUE(result_cell.isEmpty());
+}
+
+TEST_F(Test12_FileReader, ReadCastepMdCorrectly) {
+  FileReader::FileType type = FileReader::determineFileType("test.md");
+  EXPECT_EQ(type, FileReader::FileType::CastepMd);
+
+  Trajectory traj = FileReader::readTrajectory("test.md", type);
+
+  const auto &frames = traj.getFrames();
+  ASSERT_EQ(frames.size(), 2);
+
+  const double BOHR_TO_ANGSTROM = 0.529177210903;
+
+  // Check Frame 1
+  const auto &f1 = frames[0];
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * BOHR_TO_ANGSTROM);
+  ASSERT_EQ(f1.atomCount(), 2);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * BOHR_TO_ANGSTROM);
+
+  // Check the energy is parsed correctly
+  EXPECT_DOUBLE_EQ(f1.getEnergy(), -31.8206146);
+
+  // Check Frame 2
+  const auto &f2 = frames[1];
+  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * BOHR_TO_ANGSTROM);
 }
