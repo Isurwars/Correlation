@@ -198,3 +198,45 @@ TEST_F(Test02_Cell, WrapPositionsWrapsAtomIntoCell) {
   EXPECT_NEAR(final_pos.y(), 7.0, 1e-9); // -3.0 mod 10.0
   EXPECT_NEAR(final_pos.z(), 5.0, 1e-9); // 5.0 mod 10.0
 }
+
+TEST_F(Test02_Cell, MoveSemanticsLeavesMovedFromStateEmpty) {
+  // Arrange
+  const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
+  Cell cell(params);
+  cell.addAtom("H", {0.5, 0.5, 0.5});
+
+  // Act
+  Cell cell_moved(std::move(cell));
+
+  // Assert
+  EXPECT_TRUE(cell.isEmpty());
+  EXPECT_EQ(cell.atomCount(), 0);
+}
+
+TEST_F(Test02_Cell, InverseLatticeVectorsAreCorrect) {
+  const std::array<double, 6> params = {2.0, 4.0, 5.0, 90.0, 90.0, 90.0};
+  Cell cell(params);
+
+  const auto &inv = cell.inverseLatticeVectors();
+
+  // 1/2, 1/4, 1/5 for diagonal elements of inverse matrix of orthogonal cell
+  EXPECT_NEAR(inv[0][0], 0.5, 1e-9);
+  EXPECT_NEAR(inv[1][1], 0.25, 1e-9);
+  EXPECT_NEAR(inv[2][2], 0.2, 1e-9);
+  EXPECT_NEAR(inv[0][1], 0.0, 1e-9);
+}
+
+TEST_F(Test02_Cell, WrapPositionsHandlesNegativeCoordinates) {
+  // Arrange
+  Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  cell.addAtom("H", {-15.0, -1.0, -25.0});
+
+  // Act
+  cell.wrapPositions();
+  const auto &final_pos = cell.atoms().front().position();
+
+  // Assert (-15 mod 10 = 5, -1 mod 10 = 9, -25 mod 10 = 5)
+  EXPECT_NEAR(final_pos.x(), 5.0, 1e-9);
+  EXPECT_NEAR(final_pos.y(), 9.0, 1e-9);
+  EXPECT_NEAR(final_pos.z(), 5.0, 1e-9);
+}

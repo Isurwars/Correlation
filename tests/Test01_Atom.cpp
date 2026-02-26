@@ -115,3 +115,25 @@ TEST_F(Test01_Atom, AngleFunctionHandlesCoincidentAtoms) {
   // Assert: Angle with a zero-length vector should gracefully return 0.
   EXPECT_DOUBLE_EQ(calculated_angle, 0.0);
 }
+
+TEST_F(Test01_Atom, ElementIDEqualityWorks) {
+  ElementID id1{5};
+  ElementID id2{5};
+  ElementID id3{10};
+
+  EXPECT_TRUE(id1 == id2);
+  EXPECT_FALSE(id1 == id3);
+}
+
+TEST_F(Test01_Atom, AngleFunctionClampsFloatingPointInaccuracies) {
+  const Element element = {"O", {0}};
+  const Atom center(element, {0.0, 0.0, 0.0}, 0);
+  
+  // Using vectors that are collinear to trigger theta=0 calculations
+  // which tests the clamp if floating point gets > 1.0 slightly
+  const Atom neighbor_a(element, {1e-8, 1e-8, 1e-8}, 1);
+  const Atom neighbor_b(element, {1e-8, 1e-8, 1e-8}, 2);
+  
+  const double calculated_angle = angle(center, neighbor_a, neighbor_b);
+  EXPECT_DOUBLE_EQ(calculated_angle, 0.0);
+}

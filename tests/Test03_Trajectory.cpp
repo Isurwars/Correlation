@@ -357,3 +357,30 @@ TEST_F(Test03_Trajectory, HandlesAllDuplicates) {
   // Should keep only the first one
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
+
+TEST_F(Test03_Trajectory, AddFrameThrowsOnAtomCountMismatch) {
+  Trajectory traj;
+  traj.addFrame(createFrame(0, 0, 0)); // 1 atom
+
+  Cell bad_frame = createFrame(0, 0, 0);
+  bad_frame.addAtom("O", {1.0, 1.0, 1.0}); // 2 atoms
+
+  EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
+}
+
+TEST_F(Test03_Trajectory, AddFrameThrowsOnElementMismatch) {
+  Trajectory traj;
+  traj.addFrame(createFrame(0, 0, 0)); // 1 atom H
+
+  Cell bad_frame;
+  bad_frame.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  bad_frame.addAtom("O", {0.0, 0.0, 0.0}); // 1 atom O
+
+  EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
+}
+
+TEST_F(Test03_Trajectory, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {
+  Trajectory traj;
+  EXPECT_NO_THROW(traj.calculateVelocities());
+  EXPECT_TRUE(traj.getVelocities().empty());
+}
