@@ -23,6 +23,7 @@ enum class FileType {
   Arc,
   LammpsDump,
   CastepMd,
+  Outmol,
   Unknown
 };
 

@@ -43,6 +43,7 @@ add_library(correlation_lib STATIC
     src/readers/CifReader.cpp
     src/readers/LammpsDumpReader.cpp
     src/readers/OnetepDatReader.cpp
+    src/readers/OutmolReader.cpp
     src/FileWriter.cpp
     src/StructureAnalyzer.cpp
     src/Trajectory.cpp

@@ -283,22 +283,25 @@ void AppController::handleWriteFiles() {
 }
 
 void AppController::handleBrowseFile() {
-  std::vector<std::string> filters = {"Supported Structure Files",
-                                      "*arc *.car *.cell *.cif *.dat *.md",
-                                      "Materials Studio CAR",
-                                      "*.car",
-                                      "Materials Studio ARC",
-                                      "*.arc",
-                                      "CASTEP CELL",
-                                      "*.cell",
-                                      "CASTEP MD",
-                                      "*.md",
-                                      "CIF files",
-                                      "*.cif",
-                                      "ONETEP DAT",
-                                      "*.dat",
-                                      "All Files",
-                                      "*"};
+  std::vector<std::string> filters = {
+      "Supported Structure Files",
+      "*arc *.car *.cell *.cif *.dat *.md *.outmol",
+      "Materials Studio CAR",
+      "*.car",
+      "Materials Studio ARC",
+      "*.arc",
+      "CASTEP CELL",
+      "*.cell",
+      "CASTEP MD",
+      "*.md",
+      "CIF files",
+      "*.cif",
+      "ONETEP DAT",
+      "*.dat",
+      "DMol3 Outmol",
+      "*.outmol",
+      "All Files",
+      "*"};
 
   current_file_dialog_ = std::make_unique<pfd::open_file>(
       "Select a structure file", "", filters, pfd::opt::multiselect);

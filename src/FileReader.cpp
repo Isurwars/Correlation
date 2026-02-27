@@ -15,6 +15,7 @@
 #include "readers/CifReader.hpp"
 #include "readers/LammpsDumpReader.hpp"
 #include "readers/OnetepDatReader.hpp"
+#include "readers/OutmolReader.hpp"
 
 namespace FileReader {
 
@@ -36,6 +37,8 @@ FileType determineFileType(const std::string &filename) {
     return FileType::OnetepDat;
   if (ext == ".md")
     return FileType::CastepMd;
+  if (ext == ".outmol")
+    return FileType::Outmol;
 
   throw std::runtime_error("Unsupported file extension: " + ext);
 }
@@ -70,6 +73,10 @@ Trajectory readTrajectory(const std::string &filename, FileType type) {
   }
   case FileType::CastepMd: {
     std::vector<Cell> frames = CastepMdReader::read(filename);
+    return Trajectory(frames, 1.0); // Default time_step 1.0 for now
+  }
+  case FileType::Outmol: {
+    std::vector<Cell> frames = OutmolReader::read(filename);
     return Trajectory(frames, 1.0); // Default time_step 1.0 for now
   }
   default:

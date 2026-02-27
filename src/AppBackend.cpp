@@ -146,7 +146,8 @@ std::string AppBackend::load_file(const std::string &path) {
   // reader.
 
   if (type == FileReader::FileType::Arc ||
-      type == FileReader::FileType::CastepMd) {
+      type == FileReader::FileType::CastepMd ||
+      type == FileReader::FileType::Outmol) {
     trajectory_ =
         std::make_unique<Trajectory>(FileReader::readTrajectory(path, type));
   } else {

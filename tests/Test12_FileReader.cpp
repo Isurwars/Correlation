@@ -416,3 +416,42 @@ TEST_F(Test12_FileReader, ReadCelluloseExample) {
     EXPECT_GT(frames[0].atomCount(), 0);
   }
 }
+
+TEST_F(Test12_FileReader, ReadOutmolCorrectly) {
+  // Try finding the PdCuNiP.outmol example
+  std::string file_path = "../../examples/PdCuNiP/PdCuNiP.outmol";
+  std::ifstream f(file_path);
+  if (!f.good()) {
+    file_path = "../examples/PdCuNiP/PdCuNiP.outmol";
+    std::ifstream f2(file_path);
+    if (!f2.good()) {
+      file_path = "examples/PdCuNiP/PdCuNiP.outmol";
+      std::ifstream f3(file_path);
+      if (!f3.good()) {
+        GTEST_SKIP() << "PdCuNiP.outmol example file not found. Skipping test.";
+        return;
+      }
+    }
+  }
+
+  Trajectory traj =
+      FileReader::readTrajectory(file_path, FileReader::FileType::Outmol);
+  const auto &frames = traj.getFrames();
+
+  // Verify we have a trajectory with frames
+  EXPECT_GT(frames.size(), 0);
+  // The total MD steps in the file are around 225, plus initial structure.
+  EXPECT_GT(frames.size(), 200);
+
+  if (!frames.empty()) {
+    const Cell &frame0 = frames[0];
+    EXPECT_EQ(frame0.atomCount(), 216);
+
+    // Checking cell dimensions.
+    // They are 26.78119864340916 Bohr in outmol.
+    // 26.78119864340916 * 0.529177210903 = 14.171999999994
+    EXPECT_NEAR(frame0.lattice_parameters()[0], 14.172, 1e-3);
+    EXPECT_NEAR(frame0.lattice_parameters()[1], 14.172, 1e-3);
+    EXPECT_NEAR(frame0.lattice_parameters()[2], 14.172, 1e-3);
+  }
+}
