@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0 RC2] 2026-02-27
+
+### Added
+- Implemented DMol3 `.outmol` file reading with `OutmolReader`.
+- Added support for reading CASTEP MD and trajectory files.
+- Added outmol and cellulose examples.
+- Added automated Time Step suggestion.
+- Added frame range parameters and parallelization to VACF calculation.
+- Implemented Filon's Quadrature in VDOS.
+- Added toggleable advanced options and dynamic UI layout for analysis cards.
+- Added colored buttons to the GUI.
+- Added extensive tests for `FileReader`, `AppBackend`, `AppController`, and `XRD`.
+
+### Changed
+- Refactored `FileIO` into specialized `FileReader` objects.
+- Refactored `DistributionFunctions` into independent calculators.
+- Added `const` and `[[nodiscard]]` attributes to key API functions.
+- Improved `RunAnalysisCard` and reorganized AppWindow cards.
+- Removed redundant components and cleaned up dual GUI flags.
+
+### Fixed
+- Fixed segmentation faults and edge cases reading MD files.
+- Minor GUI bug fixes, including Options button, rightbar layout, and Window Title.
+
 ## [2.0.0 RC1] 2026-02-14
 
 ### Added
