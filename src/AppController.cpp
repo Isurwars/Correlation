@@ -284,13 +284,15 @@ void AppController::handleWriteFiles() {
 
 void AppController::handleBrowseFile() {
   std::vector<std::string> filters = {"Supported Structure Files",
-                                      "*arc *.car *.cell *.cif *.dat",
+                                      "*arc *.car *.cell *.cif *.dat *.md",
                                       "Materials Studio CAR",
                                       "*.car",
                                       "Materials Studio ARC",
                                       "*.arc",
                                       "CASTEP CELL",
                                       "*.cell",
+                                      "CASTEP MD",
+                                      "*.md",
                                       "CIF files",
                                       "*.cif",
                                       "ONETEP DAT",
