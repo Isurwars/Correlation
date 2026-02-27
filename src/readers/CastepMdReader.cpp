@@ -60,7 +60,7 @@ std::vector<Cell> read(const std::string &file_name) {
       continue;
     }
 
-    if (line.find("<-- h") != std::string::npos) {
+    if (line.find("<-- h") != std::string::npos && line.find("<-- hv") == std::string::npos) {
       // Lattice vectors h are given row by row in Bohr
       // The first <-- h is row 1
       std::array<double, 3> h1, h2, h3;

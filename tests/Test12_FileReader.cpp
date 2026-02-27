@@ -385,3 +385,34 @@ TEST_F(Test12_FileReader, ReadCastepMdCorrectly) {
   EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * BOHR_TO_ANGSTROM);
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * BOHR_TO_ANGSTROM);
 }
+
+TEST_F(Test12_FileReader, ReadCelluloseExample) {
+  // Try finding the Cellulose.md example file relative to the build directory
+  std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
+  std::ifstream f(cellulose_path);
+  if (!f.good()) {
+    cellulose_path = "../examples/Cellulose/Cellulose.md";
+    std::ifstream f2(cellulose_path);
+    if (!f2.good()) {
+      cellulose_path = "examples/Cellulose/Cellulose.md";
+      std::ifstream f3(cellulose_path);
+      if (!f3.good()) {
+        GTEST_SKIP() << "Cellulose.md example file not found. Skipping test.";
+        return;
+      }
+    }
+  }
+
+  FileReader::FileType type = FileReader::determineFileType(cellulose_path);
+  EXPECT_EQ(type, FileReader::FileType::CastepMd);
+
+  // This should not crash or throw
+  Trajectory traj = FileReader::readTrajectory(cellulose_path, type);
+  const auto &frames = traj.getFrames();
+
+  // The Cellulose.md has 1001 frames
+  EXPECT_EQ(frames.size(), 1001);
+  if (!frames.empty()) {
+    EXPECT_GT(frames[0].atomCount(), 0);
+  }
+}

@@ -322,7 +322,7 @@ void AppController::handleCheckFileDialogStatus() {
     ui_.set_timer_running(false);
 
     // Populate atom counts and bond cutoffs in UI
-    if (!selection.empty()) {
+    if (!selection.empty() && backend_.cell()) {
       ui_.set_file_loaded(true);
 
       // Atom Counts

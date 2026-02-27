@@ -145,7 +145,8 @@ std::string AppBackend::load_file(const std::string &path) {
   // frame. The determineFileType helper is used to dispatch to the correct
   // reader.
 
-  if (type == FileReader::FileType::Arc) {
+  if (type == FileReader::FileType::Arc ||
+      type == FileReader::FileType::CastepMd) {
     trajectory_ =
         std::make_unique<Trajectory>(FileReader::readTrajectory(path, type));
   } else {
