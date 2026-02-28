@@ -416,7 +416,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
         frame_df->calculatePAD(settings.angle_bin_width);
         frame_df->calculateDAD(settings.angle_bin_width);
       }
-      frame_df->calculateMD();
+      frame_df->calculateMD(settings.max_ring_size);
       if (settings.q_max > 0) {
         frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
                               settings.r_int_max);

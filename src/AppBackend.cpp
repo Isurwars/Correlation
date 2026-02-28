@@ -225,6 +225,7 @@ std::string AppBackend::run_analysis() {
     settings.q_bin_width = options_.q_bin_width;
     settings.r_int_max = options_.r_int_max;
     settings.angle_bin_width = options_.angle_bin_width;
+    settings.max_ring_size = options_.max_ring_size;
     settings.smoothing = options_.smoothing;
     settings.smoothing_sigma = options_.smoothing_sigma;
     settings.smoothing_kernel = options_.smoothing_kernel;

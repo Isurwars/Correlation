@@ -62,6 +62,7 @@ struct ProgramOptions {
   double q_bin_width = AppDefaults::Q_BIN_WIDTH;
   double r_int_max = AppDefaults::R_INT_MAX;
   double angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;
+  size_t max_ring_size = 6;
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;
   KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL;
   int min_frame = 0;

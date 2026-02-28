@@ -25,6 +25,7 @@ struct AnalysisSettings {
   double q_bin_width = 0.02;
   double r_int_max = 10.0;
   double angle_bin_width = 1.0;
+  size_t max_ring_size = 6;
   bool smoothing = true;
   double smoothing_sigma = 0.1;
   KernelType smoothing_kernel = KernelType::Gaussian;
@@ -132,7 +133,7 @@ public:
    * @brief Calculates the Motif Distribution (MD).
    * @param max_ring_size Max ring size to search for.
    */
-  void calculateMD(size_t max_ring_size = 10);
+  void calculateMD(size_t max_ring_size = 6);
 
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
