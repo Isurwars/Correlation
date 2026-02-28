@@ -16,7 +16,7 @@
 // Part 1: Angle Reproduction Tests
 // ============================================================================
 
-class Test09_PAD_AngleReproduction : public ::testing::Test {
+class _14_PAD_Tests_AngleReproduction : public ::testing::Test {
 protected:
   void SetUp() override {
     // Simple cubic cell
@@ -39,7 +39,7 @@ protected:
   Trajectory trajectory_;
 };
 
-TEST_F(Test09_PAD_AngleReproduction, CalculatePAD) {
+TEST_F(_14_PAD_Tests_AngleReproduction, CalculatePAD) {
   // Water molecule angle 104.5ish
   Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
@@ -60,7 +60,7 @@ TEST_F(Test09_PAD_AngleReproduction, CalculatePAD) {
   EXPECT_NEAR(angle, 104.5, 2.0);
 }
 
-TEST_F(Test09_PAD_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
+TEST_F(_14_PAD_Tests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
   // A-B-C angle.
   // B is at (5,5,5)
   // A is at (4,5,5) -> dist 1.0
@@ -93,7 +93,7 @@ TEST_F(Test09_PAD_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
   }
 }
 
-TEST_F(Test09_PAD_AngleReproduction, PBCAngleDetection) {
+TEST_F(_14_PAD_Tests_AngleReproduction, PBCAngleDetection) {
   cell_.addAtom("Si", {0.5, 0.5, 0.5});
   cell_.addAtom("O", {9.6, 0.5, 0.5});
   cell_.addAtom("O", {0.5, 9.6, 0.5});
@@ -117,7 +117,7 @@ TEST_F(Test09_PAD_AngleReproduction, PBCAngleDetection) {
   EXPECT_TRUE(found) << "Should find 90 degree angle across PBC";
 }
 
-TEST_F(Test09_PAD_AngleReproduction, SiTetrahedron_4Atoms) {
+TEST_F(_14_PAD_Tests_AngleReproduction, SiTetrahedron_4Atoms) {
   cell_.addAtom("Si", {5.0, 5.0, 5.0}); // Center
   cell_.addAtom("Si", {6.0, 6.0, 6.0}); // Neighbor 1 (1,1,1)
   cell_.addAtom("Si", {6.0, 4.0, 4.0}); // Neighbor 2 (1,-1,-1)
@@ -153,7 +153,7 @@ TEST_F(Test09_PAD_AngleReproduction, SiTetrahedron_4Atoms) {
                                "degrees for a standard Si tetrahedron";
 }
 
-TEST_F(Test09_PAD_AngleReproduction, Icosahedron_13Atoms) {
+TEST_F(_14_PAD_Tests_AngleReproduction, Icosahedron_13Atoms) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
 
   double phi = (1.0 + std::sqrt(5.0)) / 2.0;
@@ -237,7 +237,7 @@ double sumHistogram(const std::vector<double> &hist) {
   return std::accumulate(hist.begin(), hist.end(), 0.0);
 }
 
-class Test09_PAD : public ::testing::Test {
+class _14_PAD_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // Large box to avoid PBC issues by default
@@ -255,7 +255,7 @@ protected:
 };
 
 // 1. Trivial Cases
-TEST_F(Test09_PAD, EmptyCellThrows) {
+TEST_F(_14_PAD_Tests, EmptyCellThrows) {
   // Current implementation throws explicitly if atoms are empty in
   // calculateAshcroftWeights or implicitly via other checks.
   updateTrajectory();
@@ -264,7 +264,7 @@ TEST_F(Test09_PAD, EmptyCellThrows) {
       std::invalid_argument);
 }
 
-TEST_F(Test09_PAD, SingleAtomNoAngles) {
+TEST_F(_14_PAD_Tests, SingleAtomNoAngles) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
@@ -283,7 +283,7 @@ TEST_F(Test09_PAD, SingleAtomNoAngles) {
 }
 
 // 2. Geometry Verification
-TEST_F(Test09_PAD, LinearGeometry180) {
+TEST_F(_14_PAD_Tests, LinearGeometry180) {
   // A-B-C line
   cell_.addAtom("O", {9.0, 10.0, 10.0});
   auto &si = cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
@@ -340,7 +340,7 @@ TEST_F(Test09_PAD, LinearGeometry180) {
   }
 }
 
-TEST_F(Test09_PAD, RightAngle90) {
+TEST_F(_14_PAD_Tests, RightAngle90) {
   cell_.addAtom("O", {10.0, 9.0, 10.0});
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   cell_.addAtom("O", {11.0, 10.0, 10.0});
@@ -366,7 +366,7 @@ TEST_F(Test09_PAD, RightAngle90) {
   EXPECT_NEAR(peak_angle, 90.0, 1.0);
 }
 
-TEST_F(Test09_PAD, EquilateralTriangle60) {
+TEST_F(_14_PAD_Tests, EquilateralTriangle60) {
   // Si at (0,0,0)
   // O at (1,0,0)
   // O at (0.5, sqrt(3)/2, 0)
@@ -395,7 +395,7 @@ TEST_F(Test09_PAD, EquilateralTriangle60) {
       << "Should have peak near 60 degrees";
 }
 
-TEST_F(Test09_PAD, TetrahedralAngle) {
+TEST_F(_14_PAD_Tests, TetrahedralAngle) {
   // Si at center
   // 4 Neighbors at tetrahedral positions.
   // For simplicity, just check one angle 109.47
@@ -429,7 +429,7 @@ TEST_F(Test09_PAD, TetrahedralAngle) {
 }
 
 // 3. Symmetry & Multi-Species
-TEST_F(Test09_PAD, SymmetryAndSorting) {
+TEST_F(_14_PAD_Tests, SymmetryAndSorting) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   cell_.addAtom("O", {11.0, 10.0, 10.0});
   cell_.addAtom("N", {10.0, 11.0, 10.0}); // 90 degrees
@@ -451,7 +451,7 @@ TEST_F(Test09_PAD, SymmetryAndSorting) {
 }
 
 // 4. Normalization
-TEST_F(Test09_PAD, FullNormalizationCheck) {
+TEST_F(_14_PAD_Tests, FullNormalizationCheck) {
   // 1 Si, 4 O neighbors (tetrahedron)
   // 4 neighbors -> 4*3/2 = 6 angles.
   // All 6 angles are 109.47

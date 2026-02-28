@@ -14,7 +14,7 @@
 #include "../include/Trajectory.hpp"
 
 // Test fixture for Trajectory tests
-class Test03_Trajectory : public ::testing::Test {
+class _03_Trajectory_Tests : public ::testing::Test {
 protected:
   // Helper to create a dummy frame with a specific position for an atom
   Cell createFrame(double x, double y, double z) {
@@ -45,14 +45,14 @@ protected:
 
 // --- Constructor Tests ---
 
-TEST_F(Test03_Trajectory, DefaultConstructorInitializesCorrectly) {
+TEST_F(_03_Trajectory_Tests, DefaultConstructorInitializesCorrectly) {
   Trajectory traj;
   EXPECT_EQ(traj.getFrameCount(), 0);
   EXPECT_DOUBLE_EQ(traj.getTimeStep(), 1.0); // Default timestep
   EXPECT_TRUE(traj.getFrames().empty());
 }
 
-TEST_F(Test03_Trajectory, ParameterizedConstructorSetsFramesAndTimestep) {
+TEST_F(_03_Trajectory_Tests, ParameterizedConstructorSetsFramesAndTimestep) {
   std::vector<Cell> frames;
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(1.0, 1.0, 1.0));
@@ -66,7 +66,7 @@ TEST_F(Test03_Trajectory, ParameterizedConstructorSetsFramesAndTimestep) {
 
 // --- Accessor Tests ---
 
-TEST_F(Test03_Trajectory, AccessorsWorkCorrectly) {
+TEST_F(_03_Trajectory_Tests, AccessorsWorkCorrectly) {
   Trajectory traj;
   traj.setTimeStep(2.0);
   EXPECT_DOUBLE_EQ(traj.getTimeStep(), 2.0);
@@ -79,7 +79,7 @@ TEST_F(Test03_Trajectory, AccessorsWorkCorrectly) {
 
 // --- Frame Management Tests ---
 
-TEST_F(Test03_Trajectory, AddFrameAddsFrameToTrajectory) {
+TEST_F(_03_Trajectory_Tests, AddFrameAddsFrameToTrajectory) {
   Trajectory traj;
   Cell frame = createFrame(1.0, 2.0, 3.0);
   traj.addFrame(frame);
@@ -90,7 +90,7 @@ TEST_F(Test03_Trajectory, AddFrameAddsFrameToTrajectory) {
 
 // --- Velocity Calculation Tests ---
 
-TEST_F(Test03_Trajectory, CalculateVelocitiesComputesCorrectVelocities) {
+TEST_F(_03_Trajectory_Tests, CalculateVelocitiesComputesCorrectVelocities) {
   std::vector<Cell> frames;
   // Particle moving at constant velocity (1, 0, 0) per frame
   // Time step = 1.0
@@ -115,7 +115,7 @@ TEST_F(Test03_Trajectory, CalculateVelocitiesComputesCorrectVelocities) {
   EXPECT_NEAR(velocities[0][0].z(), 0.0, 1e-6);
 }
 
-TEST_F(Test03_Trajectory, CalculateVelocitiesHandlesPBC) {
+TEST_F(_03_Trajectory_Tests, CalculateVelocitiesHandlesPBC) {
   // Create a cubic lattice 10x10x10
   linalg::Vector3<double> a = {10.0, 0.0, 0.0};
   linalg::Vector3<double> b = {0.0, 10.0, 0.0};
@@ -143,7 +143,7 @@ TEST_F(Test03_Trajectory, CalculateVelocitiesHandlesPBC) {
 
 // --- Bond Cutoff Tests ---
 
-TEST_F(Test03_Trajectory, PrecomputeBondCutoffsCalculatesCorrectly) {
+TEST_F(_03_Trajectory_Tests, PrecomputeBondCutoffsCalculatesCorrectly) {
   // Setup a frame with H and O
   Cell frame = createFrame(0, 0, 0);
   frame.addAtom("O", {0, 0, 0}); // Adding another atom type
@@ -187,7 +187,7 @@ TEST_F(Test03_Trajectory, PrecomputeBondCutoffsCalculatesCorrectly) {
   EXPECT_DOUBLE_EQ(cutoff_HH, std::sqrt(cutoff_HH_sq));
 }
 
-TEST_F(Test03_Trajectory, SetBondCutoffsManuallyWorks) {
+TEST_F(_03_Trajectory_Tests, SetBondCutoffsManuallyWorks) {
   Trajectory traj;
   // Set a dummy 2x2 cutoff matrix with squared values
   // We want cutoffs: 1.5, 2.0, 2.5
@@ -203,7 +203,7 @@ TEST_F(Test03_Trajectory, SetBondCutoffsManuallyWorks) {
 
 // --- Duplicate Frame Removal Tests (Existing, Renamed) ---
 
-TEST_F(Test03_Trajectory, RemoveDuplicatedFrames) {
+TEST_F(_03_Trajectory_Tests, RemoveDuplicatedFrames) {
   // Create a few cells
   Cell c1;
   c1.addAtom("H", {0.0, 0.0, 0.0});
@@ -246,7 +246,7 @@ TEST_F(Test03_Trajectory, RemoveDuplicatedFrames) {
   EXPECT_EQ(new_frames[2].atoms()[0].position().x(), 0.2);
 }
 
-TEST_F(Test03_Trajectory, ParseEnergyFromArc) {
+TEST_F(_03_Trajectory_Tests, ParseEnergyFromArc) {
   // Create a mock .arc file with energy
   std::string filename = "test_data/energy_test.arc";
   std::ofstream out(filename);
@@ -267,7 +267,7 @@ TEST_F(Test03_Trajectory, ParseEnergyFromArc) {
   EXPECT_DOUBLE_EQ(frames[0].getEnergy(), -12345.6789);
 }
 
-TEST_F(Test03_Trajectory, ParseMultipleFramesWithEnergy) {
+TEST_F(_03_Trajectory_Tests, ParseMultipleFramesWithEnergy) {
   std::string filename = "test_data/multi_energy.arc";
   std::ofstream out(filename);
 
@@ -299,7 +299,7 @@ TEST_F(Test03_Trajectory, ParseMultipleFramesWithEnergy) {
   EXPECT_DOUBLE_EQ(frames[1].getEnergy(), -200.5);
 }
 
-TEST_F(Test03_Trajectory, RemovesConsecutiveTriplicates) {
+TEST_F(_03_Trajectory_Tests, RemovesConsecutiveTriplicates) {
   std::vector<Cell> frames;
 
   // Frame 0: (0,0,0)
@@ -337,7 +337,7 @@ TEST_F(Test03_Trajectory, RemovesConsecutiveTriplicates) {
   EXPECT_NEAR(result_frames[2].atoms()[0].position()[0], 2.0, 1e-6);
 }
 
-TEST_F(Test03_Trajectory, HandlesNoDuplicates) {
+TEST_F(_03_Trajectory_Tests, HandlesNoDuplicates) {
   std::vector<Cell> frames;
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(1.0, 1.0, 1.0));
@@ -347,7 +347,7 @@ TEST_F(Test03_Trajectory, HandlesNoDuplicates) {
   EXPECT_EQ(traj.getFrameCount(), 3);
 }
 
-TEST_F(Test03_Trajectory, HandlesAllDuplicates) {
+TEST_F(_03_Trajectory_Tests, HandlesAllDuplicates) {
   std::vector<Cell> frames;
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(0.0, 0.0, 0.0));
@@ -358,7 +358,7 @@ TEST_F(Test03_Trajectory, HandlesAllDuplicates) {
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
 
-TEST_F(Test03_Trajectory, AddFrameThrowsOnAtomCountMismatch) {
+TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnAtomCountMismatch) {
   Trajectory traj;
   traj.addFrame(createFrame(0, 0, 0)); // 1 atom
 
@@ -368,7 +368,7 @@ TEST_F(Test03_Trajectory, AddFrameThrowsOnAtomCountMismatch) {
   EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
 }
 
-TEST_F(Test03_Trajectory, AddFrameThrowsOnElementMismatch) {
+TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnElementMismatch) {
   Trajectory traj;
   traj.addFrame(createFrame(0, 0, 0)); // 1 atom H
 
@@ -379,7 +379,7 @@ TEST_F(Test03_Trajectory, AddFrameThrowsOnElementMismatch) {
   EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
 }
 
-TEST_F(Test03_Trajectory, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {
+TEST_F(_03_Trajectory_Tests, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {
   Trajectory traj;
   EXPECT_NO_THROW(traj.calculateVelocities());
   EXPECT_TRUE(traj.getVelocities().empty());

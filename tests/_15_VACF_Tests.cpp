@@ -11,12 +11,12 @@
 #include "../include/Trajectory.hpp"
 
 // Test fixture for VACF and VDOS tests.
-class Test10_VACF : public ::testing::Test {
+class _15_VACF_Tests : public ::testing::Test {
 protected:
   // No special setup needed for VACF usually, or different from Test06
 };
 
-TEST_F(Test10_VACF, CalculateVACF_and_VDOS) {
+TEST_F(_15_VACF_Tests, CalculateVACF_and_VDOS) {
   Cell c({10, 10, 10, 90, 90, 90});
   c.addAtom("Ar", {0, 0, 0});
   Trajectory t;
@@ -71,7 +71,7 @@ TEST_F(Test10_VACF, CalculateVACF_and_VDOS) {
   EXPECT_TRUE(vdos_hist.partials.count("Frequency (cm-1)"));
 }
 
-TEST_F(Test10_VACF, CalculateVACF_WithFrameRange) {
+TEST_F(_15_VACF_Tests, CalculateVACF_WithFrameRange) {
   Trajectory tRange;
   tRange.setTimeStep(1.0);
 
@@ -108,7 +108,7 @@ TEST_F(Test10_VACF, CalculateVACF_WithFrameRange) {
   EXPECT_NEAR(vacf[3], 1.0, 1e-6);
 }
 
-TEST_F(Test10_VACF, CalculateVACF_GasLike) {
+TEST_F(_15_VACF_Tests, CalculateVACF_GasLike) {
   Trajectory tGas;
   tGas.setTimeStep(1.0);
 

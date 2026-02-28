@@ -9,9 +9,9 @@
 #include <stdexcept>
 
 // Test fixture for the AppBackend class
-class Test15_AppBackend : public ::testing::Test {};
+class _17_AppBackend_Tests : public ::testing::Test {};
 
-TEST_F(Test15_AppBackend, DefaultConstructorInitializesCorrectly) {
+TEST_F(_17_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
   AppBackend backend;
   ProgramOptions opts = backend.options();
@@ -32,7 +32,7 @@ TEST_F(Test15_AppBackend, DefaultConstructorInitializesCorrectly) {
   EXPECT_EQ(backend.getTotalAtomCount(), 0);
 }
 
-TEST_F(Test15_AppBackend, SetOptionsModifiesState) {
+TEST_F(_17_AppBackend_Tests, SetOptionsModifiesState) {
   // Arrange
   AppBackend backend;
   ProgramOptions opts;
@@ -52,7 +52,7 @@ TEST_F(Test15_AppBackend, SetOptionsModifiesState) {
   EXPECT_EQ(new_opts.max_frame, 20);
 }
 
-TEST_F(Test15_AppBackend, LoadInvalidFileThrowsException) {
+TEST_F(_17_AppBackend_Tests, LoadInvalidFileThrowsException) {
   // Arrange
   AppBackend backend;
 
@@ -61,7 +61,7 @@ TEST_F(Test15_AppBackend, LoadInvalidFileThrowsException) {
                std::runtime_error);
 }
 
-TEST_F(Test15_AppBackend, RecommendedTimeStepWithNoCellReturnsDefault) {
+TEST_F(_17_AppBackend_Tests, RecommendedTimeStepWithNoCellReturnsDefault) {
   // Arrange
   AppBackend backend;
 

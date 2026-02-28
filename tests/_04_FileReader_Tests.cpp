@@ -14,7 +14,7 @@
 // This fixture handles the creation and cleanup of temporary files needed for
 // tests, ensuring that tests are self-contained and do not rely on external
 // data files.
-class Test12_FileReader : public ::testing::Test {
+class _04_FileReader_Tests : public ::testing::Test {
 protected:
   // This function runs before each test to create temporary files.
   void SetUp() override {
@@ -187,7 +187,7 @@ protected:
 //--------------------------------- Test Cases -------------------------------//
 //----------------------------------------------------------------------------//
 
-TEST_F(Test12_FileReader, ReadCarFileCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadCarFileCorrectly) {
   // Arrange & Act
   FileReader::FileType type = FileReader::determineFileType("test.car");
   Cell result_cell = FileReader::readStructure("test.car", type);
@@ -216,7 +216,7 @@ TEST_F(Test12_FileReader, ReadCarFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.5);
 }
 
-TEST_F(Test12_FileReader, ReadCellFileCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadCellFileCorrectly) {
   // Arrange & Act
   FileReader::FileType type = FileReader::determineFileType("test.cell");
   Cell result_cell = FileReader::readStructure("test.cell", type);
@@ -245,7 +245,7 @@ TEST_F(Test12_FileReader, ReadCellFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.6);
 }
 
-TEST_F(Test12_FileReader, ReadCifFileCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
   // Arrange & Act
   FileReader::FileType type = FileReader::determineFileType("test.cif");
   Cell result_cell = FileReader::readStructure("test.cif", type);
@@ -280,7 +280,7 @@ TEST_F(Test12_FileReader, ReadCifFileCorrectly) {
       << "Did not find the original Cl atom at the cell center";
 }
 
-TEST_F(Test12_FileReader, ReadArcFileCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadArcFileCorrectly) {
   FileReader::FileType type = FileReader::determineFileType("test.arc");
   EXPECT_EQ(type, FileReader::FileType::Arc);
 
@@ -302,7 +302,7 @@ TEST_F(Test12_FileReader, ReadArcFileCorrectly) {
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 2.0);
 }
 
-TEST_F(Test12_FileReader, ReadArcFileDuplicatedFrames) {
+TEST_F(_04_FileReader_Tests, ReadArcFileDuplicatedFrames) {
   FileReader::FileType type =
       FileReader::determineFileType("test_identical.arc");
   EXPECT_EQ(type, FileReader::FileType::Arc);
@@ -322,7 +322,7 @@ TEST_F(Test12_FileReader, ReadArcFileDuplicatedFrames) {
   EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
 }
 
-TEST_F(Test12_FileReader, ReadLammpsDumpCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadLammpsDumpCorrectly) {
   // Arrange & Act
   FileReader::FileType type = FileReader::determineFileType("test.dump");
   Cell result_cell = FileReader::readStructure("test.dump", type);
@@ -348,7 +348,7 @@ TEST_F(Test12_FileReader, ReadLammpsDumpCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.0);
 }
 
-TEST_F(Test12_FileReader, ReadOnetepDatCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadOnetepDatCorrectly) {
   // Arrange & Act
   FileReader::FileType type = FileReader::determineFileType("test.dat");
   Cell result_cell = FileReader::readStructure("test.dat", type);
@@ -357,7 +357,7 @@ TEST_F(Test12_FileReader, ReadOnetepDatCorrectly) {
   EXPECT_TRUE(result_cell.isEmpty());
 }
 
-TEST_F(Test12_FileReader, ReadCastepMdCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
   FileReader::FileType type = FileReader::determineFileType("test.md");
   EXPECT_EQ(type, FileReader::FileType::CastepMd);
 
@@ -386,7 +386,7 @@ TEST_F(Test12_FileReader, ReadCastepMdCorrectly) {
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * BOHR_TO_ANGSTROM);
 }
 
-TEST_F(Test12_FileReader, ReadCelluloseExample) {
+TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {
   // Try finding the Cellulose.md example file relative to the build directory
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
   std::ifstream f(cellulose_path);
@@ -417,7 +417,7 @@ TEST_F(Test12_FileReader, ReadCelluloseExample) {
   }
 }
 
-TEST_F(Test12_FileReader, ReadOutmolCorrectly) {
+TEST_F(_04_FileReader_Tests, ReadOutmolCorrectly) {
   // Try finding the PdCuNiP.outmol example
   std::string file_path = "../../examples/PdCuNiP/PdCuNiP.outmol";
   std::ifstream f(file_path);

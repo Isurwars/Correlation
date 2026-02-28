@@ -10,12 +10,11 @@
 
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
-#include "../include/PhysicalData.hpp"
 #include "../include/Trajectory.hpp"
 #include "../include/TrajectoryAnalyzer.hpp"
 
 // Test fixture for DistributionFunctions tests.
-class Test06_DistributionFunctions : public ::testing::Test {
+class _11_RDF_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
@@ -44,13 +43,13 @@ protected:
 //----------------------------- Constructors --------------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(Test06_DistributionFunctions, DefaultConstructorWorks) {
+TEST_F(_11_RDF_Tests, DefaultConstructorWorks) {
   updateTrajectory();
   ASSERT_NO_THROW(
       DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
 }
 
-TEST_F(Test06_DistributionFunctions, MoveConstructorWorks) {
+TEST_F(_11_RDF_Tests, MoveConstructorWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF(5.0, 0.1);
@@ -61,7 +60,7 @@ TEST_F(Test06_DistributionFunctions, MoveConstructorWorks) {
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
-TEST_F(Test06_DistributionFunctions, MoveAssignmentWorks) {
+TEST_F(_11_RDF_Tests, MoveAssignmentWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF(5.0, 0.1);
@@ -77,7 +76,7 @@ TEST_F(Test06_DistributionFunctions, MoveAssignmentWorks) {
 //------------------------------- Accessors ---------------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(Test06_DistributionFunctions, AccessorsWork) {
+TEST_F(_11_RDF_Tests, AccessorsWork) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -111,7 +110,7 @@ TEST_F(Test06_DistributionFunctions, AccessorsWork) {
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(Test06_DistributionFunctions, CalculateRDF) {
+TEST_F(_11_RDF_Tests, CalculateRDF) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -132,7 +131,7 @@ TEST_F(Test06_DistributionFunctions, CalculateRDF) {
   EXPECT_NEAR(peak_r, 1.5, 0.1);
 }
 
-TEST_F(Test06_DistributionFunctions, CalculateCoordinationNumber) {
+TEST_F(_11_RDF_Tests, CalculateCoordinationNumber) {
   // Use a setup where we know neighbors exactly
   Cell cnCall({10, 10, 10, 90, 90, 90});
   cnCall.addAtom("Si", {5, 5, 5});
@@ -159,139 +158,7 @@ TEST_F(Test06_DistributionFunctions, CalculateCoordinationNumber) {
   EXPECT_EQ(osi_cn[1], 2);
 }
 
-TEST_F(Test06_DistributionFunctions, CalculatePAD) {
-  // Water molecule angle 104.5ish
-  Cell water({10, 10, 10, 90, 90, 90});
-  water.addAtom("O", {5, 5, 5});
-  water.addAtom("H", {6, 5, 5});
-  double angRad = 104.5 * constants::deg2rad;
-  water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
-
-  updateTrajectory(water);
-  DistributionFunctions df(water, 2.0, trajectory_.getBondCutoffsSQ());
-
-  df.calculatePAD(1.0);
-  const auto &hist = df.getHistogram("f(theta)");
-  const auto &hoh = hist.partials.at("H-O-H");
-
-  auto max_it = std::max_element(hoh.begin(), hoh.end());
-  size_t idx = std::distance(hoh.begin(), max_it);
-  double angle = hist.bins[idx];
-  EXPECT_NEAR(angle, 104.5, 2.0);
-}
-
-TEST_F(Test06_DistributionFunctions, CalculateSQ) {
-  updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-
-  // Need RDF first
-  df.calculateRDF(5.0, 0.05);
-  df.calculateSQ(10.0, 0.1, 5.0);
-
-  EXPECT_NO_THROW(df.getHistogram("S(Q)"));
-  const auto &hist = df.getHistogram("S(Q)");
-  EXPECT_FALSE(hist.bins.empty());
-
-  // Check peak position for 1.5A distance -> Q = 2pi/r ~ 4.18
-  const auto &total_sq = hist.partials.at("Total");
-
-  // For a dimer, S(Q) oscillates around 1. S(Q) = 1 + sin(Qr)/(Qr).
-  // At Q = 4.18 (2pi/r), Qr = 2pi, sin(2pi)=0. So S(Q) should be approx 1.
-  // The previous test expected a peak (large value), which is wrong for a
-  // 2-atom system.
-
-  // Search for value at Q ~ 4.18
-  // Find bin closest to 4.18
-  double target_Q = 4.18;
-  double min_diff = 1000.0;
-  double sq_val = 0.0;
-
-  for (size_t i = 0; i < total_sq.size(); ++i) {
-    if (std::abs(hist.bins[i] - target_Q) < min_diff) {
-      min_diff = std::abs(hist.bins[i] - target_Q);
-      sq_val = total_sq[i];
-    }
-  }
-
-  // S(Q) should be near 1.0
-  EXPECT_NEAR(sq_val, 1.0, 0.2);
-}
-
-TEST_F(Test06_DistributionFunctions, CalculateXRD) {
-  updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-
-  // Needs RDF first
-  df.calculateRDF(5.0, 0.05);
-
-  // Calling calculateXRD
-  df.calculateXRD(1.5406, 5.0, 90.0, 0.5);
-
-  EXPECT_NO_THROW(df.getHistogram("XRD"));
-  const auto &hist = df.getHistogram("XRD");
-  EXPECT_FALSE(hist.bins.empty());
-
-  // Check bins range
-  EXPECT_GE(hist.bins.front(), 5.0);
-  EXPECT_LE(hist.bins.back(), 90.0);
-}
-
-TEST_F(Test06_DistributionFunctions, CalculateVACF_and_VDOS) {
-  Cell c({10, 10, 10, 90, 90, 90});
-  c.addAtom("Ar", {0, 0, 0});
-  Trajectory t;
-  t.addFrame(c);
-  t.addFrame(c); // Static
-  t.calculateVelocities();
-
-  DistributionFunctions df(c, 0.0, {{0.0}});
-
-  df.calculateVACF(t, 1);
-  EXPECT_NO_THROW(df.getHistogram("VACF"));
-  const auto &vacf = df.getHistogram("VACF").partials.at("Total");
-  // Should be 1.0 normalized (if constant 0 velocity? Wait 0 velocity -> ??)
-  // If static, position constant -> velocity 0. Correlation of 0 with 0 is 0.
-  // Let's give it velocity.
-
-  Trajectory tMoving;
-  Cell c1 = c;
-
-  Cell c2({10, 10, 10, 90, 90, 90});
-  // Atom 1 moves +1.0 in x
-  c2.addAtom("Ar", {1.0, 0.0, 0.0});
-  // Atom 2 moves -1.0 in x (balancing COM)
-  c2.addAtom("Ar", {-1.0, 0.0, 0.0});
-
-  Cell c3({10, 10, 10, 90, 90, 90});
-  // Atom 1 moves to +2.0
-  c3.addAtom("Ar", {2.0, 0.0, 0.0});
-  // Atom 2 moves to -2.0
-  c3.addAtom("Ar", {-2.0, 0.0, 0.0});
-
-  // Need to update c1 (frame 0) to have 2 atoms at 0
-  c1 = Cell({10, 10, 10, 90, 90, 90});
-  c1.addAtom("Ar", {0.0, 0.0, 0.0});
-  c1.addAtom("Ar", {0.0, 0.0, 0.0});
-
-  tMoving.addFrame(c1);
-  tMoving.addFrame(c2);
-  tMoving.addFrame(c3);
-  tMoving.setTimeStep(1.0);
-  tMoving.calculateVelocities();
-
-  df.calculateVACF(tMoving, 1);
-  const auto &vacf2 = df.getHistogram("Normalized VACF").partials.at("Total");
-  EXPECT_NEAR(vacf2[0], 1.0, 1e-6); // t=0
-  EXPECT_NEAR(vacf2[1], 1.0, 1e-6); // t=1, const velocity
-
-  // VDOS
-  df.calculateVDOS();
-  EXPECT_NO_THROW(df.getHistogram("VDOS"));
-  const auto &vdos_hist = df.getHistogram("VDOS");
-  EXPECT_TRUE(vdos_hist.partials.count("Frequency (cm-1)"));
-}
-
-TEST_F(Test06_DistributionFunctions, Smoothing) {
+TEST_F(_11_RDF_Tests, Smoothing) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df.calculateRDF(5.0, 0.1);
@@ -309,7 +176,7 @@ TEST_F(Test06_DistributionFunctions, Smoothing) {
   EXPECT_FALSE(cn_hist.smoothed_partials.empty());
 }
 
-TEST_F(Test06_DistributionFunctions, SetStructureAnalyzer) {
+TEST_F(_11_RDF_Tests, SetStructureAnalyzer) {
   updateTrajectory();
   // Create an external analyzer
   StructureAnalyzer analyzer(cell_, 5.0, trajectory_.getBondCutoffsSQ());
@@ -327,7 +194,7 @@ TEST_F(Test06_DistributionFunctions, SetStructureAnalyzer) {
 //----------------------------- Accumulation --------------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(Test06_DistributionFunctions, AddAndScale) {
+TEST_F(_11_RDF_Tests, AddAndScale) {
   updateTrajectory();
   DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df1.calculateRDF(5.0, 0.1);
@@ -363,7 +230,7 @@ TEST_F(Test06_DistributionFunctions, AddAndScale) {
   EXPECT_NEAR(peak, refPeak, 1e-6);
 }
 
-TEST_F(Test06_DistributionFunctions, ComputeMean) {
+TEST_F(_11_RDF_Tests, ComputeMean) {
   updateTrajectory();
   TrajectoryAnalyzer ta(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -378,7 +245,7 @@ TEST_F(Test06_DistributionFunctions, ComputeMean) {
   EXPECT_NO_THROW(dfMean->getHistogram("g(r)"));
 }
 
-TEST_F(Test06_DistributionFunctions, HandlesMissingPartialInAdd) {
+TEST_F(_11_RDF_Tests, HandlesMissingPartialInAdd) {
   // Edge case: adding DFs with different partials (e.g. from different systems
   // or logic) Though usually DFs added should be compatible. If df2 has a key
   // that df1 doesn't, df1 should acquire it.

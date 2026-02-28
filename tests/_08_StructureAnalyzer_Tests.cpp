@@ -13,7 +13,7 @@
 
 // A test fixture for StructureAnalyzer tests.
 // A test fixture for StructureAnalyzer tests.
-class Test04_StructureAnalyzer : public ::testing::Test {
+class _08_StructureAnalyzer_Tests : public ::testing::Test {
 protected:
   Trajectory trajectory_;
 
@@ -24,7 +24,7 @@ protected:
   }
 };
 
-TEST_F(Test04_StructureAnalyzer, FindsCorrectNeighborsForSilicon) {
+TEST_F(_08_StructureAnalyzer_Tests, FindsCorrectNeighborsForSilicon) {
   // ... (existing test content)
   // Arrange: Create an 8-atom conventional unit cell of Silicon.
   // The diamond lattice structure is a robust test for neighbor finding.
@@ -65,7 +65,7 @@ TEST_F(Test04_StructureAnalyzer, FindsCorrectNeighborsForSilicon) {
   }
 }
 
-TEST_F(Test04_StructureAnalyzer, DistancesTensorIsCorrect) {
+TEST_F(_08_StructureAnalyzer_Tests, DistancesTensorIsCorrect) {
   // Arrange: Create a simple 2-atom system
   Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
@@ -112,7 +112,7 @@ TEST_F(Test04_StructureAnalyzer, DistancesTensorIsCorrect) {
   EXPECT_NEAR(xe_ar_dists[0], 4.0, 1e-6);
 }
 
-TEST_F(Test04_StructureAnalyzer, CalculatesCorrectAnglesForWater) {
+TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAnglesForWater) {
   // Arrange: Create a single water molecule with a known bond angle.
   Cell water_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   const double bond_length = 0.957;    // Angstroms
@@ -148,7 +148,7 @@ TEST_F(Test04_StructureAnalyzer, CalculatesCorrectAnglesForWater) {
   EXPECT_NEAR(hoh_angles[0] * constants::rad2deg, bond_angle_deg, 1e-4);
 }
 
-TEST_F(Test04_StructureAnalyzer, CalculatesCorrectAngleWithPBC) {
+TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAngleWithPBC) {
   // Arrange: Setup a system where the angle calculation requires the Minimum
   // Image Convention. Central atom B (index 1) at (0.5, 0.5, 0.5). Neighbor A
   // (index 0) at (3.5, 0.5, 0.5) -> PBC vector B->A is (-1.0, 0.0, 0.0).
@@ -192,7 +192,7 @@ TEST_F(Test04_StructureAnalyzer, CalculatesCorrectAngleWithPBC) {
   EXPECT_NEAR(cco_angles[0], expected_angle_rad, 1e-6);
 }
 
-TEST_F(Test04_StructureAnalyzer, FindsNoNeighborsForIsolatedAtom) {
+TEST_F(_08_StructureAnalyzer_Tests, FindsNoNeighborsForIsolatedAtom) {
   // Arrange: Create a large cell with a single atom.
   Cell large_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   large_cell.addAtom("Ar", {10.0, 10.0, 10.0});
@@ -209,7 +209,7 @@ TEST_F(Test04_StructureAnalyzer, FindsNoNeighborsForIsolatedAtom) {
   ASSERT_TRUE(neighborGraph.getNeighbors(0).empty());
 }
 
-TEST_F(Test04_StructureAnalyzer, FindsNeighborsBasedOnBondCutoff) {
+TEST_F(_08_StructureAnalyzer_Tests, FindsNeighborsBasedOnBondCutoff) {
   // Ar covalent radius = 0.96. Sum = 1.92.
   // Bond threshold = 1.92 * 1.2 = 2.304.
 
@@ -241,7 +241,7 @@ TEST_F(Test04_StructureAnalyzer, FindsNeighborsBasedOnBondCutoff) {
   }
 }
 
-TEST_F(Test04_StructureAnalyzer, EnforcesNeighborSymmetry) {
+TEST_F(_08_StructureAnalyzer_Tests, EnforcesNeighborSymmetry) {
   // Arrange: Create a random system of atoms.
   Cell random_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   random_cell.addAtom("Ar", {1.0, 1.0, 1.0}); // A
@@ -285,7 +285,7 @@ TEST_F(Test04_StructureAnalyzer, EnforcesNeighborSymmetry) {
   }
 }
 
-TEST_F(Test04_StructureAnalyzer, HandlesPeriodicSelfInteractions) {
+TEST_F(_08_StructureAnalyzer_Tests, HandlesPeriodicSelfInteractions) {
   // 1.92 * 1.2 = 2.304.
   // We need images to be within the bond threshold. Let's use image distance
   // = 2.0.
@@ -320,7 +320,7 @@ TEST_F(Test04_StructureAnalyzer, HandlesPeriodicSelfInteractions) {
   }
 }
 
-TEST_F(Test04_StructureAnalyzer, TriangleMoleculeConnectivity) {
+TEST_F(_08_StructureAnalyzer_Tests, TriangleMoleculeConnectivity) {
   // Arrange: Create 3 atoms in an equilateral triangle.
   Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
 

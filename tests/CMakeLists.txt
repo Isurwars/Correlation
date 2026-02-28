@@ -11,24 +11,24 @@ include(GoogleTest)
 
 # Explicitly list test sources.
 add_executable(correlation_tests
-    Test01_Atom.cpp
-    Test02_Cell.cpp
-    Test03_Trajectory.cpp
-    Test04_StructureAnalyzer.cpp
-    Test05_TrajectoryAnalyzer.cpp
-    Test06_RDF.cpp
-    Test07_SQ.cpp
-    Test08_XRD.cpp
-    Test09_PAD.cpp
-    Test10_VACF.cpp
-    Test11_DynamicsAnalyzer.cpp
-    Test12_FileReader.cpp
-    Test13_FileWriter.cpp
-    Test14_vDoS.cpp
-    Test15_AppBackend.cpp
-    Test16_AppController.cpp
-    Test17_DihedralCalculator.cpp
-    Test18_MotifFinder.cpp
+    _01_Atom_Tests.cpp
+    _02_Cell_Tests.cpp
+    _03_Trajectory_Tests.cpp
+    _04_FileReader_Tests.cpp
+    _05_FileWriter_Tests.cpp
+    _06_DihedralCalculator_Tests.cpp
+    _07_MotifFinder_Tests.cpp
+    _08_StructureAnalyzer_Tests.cpp
+    _09_TrajectoryAnalyzer_Tests.cpp
+    _10_DynamicsAnalyzer_Tests.cpp
+    _11_RDF_Tests.cpp
+    _12_SQ_Tests.cpp
+    _13_XRD_Tests.cpp
+    _14_PAD_Tests.cpp
+    _15_VACF_Tests.cpp
+    _16_vDoS_Tests.cpp
+    _17_AppBackend_Tests.cpp
+    _18_AppController_Tests.cpp
     ../src/AppBackend.cpp
     ../src/AppController.cpp
 )

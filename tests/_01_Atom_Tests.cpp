@@ -9,9 +9,9 @@
 #include "../include/PhysicalData.hpp"
 
 // Test fixture for the Atom class and related free functions.
-class Test01_Atom : public ::testing::Test {};
+class _01_Atom_Tests : public ::testing::Test {};
 
-TEST_F(Test01_Atom, DefaultConstructorInitializesCorrectly) {
+TEST_F(_01_Atom_Tests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
   const Atom atom{};
 
@@ -22,7 +22,7 @@ TEST_F(Test01_Atom, DefaultConstructorInitializesCorrectly) {
   EXPECT_DOUBLE_EQ(linalg::norm(atom.position()), 0.0);
 }
 
-TEST_F(Test01_Atom, AccessorsModifyStateCorrectly) {
+TEST_F(_01_Atom_Tests, AccessorsModifyStateCorrectly) {
   // Arrange
   Atom atom;
   const Element new_element = {"Fe", {26}};
@@ -43,7 +43,7 @@ TEST_F(Test01_Atom, AccessorsModifyStateCorrectly) {
   EXPECT_NEAR(atom.position().z(), 3.0, 1e-9);
 }
 
-TEST_F(Test01_Atom, ParameterizedConstructorSetsProperties) {
+TEST_F(_01_Atom_Tests, ParameterizedConstructorSetsProperties) {
   // Arrange
   const Element element = {"O", {1}};
   const linalg::Vector3<double> expected_pos = {1.0, 2.5, -3.0};
@@ -61,7 +61,7 @@ TEST_F(Test01_Atom, ParameterizedConstructorSetsProperties) {
   EXPECT_NEAR(atom.position().z(), expected_pos.z(), 1e-9);
 }
 
-TEST_F(Test01_Atom, DistanceFunctionCalculatesCorrectly) {
+TEST_F(_01_Atom_Tests, DistanceFunctionCalculatesCorrectly) {
   // Arrange: A classic 3-4-5 right triangle.
   const Element element = {"H", {0}};
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
@@ -74,7 +74,7 @@ TEST_F(Test01_Atom, DistanceFunctionCalculatesCorrectly) {
   EXPECT_NEAR(d, 5.0, 1e-9);
 }
 
-TEST_F(Test01_Atom, AngleFunctionCalculatesNinetyDegrees) {
+TEST_F(_01_Atom_Tests, AngleFunctionCalculatesNinetyDegrees) {
   // Arrange
   const Element element_c = {"C", {0}};
   const Element element_h = {"H", {1}};
@@ -89,7 +89,7 @@ TEST_F(Test01_Atom, AngleFunctionCalculatesNinetyDegrees) {
   EXPECT_NEAR(calculated_angle, constants::pi / 2.0, 1e-9);
 }
 
-TEST_F(Test01_Atom, AngleFunctionHandlesCollinearAtoms) {
+TEST_F(_01_Atom_Tests, AngleFunctionHandlesCollinearAtoms) {
   // Arrange
   const Element element = {"O", {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
@@ -103,7 +103,7 @@ TEST_F(Test01_Atom, AngleFunctionHandlesCollinearAtoms) {
   EXPECT_NEAR(calculated_angle, constants::pi, 1e-9);
 }
 
-TEST_F(Test01_Atom, AngleFunctionHandlesCoincidentAtoms) {
+TEST_F(_01_Atom_Tests, AngleFunctionHandlesCoincidentAtoms) {
   // Arrange: All atoms at the same position.
   const Element element = {"C", {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
@@ -116,7 +116,7 @@ TEST_F(Test01_Atom, AngleFunctionHandlesCoincidentAtoms) {
   EXPECT_DOUBLE_EQ(calculated_angle, 0.0);
 }
 
-TEST_F(Test01_Atom, ElementIDEqualityWorks) {
+TEST_F(_01_Atom_Tests, ElementIDEqualityWorks) {
   ElementID id1{5};
   ElementID id2{5};
   ElementID id3{10};
@@ -125,7 +125,7 @@ TEST_F(Test01_Atom, ElementIDEqualityWorks) {
   EXPECT_FALSE(id1 == id3);
 }
 
-TEST_F(Test01_Atom, AngleFunctionClampsFloatingPointInaccuracies) {
+TEST_F(_01_Atom_Tests, AngleFunctionClampsFloatingPointInaccuracies) {
   const Element element = {"O", {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
   

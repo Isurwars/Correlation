@@ -10,7 +10,7 @@
 #include "../include/PhysicalData.hpp"
 
 // Test fixture for the Cell class.
-class Test02_Cell : public ::testing::Test {
+class _02_Cell_Tests : public ::testing::Test {
 protected:
   // A standard 10x10x10 orthogonal cell created once for all tests in this
   // fixture.
@@ -19,7 +19,7 @@ protected:
 
 // --- Constructor and Lattice Tests ---
 
-TEST_F(Test02_Cell, DefaultConstructorInitializesCorrectly) {
+TEST_F(_02_Cell_Tests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
   Cell cell;
 
@@ -30,7 +30,7 @@ TEST_F(Test02_Cell, DefaultConstructorInitializesCorrectly) {
   EXPECT_DOUBLE_EQ(cell.getEnergy(), 0.0);
 }
 
-TEST_F(Test02_Cell, ParameterConstructorForCubicCell) {
+TEST_F(_02_Cell_Tests, ParameterConstructorForCubicCell) {
   // Arrange
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
 
@@ -45,7 +45,7 @@ TEST_F(Test02_Cell, ParameterConstructorForCubicCell) {
   EXPECT_NEAR(cell.volume(), 64.0, 1e-9);
 }
 
-TEST_F(Test02_Cell, VectorConstructorCalculatesParameters) {
+TEST_F(_02_Cell_Tests, VectorConstructorCalculatesParameters) {
   // Arrange & Act
   Cell cell({2.0, 0.0, 0.0}, {0.0, 3.0, 0.0}, {0.0, 0.0, 4.0});
   const auto &params = cell.lattice_parameters();
@@ -60,7 +60,7 @@ TEST_F(Test02_Cell, VectorConstructorCalculatesParameters) {
   EXPECT_NEAR(cell.volume(), 24.0, 1e-9);
 }
 
-TEST_F(Test02_Cell, VolumeForNonOrthogonalCellIsCorrect) {
+TEST_F(_02_Cell_Tests, VolumeForNonOrthogonalCellIsCorrect) {
   // Arrange
   const std::array<double, 6> params = {5.0, 6.0, 7.0, 80.0, 90.0, 100.0};
   Cell cell(params);
@@ -77,13 +77,13 @@ TEST_F(Test02_Cell, VolumeForNonOrthogonalCellIsCorrect) {
   EXPECT_NEAR(cell.volume(), expected_volume, 1e-9);
 }
 
-TEST_F(Test02_Cell, ThrowsOnInvalidLatticeParameters) {
+TEST_F(_02_Cell_Tests, ThrowsOnInvalidLatticeParameters) {
   EXPECT_THROW(Cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
   EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
   EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
 }
 
-TEST_F(Test02_Cell, RuleOfFiveWorksCorrectly) {
+TEST_F(_02_Cell_Tests, RuleOfFiveWorksCorrectly) {
   // Arrange
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
   Cell cell(params);
@@ -117,7 +117,7 @@ TEST_F(Test02_Cell, RuleOfFiveWorksCorrectly) {
   EXPECT_DOUBLE_EQ(cell_move_assigned.getEnergy(), 1.23);
 }
 
-TEST_F(Test02_Cell, AccessorsWorkCorrectly) {
+TEST_F(_02_Cell_Tests, AccessorsWorkCorrectly) {
   // Arrange
   Cell cell;
   // Test setLatticeParameters
@@ -139,7 +139,7 @@ TEST_F(Test02_Cell, AccessorsWorkCorrectly) {
 
 // --- Atom & Element Management Tests ---
 
-TEST_F(Test02_Cell, AddAtomManagesElementsAndAtomsCorrectly) {
+TEST_F(_02_Cell_Tests, AddAtomManagesElementsAndAtomsCorrectly) {
   // Arrange
   Cell cell;
 
@@ -168,7 +168,7 @@ TEST_F(Test02_Cell, AddAtomManagesElementsAndAtomsCorrectly) {
   EXPECT_EQ(atoms[2].element().id.value, 0);
 }
 
-TEST_F(Test02_Cell, FindElementWorksCorrectly) {
+TEST_F(_02_Cell_Tests, FindElementWorksCorrectly) {
   // Arrange
   Cell cell;
   cell.addAtom("Si", {0.0, 0.0, 0.0});
@@ -185,7 +185,7 @@ TEST_F(Test02_Cell, FindElementWorksCorrectly) {
 
 // --- Position Manipulation Tests ---
 
-TEST_F(Test02_Cell, WrapPositionsWrapsAtomIntoCell) {
+TEST_F(_02_Cell_Tests, WrapPositionsWrapsAtomIntoCell) {
   // Arrange: Uses orthogonal_cell_ from fixture
   orthogonal_cell_.addAtom("H", {12.0, -3.0, 5.0});
 
@@ -199,7 +199,7 @@ TEST_F(Test02_Cell, WrapPositionsWrapsAtomIntoCell) {
   EXPECT_NEAR(final_pos.z(), 5.0, 1e-9); // 5.0 mod 10.0
 }
 
-TEST_F(Test02_Cell, MoveSemanticsLeavesMovedFromStateEmpty) {
+TEST_F(_02_Cell_Tests, MoveSemanticsLeavesMovedFromStateEmpty) {
   // Arrange
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
   Cell cell(params);
@@ -213,7 +213,7 @@ TEST_F(Test02_Cell, MoveSemanticsLeavesMovedFromStateEmpty) {
   EXPECT_EQ(cell.atomCount(), 0);
 }
 
-TEST_F(Test02_Cell, InverseLatticeVectorsAreCorrect) {
+TEST_F(_02_Cell_Tests, InverseLatticeVectorsAreCorrect) {
   const std::array<double, 6> params = {2.0, 4.0, 5.0, 90.0, 90.0, 90.0};
   Cell cell(params);
 
@@ -226,7 +226,7 @@ TEST_F(Test02_Cell, InverseLatticeVectorsAreCorrect) {
   EXPECT_NEAR(inv[0][1], 0.0, 1e-9);
 }
 
-TEST_F(Test02_Cell, WrapPositionsHandlesNegativeCoordinates) {
+TEST_F(_02_Cell_Tests, WrapPositionsHandlesNegativeCoordinates) {
   // Arrange
   Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   cell.addAtom("H", {-15.0, -1.0, -25.0});

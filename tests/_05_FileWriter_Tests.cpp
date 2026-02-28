@@ -17,7 +17,7 @@
 #include "../include/Trajectory.hpp"
 
 // Test fixture for FileWriter integration tests.
-class Test13_FileWriter : public ::testing::Test {
+class _05_FileWriter_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // Create a temporary CAR file for an 8-atom Silicon crystal.
@@ -68,7 +68,7 @@ protected:
   }
 };
 
-TEST_F(Test13_FileWriter, CalculatesAndWritesSiliconDistributions) {
+TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
   FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
   Cell si_cell = FileReader::readStructure("si_crystal.car", type);
@@ -129,7 +129,7 @@ TEST_F(Test13_FileWriter, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 
-TEST_F(Test13_FileWriter, WritesHDF5File) {
+TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   // Arrange
   FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
   Cell si_cell = FileReader::readStructure("si_crystal.car", type);
@@ -214,7 +214,7 @@ TEST_F(Test13_FileWriter, WritesHDF5File) {
   EXPECT_EQ(data_comment, "Si-Si");
 }
 
-TEST_F(Test13_FileWriter, WritesVACFMetadata) {
+TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   // Arrange
   FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
   Cell frame1 = FileReader::readStructure("si_crystal.car", type);

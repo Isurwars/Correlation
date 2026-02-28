@@ -9,7 +9,7 @@
 #include "../include/NeighborGraph.hpp"
 #include "../include/calculators/MotifFinder.hpp"
 
-class Test18_MotifFinder : public ::testing::Test {
+class _07_MotifFinder_Tests : public ::testing::Test {
 protected:
   Cell cell;
   NeighborGraph graph;
@@ -19,7 +19,7 @@ protected:
   }
 };
 
-TEST_F(Test18_MotifFinder, DetectsSingleTriangle) {
+TEST_F(_07_MotifFinder_Tests, DetectsSingleTriangle) {
   graph = NeighborGraph(3);
 
   // 0-1, 1-2, 2-0
@@ -40,7 +40,7 @@ TEST_F(Test18_MotifFinder, DetectsSingleTriangle) {
   EXPECT_EQ(rings.count(6), 0);
 }
 
-TEST_F(Test18_MotifFinder, DetectsSingleSquare) {
+TEST_F(_07_MotifFinder_Tests, DetectsSingleSquare) {
   graph = NeighborGraph(4);
 
   // 0-1, 1-2, 2-3, 3-0

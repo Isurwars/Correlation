@@ -11,7 +11,7 @@
 #include "../include/Trajectory.hpp"
 
 // Test fixture for XRD tests.
-class Test08_XRD : public ::testing::Test {
+class _13_XRD_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
@@ -30,7 +30,7 @@ protected:
   Trajectory trajectory_;
 };
 
-TEST_F(Test08_XRD, CalculateXRD) {
+TEST_F(_13_XRD_Tests, CalculateXRD) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -49,7 +49,7 @@ TEST_F(Test08_XRD, CalculateXRD) {
   EXPECT_LE(hist.bins.back(), 90.0);
 }
 
-TEST_F(Test08_XRD, CalculateXRD_ThrowsIfNoRDF) {
+TEST_F(_13_XRD_Tests, CalculateXRD_ThrowsIfNoRDF) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -57,7 +57,7 @@ TEST_F(Test08_XRD, CalculateXRD_ThrowsIfNoRDF) {
   EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, 0.5), std::logic_error);
 }
 
-TEST_F(Test08_XRD, CalculateXRD_InvalidBinWidth) {
+TEST_F(_13_XRD_Tests, CalculateXRD_InvalidBinWidth) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -68,7 +68,7 @@ TEST_F(Test08_XRD, CalculateXRD_InvalidBinWidth) {
   EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, -0.5), std::invalid_argument);
 }
 
-TEST_F(Test08_XRD, CalculateXRD_IntensityIsZeroAtThetaZero) {
+TEST_F(_13_XRD_Tests, CalculateXRD_IntensityIsZeroAtThetaZero) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -88,7 +88,7 @@ TEST_F(Test08_XRD, CalculateXRD_IntensityIsZeroAtThetaZero) {
   EXPECT_DOUBLE_EQ(intensities.front(), 0.0);
 }
 
-TEST_F(Test08_XRD, CalculateXRDCubicCell) {
+TEST_F(_13_XRD_Tests, CalculateXRDCubicCell) {
   // Simple cubic cell a = 3.0, 3x3x3 supercell
   Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
   for (int x = 0; x < 2; ++x) {

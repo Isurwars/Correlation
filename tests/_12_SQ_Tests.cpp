@@ -11,7 +11,7 @@
 #include "../include/Trajectory.hpp"
 
 // Test fixture for SQ tests.
-class Test07_SQ : public ::testing::Test {
+class _12_SQ_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
@@ -30,7 +30,7 @@ protected:
   Trajectory trajectory_;
 };
 
-TEST_F(Test07_SQ, CalculateSQ) {
+TEST_F(_12_SQ_Tests, CalculateSQ) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
