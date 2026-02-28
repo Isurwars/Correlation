@@ -29,6 +29,8 @@ add_executable(correlation_tests
     _16_vDoS_Tests.cpp
     _17_AppBackend_Tests.cpp
     _18_AppController_Tests.cpp
+    _19_DAD_Tests.cpp
+    _20_MD_Tests.cpp
     ../src/AppBackend.cpp
     ../src/AppController.cpp
 )

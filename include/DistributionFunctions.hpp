@@ -123,6 +123,18 @@ public:
   void calculatePAD(double bin_width = 1.0);
 
   /**
+   * @brief Calculates the Dihedral Angle Distribution (DAD).
+   * @param bin_width Width of angular bins in degrees.
+   */
+  void calculateDAD(double bin_width = 1.0);
+
+  /**
+   * @brief Calculates the Motif Distribution (MD).
+   * @param max_ring_size Max ring size to search for.
+   */
+  void calculateMD(size_t max_ring_size = 10);
+
+  /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
    * @param max_correlation_frames Maximum lag frames. -1 uses default (half
    * trajectory).

@@ -12,6 +12,8 @@
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
 #include "calculators/CNCalculator.hpp"
+#include "calculators/DADCalculator.hpp"
+#include "calculators/MDCalculator.hpp"
 #include "calculators/PADCalculator.hpp"
 #include "calculators/RDFCalculator.hpp"
 #include "calculators/SQCalculator.hpp"
@@ -238,6 +240,23 @@ void DistributionFunctions::calculatePAD(double bin_width) {
 }
 
 //---------------------------------------------------------------------------//
+//----------------------------- Calculation DAD -----------------------------//
+//---------------------------------------------------------------------------//
+
+void DistributionFunctions::calculateDAD(double bin_width) {
+  histograms_["DAD"] = DADCalculator::calculate(cell_, neighbors(), bin_width);
+}
+
+//---------------------------------------------------------------------------//
+//----------------------------- Calculation MD ------------------------------//
+//---------------------------------------------------------------------------//
+
+void DistributionFunctions::calculateMD(size_t max_ring_size) {
+  histograms_["MD"] =
+      MDCalculator::calculate(neighbors()->neighborGraph(), max_ring_size);
+}
+
+//---------------------------------------------------------------------------//
 //----------------------------- Calculation VACF ----------------------------//
 //---------------------------------------------------------------------------//
 
@@ -395,7 +414,9 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
       frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
       if (settings.angle_bin_width > 0) {
         frame_df->calculatePAD(settings.angle_bin_width);
+        frame_df->calculateDAD(settings.angle_bin_width);
       }
+      frame_df->calculateMD();
       if (settings.q_max > 0) {
         frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
                               settings.r_int_max);
