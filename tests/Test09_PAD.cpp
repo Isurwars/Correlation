@@ -299,10 +299,11 @@ TEST_F(Test09_PAD, LinearGeometry180) {
 
   // Verify StructureAnalyzer finds neighbors
   StructureAnalyzer analyzer(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  const auto &neighbors = analyzer.neighbors();
+  const auto &neighborGraph = analyzer.neighborGraph();
   // Si is atom index 1 (0-based)
-  ASSERT_GT(neighbors.size(), 1);
-  EXPECT_EQ(neighbors[1].size(), 2) << "Si should have 2 neighbors (O atoms)";
+  ASSERT_GT(neighborGraph.nodeCount(), 1);
+  EXPECT_EQ(neighborGraph.getNeighbors(1).size(), 2)
+      << "Si should have 2 neighbors (O atoms)";
 
   // Bond length 1.0. Cutoff needs to be > 1.0
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());

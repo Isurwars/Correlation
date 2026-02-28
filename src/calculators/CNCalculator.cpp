@@ -16,7 +16,7 @@ Histogram CNCalculator::calculate(const Cell &cell,
   }
 
   const auto &atoms = cell.atoms();
-  const auto &all_neighbors = neighbors->neighbors();
+  const auto &neighbor_graph = neighbors->neighborGraph();
 
   std::map<std::string, std::vector<int>> partial_dists;
   size_t max_cn = 0;
@@ -26,7 +26,7 @@ Histogram CNCalculator::calculate(const Cell &cell,
     const std::string &central_symbol = central_atom.element().symbol;
 
     std::map<std::string, int> neighbor_counts_for_this_atom;
-    for (const auto &neighbor : all_neighbors[i]) {
+    for (const auto &neighbor : neighbor_graph.getNeighbors(i)) {
       const auto &neighbor_atom = atoms[neighbor.index];
       neighbor_counts_for_this_atom[neighbor_atom.element().symbol]++;
     }

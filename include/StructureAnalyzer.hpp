@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Cell.hpp"
+#include "NeighborGraph.hpp"
 
 /**
  * @class StructureAnalyzer
@@ -21,7 +22,6 @@
  */
 class StructureAnalyzer {
 public:
-  using NeighborTensor = std::vector<std::vector<Neighbor>>;
   using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
   using AngleTensor =
       std::vector<std::vector<std::vector<std::vector<double>>>>;
@@ -29,14 +29,14 @@ public:
   // A helper struct to hold the thread-local results
   struct ThreadLocalResults {
     DistanceTensor distance_tensor_local;
-    NeighborTensor neighbor_tensor_local;
+    std::vector<std::vector<Neighbor>> neighbor_list_local;
     AngleTensor angle_tensor_local;
 
     // Constructor to initialize the tensors with the correct dimensions
     ThreadLocalResults(size_t num_elements, size_t atom_count)
         : distance_tensor_local(num_elements,
                                 std::vector<std::vector<double>>(num_elements)),
-          neighbor_tensor_local(atom_count),
+          neighbor_list_local(atom_count),
           angle_tensor_local(num_elements,
                              std::vector<std::vector<std::vector<double>>>(
                                  num_elements, std::vector<std::vector<double>>(
@@ -63,7 +63,7 @@ public:
   //-------------------------------------------------------------------------//
   const DistanceTensor &distances() const { return distance_tensor_; }
   const AngleTensor &angles() const { return angle_tensor_; }
-  const NeighborTensor &neighbors() const { return neighbor_tensor_; }
+  const NeighborGraph &neighborGraph() const { return neighbor_graph_; }
 
 private:
   Cell &cell_;
@@ -72,7 +72,7 @@ private:
 
   bool ignore_periodic_self_interactions_;
 
-  NeighborTensor neighbor_tensor_;
+  NeighborGraph neighbor_graph_;
   DistanceTensor distance_tensor_;
   AngleTensor angle_tensor_;
 

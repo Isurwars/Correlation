@@ -26,15 +26,6 @@ struct Element {
 };
 
 /**
- * @brief Represents a neighbor atom in a neighbor list.
- */
-struct Neighbor {
-  AtomID index;                 ///< Index of the neighbor in the atom list
-  double distance;              ///< Distance to the neighbor
-  linalg::Vector3<double> r_ij; ///< Vector from central atom to neighbor
-};
-
-/**
  * @brief Represents an atom in the simulation cell.
  *
  * Stores the element type, position, and unique ID of the atom.

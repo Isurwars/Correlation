@@ -47,18 +47,19 @@ TEST_F(Test04_StructureAnalyzer, FindsCorrectNeighborsForSilicon) {
   // shell. The first nearest neighbor distance in Si is (sqrt(3)/4)*a
   // approx 2.35 Å.
   StructureAnalyzer neighbors(si_cell, 3.0, trajectory_.getBondCutoffsSQ());
-  const auto &neighborMatrix = neighbors.neighbors();
+  const auto &neighborGraph = neighbors.neighborGraph();
   const auto &atoms = si_cell.atoms();
 
   // Assert
-  ASSERT_EQ(neighborMatrix.size(), 8);
+  ASSERT_EQ(neighborGraph.nodeCount(), 8);
   const double expected_distance = 2.3512; // More precise value
 
   // Every Si atom in a diamond lattice must have exactly 4 nearest neighbors.
-  for (const auto neighbors : neighborMatrix) {
-    ASSERT_EQ(neighbors.size(), 4);
+  for (size_t i = 0; i < neighborGraph.nodeCount(); ++i) {
+    const auto &node_neighbors = neighborGraph.getNeighbors(i);
+    ASSERT_EQ(node_neighbors.size(), 4);
     // Check that the distance to each of these neighbors is correct.
-    for (const auto neighbor : neighbors) {
+    for (const auto neighbor : node_neighbors) {
       EXPECT_NEAR(neighbor.distance, expected_distance, 1e-4);
     }
   }
@@ -200,11 +201,12 @@ TEST_F(Test04_StructureAnalyzer, FindsNoNeighborsForIsolatedAtom) {
 
   // Act: Calculate neighbors with a moderate cutoff.
   StructureAnalyzer analyzer(large_cell, 5.0, trajectory_.getBondCutoffsSQ());
-  const auto &neighbors = analyzer.neighbors();
+  const auto &neighborGraph = analyzer.neighborGraph();
 
   // Assert: The single atom should have no neighbors.
-  ASSERT_FALSE(neighbors.empty()); // The vector itself has size 1 (for 1 atom)
-  ASSERT_TRUE(neighbors[0].empty());
+  ASSERT_GT(neighborGraph.nodeCount(),
+            0); // The vector itself has size 1 (for 1 atom)
+  ASSERT_TRUE(neighborGraph.getNeighbors(0).empty());
 }
 
 TEST_F(Test04_StructureAnalyzer, FindsNeighborsBasedOnBondCutoff) {
@@ -218,11 +220,11 @@ TEST_F(Test04_StructureAnalyzer, FindsNeighborsBasedOnBondCutoff) {
     cell.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance = 2.0 < 2.304
     updateTrajectory(cell);
     StructureAnalyzer analyzer(cell, 3.1, trajectory_.getBondCutoffsSQ());
-    const auto &neighbors = analyzer.neighbors();
-    ASSERT_EQ(neighbors.size(), 2);
-    ASSERT_EQ(neighbors[0].size(), 1);
-    EXPECT_EQ(neighbors[0][0].index, 1);
-    EXPECT_NEAR(neighbors[0][0].distance, 2.0, 1e-6);
+    const auto &neighborGraph = analyzer.neighborGraph();
+    ASSERT_EQ(neighborGraph.nodeCount(), 2);
+    ASSERT_EQ(neighborGraph.getNeighbors(0).size(), 1);
+    EXPECT_EQ(neighborGraph.getNeighbors(0)[0].index, 1);
+    EXPECT_NEAR(neighborGraph.getNeighbors(0)[0].distance, 2.0, 1e-6);
   }
 
   // Case 2: Out of bond threshold -> No Neighbors
@@ -232,10 +234,10 @@ TEST_F(Test04_StructureAnalyzer, FindsNeighborsBasedOnBondCutoff) {
     cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0 > 2.304
     updateTrajectory(cell);
     StructureAnalyzer analyzer(cell, 3.5, trajectory_.getBondCutoffsSQ());
-    const auto &neighbors = analyzer.neighbors();
-    ASSERT_EQ(neighbors.size(), 2);
-    EXPECT_TRUE(neighbors[0].empty());
-    EXPECT_TRUE(neighbors[1].empty());
+    const auto &neighborGraph = analyzer.neighborGraph();
+    ASSERT_EQ(neighborGraph.nodeCount(), 2);
+    EXPECT_TRUE(neighborGraph.getNeighbors(0).empty());
+    EXPECT_TRUE(neighborGraph.getNeighbors(1).empty());
   }
 }
 
@@ -256,16 +258,16 @@ TEST_F(Test04_StructureAnalyzer, EnforcesNeighborSymmetry) {
   // A-D should be neighbors.
   // Act
   StructureAnalyzer analyzer(random_cell, 3.0, trajectory_.getBondCutoffsSQ());
-  const auto &neighbors = analyzer.neighbors();
+  const auto &neighborGraph = analyzer.neighborGraph();
 
   // Assert: Check symmetry for all pairs.
-  for (size_t i = 0; i < neighbors.size(); ++i) {
-    for (const auto &neighbor : neighbors[i]) {
+  for (size_t i = 0; i < neighborGraph.nodeCount(); ++i) {
+    for (const auto &neighbor : neighborGraph.getNeighbors(i)) {
       size_t j = neighbor.index;
 
       // If i sees j, then j must see i
       bool found_reverse = false;
-      for (const auto &reverse_neighbor : neighbors[j]) {
+      for (const auto &reverse_neighbor : neighborGraph.getNeighbors(j)) {
         if (reverse_neighbor.index == i) {
           found_reverse = true;
           // Distances must match
@@ -296,23 +298,23 @@ TEST_F(Test04_StructureAnalyzer, HandlesPeriodicSelfInteractions) {
   {
     StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(),
                                true);
-    const auto &neighbors = analyzer.neighbors();
-    ASSERT_EQ(neighbors.size(), 1);
+    const auto &neighborGraph = analyzer.neighborGraph();
+    ASSERT_EQ(neighborGraph.nodeCount(), 1);
     // Should NOT see itself
-    EXPECT_TRUE(neighbors[0].empty());
+    EXPECT_TRUE(neighborGraph.getNeighbors(0).empty());
   }
 
   // Case 2: Ignore Periodic Self Interactions = false
   {
     StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(),
                                false);
-    const auto &neighbors = analyzer.neighbors();
-    ASSERT_EQ(neighbors.size(), 1);
+    const auto &neighborGraph = analyzer.neighborGraph();
+    ASSERT_EQ(neighborGraph.nodeCount(), 1);
 
     // In a cubic cell with side 2.0, nearest images are 6 face-sharing images
     // at d=2.0. 2.0 < 2.304, so they should be found as bonded neighbors.
-    EXPECT_EQ(neighbors[0].size(), 6);
-    for (const auto &n : neighbors[0]) {
+    EXPECT_EQ(neighborGraph.getNeighbors(0).size(), 6);
+    for (const auto &n : neighborGraph.getNeighbors(0)) {
       EXPECT_NEAR(n.distance, 2.0, 1e-6);
     }
   }
@@ -336,16 +338,16 @@ TEST_F(Test04_StructureAnalyzer, TriangleMoleculeConnectivity) {
 
   // Act
   StructureAnalyzer analyzer(cell, 3.0, trajectory_.getBondCutoffsSQ());
-  const auto &neighbors = analyzer.neighbors();
+  const auto &neighborGraph = analyzer.neighborGraph();
 
   // Assert
-  ASSERT_EQ(neighbors.size(), 3);
+  ASSERT_EQ(neighborGraph.nodeCount(), 3);
 
   // Each atom should see exactly 2 neighbors (the other two vertices)
   for (size_t i = 0; i < 3; ++i) {
-    ASSERT_EQ(neighbors[i].size(), 2)
+    ASSERT_EQ(neighborGraph.getNeighbors(i).size(), 2)
         << "Atom " << i << " does not have 2 neighbors";
-    for (const auto &n : neighbors[i]) {
+    for (const auto &n : neighborGraph.getNeighbors(i)) {
       EXPECT_NEAR(n.distance, d, 1e-6);
     }
   }

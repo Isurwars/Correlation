@@ -61,7 +61,7 @@ StructureAnalyzer::StructureAnalyzer(
       std::vector<std::vector<std::vector<double>>>(
           num_elements, std::vector<std::vector<double>>(
                             num_elements, std::vector<double>())));
-  neighbor_tensor_.resize(cell.atomCount());
+  neighbor_graph_ = NeighborGraph(cell.atomCount());
 
   // The constructor orchestrates the computation
   computeDistances();
@@ -116,7 +116,7 @@ void StructureAnalyzer::computeDistances() {
         // Each thread gets its own private copy of the results structure.
         ThreadLocalResults &local_results = ets.local();
         auto &distance_local = local_results.distance_tensor_local;
-        auto &neighbor_local = local_results.neighbor_tensor_local;
+        auto &neighbor_local = local_results.neighbor_list_local;
 
         const auto &atom_A = atoms[i];
         const int type_A = atom_A.element_id();
@@ -169,9 +169,10 @@ void StructureAnalyzer::computeDistances() {
       }
     }
     for (size_t i = 0; i < atom_count; ++i) {
-      neighbor_tensor_[i].insert(neighbor_tensor_[i].end(),
-                                 local_results.neighbor_tensor_local[i].begin(),
-                                 local_results.neighbor_tensor_local[i].end());
+      for (const auto &neighbor : local_results.neighbor_list_local[i]) {
+        neighbor_graph_.addDirectedEdge(i, neighbor.index, neighbor.distance,
+                                        neighbor.r_ij);
+      }
     }
   }
 }
@@ -197,7 +198,7 @@ void StructureAnalyzer::computeAngles() {
       [&](const tbb::blocked_range<size_t> &r) {
         auto &local_tensor = ets.local();
         for (size_t i = r.begin(); i != r.end(); ++i) {
-          const auto &central_atom_neighbors = neighbor_tensor_[i];
+          const auto &central_atom_neighbors = neighbor_graph_.getNeighbors(i);
 
           // Skip if the central atom has fewer than two neighbors
           if (central_atom_neighbors.size() < 2)
