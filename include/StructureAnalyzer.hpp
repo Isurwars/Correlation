@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include <vector>
-
 #include "Cell.hpp"
 #include "NeighborGraph.hpp"
+#include "calculators/DihedralCalculator.hpp"
 
 /**
  * @class StructureAnalyzer
@@ -26,30 +25,6 @@ public:
   using AngleTensor =
       std::vector<std::vector<std::vector<std::vector<double>>>>;
 
-  // A helper struct to hold the thread-local results
-  struct ThreadLocalResults {
-    DistanceTensor distance_tensor_local;
-    std::vector<std::vector<Neighbor>> neighbor_list_local;
-    AngleTensor angle_tensor_local;
-
-    // Constructor to initialize the tensors with the correct dimensions
-    ThreadLocalResults(size_t num_elements, size_t atom_count)
-        : distance_tensor_local(num_elements,
-                                std::vector<std::vector<double>>(num_elements)),
-          neighbor_list_local(atom_count),
-          angle_tensor_local(num_elements,
-                             std::vector<std::vector<std::vector<double>>>(
-                                 num_elements, std::vector<std::vector<double>>(
-                                                   num_elements))) {}
-  };
-
-  /**
-   * @brief Computes all distances and angles within the cutoff radius.
-   * @param cell The cell containing the atoms and lattice information.
-   * @param cutoff The maximum distance to search for neighbors.
-   * @param ignore_periodic_self_interactions If true the periodic self
-   * interactions will be ignored.
-   */
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
@@ -63,6 +38,9 @@ public:
   //-------------------------------------------------------------------------//
   const DistanceTensor &distances() const { return distance_tensor_; }
   const AngleTensor &angles() const { return angle_tensor_; }
+  const calculators::DihedralTensor &dihedrals() const {
+    return dihedral_tensor_;
+  }
   const NeighborGraph &neighborGraph() const { return neighbor_graph_; }
 
 private:
@@ -75,22 +53,5 @@ private:
   NeighborGraph neighbor_graph_;
   DistanceTensor distance_tensor_;
   AngleTensor angle_tensor_;
-
-  //-------------------------------------------------------------------------//
-  //-------------------------------- Methods --------------------------------//
-  //-------------------------------------------------------------------------//
-
-  /**
-   * @brief Computes pairwise distances and identifies bonded neighbors.
-   * This method is parallelized using OpenMP.
-   * @return A list of all neighbors within the cutoff for each atom, used for
-   * angle calculations.
-   */
-  void computeDistances();
-
-  /**
-   * @brief Computes all unique bond angles.
-   * This method is parallelized using OpenMP.
-   */
-  void computeAngles();
+  calculators::DihedralTensor dihedral_tensor_;
 };

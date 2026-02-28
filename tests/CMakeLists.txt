@@ -27,6 +27,8 @@ add_executable(correlation_tests
     Test14_vDoS.cpp
     Test15_AppBackend.cpp
     Test16_AppController.cpp
+    Test17_DihedralCalculator.cpp
+    Test18_MotifFinder.cpp
     ../src/AppBackend.cpp
     ../src/AppController.cpp
 )

@@ -27,7 +27,11 @@ include(cmake/Dependencies.cmake)
 add_library(correlation_lib STATIC
     src/Cell.cpp
     src/DistributionFunctions.cpp
+    src/calculators/AngleCalculator.cpp
+    src/calculators/DihedralCalculator.cpp
+    src/calculators/MotifFinder.cpp
     src/calculators/CNCalculator.cpp
+    src/calculators/DistanceCalculator.cpp
     src/calculators/RDFCalculator.cpp
     src/calculators/PADCalculator.cpp
     src/calculators/VACFCalculator.cpp
