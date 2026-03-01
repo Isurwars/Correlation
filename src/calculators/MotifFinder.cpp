@@ -5,7 +5,7 @@
 
 #include "calculators/MotifFinder.hpp"
 #include <algorithm>
-#include <queue>
+#include <vector>
 
 namespace calculators {
 
@@ -34,19 +34,32 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
   if (max_size < 3)
     return all_cycles;
 
-  for (size_t root = 0; root < graph.nodeCount(); ++root) {
-    std::vector<int> dist(graph.nodeCount(), -1);
-    std::vector<std::vector<AtomID>> parents(graph.nodeCount());
-    std::queue<size_t> q;
+  size_t num_nodes = graph.nodeCount();
+  std::vector<int> dist(num_nodes, -1);
+  std::vector<std::vector<AtomID>> parents(num_nodes);
+  std::vector<size_t> visited;
+  visited.reserve(num_nodes); // Prevent reallocation
+
+  std::vector<std::pair<size_t, size_t>> cross_edges;
+  cross_edges.reserve(1024);
+
+  // Use a vector as a queue to avoid reallocations
+  std::vector<size_t> q;
+  q.reserve(num_nodes);
+
+  for (size_t root = 0; root < num_nodes; ++root) {
+    visited.clear();
+    cross_edges.clear();
+    q.clear();
 
     dist[root] = 0;
-    q.push(root);
+    q.push_back(root);
+    visited.push_back(root);
 
-    std::vector<std::pair<size_t, size_t>> cross_edges;
+    size_t q_head = 0;
 
-    while (!q.empty()) {
-      size_t u = q.front();
-      q.pop();
+    while (q_head < q.size()) {
+      size_t u = q[q_head++];
 
       for (const auto &neighbor : graph.getNeighbors(u)) {
         size_t v = neighbor.index;
@@ -56,8 +69,9 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
         if (dist[v] == -1) {
           dist[v] = dist[u] + 1;
           parents[v].push_back(static_cast<AtomID>(u));
+          visited.push_back(v);
           if (2 * dist[v] + 1 <= static_cast<int>(max_size)) {
-            q.push(v);
+            q.push_back(v);
           }
         } else if (dist[v] == dist[u]) {
           if (u < v) {
@@ -84,20 +98,26 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
 
       std::vector<std::vector<AtomID>> paths_u;
       std::vector<AtomID> current_u;
+      current_u.reserve(max_size);
       get_paths(u, root, parents, current_u, paths_u);
 
       std::vector<std::vector<AtomID>> paths_v;
       std::vector<AtomID> current_v;
+      current_v.reserve(max_size);
       get_paths(v, root, parents, current_v, paths_v);
 
       for (const auto &pu : paths_u) {
         for (const auto &pv : paths_v) {
           bool intersect = false;
           for (size_t i = 0; i < pu.size() - 1; ++i) {
-            if (std::find(pv.begin(), pv.end() - 1, pu[i]) != pv.end() - 1) {
-              intersect = true;
-              break;
+            for (size_t j = 0; j < pv.size() - 1; ++j) {
+              if (pu[i] == pv[j]) {
+                intersect = true;
+                break;
+              }
             }
+            if (intersect)
+              break;
           }
           if (!intersect) {
             std::vector<AtomID> cycle;
@@ -120,6 +140,12 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
           }
         }
       }
+    }
+
+    // Reset only the visited nodes for the next root iteration
+    for (size_t v : visited) {
+      dist[v] = -1;
+      parents[v].clear();
     }
   }
 
