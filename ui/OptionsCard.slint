@@ -26,24 +26,39 @@ export component OptionsCard inherits FilledCard {
     in-out property <string> q_bin_width;
     in-out property <string> r_int_max;
     in-out property <string> angle_bin_width;
+    in-out property <string> dihedral_bin_width;
+    in-out property <string> max_ring_size;
     in-out property <bool> smoothing: true;
     in-out property <bool> use_hdf5: true;
     in-out property <bool> use_csv: true;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
     in-out property <[BondCutoff]> bond_cutoffs;
+    in property <bool> file_loaded;
+    in-out property <bool> run_rdf: true;
+    in-out property <bool> run_sq: true;
+    in-out property <bool> run_xrd: true;
+    in-out property <bool> run_pad: true;
+    in-out property <bool> run_dad: false;
+    in-out property <bool> run_vacf: false;
+    in-out property <bool> run_vdos: false;
+    in-out property <bool> run_md: false;
     
     // Toggle stats for groups
+    in-out property <bool> analyses_expanded: false;
     in-out property <bool> rdf_expanded: false;
     in-out property <bool> sq_expanded: false;
     in-out property <bool> angle_expanded: false;
+    in-out property <bool> md_expanded: false;
     in-out property <bool> smoothing_expanded: false;
     in-out property <bool> bond_cutoffs_expanded: false;
 
     // Toggle height for groups
+    property <length> analyses_height: analyses_expanded ? 210px : 0px;
     property <length> rdf_height: rdf_expanded ? 100px : 0px;
     property <length> sq_height: sq_expanded ? 150px : 0px;
-    property <length> angle_height: angle_expanded ? 50px : 0px;
+    property <length> angle_height: angle_expanded ? 100px : 0px;
+    property <length> md_height: md_expanded ? 50px : 0px;
     property <length> smoothing_height: smoothing_expanded ? 100px : 0px;
     property <length> bond_cutoffs_height: bond_cutoffs_expanded ? min(150px, root.bond_cutoffs.length * 50px) : 0px;
   
@@ -53,6 +68,8 @@ export component OptionsCard inherits FilledCard {
     out property <bool> q_max_has_hover: q_max_area.has-hover;
     out property <bool> r_int_has_hover: r_int_area.has-hover;
     out property <bool> theta_bin_has_hover: theta_bin_area.has-hover;
+    out property <bool> dihedral_bin_has_hover: dihedral_bin_area.has-hover;
+    out property <bool> ring_size_has_hover: ring_size_area.has-hover;
     out property <bool> q_bin_has_hover: q_bin_area.has-hover;
 
     out property <bool> sigma_has_hover: sigma_area.has-hover;
@@ -63,6 +80,211 @@ export component OptionsCard inherits FilledCard {
         spacing: MaterialStyleMetrics.spacing_4;
         alignment: space-around;
         
+        // 0. Select Analyses
+        TouchArea {
+            height: 48px;
+            layout_analyses := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    y: 12px;
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.analyses_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                }
+
+                MaterialText {
+                    text: "Select Analyses";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.analyses_expanded = !root.analyses_expanded;
+            }
+        }
+
+        VerticalLayout {
+            alignment: start;
+            height: root.analyses_height;
+            opacity: root.analyses_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_4;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_rdf ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_rdf = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "Radial Functions";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_sq ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_sq = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "Structure Factor";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_xrd ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_xrd = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "XRD";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_pad ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_pad = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "Plane-Angles";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_dad ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_dad = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "Dihedral-Angles";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_md ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_md = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "Motif Rings";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_vacf ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_vacf = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "Velocity-ACF";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+
+            TouchArea {
+                HorizontalLayout {
+                    CheckBox {
+                        width: 24px;
+                        height: 24px;
+                        enabled: root.file_loaded;
+                        check_state: root.run_vdos ? CheckState.checked : CheckState.unchecked;
+                        checked_state_changed(s) => {
+                            root.run_vdos = (s == CheckState.checked);
+                        }
+                    }
+
+                    MaterialText {
+                        text: "vDoS";
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+        }
+
         // 1. Radial Distribution Group
         TouchArea {
             height: 48px;
@@ -236,6 +458,65 @@ export component OptionsCard inherits FilledCard {
                     width: 90%;
                     label: "PAD Bin Width (°)";
                     text <=> root.angle_bin_width;
+                }
+            }
+
+            dihedral_bin_area := TouchArea {
+                TextField {
+                    width: 90%;
+                    label: "DAD Bin Width (°)";
+                    text <=> root.dihedral_bin_width;
+                }
+            }
+        }
+
+        // 3.5 Topological Motifs Group
+        TouchArea {
+            height: 48px;
+            layout_md := HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_4;
+                padding_left: MaterialStyleMetrics.spacing_4;
+                padding_right: MaterialStyleMetrics.spacing_4;
+                Icon {
+                    y: 12px;
+                    colorize: MaterialPalette.on_surface_variant;
+                    height: 24px;
+                    width: 24px;
+                    vertical-alignment: center;
+                    source: root.md_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+                }
+
+                MaterialText {
+                    text: "Topological Motifs";
+                    style: MaterialTypography.title_small;
+                    vertical-alignment: center;
+                    color: MaterialPalette.on_surface_variant;
+                }
+            }
+
+            clicked => {
+                root.md_expanded = !root.md_expanded;
+            }
+        }
+
+        VerticalLayout {
+            height: root.md_height;
+            opacity: root.md_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
+            ring_size_area := TouchArea {
+                TextField {
+                    width: 90%;
+                    label: "Max Ring Size";
+                    text <=> root.max_ring_size;
                 }
             }
         }

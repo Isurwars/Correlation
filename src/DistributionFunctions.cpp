@@ -411,15 +411,24 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
       frame_df->setStructureAnalyzer(analyzers[i].get());
 
       frame_df->calculateCoordinationNumber();
-      frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
-      if (settings.angle_bin_width > 0) {
-        frame_df->calculatePAD(settings.angle_bin_width);
-        frame_df->calculateDAD(settings.angle_bin_width);
+      if (settings.run_rdf) {
+        frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
       }
-      frame_df->calculateMD(settings.max_ring_size);
-      if (settings.q_max > 0) {
+      if (settings.run_pad && settings.angle_bin_width > 0) {
+        frame_df->calculatePAD(settings.angle_bin_width);
+      }
+      if (settings.run_dad && settings.dihedral_bin_width > 0) {
+        frame_df->calculateDAD(settings.dihedral_bin_width);
+      }
+      if (settings.run_md) {
+        frame_df->calculateMD(settings.max_ring_size);
+      }
+      if (settings.run_sq && settings.q_max > 0) {
         frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
                               settings.r_int_max);
+      }
+      if (settings.run_xrd && settings.q_max > 0) {
+        frame_df->calculateXRD(1.5406, 5.0, 90.0, settings.q_bin_width);
       }
 
       results[i] = std::move(frame_df);

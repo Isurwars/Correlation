@@ -25,7 +25,16 @@ struct AnalysisSettings {
   double q_bin_width = 0.02;
   double r_int_max = 10.0;
   double angle_bin_width = 1.0;
+  double dihedral_bin_width = 1.0;
   size_t max_ring_size = 6;
+  bool run_rdf = true;
+  bool run_sq = true;
+  bool run_pad = false;
+  bool run_dad = false;
+  bool run_vacf = false;
+  bool run_md = false;
+  bool run_xrd = false;
+  bool run_vdos = false;
   bool smoothing = true;
   double smoothing_sigma = 0.1;
   KernelType smoothing_kernel = KernelType::Gaussian;

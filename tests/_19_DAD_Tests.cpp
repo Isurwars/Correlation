@@ -9,7 +9,7 @@
 #include "StructureAnalyzer.hpp"
 #include "calculators/DADCalculator.hpp"
 
-class DADCalculatorTest : public ::testing::Test {
+class _19_DAD_Tests : public ::testing::Test {
 protected:
   Cell cell;
 
@@ -26,7 +26,7 @@ protected:
   }
 };
 
-TEST_F(DADCalculatorTest, BasicCalculation) {
+TEST_F(_19_DAD_Tests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
   double r_cut = 1.5;
   std::vector<std::vector<double>> bond_cutoffs(

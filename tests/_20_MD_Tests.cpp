@@ -8,7 +8,7 @@
 #include "NeighborGraph.hpp"
 #include "calculators/MDCalculator.hpp"
 
-class MDCalculatorTest : public ::testing::Test {
+class _20_MD_Tests : public ::testing::Test {
 protected:
   NeighborGraph graph;
 
@@ -26,7 +26,7 @@ protected:
   }
 };
 
-TEST_F(MDCalculatorTest, ComputeMotif) {
+TEST_F(_20_MD_Tests, ComputeMotif) {
   size_t max_ring_size = 5;
   Histogram f_motif = MDCalculator::calculate(graph, max_ring_size);
 
@@ -48,6 +48,6 @@ TEST_F(MDCalculatorTest, ComputeMotif) {
   EXPECT_EQ(partial[2], 0.0);
 }
 
-TEST_F(MDCalculatorTest, InvalidMaxRingSize) {
+TEST_F(_20_MD_Tests, InvalidMaxRingSize) {
   EXPECT_THROW(MDCalculator::calculate(graph, 2), std::invalid_argument);
 }

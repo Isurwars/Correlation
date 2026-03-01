@@ -52,7 +52,7 @@ export component RunAnalysisCard inherits FilledCard {
                 root.options_toggled(root.advanced_options_visible);
             }
             Rectangle {
-                background: #d6d690;
+                background: MaterialPalette.surface_container_highest;
                 border-radius: MaterialStyleMetrics.border_radius_8;
                 HorizontalLayout {
                     alignment: center;
@@ -63,7 +63,6 @@ export component RunAnalysisCard inherits FilledCard {
                         text: "Options";
                         vertical-alignment: center;
                         style: MaterialTypography.label_large;
-                        color: black;
                     }
 
                     Icon {
@@ -72,14 +71,13 @@ export component RunAnalysisCard inherits FilledCard {
                         width: 25px;
                         height: 25px;
                         vertical-alignment: center;
-                        colorize: black;
                     }
                 }
             }
         }
 
         // Frame Range
-            TouchArea {
+        TouchArea {
             start_frame := TextField {
                 enabled: root.file_loaded;
                 width: 100%;
@@ -97,30 +95,8 @@ export component RunAnalysisCard inherits FilledCard {
             }
         }
 
-        // Action Buttons and Progress Bar
-
-            LinearProgressIndicator {
-            width: 100%;
-            height: 8px;
-            progress: root.progress;
-            indeterminate: false;
-        }
-
-        analysis_area := TouchArea {
-            FilledButton {
-                width: 100%;
-                background: #70d270;
-                text: root.analysis_running ? "In Progress..." : "Run Analysis";
-                enabled: root.file_loaded && !root.analysis_running;
-                clicked => {
-                    root.run_analysis();
-                }
-            }
-        }
-
         // Export Options
-
-            csv_area := TouchArea {
+        csv_area := TouchArea {
             HorizontalLayout {
                 padding: 0px;
                 MaterialText {
@@ -158,11 +134,29 @@ export component RunAnalysisCard inherits FilledCard {
             }
         }
 
+        // Action Buttons and Progress Bar
+        LinearProgressIndicator {
+            width: 100%;
+            height: 8px;
+            progress: root.progress;
+            indeterminate: false;
+        }
+
+        analysis_area := TouchArea {
+            FilledButton {
+                width: 100%;
+                text: root.analysis_running ? "In Progress..." : "Run Analysis";
+                enabled: root.file_loaded && !root.analysis_running;
+                clicked => {
+                    root.run_analysis();
+                }
+            }
+        }
+
         write_area := TouchArea {
             FilledButton {
                 width: 100%;
-                background: #e57373;
-                text: "Save";
+                text: "Save Results";
                 enabled: root.analysis_done && !root.analysis_running;
                 clicked => {
                     root.write_files();

@@ -55,10 +55,22 @@ export component AppWindow inherits Window {
     in-out property <string> q_bin_width;
     in-out property <string> r_int_max;
     in-out property <string> angle_bin_width;
+    in-out property <string> dihedral_bin_width;
+    in-out property <string> max_ring_size;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel: -1;
     in-out property <string> min_frame: "1";
     in-out property <string> max_frame: "End";
+
+    // Analysis selection toggles
+    in-out property <bool> run_rdf: true;
+    in-out property <bool> run_sq: true;
+    in-out property <bool> run_pad: false;
+    in-out property <bool> run_dad: false;
+    in-out property <bool> run_vacf: false;
+    in-out property <bool> run_md: false;
+    in-out property <bool> run_xrd: false;
+    in-out property <bool> run_vdos: false;
 
     property <bool> show_advanced_options: false;
     property <length> window_width: (root.file_loaded ? 392px : 198px) + (root.show_advanced_options ? 220px : 0px);
@@ -154,6 +166,7 @@ export component AppWindow inherits Window {
                     }
                     options_toggled(visible) => {
                         if (!visible) {
+                            options_card.analyses_expanded = false;
                             options_card.rdf_expanded = false;
                             options_card.sq_expanded = false;
                             options_card.angle_expanded = false;
@@ -176,12 +189,23 @@ export component AppWindow inherits Window {
                 spacing: MaterialStyleMetrics.spacing_4;
 
                 options_card := OptionsCard {
+                    file_loaded <=> root.file_loaded;
+                    run_rdf <=> root.run_rdf;
+                    run_sq <=> root.run_sq;
+                    run_pad <=> root.run_pad;
+                    run_dad <=> root.run_dad;
+                    run_vacf <=> root.run_vacf;
+                    run_md <=> root.run_md;
+                    run_xrd <=> root.run_xrd;
+                    run_vdos <=> root.run_vdos;
                     r_max <=> root.r_max;
                     r_bin_width <=> root.r_bin_width;
                     q_max <=> root.q_max;
                     q_bin_width <=> root.q_bin_width;
                     r_int_max <=> root.r_int_max;
                     angle_bin_width <=> root.angle_bin_width;
+                    dihedral_bin_width <=> root.dihedral_bin_width;
+                    max_ring_size <=> root.max_ring_size;
                     smoothing <=> root.smoothing;
                     smoothing_sigma <=> root.smoothing_sigma;
                     smoothing_kernel <=> root.smoothing_kernel;
