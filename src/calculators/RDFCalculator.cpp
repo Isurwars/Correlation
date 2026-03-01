@@ -83,6 +83,9 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       auto &partial_hist = H_r.partials[key];
       partial_hist.assign(num_bins, 0.0);
 
+      // First Pass: Accumulate the raw distance counts H(r) into histogram
+      // bins. Distances are pre-computed in
+      // `StructureAnalyzer::distance_tensor_`.
       for (const auto &dist : neighbors->distances()[i][j]) {
         if (dist < r_max) {
           size_t bin = static_cast<size_t>(dist / r_bin_width);
@@ -91,6 +94,10 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
           }
         }
       }
+
+      // For self-pairs (A-A), each pair is counted once in the upper triangular
+      // DistanceTensor. We multiply by 2 to account for both A_1 -> A_2 and A_2
+      // -> A_1 interactions.
       if (i == j) {
         for (size_t k = 0; k < num_bins; ++k) {
           partial_hist[k] *= 2.0;
@@ -117,19 +124,29 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       J_r.partials[key].assign(num_bins, 0.0);
       J_r.partials[inversekey].assign(num_bins, 0.0);
 
+      // Second Pass: Normalize the raw counts H(r) into target distribution
+      // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
+      // The r^2 term is applied inside the loop.
       const double g_norm_constant = (V) / (4.0 * constants::pi * dr * Ni * Nj);
       const double rho_j = Nj / V;
 
       for (size_t k = 0; k < num_bins; ++k) {
         const double r = g_r.bins[k];
-        if (r < 1e-9)
+        if (r < 1e-9) // Prevent division by zero at the origin
           continue;
 
         const double H = H_ij[k];
 
+        // Partial Pair Correlation Function: g_{ij}(r) = H_{ij}(r) * V / (4 *
+        // pi * r^2 * dr * N_i * N_j)
         g_r.partials[key][k] = H * g_norm_constant / (r * r);
+
+        // Radial Distribution Function for Coordination Number
         J_r.partials[key][k] = H / (Ni * dr);
         J_r.partials[inversekey][k] = H / (Nj * dr);
+
+        // Reduced Pair Distribution Function: G_{ij}(r) = 4 * \pi * r * \rho_j
+        // * (g_{ij}(r) - 1)
         G_r.partials[key][k] =
             4.0 * constants::pi * rho_j * r * (g_r.partials[key][k] - 1.0);
       }

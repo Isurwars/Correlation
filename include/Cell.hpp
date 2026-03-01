@@ -75,28 +75,59 @@ public:
   void setLatticeParameters(std::array<double, 6>);
 
   // Lattice Vectors
+  /**
+   * @brief Gets the lattice vectors as a 3x3 matrix.
+   * @return Constant reference to the lattice vectors matrix.
+   */
   [[nodiscard]] const linalg::Matrix3<double> &latticeVectors() const noexcept {
     return lattice_vectors_;
   }
+
+  /**
+   * @brief Gets the inverse lattice vectors as a 3x3 matrix.
+   * Useful for converting Cartesian coordinates to fractional coordinates.
+   * @return Constant reference to the inverse lattice vectors matrix.
+   */
   [[nodiscard]] const linalg::Matrix3<double> &
   inverseLatticeVectors() const noexcept {
     return inverse_lattice_vectors_;
   }
 
   // Volume
+  /**
+   * @brief Gets the volume of the simulation cell.
+   * @return The volume value in cubic Angstroms (typically).
+   */
   [[nodiscard]] const double &volume() const noexcept { return volume_; }
 
   // Atoms
+  /**
+   * @brief Gets the list of atoms in the cell.
+   * @return Constant reference to the vector of atoms.
+   */
   [[nodiscard]] const std::vector<Atom> &atoms() const noexcept {
     return atoms_;
   }
 
   // Elements
+  /**
+   * @brief Gets the list of unique chemical elements in the cell.
+   * @return Constant reference to the vector of elements.
+   */
   [[nodiscard]] const std::vector<Element> &elements() const {
     return elements_;
   }
 
+  /**
+   * @brief Gets the total number of atoms in the cell.
+   * @return The number of atoms.
+   */
   [[nodiscard]] size_t atomCount() const noexcept { return atoms_.size(); }
+
+  /**
+   * @brief Checks whether the cell contains no atoms.
+   * @return True if empty, false otherwise.
+   */
   [[nodiscard]] bool isEmpty() const noexcept { return atoms_.empty(); }
 
   /**

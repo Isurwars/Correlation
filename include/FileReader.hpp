@@ -14,17 +14,20 @@
 // structure and trajectory files. It delegates to specialized readers.
 namespace FileReader {
 
-// A type-safe enum to specify the format of a structure file.
+/**
+ * @brief A type-safe enum to specify the format of a structure or trajectory
+ * file.
+ */
 enum class FileType {
-  Car,
-  Cell,
-  Cif,
-  OnetepDat,
-  Arc,
-  LammpsDump,
-  CastepMd,
-  Outmol,
-  Unknown
+  Car,        ///< Accelrys .car file format
+  Cell,       ///< CASTEP .cell physical structure format
+  Cif,        ///< Crystallographic Information File (.cif)
+  OnetepDat,  ///< ONETEP input/output .dat format
+  Arc,        ///< Accelrys .arc trajectory format
+  LammpsDump, ///< LAMMPS atomic dump trajectory format
+  CastepMd,   ///< CASTEP molecular dynamics .md trajectory format
+  Outmol,     ///< DMol3 .outmol format
+  Unknown     ///< Unrecognized or unsupported file format
 };
 
 /**

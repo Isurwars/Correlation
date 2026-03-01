@@ -13,6 +13,9 @@
 
 using AtomID = std::uint32_t;
 
+/**
+ * @brief Represents a unique integer ID for an element type.
+ */
 struct ElementID {
   int value;
   constexpr bool operator==(const ElementID other) const {
@@ -20,6 +23,9 @@ struct ElementID {
   };
 };
 
+/**
+ * @brief Represents a chemical element with its symbol and unique ID.
+ */
 struct Element {
   std::string symbol;
   ElementID id{-1};
@@ -60,6 +66,11 @@ public:
    * @return The atom ID.
    */
   [[nodiscard]] AtomID id() const noexcept { return id_; }
+
+  /**
+   * @brief Sets the unique ID of the atom.
+   * @param num The new atom ID.
+   */
   void setID(std::uint32_t num) { id_ = num; }
 
   /**
@@ -69,6 +80,11 @@ public:
   [[nodiscard]] const linalg::Vector3<double> &position() const noexcept {
     return position_;
   }
+
+  /**
+   * @brief Sets the position of the atom.
+   * @param pos The new position vector.
+   */
   void setPosition(linalg::Vector3<double> pos) { position_ = pos; }
 
   /**
@@ -76,6 +92,11 @@ public:
    * @return A const reference to the Element struct.
    */
   [[nodiscard]] const Element &element() const { return element_; }
+
+  /**
+   * @brief Sets the element type of the atom.
+   * @param ele The new Element struct.
+   */
   void setElement(const Element &ele) { element_ = ele; }
 
   /**

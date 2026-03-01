@@ -10,12 +10,12 @@
 #include "../include/Cell.hpp"
 
 class Trajectory {
-  /* --------------------------------------------------------------------------
-   * This class stores a series of snapshots of a system, ensuring that the
-   * number of atoms and their identities are consistent across all frames. It
-   * provides methods to analyze the dynamic properties of the system, such as
-   * velocity distributions.
-   * --------------------------------------------------------------------------
+  /**
+   * @brief This class stores a series of snapshots of a system.
+   *
+   * It ensures that the number of atoms and their identities are consistent
+   * across all frames. It provides methods to analyze dynamic properties
+   * of the system, such as velocity distributions.
    */
 
 public:
@@ -29,26 +29,50 @@ public:
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
+  /**
+   * @brief Gets a mutable reference to the frames.
+   * @return A vector of Cell objects representing the frames.
+   */
   [[nodiscard]] std::vector<Cell> &getFrames() { return frames_; }
+
+  /**
+   * @brief Gets a constant reference to the frames.
+   * @return A vector of Cell objects representing the frames.
+   */
   [[nodiscard]] const std::vector<Cell> &getFrames() const { return frames_; }
+
+  /**
+   * @brief Gets the total number of frames in the trajectory.
+   * @return The number of frames.
+   */
   [[nodiscard]] size_t getFrameCount() const { return frames_.size(); }
+
+  /**
+   * @brief Gets the time step between frames.
+   * @return The time step in simulation units.
+   */
   [[nodiscard]] double getTimeStep() const { return time_step_; }
+
+  /**
+   * @brief Sets the time step between frames.
+   * @param dt The new time step value.
+   */
   void setTimeStep(double dt) { time_step_ = dt; }
 
   /**
-   * @brief get a bond cut off for two given elements.
-   *@param type1
-   *@param type2
-   *@return The linear bond cutoff distance.
-   **/
+   * @brief Gets a linear bond cutoff distance for two given element types.
+   * @param type1 ID of the first element type.
+   * @param type2 ID of the second element type.
+   * @return The linear bond cutoff distance.
+   */
   [[nodiscard]] double getBondCutoff(int type1, int type2) const;
 
   /**
-   * @brief get a squared bond cut off for two given elements.
-   *@param type1
-   *@param type2
-   *@return The squared bond cutoff distance.
-   **/
+   * @brief Gets a squared bond cutoff distance for two given element types.
+   * @param type1 ID of the first element type.
+   * @param type2 ID of the second element type.
+   * @return The squared bond cutoff distance.
+   */
   [[nodiscard]] double getBondCutoffSQ(int type1, int type2) const;
 
   void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) {
@@ -76,11 +100,19 @@ public:
    */
   void calculateVelocities();
 
+  /**
+   * @brief Gets the pre-calculated velocities for all atoms.
+   * @return A vector of velocity vectors, indexed by `[frame][atom_index]`.
+   */
   [[nodiscard]] const std::vector<std::vector<linalg::Vector3<double>>> &
   getVelocities() const {
     return velocities_;
   }
 
+  /**
+   * @brief Gets the matrix of squared bond cutoffs for element pairs.
+   * @return The squared bond cutoff matrix.
+   */
   [[nodiscard]] const std::vector<std::vector<double>> &
   getBondCutoffsSQ() const {
     return bond_cutoffs_sq_;

@@ -11,6 +11,13 @@ namespace calculators {
 
 namespace {
 
+/**
+ * @brief A helper to recursively trace paths back from a target node to the
+ * root.
+ *
+ * Used during the Breadth-First Search (BFS) after a cyclic cross-edge is found
+ * to reconstruct the two halves of the ring.
+ */
 void get_paths(size_t node, size_t root,
                const std::vector<std::vector<AtomID>> &parents,
                std::vector<AtomID> &current_path,
@@ -28,6 +35,18 @@ void get_paths(size_t node, size_t root,
   current_path.pop_back();
 }
 
+/**
+ * @brief Breadth-First Search algorithm to find all shortest chordless cycles
+ * (rings).
+ *
+ * The algorithm iterates through each node as a root, performing a level-order
+ * traversal. When the BFS encounters an edge connecting two nodes at the same
+ * depth (or depth + 1) without an immediate parent relationship, it identifies
+ * a "cross-edge" completing a ring.
+ *
+ * @param graph The atomic neighbor graph.
+ * @param max_size The maximum chordless ring size.
+ */
 std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
                                                      size_t max_size) {
   std::vector<std::vector<AtomID>> all_cycles;
@@ -35,6 +54,8 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
     return all_cycles;
 
   size_t num_nodes = graph.nodeCount();
+  // We hoist memory allocations out of the search loops to drastically improve
+  // performance.
   std::vector<int> dist(num_nodes, -1);
   std::vector<std::vector<AtomID>> parents(num_nodes);
   std::vector<size_t> visited;
