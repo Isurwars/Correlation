@@ -38,12 +38,16 @@ export component RunAnalysisCard inherits FilledCard {
     out property <bool> analysis_area_has_hover: analysis_area.has-hover;
     out property <bool> hdf5_area_has_hover: hdf5_area.has-hover;
     out property <bool> csv_area_has_hover: csv_area.has-hover;
+    out property <bool> options_area_has_hover: options_area.has-hover;
+    out property <bool> start_frame_has_hover: start_frame_area.has-hover;
+    out property <bool> end_frame_has_hover: end_frame_area.has-hover;
+    out property <bool> write_area_has_hover: write_area.has-hover;
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
 
-        TouchArea {
+        options_area := TouchArea {
             width: 100%;
             height: 40px;
             mouse-cursor: pointer;
@@ -79,7 +83,7 @@ export component RunAnalysisCard inherits FilledCard {
         }
 
         // Frame Range
-        TouchArea {
+        start_frame_area := TouchArea {
             start_frame := TextField {
                 enabled: root.file_loaded;
                 width: 100%;
@@ -88,7 +92,7 @@ export component RunAnalysisCard inherits FilledCard {
             }
         }
 
-        TouchArea {
+        end_frame_area := TouchArea {
             end_frame := TextField {
                 enabled: root.file_loaded;
                 width: 100%;

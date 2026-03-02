@@ -34,6 +34,12 @@ export component AppToolTips inherits Rectangle {
     in property <bool> vacf_cb_hover;
     in property <bool> vdos_cb_hover;
 
+    in property <bool> options_area_hover;
+    in property <bool> start_frame_hover;
+    in property <bool> end_frame_hover;
+    in property <bool> analysis_area_hover;
+    in property <bool> write_area_hover;
+
     ToolTip {
         x: mouse_x + 20px;
         y: mouse_y + 20px;
@@ -179,5 +185,40 @@ export component AppToolTips inherits Rectangle {
         y: mouse_y + 20px;
         text: "Enable calculation of the Vibrational Density of States (vDoS).";
         visible: vdos_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Toggle advanced analysis options.";
+        visible: options_area_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "First frame to include in the analysis.";
+        visible: start_frame_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Last frame to include in the analysis (use 'End' for the final frame).";
+        visible: end_frame_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Start the selected analyses.";
+        visible: analysis_area_hover;
+    }
+
+    ToolTip {
+        x: mouse_x + 20px;
+        y: mouse_y + 20px;
+        text: "Export the analysis results to files.";
+        visible: write_area_hover;
     }
 }
