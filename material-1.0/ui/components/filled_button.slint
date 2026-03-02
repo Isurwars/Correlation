@@ -13,8 +13,9 @@ export component FilledButton {
     in property <string> tooltip <=> base.tooltip;
     in property <bool> enabled <=> base.enabled;
 
-    // Optional background color override
+    // Optional background color and text color override
     in property <brush> background: MaterialPalette.primary;
+    in property <brush> text_color: MaterialPalette.on_primary;
 
     callback clicked <=> base.clicked;
 
@@ -34,7 +35,7 @@ export component FilledButton {
 
     base := BaseButton {
         border_radius: elevation.border_radius;
-        color: MaterialPalette.on_primary;
+        color: root.text_color;
     }
 
     states [

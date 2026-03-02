@@ -108,6 +108,8 @@ export component RunAnalysisCard inherits FilledCard {
                 }
 
                 CheckBox {
+                    width: 24px;
+                    height: 24px;
                     enabled: root.file_loaded;
                     check_state: root.use_csv ? CheckState.checked : CheckState.unchecked;
                     checked_state_changed(s) => {
@@ -127,6 +129,8 @@ export component RunAnalysisCard inherits FilledCard {
                 }
 
                 CheckBox {
+                    width: 24px;
+                    height: 24px;
                     enabled: root.file_loaded;
                     check_state: root.use_hdf5 ? CheckState.checked : CheckState.unchecked;
                     checked_state_changed(s) => {
@@ -150,6 +154,7 @@ export component RunAnalysisCard inherits FilledCard {
                 text: root.analysis_running ? "In Progress..." : "Run Analysis";
                 enabled: root.file_loaded && !root.analysis_running;
                 background: MaterialPalette.run;
+                text_color: MaterialPalette.on_run;
                 clicked => {
                     root.run_analysis();
                 }
@@ -162,6 +167,7 @@ export component RunAnalysisCard inherits FilledCard {
                 text: "Save Results";
                 enabled: root.analysis_done && !root.analysis_running;
                 background: MaterialPalette.error;
+                text_color: MaterialPalette.on_error;
                 clicked => {
                     root.write_files();
                 }
