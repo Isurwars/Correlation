@@ -18,6 +18,10 @@ export global MaterialPalette {
     out property <color> on_tertiary: root.scheme.onTertiary;
     out property <color> tertiary_container: root.scheme.tertiaryContainer;
     out property <color> on_tertiary_container: root.scheme.onTertiaryContainer;
+    out property <color> warning: root.scheme.warning;
+    out property <color> on_warning: root.scheme.onWarning;
+    out property <color> run: root.scheme.run;
+    out property <color> on_run: root.scheme.onRun;
     out property <color> error: root.scheme.error;
     out property <color> on_error: root.scheme.onError;
     out property <color> error_container: root.scheme.errorContainer;
@@ -79,7 +83,11 @@ export global MaterialPalette {
             onTertiary: rgb(255, 255, 255),
             tertiaryContainer: rgb(252, 215, 251),
             onTertiaryContainer: rgb(41, 19, 45),
-            error: rgb(186, 26, 26),
+            warning: rgb(255, 235, 59),
+            onWarning: rgb(62, 57, 0),
+            run: rgb(129, 199, 132),
+            onRun: rgb(0, 51, 0),
+            error: rgb(244, 67, 54),
             onError: rgb(255, 255, 255),
             errorContainer: rgb(255, 218, 214),
             onErrorContainer: rgb(65, 0, 2),
@@ -130,8 +138,12 @@ export global MaterialPalette {
             onTertiary: rgb(64, 40, 67),
             tertiaryContainer: rgb(88, 62, 91),
             onTertiaryContainer: rgb(252, 215, 251),
-            error: rgb(255, 180, 171),
-            onError: rgb(105, 0, 5),
+            warning: rgb(255, 214, 0),
+            onWarning: rgb(41, 35, 0),
+            run: rgb(76, 175, 80),
+            onRun: rgb(0, 41, 0),
+            error: rgb(229, 57, 53),
+            onError: rgb(255, 255, 255),
             errorContainer: rgb(147, 0, 10),
             onErrorContainer: rgb(255, 218, 214),
             background: rgb(17, 19, 24),
