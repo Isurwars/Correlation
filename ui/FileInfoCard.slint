@@ -61,23 +61,9 @@ export component FileInfoCard inherits FilledCard {
                 }
             }
 
-            atoms_layout := TouchArea {
-                HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_2;
-                    MaterialText {
-                        text: "Total Atoms:";
-                        horizontal-stretch: 1;
-                    }
-
-                    MaterialText {
-                        text: root.total_atoms;
-                        horizontal-alignment: right;
-                    }
-                }
-            }
-
             removed_layout := TouchArea {
-                if (root.removed_frames_count > 0): HorizontalLayout {
+                height: root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
+                HorizontalLayout {
                     padding: MaterialStyleMetrics.padding_2;
                     MaterialText {
                         text: "Removed Frames:";
@@ -94,14 +80,37 @@ export component FileInfoCard inherits FilledCard {
             }
 
             time_step_area := TouchArea {
-                if (root.num_frames > 0): HorizontalLayout {
+                HorizontalLayout {
                     padding: MaterialStyleMetrics.padding_2;
                     TextField {
                         label: "Time Step (fs)";
                         horizontal-stretch: 1;
                         text <=> root.time_step;
                         height: MaterialStyleMetrics.size_40;
+                        enabled: root.num_frames > 0;
                     }
+                }
+            }
+
+            atoms_layout := TouchArea {
+                HorizontalLayout {
+                    padding: MaterialStyleMetrics.padding_2;
+                    MaterialText {
+                        text: "Total Atoms:";
+                        horizontal-stretch: 1;
+                    }
+
+                    MaterialText {
+                        text: root.total_atoms;
+                        horizontal-alignment: right;
+                    }
+                }
+            }
+
+            HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
+                MaterialText {
+                    text: "Atoms per element";
                 }
             }
 
