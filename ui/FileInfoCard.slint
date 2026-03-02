@@ -23,6 +23,11 @@ export component FileInfoCard inherits FilledCard {
     in property <[AtomCount]> atom_counts;
     in-out property <string> time_step;
 
+    out property <bool> frames_hover: frames_layout.has-hover;
+    out property <bool> atoms_hover: atoms_layout.has-hover;
+    out property <bool> removed_frames_hover: removed_layout.has-hover;
+    out property <bool> time_step_hover: time_step_area.has-hover;
+
     height: root.file_loaded ? root.preferred-height : 0px;
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
@@ -41,54 +46,62 @@ export component FileInfoCard inherits FilledCard {
                 wrap: word-wrap;
             }
 
-            HorizontalLayout {
-                padding: MaterialStyleMetrics.padding_2;
-                MaterialText {
-                    text: "Frames:";
-                    horizontal-stretch: 1;
-                }
+            frames_layout := TouchArea {
+                HorizontalLayout {
+                    padding: MaterialStyleMetrics.padding_2;
+                    MaterialText {
+                        text: "Frames:";
+                        horizontal-stretch: 1;
+                    }
 
-                MaterialText {
-                    text: root.num_frames;
-                    horizontal-alignment: right;
-                }
-            }
-
-            HorizontalLayout {
-                padding: MaterialStyleMetrics.padding_2;
-                MaterialText {
-                    text: "Total Atoms:";
-                    horizontal-stretch: 1;
-                }
-
-                MaterialText {
-                    text: root.total_atoms;
-                    horizontal-alignment: right;
+                    MaterialText {
+                        text: root.num_frames;
+                        horizontal-alignment: right;
+                    }
                 }
             }
 
-            if (root.removed_frames_count > 0): HorizontalLayout {
-                padding: MaterialStyleMetrics.padding_2;
-                MaterialText {
-                    text: "Removed Frames:";
-                    horizontal-stretch: 1;
-                    color: MaterialPalette.error;
-                }
+            atoms_layout := TouchArea {
+                HorizontalLayout {
+                    padding: MaterialStyleMetrics.padding_2;
+                    MaterialText {
+                        text: "Total Atoms:";
+                        horizontal-stretch: 1;
+                    }
 
-                MaterialText {
-                    text: root.removed_frames_count;
-                    horizontal-alignment: right;
-                    color: MaterialPalette.error;
+                    MaterialText {
+                        text: root.total_atoms;
+                        horizontal-alignment: right;
+                    }
                 }
             }
 
-            if (root.num_frames > 0): HorizontalLayout {
-                padding: MaterialStyleMetrics.padding_2;
-                TextField {
-                    label: "Time Step (fs)";
-                    horizontal-stretch: 1;
-                    text <=> root.time_step;
-                    height: MaterialStyleMetrics.size_40;
+            removed_layout := TouchArea {
+                if (root.removed_frames_count > 0): HorizontalLayout {
+                    padding: MaterialStyleMetrics.padding_2;
+                    MaterialText {
+                        text: "Removed Frames:";
+                        horizontal-stretch: 1;
+                        color: MaterialPalette.error;
+                    }
+
+                    MaterialText {
+                        text: root.removed_frames_count;
+                        horizontal-alignment: right;
+                        color: MaterialPalette.error;
+                    }
+                }
+            }
+
+            time_step_area := TouchArea {
+                if (root.num_frames > 0): HorizontalLayout {
+                    padding: MaterialStyleMetrics.padding_2;
+                    TextField {
+                        label: "Time Step (fs)";
+                        horizontal-stretch: 1;
+                        text <=> root.time_step;
+                        height: MaterialStyleMetrics.size_40;
+                    }
                 }
             }
 

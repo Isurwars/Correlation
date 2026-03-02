@@ -23,6 +23,10 @@ export component AppToolTips inherits Rectangle {
     in property <bool> kernel_hover;
     in property <bool> hdf5_hover;
     in property <bool> csv_hover;
+    in property <bool> frames_hover;
+    in property <bool> atoms_hover;
+    in property <bool> removed_frames_hover;
+    in property <bool> time_step_hover;
     in property <bool> dihedral_bin_hover;
     in property <bool> ring_size_hover;
     in property <bool> rdf_cb_hover;
@@ -227,6 +231,42 @@ export component AppToolTips inherits Rectangle {
         parent_height: root.height;
         text: "Enable calculation of the Vibrational Density of States (vDoS).";
         visible: vdos_cb_hover;
+    }
+
+    ToolTip {
+        mouse_x: root.mouse_x;
+        mouse_y: root.mouse_y;
+        parent_width: root.width;
+        parent_height: root.height;
+        text: "Number of structural frames parsed from the file.";
+        visible: frames_hover;
+    }
+
+    ToolTip {
+        mouse_x: root.mouse_x;
+        mouse_y: root.mouse_y;
+        parent_width: root.width;
+        parent_height: root.height;
+        text: "Total number of atoms found in a single frame.";
+        visible: atoms_hover;
+    }
+
+    ToolTip {
+        mouse_x: root.mouse_x;
+        mouse_y: root.mouse_y;
+        parent_width: root.width;
+        parent_height: root.height;
+        text: "Number of frames skipped due to parsing errors or missing structural data.";
+        visible: removed_frames_hover;
+    }
+
+    ToolTip {
+        mouse_x: root.mouse_x;
+        mouse_y: root.mouse_y;
+        parent_width: root.width;
+        parent_height: root.height;
+        text: "Time interval between parsed frames in femtoseconds (fs). Useful for dynamic calculations.";
+        visible: time_step_hover;
     }
 
     ToolTip {
