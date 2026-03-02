@@ -75,6 +75,15 @@ export component OptionsCard inherits FilledCard {
     out property <bool> sigma_has_hover: sigma_area.has-hover;
     out property <bool> kernel_has_hover: kernel_area.has-hover;
 
+    out property <bool> rdf_cb_has_hover: rdf_cb_area.has-hover;
+    out property <bool> sq_cb_has_hover: sq_cb_area.has-hover;
+    out property <bool> xrd_cb_has_hover: xrd_cb_area.has-hover;
+    out property <bool> pad_cb_has_hover: pad_cb_area.has-hover;
+    out property <bool> dad_cb_has_hover: dad_cb_area.has-hover;
+    out property <bool> md_cb_has_hover: md_cb_area.has-hover;
+    out property <bool> vacf_cb_has_hover: vacf_cb_area.has-hover;
+    out property <bool> vdos_cb_has_hover: vdos_cb_area.has-hover;
+
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_4;
         spacing: MaterialStyleMetrics.spacing_4;
@@ -124,7 +133,7 @@ export component OptionsCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_4;
             padding_left: MaterialStyleMetrics.spacing_8;
 
-            TouchArea {
+            rdf_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -144,7 +153,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            sq_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -164,7 +173,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            xrd_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -184,7 +193,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            pad_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -204,7 +213,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            dad_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -224,7 +233,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            md_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -244,7 +253,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            vacf_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;
@@ -264,7 +273,7 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            TouchArea {
+            vdos_cb_area := TouchArea {
                 HorizontalLayout {
                     CheckBox {
                         width: 24px;

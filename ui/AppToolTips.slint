@@ -23,6 +23,16 @@ export component AppToolTips inherits Rectangle {
     in property <bool> kernel_hover;
     in property <bool> hdf5_hover;
     in property <bool> csv_hover;
+    in property <bool> dihedral_bin_hover;
+    in property <bool> ring_size_hover;
+    in property <bool> rdf_cb_hover;
+    in property <bool> sq_cb_hover;
+    in property <bool> xrd_cb_hover;
+    in property <bool> pad_cb_hover;
+    in property <bool> dad_cb_hover;
+    in property <bool> md_cb_hover;
+    in property <bool> vacf_cb_hover;
+    in property <bool> vdos_cb_hover;
 
     ToolTip {
         x: mouse_x + 20px;
@@ -46,7 +56,7 @@ export component AppToolTips inherits Rectangle {
     }
 
     ToolTip {
-        x: mouse_x + 20px;
+        x: mouse_x - 240px;
         y: mouse_y + 20px;
         text: "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å.";
         visible: r_max_hover;
@@ -60,14 +70,14 @@ export component AppToolTips inherits Rectangle {
     }
 
     ToolTip {
-        x: mouse_x + 20px;
+        x: mouse_x - 240px;
         y: mouse_y + 20px;
         text: "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹";
         visible: q_max_hover;
     }
 
     ToolTip {
-        x: mouse_x + 20px;
+        x: mouse_x - 240px;
         y: mouse_y + 20px;
         text: "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°.";
         visible: theta_bin_hover;
@@ -88,7 +98,7 @@ export component AppToolTips inherits Rectangle {
     }
 
     ToolTip {
-        x: mouse_x + 20px;
+        x: mouse_x - 240px;
         y: mouse_y + 20px;
         text: "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01.";
         visible: sigma_hover;
@@ -99,5 +109,75 @@ export component AppToolTips inherits Rectangle {
         y: mouse_y + 20px;
         text: "The kernel used by the kernel smoother. The recommended kernel is the Gaussian kernel.";
         visible: kernel_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Bin width used to calculate the histograms for the Dihedral-Angle Distribution. The recommended bin is 1.0°.";
+        visible: dihedral_bin_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Maximum ring size to search for in topological motif analysis.";
+        visible: ring_size_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of Radial Distribution Functions: g(r), J(r), and G(r).";
+        visible: rdf_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of the Structure Factor S(Q).";
+        visible: sq_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of the X-Ray Diffraction pattern (XRD).";
+        visible: xrd_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of the Plane-Angle Distribution (PAD).";
+        visible: pad_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of the Dihedral-Angle Distribution (DAD).";
+        visible: dad_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable search for Topological Motif Rings.";
+        visible: md_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of the Velocity Autocorrelation Function (VACF).";
+        visible: vacf_cb_hover;
+    }
+
+    ToolTip {
+        x: mouse_x - 240px;
+        y: mouse_y + 20px;
+        text: "Enable calculation of the Vibrational Density of States (vDoS).";
+        visible: vdos_cb_hover;
     }
 }
