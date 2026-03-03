@@ -10,29 +10,9 @@ import {
     FilledCard,
     MaterialText,
     TextField,
+    InfoRow,
 } from "@material";
 import { AtomCount } from "Types.slint";
-
-component InfoRow inherits TouchArea {
-    in property <string> label;
-    in property <string> value;
-    in property <color> text-color: MaterialPalette.on-surface;
-
-    HorizontalLayout {
-        padding: MaterialStyleMetrics.padding_2;
-        MaterialText {
-            text: root.label;
-            horizontal-stretch: 1;
-            color: root.text-color;
-        }
-
-        MaterialText {
-            text: root.value;
-            horizontal-alignment: right;
-            color: root.text-color;
-        }
-    }
-}
 
 export component FileInfoCard inherits FilledCard {
     visible: root.file_loaded;

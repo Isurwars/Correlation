@@ -1,0 +1,24 @@
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialText } from "./material_text.slint";
+
+export component InfoRow inherits TouchArea {
+    in property <string> label;
+    in property <string> value;
+    in property <color> text-color: MaterialPalette.on-surface;
+
+    HorizontalLayout {
+        padding: MaterialStyleMetrics.padding_2;
+        MaterialText {
+            text: root.label;
+            horizontal-stretch: 1;
+            color: root.text-color;
+        }
+
+        MaterialText {
+            text: root.value;
+            horizontal-alignment: right;
+            color: root.text-color;
+        }
+    }
+}
