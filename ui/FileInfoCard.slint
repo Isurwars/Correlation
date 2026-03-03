@@ -13,6 +13,27 @@ import {
 } from "@material";
 import { AtomCount } from "Types.slint";
 
+component InfoRow inherits TouchArea {
+    in property <string> label;
+    in property <string> value;
+    in property <color> text-color: MaterialPalette.on-surface;
+
+    HorizontalLayout {
+        padding: MaterialStyleMetrics.padding_2;
+        MaterialText {
+            text: root.label;
+            horizontal-stretch: 1;
+            color: root.text-color;
+        }
+
+        MaterialText {
+            text: root.value;
+            horizontal-alignment: right;
+            color: root.text-color;
+        }
+    }
+}
+
 export component FileInfoCard inherits FilledCard {
     visible: root.file_loaded;
     in-out property <string> file_status_text;
@@ -46,37 +67,16 @@ export component FileInfoCard inherits FilledCard {
                 wrap: word-wrap;
             }
 
-            frames_layout := TouchArea {
-                HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_2;
-                    MaterialText {
-                        text: "Frames:";
-                        horizontal-stretch: 1;
-                    }
-
-                    MaterialText {
-                        text: root.num_frames;
-                        horizontal-alignment: right;
-                    }
-                }
+            frames_layout := InfoRow {
+                label: "Frames:";
+                value: root.num_frames;
             }
 
-            removed_layout := TouchArea {
+            removed_layout := InfoRow {
                 height: root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
-                HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_2;
-                    MaterialText {
-                        text: "Removed Frames:";
-                        horizontal-stretch: 1;
-                        color: MaterialPalette.error;
-                    }
-
-                    MaterialText {
-                        text: root.removed_frames_count;
-                        horizontal-alignment: right;
-                        color: MaterialPalette.error;
-                    }
-                }
+                label: "Removed Frames:";
+                value: root.removed_frames_count;
+                text-color: MaterialPalette.error;
             }
 
             time_step_area := TouchArea {
@@ -92,19 +92,9 @@ export component FileInfoCard inherits FilledCard {
                 }
             }
 
-            atoms_layout := TouchArea {
-                HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_2;
-                    MaterialText {
-                        text: "Total Atoms:";
-                        horizontal-stretch: 1;
-                    }
-
-                    MaterialText {
-                        text: root.total_atoms;
-                        horizontal-alignment: right;
-                    }
-                }
+            atoms_layout := InfoRow {
+                label: "Total Atoms:";
+                value: root.total_atoms;
             }
 
             HorizontalLayout {
