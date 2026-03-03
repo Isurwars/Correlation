@@ -84,25 +84,41 @@ export component RunAnalysisCard inherits FilledCard {
         }
 
         // Frame Range
-        start_frame_area := TouchArea {
-            start_frame := TextField {
-                enabled: root.file_loaded;
-                width: 100%;
-                label: "Start Frame";
-                text <=> root.min_frame;
-            }
+        MaterialText {
+            text: "Frame Range";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
         }
 
-        end_frame_area := TouchArea {
-            end_frame := TextField {
-                enabled: root.file_loaded;
-                width: 100%;
-                label: "End Frame";
-                text <=> root.max_frame;
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            start_frame_area := TouchArea {
+                start_frame := TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Start Frame";
+                    text <=> root.min_frame;
+                }
+            }
+
+            end_frame_area := TouchArea {
+                end_frame := TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "End Frame";
+                    text <=> root.max_frame;
+                }
             }
         }
 
         // Export Options
+        MaterialText {
+            text: "Export Formats";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
+        }
+
         csv_area := CheckBoxRow {
             enabled: root.file_loaded;
             check_state_bool: root.use_csv;
@@ -121,14 +137,7 @@ export component RunAnalysisCard inherits FilledCard {
             }
         }
 
-        // Action Buttons and Progress Bar
-        LinearProgressIndicator {
-            width: 100%;
-            height: 8px;
-            progress: root.progress;
-            indeterminate: false;
-        }
-
+        // Main Action Button
         analysis_area := TouchArea {
             FilledButton {
                 width: 100%;
@@ -142,6 +151,25 @@ export component RunAnalysisCard inherits FilledCard {
             }
         }
 
+        // Progress Section (Visible only when running or has progressed)
+        if root.analysis_running || root.analysis_done: VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_2;
+            MaterialText {
+                text: root.analysis_status_text;
+                color: MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+
+            LinearProgressIndicator {
+                width: 100%;
+                height: 8px;
+                progress: root.progress;
+                indeterminate: false;
+            }
+        }
+
+        // Save Results
         write_area := TouchArea {
             FilledButton {
                 width: 100%;
