@@ -45,6 +45,11 @@ export component RunAnalysisCard inherits FilledCard {
     out property <bool> end_frame_has_hover: end_frame_area.has-hover;
     out property <bool> write_area_has_hover: write_area.has-hover;
 
+    // Animated Heights
+    property <length> frame_text_height: root.num_frames > 1 ? 24px : 0px;
+    property <length> frame_range_height: root.num_frames > 1 ? 40px : 0px;
+    property <length> progress_height: (root.analysis_running || root.analysis_done) ? 45px : 0px;
+
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
@@ -89,14 +94,30 @@ export component RunAnalysisCard inherits FilledCard {
             text: "Frame Range";
             style: MaterialTypography.label_large;
             color: MaterialPalette.on_surface_variant;
-            visible: root.num_frames > 1;
-            height: root.num_frames > 1 ? self.preferred-height : 0px;
+            opacity: root.num_frames > 1 ? 1.0 : 0.0;
+            height: root.frame_text_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
         }
 
         HorizontalLayout {
             spacing: MaterialStyleMetrics.spacing_4;
-            visible: root.num_frames > 1;
-            height: root.num_frames > 1 ? self.preferred-height : 0px;
+            opacity: root.num_frames > 1 ? 1.0 : 0.0;
+            height: root.frame_range_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
 
             start_frame_area := TouchArea {
                 start_frame := TextField {
@@ -104,7 +125,11 @@ export component RunAnalysisCard inherits FilledCard {
                     width: 100%;
                     label: "Start Frame";
                     text <=> root.min_frame;
-                    height: root.num_frames > 1 ? self.preferred-height : 0px;
+                    height: root.frame_range_height;
+                    animate height {
+                        duration: 250ms;
+                        easing: ease-in-out;
+                    }
                 }
             }
 
@@ -114,7 +139,11 @@ export component RunAnalysisCard inherits FilledCard {
                     width: 100%;
                     label: "End Frame";
                     text <=> root.max_frame;
-                    height: root.num_frames > 1 ? self.preferred-height : 0px;
+                    height: root.frame_range_height;
+                    animate height {
+                        duration: 250ms;
+                        easing: ease-in-out;
+                    }
                 }
             }
         }
@@ -159,7 +188,19 @@ export component RunAnalysisCard inherits FilledCard {
         }
 
         // Progress Section (Visible only when running or has progressed)
-        if root.analysis_running || root.analysis_done: VerticalLayout {
+        VerticalLayout {
+            padding: MaterialStyleMetrics.spacing_4;
+
+            height: root.progress_height;
+            opacity: (root.analysis_running || root.analysis_done) ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             spacing: MaterialStyleMetrics.spacing_2;
             MaterialText {
                 text: root.analysis_status_text;

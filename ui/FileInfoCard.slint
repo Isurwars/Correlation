@@ -31,7 +31,11 @@ export component FileInfoCard inherits FilledCard {
     out property <bool> time_step_hover: time_step_area.has-hover;
     in-out property <bool> atoms_expanded: false;
 
-    height: root.file_loaded ? root.preferred-height : 0px;
+    property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
+    property <length> frames_height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+    property <length> removed_height: (root.num_frames > 1 && root.removed_frames_count > 0) ? MaterialStyleMetrics.size_40 : 0px;
+    property <length> time_step_height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
@@ -47,7 +51,17 @@ export component FileInfoCard inherits FilledCard {
             expanded <=> root.atoms_expanded;
         }
 
-        if root.atoms_expanded: VerticalLayout {
+        VerticalLayout {
+            height: root.atoms_height;
+            opacity: root.atoms_expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             spacing: MaterialStyleMetrics.spacing_2;
             for info in root.atom_counts: InfoRow {
                 label: info.symbol + ":";
@@ -56,30 +70,58 @@ export component FileInfoCard inherits FilledCard {
         }
 
         frames_layout := InfoRow {
-            visible: root.num_frames > 1;
-            height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+            opacity: root.num_frames > 1 ? 1.0 : 0.0;
+            height: root.frames_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             label: "Frames:";
             value: root.num_frames;
         }
 
         removed_layout := InfoRow {
-            visible: root.num_frames > 1 && root.removed_frames_count > 0;
-            height: root.num_frames > 1 && root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
+            opacity: (root.num_frames > 1 && root.removed_frames_count > 0) ? 1.0 : 0.0;
+            height: root.removed_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             label: "Removed Frames:";
             value: root.removed_frames_count;
             text-color: MaterialPalette.error;
         }
 
         time_step_area := TouchArea {
-            visible: root.num_frames > 1;
-            height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+            opacity: root.num_frames > 1 ? 1.0 : 0.0;
+            height: root.time_step_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
             HorizontalLayout {
                 padding: MaterialStyleMetrics.padding_2;
                 TextField {
                     label: "Time Step (fs)";
                     horizontal-stretch: 1;
                     text <=> root.time_step;
-                    height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+                    height: root.time_step_height;
+                    animate height {
+                        duration: 250ms;
+                        easing: ease-in-out;
+                    }
                     enabled: root.num_frames > 1;
                 }
             }
