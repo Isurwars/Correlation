@@ -16,6 +16,8 @@ import {
     Icons,
     MaterialPalette,
     ScrollView,
+    ExpandableHeader,
+    CheckBoxRow,
 } from "@material";
 import { BondCutoff } from "Types.slint";
 
@@ -90,32 +92,9 @@ export component OptionsCard inherits FilledCard {
         alignment: space-around;
         
         // 0. Select Analyses
-        TouchArea {
-            height: 48px;
-            layout_analyses := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.analyses_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Select Analyses";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.analyses_expanded = !root.analyses_expanded;
-            }
+        ExpandableHeader {
+            text: "Select Analyses";
+            expanded <=> root.analyses_expanded;
         }
 
         VerticalLayout {
@@ -133,194 +112,83 @@ export component OptionsCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_4;
             padding_left: MaterialStyleMetrics.spacing_8;
 
-            rdf_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_rdf ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_rdf = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "Radial Functions";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            rdf_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_rdf;
+                text: "Radial Functions";
+                checked_state_changed(s) => {
+                    root.run_rdf = s;
                 }
             }
 
-            sq_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_sq ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_sq = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "Structure Factor";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            sq_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_sq;
+                text: "Structure Factor";
+                checked_state_changed(s) => {
+                    root.run_sq = s;
                 }
             }
 
-            xrd_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_xrd ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_xrd = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "XRD";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            xrd_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_xrd;
+                text: "XRD";
+                checked_state_changed(s) => {
+                    root.run_xrd = s;
                 }
             }
 
-            pad_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_pad ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_pad = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "Plane-Angles";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            pad_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_pad;
+                text: "Plane-Angles";
+                checked_state_changed(s) => {
+                    root.run_pad = s;
                 }
             }
 
-            dad_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_dad ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_dad = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "Dihedral-Angles";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            dad_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_dad;
+                text: "Dihedral-Angles";
+                checked_state_changed(s) => {
+                    root.run_dad = s;
                 }
             }
 
-            md_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_md ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_md = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "Motif Rings";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            md_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_md;
+                text: "Motif Rings";
+                checked_state_changed(s) => {
+                    root.run_md = s;
                 }
             }
 
-            vacf_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_vacf ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_vacf = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "Velocity-ACF";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            vacf_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_vacf;
+                text: "Velocity-ACF";
+                checked_state_changed(s) => {
+                    root.run_vacf = s;
                 }
             }
 
-            vdos_cb_area := TouchArea {
-                HorizontalLayout {
-                    CheckBox {
-                        width: 24px;
-                        height: 24px;
-                        enabled: root.file_loaded;
-                        check_state: root.run_vdos ? CheckState.checked : CheckState.unchecked;
-                        checked_state_changed(s) => {
-                            root.run_vdos = (s == CheckState.checked);
-                        }
-                    }
-
-                    MaterialText {
-                        text: "vDoS";
-                        vertical-alignment: center;
-                        horizontal-stretch: 1;
-                    }
+            vdos_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.run_vdos;
+                text: "vDoS";
+                checked_state_changed(s) => {
+                    root.run_vdos = s;
                 }
             }
         }
 
         // 1. Radial Distribution Group
-        TouchArea {
-            height: 48px;
-            layout := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.rdf_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Radial Distribution";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.rdf_expanded = !root.rdf_expanded;
-            }
+        ExpandableHeader {
+            text: "Radial Distribution";
+            expanded <=> root.rdf_expanded;
         }
 
         VerticalLayout {
@@ -354,32 +222,9 @@ export component OptionsCard inherits FilledCard {
         }
 
         // 2. Structure Factor Group
-        TouchArea {
-            height: 48px;
-            layout2 := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.sq_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Structure Factor";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.sq_expanded = !root.sq_expanded;
-            }
+        ExpandableHeader {
+            text: "Structure Factor";
+            expanded <=> root.sq_expanded;
         }
 
         VerticalLayout {
@@ -421,32 +266,9 @@ export component OptionsCard inherits FilledCard {
         }
 
         // 3. Bond Angle Group
-        TouchArea {
-            height: 48px;
-            layout3 := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.angle_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Bond Angle";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.angle_expanded = !root.angle_expanded;
-            }
+        ExpandableHeader {
+            text: "Bond Angle";
+            expanded <=> root.angle_expanded;
         }
 
         VerticalLayout {
@@ -480,32 +302,9 @@ export component OptionsCard inherits FilledCard {
         }
 
         // 3.5 Topological Motifs Group
-        TouchArea {
-            height: 48px;
-            layout_md := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.md_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Topological Motifs";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.md_expanded = !root.md_expanded;
-            }
+        ExpandableHeader {
+            text: "Topological Motifs";
+            expanded <=> root.md_expanded;
         }
 
         VerticalLayout {
@@ -531,32 +330,9 @@ export component OptionsCard inherits FilledCard {
         }
 
         // 4. Smoothing Group
-        TouchArea {
-            height: 48px;
-            layout4 := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.smoothing_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Smoothing";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.smoothing_expanded = !root.smoothing_expanded;
-            }
+        ExpandableHeader {
+            text: "Smoothing";
+            expanded <=> root.smoothing_expanded;
         }
 
         VerticalLayout {
@@ -595,32 +371,9 @@ export component OptionsCard inherits FilledCard {
         }
 
         // 5. Bond Cutoffs Group
-        TouchArea {
-            height: 48px;
-            layout5 := HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_4;
-                padding_left: MaterialStyleMetrics.spacing_4;
-                padding_right: MaterialStyleMetrics.spacing_4;
-                Icon {
-                    y: 12px;
-                    colorize: MaterialPalette.on_surface_variant;
-                    height: 24px;
-                    width: 24px;
-                    vertical-alignment: center;
-                    source: root.bond_cutoffs_expanded ? Icons.arrow_drop_down : Icons.arrow_right;
-                }
-
-                MaterialText {
-                    text: "Bond Cutoffs";
-                    style: MaterialTypography.title_small;
-                    vertical-alignment: center;
-                    color: MaterialPalette.on_surface_variant;
-                }
-            }
-
-            clicked => {
-                root.bond_cutoffs_expanded = !root.bond_cutoffs_expanded;
-            }
+        ExpandableHeader {
+            text: "Bond Cutoffs";
+            expanded <=> root.bond_cutoffs_expanded;
         }
 
         VerticalLayout {

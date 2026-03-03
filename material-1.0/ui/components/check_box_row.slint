@@ -1,0 +1,36 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { CheckBox, CheckState } from "check_box.slint";
+import { MaterialText } from "material_text.slint";
+
+export component CheckBoxRow inherits TouchArea {
+    in property <string> text;
+    in property <bool> check_state_bool;
+    out property <CheckState> check_state: root.check_state_bool ? CheckState.checked : CheckState.unchecked;
+    callback checked_state_changed(bool);
+
+    HorizontalLayout {
+        padding: 0px;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        CheckBox {
+            width: 24px;
+            height: 24px;
+            enabled: root.enabled;
+            check_state: root.check_state;
+            checked_state_changed(s) => {
+                root.checked_state_changed(s == CheckState.checked);
+            }
+        }
+
+        MaterialText {
+            text: root.text;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+        }
+    }
+}

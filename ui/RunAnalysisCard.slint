@@ -16,6 +16,7 @@ import {
     LinearProgressIndicator,
     Icons,
     Icon,
+    CheckBoxRow,
 } from "@material";
 import { FileInfoCard } from "FileInfoCard.slint";
 
@@ -102,45 +103,21 @@ export component RunAnalysisCard inherits FilledCard {
         }
 
         // Export Options
-        csv_area := TouchArea {
-            HorizontalLayout {
-                padding: 0px;
-                MaterialText {
-                    vertical-alignment: center;
-                    text: "Export as CSV";
-                    horizontal-stretch: 1;
-                }
-
-                CheckBox {
-                    width: 24px;
-                    height: 24px;
-                    enabled: root.file_loaded;
-                    check_state: root.use_csv ? CheckState.checked : CheckState.unchecked;
-                    checked_state_changed(s) => {
-                        root.use_csv = (s == CheckState.checked);
-                    }
-                }
+        csv_area := CheckBoxRow {
+            enabled: root.file_loaded;
+            check_state_bool: root.use_csv;
+            text: "Export as CSV";
+            checked_state_changed(s) => {
+                root.use_csv = s;
             }
         }
 
-        hdf5_area := TouchArea {
-            HorizontalLayout {
-                padding: 0px;
-                MaterialText {
-                    vertical-alignment: center;
-                    text: "Export as HDF5";
-                    horizontal-stretch: 1;
-                }
-
-                CheckBox {
-                    width: 24px;
-                    height: 24px;
-                    enabled: root.file_loaded;
-                    check_state: root.use_hdf5 ? CheckState.checked : CheckState.unchecked;
-                    checked_state_changed(s) => {
-                        root.use_hdf5 = (s == CheckState.checked);
-                    }
-                }
+        hdf5_area := CheckBoxRow {
+            enabled: root.file_loaded;
+            check_state_bool: root.use_hdf5;
+            text: "Export as HDF5";
+            checked_state_changed(s) => {
+                root.use_hdf5 = s;
             }
         }
 

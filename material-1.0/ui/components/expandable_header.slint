@@ -1,0 +1,42 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialText } from "material_text.slint";
+import { Icon } from "icon.slint";
+import { Icons } from "../icons/icons.slint";
+
+export component ExpandableHeader inherits TouchArea {
+    in property <string> text;
+    in-out property <bool> expanded: false;
+    height: 48px;
+
+    HorizontalLayout {
+        spacing: MaterialStyleMetrics.spacing_4;
+        padding_left: MaterialStyleMetrics.spacing_4;
+        padding_right: MaterialStyleMetrics.spacing_4;
+        Icon {
+            y: 12px;
+            colorize: MaterialPalette.on_surface_variant;
+            height: 24px;
+            width: 24px;
+            vertical-alignment: center;
+            source: root.expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+        }
+
+        MaterialText {
+            text: root.text;
+            style: MaterialTypography.title_small;
+            vertical-alignment: center;
+            color: MaterialPalette.on_surface_variant;
+        }
+    }
+
+    clicked => {
+        root.expanded = !root.expanded;
+    }
+}
