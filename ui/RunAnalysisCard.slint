@@ -22,6 +22,7 @@ import { FileInfoCard } from "FileInfoCard.slint";
 
 export component RunAnalysisCard inherits FilledCard {
     in property <bool> file_loaded;
+    in property <int> num_frames;
     in property <bool> analysis_running;
     in property <bool> analysis_done;
     in property <float> progress;
@@ -88,26 +89,32 @@ export component RunAnalysisCard inherits FilledCard {
             text: "Frame Range";
             style: MaterialTypography.label_large;
             color: MaterialPalette.on_surface_variant;
+            visible: root.num_frames > 1;
+            height: root.num_frames > 1 ? self.preferred-height : 0px;
         }
 
         HorizontalLayout {
             spacing: MaterialStyleMetrics.spacing_4;
+            visible: root.num_frames > 1;
+            height: root.num_frames > 1 ? self.preferred-height : 0px;
 
             start_frame_area := TouchArea {
                 start_frame := TextField {
-                    enabled: root.file_loaded;
+                    enabled: root.num_frames > 1;
                     width: 100%;
                     label: "Start Frame";
                     text <=> root.min_frame;
+                    height: root.num_frames > 1 ? self.preferred-height : 0px;
                 }
             }
 
             end_frame_area := TouchArea {
                 end_frame := TextField {
-                    enabled: root.file_loaded;
+                    enabled: root.num_frames > 1;
                     width: 100%;
                     label: "End Frame";
                     text <=> root.max_frame;
+                    height: root.num_frames > 1 ? self.preferred-height : 0px;
                 }
             }
         }
