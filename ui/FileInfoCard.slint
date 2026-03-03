@@ -35,63 +35,52 @@ export component FileInfoCard inherits FilledCard {
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
-        VerticalLayout {
-            spacing: MaterialStyleMetrics.spacing_4;
 
-            MaterialText {
-                text: root.file_status_text;
-                horizontal-stretch: 1;
-                wrap: word-wrap;
+        MaterialText {
+            text: root.file_status_text;
+            horizontal-stretch: 1;
+            wrap: word-wrap;
+        }
+
+        atoms_layout := ExpandableHeader {
+            text: "Total Atoms: " + root.total_atoms;
+            expanded <=> root.atoms_expanded;
+        }
+
+        if root.atoms_expanded: VerticalLayout {
+            spacing: MaterialStyleMetrics.spacing_2;
+            for info in root.atom_counts: InfoRow {
+                label: info.symbol + ":";
+                value: info.count;
             }
+        }
 
-            atoms_layout := ExpandableHeader {
-                text: "Total Atoms: " + root.total_atoms;
-                expanded <=> root.atoms_expanded;
-            }
+        frames_layout := InfoRow {
+            visible: root.num_frames > 1;
+            height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+            label: "Frames:";
+            value: root.num_frames;
+        }
 
-            if root.atoms_expanded: VerticalLayout {
-                spacing: MaterialStyleMetrics.spacing_2;
-                for info in root.atom_counts: InfoRow {
-                    label: info.symbol + ":";
-                    value: info.count;
-                }
-            }
+        removed_layout := InfoRow {
+            visible: root.num_frames > 1 && root.removed_frames_count > 0;
+            height: root.num_frames > 1 && root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
+            label: "Removed Frames:";
+            value: root.removed_frames_count;
+            text-color: MaterialPalette.error;
+        }
 
-            MaterialText {
-                text: "Trajectory info:";
-                style: MaterialTypography.label_large;
-                color: MaterialPalette.on_surface_variant;
-                visible: root.num_frames > 1;
-                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
-            }
-
-            frames_layout := InfoRow {
-                visible: root.num_frames > 1;
-                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
-                label: "Frames:";
-                value: root.num_frames;
-            }
-
-            removed_layout := InfoRow {
-                visible: root.num_frames > 1 && root.removed_frames_count > 0;
-                height: root.num_frames > 1 && root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
-                label: "Removed Frames:";
-                value: root.removed_frames_count;
-                text-color: MaterialPalette.error;
-            }
-
-            time_step_area := TouchArea {
-                visible: root.num_frames > 1;
-                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
-                HorizontalLayout {
-                    padding: MaterialStyleMetrics.padding_2;
-                    TextField {
-                        label: "Time Step (fs)";
-                        horizontal-stretch: 1;
-                        text <=> root.time_step;
-                        height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
-                        enabled: root.num_frames > 1;
-                    }
+        time_step_area := TouchArea {
+            visible: root.num_frames > 1;
+            height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+            HorizontalLayout {
+                padding: MaterialStyleMetrics.padding_2;
+                TextField {
+                    label: "Time Step (fs)";
+                    horizontal-stretch: 1;
+                    text <=> root.time_step;
+                    height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+                    enabled: root.num_frames > 1;
                 }
             }
         }
