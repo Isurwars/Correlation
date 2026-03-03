@@ -11,6 +11,7 @@ import {
     MaterialText,
     TextField,
     InfoRow,
+    ExpandableHeader,
 } from "@material";
 import { AtomCount } from "Types.slint";
 
@@ -28,6 +29,7 @@ export component FileInfoCard inherits FilledCard {
     out property <bool> atoms_hover: atoms_layout.has-hover;
     out property <bool> removed_frames_hover: removed_layout.has-hover;
     out property <bool> time_step_hover: time_step_area.has-hover;
+    in-out property <bool> atoms_expanded: false;
 
     height: root.file_loaded ? root.preferred-height : 0px;
     VerticalLayout {
@@ -42,53 +44,54 @@ export component FileInfoCard inherits FilledCard {
                 wrap: word-wrap;
             }
 
+            atoms_layout := ExpandableHeader {
+                text: "Total Atoms: " + root.total_atoms;
+                expanded <=> root.atoms_expanded;
+            }
+
+            if root.atoms_expanded: VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_2;
+                for info in root.atom_counts: InfoRow {
+                    label: info.symbol + ":";
+                    value: info.count;
+                }
+            }
+
+            MaterialText {
+                text: "Trajectory info:";
+                style: MaterialTypography.label_large;
+                color: MaterialPalette.on_surface_variant;
+                visible: root.num_frames > 1;
+                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+            }
+
             frames_layout := InfoRow {
+                visible: root.num_frames > 1;
+                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
                 label: "Frames:";
                 value: root.num_frames;
             }
 
             removed_layout := InfoRow {
-                height: root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
+                visible: root.num_frames > 1 && root.removed_frames_count > 0;
+                height: root.num_frames > 1 && root.removed_frames_count > 0 ? MaterialStyleMetrics.size_40 : 0px;
                 label: "Removed Frames:";
                 value: root.removed_frames_count;
                 text-color: MaterialPalette.error;
             }
 
             time_step_area := TouchArea {
+                visible: root.num_frames > 1;
+                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
                 HorizontalLayout {
                     padding: MaterialStyleMetrics.padding_2;
                     TextField {
                         label: "Time Step (fs)";
                         horizontal-stretch: 1;
                         text <=> root.time_step;
-                        height: MaterialStyleMetrics.size_40;
-                        enabled: root.num_frames > 0;
+                        height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+                        enabled: root.num_frames > 1;
                     }
-                }
-            }
-
-            atoms_layout := InfoRow {
-                label: "Total Atoms:";
-                value: root.total_atoms;
-            }
-
-            HorizontalLayout {
-                padding: MaterialStyleMetrics.padding_2;
-                MaterialText {
-                    text: "Atoms per element";
-                }
-            }
-
-            for info in root.atom_counts: HorizontalLayout {
-                padding: MaterialStyleMetrics.padding_2;
-                MaterialText {
-                    text: info.symbol + ":";
-                    horizontal-stretch: 1;
-                }
-
-                MaterialText {
-                    text: info.count;
-                    horizontal-alignment: right;
                 }
             }
         }
