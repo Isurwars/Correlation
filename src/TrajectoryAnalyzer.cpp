@@ -13,7 +13,7 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
     Trajectory &trajectory, double neighbor_cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame,
     long long end_frame, bool ignore_periodic_self_interactions,
-    std::function<void(float)> progress_callback)
+    std::function<void(float, const std::string &)> progress_callback)
     : time_step_(trajectory.getTimeStep()), neighbor_cutoff_(neighbor_cutoff),
       bond_cutoffs_(bond_cutoffs),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
@@ -35,7 +35,9 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
     if (progress_callback) {
       float p = static_cast<float>(i - start_frame) /
                 static_cast<float>(effective_end - start_frame);
-      progress_callback(p);
+      progress_callback(p, "Analyzing structure frame " +
+                               std::to_string(i + 1) + " of " +
+                               std::to_string(effective_end));
     }
     analyzers_.push_back(std::make_unique<StructureAnalyzer>(
         frames[i], neighbor_cutoff, bond_cutoffs,
@@ -43,6 +45,6 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
   }
 
   if (progress_callback) {
-    progress_callback(1.0f);
+    progress_callback(1.0f, "Structure analysis complete.");
   }
 }

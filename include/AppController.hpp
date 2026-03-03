@@ -50,7 +50,7 @@ private:
   std::thread analysis_thread_;
 
   // Progress helper
-  void updateProgress(float p);
+  void updateProgress(float p, const std::string &msg);
 
   // functions to handle options
   void handleOptionstoUI(AppWindow &ui);

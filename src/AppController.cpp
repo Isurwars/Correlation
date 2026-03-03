@@ -52,12 +52,17 @@ float safe_stof(const slint::SharedString &s, float default_value) {
   }
 }
 
-void AppController::updateProgress(float p) {
+void AppController::updateProgress(float p, const std::string &msg) {
   if (p < 0.0f)
     p = 0.0f;
   if (p > 1.0f)
     p = 1.0f;
-  slint::invoke_from_event_loop([=, this]() { ui_.set_progress(p); });
+  slint::invoke_from_event_loop([=, this]() {
+    ui_.set_progress(p);
+    if (!msg.empty()) {
+      ui_.set_analysis_status_text(slint::SharedString(msg));
+    }
+  });
 }
 
 void AppController::handleOptionstoUI(AppWindow &ui) {
@@ -263,7 +268,8 @@ void AppController::handleRunAnalysis() {
   backend_.setOptions(handleOptionsfromUI(ui_));
 
   // Set the progress callback
-  backend_.setProgressCallback([this](float p) { updateProgress(p); });
+  backend_.setProgressCallback(
+      [this](float p, const std::string &msg) { updateProgress(p, msg); });
 
   // run analysis in a separate thread
   if (analysis_thread_.joinable()) {

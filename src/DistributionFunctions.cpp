@@ -374,7 +374,7 @@ void DistributionFunctions::scale(double factor) {
 std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
     size_t start_frame, const AnalysisSettings &settings,
-    std::function<void(float)> progress_callback) {
+    std::function<void(float, const std::string &)> progress_callback) {
 
   const auto &analyzers = analyzer.getAnalyzers();
   if (analyzers.empty()) {
@@ -438,8 +438,11 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
         // Avoid flooding the callback, update maybe every 1% or just
         // simple throttle? Or lock.
         std::lock_guard<std::mutex> lock(callback_mutex);
-        progress_callback(static_cast<float>(current_completed) /
-                          static_cast<float>(num_frames));
+        progress_callback(
+            static_cast<float>(current_completed) /
+                static_cast<float>(num_frames),
+            "Calculating distributions: " + std::to_string(current_completed) +
+                " of " + std::to_string(num_frames));
       }
     }));
   }

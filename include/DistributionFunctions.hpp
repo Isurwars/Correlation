@@ -221,10 +221,11 @@ public:
    * @brief Computes the mean distribution functions over a trajectory.
    *        Uses parallel execution to speed up calculation.
    */
-  static std::unique_ptr<DistributionFunctions>
-  computeMean(Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-              size_t start_frame, const AnalysisSettings &settings,
-              std::function<void(float)> progress_callback = nullptr);
+  static std::unique_ptr<DistributionFunctions> computeMean(
+      Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+      size_t start_frame, const AnalysisSettings &settings,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr);
 
 private:
   const StructureAnalyzer *neighbors() const;

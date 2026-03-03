@@ -21,7 +21,8 @@ public:
                      const std::vector<std::vector<double>> &bond_cutoffs,
                      size_t start_frame = 0, long long end_frame = -1,
                      bool ignore_periodic_self_interactions = true,
-                     std::function<void(float)> progress_callback = nullptr);
+                     std::function<void(float, const std::string &)>
+                         progress_callback = nullptr);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//

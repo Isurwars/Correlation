@@ -198,17 +198,17 @@ std::string AppBackend::run_analysis() {
     trajectory_->setTimeStep(options_.time_step);
 
     if (progress_callback_)
-      progress_callback_(0.0f);
+      progress_callback_(0.0f, "Starting analysis...");
 
     // Define progress callbacks
-    auto cb_structure = [this](float p) {
+    auto cb_structure = [this](float p, const std::string &msg) {
       if (progress_callback_)
-        progress_callback_(p * 0.7f);
+        progress_callback_(p * 0.7f, msg);
     };
 
-    auto cb_dist = [this](float p) {
+    auto cb_dist = [this](float p, const std::string &msg) {
       if (progress_callback_)
-        progress_callback_(0.7f + p * 0.3f);
+        progress_callback_(0.7f + p * 0.3f, msg);
     };
 
     // Initialize the TrajectoryAnalyzer, which handles frame-by-frame

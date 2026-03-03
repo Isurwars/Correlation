@@ -221,7 +221,7 @@ public:
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
 
   // Callbacks
-  void setProgressCallback(std::function<void(float)> cb) {
+  void setProgressCallback(std::function<void(float, const std::string&)> cb) {
     progress_callback_ = cb;
   }
 
@@ -235,5 +235,5 @@ private:
   std::unique_ptr<DistributionFunctions> df_;
 
   ProgramOptions options_;
-  std::function<void(float)> progress_callback_;
+  std::function<void(float, const std::string&)> progress_callback_;
 };
