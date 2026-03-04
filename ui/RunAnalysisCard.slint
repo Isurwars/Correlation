@@ -29,6 +29,7 @@ export component RunAnalysisCard inherits FilledCard {
     in-out property <string> analysis_status_text;
     in-out property <bool> use_csv: true;
     in-out property <bool> use_hdf5: true;
+    in-out property <bool> use_parquet: false;
     in-out property <string> min_frame;
     in-out property <string> max_frame;
     in-out property <bool> advanced_options_visible;
@@ -40,6 +41,7 @@ export component RunAnalysisCard inherits FilledCard {
     out property <bool> analysis_area_has_hover: analysis_area.has-hover;
     out property <bool> hdf5_area_has_hover: hdf5_area.has-hover;
     out property <bool> csv_area_has_hover: csv_area.has-hover;
+    out property <bool> parquet_area_has_hover: parquet_area.has-hover;
     out property <bool> options_area_has_hover: options_area.has-hover;
     out property <bool> start_frame_has_hover: start_frame_area.has-hover;
     out property <bool> end_frame_has_hover: end_frame_area.has-hover;
@@ -170,6 +172,15 @@ export component RunAnalysisCard inherits FilledCard {
             text: "Export as HDF5";
             checked_state_changed(s) => {
                 root.use_hdf5 = s;
+            }
+        }
+
+        parquet_area := CheckBoxRow {
+            enabled: root.file_loaded;
+            check_state_bool: root.use_parquet;
+            text: "Export as Parquet";
+            checked_state_changed(s) => {
+                root.use_parquet = s;
             }
         }
 

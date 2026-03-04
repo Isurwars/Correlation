@@ -71,6 +71,7 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_smoothing(opt.smoothing);
   ui.set_use_hdf5(opt.use_hdf5);
   ui.set_use_csv(opt.use_csv);
+  ui.set_use_parquet(opt.use_parquet);
   ui.set_r_max(slint::SharedString(std::format("{:.2f}", opt.r_max)));
   ui.set_r_bin_width(
       slint::SharedString(std::format("{:.2f}", opt.r_bin_width)));
@@ -116,6 +117,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.smoothing = true;
   opt.use_hdf5 = ui_.get_use_hdf5();
   opt.use_csv = ui_.get_use_csv();
+  opt.use_parquet = ui_.get_use_parquet();
   opt.r_max = safe_stof(ui_.get_r_max(), opt.r_max);
   opt.r_bin_width = safe_stof(ui_.get_r_bin_width(), opt.r_bin_width);
   opt.q_max = safe_stof(ui_.get_q_max(), opt.q_max);
