@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0 RC3] 2026-03-04
+
+### Added
+- Implemented `ArrowWriter` to export distributions to the Parquet format.
+- Added "Export as Parquet" option directly in the GUI analysis card.
+- Added comprehensive list of Atomic Form Factors (Cromer-Mann coefficients) in `PhysicalData.hpp`.
+- Added new UI components: `expandable_header`, `check_box_row`, and `infoRow`.
+
+### Changed
+- Improved CSV export headers to correctly export units and comments for OriginPro compatibility.
+- Improved HDF5 export to correctly map histogram names to their corresponding metadata (bin label, units, description).
+- Refactored `FileWriter` and re-enabled all Distribution Functions by default.
+- Implemented dynamic height control for analysis and file info cards in the UI.
+- Improved analysis progress reporting with more detailed and verbatim feedback during executions.
+- Refactored `AppToolTips` dynamic positioning to avoid exceeding program boundaries.
+- General UI/UX improvements and refactoring in `RunAnalysisCard` and `FileInfoCard` (e.g., hiding trajectory options when not needed).
+- Updated project version to 2.0.0 RC3.
+
+### Fixed
+- Improved and fixed Google Tests in `_05_Writer_Tests.cpp` and `ArrowWriter` to correctly handle Parquet assertions.
+
 ## [2.0.0 RC2] 2026-02-27
 
 ### Added
