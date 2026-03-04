@@ -4,9 +4,9 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "FileWriter.hpp"
+#include "writers/ArrowWriter.hpp"
 #include "writers/CSVWriter.hpp"
 #include "writers/HDF5Writer.hpp"
-// #include "writers/ParquetWriter.hpp"
 
 FileWriter::FileWriter(const DistributionFunctions &df) : df_(df) {}
 
@@ -23,7 +23,7 @@ void FileWriter::write(const std::string &base_path, bool use_csv,
   }
 
   if (use_parquet) {
-    // ParquetWriter parquet_writer(df_);
-    // parquet_writer.writeAll(base_path, smoothing);
+    ArrowWriter parquet_writer(df_);
+    parquet_writer.writeAllParquet(base_path, smoothing);
   }
 }

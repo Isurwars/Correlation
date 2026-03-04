@@ -150,3 +150,32 @@ else()
      endif()
   endif()
 endif()
+
+# 6. Arrow/Parquet
+find_package(Arrow QUIET)
+find_package(Parquet QUIET)
+if (Arrow_FOUND AND Parquet_FOUND)
+  message(STATUS "Found Arrow: ${Arrow_DIR} (Version: ${Arrow_VERSION})")
+  message(STATUS "Found Parquet: ${Parquet_DIR} (Version: ${Parquet_VERSION})")
+else()
+  message(STATUS "Arrow/Parquet not found. Downloading Arrow from GitHub...")
+  FetchContent_Declare(
+    arrow
+    GIT_REPOSITORY https://github.com/apache/arrow.git
+    GIT_TAG        apache-arrow-23.0.1 # Use the latest stable version
+    SOURCE_SUBDIR  cpp                 # We only need the C++ source
+  )
+
+  # Configure Arrow Build Options (Crucial for speed)
+  # We disable things you don't need for a simple exporter to save compile time.
+  set(ARROW_PARQUET ON CACHE INTERNAL "")
+  set(ARROW_WITH_SNAPPY ON CACHE INTERNAL "")  # Recommended compression
+  set(ARROW_BUILD_STATIC ON CACHE INTERNAL "")
+  set(ARROW_BUILD_SHARED OFF CACHE INTERNAL "")
+  set(ARROW_COMPUTE OFF CACHE INTERNAL "")
+  set(ARROW_CSV OFF CACHE INTERNAL "")
+  set(ARROW_DATASET OFF CACHE INTERNAL "")
+  set(ARROW_FILESYSTEM ON CACHE INTERNAL "")
+
+  FetchContent_MakeAvailable(arrow)
+endif()
