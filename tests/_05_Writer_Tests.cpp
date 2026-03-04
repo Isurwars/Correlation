@@ -86,7 +86,7 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   df.smoothAll(0.1);
 
   FileWriter writer(df);
-  writer.writeAllCSVs("test_si", true);
+  writer.write("test_si", true, false, false, true);
 
   // Assert: Part 1 - Validate content of the calculated g(r) histogram.
 
@@ -145,7 +145,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   df.calculatePAD(2.0);
 
   FileWriter writer(df);
-  writer.writeHDF("test_si.h5");
+  writer.write("test_si", false, true, false, false);
 
   // Assert
   ASSERT_TRUE(fileExistsAndIsNotEmpty("test_si.h5"));
@@ -245,8 +245,9 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   df.calculateVACF(trajectory, 1);
 
   FileWriter writer(df);
-  std::string filename = "test_vacf_new.h5";
-  writer.writeHDF(filename);
+  std::string base_filename = "test_vacf_new";
+  writer.write(base_filename, false, true, false, false);
+  std::string filename = base_filename + ".h5";
 
   // Assert
   ASSERT_TRUE(fileExistsAndIsNotEmpty(filename));
@@ -315,9 +316,9 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   // Calculate and Check VDOS
   df.calculateVDOS();
 
-  std::string vdos_filename = "test_vacf_vdos.h5";
-  writer.writeHDF(vdos_filename);
-  writer.writeAllCSVs("test_vacf_vdos", true);
+  std::string vdos_base = "test_vacf_vdos";
+  writer.write(vdos_base, true, true, false, true);
+  std::string vdos_filename = vdos_base + ".h5";
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_vacf_vdos_VDOS.csv"));
 
   // Re-open to check VDOS

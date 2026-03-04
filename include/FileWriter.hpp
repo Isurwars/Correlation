@@ -1,0 +1,43 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+#pragma once
+
+#include <string>
+
+#include "DistributionFunctions.hpp"
+
+/**
+ * @class FileWriter
+ * @brief Facade class that manages writing data to various file formats.
+ *
+ * This class orchestrates the usage of specific writers (CSV, HDF5, Parquet)
+ * based on provided options.
+ */
+class FileWriter {
+public:
+  /**
+   * @brief Constructs a FileWriter linked to a DistributionFunctions object.
+   * @param df The DistributionFunctions object containing the data to be
+   * written.
+   */
+  explicit FileWriter(const DistributionFunctions &df);
+
+  /**
+   * @brief Writes the available histograms using specified formats.
+   *
+   * @param base_path The base name for the output files (e.g.,
+   * "output/my_sample").
+   * @param use_csv Whether to write CSV files.
+   * @param use_hdf5 Whether to write an HDF5 file.
+   * @param use_parquet Whether to write Parquet files.
+   * @param smoothing Whether to include smoothed data.
+   */
+  void write(const std::string &base_path, bool use_csv, bool use_hdf5,
+             bool use_parquet, bool smoothing) const;
+
+private:
+  const DistributionFunctions &df_;
+};

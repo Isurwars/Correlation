@@ -40,8 +40,8 @@ Histogram MDCalculator::calculate(const NeighborGraph &graph,
   // Not strictly normalized the same way as angular distributions,
   // since this is discrete occurrences. The "Total" can just be
   // a copy of the "Rings" partial if desired, or we just leave it
-  // with "Rings". For consistency with FileWriter, we might just
-  // provide a Total if we expect one, but FileWriter works on
+  // with "Rings". For consistency with CSVWriter/HDF5Writer, we might just
+  // provide a Total if we expect one, but the Writers work on
   // any partial keys. We will provide "Total" as identical for now.
 
   f_motif.partials["Total"] = partial_hist;

@@ -282,12 +282,8 @@ std::string AppBackend::write_files() {
   try {
     // --- Write results ---
     FileWriter writer(*df_);
-    if (options_.use_csv) {
-      writer.writeAllCSVs(options_.output_file_base, options_.smoothing);
-    }
-    if (options_.use_hdf5) {
-      writer.writeHDF(options_.output_file_base + ".h5");
-    }
+    writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5,
+                 options_.use_parquet, options_.smoothing);
     std::cout << "Files writen to: " << options_.output_file_base << std::endl;
   } catch (const std::exception &e) {
     std::string err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();

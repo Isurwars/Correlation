@@ -51,6 +51,8 @@ add_library(correlation_lib STATIC
     src/readers/OnetepDatReader.cpp
     src/readers/OutmolReader.cpp
     src/FileWriter.cpp
+    src/writers/CSVWriter.cpp
+    src/writers/HDF5Writer.cpp
     src/NeighborGraph.cpp
     src/StructureAnalyzer.cpp
     src/Trajectory.cpp

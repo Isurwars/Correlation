@@ -56,6 +56,7 @@ struct ProgramOptions {
   bool smoothing = true;
   bool use_hdf5 = true;
   bool use_csv = false;
+  bool use_parquet = false;
   double r_max = AppDefaults::R_MAX;
   double r_bin_width = AppDefaults::R_BIN_WIDTH;
   double q_max = AppDefaults::Q_MAX;
@@ -221,7 +222,7 @@ public:
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
 
   // Callbacks
-  void setProgressCallback(std::function<void(float, const std::string&)> cb) {
+  void setProgressCallback(std::function<void(float, const std::string &)> cb) {
     progress_callback_ = cb;
   }
 
@@ -235,5 +236,5 @@ private:
   std::unique_ptr<DistributionFunctions> df_;
 
   ProgramOptions options_;
-  std::function<void(float, const std::string&)> progress_callback_;
+  std::function<void(float, const std::string &)> progress_callback_;
 };

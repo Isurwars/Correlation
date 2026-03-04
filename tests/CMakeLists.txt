@@ -15,7 +15,7 @@ add_executable(correlation_tests
     _02_Cell_Tests.cpp
     _03_Trajectory_Tests.cpp
     _04_FileReader_Tests.cpp
-    _05_FileWriter_Tests.cpp
+    _05_Writer_Tests.cpp
     _06_DihedralCalculator_Tests.cpp
     _07_MotifFinder_Tests.cpp
     _08_StructureAnalyzer_Tests.cpp
