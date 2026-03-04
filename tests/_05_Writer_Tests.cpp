@@ -57,6 +57,9 @@ protected:
     std::remove("test_vacf_new.h5");
     std::remove("test_vacf_vdos.h5");
     std::remove("test_vacf_vdos_VDOS.csv");
+    std::remove("test_si_g.parquet");
+    std::remove("test_si_J.parquet");
+    std::remove("test_si_PAD.parquet");
   }
 
   // Helper to check if a file exists and is not empty.
@@ -355,4 +358,33 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   std::string mev_units;
   vdos_mev_ds.getAttribute("Units").read(mev_units);
   EXPECT_EQ(mev_units, "meV");
+}
+
+TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
+  // Arrange
+  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
+  Cell si_cell = FileReader::readStructure("si_crystal.car", type);
+  Trajectory trajectory;
+  trajectory.addFrame(si_cell);
+  trajectory.precomputeBondCutoffs();
+
+  DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+
+  df.calculateRDF(5.0, 0.1);
+  df.calculatePAD(2.0);
+
+  FileWriter writer(df);
+
+  // Act
+  // write(base_path, use_csv, use_hdf5, use_parquet, smoothing)
+  writer.write("test_si", false, false, true, false);
+
+  // Assert
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
+
+  // Verify it doesn't create empty ones for un-run calculations
+  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_G.parquet"));
+  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si__G.parquet"));
 }
