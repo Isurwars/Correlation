@@ -69,10 +69,10 @@ struct ProgramOptions {
   bool run_sq = true;
   bool run_xrd = true;
   bool run_pad = true;
-  bool run_dad = false;
-  bool run_md = false;
-  bool run_vacf = false;
-  bool run_vdos = false;
+  bool run_dad = true;
+  bool run_md = true;
+  bool run_vacf = true;
+  bool run_vdos = true;
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;
   KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL;
   int min_frame = 0;
