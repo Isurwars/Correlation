@@ -51,7 +51,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, CalculatePAD) {
   DistributionFunctions df(water, 2.0, trajectory_.getBondCutoffsSQ());
 
   df.calculatePAD(1.0);
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
   const auto &hoh = hist.partials.at("H-O-H");
 
   auto max_it = std::max_element(hoh.begin(), hoh.end());
@@ -269,11 +269,11 @@ TEST_F(_14_PAD_Tests, SingleAtomNoAngles) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df.calculatePAD(1.0);
-  // Might have partials created but empty, or just no "f(theta)" if logic
+  // Might have partials created but empty, or just no "BAD" if logic
   // handles it. Actually implementation might create partials if atoms exist
   // but no angles found. Let's check total counts.
-  if (df.getAllHistograms().count("f(theta)")) {
-    const auto &hist = df.getHistogram("f(theta)");
+  if (df.getAllHistograms().count("BAD")) {
+    const auto &hist = df.getHistogram("BAD");
     if (!hist.partials.empty()) {
       if (hist.partials.count("Total")) {
         EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
@@ -310,7 +310,7 @@ TEST_F(_14_PAD_Tests, LinearGeometry180) {
   // Use 180.0 now that we fixed the binning logic
   df.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
   // Should have O-Si-O peak at 180
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
   const auto &partial = hist.partials.at("O-Si-O");
@@ -349,7 +349,7 @@ TEST_F(_14_PAD_Tests, RightAngle90) {
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
   df.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
 
   // Find peak
@@ -378,7 +378,7 @@ TEST_F(_14_PAD_Tests, EquilateralTriangle60) {
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
   df.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
   // Should have O-Si-O
   const auto &partial = hist.partials.at("O-Si-O");
 
@@ -413,7 +413,7 @@ TEST_F(_14_PAD_Tests, TetrahedralAngle) {
                            trajectory_.getBondCutoffsSQ()); // Distance is 1.0
   df.calculatePAD(0.5);                                     // Finer bins
 
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
   const auto &partial = hist.partials.at("O-Si-O");
 
   // Expected ~109.5
@@ -438,7 +438,7 @@ TEST_F(_14_PAD_Tests, SymmetryAndSorting) {
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
   df.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
 
   // Check if we have O-Si-N or N-Si-O
   bool found = false;
@@ -475,7 +475,7 @@ TEST_F(_14_PAD_Tests, FullNormalizationCheck) {
   DistributionFunctions df(cell_, 1.5, cutoffs);
   df.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("f(theta)");
+  const auto &hist = df.getHistogram("BAD");
 
   double sum_partial = 0;
   double sum_total = 0;

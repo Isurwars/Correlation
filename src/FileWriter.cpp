@@ -72,7 +72,7 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
       {"g(r)", "_g.csv"},
       {"J(r)", "_J.csv"},
       {"G(r)", "__G.csv"},
-      {"f(theta)", "_PAD.csv"},
+      {"BAD", "_PAD.csv"},
       {"DAD", "_DAD.csv"},
       {"MD", "_MD.csv"},
       {"S(Q)", "_S.csv"},
@@ -215,9 +215,9 @@ void FileWriter::writeHDF(const std::string &filename) const {
           ds.createAttribute<std::string>("Units",
                                           HighFive::DataSpace::From(bin_unit))
               .write(bin_unit);
-          ds.createAttribute<std::string>("Comments",
-                                          HighFive::DataSpace::From(dim_label))
-              .write(dim_label);
+          ds.createAttribute<std::string>(
+                "Comments", HighFive::DataSpace::From(description))
+              .write(description);
 
           // Make this a dimension scale
           herr_t status = H5DSset_scale(ds.getId(), dim_label.c_str());
@@ -226,22 +226,29 @@ void FileWriter::writeHDF(const std::string &filename) const {
                       << dataset_name << std::endl;
           }
         } else {
-          ds.createAttribute<std::string>(
-                "Long Name", HighFive::DataSpace::From(headers[col]))
-              .write(headers[col]);
+          std::string current_long_name = headers[col];
+          std::string current_data_unit = data_unit;
+          std::string current_comment = headers[col];
+
           // Check if there is specific metadata for this column (e.g., VDOS
           // extra frequencies)
-          std::string current_data_unit = data_unit;
           if (metadata_map.count(headers[col])) {
             current_data_unit = metadata_map.at(headers[col]).bin_unit;
+            current_comment = metadata_map.at(headers[col]).description;
+            if (!metadata_map.at(headers[col]).bin_label.empty()) {
+              current_long_name = metadata_map.at(headers[col]).bin_label;
+            }
           }
 
+          ds.createAttribute<std::string>(
+                "Long Name", HighFive::DataSpace::From(current_long_name))
+              .write(current_long_name);
           ds.createAttribute<std::string>(
                 "Units", HighFive::DataSpace::From(current_data_unit))
               .write(current_data_unit);
           ds.createAttribute<std::string>(
-                "Comments", HighFive::DataSpace::From(headers[col]))
-              .write(headers[col]);
+                "Comments", HighFive::DataSpace::From(current_comment))
+              .write(current_comment);
           std::stringstream ss_bin;
           ss_bin << std::setw(2) << std::setfill('0') << 0 << "_" << headers[0];
 

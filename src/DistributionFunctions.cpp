@@ -235,8 +235,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculatePAD(double bin_width) {
-  histograms_["f(theta)"] =
-      PADCalculator::calculate(cell_, neighbors(), bin_width);
+  histograms_["BAD"] = PADCalculator::calculate(cell_, neighbors(), bin_width);
 }
 
 //---------------------------------------------------------------------------//

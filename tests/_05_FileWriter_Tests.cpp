@@ -110,9 +110,9 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   EXPECT_NEAR(bins[first_peak_idx], 2.35, rdf_bin * 2);
   EXPECT_NEAR(bins[second_peak_idx], 3.84, rdf_bin * 2);
 
-  // Assert: Part 2 - Validate content of the calculated f(theta) histogram.
+  // Assert: Part 2 - Validate content of the calculated BAD histogram.
 
-  const auto &pad_hist = df.getHistogram("f(theta)");
+  const auto &pad_hist = df.getHistogram("BAD");
   const auto &pad_bins = pad_hist.bins;
   const auto &si_si_si_pad = pad_hist.partials.at("Si-Si-Si");
 
@@ -153,7 +153,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   // Verify content using HighFive
   HighFive::File file("test_si.h5", HighFive::File::ReadOnly);
   EXPECT_TRUE(file.exist("g_r"));
-  EXPECT_TRUE(file.exist("f_theta"));
+  EXPECT_TRUE(file.exist("BAD"));
 
   HighFive::Group g_group = file.getGroup("g_r");
   // The old "data" dataset should not exist anymore
@@ -194,7 +194,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   EXPECT_TRUE(bin_ds.hasAttribute("Comments"));
   std::string bin_comment;
   bin_ds.getAttribute("Comments").read(bin_comment);
-  EXPECT_EQ(bin_comment, "r (Å)");
+  EXPECT_EQ(bin_comment, "Radial Distribution Function");
 
   // Verify data dataset attributes
   HighFive::DataSet data_ds = g_group.getDataSet(data_ds_name);
