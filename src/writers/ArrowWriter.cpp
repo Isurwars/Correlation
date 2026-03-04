@@ -48,6 +48,10 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
     try {
       const auto &hist = df_.getHistogram(name);
 
+      if (hist.partials.empty() || hist.bins.empty() || hist.bins.size() == 0) {
+        continue;
+      }
+
       std::string filename = base_path + suffix;
       writeHistogramToParquet(filename, name, hist);
 

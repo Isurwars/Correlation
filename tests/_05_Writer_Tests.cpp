@@ -59,6 +59,7 @@ protected:
     std::remove("test_vacf_vdos_VDOS.csv");
     std::remove("test_si_g.parquet");
     std::remove("test_si_J.parquet");
+    std::remove("test_si__G.parquet");
     std::remove("test_si_PAD.parquet");
   }
 
@@ -382,9 +383,10 @@ TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
   // Assert
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
 
   // Verify it doesn't create empty ones for un-run calculations
   EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_G.parquet"));
-  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si__G.parquet"));
+  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_S.parquet"));
 }
