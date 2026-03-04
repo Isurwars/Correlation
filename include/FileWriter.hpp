@@ -65,6 +65,7 @@ private:
    * @param hist The Histogram data structure to write.
    */
   void writeHistogramToCSV(const std::string &filename,
+                           const std::string &name,
                            const Histogram &hist) const;
 
   const DistributionFunctions &df_;

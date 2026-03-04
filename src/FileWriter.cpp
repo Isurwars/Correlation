@@ -17,6 +17,45 @@
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
 
+namespace {
+// Define metadata structure
+struct FunctionMetadata {
+  std::string bin_label;
+  std::string bin_unit;
+  std::string data_unit;
+  std::string description;
+};
+
+// Metadata mapping
+const std::map<std::string, FunctionMetadata> metadata_map = {
+    {"g(r)", {"r (Å)", "Å", "Å^-1", "Radial Distribution Function"}},
+    {"J(r)", {"r (Å)", "Å", "Å^-1", "Radial Distribution of Electron Density"}},
+    {"G(r)", {"r (Å)", "Å", "Å^-1", "Reduced Radial Distribution Function"}},
+    {"BAD",
+     {"Bond Angle (°)", "Degrees", "degree^-1", "Bond Angle Distribution"}},
+    {"DAD",
+     {"Dihedral Angle (°)", "Degrees", "degree^-1",
+      "Dihedral Angle Distribution"}},
+    {"MD", {"Ring Size", "atoms", "counts", "Motif Distribution"}},
+    {"S(Q)", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
+    {"XRD",
+     {"2theta", "Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
+    {"CN", {"counts", "neighbors", "Count", "Coordination Number"}},
+    {"VACF",
+     {"Time (fs)", "fs", "Å^2/fs^2", "Velocity Autocorrelation Function"}},
+    {"Normalized VACF",
+     {"Time (fs)", "fs", "normalized",
+      "Normalized Velocity Autocorrelation Function"}},
+    {"VDOS",
+     {"Frequency (THz)", "THz", "arbitrary units",
+      "Vibrational Density of States"}},
+    {"Frequency (cm-1)",
+     {"Frequency (cm-1)", "cm^-1", "arbitrary units",
+      "Frequency in wavenumbers"}},
+    {"Frequency (meV)",
+     {"Frequency (meV)", "meV", "arbitrary units", "Frequency in meV"}}};
+} // namespace
+
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
@@ -48,7 +87,7 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
       const auto &hist = df_.getHistogram(name);
 
       std::string filename = base_path + suffix;
-      writeHistogramToCSV(filename, hist);
+      writeHistogramToCSV(filename, name, hist);
 
     } catch (const std::out_of_range &) {
       // This is not an error; it just means the histogram wasn't calculated.
@@ -61,45 +100,6 @@ void FileWriter::writeAllCSVs(const std::string &base_path,
 }
 
 void FileWriter::writeHDF(const std::string &filename) const {
-  // Define metadata structure
-  struct FunctionMetadata {
-    std::string bin_label;
-    std::string bin_unit;
-    std::string data_unit;
-    std::string description;
-  };
-
-  // Metadata mapping
-  const std::map<std::string, FunctionMetadata> metadata_map = {
-      {"g(r)", {"r (Å)", "Å", "Å^-1", "Radial Distribution Function"}},
-      {"J(r)",
-       {"r (Å)", "Å", "Å^-1", "Radial Distribution of Electron Density"}},
-      {"G(r)", {"r (Å)", "Å", "Å^-1", "Reduced Radial Distribution Function"}},
-      {"f(theta)",
-       {"theta (angle)", "Degrees", "degree^-1", "Bond Angle Distribution"}},
-      {"DAD",
-       {"Dihedral Angle (°)", "Degrees", "degree^-1",
-        "Dihedral Angle Distribution"}},
-      {"MD", {"Ring Size", "atoms", "counts", "Motif Distribution"}},
-      {"S(Q)", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
-      {"XRD",
-       {"2theta", "Degrees (2theta)", "Intensity",
-        "X-Ray Diffraction Pattern"}},
-      {"CN", {"counts", "neighbors", "Count", "Coordination Number"}},
-      {"VACF",
-       {"Time (fs)", "fs", "Å^2/fs^2", "Velocity Autocorrelation Function"}},
-      {"Normalized VACF",
-       {"Time (fs)", "fs", "normalized",
-        "Normalized Velocity Autocorrelation Function"}},
-      {"VDOS",
-       {"Frequency (THz)", "THz", "arbitrary units",
-        "Vibrational Density of States"}},
-      {"Frequency (cm-1)",
-       {"Frequency (cm-1)", "cm^-1", "arbitrary units",
-        "Frequency in wavenumbers"}},
-      {"Frequency (meV)",
-       {"Frequency (meV)", "meV", "arbitrary units", "Frequency in meV"}}};
-
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
                                       HighFive::File::Create |
@@ -276,6 +276,7 @@ void FileWriter::writeHDF(const std::string &filename) const {
 //---------------------------------------------------------------------------//
 
 void FileWriter::writeHistogramToCSV(const std::string &filename,
+                                     const std::string &name,
                                      const Histogram &hist) const {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
@@ -299,13 +300,56 @@ void FileWriter::writeHistogramToCSV(const std::string &filename,
   }
   std::sort(smoothed_keys.begin(), smoothed_keys.end());
 
+  // Get metadata if available
+  std::string bin_unit = "arbitrary units";
+  std::string data_unit = "arbitrary units";
+  std::string description = "Data export";
+  std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
+
+  if (metadata_map.count(name)) {
+    const auto &meta = metadata_map.at(name);
+    bin_unit = meta.bin_unit;
+    data_unit = meta.data_unit;
+    description = meta.description;
+    if (!meta.bin_label.empty()) {
+      dim_label = meta.bin_label;
+    }
+  }
+
   // --- Write Header ---
-  file << hist.bin_label;
-  // Write headers for raw data
+  // Line 1: Long Name
+  file << dim_label;
   for (const auto &key : raw_keys) {
     file << "," << key;
   }
-  // Write headers for smoothed data
+  for (const auto &key : smoothed_keys) {
+    file << "," << key << "_smoothed";
+  }
+  file << '\n';
+
+  // Line 2: Units
+  file << bin_unit;
+  for (const auto &key : raw_keys) {
+    std::string current_data_unit = data_unit;
+    if (metadata_map.count(key)) {
+      current_data_unit = metadata_map.at(key).bin_unit;
+    }
+    file << "," << current_data_unit;
+  }
+  for (const auto &key : smoothed_keys) {
+    std::string current_data_unit = data_unit;
+    if (metadata_map.count(key)) {
+      current_data_unit = metadata_map.at(key).bin_unit;
+    }
+    file << "," << current_data_unit;
+  }
+  file << '\n';
+
+  // Line 3: Comments
+  file << description;
+  for (const auto &key : raw_keys) {
+    file << "," << key;
+  }
   for (const auto &key : smoothed_keys) {
     file << "," << key << "_smoothed";
   }
