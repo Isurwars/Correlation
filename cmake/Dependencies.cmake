@@ -157,6 +157,23 @@ find_package(Parquet QUIET)
 if (Arrow_FOUND AND Parquet_FOUND)
   message(STATUS "Found Arrow: ${Arrow_DIR} (Version: ${Arrow_VERSION})")
   message(STATUS "Found Parquet: ${Parquet_DIR} (Version: ${Parquet_VERSION})")
+
+  # Create ALIAS targets so the rest of the project can just link 'arrow_static' and 'parquet_static'
+  if (TARGET Arrow::arrow_static)
+    add_library(arrow_static ALIAS Arrow::arrow_static)
+  elseif (TARGET Arrow::arrow_shared)
+    add_library(arrow_static ALIAS Arrow::arrow_shared)
+  elseif (TARGET arrow_shared)
+    add_library(arrow_static ALIAS arrow_shared)
+  endif()
+
+  if (TARGET Parquet::parquet_static)
+    add_library(parquet_static ALIAS Parquet::parquet_static)
+  elseif (TARGET Parquet::parquet_shared)
+    add_library(parquet_static ALIAS Parquet::parquet_shared)
+  elseif (TARGET parquet_shared)
+    add_library(parquet_static ALIAS parquet_shared)
+  endif()
 else()
   message(STATUS "Arrow/Parquet not found. Downloading Arrow from GitHub...")
   FetchContent_Declare(
@@ -168,7 +185,7 @@ else()
 
   # Configure Arrow Build Options (Crucial for speed)
   # We disable things you don't need for a simple exporter to save compile time.
-  set(ARROW_DEPENDENCY_SOURCE "BUNDLED" CACHE INTERNAL "")
+  set(ARROW_DEPENDENCY_SOURCE "AUTO" CACHE INTERNAL "")
   set(ARROW_PARQUET ON CACHE INTERNAL "")
   set(ARROW_WITH_SNAPPY OFF CACHE INTERNAL "")
   set(ARROW_BUILD_STATIC ON CACHE INTERNAL "")
