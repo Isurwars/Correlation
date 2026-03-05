@@ -70,7 +70,7 @@ target_include_directories(correlation_lib PUBLIC
 target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
-target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_shared parquet_shared)
+target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_static parquet_static)
 
 #------------------------------------------------------------------
 # Executable Target (correlation)

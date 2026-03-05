@@ -168,14 +168,30 @@ else()
 
   # Configure Arrow Build Options (Crucial for speed)
   # We disable things you don't need for a simple exporter to save compile time.
+  set(ARROW_DEPENDENCY_SOURCE "BUNDLED" CACHE INTERNAL "")
   set(ARROW_PARQUET ON CACHE INTERNAL "")
-  set(ARROW_WITH_SNAPPY ON CACHE INTERNAL "")  # Recommended compression
+  set(ARROW_WITH_SNAPPY OFF CACHE INTERNAL "")
   set(ARROW_BUILD_STATIC ON CACHE INTERNAL "")
   set(ARROW_BUILD_SHARED OFF CACHE INTERNAL "")
   set(ARROW_COMPUTE OFF CACHE INTERNAL "")
   set(ARROW_CSV OFF CACHE INTERNAL "")
   set(ARROW_DATASET OFF CACHE INTERNAL "")
   set(ARROW_FILESYSTEM ON CACHE INTERNAL "")
+  set(ARROW_IPC ON CACHE INTERNAL "")
+  set(ARROW_BUILD_TESTS OFF CACHE INTERNAL "")
+  set(ARROW_BUILD_BENCHMARKS OFF CACHE INTERNAL "")
+  set(ARROW_SIMD_LEVEL "NONE" CACHE STRING "Arrow SIMD Level" FORCE)
 
   FetchContent_MakeAvailable(arrow)
+
+  # Arrow targets built from source don't set the correct INCLUDE directories by default
+  # We manually expose source and generated header folders.
+  target_include_directories(arrow_static INTERFACE 
+    $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
+    $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
+  )
+  target_include_directories(parquet_static INTERFACE 
+    $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
+    $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
+  )
 endif()
