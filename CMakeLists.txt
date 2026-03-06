@@ -70,7 +70,7 @@ target_include_directories(correlation_lib PUBLIC
 target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
-target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_static parquet_static)
+target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_shared parquet_shared)
 
 #------------------------------------------------------------------
 # Executable Target (correlation)
@@ -97,6 +97,14 @@ if (WIN32)
 endif()
 
 target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})
+
+# Copy DLLs to the executable directory so it can be run without adding to PATH
+if (WIN32)
+    add_custom_command(TARGET correlation POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:correlation> $<TARGET_FILE_DIR:correlation>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
 
 
 # Add the include directory for the generated slint header

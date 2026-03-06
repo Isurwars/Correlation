@@ -3,8 +3,7 @@
 # -----------------------------------------------------------
 include(FetchContent)
 
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force static libraries" FORCE)
-set(TBB_USE_STATIC_LIBS ON CACHE BOOL "Use static TBB libraries" FORCE)
+set(BUILD_SHARED_LIBS ON CACHE BOOL "Force shared libraries" FORCE)
 
 # 1. TBB
 find_package(TBB QUIET)
@@ -57,9 +56,9 @@ else()
   set(HDF5_ENABLE_NONSTANDARD_FEATURE_FLOAT16 OFF CACHE BOOL "Disable _Float16 support" FORCE)
   set(HDF5_ENABLE_NONSTANDARD_FEATURE_COMPLEX OFF CACHE BOOL "Disable _Complex support" FORCE)
   set(HDF5_ENABLE_NONSTANDARD_FEATURE_COMPLEX_H OFF CACHE BOOL "Disable _Complex_H support" FORCE)
-  # Static specific options
-  set(HDF5_BUILD_SHARED_LIBS OFF CACHE BOOL "Build HDF5 Shared Library" FORCE)
-  set(HDF5_USE_STATIC_LIBRARIES ON CACHE BOOL "Use HDF5 Static Libraries" FORCE)
+  # Shared specific options
+  set(HDF5_BUILD_SHARED_LIBS ON CACHE BOOL "Build HDF5 Shared Library" FORCE)
+  set(HDF5_USE_STATIC_LIBRARIES OFF CACHE BOOL "Use HDF5 Static Libraries" FORCE)
   set(HDF5_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build HDF5 Static Tools" FORCE)
 
 
@@ -158,21 +157,13 @@ if (Arrow_FOUND AND Parquet_FOUND)
   message(STATUS "Found Arrow: ${Arrow_DIR} (Version: ${Arrow_VERSION})")
   message(STATUS "Found Parquet: ${Parquet_DIR} (Version: ${Parquet_VERSION})")
 
-  # Create ALIAS targets so the rest of the project can just link 'arrow_static' and 'parquet_static'
-  if (TARGET Arrow::arrow_static)
-    add_library(arrow_static ALIAS Arrow::arrow_static)
-  elseif (TARGET Arrow::arrow_shared)
-    add_library(arrow_static ALIAS Arrow::arrow_shared)
-  elseif (TARGET arrow_shared)
-    add_library(arrow_static ALIAS arrow_shared)
+  # Create ALIAS targets so the rest of the project can just link 'arrow_shared' and 'parquet_shared'
+  if (NOT TARGET arrow_shared AND TARGET Arrow::arrow_shared)
+    add_library(arrow_shared ALIAS Arrow::arrow_shared)
   endif()
 
-  if (TARGET Parquet::parquet_static)
-    add_library(parquet_static ALIAS Parquet::parquet_static)
-  elseif (TARGET Parquet::parquet_shared)
-    add_library(parquet_static ALIAS Parquet::parquet_shared)
-  elseif (TARGET parquet_shared)
-    add_library(parquet_static ALIAS parquet_shared)
+  if (NOT TARGET parquet_shared AND TARGET Parquet::parquet_shared)
+    add_library(parquet_shared ALIAS Parquet::parquet_shared)
   endif()
 else()
   message(STATUS "Arrow/Parquet not found. Downloading Arrow from GitHub...")
@@ -188,10 +179,11 @@ else()
   set(ARROW_DEPENDENCY_SOURCE "AUTO" CACHE INTERNAL "")
   set(ARROW_PARQUET ON CACHE INTERNAL "")
   set(ARROW_WITH_SNAPPY OFF CACHE INTERNAL "")
-  set(ARROW_BUILD_STATIC ON CACHE INTERNAL "")
-  set(ARROW_BUILD_SHARED OFF CACHE INTERNAL "")
+  set(ARROW_BUILD_STATIC OFF CACHE INTERNAL "")
+  set(ARROW_BUILD_SHARED ON CACHE INTERNAL "")
   set(ARROW_COMPUTE OFF CACHE INTERNAL "")
   set(ARROW_CSV OFF CACHE INTERNAL "")
+  set(ARROW_JSON OFF CACHE INTERNAL "")
   set(ARROW_DATASET OFF CACHE INTERNAL "")
   set(ARROW_FILESYSTEM ON CACHE INTERNAL "")
   set(ARROW_IPC ON CACHE INTERNAL "")
@@ -199,15 +191,19 @@ else()
   set(ARROW_BUILD_BENCHMARKS OFF CACHE INTERNAL "")
   set(ARROW_SIMD_LEVEL "NONE" CACHE STRING "Arrow SIMD Level" FORCE)
 
+  # Arrow pulls in rapidjson which has a broken CMake < 3.5 minimum version check for CMake 4.0+.
+  # We enforce a policy version minimum before making it available to avoid errors.
+  set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "" FORCE)
+
   FetchContent_MakeAvailable(arrow)
 
   # Arrow targets built from source don't set the correct INCLUDE directories by default
   # We manually expose source and generated header folders.
-  target_include_directories(arrow_static INTERFACE 
+  target_include_directories(arrow_shared INTERFACE 
     $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
     $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
   )
-  target_include_directories(parquet_static INTERFACE 
+  target_include_directories(parquet_shared INTERFACE 
     $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
     $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
   )
