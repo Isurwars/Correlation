@@ -355,7 +355,10 @@ void AppController::handleCheckFileDialogStatus() {
       }
     }
     ui_.set_file_status_text(slint::SharedString(message));
-    ui_.set_timer_running(false);
+    slint::invoke_from_event_loop([this]() {
+      ui_.set_timer_running(false);
+      ui_.set_text_opacity(false);
+    });
 
     // Populate atom counts and bond cutoffs in UI
     if (!selection.empty() && backend_.cell()) {
@@ -412,7 +415,10 @@ void AppController::handleCheckFileDialogStatus() {
       ui_.set_analysis_status_text(
           slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
     }
-    ui_.set_timer_running(false);
+    slint::invoke_from_event_loop([this]() {
+      ui_.set_timer_running(false);
+      ui_.set_text_opacity(false);
+    });
     current_save_dialog_.reset();
   }
 }
