@@ -49,15 +49,37 @@ private:
   // Analysis thread
   std::thread analysis_thread_;
 
-  // Progress helper
+  /**
+   * @brief Helper to update the UI progress bar and status text safely.
+   * @param p Progress value between 0.0 and 1.0.
+   * @param msg Status message to display in the UI.
+   */
   void updateProgress(float p, const std::string &msg);
 
-  // functions to handle options
+  /**
+   * @brief Propagates the current backend options to the UI elements.
+   * @param ui Reference to the main application window.
+   */
   void handleOptionstoUI(AppWindow &ui);
+
+  /**
+   * @brief Retrieves the current user-selected options from the UI.
+   * @param ui Reference to the main application window.
+   * @return The populated ProgramOptions struct.
+   */
   ProgramOptions handleOptionsfromUI(AppWindow &ui);
 
-  // functios to handle Bond_Cutoffs_Sq_
+  /**
+   * @brief Updates the UI with the recommended bond cutoffs from the backend.
+   * @param ui Reference to the main application window.
+   */
   void setBondCutoffs(AppWindow &ui);
+
+  /**
+   * @brief Parses and retrieves the user-modified bond cutoffs from the UI.
+   * @param ui Reference to the main application window.
+   * @return A nested vector representing the bond cutoff matrix.
+   */
   std::vector<std::vector<double>> getBondCutoffs(AppWindow &ui);
 
   //-------------------------------------------------------------------------//

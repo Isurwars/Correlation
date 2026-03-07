@@ -227,7 +227,12 @@ public:
   }
 
 private:
-  // Member functions
+  /**
+   * @brief Main function executed by the analysis thread.
+   *
+   * Responsible for orchestrating the computation of distribution functions
+   * and notifying the provided progress callback upon completion or error.
+   */
   void analysis_thread_func();
 
   // Pointers to the Trajectory and DF
