@@ -24,6 +24,7 @@
 #include <atomic>
 #include <future>
 #include <mutex>
+#include <thread>
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructor -------------------------------//
@@ -388,68 +389,73 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   // Note: TrajectoryAnalyzer uses same cutoffs for all frames usually.
   auto bond_cutoffs = analyzer.getBondCutoffsSQ();
 
-  // Mutex for progress callback (if needed, though atomic is better for
-  // count)
   std::mutex callback_mutex;
   std::atomic<size_t> completed_frames{0};
+  std::atomic<size_t> next_frame{0};
 
-  for (size_t i = 0; i < num_frames; ++i) {
-    futures.push_back(std::async(std::launch::async, [&, i]() {
-      size_t frame_idx = start_frame + i;
-      if (frame_idx >= trajectory.getFrames().size()) {
-        // Should not happen if TrajectoryAnalyzer was constructed
-        // correctly
-        return;
-      }
+  const size_t num_threads = std::min(
+      static_cast<size_t>(std::thread::hardware_concurrency()), num_frames);
+  std::vector<std::thread> threads;
 
-      Cell &frame = trajectory.getFrames()[frame_idx];
+  for (size_t t = 0; t < num_threads; ++t) {
+    threads.emplace_back([&]() {
+      while (true) {
+        size_t i = next_frame.fetch_add(1);
+        if (i >= num_frames)
+          break;
 
-      // Create DF for this frame
-      auto frame_df =
-          std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
-      frame_df->setStructureAnalyzer(analyzers[i].get());
+        size_t frame_idx = start_frame + i;
+        if (frame_idx >= trajectory.getFrames().size()) {
+          continue;
+        }
 
-      frame_df->calculateCoordinationNumber();
-      if (settings.run_rdf) {
-        frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
-      }
-      if (settings.run_pad && settings.angle_bin_width > 0) {
-        frame_df->calculatePAD(settings.angle_bin_width);
-      }
-      if (settings.run_dad && settings.dihedral_bin_width > 0) {
-        frame_df->calculateDAD(settings.dihedral_bin_width);
-      }
-      if (settings.run_rd) {
-        frame_df->calculateRD(settings.max_ring_size);
-      }
-      if (settings.run_sq && settings.q_max > 0) {
-        frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
-                              settings.r_int_max);
-      }
-      if (settings.run_xrd && settings.q_max > 0) {
-        frame_df->calculateXRD(1.5406, 5.0, 90.0, settings.q_bin_width);
-      }
+        Cell &frame = trajectory.getFrames()[frame_idx];
 
-      results[i] = std::move(frame_df);
+        // Create DF for this frame
+        auto frame_df =
+            std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
+        frame_df->setStructureAnalyzer(analyzers[i].get());
 
-      size_t current_completed = ++completed_frames;
-      if (progress_callback) {
-        // Avoid flooding the callback, update maybe every 1% or just
-        // simple throttle? Or lock.
-        std::lock_guard<std::mutex> lock(callback_mutex);
-        progress_callback(
-            static_cast<float>(current_completed) /
-                static_cast<float>(num_frames),
-            "Calculating distributions: " + std::to_string(current_completed) +
-                " of " + std::to_string(num_frames));
+        frame_df->calculateCoordinationNumber();
+        if (settings.run_rdf) {
+          frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
+        }
+        if (settings.run_pad && settings.angle_bin_width > 0) {
+          frame_df->calculatePAD(settings.angle_bin_width);
+        }
+        if (settings.run_dad && settings.dihedral_bin_width > 0) {
+          frame_df->calculateDAD(settings.dihedral_bin_width);
+        }
+        if (settings.run_rd) {
+          frame_df->calculateRD(settings.max_ring_size);
+        }
+        if (settings.run_sq && settings.q_max > 0) {
+          frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
+                                settings.r_int_max);
+        }
+        if (settings.run_xrd && settings.q_max > 0) {
+          frame_df->calculateXRD(1.5406, 5.0, 90.0, settings.q_bin_width);
+        }
+
+        results[i] = std::move(frame_df);
+
+        size_t current_completed = ++completed_frames;
+        if (progress_callback) {
+          std::lock_guard<std::mutex> lock(callback_mutex);
+          progress_callback(static_cast<float>(current_completed) /
+                                static_cast<float>(num_frames),
+                            "Calculating distributions: " +
+                                std::to_string(current_completed) + " of " +
+                                std::to_string(num_frames));
+        }
       }
-    }));
+    });
   }
 
   // Wait for all tasks
-  for (auto &f : futures) {
-    if (f.valid()) {
-      f.get();
+  for (auto &t : threads) {
+    if (t.joinable()) {
+      t.join();
     }
   }
 
