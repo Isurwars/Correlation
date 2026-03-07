@@ -36,6 +36,9 @@ AppController::~AppController() {
   if (analysis_thread_.joinable()) {
     analysis_thread_.join();
   }
+  if (load_thread_.joinable()) {
+    load_thread_.join();
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -343,51 +346,78 @@ void AppController::handleBrowseFile() {
 
 void AppController::handleCheckFileDialogStatus() {
   if (current_file_dialog_ && current_file_dialog_->ready(0)) {
-    std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
     auto selection = current_file_dialog_->result();
     if (!selection.empty()) {
-      ui_.set_in_file_text(slint::SharedString(selection[0]));
-      try {
-        message = backend_.load_file(selection[0]);
-      } catch (const std::exception &e) {
-        message =
-            std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
+      std::string filepath = selection[0];
+      ui_.set_in_file_text(slint::SharedString(filepath));
+      ui_.set_file_status_text(slint::SharedString("Loading file..."));
+      ui_.set_timer_running(true);
+      ui_.set_text_opacity(true);
+      ui_.set_progress(0.0f);
+
+      if (load_thread_.joinable()) {
+        load_thread_.join();
       }
-    }
-    ui_.set_file_status_text(slint::SharedString(message));
-    slint::invoke_from_event_loop([this]() {
-      ui_.set_timer_running(false);
-      ui_.set_text_opacity(false);
-    });
 
-    // Populate atom counts and bond cutoffs in UI
-    if (!selection.empty() && backend_.cell()) {
-      ui_.set_file_loaded(true);
+      load_thread_ = std::thread([this, filepath]() {
+        backend_.setProgressCallback([this](float p, const std::string &msg) {
+          updateProgress(p, msg);
+        });
 
-      // Atom Counts
-      auto atom_counts_map = backend_.getAtomCounts();
-      auto slint_atom_counts =
-          std::make_shared<slint::VectorModel<AtomCount>>();
-      for (const auto &[symbol, count] : atom_counts_map) {
-        slint_atom_counts->push_back({slint::SharedString(symbol), count});
-      }
-      ui_.set_atom_counts(slint_atom_counts);
+        std::string message;
+        bool success = false;
+        try {
+          message = backend_.load_file(filepath);
+          success = true;
+        } catch (const std::exception &e) {
+          message = std::string(AppDefaults::MSG_ERROR_LOADING) +
+                    std::string(e.what());
+        }
 
-      // Bond Cutoffs
-      setBondCutoffs(ui_);
+        slint::invoke_from_event_loop([this, message, success]() {
+          ui_.set_file_status_text(slint::SharedString(message));
+          ui_.set_timer_running(false);
+          ui_.set_text_opacity(false);
+          ui_.set_progress(1.0f);
 
-      // File Info
-      ui_.set_num_frames(backend_.getFrameCount());
-      ui_.set_total_atoms(backend_.getTotalAtomCount());
-      ui_.set_removed_frames_count(
-          static_cast<int>(backend_.getRemovedFrameCount()));
-      ui_.set_time_step(slint::SharedString(
-          std::format("{:.2f}", backend_.getRecommendedTimeStep())));
+          if (success && backend_.cell()) {
+            ui_.set_file_loaded(true);
 
-      // Update Run Analysis Card Frame Info
-      ui_.set_min_frame("1");
-      ui_.set_max_frame(
-          slint::SharedString(std::to_string(backend_.getFrameCount())));
+            // Atom Counts
+            auto atom_counts_map = backend_.getAtomCounts();
+            auto slint_atom_counts =
+                std::make_shared<slint::VectorModel<AtomCount>>();
+            for (const auto &[symbol, count] : atom_counts_map) {
+              slint_atom_counts->push_back(
+                  {slint::SharedString(symbol), count});
+            }
+            ui_.set_atom_counts(slint_atom_counts);
+
+            // Bond Cutoffs
+            setBondCutoffs(ui_);
+
+            // File Info
+            ui_.set_num_frames(backend_.getFrameCount());
+            ui_.set_total_atoms(backend_.getTotalAtomCount());
+            ui_.set_removed_frames_count(
+                static_cast<int>(backend_.getRemovedFrameCount()));
+            ui_.set_time_step(slint::SharedString(
+                std::format("{:.2f}", backend_.getRecommendedTimeStep())));
+
+            // Update Run Analysis Card Frame Info
+            ui_.set_min_frame("1");
+            ui_.set_max_frame(
+                slint::SharedString(std::to_string(backend_.getFrameCount())));
+          }
+        });
+      });
+    } else {
+      std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
+      ui_.set_file_status_text(slint::SharedString(message));
+      slint::invoke_from_event_loop([this]() {
+        ui_.set_timer_running(false);
+        ui_.set_text_opacity(false);
+      });
     }
 
     current_file_dialog_.reset();

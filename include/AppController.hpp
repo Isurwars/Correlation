@@ -46,8 +46,9 @@ private:
   std::unique_ptr<pfd::open_file> current_file_dialog_;
   std::unique_ptr<pfd::save_file> current_save_dialog_;
 
-  // Analysis thread
+  // Analysis and loading threads
   std::thread analysis_thread_;
+  std::thread load_thread_;
 
   /**
    * @brief Helper to update the UI progress bar and status text safely.

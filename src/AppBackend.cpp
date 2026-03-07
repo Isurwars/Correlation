@@ -148,11 +148,12 @@ std::string AppBackend::load_file(const std::string &path) {
   if (type == FileReader::FileType::Arc ||
       type == FileReader::FileType::CastepMd ||
       type == FileReader::FileType::Outmol) {
-    trajectory_ =
-        std::make_unique<Trajectory>(FileReader::readTrajectory(path, type));
+    trajectory_ = std::make_unique<Trajectory>(
+        FileReader::readTrajectory(path, type, progress_callback_));
   } else {
     trajectory_ = std::make_unique<Trajectory>();
-    trajectory_->addFrame(FileReader::readStructure(path, type));
+    trajectory_->addFrame(
+        FileReader::readStructure(path, type, progress_callback_));
   }
 
   options_.input_file = path;

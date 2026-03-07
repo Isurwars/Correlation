@@ -13,7 +13,9 @@
 
 namespace ArcReader {
 
-std::vector<Cell> read(const std::string &file_name) {
+std::vector<Cell>
+read(const std::string &file_name,
+     std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -24,7 +26,22 @@ std::vector<Cell> read(const std::string &file_name) {
   Cell tempCell;
   std::string line;
 
+  myfile.seekg(0, std::ios::end);
+  std::streampos file_size = myfile.tellg();
+  myfile.seekg(0, std::ios::beg);
+  std::streampos last_progress_pos = 0;
+  size_t update_interval = file_size / 100;
+
   while (std::getline(myfile, line)) {
+    if (progress_callback) {
+      std::streampos current_pos = myfile.tellg();
+      if (current_pos - last_progress_pos > update_interval) {
+        float p =
+            static_cast<float>(current_pos) / static_cast<float>(file_size);
+        progress_callback(p, "Loading ARC file...");
+        last_progress_pos = current_pos;
+      }
+    }
     // Ignore empty lines or comment lines
     if (line.empty() || line[0] == '!') {
       continue;

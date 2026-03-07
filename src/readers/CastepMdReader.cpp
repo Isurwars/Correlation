@@ -16,7 +16,9 @@ namespace CastepMdReader {
 // Conversion factor from Bohr (Hartree atomic units) to Angstroms
 constexpr double BOHR_TO_ANGSTROM = 0.529177210903;
 
-std::vector<Cell> read(const std::string &file_name) {
+std::vector<Cell>
+read(const std::string &file_name,
+     std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -40,7 +42,31 @@ std::vector<Cell> read(const std::string &file_name) {
   bool cell_has_atoms = false;
 
   // Parse frames
+  myfile.seekg(0, std::ios::end);
+  std::streampos file_size = myfile.tellg();
+  myfile.clear();
+  myfile.seekg(0, std::ios::beg);
+  std::streampos last_progress_pos = 0;
+  size_t update_interval = file_size / 100;
+
+  // re-skip header since we seekg to beg
+  in_header = true;
+  while (in_header && std::getline(myfile, line)) {
+    if (line.empty() || line.find_first_not_of(' ') == std::string::npos) {
+      in_header = false;
+    }
+  }
+
   while (std::getline(myfile, line)) {
+    if (progress_callback) {
+      std::streampos current_pos = myfile.tellg();
+      if (current_pos - last_progress_pos > update_interval) {
+        float p =
+            static_cast<float>(current_pos) / static_cast<float>(file_size);
+        progress_callback(p, "Loading CASTEP MD file...");
+        last_progress_pos = current_pos;
+      }
+    }
     // If line represents energies/time
     if (line.find("<-- E") != std::string::npos) {
       // For CASTEP MD, the frame usually starts with time (single float on a
@@ -60,7 +86,8 @@ std::vector<Cell> read(const std::string &file_name) {
       continue;
     }
 
-    if (line.find("<-- h") != std::string::npos && line.find("<-- hv") == std::string::npos) {
+    if (line.find("<-- h") != std::string::npos &&
+        line.find("<-- hv") == std::string::npos) {
       // Lattice vectors h are given row by row in Bohr
       // The first <-- h is row 1
       std::array<double, 3> h1, h2, h3;

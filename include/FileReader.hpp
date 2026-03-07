@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 
 #include "Cell.hpp"
@@ -38,7 +39,9 @@ enum class FileType {
  * @return A Cell object containing the parsed atomic structure.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
-Cell readStructure(const std::string &filename, FileType type);
+Cell readStructure(const std::string &filename, FileType type,
+                   std::function<void(float, const std::string &)>
+                       progress_callback = nullptr);
 
 /**
  * @brief Reads a trajectory from a file.
@@ -48,7 +51,9 @@ Cell readStructure(const std::string &filename, FileType type);
  * @return A Trajectory object.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
-Trajectory readTrajectory(const std::string &filename, FileType type);
+Trajectory readTrajectory(const std::string &filename, FileType type,
+                          std::function<void(float, const std::string &)>
+                              progress_callback = nullptr);
 
 /**
  * @brief Determines the FileType from a given filename extension.

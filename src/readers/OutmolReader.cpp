@@ -15,7 +15,9 @@ namespace OutmolReader {
 // Conversion factor from Bohr (Hartree atomic units) to Angstroms
 constexpr double BOHR_TO_ANGSTROM = 0.529177210903;
 
-std::vector<Cell> read(const std::string &file_name) {
+std::vector<Cell>
+read(const std::string &file_name,
+     std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -30,7 +32,22 @@ std::vector<Cell> read(const std::string &file_name) {
   std::array<double, 3> h3 = {0.0, 0.0, 0.0};
   bool cell_parsed = false;
 
+  myfile.seekg(0, std::ios::end);
+  std::streampos file_size = myfile.tellg();
+  myfile.seekg(0, std::ios::beg);
+  std::streampos last_progress_pos = 0;
+  size_t update_interval = file_size / 100;
+
   while (std::getline(myfile, line)) {
+    if (progress_callback) {
+      std::streampos current_pos = myfile.tellg();
+      if (current_pos - last_progress_pos > update_interval) {
+        float p =
+            static_cast<float>(current_pos) / static_cast<float>(file_size);
+        progress_callback(p, "Loading Outmol file...");
+        last_progress_pos = current_pos;
+      }
+    }
     if (line.find("$cell vectors") != std::string::npos) {
       std::getline(myfile, line); // row 1
       std::stringstream(line) >> h1[0] >> h1[1] >> h1[2];

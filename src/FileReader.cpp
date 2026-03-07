@@ -43,7 +43,9 @@ FileType determineFileType(const std::string &filename) {
   throw std::runtime_error("Unsupported file extension: " + ext);
 }
 
-Cell readStructure(const std::string &filename, FileType type) {
+Cell readStructure(
+    const std::string &filename, FileType type,
+    std::function<void(float, const std::string &)> progress_callback) {
   switch (type) {
   case FileType::Car:
     return CarReader::read(filename);
@@ -65,18 +67,21 @@ Cell readStructure(const std::string &filename, FileType type) {
   }
 }
 
-Trajectory readTrajectory(const std::string &filename, FileType type) {
+Trajectory readTrajectory(
+    const std::string &filename, FileType type,
+    std::function<void(float, const std::string &)> progress_callback) {
   switch (type) {
   case FileType::Arc: {
-    std::vector<Cell> frames = ArcReader::read(filename);
+    std::vector<Cell> frames = ArcReader::read(filename, progress_callback);
     return Trajectory(frames, 1.0); // Default time_step 1.0 for now
   }
   case FileType::CastepMd: {
-    std::vector<Cell> frames = CastepMdReader::read(filename);
+    std::vector<Cell> frames =
+        CastepMdReader::read(filename, progress_callback);
     return Trajectory(frames, 1.0); // Default time_step 1.0 for now
   }
   case FileType::Outmol: {
-    std::vector<Cell> frames = OutmolReader::read(filename);
+    std::vector<Cell> frames = OutmolReader::read(filename, progress_callback);
     return Trajectory(frames, 1.0); // Default time_step 1.0 for now
   }
   default:
