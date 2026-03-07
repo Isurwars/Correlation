@@ -11,6 +11,17 @@ import {
     MaterialText,
 } from "@material";
 
+// ============================================================================
+// InputFileCard Component
+// ============================================================================
+// This component provides the entry point for users to load a file.
+// 
+// C++ Binding Architecture:
+// - Exposes the `browse_file()` callback, which maps to 
+//   `AppController::handleBrowseFile()` in C++.
+// - When clicked, the C++ backend opens a native file dialog (via 
+//   `PortableFileDialogs`) to select the input structure/trajectory.
+// ============================================================================
 export component InputFileCard inherits FilledCard {
     callback browse_file();
     

@@ -5,6 +5,17 @@
 
 import { ToolTip } from "@material";
 
+// ============================================================================
+// AppToolTips Component
+// ============================================================================
+// This component manages all tooltips displayed across the application.
+// 
+// C++ Binding Architecture:
+// - This component does not directly interface with the C++ backend.
+// - Instead, it relies on hover states (e.g., `file_hover`, `r_max_hover`)
+//   passed down from the parent `AppWindow` and its child components. 
+// - It acts purely as a presentation layer for UI hints.
+// ============================================================================
 export component AppToolTips inherits Rectangle {
     in property <length> mouse_x;
     in property <length> mouse_y;

@@ -20,6 +20,20 @@ import {
 } from "@material";
 import { FileInfoCard } from "FileInfoCard.slint";
 
+// ============================================================================
+// RunAnalysisCard Component
+// ============================================================================
+// This component handles the final configuration of the analysis (frame ranges,
+// export formats) and triggers the execution.
+// 
+// C++ Binding Architecture:
+// - Callbacks: `run_analysis()` and `write_files()` trigger the corresponding
+//   handlers in `AppController.cpp`.
+// - The `run_analysis` execution happens asynchronously in C++. As it runs,
+//   the backend updates `analysis_running`, `progress`, and `analysis_status_text`.
+// - The export options (`use_csv`, `use_hdf5`, `use_parquet`) and frame ranges
+//   (`min_frame`, `max_frame`) are read by C++ before starting the analysis.
+// ============================================================================
 export component RunAnalysisCard inherits FilledCard {
     in property <bool> file_loaded;
     in property <int> num_frames;

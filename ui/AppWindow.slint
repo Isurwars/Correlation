@@ -19,6 +19,20 @@ import { AppToolTips } from "AppToolTips.slint";
 
 export { AtomCount, BondCutoff }
 
+// ============================================================================
+// AppWindow Component
+// ============================================================================
+// This is the root component of the GUI. Its properties (`in-out property <...>`) 
+// and callbacks (`callback ...`) form the main interface with the C++ backend.
+//
+// C++ Binding Architecture:
+// - Callbacks (e.g., `run_analysis()`, `browse_file()`) are implemented in C++
+//   (via `AppController.cpp`) using `ui->on_run_analysis([...])` to handle events.
+// - Properties (e.g., `file_status_text`, `r_max`, `use_csv`) are read and written
+//   from C++ using getters (`ui->get_r_max()`) and setters (`ui->set_progress(...)`).
+// - The C++ application holds an instance of `AppWindow` and updates its state
+//   based on backend computations, while the UI triggers backend actions.
+// ============================================================================
 export component AppWindow inherits Window {
     // Callback that the UI invokes on the C++ side
     callback run_analysis();

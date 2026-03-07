@@ -21,6 +21,22 @@ import {
 } from "@material";
 import { BondCutoff } from "Types.slint";
 
+// ============================================================================
+// OptionsCard Component
+// ============================================================================
+// This component encapsulates the configuration inputs for the analysis (e.g.,
+// RDF max r, S(Q) max Q, smoothing options, and bond cutoffs).
+// 
+// C++ Binding Architecture:
+// - The properties defined here (like `r_max`, `smoothing_sigma`) are bound
+//   bi-directionally to the `AppWindow` root component.
+// - The C++ controller (`AppController::handleOptionsfromUI`) reads these values
+//   through the `AppWindow` instance when an analysis is started, parsing the 
+//   strings into appropriate numeric types for the backend (`AppBackend`).
+// - Conversely, when a file is loaded, the backend recommendations are pushed
+//   back to the UI (via `AppController::handleOptionstoUI`), updating these
+//   same properties to display default values.
+// ============================================================================
 export component OptionsCard inherits FilledCard {
     in-out property <string> r_max;
     in-out property <string> r_bin_width;
