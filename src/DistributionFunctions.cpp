@@ -447,11 +447,11 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
         size_t current_completed = ++completed_frames;
         if (progress_callback) {
           std::lock_guard<std::mutex> lock(callback_mutex);
-          progress_callback(static_cast<float>(current_completed) /
-                                static_cast<float>(num_frames),
-                            "Calculating distributions: " +
-                                std::to_string(current_completed) + " of " +
-                                std::to_string(num_frames));
+          progress_callback(
+              static_cast<float>(current_completed) /
+                  static_cast<float>(num_frames),
+              "Calculating: " + std::to_string(current_completed) + " of " +
+                  std::to_string(num_frames));
         }
       }
     });

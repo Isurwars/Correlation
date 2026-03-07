@@ -201,14 +201,18 @@ std::string AppBackend::run_analysis() {
       progress_callback_(0.0f, "Starting analysis...");
 
     // Define progress callbacks
+    // Since TrajectoryAnalyzer no longer does heavy lifting during
+    // initialization, we give the entire progress duration to the
+    // DistributionFunctions::computeMean phase.
     auto cb_structure = [this](float p, const std::string &msg) {
       if (progress_callback_)
-        progress_callback_(p * 0.7f, msg);
+        progress_callback_(0.0f,
+                           msg); // just show message, progress is negligible
     };
 
     auto cb_dist = [this](float p, const std::string &msg) {
       if (progress_callback_)
-        progress_callback_(0.7f + p * 0.3f, msg);
+        progress_callback_(p, msg);
     };
 
     // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
