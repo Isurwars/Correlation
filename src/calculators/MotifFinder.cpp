@@ -5,6 +5,7 @@
 
 #include "calculators/MotifFinder.hpp"
 #include <algorithm>
+#include <set>
 #include <vector>
 
 namespace calculators {
@@ -36,6 +37,79 @@ void get_paths(size_t node, size_t root,
 }
 
 /**
+ * @brief Checks if a given cycle is a King's ring (shortest-path ring) in the
+ * graph.
+ *
+ * A cycle is a King's ring if the shortest path distance in the entire graph
+ * between any two nodes in the cycle is equal to their shortest distance along
+ * the cycle. This prevents identifying large macro-cycles that wrap around
+ * smaller internal structures.
+ */
+bool isKingRing(const NeighborGraph &graph, const std::vector<AtomID> &cycle,
+                std::vector<int> &dist_king, std::vector<size_t> &q_king) {
+  int n = cycle.size();
+  if (n < 3)
+    return false;
+
+  std::vector<size_t> visited_nodes;
+  visited_nodes.reserve(n * 10);
+
+  for (int i = 0; i < n; ++i) {
+    size_t start_node = cycle[i];
+
+    q_king.clear();
+    visited_nodes.clear();
+
+    dist_king[start_node] = 0;
+    q_king.push_back(start_node);
+    visited_nodes.push_back(start_node);
+
+    size_t q_head = 0;
+    int max_check_dist = n / 2;
+
+    while (q_head < q_king.size()) {
+      size_t u = q_king[q_head++];
+      int current_dist = dist_king[u];
+
+      if (current_dist >= max_check_dist) {
+        continue;
+      }
+
+      for (const auto &neighbor : graph.getNeighbors(u)) {
+        size_t v = neighbor.index;
+        if (dist_king[v] == -1) {
+          dist_king[v] = current_dist + 1;
+          q_king.push_back(v);
+          visited_nodes.push_back(v);
+        }
+      }
+    }
+
+    bool is_king = true;
+    for (int j = 0; j < n; ++j) {
+      if (i == j)
+        continue;
+      size_t target_node = cycle[j];
+      int expected_dist = std::min(std::abs(j - i), n - std::abs(j - i));
+      if (dist_king[target_node] != -1 &&
+          dist_king[target_node] < expected_dist) {
+        is_king = false;
+        break;
+      }
+    }
+
+    for (size_t v : visited_nodes) {
+      dist_king[v] = -1;
+    }
+
+    if (!is_king)
+      return false;
+  }
+
+  return true;
+}
+
+/**
  * @brief Breadth-First Search algorithm to find all shortest chordless cycles
  * (rings).
  *
@@ -53,6 +127,8 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
   if (max_size < 3)
     return all_cycles;
 
+  std::set<std::vector<AtomID>> unique_ring_nodes;
+
   size_t num_nodes = graph.nodeCount();
   // We hoist memory allocations out of the search loops to drastically improve
   // performance.
@@ -60,6 +136,10 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
   std::vector<std::vector<AtomID>> parents(num_nodes);
   std::vector<size_t> visited;
   visited.reserve(num_nodes); // Prevent reallocation
+
+  std::vector<int> dist_king(num_nodes, -1);
+  std::vector<size_t> q_king;
+  q_king.reserve(num_nodes);
 
   std::vector<std::pair<size_t, size_t>> cross_edges;
   cross_edges.reserve(1024);
@@ -84,6 +164,10 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
 
       for (const auto &neighbor : graph.getNeighbors(u)) {
         size_t v = neighbor.index;
+
+        if (v == u)
+          continue; // Skip self-loops
+
         if (v < root)
           continue;
 
@@ -156,7 +240,15 @@ std::vector<std::vector<AtomID>> getAllShortestRings(const NeighborGraph &graph,
               if (cycle[1] > cycle.back()) {
                 std::reverse(cycle.begin() + 1, cycle.end());
               }
-              all_cycles.push_back(cycle);
+
+              if (isKingRing(graph, cycle, dist_king, q_king)) {
+                std::vector<AtomID> sorted_nodes = cycle;
+                std::sort(sorted_nodes.begin(), sorted_nodes.end());
+
+                if (unique_ring_nodes.insert(sorted_nodes).second) {
+                  all_cycles.push_back(cycle);
+                }
+              }
             }
           }
         }
