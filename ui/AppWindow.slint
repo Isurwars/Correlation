@@ -69,7 +69,7 @@ export component AppWindow inherits Window {
     in-out property <bool> run_pad: false;
     in-out property <bool> run_dad: false;
     in-out property <bool> run_vacf: false;
-    in-out property <bool> run_md: false;
+    in-out property <bool> run_rd: false;
     in-out property <bool> run_xrd: false;
     in-out property <bool> run_vdos: false;
 
@@ -200,7 +200,7 @@ export component AppWindow inherits Window {
                     run_pad <=> root.run_pad;
                     run_dad <=> root.run_dad;
                     run_vacf <=> root.run_vacf;
-                    run_md <=> root.run_md;
+                    run_rd <=> root.run_rd;
                     run_xrd <=> root.run_xrd;
                     run_vdos <=> root.run_vdos;
                     r_max <=> root.r_max;
@@ -254,7 +254,7 @@ export component AppWindow inherits Window {
             xrd_cb_hover: options_card.xrd_cb_has_hover;
             pad_cb_hover: options_card.pad_cb_has_hover;
             dad_cb_hover: options_card.dad_cb_has_hover;
-            md_cb_hover: options_card.md_cb_has_hover;
+            rd_cb_hover: options_card.rd_cb_has_hover;
             vacf_cb_hover: options_card.vacf_cb_has_hover;
             vdos_cb_hover: options_card.vdos_cb_has_hover;
         }

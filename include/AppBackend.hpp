@@ -64,13 +64,13 @@ struct ProgramOptions {
   double r_int_max = AppDefaults::R_INT_MAX;
   double angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;
   double dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH;
-  size_t max_ring_size = 6;
+  size_t max_ring_size = 8;
   bool run_rdf = true;
   bool run_sq = true;
   bool run_xrd = true;
   bool run_pad = true;
   bool run_dad = true;
-  bool run_md = true;
+  bool run_rd = true;
   bool run_vacf = true;
   bool run_vdos = true;
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;

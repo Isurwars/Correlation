@@ -3,11 +3,15 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#pragma once
+#ifndef RDCALCULATOR_HPP
+#define RDCALCULATOR_HPP
 
 #include "DistributionFunctions.hpp"
+#include "StructureAnalyzer.hpp"
 
-class MDCalculator {
+class RDCalculator {
 public:
   static Histogram calculate(const NeighborGraph &graph, size_t max_ring_size);
 };
+
+#endif // RDCALCULATOR_HPP

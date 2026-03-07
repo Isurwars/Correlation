@@ -6,9 +6,10 @@
 #include <gtest/gtest.h>
 
 #include "NeighborGraph.hpp"
-#include "calculators/MDCalculator.hpp"
+#include "calculators/MotifFinder.hpp"
+#include "calculators/RDCalculator.hpp"
 
-class _20_MD_Tests : public ::testing::Test {
+class _20_RD_Tests : public ::testing::Test {
 protected:
   NeighborGraph graph;
 
@@ -26,14 +27,14 @@ protected:
   }
 };
 
-TEST_F(_20_MD_Tests, ComputeMotif) {
+TEST_F(_20_RD_Tests, ComputeMotif) {
   size_t max_ring_size = 5;
-  Histogram f_motif = MDCalculator::calculate(graph, max_ring_size);
+  Histogram f_motif = RDCalculator::calculate(graph, max_ring_size);
 
-  ASSERT_FALSE(f_motif.partials.empty());
+  EXPECT_EQ(f_motif.bin_label, "Ring Size");
   ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);
 
-  // Bins should be 3, 4, 5
+  // Check bins are 3, 4, 5
   EXPECT_EQ(f_motif.bins[0], 3.0);
   EXPECT_EQ(f_motif.bins[1], 4.0);
   EXPECT_EQ(f_motif.bins[2], 5.0);
@@ -48,6 +49,9 @@ TEST_F(_20_MD_Tests, ComputeMotif) {
   EXPECT_EQ(partial[2], 0.0);
 }
 
-TEST_F(_20_MD_Tests, InvalidMaxRingSize) {
-  EXPECT_THROW(MDCalculator::calculate(graph, 2), std::invalid_argument);
+TEST_F(_20_RD_Tests, InvalidMaxRingSize) {
+  EXPECT_THROW(RDCalculator::calculate(graph, 2), std::invalid_argument);
 }
+
+// -------------------------------------------------------------------------- //
+// ----------------------------- Main function ------------------------------ //

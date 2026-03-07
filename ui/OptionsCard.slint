@@ -44,7 +44,9 @@ export component OptionsCard inherits FilledCard {
     in-out property <bool> run_dad: true;
     in-out property <bool> run_vacf: true;
     in-out property <bool> run_vdos: true;
-    in-out property <bool> run_md: true;
+    in-out property <bool> run_rd: true;
+    in-out property <bool> rd_cb: true;
+    in-out property <bool> vacf_cb: true;
     
     // Toggle stats for groups
     in-out property <bool> analyses_expanded: false;
@@ -82,9 +84,9 @@ export component OptionsCard inherits FilledCard {
     out property <bool> xrd_cb_has_hover: xrd_cb_area.has-hover;
     out property <bool> pad_cb_has_hover: pad_cb_area.has-hover;
     out property <bool> dad_cb_has_hover: dad_cb_area.has-hover;
-    out property <bool> md_cb_has_hover: md_cb_area.has-hover;
     out property <bool> vacf_cb_has_hover: vacf_cb_area.has-hover;
     out property <bool> vdos_cb_has_hover: vdos_cb_area.has-hover;
+    out property <bool> rd_cb_has_hover: rd_cb_area.has-hover;
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_4;
@@ -157,15 +159,6 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
-            md_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_md;
-                text: "Motif Rings";
-                checked_state_changed(s) => {
-                    root.run_md = s;
-                }
-            }
-
             vacf_cb_area := CheckBoxRow {
                 enabled: root.file_loaded;
                 check_state_bool: root.run_vacf;
@@ -181,6 +174,15 @@ export component OptionsCard inherits FilledCard {
                 text: "vDoS";
                 checked_state_changed(s) => {
                     root.run_vdos = s;
+                }
+            }
+
+            rd_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.rd_cb;
+                text: "Ring Distribution";
+                checked_state_changed(s) => {
+                    root.rd_cb = s;
                 }
             }
         }
@@ -301,9 +303,9 @@ export component OptionsCard inherits FilledCard {
             }
         }
 
-        // 3.5 Topological Motifs Group
+        // 3.5 Topological Rings Group
         ExpandableHeader {
-            text: "Topological Motifs";
+            text: "Topological Rings";
             expanded <=> root.md_expanded;
         }
 

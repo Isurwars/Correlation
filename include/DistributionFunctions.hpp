@@ -26,13 +26,13 @@ struct AnalysisSettings {
   double r_int_max = 10.0;
   double angle_bin_width = 1.0;
   double dihedral_bin_width = 1.0;
-  size_t max_ring_size = 6;
+  size_t max_ring_size = 8;
   bool run_rdf = true;
   bool run_sq = true;
   bool run_pad = false;
   bool run_dad = false;
   bool run_vacf = false;
-  bool run_md = false;
+  bool run_rd = false;
   bool run_xrd = false;
   bool run_vdos = false;
   bool smoothing = true;
@@ -139,10 +139,10 @@ public:
   void calculateDAD(double bin_width = 1.0);
 
   /**
-   * @brief Calculates the Motif Distribution (MD).
+   * @brief Calculates the Ring Distribution (RD).
    * @param max_ring_size Max ring size to search for.
    */
-  void calculateMD(size_t max_ring_size = 6);
+  void calculateRD(size_t max_ring_size = 8);
 
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).

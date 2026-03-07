@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "calculators/MDCalculator.hpp"
+#include "calculators/RDCalculator.hpp"
 #include "calculators/MotifFinder.hpp"
 #include <stdexcept>
 
-Histogram MDCalculator::calculate(const NeighborGraph &graph,
+Histogram RDCalculator::calculate(const NeighborGraph &graph,
                                   size_t max_ring_size) {
   if (max_ring_size < 3) {
     throw std::invalid_argument("Max ring size must be at least 3");
@@ -37,18 +37,13 @@ Histogram MDCalculator::calculate(const NeighborGraph &graph,
     }
   }
 
-  // Not strictly normalized the same way as angular distributions,
-  // since this is discrete occurrences. The "Total" can just be
-  // a copy of the "Rings" partial if desired, or we just leave it
-  // with "Rings". For consistency with CSVWriter/HDF5Writer, we might just
-  // provide a Total if we expect one, but the Writers work on
-  // any partial keys. We will provide "Total" as identical for now.
+  if (total_counts > 0.0) {
+    for (size_t i = 0; i < num_bins; ++i) {
+      partial_hist[i] /= total_counts;
+    }
+  }
 
   f_motif.partials["Total"] = partial_hist;
-
-  // Discrete rings often preferred as raw counts rather than a probability
-  // density with bin_width=1. We'll leave them as counts to allow users
-  // to see exactly how many 5-membered rings were found.
 
   return f_motif;
 }

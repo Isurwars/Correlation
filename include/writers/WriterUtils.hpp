@@ -29,7 +29,7 @@ inline const std::map<std::string, FunctionMetadata> metadata_map = {
     {"DAD",
      {"Dihedral Angle (°)", "Degrees", "degree^-1",
       "Dihedral Angle Distribution"}},
-    {"MD", {"Ring Size", "atoms", "counts", "Motif Distribution"}},
+    {"RD", {"Ring Size", "atoms", "counts", "Ring Distribution"}},
     {"S(Q)", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
     {"XRD",
      {"2theta", "Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},

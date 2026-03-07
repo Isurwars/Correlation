@@ -232,7 +232,7 @@ std::string AppBackend::run_analysis() {
     settings.run_pad = options_.run_pad;
     settings.run_dad = options_.run_dad;
     settings.run_vacf = options_.run_vacf;
-    settings.run_md = options_.run_md;
+    settings.run_rd = options_.run_rd;
     settings.run_xrd = options_.run_xrd;
     settings.run_vdos = options_.run_vdos;
     settings.smoothing = options_.smoothing;

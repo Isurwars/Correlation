@@ -36,7 +36,8 @@ add_library(correlation_lib STATIC
     src/calculators/RDFCalculator.cpp
     src/calculators/PADCalculator.cpp
     src/calculators/DADCalculator.cpp
-    src/calculators/MDCalculator.cpp
+    src/calculators/MotifFinder.cpp
+    src/calculators/RDCalculator.cpp
     src/calculators/VACFCalculator.cpp
     src/calculators/VDOSCalculator.cpp
     src/calculators/SQCalculator.cpp

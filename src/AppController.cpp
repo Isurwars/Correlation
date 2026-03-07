@@ -89,7 +89,7 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_run_pad(opt.run_pad);
   ui.set_run_dad(opt.run_dad);
   ui.set_run_vacf(opt.run_vacf);
-  ui.set_run_md(opt.run_md);
+  ui.set_run_rd(opt.run_rd);
   ui.set_run_xrd(opt.run_xrd);
   ui.set_run_vdos(opt.run_vdos);
   ui.set_smoothing_sigma(
@@ -134,7 +134,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.run_pad = ui_.get_run_pad();
   opt.run_dad = ui_.get_run_dad();
   opt.run_vacf = ui_.get_run_vacf();
-  opt.run_md = ui_.get_run_md();
+  opt.run_rd = ui_.get_run_rd();
   opt.run_xrd = ui_.get_run_xrd();
   opt.run_vdos = ui_.get_run_vdos();
   opt.smoothing_sigma =

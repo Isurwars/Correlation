@@ -13,8 +13,8 @@
 #include "TrajectoryAnalyzer.hpp"
 #include "calculators/CNCalculator.hpp"
 #include "calculators/DADCalculator.hpp"
-#include "calculators/MDCalculator.hpp"
 #include "calculators/PADCalculator.hpp"
+#include "calculators/RDCalculator.hpp"
 #include "calculators/RDFCalculator.hpp"
 #include "calculators/SQCalculator.hpp"
 #include "calculators/VACFCalculator.hpp"
@@ -247,12 +247,12 @@ void DistributionFunctions::calculateDAD(double bin_width) {
 }
 
 //---------------------------------------------------------------------------//
-//----------------------------- Calculation MD ------------------------------//
+//----------------------------- Calculation RD ------------------------------//
 //---------------------------------------------------------------------------//
 
-void DistributionFunctions::calculateMD(size_t max_ring_size) {
-  histograms_["MD"] =
-      MDCalculator::calculate(neighbors()->neighborGraph(), max_ring_size);
+void DistributionFunctions::calculateRD(size_t max_ring_size) {
+  histograms_["RD"] =
+      RDCalculator::calculate(neighbors()->neighborGraph(), max_ring_size);
 }
 
 //---------------------------------------------------------------------------//
@@ -419,8 +419,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
       if (settings.run_dad && settings.dihedral_bin_width > 0) {
         frame_df->calculateDAD(settings.dihedral_bin_width);
       }
-      if (settings.run_md) {
-        frame_df->calculateMD(settings.max_ring_size);
+      if (settings.run_rd) {
+        frame_df->calculateRD(settings.max_ring_size);
       }
       if (settings.run_sq && settings.q_max > 0) {
         frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
