@@ -27,9 +27,12 @@ public:
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
-  const std::vector<std::unique_ptr<StructureAnalyzer>> &getAnalyzers() const {
-    return analyzers_;
+  std::unique_ptr<StructureAnalyzer> createAnalyzer(size_t frame_idx) const;
+
+  [[nodiscard]] size_t getNumFrames() const {
+    return effective_end_ - start_frame_;
   }
+  [[nodiscard]] size_t getStartFrame() const { return start_frame_; }
 
   [[nodiscard]] double getTimeStep() const { return time_step_; }
   [[nodiscard]] double getNeighborCutoff() const { return neighbor_cutoff_; }
@@ -42,7 +45,9 @@ public:
   }
 
 private:
-  std::vector<std::unique_ptr<StructureAnalyzer>> analyzers_;
+  Trajectory &trajectory_;
+  size_t start_frame_;
+  size_t effective_end_;
   double time_step_;
   double neighbor_cutoff_;
   std::vector<std::vector<double>> bond_cutoffs_;

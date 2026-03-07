@@ -197,7 +197,17 @@ public:
    */
   void smoothAll(double sigma, KernelType kernel = KernelType::Gaussian);
 
+  /**
+   * @brief Uses an external StructureAnalyzer for neighborhood/bond info.
+   * @param analyzer A pre-computed external analyzer instance.
+   */
   void setStructureAnalyzer(const StructureAnalyzer *analyzer);
+
+  /**
+   * @brief Takes ownership of a StructureAnalyzer for neighborhood/bond info.
+   * @param analyzer A pre-computed analyzer instance.
+   */
+  void setStructureAnalyzerOwned(std::unique_ptr<StructureAnalyzer> analyzer);
 
   //-------------------------------------------------------------------------//
   //----------------------------- Accumulation ------------------------------//

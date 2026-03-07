@@ -86,6 +86,12 @@ void DistributionFunctions::setStructureAnalyzer(
   }
 }
 
+void DistributionFunctions::setStructureAnalyzerOwned(
+    std::unique_ptr<StructureAnalyzer> analyzer) {
+  neighbors_owned_ = std::move(analyzer);
+  neighbors_ref_ = nullptr;
+}
+
 const StructureAnalyzer *DistributionFunctions::neighbors() const {
   if (neighbors_ref_) {
     return neighbors_ref_;
@@ -376,12 +382,11 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
     size_t start_frame, const AnalysisSettings &settings,
     std::function<void(float, const std::string &)> progress_callback) {
 
-  const auto &analyzers = analyzer.getAnalyzers();
-  if (analyzers.empty()) {
+  const size_t num_frames = analyzer.getNumFrames();
+  if (num_frames == 0) {
     return nullptr;
   }
 
-  const size_t num_frames = analyzers.size();
   std::vector<std::unique_ptr<DistributionFunctions>> results(num_frames);
   std::vector<std::future<void>> futures;
 
@@ -414,7 +419,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
         // Create DF for this frame
         auto frame_df =
             std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
-        frame_df->setStructureAnalyzer(analyzers[i].get());
+        frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
 
         frame_df->calculateCoordinationNumber();
         if (settings.run_rdf) {

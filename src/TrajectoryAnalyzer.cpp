@@ -14,37 +14,30 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
     const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame,
     long long end_frame, bool ignore_periodic_self_interactions,
     std::function<void(float, const std::string &)> progress_callback)
-    : time_step_(trajectory.getTimeStep()), neighbor_cutoff_(neighbor_cutoff),
-      bond_cutoffs_(bond_cutoffs),
+    : trajectory_(trajectory), time_step_(trajectory.getTimeStep()),
+      neighbor_cutoff_(neighbor_cutoff), bond_cutoffs_(bond_cutoffs),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
 
   auto &frames = trajectory.getFrames();
   size_t n_frames = frames.size();
 
-  size_t effective_end =
+  effective_end_ =
       (end_frame == -1 || static_cast<size_t>(end_frame) >= n_frames)
           ? n_frames
           : static_cast<size_t>(end_frame);
 
-  if (start_frame >= n_frames)
-    return; // Nothing to do
-
-  analyzers_.reserve(effective_end - start_frame);
-
-  for (size_t i = start_frame; i < effective_end; ++i) {
-    if (progress_callback) {
-      float p = static_cast<float>(i - start_frame) /
-                static_cast<float>(effective_end - start_frame);
-      progress_callback(p, "Analyzing structure frame " +
-                               std::to_string(i + 1) + " of " +
-                               std::to_string(effective_end));
-    }
-    analyzers_.push_back(std::make_unique<StructureAnalyzer>(
-        frames[i], neighbor_cutoff, bond_cutoffs,
-        ignore_periodic_self_interactions));
-  }
+  start_frame_ = (start_frame >= n_frames) ? n_frames : start_frame;
 
   if (progress_callback) {
-    progress_callback(1.0f, "Structure analysis complete.");
+    progress_callback(1.0f, "TrajectoryAnalyzer initialized.");
   }
+}
+
+std::unique_ptr<StructureAnalyzer>
+TrajectoryAnalyzer::createAnalyzer(size_t frame_idx) const {
+  if (frame_idx >= trajectory_.getFrames().size())
+    return nullptr;
+  return std::make_unique<StructureAnalyzer>(
+      trajectory_.getFrames()[frame_idx], neighbor_cutoff_, bond_cutoffs_,
+      ignore_periodic_self_interactions_);
 }

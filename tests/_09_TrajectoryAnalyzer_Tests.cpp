@@ -26,13 +26,13 @@ TEST(_09_TrajectoryAnalyzer_Tests, BasicUsage) {
 
   TrajectoryAnalyzer analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 
-  EXPECT_EQ(analyzer.getAnalyzers().size(), 2);
+  EXPECT_EQ(analyzer.getNumFrames(), 2);
   EXPECT_EQ(analyzer.getNeighborCutoff(), neighbor_cutoff);
   EXPECT_EQ(analyzer.getBondCutoffsSQ()[0][0], 1.1);
 
-  // Verify that StructureAnalyzers were created and ran
-  const auto &frame_analyzers = analyzer.getAnalyzers();
-  for (const auto &sa : frame_analyzers) {
+  // Verify that StructureAnalyzers can be created dynamically
+  for (size_t i = 0; i < analyzer.getNumFrames(); ++i) {
+    auto sa = analyzer.createAnalyzer(i);
     // Just checking if we can access them and they are not null
     EXPECT_TRUE(sa != nullptr);
     // In a real test we might check neighbor counts if we knew indices
