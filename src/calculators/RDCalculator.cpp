@@ -18,8 +18,7 @@ Histogram RDCalculator::calculate(const NeighborGraph &graph,
   Histogram f_motif;
   f_motif.bin_label = "Ring Size";
 
-  // Create bins from 3 to max_ring_size
-  size_t num_bins = max_ring_size - 2;
+  size_t num_bins = max_ring_size >= 3 ? (max_ring_size - 2) : 0;
   f_motif.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_motif.bins[i] = static_cast<double>(i + 3);

@@ -90,9 +90,9 @@ bool isKingRing(const NeighborGraph &graph, const std::vector<AtomID> &cycle,
       if (i == j)
         continue;
       size_t target_node = cycle[j];
-      int expected_dist = std::min(std::abs(j - i), n - std::abs(j - i));
+      int dist_in_cycle = std::min(std::abs(j - i), n - std::abs(j - i));
       if (dist_king[target_node] != -1 &&
-          dist_king[target_node] < expected_dist) {
+          dist_king[target_node] < dist_in_cycle) {
         is_king = false;
         break;
       }
