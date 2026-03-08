@@ -74,7 +74,7 @@ export component OptionsCard inherits FilledCard {
     in-out property <bool> bond_cutoffs_expanded: false;
 
     // Toggle height for groups
-    property <length> analyses_height: analyses_expanded ? 210px : 0px;
+    property <length> analyses_height: analyses_expanded ? 320px : 0px;
     property <length> rdf_height: rdf_expanded ? 100px : 0px;
     property <length> sq_height: sq_expanded ? 150px : 0px;
     property <length> angle_height: angle_expanded ? 100px : 0px;
@@ -130,6 +130,12 @@ export component OptionsCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_4;
             padding_left: MaterialStyleMetrics.spacing_8;
 
+            MaterialText {
+                text: "Structural";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+            }
+
             rdf_cb_area := CheckBoxRow {
                 enabled: root.file_loaded;
                 check_state_bool: root.run_rdf;
@@ -157,6 +163,17 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            MaterialText {
+                text: "Angular";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+            }
+
             pad_cb_area := CheckBoxRow {
                 enabled: root.file_loaded;
                 check_state_bool: root.run_pad;
@@ -175,6 +192,37 @@ export component OptionsCard inherits FilledCard {
                 }
             }
 
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            MaterialText {
+                text: "Rings";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            rd_cb_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.rd_cb;
+                text: "Ring Distribution";
+                checked_state_changed(s) => {
+                    root.rd_cb = s;
+                }
+            }
+
+            Rectangle {
+                height: 1px;
+                background: MaterialPalette.outline_variant;
+            }
+
+            MaterialText {
+                text: "Dynamic";
+                style: MaterialTypography.label_small;
+                color: MaterialPalette.on_surface_variant;
+            }
+
             vacf_cb_area := CheckBoxRow {
                 enabled: root.file_loaded;
                 check_state_bool: root.run_vacf;
@@ -190,15 +238,6 @@ export component OptionsCard inherits FilledCard {
                 text: "vDoS";
                 checked_state_changed(s) => {
                     root.run_vdos = s;
-                }
-            }
-
-            rd_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.rd_cb;
-                text: "Ring Distribution";
-                checked_state_changed(s) => {
-                    root.rd_cb = s;
                 }
             }
         }
