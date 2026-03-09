@@ -136,6 +136,23 @@ install(TARGETS correlation
 )
 
 # -----------------------------------------------------------
+# Install setup for Linux shared libraries
+# -----------------------------------------------------------
+if (NOT WIN32)
+    # Ensure correlation finds shared libraries in <prefix>/lib
+    set_target_properties(correlation PROPERTIES
+        INSTALL_RPATH "$ORIGIN/../lib"
+    )
+    # If Arrow/Parquet were built from source, install them
+    if (TARGET arrow_shared AND TARGET parquet_shared AND NOT Arrow_FOUND)
+        install(TARGETS arrow_shared parquet_shared
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin
+        )
+    endif()
+endif()
+
+# -----------------------------------------------------------
 # Install setup for Linux Desktop Integration
 # -----------------------------------------------------------
 if (NOT WIN32)
