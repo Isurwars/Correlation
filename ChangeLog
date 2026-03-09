@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.0 RC4] 2026-03-08
+
+### Added
+- Added progress bar to File Loading for extremely large input files.
+- Added code commentaries to all Slint UI files.
+- Updated API Doxygen documentation.
+
+### Changed
+- Improved Motif Finder logic to better identify chordless rings.
+- Improved Ring Distribution calculation and implemented ring distribution normalization to integrate to one.
+- Refactored `TrajectoryAnalyzer` and `StructureAnalyzers`.
+- Reworked `computeMean` function.
+- Updated progress bar logic and status messages.
+- Switched back to shared DLLs to address false positive virus detection.
+
+### Fixed
+- Fixed UI clutter in Distribution functions.
+- Fixed a bug where the load button state wasn't restored if file selection was canceled.
+- Fixed Linux and Windows compilation issues.
+
 ## [2.0.0 RC3] 2026-03-04
 
 ### Added
