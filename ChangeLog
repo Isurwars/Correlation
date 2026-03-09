@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.0.0 RC4] 2026-03-08
+## [2.0.0] 2026-03-09
 
 ### Added
 - Added progress bar to File Loading for extremely large input files.

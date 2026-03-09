@@ -86,15 +86,13 @@ export component AppWindow inherits Window {
     in-out property <bool> run_rd: false;
     in-out property <bool> run_xrd: false;
     in-out property <bool> run_vdos: false;
-
     property <bool> show_advanced_options: false;
     property <length> window_width: (root.file_loaded ? 392px : 198px) + (root.show_advanced_options ? 220px : 0px);
     property <length> window_height: root.file_loaded ? max(
         max(110px + file_info_card.preferred-height, 80px + analysis_card.preferred-height),
         root.show_advanced_options ? 60px + options_card.preferred-height : 0px) : (input_card.preferred-height + 16px);
-
     width: root.window_width;
-    title: "Correlation 2.0.0RC4";
+    title: "Correlation 2.0.0";
     animate width {
         duration: 100ms;
         easing: ease-in-out;
@@ -109,7 +107,6 @@ export component AppWindow inherits Window {
     default-font-weight: MaterialTypography.body_small.font_weight;
     property <image> logo-icon: @image-url("../Images/Logo.png");
     icon: logo-icon;
-
     timer := Timer {
         interval: 200ms;
         running: timer_running;
@@ -163,7 +160,6 @@ export component AppWindow inherits Window {
                 padding-bottom: MaterialStyleMetrics.spacing_8;
                 padding-right: 0px;
                 spacing: MaterialStyleMetrics.spacing_4;
-
                 analysis_card := RunAnalysisCard {
                     file_loaded: root.file_loaded;
                     num_frames: root.num_frames;
@@ -206,7 +202,6 @@ export component AppWindow inherits Window {
                 padding-bottom: MaterialStyleMetrics.spacing_8;
                 padding-right: MaterialStyleMetrics.spacing_4;
                 spacing: MaterialStyleMetrics.spacing_4;
-
                 options_card := OptionsCard {
                     file_loaded <=> root.file_loaded;
                     run_rdf <=> root.run_rdf;
