@@ -130,6 +130,8 @@ sudo cmake --install .
 ./build/correlation
 ```
 
+![Correlation Demo](Images/demo.gif)
+
 ### 1. Load a Structure File
 Click the **"Load a structure file"** button in the **Input File** card. This opens a file dialog to select your material structure. Supported formats include `.car`, `.cell`, `.dat`, and `.xyz`.
 
