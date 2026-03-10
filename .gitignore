@@ -4,4 +4,5 @@
 .vscode
 compile_commands.json
 build
+installers
 

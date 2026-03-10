@@ -1,0 +1,44 @@
+; Inno Setup Script for Correlation 2.0.0
+; https://jrsoftware.org/isinfo.php
+
+[Setup]
+AppName=Correlation
+AppVersion=2.0.0
+AppPublisher=Isaías Rodríguez
+AppPublisherURL=https://github.com/Isurwars/Correlation
+AppSupportURL=https://github.com/Isurwars/Correlation/issues
+AppUpdatesURL=https://github.com/Isurwars/Correlation/releases
+DefaultDirName={autopf}\Correlation
+DefaultGroupName=Correlation
+AllowNoIcons=yes
+LicenseFile=LICENSE
+; Ensure we use the 64-bit Program Files directory by default for a modern C++ app
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
+OutputDir=Installers
+OutputBaseFilename=CorrelationSetup_v2.0.0
+Compression=lzma2/ultra64
+SolidCompression=yes
+WizardStyle=modern
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[Tasks]
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
+[Files]
+; Main executable (.exe and all necessary DLLs must be included in the build output dir)
+Source: "build\correlation.exe"; DestDir: "{app}"; Flags: ignoreversion
+; Assuming the build copies the required DLLs onto the build folder as coded in CMakeLists.txt
+Source: "build\*.dll"; DestDir: "{app}"; Flags: ignoreversion nocompression
+Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion
+Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
+
+[Icons]
+Name: "{group}\Correlation"; Filename: "{app}\correlation.exe"
+Name: "{group}\{cm:UninstallProgram,Correlation}"; Filename: "{uninstallexe}"
+Name: "{commondesktop}\Correlation"; Filename: "{app}\correlation.exe"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\correlation.exe"; Description: "{cm:LaunchProgram,Correlation}"; Flags: nowait postinstall skipifsilent
