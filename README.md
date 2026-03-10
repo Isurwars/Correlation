@@ -31,8 +31,11 @@ functions:
 - Pair Distribution Function (g(r))
 - Reduced Pair Distribution Function (G(r))
 - Coordination Number (CN)
-- Plane-Angle Distribution (PAD)
 - Structure Factor (S(Q))
+- X-Ray Diffraction (XRD)
+- Plane-Angle Distribution (PAD)
+- Dihedral-Angle Distribution (DAD)
+- Ring Distribution (RD)
 - Velocity Autocorrelation Function (VACF)
 - Vibrational Density of States (VDOS)
 
@@ -140,18 +143,19 @@ Once a file is loaded, the **File Info** card displays the total atom count and 
 
 ### 3. Configure Analysis Options
 Adjust the calculation parameters in the **Options** card:
-- **RDF Max r & Bin Width:** Set the maximum radius ($r_{max}$) and the bin width for Radial Distribution Functions.
-- **Max Q & S(Q) Bin Width:** Set the maximum scattering vector ($Q_{max}$) and the bin width for the Structure Factor.
-- **FFT Max r:** Set the maximum integration radius for the Fourier Transform.
-- **PAD Bin Width:** Set the bin width for the Plane-Angle Distribution.
+- **Radial Distribution:** Set the maximum radius ($r_{max}$) and the bin width for Radial Distribution Functions.
+- **Structure Factor:** Set the maximum scattering vector ($Q_{max}$), the S(Q) bin width, and the maximum integration radius for the FFT.
+- **Bond Angle:** Set the bin widths for the Plane-Angle and Dihedral-Angle Distributions.
+- **Topological Rings:** Set the maximum ring size to search for in the Ring Distribution analysis.
 - **Smoothing:** Enable kernel smoothing and select the kernel type (Gaussian, Bump, or Triweight) and sigma value.
 
 ### 4. Bond Cutoffs
-The **Bond Cutoffs** card allows you to review and manually adjust the distances used to define atomic bonds, which are used for coordination number and angle calculations.
+The **Bond Cutoffs** card allows you to review and manually adjust the distances used to define atomic bonds, which are used for coordination number, angle computations, and ring finding.
 
 ### 5. Run Analysis
-Configure the final output and execution settings in the **Run Analysis** card:
--   **Export Format**: Choose to export results as **CSV** (for easy plotting) or **HDF5** (for large datasets/archival).
+Configure the final output and execution settings:
+-   **Select Analyses**: Check the boxes under the **Options** card for the specific analyses you wish to compute (e.g., Structural, Angular, Rings, Dynamic).
+-   **Export Format**: In the **Run Analysis** card, choose to export results as **CSV**, **Parquet**, or **HDF5**.
 -   **Frame Selection**: Specify the **Start Frame** and **End Frame** to analyze a specific subset of your trajectory.
 -   **Run Analysis**: Click the **"Run Analysis"** button to start the computations. Progress will be displayed in the bar below.
 -   **Write Files**: Once the analysis is complete, click **"Write Files"** to save the results to disk.
