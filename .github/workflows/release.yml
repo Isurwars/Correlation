@@ -1,0 +1,131 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Correlation
+        run: cmake --build build --config Release -j $(nproc)
+
+      - name: Package Release
+        run: |
+          mkdir -p Correlation-${{ github.event.release.tag_name }}-Linux/bin
+          cp build/correlation Correlation-${{ github.event.release.tag_name }}-Linux/bin/
+          cp -r Images/ Correlation-${{ github.event.release.tag_name }}-Linux/
+          cp LICENSE Correlation-${{ github.event.release.tag_name }}-Linux/
+          cp README.md Correlation-${{ github.event.release.tag_name }}-Linux/
+          tar -czvf Correlation-${{ github.event.release.tag_name }}-Linux.tar.gz Correlation-${{ github.event.release.tag_name }}-Linux/
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Correlation-${{ github.event.release.tag_name }}-Linux.tar.gz
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Correlation
+        run: cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS
+
+      - name: Create Installer
+        run: iscc correlation.iss
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Installers/CorrelationSetup_*.exe
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install tbb hdf5
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Correlation
+        run: cmake --build build --config Release -j $(sysctl -n hw.ncpu)
+
+      - name: Package Release
+        run: |
+          mkdir -p Correlation-${{ github.event.release.tag_name }}-macOS/bin
+          cp build/correlation Correlation-${{ github.event.release.tag_name }}-macOS/bin/
+          cp LICENSE Correlation-${{ github.event.release.tag_name }}-macOS/
+          cp README.md Correlation-${{ github.event.release.tag_name }}-macOS/
+          zip -r Correlation-${{ github.event.release.tag_name }}-macOS.zip Correlation-${{ github.event.release.tag_name }}-macOS/
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Correlation-${{ github.event.release.tag_name }}-macOS.zip
+
+  publish-aur:
+    name: Publish to AUR
+    needs: build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update PKGBUILD version and checksum
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}" # Remove 'v' prefix if present
+          
+          # Download the source tarball to compute sha256
+          wget "https://github.com/${{ github.repository }}/archive/refs/tags/${{ github.event.release.tag_name }}.tar.gz" -O source.tar.gz
+          SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
+          
+          # Update PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=$VERSION/" aur/PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('$SHA256')/" aur/PKGBUILD
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v3.0.1
+        with:
+          pkgname: correlation
+          pkgbuild: aur/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Update to ${{ github.event.release.tag_name }}"
