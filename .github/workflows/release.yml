@@ -21,16 +21,16 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
+          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Configure CMake
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
 
       - name: Build Correlation
-        run: cmake --build build --config Release -j 2
+        run: cmake --build build --config Release
 
       - name: Package Release
         run: |
@@ -60,7 +60,7 @@ jobs:
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Correlation
-        run: cmake --build build --config Release -j 2
+        run: cmake --build build --config Release --parallel
 
       - name: Create Installer
         run: iscc correlation.iss
@@ -78,16 +78,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: brew install tbb hdf5
+        run: brew install ninja tbb hdf5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Configure CMake
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
 
       - name: Build Correlation
-        run: cmake --build build --config Release -j 2
+        run: cmake --build build --config Release
 
       - name: Package Release
         run: |
