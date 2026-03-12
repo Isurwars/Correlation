@@ -2,9 +2,9 @@ name: CI Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
@@ -19,27 +19,31 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig1-dev
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev xvfb
 
-    - name: Install dependencies (macOS)
-      if: runner.os == 'macOS'
-      run: brew install tbb hdf5
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install tbb hdf5
 
-    - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
 
-    - name: Configure CMake
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+      - name: Configure CMake
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
-    - name: Build
-      run: cmake --build build --config Release -j 2
+      - name: Build
+        run: cmake --build build --config Release -j 2
 
-    - name: Test
-      if: runner.os != 'Windows'
-      run: cd build && ctest --output-on-failure
+      - name: Test (Linux)
+        if: runner.os == 'Linux'
+        run: cd build && xvfb-run ctest --output-on-failure
+
+      - name: Test (macOS)
+        if: runner.os == 'macOS'
+        run: cd build && ctest --output-on-failure
