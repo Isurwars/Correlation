@@ -6,6 +6,11 @@
 #include <gtest/gtest.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#define NOMINMAX
+#include <Windows.h>
+#endif
+
 #include "../include/AppBackend.hpp"
 #include "../include/AppController.hpp"
 #include "AppWindow.h"

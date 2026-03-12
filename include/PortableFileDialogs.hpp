@@ -10,16 +10,17 @@
 #if _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
-#include <set>
 #endif
+#include <windows.h>
+
 #include <commdlg.h>
 #include <future> // std::async
+#include <set>
 #include <shellapi.h>
 #include <shlobj.h>
 #include <shobjidl.h> // IFileDialog
 #include <strsafe.h>
 #include <userenv.h> // GetUserProfileDirectory()
-#include <windows.h>
 
 #elif __EMSCRIPTEN__
 #include <emscripten.h>
