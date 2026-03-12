@@ -32,6 +32,7 @@ else()
     GIT_TAG v1.15.1
     SOURCE_SUBDIR api/cpp
   )
+  set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc on macOS" FORCE)
   FetchContent_MakeAvailable(Slint)
 endif()
 
@@ -189,7 +190,6 @@ else()
   set(ARROW_IPC ON CACHE INTERNAL "")
   set(ARROW_BUILD_TESTS OFF CACHE INTERNAL "")
   set(ARROW_BUILD_BENCHMARKS OFF CACHE INTERNAL "")
-  set(ARROW_JEMALLOC OFF CACHE INTERNAL "Disable jemalloc which causes build issues on macOS")
   set(ARROW_SIMD_LEVEL "NONE" CACHE STRING "Arrow SIMD Level" FORCE)
 
   # Arrow pulls in rapidjson which has a broken CMake < 3.5 minimum version check for CMake 4.0+.
