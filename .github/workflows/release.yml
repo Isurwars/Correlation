@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake
+          sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig1-dev
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -30,7 +30,7 @@ jobs:
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Correlation
-        run: cmake --build build --config Release -j $(nproc)
+        run: cmake --build build --config Release -j 2
 
       - name: Package Release
         run: |
@@ -60,7 +60,7 @@ jobs:
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Correlation
-        run: cmake --build build --config Release -j $env:NUMBER_OF_PROCESSORS
+        run: cmake --build build --config Release -j 2
 
       - name: Create Installer
         run: iscc correlation.iss
@@ -87,7 +87,7 @@ jobs:
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Correlation
-        run: cmake --build build --config Release -j $(sysctl -n hw.ncpu)
+        run: cmake --build build --config Release -j 2
 
       - name: Package Release
         run: |
