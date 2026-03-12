@@ -6,13 +6,9 @@
 #include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
 #include <algorithm>
-#if defined(__APPLE__) && defined(__clang__)
-#include <tbb/parallel_for.h>
-#else
-#include <execution>
-#endif
 #include <mutex>
 #include <numeric>
+#include <tbb/parallel_for.h>
 
 //---------------------------------------------------------------------------//
 //--------------------------- Calculation Methods ---------------------------//
@@ -92,13 +88,7 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
 
   std::mutex vacf_mutex;
 
-#if defined(__APPLE__) && defined(__clang__)
   tbb::parallel_for(size_t(0), num_atoms, [&](size_t i) {
-#else
-  std::for_each(
-      std::execution::par, atom_indices.begin(), atom_indices.end(),
-      [&](size_t i) {
-#endif
     std::vector<double> local_vacf(max_correlation_frames + 1, 0.0);
     const auto &v_i = atom_velocities[i];
 
