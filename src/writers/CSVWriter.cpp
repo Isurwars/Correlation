@@ -30,7 +30,7 @@ void CSVWriter::writeAllCSVs(const std::string &base_path,
   const std::map<std::string, std::string> file_map = {
       {"g(r)", "_g.csv"},
       {"J(r)", "_J.csv"},
-      {"G(r)", "__G.csv"},
+      {"G(r)", "_G_reduced.csv"},
       {"BAD", "_PAD.csv"},
       {"DAD", "_DAD.csv"},
       {"RD", "_RD.csv"},

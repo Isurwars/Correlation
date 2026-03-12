@@ -33,7 +33,7 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
   const std::map<std::string, std::string> file_map = {
       {"g(r)", "_g.parquet"},
       {"J(r)", "_J.parquet"},
-      {"G(r)", "__G.parquet"},
+      {"G(r)", "_G_reduced.parquet"},
       {"BAD", "_PAD.parquet"},
       {"DAD", "_DAD.parquet"},
       {"RD", "_RD.parquet"},

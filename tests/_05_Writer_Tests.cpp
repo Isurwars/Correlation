@@ -44,13 +44,11 @@ protected:
     std::remove("si_crystal.car");
     std::remove("test_si_g.csv");
     std::remove("test_si_J.csv");
-    std::remove("test_si_G.csv");
-    std::remove("test_si__G.csv");
+    std::remove("test_si_G_reduced.csv");
     std::remove("test_si_PAD.csv");
     std::remove("test_si_g_smoothed.csv");
     std::remove("test_si_J_smoothed.csv");
-    std::remove("test_si_G_smoothed.csv");
-    std::remove("test_si__G_smoothed.csv");
+    std::remove("test_si_G_reduced_smoothed.csv");
     std::remove("test_si_PAD_smoothed.csv");
     std::remove("test_si.h5");
     std::remove("test_vacf.h5");
@@ -59,7 +57,7 @@ protected:
     std::remove("test_vacf_vdos_VDOS.csv");
     std::remove("test_si_g.parquet");
     std::remove("test_si_J.parquet");
-    std::remove("test_si__G.parquet");
+    std::remove("test_si_G_reduced.parquet");
     std::remove("test_si_PAD.parquet");
   }
 
@@ -129,7 +127,7 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   // Assert: Part 3 - Check that all expected files were created
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 
@@ -383,10 +381,7 @@ TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
   // Assert
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.parquet"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si__G.parquet"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
-
-  // Verify it doesn't create empty ones for un-run calculations
-  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_G.parquet"));
   EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_S.parquet"));
 }
