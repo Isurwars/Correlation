@@ -29,6 +29,7 @@
 #define _POSIX_C_SOURCE 2 // for popen()
 #endif
 #ifdef __APPLE__
+#include <csignal> // kill(), SIGKILL
 #ifndef _DARWIN_C_SOURCE
 #define _DARWIN_C_SOURCE
 #endif
