@@ -25,20 +25,25 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-x11-0 xvfb
+          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-x11-0 xvfb
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install tbb hdf5
+        run: brew install ninja tbb hdf5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Configure CMake
+      - name: Configure CMake (Unix)
+        if: runner.os != 'Windows'
+        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
+
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build --config Release -j 2
+        run: cmake --build build --config Release --parallel
 
       - name: Test (Linux)
         if: runner.os == 'Linux'
