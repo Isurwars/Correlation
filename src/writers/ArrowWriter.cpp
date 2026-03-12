@@ -146,7 +146,7 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
   // Writer properties
   std::shared_ptr<parquet::WriterProperties> props =
       parquet::WriterProperties::Builder()
-          .compression(parquet::Compression::SNAPPY)
+          .compression(parquet::Compression::UNCOMPRESSED)
           ->build();
 
   PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(
