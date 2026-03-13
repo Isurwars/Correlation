@@ -168,3 +168,38 @@ if (NOT WIN32)
     install(FILES "${PROJECT_BINARY_DIR}/correlation.desktop"
             DESTINATION share/applications)
 endif()
+
+# -----------------------------------------------------------
+# CPack Packaging
+# -----------------------------------------------------------
+set(CPACK_PACKAGE_NAME "Correlation")
+set(CPACK_PACKAGE_VENDOR "Isaías Rodríguez")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Analysis tool for liquid and amorphous solid structures")
+set(CPACK_PACKAGE_VERSION "${CORRELATION_VERSION}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "Correlation")
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
+
+if (WIN32)
+    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_NSIS_PACKAGE_NAME "Correlation Analysis Tool")
+    set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/Images/AppIcon.ico") # Corrected icon name
+    set(CPACK_NSIS_HELP_LINK "https://github.com/Isurwars/Correlation")
+    set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Isurwars/Correlation")
+    set(CPACK_NSIS_CONTACT "isurwars@gmail.com")
+    set(CPACK_NSIS_MODIFY_PATH ON)
+elseif (APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+    set(CPACK_DMG_VOLUME_NAME "Correlation")
+    set(CPACK_SYSTEM_NAME "macOS")
+else ()
+    # Linux
+    set(CPACK_GENERATOR "DEB;TGZ")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Isaías Rodríguez <isurwars@gmail.com>")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libtbb12 (>= 2021.5), libhdf5-103-1 | libhdf5-103") # Approximated dependencies
+    set(CPACK_DEBIAN_PACKAGE_SECTION "science")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+    set(CPACK_STRIP_FILES TRUE)
+endif ()
+
+include(CPack)
