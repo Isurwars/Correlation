@@ -10,11 +10,19 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
 
+#include "SIMDUtils.hpp"
+
 namespace calculators {
 
 struct ThreadLocalDistances {
   DistanceTensor distance_tensor_local;
   std::vector<std::vector<Neighbor>> neighbor_list_local;
+
+  // Per-thread SoA scratch buffers (reused across iterations to avoid allocs)
+  std::vector<double> soa_x;
+  std::vector<double> soa_y;
+  std::vector<double> soa_z;
+  std::vector<double> dsq_scratch;
 
   ThreadLocalDistances(size_t num_elements, size_t atom_count)
       : distance_tensor_local(num_elements,
@@ -69,41 +77,96 @@ void DistanceCalculator::compute(
         auto &distance_local = local_results.distance_tensor_local;
         auto &neighbor_local = local_results.neighbor_list_local;
 
+        auto &soa_x   = local_results.soa_x;
+        auto &soa_y   = local_results.soa_y;
+        auto &soa_z   = local_results.soa_z;
+        auto &dsq_buf = local_results.dsq_scratch;
+
         const auto &atom_A = atoms[i];
         const int type_A = atom_A.element_id();
+        const double ax = atom_A.position().x();
+        const double ay = atom_A.position().y();
+        const double az = atom_A.position().z();
 
-        for (size_t j = i; j < atom_count; ++j) {
-          if (i == j && ignore_periodic_self_interactions) {
-            continue;
+        // j ranges from i to atom_count-1 (upper triangle + self)
+        const size_t j_count = atom_count - i;
+
+        // Ensure scratch buffers are large enough
+        if (soa_x.size() < j_count) {
+          soa_x.resize(j_count);
+          soa_y.resize(j_count);
+          soa_z.resize(j_count);
+          dsq_buf.resize(j_count);
+        }
+
+        // -----------------------------------------------------------------------
+        // For each periodic image displacement, build a shifted SoA block for
+        // all j in [i, atom_count) and run the SIMD squared-distance kernel.
+        // -----------------------------------------------------------------------
+        for (const auto &disp : displacements) {
+          const double disp_sq = linalg::norm_sq(disp);
+          const bool zero_disp = (disp_sq < 1e-9);
+
+          // Build SoA: shifted positions of atom_B candidates
+          for (size_t jj = 0; jj < j_count; ++jj) {
+            const auto &pos_B = atoms[i + jj].position();
+            soa_x[jj] = pos_B.x() + disp.x();
+            soa_y[jj] = pos_B.y() + disp.y();
+            soa_z[jj] = pos_B.z() + disp.z();
           }
-          const auto &atom_B = atoms[j];
-          const int type_B = atom_B.element_id();
-          double max_bond_dist_sq = 0.0;
-          if (static_cast<size_t>(type_A) < bond_cutoffs_sq.size() &&
-              static_cast<size_t>(type_B) < bond_cutoffs_sq[type_A].size()) {
-            max_bond_dist_sq = bond_cutoffs_sq[type_A][type_B];
-          }
-          for (const auto &disp : displacements) {
-            if (i == j && linalg::norm_sq(disp) < 1e-9) {
+
+          // SIMD pass: compute dsq[jj] = ||atom_A - shifted_atom_B[jj]||²
+          simd_utils::PositionBlock block{soa_x.data(), soa_y.data(),
+                                         soa_z.data(), j_count};
+          simd_utils::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
+
+          // -----------------------------------------------------------------------
+          // Scalar post-processing: apply cutoff and record output
+          // Mirrors the original logic exactly:
+          //   - i == j with zero-displacement → skip always (same atom, same image)
+          //   - i == j with non-zero displacement → periodic self-image:
+          //       skip if ignore_periodic_self_interactions is true
+          //   - i != j → normal pair
+          // -----------------------------------------------------------------------
+          for (size_t jj = 0; jj < j_count; ++jj) {
+            const size_t j = i + jj;
+
+            // Skip self with zero displacement (exact same image of same atom)
+            if (i == j && zero_disp) {
+              continue;
+            }
+            // Skip periodic self-images if requested
+            if (i == j && ignore_periodic_self_interactions) {
               continue;
             }
 
-            linalg::Vector3<double> r_ij =
-                atom_B.position() + disp - atom_A.position();
-            double d_sq = linalg::norm_sq(r_ij);
+            const double d_sq = dsq_buf[jj];
+            if (d_sq >= cutoff_sq)
+              continue;
 
-            if (d_sq < cutoff_sq) {
-              double dist = std::sqrt(d_sq);
-              distance_local[type_A][type_B].push_back(dist);
-              if (i != j && type_A != type_B) {
-                distance_local[type_B][type_A].push_back(dist);
-              }
+            const double dist = std::sqrt(d_sq);
 
-              if (d_sq <= max_bond_dist_sq) {
-                neighbor_local[i].push_back({atom_B.id(), dist, r_ij});
-                if (i != j) {
-                  neighbor_local[j].push_back({atom_A.id(), dist, -1.0 * r_ij});
-                }
+            distance_local[type_A][atoms[j].element_id()].push_back(dist);
+            if (i != j && type_A != atoms[j].element_id()) {
+              distance_local[atoms[j].element_id()][type_A].push_back(dist);
+            }
+
+            // Neighbor graph
+            const int type_B = atoms[j].element_id();
+            double max_bond_dist_sq = 0.0;
+            if (static_cast<size_t>(type_A) < bond_cutoffs_sq.size() &&
+                static_cast<size_t>(type_B) < bond_cutoffs_sq[type_A].size()) {
+              max_bond_dist_sq = bond_cutoffs_sq[type_A][type_B];
+            }
+
+            if (d_sq <= max_bond_dist_sq) {
+              // r_ij = (pos_B + disp) - pos_A  — already stored in soa arrays
+              linalg::Vector3<double> r_ij = {soa_x[jj] - ax,
+                                              soa_y[jj] - ay,
+                                              soa_z[jj] - az};
+              neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
+              if (i != j) {
+                neighbor_local[j].push_back({atom_A.id(), dist, -1.0 * r_ij});
               }
             }
           }
