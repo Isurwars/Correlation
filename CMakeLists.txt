@@ -151,11 +151,13 @@ target_include_directories(correlation_lib PUBLIC
 target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 if (CORRELATION_SIMD_FLAGS)
-  # Apply SIMD flags only to the DistanceCalculator translation unit to keep
-  # compile times short for the rest of the library, while still exposing the
-  # SIMD header to all consumers via the include path.
+  # Apply SIMD flags to translation units that use SIMD kernels from
+  # SIMDUtils.hpp: DistanceCalculator (dsq kernel),
+  # SQCalculator and XRDCalculator (sinc_integral kernel).
   set_source_files_properties(
       src/calculators/DistanceCalculator.cpp
+      src/calculators/SQCalculator.cpp
+      src/calculators/XRDCalculator.cpp
       PROPERTIES COMPILE_FLAGS "${CORRELATION_SIMD_FLAGS}"
   )
 endif()

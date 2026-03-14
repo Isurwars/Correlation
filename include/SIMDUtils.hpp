@@ -35,6 +35,7 @@
   #define CORRELATION_RESTRICT
 #endif
 
+#include <cmath>
 #include <cstddef>
 #include <vector>
 
@@ -151,6 +152,101 @@ inline void compute_dsq_block(double ax, double ay, double az,
     out_dsq[k] = dist_sq_scalar(ax, ay, az,
                                  block.x[k], block.y[k], block.z[k]);
   }
+}
+
+#endif
+
+// ---------------------------------------------------------------------------
+// sinc_integral kernel
+//
+// Computes: sum_{j=0}^{count-1} integrand[j] * sin(Q * rbins[j])
+//
+// Strategy (portable, no SVML/sleef dependency):
+//   Phase 1 – fill a caller-provided scratch buffer sinQr[j] = sin(Q*rbins[j])
+//             using a tight scalar loop.  Modern compilers (GCC/Clang -O2 +
+//             -ffast-math) auto-vectorize this with the platform sin library.
+//   Phase 2 – AVX2/AVX-512 FMA dot-product: acc += integrand[j] * sinQr[j].
+//
+// The caller must supply `sinqr_scratch` with capacity >= count.
+// ---------------------------------------------------------------------------
+
+#if defined(CORRELATION_SIMD_AVX512)
+
+inline double sinc_integral(double Q,
+                             const double *CORRELATION_RESTRICT integrand,
+                             const double *CORRELATION_RESTRICT rbins,
+                             double       *CORRELATION_RESTRICT sinqr_scratch,
+                             std::size_t count) noexcept {
+  // Phase 1: scalar sin (auto-vectorized by the compiler)
+  for (std::size_t j = 0; j < count; ++j) {
+    sinqr_scratch[j] = std::sin(Q * rbins[j]);
+  }
+
+  // Phase 2: AVX-512 FMA dot product
+  __m512d vacc = _mm512_setzero_pd();
+  std::size_t j = 0;
+  for (; j + 8 <= count; j += 8) {
+    __m512d vi = _mm512_loadu_pd(integrand + j);
+    __m512d vs = _mm512_loadu_pd(sinqr_scratch + j);
+    vacc = _mm512_fmadd_pd(vi, vs, vacc);
+  }
+  double acc = _mm512_reduce_add_pd(vacc);
+  // Scalar tail
+  for (; j < count; ++j) {
+    acc += integrand[j] * sinqr_scratch[j];
+  }
+  return acc;
+}
+
+#elif defined(CORRELATION_SIMD_AVX2)
+
+inline double sinc_integral(double Q,
+                             const double *CORRELATION_RESTRICT integrand,
+                             const double *CORRELATION_RESTRICT rbins,
+                             double       *CORRELATION_RESTRICT sinqr_scratch,
+                             std::size_t count) noexcept {
+  // Phase 1: scalar sin (auto-vectorized by the compiler)
+  for (std::size_t j = 0; j < count; ++j) {
+    sinqr_scratch[j] = std::sin(Q * rbins[j]);
+  }
+
+  // Phase 2: AVX2 FMA dot product (4 doubles per register)
+  __m256d vacc = _mm256_setzero_pd();
+  std::size_t j = 0;
+  for (; j + 4 <= count; j += 4) {
+    __m256d vi = _mm256_loadu_pd(integrand + j);
+    __m256d vs = _mm256_loadu_pd(sinqr_scratch + j);
+#if defined(__FMA__)
+    vacc = _mm256_fmadd_pd(vi, vs, vacc);
+#else
+    vacc = _mm256_add_pd(vacc, _mm256_mul_pd(vi, vs));
+#endif
+  }
+  // Horizontal reduction of the 4-lane AVX2 accumulator
+  __m128d lo  = _mm256_castpd256_pd128(vacc);
+  __m128d hi  = _mm256_extractf128_pd(vacc, 1);
+  __m128d sum2 = _mm_add_pd(lo, hi);
+  __m128d sum1 = _mm_hadd_pd(sum2, sum2);
+  double acc = _mm_cvtsd_f64(sum1);
+  // Scalar tail
+  for (; j < count; ++j) {
+    acc += integrand[j] * sinqr_scratch[j];
+  }
+  return acc;
+}
+
+#else // Scalar fallback
+
+inline double sinc_integral(double Q,
+                             const double *CORRELATION_RESTRICT integrand,
+                             const double *CORRELATION_RESTRICT rbins,
+                             double       *CORRELATION_RESTRICT /*sinqr_scratch*/,
+                             std::size_t count) noexcept {
+  double acc = 0.0;
+  for (std::size_t j = 0; j < count; ++j) {
+    acc += integrand[j] * std::sin(Q * rbins[j]);
+  }
+  return acc;
 }
 
 #endif

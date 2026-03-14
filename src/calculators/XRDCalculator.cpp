@@ -5,8 +5,11 @@
 
 #include "calculators/XRDCalculator.hpp"
 #include "PhysicalData.hpp"
+#include "SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_for.h>
 
 Histogram
 XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
@@ -60,46 +63,74 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
     concentrations[elem.symbol] = count / cell.atomCount();
   }
 
-  for (size_t i = 0; i < num_bins; ++i) {
-    double two_theta = theta_min + i * bin_width;
-    xrd_hist.bins[i] = two_theta;
-
-    double theta_rad = (two_theta / 2.0) * constants::deg2rad;
-    double Q = 4.0 * constants::pi * std::sin(theta_rad) / lambda;
-
-    if (Q < 1e-6) {
-      intensities[i] = 0.0;
-      continue;
-    }
-
-    double I_Q = 0.0;
-
-    for (const auto &[sym, c] : concentrations) {
-      double f = get_f_Q(sym, Q);
-      I_Q += c * f * f;
-    }
-
-    for (const auto &[key, integrands] : partial_integrands) {
-      double weight = ashcroft_weights.at(key);
-
-      size_t dash_pos = key.find('-');
-      std::string sym1 = key.substr(0, dash_pos);
-      std::string sym2 = key.substr(dash_pos + 1);
-
-      double f1 = get_f_Q(sym1, Q);
-      double f2 = get_f_Q(sym2, Q);
-
-      double integral = 0.0;
-      for (size_t k = 0; k < integrands.size(); ++k) {
-        integral += integrands[k] * std::sin(Q * r_bins[k]);
-      }
-
-      I_Q +=
-          weight * f1 * f2 * (4.0 * constants::pi * total_rho / Q) * integral;
-    }
-
-    intensities[i] = I_Q;
+  // Collect partials as a flat vector for parallel access (avoids map iteration
+  // inside the parallel region)
+  struct PartialXRD {
+    const std::string *key;
+    const std::vector<double> *integrand;
+    double weight;
+    std::string sym1, sym2;
+  };
+  std::vector<PartialXRD> xrd_partials;
+  xrd_partials.reserve(partial_integrands.size());
+  for (const auto &[key, integ] : partial_integrands) {
+    double weight = ashcroft_weights.at(key);
+    size_t dash_pos = key.find('-');
+    std::string s1 = key.substr(0, dash_pos);
+    std::string s2 = key.substr(dash_pos + 1);
+    xrd_partials.push_back({&key, &integ, weight, s1, s2});
   }
+  const size_t num_xrd_partials = xrd_partials.size();
+
+  // Thread-local sin(Q*r) scratch buffer
+  const size_t r_count = r_bins.size();
+  tbb::enumerable_thread_specific<std::vector<double>> sinqr_ets(
+      [&] { return std::vector<double>(r_count, 0.0); });
+
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_bins),
+      [&](const tbb::blocked_range<size_t> &range) {
+        auto &sinqr = sinqr_ets.local();
+
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          double two_theta = theta_min + i * bin_width;
+          xrd_hist.bins[i] = two_theta;
+
+          double theta_rad = (two_theta / 2.0) * constants::deg2rad;
+          double Q = 4.0 * constants::pi * std::sin(theta_rad) / lambda;
+
+          if (Q < 1e-6) {
+            intensities[i] = 0.0;
+            continue;
+          }
+
+          double I_Q = 0.0;
+
+          for (const auto &[sym, c] : concentrations) {
+            double f = get_f_Q(sym, Q);
+            I_Q += c * f * f;
+          }
+
+          for (size_t p = 0; p < num_xrd_partials; ++p) {
+            const PartialXRD &px = xrd_partials[p];
+            // Clamp integrand to r_bins size (partial_integrands was built
+            // from g_partial which may be shorter than r_bins)
+            const size_t pcount = std::min(px.integrand->size(), r_count);
+
+            double integral = simd_utils::sinc_integral(
+                Q, px.integrand->data(), r_bins.data(),
+                sinqr.data(), pcount);
+
+            double f1 = get_f_Q(px.sym1, Q);
+            double f2 = get_f_Q(px.sym2, Q);
+
+            I_Q += px.weight * f1 * f2 *
+                   (4.0 * constants::pi * total_rho / Q) * integral;
+          }
+
+          intensities[i] = I_Q;
+        }
+      });
 
   xrd_hist.partials["Total"] = std::move(intensities);
 
