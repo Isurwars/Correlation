@@ -24,6 +24,17 @@
   #define CORRELATION_SIMD_WIDTH 1   // scalar fallback
 #endif
 
+// ---------------------------------------------------------------------------
+// Portable restrict keyword
+// ---------------------------------------------------------------------------
+#if defined(_MSC_VER)
+  #define CORRELATION_RESTRICT __restrict
+#elif defined(__GNUC__) || defined(__clang__)
+  #define CORRELATION_RESTRICT __restrict__
+#else
+  #define CORRELATION_RESTRICT
+#endif
+
 #include <cstddef>
 #include <vector>
 
@@ -67,7 +78,7 @@ inline double dist_sq_scalar(double ax, double ay, double az,
 
 inline void compute_dsq_block(double ax, double ay, double az,
                                const PositionBlock &block,
-                               double *__restrict__ out_dsq) noexcept {
+                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m512d va_x = _mm512_set1_pd(ax);
   const __m512d va_y = _mm512_set1_pd(ay);
   const __m512d va_z = _mm512_set1_pd(az);
@@ -101,7 +112,7 @@ inline void compute_dsq_block(double ax, double ay, double az,
 
 inline void compute_dsq_block(double ax, double ay, double az,
                                const PositionBlock &block,
-                               double *__restrict__ out_dsq) noexcept {
+                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256d va_x = _mm256_set1_pd(ax);
   const __m256d va_y = _mm256_set1_pd(ay);
   const __m256d va_z = _mm256_set1_pd(az);
@@ -135,7 +146,7 @@ inline void compute_dsq_block(double ax, double ay, double az,
 
 inline void compute_dsq_block(double ax, double ay, double az,
                                const PositionBlock &block,
-                               double *__restrict__ out_dsq) noexcept {
+                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t k = 0; k < block.count; ++k) {
     out_dsq[k] = dist_sq_scalar(ax, ay, az,
                                  block.x[k], block.y[k], block.z[k]);
