@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_reduce.h>
 #include <vector>
 
 //---------------------------------------------------------------------------//
@@ -29,17 +31,22 @@ StructureAnalyzer::StructureAnalyzer(
   // Ensure cutoff covers the largest bond distance
   const auto &elements = cell.elements();
   double max_bond_dist = 0.0;
-  for (size_t i = 0; i < elements.size(); ++i) {
-    for (size_t j = i; j < elements.size(); ++j) {
-      // Find element indices in the cutoff matrix
-      // Assuming bond_cutoffs_sq indices match element indices in frame
-      // This assumption holds if trajectory validation works.
-      if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
-        max_bond_dist =
-            std::max(max_bond_dist, std::sqrt(bond_cutoffs_sq[i][j]));
-      }
-    }
-  }
+  max_bond_dist = tbb::parallel_reduce(
+      tbb::blocked_range<size_t>(0, elements.size()), 0.0,
+      [&](const tbb::blocked_range<size_t> &r, double init) {
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          for (size_t j = i; j < elements.size(); ++j) {
+            // Find element indices in the cutoff matrix
+            // Assuming bond_cutoffs_sq indices match element indices in frame
+            // This assumption holds if trajectory validation works.
+            if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
+              init = std::max(init, std::sqrt(bond_cutoffs_sq[i][j]));
+            }
+          }
+        }
+        return init;
+      },
+      [](double x, double y) { return std::max(x, y); });
   if (cutoff < max_bond_dist) {
     cutoff = max_bond_dist;
     cutoff_sq_ = cutoff * cutoff;

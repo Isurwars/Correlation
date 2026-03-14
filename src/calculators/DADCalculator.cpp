@@ -5,6 +5,7 @@
 
 #include "calculators/DADCalculator.hpp"
 #include "PhysicalData.hpp"
+#include "SIMDUtils.hpp"
 #include <stdexcept>
 
 Histogram DADCalculator::calculate(const Cell &cell,
@@ -96,9 +97,7 @@ Histogram DADCalculator::calculate(const Cell &cell,
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_dihedral.partials) {
-    for (size_t i = 0; i < num_bins; ++i) {
-      partial[i] *= normalization_factor;
-    }
+    simd_utils::scale_bins(partial.data(), normalization_factor, num_bins);
   }
   return f_dihedral;
 }
