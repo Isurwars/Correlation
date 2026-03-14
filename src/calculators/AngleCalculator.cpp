@@ -10,6 +10,8 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
+#include "SIMDUtils.hpp"
+
 namespace calculators {
 
 void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
@@ -18,7 +20,7 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
 
-  // Initialize thread-local storage
+  // Thread-local AngleTensor accumulator
   tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
     return AngleTensor(
         num_elements,
@@ -26,40 +28,73 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
             num_elements, std::vector<std::vector<double>>(num_elements)));
   });
 
+  // Thread-local SoA scratch: pre-built per central atom and reused across
+  // atoms on the same thread.  Grows to max(CN) and stays there – zero
+  // heap allocs after the first high-CN atom is processed.
+  struct AngleScratch {
+    std::vector<double> nb_x, nb_y, nb_z, nb_dist, dots;
+    void ensure(size_t cn) {
+      if (nb_x.size() < cn) {
+        nb_x.resize(cn);
+        nb_y.resize(cn);
+        nb_z.resize(cn);
+        nb_dist.resize(cn);
+        dots.resize(cn);
+      }
+    }
+  };
+  tbb::enumerable_thread_specific<AngleScratch> scratch_ets;
+
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, atom_count),
       [&](const tbb::blocked_range<size_t> &r) {
         auto &local_tensor = ets.local();
-        for (size_t i = r.begin(); i != r.end(); ++i) {
-          const auto &central_atom_neighbors = graph.getNeighbors(i);
+        auto &sc = scratch_ets.local();
 
-          // Skip if the central atom has fewer than two neighbors
-          if (central_atom_neighbors.size() < 2)
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          const auto &neighbors = graph.getNeighbors(i);
+          const size_t cn = neighbors.size();
+          if (cn < 2)
             continue;
 
           const int type_central = atoms[i].element_id();
 
-          // Loop over all unique pairs of neighbors (j, k)
-          for (size_t j = 0; j < central_atom_neighbors.size(); ++j) {
-            for (size_t k = j + 1; k < central_atom_neighbors.size(); ++k) {
-              const auto &neighbor1 = central_atom_neighbors[j];
-              const auto &neighbor2 = central_atom_neighbors[k];
+          // Build SoA for all neighbors of atom i (once per atom)
+          sc.ensure(cn);
+          for (size_t a = 0; a < cn; ++a) {
+            const auto &r_ij = neighbors[a].r_ij;
+            sc.nb_x[a]    = r_ij.x();
+            sc.nb_y[a]    = r_ij.y();
+            sc.nb_z[a]    = r_ij.z();
+            sc.nb_dist[a] = neighbors[a].distance;
+          }
 
-              const int type1 = atoms[neighbor1.index].element_id();
-              const int type2 = atoms[neighbor2.index].element_id();
+          // For each j: batch-compute dot(v_j, v_k) for all k > j via SIMD,
+          // then apply scalar acos per (j,k) pair.
+          for (size_t j = 0; j < cn - 1; ++j) {
+            const size_t k_count = cn - j - 1; // number of k's for this j
 
-              const auto &v1 = neighbor1.r_ij;
-              const auto &v2 = neighbor2.r_ij;
+            // SIMD dot products: dots[m] = dot(v_j, v_{j+1+m})
+            simd_utils::dot_block(sc.nb_x[j], sc.nb_y[j], sc.nb_z[j],
+                                  sc.nb_x.data()    + j + 1,
+                                  sc.nb_y.data()    + j + 1,
+                                  sc.nb_z.data()    + j + 1,
+                                  sc.dots.data(), k_count);
 
-              // Calculate angle
-              double cos_theta = linalg::dot(v1, v2) /
-                                 (neighbor1.distance * neighbor2.distance);
-              cos_theta = std::clamp(cos_theta, -1.0, 1.0);
+            const int type1 = atoms[neighbors[j].index].element_id();
+            const double d1 = sc.nb_dist[j];
+
+            for (size_t m = 0; m < k_count; ++m) {
+              const size_t k = j + 1 + m;
+              const int type2 = atoms[neighbors[k].index].element_id();
+
+              double cos_theta =
+                  std::clamp(sc.dots[m] / (d1 * sc.nb_dist[k]), -1.0, 1.0);
               double angle_rad = std::acos(cos_theta);
+
               local_tensor[type1][type_central][type2].push_back(angle_rad);
-              if (type1 != type2) {
+              if (type1 != type2)
                 local_tensor[type2][type_central][type1].push_back(angle_rad);
-              }
             }
           }
         }
@@ -80,3 +115,4 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
 }
 
 } // namespace calculators
+

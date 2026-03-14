@@ -399,6 +399,81 @@ inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
 #endif
 
 // ---------------------------------------------------------------------------
+// dot_block kernel
+//
+// Computes: out[k] = v1x*v2x[k] + v1y*v2y[k] + v1z*v2z[k]  for k in [0, count)
+//
+// Used by AngleCalculator to batch all cos(θ) numerators for a fixed
+// neighbor j against the remaining neighbors [j+1, CN) in one SIMD pass.
+// Caller still applies scalar acos per element after dividing by distances.
+// ---------------------------------------------------------------------------
+
+#if defined(CORRELATION_SIMD_AVX512)
+
+inline void dot_block(double v1x, double v1y, double v1z,
+                      const double *CORRELATION_RESTRICT v2x,
+                      const double *CORRELATION_RESTRICT v2y,
+                      const double *CORRELATION_RESTRICT v2z,
+                      double *CORRELATION_RESTRICT out,
+                      std::size_t count) noexcept {
+  const __m512d vv1x = _mm512_set1_pd(v1x);
+  const __m512d vv1y = _mm512_set1_pd(v1y);
+  const __m512d vv1z = _mm512_set1_pd(v1z);
+  std::size_t k = 0;
+  for (; k + 8 <= count; k += 8) {
+    __m512d d = _mm512_fmadd_pd(vv1x, _mm512_loadu_pd(v2x + k),
+                _mm512_fmadd_pd(vv1y, _mm512_loadu_pd(v2y + k),
+                _mm512_mul_pd (vv1z, _mm512_loadu_pd(v2z + k))));
+    _mm512_storeu_pd(out + k, d);
+  }
+  for (; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+}
+
+#elif defined(CORRELATION_SIMD_AVX2)
+
+inline void dot_block(double v1x, double v1y, double v1z,
+                      const double *CORRELATION_RESTRICT v2x,
+                      const double *CORRELATION_RESTRICT v2y,
+                      const double *CORRELATION_RESTRICT v2z,
+                      double *CORRELATION_RESTRICT out,
+                      std::size_t count) noexcept {
+  const __m256d vv1x = _mm256_set1_pd(v1x);
+  const __m256d vv1y = _mm256_set1_pd(v1y);
+  const __m256d vv1z = _mm256_set1_pd(v1z);
+  std::size_t k = 0;
+  for (; k + 4 <= count; k += 4) {
+#if defined(__FMA__)
+    __m256d d = _mm256_fmadd_pd(vv1x, _mm256_loadu_pd(v2x + k),
+                _mm256_fmadd_pd(vv1y, _mm256_loadu_pd(v2y + k),
+                _mm256_mul_pd (vv1z, _mm256_loadu_pd(v2z + k))));
+#else
+    __m256d d = _mm256_add_pd(
+        _mm256_mul_pd(vv1x, _mm256_loadu_pd(v2x + k)),
+        _mm256_add_pd(_mm256_mul_pd(vv1y, _mm256_loadu_pd(v2y + k)),
+                      _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + k))));
+#endif
+    _mm256_storeu_pd(out + k, d);
+  }
+  for (; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+}
+
+#else // Scalar fallback
+
+inline void dot_block(double v1x, double v1y, double v1z,
+                      const double *CORRELATION_RESTRICT v2x,
+                      const double *CORRELATION_RESTRICT v2y,
+                      const double *CORRELATION_RESTRICT v2z,
+                      double *CORRELATION_RESTRICT out,
+                      std::size_t count) noexcept {
+  for (std::size_t k = 0; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+}
+
+#endif
+
+// ---------------------------------------------------------------------------
 // Utility: build a SoA position block from a range of atoms.
 // Writes into caller-provided aligned storage. Returns the count.
 // ---------------------------------------------------------------------------
