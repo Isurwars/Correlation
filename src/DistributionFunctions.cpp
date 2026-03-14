@@ -22,9 +22,8 @@
 #include "calculators/XRDCalculator.hpp"
 
 #include <atomic>
-#include <future>
 #include <mutex>
-#include <thread>
+#include <tbb/parallel_for.h>
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructor -------------------------------//
@@ -388,81 +387,63 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   }
 
   std::vector<std::unique_ptr<DistributionFunctions>> results(num_frames);
-  std::vector<std::future<void>> futures;
 
   // Retrieve bond cutoffs from the analyzer.
-  // Note: TrajectoryAnalyzer uses same cutoffs for all frames usually.
   auto bond_cutoffs = analyzer.getBondCutoffsSQ();
 
   std::mutex callback_mutex;
   std::atomic<size_t> completed_frames{0};
-  std::atomic<size_t> next_frame{0};
 
-  const size_t num_threads = std::min(
-      static_cast<size_t>(std::thread::hardware_concurrency()), num_frames);
-  std::vector<std::thread> threads;
+  // TBB parallel_for nests cleanly with TBB calls inside each frame's
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, num_frames),
+      [&](const tbb::blocked_range<size_t> &range) {
+        for (size_t i = range.begin(); i != range.end(); ++i) {
+          const size_t frame_idx = start_frame + i;
+          if (frame_idx >= trajectory.getFrames().size())
+            continue;
 
-  for (size_t t = 0; t < num_threads; ++t) {
-    threads.emplace_back([&]() {
-      while (true) {
-        size_t i = next_frame.fetch_add(1);
-        if (i >= num_frames)
-          break;
+          Cell &frame = trajectory.getFrames()[frame_idx];
 
-        size_t frame_idx = start_frame + i;
-        if (frame_idx >= trajectory.getFrames().size()) {
-          continue;
+          auto frame_df =
+              std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
+          frame_df->setStructureAnalyzerOwned(
+              analyzer.createAnalyzer(frame_idx));
+
+          frame_df->calculateCoordinationNumber();
+          if (settings.run_rdf) {
+            frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
+          }
+          if (settings.run_pad && settings.angle_bin_width > 0) {
+            frame_df->calculatePAD(settings.angle_bin_width);
+          }
+          if (settings.run_dad && settings.dihedral_bin_width > 0) {
+            frame_df->calculateDAD(settings.dihedral_bin_width);
+          }
+          if (settings.run_rd) {
+            frame_df->calculateRD(settings.max_ring_size);
+          }
+          if (settings.run_sq && settings.q_max > 0) {
+            frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
+                                  settings.r_int_max);
+          }
+          if (settings.run_xrd && settings.q_max > 0) {
+            frame_df->calculateXRD(1.5406, 5.0, 90.0, settings.q_bin_width);
+          }
+
+          results[i] = std::move(frame_df);
+
+          const size_t current_completed = ++completed_frames;
+          if (progress_callback) {
+            std::lock_guard<std::mutex> lock(callback_mutex);
+            progress_callback(
+                static_cast<float>(current_completed) /
+                    static_cast<float>(num_frames),
+                "Calculating: " + std::to_string(current_completed) + " of " +
+                    std::to_string(num_frames));
+          }
         }
-
-        Cell &frame = trajectory.getFrames()[frame_idx];
-
-        // Create DF for this frame
-        auto frame_df =
-            std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
-        frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
-
-        frame_df->calculateCoordinationNumber();
-        if (settings.run_rdf) {
-          frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
-        }
-        if (settings.run_pad && settings.angle_bin_width > 0) {
-          frame_df->calculatePAD(settings.angle_bin_width);
-        }
-        if (settings.run_dad && settings.dihedral_bin_width > 0) {
-          frame_df->calculateDAD(settings.dihedral_bin_width);
-        }
-        if (settings.run_rd) {
-          frame_df->calculateRD(settings.max_ring_size);
-        }
-        if (settings.run_sq && settings.q_max > 0) {
-          frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
-                                settings.r_int_max);
-        }
-        if (settings.run_xrd && settings.q_max > 0) {
-          frame_df->calculateXRD(1.5406, 5.0, 90.0, settings.q_bin_width);
-        }
-
-        results[i] = std::move(frame_df);
-
-        size_t current_completed = ++completed_frames;
-        if (progress_callback) {
-          std::lock_guard<std::mutex> lock(callback_mutex);
-          progress_callback(
-              static_cast<float>(current_completed) /
-                  static_cast<float>(num_frames),
-              "Calculating: " + std::to_string(current_completed) + " of " +
-                  std::to_string(num_frames));
-        }
-      }
-    });
-  }
-
-  // Wait for all tasks
-  for (auto &t : threads) {
-    if (t.joinable()) {
-      t.join();
-    }
-  }
+      });
 
   // Accumulate results
   if (results.empty() || !results[0]) {
