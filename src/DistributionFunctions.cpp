@@ -202,12 +202,34 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
   auto &hist = histograms_.at(name);
   hist.smoothed_partials.clear();
 
-  for (const auto &[key, partial_values] : hist.partials) {
-    const double dx = hist.bins[1] - hist.bins[0];
-    const double min_sigma = std::max(dx, sigma);
-    hist.smoothed_partials[key] =
-        KernelSmoothing(hist.bins, partial_values, min_sigma, kernel);
-  }
+  if (hist.bins.size() < 2)
+    return;
+
+  // Constants are the same for every partial of this histogram.
+  const double dx = hist.bins[1] - hist.bins[0];
+  const double min_sigma = std::max(dx, sigma);
+
+  // Flatten partials into a read-only list so we can access them safely from
+  // parallel tasks (std::map is not thread-safe for concurrent reads + writes).
+  using PartialEntry = std::pair<const std::string *, const std::vector<double> *>;
+  std::vector<PartialEntry> entries;
+  entries.reserve(hist.partials.size());
+  for (const auto &[key, vals] : hist.partials)
+    entries.push_back({&key, &vals});
+
+  // Compute each partial's smoothed values in parallel.
+  std::vector<std::vector<double>> results(entries.size());
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, entries.size()),
+      [&](const tbb::blocked_range<size_t> &r) {
+        for (size_t i = r.begin(); i != r.end(); ++i)
+          results[i] =
+              KernelSmoothing(hist.bins, *entries[i].second, min_sigma, kernel);
+      });
+
+  // Serial writeback — map insertions are not thread-safe.
+  for (size_t i = 0; i < entries.size(); ++i)
+    hist.smoothed_partials[*entries[i].first] = std::move(results[i]);
 }
 
 void DistributionFunctions::smoothAll(double sigma, KernelType kernel) {

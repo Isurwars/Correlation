@@ -128,19 +128,39 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
   const auto kernel = generateKernel(kernel_size, dx, sigma, type);
   std::vector<double> smoothed(n, 0.0);
 
-  // Apply the convolution.
-  for (size_t i = 0; i < n; ++i) {
+  // Phase 1 – left boundary (bins 0 .. kernel_radius-1): needs index clamping.
+  for (size_t i = 0; i < std::min(kernel_radius, n); ++i) {
     for (size_t j = 0; j < kernel_size; ++j) {
-      const long long data_idx = static_cast<long long>(i) +
-                                 static_cast<long long>(j) -
-                                 static_cast<long long>(kernel_radius);
+      const long long idx = static_cast<long long>(i) +
+                            static_cast<long long>(j) -
+                            static_cast<long long>(kernel_radius);
+      smoothed[i] += y[static_cast<size_t>(std::max(0LL, idx))] * kernel[j];
+    }
+  }
 
-      // Handle boundary conditions: clamp the index to [0, n-1].
-      // This ensures safe access and uses the boundary values for convolution
-      // with kernel points outside the data range.
-      const long long clamped_idx = std::clamp<long long>(data_idx, 0, n - 1);
+  // Phase 2 – interior (bins kernel_radius .. n-kernel_radius-1):
+  // index  i - kernel_radius + j  is always in [0, n-1],  no branch needed.
+  // The clean inner loop (sum += src[j] * kernel[j]) is auto-vectorised by
+  // GCC/Clang at -O2 using whatever SIMD width the TU was compiled with.
+  if (n > 2 * kernel_radius) {
+    for (size_t i = kernel_radius; i < n - kernel_radius; ++i) {
+      const double *src = y.data() + (i - kernel_radius);
+      double sum = 0.0;
+      for (size_t j = 0; j < kernel_size; ++j)
+        sum += src[j] * kernel[j];
+      smoothed[i] = sum;
+    }
+  }
 
-      smoothed[i] += y[clamped_idx] * kernel[j];
+  // Phase 3 – right boundary (bins n-kernel_radius .. n-1): needs clamping.
+  const size_t right_start = (n > kernel_radius) ? n - kernel_radius : n;
+  for (size_t i = right_start; i < n; ++i) {
+    for (size_t j = 0; j < kernel_size; ++j) {
+      const long long idx = static_cast<long long>(i) +
+                            static_cast<long long>(j) -
+                            static_cast<long long>(kernel_radius);
+      const long long clamped = std::min(idx, static_cast<long long>(n) - 1);
+      smoothed[i] += y[static_cast<size_t>(clamped)] * kernel[j];
     }
   }
 
