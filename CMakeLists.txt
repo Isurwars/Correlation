@@ -27,6 +27,8 @@ include(cmake/Dependencies.cmake)
 # -----------------------------------------------------------
 include(CheckCXXCompilerFlag)
 
+option(CORRELATION_OPTIMIZE_NATIVE "Enable architecture-specific optimizations (AVX2/AVX512)" OFF)
+
 set(CORRELATION_SIMD_FLAGS "")
 set(HOST_HAS_AVX512 FALSE)
 set(HOST_HAS_AVX2 FALSE)
@@ -59,14 +61,18 @@ elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(HOST_HAS_AVX2 TRUE)
   endif()
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-  # On Windows use a small test program – for now fall back to compiler check
-  check_cxx_compiler_flag("/arch:AVX512" COMPILER_SUPPORTS_AVX512)
-  if (COMPILER_SUPPORTS_AVX512)
-    set(HOST_HAS_AVX512 TRUE)
-  endif()
-  check_cxx_compiler_flag("/arch:AVX2" COMPILER_SUPPORTS_AVX2)
-  if (COMPILER_SUPPORTS_AVX2)
-    set(HOST_HAS_AVX2 TRUE)
+  # On Windows, we only enable SIMD if CORRELATION_OPTIMIZE_NATIVE is ON.
+  # This prevents 'Illegal Instruction' crashes on older CPUs when the compiler
+  # capability is misaligned with the host hardware.
+  if (CORRELATION_OPTIMIZE_NATIVE)
+    check_cxx_compiler_flag("/arch:AVX512" COMPILER_SUPPORTS_AVX512)
+    if (COMPILER_SUPPORTS_AVX512)
+      set(HOST_HAS_AVX512 TRUE)
+    endif()
+    check_cxx_compiler_flag("/arch:AVX2" COMPILER_SUPPORTS_AVX2)
+    if (COMPILER_SUPPORTS_AVX2)
+      set(HOST_HAS_AVX2 TRUE)
+    endif()
   endif()
 endif()
 
@@ -96,7 +102,11 @@ else()
     set(CORRELATION_SIMD_FLAGS "/arch:AVX2")
     message(STATUS "SIMD: AVX2 enabled (/arch:AVX2)")
   else()
-    message(STATUS "SIMD: No AVX support detected – using scalar fallback")
+    if (CORRELATION_OPTIMIZE_NATIVE)
+      message(STATUS "SIMD: Requested optimization but no compatible AVX level found")
+    else()
+      message(STATUS "SIMD: Optimization disabled – using scalar fallback")
+    endif()
   endif()
 endif()
 
