@@ -9,30 +9,30 @@
 // SIMD level detection
 // ---------------------------------------------------------------------------
 #if defined(__AVX512F__)
-  #define CORRELATION_SIMD_AVX512
+#define CORRELATION_SIMD_AVX512
 #elif defined(__AVX2__)
-  #define CORRELATION_SIMD_AVX2
+#define CORRELATION_SIMD_AVX2
 #endif
 
 #if defined(CORRELATION_SIMD_AVX512)
-  #include <immintrin.h>
-  #define CORRELATION_SIMD_WIDTH 8   // 8 doubles per AVX-512 register
+#include <immintrin.h>
+#define CORRELATION_SIMD_WIDTH 8 // 8 doubles per AVX-512 register
 #elif defined(CORRELATION_SIMD_AVX2)
-  #include <immintrin.h>
-  #define CORRELATION_SIMD_WIDTH 4   // 4 doubles per AVX2 register
+#include <immintrin.h>
+#define CORRELATION_SIMD_WIDTH 4 // 4 doubles per AVX2 register
 #else
-  #define CORRELATION_SIMD_WIDTH 1   // scalar fallback
+#define CORRELATION_SIMD_WIDTH 1 // scalar fallback
 #endif
 
 // ---------------------------------------------------------------------------
 // Portable restrict keyword
 // ---------------------------------------------------------------------------
 #if defined(_MSC_VER)
-  #define CORRELATION_RESTRICT __restrict
+#define CORRELATION_RESTRICT __restrict
 #elif defined(__GNUC__) || defined(__clang__)
-  #define CORRELATION_RESTRICT __restrict__
+#define CORRELATION_RESTRICT __restrict__
 #else
-  #define CORRELATION_RESTRICT
+#define CORRELATION_RESTRICT
 #endif
 
 #include <cmath>
@@ -57,8 +57,8 @@ struct PositionBlock {
 // ---------------------------------------------------------------------------
 // Scalar helper: squared distance between atom A (single) and atom B[k]
 // ---------------------------------------------------------------------------
-inline double dist_sq_scalar(double ax, double ay, double az,
-                              double bx, double by, double bz) noexcept {
+inline double dist_sq_scalar(double ax, double ay, double az, double bx,
+                             double by, double bz) noexcept {
   double dx = bx - ax;
   double dy = by - ay;
   double dz = bz - az;
@@ -78,8 +78,8 @@ inline double dist_sq_scalar(double ax, double ay, double az,
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline void compute_dsq_block(double ax, double ay, double az,
-                               const PositionBlock &block,
-                               double *CORRELATION_RESTRICT out_dsq) noexcept {
+                              const PositionBlock &block,
+                              double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m512d va_x = _mm512_set1_pd(ax);
   const __m512d va_y = _mm512_set1_pd(ay);
   const __m512d va_z = _mm512_set1_pd(az);
@@ -90,9 +90,8 @@ inline void compute_dsq_block(double ax, double ay, double az,
     __m512d dx = _mm512_sub_pd(_mm512_loadu_pd(block.x + k), va_x);
     __m512d dy = _mm512_sub_pd(_mm512_loadu_pd(block.y + k), va_y);
     __m512d dz = _mm512_sub_pd(_mm512_loadu_pd(block.z + k), va_z);
-    __m512d dsq = _mm512_fmadd_pd(dx, dx,
-                  _mm512_fmadd_pd(dy, dy,
-                  _mm512_mul_pd(dz, dz)));
+    __m512d dsq =
+        _mm512_fmadd_pd(dx, dx, _mm512_fmadd_pd(dy, dy, _mm512_mul_pd(dz, dz)));
     _mm512_storeu_pd(out_dsq + k, dsq);
   }
   // Masked tail: remaining atoms (0-7)
@@ -102,9 +101,8 @@ inline void compute_dsq_block(double ax, double ay, double az,
     __m512d dx = _mm512_sub_pd(_mm512_maskz_loadu_pd(mask, block.x + k), va_x);
     __m512d dy = _mm512_sub_pd(_mm512_maskz_loadu_pd(mask, block.y + k), va_y);
     __m512d dz = _mm512_sub_pd(_mm512_maskz_loadu_pd(mask, block.z + k), va_z);
-    __m512d dsq = _mm512_fmadd_pd(dx, dx,
-                  _mm512_fmadd_pd(dy, dy,
-                  _mm512_mul_pd(dz, dz)));
+    __m512d dsq =
+        _mm512_fmadd_pd(dx, dx, _mm512_fmadd_pd(dy, dy, _mm512_mul_pd(dz, dz)));
     _mm512_mask_storeu_pd(out_dsq + k, mask, dsq);
   }
 }
@@ -112,8 +110,8 @@ inline void compute_dsq_block(double ax, double ay, double az,
 #elif defined(CORRELATION_SIMD_AVX2)
 
 inline void compute_dsq_block(double ax, double ay, double az,
-                               const PositionBlock &block,
-                               double *CORRELATION_RESTRICT out_dsq) noexcept {
+                              const PositionBlock &block,
+                              double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256d va_x = _mm256_set1_pd(ax);
   const __m256d va_y = _mm256_set1_pd(ay);
   const __m256d va_z = _mm256_set1_pd(az);
@@ -126,31 +124,28 @@ inline void compute_dsq_block(double ax, double ay, double az,
     __m256d dz = _mm256_sub_pd(_mm256_loadu_pd(block.z + k), va_z);
     // Use FMA if available (AVX2 CPUs typically have FMA3 as well)
 #if defined(__FMA__)
-    __m256d dsq = _mm256_fmadd_pd(dx, dx,
-                  _mm256_fmadd_pd(dy, dy,
-                  _mm256_mul_pd(dz, dz)));
+    __m256d dsq =
+        _mm256_fmadd_pd(dx, dx, _mm256_fmadd_pd(dy, dy, _mm256_mul_pd(dz, dz)));
 #else
-    __m256d dsq = _mm256_add_pd(_mm256_mul_pd(dx, dx),
-                  _mm256_add_pd(_mm256_mul_pd(dy, dy),
-                                _mm256_mul_pd(dz, dz)));
+    __m256d dsq = _mm256_add_pd(
+        _mm256_mul_pd(dx, dx),
+        _mm256_add_pd(_mm256_mul_pd(dy, dy), _mm256_mul_pd(dz, dz)));
 #endif
     _mm256_storeu_pd(out_dsq + k, dsq);
   }
   // Scalar tail
   for (; k < block.count; ++k) {
-    out_dsq[k] = dist_sq_scalar(ax, ay, az,
-                                 block.x[k], block.y[k], block.z[k]);
+    out_dsq[k] = dist_sq_scalar(ax, ay, az, block.x[k], block.y[k], block.z[k]);
   }
 }
 
 #else // Scalar fallback
 
 inline void compute_dsq_block(double ax, double ay, double az,
-                               const PositionBlock &block,
-                               double *CORRELATION_RESTRICT out_dsq) noexcept {
+                              const PositionBlock &block,
+                              double *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t k = 0; k < block.count; ++k) {
-    out_dsq[k] = dist_sq_scalar(ax, ay, az,
-                                 block.x[k], block.y[k], block.z[k]);
+    out_dsq[k] = dist_sq_scalar(ax, ay, az, block.x[k], block.y[k], block.z[k]);
   }
 }
 
@@ -173,10 +168,10 @@ inline void compute_dsq_block(double ax, double ay, double az,
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline double sinc_integral(double Q,
-                             const double *CORRELATION_RESTRICT integrand,
-                             const double *CORRELATION_RESTRICT rbins,
-                             double       *CORRELATION_RESTRICT sinqr_scratch,
-                             std::size_t count) noexcept {
+                            const double *CORRELATION_RESTRICT integrand,
+                            const double *CORRELATION_RESTRICT rbins,
+                            double *CORRELATION_RESTRICT sinqr_scratch,
+                            std::size_t count) noexcept {
   // Phase 1: scalar sin (auto-vectorized by the compiler)
   for (std::size_t j = 0; j < count; ++j) {
     sinqr_scratch[j] = std::sin(Q * rbins[j]);
@@ -201,10 +196,10 @@ inline double sinc_integral(double Q,
 #elif defined(CORRELATION_SIMD_AVX2)
 
 inline double sinc_integral(double Q,
-                             const double *CORRELATION_RESTRICT integrand,
-                             const double *CORRELATION_RESTRICT rbins,
-                             double       *CORRELATION_RESTRICT sinqr_scratch,
-                             std::size_t count) noexcept {
+                            const double *CORRELATION_RESTRICT integrand,
+                            const double *CORRELATION_RESTRICT rbins,
+                            double *CORRELATION_RESTRICT sinqr_scratch,
+                            std::size_t count) noexcept {
   // Phase 1: scalar sin (auto-vectorized by the compiler)
   for (std::size_t j = 0; j < count; ++j) {
     sinqr_scratch[j] = std::sin(Q * rbins[j]);
@@ -223,8 +218,8 @@ inline double sinc_integral(double Q,
 #endif
   }
   // Horizontal reduction of the 4-lane AVX2 accumulator
-  __m128d lo  = _mm256_castpd256_pd128(vacc);
-  __m128d hi  = _mm256_extractf128_pd(vacc, 1);
+  __m128d lo = _mm256_castpd256_pd128(vacc);
+  __m128d hi = _mm256_extractf128_pd(vacc, 1);
   __m128d sum2 = _mm_add_pd(lo, hi);
   __m128d sum1 = _mm_hadd_pd(sum2, sum2);
   double acc = _mm_cvtsd_f64(sum1);
@@ -238,10 +233,10 @@ inline double sinc_integral(double Q,
 #else // Scalar fallback
 
 inline double sinc_integral(double Q,
-                             const double *CORRELATION_RESTRICT integrand,
-                             const double *CORRELATION_RESTRICT rbins,
-                             double       *CORRELATION_RESTRICT /*sinqr_scratch*/,
-                             std::size_t count) noexcept {
+                            const double *CORRELATION_RESTRICT integrand,
+                            const double *CORRELATION_RESTRICT rbins,
+                            double *CORRELATION_RESTRICT /*sinqr_scratch*/,
+                            std::size_t count) noexcept {
   double acc = 0.0;
   for (std::size_t j = 0; j < count; ++j) {
     acc += integrand[j] * std::sin(Q * rbins[j]);
@@ -252,15 +247,166 @@ inline double sinc_integral(double Q,
 #endif
 
 // ---------------------------------------------------------------------------
+// normalize_rdf_bins kernel
+//
+// Computes for k in [1, count)  (bin 0 is left as-is / zero):
+//   g[k]    = H[k] * g_norm / (r[k]^2)
+//   G[k]    = pi4_rho_j * r[k] * (g[k] - 1)
+//   J[k]    = H[k] * inv_Ni_dr
+//   Jinv[k] = H[k] * inv_Nj_dr
+//
+// NOTE: J_out and Jinv_out may alias (self-pair case i==j) — no restrict.
+// H and rbins are read-only and must not alias any output.
+// ---------------------------------------------------------------------------
+
+#if defined(CORRELATION_SIMD_AVX512)
+
+inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
+                               const double *CORRELATION_RESTRICT rbins,
+                               double g_norm, double inv_Ni_dr,
+                               double inv_Nj_dr, double pi4_rho_j,
+                               double *g_out, double *G_out, double *J_out,
+                               double *Jinv_out, std::size_t count) noexcept {
+  const __m512d vg_norm = _mm512_set1_pd(g_norm);
+  const __m512d v1 = _mm512_set1_pd(1.0);
+  const __m512d vinNidr = _mm512_set1_pd(inv_Ni_dr);
+  const __m512d vinNjdr = _mm512_set1_pd(inv_Nj_dr);
+  const __m512d vpi4rho = _mm512_set1_pd(pi4_rho_j);
+
+  std::size_t k = 1; // bin 0 stays 0
+  for (; k + 8 <= count; k += 8) {
+    __m512d vH = _mm512_loadu_pd(H + k);
+    __m512d vr = _mm512_loadu_pd(rbins + k);
+    __m512d vr2 = _mm512_mul_pd(vr, vr);
+    __m512d vg = _mm512_div_pd(_mm512_mul_pd(vH, vg_norm), vr2);
+    _mm512_storeu_pd(g_out + k, vg);
+    _mm512_storeu_pd(
+        G_out + k,
+        _mm512_mul_pd(vpi4rho, _mm512_mul_pd(vr, _mm512_sub_pd(vg, v1))));
+    _mm512_storeu_pd(J_out + k, _mm512_mul_pd(vH, vinNidr));
+    _mm512_storeu_pd(Jinv_out + k, _mm512_mul_pd(vH, vinNjdr));
+  }
+  for (; k < count; ++k) {
+    const double r = rbins[k];
+    if (r < 1e-9)
+      continue;
+    const double g = H[k] * g_norm / (r * r);
+    g_out[k] = g;
+    G_out[k] = pi4_rho_j * r * (g - 1.0);
+    J_out[k] = H[k] * inv_Ni_dr;
+    Jinv_out[k] = H[k] * inv_Nj_dr;
+  }
+}
+
+#elif defined(CORRELATION_SIMD_AVX2)
+
+inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
+                               const double *CORRELATION_RESTRICT rbins,
+                               double g_norm, double inv_Ni_dr,
+                               double inv_Nj_dr, double pi4_rho_j,
+                               double *g_out, double *G_out, double *J_out,
+                               double *Jinv_out, std::size_t count) noexcept {
+  const __m256d vg_norm = _mm256_set1_pd(g_norm);
+  const __m256d v1 = _mm256_set1_pd(1.0);
+  const __m256d vinNidr = _mm256_set1_pd(inv_Ni_dr);
+  const __m256d vinNjdr = _mm256_set1_pd(inv_Nj_dr);
+  const __m256d vpi4rho = _mm256_set1_pd(pi4_rho_j);
+
+  std::size_t k = 1; // bin 0 stays 0
+  for (; k + 4 <= count; k += 4) {
+    __m256d vH = _mm256_loadu_pd(H + k);
+    __m256d vr = _mm256_loadu_pd(rbins + k);
+    __m256d vr2 = _mm256_mul_pd(vr, vr);
+    __m256d vg = _mm256_div_pd(_mm256_mul_pd(vH, vg_norm), vr2);
+    _mm256_storeu_pd(g_out + k, vg);
+    _mm256_storeu_pd(
+        G_out + k,
+        _mm256_mul_pd(vpi4rho, _mm256_mul_pd(vr, _mm256_sub_pd(vg, v1))));
+    _mm256_storeu_pd(J_out + k, _mm256_mul_pd(vH, vinNidr));
+    _mm256_storeu_pd(Jinv_out + k, _mm256_mul_pd(vH, vinNjdr));
+  }
+  // Scalar tail
+  for (; k < count; ++k) {
+    const double r = rbins[k];
+    if (r < 1e-9)
+      continue;
+    const double g = H[k] * g_norm / (r * r);
+    g_out[k] = g;
+    G_out[k] = pi4_rho_j * r * (g - 1.0);
+    J_out[k] = H[k] * inv_Ni_dr;
+    Jinv_out[k] = H[k] * inv_Nj_dr;
+  }
+}
+
+#else // Scalar fallback
+
+inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
+                               const double *CORRELATION_RESTRICT rbins,
+                               double g_norm, double inv_Ni_dr,
+                               double inv_Nj_dr, double pi4_rho_j,
+                               double *g_out, double *G_out, double *J_out,
+                               double *Jinv_out, std::size_t count) noexcept {
+  for (std::size_t k = 1; k < count; ++k) {
+    const double r = rbins[k];
+    if (r < 1e-9)
+      continue;
+    const double g = H[k] * g_norm / (r * r);
+    g_out[k] = g;
+    G_out[k] = pi4_rho_j * r * (g - 1.0);
+    J_out[k] = H[k] * inv_Ni_dr;
+    Jinv_out[k] = H[k] * inv_Nj_dr;
+  }
+}
+
+#endif
+
+// ---------------------------------------------------------------------------
+// scale_bins: multiply every element of arr[0..count) by scalar `s`
+// Used for the self-pair H(r) x2 correction.
+// Auto-vectorized by the compiler; explicit AVX2 for clarity and alignment
+// with the rest of this header.
+// ---------------------------------------------------------------------------
+
+#if defined(CORRELATION_SIMD_AVX512)
+
+inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
+  const __m512d vs = _mm512_set1_pd(s);
+  std::size_t k = 0;
+  for (; k + 8 <= count; k += 8)
+    _mm512_storeu_pd(arr + k, _mm512_mul_pd(_mm512_loadu_pd(arr + k), vs));
+  for (; k < count; ++k)
+    arr[k] *= s;
+}
+
+#elif defined(CORRELATION_SIMD_AVX2)
+
+inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
+  const __m256d vs = _mm256_set1_pd(s);
+  std::size_t k = 0;
+  for (; k + 4 <= count; k += 4)
+    _mm256_storeu_pd(arr + k, _mm256_mul_pd(_mm256_loadu_pd(arr + k), vs));
+  for (; k < count; ++k)
+    arr[k] *= s;
+}
+
+#else
+
+inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
+  for (std::size_t k = 0; k < count; ++k)
+    arr[k] *= s;
+}
+
+#endif
+
+// ---------------------------------------------------------------------------
 // Utility: build a SoA position block from a range of atoms.
 // Writes into caller-provided aligned storage. Returns the count.
 // ---------------------------------------------------------------------------
 template <typename AtomRange>
-inline std::size_t fill_position_block(const AtomRange &atoms,
-                                       std::size_t begin, std::size_t end,
-                                       std::vector<double> &xs,
-                                       std::vector<double> &ys,
-                                       std::vector<double> &zs) noexcept {
+inline std::size_t
+fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
+                    std::vector<double> &xs, std::vector<double> &ys,
+                    std::vector<double> &zs) noexcept {
   const std::size_t count = end - begin;
   xs.resize(count);
   ys.resize(count);

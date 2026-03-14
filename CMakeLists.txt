@@ -158,6 +158,7 @@ if (CORRELATION_SIMD_FLAGS)
       src/calculators/DistanceCalculator.cpp
       src/calculators/SQCalculator.cpp
       src/calculators/XRDCalculator.cpp
+      src/calculators/RDFCalculator.cpp
       PROPERTIES COMPILE_FLAGS "${CORRELATION_SIMD_FLAGS}"
   )
 endif()

@@ -5,6 +5,7 @@
 
 #include "calculators/RDFCalculator.hpp"
 #include "PhysicalData.hpp"
+#include "SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>
 
@@ -99,9 +100,7 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       // DistanceTensor. We multiply by 2 to account for both A_1 -> A_2 and A_2
       // -> A_1 interactions.
       if (i == j) {
-        for (size_t k = 0; k < num_bins; ++k) {
-          partial_hist[k] *= 2.0;
-        }
+        simd_utils::scale_bins(partial_hist.data(), 2.0, num_bins);
       }
     }
   }
@@ -126,30 +125,21 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
 
       // Second Pass: Normalize the raw counts H(r) into target distribution
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
-      // The r^2 term is applied inside the loop.
-      const double g_norm_constant = (V) / (4.0 * constants::pi * dr * Ni * Nj);
-      const double rho_j = Nj / V;
+      // The r^2 term is applied per-bin inside the SIMD kernel.
+      const double g_norm_constant = V / (4.0 * constants::pi * dr * Ni * Nj);
+      const double rho_j           = Nj / V;
+      const double inv_Ni_dr       = 1.0 / (Ni * dr);
+      const double inv_Nj_dr       = 1.0 / (Nj * dr);
+      const double pi4_rho_j       = 4.0 * constants::pi * rho_j;
 
-      for (size_t k = 0; k < num_bins; ++k) {
-        const double r = g_r.bins[k];
-        if (r < 1e-9) // Prevent division by zero at the origin
-          continue;
-
-        const double H = H_ij[k];
-
-        // Partial Pair Correlation Function: g_{ij}(r) = H_{ij}(r) * V / (4 *
-        // pi * r^2 * dr * N_i * N_j)
-        g_r.partials[key][k] = H * g_norm_constant / (r * r);
-
-        // Radial Distribution Function for Coordination Number
-        J_r.partials[key][k] = H / (Ni * dr);
-        J_r.partials[inversekey][k] = H / (Nj * dr);
-
-        // Reduced Pair Distribution Function: G_{ij}(r) = 4 * \pi * r * \rho_j
-        // * (g_{ij}(r) - 1)
-        G_r.partials[key][k] =
-            4.0 * constants::pi * rho_j * r * (g_r.partials[key][k] - 1.0);
-      }
+      simd_utils::normalize_rdf_bins(
+          H_ij.data(), g_r.bins.data(),
+          g_norm_constant, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
+          g_r.partials[key].data(),
+          G_r.partials[key].data(),
+          J_r.partials[key].data(),
+          J_r.partials[inversekey].data(),
+          num_bins);
     }
   }
 
