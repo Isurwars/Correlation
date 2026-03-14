@@ -6,8 +6,8 @@
 #include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
 #include <algorithm>
-#include <mutex>
 #include <numeric>
+#include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
 //---------------------------------------------------------------------------//
@@ -82,14 +82,14 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
     counts[lag] = num_frames - lag;
   }
 
-  // Parallel computation over atoms
-  std::vector<size_t> atom_indices(num_atoms);
-  std::iota(atom_indices.begin(), atom_indices.end(), 0);
-
-  std::mutex vacf_mutex;
+  // Thread-local VACF accumulators: eliminates all mutex acquisitions.
+  // Each TBB worker thread gets its own vector and accumulates freely;
+  // we merge once serially at the end.
+  tbb::enumerable_thread_specific<std::vector<double>> ets_vacf(
+      [&] { return std::vector<double>(max_correlation_frames + 1, 0.0); });
 
   tbb::parallel_for(size_t(0), num_atoms, [&](size_t i) {
-    std::vector<double> local_vacf(max_correlation_frames + 1, 0.0);
+    auto &local_vacf = ets_vacf.local();
     const auto &v_i = atom_velocities[i];
 
     for (size_t t0 = 0; t0 < num_frames; ++t0) {
@@ -99,12 +99,14 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
         local_vacf[lag] += linalg::dot(v_i[t0], v_i[t0 + lag]);
       }
     }
+  });
 
-    std::lock_guard<std::mutex> lock(vacf_mutex);
+  // Serial merge of per-thread accumulators into the shared vacf[]
+  for (const auto &local_vacf : ets_vacf) {
     for (int lag = 0; lag <= max_correlation_frames; ++lag) {
       vacf[lag] += local_vacf[lag];
     }
-  });
+  }
 
   // Normalize by number of time origins and number of atoms
   for (int lag = 0; lag <= max_correlation_frames; ++lag) {
