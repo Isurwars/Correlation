@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] 2026-03-14
+
+### Added
+- Implemented SIMD vectorization (AVX2/AVX-512) for key calculators (`SQCalculator`, `XRDCalculator`, `DistanceCalculator`, `RDFCalculator`, `AngleCalculator`).
+- Added `sinc_integral` SIMD kernel for structure factor calculations.
+- Integrated TBB (Threading Building Blocks) for parallelization across all calculators and smoothing functions.
+- Added comprehensive Inno Setup script for Windows installers.
+- Added AUR (Arch User Repository) configuration files.
+- Added 3.0.0 Roadmap and updated project documentation.
+- Integrated CPack for multi-platform packaging (DEB, TGZ, NSIS, DragNDrop).
+
+### Fixed
+- Resolved SIMD compilation errors on Windows/MSVC.
+- Fixed case-sensitivity issues in distribution function filenames.
+- Fixed Parquet export issues on macOS.
+- Resolved CI/CD runner compatibility issues (Node 20 deprecation, JEMALLOC on macOS, headless X11 for Linux tests).
+- Fixed various build and test failures in GitHub Actions.
+
 ## [2.0.0] 2026-03-09
 
 ### Added

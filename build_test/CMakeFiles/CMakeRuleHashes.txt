@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+05d08d1af21e6d033b0c63ef518c95b9 AppWindow.h
+65a6a62607b79f2628100059d5ef7561 tests/AppWindow.h
