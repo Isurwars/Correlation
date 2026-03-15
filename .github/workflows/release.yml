@@ -52,6 +52,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install NSIS
+        run: choco install nsis -y
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
