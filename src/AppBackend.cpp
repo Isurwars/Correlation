@@ -271,7 +271,11 @@ std::string AppBackend::run_analysis() {
 
   } catch (const std::exception &e) {
     std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + e.what();
-    std::cerr << err << std::endl;
+    std::cerr << "Analysis Exception: " << e.what() << std::endl;
+    return err;
+  } catch (...) {
+    std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
+    std::cerr << "Analysis Exception: Unknown error." << std::endl;
     return err;
   }
   return "";
