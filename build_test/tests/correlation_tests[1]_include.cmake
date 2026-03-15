@@ -1,5 +1,0 @@
-if(EXISTS "/home/isurwars/Projects/Correlation/build_test/tests/correlation_tests[1]_tests.cmake")
-  include("/home/isurwars/Projects/Correlation/build_test/tests/correlation_tests[1]_tests.cmake")
-else()
-  add_test(correlation_tests_NOT_BUILT correlation_tests_NOT_BUILT)
-endif()

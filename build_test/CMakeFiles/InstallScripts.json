@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/isurwars/Projects/Correlation/build_test/cmake_install.cmake",
-		"/home/isurwars/Projects/Correlation/build_test/tests/cmake_install.cmake"
-	],
-	"Parallel" : false
-}
