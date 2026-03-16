@@ -102,3 +102,51 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: build/Correlation-*-macOS.dmg
+
+  publish-aur:
+    name: Publish to AUR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Update PKGBUILD
+        run: |
+          sed -i "s/pkgver=.*/pkgver=${{ env.VERSION }}/" PKGBUILD
+          # The source URL in PKGBUILD also needs the correct version
+          # (though it usually uses ${pkgver})
+
+      - name: Update Checksums
+        run: |
+          # Fetch the source tarball to compute checksum
+          URL="https://github.com/${{ github.repository }}/archive/refs/tags/v${{ env.VERSION }}.tar.gz"
+          curl -L "$URL" -o source.tar.gz
+          SHA256=$(sha256sum source.tar.gz | cut -d ' ' -f 1)
+          sed -i "s/sha256sums=.*/sha256sums=('$SHA256')/" PKGBUILD
+
+      - name: Generate .SRCINFO
+        run: |
+          # We need an Arch environment to use makepkg --printsrcinfo
+          docker run --rm -v $PWD:/pkg archlinux /bin/bash -c "
+            pacman -Sy --noconfirm base-devel-minimal
+            cd /pkg
+            # We need a non-root user for makepkg
+            useradd -m builder
+            chown -R builder:builder .
+            su builder -c 'makepkg --printsrcinfo' > .SRCINFO
+          "
+
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v3
+        with:
+          pkgname: correlation
+          pkgbuild: ./PKGBUILD
+          commit_username: ${{ github.actor }}
+          commit_email: ${{ github.actor }}@users.noreply.github.com
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: "Release v${{ env.VERSION }}"
