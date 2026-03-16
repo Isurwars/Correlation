@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.1.1] 2026-03-15
+
+### Added
+- Integrated AUR (Arch User Repository) publishing into the release workflow.
+
+### Fixed
+- Resolved context access errors in the GitHub Actions release workflow.
+
 ## [2.1.0] 2026-03-14
 
 ### Added
