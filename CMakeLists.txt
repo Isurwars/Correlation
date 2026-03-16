@@ -276,11 +276,11 @@ endif()
 # -----------------------------------------------------------
 # CPack Packaging
 # -----------------------------------------------------------
-set(CPACK_PACKAGE_NAME "Correlation")
+set(CPACK_PACKAGE_NAME "correlation")
 set(CPACK_PACKAGE_VENDOR "Isaías Rodríguez")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Analysis tool for liquid and amorphous solid structures")
 set(CPACK_PACKAGE_VERSION "${CORRELATION_VERSION}")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "Correlation")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "correlation")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
 
@@ -294,7 +294,7 @@ if (WIN32)
     set(CPACK_NSIS_MODIFY_PATH ON)
 elseif (APPLE)
     set(CPACK_GENERATOR "DragNDrop")
-    set(CPACK_DMG_VOLUME_NAME "Correlation")
+    set(CPACK_DMG_VOLUME_NAME "correlation")
     set(CPACK_SYSTEM_NAME "macOS")
 else ()
     # Linux

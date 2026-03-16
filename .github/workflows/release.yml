@@ -29,7 +29,7 @@ jobs:
       - name: Configure CMake
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
 
-      - name: Build Correlation
+      - name: Build correlation
         run: cmake --build build --config Release
 
       - name: Package Release
@@ -42,8 +42,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/Correlation-*-Linux.deb
-            build/Correlation-*-Linux.tar.gz
+            build/correlation-*-Linux.deb
+            build/correlation-*-Linux.tar.gz
 
   build-windows:
     name: Build Windows
@@ -61,7 +61,7 @@ jobs:
       - name: Configure CMake
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
 
-      - name: Build Correlation
+      - name: Build correlation
         run: cmake --build build --config Release --parallel
 
       - name: Create Installer
@@ -72,7 +72,7 @@ jobs:
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: build/Correlation-*-win64.exe
+          files: build/correlation-*-win64.exe
 
   build-macos:
     name: Build macOS
@@ -90,7 +90,7 @@ jobs:
       - name: Configure CMake
         run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
 
-      - name: Build Correlation
+      - name: Build correlation
         run: cmake --build build --config Release
 
       - name: Package Release
@@ -101,7 +101,7 @@ jobs:
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: build/Correlation-*-macOS.dmg
+          files: build/correlation-*-macOS.dmg
 
   publish-aur:
     name: Publish to AUR
