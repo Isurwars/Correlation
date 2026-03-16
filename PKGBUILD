@@ -12,7 +12,7 @@ source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz
 sha256sums=('SKIP') # To be updated by the workflow
 
 prepare() {
-  cmake -B build -S "${pkgname}-${pkgver}" \
+  cmake -B build -S "Correlation-${pkgver}" \
     -DCMAKE_BUILD_TYPE=Release \
     -G Ninja
 }
