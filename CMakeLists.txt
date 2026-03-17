@@ -126,7 +126,6 @@ add_library(correlation_lib STATIC
     src/calculators/RDFCalculator.cpp
     src/calculators/PADCalculator.cpp
     src/calculators/DADCalculator.cpp
-    src/calculators/MotifFinder.cpp
     src/calculators/RDCalculator.cpp
     src/calculators/VACFCalculator.cpp
     src/calculators/VDOSCalculator.cpp
@@ -142,6 +141,7 @@ add_library(correlation_lib STATIC
     src/readers/LammpsDumpReader.cpp
     src/readers/OnetepDatReader.cpp
     src/readers/OutmolReader.cpp
+    src/readers/ReaderFactory.cpp
     src/FileWriter.cpp
     src/writers/ArrowWriter.cpp
     src/writers/CSVWriter.cpp

@@ -3,16 +3,41 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "readers/LammpsDumpReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <cerrno>
 #include <cstring>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <memory>
+#include <functional>
 
-namespace LammpsDumpReader {
+#include "Cell.hpp"
+#include "Trajectory.hpp"
 
-Cell read(const std::string &file_name) {
+namespace FileReader {
+
+// Automatic registration
+static bool registered = ReaderFactory::instance().registerReader(
+    std::make_unique<LammpsDumpReader>()
+);
+
+Cell LammpsDumpReader::readStructure(const std::string &filename,
+                                      std::function<void(float, const std::string &)>
+                                          progress_callback) {
+  return read(filename);
+}
+
+Trajectory LammpsDumpReader::readTrajectory(const std::string &filename,
+                                             std::function<void(float, const std::string &)>
+                                                 progress_callback) {
+  // LAMMPS dump files can be trajectories, but current read() only returns the
+  // LAST frame.
+  return Trajectory({read(filename)}, 1.0);
+}
+
+Cell LammpsDumpReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -79,4 +104,4 @@ Cell read(const std::string &file_name) {
   return tempCell;
 }
 
-} // namespace LammpsDumpReader
+} // namespace FileReader

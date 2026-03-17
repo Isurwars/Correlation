@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "readers/CarReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <array>
 #include <cerrno>
@@ -10,10 +11,32 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <memory>
+#include <functional>
 
-namespace CarReader {
+#include "Cell.hpp"
+#include "Trajectory.hpp"
 
-Cell read(const std::string &file_name) {
+namespace FileReader {
+
+// Automatic registration
+static bool registered = ReaderFactory::instance().registerReader(
+    std::make_unique<CarReader>()
+);
+
+Cell CarReader::readStructure(const std::string &filename,
+                               std::function<void(float, const std::string &)>
+                                   progress_callback) {
+  return read(filename);
+}
+
+Trajectory CarReader::readTrajectory(const std::string &filename,
+                                      std::function<void(float, const std::string &)>
+                                          progress_callback) {
+  throw std::runtime_error("CAR files are structures, use readStructure.");
+}
+
+Cell CarReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -67,4 +90,4 @@ Cell read(const std::string &file_name) {
   return tempCell;
 }
 
-} // namespace CarReader
+} // namespace FileReader

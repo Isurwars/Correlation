@@ -3,19 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "FileReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
 #include <filesystem>
 #include <stdexcept>
-
-#include "readers/ArcReader.hpp"
-#include "readers/CarReader.hpp"
-#include "readers/CastepMdReader.hpp"
-#include "readers/CellReader.hpp"
-#include "readers/CifReader.hpp"
-#include "readers/LammpsDumpReader.hpp"
-#include "readers/OnetepDatReader.hpp"
-#include "readers/OutmolReader.hpp"
 
 namespace FileReader {
 
@@ -40,53 +32,50 @@ FileType determineFileType(const std::string &filename) {
   if (ext == ".outmol")
     return FileType::Outmol;
 
-  throw std::runtime_error("Unsupported file extension: " + ext);
+  return FileType::Unknown;
 }
 
 Cell readStructure(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
-  switch (type) {
-  case FileType::Car:
-    return CarReader::read(filename);
-  case FileType::Cif:
-    return CifReader::read(filename);
-  case FileType::Cell:
-    return CellReader::read(filename);
-  case FileType::OnetepDat:
-    return OnetepDatReader::read(filename);
-  case FileType::LammpsDump:
-    return LammpsDumpReader::read(filename);
-  case FileType::Arc:
-    throw std::runtime_error("ARC files are trajectories, use readTrajectory.");
-  case FileType::CastepMd:
-    throw std::runtime_error(
-        "CASTEP .md files are trajectories, use readTrajectory.");
-  default:
-    throw std::invalid_argument("Unknown file type specified.");
+  
+  std::string ext = std::filesystem::path(filename).extension().string();
+  auto reader = ReaderFactory::instance().getReaderForExtension(ext);
+  
+  if (reader) {
+    return reader->readStructure(filename, progress_callback);
   }
+
+  throw std::runtime_error("No reader found for extension: " + ext);
 }
 
 Trajectory readTrajectory(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
-  switch (type) {
-  case FileType::Arc: {
-    std::vector<Cell> frames = ArcReader::read(filename, progress_callback);
-    return Trajectory(frames, 1.0); // Default time_step 1.0 for now
+  
+  std::string ext = std::filesystem::path(filename).extension().string();
+  auto reader = ReaderFactory::instance().getReaderForExtension(ext);
+  
+  if (reader) {
+    if (reader->isTrajectory()) {
+      return reader->readTrajectory(filename, progress_callback);
+    } else {
+      // If it's not a trajectory reader but we asked for a trajectory,
+      // maybe we just want it as a single frame trajectory?
+      // BaseReader doesn't guarantee readTrajectory works for structure-only files.
+      // But some might.
+      try {
+        Cell c = reader->readStructure(filename, progress_callback);
+        std::vector<Cell> frames;
+        frames.push_back(std::move(c));
+        return Trajectory(frames, 1.0);
+      } catch (...) {
+        throw std::runtime_error("Reader for " + ext + " does not support trajectory reading.");
+      }
+    }
   }
-  case FileType::CastepMd: {
-    std::vector<Cell> frames =
-        CastepMdReader::read(filename, progress_callback);
-    return Trajectory(frames, 1.0); // Default time_step 1.0 for now
-  }
-  case FileType::Outmol: {
-    std::vector<Cell> frames = OutmolReader::read(filename, progress_callback);
-    return Trajectory(frames, 1.0); // Default time_step 1.0 for now
-  }
-  default:
-    throw std::runtime_error("Unsupported trajectory format.");
-  }
+
+  throw std::runtime_error("No reader found for extension: " + ext);
 }
 
 } // namespace FileReader

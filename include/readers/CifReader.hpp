@@ -6,8 +6,28 @@
 
 #include <string>
 
-#include "Cell.hpp"
+#include "BaseReader.hpp"
 
-namespace CifReader {
-Cell read(const std::string &file_name);
-}
+namespace FileReader {
+
+/**
+ * @brief Reads a Crystallographic Information File (.cif).
+ */
+class CifReader : public BaseReader {
+public:
+  std::string getName() const override { return "CIF"; }
+  std::vector<std::string> getExtensions() const override { return {"cif"}; }
+  bool isTrajectory() const override { return false; }
+
+  Cell readStructure(const std::string &filename,
+                     std::function<void(float, const std::string &)>
+                         progress_callback = nullptr) override;
+
+  Trajectory readTrajectory(const std::string &filename,
+                            std::function<void(float, const std::string &)>
+                                progress_callback = nullptr) override;
+
+  static Cell read(const std::string &file_name);
+};
+
+} // namespace FileReader

@@ -3,21 +3,44 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "readers/OutmolReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <cerrno>
 #include <cstring>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <memory>
+#include <functional>
 
-namespace OutmolReader {
+#include "Cell.hpp"
+#include "Trajectory.hpp"
+
+namespace FileReader {
+
+// Automatic registration
+static bool registered = ReaderFactory::instance().registerReader(
+    std::make_unique<OutmolReader>()
+);
+
+Cell OutmolReader::readStructure(const std::string &filename,
+                                  std::function<void(float, const std::string &)>
+                                      progress_callback) {
+  return read(filename, progress_callback).at(0);
+}
+
+Trajectory OutmolReader::readTrajectory(const std::string &filename,
+                                         std::function<void(float, const std::string &)>
+                                             progress_callback) {
+  return Trajectory(read(filename, progress_callback), 1.0);
+}
 
 // Conversion factor from Bohr (Hartree atomic units) to Angstroms
 constexpr double BOHR_TO_ANGSTROM = 0.529177210903;
 
 std::vector<Cell>
-read(const std::string &file_name,
-     std::function<void(float, const std::string &)> progress_callback) {
+OutmolReader::read(const std::string &file_name,
+                   std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -118,4 +141,4 @@ read(const std::string &file_name,
   return frames;
 }
 
-} // namespace OutmolReader
+} // namespace FileReader

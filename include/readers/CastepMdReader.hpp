@@ -9,18 +9,32 @@
 #include <vector>
 
 #include "../Cell.hpp"
+#include "../Trajectory.hpp"
 
-namespace CastepMdReader {
+#include "BaseReader.hpp"
+
+namespace FileReader {
 
 /**
  * @brief Reads a sequence of frames from a CASTEP .md trajectory file.
- * @param file_name The path to the .md file.
- * @param progress_callback Optional callback to report loading progress [0, 1].
- * @return A vector of Cell objects representing the trajectory frames.
- * @throws std::runtime_error if the file cannot be opened or parsed.
  */
-std::vector<Cell> read(const std::string &file_name,
-                       std::function<void(float, const std::string &)>
-                           progress_callback = nullptr);
+class CastepMdReader : public BaseReader {
+public:
+  std::string getName() const override { return "CASTEP MD"; }
+  std::vector<std::string> getExtensions() const override { return {"md"}; }
+  bool isTrajectory() const override { return true; }
 
-} // namespace CastepMdReader
+  Cell readStructure(const std::string &filename,
+                     std::function<void(float, const std::string &)>
+                         progress_callback = nullptr) override;
+
+  Trajectory readTrajectory(const std::string &filename,
+                            std::function<void(float, const std::string &)>
+                                progress_callback = nullptr) override;
+
+  static std::vector<Cell> read(const std::string &file_name,
+                                std::function<void(float, const std::string &)>
+                                    progress_callback = nullptr);
+};
+
+} // namespace FileReader

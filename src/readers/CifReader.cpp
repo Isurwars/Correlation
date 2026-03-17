@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "readers/CifReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -12,6 +13,30 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>
+#include <memory>
+#include <functional>
+
+#include "Cell.hpp"
+#include "Trajectory.hpp"
+
+namespace FileReader {
+
+// Automatic registration
+static bool registered = ReaderFactory::instance().registerReader(
+    std::make_unique<CifReader>()
+);
+
+Cell CifReader::readStructure(const std::string &filename,
+                               std::function<void(float, const std::string &)>
+                                   progress_callback) {
+  return read(filename);
+}
+
+Trajectory CifReader::readTrajectory(const std::string &filename,
+                                      std::function<void(float, const std::string &)>
+                                          progress_callback) {
+  throw std::runtime_error("CIF files are structures, use readStructure.");
+}
 
 #include "LinearAlgebra.hpp"
 
@@ -153,9 +178,7 @@ std::vector<std::string> tokenizeCifLine(const std::string &line) {
 
 } // namespace
 
-namespace CifReader {
-
-Cell read(const std::string &file_name) {
+Cell CifReader::read(const std::string &file_name) {
   std::ifstream file(file_name);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open CIF file: " + file_name);
@@ -343,4 +366,4 @@ Cell read(const std::string &file_name) {
   return tempCell;
 }
 
-} // namespace CifReader
+} // namespace FileReader

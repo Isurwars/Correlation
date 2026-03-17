@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 #include "readers/CellReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
 #include <array>
@@ -12,6 +13,30 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <memory>
+#include <functional>
+
+#include "Cell.hpp"
+#include "Trajectory.hpp"
+
+namespace FileReader {
+
+// Automatic registration
+static bool registered = ReaderFactory::instance().registerReader(
+    std::make_unique<CellReader>()
+);
+
+Cell CellReader::readStructure(const std::string &filename,
+                                std::function<void(float, const std::string &)>
+                                    progress_callback) {
+  return read(filename);
+}
+
+Trajectory CellReader::readTrajectory(const std::string &filename,
+                                       std::function<void(float, const std::string &)>
+                                           progress_callback) {
+  throw std::runtime_error("Cell files are structures, use readStructure.");
+}
 
 namespace {
 void toLower(std::string &s) {
@@ -20,9 +45,7 @@ void toLower(std::string &s) {
 }
 } // namespace
 
-namespace CellReader {
-
-Cell read(const std::string &file_name) {
+Cell CellReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -116,4 +139,4 @@ Cell read(const std::string &file_name) {
   return tempCell;
 }
 
-} // namespace CellReader
+} // namespace FileReader
