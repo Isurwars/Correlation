@@ -114,6 +114,22 @@ endif()
 # Library setup
 #-----------------------------------------------------------
 
+# Readers as an OBJECT library to ensure static registration triggers
+add_library(readers_obj OBJECT
+    src/readers/ArcReader.cpp
+    src/readers/CarReader.cpp
+    src/readers/CellReader.cpp
+    src/readers/CastepMdReader.cpp
+    src/readers/CifReader.cpp
+    src/readers/LammpsDumpReader.cpp
+    src/readers/OnetepDatReader.cpp
+    src/readers/OutmolReader.cpp
+    src/readers/ReaderFactory.cpp
+)
+target_include_directories(readers_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 # Add sources to library
 add_library(correlation_lib STATIC
     src/Cell.cpp
@@ -133,15 +149,6 @@ add_library(correlation_lib STATIC
     src/calculators/XRDCalculator.cpp
     src/DynamicsAnalyzer.cpp
     src/FileReader.cpp
-    src/readers/ArcReader.cpp
-    src/readers/CarReader.cpp
-    src/readers/CellReader.cpp
-    src/readers/CastepMdReader.cpp
-    src/readers/CifReader.cpp
-    src/readers/LammpsDumpReader.cpp
-    src/readers/OnetepDatReader.cpp
-    src/readers/OutmolReader.cpp
-    src/readers/ReaderFactory.cpp
     src/FileWriter.cpp
     src/writers/ArrowWriter.cpp
     src/writers/CSVWriter.cpp
@@ -150,6 +157,7 @@ add_library(correlation_lib STATIC
     src/StructureAnalyzer.cpp
     src/Trajectory.cpp
     src/TrajectoryAnalyzer.cpp
+    $<TARGET_OBJECTS:readers_obj>
 )
 
 # Include directories
@@ -201,7 +209,7 @@ if (WIN32)
     list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme)
 endif()
 
-target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})
+target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS} readers_obj)
 
 # Copy DLLs to the executable directory so it can be run without adding to PATH
 if (WIN32)

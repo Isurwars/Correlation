@@ -38,6 +38,7 @@ add_executable(correlation_tests
 # The test executable also links to the library and inherits its properties.
 target_link_libraries(correlation_tests PRIVATE
     correlation_lib
+    readers_obj
     GTest::gtest
     GTest::gtest_main
     Slint::Slint
