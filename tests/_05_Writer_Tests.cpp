@@ -5,10 +5,14 @@
 
 #include <algorithm> // For std::max_element
 #include <cstdio>    // For std::remove
+#include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <highfive/highfive.hpp>
 #include <iterator> // For std::distance
+#include <vector>
+
+namespace fs = std::filesystem;
 
 #include "../include/Cell.hpp"
 #include "../include/DistributionFunctions.hpp"
@@ -41,24 +45,40 @@ protected:
 
   void TearDown() override {
     // Clean up all generated files.
-    std::remove("si_crystal.car");
-    std::remove("test_si_g.csv");
-    std::remove("test_si_J.csv");
-    std::remove("test_si_G_reduced.csv");
-    std::remove("test_si_PAD.csv");
-    std::remove("test_si_g_smoothed.csv");
-    std::remove("test_si_J_smoothed.csv");
-    std::remove("test_si_G_reduced_smoothed.csv");
-    std::remove("test_si_PAD_smoothed.csv");
-    std::remove("test_si.h5");
-    std::remove("test_vacf.h5");
-    std::remove("test_vacf_new.h5");
-    std::remove("test_vacf_vdos.h5");
-    std::remove("test_vacf_vdos_VDOS.csv");
-    std::remove("test_si_g.parquet");
-    std::remove("test_si_J.parquet");
-    std::remove("test_si_G_reduced.parquet");
-    std::remove("test_si_PAD.parquet");
+    std::vector<std::string> files_to_remove = {
+        "si_crystal.car",
+        "test_si_g.csv",
+        "test_si_J.csv",
+        "test_si_G_reduced.csv",
+        "test_si_PAD.csv",
+        "test_si_DAD.csv",
+        "test_si_RD.csv",
+        "test_si_S.csv",
+        "test_si_XRD.csv",
+        "test_si_CN.csv",
+        "test_si_g_smoothed.csv",
+        "test_si_J_smoothed.csv",
+        "test_si_G_reduced_smoothed.csv",
+        "test_si_PAD_smoothed.csv",
+        "test_si.h5",
+        "test_vacf.h5",
+        "test_vacf_new.h5",
+        "test_vacf_new_VACF.csv",
+        "test_vacf_new_VACF_norm.csv",
+        "test_vacf_new_VDOS.csv",
+        "test_vacf_vdos.h5",
+        "test_vacf_vdos_VACF.csv",
+        "test_vacf_vdos_VACF_norm.csv",
+        "test_vacf_vdos_VDOS.csv",
+        "test_si_g.parquet",
+        "test_si_J.parquet",
+        "test_si_G_reduced.parquet",
+        "test_si_PAD.parquet"};
+
+    for (const auto &file : files_to_remove) {
+      std::error_code ec;
+      fs::remove(file, ec);
+    }
   }
 
   // Helper to check if a file exists and is not empty.
