@@ -39,7 +39,7 @@ target_include_directories(correlation_lib PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
+# target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 
 if (CORRELATION_SIMD_FLAGS)

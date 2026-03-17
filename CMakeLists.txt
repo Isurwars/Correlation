@@ -7,8 +7,10 @@ cmake_minimum_required(VERSION 3.21)
 project(Correlation VERSION 2.1.1 LANGUAGES CXX)
 set(CORRELATION_VERSION "2.1.1")
 
-# Set the C++ standard as a target property, not a global variable.
-set(CXX_STANDARD 23)
+# Set the C++ standard globally.
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set default install path
