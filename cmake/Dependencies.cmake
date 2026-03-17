@@ -102,15 +102,17 @@ if(NOT TARGET HDF5::HDF5_HL)
 endif()
 
 # 4. HighFive
+set(HIGHFIVE_USE_BOOST OFF CACHE BOOL "Do not use Boost")
+set(HIGHFIVE_EXAMPLES OFF CACHE BOOL "Do not build examples")
+set(HIGHFIVE_UNIT_TESTS OFF CACHE BOOL "Do not build tests")
+set(HIGHFIVE_USE_INSTALL OFF CACHE BOOL "Do not use install")
+set(HIGHFIVE_FIND_HDF5 OFF CACHE BOOL "Do not let HighFive find HDF5" FORCE)
+
 find_package(HighFive QUIET)
 if(HighFive_FOUND)
   message(STATUS "Found HighFive: ${HighFive_DIR} (Version: ${HighFive_VERSION})")
 else()
   message(STATUS "HighFive not found. Downloading HighFive from GitHub...")
-  set(HIGHFIVE_USE_BOOST OFF CACHE BOOL "Do not use Boost")
-  set(HIGHFIVE_EXAMPLES OFF CACHE BOOL "Do not build examples")
-  set(HIGHFIVE_UNIT_TESTS OFF CACHE BOOL "Do not build tests")
-  set(HIGHFIVE_USE_INSTALL OFF CACHE BOOL "Do not use install")
   set(HIGHFIVE_FIND_HDF5 OFF CACHE BOOL "Do not let HighFive find HDF5" FORCE)
 
   FetchContent_Declare(
