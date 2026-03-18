@@ -16,11 +16,9 @@
 
 #include "Cell.hpp"
 #include "Trajectory.hpp"
+#include "PhysicalData.hpp"
 
 namespace FileReader {
-
-// Conversion factor from Bohr (Hartree atomic units) to Angstroms
-constexpr double BOHR_TO_ANGSTROM = 0.529177210903;
 
 // Automatic registration
 static bool registered = ReaderFactory::instance().registerReader(
@@ -124,9 +122,9 @@ CastepMdReader::read(const std::string &file_name,
 
       // Convert Bohr to Angstroms
       for (int i = 0; i < 3; ++i) {
-        h1[i] *= BOHR_TO_ANGSTROM;
-        h2[i] *= BOHR_TO_ANGSTROM;
-        h3[i] *= BOHR_TO_ANGSTROM;
+        h1[i] *= constants::BOHR_TO_ANGSTROM;
+        h2[i] *= constants::BOHR_TO_ANGSTROM;
+        h3[i] *= constants::BOHR_TO_ANGSTROM;
       }
 
       tempCell = Cell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]},
@@ -142,9 +140,9 @@ CastepMdReader::read(const std::string &file_name,
       int id;
       double x, y, z;
       if (ss >> symbol >> id >> x >> y >> z) {
-        tempCell.addAtom(symbol, linalg::Vector3<double>(x * BOHR_TO_ANGSTROM,
-                                                        y * BOHR_TO_ANGSTROM,
-                                                        z * BOHR_TO_ANGSTROM));
+        tempCell.addAtom(symbol, linalg::Vector3<double>(x * constants::BOHR_TO_ANGSTROM,
+                                                        y * constants::BOHR_TO_ANGSTROM,
+                                                        z * constants::BOHR_TO_ANGSTROM));
         tempCell.setEnergy(
             current_energy); // Assign energy once per atom or frame
         cell_has_atoms = true;

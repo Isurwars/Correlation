@@ -15,6 +15,7 @@
 
 #include "Cell.hpp"
 #include "Trajectory.hpp"
+#include "PhysicalData.hpp"
 
 namespace FileReader {
 
@@ -34,9 +35,6 @@ Trajectory OutmolReader::readTrajectory(const std::string &filename,
                                              progress_callback) {
   return Trajectory(read(filename, progress_callback), 1.0);
 }
-
-// Conversion factor from Bohr (Hartree atomic units) to Angstroms
-constexpr double BOHR_TO_ANGSTROM = 0.529177210903;
 
 std::vector<Cell>
 OutmolReader::read(const std::string &file_name,
@@ -82,9 +80,9 @@ OutmolReader::read(const std::string &file_name,
       std::stringstream(line) >> h3[0] >> h3[1] >> h3[2];
 
       for (int i = 0; i < 3; ++i) {
-        h1[i] *= BOHR_TO_ANGSTROM;
-        h2[i] *= BOHR_TO_ANGSTROM;
-        h3[i] *= BOHR_TO_ANGSTROM;
+        h1[i] *= constants::BOHR_TO_ANGSTROM;
+        h2[i] *= constants::BOHR_TO_ANGSTROM;
+        h3[i] *= constants::BOHR_TO_ANGSTROM;
       }
       cell_parsed = true;
       continue;
@@ -101,8 +99,8 @@ OutmolReader::read(const std::string &file_name,
         std::string symbol;
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
-          tempCell.addAtom(symbol, {x * BOHR_TO_ANGSTROM, y * BOHR_TO_ANGSTROM,
-                                    z * BOHR_TO_ANGSTROM});
+          tempCell.addAtom(symbol, {x * constants::BOHR_TO_ANGSTROM, y * constants::BOHR_TO_ANGSTROM,
+                                    z * constants::BOHR_TO_ANGSTROM});
         }
       }
       if (!tempCell.isEmpty()) {
@@ -126,8 +124,8 @@ OutmolReader::read(const std::string &file_name,
         if (ss >> df >> symbol >> x >> y >> z) {
           if (df == "df") {
             tempCell.addAtom(symbol,
-                             {x * BOHR_TO_ANGSTROM, y * BOHR_TO_ANGSTROM,
-                              z * BOHR_TO_ANGSTROM});
+                             {x * constants::BOHR_TO_ANGSTROM, y * constants::BOHR_TO_ANGSTROM,
+                              z * constants::BOHR_TO_ANGSTROM});
           }
         }
       }

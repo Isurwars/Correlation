@@ -9,6 +9,7 @@
 #include "../include/Cell.hpp"
 #include "../include/FileReader.hpp"
 #include "../include/LinearAlgebra.hpp"
+#include "../include/PhysicalData.hpp"
 
 // A single test fixture for all File I/O related tests.
 // This fixture handles the creation and cleanup of temporary files needed for
@@ -366,24 +367,22 @@ TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
 
-  const double BOHR_TO_ANGSTROM = 0.529177210903;
-
   // Check Frame 1
   const auto &f1 = frames[0];
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * constants::BOHR_TO_ANGSTROM);
   ASSERT_EQ(f1.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * constants::BOHR_TO_ANGSTROM);
 
   // Check the energy is parsed correctly
   EXPECT_DOUBLE_EQ(f1.getEnergy(), -31.8206146);
 
   // Check Frame 2
   const auto &f2 = frames[1];
-  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * constants::BOHR_TO_ANGSTROM);
 }
 
 TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {

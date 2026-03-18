@@ -22,6 +22,7 @@ constexpr double rad2deg = 180.0 / pi;    // RADIANS -> DEGREES
 constexpr double deg2rad = pi / 180.0;    // DEGREES -> RADIANS
 constexpr double THz_to_cmInv = 33.35641; // THz -> cm^-1
 constexpr double THz_to_meV = 4.135667;   // THz -> meV
+constexpr double BOHR_TO_ANGSTROM = 0.529177210903; // Bohr -> Angstroms
 } // namespace constants
 
 /**
