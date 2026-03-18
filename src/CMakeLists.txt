@@ -1,7 +1,20 @@
 # Correlation - Liquid and Amorphous Solid Analysis Tool
 
-# Add readers subdirectory
-add_subdirectory(readers)
+# Readers as an OBJECT library to ensure static registration triggers
+add_library(readers_obj OBJECT
+    readers/ArcReader.cpp
+    readers/CarReader.cpp
+    readers/CellReader.cpp
+    readers/CastepMdReader.cpp
+    readers/CifReader.cpp
+    readers/LammpsDumpReader.cpp
+    readers/OnetepDatReader.cpp
+    readers/OutmolReader.cpp
+    readers/ReaderFactory.cpp
+)
+target_include_directories(readers_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
 
 # Add sources to library
 add_library(correlation_lib STATIC
