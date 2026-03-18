@@ -49,7 +49,15 @@ CastepMdReader::read(const std::string &file_name,
   std::vector<Cell> frames;
   std::string line;
 
-  // Skip the header until we reach the blank line
+  // Parse frames
+  myfile.seekg(0, std::ios::end);
+  std::streampos file_size = myfile.tellg();
+  myfile.clear();
+  myfile.seekg(0, std::ios::beg);
+  std::streampos last_progress_pos = 0;
+  size_t update_interval = file_size / 100;
+
+  // Skip the header
   bool in_header = true;
   while (in_header && std::getline(myfile, line)) {
     if (line.empty() || line.find_first_not_of(' ') == std::string::npos) {
@@ -62,21 +70,7 @@ CastepMdReader::read(const std::string &file_name,
   double current_energy = 0.0;
   bool cell_has_atoms = false;
 
-  // Parse frames
-  myfile.seekg(0, std::ios::end);
-  std::streampos file_size = myfile.tellg();
-  myfile.clear();
-  myfile.seekg(0, std::ios::beg);
-  std::streampos last_progress_pos = 0;
-  size_t update_interval = file_size / 100;
-
-  // re-skip header since we seekg to beg
-  in_header = true;
-  while (in_header && std::getline(myfile, line)) {
-    if (line.empty() || line.find_first_not_of(' ') == std::string::npos) {
-      in_header = false;
-    }
-  }
+  std::stringstream ss;
 
   while (std::getline(myfile, line)) {
     if (progress_callback) {
@@ -94,15 +88,23 @@ CastepMdReader::read(const std::string &file_name,
       // line without tag) We skip it and read E. If we have atoms in tempCell,
       // it means this is a new frame starting
       if (cell_has_atoms) {
+        // Save lattice parameters and energy
+        std::array<double, 6> last_lattice = tempCell.lattice_parameters();
+        double last_energy = tempCell.getEnergy();
+        
         frames.push_back(std::move(tempCell));
-        tempCell = Cell();
+        
+        // Re-initialize for next frame but keep lattice & energy
+        tempCell = Cell(last_lattice);
+        tempCell.setEnergy(last_energy);
         cell_has_atoms = false;
       }
 
       // We can extract energy if needed...
-      std::stringstream ss(line);
+      ss.clear();
+      ss.str(line);
       if (ss >> current_energy) {
-        // successfully read energy
+        tempCell.setEnergy(current_energy); // Update energy
       }
       continue;
     }
@@ -111,14 +113,19 @@ CastepMdReader::read(const std::string &file_name,
         line.find("<-- hv") == std::string::npos) {
       // Lattice vectors h are given row by row in Bohr
       // The first <-- h is row 1
-      std::array<double, 3> h1, h2, h3;
-      std::stringstream(line) >> h1[0] >> h1[1] >> h1[2];
+      std::array<double, 3> h1{}, h2{}, h3{};
+      ss.clear(); ss.str(line);
+      ss >> h1[0] >> h1[1] >> h1[2];
 
-      std::getline(myfile, line); // row 2
-      std::stringstream(line) >> h2[0] >> h2[1] >> h2[2];
+      if (std::getline(myfile, line)) { // row 2
+        ss.clear(); ss.str(line);
+        ss >> h2[0] >> h2[1] >> h2[2];
+      }
 
-      std::getline(myfile, line); // row 3
-      std::stringstream(line) >> h3[0] >> h3[1] >> h3[2];
+      if (std::getline(myfile, line)) { // row 3
+        ss.clear(); ss.str(line);
+        ss >> h3[0] >> h3[1] >> h3[2];
+      }
 
       // Convert Bohr to Angstroms
       for (int i = 0; i < 3; ++i) {
@@ -135,7 +142,8 @@ CastepMdReader::read(const std::string &file_name,
     if (line.find("<-- R") != std::string::npos) {
       // Positions R are given in Bohr
       // Format: Symbol ID x y z <-- R
-      std::stringstream ss(line);
+      ss.clear();
+      ss.str(line);
       std::string symbol, tag;
       int id;
       double x, y, z;

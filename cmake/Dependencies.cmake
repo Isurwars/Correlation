@@ -16,6 +16,7 @@ else()
     GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
     GIT_TAG v2022.3.0  
   )
+  set(TBB_TEST OFF CACHE BOOL "Disable TBB tests" FORCE)
   FetchContent_MakeAvailable(TBB)
 endif()
 

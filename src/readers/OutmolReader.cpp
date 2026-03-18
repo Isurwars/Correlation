@@ -59,6 +59,8 @@ OutmolReader::read(const std::string &file_name,
   std::streampos last_progress_pos = 0;
   size_t update_interval = file_size / 100;
 
+  std::stringstream ss;
+
   while (std::getline(myfile, line)) {
     if (progress_callback) {
       std::streampos current_pos = myfile.tellg();
@@ -70,14 +72,17 @@ OutmolReader::read(const std::string &file_name,
       }
     }
     if (line.find("$cell vectors") != std::string::npos) {
-      std::getline(myfile, line); // row 1
-      std::stringstream(line) >> h1[0] >> h1[1] >> h1[2];
+      if (!std::getline(myfile, line)) break; // row 1
+      ss.clear(); ss.str(line);
+      ss >> h1[0] >> h1[1] >> h1[2];
 
-      std::getline(myfile, line); // row 2
-      std::stringstream(line) >> h2[0] >> h2[1] >> h2[2];
+      if (!std::getline(myfile, line)) break; // row 2
+      ss.clear(); ss.str(line);
+      ss >> h2[0] >> h2[1] >> h2[2];
 
-      std::getline(myfile, line); // row 3
-      std::stringstream(line) >> h3[0] >> h3[1] >> h3[2];
+      if (!std::getline(myfile, line)) break; // row 3
+      ss.clear(); ss.str(line);
+      ss >> h3[0] >> h3[1] >> h3[2];
 
       for (int i = 0; i < 3; ++i) {
         h1[i] *= constants::BOHR_TO_ANGSTROM;
@@ -95,7 +100,8 @@ OutmolReader::read(const std::string &file_name,
         if (line.find("$end") != std::string::npos) {
           break;
         }
-        std::stringstream ss(line);
+        ss.clear();
+        ss.str(line);
         std::string symbol;
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
@@ -118,7 +124,8 @@ OutmolReader::read(const std::string &file_name,
         if (line.find("df") == std::string::npos) {
           break;
         }
-        std::stringstream ss(line);
+        ss.clear();
+        ss.str(line);
         std::string df, symbol;
         double x, y, z;
         if (ss >> df >> symbol >> x >> y >> z) {
