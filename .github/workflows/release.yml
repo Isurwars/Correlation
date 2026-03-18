@@ -7,9 +7,6 @@ on:
 permissions:
   contents: write
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-linux:
     name: Build Linux
@@ -82,7 +79,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Install dependencies
-        run: brew install ninja tbb hdf5
+        run: brew install tbb hdf5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
