@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
 #include <map>
 #include <string>
@@ -21,8 +22,20 @@
  * - `J(r)`: The radial distribution function related to the coordination
  * number, `J(r) = 4 * \pi * r^2 * \rho_0 * g(r)`.
  */
-class RDFCalculator {
+class RDFCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "RDF"; }
+  std::string getGroup() const override { return "Radial"; }
+  std::string getDescription() const override {
+    return "Computes the Radial Distribution Function g(r), J(r), and G(r).";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   /**
    * @brief Calculates the J(r), g(r), and G(r) histograms for the given cell
    * and pair distances.

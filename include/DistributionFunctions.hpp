@@ -107,6 +107,14 @@ public:
     return histograms_;
   }
 
+  const std::map<std::string, double> &getAshcroftWeights() const {
+    return ashcroft_weights_;
+  }
+
+  void addHistogram(const std::string &name, Histogram &&histogram);
+
+  const StructureAnalyzer *neighbors() const;
+
   std::vector<std::string> getAvailableHistograms() const;
   //-------------------------------------------------------------------------//
   //--------------------------- Calculation Methods -------------------------//
@@ -238,7 +246,6 @@ public:
           nullptr);
 
 private:
-  const StructureAnalyzer *neighbors() const;
   void ensureNeighborsComputed(double r_cut);
   std::string getPartialKey(int type1, int type2) const;
   std::string getInversePartialKey(int type1, int type2) const;

@@ -16,10 +16,8 @@ target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
-# Add sources to library
-add_library(correlation_lib STATIC
-    Cell.cpp
-    DistributionFunctions.cpp
+# Calculators as an OBJECT library to ensure static registration triggers
+add_library(calculators_obj OBJECT
     calculators/AngleCalculator.cpp
     calculators/DihedralCalculator.cpp
     calculators/MotifFinder.cpp
@@ -33,6 +31,16 @@ add_library(correlation_lib STATIC
     calculators/VDOSCalculator.cpp
     calculators/SQCalculator.cpp
     calculators/XRDCalculator.cpp
+    calculators/CalculatorFactory.cpp
+)
+target_include_directories(calculators_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
+# Add sources to library
+add_library(correlation_lib STATIC
+    Cell.cpp
+    DistributionFunctions.cpp
     DynamicsAnalyzer.cpp
     FileReader.cpp
     FileWriter.cpp
@@ -44,6 +52,7 @@ add_library(correlation_lib STATIC
     Trajectory.cpp
     TrajectoryAnalyzer.cpp
     $<TARGET_OBJECTS:readers_obj>
+    $<TARGET_OBJECTS:calculators_obj>
 )
 
 # Include directories

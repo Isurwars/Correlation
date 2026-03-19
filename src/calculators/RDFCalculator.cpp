@@ -6,6 +6,7 @@
 #include "calculators/RDFCalculator.hpp"
 #include "PhysicalData.hpp"
 #include "SIMDUtils.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include <cmath>
 #include <stdexcept>
 
@@ -23,7 +24,20 @@ std::string getInversePartialKey(const Cell &cell, int type1, int type2) {
     std::swap(type1, type2);
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
+
+// Static registration
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<RDFCalculator>());
 } // namespace
+
+void RDFCalculator::calculateFrame(DistributionFunctions &df,
+                                   const AnalysisSettings &settings) const {
+  auto results = calculate(df.cell(), df.neighbors(), df.getAshcroftWeights(),
+                           settings.r_max, settings.r_bin_width);
+  for (auto &[name, histogram] : results) {
+    df.addHistogram(name, std::move(histogram));
+  }
+}
 
 std::map<std::string, Histogram>
 RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
@@ -127,19 +141,15 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
       const double g_norm_constant = V / (4.0 * constants::pi * dr * Ni * Nj);
-      const double rho_j           = Nj / V;
-      const double inv_Ni_dr       = 1.0 / (Ni * dr);
-      const double inv_Nj_dr       = 1.0 / (Nj * dr);
-      const double pi4_rho_j       = 4.0 * constants::pi * rho_j;
+      const double rho_j = Nj / V;
+      const double inv_Ni_dr = 1.0 / (Ni * dr);
+      const double inv_Nj_dr = 1.0 / (Nj * dr);
+      const double pi4_rho_j = 4.0 * constants::pi * rho_j;
 
       simd_utils::normalize_rdf_bins(
-          H_ij.data(), g_r.bins.data(),
-          g_norm_constant, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
-          g_r.partials[key].data(),
-          G_r.partials[key].data(),
-          J_r.partials[key].data(),
-          J_r.partials[inversekey].data(),
-          num_bins);
+          H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr,
+          pi4_rho_j, g_r.partials[key].data(), G_r.partials[key].data(),
+          J_r.partials[key].data(), J_r.partials[inversekey].data(), num_bins);
     }
   }
 

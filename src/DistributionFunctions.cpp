@@ -12,6 +12,7 @@
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
 #include "calculators/CNCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "calculators/DADCalculator.hpp"
 #include "calculators/PADCalculator.hpp"
 #include "calculators/RDCalculator.hpp"
@@ -118,6 +119,11 @@ void DistributionFunctions::ensureNeighborsComputed(double r_max) {
         cell_, r_max, bond_cutoffs_sq_, true);
     current_cutoff_ = r_max;
   }
+}
+
+void DistributionFunctions::addHistogram(const std::string &name,
+                                         Histogram &&histogram) {
+  histograms_[name] = std::move(histogram);
 }
 
 std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
@@ -251,10 +257,18 @@ void DistributionFunctions::calculateCoordinationNumber() {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
-  auto results = RDFCalculator::calculate(cell_, neighbors(), ashcroft_weights_,
-                                          r_max, r_bin_width);
-  for (auto &[name, histogram] : results) {
-    histograms_[name] = std::move(histogram);
+  const auto *calc = CalculatorFactory::instance().getCalculator("RDF");
+  if (calc) {
+    AnalysisSettings settings;
+    settings.r_max = r_max;
+    settings.r_bin_width = r_bin_width;
+    calc->calculateFrame(*this, settings);
+  } else {
+    auto results = RDFCalculator::calculate(
+        cell_, neighbors(), ashcroft_weights_, r_max, r_bin_width);
+    for (auto &[name, histogram] : results) {
+      histograms_[name] = std::move(histogram);
+    }
   }
 }
 
