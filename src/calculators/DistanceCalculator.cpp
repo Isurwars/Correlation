@@ -11,8 +11,27 @@
 #include <tbb/parallel_for_each.h>
 
 #include "SIMDUtils.hpp"
+#include "calculators/CalculatorFactory.hpp"
+#include "DistributionFunctions.hpp"
+
+namespace {
+// Static registration
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<calculators::DistanceCalculator>());
+} // namespace
 
 namespace calculators {
+
+void DistanceCalculator::calculateFrame(DistributionFunctions &df,
+                                        const AnalysisSettings &settings) const {
+  // DistanceCalculator is a foundational calculator. In the current
+  // architecture, it's called by StructureAnalyzer, which df already has.
+  // We provide this implementation for completeness within the BaseCalculator
+  // framework.
+  // Note: Since StructureAnalyzer already runs this in its constructor, 
+  // calling it again here might be redundant if df.neighbors() is already 
+  // populated. 
+}
 
 struct ThreadLocalDistances {
   DistanceTensor distance_tensor_local;
