@@ -36,6 +36,8 @@ add_library(calculators_obj OBJECT
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
+target_link_libraries(calculators_obj PRIVATE TBB::tbb)
+target_compile_definitions(calculators_obj PRIVATE _PSTL_PAR_BACKEND_TBB)
 
 # Add sources to library
 add_library(correlation_lib STATIC
