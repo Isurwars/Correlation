@@ -7,7 +7,12 @@
 
 #include "../Cell.hpp"
 #include "../NeighborGraph.hpp"
+#include "BaseCalculator.hpp"
 #include <vector>
+
+// Forward declarations
+class DistributionFunctions;
+struct AnalysisSettings;
 
 namespace calculators {
 
@@ -25,8 +30,20 @@ using DihedralTensor =
  * plane(B,C,D). The computation is accelerated using Intel TBB
  * (`tbb::parallel_for`) with thread-local storage.
  */
-class DihedralCalculator {
+class DihedralCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "Dihedral"; }
+  std::string getGroup() const override { return "Structural"; }
+  std::string getDescription() const override {
+    return "Computes all unique 4-body dihedral (torsion) angles.";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   /**
    * @brief Computes and populates the dihedral angles tensor.
    *

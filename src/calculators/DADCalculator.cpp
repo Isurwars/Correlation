@@ -4,9 +4,21 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/DADCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "PhysicalData.hpp"
 #include "SIMDUtils.hpp"
 #include <stdexcept>
+
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<DADCalculator>());
+} // namespace
+
+void DADCalculator::calculateFrame(DistributionFunctions &df,
+                                   const AnalysisSettings &settings) const {
+  df.addHistogram(
+      "DAD", calculate(df.cell(), df.neighbors(), settings.dihedral_bin_width));
+}
 
 Histogram DADCalculator::calculate(const Cell &cell,
                                    const StructureAnalyzer *neighbors,

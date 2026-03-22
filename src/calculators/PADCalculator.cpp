@@ -4,9 +4,21 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/PADCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "PhysicalData.hpp"
 #include "SIMDUtils.hpp"
 #include <stdexcept>
+
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<PADCalculator>());
+} // namespace
+
+void PADCalculator::calculateFrame(DistributionFunctions &df,
+                                   const AnalysisSettings &settings) const {
+  df.addHistogram("BAD",
+                  calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
+}
 
 Histogram PADCalculator::calculate(const Cell &cell,
                                    const StructureAnalyzer *neighbors,

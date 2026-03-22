@@ -4,12 +4,25 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/DihedralCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
+#include "DistributionFunctions.hpp"
 
 #include <cmath>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<calculators::DihedralCalculator>());
+} // namespace
+
 namespace calculators {
+
+void DihedralCalculator::calculateFrame(DistributionFunctions & /*df*/,
+                                        const AnalysisSettings & /*settings*/) const {
+  // DihedralCalculator is a foundational calculator — called by
+  // StructureAnalyzer during its construction. Nothing to do here.
+}
 
 void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                                  DihedralTensor &out_dihedrals) {

@@ -4,9 +4,25 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/VDOSCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
 #include <stdexcept>
+
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<VDOSCalculator>());
+} // namespace
+
+void VDOSCalculator::calculateTrajectory(DistributionFunctions &df,
+                                          const Trajectory &traj,
+                                          const AnalysisSettings &settings) const {
+  const auto &all = df.getAllHistograms();
+  if (all.find("VACF") == all.end()) {
+    return; // VACF must be computed first
+  }
+  df.addHistogram("VDOS", calculate(df.getHistogram("VACF")));
+}
 
 Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
   const auto &vacf_data = vacf_hist.partials.at("Total");

@@ -3,15 +3,28 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#ifndef RDCALCULATOR_HPP
-#define RDCALCULATOR_HPP
+#pragma once
 
+#include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
-#include "StructureAnalyzer.hpp"
 
-class RDCalculator {
+/**
+ * @class RDCalculator
+ * @brief Computes the Ring Distribution (RD).
+ */
+class RDCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "RD"; }
+  std::string getGroup() const override { return "Rings"; }
+  std::string getDescription() const override {
+    return "Computes the Ring Distribution (chordless rings).";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   static Histogram calculate(const NeighborGraph &graph, size_t max_ring_size);
 };
-
-#endif // RDCALCULATOR_HPP

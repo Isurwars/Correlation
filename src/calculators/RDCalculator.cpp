@@ -4,8 +4,23 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/RDCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "calculators/MotifFinder.hpp"
 #include <stdexcept>
+
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<RDCalculator>());
+} // namespace
+
+void RDCalculator::calculateFrame(DistributionFunctions &df,
+                                  const AnalysisSettings &settings) const {
+  if (!df.neighbors()) {
+    return;
+  }
+  df.addHistogram("RD",
+                  calculate(df.neighbors()->neighborGraph(), settings.max_ring_size));
+}
 
 Histogram RDCalculator::calculate(const NeighborGraph &graph,
                                   size_t max_ring_size) {

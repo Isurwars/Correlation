@@ -5,10 +5,27 @@
 
 #pragma once
 
+#include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
 
-class PADCalculator {
+/**
+ * @class PADCalculator
+ * @brief Computes the Bond Angle Distribution (BAD/PAD).
+ */
+class PADCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "PAD"; }
+  std::string getGroup() const override { return "Angular"; }
+  std::string getDescription() const override {
+    return "Computes the Bond Angle Distribution (BAD).";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   static Histogram calculate(const Cell &cell,
                              const StructureAnalyzer *neighbors,
                              double bin_width);

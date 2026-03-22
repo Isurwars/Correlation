@@ -4,12 +4,29 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/SQCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "PhysicalData.hpp"
 #include "SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
+
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<SQCalculator>());
+} // namespace
+
+void SQCalculator::calculateFrame(DistributionFunctions &df,
+                                  const AnalysisSettings &settings) const {
+  if (df.getAllHistograms().find("g(r)") == df.getAllHistograms().end()) {
+    return; // g(r) hasn't been calculated yet
+  }
+  df.addHistogram("S(Q)",
+                  calculate(df.getHistogram("g(r)"), df.cell(),
+                            df.getAshcroftWeights(), settings.q_max,
+                            settings.q_bin_width, settings.r_int_max));
+}
 
 Histogram
 SQCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,

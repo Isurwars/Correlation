@@ -5,12 +5,29 @@
 
 #pragma once
 
+#include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
 #include <map>
 #include <string>
 
-class XRDCalculator {
+/**
+ * @class XRDCalculator
+ * @brief Computes the X-Ray Diffraction (XRD) pattern from g(r).
+ */
+class XRDCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "XRD"; }
+  std::string getGroup() const override { return "Radial"; }
+  std::string getDescription() const override {
+    return "Computes the X-Ray Diffraction pattern from g(r).";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   static Histogram
   calculate(const Histogram &g_r_hist, const Cell &cell,
             const std::map<std::string, double> &ashcroft_weights,

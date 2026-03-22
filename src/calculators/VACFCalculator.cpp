@@ -4,7 +4,22 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/VACFCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "DynamicsAnalyzer.hpp"
+
+namespace {
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<VACFCalculator>());
+} // namespace
+
+void VACFCalculator::calculateTrajectory(DistributionFunctions &df,
+                                         const Trajectory &traj,
+                                         const AnalysisSettings &settings) const {
+  auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
+  for (auto &[name, histogram] : results) {
+    df.addHistogram(name, std::move(histogram));
+  }
+}
 
 std::map<std::string, Histogram>
 VACFCalculator::calculate(const Trajectory &traj, int max_correlation_frames,

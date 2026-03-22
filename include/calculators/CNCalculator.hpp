@@ -5,10 +5,27 @@
 
 #pragma once
 
+#include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
 
-class CNCalculator {
+/**
+ * @class CNCalculator
+ * @brief Computes the Coordination Number (CN) distribution.
+ */
+class CNCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "CN"; }
+  std::string getGroup() const override { return "Structural"; }
+  std::string getDescription() const override {
+    return "Computes the Coordination Number distribution.";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   static Histogram calculate(const Cell &cell,
                              const StructureAnalyzer *neighbors);
 };
