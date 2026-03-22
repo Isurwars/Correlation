@@ -91,7 +91,7 @@ set(CORRELATION_SOURCES
 )
 
 if (WIN32)
-    list(APPEND CORRELATION_SOURCES ../resource.rc)
+    list(APPEND CORRELATION_SOURCES ../packaging/resource.rc)
     add_executable(correlation WIN32 ${CORRELATION_SOURCES})
 else()
     add_executable(correlation ${CORRELATION_SOURCES})
