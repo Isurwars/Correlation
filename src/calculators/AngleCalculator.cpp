@@ -4,6 +4,8 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/AngleCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
+#include "DistributionFunctions.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -12,7 +14,19 @@
 
 #include "SIMDUtils.hpp"
 
+namespace {
+// Static registration
+bool registered = CalculatorFactory::instance().registerCalculator(
+    std::make_unique<calculators::AngleCalculator>());
+} // namespace
+
 namespace calculators {
+
+void AngleCalculator::calculateFrame(DistributionFunctions &df,
+                                    const AnalysisSettings &settings) const {
+  // AngleCalculator is a foundational calculator. It is currently
+  // called by StructureAnalyzer during its construction.
+}
 
 void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                               AngleTensor &out_angles) {

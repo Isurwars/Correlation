@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "BaseCalculator.hpp"
 #include "../Cell.hpp"
 #include "../NeighborGraph.hpp"
 #include <vector>
@@ -26,8 +27,20 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<double>>>>;
  * thread-local storage (`tbb::enumerable_thread_specific`) to avoid locks when
  * writing to the output tensor.
  */
-class AngleCalculator {
+class AngleCalculator : public BaseCalculator {
 public:
+  std::string getName() const override { return "Angle"; }
+  std::string getGroup() const override { return "Structural"; }
+  std::string getDescription() const override {
+    return "Computes all unique 3-body bond angles.";
+  }
+
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
+
+  void calculateFrame(DistributionFunctions &df,
+                      const AnalysisSettings &settings) const override;
+
   /**
    * @brief Computes and populates the bond angles tensor.
    *
