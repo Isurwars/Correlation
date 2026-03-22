@@ -11,7 +11,7 @@ AppUpdatesURL=https://github.com/Isurwars/Correlation/releases
 DefaultDirName={autopf}\Correlation
 DefaultGroupName=Correlation
 AllowNoIcons=yes
-LicenseFile=LICENSE
+LicenseFile=..\LICENSE
 ; Ensure we use the 64-bit Program Files directory by default for a modern C++ app
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
@@ -29,11 +29,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 ; Main executable (.exe and all necessary DLLs must be included in the build output dir)
-Source: "build\correlation.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build\correlation.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; Assuming the build copies the required DLLs onto the build folder as coded in CMakeLists.txt
-Source: "build\*.dll"; DestDir: "{app}"; Flags: ignoreversion nocompression
-Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion
-Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\build\*.dll"; DestDir: "{app}"; Flags: ignoreversion nocompression
+Source: "..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Correlation"; Filename: "{app}\correlation.exe"

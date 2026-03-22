@@ -74,7 +74,7 @@ if (NOT WIN32)
             RENAME correlation.png)
 
     # 2. Configure and Install the .desktop file
-    configure_file("${PROJECT_SOURCE_DIR}/correlation.desktop"
+    configure_file("${PROJECT_SOURCE_DIR}/packaging/correlation.desktop"
                    "${PROJECT_BINARY_DIR}/correlation.desktop"
                    COPYONLY)
     install(FILES "${PROJECT_BINARY_DIR}/correlation.desktop"
