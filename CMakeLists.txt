@@ -5,7 +5,8 @@
 
 cmake_minimum_required(VERSION 3.21)
 project(Correlation VERSION 2.2.0 LANGUAGES CXX)
-set(CORRELATION_VERSION "2.2.0")
+
+include(GNUInstallDirs)
 
 # Set the C++ standard globally.
 set(CMAKE_CXX_STANDARD 23)
@@ -41,8 +42,10 @@ add_subdirectory(src)
 #-----------------------------------------------------------
 # Testing
 #-----------------------------------------------------------
-enable_testing()
-add_subdirectory(tests)
+include(CTest)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 
 #-----------------------------------------------------------
 # Install setup
@@ -50,7 +53,7 @@ add_subdirectory(tests)
 
 # Install the executable and the library.
 install(TARGETS correlation
-    RUNTIME DESTINATION bin
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 # -----------------------------------------------------------
@@ -59,13 +62,13 @@ install(TARGETS correlation
 if (NOT WIN32)
     # Ensure correlation finds shared libraries in <prefix>/lib
     set_target_properties(correlation PROPERTIES
-        INSTALL_RPATH "$ORIGIN/../lib"
+        INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
     )
     # If Arrow/Parquet were built from source, install them
     if (TARGET arrow_shared AND TARGET parquet_shared AND NOT Arrow_FOUND)
         install(TARGETS arrow_shared parquet_shared
-            LIBRARY DESTINATION lib
-            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         )
     endif()
 endif()
@@ -93,7 +96,7 @@ endif()
 set(CPACK_PACKAGE_NAME "correlation")
 set(CPACK_PACKAGE_VENDOR "Isaías Rodríguez")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Analysis tool for liquid and amorphous solid structures")
-set(CPACK_PACKAGE_VERSION "${CORRELATION_VERSION}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "correlation")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")

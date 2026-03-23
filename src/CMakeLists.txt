@@ -63,7 +63,6 @@ target_include_directories(correlation_lib PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-# target_compile_features(correlation_lib PUBLIC cxx_std_${CXX_STANDARD})
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 
 if (CORRELATION_SIMD_FLAGS)
@@ -126,13 +125,8 @@ set_property(TARGET correlation PROPERTY SLINT_EMBED_RESOURCES "embed-files")
 # Copy DLLs to the executable directory on Windows
 bundle_windows_dlls(correlation)
 
-# Installation logic for the executable
-install(TARGETS correlation
-    RUNTIME DESTINATION bin
-)
-
 if (NOT WIN32)
     set_target_properties(correlation PROPERTIES
-        INSTALL_RPATH "$ORIGIN/../lib"
+        INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
