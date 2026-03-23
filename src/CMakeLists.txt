@@ -120,12 +120,7 @@ slint_target_sources(correlation
 set_property(TARGET correlation PROPERTY SLINT_EMBED_RESOURCES "embed-files")
 
 # Copy DLLs to the executable directory on Windows
-if (WIN32)
-    add_custom_command(TARGET correlation POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:correlation>" "$<TARGET_RUNTIME_DLLS:correlation>" "$<TARGET_FILE_DIR:correlation>"
-        COMMAND_EXPAND_LISTS
-    )
-endif()
+bundle_windows_dlls(correlation)
 
 # Installation logic for the executable
 install(TARGETS correlation
