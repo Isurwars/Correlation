@@ -24,3 +24,14 @@ export struct BondCutoff {
     element2: string,
     distance: string,
 }
+
+export struct CalculatorInfo {
+    id: string,
+    name: string,
+    enabled: bool,
+}
+
+export struct CalculatorGroup {
+    name: string,
+    calculators: [CalculatorInfo],
+}

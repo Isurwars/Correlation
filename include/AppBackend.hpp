@@ -65,14 +65,8 @@ struct ProgramOptions {
   double angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;
   double dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH;
   size_t max_ring_size = 8;
-  bool run_rdf = true;
-  bool run_sq = true;
-  bool run_xrd = true;
-  bool run_pad = true;
-  bool run_dad = true;
-  bool run_rd = true;
-  bool run_vacf = true;
-  bool run_vdos = true;
+  // Maps calculator ID (e.g., "RDF", "SQ") to whether it should run.
+  std::map<std::string, bool> active_calculators;
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;
   KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL;
   int min_frame = 0;
@@ -114,6 +108,15 @@ public:
    * @return Copy of the current options.
    */
   [[nodiscard]] ProgramOptions options() const { return options_; }
+
+  /**
+   * @brief Updates the enabled state of a single calculator.
+   * @param id Calculator ID (e.g., "RDF", "SQ").
+   * @param enabled Whether this calculator should run.
+   */
+  void setCalculatorActive(const std::string &id, bool enabled) {
+    options_.active_calculators[id] = enabled;
+  }
 
   /**
    * @brief Gets a pointer to the current cell (first frame of trajectory).

@@ -447,24 +447,21 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
               analyzer.createAnalyzer(frame_idx));
 
           frame_df->calculateCoordinationNumber();
-          if (settings.run_rdf) {
-            frame_df->calculateRDF(settings.r_max, settings.r_bin_width);
+
+          // Dispatch all active frame-based calculators from the factory
+          const auto &factory_calcs =
+              CalculatorFactory::instance().getCalculators();
+          for (const auto &calc : factory_calcs) {
+            if (!calc->isFrameCalculator())
+              continue;
+            if (!settings.isActive(calc->getName()))
+              continue;
+            calc->calculateFrame(*frame_df, settings);
           }
-          if (settings.run_pad && settings.angle_bin_width > 0) {
-            frame_df->calculatePAD(settings.angle_bin_width);
-          }
-          if (settings.run_dad && settings.dihedral_bin_width > 0) {
-            frame_df->calculateDAD(settings.dihedral_bin_width);
-          }
-          if (settings.run_rd) {
+
+          // Ring Distribution requires neighbors from StructureAnalyzer
+          if (settings.isActive("RD")) {
             frame_df->calculateRD(settings.max_ring_size);
-          }
-          if (settings.run_sq && settings.q_max > 0) {
-            frame_df->calculateSQ(settings.q_max, settings.q_bin_width,
-                                  settings.r_int_max);
-          }
-          if (settings.run_xrd && settings.q_max > 0) {
-            frame_df->calculateXRD(1.5406, 5.0, 90.0, settings.q_bin_width);
           }
 
           results[i] = std::move(frame_df);

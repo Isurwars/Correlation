@@ -10,9 +10,12 @@
 
 #include "../include/AppController.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <string>
 #include <vector>
+
+#include "../include/calculators/CalculatorFactory.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -20,6 +23,9 @@
 
 AppController::AppController(AppWindow &ui, AppBackend &backend)
     : ui_(ui), backend_(backend) {
+
+  // Populate the calculator groups from the factory
+  populateCalculatorGroups(ui_);
 
   // default options to UI
   handleOptionstoUI(ui_);
@@ -30,6 +36,11 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   ui_.on_write_files([this]() { handleWriteFiles(); });
   ui_.on_browse_file([this]() { handleBrowseFile(); });
   ui_.on_check_file_dialog_status([this]() { handleCheckFileDialogStatus(); });
+
+  // Handle calculator toggle: update backend options and refresh the UI model
+  ui_.on_toggle_calculator([this](slint::SharedString id, bool enabled) {
+    backend_.setCalculatorActive(std::string(id.data()), enabled);
+  });
 }
 
 AppController::~AppController() {
@@ -87,14 +98,6 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_dihedral_bin_width(
       slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width)));
   ui.set_max_ring_size(slint::SharedString(std::to_string(opt.max_ring_size)));
-  ui.set_run_rdf(opt.run_rdf);
-  ui.set_run_sq(opt.run_sq);
-  ui.set_run_pad(opt.run_pad);
-  ui.set_run_dad(opt.run_dad);
-  ui.set_run_vacf(opt.run_vacf);
-  ui.set_run_rd(opt.run_rd);
-  ui.set_run_xrd(opt.run_xrd);
-  ui.set_run_vdos(opt.run_vdos);
   ui.set_smoothing_sigma(
       slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
   ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
@@ -132,14 +135,17 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
       safe_stof(ui_.get_dihedral_bin_width(), opt.dihedral_bin_width);
   opt.max_ring_size = static_cast<size_t>(safe_stof(
       ui_.get_max_ring_size(), static_cast<float>(opt.max_ring_size)));
-  opt.run_rdf = ui_.get_run_rdf();
-  opt.run_sq = ui_.get_run_sq();
-  opt.run_pad = ui_.get_run_pad();
-  opt.run_dad = ui_.get_run_dad();
-  opt.run_vacf = ui_.get_run_vacf();
-  opt.run_rd = ui_.get_run_rd();
-  opt.run_xrd = ui_.get_run_xrd();
-  opt.run_vdos = ui_.get_run_vdos();
+
+  // Collect active_calculators from the UI model
+  auto groups = ui_.get_calculator_groups();
+  for (size_t gi = 0; gi < groups->row_count(); ++gi) {
+    auto group = groups->row_data(gi).value();
+    for (size_t ci = 0; ci < group.calculators->row_count(); ++ci) {
+      auto calc = group.calculators->row_data(ci).value();
+      opt.active_calculators[std::string(calc.id.data())] = calc.enabled;
+    }
+  }
+
   opt.smoothing_sigma =
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
@@ -256,6 +262,44 @@ std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
     }
   }
   return cutoffs;
+}
+
+void AppController::populateCalculatorGroups(AppWindow &ui) {
+  const auto &calculators = CalculatorFactory::instance().getCalculators();
+  const auto &opts = backend_.options();
+
+  // Collect group names in insertion order
+  std::vector<std::string> group_order;
+  std::map<std::string, std::vector<const BaseCalculator *>> groups_map;
+  for (const auto &calc : calculators) {
+    const std::string &grp = calc->getGroup();
+    if (groups_map.find(grp) == groups_map.end()) {
+      group_order.push_back(grp);
+    }
+    groups_map[grp].push_back(calc.get());
+  }
+
+  auto groups_model = std::make_shared<slint::VectorModel<CalculatorGroup>>();
+  for (const auto &grp_name : group_order) {
+    auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
+    for (const auto *calc : groups_map.at(grp_name)) {
+      bool enabled = true; // default on
+      auto it = opts.active_calculators.find(calc->getName());
+      if (it != opts.active_calculators.end()) {
+        enabled = it->second;
+      }
+      CalculatorInfo info;
+      info.id = slint::SharedString(calc->getName());
+      info.name = slint::SharedString(calc->getDescription());
+      info.enabled = enabled;
+      calcs_model->push_back(info);
+    }
+    CalculatorGroup group;
+    group.name = slint::SharedString(grp_name);
+    group.calculators = calcs_model;
+    groups_model->push_back(group);
+  }
+  ui.set_calculator_groups(groups_model);
 }
 
 //---------------------------------------------------------------------------//

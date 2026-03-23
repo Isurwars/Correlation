@@ -232,14 +232,7 @@ std::string AppBackend::run_analysis() {
     settings.angle_bin_width = options_.angle_bin_width;
     settings.dihedral_bin_width = options_.dihedral_bin_width;
     settings.max_ring_size = options_.max_ring_size;
-    settings.run_rdf = options_.run_rdf;
-    settings.run_sq = options_.run_sq;
-    settings.run_pad = options_.run_pad;
-    settings.run_dad = options_.run_dad;
-    settings.run_vacf = options_.run_vacf;
-    settings.run_rd = options_.run_rd;
-    settings.run_xrd = options_.run_xrd;
-    settings.run_vdos = options_.run_vdos;
+    settings.active_calculators = options_.active_calculators;
     settings.smoothing = options_.smoothing;
     settings.smoothing_sigma = options_.smoothing_sigma;
     settings.smoothing_kernel = options_.smoothing_kernel;
@@ -250,16 +243,18 @@ std::string AppBackend::run_analysis() {
         *trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 
     if (df_) {
-      if (settings.run_vdos) {
-        settings.run_vacf = true;
+      // Trajectory-wide calculators (VACF, VDOS)
+      bool run_vacf = settings.isActive("VACF");
+      bool run_vdos = settings.isActive("VDOS");
+      if (run_vdos) {
+        run_vacf = true; // VDOS requires VACF
       }
-      // Ensure velocities are calculated for VACF
-      if (settings.run_vacf) {
+      if (run_vacf) {
         if (trajectory_->getVelocities().empty()) {
           trajectory_->calculateVelocities();
         }
         df_->calculateVACF(*trajectory_, -1, start_f, options_.max_frame);
-        if (settings.run_vdos) {
+        if (run_vdos) {
           try {
             df_->calculateVDOS();
           } catch (const std::exception &e) {

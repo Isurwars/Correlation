@@ -83,6 +83,12 @@ private:
    */
   std::vector<std::vector<double>> getBondCutoffs(AppWindow &ui);
 
+  /**
+   * @brief Populates the UI calculator groups from CalculatorFactory.
+   * @param ui Reference to the main application window.
+   */
+  void populateCalculatorGroups(AppWindow &ui);
+
   //-------------------------------------------------------------------------//
   //-------------------------------- Methods --------------------------------//
   //-------------------------------------------------------------------------//

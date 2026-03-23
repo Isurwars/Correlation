@@ -19,7 +19,7 @@ import {
     ExpandableHeader,
     CheckBoxRow,
 } from "@material";
-import { BondCutoff } from "Types.slint";
+import { BondCutoff, CalculatorInfo, CalculatorGroup } from "Types.slint";
 
 // ============================================================================
 // OptionsCard Component
@@ -53,17 +53,11 @@ export component OptionsCard inherits FilledCard {
     in-out property <int> smoothing_kernel;
     in-out property <[BondCutoff]> bond_cutoffs;
     in property <bool> file_loaded;
-    in-out property <bool> run_rdf: true;
-    in-out property <bool> run_sq: true;
-    in-out property <bool> run_xrd: true;
-    in-out property <bool> run_pad: true;
-    in-out property <bool> run_dad: true;
-    in-out property <bool> run_vacf: true;
-    in-out property <bool> run_vdos: true;
-    in-out property <bool> run_rd: true;
-    in-out property <bool> rd_cb: true;
-    in-out property <bool> vacf_cb: true;
-    
+    // Dynamic calculator groups from CalculatorFactory via C++
+    in-out property <[CalculatorGroup]> calculator_groups: [];
+    callback toggle_calculator(string, bool);
+
+
     // Toggle stats for groups
     in-out property <bool> analyses_expanded: false;
     in-out property <bool> rdf_expanded: false;
@@ -74,14 +68,15 @@ export component OptionsCard inherits FilledCard {
     in-out property <bool> bond_cutoffs_expanded: false;
 
     // Toggle height for groups
-    property <length> analyses_height: analyses_expanded ? 320px : 0px;
+    property <length> analyses_height: analyses_expanded ?
+        max(40px, root.calculator_groups.length * 26px + (root.calculator_groups.length - 1) * 8px + 16px) : 0px;
     property <length> rdf_height: rdf_expanded ? 100px : 0px;
     property <length> sq_height: sq_expanded ? 150px : 0px;
     property <length> angle_height: angle_expanded ? 100px : 0px;
     property <length> md_height: md_expanded ? 50px : 0px;
     property <length> smoothing_height: smoothing_expanded ? 100px : 0px;
     property <length> bond_cutoffs_height: bond_cutoffs_expanded ? min(150px, root.bond_cutoffs.length * 50px) : 0px;
-  
+
     // Hover states for tooltips
     out property <bool> r_max_has_hover: r_max_area.has-hover;
     out property <bool> r_bin_has_hover: r_bin_area.has-hover;
@@ -95,21 +90,12 @@ export component OptionsCard inherits FilledCard {
     out property <bool> sigma_has_hover: sigma_area.has-hover;
     out property <bool> kernel_has_hover: kernel_area.has-hover;
 
-    out property <bool> rdf_cb_has_hover: rdf_cb_area.has-hover;
-    out property <bool> sq_cb_has_hover: sq_cb_area.has-hover;
-    out property <bool> xrd_cb_has_hover: xrd_cb_area.has-hover;
-    out property <bool> pad_cb_has_hover: pad_cb_area.has-hover;
-    out property <bool> dad_cb_has_hover: dad_cb_area.has-hover;
-    out property <bool> vacf_cb_has_hover: vacf_cb_area.has-hover;
-    out property <bool> vdos_cb_has_hover: vdos_cb_area.has-hover;
-    out property <bool> rd_cb_has_hover: rd_cb_area.has-hover;
-
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_4;
         spacing: MaterialStyleMetrics.spacing_4;
         alignment: space-around;
         
-        // 0. Select Analyses
+        // 0. Select Analyses - dynamic list from CalculatorFactory
         ExpandableHeader {
             text: "Select Analyses";
             expanded <=> root.analyses_expanded;
@@ -130,114 +116,27 @@ export component OptionsCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_4;
             padding_left: MaterialStyleMetrics.spacing_8;
 
-            MaterialText {
-                text: "Structural";
-                style: MaterialTypography.label_small;
-                color: MaterialPalette.on_surface_variant;
-            }
+            for group[gi] in root.calculator_groups: VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_2;
 
-            rdf_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_rdf;
-                text: "Radial Functions";
-                checked_state_changed(s) => {
-                    root.run_rdf = s;
+                if gi > 0: Rectangle {
+                    height: 1px;
+                    background: MaterialPalette.outline_variant;
                 }
-            }
 
-            sq_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_sq;
-                text: "Structure Factor";
-                checked_state_changed(s) => {
-                    root.run_sq = s;
+                MaterialText {
+                    text: group.name;
+                    style: MaterialTypography.label_small;
+                    color: MaterialPalette.on_surface_variant;
                 }
-            }
 
-            xrd_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_xrd;
-                text: "XRD";
-                checked_state_changed(s) => {
-                    root.run_xrd = s;
-                }
-            }
-
-            Rectangle {
-                height: 1px;
-                background: MaterialPalette.outline_variant;
-            }
-
-            MaterialText {
-                text: "Angular";
-                style: MaterialTypography.label_small;
-                color: MaterialPalette.on_surface_variant;
-            }
-
-            pad_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_pad;
-                text: "Plane-Angles";
-                checked_state_changed(s) => {
-                    root.run_pad = s;
-                }
-            }
-
-            dad_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_dad;
-                text: "Dihedral-Angles";
-                checked_state_changed(s) => {
-                    root.run_dad = s;
-                }
-            }
-
-            Rectangle {
-                height: 1px;
-                background: MaterialPalette.outline_variant;
-            }
-
-            MaterialText {
-                text: "Rings";
-                style: MaterialTypography.label_small;
-                color: MaterialPalette.on_surface_variant;
-            }
-
-            rd_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.rd_cb;
-                text: "Ring Distribution";
-                checked_state_changed(s) => {
-                    root.rd_cb = s;
-                }
-            }
-
-            Rectangle {
-                height: 1px;
-                background: MaterialPalette.outline_variant;
-            }
-
-            MaterialText {
-                text: "Dynamic";
-                style: MaterialTypography.label_small;
-                color: MaterialPalette.on_surface_variant;
-            }
-
-            vacf_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_vacf;
-                text: "Velocity-ACF";
-                checked_state_changed(s) => {
-                    root.run_vacf = s;
-                }
-            }
-
-            vdos_cb_area := CheckBoxRow {
-                enabled: root.file_loaded;
-                check_state_bool: root.run_vdos;
-                text: "vDoS";
-                checked_state_changed(s) => {
-                    root.run_vdos = s;
+                for calc[ci] in group.calculators: CheckBoxRow {
+                    enabled: root.file_loaded;
+                    check_state_bool: calc.enabled;
+                    text: calc.name;
+                    checked_state_changed(s) => {
+                        root.toggle_calculator(calc.id, s);
+                    }
                 }
             }
         }
