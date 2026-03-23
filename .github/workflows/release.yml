@@ -121,7 +121,7 @@ jobs:
 
       - name: Update PKGBUILD
         run: |
-          sed -i "s/pkgver=.*/pkgver=${{ env.VERSION }}/" PKGBUILD
+          sed -i "s/pkgver=.*/pkgver=${{ env.VERSION }}/" packaging/PKGBUILD
           # The source URL in PKGBUILD also needs the correct version
           # (though it usually uses ${pkgver})
 
@@ -131,12 +131,12 @@ jobs:
           URL="https://github.com/${{ github.repository }}/archive/refs/tags/v${{ env.VERSION }}.tar.gz"
           curl -L "$URL" -o source.tar.gz
           SHA256=$(sha256sum source.tar.gz | cut -d ' ' -f 1)
-          sed -i "s/sha256sums=.*/sha256sums=('$SHA256')/" PKGBUILD
+          sed -i "s/sha256sums=.*/sha256sums=('$SHA256')/" packaging/PKGBUILD
 
       - name: Generate .SRCINFO
         run: |
           # We need an Arch environment to use makepkg --printsrcinfo
-          docker run --rm -v $PWD:/pkg archlinux /bin/bash -c "
+          docker run --rm -v $PWD/packaging:/pkg archlinux /bin/bash -c "
             pacman -Sy --noconfirm base-devel-minimal
             cd /pkg
             # We need a non-root user for makepkg
@@ -149,7 +149,7 @@ jobs:
         uses: KSXGitHub/github-actions-deploy-aur@v3
         with:
           pkgname: correlation
-          pkgbuild: ./PKGBUILD
+          pkgbuild: ./packaging/PKGBUILD
           commit_username: ${{ github.actor }}
           commit_email: ${{ github.actor }}@users.noreply.github.com
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
