@@ -107,6 +107,10 @@ endif()
 # We link readers_obj directly to ensure static registration
 target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS} readers_obj)
 
+if (WIN32)
+    target_include_directories(correlation PRIVATE ${PROJECT_SOURCE_DIR})
+endif()
+
 # Add the include directory for the generated slint header
 target_include_directories(correlation PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
