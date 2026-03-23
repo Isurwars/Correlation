@@ -4,8 +4,8 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 2.1.2 LANGUAGES CXX)
-set(CORRELATION_VERSION "2.1.2")
+project(Correlation VERSION 2.2.0 LANGUAGES CXX)
+set(CORRELATION_VERSION "2.2.0")
 
 # Set the C++ standard globally.
 set(CMAKE_CXX_STANDARD 23)

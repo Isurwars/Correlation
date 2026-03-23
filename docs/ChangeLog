@@ -1,5 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## [2.2.0] 2026-03-22
+
+### Added
+- Implemented `BaseCalculator` and `CalculatorFactory` to streamline calculator management.
+- Refactored all calculators (`PAD`, `CN`, `DAD`, `SQ`, `XRD`, `RD`, `Dihedral`, `VACF`, `VDOS`, `RDF`, `Distance`, `Angle`) to use the new factory pattern.
+- Updated UI to dynamically render calculator options based on the factory.
+
+### Changed
+- Reorganized the project root directory to reduce clutter, moving packaging, images, and documentation into subfolders.
+- Improved TBB integration for calculators.
+
+### Fixed
+- Resolved Windows compilation issue related to `resource.rc` path.
+- Fixed GitHub Actions warnings by updating the release action to support Node.js 24.
+
 ## [2.1.2] 2026-03-18
 
 ### Fixed
