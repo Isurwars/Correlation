@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "writers/CSVWriter.hpp"
+#include "writers/WriterFactory.hpp"
 #include "writers/WriterUtils.hpp"
 
 #include <algorithm>
@@ -14,18 +15,17 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <memory>
 
-//---------------------------------------------------------------------------//
-//------------------------------- Constructors ------------------------------//
-//---------------------------------------------------------------------------//
+namespace Writer {
 
-CSVWriter::CSVWriter(const DistributionFunctions &df) : df_(df) {}
-
-//---------------------------------------------------------------------------//
-//---------------------------------- Methods --------------------------------//
-//---------------------------------------------------------------------------//
+// Automatic registration
+static bool registered = WriterFactory::instance().registerWriter(
+    std::make_unique<CSVWriter>()
+);
 
 void CSVWriter::writeAllCSVs(const std::string &base_path,
+                             const DistributionFunctions &df,
                              bool /*write_smoothed*/) const {
   const std::map<std::string, std::string> file_map = {
       {"g(r)", "_g.csv"},
@@ -43,7 +43,7 @@ void CSVWriter::writeAllCSVs(const std::string &base_path,
 
   for (const auto &[name, suffix] : file_map) {
     try {
-      const auto &hist = df_.getHistogram(name);
+      const auto &hist = df.getHistogram(name);
 
       std::string filename = base_path + suffix;
       writeHistogramToCSV(filename, name, hist);
@@ -57,10 +57,6 @@ void CSVWriter::writeAllCSVs(const std::string &base_path,
     }
   }
 }
-
-//---------------------------------------------------------------------------//
-//----------------------------- Private Methods -----------------------------//
-//---------------------------------------------------------------------------//
 
 void CSVWriter::writeHistogramToCSV(const std::string &filename,
                                     const std::string &name,
@@ -76,14 +72,14 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename,
 
   // Get sorted keys for both raw and smoothed data
   std::vector<std::string> raw_keys;
-  for (const auto &[key, val] : hist.partials) {
-    raw_keys.push_back(key);
+  for (const auto &[k, v] : hist.partials) {
+    raw_keys.push_back(k);
   }
   std::sort(raw_keys.begin(), raw_keys.end());
 
   std::vector<std::string> smoothed_keys;
-  for (const auto &[key, val] : hist.smoothed_partials) {
-    smoothed_keys.push_back(key);
+  for (const auto &[k, v] : hist.smoothed_partials) {
+    smoothed_keys.push_back(k);
   }
   std::sort(smoothed_keys.begin(), smoothed_keys.end());
 
@@ -161,3 +157,5 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename,
     file << '\n';
   }
 }
+
+} // namespace Writer

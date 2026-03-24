@@ -6,8 +6,12 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
+#include "BaseWriter.hpp"
 #include "DistributionFunctions.hpp"
+
+namespace Writer {
 
 /**
  * @class CSVWriter
@@ -17,21 +21,17 @@
  * write the calculated histograms (both raw and smoothed) to disk in a
  * well-formatted, data-driven way.
  */
-class CSVWriter {
+class CSVWriter : public BaseWriter {
 public:
-  /**
-   * @brief Constructs a CSVWriter linked to a DistributionFunctions object.
-   * @param df The DistributionFunctions object containing the data to be
-   * written.
-   */
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
-  explicit CSVWriter(const DistributionFunctions &df);
+  CSVWriter() = default;
 
-  //-------------------------------------------------------------------------//
-  //-------------------------------- Methods --------------------------------//
-  //-------------------------------------------------------------------------//
+  std::string getName() const override { return "CSV"; }
+  std::vector<std::string> getExtensions() const override { return {".csv"}; }
+
+  void write(const std::string &base_path, const DistributionFunctions &df,
+             bool smoothing) const override {
+    writeAllCSVs(base_path, df, smoothing);
+  }
 
   /**
    * @brief Writes all available histograms to appropriately named CSV files.
@@ -41,17 +41,14 @@ public:
    *
    * @param base_path The base name for the output files (e.g.,
    * "output/my_sample").
+   * @param df The DistributionFunctions object containing the data.
    * @param write_smoothed If true, also writes smoothed data to separate files
    * (e.g., "base_path_g_smoothed.csv").
    */
-  void writeAllCSVs(const std::string &base_path,
+  void writeAllCSVs(const std::string &base_path, const DistributionFunctions &df,
                     bool write_smoothed = false) const;
 
 private:
-  //-------------------------------------------------------------------------//
-  //------------------------------ Helpers ----------------------------------//
-  //-------------------------------------------------------------------------//
-
   /**
    * @brief The core implementation for writing a single histogram
    * and it's smoothed histograms to a single CSV file.
@@ -61,6 +58,6 @@ private:
    */
   void writeHistogramToCSV(const std::string &filename, const std::string &name,
                            const Histogram &hist) const;
-
-  const DistributionFunctions &df_;
 };
+
+} // namespace Writer

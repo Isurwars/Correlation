@@ -39,6 +39,17 @@ target_include_directories(calculators_obj PRIVATE
 target_link_libraries(calculators_obj PRIVATE TBB::tbb)
 target_compile_definitions(calculators_obj PRIVATE _PSTL_PAR_BACKEND_TBB)
 
+# Writers as an OBJECT library to ensure static registration triggers
+add_library(writers_obj OBJECT
+    writers/ArrowWriter.cpp
+    writers/CSVWriter.cpp
+    writers/HDF5Writer.cpp
+    writers/WriterFactory.cpp
+)
+target_include_directories(writers_obj PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 # Add sources to library
 add_library(correlation_lib STATIC
     Cell.cpp
@@ -46,15 +57,13 @@ add_library(correlation_lib STATIC
     DynamicsAnalyzer.cpp
     FileReader.cpp
     FileWriter.cpp
-    writers/ArrowWriter.cpp
-    writers/CSVWriter.cpp
-    writers/HDF5Writer.cpp
     NeighborGraph.cpp
     StructureAnalyzer.cpp
     Trajectory.cpp
     TrajectoryAnalyzer.cpp
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
+    $<TARGET_OBJECTS:writers_obj>
 )
 
 # Include directories
@@ -104,7 +113,7 @@ if (WIN32)
 endif()
 
 # We link readers_obj directly to ensure static registration
-target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS} readers_obj)
+target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS} readers_obj writers_obj calculators_obj)
 
 if (WIN32)
     target_include_directories(correlation PRIVATE ${PROJECT_SOURCE_DIR})

@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "writers/HDF5Writer.hpp"
+#include "writers/WriterFactory.hpp"
 #include "writers/WriterUtils.hpp"
 
 #include <algorithm>
@@ -14,30 +15,28 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
 
-//---------------------------------------------------------------------------//
-//------------------------------- Constructors ------------------------------//
-//---------------------------------------------------------------------------//
+namespace Writer {
 
-HDF5Writer::HDF5Writer(const DistributionFunctions &df) : df_(df) {}
+// Automatic registration
+static bool registered = WriterFactory::instance().registerWriter(
+    std::make_unique<HDF5Writer>()
+);
 
-//---------------------------------------------------------------------------//
-//---------------------------------- Methods --------------------------------//
-//---------------------------------------------------------------------------//
-
-void HDF5Writer::writeHDF(const std::string &filename) const {
+void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctions &df) const {
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
-                                      HighFive::File::Create |
-                                      HighFive::File::Truncate);
+                                       HighFive::File::Create |
+                                       HighFive::File::Truncate);
 
     const auto &metadata_map = Correlation::WriterUtils::metadata_map;
 
     // Iterate over all calculated histograms and write them as HDF5 groups
-    for (const auto &[name, hist] : df_.getAllHistograms()) {
+    for (const auto &[name, hist] : df.getAllHistograms()) {
       if (hist.partials.empty() || hist.bins.empty()) {
         continue;
       }
@@ -46,7 +45,7 @@ void HDF5Writer::writeHDF(const std::string &filename) const {
       std::string group_name = name;
       std::replace(group_name.begin(), group_name.end(), '(', '_');
       group_name.erase(std::remove(group_name.begin(), group_name.end(), ')'),
-                       group_name.end());
+                        group_name.end());
 
       // Also replace '/' with '_' just in case
       std::replace(group_name.begin(), group_name.end(), '/', '_');
@@ -56,7 +55,7 @@ void HDF5Writer::writeHDF(const std::string &filename) const {
       // Create a property list for group creation
       HighFive::GroupCreateProps props;
       props.add(HighFive::LinkCreationOrder(HighFive::CreationOrder::Tracked |
-                                            HighFive::CreationOrder::Indexed));
+                                             HighFive::CreationOrder::Indexed));
 
       HighFive::Group group = file.createGroup(group_name, props);
 
@@ -104,7 +103,7 @@ void HDF5Writer::writeHDF(const std::string &filename) const {
         }
         std::sort(smoothed_keys.begin(), smoothed_keys.end());
         headers.insert(headers.end(), smoothed_keys.begin(),
-                       smoothed_keys.end());
+                        smoothed_keys.end());
       }
 
       // Determine dimensions
@@ -141,10 +140,10 @@ void HDF5Writer::writeHDF(const std::string &filename) const {
         // Add attributes
         if (col == 0) {
           ds.createAttribute<std::string>("Long Name",
-                                          HighFive::DataSpace::From(dim_label))
+                                           HighFive::DataSpace::From(dim_label))
               .write(dim_label);
           ds.createAttribute<std::string>("Units",
-                                          HighFive::DataSpace::From(bin_unit))
+                                           HighFive::DataSpace::From(bin_unit))
               .write(bin_unit);
           ds.createAttribute<std::string>(
                 "Comments", HighFive::DataSpace::From(description))
@@ -208,3 +207,5 @@ void HDF5Writer::writeHDF(const std::string &filename) const {
     throw std::runtime_error("HDF5 Error: " + std::string(err.what()));
   }
 }
+
+} // namespace Writer

@@ -39,6 +39,7 @@ add_executable(correlation_tests
 target_link_libraries(correlation_tests PRIVATE
     correlation_lib
     readers_obj
+    writers_obj
     calculators_obj
     GTest::gtest
     GTest::gtest_main

@@ -6,8 +6,12 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
+#include "BaseWriter.hpp"
 #include "DistributionFunctions.hpp"
+
+namespace Writer {
 
 /**
  * @class HDF5Writer
@@ -16,28 +20,24 @@
  * This class takes a DistributionFunctions object and provides methods to
  * write the calculated histograms to an HDF5 file.
  */
-class HDF5Writer {
+class HDF5Writer : public BaseWriter {
 public:
-  /**
-   * @brief Constructs a HDF5Writer linked to a DistributionFunctions object.
-   * @param df The DistributionFunctions object containing the data to be
-   * written.
-   */
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
-  explicit HDF5Writer(const DistributionFunctions &df);
+  HDF5Writer() = default;
 
-  //-------------------------------------------------------------------------//
-  //-------------------------------- Methods --------------------------------//
-  //-------------------------------------------------------------------------//
+  std::string getName() const override { return "HDF5"; }
+  std::vector<std::string> getExtensions() const override { return {".h5", ".hdf5"}; }
+
+  void write(const std::string &base_path, const DistributionFunctions &df,
+             bool smoothing) const override {
+    writeHDF(base_path + ".h5", df);
+  }
 
   /**
    * @brief Writes all available histograms to a single HDF5 file.
    * @param filename The full path of the HDF5 file to write.
+   * @param df The DistributionFunctions object containing the data.
    */
-  void writeHDF(const std::string &filename) const;
-
-private:
-  const DistributionFunctions &df_;
+  void writeHDF(const std::string &filename, const DistributionFunctions &df) const;
 };
+
+} // namespace Writer

@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "writers/ArrowWriter.hpp"
+#include "writers/WriterFactory.hpp"
 #include "writers/WriterUtils.hpp"
 
 #include <algorithm>
@@ -12,23 +13,22 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <arrow/api.h>
 #include <arrow/io/api.h>
 #include <parquet/arrow/writer.h>
 #include <parquet/exception.h>
 
-//---------------------------------------------------------------------------//
-//------------------------------- Constructors ------------------------------//
-//---------------------------------------------------------------------------//
+namespace Writer {
 
-ArrowWriter::ArrowWriter(const DistributionFunctions &df) : df_(df) {}
-
-//---------------------------------------------------------------------------//
-//---------------------------------- Methods --------------------------------//
-//---------------------------------------------------------------------------//
+// Automatic registration
+static bool registered = WriterFactory::instance().registerWriter(
+    std::make_unique<ArrowWriter>()
+);
 
 void ArrowWriter::writeAllParquet(const std::string &base_path,
+                                  const DistributionFunctions &df,
                                   bool /*write_smoothed*/) const {
   const std::map<std::string, std::string> file_map = {
       {"g(r)", "_g.parquet"},
@@ -46,7 +46,7 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
 
   for (const auto &[name, suffix] : file_map) {
     try {
-      const auto &hist = df_.getHistogram(name);
+      const auto &hist = df.getHistogram(name);
 
       if (hist.partials.empty() || hist.bins.empty() || hist.bins.size() == 0) {
         continue;
@@ -65,10 +65,6 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
   }
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Private Methods -----------------------------//
-//---------------------------------------------------------------------------//
-
 void ArrowWriter::writeHistogramToParquet(const std::string &filename,
                                           const std::string &name,
                                           const Histogram &hist) const {
@@ -78,14 +74,14 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
 
   // Get sorted keys for both raw and smoothed data
   std::vector<std::string> raw_keys;
-  for (const auto &[key, val] : hist.partials) {
-    raw_keys.push_back(key);
+  for (const auto &[k, v] : hist.partials) {
+    raw_keys.push_back(k);
   }
   std::sort(raw_keys.begin(), raw_keys.end());
 
   std::vector<std::string> smoothed_keys;
-  for (const auto &[key, val] : hist.smoothed_partials) {
-    smoothed_keys.push_back(key);
+  for (const auto &[k, v] : hist.smoothed_partials) {
+    smoothed_keys.push_back(k);
   }
   std::sort(smoothed_keys.begin(), smoothed_keys.end());
 
@@ -152,3 +148,5 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
   PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(
       *table, arrow::default_memory_pool(), outfile, 1024 * 1024, props));
 }
+
+} // namespace Writer
