@@ -32,6 +32,7 @@ add_executable(correlation_tests
     _19_DAD_Tests.cpp
     _20_RD_Tests.cpp
     _21_SIMDUtils_Tests.cpp
+    _22_DebyeS_KCalculator_Tests.cpp
     ../src/AppBackend.cpp
     ../src/AppController.cpp
 )

@@ -42,7 +42,8 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
       {"CN", "_CN.parquet"},
       {"VACF", "_VACF.parquet"},
       {"Normalized VACF", "_VACF_norm.parquet"},
-      {"VDOS", "_VDOS.parquet"}};
+      {"VDOS", "_VDOS.parquet"},
+      {"Debye_S(Q)", "_Debye_S.parquet"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

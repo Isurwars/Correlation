@@ -39,7 +39,8 @@ void CSVWriter::writeAllCSVs(const std::string &base_path,
       {"CN", "_CN.csv"},
       {"VACF", "_VACF.csv"},
       {"Normalized VACF", "_VACF_norm.csv"},
-      {"VDOS", "_VDOS.csv"}};
+      {"VDOS", "_VDOS.csv"},
+      {"Debye_S(Q)", "_Debye_S.csv"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

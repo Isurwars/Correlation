@@ -247,6 +247,90 @@ inline double sinc_integral(double Q,
 #endif
 
 // ---------------------------------------------------------------------------
+// debye_sum kernel
+//
+// Computes: sum_{j=0}^{count-1} sin(Q * distances[j]) / (Q * distances[j])
+//
+// Strategy:
+//   Phase 1 - fill scratch buffer with sin(Q*distances[j]) using auto-vectorized loop.
+//   Phase 2 - AVX2/AVX-512 division and sum.
+// ---------------------------------------------------------------------------
+
+#if defined(CORRELATION_SIMD_AVX512)
+
+inline double debye_sum(double Q,
+                        const double *CORRELATION_RESTRICT distances,
+                        double *CORRELATION_RESTRICT scratch,
+                        std::size_t count) noexcept {
+  const double invQ = 1.0 / Q;
+  for (std::size_t j = 0; j < count; ++j) {
+    scratch[j] = std::sin(Q * distances[j]);
+  }
+
+  __m512d vacc = _mm512_setzero_pd();
+  const __m512d vinvQ = _mm512_set1_pd(invQ);
+  std::size_t j = 0;
+  for (; j + 8 <= count; j += 8) {
+    __m512d vr = _mm512_loadu_pd(distances + j);
+    __m512d vs = _mm512_loadu_pd(scratch + j);
+    __m512d term = _mm512_div_pd(_mm512_mul_pd(vs, vinvQ), vr);
+    vacc = _mm512_add_pd(vacc, term);
+  }
+  double acc = _mm512_reduce_add_pd(vacc);
+  for (; j < count; ++j) {
+    acc += scratch[j] * invQ / distances[j];
+  }
+  return acc;
+}
+
+#elif defined(CORRELATION_SIMD_AVX2)
+
+inline double debye_sum(double Q,
+                        const double *CORRELATION_RESTRICT distances,
+                        double *CORRELATION_RESTRICT scratch,
+                        std::size_t count) noexcept {
+  const double invQ = 1.0 / Q;
+  for (std::size_t j = 0; j < count; ++j) {
+    scratch[j] = std::sin(Q * distances[j]);
+  }
+
+  __m256d vacc = _mm256_setzero_pd();
+  const __m256d vinvQ = _mm256_set1_pd(invQ);
+  std::size_t j = 0;
+  for (; j + 4 <= count; j += 4) {
+    __m256d vr = _mm256_loadu_pd(distances + j);
+    __m256d vs = _mm256_loadu_pd(scratch + j);
+    __m256d term = _mm256_div_pd(_mm256_mul_pd(vs, vinvQ), vr);
+    vacc = _mm256_add_pd(vacc, term);
+  }
+  __m128d lo = _mm256_castpd256_pd128(vacc);
+  __m128d hi = _mm256_extractf128_pd(vacc, 1);
+  __m128d sum2 = _mm_add_pd(lo, hi);
+  __m128d sum1 = _mm_hadd_pd(sum2, sum2);
+  double acc = _mm_cvtsd_f64(sum1);
+  for (; j < count; ++j) {
+    acc += scratch[j] * invQ / distances[j];
+  }
+  return acc;
+}
+
+#else // Scalar fallback
+
+inline double debye_sum(double Q,
+                        const double *CORRELATION_RESTRICT distances,
+                        double *CORRELATION_RESTRICT /*scratch*/,
+                        std::size_t count) noexcept {
+  double acc = 0.0;
+  const double invQ = 1.0 / Q;
+  for (std::size_t j = 0; j < count; ++j) {
+    acc += std::sin(Q * distances[j]) * invQ / distances[j];
+  }
+  return acc;
+}
+
+#endif
+
+// ---------------------------------------------------------------------------
 // normalize_rdf_bins kernel
 //
 // Computes for k in [1, count)  (bin 0 is left as-is / zero):
