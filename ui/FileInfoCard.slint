@@ -31,7 +31,6 @@ import { AtomCount } from "Types.slint";
 //   before running dynamic analyses (e.g., VACF).
 // ============================================================================
 export component FileInfoCard inherits FilledCard {
-    visible: root.file_loaded;
     in-out property <string> file_status_text;
     in property <bool> file_loaded;
     in property <int> num_frames;
@@ -56,14 +55,17 @@ export component FileInfoCard inherits FilledCard {
         spacing: MaterialStyleMetrics.spacing_4;
 
         MaterialText {
-            text: root.file_status_text;
+            text: root.file_loaded ? root.file_status_text : "No file loaded.";
             horizontal-stretch: 1;
             wrap: word-wrap;
+            color: root.file_loaded ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
         }
 
         atoms_layout := ExpandableHeader {
             text: "Total Atoms: " + root.total_atoms;
             expanded <=> root.atoms_expanded;
+            enabled: root.file_loaded;
+            opacity: root.file_loaded ? 1.0 : 0.4;
         }
 
         VerticalLayout {
