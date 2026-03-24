@@ -56,7 +56,8 @@ void DebyeS_KCalculator::calculateFrame(DistributionFunctions &df,
   struct PairData {
     std::string key;
     std::vector<double> distances;
-    double weight;
+    double weight; // Ashcroft-Langreth weight: c_i * c_j (or 2*c_i*c_j)
+    double composition_factor; // sqrt(c_i * c_j)
     double N_A;
     double N_B;
     bool is_identical;
@@ -76,17 +77,17 @@ void DebyeS_KCalculator::calculateFrame(DistributionFunctions &df,
       const double N_B = static_cast<double>(ids2.size());
       
       bool is_identical = (sym1 == sym2);
-      std::string key = is_identical ? (sym1 + "-" + sym1) : (sym1 + "-" + sym2);
-      // Fallback to inverse key if not found
-      if (ashcroft_weights.find(key) == ashcroft_weights.end()) {
-          key = sym2 + "-" + sym1;
-      }
+      // Construct key consistent with DistributionFunctions::getPartialKey
+      std::string key = (sym1 < sym2) ? (sym1 + "-" + sym2) : (sym2 + "-" + sym1);
       
       double weight = 0.0;
       auto wit = ashcroft_weights.find(key);
       if (wit != ashcroft_weights.end()) {
         weight = wit->second;
       }
+
+      // Ashcroft-Langreth composition factor: sqrt(c_i * c_j)
+      double comp_factor = is_identical ? std::sqrt(weight) : std::sqrt(weight / 2.0);
 
       std::vector<double> dists;
       if (is_identical) {
@@ -113,17 +114,14 @@ void DebyeS_KCalculator::calculateFrame(DistributionFunctions &df,
         }
       }
       
-      pair_data_list.push_back({key, std::move(dists), weight, N_A, N_B, is_identical});
+      pair_data_list.push_back({key, std::move(dists), weight, comp_factor, N_A, N_B, is_identical});
       s_k_hist.partials[key].assign(num_q_bins, 0.0);
     }
   }
 
   std::vector<double> total_s_k(num_q_bins, 0.0);
+  tbb::enumerable_thread_specific<std::vector<double>> scratch_ets;
 
-  // Thread-local scratch buffer for debye_sum internal use
-  tbb::enumerable_thread_specific<std::vector<double>> scratch_ets; // Allocated per thread on demand
-
-  // 3. Parallelize over Q bins
   tbb::parallel_for(
     tbb::blocked_range<size_t>(0, num_q_bins),
     [&](const tbb::blocked_range<size_t> &range) {
@@ -152,7 +150,9 @@ void DebyeS_KCalculator::calculateFrame(DistributionFunctions &df,
           }
           
           s_k_hist.partials[pair_data.key][i] = partial_sk;
-          total_s_k[i] += partial_sk * pair_data.weight;
+          // Total S(Q) = sum_A c_A * S_AA(Q) + sum_{A<B} 2 * sqrt(c_A*c_B) * S_AB(Q)
+          double weight_factor = pair_data.is_identical ? 1.0 : 2.0;
+          total_s_k[i] += partial_sk * pair_data.composition_factor * weight_factor;
         }
       }
     });

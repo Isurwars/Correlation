@@ -262,6 +262,10 @@ inline double debye_sum(double Q,
                         const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT scratch,
                         std::size_t count) noexcept {
+  const double Q2 = Q * Q;
+  if (Q < 1e-9) {
+      return static_cast<double>(count);
+  }
   const double invQ = 1.0 / Q;
   for (std::size_t j = 0; j < count; ++j) {
     scratch[j] = std::sin(Q * distances[j]);
@@ -273,12 +277,19 @@ inline double debye_sum(double Q,
   for (; j + 8 <= count; j += 8) {
     __m512d vr = _mm512_loadu_pd(distances + j);
     __m512d vs = _mm512_loadu_pd(scratch + j);
+    // sinc(x) = sin(x)/x. vs is sin(Q*r), vr is r. 
+    // vs * invQ / vr = sin(Q*r) / (Q*r)
     __m512d term = _mm512_div_pd(_mm512_mul_pd(vs, vinvQ), vr);
     vacc = _mm512_add_pd(vacc, term);
   }
   double acc = _mm512_reduce_add_pd(vacc);
   for (; j < count; ++j) {
-    acc += scratch[j] * invQ / distances[j];
+    const double x = Q * distances[j];
+    if (x < 1e-4) {
+      acc += 1.0 - (x * x) / 6.0;
+    } else {
+      acc += std::sin(x) / x;
+    }
   }
   return acc;
 }
@@ -289,6 +300,9 @@ inline double debye_sum(double Q,
                         const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT scratch,
                         std::size_t count) noexcept {
+  if (Q < 1e-9) {
+      return static_cast<double>(count);
+  }
   const double invQ = 1.0 / Q;
   for (std::size_t j = 0; j < count; ++j) {
     scratch[j] = std::sin(Q * distances[j]);
@@ -309,7 +323,12 @@ inline double debye_sum(double Q,
   __m128d sum1 = _mm_hadd_pd(sum2, sum2);
   double acc = _mm_cvtsd_f64(sum1);
   for (; j < count; ++j) {
-    acc += scratch[j] * invQ / distances[j];
+    const double x = Q * distances[j];
+    if (x < 1e-4) {
+      acc += 1.0 - (x * x) / 6.0;
+    } else {
+      acc += std::sin(x) / x;
+    }
   }
   return acc;
 }
@@ -320,10 +339,17 @@ inline double debye_sum(double Q,
                         const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT /*scratch*/,
                         std::size_t count) noexcept {
+  if (Q < 1e-9) {
+      return static_cast<double>(count);
+  }
   double acc = 0.0;
-  const double invQ = 1.0 / Q;
   for (std::size_t j = 0; j < count; ++j) {
-    acc += std::sin(Q * distances[j]) * invQ / distances[j];
+    const double x = Q * distances[j];
+    if (x < 1e-4) {
+      acc += 1.0 - (x * x) / 6.0;
+    } else {
+      acc += std::sin(x) / x;
+    }
   }
   return acc;
 }
@@ -577,6 +603,30 @@ fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
     zs[i] = pos.z();
   }
   return count;
+}
+
+// ---------------------------------------------------------------------------
+// complex_exp_sum kernel
+//
+// Computes the real and imaginary parts of: rho(q) = sum_j exp(i q.r_j)
+//   cos_sum = sum_j cos(qx*x_j + qy*y_j + qz*z_j)
+//   sin_sum = sum_j sin(qx*x_j + qy*y_j + qz*z_j)
+//
+// Then |rho|^2 = cos_sum^2 + sin_sum^2.
+// ---------------------------------------------------------------------------
+inline void complex_exp_sum(double qx, double qy, double qz,
+                            const double *CORRELATION_RESTRICT xs,
+                            const double *CORRELATION_RESTRICT ys,
+                            const double *CORRELATION_RESTRICT zs,
+                            std::size_t count,
+                            double &cos_sum, double &sin_sum) noexcept {
+  cos_sum = 0.0;
+  sin_sum = 0.0;
+  for (std::size_t j = 0; j < count; ++j) {
+    const double phase = qx * xs[j] + qy * ys[j] + qz * zs[j];
+    cos_sum += std::cos(phase);
+    sin_sum += std::sin(phase);
+  }
 }
 
 // ---------------------------------------------------------------------------
