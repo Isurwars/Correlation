@@ -49,6 +49,7 @@ add_library(writers_obj OBJECT
 target_include_directories(writers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
+target_link_libraries(writers_obj PRIVATE HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_shared parquet_shared)
 
 # Add sources to library
 add_library(correlation_lib STATIC
