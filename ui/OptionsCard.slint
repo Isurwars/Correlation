@@ -57,7 +57,6 @@ export component OptionsCard inherits FilledCard {
     in-out property <[CalculatorGroup]> calculator_groups: [];
     callback toggle_calculator(string, bool);
 
-
     // Toggle stats for groups
     in-out property <bool> analyses_expanded: false;
     in-out property <bool> rdf_expanded: false;
@@ -68,8 +67,7 @@ export component OptionsCard inherits FilledCard {
     in-out property <bool> bond_cutoffs_expanded: false;
 
     // Toggle height for groups
-    property <length> analyses_height: analyses_expanded ?
-        max(40px, root.calculator_groups.length * 26px + (root.calculator_groups.length - 1) * 8px + 16px) : 0px;
+    property <length> analyses_height: analyses_expanded ? max(40px, root.calculator_groups.length * 48px + (root.calculator_groups.length - 1) * 12px + 4 * 16px) : 0px;
     property <length> rdf_height: rdf_expanded ? 100px : 0px;
     property <length> sq_height: sq_expanded ? 150px : 0px;
     property <length> angle_height: angle_expanded ? 100px : 0px;

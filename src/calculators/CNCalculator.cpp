@@ -4,14 +4,8 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/CNCalculator.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include <numeric>
 #include <stdexcept>
-
-namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<CNCalculator>());
-} // namespace
 
 void CNCalculator::calculateFrame(DistributionFunctions &df,
                                   const AnalysisSettings &settings) const {

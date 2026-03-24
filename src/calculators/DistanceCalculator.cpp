@@ -10,27 +10,20 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
 
-#include "SIMDUtils.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include "DistributionFunctions.hpp"
-
-namespace {
-// Static registration
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<calculators::DistanceCalculator>());
-} // namespace
+#include "SIMDUtils.hpp"
 
 namespace calculators {
 
-void DistanceCalculator::calculateFrame(DistributionFunctions &df,
-                                        const AnalysisSettings &settings) const {
+void DistanceCalculator::calculateFrame(
+    DistributionFunctions &df, const AnalysisSettings &settings) const {
   // DistanceCalculator is a foundational calculator. In the current
   // architecture, it's called by StructureAnalyzer, which df already has.
   // We provide this implementation for completeness within the BaseCalculator
   // framework.
-  // Note: Since StructureAnalyzer already runs this in its constructor, 
-  // calling it again here might be redundant if df.neighbors() is already 
-  // populated. 
+  // Note: Since StructureAnalyzer already runs this in its constructor,
+  // calling it again here might be redundant if df.neighbors() is already
+  // populated.
 }
 
 struct ThreadLocalDistances {
@@ -96,9 +89,9 @@ void DistanceCalculator::compute(
         auto &distance_local = local_results.distance_tensor_local;
         auto &neighbor_local = local_results.neighbor_list_local;
 
-        auto &soa_x   = local_results.soa_x;
-        auto &soa_y   = local_results.soa_y;
-        auto &soa_z   = local_results.soa_z;
+        auto &soa_x = local_results.soa_x;
+        auto &soa_y = local_results.soa_y;
+        auto &soa_z = local_results.soa_z;
         auto &dsq_buf = local_results.dsq_scratch;
 
         const auto &atom_A = atoms[i];
@@ -136,13 +129,14 @@ void DistanceCalculator::compute(
 
           // SIMD pass: compute dsq[jj] = ||atom_A - shifted_atom_B[jj]||²
           simd_utils::PositionBlock block{soa_x.data(), soa_y.data(),
-                                         soa_z.data(), j_count};
+                                          soa_z.data(), j_count};
           simd_utils::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
 
           // -----------------------------------------------------------------------
           // Scalar post-processing: apply cutoff and record output
           // Mirrors the original logic exactly:
-          //   - i == j with zero-displacement → skip always (same atom, same image)
+          //   - i == j with zero-displacement → skip always (same atom, same
+          //   image)
           //   - i == j with non-zero displacement → periodic self-image:
           //       skip if ignore_periodic_self_interactions is true
           //   - i != j → normal pair
@@ -180,8 +174,7 @@ void DistanceCalculator::compute(
 
             if (d_sq <= max_bond_dist_sq) {
               // r_ij = (pos_B + disp) - pos_A  — already stored in soa arrays
-              linalg::Vector3<double> r_ij = {soa_x[jj] - ax,
-                                              soa_y[jj] - ay,
+              linalg::Vector3<double> r_ij = {soa_x[jj] - ax, soa_y[jj] - ay,
                                               soa_z[jj] - az};
               neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
               if (i != j) {

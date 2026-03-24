@@ -4,7 +4,6 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/AngleCalculator.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include "DistributionFunctions.hpp"
 
 #include <algorithm>
@@ -14,16 +13,10 @@
 
 #include "SIMDUtils.hpp"
 
-namespace {
-// Static registration
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<calculators::AngleCalculator>());
-} // namespace
-
 namespace calculators {
 
 void AngleCalculator::calculateFrame(DistributionFunctions &df,
-                                    const AnalysisSettings &settings) const {
+                                     const AnalysisSettings &settings) const {
   // AngleCalculator is a foundational calculator. It is currently
   // called by StructureAnalyzer during its construction.
 }
@@ -77,9 +70,9 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
           sc.ensure(cn);
           for (size_t a = 0; a < cn; ++a) {
             const auto &r_ij = neighbors[a].r_ij;
-            sc.nb_x[a]    = r_ij.x();
-            sc.nb_y[a]    = r_ij.y();
-            sc.nb_z[a]    = r_ij.z();
+            sc.nb_x[a] = r_ij.x();
+            sc.nb_y[a] = r_ij.y();
+            sc.nb_z[a] = r_ij.z();
             sc.nb_dist[a] = neighbors[a].distance;
           }
 
@@ -89,11 +82,10 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
             const size_t k_count = cn - j - 1; // number of k's for this j
 
             // SIMD dot products: dots[m] = dot(v_j, v_{j+1+m})
-            simd_utils::dot_block(sc.nb_x[j], sc.nb_y[j], sc.nb_z[j],
-                                  sc.nb_x.data()    + j + 1,
-                                  sc.nb_y.data()    + j + 1,
-                                  sc.nb_z.data()    + j + 1,
-                                  sc.dots.data(), k_count);
+            simd_utils::dot_block(
+                sc.nb_x[j], sc.nb_y[j], sc.nb_z[j], sc.nb_x.data() + j + 1,
+                sc.nb_y.data() + j + 1, sc.nb_z.data() + j + 1, sc.dots.data(),
+                k_count);
 
             const int type1 = atoms[neighbors[j].index].element_id();
             const double d1 = sc.nb_dist[j];
@@ -129,4 +121,3 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
 }
 
 } // namespace calculators
-
