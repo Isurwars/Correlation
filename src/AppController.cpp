@@ -290,7 +290,7 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
       }
       CalculatorInfo info;
       info.id = slint::SharedString(calc->getName());
-      info.name = slint::SharedString(calc->getShortName());
+      info.name = slint::SharedString(calc->getName());
       info.description = slint::SharedString(calc->getDescription());
       info.enabled = enabled;
       calcs_model->push_back(info);

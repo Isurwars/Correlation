@@ -29,10 +29,10 @@ add_library(calculators_obj OBJECT
     calculators/RDCalculator.cpp
     calculators/VACFCalculator.cpp
     calculators/VDOSCalculator.cpp
-    calculators/SQCalculator.cpp
-    calculators/XRDCalculator.cpp
-    calculators/DebyeS_KCalculator.cpp
     calculators/StructureFactorCalculator.cpp
+    calculators/XRDCalculator.cpp
+    calculators/SQCalculator.cpp
+    calculators/DebyeS_KCalculator.cpp
     calculators/CalculatorFactory.cpp
 )
 target_include_directories(calculators_obj PRIVATE

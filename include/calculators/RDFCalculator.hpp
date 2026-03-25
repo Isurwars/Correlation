@@ -16,7 +16,7 @@
  * pair correlation function `g(r)`.
  *
  * It calculates the local particle density around a reference atom as a
- * function of distance `r`. From `g(r)`, it also calculates:
+ * function of distance `r`. From `g(r)`, it also calculates:L
  * - `G(r)`: The reduced pair distribution function, `G(r) = 4 * \pi * r *
  * \rho_0 * (g(r) - 1)`.
  * - `J(r)`: The radial distribution function related to the coordination
@@ -24,8 +24,8 @@
  */
 class RDFCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "RDF"; }
-  std::string getShortName() const override { return "g_r"; }
+  std::string getName() const override { return "g(r), J(r), G(r)"; }
+  std::string getShortName() const override { return "RDF"; }
   std::string getGroup() const override { return "Radial"; }
   std::string getDescription() const override {
     return "Computes the Radial Distribution Function g_r, J_r, and G_r.";

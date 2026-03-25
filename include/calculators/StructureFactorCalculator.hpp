@@ -21,11 +21,11 @@
  */
 class StructureFactorCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "SQ"; }
-  std::string getShortName() const override { return "S_q"; }
+  std::string getName() const override { return "S(K)"; }
+  std::string getShortName() const override { return "S_K"; }
   std::string getGroup() const override { return "Radial"; }
   std::string getDescription() const override {
-    return "Computes the static structure factor S_q via plane wave summation "
+    return "Computes the static structure factor S(K) via plane wave summation "
            "over reciprocal lattice vectors (for periodic systems).";
   }
 

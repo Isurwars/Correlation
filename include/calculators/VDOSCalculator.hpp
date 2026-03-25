@@ -14,11 +14,11 @@
  */
 class VDOSCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "VDOS"; }
-  std::string getShortName() const override { return "VDOS"; }
+  std::string getName() const override { return "vDoS"; }
+  std::string getShortName() const override { return "vDoS"; }
   std::string getGroup() const override { return "Dynamic"; }
   std::string getDescription() const override {
-    return "Computes the Vibrational Density of States (VDOS).";
+    return "Computes the Vibrational Density of States (vDoS).";
   }
 
   bool isFrameCalculator() const override { return false; }
