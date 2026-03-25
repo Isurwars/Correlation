@@ -31,20 +31,20 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
                                   const DistributionFunctions &df,
                                   bool /*write_smoothed*/) const {
   const std::map<std::string, std::string> file_map = {
-      {"g(r)", "_g.parquet"},
-      {"J(r)", "_J.parquet"},
-      {"G(r)", "_G_reduced.parquet"},
+      {"g_r", "_g.parquet"},
+      {"J_r", "_J.parquet"},
+      {"G_r", "_G_reduced.parquet"},
       {"BAD", "_PAD.parquet"},
       {"DAD", "_DAD.parquet"},
       {"RD", "_RD.parquet"},
-      {"S(Q)", "_S.parquet"},
+      {"fft_S_q", "_S.parquet"},
       {"XRD", "_XRD.parquet"},
       {"CN", "_CN.parquet"},
       {"VACF", "_VACF.parquet"},
       {"Normalized VACF", "_VACF_norm.parquet"},
       {"VDOS", "_VDOS.parquet"},
-      {"Debye_S(Q)", "_Debye_S.parquet"},
-      {"S(Q)_pw", "_S_pw.parquet"}};
+      {"debye_S_q", "_Debye_S.parquet"},
+      {"S_q", "_S_pw.parquet"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

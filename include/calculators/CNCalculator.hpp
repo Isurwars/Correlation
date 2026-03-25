@@ -15,9 +15,10 @@
 class CNCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "CN"; }
+  std::string getShortName() const override { return "CN"; }
   std::string getGroup() const override { return "Structural"; }
   std::string getDescription() const override {
-    return "Computes the Coordination Number distribution.";
+    return "Computes the Coordination Number (CN).";
   }
 
   bool isFrameCalculator() const override { return true; }

@@ -34,7 +34,7 @@ TEST_F(_22_DebyeS_KCalculator_Tests, CalculatesDiatomicMolecule) {
   calc.calculateFrame(df, settings);
 
   // Assert
-  const auto &hist = df.getHistogram("Debye_S(Q)");
+  const auto &hist = df.getHistogram("debye_S_q");
   
   EXPECT_EQ(hist.bins.size(), 10);
   EXPECT_EQ(hist.bin_label, "Q (Å⁻¹)");
@@ -76,7 +76,7 @@ TEST_F(_22_DebyeS_KCalculator_Tests, VerifiesSZeroLimit) {
 
   // Act
   calc.calculateFrame(df, settings);
-  const auto &hist = df.getHistogram("Debye_S(Q)");
+  const auto &hist = df.getHistogram("debye_S_q");
 
   // Assert
   // S(0) should be N = 4.0. At Q=0.01, it should be very close.
@@ -100,7 +100,7 @@ TEST_F(_22_DebyeS_KCalculator_Tests, VerifiesSZeroLimitMultiComponent) {
 
   // Act
   calc.calculateFrame(df, settings);
-  const auto &hist = df.getHistogram("Debye_S(Q)");
+  const auto &hist = df.getHistogram("debye_S_q");
 
   // Assert
   // S(0) should be N = 2.0. 

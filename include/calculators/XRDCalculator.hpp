@@ -17,9 +17,10 @@
 class XRDCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "XRD"; }
+  std::string getShortName() const override { return "XRD"; }
   std::string getGroup() const override { return "Radial"; }
   std::string getDescription() const override {
-    return "Computes the X-Ray Diffraction pattern from g(r).";
+    return "Computes the X-Ray Diffraction Pattern (XRD).";
   }
 
   bool isFrameCalculator() const override { return true; }

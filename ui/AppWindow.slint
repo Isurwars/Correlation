@@ -10,7 +10,12 @@ import {
     MaterialText,
 } from "@material";
 
-import { AtomCount, BondCutoff, CalculatorInfo, CalculatorGroup } from "Types.slint";
+import {
+    AtomCount,
+    BondCutoff,
+    CalculatorInfo,
+    CalculatorGroup,
+} from "Types.slint";
 import { InputFileCard } from "InputFileCard.slint";
 import { FileInfoCard } from "FileInfoCard.slint"; 
 import { OptionsCard } from "OptionsCard.slint";
@@ -79,11 +84,13 @@ export component AppWindow inherits Window {
 
     // Analysis calculator groups (dynamically populated from C++)
     in-out property <[CalculatorGroup]> calculator_groups: [];
+    in-out property <int> total_calculator_count: 0;
     callback toggle_calculator(string, bool);
+    in-out property <string> hovered_calculator_description: "";
     property <bool> show_advanced_options: false;
     property <length> window_width: 392px + (root.show_advanced_options ? 220px : 0px);
     property <length> window_height: max(
-        max(110px + file_info_card.preferred-height, 80px + analysis_card.preferred-height),
+        max(110px + file_info_card.preferred-height, 100px + analysis_card.preferred-height),
         root.show_advanced_options ? 60px + options_card.preferred-height : 0px);
     width: root.window_width;
     title: "Correlation";
@@ -198,6 +205,10 @@ export component AppWindow inherits Window {
                 options_card := OptionsCard {
                     file_loaded <=> root.file_loaded;
                     calculator_groups <=> root.calculator_groups;
+                    total_calculator_count <=> root.total_calculator_count;
+                    hovered_calc_changed(desc) => {
+                        root.hovered_calculator_description = desc;
+                    }
                     toggle_calculator(id, enabled) => {
                         root.toggle_calculator(id, enabled);
                     }
@@ -232,7 +243,7 @@ export component AppWindow inherits Window {
             hdf5_hover: analysis_card.hdf5_area_has_hover;
             csv_hover: analysis_card.csv_area_has_hover;
             parquet_hover: analysis_card.parquet_area_has_hover;
-            options_area_hover: analysis_card.options_area_has_hover;
+
             start_frame_hover: analysis_card.start_frame_has_hover;
             end_frame_hover: analysis_card.end_frame_has_hover;
             analysis_area_hover: analysis_card.analysis_area_has_hover;
@@ -255,6 +266,7 @@ export component AppWindow inherits Window {
             rd_cb_hover: false;
             vacf_cb_hover: false;
             vdos_cb_hover: false;
+            hovered_description: root.hovered_calculator_description;
         }
     }
 }

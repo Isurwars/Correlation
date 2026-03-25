@@ -25,6 +25,11 @@ public:
   virtual std::string getName() const = 0;
 
   /**
+   * @brief Returns a short, UI-friendly name of the calculator (e.g. "g_r", "S_q").
+   */
+  virtual std::string getShortName() const = 0;
+
+  /**
    * @brief Returns the UI group this calculator belongs to (e.g., "Radial",
    * "Angular", "Dynamic", "Rings").
    */

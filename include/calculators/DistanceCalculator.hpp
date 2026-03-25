@@ -17,9 +17,10 @@ using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
 class DistanceCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "Distance"; }
+  std::string getShortName() const override { return "Distance"; }
   std::string getGroup() const override { return "Structural"; }
   std::string getDescription() const override {
-    return "Computes all-pairs distances and builds the neighbor graph.";
+    return "Computes all unique 2-body distances.";
   }
 
   bool isFrameCalculator() const override { return true; }

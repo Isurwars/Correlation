@@ -15,9 +15,10 @@
 class PADCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "PAD"; }
+  std::string getShortName() const override { return "PAD"; }
   std::string getGroup() const override { return "Angular"; }
   std::string getDescription() const override {
-    return "Computes the Bond Angle Distribution (BAD).";
+    return "Computes the Plane-Angle Distribution (PAD).";
   }
 
   bool isFrameCalculator() const override { return true; }

@@ -15,9 +15,10 @@
 class DADCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "DAD"; }
+  std::string getShortName() const override { return "DAD"; }
   std::string getGroup() const override { return "Angular"; }
   std::string getDescription() const override {
-    return "Computes the Dihedral Angle Distribution.";
+    return "Computes the Dihedral Angle Distribution (DAD).";
   }
 
   bool isFrameCalculator() const override { return true; }

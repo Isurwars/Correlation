@@ -28,20 +28,20 @@ void CSVWriter::writeAllCSVs(const std::string &base_path,
                              const DistributionFunctions &df,
                              bool /*write_smoothed*/) const {
   const std::map<std::string, std::string> file_map = {
-      {"g(r)", "_g.csv"},
-      {"J(r)", "_J.csv"},
-      {"G(r)", "_G_reduced.csv"},
+      {"g_r", "_g.csv"},
+      {"J_r", "_J.csv"},
+      {"G_r", "_G_reduced.csv"},
       {"BAD", "_PAD.csv"},
       {"DAD", "_DAD.csv"},
       {"RD", "_RD.csv"},
-      {"S(Q)", "_S.csv"},
+      {"fft_S_q", "_S.csv"},
       {"XRD", "_XRD.csv"},
       {"CN", "_CN.csv"},
       {"VACF", "_VACF.csv"},
       {"Normalized VACF", "_VACF_norm.csv"},
       {"VDOS", "_VDOS.csv"},
-      {"Debye_S(Q)", "_Debye_S.csv"},
-      {"S(Q)_pw", "_S_pw.csv"}};
+      {"debye_S_q", "_Debye_S.csv"},
+      {"S_q", "_S_pw.csv"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

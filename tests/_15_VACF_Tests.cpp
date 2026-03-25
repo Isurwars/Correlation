@@ -68,7 +68,7 @@ TEST_F(_15_VACF_Tests, CalculateVACF_and_VDOS) {
   df.calculateVDOS();
   EXPECT_NO_THROW(df.getHistogram("VDOS"));
   const auto &vdos_hist = df.getHistogram("VDOS");
-  EXPECT_TRUE(vdos_hist.partials.count("Frequency (cm-1)"));
+  EXPECT_TRUE(vdos_hist.partials.count("Frequency_cm_1"));
 }
 
 TEST_F(_15_VACF_Tests, CalculateVACF_WithFrameRange) {

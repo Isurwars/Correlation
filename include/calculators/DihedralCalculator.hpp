@@ -33,6 +33,7 @@ using DihedralTensor =
 class DihedralCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "Dihedral"; }
+  std::string getShortName() const override { return "Dihedral"; }
   std::string getGroup() const override { return "Structural"; }
   std::string getDescription() const override {
     return "Computes all unique 4-body dihedral (torsion) angles.";

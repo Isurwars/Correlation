@@ -16,11 +16,12 @@
  */
 class SQCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "SQ"; }
+  std::string getName() const override { return "fft_S_q"; }
+  std::string getShortName() const override { return "fft_S_q"; }
   std::string getGroup() const override { return "Radial"; }
   std::string getDescription() const override {
-    return "Computes the Structure Factor S(Q) from the pair distribution "
-           "function g(r).";
+    return "Computes the Structure Factor S_q from the pair distribution "
+           "function g_r.";
   }
 
   bool isFrameCalculator() const override { return true; }

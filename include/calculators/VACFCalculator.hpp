@@ -18,6 +18,7 @@
 class VACFCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "VACF"; }
+  std::string getShortName() const override { return "VACF"; }
   std::string getGroup() const override { return "Dynamic"; }
   std::string getDescription() const override {
     return "Computes the Velocity Autocorrelation Function (VACF).";

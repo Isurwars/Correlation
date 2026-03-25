@@ -65,11 +65,11 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
   }
 
   Histogram vdos_hist;
-  vdos_hist.bin_label = "Frequency (THz)";
+  vdos_hist.bin_label = "Frequency_THz";
   vdos_hist.bins = combined_frequencies;
   vdos_hist.partials["Total"] = combined_intensities;
-  vdos_hist.partials["Frequency (cm-1)"] = combined_frequencies_cmInv;
-  vdos_hist.partials["Frequency (meV)"] = combined_frequencies_meV;
+  vdos_hist.partials["Frequency_cm_1"] = combined_frequencies_cmInv;
+  vdos_hist.partials["Frequency_meV"] = combined_frequencies_meV;
 
   return vdos_hist;
 }

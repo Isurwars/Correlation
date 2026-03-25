@@ -19,11 +19,11 @@ bool registered = CalculatorFactory::instance().registerCalculator(
 
 void SQCalculator::calculateFrame(DistributionFunctions &df,
                                   const AnalysisSettings &settings) const {
-  if (df.getAllHistograms().find("g(r)") == df.getAllHistograms().end()) {
-    return; // g(r) hasn't been calculated yet
+  if (df.getAllHistograms().find("g_r") == df.getAllHistograms().end()) {
+    return; // g_r hasn't been calculated yet
   }
-  df.addHistogram("S(Q)",
-                  calculate(df.getHistogram("g(r)"), df.cell(),
+  df.addHistogram("fft_S_q",
+                  calculate(df.getHistogram("g_r"), df.cell(),
                             df.getAshcroftWeights(), settings.q_max,
                             settings.q_bin_width, settings.r_int_max));
 }

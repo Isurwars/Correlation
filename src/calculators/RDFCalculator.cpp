@@ -181,9 +181,9 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
   }
 
   std::map<std::string, Histogram> results;
-  results["J(r)"] = std::move(J_r);
-  results["g(r)"] = std::move(g_r);
-  results["G(r)"] = std::move(G_r);
+  results["J_r"] = std::move(J_r);
+  results["g_r"] = std::move(g_r);
+  results["G_r"] = std::move(G_r);
 
   return results;
 }

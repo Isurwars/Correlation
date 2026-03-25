@@ -56,6 +56,8 @@ export component OptionsCard inherits FilledCard {
     // Dynamic calculator groups from CalculatorFactory via C++
     in-out property <[CalculatorGroup]> calculator_groups: [];
     callback toggle_calculator(string, bool);
+    callback hovered_calc_changed(string);
+    in property <int> total_calculator_count: 0;
 
     // Toggle stats for groups
     in-out property <bool> analyses_expanded: false;
@@ -67,7 +69,7 @@ export component OptionsCard inherits FilledCard {
     in-out property <bool> bond_cutoffs_expanded: false;
 
     // Toggle height for groups
-    property <length> analyses_height: analyses_expanded ? max(40px, root.calculator_groups.length * 48px + (root.calculator_groups.length - 1) * 12px + 4 * 16px) : 0px;
+    property <length> analyses_height: analyses_expanded ? (root.total_calculator_count * 28px + root.calculator_groups.length * 14px + 32px) : 0px;
     property <length> rdf_height: rdf_expanded ? 100px : 0px;
     property <length> sq_height: sq_expanded ? 150px : 0px;
     property <length> angle_height: angle_expanded ? 100px : 0px;
@@ -116,7 +118,6 @@ export component OptionsCard inherits FilledCard {
 
             for group[gi] in root.calculator_groups: VerticalLayout {
                 spacing: MaterialStyleMetrics.spacing_2;
-
                 if gi > 0: Rectangle {
                     height: 1px;
                     background: MaterialPalette.outline_variant;
@@ -128,12 +129,18 @@ export component OptionsCard inherits FilledCard {
                     color: MaterialPalette.on_surface_variant;
                 }
 
-                for calc[ci] in group.calculators: CheckBoxRow {
-                    enabled: root.file_loaded;
-                    check_state_bool: calc.enabled;
-                    text: calc.name;
-                    checked_state_changed(s) => {
-                        root.toggle_calculator(calc.id, s);
+                for calc[ci] in group.calculators: HorizontalLayout {
+                    height: 28px;
+                    padding-left: MaterialStyleMetrics.spacing_2;
+
+                    CheckBoxRow {
+                        enabled: root.file_loaded;
+                        check_state_bool: calc.enabled;
+                        text: calc.name;
+                        horizontal-stretch: 1;
+                        checked_state_changed(s) => {
+                            root.toggle_calculator(calc.id, s);
+                        }
                     }
                 }
             }

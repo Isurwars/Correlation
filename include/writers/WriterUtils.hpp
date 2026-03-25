@@ -21,16 +21,17 @@ struct FunctionMetadata {
 
 // Metadata mapping
 inline const std::map<std::string, FunctionMetadata> metadata_map = {
-    {"g(r)", {"r (Å)", "Å", "Å^-1", "Radial Distribution Function"}},
-    {"J(r)", {"r (Å)", "Å", "Å^-1", "Radial Distribution of Electron Density"}},
-    {"G(r)", {"r (Å)", "Å", "Å^-1", "Reduced Radial Distribution Function"}},
+    {"g_r", {"r (Å)", "Å", "Å^-1", "Radial Distribution Function"}},
+    {"J_r", {"r (Å)", "Å", "Å^-1", "Radial Distribution of Electron Density"}},
+    {"G_r", {"r (Å)", "Å", "Å^-1", "Reduced Radial Distribution Function"}},
     {"BAD",
      {"Bond Angle (°)", "Degrees", "degree^-1", "Bond Angle Distribution"}},
     {"DAD",
      {"Dihedral Angle (°)", "Degrees", "degree^-1",
       "Dihedral Angle Distribution"}},
     {"RD", {"Ring Size", "atoms", "counts", "Ring Distribution"}},
-    {"S(Q)", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
+    {"fft_S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor (FFT)"}},
+    {"S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
     {"XRD",
      {"2theta", "Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
     {"CN", {"counts", "neighbors", "Count", "Coordination Number"}},
@@ -40,13 +41,16 @@ inline const std::map<std::string, FunctionMetadata> metadata_map = {
      {"Time (fs)", "fs", "normalized",
       "Normalized Velocity Autocorrelation Function"}},
     {"VDOS",
-     {"Frequency (THz)", "THz", "arbitrary units",
+     {"Frequency_THz", "THz", "arbitrary units",
       "Vibrational Density of States"}},
-    {"Frequency (cm-1)",
-     {"Frequency (cm-1)", "cm^-1", "arbitrary units",
+    {"Frequency_THz", {"Frequency_THz", "THz", "THz", "Frequency_THz"}},
+    {"Frequency_cm_1",
+     {"Frequency_cm_1", "cm^-1", "arbitrary units",
       "Frequency in wavenumbers"}},
-    {"Frequency (meV)",
-     {"Frequency (meV)", "meV", "arbitrary units", "Frequency in meV"}}};
+    {"Frequency_meV",
+     {"Frequency_meV", "meV", "arbitrary units", "Frequency in meV"}},
+    {"debye_S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Debye Structure Factor"}},
+    {"S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Plane Wave Structure Factor"}}};
 
 } // namespace WriterUtils
 } // namespace Correlation

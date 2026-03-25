@@ -158,5 +158,5 @@ void DebyeS_KCalculator::calculateFrame(DistributionFunctions &df,
     });
 
   s_k_hist.partials["Total"] = std::move(total_s_k);
-  df.addHistogram("Debye_S(Q)", std::move(s_k_hist));
+  df.addHistogram("debye_S_q", std::move(s_k_hist));
 }

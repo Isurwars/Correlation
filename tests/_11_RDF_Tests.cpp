@@ -56,7 +56,7 @@ TEST_F(_11_RDF_Tests, MoveConstructorWorks) {
 
   DistributionFunctions dfDest(std::move(dfSource));
 
-  EXPECT_NO_THROW(dfDest.getHistogram("g(r)"));
+  EXPECT_NO_THROW(dfDest.getHistogram("g_r"));
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
@@ -68,7 +68,7 @@ TEST_F(_11_RDF_Tests, MoveAssignmentWorks) {
   DistributionFunctions dfDest(cell_, 0.0, std::vector<std::vector<double>>{});
   dfDest = std::move(dfSource);
 
-  EXPECT_NO_THROW(dfDest.getHistogram("g(r)"));
+  EXPECT_NO_THROW(dfDest.getHistogram("g_r"));
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
@@ -91,19 +91,19 @@ TEST_F(_11_RDF_Tests, AccessorsWork) {
   df.calculateRDF(5.0, 0.1);
   histNames = df.getAvailableHistograms();
   EXPECT_FALSE(histNames.empty());
-  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g(r)"),
+  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"),
             histNames.end());
 
   // getHistogram()
-  EXPECT_NO_THROW(df.getHistogram("g(r)"));
+  EXPECT_NO_THROW(df.getHistogram("g_r"));
   EXPECT_THROW(df.getHistogram("NonExistent"), std::out_of_range);
 
   // getAllHistograms()
   const auto &allHists = df.getAllHistograms();
   EXPECT_EQ(allHists.size(), 3);
-  EXPECT_TRUE(allHists.count("g(r)"));
-  EXPECT_TRUE(allHists.count("J(r)"));
-  EXPECT_TRUE(allHists.count("G(r)"));
+  EXPECT_TRUE(allHists.count("g_r"));
+  EXPECT_TRUE(allHists.count("J_r"));
+  EXPECT_TRUE(allHists.count("G_r"));
 }
 
 //---------------------------------------------------------------------------//
@@ -121,7 +121,7 @@ TEST_F(_11_RDF_Tests, CalculateRDF) {
 
   // Valid calculation
   df.calculateRDF(5.0, 0.1);
-  const auto &hist = df.getHistogram("g(r)");
+  const auto &hist = df.getHistogram("g_r");
   const auto &total = hist.partials.at("Ar-Ar");
 
   // Peak at 1.5 (+- bin width)
@@ -164,8 +164,8 @@ TEST_F(_11_RDF_Tests, Smoothing) {
   df.calculateRDF(5.0, 0.1);
 
   // Checks "smooth" single
-  ASSERT_NO_THROW(df.smooth("g(r)", 0.2));
-  const auto &hist = df.getHistogram("g(r)");
+  ASSERT_NO_THROW(df.smooth("g_r", 0.2));
+  const auto &hist = df.getHistogram("g_r");
   EXPECT_FALSE(hist.smoothed_partials.empty());
 
   // Check "smoothAll"
@@ -186,8 +186,8 @@ TEST_F(_11_RDF_Tests, SetStructureAnalyzer) {
   df.setStructureAnalyzer(&analyzer);
 
   df.calculateRDF(5.0, 0.1);
-  EXPECT_NO_THROW(df.getHistogram("g(r)"));
-  EXPECT_FALSE(df.getHistogram("g(r)").partials.empty());
+  EXPECT_NO_THROW(df.getHistogram("g_r"));
+  EXPECT_FALSE(df.getHistogram("g_r").partials.empty());
 }
 
 //---------------------------------------------------------------------------//
@@ -204,7 +204,7 @@ TEST_F(_11_RDF_Tests, AddAndScale) {
 
   // Add
   df1.add(df2);
-  const auto &h1 = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+  const auto &h1 = df1.getHistogram("g_r").partials.at("Ar-Ar");
 
   // Peak should be doubled roughly (since they are identical)
   // Actually add() sums the bins.
@@ -212,7 +212,7 @@ TEST_F(_11_RDF_Tests, AddAndScale) {
 
   // Scale
   df1.scale(0.5);
-  const auto &h1_scaled = df1.getHistogram("g(r)").partials.at("Ar-Ar");
+  const auto &h1_scaled = df1.getHistogram("g_r").partials.at("Ar-Ar");
 
   // Should be back to original magnitude
   // We check peak value
@@ -224,8 +224,8 @@ TEST_F(_11_RDF_Tests, AddAndScale) {
   DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfRef.calculateRDF(5.0, 0.1);
   double refPeak =
-      *std::max_element(dfRef.getHistogram("g(r)").partials.at("Ar-Ar").begin(),
-                        dfRef.getHistogram("g(r)").partials.at("Ar-Ar").end());
+      *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
+                        dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
 
   EXPECT_NEAR(peak, refPeak, 1e-6);
 }
@@ -242,7 +242,7 @@ TEST_F(_11_RDF_Tests, ComputeMean) {
   auto dfMean =
       DistributionFunctions::computeMean(trajectory_, ta, 0, settings);
   ASSERT_TRUE(dfMean != nullptr);
-  EXPECT_NO_THROW(dfMean->getHistogram("g(r)"));
+  EXPECT_NO_THROW(dfMean->getHistogram("g_r"));
 }
 
 TEST_F(_11_RDF_Tests, HandlesMissingPartialInAdd) {
@@ -265,6 +265,6 @@ TEST_F(_11_RDF_Tests, HandlesMissingPartialInAdd) {
 
   df1.add(df2);
 
-  EXPECT_NO_THROW(df1.getHistogram("g(r)"));
+  EXPECT_NO_THROW(df1.getHistogram("g_r"));
   EXPECT_NO_THROW(df1.getHistogram("CN"));
 }

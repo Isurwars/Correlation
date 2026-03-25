@@ -38,8 +38,8 @@ TEST_F(_12_SQ_Tests, CalculateSQ) {
   df.calculateRDF(5.0, 0.05);
   df.calculateSQ(10.0, 0.1, 5.0);
 
-  EXPECT_NO_THROW(df.getHistogram("S(Q)"));
-  const auto &hist = df.getHistogram("S(Q)");
+  EXPECT_NO_THROW(df.getHistogram("fft_S_q"));
+  const auto &hist = df.getHistogram("fft_S_q");
   EXPECT_FALSE(hist.bins.empty());
 
   // Check peak position for 1.5A distance -> Q = 2pi/r ~ 4.18

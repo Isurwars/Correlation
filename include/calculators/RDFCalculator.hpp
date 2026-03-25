@@ -25,9 +25,10 @@
 class RDFCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "RDF"; }
+  std::string getShortName() const override { return "g_r"; }
   std::string getGroup() const override { return "Radial"; }
   std::string getDescription() const override {
-    return "Computes the Radial Distribution Function g(r), J(r), and G(r).";
+    return "Computes the Radial Distribution Function g_r, J_r, and G_r.";
   }
 
   bool isFrameCalculator() const override { return true; }

@@ -30,9 +30,10 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<double>>>>;
 class AngleCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "Angle"; }
+  std::string getShortName() const override { return "BAD"; }
   std::string getGroup() const override { return "Structural"; }
   std::string getDescription() const override {
-    return "Computes all unique 3-body bond angles.";
+    return "Computes the Bond Angle Distribution (BAD).";
   }
 
   bool isFrameCalculator() const override { return true; }

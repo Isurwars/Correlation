@@ -10,10 +10,12 @@
 
 class DebyeS_KCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Debye_SK"; }
+  std::string getName() const override { return "Debye_S_q"; }
+  std::string getShortName() const override { return "debye_S_q"; }
   std::string getGroup() const override { return "Radial"; }
   std::string getDescription() const override {
-    return "Computes the Structure Factor S(k) using the Debye direct summation formula (ideal for non-periodic/cluster systems).";
+    return "Computes the Structure Factor S_q using the Debye direct "
+           "summation formula (ideal for non-periodic/cluster systems).";
   }
 
   bool isFrameCalculator() const override { return true; }

@@ -15,9 +15,10 @@
 class RDCalculator : public BaseCalculator {
 public:
   std::string getName() const override { return "RD"; }
+  std::string getShortName() const override { return "RD"; }
   std::string getGroup() const override { return "Rings"; }
   std::string getDescription() const override {
-    return "Computes the Ring Distribution (chordless rings).";
+    return "Computes the Ring Distribution (RD).";
   }
 
   bool isFrameCalculator() const override { return true; }

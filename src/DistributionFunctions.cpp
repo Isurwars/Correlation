@@ -330,25 +330,25 @@ void DistributionFunctions::calculateVDOS() {
 
 void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
                                         double r_integration_max) {
-  if (histograms_.find("g(r)") == histograms_.end()) {
+  if (histograms_.find("g_r") == histograms_.end()) {
     throw std::logic_error(
-        "Cannot calculate S(Q). Please calculate g(r) first by calling "
+        "Cannot calculate fft_S_q. Please calculate g_r first by calling "
         "calculateRDF().");
   }
-  histograms_["S(Q)"] =
-      SQCalculator::calculate(histograms_.at("g(r)"), cell_, ashcroft_weights_,
+  histograms_["fft_S_q"] =
+      SQCalculator::calculate(histograms_.at("g_r"), cell_, ashcroft_weights_,
                               q_max, q_bin_width, r_integration_max);
 }
 
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {
-  if (histograms_.find("g(r)") == histograms_.end()) {
+  if (histograms_.find("g_r") == histograms_.end()) {
     throw std::logic_error(
-        "Cannot calculate XRD. Please calculate g(r) first by calling "
+        "Cannot calculate XRD. Please calculate g_r first by calling "
         "calculateRDF().");
   }
   histograms_["XRD"] =
-      XRDCalculator::calculate(histograms_.at("g(r)"), cell_, ashcroft_weights_,
+      XRDCalculator::calculate(histograms_.at("g_r"), cell_, ashcroft_weights_,
                                lambda, theta_min, theta_max, bin_width);
 }
 

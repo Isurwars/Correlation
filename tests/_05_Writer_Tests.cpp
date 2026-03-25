@@ -110,9 +110,9 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   FileWriter writer(df);
   writer.write("test_si", true, false, false, true);
 
-  // Assert: Part 1 - Validate content of the calculated g(r) histogram.
+  // Assert: Part 1 - Validate content of the calculated g_r histogram.
 
-  const auto &rdf_hist = df.getHistogram("g(r)");
+  const auto &rdf_hist = df.getHistogram("g_r");
   const auto &bins = rdf_hist.bins;
   const auto &si_si_rdf = rdf_hist.partials.at("Si-Si");
 
@@ -353,15 +353,15 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   vdos_group.getAttribute("description").read(vdos_desc);
   EXPECT_EQ(vdos_desc, "Vibrational Density of States");
 
-  std::string vdos_freq_name = "00_Frequency__THz_";
+  std::string vdos_freq_name = "00_Frequency_THz";
   std::string vdos_val_name = "03_Total";
 
   EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
   EXPECT_TRUE(vdos_group.exist(vdos_val_name));
 
   // Check new units in HDF5
-  std::string vdos_cm_name = "01_Frequency__cm-1_";
-  std::string vdos_mev_name = "02_Frequency__meV_";
+  std::string vdos_cm_name = "01_Frequency_cm_1";
+  std::string vdos_mev_name = "02_Frequency_meV";
 
   EXPECT_TRUE(vdos_group.exist(vdos_cm_name));
   EXPECT_TRUE(vdos_group.exist(vdos_mev_name));

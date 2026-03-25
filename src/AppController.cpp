@@ -290,7 +290,8 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
       }
       CalculatorInfo info;
       info.id = slint::SharedString(calc->getName());
-      info.name = slint::SharedString(calc->getDescription());
+      info.name = slint::SharedString(calc->getShortName());
+      info.description = slint::SharedString(calc->getDescription());
       info.enabled = enabled;
       calcs_model->push_back(info);
     }
@@ -300,6 +301,7 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
     groups_model->push_back(group);
   }
   ui.set_calculator_groups(groups_model);
+  ui.set_total_calculator_count(static_cast<int>(calculators.size()));
 }
 
 //---------------------------------------------------------------------------//
