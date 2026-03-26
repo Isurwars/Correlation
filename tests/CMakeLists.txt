@@ -34,6 +34,7 @@ add_executable(correlation_tests
     _21_SIMDUtils_Tests.cpp
     _22_DebyeS_KCalculator_Tests.cpp
     _23_StructureFactorCalculator_Tests.cpp
+    _24_SteinhardtCalculator_Tests.cpp
     ../src/AppBackend.cpp
     ../src/AppController.cpp
 )
