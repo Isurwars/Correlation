@@ -1,18 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.3.0] 2026-03-23
+## [2.3.1] 2026-03-25
 
 ### Added
+- Added tooltips to the calculators for better usability.
+- Added direct structure factor calculator and Debye S(K) calculator.
+- Added unit tests for `SIMDUtils`.
 - **Fixed-Size Window Layout**: Standardized the UI to a consistent 392px width, improving UX by avoiding jarring window resizes during file loading.
 - **Foundational Calculator Automation**: `DistanceCalculator`, `AngleCalculator`, `DihedralCalculator`, and `CNCalculator` are now executed automatically as foundational steps in the analysis pipeline.
 
 ### Changed
+- Major refactor to calculator naming.
+- Refactored writers for better code quality.
+- Refactored ToolTip logic and OptionCard for improved UI/UX.
 - **UI Optimization**: Hid foundational calculators (Distance, Angle, Dihedral, CN) from the user selection panel to reduce clutter, as they are now mandatory internal dependencies.
 - **FileInfoCard Visibility**: The card is now always visible with a placeholder for better layout stability.
 - **Analysis Cleanup**: Structural calculators no longer appear in the dynamic UI, focusing the interface on high-level analysis results.
 
 ### Fixed
+- Fixed UI/UX across multiple components.
+- Fixed GitHub Actions workflows.
 - **Slint UI Refinements**: Standardized padding and element alignments across all cards for a more premium feel.
 
 ## [2.2.0] 2026-03-22

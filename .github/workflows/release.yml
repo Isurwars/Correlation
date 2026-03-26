@@ -96,7 +96,14 @@ jobs:
       - name: Package Release
         run: |
           cd build
-          cpack -G DragNDrop
+          for i in 1 2 3 4 5; do
+            if cpack -G DragNDrop; then
+              exit 0
+            fi
+            echo "CPack failed, retrying in 5 seconds..."
+            sleep 5
+          done
+          exit 1
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
