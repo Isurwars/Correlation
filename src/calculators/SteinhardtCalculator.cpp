@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/SteinhardtCalculator.hpp"
+#include "SpecialFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include <cmath>
 #include <stdexcept>
@@ -11,48 +12,18 @@
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<SteinhardtCalculator>());
-
-// Helper for factorials up to a small number
-double factorial(int n) {
-  static const double fact[] = {1.0,
-                                1.0,
-                                2.0,
-                                6.0,
-                                24.0,
-                                120.0,
-                                720.0,
-                                5040.0,
-                                40320.0,
-                                362880.0,
-                                3628800.0,
-                                39916800.0,
-                                479001600.0,
-                                6227020800.0,
-                                87178291200.0,
-                                1307674368000.0,
-                                20922789888000.0,
-                                355687428096000.0,
-                                6402373705728000.0,
-                                121645100408832000.0,
-                                2432902008176640000.0};
-  if (n < 0)
-    return 0.0;
-  if (n <= 20)
-    return fact[n];
-  return std::tgamma(n + 1);
-}
 } // namespace
 
 std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m,
                                                              double theta,
                                                              double phi) {
   if (m >= 0) {
-    double P_lm = std::sph_legendre(l, m, theta);
+    double P_lm = special_math::sph_legendre(l, m, theta);
     return P_lm * std::polar(1.0, m * phi);
   } else {
     // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
     int abs_m = -m;
-    double P_lm = std::sph_legendre(l, abs_m, theta);
+    double P_lm = special_math::sph_legendre(l, abs_m, theta);
     std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * phi);
     std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
     if (abs_m % 2 != 0) {
@@ -71,12 +42,16 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
   if (std::abs(m1) > j1 || std::abs(m2) > j2 || std::abs(m3) > j3)
     return 0.0;
 
-  double delta = factorial(j1 + j2 - j3) * factorial(j1 - j2 + j3) *
-                 factorial(-j1 + j2 + j3) / factorial(j1 + j2 + j3 + 1);
+  double delta = special_math::factorial(j1 + j2 - j3) *
+                 special_math::factorial(j1 - j2 + j3) *
+                 special_math::factorial(-j1 + j2 + j3) /
+                 special_math::factorial(j1 + j2 + j3 + 1);
   delta = std::sqrt(delta);
 
-  double comp = factorial(j1 - m1) * factorial(j1 + m1) * factorial(j2 - m2) *
-                factorial(j2 + m2) * factorial(j3 - m3) * factorial(j3 + m3);
+  double comp =
+      special_math::factorial(j1 - m1) * special_math::factorial(j1 + m1) *
+      special_math::factorial(j2 - m2) * special_math::factorial(j2 + m2) *
+      special_math::factorial(j3 - m3) * special_math::factorial(j3 + m3);
   comp = std::sqrt(comp);
 
   double phase1 = ((j1 - j2 - m3) % 2 != 0) ? -1.0 : 1.0;
@@ -87,9 +62,12 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
   double sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
     double k_phase = (k % 2 != 0) ? -1.0 : 1.0;
-    double denom = factorial(k) * factorial(j1 + j2 - j3 - k) *
-                   factorial(j1 - m1 - k) * factorial(j2 + m2 - k) *
-                   factorial(j3 - j2 + m1 + k) * factorial(j3 - j1 - m2 + k);
+    double denom = special_math::factorial(k) *
+                   special_math::factorial(j1 + j2 - j3 - k) *
+                   special_math::factorial(j1 - m1 - k) *
+                   special_math::factorial(j2 + m2 - k) *
+                   special_math::factorial(j3 - j2 + m1 + k) *
+                   special_math::factorial(j3 - j1 - m2 + k);
     sum += k_phase / denom;
   }
 
