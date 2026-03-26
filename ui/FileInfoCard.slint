@@ -39,10 +39,12 @@ export component FileInfoCard inherits FilledCard {
     in property <[AtomCount]> atom_counts;
     in-out property <string> time_step;
 
-    out property <bool> frames_hover: frames_layout.has-hover;
-    out property <bool> atoms_hover: atoms_layout.has-hover;
-    out property <bool> removed_frames_hover: removed_layout.has-hover;
-    out property <bool> time_step_hover: time_step_area.has-hover;
+    out property <string> hovered_tooltip_text:
+        frames_layout.has-hover ? "Number of structural frames parsed from the file." :
+        atoms_layout.has-hover ? "Total number of atoms found in a single frame." :
+        removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data." :
+        time_step_area.has-hover ? "Time interval between parsed frames in femtoseconds (fs). Useful for dynamic calculations." :
+        "";
     in-out property <bool> atoms_expanded: false;
 
     property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;

@@ -52,14 +52,16 @@ export component RunAnalysisCard inherits FilledCard {
     callback options_toggled(bool);
 
     // Hover state for tooltip
-    out property <bool> analysis_area_has_hover: analysis_area.has-hover;
-    out property <bool> hdf5_area_has_hover: hdf5_area.has-hover;
-    out property <bool> csv_area_has_hover: csv_area.has-hover;
-    out property <bool> parquet_area_has_hover: parquet_area.has-hover;
-    out property <bool> options_area_has_hover: options_area.has-hover;
-    out property <bool> start_frame_has_hover: start_frame_area.has-hover;
-    out property <bool> end_frame_has_hover: end_frame_area.has-hover;
-    out property <bool> write_area_has_hover: write_area.has-hover;
+    out property <string> hovered_tooltip_text:
+        options_area.has-hover ? "Toggle advanced analysis options." :
+        start_frame_area.has-hover ? "First frame to include in the analysis." :
+        end_frame_area.has-hover ? "Last frame to include in the analysis (use 'End' for the final frame)." :
+        csv_area.has-hover ? "If enabled, the results will be exported as CSV files." :
+        hdf5_area.has-hover ? "If enabled, the results will be exported to a single HDF5 file." :
+        parquet_area.has-hover ? "If enabled, the results will be exported as Parquet files." :
+        analysis_area.has-hover ? "Start the selected analyses." :
+        write_area.has-hover ? "Export the analysis results to files." :
+        "";
 
     // Animated Heights
     property <length> frame_text_height: root.num_frames > 1 ? 24px : 0px;

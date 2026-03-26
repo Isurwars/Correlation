@@ -56,7 +56,6 @@ export component OptionsCard inherits FilledCard {
     // Dynamic calculator groups from CalculatorFactory via C++
     in-out property <[CalculatorGroup]> calculator_groups: [];
     callback toggle_calculator(string, bool);
-    callback hovered_calc_changed(string);
     in property <int> total_calculator_count: 0;
 
     // Toggle stats for groups
@@ -78,17 +77,20 @@ export component OptionsCard inherits FilledCard {
     property <length> bond_cutoffs_height: bond_cutoffs_expanded ? min(150px, root.bond_cutoffs.length * 50px) : 0px;
 
     // Hover states for tooltips
-    out property <bool> r_max_has_hover: r_max_area.has-hover;
-    out property <bool> r_bin_has_hover: r_bin_area.has-hover;
-    out property <bool> q_max_has_hover: q_max_area.has-hover;
-    out property <bool> r_int_has_hover: r_int_area.has-hover;
-    out property <bool> theta_bin_has_hover: theta_bin_area.has-hover;
-    out property <bool> dihedral_bin_has_hover: dihedral_bin_area.has-hover;
-    out property <bool> ring_size_has_hover: ring_size_area.has-hover;
-    out property <bool> q_bin_has_hover: q_bin_area.has-hover;
-
-    out property <bool> sigma_has_hover: sigma_area.has-hover;
-    out property <bool> kernel_has_hover: kernel_area.has-hover;
+    property <string> hovered_calculator_description: "";
+    out property <string> hovered_tooltip_text:
+        r_max_area.has-hover ? "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å." :
+        r_bin_area.has-hover ? "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å." :
+        q_max_area.has-hover ? "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹" :
+        q_bin_area.has-hover ? "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹." :
+        r_int_area.has-hover ? "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å" :
+        theta_bin_area.has-hover ? "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°." :
+        dihedral_bin_area.has-hover ? "Bin width used to calculate the histograms for the Dihedral-Angle Distribution. The recommended bin is 1.0°." :
+        ring_size_area.has-hover ? "Maximum ring size to search for in topological motif analysis." :
+        sigma_area.has-hover ? "Sigma to be used for the smoothing of the distribution functions. The recommended  sigma is 0.01." :
+        kernel_area.has-hover ? "Kernel smoother type.\nGaussian: General purpose smoothing.\nBump: Sharp cutoff, preserves high frequencies.\nTriweight: Higher weight near the center, good for noisy data." :
+        root.hovered_calculator_description != "" ? root.hovered_calculator_description :
+        "";
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_4;
@@ -137,9 +139,9 @@ export component OptionsCard inherits FilledCard {
                         property <bool> _hover: self.has-hover;
                         changed _hover => {
                             if (self.has-hover) {
-                                root.hovered_calc_changed(calc.description);
+                                root.hovered_calculator_description = calc.description;
                             } else {
-                                root.hovered_calc_changed("");
+                                root.hovered_calculator_description = "";
                             }
                         }
 
