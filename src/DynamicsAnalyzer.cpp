@@ -118,6 +118,123 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   return vacf;
 }
 
+std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
+                                                    int max_correlation_frames,
+                                                    size_t start_frame,
+                                                    size_t end_frame) {
+  const auto &frames = traj.getFrames();
+  if (frames.empty()) {
+    return {};
+  }
+
+  size_t total_frames = frames.size();
+  size_t num_atoms = frames[0].atoms().size();
+
+  start_frame = std::min(start_frame, total_frames > 0 ? total_frames - 1 : 0);
+  end_frame = std::min(end_frame, total_frames);
+  if (start_frame >= end_frame) {
+    return {};
+  }
+
+  size_t num_frames = end_frame - start_frame;
+
+  // Default: use half the trajectory length to ensure good statistics
+  if (max_correlation_frames < 0 ||
+      static_cast<size_t>(max_correlation_frames) >= num_frames) {
+    max_correlation_frames = static_cast<int>(num_frames / 2);
+  }
+  if (max_correlation_frames == 0) {
+    return {};
+  }
+
+  // --- Build unwrapped trajectories using minimum image convention ---
+  // For each atom i and frame t (relative to start_frame):
+  //   unwrapped[i][t] = sum_{s=0}^{t-1} min_image( r(s+1) - r(s) )
+  // This correctly handles PBC crossings without needing explicit unwrapping.
+
+  std::vector<std::vector<linalg::Vector3<double>>> unwrapped(
+      num_atoms, std::vector<linalg::Vector3<double>>(num_frames,
+                                                       {0.0, 0.0, 0.0}));
+
+  for (size_t t = 1; t < num_frames; ++t) {
+    const size_t tf = start_frame + t;
+    const size_t tf_prev = start_frame + t - 1;
+
+    // Get box vectors for minimum image (use current frame)
+    const auto &lattice = frames[tf].latticeVectors();
+    linalg::Vector3<double> box = {lattice[0][0], lattice[1][1],
+                                   lattice[2][2]};
+    bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
+
+    const auto &curr_atoms = frames[tf].atoms();
+    const auto &prev_atoms = frames[tf_prev].atoms();
+
+    for (size_t i = 0; i < num_atoms; ++i) {
+      linalg::Vector3<double> dr =
+          curr_atoms[i].position() - prev_atoms[i].position();
+
+      // Apply minimum image convention
+      if (use_pbc) {
+        for (int d = 0; d < 3; ++d) {
+          if (dr[d] > box[d] * 0.5)
+            dr[d] -= box[d];
+          if (dr[d] < -box[d] * 0.5)
+            dr[d] += box[d];
+        }
+      }
+
+      // Accumulate unwrapped position: unwrapped[i][t] = unwrapped[i][t-1] + dr
+      unwrapped[i][t] = unwrapped[i][t - 1] + dr;
+    }
+  }
+
+  // --- Compute MSD by time-averaging over all origins ---
+  std::vector<double> msd(max_correlation_frames + 1, 0.0);
+  std::vector<int> counts(max_correlation_frames + 1, 0);
+
+  // Count time origins per lag analytically
+  for (int lag = 0; lag <= max_correlation_frames; ++lag) {
+    counts[lag] = static_cast<int>(num_frames) - lag;
+  }
+
+  // Thread-local MSD accumulators to eliminate mutex contention
+  tbb::enumerable_thread_specific<std::vector<double>> ets_msd(
+      [&] { return std::vector<double>(max_correlation_frames + 1, 0.0); });
+
+  tbb::parallel_for(size_t(0), num_atoms, [&](size_t i) {
+    auto &local_msd = ets_msd.local();
+    const auto &u_i = unwrapped[i];
+
+    for (size_t t0 = 0; t0 < num_frames; ++t0) {
+      int max_lag = std::min(max_correlation_frames,
+                             static_cast<int>(num_frames - 1 - t0));
+      for (int lag = 1; lag <= max_lag; ++lag) {
+        linalg::Vector3<double> disp = u_i[t0 + lag] - u_i[t0];
+        local_msd[lag] += linalg::dot(disp, disp);
+      }
+    }
+  });
+
+  // Serial merge of per-thread accumulators
+  for (const auto &local_msd : ets_msd) {
+    for (int lag = 0; lag <= max_correlation_frames; ++lag) {
+      msd[lag] += local_msd[lag];
+    }
+  }
+
+  // Normalize by number of time origins and number of atoms
+  // lag=0 is always 0 by definition
+  msd[0] = 0.0;
+  for (int lag = 1; lag <= max_correlation_frames; ++lag) {
+    if (counts[lag] > 0) {
+      msd[lag] /= (counts[lag] * static_cast<double>(num_atoms));
+    }
+  }
+
+  return msd;
+}
+
+
 std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(
     const Trajectory &traj, int max_correlation_frames, size_t start_frame,
     size_t end_frame) {

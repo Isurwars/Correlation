@@ -10,10 +10,10 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include <arrow/api.h>
 #include <arrow/io/api.h>
@@ -23,9 +23,8 @@
 namespace Writer {
 
 // Automatic registration
-static bool registered = WriterFactory::instance().registerWriter(
-    std::make_unique<ArrowWriter>()
-);
+static bool registered =
+    WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>());
 
 void ArrowWriter::writeAllParquet(const std::string &base_path,
                                   const DistributionFunctions &df,
@@ -37,14 +36,16 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
       {"BAD", "_PAD.parquet"},
       {"DAD", "_DAD.parquet"},
       {"RD", "_RD.parquet"},
-      {"fft_S_q", "_S.parquet"},
+      {"fft_S_q", "_fft_S.parquet"},
       {"XRD", "_XRD.parquet"},
       {"CN", "_CN.parquet"},
       {"VACF", "_VACF.parquet"},
       {"Normalized VACF", "_VACF_norm.parquet"},
       {"VDOS", "_VDOS.parquet"},
       {"debye_S_q", "_Debye_S.parquet"},
-      {"S_q", "_S_pw.parquet"}};
+      {"S_q", "_S.parquet"},
+      {"MSD", "_MSD.parquet"},
+      {"D_eff", "_D_eff.parquet"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

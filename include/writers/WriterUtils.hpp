@@ -30,7 +30,8 @@ inline const std::map<std::string, FunctionMetadata> metadata_map = {
      {"Dihedral Angle (°)", "Degrees", "degree^-1",
       "Dihedral Angle Distribution"}},
     {"RD", {"Ring Size", "atoms", "counts", "Ring Distribution"}},
-    {"fft_S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor (FFT)"}},
+    {"fft_S_q",
+     {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor (FFT)"}},
     {"S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Structure Factor"}},
     {"XRD",
      {"2theta", "Degrees (2theta)", "Intensity", "X-Ray Diffraction Pattern"}},
@@ -49,8 +50,14 @@ inline const std::map<std::string, FunctionMetadata> metadata_map = {
       "Frequency in wavenumbers"}},
     {"Frequency_meV",
      {"Frequency_meV", "meV", "arbitrary units", "Frequency in meV"}},
-    {"debye_S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Debye Structure Factor"}},
-    {"S_q", {"q (Å^-1)", "Å^-1", "arbitrary units", "Plane Wave Structure Factor"}}};
+    {"debye_S_q",
+     {"q (Å^-1)", "Å^-1", "arbitrary units", "Debye Structure Factor"}},
+    {"S_q",
+     {"q (Å^-1)", "Å^-1", "arbitrary units", "Plane Wave Structure Factor"}},
+    {"MSD", {"Time (fs)", "fs", "Å²", "Mean Squared Displacement"}},
+    {"D_eff",
+     {"Time (fs)", "fs", "Å²/fs",
+      "Running Diffusion Coefficient D(t) = MSD(t) / (6t)"}}};
 
 } // namespace WriterUtils
 } // namespace Correlation

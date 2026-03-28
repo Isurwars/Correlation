@@ -12,17 +12,16 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <memory>
 
 namespace Writer {
 
 // Automatic registration
-static bool registered = WriterFactory::instance().registerWriter(
-    std::make_unique<CSVWriter>()
-);
+static bool registered =
+    WriterFactory::instance().registerWriter(std::make_unique<CSVWriter>());
 
 void CSVWriter::writeAllCSVs(const std::string &base_path,
                              const DistributionFunctions &df,
@@ -34,14 +33,16 @@ void CSVWriter::writeAllCSVs(const std::string &base_path,
       {"BAD", "_PAD.csv"},
       {"DAD", "_DAD.csv"},
       {"RD", "_RD.csv"},
-      {"fft_S_q", "_S.csv"},
+      {"fft_S_q", "_fft_S.csv"},
       {"XRD", "_XRD.csv"},
       {"CN", "_CN.csv"},
       {"VACF", "_VACF.csv"},
       {"Normalized VACF", "_VACF_norm.csv"},
       {"VDOS", "_VDOS.csv"},
       {"debye_S_q", "_Debye_S.csv"},
-      {"S_q", "_S_pw.csv"}};
+      {"S_q", "_S.csv"},
+      {"MSD", "_MSD.csv"},
+      {"D_eff", "_D_eff.csv"}};
 
   for (const auto &[name, suffix] : file_map) {
     try {

@@ -13,7 +13,7 @@ Expanding support to attract users from biomolecular, solid-state, and soft-matt
 ## 2. New Distribution Functions and Analyses
 Enhancing the suite of structural and dynamic tools.
 
-- [ ] **Mean Squared Displacement (MSD)**: The standard way to compute diffusion coefficients ($D$) via the Einstein relation. Natural addition alongside the existing VACF.
+- [x] **Mean Squared Displacement (MSD)**: The standard way to compute diffusion coefficients ($D$) via the Einstein relation. Natural addition alongside the existing VACF.
 - [ ] **Common Neighbor Analysis (CNA) / Polyhedral Template Matching (PTM)**: Crucial for classifying atoms into localized crystallographic environments (FCC, BCC, HCP, Icosahedral) during freezing/melting or in metallic glasses.
 - [x] **Steinhardt Bond-Orientational Parameters ($Q_4, Q_6, W_6$)**: The gold standard for distinguishing rotationally invariant local structures in liquids vs amorphous/crystalline solids.
 - [ ] **Spatial Distribution Functions (SDF)**: Computing the 3D probability density of finding an atom around a central molecule (e.g., mapping hydration shells), moving beyond 1D $g(r)$.

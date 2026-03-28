@@ -34,6 +34,7 @@ add_library(calculators_obj OBJECT
     calculators/SQCalculator.cpp
     calculators/DebyeS_KCalculator.cpp
     calculators/SteinhardtCalculator.cpp
+    calculators/MSDCalculator.cpp
     calculators/CalculatorFactory.cpp
 )
 target_include_directories(calculators_obj PRIVATE
