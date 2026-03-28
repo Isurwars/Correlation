@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "math/SpecialFunctions.hpp"
 #include "math/Constants.hpp"
 #include <cmath>
 

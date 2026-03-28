@@ -108,8 +108,8 @@ SteinhardtCalculator::calculate(const Cell &cell,
   std::vector<double> W6(num_atoms, 0.0);
   std::vector<double> W6_hat(num_atoms, 0.0);
 
-  double global_Q4_factor = std::sqrt(4.0 * M_PI / 9.0);
-  double global_Q6_factor = std::sqrt(4.0 * M_PI / 13.0);
+  double global_Q4_factor = std::sqrt(4.0 * correlation::math::constants::pi / 9.0);
+  double global_Q6_factor = std::sqrt(4.0 * correlation::math::constants::pi / 13.0);
 
   for (size_t i = 0; i < num_atoms; ++i) {
     const auto &atom_neighbors = neighbor_graph.getNeighbors(i);

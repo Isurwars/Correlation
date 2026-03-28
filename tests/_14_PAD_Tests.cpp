@@ -83,7 +83,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
       for (const auto &center : t1) {
         for (const auto &t2 : center) {
           for (double angle : t2) {
-            if (std::abs(angle * 180.0 / M_PI - 90.0) < 1.0) {
+            if (std::abs(angle * 180.0 / correlation::math::constants::pi - 90.0) < 1.0) {
               found = true;
             }
           }
@@ -108,7 +108,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, PBCAngleDetection) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          if (std::abs(angle * 180.0 / M_PI - 90.0) < 1.0) {
+          if (std::abs(angle * 180.0 / correlation::math::constants::pi - 90.0) < 1.0) {
             found = true;
           }
         }
@@ -140,7 +140,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, SiTetrahedron_4Atoms) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          double degrees = angle * 180.0 / M_PI;
+          double degrees = angle * 180.0 / correlation::math::constants::pi;
           // std::cout << "Angle: " << degrees << " degrees\n";
           // Expected angle is acos(-1/3) ~ 109.47 degrees
           if (std::abs(degrees - 109.47) < 1.0) {
@@ -186,7 +186,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, Icosahedron_13Atoms) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          double deg = angle * 180.0 / M_PI;
+          double deg = angle * 180.0 / correlation::math::constants::pi;
           total_angles++;
 
           if (std::abs(deg - 63.43) < 1.0)
