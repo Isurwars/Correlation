@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/Constants.hpp"
 #include "calculators/PADCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "PhysicalData.hpp"
-#include "SIMDUtils.hpp"
+#include "math/PhysicalData.hpp"
+#include "math/SIMDUtils.hpp"
 #include <stdexcept>
 
 namespace {
@@ -52,7 +53,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
         partial_hist.assign(num_bins, 0.0);
 
         for (const auto &angle_rad : neighbors->angles()[j][i][k]) {
-          double angle_deg = angle_rad * constants::rad2deg;
+          double angle_deg = angle_rad * correlation::math::constants::rad2deg;
 
           if (angle_deg <= theta_cut + 1e-5) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
@@ -89,7 +90,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_theta.partials) {
-    simd_utils::scale_bins(partial.data(), normalization_factor, num_bins);
+    correlation::math::simd::scale_bins(partial.data(), normalization_factor, num_bins);
   }
   return f_theta;
 }

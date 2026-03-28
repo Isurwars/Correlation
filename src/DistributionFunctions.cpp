@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Smoothing.hpp"
+#include "math/Smoothing.hpp"
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
 #include "calculators/CNCalculator.hpp"
@@ -199,7 +199,7 @@ void DistributionFunctions::calculateAshcroftWeights() {
 //---------------------------- Smoothing Methods ----------------------------//
 //---------------------------------------------------------------------------//
 void DistributionFunctions::smooth(const std::string &name, double sigma,
-                                   KernelType kernel) {
+                                   correlation::math::smoothing::KernelType kernel) {
   if (histograms_.find(name) == histograms_.end()) {
     throw std::runtime_error("Histogram '" + name +
                              "' not found for smoothing.");
@@ -230,7 +230,8 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
       [&](const tbb::blocked_range<size_t> &r) {
         for (size_t i = r.begin(); i != r.end(); ++i)
           results[i] =
-              KernelSmoothing(hist.bins, *entries[i].second, min_sigma, kernel);
+              correlation::math::smoothing::KernelSmoothing(
+                  hist.bins, *entries[i].second, min_sigma, kernel);
       });
 
   // Serial writeback — map insertions are not thread-safe.
@@ -238,7 +239,8 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
     hist.smoothed_partials[*entries[i].first] = std::move(results[i]);
 }
 
-void DistributionFunctions::smoothAll(double sigma, KernelType kernel) {
+void DistributionFunctions::smoothAll(
+    double sigma, correlation::math::smoothing::KernelType kernel) {
   for (const auto &[name, histogram] : histograms_) {
     smooth(name, sigma, kernel);
   }

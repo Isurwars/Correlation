@@ -5,13 +5,14 @@
 
 #pragma once
 
+#include "math/Constants.hpp"
 #include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <stdexcept>
 #include <vector>
 
-#include "PhysicalData.hpp"
+namespace correlation::math::smoothing {
 
 // Enum class for type-safe selection of kernel types.
 // This prevents passing invalid integer values.
@@ -34,7 +35,8 @@ inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
 
   if (type == KernelType::Gaussian) {
     // 1 / (sigma * sqrt(2*pi))
-    const double a = 1.0 / (std::sqrt(2 * constants::pi) * sigma);
+    const double a =
+        1.0 / (std::sqrt(2 * correlation::math::constants::pi) * sigma);
     const double b = -1.0 / (2.0 * sigma * sigma);
     for (size_t i = 0; i < size; ++i) {
       // Calculate x in distance units (r units)
@@ -166,3 +168,5 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
 
   return smoothed;
 }
+
+} // namespace correlation::math::smoothing

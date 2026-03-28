@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/LinearAlgebra.hpp"
 #include "calculators/SteinhardtCalculator.hpp"
-#include "SpecialFunctions.hpp"
+#include "math/SpecialFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include <cmath>
 #include <stdexcept>
@@ -18,12 +19,12 @@ std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m,
                                                              double theta,
                                                              double phi) {
   if (m >= 0) {
-    double P_lm = special_math::sph_legendre(l, m, theta);
+    double P_lm = correlation::math::special::sph_legendre(l, m, theta);
     return P_lm * std::polar(1.0, m * phi);
   } else {
     // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
     int abs_m = -m;
-    double P_lm = special_math::sph_legendre(l, abs_m, theta);
+    double P_lm = correlation::math::special::sph_legendre(l, abs_m, theta);
     std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * phi);
     std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
     if (abs_m % 2 != 0) {
@@ -42,16 +43,16 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
   if (std::abs(m1) > j1 || std::abs(m2) > j2 || std::abs(m3) > j3)
     return 0.0;
 
-  double delta = special_math::factorial(j1 + j2 - j3) *
-                 special_math::factorial(j1 - j2 + j3) *
-                 special_math::factorial(-j1 + j2 + j3) /
-                 special_math::factorial(j1 + j2 + j3 + 1);
+  double delta = correlation::math::special::factorial(j1 + j2 - j3) *
+                 correlation::math::special::factorial(j1 - j2 + j3) *
+                 correlation::math::special::factorial(-j1 + j2 + j3) /
+                 correlation::math::special::factorial(j1 + j2 + j3 + 1);
   delta = std::sqrt(delta);
 
   double comp =
-      special_math::factorial(j1 - m1) * special_math::factorial(j1 + m1) *
-      special_math::factorial(j2 - m2) * special_math::factorial(j2 + m2) *
-      special_math::factorial(j3 - m3) * special_math::factorial(j3 + m3);
+      correlation::math::special::factorial(j1 - m1) * correlation::math::special::factorial(j1 + m1) *
+      correlation::math::special::factorial(j2 - m2) * correlation::math::special::factorial(j2 + m2) *
+      correlation::math::special::factorial(j3 - m3) * correlation::math::special::factorial(j3 + m3);
   comp = std::sqrt(comp);
 
   double phase1 = ((j1 - j2 - m3) % 2 != 0) ? -1.0 : 1.0;
@@ -62,12 +63,12 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
   double sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
     double k_phase = (k % 2 != 0) ? -1.0 : 1.0;
-    double denom = special_math::factorial(k) *
-                   special_math::factorial(j1 + j2 - j3 - k) *
-                   special_math::factorial(j1 - m1 - k) *
-                   special_math::factorial(j2 + m2 - k) *
-                   special_math::factorial(j3 - j2 + m1 + k) *
-                   special_math::factorial(j3 - j1 - m2 + k);
+    double denom = correlation::math::special::factorial(k) *
+                   correlation::math::special::factorial(j1 + j2 - j3 - k) *
+                   correlation::math::special::factorial(j1 - m1 - k) *
+                   correlation::math::special::factorial(j2 + m2 - k) *
+                   correlation::math::special::factorial(j3 - j2 + m1 + k) *
+                   correlation::math::special::factorial(j3 - j1 - m2 + k);
     sum += k_phase / denom;
   }
 
@@ -119,7 +120,7 @@ SteinhardtCalculator::calculate(const Cell &cell,
 
     for (const auto &neighbor : atom_neighbors) {
       // r_ij vector
-      linalg::Vector3<double> r_ij = neighbor.r_ij;
+      correlation::math::linalg::Vector3<double> r_ij = neighbor.r_ij;
       double r = neighbor.distance;
       if (r == 0)
         continue; // Safety check

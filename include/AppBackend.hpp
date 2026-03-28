@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "DistributionFunctions.hpp"
-#include "Smoothing.hpp"
+#include "math/Smoothing.hpp"
 #include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
 
@@ -25,8 +25,8 @@ struct AppDefaults {
   static constexpr double R_INT_MAX = 10.0;
   static constexpr double ANGLE_BIN_WIDTH = 1.0;
   static constexpr double SMOOTHING_SIGMA = 0.1;
-  static constexpr decltype(KernelType::Gaussian) SMOOTHING_KERNEL =
-      KernelType::Gaussian;
+  static constexpr decltype(correlation::math::smoothing::KernelType::Gaussian)
+      SMOOTHING_KERNEL = correlation::math::smoothing::KernelType::Gaussian;
   static constexpr double TIME_STEP = 1.0;
 
   static constexpr const char *MSG_RUNNING_ANALYSIS = "Running Analysis...";
@@ -68,7 +68,8 @@ struct ProgramOptions {
   // Maps calculator ID (e.g., "RDF", "SQ") to whether it should run.
   std::map<std::string, bool> active_calculators;
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;
-  KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL;
+  correlation::math::smoothing::KernelType smoothing_kernel =
+      AppDefaults::SMOOTHING_KERNEL;
   int min_frame = 0;
   int max_frame = -1;
   double time_step = AppDefaults::TIME_STEP;

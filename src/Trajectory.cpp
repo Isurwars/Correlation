@@ -4,7 +4,8 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "Trajectory.hpp"
-#include "PhysicalData.hpp"
+#include "math/LinearAlgebra.hpp"
+#include "math/PhysicalData.hpp"
 #include <cmath>
 #include <stdexcept>
 
@@ -63,9 +64,13 @@ void Trajectory::precomputeBondCutoffs() const {
   bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
 
   for (size_t i = 0; i < num_elements; ++i) {
-    const double radius_A = CovalentRadii::get(elements[i].symbol);
+    const double radius_A =
+        correlation::math::physics_data::getCovalentRadius(
+            elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
-      const double radius_B = CovalentRadii::get(elements[j].symbol);
+      const double radius_B =
+          correlation::math::physics_data::getCovalentRadius(
+              elements[j].symbol);
       const double max_bond_dist = (radius_A + radius_B) * 1.3;
       const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
       bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
@@ -100,8 +105,9 @@ void Trajectory::removeDuplicatedFrames() {
       const auto &last_atoms = last_unique_frame.atoms();
 
       for (size_t j = 0; j < current_atoms.size(); ++j) {
-        if (linalg::norm(current_atoms[j].position() -
-                         last_atoms[j].position()) > epsilon) {
+        if (correlation::math::linalg::norm(current_atoms[j].position() -
+                                            last_atoms[j].position()) >
+            epsilon) {
           is_duplicate = false;
           break;
         }
@@ -125,8 +131,9 @@ void Trajectory::calculateVelocities() {
   size_t num_frames = frames_.size();
   size_t num_atoms = frames_[0].atoms().size();
 
-  velocities_.assign(num_frames,
-                     std::vector<linalg::Vector3<double>>(num_atoms));
+  velocities_.assign(
+      num_frames,
+      std::vector<correlation::math::linalg::Vector3<double>>(num_atoms));
 
   if (time_step_ <= 0.0)
     return; // Cannot calculate valid velocities
@@ -134,30 +141,32 @@ void Trajectory::calculateVelocities() {
   for (size_t t = 0; t < num_frames; ++t) {
     // Determine simulation box for PBC (using current frame)
     const auto &lattice = frames_[t].latticeVectors();
-    linalg::Vector3<double> box = {lattice[0][0], lattice[1][1], lattice[2][2]};
+    correlation::math::linalg::Vector3<double> box = {
+        lattice[0][0], lattice[1][1], lattice[2][2]};
     // Check if box is valid (not zero), otherwise disable PBC correction
     bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
 
     // Helper lambda to get minimum image displacement
-    auto displacement = [&](const linalg::Vector3<double> &r2,
-                            const linalg::Vector3<double> &r1) {
-      linalg::Vector3<double> dr = r2 - r1;
-      if (use_pbc) {
-        if (dr[0] > box[0] * 0.5)
-          dr[0] -= box[0];
-        if (dr[0] < -box[0] * 0.5)
-          dr[0] += box[0];
-        if (dr[1] > box[1] * 0.5)
-          dr[1] -= box[1];
-        if (dr[1] < -box[1] * 0.5)
-          dr[1] += box[1];
-        if (dr[2] > box[2] * 0.5)
-          dr[2] -= box[2];
-        if (dr[2] < -box[2] * 0.5)
-          dr[2] += box[2];
-      }
-      return dr;
-    };
+    auto displacement =
+        [&](const correlation::math::linalg::Vector3<double> &r2,
+            const correlation::math::linalg::Vector3<double> &r1) {
+          correlation::math::linalg::Vector3<double> dr = r2 - r1;
+          if (use_pbc) {
+            if (dr[0] > box[0] * 0.5)
+              dr[0] -= box[0];
+            if (dr[0] < -box[0] * 0.5)
+              dr[0] += box[0];
+            if (dr[1] > box[1] * 0.5)
+              dr[1] -= box[1];
+            if (dr[1] < -box[1] * 0.5)
+              dr[1] += box[1];
+            if (dr[2] > box[2] * 0.5)
+              dr[2] -= box[2];
+            if (dr[2] < -box[2] * 0.5)
+              dr[2] += box[2];
+          }
+          return dr;
+        };
 
     for (size_t i = 0; i < num_atoms; ++i) {
       if (t == 0) {

@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/StructureFactorCalculator.hpp"
-#include "SIMDUtils.hpp"
+#include "math/SIMDUtils.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include <cmath>
 #include <map>
@@ -170,7 +170,7 @@ void StructureFactorCalculator::calculateFrame(
           const auto &q = q_vectors[qi];
           double cos_sum = 0.0, sin_sum = 0.0;
           
-          simd_utils::miller_phase_sum(
+          correlation::math::simd::miller_phase_sum(
               &E1_cos[(q.h + hmax) * N], &E1_sin[(q.h + hmax) * N],
               &E2_cos[(q.k + kmax) * N], &E2_sin[(q.k + kmax) * N],
               &E3_cos[(q.l + lmax) * N], &E3_sin[(q.l + lmax) * N],

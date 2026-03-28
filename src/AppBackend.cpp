@@ -9,7 +9,7 @@
 
 #include "FileReader.hpp"
 #include "FileWriter.hpp"
-#include "PhysicalData.hpp"
+#include "math/PhysicalData.hpp"
 #include <cmath>
 #include <limits>
 
@@ -69,7 +69,8 @@ double AppBackend::getRecommendedTimeStep() const {
 
   for (const auto &element : c->elements()) {
     try {
-      double mass = AtomicMasses::get(element.symbol);
+      double mass =
+          correlation::math::physics_data::getAtomicMass(element.symbol);
       if (mass < min_mass) {
         min_mass = mass;
         found = true;
@@ -269,7 +270,8 @@ std::string AppBackend::run_analysis() {
     std::cerr << "Analysis Exception: " << e.what() << std::endl;
     return err;
   } catch (...) {
-    std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
+    std::string err =
+        std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
     std::cerr << "Analysis Exception: Unknown error." << std::endl;
     return err;
   }

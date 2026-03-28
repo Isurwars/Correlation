@@ -148,7 +148,8 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
   opt.smoothing_sigma =
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
-  opt.smoothing_kernel = static_cast<KernelType>(ui_.get_smoothing_kernel());
+  opt.smoothing_kernel = static_cast<correlation::math::smoothing::KernelType>(
+      ui_.get_smoothing_kernel());
 
   // Frame Selection Logic:
   // - "Start" maps to 0

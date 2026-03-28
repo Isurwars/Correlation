@@ -5,7 +5,7 @@
 
 #include "calculators/DebyeS_KCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "SIMDUtils.hpp"
+#include "math/SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
@@ -137,7 +137,7 @@ void DebyeS_KCalculator::calculateFrame(DistributionFunctions &df,
           
           double sum = 0.0;
           if (!pair_data.distances.empty()) {
-             sum = simd_utils::debye_sum(Q, pair_data.distances.data(), scratch.data(), pair_data.distances.size());
+             sum = correlation::math::simd::debye_sum(Q, pair_data.distances.data(), scratch.data(), pair_data.distances.size());
           }
           
           double partial_sk = 0.0;

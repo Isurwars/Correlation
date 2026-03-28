@@ -5,15 +5,17 @@
 
 #pragma once
 
+#include "math/SpecialFunctions.hpp"
+#include "math/Constants.hpp"
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+namespace correlation::math::special {
 
-namespace special_math {
-
-// Inline helper for factorials up to a small number
+/**
+ * @brief Inline helper for factorials up to 20.
+ * Beyond 20, the values exceed the capacity of a 64-bit integer,
+ * so we return doubles for consistency.
+ */
 inline double factorial(int n) {
   static const double fact[] = {1.0,
                                 1.0,
@@ -46,7 +48,7 @@ inline double factorial(int n) {
 /**
  * @brief Computes the spherical associated Legendre polynomial
  * corresponding to std::sph_legendre from C++17.
- * 
+ *
  * Specifically, computes Y_l^m(theta, 0) without the Condon-Shortley phase.
  */
 inline double sph_legendre(int l, int m, double theta) {
@@ -55,7 +57,7 @@ inline double sph_legendre(int l, int m, double theta) {
   }
 
   double x = std::cos(theta);
-  
+
   // Compute P_m^m(x)
   double p_mm = 1.0;
   if (m > 0) {
@@ -68,7 +70,7 @@ inline double sph_legendre(int l, int m, double theta) {
   }
 
   double p_lm = p_mm;
-  
+
   if (l != m) {
     // Compute P_{m+1}^m(x)
     double p_mp1m = x * (2 * m + 1) * p_mm;
@@ -88,16 +90,10 @@ inline double sph_legendre(int l, int m, double theta) {
   }
 
   // Normalization factor
-  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * M_PI) * 
-                factorial(l - m) / factorial(l + m));
+  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * constants::pi) *
+                          factorial(l - m) / factorial(l + m));
 
-  // Note: Standard std::sph_legendre does NOT include the (-1)^m Condon-Shortley phase.
-  // P_m^m(x) initialized above DOES include the (-1)^m phase internally based on NR standard.
-  // Wait, the standard P_l^m already includes (-1)^m in some definitions, while others don't.
-  // For std::sph_legendre, it's defined without the Condon-Shortley phase. So we need to cancel
-  // it out if we applied it in P_mm.
-  // Our P_mm loop multiplies by -fact, implementing (-1)^m.
-  // To match std::sph_legendre, we multiply by (-1)^m.
+  // Cancel Condon-Shortley phase to match std::sph_legendre
   if (m % 2 != 0) {
     p_lm = -p_lm;
   }
@@ -105,4 +101,16 @@ inline double sph_legendre(int l, int m, double theta) {
   return p_lm * norm;
 }
 
-} // namespace special_math
+/**
+ * @brief Vectorized version of sph_legendre.
+ * Computes the polynomial for a range of angles.
+ */
+inline void sph_legendre_batch(int l, int m, const double *theta,
+                               double *results, size_t count) {
+  for (size_t i = 0; i < count; ++i) {
+    results[i] = sph_legendre(l, m, theta[i]);
+  }
+  // TODO: Add SIMD optimization for specific platforms if needed.
+}
+
+} // namespace correlation::math::special

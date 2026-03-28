@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "Atom.hpp"
-#include "LinearAlgebra.hpp"
+#include "math/LinearAlgebra.hpp"
 
 /**
  * @brief Represents the simulation cell (periodic box).
@@ -33,9 +33,9 @@ public:
    * @param b The second lattice vector.
    * @param c The third lattice vector.
    */
-  explicit Cell(const linalg::Vector3<double> &a,
-                const linalg::Vector3<double> &b,
-                const linalg::Vector3<double> &c);
+  explicit Cell(const correlation::math::linalg::Vector3<double> &a,
+                const correlation::math::linalg::Vector3<double> &b,
+                const correlation::math::linalg::Vector3<double> &c);
 
   /**
    * @brief Constructs a Cell from lattice parameters {a, b, c, alpha, beta,
@@ -79,7 +79,7 @@ public:
    * @brief Gets the lattice vectors as a 3x3 matrix.
    * @return Constant reference to the lattice vectors matrix.
    */
-  [[nodiscard]] const linalg::Matrix3<double> &latticeVectors() const noexcept {
+  [[nodiscard]] const correlation::math::linalg::Matrix3<double> &latticeVectors() const noexcept {
     return lattice_vectors_;
   }
 
@@ -88,7 +88,7 @@ public:
    * Useful for converting Cartesian coordinates to fractional coordinates.
    * @return Constant reference to the inverse lattice vectors matrix.
    */
-  [[nodiscard]] const linalg::Matrix3<double> &
+  [[nodiscard]] const correlation::math::linalg::Matrix3<double> &
   inverseLatticeVectors() const noexcept {
     return inverse_lattice_vectors_;
   }
@@ -151,7 +151,7 @@ public:
    * @return The newly created Atom object.
    */
   Atom &addAtom(const std::string &symbol,
-                const linalg::Vector3<double> &position);
+                const correlation::math::linalg::Vector3<double> &position);
 
   /**
    * @brief Applies periodic boundary conditions to all atom positions.
@@ -173,12 +173,12 @@ public:
   [[nodiscard]] double getEnergy() const { return energy_; }
 
 private:
-  void updateLattice(const linalg::Matrix3<double> &new_lattice);
+  void updateLattice(const correlation::math::linalg::Matrix3<double> &new_lattice);
   void updateLatticeParametersFromVectors();
   ElementID getOrRegisterElement(const std::string &symbol);
 
-  linalg::Matrix3<double> lattice_vectors_;
-  linalg::Matrix3<double> inverse_lattice_vectors_;
+  correlation::math::linalg::Matrix3<double> lattice_vectors_;
+  correlation::math::linalg::Matrix3<double> inverse_lattice_vectors_;
   std::array<double, 6> lattice_parameters_;
   double volume_{0.0};
   double energy_{0.0};

@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/Constants.hpp"
 #include <gtest/gtest.h>
 #include <vector>
 
 #include "../include/DynamicsAnalyzer.hpp"
-#include "../include/PhysicalData.hpp"
 
 TEST(_16_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)
@@ -48,7 +48,7 @@ TEST(_16_vDoS_Tests, PerfectSolidShowsSinglePeak) {
   for (size_t i = 0; i < num_frames; ++i) {
     double t_fs = i * dt;
     // 0.001 converts fs to ps for THz frequency
-    vacf[i] = std::cos(2.0 * constants::pi * target_nu_thz * t_fs * 0.001);
+    vacf[i] = std::cos(2.0 * correlation::math::constants::pi * target_nu_thz * t_fs * 0.001);
   }
 
   auto [frequencies, intensities_real, intensities_imag] =
@@ -85,7 +85,7 @@ TEST(_16_vDoS_Tests, IdealGasShowsImaginaryPeak) {
   // We choose an exponential decay coefficient 'a' such that the imaginary peak
   // is at 10.0 THz.
   double target_nu_peak = 10.0;
-  double a = 2.0 * constants::pi * target_nu_peak; // a in THz (ps^-1)
+  double a = 2.0 * correlation::math::constants::pi * target_nu_peak; // a in THz (ps^-1)
 
   for (size_t i = 0; i < num_frames; ++i) {
     double t_ps = i * dt * 0.001; // fs to ps

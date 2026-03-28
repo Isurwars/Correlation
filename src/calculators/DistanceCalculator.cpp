@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/LinearAlgebra.hpp"
 #include "calculators/DistanceCalculator.hpp"
 
 #include <cmath>
@@ -11,7 +12,7 @@
 #include <tbb/parallel_for_each.h>
 
 #include "DistributionFunctions.hpp"
-#include "SIMDUtils.hpp"
+#include "math/SIMDUtils.hpp"
 
 namespace calculators {
 
@@ -53,9 +54,9 @@ void DistanceCalculator::compute(
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 
-  linalg::Vector3<double> box_sidelengths = {linalg::norm(lattice[0]),
-                                             linalg::norm(lattice[1]),
-                                             linalg::norm(lattice[2])};
+  correlation::math::linalg::Vector3<double> box_sidelengths = {correlation::math::linalg::norm(lattice[0]),
+                                             correlation::math::linalg::norm(lattice[1]),
+                                             correlation::math::linalg::norm(lattice[2])};
   int nx =
       static_cast<int>(std::ceil(std::sqrt(cutoff_sq) / box_sidelengths.x()));
   int ny =
@@ -67,7 +68,7 @@ void DistanceCalculator::compute(
     ignore_periodic_self_interactions = false;
   }
 
-  std::vector<linalg::Vector3<double>> displacements;
+  std::vector<correlation::math::linalg::Vector3<double>> displacements;
   for (int i = -nx; i <= nx; ++i) {
     for (int j = -ny; j <= ny; ++j) {
       for (int k = -nz; k <= nz; ++k) {
@@ -116,7 +117,7 @@ void DistanceCalculator::compute(
         // all j in [i, atom_count) and run the SIMD squared-distance kernel.
         // -----------------------------------------------------------------------
         for (const auto &disp : displacements) {
-          const double disp_sq = linalg::norm_sq(disp);
+          const double disp_sq = correlation::math::linalg::norm_sq(disp);
           const bool zero_disp = (disp_sq < 1e-9);
 
           // Build SoA: shifted positions of atom_B candidates
@@ -128,9 +129,9 @@ void DistanceCalculator::compute(
           }
 
           // SIMD pass: compute dsq[jj] = ||atom_A - shifted_atom_B[jj]||²
-          simd_utils::PositionBlock block{soa_x.data(), soa_y.data(),
+          correlation::math::simd::PositionBlock block{soa_x.data(), soa_y.data(),
                                           soa_z.data(), j_count};
-          simd_utils::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
+          correlation::math::simd::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
 
           // -----------------------------------------------------------------------
           // Scalar post-processing: apply cutoff and record output
@@ -174,7 +175,7 @@ void DistanceCalculator::compute(
 
             if (d_sq <= max_bond_dist_sq) {
               // r_ij = (pos_B + disp) - pos_A  — already stored in soa arrays
-              linalg::Vector3<double> r_ij = {soa_x[jj] - ax, soa_y[jj] - ay,
+              correlation::math::linalg::Vector3<double> r_ij = {soa_x[jj] - ax, soa_y[jj] - ay,
                                               soa_z[jj] - az};
               neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
               if (i != j) {

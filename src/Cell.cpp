@@ -2,21 +2,22 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+#include "math/Constants.hpp"
 #include "Cell.hpp"
 
 #include <algorithm>
 #include <cmath>
 
 #include "Atom.hpp"
-#include "LinearAlgebra.hpp"
-#include "PhysicalData.hpp"
+#include "math/LinearAlgebra.hpp"
+#include "math/PhysicalData.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-Cell::Cell(const linalg::Vector3<double> &a, const linalg::Vector3<double> &b,
-           const linalg::Vector3<double> &c) {
-  updateLattice(linalg::Matrix3<double>(a, b, c));
+Cell::Cell(const correlation::math::linalg::Vector3<double> &a, const correlation::math::linalg::Vector3<double> &b,
+           const correlation::math::linalg::Vector3<double> &c) {
+  updateLattice(correlation::math::linalg::Matrix3<double>(a, b, c));
 }
 
 Cell::Cell(const std::array<double, 6> &params) {
@@ -52,9 +53,9 @@ Cell &Cell::operator=(Cell &&other) noexcept {
 void Cell::setLatticeParameters(std::array<double, 6> params) {
   lattice_parameters_ = params;
   const double a = params[0], b = params[1], c = params[2];
-  const double alpha = params[3] * constants::deg2rad;
-  const double beta = params[4] * constants::deg2rad;
-  const double gamma = params[5] * constants::deg2rad;
+  const double alpha = params[3] * correlation::math::constants::deg2rad;
+  const double beta = params[4] * correlation::math::constants::deg2rad;
+  const double gamma = params[5] * correlation::math::constants::deg2rad;
 
   if (a <= 0 || b <= 0 || c <= 0) {
     throw std::invalid_argument("Lattice parameters a, b, c must be positive.");
@@ -65,9 +66,9 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
 
   // Standard conversion from lattice parameters (lengths and angles) to lattice
   // vectors. We align 'a' with the x-axis, and 'b' in the xy-plane.
-  linalg::Vector3<double> v_a = {a, 0.0, 0.0};
-  linalg::Vector3<double> v_b = {b * cos_g, b * sin_g, 0.0};
-  linalg::Vector3<double> v_c = {
+  correlation::math::linalg::Vector3<double> v_a = {a, 0.0, 0.0};
+  correlation::math::linalg::Vector3<double> v_b = {b * cos_g, b * sin_g, 0.0};
+  correlation::math::linalg::Vector3<double> v_c = {
       c * std::cos(beta),
       c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g,
       0.0 // z-component is calculated from volume
@@ -79,17 +80,17 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
                 std::pow(std::cos(beta), 2) - std::pow(std::cos(gamma), 2) +
                 2.0 * std::cos(alpha) * std::cos(beta) * std::cos(gamma));
   v_c.z() = volume / (a * b * sin_g);
-  updateLattice(linalg::Matrix3<double>(v_a, v_b, v_c));
+  updateLattice(correlation::math::linalg::Matrix3<double>(v_a, v_b, v_c));
 }
 
-void Cell::updateLattice(const linalg::Matrix3<double> &new_lattice) {
+void Cell::updateLattice(const correlation::math::linalg::Matrix3<double> &new_lattice) {
   lattice_vectors_ = new_lattice;
-  volume_ = linalg::determinant(lattice_vectors_);
+  volume_ = correlation::math::linalg::determinant(lattice_vectors_);
   if (volume_ <= 1e-9) {
     throw std::logic_error("Cell volume must be positive.");
   }
   inverse_lattice_vectors_ =
-      linalg::transpose(linalg::invert(lattice_vectors_));
+      correlation::math::linalg::transpose(correlation::math::linalg::invert(lattice_vectors_));
   updateLatticeParametersFromVectors();
 }
 
@@ -98,9 +99,9 @@ void Cell::updateLatticeParametersFromVectors() {
   const auto &b_vec = lattice_vectors_[1];
   const auto &c_vec = lattice_vectors_[2];
 
-  const double a = linalg::norm(a_vec);
-  const double b = linalg::norm(b_vec);
-  const double c = linalg::norm(c_vec);
+  const double a = correlation::math::linalg::norm(a_vec);
+  const double b = correlation::math::linalg::norm(b_vec);
+  const double c = correlation::math::linalg::norm(c_vec);
 
   if (a < 1e-9 || b < 1e-9 || c < 1e-9) {
     // Handle case of zero-length vectors, though updateLattice would likely
@@ -109,16 +110,16 @@ void Cell::updateLatticeParametersFromVectors() {
     return;
   }
 
-  const double alpha_rad = std::acos(linalg::dot(b_vec, c_vec) / (b * c));
-  const double beta_rad = std::acos(linalg::dot(a_vec, c_vec) / (a * c));
-  const double gamma_rad = std::acos(linalg::dot(a_vec, b_vec) / (a * b));
+  const double alpha_rad = std::acos(correlation::math::linalg::dot(b_vec, c_vec) / (b * c));
+  const double beta_rad = std::acos(correlation::math::linalg::dot(a_vec, c_vec) / (a * c));
+  const double gamma_rad = std::acos(correlation::math::linalg::dot(a_vec, b_vec) / (a * b));
 
   lattice_parameters_ = {a,
                          b,
                          c,
-                         alpha_rad * constants::rad2deg,
-                         beta_rad * constants::rad2deg,
-                         gamma_rad * constants::rad2deg};
+                         alpha_rad * correlation::math::constants::rad2deg,
+                         beta_rad * correlation::math::constants::rad2deg,
+                         gamma_rad * correlation::math::constants::rad2deg};
 }
 
 //---------------------------------------------------------------------------//
@@ -145,7 +146,7 @@ ElementID Cell::getOrRegisterElement(const std::string &symbol) {
 }
 
 Atom &Cell::addAtom(const std::string &symbol,
-                    const linalg::Vector3<double> &position) {
+                    const correlation::math::linalg::Vector3<double> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
   auto element_it =
       std::find_if(elements_.begin(), elements_.end(), [&](const Element &e) {
@@ -159,7 +160,7 @@ Atom &Cell::addAtom(const std::string &symbol,
 
 void Cell::wrapPositions() {
   for (Atom &atom : atoms_) {
-    linalg::Vector3<double> frac_pos =
+    correlation::math::linalg::Vector3<double> frac_pos =
         inverse_lattice_vectors_ * atom.position();
     frac_pos.x() -= std::floor(frac_pos.x());
     frac_pos.y() -= std::floor(frac_pos.y());

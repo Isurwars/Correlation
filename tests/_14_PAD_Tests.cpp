@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/Constants.hpp"
 #include <cmath>
 #include <gtest/gtest.h>
 #include <numeric>
@@ -44,7 +45,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, CalculatePAD) {
   Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
   water.addAtom("H", {6, 5, 5});
-  double angRad = 104.5 * constants::deg2rad;
+  double angRad = 104.5 * correlation::math::constants::deg2rad;
   water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
 
   updateTrajectory(water);

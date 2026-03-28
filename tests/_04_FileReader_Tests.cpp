@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/LinearAlgebra.hpp"
+#include "math/Constants.hpp"
 #include <fstream>
 #include <gtest/gtest.h>
 
 #include "../include/Cell.hpp"
 #include "../include/FileReader.hpp"
 #include "../include/LinearAlgebra.hpp"
-#include "../include/PhysicalData.hpp"
 
 // A single test fixture for all File I/O related tests.
 // This fixture handles the creation and cleanup of temporary files needed for
@@ -266,12 +267,12 @@ TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
   bool na_origin_found = false;
   bool cl_center_found = false;
   for (const auto &atom : atoms) {
-    if (atom.element().symbol == "Na" && linalg::norm(atom.position()) < 1e-4) {
+    if (atom.element().symbol == "Na" && correlation::math::linalg::norm(atom.position()) < 1e-4) {
       na_origin_found = true;
     }
-    linalg::Vector3<double> expected_cl_pos = {2.82, 2.82, 2.82};
+    correlation::math::linalg::Vector3<double> expected_cl_pos = {2.82, 2.82, 2.82};
     if (atom.element().symbol == "Cl" &&
-        linalg::norm(atom.position() - expected_cl_pos) < 1e-4) {
+        correlation::math::linalg::norm(atom.position() - expected_cl_pos) < 1e-4) {
       cl_center_found = true;
     }
   }
@@ -369,20 +370,20 @@ TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
 
   // Check Frame 1
   const auto &f1 = frames[0];
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * constants::BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * constants::BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * correlation::math::constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * correlation::math::constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * correlation::math::constants::BOHR_TO_ANGSTROM);
   ASSERT_EQ(f1.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * constants::BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * correlation::math::constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * correlation::math::constants::BOHR_TO_ANGSTROM);
 
   // Check the energy is parsed correctly
   EXPECT_DOUBLE_EQ(f1.getEnergy(), -31.8206146);
 
   // Check Frame 2
   const auto &f2 = frames[1];
-  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * constants::BOHR_TO_ANGSTROM);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * correlation::math::constants::BOHR_TO_ANGSTROM);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * correlation::math::constants::BOHR_TO_ANGSTROM);
 }
 
 TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {

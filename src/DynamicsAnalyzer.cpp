@@ -4,8 +4,10 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "DynamicsAnalyzer.hpp"
-#include "PhysicalData.hpp"
-#include "FFTUtils.hpp"
+#include "math/Constants.hpp"
+#include "math/FFTUtils.hpp"
+#include "math/LinearAlgebra.hpp"
+#include "math/PhysicalData.hpp"
 #include <algorithm>
 #include <numeric>
 #include <tbb/enumerable_thread_specific.h>
@@ -51,7 +53,8 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   double total_mass = 0.0;
   for (size_t i = 0; i < num_atoms; ++i) {
     try {
-      masses[i] = AtomicMasses::get(atoms[i].element().symbol);
+      masses[i] = correlation::math::physics_data::getAtomicMass(
+          atoms[i].element().symbol);
     } catch (const std::out_of_range &) {
       masses[i] = 1.0;
     }
@@ -59,16 +62,19 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   }
 
   // Create corrected velocities (COM removed) mapped relative to start_frame
-  std::vector<std::vector<linalg::Vector3<double>>> atom_velocities(
-      num_atoms, std::vector<linalg::Vector3<double>>(num_frames));
+  std::vector<std::vector<correlation::math::linalg::Vector3<double>>>
+      atom_velocities(
+          num_atoms,
+          std::vector<correlation::math::linalg::Vector3<double>>(num_frames));
 
   for (size_t t = 0; t < num_frames; ++t) {
     const size_t traj_t = start_frame + t;
-    linalg::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
+    correlation::math::linalg::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
     for (size_t i = 0; i < num_atoms; ++i) {
       momentum_sum += velocities[traj_t][i] * masses[i];
     }
-    linalg::Vector3<double> v_com = momentum_sum / total_mass;
+    correlation::math::linalg::Vector3<double> v_com =
+        momentum_sum / total_mass;
 
     for (size_t i = 0; i < num_atoms; ++i) {
       atom_velocities[i][t] = velocities[traj_t][i] - v_com;
@@ -98,9 +104,9 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
       vz[t] = v_i[t].z();
     }
 
-    auto S2_x = FFTUtils::autocorrelate(vx);
-    auto S2_y = FFTUtils::autocorrelate(vy);
-    auto S2_z = FFTUtils::autocorrelate(vz);
+    auto S2_x = correlation::math::fft::autocorrelate(vx);
+    auto S2_y = correlation::math::fft::autocorrelate(vy);
+    auto S2_z = correlation::math::fft::autocorrelate(vz);
 
     for (int lag = 0; lag <= max_correlation_frames; ++lag) {
       local_vacf[lag] += S2_x[lag] + S2_y[lag] + S2_z[lag];
@@ -125,9 +131,9 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
 }
 
 std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
-                                                    int max_correlation_frames,
-                                                    size_t start_frame,
-                                                    size_t end_frame) {
+                                                   int max_correlation_frames,
+                                                   size_t start_frame,
+                                                   size_t end_frame) {
   const auto &frames = traj.getFrames();
   if (frames.empty()) {
     return {};
@@ -158,9 +164,10 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
   //   unwrapped[i][t] = sum_{s=0}^{t-1} min_image( r(s+1) - r(s) )
   // This correctly handles PBC crossings without needing explicit unwrapping.
 
-  std::vector<std::vector<linalg::Vector3<double>>> unwrapped(
-      num_atoms, std::vector<linalg::Vector3<double>>(num_frames,
-                                                       {0.0, 0.0, 0.0}));
+  std::vector<std::vector<correlation::math::linalg::Vector3<double>>>
+      unwrapped(num_atoms,
+                std::vector<correlation::math::linalg::Vector3<double>>(
+                    num_frames, {0.0, 0.0, 0.0}));
 
   for (size_t t = 1; t < num_frames; ++t) {
     const size_t tf = start_frame + t;
@@ -168,15 +175,15 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
 
     // Get box vectors for minimum image (use current frame)
     const auto &lattice = frames[tf].latticeVectors();
-    linalg::Vector3<double> box = {lattice[0][0], lattice[1][1],
-                                   lattice[2][2]};
+    correlation::math::linalg::Vector3<double> box = {
+        lattice[0][0], lattice[1][1], lattice[2][2]};
     bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
 
     const auto &curr_atoms = frames[tf].atoms();
     const auto &prev_atoms = frames[tf_prev].atoms();
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      linalg::Vector3<double> dr =
+      correlation::math::linalg::Vector3<double> dr =
           curr_atoms[i].position() - prev_atoms[i].position();
 
       // Apply minimum image convention
@@ -218,12 +225,12 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
       x[t] = u_i[t].x();
       y[t] = u_i[t].y();
       z[t] = u_i[t].z();
-      r_sq[t] = x[t]*x[t] + y[t]*y[t] + z[t]*z[t];
+      r_sq[t] = x[t] * x[t] + y[t] * y[t] + z[t] * z[t];
     }
 
-    auto S2_x = FFTUtils::autocorrelate(x);
-    auto S2_y = FFTUtils::autocorrelate(y);
-    auto S2_z = FFTUtils::autocorrelate(z);
+    auto S2_x = correlation::math::fft::autocorrelate(x);
+    auto S2_y = correlation::math::fft::autocorrelate(y);
+    auto S2_z = correlation::math::fft::autocorrelate(z);
 
     std::vector<double> S1(max_correlation_frames + 1, 0.0);
     S1[0] = 2.0 * std::accumulate(r_sq.begin(), r_sq.end(), 0.0);
@@ -255,7 +262,6 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
 
   return msd;
 }
-
 
 std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(
     const Trajectory &traj, int max_correlation_frames, size_t start_frame,
@@ -319,7 +325,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
 
     // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
     // scale)
-    double theta = 2.0 * constants::pi * nu * dt * 0.001;
+    double theta = 2.0 * correlation::math::constants::pi * nu * dt * 0.001;
 
     if (std::abs(theta) < 1e-6) {
       for (size_t i = 0; i < num_frames; ++i) {

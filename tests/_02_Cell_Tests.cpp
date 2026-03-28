@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/LinearAlgebra.hpp"
+#include "math/Constants.hpp"
 #include <cmath>
 #include <gtest/gtest.h>
 
 #include "../include/Cell.hpp"
-#include "../include/PhysicalData.hpp"
 
 // Test fixture for the Cell class.
 class _02_Cell_Tests : public ::testing::Test {
@@ -39,9 +40,9 @@ TEST_F(_02_Cell_Tests, ParameterConstructorForCubicCell) {
   const auto &vectors = cell.latticeVectors();
 
   // Assert
-  EXPECT_NEAR(linalg::norm(vectors[0]), 4.0, 1e-9);
-  EXPECT_NEAR(linalg::norm(vectors[1]), 4.0, 1e-9);
-  EXPECT_NEAR(linalg::norm(vectors[2]), 4.0, 1e-9);
+  EXPECT_NEAR(correlation::math::linalg::norm(vectors[0]), 4.0, 1e-9);
+  EXPECT_NEAR(correlation::math::linalg::norm(vectors[1]), 4.0, 1e-9);
+  EXPECT_NEAR(correlation::math::linalg::norm(vectors[2]), 4.0, 1e-9);
   EXPECT_NEAR(cell.volume(), 64.0, 1e-9);
 }
 
@@ -66,9 +67,9 @@ TEST_F(_02_Cell_Tests, VolumeForNonOrthogonalCellIsCorrect) {
   Cell cell(params);
 
   // Act: Expected volume from standard formula
-  const double cos_a = std::cos(80.0 * constants::deg2rad);
-  const double cos_b = std::cos(90.0 * constants::deg2rad);
-  const double cos_g = std::cos(100.0 * constants::deg2rad);
+  const double cos_a = std::cos(80.0 * correlation::math::constants::deg2rad);
+  const double cos_b = std::cos(90.0 * correlation::math::constants::deg2rad);
+  const double cos_g = std::cos(100.0 * correlation::math::constants::deg2rad);
   const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g +
                           2 * cos_a * cos_b * cos_g;
   const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);

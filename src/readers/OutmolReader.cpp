@@ -2,6 +2,7 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+#include "math/Constants.hpp"
 #include "readers/OutmolReader.hpp"
 #include "readers/ReaderFactory.hpp"
 
@@ -15,7 +16,7 @@
 
 #include "Cell.hpp"
 #include "Trajectory.hpp"
-#include "PhysicalData.hpp"
+#include "math/PhysicalData.hpp"
 
 namespace FileReader {
 
@@ -85,9 +86,9 @@ OutmolReader::read(const std::string &file_name,
       ss >> h3[0] >> h3[1] >> h3[2];
 
       for (int i = 0; i < 3; ++i) {
-        h1[i] *= constants::BOHR_TO_ANGSTROM;
-        h2[i] *= constants::BOHR_TO_ANGSTROM;
-        h3[i] *= constants::BOHR_TO_ANGSTROM;
+        h1[i] *= correlation::math::constants::BOHR_TO_ANGSTROM;
+        h2[i] *= correlation::math::constants::BOHR_TO_ANGSTROM;
+        h3[i] *= correlation::math::constants::BOHR_TO_ANGSTROM;
       }
       cell_parsed = true;
       continue;
@@ -105,8 +106,8 @@ OutmolReader::read(const std::string &file_name,
         std::string symbol;
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
-          tempCell.addAtom(symbol, {x * constants::BOHR_TO_ANGSTROM, y * constants::BOHR_TO_ANGSTROM,
-                                    z * constants::BOHR_TO_ANGSTROM});
+          tempCell.addAtom(symbol, {x * correlation::math::constants::BOHR_TO_ANGSTROM, y * correlation::math::constants::BOHR_TO_ANGSTROM,
+                                    z * correlation::math::constants::BOHR_TO_ANGSTROM});
         }
       }
       if (!tempCell.isEmpty()) {
@@ -131,8 +132,8 @@ OutmolReader::read(const std::string &file_name,
         if (ss >> df >> symbol >> x >> y >> z) {
           if (df == "df") {
             tempCell.addAtom(symbol,
-                             {x * constants::BOHR_TO_ANGSTROM, y * constants::BOHR_TO_ANGSTROM,
-                              z * constants::BOHR_TO_ANGSTROM});
+                             {x * correlation::math::constants::BOHR_TO_ANGSTROM, y * correlation::math::constants::BOHR_TO_ANGSTROM,
+                              z * correlation::math::constants::BOHR_TO_ANGSTROM});
           }
         }
       }

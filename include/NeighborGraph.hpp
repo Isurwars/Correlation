@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "math/LinearAlgebra.hpp"
 #include "Atom.hpp"
 #include <vector>
 
@@ -14,7 +15,7 @@
 struct Neighbor {
   AtomID index;                 ///< Index of the neighbor in the atom list
   double distance;              ///< Distance to the neighbor
-  linalg::Vector3<double> r_ij; ///< Vector from central atom to neighbor
+  correlation::math::linalg::Vector3<double> r_ij; ///< Vector from central atom to neighbor
 };
 
 class NeighborGraph {
@@ -23,7 +24,7 @@ public:
   explicit NeighborGraph(size_t node_count);
 
   void addDirectedEdge(size_t from, size_t to, double distance,
-                       const linalg::Vector3<double> &r_ij);
+                       const correlation::math::linalg::Vector3<double> &r_ij);
 
   [[nodiscard]] const std::vector<Neighbor> &
   getNeighbors(size_t atom_index) const;

@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Cell.hpp"
-#include "Smoothing.hpp"
+#include "math/Smoothing.hpp"
 #include "StructureAnalyzer.hpp"
 
 class Trajectory;
@@ -37,7 +37,8 @@ struct AnalysisSettings {
   }
   bool smoothing = true;
   double smoothing_sigma = 0.1;
-  KernelType smoothing_kernel = KernelType::Gaussian;
+  correlation::math::smoothing::KernelType smoothing_kernel =
+      correlation::math::smoothing::KernelType::Gaussian;
 };
 
 // A structure to hold all data related to a single histogram.
@@ -196,14 +197,17 @@ public:
    * @param kernel The smoothing kernel type.
    */
   void smooth(const std::string &name, double sigma,
-              KernelType kernel = KernelType::Gaussian);
+              correlation::math::smoothing::KernelType kernel =
+                  correlation::math::smoothing::KernelType::Gaussian);
 
   /**
    * @brief Smooths all available histograms.
    * @param sigma Smoothing width.
    * @param kernel The smoothing kernel type.
    */
-  void smoothAll(double sigma, KernelType kernel = KernelType::Gaussian);
+  void smoothAll(double sigma,
+                 correlation::math::smoothing::KernelType kernel =
+                     correlation::math::smoothing::KernelType::Gaussian);
 
   /**
    * @brief Uses an external StructureAnalyzer for neighborhood/bond info.

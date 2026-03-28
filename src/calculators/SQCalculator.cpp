@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "math/Constants.hpp"
 #include "calculators/SQCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "PhysicalData.hpp"
-#include "SIMDUtils.hpp"
+#include "math/PhysicalData.hpp"
+#include "math/SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
@@ -117,7 +118,7 @@ SQCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
       double window = 1.0;
       if (r > r_max_val * 0.8) {
         const double x = (r - 0.8 * r_max_val) / (0.2 * r_max_val);
-        window = std::cos(constants::pi * x / 2.0);
+        window = std::cos(correlation::math::constants::pi * x / 2.0);
       }
       integrand_terms[p][j] = r * (g_r_partial[j] - 1.0) * window * dr;
     }
@@ -138,13 +139,13 @@ SQCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
 
           for (size_t p = 0; p < num_partials; ++p) {
             const PartialInfo &pi = partials[p];
-            const double integral = simd_utils::sinc_integral(
+            const double integral = correlation::math::simd::sinc_integral(
                 Q, integrand_terms[p].data(), r_bins.data(),
                 sinqr.data(), j_max);
 
             const double delta_ij = pi.is_identical ? 1.0 : 0.0;
             const double sq_val =
-                delta_ij + (4.0 * constants::pi * total_rho *
+                delta_ij + (4.0 * correlation::math::constants::pi * total_rho *
                             pi.composition_sqrt_factor / Q) *
                                integral;
 

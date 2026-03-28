@@ -5,8 +5,9 @@
 
 #include "calculators/XRDCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "PhysicalData.hpp"
-#include "SIMDUtils.hpp"
+#include "math/Constants.hpp"
+#include "math/PhysicalData.hpp"
+#include "math/SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
@@ -22,10 +23,9 @@ void XRDCalculator::calculateFrame(DistributionFunctions &df,
   if (df.getAllHistograms().find("g(r)") == df.getAllHistograms().end()) {
     return; // g(r) hasn't been calculated yet
   }
-  df.addHistogram("XRD",
-                  calculate(df.getHistogram("g(r)"), df.cell(),
-                            df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
-                            settings.q_bin_width));
+  df.addHistogram("XRD", calculate(df.getHistogram("g(r)"), df.cell(),
+                                   df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
+                                   settings.q_bin_width));
 }
 
 Histogram
@@ -50,8 +50,9 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
   std::vector<double> intensities(num_bins, 0.0);
 
   auto get_f_Q = [](const std::string &symbol, double Q) -> double {
-    const auto &coeffs = AtomicFormFactors::get(symbol);
-    double s = Q / (4.0 * constants::pi);
+    const auto &coeffs =
+        correlation::math::physics_data::getAtomicFormFactors(symbol);
+    double s = Q / (4.0 * correlation::math::constants::pi);
     double s2 = s * s;
     double f = coeffs[8];
     for (size_t i = 0; i < 4; ++i) {
@@ -113,8 +114,10 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
           double two_theta = theta_min + i * bin_width;
           xrd_hist.bins[i] = two_theta;
 
-          double theta_rad = (two_theta / 2.0) * constants::deg2rad;
-          double Q = 4.0 * constants::pi * std::sin(theta_rad) / lambda;
+          double theta_rad =
+              (two_theta / 2.0) * correlation::math::constants::deg2rad;
+          double Q = 4.0 * correlation::math::constants::pi *
+                     std::sin(theta_rad) / lambda;
 
           if (Q < 1e-6) {
             intensities[i] = 0.0;
@@ -134,15 +137,15 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
             // from g_partial which may be shorter than r_bins)
             const size_t pcount = std::min(px.integrand->size(), r_count);
 
-            double integral = simd_utils::sinc_integral(
-                Q, px.integrand->data(), r_bins.data(),
-                sinqr.data(), pcount);
+            double integral = correlation::math::simd::sinc_integral(
+                Q, px.integrand->data(), r_bins.data(), sinqr.data(), pcount);
 
             double f1 = get_f_Q(px.sym1, Q);
             double f2 = get_f_Q(px.sym2, Q);
 
             I_Q += px.weight * f1 * f2 *
-                   (4.0 * constants::pi * total_rho / Q) * integral;
+                   (4.0 * correlation::math::constants::pi * total_rho / Q) *
+                   integral;
           }
 
           intensities[i] = I_Q;
