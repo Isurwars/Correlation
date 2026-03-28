@@ -5,6 +5,7 @@
 
 #include "DynamicsAnalyzer.hpp"
 #include "PhysicalData.hpp"
+#include "FFTUtils.hpp"
 #include <algorithm>
 #include <numeric>
 #include <tbb/enumerable_thread_specific.h>
@@ -83,8 +84,6 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   }
 
   // Thread-local VACF accumulators: eliminates all mutex acquisitions.
-  // Each TBB worker thread gets its own vector and accumulates freely;
-  // we merge once serially at the end.
   tbb::enumerable_thread_specific<std::vector<double>> ets_vacf(
       [&] { return std::vector<double>(max_correlation_frames + 1, 0.0); });
 
@@ -92,12 +91,19 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
     auto &local_vacf = ets_vacf.local();
     const auto &v_i = atom_velocities[i];
 
-    for (size_t t0 = 0; t0 < num_frames; ++t0) {
-      int max_lag = std::min(max_correlation_frames,
-                             static_cast<int>(num_frames - 1 - t0));
-      for (int lag = 0; lag <= max_lag; ++lag) {
-        local_vacf[lag] += linalg::dot(v_i[t0], v_i[t0 + lag]);
-      }
+    std::vector<double> vx(num_frames), vy(num_frames), vz(num_frames);
+    for (size_t t = 0; t < num_frames; ++t) {
+      vx[t] = v_i[t].x();
+      vy[t] = v_i[t].y();
+      vz[t] = v_i[t].z();
+    }
+
+    auto S2_x = FFTUtils::autocorrelate(vx);
+    auto S2_y = FFTUtils::autocorrelate(vy);
+    auto S2_z = FFTUtils::autocorrelate(vz);
+
+    for (int lag = 0; lag <= max_correlation_frames; ++lag) {
+      local_vacf[lag] += S2_x[lag] + S2_y[lag] + S2_z[lag];
     }
   });
 
@@ -188,13 +194,14 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
     }
   }
 
-  // --- Compute MSD by time-averaging over all origins ---
-  std::vector<double> msd(max_correlation_frames + 1, 0.0);
-  std::vector<int> counts(max_correlation_frames + 1, 0);
+  // --- Compute MSD using Wiener-Khinchin Fast Correlation Algorithm ---
+  // MSD(k) = (S1(k) - 2 * S2(k)) / (N - k)
+  // S1(k) = sum_{i=0}^{N-1-k} (r_{i+k}^2 + r_i^2)
+  // S2(k) = sum_{i=0}^{N-1-k} r_{i+k} * r_i
 
-  // Count time origins per lag analytically
+  std::vector<double> counts(max_correlation_frames + 1, 0.0);
   for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-    counts[lag] = static_cast<int>(num_frames) - lag;
+    counts[lag] = static_cast<double>(num_frames - lag);
   }
 
   // Thread-local MSD accumulators to eliminate mutex contention
@@ -205,25 +212,40 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
     auto &local_msd = ets_msd.local();
     const auto &u_i = unwrapped[i];
 
-    for (size_t t0 = 0; t0 < num_frames; ++t0) {
-      int max_lag = std::min(max_correlation_frames,
-                             static_cast<int>(num_frames - 1 - t0));
-      for (int lag = 1; lag <= max_lag; ++lag) {
-        linalg::Vector3<double> disp = u_i[t0 + lag] - u_i[t0];
-        local_msd[lag] += linalg::dot(disp, disp);
-      }
+    std::vector<double> x(num_frames), y(num_frames), z(num_frames);
+    std::vector<double> r_sq(num_frames);
+    for (size_t t = 0; t < num_frames; ++t) {
+      x[t] = u_i[t].x();
+      y[t] = u_i[t].y();
+      z[t] = u_i[t].z();
+      r_sq[t] = x[t]*x[t] + y[t]*y[t] + z[t]*z[t];
+    }
+
+    auto S2_x = FFTUtils::autocorrelate(x);
+    auto S2_y = FFTUtils::autocorrelate(y);
+    auto S2_z = FFTUtils::autocorrelate(z);
+
+    std::vector<double> S1(max_correlation_frames + 1, 0.0);
+    S1[0] = 2.0 * std::accumulate(r_sq.begin(), r_sq.end(), 0.0);
+    for (int k = 1; k <= max_correlation_frames; ++k) {
+      S1[k] = S1[k - 1] - r_sq[k - 1] - r_sq[num_frames - k];
+    }
+
+    for (int lag = 1; lag <= max_correlation_frames; ++lag) {
+      double S2 = S2_x[lag] + S2_y[lag] + S2_z[lag];
+      local_msd[lag] += (S1[lag] - 2.0 * S2);
     }
   });
 
+  std::vector<double> msd(max_correlation_frames + 1, 0.0);
   // Serial merge of per-thread accumulators
   for (const auto &local_msd : ets_msd) {
-    for (int lag = 0; lag <= max_correlation_frames; ++lag) {
+    for (int lag = 1; lag <= max_correlation_frames; ++lag) {
       msd[lag] += local_msd[lag];
     }
   }
 
   // Normalize by number of time origins and number of atoms
-  // lag=0 is always 0 by definition
   msd[0] = 0.0;
   for (int lag = 1; lag <= max_correlation_frames; ++lag) {
     if (counts[lag] > 0) {

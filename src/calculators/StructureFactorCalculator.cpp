@@ -8,7 +8,6 @@
 #include "calculators/CalculatorFactory.hpp"
 #include <cmath>
 #include <map>
-#include <mutex>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
@@ -83,7 +82,8 @@ void StructureFactorCalculator::calculateFrame(
       (b3_norm > 1e-10) ? static_cast<int>(std::ceil(q_max / b3_norm)) : 0;
 
   struct QVector {
-    double qx, qy, qz, qmag;
+    int h, k, l;
+    double qmag;
   };
   std::vector<QVector> q_vectors;
   q_vectors.reserve(8 * hmax * kmax * lmax + 1);
@@ -99,7 +99,7 @@ void StructureFactorCalculator::calculateFrame(
         const double qz = h * bx_z + k * by_z + l * bz_z;
         const double qmag_sq = qx * qx + qy * qy + qz * qz;
         if (qmag_sq <= q_max_sq) {
-          q_vectors.push_back({qx, qy, qz, std::sqrt(qmag_sq)});
+          q_vectors.push_back({h, k, l, std::sqrt(qmag_sq)});
         }
       }
     }
@@ -110,7 +110,8 @@ void StructureFactorCalculator::calculateFrame(
   }
 
   // -----------------------------------------------------------------------
-  // Precompute atom positions as SoA arrays.
+  // Precompute phase factors for Miller index decomposition
+  // arrays memory size: (2*hmax+1) * N doubles
   // -----------------------------------------------------------------------
   std::vector<double> xs(N), ys(N), zs(N);
   for (size_t j = 0; j < N; ++j) {
@@ -119,6 +120,26 @@ void StructureFactorCalculator::calculateFrame(
     ys[j] = pos.y();
     zs[j] = pos.z();
   }
+
+  auto precompute_phases = [&](int max_idx, double bx, double by, double bz, 
+                               std::vector<double>& E_cos, std::vector<double>& E_sin) {
+    E_cos.resize((2 * max_idx + 1) * N);
+    E_sin.resize((2 * max_idx + 1) * N);
+    for (int h = -max_idx; h <= max_idx; ++h) {
+      double* cos_h = &E_cos[(h + max_idx) * N];
+      double* sin_h = &E_sin[(h + max_idx) * N];
+      for (size_t j = 0; j < N; ++j) {
+        double phase = h * (bx * xs[j] + by * ys[j] + bz * zs[j]);
+        cos_h[j] = std::cos(phase);
+        sin_h[j] = std::sin(phase);
+      }
+    }
+  };
+
+  std::vector<double> E1_cos, E1_sin, E2_cos, E2_sin, E3_cos, E3_sin;
+  precompute_phases(hmax, bx_x, bx_y, bx_z, E1_cos, E1_sin);
+  precompute_phases(kmax, by_x, by_y, by_z, E2_cos, E2_sin);
+  precompute_phases(lmax, bz_x, bz_y, bz_z, E3_cos, E3_sin);
 
   // -----------------------------------------------------------------------
   // For each q-vector, compute S(q) = |rho(q)|^2 / N, then bin by |q|.
@@ -131,11 +152,9 @@ void StructureFactorCalculator::calculateFrame(
     s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
   }
 
-  // Accumulators: sum of S(q) and count of q-vectors per bin for averaging
   std::vector<double> sq_sum(num_q_bins, 0.0);
   std::vector<size_t> sq_count(num_q_bins, 0);
 
-  std::mutex bin_mutex;
   tbb::enumerable_thread_specific<
       std::pair<std::vector<double>, std::vector<size_t>>>
       local_ets([&] {
@@ -150,8 +169,13 @@ void StructureFactorCalculator::calculateFrame(
         for (size_t qi = range.begin(); qi != range.end(); ++qi) {
           const auto &q = q_vectors[qi];
           double cos_sum = 0.0, sin_sum = 0.0;
-          simd_utils::complex_exp_sum(q.qx, q.qy, q.qz, xs.data(), ys.data(),
-                                      zs.data(), N, cos_sum, sin_sum);
+          
+          simd_utils::miller_phase_sum(
+              &E1_cos[(q.h + hmax) * N], &E1_sin[(q.h + hmax) * N],
+              &E2_cos[(q.k + kmax) * N], &E2_sin[(q.k + kmax) * N],
+              &E3_cos[(q.l + lmax) * N], &E3_sin[(q.l + lmax) * N],
+              N, cos_sum, sin_sum);
+
           const double sq =
               (cos_sum * cos_sum + sin_sum * sin_sum) / static_cast<double>(N);
           const size_t bin = static_cast<size_t>(q.qmag / q_bin_width);
@@ -162,7 +186,6 @@ void StructureFactorCalculator::calculateFrame(
         }
       });
 
-  // Merge thread-local results
   local_ets.combine_each([&](const auto &local) {
     const auto &[local_sum, local_count] = local;
     for (size_t i = 0; i < num_q_bins; ++i) {
@@ -171,7 +194,6 @@ void StructureFactorCalculator::calculateFrame(
     }
   });
 
-  // Average S(q) over all q-vectors in each bin
   std::vector<double> total_sq(num_q_bins, 0.0);
   for (size_t i = 0; i < num_q_bins; ++i) {
     if (sq_count[i] > 0) {

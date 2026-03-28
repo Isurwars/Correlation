@@ -630,6 +630,124 @@ inline void complex_exp_sum(double qx, double qy, double qz,
 }
 
 // ---------------------------------------------------------------------------
+// miller_phase_sum kernel
+//
+// Computes: sum_j exp(i * (phase1_j + phase2_j + phase3_j))
+// by taking precomputed exp(i phase1), exp(i phase2), exp(i phase3) arrays.
+// ---------------------------------------------------------------------------
+
+#if defined(CORRELATION_SIMD_AVX512)
+
+inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double *CORRELATION_RESTRICT s1,
+                             const double *CORRELATION_RESTRICT c2, const double *CORRELATION_RESTRICT s2,
+                             const double *CORRELATION_RESTRICT c3, const double *CORRELATION_RESTRICT s3,
+                             std::size_t count, double &c_sum, double &s_sum) noexcept {
+  __m512d vc_sum = _mm512_setzero_pd();
+  __m512d vs_sum = _mm512_setzero_pd();
+  std::size_t i = 0;
+  for (; i + 8 <= count; i += 8) {
+    __m512d vc1 = _mm512_loadu_pd(c1 + i);
+    __m512d vs1 = _mm512_loadu_pd(s1 + i);
+    __m512d vc2 = _mm512_loadu_pd(c2 + i);
+    __m512d vs2 = _mm512_loadu_pd(s2 + i);
+    __m512d vc3 = _mm512_loadu_pd(c3 + i);
+    __m512d vs3 = _mm512_loadu_pd(s3 + i);
+
+    // c12 = c1*c2 - s1*s2
+    __m512d vc12 = _mm512_fmsub_pd(vc1, vc2, _mm512_mul_pd(vs1, vs2));
+    // s12 = s1*c2 + c1*s2
+    __m512d vs12 = _mm512_fmadd_pd(vs1, vc2, _mm512_mul_pd(vc1, vs2));
+
+    // c123 = c12*c3 - s12*s3
+    __m512d vc123 = _mm512_fmsub_pd(vc12, vc3, _mm512_mul_pd(vs12, vs3));
+    // s123 = s12*c3 + c12*s3
+    __m512d vs123 = _mm512_fmadd_pd(vs12, vc3, _mm512_mul_pd(vc12, vs3));
+
+    vc_sum = _mm512_add_pd(vc_sum, vc123);
+    vs_sum = _mm512_add_pd(vs_sum, vs123);
+  }
+  c_sum = _mm512_reduce_add_pd(vc_sum);
+  s_sum = _mm512_reduce_add_pd(vs_sum);
+  for (; i < count; ++i) {
+    double c12 = c1[i]*c2[i] - s1[i]*s2[i];
+    double s12 = s1[i]*c2[i] + c1[i]*s2[i];
+    c_sum += c12*c3[i] - s12*s3[i];
+    s_sum += s12*c3[i] + c12*s3[i];
+  }
+}
+
+#elif defined(CORRELATION_SIMD_AVX2)
+
+inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double *CORRELATION_RESTRICT s1,
+                             const double *CORRELATION_RESTRICT c2, const double *CORRELATION_RESTRICT s2,
+                             const double *CORRELATION_RESTRICT c3, const double *CORRELATION_RESTRICT s3,
+                             std::size_t count, double &c_sum, double &s_sum) noexcept {
+  __m256d vc_sum = _mm256_setzero_pd();
+  __m256d vs_sum = _mm256_setzero_pd();
+  std::size_t i = 0;
+  for (; i + 4 <= count; i += 4) {
+    __m256d vc1 = _mm256_loadu_pd(c1 + i);
+    __m256d vs1 = _mm256_loadu_pd(s1 + i);
+    __m256d vc2 = _mm256_loadu_pd(c2 + i);
+    __m256d vs2 = _mm256_loadu_pd(s2 + i);
+    __m256d vc3 = _mm256_loadu_pd(c3 + i);
+    __m256d vs3 = _mm256_loadu_pd(s3 + i);
+
+#if defined(__FMA__)
+    __m256d vc12 = _mm256_fmsub_pd(vc1, vc2, _mm256_mul_pd(vs1, vs2));
+    __m256d vs12 = _mm256_fmadd_pd(vs1, vc2, _mm256_mul_pd(vc1, vs2));
+    __m256d vc123 = _mm256_fmsub_pd(vc12, vc3, _mm256_mul_pd(vs12, vs3));
+    __m256d vs123 = _mm256_fmadd_pd(vs12, vc3, _mm256_mul_pd(vc12, vs3));
+#else
+    __m256d vc12 = _mm256_sub_pd(_mm256_mul_pd(vc1, vc2), _mm256_mul_pd(vs1, vs2));
+    __m256d vs12 = _mm256_add_pd(_mm256_mul_pd(vs1, vc2), _mm256_mul_pd(vc1, vs2));
+    __m256d vc123 = _mm256_sub_pd(_mm256_mul_pd(vc12, vc3), _mm256_mul_pd(vs12, vs3));
+    __m256d vs123 = _mm256_add_pd(_mm256_mul_pd(vs12, vc3), _mm256_mul_pd(vc12, vs3));
+#endif
+
+    vc_sum = _mm256_add_pd(vc_sum, vc123);
+    vs_sum = _mm256_add_pd(vs_sum, vs123);
+  }
+  
+  __m128d clo = _mm256_castpd256_pd128(vc_sum);
+  __m128d chi = _mm256_extractf128_pd(vc_sum, 1);
+  __m128d c_sum2 = _mm_add_pd(clo, chi);
+  __m128d c_sum1 = _mm_hadd_pd(c_sum2, c_sum2);
+  c_sum = _mm_cvtsd_f64(c_sum1);
+
+  __m128d slo = _mm256_castpd256_pd128(vs_sum);
+  __m128d shi = _mm256_extractf128_pd(vs_sum, 1);
+  __m128d s_sum2 = _mm_add_pd(slo, shi);
+  __m128d s_sum1 = _mm_hadd_pd(s_sum2, s_sum2);
+  s_sum = _mm_cvtsd_f64(s_sum1);
+
+  for (; i < count; ++i) {
+    double c12 = c1[i]*c2[i] - s1[i]*s2[i];
+    double s12 = s1[i]*c2[i] + c1[i]*s2[i];
+    c_sum += c12*c3[i] - s12*s3[i];
+    s_sum += s12*c3[i] + c12*s3[i];
+  }
+}
+
+#else
+
+inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double *CORRELATION_RESTRICT s1,
+                             const double *CORRELATION_RESTRICT c2, const double *CORRELATION_RESTRICT s2,
+                             const double *CORRELATION_RESTRICT c3, const double *CORRELATION_RESTRICT s3,
+                             std::size_t count, double &c_sum, double &s_sum) noexcept {
+  c_sum = 0.0;
+  s_sum = 0.0;
+  for (std::size_t i = 0; i < count; ++i) {
+    double c12 = c1[i]*c2[i] - s1[i]*s2[i];
+    double s12 = s1[i]*c2[i] + c1[i]*s2[i];
+    c_sum += c12*c3[i] - s12*s3[i];
+    s_sum += s12*c3[i] + c12*s3[i];
+  }
+}
+
+#endif
+
+// ---------------------------------------------------------------------------
 // Report which SIMD level was compiled in (for logging/debugging)
 // ---------------------------------------------------------------------------
 inline const char *simd_level_string() noexcept {
