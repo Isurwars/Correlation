@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace correlation::math::physics {
@@ -549,13 +550,17 @@ inline const ElementData *find(const std::string &symbol) {
         3.657525, 96.064972, 3.005326}},
   };
 
-  // Use linear search for now, should be fine for 100 elements but faster
-  // than map
-  for (const auto &data : database) {
-    if (symbol == data.symbol)
-      return &data;
-  }
-  return nullptr;
+  // Build a symbol -> pointer map once; O(1) amortized lookups thereafter.
+  static const std::unordered_map<std::string, const ElementData *> index = [&] {
+    std::unordered_map<std::string, const ElementData *> m;
+    m.reserve(database.size());
+    for (const auto &d : database)
+      m.emplace(d.symbol, &d);
+    return m;
+  }();
+
+  auto it = index.find(symbol);
+  return it != index.end() ? it->second : nullptr;
 }
 } // namespace detail
 
