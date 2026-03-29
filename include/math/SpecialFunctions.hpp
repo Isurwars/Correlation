@@ -6,6 +6,7 @@
 #pragma once
 
 #include "math/Constants.hpp"
+#include "math/SIMDConfig.hpp"
 #include <cmath>
 
 namespace correlation::math::special {
@@ -104,12 +105,121 @@ inline double sph_legendre(int l, int m, double theta) {
  * @brief Vectorized version of sph_legendre.
  * Computes the polynomial for a range of angles.
  */
-inline void sph_legendre_batch(int l, int m, const double *theta,
-                               double *results, size_t count) {
+inline void sph_legendre_batch(int l, int m, const double *CORRELATION_RESTRICT theta,
+                               double *CORRELATION_RESTRICT results, size_t count) {
+  if (m < 0 || m > l) {
+    for (size_t i = 0; i < count; ++i) {
+      results[i] = 0.0;
+    }
+    return;
+  }
+
+  // Precompute normalization factor and Condon-Shortley phase
+  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * constants::pi) *
+                          factorial(l - m) / factorial(l + m));
+  if (m % 2 != 0) {
+    norm = -norm;
+  }
+
+#if defined(CORRELATION_SIMD_AVX512)
+  size_t i = 0;
+  const __m512d vnorm = _mm512_set1_pd(norm);
+  for (; i + 8 <= count; i += 8) {
+    double x_arr[8], somx2_arr[8];
+    for (int k = 0; k < 8; ++k) {
+      x_arr[k] = std::cos(theta[i + k]);
+      somx2_arr[k] = std::sqrt((1.0 - x_arr[k]) * (1.0 + x_arr[k]));
+    }
+    __m512d vx = _mm512_loadu_pd(x_arr);
+    __m512d vsomx2 = _mm512_loadu_pd(somx2_arr);
+
+    __m512d vp_mm = _mm512_set1_pd(1.0);
+    if (m > 0) {
+      double fact = 1.0;
+      for (int k = 1; k <= m; ++k) {
+        vp_mm = _mm512_mul_pd(vp_mm, _mm512_mul_pd(_mm512_set1_pd(-fact), vsomx2));
+        fact += 2.0;
+      }
+    }
+
+    __m512d vp_lm = vp_mm;
+    if (l != m) {
+      __m512d vp_mp1m = _mm512_mul_pd(_mm512_mul_pd(vx, _mm512_set1_pd(2.0 * m + 1.0)), vp_mm);
+      vp_lm = vp_mp1m;
+
+      if (l > m + 1) {
+        __m512d vp_ll_2 = vp_mm;
+        __m512d vp_ll_1 = vp_mp1m;
+
+        for (int ll = m + 2; ll <= l; ++ll) {
+          __m512d term1 = _mm512_mul_pd(_mm512_mul_pd(vx, _mm512_set1_pd(2.0 * ll - 1.0)), vp_ll_1);
+          __m512d term2 = _mm512_mul_pd(_mm512_set1_pd(ll + m - 1.0), vp_ll_2);
+          __m512d diff = _mm512_sub_pd(term1, term2);
+          vp_lm = _mm512_mul_pd(diff, _mm512_set1_pd(1.0 / (ll - m)));
+          vp_ll_2 = vp_ll_1;
+          vp_ll_1 = vp_lm;
+        }
+      }
+    }
+    
+    __m512d vres = _mm512_mul_pd(vp_lm, vnorm);
+    _mm512_storeu_pd(results + i, vres);
+  }
+  for (; i < count; ++i) {
+    results[i] = sph_legendre(l, m, theta[i]);
+  }
+#elif defined(CORRELATION_SIMD_AVX2)
+  size_t i = 0;
+  const __m256d vnorm = _mm256_set1_pd(norm);
+  for (; i + 4 <= count; i += 4) {
+    double x_arr[4], somx2_arr[4];
+    for (int k = 0; k < 4; ++k) {
+      x_arr[k] = std::cos(theta[i + k]);
+      somx2_arr[k] = std::sqrt((1.0 - x_arr[k]) * (1.0 + x_arr[k]));
+    }
+    __m256d vx = _mm256_loadu_pd(x_arr);
+    __m256d vsomx2 = _mm256_loadu_pd(somx2_arr);
+
+    __m256d vp_mm = _mm256_set1_pd(1.0);
+    if (m > 0) {
+      double fact = 1.0;
+      for (int k = 1; k <= m; ++k) {
+        vp_mm = _mm256_mul_pd(vp_mm, _mm256_mul_pd(_mm256_set1_pd(-fact), vsomx2));
+        fact += 2.0;
+      }
+    }
+
+    __m256d vp_lm = vp_mm;
+    if (l != m) {
+      __m256d vp_mp1m = _mm256_mul_pd(_mm256_mul_pd(vx, _mm256_set1_pd(2.0 * m + 1.0)), vp_mm);
+      vp_lm = vp_mp1m;
+
+      if (l > m + 1) {
+        __m256d vp_ll_2 = vp_mm;
+        __m256d vp_ll_1 = vp_mp1m;
+
+        for (int ll = m + 2; ll <= l; ++ll) {
+          __m256d term1 = _mm256_mul_pd(_mm256_mul_pd(vx, _mm256_set1_pd(2.0 * ll - 1.0)), vp_ll_1);
+          __m256d term2 = _mm256_mul_pd(_mm256_set1_pd(ll + m - 1.0), vp_ll_2);
+          __m256d diff = _mm256_sub_pd(term1, term2);
+          vp_lm = _mm256_mul_pd(diff, _mm256_set1_pd(1.0 / (ll - m)));
+          vp_ll_2 = vp_ll_1;
+          vp_ll_1 = vp_lm;
+        }
+      }
+    }
+
+    __m256d vres = _mm256_mul_pd(vp_lm, vnorm);
+    _mm256_storeu_pd(results + i, vres);
+  }
+  for (; i < count; ++i) {
+    results[i] = sph_legendre(l, m, theta[i]);
+  }
+#else
   for (size_t i = 0; i < count; ++i) {
     results[i] = sph_legendre(l, m, theta[i]);
   }
-  // TODO: Add SIMD optimization for specific platforms if needed.
+#endif
 }
 
 } // namespace correlation::math::special
