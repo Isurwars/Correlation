@@ -2,20 +2,20 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "math/Constants.hpp"
+
 #include "Cell.hpp"
+#include "Atom.hpp"
+#include "math/Constants.hpp"
+#include "math/LinearAlgebra.hpp"
 
 #include <algorithm>
 #include <cmath>
 
-#include "Atom.hpp"
-#include "math/LinearAlgebra.hpp"
-#include "math/PhysicalData.hpp"
-
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-Cell::Cell(const correlation::math::linalg::Vector3<double> &a, const correlation::math::linalg::Vector3<double> &b,
+Cell::Cell(const correlation::math::linalg::Vector3<double> &a,
+           const correlation::math::linalg::Vector3<double> &b,
            const correlation::math::linalg::Vector3<double> &c) {
   updateLattice(correlation::math::linalg::Matrix3<double>(a, b, c));
 }
@@ -53,9 +53,9 @@ Cell &Cell::operator=(Cell &&other) noexcept {
 void Cell::setLatticeParameters(std::array<double, 6> params) {
   lattice_parameters_ = params;
   const double a = params[0], b = params[1], c = params[2];
-  const double alpha = params[3] * correlation::math::constants::deg2rad;
-  const double beta = params[4] * correlation::math::constants::deg2rad;
-  const double gamma = params[5] * correlation::math::constants::deg2rad;
+  const double alpha = params[3] * correlation::math::constants::deg_to_rad;
+  const double beta = params[4] * correlation::math::constants::deg_to_rad;
+  const double gamma = params[5] * correlation::math::constants::deg_to_rad;
 
   if (a <= 0 || b <= 0 || c <= 0) {
     throw std::invalid_argument("Lattice parameters a, b, c must be positive.");
@@ -83,14 +83,15 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
   updateLattice(correlation::math::linalg::Matrix3<double>(v_a, v_b, v_c));
 }
 
-void Cell::updateLattice(const correlation::math::linalg::Matrix3<double> &new_lattice) {
+void Cell::updateLattice(
+    const correlation::math::linalg::Matrix3<double> &new_lattice) {
   lattice_vectors_ = new_lattice;
   volume_ = correlation::math::linalg::determinant(lattice_vectors_);
   if (volume_ <= 1e-9) {
     throw std::logic_error("Cell volume must be positive.");
   }
-  inverse_lattice_vectors_ =
-      correlation::math::linalg::transpose(correlation::math::linalg::invert(lattice_vectors_));
+  inverse_lattice_vectors_ = correlation::math::linalg::transpose(
+      correlation::math::linalg::invert(lattice_vectors_));
   updateLatticeParametersFromVectors();
 }
 
@@ -110,16 +111,19 @@ void Cell::updateLatticeParametersFromVectors() {
     return;
   }
 
-  const double alpha_rad = std::acos(correlation::math::linalg::dot(b_vec, c_vec) / (b * c));
-  const double beta_rad = std::acos(correlation::math::linalg::dot(a_vec, c_vec) / (a * c));
-  const double gamma_rad = std::acos(correlation::math::linalg::dot(a_vec, b_vec) / (a * b));
+  const double alpha_rad =
+      std::acos(correlation::math::linalg::dot(b_vec, c_vec) / (b * c));
+  const double beta_rad =
+      std::acos(correlation::math::linalg::dot(a_vec, c_vec) / (a * c));
+  const double gamma_rad =
+      std::acos(correlation::math::linalg::dot(a_vec, b_vec) / (a * b));
 
   lattice_parameters_ = {a,
                          b,
                          c,
-                         alpha_rad * correlation::math::constants::rad2deg,
-                         beta_rad * correlation::math::constants::rad2deg,
-                         gamma_rad * correlation::math::constants::rad2deg};
+                         alpha_rad * correlation::math::constants::rad_to_deg,
+                         beta_rad * correlation::math::constants::rad_to_deg,
+                         gamma_rad * correlation::math::constants::rad_to_deg};
 }
 
 //---------------------------------------------------------------------------//
@@ -145,8 +149,9 @@ ElementID Cell::getOrRegisterElement(const std::string &symbol) {
   return new_id;
 }
 
-Atom &Cell::addAtom(const std::string &symbol,
-                    const correlation::math::linalg::Vector3<double> &position) {
+Atom &
+Cell::addAtom(const std::string &symbol,
+              const correlation::math::linalg::Vector3<double> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
   auto element_it =
       std::find_if(elements_.begin(), elements_.end(), [&](const Element &e) {

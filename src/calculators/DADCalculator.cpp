@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "math/Constants.hpp"
 #include "calculators/DADCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "math/PhysicalData.hpp"
+#include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
+
 #include <stdexcept>
 
 namespace {
@@ -65,7 +65,8 @@ Histogram DADCalculator::calculate(const Cell &cell,
           }
 
           for (const auto &angle_rad : angles_rad) {
-            double angle_deg = angle_rad * correlation::math::constants::rad2deg;
+            double angle_deg =
+                angle_rad * correlation::math::constants::rad_to_deg;
 
             // clamp angle into [-180, 180]
             while (angle_deg <= -180.0)
@@ -110,7 +111,8 @@ Histogram DADCalculator::calculate(const Cell &cell,
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_dihedral.partials) {
-    correlation::math::simd::scale_bins(partial.data(), normalization_factor, num_bins);
+    correlation::math::simd::scale_bins(partial.data(), normalization_factor,
+                                        num_bins);
   }
   return f_dihedral;
 }

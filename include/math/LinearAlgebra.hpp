@@ -36,9 +36,11 @@ public:
   constexpr T &x() noexcept { return data_[0]; }
   constexpr T y() const noexcept { return data_[1]; }
   constexpr T &y() noexcept { return data_[1]; }
-  constexpr T &operator()(std::size_t i) noexcept { return data_[i]; }
   constexpr T z() const noexcept { return data_[2]; }
   constexpr T &z() noexcept { return data_[2]; }
+
+  constexpr T &operator()(std::size_t i) noexcept { return data_[i]; }
+  constexpr T operator()(std::size_t i) const noexcept { return data_[i]; }
 
   // True if every component is exactly zero
   constexpr bool empty() const noexcept {

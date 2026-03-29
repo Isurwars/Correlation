@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "math/LinearAlgebra.hpp"
 #include "math/Constants.hpp"
+#include "math/LinearAlgebra.hpp"
 #include <cmath>
 #include <gtest/gtest.h>
 
@@ -67,9 +67,12 @@ TEST_F(_02_Cell_Tests, VolumeForNonOrthogonalCellIsCorrect) {
   Cell cell(params);
 
   // Act: Expected volume from standard formula
-  const double cos_a = std::cos(80.0 * correlation::math::constants::deg2rad);
-  const double cos_b = std::cos(90.0 * correlation::math::constants::deg2rad);
-  const double cos_g = std::cos(100.0 * correlation::math::constants::deg2rad);
+  const double cos_a =
+      std::cos(80.0 * correlation::math::constants::deg_to_rad);
+  const double cos_b =
+      std::cos(90.0 * correlation::math::constants::deg_to_rad);
+  const double cos_g =
+      std::cos(100.0 * correlation::math::constants::deg_to_rad);
   const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g +
                           2 * cos_a * cos_b * cos_g;
   const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);

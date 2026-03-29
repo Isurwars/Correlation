@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "math/Constants.hpp"
 #include "calculators/VDOSCalculator.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include "DynamicsAnalyzer.hpp"
-#include "math/PhysicalData.hpp"
+#include "calculators/CalculatorFactory.hpp"
+#include "math/Constants.hpp"
+
 #include <stdexcept>
 
 namespace {
@@ -15,9 +15,9 @@ bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<VDOSCalculator>());
 } // namespace
 
-void VDOSCalculator::calculateTrajectory(DistributionFunctions &df,
-                                          const Trajectory &traj,
-                                          const AnalysisSettings &settings) const {
+void VDOSCalculator::calculateTrajectory(
+    DistributionFunctions &df, const Trajectory &traj,
+    const AnalysisSettings &settings) const {
   const auto &all = df.getAllHistograms();
   if (all.find("VACF") == all.end()) {
     return; // VACF must be computed first
@@ -51,17 +51,19 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
 
   for (size_t i = num_points - 1; i > 0; --i) {
     combined_frequencies.push_back(-frequencies[i]);
-    combined_frequencies_cmInv.push_back(-frequencies[i] *
-                                         correlation::math::constants::THz_to_cmInv);
-    combined_frequencies_meV.push_back(-frequencies[i] * correlation::math::constants::THz_to_meV);
+    combined_frequencies_cmInv.push_back(
+        -frequencies[i] * correlation::math::constants::thz_to_cminv);
+    combined_frequencies_meV.push_back(
+        -frequencies[i] * correlation::math::constants::thz_to_mev);
     combined_intensities.push_back(intensities_imag[i]);
   }
 
   for (size_t i = 0; i < num_points; ++i) {
     combined_frequencies.push_back(frequencies[i]);
-    combined_frequencies_cmInv.push_back(frequencies[i] *
-                                         correlation::math::constants::THz_to_cmInv);
-    combined_frequencies_meV.push_back(frequencies[i] * correlation::math::constants::THz_to_meV);
+    combined_frequencies_cmInv.push_back(
+        frequencies[i] * correlation::math::constants::thz_to_cminv);
+    combined_frequencies_meV.push_back(
+        frequencies[i] * correlation::math::constants::thz_to_mev);
     combined_intensities.push_back(intensities_real[i]);
   }
 

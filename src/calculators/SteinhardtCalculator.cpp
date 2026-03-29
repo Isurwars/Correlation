@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "math/LinearAlgebra.hpp"
 #include "calculators/SteinhardtCalculator.hpp"
-#include "math/SpecialFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Constants.hpp"
+#include "math/LinearAlgebra.hpp"
+#include "math/SpecialFunctions.hpp"
 #include <cmath>
 #include <stdexcept>
 
@@ -49,10 +50,12 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
                  correlation::math::special::factorial(j1 + j2 + j3 + 1);
   delta = std::sqrt(delta);
 
-  double comp =
-      correlation::math::special::factorial(j1 - m1) * correlation::math::special::factorial(j1 + m1) *
-      correlation::math::special::factorial(j2 - m2) * correlation::math::special::factorial(j2 + m2) *
-      correlation::math::special::factorial(j3 - m3) * correlation::math::special::factorial(j3 + m3);
+  double comp = correlation::math::special::factorial(j1 - m1) *
+                correlation::math::special::factorial(j1 + m1) *
+                correlation::math::special::factorial(j2 - m2) *
+                correlation::math::special::factorial(j2 + m2) *
+                correlation::math::special::factorial(j3 - m3) *
+                correlation::math::special::factorial(j3 + m3);
   comp = std::sqrt(comp);
 
   double phase1 = ((j1 - j2 - m3) % 2 != 0) ? -1.0 : 1.0;
@@ -108,8 +111,10 @@ SteinhardtCalculator::calculate(const Cell &cell,
   std::vector<double> W6(num_atoms, 0.0);
   std::vector<double> W6_hat(num_atoms, 0.0);
 
-  double global_Q4_factor = std::sqrt(4.0 * correlation::math::constants::pi / 9.0);
-  double global_Q6_factor = std::sqrt(4.0 * correlation::math::constants::pi / 13.0);
+  double global_Q4_factor =
+      std::sqrt(correlation::math::constants::four_pi / 9.0);
+  double global_Q6_factor =
+      std::sqrt(correlation::math::constants::four_pi / 13.0);
 
   for (size_t i = 0; i < num_atoms; ++i) {
     const auto &atom_neighbors = neighbor_graph.getNeighbors(i);

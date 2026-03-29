@@ -45,7 +45,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, CalculatePAD) {
   Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
   water.addAtom("H", {6, 5, 5});
-  double angRad = 104.5 * correlation::math::constants::deg2rad;
+  double angRad = 104.5 * correlation::math::constants::deg_to_rad;
   water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
 
   updateTrajectory(water);
@@ -83,7 +83,8 @@ TEST_F(_14_PAD_Tests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
       for (const auto &center : t1) {
         for (const auto &t2 : center) {
           for (double angle : t2) {
-            if (std::abs(angle * 180.0 / correlation::math::constants::pi - 90.0) < 1.0) {
+            if (std::abs(angle * 180.0 / correlation::math::constants::pi -
+                         90.0) < 1.0) {
               found = true;
             }
           }
@@ -108,7 +109,8 @@ TEST_F(_14_PAD_Tests_AngleReproduction, PBCAngleDetection) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          if (std::abs(angle * 180.0 / correlation::math::constants::pi - 90.0) < 1.0) {
+          if (std::abs(angle * 180.0 / correlation::math::constants::pi -
+                       90.0) < 1.0) {
             found = true;
           }
         }

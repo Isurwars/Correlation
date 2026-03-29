@@ -4,8 +4,10 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "calculators/StructureFactorCalculator.hpp"
-#include "math/SIMDUtils.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Constants.hpp"
+#include "math/SIMDUtils.hpp"
+
 #include <cmath>
 #include <map>
 #include <stdexcept>
@@ -16,11 +18,6 @@
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<StructureFactorCalculator>());
-} // namespace
-
-namespace {
-// 2*pi constant
-static constexpr double two_pi = 2.0 * 3.14159265358979323846;
 } // namespace
 
 void StructureFactorCalculator::calculateFrame(
@@ -56,15 +53,15 @@ void StructureFactorCalculator::calculateFrame(
   // direction (without the 2*pi). So bx = 2*pi * row0(inv), etc.
   // Row 0 of inv = (inv(0,0), inv(0,1), inv(0,2))
   // inv(r,c) = inv column c, row r
-  const double bx_x = two_pi * inv(0, 0);
-  const double bx_y = two_pi * inv(0, 1);
-  const double bx_z = two_pi * inv(0, 2);
-  const double by_x = two_pi * inv(1, 0);
-  const double by_y = two_pi * inv(1, 1);
-  const double by_z = two_pi * inv(1, 2);
-  const double bz_x = two_pi * inv(2, 0);
-  const double bz_y = two_pi * inv(2, 1);
-  const double bz_z = two_pi * inv(2, 2);
+  const double bx_x = correlation::math::constants::two_pi * inv(0, 0);
+  const double bx_y = correlation::math::constants::two_pi * inv(0, 1);
+  const double bx_z = correlation::math::constants::two_pi * inv(0, 2);
+  const double by_x = correlation::math::constants::two_pi * inv(1, 0);
+  const double by_y = correlation::math::constants::two_pi * inv(1, 1);
+  const double by_z = correlation::math::constants::two_pi * inv(1, 2);
+  const double bz_x = correlation::math::constants::two_pi * inv(2, 0);
+  const double bz_y = correlation::math::constants::two_pi * inv(2, 1);
+  const double bz_z = correlation::math::constants::two_pi * inv(2, 2);
 
   // -----------------------------------------------------------------------
   // Generate all (h, k, l) reciprocal lattice vectors with |q| <= q_max.
@@ -121,13 +118,14 @@ void StructureFactorCalculator::calculateFrame(
     zs[j] = pos.z();
   }
 
-  auto precompute_phases = [&](int max_idx, double bx, double by, double bz, 
-                               std::vector<double>& E_cos, std::vector<double>& E_sin) {
+  auto precompute_phases = [&](int max_idx, double bx, double by, double bz,
+                               std::vector<double> &E_cos,
+                               std::vector<double> &E_sin) {
     E_cos.resize((2 * max_idx + 1) * N);
     E_sin.resize((2 * max_idx + 1) * N);
     for (int h = -max_idx; h <= max_idx; ++h) {
-      double* cos_h = &E_cos[(h + max_idx) * N];
-      double* sin_h = &E_sin[(h + max_idx) * N];
+      double *cos_h = &E_cos[(h + max_idx) * N];
+      double *sin_h = &E_sin[(h + max_idx) * N];
       for (size_t j = 0; j < N; ++j) {
         double phase = h * (bx * xs[j] + by * ys[j] + bz * zs[j]);
         cos_h[j] = std::cos(phase);
@@ -169,12 +167,12 @@ void StructureFactorCalculator::calculateFrame(
         for (size_t qi = range.begin(); qi != range.end(); ++qi) {
           const auto &q = q_vectors[qi];
           double cos_sum = 0.0, sin_sum = 0.0;
-          
+
           correlation::math::simd::miller_phase_sum(
               &E1_cos[(q.h + hmax) * N], &E1_sin[(q.h + hmax) * N],
               &E2_cos[(q.k + kmax) * N], &E2_sin[(q.k + kmax) * N],
-              &E3_cos[(q.l + lmax) * N], &E3_sin[(q.l + lmax) * N],
-              N, cos_sum, sin_sum);
+              &E3_cos[(q.l + lmax) * N], &E3_sin[(q.l + lmax) * N], N, cos_sum,
+              sin_sum);
 
           const double sq =
               (cos_sum * cos_sum + sin_sum * sin_sum) / static_cast<double>(N);

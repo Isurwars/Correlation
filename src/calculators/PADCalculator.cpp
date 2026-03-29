@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "math/Constants.hpp"
 #include "calculators/PADCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "math/PhysicalData.hpp"
+#include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
+
 #include <stdexcept>
 
 namespace {
@@ -17,8 +17,8 @@ bool registered = CalculatorFactory::instance().registerCalculator(
 
 void PADCalculator::calculateFrame(DistributionFunctions &df,
                                    const AnalysisSettings &settings) const {
-  df.addHistogram("BAD",
-                  calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
+  df.addHistogram(
+      "BAD", calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
 }
 
 Histogram PADCalculator::calculate(const Cell &cell,
@@ -53,7 +53,8 @@ Histogram PADCalculator::calculate(const Cell &cell,
         partial_hist.assign(num_bins, 0.0);
 
         for (const auto &angle_rad : neighbors->angles()[j][i][k]) {
-          double angle_deg = angle_rad * correlation::math::constants::rad2deg;
+          double angle_deg =
+              angle_rad * correlation::math::constants::rad_to_deg;
 
           if (angle_deg <= theta_cut + 1e-5) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
@@ -90,7 +91,8 @@ Histogram PADCalculator::calculate(const Cell &cell,
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_theta.partials) {
-    correlation::math::simd::scale_bins(partial.data(), normalization_factor, num_bins);
+    correlation::math::simd::scale_bins(partial.data(), normalization_factor,
+                                        num_bins);
   }
   return f_theta;
 }

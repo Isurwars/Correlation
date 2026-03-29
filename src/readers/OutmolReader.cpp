@@ -2,44 +2,42 @@
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-#include "math/Constants.hpp"
+
 #include "readers/OutmolReader.hpp"
+#include "Cell.hpp"
+#include "Trajectory.hpp"
+#include "math/Constants.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <cerrno>
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
-#include <memory>
-#include <functional>
-
-#include "Cell.hpp"
-#include "Trajectory.hpp"
-#include "math/PhysicalData.hpp"
 
 namespace FileReader {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<OutmolReader>()
-);
+static bool registered =
+    ReaderFactory::instance().registerReader(std::make_unique<OutmolReader>());
 
-Cell OutmolReader::readStructure(const std::string &filename,
-                                  std::function<void(float, const std::string &)>
-                                      progress_callback) {
+Cell OutmolReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   return read(filename, progress_callback).at(0);
 }
 
-Trajectory OutmolReader::readTrajectory(const std::string &filename,
-                                         std::function<void(float, const std::string &)>
-                                             progress_callback) {
+Trajectory OutmolReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   return Trajectory(read(filename, progress_callback), 1.0);
 }
 
-std::vector<Cell>
-OutmolReader::read(const std::string &file_name,
-                   std::function<void(float, const std::string &)> progress_callback) {
+std::vector<Cell> OutmolReader::read(
+    const std::string &file_name,
+    std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
@@ -73,22 +71,28 @@ OutmolReader::read(const std::string &file_name,
       }
     }
     if (line.find("$cell vectors") != std::string::npos) {
-      if (!std::getline(myfile, line)) break; // row 1
-      ss.clear(); ss.str(line);
+      if (!std::getline(myfile, line))
+        break; // row 1
+      ss.clear();
+      ss.str(line);
       ss >> h1[0] >> h1[1] >> h1[2];
 
-      if (!std::getline(myfile, line)) break; // row 2
-      ss.clear(); ss.str(line);
+      if (!std::getline(myfile, line))
+        break; // row 2
+      ss.clear();
+      ss.str(line);
       ss >> h2[0] >> h2[1] >> h2[2];
 
-      if (!std::getline(myfile, line)) break; // row 3
-      ss.clear(); ss.str(line);
+      if (!std::getline(myfile, line))
+        break; // row 3
+      ss.clear();
+      ss.str(line);
       ss >> h3[0] >> h3[1] >> h3[2];
 
       for (int i = 0; i < 3; ++i) {
-        h1[i] *= correlation::math::constants::BOHR_TO_ANGSTROM;
-        h2[i] *= correlation::math::constants::BOHR_TO_ANGSTROM;
-        h3[i] *= correlation::math::constants::BOHR_TO_ANGSTROM;
+        h1[i] *= correlation::math::constants::bohr_to_angstrom;
+        h2[i] *= correlation::math::constants::bohr_to_angstrom;
+        h3[i] *= correlation::math::constants::bohr_to_angstrom;
       }
       cell_parsed = true;
       continue;
@@ -106,8 +110,10 @@ OutmolReader::read(const std::string &file_name,
         std::string symbol;
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
-          tempCell.addAtom(symbol, {x * correlation::math::constants::BOHR_TO_ANGSTROM, y * correlation::math::constants::BOHR_TO_ANGSTROM,
-                                    z * correlation::math::constants::BOHR_TO_ANGSTROM});
+          tempCell.addAtom(
+              symbol, {x * correlation::math::constants::bohr_to_angstrom,
+                       y * correlation::math::constants::bohr_to_angstrom,
+                       z * correlation::math::constants::bohr_to_angstrom});
         }
       }
       if (!tempCell.isEmpty()) {
@@ -131,9 +137,10 @@ OutmolReader::read(const std::string &file_name,
         double x, y, z;
         if (ss >> df >> symbol >> x >> y >> z) {
           if (df == "df") {
-            tempCell.addAtom(symbol,
-                             {x * correlation::math::constants::BOHR_TO_ANGSTROM, y * correlation::math::constants::BOHR_TO_ANGSTROM,
-                              z * correlation::math::constants::BOHR_TO_ANGSTROM});
+            tempCell.addAtom(
+                symbol, {x * correlation::math::constants::bohr_to_angstrom,
+                         y * correlation::math::constants::bohr_to_angstrom,
+                         z * correlation::math::constants::bohr_to_angstrom});
           }
         }
       }

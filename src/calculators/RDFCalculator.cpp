@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "math/Constants.hpp"
 #include "calculators/RDFCalculator.hpp"
-#include "math/PhysicalData.hpp"
-#include "math/SIMDUtils.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Constants.hpp"
+#include "math/SIMDUtils.hpp"
+
 #include <cmath>
 #include <stdexcept>
 
@@ -141,11 +141,12 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       // Second Pass: Normalize the raw counts H(r) into target distribution
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
-      const double g_norm_constant = V / (4.0 * correlation::math::constants::pi * dr * Ni * Nj);
+      const double g_norm_constant =
+          V / (correlation::math::constants::four_pi * dr * Ni * Nj);
       const double rho_j = Nj / V;
       const double inv_Ni_dr = 1.0 / (Ni * dr);
       const double inv_Nj_dr = 1.0 / (Nj * dr);
-      const double pi4_rho_j = 4.0 * correlation::math::constants::pi * rho_j;
+      const double pi4_rho_j = correlation::math::constants::four_pi * rho_j;
 
       correlation::math::simd::normalize_rdf_bins(
           H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr,
@@ -177,8 +178,10 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
     if (r < 1e-9)
       continue;
 
-    total_J[k] = 4.0 * correlation::math::constants::pi * r * r * rho_0 * total_g[k];
-    total_G[k] = 4.0 * correlation::math::constants::pi * rho_0 * r * (total_g[k] - 1.0);
+    total_J[k] =
+        correlation::math::constants::four_pi * r * r * rho_0 * total_g[k];
+    total_G[k] =
+        correlation::math::constants::four_pi * rho_0 * r * (total_g[k] - 1.0);
   }
 
   std::map<std::string, Histogram> results;

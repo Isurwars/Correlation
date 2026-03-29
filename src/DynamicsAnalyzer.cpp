@@ -325,7 +325,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
 
     // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
     // scale)
-    double theta = 2.0 * correlation::math::constants::pi * nu * dt * 0.001;
+    double theta = correlation::math::constants::two_pi * nu * dt * 0.001;
 
     if (std::abs(theta) < 1e-6) {
       for (size_t i = 0; i < num_frames; ++i) {

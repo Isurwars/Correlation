@@ -52,7 +52,7 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
   auto get_f_Q = [](const std::string &symbol, double Q) -> double {
     const auto &coeffs =
         correlation::math::physics::getAtomicFormFactors(symbol);
-    double s = Q / (4.0 * correlation::math::constants::pi);
+    double s = Q / correlation::math::constants::four_pi;
     double s2 = s * s;
     double f = coeffs[8];
     for (size_t i = 0; i < 4; ++i) {
@@ -115,8 +115,8 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
           xrd_hist.bins[i] = two_theta;
 
           double theta_rad =
-              (two_theta / 2.0) * correlation::math::constants::deg2rad;
-          double Q = 4.0 * correlation::math::constants::pi *
+              (two_theta / 2.0) * correlation::math::constants::deg_to_rad;
+          double Q = correlation::math::constants::four_pi *
                      std::sin(theta_rad) / lambda;
 
           if (Q < 1e-6) {
@@ -144,7 +144,7 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
             double f2 = get_f_Q(px.sym2, Q);
 
             I_Q += px.weight * f1 * f2 *
-                   (4.0 * correlation::math::constants::pi * total_rho / Q) *
+                   (correlation::math::constants::four_pi * total_rho / Q) *
                    integral;
           }
 
