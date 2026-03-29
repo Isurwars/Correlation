@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "math/SIMDUtils.hpp"
 #include "math/SIMDConfig.hpp"
 #include <cmath>
 #include <cstddef>
@@ -41,8 +40,8 @@ inline double dist_sq_scalar(double ax, double ay, double az, double bx,
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline void compute_dsq_block(double ax, double ay, double az,
-                               const PositionBlock &block,
-                               double *CORRELATION_RESTRICT out_dsq) noexcept {
+                              const PositionBlock &block,
+                              double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m512d va_x = _mm512_set1_pd(ax);
   const __m512d va_y = _mm512_set1_pd(ay);
   const __m512d va_z = _mm512_set1_pd(az);
@@ -83,15 +82,16 @@ inline double sinc_integral(double Q,
     vacc = _mm512_fmadd_pd(vi, vs, vacc);
   }
   double acc = _mm512_reduce_add_pd(vacc);
-  for (; j < count; ++j) acc += integrand[j] * sinqr_scratch[j];
+  for (; j < count; ++j)
+    acc += integrand[j] * sinqr_scratch[j];
   return acc;
 }
 
 #elif defined(CORRELATION_SIMD_AVX2)
 
 inline void compute_dsq_block(double ax, double ay, double az,
-                               const PositionBlock &block,
-                               double *CORRELATION_RESTRICT out_dsq) noexcept {
+                              const PositionBlock &block,
+                              double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256d va_x = _mm256_set1_pd(ax);
   const __m256d va_y = _mm256_set1_pd(ay);
   const __m256d va_z = _mm256_set1_pd(az);
@@ -140,15 +140,16 @@ inline double sinc_integral(double Q,
   __m128d sum2 = _mm_add_pd(lo, hi);
   __m128d sum1 = _mm_hadd_pd(sum2, sum2);
   double acc = _mm_cvtsd_f64(sum1);
-  for (; j < count; ++j) acc += integrand[j] * sinqr_scratch[j];
+  for (; j < count; ++j)
+    acc += integrand[j] * sinqr_scratch[j];
   return acc;
 }
 
 #else // Scalar fallback
 
 inline void compute_dsq_block(double ax, double ay, double az,
-                               const PositionBlock &block,
-                               double *CORRELATION_RESTRICT out_dsq) noexcept {
+                              const PositionBlock &block,
+                              double *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t k = 0; k < block.count; ++k) {
     out_dsq[k] = dist_sq_scalar(ax, ay, az, block.x[k], block.y[k], block.z[k]);
   }
@@ -178,14 +179,15 @@ inline double sinc_integral(double Q,
 
 #if defined(CORRELATION_SIMD_AVX512)
 
-inline double debye_sum(double Q,
-                        const double *CORRELATION_RESTRICT distances,
+inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT scratch,
                         std::size_t count) noexcept {
   const double Q2 = Q * Q;
-  if (Q < 1e-9) return static_cast<double>(count);
+  if (Q < 1e-9)
+    return static_cast<double>(count);
   const double invQ = 1.0 / Q;
-  for (std::size_t j = 0; j < count; ++j) scratch[j] = std::sin(Q * distances[j]);
+  for (std::size_t j = 0; j < count; ++j)
+    scratch[j] = std::sin(Q * distances[j]);
 
   __m512d vacc = _mm512_setzero_pd();
   const __m512d vinvQ = _mm512_set1_pd(invQ);
@@ -199,21 +201,24 @@ inline double debye_sum(double Q,
   double acc = _mm512_reduce_add_pd(vacc);
   for (; j < count; ++j) {
     const double x = Q * distances[j];
-    if (x < 1e-4) acc += 1.0 - (x * x) / 6.0;
-    else acc += std::sin(x) / x;
+    if (x < 1e-4)
+      acc += 1.0 - (x * x) / 6.0;
+    else
+      acc += std::sin(x) / x;
   }
   return acc;
 }
 
 #elif defined(CORRELATION_SIMD_AVX2)
 
-inline double debye_sum(double Q,
-                        const double *CORRELATION_RESTRICT distances,
+inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT scratch,
                         std::size_t count) noexcept {
-  if (Q < 1e-9) return static_cast<double>(count);
+  if (Q < 1e-9)
+    return static_cast<double>(count);
   const double invQ = 1.0 / Q;
-  for (std::size_t j = 0; j < count; ++j) scratch[j] = std::sin(Q * distances[j]);
+  for (std::size_t j = 0; j < count; ++j)
+    scratch[j] = std::sin(Q * distances[j]);
 
   __m256d vacc = _mm256_setzero_pd();
   const __m256d vinvQ = _mm256_set1_pd(invQ);
@@ -231,24 +236,28 @@ inline double debye_sum(double Q,
   double acc = _mm_cvtsd_f64(sum1);
   for (; j < count; ++j) {
     const double x = Q * distances[j];
-    if (x < 1e-4) acc += 1.0 - (x * x) / 6.0;
-    else acc += std::sin(x) / x;
+    if (x < 1e-4)
+      acc += 1.0 - (x * x) / 6.0;
+    else
+      acc += std::sin(x) / x;
   }
   return acc;
 }
 
 #else
 
-inline double debye_sum(double Q,
-                        const double *CORRELATION_RESTRICT distances,
+inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT /*scratch*/,
                         std::size_t count) noexcept {
-  if (Q < 1e-9) return static_cast<double>(count);
+  if (Q < 1e-9)
+    return static_cast<double>(count);
   double acc = 0.0;
   for (std::size_t j = 0; j < count; ++j) {
     const double x = Q * distances[j];
-    if (x < 1e-4) acc += 1.0 - (x * x) / 6.0;
-    else acc += std::sin(x) / x;
+    if (x < 1e-4)
+      acc += 1.0 - (x * x) / 6.0;
+    else
+      acc += std::sin(x) / x;
   }
   return acc;
 }
@@ -262,11 +271,11 @@ inline double debye_sum(double Q,
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
-                                const double *CORRELATION_RESTRICT rbins,
-                                double g_norm, double inv_Ni_dr,
-                                double inv_Nj_dr, double pi4_rho_j,
-                                double *g_out, double *G_out, double *J_out,
-                                double *Jinv_out, std::size_t count) noexcept {
+                               const double *CORRELATION_RESTRICT rbins,
+                               double g_norm, double inv_Ni_dr,
+                               double inv_Nj_dr, double pi4_rho_j,
+                               double *g_out, double *G_out, double *J_out,
+                               double *Jinv_out, std::size_t count) noexcept {
   const __m512d vg_norm = _mm512_set1_pd(g_norm);
   const __m512d v1 = _mm512_set1_pd(1.0);
   const __m512d vinNidr = _mm512_set1_pd(inv_Ni_dr);
@@ -280,13 +289,16 @@ inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
     __m512d vr2 = _mm512_mul_pd(vr, vr);
     __m512d vg = _mm512_div_pd(_mm512_mul_pd(vH, vg_norm), vr2);
     _mm512_storeu_pd(g_out + k, vg);
-    _mm512_storeu_pd(G_out + k, _mm512_mul_pd(vpi4rho, _mm512_mul_pd(vr, _mm512_sub_pd(vg, v1))));
+    _mm512_storeu_pd(
+        G_out + k,
+        _mm512_mul_pd(vpi4rho, _mm512_mul_pd(vr, _mm512_sub_pd(vg, v1))));
     _mm512_storeu_pd(J_out + k, _mm512_mul_pd(vH, vinNidr));
     _mm512_storeu_pd(Jinv_out + k, _mm512_mul_pd(vH, vinNjdr));
   }
   for (; k < count; ++k) {
     const double r = rbins[k];
-    if (r < 1e-9) continue;
+    if (r < 1e-9)
+      continue;
     const double g = H[k] * g_norm / (r * r);
     g_out[k] = g;
     G_out[k] = pi4_rho_j * r * (g - 1.0);
@@ -298,11 +310,11 @@ inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
 #elif defined(CORRELATION_SIMD_AVX2)
 
 inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
-                                const double *CORRELATION_RESTRICT rbins,
-                                double g_norm, double inv_Ni_dr,
-                                double inv_Nj_dr, double pi4_rho_j,
-                                double *g_out, double *G_out, double *J_out,
-                                double *Jinv_out, std::size_t count) noexcept {
+                               const double *CORRELATION_RESTRICT rbins,
+                               double g_norm, double inv_Ni_dr,
+                               double inv_Nj_dr, double pi4_rho_j,
+                               double *g_out, double *G_out, double *J_out,
+                               double *Jinv_out, std::size_t count) noexcept {
   const __m256d vg_norm = _mm256_set1_pd(g_norm);
   const __m256d v1 = _mm256_set1_pd(1.0);
   const __m256d vinNidr = _mm256_set1_pd(inv_Ni_dr);
@@ -316,13 +328,16 @@ inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
     __m256d vr2 = _mm256_mul_pd(vr, vr);
     __m256d vg = _mm256_div_pd(_mm256_mul_pd(vH, vg_norm), vr2);
     _mm256_storeu_pd(g_out + k, vg);
-    _mm256_storeu_pd(G_out + k, _mm256_mul_pd(vpi4rho, _mm256_mul_pd(vr, _mm256_sub_pd(vg, v1))));
+    _mm256_storeu_pd(
+        G_out + k,
+        _mm256_mul_pd(vpi4rho, _mm256_mul_pd(vr, _mm256_sub_pd(vg, v1))));
     _mm256_storeu_pd(J_out + k, _mm256_mul_pd(vH, vinNidr));
     _mm256_storeu_pd(Jinv_out + k, _mm256_mul_pd(vH, vinNjdr));
   }
   for (; k < count; ++k) {
     const double r = rbins[k];
-    if (r < 1e-9) continue;
+    if (r < 1e-9)
+      continue;
     const double g = H[k] * g_norm / (r * r);
     g_out[k] = g;
     G_out[k] = pi4_rho_j * r * (g - 1.0);
@@ -334,14 +349,15 @@ inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
 #else
 
 inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
-                                const double *CORRELATION_RESTRICT rbins,
-                                double g_norm, double inv_Ni_dr,
-                                double inv_Nj_dr, double pi4_rho_j,
-                                double *g_out, double *G_out, double *J_out,
-                                double *Jinv_out, std::size_t count) noexcept {
+                               const double *CORRELATION_RESTRICT rbins,
+                               double g_norm, double inv_Ni_dr,
+                               double inv_Nj_dr, double pi4_rho_j,
+                               double *g_out, double *G_out, double *J_out,
+                               double *Jinv_out, std::size_t count) noexcept {
   for (std::size_t k = 1; k < count; ++k) {
     const double r = rbins[k];
-    if (r < 1e-9) continue;
+    if (r < 1e-9)
+      continue;
     const double g = H[k] * g_norm / (r * r);
     g_out[k] = g;
     G_out[k] = pi4_rho_j * r * (g - 1.0);
@@ -362,7 +378,8 @@ inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
   std::size_t k = 0;
   for (; k + 8 <= count; k += 8)
     _mm512_storeu_pd(arr + k, _mm512_mul_pd(_mm512_loadu_pd(arr + k), vs));
-  for (; k < count; ++k) arr[k] *= s;
+  for (; k < count; ++k)
+    arr[k] *= s;
 }
 #elif defined(CORRELATION_SIMD_AVX2)
 inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
@@ -370,11 +387,13 @@ inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
   std::size_t k = 0;
   for (; k + 4 <= count; k += 4)
     _mm256_storeu_pd(arr + k, _mm256_mul_pd(_mm256_loadu_pd(arr + k), vs));
-  for (; k < count; ++k) arr[k] *= s;
+  for (; k < count; ++k)
+    arr[k] *= s;
 }
 #else
 inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
-  for (std::size_t k = 0; k < count; ++k) arr[k] *= s;
+  for (std::size_t k = 0; k < count; ++k)
+    arr[k] *= s;
 }
 #endif
 
@@ -394,12 +413,14 @@ inline void dot_block(double v1x, double v1y, double v1z,
   const __m512d vv1z = _mm512_set1_pd(v1z);
   std::size_t k = 0;
   for (; k + 8 <= count; k += 8) {
-    __m512d d = _mm512_fmadd_pd(vv1x, _mm512_loadu_pd(v2x + k),
-                _mm512_fmadd_pd(vv1y, _mm512_loadu_pd(v2y + k),
-                _mm512_mul_pd (vv1z, _mm512_loadu_pd(v2z + k))));
+    __m512d d = _mm512_fmadd_pd(
+        vv1x, _mm512_loadu_pd(v2x + k),
+        _mm512_fmadd_pd(vv1y, _mm512_loadu_pd(v2y + k),
+                        _mm512_mul_pd(vv1z, _mm512_loadu_pd(v2z + k))));
     _mm512_storeu_pd(out + k, d);
   }
-  for (; k < count; ++k) out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+  for (; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
 }
 #elif defined(CORRELATION_SIMD_AVX2)
 inline void dot_block(double v1x, double v1y, double v1z,
@@ -414,17 +435,20 @@ inline void dot_block(double v1x, double v1y, double v1z,
   std::size_t k = 0;
   for (; k + 4 <= count; k += 4) {
 #if defined(__FMA__)
-    __m256d d = _mm256_fmadd_pd(vv1x, _mm256_loadu_pd(v2x + k),
-                _mm256_fmadd_pd(vv1y, _mm256_loadu_pd(v2y + k),
-                _mm256_mul_pd (vv1z, _mm256_loadu_pd(v2z + k))));
+    __m256d d = _mm256_fmadd_pd(
+        vv1x, _mm256_loadu_pd(v2x + k),
+        _mm256_fmadd_pd(vv1y, _mm256_loadu_pd(v2y + k),
+                        _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + k))));
 #else
-    __m256d d = _mm256_add_pd(_mm256_mul_pd(vv1x, _mm256_loadu_pd(v2x + k)),
-                _mm256_add_pd(_mm256_mul_pd(vv1y, _mm256_loadu_pd(v2y + k)),
-                _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + k))));
+    __m256d d = _mm256_add_pd(
+        _mm256_mul_pd(vv1x, _mm256_loadu_pd(v2x + k)),
+        _mm256_add_pd(_mm256_mul_pd(vv1y, _mm256_loadu_pd(v2y + k)),
+                      _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + k))));
 #endif
     _mm256_storeu_pd(out + k, d);
   }
-  for (; k < count; ++k) out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+  for (; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
 }
 #else
 inline void dot_block(double v1x, double v1y, double v1z,
@@ -433,7 +457,8 @@ inline void dot_block(double v1x, double v1y, double v1z,
                       const double *CORRELATION_RESTRICT v2z,
                       double *CORRELATION_RESTRICT out,
                       std::size_t count) noexcept {
-  for (std::size_t k = 0; k < count; ++k) out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+  for (std::size_t k = 0; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
 }
 #endif
 
@@ -441,14 +466,19 @@ inline void dot_block(double v1x, double v1y, double v1z,
 // Utility
 // ---------------------------------------------------------------------------
 template <typename AtomRange>
-inline std::size_t fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
+inline std::size_t
+fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
                     std::vector<double> &xs, std::vector<double> &ys,
                     std::vector<double> &zs) noexcept {
   const std::size_t count = end - begin;
-  xs.resize(count); ys.resize(count); zs.resize(count);
+  xs.resize(count);
+  ys.resize(count);
+  zs.resize(count);
   for (std::size_t i = 0; i < count; ++i) {
     const auto &pos = atoms[begin + i].position();
-    xs[i] = pos.x(); ys[i] = pos.y(); zs[i] = pos.z();
+    xs[i] = pos.x();
+    ys[i] = pos.y();
+    zs[i] = pos.z();
   }
   return count;
 }
@@ -457,15 +487,17 @@ inline std::size_t fill_position_block(const AtomRange &atoms, std::size_t begin
 // complex_exp_sum
 // ---------------------------------------------------------------------------
 inline void complex_exp_sum(double qx, double qy, double qz,
-                             const double *CORRELATION_RESTRICT xs,
-                             const double *CORRELATION_RESTRICT ys,
-                             const double *CORRELATION_RESTRICT zs,
-                             std::size_t count,
-                             double &cos_sum, double &sin_sum) noexcept {
-  cos_sum = 0.0; sin_sum = 0.0;
+                            const double *CORRELATION_RESTRICT xs,
+                            const double *CORRELATION_RESTRICT ys,
+                            const double *CORRELATION_RESTRICT zs,
+                            std::size_t count, double &cos_sum,
+                            double &sin_sum) noexcept {
+  cos_sum = 0.0;
+  sin_sum = 0.0;
   for (std::size_t j = 0; j < count; ++j) {
     const double phase = qx * xs[j] + qy * ys[j] + qz * zs[j];
-    cos_sum += std::cos(phase); sin_sum += std::sin(phase);
+    cos_sum += std::cos(phase);
+    sin_sum += std::sin(phase);
   }
 }
 
@@ -475,17 +507,24 @@ inline void complex_exp_sum(double qx, double qy, double qz,
 
 #if defined(CORRELATION_SIMD_AVX512)
 
-inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double *CORRELATION_RESTRICT s1,
-                             const double *CORRELATION_RESTRICT c2, const double *CORRELATION_RESTRICT s2,
-                             const double *CORRELATION_RESTRICT c3, const double *CORRELATION_RESTRICT s3,
-                             std::size_t count, double &c_sum, double &s_sum) noexcept {
+inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
+                             const double *CORRELATION_RESTRICT s1,
+                             const double *CORRELATION_RESTRICT c2,
+                             const double *CORRELATION_RESTRICT s2,
+                             const double *CORRELATION_RESTRICT c3,
+                             const double *CORRELATION_RESTRICT s3,
+                             std::size_t count, double &c_sum,
+                             double &s_sum) noexcept {
   __m512d vc_sum = _mm512_setzero_pd();
   __m512d vs_sum = _mm512_setzero_pd();
   std::size_t i = 0;
   for (; i + 8 <= count; i += 8) {
-    __m512d vc1 = _mm512_loadu_pd(c1 + i); __m512d vs1 = _mm512_loadu_pd(s1 + i);
-    __m512d vc2 = _mm512_loadu_pd(c2 + i); __m512d vs2 = _mm512_loadu_pd(s2 + i);
-    __m512d vc3 = _mm512_loadu_pd(c3 + i); __m512d vs3 = _mm512_loadu_pd(s3 + i);
+    __m512d vc1 = _mm512_loadu_pd(c1 + i);
+    __m512d vs1 = _mm512_loadu_pd(s1 + i);
+    __m512d vc2 = _mm512_loadu_pd(c2 + i);
+    __m512d vs2 = _mm512_loadu_pd(s2 + i);
+    __m512d vc3 = _mm512_loadu_pd(c3 + i);
+    __m512d vs3 = _mm512_loadu_pd(s3 + i);
     __m512d vc12 = _mm512_fmsub_pd(vc1, vc2, _mm512_mul_pd(vs1, vs2));
     __m512d vs12 = _mm512_fmadd_pd(vs1, vc2, _mm512_mul_pd(vc1, vs2));
     __m512d vc123 = _mm512_fmsub_pd(vc12, vc3, _mm512_mul_pd(vs12, vs3));
@@ -496,59 +535,86 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double
   c_sum = _mm512_reduce_add_pd(vc_sum);
   s_sum = _mm512_reduce_add_pd(vs_sum);
   for (; i < count; ++i) {
-    double c12 = c1[i]*c2[i] - s1[i]*s2[i]; double s12 = s1[i]*c2[i] + c1[i]*s2[i];
-    c_sum += c12*c3[i] - s12*s3[i]; s_sum += s12*c3[i] + c12*s3[i];
+    double c12 = c1[i] * c2[i] - s1[i] * s2[i];
+    double s12 = s1[i] * c2[i] + c1[i] * s2[i];
+    c_sum += c12 * c3[i] - s12 * s3[i];
+    s_sum += s12 * c3[i] + c12 * s3[i];
   }
 }
 
 #elif defined(CORRELATION_SIMD_AVX2)
 
-inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double *CORRELATION_RESTRICT s1,
-                             const double *CORRELATION_RESTRICT c2, const double *CORRELATION_RESTRICT s2,
-                             const double *CORRELATION_RESTRICT c3, const double *CORRELATION_RESTRICT s3,
-                             std::size_t count, double &c_sum, double &s_sum) noexcept {
-  __m256d vc_sum = _mm256_setzero_pd(); __m256d vs_sum = _mm256_setzero_pd();
+inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
+                             const double *CORRELATION_RESTRICT s1,
+                             const double *CORRELATION_RESTRICT c2,
+                             const double *CORRELATION_RESTRICT s2,
+                             const double *CORRELATION_RESTRICT c3,
+                             const double *CORRELATION_RESTRICT s3,
+                             std::size_t count, double &c_sum,
+                             double &s_sum) noexcept {
+  __m256d vc_sum = _mm256_setzero_pd();
+  __m256d vs_sum = _mm256_setzero_pd();
   std::size_t i = 0;
   for (; i + 4 <= count; i += 4) {
-    __m256d vc1 = _mm256_loadu_pd(c1 + i); __m256d vs1 = _mm256_loadu_pd(s1 + i);
-    __m256d vc2 = _mm256_loadu_pd(c2 + i); __m256d vs2 = _mm256_loadu_pd(s2 + i);
-    __m256d vc3 = _mm256_loadu_pd(c3 + i); __m256d vs3 = _mm256_loadu_pd(s3 + i);
+    __m256d vc1 = _mm256_loadu_pd(c1 + i);
+    __m256d vs1 = _mm256_loadu_pd(s1 + i);
+    __m256d vc2 = _mm256_loadu_pd(c2 + i);
+    __m256d vs2 = _mm256_loadu_pd(s2 + i);
+    __m256d vc3 = _mm256_loadu_pd(c3 + i);
+    __m256d vs3 = _mm256_loadu_pd(s3 + i);
 #if defined(__FMA__)
     __m256d vc12 = _mm256_fmsub_pd(vc1, vc2, _mm256_mul_pd(vs1, vs2));
     __m256d vs12 = _mm256_fmadd_pd(vs1, vc2, _mm256_mul_pd(vc1, vs2));
     __m256d vc123 = _mm256_fmsub_pd(vc12, vc3, _mm256_mul_pd(vs12, vs3));
     __m256d vs123 = _mm256_fmadd_pd(vs12, vc3, _mm256_mul_pd(vc12, vs3));
 #else
-    __m256d vc12 = _mm256_sub_pd(_mm256_mul_pd(vc1, vc2), _mm256_mul_pd(vs1, vs2));
-    __m256d vs12 = _mm256_add_pd(_mm256_mul_pd(vs1, vc2), _mm256_mul_pd(vc1, vs2));
-    __m256d vc123 = _mm256_sub_pd(_mm256_mul_pd(vc12, vc3), _mm256_mul_pd(vs12, vs3));
-    __m256d vs123 = _mm256_add_pd(_mm256_mul_pd(vs12, vc3), _mm256_mul_pd(vc12, vs3));
+    __m256d vc12 =
+        _mm256_sub_pd(_mm256_mul_pd(vc1, vc2), _mm256_mul_pd(vs1, vs2));
+    __m256d vs12 =
+        _mm256_add_pd(_mm256_mul_pd(vs1, vc2), _mm256_mul_pd(vc1, vs2));
+    __m256d vc123 =
+        _mm256_sub_pd(_mm256_mul_pd(vc12, vc3), _mm256_mul_pd(vs12, vs3));
+    __m256d vs123 =
+        _mm256_add_pd(_mm256_mul_pd(vs12, vc3), _mm256_mul_pd(vc12, vs3));
 #endif
     vc_sum = _mm256_add_pd(vc_sum, vc123);
     vs_sum = _mm256_add_pd(vs_sum, vs123);
   }
-  __m128d clo = _mm256_castpd256_pd128(vc_sum); __m128d chi = _mm256_extractf128_pd(vc_sum, 1);
-  __m128d c_sum2 = _mm_add_pd(clo, chi); __m128d c_sum1 = _mm_hadd_pd(c_sum2, c_sum2);
+  __m128d clo = _mm256_castpd256_pd128(vc_sum);
+  __m128d chi = _mm256_extractf128_pd(vc_sum, 1);
+  __m128d c_sum2 = _mm_add_pd(clo, chi);
+  __m128d c_sum1 = _mm_hadd_pd(c_sum2, c_sum2);
   c_sum = _mm_cvtsd_f64(c_sum1);
-  __m128d slo = _mm256_castpd256_pd128(vs_sum); __m128d shi = _mm256_extractf128_pd(vs_sum, 1);
-  __m128d s_sum2 = _mm_add_pd(slo, shi); __m128d s_sum1 = _mm_hadd_pd(s_sum2, s_sum2);
+  __m128d slo = _mm256_castpd256_pd128(vs_sum);
+  __m128d shi = _mm256_extractf128_pd(vs_sum, 1);
+  __m128d s_sum2 = _mm_add_pd(slo, shi);
+  __m128d s_sum1 = _mm_hadd_pd(s_sum2, s_sum2);
   s_sum = _mm_cvtsd_f64(s_sum1);
   for (; i < count; ++i) {
-    double c12 = c1[i]*c2[i] - s1[i]*s2[i]; double s12 = s1[i]*c2[i] + c1[i]*s2[i];
-    c_sum += c12*c3[i] - s12*s3[i]; s_sum += s12*c3[i] + c12*s3[i];
+    double c12 = c1[i] * c2[i] - s1[i] * s2[i];
+    double s12 = s1[i] * c2[i] + c1[i] * s2[i];
+    c_sum += c12 * c3[i] - s12 * s3[i];
+    s_sum += s12 * c3[i] + c12 * s3[i];
   }
 }
 
 #else
 
-inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double *CORRELATION_RESTRICT s1,
-                             const double *CORRELATION_RESTRICT c2, const double *CORRELATION_RESTRICT s2,
-                             const double *CORRELATION_RESTRICT c3, const double *CORRELATION_RESTRICT s3,
-                             std::size_t count, double &c_sum, double &s_sum) noexcept {
-  c_sum = 0.0; s_sum = 0.0;
+inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
+                             const double *CORRELATION_RESTRICT s1,
+                             const double *CORRELATION_RESTRICT c2,
+                             const double *CORRELATION_RESTRICT s2,
+                             const double *CORRELATION_RESTRICT c3,
+                             const double *CORRELATION_RESTRICT s3,
+                             std::size_t count, double &c_sum,
+                             double &s_sum) noexcept {
+  c_sum = 0.0;
+  s_sum = 0.0;
   for (std::size_t i = 0; i < count; ++i) {
-    double c12 = c1[i]*c2[i] - s1[i]*s2[i]; double s12 = s1[i]*c2[i] + c1[i]*s2[i];
-    c_sum += c12*c3[i] - s12*s3[i]; s_sum += s12*c3[i] + c12*s3[i];
+    double c12 = c1[i] * c2[i] - s1[i] * s2[i];
+    double s12 = s1[i] * c2[i] + c1[i] * s2[i];
+    c_sum += c12 * c3[i] - s12 * s3[i];
+    s_sum += s12 * c3[i] + c12 * s3[i];
   }
 }
 

@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "math/LinearAlgebra.hpp"
 #include <array>
 #include <cmath>
 #include <stdexcept>

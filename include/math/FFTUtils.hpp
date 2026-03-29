@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "math/FFTUtils.hpp"
 #include "math/Constants.hpp"
 #include <algorithm>
 #include <complex>
@@ -15,7 +14,8 @@
 namespace correlation::math::fft {
 
 /**
- * @brief Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal optimization.
+ * @brief Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal
+ * optimization.
  */
 inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
   size_t n = a.size();
