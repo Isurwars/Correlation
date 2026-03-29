@@ -113,11 +113,11 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 }
 
                 // Normalizing
-                n1 = n1 * (1.0 / n1_norm);
-                n2 = n2 * (1.0 / n2_norm);
+                n1 = correlation::math::linalg::normalize(n1);
+                n2 = correlation::math::linalg::normalize(n2);
 
                 // m = n1 x (b2 / |b2|)
-                correlation::math::linalg::Vector3<double> b2_hat = b2 * (1.0 / correlation::math::linalg::norm(b2));
+                correlation::math::linalg::Vector3<double> b2_hat = correlation::math::linalg::normalize(b2);
                 correlation::math::linalg::Vector3<double> m = correlation::math::linalg::cross(n1, b2_hat);
 
                 // cos(phi) = n1 . n2

@@ -127,6 +127,41 @@ public:
              {data_[0][2], data_[1][2], data_[2][2]}}};
   }
 
+  // Trace: sum of diagonal elements
+  constexpr T trace() const noexcept {
+    return data_[0][0] + data_[1][1] + data_[2][2];
+  }
+
+  // Scalar multiplication
+  constexpr Matrix3 operator*(T s) const noexcept {
+    return Matrix3(data_[0] * s, data_[1] * s, data_[2] * s);
+  }
+
+  // In-place scalar multiplication
+  constexpr Matrix3 &operator*=(T s) noexcept {
+    data_[0] = data_[0] * s;
+    data_[1] = data_[1] * s;
+    data_[2] = data_[2] * s;
+    return *this;
+  }
+
+  // In-place matrix addition
+  constexpr Matrix3 &operator+=(const Matrix3 &rhs) noexcept {
+    data_[0] += rhs.data_[0];
+    data_[1] += rhs.data_[1];
+    data_[2] += rhs.data_[2];
+    return *this;
+  }
+
+  // In-place matrix multiplication
+  constexpr Matrix3 &operator*=(const Matrix3 &rhs) noexcept {
+    const Matrix3 lhs = *this;
+    for (std::size_t j = 0; j < 3; ++j) {
+      data_[j] = lhs[0] * rhs(0, j) + lhs[1] * rhs(1, j) + lhs[2] * rhs(2, j);
+    }
+    return *this;
+  }
+
 private:
   std::array<Vector3<T>, 3> data_;
 };
@@ -269,6 +304,14 @@ template <typename T> constexpr T norm_sq(const Vector3<T> &v) noexcept {
 // Vector norm
 template <typename T> constexpr T norm(const Vector3<T> &v) noexcept {
   return std::sqrt(v * v);
+}
+
+// Vector normalize
+template <typename T> inline Vector3<T> normalize(const Vector3<T> &v) {
+  const T n = norm(v);
+  if (n < static_cast<T>(1e-300))
+    throw std::domain_error("normalize: zero-length vector");
+  return v / n;
 }
 
 // Matrix determinant
