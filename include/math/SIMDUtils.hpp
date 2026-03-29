@@ -182,7 +182,6 @@ inline double sinc_integral(double Q,
 inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
                         double *CORRELATION_RESTRICT scratch,
                         std::size_t count) noexcept {
-  const double Q2 = Q * Q;
   if (Q < 1e-9)
     return static_cast<double>(count);
   const double invQ = 1.0 / Q;

@@ -65,11 +65,11 @@ void Trajectory::precomputeBondCutoffs() const {
 
   for (size_t i = 0; i < num_elements; ++i) {
     const double radius_A =
-        correlation::math::physics_data::getCovalentRadius(
+        correlation::math::physics::getCovalentRadius(
             elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
       const double radius_B =
-          correlation::math::physics_data::getCovalentRadius(
+          correlation::math::physics::getCovalentRadius(
               elements[j].symbol);
       const double max_bond_dist = (radius_A + radius_B) * 1.3;
       const double max_bond_dist_sq = max_bond_dist * max_bond_dist;

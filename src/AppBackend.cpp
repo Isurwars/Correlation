@@ -70,7 +70,7 @@ double AppBackend::getRecommendedTimeStep() const {
   for (const auto &element : c->elements()) {
     try {
       double mass =
-          correlation::math::physics_data::getAtomicMass(element.symbol);
+          correlation::math::physics::getAtomicMass(element.symbol);
       if (mass < min_mass) {
         min_mass = mass;
         found = true;

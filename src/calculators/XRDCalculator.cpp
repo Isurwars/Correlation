@@ -51,7 +51,7 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
 
   auto get_f_Q = [](const std::string &symbol, double Q) -> double {
     const auto &coeffs =
-        correlation::math::physics_data::getAtomicFormFactors(symbol);
+        correlation::math::physics::getAtomicFormFactors(symbol);
     double s = Q / (4.0 * correlation::math::constants::pi);
     double s2 = s * s;
     double f = coeffs[8];

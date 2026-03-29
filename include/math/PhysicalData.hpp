@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace correlation::math::physics_data {
+namespace correlation::math::physics {
 
 namespace detail {
 /**
@@ -559,4 +559,4 @@ inline const ElementData *find(const std::string &symbol) {
 }
 } // namespace detail
 
-} // namespace correlation::math::physics_data
+} // namespace correlation::math::physics

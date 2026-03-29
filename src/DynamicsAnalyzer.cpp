@@ -53,7 +53,7 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   double total_mass = 0.0;
   for (size_t i = 0; i < num_atoms; ++i) {
     try {
-      masses[i] = correlation::math::physics_data::getAtomicMass(
+      masses[i] = correlation::math::physics::getAtomicMass(
           atoms[i].element().symbol);
     } catch (const std::out_of_range &) {
       masses[i] = 1.0;
