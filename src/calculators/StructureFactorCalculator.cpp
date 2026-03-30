@@ -49,10 +49,6 @@ void StructureFactorCalculator::calculateFrame(
   // the inverse.
   // -----------------------------------------------------------------------
   const auto &inv = cell.inverseLatticeVectors();
-  // inv stores M^{-1} column-major. Row i of inv is the i-th reciprocal vector
-  // direction (without the 2*pi). So bx = 2*pi * row0(inv), etc.
-  // Row 0 of inv = (inv(0,0), inv(0,1), inv(0,2))
-  // inv(r,c) = inv column c, row r
   const double bx_x = correlation::math::two_pi * inv(0, 0);
   const double bx_y = correlation::math::two_pi * inv(0, 1);
   const double bx_z = correlation::math::two_pi * inv(0, 2);
@@ -65,7 +61,6 @@ void StructureFactorCalculator::calculateFrame(
 
   // -----------------------------------------------------------------------
   // Generate all (h, k, l) reciprocal lattice vectors with |q| <= q_max.
-  // Estimate max Miller index needed.
   // -----------------------------------------------------------------------
   const double b1_norm = std::sqrt(bx_x * bx_x + bx_y * bx_y + bx_z * bx_z);
   const double b2_norm = std::sqrt(by_x * by_x + by_y * by_y + by_z * by_z);
@@ -90,7 +85,7 @@ void StructureFactorCalculator::calculateFrame(
     for (int k = -kmax; k <= kmax; ++k) {
       for (int l = -lmax; l <= lmax; ++l) {
         if (h == 0 && k == 0 && l == 0)
-          continue; // skip Gamma point
+          continue;
         const double qx = h * bx_x + k * by_x + l * bz_x;
         const double qy = h * bx_y + k * by_y + l * bz_y;
         const double qz = h * bx_z + k * by_z + l * bz_z;
@@ -107,20 +102,77 @@ void StructureFactorCalculator::calculateFrame(
   }
 
   // -----------------------------------------------------------------------
-  // Precompute phase factors for Miller index decomposition
-  // arrays memory size: (2*hmax+1) * N doubles
+  // Group atom indices by element type for partial S(Q) calculation.
   // -----------------------------------------------------------------------
-  std::vector<double> xs(N), ys(N), zs(N);
+  std::map<std::string, std::vector<size_t>> indices_by_type;
   for (size_t j = 0; j < N; ++j) {
-    const auto &pos = atoms[j].position();
-    xs[j] = pos.x();
-    ys[j] = pos.y();
-    zs[j] = pos.z();
+    indices_by_type[atoms[j].element().symbol].push_back(j);
   }
 
+  // Collect element pairs for partial S(Q) output.
+  struct PartialInfo {
+    std::string key;
+    size_t typeA_idx; // offset into flat per-type phase arrays
+    size_t typeB_idx;
+    size_t N_A;
+    size_t N_B;
+    bool is_identical;
+    double weight;
+  };
+  std::vector<PartialInfo> partials_info;
+  const auto &ashcroft_weights = df.getAshcroftWeights();
+
+  // Build a flat array of per-type start offsets into the global xs/ys/zs.
+  // We'll store positions contiguously: all of type0, then type1, etc.
+  struct TypeBlock {
+    std::string symbol;
+    size_t offset; // start index in flat position arrays
+    size_t count;
+  };
+  std::vector<TypeBlock> type_blocks;
+  type_blocks.reserve(indices_by_type.size());
+  std::vector<double> xs(N), ys(N), zs(N);
+
+  size_t flat_offset = 0;
+  for (const auto &[sym, idxs] : indices_by_type) {
+    TypeBlock tb;
+    tb.symbol = sym;
+    tb.offset = flat_offset;
+    tb.count = idxs.size();
+    for (size_t j = 0; j < idxs.size(); ++j) {
+      const auto &pos = atoms[idxs[j]].position();
+      xs[flat_offset + j] = pos.x();
+      ys[flat_offset + j] = pos.y();
+      zs[flat_offset + j] = pos.z();
+    }
+    flat_offset += idxs.size();
+    type_blocks.push_back(tb);
+  }
+
+  // Build partials_info for every (i >= j) pair of type blocks.
+  for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
+    for (size_t tj = ti; tj < type_blocks.size(); ++tj) {
+      const auto &tbA = type_blocks[ti];
+      const auto &tbB = type_blocks[tj];
+      bool is_identical = (ti == tj);
+      std::string key = (tbA.symbol < tbB.symbol)
+                            ? (tbA.symbol + "-" + tbB.symbol)
+                            : (tbB.symbol + "-" + tbA.symbol);
+      double w = 0.0;
+      auto wit = ashcroft_weights.find(key);
+      if (wit != ashcroft_weights.end())
+        w = wit->second;
+      partials_info.push_back(
+          {key, ti, tj, tbA.count, tbB.count, is_identical, w});
+    }
+  }
+
+  // -----------------------------------------------------------------------
+  // Precompute phase factors for Miller index decomposition.
+  // -----------------------------------------------------------------------
   auto precompute_phases = [&](int max_idx, double bx, double by, double bz,
-                               std::vector<double> &E_cos,
-                               std::vector<double> &E_sin) {
+                                std::vector<double> &E_cos,
+                                std::vector<double> &E_sin) {
     E_cos.resize((2 * max_idx + 1) * N);
     E_sin.resize((2 * max_idx + 1) * N);
     for (int h = -max_idx; h <= max_idx; ++h) {
@@ -140,62 +192,133 @@ void StructureFactorCalculator::calculateFrame(
   precompute_phases(lmax, bz_x, bz_y, bz_z, E3_cos, E3_sin);
 
   // -----------------------------------------------------------------------
-  // For each q-vector, compute S(q) = |rho(q)|^2 / N, then bin by |q|.
-  // Parallel over q-vectors.
+  // Allocate output histogram with partials.
   // -----------------------------------------------------------------------
   Histogram s_q_hist;
   s_q_hist.bin_label = "Q (Å⁻¹)";
   s_q_hist.bins.resize(num_q_bins);
-  for (size_t i = 0; i < num_q_bins; ++i) {
+  for (size_t i = 0; i < num_q_bins; ++i)
     s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
-  }
 
-  std::vector<double> sq_sum(num_q_bins, 0.0);
-  std::vector<size_t> sq_count(num_q_bins, 0);
+  for (const auto &pi : partials_info)
+    s_q_hist.partials[pi.key].assign(num_q_bins, 0.0);
 
+  std::vector<double> sq_total_sum(num_q_bins, 0.0);
+  std::vector<size_t> sq_total_count(num_q_bins, 0);
+
+  // Per-partial accumulators: sum and count.
+  const size_t np = partials_info.size();
+  std::vector<std::vector<double>> partial_sums(np,
+                                                std::vector<double>(num_q_bins, 0.0));
+  std::vector<std::vector<size_t>> partial_counts(
+      np, std::vector<size_t>(num_q_bins, 0));
+
+  // Thread-local storage: one pair<sum, count> per partial + one for total.
+  using LocalPartials =
+      std::pair<std::vector<std::vector<double>>, std::vector<std::vector<size_t>>>;
   tbb::enumerable_thread_specific<
-      std::pair<std::vector<double>, std::vector<size_t>>>
+      std::tuple<std::vector<double>, std::vector<size_t>, // total sum/count
+                 std::vector<std::vector<double>>,          // partial sums
+                 std::vector<std::vector<size_t>>>>         // partial counts
       local_ets([&] {
-        return std::make_pair(std::vector<double>(num_q_bins, 0.0),
-                              std::vector<size_t>(num_q_bins, 0));
+        return std::make_tuple(
+            std::vector<double>(num_q_bins, 0.0),
+            std::vector<size_t>(num_q_bins, 0),
+            std::vector<std::vector<double>>(np,
+                                             std::vector<double>(num_q_bins, 0.0)),
+            std::vector<std::vector<size_t>>(
+                np, std::vector<size_t>(num_q_bins, 0)));
       });
 
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, q_vectors.size()),
       [&](const tbb::blocked_range<size_t> &range) {
-        auto &[local_sum, local_count] = local_ets.local();
+        auto &[local_total_sum, local_total_count, local_partial_sums,
+               local_partial_counts] = local_ets.local();
+
         for (size_t qi = range.begin(); qi != range.end(); ++qi) {
           const auto &q = q_vectors[qi];
-          double cos_sum = 0.0, sin_sum = 0.0;
-
-          correlation::math::miller_phase_sum(
-              &E1_cos[(q.h + hmax) * N], &E1_sin[(q.h + hmax) * N],
-              &E2_cos[(q.k + kmax) * N], &E2_sin[(q.k + kmax) * N],
-              &E3_cos[(q.l + lmax) * N], &E3_sin[(q.l + lmax) * N], N, cos_sum,
-              sin_sum);
-
-          const double sq =
-              (cos_sum * cos_sum + sin_sum * sin_sum) / static_cast<double>(N);
           const size_t bin = static_cast<size_t>(q.qmag / q_bin_width);
-          if (bin < num_q_bins) {
-            local_sum[bin] += sq;
-            local_count[bin] += 1;
+          if (bin >= num_q_bins)
+            continue;
+
+          // Compute cos/sin sums for each type block by multiplying the
+          // per-index contributions (already factored by Miller h,k,l).
+          std::vector<double> type_cos(type_blocks.size(), 0.0);
+          std::vector<double> type_sin(type_blocks.size(), 0.0);
+
+          for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
+            const size_t off = type_blocks[ti].offset;
+            const size_t cnt = type_blocks[ti].count;
+            double c_sum = 0.0, s_sum = 0.0;
+            correlation::math::miller_phase_sum(
+                &E1_cos[(q.h + hmax) * N] + off,
+                &E1_sin[(q.h + hmax) * N] + off,
+                &E2_cos[(q.k + kmax) * N] + off,
+                &E2_sin[(q.k + kmax) * N] + off,
+                &E3_cos[(q.l + lmax) * N] + off,
+                &E3_sin[(q.l + lmax) * N] + off, cnt, c_sum, s_sum);
+            type_cos[ti] = c_sum;
+            type_sin[ti] = s_sum;
+          }
+
+          // Accumulate total S(Q) via the full sum |rho(q)|^2 / N.
+          double full_cos = 0.0, full_sin = 0.0;
+          for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
+            full_cos += type_cos[ti];
+            full_sin += type_sin[ti];
+          }
+          const double sq_total =
+              (full_cos * full_cos + full_sin * full_sin) /
+              static_cast<double>(N);
+          local_total_sum[bin] += sq_total;
+          local_total_count[bin] += 1;
+
+          // Per-partial: S_AB(Q) = Re[rho_A(q)* · rho_B(q)] / sqrt(N_A * N_B)
+          for (size_t pi = 0; pi < np; ++pi) {
+            const auto &pinfo = partials_info[pi];
+            const size_t tiA = pinfo.typeA_idx;
+            const size_t tiB = pinfo.typeB_idx;
+            // Re[rho_A* rho_B] = cosA*cosB + sinA*sinB
+            double cross = type_cos[tiA] * type_cos[tiB] +
+                           type_sin[tiA] * type_sin[tiB];
+            double denom = std::sqrt(static_cast<double>(pinfo.N_A) *
+                                     static_cast<double>(pinfo.N_B));
+            double sq_partial = (denom > 0.0) ? cross / denom : 0.0;
+            local_partial_sums[pi][bin] += sq_partial;
+            local_partial_counts[pi][bin] += 1;
           }
         }
       });
 
+  // Reduce thread-local results.
   local_ets.combine_each([&](const auto &local) {
-    const auto &[local_sum, local_count] = local;
+    const auto &[lt_sum, lt_count, lp_sums, lp_counts] = local;
     for (size_t i = 0; i < num_q_bins; ++i) {
-      sq_sum[i] += local_sum[i];
-      sq_count[i] += local_count[i];
+      sq_total_sum[i] += lt_sum[i];
+      sq_total_count[i] += lt_count[i];
+    }
+    for (size_t pi = 0; pi < np; ++pi) {
+      for (size_t i = 0; i < num_q_bins; ++i) {
+        partial_sums[pi][i] += lp_sums[pi][i];
+        partial_counts[pi][i] += lp_counts[pi][i];
+      }
     }
   });
 
+  // Average and store.
   std::vector<double> total_sq(num_q_bins, 0.0);
   for (size_t i = 0; i < num_q_bins; ++i) {
-    if (sq_count[i] > 0) {
-      total_sq[i] = sq_sum[i] / static_cast<double>(sq_count[i]);
+    if (sq_total_count[i] > 0)
+      total_sq[i] = sq_total_sum[i] / static_cast<double>(sq_total_count[i]);
+  }
+
+  for (size_t pi = 0; pi < np; ++pi) {
+    auto &out = s_q_hist.partials[partials_info[pi].key];
+    for (size_t i = 0; i < num_q_bins; ++i) {
+      if (partial_counts[pi][i] > 0)
+        out[i] = partial_sums[pi][i] /
+                 static_cast<double>(partial_counts[pi][i]);
     }
   }
 

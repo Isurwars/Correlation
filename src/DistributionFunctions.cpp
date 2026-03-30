@@ -17,7 +17,6 @@
 #include "calculators/PADCalculator.hpp"
 #include "calculators/RDCalculator.hpp"
 #include "calculators/RDFCalculator.hpp"
-#include "calculators/SQCalculator.hpp"
 #include "calculators/VACFCalculator.hpp"
 #include "calculators/VDOSCalculator.hpp"
 #include "calculators/XRDCalculator.hpp"
@@ -326,21 +325,6 @@ void DistributionFunctions::calculateVDOS() {
   histograms_["VDOS"] = VDOSCalculator::calculate(histograms_.at("VACF"));
 }
 
-//---------------------------------------------------------------------------//
-//---------------------------- Calculation S(Q) -----------------------------//
-//---------------------------------------------------------------------------//
-
-void DistributionFunctions::calculateSQ(double q_max, double q_bin_width,
-                                        double r_integration_max) {
-  if (histograms_.find("g_r") == histograms_.end()) {
-    throw std::logic_error(
-        "Cannot calculate fft_S_q. Please calculate g_r first by calling "
-        "calculateRDF().");
-  }
-  histograms_["fft_S_q"] =
-      SQCalculator::calculate(histograms_.at("g_r"), cell_, ashcroft_weights_,
-                              q_max, q_bin_width, r_integration_max);
-}
 
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {

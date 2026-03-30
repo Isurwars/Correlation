@@ -31,8 +31,6 @@ add_library(calculators_obj OBJECT
     calculators/VDOSCalculator.cpp
     calculators/StructureFactorCalculator.cpp
     calculators/XRDCalculator.cpp
-    calculators/SQCalculator.cpp
-    calculators/DebyeS_KCalculator.cpp
     calculators/SteinhardtCalculator.cpp
     calculators/MSDCalculator.cpp
     calculators/CalculatorFactory.cpp
@@ -83,7 +81,7 @@ if (CORRELATION_SIMD_FLAGS)
   # Apply SIMD flags to translation units that use SIMD kernels
   set_source_files_properties(
       calculators/DistanceCalculator.cpp
-      calculators/SQCalculator.cpp
+      calculators/StructureFactorCalculator.cpp
       calculators/XRDCalculator.cpp
       calculators/RDFCalculator.cpp
       calculators/AngleCalculator.cpp

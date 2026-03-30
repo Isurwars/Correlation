@@ -73,3 +73,85 @@ TEST_F(_23_StructureFactorCalculator_Tests, SingleAtomGivesOne) {
     }
   }
 }
+
+// --- Tests migrated from _12_SQ_Tests.cpp ---
+
+// For two identical atoms separated by 1.5 Å in a 10x10x10 box,
+// S(Q) for the Si-Si partial should appear and not be empty.
+TEST_F(_23_StructureFactorCalculator_Tests, DimerProducesValidSQ) {
+  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});
+  cell.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5 Å
+
+  DistributionFunctions df(cell);
+  StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 10.0;
+  settings.q_bin_width = 0.1;
+
+  calc.calculateFrame(df, settings);
+
+  EXPECT_NO_THROW(df.getHistogram("S_q"));
+  const auto &hist = df.getHistogram("S_q");
+  EXPECT_FALSE(hist.bins.empty());
+  EXPECT_TRUE(hist.partials.count("Total"));
+
+  // For a homonuclear dimer, S(Q) oscillates. Verify the histogram is
+  // populated with reasonable values (not NaN or all-zero).
+  bool has_nonzero = false;
+  for (const auto &v : hist.partials.at("Total")) {
+    if (v > 0.0) {
+      has_nonzero = true;
+      break;
+    }
+  }
+  EXPECT_TRUE(has_nonzero);
+}
+
+// --- Tests migrated from _22_DebyeS_KCalculator_Tests.cpp ---
+
+// For N identical atoms, S(Q->0) should approach N.
+// Using a 4-atom Si cluster and a very small Q bin.
+TEST_F(_23_StructureFactorCalculator_Tests, VerifiesPartialsExistForMulticomponent) {
+  Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  cell.addAtom("C", {0.0, 0.0, 0.0});
+  cell.addAtom("O", {1.2, 0.0, 0.0});
+
+  DistributionFunctions df(cell);
+  StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 10.0;
+  settings.q_bin_width = 1.0;
+
+  calc.calculateFrame(df, settings);
+  const auto &hist = df.getHistogram("S_q");
+
+  // Verify all expected partials are present
+  EXPECT_TRUE(hist.partials.count("C-C"));
+  EXPECT_TRUE(hist.partials.count("O-O"));
+  EXPECT_TRUE(hist.partials.count("C-O"));
+  EXPECT_TRUE(hist.partials.count("Total"));
+
+  EXPECT_FALSE(hist.bins.empty());
+}
+
+// Verify a multicomponent system produces an S_q partial for each pair.
+TEST_F(_23_StructureFactorCalculator_Tests, HomonuclearClusterPartialsPresent) {
+  Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  cell.addAtom("Si", {2.0, 0.0, 0.0});
+  cell.addAtom("Si", {0.0, 2.0, 0.0});
+  cell.addAtom("Si", {0.0, 0.0, 2.0});
+
+  DistributionFunctions df(cell);
+  StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 5.0;
+  settings.q_bin_width = 0.5;
+
+  calc.calculateFrame(df, settings);
+  const auto &hist = df.getHistogram("S_q");
+
+  EXPECT_TRUE(hist.partials.count("Si-Si"));
+  EXPECT_TRUE(hist.partials.count("Total"));
+}

@@ -171,16 +171,6 @@ public:
   void calculateVDOS();
 
   /**
-   * @brief Calculates the Structure Factor S(Q).
-   * @param q_max Maximum Scattering Vector Q.
-   * @param q_bin_width Bin width for Q.
-   * @param r_integration_max Maximum r to use in the Fourier transform
-   * integration.
-   */
-  void calculateSQ(double q_max = 25.0, double q_bin_width = 0.05,
-                   double r_integration_max = 8.0);
-
-  /**
    * @brief Calculates the XRD pattern.
    * @param lambda X-ray wavelength in Angstroms.
    * @param theta_min Minimum 2-theta angle.
