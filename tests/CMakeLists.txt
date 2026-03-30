@@ -22,17 +22,17 @@ add_executable(correlation_tests
     _09_TrajectoryAnalyzer_Tests.cpp
     _10_DynamicsAnalyzer_Tests.cpp
     _11_RDF_Tests.cpp
-    _13_XRD_Tests.cpp
-    _14_PAD_Tests.cpp
-    _15_VACF_Tests.cpp
-    _16_vDoS_Tests.cpp
-    _17_AppBackend_Tests.cpp
-    _18_AppController_Tests.cpp
-    _19_DAD_Tests.cpp
-    _20_RD_Tests.cpp
-    _21_SIMDUtils_Tests.cpp
-    _23_StructureFactorCalculator_Tests.cpp
-    _24_SteinhardtCalculator_Tests.cpp
+    _12_XRD_Tests.cpp
+    _13_PAD_Tests.cpp
+    _14_VACF_Tests.cpp
+    _15_vDoS_Tests.cpp
+    _16_AppBackend_Tests.cpp
+    _17_AppController_Tests.cpp
+    _18_DAD_Tests.cpp
+    _19_RD_Tests.cpp
+    _20_SIMDUtils_Tests.cpp
+    _21_StructureFactorCalculator_Tests.cpp
+    _22_SteinhardtCalculator_Tests.cpp
     ../src/AppBackend.cpp
     ../src/AppController.cpp
 )
