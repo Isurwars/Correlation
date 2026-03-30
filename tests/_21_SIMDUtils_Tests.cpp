@@ -50,7 +50,7 @@ TEST_F(_21_SIMDUtils_Tests, SincIntegralMatchesScalar) {
     }
 
     // Call the SIMD implementation
-    double actual_acc = correlation::math::simd::sinc_integral(
+    double actual_acc = correlation::math::sinc_integral(
         Q, integrand.data(), rbins.data(), scratch.data(), size);
 
     // Assert with a small tolerance due to potential floating point reordering
@@ -76,7 +76,7 @@ TEST_F(_21_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
     std::vector<double> by = generateRandomData(size);
     std::vector<double> bz = generateRandomData(size);
 
-    correlation::math::simd::PositionBlock block{bx.data(), by.data(),
+    correlation::math::PositionBlock block{bx.data(), by.data(),
                                                  bz.data(), size};
 
     // Output array, initialized to -1 to detect unwritten values
@@ -85,12 +85,12 @@ TEST_F(_21_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
     // Calculate expected scalar result
     std::vector<double> expected_dsq(size);
     for (size_t k = 0; k < size; ++k) {
-      expected_dsq[k] = correlation::math::simd::dist_sq_scalar(
+      expected_dsq[k] = correlation::math::dist_sq_scalar(
           ax, ay, az, bx[k], by[k], bz[k]);
     }
 
     // Call SIMD implementation
-    correlation::math::simd::compute_dsq_block(ax, ay, az, block,
+    correlation::math::compute_dsq_block(ax, ay, az, block,
                                                actual_dsq.data());
 
     for (size_t k = 0; k < size; ++k) {
@@ -125,7 +125,7 @@ TEST_F(_21_SIMDUtils_Tests, NormalizeRDFBinsMatchesScalar) {
     std::vector<double> actual_Jinv(size, 0.0);
 
     // Call SIMD implementation
-    correlation::math::simd::normalize_rdf_bins(
+    correlation::math::normalize_rdf_bins(
         H.data(), rbins.data(), g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
         actual_g.data(), actual_G.data(), actual_J.data(), actual_Jinv.data(),
         size);
@@ -168,7 +168,7 @@ TEST_F(_21_SIMDUtils_Tests, ScaleBinsMatchesScalar) {
       val *= scale_factor;
     }
 
-    correlation::math::simd::scale_bins(data.data(), scale_factor, size);
+    correlation::math::scale_bins(data.data(), scale_factor, size);
 
     for (size_t k = 0; k < size; ++k) {
       EXPECT_NEAR(data[k], expected[k], 1e-9)
@@ -199,7 +199,7 @@ TEST_F(_21_SIMDUtils_Tests, DotBlockMatchesScalar) {
       expected_out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
     }
 
-    correlation::math::simd::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(),
+    correlation::math::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(),
                                        v2z.data(), actual_out.data(), size);
 
     for (size_t k = 0; k < size; ++k) {

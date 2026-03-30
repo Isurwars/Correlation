@@ -52,18 +52,18 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
   for (size_t i = num_points - 1; i > 0; --i) {
     combined_frequencies.push_back(-frequencies[i]);
     combined_frequencies_cmInv.push_back(
-        -frequencies[i] * correlation::math::constants::thz_to_cminv);
+        -frequencies[i] * correlation::math::thz_to_cminv);
     combined_frequencies_meV.push_back(
-        -frequencies[i] * correlation::math::constants::thz_to_mev);
+        -frequencies[i] * correlation::math::thz_to_mev);
     combined_intensities.push_back(intensities_imag[i]);
   }
 
   for (size_t i = 0; i < num_points; ++i) {
     combined_frequencies.push_back(frequencies[i]);
     combined_frequencies_cmInv.push_back(
-        frequencies[i] * correlation::math::constants::thz_to_cminv);
+        frequencies[i] * correlation::math::thz_to_cminv);
     combined_frequencies_meV.push_back(
-        frequencies[i] * correlation::math::constants::thz_to_mev);
+        frequencies[i] * correlation::math::thz_to_mev);
     combined_intensities.push_back(intensities_real[i]);
   }
 

@@ -63,7 +63,7 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
               continue;
 
             const int type_C = atoms[C].element_id();
-            const correlation::math::linalg::Vector3<double> &r_BC = neighbor_C.r_ij; // B -> C
+            const correlation::math::Vector3<double> &r_BC = neighbor_C.r_ij; // B -> C
 
             // Now, find all A bonded to B (where A != C)
             for (const auto &neighbor_A : B_neighbors) {
@@ -72,7 +72,7 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 continue;
 
               const int type_A = atoms[A].element_id();
-              const correlation::math::linalg::Vector3<double> &r_BA = neighbor_A.r_ij; // B -> A
+              const correlation::math::Vector3<double> &r_BA = neighbor_A.r_ij; // B -> A
 
               // And find all D bonded to C (where D != B and D != A)
               for (const auto &neighbor_D : C_neighbors) {
@@ -85,7 +85,7 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 // Vector C -> D.
                 // Wait, r_ij in Neighbor array is Central -> Neighbor.
                 // So neighbor_D.r_ij is C -> D.
-                const correlation::math::linalg::Vector3<double> &r_CD = neighbor_D.r_ij;
+                const correlation::math::Vector3<double> &r_CD = neighbor_D.r_ij;
 
                 // We have vectors:
                 // b1 = r_BA  (B to A)
@@ -96,34 +96,34 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 // IUPAC: b1 = r_AB (A to B) = -r_BA b2 = r_BC (B to C) b3 =
                 // r_CD (C to D)
 
-                correlation::math::linalg::Vector3<double> b1 = -1.0 * r_BA;
-                correlation::math::linalg::Vector3<double> b2 = r_BC;
-                correlation::math::linalg::Vector3<double> b3 = r_CD;
+                correlation::math::Vector3<double> b1 = -1.0 * r_BA;
+                correlation::math::Vector3<double> b2 = r_BC;
+                correlation::math::Vector3<double> b3 = r_CD;
 
                 // n1 = b1 x b2
                 // n2 = b2 x b3
-                correlation::math::linalg::Vector3<double> n1 = correlation::math::linalg::cross(b1, b2);
-                correlation::math::linalg::Vector3<double> n2 = correlation::math::linalg::cross(b2, b3);
+                correlation::math::Vector3<double> n1 = correlation::math::cross(b1, b2);
+                correlation::math::Vector3<double> n2 = correlation::math::cross(b2, b3);
 
-                double n1_norm = correlation::math::linalg::norm(n1);
-                double n2_norm = correlation::math::linalg::norm(n2);
+                double n1_norm = correlation::math::norm(n1);
+                double n2_norm = correlation::math::norm(n2);
 
                 if (n1_norm < 1e-8 || n2_norm < 1e-8) {
                   continue; // Collinear atoms, dihedral undefined.
                 }
 
                 // Normalizing
-                n1 = correlation::math::linalg::normalize(n1);
-                n2 = correlation::math::linalg::normalize(n2);
+                n1 = correlation::math::normalize(n1);
+                n2 = correlation::math::normalize(n2);
 
                 // m = n1 x (b2 / |b2|)
-                correlation::math::linalg::Vector3<double> b2_hat = correlation::math::linalg::normalize(b2);
-                correlation::math::linalg::Vector3<double> m = correlation::math::linalg::cross(n1, b2_hat);
+                correlation::math::Vector3<double> b2_hat = correlation::math::normalize(b2);
+                correlation::math::Vector3<double> m = correlation::math::cross(n1, b2_hat);
 
                 // cos(phi) = n1 . n2
                 // sin(phi) = m . n2
-                double x = correlation::math::linalg::dot(n1, n2);
-                double y = correlation::math::linalg::dot(m, n2);
+                double x = correlation::math::dot(n1, n2);
+                double y = correlation::math::dot(m, n2);
 
                 double dihedral_angle =
                     std::atan2(y, x); // Returns range [-pi, pi]

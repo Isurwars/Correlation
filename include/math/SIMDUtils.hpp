@@ -10,7 +10,7 @@
 #include <cstddef>
 #include <vector>
 
-namespace correlation::math::simd {
+namespace correlation::math {
 
 // ---------------------------------------------------------------------------
 // SoA block of atom positions
@@ -621,4 +621,4 @@ inline const char *simd_level_string() noexcept {
 #endif
 }
 
-} // namespace correlation::math::simd
+} // namespace correlation::math

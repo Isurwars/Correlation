@@ -82,7 +82,7 @@ void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
             const size_t k_count = cn - j - 1; // number of k's for this j
 
             // SIMD dot products: dots[m] = dot(v_j, v_{j+1+m})
-            correlation::math::simd::dot_block(
+            correlation::math::dot_block(
                 sc.nb_x[j], sc.nb_y[j], sc.nb_z[j], sc.nb_x.data() + j + 1,
                 sc.nb_y.data() + j + 1, sc.nb_z.data() + j + 1, sc.dots.data(),
                 k_count);

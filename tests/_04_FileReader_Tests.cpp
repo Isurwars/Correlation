@@ -267,13 +267,13 @@ TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
   bool cl_center_found = false;
   for (const auto &atom : atoms) {
     if (atom.element().symbol == "Na" &&
-        correlation::math::linalg::norm(atom.position()) < 1e-4) {
+        correlation::math::norm(atom.position()) < 1e-4) {
       na_origin_found = true;
     }
-    correlation::math::linalg::Vector3<double> expected_cl_pos = {2.82, 2.82,
+    correlation::math::Vector3<double> expected_cl_pos = {2.82, 2.82,
                                                                   2.82};
     if (atom.element().symbol == "Cl" &&
-        correlation::math::linalg::norm(atom.position() - expected_cl_pos) <
+        correlation::math::norm(atom.position() - expected_cl_pos) <
             1e-4) {
       cl_center_found = true;
     }
@@ -373,16 +373,16 @@ TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
   // Check Frame 1
   const auto &f1 = frames[0];
   EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0],
-                   10.0 * correlation::math::constants::bohr_to_angstrom);
+                   10.0 * correlation::math::bohr_to_angstrom);
   EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1],
-                   11.0 * correlation::math::constants::bohr_to_angstrom);
+                   11.0 * correlation::math::bohr_to_angstrom);
   EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2],
-                   12.0 * correlation::math::constants::bohr_to_angstrom);
+                   12.0 * correlation::math::bohr_to_angstrom);
   ASSERT_EQ(f1.atomCount(), 2);
   EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(),
-                   1.0 * correlation::math::constants::bohr_to_angstrom);
+                   1.0 * correlation::math::bohr_to_angstrom);
   EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(),
-                   4.0 * correlation::math::constants::bohr_to_angstrom);
+                   4.0 * correlation::math::bohr_to_angstrom);
 
   // Check the energy is parsed correctly
   EXPECT_DOUBLE_EQ(f1.getEnergy(), -31.8206146);
@@ -390,9 +390,9 @@ TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
   // Check Frame 2
   const auto &f2 = frames[1];
   EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0],
-                   10.0 * correlation::math::constants::bohr_to_angstrom);
+                   10.0 * correlation::math::bohr_to_angstrom);
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(),
-                   1.1 * correlation::math::constants::bohr_to_angstrom);
+                   1.1 * correlation::math::bohr_to_angstrom);
 }
 
 TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {

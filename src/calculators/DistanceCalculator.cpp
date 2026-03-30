@@ -54,9 +54,9 @@ void DistanceCalculator::compute(
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 
-  correlation::math::linalg::Vector3<double> box_sidelengths = {correlation::math::linalg::norm(lattice[0]),
-                                             correlation::math::linalg::norm(lattice[1]),
-                                             correlation::math::linalg::norm(lattice[2])};
+  correlation::math::Vector3<double> box_sidelengths = {correlation::math::norm(lattice[0]),
+                                             correlation::math::norm(lattice[1]),
+                                             correlation::math::norm(lattice[2])};
   int nx =
       static_cast<int>(std::ceil(std::sqrt(cutoff_sq) / box_sidelengths.x()));
   int ny =
@@ -68,7 +68,7 @@ void DistanceCalculator::compute(
     ignore_periodic_self_interactions = false;
   }
 
-  std::vector<correlation::math::linalg::Vector3<double>> displacements;
+  std::vector<correlation::math::Vector3<double>> displacements;
   for (int i = -nx; i <= nx; ++i) {
     for (int j = -ny; j <= ny; ++j) {
       for (int k = -nz; k <= nz; ++k) {
@@ -117,7 +117,7 @@ void DistanceCalculator::compute(
         // all j in [i, atom_count) and run the SIMD squared-distance kernel.
         // -----------------------------------------------------------------------
         for (const auto &disp : displacements) {
-          const double disp_sq = correlation::math::linalg::norm_sq(disp);
+          const double disp_sq = correlation::math::norm_sq(disp);
           const bool zero_disp = (disp_sq < 1e-9);
 
           // Build SoA: shifted positions of atom_B candidates
@@ -129,9 +129,9 @@ void DistanceCalculator::compute(
           }
 
           // SIMD pass: compute dsq[jj] = ||atom_A - shifted_atom_B[jj]||²
-          correlation::math::simd::PositionBlock block{soa_x.data(), soa_y.data(),
+          correlation::math::PositionBlock block{soa_x.data(), soa_y.data(),
                                           soa_z.data(), j_count};
-          correlation::math::simd::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
+          correlation::math::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
 
           // -----------------------------------------------------------------------
           // Scalar post-processing: apply cutoff and record output
@@ -175,7 +175,7 @@ void DistanceCalculator::compute(
 
             if (d_sq <= max_bond_dist_sq) {
               // r_ij = (pos_B + disp) - pos_A  — already stored in soa arrays
-              correlation::math::linalg::Vector3<double> r_ij = {soa_x[jj] - ax, soa_y[jj] - ay,
+              correlation::math::Vector3<double> r_ij = {soa_x[jj] - ax, soa_y[jj] - ay,
                                               soa_z[jj] - az};
               neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
               if (i != j) {

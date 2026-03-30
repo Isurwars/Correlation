@@ -46,7 +46,7 @@ TEST(_10_DynamicsAnalyzer_Tests, CalculatesVACFFromExampletraj) {
   // Check if we have some non-zero velocities (it's liquid Bi, particles move)
   double max_v_sq = 0.0;
   for (const auto &v : velocities[10]) { // Check some intermediate frame
-    max_v_sq = std::max(max_v_sq, correlation::math::linalg::dot(v, v));
+    max_v_sq = std::max(max_v_sq, correlation::math::dot(v, v));
   }
   EXPECT_GT(max_v_sq, 0.0) << "Particles should be moving";
 

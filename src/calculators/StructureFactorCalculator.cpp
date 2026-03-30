@@ -53,15 +53,15 @@ void StructureFactorCalculator::calculateFrame(
   // direction (without the 2*pi). So bx = 2*pi * row0(inv), etc.
   // Row 0 of inv = (inv(0,0), inv(0,1), inv(0,2))
   // inv(r,c) = inv column c, row r
-  const double bx_x = correlation::math::constants::two_pi * inv(0, 0);
-  const double bx_y = correlation::math::constants::two_pi * inv(0, 1);
-  const double bx_z = correlation::math::constants::two_pi * inv(0, 2);
-  const double by_x = correlation::math::constants::two_pi * inv(1, 0);
-  const double by_y = correlation::math::constants::two_pi * inv(1, 1);
-  const double by_z = correlation::math::constants::two_pi * inv(1, 2);
-  const double bz_x = correlation::math::constants::two_pi * inv(2, 0);
-  const double bz_y = correlation::math::constants::two_pi * inv(2, 1);
-  const double bz_z = correlation::math::constants::two_pi * inv(2, 2);
+  const double bx_x = correlation::math::two_pi * inv(0, 0);
+  const double bx_y = correlation::math::two_pi * inv(0, 1);
+  const double bx_z = correlation::math::two_pi * inv(0, 2);
+  const double by_x = correlation::math::two_pi * inv(1, 0);
+  const double by_y = correlation::math::two_pi * inv(1, 1);
+  const double by_z = correlation::math::two_pi * inv(1, 2);
+  const double bz_x = correlation::math::two_pi * inv(2, 0);
+  const double bz_y = correlation::math::two_pi * inv(2, 1);
+  const double bz_z = correlation::math::two_pi * inv(2, 2);
 
   // -----------------------------------------------------------------------
   // Generate all (h, k, l) reciprocal lattice vectors with |q| <= q_max.
@@ -168,7 +168,7 @@ void StructureFactorCalculator::calculateFrame(
           const auto &q = q_vectors[qi];
           double cos_sum = 0.0, sin_sum = 0.0;
 
-          correlation::math::simd::miller_phase_sum(
+          correlation::math::miller_phase_sum(
               &E1_cos[(q.h + hmax) * N], &E1_sin[(q.h + hmax) * N],
               &E2_cos[(q.k + kmax) * N], &E2_sin[(q.k + kmax) * N],
               &E3_cos[(q.l + lmax) * N], &E3_sin[(q.l + lmax) * N], N, cos_sum,

@@ -132,9 +132,9 @@ std::vector<Cell> CastepMdReader::read(
 
       // Convert Bohr to Angstroms
       for (int i = 0; i < 3; ++i) {
-        h1[i] *= correlation::math::constants::bohr_to_angstrom;
-        h2[i] *= correlation::math::constants::bohr_to_angstrom;
-        h3[i] *= correlation::math::constants::bohr_to_angstrom;
+        h1[i] *= correlation::math::bohr_to_angstrom;
+        h2[i] *= correlation::math::bohr_to_angstrom;
+        h3[i] *= correlation::math::bohr_to_angstrom;
       }
 
       tempCell = Cell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]},
@@ -152,10 +152,10 @@ std::vector<Cell> CastepMdReader::read(
       double x, y, z;
       if (ss >> symbol >> id >> x >> y >> z) {
         tempCell.addAtom(
-            symbol, correlation::math::linalg::Vector3<double>(
-                        x * correlation::math::constants::bohr_to_angstrom,
-                        y * correlation::math::constants::bohr_to_angstrom,
-                        z * correlation::math::constants::bohr_to_angstrom));
+            symbol, correlation::math::Vector3<double>(
+                        x * correlation::math::bohr_to_angstrom,
+                        y * correlation::math::bohr_to_angstrom,
+                        z * correlation::math::bohr_to_angstrom));
         tempCell.setEnergy(
             current_energy); // Assign energy once per atom or frame
         cell_has_atoms = true;

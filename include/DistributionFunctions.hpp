@@ -37,8 +37,8 @@ struct AnalysisSettings {
   }
   bool smoothing = true;
   double smoothing_sigma = 0.1;
-  correlation::math::smoothing::KernelType smoothing_kernel =
-      correlation::math::smoothing::KernelType::Gaussian;
+  correlation::math::KernelType smoothing_kernel =
+      correlation::math::KernelType::Gaussian;
 };
 
 // A structure to hold all data related to a single histogram.
@@ -197,8 +197,8 @@ public:
    * @param kernel The smoothing kernel type.
    */
   void smooth(const std::string &name, double sigma,
-              correlation::math::smoothing::KernelType kernel =
-                  correlation::math::smoothing::KernelType::Gaussian);
+              correlation::math::KernelType kernel =
+                  correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Smooths all available histograms.
@@ -206,8 +206,8 @@ public:
    * @param kernel The smoothing kernel type.
    */
   void smoothAll(double sigma,
-                 correlation::math::smoothing::KernelType kernel =
-                     correlation::math::smoothing::KernelType::Gaussian);
+                 correlation::math::KernelType kernel =
+                     correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Uses an external StructureAnalyzer for neighborhood/bond info.

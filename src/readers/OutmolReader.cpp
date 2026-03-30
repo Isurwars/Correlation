@@ -90,9 +90,9 @@ std::vector<Cell> OutmolReader::read(
       ss >> h3[0] >> h3[1] >> h3[2];
 
       for (int i = 0; i < 3; ++i) {
-        h1[i] *= correlation::math::constants::bohr_to_angstrom;
-        h2[i] *= correlation::math::constants::bohr_to_angstrom;
-        h3[i] *= correlation::math::constants::bohr_to_angstrom;
+        h1[i] *= correlation::math::bohr_to_angstrom;
+        h2[i] *= correlation::math::bohr_to_angstrom;
+        h3[i] *= correlation::math::bohr_to_angstrom;
       }
       cell_parsed = true;
       continue;
@@ -111,9 +111,9 @@ std::vector<Cell> OutmolReader::read(
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
           tempCell.addAtom(
-              symbol, {x * correlation::math::constants::bohr_to_angstrom,
-                       y * correlation::math::constants::bohr_to_angstrom,
-                       z * correlation::math::constants::bohr_to_angstrom});
+              symbol, {x * correlation::math::bohr_to_angstrom,
+                       y * correlation::math::bohr_to_angstrom,
+                       z * correlation::math::bohr_to_angstrom});
         }
       }
       if (!tempCell.isEmpty()) {
@@ -138,9 +138,9 @@ std::vector<Cell> OutmolReader::read(
         if (ss >> df >> symbol >> x >> y >> z) {
           if (df == "df") {
             tempCell.addAtom(
-                symbol, {x * correlation::math::constants::bohr_to_angstrom,
-                         y * correlation::math::constants::bohr_to_angstrom,
-                         z * correlation::math::constants::bohr_to_angstrom});
+                symbol, {x * correlation::math::bohr_to_angstrom,
+                         y * correlation::math::bohr_to_angstrom,
+                         z * correlation::math::bohr_to_angstrom});
           }
         }
       }

@@ -9,7 +9,7 @@
 NeighborGraph::NeighborGraph(size_t node_count) : adj_list_(node_count) {}
 
 void NeighborGraph::addDirectedEdge(size_t from, size_t to, double distance,
-                                    const correlation::math::linalg::Vector3<double> &r_ij) {
+                                    const correlation::math::Vector3<double> &r_ij) {
   if (from >= adj_list_.size()) {
     return;
   }

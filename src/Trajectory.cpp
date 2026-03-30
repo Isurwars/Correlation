@@ -65,11 +65,11 @@ void Trajectory::precomputeBondCutoffs() const {
 
   for (size_t i = 0; i < num_elements; ++i) {
     const double radius_A =
-        correlation::math::physics::getCovalentRadius(
+        correlation::physics::getCovalentRadius(
             elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
       const double radius_B =
-          correlation::math::physics::getCovalentRadius(
+          correlation::physics::getCovalentRadius(
               elements[j].symbol);
       const double max_bond_dist = (radius_A + radius_B) * 1.3;
       const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
@@ -105,7 +105,7 @@ void Trajectory::removeDuplicatedFrames() {
       const auto &last_atoms = last_unique_frame.atoms();
 
       for (size_t j = 0; j < current_atoms.size(); ++j) {
-        if (correlation::math::linalg::norm(current_atoms[j].position() -
+        if (correlation::math::norm(current_atoms[j].position() -
                                             last_atoms[j].position()) >
             epsilon) {
           is_duplicate = false;
@@ -133,7 +133,7 @@ void Trajectory::calculateVelocities() {
 
   velocities_.assign(
       num_frames,
-      std::vector<correlation::math::linalg::Vector3<double>>(num_atoms));
+      std::vector<correlation::math::Vector3<double>>(num_atoms));
 
   if (time_step_ <= 0.0)
     return; // Cannot calculate valid velocities
@@ -141,16 +141,16 @@ void Trajectory::calculateVelocities() {
   for (size_t t = 0; t < num_frames; ++t) {
     // Determine simulation box for PBC (using current frame)
     const auto &lattice = frames_[t].latticeVectors();
-    correlation::math::linalg::Vector3<double> box = {
+    correlation::math::Vector3<double> box = {
         lattice[0][0], lattice[1][1], lattice[2][2]};
     // Check if box is valid (not zero), otherwise disable PBC correction
     bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
 
     // Helper lambda to get minimum image displacement
     auto displacement =
-        [&](const correlation::math::linalg::Vector3<double> &r2,
-            const correlation::math::linalg::Vector3<double> &r1) {
-          correlation::math::linalg::Vector3<double> dr = r2 - r1;
+        [&](const correlation::math::Vector3<double> &r2,
+            const correlation::math::Vector3<double> &r1) {
+          correlation::math::Vector3<double> dr = r2 - r1;
           if (use_pbc) {
             if (dr[0] > box[0] * 0.5)
               dr[0] -= box[0];

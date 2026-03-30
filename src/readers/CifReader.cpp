@@ -44,11 +44,11 @@ namespace {
 
 // --- Helper Struct for CIF Symmetry Operations ---
 struct SymmetryOp {
-  correlation::math::linalg::Matrix3<double> rotation{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-  correlation::math::linalg::Vector3<double> translation{0, 0, 0};
+  correlation::math::Matrix3<double> rotation{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+  correlation::math::Vector3<double> translation{0, 0, 0};
 
   // Applies the operation: new_pos = rotation * old_pos + translation
-  correlation::math::linalg::Vector3<double> apply(const correlation::math::linalg::Vector3<double> &pos) const {
+  correlation::math::Vector3<double> apply(const correlation::math::Vector3<double> &pos) const {
     return rotation * pos + translation;
   }
 };
@@ -124,7 +124,7 @@ void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &op) {
 SymmetryOp parseSymmetryString(const std::string &op_str) {
   SymmetryOp op;
   // Set rotation to zero initially
-  op.rotation = correlation::math::linalg::Matrix3<double>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
+  op.rotation = correlation::math::Matrix3<double>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
   std::stringstream ss(op_str);
   std::string component;
   int row = 0;
@@ -191,7 +191,7 @@ Cell CifReader::read(const std::string &file_name) {
   std::map<std::string, std::string> cif_data;
   struct AsymmetricAtom {
     std::string symbol;
-    correlation::math::linalg::Vector3<double> frac_pos;
+    correlation::math::Vector3<double> frac_pos;
   };
   std::vector<AsymmetricAtom> asymmetric_atoms;
   std::vector<SymmetryOp> symmetry_ops;
@@ -266,7 +266,7 @@ Cell CifReader::read(const std::string &file_name) {
               std::remove_if(element.begin(), element.end(), ::isdigit),
               element.end());
 
-          correlation::math::linalg::Vector3<double> pos = {
+          correlation::math::Vector3<double> pos = {
               std::stod(cleanCifValue(
                   tokens.at(header_map.at("_atom_site_fract_x")))),
               std::stod(cleanCifValue(
@@ -315,7 +315,7 @@ Cell CifReader::read(const std::string &file_name) {
   const double tolerance = 1e-4;
   for (const auto &atom : asymmetric_atoms) {
     for (const auto &op : symmetry_ops) {
-      correlation::math::linalg::Vector3<double> frac_pos = op.apply(atom.frac_pos);
+      correlation::math::Vector3<double> frac_pos = op.apply(atom.frac_pos);
 
       // Normalize fractional coordinates to be within [0-epsilon, 1-epsilon)
       frac_pos.x() = std::fmod(frac_pos.x(), 1.0);
@@ -334,7 +334,7 @@ Cell CifReader::read(const std::string &file_name) {
         if (final_atom.symbol != atom.symbol)
           continue;
 
-        correlation::math::linalg::Vector3<double> diff = frac_pos - final_atom.frac_pos;
+        correlation::math::Vector3<double> diff = frac_pos - final_atom.frac_pos;
         // Account for periodic boundary wrapping
         diff.x() = std::fmod(diff.x(), 1.0);
         if (std::abs(diff.x()) > 0.5)
@@ -346,7 +346,7 @@ Cell CifReader::read(const std::string &file_name) {
         if (std::abs(diff.z()) > 0.5)
           diff.z() -= std::copysign(1.0, diff.z());
 
-        if (correlation::math::linalg::norm(diff) < tolerance) {
+        if (correlation::math::norm(diff) < tolerance) {
           exists = true;
           break;
         }

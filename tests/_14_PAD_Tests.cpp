@@ -45,7 +45,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, CalculatePAD) {
   Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
   water.addAtom("H", {6, 5, 5});
-  double angRad = 104.5 * correlation::math::constants::deg_to_rad;
+  double angRad = 104.5 * correlation::math::deg_to_rad;
   water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
 
   updateTrajectory(water);
@@ -83,7 +83,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
       for (const auto &center : t1) {
         for (const auto &t2 : center) {
           for (double angle : t2) {
-            if (std::abs(angle * 180.0 / correlation::math::constants::pi -
+            if (std::abs(angle * 180.0 / correlation::math::pi -
                          90.0) < 1.0) {
               found = true;
             }
@@ -109,7 +109,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, PBCAngleDetection) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          if (std::abs(angle * 180.0 / correlation::math::constants::pi -
+          if (std::abs(angle * 180.0 / correlation::math::pi -
                        90.0) < 1.0) {
             found = true;
           }
@@ -142,7 +142,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, SiTetrahedron_4Atoms) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          double degrees = angle * 180.0 / correlation::math::constants::pi;
+          double degrees = angle * 180.0 / correlation::math::pi;
           // std::cout << "Angle: " << degrees << " degrees\n";
           // Expected angle is acos(-1/3) ~ 109.47 degrees
           if (std::abs(degrees - 109.47) < 1.0) {
@@ -188,7 +188,7 @@ TEST_F(_14_PAD_Tests_AngleReproduction, Icosahedron_13Atoms) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
         for (double angle : t2) {
-          double deg = angle * 180.0 / correlation::math::constants::pi;
+          double deg = angle * 180.0 / correlation::math::pi;
           total_angles++;
 
           if (std::abs(deg - 63.43) < 1.0)

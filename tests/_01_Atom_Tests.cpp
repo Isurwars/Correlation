@@ -21,14 +21,14 @@ TEST_F(_01_Atom_Tests, DefaultConstructorInitializesCorrectly) {
   EXPECT_EQ(atom.id(), 0);
   EXPECT_EQ(atom.element().symbol, "");
   EXPECT_EQ(atom.element().id.value, -1);
-  EXPECT_DOUBLE_EQ(correlation::math::linalg::norm(atom.position()), 0.0);
+  EXPECT_DOUBLE_EQ(correlation::math::norm(atom.position()), 0.0);
 }
 
 TEST_F(_01_Atom_Tests, AccessorsModifyStateCorrectly) {
   // Arrange
   Atom atom;
   const Element new_element = {"Fe", {26}};
-  const correlation::math::linalg::Vector3<double> new_pos = {1.0, 2.0, 3.0};
+  const correlation::math::Vector3<double> new_pos = {1.0, 2.0, 3.0};
 
   // Act
   atom.setID(42);
@@ -48,7 +48,7 @@ TEST_F(_01_Atom_Tests, AccessorsModifyStateCorrectly) {
 TEST_F(_01_Atom_Tests, ParameterizedConstructorSetsProperties) {
   // Arrange
   const Element element = {"O", {1}};
-  const correlation::math::linalg::Vector3<double> expected_pos = {1.0, 2.5, -3.0};
+  const correlation::math::Vector3<double> expected_pos = {1.0, 2.5, -3.0};
   const AtomID expected_id = 123;
 
   // Act
@@ -88,7 +88,7 @@ TEST_F(_01_Atom_Tests, AngleFunctionCalculatesNinetyDegrees) {
   const double calculated_angle = angle(center, neighbor_a, neighbor_b);
 
   // Assert
-  EXPECT_NEAR(calculated_angle, correlation::math::constants::pi / 2.0, 1e-9);
+  EXPECT_NEAR(calculated_angle, correlation::math::pi / 2.0, 1e-9);
 }
 
 TEST_F(_01_Atom_Tests, AngleFunctionHandlesCollinearAtoms) {
@@ -102,7 +102,7 @@ TEST_F(_01_Atom_Tests, AngleFunctionHandlesCollinearAtoms) {
   const double calculated_angle = angle(center, neighbor_a, neighbor_b);
 
   // Assert
-  EXPECT_NEAR(calculated_angle, correlation::math::constants::pi, 1e-9);
+  EXPECT_NEAR(calculated_angle, correlation::math::pi, 1e-9);
 }
 
 TEST_F(_01_Atom_Tests, AngleFunctionHandlesCoincidentAtoms) {

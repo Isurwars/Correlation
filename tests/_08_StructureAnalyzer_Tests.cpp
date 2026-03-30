@@ -33,7 +33,7 @@ TEST_F(_08_StructureAnalyzer_Tests, FindsCorrectNeighborsForSilicon) {
   Cell si_cell({lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
 
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
-  std::vector<correlation::math::linalg::Vector3<double>> fractional_coords = {
+  std::vector<correlation::math::Vector3<double>> fractional_coords = {
       {0.0, 0.0, 0.0},    {0.5, 0.5, 0.0},    {0.5, 0.0, 0.5},
       {0.0, 0.5, 0.5},    {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25},
       {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75}};
@@ -119,7 +119,7 @@ TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAnglesForWater) {
   const double bond_length = 0.957;    // Angstroms
   const double bond_angle_deg = 104.5; // Degrees
   const double bond_angle_rad =
-      bond_angle_deg * correlation::math::constants::deg_to_rad;
+      bond_angle_deg * correlation::math::deg_to_rad;
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});
   water_cell.addAtom("H", {10.0 + bond_length, 10.0, 10.0});
@@ -147,7 +147,7 @@ TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAnglesForWater) {
   // There should be exactly one H-O-H angle in this system.
   ASSERT_EQ(hoh_angles.size(), 1);
   // The calculated angle should match the known value.
-  EXPECT_NEAR(hoh_angles[0] * correlation::math::constants::rad_to_deg,
+  EXPECT_NEAR(hoh_angles[0] * correlation::math::rad_to_deg,
               bond_angle_deg, 1e-4);
 }
 

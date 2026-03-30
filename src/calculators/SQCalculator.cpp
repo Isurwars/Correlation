@@ -119,7 +119,7 @@ SQCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
       double window = 1.0;
       if (r > r_max_val * 0.8) {
         const double x = (r - 0.8 * r_max_val) / (0.2 * r_max_val);
-        window = std::cos(correlation::math::constants::pi * x / 2.0);
+        window = std::cos(correlation::math::pi * x / 2.0);
       }
       integrand_terms[p][j] = r * (g_r_partial[j] - 1.0) * window * dr;
     }
@@ -140,13 +140,13 @@ SQCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
 
           for (size_t p = 0; p < num_partials; ++p) {
             const PartialInfo &pi = partials[p];
-            const double integral = correlation::math::simd::sinc_integral(
+            const double integral = correlation::math::sinc_integral(
                 Q, integrand_terms[p].data(), r_bins.data(), sinqr.data(),
                 j_max);
 
             const double delta_ij = pi.is_identical ? 1.0 : 0.0;
             const double sq_val =
-                delta_ij + (correlation::math::constants::four_pi * total_rho *
+                delta_ij + (correlation::math::four_pi * total_rho *
                             pi.composition_sqrt_factor / Q) *
                                integral;
 

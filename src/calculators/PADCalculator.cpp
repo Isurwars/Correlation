@@ -54,7 +54,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
 
         for (const auto &angle_rad : neighbors->angles()[j][i][k]) {
           double angle_deg =
-              angle_rad * correlation::math::constants::rad_to_deg;
+              angle_rad * correlation::math::rad_to_deg;
 
           if (angle_deg <= theta_cut + 1e-5) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
@@ -91,7 +91,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_theta.partials) {
-    correlation::math::simd::scale_bins(partial.data(), normalization_factor,
+    correlation::math::scale_bins(partial.data(), normalization_factor,
                                         num_bins);
   }
   return f_theta;

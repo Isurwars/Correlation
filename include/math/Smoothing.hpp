@@ -12,7 +12,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace correlation::math::smoothing {
+namespace correlation::math {
 
 // Enum class for type-safe selection of kernel types.
 // This prevents passing invalid integer values.
@@ -35,8 +35,7 @@ inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
 
   if (type == KernelType::Gaussian) {
     // 1 / (sigma * sqrt(2*pi))
-    const double a =
-        1.0 / (std::sqrt(2 * correlation::math::constants::pi) * sigma);
+    const double a = 1.0 / (std::sqrt(correlation::math::two_pi) * sigma);
     const double b = -1.0 / (2.0 * sigma * sigma);
     for (size_t i = 0; i < size; ++i) {
       // Calculate x in distance units (r units)
@@ -83,35 +82,34 @@ inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
 /**
  * @brief Applies kernel smoothing to a data series.
  *
- * This function convolves a given kernel with the input data `y` to produce a
- * smoothed version.
+ * This function convolves the chosen kernel with `y` to produce a smoothed
+ * version. The bin width `dx` fully characterises the sampling grid; the full
+ * grid vector is not required and is not accepted to keep the interface lean.
  *
- * @param r The independent variable values (x-axis).
- * @param y The dependent variable values (y-axis) to be smoothed.
- * @param sigma The bandwidth (standard deviation for Gaussian) of the kernel,
- * in the same units as the 'r' bins (e.g., Å or degrees).
- * @param type The type of kernel to use for smoothing.
- * @return A vector containing the smoothed data.
+ * @param dx    Uniform bin width of the data (e.g., Δr in Å).
+ * @param y     The dependent variable values to be smoothed.
+ * @param sigma Kernel bandwidth (standard deviation for Gaussian), in the
+ *              same physical units as `dx`.
+ * @param type  Kernel type to use.
+ * @return A vector containing the smoothed data (same length as `y`).
  */
-inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
+inline std::vector<double> KernelSmoothing(double dx,
                                            const std::vector<double> &y,
                                            double sigma, KernelType type) {
-  if (r.size() != y.size() || r.empty()) {
-    return {}; // Return empty vector for invalid input
+  if (y.empty()) {
+    return {};
+  }
+  if (dx <= 0) {
+    throw std::invalid_argument(
+        "'dx' must be a positive bin width for smoothing.");
   }
   if (sigma <= 0.0) {
     throw std::invalid_argument("Smoothing sigma must be positive.");
   }
 
-  const size_t n = r.size();
-  const double dx = (n > 1) ? (r[1] - r[0]) : 0;
-  if (dx <= 0) {
-    throw std::invalid_argument(
-        "Input 'r' must be uniformly increasing for smoothing.");
-  }
-
   // Calculate the kernel radius in bins by dividing the physical sigma by dx.
   // We use 4.0 * sigma to cover approximately 99.99% of the Gaussian area.
+  const size_t n = y.size();
   size_t kernel_radius_bins = static_cast<size_t>(4.0 * sigma / dx);
 
   // Clamp the radius to prevent the kernel from exceeding half the data size.
@@ -169,4 +167,19 @@ inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
   return smoothed;
 }
 
-} // namespace correlation::math::smoothing
+/**
+ * @brief Compatibility overload: derives `dx` from the grid and delegates.
+ *
+ * Prefer the `(dx, y, sigma, type)` overload when the bin width is already
+ * known to avoid recomputing it.
+ */
+inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
+                                           const std::vector<double> &y,
+                                           double sigma, KernelType type) {
+  if (r.size() != y.size() || r.size() < 2)
+    return {};
+  const double dx = r[1] - r[0];
+  return KernelSmoothing(dx, y, sigma, type);
+}
+
+} // namespace correlation::math

@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "math/Constants.hpp"
 #include "math/SIMDConfig.hpp"
 #include <cmath>
+#include <numbers>
 
-namespace correlation::math::special {
+namespace correlation::math {
 
 /**
  * @brief Inline helper for factorials up to 20.
@@ -90,7 +90,7 @@ inline double sph_legendre(int l, int m, double theta) {
   }
 
   // Normalization factor
-  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * constants::pi) *
+  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * std::numbers::pi) *
                           factorial(l - m) / factorial(l + m));
 
   // Cancel Condon-Shortley phase to match std::sph_legendre
@@ -115,7 +115,7 @@ inline void sph_legendre_batch(int l, int m, const double *CORRELATION_RESTRICT 
   }
 
   // Precompute normalization factor and Condon-Shortley phase
-  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * constants::pi) *
+  double norm = std::sqrt((2.0 * l + 1.0) / (4.0 * std::numbers::pi) *
                           factorial(l - m) / factorial(l + m));
   if (m % 2 != 0) {
     norm = -norm;
@@ -222,4 +222,4 @@ inline void sph_legendre_batch(int l, int m, const double *CORRELATION_RESTRICT 
 #endif
 }
 
-} // namespace correlation::math::special
+} // namespace correlation::math

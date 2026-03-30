@@ -20,9 +20,9 @@ protected:
   // Helper to create a dummy frame with a specific position for an atom
   Cell createFrame(double x, double y, double z) {
     // Create a simple cubic lattice
-    correlation::math::linalg::Vector3<double> a = {10.0, 0.0, 0.0};
-    correlation::math::linalg::Vector3<double> b = {0.0, 10.0, 0.0};
-    correlation::math::linalg::Vector3<double> c = {0.0, 0.0, 10.0};
+    correlation::math::Vector3<double> a = {10.0, 0.0, 0.0};
+    correlation::math::Vector3<double> b = {0.0, 10.0, 0.0};
+    correlation::math::Vector3<double> c = {0.0, 0.0, 10.0};
 
     Cell frame(a, b, c);
 
@@ -118,9 +118,9 @@ TEST_F(_03_Trajectory_Tests, CalculateVelocitiesComputesCorrectVelocities) {
 
 TEST_F(_03_Trajectory_Tests, CalculateVelocitiesHandlesPBC) {
   // Create a cubic lattice 10x10x10
-  correlation::math::linalg::Vector3<double> a = {10.0, 0.0, 0.0};
-  correlation::math::linalg::Vector3<double> b = {0.0, 10.0, 0.0};
-  correlation::math::linalg::Vector3<double> c = {0.0, 0.0, 10.0};
+  correlation::math::Vector3<double> a = {10.0, 0.0, 0.0};
+  correlation::math::Vector3<double> b = {0.0, 10.0, 0.0};
+  correlation::math::Vector3<double> c = {0.0, 0.0, 10.0};
 
   Cell frame1(a, b, c);
   frame1.addAtom("H", {9.0, 5.0, 5.0}); // Near boundary

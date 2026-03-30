@@ -199,7 +199,7 @@ void DistributionFunctions::calculateAshcroftWeights() {
 //---------------------------- Smoothing Methods ----------------------------//
 //---------------------------------------------------------------------------//
 void DistributionFunctions::smooth(const std::string &name, double sigma,
-                                   correlation::math::smoothing::KernelType kernel) {
+                                   correlation::math::KernelType kernel) {
   if (histograms_.find(name) == histograms_.end()) {
     throw std::runtime_error("Histogram '" + name +
                              "' not found for smoothing.");
@@ -230,8 +230,8 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
       [&](const tbb::blocked_range<size_t> &r) {
         for (size_t i = r.begin(); i != r.end(); ++i)
           results[i] =
-              correlation::math::smoothing::KernelSmoothing(
-                  hist.bins, *entries[i].second, min_sigma, kernel);
+              correlation::math::KernelSmoothing(
+                  dx, *entries[i].second, min_sigma, kernel);
       });
 
   // Serial writeback — map insertions are not thread-safe.
@@ -240,7 +240,7 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
 }
 
 void DistributionFunctions::smoothAll(
-    double sigma, correlation::math::smoothing::KernelType kernel) {
+    double sigma, correlation::math::KernelType kernel) {
   for (const auto &[name, histogram] : histograms_) {
     smooth(name, sigma, kernel);
   }

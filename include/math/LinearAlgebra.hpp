@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-namespace correlation::math::linalg {
+namespace correlation::math {
 
 // -----------------------------------------------------------------------------
 //  Vector3  –  lightweight, constexpr, stack-based
@@ -375,4 +375,4 @@ operator*(Scalar s, const Vector3<T> &v) noexcept {
   return v * static_cast<T>(s);
 }
 
-} // namespace correlation::math::linalg
+} // namespace correlation::math

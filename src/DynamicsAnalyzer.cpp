@@ -53,7 +53,7 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   double total_mass = 0.0;
   for (size_t i = 0; i < num_atoms; ++i) {
     try {
-      masses[i] = correlation::math::physics::getAtomicMass(
+      masses[i] = correlation::physics::getAtomicMass(
           atoms[i].element().symbol);
     } catch (const std::out_of_range &) {
       masses[i] = 1.0;
@@ -62,18 +62,18 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   }
 
   // Create corrected velocities (COM removed) mapped relative to start_frame
-  std::vector<std::vector<correlation::math::linalg::Vector3<double>>>
+  std::vector<std::vector<correlation::math::Vector3<double>>>
       atom_velocities(
           num_atoms,
-          std::vector<correlation::math::linalg::Vector3<double>>(num_frames));
+          std::vector<correlation::math::Vector3<double>>(num_frames));
 
   for (size_t t = 0; t < num_frames; ++t) {
     const size_t traj_t = start_frame + t;
-    correlation::math::linalg::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
+    correlation::math::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
     for (size_t i = 0; i < num_atoms; ++i) {
       momentum_sum += velocities[traj_t][i] * masses[i];
     }
-    correlation::math::linalg::Vector3<double> v_com =
+    correlation::math::Vector3<double> v_com =
         momentum_sum / total_mass;
 
     for (size_t i = 0; i < num_atoms; ++i) {
@@ -93,8 +93,13 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   tbb::enumerable_thread_specific<std::vector<double>> ets_vacf(
       [&] { return std::vector<double>(max_correlation_frames + 1, 0.0); });
 
+  // Thread-local FFT workspace: one heap allocation per thread, reused
+  // per-atom across all three autocorrelate calls.
+  tbb::enumerable_thread_specific<std::vector<std::complex<double>>> ets_ws;
+
   tbb::parallel_for(size_t(0), num_atoms, [&](size_t i) {
     auto &local_vacf = ets_vacf.local();
+    auto &ws = ets_ws.local();
     const auto &v_i = atom_velocities[i];
 
     std::vector<double> vx(num_frames), vy(num_frames), vz(num_frames);
@@ -104,9 +109,9 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
       vz[t] = v_i[t].z();
     }
 
-    auto S2_x = correlation::math::fft::autocorrelate(vx);
-    auto S2_y = correlation::math::fft::autocorrelate(vy);
-    auto S2_z = correlation::math::fft::autocorrelate(vz);
+    auto S2_x = correlation::math::autocorrelate(vx, ws);
+    auto S2_y = correlation::math::autocorrelate(vy, ws);
+    auto S2_z = correlation::math::autocorrelate(vz, ws);
 
     for (int lag = 0; lag <= max_correlation_frames; ++lag) {
       local_vacf[lag] += S2_x[lag] + S2_y[lag] + S2_z[lag];
@@ -164,9 +169,9 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
   //   unwrapped[i][t] = sum_{s=0}^{t-1} min_image( r(s+1) - r(s) )
   // This correctly handles PBC crossings without needing explicit unwrapping.
 
-  std::vector<std::vector<correlation::math::linalg::Vector3<double>>>
+  std::vector<std::vector<correlation::math::Vector3<double>>>
       unwrapped(num_atoms,
-                std::vector<correlation::math::linalg::Vector3<double>>(
+                std::vector<correlation::math::Vector3<double>>(
                     num_frames, {0.0, 0.0, 0.0}));
 
   for (size_t t = 1; t < num_frames; ++t) {
@@ -175,7 +180,7 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
 
     // Get box vectors for minimum image (use current frame)
     const auto &lattice = frames[tf].latticeVectors();
-    correlation::math::linalg::Vector3<double> box = {
+    correlation::math::Vector3<double> box = {
         lattice[0][0], lattice[1][1], lattice[2][2]};
     bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
 
@@ -183,7 +188,7 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
     const auto &prev_atoms = frames[tf_prev].atoms();
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      correlation::math::linalg::Vector3<double> dr =
+      correlation::math::Vector3<double> dr =
           curr_atoms[i].position() - prev_atoms[i].position();
 
       // Apply minimum image convention
@@ -215,8 +220,12 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
   tbb::enumerable_thread_specific<std::vector<double>> ets_msd(
       [&] { return std::vector<double>(max_correlation_frames + 1, 0.0); });
 
+  // Thread-local FFT workspace reused across per-atom autocorrelate calls.
+  tbb::enumerable_thread_specific<std::vector<std::complex<double>>> ets_ws_msd;
+
   tbb::parallel_for(size_t(0), num_atoms, [&](size_t i) {
     auto &local_msd = ets_msd.local();
+    auto &ws = ets_ws_msd.local();
     const auto &u_i = unwrapped[i];
 
     std::vector<double> x(num_frames), y(num_frames), z(num_frames);
@@ -228,9 +237,9 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
       r_sq[t] = x[t] * x[t] + y[t] * y[t] + z[t] * z[t];
     }
 
-    auto S2_x = correlation::math::fft::autocorrelate(x);
-    auto S2_y = correlation::math::fft::autocorrelate(y);
-    auto S2_z = correlation::math::fft::autocorrelate(z);
+    auto S2_x = correlation::math::autocorrelate(x, ws);
+    auto S2_y = correlation::math::autocorrelate(y, ws);
+    auto S2_z = correlation::math::autocorrelate(z, ws);
 
     std::vector<double> S1(max_correlation_frames + 1, 0.0);
     S1[0] = 2.0 * std::accumulate(r_sq.begin(), r_sq.end(), 0.0);
@@ -325,7 +334,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
 
     // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
     // scale)
-    double theta = correlation::math::constants::two_pi * nu * dt * 0.001;
+    double theta = correlation::math::two_pi * nu * dt * 0.001;
 
     if (std::abs(theta) < 1e-6) {
       for (size_t i = 0; i < num_frames; ++i) {

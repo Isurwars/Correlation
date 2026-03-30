@@ -10,10 +10,10 @@
 #endif
 
 /**
- * @namespace correlation::math::constants
+ * @namespace correlation::math
  * @brief Defines universal mathematical and physical constants.
  */
-namespace correlation::math::constants {
+namespace correlation::math {
 
 // Use the standard library's high-precision pi from C++20 if available
 // or a high-precision constant.
@@ -35,4 +35,4 @@ constexpr double four_pi = 4.0 * pi;
 constexpr double kb_ev_per_k = 8.617333262e-5;      // eV / K
 constexpr double hbar_ev_ps = 6.582119569e-4;       // eV·ps
 
-} // namespace correlation::math::constants
+} // namespace correlation::math

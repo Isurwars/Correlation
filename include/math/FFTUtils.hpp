@@ -7,11 +7,12 @@
 
 #include "math/Constants.hpp"
 #include <algorithm>
+#include <cmath>
 #include <complex>
 #include <stdexcept>
 #include <vector>
 
-namespace correlation::math::fft {
+namespace correlation::math {
 
 /**
  * @brief Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal
@@ -40,7 +41,7 @@ inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
 
   // Cooley-Tukey with precomputed twiddle basics
   for (size_t len = 2; len <= n; len <<= 1) {
-    double angle = 2.0 * constants::pi / len * (invert ? -1 : 1);
+    double angle = correlation::math::two_pi / len * (invert ? -1 : 1);
     std::complex<double> wlen(std::cos(angle), std::sin(angle));
     for (size_t i = 0; i < n; i += len) {
       std::complex<double> w(1.0, 0.0);
@@ -63,9 +64,17 @@ inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
 
 /**
  * @brief Computes the autocorrelation of a 1D real sequence using FFT.
+ *
+ * @param x         Input signal.
+ * @param workspace Reusable scratch buffer. Resized automatically when needed.
+ *                  Pass the same buffer across repeated calls (e.g. per-atom
+ *                  loops) to avoid repeated heap allocation.
+ * @return Autocorrelation array of length n.
  */
-inline std::vector<double> autocorrelate(const std::vector<double> &x) {
-  size_t n = x.size();
+inline std::vector<double>
+autocorrelate(const std::vector<double> &x,
+              std::vector<std::complex<double>> &workspace) {
+  const size_t n = x.size();
   if (n == 0)
     return {};
 
@@ -73,24 +82,36 @@ inline std::vector<double> autocorrelate(const std::vector<double> &x) {
   while (len < 2 * n)
     len <<= 1;
 
-  std::vector<std::complex<double>> cx(len, {0.0, 0.0});
+  // Reuse caller-supplied workspace; only reallocates when length grows.
+  workspace.assign(len, {0.0, 0.0});
   for (size_t i = 0; i < n; ++i)
-    cx[i] = {x[i], 0.0};
+    workspace[i] = {x[i], 0.0};
 
-  computeFFT(cx, false);
+  computeFFT(workspace, false);
 
+  // In-place |X[k]|² — no intermediate vector needed.
   for (size_t i = 0; i < len; ++i) {
-    double mag_sq = cx[i].real() * cx[i].real() + cx[i].imag() * cx[i].imag();
-    cx[i] = {mag_sq, 0.0};
+    const double re = workspace[i].real();
+    const double im = workspace[i].imag();
+    workspace[i] = {re * re + im * im, 0.0};
   }
 
-  computeFFT(cx, true);
+  computeFFT(workspace, true);
 
   std::vector<double> result(n);
-  for (size_t i = 0; i < n; ++i) {
-    result[i] = cx[i].real();
-  }
+  for (size_t i = 0; i < n; ++i)
+    result[i] = workspace[i].real();
   return result;
 }
 
-} // namespace correlation::math::fft
+/**
+ * @brief Convenience overload — allocates its own workspace.
+ *
+ * Prefer the two-argument overload in tight loops to recycle the allocation.
+ */
+inline std::vector<double> autocorrelate(const std::vector<double> &x) {
+  std::vector<std::complex<double>> workspace;
+  return autocorrelate(x, workspace);
+}
+
+} // namespace correlation::math

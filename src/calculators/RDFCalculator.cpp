@@ -115,7 +115,7 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       // DistanceTensor. We multiply by 2 to account for both A_1 -> A_2 and A_2
       // -> A_1 interactions.
       if (i == j) {
-        correlation::math::simd::scale_bins(partial_hist.data(), 2.0, num_bins);
+        correlation::math::scale_bins(partial_hist.data(), 2.0, num_bins);
       }
     }
   }
@@ -142,13 +142,13 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
       const double g_norm_constant =
-          V / (correlation::math::constants::four_pi * dr * Ni * Nj);
+          V / (correlation::math::four_pi * dr * Ni * Nj);
       const double rho_j = Nj / V;
       const double inv_Ni_dr = 1.0 / (Ni * dr);
       const double inv_Nj_dr = 1.0 / (Nj * dr);
-      const double pi4_rho_j = correlation::math::constants::four_pi * rho_j;
+      const double pi4_rho_j = correlation::math::four_pi * rho_j;
 
-      correlation::math::simd::normalize_rdf_bins(
+      correlation::math::normalize_rdf_bins(
           H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr,
           pi4_rho_j, g_r.partials[key].data(), G_r.partials[key].data(),
           J_r.partials[key].data(), J_r.partials[inversekey].data(), num_bins);
@@ -179,9 +179,9 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
       continue;
 
     total_J[k] =
-        correlation::math::constants::four_pi * r * r * rho_0 * total_g[k];
+        correlation::math::four_pi * r * r * rho_0 * total_g[k];
     total_G[k] =
-        correlation::math::constants::four_pi * rho_0 * r * (total_g[k] - 1.0);
+        correlation::math::four_pi * rho_0 * r * (total_g[k] - 1.0);
   }
 
   std::map<std::string, Histogram> results;
