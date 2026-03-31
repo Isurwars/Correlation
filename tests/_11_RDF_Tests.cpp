@@ -119,16 +119,18 @@ TEST_F(_11_RDF_Tests, CalculateRDF) {
                std::invalid_argument); // Zero bin width
   EXPECT_THROW(df.calculateRDF(0.0, 0.1), std::invalid_argument); // Zero r_max
 
-  // Valid calculation
-  df.calculateRDF(5.0, 0.1);
+  // Valid calculation with tight bins for numerical accuracy
+  df.calculateRDF(5.0, 0.001);
   const auto &hist = df.getHistogram("g_r");
   const auto &total = hist.partials.at("Ar-Ar");
 
-  // Peak at 1.5 (+- bin width)
+  // High precision peak location
   auto max_it = std::max_element(total.begin(), total.end());
   size_t peak_idx = std::distance(total.begin(), max_it);
   double peak_r = hist.bins[peak_idx];
-  EXPECT_NEAR(peak_r, 1.5, 0.1);
+  
+  // Bin size is 0.001. Bin containing 1.50 is index 1500 (center 1.5005) or 1499 (1.4995)
+  EXPECT_NEAR(peak_r, 1.5, 0.001);
 }
 
 TEST_F(_11_RDF_Tests, CalculateCoordinationNumber) {

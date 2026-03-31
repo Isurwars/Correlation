@@ -51,14 +51,15 @@ TEST_F(_13_PAD_Tests_AngleReproduction, CalculatePAD) {
   updateTrajectory(water);
   DistributionFunctions df(water, 2.0, trajectory_.getBondCutoffsSQ());
 
-  df.calculatePAD(1.0);
+  df.calculatePAD(0.001);
   const auto &hist = df.getHistogram("BAD");
   const auto &hoh = hist.partials.at("H-O-H");
 
   auto max_it = std::max_element(hoh.begin(), hoh.end());
   size_t idx = std::distance(hoh.begin(), max_it);
   double angle = hist.bins[idx];
-  EXPECT_NEAR(angle, 104.5, 2.0);
+  // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to precision
+  EXPECT_NEAR(angle, 104.5, 0.001);
 }
 
 TEST_F(_13_PAD_Tests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
@@ -308,8 +309,8 @@ TEST_F(_13_PAD_Tests, LinearGeometry180) {
 
   // Bond length 1.0. Cutoff needs to be > 1.0
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  // Use 180.0 now that we fixed the binning logic
-  df.calculatePAD(1.0);
+  // Fine binning for accuracy 
+  df.calculatePAD(0.001);
 
   const auto &hist = df.getHistogram("BAD");
   // Should have O-Si-O peak at 180
@@ -317,9 +318,8 @@ TEST_F(_13_PAD_Tests, LinearGeometry180) {
   const auto &partial = hist.partials.at("O-Si-O");
 
   // Bin for 180 degrees.
-  // If n_bins = 180.1/1 = 180.
-
-  double total_prob = sumHistogram(partial);
+  // Multiply counts/density by bin width (0.001) to get the probability sum
+  double total_prob = sumHistogram(partial) * 0.001;
   EXPECT_NEAR(total_prob, 1.0, 1e-5)
       << "Should be normalized to 1 angle (normalized by counts * bin_width)";
 
@@ -335,7 +335,9 @@ TEST_F(_13_PAD_Tests, LinearGeometry180) {
 
   if (peak_bin >= 0) {
     double peak_angle = hist.bins[peak_bin];
-    EXPECT_NEAR(peak_angle, 179.5, 1.0);
+    // A 180 degree angle lands in the last bin
+    // Depending on exactly how 180 is handled, it's very close to 180
+    EXPECT_NEAR(peak_angle, 180.0, 1e-3);
   } else {
     FAIL() << "No peak found in partial distribution";
   }
@@ -348,7 +350,7 @@ TEST_F(_13_PAD_Tests, RightAngle90) {
   updateTrajectory();
 
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  df.calculatePAD(1.0);
+  df.calculatePAD(0.001);
 
   const auto &hist = df.getHistogram("BAD");
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
@@ -364,7 +366,8 @@ TEST_F(_13_PAD_Tests, RightAngle90) {
     }
   }
   double peak_angle = hist.bins[peak_bin];
-  EXPECT_NEAR(peak_angle, 90.0, 1.0);
+  // 90.0 / 0.001 could land in 89.9995 or 90.0005
+  EXPECT_NEAR(peak_angle, 90.0, 0.001);
 }
 
 TEST_F(_13_PAD_Tests, EquilateralTriangle60) {
@@ -412,12 +415,12 @@ TEST_F(_13_PAD_Tests, TetrahedralAngle) {
 
   DistributionFunctions df(cell_, 1.5,
                            trajectory_.getBondCutoffsSQ()); // Distance is 1.0
-  df.calculatePAD(0.5);                                     // Finer bins
+  df.calculatePAD(0.001);                                     // Hyperfine bins
 
   const auto &hist = df.getHistogram("BAD");
   const auto &partial = hist.partials.at("O-Si-O");
 
-  // Expected ~109.5
+  // Expected ~109.471
   double peak_val = 0;
   double peak_angle = 0;
   for (size_t i = 0; i < partial.size(); ++i) {
@@ -426,7 +429,8 @@ TEST_F(_13_PAD_Tests, TetrahedralAngle) {
       peak_angle = hist.bins[i];
     }
   }
-  EXPECT_NEAR(peak_angle, 109.5, 1.0);
+  // 109.4712... / 0.001 -> index 109471 -> center 109.4715
+  EXPECT_NEAR(peak_angle, 109.4712206, 0.001);
 }
 
 // 3. Symmetry & Multi-Species
