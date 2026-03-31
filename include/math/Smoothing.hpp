@@ -16,6 +16,10 @@ namespace correlation::math {
 
 // Enum class for type-safe selection of kernel types.
 // This prevents passing invalid integer values.
+/**
+ * @enum KernelType
+ * @brief Selection of kernel types for smoothing.
+ */
 enum class KernelType { Gaussian, Bump, Triweight };
 
 /**

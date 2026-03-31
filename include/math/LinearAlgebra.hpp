@@ -271,13 +271,25 @@ private:
 //  Free Functions
 // -----------------------------------------------------------------------------
 
-// Vector dot product
+/**
+ * @brief Computes the dot product of two vectors.
+ * 
+ * @param a The first vector.
+ * @param b The second vector.
+ * @return The scalar dot product.
+ */
 template <typename T>
 constexpr T dot(const Vector3<T> &a, const Vector3<T> &b) noexcept {
   return a * b;
 }
 
-// Vector cross product
+/**
+ * @brief Computes the cross product of two 3D vectors.
+ * 
+ * @param a The first vector.
+ * @param b The second vector.
+ * @return A new Vector3 representing the cross product a x b.
+ */
 template <typename T>
 constexpr Vector3<T> cross(const Vector3<T> &a, const Vector3<T> &b) noexcept {
   return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
@@ -297,16 +309,32 @@ inline Vector3<double> cross(const Vector3<double> &a,
 }
 #endif
 
-// Vector norm_sq
+/**
+ * @brief Computes the squared vector norm (length).
+ * 
+ * @param v The vector.
+ * @return The squared length of the vector.
+ */
 template <typename T> constexpr T norm_sq(const Vector3<T> &v) noexcept {
   return v * v;
 }
-// Vector norm
+/**
+ * @brief Computes the vector norm (length).
+ * 
+ * @param v The vector.
+ * @return The length of the vector.
+ */
 template <typename T> constexpr T norm(const Vector3<T> &v) noexcept {
   return std::sqrt(v * v);
 }
 
-// Vector normalize
+/**
+ * @brief Normalizes the given vector.
+ * 
+ * @param v The vector to normalize.
+ * @return A normalized copy of the vector.
+ * @throws std::domain_error if the vector length is too close to zero.
+ */
 template <typename T> inline Vector3<T> normalize(const Vector3<T> &v) {
   const T n = norm(v);
   if (n < static_cast<T>(1e-300))
@@ -314,14 +342,25 @@ template <typename T> inline Vector3<T> normalize(const Vector3<T> &v) {
   return v / n;
 }
 
-// Matrix determinant
+/**
+ * @brief Computes the determinant of a 3x3 matrix.
+ * 
+ * @param m The matrix.
+ * @return The determinant.
+ */
 template <typename T> constexpr T determinant(const Matrix3<T> &m) noexcept {
   return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
          m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
          m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 }
 
-// Matrix invert
+/**
+ * @brief Computes the inverse of a 3x3 matrix.
+ * 
+ * @param m The matrix to invert.
+ * @return The inverted matrix.
+ * @throws std::runtime_error if the matrix is singular (determinant near zero).
+ */
 template <typename T> constexpr Matrix3<T> invert(const Matrix3<T> &m) {
   T det = determinant(m);
   if (std::abs(det) < 1e-15)
@@ -343,7 +382,12 @@ template <typename T> constexpr Matrix3<T> invert(const Matrix3<T> &m) {
   return Matrix3<T>(c0 * inv, c1 * inv, c2 * inv);
 }
 
-// Matrix transpose
+/**
+ * @brief Computes the transpose of a 3x3 matrix.
+ * 
+ * @param m The matrix to transpose.
+ * @return The transposed matrix.
+ */
 template <typename T>
 constexpr Matrix3<T> transpose(const Matrix3<T> &m) noexcept {
   return Matrix3<T>({m(0, 0), m(1, 0), m(2, 0)}, {m(0, 1), m(1, 1), m(2, 1)},

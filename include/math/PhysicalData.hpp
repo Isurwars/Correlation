@@ -11,6 +11,10 @@
 #include <string_view>
 #include <algorithm>
 
+/**
+ * @namespace correlation::physics
+ * @brief Provides structures and functions for handling atomic and material physical properties.
+ */
 namespace correlation::physics {
 
 namespace detail {
@@ -33,6 +37,13 @@ constexpr const ElementData *find(std::string_view symbol) noexcept;
  * Optimized for frequent access by caching a sorted list of elements.
  */
 
+/**
+ * @brief Retrieves the covalent radius of a given chemical element.
+ * 
+ * @param symbol The atomic symbol of the element (e.g., "C", "O", "Fe").
+ * @return The covalent radius in Angstroms.
+ * @throws std::out_of_range if the element symbol is not found in the database.
+ */
 inline double getCovalentRadius(std::string_view symbol) {
   const auto *data = detail::find(symbol);
   if (!data)
@@ -40,6 +51,13 @@ inline double getCovalentRadius(std::string_view symbol) {
   return data->radius;
 }
 
+/**
+ * @brief Retrieves the atomic mass of a given chemical element.
+ * 
+ * @param symbol The atomic symbol of the element.
+ * @return The atomic mass in atomic mass units (Da or g/mol).
+ * @throws std::out_of_range if the element symbol is not found in the database.
+ */
 inline double getAtomicMass(std::string_view symbol) {
   const auto *data = detail::find(symbol);
   if (!data)
@@ -47,6 +65,15 @@ inline double getAtomicMass(std::string_view symbol) {
   return data->mass;
 }
 
+/**
+ * @brief Retrieves the atomic form factors for a given chemical element.
+ * 
+ * The array contains 9 coefficients (a1, b1, a2, b2, a3, b3, a4, b4, c) based on the Cromer-Mann equation.
+ * 
+ * @param symbol The atomic symbol of the element.
+ * @return A 9-element array containing the form factor coefficients.
+ * @throws std::out_of_range if the element symbol is not found in the database.
+ */
 inline const std::array<double, 9> &getAtomicFormFactors(std::string_view symbol) {
   const auto *data = detail::find(symbol);
   if (!data)

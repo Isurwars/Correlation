@@ -15,6 +15,9 @@ namespace correlation::math {
  * @brief Inline helper for factorials up to 20.
  * Beyond 20, the values exceed the capacity of a 64-bit integer,
  * so we return doubles for consistency.
+ * 
+ * @param n the number to compute factorial for.
+ * @return The factorial of n.
  */
 inline double factorial(int n) {
   static const double fact[] = {1.0,
@@ -50,6 +53,11 @@ inline double factorial(int n) {
  * corresponding to std::sph_legendre from C++17.
  *
  * Specifically, computes Y_l^m(theta, 0) without the Condon-Shortley phase.
+ * 
+ * @param l The degree of the polynomial.
+ * @param m The order of the polynomial.
+ * @param theta The colatitudinal angle in radians.
+ * @return The evaluated spherical Legendre polynomial.
  */
 inline double sph_legendre(int l, int m, double theta) {
   if (m < 0 || m > l) {
@@ -104,6 +112,12 @@ inline double sph_legendre(int l, int m, double theta) {
 /**
  * @brief Vectorized version of sph_legendre.
  * Computes the polynomial for a range of angles.
+ * 
+ * @param l The degree of the polynomial.
+ * @param m The order of the polynomial.
+ * @param theta Array of colatitudinal angles.
+ * @param results Output array where computed polynomials will be stored.
+ * @param count Number of angles to process.
  */
 inline void sph_legendre_batch(int l, int m, const double *CORRELATION_RESTRICT theta,
                                double *CORRELATION_RESTRICT results, size_t count) {

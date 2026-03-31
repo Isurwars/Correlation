@@ -17,6 +17,9 @@ namespace correlation::math {
 /**
  * @brief Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal
  * optimization.
+ * 
+ * @param a The input/output vector of complex numbers. Modifies in-place.
+ * @param invert If true, performs an inverse FFT and scales the result by 1/N.
  */
 inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
   size_t n = a.size();

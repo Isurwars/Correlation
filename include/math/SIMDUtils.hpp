@@ -15,6 +15,10 @@ namespace correlation::math {
 // ---------------------------------------------------------------------------
 // SoA block of atom positions
 // ---------------------------------------------------------------------------
+/**
+ * @struct PositionBlock
+ * @brief Represents a Structure of Arrays (SoA) block of atom positions for SIMD processing.
+ */
 struct PositionBlock {
   double *x;
   double *y;
@@ -25,6 +29,11 @@ struct PositionBlock {
 // ---------------------------------------------------------------------------
 // Scalar helper
 // ---------------------------------------------------------------------------
+/**
+ * @brief Computes the squared distance between two 3D points.
+ * 
+ * @return The scalar squared distance.
+ */
 inline double dist_sq_scalar(double ax, double ay, double az, double bx,
                              double by, double bz) noexcept {
   double dx = bx - ax;
@@ -37,6 +46,15 @@ inline double dist_sq_scalar(double ax, double ay, double az, double bx,
 // Core SIMD kernels
 // ---------------------------------------------------------------------------
 
+/**
+ * @brief Computes the squared distances from a reference point to a block of positions.
+ * 
+ * @param ax x-coordinate of the reference point.
+ * @param ay y-coordinate of the reference point.
+ * @param az z-coordinate of the reference point.
+ * @param block Structure of Arrays containing the target positions.
+ * @param out_dsq Destination array for the computed squared distances.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline void compute_dsq_block(double ax, double ay, double az,
@@ -177,6 +195,15 @@ inline double sinc_integral(double Q,
 // debye_sum kernel
 // ---------------------------------------------------------------------------
 
+/**
+ * @brief Computes the Debye scattering equation sum.
+ * 
+ * @param Q The scattering vector magnitude.
+ * @param distances Source array of distance values.
+ * @param scratch Scratchpad array for intermediate evaluations.
+ * @param count Number of distances to process.
+ * @return The computed Debye sum.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
@@ -259,6 +286,21 @@ inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
 // normalize_rdf_bins kernel
 // ---------------------------------------------------------------------------
 
+/**
+ * @brief Normalizes Radial Distribution Function (RDF) bins.
+ * 
+ * @param H Histogram array of raw bin counts.
+ * @param rbins Array of radial bin positions.
+ * @param g_norm Normalization factor for g(r).
+ * @param inv_Ni_dr Inverse scale factor times dr.
+ * @param inv_Nj_dr Inverse scale factor times dr.
+ * @param pi4_rho_j Density scaling factor (4 * pi * rho_j).
+ * @param g_out Output array for g(r).
+ * @param G_out Output array for G(r).
+ * @param J_out Output array for J(r).
+ * @param Jinv_out Output array for J^{-1}(r).
+ * @param count Total number of bins.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
@@ -363,6 +405,13 @@ inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H,
 // scale_bins
 // ---------------------------------------------------------------------------
 
+/**
+ * @brief Scales an array by a constant scalar factor.
+ * 
+ * @param arr The array to scale in-place.
+ * @param s The scalar multiplication factor.
+ * @param count Number of elements to scale.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
   const __m512d vs = _mm512_set1_pd(s);
@@ -392,6 +441,18 @@ inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
 // dot_block
 // ---------------------------------------------------------------------------
 
+/**
+ * @brief Computes dot products between a reference vector and a block of vectors.
+ * 
+ * @param v1x x-component of the reference vector.
+ * @param v1y y-component of the reference vector.
+ * @param v1z z-component of the reference vector.
+ * @param v2x Array of x-components for the target vectors.
+ * @param v2y Array of y-components for the target vectors.
+ * @param v2z Array of z-components for the target vectors.
+ * @param out Output array for the scalar dot products.
+ * @param count Number of elements.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 inline void dot_block(double v1x, double v1y, double v1z,
                       const double *CORRELATION_RESTRICT v2x,
@@ -456,6 +517,9 @@ inline void dot_block(double v1x, double v1y, double v1z,
 // ---------------------------------------------------------------------------
 // Utility
 // ---------------------------------------------------------------------------
+/**
+ * @brief populates vectors with standard atom block positions for SIMD.
+ */
 template <typename AtomRange>
 inline std::size_t
 fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
@@ -477,6 +541,9 @@ fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
 // ---------------------------------------------------------------------------
 // complex_exp_sum
 // ---------------------------------------------------------------------------
+/**
+ * @brief Computes the sum of complex exponentials for a given query vector.
+ */
 inline void complex_exp_sum(double qx, double qy, double qz,
                             const double *CORRELATION_RESTRICT xs,
                             const double *CORRELATION_RESTRICT ys,
@@ -496,6 +563,9 @@ inline void complex_exp_sum(double qx, double qy, double qz,
 // miller_phase_sum
 // ---------------------------------------------------------------------------
 
+/**
+ * @brief Computes the Miller phase sum across a block of angles.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
@@ -611,6 +681,10 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
 
 #endif
 
+/**
+ * @brief Returns a string describing the compiled SIMD instruction set level.
+ * @return String representation of the SIMD level ("AVX-512", "AVX2", or "Scalar").
+ */
 inline const char *simd_level_string() noexcept {
 #if defined(CORRELATION_SIMD_AVX512)
   return "AVX-512";
