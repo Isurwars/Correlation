@@ -5,7 +5,7 @@
 
 #include "Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
-#include "math/PhysicalData.hpp"
+#include "physics/PhysicalData.hpp"
 #include <cmath>
 #include <stdexcept>
 

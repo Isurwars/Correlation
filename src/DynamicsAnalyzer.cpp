@@ -7,7 +7,7 @@
 #include "math/Constants.hpp"
 #include "math/FFTUtils.hpp"
 #include "math/LinearAlgebra.hpp"
-#include "math/PhysicalData.hpp"
+#include "physics/PhysicalData.hpp"
 #include <algorithm>
 #include <numeric>
 #include <tbb/enumerable_thread_specific.h>

@@ -6,7 +6,7 @@
 #include "calculators/XRDCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
-#include "math/PhysicalData.hpp"
+#include "physics/PhysicalData.hpp"
 #include "math/SIMDUtils.hpp"
 #include <cmath>
 #include <stdexcept>

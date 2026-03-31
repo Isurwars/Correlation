@@ -9,7 +9,7 @@
 
 #include "FileReader.hpp"
 #include "FileWriter.hpp"
-#include "math/PhysicalData.hpp"
+#include "physics/PhysicalData.hpp"
 #include <cmath>
 #include <limits>
 
