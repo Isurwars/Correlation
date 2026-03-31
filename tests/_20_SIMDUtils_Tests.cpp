@@ -10,7 +10,7 @@
 #include <vector>
 
 // Test fixture for SIMDUtils
-class _21_SIMDUtils_Tests : public ::testing::Test {
+class _20_SIMDUtils_Tests : public ::testing::Test {
 protected:
   // Random number generator setup for generating test data
   std::mt19937 gen{1337}; // Fixed seed for reproducibility
@@ -31,7 +31,7 @@ protected:
 // -----------------------------------------------------------------------------
 // Test: sinc_integral (Fourier Transform core)
 // -----------------------------------------------------------------------------
-TEST_F(_21_SIMDUtils_Tests, SincIntegralMatchesScalar) {
+TEST_F(_20_SIMDUtils_Tests, SincIntegralMatchesScalar) {
   // Test both exact multiples of SIMD width and non-multiples to hit the tail
   // logic
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
@@ -62,7 +62,7 @@ TEST_F(_21_SIMDUtils_Tests, SincIntegralMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: compute_dsq_block (Distance Squared)
 // -----------------------------------------------------------------------------
-TEST_F(_21_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
+TEST_F(_20_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
 
   // Single atom A
@@ -76,8 +76,8 @@ TEST_F(_21_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
     std::vector<double> by = generateRandomData(size);
     std::vector<double> bz = generateRandomData(size);
 
-    correlation::math::PositionBlock block{bx.data(), by.data(),
-                                                 bz.data(), size};
+    correlation::math::PositionBlock block{bx.data(), by.data(), bz.data(),
+                                           size};
 
     // Output array, initialized to -1 to detect unwritten values
     std::vector<double> actual_dsq(size, -1.0);
@@ -85,13 +85,12 @@ TEST_F(_21_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
     // Calculate expected scalar result
     std::vector<double> expected_dsq(size);
     for (size_t k = 0; k < size; ++k) {
-      expected_dsq[k] = correlation::math::dist_sq_scalar(
-          ax, ay, az, bx[k], by[k], bz[k]);
+      expected_dsq[k] =
+          correlation::math::dist_sq_scalar(ax, ay, az, bx[k], by[k], bz[k]);
     }
 
     // Call SIMD implementation
-    correlation::math::compute_dsq_block(ax, ay, az, block,
-                                               actual_dsq.data());
+    correlation::math::compute_dsq_block(ax, ay, az, block, actual_dsq.data());
 
     for (size_t k = 0; k < size; ++k) {
       EXPECT_NEAR(actual_dsq[k], expected_dsq[k], 1e-9)
@@ -103,7 +102,7 @@ TEST_F(_21_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: normalize_rdf_bins
 // -----------------------------------------------------------------------------
-TEST_F(_21_SIMDUtils_Tests, NormalizeRDFBinsMatchesScalar) {
+TEST_F(_20_SIMDUtils_Tests, NormalizeRDFBinsMatchesScalar) {
   const std::vector<size_t> sizes = {
       2,  5,  8,  9,
       16, 17, 33, 100}; // Need at least size 2 since bin 0 is skipped
@@ -156,7 +155,7 @@ TEST_F(_21_SIMDUtils_Tests, NormalizeRDFBinsMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: scale_bins
 // -----------------------------------------------------------------------------
-TEST_F(_21_SIMDUtils_Tests, ScaleBinsMatchesScalar) {
+TEST_F(_20_SIMDUtils_Tests, ScaleBinsMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100};
   const double scale_factor = 2.5;
 
@@ -180,7 +179,7 @@ TEST_F(_21_SIMDUtils_Tests, ScaleBinsMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: dot_block
 // -----------------------------------------------------------------------------
-TEST_F(_21_SIMDUtils_Tests, DotBlockMatchesScalar) {
+TEST_F(_20_SIMDUtils_Tests, DotBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100};
 
   double v1x = dist(gen);
@@ -200,7 +199,7 @@ TEST_F(_21_SIMDUtils_Tests, DotBlockMatchesScalar) {
     }
 
     correlation::math::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(),
-                                       v2z.data(), actual_out.data(), size);
+                                 v2z.data(), actual_out.data(), size);
 
     for (size_t k = 0; k < size; ++k) {
       EXPECT_NEAR(actual_out[k], expected_out[k], 1e-9)

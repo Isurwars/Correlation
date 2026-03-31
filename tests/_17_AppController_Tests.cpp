@@ -16,7 +16,7 @@
 #include "AppWindow.h"
 
 // Test fixture for the AppController class
-class _18_AppController_Tests : public ::testing::Test {
+class _17_AppController_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // Ensure Slint uses the headless backend during tests to avoid UI/X11
@@ -32,7 +32,7 @@ protected:
   }
 };
 
-TEST_F(_18_AppController_Tests, ConstructorInitializesCorrectly) {
+TEST_F(_17_AppController_Tests, ConstructorInitializesCorrectly) {
   // Slint testing backend setup if headless env var is not enough.
   // slint::testing::backend::init(); // available in slint-testing
 

@@ -8,7 +8,7 @@
 #include "NeighborGraph.hpp"
 #include "calculators/RDCalculator.hpp"
 
-class _20_RD_Tests : public ::testing::Test {
+class _19_RD_Tests : public ::testing::Test {
 protected:
   NeighborGraph graph;
 
@@ -26,7 +26,7 @@ protected:
   }
 };
 
-TEST_F(_20_RD_Tests, ComputeMotif) {
+TEST_F(_19_RD_Tests, ComputeMotif) {
   size_t max_ring_size = 5;
   Histogram f_motif = RDCalculator::calculate(graph, max_ring_size);
 
@@ -45,7 +45,7 @@ TEST_F(_20_RD_Tests, ComputeMotif) {
   EXPECT_EQ(partial[2], 0.0);
 }
 
-TEST_F(_20_RD_Tests, InvalidMaxRingSize) {
+TEST_F(_19_RD_Tests, InvalidMaxRingSize) {
   EXPECT_THROW(RDCalculator::calculate(graph, 2), std::invalid_argument);
 }
 
@@ -54,7 +54,7 @@ TEST_F(_20_RD_Tests, InvalidMaxRingSize) {
 #include "../include/Trajectory.hpp"
 #include <fstream>
 
-TEST_F(_20_RD_Tests, CelluloseRingDistribution) {
+TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
   std::ifstream f(cellulose_path);
   if (!f.good()) {

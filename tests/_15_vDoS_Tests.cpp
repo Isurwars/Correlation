@@ -9,7 +9,7 @@
 
 #include "../include/DynamicsAnalyzer.hpp"
 
-TEST(_16_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
+TEST(_15_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)
   // Fourier transform of a constant is a delta at f=0.
   // Since we define VDOS as the Fourier Transform of the VACF (without
@@ -32,7 +32,7 @@ TEST(_16_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
       << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
 }
 
-TEST(_16_vDoS_Tests, PerfectSolidShowsSinglePeak) {
+TEST(_15_vDoS_Tests, PerfectSolidShowsSinglePeak) {
   // A perfect solid has a VACF represented by non-decaying cosine waves.
   // We model a single vibrational mode as a pure cosine wave.
   // The resulting VDOS (real part) should have a single maximum at that
@@ -48,7 +48,8 @@ TEST(_16_vDoS_Tests, PerfectSolidShowsSinglePeak) {
   for (size_t i = 0; i < num_frames; ++i) {
     double t_fs = i * dt;
     // 0.001 converts fs to ps for THz frequency
-    vacf[i] = std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001);
+    vacf[i] =
+        std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001);
   }
 
   auto [frequencies, intensities_real, intensities_imag] =
@@ -72,7 +73,7 @@ TEST(_16_vDoS_Tests, PerfectSolidShowsSinglePeak) {
   EXPECT_GT(*max_it, 0.0) << "The peak real intensity should be positive.";
 }
 
-TEST(_16_vDoS_Tests, IdealGasShowsImaginaryPeak) {
+TEST(_15_vDoS_Tests, IdealGasShowsImaginaryPeak) {
   // An ideal gas (or a purely diffusive liquid) has a VACF that decays
   // exponentially without oscillations. A pure exponential decay e^(-at)
   // translates to a VDOS where the real part peaks at 0 THz and the imaginary

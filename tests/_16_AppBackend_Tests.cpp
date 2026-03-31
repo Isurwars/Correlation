@@ -9,9 +9,9 @@
 #include <stdexcept>
 
 // Test fixture for the AppBackend class
-class _17_AppBackend_Tests : public ::testing::Test {};
+class _16_AppBackend_Tests : public ::testing::Test {};
 
-TEST_F(_17_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
+TEST_F(_16_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
   AppBackend backend;
   ProgramOptions opts = backend.options();
@@ -32,7 +32,7 @@ TEST_F(_17_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
   EXPECT_EQ(backend.getTotalAtomCount(), 0);
 }
 
-TEST_F(_17_AppBackend_Tests, SetOptionsModifiesState) {
+TEST_F(_16_AppBackend_Tests, SetOptionsModifiesState) {
   // Arrange
   AppBackend backend;
   ProgramOptions opts;
@@ -52,7 +52,7 @@ TEST_F(_17_AppBackend_Tests, SetOptionsModifiesState) {
   EXPECT_EQ(new_opts.max_frame, 20);
 }
 
-TEST_F(_17_AppBackend_Tests, LoadInvalidFileThrowsException) {
+TEST_F(_16_AppBackend_Tests, LoadInvalidFileThrowsException) {
   // Arrange
   AppBackend backend;
 
@@ -61,7 +61,7 @@ TEST_F(_17_AppBackend_Tests, LoadInvalidFileThrowsException) {
                std::runtime_error);
 }
 
-TEST_F(_17_AppBackend_Tests, RecommendedTimeStepWithNoCellReturnsDefault) {
+TEST_F(_16_AppBackend_Tests, RecommendedTimeStepWithNoCellReturnsDefault) {
   // Arrange
   AppBackend backend;
 
