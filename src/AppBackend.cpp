@@ -28,9 +28,20 @@ std::map<std::string, int> AppBackend::getAtomCounts() const {
   const Cell *c = cell();
   if (!c)
     return counts;
+
+  const auto &elements = c->elements();
+  std::vector<int> id_counts(elements.size(), 0);
+
   for (const auto &atom : c->atoms()) {
-    counts[atom.element().symbol]++;
+    id_counts[atom.element_id()]++;
   }
+
+  for (size_t i = 0; i < elements.size(); ++i) {
+    if (id_counts[i] > 0) {
+      counts[elements[i].symbol] = id_counts[i];
+    }  
+  }
+
   return counts;
 }
 
