@@ -200,23 +200,40 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
         std::to_string(new_frame.atomCount()));
   }
 
-  // We should also ideally check if the atom types match in strict order,
-  // but for now, we rely on count consistency.
-  // Warning: If element registration order differs, elementIDs might differ
-  // even if symbols are same. Check symbols.
-  const auto &ref_atoms = reference.atoms();
-  const auto &new_atoms = new_frame.atoms();
+  // Check the element in the cell match the reference frame
   const auto &ref_elements = reference.elements();
   const auto &new_elements = new_frame.elements();
+  if (ref_elements.size() != new_elements.size()) {
+    throw std::runtime_error(
+        "Frame validation failed: Element count mismatch. Expected " +
+        std::to_string(ref_elements.size()) + ", but got " +
+        std::to_string(new_elements.size()));
+  }
+
+  for (size_t i = 0; i < ref_elements.size(); ++i) {
+    if (ref_elements[i].symbol != new_elements[i].symbol) {
+      throw std::runtime_error(
+          "Frame validation failed: Element symbol mismatch at index " +
+          std::to_string(i) + ". Expected " + ref_elements[i].symbol +
+          ", but got " + new_elements[i].symbol);
+    }
+  }
+
+  // Check if the element IDs match in strict order
+  // This ensures that the atom types match in the same order as the reference
+  // frame
+  const auto &ref_atoms = reference.atoms();
+  const auto &new_atoms = new_frame.atoms();
 
   for (size_t i = 0; i < ref_atoms.size(); ++i) {
-    const std::string &ref_sym = ref_elements[ref_atoms[i].element_id()].symbol;
-    const std::string &new_sym = new_elements[new_atoms[i].element_id()].symbol;
+    const int &ref_id = ref_atoms[i].element_id();
+    const int &new_id = new_atoms[i].element_id();
 
-    if (ref_sym != new_sym) {
+    if (ref_id != new_id) {
       throw std::runtime_error(
           "Frame validation failed: Atom symbol mismatch at index " +
-          std::to_string(i) + ". Expected " + ref_sym + ", but got " + new_sym);
+          std::to_string(i) + ". Expected " + ref_elements[ref_id].symbol +
+          ", but got " + new_elements[new_id].symbol);
     }
   }
 }
