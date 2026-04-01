@@ -29,6 +29,9 @@ struct ElementID {
 struct Element {
   std::string symbol;
   ElementID id{-1};
+  constexpr bool operator==(const Element other) const {
+    return symbol == other.symbol;
+  };
 };
 
 /**
@@ -77,7 +80,8 @@ public:
    * @brief Gets the position of the atom.
    * @return A const reference to the position vector.
    */
-  [[nodiscard]] const correlation::math::Vector3<double> &position() const noexcept {
+  [[nodiscard]] const correlation::math::Vector3<double> &
+  position() const noexcept {
     return position_;
   }
 
@@ -127,8 +131,10 @@ private:
  */
 [[nodiscard]] inline double angle(const Atom &center, const Atom &a,
                                   const Atom &b) noexcept {
-  const correlation::math::Vector3<double> vA = a.position() - center.position();
-  const correlation::math::Vector3<double> vB = b.position() - center.position();
+  const correlation::math::Vector3<double> vA =
+      a.position() - center.position();
+  const correlation::math::Vector3<double> vB =
+      b.position() - center.position();
 
   const double norm_sq_A = correlation::math::dot(vA, vA);
   const double norm_sq_B = correlation::math::dot(vB, vB);
@@ -137,7 +143,8 @@ private:
     return 0.0;
   }
 
-  double cos_theta = correlation::math::dot(vA, vB) / std::sqrt(norm_sq_A * norm_sq_B);
+  double cos_theta =
+      correlation::math::dot(vA, vB) / std::sqrt(norm_sq_A * norm_sq_B);
 
   // Clamp for numerical stability
   cos_theta = std::clamp(cos_theta, -1.0, 1.0);

@@ -380,6 +380,40 @@ TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnElementMismatch) {
   EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
 }
 
+TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnElementCountMismatch) {
+  Trajectory traj;
+  Cell frame1;
+  frame1.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  frame1.addAtom("H", {0.0, 0.0, 0.0});
+  frame1.addAtom("O", {1.0, 0.0, 0.0});
+  traj.addFrame(frame1);
+
+  Cell bad_frame;
+  bad_frame.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  bad_frame.addAtom("H", {0.0, 0.0, 0.0});
+  bad_frame.addAtom("H", {1.0, 0.0, 0.0}); // Frame has 2 atoms but only 1 element (H)
+
+  // Throws because frame1 has 2 elements (H, O), bad_frame has 1 element (H)
+  EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
+}
+
+TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnAtomOrderMismatch) {
+  Trajectory traj;
+  Cell frame1;
+  frame1.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  frame1.addAtom("H", {0.0, 0.0, 0.0});
+  frame1.addAtom("O", {1.0, 0.0, 0.0});
+  traj.addFrame(frame1);
+
+  Cell bad_frame;
+  bad_frame.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  bad_frame.addAtom("O", {1.0, 0.0, 0.0});
+  bad_frame.addAtom("H", {0.0, 0.0, 0.0});
+
+  // Throws because the order of atoms is different
+  EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
+}
+
 TEST_F(_03_Trajectory_Tests, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {
   Trajectory traj;
   EXPECT_NO_THROW(traj.calculateVelocities());

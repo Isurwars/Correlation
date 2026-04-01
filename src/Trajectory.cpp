@@ -6,6 +6,7 @@
 #include "Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -210,13 +211,18 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
         std::to_string(new_elements.size()));
   }
 
-  for (size_t i = 0; i < ref_elements.size(); ++i) {
-    if (ref_elements[i].symbol != new_elements[i].symbol) {
+  // Map new element IDs to reference element IDs for fast comparison
+  std::vector<int> new_to_ref(new_elements.size(), -1);
+  for (size_t i = 0; i < new_elements.size(); ++i) {
+    auto it =
+        std::find(ref_elements.begin(), ref_elements.end(), new_elements[i]);
+    if (it == ref_elements.end()) {
       throw std::runtime_error(
           "Frame validation failed: Element symbol mismatch at index " +
           std::to_string(i) + ". Expected " + ref_elements[i].symbol +
           ", but got " + new_elements[i].symbol);
     }
+    new_to_ref[i] = static_cast<int>(std::distance(ref_elements.begin(), it));
   }
 
   // Check if the element IDs match in strict order
@@ -227,13 +233,15 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
 
   for (size_t i = 0; i < ref_atoms.size(); ++i) {
     const int &ref_id = ref_atoms[i].element_id();
-    const int &new_id = new_atoms[i].element_id();
+    const int &new_id = new_to_ref[new_atoms[i].element_id()];
 
     if (ref_id != new_id) {
+      // For a helpful error message, we get the mapped original new_id
+      const int original_new_id = new_atoms[i].element_id();
       throw std::runtime_error(
           "Frame validation failed: Atom symbol mismatch at index " +
           std::to_string(i) + ". Expected " + ref_elements[ref_id].symbol +
-          ", but got " + new_elements[new_id].symbol);
+          ", but got " + new_elements[original_new_id].symbol);
     }
   }
 }
