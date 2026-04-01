@@ -147,18 +147,9 @@ void Trajectory::calculateVelocities() {
                             const correlation::math::Vector3<double> &r1) {
       correlation::math::Vector3<double> dr = r2 - r1;
       if (use_pbc) {
-        if (dr[0] > box[0] * 0.5)
-          dr[0] -= box[0];
-        if (dr[0] < -box[0] * 0.5)
-          dr[0] += box[0];
-        if (dr[1] > box[1] * 0.5)
-          dr[1] -= box[1];
-        if (dr[1] < -box[1] * 0.5)
-          dr[1] += box[1];
-        if (dr[2] > box[2] * 0.5)
-          dr[2] -= box[2];
-        if (dr[2] < -box[2] * 0.5)
-          dr[2] += box[2];
+        dr[0] -= box[0] * std::round(dr[0] / box[0]);
+        dr[1] -= box[1] * std::round(dr[1] / box[1]);
+        dr[2] -= box[2] * std::round(dr[2] / box[2]);
       }
       return dr;
     };
