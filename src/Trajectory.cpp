@@ -54,6 +54,9 @@ void Trajectory::addFrame(const Cell &frame) {
     validateFrame(frame);
   }
   frames_.push_back(frame);
+  if (frames_.size() == 1) {
+    precomputeBondCutoffs();
+  }
 }
 
 void Trajectory::precomputeBondCutoffs() const {
