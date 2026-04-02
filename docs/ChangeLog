@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] 2026-04-01
+
+### Added
+- Added MSD (Mean Squared Displacement) calculator.
+- Added Steinhardt calculator.
+- Added `SpecialFunctions` with AVX implementation.
+- Added Doxygen documentation for `math` and `physics` namespaces.
+
+### Changed
+- Refactored `math` and `physics` namespaces, moving `physics` to its own folder and grouping utilities.
+- Improved `LinearAlgebra` and math consistency, replacing `M_PI` usage.
+- Optimized constants lookup by using an `unordered_map` for physical constants.
+- Optimized `calculateVelocities` via loop switching.
+- Eagerly precompute bond cutoffs after the first frame is loaded.
+- Simplified box wrapping logic.
+- Improved trajectory and frame validation for large cells.
+- Improved and reordered the test suite.
+
+### Fixed
+- Fixed `K/Q = 0` handling in FFT.
+- Fixed self-inclusion issues in the `math` namespace.
+- Improved element counting accuracy.
+
+### Removed
+- Removed old S(Q) calculators.
+
 ## [2.3.1] 2026-03-25
 
 ### Added
