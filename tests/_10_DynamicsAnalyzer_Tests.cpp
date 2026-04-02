@@ -8,9 +8,9 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "../include/DynamicsAnalyzer.hpp"
-#include "../include/FileReader.hpp"
-#include "../include/Trajectory.hpp"
+#include "DynamicsAnalyzer.hpp"
+#include "FileReader.hpp"
+#include "Trajectory.hpp"
 
 // Assuming the test is run from the build directory or project root
 // We need to locate the l-Bi.arc file

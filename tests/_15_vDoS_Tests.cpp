@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "../include/DynamicsAnalyzer.hpp"
+#include "DynamicsAnalyzer.hpp"
 
 TEST(_15_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)

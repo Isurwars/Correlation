@@ -6,10 +6,10 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "../include/Cell.hpp"
-#include "../include/NeighborGraph.hpp"
-#include "../include/calculators/DihedralCalculator.hpp"
-#include "../include/math/Constants.hpp"
+#include "Cell.hpp"
+#include "NeighborGraph.hpp"
+#include "calculators/DihedralCalculator.hpp"
+#include "math/Constants.hpp"
 
 class _06_DihedralCalculator_Tests : public ::testing::Test {
 protected:

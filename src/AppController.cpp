@@ -8,14 +8,14 @@
 #include <Windows.h>
 #endif
 
-#include "../include/AppController.hpp"
+#include "AppController.hpp"
 
 #include <algorithm>
 #include <filesystem>
 #include <string>
 #include <vector>
 
-#include "../include/calculators/CalculatorFactory.hpp"
+#include "calculators/CalculatorFactory.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//

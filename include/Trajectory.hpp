@@ -8,7 +8,7 @@
 #include "math/LinearAlgebra.hpp"
 #include <vector>
 
-#include "../include/Cell.hpp"
+#include "Cell.hpp"
 
 class Trajectory {
   /**

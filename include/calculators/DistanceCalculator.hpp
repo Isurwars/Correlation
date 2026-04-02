@@ -6,8 +6,8 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "../Cell.hpp"
-#include "../NeighborGraph.hpp"
+#include "Cell.hpp"
+#include "NeighborGraph.hpp"
 #include <vector>
 
 namespace calculators {

@@ -5,9 +5,9 @@
 
 #include <gtest/gtest.h>
 
-#include "../include/Cell.hpp"
-#include "../include/DistributionFunctions.hpp"
-#include "../include/calculators/StructureFactorCalculator.hpp"
+#include "Cell.hpp"
+#include "DistributionFunctions.hpp"
+#include "calculators/StructureFactorCalculator.hpp"
 
 class _21_StructureFactorCalculator_Tests : public ::testing::Test {
 protected:

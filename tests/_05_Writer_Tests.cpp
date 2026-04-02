@@ -14,11 +14,11 @@
 
 namespace fs = std::filesystem;
 
-#include "../include/Cell.hpp"
-#include "../include/DistributionFunctions.hpp"
-#include "../include/FileReader.hpp"
-#include "../include/FileWriter.hpp"
-#include "../include/Trajectory.hpp"
+#include "Cell.hpp"
+#include "DistributionFunctions.hpp"
+#include "FileReader.hpp"
+#include "FileWriter.hpp"
+#include "Trajectory.hpp"
 
 // Test fixture for FileWriter integration tests.
 class _05_FileWriter_Tests : public ::testing::Test {

@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "../Cell.hpp"
-#include "../Trajectory.hpp"
+#include "Cell.hpp"
+#include "Trajectory.hpp"
 
 namespace FileReader {
 

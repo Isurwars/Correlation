@@ -49,9 +49,9 @@ TEST_F(_19_RD_Tests, InvalidMaxRingSize) {
   EXPECT_THROW(RDCalculator::calculate(graph, 2), std::invalid_argument);
 }
 
-#include "../include/FileReader.hpp"
-#include "../include/StructureAnalyzer.hpp"
-#include "../include/Trajectory.hpp"
+#include "FileReader.hpp"
+#include "StructureAnalyzer.hpp"
+#include "Trajectory.hpp"
 #include <fstream>
 
 TEST_F(_19_RD_Tests, CelluloseRingDistribution) {

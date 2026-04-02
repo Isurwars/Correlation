@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/Cell.hpp"
-#include "../include/FileReader.hpp"
+#include "Cell.hpp"
+#include "FileReader.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 

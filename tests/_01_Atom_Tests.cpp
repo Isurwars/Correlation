@@ -7,7 +7,7 @@
 #include "math/Constants.hpp"
 #include <gtest/gtest.h>
 
-#include "../include/Atom.hpp"
+#include "Atom.hpp"
 
 
 // Test fixture for the Atom class and related free functions.

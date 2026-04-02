@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../NeighborGraph.hpp"
+#include "NeighborGraph.hpp"
 #include <map>
 #include <vector>
 

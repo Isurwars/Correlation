@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/Cell.hpp"
-#include "../include/Trajectory.hpp"
-#include "../include/TrajectoryAnalyzer.hpp"
+#include "Cell.hpp"
+#include "Trajectory.hpp"
+#include "TrajectoryAnalyzer.hpp"
 #include <gtest/gtest.h>
 
 TEST(_09_TrajectoryAnalyzer_Tests, BasicUsage) {

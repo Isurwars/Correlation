@@ -10,9 +10,9 @@
 #include <string>
 #include <vector>
 
-#include "../include/Cell.hpp"
-#include "../include/FileReader.hpp"
-#include "../include/Trajectory.hpp"
+#include "Cell.hpp"
+#include "FileReader.hpp"
+#include "Trajectory.hpp"
 
 // Test fixture for Trajectory tests
 class _03_Trajectory_Tests : public ::testing::Test {

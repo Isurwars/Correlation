@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/Atom.hpp"
-#include "../include/Cell.hpp"
-#include "../include/StructureAnalyzer.hpp"
-#include "../include/Trajectory.hpp"
+#include "Atom.hpp"
+#include "Cell.hpp"
+#include "StructureAnalyzer.hpp"
+#include "Trajectory.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 #include <gtest/gtest.h>

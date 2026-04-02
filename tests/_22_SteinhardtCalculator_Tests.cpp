@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "../include/Cell.hpp"
-#include "../include/StructureAnalyzer.hpp"
-#include "../include/calculators/SteinhardtCalculator.hpp"
+#include "Cell.hpp"
+#include "StructureAnalyzer.hpp"
+#include "calculators/SteinhardtCalculator.hpp"
 #include <gtest/gtest.h>
 
 class _22_SteinhardtCalculator_Tests : public ::testing::Test {

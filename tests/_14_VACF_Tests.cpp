@@ -6,9 +6,9 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "../include/Cell.hpp"
-#include "../include/DistributionFunctions.hpp"
-#include "../include/Trajectory.hpp"
+#include "Cell.hpp"
+#include "DistributionFunctions.hpp"
+#include "Trajectory.hpp"
 
 // Test fixture for VACF and VDOS tests.
 class _14_VACF_Tests : public ::testing::Test {

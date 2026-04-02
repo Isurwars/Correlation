@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-#include "../include/AppBackend.hpp"
+#include "AppBackend.hpp"
 #include <stdexcept>
 
 // Test fixture for the AppBackend class

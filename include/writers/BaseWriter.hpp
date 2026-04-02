@@ -7,7 +7,7 @@
 
 #include <string>
 #include <vector>
-#include "../DistributionFunctions.hpp"
+#include "DistributionFunctions.hpp"
 
 namespace Writer {
 

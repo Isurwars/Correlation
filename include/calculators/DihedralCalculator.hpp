@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "../Cell.hpp"
-#include "../NeighborGraph.hpp"
+#include "Cell.hpp"
+#include "NeighborGraph.hpp"
 #include "BaseCalculator.hpp"
 #include <vector>
 

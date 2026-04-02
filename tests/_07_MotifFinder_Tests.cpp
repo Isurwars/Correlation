@@ -5,9 +5,9 @@
 
 #include <gtest/gtest.h>
 
-#include "../include/Cell.hpp"
-#include "../include/NeighborGraph.hpp"
-#include "../include/calculators/MotifFinder.hpp"
+#include "Cell.hpp"
+#include "NeighborGraph.hpp"
+#include "calculators/MotifFinder.hpp"
 
 class _07_MotifFinder_Tests : public ::testing::Test {
 protected:

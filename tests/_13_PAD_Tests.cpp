@@ -8,10 +8,10 @@
 #include <gtest/gtest.h>
 #include <numeric>
 
-#include "../include/Cell.hpp"
-#include "../include/DistributionFunctions.hpp"
-#include "../include/StructureAnalyzer.hpp"
-#include "../include/Trajectory.hpp"
+#include "Cell.hpp"
+#include "DistributionFunctions.hpp"
+#include "StructureAnalyzer.hpp"
+#include "Trajectory.hpp"
 
 // ============================================================================
 // Part 1: Angle Reproduction Tests

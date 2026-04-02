@@ -8,10 +8,10 @@
 #include <iterator>
 #include <vector>
 
-#include "../include/Cell.hpp"
-#include "../include/DistributionFunctions.hpp"
-#include "../include/Trajectory.hpp"
-#include "../include/TrajectoryAnalyzer.hpp"
+#include "Cell.hpp"
+#include "DistributionFunctions.hpp"
+#include "Trajectory.hpp"
+#include "TrajectoryAnalyzer.hpp"
 
 // Test fixture for DistributionFunctions tests.
 class _11_RDF_Tests : public ::testing::Test {

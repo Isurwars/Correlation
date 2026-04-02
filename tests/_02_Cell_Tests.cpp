@@ -8,7 +8,7 @@
 #include <cmath>
 #include <gtest/gtest.h>
 
-#include "../include/Cell.hpp"
+#include "Cell.hpp"
 
 // Test fixture for the Cell class.
 class _02_Cell_Tests : public ::testing::Test {
