@@ -127,6 +127,39 @@ protected:
     dump_file << "2 2 4.0 5.0 6.0\n";
     dump_file.close();
 
+    // Create a multi-frame LAMMPS dump file (two timesteps)
+    std::ofstream dump_traj_file("test_multi.dump");
+    ASSERT_TRUE(dump_traj_file.is_open());
+    // Frame 1
+    dump_traj_file << "ITEM: TIMESTEP\n100\n";
+    dump_traj_file << "ITEM: NUMBER OF ATOMS\n2\n";
+    dump_traj_file << "ITEM: BOX BOUNDS pp pp pp\n";
+    dump_traj_file << "0.0 10.0\n0.0 11.0\n0.0 12.0\n";
+    dump_traj_file << "ITEM: ATOMS id type x y z\n";
+    dump_traj_file << "1 1 1.0 2.0 3.0\n";
+    dump_traj_file << "2 2 4.0 5.0 6.0\n";
+    // Frame 2
+    dump_traj_file << "ITEM: TIMESTEP\n200\n";
+    dump_traj_file << "ITEM: NUMBER OF ATOMS\n2\n";
+    dump_traj_file << "ITEM: BOX BOUNDS pp pp pp\n";
+    dump_traj_file << "0.0 10.0\n0.0 11.0\n0.0 12.0\n";
+    dump_traj_file << "ITEM: ATOMS id type x y z\n";
+    dump_traj_file << "1 1 1.5 2.5 3.5\n";
+    dump_traj_file << "2 2 4.5 5.5 6.5\n";
+    dump_traj_file.close();
+
+    // Create a LAMMPS dump file with explicit element names
+    std::ofstream dump_elem_file("test_element.dump");
+    ASSERT_TRUE(dump_elem_file.is_open());
+    dump_elem_file << "ITEM: TIMESTEP\n0\n";
+    dump_elem_file << "ITEM: NUMBER OF ATOMS\n2\n";
+    dump_elem_file << "ITEM: BOX BOUNDS pp pp pp\n";
+    dump_elem_file << "0.0 10.0\n0.0 11.0\n0.0 12.0\n";
+    dump_elem_file << "ITEM: ATOMS id element x y z\n";
+    dump_elem_file << "1 Si 1.0 2.0 3.0\n";
+    dump_elem_file << "2 O  4.0 5.0 6.0\n";
+    dump_elem_file.close();
+
     // Create a temporary ONETEP .dat file
     std::ofstream dat_file("test.dat");
     ASSERT_TRUE(dat_file.is_open());
@@ -179,6 +212,8 @@ protected:
     remove("test.arc");
     remove("test_identical.arc");
     remove("test.dump");
+    remove("test_multi.dump");
+    remove("test_element.dump");
     remove("test.dat");
     remove("test.md");
   }
@@ -350,6 +385,44 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().x(), 4.0);
   EXPECT_DOUBLE_EQ(atoms[1].position().y(), 5.0);
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.0);
+}
+
+TEST_F(_04_FileReader_Tests, ReadLammpsDumpTrajectoryCorrectly) {
+  FileReader::FileType type = FileReader::determineFileType("test_multi.dump");
+  EXPECT_EQ(type, FileReader::FileType::LammpsDump);
+
+  Trajectory traj = FileReader::readTrajectory("test_multi.dump", type);
+  const auto &frames = traj.getFrames();
+  ASSERT_EQ(frames.size(), 2);
+
+  // Frame 1 positions
+  const auto &f1 = frames[0];
+  ASSERT_EQ(f1.atomCount(), 2);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0);
+  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0);
+
+  // Frame 2 positions (shifted by 0.5)
+  const auto &f2 = frames[1];
+  ASSERT_EQ(f2.atomCount(), 2);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.5);
+  EXPECT_DOUBLE_EQ(f2.atoms()[1].position().x(), 4.5);
+}
+
+TEST_F(_04_FileReader_Tests, ReadLammpsDumpElementColumnCorrectly) {
+  FileReader::FileType type = FileReader::determineFileType("test_element.dump");
+  EXPECT_EQ(type, FileReader::FileType::LammpsDump);
+
+  Cell result_cell = FileReader::readStructure("test_element.dump", type);
+
+  const auto &atoms = result_cell.atoms();
+  ASSERT_EQ(atoms.size(), 2);
+
+  // With explicit element names the symbols should be "Si" and "O"
+  EXPECT_EQ(atoms[0].element().symbol, "Si");
+  EXPECT_DOUBLE_EQ(atoms[0].position().x(), 1.0);
+
+  EXPECT_EQ(atoms[1].element().symbol, "O");
+  EXPECT_DOUBLE_EQ(atoms[1].position().x(), 4.0);
 }
 
 TEST_F(_04_FileReader_Tests, ReadOnetepDatCorrectly) {
