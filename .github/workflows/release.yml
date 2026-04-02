@@ -64,10 +64,24 @@ jobs:
       - name: Build correlation
         run: cmake --build build --config Release --parallel
 
-      - name: Create Installer
+      - name: Pre-Package Diagnostics
+        shell: bash
         run: |
           cd build
-          cpack -G NSIS
+          ls -la *.dll || true
+
+      - name: Create Installer
+        shell: bash
+        run: |
+          cd build
+          for i in 1 2 3 4 5; do
+            if cpack -G NSIS; then
+              exit 0
+            fi
+            echo "CPack failed, retrying in 5 seconds..."
+            sleep 5
+          done
+          exit 1
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2

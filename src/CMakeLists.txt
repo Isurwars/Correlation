@@ -136,6 +136,7 @@ set_property(TARGET correlation PROPERTY SLINT_EMBED_RESOURCES "embed-files")
 
 # Copy DLLs to the executable directory on Windows
 bundle_windows_dlls(correlation)
+install_windows_dlls(correlation ${CMAKE_INSTALL_BINDIR})
 
 if (NOT WIN32)
     set_target_properties(correlation PROPERTIES
