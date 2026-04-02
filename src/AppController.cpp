@@ -208,10 +208,10 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs(ui_);
   size_t n = cutoffs.size();
-  opt.bond_cutoffs_sq_.resize(n, std::vector<double>(n));
+  opt.bond_cutoffs_sq.resize(n, std::vector<double>(n));
   for (size_t i = 0; i < n; ++i) {
     for (size_t j = 0; j < n; ++j) {
-      opt.bond_cutoffs_sq_[i][j] = cutoffs[i][j] * cutoffs[i][j];
+      opt.bond_cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
     }
   }
 

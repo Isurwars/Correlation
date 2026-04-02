@@ -73,7 +73,7 @@ struct ProgramOptions {
   int min_frame = 0;
   int max_frame = -1;
   double time_step = AppDefaults::TIME_STEP;
-  std::vector<std::vector<double>> bond_cutoffs_sq_;
+  std::vector<std::vector<double>> bond_cutoffs_sq;
 };
 
 /**

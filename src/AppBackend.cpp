@@ -190,8 +190,8 @@ std::string AppBackend::run_analysis() {
 
   try {
     // Apply custom bond cutoffs if they were set in options
-    if (!options_.bond_cutoffs_sq_.empty()) {
-      trajectory_->setBondCutoffsSQ(options_.bond_cutoffs_sq_);
+    if (!options_.bond_cutoffs_sq.empty()) {
+      trajectory_->setBondCutoffsSQ(options_.bond_cutoffs_sq);
     } else {
       if (trajectory_->getBondCutoffsSQ().empty()) {
         trajectory_->precomputeBondCutoffs();
@@ -199,8 +199,8 @@ std::string AppBackend::run_analysis() {
     }
     // Determine which cutoffs to use: explicit overrides or precomputed
     // defaults.
-    const auto &active_cutoffs = !options_.bond_cutoffs_sq_.empty()
-                                     ? options_.bond_cutoffs_sq_
+    const auto &active_cutoffs = !options_.bond_cutoffs_sq.empty()
+                                     ? options_.bond_cutoffs_sq
                                      : trajectory_->getBondCutoffsSQ();
 
     // Ensure min_frame is within bounds
