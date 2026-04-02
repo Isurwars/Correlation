@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.1] 2026-04-02
+
+### Fixed
+- Fixed the release action on windows to ensure `slint_cpp.dll` is correctly relocated.
+
 ## [2.4.0] 2026-04-01
 
 ### Added
