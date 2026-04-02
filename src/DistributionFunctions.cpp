@@ -15,7 +15,6 @@
 #include "calculators/CalculatorFactory.hpp"
 #include "calculators/DADCalculator.hpp"
 #include "calculators/PADCalculator.hpp"
-#include "calculators/RDCalculator.hpp"
 #include "calculators/RDFCalculator.hpp"
 #include "calculators/VACFCalculator.hpp"
 #include "calculators/VDOSCalculator.hpp"
@@ -290,15 +289,6 @@ void DistributionFunctions::calculateDAD(double bin_width) {
 }
 
 //---------------------------------------------------------------------------//
-//----------------------------- Calculation RD ------------------------------//
-//---------------------------------------------------------------------------//
-
-void DistributionFunctions::calculateRD(size_t max_ring_size) {
-  histograms_["RD"] =
-      RDCalculator::calculate(neighbors()->neighborGraph(), max_ring_size);
-}
-
-//---------------------------------------------------------------------------//
 //----------------------------- Calculation VACF ----------------------------//
 //---------------------------------------------------------------------------//
 
@@ -443,11 +433,6 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
             if (!settings.isActive(calc->getName()))
               continue;
             calc->calculateFrame(*frame_df, settings);
-          }
-
-          // Ring Distribution requires neighbors from StructureAnalyzer
-          if (settings.isActive("RD")) {
-            frame_df->calculateRD(settings.max_ring_size);
           }
 
           results[i] = std::move(frame_df);

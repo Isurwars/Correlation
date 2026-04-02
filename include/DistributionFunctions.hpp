@@ -148,12 +148,6 @@ public:
   void calculateDAD(double bin_width = 1.0);
 
   /**
-   * @brief Calculates the Ring Distribution (RD).
-   * @param max_ring_size Max ring size to search for.
-   */
-  void calculateRD(size_t max_ring_size = 8);
-
-  /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
    * @param max_correlation_frames Maximum lag frames. -1 uses default (half
    * trajectory).
