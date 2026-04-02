@@ -22,7 +22,7 @@ function(install_windows_dlls target_name dest_dir)
         # The generator expression $<TARGET_RUNTIME_DLLS:tgt> is only valid in CMake 3.21+
         install(FILES $<TARGET_RUNTIME_DLLS:${target_name}>
                 DESTINATION ${dest_dir}
-                COMPONENT Runtime
+                COMPONENT correlation
                 OPTIONAL)
     endif()
 endfunction()

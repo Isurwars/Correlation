@@ -54,6 +54,7 @@ endif()
 # Install the executable and the library.
 install(TARGETS correlation
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT correlation
 )
 
 # -----------------------------------------------------------
@@ -69,6 +70,7 @@ if (NOT WIN32)
         install(TARGETS arrow_shared parquet_shared
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT correlation
         )
     endif()
 endif()
@@ -80,14 +82,16 @@ if (NOT WIN32)
     # 1. Install the Icon (adjust path if you use a different icon directory)
     install(FILES "${PROJECT_SOURCE_DIR}/Images/Logo.png"
             DESTINATION share/icons/hicolor/scalable/apps
-            RENAME correlation.png)
+            RENAME correlation.png
+            COMPONENT correlation)
 
     # 2. Configure and Install the .desktop file
     configure_file("${PROJECT_SOURCE_DIR}/packaging/correlation.desktop"
                    "${PROJECT_BINARY_DIR}/correlation.desktop"
                    COPYONLY)
     install(FILES "${PROJECT_BINARY_DIR}/correlation.desktop"
-            DESTINATION share/applications)
+            DESTINATION share/applications
+            COMPONENT correlation)
 endif()
 
 # -----------------------------------------------------------
@@ -100,6 +104,7 @@ set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "correlation")
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${PROJECT_SOURCE_DIR}/README.md")
+set(CPACK_COMPONENTS_ALL correlation)
 
 if (WIN32)
     set(CPACK_GENERATOR "NSIS")
