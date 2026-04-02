@@ -2,7 +2,7 @@
 
 # `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-2.3.0-green)](https://img.shields.io/badge/version-2.3.0-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-2.4.0-green)](https://img.shields.io/badge/version-2.4.0-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
 `Correlation` is a high-performance, user-friendly tool for calculating and analyzing the structural properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, and crystalline structures.
 
@@ -36,15 +36,19 @@ functions:
 - Plane-Angle Distribution (PAD)
 - Dihedral-Angle Distribution (DAD)
 - Ring Distribution (RD)
+- Mean Squared Displacement (MSD)
+- Steinhardt Bond-Orientational Parameters (Q4, Q6, W6)
 - Velocity Autocorrelation Function (VACF)
 - Vibrational Density of States (VDOS)
 
 
 Supports structure files from:
-- DMoL3 (`.CAR`)
-- CASTEP (`.CELL`)
+- Crystallographic Information Files (`.CIF`)
+- DMoL3 (`.CAR`, `.ARC`)
+- CASTEP (`.CELL`, `.MD`)
 - ONETEP (`.DAT`)
-- LAMMPS (`.XYZ`)
+- LAMMPS (`.XYZ`, `.DUMP`)
+- DMol3/Gaussian (`.OUTMOL`)
 
 High Performance: The core calculation loops are parallelized using modern C++ techniques, enabling the analysis of systems with hundreds of thousands of atoms.
 
@@ -54,7 +58,7 @@ Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clea
 
 ### Prerequisites
 
-- A modern C++ compiler (c++20 support required)
+- A modern C++ compiler (C++23 support required)
 - CMake (version 3.20+)
 - git
 - Intel TBB (for parallelization)

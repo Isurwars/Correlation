@@ -23,7 +23,7 @@ Enhancing the suite of structural and dynamic tools.
 Modernizing the codebase and improving developer/user experience.
 
 - [ ] **Python Bindings (`pybind11` or `nanobind`)**: Wrap the C++ core into a Python module (e.g., `pip install correlation-analysis`) to allow researchers to bypass the UI and integrate the fast parallel engine directly into their Jupyter Notebooks and existing analysis pipelines (ASE, MDAnalysis).
-- [x] **Plugin/Factory Pattern for Readers & Calculators**: Refactor the architecture so adding a new `Reader` or `Calculator` only requires dropping in a new class that automatically registers itself with the GUI, without modifying the core UI and `AppController`.
+- [x] **Plugin/Factory Pattern for Readers & Calculators**: Refactor the architecture so adding a new `Reader`, `Calculator` and `Writer` only requires dropping in a new class that automatically registers itself with the GUI, without modifying the core UI and `AppController`.
 - [x] **Explicit SIMD Vectorization**: Explore using explicit SIMD (AVX2/AVX-512) for the inner loops of distance calculations to achieve even higher performance on top of the existing Intel TBB multithreading.
 - [x] **Automated Release Pipelines**: Set up GitHub Actions to automatically compile binaries for Windows/Linux/macOS, generate installers, and update the AUR package upon a new GitHub Release.
 |
