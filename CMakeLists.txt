@@ -128,4 +128,8 @@ else ()
     set(CPACK_STRIP_FILES TRUE)
 endif ()
 
+set(CPACK_INSTALL_CMAKE_PROJECTS "${PROJECT_BINARY_DIR};Correlation;correlation;/")
+# Unset the internal CPack included guard to force CPack to overwrite
+# the CPackConfig with our top-level settings, overriding fetched dependencies.
+unset(CPack_CMake_INCLUDED)
 include(CPack)
