@@ -180,15 +180,17 @@ else()
 
   # Configure Arrow Build Options (Crucial for speed)
   # We disable things you don't need for a simple exporter to save compile time.
-  set(ARROW_DEPENDENCY_SOURCE "BUNDLED" CACHE INTERNAL "") # Never use system Boost or other system deps
+  # AUTO mode lets Arrow find system ZLIB (always available on Linux/macOS) without
+  # conflicting with HDF5 FetchContent which also defines ZLIB::ZLIB.
+  # ARROW_WITH_BOOST=OFF is the explicit kill switch that prevents Boost use.
+  set(ARROW_DEPENDENCY_SOURCE "AUTO" CACHE INTERNAL "")
+  set(ARROW_WITH_BOOST OFF CACHE INTERNAL "") # Never use Boost
   set(ARROW_PARQUET ON CACHE INTERNAL "")
   set(ARROW_WITH_SNAPPY OFF CACHE INTERNAL "")
-  set(ARROW_WITH_ZLIB OFF CACHE INTERNAL "")
   set(ARROW_WITH_ZSTD OFF CACHE INTERNAL "")
   set(ARROW_WITH_LZ4 OFF CACHE INTERNAL "")
   set(ARROW_WITH_BROTLI OFF CACHE INTERNAL "")
   set(ARROW_WITH_BZ2 OFF CACHE INTERNAL "")
-  set(ARROW_WITH_BOOST OFF CACHE INTERNAL "") # Explicitly disable Boost
   set(ARROW_BUILD_STATIC OFF CACHE INTERNAL "")
   set(ARROW_BUILD_SHARED ON CACHE INTERNAL "")
   set(ARROW_COMPUTE OFF CACHE INTERNAL "")

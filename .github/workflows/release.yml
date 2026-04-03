@@ -29,7 +29,7 @@ jobs:
       - name: Configure CMake
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
-            -DARROW_DEPENDENCY_SOURCE=BUNDLED \
+            -DARROW_DEPENDENCY_SOURCE=AUTO \
             -DARROW_WITH_BOOST=OFF
 
       - name: Build correlation
