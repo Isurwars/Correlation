@@ -170,11 +170,30 @@ jobs:
             '
 
       - name: Publish to AUR
-        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
-        with:
-          pkgname: correlation
-          pkgbuild: ./packaging/PKGBUILD
-          commit_username: ${{ github.actor }}
-          commit_email: ${{ github.actor }}@users.noreply.github.com
-          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-          commit_message: "Release v${{ env.VERSION }}"
+        timeout-minutes: 5
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          # Configure SSH
+          mkdir -p ~/.ssh
+          echo "$AUR_SSH_PRIVATE_KEY" > ~/.ssh/aur_key
+          chmod 600 ~/.ssh/aur_key
+          cat >> ~/.ssh/config <<'EOF'
+          Host aur.archlinux.org
+            IdentityFile ~/.ssh/aur_key
+            User aur
+            StrictHostKeyChecking no
+          EOF
+
+          # Configure git identity
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+          # Clone the AUR package repo and push updated files
+          git clone ssh://aur@aur.archlinux.org/correlation.git /tmp/aur-correlation
+          cp packaging/PKGBUILD /tmp/aur-correlation/PKGBUILD
+          cp packaging/.SRCINFO /tmp/aur-correlation/.SRCINFO
+          cd /tmp/aur-correlation
+          git add PKGBUILD .SRCINFO
+          git diff --cached --quiet || git commit -m "Release v${{ env.VERSION }}"
+          git push
