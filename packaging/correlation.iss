@@ -1,9 +1,9 @@
-; Inno Setup Script for Correlation 2.4.1
+; Inno Setup Script for Correlation 2.4.4
 ; https://jrsoftware.org/isinfo.php
 
 [Setup]
 AppName=Correlation
-AppVersion=2.4.1
+AppVersion=2.4.4
 AppPublisher=Isaías Rodríguez
 AppPublisherURL=https://github.com/Isurwars/Correlation
 AppSupportURL=https://github.com/Isurwars/Correlation/issues
@@ -16,7 +16,7 @@ LicenseFile=..\LICENSE
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 OutputDir=Installers
-OutputBaseFilename=CorrelationSetup_v2.4.1
+OutputBaseFilename=CorrelationSetup_v2.4.4
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern

@@ -2,25 +2,37 @@
 
 # `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-2.4.1-green)](https://img.shields.io/badge/version-2.4.1-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-2.4.4-green)](https://img.shields.io/badge/version-2.4.4-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
 `Correlation` is a high-performance, user-friendly tool for calculating and analyzing the structural properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, and crystalline structures.
 
 The software computes key correlation functions from atomic coordinate files and exports the results in clean, ready-to-plot CSV files, making it easy to integrate into scientific workflows.
 
 ## Table of Contents
-- [Key Features](#key-features)
-- [Quick Start: Installation](#quick-start-installation)
-  - [Prerequisites](#prerequisites)
-  - [Windows](#windows)
-  - [Linux (Debian/Ubuntu)](#linux-debian-ubuntu)
-  - [Linux (Arch/Manjaro)](#linux-arch-manjaro)
-  - [MacOS](#macos)
-  - [Build Instructions](#build-instructions)
-- [Usage](#usage)
-- [License](#license)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgments)
+- [`Correlation`: An Analysis Tool for Liquids and for Amorphous Solids](#correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids)
+  - [Table of Contents](#table-of-contents)
+  - [Key Features](#key-features)
+  - [Quick Start: Installation](#quick-start-installation)
+    - [Prerequisites](#prerequisites)
+    - [Windows](#windows)
+    - [Linux (Debian/Ubuntu)](#linux-debianubuntu)
+    - [Linux (Arch/Manjaro)](#linux-archmanjaro)
+    - [MacOS](#macos)
+    - [Build Instructions](#build-instructions)
+      - [Clone the repository:](#clone-the-repository)
+      - [Build the project:](#build-the-project)
+      - [Run tests:](#run-tests)
+      - [(OPTIONAL) Install system-wide:](#optional-install-system-wide)
+  - [Usage](#usage)
+    - [1. Load a Structure File](#1-load-a-structure-file)
+    - [2. File Information](#2-file-information)
+    - [3. Configure Analysis Options](#3-configure-analysis-options)
+    - [4. Bond Cutoffs](#4-bond-cutoffs)
+    - [5. Run Analysis](#5-run-analysis)
+  - [Built with](#built-with)
+  - [Authors](#authors)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
 
 ## Key Features
 

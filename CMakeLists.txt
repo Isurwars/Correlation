@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.21)
-project(Correlation VERSION 2.4.1 LANGUAGES CXX)
+project(Correlation VERSION 2.4.4 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 
@@ -109,6 +109,8 @@ set(CPACK_COMPONENTS_ALL correlation)
 if (WIN32)
     set(CPACK_GENERATOR "NSIS")
     set(CPACK_NSIS_PACKAGE_NAME "Correlation Analysis Tool")
+    set(CPACK_NSIS_DISPLAY_NAME "Correlation Analysis Tool")
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\\\correlation.exe")
     set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/Images/AppIcon.ico") # Corrected icon name
     set(CPACK_NSIS_HELP_LINK "https://github.com/Isurwars/Correlation")
     set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Isurwars/Correlation")
