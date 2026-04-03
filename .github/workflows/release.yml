@@ -167,7 +167,7 @@ jobs:
           "
 
       - name: Publish to AUR
-        uses: KSXGitHub/github-actions-deploy-aur@v3
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
         with:
           pkgname: correlation
           pkgbuild: ./packaging/PKGBUILD
