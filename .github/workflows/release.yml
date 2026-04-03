@@ -158,7 +158,7 @@ jobs:
         run: |
           # We need an Arch environment to use makepkg --printsrcinfo
           docker run --rm -v $PWD/packaging:/pkg archlinux /bin/bash -c "
-            pacman -Sy --noconfirm base-devel-minimal
+            pacman -Sy --noconfirm base-devel
             cd /pkg
             # We need a non-root user for makepkg
             useradd -m builder
