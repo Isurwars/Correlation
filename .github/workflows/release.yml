@@ -21,13 +21,16 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
+          sudo apt-get install -y ninja-build libtbb-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Configure CMake
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
+        run: |
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            -DARROW_DEPENDENCY_SOURCE=BUNDLED \
+            -DARROW_WITH_BOOST=OFF
 
       - name: Build correlation
         run: cmake --build build --config Release
