@@ -7,3 +7,5 @@ build
 installers
 
 aur/
+packaging/correlation.iss
+scripts/

@@ -6,6 +6,17 @@
 cmake_minimum_required(VERSION 3.21)
 project(Correlation VERSION 2.4.4 LANGUAGES CXX)
 
+# -----------------------------------------------------------
+# Auto-generate packaging files from templates.
+# correlation.iss is the single versioned output — edit
+# packaging/correlation.iss.in, never the .iss directly.
+# -----------------------------------------------------------
+configure_file(
+    "${PROJECT_SOURCE_DIR}/packaging/correlation.iss.in"
+    "${PROJECT_SOURCE_DIR}/packaging/correlation.iss"
+    @ONLY
+)
+
 include(GNUInstallDirs)
 
 # Set the C++ standard globally.
