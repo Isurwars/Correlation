@@ -74,17 +74,22 @@ jobs:
           ls -la *.dll || true
 
       - name: Create Installer
-        shell: bash
+        shell: pwsh
         run: |
-          cd build
-          for i in 1 2 3 4 5; do
-            if cpack -G NSIS; then
-              exit 0
-            fi
-            echo "CPack failed, retrying in 5 seconds..."
-            sleep 5
-          done
-          exit 1
+          Set-Location build
+          # Give the build a moment to release all file handles
+          Start-Sleep -Seconds 3
+          # Run CPack and tee output to a log file for diagnostics
+          $proc = Start-Process cpack -ArgumentList '-G','NSIS','--verbose' `
+            -NoNewWindow -PassThru -Wait `
+            -RedirectStandardOutput NSISOutput.log `
+            -RedirectStandardError NSISError.log
+          Get-Content NSISOutput.log
+          if ($proc.ExitCode -ne 0) {
+            Write-Error "CPack NSIS failed (exit $($proc.ExitCode))"
+            Get-Content NSISError.log -ErrorAction SilentlyContinue
+            exit 1
+          }
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
