@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.5-2.4.8] 2026-04-05
+
+### Added
+- Auto-generate Inno Setup installer script (`correlation.iss`) from a CMake template.
+- Improved Windows installer branding with customized icons and bitmaps.
+
+### Changed
+- Updated CI and Release GitHub workflows to be triggered manually (`workflow_dispatch`) instead of automatically on tags and commits.
+
+### Fixed
+- Fixed `makensis.exe` syntax errors during CPack NSIS installer generation on Windows by ensuring absolute path variables use backslashes.
+- Fixed Arch User Repository (AUR) release workflow by bypassing faulty third-party actions and resolving Docker timeouts.
+- Fixed Linux and macOS packaging workflows.
+- Modernized CPack build process with PowerShell logging to improve error diagnostics on Windows.
+
 ## [2.4.4] 2026-04-03
 
 ### Fixed

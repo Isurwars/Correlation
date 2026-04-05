@@ -28,17 +28,18 @@ fi
 sed -i -E "s/badge\/version-v[0-9]+\.[0-9]+\.[0-9]+-[A-Za-z0-9]+/badge\/version-v$VERSION-blue/g" README.md
 
 # 4. Stage changes
-git add CMakeLists.txt packaging/correlation.iss README.md
+#git add CMakeLists.txt packaging/correlation.iss README.md
 
 # 5. Show diff and wait for confirmation
-echo "---------------------------------------------------"
-git diff --cached
-echo "---------------------------------------------------"
-read -p "Does the diff look good? Press [Enter] to commit and push, or [Ctrl+C] to abort..."
+#echo "---------------------------------------------------"
+#git diff --cached
+#echo "---------------------------------------------------"
+#read -p "Does the diff look good? Press [Enter] to commit and push, or [Ctrl+C] to abort..."
 
 # 6. Commit, tag, and push
-git commit -m "Release v$VERSION"
+#git commit -m "Release v$VERSION"
 git tag "v$VERSION"
-git push && git push --tags
+#git push && 
+git push --tags
 
 echo "✅ Version $VERSION pushed successfully! Please trigger the release action manually from the GitHub Actions tab."
