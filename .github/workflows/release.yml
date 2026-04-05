@@ -1,9 +1,7 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -80,16 +78,11 @@ jobs:
           Set-Location build
           # Give the build a moment to release all file handles
           Start-Sleep -Seconds 3
-          # Run CPack and tee output to a log file for diagnostics
-          $proc = Start-Process cpack -ArgumentList '-G','NSIS','--verbose' `
-            -NoNewWindow -PassThru -Wait `
-            -RedirectStandardOutput NSISOutput.log `
-            -RedirectStandardError NSISError.log
-          Get-Content NSISOutput.log
-          if ($proc.ExitCode -ne 0) {
-            Write-Error "CPack NSIS failed (exit $($proc.ExitCode))"
-            Get-Content NSISError.log -ErrorAction SilentlyContinue
-            exit 1
+          # Run CPack directly to ensure logs are captured by GitHub Actions
+          cpack -G NSIS --verbose
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "CPack NSIS failed (exit $LASTEXITCODE)"
+            exit $LASTEXITCODE
           }
 
       - name: Upload Release Asset

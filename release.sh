@@ -41,4 +41,4 @@ git commit -m "Release v$VERSION"
 git tag "v$VERSION"
 git push && git push --tags
 
-echo "✅ Version $VERSION pushed successfully! GitHub Actions is taking over."
+echo "✅ Version $VERSION pushed successfully! Please trigger the release action manually from the GitHub Actions tab."
