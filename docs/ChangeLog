@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.4.9] 2026-04-05
+
+### Added
+- Cleaned and updated the NSIS Windows installer banners with a custom abstract "correlation" theme.
+
+### Fixed
+- Fixed `release.sh` to correctly bump version strings across `README.md`, `correlation.iss.in`, `PKGBUILD`, `.SRCINFO`, and `correlation.desktop`.
+
 ## [2.4.5-2.4.8] 2026-04-05
 
 ### Added
