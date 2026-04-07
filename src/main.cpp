@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file main.cpp
+ * @brief Application entry point.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 
 #if defined(_WIN32)
 #define NOMINMAX

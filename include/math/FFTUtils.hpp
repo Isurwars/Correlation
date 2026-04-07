@@ -2,7 +2,8 @@
  * @file FFTUtils.hpp
  * @brief Fast Fourier Transform (FFT) and autocorrelation utilities.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
- * @license SPDX-License-Identifier: MIT
+ * @par License
+ * SPDX-License-Identifier: MIT
  */
 
 #pragma once

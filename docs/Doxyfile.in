@@ -1,4 +1,4 @@
-# Doxygen configuration template
+# Doxygen configuration template — processed by CMake configure_file()
 PROJECT_NAME           = "Correlation"
 PROJECT_NUMBER         = "@PROJECT_VERSION@"
 PROJECT_BRIEF          = "An Analysis Tool for Liquids and for Amorphous Solids"
@@ -10,12 +10,32 @@ INPUT                  = @PROJECT_SOURCE_DIR@/include \
 FILE_PATTERNS          = *.hpp *.cpp *.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md
+# Note: README.md contains GitHub-style anchor links (e.g., #heading) which
+# Doxygen treats as \ref commands. These generate unresolvable reference
+# warnings — they are cosmetic and do not affect the API documentation.
 
 # Extraction Settings
 EXTRACT_ALL            = YES
 EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 EXTRACT_LOCAL_CLASSES  = YES
+
+# LaTeX / math rendering
+FORMULA_FONTSIZE       = 12
+USE_MATHJAX            = YES
+
+# Custom command aliases
+# @license text  → rendered as a "License" section paragraph
+ALIASES                = "license{1}=@par License ^\1"
+
+# Preprocessor: expand CORRELATION_RESTRICT so Doxygen sees real param names
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = YES
+PREDEFINED             = "CORRELATION_RESTRICT=" \
+                         "CORRELATION_ALIGN(x)=" \
+                         "CORRELATION_SIMD_AVX2" \
+                         "CORRELATION_SIMD_WIDTH=4"
 
 # Warning Settings
 QUIET                  = YES
@@ -29,11 +49,12 @@ GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 
+# LaTeX Settings (keep off for speed; enable manually for PDF)
+GENERATE_LATEX         = NO
+
 # Dot/Graphviz Settings
 HAVE_DOT               = YES
 DOT_NUM_THREADS        = 0
-DOT_FONTNAME           = Helvetica
-DOT_FONTSIZE           = 10
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = YES
 GROUP_GRAPHS           = YES
@@ -46,4 +67,3 @@ GRAPHICAL_HIERARCHY    = YES
 DIRECTORY_GRAPH        = YES
 DOT_GRAPH_MAX_NODES    = 50
 MAX_DOT_GRAPH_DEPTH    = 0
-DOT_TRANSPARENT        = YES

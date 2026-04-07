@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file DADCalculator.cpp
+ * @brief Implementation of the dihedral angle distribution calculator.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 
 #include "calculators/DADCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"

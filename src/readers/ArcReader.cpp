@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file ArcReader.cpp
+ * @brief Implementation of the ARC file format reader.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 #include "readers/ArcReader.hpp"
 #include "readers/ReaderFactory.hpp"
 

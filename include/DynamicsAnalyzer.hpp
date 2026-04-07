@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file DynamicsAnalyzer.hpp
+ * @brief Static methods for dynamics properties (VACF, VDOS, MSD).
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 
@@ -23,11 +26,13 @@ public:
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
    *
-   * C(t) = < v(t0) * v(t0 + t) >
+   * @f$ C(t) = \langle \mathbf{v}(t_0) \cdot \mathbf{v}(t_0 + t) \rangle @f$
    *
    * @param traj The trajectory containing pre-calculated velocities.
    * @param max_correlation_frames The maximum time lag (in frames) to calculate
    * correlation for.
+   * @param start_frame First frame to include (default: 0).
+   * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector containing the VACF values for lag times 0 to
    * max_correlation_frames.
    */
@@ -42,6 +47,8 @@ public:
    *
    * @param traj The trajectory containing pre-calculated velocities.
    * @param max_correlation_frames The maximum time lag.
+   * @param start_frame First frame to include (default: 0).
+   * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector containing the normalized VACF values.
    */
   static std::vector<double>
@@ -75,12 +82,13 @@ public:
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
    *
-   * Real part (Cosine Transform): \int_0^\infty VACF(t) * cos(omega * t) dt
-   * Imaginary part (Sine Transform): \int_0^\infty VACF(t) * sin(omega * t) dt
+   * Real part (Cosine Transform):
+   * @f[ \text{VDOS}_{\text{re}}(\omega) = \int_0^{\infty} C(t)\,\cos(\omega t)\,\mathrm{d}t @f]
+   * Imaginary part (Sine Transform):
+   * @f[ \text{VDOS}_{\text{im}}(\omega) = \int_0^{\infty} C(t)\,\sin(\omega t)\,\mathrm{d}t @f]
    *
    * @param vacf The Velocity Autocorrelation Function.
    * @param dt The time step between frames (in femtoseconds).
-   * @param params Optional parameters for windowing/padding.
    * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
    */
   static std::tuple<std::vector<double>, std::vector<double>,

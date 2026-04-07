@@ -2,7 +2,8 @@
  * @file SIMDConfig.hpp
  * @brief Configuration macros for SIMD instruction sets and compiler specifics.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
- * @license SPDX-License-Identifier: MIT
+ * @par License
+ * SPDX-License-Identifier: MIT
  */
 
 #pragma once

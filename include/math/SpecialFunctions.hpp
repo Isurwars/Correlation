@@ -2,7 +2,8 @@
  * @file SpecialFunctions.hpp
  * @brief Implementation of specialized mathematical functions (factorials, Legendre polynomials).
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
- * @license SPDX-License-Identifier: MIT
+ * @par License
+ * SPDX-License-Identifier: MIT
  */
 
 #pragma once

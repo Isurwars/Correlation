@@ -1,5 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+/**
+ * @file StructureAnalyzer.cpp
+ * @brief Implementation of structural analysis and neighbor search.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 #include "StructureAnalyzer.hpp"
 #include "calculators/AngleCalculator.hpp"
 #include "calculators/DihedralCalculator.hpp"

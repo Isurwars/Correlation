@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file FileReader.hpp
+ * @brief Unified file reading interface for structure and trajectory files.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 
@@ -36,6 +39,7 @@ enum class FileType {
  *
  * @param filename The path to the structure file.
  * @param type The format of the file.
+ * @param progress_callback Optional callback invoked with progress (0.0–1.0) and a status message.
  * @return A Cell object containing the parsed atomic structure.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
@@ -48,6 +52,7 @@ Cell readStructure(const std::string &filename, FileType type,
  *
  * @param filename The path to the trajectory file.
  * @param type The format of the file.
+ * @param progress_callback Optional callback invoked with progress (0.0–1.0) and a status message.
  * @return A Trajectory object.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */

@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file MotifFinder.hpp
+ * @brief Ring and structural motif finder using neighbour graph search.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 
@@ -24,14 +27,6 @@ public:
   static std::map<int, size_t> findRings(const NeighborGraph &graph,
                                          size_t max_size = 6);
 
-  /**
-   * @brief Extracts the explicit sequences of AtomIDs that form cycles of
-   * `target_size`.
-   * @param graph The underlying neighbor graph.
-   * @param target_size The exact size of cycle to extract.
-   * @return A vector of sequences, where each sequence is a list of AtomIDs
-   * forming the cycle.
-   */
   /**
    * @brief Extracts all exact cycles of a specific target size.
    *

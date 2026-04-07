@@ -1,7 +1,10 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file DistributionFunctions.hpp
+ * @brief Manager for distribution function calculations (RDF, PAD, S(Q), etc.).
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @par License
+ * SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 
@@ -129,7 +132,7 @@ public:
   /**
    * @brief Calculates the radial distribution function g(r)
    * @param r_max Maximum radius to calculate up to
-   * @param r_bin_width Width of each bin in Angstroms
+   * @param bin_width Width of each bin in Angstroms
    * @throws std::invalid_argument if parameters are invalid
    * @throws std::logic_error if cell volume is invalid
    */
@@ -149,6 +152,7 @@ public:
 
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
+   * @param traj The trajectory containing pre-calculated velocities.
    * @param max_correlation_frames Maximum lag frames. -1 uses default (half
    * trajectory).
    * @param start_frame Starting frame index.
