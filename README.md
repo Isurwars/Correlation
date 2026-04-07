@@ -2,37 +2,37 @@
 
 # `Correlation`: An Analysis Tool for Liquids and for Amorphous Solids
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-2.5.0-green)](https://img.shields.io/badge/version-2.5.0-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg)](https://doi.org/10.5281/zenodo.5514113) [![Version](https://img.shields.io/badge/version-2.5.2-green)](https://img.shields.io/badge/version-2.5.2-green) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md) [![DOI](https://joss.theoj.org/papers/10.21105/joss.02976/status.svg)](https://doi.org/10.21105/joss.02976)
 
 `Correlation` is a high-performance, user-friendly tool for calculating and analyzing the structural properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, and crystalline structures.
 
 The software computes key correlation functions from atomic coordinate files and exports the results in clean, ready-to-plot CSV files, making it easy to integrate into scientific workflows.
 
 ## Table of Contents
-- [`Correlation`: An Analysis Tool for Liquids and for Amorphous Solids](#correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids)
-  - [Table of Contents](#table-of-contents)
-  - [Key Features](#key-features)
-  - [Quick Start: Installation](#quick-start-installation)
-    - [Prerequisites](#prerequisites)
-    - [Windows](#windows)
-    - [Linux (Debian/Ubuntu)](#linux-debianubuntu)
-    - [Linux (Arch/Manjaro)](#linux-archmanjaro)
-    - [MacOS](#macos)
-    - [Build Instructions](#build-instructions)
-      - [Clone the repository:](#clone-the-repository)
-      - [Build the project:](#build-the-project)
-      - [Run tests:](#run-tests)
-      - [(OPTIONAL) Install system-wide:](#optional-install-system-wide)
-  - [Usage](#usage)
-    - [1. Load a Structure File](#1-load-a-structure-file)
-    - [2. File Information](#2-file-information)
-    - [3. Configure Analysis Options](#3-configure-analysis-options)
-    - [4. Bond Cutoffs](#4-bond-cutoffs)
-    - [5. Run Analysis](#5-run-analysis)
-  - [Built with](#built-with)
-  - [Authors](#authors)
-  - [License](#license)
-  - [Acknowledgments](#acknowledgments)
+- <a href="#correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids">`Correlation`: An Analysis Tool for Liquids and for Amorphous Solids</a>
+  - <a href="#table-of-contents">Table of Contents</a>
+  - <a href="#key-features">Key Features</a>
+  - <a href="#quick-start-installation">Quick Start: Installation</a>
+    - <a href="#prerequisites">Prerequisites</a>
+    - <a href="#windows">Windows</a>
+    - <a href="#linux-debianubuntu">Linux (Debian/Ubuntu)</a>
+    - <a href="#linux-archmanjaro">Linux (Arch/Manjaro)</a>
+    - <a href="#macos">MacOS</a>
+    - <a href="#build-instructions">Build Instructions</a>
+      - <a href="#clone-the-repository">Clone the repository:</a>
+      - <a href="#build-the-project">Build the project:</a>
+      - <a href="#run-tests">Run tests:</a>
+      - <a href="#optional-install-system-wide">(OPTIONAL) Install system-wide:</a>
+  - <a href="#usage">Usage</a>
+    - <a href="#1-load-a-structure-file">1. Load a Structure File</a>
+    - <a href="#2-file-information">2. File Information</a>
+    - <a href="#3-configure-analysis-options">3. Configure Analysis Options</a>
+    - <a href="#4-bond-cutoffs">4. Bond Cutoffs</a>
+    - <a href="#5-run-analysis">5. Run Analysis</a>
+  - <a href="#built-with">Built with</a>
+  - <a href="#authors">Authors</a>
+  - <a href="#license">License</a>
+  - <a href="#acknowledgments">Acknowledgments</a>
 
 ## Key Features
 
@@ -191,7 +191,7 @@ Configure the final output and execution settings:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details
 
 ## Acknowledgments
 

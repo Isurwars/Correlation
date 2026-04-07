@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.5.1-2.5.2] 2026-04-07
+
+### Fixed
+- Fixed Doxygen CI build failures by adding the `docs` directory to `Doxyfile` input and converting markdown anchor links in `README.md` to HTML links to resolve reference errors.
+- Added project include directories to Doxyfile search path to improve API documentation generation.
+
 ## [2.5.0] 2026-04-07
 
 ### Added
