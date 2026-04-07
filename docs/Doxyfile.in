@@ -10,6 +10,8 @@ INPUT                  = @PROJECT_SOURCE_DIR@/include \
 FILE_PATTERNS          = *.hpp *.cpp *.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md
+INCLUDE_PATH           = @PROJECT_SOURCE_DIR@/include \
+                         @PROJECT_SOURCE_DIR@/src
 # Note: README.md contains GitHub-style anchor links (e.g., #heading) which
 # Doxygen treats as \ref commands. These generate unresolvable reference
 # warnings — they are cosmetic and do not affect the API documentation.
