@@ -44,19 +44,4 @@ if [ -f "packaging/correlation.desktop" ]; then
     echo "Updated correlation.desktop version."
 fi
 
-# 4. Stage changes
-#git add CMakeLists.txt packaging/correlation.iss README.md
-
-# 5. Show diff and wait for confirmation
-#echo "---------------------------------------------------"
-#git diff --cached
-#echo "---------------------------------------------------"
-#read -p "Does the diff look good? Press [Enter] to commit and push, or [Ctrl+C] to abort..."
-
-# 6. Commit, tag, and push
-#git commit -m "Release v$VERSION"
-#git tag "v$VERSION"
-#git push && 
-#git push --tags
-
-#echo "✅ Version $VERSION pushed successfully! Please trigger the release action manually from the GitHub Actions tab."
+echo "✅ Version updated to $VERSION across all relevant files!"
