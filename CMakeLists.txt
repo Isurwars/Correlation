@@ -147,8 +147,8 @@ if (WIN32)
     string(REPLACE "/" "\\\\" CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${PROJECT_SOURCE_DIR}/packaging/nsis_welcome.bmp")
     string(REPLACE "/" "\\\\" CPACK_NSIS_MUI_HEADERIMAGE "${PROJECT_SOURCE_DIR}/packaging/nsis_header.bmp")
     set(CPACK_NSIS_MUI_HEADERIMAGE_RIGHT ON)
-    # LZMA compression
-    set(CPACK_NSIS_COMPRESSOR "lzma")
+    # Use default zlib compression instead of lzma to avoid false-positive virus detections
+    # set(CPACK_NSIS_COMPRESSOR "lzma")
     set(CPACK_NSIS_HELP_LINK "https://github.com/Isurwars/Correlation")
     set(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/Isurwars/Correlation")
     set(CPACK_NSIS_CONTACT "isurwars@gmail.com")
