@@ -1,7 +1,9 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file Constants.hpp
+ * @brief Mathematical and physical constants for the Correlation tool.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @license SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 

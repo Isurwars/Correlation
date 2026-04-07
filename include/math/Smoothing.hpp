@@ -1,7 +1,9 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file Smoothing.hpp
+ * @brief Kernel-based smoothing algorithms for analysis data.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @license SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 
@@ -14,8 +16,6 @@
 
 namespace correlation::math {
 
-// Enum class for type-safe selection of kernel types.
-// This prevents passing invalid integer values.
 /**
  * @enum KernelType
  * @brief Selection of kernel types for smoothing.

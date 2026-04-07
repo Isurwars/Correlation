@@ -1,7 +1,9 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file PhysicalData.hpp
+ * @brief Database of physical properties for chemical elements (radii, masses, form factors).
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @license SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 

@@ -1,7 +1,9 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+/**
+ * @file SIMDUtils.hpp
+ * @brief SIMD-accelerated kernels for distance, integration, and normalization.
+ * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+ * @license SPDX-License-Identifier: MIT
+ */
 
 #pragma once
 
