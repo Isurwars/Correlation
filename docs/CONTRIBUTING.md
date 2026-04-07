@@ -1,48 +1,50 @@
-[![Version](<https://img.shields.io/badge/version-1.0.0(RC6)-green>)](<https://img.shields.io/badge/version-1.0.0(RC6)-green>) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
+[![Version](<https://img.shields.io/badge/version-1.0.0(RC6)-green>)](<https://img.shields.io/badge/version-1.0.0(RC6)-green>) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-# Correlation: Contributing guidelines
+# Correlation: Contributing Guidelines
 
-We want to make contributing to this project easy and transparent, whether it's:
+We welcome contributions to this project and strive to make the process transparent and accessible. As a formal scientific repository, we uphold high standards of academic integrity, code reproducibility, and rigorous peer review. 
 
-- Reporting a bug
-- Submitting a fix
-- Proposing new features
-- Discussing the current state of the code
+You can contribute in several ways:
+- Reporting a reproducible bug or computational error
+- Submitting a rigorous fix or optimization
+- Proposing scientifically relevant new features
+- Discussing the current theoretical and algorithmic state of the code
 
 ## Code of Conduct
 
-This project and everyone participating in it are governed by our [**code of conduct**](https://github.com/Isurwars/Correlation/blob/main/CODE_OF_CONDUCT.md) guidelines. By participating, you are expected to uphold this code. Please report unacceptable behavior.
+This project and everyone participating in it are governed by our [**Code of Conduct**](CODE_OF_CONDUCT.md) guidelines. By participating, you are expected to uphold this code, which encompasses both community interaction and scientific integrity. Please report unacceptable behavior.
 
-## How to contribute to **Correlation**
+## How to Contribute to **Correlation**
 
 ### **Reporting a bug:**
 
-- **Please, make sure the bug has not been previously reported** by searching on GitHub under [Issues](https://github.com/Isurwars/Correlation/issues).
-
-- **If you're unable to find an open issue addressing the problem**, [open a new one](https://github.com/Isurwars/Correlation/issues/new). Be sure to include a **title and clear description**, as much relevant information as possible: the **structure used**, as well as the **parameters**. In case the program does not match the expected results, please include a sample of the expected behavior that is not occurring.
+- **Verify prior reports** by searching on GitHub under [Issues](https://github.com/Isurwars/Correlation/issues).
+- **If you're unable to find an open issue**, [open a new one](https://github.com/Isurwars/Correlation/issues/new). Ensure you include a **title and clear description**. For scientific rigor, please provide:
+  - The **atomic structure files** used.
+  - The exact **analysis parameters** configured.
+  - The environment details (OS, Compiler version).
+  - A description of why the behavior deviates from theoretical expectations or previous results.
 
 ### **Submitting a fix:**
 
-In case you have created a patch for an existing bug in **Correlation**, follow these steps:
+If you have isolated and resolved an algorithmic error, computational bug, or performance issue, follow these steps:
+- Open a new GitHub **pull request (PR)** with the proposed changes.
+- Ensure the **PR** description includes:
+  - A clear mathematical or programmatic explanation of the **bug** and your solution.
+  - The relevant issue number if applicable.
+  - Evidence of testing to ensure scientific reproducibility remains intact.
+  - Updates to the [**ChangeLog**](ChangeLog) and the addition of your name to the [**AUTHORS**](AUTHORS) file.
 
-- Open a new GitHub **pull request (PR)** with the patch.
-- Ensure the **PR** description includes the following :
-  - Clearly describes the **bug** and your solution.
-  - Include the relevant issue number if applicable.
-  - Include the changes to the [**Changelog**](https://github.com/Isurwars/Correlation/blob/main/ChangeLog) and your contribution to the [**AUTHORS**](https://github.com/Isurwars/Correlation/blob/main/AUTHORS) file.
+### **Proposing new features:**
 
-### **Proposing new features**
-
-- **Please, make sure the feature is not currently been developed** by searching on the GitHub [**branches**](https://github.com/Isurwars/Correlation/branches).
-- If the feature is currently under development, **you are heartily welcome** to contribute within the corresponding branch.
-
-- If the feature is not under development, but is included in the planned future features in the [**README**](https://github.com/Isurwars/Correlation/blob/main/README.md), you are encouraged to create a new branch.
-
-- If the intended feature is not included in the planned future features in the [**README**](https://github.com/Isurwars/Correlation/blob/main/README.md), please contact the developers listed in the [**AUTHORS**](https://github.com/Isurwars/Correlation/blob/main/AUTHORS) file.
+- **Check current developments** by exploring the GitHub [**branches**](https://github.com/Isurwars/Correlation/branches).
+- If the feature is currently under development, **you are heartily welcome** to collaborate within the corresponding branch.
+- If the feature addresses a new analytical capability (e.g., a new structural correlation function), please create a new branch or open an issue to present the theoretical background and algorithms you intend to implement.
+- If the intended feature diverges significantly from the planned capabilities in the [**README**](../README.md), please consult the principal investigators and developers listed in the [**AUTHORS**](AUTHORS) file before starting active development.
 
 ### **Discussing the current state of the code:**
 
-- For any questions about **Correlation** source code, please contact the developers listed in the [**AUTHORS**](https://github.com/Isurwars/Correlation/blob/main/AUTHORS) file.
+- For scientific inquiries or questions about the implementation details of the **Correlation** source code, please contact the developers listed in the [**AUTHORS**](AUTHORS) file.
 
 ## License
 
@@ -50,5 +52,4 @@ By contributing to **Correlation**, you agree that your contributions will be li
 
 ## Attribution
 
-This Contributing guidelines is adapted from the [Ruby on Rails](https://rubyonrails.org/) contributing guidelines available at
-[CONTRIBUTING.md](https://github.com/rails/rails/blob/main/CONTRIBUTING.md).
+These Contributing guidelines are adapted from the [Ruby on Rails](https://rubyonrails.org/) contributing guidelines and modified to reflect the standards of academic software development.
