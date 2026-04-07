@@ -1,7 +1,14 @@
 name: CI Build
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
+
+env:
+  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
   build:
@@ -13,7 +20,10 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
+
+      - name: Set up sccache
+        uses: mozilla-actions/sccache-action@v0.0.9
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -28,15 +38,34 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~\.cargo\registry
+            ~\.cargo\git
+          key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
+
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja
+        run: |
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
-        run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+        run: |
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_C_COMPILER_LAUNCHER=sccache `
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build
+        env:
+          RUSTC_WRAPPER: sccache
         run: cmake --build build --config Release --parallel
 
       - name: Test (Linux)
