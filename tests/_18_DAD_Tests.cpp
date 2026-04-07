@@ -53,3 +53,48 @@ TEST_F(_18_DAD_Tests, BasicCalculation) {
   // Because it is normalized: sum * bin_width = 1.0
   EXPECT_NEAR(sum * bin_width, 1.0, 1e-5);
 }
+
+TEST_F(_18_DAD_Tests, IcosahedronAnglesDAD) {
+  Cell cell_iso;
+  cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
+  cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
+  double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+  std::vector<std::vector<double>> verts = {
+      {0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+
+  for (const auto &v : verts) {
+    cell_iso.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
+  }
+
+  double r_cut = 2.5; 
+  std::vector<std::vector<double>> bond_cutoffs(
+      1, std::vector<double>(1, r_cut * r_cut));
+  StructureAnalyzer analyzer(cell_iso, r_cut, bond_cutoffs, true);
+
+  double bin_width = 1.0;
+  Histogram f_dihedral = DADCalculator::calculate(cell_iso, &analyzer, bin_width);
+
+  ASSERT_FALSE(f_dihedral.partials.empty());
+  auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
+
+  // DAD expects multiple angles due to Center-Vertex and Vertex-Vertex chains
+  std::vector<double> expected_angles = {
+      0.0, 31.7, 36.0, 63.4, 72.0, 100.0, 108.0, 138.19, 144.0, 180.0
+  };
+
+  for (double target : expected_angles) {
+    bool found = false;
+    for (size_t i = 0; i < partial.size(); ++i) {
+      if (partial[i] > 1e-4) {
+        double angle = std::abs(f_dihedral.bins[i]);
+        if (std::abs(angle - target) < 2.0) { // Tolerance considering binning
+          found = true;
+          break;
+        }
+      }
+    }
+    EXPECT_TRUE(found) << "Should find DAD peak near " << target << " degrees";
+  }
+}

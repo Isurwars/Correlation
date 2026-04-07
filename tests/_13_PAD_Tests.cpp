@@ -502,3 +502,50 @@ TEST_F(_13_PAD_Tests, FullNormalizationCheck) {
               0.05); // Relaxed checking 0.05 due to binning effects
   EXPECT_NEAR(sum_total, 1.0, 0.05);
 }
+
+TEST_F(_13_PAD_Tests, IcosahedronAnglesPAD) {
+  cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
+  double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+  std::vector<std::vector<double>> verts = {
+      {0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+
+  for (const auto &v : verts) {
+    cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
+  }
+  updateTrajectory();
+
+  DistributionFunctions df(cell_, 2.5, trajectory_.getBondCutoffsSQ());
+  df.calculatePAD(0.01);
+
+  const auto &hist = df.getHistogram("BAD");
+  ASSERT_EQ(hist.partials.count("Si-Si-Si"), 1);
+  const auto &partial = hist.partials.at("Si-Si-Si");
+
+  bool found_58 = false;
+  bool found_60 = false;
+  bool found_63 = false;
+  bool found_108 = false;
+  bool found_116 = false;
+  bool found_180 = false;
+
+  for (size_t i = 0; i < partial.size(); ++i) {
+    if (partial[i] > 0.01) { // some density exists
+      double angle = hist.bins[i];
+      if (std::abs(angle - 58.28) < 0.5) found_58 = true;
+      if (std::abs(angle - 60.0) < 0.5) found_60 = true;
+      if (std::abs(angle - 63.43) < 0.5) found_63 = true;
+      if (std::abs(angle - 108.0) < 0.5) found_108 = true;
+      if (std::abs(angle - 116.57) < 0.5) found_116 = true;
+      if (std::abs(angle - 180.0) < 0.5) found_180 = true;
+    }
+  }
+
+  EXPECT_TRUE(found_58) << "Should find PAD peak near 58.28 degrees";
+  EXPECT_TRUE(found_60) << "Should find PAD peak near 60.00 degrees";
+  EXPECT_TRUE(found_63) << "Should find PAD peak near 63.43 degrees";
+  EXPECT_TRUE(found_108) << "Should find PAD peak near 108.00 degrees";
+  EXPECT_TRUE(found_116) << "Should find PAD peak near 116.57 degrees";
+  EXPECT_TRUE(found_180) << "Should find PAD peak near 180.00 degrees";
+}
