@@ -6,13 +6,13 @@
 // ============================================================================
 // Types
 // ============================================================================
-// Defines custom data structures used across the Slint UI components.
-// 
-// C++ Binding Architecture:
-// - These structured types map to automatically generated C++ structs 
-//   (e.g., `slint::SharedVector<AtomCount>`) allowing complex lists of data
-//   (like atom counts and bond cutoffs) to be passed efficiently between
-//   the Rust-Slint UI layer and the C++ application logic.
+/// Defines custom data structures used across the Slint UI components.
+/// 
+/// C++ Binding Architecture:
+/// - These structured types map to automatically generated C++ structs 
+///   (e.g., `slint::SharedVector<AtomCount>`) allowing complex lists of data
+///   (like atom counts and bond cutoffs) to be passed efficiently between
+///   the Rust-Slint UI layer and the C++ application logic.
 // ============================================================================
 export struct AtomCount {
     symbol: string,

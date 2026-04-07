@@ -18,17 +18,17 @@ import { AtomCount } from "Types.slint";
 // ============================================================================
 // FileInfoCard Component
 // ============================================================================
-// This component displays information about the loaded structure or trajectory
-// file, including atom counts, frame counts, and time steps.
-// 
-// C++ Binding Architecture:
-// - Properties like `num_frames`, `total_atoms`, and `time_step` are populated
-//   by the C++ backend (`AppBackend::load_file()`) when a file is successfully read.
-// - The `AppController` pushes these values to the UI via the `AppWindow` 
-//   properties.
-// - The `time_step` property is a two-way binding: it receives a default from
-//   C++ based on atom masses, but the user can edit it, and C++ reads it
-//   before running dynamic analyses (e.g., VACF).
+/// This component displays information about the loaded structure or trajectory
+/// file, including atom counts, frame counts, and time steps.
+/// 
+/// C++ Binding Architecture:
+/// - Properties like `num_frames`, `total_atoms`, and `time_step` are populated
+///   by the C++ backend (`AppBackend::load_file()`) when a file is successfully read.
+/// - The `AppController` pushes these values to the UI via the `AppWindow` 
+///   properties.
+/// - The `time_step` property is a two-way binding: it receives a default from
+///   C++ based on atom masses, but the user can edit it, and C++ reads it
+///   before running dynamic analyses (e.g., VACF).
 // ============================================================================
 export component FileInfoCard inherits FilledCard {
     in-out property <string> file_status_text;
