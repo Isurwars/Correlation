@@ -198,12 +198,15 @@ inline double sinc_integral(double Q,
 // debye_sum kernel
 // ---------------------------------------------------------------------------
 
-/// @brief Computes the Debye scattering equation sum.
-/// @param Q The scattering vector magnitude.
-/// @param distances Source array of distance values.
-/// @param scratch Scratchpad array for intermediate @f$ \text{sinc}(Qr) @f$ evaluations.
-/// @param count Number of distances to process.
-/// @return The computed Debye sum.
+/**
+ * @brief Computes the Debye scattering equation sum.
+ *
+ * @param Q The scattering vector magnitude.
+ * @param distances Source array of distance values.
+ * @param scratch Scratchpad array for intermediate @f$ \text{sinc}(Qr) @f$ evaluations.
+ * @param count Number of distances to process.
+ * @return The computed Debye sum.
+ */
 #if defined(CORRELATION_SIMD_AVX512)
 
 inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
