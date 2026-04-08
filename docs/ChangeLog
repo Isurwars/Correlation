@@ -1,12 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [2.5.1-2.5.2] 2026-04-07
+## [2.5.2] 2026-04-07
 
 ### Fixed
 - Fixed Doxygen CI build failures by adding the `docs` directory to `Doxyfile` input and converting markdown anchor links in `README.md` to HTML links to resolve reference errors.
 - Added project include directories to Doxyfile search path to improve API documentation generation.
+- 
+## [2.5.1] 2026-04-07
 
+### Added
+- Added desktop shortcut and executable registration to the NSIS Windows installer.
+- Added icosahedral geometry validation tests for Plane Angle Distribution (PAD) and Dihedral Angle Distribution (DAD) calculations.
+- Integrated automated Doxygen API documentation generation and deployment into the CI pipeline.
+
+### Changed
+- Reverted the NSIS Windows installer compression to default `zlib` to prevent false-positive virus detections.
+- Optimized CI/CD pipelines incorporating `sccache` and dependency caching to significantly reduce build times across all platforms.
+- Standardized file headers and Doxygen documentation (including Slint triple-slash syntax) across the entire codebase.
+- Updated the Code of Conduct to version 2.1 and expanded scientific integrity guidelines.
+- Simplified the release process by refactoring/removing the custom `release.sh` version bouncing scripts.
+- 
 ## [2.5.0] 2026-04-07
 
 ### Added
