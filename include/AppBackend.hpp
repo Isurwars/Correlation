@@ -228,6 +228,20 @@ public:
    */
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
 
+  /**
+   * @brief Returns the names of all histograms available from the last analysis.
+   * @return Sorted vector of histogram names (e.g., "g(r)", "S(Q)", "PAD").
+   *         Returns an empty vector if no analysis has been run yet.
+   */
+  [[nodiscard]] std::vector<std::string> getAvailableHistogramNames() const;
+
+  /**
+   * @brief Returns a pointer to a specific histogram from the last analysis.
+   * @param name The histogram name (e.g., "g(r)").
+   * @return Pointer to the Histogram, or nullptr if not found or no analysis run.
+   */
+  [[nodiscard]] const Histogram *getHistogram(const std::string &name) const;
+
   // Callbacks
   void setProgressCallback(std::function<void(float, const std::string &)> cb) {
     progress_callback_ = cb;

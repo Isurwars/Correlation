@@ -120,4 +120,18 @@ private:
    * process/thread, this method checks if they have returned a result.
    */
   void handleCheckFileDialogStatus();
+
+  /**
+   * @brief Populates the UI plot dropdown with the available histogram names
+   *        from the last completed analysis.
+   */
+  void populatePlotList();
+
+  /**
+   * @brief Handles the "Select Plot" signal from the UI.
+   *        Generates an SVG image for the requested histogram and pushes it
+   *        to the UI via `ui_.set_preview_plot()`.
+   * @param name The histogram name (e.g., "g(r)").
+   */
+  void handleSelectPlot(const std::string &name);
 };

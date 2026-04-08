@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.0] 2026-04-08
+
+### Added
+- Integrated a graphical preview feature for distribution functions (RDF, S(Q), PAD, etc.) directly within the GUI.
+- Implemented high-performance, dynamic SVG generation in C++ using a custom zero-dependency `SvgPlotter` utility.
+- Added a fourth UI card (`PreviewCard`) that dynamically appears on the right side of the application upon analysis completion.
+- Implemented automatic window resizing and smooth layout transitions to accommodate the new preview area.
+- Added backend accessors to `AppBackend` for retrieving histogram data and a list of available plots from the latest analysis.
+
 ## [2.5.2] 2026-04-07
 
 ### Fixed

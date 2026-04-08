@@ -1,0 +1,106 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledCard,
+    MaterialText,
+    DropDownMenu,
+    MenuItem,
+} from "@material";
+
+// ============================================================================
+// PreviewCard Component
+// ============================================================================
+/// Displays a preview plot of a computed distribution function as a static SVG
+/// image. The rendered image is produced by the C++ backend (`AppController`)
+/// using the `SvgPlotter` utility and pushed via `preview_plot`.
+///
+/// C++ Binding Architecture:
+/// - `plot_items`: populated after analysis finishes with histogram names as
+///   MenuItem structs (e.g., {text: "g(r)", enabled: true}).
+///   The C++ controller builds a VectorModel<MenuItem> from the DF histogram
+///   keys and pushes it via `ui.set_plot_items(model)`.
+/// - `preview_plot`: an `slint::Image` produced from an SVG string by
+///   `slint::Image::load_from_svg_data()` in the controller.
+/// - `plot_selected(name)`: callback invoked when the user changes the dropdown;
+///   the C++ controller re-generates the SVG and updates `preview_plot`.
+// ============================================================================
+export component PreviewCard inherits FilledCard {
+    in property <bool>       analysis_done;
+    in property <image>      preview_plot;
+    in property <[MenuItem]> plot_items: [];
+    in-out property <int>    selected_plot_index: -1;
+
+    callback plot_selected(string);
+
+    // Hover state for tooltip
+    out property <string> hovered_tooltip_text:
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview." :
+        "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        // Header
+        MaterialText {
+            text: "Distribution Preview";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
+        }
+
+        // Plot selector dropdown
+        plot_dropdown_area := TouchArea {
+            height: MaterialStyleMetrics.size_40;
+            DropDownMenu {
+                width: 100%;
+                height: 100%;
+                label: "Select Plot";
+                enabled: root.analysis_done && root.plot_items.length > 0;
+                items: root.plot_items;
+                current_index <=> root.selected_plot_index;
+
+                selected(idx) => {
+                    if (idx >= 0 && idx < root.plot_items.length) {
+                        root.plot_selected(root.plot_items[idx].text);
+                    }
+                }
+            }
+        }
+
+        // SVG plot image area — fills remaining space
+        Rectangle {
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+            min-height: 280px;
+            background: MaterialPalette.surface;
+            border-radius: MaterialStyleMetrics.border_radius_2;
+            clip: true;
+
+            // Placeholder text when no image is available
+            if root.preview_plot.width == 0: MaterialText {
+                text: root.analysis_done
+                    ? "Select a plot from the dropdown above."
+                    : "Run an analysis to preview results here.";
+                color: MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                wrap: word-wrap;
+                padding: MaterialStyleMetrics.spacing_8;
+            }
+
+            // The rendered SVG plot
+            if root.preview_plot.width > 0: Image {
+                width: 100%;
+                height: 100%;
+                source: root.preview_plot;
+                image-fit: contain;
+            }
+        }
+    }
+}

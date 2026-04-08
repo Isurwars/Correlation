@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "calculators/CalculatorFactory.hpp"
+#include "SvgPlotter.hpp"
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -43,6 +44,11 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   // Handle calculator toggle: update backend options and refresh the UI model
   ui_.on_toggle_calculator([this](slint::SharedString id, bool enabled) {
     backend_.setCalculatorActive(std::string(id.data()), enabled);
+  });
+
+  // Handle plot selection: generate SVG and push to UI
+  ui_.on_select_plot([this](slint::SharedString name) {
+    handleSelectPlot(std::string(name.data()));
   });
 }
 
@@ -344,6 +350,13 @@ void AppController::handleRunAnalysis() {
       }
       ui_.set_analysis_done(true);
       ui_.set_progress(1.0f);
+
+      // Populate the plot dropdown and auto-preview the first histogram
+      populatePlotList();
+      auto available = backend_.getAvailableHistogramNames();
+      if (!available.empty()) {
+        handleSelectPlot(available[0]);
+      }
     });
   });
 
@@ -501,4 +514,40 @@ void AppController::handleCheckFileDialogStatus() {
     });
     current_save_dialog_.reset();
   }
+}
+
+//---------------------------------------------------------------------------//
+//---------------------------- Plot Preview Methods -------------------------//
+//---------------------------------------------------------------------------//
+
+void AppController::populatePlotList() {
+  auto names = backend_.getAvailableHistogramNames();
+  auto model = std::make_shared<slint::VectorModel<slint::StandardListViewItem>>();
+
+  // Build MenuItem list: {text: name, enabled: true}
+  // MenuItem is: struct MenuItem { text: string, enabled: bool }
+  // The generated C++ type is MenuItem with fields `text` and `enabled`.
+  auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
+  for (const auto &name : names) {
+    MenuItem item;
+    item.text = slint::SharedString(name);
+    item.enabled = true;
+    menu_model->push_back(item);
+  }
+  ui_.set_plot_items(menu_model);
+
+  // Reset selection index
+  ui_.set_selected_plot_index(names.empty() ? -1 : 0);
+}
+
+void AppController::handleSelectPlot(const std::string &name) {
+  const Histogram *hist = backend_.getHistogram(name);
+  if (!hist) return;
+
+  std::string svg = SvgPlotter::renderHistogramAsSvg(*hist, name);
+
+  // Load SVG bytes into a Slint image using the embedded data API
+  std::span<const uint8_t> svg_span(reinterpret_cast<const uint8_t *>(svg.data()), svg.size());
+  auto img = slint::private_api::load_image_from_embedded_data(svg_span, "svg");
+  ui_.set_preview_plot(img);
 }

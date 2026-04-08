@@ -147,6 +147,20 @@ void AppBackend::setBondCutoffs(
   trajectory_->setBondCutoffsSQ(cutoffs_sq);
 }
 
+std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
+  if (!df_) return {};
+  return df_->getAvailableHistograms();
+}
+
+const Histogram *AppBackend::getHistogram(const std::string &name) const {
+  if (!df_) return nullptr;
+  try {
+    return &df_->getHistogram(name);
+  } catch (const std::out_of_range &) {
+    return nullptr;
+  }
+}
+
 //---------------------------------------------------------------------------//
 //---------------------------------- Methods --------------------------------//
 //---------------------------------------------------------------------------//
