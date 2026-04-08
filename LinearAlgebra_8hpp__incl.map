@@ -1,0 +1,11 @@
+<map id="include/math/LinearAlgebra.hpp" name="include/math/LinearAlgebra.hpp">
+<area shape="rect" id="Node000001" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="52,5,281,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,61,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,33,68,74,66,70,144,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="86,79,149,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="161,33,135,69,131,66,156,29"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="173,79,259,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="177,29,202,66,198,69,173,33"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="283,79,375,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="194,28,291,71,289,75,192,33"/>
+</map>

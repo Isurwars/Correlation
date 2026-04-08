@@ -1,0 +1,12 @@
+<map id="AnalysisSettings::isActive" name="AnalysisSettings::isActive">
+<area shape="rect" id="Node000001" title=" " alt="" coords="945,42,1136,67"/>
+<area shape="rect" id="Node000002" href="$classDistributionFunctions.html#a41c9ed4d574bf745c149b394309ffaf9" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="737,5,897,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="931,43,897,38,898,33,932,38"/>
+<area shape="rect" id="Node000003" href="$classAppBackend.html#a504777511f527e928f0f67c57d89f46e" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="497,42,689,67"/>
+<area shape="poly" id="edge5_Node000001_Node000003" title=" " alt="" coords="932,60,897,60,737,60,689,59,689,54,737,55,897,55,931,54"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="724,40,690,45,689,39,723,35"/>
+<area shape="rect" id="Node000004" href="$classAppController.html#a335b87391f4a064630511be651bf31d6" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="261,35,449,75"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="484,57,450,57,450,52,484,52"/>
+<area shape="rect" id="Node000005" href="$classAppController.html#a1a624a2d6b3337b30cb4467f06c59df5" title="Constructs the AppController." alt="" coords="5,42,213,67"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="248,57,214,57,214,52,248,52"/>
+</map>

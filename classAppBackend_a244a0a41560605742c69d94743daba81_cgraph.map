@@ -1,0 +1,11 @@
+<map id="AppBackend::getRecommendedTimeStep" name="AppBackend::getRecommendedTimeStep">
+<area shape="rect" id="Node000001" title="Calculates a recommended time step in fs based on the smallest atomic mass. Uses formula: sqrt(9 * Mi..." alt="" coords="5,47,235,87"/>
+<area shape="rect" id="Node000002" href="$classAppBackend.html#ab2587d3731053bb051871ba61214691f" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="291,5,424,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="216,45,282,31,283,36,217,50"/>
+<area shape="rect" id="Node000003" href="$classCell.html#a9970dde4c223bb5f44f6dfe49ae0639e" title="Gets the list of unique chemical elements in the cell." alt="" coords="299,55,415,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="235,65,285,65,285,70,235,70"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="283,105,432,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="204,85,270,101,269,106,203,90"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title=" " alt="" coords="480,105,629,145"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="432,122,466,122,466,127,432,127"/>
+</map>

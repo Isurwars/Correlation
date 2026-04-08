@@ -1,0 +1,18 @@
+<map id="include/TrajectoryAnalyzer.hpp" name="include/TrajectoryAnalyzer.hpp">
+<area shape="rect" id="Node000001" title="Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="352,5,573,31"/>
+<area shape="rect" id="Node000002" href="$AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="152,79,333,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="415,37,279,81,277,76,413,32"/>
+<area shape="rect" id="Node000007" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="357,79,568,104"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="465,44,465,79,460,79,460,44"/>
+<area shape="rect" id="Node000008" href="$TrajectoryAnalyzer_8cpp.html" title="Implementation of trajectory&#45;level analysis coordination." alt="" coords="592,79,784,104"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="513,32,652,76,651,81,511,37"/>
+<area shape="rect" id="Node000003" href="$AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="16,152,205,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="211,113,134,154,131,149,208,108"/>
+<area shape="rect" id="Node000005" href="$main_8cpp.html" title="Application entry point." alt="" coords="190,225,295,251"/>
+<area shape="poly" id="edge6_Node000002_Node000005" title=" " alt="" coords="245,118,245,225,240,225,240,118"/>
+<area shape="rect" id="Node000006" href="$AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="280,152,432,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="274,109,339,150,336,154,271,114"/>
+<area shape="rect" id="Node000004" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,225,165,251"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="104,191,92,226,87,224,99,189"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="145,181,222,223,220,227,142,186"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="correlation::math::normalize" name="correlation::math::normalize">
+<area shape="rect" id="Node000001" title="Normalizes the given vector." alt="" coords="5,29,148,69"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="38,30,36,20,42,11,56,5,77,3,101,6,114,13,111,18,99,11,77,8,57,10,45,15,41,21,43,28"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="196,37,372,62"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,47,182,47,182,52,148,52"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="250,38,243,28,247,18,261,12,284,10,313,14,324,23,321,27,310,19,284,15,262,17,251,22,248,28,254,35"/>
+</map>

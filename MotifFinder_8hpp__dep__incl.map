@@ -1,0 +1,7 @@
+<map id="include/calculators/MotifFinder.hpp" name="include/calculators/MotifFinder.hpp">
+<area shape="rect" id="Node000001" title="Ring and structural motif finder using neighbour graph search." alt="" coords="167,5,311,45"/>
+<area shape="rect" id="Node000002" href="$MotifFinder_8cpp.html" title="Implementation of ring and structural motif search." alt="" coords="5,93,225,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,55,135,95,132,91,196,51"/>
+<area shape="rect" id="Node000003" href="$RDCalculator_8cpp.html" title="Implementation of the reduced distribution function calculator." alt="" coords="249,93,480,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="283,51,348,91,345,95,280,55"/>
+</map>

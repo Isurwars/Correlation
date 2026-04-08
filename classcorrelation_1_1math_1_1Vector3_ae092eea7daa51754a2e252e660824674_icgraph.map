@@ -1,0 +1,28 @@
+<map id="correlation::math::Vector3::x" name="correlation::math::Vector3::x">
+<area shape="rect" id="Node000001" title=" " alt="" coords="715,189,857,229"/>
+<area shape="rect" id="Node000002" href="$classSteinhardtCalculator.html#a25ea80e56a8ee127c50dddf4ce21e3aa" title=" " alt="" coords="477,5,632,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="766,179,725,118,697,86,665,60,631,43,633,38,668,55,701,82,729,114,770,176"/>
+<area shape="rect" id="Node000004" href="$classcalculators_1_1DistanceCalculator.html#ae3fea61e3c2fd8ed9d5b3b30f2529372" title=" " alt="" coords="443,69,667,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="751,182,711,152,665,124,637,112,639,107,668,119,714,147,754,178"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a59b5569dd24e6712b5c4938a0b71a93c" title=" " alt="" coords="483,157,626,197"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="700,200,626,190,627,185,701,195"/>
+<area shape="rect" id="Node000008" href="$classFileReader_1_1CifReader.html#aed594e3309a748570014f2a1b9262202" title=" " alt="" coords="473,221,636,261"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="701,224,637,233,636,227,700,218"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#a760662b593b0b704b826d1c584958b16" title=" " alt="" coords="483,285,626,325"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="741,239,668,276,627,290,626,285,666,271,739,234"/>
+<area shape="rect" id="Node000011" href="$classCell.html#ae3464733bd7ad1518437fc322517839d" title="Applies periodic boundary conditions to all atom positions. Wraps all atoms back into the primary sim..." alt="" coords="481,350,628,375"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="766,243,725,293,698,318,668,340,629,355,627,350,665,335,695,314,721,290,762,239"/>
+<area shape="rect" id="Node000003" href="$classSteinhardtCalculator.html#a60d929283ac65ad0511e180ae2ebf5b4" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="232,5,387,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="464,28,387,28,387,23,464,23"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="594,146,580,139,555,136,533,138,519,143,514,149,517,156,512,158,509,148,516,138,531,133,555,131,581,134,596,141"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a32c07e2335019155eda874e34d2f303c" title=" " alt="" coords="238,93,381,133"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="469,158,380,134,381,129,471,153"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a191c2ffcaad68c44f8279cbe6b0007e9" title=" " alt="" coords="238,157,381,197"/>
+<area shape="poly" id="edge7_Node000005_Node000007" title=" " alt="" coords="470,180,381,180,381,175,470,175"/>
+<area shape="rect" id="Node000009" href="$classFileReader_1_1CifReader.html#a4a505a21a0036f7ba894f8dd5ba7d4a0" title="Reads an atomic structure from a file." alt="" coords="228,221,391,261"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="459,244,391,244,391,239,459,239"/>
+<area shape="rect" id="Node000012" href="$classFileReader_1_1CellReader.html#ad8585f834211096fae134989720a12ac" title=" " alt="" coords="224,343,395,383"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="468,365,395,365,395,360,468,360"/>
+<area shape="rect" id="Node000013" href="$classFileReader_1_1CellReader.html#ad4963e2a95bb6b7b63b956a3bc7cf7e9" title="Reads an atomic structure from a file." alt="" coords="5,343,176,383"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="210,365,176,365,176,360,210,360"/>
+</map>

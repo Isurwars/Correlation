@@ -1,0 +1,27 @@
+<map id="Cell::updateLatticeParametersFromVectors" name="Cell::updateLatticeParametersFromVectors">
+<area shape="rect" id="Node000001" title=" " alt="" coords="876,95,1095,135"/>
+<area shape="rect" id="Node000002" href="$classCell.html#aba82db75c187e763fdff56dd6a1558ac" title=" " alt="" coords="684,103,828,128"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="862,118,828,118,828,113,862,113"/>
+<area shape="rect" id="Node000003" href="$classCell.html#ad8f270488624e1dc9cc20b82caceb2e3" title="Constructs a Cell from three lattice vectors." alt="" coords="499,77,579,103"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="669,108,580,97,580,92,670,103"/>
+<area shape="rect" id="Node000004" href="$classCell.html#a3862a2d9a684203bb9ba71a4d1199b75" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="443,127,636,152"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="670,127,637,131,636,126,670,122"/>
+<area shape="rect" id="Node000005" href="$classCell.html#ac2f702ac359e8d3a3dfaa60824f23326" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="269,5,349,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="453,123,441,116,424,98,416,80,408,62,393,45,372,34,349,26,350,21,374,29,396,41,413,59,421,78,429,95,444,112,456,119"/>
+<area shape="rect" id="Node000006" href="$classFileReader_1_1CarReader.html#a24857ba8a39d3359a71fb9b2a47c90be" title=" " alt="" coords="226,55,393,95"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="475,126,442,117,377,98,379,93,443,111,476,120"/>
+<area shape="rect" id="Node000008" href="$classFileReader_1_1CellReader.html#ad8585f834211096fae134989720a12ac" title=" " alt="" coords="224,119,395,159"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="429,142,395,142,395,137,429,137"/>
+<area shape="rect" id="Node000010" href="$classFileReader_1_1CifReader.html#aed594e3309a748570014f2a1b9262202" title=" " alt="" coords="228,183,391,223"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="480,158,383,186,381,181,479,153"/>
+<area shape="rect" id="Node000012" href="$classFileReader_1_1ArcReader.html#a4c785b37eab42f85ebb1b846c8f5392d" title=" " alt="" coords="226,247,393,287"/>
+<area shape="poly" id="edge11_Node000004_Node000012" title=" " alt="" coords="512,163,460,200,396,238,370,250,368,245,393,233,457,195,509,158"/>
+<area shape="rect" id="Node000007" href="$classFileReader_1_1CarReader.html#ab41d705dd5ad4767d6c5ebf1d458516f" title="Reads an atomic structure from a file." alt="" coords="7,55,174,95"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="212,78,174,78,174,73,212,73"/>
+<area shape="rect" id="Node000009" href="$classFileReader_1_1CellReader.html#ad4963e2a95bb6b7b63b956a3bc7cf7e9" title="Reads an atomic structure from a file." alt="" coords="5,119,176,159"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="210,142,176,142,176,137,210,137"/>
+<area shape="rect" id="Node000011" href="$classFileReader_1_1CifReader.html#a4a505a21a0036f7ba894f8dd5ba7d4a0" title="Reads an atomic structure from a file." alt="" coords="9,183,172,223"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="214,206,172,206,172,201,214,201"/>
+<area shape="rect" id="Node000013" href="$classFileReader_1_1ArcReader.html#ac1a899b5d1612171f7fb88c0d21027ec" title="Reads a trajectory from a file." alt="" coords="7,247,174,287"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="212,270,174,270,174,265,212,265"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="CalculatorFactory::instance" name="CalculatorFactory::instance">
+<area shape="rect" id="Node000001" title=" " alt="" coords="996,69,1139,109"/>
+<area shape="rect" id="Node000002" href="$classDistributionFunctions.html#a5520225c5dfcb791f27d1769a11f0a32" title="Calculates the radial distribution function g(r)" alt="" coords="788,5,948,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="991,68,930,48,932,43,992,63"/>
+<area shape="rect" id="Node000003" href="$classDistributionFunctions.html#a41c9ed4d574bf745c149b394309ffaf9" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="788,69,948,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="982,92,948,92,948,87,982,87"/>
+<area shape="rect" id="Node000007" href="$classAppController.html#a894e45e98475c56841dc20d1bdff336b" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="497,127,740,167"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="988,116,948,124,842,138,740,145,740,140,842,133,948,119,986,110"/>
+<area shape="rect" id="Node000004" href="$classAppBackend.html#a504777511f527e928f0f67c57d89f46e" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="523,77,715,102"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="774,92,715,92,715,87,774,87"/>
+<area shape="rect" id="Node000005" href="$classAppController.html#a335b87391f4a064630511be651bf31d6" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="261,69,449,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="509,92,450,92,450,87,509,87"/>
+<area shape="rect" id="Node000006" href="$classAppController.html#a1a624a2d6b3337b30cb4467f06c59df5" title="Constructs the AppController." alt="" coords="5,106,213,131"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="248,105,214,109,213,104,248,99"/>
+<area shape="poly" id="edge7_Node000007_Node000006" title=" " alt="" coords="484,142,213,127,214,122,484,137"/>
+</map>

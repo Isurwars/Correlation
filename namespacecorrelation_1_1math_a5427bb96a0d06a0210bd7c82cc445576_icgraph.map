@@ -1,0 +1,8 @@
+<map id="correlation::math::cross" name="correlation::math::cross">
+<area shape="rect" id="Node000001" title="Computes the cross product of two 3D vectors." alt="" coords="276,37,419,77"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="386,26,373,19,347,16,325,18,312,23,307,29,310,36,304,38,302,28,309,18,324,13,347,11,374,14,389,21"/>
+<area shape="rect" id="Node000002" href="$classcalculators_1_1DihedralCalculator.html#ac107d67bd6d594a01c51a4ec7fe5870f" title="Computes and populates the dihedral angles tensor." alt="" coords="5,5,228,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="262,48,228,43,229,38,263,43"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a047a41476f7c42e9ed66a7e997f8d752" title=" " alt="" coords="45,69,188,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="263,72,188,82,188,77,262,66"/>
+</map>

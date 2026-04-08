@@ -1,0 +1,5 @@
+<map id="FileWriter::write" name="FileWriter::write">
+<area shape="rect" id="Node000001" title="Writes the available histograms using specified formats." alt="" coords="231,5,357,31"/>
+<area shape="rect" id="Node000002" href="$classAppBackend.html#af35bac42cd901ece8cfb421ccb21e148" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="5,5,183,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,21,183,21,183,15,217,15"/>
+</map>

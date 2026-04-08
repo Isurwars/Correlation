@@ -1,0 +1,11 @@
+<map id="FileReader::OutmolReader::readTrajectory" name="FileReader::OutmolReader::readTrajectory">
+<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="5,5,199,45"/>
+<area shape="rect" id="Node000002" href="$classFileReader_1_1OutmolReader.html#a8172760c606b2d8ae35281e6ea8e4426" title=" " alt="" coords="247,5,440,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,23,233,23,233,28,199,28"/>
+<area shape="rect" id="Node000003" href="$classCell.html#ac28f21b6a10b651a1066c5a490b63b49" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered." alt="" coords="488,13,603,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="440,23,474,23,474,28,440,28"/>
+<area shape="rect" id="Node000004" href="$classCell.html#ad733f1cdbe1571fef7e2ca568353ebd0" title=" " alt="" coords="651,13,849,38"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="603,23,637,23,637,28,603,28"/>
+<area shape="rect" id="Node000005" href="$classCell.html#ab0ed4ceb831594bb3da3f354f3ba70f5" title="Finds the Element properties for a given element symbol." alt="" coords="897,13,1031,38"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="850,23,884,23,884,28,850,28"/>
+</map>

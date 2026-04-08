@@ -1,0 +1,13 @@
+<map id="AppBackend::options" name="AppBackend::options">
+<area shape="rect" id="Node000001" title="Gets the current program options." alt="" coords="552,63,711,88"/>
+<area shape="rect" id="Node000002" href="$classAppController.html#abb6bbe9191bcace65347e674c510447b" title="Propagates the current backend options to the UI elements." alt="" coords="263,5,503,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="568,62,503,46,446,33,447,28,505,41,569,57"/>
+<area shape="rect" id="Node000004" href="$classAppController.html#ad3f2d9ec0c900ebdfd05cf406f1e5ab2" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="283,55,482,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="538,78,482,78,482,73,538,73"/>
+<area shape="rect" id="Node000005" href="$classAppController.html#a894e45e98475c56841dc20d1bdff336b" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="261,119,504,159"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="569,94,462,122,461,117,567,89"/>
+<area shape="rect" id="Node000003" href="$classAppController.html#a1a624a2d6b3337b30cb4467f06c59df5" title="Constructs the AppController." alt="" coords="5,63,213,88"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="308,36,262,46,171,65,170,60,261,41,307,31"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="270,78,213,78,213,73,270,73"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="282,119,164,91,165,85,284,114"/>
+</map>

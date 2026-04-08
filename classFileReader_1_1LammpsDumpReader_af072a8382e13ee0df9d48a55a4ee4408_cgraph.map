@@ -1,0 +1,15 @@
+<map id="FileReader::LammpsDumpReader::readStructure" name="FileReader::LammpsDumpReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,47,245,87"/>
+<area shape="rect" id="Node000002" href="$classFileReader_1_1LammpsDumpReader.html#a8a77858a053d9bdfb3814fbe0cd4351a" title="Reads all frames from a LAMMPS dump file." alt="" coords="293,47,533,87"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="246,65,280,65,280,70,246,70"/>
+<area shape="rect" id="Node000003" href="$classCell.html#ac28f21b6a10b651a1066c5a490b63b49" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered." alt="" coords="596,5,711,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="511,45,582,30,583,35,512,50"/>
+<area shape="rect" id="Node000006" href="$classCell.html#ade3ae3e692df90bc4f8cf0d4817ed454" title="Checks whether the cell contains no atoms." alt="" coords="599,55,707,80"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="534,65,585,65,585,70,534,70"/>
+<area shape="rect" id="Node000007" href="$classCell.html#adb6c455b83d64d040b0d27890096d3ab" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="581,104,725,129"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="512,85,578,99,577,104,511,90"/>
+<area shape="rect" id="Node000004" href="$classCell.html#ad733f1cdbe1571fef7e2ca568353ebd0" title=" " alt="" coords="773,5,972,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="711,15,760,15,760,21,711,21"/>
+<area shape="rect" id="Node000005" href="$classCell.html#ab0ed4ceb831594bb3da3f354f3ba70f5" title="Finds the Element properties for a given element symbol." alt="" coords="1020,5,1153,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="972,15,1007,15,1007,21,972,21"/>
+</map>

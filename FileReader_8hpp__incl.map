@@ -1,0 +1,38 @@
+<map id="include/FileReader.hpp" name="include/FileReader.hpp">
+<area shape="rect" id="Node000001" title="Unified file reading interface for structure and trajectory files." alt="" coords="167,5,336,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,92,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,33,95,77,93,72,218,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="19,299,78,324"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="246,32,67,289,62,286,241,29"/>
+<area shape="rect" id="Node000004" href="$Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="362,152,437,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="265,29,380,141,376,144,262,33"/>
+<area shape="rect" id="Node000015" href="$Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="459,79,571,104"/>
+<area shape="poly" id="edge18_Node000001_Node000015" title=" " alt="" coords="294,28,460,72,459,78,293,33"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="363,178,290,198,207,228,138,261,80,294,77,289,135,256,205,223,288,193,361,173"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="490,372,546,397"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="408,176,452,249,474,272,495,297,508,328,516,358,511,359,503,330,490,300,470,276,448,252,403,179"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="462,225,537,251"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="417,175,473,215,470,219,414,180"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="561,225,624,251"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="431,175,549,218,548,223,429,180"/>
+<area shape="rect" id="Node000008" href="$Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="218,225,303,251"/>
+<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="378,180,297,221,294,217,376,175"/>
+<area shape="rect" id="Node000011" href="$LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="302,299,481,324"/>
+<area shape="poly" id="edge17_Node000004_Node000011" title=" " alt="" coords="401,178,395,285,390,285,396,178"/>
+<area shape="poly" id="edge11_Node000008_Node000003" title=" " alt="" coords="227,253,92,298,90,293,226,248"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="102,299,187,324"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="243,253,177,294,174,289,241,248"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="211,299,278,324"/>
+<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="261,252,253,286,248,285,255,250"/>
+<area shape="poly" id="edge12_Node000008_Node000011" title=" " alt="" coords="283,248,359,290,357,294,280,253"/>
+<area shape="poly" id="edge13_Node000011_Node000005" title=" " alt="" coords="413,322,487,363,484,367,410,326"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="292,372,355,397"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="382,326,346,364,342,360,378,322"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="379,372,465,397"/>
+<area shape="poly" id="edge15_Node000011_Node000013" title=" " alt="" coords="399,323,414,359,409,361,394,325"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="176,372,268,397"/>
+<area shape="poly" id="edge16_Node000011_Node000014" title=" " alt="" coords="365,326,263,369,261,364,363,322"/>
+<area shape="poly" id="edge21_Node000015_Node000004" title=" " alt="" coords="498,106,431,147,429,142,495,102"/>
+<area shape="poly" id="edge20_Node000015_Node000007" title=" " alt="" coords="524,103,582,212,578,215,519,106"/>
+<area shape="poly" id="edge19_Node000015_Node000011" title=" " alt="" coords="538,102,579,128,621,165,638,186,648,208,649,230,639,252,616,269,582,282,495,301,494,295,580,277,614,264,635,249,644,229,643,209,633,189,617,169,575,133,535,106"/>
+</map>

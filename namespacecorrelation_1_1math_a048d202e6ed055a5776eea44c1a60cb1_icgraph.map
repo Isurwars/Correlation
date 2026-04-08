@@ -1,0 +1,17 @@
+<map id="correlation::math::factorial" name="correlation::math::factorial">
+<area shape="rect" id="Node000001" title="Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64&#45;bit integer,..." alt="" coords="816,63,959,103"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="619,63,762,103"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="802,85,763,85,763,80,802,80"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="412,5,564,45"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="806,62,768,53,661,39,564,31,565,26,662,34,768,48,807,56"/>
+<area shape="rect" id="Node000007" href="$classSteinhardtCalculator.html#a3dc32f1fff1bc0219db538dcd0353dfc" title=" " alt="" coords="613,127,768,167"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="813,109,753,129,752,124,812,104"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="606,61,559,48,560,43,607,56"/>
+<area shape="rect" id="Node000004" href="$classSteinhardtCalculator.html#a67a83cb7fdb5daf5c898dfa590323de9" title=" " alt="" coords="411,69,565,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="605,88,566,89,566,84,605,83"/>
+<area shape="rect" id="Node000005" href="$classSteinhardtCalculator.html#a25ea80e56a8ee127c50dddf4ce21e3aa" title=" " alt="" coords="208,99,363,139"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="398,105,364,110,363,105,397,100"/>
+<area shape="rect" id="Node000006" href="$classSteinhardtCalculator.html#a60d929283ac65ad0511e180ae2ebf5b4" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,99,160,139"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="194,121,161,121,161,116,194,116"/>
+<area shape="poly" id="edge8_Node000007_Node000005" title=" " alt="" coords="600,143,363,127,363,121,600,138"/>
+</map>

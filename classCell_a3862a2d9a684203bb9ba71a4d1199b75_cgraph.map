@@ -1,0 +1,27 @@
+<map id="Cell::setLatticeParameters" name="Cell::setLatticeParameters">
+<area shape="rect" id="Node000001" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="5,171,199,197"/>
+<area shape="rect" id="Node000002" href="$classCell.html#aba82db75c187e763fdff56dd6a1558ac" title=" " alt="" coords="247,122,391,147"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="158,169,248,148,250,153,159,174"/>
+<area shape="rect" id="Node000009" href="$classCell.html#abd05218e7f38b9d2a4d4da4d8e4a1b35" title="Gets the volume of the simulation cell." alt="" coords="267,171,371,197"/>
+<area shape="poly" id="edge14_Node000001_Node000009" title=" " alt="" coords="199,181,253,181,253,187,199,187"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="247,221,390,261"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="152,194,235,216,233,222,150,199"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="722,29,865,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="328,120,371,74,403,50,438,32,472,22,507,15,579,11,648,16,709,26,708,31,648,21,579,17,508,21,473,27,440,37,405,55,375,78,332,123"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="477,71,619,111"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="385,119,463,104,464,109,386,125"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a6ba992b818462710f63a3122c3e98669" title="Computes the transpose of a 3x3 matrix." alt="" coords="477,159,619,199"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="386,145,464,160,463,165,385,150"/>
+<area shape="rect" id="Node000006" href="$classCell.html#a1e3bae07b19bd42137eebf505391a2f2" title=" " alt="" coords="439,223,657,263"/>
+<area shape="poly" id="edge9_Node000002_Node000006" title=" " alt="" coords="367,145,392,158,407,171,417,184,426,196,440,208,452,215,449,219,437,213,422,200,412,187,403,175,389,162,364,150"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="748,30,745,20,752,10,769,5,793,3,822,6,837,13,835,18,820,11,793,8,770,10,755,15,750,21,753,28"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="619,76,708,61,709,66,620,81"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="505,71,503,61,509,52,525,46,548,44,575,47,589,54,587,59,573,52,548,49,526,51,513,56,508,62,510,70"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="505,159,503,149,509,140,525,134,548,132,575,135,589,142,587,147,573,140,548,137,526,139,513,144,508,150,510,158"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="712,158,875,183"/>
+<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="617,220,657,208,705,193,734,185,736,190,706,199,658,213,618,225"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="705,231,881,257"/>
+<area shape="poly" id="edge12_Node000006_Node000008" title=" " alt="" coords="658,241,692,241,692,246,658,246"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="754,160,745,150,749,140,766,134,793,131,828,135,838,140,842,146,837,149,834,144,827,140,793,137,767,139,753,144,750,149,757,156"/>
+<area shape="poly" id="edge13_Node000008_Node000008" title=" " alt="" coords="754,233,745,223,749,213,766,207,793,205,828,209,838,213,842,219,837,222,834,217,827,214,793,210,767,212,753,217,750,222,757,229"/>
+</map>

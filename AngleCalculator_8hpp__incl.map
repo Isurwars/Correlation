@@ -1,0 +1,39 @@
+<map id="include/calculators/AngleCalculator.hpp" name="include/calculators/AngleCalculator.hpp">
+<area shape="rect" id="Node000001" title="Calculator for angular distribution functions." alt="" coords="251,5,407,45"/>
+<area shape="rect" id="Node000002" href="$BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="5,93,152,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="270,48,129,92,128,87,269,43"/>
+<area shape="rect" id="Node000004" href="$Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="224,93,299,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="315,47,282,84,278,81,311,44"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="478,167,541,192"/>
+<area shape="poly" id="edge22_Node000001_Node000007" title=" " alt="" coords="407,43,448,62,485,92,502,121,509,152,504,153,497,123,481,95,445,67,404,48"/>
+<area shape="rect" id="Node000015" href="$NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="323,93,471,119"/>
+<area shape="poly" id="edge18_Node000001_Node000015" title=" " alt="" coords="348,44,380,81,376,84,344,47"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="35,240,93,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,120,64,167,62,198,64,226,58,226,57,197,59,166,72,118"/>
+<area shape="poly" id="edge6_Node000004_Node000003" title=" " alt="" coords="225,117,169,136,140,150,114,169,90,197,75,228,70,226,86,195,110,165,137,146,167,131,223,112"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="161,313,217,339"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="225,120,188,138,171,152,158,168,148,193,146,214,159,264,175,301,171,303,153,266,141,215,143,191,154,165,167,148,185,134,222,115"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="168,167,243,192"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="254,121,225,157,221,154,250,117"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="300,116,465,163,464,168,298,121"/>
+<area shape="rect" id="Node000008" href="$Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="267,167,352,192"/>
+<area shape="poly" id="edge8_Node000004_Node000008" title=" " alt="" coords="271,118,296,154,292,157,267,121"/>
+<area shape="rect" id="Node000011" href="$LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="368,240,547,265"/>
+<area shape="poly" id="edge17_Node000004_Node000011" title=" " alt="" coords="286,116,324,137,366,165,405,197,438,228,435,232,402,201,362,169,321,142,283,121"/>
+<area shape="poly" id="edge11_Node000008_Node000003" title=" " alt="" coords="271,195,108,241,106,236,269,189"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="259,240,344,265"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="311,193,307,227,301,226,305,192"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="168,240,235,265"/>
+<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="293,194,232,235,229,230,291,190"/>
+<area shape="poly" id="edge12_Node000008_Node000011" title=" " alt="" coords="334,190,422,232,420,236,332,194"/>
+<area shape="poly" id="edge13_Node000011_Node000005" title=" " alt="" coords="415,268,231,316,230,311,414,263"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="527,313,590,339"/>
+<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="475,263,532,303,529,307,472,268"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="301,313,387,339"/>
+<area shape="poly" id="edge15_Node000011_Node000013" title=" " alt="" coords="441,268,375,308,372,304,438,263"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="411,313,503,339"/>
+<area shape="poly" id="edge16_Node000011_Node000014" title=" " alt="" coords="460,266,460,300,455,300,455,266"/>
+<area shape="poly" id="edge21_Node000015_Node000007" title=" " alt="" coords="417,116,481,157,478,161,414,121"/>
+<area shape="poly" id="edge20_Node000015_Node000008" title=" " alt="" coords="385,121,336,160,333,156,382,117"/>
+<area shape="poly" id="edge19_Node000015_Node000011" title=" " alt="" coords="405,118,450,226,445,228,400,120"/>
+</map>

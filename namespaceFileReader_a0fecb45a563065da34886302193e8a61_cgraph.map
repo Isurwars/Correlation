@@ -1,0 +1,9 @@
+<map id="FileReader::readTrajectory" name="FileReader::readTrajectory">
+<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="5,77,197,102"/>
+<area shape="rect" id="Node000002" href="$classFileReader_1_1ReaderFactory.html#ae05458e1df32261a74a5edb7f12bf08c" title="Finds a reader that supports the given file extension." alt="" coords="245,5,437,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,74,252,46,253,52,151,79"/>
+<area shape="rect" id="Node000003" href="$classFileReader_1_1ReaderFactory.html#ae3f6c0c59d1fa491d420a781fa227a0a" title=" " alt="" coords="245,69,437,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="197,87,232,87,232,92,197,92"/>
+<area shape="rect" id="Node000004" href="$classFileReader_1_1BaseReader.html#a15b983c4cd012f5bf48f46895c423a7e" title="Reads a trajectory from a file." alt="" coords="253,133,430,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="151,100,253,127,252,132,149,105"/>
+</map>

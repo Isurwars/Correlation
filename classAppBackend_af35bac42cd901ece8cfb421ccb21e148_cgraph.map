@@ -1,0 +1,7 @@
+<map id="AppBackend::write_files" name="AppBackend::write_files">
+<area shape="rect" id="Node000001" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="5,13,183,38"/>
+<area shape="rect" id="Node000002" href="$classFileWriter.html#a32ad226a1809cf03a53e89d134aae80c" title="Writes the available histograms using specified formats." alt="" coords="231,13,357,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,23,217,23,217,28,183,28"/>
+<area shape="rect" id="Node000003" href="$classWriter_1_1WriterFactory.html#a6b25699e4cd306d8a095599a9e35788b" title=" " alt="" coords="405,5,563,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="358,23,392,23,392,28,358,28"/>
+</map>

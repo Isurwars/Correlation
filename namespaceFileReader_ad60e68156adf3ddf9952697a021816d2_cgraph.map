@@ -1,0 +1,9 @@
+<map id="FileReader::readStructure" name="FileReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,77,192,102"/>
+<area shape="rect" id="Node000002" href="$classFileReader_1_1ReaderFactory.html#ae05458e1df32261a74a5edb7f12bf08c" title="Finds a reader that supports the given file extension." alt="" coords="240,5,432,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,74,247,46,249,52,148,79"/>
+<area shape="rect" id="Node000003" href="$classFileReader_1_1ReaderFactory.html#ae3f6c0c59d1fa491d420a781fa227a0a" title=" " alt="" coords="240,69,432,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="192,87,226,87,226,92,192,92"/>
+<area shape="rect" id="Node000004" href="$classFileReader_1_1BaseReader.html#ab38b339aa1b69752aee9d2c064bc185a" title="Reads an atomic structure from a file." alt="" coords="247,133,425,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="148,100,249,127,247,132,146,105"/>
+</map>

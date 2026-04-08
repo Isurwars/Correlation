@@ -1,0 +1,5 @@
+<map id="include/readers/CastepMdReader.hpp" name="include/readers/CastepMdReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for CASTEP molecular dynamics trajectory files." alt="" coords="27,5,218,45"/>
+<area shape="rect" id="Node000002" href="$CastepMdReader_8cpp.html" title="Implementation of the CASTEP MD trajectory reader." alt="" coords="5,93,240,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,59,125,93,120,93,120,59"/>
+</map>

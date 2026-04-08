@@ -1,0 +1,9 @@
+<map id="include/writers/WriterUtils.hpp" name="include/writers/WriterUtils.hpp">
+<area shape="rect" id="Node000001" title="Shared utilities for file writer implementations." alt="" coords="212,5,432,31"/>
+<area shape="rect" id="Node000002" href="$ArrowWriter_8cpp.html" title="Implementation of the Apache Arrow/Parquet writer." alt="" coords="5,79,204,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="275,37,141,81,139,76,273,32"/>
+<area shape="rect" id="Node000003" href="$CSVWriter_8cpp.html" title="Implementation of the CSV writer." alt="" coords="229,79,415,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="325,44,325,79,319,79,319,44"/>
+<area shape="rect" id="Node000004" href="$HDF5Writer_8cpp.html" title="Implementation of the HDF5 writer." alt="" coords="440,79,636,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="371,32,504,76,502,81,369,37"/>
+</map>

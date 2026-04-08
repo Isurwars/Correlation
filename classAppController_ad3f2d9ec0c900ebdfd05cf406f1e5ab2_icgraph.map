@@ -1,0 +1,5 @@
+<map id="AppController::handleWriteFiles" name="AppController::handleWriteFiles">
+<area shape="rect" id="Node000001" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="261,5,460,45"/>
+<area shape="rect" id="Node000002" href="$classAppController.html#a1a624a2d6b3337b30cb4467f06c59df5" title="Constructs the AppController." alt="" coords="5,13,213,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,28,214,28,214,23,247,23"/>
+</map>

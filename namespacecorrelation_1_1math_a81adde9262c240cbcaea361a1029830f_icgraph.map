@@ -1,0 +1,7 @@
+<map id="correlation::math::generateKernel" name="correlation::math::generateKernel">
+<area shape="rect" id="Node000001" title="Generates a smoothing kernel." alt="" coords="387,5,529,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646" title="Applies kernel smoothing to a data series." alt="" coords="196,5,339,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="373,28,339,28,339,23,373,23"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#afea4c44f2d02d37fb0d2c9ed8fe1925b" title="Compatibility overload: derives dx from the grid and delegates." alt="" coords="5,5,148,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="183,28,148,28,148,23,183,23"/>
+</map>

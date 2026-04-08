@@ -1,0 +1,18 @@
+<map id="correlation::math::autocorrelate" name="correlation::math::autocorrelate">
+<area shape="rect" id="Node000001" title="Convenience overload — allocates its own workspace." alt="" coords="5,63,148,103"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="196,63,339,103"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,81,183,81,183,86,148,86"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="387,63,529,103"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="339,81,373,81,373,86,339,86"/>
+<area shape="rect" id="Node000004" href="$Atom_8hpp.html#a692d3d5d638b8f4ceaf2e24183a6a25d" title="Calculates the angle (in radians) formed by three atoms." alt="" coords="619,29,678,55"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="529,65,605,49,606,54,530,71"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="577,103,720,143"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="530,96,564,103,563,108,529,101"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="768,29,931,55"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="678,39,754,39,754,45,678,45"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="816,31,809,21,813,11,827,5,849,3,877,6,888,16,885,20,875,11,849,8,828,10,817,15,815,20,821,28"/>
+<area shape="poly" id="edge9_Node000006_Node000006" title=" " alt="" coords="613,104,611,94,616,85,629,79,649,77,671,80,683,87,680,91,669,85,649,82,631,84,620,89,616,95,618,102"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="778,103,921,143"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="720,121,764,121,764,126,720,126"/>
+<area shape="poly" id="edge8_Node000007_Node000007" title=" " alt="" coords="812,104,809,94,815,85,829,79,849,77,873,80,886,87,883,92,871,85,849,82,830,84,819,89,815,95,817,102"/>
+</map>

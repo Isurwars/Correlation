@@ -1,0 +1,19 @@
+<map id="FileReader::CastepMdReader::readStructure" name="FileReader::CastepMdReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,97,216,137"/>
+<area shape="rect" id="Node000002" href="$classFileReader_1_1CastepMdReader.html#aa5552ebba5744a7a8a6ddfe45798044c" title=" " alt="" coords="264,97,475,137"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="216,114,251,114,251,119,216,119"/>
+<area shape="rect" id="Node000003" href="$classCell.html#ac28f21b6a10b651a1066c5a490b63b49" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered." alt="" coords="555,5,669,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="405,94,460,67,522,40,543,32,545,37,524,44,462,71,408,99"/>
+<area shape="rect" id="Node000006" href="$classCell.html#a0f6aa464dbb320038503443482e20618" title="Gets the energy of the cell frame." alt="" coords="551,55,673,80"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="468,94,537,80,538,85,469,99"/>
+<area shape="rect" id="Node000007" href="$classCell.html#ade3ae3e692df90bc4f8cf0d4817ed454" title="Checks whether the cell contains no atoms." alt="" coords="558,104,666,129"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="475,114,544,114,544,119,475,119"/>
+<area shape="rect" id="Node000008" href="$classCell.html#ada7deb1b671f582bf8256f52dfebbea5" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="523,153,701,179"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="469,134,536,148,535,153,468,139"/>
+<area shape="rect" id="Node000009" href="$classCell.html#a20b20b54019f0929b549ff4b19e9bccf" title="Sets the energy of the cell frame." alt="" coords="552,203,672,228"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="409,134,463,161,524,188,549,196,547,201,522,192,460,166,407,139"/>
+<area shape="rect" id="Node000004" href="$classCell.html#ad733f1cdbe1571fef7e2ca568353ebd0" title=" " alt="" coords="749,5,948,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="669,15,736,15,736,21,669,21"/>
+<area shape="rect" id="Node000005" href="$classCell.html#ab0ed4ceb831594bb3da3f354f3ba70f5" title="Finds the Element properties for a given element symbol." alt="" coords="996,5,1129,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="948,15,983,15,983,21,948,21"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="correlation::physics::getAtomicMass" name="correlation::physics::getAtomicMass">
+<area shape="rect" id="Node000001" title="Retrieves the atomic mass of a given chemical element." alt="" coords="5,5,155,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title=" " alt="" coords="203,5,352,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="155,23,189,23,189,28,155,28"/>
+</map>

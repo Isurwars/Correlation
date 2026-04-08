@@ -1,0 +1,7 @@
+<map id="XRDCalculator::calculate" name="XRDCalculator::calculate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="236,45,419,70"/>
+<area shape="rect" id="Node000002" href="$classXRDCalculator.html#a84c27dcba4323cd2a7ad1131ded81a96" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,188,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,45,188,41,189,35,223,40"/>
+<area shape="rect" id="Node000003" href="$classDistributionFunctions.html#a9cd6818382ccc113ec0e51a803918ef4" title="Calculates the XRD pattern." alt="" coords="17,69,177,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="223,75,177,81,176,76,222,69"/>
+</map>

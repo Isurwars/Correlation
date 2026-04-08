@@ -1,0 +1,7 @@
+<map id="DistributionFunctions::calculateVDOS" name="DistributionFunctions::calculateVDOS">
+<area shape="rect" id="Node000001" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="5,5,165,45"/>
+<area shape="rect" id="Node000002" href="$classVDOSCalculator.html#a68fb2734c26d0f9d58650fec9b7c2c5c" title=" " alt="" coords="213,13,405,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="166,23,199,23,199,28,166,28"/>
+<area shape="rect" id="Node000003" href="$classDynamicsAnalyzer.html#aacc29d5cf6c1344190c0fe45fc24d612" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="453,13,701,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="405,23,440,23,440,28,405,28"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="AppController::populateCalculatorGroups" name="AppController::populateCalculatorGroups">
+<area shape="rect" id="Node000001" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="5,69,248,109"/>
+<area shape="rect" id="Node000002" href="$classCalculatorFactory.html#a4cc8bf0f039176fc02bbda9c281142a2" title="Returns all registered calculators." alt="" coords="304,5,447,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="204,67,290,44,292,50,206,72"/>
+<area shape="rect" id="Node000003" href="$classCalculatorFactory.html#afaee5bef8befa1387c9960f592cd7461" title=" " alt="" coords="304,69,447,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="248,87,291,87,291,92,248,92"/>
+<area shape="rect" id="Node000004" href="$classAppBackend.html#a71c6c92b4244bf31a7d45c6106b03bb1" title="Gets the current program options." alt="" coords="296,134,455,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="215,107,307,128,306,134,213,112"/>
+</map>

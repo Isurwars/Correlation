@@ -1,0 +1,23 @@
+<map id="include/readers/ReaderFactory.hpp" name="include/readers/ReaderFactory.hpp">
+<area shape="rect" id="Node000001" title="Factory for instantiating file reader objects by format." alt="" coords="942,5,1187,31"/>
+<area shape="rect" id="Node000002" href="$FileReader_8cpp.html" title="Implementation of the unified file reader." alt="" coords="5,79,145,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="928,28,578,47,368,62,157,81,146,83,145,77,156,76,367,57,578,42,928,22"/>
+<area shape="rect" id="Node000003" href="$ArcReader_8cpp.html" title="Implementation of the ARC file format reader." alt="" coords="169,79,360,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="928,33,373,81,360,83,360,77,372,76,928,28"/>
+<area shape="rect" id="Node000004" href="$CarReader_8cpp.html" title="Implementation of the CAR file format reader." alt="" coords="385,79,577,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="958,35,575,81,574,76,957,30"/>
+<area shape="rect" id="Node000005" href="$CastepMdReader_8cpp.html" title="Implementation of the CASTEP MD trajectory reader." alt="" coords="601,79,835,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="996,36,775,81,774,76,995,31"/>
+<area shape="rect" id="Node000006" href="$CellReader_8cpp.html" title="Implementation of the CASTEP CELL file reader." alt="" coords="859,79,1054,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1037,40,976,81,973,76,1035,36"/>
+<area shape="rect" id="Node000007" href="$CifReader_8cpp.html" title="Implementation of the CIF file format reader." alt="" coords="1079,79,1267,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1095,36,1156,76,1154,81,1092,40"/>
+<area shape="rect" id="Node000008" href="$LammpsDumpReader_8cpp.html" title="Implementation of the LAMMPS dump file reader." alt="" coords="1291,79,1556,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1136,31,1366,76,1365,81,1135,36"/>
+<area shape="rect" id="Node000009" href="$OnetepDatReader_8cpp.html" title="Implementation of the ONETEP .dat file reader." alt="" coords="1581,79,1821,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1181,30,1599,76,1598,81,1180,35"/>
+<area shape="rect" id="Node000010" href="$OutmolReader_8cpp.html" title="Implementation of the CASTEP .outmol file reader." alt="" coords="1845,79,2063,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1201,27,1833,76,1844,77,1844,82,1832,81,1201,32"/>
+<area shape="rect" id="Node000011" href="$ReaderFactory_8cpp.html" title="Implementation of the reader factory." alt="" coords="2087,79,2303,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1202,23,1594,44,2076,76,2087,77,2087,82,2075,81,1594,50,1201,28"/>
+</map>

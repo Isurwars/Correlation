@@ -1,0 +1,7 @@
+<map id="Trajectory::precomputeBondCutoffs" name="Trajectory::precomputeBondCutoffs">
+<area shape="rect" id="Node000001" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="5,5,209,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Provides a static database of physical data for chemical elements. Optimized for frequent access by c..." alt="" coords="257,5,411,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,23,244,23,244,28,210,28"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title=" " alt="" coords="459,5,608,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="411,23,445,23,445,28,411,28"/>
+</map>

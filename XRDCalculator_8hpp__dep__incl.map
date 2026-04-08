@@ -1,0 +1,7 @@
+<map id="include/calculators/XRDCalculator.hpp" name="include/calculators/XRDCalculator.hpp">
+<area shape="rect" id="Node000001" title="X&#45;ray diffraction (XRD) pattern calculator." alt="" coords="161,5,308,45"/>
+<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,216,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,55,130,95,127,91,192,51"/>
+<area shape="rect" id="Node000003" href="$XRDCalculator_8cpp.html" title="Implementation of X&#45;ray diffraction pattern calculations." alt="" coords="240,93,480,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="278,51,343,91,340,95,275,55"/>
+</map>

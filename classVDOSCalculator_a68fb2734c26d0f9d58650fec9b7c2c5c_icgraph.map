@@ -1,0 +1,7 @@
+<map id="VDOSCalculator::calculate" name="VDOSCalculator::calculate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="245,45,437,70"/>
+<area shape="rect" id="Node000002" href="$classVDOSCalculator.html#a00706e352120e91428d3e1ed32ae6a10" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,5,197,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="232,45,197,41,198,35,233,40"/>
+<area shape="rect" id="Node000003" href="$classDistributionFunctions.html#a34df5e733a899b42ce97fa3b70f1abd6" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="21,69,181,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="233,75,182,81,181,76,232,69"/>
+</map>

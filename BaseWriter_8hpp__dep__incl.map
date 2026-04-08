@@ -1,0 +1,24 @@
+<map id="include/writers/BaseWriter.hpp" name="include/writers/BaseWriter.hpp">
+<area shape="rect" id="Node000001" title="Abstract base class for all file format writers." alt="" coords="377,5,599,31"/>
+<area shape="rect" id="Node000002" href="$ArrowWriter_8hpp.html" title="Writer for Apache Arrow/Parquet columnar output format." alt="" coords="5,79,232,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="416,36,179,81,178,76,415,31"/>
+<area shape="rect" id="Node000004" href="$CSVWriter_8hpp.html" title="Writer for CSV tabular output format." alt="" coords="257,79,471,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="458,40,386,81,383,76,455,35"/>
+<area shape="rect" id="Node000006" href="$HDF5Writer_8hpp.html" title="Writer for HDF5 hierarchical data format." alt="" coords="798,79,1023,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="570,30,843,76,842,81,569,36"/>
+<area shape="rect" id="Node000008" href="$WriterFactory_8hpp.html" title="Factory for instantiating file writer objects by format." alt="" coords="496,79,731,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="521,35,594,76,592,81,519,40"/>
+<area shape="rect" id="Node000003" href="$ArrowWriter_8cpp.html" title="Implementation of the Apache Arrow/Parquet writer." alt="" coords="33,152,231,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="126,117,132,151,127,152,121,118"/>
+<area shape="rect" id="Node000005" href="$CSVWriter_8cpp.html" title="Implementation of the CSV writer." alt="" coords="263,152,449,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="364,118,360,152,355,152,359,117"/>
+<area shape="rect" id="Node000007" href="$HDF5Writer_8cpp.html" title="Implementation of the HDF5 writer." alt="" coords="863,152,1059,177"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="929,114,955,150,951,153,925,117"/>
+<area shape="poly" id="edge9_Node000008_Node000003" title=" " alt="" coords="523,109,210,155,209,149,522,103"/>
+<area shape="poly" id="edge10_Node000008_Node000005" title=" " alt="" coords="560,110,398,154,397,149,558,105"/>
+<area shape="poly" id="edge11_Node000008_Node000007" title=" " alt="" coords="683,104,906,149,904,155,682,109"/>
+<area shape="rect" id="Node000009" href="$FileWriter_8cpp.html" title="Implementation of the unified file writer." alt="" coords="705,152,839,177"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="652,107,747,149,745,154,650,112"/>
+<area shape="rect" id="Node000010" href="$WriterFactory_8cpp.html" title="Implementation of the writer factory." alt="" coords="474,152,681,177"/>
+<area shape="poly" id="edge12_Node000008_Node000010" title=" " alt="" coords="604,117,586,153,581,151,599,115"/>
+</map>

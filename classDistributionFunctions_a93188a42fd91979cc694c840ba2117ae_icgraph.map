@@ -1,0 +1,12 @@
+<map id="DistributionFunctions::getAllHistograms" name="DistributionFunctions::getAllHistograms">
+<area shape="rect" id="Node000001" title=" " alt="" coords="440,69,600,109"/>
+<area shape="rect" id="Node000002" href="$classXRDCalculator.html#a84c27dcba4323cd2a7ad1131ded81a96" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="205,5,387,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="435,68,366,48,367,43,437,63"/>
+<area shape="rect" id="Node000003" href="$classVDOSCalculator.html#a00706e352120e91428d3e1ed32ae6a10" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="200,69,392,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="426,92,392,92,392,87,426,87"/>
+<area shape="rect" id="Node000004" href="$classWriter_1_1HDF5Writer.html#a30563687e53d7f5ddb7f83ffcf8a8435" title="Writes all available histograms to a single HDF5 file." alt="" coords="223,133,369,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="437,116,367,136,366,131,435,111"/>
+<area shape="rect" id="Node000005" href="$classWriter_1_1HDF5Writer.html#a70997343f0ae6ba919c45e185cc31c4f" title="Writes the distribution function data to file(s)." alt="" coords="5,133,152,173"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="209,165,152,165,152,159,209,160"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="166,142,223,142,223,147,166,147"/>
+</map>

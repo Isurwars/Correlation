@@ -1,0 +1,14 @@
+<map id="DistributionFunctions::DistributionFunctions" name="DistributionFunctions::DistributionFunctions">
+<area shape="rect" id="Node000001" title="Constructs a DistributionFunctions object." alt="" coords="5,81,173,121"/>
+<area shape="rect" id="Node000002" href="$classDistributionFunctions.html#aa80f72be92aaadaca5a6dd263c6f8b83" title=" " alt="" coords="227,49,422,89"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,87,213,81,214,86,174,92"/>
+<area shape="rect" id="Node000006" href="$classDistributionFunctions.html#a13a3fdf1eaddce4f89a370ab0cdfd444" title=" " alt="" coords="221,113,428,153"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="174,109,208,114,207,119,173,115"/>
+<area shape="rect" id="Node000003" href="$classCell.html#af74ce1c15d5d8c56fdc7a3fc1f344fa3" title="Gets the list of atoms in the cell." alt="" coords="508,5,604,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="416,46,494,29,495,34,417,51"/>
+<area shape="rect" id="Node000004" href="$classCell.html#a9970dde4c223bb5f44f6dfe49ae0639e" title="Gets the list of unique chemical elements in the cell." alt="" coords="684,85,800,111"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="422,73,671,90,670,96,422,78"/>
+<area shape="rect" id="Node000005" href="$classDistributionFunctions.html#ae247077e4ad26169d0c5601ce207723b" title=" " alt="" coords="476,106,636,146"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="407,86,463,100,462,105,405,91"/>
+<area shape="poly" id="edge5_Node000005_Node000004" title=" " alt="" coords="636,111,670,106,671,111,637,117"/>
+</map>

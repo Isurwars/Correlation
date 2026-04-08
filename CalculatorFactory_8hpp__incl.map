@@ -1,0 +1,12 @@
+<map id="include/calculators/CalculatorFactory.hpp" name="include/calculators/CalculatorFactory.hpp">
+<area shape="rect" id="Node000001" title="Factory for instantiating analysis calculator objects." alt="" coords="144,5,309,45"/>
+<area shape="rect" id="Node000002" href="$BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="5,93,152,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,48,114,89,111,84,190,43"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="104,167,163,192"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="217,47,150,156,145,153,213,44"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="227,93,304,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="238,44,256,80,251,82,234,47"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="329,93,391,119"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="260,43,330,84,327,89,257,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="90,117,118,154,114,157,86,121"/>
+</map>

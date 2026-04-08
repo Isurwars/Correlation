@@ -1,0 +1,5 @@
+<map id="include/readers/CarReader.hpp" name="include/readers/CarReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for BIOVIA/Accelrys CAR structure files." alt="" coords="5,5,227,31"/>
+<area shape="rect" id="Node000002" href="$CarReader_8cpp.html" title="Implementation of the CAR file format reader." alt="" coords="20,79,212,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,44,119,79,113,79,113,44"/>
+</map>

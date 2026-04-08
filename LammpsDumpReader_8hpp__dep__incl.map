@@ -1,0 +1,5 @@
+<map id="include/readers/LammpsDumpReader.hpp" name="include/readers/LammpsDumpReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for LAMMPS dump trajectory files." alt="" coords="27,5,249,45"/>
+<area shape="rect" id="Node000002" href="$LammpsDumpReader_8cpp.html" title="Implementation of the LAMMPS dump file reader." alt="" coords="5,93,271,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="141,59,141,93,135,93,135,59"/>
+</map>

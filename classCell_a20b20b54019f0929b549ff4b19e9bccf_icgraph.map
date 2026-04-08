@@ -1,0 +1,13 @@
+<map id="Cell::setEnergy" name="Cell::setEnergy">
+<area shape="rect" id="Node000001" title="Sets the energy of the cell frame." alt="" coords="523,45,643,70"/>
+<area shape="rect" id="Node000002" href="$classFileReader_1_1ArcReader.html#a4c785b37eab42f85ebb1b846c8f5392d" title=" " alt="" coords="286,5,453,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="509,49,453,40,453,35,510,44"/>
+<area shape="rect" id="Node000004" href="$classFileReader_1_1CastepMdReader.html#aa5552ebba5744a7a8a6ddfe45798044c" title=" " alt="" coords="264,69,475,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="510,71,475,76,475,71,509,66"/>
+<area shape="rect" id="Node000003" href="$classFileReader_1_1ArcReader.html#ac1a899b5d1612171f7fb88c0d21027ec" title="Reads a trajectory from a file." alt="" coords="27,5,194,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="272,28,194,28,194,23,272,23"/>
+<area shape="rect" id="Node000005" href="$classFileReader_1_1CastepMdReader.html#a40aa4a763e995d7c0264344f40bad4fd" title="Reads an atomic structure from a file." alt="" coords="5,69,216,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="250,92,216,92,216,87,250,87"/>
+<area shape="rect" id="Node000006" href="$classFileReader_1_1CastepMdReader.html#a1af9f8114b7f113676d88e7dbf0e9208" title="Reads a trajectory from a file." alt="" coords="5,133,216,173"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="275,115,193,136,191,131,274,110"/>
+</map>

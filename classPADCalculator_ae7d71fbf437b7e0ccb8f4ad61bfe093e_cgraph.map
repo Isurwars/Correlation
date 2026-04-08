@@ -1,0 +1,17 @@
+<map id="PADCalculator::calculateFrame" name="PADCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,92,187,132"/>
+<area shape="rect" id="Node000002" href="$classDistributionFunctions.html#add20bb00dd01a9fe546ea1d8407a05dd" title=" " alt="" coords="245,5,405,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,89,234,55,253,48,255,53,236,60,148,94"/>
+<area shape="rect" id="Node000003" href="$classPADCalculator.html#ae7ff941cf955a94428a9ae01d9e30e50" title=" " alt="" coords="235,70,416,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,98,221,93,221,99,187,103"/>
+<area shape="rect" id="Node000007" href="$classDistributionFunctions.html#a410ae9733a717623015dcf2e17875723" title=" " alt="" coords="245,120,405,160"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="187,120,232,126,231,131,187,126"/>
+<area shape="rect" id="Node000008" href="$classDistributionFunctions.html#a8ead5fdc49273cd2c99de00c2791a9a2" title=" " alt="" coords="245,184,405,224"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="143,130,236,170,254,177,252,182,234,174,140,135"/>
+<area shape="rect" id="Node000004" href="$classStructureAnalyzer.html#a50e55beb55caa229e5f7ed8713ccdaca" title="Gets a multi&#45;dimensional tensor containing bond angles." alt="" coords="464,5,611,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="372,67,450,46,452,51,374,73"/>
+<area shape="rect" id="Node000005" href="$classCell.html#a9970dde4c223bb5f44f6dfe49ae0639e" title="Gets the list of unique chemical elements in the cell." alt="" coords="479,70,595,95"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="416,80,465,80,465,85,416,85"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="466,120,609,160"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="374,93,453,115,452,120,372,98"/>
+</map>

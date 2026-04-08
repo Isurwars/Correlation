@@ -1,0 +1,7 @@
+<map id="correlation::math::dist_sq_scalar" name="correlation::math::dist_sq_scalar">
+<area shape="rect" id="Node000001" title="Computes the squared distance between two 3D points." alt="" coords="476,5,619,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a9eca03a5de0ee5364e13bb74bf54b1f7" title="Computes the squared distances from a reference point to a block of positions." alt="" coords="277,5,428,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="462,28,428,28,428,23,462,23"/>
+<area shape="rect" id="Node000003" href="$classcalculators_1_1DistanceCalculator.html#ae3fea61e3c2fd8ed9d5b3b30f2529372" title=" " alt="" coords="5,5,229,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="264,28,230,28,230,23,264,23"/>
+</map>

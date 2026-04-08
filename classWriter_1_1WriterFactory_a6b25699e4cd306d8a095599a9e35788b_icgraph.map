@@ -1,0 +1,7 @@
+<map id="Writer::WriterFactory::instance" name="Writer::WriterFactory::instance">
+<area shape="rect" id="Node000001" title=" " alt="" coords="405,5,563,45"/>
+<area shape="rect" id="Node000002" href="$classFileWriter.html#a32ad226a1809cf03a53e89d134aae80c" title="Writes the available histograms using specified formats." alt="" coords="231,13,357,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="392,28,358,28,358,23,392,23"/>
+<area shape="rect" id="Node000003" href="$classAppBackend.html#af35bac42cd901ece8cfb421ccb21e148" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="5,13,183,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="217,28,183,28,183,23,217,23"/>
+</map>

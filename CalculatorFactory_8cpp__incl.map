@@ -1,0 +1,14 @@
+<map id="src/calculators/CalculatorFactory.cpp" name="src/calculators/CalculatorFactory.cpp">
+<area shape="rect" id="Node000001" title="Implementation of the calculator factory." alt="" coords="133,5,320,45"/>
+<area shape="rect" id="Node000002" href="$CalculatorFactory_8hpp.html" title="Factory for instantiating analysis calculator objects." alt="" coords="109,93,345,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,46,229,79,224,79,224,46"/>
+<area shape="rect" id="Node000003" href="$BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="5,167,152,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="204,121,116,163,114,158,202,116"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="104,240,163,265"/>
+<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="221,121,150,230,146,227,217,118"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="227,167,304,192"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="235,118,255,153,250,156,231,120"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="329,167,391,192"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="249,116,327,158,325,162,247,121"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="90,191,118,228,114,231,86,194"/>
+</map>

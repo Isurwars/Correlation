@@ -1,0 +1,27 @@
+<map id="SteinhardtCalculator::calculate" name="SteinhardtCalculator::calculate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,198,160,238"/>
+<area shape="rect" id="Node000002" href="$classCell.html#af74ce1c15d5d8c56fdc7a3fc1f344fa3" title="Gets the list of atoms in the cell." alt="" coords="237,5,333,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,197,107,163,133,121,166,77,206,40,223,30,226,35,210,44,170,81,137,124,112,165,95,199"/>
+<area shape="rect" id="Node000003" href="$classCell.html#a9970dde4c223bb5f44f6dfe49ae0639e" title="Gets the list of unique chemical elements in the cell." alt="" coords="227,55,343,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="97,196,142,144,173,115,207,90,221,83,223,87,209,95,176,119,146,147,101,199"/>
+<area shape="rect" id="Node000004" href="$classStructureAnalyzer.html#a55a8d4438a90eccbd49e841cee2adfc0" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="212,105,359,145"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="122,195,207,154,222,148,224,153,209,159,125,200"/>
+<area shape="rect" id="Node000005" href="$classSteinhardtCalculator.html#a67a83cb7fdb5daf5c898dfa590323de9" title=" " alt="" coords="208,169,363,209"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="160,204,194,199,195,204,161,209"/>
+<area shape="rect" id="Node000009" href="$classSteinhardtCalculator.html#a3dc32f1fff1bc0219db538dcd0353dfc" title=" " alt="" coords="411,229,565,269"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="160,221,397,239,397,244,160,226"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="214,283,357,323"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="132,236,226,276,224,280,130,240"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="214,347,357,387"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="103,236,149,284,210,333,219,339,216,343,206,338,145,288,99,240"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="214,411,357,451"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="95,237,138,314,171,358,210,397,216,402,213,406,206,401,167,362,134,317,91,240"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="417,165,559,205"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="363,184,403,184,403,189,363,190"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a048d202e6ed055a5776eea44c1a60cb1" title="Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64&#45;bit integer,..." alt="" coords="630,225,773,265"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="560,202,618,218,616,224,559,207"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="613,172,789,197"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="559,182,600,182,600,187,559,187"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="666,174,659,164,663,154,677,148,701,145,731,149,743,158,740,162,729,154,701,151,679,153,667,158,664,163,671,170"/>
+<area shape="poly" id="edge10_Node000009_Node000007" title=" " alt="" coords="565,245,616,244,616,249,565,250"/>
+</map>

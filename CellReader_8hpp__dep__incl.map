@@ -1,0 +1,5 @@
+<map id="include/readers/CellReader.hpp" name="include/readers/CellReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for CASTEP CELL structure files." alt="" coords="5,5,229,31"/>
+<area shape="rect" id="Node000002" href="$CellReader_8cpp.html" title="Implementation of the CASTEP CELL file reader." alt="" coords="20,79,215,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="120,44,120,79,115,79,115,44"/>
+</map>

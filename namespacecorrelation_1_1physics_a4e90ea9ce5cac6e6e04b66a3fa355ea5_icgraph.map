@@ -1,0 +1,11 @@
+<map id="correlation::physics::getCovalentRadius" name="correlation::physics::getCovalentRadius">
+<area shape="rect" id="Node000001" title="Provides a static database of physical data for chemical elements. Optimized for frequent access by c..." alt="" coords="744,23,897,63"/>
+<area shape="rect" id="Node000002" href="$classTrajectory.html#a641d96e3626a32e42b55c4b4da2f5658" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,23,696,63"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="730,46,696,46,696,41,730,41"/>
+<area shape="rect" id="Node000003" href="$classTrajectory.html#ae0ce9e5374a8f89a5c32a4e3ab4ef587" title=" " alt="" coords="263,5,421,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="478,34,421,29,422,23,479,29"/>
+<area shape="rect" id="Node000004" href="$classTrajectory.html#a46e09f863d62eae9f25b0c344c4b1199" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,55,444,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="479,57,445,60,444,55,478,52"/>
+<area shape="rect" id="Node000005" href="$classTrajectory.html#a6013283f77f571de8dc80ff7bc940af2" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,55,192,80"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="227,70,192,70,192,65,227,65"/>
+</map>

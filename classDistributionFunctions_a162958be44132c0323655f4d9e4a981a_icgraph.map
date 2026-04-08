@@ -1,0 +1,15 @@
+<map id="DistributionFunctions::getHistogram" name="DistributionFunctions::getHistogram">
+<area shape="rect" id="Node000001" title="Access a specific calculated histogram by name." alt="" coords="441,101,601,141"/>
+<area shape="rect" id="Node000002" href="$classXRDCalculator.html#a84c27dcba4323cd2a7ad1131ded81a96" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="206,5,389,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="470,97,392,60,361,48,363,43,394,55,472,92"/>
+<area shape="rect" id="Node000003" href="$classVDOSCalculator.html#a00706e352120e91428d3e1ed32ae6a10" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="201,69,393,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="427,111,393,106,394,100,428,105"/>
+<area shape="rect" id="Node000004" href="$classWriter_1_1CSVWriter.html#af5569f7f58ec6badc82154092db56599" title="Writes all available histograms to appropriately named CSV files." alt="" coords="225,133,369,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="428,137,370,146,369,140,427,132"/>
+<area shape="rect" id="Node000006" href="$classWriter_1_1ArrowWriter.html#a4a45c5bb5fbe26b809b014374bc23a59" title="Writes all available histograms to Parquet files." alt="" coords="223,197,371,237"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="472,150,394,188,363,200,361,195,392,183,470,146"/>
+<area shape="rect" id="Node000005" href="$classWriter_1_1CSVWriter.html#a756a88baf5a910149fbba246baf25c5a" title="Writes the distribution function data to file(s)." alt="" coords="7,133,151,173"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="211,156,152,156,152,151,211,151"/>
+<area shape="rect" id="Node000007" href="$classWriter_1_1ArrowWriter.html#aa6659c9be980dcdc57ffefbb796804c2" title="Writes the distribution function data to file(s)." alt="" coords="5,197,153,237"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="210,220,153,220,153,215,210,215"/>
+</map>

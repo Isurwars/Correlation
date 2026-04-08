@@ -1,0 +1,29 @@
+<map id="Cell::Cell" name="Cell::Cell">
+<area shape="rect" id="Node000001" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="5,171,85,197"/>
+<area shape="rect" id="Node000002" href="$classCell.html#a3862a2d9a684203bb9ba71a4d1199b75" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="133,171,327,197"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,181,120,181,120,187,86,187"/>
+<area shape="rect" id="Node000003" href="$classCell.html#aba82db75c187e763fdff56dd6a1558ac" title=" " alt="" coords="375,122,519,147"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="286,169,376,148,378,153,287,174"/>
+<area shape="rect" id="Node000010" href="$classCell.html#abd05218e7f38b9d2a4d4da4d8e4a1b35" title="Gets the volume of the simulation cell." alt="" coords="395,171,499,197"/>
+<area shape="poly" id="edge15_Node000002_Node000010" title=" " alt="" coords="327,181,381,181,381,187,327,187"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="375,221,518,261"/>
+<area shape="poly" id="edge16_Node000002_Node000011" title=" " alt="" coords="280,194,363,216,361,222,278,199"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="850,29,993,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="456,120,499,74,531,50,566,32,600,22,635,15,707,11,776,16,837,26,836,31,776,21,707,17,636,21,601,27,568,37,533,55,503,78,460,123"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="605,71,747,111"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="513,119,591,104,592,109,514,125"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a6ba992b818462710f63a3122c3e98669" title="Computes the transpose of a 3x3 matrix." alt="" coords="605,159,747,199"/>
+<area shape="poly" id="edge8_Node000003_Node000006" title=" " alt="" coords="514,145,592,160,591,165,513,150"/>
+<area shape="rect" id="Node000007" href="$classCell.html#a1e3bae07b19bd42137eebf505391a2f2" title=" " alt="" coords="567,223,785,263"/>
+<area shape="poly" id="edge10_Node000003_Node000007" title=" " alt="" coords="495,145,520,158,535,171,545,184,554,196,568,208,580,215,577,219,565,213,550,200,540,187,531,175,517,162,492,150"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="876,30,873,20,880,10,897,5,921,3,950,6,965,13,963,18,948,11,921,8,898,10,883,15,878,21,881,28"/>
+<area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="747,76,836,61,837,66,748,81"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="633,71,631,61,637,52,653,46,676,44,703,47,717,54,715,59,701,52,676,49,654,51,641,56,636,62,638,70"/>
+<area shape="poly" id="edge9_Node000006_Node000006" title=" " alt="" coords="633,159,631,149,637,140,653,134,676,132,703,135,717,142,715,147,701,140,676,137,654,139,641,144,636,150,638,158"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="840,158,1003,183"/>
+<area shape="poly" id="edge11_Node000007_Node000008" title=" " alt="" coords="745,220,785,208,833,193,862,185,864,190,834,199,786,213,746,225"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="833,231,1009,257"/>
+<area shape="poly" id="edge13_Node000007_Node000009" title=" " alt="" coords="786,241,820,241,820,246,786,246"/>
+<area shape="poly" id="edge12_Node000008_Node000008" title=" " alt="" coords="882,160,873,150,877,140,894,134,921,131,956,135,966,140,970,146,965,149,962,144,955,140,921,137,895,139,881,144,878,149,885,156"/>
+<area shape="poly" id="edge14_Node000009_Node000009" title=" " alt="" coords="882,233,873,223,877,213,894,207,921,205,956,209,966,213,970,219,965,222,962,217,955,214,921,210,895,212,881,217,878,222,885,229"/>
+</map>

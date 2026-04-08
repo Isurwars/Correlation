@@ -1,0 +1,5 @@
+<map id="include/readers/OutmolReader.hpp" name="include/readers/OutmolReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for CASTEP .outmol trajectory files." alt="" coords="5,5,252,31"/>
+<area shape="rect" id="Node000002" href="$OutmolReader_8cpp.html" title="Implementation of the CASTEP .outmol file reader." alt="" coords="19,79,238,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,44,131,79,126,79,126,44"/>
+</map>

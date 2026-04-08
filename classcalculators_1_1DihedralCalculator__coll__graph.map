@@ -1,0 +1,5 @@
+<map id="calculators::DihedralCalculator" name="calculators::DihedralCalculator">
+<area shape="rect" id="Node000001" title="Computes all unique 4&#45;body dihedral (torsion) angles in the simulation cell." alt="" coords="5,79,228,104"/>
+<area shape="rect" id="Node000002" href="$classBaseCalculator.html" title="Base class for all analysis calculators." alt="" coords="57,5,177,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,44,119,79,114,79,114,44"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="include/calculators/VACFCalculator.hpp" name="include/calculators/VACFCalculator.hpp">
+<area shape="rect" id="Node000001" title="Velocity autocorrelation function (VACF) calculator." alt="" coords="159,5,313,45"/>
+<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,216,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,55,130,95,128,91,192,51"/>
+<area shape="rect" id="Node000003" href="$VACFCalculator_8cpp.html" title="Implementation of velocity autocorrelation calculations." alt="" coords="239,93,486,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,51,345,91,343,95,277,55"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="FileReader::BaseReader::readStructure" name="FileReader::BaseReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="960,5,1137,45"/>
+<area shape="rect" id="Node000002" href="$namespaceFileReader.html#ad60e68156adf3ddf9952697a021816d2" title="Reads an atomic structure from a file." alt="" coords="725,13,912,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="946,28,912,28,912,23,946,23"/>
+<area shape="rect" id="Node000003" href="$classAppBackend.html#aeae60a03e7a51bccb0b6359a36bf9f5c" title="Loads a file from a given path." alt="" coords="512,13,677,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="711,28,678,28,678,23,711,23"/>
+<area shape="rect" id="Node000004" href="$classAppController.html#a48bc06e7f6db878aa1d52ff5dff86605" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="261,5,464,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="498,28,464,28,464,23,498,23"/>
+<area shape="rect" id="Node000005" href="$classAppController.html#a1a624a2d6b3337b30cb4467f06c59df5" title="Constructs the AppController." alt="" coords="5,13,213,38"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="248,28,214,28,214,23,248,23"/>
+</map>

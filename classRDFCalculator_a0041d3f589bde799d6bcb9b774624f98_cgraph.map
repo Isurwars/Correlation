@@ -1,0 +1,27 @@
+<map id="RDFCalculator::calculateFrame" name="RDFCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,219,188,259"/>
+<area shape="rect" id="Node000002" href="$classDistributionFunctions.html#add20bb00dd01a9fe546ea1d8407a05dd" title=" " alt="" coords="247,105,407,145"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="126,217,176,186,235,154,251,147,253,152,237,159,179,190,129,221"/>
+<area shape="rect" id="Node000003" href="$classRDFCalculator.html#a68fee493adf46fb3a1a7d0a123d92a08" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="236,169,419,195"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="177,217,262,195,263,201,178,222"/>
+<area shape="rect" id="Node000011" href="$classDistributionFunctions.html#a410ae9733a717623015dcf2e17875723" title=" " alt="" coords="247,219,407,259"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="188,237,234,237,234,242,188,242"/>
+<area shape="rect" id="Node000012" href="$classDistributionFunctions.html#ae87d32a2203ca2b5c449d22a88f1be0f" title=" " alt="" coords="247,283,407,323"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="170,257,242,277,241,282,169,262"/>
+<area shape="rect" id="Node000013" href="$classDistributionFunctions.html#a8ead5fdc49273cd2c99de00c2791a9a2" title=" " alt="" coords="247,347,407,387"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="124,257,175,295,237,333,251,340,249,345,235,338,172,299,121,262"/>
+<area shape="rect" id="Node000004" href="$classCell.html#a7ec9ee1d3ca8aae778a329de7739fddd" title="Gets the total number of atoms in the cell." alt="" coords="477,5,603,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="397,167,417,155,429,141,435,128,440,99,445,70,452,55,465,40,470,36,474,40,469,44,457,58,450,71,446,100,440,129,433,144,420,159,400,171"/>
+<area shape="rect" id="Node000005" href="$classCell.html#af74ce1c15d5d8c56fdc7a3fc1f344fa3" title="Gets the list of atoms in the cell." alt="" coords="492,55,588,80"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="393,167,417,154,432,140,441,124,449,107,465,91,478,83,481,87,468,95,453,110,445,126,437,143,420,159,395,172"/>
+<area shape="rect" id="Node000006" href="$classStructureAnalyzer.html#a62f14599d877ac629930411767561551" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="467,105,613,145"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="375,167,453,145,454,150,376,172"/>
+<area shape="rect" id="Node000007" href="$classCell.html#a9970dde4c223bb5f44f6dfe49ae0639e" title="Gets the list of unique chemical elements in the cell." alt="" coords="482,169,598,195"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="419,179,468,179,468,185,419,185"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a07c9132be7dfd8bcec0558594935f91b" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="467,219,613,259"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="376,192,454,214,453,219,375,197"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="469,283,611,323"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="395,192,420,205,437,221,446,237,454,253,468,269,475,274,472,278,465,273,449,256,441,240,433,224,417,210,393,197"/>
+<area shape="rect" id="Node000010" href="$classCell.html#abd05218e7f38b9d2a4d4da4d8e4a1b35" title="Gets the volume of the simulation cell." alt="" coords="488,348,592,373"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="401,193,420,205,434,221,442,238,446,270,450,302,456,318,469,333,478,341,474,345,465,337,452,321,445,304,441,271,436,239,430,224,417,209,398,197"/>
+</map>

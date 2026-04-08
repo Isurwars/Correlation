@@ -1,0 +1,8 @@
+<map id="correlation::math::sph_legendre" name="correlation::math::sph_legendre">
+<area shape="rect" id="Node000001" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="5,47,148,87"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a048d202e6ed055a5776eea44c1a60cb1" title="Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64&#45;bit integer,..." alt="" coords="213,5,355,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,50,199,40,200,45,149,55"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="196,94,372,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="149,78,205,89,204,94,148,83"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="250,96,243,86,247,76,261,70,284,67,313,71,324,80,321,84,310,76,284,73,262,75,251,79,248,85,254,92"/>
+</map>

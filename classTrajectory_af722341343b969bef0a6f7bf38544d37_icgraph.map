@@ -1,0 +1,15 @@
+<map id="Trajectory::getVelocities" name="Trajectory::getVelocities">
+<area shape="rect" id="Node000001" title="Gets the pre&#45;calculated velocities for all atoms." alt="" coords="1032,19,1209,45"/>
+<area shape="rect" id="Node000002" href="$classVACFCalculator.html#ad1aa29b809be017e3857a0d7e23488d8" title=" " alt="" coords="243,45,432,70"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1018,31,773,30,627,33,480,41,424,47,423,42,480,36,626,28,773,24,1018,26"/>
+<area shape="rect" id="Node000005" href="$classDynamicsAnalyzer.html#a75bce502fd26c58fd80088c485771518" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="739,45,984,70"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1019,45,985,48,984,43,1018,39"/>
+<area shape="rect" id="Node000003" href="$classVACFCalculator.html#a409953a1255c73c6b471f9d12172e94c" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,5,195,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="229,45,194,41,195,35,230,40"/>
+<area shape="rect" id="Node000004" href="$classDistributionFunctions.html#a1d186efbf628b45fb9dd3bc11f004203" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="20,69,180,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="230,74,181,81,180,76,229,69"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="725,60,432,60,432,55,725,55"/>
+<area shape="rect" id="Node000006" href="$classDynamicsAnalyzer.html#ae4f1e59bba121407ff094c51b83b8f3f" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="480,95,691,135"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="787,75,683,97,682,92,785,70"/>
+<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="484,94,392,73,394,67,486,89"/>
+</map>
