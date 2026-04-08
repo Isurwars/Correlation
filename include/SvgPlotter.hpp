@@ -68,7 +68,7 @@ inline double mapValue(double v, double data_min, double data_max,
     return svg_min + (v - data_min) / (data_max - data_min) * (svg_max - svg_min);
 }
 
-/// Append a <polyline> for the given x/y vectors.
+/// Append a @c \<polyline\> for the given x/y vectors.
 inline void appendPolyline(std::ostringstream& svg,
                             const std::vector<double>& xs,
                             const std::vector<double>& ys,
@@ -294,7 +294,7 @@ inline std::string renderHistogramAsSvg(const Histogram& hist,
  * | VACF          | VACF          | t (fs)           | C(t)      |
  * | VDOS          | VDOS          | ν (THz)          | g(ν)      |
  * | MSD           | MSD           | t (fs)           | MSD (Å²)  |
- * | (other)       | <name>        | x                | y         |
+ * | (other)       | \<name\>      | x                | y         |
  */
 inline std::string renderHistogramAsSvg(const Histogram& hist,
                                          const std::string& name) {
