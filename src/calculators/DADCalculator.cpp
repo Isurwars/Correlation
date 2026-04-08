@@ -50,6 +50,7 @@ Histogram DADCalculator::calculate(const Cell &cell,
   f_dihedral.x_unit = "Degrees";
   f_dihedral.y_unit = "degree^-1";
   f_dihedral.description = "Dihedral Angle Distribution";
+  f_dihedral.file_suffix = "_DAD";
   f_dihedral.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_dihedral.bins[i] = theta_min + (i + 0.5) * bin_width;

@@ -89,6 +89,7 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
   H_r.x_unit = "Å";
   H_r.y_unit = "counts";
   H_r.description = "Distance Histogram";
+  H_r.file_suffix = "_H";
 
   g_r.x_label = "r (Å)";
   g_r.title = "g(r) — Pair Distribution";
@@ -96,6 +97,7 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
   g_r.x_unit = "Å";
   g_r.y_unit = "Å^-1";
   g_r.description = "Pair Distribution Function";
+  g_r.file_suffix = "_g";
 
   G_r.x_label = "r (Å)";
   G_r.title = "G(r) — Reduced Pair Distribution";
@@ -103,13 +105,15 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
   G_r.x_unit = "Å";
   G_r.y_unit = "Å^-1";
   G_r.description = "Reduced Pair Distribution Function";
+  G_r.file_suffix = "_G_reduced";
 
   J_r.x_label = "r (Å)";
   J_r.title = "J(r) — Reduced Pair Distribution";
   J_r.y_label = "J(r)";
   J_r.x_unit = "Å";
   J_r.y_unit = "Å^-1";
-  J_r.description = "Reduced Pair Distribution Function";
+  J_r.description = "Radial Distribution Function";
+  J_r.file_suffix = "_J";
 
   for (size_t i = 0; i < num_bins; ++i) {
     const double r = (i + 0.5) * r_bin_width;

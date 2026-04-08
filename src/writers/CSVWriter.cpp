@@ -28,32 +28,15 @@ static bool registered =
 void CSVWriter::writeAllCSVs(const std::string &base_path,
                              const DistributionFunctions &df,
                              bool /*write_smoothed*/) const {
-  const std::map<std::string, std::string> file_map = {
-      {"g_r", "_g.csv"},
-      {"J_r", "_J.csv"},
-      {"G_r", "_G_reduced.csv"},
-      {"BAD", "_PAD.csv"},
-      {"DAD", "_DAD.csv"},
-      {"RD", "_RD.csv"},
-      {"S_q", "_S.csv"},
-      {"XRD", "_XRD.csv"},
-      {"CN", "_CN.csv"},
-      {"VACF", "_VACF.csv"},
-      {"Normalized VACF", "_VACF_norm.csv"},
-      {"VDOS", "_VDOS.csv"},
-      {"MSD", "_MSD.csv"},
-      {"D_eff", "_D_eff.csv"}};
-
-  for (const auto &[name, suffix] : file_map) {
+  for (const auto &[name, hist] : df.getAllHistograms()) {
     try {
-      const auto &hist = df.getHistogram(name);
+      if (hist.partials.empty() || hist.bins.empty() || hist.file_suffix.empty()) {
+        continue;
+      }
 
-      std::string filename = base_path + suffix;
+      std::string filename = base_path + hist.file_suffix + ".csv";
       writeHistogramToCSV(filename, name, hist);
 
-    } catch (const std::out_of_range &) {
-      // This is not an error; it just means the histogram wasn't calculated.
-      // We can silently skip it.
     } catch (const std::exception &e) {
       std::cerr << "Error writing file for '" << name << "': " << e.what()
                 << std::endl;

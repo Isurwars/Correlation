@@ -174,8 +174,8 @@ void StructureFactorCalculator::calculateFrame(
   // Precompute phase factors for Miller index decomposition.
   // -----------------------------------------------------------------------
   auto precompute_phases = [&](int max_idx, double bx, double by, double bz,
-                                std::vector<double> &E_cos,
-                                std::vector<double> &E_sin) {
+                               std::vector<double> &E_cos,
+                               std::vector<double> &E_sin) {
     E_cos.resize((2 * max_idx + 1) * N);
     E_sin.resize((2 * max_idx + 1) * N);
     for (int h = -max_idx; h <= max_idx; ++h) {
@@ -205,6 +205,7 @@ void StructureFactorCalculator::calculateFrame(
   s_q_hist.x_unit = "Å^-1";
   s_q_hist.y_unit = "arbitrary units";
   s_q_hist.description = "Structure Factor S(Q)";
+  s_q_hist.file_suffix = "_S";
   for (size_t i = 0; i < num_q_bins; ++i)
     s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
 
@@ -216,26 +217,25 @@ void StructureFactorCalculator::calculateFrame(
 
   // Per-partial accumulators: sum and count.
   const size_t np = partials_info.size();
-  std::vector<std::vector<double>> partial_sums(np,
-                                                std::vector<double>(num_q_bins, 0.0));
+  std::vector<std::vector<double>> partial_sums(
+      np, std::vector<double>(num_q_bins, 0.0));
   std::vector<std::vector<size_t>> partial_counts(
       np, std::vector<size_t>(num_q_bins, 0));
 
   // Thread-local storage: one pair<sum, count> per partial + one for total.
-  using LocalPartials =
-      std::pair<std::vector<std::vector<double>>, std::vector<std::vector<size_t>>>;
+  using LocalPartials = std::pair<std::vector<std::vector<double>>,
+                                  std::vector<std::vector<size_t>>>;
   tbb::enumerable_thread_specific<
       std::tuple<std::vector<double>, std::vector<size_t>, // total sum/count
-                 std::vector<std::vector<double>>,          // partial sums
-                 std::vector<std::vector<size_t>>>>         // partial counts
+                 std::vector<std::vector<double>>,         // partial sums
+                 std::vector<std::vector<size_t>>>>        // partial counts
       local_ets([&] {
-        return std::make_tuple(
-            std::vector<double>(num_q_bins, 0.0),
-            std::vector<size_t>(num_q_bins, 0),
-            std::vector<std::vector<double>>(np,
-                                             std::vector<double>(num_q_bins, 0.0)),
-            std::vector<std::vector<size_t>>(
-                np, std::vector<size_t>(num_q_bins, 0)));
+        return std::make_tuple(std::vector<double>(num_q_bins, 0.0),
+                               std::vector<size_t>(num_q_bins, 0),
+                               std::vector<std::vector<double>>(
+                                   np, std::vector<double>(num_q_bins, 0.0)),
+                               std::vector<std::vector<size_t>>(
+                                   np, std::vector<size_t>(num_q_bins, 0)));
       });
 
   tbb::parallel_for(
@@ -259,13 +259,13 @@ void StructureFactorCalculator::calculateFrame(
             const size_t off = type_blocks[ti].offset;
             const size_t cnt = type_blocks[ti].count;
             double c_sum = 0.0, s_sum = 0.0;
-            correlation::math::miller_phase_sum(
-                &E1_cos[(q.h + hmax) * N] + off,
-                &E1_sin[(q.h + hmax) * N] + off,
-                &E2_cos[(q.k + kmax) * N] + off,
-                &E2_sin[(q.k + kmax) * N] + off,
-                &E3_cos[(q.l + lmax) * N] + off,
-                &E3_sin[(q.l + lmax) * N] + off, cnt, c_sum, s_sum);
+            correlation::math::miller_phase_sum(&E1_cos[(q.h + hmax) * N] + off,
+                                                &E1_sin[(q.h + hmax) * N] + off,
+                                                &E2_cos[(q.k + kmax) * N] + off,
+                                                &E2_sin[(q.k + kmax) * N] + off,
+                                                &E3_cos[(q.l + lmax) * N] + off,
+                                                &E3_sin[(q.l + lmax) * N] + off,
+                                                cnt, c_sum, s_sum);
             type_cos[ti] = c_sum;
             type_sin[ti] = s_sum;
           }
@@ -276,9 +276,8 @@ void StructureFactorCalculator::calculateFrame(
             full_cos += type_cos[ti];
             full_sin += type_sin[ti];
           }
-          const double sq_total =
-              (full_cos * full_cos + full_sin * full_sin) /
-              static_cast<double>(N);
+          const double sq_total = (full_cos * full_cos + full_sin * full_sin) /
+                                  static_cast<double>(N);
           local_total_sum[bin] += sq_total;
           local_total_count[bin] += 1;
 
@@ -288,8 +287,8 @@ void StructureFactorCalculator::calculateFrame(
             const size_t tiA = pinfo.typeA_idx;
             const size_t tiB = pinfo.typeB_idx;
             // Re[rho_A* rho_B] = cosA*cosB + sinA*sinB
-            double cross = type_cos[tiA] * type_cos[tiB] +
-                           type_sin[tiA] * type_sin[tiB];
+            double cross =
+                type_cos[tiA] * type_cos[tiB] + type_sin[tiA] * type_sin[tiB];
             double denom = std::sqrt(static_cast<double>(pinfo.N_A) *
                                      static_cast<double>(pinfo.N_B));
             double sq_partial = (denom > 0.0) ? cross / denom : 0.0;
@@ -325,8 +324,8 @@ void StructureFactorCalculator::calculateFrame(
     auto &out = s_q_hist.partials[partials_info[pi].key];
     for (size_t i = 0; i < num_q_bins; ++i) {
       if (partial_counts[pi][i] > 0)
-        out[i] = partial_sums[pi][i] /
-                 static_cast<double>(partial_counts[pi][i]);
+        out[i] =
+            partial_sums[pi][i] / static_cast<double>(partial_counts[pi][i]);
     }
   }
 

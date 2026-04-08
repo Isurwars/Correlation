@@ -7,17 +7,17 @@
  */
 
 #include "calculators/MSDCalculator.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include "DynamicsAnalyzer.hpp"
+#include "calculators/CalculatorFactory.hpp"
 
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<MSDCalculator>());
 } // namespace
 
-void MSDCalculator::calculateTrajectory(DistributionFunctions &df,
-                                        const Trajectory &traj,
-                                        const AnalysisSettings &settings) const {
+void MSDCalculator::calculateTrajectory(
+    DistributionFunctions &df, const Trajectory &traj,
+    const AnalysisSettings &settings) const {
   auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
   for (auto &[name, histogram] : results) {
     df.addHistogram(name, std::move(histogram));
@@ -52,6 +52,7 @@ MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
   msd_hist.x_unit = "fs";
   msd_hist.y_unit = "Å²";
   msd_hist.description = "Mean Squared Displacement";
+  msd_hist.file_suffix = "_MSD";
   msd_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
     msd_hist.bins[i] = static_cast<double>(i) * dt;
@@ -68,6 +69,7 @@ MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
   deff_hist.x_unit = "fs";
   deff_hist.y_unit = "Å²/fs";
   deff_hist.description = "Running Diffusion Coefficient D(t) = MSD(t) / (6t)";
+  deff_hist.file_suffix = "_MSD";
   deff_hist.bins = results["MSD"].bins; // Same time axis
   std::vector<double> d_eff(num_frames, 0.0);
   for (size_t i = 1; i < num_frames; ++i) {

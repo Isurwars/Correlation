@@ -47,6 +47,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
   f_theta.x_unit = "Degrees";
   f_theta.y_unit = "degree^-1";
   f_theta.description = "Bond Angle Distribution";
+  f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_theta.bins[i] = (i + 0.5) * bin_width;

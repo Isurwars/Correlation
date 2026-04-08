@@ -54,29 +54,30 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
 
   for (size_t i = num_points - 1; i > 0; --i) {
     combined_frequencies.push_back(-frequencies[i]);
-    combined_frequencies_cmInv.push_back(
-        -frequencies[i] * correlation::math::thz_to_cminv);
-    combined_frequencies_meV.push_back(
-        -frequencies[i] * correlation::math::thz_to_mev);
+    combined_frequencies_cmInv.push_back(-frequencies[i] *
+                                         correlation::math::thz_to_cminv);
+    combined_frequencies_meV.push_back(-frequencies[i] *
+                                       correlation::math::thz_to_mev);
     combined_intensities.push_back(intensities_imag[i]);
   }
 
   for (size_t i = 0; i < num_points; ++i) {
     combined_frequencies.push_back(frequencies[i]);
-    combined_frequencies_cmInv.push_back(
-        frequencies[i] * correlation::math::thz_to_cminv);
-    combined_frequencies_meV.push_back(
-        frequencies[i] * correlation::math::thz_to_mev);
+    combined_frequencies_cmInv.push_back(frequencies[i] *
+                                         correlation::math::thz_to_cminv);
+    combined_frequencies_meV.push_back(frequencies[i] *
+                                       correlation::math::thz_to_mev);
     combined_intensities.push_back(intensities_real[i]);
   }
 
   Histogram vdos_hist;
   vdos_hist.x_label = "ν (THz)";
   vdos_hist.title = "Vibrational Density of States";
+  vdos_hist.description = "Vibrational Density of States";
+  vdos_hist.file_suffix = "_VDOS";
   vdos_hist.y_label = "g(ν)";
   vdos_hist.x_unit = "THz";
   vdos_hist.y_unit = "arbitrary units";
-  vdos_hist.description = "Vibrational Density of States";
   vdos_hist.bins = combined_frequencies;
   vdos_hist.partials["Total"] = combined_intensities;
   vdos_hist.partials["Frequency_cm_1"] = combined_frequencies_cmInv;

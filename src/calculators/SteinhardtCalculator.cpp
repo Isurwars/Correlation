@@ -202,6 +202,7 @@ SteinhardtCalculator::calculate(const Cell &cell,
   hist_Q4.x_unit = "arbitrary units";
   hist_Q4.y_unit = "counts";
   hist_Q4.description = "Steinhardt Q4 Bond Orientational Order Parameter";
+  hist_Q4.file_suffix = "_Q4";
   hist_Q4.bins.resize(bins_Q);
   for (size_t b = 0; b < bins_Q; ++b)
     hist_Q4.bins[b] = (b + 0.5) * dQ;
@@ -213,6 +214,7 @@ SteinhardtCalculator::calculate(const Cell &cell,
   hist_Q6.x_unit = "arbitrary units";
   hist_Q6.y_unit = "counts";
   hist_Q6.description = "Steinhardt Q6 Bond Orientational Order Parameter";
+  hist_Q6.file_suffix = "_Q6";
   hist_Q6.bins.resize(bins_Q);
   for (size_t b = 0; b < bins_Q; ++b)
     hist_Q6.bins[b] = (b + 0.5) * dQ;
@@ -224,6 +226,7 @@ SteinhardtCalculator::calculate(const Cell &cell,
   hist_W6.x_unit = "arbitrary units";
   hist_W6.y_unit = "counts";
   hist_W6.description = "Steinhardt Normalized W6 Bond Orientational Order Parameter";
+  hist_W6.file_suffix = "_W6_hat";
   hist_W6.bins.resize(bins_W);
   for (size_t b = 0; b < bins_W; ++b)
     hist_W6.bins[b] = W_min + (b + 0.5) * dW;

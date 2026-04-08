@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.1] 2026-04-08
+- Major refactor to the Calculators to include relevant information for writting and GUI interactions.
+
 ## [2.6.0] 2026-04-08
 
 ### Added

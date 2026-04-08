@@ -59,6 +59,7 @@ Histogram CNCalculator::calculate(const Cell &cell,
   cn_histogram.x_unit = "neighbors";
   cn_histogram.y_unit = "Count";
   cn_histogram.description = "Coordination Number";
+  cn_histogram.file_suffix = "_CN";
 
   cn_histogram.bins.resize(num_bins);
   std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), 0.0);

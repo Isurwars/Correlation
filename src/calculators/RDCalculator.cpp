@@ -40,6 +40,7 @@ Histogram RDCalculator::calculate(const NeighborGraph &graph,
   f_motif.x_unit = "atoms";
   f_motif.y_unit = "counts";
   f_motif.description = "Ring Distribution";
+  f_motif.file_suffix = "_RD";
 
   size_t num_bins = max_ring_size >= 3 ? (max_ring_size - 2) : 0;
   f_motif.bins.resize(num_bins);

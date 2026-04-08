@@ -53,6 +53,7 @@ struct Histogram {
   std::string x_unit;
   std::string y_unit;
   std::string description;
+  std::string file_suffix;
   // Maps a partial key (e.g., "Si-O" or "Total") to its histogram values
   std::map<std::string, std::vector<double>> partials;
   std::map<std::string, std::vector<double>> smoothed_partials;

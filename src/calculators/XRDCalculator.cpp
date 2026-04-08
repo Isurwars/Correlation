@@ -9,8 +9,8 @@
 #include "calculators/XRDCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
-#include "physics/PhysicalData.hpp"
 #include "math/SIMDUtils.hpp"
+#include "physics/PhysicalData.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
@@ -54,12 +54,12 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
   xrd_hist.x_unit = "Degrees (2theta)";
   xrd_hist.y_unit = "Intensity";
   xrd_hist.description = "X-Ray Diffraction Pattern";
+  xrd_hist.file_suffix = "_XRD";
   xrd_hist.bins.resize(num_bins);
   std::vector<double> intensities(num_bins, 0.0);
 
   auto get_f_Q = [](const std::string &symbol, double Q) -> double {
-    const auto &coeffs =
-        correlation::physics::getAtomicFormFactors(symbol);
+    const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
     double s = Q / correlation::math::four_pi;
     double s2 = s * s;
     double f = coeffs[8];
@@ -122,10 +122,8 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
           double two_theta = theta_min + i * bin_width;
           xrd_hist.bins[i] = two_theta;
 
-          double theta_rad =
-              (two_theta / 2.0) * correlation::math::deg_to_rad;
-          double Q = correlation::math::four_pi *
-                     std::sin(theta_rad) / lambda;
+          double theta_rad = (two_theta / 2.0) * correlation::math::deg_to_rad;
+          double Q = correlation::math::four_pi * std::sin(theta_rad) / lambda;
 
           if (Q < 1e-6) {
             intensities[i] = 0.0;
@@ -152,8 +150,7 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
             double f2 = get_f_Q(px.sym2, Q);
 
             I_Q += px.weight * f1 * f2 *
-                   (correlation::math::four_pi * total_rho / Q) *
-                   integral;
+                   (correlation::math::four_pi * total_rho / Q) * integral;
           }
 
           intensities[i] = I_Q;

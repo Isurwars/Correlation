@@ -13,7 +13,6 @@
 #include <iostream>
 #include <map>
 #include <memory>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -31,36 +30,16 @@ static bool registered =
 void ArrowWriter::writeAllParquet(const std::string &base_path,
                                   const DistributionFunctions &df,
                                   bool /*write_smoothed*/) const {
-  const std::map<std::string, std::string> file_map = {
-      {"g_r", "_g.parquet"},
-      {"J_r", "_J.parquet"},
-      {"G_r", "_G_reduced.parquet"},
-      {"BAD", "_PAD.parquet"},
-      {"DAD", "_DAD.parquet"},
-      {"RD", "_RD.parquet"},
-      {"S_q", "_S.parquet"},
-      {"XRD", "_XRD.parquet"},
-      {"CN", "_CN.parquet"},
-      {"VACF", "_VACF.parquet"},
-      {"Normalized VACF", "_VACF_norm.parquet"},
-      {"VDOS", "_VDOS.parquet"},
-      {"MSD", "_MSD.parquet"},
-      {"D_eff", "_D_eff.parquet"}};
-
-  for (const auto &[name, suffix] : file_map) {
+  for (const auto &[name, hist] : df.getAllHistograms()) {
     try {
-      const auto &hist = df.getHistogram(name);
-
-      if (hist.partials.empty() || hist.bins.empty() || hist.bins.size() == 0) {
+      if (hist.partials.empty() || hist.bins.empty() ||
+          hist.file_suffix.empty()) {
         continue;
       }
 
-      std::string filename = base_path + suffix;
+      std::string filename = base_path + hist.file_suffix + ".parquet";
       writeHistogramToParquet(filename, name, hist);
 
-    } catch (const std::out_of_range &) {
-      // This is not an error; it just means the histogram wasn't calculated.
-      // We can silently skip it.
     } catch (const std::exception &e) {
       std::cerr << "Error writing Parquet file for '" << name
                 << "': " << e.what() << std::endl;
