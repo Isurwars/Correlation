@@ -8,7 +8,6 @@
 
 #include "writers/ArrowWriter.hpp"
 #include "writers/WriterFactory.hpp"
-#include "writers/WriterUtils.hpp"
 
 #include <algorithm>
 #include <iostream>
@@ -90,16 +89,7 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
   std::sort(smoothed_keys.begin(), smoothed_keys.end());
 
   // Get metadata if available
-  std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
-
-  const auto &metadata_map = Correlation::WriterUtils::metadata_map;
-
-  if (metadata_map.count(name)) {
-    const auto &meta = metadata_map.at(name);
-    if (!meta.bin_label.empty()) {
-      dim_label = meta.bin_label;
-    }
-  }
+  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
   // --- Build Arrow Schema and Data Arrays ---
   arrow::FieldVector fields;

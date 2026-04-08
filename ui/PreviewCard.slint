@@ -27,8 +27,10 @@ import {
 ///   keys and pushes it via `ui.set_plot_items(model)`.
 /// - `preview_plot`: an `slint::Image` produced from an SVG string by
 ///   `slint::Image::load_from_svg_data()` in the controller.
-/// - `plot_selected(name)`: callback invoked when the user changes the dropdown;
-///   the C++ controller re-generates the SVG and updates `preview_plot`.
+/// - `plot_selected(index)`: callback invoked when the user changes the dropdown;
+/// - `plot_items`: A list of menu items containing descriptive titles
+/// - `selected_plot_index`: The index of the currently active diagram.
+/// - `preview_plot`: The current generated plot image.
 // ============================================================================
 export component PreviewCard inherits FilledCard {
     in property <bool>       analysis_done;
@@ -36,7 +38,7 @@ export component PreviewCard inherits FilledCard {
     in property <[MenuItem]> plot_items: [];
     in-out property <int>    selected_plot_index: -1;
 
-    callback plot_selected(string);
+    callback plot_selected(int);
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
@@ -66,9 +68,7 @@ export component PreviewCard inherits FilledCard {
                 current_index <=> root.selected_plot_index;
 
                 selected(idx) => {
-                    if (idx >= 0 && idx < root.plot_items.length) {
-                        root.plot_selected(root.plot_items[idx].text);
-                    }
+                    root.plot_selected(idx);
                 }
             }
         }

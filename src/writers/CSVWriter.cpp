@@ -8,7 +8,6 @@
 
 #include "writers/CSVWriter.hpp"
 #include "writers/WriterFactory.hpp"
-#include "writers/WriterUtils.hpp"
 
 #include <algorithm>
 #include <fstream>
@@ -88,22 +87,11 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename,
   std::sort(smoothed_keys.begin(), smoothed_keys.end());
 
   // Get metadata if available
-  std::string bin_unit = "arbitrary units";
-  std::string data_unit = "arbitrary units";
-  std::string description = "Data export";
-  std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
-
-  const auto &metadata_map = Correlation::WriterUtils::metadata_map;
-
-  if (metadata_map.count(name)) {
-    const auto &meta = metadata_map.at(name);
-    bin_unit = meta.bin_unit;
-    data_unit = meta.data_unit;
-    description = meta.description;
-    if (!meta.bin_label.empty()) {
-      dim_label = meta.bin_label;
-    }
-  }
+  std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+  std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+  std::string description =
+      hist.description.empty() ? "Data export" : hist.description;
+  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
   // --- Write Header ---
   // Line 1: Long Name
@@ -119,18 +107,10 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename,
   // Line 2: Units
   file << bin_unit;
   for (const auto &key : raw_keys) {
-    std::string current_data_unit = data_unit;
-    if (metadata_map.count(key)) {
-      current_data_unit = metadata_map.at(key).bin_unit;
-    }
-    file << "," << current_data_unit;
+    file << "," << data_unit;
   }
   for (const auto &key : smoothed_keys) {
-    std::string current_data_unit = data_unit;
-    if (metadata_map.count(key)) {
-      current_data_unit = metadata_map.at(key).bin_unit;
-    }
-    file << "," << current_data_unit;
+    file << "," << data_unit;
   }
   file << '\n';
 

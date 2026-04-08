@@ -53,7 +53,12 @@ Histogram CNCalculator::calculate(const Cell &cell,
 
   Histogram cn_histogram;
   const size_t num_bins = max_cn + 3;
-  cn_histogram.bin_label = "# neighbors";
+  cn_histogram.x_label = "CN";
+  cn_histogram.title = "Coordination Number Distribution";
+  cn_histogram.y_label = "Count";
+  cn_histogram.x_unit = "neighbors";
+  cn_histogram.y_unit = "Count";
+  cn_histogram.description = "Coordination Number";
 
   cn_histogram.bins.resize(num_bins);
   std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), 0.0);

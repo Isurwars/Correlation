@@ -47,8 +47,8 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   });
 
   // Handle plot selection: generate SVG and push to UI
-  ui_.on_select_plot([this](slint::SharedString name) {
-    handleSelectPlot(std::string(name.data()));
+  ui_.on_select_plot([this](int index) {
+    handleSelectPlot(index);
   });
 }
 
@@ -353,9 +353,8 @@ void AppController::handleRunAnalysis() {
 
       // Populate the plot dropdown and auto-preview the first histogram
       populatePlotList();
-      auto available = backend_.getAvailableHistogramNames();
-      if (!available.empty()) {
-        handleSelectPlot(available[0]);
+      if (!available_plot_keys_.empty()) {
+        handleSelectPlot(0);
       }
     });
   });
@@ -522,15 +521,15 @@ void AppController::handleCheckFileDialogStatus() {
 
 void AppController::populatePlotList() {
   auto names = backend_.getAvailableHistogramNames();
-  auto model = std::make_shared<slint::VectorModel<slint::StandardListViewItem>>();
+  available_plot_keys_ = names; // Store keys corresponding to indices
 
   // Build MenuItem list: {text: name, enabled: true}
-  // MenuItem is: struct MenuItem { text: string, enabled: bool }
-  // The generated C++ type is MenuItem with fields `text` and `enabled`.
   auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
   for (const auto &name : names) {
     MenuItem item;
-    item.text = slint::SharedString(name);
+    const Histogram *hist = backend_.getHistogram(name);
+    std::string display_text = (hist && !hist->title.empty()) ? hist->title : name;
+    item.text = slint::SharedString(display_text);
     item.enabled = true;
     menu_model->push_back(item);
   }
@@ -540,11 +539,13 @@ void AppController::populatePlotList() {
   ui_.set_selected_plot_index(names.empty() ? -1 : 0);
 }
 
-void AppController::handleSelectPlot(const std::string &name) {
+void AppController::handleSelectPlot(int index) {
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) return;
+  const std::string &name = available_plot_keys_[index];
   const Histogram *hist = backend_.getHistogram(name);
   if (!hist) return;
 
-  std::string svg = SvgPlotter::renderHistogramAsSvg(*hist, name);
+  std::string svg = SvgPlotter::renderHistogramAsSvg(*hist);
 
   // Load SVG bytes into a Slint image using the embedded data API
   std::span<const uint8_t> svg_span(reinterpret_cast<const uint8_t *>(svg.data()), svg.size());

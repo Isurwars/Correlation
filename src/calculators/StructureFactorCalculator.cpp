@@ -198,8 +198,13 @@ void StructureFactorCalculator::calculateFrame(
   // Allocate output histogram with partials.
   // -----------------------------------------------------------------------
   Histogram s_q_hist;
-  s_q_hist.bin_label = "Q (Å⁻¹)";
   s_q_hist.bins.resize(num_q_bins);
+  s_q_hist.x_label = "Q (Å⁻¹)";
+  s_q_hist.title = "S(Q) — Structure Factor";
+  s_q_hist.y_label = "S(Q)";
+  s_q_hist.x_unit = "Å^-1";
+  s_q_hist.y_unit = "arbitrary units";
+  s_q_hist.description = "Structure Factor S(Q)";
   for (size_t i = 0; i < num_q_bins; ++i)
     s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
 

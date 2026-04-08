@@ -48,7 +48,12 @@ XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
   size_t num_bins =
       static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
   Histogram xrd_hist;
-  xrd_hist.bin_label = "2Theta (°)";
+  xrd_hist.x_label = "2θ (°)";
+  xrd_hist.title = "XRD Pattern";
+  xrd_hist.y_label = "Intensity";
+  xrd_hist.x_unit = "Degrees (2theta)";
+  xrd_hist.y_unit = "Intensity";
+  xrd_hist.description = "X-Ray Diffraction Pattern";
   xrd_hist.bins.resize(num_bins);
   std::vector<double> intensities(num_bins, 0.0);
 

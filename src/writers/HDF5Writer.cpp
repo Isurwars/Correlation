@@ -8,17 +8,16 @@
 
 #include "writers/HDF5Writer.hpp"
 #include "writers/WriterFactory.hpp"
-#include "writers/WriterUtils.hpp"
 
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <memory>
 
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
@@ -26,17 +25,15 @@
 namespace Writer {
 
 // Automatic registration
-static bool registered = WriterFactory::instance().registerWriter(
-    std::make_unique<HDF5Writer>()
-);
+static bool registered =
+    WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>());
 
-void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctions &df) const {
+void HDF5Writer::writeHDF(const std::string &filename,
+                          const DistributionFunctions &df) const {
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
-                                       HighFive::File::Create |
-                                       HighFive::File::Truncate);
-
-    const auto &metadata_map = Correlation::WriterUtils::metadata_map;
+                                      HighFive::File::Create |
+                                      HighFive::File::Truncate);
 
     // Iterate over all calculated histograms and write them as HDF5 groups
     for (const auto &[name, hist] : df.getAllHistograms()) {
@@ -48,7 +45,7 @@ void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctio
       std::string group_name = name;
       std::replace(group_name.begin(), group_name.end(), '(', '_');
       group_name.erase(std::remove(group_name.begin(), group_name.end(), ')'),
-                        group_name.end());
+                       group_name.end());
 
       // Also replace '/' with '_' just in case
       std::replace(group_name.begin(), group_name.end(), '/', '_');
@@ -58,25 +55,18 @@ void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctio
       // Create a property list for group creation
       HighFive::GroupCreateProps props;
       props.add(HighFive::LinkCreationOrder(HighFive::CreationOrder::Tracked |
-                                             HighFive::CreationOrder::Indexed));
+                                            HighFive::CreationOrder::Indexed));
 
       HighFive::Group group = file.createGroup(group_name, props);
 
       // Get metadata if available
-      std::string bin_unit = "arbitrary units";
-      std::string data_unit = "arbitrary units";
-      std::string description = "";
-      std::string dim_label = hist.bin_label.empty() ? "x" : hist.bin_label;
-
-      if (metadata_map.count(name)) {
-        const auto &meta = metadata_map.at(name);
-        bin_unit = meta.bin_unit;
-        data_unit = meta.data_unit;
-        description = meta.description;
-        if (!meta.bin_label.empty()) {
-          dim_label = meta.bin_label;
-        }
-      }
+      std::string bin_unit =
+          hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+      std::string data_unit =
+          hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+      std::string description =
+          hist.description.empty() ? "" : hist.description;
+      std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
       // Add description attribute to the group
       if (!description.empty()) {
@@ -89,7 +79,7 @@ void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctio
       // Prepare headers and data keys
       std::vector<std::string> headers;
       // Start with bins
-      headers.push_back(hist.bin_label);
+      headers.push_back(dim_label);
       // Then raw data keys
       std::vector<std::string> raw_keys;
       for (const auto &[key, _] : hist.partials) {
@@ -106,7 +96,7 @@ void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctio
         }
         std::sort(smoothed_keys.begin(), smoothed_keys.end());
         headers.insert(headers.end(), smoothed_keys.begin(),
-                        smoothed_keys.end());
+                       smoothed_keys.end());
       }
 
       // Determine dimensions
@@ -143,10 +133,10 @@ void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctio
         // Add attributes
         if (col == 0) {
           ds.createAttribute<std::string>("Long Name",
-                                           HighFive::DataSpace::From(dim_label))
+                                          HighFive::DataSpace::From(dim_label))
               .write(dim_label);
           ds.createAttribute<std::string>("Units",
-                                           HighFive::DataSpace::From(bin_unit))
+                                          HighFive::DataSpace::From(bin_unit))
               .write(bin_unit);
           ds.createAttribute<std::string>(
                 "Comments", HighFive::DataSpace::From(description))
@@ -162,16 +152,6 @@ void HDF5Writer::writeHDF(const std::string &filename, const DistributionFunctio
           std::string current_long_name = headers[col];
           std::string current_data_unit = data_unit;
           std::string current_comment = headers[col];
-
-          // Check if there is specific metadata for this column (e.g., VDOS
-          // extra frequencies)
-          if (metadata_map.count(headers[col])) {
-            current_data_unit = metadata_map.at(headers[col]).bin_unit;
-            current_comment = metadata_map.at(headers[col]).description;
-            if (!metadata_map.at(headers[col]).bin_label.empty()) {
-              current_long_name = metadata_map.at(headers[col]).bin_label;
-            }
-          }
 
           ds.createAttribute<std::string>(
                 "Long Name", HighFive::DataSpace::From(current_long_name))

@@ -30,8 +30,8 @@ TEST_F(_19_RD_Tests, ComputeMotif) {
   size_t max_ring_size = 5;
   Histogram f_motif = RDCalculator::calculate(graph, max_ring_size);
 
-  EXPECT_EQ(f_motif.bin_label, "Ring Size");
-  ASSERT_EQ(f_motif.bins.size(), 3);
+  EXPECT_EQ(f_motif.x_label, "Ring Size");
+  EXPECT_EQ(f_motif.bins.size(), 3);
 
   // Check bins are up to 5
   EXPECT_EQ(f_motif.bins[0], 3.0);
@@ -108,7 +108,7 @@ TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
 
   Histogram f_motif = RDCalculator::calculate(graph_cellulose, max_ring_size);
 
-  EXPECT_EQ(f_motif.bin_label, "Ring Size");
+  EXPECT_EQ(f_motif.x_label, "Ring Size");
   ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);
 
   auto &partial = f_motif.partials.at("Rings");

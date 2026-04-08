@@ -93,7 +93,7 @@ export component AppWindow inherits Window {
     in-out property <image>      preview_plot;
     in-out property <[MenuItem]> plot_items: [];
     in-out property <int>        selected_plot_index: -1;
-    callback select_plot(string);
+    callback select_plot(int);
     property <string> hovered_tooltip_text:
         input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text :
         file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text :
@@ -264,8 +264,8 @@ export component AppWindow inherits Window {
                     preview_plot <=> root.preview_plot;
                     plot_items <=> root.plot_items;
                     selected_plot_index <=> root.selected_plot_index;
-                    plot_selected(name) => {
-                        root.select_plot(name);
+                    plot_selected(idx) => {
+                        root.select_plot(idx);
                     }
                 }
             }

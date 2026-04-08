@@ -41,7 +41,12 @@ Histogram PADCalculator::calculate(const Cell &cell,
   const size_t num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
   Histogram f_theta;
-  f_theta.bin_label = "theta (°)";
+  f_theta.x_label = "θ (°)";
+  f_theta.title = "Plane-Angle Distribution";
+  f_theta.y_label = "P(θ)";
+  f_theta.x_unit = "Degrees";
+  f_theta.y_unit = "degree^-1";
+  f_theta.description = "Bond Angle Distribution";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_theta.bins[i] = (i + 0.5) * bin_width;

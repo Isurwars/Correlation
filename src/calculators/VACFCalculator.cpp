@@ -42,7 +42,12 @@ VACFCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
   double dt = traj.getTimeStep();
 
   Histogram vacf_hist;
-  vacf_hist.bin_label = "Time";
+  vacf_hist.x_label = "t (fs)";
+  vacf_hist.title = "Velocity Autocorrelation";
+  vacf_hist.y_label = "C(t)";
+  vacf_hist.x_unit = "fs";
+  vacf_hist.y_unit = "Å^2/fs^2";
+  vacf_hist.description = "Velocity Autocorrelation Function";
   vacf_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
     vacf_hist.bins[i] = i * dt;
@@ -55,7 +60,12 @@ VACFCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
       traj, max_correlation_frames, start_frame, end_frame);
   if (!norm_vacf.empty()) {
     Histogram norm_vacf_hist;
-    norm_vacf_hist.bin_label = "Time";
+    norm_vacf_hist.x_label = "t (fs)";
+    norm_vacf_hist.title = "Normalized Velocity Autocorrelation";
+    norm_vacf_hist.y_label = "C(t) / C(0)";
+    norm_vacf_hist.x_unit = "fs";
+    norm_vacf_hist.y_unit = "normalized";
+    norm_vacf_hist.description = "Normalized Velocity Autocorrelation Function";
     norm_vacf_hist.bins = results["VACF"].bins;
     norm_vacf_hist.partials["Total"] = norm_vacf;
     results["Normalized VACF"] = std::move(norm_vacf_hist);

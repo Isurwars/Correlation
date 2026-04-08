@@ -34,7 +34,12 @@ Histogram RDCalculator::calculate(const NeighborGraph &graph,
   auto rings = calculators::MotifFinder::findRings(graph, max_ring_size);
 
   Histogram f_motif;
-  f_motif.bin_label = "Ring Size";
+  f_motif.x_label = "Ring Size";
+  f_motif.title = "Ring Distribution";
+  f_motif.y_label = "Frequency";
+  f_motif.x_unit = "atoms";
+  f_motif.y_unit = "counts";
+  f_motif.description = "Ring Distribution";
 
   size_t num_bins = max_ring_size >= 3 ? (max_ring_size - 2) : 0;
   f_motif.bins.resize(num_bins);

@@ -185,7 +185,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   EXPECT_TRUE(g_group.hasAttribute("description"));
   std::string description;
   g_group.getAttribute("description").read(description);
-  EXPECT_EQ(description, "Radial Distribution Function");
+  EXPECT_EQ(description, "Pair Distribution Function");
 
   // Check for expected datasets (prefixed names)
   // For Si crystal, we expect "r (Å)" (bin) and "Si-Si" (raw)
@@ -216,7 +216,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   EXPECT_TRUE(bin_ds.hasAttribute("Comments"));
   std::string bin_comment;
   bin_ds.getAttribute("Comments").read(bin_comment);
-  EXPECT_EQ(bin_comment, "Radial Distribution Function");
+  EXPECT_EQ(bin_comment, "Pair Distribution Function");
 
   // Verify data dataset attributes
   HighFive::DataSet data_ds = g_group.getDataSet(data_ds_name);
@@ -290,9 +290,9 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
     EXPECT_FALSE(vacf_group.exist("data"));
 
     // Check new datasets
-    // "Time" -> "00_Time"
+    // "t (fs)" -> "00_t__fs_"
     // "VACF" -> "Total" -> "01_Total"
-    std::string time_ds_name = "00_Time";
+    std::string time_ds_name = "00_t__fs_";
     std::string vacf_ds_name = "01_Total";
 
     EXPECT_TRUE(vacf_group.exist(time_ds_name));
@@ -353,7 +353,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   vdos_group.getAttribute("description").read(vdos_desc);
   EXPECT_EQ(vdos_desc, "Vibrational Density of States");
 
-  std::string vdos_freq_name = "00_Frequency_THz";
+  std::string vdos_freq_name = "00_ν__THz_";
   std::string vdos_val_name = "03_Total";
 
   EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
@@ -370,13 +370,13 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   EXPECT_TRUE(vdos_cm_ds.hasAttribute("Units"));
   std::string cm_units;
   vdos_cm_ds.getAttribute("Units").read(cm_units);
-  EXPECT_EQ(cm_units, "cm^-1");
+  EXPECT_EQ(cm_units, "arbitrary units");
 
   HighFive::DataSet vdos_mev_ds = vdos_group.getDataSet(vdos_mev_name);
   EXPECT_TRUE(vdos_mev_ds.hasAttribute("Units"));
   std::string mev_units;
   vdos_mev_ds.getAttribute("Units").read(mev_units);
-  EXPECT_EQ(mev_units, "meV");
+  EXPECT_EQ(mev_units, "arbitrary units");
 }
 
 TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {

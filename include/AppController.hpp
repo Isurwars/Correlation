@@ -53,6 +53,9 @@ private:
   std::thread analysis_thread_;
   std::thread load_thread_;
 
+  // Mapping from UI dropdown index to backend histogram key
+  std::vector<std::string> available_plot_keys_;
+
   /**
    * @brief Helper to update the UI progress bar and status text safely.
    * @param p Progress value between 0.0 and 1.0.
@@ -131,7 +134,7 @@ private:
    * @brief Handles the "Select Plot" signal from the UI.
    *        Generates an SVG image for the requested histogram and pushes it
    *        to the UI via `ui_.set_preview_plot()`.
-   * @param name The histogram name (e.g., "g(r)").
+   * @param index The index of the selected plot in the dropdown menu.
    */
-  void handleSelectPlot(const std::string &name);
+  void handleSelectPlot(int index);
 };

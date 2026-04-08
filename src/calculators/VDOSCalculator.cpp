@@ -71,7 +71,12 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
   }
 
   Histogram vdos_hist;
-  vdos_hist.bin_label = "Frequency_THz";
+  vdos_hist.x_label = "ν (THz)";
+  vdos_hist.title = "Vibrational Density of States";
+  vdos_hist.y_label = "g(ν)";
+  vdos_hist.x_unit = "THz";
+  vdos_hist.y_unit = "arbitrary units";
+  vdos_hist.description = "Vibrational Density of States";
   vdos_hist.bins = combined_frequencies;
   vdos_hist.partials["Total"] = combined_intensities;
   vdos_hist.partials["Frequency_cm_1"] = combined_frequencies_cmInv;

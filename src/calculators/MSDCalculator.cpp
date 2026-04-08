@@ -46,7 +46,12 @@ MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
 
   // --- MSD histogram: bins = time (fs), partials["Total"] = MSD (Å²) ---
   Histogram msd_hist;
-  msd_hist.bin_label = "Time";
+  msd_hist.x_label = "t (fs)";
+  msd_hist.title = "Mean Squared Displacement";
+  msd_hist.y_label = "MSD (Å²)";
+  msd_hist.x_unit = "fs";
+  msd_hist.y_unit = "Å²";
+  msd_hist.description = "Mean Squared Displacement";
   msd_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
     msd_hist.bins[i] = static_cast<double>(i) * dt;
@@ -57,7 +62,12 @@ MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
   // --- Running D(t) = MSD(t) / (6 * t): skip lag=0 (division by zero) ---
   // We store D_eff starting from lag=1; lag=0 gets D=0 by convention.
   Histogram deff_hist;
-  deff_hist.bin_label = "Time";
+  deff_hist.x_label = "t (fs)";
+  deff_hist.title = "Running Diffusion Coefficient";
+  deff_hist.y_label = "D(t)";
+  deff_hist.x_unit = "fs";
+  deff_hist.y_unit = "Å²/fs";
+  deff_hist.description = "Running Diffusion Coefficient D(t) = MSD(t) / (6t)";
   deff_hist.bins = results["MSD"].bins; // Same time axis
   std::vector<double> d_eff(num_frames, 0.0);
   for (size_t i = 1; i < num_frames; ++i) {

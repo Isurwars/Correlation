@@ -196,19 +196,34 @@ SteinhardtCalculator::calculate(const Cell &cell,
   double dW = (W_max - W_min) / bins_W;
 
   Histogram hist_Q4;
-  hist_Q4.bin_label = "Q4";
+  hist_Q4.x_label = "Q4";
+  hist_Q4.title = "Steinhardt Q4 Interface Parameter";
+  hist_Q4.y_label = "Probability";
+  hist_Q4.x_unit = "arbitrary units";
+  hist_Q4.y_unit = "counts";
+  hist_Q4.description = "Steinhardt Q4 Bond Orientational Order Parameter";
   hist_Q4.bins.resize(bins_Q);
   for (size_t b = 0; b < bins_Q; ++b)
     hist_Q4.bins[b] = (b + 0.5) * dQ;
 
   Histogram hist_Q6;
-  hist_Q6.bin_label = "Q6";
+  hist_Q6.x_label = "Q6";
+  hist_Q6.title = "Steinhardt Q6 Interface Parameter";
+  hist_Q6.y_label = "Probability";
+  hist_Q6.x_unit = "arbitrary units";
+  hist_Q6.y_unit = "counts";
+  hist_Q6.description = "Steinhardt Q6 Bond Orientational Order Parameter";
   hist_Q6.bins.resize(bins_Q);
   for (size_t b = 0; b < bins_Q; ++b)
     hist_Q6.bins[b] = (b + 0.5) * dQ;
 
   Histogram hist_W6;
-  hist_W6.bin_label = "W6_hat";
+  hist_W6.x_label = "W6_hat";
+  hist_W6.title = "Steinhardt W6_hat Parameter";
+  hist_W6.y_label = "Probability";
+  hist_W6.x_unit = "arbitrary units";
+  hist_W6.y_unit = "counts";
+  hist_W6.description = "Steinhardt Normalized W6 Bond Orientational Order Parameter";
   hist_W6.bins.resize(bins_W);
   for (size_t b = 0; b < bins_W; ++b)
     hist_W6.bins[b] = W_min + (b + 0.5) * dW;
