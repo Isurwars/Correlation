@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace FileReader {
+namespace correlation::readers {
 
 /**
  * @brief Registry for all file readers, enabling automatic discovery.
@@ -53,4 +53,4 @@ private:
   std::map<std::string, BaseReader *> extension_map_;
 };
 
-} // namespace FileReader
+} // namespace correlation::readers

@@ -4,7 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "Cell.hpp"
-#include "FileReader.hpp"
+#include "readers/FileReader.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 
@@ -225,8 +225,8 @@ protected:
 
 TEST_F(_04_FileReader_Tests, ReadCarFileCorrectly) {
   // Arrange & Act
-  FileReader::FileType type = FileReader::determineFileType("test.car");
-  Cell result_cell = FileReader::readStructure("test.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.car");
+  Cell result_cell = correlation::readers::readStructure("test.car", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -254,8 +254,8 @@ TEST_F(_04_FileReader_Tests, ReadCarFileCorrectly) {
 
 TEST_F(_04_FileReader_Tests, ReadCellFileCorrectly) {
   // Arrange & Act
-  FileReader::FileType type = FileReader::determineFileType("test.cell");
-  Cell result_cell = FileReader::readStructure("test.cell", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.cell");
+  Cell result_cell = correlation::readers::readStructure("test.cell", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -283,8 +283,8 @@ TEST_F(_04_FileReader_Tests, ReadCellFileCorrectly) {
 
 TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
   // Arrange & Act
-  FileReader::FileType type = FileReader::determineFileType("test.cif");
-  Cell result_cell = FileReader::readStructure("test.cif", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.cif");
+  Cell result_cell = correlation::readers::readStructure("test.cif", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -320,10 +320,10 @@ TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
 }
 
 TEST_F(_04_FileReader_Tests, ReadArcFileCorrectly) {
-  FileReader::FileType type = FileReader::determineFileType("test.arc");
-  EXPECT_EQ(type, FileReader::FileType::Arc);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.arc");
+  EXPECT_EQ(type, correlation::readers::FileType::Arc);
 
-  Trajectory traj = FileReader::readTrajectory("test.arc", type);
+  Trajectory traj = correlation::readers::readTrajectory("test.arc", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
@@ -342,11 +342,11 @@ TEST_F(_04_FileReader_Tests, ReadArcFileCorrectly) {
 }
 
 TEST_F(_04_FileReader_Tests, ReadArcFileDuplicatedFrames) {
-  FileReader::FileType type =
-      FileReader::determineFileType("test_identical.arc");
-  EXPECT_EQ(type, FileReader::FileType::Arc);
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType("test_identical.arc");
+  EXPECT_EQ(type, correlation::readers::FileType::Arc);
 
-  Trajectory traj = FileReader::readTrajectory("test_identical.arc", type);
+  Trajectory traj = correlation::readers::readTrajectory("test_identical.arc", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
@@ -363,8 +363,8 @@ TEST_F(_04_FileReader_Tests, ReadArcFileDuplicatedFrames) {
 
 TEST_F(_04_FileReader_Tests, ReadLammpsDumpCorrectly) {
   // Arrange & Act
-  FileReader::FileType type = FileReader::determineFileType("test.dump");
-  Cell result_cell = FileReader::readStructure("test.dump", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.dump");
+  Cell result_cell = correlation::readers::readStructure("test.dump", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -388,10 +388,10 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpCorrectly) {
 }
 
 TEST_F(_04_FileReader_Tests, ReadLammpsDumpTrajectoryCorrectly) {
-  FileReader::FileType type = FileReader::determineFileType("test_multi.dump");
-  EXPECT_EQ(type, FileReader::FileType::LammpsDump);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test_multi.dump");
+  EXPECT_EQ(type, correlation::readers::FileType::LammpsDump);
 
-  Trajectory traj = FileReader::readTrajectory("test_multi.dump", type);
+  Trajectory traj = correlation::readers::readTrajectory("test_multi.dump", type);
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
 
@@ -409,10 +409,10 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpTrajectoryCorrectly) {
 }
 
 TEST_F(_04_FileReader_Tests, ReadLammpsDumpElementColumnCorrectly) {
-  FileReader::FileType type = FileReader::determineFileType("test_element.dump");
-  EXPECT_EQ(type, FileReader::FileType::LammpsDump);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test_element.dump");
+  EXPECT_EQ(type, correlation::readers::FileType::LammpsDump);
 
-  Cell result_cell = FileReader::readStructure("test_element.dump", type);
+  Cell result_cell = correlation::readers::readStructure("test_element.dump", type);
 
   const auto &atoms = result_cell.atoms();
   ASSERT_EQ(atoms.size(), 2);
@@ -427,18 +427,18 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpElementColumnCorrectly) {
 
 TEST_F(_04_FileReader_Tests, ReadOnetepDatCorrectly) {
   // Arrange & Act
-  FileReader::FileType type = FileReader::determineFileType("test.dat");
-  Cell result_cell = FileReader::readStructure("test.dat", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.dat");
+  Cell result_cell = correlation::readers::readStructure("test.dat", type);
 
   // Assert: Check that it returns an empty Cell as it is a stub
   EXPECT_TRUE(result_cell.isEmpty());
 }
 
 TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
-  FileReader::FileType type = FileReader::determineFileType("test.md");
-  EXPECT_EQ(type, FileReader::FileType::CastepMd);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.md");
+  EXPECT_EQ(type, correlation::readers::FileType::CastepMd);
 
-  Trajectory traj = FileReader::readTrajectory("test.md", type);
+  Trajectory traj = correlation::readers::readTrajectory("test.md", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
@@ -485,11 +485,11 @@ TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {
     }
   }
 
-  FileReader::FileType type = FileReader::determineFileType(cellulose_path);
-  EXPECT_EQ(type, FileReader::FileType::CastepMd);
+  correlation::readers::FileType type = correlation::readers::determineFileType(cellulose_path);
+  EXPECT_EQ(type, correlation::readers::FileType::CastepMd);
 
   // This should not crash or throw
-  Trajectory traj = FileReader::readTrajectory(cellulose_path, type);
+  Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
   const auto &frames = traj.getFrames();
 
   // The Cellulose.md has 1001 frames
@@ -517,7 +517,7 @@ TEST_F(_04_FileReader_Tests, ReadOutmolCorrectly) {
   }
 
   Trajectory traj =
-      FileReader::readTrajectory(file_path, FileReader::FileType::Outmol);
+      correlation::readers::readTrajectory(file_path, correlation::readers::FileType::Outmol);
   const auto &frames = traj.getFrames();
 
   // Verify we have a trajectory with frames

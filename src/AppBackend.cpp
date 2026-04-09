@@ -10,8 +10,8 @@
 
 #include <iostream>
 
-#include "FileReader.hpp"
-#include "FileWriter.hpp"
+#include "readers/FileReader.hpp"
+#include "writers/FileWriter.hpp"
 #include "physics/PhysicalData.hpp"
 #include <cmath>
 #include <limits>
@@ -168,21 +168,21 @@ const Histogram *AppBackend::getHistogram(const std::string &name) const {
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;
   std::replace(display_path.begin(), display_path.end(), '\\', '/');
-  FileReader::FileType type = FileReader::determineFileType(path);
+  correlation::readers::FileType type = correlation::readers::determineFileType(path);
 
   // For now, loading a single structure file starts a new trajectory with 1
   // frame. The determineFileType helper is used to dispatch to the correct
   // reader.
 
-  if (type == FileReader::FileType::Arc ||
-      type == FileReader::FileType::CastepMd ||
-      type == FileReader::FileType::Outmol) {
+  if (type == correlation::readers::FileType::Arc ||
+      type == correlation::readers::FileType::CastepMd ||
+      type == correlation::readers::FileType::Outmol) {
     trajectory_ = std::make_unique<Trajectory>(
-        FileReader::readTrajectory(path, type, progress_callback_));
+        correlation::readers::readTrajectory(path, type, progress_callback_));
   } else {
     trajectory_ = std::make_unique<Trajectory>();
     trajectory_->addFrame(
-        FileReader::readStructure(path, type, progress_callback_));
+        correlation::readers::readStructure(path, type, progress_callback_));
   }
 
   options_.input_file = path;
@@ -315,7 +315,7 @@ std::string AppBackend::write_files() {
 
   try {
     // --- Write results ---
-    FileWriter writer(*df_);
+    correlation::writers::FileWriter writer(*df_);
     writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5,
                  options_.use_parquet, options_.smoothing);
     std::cout << "Files writen to: " << options_.output_file_base << std::endl;

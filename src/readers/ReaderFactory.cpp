@@ -9,7 +9,7 @@
 #include "readers/ReaderFactory.hpp"
 #include <algorithm>
 
-namespace FileReader {
+namespace correlation::readers {
 
 ReaderFactory &ReaderFactory::instance() {
   static ReaderFactory instance_val;
@@ -55,4 +55,4 @@ const std::vector<std::unique_ptr<BaseReader>> &ReaderFactory::getReaders() cons
   return readers_;
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

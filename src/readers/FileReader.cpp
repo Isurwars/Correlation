@@ -5,14 +5,14 @@
  * @par License
  * SPDX-License-Identifier: MIT
  */
-#include "FileReader.hpp"
+#include "readers/FileReader.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
 #include <filesystem>
 #include <stdexcept>
 
-namespace FileReader {
+namespace correlation::readers {
 
 FileType determineFileType(const std::string &filename) {
   std::string ext = std::filesystem::path(filename).extension().string();
@@ -81,4 +81,4 @@ Trajectory readTrajectory(
   throw std::runtime_error("No reader found for extension: " + ext);
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

@@ -22,7 +22,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace FileReader {
+namespace correlation::readers {
 
 // Automatic registration
 static bool registered = ReaderFactory::instance().registerReader(
@@ -175,4 +175,4 @@ std::vector<Cell> CastepMdReader::read(
   return frames;
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

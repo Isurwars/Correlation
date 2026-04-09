@@ -16,8 +16,8 @@ namespace fs = std::filesystem;
 
 #include "Cell.hpp"
 #include "DistributionFunctions.hpp"
-#include "FileReader.hpp"
-#include "FileWriter.hpp"
+#include "readers/FileReader.hpp"
+#include "writers/FileWriter.hpp"
 #include "Trajectory.hpp"
 
 // Test fixture for FileWriter integration tests.
@@ -92,8 +92,8 @@ protected:
 
 TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
-  Cell si_cell = FileReader::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
   Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -107,7 +107,7 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   df.calculatePAD(pad_bin);
   df.smoothAll(0.1);
 
-  FileWriter writer(df);
+  correlation::writers::FileWriter writer(df);
   writer.write("test_si", true, false, false, true);
 
   // Assert: Part 1 - Validate content of the calculated g_r histogram.
@@ -153,8 +153,8 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
 
 TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   // Arrange
-  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
-  Cell si_cell = FileReader::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
   Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -166,7 +166,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);
 
-  FileWriter writer(df);
+  correlation::writers::FileWriter writer(df);
   writer.write("test_si", false, true, false, false);
 
   // Assert
@@ -187,7 +187,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   g_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Pair Distribution Function");
 
-  // Note: sanitize logic in FileWriter replaces '(', ')', '/', ' ' with '_'
+  // Note: sanitize logic in correlation::writers::FileWriter replaces '(', ')', '/', ' ' with '_'
   std::string bin_ds_name = "00_r";
   std::string data_ds_name = "01_Si-Si";
 
@@ -231,8 +231,8 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
 
 TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   // Arrange
-  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
-  Cell frame1 = FileReader::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  Cell frame1 = correlation::readers::readStructure("si_crystal.car", type);
 
   // Create frame2 with same lattice
   auto lv = frame1.latticeVectors();
@@ -259,7 +259,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffsSQ());
   df.calculateVACF(trajectory, 1);
 
-  FileWriter writer(df);
+  correlation::writers::FileWriter writer(df);
   std::string base_filename = "test_vacf_new";
   writer.write(base_filename, false, true, false, false);
   std::string filename = base_filename + ".h5";
@@ -374,8 +374,8 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
 
 TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
   // Arrange
-  FileReader::FileType type = FileReader::determineFileType("si_crystal.car");
-  Cell si_cell = FileReader::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
   Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -385,7 +385,7 @@ TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);
 
-  FileWriter writer(df);
+  correlation::writers::FileWriter writer(df);
 
   // Act
   // write(base_path, use_csv, use_hdf5, use_parquet, smoothing)

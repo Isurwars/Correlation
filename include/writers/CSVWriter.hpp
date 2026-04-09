@@ -14,7 +14,7 @@
 #include "BaseWriter.hpp"
 #include "DistributionFunctions.hpp"
 
-namespace Writer {
+namespace correlation::writers {
 
 /**
  * @class CSVWriter
@@ -63,4 +63,4 @@ private:
                            const Histogram &hist) const;
 };
 
-} // namespace Writer
+} // namespace correlation::writers

@@ -15,7 +15,7 @@
 #include "Trajectory.hpp"
 #include "BaseReader.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 /**
  * @brief Reads one or more frames from a LAMMPS custom dump file.
@@ -54,4 +54,4 @@ public:
            nullptr);
 };
 
-} // namespace FileReader
+} // namespace correlation::readers

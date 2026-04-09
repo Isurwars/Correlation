@@ -9,7 +9,7 @@
 #include "writers/WriterFactory.hpp"
 #include <algorithm>
 
-namespace Writer {
+namespace correlation::writers {
 
 WriterFactory &WriterFactory::instance() {
   static WriterFactory instance_val;
@@ -56,4 +56,4 @@ BaseWriter *WriterFactory::getWriter(const std::string &name) {
   return nullptr;
 }
 
-} // namespace Writer
+} // namespace correlation::writers

@@ -16,7 +16,7 @@
 
 #include "BaseReader.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 /**
  * @brief Reads an ARC file and returns a vector of Cell objects.
@@ -40,4 +40,4 @@ public:
                                     progress_callback = nullptr);
 };
 
-} // namespace FileReader
+} // namespace correlation::readers

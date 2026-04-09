@@ -22,7 +22,7 @@
 #include "Cell.hpp"
 #include "Trajectory.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 // Automatic registration
 static bool registered = ReaderFactory::instance().registerReader(
@@ -142,4 +142,4 @@ Cell CellReader::read(const std::string &file_name) {
   return tempCell;
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

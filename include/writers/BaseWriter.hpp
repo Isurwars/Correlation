@@ -12,7 +12,7 @@
 #include <vector>
 #include "DistributionFunctions.hpp"
 
-namespace Writer {
+namespace correlation::writers {
 
 /**
  * @brief Base class for all file writers.
@@ -41,4 +41,4 @@ public:
                      bool smoothing) const = 0;
 };
 
-} // namespace Writer
+} // namespace correlation::writers

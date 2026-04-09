@@ -20,7 +20,7 @@
 #include "Cell.hpp"
 #include "Trajectory.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 // Automatic registration
 static bool registered = ReaderFactory::instance().registerReader(
@@ -132,4 +132,4 @@ ArcReader::read(const std::string &file_name,
   return frames;
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

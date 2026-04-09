@@ -49,7 +49,7 @@ TEST_F(_19_RD_Tests, InvalidMaxRingSize) {
   EXPECT_THROW(RDCalculator::calculate(graph, 2), std::invalid_argument);
 }
 
-#include "FileReader.hpp"
+#include "readers/FileReader.hpp"
 #include "StructureAnalyzer.hpp"
 #include "Trajectory.hpp"
 #include <fstream>
@@ -70,8 +70,8 @@ TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
     }
   }
 
-  FileReader::FileType type = FileReader::determineFileType(cellulose_path);
-  Trajectory traj = FileReader::readTrajectory(cellulose_path, type);
+  correlation::readers::FileType type = correlation::readers::determineFileType(cellulose_path);
+  Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
   if (traj.getFrames().empty()) {
     GTEST_SKIP() << "No frames found in Cellulose.md";
     return;

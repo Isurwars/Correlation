@@ -6,14 +6,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "FileWriter.hpp"
+#include "writers/FileWriter.hpp"
 #include "writers/WriterFactory.hpp"
+namespace correlation::writers {
 
 FileWriter::FileWriter(const DistributionFunctions &df) : df_(df) {}
 
 void FileWriter::write(const std::string &base_path, bool use_csv,
                        bool use_hdf5, bool use_parquet, bool smoothing) const {
-  auto &factory = Writer::WriterFactory::instance();
+  auto &factory = WriterFactory::instance();
 
   if (use_csv) {
     if (auto writer = factory.getWriter("CSV")) {
@@ -33,3 +34,5 @@ void FileWriter::write(const std::string &base_path, bool use_csv,
     }
   }
 }
+
+} // namespace correlation::writers

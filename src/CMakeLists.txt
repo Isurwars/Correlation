@@ -10,6 +10,7 @@ add_library(readers_obj OBJECT
     readers/LammpsDumpReader.cpp
     readers/OnetepDatReader.cpp
     readers/OutmolReader.cpp
+    readers/FileReader.cpp
     readers/ReaderFactory.cpp
 )
 target_include_directories(readers_obj PRIVATE
@@ -46,6 +47,7 @@ add_library(writers_obj OBJECT
     writers/ArrowWriter.cpp
     writers/CSVWriter.cpp
     writers/HDF5Writer.cpp
+    writers/FileWriter.cpp
     writers/WriterFactory.cpp
 )
 target_include_directories(writers_obj PRIVATE
@@ -58,8 +60,6 @@ add_library(correlation_lib STATIC
     Cell.cpp
     DistributionFunctions.cpp
     DynamicsAnalyzer.cpp
-    FileReader.cpp
-    FileWriter.cpp
     NeighborGraph.cpp
     StructureAnalyzer.cpp
     Trajectory.cpp

@@ -14,7 +14,7 @@
 #include "BaseWriter.hpp"
 #include "DistributionFunctions.hpp"
 
-namespace Writer {
+namespace correlation::writers {
 
 /**
  * @class ArrowWriter
@@ -61,4 +61,4 @@ private:
                                const Histogram &hist) const;
 };
 
-} // namespace Writer
+} // namespace correlation::writers

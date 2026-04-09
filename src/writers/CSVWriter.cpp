@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-namespace Writer {
+namespace correlation::writers {
 
 // Automatic registration
 static bool registered =
@@ -125,4 +125,4 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename,
   }
 }
 
-} // namespace Writer
+} // namespace correlation::writers

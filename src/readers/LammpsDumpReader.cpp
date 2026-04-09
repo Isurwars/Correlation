@@ -21,7 +21,7 @@
 #include "Cell.hpp"
 #include "Trajectory.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 // Automatic registration
 static bool registered = ReaderFactory::instance().registerReader(
@@ -262,4 +262,4 @@ std::vector<Cell> LammpsDumpReader::read(
   return frames;
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

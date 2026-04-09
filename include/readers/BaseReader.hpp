@@ -14,7 +14,7 @@
 #include "Cell.hpp"
 #include "Trajectory.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 /**
  * @brief Base class for all file readers.
@@ -53,4 +53,4 @@ public:
                                         progress_callback = nullptr) = 0;
 };
 
-} // namespace FileReader
+} // namespace correlation::readers

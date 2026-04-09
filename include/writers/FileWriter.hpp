@@ -12,6 +12,8 @@
 
 #include "DistributionFunctions.hpp"
 
+namespace correlation::writers {
+
 /**
  * @class FileWriter
  * @brief Facade class that manages writing data to various file formats.
@@ -44,3 +46,6 @@ public:
 private:
   const DistributionFunctions &df_;
 };
+
+} // namespace correlation::writers
+

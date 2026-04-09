@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "Cell.hpp"
-#include "FileReader.hpp"
+#include "readers/FileReader.hpp"
 #include "Trajectory.hpp"
 
 // Test fixture for Trajectory tests
@@ -261,7 +261,7 @@ TEST_F(_03_Trajectory_Tests, ParseEnergyFromArc) {
   out << "end\n";
   out.close();
 
-  auto traj = FileReader::readTrajectory(filename, FileReader::FileType::Arc);
+  auto traj = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Arc);
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 1);
 
@@ -293,7 +293,7 @@ TEST_F(_03_Trajectory_Tests, ParseMultipleFramesWithEnergy) {
   out << "end\n";
   out.close();
 
-  auto traj2 = FileReader::readTrajectory(filename, FileReader::FileType::Arc);
+  auto traj2 = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Arc);
   const auto &frames = traj2.getFrames();
   ASSERT_EQ(frames.size(), 2);
   EXPECT_DOUBLE_EQ(frames[0].getEnergy(), -100.0);

@@ -21,7 +21,7 @@
 #include <parquet/arrow/writer.h>
 #include <parquet/exception.h>
 
-namespace Writer {
+namespace correlation::writers {
 
 // Automatic registration
 static bool registered =
@@ -122,4 +122,4 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename,
       *table, arrow::default_memory_pool(), outfile, 1024 * 1024, props));
 }
 
-} // namespace Writer
+} // namespace correlation::writers

@@ -14,9 +14,9 @@
 #include "Cell.hpp"
 #include "Trajectory.hpp"
 
-// The FileReader namespace encapsulates all functionality related to reading
-// structure and trajectory files. It delegates to specialized readers.
-namespace FileReader {
+// The correlation::readers namespace encapsulates all functionality related to
+// reading structure and trajectory files. It delegates to specialized readers.
+namespace correlation::readers {
 
 /**
  * @brief A type-safe enum to specify the format of a structure or trajectory
@@ -39,7 +39,8 @@ enum class FileType {
  *
  * @param filename The path to the structure file.
  * @param type The format of the file.
- * @param progress_callback Optional callback invoked with progress (0.0–1.0) and a status message.
+ * @param progress_callback Optional callback invoked with progress (0.0–1.0)
+ * and a status message.
  * @return A Cell object containing the parsed atomic structure.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
@@ -52,7 +53,8 @@ Cell readStructure(const std::string &filename, FileType type,
  *
  * @param filename The path to the trajectory file.
  * @param type The format of the file.
- * @param progress_callback Optional callback invoked with progress (0.0–1.0) and a status message.
+ * @param progress_callback Optional callback invoked with progress (0.0–1.0)
+ * and a status message.
  * @return A Trajectory object.
  * @throws std::runtime_error if the file cannot be opened or is malformed.
  */
@@ -69,4 +71,4 @@ Trajectory readTrajectory(const std::string &filename, FileType type,
  */
 FileType determineFileType(const std::string &filename);
 
-} // namespace FileReader
+} // namespace correlation::readers

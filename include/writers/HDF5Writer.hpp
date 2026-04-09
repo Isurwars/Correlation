@@ -14,7 +14,7 @@
 #include "BaseWriter.hpp"
 #include "DistributionFunctions.hpp"
 
-namespace Writer {
+namespace correlation::writers {
 
 /**
  * @class HDF5Writer
@@ -43,4 +43,4 @@ public:
   void writeHDF(const std::string &filename, const DistributionFunctions &df) const;
 };
 
-} // namespace Writer
+} // namespace correlation::writers

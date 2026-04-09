@@ -16,7 +16,7 @@
 
 #include "BaseReader.hpp"
 
-namespace FileReader {
+namespace correlation::readers {
 
 /**
  * @brief Reads a ONETEP .dat structure format.
@@ -38,4 +38,4 @@ public:
   static Cell read(const std::string &file_name);
 };
 
-} // namespace FileReader
+} // namespace correlation::readers

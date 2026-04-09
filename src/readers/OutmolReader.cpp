@@ -20,7 +20,7 @@
 #include <sstream>
 #include <stdexcept>
 
-namespace FileReader {
+namespace correlation::readers {
 
 // Automatic registration
 static bool registered =
@@ -157,4 +157,4 @@ std::vector<Cell> OutmolReader::read(
   return frames;
 }
 
-} // namespace FileReader
+} // namespace correlation::readers

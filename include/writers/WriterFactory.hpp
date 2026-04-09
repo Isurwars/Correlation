@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace Writer {
+namespace correlation::writers {
 
 /**
  * @brief Registry for all file writers, enabling automatic discovery.
@@ -56,4 +56,4 @@ private:
   std::map<std::string, BaseWriter *> name_map_;
 };
 
-} // namespace Writer
+} // namespace correlation::writers

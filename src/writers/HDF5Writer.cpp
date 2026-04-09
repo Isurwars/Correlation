@@ -22,7 +22,7 @@
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
 
-namespace Writer {
+namespace correlation::writers {
 
 // Automatic registration
 static bool registered =
@@ -191,4 +191,4 @@ void HDF5Writer::writeHDF(const std::string &filename,
   }
 }
 
-} // namespace Writer
+} // namespace correlation::writers
