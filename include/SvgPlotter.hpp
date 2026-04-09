@@ -123,10 +123,9 @@ inline std::string fmtTick(double v) {
  * individual coloured polylines with a legend.  If `smoothed_partials` is
  * empty, the function falls back to `hist.partials`.
  *
+ * Title and axis labels are retrieved from the `Histogram` metadata.
+ *
  * @param hist     The Histogram to render.
- * @param title    Title text displayed above the plot.
- * @param x_label  Label for the x-axis (e.g., "r (Å)").
- * @param y_label  Label for the y-axis (e.g., "g(r)").
  * @returns        A complete SVG document as `std::string`.
  */
 inline std::string renderHistogramAsSvg(const Histogram &hist) {
