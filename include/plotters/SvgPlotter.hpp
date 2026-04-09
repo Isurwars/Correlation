@@ -22,9 +22,9 @@
 #include <vector>
 
 #include "DistributionFunctions.hpp"
-#include "math/PathFont.hpp"
+#include "plotters/PathFont.hpp"
 
-namespace SvgPlotter {
+namespace correlation::plotters {
 
 /**
  * @brief Theme and layout configuration for the plot.
@@ -67,6 +67,7 @@ static const std::vector<std::string> kColors = {
     "#0072B2", // Blue
     "#D55E00", // Vermillion
     "#CC79A7", // Reddish Purple
+    "#000000", // Black
 };
 
 inline std::string color(std::size_t i) { return kColors[i % kColors.size()]; }
@@ -241,7 +242,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
         "<path d=\"{3}\" fill=\"{4}\" stroke=\"none\"/></svg>",
         kW, kH, config.bg_color(),
-        PathFont::Roboto::instance().render("No data available", kW / 2.0,
+        Roboto::instance().render("No data available", kW / 2.0,
                                             kH / 2.0 + 8.0, 24, "middle"),
         config.text_color());
   }
@@ -290,7 +291,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
     // Label
     svg << std::format(
         "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-        PathFont::Roboto::instance().render(detail::fmtScientific(yv),
+        Roboto::instance().render(detail::fmtScientific(yv),
                                             px0 - 15.0, spy + 7.0, 20, "end"),
         config.text_color());
   }
@@ -310,7 +311,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
     // Label
     svg << std::format(
         "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-        PathFont::Roboto::instance().render(detail::fmtScientific(xv), spx,
+        Roboto::instance().render(detail::fmtScientific(xv), spx,
                                             py1 + 25.0, 20, "middle"),
         config.text_color());
   }
@@ -371,7 +372,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
         "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
         lx - 40.0, ly, lx - 10.0, ly, it->second);
     svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                       PathFont::Roboto::instance().render(it->first, lx - 45.0,
+                       Roboto::instance().render(it->first, lx - 45.0,
                                                            ly + 6.0, 18, "end"),
                        config.text_color());
     ly += 28.0;
@@ -379,7 +380,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
 
   // Titles/Labels
   svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                     PathFont::Roboto::instance().render(
+                     Roboto::instance().render(
                          x_label, (px0 + px1) / 2.0, py1 + 75.0, 28, "middle"),
                      config.text_color());
 
@@ -389,7 +390,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
       (py0 + py1) / 2.0);
   svg << std::format(
       "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-      PathFont::Roboto::instance().render(y_label, 0, 0, 28, "middle"),
+      Roboto::instance().render(y_label, 0, 0, 28, "middle"),
       config.text_color());
   svg << "  </g>\n";
 
@@ -397,4 +398,4 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
   return svg.str();
 }
 
-} // namespace SvgPlotter
+} // namespace correlation::plotters

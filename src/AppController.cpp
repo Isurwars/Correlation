@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#include "SvgPlotter.hpp"
+#include "plotters/SvgPlotter.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include <fstream>
 
@@ -545,10 +545,10 @@ void AppController::handleSelectPlot(int index) {
   const std::string &name = available_plot_keys_[index];
   const Histogram *hist = backend_.getHistogram(name);
   if (!hist) return;
-  SvgPlotter::PlotConfig config;
-  config.theme = ui_.get_is_dark() ? SvgPlotter::PlotConfig::Theme::Dark
-                                   : SvgPlotter::PlotConfig::Theme::Light;
-  std::string svg = SvgPlotter::renderHistogramAsSvg(*hist, config);
+  correlation::plotters::PlotConfig config;
+  config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
+                                   : correlation::plotters::PlotConfig::Theme::Light;
+  std::string svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
 
   // Diagnostic file output
   std::ofstream out("preview.svg");

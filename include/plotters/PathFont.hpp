@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace PathFont {
+namespace correlation::plotters {
 
 struct Glyph {
   int left, right;
@@ -1422,4 +1422,4 @@ private:
   }
 };
 
-} // namespace PathFont
+} // namespace correlation::plotters

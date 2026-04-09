@@ -187,15 +187,8 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   g_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Pair Distribution Function");
 
-  // Check for expected datasets (prefixed names)
-  // For Si crystal, we expect "r (Å)" (bin) and "Si-Si" (raw)
-  // Cleaned up names:
-  // "r (Å)" -> "r__Å_" -> "00_r__Å_"
-  // "Si-Si" -> "01_Si-Si"
-
   // Note: sanitize logic in FileWriter replaces '(', ')', '/', ' ' with '_'
-  // "r (Å)" -> "r__Å_"
-  std::string bin_ds_name = "00_r__Å_";
+  std::string bin_ds_name = "00_r";
   std::string data_ds_name = "01_Si-Si";
 
   EXPECT_TRUE(g_group.exist(bin_ds_name));
@@ -211,7 +204,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   EXPECT_TRUE(bin_ds.hasAttribute("Long Name"));
   std::string bin_label;
   bin_ds.getAttribute("Long Name").read(bin_label);
-  EXPECT_EQ(bin_label, "r (Å)");
+  EXPECT_EQ(bin_label, "r");
 
   EXPECT_TRUE(bin_ds.hasAttribute("Comments"));
   std::string bin_comment;
@@ -223,7 +216,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   EXPECT_TRUE(data_ds.hasAttribute("Units"));
   std::string data_units;
   data_ds.getAttribute("Units").read(data_units);
-  EXPECT_EQ(data_units, "Å^-1");
+  EXPECT_EQ(data_units, "Å⁻¹");
 
   EXPECT_TRUE(data_ds.hasAttribute("Long Name"));
   std::string data_label;
@@ -292,7 +285,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
     // Check new datasets
     // "t (fs)" -> "00_t__fs_"
     // "VACF" -> "Total" -> "01_Total"
-    std::string time_ds_name = "00_t__fs_";
+    std::string time_ds_name = "00_t";
     std::string vacf_ds_name = "01_Total";
 
     EXPECT_TRUE(vacf_group.exist(time_ds_name));
@@ -308,7 +301,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
     EXPECT_TRUE(vacf_ds.hasAttribute("Units"));
     std::string data_units;
     vacf_ds.getAttribute("Units").read(data_units);
-    EXPECT_EQ(data_units, "Å^2/fs^2");
+    EXPECT_EQ(data_units, "Å²/fs²");
 
     // Check Normalized VACF
     EXPECT_TRUE(file.exist("Normalized_VACF"));
@@ -353,7 +346,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   vdos_group.getAttribute("description").read(vdos_desc);
   EXPECT_EQ(vdos_desc, "Vibrational Density of States");
 
-  std::string vdos_freq_name = "00_ν__THz_";
+  std::string vdos_freq_name = "00_ν";
   std::string vdos_val_name = "03_Total";
 
   EXPECT_TRUE(vdos_group.exist(vdos_freq_name));
