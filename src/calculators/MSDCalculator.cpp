@@ -63,11 +63,11 @@ MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
   // --- Running D(t) = MSD(t) / (6 * t): skip lag=0 (division by zero) ---
   // We store D_eff starting from lag=1; lag=0 gets D=0 by convention.
   Histogram deff_hist;
-  deff_hist.x_label = "t (fs)";
+  deff_hist.x_label = "t";
   deff_hist.title = "Running Diffusion Coefficient";
   deff_hist.y_label = "D(t)";
   deff_hist.x_unit = "fs";
-  deff_hist.y_unit = "Å²/fs";
+  deff_hist.y_unit = "Å² fs⁻¹";
   deff_hist.description = "Running Diffusion Coefficient D(t) = MSD(t) / (6t)";
   deff_hist.file_suffix = "_MSD";
   deff_hist.bins = results["MSD"].bins; // Same time axis

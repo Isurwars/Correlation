@@ -44,7 +44,7 @@ Histogram DADCalculator::calculate(const Cell &cell,
   const size_t num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
 
   Histogram f_dihedral;
-  f_dihedral.x_label = "φ (°)";
+  f_dihedral.x_label = "φ";
   f_dihedral.title = "Dihedral-Angle Distribution";
   f_dihedral.y_label = "P(φ)";
   f_dihedral.x_unit = "°";
