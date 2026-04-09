@@ -71,7 +71,7 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
   }
 
   Histogram vdos_hist;
-  vdos_hist.x_label = "ν (THz)";
+  vdos_hist.x_label = "ν";
   vdos_hist.title = "Vibrational Density of States";
   vdos_hist.description = "Vibrational Density of States";
   vdos_hist.file_suffix = "_VDOS";

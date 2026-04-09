@@ -7,17 +7,17 @@
  */
 
 #include "calculators/VACFCalculator.hpp"
-#include "calculators/CalculatorFactory.hpp"
 #include "DynamicsAnalyzer.hpp"
+#include "calculators/CalculatorFactory.hpp"
 
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<VACFCalculator>());
 } // namespace
 
-void VACFCalculator::calculateTrajectory(DistributionFunctions &df,
-                                         const Trajectory &traj,
-                                         const AnalysisSettings &settings) const {
+void VACFCalculator::calculateTrajectory(
+    DistributionFunctions &df, const Trajectory &traj,
+    const AnalysisSettings &settings) const {
   auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
   for (auto &[name, histogram] : results) {
     df.addHistogram(name, std::move(histogram));
@@ -42,7 +42,7 @@ VACFCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
   double dt = traj.getTimeStep();
 
   Histogram vacf_hist;
-  vacf_hist.x_label = "t (fs)";
+  vacf_hist.x_label = "t";
   vacf_hist.title = "Velocity Autocorrelation";
   vacf_hist.y_label = "C(t)";
   vacf_hist.x_unit = "fs";

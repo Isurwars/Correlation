@@ -83,7 +83,7 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
   g_r.bins.resize(num_bins);
   G_r.bins.resize(num_bins);
   J_r.bins.resize(num_bins);
-  H_r.x_label = "r (Å)";
+  H_r.x_label = "r";
   H_r.title = "H(r) — Distance Histogram";
   H_r.y_label = "H(r)";
   H_r.x_unit = "Å";
@@ -91,27 +91,27 @@ RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
   H_r.description = "Distance Histogram";
   H_r.file_suffix = "_H";
 
-  g_r.x_label = "r (Å)";
+  g_r.x_label = "r";
   g_r.title = "g(r) — Pair Distribution";
   g_r.y_label = "g(r)";
   g_r.x_unit = "Å";
-  g_r.y_unit = "Å^-1";
+  g_r.y_unit = "Å⁻¹";
   g_r.description = "Pair Distribution Function";
   g_r.file_suffix = "_g";
 
-  G_r.x_label = "r (Å)";
+  G_r.x_label = "r";
   G_r.title = "G(r) — Reduced Pair Distribution";
   G_r.y_label = "G(r)";
   G_r.x_unit = "Å";
-  G_r.y_unit = "Å^-1";
+  G_r.y_unit = "Å⁻¹";
   G_r.description = "Reduced Pair Distribution Function";
   G_r.file_suffix = "_G_reduced";
 
-  J_r.x_label = "r (Å)";
+  J_r.x_label = "r";
   J_r.title = "J(r) — Reduced Pair Distribution";
   J_r.y_label = "J(r)";
   J_r.x_unit = "Å";
-  J_r.y_unit = "Å^-1";
+  J_r.y_unit = "Å⁻¹";
   J_r.description = "Radial Distribution Function";
   J_r.file_suffix = "_J";
 

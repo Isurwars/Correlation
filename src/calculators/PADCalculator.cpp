@@ -41,11 +41,11 @@ Histogram PADCalculator::calculate(const Cell &cell,
   const size_t num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
   Histogram f_theta;
-  f_theta.x_label = "θ (°)";
+  f_theta.x_label = "θ";
   f_theta.title = "Plane-Angle Distribution";
   f_theta.y_label = "P(θ)";
-  f_theta.x_unit = "Degrees";
-  f_theta.y_unit = "degree^-1";
+  f_theta.x_unit = "°";
+  f_theta.y_unit = "°⁻¹";
   f_theta.description = "Bond Angle Distribution";
   f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
@@ -62,8 +62,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
         partial_hist.assign(num_bins, 0.0);
 
         for (const auto &angle_rad : neighbors->angles()[j][i][k]) {
-          double angle_deg =
-              angle_rad * correlation::math::rad_to_deg;
+          double angle_deg = angle_rad * correlation::math::rad_to_deg;
 
           if (angle_deg <= theta_cut + 1e-5) {
             size_t bin = static_cast<size_t>(angle_deg / bin_width);
@@ -101,7 +100,7 @@ Histogram PADCalculator::calculate(const Cell &cell,
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_theta.partials) {
     correlation::math::scale_bins(partial.data(), normalization_factor,
-                                        num_bins);
+                                  num_bins);
   }
   return f_theta;
 }

@@ -18,8 +18,9 @@
 #include <string>
 #include <vector>
 
-#include "calculators/CalculatorFactory.hpp"
 #include "SvgPlotter.hpp"
+#include "calculators/CalculatorFactory.hpp"
+#include <fstream>
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -47,9 +48,7 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   });
 
   // Handle plot selection: generate SVG and push to UI
-  ui_.on_select_plot([this](int index) {
-    handleSelectPlot(index);
-  });
+  ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
 }
 
 AppController::~AppController() {
@@ -157,8 +156,8 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
   opt.smoothing_sigma =
       safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
-  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(
-      ui_.get_smoothing_kernel());
+  opt.smoothing_kernel =
+      static_cast<correlation::math::KernelType>(ui_.get_smoothing_kernel());
 
   // Frame Selection Logic:
   // - "Start" maps to 0
@@ -528,7 +527,8 @@ void AppController::populatePlotList() {
   for (const auto &name : names) {
     MenuItem item;
     const Histogram *hist = backend_.getHistogram(name);
-    std::string display_text = (hist && !hist->title.empty()) ? hist->title : name;
+    std::string display_text =
+        (hist && !hist->title.empty()) ? hist->title : name;
     item.text = slint::SharedString(display_text);
     item.enabled = true;
     menu_model->push_back(item);
@@ -540,15 +540,23 @@ void AppController::populatePlotList() {
 }
 
 void AppController::handleSelectPlot(int index) {
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) return;
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
+    return;
   const std::string &name = available_plot_keys_[index];
   const Histogram *hist = backend_.getHistogram(name);
   if (!hist) return;
+  SvgPlotter::PlotConfig config;
+  config.theme = ui_.get_is_dark() ? SvgPlotter::PlotConfig::Theme::Dark
+                                   : SvgPlotter::PlotConfig::Theme::Light;
+  std::string svg = SvgPlotter::renderHistogramAsSvg(*hist, config);
 
-  std::string svg = SvgPlotter::renderHistogramAsSvg(*hist);
+  // Diagnostic file output
+  std::ofstream out("preview.svg");
+  out << svg;
+  out.close();
 
-  // Load SVG bytes into a Slint image using the embedded data API
-  std::span<const uint8_t> svg_span(reinterpret_cast<const uint8_t *>(svg.data()), svg.size());
-  auto img = slint::private_api::load_image_from_embedded_data(svg_span, "svg");
+  // Load SVG from the verified file for high-quality rendering
+  auto path = std::filesystem::absolute("preview.svg").string();
+  auto img = slint::Image::load_from_path(slint::SharedString(path));
   ui_.set_preview_plot(img);
 }

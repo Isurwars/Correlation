@@ -47,8 +47,8 @@ Histogram DADCalculator::calculate(const Cell &cell,
   f_dihedral.x_label = "φ (°)";
   f_dihedral.title = "Dihedral-Angle Distribution";
   f_dihedral.y_label = "P(φ)";
-  f_dihedral.x_unit = "Degrees";
-  f_dihedral.y_unit = "degree^-1";
+  f_dihedral.x_unit = "°";
+  f_dihedral.y_unit = "°⁻¹";
   f_dihedral.description = "Dihedral Angle Distribution";
   f_dihedral.file_suffix = "_DAD";
   f_dihedral.bins.resize(num_bins);
@@ -74,8 +74,7 @@ Histogram DADCalculator::calculate(const Cell &cell,
           }
 
           for (const auto &angle_rad : angles_rad) {
-            double angle_deg =
-                angle_rad * correlation::math::rad_to_deg;
+            double angle_deg = angle_rad * correlation::math::rad_to_deg;
 
             // clamp angle into [-180, 180]
             while (angle_deg <= -180.0)
@@ -121,7 +120,7 @@ Histogram DADCalculator::calculate(const Cell &cell,
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_dihedral.partials) {
     correlation::math::scale_bins(partial.data(), normalization_factor,
-                                        num_bins);
+                                  num_bins);
   }
   return f_dihedral;
 }

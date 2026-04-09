@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "math/PathFont.hpp"
 #include "DistributionFunctions.hpp"
 
 namespace SvgPlotter {
@@ -142,8 +143,22 @@ inline std::string fmtScientific(double v) {
   if (abs_v < 0.001 || abs_v >= 10000.0) {
     int exponent = static_cast<int>(std::floor(std::log10(abs_v)));
     double fraction = v / std::pow(10.0, exponent);
-    return std::format("{:.1f}×10<tspan dy=\"-0.6em\" font-size=\"75%\">{}</tspan><tspan dy=\"0.6em\"> </tspan>",
-                       fraction, exponent);
+    std::string res = std::format("{:.1f}×10", fraction);
+    std::string exp_s = std::to_string(exponent);
+    for (char c : exp_s) {
+      if (c == '-') res += "⁻";
+      else if (c == '0') res += "⁰";
+      else if (c == '1') res += "¹";
+      else if (c == '2') res += "²";
+      else if (c == '3') res += "³";
+      else if (c == '4') res += "⁴";
+      else if (c == '5') res += "⁵";
+      else if (c == '6') res += "⁶";
+      else if (c == '7') res += "⁷";
+      else if (c == '8') res += "⁸";
+      else if (c == '9') res += "⁹";
+    }
+    return res;
   }
 
   // Otherwise use simple formatting
@@ -179,7 +194,12 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
 
   // Add units if available
   if (!hist.x_unit.empty()) x_label += std::format(" ({})", hist.x_unit);
-  if (!hist.y_unit.empty()) y_label += std::format(" ({})", hist.y_unit);
+  if (!hist.y_unit.empty()) {
+    std::string y_unit = hist.y_unit;
+    // Standardize Å^-1 to Å⁻¹ for path rendering
+    if (y_unit == "Å^-1") y_unit = "Å⁻¹";
+    y_label += std::format(" ({})", y_unit);
+  }
 
   // ---- Layout configuration --------------------------------------------
   const double kW = config.width;
@@ -203,9 +223,10 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
     return std::format(
         "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0} {1}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-        "<text x=\"{3}\" y=\"{4}\" fill=\"{5}\" font-size=\"24\" "
-        "text-anchor=\"middle\">No data available</text></svg>",
-        kW, kH, config.bg_color(), kW / 2.0, kH / 2.0, config.text_color());
+        "<path d=\"{3}\" fill=\"{4}\" stroke=\"none\"/></svg>",
+        kW, kH, config.bg_color(), 
+        PathFont::Roboto::instance().render("No data available", kW/2.0, kH/2.0 + 8.0, 24, "middle"),
+        config.text_color());
   }
 
   // ---- Compute ranges and nice ticks -----------------------------------
@@ -226,7 +247,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
 
   // ---- Build SVG -------------------------------------------------------
   std::ostringstream svg;
-  svg << std::format("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" font-family=\"sans-serif\">\n", kW, kH);
+  svg << std::format("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\">\n", kW, kH);
   svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n", config.bg_color());
 
   // Grid and Axes
@@ -244,9 +265,9 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        px0 - 8.0, spy, px0, spy, config.axis_color());
     // Label
-    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"16\" "
-                       "text-anchor=\"end\" dominant-baseline=\"middle\">{}</text>\n",
-                       px0 - 12.0, spy, config.text_color(), detail::fmtScientific(yv));
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       PathFont::Roboto::instance().render(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20, "end"),
+                       config.text_color());
   }
 
   for (double xv : xScale.ticks) {
@@ -259,9 +280,10 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        spx, py1, spx, py1 + 8.0, config.axis_color());
-    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"16\" "
-                       "text-anchor=\"middle\">{}</text>\n",
-                       spx, py1 + 28.0, config.text_color(), detail::fmtScientific(xv));
+    // Label
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       PathFont::Roboto::instance().render(detail::fmtScientific(xv), spx, py1 + 25.0, 20, "middle"),
+                       config.text_color());
   }
 
   // Draw axis border
@@ -302,24 +324,27 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                        lx - 40.0, ly, lx - 10.0, ly, it->second);
-    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"18\" "
-                       "text-anchor=\"end\" dominant-baseline=\"middle\">{}</text>\n",
-                       lx - 45.0, ly, config.text_color(), it->first);
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       PathFont::Roboto::instance().render(it->first, lx - 45.0, ly + 6.0, 18, "end"),
+                       config.text_color());
     ly += 28.0;
   }
 
   // Titles/Labels
-  svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"22\" "
-                     "text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
-                     (px0 + px1) / 2.0, py1 + 65.0, config.axis_color(), x_label);
+  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                     PathFont::Roboto::instance().render(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28, "middle"),
+                     config.text_color());
 
-  svg << std::format("  <text transform=\"rotate(-90)\" x=\"{:.1f}\" y=\"{:.1f}\" "
-                     "fill=\"{}\" font-size=\"22\" text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
-                     -((py0 + py1) / 2.0), 25.0, config.axis_color(), y_label);
+  // Y label rotated
+  svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
+  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                     PathFont::Roboto::instance().render(y_label, 0, 0, 28, "middle"),
+                     config.text_color());
+  svg << "  </g>\n";
 
-  svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"28\" "
-                     "text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
-                     (px0 + px1) / 2.0, py0 - 25.0, config.axis_color(), title);
+  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                     PathFont::Roboto::instance().render(title, (px0 + px1) / 2.0, py0 - 45.0, 36, "middle"),
+                     config.text_color());
 
   svg << "</svg>\n";
   return svg.str();
