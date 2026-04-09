@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.2] 2026-04-09
+
+### Added
+- Integrated full Roboto glyph set including Greek characters (θ, φ, ν) and scientific superscripts (⁰-⁹, ⁻, ¹, ², ³) into the vector font engine for high-fidelity scientific notation.
+- Implemented dynamically dashed emphasis lines for y=1 and solid lines for y=0 in SvgPlotter to improve visual clarity of distribution functions.
+- Increased x-axis tick resolution from 7 to 11 in SVG plots for better data readability.
+- Added black (`#000000`) to the Okabe-Ito color palette for high-contrast plot elements.
+
+### Changed
+- **Architectural Refactor**: Moved all plotting and vector font utilities to a dedicated `plotters` directory and `correlation::plotters` namespace for better modularity.
+- **Metadata Standardization**: Refactored all calculators (RDF, S(Q), PAD, MSD, VACF, XRD, etc.) to use standardized Unicode symbols for units (e.g., `Å⁻¹`, `Å² fs⁻¹`, `°`) and removed redundant unit strings from dataset labels.
+- Cleaned up `SvgPlotter` output by removing redundant title text that overlapped with the GUI's selection menu.
+
+### Fixed
+- Fixed missing superscripts and special characters in unit rendering for SVG previews.
+- Fixed regression in `_05_FileWriter_Tests` by updating HDF5 attribute and dataset naming expectations to match the new standardized metadata format.
+
 ## [2.6.1] 2026-04-08
 - Major refactor to the Calculators to include relevant information for writting and GUI interactions.
 

@@ -46,9 +46,9 @@ MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
 
   // --- MSD histogram: bins = time (fs), partials["Total"] = MSD (Å²) ---
   Histogram msd_hist;
-  msd_hist.x_label = "t (fs)";
+  msd_hist.x_label = "t";
   msd_hist.title = "Mean Squared Displacement";
-  msd_hist.y_label = "MSD (Å²)";
+  msd_hist.y_label = "MSD";
   msd_hist.x_unit = "fs";
   msd_hist.y_unit = "Å²";
   msd_hist.description = "Mean Squared Displacement";

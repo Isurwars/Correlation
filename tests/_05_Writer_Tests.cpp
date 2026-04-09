@@ -301,7 +301,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
     EXPECT_TRUE(vacf_ds.hasAttribute("Units"));
     std::string data_units;
     vacf_ds.getAttribute("Units").read(data_units);
-    EXPECT_EQ(data_units, "Å²/fs²");
+    EXPECT_EQ(data_units, "Å² fs⁻²");
 
     // Check Normalized VACF
     EXPECT_TRUE(file.exist("Normalized_VACF"));
