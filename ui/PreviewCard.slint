@@ -33,17 +33,16 @@ import {
 /// - `preview_plot`: The current generated plot image.
 // ============================================================================
 export component PreviewCard inherits FilledCard {
-    in property <bool>       analysis_done;
-    in property <image>      preview_plot;
+    in property <bool> analysis_done;
+    in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
-    in-out property <int>    selected_plot_index: -1;
+    in-out property <int> selected_plot_index: -1;
 
     callback plot_selected(int);
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview." :
-        "";
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview." : "";
 
     VerticalLayout {
         padding: MaterialStyleMetrics.spacing_8;
@@ -77,21 +76,21 @@ export component PreviewCard inherits FilledCard {
         Rectangle {
             horizontal-stretch: 1;
             vertical-stretch: 1;
-            min-height: 280px;
+            min-height: 420px; // 4:3 ratio for 560px inner width
             background: MaterialPalette.surface;
             border-radius: MaterialStyleMetrics.border_radius_2;
             clip: true;
 
             // Placeholder text when no image is available
-            if root.preview_plot.width == 0: MaterialText {
-                text: root.analysis_done
-                    ? "Select a plot from the dropdown above."
-                    : "Run an analysis to preview results here.";
-                color: MaterialPalette.on_surface_variant;
-                horizontal-alignment: center;
-                vertical-alignment: center;
-                wrap: word-wrap;
+            if root.preview_plot.width == 0: VerticalLayout {
                 padding: MaterialStyleMetrics.spacing_8;
+                MaterialText {
+                    text: root.analysis_done ? "Select a plot from the dropdown above." : "Run an analysis to preview results here.";
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    wrap: word-wrap;
+                }
             }
 
             // The rendered SVG plot

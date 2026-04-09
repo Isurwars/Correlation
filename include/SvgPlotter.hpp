@@ -31,8 +31,8 @@ struct PlotConfig {
   enum class Theme { Light, Dark };
 
   Theme theme = Theme::Light;
-  double width = 800.0;
-  double height = 450.0;
+  double width = 1200.0;
+  double height = 900.0;
   bool show_grid = true;
   bool show_markers = false;
 
@@ -185,10 +185,10 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
   const double kW = config.width;
   const double kH = config.height;
   // Margins (enough room for labels)
-  const double kLeft = 75.0;
-  const double kRight = 25.0;
-  const double kTop = 50.0;
-  const double kBot = 60.0;
+  const double kLeft = 100.0;
+  const double kRight = 40.0;
+  const double kTop = 80.0;
+  const double kBot = 90.0;
 
   const double px0 = kLeft;
   const double px1 = kW - kRight;
@@ -203,7 +203,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
     return std::format(
         "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0} {1}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-        "<text x=\"{3}\" y=\"{4}\" fill=\"{5}\" font-size=\"18\" "
+        "<text x=\"{3}\" y=\"{4}\" fill=\"{5}\" font-size=\"24\" "
         "text-anchor=\"middle\">No data available</text></svg>",
         kW, kH, config.bg_color(), kW / 2.0, kH / 2.0, config.text_color());
   }
@@ -227,7 +227,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
   // ---- Build SVG -------------------------------------------------------
   std::ostringstream svg;
   svg << std::format("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" font-family=\"sans-serif\">\n", kW, kH);
-  svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"4\"/>\n", config.bg_color());
+  svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n", config.bg_color());
 
   // Grid and Axes
   svg << "  <!-- Grid & Ticks -->\n";
@@ -236,37 +236,37 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
     // Grid line
     if (config.show_grid) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                         "stroke=\"{}\" stroke-width=\"0.5\" stroke-dasharray=\"2,2\"/>\n",
+                         "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
                          px0, spy, px1, spy, config.grid_color());
     }
     // Tick mark
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                       "stroke=\"{}\" stroke-width=\"1\"/>\n",
-                       px0 - 5.0, spy, px0, spy, config.axis_color());
+                       "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                       px0 - 8.0, spy, px0, spy, config.axis_color());
     // Label
-    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"11\" "
+    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"16\" "
                        "text-anchor=\"end\" dominant-baseline=\"middle\">{}</text>\n",
-                       px0 - 8.0, spy, config.text_color(), detail::fmtScientific(yv));
+                       px0 - 12.0, spy, config.text_color(), detail::fmtScientific(yv));
   }
 
   for (double xv : xScale.ticks) {
     double spx = detail::mapValue(xv, xScale.min, xScale.max, px0, px1);
     if (config.show_grid) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                         "stroke=\"{}\" stroke-width=\"0.5\" stroke-dasharray=\"2,2\"/>\n",
+                         "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
                          spx, py0, spx, py1, config.grid_color());
     }
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                       "stroke=\"{}\" stroke-width=\"1\"/>\n",
-                       spx, py1, spx, py1 + 5.0, config.axis_color());
-    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"11\" "
+                       "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                       spx, py1, spx, py1 + 8.0, config.axis_color());
+    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"16\" "
                        "text-anchor=\"middle\">{}</text>\n",
-                       spx, py1 + 18.0, config.text_color(), detail::fmtScientific(xv));
+                       spx, py1 + 28.0, config.text_color(), detail::fmtScientific(xv));
   }
 
   // Draw axis border
   svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
-                     "fill=\"none\" stroke=\"{}\" stroke-width=\"1\"/>\n",
+                     "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                      px0, py0, px1 - px0, py1 - py0, config.axis_color());
 
   // Emphasis line for y=0 or y=1 (if histogram is S(Q))
@@ -274,7 +274,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
   if (focus_y >= yScale.min && focus_y <= yScale.max) {
     double spy = detail::mapValue(focus_y, yScale.min, yScale.max, py1, py0);
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                       "stroke=\"{}\" stroke-width=\"1.2\"/>\n",
+                       "stroke=\"{}\" stroke-width=\"1.8\"/>\n",
                        px0, spy, px1, spy, config.axis_color());
   }
 
@@ -284,7 +284,7 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
   for (const auto &[key, ys] : partials) {
     const std::string col = detail::color(ci++);
     svg << "  <polyline fill=\"none\" stroke=\"" << col
-        << "\" stroke-width=\"2.0\" stroke-linejoin=\"round\" points=\"";
+        << "\" stroke-width=\"3.0\" stroke-linejoin=\"round\" points=\"";
     std::size_t n = std::min(xs.size(), ys.size());
     for (std::size_t i = 0; i < n; ++i) {
       double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
@@ -296,30 +296,30 @@ inline std::string renderHistogramAsSvg(const Histogram &hist, const PlotConfig 
   }
 
   // Legend (Top Right)
-  double lx = px1 - 10.0;
-  double ly = py0 + 15.0;
+  double lx = px1 - 15.0;
+  double ly = py0 + 25.0;
   for (auto it = legend.rbegin(); it != legend.rend(); ++it) {
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
-                       "stroke=\"{}\" stroke-width=\"2.5\"/>\n",
-                       lx - 25.0, ly, lx - 5.0, ly, it->second);
-    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"12\" "
+                       "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
+                       lx - 40.0, ly, lx - 10.0, ly, it->second);
+    svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"18\" "
                        "text-anchor=\"end\" dominant-baseline=\"middle\">{}</text>\n",
-                       lx - 30.0, ly, config.text_color(), it->first);
-    ly += 18.0;
+                       lx - 45.0, ly, config.text_color(), it->first);
+    ly += 28.0;
   }
 
   // Titles/Labels
-  svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"14\" "
+  svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"22\" "
                      "text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
-                     (px0 + px1) / 2.0, py1 + 45.0, config.axis_color(), x_label);
+                     (px0 + px1) / 2.0, py1 + 65.0, config.axis_color(), x_label);
 
   svg << std::format("  <text transform=\"rotate(-90)\" x=\"{:.1f}\" y=\"{:.1f}\" "
-                     "fill=\"{}\" font-size=\"14\" text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
-                     -((py0 + py1) / 2.0), 16.0, config.axis_color(), y_label);
+                     "fill=\"{}\" font-size=\"22\" text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
+                     -((py0 + py1) / 2.0), 25.0, config.axis_color(), y_label);
 
-  svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"18\" "
+  svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" fill=\"{}\" font-size=\"28\" "
                      "text-anchor=\"middle\" font-weight=\"bold\">{}</text>\n",
-                     (px0 + px1) / 2.0, py0 - 15.0, config.axis_color(), title);
+                     (px0 + px1) / 2.0, py0 - 25.0, config.axis_color(), title);
 
   svg << "</svg>\n";
   return svg.str();

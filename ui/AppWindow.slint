@@ -104,10 +104,11 @@ export component AppWindow inherits Window {
     property <bool> show_advanced_options: false;
     property <length> window_width: 392px
         + (root.show_advanced_options ? 220px : 0px)
-        + (root.analysis_done        ? 388px : 0px);
+        + (root.analysis_done        ? 582px : 0px);
     property <length> window_height: max(
         max(110px + file_info_card.preferred-height, 100px + analysis_card.preferred-height),
-        root.show_advanced_options ? 60px + options_card.preferred-height : 0px);
+        root.show_advanced_options ? 60px + options_card.preferred-height : 0px,
+        root.analysis_done ? 20px + preview_card.preferred-height : 0px);
     width: root.window_width;
     title: "Correlation";
     animate width {
@@ -244,7 +245,7 @@ export component AppWindow inherits Window {
         VerticalLayout {
                 x: 388px + (root.show_advanced_options ? 224px : 4px);
                 y: 0px;
-                width: root.analysis_done ? 384px : 0px;
+                width: root.analysis_done ? 576px : 0px;
                 padding-left: 0px;
                 padding-top: MaterialStyleMetrics.spacing_8;
                 padding-bottom: MaterialStyleMetrics.spacing_8;
