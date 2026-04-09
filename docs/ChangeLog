@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - **Architectural Refactor**: Moved all plotting and vector font utilities to a dedicated `plotters` directory and `correlation::plotters` namespace for better modularity.
+- **Architectural Refactor**: Reorganized file I/O operations by moving `FileReader` and `FileWriter` facades into dedicated `readers/` and `writers/` directories and namespaces (`correlation::readers`, `correlation::writers`).
 - **Metadata Standardization**: Refactored all calculators (RDF, S(Q), PAD, MSD, VACF, XRD, etc.) to use standardized Unicode symbols for units (e.g., `Å⁻¹`, `Å² fs⁻¹`, `°`) and removed redundant unit strings from dataset labels.
 - Cleaned up `SvgPlotter` output by removing redundant title text that overlapped with the GUI's selection menu.
 
