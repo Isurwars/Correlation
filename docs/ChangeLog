@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.3] 2026-04-09
+
+### Added
+- Implemented in-memory SVG loading in `AppController` using `slint::private_api::load_image_from_embedded_data`, eliminating the need for temporary files and fixing a critical filesystem-related runtime crash.
+
+### Changed
+- **Major Architectural Refactor**: Completed the namespace transition by logically grouping all components:
+  - `core/`: Core scientific types (`Atom`, `Cell`, `Trajectory`, `NeighborGraph`) moved to `correlation::core`.
+  - `analysis/`: High-level analyzers and distribution functions moved to `correlation::analysis`.
+  - `app/`: Application-level logic (`AppController`, `AppBackend`) moved to `src/app/` and `correlation::app` namespace.
+- **Performance Restoration**: Switched to project-wide SIMD optimization flags (`CORRELATION_SIMD_FLAGS`) in CMake to ensure ABI consistency for `Vector3<double>` and restore 10x calculation speed across all analyzers.
+- **Test Suite Migration**: Updated the full test suite (134+ tests) to work with the new namespaced and restructured codebase.
+
 ## [2.6.2] 2026-04-09
 
 ### Added

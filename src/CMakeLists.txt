@@ -17,6 +17,12 @@ target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+if (CORRELATION_SIMD_FLAGS)
+    # Convert string of flags to a list for target_compile_options
+    separate_arguments(SIMD_FLAGS_LIST NATIVE_COMMAND "${CORRELATION_SIMD_FLAGS}")
+    target_compile_options(readers_obj PRIVATE ${SIMD_FLAGS_LIST})
+endif()
+
 # Calculators as an OBJECT library to ensure static registration triggers
 add_library(calculators_obj OBJECT
     calculators/AngleCalculator.cpp
@@ -41,6 +47,10 @@ target_include_directories(calculators_obj PRIVATE
 )
 target_link_libraries(calculators_obj PRIVATE TBB::tbb)
 target_compile_definitions(calculators_obj PRIVATE _PSTL_PAR_BACKEND_TBB)
+if (CORRELATION_SIMD_FLAGS)
+    separate_arguments(SIMD_FLAGS_LIST NATIVE_COMMAND "${CORRELATION_SIMD_FLAGS}")
+    target_compile_options(calculators_obj PRIVATE ${SIMD_FLAGS_LIST})
+endif()
 
 # Writers as an OBJECT library to ensure static registration triggers
 add_library(writers_obj OBJECT
@@ -54,6 +64,10 @@ target_include_directories(writers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 target_link_libraries(writers_obj PRIVATE HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_shared parquet_shared)
+if (CORRELATION_SIMD_FLAGS)
+    separate_arguments(SIMD_FLAGS_LIST NATIVE_COMMAND "${CORRELATION_SIMD_FLAGS}")
+    target_compile_options(writers_obj PRIVATE ${SIMD_FLAGS_LIST})
+endif()
 
 # Add sources to library
 add_library(correlation_lib STATIC
@@ -78,15 +92,9 @@ target_include_directories(correlation_lib PUBLIC
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
 
 if (CORRELATION_SIMD_FLAGS)
-  # Apply SIMD flags to translation units that use SIMD kernels
-  set_source_files_properties(
-      calculators/DistanceCalculator.cpp
-      calculators/StructureFactorCalculator.cpp
-      calculators/XRDCalculator.cpp
-      calculators/RDFCalculator.cpp
-      calculators/AngleCalculator.cpp
-      PROPERTIES COMPILE_FLAGS "${CORRELATION_SIMD_FLAGS}"
-  )
+  # Ensure the entire library uses consistent SIMD flags for ABI safety
+  separate_arguments(SIMD_FLAGS_LIST NATIVE_COMMAND "${CORRELATION_SIMD_FLAGS}")
+  target_compile_options(correlation_lib PUBLIC ${SIMD_FLAGS_LIST})
 endif()
 
 target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
@@ -110,6 +118,12 @@ endif()
 
 # Link correlation_lib to correlation
 set(CORRELATION_LIBS correlation_lib Slint::Slint)
+
+if (CORRELATION_SIMD_FLAGS)
+    # Main executable must also use SIMD flags to avoid ABI issues with Vector3
+    separate_arguments(SIMD_FLAGS_LIST NATIVE_COMMAND "${CORRELATION_SIMD_FLAGS}")
+    target_compile_options(correlation PRIVATE ${SIMD_FLAGS_LIST})
+endif()
 
 if (WIN32)
     list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme)
