@@ -3,20 +3,21 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "Cell.hpp"
-#include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include <gtest/gtest.h>
 
 TEST(_09_TrajectoryAnalyzer_Tests, BasicUsage) {
   // Create a dummy cell
-  Cell cell;
+  correlation::core::Cell cell;
   cell.setLatticeParameters({10, 10, 10, 90, 90, 90});
   cell.addAtom("H", {0.5, 0.5, 0.5});
   cell.addAtom("H", {1.5, 0.5, 0.5}); // Distance 1.0
 
   // Create a trajectory with multiple frames
-  Trajectory trajectory;
+  correlation::core::Trajectory trajectory;
   trajectory.addFrame(cell);
   trajectory.addFrame(cell);
 

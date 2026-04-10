@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include "Trajectory.hpp"
+#include "core/Trajectory.hpp"
+
 #include <tuple>
 #include <vector>
 
@@ -16,7 +17,7 @@
  * @brief Static class providing dynamics analysis methods.
  *
  * This class contains stateless static methods for calculating time-dependent
- * properties like VACF and VDOS from Trajectory data.
+ * properties like VACF and VDOS from correlation::core::Trajectory data.
  */
 class DynamicsAnalyzer {
 public:
@@ -37,8 +38,8 @@ public:
    * max_correlation_frames.
    */
   static std::vector<double>
-  calculateVACF(const Trajectory &traj, int max_correlation_frames,
-                size_t start_frame = 0,
+  calculateVACF(const correlation::core::Trajectory &traj,
+                int max_correlation_frames, size_t start_frame = 0,
                 size_t end_frame = static_cast<size_t>(-1));
 
   /**
@@ -52,8 +53,8 @@ public:
    * @return A vector containing the normalized VACF values.
    */
   static std::vector<double>
-  calculateNormalizedVACF(const Trajectory &traj, int max_correlation_frames,
-                          size_t start_frame = 0,
+  calculateNormalizedVACF(const correlation::core::Trajectory &traj,
+                          int max_correlation_frames, size_t start_frame = 0,
                           size_t end_frame = static_cast<size_t>(-1));
 
   /**
@@ -75,17 +76,18 @@ public:
    * @return A vector of MSD values indexed by lag (in Å²).
    */
   static std::vector<double>
-  calculateMSD(const Trajectory &traj, int max_correlation_frames,
-               size_t start_frame = 0,
+  calculateMSD(const correlation::core::Trajectory &traj,
+               int max_correlation_frames, size_t start_frame = 0,
                size_t end_frame = static_cast<size_t>(-1));
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
    *
    * Real part (Cosine Transform):
-   * @f[ \text{VDOS}_{\text{re}}(\omega) = \int_0^{\infty} C(t)\,\cos(\omega t)\,\mathrm{d}t @f]
-   * Imaginary part (Sine Transform):
-   * @f[ \text{VDOS}_{\text{im}}(\omega) = \int_0^{\infty} C(t)\,\sin(\omega t)\,\mathrm{d}t @f]
+   * @f[ \text{VDOS}_{\text{re}}(\omega) = \int_0^{\infty} C(t)\,\cos(\omega
+   * t)\,\mathrm{d}t @f] Imaginary part (Sine Transform):
+   * @f[ \text{VDOS}_{\text{im}}(\omega) = \int_0^{\infty} C(t)\,\sin(\omega
+   * t)\,\mathrm{d}t @f]
    *
    * @param vacf The Velocity Autocorrelation Function.
    * @param dt The time step between frames (in femtoseconds).

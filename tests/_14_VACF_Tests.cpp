@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DistributionFunctions.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
-
-#include "Cell.hpp"
-#include "DistributionFunctions.hpp"
-#include "Trajectory.hpp"
 
 // Test fixture for VACF and VDOS tests.
 class _14_VACF_Tests : public ::testing::Test {
@@ -17,9 +17,9 @@ protected:
 };
 
 TEST_F(_14_VACF_Tests, CalculateVACF_and_VDOS) {
-  Cell c({10, 10, 10, 90, 90, 90});
+  correlation::core::Cell c({10, 10, 10, 90, 90, 90});
   c.addAtom("Ar", {0, 0, 0});
-  Trajectory t;
+  correlation::core::Trajectory t;
   t.addFrame(c);
   t.addFrame(c); // Static
   t.calculateVelocities();
@@ -33,23 +33,23 @@ TEST_F(_14_VACF_Tests, CalculateVACF_and_VDOS) {
   // If static, position constant -> velocity 0. Correlation of 0 with 0 is 0.
   // Let's give it velocity.
 
-  Trajectory tMoving;
-  Cell c1 = c;
+  correlation::core::Trajectory tMoving;
+  correlation::core::Cell c1 = c;
 
-  Cell c2({10, 10, 10, 90, 90, 90});
-  // Atom 1 moves +1.0 in x
+  correlation::core::Cell c2({10, 10, 10, 90, 90, 90});
+  // correlation::core::Atom 1 moves +1.0 in x
   c2.addAtom("Ar", {1.0, 0.0, 0.0});
-  // Atom 2 moves -1.0 in x (balancing COM)
+  // correlation::core::Atom 2 moves -1.0 in x (balancing COM)
   c2.addAtom("Ar", {-1.0, 0.0, 0.0});
 
-  Cell c3({10, 10, 10, 90, 90, 90});
-  // Atom 1 moves to +2.0
+  correlation::core::Cell c3({10, 10, 10, 90, 90, 90});
+  // correlation::core::Atom 1 moves to +2.0
   c3.addAtom("Ar", {2.0, 0.0, 0.0});
-  // Atom 2 moves to -2.0
+  // correlation::core::Atom 2 moves to -2.0
   c3.addAtom("Ar", {-2.0, 0.0, 0.0});
 
   // Need to update c1 (frame 0) to have 2 atoms at 0
-  c1 = Cell({10, 10, 10, 90, 90, 90});
+  c1 = correlation::core::Cell({10, 10, 10, 90, 90, 90});
   c1.addAtom("Ar", {0.0, 0.0, 0.0});
   c1.addAtom("Ar", {0.0, 0.0, 0.0});
 
@@ -72,19 +72,19 @@ TEST_F(_14_VACF_Tests, CalculateVACF_and_VDOS) {
 }
 
 TEST_F(_14_VACF_Tests, CalculateVACF_WithFrameRange) {
-  Trajectory tRange;
+  correlation::core::Trajectory tRange;
   tRange.setTimeStep(1.0);
 
   // Create 10 frames
   for (int i = 0; i < 10; ++i) {
-    Cell c({10, 10, 10, 90, 90, 90});
+    correlation::core::Cell c({10, 10, 10, 90, 90, 90});
     c.addAtom("Ar", {static_cast<double>(i), 0.0, 0.0});
     c.addAtom("Ar", {-static_cast<double>(i), 0.0, 0.0});
     tRange.addFrame(c);
   }
   tRange.calculateVelocities();
 
-  Cell base_cell({10, 10, 10, 90, 90, 90});
+  correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
   DistributionFunctions df(base_cell, 0.0, {{0.0}});
@@ -109,7 +109,7 @@ TEST_F(_14_VACF_Tests, CalculateVACF_WithFrameRange) {
 }
 
 TEST_F(_14_VACF_Tests, CalculateVACF_GasLike) {
-  Trajectory tGas;
+  correlation::core::Trajectory tGas;
   tGas.setTimeStep(1.0);
 
   // We want to simulate a gas-like behavior where VACF decays exponentially
@@ -127,14 +127,14 @@ TEST_F(_14_VACF_Tests, CalculateVACF_GasLike) {
                                    2.625, 2.6875, 2.71875, 2.734375};
 
   for (double x : positions) {
-    Cell c({10, 10, 10, 90, 90, 90});
+    correlation::core::Cell c({10, 10, 10, 90, 90, 90});
     c.addAtom("Ar", {x, 0.0, 0.0});
     c.addAtom("Ar", {-x, 0.0, 0.0}); // To balance COM
     tGas.addFrame(c);
   }
   tGas.calculateVelocities();
 
-  Cell base_cell({10, 10, 10, 90, 90, 90});
+  correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
   DistributionFunctions df(base_cell, 0.0, {{0.0}});

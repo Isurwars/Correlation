@@ -8,12 +8,13 @@
 
 #pragma once
 
+#include "core/Trajectory.hpp"
+
 #include <string>
 
 // Forward declarations
 class DistributionFunctions;
 struct AnalysisSettings;
-class Trajectory;
 
 /**
  * @brief Base class for all analysis calculators.
@@ -28,7 +29,8 @@ public:
   virtual std::string getName() const = 0;
 
   /**
-   * @brief Returns a short, UI-friendly name of the calculator (e.g. "g_r", "S_q").
+   * @brief Returns a short, UI-friendly name of the calculator (e.g. "g_r",
+   * "S_q").
    */
   virtual std::string getShortName() const = 0;
 
@@ -66,6 +68,6 @@ public:
    *        Called once after all frames are accumulated.
    */
   virtual void calculateTrajectory(DistributionFunctions &df,
-                                   const Trajectory &traj,
+                                   const correlation::core::Trajectory &traj,
                                    const AnalysisSettings &settings) const {}
 };

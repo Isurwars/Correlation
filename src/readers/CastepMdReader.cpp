@@ -7,8 +7,8 @@
  */
 
 #include "readers/CastepMdReader.hpp"
-#include "Cell.hpp"
-#include "Trajectory.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "readers/ReaderFactory.hpp"
@@ -28,19 +28,20 @@ namespace correlation::readers {
 static bool registered = ReaderFactory::instance().registerReader(
     std::make_unique<CastepMdReader>());
 
-Cell CastepMdReader::readStructure(
+correlation::core::Cell CastepMdReader::readStructure(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
   return CastepMdReader::read(filename, progress_callback).at(0);
 }
 
-Trajectory CastepMdReader::readTrajectory(
+correlation::core::Trajectory CastepMdReader::readTrajectory(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
-  return Trajectory(CastepMdReader::read(filename, progress_callback), 1.0);
+  return correlation::core::Trajectory(
+      CastepMdReader::read(filename, progress_callback), 1.0);
 }
 
-std::vector<Cell> CastepMdReader::read(
+std::vector<correlation::core::Cell> CastepMdReader::read(
     const std::string &file_name,
     std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
@@ -49,7 +50,7 @@ std::vector<Cell> CastepMdReader::read(
                              std::strerror(errno) + ").");
   }
 
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   std::string line;
 
   // Parse frames
@@ -69,7 +70,7 @@ std::vector<Cell> CastepMdReader::read(
   }
 
   // Temporary storage for building the current cell
-  Cell tempCell;
+  correlation::core::Cell tempCell;
   double current_energy = 0.0;
   bool cell_has_atoms = false;
 
@@ -98,7 +99,7 @@ std::vector<Cell> CastepMdReader::read(
         frames.push_back(std::move(tempCell));
 
         // Re-initialize for next frame but keep lattice & energy
-        tempCell = Cell(last_lattice);
+        tempCell = correlation::core::Cell(last_lattice);
         tempCell.setEnergy(last_energy);
         cell_has_atoms = false;
       }
@@ -140,8 +141,8 @@ std::vector<Cell> CastepMdReader::read(
         h3[i] *= correlation::math::bohr_to_angstrom;
       }
 
-      tempCell = Cell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]},
-                      {h3[0], h3[1], h3[2]});
+      tempCell = correlation::core::Cell(
+          {h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
       continue;
     }
 
@@ -154,11 +155,10 @@ std::vector<Cell> CastepMdReader::read(
       int id;
       double x, y, z;
       if (ss >> symbol >> id >> x >> y >> z) {
-        tempCell.addAtom(
-            symbol, correlation::math::Vector3<double>(
-                        x * correlation::math::bohr_to_angstrom,
-                        y * correlation::math::bohr_to_angstrom,
-                        z * correlation::math::bohr_to_angstrom));
+        tempCell.addAtom(symbol, correlation::math::Vector3<double>(
+                                     x * correlation::math::bohr_to_angstrom,
+                                     y * correlation::math::bohr_to_angstrom,
+                                     z * correlation::math::bohr_to_angstrom));
         tempCell.setEnergy(
             current_energy); // Assign energy once per atom or frame
         cell_has_atoms = true;

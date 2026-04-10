@@ -6,47 +6,45 @@
  * SPDX-License-Identifier: MIT
  */
 #include "readers/CarReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <array>
 #include <cerrno>
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
-#include <memory>
-#include <functional>
-
-#include "Cell.hpp"
-#include "Trajectory.hpp"
 
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<CarReader>()
-);
+static bool registered =
+    ReaderFactory::instance().registerReader(std::make_unique<CarReader>());
 
-Cell CarReader::readStructure(const std::string &filename,
-                               std::function<void(float, const std::string &)>
-                                   progress_callback) {
+correlation::core::Cell CarReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   return read(filename);
 }
 
-Trajectory CarReader::readTrajectory(const std::string &filename,
-                                      std::function<void(float, const std::string &)>
-                                          progress_callback) {
+correlation::core::Trajectory CarReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   throw std::runtime_error("CAR files are structures, use readStructure.");
 }
 
-Cell CarReader::read(const std::string &file_name) {
+correlation::core::Cell CarReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
                              std::strerror(errno) + ").");
   }
 
-  Cell tempCell;
+  correlation::core::Cell tempCell;
   std::string line;
 
   while (std::getline(myfile, line)) {

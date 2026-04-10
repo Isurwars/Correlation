@@ -21,6 +21,7 @@
 #include <parquet/arrow/writer.h>
 #include <parquet/exception.h>
 
+using namespace correlation::core;
 namespace correlation::writers {
 
 // Automatic registration

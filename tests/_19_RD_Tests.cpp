@@ -3,18 +3,18 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include <gtest/gtest.h>
-
-#include "NeighborGraph.hpp"
 #include "calculators/RDCalculator.hpp"
+#include "core/NeighborGraph.hpp"
+
+#include <gtest/gtest.h>
 
 class _19_RD_Tests : public ::testing::Test {
 protected:
-  NeighborGraph graph;
+  correlation::core::NeighborGraph graph;
 
   void SetUp() override {
     // Generate a simple triangle (3-ring)
-    graph = NeighborGraph(3);
+    graph = correlation::core::NeighborGraph(3);
     graph.addDirectedEdge(0, 1, 1.0, {1, 0, 0});
     graph.addDirectedEdge(1, 0, 1.0, {-1, 0, 0});
 
@@ -49,11 +49,12 @@ TEST_F(_19_RD_Tests, InvalidMaxRingSize) {
   EXPECT_THROW(RDCalculator::calculate(graph, 2), std::invalid_argument);
 }
 
-#include "readers/FileReader.hpp"
 #include "StructureAnalyzer.hpp"
-#include "Trajectory.hpp"
+#include "core/Trajectory.hpp"
+#include "readers/FileReader.hpp"
 #include <fstream>
 
+using namespace correlation::core;
 TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
   std::ifstream f(cellulose_path);
@@ -70,8 +71,10 @@ TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
     }
   }
 
-  correlation::readers::FileType type = correlation::readers::determineFileType(cellulose_path);
-  Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType(cellulose_path);
+  correlation::core::Trajectory traj =
+      correlation::readers::readTrajectory(cellulose_path, type);
   if (traj.getFrames().empty()) {
     GTEST_SKIP() << "No frames found in Cellulose.md";
     return;
@@ -100,9 +103,10 @@ TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
   }
   traj.setBondCutoffsSQ(cutoffs);
 
-  Cell frame = traj.getFrames()[0];
+  correlation::core::Cell frame = traj.getFrames()[0];
   StructureAnalyzer analyzer(frame, 3.0, traj.getBondCutoffsSQ(), true);
-  const NeighborGraph &graph_cellulose = analyzer.neighborGraph();
+  const correlation::core::NeighborGraph &graph_cellulose =
+      analyzer.neighborGraph();
 
   size_t max_ring_size = 10;
 

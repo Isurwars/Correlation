@@ -9,6 +9,7 @@
 #include "calculators/RDCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "calculators/MotifFinder.hpp"
+
 #include <stdexcept>
 
 namespace {
@@ -21,11 +22,11 @@ void RDCalculator::calculateFrame(DistributionFunctions &df,
   if (!df.neighbors()) {
     return;
   }
-  df.addHistogram("RD",
-                  calculate(df.neighbors()->neighborGraph(), settings.max_ring_size));
+  df.addHistogram(
+      "RD", calculate(df.neighbors()->neighborGraph(), settings.max_ring_size));
 }
 
-Histogram RDCalculator::calculate(const NeighborGraph &graph,
+Histogram RDCalculator::calculate(const correlation::core::NeighborGraph &graph,
                                   size_t max_ring_size) {
   if (max_ring_size < 3) {
     throw std::invalid_argument("Max ring size must be at least 3");

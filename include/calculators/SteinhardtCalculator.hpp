@@ -10,6 +10,7 @@
 
 #include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
+
 #include <complex>
 
 /**
@@ -33,7 +34,8 @@ public:
 
   // Static function to calculate Steinhardt histograms
   static std::map<std::string, Histogram>
-  calculate(const Cell &cell, const StructureAnalyzer *neighbors);
+  calculate(const correlation::core::Cell &cell,
+            const StructureAnalyzer *neighbors);
 
   // Helper math functions
   static std::complex<double> sphericalHarmonic(int l, int m, double theta,

@@ -3,24 +3,25 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include <gtest/gtest.h>
-
-#include "Cell.hpp"
-#include "NeighborGraph.hpp"
 #include "calculators/MotifFinder.hpp"
+#include "core/Cell.hpp"
+#include "core/NeighborGraph.hpp"
+
+#include <gtest/gtest.h>
 
 class _07_MotifFinder_Tests : public ::testing::Test {
 protected:
-  Cell cell;
-  NeighborGraph graph;
+  correlation::core::Cell cell;
+  correlation::core::NeighborGraph graph;
 
   void SetUp() override {
-    cell = Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
+    cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0},
+                                   {0.0, 0.0, 20.0});
   }
 };
 
 TEST_F(_07_MotifFinder_Tests, DetectsSingleTriangle) {
-  graph = NeighborGraph(3);
+  graph = correlation::core::NeighborGraph(3);
 
   // 0-1, 1-2, 2-0
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
@@ -41,7 +42,7 @@ TEST_F(_07_MotifFinder_Tests, DetectsSingleTriangle) {
 }
 
 TEST_F(_07_MotifFinder_Tests, DetectsSingleSquare) {
-  graph = NeighborGraph(4);
+  graph = correlation::core::NeighborGraph(4);
 
   // 0-1, 1-2, 2-3, 3-0
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});

@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "Cell.hpp"
 #include "StructureAnalyzer.hpp"
 #include "calculators/SteinhardtCalculator.hpp"
+#include "core/Cell.hpp"
+
 #include <gtest/gtest.h>
 
 class _22_SteinhardtCalculator_Tests : public ::testing::Test {
@@ -45,7 +46,7 @@ protected:
 };
 
 TEST_F(_22_SteinhardtCalculator_Tests, SimpleCubic) {
-  Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
   // ignore_periodic_self_interactions = false
@@ -56,7 +57,7 @@ TEST_F(_22_SteinhardtCalculator_Tests, SimpleCubic) {
 }
 
 TEST_F(_22_SteinhardtCalculator_Tests, BCC) {
-  Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
@@ -68,7 +69,7 @@ TEST_F(_22_SteinhardtCalculator_Tests, BCC) {
 }
 
 TEST_F(_22_SteinhardtCalculator_Tests, FCC) {
-  Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.0});
   cell.addAtom("Ar", {0.5, 0.0, 0.5});
@@ -82,7 +83,7 @@ TEST_F(_22_SteinhardtCalculator_Tests, FCC) {
 }
 
 TEST_F(_22_SteinhardtCalculator_Tests, Icosahedral) {
-  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
   double phi = (1.0 + std::sqrt(5.0)) / 2.0;

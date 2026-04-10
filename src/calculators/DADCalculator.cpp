@@ -24,7 +24,7 @@ void DADCalculator::calculateFrame(DistributionFunctions &df,
       "DAD", calculate(df.cell(), df.neighbors(), settings.dihedral_bin_width));
 }
 
-Histogram DADCalculator::calculate(const Cell &cell,
+Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
                                    const StructureAnalyzer *neighbors,
                                    double bin_width) {
   if (bin_width <= 0) {

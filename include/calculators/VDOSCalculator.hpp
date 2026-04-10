@@ -27,7 +27,8 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(DistributionFunctions &df, const Trajectory &traj,
+  void calculateTrajectory(DistributionFunctions &df,
+                           const correlation::core::Trajectory &traj,
                            const AnalysisSettings &settings) const override;
 
   static Histogram calculate(const Histogram &vacf_hist);

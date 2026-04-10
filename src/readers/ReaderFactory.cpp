@@ -7,6 +7,7 @@
  */
 
 #include "readers/ReaderFactory.hpp"
+
 #include <algorithm>
 
 namespace correlation::readers {
@@ -17,12 +18,15 @@ ReaderFactory &ReaderFactory::instance() {
 }
 
 bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
-  if (!reader) return false;
+  if (!reader)
+    return false;
 
   for (const auto &ext : reader->getExtensions()) {
     std::string lower_ext = ext;
-    if (lower_ext[0] != '.') lower_ext = "." + lower_ext;
-    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
+    if (lower_ext[0] != '.')
+      lower_ext = "." + lower_ext;
+    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
+                   ::tolower);
     extension_map_[lower_ext] = reader.get();
   }
 
@@ -32,8 +36,10 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
 
 BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension) {
   std::string lower_ext = extension;
-  if (lower_ext[0] != '.') lower_ext = "." + lower_ext;
-  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
+  if (lower_ext[0] != '.')
+    lower_ext = "." + lower_ext;
+  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
+                 ::tolower);
 
   auto it = extension_map_.find(lower_ext);
   if (it != extension_map_.end()) {
@@ -51,7 +57,8 @@ std::vector<std::string> ReaderFactory::getAllExtensions() const {
   return extensions;
 }
 
-const std::vector<std::unique_ptr<BaseReader>> &ReaderFactory::getReaders() const {
+const std::vector<std::unique_ptr<BaseReader>> &
+ReaderFactory::getReaders() const {
   return readers_;
 }
 

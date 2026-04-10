@@ -6,6 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 #include "readers/LammpsDumpReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <cerrno>
@@ -18,16 +20,13 @@
 #include <string>
 #include <vector>
 
-#include "Cell.hpp"
-#include "Trajectory.hpp"
-
 namespace correlation::readers {
 
 // Automatic registration
 static bool registered = ReaderFactory::instance().registerReader(
     std::make_unique<LammpsDumpReader>());
 
-Cell LammpsDumpReader::readStructure(
+correlation::core::Cell LammpsDumpReader::readStructure(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
   auto frames = read(filename, progress_callback);
@@ -38,17 +37,17 @@ Cell LammpsDumpReader::readStructure(
   return frames.front();
 }
 
-Trajectory LammpsDumpReader::readTrajectory(
+correlation::core::Trajectory LammpsDumpReader::readTrajectory(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
-  return Trajectory(read(filename, progress_callback), 1.0);
+  return correlation::core::Trajectory(read(filename, progress_callback), 1.0);
 }
 
 // ---------------------------------------------------------------------------
 // Core parser
 // ---------------------------------------------------------------------------
 
-std::vector<Cell> LammpsDumpReader::read(
+std::vector<correlation::core::Cell> LammpsDumpReader::read(
     const std::string &file_name,
     std::function<void(float, const std::string &)> progress_callback) {
 
@@ -66,7 +65,7 @@ std::vector<Cell> LammpsDumpReader::read(
   const size_t update_interval =
       (file_size > 100) ? static_cast<size_t>(file_size) / 100 : 1;
 
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   std::string line;
 
   while (std::getline(myfile, line)) {
@@ -133,7 +132,7 @@ std::vector<Cell> LammpsDumpReader::read(
     // Build the Cell from the box definition.
     // For orthorhombic boxes this is straightforward. For triclinic we pass
     // the full lattice vectors following the LAMMPS convention.
-    Cell frame;
+    correlation::core::Cell frame;
     if (triclinic) {
       // LAMMPS triclinic lattice vectors:
       //   a = (lx,  0,  0)
@@ -142,10 +141,11 @@ std::vector<Cell> LammpsDumpReader::read(
       const double lx = xhi - xlo;
       const double ly = yhi - ylo;
       const double lz = zhi - zlo;
-      frame = Cell({lx, 0.0, 0.0}, {xy, ly, 0.0}, {xz, yz, lz});
+      frame =
+          correlation::core::Cell({lx, 0.0, 0.0}, {xy, ly, 0.0}, {xz, yz, lz});
     } else {
-      frame = Cell({xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0},
-                   {0.0, 0.0, zhi - zlo});
+      frame = correlation::core::Cell(
+          {xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0}, {0.0, 0.0, zhi - zlo});
     }
 
     // --- ATOMS header — discover column layout ---

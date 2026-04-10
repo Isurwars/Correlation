@@ -12,15 +12,14 @@
 #endif
 
 #include "AppController.hpp"
+#include "calculators/CalculatorFactory.hpp"
+#include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <string>
 #include <vector>
-
-#include "plotters/SvgPlotter.hpp"
-#include "calculators/CalculatorFactory.hpp"
-#include <fstream>
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -544,10 +543,12 @@ void AppController::handleSelectPlot(int index) {
     return;
   const std::string &name = available_plot_keys_[index];
   const Histogram *hist = backend_.getHistogram(name);
-  if (!hist) return;
+  if (!hist)
+    return;
   correlation::plotters::PlotConfig config;
-  config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
-                                   : correlation::plotters::PlotConfig::Theme::Light;
+  config.theme = ui_.get_is_dark()
+                     ? correlation::plotters::PlotConfig::Theme::Dark
+                     : correlation::plotters::PlotConfig::Theme::Light;
   std::string svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
 
   // Diagnostic file output

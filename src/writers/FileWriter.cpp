@@ -8,6 +8,8 @@
 
 #include "writers/FileWriter.hpp"
 #include "writers/WriterFactory.hpp"
+
+using namespace correlation::core;
 namespace correlation::writers {
 
 FileWriter::FileWriter(const DistributionFunctions &df) : df_(df) {}

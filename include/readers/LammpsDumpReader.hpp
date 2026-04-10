@@ -7,13 +7,13 @@
  */
 #pragma once
 
+#include "BaseReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include <functional>
 #include <string>
 #include <vector>
-
-#include "Cell.hpp"
-#include "Trajectory.hpp"
-#include "BaseReader.hpp"
 
 namespace correlation::readers {
 
@@ -33,22 +33,26 @@ public:
   }
   bool isTrajectory() const override { return true; }
 
-  Cell readStructure(const std::string &filename,
-                     std::function<void(float, const std::string &)>
-                         progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) override;
 
-  Trajectory readTrajectory(const std::string &filename,
-                            std::function<void(float, const std::string &)>
-                                progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) override;
 
   /**
    * @brief Reads all frames from a LAMMPS dump file.
    *
    * @param file_name        Path to the dump file.
-   * @param progress_callback Optional callback invoked with (fraction, message).
-   * @return A vector of Cell objects, one per timestep found in the file.
+   * @param progress_callback Optional callback invoked with (fraction,
+   * message).
+   * @return A vector of correlation::core::Cell objects, one per timestep found
+   * in the file.
    */
-  static std::vector<Cell>
+  static std::vector<correlation::core::Cell>
   read(const std::string &file_name,
        std::function<void(float, const std::string &)> progress_callback =
            nullptr);

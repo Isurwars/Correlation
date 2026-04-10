@@ -11,6 +11,7 @@
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
 #include "physics/PhysicalData.hpp"
+
 #include <cmath>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
@@ -31,11 +32,10 @@ void XRDCalculator::calculateFrame(DistributionFunctions &df,
                                    settings.q_bin_width));
 }
 
-Histogram
-XRDCalculator::calculate(const Histogram &g_r_hist, const Cell &cell,
-                         const std::map<std::string, double> &ashcroft_weights,
-                         double lambda, double theta_min, double theta_max,
-                         double bin_width) {
+Histogram XRDCalculator::calculate(
+    const Histogram &g_r_hist, const correlation::core::Cell &cell,
+    const std::map<std::string, double> &ashcroft_weights, double lambda,
+    double theta_min, double theta_max, double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive.");
   }

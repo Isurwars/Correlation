@@ -16,7 +16,7 @@ bool registered = CalculatorFactory::instance().registerCalculator(
 } // namespace
 
 void MSDCalculator::calculateTrajectory(
-    DistributionFunctions &df, const Trajectory &traj,
+    DistributionFunctions &df, const correlation::core::Trajectory &traj,
     const AnalysisSettings &settings) const {
   auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
   for (auto &[name, histogram] : results) {
@@ -25,8 +25,9 @@ void MSDCalculator::calculateTrajectory(
 }
 
 std::map<std::string, Histogram>
-MSDCalculator::calculate(const Trajectory &traj, int max_correlation_frames,
-                         size_t start_frame, size_t end_frame) {
+MSDCalculator::calculate(const correlation::core::Trajectory &traj,
+                         int max_correlation_frames, size_t start_frame,
+                         size_t end_frame) {
   std::map<std::string, Histogram> results;
 
   // MSD requires positional data only (frames), not velocity data

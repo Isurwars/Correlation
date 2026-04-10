@@ -8,11 +8,13 @@
 
 #pragma once
 
+#include "math/LinearAlgebra.hpp"
+
 #include <algorithm>
 #include <cstdint>
 #include <string>
 
-#include "math/LinearAlgebra.hpp"
+namespace correlation::core {
 
 using AtomID = std::uint32_t;
 
@@ -59,8 +61,7 @@ public:
    * @param pos The position vector of the atom.
    * @param id The unique ID of the atom.
    */
-  explicit Atom(Element element, correlation::math::Vector3<double> pos,
-                AtomID id) noexcept
+  explicit Atom(Element element, math::Vector3<double> pos, AtomID id) noexcept
       : element_(std::move(element)), position_(pos), id_(id) {}
 
   //-------------------------------------------------------------------------//
@@ -83,8 +84,7 @@ public:
    * @brief Gets the position of the atom.
    * @return A const reference to the position vector.
    */
-  [[nodiscard]] const correlation::math::Vector3<double> &
-  position() const noexcept {
+  [[nodiscard]] const math::Vector3<double> &position() const noexcept {
     return position_;
   }
 
@@ -92,7 +92,7 @@ public:
    * @brief Sets the position of the atom.
    * @param pos The new position vector.
    */
-  void setPosition(correlation::math::Vector3<double> pos) { position_ = pos; }
+  void setPosition(math::Vector3<double> pos) { position_ = pos; }
 
   /**
    * @brief Gets the element type of the atom.
@@ -114,7 +114,7 @@ public:
 
 private:
   AtomID id_;
-  correlation::math::Vector3<double> position_;
+  math::Vector3<double> position_;
   Element element_;
 };
 
@@ -122,7 +122,7 @@ private:
  * @brief Calculates the Euclidean distance between two atoms.
  */
 [[nodiscard]] inline double distance(const Atom &a, const Atom &b) noexcept {
-  return correlation::math::norm(a.position() - b.position());
+  return math::norm(a.position() - b.position());
 }
 
 /**
@@ -134,23 +134,22 @@ private:
  */
 [[nodiscard]] inline double angle(const Atom &center, const Atom &a,
                                   const Atom &b) noexcept {
-  const correlation::math::Vector3<double> vA =
-      a.position() - center.position();
-  const correlation::math::Vector3<double> vB =
-      b.position() - center.position();
+  const math::Vector3<double> vA = a.position() - center.position();
+  const math::Vector3<double> vB = b.position() - center.position();
 
-  const double norm_sq_A = correlation::math::dot(vA, vA);
-  const double norm_sq_B = correlation::math::dot(vB, vB);
+  const double norm_sq_A = math::dot(vA, vA);
+  const double norm_sq_B = math::dot(vB, vB);
 
   if (norm_sq_A == 0.0 || norm_sq_B == 0.0) {
     return 0.0;
   }
 
-  double cos_theta =
-      correlation::math::dot(vA, vB) / std::sqrt(norm_sq_A * norm_sq_B);
+  double cos_theta = math::dot(vA, vB) / std::sqrt(norm_sq_A * norm_sq_B);
 
   // Clamp for numerical stability
   cos_theta = std::clamp(cos_theta, -1.0, 1.0);
 
   return std::acos(cos_theta);
 }
+
+} // namespace correlation::core

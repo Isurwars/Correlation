@@ -3,28 +3,28 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "readers/FileReader.hpp"
+
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
 
-#include "Cell.hpp"
-#include "readers/FileReader.hpp"
-#include "Trajectory.hpp"
-
-// Test fixture for Trajectory tests
+// Test fixture for correlation::core::Trajectory tests
 class _03_Trajectory_Tests : public ::testing::Test {
 protected:
   // Helper to create a dummy frame with a specific position for an atom
-  Cell createFrame(double x, double y, double z) {
+  correlation::core::Cell createFrame(double x, double y, double z) {
     // Create a simple cubic lattice
     correlation::math::Vector3<double> a = {10.0, 0.0, 0.0};
     correlation::math::Vector3<double> b = {0.0, 10.0, 0.0};
     correlation::math::Vector3<double> c = {0.0, 0.0, 10.0};
 
-    Cell frame(a, b, c);
+    correlation::core::Cell frame(a, b, c);
 
     // Add one atom
     // addAtom automatically handles element registration
@@ -47,18 +47,18 @@ protected:
 // --- Constructor Tests ---
 
 TEST_F(_03_Trajectory_Tests, DefaultConstructorInitializesCorrectly) {
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   EXPECT_EQ(traj.getFrameCount(), 0);
   EXPECT_DOUBLE_EQ(traj.getTimeStep(), 1.0); // Default timestep
   EXPECT_TRUE(traj.getFrames().empty());
 }
 
 TEST_F(_03_Trajectory_Tests, ParameterizedConstructorSetsFramesAndTimestep) {
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(1.0, 1.0, 1.0));
 
-  Trajectory traj(frames, 0.5);
+  correlation::core::Trajectory traj(frames, 0.5);
 
   EXPECT_EQ(traj.getFrameCount(), 2);
   EXPECT_DOUBLE_EQ(traj.getTimeStep(), 0.5);
@@ -68,11 +68,11 @@ TEST_F(_03_Trajectory_Tests, ParameterizedConstructorSetsFramesAndTimestep) {
 // --- Accessor Tests ---
 
 TEST_F(_03_Trajectory_Tests, AccessorsWorkCorrectly) {
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   traj.setTimeStep(2.0);
   EXPECT_DOUBLE_EQ(traj.getTimeStep(), 2.0);
 
-  Cell frame = createFrame(0, 0, 0);
+  correlation::core::Cell frame = createFrame(0, 0, 0);
   traj.addFrame(frame);
   EXPECT_EQ(traj.getFrameCount(), 1);
   EXPECT_EQ(traj.getFrames().size(), 1);
@@ -81,8 +81,8 @@ TEST_F(_03_Trajectory_Tests, AccessorsWorkCorrectly) {
 // --- Frame Management Tests ---
 
 TEST_F(_03_Trajectory_Tests, AddFrameAddsFrameToTrajectory) {
-  Trajectory traj;
-  Cell frame = createFrame(1.0, 2.0, 3.0);
+  correlation::core::Trajectory traj;
+  correlation::core::Cell frame = createFrame(1.0, 2.0, 3.0);
   traj.addFrame(frame);
 
   ASSERT_EQ(traj.getFrameCount(), 1);
@@ -92,14 +92,14 @@ TEST_F(_03_Trajectory_Tests, AddFrameAddsFrameToTrajectory) {
 // --- Velocity Calculation Tests ---
 
 TEST_F(_03_Trajectory_Tests, CalculateVelocitiesComputesCorrectVelocities) {
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   // Particle moving at constant velocity (1, 0, 0) per frame
   // Time step = 1.0
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(1.0, 0.0, 0.0));
   frames.push_back(createFrame(2.0, 0.0, 0.0));
 
-  Trajectory traj(frames, 1.0);
+  correlation::core::Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
 
   const auto &velocities = traj.getVelocities();
@@ -122,15 +122,15 @@ TEST_F(_03_Trajectory_Tests, CalculateVelocitiesHandlesPBC) {
   correlation::math::Vector3<double> b = {0.0, 10.0, 0.0};
   correlation::math::Vector3<double> c = {0.0, 0.0, 10.0};
 
-  Cell frame1(a, b, c);
+  correlation::core::Cell frame1(a, b, c);
   frame1.addAtom("H", {9.0, 5.0, 5.0}); // Near boundary
 
-  Cell frame2(a, b, c);
+  correlation::core::Cell frame2(a, b, c);
   frame2.addAtom(
       "H", {1.0, 5.0, 5.0}); // Wrapped around (moved +2.0 units effectively)
 
-  std::vector<Cell> frames = {frame1, frame2};
-  Trajectory traj(frames, 1.0);
+  std::vector<correlation::core::Cell> frames = {frame1, frame2};
+  correlation::core::Trajectory traj(frames, 1.0);
 
   traj.calculateVelocities();
   const auto &velocities = traj.getVelocities();
@@ -146,28 +146,29 @@ TEST_F(_03_Trajectory_Tests, CalculateVelocitiesHandlesPBC) {
 
 TEST_F(_03_Trajectory_Tests, PrecomputeBondCutoffsCalculatesCorrectly) {
   // Setup a frame with H and O
-  Cell frame = createFrame(0, 0, 0);
+  correlation::core::Cell frame = createFrame(0, 0, 0);
   frame.addAtom("O", {0, 0, 0}); // Adding another atom type
 
-  std::vector<Cell> frames = {frame};
-  Trajectory traj(frames, 1.0);
+  std::vector<correlation::core::Cell> frames = {frame};
+  correlation::core::Trajectory traj(frames, 1.0);
 
   // Manually set cutoffs for test (usually done via PhysicalData or auto-guess)
-  // Here we are testing if the Trajectory class storage works.
-  // BUT precomputeBondCutoffs uses CovalentRadii from PhysicalData usually.
+  // Here we are testing if the correlation::core::Trajectory class storage
+  // works. BUT precomputeBondCutoffs uses CovalentRadii from PhysicalData
+  // usually.
 
   traj.precomputeBondCutoffs();
 
-  // Element IDs: H=0, O=1 (approx, depends on registration order/data)
-  // Let's verify we can retrieve something non-zero.
+  // correlation::core::Element IDs: H=0, O=1 (approx, depends on registration
+  // order/data) Let's verify we can retrieve something non-zero.
 
-  // Retrieve H-H cutoff (id depends on order of insertion in Cell usually or
-  // global ID) In `createFrame`, we added H. In this test we added O. The
-  // element IDs are assigned sequentially in the Cell if not global. Actually
-  // Element::id is global if PhysicalData is used, but here `createFrame` uses
-  // string lookup. Let's rely on the fact that H and O have standard IDs if
-  // PhysicalData is linked, or dynamic IDs if not. Let's check if the vector is
-  // populated.
+  // Retrieve H-H cutoff (id depends on order of insertion in
+  // correlation::core::Cell usually or global ID) In `createFrame`, we added H.
+  // In this test we added O. The element IDs are assigned sequentially in the
+  // correlation::core::Cell if not global. Actually Element::id is global if
+  // PhysicalData is used, but here `createFrame` uses string lookup. Let's rely
+  // on the fact that H and O have standard IDs if PhysicalData is linked, or
+  // dynamic IDs if not. Let's check if the vector is populated.
 
   const auto &cutoffs = traj.getBondCutoffsSQ();
   ASSERT_FALSE(cutoffs.empty());
@@ -189,7 +190,7 @@ TEST_F(_03_Trajectory_Tests, PrecomputeBondCutoffsCalculatesCorrectly) {
 }
 
 TEST_F(_03_Trajectory_Tests, SetBondCutoffsManuallyWorks) {
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   // Set a dummy 2x2 cutoff matrix with squared values
   // We want cutoffs: 1.5, 2.0, 2.5
   // So we pass: 1.5^2=2.25, 2.0^2=4.0, 2.5^2=6.25
@@ -206,31 +207,31 @@ TEST_F(_03_Trajectory_Tests, SetBondCutoffsManuallyWorks) {
 
 TEST_F(_03_Trajectory_Tests, RemoveDuplicatedFrames) {
   // Create a few cells
-  Cell c1;
+  correlation::core::Cell c1;
   c1.addAtom("H", {0.0, 0.0, 0.0});
   c1.addAtom("O", {1.0, 0.0, 0.0});
 
-  Cell c2; // Identical to c1
+  correlation::core::Cell c2; // Identical to c1
   c2.addAtom("H", {0.0, 0.0, 0.0});
   c2.addAtom("O", {1.0, 0.0, 0.0});
 
-  Cell c3; // Different positions
+  correlation::core::Cell c3; // Different positions
   c3.addAtom("H", {0.1, 0.0, 0.0});
   c3.addAtom("O", {1.1, 0.0, 0.0});
 
-  Cell c4; // Identical to c3
+  correlation::core::Cell c4; // Identical to c3
   c4.addAtom("H", {0.1, 0.0, 0.0});
   c4.addAtom("O", {1.1, 0.0, 0.0});
 
-  Cell c5; // Different atoms (simulation: just partial difference or different
-           // position)
-  // To satisfy Trajectory validation, it must have same atom count and symbols
-  // in order
+  correlation::core::Cell c5; // Different atoms (simulation: just partial
+                              // difference or different position)
+  // To satisfy correlation::core::Trajectory validation, it must have same atom
+  // count and symbols in order
   c5.addAtom("H", {0.2, 0.0, 0.0});
   c5.addAtom("O", {1.2, 0.0, 0.0});
 
-  std::vector<Cell> frames = {c1, c2, c3, c4, c5};
-  Trajectory traj(frames, 1.0);
+  std::vector<correlation::core::Cell> frames = {c1, c2, c3, c4, c5};
+  correlation::core::Trajectory traj(frames, 1.0);
 
   // Duplicates are removed in constructor now
   EXPECT_EQ(traj.getFrameCount(), 3);
@@ -261,7 +262,8 @@ TEST_F(_03_Trajectory_Tests, ParseEnergyFromArc) {
   out << "end\n";
   out.close();
 
-  auto traj = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Arc);
+  auto traj = correlation::readers::readTrajectory(
+      filename, correlation::readers::FileType::Arc);
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 1);
 
@@ -293,7 +295,8 @@ TEST_F(_03_Trajectory_Tests, ParseMultipleFramesWithEnergy) {
   out << "end\n";
   out.close();
 
-  auto traj2 = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Arc);
+  auto traj2 = correlation::readers::readTrajectory(
+      filename, correlation::readers::FileType::Arc);
   const auto &frames = traj2.getFrames();
   ASSERT_EQ(frames.size(), 2);
   EXPECT_DOUBLE_EQ(frames[0].getEnergy(), -100.0);
@@ -301,7 +304,7 @@ TEST_F(_03_Trajectory_Tests, ParseMultipleFramesWithEnergy) {
 }
 
 TEST_F(_03_Trajectory_Tests, RemovesConsecutiveTriplicates) {
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
 
   // Frame 0: (0,0,0)
   frames.push_back(createFrame(0.0, 0.0, 0.0));
@@ -321,8 +324,8 @@ TEST_F(_03_Trajectory_Tests, RemovesConsecutiveTriplicates) {
   // Frame 5: (2,2,2) - Distinct
   frames.push_back(createFrame(2.0, 2.0, 2.0));
 
-  // Initialize Trajectory
-  Trajectory traj(frames, 1.0);
+  // Initialize correlation::core::Trajectory
+  correlation::core::Trajectory traj(frames, 1.0);
 
   // We expect frames 0, 2, and 5 to remain.
   // That is 3 frames total.
@@ -339,41 +342,41 @@ TEST_F(_03_Trajectory_Tests, RemovesConsecutiveTriplicates) {
 }
 
 TEST_F(_03_Trajectory_Tests, HandlesNoDuplicates) {
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(1.0, 1.0, 1.0));
   frames.push_back(createFrame(2.0, 2.0, 2.0));
 
-  Trajectory traj(frames, 1.0);
+  correlation::core::Trajectory traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 3);
 }
 
 TEST_F(_03_Trajectory_Tests, HandlesAllDuplicates) {
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(0.0, 0.0, 0.0));
   frames.push_back(createFrame(0.0, 0.0, 0.0));
 
-  Trajectory traj(frames, 1.0);
+  correlation::core::Trajectory traj(frames, 1.0);
   // Should keep only the first one
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
 
 TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnAtomCountMismatch) {
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   traj.addFrame(createFrame(0, 0, 0)); // 1 atom
 
-  Cell bad_frame = createFrame(0, 0, 0);
+  correlation::core::Cell bad_frame = createFrame(0, 0, 0);
   bad_frame.addAtom("O", {1.0, 1.0, 1.0}); // 2 atoms
 
   EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
 }
 
 TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnElementMismatch) {
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   traj.addFrame(createFrame(0, 0, 0)); // 1 atom H
 
-  Cell bad_frame;
+  correlation::core::Cell bad_frame;
   bad_frame.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   bad_frame.addAtom("O", {0.0, 0.0, 0.0}); // 1 atom O
 
@@ -381,31 +384,32 @@ TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnElementMismatch) {
 }
 
 TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnElementCountMismatch) {
-  Trajectory traj;
-  Cell frame1;
+  correlation::core::Trajectory traj;
+  correlation::core::Cell frame1;
   frame1.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   frame1.addAtom("H", {0.0, 0.0, 0.0});
   frame1.addAtom("O", {1.0, 0.0, 0.0});
   traj.addFrame(frame1);
 
-  Cell bad_frame;
+  correlation::core::Cell bad_frame;
   bad_frame.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   bad_frame.addAtom("H", {0.0, 0.0, 0.0});
-  bad_frame.addAtom("H", {1.0, 0.0, 0.0}); // Frame has 2 atoms but only 1 element (H)
+  bad_frame.addAtom(
+      "H", {1.0, 0.0, 0.0}); // Frame has 2 atoms but only 1 element (H)
 
   // Throws because frame1 has 2 elements (H, O), bad_frame has 1 element (H)
   EXPECT_THROW(traj.addFrame(bad_frame), std::runtime_error);
 }
 
 TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnAtomOrderMismatch) {
-  Trajectory traj;
-  Cell frame1;
+  correlation::core::Trajectory traj;
+  correlation::core::Cell frame1;
   frame1.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   frame1.addAtom("H", {0.0, 0.0, 0.0});
   frame1.addAtom("O", {1.0, 0.0, 0.0});
   traj.addFrame(frame1);
 
-  Cell bad_frame;
+  correlation::core::Cell bad_frame;
   bad_frame.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   bad_frame.addAtom("O", {1.0, 0.0, 0.0});
   bad_frame.addAtom("H", {0.0, 0.0, 0.0});
@@ -415,7 +419,7 @@ TEST_F(_03_Trajectory_Tests, AddFrameThrowsOnAtomOrderMismatch) {
 }
 
 TEST_F(_03_Trajectory_Tests, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory) {
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   EXPECT_NO_THROW(traj.calculateVelocities());
   EXPECT_TRUE(traj.getVelocities().empty());
 }

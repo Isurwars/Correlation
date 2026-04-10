@@ -8,9 +8,10 @@
 
 #pragma once
 
-#include "Cell.hpp"
-#include "NeighborGraph.hpp"
 #include "BaseCalculator.hpp"
+#include "core/Cell.hpp"
+#include "core/NeighborGraph.hpp"
+
 #include <vector>
 
 // Forward declarations
@@ -19,7 +20,9 @@ struct AnalysisSettings;
 
 namespace calculators {
 
-// [Element A] [Element B] [Element C] [Element D] -> List of Angles
+// [correlation::core::Element A] [correlation::core::Element B]
+// [correlation::core::Element C] [correlation::core::Element D] -> List of
+// Angles
 using DihedralTensor =
     std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
 
@@ -53,11 +56,13 @@ public:
    *
    * @param cell The simulation cell containing atoms and positions.
    * @param graph The pre-computed neighbor graph containing local connections.
-   * @param out_dihedrals A 5D tensor `[Element A][Element B][Element C][Element
-   * D][angle_idx]` where elements are the indices, populated with angles in
-   * radians [-pi, pi].
+   * @param out_dihedrals A 5D tensor `[correlation::core::Element
+   * A][correlation::core::Element B][correlation::core::Element
+   * C][correlation::core::Element D][angle_idx]` where elements are the
+   * indices, populated with angles in radians [-pi, pi].
    */
-  static void compute(const Cell &cell, const NeighborGraph &graph,
+  static void compute(const correlation::core::Cell &cell,
+                      const correlation::core::NeighborGraph &graph,
                       DihedralTensor &out_dihedrals);
 };
 

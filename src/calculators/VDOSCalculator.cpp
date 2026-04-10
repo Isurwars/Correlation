@@ -19,7 +19,7 @@ bool registered = CalculatorFactory::instance().registerCalculator(
 } // namespace
 
 void VDOSCalculator::calculateTrajectory(
-    DistributionFunctions &df, const Trajectory &traj,
+    DistributionFunctions &df, const correlation::core::Trajectory &traj,
     const AnalysisSettings &settings) const {
   const auto &all = df.getAllHistograms();
   if (all.find("VACF") == all.end()) {

@@ -7,9 +7,9 @@
  */
 #pragma once
 
-#include <string>
-
 #include "BaseReader.hpp"
+
+#include <string>
 
 namespace correlation::readers {
 
@@ -22,15 +22,17 @@ public:
   std::vector<std::string> getExtensions() const override { return {"cif"}; }
   bool isTrajectory() const override { return false; }
 
-  Cell readStructure(const std::string &filename,
-                     std::function<void(float, const std::string &)>
-                         progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) override;
 
-  Trajectory readTrajectory(const std::string &filename,
-                            std::function<void(float, const std::string &)>
-                                progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) override;
 
-  static Cell read(const std::string &file_name);
+  static correlation::core::Cell read(const std::string &file_name);
 };
 
 } // namespace correlation::readers

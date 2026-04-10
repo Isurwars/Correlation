@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DistributionFunctions.hpp"
+#include "StructureAnalyzer.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include "math/Constants.hpp"
 #include <cmath>
 #include <gtest/gtest.h>
 #include <numeric>
-
-#include "Cell.hpp"
-#include "DistributionFunctions.hpp"
-#include "StructureAnalyzer.hpp"
-#include "Trajectory.hpp"
 
 // ============================================================================
 // Part 1: Angle Reproduction Tests
@@ -21,28 +21,28 @@ class _13_PAD_Tests_AngleReproduction : public ::testing::Test {
 protected:
   void SetUp() override {
     // Simple cubic cell
-    cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+    cell_ = correlation::core::Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   }
 
   void updateTrajectory() {
-    trajectory_ = Trajectory();
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(cell_);
     trajectory_.precomputeBondCutoffs();
   }
 
-  void updateTrajectory(const Cell &c) {
-    trajectory_ = Trajectory();
+  void updateTrajectory(const correlation::core::Cell &c) {
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(c);
     trajectory_.precomputeBondCutoffs();
   }
 
-  Cell cell_;
-  Trajectory trajectory_;
+  correlation::core::Cell cell_;
+  correlation::core::Trajectory trajectory_;
 };
 
 TEST_F(_13_PAD_Tests_AngleReproduction, CalculatePAD) {
   // Water molecule angle 104.5ish
-  Cell water({10, 10, 10, 90, 90, 90});
+  correlation::core::Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
   water.addAtom("H", {6, 5, 5});
   double angRad = 104.5 * correlation::math::deg_to_rad;
@@ -58,7 +58,8 @@ TEST_F(_13_PAD_Tests_AngleReproduction, CalculatePAD) {
   auto max_it = std::max_element(hoh.begin(), hoh.end());
   size_t idx = std::distance(hoh.begin(), max_it);
   double angle = hist.bins[idx];
-  // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to precision
+  // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to
+  // precision
   EXPECT_NEAR(angle, 104.5, 0.001);
 }
 
@@ -121,10 +122,13 @@ TEST_F(_13_PAD_Tests_AngleReproduction, PBCAngleDetection) {
 
 TEST_F(_13_PAD_Tests_AngleReproduction, SiTetrahedron_4Atoms) {
   cell_.addAtom("Si", {5.0, 5.0, 5.0}); // Center
-  cell_.addAtom("Si", {6.0, 6.0, 6.0}); // Neighbor 1 (1,1,1)
-  cell_.addAtom("Si", {6.0, 4.0, 4.0}); // Neighbor 2 (1,-1,-1)
-  cell_.addAtom("Si", {4.0, 6.0, 4.0}); // Neighbor 3 (-1,1,-1)
-  cell_.addAtom("Si", {4.0, 4.0, 6.0}); // Neighbor 4 (-1,-1,1)
+  cell_.addAtom("Si", {6.0, 6.0, 6.0}); // correlation::core::Neighbor 1 (1,1,1)
+  cell_.addAtom("Si",
+                {6.0, 4.0, 4.0}); // correlation::core::Neighbor 2 (1,-1,-1)
+  cell_.addAtom("Si",
+                {4.0, 6.0, 4.0}); // correlation::core::Neighbor 3 (-1,1,-1)
+  cell_.addAtom("Si",
+                {4.0, 4.0, 6.0}); // correlation::core::Neighbor 4 (-1,-1,1)
   updateTrajectory();
 
   // With 4 neighbors, we have C(4,2) = 6 angles.
@@ -226,7 +230,8 @@ TEST_F(_13_PAD_Tests_AngleReproduction, Icosahedron_13Atoms) {
   EXPECT_EQ(count_108, 60)
       << "Should find 60 Surface-Pentagon angles (108 deg)";
   EXPECT_EQ(count_58, 60)
-      << "Should find 60 Surface-Center angles (Center-S-Neighbor, ~58.3 deg)";
+      << "Should find 60 Surface-Center angles "
+         "(Center-S-correlation::core::Neighbor, ~58.3 deg)";
   EXPECT_EQ(total_angles, 246) << "Total angles should be 246";
 }
 
@@ -243,17 +248,17 @@ class _13_PAD_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // Large box to avoid PBC issues by default
-    cell_ = Cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    cell_ = correlation::core::Cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   }
 
   void updateTrajectory() {
-    trajectory_ = Trajectory();
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(cell_);
     trajectory_.precomputeBondCutoffs();
   }
 
-  Cell cell_;
-  Trajectory trajectory_;
+  correlation::core::Cell cell_;
+  correlation::core::Trajectory trajectory_;
 };
 
 // 1. Trivial Cases
@@ -309,7 +314,7 @@ TEST_F(_13_PAD_Tests, LinearGeometry180) {
 
   // Bond length 1.0. Cutoff needs to be > 1.0
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  // Fine binning for accuracy 
+  // Fine binning for accuracy
   df.calculatePAD(0.001);
 
   const auto &hist = df.getHistogram("BAD");
@@ -415,7 +420,7 @@ TEST_F(_13_PAD_Tests, TetrahedralAngle) {
 
   DistributionFunctions df(cell_, 1.5,
                            trajectory_.getBondCutoffsSQ()); // Distance is 1.0
-  df.calculatePAD(0.001);                                     // Hyperfine bins
+  df.calculatePAD(0.001);                                   // Hyperfine bins
 
   const auto &hist = df.getHistogram("BAD");
   const auto &partial = hist.partials.at("O-Si-O");
@@ -533,12 +538,18 @@ TEST_F(_13_PAD_Tests, IcosahedronAnglesPAD) {
   for (size_t i = 0; i < partial.size(); ++i) {
     if (partial[i] > 0.01) { // some density exists
       double angle = hist.bins[i];
-      if (std::abs(angle - 58.28) < 0.5) found_58 = true;
-      if (std::abs(angle - 60.0) < 0.5) found_60 = true;
-      if (std::abs(angle - 63.43) < 0.5) found_63 = true;
-      if (std::abs(angle - 108.0) < 0.5) found_108 = true;
-      if (std::abs(angle - 116.57) < 0.5) found_116 = true;
-      if (std::abs(angle - 180.0) < 0.5) found_180 = true;
+      if (std::abs(angle - 58.28) < 0.5)
+        found_58 = true;
+      if (std::abs(angle - 60.0) < 0.5)
+        found_60 = true;
+      if (std::abs(angle - 63.43) < 0.5)
+        found_63 = true;
+      if (std::abs(angle - 108.0) < 0.5)
+        found_108 = true;
+      if (std::abs(angle - 116.57) < 0.5)
+        found_116 = true;
+      if (std::abs(angle - 180.0) < 0.5)
+        found_180 = true;
     }
   }
 

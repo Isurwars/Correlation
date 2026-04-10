@@ -10,6 +10,7 @@
 
 #include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
+
 #include <map>
 #include <string>
 
@@ -44,7 +45,8 @@ public:
    * @brief Calculates the J(r), g(r), and G(r) histograms for the given cell
    * and pair distances.
    *
-   * @param cell The simulation Cell containing atoms and lattice information.
+   * @param cell The simulation correlation::core::Cell containing atoms and
+   * lattice information.
    * @param neighbors The StructureAnalyzer containing pre-computed pair
    * distances.
    * @param ashcroft_weights The Ashcroft-Langreth scattering weights for
@@ -55,7 +57,8 @@ public:
    * partial and total.
    */
   static std::map<std::string, Histogram>
-  calculate(const Cell &cell, const StructureAnalyzer *neighbors,
+  calculate(const correlation::core::Cell &cell,
+            const StructureAnalyzer *neighbors,
             const std::map<std::string, double> &ashcroft_weights, double r_max,
             double r_bin_width);
 };

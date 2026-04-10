@@ -6,42 +6,39 @@
  * SPDX-License-Identifier: MIT
  */
 #include "readers/CifReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+#include "math/LinearAlgebra.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <fstream>
+#include <functional>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
-#include <memory>
-#include <functional>
-
-#include "Cell.hpp"
-#include "Trajectory.hpp"
 
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<CifReader>()
-);
+static bool registered =
+    ReaderFactory::instance().registerReader(std::make_unique<CifReader>());
 
-Cell CifReader::readStructure(const std::string &filename,
-                               std::function<void(float, const std::string &)>
-                                   progress_callback) {
+correlation::core::Cell CifReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   return read(filename);
 }
 
-Trajectory CifReader::readTrajectory(const std::string &filename,
-                                      std::function<void(float, const std::string &)>
-                                          progress_callback) {
+correlation::core::Trajectory CifReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   throw std::runtime_error("CIF files are structures, use readStructure.");
 }
-
-#include "math/LinearAlgebra.hpp"
 
 namespace {
 
@@ -51,7 +48,8 @@ struct SymmetryOp {
   correlation::math::Vector3<double> translation{0, 0, 0};
 
   // Applies the operation: new_pos = rotation * old_pos + translation
-  correlation::math::Vector3<double> apply(const correlation::math::Vector3<double> &pos) const {
+  correlation::math::Vector3<double>
+  apply(const correlation::math::Vector3<double> &pos) const {
     return rotation * pos + translation;
   }
 };
@@ -127,7 +125,8 @@ void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &op) {
 SymmetryOp parseSymmetryString(const std::string &op_str) {
   SymmetryOp op;
   // Set rotation to zero initially
-  op.rotation = correlation::math::Matrix3<double>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
+  op.rotation =
+      correlation::math::Matrix3<double>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
   std::stringstream ss(op_str);
   std::string component;
   int row = 0;
@@ -181,13 +180,13 @@ std::vector<std::string> tokenizeCifLine(const std::string &line) {
 
 } // namespace
 
-Cell CifReader::read(const std::string &file_name) {
+correlation::core::Cell CifReader::read(const std::string &file_name) {
   std::ifstream file(file_name);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open CIF file: " + file_name);
   }
 
-  Cell tempCell;
+  correlation::core::Cell tempCell;
   std::string line;
 
   // --- Data storage during parsing ---
@@ -337,7 +336,8 @@ Cell CifReader::read(const std::string &file_name) {
         if (final_atom.symbol != atom.symbol)
           continue;
 
-        correlation::math::Vector3<double> diff = frac_pos - final_atom.frac_pos;
+        correlation::math::Vector3<double> diff =
+            frac_pos - final_atom.frac_pos;
         // Account for periodic boundary wrapping
         diff.x() = std::fmod(diff.x(), 1.0);
         if (std::abs(diff.x()) > 0.5)

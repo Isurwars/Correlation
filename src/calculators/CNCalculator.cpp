@@ -7,6 +7,7 @@
  */
 
 #include "calculators/CNCalculator.hpp"
+
 #include <numeric>
 #include <stdexcept>
 
@@ -15,7 +16,7 @@ void CNCalculator::calculateFrame(DistributionFunctions &df,
   df.addHistogram("CN", calculate(df.cell(), df.neighbors()));
 }
 
-Histogram CNCalculator::calculate(const Cell &cell,
+Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
                                   const StructureAnalyzer *neighbors) {
   if (!neighbors) {
     throw std::logic_error(

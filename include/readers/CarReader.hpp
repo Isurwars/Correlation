@@ -7,19 +7,19 @@
  */
 #pragma once
 
+#include "BaseReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include <functional>
 #include <string>
 #include <vector>
 
-#include "Cell.hpp"
-#include "Trajectory.hpp"
-
-#include "BaseReader.hpp"
-
 namespace correlation::readers {
 
 /**
- * @brief Reads a Materials Studio .car file and returns a Cell object.
+ * @brief Reads a Materials Studio .car file and returns a
+ * correlation::core::Cell object.
  */
 class CarReader : public BaseReader {
 public:
@@ -27,15 +27,17 @@ public:
   std::vector<std::string> getExtensions() const override { return {"car"}; }
   bool isTrajectory() const override { return false; }
 
-  Cell readStructure(const std::string &filename,
-                     std::function<void(float, const std::string &)>
-                         progress_callback = nullptr) override;
+  correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) override;
 
-  Trajectory readTrajectory(const std::string &filename,
-                            std::function<void(float, const std::string &)>
-                                progress_callback = nullptr) override;
+  correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) override;
 
-  static Cell read(const std::string &file_name);
+  static correlation::core::Cell read(const std::string &file_name);
 };
 
 } // namespace correlation::readers

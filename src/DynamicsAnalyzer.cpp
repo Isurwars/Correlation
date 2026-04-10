@@ -11,6 +11,7 @@
 #include "math/FFTUtils.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
+
 #include <algorithm>
 #include <numeric>
 #include <tbb/enumerable_thread_specific.h>
@@ -20,10 +21,10 @@
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
-std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
-                                                    int max_correlation_frames,
-                                                    size_t start_frame,
-                                                    size_t end_frame) {
+std::vector<double>
+DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
+                                int max_correlation_frames, size_t start_frame,
+                                size_t end_frame) {
   const auto &velocities = traj.getVelocities();
 
   if (velocities.empty()) {
@@ -56,8 +57,8 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   double total_mass = 0.0;
   for (size_t i = 0; i < num_atoms; ++i) {
     try {
-      masses[i] = correlation::physics::getAtomicMass(
-          atoms[i].element().symbol);
+      masses[i] =
+          correlation::physics::getAtomicMass(atoms[i].element().symbol);
     } catch (const std::out_of_range &) {
       masses[i] = 1.0;
     }
@@ -65,10 +66,8 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   }
 
   // Create corrected velocities (COM removed) mapped relative to start_frame
-  std::vector<std::vector<correlation::math::Vector3<double>>>
-      atom_velocities(
-          num_atoms,
-          std::vector<correlation::math::Vector3<double>>(num_frames));
+  std::vector<std::vector<correlation::math::Vector3<double>>> atom_velocities(
+      num_atoms, std::vector<correlation::math::Vector3<double>>(num_frames));
 
   for (size_t t = 0; t < num_frames; ++t) {
     const size_t traj_t = start_frame + t;
@@ -76,8 +75,7 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
     for (size_t i = 0; i < num_atoms; ++i) {
       momentum_sum += velocities[traj_t][i] * masses[i];
     }
-    correlation::math::Vector3<double> v_com =
-        momentum_sum / total_mass;
+    correlation::math::Vector3<double> v_com = momentum_sum / total_mass;
 
     for (size_t i = 0; i < num_atoms; ++i) {
       atom_velocities[i][t] = velocities[traj_t][i] - v_com;
@@ -138,10 +136,10 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const Trajectory &traj,
   return vacf;
 }
 
-std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
-                                                   int max_correlation_frames,
-                                                   size_t start_frame,
-                                                   size_t end_frame) {
+std::vector<double>
+DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
+                               int max_correlation_frames, size_t start_frame,
+                               size_t end_frame) {
   const auto &frames = traj.getFrames();
   if (frames.empty()) {
     return {};
@@ -172,10 +170,9 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
   //   unwrapped[i][t] = sum_{s=0}^{t-1} min_image( r(s+1) - r(s) )
   // This correctly handles PBC crossings without needing explicit unwrapping.
 
-  std::vector<std::vector<correlation::math::Vector3<double>>>
-      unwrapped(num_atoms,
-                std::vector<correlation::math::Vector3<double>>(
-                    num_frames, {0.0, 0.0, 0.0}));
+  std::vector<std::vector<correlation::math::Vector3<double>>> unwrapped(
+      num_atoms, std::vector<correlation::math::Vector3<double>>(
+                     num_frames, {0.0, 0.0, 0.0}));
 
   for (size_t t = 1; t < num_frames; ++t) {
     const size_t tf = start_frame + t;
@@ -183,8 +180,8 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
 
     // Get box vectors for minimum image (use current frame)
     const auto &lattice = frames[tf].latticeVectors();
-    correlation::math::Vector3<double> box = {
-        lattice[0][0], lattice[1][1], lattice[2][2]};
+    correlation::math::Vector3<double> box = {lattice[0][0], lattice[1][1],
+                                              lattice[2][2]};
     bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
 
     const auto &curr_atoms = frames[tf].atoms();
@@ -276,8 +273,8 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const Trajectory &traj,
 }
 
 std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(
-    const Trajectory &traj, int max_correlation_frames, size_t start_frame,
-    size_t end_frame) {
+    const correlation::core::Trajectory &traj, int max_correlation_frames,
+    size_t start_frame, size_t end_frame) {
   std::vector<double> vacf =
       calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (!vacf.empty() && vacf[0] != 0.0) {

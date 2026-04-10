@@ -3,26 +3,27 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "core/Cell.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
+
 #include <cmath>
 #include <gtest/gtest.h>
 
-#include "Cell.hpp"
-
-// Test fixture for the Cell class.
+// Test fixture for the correlation::core::Cell class.
 class _02_Cell_Tests : public ::testing::Test {
 protected:
   // A standard 10x10x10 orthogonal cell created once for all tests in this
   // fixture.
-  Cell orthogonal_cell_{{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}};
+  correlation::core::Cell orthogonal_cell_{
+      {10.0, 10.0, 10.0, 90.0, 90.0, 90.0}};
 };
 
 // --- Constructor and Lattice Tests ---
 
 TEST_F(_02_Cell_Tests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
-  Cell cell;
+  correlation::core::Cell cell;
 
   // Assert
   EXPECT_TRUE(cell.isEmpty());
@@ -36,7 +37,7 @@ TEST_F(_02_Cell_Tests, ParameterConstructorForCubicCell) {
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
 
   // Act
-  Cell cell(params);
+  correlation::core::Cell cell(params);
   const auto &vectors = cell.latticeVectors();
 
   // Assert
@@ -48,7 +49,8 @@ TEST_F(_02_Cell_Tests, ParameterConstructorForCubicCell) {
 
 TEST_F(_02_Cell_Tests, VectorConstructorCalculatesParameters) {
   // Arrange & Act
-  Cell cell({2.0, 0.0, 0.0}, {0.0, 3.0, 0.0}, {0.0, 0.0, 4.0});
+  correlation::core::Cell cell({2.0, 0.0, 0.0}, {0.0, 3.0, 0.0},
+                               {0.0, 0.0, 4.0});
   const auto &params = cell.lattice_parameters();
 
   // Assert
@@ -64,15 +66,12 @@ TEST_F(_02_Cell_Tests, VectorConstructorCalculatesParameters) {
 TEST_F(_02_Cell_Tests, VolumeForNonOrthogonalCellIsCorrect) {
   // Arrange
   const std::array<double, 6> params = {5.0, 6.0, 7.0, 80.0, 90.0, 100.0};
-  Cell cell(params);
+  correlation::core::Cell cell(params);
 
   // Act: Expected volume from standard formula
-  const double cos_a =
-      std::cos(80.0 * correlation::math::deg_to_rad);
-  const double cos_b =
-      std::cos(90.0 * correlation::math::deg_to_rad);
-  const double cos_g =
-      std::cos(100.0 * correlation::math::deg_to_rad);
+  const double cos_a = std::cos(80.0 * correlation::math::deg_to_rad);
+  const double cos_b = std::cos(90.0 * correlation::math::deg_to_rad);
+  const double cos_g = std::cos(100.0 * correlation::math::deg_to_rad);
   const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g +
                           2 * cos_a * cos_b * cos_g;
   const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
@@ -82,39 +81,42 @@ TEST_F(_02_Cell_Tests, VolumeForNonOrthogonalCellIsCorrect) {
 }
 
 TEST_F(_02_Cell_Tests, ThrowsOnInvalidLatticeParameters) {
-  EXPECT_THROW(Cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
-  EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
-  EXPECT_THROW(Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}), std::invalid_argument);
+  EXPECT_THROW(correlation::core::Cell({-5.0, 1.0, 1.0, 90.0, 90.0, 90.0}),
+               std::invalid_argument);
+  EXPECT_THROW(correlation::core::Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}),
+               std::invalid_argument);
+  EXPECT_THROW(correlation::core::Cell({0.0, 1.0, 1.0, 90.0, 90.0, 90.0}),
+               std::invalid_argument);
 }
 
 TEST_F(_02_Cell_Tests, RuleOfFiveWorksCorrectly) {
   // Arrange
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
-  Cell cell(params);
+  correlation::core::Cell cell(params);
   cell.addAtom("H", {0.5, 0.5, 0.5});
   cell.setEnergy(1.23);
 
   // Copy Constructor
-  Cell cell_copy(cell);
+  correlation::core::Cell cell_copy(cell);
   EXPECT_EQ(cell_copy.volume(), cell.volume());
   EXPECT_EQ(cell_copy.atomCount(), cell.atomCount());
   EXPECT_DOUBLE_EQ(cell_copy.getEnergy(), 1.23);
 
   // Copy Assignment
-  Cell cell_assigned;
+  correlation::core::Cell cell_assigned;
   cell_assigned = cell;
   EXPECT_EQ(cell_assigned.volume(), cell.volume());
   EXPECT_EQ(cell_assigned.atomCount(), cell.atomCount());
   EXPECT_DOUBLE_EQ(cell_assigned.getEnergy(), 1.23);
 
   // Move Constructor
-  Cell cell_moved(std::move(cell_copy));
+  correlation::core::Cell cell_moved(std::move(cell_copy));
   EXPECT_EQ(cell_moved.volume(), cell.volume());
   EXPECT_EQ(cell_moved.atomCount(), cell.atomCount());
   EXPECT_DOUBLE_EQ(cell_moved.getEnergy(), 1.23);
 
   // Move Assignment
-  Cell cell_move_assigned;
+  correlation::core::Cell cell_move_assigned;
   cell_move_assigned = std::move(cell_assigned);
   EXPECT_EQ(cell_move_assigned.volume(), cell.volume());
   EXPECT_EQ(cell_move_assigned.atomCount(), cell.atomCount());
@@ -123,7 +125,7 @@ TEST_F(_02_Cell_Tests, RuleOfFiveWorksCorrectly) {
 
 TEST_F(_02_Cell_Tests, AccessorsWorkCorrectly) {
   // Arrange
-  Cell cell;
+  correlation::core::Cell cell;
   // Test setLatticeParameters
   const std::array<double, 6> params = {10.0, 10.0, 10.0, 90.0, 90.0, 90.0};
   cell.setLatticeParameters(params);
@@ -141,11 +143,11 @@ TEST_F(_02_Cell_Tests, AccessorsWorkCorrectly) {
   EXPECT_DOUBLE_EQ(cell.getEnergy(), -13.6);
 }
 
-// --- Atom & Element Management Tests ---
+// --- correlation::core::Atom & correlation::core::Element Management Tests ---
 
 TEST_F(_02_Cell_Tests, AddAtomManagesElementsAndAtomsCorrectly) {
   // Arrange
-  Cell cell;
+  correlation::core::Cell cell;
 
   // Act
   cell.addAtom("Si", {0.0, 0.0, 0.0});
@@ -174,7 +176,7 @@ TEST_F(_02_Cell_Tests, AddAtomManagesElementsAndAtomsCorrectly) {
 
 TEST_F(_02_Cell_Tests, FindElementWorksCorrectly) {
   // Arrange
-  Cell cell;
+  correlation::core::Cell cell;
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   // Act
@@ -206,11 +208,11 @@ TEST_F(_02_Cell_Tests, WrapPositionsWrapsAtomIntoCell) {
 TEST_F(_02_Cell_Tests, MoveSemanticsLeavesMovedFromStateEmpty) {
   // Arrange
   const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
-  Cell cell(params);
+  correlation::core::Cell cell(params);
   cell.addAtom("H", {0.5, 0.5, 0.5});
 
   // Act
-  Cell cell_moved(std::move(cell));
+  correlation::core::Cell cell_moved(std::move(cell));
 
   // Assert
   EXPECT_TRUE(cell.isEmpty());
@@ -219,7 +221,7 @@ TEST_F(_02_Cell_Tests, MoveSemanticsLeavesMovedFromStateEmpty) {
 
 TEST_F(_02_Cell_Tests, InverseLatticeVectorsAreCorrect) {
   const std::array<double, 6> params = {2.0, 4.0, 5.0, 90.0, 90.0, 90.0};
-  Cell cell(params);
+  correlation::core::Cell cell(params);
 
   const auto &inv = cell.inverseLatticeVectors();
 
@@ -232,7 +234,7 @@ TEST_F(_02_Cell_Tests, InverseLatticeVectorsAreCorrect) {
 
 TEST_F(_02_Cell_Tests, WrapPositionsHandlesNegativeCoordinates) {
   // Arrange
-  Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  correlation::core::Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   cell.addAtom("H", {-15.0, -1.0, -25.0});
 
   // Act

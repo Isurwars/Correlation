@@ -3,14 +3,14 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DynamicsAnalyzer.hpp"
+#include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "readers/FileReader.hpp"
+
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <vector>
-
-#include "DynamicsAnalyzer.hpp"
-#include "readers/FileReader.hpp"
-#include "Trajectory.hpp"
 
 // Assuming the test is run from the build directory or project root
 // We need to locate the l-Bi.arc file
@@ -31,10 +31,11 @@ TEST(_10_DynamicsAnalyzer_Tests, CalculatesVACFFromExampletraj) {
   ASSERT_TRUE(std::filesystem::exists(file_path))
       << "Could not find example file: " << EXAMPLE_FILE;
 
-  // 2. Read Trajectory
-  Trajectory traj =
-      correlation::readers::readTrajectory(file_path.string(), correlation::readers::FileType::Arc);
-  ASSERT_GT(traj.getFrameCount(), 0) << "Trajectory should not be empty";
+  // 2. Read correlation::core::Trajectory
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory(
+      file_path.string(), correlation::readers::FileType::Arc);
+  ASSERT_GT(traj.getFrameCount(), 0)
+      << "correlation::core::Trajectory should not be empty";
 
   // 3. Calculate Velocities
   traj.calculateVelocities();

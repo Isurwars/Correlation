@@ -29,7 +29,7 @@ void StructureFactorCalculator::calculateFrame(
     throw std::invalid_argument("Q-space parameters must be positive.");
   }
 
-  const Cell &cell = df.cell();
+  const correlation::core::Cell &cell = df.cell();
   const auto &atoms = cell.atoms();
   const size_t N = atoms.size();
   if (N == 0)

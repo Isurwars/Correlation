@@ -3,23 +3,23 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "Atom.hpp"
-#include "Cell.hpp"
 #include "StructureAnalyzer.hpp"
-#include "Trajectory.hpp"
+#include "core/Atom.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
 
 // A test fixture for StructureAnalyzer tests.
-// A test fixture for StructureAnalyzer tests.
 class _08_StructureAnalyzer_Tests : public ::testing::Test {
 protected:
-  Trajectory trajectory_;
+  correlation::core::Trajectory trajectory_;
 
-  void updateTrajectory(const Cell &cell) {
-    trajectory_ = Trajectory();
+  void updateTrajectory(const correlation::core::Cell &cell) {
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(cell);
     trajectory_.precomputeBondCutoffs();
   }
@@ -30,7 +30,8 @@ TEST_F(_08_StructureAnalyzer_Tests, FindsCorrectNeighborsForSilicon) {
   // Arrange: Create an 8-atom conventional unit cell of Silicon.
   // The diamond lattice structure is a robust test for neighbor finding.
   const double lattice_const = 5.43; // Angstroms
-  Cell si_cell({lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
+  correlation::core::Cell si_cell(
+      {lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
 
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
   std::vector<correlation::math::Vector3<double>> fractional_coords = {
@@ -68,7 +69,7 @@ TEST_F(_08_StructureAnalyzer_Tests, FindsCorrectNeighborsForSilicon) {
 
 TEST_F(_08_StructureAnalyzer_Tests, DistancesTensorIsCorrect) {
   // Arrange: Create a simple 2-atom system
-  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   cell.addAtom("Ar", {3.0, 0.0, 0.0});
   updateTrajectory(cell);
@@ -90,7 +91,7 @@ TEST_F(_08_StructureAnalyzer_Tests, DistancesTensorIsCorrect) {
   EXPECT_NEAR(ar_ar_dists[0], 3.0, 1e-6);
 
   // Arrange Mixed Species
-  Cell mixed_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell mixed_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   mixed_cell.addAtom("Ar", {0.0, 0.0, 0.0});
   mixed_cell.addAtom("Xe", {0.0, 4.0, 0.0});
   updateTrajectory(mixed_cell);
@@ -115,11 +116,10 @@ TEST_F(_08_StructureAnalyzer_Tests, DistancesTensorIsCorrect) {
 
 TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAnglesForWater) {
   // Arrange: Create a single water molecule with a known bond angle.
-  Cell water_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell water_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   const double bond_length = 0.957;    // Angstroms
   const double bond_angle_deg = 104.5; // Degrees
-  const double bond_angle_rad =
-      bond_angle_deg * correlation::math::deg_to_rad;
+  const double bond_angle_rad = bond_angle_deg * correlation::math::deg_to_rad;
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});
   water_cell.addAtom("H", {10.0 + bond_length, 10.0, 10.0});
@@ -147,32 +147,34 @@ TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAnglesForWater) {
   // There should be exactly one H-O-H angle in this system.
   ASSERT_EQ(hoh_angles.size(), 1);
   // The calculated angle should match the known value.
-  EXPECT_NEAR(hoh_angles[0] * correlation::math::rad_to_deg,
-              bond_angle_deg, 1e-4);
+  EXPECT_NEAR(hoh_angles[0] * correlation::math::rad_to_deg, bond_angle_deg,
+              1e-4);
 }
 
 TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAngleWithPBC) {
   // Arrange: Setup a system where the angle calculation requires the Minimum
-  // Image Convention. Central atom B (index 1) at (0.5, 0.5, 0.5). Neighbor A
-  // (index 0) at (3.5, 0.5, 0.5) -> PBC vector B->A is (-1.0, 0.0, 0.0).
-  // Neighbor C (index 2) at (0.5, 3.5, 0.5) -> PBC vector B->C is (0.0, -1.0,
-  // 0.0). The resulting angle A-B-C must be 90 degrees (pi/2 radians).
+  // Image Convention. Central atom B (index 1) at (0.5, 0.5, 0.5).
+  // correlation::core::Neighbor A (index 0) at (3.5, 0.5, 0.5) -> PBC vector
+  // B->A is (-1.0, 0.0, 0.0). correlation::core::Neighbor C (index 2) at
+  // (0.5, 3.5, 0.5) -> PBC vector B->C is (0.0, -1.0, 0.0). The resulting angle
+  // A-B-C must be 90 degrees (pi/2 radians).
 
   const double side_length = 10.0;
   const double cutoff = 2.0;
   // Calculate pi/2 explicitly using acos(-1.0) = pi.
   const double expected_angle_rad = std::acos(-1.0) / 2.0;
 
-  Cell pbc_cell({side_length, side_length, side_length, 90.0, 90.0, 90.0});
+  correlation::core::Cell pbc_cell(
+      {side_length, side_length, side_length, 90.0, 90.0, 90.0});
 
   // B (Central) at (0.5, 0.5, 0.5)
   // A at (9.0, 0.5, 0.5) -> Wrapped dist to B is 1.5
   // C at (0.5, 9.0, 0.5) -> Wrapped dist to B is 1.5
   // Dist A-C is sqrt(1.5^2 + 1.5^2) = 2.12 > bond_cutoff (~1.85)
 
-  pbc_cell.addAtom("C", {9.0, 0.5, 0.5}); // Atom A
-  pbc_cell.addAtom("C", {0.5, 0.5, 0.5}); // Atom B (Central)
-  pbc_cell.addAtom("O", {0.5, 9.0, 0.5}); // Atom C
+  pbc_cell.addAtom("C", {9.0, 0.5, 0.5}); // correlation::core::Atom A
+  pbc_cell.addAtom("C", {0.5, 0.5, 0.5}); // correlation::core::Atom B (Central)
+  pbc_cell.addAtom("O", {0.5, 9.0, 0.5}); // correlation::core::Atom C
   updateTrajectory(pbc_cell);
 
   // Act: Calculate neighbors and angles.
@@ -197,7 +199,7 @@ TEST_F(_08_StructureAnalyzer_Tests, CalculatesCorrectAngleWithPBC) {
 
 TEST_F(_08_StructureAnalyzer_Tests, FindsNoNeighborsForIsolatedAtom) {
   // Arrange: Create a large cell with a single atom.
-  Cell large_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell large_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   large_cell.addAtom("Ar", {10.0, 10.0, 10.0});
   updateTrajectory(large_cell);
   // Use default bond factor.
@@ -218,7 +220,7 @@ TEST_F(_08_StructureAnalyzer_Tests, FindsNeighborsBasedOnBondCutoff) {
 
   // Case 1: Within bond threshold -> Neighbors Found
   {
-    Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
     cell.addAtom("Ar", {5.0, 5.0, 5.0});
     cell.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance = 2.0 < 2.304
     updateTrajectory(cell);
@@ -232,7 +234,7 @@ TEST_F(_08_StructureAnalyzer_Tests, FindsNeighborsBasedOnBondCutoff) {
 
   // Case 2: Out of bond threshold -> No Neighbors
   {
-    Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+    correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
     cell.addAtom("Ar", {5.0, 5.0, 5.0});
     cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0 > 2.304
     updateTrajectory(cell);
@@ -246,7 +248,7 @@ TEST_F(_08_StructureAnalyzer_Tests, FindsNeighborsBasedOnBondCutoff) {
 
 TEST_F(_08_StructureAnalyzer_Tests, EnforcesNeighborSymmetry) {
   // Arrange: Create a random system of atoms.
-  Cell random_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell random_cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   random_cell.addAtom("Ar", {1.0, 1.0, 1.0}); // A
   random_cell.addAtom("Ar", {2.0, 2.0, 2.0}); // B (Dist ~1.73)
   random_cell.addAtom("Ar", {8.0, 8.0, 8.0}); // C
@@ -282,8 +284,9 @@ TEST_F(_08_StructureAnalyzer_Tests, EnforcesNeighborSymmetry) {
           break;
         }
       }
-      EXPECT_TRUE(found_reverse) << "Symmetry broken: Atom " << i << " sees "
-                                 << j << " but " << j << " does not see " << i;
+      EXPECT_TRUE(found_reverse)
+          << "Symmetry broken: correlation::core::Atom " << i << " sees " << j
+          << " but " << j << " does not see " << i;
     }
   }
 }
@@ -293,7 +296,7 @@ TEST_F(_08_StructureAnalyzer_Tests, HandlesPeriodicSelfInteractions) {
   // We need images to be within the bond threshold. Let's use image distance
   // = 2.0.
 
-  Cell small_cell({2.0, 2.0, 2.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell small_cell({2.0, 2.0, 2.0, 90.0, 90.0, 90.0});
   small_cell.addAtom("Ar", {1.0, 1.0, 1.0});
   updateTrajectory(small_cell);
 
@@ -325,7 +328,7 @@ TEST_F(_08_StructureAnalyzer_Tests, HandlesPeriodicSelfInteractions) {
 
 TEST_F(_08_StructureAnalyzer_Tests, TriangleMoleculeConnectivity) {
   // Arrange: Create 3 atoms in an equilateral triangle.
-  Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
 
   // Equilateral triangle with side length 2.0
   // Covalent radius Ar = 0.96 -> Bond cutoff = 1.92 * 1.2 = 2.304.
@@ -349,7 +352,7 @@ TEST_F(_08_StructureAnalyzer_Tests, TriangleMoleculeConnectivity) {
   // Each atom should see exactly 2 neighbors (the other two vertices)
   for (size_t i = 0; i < 3; ++i) {
     ASSERT_EQ(neighborGraph.getNeighbors(i).size(), 2)
-        << "Atom " << i << " does not have 2 neighbors";
+        << "correlation::core::Atom " << i << " does not have 2 neighbors";
     for (const auto &n : neighborGraph.getNeighbors(i)) {
       EXPECT_NEAR(n.distance, d, 1e-6);
     }

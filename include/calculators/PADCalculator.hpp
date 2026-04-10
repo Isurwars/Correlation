@@ -30,7 +30,7 @@ public:
   void calculateFrame(DistributionFunctions &df,
                       const AnalysisSettings &settings) const override;
 
-  static Histogram calculate(const Cell &cell,
+  static Histogram calculate(const correlation::core::Cell &cell,
                              const StructureAnalyzer *neighbors,
                              double bin_width);
 };

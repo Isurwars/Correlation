@@ -1,6 +1,7 @@
 /**
  * @file StructureAnalyzer.hpp
- * @brief Structural analysis utilities for neighbor detection and bond topology.
+ * @brief Structural analysis utilities for neighbor detection and bond
+ * topology.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: MIT
@@ -8,9 +9,9 @@
 
 #pragma once
 
-#include "Cell.hpp"
-#include "NeighborGraph.hpp"
 #include "calculators/DihedralCalculator.hpp"
+#include "core/Cell.hpp"
+#include "core/NeighborGraph.hpp"
 
 /**
  * @class StructureAnalyzer
@@ -32,7 +33,7 @@ public:
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
   explicit StructureAnalyzer(
-      Cell &cell, double cutoff,
+      correlation::core::Cell &cell, double cutoff,
       const std::vector<std::vector<double>> &bond_cutoffs_sq,
       bool ignore_periodic_self_interactions = true);
 
@@ -64,18 +65,20 @@ public:
   /**
    * @brief Gets the corresponding neighbor graph capturing topological
    * connections.
-   * @return Constant reference to the NeighborGraph object.
+   * @return Constant reference to the correlation::core::NeighborGraph object.
    */
-  const NeighborGraph &neighborGraph() const { return neighbor_graph_; }
+  const correlation::core::NeighborGraph &neighborGraph() const {
+    return neighbor_graph_;
+  }
 
 private:
-  Cell &cell_;
+  correlation::core::Cell &cell_;
   double cutoff_sq_;
   std::vector<std::vector<double>> bond_cutoffs_sq_;
 
   bool ignore_periodic_self_interactions_;
 
-  NeighborGraph neighbor_graph_;
+  correlation::core::NeighborGraph neighbor_graph_;
   DistanceTensor distance_tensor_;
   AngleTensor angle_tensor_;
   calculators::DihedralTensor dihedral_tensor_;

@@ -10,6 +10,7 @@
 
 #include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
+
 #include <map>
 #include <string>
 
@@ -33,7 +34,7 @@ public:
                       const AnalysisSettings &settings) const override;
 
   static Histogram
-  calculate(const Histogram &g_r_hist, const Cell &cell,
+  calculate(const Histogram &g_r_hist, const correlation::core::Cell &cell,
             const std::map<std::string, double> &ashcroft_weights,
             double lambda, double theta_min, double theta_max,
             double bin_width);

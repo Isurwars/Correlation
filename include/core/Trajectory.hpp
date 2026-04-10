@@ -8,10 +8,12 @@
 
 #pragma once
 
+#include "core/Cell.hpp"
 #include "math/LinearAlgebra.hpp"
+
 #include <vector>
 
-#include "Cell.hpp"
+namespace correlation::core {
 
 class Trajectory {
   /**
@@ -108,7 +110,7 @@ public:
    * @brief Gets the pre-calculated velocities for all atoms.
    * @return A vector of velocity vectors, indexed by `[frame][atom_index]`.
    */
-  [[nodiscard]] const std::vector<std::vector<correlation::math::Vector3<double>>> &
+  [[nodiscard]] const std::vector<std::vector<math::Vector3<double>>> &
   getVelocities() const {
     return velocities_;
   }
@@ -134,7 +136,9 @@ private:
   std::vector<Cell> frames_;
   mutable std::vector<std::vector<double>> bond_cutoffs_sq_;
   // Stores calculate velocities Vector<Atom<Vector<Velocity>>>
-  std::vector<std::vector<correlation::math::Vector3<double>>> velocities_;
+  std::vector<std::vector<math::Vector3<double>>> velocities_;
   double time_step_;
   size_t removed_frames_count_{0};
 };
+
+} // namespace correlation::core

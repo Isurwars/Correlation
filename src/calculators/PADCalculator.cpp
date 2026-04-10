@@ -24,7 +24,7 @@ void PADCalculator::calculateFrame(DistributionFunctions &df,
       "BAD", calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
 }
 
-Histogram PADCalculator::calculate(const Cell &cell,
+Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
                                    const StructureAnalyzer *neighbors,
                                    double bin_width) {
   if (bin_width <= 0) {

@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "math/SIMDUtils.hpp"
+
 #include <cmath>
 #include <gtest/gtest.h>
 #include <random>

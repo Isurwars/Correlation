@@ -38,13 +38,13 @@ FileType determineFileType(const std::string &filename) {
   return FileType::Unknown;
 }
 
-Cell readStructure(
+correlation::core::Cell readStructure(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
-  
+
   std::string ext = std::filesystem::path(filename).extension().string();
   auto reader = ReaderFactory::instance().getReaderForExtension(ext);
-  
+
   if (reader) {
     return reader->readStructure(filename, progress_callback);
   }
@@ -52,28 +52,30 @@ Cell readStructure(
   throw std::runtime_error("No reader found for extension: " + ext);
 }
 
-Trajectory readTrajectory(
+correlation::core::Trajectory readTrajectory(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
-  
+
   std::string ext = std::filesystem::path(filename).extension().string();
   auto reader = ReaderFactory::instance().getReaderForExtension(ext);
-  
+
   if (reader) {
     if (reader->isTrajectory()) {
       return reader->readTrajectory(filename, progress_callback);
     } else {
       // If it's not a trajectory reader but we asked for a trajectory,
       // maybe we just want it as a single frame trajectory?
-      // BaseReader doesn't guarantee readTrajectory works for structure-only files.
-      // But some might.
+      // BaseReader doesn't guarantee readTrajectory works for structure-only
+      // files. But some might.
       try {
-        Cell c = reader->readStructure(filename, progress_callback);
-        std::vector<Cell> frames;
+        correlation::core::Cell c =
+            reader->readStructure(filename, progress_callback);
+        std::vector<correlation::core::Cell> frames;
         frames.push_back(std::move(c));
-        return Trajectory(frames, 1.0);
+        return correlation::core::Trajectory(frames, 1.0);
       } catch (...) {
-        throw std::runtime_error("Reader for " + ext + " does not support trajectory reading.");
+        throw std::runtime_error("Reader for " + ext +
+                                 " does not support trajectory reading.");
       }
     }
   }

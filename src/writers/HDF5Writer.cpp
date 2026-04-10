@@ -22,6 +22,7 @@
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
 
+using namespace correlation::core;
 namespace correlation::writers {
 
 // Automatic registration

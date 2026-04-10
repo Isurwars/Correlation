@@ -6,13 +6,15 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include "core/NeighborGraph.hpp"
 #include "math/LinearAlgebra.hpp"
-#include "NeighborGraph.hpp"
+
+namespace correlation::core {
 
 NeighborGraph::NeighborGraph(size_t node_count) : adj_list_(node_count) {}
 
 void NeighborGraph::addDirectedEdge(size_t from, size_t to, double distance,
-                                    const correlation::math::Vector3<double> &r_ij) {
+                                    const math::Vector3<double> &r_ij) {
   if (from >= adj_list_.size()) {
     return;
   }
@@ -32,7 +34,7 @@ bool NeighborGraph::areConnected(size_t i, size_t j) const {
   if (i >= adj_list_.size())
     return false;
   for (const auto &neighbor : adj_list_[i]) {
-    if (neighbor.index == j) {
+    if (neighbor.index == static_cast<AtomID>(j)) {
       return true;
     }
   }
@@ -53,3 +55,5 @@ std::vector<bool> NeighborGraph::getDenseAdjacencyMatrix() const {
 }
 
 size_t NeighborGraph::nodeCount() const { return adj_list_.size(); }
+
+} // namespace correlation::core

@@ -3,6 +3,12 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DistributionFunctions.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+#include "readers/FileReader.hpp"
+#include "writers/FileWriter.hpp"
+
 #include <algorithm> // For std::max_element
 #include <cstdio>    // For std::remove
 #include <filesystem>
@@ -11,14 +17,6 @@
 #include <highfive/highfive.hpp>
 #include <iterator> // For std::distance
 #include <vector>
-
-namespace fs = std::filesystem;
-
-#include "Cell.hpp"
-#include "DistributionFunctions.hpp"
-#include "readers/FileReader.hpp"
-#include "writers/FileWriter.hpp"
-#include "Trajectory.hpp"
 
 // Test fixture for FileWriter integration tests.
 class _05_FileWriter_Tests : public ::testing::Test {
@@ -77,7 +75,7 @@ protected:
 
     for (const auto &file : files_to_remove) {
       std::error_code ec;
-      fs::remove(file, ec);
+      std::filesystem::remove(file, ec);
     }
   }
 
@@ -92,9 +90,11 @@ protected:
 
 TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
-  Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
-  Trajectory trajectory;
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell si_cell =
+      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
@@ -153,9 +153,11 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
 
 TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   // Arrange
-  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
-  Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
-  Trajectory trajectory;
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell si_cell =
+      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
@@ -187,7 +189,8 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   g_group.getAttribute("description").read(description);
   EXPECT_EQ(description, "Pair Distribution Function");
 
-  // Note: sanitize logic in correlation::writers::FileWriter replaces '(', ')', '/', ' ' with '_'
+  // Note: sanitize logic in correlation::writers::FileWriter replaces '(', ')',
+  // '/', ' ' with '_'
   std::string bin_ds_name = "00_r";
   std::string data_ds_name = "01_Si-Si";
 
@@ -231,12 +234,14 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
 
 TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   // Arrange
-  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
-  Cell frame1 = correlation::readers::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell frame1 =
+      correlation::readers::readStructure("si_crystal.car", type);
 
   // Create frame2 with same lattice
   auto lv = frame1.latticeVectors();
-  Cell frame2(lv[0], lv[1], lv[2]);
+  correlation::core::Cell frame2(lv[0], lv[1], lv[2]);
 
   // Modify frame2 slightly to create velocity
   // Use alternating signs to ensure zero net momentum (approx) for CoM removal
@@ -249,7 +254,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
     frame2.addAtom(atom.element().symbol, pos);
   }
 
-  Trajectory trajectory;
+  correlation::core::Trajectory trajectory;
   trajectory.addFrame(frame1);
   trajectory.addFrame(frame2);
   trajectory.setTimeStep(1.0);        // 1 fs
@@ -374,9 +379,11 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
 
 TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
   // Arrange
-  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
-  Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
-  Trajectory trajectory;
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell si_cell =
+      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 

@@ -1,6 +1,7 @@
 /**
  * @file TrajectoryAnalyzer.hpp
- * @brief Trajectory-level analysis coordination (averaging, frame iteration).
+ * @brief correlation::core::Trajectory-level analysis coordination (averaging,
+ * frame iteration).
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: MIT
@@ -8,19 +9,20 @@
 
 #pragma once
 
+#include "StructureAnalyzer.hpp"
+#include "core/Trajectory.hpp"
+
+#include <functional>
 #include <memory>
 #include <vector>
-
-#include "StructureAnalyzer.hpp"
-#include "Trajectory.hpp"
-#include <functional>
 
 class TrajectoryAnalyzer {
 public:
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
   //-------------------------------------------------------------------------//
-  TrajectoryAnalyzer(Trajectory &trajectory, double neighbor_cutoff,
+  TrajectoryAnalyzer(correlation::core::Trajectory &trajectory,
+                     double neighbor_cutoff,
                      const std::vector<std::vector<double>> &bond_cutoffs,
                      size_t start_frame = 0, long long end_frame = -1,
                      bool ignore_periodic_self_interactions = true,
@@ -48,7 +50,7 @@ public:
   }
 
 private:
-  Trajectory &trajectory_;
+  correlation::core::Trajectory &trajectory_;
   size_t start_frame_;
   size_t effective_end_;
   double time_step_;

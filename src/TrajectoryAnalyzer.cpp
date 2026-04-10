@@ -13,7 +13,7 @@
 //---------------------------------------------------------------------------//
 
 TrajectoryAnalyzer::TrajectoryAnalyzer(
-    Trajectory &trajectory, double neighbor_cutoff,
+    correlation::core::Trajectory &trajectory, double neighbor_cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame,
     long long end_frame, bool ignore_periodic_self_interactions,
     std::function<void(float, const std::string &)> progress_callback)

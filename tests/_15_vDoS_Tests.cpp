@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DynamicsAnalyzer.hpp"
 #include "math/Constants.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
-
-#include "DynamicsAnalyzer.hpp"
 
 TEST(_15_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)

@@ -3,6 +3,10 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "AppBackend.hpp"
+#include "AppController.hpp"
+#include "AppWindow.h"
+
 #include <gtest/gtest.h>
 #include <stdlib.h>
 
@@ -10,10 +14,6 @@
 #define NOMINMAX
 #include <Windows.h>
 #endif
-
-#include "AppBackend.hpp"
-#include "AppController.hpp"
-#include "AppWindow.h"
 
 // Test fixture for the AppController class
 class _17_AppController_Tests : public ::testing::Test {

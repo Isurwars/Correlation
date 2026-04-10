@@ -7,8 +7,8 @@
  */
 
 #include "readers/OutmolReader.hpp"
-#include "Cell.hpp"
-#include "Trajectory.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/Constants.hpp"
 #include "readers/ReaderFactory.hpp"
 
@@ -26,19 +26,19 @@ namespace correlation::readers {
 static bool registered =
     ReaderFactory::instance().registerReader(std::make_unique<OutmolReader>());
 
-Cell OutmolReader::readStructure(
+correlation::core::Cell OutmolReader::readStructure(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
   return read(filename, progress_callback).at(0);
 }
 
-Trajectory OutmolReader::readTrajectory(
+correlation::core::Trajectory OutmolReader::readTrajectory(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
-  return Trajectory(read(filename, progress_callback), 1.0);
+  return correlation::core::Trajectory(read(filename, progress_callback), 1.0);
 }
 
-std::vector<Cell> OutmolReader::read(
+std::vector<correlation::core::Cell> OutmolReader::read(
     const std::string &file_name,
     std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
@@ -47,7 +47,7 @@ std::vector<Cell> OutmolReader::read(
                              std::strerror(errno) + ").");
   }
 
-  std::vector<Cell> frames;
+  std::vector<correlation::core::Cell> frames;
   std::string line;
 
   std::array<double, 3> h1 = {0.0, 0.0, 0.0};
@@ -102,8 +102,8 @@ std::vector<Cell> OutmolReader::read(
     }
 
     if (line.find("$coordinates") != std::string::npos) {
-      Cell tempCell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]},
-                    {h3[0], h3[1], h3[2]});
+      correlation::core::Cell tempCell(
+          {h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
       while (std::getline(myfile, line)) {
         if (line.find("$end") != std::string::npos) {
           break;
@@ -113,10 +113,9 @@ std::vector<Cell> OutmolReader::read(
         std::string symbol;
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
-          tempCell.addAtom(
-              symbol, {x * correlation::math::bohr_to_angstrom,
-                       y * correlation::math::bohr_to_angstrom,
-                       z * correlation::math::bohr_to_angstrom});
+          tempCell.addAtom(symbol, {x * correlation::math::bohr_to_angstrom,
+                                    y * correlation::math::bohr_to_angstrom,
+                                    z * correlation::math::bohr_to_angstrom});
         }
       }
       if (!tempCell.isEmpty()) {
@@ -127,8 +126,8 @@ std::vector<Cell> OutmolReader::read(
 
     if (line.find("ATOMIC  COORDINATES (au)") != std::string::npos) {
       std::getline(myfile, line); // Next line is header: df x y z ...
-      Cell tempCell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]},
-                    {h3[0], h3[1], h3[2]});
+      correlation::core::Cell tempCell(
+          {h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
       while (std::getline(myfile, line)) {
         // Look for the "df" prefix
         if (line.find("df") == std::string::npos) {
@@ -140,10 +139,9 @@ std::vector<Cell> OutmolReader::read(
         double x, y, z;
         if (ss >> df >> symbol >> x >> y >> z) {
           if (df == "df") {
-            tempCell.addAtom(
-                symbol, {x * correlation::math::bohr_to_angstrom,
-                         y * correlation::math::bohr_to_angstrom,
-                         z * correlation::math::bohr_to_angstrom});
+            tempCell.addAtom(symbol, {x * correlation::math::bohr_to_angstrom,
+                                      y * correlation::math::bohr_to_angstrom,
+                                      z * correlation::math::bohr_to_angstrom});
           }
         }
       }

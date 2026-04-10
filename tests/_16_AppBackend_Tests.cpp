@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include <gtest/gtest.h>
-
 #include "AppBackend.hpp"
+
+#include <gtest/gtest.h>
 #include <stdexcept>
 
 // Test fixture for the AppBackend class

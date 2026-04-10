@@ -3,40 +3,40 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DistributionFunctions.hpp"
+#include "TrajectoryAnalyzer.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include <algorithm>
 #include <gtest/gtest.h>
 #include <iterator>
 #include <vector>
-
-#include "Cell.hpp"
-#include "DistributionFunctions.hpp"
-#include "Trajectory.hpp"
-#include "TrajectoryAnalyzer.hpp"
 
 // Test fixture for DistributionFunctions tests.
 class _11_RDF_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
-    cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+    cell_ = correlation::core::Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
     cell_.addAtom("Ar", {5.0, 5.0, 5.0});
     cell_.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5
   }
 
   void updateTrajectory() {
-    trajectory_ = Trajectory();
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(cell_);
     trajectory_.precomputeBondCutoffs();
   }
 
-  void updateTrajectory(const Cell &c) {
-    trajectory_ = Trajectory();
+  void updateTrajectory(const correlation::core::Cell &c) {
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(c);
     trajectory_.precomputeBondCutoffs();
   }
 
-  Cell cell_{};
-  Trajectory trajectory_;
+  correlation::core::Cell cell_{};
+  correlation::core::Trajectory trajectory_;
 };
 
 //---------------------------------------------------------------------------//
@@ -128,14 +128,15 @@ TEST_F(_11_RDF_Tests, CalculateRDF) {
   auto max_it = std::max_element(total.begin(), total.end());
   size_t peak_idx = std::distance(total.begin(), max_it);
   double peak_r = hist.bins[peak_idx];
-  
-  // Bin size is 0.001. Bin containing 1.50 is index 1500 (center 1.5005) or 1499 (1.4995)
+
+  // Bin size is 0.001. Bin containing 1.50 is index 1500 (center 1.5005) or
+  // 1499 (1.4995)
   EXPECT_NEAR(peak_r, 1.5, 0.001);
 }
 
 TEST_F(_11_RDF_Tests, CalculateCoordinationNumber) {
   // Use a setup where we know neighbors exactly
-  Cell cnCall({10, 10, 10, 90, 90, 90});
+  correlation::core::Cell cnCall({10, 10, 10, 90, 90, 90});
   cnCall.addAtom("Si", {5, 5, 5});
   cnCall.addAtom("O", {6, 5, 5}); // 1.0 dist
   cnCall.addAtom("O", {4, 5, 5}); // 1.0 dist

@@ -21,7 +21,7 @@
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
 StructureAnalyzer::StructureAnalyzer(
-    Cell &cell, double cutoff,
+    correlation::core::Cell &cell, double cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs_sq,
     bool ignore_periodic_self_interactions)
     // Use the member initializer list for all members for correctness and
@@ -79,7 +79,7 @@ StructureAnalyzer::StructureAnalyzer(
               num_elements, std::vector<std::vector<double>>(
                                 num_elements, std::vector<double>()))));
 
-  neighbor_graph_ = NeighborGraph(cell.atomCount());
+  neighbor_graph_ = correlation::core::NeighborGraph(cell.atomCount());
 
   // The constructor orchestrates the computation by delegating to dedicated
   // calculators

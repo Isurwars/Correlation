@@ -3,31 +3,31 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "DistributionFunctions.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
-
-#include "Cell.hpp"
-#include "DistributionFunctions.hpp"
-#include "Trajectory.hpp"
 
 // Test fixture for XRD tests.
 class _12_XRD_Tests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
-    cell_ = Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+    cell_ = correlation::core::Cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
     cell_.addAtom("Ar", {5.0, 5.0, 5.0});
     cell_.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5
   }
 
   void updateTrajectory() {
-    trajectory_ = Trajectory();
+    trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(cell_);
     trajectory_.precomputeBondCutoffs();
   }
 
-  Cell cell_{};
-  Trajectory trajectory_;
+  correlation::core::Cell cell_{};
+  correlation::core::Trajectory trajectory_;
 };
 
 TEST_F(_12_XRD_Tests, CalculateXRD) {
@@ -90,7 +90,7 @@ TEST_F(_12_XRD_Tests, CalculateXRD_IntensityIsZeroAtThetaZero) {
 
 TEST_F(_12_XRD_Tests, CalculateXRDCubicCell) {
   // Simple cubic cell a = 3.0, 3x3x3 supercell
-  Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
   for (int x = 0; x < 2; ++x) {
     for (int y = 0; y < 2; ++y) {
       for (int z = 0; z < 2; ++z) {
@@ -99,7 +99,7 @@ TEST_F(_12_XRD_Tests, CalculateXRDCubicCell) {
     }
   }
 
-  Trajectory traj;
+  correlation::core::Trajectory traj;
   traj.addFrame(cubic_cell);
   traj.precomputeBondCutoffs();
 

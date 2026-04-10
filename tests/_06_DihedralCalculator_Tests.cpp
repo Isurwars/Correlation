@@ -3,22 +3,23 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "calculators/DihedralCalculator.hpp"
+#include "core/Cell.hpp"
+#include "core/NeighborGraph.hpp"
+#include "math/Constants.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
 
-#include "Cell.hpp"
-#include "NeighborGraph.hpp"
-#include "calculators/DihedralCalculator.hpp"
-#include "math/Constants.hpp"
-
 class _06_DihedralCalculator_Tests : public ::testing::Test {
 protected:
-  Cell cell;
-  NeighborGraph graph;
+  correlation::core::Cell cell;
+  correlation::core::NeighborGraph graph;
 
   void SetUp() override {
     // Setup a non-periodic cell large enough
-    cell = Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
+    cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0},
+                                   {0.0, 0.0, 20.0});
   }
 };
 
@@ -34,7 +35,7 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect90DegreeDihedral) {
   cell.addAtom("C", {0.0, 1.0, 0.0}); // C
   cell.addAtom("C", {0.0, 1.0, 1.0}); // D
 
-  graph = NeighborGraph(4);
+  graph = correlation::core::NeighborGraph(4);
   // Bind A-B (dist 1.0)
   graph.addDirectedEdge(
       0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
@@ -88,7 +89,7 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect0DegreeDihedral) {
   cell.addAtom("C", {0.0, -1.0, 0.0}); // C
   cell.addAtom("C", {1.0, -1.0, 0.0}); // D
 
-  graph = NeighborGraph(4);
+  graph = correlation::core::NeighborGraph(4);
   graph.addDirectedEdge(
       0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
   graph.addDirectedEdge(
@@ -126,7 +127,7 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect180DegreeDihedral) {
   cell.addAtom("C", {0.0, -1.0, 0.0});  // C
   cell.addAtom("C", {-1.0, -1.0, 0.0}); // D
 
-  graph = NeighborGraph(4);
+  graph = correlation::core::NeighborGraph(4);
   graph.addDirectedEdge(
       0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
   graph.addDirectedEdge(

@@ -11,6 +11,7 @@
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/SpecialFunctions.hpp"
+
 #include <cmath>
 #include <stdexcept>
 
@@ -90,7 +91,7 @@ void SteinhardtCalculator::calculateFrame(
 }
 
 std::map<std::string, Histogram>
-SteinhardtCalculator::calculate(const Cell &cell,
+SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
                                 const StructureAnalyzer *neighbors) {
   if (!neighbors) {
     throw std::logic_error(
@@ -114,10 +115,8 @@ SteinhardtCalculator::calculate(const Cell &cell,
   std::vector<double> W6(num_atoms, 0.0);
   std::vector<double> W6_hat(num_atoms, 0.0);
 
-  double global_Q4_factor =
-      std::sqrt(correlation::math::four_pi / 9.0);
-  double global_Q6_factor =
-      std::sqrt(correlation::math::four_pi / 13.0);
+  double global_Q4_factor = std::sqrt(correlation::math::four_pi / 9.0);
+  double global_Q6_factor = std::sqrt(correlation::math::four_pi / 13.0);
 
   for (size_t i = 0; i < num_atoms; ++i) {
     const auto &atom_neighbors = neighbor_graph.getNeighbors(i);
@@ -225,7 +224,8 @@ SteinhardtCalculator::calculate(const Cell &cell,
   hist_W6.y_label = "Probability";
   hist_W6.x_unit = "arbitrary units";
   hist_W6.y_unit = "counts";
-  hist_W6.description = "Steinhardt Normalized W6 Bond Orientational Order Parameter";
+  hist_W6.description =
+      "Steinhardt Normalized W6 Bond Orientational Order Parameter";
   hist_W6.file_suffix = "_W6_hat";
   hist_W6.bins.resize(bins_W);
   for (size_t b = 0; b < bins_W; ++b)

@@ -6,6 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 #include "readers/CellReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
@@ -14,30 +16,26 @@
 #include <cerrno>
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
-#include <memory>
-#include <functional>
-
-#include "Cell.hpp"
-#include "Trajectory.hpp"
 
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<CellReader>()
-);
+static bool registered =
+    ReaderFactory::instance().registerReader(std::make_unique<CellReader>());
 
-Cell CellReader::readStructure(const std::string &filename,
-                                std::function<void(float, const std::string &)>
-                                    progress_callback) {
+correlation::core::Cell CellReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   return read(filename);
 }
 
-Trajectory CellReader::readTrajectory(const std::string &filename,
-                                       std::function<void(float, const std::string &)>
-                                           progress_callback) {
+correlation::core::Trajectory CellReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   throw std::runtime_error("Cell files are structures, use readStructure.");
 }
 
@@ -48,14 +46,14 @@ void toLower(std::string &s) {
 }
 } // namespace
 
-Cell CellReader::read(const std::string &file_name) {
+correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
                              std::strerror(errno) + ").");
   }
 
-  Cell tempCell;
+  correlation::core::Cell tempCell;
   bool in_block = false;
   bool frac_flag = false;
   std::string current_block_type;
@@ -93,9 +91,9 @@ Cell CellReader::read(const std::string &file_name) {
             v[lattice_row_count][2]) {
           lattice_row_count++;
           if (lattice_row_count == 3) {
-            tempCell =
-                Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
-                     {v[2][0], v[2][1], v[2][2]});
+            tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]},
+                                               {v[1][0], v[1][1], v[1][2]},
+                                               {v[2][0], v[2][1], v[2][2]});
           }
         }
       }

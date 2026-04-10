@@ -10,7 +10,8 @@
 
 #include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
-#include "Trajectory.hpp"
+#include "core/Trajectory.hpp"
+
 #include <map>
 #include <string>
 
@@ -39,7 +40,8 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(DistributionFunctions &df, const Trajectory &traj,
+  void calculateTrajectory(DistributionFunctions &df,
+                           const correlation::core::Trajectory &traj,
                            const AnalysisSettings &settings) const override;
 
   /**
@@ -50,11 +52,12 @@ public:
    *  - "D_eff" : running diffusion coefficient D(t) = MSD(t) / (6t)  (Å²/fs)
    *
    * @param traj               The trajectory.
-   * @param max_correlation_frames  Maximum lag in frames (-1 = half trajectory).
+   * @param max_correlation_frames  Maximum lag in frames (-1 = half
+   * trajectory).
    * @param start_frame        First frame to use.
    * @param end_frame          One-past-last frame to use.
    */
   static std::map<std::string, Histogram>
-  calculate(const Trajectory &traj, int max_correlation_frames,
-            size_t start_frame, size_t end_frame);
+  calculate(const correlation::core::Trajectory &traj,
+            int max_correlation_frames, size_t start_frame, size_t end_frame);
 };

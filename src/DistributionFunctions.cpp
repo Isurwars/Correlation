@@ -7,12 +7,6 @@
  */
 
 #include "DistributionFunctions.hpp"
-
-#include <algorithm>
-#include <stdexcept>
-
-#include "math/Smoothing.hpp"
-#include "Trajectory.hpp"
 #include "TrajectoryAnalyzer.hpp"
 #include "calculators/CNCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
@@ -22,11 +16,16 @@
 #include "calculators/VACFCalculator.hpp"
 #include "calculators/VDOSCalculator.hpp"
 #include "calculators/XRDCalculator.hpp"
+#include "core/Trajectory.hpp"
+#include "math/Smoothing.hpp"
 
+#include <algorithm>
 #include <atomic>
 #include <mutex>
+#include <stdexcept>
 #include <tbb/parallel_for.h>
 
+using namespace correlation::core;
 //---------------------------------------------------------------------------//
 //------------------------------- Constructor -------------------------------//
 //---------------------------------------------------------------------------//
@@ -218,7 +217,8 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
 
   // Flatten partials into a read-only list so we can access them safely from
   // parallel tasks (std::map is not thread-safe for concurrent reads + writes).
-  using PartialEntry = std::pair<const std::string *, const std::vector<double> *>;
+  using PartialEntry =
+      std::pair<const std::string *, const std::vector<double> *>;
   std::vector<PartialEntry> entries;
   entries.reserve(hist.partials.size());
   for (const auto &[key, vals] : hist.partials)
@@ -226,22 +226,20 @@ void DistributionFunctions::smooth(const std::string &name, double sigma,
 
   // Compute each partial's smoothed values in parallel.
   std::vector<std::vector<double>> results(entries.size());
-  tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, entries.size()),
-      [&](const tbb::blocked_range<size_t> &r) {
-        for (size_t i = r.begin(); i != r.end(); ++i)
-          results[i] =
-              correlation::math::KernelSmoothing(
-                  dx, *entries[i].second, min_sigma, kernel);
-      });
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, entries.size()),
+                    [&](const tbb::blocked_range<size_t> &r) {
+                      for (size_t i = r.begin(); i != r.end(); ++i)
+                        results[i] = correlation::math::KernelSmoothing(
+                            dx, *entries[i].second, min_sigma, kernel);
+                    });
 
   // Serial writeback — map insertions are not thread-safe.
   for (size_t i = 0; i < entries.size(); ++i)
     hist.smoothed_partials[*entries[i].first] = std::move(results[i]);
 }
 
-void DistributionFunctions::smoothAll(
-    double sigma, correlation::math::KernelType kernel) {
+void DistributionFunctions::smoothAll(double sigma,
+                                      correlation::math::KernelType kernel) {
   for (const auto &[name, histogram] : histograms_) {
     smooth(name, sigma, kernel);
   }
@@ -317,7 +315,6 @@ void DistributionFunctions::calculateVDOS() {
   }
   histograms_["VDOS"] = VDOSCalculator::calculate(histograms_.at("VACF"));
 }
-
 
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {

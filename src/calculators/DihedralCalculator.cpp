@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "math/LinearAlgebra.hpp"
 #include "calculators/DihedralCalculator.hpp"
 #include "DistributionFunctions.hpp"
+#include "math/LinearAlgebra.hpp"
 
 #include <cmath>
 #include <tbb/enumerable_thread_specific.h>
@@ -23,7 +23,8 @@ void DihedralCalculator::calculateFrame(
   // StructureAnalyzer during its construction. Nothing to do here.
 }
 
-void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
+void DihedralCalculator::compute(const correlation::core::Cell &cell,
+                                 const correlation::core::NeighborGraph &graph,
                                  DihedralTensor &out_dihedrals) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
@@ -66,7 +67,8 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
               continue;
 
             const int type_C = atoms[C].element_id();
-            const correlation::math::Vector3<double> &r_BC = neighbor_C.r_ij; // B -> C
+            const correlation::math::Vector3<double> &r_BC =
+                neighbor_C.r_ij; // B -> C
 
             // Now, find all A bonded to B (where A != C)
             for (const auto &neighbor_A : B_neighbors) {
@@ -75,7 +77,8 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 continue;
 
               const int type_A = atoms[A].element_id();
-              const correlation::math::Vector3<double> &r_BA = neighbor_A.r_ij; // B -> A
+              const correlation::math::Vector3<double> &r_BA =
+                  neighbor_A.r_ij; // B -> A
 
               // And find all D bonded to C (where D != B and D != A)
               for (const auto &neighbor_D : C_neighbors) {
@@ -88,7 +91,8 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 // Vector C -> D.
                 // Wait, r_ij in Neighbor array is Central -> Neighbor.
                 // So neighbor_D.r_ij is C -> D.
-                const correlation::math::Vector3<double> &r_CD = neighbor_D.r_ij;
+                const correlation::math::Vector3<double> &r_CD =
+                    neighbor_D.r_ij;
 
                 // We have vectors:
                 // b1 = r_BA  (B to A)
@@ -105,8 +109,10 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
 
                 // n1 = b1 x b2
                 // n2 = b2 x b3
-                correlation::math::Vector3<double> n1 = correlation::math::cross(b1, b2);
-                correlation::math::Vector3<double> n2 = correlation::math::cross(b2, b3);
+                correlation::math::Vector3<double> n1 =
+                    correlation::math::cross(b1, b2);
+                correlation::math::Vector3<double> n2 =
+                    correlation::math::cross(b2, b3);
 
                 double n1_norm = correlation::math::norm(n1);
                 double n2_norm = correlation::math::norm(n2);
@@ -120,8 +126,10 @@ void DihedralCalculator::compute(const Cell &cell, const NeighborGraph &graph,
                 n2 = correlation::math::normalize(n2);
 
                 // m = n1 x (b2 / |b2|)
-                correlation::math::Vector3<double> b2_hat = correlation::math::normalize(b2);
-                correlation::math::Vector3<double> m = correlation::math::cross(n1, b2_hat);
+                correlation::math::Vector3<double> b2_hat =
+                    correlation::math::normalize(b2);
+                correlation::math::Vector3<double> m =
+                    correlation::math::cross(n1, b2_hat);
 
                 // cos(phi) = n1 . n2
                 // sin(phi) = m . n2

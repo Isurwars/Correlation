@@ -6,16 +6,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "math/LinearAlgebra.hpp"
 #include "calculators/DistanceCalculator.hpp"
+#include "DistributionFunctions.hpp"
+#include "math/LinearAlgebra.hpp"
+#include "math/SIMDUtils.hpp"
 
 #include <cmath>
 #include <numeric>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
-
-#include "DistributionFunctions.hpp"
-#include "math/SIMDUtils.hpp"
 
 namespace calculators {
 
@@ -32,7 +31,7 @@ void DistanceCalculator::calculateFrame(
 
 struct ThreadLocalDistances {
   DistanceTensor distance_tensor_local;
-  std::vector<std::vector<Neighbor>> neighbor_list_local;
+  std::vector<std::vector<correlation::core::Neighbor>> neighbor_list_local;
 
   // Per-thread SoA scratch buffers (reused across iterations to avoid allocs)
   std::vector<double> soa_x;
@@ -47,19 +46,19 @@ struct ThreadLocalDistances {
 };
 
 void DistanceCalculator::compute(
-    const Cell &cell, double cutoff_sq,
+    const correlation::core::Cell &cell, double cutoff_sq,
     const std::vector<std::vector<double>> &bond_cutoffs_sq,
     bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
-    NeighborGraph &out_graph) {
+    correlation::core::NeighborGraph &out_graph) {
 
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 
-  correlation::math::Vector3<double> box_sidelengths = {correlation::math::norm(lattice[0]),
-                                             correlation::math::norm(lattice[1]),
-                                             correlation::math::norm(lattice[2])};
+  correlation::math::Vector3<double> box_sidelengths = {
+      correlation::math::norm(lattice[0]), correlation::math::norm(lattice[1]),
+      correlation::math::norm(lattice[2])};
   int nx =
       static_cast<int>(std::ceil(std::sqrt(cutoff_sq) / box_sidelengths.x()));
   int ny =
@@ -133,8 +132,9 @@ void DistanceCalculator::compute(
 
           // SIMD pass: compute dsq[jj] = ||atom_A - shifted_atom_B[jj]||²
           correlation::math::PositionBlock block{soa_x.data(), soa_y.data(),
-                                          soa_z.data(), j_count};
-          correlation::math::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
+                                                 soa_z.data(), j_count};
+          correlation::math::compute_dsq_block(ax, ay, az, block,
+                                               dsq_buf.data());
 
           // -----------------------------------------------------------------------
           // Scalar post-processing: apply cutoff and record output
@@ -178,8 +178,8 @@ void DistanceCalculator::compute(
 
             if (d_sq <= max_bond_dist_sq) {
               // r_ij = (pos_B + disp) - pos_A  — already stored in soa arrays
-              correlation::math::Vector3<double> r_ij = {soa_x[jj] - ax, soa_y[jj] - ay,
-                                              soa_z[jj] - az};
+              correlation::math::Vector3<double> r_ij = {
+                  soa_x[jj] - ax, soa_y[jj] - ay, soa_z[jj] - az};
               neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
               if (i != j) {
                 neighbor_local[j].push_back({atom_A.id(), dist, -1.0 * r_ij});

@@ -15,14 +15,16 @@
 #include <stdexcept>
 
 namespace {
-std::string getPartialKey(const Cell &cell, int type1, int type2) {
+std::string getPartialKey(const correlation::core::Cell &cell, int type1,
+                          int type2) {
   const auto &elements = cell.elements();
   if (type1 > type2)
     std::swap(type1, type2);
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
-std::string getInversePartialKey(const Cell &cell, int type1, int type2) {
+std::string getInversePartialKey(const correlation::core::Cell &cell, int type1,
+                                 int type2) {
   const auto &elements = cell.elements();
   if (type1 < type2)
     std::swap(type1, type2);
@@ -44,7 +46,8 @@ void RDFCalculator::calculateFrame(DistributionFunctions &df,
 }
 
 std::map<std::string, Histogram>
-RDFCalculator::calculate(const Cell &cell, const StructureAnalyzer *neighbors,
+RDFCalculator::calculate(const correlation::core::Cell &cell,
+                         const StructureAnalyzer *neighbors,
                          const std::map<std::string, double> &ashcroft_weights,
                          double r_max, double r_bin_width) {
   if (r_bin_width <= 0) {

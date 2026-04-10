@@ -9,6 +9,7 @@
 #include "writers/WriterFactory.hpp"
 #include <algorithm>
 
+using namespace correlation::core;
 namespace correlation::writers {
 
 WriterFactory &WriterFactory::instance() {

@@ -8,13 +8,12 @@
 
 #include "calculators/AngleCalculator.hpp"
 #include "DistributionFunctions.hpp"
+#include "math/SIMDUtils.hpp"
 
 #include <algorithm>
 #include <cmath>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
-
-#include "math/SIMDUtils.hpp"
 
 namespace calculators {
 
@@ -24,7 +23,8 @@ void AngleCalculator::calculateFrame(DistributionFunctions &df,
   // called by StructureAnalyzer during its construction.
 }
 
-void AngleCalculator::compute(const Cell &cell, const NeighborGraph &graph,
+void AngleCalculator::compute(const correlation::core::Cell &cell,
+                              const correlation::core::NeighborGraph &graph,
                               AngleTensor &out_angles) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();

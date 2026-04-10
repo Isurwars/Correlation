@@ -26,8 +26,9 @@ CalculatorFactory::getCalculators() const {
   return calculators_;
 }
 
-const BaseCalculator* CalculatorFactory::getCalculator(const std::string& name) const {
-  for (const auto& calc : calculators_) {
+const BaseCalculator *
+CalculatorFactory::getCalculator(const std::string &name) const {
+  for (const auto &calc : calculators_) {
     if (calc->getName() == name) {
       return calc.get();
     }

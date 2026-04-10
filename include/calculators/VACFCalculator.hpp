@@ -10,7 +10,8 @@
 
 #include "BaseCalculator.hpp"
 #include "DistributionFunctions.hpp"
-#include "Trajectory.hpp"
+#include "core/Trajectory.hpp"
+
 #include <map>
 #include <string>
 
@@ -30,11 +31,11 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(DistributionFunctions &df, const Trajectory &traj,
+  void calculateTrajectory(DistributionFunctions &df,
+                           const correlation::core::Trajectory &traj,
                            const AnalysisSettings &settings) const override;
 
-  static std::map<std::string, Histogram> calculate(const Trajectory &traj,
-                                                    int max_correlation_frames,
-                                                    size_t start_frame,
-                                                    size_t end_frame);
+  static std::map<std::string, Histogram>
+  calculate(const correlation::core::Trajectory &traj,
+            int max_correlation_frames, size_t start_frame, size_t end_frame);
 };

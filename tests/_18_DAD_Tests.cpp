@@ -3,15 +3,15 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include <gtest/gtest.h>
-
-#include "Cell.hpp"
 #include "StructureAnalyzer.hpp"
 #include "calculators/DADCalculator.hpp"
+#include "core/Cell.hpp"
+
+#include <gtest/gtest.h>
 
 class _18_DAD_Tests : public ::testing::Test {
 protected:
-  Cell cell;
+  correlation::core::Cell cell;
 
   void SetUp() override {
     // We will place 4 atoms in a sequence A-B-C-D to test dihedral.
@@ -55,7 +55,7 @@ TEST_F(_18_DAD_Tests, BasicCalculation) {
 }
 
 TEST_F(_18_DAD_Tests, IcosahedronAnglesDAD) {
-  Cell cell_iso;
+  correlation::core::Cell cell_iso;
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   double phi = (1.0 + std::sqrt(5.0)) / 2.0;
@@ -68,21 +68,21 @@ TEST_F(_18_DAD_Tests, IcosahedronAnglesDAD) {
     cell_iso.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
   }
 
-  double r_cut = 2.5; 
+  double r_cut = 2.5;
   std::vector<std::vector<double>> bond_cutoffs(
       1, std::vector<double>(1, r_cut * r_cut));
   StructureAnalyzer analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
   double bin_width = 1.0;
-  Histogram f_dihedral = DADCalculator::calculate(cell_iso, &analyzer, bin_width);
+  Histogram f_dihedral =
+      DADCalculator::calculate(cell_iso, &analyzer, bin_width);
 
   ASSERT_FALSE(f_dihedral.partials.empty());
   auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
 
   // DAD expects multiple angles due to Center-Vertex and Vertex-Vertex chains
-  std::vector<double> expected_angles = {
-      0.0, 31.7, 36.0, 63.4, 72.0, 100.0, 108.0, 138.19, 144.0, 180.0
-  };
+  std::vector<double> expected_angles = {0.0,   31.7,  36.0,   63.4,  72.0,
+                                         100.0, 108.0, 138.19, 144.0, 180.0};
 
   for (double target : expected_angles) {
     bool found = false;

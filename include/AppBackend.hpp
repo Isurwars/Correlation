@@ -8,14 +8,14 @@
 
 #pragma once
 
+#include "DistributionFunctions.hpp"
+#include "TrajectoryAnalyzer.hpp"
+#include "core/Trajectory.hpp"
+#include "math/Smoothing.hpp"
+
 #include <functional>
 #include <map>
 #include <memory>
-
-#include "DistributionFunctions.hpp"
-#include "math/Smoothing.hpp"
-#include "Trajectory.hpp"
-#include "TrajectoryAnalyzer.hpp"
 
 /**
  * @brief Default values and messages for the application.
@@ -124,9 +124,10 @@ public:
 
   /**
    * @brief Gets a pointer to the current cell (first frame of trajectory).
-   * @return Pointer to the Cell, or nullptr if no trajectory loaded.
+   * @return Pointer to the correlation::core::Cell, or nullptr if no trajectory
+   * loaded.
    */
-  [[nodiscard]] const Cell *cell() const {
+  [[nodiscard]] const correlation::core::Cell *cell() const {
     if (trajectory_ && !trajectory_->getFrames().empty()) {
       return &trajectory_->getFrames()[0];
     }
@@ -171,7 +172,7 @@ public:
 
   /**
    * @brief Gets the atom counts for the current structure.
-   * @return A map of Element Symbol -> Count.
+   * @return A map of correlation::core::Element Symbol -> Count.
    */
   [[nodiscard]] std::map<std::string, int> getAtomCounts() const;
 
@@ -229,7 +230,8 @@ public:
   void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
 
   /**
-   * @brief Returns the names of all histograms available from the last analysis.
+   * @brief Returns the names of all histograms available from the last
+   * analysis.
    * @return Sorted vector of histogram names (e.g., "g(r)", "S(Q)", "PAD").
    *         Returns an empty vector if no analysis has been run yet.
    */
@@ -238,7 +240,8 @@ public:
   /**
    * @brief Returns a pointer to a specific histogram from the last analysis.
    * @param name The histogram name (e.g., "g(r)").
-   * @return Pointer to the Histogram, or nullptr if not found or no analysis run.
+   * @return Pointer to the Histogram, or nullptr if not found or no analysis
+   * run.
    */
   [[nodiscard]] const Histogram *getHistogram(const std::string &name) const;
 
@@ -256,8 +259,8 @@ private:
    */
   void analysis_thread_func();
 
-  // Pointers to the Trajectory and DF
-  std::unique_ptr<Trajectory> trajectory_;
+  // Pointers to the correlation::core::Trajectory and DF
+  std::unique_ptr<correlation::core::Trajectory> trajectory_;
   std::unique_ptr<TrajectoryAnalyzer> trajectory_analyzer_;
   std::unique_ptr<DistributionFunctions> df_;
 

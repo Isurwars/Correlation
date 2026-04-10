@@ -8,11 +8,12 @@
 
 #pragma once
 
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
+
+#include <functional>
 #include <string>
 #include <vector>
-#include <functional>
-#include "Cell.hpp"
-#include "Trajectory.hpp"
 
 namespace correlation::readers {
 
@@ -41,16 +42,18 @@ public:
   /**
    * @brief Reads an atomic structure from a file.
    */
-  virtual Cell readStructure(const std::string &filename,
-                             std::function<void(float, const std::string &)>
-                                 progress_callback = nullptr) = 0;
+  virtual correlation::core::Cell readStructure(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) = 0;
 
   /**
    * @brief Reads a trajectory from a file.
    */
-  virtual Trajectory readTrajectory(const std::string &filename,
-                                    std::function<void(float, const std::string &)>
-                                        progress_callback = nullptr) = 0;
+  virtual correlation::core::Trajectory readTrajectory(
+      const std::string &filename,
+      std::function<void(float, const std::string &)> progress_callback =
+          nullptr) = 0;
 };
 
 } // namespace correlation::readers

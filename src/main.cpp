@@ -14,7 +14,6 @@
 
 #include "AppBackend.hpp"
 #include "AppController.hpp"
-
 #include "AppWindow.h"
 
 int main() {

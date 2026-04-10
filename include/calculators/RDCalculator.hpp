@@ -30,5 +30,6 @@ public:
   void calculateFrame(DistributionFunctions &df,
                       const AnalysisSettings &settings) const override;
 
-  static Histogram calculate(const NeighborGraph &graph, size_t max_ring_size);
+  static Histogram calculate(const correlation::core::NeighborGraph &graph,
+                             size_t max_ring_size);
 };

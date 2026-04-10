@@ -6,50 +6,48 @@
  * SPDX-License-Identifier: MIT
  */
 #include "readers/ArcReader.hpp"
+#include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "readers/ReaderFactory.hpp"
 
 #include <array>
 #include <cerrno>
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
-#include <memory>
-#include <functional>
-
-#include "Cell.hpp"
-#include "Trajectory.hpp"
 
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<ArcReader>()
-);
+static bool registered =
+    ReaderFactory::instance().registerReader(std::make_unique<ArcReader>());
 
-Cell ArcReader::readStructure(const std::string &filename,
-                               std::function<void(float, const std::string &)>
-                                   progress_callback) {
+correlation::core::Cell ArcReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
   throw std::runtime_error("ARC files are trajectories, use readTrajectory.");
 }
 
-Trajectory ArcReader::readTrajectory(const std::string &filename,
-                                      std::function<void(float, const std::string &)>
-                                          progress_callback) {
-  return Trajectory(read(filename, progress_callback), 1.0);
+correlation::core::Trajectory ArcReader::readTrajectory(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
+  return correlation::core::Trajectory(read(filename, progress_callback), 1.0);
 }
 
-std::vector<Cell>
-ArcReader::read(const std::string &file_name,
-                std::function<void(float, const std::string &)> progress_callback) {
+std::vector<correlation::core::Cell> ArcReader::read(
+    const std::string &file_name,
+    std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" +
                              std::strerror(errno) + ").");
   }
 
-  std::vector<Cell> frames;
-  Cell tempCell;
+  std::vector<correlation::core::Cell> frames;
+  correlation::core::Cell tempCell;
   std::string line;
 
   myfile.seekg(0, std::ios::end);
@@ -80,7 +78,7 @@ ArcReader::read(const std::string &file_name,
     if (first_token == "end") {
       if (!tempCell.isEmpty()) {
         frames.push_back(std::move(tempCell));
-        tempCell = Cell(); // Reset for next frame
+        tempCell = correlation::core::Cell(); // Reset for next frame
       }
       continue;
     }

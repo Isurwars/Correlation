@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include <memory>
-#include <thread>
-
 #include "AppBackend.hpp"
 #include "AppWindow.h"
 #include "PortableFileDialogs.hpp"
+
+#include <memory>
+#include <thread>
 
 /**
  * @brief Controller class for the application.

@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+using namespace correlation::core;
 namespace correlation::writers {
 
 // Automatic registration

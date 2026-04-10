@@ -9,8 +9,8 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "Cell.hpp"
-#include "NeighborGraph.hpp"
+#include "core/Cell.hpp"
+#include "core/NeighborGraph.hpp"
 #include <vector>
 
 namespace calculators {
@@ -53,7 +53,7 @@ public:
    * @param out_angles A 4D tensor `[outer1][central][outer2][angle_idx]`
    * populated with angles in radians.
    */
-  static void compute(const Cell &cell, const NeighborGraph &graph,
+  static void compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
                       AngleTensor &out_angles);
 };
 

@@ -7,15 +7,14 @@
  */
 
 #include "AppBackend.hpp"
-
-#include <iostream>
-
+#include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
 #include "writers/FileWriter.hpp"
-#include "physics/PhysicalData.hpp"
+
 #include <cmath>
 #include <limits>
 
+#include <iostream>
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
@@ -28,7 +27,7 @@ AppBackend::AppBackend() {}
 
 std::map<std::string, int> AppBackend::getAtomCounts() const {
   std::map<std::string, int> counts;
-  const Cell *c = cell();
+  const correlation::core::Cell *c = cell();
   if (!c)
     return counts;
 
@@ -42,7 +41,7 @@ std::map<std::string, int> AppBackend::getAtomCounts() const {
   for (size_t i = 0; i < elements.size(); ++i) {
     if (id_counts[i] > 0) {
       counts[elements[i].symbol] = id_counts[i];
-    }  
+    }
   }
 
   return counts;
@@ -73,7 +72,7 @@ double AppBackend::getTimeStep() const {
 }
 
 double AppBackend::getRecommendedTimeStep() const {
-  const Cell *c = cell();
+  const correlation::core::Cell *c = cell();
   if (!c || c->elements().empty()) {
     return AppDefaults::TIME_STEP;
   }
@@ -83,8 +82,7 @@ double AppBackend::getRecommendedTimeStep() const {
 
   for (const auto &element : c->elements()) {
     try {
-      double mass =
-          correlation::physics::getAtomicMass(element.symbol);
+      double mass = correlation::physics::getAtomicMass(element.symbol);
       if (mass < min_mass) {
         min_mass = mass;
         found = true;
@@ -108,7 +106,7 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   // Precompute on the trajectory (which updates its internal cache)
   trajectory_->precomputeBondCutoffs();
 
-  const Cell &c = trajectory_->getFrames()[0];
+  const correlation::core::Cell &c = trajectory_->getFrames()[0];
   const size_t num_elements = c.elements().size();
   std::vector<std::vector<double>> cutoffs(num_elements,
                                            std::vector<double>(num_elements));
@@ -148,12 +146,14 @@ void AppBackend::setBondCutoffs(
 }
 
 std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
-  if (!df_) return {};
+  if (!df_)
+    return {};
   return df_->getAvailableHistograms();
 }
 
 const Histogram *AppBackend::getHistogram(const std::string &name) const {
-  if (!df_) return nullptr;
+  if (!df_)
+    return nullptr;
   try {
     return &df_->getHistogram(name);
   } catch (const std::out_of_range &) {
@@ -168,7 +168,8 @@ const Histogram *AppBackend::getHistogram(const std::string &name) const {
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;
   std::replace(display_path.begin(), display_path.end(), '\\', '/');
-  correlation::readers::FileType type = correlation::readers::determineFileType(path);
+  correlation::readers::FileType type =
+      correlation::readers::determineFileType(path);
 
   // For now, loading a single structure file starts a new trajectory with 1
   // frame. The determineFileType helper is used to dispatch to the correct
@@ -177,10 +178,10 @@ std::string AppBackend::load_file(const std::string &path) {
   if (type == correlation::readers::FileType::Arc ||
       type == correlation::readers::FileType::CastepMd ||
       type == correlation::readers::FileType::Outmol) {
-    trajectory_ = std::make_unique<Trajectory>(
+    trajectory_ = std::make_unique<correlation::core::Trajectory>(
         correlation::readers::readTrajectory(path, type, progress_callback_));
   } else {
-    trajectory_ = std::make_unique<Trajectory>();
+    trajectory_ = std::make_unique<correlation::core::Trajectory>();
     trajectory_->addFrame(
         correlation::readers::readStructure(path, type, progress_callback_));
   }

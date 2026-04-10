@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include "NeighborGraph.hpp"
+#include "core/NeighborGraph.hpp"
+
 #include <map>
 #include <vector>
 
@@ -24,8 +25,8 @@ public:
    * @return A map where the key is the ring size and the value is the total
    * count of such rings.
    */
-  static std::map<int, size_t> findRings(const NeighborGraph &graph,
-                                         size_t max_size = 6);
+  static std::map<int, size_t>
+  findRings(const correlation::core::NeighborGraph &graph, size_t max_size = 6);
 
   /**
    * @brief Extracts all exact cycles of a specific target size.
@@ -35,8 +36,9 @@ public:
    * @return A vector of rings, where each ring is represented as a vector of
    * AtomIDs in order.
    */
-  static std::vector<std::vector<AtomID>>
-  extractCycles(const NeighborGraph &graph, size_t target_size);
+  static std::vector<std::vector<correlation::core::AtomID>>
+  extractCycles(const correlation::core::NeighborGraph &graph,
+                size_t target_size);
 };
 
 } // namespace calculators

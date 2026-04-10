@@ -8,17 +8,19 @@
 
 #pragma once
 
+#include "StructureAnalyzer.hpp"
+#include "core/Cell.hpp"
+#include "math/Smoothing.hpp"
+
 #include <functional>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "Cell.hpp"
-#include "math/Smoothing.hpp"
-#include "StructureAnalyzer.hpp"
-
+namespace correlation::core {
 class Trajectory;
+}
 class TrajectoryAnalyzer;
 
 struct AnalysisSettings {
@@ -33,8 +35,9 @@ struct AnalysisSettings {
   // Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
   // An empty map means all calculators are enabled by default.
   std::map<std::string, bool> active_calculators;
-  bool isActive(const std::string& id) const {
-    if (active_calculators.empty()) return true; // default: all enabled
+  bool isActive(const std::string &id) const {
+    if (active_calculators.empty())
+      return true; // default: all enabled
     auto it = active_calculators.find(id);
     return it != active_calculators.end() && it->second;
   }
@@ -70,8 +73,8 @@ struct Histogram {
  * - Structure Factor S(Q)
  * - X-Ray Diffraction (XRD) patterns
  *
- * It acts as a container for all analysis results associated with a Cell or
- * Trajectory.
+ * It acts as a container for all analysis results associated with a
+ * correlation::core::Cell or correlation::core::Trajectory.
  */
 class DistributionFunctions {
 public:
@@ -87,7 +90,7 @@ public:
    * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
    */
   explicit DistributionFunctions(
-      Cell &cell, double cutoff = 0.0,
+      correlation::core::Cell &cell, double cutoff = 0.0,
       const std::vector<std::vector<double>> &bond_cutoffs = {});
 
   /**
@@ -103,7 +106,7 @@ public:
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
-  const Cell &cell() const { return cell_; }
+  const correlation::core::Cell &cell() const { return cell_; }
 
   /**
    * @brief Access a specific calculated histogram by name.
@@ -164,8 +167,8 @@ public:
    * @param start_frame Starting frame index.
    * @param end_frame Ending frame index (exclusive).
    */
-  void calculateVACF(const Trajectory &traj, int max_correlation_frames = -1,
-                     size_t start_frame = 0,
+  void calculateVACF(const correlation::core::Trajectory &traj,
+                     int max_correlation_frames = -1, size_t start_frame = 0,
                      size_t end_frame = static_cast<size_t>(-1));
 
   /**
@@ -199,9 +202,8 @@ public:
    * @param sigma Smoothing width.
    * @param kernel The smoothing kernel type.
    */
-  void smoothAll(double sigma,
-                 correlation::math::KernelType kernel =
-                     correlation::math::KernelType::Gaussian);
+  void smoothAll(double sigma, correlation::math::KernelType kernel =
+                                   correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Uses an external StructureAnalyzer for neighborhood/bond info.
@@ -238,8 +240,9 @@ public:
    *        Uses parallel execution to speed up calculation.
    */
   static std::unique_ptr<DistributionFunctions> computeMean(
-      Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-      size_t start_frame, const AnalysisSettings &settings,
+      correlation::core::Trajectory &trajectory,
+      const TrajectoryAnalyzer &analyzer, size_t start_frame,
+      const AnalysisSettings &settings,
       std::function<void(float, const std::string &)> progress_callback =
           nullptr);
 
@@ -249,7 +252,7 @@ private:
   std::string getInversePartialKey(int type1, int type2) const;
   void calculateAshcroftWeights();
 
-  Cell &cell_;
+  correlation::core::Cell &cell_;
   const StructureAnalyzer *neighbors_ref_{nullptr};
   std::unique_ptr<StructureAnalyzer> neighbors_owned_;
   double current_cutoff_{-1.0};
