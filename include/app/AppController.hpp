@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "app/AppBackend.hpp"
 #include "AppWindow.h"
-#include "PortableFileDialogs.hpp"
+#include "app/AppBackend.hpp"
+#include "external/PortableFileDialogs.hpp"
 
 #include <memory>
 #include <thread>

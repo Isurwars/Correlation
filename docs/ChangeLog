@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
   - `analysis/`: High-level analyzers and distribution functions moved to `correlation::analysis`.
   - `app/`: Application-level logic (`AppController`, `AppBackend`) moved to `src/app/` and `correlation::app` namespace.
 - **Performance Restoration**: Switched to project-wide SIMD optimization flags (`CORRELATION_SIMD_FLAGS`) in CMake to ensure ABI consistency for `Vector3<double>` and restore 10x calculation speed across all analyzers.
+- **Header Organization**: Moved `PortableFileDialogs.hpp` to `include/external/` and updated all include directives to better organize external dependencies.
 - **Test Suite Migration**: Updated the full test suite (134+ tests) to work with the new namespaced and restructured codebase.
 
 ## [2.6.2] 2026-04-09
