@@ -17,7 +17,6 @@
 
 #include <algorithm>
 #include <filesystem>
-#include <fstream>
 #include <string>
 #include <vector>
 
@@ -556,14 +555,11 @@ void AppController::handleSelectPlot(int index) {
                      : correlation::plotters::PlotConfig::Theme::Light;
   std::string svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
 
-  // Diagnostic file output
-  std::ofstream out("preview.svg");
-  out << svg;
-  out.close();
-
-  // Load SVG from the verified file for high-quality rendering
-  auto path = std::filesystem::absolute("preview.svg").string();
-  auto img = slint::Image::load_from_path(slint::SharedString(path));
+  // Load SVG directly from memory avoiding filesystem issues
+  auto img = slint::private_api::load_image_from_embedded_data(
+      std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()),
+                               svg.size()),
+      "svg");
   ui_.set_preview_plot(img);
 }
 } // namespace correlation::app
