@@ -16,6 +16,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+namespace correlation::app {
 
 /**
  * @brief Default values and messages for the application.
@@ -269,3 +270,4 @@ private:
   ProgramOptions options_;
   std::function<void(float, const std::string &)> progress_callback_;
 };
+} // namespace correlation::app

@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "AppBackend.hpp"
-#include "AppController.hpp"
 #include "AppWindow.h"
+#include "app/AppBackend.hpp"
+#include "app/AppController.hpp"
 
 #include <gtest/gtest.h>
 #include <stdlib.h>
@@ -39,8 +39,9 @@ TEST_F(_17_AppController_Tests, ConstructorInitializesCorrectly) {
   // Arrange
   auto ui = AppWindow::create();
 
-  AppBackend backend;
+  correlation::app::AppBackend backend;
 
   // Act & Assert
-  EXPECT_NO_THROW({ AppController controller(*ui, backend); });
+  EXPECT_NO_THROW(
+      { correlation::app::AppController controller(*ui, backend); });
 }

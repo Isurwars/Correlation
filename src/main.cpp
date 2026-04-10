@@ -12,8 +12,8 @@
 #include <Windows.h>
 #endif
 
-#include "AppBackend.hpp"
-#include "AppController.hpp"
+#include "app/AppBackend.hpp"
+#include "app/AppController.hpp"
 #include "AppWindow.h"
 
 int main() {
@@ -24,10 +24,10 @@ int main() {
 #endif
 
   auto ui = AppWindow::create();
-  AppBackend backend;
+  correlation::app::AppBackend backend;
 
   // Instantiate the controller, which sets up all callbacks
-  AppController controller(*ui, backend);
+  correlation::app::AppController controller(*ui, backend);
 
   ui->run();
 

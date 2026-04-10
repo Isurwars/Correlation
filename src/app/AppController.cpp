@@ -11,7 +11,7 @@
 #include <Windows.h>
 #endif
 
-#include "AppController.hpp"
+#include "app/AppController.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "plotters/SvgPlotter.hpp"
 
@@ -20,6 +20,8 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
+namespace correlation::app {
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -564,3 +566,4 @@ void AppController::handleSelectPlot(int index) {
   auto img = slint::Image::load_from_path(slint::SharedString(path));
   ui_.set_preview_plot(img);
 }
+} // namespace correlation::app

@@ -33,8 +33,8 @@ add_executable(correlation_tests
     _20_SIMDUtils_Tests.cpp
     _21_StructureFactorCalculator_Tests.cpp
     _22_SteinhardtCalculator_Tests.cpp
-    ../src/AppBackend.cpp
-    ../src/AppController.cpp
+    ../src/app/AppBackend.cpp
+    ../src/app/AppController.cpp
 )
 
 # The test executable also links to the library and inherits its properties.

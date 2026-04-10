@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "AppBackend.hpp"
+#include "app/AppBackend.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
 #include "writers/FileWriter.hpp"
@@ -14,6 +14,8 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+
+namespace correlation::app {
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
@@ -333,3 +335,4 @@ void AppBackend::analysis_thread_func() {
   // Implementation of analysis thread if needed, currently inline in
   // run_analysis or managed by AppController
 }
+} // namespace correlation::app

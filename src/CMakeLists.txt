@@ -97,8 +97,8 @@ target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL a
 #------------------------------------------------------------------
 set(CORRELATION_SOURCES
     main.cpp
-    AppBackend.cpp
-    AppController.cpp
+    app/AppBackend.cpp
+    app/AppController.cpp
 )
 
 if (WIN32)

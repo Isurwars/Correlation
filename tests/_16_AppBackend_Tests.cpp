@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "AppBackend.hpp"
+#include "app/AppBackend.hpp"
 
 #include <gtest/gtest.h>
 #include <stdexcept>
@@ -13,19 +13,24 @@ class _16_AppBackend_Tests : public ::testing::Test {};
 
 TEST_F(_16_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
-  AppBackend backend;
-  ProgramOptions opts = backend.options();
+  correlation::app::AppBackend backend;
+  correlation::app::ProgramOptions opts = backend.options();
 
   // Assert
-  EXPECT_DOUBLE_EQ(opts.r_max, AppDefaults::R_MAX);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, AppDefaults::R_BIN_WIDTH);
-  EXPECT_DOUBLE_EQ(opts.q_max, AppDefaults::Q_MAX);
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, AppDefaults::Q_BIN_WIDTH);
-  EXPECT_DOUBLE_EQ(opts.r_int_max, AppDefaults::R_INT_MAX);
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, AppDefaults::ANGLE_BIN_WIDTH);
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, AppDefaults::SMOOTHING_SIGMA);
-  EXPECT_EQ(opts.smoothing_kernel, AppDefaults::SMOOTHING_KERNEL);
-  EXPECT_DOUBLE_EQ(opts.time_step, AppDefaults::TIME_STEP);
+  EXPECT_DOUBLE_EQ(opts.r_max, correlation::app::AppDefaults::R_MAX);
+  EXPECT_DOUBLE_EQ(opts.r_bin_width,
+                   correlation::app::AppDefaults::R_BIN_WIDTH);
+  EXPECT_DOUBLE_EQ(opts.q_max, correlation::app::AppDefaults::Q_MAX);
+  EXPECT_DOUBLE_EQ(opts.q_bin_width,
+                   correlation::app::AppDefaults::Q_BIN_WIDTH);
+  EXPECT_DOUBLE_EQ(opts.r_int_max, correlation::app::AppDefaults::R_INT_MAX);
+  EXPECT_DOUBLE_EQ(opts.angle_bin_width,
+                   correlation::app::AppDefaults::ANGLE_BIN_WIDTH);
+  EXPECT_DOUBLE_EQ(opts.smoothing_sigma,
+                   correlation::app::AppDefaults::SMOOTHING_SIGMA);
+  EXPECT_EQ(opts.smoothing_kernel,
+            correlation::app::AppDefaults::SMOOTHING_KERNEL);
+  EXPECT_DOUBLE_EQ(opts.time_step, correlation::app::AppDefaults::TIME_STEP);
 
   EXPECT_EQ(backend.cell(), nullptr);
   EXPECT_EQ(backend.getFrameCount(), 0);
@@ -34,8 +39,8 @@ TEST_F(_16_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
 
 TEST_F(_16_AppBackend_Tests, SetOptionsModifiesState) {
   // Arrange
-  AppBackend backend;
-  ProgramOptions opts;
+  correlation::app::AppBackend backend;
+  correlation::app::ProgramOptions opts;
   opts.r_max = 50.0;
   opts.smoothing_sigma = 0.5;
   opts.min_frame = 10;
@@ -45,7 +50,7 @@ TEST_F(_16_AppBackend_Tests, SetOptionsModifiesState) {
   backend.setOptions(opts);
 
   // Assert
-  ProgramOptions new_opts = backend.options();
+  correlation::app::ProgramOptions new_opts = backend.options();
   EXPECT_DOUBLE_EQ(new_opts.r_max, 50.0);
   EXPECT_DOUBLE_EQ(new_opts.smoothing_sigma, 0.5);
   EXPECT_EQ(new_opts.min_frame, 10);
@@ -54,7 +59,7 @@ TEST_F(_16_AppBackend_Tests, SetOptionsModifiesState) {
 
 TEST_F(_16_AppBackend_Tests, LoadInvalidFileThrowsException) {
   // Arrange
-  AppBackend backend;
+  correlation::app::AppBackend backend;
 
   // Act & Assert
   EXPECT_THROW(backend.load_file("nonexistent_file_that_should_not_exist.xyz"),
@@ -63,13 +68,13 @@ TEST_F(_16_AppBackend_Tests, LoadInvalidFileThrowsException) {
 
 TEST_F(_16_AppBackend_Tests, RecommendedTimeStepWithNoCellReturnsDefault) {
   // Arrange
-  AppBackend backend;
+  correlation::app::AppBackend backend;
 
   // Act
   double time_step = backend.getRecommendedTimeStep();
 
   // Assert
-  EXPECT_DOUBLE_EQ(time_step, AppDefaults::TIME_STEP);
+  EXPECT_DOUBLE_EQ(time_step, correlation::app::AppDefaults::TIME_STEP);
 }
 
 // Additional rigorous test for recommended step logic should be added by

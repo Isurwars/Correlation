@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "AppBackend.hpp"
+#include "app/AppBackend.hpp"
 #include "AppWindow.h"
 #include "PortableFileDialogs.hpp"
 
@@ -22,6 +22,8 @@
  * and the logic Backend (AppBackend). It manages event handling, threading for
  * analysis, and data synchronization between UI and Backend.
  */
+namespace correlation::app {
+
 class AppController {
 public:
   //-------------------------------------------------------------------------//
@@ -138,3 +140,4 @@ private:
    */
   void handleSelectPlot(int index);
 };
+} // namespace correlation::app
