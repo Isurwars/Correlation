@@ -4,13 +4,11 @@ All notable changes to this project will be documented in this file.
 ## [2.6.4] 2026-04-10
 
 ### Changed
-- **Documentation Coverage**: Successfully achieved 100% Doxygen documentation coverage for the core project API across three phases.
-  - **Phase 1**: Core interfaces and data structures (`BaseCalculator`, `Trajectory`, etc.).
-  - **Phase 2**: Math and physics foundations (`LinearAlgebra`, `PhysicalData`).
-  - **Phase 3**: Application backend and SVG visualization (`AppBackend`, `SvgPlotter`).
-- Resolved all Doxygen audit warnings, including strict `@param`, `@return`, and `@throws` verification, ensuring a clean, professional documentation build for CI/CD.
+- **Documentation Coverage**: Successfully achieved 100% Doxygen documentation coverage for the core project API across four phases, covering analysis, core, math, and plotting components.
+- **UI Polish**: Categorized and ordered the plot preview dropdown menu by scientific priority: Radial (g(r), G(r), J(r)), Scattering (S(q), XRD), Angular (BAD, DAD, CN, RD), and Dynamic (MSD, VACF, VDOS).
+- **Audit Verification**: Resolved all Doxygen warnings, including strict @param and @return verification, ensuring a clean, professional documentation build for CI/CD.
 
-## [2.6.3] 2026-04-09
+## [2.6.4] 2026-04-09
 
 ### Added
 - Implemented in-memory SVG loading in `AppController` using `slint::private_api::load_image_from_embedded_data`, eliminating the need for temporary files and fixing a critical filesystem-related runtime crash.

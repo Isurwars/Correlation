@@ -530,6 +530,27 @@ void AppController::handleCheckFileDialogStatus() {
 
 void AppController::populatePlotList() {
   auto names = backend_.getAvailableHistogramNames();
+
+  // Custom ordering based on user request:
+  // 1. Radial: g(r), G(r), J(r)
+  // 2. Scattering: S_q, XRD
+  // 3. Angular: BAD, PAD, DAD, CN, RD
+  // 4. Trajectory: MSD, VACF, VDOS
+  std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},  {"J_r", 2},
+                                         {"S_q", 10}, {"XRD", 11}, {"BAD", 20},
+                                         {"PAD", 21}, {"DAD", 22}, {"CN", 23},
+                                         {"RD", 24},  {"MSD", 30}, {"VACF", 31},
+                                         {"VDOS", 32}};
+
+  std::sort(names.begin(), names.end(),
+            [&](const std::string &a, const std::string &b) {
+              int p1 = priority.contains(a) ? priority.at(a) : 100;
+              int p2 = priority.contains(b) ? priority.at(b) : 100;
+              if (p1 != p2)
+                return p1 < p2;
+              return a < b; // Fallback to alphabetical
+            });
+
   available_plot_keys_ = names; // Store keys corresponding to indices
 
   // Build MenuItem list: {text: name, enabled: true}
