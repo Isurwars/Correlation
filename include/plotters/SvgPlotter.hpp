@@ -134,7 +134,7 @@ private:
 
 /**
  * @brief Formats a number for SVG display, using scientific notation if needed.
- * Returns a string that might contain <tspan> for superscripts.
+ * Returns a string that might contain Unicode superscript characters.
  */
 inline std::string fmtScientific(double v) {
   double abs_v = std::abs(v);

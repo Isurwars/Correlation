@@ -23,15 +23,28 @@ namespace correlation::physics {
 namespace detail {
 /**
  * @struct ElementData
- * @brief Simple internal structure to hold element-specific data.
+ * @brief Internal structure to hold element-specific physical data.
+ *
+ * This data is used for calculating density, scattering intensities, and
+ * neighbor interactions.
  */
 struct ElementData {
-  std::string_view symbol;
-  double radius;
-  double mass;
+  std::string_view symbol;     ///< Chemical symbol (e.g., "Si").
+  double radius;               ///< Covalent radius in Angstroms.
+  double mass;                 ///< Atomic mass in atomic mass units (Da).
+  
+  /**
+   * @brief 9 coefficients (a1, b1, a2, b2, a3, b3, a4, b4, c) for the 
+   * Cromer-Mann equation used to calculate atomic form factors f(q).
+   */
   std::array<double, 9> form_factors;
 };
 
+/**
+ * @brief Searches for an element by its symbol in the static database.
+ * @param symbol The chemical symbol to look for.
+ * @return Pointer to ElementData if found, nullptr otherwise.
+ */
 constexpr const ElementData *find(std::string_view symbol) noexcept;
 } // namespace detail
 
@@ -284,6 +297,12 @@ constexpr const ElementData *find(std::string_view symbol) noexcept {
       {"Zr", 1.54, 91.224, {17.859772, 1.310692, 10.911038, 12.319285, 5.821115, 0.104353, 3.512513,
         91.777542, 1.124859}},
   }};
+  /**
+   * @brief Binary search implementation for element data retrieval.
+   * This function provides O(log N) lookup complexity.
+   * @param symbol Chemical symbol.
+   * @return Constant pointer to ElementData or nullptr.
+   */
   auto it = std::lower_bound(database.begin(), database.end(), symbol,
                              [](const ElementData &a, std::string_view sym) {
                                return a.symbol < sym;

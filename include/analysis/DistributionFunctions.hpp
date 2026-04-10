@@ -23,42 +23,59 @@ namespace correlation::analysis {
 
 class TrajectoryAnalyzer;
 
+/**
+ * @brief Configuration settings for distribution function analysis.
+ */
 struct AnalysisSettings {
-  double r_max = 20.0;
-  double r_bin_width = 0.02;
-  double q_max = 20.0;
-  double q_bin_width = 0.02;
-  double r_int_max = 10.0;
-  double angle_bin_width = 1.0;
-  double dihedral_bin_width = 1.0;
-  size_t max_ring_size = 8;
-  // Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
-  // An empty map means all calculators are enabled by default.
+  double r_max = 20.0;           ///< Maximum radius for RDF calculations (Angstroms).
+  double r_bin_width = 0.02;     ///< Bin width for radial distributions (Angstroms).
+  double q_max = 20.0;           ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  double q_bin_width = 0.02;     ///< Bin width for S(Q) (Angstroms^-1).
+  double r_int_max = 10.0;       ///< Cutoff for integration-based properties.
+  double angle_bin_width = 1.0;  ///< Bin width for bond angle distributions (degrees).
+  double dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
+  size_t max_ring_size = 8;      ///< Maximum size of rings to search for.
+
+  /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
+  /// An empty map means all calculators are enabled by default.
   std::map<std::string, bool> active_calculators;
+
+  /**
+   * @brief Helper to check if a specific calculator is enabled.
+   * @param id The identifier of the calculator (e.g. "RDF").
+   * @return True if active or if no active calculators are specified.
+   */
   bool isActive(const std::string &id) const {
     if (active_calculators.empty())
       return true; // default: all enabled
     auto it = active_calculators.find(id);
     return it != active_calculators.end() && it->second;
   }
-  bool smoothing = true;
-  double smoothing_sigma = 0.1;
+
+  bool smoothing = true;         ///< Whether to apply post-processing smoothing.
+  double smoothing_sigma = 0.1;  ///< Gaussian smoothing standard deviation.
   correlation::math::KernelType smoothing_kernel =
-      correlation::math::KernelType::Gaussian;
+      correlation::math::KernelType::Gaussian; ///< The kernel to use for smoothing.
 };
 
 // A structure to hold all data related to a single histogram.
+/**
+ * @brief Container for a single calculated distribution function.
+ */
 struct Histogram {
-  std::vector<double> bins;
-  std::string title;
-  std::string x_label;
-  std::string y_label;
-  std::string x_unit;
-  std::string y_unit;
-  std::string description;
-  std::string file_suffix;
-  // Maps a partial key (e.g., "Si-O" or "Total") to its histogram values
+  std::vector<double> bins;      ///< The x-axis values (radii, angles, etc.).
+  std::string title;             ///< Descriptive title for the plot.
+  std::string x_label;           ///< Label for the x-axis.
+  std::string y_label;           ///< Label for the y-axis.
+  std::string x_unit;            ///< Physical unit for the x-axis (e.g. "A").
+  std::string y_unit;            ///< Physical unit for the y-axis (e.g. "A^-3").
+  std::string description;       ///< Internal description of what this data represents.
+  std::string file_suffix;       ///< Default suffix for saving this histogram to disk.
+
+  /// Maps a partial key (e.g., "Si-O" or "Total") to its histogram values.
   std::map<std::string, std::vector<double>> partials;
+
+  /// Maps a partial key to its smoothed histogram values.
   std::map<std::string, std::vector<double>> smoothed_partials;
 };
 
@@ -95,17 +112,25 @@ public:
 
   /**
    * @brief Move constructor.
+   * @param other The DistributionFunctions object to move from.
    */
   DistributionFunctions(DistributionFunctions &&other) noexcept;
 
   /**
    * @brief Move assignment operator.
+   * @param other The DistributionFunctions object to move from.
+   * @return Reference to this object.
    */
   DistributionFunctions &operator=(DistributionFunctions &&other) noexcept;
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
+
+  /**
+   * @brief Access the underlying simulation cell.
+   * @return Constant reference to the Cell object.
+   */
   const correlation::core::Cell &cell() const { return cell_; }
 
   /**
@@ -116,18 +141,39 @@ public:
    */
   const Histogram &getHistogram(const std::string &name) const;
 
+  /**
+   * @brief Access all calculated histograms.
+   * @return A map of histogram names to Histogram objects.
+   */
   const std::map<std::string, Histogram> &getAllHistograms() const {
     return histograms_;
   }
 
+  /**
+   * @brief Gets the Ashcroft-Langreth weights used for S(Q) partials.
+   * @return A map of element pair strings to weight values.
+   */
   const std::map<std::string, double> &getAshcroftWeights() const {
     return ashcroft_weights_;
   }
 
+  /**
+   * @brief Manually add a histogram to the collection.
+   * @param name Name of the histogram.
+   * @param histogram The Histogram data to move into the collection.
+   */
   void addHistogram(const std::string &name, Histogram &&histogram);
 
+  /**
+   * @brief Returns the structure analyzer providing neighbor information.
+   * @return Pointer to the current StructureAnalyzer.
+   */
   const StructureAnalyzer *neighbors() const;
 
+  /**
+   * @brief Gets a list of names for all currently available histograms.
+   * @return Vector of histogram name strings.
+   */
   std::vector<std::string> getAvailableHistograms() const;
   //-------------------------------------------------------------------------//
   //--------------------------- Calculation Methods -------------------------//
@@ -238,6 +284,12 @@ public:
   /**
    * @brief Computes the mean distribution functions over a trajectory.
    *        Uses parallel execution to speed up calculation.
+   * @param trajectory The trajectory to analyze.
+   * @param analyzer A pre-configured TrajectoryAnalyzer for neighbor info.
+   * @param start_frame Index of the frame to start analysis from.
+   * @param settings The analysis parameters (bin widths, cutoffs, etc.).
+   * @param progress_callback Optional callback to report completion progress.
+   * @return A unique_ptr to the newly created and populated DistributionFunctions object.
    */
   static std::unique_ptr<DistributionFunctions> computeMean(
       correlation::core::Trajectory &trajectory,
@@ -247,19 +299,41 @@ public:
           nullptr);
 
 private:
+  /**
+   * @brief Ensures neighbors are computed for the given cutoff.
+   * @param r_cut Cutoff radius.
+   */
   void ensureNeighborsComputed(double r_cut);
+
+  /**
+   * @brief Generates a unique string key for a pair of element types.
+   * @param type1 First element ID.
+   * @param type2 Second element ID.
+   * @return Canonical string key (e.g. "Si-O").
+   */
   std::string getPartialKey(int type1, int type2) const;
+
+  /**
+   * @brief Generates the inverse string key for a pair of element types.
+   * @param type1 First element ID.
+   * @param type2 Second element ID.
+   * @return Inverse string key (e.g. "O-Si").
+   */
   std::string getInversePartialKey(int type1, int type2) const;
+
+  /**
+   * @brief Calculates weights for partial distributions based on concentrations.
+   */
   void calculateAshcroftWeights();
 
-  correlation::core::Cell &cell_;
-  const StructureAnalyzer *neighbors_ref_{nullptr};
-  std::unique_ptr<StructureAnalyzer> neighbors_owned_;
-  double current_cutoff_{-1.0};
-  std::vector<std::vector<double>> bond_cutoffs_sq_;
+  correlation::core::Cell &cell_; ///< Reference to the cell being analyzed.
+  const StructureAnalyzer *neighbors_ref_{nullptr}; ///< Pointer to external neighbor info.
+  std::unique_ptr<StructureAnalyzer> neighbors_owned_; ///< Owned neighbor info.
+  double current_cutoff_{-1.0}; ///< Last cutoff used for neighbor searching.
+  std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
 
-  std::map<std::string, Histogram> histograms_;
-  std::map<std::string, double> ashcroft_weights_;
+  std::map<std::string, Histogram> histograms_; ///< Storage for all analysis results.
+  std::map<std::string, double> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
 };
 
 } // namespace correlation::analysis

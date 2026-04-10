@@ -16,13 +16,22 @@
 
 namespace correlation::core {
 
+/**
+ * @brief Unsigned integer type used for unique atom identification.
+ */
 using AtomID = std::uint32_t;
 
 /**
  * @brief Represents a unique integer ID for an element type.
  */
 struct ElementID {
-  int value;
+  int value; ///< Unique integer value representing the element type.
+
+  /**
+   * @brief Equality operator for ElementID.
+   * @param other The other ID to compare against.
+   * @return True if values are equal.
+   */
   constexpr bool operator==(const ElementID other) const {
     return value == other.value;
   };
@@ -32,8 +41,14 @@ struct ElementID {
  * @brief Represents a chemical element with its symbol and unique ID.
  */
 struct Element {
-  std::string symbol;
-  ElementID id{-1};
+  std::string symbol; ///< Chemical symbol (e.g., "Si").
+  ElementID id{-1};   ///< Assigned unique integer ID.
+
+  /**
+   * @brief Equality operator for Element.
+   * @param other The other element to compare against.
+   * @return True if symbols are identical.
+   */
   constexpr bool operator==(const Element other) const {
     return symbol == other.symbol;
   };
@@ -113,13 +128,16 @@ public:
   [[nodiscard]] int element_id() const { return element_.id.value; }
 
 private:
-  AtomID id_;
-  math::Vector3<double> position_;
-  Element element_;
+  AtomID id_;                    ///< Unique identification number.
+  math::Vector3<double> position_; ///< Cartesian coordinates in Angstroms.
+  Element element_;              ///< Chemical element properties.
 };
 
 /**
  * @brief Calculates the Euclidean distance between two atoms.
+ * @param a The first atom.
+ * @param b The second atom.
+ * @return The straight-line distance between atoms (not accounting for PBC).
  */
 [[nodiscard]] inline double distance(const Atom &a, const Atom &b) noexcept {
   return math::norm(a.position() - b.position());

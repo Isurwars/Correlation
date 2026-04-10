@@ -44,20 +44,42 @@ public:
   /**
    * @brief Constructs a Cell from lattice parameters {a, b, c, alpha, beta,
    * gamma}.
-   * @param params An array containing the six lattice parameters.
+   * @param params An array containing the six lattice parameters:
+   *               - params[0]: a (length of vector a in Angstroms)
+   *               - params[1]: b (length of vector b in Angstroms)
+   *               - params[2]: c (length of vector c in Angstroms)
+   *               - params[3]: alpha (angle between b and c in degrees)
+   *               - params[4]: beta (angle between a and c in degrees)
+   *               - params[5]: gamma (angle between a and b in degrees)
    */
   explicit Cell(const std::array<double, 6> &params);
 
-  // Move constructor
+  /**
+   * @brief Move constructor.
+   * Transfers ownership of lattice vectors and atom data.
+   * @param other Cell object to move from.
+   */
   Cell(Cell &&other) noexcept;
 
-  // Move assignment operator
+  /**
+   * @brief Move assignment operator.
+   * @param other Cell object to move from.
+   * @return Reference to this cell.
+   */
   Cell &operator=(Cell &&other) noexcept;
 
-  // The copy constructor and assignment operator can be explicitly defaulted,
-  // or implicitly generated if no other special member functions are declared.
-  Cell(const Cell &) = default;
-  Cell &operator=(const Cell &) = default;
+  /**
+   * @brief Copy constructor.
+   * @param other Cell object to copy from.
+   */
+  Cell(const Cell &other) = default;
+
+  /**
+   * @brief Copy assignment operator.
+   * @param other Cell object to copy from.
+   * @return Reference to this cell.
+   */
+  Cell &operator=(const Cell &other) = default;
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -149,10 +171,11 @@ public:
 
   /**
    * @brief Adds a new atom to the cell.
-   * The atom's element type is automatically registered.
-   * @param symbol The element symbol of the atom.
-   * @param position The Cartesian position of the atom.
-   * @return The newly created Atom object.
+   * The atom's element type is automatically registered if it's the first
+   * mention of this symbol.
+   * @param symbol The chemical element symbol (e.g. "Fe").
+   * @param position The Cartesian position [x, y, z] in Angstroms.
+   * @return A reference to the newly created Atom.
    */
   Atom &addAtom(const std::string &symbol,
                 const math::Vector3<double> &position);
@@ -176,18 +199,31 @@ public:
    */
   [[nodiscard]] double getEnergy() const { return energy_; }
 
-private:
+  /**
+   * @brief Internal helper to update lattice vectors and recompute volume/inverse.
+   * @param new_lattice New 3x3 lattice matrix.
+   */
   void updateLattice(const math::Matrix3<double> &new_lattice);
+
+  /**
+   * @brief Internal helper to synchronize scalar parameters with vector matrix.
+   */
   void updateLatticeParametersFromVectors();
+
+  /**
+   * @brief Registers an element symbol and returns its ID.
+   * @param symbol Element symbol (e.g. "O").
+   * @return The existing or newly assigned ElementID.
+   */
   ElementID getOrRegisterElement(const std::string &symbol);
 
-  math::Matrix3<double> lattice_vectors_;
-  math::Matrix3<double> inverse_lattice_vectors_;
-  std::array<double, 6> lattice_parameters_;
-  double volume_{0.0};
-  double energy_{0.0};
-  std::vector<Atom> atoms_;
-  std::vector<Element> elements_;
+  math::Matrix3<double> lattice_vectors_; ///< Basis vectors of the box.
+  math::Matrix3<double> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.
+  std::array<double, 6> lattice_parameters_; ///< {a, b, c, alpha, beta, gamma}.
+  double volume_{0.0}; ///< Cached volume in Angstroms^3.
+  double energy_{0.0}; ///< Potential energy of this specific coordinate set.
+  std::vector<Atom> atoms_; ///< Collection of atoms in the cell.
+  std::vector<Element> elements_; ///< Unique elements present in the system.
 };
 
 } // namespace correlation::core
