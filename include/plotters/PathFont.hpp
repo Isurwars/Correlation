@@ -16,11 +16,25 @@
 
 namespace correlation::plotters {
 
+/**
+ * @struct Glyph
+ * @brief Represents a single vector character glyph.
+ * 
+ * Contains the spacing information (left/right bounds) and a collection 
+ * of strokes defined as a series of (x,y) point pairs.
+ */
 struct Glyph {
-  int left, right;
-  std::vector<std::vector<std::pair<int, int>>> strokes;
+  int left;  ///< Left side bearing.
+  int right; ///< Right side bearing.
+  std::vector<std::vector<std::pair<int, int>>> strokes; ///< Vector paths for the character.
 
   Glyph() : left(0), right(0) {}
+  /**
+   * @brief Constructs a Glyph with spacing and geometry.
+   * @param l Left bearing.
+   * @param r Right bearing.
+   * @param s Stroke paths.
+   */
   Glyph(int l, int r, std::vector<std::vector<std::pair<int, int>>> s)
       : left(l), right(r), strokes(std::move(s)) {}
 };
@@ -30,11 +44,22 @@ struct Glyph {
  */
 class Roboto {
 public:
+  /** @return Singleton instance of the Roboto font. */
   static Roboto &instance() {
     static Roboto inst;
     return inst;
   }
 
+  /**
+   * @brief Renders a string of text as SVG path data.
+   * 
+   * @param text The UTF-8 string to render.
+   * @param x The starting x-coordinate.
+   * @param y The starting y-coordinate (baseline).
+   * @param size The font size (height in pixels).
+   * @param anchor Text anchor: "start", "middle", or "end".
+   * @return A string containing SVG path instructions (M/L commands).
+   */
   std::string render(const std::string &text, double x, double y, double size,
                      const std::string &anchor = "start") {
     double scale = size / 20.0;
@@ -82,7 +107,7 @@ public:
   }
 
 private:
-  std::map<uint32_t, Glyph> glyphs_;
+  std::map<uint32_t, Glyph> glyphs_; ///< Local storage for character glyph data.
 
   Roboto() {
     auto add = [&](uint32_t c, int l, int r,
@@ -1400,6 +1425,11 @@ private:
           {0, -7},  {-1, -7}, {-2, -6}, {-2, -5}, {-2, -4}}}); // ⁿ
   }
 
+  /**
+   * @brief Converts a UTF-8 encoded string to a vector of Unicode code points.
+   * @param str The input UTF-8 string.
+   * @return A vector of 32-bit Unicode integers.
+   */
   std::vector<uint32_t> utf8ToUnicode(const std::string &str) {
     std::vector<uint32_t> unicode;
     for (size_t i = 0; i < str.length();) {

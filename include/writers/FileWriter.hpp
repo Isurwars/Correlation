@@ -44,6 +44,7 @@ public:
              bool use_parquet, bool smoothing) const;
 
 private:
+  /** @brief Reference to the analysis data structure. */
   const correlation::analysis::DistributionFunctions &df_;
 };
 

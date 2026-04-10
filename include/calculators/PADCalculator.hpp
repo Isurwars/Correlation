@@ -33,6 +33,14 @@ public:
       correlation::analysis::DistributionFunctions &df,
       const correlation::analysis::AnalysisSettings &settings) const override;
 
+  /**
+   * @brief High-performance computation of the Plane Angle Distribution (PAD).
+   * 
+   * @param cell The periodic cell.
+   * @param neighbors Structural analyzer containing the neighbor graph.
+   * @param bin_width Angular resolution (radians).
+   * @return A histogram representing the PAD distribution.
+   */
   static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors,

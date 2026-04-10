@@ -50,15 +50,13 @@ public:
   /**
    * @brief Core MSD calculation returning named histograms.
    *
-   * Returns:
-   *  - "MSD"   : raw MSD (Å²) vs time (fs)
-   *  - "D_eff" : running diffusion coefficient D(t) = MSD(t) / (6t)  (Å²/fs)
-   *
    * @param traj               The trajectory.
-   * @param max_correlation_frames  Maximum lag in frames (-1 = half
-   * trajectory).
+   * @param max_correlation_frames  Maximum lag in frames (-1 = half trajectory).
    * @param start_frame        First frame to use.
    * @param end_frame          One-past-last frame to use.
+   * @return A map of histograms:
+   *  - "MSD"   : raw MSD (Angstrom^2) vs time (fs)
+   *  - "D_eff" : running diffusion coefficient D(t) = MSD(t) / (6t) (Angstrom^2/fs)
    */
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Trajectory &traj,

@@ -38,6 +38,15 @@ public:
       const correlation::core::Trajectory &traj,
       const correlation::analysis::AnalysisSettings &settings) const override;
 
+  /**
+   * @brief High-performance computation of the Velocity Autocorrelation Function (VACF).
+   * 
+   * @param traj The source trajectory containing atomic velocities.
+   * @param max_correlation_frames Maximum time lag (dt) for correlation.
+   * @param start_frame Index of the first frame to include.
+   * @param end_frame Index of the last frame to include.
+   * @return A map of histograms (VACF per element).
+   */
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Trajectory &traj,
             int max_correlation_frames, size_t start_frame, size_t end_frame);

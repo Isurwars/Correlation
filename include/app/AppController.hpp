@@ -15,15 +15,16 @@
 #include <memory>
 #include <thread>
 
+namespace correlation::app {
+
 /**
+ * @class AppController
  * @brief Controller class for the application.
  *
  * This class handles the interaction between the User Interface (AppWindow)
  * and the logic Backend (AppBackend). It manages event handling, threading for
  * analysis, and data synchronization between UI and Backend.
  */
-namespace correlation::app {
-
 class AppController {
 public:
   //-------------------------------------------------------------------------//
@@ -43,20 +44,16 @@ public:
   ~AppController();
 
 private:
-  // Pointers to the UI and backend objects
-  AppWindow &ui_;
-  AppBackend &backend_;
+  AppWindow &ui_;         ///< Reference to the managed UI window.
+  AppBackend &backend_;   ///< Reference to the logic backend.
 
-  // Handle to the file dialog, moved here from main.cpp
-  std::unique_ptr<pfd::open_file> current_file_dialog_;
-  std::unique_ptr<pfd::save_file> current_save_dialog_;
+  std::unique_ptr<pfd::open_file> current_file_dialog_; ///< Active file open dialog handler.
+  std::unique_ptr<pfd::save_file> current_save_dialog_; ///< Active file save dialog handler.
 
-  // Analysis and loading threads
-  std::thread analysis_thread_;
-  std::thread load_thread_;
+  std::thread analysis_thread_; ///< Handle for the background analysis computation.
+  std::thread load_thread_;     ///< Handle for the background file loading process.
 
-  // Mapping from UI dropdown index to backend histogram key
-  std::vector<std::string> available_plot_keys_;
+  std::vector<std::string> available_plot_keys_; ///< Map of UI indices to plot data keys.
 
   /**
    * @brief Helper to update the UI progress bar and status text safely.

@@ -177,6 +177,12 @@ inline std::vector<double> KernelSmoothing(double dx,
  *
  * Prefer the `(dx, y, sigma, type)` overload when the bin width is already
  * known to avoid recomputing it.
+ * 
+ * @param r The independent variable grid (e.g., radial distances).
+ * @param y The dependent variable values to be smoothed.
+ * @param sigma Kernel bandwidth.
+ * @param type Kernel type to use.
+ * @return A vector containing the smoothed data.
  */
 inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
                                            const std::vector<double> &y,

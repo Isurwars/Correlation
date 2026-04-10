@@ -36,6 +36,18 @@ public:
       correlation::analysis::DistributionFunctions &df,
       const correlation::analysis::AnalysisSettings &settings) const override;
 
+  /**
+   * @brief High-performance computation of the X-Ray Diffraction (XRD) pattern.
+   * 
+   * @param g_r_hist Input Radial Distribution Function g(r).
+   * @param cell The periodic cell.
+   * @param ashcroft_weights Composition-dependent scattering weights.
+   * @param lambda X-ray wavelength (Angstrom).
+   * @param theta_min Minimum 2-theta angle (degrees).
+   * @param theta_max Maximum 2-theta angle (degrees).
+   * @param bin_width Angular resolution (degrees).
+   * @return A histogram representing intensity vs 2-theta.
+   */
   static correlation::analysis::Histogram
   calculate(const correlation::analysis::Histogram &g_r_hist,
             const correlation::core::Cell &cell,

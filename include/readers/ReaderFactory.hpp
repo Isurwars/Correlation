@@ -22,6 +22,7 @@ namespace correlation::readers {
  */
 class ReaderFactory {
 public:
+  /** @return Singleton instance of the ReaderFactory. */
   static ReaderFactory &instance();
 
   /**
@@ -40,18 +41,20 @@ public:
 
   /**
    * @brief Returns all registered extensions.
+   * @return A vector of extension strings (e.g., {".car", ".arc"}).
    */
   std::vector<std::string> getAllExtensions() const;
 
   /**
    * @brief Returns all registered readers.
+   * @return Constant reference to the internal vector of readers.
    */
   const std::vector<std::unique_ptr<BaseReader>> &getReaders() const;
 
 private:
   ReaderFactory() = default;
-  std::vector<std::unique_ptr<BaseReader>> readers_;
-  std::map<std::string, BaseReader *> extension_map_;
+  std::vector<std::unique_ptr<BaseReader>> readers_;    ///< Storage for reader instances.
+  std::map<std::string, BaseReader *> extension_map_;    ///< Lookup map for file extensions.
 };
 
 } // namespace correlation::readers

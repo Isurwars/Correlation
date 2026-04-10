@@ -21,6 +21,7 @@ namespace correlation::calculators {
  */
 class CalculatorFactory {
 public:
+  /** @return Singleton instance of the CalculatorFactory. */
   static CalculatorFactory &instance();
 
   /**
@@ -32,6 +33,7 @@ public:
 
   /**
    * @brief Returns all registered calculators.
+   * @return Constant reference to the internal vector of calculators.
    */
   const std::vector<std::unique_ptr<BaseCalculator>> &getCalculators() const;
 
@@ -44,7 +46,7 @@ public:
 
 private:
   CalculatorFactory() = default;
-  std::vector<std::unique_ptr<BaseCalculator>> calculators_;
+  std::vector<std::unique_ptr<BaseCalculator>> calculators_; ///< Storage for calculator instances.
 };
 
 } // namespace correlation::calculators

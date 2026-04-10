@@ -34,6 +34,11 @@ public:
       const correlation::core::Trajectory &traj,
       const correlation::analysis::AnalysisSettings &settings) const override;
 
+  /**
+   * @brief Computes the Vibrational Density of States (VDOS).
+   * @param vacf_hist Input Velocity Autocorrelation Function (VACF) histogram.
+   * @return A histogram representing intensity vs frequency (THz/cm^-1).
+   */
   static correlation::analysis::Histogram
   calculate(const correlation::analysis::Histogram &vacf_hist);
 };

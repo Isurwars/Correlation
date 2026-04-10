@@ -16,6 +16,14 @@
 #include "app/AppController.hpp"
 #include "AppWindow.h"
 
+/**
+ * @brief Main entry point of the application.
+ * 
+ * Initializes the Slint UI, backend components, and the AppController.
+ * Starts the Slint event loop.
+ * 
+ * @return Exit code (0 for success).
+ */
 int main() {
 
 #if defined(_WIN32)

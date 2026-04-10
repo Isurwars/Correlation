@@ -65,6 +65,13 @@ AppController::~AppController() {
 //---------------------------------------------------------------------------//
 
 // Safe conversion helper
+/**
+ * @brief Safely converts a Slint SharedString to a float with a default fallback.
+ * 
+ * @param s The Slint string to parse.
+ * @param default_value The value to return if parsing fails.
+ * @return The parsed float or default_value on error.
+ */
 float safe_stof(const slint::SharedString &s, float default_value) {
   try {
     return std::stof(s.data());

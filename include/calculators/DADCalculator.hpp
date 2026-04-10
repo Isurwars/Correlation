@@ -32,6 +32,14 @@ public:
   void calculateFrame(correlation::analysis::DistributionFunctions &df,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
+  /**
+   * @brief High-performance computation of the Dihedral Angle Distribution (DAD).
+   * 
+   * @param cell The periodic cell.
+   * @param neighbors Structural analyzer containing the neighbor graph.
+   * @param bin_width Angular resolution (radians).
+   * @return A histogram representing the DAD distribution.
+   */
   static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
                              const correlation::analysis::StructureAnalyzer *neighbors,
                              double bin_width);

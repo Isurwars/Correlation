@@ -114,6 +114,9 @@ autocorrelate(const std::vector<double> &x,
  * @brief Convenience overload — allocates its own workspace.
  *
  * Prefer the two-argument overload in tight loops to recycle the allocation.
+ * 
+ * @param x Input signal vector.
+ * @return The autocorrelation vector.
  */
 inline std::vector<double> autocorrelate(const std::vector<double> &x) {
   std::vector<std::complex<double>> workspace;

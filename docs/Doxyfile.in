@@ -8,6 +8,9 @@ INPUT                  = @PROJECT_SOURCE_DIR@/include \
                          @PROJECT_SOURCE_DIR@/src \
                          @PROJECT_SOURCE_DIR@/docs \
                          @PROJECT_SOURCE_DIR@/README.md
+EXCLUDE                 = @PROJECT_SOURCE_DIR@/include/external
+EXCLUDE_PATTERNS        = */external/*
+EXCLUDE_SYMBOLS         = registered
 FILE_PATTERNS          = *.hpp *.cpp *.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = @PROJECT_SOURCE_DIR@/README.md

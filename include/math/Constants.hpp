@@ -18,8 +18,7 @@
  */
 namespace correlation::math {
 
-// Use the standard library's high-precision pi from C++20 if available
-// or a high-precision constant.
+/** @brief High-precision mathematical pi constant. */
 #if __cplusplus >= 202002L
 constexpr double pi = std::numbers::pi;
 #else

@@ -17,6 +17,7 @@
 
 namespace correlation::calculators {
 
+/** @brief Type definition for an angle tensor [center][outer1][outer2][angle_index]. */
 using AngleTensor = std::vector<std::vector<std::vector<std::vector<double>>>>;
 
 /**

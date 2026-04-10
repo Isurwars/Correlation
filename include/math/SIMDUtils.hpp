@@ -23,10 +23,10 @@ namespace correlation::math {
  * @brief Represents a Structure of Arrays (SoA) block of atom positions for SIMD processing.
  */
 struct PositionBlock {
-  double *x;
-  double *y;
-  double *z;
-  std::size_t count;
+  double *x;         ///< Array of x-coordinates.
+  double *y;         ///< Array of y-coordinates.
+  double *z;         ///< Array of z-coordinates.
+  std::size_t count; ///< Number of atoms in this block.
 };
 
 // ---------------------------------------------------------------------------
@@ -35,6 +35,12 @@ struct PositionBlock {
 /**
  * @brief Computes the squared distance between two 3D points.
  * 
+ * @param ax x-coordinate of the first point.
+ * @param ay y-coordinate of the first point.
+ * @param az z-coordinate of the first point.
+ * @param bx x-coordinate of the second point.
+ * @param by y-coordinate of the second point.
+ * @param bz z-coordinate of the second point.
  * @return The scalar squared distance.
  */
 inline double dist_sq_scalar(double ax, double ay, double az, double bx,
@@ -137,6 +143,16 @@ inline void compute_dsq_block(double ax, double ay, double az,
   }
 }
 
+/**
+ * @brief Computes a sinc-weighted integral over a range (AVX2 version).
+ * 
+ * @param Q The scattering vector magnitude.
+ * @param integrand Values to be integrated (usually correlation data).
+ * @param rbins Radial distances for each point in the integrand.
+ * @param sinqr_scratch Scratchpad memory for sinc calculations.
+ * @param count Number of data points.
+ * @return The accumulated integral value.
+ */
 inline double sinc_integral(double Q,
                             const double *CORRELATION_RESTRICT integrand,
                             const double *CORRELATION_RESTRICT rbins,
@@ -176,6 +192,16 @@ inline void compute_dsq_block(double ax, double ay, double az,
   }
 }
 
+/**
+ * @brief Computes a sinc-weighted integral over a range (Scalar fallback).
+ * 
+ * @param Q The scattering vector magnitude.
+ * @param integrand Values to be integrated (usually correlation data).
+ * @param rbins Radial distances for each point in the integrand.
+ * @param sinqr_scratch Unused in scalar fallback.
+ * @param count Number of data points.
+ * @return The accumulated integral value.
+ */
 inline double sinc_integral(double Q,
                             const double *CORRELATION_RESTRICT integrand,
                             const double *CORRELATION_RESTRICT rbins,
@@ -521,7 +547,16 @@ inline void dot_block(double v1x, double v1y, double v1z,
 // Utility
 // ---------------------------------------------------------------------------
 /**
- * @brief populates vectors with standard atom block positions for SIMD.
+ * @brief Populates vectors with standard atom block positions for SIMD.
+ * 
+ * @tparam AtomRange A range of atom objects (e.g., std::vector<Atom>).
+ * @param atoms The source atom collection.
+ * @param begin Start index of the block.
+ * @param end End index of the block.
+ * @param xs Output x-coordinate vector.
+ * @param ys Output y-coordinate vector.
+ * @param zs Output z-coordinate vector.
+ * @return The number of atoms added to the block.
  */
 template <typename AtomRange>
 inline std::size_t
@@ -541,11 +576,18 @@ fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
   return count;
 }
 
-// ---------------------------------------------------------------------------
-// complex_exp_sum
-// ---------------------------------------------------------------------------
 /**
  * @brief Computes the sum of complex exponentials for a given query vector.
+ * 
+ * @param qx x-component of the q-vector.
+ * @param qy y-component of the q-vector.
+ * @param qz z-component of the q-vector.
+ * @param xs Array of atom x-positions.
+ * @param ys Array of atom y-positions.
+ * @param zs Array of atom z-positions.
+ * @param count Number of atoms.
+ * @param cos_sum Output for the real part (sum of cosines).
+ * @param sin_sum Output for the imaginary part (sum of sines).
  */
 inline void complex_exp_sum(double qx, double qy, double qz,
                             const double *CORRELATION_RESTRICT xs,
@@ -571,6 +613,19 @@ inline void complex_exp_sum(double qx, double qy, double qz,
  */
 #if defined(CORRELATION_SIMD_AVX512)
 
+/**
+ * @brief Computes the Miller phase sum across a block of angles (AVX-512 version).
+ * 
+ * @param c1 Cosine of first angle block.
+ * @param s1 Sine of first angle block.
+ * @param c2 Cosine of second angle block.
+ * @param s2 Sine of second angle block.
+ * @param c3 Cosine of third angle block.
+ * @param s3 Sine of third angle block.
+ * @param count Number of elements in the blocks.
+ * @param c_sum Output for the cosine component of the sum.
+ * @param s_sum Output for the sine component of the sum.
+ */
 inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
                              const double *CORRELATION_RESTRICT s1,
                              const double *CORRELATION_RESTRICT c2,
@@ -608,6 +663,19 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
 
 #elif defined(CORRELATION_SIMD_AVX2)
 
+/**
+ * @brief Computes the Miller phase sum across a block of angles (AVX2 version).
+ * 
+ * @param c1 Cosine of first angle block.
+ * @param s1 Sine of first angle block.
+ * @param c2 Cosine of second angle block.
+ * @param s2 Sine of second angle block.
+ * @param c3 Cosine of third angle block.
+ * @param s3 Sine of third angle block.
+ * @param count Number of elements in the blocks.
+ * @param c_sum Output for the cosine component of the sum.
+ * @param s_sum Output for the sine component of the sum.
+ */
 inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
                              const double *CORRELATION_RESTRICT s1,
                              const double *CORRELATION_RESTRICT c2,
@@ -664,6 +732,19 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
 
 #else
 
+/**
+ * @brief Computes the Miller phase sum across a block of angles (Scalar fallback).
+ * 
+ * @param c1 Cosine of first angle block.
+ * @param s1 Sine of first angle block.
+ * @param c2 Cosine of second angle block.
+ * @param s2 Sine of second angle block.
+ * @param c3 Cosine of third angle block.
+ * @param s3 Sine of third angle block.
+ * @param count Number of elements in the blocks.
+ * @param c_sum Output for the cosine component of the sum.
+ * @param s_sum Output for the sine component of the sum.
+ */
 inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1,
                              const double *CORRELATION_RESTRICT s1,
                              const double *CORRELATION_RESTRICT c2,

@@ -23,12 +23,14 @@ public:
   virtual ~BaseWriter() = default;
 
   /**
-   * @brief Returns the display name of the format.
+   * @brief Returns the display name of the format (e.g., "HDF5", "CSV").
+   * @return A human-readable name for the writer format.
    */
   virtual std::string getName() const = 0;
 
   /**
-   * @brief Returns a list of supported file extensions.
+   * @brief Returns a list of supported file extensions (e.g., {".h5"}, {".csv"}).
+   * @return A vector of extension strings including the dot.
    */
   virtual std::vector<std::string> getExtensions() const = 0;
 

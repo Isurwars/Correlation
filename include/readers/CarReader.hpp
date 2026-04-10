@@ -37,6 +37,11 @@ public:
       std::function<void(float, const std::string &)> progress_callback =
           nullptr) override;
 
+  /**
+   * @brief Low-level parser for the specific file format.
+   * @param file_name Path to the source file.
+   * @return The parsed simulation cell.
+   */
   static correlation::core::Cell read(const std::string &file_name);
 };
 

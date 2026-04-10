@@ -22,6 +22,7 @@ namespace correlation::writers {
  */
 class WriterFactory {
 public:
+  /** @return Singleton instance of the WriterFactory. */
   static WriterFactory &instance();
 
   /**
@@ -40,6 +41,7 @@ public:
 
   /**
    * @brief Returns all registered writers.
+   * @return Constant reference to the internal vector of writers.
    */
   const std::vector<std::unique_ptr<BaseWriter>> &getWriters() const;
 
@@ -52,9 +54,9 @@ public:
 
 private:
   WriterFactory() = default;
-  std::vector<std::unique_ptr<BaseWriter>> writers_;
-  std::map<std::string, BaseWriter *> extension_map_;
-  std::map<std::string, BaseWriter *> name_map_;
+  std::vector<std::unique_ptr<BaseWriter>> writers_;    ///< Storage for writer instances.
+  std::map<std::string, BaseWriter *> extension_map_;    ///< Lookup map for file extensions.
+  std::map<std::string, BaseWriter *> name_map_;         ///< Lookup map for format names.
 };
 
 } // namespace correlation::writers

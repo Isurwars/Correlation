@@ -30,16 +30,28 @@ void DistanceCalculator::calculateFrame(
   // populated.
 }
 
+/**
+ * @struct ThreadLocalDistances
+ * @brief Thread-local storage for parallel distance calculations.
+ * 
+ * Contains local tensor results, neighbor lists, and scratch buffers for SoA
+ * (Structure of Arrays) SIMD operations to avoid frequent memory allocations.
+ */
 struct ThreadLocalDistances {
-  DistanceTensor distance_tensor_local;
-  std::vector<std::vector<correlation::core::Neighbor>> neighbor_list_local;
+  DistanceTensor distance_tensor_local; ///< Local partial distance tensor.
+  std::vector<std::vector<correlation::core::Neighbor>> neighbor_list_local; ///< Local partial neighbor list.
 
   // Per-thread SoA scratch buffers (reused across iterations to avoid allocs)
-  std::vector<double> soa_x;
-  std::vector<double> soa_y;
-  std::vector<double> soa_z;
-  std::vector<double> dsq_scratch;
+  std::vector<double> soa_x;      ///< Scratch for x-coordinates.
+  std::vector<double> soa_y;      ///< Scratch for y-coordinates.
+  std::vector<double> soa_z;      ///< Scratch for z-coordinates.
+  std::vector<double> dsq_scratch; ///< Scratch for squared distance results.
 
+  /**
+   * @brief Constructs thread-local storage.
+   * @param num_elements Number of unique elements in the cell.
+   * @param atom_count Total number of atoms.
+   */
   ThreadLocalDistances(size_t num_elements, size_t atom_count)
       : distance_tensor_local(num_elements,
                               std::vector<std::vector<double>>(num_elements)),

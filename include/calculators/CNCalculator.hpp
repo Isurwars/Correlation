@@ -32,6 +32,13 @@ public:
   void calculateFrame(correlation::analysis::DistributionFunctions &df,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
+  /**
+   * @brief High-performance computation of the Coordination Number (CN).
+   * 
+   * @param cell The periodic cell.
+   * @param neighbors Structural analyzer containing the neighbor graph.
+   * @return A histogram representing the CN distribution (count vs coordination).
+   */
   static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
                              const correlation::analysis::StructureAnalyzer *neighbors);
 };
