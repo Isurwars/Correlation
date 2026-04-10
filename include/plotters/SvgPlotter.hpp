@@ -239,7 +239,7 @@ renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
 
   if (xs.empty() || partials.empty()) {
     return std::format(
-        "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0} {1}\">"
+        "<svg width='1200' height='900' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0} {1}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
         "<path d=\"{3}\" fill=\"{4}\" stroke=\"none\"/></svg>",
         kW, kH, config.bg_color(),
@@ -267,7 +267,7 @@ renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
   // ---- Build SVG -------------------------------------------------------
   std::ostringstream svg;
   svg << std::format(
-      "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\">\n", kW,
+      "<svg width='1200' height='900' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\">\n", kW,
       kH);
   svg << std::format(
       "  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",

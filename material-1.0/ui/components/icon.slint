@@ -9,5 +9,6 @@ import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
 export component Icon inherits Image {
     width: MaterialStyleMetrics.icon_size_18;
     height: self.width;
+    visible: self.width > 0.1px && self.height > 0.1px;
     colorize: MaterialPalette.on_background;
 }

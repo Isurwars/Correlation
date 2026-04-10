@@ -97,6 +97,7 @@ export component RunAnalysisCard inherits FilledCard {
             style: MaterialTypography.label_large;
             color: MaterialPalette.on_surface_variant;
             opacity: root.num_frames > 1 ? 1.0 : 0.0;
+            visible: self.height > 0.1px;
             height: root.frame_text_height;
             animate height {
                 duration: 250ms;
@@ -111,6 +112,7 @@ export component RunAnalysisCard inherits FilledCard {
         HorizontalLayout {
             spacing: MaterialStyleMetrics.spacing_4;
             opacity: root.num_frames > 1 ? 1.0 : 0.0;
+            visible: self.height > 0.1px;
             height: root.frame_range_height;
             animate height {
                 duration: 250ms;
@@ -203,6 +205,7 @@ export component RunAnalysisCard inherits FilledCard {
             padding: MaterialStyleMetrics.spacing_4;
 
             height: root.progress_height;
+            visible: self.height > 0.1px;
             opacity: (root.analysis_running || root.analysis_done) ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;

@@ -13,13 +13,16 @@ export component Elevation {
     in property <int> level;
 
     property <bool> dark: Palette.color_scheme == ColorScheme.dark;
+    visible: root.width > 0.1px && root.height > 0.1px;
 
     outer_shadow := Rectangle {
         border_radius: root.border_radius;
+        visible: root.width > 1px && root.height > 1px;
 
         inner_shadow := Rectangle {
             border_radius: root.border_radius;
             background: root.background;
+            visible: root.width > 1px && root.height > 1px;
 
             @children
         }

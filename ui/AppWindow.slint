@@ -208,7 +208,8 @@ export component AppWindow inherits Window {
         VerticalLayout {
                 x: 388px;
                 y: 0px;
-                width: root.show_advanced_options ? 220px : 0px;
+                width: root.show_advanced_options ? 220px : 0.1px;
+                visible: root.show_advanced_options || self.width > 1px;
                 padding-left: 0px;
                 padding-top: MaterialStyleMetrics.spacing_8;
                 padding-bottom: MaterialStyleMetrics.spacing_8;
@@ -235,18 +236,19 @@ export component AppWindow inherits Window {
                     bond_cutoffs <=> root.bond_cutoffs;
                 }
             }
-
+ 
             // 4. Far-right: Distribution Function Preview
         VerticalLayout {
                 x: 388px + (root.show_advanced_options ? 224px : 4px);
                 y: 0px;
-                width: root.analysis_done ? 576px : 0px;
+                width: root.analysis_done ? 576px : 0.1px;
+                visible: root.analysis_done || self.width > 1px;
                 padding-left: 0px;
                 padding-top: MaterialStyleMetrics.spacing_8;
                 padding-bottom: MaterialStyleMetrics.spacing_8;
                 padding-right: MaterialStyleMetrics.spacing_8;
                 spacing: MaterialStyleMetrics.spacing_4;
-                opacity: root.analysis_done ? 1.0 : 0.0;
+                opacity: root.analysis_done ? 1.0 : (self.width > 1px ? 0.0 : 1.0);
                 animate width {
                     duration: 200ms;
                     easing: ease-in-out;

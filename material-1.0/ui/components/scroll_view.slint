@@ -22,7 +22,7 @@ export component ScrollBar {
     visible: (self.policy == ScrollBarPolicy.always_on) || (self.policy == ScrollBarPolicy.as_needed && self.maximum > 0);
 
     Rectangle {
-        clip: true;
+        clip: self.width > 1px && self.height > 1px;
 
         thumb := Rectangle {
             width: !root.horizontal ? parent.width : root.maximum <= 0phx ? 0phx : max(min(32px, root.width), root.track-size * root.page-size / (root.maximum + root.page-size));

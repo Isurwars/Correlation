@@ -79,7 +79,8 @@ export component PreviewCard inherits FilledCard {
             min-height: 420px; // 4:3 ratio for 560px inner width
             background: MaterialPalette.surface;
             border-radius: MaterialStyleMetrics.border_radius_2;
-            clip: true;
+            clip: self.width > 1px && self.height > 1px;
+            visible: self.width > 0.1px && self.height > 0.1px;
 
             // Placeholder text when no image is available
             if root.preview_plot.width == 0: VerticalLayout {

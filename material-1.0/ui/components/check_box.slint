@@ -48,6 +48,7 @@ export component CheckBox {
         background_layer := Rectangle {
             width: MaterialStyleMetrics.size_18;
             height: self.width;
+            visible: self.width > 0.1px && self.height > 0.1px;
             border_radius: MaterialStyleMetrics.border_radius_2;
             border_width: root.checked ? 0 : 2px;
             border_color: root.has_error ? MaterialPalette.error : MaterialPalette.on_surface_variant;

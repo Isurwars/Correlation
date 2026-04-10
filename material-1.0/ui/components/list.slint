@@ -22,7 +22,7 @@ export component Avatar {
         height: 100%;
         border_radius: self.width / 2;
         background: root.background;
-        clip: true;
+        clip: self.width > 1px && self.height > 1px;
 
         Image {
             source: root.image;
@@ -59,7 +59,7 @@ export component ListTile {
                 width: self.height;
                 border_radius: self.height / 2;
                 background: root.avatar_background;
-                clip: true;
+                clip: self.width > 1px && self.height > 1px;
 
                 if root.avatar_text != "" : MaterialText {
                     text: root.avatar_text;

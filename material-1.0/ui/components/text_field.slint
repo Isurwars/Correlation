@@ -76,7 +76,8 @@ export component TextField {
 
                     Rectangle {
                         horizontal_stretch: 1;
-                        clip: true;
+                        clip: self.width > 1px && self.height > 1px;
+                        visible: self.width > 0.1px && self.height > 0.1px;
                         min_height: input.min_height;
 
                         input := TextInput {
@@ -156,6 +157,7 @@ export component TextField {
                 y: parent.height - self.height;
                 height: MaterialStyleMetrics.size_1;
                 background: root.highlight;
+                visible: root.width > 1px;
 
                 animate height {
                     duration: MaterialAnimations.standard_fast_duration;
@@ -164,9 +166,10 @@ export component TextField {
             }
         }
 
-        if root.supporting_text != "": HorizontalLayout {
+        if root.supporting_text != "" : HorizontalLayout {
             padding_left: MaterialStyleMetrics.padding_16;
             padding_right: self.padding_left;
+            visible: root.width > 1px;
 
             supporting_text := MaterialText {
                 text: root.supporting_text;
@@ -204,8 +207,8 @@ export component TextField {
     states [
         disabled when !root.enabled: {
             background_layer.background: MaterialPalette.surface_container_highest.with_alpha(MaterialPalette.disable_opacity);
-            text_label.opacity: MaterialPalette.disable_opacity;
-            input.opacity: MaterialPalette.disable_opacity;
+            text_label.opacity: (root.width > 1px && root.height > 1px) ? MaterialPalette.disable_opacity : 1.0;
+            input.opacity: (root.width > 1px && root.height > 1px) ? MaterialPalette.disable_opacity : 1.0;
         }
         focused when input.has_focus: {
             active_indicator.height: MaterialStyleMetrics.size_3;

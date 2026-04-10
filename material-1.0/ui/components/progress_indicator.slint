@@ -12,10 +12,10 @@ export component LinearProgressIndicator {
 
     height: MaterialStyleMetrics.size_4;
 
+    visible: self.width > 0.1px && self.height > 0.1px;
     Rectangle {
         width: 100%;
         height: 100%;
-        clip: true;
         background: MaterialPalette.primary_container;
         border_radius: MaterialStyleMetrics.border_radius_2;
 
@@ -62,7 +62,7 @@ export component CircularProgressIndicator {
         width: background_layer.width;
         height: background_layer.height;
         fill: MaterialPalette.primary;
-        visible: self.progress > 0 && self.progress < 1;
+        visible: (self.progress > 0 && self.progress < 1) && (self.width > 0.1px && self.height > 0.1px);
 
         MoveTo {
             x: !root.indeterminate ? track.start_x : track.start_x - track.radius * sin(-track.start * 360deg);

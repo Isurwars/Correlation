@@ -106,6 +106,7 @@ export component OptionsCard inherits FilledCard {
         VerticalLayout {
             alignment: start;
             height: root.analyses_height;
+            visible: self.height > 0.1px;
             opacity: root.analyses_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;
@@ -167,6 +168,7 @@ export component OptionsCard inherits FilledCard {
 
         VerticalLayout {
             height: root.rdf_height;
+            visible: self.height > 0.1px;
             opacity: root.rdf_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;
@@ -203,6 +205,7 @@ export component OptionsCard inherits FilledCard {
 
         VerticalLayout {
             height: root.sq_height;
+            visible: self.height > 0.1px;
             opacity: root.sq_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;
@@ -247,6 +250,7 @@ export component OptionsCard inherits FilledCard {
 
         VerticalLayout {
             height: root.angle_height;
+            visible: self.height > 0.1px;
             opacity: root.angle_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;
@@ -283,6 +287,7 @@ export component OptionsCard inherits FilledCard {
 
         VerticalLayout {
             height: root.md_height;
+            visible: self.height > 0.1px;
             opacity: root.md_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;
@@ -311,6 +316,7 @@ export component OptionsCard inherits FilledCard {
 
         VerticalLayout {
             height: root.smoothing_height;
+            visible: self.height > 0.1px;
             opacity: root.smoothing_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;
@@ -352,6 +358,7 @@ export component OptionsCard inherits FilledCard {
 
         VerticalLayout {
             height: root.bond_cutoffs_height;
+            visible: self.height > 0.1px;
             opacity: root.bond_cutoffs_expanded ? 1.0 : 0.0;
             animate height {
                 duration: 250ms;

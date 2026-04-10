@@ -1408,15 +1408,24 @@ private:
         unicode.push_back(c);
         i++;
       } else if ((c & 0xE0) == 0xC0) {
-        unicode.push_back(((c & 0x1F) << 6) | (str[i + 1] & 0x3F));
-        i += 2;
+        if (i + 1 < str.length()) {
+          unicode.push_back(((c & 0x1F) << 6) | (str[i + 1] & 0x3F));
+          i += 2;
+        } else {
+          i++;
+        }
       } else if ((c & 0xF0) == 0xE0) {
-        uint32_t val = ((c & 0x0F) << 12) | ((str[i + 1] & 0x3F) << 6) |
-                       (str[i + 2] & 0x3F);
-        unicode.push_back(val);
-        i += 3;
-      } else
+        if (i + 2 < str.length()) {
+          uint32_t val = ((c & 0x0F) << 12) | ((str[i + 1] & 0x3F) << 6) |
+                         (str[i + 2] & 0x3F);
+          unicode.push_back(val);
+          i += 3;
+        } else {
+          i++;
+        }
+      } else {
         i++;
+      }
     }
     return unicode;
   }
