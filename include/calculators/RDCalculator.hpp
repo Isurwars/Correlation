@@ -9,7 +9,9 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
+
+namespace correlation::calculators {
 
 /**
  * @class RDCalculator
@@ -27,9 +29,13 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(DistributionFunctions &df,
-                      const AnalysisSettings &settings) const override;
+  void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
-  static Histogram calculate(const correlation::core::NeighborGraph &graph,
-                             size_t max_ring_size);
+  static correlation::analysis::Histogram
+  calculate(const correlation::core::NeighborGraph &graph,
+            size_t max_ring_size);
 };
+
+} // namespace correlation::calculators

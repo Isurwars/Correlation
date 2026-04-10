@@ -7,7 +7,7 @@
  */
 
 #include "calculators/DistanceCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/SIMDUtils.hpp"
 
@@ -16,10 +16,11 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
 
-namespace calculators {
+namespace correlation::calculators {
 
 void DistanceCalculator::calculateFrame(
-    DistributionFunctions &df, const AnalysisSettings &settings) const {
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   // DistanceCalculator is a foundational calculator. In the current
   // architecture, it's called by StructureAnalyzer, which df already has.
   // We provide this implementation for completeness within the BaseCalculator
@@ -207,4 +208,4 @@ void DistanceCalculator::compute(
   }
 }
 
-} // namespace calculators
+} // namespace correlation::calculators

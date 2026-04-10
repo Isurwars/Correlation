@@ -13,6 +13,9 @@
 
 #pragma once
 
+#include "analysis/DistributionFunctions.hpp"
+#include "plotters/PathFont.hpp"
+
 #include <algorithm>
 #include <cmath>
 #include <format>
@@ -20,9 +23,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include "DistributionFunctions.hpp"
-#include "plotters/PathFont.hpp"
 
 namespace correlation::plotters {
 
@@ -200,8 +200,9 @@ inline std::string fmtScientific(double v) {
  * @param config   Optional plot configuration (theme, size, etc.).
  * @returns        A complete SVG document as `std::string`.
  */
-inline std::string renderHistogramAsSvg(const Histogram &hist,
-                                        const PlotConfig &config = {}) {
+inline std::string
+renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
+                     const PlotConfig &config = {}) {
   std::string title = hist.title.empty() ? "Histogram" : hist.title;
   std::string x_label = hist.x_label.empty() ? "x" : hist.x_label;
   std::string y_label = hist.y_label.empty() ? "y" : hist.y_label;
@@ -242,8 +243,8 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
         "<path d=\"{3}\" fill=\"{4}\" stroke=\"none\"/></svg>",
         kW, kH, config.bg_color(),
-        Roboto::instance().render("No data available", kW / 2.0,
-                                            kH / 2.0 + 8.0, 24, "middle"),
+        Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0,
+                                  24, "middle"),
         config.text_color());
   }
 
@@ -289,11 +290,11 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
         "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
         px0 - 8.0, spy, px0, spy, config.axis_color());
     // Label
-    svg << std::format(
-        "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-        Roboto::instance().render(detail::fmtScientific(yv),
-                                            px0 - 15.0, spy + 7.0, 20, "end"),
-        config.text_color());
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       Roboto::instance().render(detail::fmtScientific(yv),
+                                                 px0 - 15.0, spy + 7.0, 20,
+                                                 "end"),
+                       config.text_color());
   }
 
   for (double xv : xScale.ticks) {
@@ -309,11 +310,10 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
         "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
         spx, py1, spx, py1 + 8.0, config.axis_color());
     // Label
-    svg << std::format(
-        "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-        Roboto::instance().render(detail::fmtScientific(xv), spx,
-                                            py1 + 25.0, 20, "middle"),
-        config.text_color());
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       Roboto::instance().render(detail::fmtScientific(xv), spx,
+                                                 py1 + 25.0, 20, "middle"),
+                       config.text_color());
   }
 
   // Draw axis border
@@ -371,27 +371,26 @@ inline std::string renderHistogramAsSvg(const Histogram &hist,
         "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
         "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
         lx - 40.0, ly, lx - 10.0, ly, it->second);
-    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                       Roboto::instance().render(it->first, lx - 45.0,
-                                                           ly + 6.0, 18, "end"),
-                       config.text_color());
+    svg << std::format(
+        "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+        Roboto::instance().render(it->first, lx - 45.0, ly + 6.0, 18, "end"),
+        config.text_color());
     ly += 28.0;
   }
 
   // Titles/Labels
   svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                     Roboto::instance().render(
-                         x_label, (px0 + px1) / 2.0, py1 + 75.0, 28, "middle"),
+                     Roboto::instance().render(x_label, (px0 + px1) / 2.0,
+                                               py1 + 75.0, 28, "middle"),
                      config.text_color());
 
   // Y label rotated
   svg << std::format(
       "  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0,
       (py0 + py1) / 2.0);
-  svg << std::format(
-      "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-      Roboto::instance().render(y_label, 0, 0, 28, "middle"),
-      config.text_color());
+  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                     Roboto::instance().render(y_label, 0, 0, 28, "middle"),
+                     config.text_color());
   svg << "  </g>\n";
 
   svg << "</svg>\n";

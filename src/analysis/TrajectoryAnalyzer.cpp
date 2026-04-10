@@ -6,7 +6,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "TrajectoryAnalyzer.hpp"
+#include "analysis/TrajectoryAnalyzer.hpp"
+
+namespace correlation::analysis {
 
 //---------------------------------------------------------------------------//
 //----------------------------- Constructors --------------------------------//
@@ -44,3 +46,5 @@ TrajectoryAnalyzer::createAnalyzer(size_t frame_idx) const {
       trajectory_.getFrames()[frame_idx], neighbor_cutoff_, bond_cutoffs_,
       ignore_periodic_self_interactions_);
 }
+
+} // namespace correlation::analysis

@@ -7,7 +7,7 @@
  */
 
 #include "calculators/AngleCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "math/SIMDUtils.hpp"
 
 #include <algorithm>
@@ -15,10 +15,11 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
-namespace calculators {
+namespace correlation::calculators {
 
-void AngleCalculator::calculateFrame(DistributionFunctions &df,
-                                     const AnalysisSettings &settings) const {
+void AngleCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   // AngleCalculator is a foundational calculator. It is currently
   // called by StructureAnalyzer during its construction.
 }
@@ -123,4 +124,4 @@ void AngleCalculator::compute(const correlation::core::Cell &cell,
   }
 }
 
-} // namespace calculators
+} // namespace correlation::calculators

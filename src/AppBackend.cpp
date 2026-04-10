@@ -12,9 +12,8 @@
 #include "writers/FileWriter.hpp"
 
 #include <cmath>
-#include <limits>
-
 #include <iostream>
+#include <limits>
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
@@ -151,7 +150,8 @@ std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
   return df_->getAvailableHistograms();
 }
 
-const Histogram *AppBackend::getHistogram(const std::string &name) const {
+const correlation::analysis::Histogram *
+AppBackend::getHistogram(const std::string &name) const {
   if (!df_)
     return nullptr;
   try {
@@ -248,12 +248,13 @@ std::string AppBackend::run_analysis() {
 
     // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
     // structural analysis
-    trajectory_analyzer_ = std::make_unique<TrajectoryAnalyzer>(
-        *trajectory_, options_.r_max, active_cutoffs, start_f,
-        options_.max_frame, true, cb_structure);
+    trajectory_analyzer_ =
+        std::make_unique<correlation::analysis::TrajectoryAnalyzer>(
+            *trajectory_, options_.r_max, active_cutoffs, start_f,
+            options_.max_frame, true, cb_structure);
 
     // Prepare settings
-    AnalysisSettings settings;
+    correlation::analysis::AnalysisSettings settings;
     settings.r_max = options_.r_max;
     settings.r_bin_width = options_.r_bin_width;
     settings.q_max = options_.q_max;
@@ -269,7 +270,7 @@ std::string AppBackend::run_analysis() {
 
     // Run parallel analysis to compute distribution functions
     // This accumulates results from all processed frames.
-    df_ = DistributionFunctions::computeMean(
+    df_ = correlation::analysis::DistributionFunctions::computeMean(
         *trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 
     if (df_) {

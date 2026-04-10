@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "StructureAnalyzer.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "core/Atom.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -12,6 +12,8 @@
 
 #include <gtest/gtest.h>
 #include <vector>
+
+namespace correlation::analysis {
 
 // A test fixture for StructureAnalyzer tests.
 class _08_StructureAnalyzer_Tests : public ::testing::Test {
@@ -358,3 +360,4 @@ TEST_F(_08_StructureAnalyzer_Tests, TriangleMoleculeConnectivity) {
     }
   }
 }
+} // namespace correlation::analysis

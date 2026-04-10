@@ -9,9 +9,10 @@
 
 #pragma once
 
-#include "calculators/DihedralCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
+
+namespace correlation::analysis {
 
 /**
  * @class StructureAnalyzer
@@ -28,6 +29,8 @@ public:
   using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
   using AngleTensor =
       std::vector<std::vector<std::vector<std::vector<double>>>>;
+  using DihedralTensor =
+      std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
 
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
@@ -58,7 +61,7 @@ public:
    * @return The dihedral tensor
    * `[element1][element2][element3][element4][dihedral_index]`.
    */
-  const calculators::DihedralTensor &dihedrals() const {
+  const DihedralTensor &dihedrals() const {
     return dihedral_tensor_;
   }
 
@@ -81,5 +84,7 @@ private:
   correlation::core::NeighborGraph neighbor_graph_;
   DistanceTensor distance_tensor_;
   AngleTensor angle_tensor_;
-  calculators::DihedralTensor dihedral_tensor_;
+  DihedralTensor dihedral_tensor_;
 };
+
+} // namespace correlation::analysis

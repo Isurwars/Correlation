@@ -9,9 +9,11 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 
 #include <complex>
+
+namespace correlation::calculators {
 
 /**
  * @class SteinhardtCalculator
@@ -29,16 +31,19 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(DistributionFunctions &df,
-                      const AnalysisSettings &settings) const override;
+  void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
   // Static function to calculate Steinhardt histograms
-  static std::map<std::string, Histogram>
+  static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell,
-            const StructureAnalyzer *neighbors);
+            const correlation::analysis::StructureAnalyzer *neighbors);
 
   // Helper math functions
   static std::complex<double> sphericalHarmonic(int l, int m, double theta,
                                                 double phi);
   static double wigner3j(int j1, int j2, int j3, int m1, int m2, int m3);
 };
+
+} // namespace correlation::calculators

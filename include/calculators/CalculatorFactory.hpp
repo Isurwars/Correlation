@@ -9,9 +9,12 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
+
 #include <memory>
 #include <string>
 #include <vector>
+
+namespace correlation::calculators {
 
 /**
  * @brief Registry for all calculators, enabling automatic discovery.
@@ -37,9 +40,11 @@ public:
    * @param name The name of the calculator.
    * @return Pointer to the calculator, or nullptr if not found.
    */
-  const BaseCalculator* getCalculator(const std::string& name) const;
+  const BaseCalculator *getCalculator(const std::string &name) const;
 
 private:
   CalculatorFactory() = default;
   std::vector<std::unique_ptr<BaseCalculator>> calculators_;
 };
+
+} // namespace correlation::calculators

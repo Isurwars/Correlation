@@ -21,16 +21,16 @@
 #include <parquet/arrow/writer.h>
 #include <parquet/exception.h>
 
-using namespace correlation::core;
 namespace correlation::writers {
 
 // Automatic registration
 static bool registered =
     WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>());
 
-void ArrowWriter::writeAllParquet(const std::string &base_path,
-                                  const DistributionFunctions &df,
-                                  bool /*write_smoothed*/) const {
+void ArrowWriter::writeAllParquet(
+    const std::string &base_path,
+    const correlation::analysis::DistributionFunctions &df,
+    bool /*write_smoothed*/) const {
   for (const auto &[name, hist] : df.getAllHistograms()) {
     try {
       if (hist.partials.empty() || hist.bins.empty() ||
@@ -48,9 +48,9 @@ void ArrowWriter::writeAllParquet(const std::string &base_path,
   }
 }
 
-void ArrowWriter::writeHistogramToParquet(const std::string &filename,
-                                          const std::string &name,
-                                          const Histogram &hist) const {
+void ArrowWriter::writeHistogramToParquet(
+    const std::string &filename, const std::string &name,
+    const correlation::analysis::Histogram &hist) const {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
   }

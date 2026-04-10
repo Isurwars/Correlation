@@ -5,8 +5,7 @@
  * @par License
  * SPDX-License-Identifier: MIT
  */
-
-#include "DynamicsAnalyzer.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "math/Constants.hpp"
 #include "math/FFTUtils.hpp"
 #include "math/LinearAlgebra.hpp"
@@ -16,6 +15,8 @@
 #include <numeric>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
+
+namespace correlation::analysis {
 
 //---------------------------------------------------------------------------//
 //--------------------------- Calculation Methods ---------------------------//
@@ -419,3 +420,5 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
 
   return {frequencies, intensities_real, intensities_imag};
 }
+
+} // namespace correlation::analysis

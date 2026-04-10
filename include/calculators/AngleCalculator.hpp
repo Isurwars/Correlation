@@ -9,11 +9,13 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
+
 #include <vector>
 
-namespace calculators {
+namespace correlation::calculators {
 
 using AngleTensor = std::vector<std::vector<std::vector<std::vector<double>>>>;
 
@@ -42,8 +44,9 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(DistributionFunctions &df,
-                      const AnalysisSettings &settings) const override;
+  void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes and populates the bond angles tensor.
@@ -53,8 +56,9 @@ public:
    * @param out_angles A 4D tensor `[outer1][central][outer2][angle_idx]`
    * populated with angles in radians.
    */
-  static void compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+  static void compute(const correlation::core::Cell &cell,
+                      const correlation::core::NeighborGraph &graph,
                       AngleTensor &out_angles);
 };
 
-} // namespace calculators
+} // namespace correlation::calculators

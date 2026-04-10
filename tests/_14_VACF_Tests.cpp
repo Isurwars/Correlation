@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
 #include <gtest/gtest.h>
 #include <vector>
+
+namespace correlation::analysis {
 
 // Test fixture for VACF and VDOS tests.
 class _14_VACF_Tests : public ::testing::Test {
@@ -154,3 +156,4 @@ TEST_F(_14_VACF_Tests, CalculateVACF_GasLike) {
   EXPECT_LT(vacf[4], vacf[3]);
   EXPECT_GT(vacf[4], 0.0);
 }
+} // namespace correlation::analysis

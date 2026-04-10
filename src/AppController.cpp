@@ -273,12 +273,15 @@ std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
 }
 
 void AppController::populateCalculatorGroups(AppWindow &ui) {
-  const auto &calculators = CalculatorFactory::instance().getCalculators();
+  const auto &calculators =
+      correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
   // Collect group names in insertion order
   std::vector<std::string> group_order;
-  std::map<std::string, std::vector<const BaseCalculator *>> groups_map;
+  std::map<std::string,
+           std::vector<const correlation::calculators::BaseCalculator *>>
+      groups_map;
   for (const auto &calc : calculators) {
     const std::string &grp = calc->getGroup();
     if (groups_map.find(grp) == groups_map.end()) {
@@ -525,7 +528,7 @@ void AppController::populatePlotList() {
   auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
   for (const auto &name : names) {
     MenuItem item;
-    const Histogram *hist = backend_.getHistogram(name);
+    const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
     std::string display_text =
         (hist && !hist->title.empty()) ? hist->title : name;
     item.text = slint::SharedString(display_text);
@@ -542,7 +545,7 @@ void AppController::handleSelectPlot(int index) {
   if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
     return;
   const std::string &name = available_plot_keys_[index];
-  const Histogram *hist = backend_.getHistogram(name);
+  const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
   if (!hist)
     return;
   correlation::plotters::PlotConfig config;

@@ -13,6 +13,8 @@
 #include <tuple>
 #include <vector>
 
+namespace correlation::analysis {
+
 /**
  * @brief Static class providing dynamics analysis methods.
  *
@@ -97,3 +99,5 @@ public:
                     std::vector<double>>
   calculateVDOS(const std::vector<double> &vacf, double dt);
 };
+
+} // namespace correlation::analysis

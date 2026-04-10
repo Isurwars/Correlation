@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "StructureAnalyzer.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "calculators/SteinhardtCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>
+
+namespace correlation::analysis {
 
 class _22_SteinhardtCalculator_Tests : public ::testing::Test {
 protected:
@@ -51,7 +53,8 @@ TEST_F(_22_SteinhardtCalculator_Tests, SimpleCubic) {
 
   // ignore_periodic_self_interactions = false
   StructureAnalyzer analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
-  auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
+      cell, &analyzer);
 
   checkOutputs(hists, 0.764, 0.354, 0.013);
 }
@@ -63,7 +66,8 @@ TEST_F(_22_SteinhardtCalculator_Tests, BCC) {
 
   StructureAnalyzer analyzer(cell, 1.1, {{1.1 * 1.1}},
                              false); // dist = sqrt(0.75) ~ 0.866 and 1.0
-  auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
+      cell, &analyzer);
 
   checkOutputs(hists, 0.036, 0.511, 0.013);
 }
@@ -77,7 +81,8 @@ TEST_F(_22_SteinhardtCalculator_Tests, FCC) {
 
   StructureAnalyzer analyzer(cell, 0.8, {{0.8 * 0.8}},
                              false); // dist = sqrt(0.5) ~ 0.707
-  auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
+      cell, &analyzer);
 
   checkOutputs(hists, 0.191, 0.575, -0.013); // W6 for FCC is approx -0.013
 }
@@ -109,8 +114,10 @@ TEST_F(_22_SteinhardtCalculator_Tests, Icosahedral) {
   // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from
   // histogram!
   StructureAnalyzer analyzer(cell, 1.02, {{1.02 * 1.02}}, true);
-  auto hists = SteinhardtCalculator::calculate(cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
+      cell, &analyzer);
 
   checkOutputs(hists, 0.000, 0.663,
                -0.169); // W6_hat for Icosahedral is approx -0.1697
 }
+} // namespace correlation::analysis

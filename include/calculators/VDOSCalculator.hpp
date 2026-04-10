@@ -9,7 +9,9 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
+
+namespace correlation::calculators {
 
 /**
  * @class VDOSCalculator
@@ -27,9 +29,13 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(DistributionFunctions &df,
-                           const correlation::core::Trajectory &traj,
-                           const AnalysisSettings &settings) const override;
+  void calculateTrajectory(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::core::Trajectory &traj,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
-  static Histogram calculate(const Histogram &vacf_hist);
+  static correlation::analysis::Histogram
+  calculate(const correlation::analysis::Histogram &vacf_hist);
 };
+
+} // namespace correlation::calculators

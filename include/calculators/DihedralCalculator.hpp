@@ -9,22 +9,12 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
+#include "analysis/DistributionFunctions.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
 
-#include <vector>
-
-// Forward declarations
-class DistributionFunctions;
-struct AnalysisSettings;
-
-namespace calculators {
-
-// [correlation::core::Element A] [correlation::core::Element B]
-// [correlation::core::Element C] [correlation::core::Element D] -> List of
-// Angles
-using DihedralTensor =
-    std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
+namespace correlation::calculators {
 
 /**
  * @class DihedralCalculator
@@ -48,8 +38,9 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(DistributionFunctions &df,
-                      const AnalysisSettings &settings) const override;
+  void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes and populates the dihedral angles tensor.
@@ -61,9 +52,10 @@ public:
    * C][correlation::core::Element D][angle_idx]` where elements are the
    * indices, populated with angles in radians [-pi, pi].
    */
-  static void compute(const correlation::core::Cell &cell,
-                      const correlation::core::NeighborGraph &graph,
-                      DihedralTensor &out_dihedrals);
+  static void compute(
+      const correlation::core::Cell &cell,
+      const correlation::core::NeighborGraph &graph,
+      correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals);
 };
 
-} // namespace calculators
+} // namespace correlation::calculators

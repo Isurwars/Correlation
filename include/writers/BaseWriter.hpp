@@ -8,9 +8,10 @@
 
 #pragma once
 
+#include "analysis/DistributionFunctions.hpp"
+
 #include <string>
 #include <vector>
-#include "DistributionFunctions.hpp"
 
 namespace correlation::writers {
 
@@ -37,7 +38,8 @@ public:
    * @param df The DistributionFunctions object containing the data.
    * @param smoothing Whether to include smoothed data.
    */
-  virtual void write(const std::string &base_path, const DistributionFunctions &df,
+  virtual void write(const std::string &base_path,
+                     const correlation::analysis::DistributionFunctions &df,
                      bool smoothing) const = 0;
 };
 

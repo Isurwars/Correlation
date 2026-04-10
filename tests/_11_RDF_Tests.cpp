@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DistributionFunctions.hpp"
-#include "TrajectoryAnalyzer.hpp"
+#include "analysis/DistributionFunctions.hpp"
+#include "analysis/TrajectoryAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -12,6 +12,8 @@
 #include <gtest/gtest.h>
 #include <iterator>
 #include <vector>
+
+namespace correlation::analysis {
 
 // Test fixture for DistributionFunctions tests.
 class _11_RDF_Tests : public ::testing::Test {
@@ -271,3 +273,4 @@ TEST_F(_11_RDF_Tests, HandlesMissingPartialInAdd) {
   EXPECT_NO_THROW(df1.getHistogram("g_r"));
   EXPECT_NO_THROW(df1.getHistogram("CN"));
 }
+} // namespace correlation::analysis

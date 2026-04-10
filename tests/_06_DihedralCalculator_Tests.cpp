@@ -54,13 +54,13 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect90DegreeDihedral) {
   graph.addDirectedEdge(
       3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
-  calculators::DihedralTensor dict;
+  correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
                             1, std::vector<std::vector<double>>(
                                    1, std::vector<double>()))));
 
-  calculators::DihedralCalculator::compute(cell, graph, dict);
+  correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
   const auto &angles = dict[0][0][0][0];
   // Expected: either 1 angle if we only do A-B-C-D, or 2 if we do A-B-C-D and
@@ -103,13 +103,13 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect0DegreeDihedral) {
   graph.addDirectedEdge(
       3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
-  calculators::DihedralTensor dict;
+  correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
                             1, std::vector<std::vector<double>>(
                                    1, std::vector<double>()))));
 
-  calculators::DihedralCalculator::compute(cell, graph, dict);
+  correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
   const auto &angles = dict[0][0][0][0];
   ASSERT_EQ(angles.size(), 1);
@@ -141,13 +141,13 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect180DegreeDihedral) {
   graph.addDirectedEdge(
       3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
-  calculators::DihedralTensor dict;
+  correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
                             1, std::vector<std::vector<double>>(
                                    1, std::vector<double>()))));
 
-  calculators::DihedralCalculator::compute(cell, graph, dict);
+  correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
   const auto &angles = dict[0][0][0][0];
   ASSERT_EQ(angles.size(), 1);

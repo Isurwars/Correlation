@@ -9,11 +9,13 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/NeighborGraph.hpp"
+
 #include <vector>
 
-namespace calculators {
+namespace correlation::calculators {
 
 using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
 
@@ -29,13 +31,15 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(DistributionFunctions &df,
-                      const AnalysisSettings &settings) const override;
+  void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
   static void compute(const correlation::core::Cell &cell, double cutoff_sq,
                       const std::vector<std::vector<double>> &bond_cutoffs_sq,
                       bool ignore_periodic_self_interactions,
-                      DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph);
+                      DistanceTensor &out_distances,
+                      correlation::core::NeighborGraph &out_graph);
 };
 
-} // namespace calculators
+} // namespace correlation::calculators

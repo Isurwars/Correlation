@@ -9,12 +9,14 @@
 
 #pragma once
 
-#include "StructureAnalyzer.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "core/Trajectory.hpp"
 
 #include <functional>
 #include <memory>
 #include <vector>
+
+namespace correlation::analysis {
 
 class TrajectoryAnalyzer {
 public:
@@ -58,3 +60,5 @@ private:
   std::vector<std::vector<double>> bond_cutoffs_;
   bool ignore_periodic_self_interactions_;
 };
+
+} // namespace correlation::analysis

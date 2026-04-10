@@ -13,8 +13,15 @@
 #include <map>
 #include <vector>
 
-namespace calculators {
+namespace correlation::calculators {
 
+/**
+ * @class MotifFinder
+ * @brief Utility class for finding structural motifs (rings) in a system.
+ *
+ * This class provides static methods to search for and count chordless rings
+ * within a molecular system, leveraging the neighbor graph structure.
+ */
 class MotifFinder {
 public:
   /**
@@ -41,4 +48,4 @@ public:
                 size_t target_size);
 };
 
-} // namespace calculators
+} // namespace correlation::calculators

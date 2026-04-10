@@ -5,7 +5,7 @@
  * @par License
  * SPDX-License-Identifier: MIT
  */
-#include "StructureAnalyzer.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "calculators/AngleCalculator.hpp"
 #include "calculators/DihedralCalculator.hpp"
 #include "calculators/DistanceCalculator.hpp"
@@ -16,6 +16,8 @@
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_reduce.h>
 #include <vector>
+
+namespace correlation::analysis {
 
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
@@ -83,10 +85,13 @@ StructureAnalyzer::StructureAnalyzer(
 
   // The constructor orchestrates the computation by delegating to dedicated
   // calculators
-  calculators::DistanceCalculator::compute(cell_, cutoff_sq_, bond_cutoffs_sq_,
-                                           ignore_periodic_self_interactions_,
-                                           distance_tensor_, neighbor_graph_);
-  calculators::AngleCalculator::compute(cell_, neighbor_graph_, angle_tensor_);
-  calculators::DihedralCalculator::compute(cell_, neighbor_graph_,
-                                           dihedral_tensor_);
+  correlation::calculators::DistanceCalculator::compute(
+      cell_, cutoff_sq_, bond_cutoffs_sq_, ignore_periodic_self_interactions_,
+      distance_tensor_, neighbor_graph_);
+  correlation::calculators::AngleCalculator::compute(cell_, neighbor_graph_,
+                                                     angle_tensor_);
+  correlation::calculators::DihedralCalculator::compute(cell_, neighbor_graph_,
+                                                        dihedral_tensor_);
 }
+
+} // namespace correlation::analysis

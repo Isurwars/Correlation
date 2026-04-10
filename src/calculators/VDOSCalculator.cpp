@@ -7,11 +7,13 @@
  */
 
 #include "calculators/VDOSCalculator.hpp"
-#include "DynamicsAnalyzer.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
 
 #include <stdexcept>
+
+namespace correlation::calculators {
 
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
@@ -19,8 +21,9 @@ bool registered = CalculatorFactory::instance().registerCalculator(
 } // namespace
 
 void VDOSCalculator::calculateTrajectory(
-    DistributionFunctions &df, const correlation::core::Trajectory &traj,
-    const AnalysisSettings &settings) const {
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::core::Trajectory &traj,
+    const correlation::analysis::AnalysisSettings &settings) const {
   const auto &all = df.getAllHistograms();
   if (all.find("VACF") == all.end()) {
     return; // VACF must be computed first
@@ -28,7 +31,8 @@ void VDOSCalculator::calculateTrajectory(
   df.addHistogram("VDOS", calculate(df.getHistogram("VACF")));
 }
 
-Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
+correlation::analysis::Histogram
+VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist) {
   const auto &vacf_data = vacf_hist.partials.at("Total");
 
   if (vacf_data.size() < 2) {
@@ -38,7 +42,7 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
   double dt = vacf_hist.bins[1] - vacf_hist.bins[0];
 
   auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
+      correlation::analysis::DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
 
   size_t num_points = frequencies.size();
   size_t total_points = 2 * num_points - 1;
@@ -70,7 +74,7 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
     combined_intensities.push_back(intensities_real[i]);
   }
 
-  Histogram vdos_hist;
+  correlation::analysis::Histogram vdos_hist;
   vdos_hist.x_label = "ν";
   vdos_hist.title = "Vibrational Density of States";
   vdos_hist.description = "Vibrational Density of States";
@@ -85,3 +89,5 @@ Histogram VDOSCalculator::calculate(const Histogram &vacf_hist) {
 
   return vdos_hist;
 }
+
+} // namespace correlation::calculators

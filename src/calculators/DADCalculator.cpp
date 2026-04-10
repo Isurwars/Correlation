@@ -13,20 +13,24 @@
 
 #include <stdexcept>
 
+namespace correlation::calculators {
+
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<DADCalculator>());
 } // namespace
 
-void DADCalculator::calculateFrame(DistributionFunctions &df,
-                                   const AnalysisSettings &settings) const {
+void DADCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   df.addHistogram(
       "DAD", calculate(df.cell(), df.neighbors(), settings.dihedral_bin_width));
 }
 
-Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
-                                   const StructureAnalyzer *neighbors,
-                                   double bin_width) {
+correlation::analysis::Histogram DADCalculator::calculate(
+    const correlation::core::Cell &cell,
+    const correlation::analysis::StructureAnalyzer *neighbors,
+    double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
@@ -43,7 +47,7 @@ Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
 
   const size_t num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
 
-  Histogram f_dihedral;
+  correlation::analysis::Histogram f_dihedral;
   f_dihedral.x_label = "φ";
   f_dihedral.title = "Dihedral-Angle Distribution";
   f_dihedral.y_label = "P(φ)";
@@ -124,3 +128,5 @@ Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
   }
   return f_dihedral;
 }
+
+} // namespace correlation::calculators

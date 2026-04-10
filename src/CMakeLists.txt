@@ -58,12 +58,12 @@ target_link_libraries(writers_obj PRIVATE HighFive HDF5::HDF5 HDF5::HDF5_HL arro
 # Add sources to library
 add_library(correlation_lib STATIC
     core/Cell.cpp
-    DistributionFunctions.cpp
-    DynamicsAnalyzer.cpp
+    analysis/DistributionFunctions.cpp
+    analysis/DynamicsAnalyzer.cpp
     core/NeighborGraph.cpp
-    StructureAnalyzer.cpp
+    analysis/StructureAnalyzer.cpp
     core/Trajectory.cpp
-    TrajectoryAnalyzer.cpp
+    analysis/TrajectoryAnalyzer.cpp
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>

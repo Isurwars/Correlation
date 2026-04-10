@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "readers/FileReader.hpp"
@@ -98,7 +98,8 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  DistributionFunctions df(si_cell, 20.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions df(
+      si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
   const double rdf_bin = 0.05;
@@ -161,7 +162,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  DistributionFunctions df(
+  correlation::analysis::DistributionFunctions df(
       si_cell, 5.0,
       trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
@@ -261,7 +262,8 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
   trajectory.calculateVelocities();
 
-  DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions df(
+      frame1, 5.0, trajectory.getBondCutoffsSQ());
   df.calculateVACF(trajectory, 1);
 
   correlation::writers::FileWriter writer(df);
@@ -387,7 +389,8 @@ TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions df(
+      si_cell, 5.0, trajectory.getBondCutoffsSQ());
 
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);

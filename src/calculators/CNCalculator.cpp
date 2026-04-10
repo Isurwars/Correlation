@@ -11,13 +11,17 @@
 #include <numeric>
 #include <stdexcept>
 
-void CNCalculator::calculateFrame(DistributionFunctions &df,
-                                  const AnalysisSettings &settings) const {
+namespace correlation::calculators {
+
+void CNCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   df.addHistogram("CN", calculate(df.cell(), df.neighbors()));
 }
 
-Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
-                                  const StructureAnalyzer *neighbors) {
+correlation::analysis::Histogram CNCalculator::calculate(
+    const correlation::core::Cell &cell,
+    const correlation::analysis::StructureAnalyzer *neighbors) {
   if (!neighbors) {
     throw std::logic_error(
         "Cannot calculate Coordination Number. Neighbor list has not been "
@@ -52,7 +56,7 @@ Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
     }
   }
 
-  Histogram cn_histogram;
+  correlation::analysis::Histogram cn_histogram;
   const size_t num_bins = max_cn + 3;
   cn_histogram.x_label = "CN";
   cn_histogram.title = "Coordination Number Distribution";
@@ -99,3 +103,5 @@ Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
 
   return cn_histogram;
 }
+
+} // namespace correlation::calculators

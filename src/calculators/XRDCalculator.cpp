@@ -17,13 +17,16 @@
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
+namespace correlation::calculators {
+
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<XRDCalculator>());
 } // namespace
 
-void XRDCalculator::calculateFrame(DistributionFunctions &df,
-                                   const AnalysisSettings &settings) const {
+void XRDCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   if (df.getAllHistograms().find("g(r)") == df.getAllHistograms().end()) {
     return; // g(r) hasn't been calculated yet
   }
@@ -32,10 +35,12 @@ void XRDCalculator::calculateFrame(DistributionFunctions &df,
                                    settings.q_bin_width));
 }
 
-Histogram XRDCalculator::calculate(
-    const Histogram &g_r_hist, const correlation::core::Cell &cell,
-    const std::map<std::string, double> &ashcroft_weights, double lambda,
-    double theta_min, double theta_max, double bin_width) {
+correlation::analysis::Histogram
+XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
+                         const correlation::core::Cell &cell,
+                         const std::map<std::string, double> &ashcroft_weights,
+                         double lambda, double theta_min, double theta_max,
+                         double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive.");
   }
@@ -47,7 +52,7 @@ Histogram XRDCalculator::calculate(
 
   size_t num_bins =
       static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
-  Histogram xrd_hist;
+  correlation::analysis::Histogram xrd_hist;
   xrd_hist.x_label = "2θ";
   xrd_hist.title = "XRD Pattern";
   xrd_hist.y_label = "Intensity";
@@ -161,3 +166,5 @@ Histogram XRDCalculator::calculate(
 
   return xrd_hist;
 }
+
+} // namespace correlation::calculators

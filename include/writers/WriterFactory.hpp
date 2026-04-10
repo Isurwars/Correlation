@@ -9,8 +9,9 @@
 #pragma once
 
 #include "BaseWriter.hpp"
-#include <memory>
+
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 

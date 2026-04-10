@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include <string>
+#include "analysis/DistributionFunctions.hpp"
 
-#include "DistributionFunctions.hpp"
+#include <string>
 
 namespace correlation::writers {
 
@@ -28,7 +28,7 @@ public:
    * @param df The DistributionFunctions object containing the data to be
    * written.
    */
-  explicit FileWriter(const DistributionFunctions &df);
+  explicit FileWriter(const correlation::analysis::DistributionFunctions &df);
 
   /**
    * @brief Writes the available histograms using specified formats.
@@ -44,8 +44,7 @@ public:
              bool use_parquet, bool smoothing) const;
 
 private:
-  const DistributionFunctions &df_;
+  const correlation::analysis::DistributionFunctions &df_;
 };
 
 } // namespace correlation::writers
-

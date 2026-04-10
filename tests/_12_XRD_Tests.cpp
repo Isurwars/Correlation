@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
 #include <gtest/gtest.h>
 #include <vector>
+
+namespace correlation::analysis {
 
 // Test fixture for XRD tests.
 class _12_XRD_Tests : public ::testing::Test {
@@ -133,3 +135,4 @@ TEST_F(_12_XRD_Tests, CalculateXRDCubicCell) {
   // shifts to lower angles (~28.5 degrees).
   EXPECT_NEAR(max_theta, 28.5, 1.0);
 }
+} // namespace correlation::analysis

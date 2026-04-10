@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "DistributionFunctions.hpp"
-#include "TrajectoryAnalyzer.hpp"
+#include "analysis/DistributionFunctions.hpp"
+#include "analysis/TrajectoryAnalyzer.hpp"
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
@@ -243,7 +243,8 @@ public:
    * @return Pointer to the Histogram, or nullptr if not found or no analysis
    * run.
    */
-  [[nodiscard]] const Histogram *getHistogram(const std::string &name) const;
+  [[nodiscard]] const correlation::analysis::Histogram *
+  getHistogram(const std::string &name) const;
 
   // Callbacks
   void setProgressCallback(std::function<void(float, const std::string &)> cb) {
@@ -261,8 +262,9 @@ private:
 
   // Pointers to the correlation::core::Trajectory and DF
   std::unique_ptr<correlation::core::Trajectory> trajectory_;
-  std::unique_ptr<TrajectoryAnalyzer> trajectory_analyzer_;
-  std::unique_ptr<DistributionFunctions> df_;
+  std::unique_ptr<correlation::analysis::TrajectoryAnalyzer>
+      trajectory_analyzer_;
+  std::unique_ptr<correlation::analysis::DistributionFunctions> df_;
 
   ProgramOptions options_;
   std::function<void(float, const std::string &)> progress_callback_;

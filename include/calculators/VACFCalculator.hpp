@@ -9,11 +9,13 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Trajectory.hpp"
 
 #include <map>
 #include <string>
+
+namespace correlation::calculators {
 
 /**
  * @class VACFCalculator
@@ -31,11 +33,14 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(DistributionFunctions &df,
-                           const correlation::core::Trajectory &traj,
-                           const AnalysisSettings &settings) const override;
+  void calculateTrajectory(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::core::Trajectory &traj,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
-  static std::map<std::string, Histogram>
+  static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Trajectory &traj,
             int max_correlation_frames, size_t start_frame, size_t end_frame);
 };
+
+} // namespace correlation::calculators

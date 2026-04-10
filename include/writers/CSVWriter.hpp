@@ -8,11 +8,11 @@
 
 #pragma once
 
+#include "BaseWriter.hpp"
+#include "analysis/DistributionFunctions.hpp"
+
 #include <string>
 #include <vector>
-
-#include "BaseWriter.hpp"
-#include "DistributionFunctions.hpp"
 
 namespace correlation::writers {
 
@@ -31,7 +31,8 @@ public:
   std::string getName() const override { return "CSV"; }
   std::vector<std::string> getExtensions() const override { return {".csv"}; }
 
-  void write(const std::string &base_path, const DistributionFunctions &df,
+  void write(const std::string &base_path,
+             const correlation::analysis::DistributionFunctions &df,
              bool smoothing) const override {
     writeAllCSVs(base_path, df, smoothing);
   }
@@ -48,7 +49,8 @@ public:
    * @param write_smoothed If true, also writes smoothed data to separate files
    * (e.g., "base_path_g_smoothed.csv").
    */
-  void writeAllCSVs(const std::string &base_path, const DistributionFunctions &df,
+  void writeAllCSVs(const std::string &base_path,
+                    const correlation::analysis::DistributionFunctions &df,
                     bool write_smoothed = false) const;
 
 private:
@@ -60,7 +62,7 @@ private:
    * @param hist The Histogram data structure to write.
    */
   void writeHistogramToCSV(const std::string &filename, const std::string &name,
-                           const Histogram &hist) const;
+                           const correlation::analysis::Histogram &hist) const;
 };
 
 } // namespace correlation::writers

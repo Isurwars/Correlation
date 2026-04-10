@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "calculators/StructureFactorCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>
+
+namespace correlation::analysis {
 
 class _21_StructureFactorCalculator_Tests : public ::testing::Test {
 protected:
@@ -29,7 +31,7 @@ TEST_F(_21_StructureFactorCalculator_Tests, CalculatesSimpleCubicBraggPeak) {
         cell.addAtom("Si", {ix * a, iy * a, iz * a});
 
   DistributionFunctions df(cell);
-  StructureFactorCalculator calc;
+  correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.05;
@@ -59,7 +61,7 @@ TEST_F(_21_StructureFactorCalculator_Tests, SingleAtomGivesOne) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   DistributionFunctions df(cell);
-  StructureFactorCalculator calc;
+  correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.1;
@@ -86,7 +88,7 @@ TEST_F(_21_StructureFactorCalculator_Tests, DimerProducesValidSQ) {
   cell.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5 Å
 
   DistributionFunctions df(cell);
-  StructureFactorCalculator calc;
+  correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 10.0;
   settings.q_bin_width = 0.1;
@@ -129,7 +131,7 @@ TEST_F(_21_StructureFactorCalculator_Tests,
   cell.addAtom("O", {1.2, 0.0, 0.0});
 
   DistributionFunctions df(cell);
-  StructureFactorCalculator calc;
+  correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 10.0;
   settings.q_bin_width = 1.0;
@@ -155,7 +157,7 @@ TEST_F(_21_StructureFactorCalculator_Tests, HomonuclearClusterPartialsPresent) {
   cell.addAtom("Si", {0.0, 0.0, 2.0});
 
   DistributionFunctions df(cell);
-  StructureFactorCalculator calc;
+  correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.5;
@@ -166,3 +168,4 @@ TEST_F(_21_StructureFactorCalculator_Tests, HomonuclearClusterPartialsPresent) {
   EXPECT_TRUE(hist.partials.count("Si-Si"));
   EXPECT_TRUE(hist.partials.count("Total"));
 }
+} // namespace correlation::analysis

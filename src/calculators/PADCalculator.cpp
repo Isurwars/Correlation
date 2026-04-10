@@ -7,26 +7,31 @@
  */
 
 #include "calculators/PADCalculator.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
 
 #include <stdexcept>
 
+namespace correlation::calculators {
+
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<PADCalculator>());
 } // namespace
 
-void PADCalculator::calculateFrame(DistributionFunctions &df,
-                                   const AnalysisSettings &settings) const {
+void PADCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   df.addHistogram(
       "BAD", calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
 }
 
-Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
-                                   const StructureAnalyzer *neighbors,
-                                   double bin_width) {
+correlation::analysis::Histogram PADCalculator::calculate(
+    const correlation::core::Cell &cell,
+    const correlation::analysis::StructureAnalyzer *neighbors,
+    double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
@@ -40,7 +45,7 @@ Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
 
   const size_t num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
-  Histogram f_theta;
+  correlation::analysis::Histogram f_theta;
   f_theta.x_label = "θ";
   f_theta.title = "Plane-Angle Distribution";
   f_theta.y_label = "P(θ)";
@@ -104,3 +109,5 @@ Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
   }
   return f_theta;
 }
+
+} // namespace correlation::calculators

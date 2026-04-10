@@ -14,6 +14,8 @@
 #include <cmath>
 #include <stdexcept>
 
+namespace correlation::calculators {
+
 namespace {
 std::string getPartialKey(const correlation::core::Cell &cell, int type1,
                           int type2) {
@@ -36,8 +38,9 @@ bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<RDFCalculator>());
 } // namespace
 
-void RDFCalculator::calculateFrame(DistributionFunctions &df,
-                                   const AnalysisSettings &settings) const {
+void RDFCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   auto results = calculate(df.cell(), df.neighbors(), df.getAshcroftWeights(),
                            settings.r_max, settings.r_bin_width);
   for (auto &[name, histogram] : results) {
@@ -45,11 +48,12 @@ void RDFCalculator::calculateFrame(DistributionFunctions &df,
   }
 }
 
-std::map<std::string, Histogram>
-RDFCalculator::calculate(const correlation::core::Cell &cell,
-                         const StructureAnalyzer *neighbors,
-                         const std::map<std::string, double> &ashcroft_weights,
-                         double r_max, double r_bin_width) {
+std::map<std::string, correlation::analysis::Histogram>
+RDFCalculator::calculate(
+    const correlation::core::Cell &cell,
+    const correlation::analysis::StructureAnalyzer *neighbors,
+    const std::map<std::string, double> &ashcroft_weights, double r_max,
+    double r_bin_width) {
   if (r_bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive, got: " +
                                 std::to_string(r_bin_width));
@@ -81,7 +85,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell,
   const double dr = r_bin_width;
   const double rho_0 = num_atoms / V;
 
-  Histogram H_r, g_r, G_r, J_r;
+  correlation::analysis::Histogram H_r, g_r, G_r, J_r;
   H_r.bins.resize(num_bins);
   g_r.bins.resize(num_bins);
   G_r.bins.resize(num_bins);
@@ -215,10 +219,12 @@ RDFCalculator::calculate(const correlation::core::Cell &cell,
     total_G[k] = correlation::math::four_pi * rho_0 * r * (total_g[k] - 1.0);
   }
 
-  std::map<std::string, Histogram> results;
+  std::map<std::string, correlation::analysis::Histogram> results;
   results["J_r"] = std::move(J_r);
   results["g_r"] = std::move(g_r);
   results["G_r"] = std::move(G_r);
 
   return results;
 }
+
+} // namespace correlation::calculators

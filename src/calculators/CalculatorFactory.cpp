@@ -8,6 +8,8 @@
 
 #include "calculators/CalculatorFactory.hpp"
 
+namespace correlation::calculators {
+
 CalculatorFactory &CalculatorFactory::instance() {
   static CalculatorFactory instance_val;
   return instance_val;
@@ -35,3 +37,5 @@ CalculatorFactory::getCalculator(const std::string &name) const {
   }
   return nullptr;
 }
+
+} // namespace correlation::calculators

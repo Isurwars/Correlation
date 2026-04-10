@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "StructureAnalyzer.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "calculators/DADCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>
+
+namespace correlation::analysis {
 
 class _18_DAD_Tests : public ::testing::Test {
 protected:
@@ -34,7 +36,8 @@ TEST_F(_18_DAD_Tests, BasicCalculation) {
   StructureAnalyzer analyzer(cell, r_cut, bond_cutoffs, true);
 
   double bin_width = 10.0;
-  Histogram f_dihedral = DADCalculator::calculate(cell, &analyzer, bin_width);
+  Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(
+      cell, &analyzer, bin_width);
 
   // We only expect one type of dihedral for C-C-C-C.
   ASSERT_FALSE(f_dihedral.partials.empty());
@@ -74,8 +77,8 @@ TEST_F(_18_DAD_Tests, IcosahedronAnglesDAD) {
   StructureAnalyzer analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
   double bin_width = 1.0;
-  Histogram f_dihedral =
-      DADCalculator::calculate(cell_iso, &analyzer, bin_width);
+  Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(
+      cell_iso, &analyzer, bin_width);
 
   ASSERT_FALSE(f_dihedral.partials.empty());
   auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
@@ -98,3 +101,4 @@ TEST_F(_18_DAD_Tests, IcosahedronAnglesDAD) {
     EXPECT_TRUE(found) << "Should find DAD peak near " << target << " degrees";
   }
 }
+} // namespace correlation::analysis

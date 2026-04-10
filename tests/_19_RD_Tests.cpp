@@ -3,10 +3,16 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "analysis/StructureAnalyzer.hpp"
 #include "calculators/RDCalculator.hpp"
 #include "core/NeighborGraph.hpp"
+#include "core/Trajectory.hpp"
+#include "readers/FileReader.hpp"
 
+#include <fstream>
 #include <gtest/gtest.h>
+
+namespace correlation::analysis {
 
 class _19_RD_Tests : public ::testing::Test {
 protected:
@@ -28,7 +34,8 @@ protected:
 
 TEST_F(_19_RD_Tests, ComputeMotif) {
   size_t max_ring_size = 5;
-  Histogram f_motif = RDCalculator::calculate(graph, max_ring_size);
+  Histogram f_motif =
+      correlation::calculators::RDCalculator::calculate(graph, max_ring_size);
 
   EXPECT_EQ(f_motif.x_label, "Ring Size");
   EXPECT_EQ(f_motif.bins.size(), 3);
@@ -46,15 +53,10 @@ TEST_F(_19_RD_Tests, ComputeMotif) {
 }
 
 TEST_F(_19_RD_Tests, InvalidMaxRingSize) {
-  EXPECT_THROW(RDCalculator::calculate(graph, 2), std::invalid_argument);
+  EXPECT_THROW(correlation::calculators::RDCalculator::calculate(graph, 2),
+               std::invalid_argument);
 }
 
-#include "StructureAnalyzer.hpp"
-#include "core/Trajectory.hpp"
-#include "readers/FileReader.hpp"
-#include <fstream>
-
-using namespace correlation::core;
 TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
   std::ifstream f(cellulose_path);
@@ -110,7 +112,8 @@ TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
 
   size_t max_ring_size = 10;
 
-  Histogram f_motif = RDCalculator::calculate(graph_cellulose, max_ring_size);
+  Histogram f_motif = correlation::calculators::RDCalculator::calculate(
+      graph_cellulose, max_ring_size);
 
   EXPECT_EQ(f_motif.x_label, "Ring Size");
   ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);
@@ -131,6 +134,8 @@ TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
   }
   EXPECT_NEAR(sum_rings, 1.0, 1e-6);
 }
+
+} // namespace correlation::analysis
 
 // -------------------------------------------------------------------------- //
 // ----------------------------- Main function ------------------------------ //

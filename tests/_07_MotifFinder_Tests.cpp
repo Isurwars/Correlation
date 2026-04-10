@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+namespace correlation::calculators {
+
 class _07_MotifFinder_Tests : public ::testing::Test {
 protected:
   correlation::core::Cell cell;
@@ -33,7 +35,7 @@ TEST_F(_07_MotifFinder_Tests, DetectsSingleTriangle) {
   graph.addDirectedEdge(2, 0, 1.0, {-1.0, -1.0, 0.0});
   graph.addDirectedEdge(0, 2, 1.0, {1.0, 1.0, 0.0});
 
-  auto rings = calculators::MotifFinder::findRings(graph, 6);
+  auto rings = MotifFinder::findRings(graph, 6);
 
   EXPECT_EQ(rings[3], 1); // Exact 1 triangle
   EXPECT_EQ(rings.count(4), 0);
@@ -57,10 +59,12 @@ TEST_F(_07_MotifFinder_Tests, DetectsSingleSquare) {
   graph.addDirectedEdge(3, 0, 1.0, {0.0, -1.0, 0.0});
   graph.addDirectedEdge(0, 3, 1.0, {0.0, 1.0, 0.0});
 
-  auto rings = calculators::MotifFinder::findRings(graph, 6);
+  auto rings = MotifFinder::findRings(graph, 6);
 
   EXPECT_EQ(rings.count(3), 0);
   EXPECT_EQ(rings[4], 1); // Exact 1 square
   EXPECT_EQ(rings.count(5), 0);
   EXPECT_EQ(rings.count(6), 0);
 }
+
+} // namespace correlation::calculators

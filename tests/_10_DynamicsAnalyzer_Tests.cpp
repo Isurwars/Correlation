@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DynamicsAnalyzer.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "readers/FileReader.hpp"
@@ -11,6 +11,8 @@
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <vector>
+
+namespace correlation::analysis {
 
 // Assuming the test is run from the build directory or project root
 // We need to locate the l-Bi.arc file
@@ -105,3 +107,4 @@ TEST(_10_DynamicsAnalyzer_Tests, CalculatesVDOSCorrectly) {
   EXPECT_NEAR(peak_freq, f0, 0.5)
       << "VDOS Peak should be near the source frequency";
 }
+} // namespace correlation::analysis

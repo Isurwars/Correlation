@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DynamicsAnalyzer.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "math/Constants.hpp"
 
 #include <gtest/gtest.h>
 #include <vector>
+
+namespace correlation::analysis {
 
 TEST(_15_vDoS_Tests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // Create a simple constant VACF (DC signal)
@@ -117,3 +119,4 @@ TEST(_15_vDoS_Tests, IdealGasShowsImaginaryPeak) {
       << " THz does not correspond to the decay constant frequency "
       << target_nu_peak << " THz.";
 }
+} // namespace correlation::analysis

@@ -3,11 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "TrajectoryAnalyzer.hpp"
+#include "analysis/TrajectoryAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
 #include <gtest/gtest.h>
+
+namespace correlation::analysis {
 
 TEST(_09_TrajectoryAnalyzer_Tests, BasicUsage) {
   // Create a dummy cell
@@ -39,3 +41,4 @@ TEST(_09_TrajectoryAnalyzer_Tests, BasicUsage) {
     // In a real test we might check neighbor counts if we knew indices
   }
 }
+} // namespace correlation::analysis

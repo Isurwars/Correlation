@@ -12,13 +12,16 @@
 
 #include <stdexcept>
 
+namespace correlation::calculators {
+
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<RDCalculator>());
 } // namespace
 
-void RDCalculator::calculateFrame(DistributionFunctions &df,
-                                  const AnalysisSettings &settings) const {
+void RDCalculator::calculateFrame(
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   if (!df.neighbors()) {
     return;
   }
@@ -26,15 +29,17 @@ void RDCalculator::calculateFrame(DistributionFunctions &df,
       "RD", calculate(df.neighbors()->neighborGraph(), settings.max_ring_size));
 }
 
-Histogram RDCalculator::calculate(const correlation::core::NeighborGraph &graph,
-                                  size_t max_ring_size) {
+correlation::analysis::Histogram
+RDCalculator::calculate(const correlation::core::NeighborGraph &graph,
+                        size_t max_ring_size) {
   if (max_ring_size < 3) {
     throw std::invalid_argument("Max ring size must be at least 3");
   }
 
-  auto rings = calculators::MotifFinder::findRings(graph, max_ring_size);
+  auto rings =
+      correlation::calculators::MotifFinder::findRings(graph, max_ring_size);
 
-  Histogram f_motif;
+  correlation::analysis::Histogram f_motif;
   f_motif.x_label = "Ring Size";
   f_motif.title = "Ring Distribution";
   f_motif.y_label = "Frequency";
@@ -71,3 +76,5 @@ Histogram RDCalculator::calculate(const correlation::core::NeighborGraph &graph,
 
   return f_motif;
 }
+
+} // namespace correlation::calculators

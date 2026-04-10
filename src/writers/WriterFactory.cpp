@@ -7,9 +7,9 @@
  */
 
 #include "writers/WriterFactory.hpp"
+
 #include <algorithm>
 
-using namespace correlation::core;
 namespace correlation::writers {
 
 WriterFactory &WriterFactory::instance() {
@@ -18,14 +18,17 @@ WriterFactory &WriterFactory::instance() {
 }
 
 bool WriterFactory::registerWriter(std::unique_ptr<BaseWriter> writer) {
-  if (!writer) return false;
+  if (!writer)
+    return false;
 
   name_map_[writer->getName()] = writer.get();
 
   for (const auto &ext : writer->getExtensions()) {
     std::string lower_ext = ext;
-    if (lower_ext[0] != '.') lower_ext = "." + lower_ext;
-    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
+    if (lower_ext[0] != '.')
+      lower_ext = "." + lower_ext;
+    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
+                   ::tolower);
     extension_map_[lower_ext] = writer.get();
   }
 
@@ -35,8 +38,10 @@ bool WriterFactory::registerWriter(std::unique_ptr<BaseWriter> writer) {
 
 BaseWriter *WriterFactory::getWriterForExtension(const std::string &extension) {
   std::string lower_ext = extension;
-  if (lower_ext[0] != '.') lower_ext = "." + lower_ext;
-  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
+  if (lower_ext[0] != '.')
+    lower_ext = "." + lower_ext;
+  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
+                 ::tolower);
 
   auto it = extension_map_.find(lower_ext);
   if (it != extension_map_.end()) {
@@ -45,7 +50,8 @@ BaseWriter *WriterFactory::getWriterForExtension(const std::string &extension) {
   return nullptr;
 }
 
-const std::vector<std::unique_ptr<BaseWriter>> &WriterFactory::getWriters() const {
+const std::vector<std::unique_ptr<BaseWriter>> &
+WriterFactory::getWriters() const {
   return writers_;
 }
 

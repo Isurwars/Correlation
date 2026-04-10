@@ -22,15 +22,15 @@
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>
 
-using namespace correlation::core;
 namespace correlation::writers {
 
 // Automatic registration
 static bool registered =
     WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>());
 
-void HDF5Writer::writeHDF(const std::string &filename,
-                          const DistributionFunctions &df) const {
+void HDF5Writer::writeHDF(
+    const std::string &filename,
+    const correlation::analysis::DistributionFunctions &df) const {
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite |
                                       HighFive::File::Create |

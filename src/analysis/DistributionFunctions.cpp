@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "DistributionFunctions.hpp"
-#include "TrajectoryAnalyzer.hpp"
+#include "analysis/DistributionFunctions.hpp"
+#include "analysis/TrajectoryAnalyzer.hpp"
 #include "calculators/CNCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "calculators/DADCalculator.hpp"
@@ -25,13 +25,14 @@
 #include <stdexcept>
 #include <tbb/parallel_for.h>
 
-using namespace correlation::core;
+namespace correlation::analysis {
+
 //---------------------------------------------------------------------------//
 //------------------------------- Constructor -------------------------------//
 //---------------------------------------------------------------------------//
 
 DistributionFunctions::DistributionFunctions(
-    Cell &cell, double cutoff,
+    correlation::core::Cell &cell, double cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs)
     : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0),
       bond_cutoffs_sq_(bond_cutoffs) {
@@ -250,7 +251,8 @@ void DistributionFunctions::smoothAll(double sigma,
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateCoordinationNumber() {
-  histograms_["CN"] = CNCalculator::calculate(cell_, neighbors());
+  histograms_["CN"] =
+      correlation::calculators::CNCalculator::calculate(cell_, neighbors());
 }
 
 //---------------------------------------------------------------------------//
@@ -258,14 +260,16 @@ void DistributionFunctions::calculateCoordinationNumber() {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
-  const auto *calc = CalculatorFactory::instance().getCalculator("RDF");
+  const auto *calc =
+      correlation::calculators::CalculatorFactory::instance().getCalculator(
+          "RDF");
   if (calc) {
     AnalysisSettings settings;
     settings.r_max = r_max;
     settings.r_bin_width = r_bin_width;
     calc->calculateFrame(*this, settings);
   } else {
-    auto results = RDFCalculator::calculate(
+    auto results = correlation::calculators::RDFCalculator::calculate(
         cell_, neighbors(), ashcroft_weights_, r_max, r_bin_width);
     for (auto &[name, histogram] : results) {
       histograms_[name] = std::move(histogram);
@@ -278,7 +282,8 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculatePAD(double bin_width) {
-  histograms_["BAD"] = PADCalculator::calculate(cell_, neighbors(), bin_width);
+  histograms_["BAD"] = correlation::calculators::PADCalculator::calculate(
+      cell_, neighbors(), bin_width);
 }
 
 //---------------------------------------------------------------------------//
@@ -286,19 +291,19 @@ void DistributionFunctions::calculatePAD(double bin_width) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateDAD(double bin_width) {
-  histograms_["DAD"] = DADCalculator::calculate(cell_, neighbors(), bin_width);
+  histograms_["DAD"] = correlation::calculators::DADCalculator::calculate(
+      cell_, neighbors(), bin_width);
 }
 
 //---------------------------------------------------------------------------//
 //----------------------------- Calculation VACF ----------------------------//
 //---------------------------------------------------------------------------//
 
-void DistributionFunctions::calculateVACF(const Trajectory &traj,
-                                          int max_correlation_frames,
-                                          size_t start_frame,
-                                          size_t end_frame) {
-  auto results = VACFCalculator::calculate(traj, max_correlation_frames,
-                                           start_frame, end_frame);
+void DistributionFunctions::calculateVACF(
+    const correlation::core::Trajectory &traj, int max_correlation_frames,
+    size_t start_frame, size_t end_frame) {
+  auto results = correlation::calculators::VACFCalculator::calculate(
+      traj, max_correlation_frames, start_frame, end_frame);
   for (auto &[name, histogram] : results) {
     histograms_[name] = std::move(histogram);
   }
@@ -313,7 +318,8 @@ void DistributionFunctions::calculateVDOS() {
     throw std::logic_error(
         "Cannot calculate VDOS. Please calculate VACF first.");
   }
-  histograms_["VDOS"] = VDOSCalculator::calculate(histograms_.at("VACF"));
+  histograms_["VDOS"] = correlation::calculators::VDOSCalculator::calculate(
+      histograms_.at("VACF"));
 }
 
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
@@ -323,9 +329,9 @@ void DistributionFunctions::calculateXRD(double lambda, double theta_min,
         "Cannot calculate XRD. Please calculate g_r first by calling "
         "calculateRDF().");
   }
-  histograms_["XRD"] =
-      XRDCalculator::calculate(histograms_.at("g_r"), cell_, ashcroft_weights_,
-                               lambda, theta_min, theta_max, bin_width);
+  histograms_["XRD"] = correlation::calculators::XRDCalculator::calculate(
+      histograms_.at("g_r"), cell_, ashcroft_weights_, lambda, theta_min,
+      theta_max, bin_width);
 }
 
 //---------------------------------------------------------------------------//
@@ -389,8 +395,9 @@ void DistributionFunctions::scale(double factor) {
 //---------------------------------------------------------------------------//
 
 std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
-    Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-    size_t start_frame, const AnalysisSettings &settings,
+    correlation::core::Trajectory &trajectory,
+    const TrajectoryAnalyzer &analyzer, size_t start_frame,
+    const AnalysisSettings &settings,
     std::function<void(float, const std::string &)> progress_callback) {
 
   const size_t num_frames = analyzer.getNumFrames();
@@ -415,7 +422,7 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           if (frame_idx >= trajectory.getFrames().size())
             continue;
 
-          Cell &frame = trajectory.getFrames()[frame_idx];
+          correlation::core::Cell &frame = trajectory.getFrames()[frame_idx];
 
           auto frame_df =
               std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
@@ -426,7 +433,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
 
           // Dispatch all active frame-based calculators from the factory
           const auto &factory_calcs =
-              CalculatorFactory::instance().getCalculators();
+              correlation::calculators::CalculatorFactory::instance()
+                  .getCalculators();
           for (const auto &calc : factory_calcs) {
             if (!calc->isFrameCalculator())
               continue;
@@ -471,3 +479,5 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
 
   return std::move(final_df);
 }
+
+} // namespace correlation::analysis

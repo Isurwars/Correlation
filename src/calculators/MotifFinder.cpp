@@ -14,7 +14,7 @@
 #include <tbb/parallel_for.h>
 #include <vector>
 
-namespace calculators {
+namespace correlation::calculators {
 
 namespace {
 
@@ -319,4 +319,4 @@ MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph,
   return exact_cycles;
 }
 
-} // namespace calculators
+} // namespace correlation::calculators

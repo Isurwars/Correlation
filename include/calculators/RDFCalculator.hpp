@@ -9,10 +9,12 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 
 #include <map>
 #include <string>
+
+namespace correlation::calculators {
 
 /**
  * @class RDFCalculator
@@ -38,8 +40,9 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(DistributionFunctions &df,
-                      const AnalysisSettings &settings) const override;
+  void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Calculates the J(r), g(r), and G(r) histograms for the given cell
@@ -56,9 +59,11 @@ public:
    * @return A map containing the `J(r)`, `g(r)`, and `G(r)` histograms, both
    * partial and total.
    */
-  static std::map<std::string, Histogram>
+  static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell,
-            const StructureAnalyzer *neighbors,
+            const correlation::analysis::StructureAnalyzer *neighbors,
             const std::map<std::string, double> &ashcroft_weights, double r_max,
             double r_bin_width);
 };
+
+} // namespace correlation::calculators

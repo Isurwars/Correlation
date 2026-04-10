@@ -7,38 +7,42 @@
  */
 
 #include "calculators/DihedralCalculator.hpp"
-#include "DistributionFunctions.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
 
 #include <cmath>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
-namespace calculators {
+namespace correlation::calculators {
 
 void DihedralCalculator::calculateFrame(
-    DistributionFunctions & /*df*/,
-    const AnalysisSettings & /*settings*/) const {
+    correlation::analysis::DistributionFunctions & /*df*/,
+    const correlation::analysis::AnalysisSettings & /*settings*/) const {
   // DihedralCalculator is a foundational calculator — called by
   // StructureAnalyzer during its construction. Nothing to do here.
 }
 
-void DihedralCalculator::compute(const correlation::core::Cell &cell,
-                                 const correlation::core::NeighborGraph &graph,
-                                 DihedralTensor &out_dihedrals) {
+void DihedralCalculator::compute(
+    const correlation::core::Cell &cell,
+    const correlation::core::NeighborGraph &graph,
+    correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
 
   // Initialize thread-local storage
-  tbb::enumerable_thread_specific<DihedralTensor> ets([&]() {
-    return DihedralTensor(
-        num_elements,
-        std::vector<std::vector<std::vector<std::vector<double>>>>(
+  tbb::enumerable_thread_specific<
+      correlation::analysis::StructureAnalyzer::DihedralTensor>
+      ets([&]() {
+        return correlation::analysis::StructureAnalyzer::DihedralTensor(
             num_elements,
-            std::vector<std::vector<std::vector<double>>>(
-                num_elements, std::vector<std::vector<double>>(num_elements))));
-  });
+            std::vector<std::vector<std::vector<std::vector<double>>>>(
+                num_elements,
+                std::vector<std::vector<std::vector<double>>>(
+                    num_elements,
+                    std::vector<std::vector<double>>(num_elements))));
+      });
 
   tbb::parallel_for(
       tbb::blocked_range<size_t>(0, atom_count),
@@ -171,4 +175,4 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell,
   }
 }
 
-} // namespace calculators
+} // namespace correlation::calculators

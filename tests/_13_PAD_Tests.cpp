@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "DistributionFunctions.hpp"
-#include "StructureAnalyzer.hpp"
+#include "analysis/DistributionFunctions.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -12,6 +12,8 @@
 #include <cmath>
 #include <gtest/gtest.h>
 #include <numeric>
+
+namespace correlation::analysis {
 
 // ============================================================================
 // Part 1: Angle Reproduction Tests
@@ -560,3 +562,4 @@ TEST_F(_13_PAD_Tests, IcosahedronAnglesPAD) {
   EXPECT_TRUE(found_116) << "Should find PAD peak near 116.57 degrees";
   EXPECT_TRUE(found_180) << "Should find PAD peak near 180.00 degrees";
 }
+} // namespace correlation::analysis

@@ -8,13 +8,12 @@
 
 #pragma once
 
+#include "analysis/DistributionFunctions.hpp"
 #include "core/Trajectory.hpp"
 
 #include <string>
 
-// Forward declarations
-class DistributionFunctions;
-struct AnalysisSettings;
+namespace correlation::calculators {
 
 /**
  * @brief Base class for all analysis calculators.
@@ -60,14 +59,18 @@ public:
    *        Called concurrently on different DistributionFunctions objects.
    *        Must be thread-safe (const).
    */
-  virtual void calculateFrame(DistributionFunctions &df,
-                              const AnalysisSettings &settings) const {}
+  virtual void calculateFrame(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::analysis::AnalysisSettings &settings) const {}
 
   /**
    * @brief Calculate multi-frame properties or post-processing.
    *        Called once after all frames are accumulated.
    */
-  virtual void calculateTrajectory(DistributionFunctions &df,
-                                   const correlation::core::Trajectory &traj,
-                                   const AnalysisSettings &settings) const {}
+  virtual void calculateTrajectory(
+      correlation::analysis::DistributionFunctions &df,
+      const correlation::core::Trajectory &traj,
+      const correlation::analysis::AnalysisSettings &settings) const {}
 };
+
+} // namespace correlation::calculators

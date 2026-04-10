@@ -7,6 +7,7 @@
  */
 
 #include "calculators/StructureFactorCalculator.hpp"
+#include "analysis/DistributionFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
@@ -18,13 +19,16 @@
 #include <tbb/parallel_for.h>
 #include <vector>
 
+namespace correlation::calculators {
+
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<StructureFactorCalculator>());
 } // namespace
 
 void StructureFactorCalculator::calculateFrame(
-    DistributionFunctions &df, const AnalysisSettings &settings) const {
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   if (settings.q_bin_width <= 0 || settings.q_max <= 0) {
     throw std::invalid_argument("Q-space parameters must be positive.");
   }
@@ -197,7 +201,7 @@ void StructureFactorCalculator::calculateFrame(
   // -----------------------------------------------------------------------
   // Allocate output histogram with partials.
   // -----------------------------------------------------------------------
-  Histogram s_q_hist;
+  correlation::analysis::Histogram s_q_hist;
   s_q_hist.bins.resize(num_q_bins);
   s_q_hist.x_label = "Q";
   s_q_hist.title = "S(Q) — Structure Factor";
@@ -332,3 +336,5 @@ void StructureFactorCalculator::calculateFrame(
   s_q_hist.partials["Total"] = std::move(total_sq);
   df.addHistogram("S_q", std::move(s_q_hist));
 }
+
+} // namespace correlation::calculators

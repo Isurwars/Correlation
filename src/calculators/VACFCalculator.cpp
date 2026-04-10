@@ -7,8 +7,10 @@
  */
 
 #include "calculators/VACFCalculator.hpp"
-#include "DynamicsAnalyzer.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+
+namespace correlation::calculators {
 
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
@@ -16,33 +18,35 @@ bool registered = CalculatorFactory::instance().registerCalculator(
 } // namespace
 
 void VACFCalculator::calculateTrajectory(
-    DistributionFunctions &df, const correlation::core::Trajectory &traj,
-    const AnalysisSettings &settings) const {
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::core::Trajectory &traj,
+    const correlation::analysis::AnalysisSettings &settings) const {
   auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
   for (auto &[name, histogram] : results) {
     df.addHistogram(name, std::move(histogram));
   }
 }
 
-std::map<std::string, Histogram>
+std::map<std::string, correlation::analysis::Histogram>
 VACFCalculator::calculate(const correlation::core::Trajectory &traj,
                           int max_correlation_frames, size_t start_frame,
                           size_t end_frame) {
-  std::map<std::string, Histogram> results;
+  std::map<std::string, correlation::analysis::Histogram> results;
   const auto &velocities = traj.getVelocities();
   if (velocities.empty()) {
     return results;
   }
 
-  std::vector<double> raw_vacf = DynamicsAnalyzer::calculateVACF(
-      traj, max_correlation_frames, start_frame, end_frame);
+  std::vector<double> raw_vacf =
+      correlation::analysis::DynamicsAnalyzer::calculateVACF(
+          traj, max_correlation_frames, start_frame, end_frame);
   if (raw_vacf.empty())
     return results;
 
   size_t num_frames = raw_vacf.size();
   double dt = traj.getTimeStep();
 
-  Histogram vacf_hist;
+  correlation::analysis::Histogram vacf_hist;
   vacf_hist.x_label = "t";
   vacf_hist.title = "Velocity Autocorrelation";
   vacf_hist.y_label = "C(t)";
@@ -58,10 +62,11 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
   vacf_hist.partials["Total"] = raw_vacf;
   results["VACF"] = std::move(vacf_hist);
 
-  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(
-      traj, max_correlation_frames, start_frame, end_frame);
+  std::vector<double> norm_vacf =
+      correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(
+          traj, max_correlation_frames, start_frame, end_frame);
   if (!norm_vacf.empty()) {
-    Histogram norm_vacf_hist;
+    correlation::analysis::Histogram norm_vacf_hist;
     norm_vacf_hist.x_label = "t";
     norm_vacf_hist.title = "Normalized Velocity Autocorrelation";
     norm_vacf_hist.y_label = "C(t) / C(0)";
@@ -76,3 +81,5 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
 
   return results;
 }
+
+} // namespace correlation::calculators

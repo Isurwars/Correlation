@@ -15,6 +15,8 @@
 #include <cmath>
 #include <stdexcept>
 
+namespace correlation::calculators {
+
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<SteinhardtCalculator>());
@@ -83,16 +85,18 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
 }
 
 void SteinhardtCalculator::calculateFrame(
-    DistributionFunctions &df, const AnalysisSettings &settings) const {
+    correlation::analysis::DistributionFunctions &df,
+    const correlation::analysis::AnalysisSettings &settings) const {
   auto histograms = calculate(df.cell(), df.neighbors());
   for (auto &[name, hist] : histograms) {
     df.addHistogram(name, std::move(hist));
   }
 }
 
-std::map<std::string, Histogram>
-SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
-                                const StructureAnalyzer *neighbors) {
+std::map<std::string, correlation::analysis::Histogram>
+SteinhardtCalculator::calculate(
+    const correlation::core::Cell &cell,
+    const correlation::analysis::StructureAnalyzer *neighbors) {
   if (!neighbors) {
     throw std::logic_error(
         "Cannot calculate Steinhardt Parameters. Neighbor list has not been "
@@ -194,7 +198,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   double W_max = 0.2;
   double dW = (W_max - W_min) / bins_W;
 
-  Histogram hist_Q4;
+  correlation::analysis::Histogram hist_Q4;
   hist_Q4.x_label = "Q4";
   hist_Q4.title = "Steinhardt Q4 Interface Parameter";
   hist_Q4.y_label = "Probability";
@@ -206,7 +210,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   for (size_t b = 0; b < bins_Q; ++b)
     hist_Q4.bins[b] = (b + 0.5) * dQ;
 
-  Histogram hist_Q6;
+  correlation::analysis::Histogram hist_Q6;
   hist_Q6.x_label = "Q6";
   hist_Q6.title = "Steinhardt Q6 Interface Parameter";
   hist_Q6.y_label = "Probability";
@@ -218,7 +222,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   for (size_t b = 0; b < bins_Q; ++b)
     hist_Q6.bins[b] = (b + 0.5) * dQ;
 
-  Histogram hist_W6;
+  correlation::analysis::Histogram hist_W6;
   hist_W6.x_label = "W6_hat";
   hist_W6.title = "Steinhardt W6_hat Parameter";
   hist_W6.y_label = "Probability";
@@ -290,10 +294,12 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
     }
   }
 
-  std::map<std::string, Histogram> hists;
+  std::map<std::string, correlation::analysis::Histogram> hists;
   hists["Q4"] = std::move(hist_Q4);
   hists["Q6"] = std::move(hist_Q6);
   hists["W6_hat"] = std::move(hist_W6);
 
   return hists;
 }
+
+} // namespace correlation::calculators

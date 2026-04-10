@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "StructureAnalyzer.hpp"
+#include "analysis/StructureAnalyzer.hpp"
 #include "core/Cell.hpp"
+#include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
 #include <functional>
@@ -18,9 +19,8 @@
 #include <string>
 #include <vector>
 
-namespace correlation::core {
-class Trajectory;
-}
+namespace correlation::analysis {
+
 class TrajectoryAnalyzer;
 
 struct AnalysisSettings {
@@ -261,3 +261,5 @@ private:
   std::map<std::string, Histogram> histograms_;
   std::map<std::string, double> ashcroft_weights_;
 };
+
+} // namespace correlation::analysis
