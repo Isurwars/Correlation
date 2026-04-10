@@ -30,24 +30,31 @@ namespace correlation::plotters {
  * @brief Theme and layout configuration for the plot.
  */
 struct PlotConfig {
-  enum class Theme { Light, Dark };
+  /** @brief Visualization themes for the generated SVG. */
+  enum class Theme { 
+    Light, ///< Standard light theme for publications.
+    Dark   ///< Modern dark theme for UI integration (e.g., Catppuccin-esque).
+  };
 
-  Theme theme = Theme::Light;
-  double width = 1200.0;
-  double height = 900.0;
-  bool show_grid = true;
-  bool show_markers = false;
+  Theme theme = Theme::Light; ///< Current theme selection.
+  double width = 1200.0;     ///< SVG canvas width (px).
+  double height = 900.0;     ///< SVG canvas height (px).
+  bool show_grid = true;     ///< Whether to render background grid lines.
+  bool show_markers = false; ///< Whether to render data point markers (dots).
 
-  // Colors based on theme
+  /** @return Hex color string for the plot background. */
   std::string bg_color() const {
     return (theme == Theme::Light) ? "#FFFFFF" : "#1e1e2e";
   }
+  /** @return Hex color string for axes and ticks. */
   std::string axis_color() const {
     return (theme == Theme::Light) ? "#000000" : "#cdd6f4";
   }
+  /** @return Hex color string for grid lines. */
   std::string grid_color() const {
     return (theme == Theme::Light) ? "#e0e0e0" : "#45475a";
   }
+  /** @return Hex color string for labels and titles. */
   std::string text_color() const {
     return (theme == Theme::Light) ? "#333333" : "#a6adc8";
   }
@@ -70,8 +77,22 @@ static const std::vector<std::string> kColors = {
     "#000000", // Black
 };
 
+/**
+ * @brief Retrieves a color from the Okabe-Ito palette.
+ * @param i Index (automatically wrapped using kColors size).
+ * @return Hex color string.
+ */
 inline std::string color(std::size_t i) { return kColors[i % kColors.size()]; }
 
+/**
+ * @brief Maps a value from data space to SVG coordinate space.
+ * @param v The coordinate in data space.
+ * @param data_min Minimum data value.
+ * @param data_max Maximum data value.
+ * @param svg_min Target SVG start coordinate.
+ * @param svg_max Target SVG end coordinate.
+ * @return The mapped SVG coordinate.
+ */
 inline double mapValue(double v, double data_min, double data_max,
                        double svg_min, double svg_max) {
   if (std::abs(data_max - data_min) < 1e-15)
@@ -83,9 +104,17 @@ inline double mapValue(double v, double data_min, double data_max,
  * @brief Logic for generating "nice" human-readable tick intervals.
  */
 struct NiceScale {
-  double min, max, spacing;
-  std::vector<double> ticks;
+  double min;     ///< Starting tick value.
+  double max;     ///< Ending tick value.
+  double spacing; ///< Calculated distance between ticks.
+  std::vector<double> ticks; ///< Generated tick locations.
 
+  /**
+   * @brief Calculates nice intervals for a range.
+   * @param actual_min Measured data minimum.
+   * @param actual_max Measured data maximum.
+   * @param max_ticks Target number of ticks.
+   */
   NiceScale(double actual_min, double actual_max, int max_ticks = 6) {
     if (std::abs(actual_max - actual_min) < 1e-12) {
       min = actual_min - 0.5;
@@ -104,6 +133,12 @@ struct NiceScale {
   }
 
 private:
+  /**
+   * @brief Rounds a range value to a "nice" human-readable number.
+   * @param range The value range for the axis.
+   * @param round Whether to perform aggressive rounding.
+   * @return The rounded "nice" value.
+   */
   double niceNum(double range, bool round) {
     double exponent = std::floor(std::log10(range));
     double fraction = range / std::pow(10.0, exponent);
@@ -134,7 +169,12 @@ private:
 
 /**
  * @brief Formats a number for SVG display, using scientific notation if needed.
- * Returns a string that might contain Unicode superscript characters.
+ * 
+ * Automatically converts "x 10^y" to "x 10^y" format using Unicode superscript 
+ * characters to avoid complex SVG text positioning issues.
+ * 
+ * @param v The number to format.
+ * @return A UTF-8 string ready for SVG path rendering.
  */
 inline std::string fmtScientific(double v) {
   double abs_v = std::abs(v);

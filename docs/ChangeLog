@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file.
 ## [2.6.4] 2026-04-10
 
 ### Changed
-- **Documentation Coverage**: Completed Phase 1 and Phase 2 of the documentation hardening project. 
-  - Achieved 100% Doxygen coverage for core interfaces (`BaseCalculator`, `BaseReader`) and fundamental data structures (`Trajectory`, `Cell`, `Atom`, `DistributionFunctions`).
-  - Achieved 100% coverage for foundational mathematical operations (`Vector3`, `Matrix3`, SIMD-specializations) and physical constant databases in `LinearAlgebra.hpp` and `PhysicalData.hpp`.
-- Resolved all remaining Doxygen audit warnings for the core, math, and physics components, ensuring a clean, zero-warning documentation build.
+- **Documentation Coverage**: Successfully achieved 100% Doxygen documentation coverage for the core project API across three phases.
+  - **Phase 1**: Core interfaces and data structures (`BaseCalculator`, `Trajectory`, etc.).
+  - **Phase 2**: Math and physics foundations (`LinearAlgebra`, `PhysicalData`).
+  - **Phase 3**: Application backend and SVG visualization (`AppBackend`, `SvgPlotter`).
+- Resolved all Doxygen audit warnings, including strict `@param`, `@return`, and `@throws` verification, ensuring a clean, professional documentation build for CI/CD.
 
 ## [2.6.3] 2026-04-09
 
