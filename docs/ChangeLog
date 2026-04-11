@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.6.5] 2026-04-11
+
+### Added
+- **Automated Documentation Deployment**: Integrated a new GitHub Actions workflow to automatically build and deploy Doxygen API documentation to GitHub Pages upon pushes to the main branch.
+- **CI Dependency Strengthening**: Enhanced documentation CI with dedicated system dependency installation (Graphviz, libtbb, libhdf5) and Rust toolchain integration for robust CMake configuration.
+
 ## [2.6.4] 2026-04-10
 
 ### Changed
@@ -8,7 +14,7 @@ All notable changes to this project will be documented in this file.
 - **UI Polish**: Categorized and ordered the plot preview dropdown menu by scientific priority: Radial (g(r), G(r), J(r)), Scattering (S(q), XRD), Angular (BAD, DAD, CN, RD), and Dynamic (MSD, VACF, VDOS).
 - **Audit Verification**: Resolved all Doxygen warnings, including strict @param and @return verification, ensuring a clean, professional documentation build for CI/CD.
 
-## [2.6.4] 2026-04-09
+## [2.6.3] 2026-04-09
 
 ### Added
 - Implemented in-memory SVG loading in `AppController` using `slint::private_api::load_image_from_embedded_data`, eliminating the need for temporary files and fixing a critical filesystem-related runtime crash.
