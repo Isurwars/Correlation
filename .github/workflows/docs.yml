@@ -5,11 +5,11 @@ on:
     branches:
       - main
     paths:
-      - 'include/**'
-      - 'src/**'
-      - 'docs/**'
-      - 'CMakeLists.txt'
-      - '.github/workflows/docs.yml'
+      - "include/**"
+      - "src/**"
+      - "docs/**"
+      - "CMakeLists.txt"
+      - ".github/workflows/docs.yml"
   workflow_dispatch:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
