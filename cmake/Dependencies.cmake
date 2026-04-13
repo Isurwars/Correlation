@@ -220,3 +220,17 @@ else()
     $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
   )
 endif()
+
+# 7. pybind11
+find_package(pybind11 QUIET)
+if (pybind11_FOUND)
+  message(STATUS "Found pybind11: ${pybind11_DIR} (Version: ${pybind11_VERSION})")
+else()
+  message(STATUS "pybind11 not found. Downloading pybind11 from GitHub...")
+  FetchContent_Declare(
+    pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11.git
+    GIT_TAG        v2.12.0
+  )
+  FetchContent_MakeAvailable(pybind11)
+endif()

@@ -97,6 +97,12 @@ if (CORRELATION_SIMD_FLAGS)
   target_compile_options(correlation_lib PUBLIC ${SIMD_FLAGS_LIST})
 endif()
 
+# Pybind11 creates a shared module and requires PIC
+set_target_properties(readers_obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(calculators_obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(writers_obj PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(correlation_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
 target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_shared parquet_shared)
 
@@ -156,4 +162,12 @@ if (NOT WIN32)
     set_target_properties(correlation PROPERTIES
         INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
     )
+endif()
+
+#------------------------------------------------------------------
+# Python Bindings
+#------------------------------------------------------------------
+option(BUILD_PYTHON_BINDINGS "Build pybind11 bindings for Correlation" OFF)
+if(BUILD_PYTHON_BINDINGS)
+    add_subdirectory(bindings)
 endif()
