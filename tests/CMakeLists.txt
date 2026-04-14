@@ -62,3 +62,24 @@ target_include_directories(correlation_tests PRIVATE
 bundle_windows_dlls(correlation_tests)
 
 gtest_discover_tests(correlation_tests DISCOVERY_TIMEOUT 60)
+
+#-----------------------------------------------------------
+# Python binding smoke test
+#-----------------------------------------------------------
+# Locate the interpreter that was used to build the pybind11 module.
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+# The shared module is placed in the bindings build directory.
+set(CORRELATION_PY_DIR "${CMAKE_BINARY_DIR}/src/bindings")
+
+add_test(
+    NAME PythonBindings
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/test_bindings.py"
+)
+
+# Make the .so importable without installing.
+set_tests_properties(PythonBindings PROPERTIES
+    ENVIRONMENT  "PYTHONPATH=${CORRELATION_PY_DIR}"
+    DEPENDS      correlation_py
+    LABELS       "python;bindings"
+)
