@@ -34,6 +34,8 @@ add_executable(correlation_tests
     _20_SIMDUtils_Tests.cpp
     _21_StructureFactorCalculator_Tests.cpp
     _22_SteinhardtCalculator_Tests.cpp
+    _23_VaspReader_Tests.cpp
+    _24_XdatcarReader_Tests.cpp
     ../src/app/AppBackend.cpp
 )
 
@@ -103,7 +105,7 @@ if(BUILD_PYTHON_BINDINGS)
     # Make the .so importable without installing.
     set_tests_properties(PythonBindings PROPERTIES
         ENVIRONMENT  "PYTHONPATH=${CORRELATION_PY_DIR}"
-        DEPENDS      correlation_py
+        DEPENDS      _correlation
         LABELS       "python;bindings"
     )
 endif()

@@ -390,7 +390,7 @@ void AppController::handleWriteFiles() {
 void AppController::handleBrowseFile() {
   std::vector<std::string> filters = {
       "Supported Structure Files",
-      "*arc *.car *.cell *.cif *.dat *.md *.outmol",
+      "*arc *.car *.cell *.cif *.dat *.md *.outmol *.poscar *.contcar *.vasp *.xdatcar",
       "Materials Studio CAR",
       "*.car",
       "Materials Studio ARC",
@@ -405,6 +405,10 @@ void AppController::handleBrowseFile() {
       "*.dat",
       "DMol3 Outmol",
       "*.outmol",
+      "VASP POSCAR/CONTCAR",
+      "POSCAR CONTCAR *.poscar *.contcar *.vasp",
+      "VASP XDATCAR",
+      "XDATCAR *.xdatcar",
       "All Files",
       "*"};
 

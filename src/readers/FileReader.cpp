@@ -34,6 +34,20 @@ FileType determineFileType(const std::string &filename) {
     return FileType::CastepMd;
   if (ext == ".outmol")
     return FileType::Outmol;
+  if (ext == ".poscar" || ext == ".contcar" || ext == ".vasp")
+    return FileType::Vasp;
+  if (ext == ".xdatcar")
+    return FileType::Xdatcar;
+
+  // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
+  if (ext.empty() || ext == ".") {
+    std::string basename = std::filesystem::path(filename).filename().string();
+    std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
+    if (basename == "poscar" || basename == "contcar")
+      return FileType::Vasp;
+    if (basename == "xdatcar")
+      return FileType::Xdatcar;
+  }
 
   return FileType::Unknown;
 }

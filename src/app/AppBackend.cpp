@@ -179,7 +179,8 @@ std::string AppBackend::load_file(const std::string &path) {
 
   if (type == correlation::readers::FileType::Arc ||
       type == correlation::readers::FileType::CastepMd ||
-      type == correlation::readers::FileType::Outmol) {
+      type == correlation::readers::FileType::Outmol ||
+      type == correlation::readers::FileType::Xdatcar) {
     trajectory_ = std::make_unique<correlation::core::Trajectory>(
         correlation::readers::readTrajectory(path, type, progress_callback_));
   } else {

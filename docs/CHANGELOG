@@ -1,10 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.8.0] 2026-04-13
+
+### Added
+- **VASP Reader**: POSCAR/CONTCAR (structure) + XDATCAR (trajectory), VASP 4/5 auto-detect, basename matching for extensionless files
+- **CLI Mode**: `correlation-cli` binary, zero Slint dependency, full arg parser with `--help`, tested end-to-end
+- **Python Packaging**: `pyproject.toml` for `pip install .`, module renamed to `_correlation` per PEP convention
+- **Test Coverage**: 17 new VASP tests, test suite split (headless/GUI), 151/151 passing
+- **Windows CI**: `ctest -C Release` with proper exclusions
+
 ## [2.7.0] 2026-04-13
 
 ### Added
 - **Python Bindings**: Implemented core Python bindings via `pybind11`. Developers and analysts can now script `correlation` interactively through standard Python, loading trajectories and inspecting atoms, cells, and parsed metadata entirely programmatically.
+
 
 ## [2.6.5] 2026-04-11
 

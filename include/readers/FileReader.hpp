@@ -31,6 +31,8 @@ enum class FileType {
   LammpsDump, ///< LAMMPS atomic dump trajectory format
   CastepMd,   ///< CASTEP molecular dynamics .md trajectory format
   Outmol,     ///< DMol3 .outmol format
+  Vasp,       ///< VASP POSCAR/CONTCAR single-structure format
+  Xdatcar,    ///< VASP XDATCAR trajectory format
   Unknown     ///< Unrecognized or unsupported file format
 };
 

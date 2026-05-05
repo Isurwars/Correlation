@@ -1,0 +1,13 @@
+Silicon selective dynamics
+5.43
+  1.0  0.0  0.0
+  0.0  1.0  0.0
+  0.0  0.0  1.0
+Si
+4
+Selective dynamics
+Direct
+  0.00  0.00  0.00  T T T
+  0.50  0.50  0.00  T T F
+  0.50  0.00  0.50  F T T
+  0.00  0.50  0.50  T F T

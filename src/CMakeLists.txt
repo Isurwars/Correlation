@@ -10,6 +10,8 @@ add_library(readers_obj OBJECT
     readers/LammpsDumpReader.cpp
     readers/OnetepDatReader.cpp
     readers/OutmolReader.cpp
+    readers/VaspReader.cpp
+    readers/XdatcarReader.cpp
     readers/FileReader.cpp
     readers/ReaderFactory.cpp
 )
@@ -163,6 +165,27 @@ if (NOT WIN32)
         INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
     )
 endif()
+
+#------------------------------------------------------------------
+# CLI Executable Target (correlation-cli) — no GUI dependency
+#------------------------------------------------------------------
+add_executable(correlation-cli
+    cli/main_cli.cpp
+    app/AppBackend.cpp
+)
+target_link_libraries(correlation-cli PRIVATE
+    correlation_lib readers_obj writers_obj calculators_obj
+)
+target_include_directories(correlation-cli PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+target_compile_definitions(correlation-cli PRIVATE _USE_MATH_DEFINES)
+if (CORRELATION_SIMD_FLAGS)
+    separate_arguments(SIMD_FLAGS_LIST NATIVE_COMMAND "${CORRELATION_SIMD_FLAGS}")
+    target_compile_options(correlation-cli PRIVATE ${SIMD_FLAGS_LIST})
+endif()
+bundle_windows_dlls(correlation-cli)
+install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 #------------------------------------------------------------------
 # Python Bindings
