@@ -9,7 +9,9 @@
 
 include(GoogleTest)
 
-# Explicitly list test sources.
+#-----------------------------------------------------------
+# 1. Headless tests (no Slint dependency — runs on ALL platforms)
+#-----------------------------------------------------------
 add_executable(correlation_tests
     _01_Atom_Tests.cpp
     _02_Cell_Tests.cpp
@@ -27,18 +29,39 @@ add_executable(correlation_tests
     _14_VACF_Tests.cpp
     _15_vDoS_Tests.cpp
     _16_AppBackend_Tests.cpp
-    _17_AppController_Tests.cpp
     _18_DAD_Tests.cpp
     _19_RD_Tests.cpp
     _20_SIMDUtils_Tests.cpp
     _21_StructureFactorCalculator_Tests.cpp
     _22_SteinhardtCalculator_Tests.cpp
     ../src/app/AppBackend.cpp
+)
+
+target_link_libraries(correlation_tests PRIVATE
+    correlation_lib
+    readers_obj
+    writers_obj
+    calculators_obj
+    GTest::gtest
+    GTest::gtest_main
+)
+target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
+
+# Call the helper function to bundle DLLs on Windows
+bundle_windows_dlls(correlation_tests)
+
+gtest_discover_tests(correlation_tests DISCOVERY_TIMEOUT 60)
+
+#-----------------------------------------------------------
+# 2. GUI tests (requires Slint — runs on platforms with a display)
+#-----------------------------------------------------------
+add_executable(correlation_gui_tests
+    _17_AppController_Tests.cpp
+    ../src/app/AppBackend.cpp
     ../src/app/AppController.cpp
 )
 
-# The test executable also links to the library and inherits its properties.
-target_link_libraries(correlation_tests PRIVATE
+target_link_libraries(correlation_gui_tests PRIVATE
     correlation_lib
     readers_obj
     writers_obj
@@ -47,21 +70,21 @@ target_link_libraries(correlation_tests PRIVATE
     GTest::gtest_main
     Slint::Slint
 )
-target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
+target_compile_definitions(correlation_gui_tests PRIVATE _USE_MATH_DEFINES)
 
 # Add slint target sources for AppWindow
-slint_target_sources(correlation_tests
+slint_target_sources(correlation_gui_tests
     ../ui/AppWindow.slint
     LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../material-1.0/material.slint
 )
-target_include_directories(correlation_tests PRIVATE
+target_include_directories(correlation_gui_tests PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # Call the helper function to bundle DLLs on Windows
-bundle_windows_dlls(correlation_tests)
+bundle_windows_dlls(correlation_gui_tests)
 
-gtest_discover_tests(correlation_tests DISCOVERY_TIMEOUT 60)
+gtest_discover_tests(correlation_gui_tests DISCOVERY_TIMEOUT 60)
 
 #-----------------------------------------------------------
 # Python binding smoke test
