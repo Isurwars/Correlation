@@ -75,3 +75,7 @@ jobs:
       - name: Test (macOS)
         if: runner.os == 'macOS'
         run: cd build && ctest --output-on-failure
+
+      - name: Test (Windows)
+        if: runner.os == 'Windows'
+        run: cd build && ctest -C Release --output-on-failure -E PythonBindings
