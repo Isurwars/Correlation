@@ -12,16 +12,18 @@
 #include <Windows.h>
 #endif
 
+#include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
-#include "AppWindow.h"
+
+#include <stdlib.h>
 
 /**
  * @brief Main entry point of the application.
- * 
+ *
  * Initializes the Slint UI, backend components, and the AppController.
  * Starts the Slint event loop.
- * 
+ *
  * @return Exit code (0 for success).
  */
 int main() {
@@ -29,6 +31,12 @@ int main() {
 #if defined(_WIN32)
   // Load the icon from the application's resource file
   HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
+#endif
+
+#if !defined(_WIN32)
+  setenv("SLINT_BACKEND", "winit-skia", 1);
+#else
+  _putenv_s("SLINT_BACKEND", "winit-skia");
 #endif
 
   auto ui = AppWindow::create();
