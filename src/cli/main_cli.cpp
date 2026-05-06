@@ -12,12 +12,10 @@
 
 #include "app/AppBackend.hpp"
 
-#include <algorithm>
-#include <cstdlib>
 #include <filesystem>
 #include <iostream>
+#include <sstream>
 #include <string>
-#include <vector>
 
 namespace {
 
@@ -95,7 +93,8 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
       opts.angle_bin_width = std::stod(argv[++i]);
     } else if (arg == "--min-frame" && i + 1 < argc) {
       opts.min_frame = std::stoi(argv[++i]) - 1; // Convert 1-based to 0-based
-      if (opts.min_frame < 0) opts.min_frame = 0;
+      if (opts.min_frame < 0)
+        opts.min_frame = 0;
     } else if (arg == "--max-frame" && i + 1 < argc) {
       opts.max_frame = std::stoi(argv[++i]);
     } else if (arg == "--csv") {
