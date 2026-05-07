@@ -10,7 +10,6 @@
 #include "core/Trajectory.hpp"
 #include "readers/ReaderFactory.hpp"
 
-#include <algorithm>
 #include <cerrno>
 #include <cmath>
 #include <cstring>
@@ -159,10 +158,10 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   }
 
   if (species.size() != atom_counts.size()) {
-    throw std::runtime_error(
-        "POSCAR: species count (" + std::to_string(species.size()) +
-        ") does not match atom count entries (" +
-        std::to_string(atom_counts.size()) + ").");
+    throw std::runtime_error("POSCAR: species count (" +
+                             std::to_string(species.size()) +
+                             ") does not match atom count entries (" +
+                             std::to_string(atom_counts.size()) + ").");
   }
 
   int total_atoms = 0;

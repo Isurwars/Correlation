@@ -33,12 +33,6 @@ int main() {
   HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
 #endif
 
-#if !defined(_WIN32)
-  setenv("SLINT_BACKEND", "winit-skia", 1);
-#else
-  _putenv_s("SLINT_BACKEND", "winit-skia");
-#endif
-
   auto ui = AppWindow::create();
   correlation::app::AppBackend backend;
 

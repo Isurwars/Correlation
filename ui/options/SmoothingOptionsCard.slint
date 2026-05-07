@@ -1,0 +1,69 @@
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+    DropDownMenu,
+} from "@material";
+
+export component SmoothingOptionsCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> file_loaded;
+    in-out property <string> smoothing_sigma;
+    in-out property <int> smoothing_kernel;
+
+    property <length> smoothing_height: root.expanded ? 100px : 0px;
+
+    out property <string> hovered_tooltip_text:
+        sigma_area.has-hover ? "Sigma to be used for the smoothing of the distribution functions. The recommended sigma is 0.01." : kernel_area.has-hover ? "Kernel smoother type.\nGaussian: General purpose smoothing.\nBump: Sharp cutoff, preserves high frequencies.\nTriweight: Higher weight near the center, good for noisy data." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_4;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        ExpandableHeader {
+            text: "Smoothing";
+            expanded <=> root.expanded;
+        }
+
+        VerticalLayout {
+            height: root.smoothing_height;
+            visible: self.height > 0.1px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            sigma_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Smoothing Sigma";
+                    text <=> root.smoothing_sigma;
+                }
+            }
+
+            kernel_area := TouchArea {
+                DropDownMenu {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Smoothing Kernel";
+                    items: [
+                        { text: "Gaussian", enabled: true },
+                        { text: "Bump", enabled: true },
+                        { text: "Triweight", enabled: true }
+                    ];
+                    current-index <=> root.smoothing_kernel;
+                }
+            }
+        }
+    }
+}

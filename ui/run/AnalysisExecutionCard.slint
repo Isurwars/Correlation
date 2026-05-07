@@ -1,0 +1,84 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledButton,
+    FilledCard,
+    MaterialText,
+    LinearProgressIndicator,
+} from "@material";
+
+export component AnalysisExecutionCard inherits FilledCard {
+    in property <bool> file_loaded;
+    in property <bool> analysis_running;
+    in property <bool> analysis_done;
+    in property <float> progress;
+    in property <string> analysis_status_text;
+
+    callback run_analysis();
+    callback write_files();
+
+    property <length> progress_height: (root.analysis_running || root.analysis_done) ? 45px : 0px;
+
+    // Hover state for tooltip
+    out property <string> hovered_tooltip_text:
+        analysis_area.has-hover ? "Start the selected analyses." : write_area.has-hover ? "Export the analysis results to files." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        // Main Action Button
+        analysis_area := TouchArea {
+            FilledButton {
+                width: 100%;
+                text: root.analysis_running ? "In Progress..." : "Run Analysis";
+                enabled: root.file_loaded && !root.analysis_running;
+                background: MaterialPalette.run;
+                text_color: MaterialPalette.on_run;
+                clicked => {
+                    root.run_analysis();
+                }
+            }
+        }
+
+        VerticalLayout {
+            padding: MaterialStyleMetrics.spacing_4;
+
+            height: root.progress_height;
+            visible: self.height > 0.1px;
+            opacity: (root.analysis_running || root.analysis_done) ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_2;
+            MaterialText {
+                text: root.analysis_status_text;
+                color: MaterialPalette.on_surface_variant;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+                wrap: word-wrap;
+            }
+        }
+
+        // Save Results
+        write_area := TouchArea {
+            FilledButton {
+                width: 100%;
+                text: "Save Results";
+                enabled: root.analysis_done && !root.analysis_running;
+                background: MaterialPalette.error;
+                text_color: MaterialPalette.on_error;
+                clicked => {
+                    root.write_files();
+                }
+            }
+        }
+    }
+}

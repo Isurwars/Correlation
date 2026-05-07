@@ -1,0 +1,90 @@
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    CheckBoxRow,
+    MaterialText,
+} from "@material";
+import { CalculatorGroup } from "../Types.slint";
+
+
+export component AnalysesSelectionCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> file_loaded;
+    in property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+    callback toggle_calculator(string, bool);
+
+    out property <string> hovered_calculator_description: "";
+
+    property <length> analyses_height: root.expanded ? (root.total_calculator_count * 32px + root.calculator_groups.length * 14px + 32px) : 0px;
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_4;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        ExpandableHeader {
+            text: "Select Analyses";
+            expanded <=> root.expanded;
+        }
+
+        VerticalLayout {
+            alignment: start;
+            height: root.analyses_height;
+            visible: self.height > 0.1px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_4;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            for group[gi] in root.calculator_groups: VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_2;
+                if gi > 0: Rectangle {
+                    height: 1px;
+                    background: MaterialPalette.outline_variant;
+                }
+
+                MaterialText {
+                    text: group.name;
+                    style: MaterialTypography.label_small;
+                    color: MaterialPalette.on_surface_variant;
+                }
+
+                for calc[ci] in group.calculators: HorizontalLayout {
+                    height: 28px;
+                    padding-left: MaterialStyleMetrics.spacing_2;
+
+                    TouchArea {
+                        property <bool> _hover: self.has-hover;
+                        changed _hover => {
+                            if (self.has-hover) {
+                                root.hovered_calculator_description = calc.description;
+                            } else {
+                                root.hovered_calculator_description = "";
+                            }
+                        }
+
+                        CheckBoxRow {
+                            enabled: root.file_loaded;
+                            check_state_bool: calc.enabled;
+                            text: calc.name;
+                            horizontal-stretch: 1;
+                            checked_state_changed(s) => {
+                                root.toggle_calculator(calc.id, s);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

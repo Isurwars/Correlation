@@ -1,0 +1,73 @@
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+} from "@material";
+
+export component SQOptionsCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> file_loaded;
+    in-out property <string> q_max;
+    in-out property <string> q_bin_width;
+    in-out property <string> r_int_max;
+
+    property <length> sq_height: root.expanded ? 150px : 0px;
+
+    out property <string> hovered_tooltip_text:
+        q_max_area.has-hover ? "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹" : q_bin_area.has-hover ? "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹." : r_int_area.has-hover ? "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å" : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_4;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        ExpandableHeader {
+            text: "Structure Factor";
+            expanded <=> root.expanded;
+        }
+
+        VerticalLayout {
+            height: root.sq_height;
+            visible: self.height > 0.1px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            q_max_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Max Q (Å⁻¹)";
+                    text <=> root.q_max;
+                }
+            }
+
+            q_bin_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "S(Q) Bin Width (Å⁻¹)";
+                    text <=> root.q_bin_width;
+                }
+            }
+
+            r_int_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Max r for the FFT (Å)";
+                    text <=> root.r_int_max;
+                }
+            }
+        }
+    }
+}

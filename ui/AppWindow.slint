@@ -10,6 +10,7 @@ import {
     MaterialText,
     MenuItem,
 } from "@material";
+import { Palette, ScrollView } from "std-widgets.slint";
 
 import {
     AtomCount,
@@ -17,11 +18,21 @@ import {
     CalculatorInfo,
     CalculatorGroup,
 } from "Types.slint";
-import { InputFileCard } from "InputFileCard.slint";
-import { FileInfoCard } from "FileInfoCard.slint"; 
-import { OptionsCard } from "OptionsCard.slint";
-import { RunAnalysisCard } from "RunAnalysisCard.slint";
-import { PreviewCard } from "PreviewCard.slint";
+
+import { InputFileCard } from "file/InputFileCard.slint";
+import { FileInfoCard } from "file/FileInfoCard.slint";
+import { OptionsToggleCard } from "run/OptionsToggleCard.slint";
+import { FrameSelectionCard } from "run/FrameSelectionCard.slint";
+import { ExportOptionsCard } from "run/ExportOptionsCard.slint";
+import { AnalysisExecutionCard } from "run/AnalysisExecutionCard.slint";
+import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
+import { RDFOptionsCard } from "options/RDFOptionsCard.slint";
+import { SQOptionsCard } from "options/SQOptionsCard.slint";
+import { BondAngleOptionsCard } from "options/BondAngleOptionsCard.slint";
+import { RingsOptionsCard } from "options/RingsOptionsCard.slint";
+import { SmoothingOptionsCard } from "options/SmoothingOptionsCard.slint";
+import { BondCutoffsCard } from "options/BondCutoffsCard.slint";
+import { PreviewCard } from "preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
 
 export { AtomCount, BondCutoff, CalculatorInfo, CalculatorGroup }
@@ -29,158 +40,120 @@ export { AtomCount, BondCutoff, CalculatorInfo, CalculatorGroup }
 // ============================================================================
 // AppWindow Component
 // ============================================================================
-/// This is the root component of the GUI. Its properties (`in-out property <...>`) 
-/// and callbacks (`callback ...`) form the main interface with the C++ backend.
-///
+/// This is the main window component for the Correlation application.
+/// 
 /// C++ Binding Architecture:
-/// - Callbacks (e.g., `run_analysis()`, `browse_file()`) are implemented in C++
-///   (via `AppController.cpp`) using `ui->on_run_analysis([...])` to handle events.
-/// - Properties (e.g., `file_status_text`, `r_max`, `use_csv`) are read and written
-///   from C++ using getters (`ui->get_r_max()`) and setters (`ui->set_progress(...)`).
-/// - The C++ application holds an instance of `AppWindow` and updates its state
-///   based on backend computations, while the UI triggers backend actions.
+/// - The `AppWindow` instance is managed by the `AppController` in C++.
+/// - Root properties (like `file_loaded`, `progress`, etc.) are bound to 
+///   the `AppController` and `AppBackend` states.
+/// - Callbacks (like `run_analysis`, `browse_file`) are mapped to methods in
+///   the `AppController` to handle user interactions.
+/// - hovered_tooltip_text: A string that is dynamically updated based on the
+///   hovered component.
 // ============================================================================
 export component AppWindow inherits Window {
-    /// Callback that the UI invokes on the C++ side
-    callback run_analysis();
-    callback write_files();
-    callback browse_file();
-    callback check_file_dialog_status();
+    // ============================================================================
+    // Global Properties
+    // ============================================================================
+    
+    /// Status of the file dialog timer
+    in property <bool> timer_running: false;
 
-    /// Properties that C++ updates to change the UI
-    in-out property <string> file_status_text: "Please load a structure file.";
-    in-out property <string> analysis_status_text: "";
-    in-out property <float> progress: 0.0;
-    in-out property <bool> analysis_running: false;
-    in-out property <bool> analysis_done: false;
-    in-out property <bool> timer_running: false;
-    in-out property <bool> text_opacity: true;
-    in-out property <bool> file_loaded: false;
-    in-out property <bool> is_dark: false;
-
-    /// Data for the UI
-    in-out property <int> num_frames: 0;
-    in-out property <int> total_atoms: 0;
-    in-out property <int> removed_frames_count: 0;
-    in-out property <[AtomCount]> atom_counts: [];
-    in-out property <[BondCutoff]> bond_cutoffs: [];
+    /// File status and metadata
+    in property <bool> file_loaded: false;
+    in property <int> num_frames: 0;
+    in property <int> total_atoms: 0;
+    in property <int> removed_frames_count: 0;
+    in property <[AtomCount]> atom_counts: [];
+    in-out property <string> file_status_text: "No file loaded.";
     in-out property <string> time_step: "1.0";
 
-    /// User-configurable options
+    /// Analysis execution state
+    in property <bool> analysis_running: false;
+    in property <bool> analysis_done: false;
+    in property <float> progress: 0.0;
+    in property <bool> text_opacity: false;
+    in-out property <string> analysis_status_text: "Ready to run analysis.";
+
+    /// Analysis configuration properties
     in-out property <string> in_file_text;
-    in-out property <bool> smoothing: true;
+    in-out property <bool> use_csv: true;
     in-out property <bool> use_hdf5: true;
-    in-out property <bool> use_csv: false;
     in-out property <bool> use_parquet: false;
-    in-out property <string> r_max;
-    in-out property <string> r_bin_width;
-    in-out property <string> q_max;
-    in-out property <string> q_bin_width;
-    in-out property <string> r_int_max;
-    in-out property <string> angle_bin_width;
-    in-out property <string> dihedral_bin_width;
-    in-out property <string> max_ring_size;
-    in-out property <string> smoothing_sigma;
-    in-out property <int> smoothing_kernel: -1;
-    in-out property <string> min_frame: "1";
+    in-out property <string> min_frame: "0";
     in-out property <string> max_frame: "End";
+    in-out property <string> r_max: "20.0";
+    in-out property <string> r_bin_width: "0.02";
+    in-out property <string> q_max: "20.0";
+    in-out property <string> q_bin_width: "0.02";
+    in-out property <string> r_int_max: "10.0";
+    in-out property <string> angle_bin_width: "1.0";
+    in-out property <string> dihedral_bin_width: "1.0";
+    in-out property <string> max_ring_size: "12";
+    in-out property <bool> smoothing: true;
+    in-out property <string> smoothing_sigma: "0.01";
+    in-out property <int> smoothing_kernel: 0;
+    in-out property <[BondCutoff]> bond_cutoffs: [];
 
-    /// Application icon
-    property <image> logo-icon: @image-url("../Images/Logo.png");
-
-    /// Analysis calculator groups (dynamically populated from C++)
+    /// Dynamic calculator groups from CalculatorFactory via C++
     in-out property <[CalculatorGroup]> calculator_groups: [];
-    in-out property <int> total_calculator_count: 0;
-    callback toggle_calculator(string, bool);
+    in property <int> total_calculator_count: 0;
 
-    /// Plot preview (populated after analysis completes)
-    in-out property <image> preview_plot;
-    in-out property <[MenuItem]> plot_items: [];
+    /// Analysis results and preview
+    in property <image> preview_plot;
+    in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
-    callback select_plot(int);
+    out property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
 
-    /// ============================================================================
-    /// Calculated Properties
-    /// ============================================================================
-    /// These are computed values based on the current state of the application.
-    /// Unlike in-out properties, these are calculated purely from Slint code
-    /// and do not have direct C++ counterparts.
-    ///
-    /// Examples:
-    /// - hovered_tooltip_text: Dynamically shows the tooltip of the currently
-    ///   hovered component (input_card, file_info_card, etc.).
-    /// - window_width/window_height: Calculate the required dimensions of the
-    ///   main window based on the visibility of different panels (advanced
-    ///   options and analysis results).
-    /// ============================================================================
-    property <string> hovered_tooltip_text:
-        input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : analysis_card.hovered_tooltip_text != "" ? analysis_card.hovered_tooltip_text : options_card.hovered_tooltip_text != "" ? options_card.hovered_tooltip_text : preview_card.hovered_tooltip_text != "" ? preview_card.hovered_tooltip_text : "";
+    // ============================================================================
+    // Callbacks (Bound to AppController.cpp)
+    // ============================================================================
+    callback browse_file();
+    callback run_analysis();
+    callback write_files();
+    callback select_plot(int);
+    callback toggle_calculator(string, bool);
+    callback check_file_dialog_status();
+
+    // ============================================================================
+    // Core Layout Logic
+    // ============================================================================
+    
+    Timer {
+        interval: 100ms;
+        running: root.timer_running;
+        triggered() => {
+            root.check_file_dialog_status();
+        }
+    }
+
+    /// hovered_tooltip_text: Dynamically update based on the currently
+    ///   hovered component.
+    property <string> hovered_tooltip_text: 
+        input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : options_toggle.hovered_tooltip_text != "" ? options_toggle.hovered_tooltip_text : frame_selection.hovered_tooltip_text != "" ? frame_selection.hovered_tooltip_text : export_options.hovered_tooltip_text != "" ? export_options.hovered_tooltip_text : execution.hovered_tooltip_text != "" ? execution.hovered_tooltip_text : analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : preview_card.hovered_tooltip_text != "" ? preview_card.hovered_tooltip_text : "";
 
     /// Whether to show advanced analysis options
     property <bool> show_advanced_options: false;
-
-    /// Width of the main window
-    property <length> window_width: 392px + (root.show_advanced_options ? 220px : 0px) + (root.analysis_done ? 582px : 0px);
-
-    /// Height of the main window
-    property <length> window_height: max(
-        110px + file_info_card.preferred-height,
-        100px + analysis_card.preferred-height,
-        root.show_advanced_options ? 60px + options_card.preferred-height : 0px,
-        root.analysis_done ? 20px + preview_card.preferred-height : 0px);
-
-    init => {
-        root.width = 392px;
-        root.height = 350px;
-    }
-
-
-    ///  App root window property
-    width: root.window_width;
-    height: root.window_height;
-    animate width {
-        duration: 100ms;
-        easing: ease-in-out;
-    }
-    animate height {
-        duration: 100ms;
-        easing: ease-in-out;
-    }
 
     title: "Correlation";
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "sans-serif";
-    icon: logo-icon;
 
     // ============================================================================
-    // Timer
+    // Main UI structure
     // ============================================================================
-    // The timer is used to periodically check the status of the file dialog.
-    timer := Timer {
-        interval: 200ms;
-        running: timer_running;
-        triggered() => {
-            check_file_dialog_status();
-        }
-    }
-
     window_area := TouchArea {
-        width: 100%;
-        height: 100%;
-        Rectangle {
-            // 1. Sidebar: Input & File Info
+        HorizontalLayout {
+            padding: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_8;
+        // 1. Sidebar: Input & File Info
             VerticalLayout {
-                x: 0px;
-                y: 0px;
+
                 width: 190px;
-                padding-left: MaterialStyleMetrics.spacing_8;
-                padding-top: MaterialStyleMetrics.spacing_8;
-                padding-bottom: MaterialStyleMetrics.spacing_8;
-                padding-right: 0px;
                 spacing: MaterialStyleMetrics.spacing_4;
-                alignment: end;
+
                 input_card := InputFileCard {
                     enabled: !root.timer_running;
                     browse_file => {
@@ -189,7 +162,7 @@ export component AppWindow inherits Window {
                 }
 
                 file_info_card := FileInfoCard {
-                    height: root.height - input_card.preferred-height - 20px;
+                    vertical-stretch: 1;
                     file_status_text <=> root.file_status_text;
                     file_loaded: root.file_loaded;
                     num_frames: root.num_frames;
@@ -201,102 +174,100 @@ export component AppWindow inherits Window {
             }
 
             // 2. Center: Output & Run
-        VerticalLayout {
-                x: 194px;
-                y: 0px;
+            VerticalLayout {
+
                 width: 190px;
-                padding-left: 0px;
-                padding-top: MaterialStyleMetrics.spacing_8;
-                padding-bottom: MaterialStyleMetrics.spacing_8;
-                padding-right: 0px;
                 spacing: MaterialStyleMetrics.spacing_4;
-                analysis_card := RunAnalysisCard {
+
+                options_toggle := OptionsToggleCard {
                     file_loaded: root.file_loaded;
+                    advanced_options_visible <=> root.show_advanced_options;
+                }
+
+                frame_selection := FrameSelectionCard {
                     num_frames: root.num_frames;
-                    analysis_running: root.analysis_running;
-                    analysis_done: root.analysis_done;
-                    progress: root.progress;
-                    analysis_status_text <=> root.analysis_status_text;
+                    min_frame <=> root.min_frame;
+                    max_frame <=> root.max_frame;
+                }
+
+                export_options := ExportOptionsCard {
+                    file_loaded: root.file_loaded;
                     use_csv <=> root.use_csv;
                     use_hdf5 <=> root.use_hdf5;
                     use_parquet <=> root.use_parquet;
-                    min_frame <=> root.min_frame;
-                    max_frame <=> root.max_frame;
-                    advanced_options_visible <=> root.show_advanced_options;
+                }
+
+                execution := AnalysisExecutionCard {
+                    file_loaded: root.file_loaded;
+                    analysis_running: root.analysis_running;
+                    analysis_done: root.analysis_done;
+                    progress: root.progress;
+                    analysis_status_text: root.analysis_status_text;
                     run_analysis => {
                         root.run_analysis();
                     }
                     write_files => {
                         root.write_files();
                     }
-                    options_toggled(visible) => {
-                        if (!visible) {
-                            options_card.analyses_expanded = false;
-                            options_card.rdf_expanded = false;
-                            options_card.sq_expanded = false;
-                            options_card.angle_expanded = false;
-                            options_card.smoothing_expanded = false;
-                            options_card.bond_cutoffs_expanded = false;
-                        }
-                    }
                 }
             }
 
             // 3. Right: Analysis Options
-        VerticalLayout {
-                x: 388px;
-                y: 0px;
-                width: root.show_advanced_options ? 220px : 0.1px;
-                visible: root.show_advanced_options || self.width > 1px;
-                padding-left: 0px;
-                padding-top: MaterialStyleMetrics.spacing_8;
-                padding-bottom: MaterialStyleMetrics.spacing_8;
-                padding-right: MaterialStyleMetrics.spacing_4;
-                spacing: MaterialStyleMetrics.spacing_4;
-                options_card := OptionsCard {
-                    file_loaded <=> root.file_loaded;
-                    calculator_groups <=> root.calculator_groups;
-                    total_calculator_count <=> root.total_calculator_count;
+            options_vertical_layout := VerticalLayout {
+
+                width: root.show_advanced_options ? 240px : 0px;
+                visible: root.show_advanced_options;
+                analyses_card := AnalysesSelectionCard {
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
                     toggle_calculator(id, enabled) => {
                         root.toggle_calculator(id, enabled);
                     }
+                }
+
+                rdf_card := RDFOptionsCard {
+                    file_loaded: root.file_loaded;
                     r_max <=> root.r_max;
                     r_bin_width <=> root.r_bin_width;
+                }
+
+                sq_card := SQOptionsCard {
+                    file_loaded: root.file_loaded;
                     q_max <=> root.q_max;
                     q_bin_width <=> root.q_bin_width;
                     r_int_max <=> root.r_int_max;
+                }
+
+                angle_card := BondAngleOptionsCard {
+                    file_loaded: root.file_loaded;
                     angle_bin_width <=> root.angle_bin_width;
                     dihedral_bin_width <=> root.dihedral_bin_width;
+                }
+
+                rings_card := RingsOptionsCard {
+                    file_loaded: root.file_loaded;
                     max_ring_size <=> root.max_ring_size;
-                    smoothing <=> root.smoothing;
+                }
+
+                smoothing_card := SmoothingOptionsCard {
+                    file_loaded: root.file_loaded;
                     smoothing_sigma <=> root.smoothing_sigma;
                     smoothing_kernel <=> root.smoothing_kernel;
+                }
+
+                bond_cutoffs_card := BondCutoffsCard {
+                    file_loaded: root.file_loaded;
                     bond_cutoffs <=> root.bond_cutoffs;
                 }
             }
 
             // 4. Far-right: Distribution Function Preview
-        VerticalLayout {
-                x: 388px + (root.show_advanced_options ? 224px : 4px);
-                y: 0px;
-                width: root.analysis_done ? 576px : 0.1px;
-                visible: root.analysis_done || self.width > 1px;
-                padding-left: 0px;
-                padding-top: MaterialStyleMetrics.spacing_8;
-                padding-bottom: MaterialStyleMetrics.spacing_8;
-                padding-right: MaterialStyleMetrics.spacing_8;
-                spacing: MaterialStyleMetrics.spacing_4;
-                opacity: root.analysis_done ? 1.0 : (self.width > 1px ? 0.0 : 1.0);
-                animate width {
-                    duration: 200ms;
-                    easing: ease-in-out;
-                }
-                animate opacity {
-                    duration: 200ms;
-                    easing: ease-in-out;
-                }
+            VerticalLayout {
+
+                width: root.analysis_done ? 576px : 0px;
+                visible: root.analysis_done;
                 preview_card := PreviewCard {
-                    analysis_done: root.analysis_done;
                     preview_plot <=> root.preview_plot;
                     plot_items <=> root.plot_items;
                     selected_plot_index <=> root.selected_plot_index;
@@ -306,15 +277,13 @@ export component AppWindow inherits Window {
                 }
             }
         }
+    }
 
-        AppToolTips {
-            x: 0;
-            y: 0;
-            width: 100%;
-            height: 100%;
-            mouse_x: window_area.mouse-x;
-            mouse_y: window_area.mouse-y;
-            hovered_tooltip_text: root.hovered_tooltip_text;
-        }
+    AppToolTips {
+        x: 0;
+        y: 0;
+        mouse_x: window_area.mouse-x;
+        mouse_y: window_area.mouse-y;
+        hovered_tooltip_text: root.hovered_tooltip_text;
     }
 }

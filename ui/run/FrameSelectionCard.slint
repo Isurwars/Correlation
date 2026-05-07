@@ -1,0 +1,82 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledCard,
+    MaterialText,
+    TextField,
+} from "@material";
+
+export component FrameSelectionCard inherits FilledCard {
+    in property <int> num_frames;
+    in-out property <string> min_frame;
+    in-out property <string> max_frame;
+
+    property <length> frame_text_height: 24px;
+    property <length> frame_range_height: 40px;
+
+    // Hover state for tooltip
+    out property <string> hovered_tooltip_text:
+        start_frame_area.has-hover ? "First frame to include in the analysis." : end_frame_area.has-hover ? "Last frame to include in the analysis (use 'End' for the final frame)." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        MaterialText {
+            text: "Frame Range";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
+            height: root.frame_text_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+        }
+
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_4;
+            height: root.frame_range_height;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            start_frame_area := TouchArea {
+                start_frame := TextField {
+                    enabled: root.num_frames > 1;
+                    width: 100%;
+                    label: "Start Frame";
+                    text <=> root.min_frame;
+                    height: root.frame_range_height;
+                    animate height {
+                        duration: 250ms;
+                        easing: ease-in-out;
+                    }
+                }
+            }
+
+            end_frame_area := TouchArea {
+                end_frame := TextField {
+                    enabled: root.num_frames > 1;
+                    width: 100%;
+                    label: "End Frame";
+                    text <=> root.max_frame;
+                    height: root.frame_range_height;
+                    animate height {
+                        duration: 250ms;
+                        easing: ease-in-out;
+                    }
+                }
+            }
+        }
+    }
+}

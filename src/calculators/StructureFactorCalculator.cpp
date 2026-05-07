@@ -12,12 +12,10 @@
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
 
-#include <cmath>
 #include <map>
 #include <stdexcept>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
-#include <vector>
 
 namespace correlation::calculators {
 

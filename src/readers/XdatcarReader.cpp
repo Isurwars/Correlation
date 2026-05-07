@@ -124,8 +124,7 @@ std::vector<correlation::core::Cell> XdatcarReader::read(
 
   // Line 7: Atom counts
   if (!std::getline(myfile, line)) {
-    throw std::runtime_error(
-        "XDATCAR: unexpected end of file (atom counts).");
+    throw std::runtime_error("XDATCAR: unexpected end of file (atom counts).");
   }
   std::vector<int> atom_counts;
   {

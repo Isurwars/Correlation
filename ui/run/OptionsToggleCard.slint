@@ -1,0 +1,34 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    FilledButton,
+    FilledCard,
+} from "@material";
+
+export component OptionsToggleCard inherits FilledCard {
+    in property <bool> file_loaded;
+    in-out property <bool> advanced_options_visible;
+    callback options_toggled(bool);
+
+    // Hover state for tooltip
+    out property <string> hovered_tooltip_text:
+        touch_area.has-hover ? "Toggle advanced analysis options." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
+        touch_area := TouchArea {
+            FilledButton {
+                width: 100%;
+                text: root.advanced_options_visible ? "◀  Options" : "Options  ▶";
+                enabled: root.file_loaded;
+                background: MaterialPalette.warning;
+                text_color: MaterialPalette.on_warning;
+                clicked => {
+                    root.advanced_options_visible = !root.advanced_options_visible;
+                    root.options_toggled(root.advanced_options_visible);
+                }
+            }
+        }
+    }
+}

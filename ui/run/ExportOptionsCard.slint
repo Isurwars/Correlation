@@ -1,0 +1,57 @@
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledCard,
+    MaterialText,
+    CheckBoxRow,
+} from "@material";
+
+export component ExportOptionsCard inherits FilledCard {
+    in property <bool> file_loaded;
+    in-out property <bool> use_csv: true;
+    in-out property <bool> use_hdf5: true;
+    in-out property <bool> use_parquet: false;
+
+    // Hover state for tooltip
+    out property <string> hovered_tooltip_text:
+        csv_area.has-hover ? "If enabled, the results will be exported as CSV files." : hdf5_area.has-hover ? "If enabled, the results will be exported to a single HDF5 file." : parquet_area.has-hover ? "If enabled, the results will be exported as Parquet files." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        MaterialText {
+            text: "Export Formats";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
+        }
+
+        csv_area := CheckBoxRow {
+            enabled: root.file_loaded;
+            check_state_bool: root.use_csv;
+            text: "Export as CSV";
+            checked_state_changed(s) => {
+                root.use_csv = s;
+            }
+        }
+
+        hdf5_area := CheckBoxRow {
+            enabled: root.file_loaded;
+            check_state_bool: root.use_hdf5;
+            text: "Export as HDF5";
+            checked_state_changed(s) => {
+                root.use_hdf5 = s;
+            }
+        }
+
+        parquet_area := CheckBoxRow {
+            enabled: root.file_loaded;
+            check_state_bool: root.use_parquet;
+            text: "Export as Parquet";
+            checked_state_changed(s) => {
+                root.use_parquet = s;
+            }
+        }
+    }
+}

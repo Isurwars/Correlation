@@ -10,7 +10,6 @@
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
 
-#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 

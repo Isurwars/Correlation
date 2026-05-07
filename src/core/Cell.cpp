@@ -11,7 +11,6 @@
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 
-#include <algorithm>
 #include <cmath>
 
 namespace correlation::core {

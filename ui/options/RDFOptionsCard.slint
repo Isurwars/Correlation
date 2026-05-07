@@ -1,0 +1,63 @@
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+} from "@material";
+
+export component RDFOptionsCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> file_loaded;
+    in-out property <string> r_max;
+    in-out property <string> r_bin_width;
+
+    property <length> rdf_height: root.expanded ? 100px : 0px;
+
+    out property <string> hovered_tooltip_text:
+        r_max_area.has-hover ? "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å." : r_bin_area.has-hover ? "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_4;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        ExpandableHeader {
+            text: "Radial Distribution";
+            expanded <=> root.expanded;
+        }
+
+        VerticalLayout {
+            height: root.rdf_height;
+            visible: self.height > 0.1px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            r_max_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "RDF Max r (Å)";
+                    text <=> root.r_max;
+                }
+            }
+
+            r_bin_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "RDF Bin Width (Å)";
+                    text <=> root.r_bin_width;
+                }
+            }
+        }
+    }
+}

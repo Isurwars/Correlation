@@ -11,7 +11,7 @@
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "math/SpecialFunctions.hpp"
-
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 

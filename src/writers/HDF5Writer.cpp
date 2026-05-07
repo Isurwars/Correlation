@@ -17,7 +17,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include <hdf5_hl.h>
 #include <highfive/highfive.hpp>

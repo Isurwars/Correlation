@@ -8,10 +8,13 @@
 
 #include "calculators/MotifFinder.hpp"
 
-#include <algorithm>
 #include <tbb/blocked_range.h>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+#include <map>
 #include <vector>
 
 namespace correlation::calculators {

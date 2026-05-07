@@ -33,7 +33,6 @@ import {
 /// - `preview_plot`: The current generated plot image.
 // ============================================================================
 export component PreviewCard inherits FilledCard {
-    in property <bool> analysis_done;
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
@@ -62,7 +61,7 @@ export component PreviewCard inherits FilledCard {
                 width: 100%;
                 height: 100%;
                 label: "Select Plot";
-                enabled: root.analysis_done && root.plot_items.length > 0;
+                enabled: root.plot_items.length > 0;
                 items: root.plot_items;
                 current_index <=> root.selected_plot_index;
 
@@ -86,7 +85,7 @@ export component PreviewCard inherits FilledCard {
             if root.preview_plot.width == 0: VerticalLayout {
                 padding: MaterialStyleMetrics.spacing_8;
                 MaterialText {
-                    text: root.analysis_done ? "Select a plot from the dropdown above." : "Run an analysis to preview results here.";
+                    text: "Select a plot from the dropdown above.";
                     color: MaterialPalette.on_surface_variant;
                     horizontal-alignment: center;
                     vertical-alignment: center;

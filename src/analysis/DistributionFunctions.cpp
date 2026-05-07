@@ -20,7 +20,6 @@
 #include "math/Smoothing.hpp"
 
 #include <algorithm>
-#include <atomic>
 #include <mutex>
 #include <stdexcept>
 #include <tbb/parallel_for.h>

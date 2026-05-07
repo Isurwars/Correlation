@@ -1,0 +1,63 @@
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+} from "@material";
+
+export component BondAngleOptionsCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> file_loaded;
+    in-out property <string> angle_bin_width;
+    in-out property <string> dihedral_bin_width;
+
+    property <length> angle_height: root.expanded ? 100px : 0px;
+
+    out property <string> hovered_tooltip_text:
+        theta_bin_area.has-hover ? "Bin width used to calculate the histograms for the Plane-Angle Distribution. The recommended bin is 1.0°." : dihedral_bin_area.has-hover ? "Bin width used to calculate the histograms for the Dihedral-Angle Distribution. The recommended bin is 1.0°." : "";
+
+    VerticalLayout {
+        padding: MaterialStyleMetrics.spacing_4;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        ExpandableHeader {
+            text: "Bond Angle";
+            expanded <=> root.expanded;
+        }
+
+        VerticalLayout {
+            height: root.angle_height;
+            visible: self.height > 0.1px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_8;
+            padding_left: MaterialStyleMetrics.spacing_8;
+
+            theta_bin_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "PAD Bin Width (°)";
+                    text <=> root.angle_bin_width;
+                }
+            }
+
+            dihedral_bin_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "DAD Bin Width (°)";
+                    text <=> root.dihedral_bin_width;
+                }
+            }
+        }
+    }
+}

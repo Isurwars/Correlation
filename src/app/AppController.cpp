@@ -16,8 +16,12 @@
 #include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
+#include <cctype>
 #include <filesystem>
+#include <format>
+#include <map>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace correlation::app {
@@ -66,8 +70,9 @@ AppController::~AppController() {
 
 // Safe conversion helper
 /**
- * @brief Safely converts a Slint SharedString to a float with a default fallback.
- * 
+ * @brief Safely converts a Slint SharedString to a float with a default
+ * fallback.
+ *
  * @param s The Slint string to parse.
  * @param default_value The value to return if parsing fails.
  * @return The parsed float or default_value on error.
@@ -540,11 +545,10 @@ void AppController::populatePlotList() {
   // 2. Scattering: S_q, XRD
   // 3. Angular: BAD, PAD, DAD, CN, RD
   // 4. Trajectory: MSD, VACF, VDOS
-  std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},  {"J_r", 2},
-                                         {"S_q", 10}, {"XRD", 11}, {"BAD", 20},
-                                         {"PAD", 21}, {"DAD", 22}, {"CN", 23},
-                                         {"RD", 24},  {"MSD", 30}, {"VACF", 31},
-                                         {"VDOS", 32}};
+  std::map<std::string, int> priority = {
+      {"g_r", 0},  {"G_r", 1},   {"J_r", 2},  {"S_q", 10}, {"XRD", 11},
+      {"BAD", 20}, {"PAD", 21},  {"DAD", 22}, {"CN", 23},  {"RD", 24},
+      {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}};
 
   std::sort(names.begin(), names.end(),
             [&](const std::string &a, const std::string &b) {
