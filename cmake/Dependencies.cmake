@@ -67,7 +67,7 @@ else()
   FetchContent_Declare(
     HDF5
     GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
-    GIT_TAG hdf5_2.1.1
+    GIT_TAG v2.1.1
   )
   FetchContent_MakeAvailable(HDF5)
 endif()
