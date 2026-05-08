@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - **UI Stability**: Switched collapsible columns (Advanced Options and Preview) to use Slint `if` condition blocks. This resolves a critical issue where forced `0px` widths conflicted with child component constraints, previously leading to layout panics or rendering failures on launch.
 - **Tooltip Accessibility**: Implemented a property-bubbling mechanism for tooltips within conditional blocks, ensuring all dynamic components correctly report their descriptions to the root window.
 - **Constraint Cleanup**: Removed hardcoded `min-width` and `min-height` constraints from several cards (e.g., `BondCutoffsCard`, `PreviewCard`) to allow for safer layout transitions and better responsiveness.
+- **Build System**: Fixed HDF5 download failure on Windows by correcting the invalid git tag `v2.1.1` to `2.1.1`. This ensures that Windows builds, which lack system-installed HDF5, can successfully fetch the dependency via FetchContent.
+- **Documentation CI**: Resolved a documentation build error in `PhysicalData.hpp` caused by duplicate Doxygen `@param` sections.
+- **GitHub Actions**: Updated all workflow actions to their latest versions and opted into the Node.js 24 runtime to resolve deprecation warnings for Node.js 20.
 
 ## [2.8.0] 2026-04-13
 
