@@ -14,7 +14,7 @@ else()
   FetchContent_Declare(
     TBB
     GIT_REPOSITORY https://github.com/uxlfoundation/oneTBB.git
-    GIT_TAG v2022.3.0  
+    GIT_TAG v2023.0.0  
   )
   set(TBB_TEST OFF CACHE BOOL "Disable TBB tests" FORCE)
   FetchContent_MakeAvailable(TBB)
@@ -30,7 +30,7 @@ else()
   FetchContent_Declare(
     Slint
     GIT_REPOSITORY https://github.com/slint-ui/slint.git
-    GIT_TAG v1.15.1
+    GIT_TAG v1.16.1
     SOURCE_SUBDIR api/cpp
   )
   set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc on macOS" FORCE)
@@ -67,7 +67,7 @@ else()
   FetchContent_Declare(
     HDF5
     GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git
-    GIT_TAG hdf5_2.0.0
+    GIT_TAG hdf5_2.1.1
   )
   FetchContent_MakeAvailable(HDF5)
 endif()
@@ -133,7 +133,7 @@ else()
   FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.16.0
+    GIT_TAG v1.16.1
   )
   FetchContent_MakeAvailable(googletest)
 
@@ -227,10 +227,11 @@ if (pybind11_FOUND)
   message(STATUS "Found pybind11: ${pybind11_DIR} (Version: ${pybind11_VERSION})")
 else()
   message(STATUS "pybind11 not found. Downloading pybind11 from GitHub...")
+  set(PYBIND11_FINDPYTHON NEW CACHE BOOL "Use new FindPython discovery")
   FetchContent_Declare(
     pybind11
     GIT_REPOSITORY https://github.com/pybind/pybind11.git
-    GIT_TAG        v2.12.0
+    GIT_TAG        v3.0.4
   )
   FetchContent_MakeAvailable(pybind11)
 endif()

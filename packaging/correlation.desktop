@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=2.8.0
+Version=2.8.1
 Name=Correlation Analysis Tool
 Comment=Analysis tool for liquid and amorphous solid structures.
 Exec=/usr/local/bin/correlation %F

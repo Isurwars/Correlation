@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.8.1] 2026-05-08
+
+### Fixed
+- **UI Stability**: Switched collapsible columns (Advanced Options and Preview) to use Slint `if` condition blocks. This resolves a critical issue where forced `0px` widths conflicted with child component constraints, previously leading to layout panics or rendering failures on launch.
+- **Tooltip Accessibility**: Implemented a property-bubbling mechanism for tooltips within conditional blocks, ensuring all dynamic components correctly report their descriptions to the root window.
+- **Constraint Cleanup**: Removed hardcoded `min-width` and `min-height` constraints from several cards (e.g., `BondCutoffsCard`, `PreviewCard`) to allow for safer layout transitions and better responsiveness.
+
 ## [2.8.0] 2026-04-13
 
 ### Added
