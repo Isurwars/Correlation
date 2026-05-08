@@ -595,12 +595,10 @@ constexpr const ElementData *find(std::string_view symbol) noexcept {
        {17.859772, 1.310692, 10.911038, 12.319285, 5.821115, 0.104353, 3.512513,
         91.777542, 1.124859}},
   }};
-  /**
-   * @brief Binary search implementation for element data retrieval.
-   * This function provides O(log N) lookup complexity.
-   * @param symbol Chemical symbol.
-   * @return Constant pointer to ElementData or nullptr.
-   */
+  // Binary search implementation for element data retrieval.
+  // This function provides O(log N) lookup complexity.
+  // @param symbol Chemical symbol.
+  // @return Constant pointer to ElementData or nullptr.
   auto it = std::lower_bound(database.begin(), database.end(), symbol,
                              [](const ElementData &a, std::string_view sym) {
                                return a.symbol < sym;
