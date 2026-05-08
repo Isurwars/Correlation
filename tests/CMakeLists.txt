@@ -77,7 +77,7 @@ target_compile_definitions(correlation_gui_tests PRIVATE _USE_MATH_DEFINES)
 # Add slint target sources for AppWindow
 slint_target_sources(correlation_gui_tests
     ../ui/AppWindow.slint
-    LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../material-1.0/material.slint
+    LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
 )
 target_include_directories(correlation_gui_tests PRIVATE
   ${CMAKE_CURRENT_BINARY_DIR}

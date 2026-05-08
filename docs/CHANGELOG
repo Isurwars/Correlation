@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.8.2] 2026-05-08
+
+### Changed
+- **Documentation**: Added comprehensive API documentation for the `correlation::core` and `correlation::analysis` namespaces, ensuring all core data structures, calculators, and utility functions are fully documented.
+- **Repository Structure**: Migrated the `material-1.0` Slint library from the root directory to `ui/material` for better organization of UI assets. Updated `slint-config.json` and CMake build scripts to reflect the new path.
+- **Build System**: Updated FetchContent for HDF5 to use a variable reference for the version number, ensuring that build script logic remains consistent and reducing redundancy.
+
 ## [2.8.1] 2026-05-08
 
 ### Fixed
@@ -10,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - **Build System**: Fixed HDF5 download failure on Windows by correcting the invalid git tag `v2.1.1` to `2.1.1`. This ensures that Windows builds, which lack system-installed HDF5, can successfully fetch the dependency via FetchContent.
 - **Documentation CI**: Resolved a documentation build error in `PhysicalData.hpp` caused by duplicate Doxygen `@param` sections.
 - **GitHub Actions**: Updated all workflow actions to their latest versions and opted into the Node.js 24 runtime to resolve deprecation warnings for Node.js 20.
+
 
 ## [2.8.0] 2026-04-13
 

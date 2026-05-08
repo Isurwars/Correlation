@@ -1,5 +1,5 @@
 {
     "library_paths": {
-        "material": "material-1.0/material.slint"
+        "material": "ui/material/material.slint"
     }
 }
