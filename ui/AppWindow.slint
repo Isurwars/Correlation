@@ -213,66 +213,74 @@ export component AppWindow inherits Window {
             }
 
             // 3. Right: Analysis Options
-            options_vertical_layout := VerticalLayout {
-
+            Rectangle {
                 width: root.show_advanced_options ? 240px : 0px;
                 visible: root.show_advanced_options;
-                analyses_card := AnalysesSelectionCard {
-                    file_loaded: root.file_loaded;
-                    calculator_groups: root.calculator_groups;
-                    total_calculator_count: root.total_calculator_count;
-                    toggle_calculator(id, enabled) => {
-                        root.toggle_calculator(id, enabled);
+                clip: true;
+                background: transparent;
+
+                options_vertical_layout := VerticalLayout {
+                    analyses_card := AnalysesSelectionCard {
+                        file_loaded: root.file_loaded;
+                        calculator_groups: root.calculator_groups;
+                        total_calculator_count: root.total_calculator_count;
+                        toggle_calculator(id, enabled) => {
+                            root.toggle_calculator(id, enabled);
+                        }
                     }
-                }
 
-                rdf_card := RDFOptionsCard {
-                    file_loaded: root.file_loaded;
-                    r_max <=> root.r_max;
-                    r_bin_width <=> root.r_bin_width;
-                }
+                    rdf_card := RDFOptionsCard {
+                        file_loaded: root.file_loaded;
+                        r_max <=> root.r_max;
+                        r_bin_width <=> root.r_bin_width;
+                    }
 
-                sq_card := SQOptionsCard {
-                    file_loaded: root.file_loaded;
-                    q_max <=> root.q_max;
-                    q_bin_width <=> root.q_bin_width;
-                    r_int_max <=> root.r_int_max;
-                }
+                    sq_card := SQOptionsCard {
+                        file_loaded: root.file_loaded;
+                        q_max <=> root.q_max;
+                        q_bin_width <=> root.q_bin_width;
+                        r_int_max <=> root.r_int_max;
+                    }
 
-                angle_card := BondAngleOptionsCard {
-                    file_loaded: root.file_loaded;
-                    angle_bin_width <=> root.angle_bin_width;
-                    dihedral_bin_width <=> root.dihedral_bin_width;
-                }
+                    angle_card := BondAngleOptionsCard {
+                        file_loaded: root.file_loaded;
+                        angle_bin_width <=> root.angle_bin_width;
+                        dihedral_bin_width <=> root.dihedral_bin_width;
+                    }
 
-                rings_card := RingsOptionsCard {
-                    file_loaded: root.file_loaded;
-                    max_ring_size <=> root.max_ring_size;
-                }
+                    rings_card := RingsOptionsCard {
+                        file_loaded: root.file_loaded;
+                        max_ring_size <=> root.max_ring_size;
+                    }
 
-                smoothing_card := SmoothingOptionsCard {
-                    file_loaded: root.file_loaded;
-                    smoothing_sigma <=> root.smoothing_sigma;
-                    smoothing_kernel <=> root.smoothing_kernel;
-                }
+                    smoothing_card := SmoothingOptionsCard {
+                        file_loaded: root.file_loaded;
+                        smoothing_sigma <=> root.smoothing_sigma;
+                        smoothing_kernel <=> root.smoothing_kernel;
+                    }
 
-                bond_cutoffs_card := BondCutoffsCard {
-                    file_loaded: root.file_loaded;
-                    bond_cutoffs <=> root.bond_cutoffs;
+                    bond_cutoffs_card := BondCutoffsCard {
+                        file_loaded: root.file_loaded;
+                        bond_cutoffs <=> root.bond_cutoffs;
+                    }
                 }
             }
 
             // 4. Far-right: Distribution Function Preview
-            VerticalLayout {
-
+            Rectangle {
                 width: root.analysis_done ? 576px : 0px;
                 visible: root.analysis_done;
-                preview_card := PreviewCard {
-                    preview_plot <=> root.preview_plot;
-                    plot_items <=> root.plot_items;
-                    selected_plot_index <=> root.selected_plot_index;
-                    plot_selected(idx) => {
-                        root.select_plot(idx);
+                clip: true;
+                background: transparent;
+
+                VerticalLayout {
+                    preview_card := PreviewCard {
+                        preview_plot <=> root.preview_plot;
+                        plot_items <=> root.plot_items;
+                        selected_plot_index <=> root.selected_plot_index;
+                        plot_selected(idx) => {
+                            root.select_plot(idx);
+                        }
                     }
                 }
             }

@@ -52,7 +52,6 @@ export component BondCutoffsCard inherits FilledCard {
                         alignment: center;
                         spacing: MaterialStyleMetrics.spacing_4;
                         MaterialText {
-                            min-width: 60px;
                             text: cutoff.element1 + " - " + cutoff.element2 + ":";
                             vertical-alignment: center;
                             horizontal-stretch: 1;
@@ -60,7 +59,6 @@ export component BondCutoffsCard inherits FilledCard {
 
                         TextField {
                             enabled: root.file_loaded;
-                            min-width: 80px;
                             text: cutoff.distance;
                             label: "Cutoff (Å)";
                             edited(s) => {

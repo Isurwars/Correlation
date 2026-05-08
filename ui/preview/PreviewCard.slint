@@ -75,7 +75,7 @@ export component PreviewCard inherits FilledCard {
         Rectangle {
             horizontal-stretch: 1;
             vertical-stretch: 1;
-            min-height: 420px; // 4:3 ratio for 560px inner width
+            // Desired height is managed by the parent layout's vertical-stretch
             background: MaterialPalette.surface;
             border-radius: MaterialStyleMetrics.border_radius_2;
             clip: self.width > 1px && self.height > 1px;
