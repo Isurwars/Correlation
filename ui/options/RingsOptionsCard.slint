@@ -4,7 +4,8 @@ import {
     FilledCard,
     ExpandableHeader,
     TextField,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 export component RingsOptionsCard inherits FilledCard {
     in-out property <bool> expanded: false;
@@ -16,16 +17,14 @@ export component RingsOptionsCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         ring_size_area.has-hover ? "Maximum ring size to search for in topological motif analysis." : "";
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_4;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
 
         ExpandableHeader {
             text: "Topological Rings";
             expanded <=> root.expanded;
         }
 
-        VerticalLayout {
+        Vertical {
             height: root.md_height;
             visible: self.height > 0.1px;
             opacity: root.expanded ? 1.0 : 0.0;
@@ -37,8 +36,6 @@ export component RingsOptionsCard inherits FilledCard {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-            spacing: MaterialStyleMetrics.spacing_8;
-            padding_left: MaterialStyleMetrics.spacing_8;
 
             ring_size_area := TouchArea {
                 TextField {

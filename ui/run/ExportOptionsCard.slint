@@ -5,7 +5,8 @@ import {
     FilledCard,
     MaterialText,
     CheckBoxRow,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 export component ExportOptionsCard inherits FilledCard {
     in property <bool> file_loaded;
@@ -17,7 +18,7 @@ export component ExportOptionsCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         csv_area.has-hover ? "If enabled, the results will be exported as CSV files." : hdf5_area.has-hover ? "If enabled, the results will be exported to a single HDF5 file." : parquet_area.has-hover ? "If enabled, the results will be exported as Parquet files." : "";
 
-    VerticalLayout {
+    Vertical {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
 

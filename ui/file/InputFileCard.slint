@@ -9,7 +9,8 @@ import {
     FilledButton,
     FilledCard,
     MaterialText,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 // ============================================================================
 // InputFileCard Component
@@ -24,14 +25,12 @@ import {
 // ============================================================================
 export component InputFileCard inherits FilledCard {
     callback browse_file();
-    
+
     // Export hover state for tooltip
     out property <string> hovered_tooltip_text: root.enabled && file_area.has-hover ? "Load a structure file" : "";
     in property <bool> enabled: true;
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
         MaterialText {
             text: "Input File";
             style: MaterialTypography.title_small;

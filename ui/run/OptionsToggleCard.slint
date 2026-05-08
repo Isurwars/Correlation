@@ -3,7 +3,8 @@ import {
     MaterialStyleMetrics,
     FilledButton,
     FilledCard,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 export component OptionsToggleCard inherits FilledCard {
     in property <bool> file_loaded;
@@ -14,9 +15,7 @@ export component OptionsToggleCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         touch_area.has-hover ? "Toggle advanced analysis options." : "";
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
         touch_area := TouchArea {
             FilledButton {
                 width: 100%;

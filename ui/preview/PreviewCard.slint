@@ -11,7 +11,8 @@ import {
     MaterialText,
     DropDownMenu,
     MenuItem,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 // ============================================================================
 // PreviewCard Component
@@ -43,9 +44,7 @@ export component PreviewCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         plot_dropdown_area.has-hover ? "Select a distribution function to preview." : "";
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
 
         // Header
         MaterialText {
@@ -82,7 +81,7 @@ export component PreviewCard inherits FilledCard {
             visible: self.width > 0.1px && self.height > 0.1px;
 
             // Placeholder text when no image is available
-            if root.preview_plot.width == 0: VerticalLayout {
+            if root.preview_plot.width == 0: Vertical {
                 padding: MaterialStyleMetrics.spacing_8;
                 MaterialText {
                     text: "Select a plot from the dropdown above.";

@@ -12,7 +12,9 @@ import {
     TextField,
     InfoRow,
     ExpandableHeader,
-} from "@material";
+    Vertical,
+    Horizontal,
+} from "../material/material.slint";
 import { AtomCount } from "../Types.slint";
 
 // ============================================================================
@@ -40,11 +42,7 @@ export component FileInfoCard inherits FilledCard {
     in-out property <string> time_step;
 
     out property <string> hovered_tooltip_text:
-        frames_layout.has-hover ? "Number of structural frames parsed from the file." :
-        atoms_layout.has-hover ? "Total number of atoms found in a single frame." :
-        removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data." :
-        time_step_area.has-hover ? "Time interval between parsed frames in femtoseconds (fs). Useful for dynamic calculations." :
-        "";
+        frames_layout.has-hover ? "Number of structural frames parsed from the file." : atoms_layout.has-hover ? "Total number of atoms found in a single frame." : removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data." : time_step_area.has-hover ? "Time interval between parsed frames in femtoseconds (fs). Useful for dynamic calculations." : "";
     in-out property <bool> atoms_expanded: false;
 
     property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
@@ -52,10 +50,7 @@ export component FileInfoCard inherits FilledCard {
     property <length> removed_height: (root.num_frames > 1 && root.removed_frames_count > 0) ? MaterialStyleMetrics.size_40 : 0px;
     property <length> time_step_height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_4;
-
+    Vertical {
         MaterialText {
             text: root.file_loaded ? root.file_status_text : "No file loaded.";
             horizontal-stretch: 1;
@@ -70,7 +65,7 @@ export component FileInfoCard inherits FilledCard {
             opacity: root.file_loaded ? 1.0 : 0.4;
         }
 
-        VerticalLayout {
+        Vertical {
             height: root.atoms_height;
             opacity: root.atoms_expanded ? 1.0 : 0.0;
             animate height {
@@ -130,7 +125,7 @@ export component FileInfoCard inherits FilledCard {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-            HorizontalLayout {
+            Horizontal {
                 padding: MaterialStyleMetrics.padding_2;
                 TextField {
                     label: "Time Step (fs)";

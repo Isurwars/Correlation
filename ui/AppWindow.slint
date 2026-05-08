@@ -9,7 +9,9 @@ import {
     MaterialTypography,
     MaterialText,
     MenuItem,
-} from "@material";
+    Vertical,
+    Horizontal,
+} from "material/material.slint";
 import { Palette, ScrollView } from "std-widgets.slint";
 
 import {
@@ -130,20 +132,13 @@ export component AppWindow inherits Window {
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
     property <string> sidebar_tooltip: 
-        input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : 
-        file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : 
-        options_toggle.hovered_tooltip_text != "" ? options_toggle.hovered_tooltip_text : 
-        frame_selection.hovered_tooltip_text != "" ? frame_selection.hovered_tooltip_text : 
-        export_options.hovered_tooltip_text != "" ? export_options.hovered_tooltip_text : 
-        execution.hovered_tooltip_text != "" ? execution.hovered_tooltip_text : "";
+        input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : options_toggle.hovered_tooltip_text != "" ? options_toggle.hovered_tooltip_text : frame_selection.hovered_tooltip_text != "" ? frame_selection.hovered_tooltip_text : export_options.hovered_tooltip_text != "" ? export_options.hovered_tooltip_text : execution.hovered_tooltip_text != "" ? execution.hovered_tooltip_text : "";
 
     property <string> options_hovered_tooltip: "";
     property <string> preview_hovered_tooltip: "";
 
     property <string> hovered_tooltip_text: 
-        sidebar_tooltip != "" ? sidebar_tooltip : 
-        options_hovered_tooltip != "" ? options_hovered_tooltip : 
-        preview_hovered_tooltip;
+        sidebar_tooltip != "" ? sidebar_tooltip : options_hovered_tooltip != "" ? options_hovered_tooltip : preview_hovered_tooltip;
 
     /// Whether to show advanced analysis options
     property <bool> show_advanced_options: false;
@@ -158,15 +153,10 @@ export component AppWindow inherits Window {
     // Main UI structure
     // ============================================================================
     window_area := TouchArea {
-        HorizontalLayout {
-            padding: MaterialStyleMetrics.spacing_8;
-            spacing: MaterialStyleMetrics.spacing_8;
+        Horizontal {
         // 1. Sidebar: Input & File Info
-            VerticalLayout {
-
+            Vertical {
                 width: 190px;
-                spacing: MaterialStyleMetrics.spacing_4;
-
                 input_card := InputFileCard {
                     enabled: !root.timer_running;
                     browse_file => {
@@ -187,11 +177,9 @@ export component AppWindow inherits Window {
             }
 
             // 2. Center: Output & Run
-            VerticalLayout {
+            Vertical {
 
                 width: 190px;
-
-                spacing: MaterialStyleMetrics.spacing_4;
 
                 options_toggle := OptionsToggleCard {
                     file_loaded: root.file_loaded;
@@ -227,18 +215,15 @@ export component AppWindow inherits Window {
             }
 
             // 3. Right: Analysis Options
-            if (root.show_advanced_options) : VerticalLayout {
+            if (root.show_advanced_options): Vertical {
                 width: 240px;
 
                 property <string> local_tooltip: 
-                    analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : 
-                    rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : 
-                    sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : 
-                    angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : 
-                    rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : 
-                    smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : "";
-                
-                changed local_tooltip => { root.options_hovered_tooltip = self.local_tooltip; }
+                    analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : "";
+
+                changed local_tooltip => {
+                    root.options_hovered_tooltip = self.local_tooltip;
+                }
 
                 analyses_card := AnalysesSelectionCard {
                     file_loaded: root.file_loaded;
@@ -286,11 +271,13 @@ export component AppWindow inherits Window {
             }
 
             // 4. Far-right: Distribution Function Preview
-            if (root.analysis_done) : VerticalLayout {
+            if (root.analysis_done): Vertical {
                 width: 576px;
 
                 property <string> local_tooltip: preview_card.hovered_tooltip_text;
-                changed local_tooltip => { root.preview_hovered_tooltip = self.local_tooltip; }
+                changed local_tooltip => {
+                    root.preview_hovered_tooltip = self.local_tooltip;
+                }
 
                 preview_card := PreviewCard {
                     preview_plot <=> root.preview_plot;

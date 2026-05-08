@@ -4,7 +4,8 @@ import {
     FilledCard,
     ExpandableHeader,
     TextField,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 export component RDFOptionsCard inherits FilledCard {
     in-out property <bool> expanded: false;
@@ -17,16 +18,14 @@ export component RDFOptionsCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         r_max_area.has-hover ? "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å." : r_bin_area.has-hover ? "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å." : "";
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_4;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
 
         ExpandableHeader {
             text: "Radial Distribution";
             expanded <=> root.expanded;
         }
 
-        VerticalLayout {
+        Vertical {
             height: root.rdf_height;
             visible: self.height > 0.1px;
             opacity: root.expanded ? 1.0 : 0.0;
@@ -38,8 +37,6 @@ export component RDFOptionsCard inherits FilledCard {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-            spacing: MaterialStyleMetrics.spacing_8;
-            padding_left: MaterialStyleMetrics.spacing_8;
 
             r_max_area := TouchArea {
                 TextField {

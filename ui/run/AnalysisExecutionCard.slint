@@ -6,7 +6,8 @@ import {
     FilledCard,
     MaterialText,
     LinearProgressIndicator,
-} from "@material";
+    Vertical,
+} from "../material/material.slint";
 
 export component AnalysisExecutionCard inherits FilledCard {
     in property <bool> file_loaded;
@@ -24,10 +25,7 @@ export component AnalysisExecutionCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         analysis_area.has-hover ? "Start the selected analyses." : write_area.has-hover ? "Export the analysis results to files." : "";
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_8;
-        spacing: MaterialStyleMetrics.spacing_4;
-
+    Vertical {
         // Main Action Button
         analysis_area := TouchArea {
             FilledButton {
@@ -42,7 +40,7 @@ export component AnalysisExecutionCard inherits FilledCard {
             }
         }
 
-        VerticalLayout {
+        Vertical {
             padding: MaterialStyleMetrics.spacing_4;
 
             height: root.progress_height;

@@ -5,7 +5,9 @@ import {
     FilledCard,
     MaterialText,
     TextField,
-} from "@material";
+    Vertical,
+    Horizontal,
+} from "../material/material.slint";
 
 export component FrameSelectionCard inherits FilledCard {
     in property <int> num_frames;
@@ -19,7 +21,7 @@ export component FrameSelectionCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         start_frame_area.has-hover ? "First frame to include in the analysis." : end_frame_area.has-hover ? "Last frame to include in the analysis (use 'End' for the final frame)." : "";
 
-    VerticalLayout {
+    Vertical {
         padding: MaterialStyleMetrics.spacing_8;
         spacing: MaterialStyleMetrics.spacing_4;
 
@@ -38,7 +40,7 @@ export component FrameSelectionCard inherits FilledCard {
             }
         }
 
-        HorizontalLayout {
+        Horizontal {
             spacing: MaterialStyleMetrics.spacing_4;
             height: root.frame_range_height;
             animate height {

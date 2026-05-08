@@ -6,7 +6,9 @@ import {
     ExpandableHeader,
     CheckBoxRow,
     MaterialText,
-} from "@material";
+    Vertical,
+    Horizontal,
+} from "../material/material.slint";
 import { CalculatorGroup } from "../Types.slint";
 
 
@@ -21,16 +23,16 @@ export component AnalysesSelectionCard inherits FilledCard {
 
     property <length> analyses_height: root.expanded ? (root.total_calculator_count * 32px + root.calculator_groups.length * 14px + 32px) : 0px;
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_4;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
 
         ExpandableHeader {
             text: "Select Analyses";
             expanded <=> root.expanded;
         }
 
-        VerticalLayout {
+        Vertical {
+            padding: MaterialStyleMetrics.spacing_2;
+            spacing: MaterialStyleMetrics.spacing_2;
             alignment: start;
             height: root.analyses_height;
             visible: self.height > 0.1px;
@@ -43,10 +45,8 @@ export component AnalysesSelectionCard inherits FilledCard {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-            spacing: MaterialStyleMetrics.spacing_4;
-            padding_left: MaterialStyleMetrics.spacing_8;
 
-            for group[gi] in root.calculator_groups: VerticalLayout {
+            for group[gi] in root.calculator_groups: Vertical {
                 spacing: MaterialStyleMetrics.spacing_2;
                 if gi > 0: Rectangle {
                     height: 1px;
@@ -59,7 +59,7 @@ export component AnalysesSelectionCard inherits FilledCard {
                     color: MaterialPalette.on_surface_variant;
                 }
 
-                for calc[ci] in group.calculators: HorizontalLayout {
+                for calc[ci] in group.calculators: Horizontal {
                     height: 28px;
                     padding-left: MaterialStyleMetrics.spacing_2;
 

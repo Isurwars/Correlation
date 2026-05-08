@@ -6,7 +6,9 @@ import {
     TextField,
     ScrollView,
     MaterialText,
-} from "@material";
+    Vertical,
+    Horizontal,
+} from "../material/material.slint";
 import { BondCutoff } from "../Types.slint";
 
 export component BondCutoffsCard inherits FilledCard {
@@ -16,16 +18,14 @@ export component BondCutoffsCard inherits FilledCard {
 
     property <length> bond_cutoffs_height: root.expanded ? min(150px, root.bond_cutoffs.length * 50px) : 0px;
 
-    VerticalLayout {
-        padding: MaterialStyleMetrics.spacing_4;
-        spacing: MaterialStyleMetrics.spacing_4;
+    Vertical {
 
         ExpandableHeader {
             text: "Bond Cutoffs";
             expanded <=> root.expanded;
         }
 
-        VerticalLayout {
+        Vertical {
             height: root.bond_cutoffs_height;
             visible: self.height > 0.1px;
             opacity: root.expanded ? 1.0 : 0.0;
@@ -37,20 +37,15 @@ export component BondCutoffsCard inherits FilledCard {
                 duration: 250ms;
                 easing: ease-in-out;
             }
-            spacing: MaterialStyleMetrics.spacing_8;
-            padding_left: MaterialStyleMetrics.spacing_8;
 
             ScrollView {
                 vertical-stretch: 0;
                 height: min(list_layout.preferred-height, root.bond_cutoffs_height);
                 viewport-height: list_layout.preferred-height;
                 viewport-width: list_layout.preferred-width;
-                list_layout := VerticalLayout {
-                    spacing: MaterialStyleMetrics.spacing_4;
-                    padding: MaterialStyleMetrics.padding_4;
-                    for cutoff[i] in root.bond_cutoffs: HorizontalLayout {
+                list_layout := Vertical {
+                    for cutoff[i] in root.bond_cutoffs: Horizontal {
                         alignment: center;
-                        spacing: MaterialStyleMetrics.spacing_4;
                         MaterialText {
                             text: cutoff.element1 + " - " + cutoff.element2 + ":";
                             vertical-alignment: center;
