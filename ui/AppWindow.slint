@@ -129,8 +129,21 @@ export component AppWindow inherits Window {
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
+    property <string> sidebar_tooltip: 
+        input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : 
+        file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : 
+        options_toggle.hovered_tooltip_text != "" ? options_toggle.hovered_tooltip_text : 
+        frame_selection.hovered_tooltip_text != "" ? frame_selection.hovered_tooltip_text : 
+        export_options.hovered_tooltip_text != "" ? export_options.hovered_tooltip_text : 
+        execution.hovered_tooltip_text != "" ? execution.hovered_tooltip_text : "";
+
+    property <string> options_hovered_tooltip: "";
+    property <string> preview_hovered_tooltip: "";
+
     property <string> hovered_tooltip_text: 
-        input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : options_toggle.hovered_tooltip_text != "" ? options_toggle.hovered_tooltip_text : frame_selection.hovered_tooltip_text != "" ? frame_selection.hovered_tooltip_text : export_options.hovered_tooltip_text != "" ? export_options.hovered_tooltip_text : execution.hovered_tooltip_text != "" ? execution.hovered_tooltip_text : analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : preview_card.hovered_tooltip_text != "" ? preview_card.hovered_tooltip_text : "";
+        sidebar_tooltip != "" ? sidebar_tooltip : 
+        options_hovered_tooltip != "" ? options_hovered_tooltip : 
+        preview_hovered_tooltip;
 
     /// Whether to show advanced analysis options
     property <bool> show_advanced_options: false;
@@ -177,6 +190,7 @@ export component AppWindow inherits Window {
             VerticalLayout {
 
                 width: 190px;
+
                 spacing: MaterialStyleMetrics.spacing_4;
 
                 options_toggle := OptionsToggleCard {
@@ -213,74 +227,77 @@ export component AppWindow inherits Window {
             }
 
             // 3. Right: Analysis Options
-            Rectangle {
-                width: root.show_advanced_options ? 240px : 0px;
-                visible: root.show_advanced_options;
-                clip: true;
-                background: transparent;
+            if (root.show_advanced_options) : VerticalLayout {
+                width: 240px;
 
-                options_vertical_layout := VerticalLayout {
-                    analyses_card := AnalysesSelectionCard {
-                        file_loaded: root.file_loaded;
-                        calculator_groups: root.calculator_groups;
-                        total_calculator_count: root.total_calculator_count;
-                        toggle_calculator(id, enabled) => {
-                            root.toggle_calculator(id, enabled);
-                        }
-                    }
+                property <string> local_tooltip: 
+                    analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : 
+                    rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : 
+                    sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : 
+                    angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : 
+                    rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : 
+                    smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : "";
+                
+                changed local_tooltip => { root.options_hovered_tooltip = self.local_tooltip; }
 
-                    rdf_card := RDFOptionsCard {
-                        file_loaded: root.file_loaded;
-                        r_max <=> root.r_max;
-                        r_bin_width <=> root.r_bin_width;
+                analyses_card := AnalysesSelectionCard {
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
+                    toggle_calculator(id, enabled) => {
+                        root.toggle_calculator(id, enabled);
                     }
+                }
 
-                    sq_card := SQOptionsCard {
-                        file_loaded: root.file_loaded;
-                        q_max <=> root.q_max;
-                        q_bin_width <=> root.q_bin_width;
-                        r_int_max <=> root.r_int_max;
-                    }
+                rdf_card := RDFOptionsCard {
+                    file_loaded: root.file_loaded;
+                    r_max <=> root.r_max;
+                    r_bin_width <=> root.r_bin_width;
+                }
 
-                    angle_card := BondAngleOptionsCard {
-                        file_loaded: root.file_loaded;
-                        angle_bin_width <=> root.angle_bin_width;
-                        dihedral_bin_width <=> root.dihedral_bin_width;
-                    }
+                sq_card := SQOptionsCard {
+                    file_loaded: root.file_loaded;
+                    q_max <=> root.q_max;
+                    q_bin_width <=> root.q_bin_width;
+                    r_int_max <=> root.r_int_max;
+                }
 
-                    rings_card := RingsOptionsCard {
-                        file_loaded: root.file_loaded;
-                        max_ring_size <=> root.max_ring_size;
-                    }
+                angle_card := BondAngleOptionsCard {
+                    file_loaded: root.file_loaded;
+                    angle_bin_width <=> root.angle_bin_width;
+                    dihedral_bin_width <=> root.dihedral_bin_width;
+                }
 
-                    smoothing_card := SmoothingOptionsCard {
-                        file_loaded: root.file_loaded;
-                        smoothing_sigma <=> root.smoothing_sigma;
-                        smoothing_kernel <=> root.smoothing_kernel;
-                    }
+                rings_card := RingsOptionsCard {
+                    file_loaded: root.file_loaded;
+                    max_ring_size <=> root.max_ring_size;
+                }
 
-                    bond_cutoffs_card := BondCutoffsCard {
-                        file_loaded: root.file_loaded;
-                        bond_cutoffs <=> root.bond_cutoffs;
-                    }
+                smoothing_card := SmoothingOptionsCard {
+                    file_loaded: root.file_loaded;
+                    smoothing_sigma <=> root.smoothing_sigma;
+                    smoothing_kernel <=> root.smoothing_kernel;
+                }
+
+                bond_cutoffs_card := BondCutoffsCard {
+                    file_loaded: root.file_loaded;
+                    bond_cutoffs <=> root.bond_cutoffs;
                 }
             }
 
             // 4. Far-right: Distribution Function Preview
-            Rectangle {
-                width: root.analysis_done ? 576px : 0px;
-                visible: root.analysis_done;
-                clip: true;
-                background: transparent;
+            if (root.analysis_done) : VerticalLayout {
+                width: 576px;
 
-                VerticalLayout {
-                    preview_card := PreviewCard {
-                        preview_plot <=> root.preview_plot;
-                        plot_items <=> root.plot_items;
-                        selected_plot_index <=> root.selected_plot_index;
-                        plot_selected(idx) => {
-                            root.select_plot(idx);
-                        }
+                property <string> local_tooltip: preview_card.hovered_tooltip_text;
+                changed local_tooltip => { root.preview_hovered_tooltip = self.local_tooltip; }
+
+                preview_card := PreviewCard {
+                    preview_plot <=> root.preview_plot;
+                    plot_items <=> root.plot_items;
+                    selected_plot_index <=> root.selected_plot_index;
+                    plot_selected(idx) => {
+                        root.select_plot(idx);
                     }
                 }
             }
