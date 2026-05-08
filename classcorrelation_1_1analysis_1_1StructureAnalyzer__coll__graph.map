@@ -1,0 +1,11 @@
+<map id="correlation::analysis::StructureAnalyzer" name="correlation::analysis::StructureAnalyzer">
+<area shape="rect" id="Node000001" title="Computes and stores pairwise distances and bond angles in tensors indexed by element type." alt="" coords="95,343,250,383"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box)." alt="" coords="5,247,167,273"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,282,158,341,154,344,103,285"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1math_1_1Matrix3.html" title=" " alt="" coords="13,108,159,148"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="89,162,89,247,83,247,83,162"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1math_1_1Matrix3.html" title="A lightweight, constexpr, stack&#45;based 3x3 matrix." alt="" coords="15,5,157,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="89,59,89,108,83,108,83,59"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1NeighborGraph.html" title="Adjacency&#45;list based graph representing atomic connectivity and proximity." alt="" coords="191,240,327,280"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="236,292,191,344,187,341,232,289"/>
+</map>

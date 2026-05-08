@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: include/FileReader.hpp File Reference</title>
+<title>Correlation: include/readers/FileReader.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -77,7 +77,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_61c57797386c8fb992d55e625d187773.html">readers</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -91,63 +91,63 @@ $(function() {
 
 <p>Unified file reading interface for structure and trajectory files.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;functional&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Cell_8hpp_source.html">core/Cell.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &quot;<a class="el" href="Cell_8hpp_source.html">Cell.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">Trajectory.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for FileReader.hpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="FileReader_8hpp__incl.png" border="0" usemap="#ainclude_2FileReader_8hpp" alt=""/></div>
-<map name="ainclude_2FileReader_8hpp" id="ainclude_2FileReader_8hpp">
-<area shape="rect" title="Unified file reading interface for structure and trajectory files." alt="" coords="167,5,336,31"/>
-<area shape="rect" title=" " alt="" coords="5,79,92,104"/>
-<area shape="poly" title=" " alt="" coords="220,33,95,77,93,72,218,28"/>
-<area shape="rect" title=" " alt="" coords="19,299,78,324"/>
-<area shape="poly" title=" " alt="" coords="246,32,67,289,62,286,241,29"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="362,152,437,177"/>
-<area shape="poly" title=" " alt="" coords="265,29,380,141,376,144,262,33"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="459,79,571,104"/>
-<area shape="poly" title=" " alt="" coords="294,28,460,72,459,78,293,33"/>
-<area shape="poly" title=" " alt="" coords="363,178,290,198,207,228,138,261,80,294,77,289,135,256,205,223,288,193,361,173"/>
-<area shape="rect" title=" " alt="" coords="490,372,546,397"/>
-<area shape="poly" title=" " alt="" coords="408,176,452,249,474,272,495,297,508,328,516,358,511,359,503,330,490,300,470,276,448,252,403,179"/>
-<area shape="rect" title=" " alt="" coords="462,225,537,251"/>
-<area shape="poly" title=" " alt="" coords="417,175,473,215,470,219,414,180"/>
-<area shape="rect" title=" " alt="" coords="561,225,624,251"/>
-<area shape="poly" title=" " alt="" coords="431,175,549,218,548,223,429,180"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="218,225,303,251"/>
-<area shape="poly" title=" " alt="" coords="378,180,297,221,294,217,376,175"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="302,299,481,324"/>
-<area shape="poly" title=" " alt="" coords="401,178,395,285,390,285,396,178"/>
-<area shape="poly" title=" " alt="" coords="227,253,92,298,90,293,226,248"/>
-<area shape="rect" title=" " alt="" coords="102,299,187,324"/>
-<area shape="poly" title=" " alt="" coords="243,253,177,294,174,289,241,248"/>
-<area shape="rect" title=" " alt="" coords="211,299,278,324"/>
-<area shape="poly" title=" " alt="" coords="261,252,253,286,248,285,255,250"/>
-<area shape="poly" title=" " alt="" coords="283,248,359,290,357,294,280,253"/>
-<area shape="poly" title=" " alt="" coords="413,322,487,363,484,367,410,326"/>
-<area shape="rect" title=" " alt="" coords="292,372,355,397"/>
-<area shape="poly" title=" " alt="" coords="382,326,346,364,342,360,378,322"/>
-<area shape="rect" title=" " alt="" coords="379,372,465,397"/>
-<area shape="poly" title=" " alt="" coords="399,323,414,359,409,361,394,325"/>
-<area shape="rect" title=" " alt="" coords="176,372,268,397"/>
-<area shape="poly" title=" " alt="" coords="365,326,263,369,261,364,363,322"/>
-<area shape="poly" title=" " alt="" coords="498,106,431,147,429,142,495,102"/>
-<area shape="poly" title=" " alt="" coords="524,103,582,212,578,215,519,106"/>
-<area shape="poly" title=" " alt="" coords="538,102,579,128,621,165,638,186,648,208,649,230,639,252,616,269,582,282,495,301,494,295,580,277,614,264,635,249,644,229,643,209,633,189,617,169,575,133,535,106"/>
+<div class="center"><img src="FileReader_8hpp__incl.png" border="0" usemap="#ainclude_2readers_2FileReader_8hpp" alt=""/></div>
+<map name="ainclude_2readers_2FileReader_8hpp" id="ainclude_2readers_2FileReader_8hpp">
+<area shape="rect" title="Unified file reading interface for structure and trajectory files." alt="" coords="471,5,693,31"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="313,152,419,177"/>
+<area shape="poly" title=" " alt="" coords="566,33,396,147,393,142,563,29"/>
+<area shape="rect" title=" " alt="" coords="475,299,534,324"/>
+<area shape="poly" title=" " alt="" coords="582,31,514,286,509,284,576,30"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="225,79,369,104"/>
+<area shape="poly" title=" " alt="" coords="537,33,357,78,355,73,536,28"/>
+<area shape="rect" title=" " alt="" coords="660,79,747,104"/>
+<area shape="poly" title=" " alt="" coords="603,28,673,69,671,74,600,33"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="267,225,385,251"/>
+<area shape="poly" title=" " alt="" coords="362,179,342,215,337,212,357,176"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="73,299,251,324"/>
+<area shape="poly" title=" " alt="" coords="342,180,301,201,257,228,217,260,184,291,180,287,214,256,254,223,298,196,339,175"/>
+<area shape="rect" title=" " alt="" coords="431,372,487,397"/>
+<area shape="poly" title=" " alt="" coords="420,173,472,191,497,205,520,223,541,247,555,271,558,296,548,325,528,350,501,368,498,364,524,347,544,323,552,296,549,273,537,250,516,227,494,210,470,196,419,178"/>
+<area shape="poly" title=" " alt="" coords="420,175,462,193,481,207,498,224,509,254,511,285,505,285,504,255,493,227,478,211,459,198,418,180"/>
+<area shape="rect" title=" " alt="" coords="409,225,483,251"/>
+<area shape="poly" title=" " alt="" coords="381,175,425,214,421,218,377,179"/>
+<area shape="rect" title=" " alt="" coords="129,225,192,251"/>
+<area shape="poly" title=" " alt="" coords="334,180,206,224,204,219,332,175"/>
+<area shape="poly" title=" " alt="" coords="301,253,202,296,200,291,299,248"/>
+<area shape="rect" title=" " alt="" coords="366,299,451,324"/>
+<area shape="poly" title=" " alt="" coords="341,249,386,287,383,292,338,253"/>
+<area shape="rect" title=" " alt="" coords="275,299,342,324"/>
+<area shape="poly" title=" " alt="" coords="326,252,317,286,312,285,321,250"/>
+<area shape="poly" title=" " alt="" coords="356,248,464,291,462,296,354,253"/>
+<area shape="poly" title=" " alt="" coords="210,321,418,371,417,376,209,327"/>
+<area shape="rect" title=" " alt="" coords="232,372,295,397"/>
+<area shape="poly" title=" " alt="" coords="180,322,237,362,234,366,177,326"/>
+<area shape="rect" title=" " alt="" coords="5,372,92,397"/>
+<area shape="poly" title=" " alt="" coords="145,326,80,367,77,362,142,322"/>
+<area shape="rect" title=" " alt="" coords="116,372,208,397"/>
+<area shape="poly" title=" " alt="" coords="165,324,165,358,159,358,159,324"/>
+<area shape="poly" title=" " alt="" coords="310,102,347,140,343,144,306,106"/>
+<area shape="poly" title=" " alt="" coords="268,107,231,124,189,150,149,184,133,204,119,226,116,242,120,258,141,288,136,291,115,260,110,242,114,224,128,201,146,181,186,146,229,120,266,102"/>
+<area shape="poly" title=" " alt="" coords="287,106,183,217,179,214,284,103"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="FileReader_8hpp__dep__incl.png" border="0" usemap="#ainclude_2FileReader_8hppdep" alt=""/></div>
-<map name="ainclude_2FileReader_8hppdep" id="ainclude_2FileReader_8hppdep">
-<area shape="rect" title="Unified file reading interface for structure and trajectory files." alt="" coords="82,5,251,31"/>
-<area shape="rect" href="AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="5,79,157,104"/>
-<area shape="poly" title=" " alt="" coords="144,41,97,80,94,76,141,37"/>
-<area shape="rect" href="FileReader_8cpp.html" title="Implementation of the unified file reader." alt="" coords="182,79,322,104"/>
-<area shape="poly" title=" " alt="" coords="192,37,240,76,236,80,189,41"/>
+<div class="center"><img src="FileReader_8hpp__dep__incl.png" border="0" usemap="#ainclude_2readers_2FileReader_8hppdep" alt=""/></div>
+<map name="ainclude_2readers_2FileReader_8hppdep" id="ainclude_2readers_2FileReader_8hppdep">
+<area shape="rect" title="Unified file reading interface for structure and trajectory files." alt="" coords="89,5,312,31"/>
+<area shape="rect" href="AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="5,79,185,104"/>
+<area shape="poly" title=" " alt="" coords="174,41,114,81,111,76,171,36"/>
+<area shape="rect" href="FileReader_8cpp.html" title="Implementation of the unified file reader." alt="" coords="209,79,403,104"/>
+<area shape="poly" title=" " alt="" coords="231,36,290,76,287,81,228,41"/>
 </map>
 </div>
 </div>
@@ -155,39 +155,43 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceFileReader" id="r_namespaceFileReader"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html">FileReader</a></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1readers" id="r_namespacecorrelation_1_1readers"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html">correlation::readers</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a034608540983c433d4efb9cc02cc4868" id="r_a034608540983c433d4efb9cc02cc4868"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868">FileReader::FileType</a> { <br />
-&#160;&#160;<a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868ae9989db5dabeea617f40c8dbfd07f5fb">FileReader::Car</a>
-, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868a1a66ab62bfc858b7bcf9e01aa9cd1841">FileReader::Cell</a>
-, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868a9d52b9b8108e3786b33e1e9e675c3f4f">FileReader::Cif</a>
-, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868aec14c590047ce90146a3c926ba49263a">FileReader::OnetepDat</a>
+<tr class="memitem:a4e5071db3eb56c211c63140e5af27b67" id="r_a4e5071db3eb56c211c63140e5af27b67"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">correlation::readers::FileType</a> { <br />
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67ae9989db5dabeea617f40c8dbfd07f5fb">correlation::readers::Car</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a1a66ab62bfc858b7bcf9e01aa9cd1841">correlation::readers::Cell</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a9d52b9b8108e3786b33e1e9e675c3f4f">correlation::readers::Cif</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aec14c590047ce90146a3c926ba49263a">correlation::readers::OnetepDat</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868a2b73f91683611c489560a1d163e37902">FileReader::Arc</a>
-, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868abd5b2d46be9431970d83ded5908f9843">FileReader::LammpsDump</a>
-, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868a601887ab6b21e76937dfc449a5b39fec">FileReader::CastepMd</a>
-, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868a294d1f3b523e5fa5136dbe81f4f83110">FileReader::Outmol</a>
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a2b73f91683611c489560a1d163e37902">correlation::readers::Arc</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67abd5b2d46be9431970d83ded5908f9843">correlation::readers::LammpsDump</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a601887ab6b21e76937dfc449a5b39fec">correlation::readers::CastepMd</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a294d1f3b523e5fa5136dbe81f4f83110">correlation::readers::Outmol</a>
 , <br />
-&#160;&#160;<a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868a88183b946cc5f0e8c96b2e66e1c74a7e">FileReader::Unknown</a>
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aa9e4f25c2775231296b2055ef94b2316">correlation::readers::Vasp</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a10b6b1dc43cc89033808b2d7e059a1af">correlation::readers::Xdatcar</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e">correlation::readers::Unknown</a>
 <br />
  }</td></tr>
-<tr class="memdesc:a034608540983c433d4efb9cc02cc4868"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type-safe enum to specify the format of a structure or trajectory file.  <a href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868">More...</a><br /></td></tr>
-<tr class="separator:a034608540983c433d4efb9cc02cc4868"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a4e5071db3eb56c211c63140e5af27b67"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type-safe enum to specify the format of a structure or trajectory file.  <a href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">More...</a><br /></td></tr>
+<tr class="separator:a4e5071db3eb56c211c63140e5af27b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ad60e68156adf3ddf9952697a021816d2" id="r_ad60e68156adf3ddf9952697a021816d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCell.html">Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html#ad60e68156adf3ddf9952697a021816d2">FileReader::readStructure</a> (const std::string &amp;filename, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
-<tr class="memdesc:ad60e68156adf3ddf9952697a021816d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
-<tr class="separator:ad60e68156adf3ddf9952697a021816d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fecb45a563065da34886302193e8a61" id="r_a0fecb45a563065da34886302193e8a61"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classTrajectory.html">Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html#a0fecb45a563065da34886302193e8a61">FileReader::readTrajectory</a> (const std::string &amp;filename, <a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
-<tr class="memdesc:a0fecb45a563065da34886302193e8a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
-<tr class="separator:a0fecb45a563065da34886302193e8a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af358c73fff0af0585e3dba7bf6be3b3f" id="r_af358c73fff0af0585e3dba7bf6be3b3f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868">FileType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html#af358c73fff0af0585e3dba7bf6be3b3f">FileReader::determineFileType</a> (const std::string &amp;filename)</td></tr>
-<tr class="memdesc:af358c73fff0af0585e3dba7bf6be3b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the FileType from a given filename extension.  <br /></td></tr>
-<tr class="separator:af358c73fff0af0585e3dba7bf6be3b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c44227489fe8986833f74d86cfeeb21" id="r_a9c44227489fe8986833f74d86cfeeb21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21">correlation::readers::readStructure</a> (const std::string &amp;filename, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
+<tr class="memdesc:a9c44227489fe8986833f74d86cfeeb21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
+<tr class="separator:a9c44227489fe8986833f74d86cfeeb21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2cf3ae14984397ae70f5449478e95e8" id="r_ad2cf3ae14984397ae70f5449478e95e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8">correlation::readers::readTrajectory</a> (const std::string &amp;filename, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
+<tr class="memdesc:ad2cf3ae14984397ae70f5449478e95e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
+<tr class="separator:ad2cf3ae14984397ae70f5449478e95e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2142722689ee5c94bfe3fde42a7c3b47" id="r_a2142722689ee5c94bfe3fde42a7c3b47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">FileType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47">correlation::readers::determineFileType</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:a2142722689ee5c94bfe3fde42a7c3b47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the FileType from a given filename extension.  <br /></td></tr>
+<tr class="separator:a2142722689ee5c94bfe3fde42a7c3b47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Unified file reading interface for structure and trajectory files. </p>

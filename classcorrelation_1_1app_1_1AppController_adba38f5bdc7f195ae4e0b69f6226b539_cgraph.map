@@ -1,0 +1,5 @@
+<map id="correlation::app::AppController::handleOptionstoUI" name="correlation::app::AppController::handleOptionstoUI">
+<area shape="rect" id="Node000001" title="Propagates the current backend options to the UI elements." alt="" coords="5,5,227,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a389c5114967f1724ff5b5c381a77ec6d" title="Gets the current program options." alt="" coords="275,5,487,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,23,261,23,261,28,227,28"/>
+</map>

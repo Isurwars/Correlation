@@ -1,0 +1,7 @@
+<map id="correlation::writers::FileWriter::write" name="correlation::writers::FileWriter::write">
+<area shape="rect" id="Node000001" title="Writes the available histograms using specified formats." alt="" coords="368,5,513,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="108,5,320,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="354,28,320,28,320,23,354,23"/>
+<area shape="rect" id="Node000003" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,13,60,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="94,28,60,28,60,23,94,23"/>
+</map>

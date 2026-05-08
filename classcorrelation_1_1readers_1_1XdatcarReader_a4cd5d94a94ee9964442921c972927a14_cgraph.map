@@ -1,0 +1,5 @@
+<map id="correlation::readers::XdatcarReader::readStructure" name="correlation::readers::XdatcarReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,5,228,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1XdatcarReader.html#a488765973a4440d21b01e2fe2be053c2" title="Low&#45;level parser for XDATCAR files." alt="" coords="276,5,439,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="228,23,262,23,262,28,228,28"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="correlation::readers::LammpsDumpReader::read" name="correlation::readers::LammpsDumpReader::read">
+<area shape="rect" id="Node000001" title="Reads all frames from a LAMMPS dump file." alt="" coords="5,69,213,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="265,5,401,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,67,251,46,253,51,181,72"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="265,69,401,109"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="214,87,251,87,251,92,214,92"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="261,133,405,173"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="181,107,250,127,249,132,179,112"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="453,5,652,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="401,23,440,23,440,28,401,28"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="700,5,836,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="652,23,686,23,686,28,652,28"/>
+</map>

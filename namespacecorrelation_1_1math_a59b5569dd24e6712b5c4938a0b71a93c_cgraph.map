@@ -1,5 +1,5 @@
 <map id="correlation::math::operator*" name="correlation::math::operator*">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,69,148,109"/>
+<area shape="rect" id="Node000001" title="Matrix&#45;vector multiplication." alt="" coords="5,69,148,109"/>
 <area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="41,70,39,60,44,51,57,45,77,43,99,46,111,53,108,57,97,51,77,48,59,50,48,55,44,61,46,68"/>
 <area shape="rect" id="Node000002" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="196,5,339,45"/>
 <area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="136,67,194,47,195,52,138,72"/>

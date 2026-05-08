@@ -1,5 +1,0 @@
-<map id="AppController::handleOptionstoUI" name="AppController::handleOptionstoUI">
-<area shape="rect" id="Node000001" title="Propagates the current backend options to the UI elements." alt="" coords="5,5,245,31"/>
-<area shape="rect" id="Node000002" href="$classAppBackend.html#a71c6c92b4244bf31a7d45c6106b03bb1" title="Gets the current program options." alt="" coords="293,5,452,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="245,15,280,15,280,21,245,21"/>
-</map>

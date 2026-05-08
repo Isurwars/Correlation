@@ -1,0 +1,16 @@
+<map id="correlation::writers::FileWriter" name="correlation::writers::FileWriter">
+<area shape="rect" id="Node000001" title="Facade class that manages writing data to various file formats." alt="" coords="137,548,282,588"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html" title="Manages the calculation and storage of various distribution functions." alt="" coords="125,445,293,485"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="212,499,212,548,207,548,207,499"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box)." alt="" coords="178,247,339,273"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="266,286,270,349,266,387,256,423,238,447,233,443,251,420,261,386,265,349,261,286"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html" title="Computes and stores pairwise distances and bond angles in tensors indexed by element type." alt="" coords="69,343,224,383"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="238,284,170,345,166,341,234,280"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1math_1_1Matrix3.html" title=" " alt="" coords="185,108,332,148"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="261,162,261,247,256,247,256,162"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1math_1_1Matrix3.html" title="A lightweight, constexpr, stack&#45;based 3x3 matrix." alt="" coords="187,5,330,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="261,59,261,108,256,108,256,59"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="148,396,154,420,177,443,173,447,150,423,142,397"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1NeighborGraph.html" title="Adjacency&#45;list based graph representing atomic connectivity and proximity." alt="" coords="5,240,141,280"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="71,293,77,317,87,330,101,340,98,345,84,334,72,320,66,295"/>
+</map>

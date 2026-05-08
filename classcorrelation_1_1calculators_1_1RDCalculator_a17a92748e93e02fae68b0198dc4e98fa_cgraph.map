@@ -1,0 +1,5 @@
+<map id="correlation::calculators::RDCalculator::calculate" name="correlation::calculators::RDCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Ring Distribution (RD)." alt="" coords="5,5,188,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e" title="Finds and counts all chordless rings up to a maximum size." alt="" coords="236,5,408,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,23,222,23,222,28,189,28"/>
+</map>

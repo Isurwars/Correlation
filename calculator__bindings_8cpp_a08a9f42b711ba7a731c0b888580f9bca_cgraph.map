@@ -1,0 +1,21 @@
+<map id="init_calculators" name="init_calculators">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,269,127,294"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a434cedf3f57302ee9cab106f26ff066f" title="Gets a calculator by its name." alt="" coords="183,5,421,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="67,268,77,226,96,169,127,108,148,80,173,55,180,50,183,55,176,59,152,83,132,111,101,171,82,228,72,269"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="180,69,424,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="70,268,83,237,105,197,135,155,173,119,182,113,185,118,176,123,139,158,109,200,88,239,75,270"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html#a045c0f632302da3084e50b5409bd4e5f" title="Returns a brief description of the calculator&#39;s purpose." alt="" coords="187,133,417,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="76,267,116,225,143,203,173,183,188,176,190,181,176,188,146,207,119,229,80,270"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html#accfcd3b5c8a8b98a27d66e3cf8fc09d4" title="Returns the UI group this calculator belongs to (e.g., &quot;Radial&quot;, &quot;Angular&quot;, &quot;Dynamic&quot;,..." alt="" coords="204,197,400,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="108,266,174,247,206,238,207,243,175,252,109,271"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html#a853a8e9431d1edeaf05a01c39fa89bfc" title="Returns the unique identifier/name of the calculator." alt="" coords="204,261,400,301"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="127,279,190,279,190,284,127,284"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html#a0f7c9627894f4c348f0e2e2e6963e87b" title="Returns a short, UI&#45;friendly name of the calculator (e.g. &quot;g_r&quot;, &quot;S_q&quot;)." alt="" coords="187,325,417,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="109,291,175,311,207,319,206,324,174,316,108,297"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="199,389,405,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="80,292,119,333,146,356,176,375,190,382,188,387,173,380,143,360,116,337,76,296"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html#a445c75544c5a75c1dcc37771f846ec2e" title="Check if this calculator runs per&#45;frame (e.g. RDF, PAD)." alt="" coords="175,453,429,493"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="75,293,88,323,109,363,139,404,176,439,185,445,182,449,173,443,135,408,105,366,83,326,70,295"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html#a425a7aaa24025117b8ff1d3d534fe821" title="Check if this calculator runs on the whole trajectory (e.g. VACF)." alt="" coords="197,518,407,573"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="72,293,82,334,102,391,133,451,153,479,176,503,186,511,183,515,173,507,149,482,128,454,97,393,77,336,67,295"/>
+</map>

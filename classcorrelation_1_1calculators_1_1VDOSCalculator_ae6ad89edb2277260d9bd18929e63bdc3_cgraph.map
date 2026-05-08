@@ -1,0 +1,13 @@
+<map id="correlation::calculators::VDOSCalculator::calculateTrajectory" name="correlation::calculators::VDOSCalculator::calculateTrajectory">
+<area shape="rect" id="Node000001" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,121,269,161"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="333,5,501,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="189,118,332,63,334,68,191,123"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html#a6890f7a2df90c538a7d5de0723f70658" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="317,85,517,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="269,121,303,117,304,122,270,126"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="333,149,501,204"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="270,155,320,162,319,167,269,160"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="333,228,501,283"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="187,158,318,213,336,220,334,225,316,218,185,163"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="565,85,821,125"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="517,102,551,102,551,107,517,107"/>
+</map>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: src/NeighborGraph.cpp File Reference</title>
+<title>Correlation: src/core/NeighborGraph.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -77,51 +77,61 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_aebb8dcc11953d78e620bbef0b9e2183.html">core</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">NeighborGraph.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Implementation of the atomic neighbor graph.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="LinearAlgebra_8hpp_source.html">math/LinearAlgebra.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="NeighborGraph_8hpp_source.html">NeighborGraph.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="NeighborGraph_8hpp_source.html">core/NeighborGraph.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="LinearAlgebra_8hpp_source.html">math/LinearAlgebra.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for NeighborGraph.cpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="NeighborGraph_8cpp__incl.png" border="0" usemap="#asrc_2NeighborGraph_8cpp" alt=""/></div>
-<map name="asrc_2NeighborGraph_8cpp" id="asrc_2NeighborGraph_8cpp">
-<area shape="rect" title="Implementation of the atomic neighbor graph." alt="" coords="149,5,320,31"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="77,225,256,251"/>
-<area shape="poly" title=" " alt="" coords="233,32,216,79,176,213,171,211,211,78,228,30"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="226,79,374,104"/>
-<area shape="poly" title=" " alt="" coords="247,29,282,67,278,70,243,33"/>
-<area shape="rect" title=" " alt="" coords="5,299,61,324"/>
-<area shape="poly" title=" " alt="" coords="146,253,68,294,66,290,144,248"/>
-<area shape="rect" title=" " alt="" coords="86,299,149,324"/>
-<area shape="poly" title=" " alt="" coords="161,253,135,289,131,286,156,249"/>
-<area shape="rect" title=" " alt="" coords="173,299,259,324"/>
-<area shape="poly" title=" " alt="" coords="177,249,202,286,198,289,173,253"/>
-<area shape="rect" title=" " alt="" coords="283,299,375,324"/>
-<area shape="poly" title=" " alt="" coords="194,248,291,291,289,295,192,253"/>
-<area shape="poly" title=" " alt="" coords="291,106,189,217,185,213,287,103"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="276,152,361,177"/>
-<area shape="poly" title=" " alt="" coords="306,104,315,138,310,140,301,105"/>
-<area shape="rect" title=" " alt="" coords="386,152,449,177"/>
-<area shape="poly" title=" " alt="" coords="320,102,388,142,385,147,317,106"/>
-<area shape="poly" title=" " alt="" coords="295,180,205,222,203,217,293,175"/>
-<area shape="rect" title=" " alt="" coords="280,225,365,251"/>
-<area shape="poly" title=" " alt="" coords="322,178,324,212,319,212,317,178"/>
-<area shape="rect" title=" " alt="" coords="389,225,456,251"/>
-<area shape="poly" title=" " alt="" coords="337,175,396,215,393,219,334,180"/>
-<area shape="rect" title=" " alt="" coords="480,225,539,251"/>
-<area shape="poly" title=" " alt="" coords="350,175,467,218,466,223,348,180"/>
+<div class="center"><img src="NeighborGraph_8cpp__incl.png" border="0" usemap="#asrc_2core_2NeighborGraph_8cpp" alt=""/></div>
+<map name="asrc_2core_2NeighborGraph_8cpp" id="asrc_2core_2NeighborGraph_8cpp">
+<area shape="rect" title="Implementation of the atomic neighbor graph." alt="" coords="245,5,448,31"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="193,79,373,104"/>
+<area shape="poly" title=" " alt="" coords="338,33,304,70,300,67,334,29"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="288,225,467,251"/>
+<area shape="poly" title=" " alt="" coords="359,29,375,51,388,78,394,114,395,151,386,213,381,212,389,151,389,115,383,79,371,54,355,33"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="112,152,229,177"/>
+<area shape="poly" title=" " alt="" coords="266,106,202,147,199,142,263,102"/>
+<area shape="poly" title=" " alt="" coords="295,102,332,151,367,211,363,214,327,153,290,106"/>
+<area shape="rect" title=" " alt="" coords="254,152,317,177"/>
+<area shape="poly" title=" " alt="" coords="286,104,287,138,282,139,280,104"/>
+<area shape="poly" title=" " alt="" coords="205,175,332,218,330,223,203,180"/>
+<area shape="rect" title=" " alt="" coords="5,225,91,251"/>
+<area shape="poly" title=" " alt="" coords="152,180,81,221,78,216,150,175"/>
+<area shape="rect" title=" " alt="" coords="115,225,181,251"/>
+<area shape="poly" title=" " alt="" coords="169,178,158,213,153,211,164,177"/>
+<area shape="rect" title=" " alt="" coords="205,225,264,251"/>
+<area shape="poly" title=" " alt="" coords="183,176,217,213,213,217,179,179"/>
+<area shape="rect" title=" " alt="" coords="216,299,272,324"/>
+<area shape="poly" title=" " alt="" coords="357,253,279,294,277,290,355,248"/>
+<area shape="rect" title=" " alt="" coords="297,299,359,324"/>
+<area shape="poly" title=" " alt="" coords="371,253,346,289,342,286,367,249"/>
+<area shape="rect" title=" " alt="" coords="383,299,470,324"/>
+<area shape="poly" title=" " alt="" coords="388,249,413,286,409,289,383,253"/>
+<area shape="rect" title=" " alt="" coords="494,299,586,324"/>
+<area shape="poly" title=" " alt="" coords="405,248,502,291,500,295,402,253"/>
 </map>
 </div>
-</div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1core" id="r_namespacecorrelation_1_1core"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1core.html">correlation::core</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the atomic neighbor graph. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright © 2013-2026 Isaías Rodríguez (<a href="#" onclick="location.href='mai'+'lto:'+'isu'+'rw'+'ars'+'@g'+'mai'+'l.'+'com'; return false;">isurw<span class="obfuscator">.nosp@m.</span>ars@<span class="obfuscator">.nosp@m.</span>gmail<span class="obfuscator">.nosp@m.</span>.com</a>) </dd></dl>
 <dl class="section user"><dt>License</dt><dd>SPDX-License-Identifier: MIT </dd></dl>

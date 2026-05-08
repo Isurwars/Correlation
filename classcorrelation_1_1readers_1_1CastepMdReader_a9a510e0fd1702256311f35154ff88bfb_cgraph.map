@@ -1,0 +1,19 @@
+<map id="correlation::readers::CastepMdReader::readStructure" name="correlation::readers::CastepMdReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,133,243,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="291,133,469,173"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="243,151,277,151,277,156,243,156"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="539,5,675,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="404,131,454,93,516,55,530,48,532,53,519,60,457,98,407,135"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="539,69,675,109"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="451,131,525,110,526,115,452,136"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="539,133,675,173"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="470,151,525,151,525,156,470,156"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="517,197,696,237"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="452,171,523,191,521,196,451,176"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="539,261,675,301"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="407,171,457,209,519,247,532,253,530,258,516,252,454,213,404,176"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="744,5,943,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="675,23,730,23,730,28,675,28"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="991,5,1127,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="943,23,977,23,977,28,943,28"/>
+</map>

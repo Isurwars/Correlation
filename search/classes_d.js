@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['save_5ffile_0',['save_file',['../classpfd_1_1save__file.html',1,'pfd']]],
-  ['select_5ffolder_1',['select_folder',['../classpfd_1_1select__folder.html',1,'pfd']]],
-  ['settings_2',['settings',['../classpfd_1_1settings.html',1,'pfd']]],
-  ['steinhardtcalculator_3',['SteinhardtCalculator',['../classSteinhardtCalculator.html',1,'']]],
-  ['structureanalyzer_4',['StructureAnalyzer',['../classStructureAnalyzer.html',1,'']]],
-  ['structurefactorcalculator_5',['StructureFactorCalculator',['../classStructureFactorCalculator.html',1,'']]]
+  ['rdcalculator_0',['RDCalculator',['../classcorrelation_1_1calculators_1_1RDCalculator.html',1,'correlation::calculators']]],
+  ['rdfcalculator_1',['RDFCalculator',['../classcorrelation_1_1calculators_1_1RDFCalculator.html',1,'correlation::calculators']]],
+  ['readerfactory_2',['ReaderFactory',['../classcorrelation_1_1readers_1_1ReaderFactory.html',1,'correlation::readers']]],
+  ['roboto_3',['Roboto',['../classcorrelation_1_1plotters_1_1Roboto.html',1,'correlation::plotters']]]
 ];

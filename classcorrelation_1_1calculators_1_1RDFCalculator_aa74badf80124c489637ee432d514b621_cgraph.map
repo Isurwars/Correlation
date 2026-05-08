@@ -1,0 +1,27 @@
+<map id="correlation::calculators::RDFCalculator::calculateFrame" name="correlation::calculators::RDFCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,277,236,317"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="299,134,467,189"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,275,211,238,283,199,298,192,300,197,285,204,214,243,154,279"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="288,213,479,253"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="203,275,287,254,288,259,204,280"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="284,277,483,317"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="236,295,270,295,270,300,236,300"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="299,342,467,397"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="195,315,286,340,285,345,194,320"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="299,421,467,475"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="149,315,209,360,285,407,296,413,294,417,283,412,206,364,146,320"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="540,5,676,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="464,211,481,198,494,181,501,164,505,129,508,93,515,74,529,56,532,52,536,56,533,59,520,77,513,94,510,130,506,165,499,184,485,202,467,215"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="540,69,676,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="460,211,481,198,497,179,505,160,512,140,529,119,535,115,538,119,533,123,517,143,509,162,502,182,484,202,463,216"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a64a1cb58db792c5df32b4a5952ca24ea" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="531,134,685,189"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="446,211,517,188,518,193,447,216"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="540,213,676,253"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="479,231,527,231,527,236,479,236"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a07c9132be7dfd8bcec0558594935f91b" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="535,277,681,317"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="455,251,525,271,523,276,454,256"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="537,341,679,381"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="463,251,484,263,501,279,509,296,518,311,532,327,540,332,536,337,529,331,513,315,505,298,496,283,481,267,460,256"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="540,405,676,445"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="468,251,485,263,498,280,505,296,510,328,514,360,521,376,533,392,536,395,533,399,529,395,516,378,509,361,505,329,500,298,493,283,481,267,465,256"/>
+</map>

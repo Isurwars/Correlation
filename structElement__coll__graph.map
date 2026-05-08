@@ -1,5 +1,0 @@
-<map id="Element" name="Element">
-<area shape="rect" id="Node000001" title="Represents a chemical element with its symbol and unique ID." alt="" coords="13,93,89,119"/>
-<area shape="rect" id="Node000002" href="$structElementID.html" title="Represents a unique integer ID for an element type." alt="" coords="5,5,96,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="53,45,53,93,48,93,48,45"/>
-</map>

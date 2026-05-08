@@ -1,21 +1,27 @@
 <map id="correlation::math::scale_bins" name="correlation::math::scale_bins">
-<area shape="rect" id="Node000001" title="Scales an array by a constant scalar factor." alt="" coords="469,165,612,205"/>
-<area shape="rect" id="Node000002" href="$classRDFCalculator.html#a68fee493adf46fb3a1a7d0a123d92a08" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="238,77,421,102"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="482,162,357,105,360,100,484,157"/>
-<area shape="rect" id="Node000005" href="$classDADCalculator.html#a601642f20f5c9dc0470492fc989c3a2b" title=" " alt="" coords="237,173,421,198"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="456,188,422,188,422,183,456,183"/>
-<area shape="rect" id="Node000008" href="$classPADCalculator.html#ae7ff941cf955a94428a9ae01d9e30e50" title=" " alt="" coords="239,269,420,294"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="484,214,360,271,357,266,482,209"/>
-<area shape="rect" id="Node000003" href="$classRDFCalculator.html#a0041d3f589bde799d6bcb9b774624f98" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="6,5,189,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="269,76,170,48,171,43,270,70"/>
-<area shape="rect" id="Node000004" href="$classDistributionFunctions.html#a5520225c5dfcb791f27d1769a11f0a32" title="Calculates the radial distribution function g(r)" alt="" coords="17,69,177,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="224,92,178,92,178,87,224,87"/>
-<area shape="rect" id="Node000006" href="$classDistributionFunctions.html#a3b1b36142474506e56a2a5e5559bf1d0" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="17,133,177,173"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="223,173,177,167,178,162,224,168"/>
-<area shape="rect" id="Node000007" href="$classDADCalculator.html#a8d0e6fa6091987a9597f73819a25f363" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,197,189,237"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="224,203,190,207,189,202,223,197"/>
-<area shape="rect" id="Node000009" href="$classPADCalculator.html#ae7d71fbf437b7e0ccb8f4ad61bfe093e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="7,261,188,301"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="224,284,188,284,188,279,224,279"/>
-<area shape="rect" id="Node000010" href="$classDistributionFunctions.html#a881d1281989fb613deb8119d09122966" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="17,325,177,365"/>
-<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="270,300,171,328,170,323,269,295"/>
+<area shape="rect" id="Node000001" title="Scales an array by a constant scalar factor." alt="" coords="877,192,1020,232"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="638,77,829,117"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="897,188,771,120,773,115,899,183"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="637,192,829,232"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="864,215,829,215,829,209,864,209"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1PADCalculator.html#a5ea8ec1e5078da7ddc0b4dd58a0c45d9" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="639,292,828,332"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="893,240,778,294,776,290,891,236"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,5,588,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="647,76,589,60,546,48,547,43,590,55,648,71"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="389,70,557,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="624,100,557,100,557,95,624,95"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,163,308,189"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="377,131,357,138,288,166,286,161,355,134,375,126"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,163,156,189"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,179,156,179,156,173,190,173"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="389,149,557,203"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="623,199,556,190,557,185,624,194"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1DADCalculator.html#a2b1f3680dacbe78916a2fe54c674bc18" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,228,589,268"/>
+<area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="624,230,590,235,589,229,623,224"/>
+<area shape="poly" id="edge8_Node000008_Node000005" title=" " alt="" coords="375,179,308,179,308,173,375,173"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1PADCalculator.html#aa128e5ec0338ba62bd618dd8a20ca62f" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,292,588,332"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="625,315,588,315,588,309,625,309"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a6f65b6d6b2631bd107d23114f1de1edc" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="389,357,557,411"/>
+<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="648,338,558,363,556,358,646,333"/>
+<area shape="poly" id="edge13_Node000012_Node000005" title=" " alt="" coords="374,359,354,346,318,307,290,263,271,221,259,190,264,188,276,219,295,261,322,304,358,342,377,355"/>
 </map>

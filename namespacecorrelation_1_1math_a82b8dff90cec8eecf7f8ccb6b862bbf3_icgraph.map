@@ -1,6 +1,6 @@
 <map id="correlation::math::norm_sq" name="correlation::math::norm_sq">
-<area shape="rect" id="Node000001" title="Computes the squared vector norm (length)." alt="" coords="277,29,420,69"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="388,18,374,11,349,8,327,10,313,15,308,21,311,28,306,30,303,20,310,10,325,5,349,3,375,6,390,13"/>
-<area shape="rect" id="Node000002" href="$classcalculators_1_1DistanceCalculator.html#ae3fea61e3c2fd8ed9d5b3b30f2529372" title=" " alt="" coords="5,29,229,69"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="263,52,230,52,230,47,263,47"/>
+<area shape="rect" id="Node000001" title="Computes the squared vector norm (length)." alt="" coords="272,29,415,69"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="382,18,368,11,343,8,322,10,308,15,304,21,306,28,301,30,298,20,305,10,320,5,343,3,370,6,384,13"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,29,224,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="258,52,224,52,224,47,258,47"/>
 </map>

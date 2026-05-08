@@ -1,0 +1,5 @@
+<map id="correlation::app::AppController::populateCalculatorGroups" name="correlation::app::AppController::populateCalculatorGroups">
+<area shape="rect" id="Node000001" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="275,5,496,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>

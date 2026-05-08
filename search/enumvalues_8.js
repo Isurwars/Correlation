@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lammpsdump_0',['LammpsDump',['../namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868abd5b2d46be9431970d83ded5908f9843',1,'FileReader']]]
+  ['unknown_0',['Unknown',['../namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e',1,'correlation::readers']]]
 ];

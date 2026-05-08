@@ -1,0 +1,9 @@
+<map id="correlation::core::Trajectory::getBondCutoffSQ" name="correlation::core::Trajectory::getBondCutoffSQ">
+<area shape="rect" id="Node000001" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="5,13,209,53"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="257,5,461,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,30,244,30,244,35,209,35"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="509,13,663,53"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="462,30,496,30,496,35,462,35"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="711,13,860,53"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="663,30,697,30,697,35,663,35"/>
+</map>

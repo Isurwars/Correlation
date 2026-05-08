@@ -1,0 +1,5 @@
+<map id="correlation::readers::CarReader::read" name="correlation::readers::CarReader::read">
+<area shape="rect" id="Node000001" title="Low&#45;level parser for the specific file format." alt="" coords="248,5,397,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="5,5,200,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="234,28,200,28,200,23,234,23"/>
+</map>

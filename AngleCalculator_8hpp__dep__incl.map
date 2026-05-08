@@ -1,7 +1,7 @@
 <map id="include/calculators/AngleCalculator.hpp" name="include/calculators/AngleCalculator.hpp">
-<area shape="rect" id="Node000001" title="Calculator for angular distribution functions." alt="" coords="142,5,298,45"/>
-<area shape="rect" id="Node000002" href="$StructureAnalyzer_8cpp.html" title="Implementation of structural analysis and neighbor search." alt="" coords="5,93,192,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,55,118,95,115,91,178,51"/>
-<area shape="rect" id="Node000003" href="$AngleCalculator_8cpp.html" title="Implementation of angular distribution calculations." alt="" coords="217,93,466,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="262,51,325,91,322,95,259,55"/>
+<area shape="rect" id="Node000001" title="Calculator for angular distribution functions." alt="" coords="186,5,342,45"/>
+<area shape="rect" id="Node000002" href="$StructureAnalyzer_8cpp.html" title="Implementation of structural analysis and neighbor search." alt="" coords="5,93,251,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="221,55,149,95,147,91,218,50"/>
+<area shape="rect" id="Node000003" href="$AngleCalculator_8cpp.html" title="Implementation of angular distribution calculations." alt="" coords="275,93,525,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="310,50,381,91,379,95,307,55"/>
 </map>

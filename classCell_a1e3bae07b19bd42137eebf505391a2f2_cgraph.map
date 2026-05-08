@@ -1,9 +1,0 @@
-<map id="Cell::updateLatticeParametersFromVectors" name="Cell::updateLatticeParametersFromVectors">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,59,224,99"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="279,29,441,55"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="224,60,265,54,266,59,225,65"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="272,103,448,128"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="225,93,260,98,259,103,224,98"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="320,31,312,21,316,11,333,5,360,3,395,7,405,11,408,17,404,20,401,15,393,12,360,8,334,10,320,15,317,20,324,27"/>
-<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="320,104,312,94,316,84,333,78,360,76,395,80,405,85,408,90,404,93,401,89,393,85,360,81,334,83,320,88,317,94,324,101"/>
-</map>

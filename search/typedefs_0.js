@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['angletensor_0',['angletensor',['../classStructureAnalyzer.html#a8a28e2022fa1995559997f2c00fad507',1,'StructureAnalyzer::AngleTensor'],['../namespacecalculators.html#ae832346afff9e615f4e540e6804dbc7a',1,'calculators::AngleTensor']]],
-  ['atomid_1',['AtomID',['../Atom_8hpp.html#a8efd015de79f1cfbddcf5ca716fe5c99',1,'Atom.hpp']]]
+  ['angletensor_0',['angletensor',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a744df2fa69e87a3caf07fe716e7d2e31',1,'correlation::analysis::StructureAnalyzer::AngleTensor'],['../namespacecorrelation_1_1calculators.html#af65b6be11be044062a734c6e60ec2701',1,'correlation::calculators::AngleTensor']]],
+  ['atomid_1',['AtomID',['../namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9',1,'correlation::core']]]
 ];

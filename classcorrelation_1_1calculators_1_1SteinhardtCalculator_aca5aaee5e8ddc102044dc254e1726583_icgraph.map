@@ -1,0 +1,5 @@
+<map id="correlation::calculators::SteinhardtCalculator::calculate" name="correlation::calculators::SteinhardtCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="224,5,395,60"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,176,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,35,176,35,176,30,210,30"/>
+</map>

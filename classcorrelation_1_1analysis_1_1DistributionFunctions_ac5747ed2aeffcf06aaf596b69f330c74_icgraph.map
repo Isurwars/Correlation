@@ -1,0 +1,11 @@
+<map id="correlation::analysis::DistributionFunctions::getHistogram" name="correlation::analysis::DistributionFunctions::getHistogram">
+<area shape="rect" id="Node000001" title="Access a specific calculated histogram by name." alt="" coords="516,62,684,117"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="220,5,452,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="502,68,418,48,420,43,503,63"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="204,69,468,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="503,92,468,92,468,87,503,87"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="284,134,388,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="503,116,469,124,389,140,388,135,467,119,502,111"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,134,156,159"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="270,149,156,149,156,144,270,144"/>
+</map>

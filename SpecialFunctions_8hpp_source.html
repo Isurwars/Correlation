@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -302,11 +302,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>} <span class="comment">// namespace correlation::math</span></div>
 <div class="ttc" id="aSIMDConfig_8hpp_html"><div class="ttname"><a href="SIMDConfig_8hpp.html">SIMDConfig.hpp</a></div><div class="ttdoc">Configuration macros for SIMD instruction sets and compiler specifics.</div></div>
-<div class="ttc" id="aSIMDConfig_8hpp_html_a4deeb02252b9bb66b12ca88abccb8051"><div class="ttname"><a href="SIMDConfig_8hpp.html#a4deeb02252b9bb66b12ca88abccb8051">CORRELATION_RESTRICT</a></div><div class="ttdeci">#define CORRELATION_RESTRICT</div><div class="ttdef"><b>Definition</b> SIMDConfig.hpp:43</div></div>
+<div class="ttc" id="aSIMDConfig_8hpp_html_a4deeb02252b9bb66b12ca88abccb8051"><div class="ttname"><a href="SIMDConfig_8hpp.html#a4deeb02252b9bb66b12ca88abccb8051">CORRELATION_RESTRICT</a></div><div class="ttdeci">#define CORRELATION_RESTRICT</div><div class="ttdoc">Portable restrict keyword macro for aliasing optimizations.</div><div class="ttdef"><b>Definition</b> SIMDConfig.hpp:49</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html"><div class="ttname"><a href="namespacecorrelation_1_1math.html">correlation::math</a></div><div class="ttdoc">Defines universal mathematical and physical constants.</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_a048d202e6ed055a5776eea44c1a60cb1"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a048d202e6ed055a5776eea44c1a60cb1">correlation::math::factorial</a></div><div class="ttdeci">double factorial(int n)</div><div class="ttdoc">Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64-bit integer,...</div><div class="ttdef"><b>Definition</b> SpecialFunctions.hpp:25</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_a46d62a6e3be1d1baa291e4425011ebbd"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd">correlation::math::sph_legendre_batch</a></div><div class="ttdeci">void sph_legendre_batch(int l, int m, const double *theta, double *results, size_t count)</div><div class="ttdoc">Vectorized version of sph_legendre. Computes the polynomial for a range of angles.</div><div class="ttdef"><b>Definition</b> SpecialFunctions.hpp:125</div></div>
-<div class="ttc" id="anamespacecorrelation_1_1math_html_a78ffcf479fa4b63059443e901b70b5d1"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1">correlation::math::norm</a></div><div class="ttdeci">constexpr T norm(const Vector3&lt; T &gt; &amp;v) noexcept</div><div class="ttdoc">Computes the vector norm (length).</div><div class="ttdef"><b>Definition</b> LinearAlgebra.hpp:330</div></div>
+<div class="ttc" id="anamespacecorrelation_1_1math_html_a78ffcf479fa4b63059443e901b70b5d1"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1">correlation::math::norm</a></div><div class="ttdeci">constexpr T norm(const Vector3&lt; T &gt; &amp;v) noexcept</div><div class="ttdoc">Computes the vector norm (length).</div><div class="ttdef"><b>Definition</b> LinearAlgebra.hpp:568</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_ae71520e0e2cd815380fd11fb6a0b33be"><div class="ttname"><a href="namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be">correlation::math::sph_legendre</a></div><div class="ttdeci">double sph_legendre(int l, int m, double theta)</div><div class="ttdoc">Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17.</div><div class="ttdef"><b>Definition</b> SpecialFunctions.hpp:65</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

@@ -1,8 +1,8 @@
 <map id="correlation::math::operator*" name="correlation::math::operator*">
-<area shape="rect" id="Node000001" title=" " alt="" coords="196,37,339,77"/>
+<area shape="rect" id="Node000001" title="Matrix&#45;vector multiplication." alt="" coords="196,37,339,77"/>
 <area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="299,25,288,19,267,16,249,18,239,23,235,29,237,36,231,38,229,28,235,19,248,13,267,11,290,14,302,21"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a32c07e2335019155eda874e34d2f303c" title=" " alt="" coords="5,5,148,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a32c07e2335019155eda874e34d2f303c" title="Matrix&#45;matrix multiplication." alt="" coords="5,5,148,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,46,148,40,149,35,183,41"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a191c2ffcaad68c44f8279cbe6b0007e9" title=" " alt="" coords="5,69,148,109"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a191c2ffcaad68c44f8279cbe6b0007e9" title="Scalar&#45;vector multiplication." alt="" coords="5,69,148,109"/>
 <area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="183,74,149,80,148,75,182,69"/>
 </map>

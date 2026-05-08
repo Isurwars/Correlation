@@ -1,0 +1,20 @@
+<map id="correlation::core::Trajectory::getTimeStep" name="correlation::core::Trajectory::getTimeStep">
+<area shape="rect" id="Node000001" title="Gets the time step between frames." alt="" coords="911,124,1087,164"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="667,24,861,64"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="937,121,811,66,813,62,939,116"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="665,124,863,164"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="897,147,863,147,863,141,897,141"/>
+<area shape="rect" id="Node000009" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="217,206,295,231"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="908,170,863,179,698,200,536,213,296,221,295,216,535,208,698,195,862,173,907,164"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="358,5,615,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="653,39,616,37,616,31,654,34"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,69,617,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="651,124,588,112,589,107,652,119"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,134,571,189"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="652,154,571,159,571,153,651,148"/>
+<area shape="rect" id="Node000007" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,153,308,178"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="389,166,308,167,308,162,389,160"/>
+<area shape="rect" id="Node000008" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,182,156,207"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="191,179,157,185,156,179,190,174"/>
+<area shape="poly" id="edge9_Node000009_Node000008" title=" " alt="" coords="203,214,156,208,157,202,203,209"/>
+</map>

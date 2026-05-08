@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -90,7 +90,7 @@ $(function() {
 
 <p>Ring and structural motif finder using neighbour graph search.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="NeighborGraph_8hpp_source.html">NeighborGraph.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="NeighborGraph_8hpp_source.html">core/NeighborGraph.hpp</a>&quot;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -98,18 +98,25 @@ Include dependency graph for MotifFinder.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="MotifFinder_8hpp__incl.png" border="0" usemap="#ainclude_2calculators_2MotifFinder_8hpp" alt=""/></div>
 <map name="ainclude_2calculators_2MotifFinder_8hpp" id="ainclude_2calculators_2MotifFinder_8hpp">
-<area shape="rect" title="Ring and structural motif finder using neighbour graph search." alt="" coords="359,5,503,45"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="245,93,393,119"/>
-<area shape="poly" title=" " alt="" coords="405,48,348,87,345,83,402,43"/>
-<area shape="rect" title=" " alt="" coords="397,167,459,192"/>
-<area shape="poly" title=" " alt="" coords="433,46,431,153,426,153,428,46"/>
-<area shape="rect" title=" " alt="" coords="468,93,519,119"/>
-<area shape="poly" title=" " alt="" coords="448,44,477,81,473,84,444,47"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="77,240,256,265"/>
-<area shape="poly" title=" " alt="" coords="308,121,191,232,187,229,304,117"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="280,167,365,192"/>
+<area shape="rect" title="Ring and structural motif finder using neighbour graph search." alt="" coords="375,5,519,45"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="229,93,409,119"/>
+<area shape="poly" title=" " alt="" coords="417,48,350,88,348,84,414,43"/>
+<area shape="rect" title=" " alt="" coords="413,167,475,192"/>
+<area shape="poly" title=" " alt="" coords="449,46,447,153,442,153,444,46"/>
+<area shape="rect" title=" " alt="" coords="484,93,535,119"/>
+<area shape="poly" title=" " alt="" coords="464,44,493,81,489,84,460,47"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="264,167,381,192"/>
 <area shape="poly" title=" " alt="" coords="322,119,324,153,319,153,317,119"/>
-<area shape="poly" title=" " alt="" coords="338,116,400,157,397,161,335,121"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="77,240,256,265"/>
+<area shape="poly" title=" " alt="" coords="307,121,254,169,189,232,186,228,250,165,303,117"/>
+<area shape="poly" title=" " alt="" coords="340,116,413,157,410,162,337,121"/>
+<area shape="poly" title=" " alt="" coords="299,194,206,237,204,232,297,190"/>
+<area shape="rect" title=" " alt="" coords="280,240,365,265"/>
+<area shape="poly" title=" " alt="" coords="325,192,325,226,320,226,320,192"/>
+<area shape="rect" title=" " alt="" coords="389,240,456,265"/>
+<area shape="poly" title=" " alt="" coords="340,190,397,230,394,234,337,194"/>
+<area shape="rect" title=" " alt="" coords="480,240,539,265"/>
+<area shape="poly" title=" " alt="" coords="354,190,468,233,466,238,352,195"/>
 <area shape="rect" title=" " alt="" coords="5,313,61,339"/>
 <area shape="poly" title=" " alt="" coords="146,268,68,309,66,304,144,263"/>
 <area shape="rect" title=" " alt="" coords="86,313,149,339"/>
@@ -118,13 +125,6 @@ Include dependency graph for MotifFinder.hpp:</div>
 <area shape="poly" title=" " alt="" coords="177,264,202,301,198,304,173,267"/>
 <area shape="rect" title=" " alt="" coords="283,313,375,339"/>
 <area shape="poly" title=" " alt="" coords="194,263,291,305,289,310,192,268"/>
-<area shape="poly" title=" " alt="" coords="299,194,206,237,204,232,297,190"/>
-<area shape="rect" title=" " alt="" coords="280,240,365,265"/>
-<area shape="poly" title=" " alt="" coords="325,192,325,226,320,226,320,192"/>
-<area shape="rect" title=" " alt="" coords="389,240,456,265"/>
-<area shape="poly" title=" " alt="" coords="340,190,397,230,394,234,337,194"/>
-<area shape="rect" title=" " alt="" coords="480,240,539,265"/>
-<area shape="poly" title=" " alt="" coords="354,190,468,233,466,238,352,195"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -144,12 +144,15 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcalculators_1_1MotifFinder.html">calculators::MotifFinder</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1MotifFinder.html">correlation::calculators::MotifFinder</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility class for finding structural motifs (rings) in a system.  <a href="classcorrelation_1_1calculators_1_1MotifFinder.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespacecalculators" id="r_namespacecalculators"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecalculators.html">calculators</a></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1calculators" id="r_namespacecorrelation_1_1calculators"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1calculators.html">correlation::calculators</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

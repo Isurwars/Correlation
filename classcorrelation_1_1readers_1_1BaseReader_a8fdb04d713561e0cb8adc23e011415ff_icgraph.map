@@ -1,0 +1,13 @@
+<map id="correlation::readers::BaseReader::readStructure" name="correlation::readers::BaseReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="1001,35,1205,75"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,35,953,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="987,57,954,57,954,52,987,52"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,35,756,75"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="791,57,756,57,756,52,791,52"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
+<area shape="rect" id="Node000006" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>

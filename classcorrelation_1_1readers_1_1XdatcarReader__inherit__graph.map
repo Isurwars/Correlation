@@ -1,0 +1,5 @@
+<map id="correlation::readers::XdatcarReader" name="correlation::readers::XdatcarReader">
+<area shape="rect" id="Node000001" title="Reads VASP XDATCAR trajectory files." alt="" coords="5,93,155,133"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1BaseReader.html" title="Base class for all file readers." alt="" coords="5,5,155,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="83,59,83,93,77,93,77,59"/>
+</map>

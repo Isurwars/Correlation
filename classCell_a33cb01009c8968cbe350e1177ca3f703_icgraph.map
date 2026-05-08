@@ -1,5 +1,0 @@
-<map id="Cell::inverseLatticeVectors" name="Cell::inverseLatticeVectors">
-<area shape="rect" id="Node000001" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="240,13,435,38"/>
-<area shape="rect" id="Node000002" href="$classStructureFactorCalculator.html#ae565df3753e877782691082de6fa44c3" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,192,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="226,28,192,28,192,23,226,23"/>
-</map>

@@ -1,0 +1,5 @@
+<map id="correlation::calculators::StructureFactorCalculator" name="correlation::calculators::StructureFactorCalculator">
+<area shape="rect" id="Node000001" title="Computes the static structure factor S(Q) using plane wave summation over reciprocal lattice vectors ..." alt="" coords="5,93,200,133"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html" title="Base class for all analysis calculators." alt="" coords="17,5,188,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="105,59,105,93,100,93,100,59"/>
+</map>

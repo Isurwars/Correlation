@@ -1,0 +1,7 @@
+<map id="correlation::writers::BaseWriter::getName" name="correlation::writers::BaseWriter::getName">
+<area shape="rect" id="Node000001" title="Returns the display name of the format (e.g., &quot;HDF5&quot;, &quot;CSV&quot;)." alt="" coords="347,5,517,45"/>
+<area shape="rect" id="Node000002" href="$writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="204,13,299,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="333,28,299,28,299,23,333,23"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,13,156,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="190,28,157,28,157,23,190,23"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="correlation::readers::OutmolReader::readTrajectory" name="correlation::readers::OutmolReader::readTrajectory">
+<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="5,5,231,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="279,5,440,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="231,23,265,23,265,28,231,28"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="488,5,624,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="440,23,474,23,474,28,440,28"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="672,5,871,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="624,23,659,23,659,28,624,28"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="919,5,1055,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="871,23,905,23,905,28,871,28"/>
+</map>

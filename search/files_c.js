@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['simdconfig_2ehpp_0',['SIMDConfig.hpp',['../SIMDConfig_8hpp.html',1,'']]],
-  ['simdutils_2ehpp_1',['SIMDUtils.hpp',['../SIMDUtils_8hpp.html',1,'']]],
-  ['smoothing_2ehpp_2',['Smoothing.hpp',['../Smoothing_8hpp.html',1,'']]],
-  ['specialfunctions_2ehpp_3',['SpecialFunctions.hpp',['../SpecialFunctions_8hpp.html',1,'']]],
-  ['steinhardtcalculator_2ecpp_4',['SteinhardtCalculator.cpp',['../SteinhardtCalculator_8cpp.html',1,'']]],
-  ['steinhardtcalculator_2ehpp_5',['SteinhardtCalculator.hpp',['../SteinhardtCalculator_8hpp.html',1,'']]],
-  ['structureanalyzer_2ecpp_6',['StructureAnalyzer.cpp',['../StructureAnalyzer_8cpp.html',1,'']]],
-  ['structureanalyzer_2ehpp_7',['StructureAnalyzer.hpp',['../StructureAnalyzer_8hpp.html',1,'']]],
-  ['structurefactorcalculator_2ecpp_8',['StructureFactorCalculator.cpp',['../StructureFactorCalculator_8cpp.html',1,'']]],
-  ['structurefactorcalculator_2ehpp_9',['StructureFactorCalculator.hpp',['../StructureFactorCalculator_8hpp.html',1,'']]]
+  ['rdcalculator_2ecpp_0',['RDCalculator.cpp',['../RDCalculator_8cpp.html',1,'']]],
+  ['rdcalculator_2ehpp_1',['RDCalculator.hpp',['../RDCalculator_8hpp.html',1,'']]],
+  ['rdfcalculator_2ecpp_2',['RDFCalculator.cpp',['../RDFCalculator_8cpp.html',1,'']]],
+  ['rdfcalculator_2ehpp_3',['RDFCalculator.hpp',['../RDFCalculator_8hpp.html',1,'']]],
+  ['readerfactory_2ecpp_4',['ReaderFactory.cpp',['../ReaderFactory_8cpp.html',1,'']]],
+  ['readerfactory_2ehpp_5',['ReaderFactory.hpp',['../ReaderFactory_8hpp.html',1,'']]],
+  ['readme_2emd_6',['README.md',['../README_8md.html',1,'']]],
+  ['roadmap_2emd_7',['RoadMap.md',['../RoadMap_8md.html',1,'']]]
 ];

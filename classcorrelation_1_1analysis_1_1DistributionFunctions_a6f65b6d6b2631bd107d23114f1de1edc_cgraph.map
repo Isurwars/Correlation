@@ -1,0 +1,11 @@
+<map id="correlation::analysis::DistributionFunctions::calculatePAD" name="correlation::analysis::DistributionFunctions::calculatePAD">
+<area shape="rect" id="Node000001" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="5,77,173,132"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1PADCalculator.html#a5ea8ec1e5078da7ddc0b4dd58a0c45d9" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="221,85,411,125"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,102,208,102,208,107,173,107"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a7ebe8b970ea072d3b55281de5a999ebf" title="Gets a multi&#45;dimensional tensor containing bond angles." alt="" coords="459,5,613,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="377,82,445,60,446,65,379,87"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="468,85,604,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="411,102,454,102,454,107,411,107"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="465,149,607,189"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="386,122,455,142,453,147,385,127"/>
+</map>

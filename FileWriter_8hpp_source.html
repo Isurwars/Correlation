@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: include/FileWriter.hpp Source File</title>
+<title>Correlation: include/writers/FileWriter.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,7 +82,7 @@ $(document).ready(function() { init_codefold(0); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_3211793a8c9519ba3d061e71909e0c6c.html">writers</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -92,27 +92,32 @@ $(document).ready(function() { init_codefold(0); });
 <a href="FileWriter_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="DistributionFunctions_8hpp.html">analysis/DistributionFunctions.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="DistributionFunctions_8hpp.html">DistributionFunctions.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="foldopen" id="foldopen00022" data-start="{" data-end="};">
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classFileWriter.html">   22</a></span><span class="keyword">class </span><a class="code hl_class" href="classFileWriter.html">FileWriter</a> {</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classFileWriter.html">FileWriter</a>(<span class="keyword">const</span> <a class="code hl_class" href="classDistributionFunctions.html">DistributionFunctions</a> &amp;df);</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classFileWriter.html#a32ad226a1809cf03a53e89d134aae80c">write</a>(<span class="keyword">const</span> std::string &amp;base_path, <span class="keywordtype">bool</span> use_csv, <span class="keywordtype">bool</span> use_hdf5,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>             <span class="keywordtype">bool</span> use_parquet, <span class="keywordtype">bool</span> smoothing) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="classFileWriter.html#aa13b3ed5b2ffef428e7adca3ddbd7629">   45</a></span>  <span class="keyword">const</span> <a class="code hl_class" href="classDistributionFunctions.html">DistributionFunctions</a> &amp;<a class="code hl_variable" href="classFileWriter.html#aa13b3ed5b2ffef428e7adca3ddbd7629">df_</a>;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>};</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecorrelation_1_1writers.html">correlation::writers</a> {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="};">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="classcorrelation_1_1writers_1_1FileWriter.html">   24</a></span><span class="keyword">class </span><a class="code hl_class" href="classcorrelation_1_1writers_1_1FileWriter.html">FileWriter</a> {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classcorrelation_1_1writers_1_1FileWriter.html">FileWriter</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a">write</a>(<span class="keyword">const</span> std::string &amp;base_path, <span class="keywordtype">bool</span> use_csv, <span class="keywordtype">bool</span> use_hdf5,</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>             <span class="keywordtype">bool</span> use_parquet, <span class="keywordtype">bool</span> smoothing) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="classcorrelation_1_1writers_1_1FileWriter.html#ac9070a90171df84c6ed632eadc2ab73d">   48</a></span>  <span class="keyword">const</span> <a class="code hl_class" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;<a class="code hl_variable" href="classcorrelation_1_1writers_1_1FileWriter.html#ac9070a90171df84c6ed632eadc2ab73d">df_</a>;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>};</div>
 </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>} <span class="comment">// namespace correlation::writers</span></div>
 <div class="ttc" id="aDistributionFunctions_8hpp_html"><div class="ttname"><a href="DistributionFunctions_8hpp.html">DistributionFunctions.hpp</a></div><div class="ttdoc">Manager for distribution function calculations (RDF, PAD, S(Q), etc.).</div></div>
-<div class="ttc" id="aclassDistributionFunctions_html"><div class="ttname"><a href="classDistributionFunctions.html">DistributionFunctions</a></div><div class="ttdoc">Manages the calculation and storage of various distribution functions.</div><div class="ttdef"><b>Definition</b> DistributionFunctions.hpp:70</div></div>
-<div class="ttc" id="aclassFileWriter_html"><div class="ttname"><a href="classFileWriter.html">FileWriter</a></div><div class="ttdoc">Facade class that manages writing data to various file formats.</div><div class="ttdef"><b>Definition</b> FileWriter.hpp:22</div></div>
-<div class="ttc" id="aclassFileWriter_html_a32ad226a1809cf03a53e89d134aae80c"><div class="ttname"><a href="classFileWriter.html#a32ad226a1809cf03a53e89d134aae80c">FileWriter::write</a></div><div class="ttdeci">void write(const std::string &amp;base_path, bool use_csv, bool use_hdf5, bool use_parquet, bool smoothing) const</div><div class="ttdoc">Writes the available histograms using specified formats.</div><div class="ttdef"><b>Definition</b> FileWriter.cpp:14</div></div>
-<div class="ttc" id="aclassFileWriter_html_aa13b3ed5b2ffef428e7adca3ddbd7629"><div class="ttname"><a href="classFileWriter.html#aa13b3ed5b2ffef428e7adca3ddbd7629">FileWriter::df_</a></div><div class="ttdeci">const DistributionFunctions &amp; df_</div><div class="ttdef"><b>Definition</b> FileWriter.hpp:45</div></div>
+<div class="ttc" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_html"><div class="ttname"><a href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a></div><div class="ttdoc">Manages the calculation and storage of various distribution functions.</div><div class="ttdef"><b>Definition</b> DistributionFunctions.hpp:96</div></div>
+<div class="ttc" id="aclasscorrelation_1_1writers_1_1FileWriter_html"><div class="ttname"><a href="classcorrelation_1_1writers_1_1FileWriter.html">correlation::writers::FileWriter</a></div><div class="ttdoc">Facade class that manages writing data to various file formats.</div><div class="ttdef"><b>Definition</b> FileWriter.hpp:24</div></div>
+<div class="ttc" id="aclasscorrelation_1_1writers_1_1FileWriter_html_ab1870aa3f0049e7f451edb9b6111fe7a"><div class="ttname"><a href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a">correlation::writers::FileWriter::write</a></div><div class="ttdeci">void write(const std::string &amp;base_path, bool use_csv, bool use_hdf5, bool use_parquet, bool smoothing) const</div><div class="ttdoc">Writes the available histograms using specified formats.</div><div class="ttdef"><b>Definition</b> FileWriter.cpp:17</div></div>
+<div class="ttc" id="aclasscorrelation_1_1writers_1_1FileWriter_html_ac9070a90171df84c6ed632eadc2ab73d"><div class="ttname"><a href="classcorrelation_1_1writers_1_1FileWriter.html#ac9070a90171df84c6ed632eadc2ab73d">correlation::writers::FileWriter::df_</a></div><div class="ttdeci">const correlation::analysis::DistributionFunctions &amp; df_</div><div class="ttdoc">Reference to the analysis data structure.</div><div class="ttdef"><b>Definition</b> FileWriter.hpp:48</div></div>
+<div class="ttc" id="anamespacecorrelation_1_1writers_html"><div class="ttname"><a href="namespacecorrelation_1_1writers.html">correlation::writers</a></div><div class="ttdef"><b>Definition</b> ArrowWriter.hpp:17</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -1,0 +1,7 @@
+<map id="correlation::app::AppController::getBondCutoffs" name="correlation::app::AppController::getBondCutoffs">
+<area shape="rect" id="Node000001" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="5,37,227,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="275,5,487,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,41,261,37,261,42,227,47"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="313,69,449,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,68,299,77,298,82,227,73"/>
+</map>

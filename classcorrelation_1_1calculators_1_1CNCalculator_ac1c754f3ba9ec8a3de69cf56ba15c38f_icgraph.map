@@ -1,0 +1,11 @@
+<map id="correlation::calculators::CNCalculator::calculate" name="correlation::calculators::CNCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="628,49,811,89"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="356,5,580,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="614,56,580,51,581,46,615,51"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,85,579,125"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="615,86,580,91,579,86,614,81"/>
+<area shape="rect" id="Node000003" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="342,35,308,35,308,30,342,30"/>
+<area shape="rect" id="Node000004" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,20,156,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
+</map>

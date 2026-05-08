@@ -1,0 +1,5 @@
+<map id="correlation::calculators::RDCalculator::calculate" name="correlation::calculators::RDCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Ring Distribution (RD)." alt="" coords="276,5,459,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1RDCalculator.html#af7885c7fe2da94e24426d75f8f39c0f8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,228,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="262,28,228,28,228,23,262,23"/>
+</map>

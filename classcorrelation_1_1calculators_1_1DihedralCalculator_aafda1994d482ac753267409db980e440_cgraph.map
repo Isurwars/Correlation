@@ -1,0 +1,22 @@
+<map id="correlation::calculators::DihedralCalculator::compute" name="correlation::calculators::DihedralCalculator::compute">
+<area shape="rect" id="Node000001" title="Computes and populates the dihedral angles tensor." alt="" coords="5,232,221,272"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="309,5,445,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,230,145,193,177,146,219,97,268,55,295,41,297,46,271,60,223,101,182,149,149,196,128,233"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a5427bb96a0d06a0210bd7c82cc445576" title="Computes the cross product of two 3D vectors." alt="" coords="305,93,448,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="137,230,195,186,268,143,292,133,294,138,271,148,198,191,141,234"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="295,182,458,207"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="205,229,304,208,305,213,206,235"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="309,232,445,272"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="221,249,295,249,295,255,221,255"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4" title="Retrieves the neighbor list for a specific atom." alt="" coords="269,296,484,336"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="197,269,281,290,280,295,196,275"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="532,402,708,427"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="142,270,199,309,234,329,270,346,316,359,379,373,520,397,519,402,378,378,314,364,268,350,232,334,196,313,139,274"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a0d52673d38d7b423ba9e839db8c86626" title="Normalizes the given vector." alt="" coords="305,435,448,475"/>
+<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="136,270,195,327,271,390,326,425,323,430,268,394,191,331,133,274"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="331,94,329,84,336,74,352,69,377,67,405,70,420,77,418,82,403,75,377,72,353,74,339,79,334,85,337,92"/>
+<area shape="poly" id="edge5_Node000004_Node000004" title=" " alt="" coords="337,184,329,174,333,164,350,158,377,155,411,159,421,164,424,170,420,173,417,168,410,164,377,161,351,163,337,168,334,173,341,180"/>
+<area shape="poly" id="edge9_Node000007_Node000007" title=" " alt="" coords="581,404,572,394,577,384,593,378,620,375,654,379,664,384,668,390,663,393,660,388,653,384,620,381,594,383,580,388,577,393,585,400"/>
+<area shape="poly" id="edge11_Node000008_Node000007" title=" " alt="" coords="448,440,529,427,530,432,449,446"/>
+<area shape="poly" id="edge12_Node000008_Node000008" title=" " alt="" coords="331,435,329,425,336,416,352,410,377,408,405,411,420,418,418,423,403,416,377,413,353,415,339,420,334,426,337,434"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="correlation::analysis::StructureAnalyzer::StructureAnalyzer" name="correlation::analysis::StructureAnalyzer::StructureAnalyzer">
+<area shape="rect" id="Node000001" title="Constructs a StructureAnalyzer for a single frame (Cell)." alt="" coords="5,5,160,60"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="208,13,344,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,30,194,30,194,35,160,35"/>
+</map>

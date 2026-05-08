@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: include/AppBackend.hpp File Reference</title>
+<title>Correlation: include/app/AppBackend.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -77,127 +77,123 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_98ff7954eb3842da01d2ae02361edfa5.html">app</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">AppBackend.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Application backend interface between the UI and analysis engine.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;functional&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="DistributionFunctions_8hpp_source.html">analysis/DistributionFunctions.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="TrajectoryAnalyzer_8hpp_source.html">analysis/TrajectoryAnalyzer.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Smoothing_8hpp_source.html">math/Smoothing.hpp</a>&quot;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
-<code>#include &quot;<a class="el" href="DistributionFunctions_8hpp_source.html">DistributionFunctions.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Smoothing_8hpp_source.html">math/Smoothing.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">Trajectory.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="TrajectoryAnalyzer_8hpp_source.html">TrajectoryAnalyzer.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for AppBackend.hpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="AppBackend_8hpp__incl.png" border="0" usemap="#ainclude_2AppBackend_8hpp" alt=""/></div>
-<map name="ainclude_2AppBackend_8hpp" id="ainclude_2AppBackend_8hpp">
-<area shape="rect" title="Application backend interface between the UI and analysis engine." alt="" coords="537,5,719,31"/>
-<area shape="rect" title=" " alt="" coords="546,152,633,177"/>
-<area shape="poly" title=" " alt="" coords="627,32,612,79,597,139,592,138,607,78,621,30"/>
+<div class="center"><img src="AppBackend_8hpp__incl.png" border="0" usemap="#ainclude_2app_2AppBackend_8hpp" alt=""/></div>
+<map name="ainclude_2app_2AppBackend_8hpp" id="ainclude_2app_2AppBackend_8hpp">
+<area shape="rect" title="Application backend interface between the UI and analysis engine." alt="" coords="495,5,705,31"/>
+<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="266,79,513,104"/>
+<area shape="poly" title=" " alt="" coords="567,33,437,77,435,72,565,28"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="477,152,621,177"/>
+<area shape="poly" title=" " alt="" coords="598,32,560,140,555,138,593,30"/>
+<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="801,225,959,251"/>
+<area shape="poly" title=" " alt="" coords="705,28,821,47,871,61,905,76,932,98,951,121,958,147,950,178,934,202,914,220,910,216,930,198,946,176,952,147,946,123,928,101,903,81,869,66,820,53,704,33"/>
+<area shape="rect" title=" " alt="" coords="697,152,783,177"/>
+<area shape="poly" title=" " alt="" coords="604,31,610,65,618,85,629,102,657,127,691,145,688,149,654,131,625,106,613,87,605,67,598,32"/>
 <area shape="rect" title=" " alt="" coords="5,152,56,177"/>
-<area shape="poly" title=" " alt="" coords="568,33,341,81,190,120,70,155,68,149,189,115,339,76,567,28"/>
-<area shape="rect" title=" " alt="" coords="657,152,735,177"/>
-<area shape="poly" title=" " alt="" coords="633,30,641,64,656,103,680,140,675,143,651,105,636,65,628,31"/>
-<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="351,79,539,104"/>
-<area shape="poly" title=" " alt="" coords="600,33,489,76,487,71,598,28"/>
-<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="838,299,997,324"/>
-<area shape="poly" title=" " alt="" coords="716,28,808,47,847,61,872,77,891,100,904,127,920,185,924,240,923,285,918,285,919,241,915,186,899,129,886,103,869,81,845,66,807,53,715,33"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="725,225,837,251"/>
-<area shape="poly" title=" " alt="" coords="709,28,793,47,828,61,850,77,859,95,862,114,859,133,852,152,830,188,805,217,801,214,825,185,847,150,854,132,856,114,854,96,846,80,825,65,792,52,708,33"/>
-<area shape="rect" href="TrajectoryAnalyzer_8hpp.html" title="Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="665,79,836,104"/>
-<area shape="poly" title=" " alt="" coords="649,28,720,69,718,74,646,33"/>
-<area shape="poly" title=" " alt="" coords="470,102,555,143,552,148,467,106"/>
-<area shape="poly" title=" " alt="" coords="360,107,226,127,75,155,70,156,69,151,74,149,225,122,360,101"/>
-<area shape="poly" title=" " alt="" coords="486,101,645,146,643,151,485,107"/>
-<area shape="rect" title=" " alt="" coords="183,445,241,471"/>
-<area shape="poly" title=" " alt="" coords="387,107,299,127,203,157,161,175,127,195,104,216,98,226,96,237,96,313,98,332,105,351,126,385,154,414,183,436,180,440,151,418,122,389,100,353,93,334,91,313,91,236,93,224,100,212,124,190,159,170,202,152,298,122,386,101"/>
-<area shape="rect" title=" " alt="" coords="643,372,706,397"/>
-<area shape="poly" title=" " alt="" coords="452,103,468,138,495,175,518,191,539,199,561,207,584,223,613,257,637,293,668,358,663,361,632,296,609,260,581,227,558,211,537,204,515,196,491,179,463,141,447,106"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="301,299,376,324"/>
-<area shape="poly" title=" " alt="" coords="376,107,296,126,264,139,245,154,236,171,236,189,241,207,251,226,281,260,313,288,309,292,277,264,247,229,236,209,230,189,231,170,241,150,262,134,295,121,375,101"/>
-<area shape="poly" title=" " alt="" coords="456,103,488,139,511,159,536,175,580,192,620,198,658,199,693,196,729,193,767,194,807,203,851,223,869,236,884,252,907,285,903,288,880,255,865,240,848,228,805,208,766,199,729,198,694,201,658,204,620,204,579,197,533,180,507,163,484,143,452,106"/>
-<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="255,152,420,177"/>
-<area shape="poly" title=" " alt="" coords="429,106,368,147,365,142,427,102"/>
-<area shape="poly" title=" " alt="" coords="327,326,279,374,230,436,226,432,275,370,324,323"/>
-<area shape="poly" title=" " alt="" coords="377,319,390,321,630,372,629,377,389,327,376,324"/>
-<area shape="rect" title=" " alt="" coords="381,519,437,544"/>
-<area shape="poly" title=" " alt="" coords="335,325,324,358,321,377,324,397,337,429,354,459,391,507,387,510,350,462,332,431,319,398,316,377,319,357,330,323"/>
-<area shape="rect" title=" " alt="" coords="333,372,408,397"/>
-<area shape="poly" title=" " alt="" coords="346,323,362,359,358,361,342,325"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="432,372,517,397"/>
-<area shape="poly" title=" " alt="" coords="362,322,442,363,439,368,359,326"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="524,445,703,471"/>
-<area shape="poly" title=" " alt="" coords="377,319,462,343,502,357,531,370,569,400,598,433,594,436,565,404,528,374,500,362,460,348,375,325"/>
-<area shape="poly" title=" " alt="" coords="433,400,255,448,254,443,432,395"/>
-<area shape="rect" title=" " alt="" coords="736,445,821,471"/>
-<area shape="poly" title=" " alt="" coords="518,393,723,441,722,446,517,399"/>
-<area shape="rect" title=" " alt="" coords="433,445,500,471"/>
-<area shape="poly" title=" " alt="" coords="476,398,472,432,467,432,471,397"/>
-<area shape="poly" title=" " alt="" coords="498,395,580,437,577,441,496,400"/>
-<area shape="poly" title=" " alt="" coords="581,473,451,518,449,513,580,468"/>
-<area shape="rect" title=" " alt="" coords="867,519,930,544"/>
-<area shape="poly" title=" " alt="" coords="660,468,855,516,853,522,659,473"/>
-<area shape="rect" title=" " alt="" coords="1046,519,1133,544"/>
-<area shape="poly" title=" " alt="" coords="690,468,1033,519,1032,524,689,473"/>
-<area shape="rect" title=" " alt="" coords="567,519,659,544"/>
-<area shape="poly" title=" " alt="" coords="616,471,616,505,611,505,611,471"/>
-<area shape="poly" title=" " alt="" coords="879,327,720,373,719,368,878,321"/>
-<area shape="poly" title=" " alt="" coords="892,326,857,346,823,374,803,403,789,433,784,431,798,400,819,370,854,342,890,322"/>
-<area shape="poly" title=" " alt="" coords="997,318,1042,328,1080,343,1094,354,1103,366,1105,382,1100,399,1068,440,1028,474,984,499,944,517,942,512,982,495,1025,469,1064,437,1095,396,1100,381,1098,368,1090,357,1077,348,1040,333,996,323"/>
-<area shape="poly" title=" " alt="" coords="998,312,1031,318,1064,329,1095,346,1119,370,1129,387,1133,405,1131,442,1120,478,1106,508,1101,506,1115,476,1126,441,1128,405,1124,389,1115,374,1091,350,1062,334,1029,323,997,317"/>
-<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="833,372,986,397"/>
-<area shape="poly" title=" " alt="" coords="919,325,915,359,909,358,913,324"/>
-<area shape="rect" title=" " alt="" coords="1011,372,1085,397"/>
-<area shape="poly" title=" " alt="" coords="940,322,1016,363,1014,368,937,326"/>
-<area shape="poly" title=" " alt="" coords="326,179,301,211,293,230,295,250,305,270,318,287,314,290,300,272,289,251,288,229,296,208,322,176"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="401,299,549,324"/>
-<area shape="poly" title=" " alt="" coords="421,175,506,194,541,207,563,224,569,234,569,245,559,264,539,281,516,295,513,290,536,277,555,261,564,244,564,236,559,227,539,212,505,199,419,180"/>
-<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="304,225,549,251"/>
-<area shape="poly" title=" " alt="" coords="353,175,403,214,400,219,350,179"/>
-<area shape="poly" title=" " alt="" coords="508,322,631,365,629,370,506,327"/>
-<area shape="poly" title=" " alt="" coords="477,324,477,358,472,358,472,324"/>
-<area shape="poly" title=" " alt="" coords="504,322,540,341,575,370,596,400,608,431,604,433,591,403,571,374,537,346,502,326"/>
-<area shape="poly" title=" " alt="" coords="459,248,509,269,563,296,612,329,653,361,649,365,609,333,560,301,506,274,457,253"/>
-<area shape="poly" title=" " alt="" coords="414,253,365,292,362,288,411,249"/>
-<area shape="poly" title=" " alt="" coords="437,250,462,286,457,289,432,253"/>
-<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="131,299,277,324"/>
-<area shape="poly" title=" " alt="" coords="392,253,254,297,252,292,390,248"/>
-<area shape="poly" title=" " alt="" coords="207,324,213,431,208,432,202,325"/>
-<area shape="poly" title=" " alt="" coords="775,253,693,362,689,359,770,250"/>
-<area shape="poly" title=" " alt="" coords="726,249,574,271,390,301,389,301,388,296,389,296,573,265,725,244"/>
-<area shape="poly" title=" " alt="" coords="782,252,764,319,746,361,721,399,692,424,659,442,657,437,689,420,717,396,742,358,759,317,777,250"/>
-<area shape="poly" title=" " alt="" coords="726,106,629,149,627,144,724,102"/>
-<area shape="poly" title=" " alt="" coords="744,106,715,143,711,140,740,103"/>
-<area shape="poly" title=" " alt="" coords="755,104,756,138,749,178,742,193,733,203,724,213,716,226,692,297,681,359,675,358,687,296,711,224,720,210,729,200,737,190,744,177,750,138,749,105"/>
-<area shape="poly" title=" " alt="" coords="685,107,418,152,417,147,684,101"/>
-<area shape="poly" title=" " alt="" coords="764,103,780,124,793,151,796,183,792,212,787,211,791,183,788,153,775,127,759,106"/>
+<area shape="poly" title=" " alt="" coords="505,33,385,52,255,81,154,115,70,149,68,144,152,110,254,76,384,47,504,28"/>
+<area shape="rect" title=" " alt="" coords="859,152,936,177"/>
+<area shape="poly" title=" " alt="" coords="706,27,809,46,852,60,880,77,891,91,897,106,901,138,896,138,892,108,886,93,877,81,850,64,808,51,705,32"/>
+<area shape="rect" href="TrajectoryAnalyzer_8hpp.html" title="correlation::core::Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="638,79,866,104"/>
+<area shape="poly" title=" " alt="" coords="626,28,716,70,714,75,623,33"/>
+<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="181,152,403,177"/>
+<area shape="poly" title=" " alt="" coords="375,106,321,146,318,141,372,102"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="169,225,276,251"/>
+<area shape="poly" title=" " alt="" coords="309,107,225,126,192,139,171,154,166,168,171,184,183,200,197,215,194,218,178,204,166,187,161,168,167,150,189,134,224,121,308,101"/>
+<area shape="rect" title=" " alt="" coords="99,372,157,397"/>
+<area shape="poly" title=" " alt="" coords="306,107,218,126,182,139,159,154,143,177,132,203,121,260,120,314,126,358,120,359,115,315,115,259,127,201,138,174,155,150,179,134,216,121,305,101"/>
+<area shape="rect" title=" " alt="" coords="574,299,637,324"/>
+<area shape="poly" title=" " alt="" coords="401,103,467,175,584,288,581,291,463,179,397,106"/>
+<area shape="poly" title=" " alt="" coords="416,102,512,144,510,149,414,106"/>
+<area shape="poly" title=" " alt="" coords="453,101,540,121,634,150,661,162,686,175,757,200,823,219,822,224,755,205,684,180,658,167,632,154,538,126,452,107"/>
+<area shape="poly" title=" " alt="" coords="446,101,684,149,683,155,445,107"/>
+<area shape="poly" title=" " alt="" coords="323,107,75,155,70,156,69,151,74,149,322,101"/>
+<area shape="poly" title=" " alt="" coords="471,101,845,153,844,159,471,107"/>
+<area shape="poly" title=" " alt="" coords="282,180,245,217,241,214,279,176"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="301,225,481,251"/>
+<area shape="poly" title=" " alt="" coords="309,175,365,215,362,219,306,180"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="331,299,448,324"/>
+<area shape="poly" title=" " alt="" coords="250,248,351,291,349,296,248,253"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="447,372,625,397"/>
+<area shape="poly" title=" " alt="" coords="277,246,380,269,428,282,461,296,497,326,523,358,519,362,493,330,459,301,426,287,378,274,276,252"/>
+<area shape="rect" title=" " alt="" coords="288,445,344,471"/>
+<area shape="poly" title=" " alt="" coords="222,252,218,285,223,323,237,355,256,386,296,433,292,437,251,389,232,358,217,325,213,284,217,251"/>
+<area shape="poly" title=" " alt="" coords="215,252,178,300,143,361,138,358,174,297,211,249"/>
+<area shape="rect" title=" " alt="" coords="232,299,307,324"/>
+<area shape="poly" title=" " alt="" coords="233,250,256,286,252,289,228,252"/>
+<area shape="poly" title=" " alt="" coords="277,247,561,299,560,304,276,252"/>
+<area shape="poly" title=" " alt="" coords="414,322,501,364,499,368,412,326"/>
+<area shape="rect" title=" " alt="" coords="700,372,785,397"/>
+<area shape="poly" title=" " alt="" coords="447,321,687,369,686,375,446,327"/>
+<area shape="rect" title=" " alt="" coords="356,372,423,397"/>
+<area shape="poly" title=" " alt="" coords="392,324,392,358,387,358,387,324"/>
+<area shape="poly" title=" " alt="" coords="348,327,171,374,170,369,347,321"/>
+<area shape="poly" title=" " alt="" coords="501,400,358,446,357,441,500,395"/>
+<area shape="rect" title=" " alt="" coords="618,445,681,471"/>
+<area shape="poly" title=" " alt="" coords="556,395,621,436,618,440,553,400"/>
+<area shape="rect" title=" " alt="" coords="742,445,829,471"/>
+<area shape="poly" title=" " alt="" coords="577,395,732,439,731,444,575,400"/>
+<area shape="rect" title=" " alt="" coords="490,445,582,471"/>
+<area shape="poly" title=" " alt="" coords="539,398,539,432,533,432,533,398"/>
+<area shape="poly" title=" " alt="" coords="393,251,392,285,387,285,388,251"/>
+<area shape="poly" title=" " alt="" coords="428,248,468,267,488,281,506,297,524,327,534,358,529,359,519,329,502,300,485,285,466,272,426,253"/>
+<area shape="poly" title=" " alt="" coords="426,248,562,293,560,298,424,253"/>
+<area shape="poly" title=" " alt="" coords="497,180,290,225,288,220,496,175"/>
+<area shape="poly" title=" " alt="" coords="568,175,601,201,636,238,650,259,658,281,660,303,652,325,627,352,596,369,593,365,624,347,647,323,654,302,653,282,645,261,632,241,598,205,565,179"/>
+<area shape="poly" title=" " alt="" coords="556,177,598,285,593,287,551,179"/>
+<area shape="poly" title=" " alt="" coords="857,253,776,299,731,333,690,374,671,403,659,433,654,431,667,401,686,370,727,329,774,295,854,248"/>
+<area shape="poly" title=" " alt="" coords="876,252,852,300,797,434,792,432,847,298,871,250"/>
+<area shape="poly" title=" " alt="" coords="960,239,1031,246,1096,260,1120,271,1135,286,1139,304,1127,326,1105,343,1071,356,983,374,885,383,799,386,799,381,884,377,982,368,1070,351,1102,338,1123,322,1134,303,1131,289,1117,276,1094,266,1030,251,959,244"/>
+<area shape="poly" title=" " alt="" coords="837,253,651,301,649,296,835,248"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="861,299,1014,324"/>
+<area shape="poly" title=" " alt="" coords="892,249,921,286,917,290,887,253"/>
+<area shape="rect" title=" " alt="" coords="1039,299,1113,324"/>
+<area shape="poly" title=" " alt="" coords="912,248,1032,291,1030,296,911,253"/>
+<area shape="poly" title=" " alt="" coords="678,107,380,153,379,147,678,101"/>
+<area shape="poly" title=" " alt="" coords="767,102,782,117,795,136,802,157,798,178,769,219,730,252,689,278,651,296,649,291,686,273,727,248,765,216,794,176,797,157,790,138,778,121,764,106"/>
+<area shape="poly" title=" " alt="" coords="720,107,596,150,594,145,719,102"/>
+<area shape="poly" title=" " alt="" coords="753,105,747,139,742,138,747,104"/>
+<area shape="poly" title=" " alt="" coords="777,102,863,144,860,148,774,106"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="AppBackend_8hpp__dep__incl.png" border="0" usemap="#ainclude_2AppBackend_8hppdep" alt=""/></div>
-<map name="ainclude_2AppBackend_8hppdep" id="ainclude_2AppBackend_8hppdep">
-<area shape="rect" title="Application backend interface between the UI and analysis engine." alt="" coords="152,5,333,31"/>
-<area shape="rect" href="AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="16,79,205,104"/>
-<area shape="poly" title=" " alt="" coords="211,39,134,81,131,76,208,35"/>
-<area shape="rect" href="main_8cpp.html" title="Application entry point." alt="" coords="190,152,295,177"/>
-<area shape="poly" title=" " alt="" coords="245,45,245,152,240,152,240,45"/>
-<area shape="rect" href="AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="280,79,432,104"/>
-<area shape="poly" title=" " alt="" coords="274,36,339,76,336,81,271,40"/>
-<area shape="rect" href="AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,152,165,177"/>
-<area shape="poly" title=" " alt="" coords="104,118,92,153,87,151,99,116"/>
-<area shape="poly" title=" " alt="" coords="145,108,222,149,220,154,142,113"/>
+<div class="center"><img src="AppBackend_8hpp__dep__incl.png" border="0" usemap="#ainclude_2app_2AppBackend_8hppdep" alt=""/></div>
+<map name="ainclude_2app_2AppBackend_8hppdep" id="ainclude_2app_2AppBackend_8hppdep">
+<area shape="rect" title="Application backend interface between the UI and analysis engine." alt="" coords="229,5,439,31"/>
+<area shape="rect" href="AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="15,79,232,104"/>
+<area shape="poly" title=" " alt="" coords="288,37,158,81,157,76,287,32"/>
+<area shape="rect" href="main_8cpp.html" title="Application entry point." alt="" coords="217,152,323,177"/>
+<area shape="poly" title=" " alt="" coords="320,44,299,80,284,119,275,152,270,151,279,117,294,78,315,41"/>
+<area shape="rect" href="AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="308,79,488,104"/>
+<area shape="poly" title=" " alt="" coords="356,39,390,77,386,80,352,43"/>
+<area shape="rect" href="main__cli_8cpp.html" title="Headless CLI entry point for Correlation." alt="" coords="513,79,659,104"/>
+<area shape="poly" title=" " alt="" coords="389,32,546,76,544,81,387,37"/>
+<area shape="rect" href="AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,152,193,177"/>
+<area shape="poly" title=" " alt="" coords="118,118,106,153,101,151,113,116"/>
+<area shape="poly" title=" " alt="" coords="160,107,247,149,245,154,158,112"/>
 </map>
 </div>
 </div>
@@ -205,14 +201,21 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAppDefaults.html">AppDefaults</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default values and messages for the application.  <a href="structAppDefaults.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1app_1_1AppDefaults.html">correlation::app::AppDefaults</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default values and messages for the application.  <a href="structcorrelation_1_1app_1_1AppDefaults.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structProgramOptions.html">ProgramOptions</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encapsulates all configurable options for the application.  <a href="structProgramOptions.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1app_1_1ProgramOptions.html">correlation::app::ProgramOptions</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encapsulates all configurable options for the application.  <a href="structcorrelation_1_1app_1_1ProgramOptions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAppBackend.html">AppBackend</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main backend class for the application.  <a href="classAppBackend.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html">correlation::app::AppBackend</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main backend class for the application.  <a href="classcorrelation_1_1app_1_1AppBackend.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1app" id="r_namespacecorrelation_1_1app"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1app.html">correlation::app</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

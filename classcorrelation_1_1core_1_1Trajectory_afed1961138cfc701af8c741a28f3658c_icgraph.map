@@ -1,0 +1,9 @@
+<map id="correlation::core::Trajectory::precomputeBondCutoffs" name="correlation::core::Trajectory::precomputeBondCutoffs">
+<area shape="rect" id="Node000001" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,30,696,85"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="263,5,421,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="478,45,421,38,422,33,479,40"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,69,444,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="479,75,445,79,444,74,478,69"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Trajectory.html#a95a497894c98f001d421d4cbb1d0cd18" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,69,192,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="227,92,192,92,192,87,227,87"/>
+</map>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -134,10 +134,13 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a3c9b294f66fe686e43adade0badec4ff" id="r_a3c9b294f66fe686e43adade0badec4ff"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SIMDConfig_8hpp.html#a3c9b294f66fe686e43adade0badec4ff">CORRELATION_SIMD_WIDTH</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:a3c9b294f66fe686e43adade0badec4ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of 64-bit float elements per SIMD register.  <br /></td></tr>
 <tr class="separator:a3c9b294f66fe686e43adade0badec4ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4deeb02252b9bb66b12ca88abccb8051" id="r_a4deeb02252b9bb66b12ca88abccb8051"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SIMDConfig_8hpp.html#a4deeb02252b9bb66b12ca88abccb8051">CORRELATION_RESTRICT</a></td></tr>
+<tr class="memdesc:a4deeb02252b9bb66b12ca88abccb8051"><td class="mdescLeft">&#160;</td><td class="mdescRight">Portable restrict keyword macro for aliasing optimizations.  <br /></td></tr>
 <tr class="separator:a4deeb02252b9bb66b12ca88abccb8051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a481ee64e919f0dc40d637a5a5c5410e9" id="r_a481ee64e919f0dc40d637a5a5c5410e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="SIMDConfig_8hpp.html#a481ee64e919f0dc40d637a5a5c5410e9">CORRELATION_ALIGN</a>(n)&#160;&#160;&#160;__attribute__((aligned(n)))</td></tr>
+<tr class="memdesc:a481ee64e919f0dc40d637a5a5c5410e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Portable alignment macro for stack and heap variables.  <br /></td></tr>
 <tr class="separator:a481ee64e919f0dc40d637a5a5c5410e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -161,6 +164,8 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Portable alignment macro for stack and heap variables. </p>
+
 </div>
 </div>
 <a id="a4deeb02252b9bb66b12ca88abccb8051" name="a4deeb02252b9bb66b12ca88abccb8051"></a>
@@ -175,6 +180,8 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Portable restrict keyword macro for aliasing optimizations. </p>
+
 </div>
 </div>
 <a id="a3c9b294f66fe686e43adade0badec4ff" name="a3c9b294f66fe686e43adade0badec4ff"></a>
@@ -188,6 +195,8 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Number of 64-bit float elements per SIMD register. </p>
 
 </div>
 </div>

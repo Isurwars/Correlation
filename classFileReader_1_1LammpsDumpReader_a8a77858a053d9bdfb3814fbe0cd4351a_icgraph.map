@@ -1,7 +1,0 @@
-<map id="FileReader::LammpsDumpReader::read" name="FileReader::LammpsDumpReader::read">
-<area shape="rect" id="Node000001" title="Reads all frames from a LAMMPS dump file." alt="" coords="293,37,533,77"/>
-<area shape="rect" id="Node000002" href="$classFileReader_1_1LammpsDumpReader.html#af072a8382e13ee0df9d48a55a4ee4408" title="Reads an atomic structure from a file." alt="" coords="5,5,245,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,45,245,41,246,36,280,40"/>
-<area shape="rect" id="Node000003" href="$classFileReader_1_1LammpsDumpReader.html#a4a4f1f52414f7826b655e719bc49c0b2" title="Reads a trajectory from a file." alt="" coords="5,69,245,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,75,246,79,245,73,279,70"/>
-</map>

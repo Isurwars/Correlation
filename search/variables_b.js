@@ -1,9 +1,20 @@
 var searchData=
 [
-  ['name_5fmap_5f_0',['name_map_',['../classWriter_1_1WriterFactory.html#adf0543b826bd4a783f13741f13a6db6c',1,'Writer::WriterFactory']]],
-  ['neighbor_5fcutoff_5f_1',['neighbor_cutoff_',['../classTrajectoryAnalyzer.html#a6d543e1268705365b7b513f43e721953',1,'TrajectoryAnalyzer']]],
-  ['neighbor_5fgraph_5f_2',['neighbor_graph_',['../classStructureAnalyzer.html#a8ae4cb4feb2b9d54e2742161eded1d74',1,'StructureAnalyzer']]],
-  ['neighbor_5flist_5flocal_3',['neighbor_list_local',['../structcalculators_1_1ThreadLocalDistances.html#aa36b3054b42d6739ae95831c41dd11f6',1,'calculators::ThreadLocalDistances']]],
-  ['neighbors_5fowned_5f_4',['neighbors_owned_',['../classDistributionFunctions.html#aaf2c6e922eba2e14ddee06014ceb0bd3',1,'DistributionFunctions']]],
-  ['neighbors_5fref_5f_5',['neighbors_ref_',['../classDistributionFunctions.html#af1925719a2cfd8df8e01073b4394ba53',1,'DistributionFunctions']]]
+  ['mass_0',['mass',['../structcorrelation_1_1physics_1_1detail_1_1ElementData.html#ab66453945a7d713fa57ac3ca7a78c76f',1,'correlation::physics::detail::ElementData']]],
+  ['max_1',['max',['../structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html#a8cfe238d357a3b53dd13500273b3416f',1,'correlation::plotters::detail::NiceScale']]],
+  ['max_5fframe_2',['max_frame',['../structcorrelation_1_1app_1_1ProgramOptions.html#ade46277dba42233127eb5e2cb15dcda0',1,'correlation::app::ProgramOptions']]],
+  ['max_5fring_5fsize_3',['max_ring_size',['../structcorrelation_1_1analysis_1_1AnalysisSettings.html#ae9b328ad5bccbb72fb40d484b4990e4f',1,'correlation::analysis::AnalysisSettings::max_ring_size'],['../structcorrelation_1_1app_1_1ProgramOptions.html#a3aff3b5165073dc6103e66ad1dd208a3',1,'correlation::app::ProgramOptions::max_ring_size']]],
+  ['min_4',['min',['../structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html#aa32592e07e7b70408958dea4b2dc72a8',1,'correlation::plotters::detail::NiceScale']]],
+  ['min_5fframe_5',['min_frame',['../structcorrelation_1_1app_1_1ProgramOptions.html#a05cb8a429e57a8a5c36c3613d47bdfcf',1,'correlation::app::ProgramOptions']]],
+  ['msg_5fanalysis_5faborted_6',['MSG_ANALYSIS_ABORTED',['../structcorrelation_1_1app_1_1AppDefaults.html#ae10fa27224ed05d0e2dadfce5bb5c8d5',1,'correlation::app::AppDefaults']]],
+  ['msg_5fanalysis_5fended_7',['MSG_ANALYSIS_ENDED',['../structcorrelation_1_1app_1_1AppDefaults.html#a9f0cb3586928df3201cae8712fba7656',1,'correlation::app::AppDefaults']]],
+  ['msg_5ferror_5fanalysis_8',['MSG_ERROR_ANALYSIS',['../structcorrelation_1_1app_1_1AppDefaults.html#a8042377a1f16cb3fdfad9851efd824c8',1,'correlation::app::AppDefaults']]],
+  ['msg_5ferror_5floading_9',['MSG_ERROR_LOADING',['../structcorrelation_1_1app_1_1AppDefaults.html#ad21b04736e385cbcd6dede183a99fb4f',1,'correlation::app::AppDefaults']]],
+  ['msg_5ferror_5fwriting_10',['MSG_ERROR_WRITING',['../structcorrelation_1_1app_1_1AppDefaults.html#ace5982037a8162a50228f6e289621d7b',1,'correlation::app::AppDefaults']]],
+  ['msg_5ffile_5fselection_5fcancelled_11',['MSG_FILE_SELECTION_CANCELLED',['../structcorrelation_1_1app_1_1AppDefaults.html#a911d0f1178ba2af9929ef33edf99e997',1,'correlation::app::AppDefaults']]],
+  ['msg_5ffiles_5fwritten_12',['MSG_FILES_WRITTEN',['../structcorrelation_1_1app_1_1AppDefaults.html#ad1755438f2ecc8c2a67a6ea83baac3d7',1,'correlation::app::AppDefaults']]],
+  ['msg_5fno_5fdata_5fto_5fwrite_13',['MSG_NO_DATA_TO_WRITE',['../structcorrelation_1_1app_1_1AppDefaults.html#a73e2c088d36a81100ae1123d2d81ea49',1,'correlation::app::AppDefaults']]],
+  ['msg_5frunning_5fanalysis_14',['MSG_RUNNING_ANALYSIS',['../structcorrelation_1_1app_1_1AppDefaults.html#a6e725445cc9820edd508e95a33a6fbf9',1,'correlation::app::AppDefaults']]],
+  ['msg_5fsave_5fcancelled_15',['MSG_SAVE_CANCELLED',['../structcorrelation_1_1app_1_1AppDefaults.html#a1b41be0a406c067bea2edbf495012e69',1,'correlation::app::AppDefaults']]],
+  ['msg_5fselecting_5foutput_16',['MSG_SELECTING_OUTPUT',['../structcorrelation_1_1app_1_1AppDefaults.html#afcf52fad4699e99ca1e5d1230c5d8e05',1,'correlation::app::AppDefaults']]]
 ];

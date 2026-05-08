@@ -1,0 +1,9 @@
+<map id="correlation::calculators::PADCalculator::calculate" name="correlation::calculators::PADCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="5,85,195,125"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a7ebe8b970ea072d3b55281de5a999ebf" title="Gets a multi&#45;dimensional tensor containing bond angles." alt="" coords="243,5,397,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,82,229,60,230,65,163,87"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="252,85,388,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="195,102,238,102,238,107,195,107"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="249,149,391,189"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="170,122,239,142,237,147,169,127"/>
+</map>

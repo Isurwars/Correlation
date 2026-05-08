@@ -1,0 +1,13 @@
+<map id="correlation::app::AppController::handleOptionsfromUI" name="correlation::app::AppController::handleOptionsfromUI">
+<area shape="rect" id="Node000001" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="5,101,227,141"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a50b026bfdba39bad613b60cbba9ebd47" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="275,37,496,77"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,99,287,78,288,83,202,104"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#ac9502096e39cd33de4ad5c38c2a75a32" title="Gets the total number of frames in the trajectory." alt="" coords="279,101,491,141"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="227,119,266,119,266,124,227,124"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1app.html#ab1b1f18acde26d9de32292d33558ae01" title="Safely converts a Slint SharedString to a float with a default fallback." alt="" coords="289,166,481,191"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="211,139,312,160,311,166,210,144"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="544,5,756,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="496,41,530,37,531,42,497,47"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="582,69,718,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="497,68,568,77,568,82,496,73"/>
+</map>

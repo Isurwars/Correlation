@@ -1,0 +1,39 @@
+<map id="correlation::readers::ArcReader::read" name="correlation::readers::ArcReader::read">
+<area shape="rect" id="Node000001" title="Low&#45;level parser for the specific file format." alt="" coords="5,104,155,144"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="231,7,367,47"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,101,202,58,223,49,225,54,204,62,117,106"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="231,72,367,112"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="154,111,218,101,218,106,155,116"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="231,136,367,176"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="155,132,218,142,218,147,154,137"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="203,203,396,243"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="117,142,204,186,227,195,225,200,202,190,115,146"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="444,5,643,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="368,24,430,23,430,29,368,29"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="732,5,868,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="643,23,718,23,718,28,643,28"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="471,144,615,184"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="382,200,457,182,459,187,384,205"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="475,208,611,248"/>
+<area shape="poly" id="edge20_Node000007_Node000015" title=" " alt="" coords="396,222,462,224,462,229,396,227"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="472,272,615,312"/>
+<area shape="poly" id="edge21_Node000007_Node000016" title=" " alt="" coords="371,240,460,266,459,271,370,245"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="974,104,1117,144"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="584,141,634,121,690,105,761,97,833,96,901,100,961,107,960,112,901,105,833,101,761,102,691,111,636,126,586,146"/>
+<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="729,144,871,184"/>
+<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="615,161,715,161,715,167,615,167"/>
+<area shape="rect" id="Node000011" href="$namespacecorrelation_1_1math.html#a6ba992b818462710f63a3122c3e98669" title="Computes the transpose of a 3x3 matrix." alt="" coords="729,232,871,272"/>
+<area shape="poly" id="edge13_Node000008_Node000011" title=" " alt="" coords="608,182,644,193,732,225,730,230,642,199,606,187"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="691,297,909,351"/>
+<area shape="poly" id="edge15_Node000008_Node000012" title=" " alt="" coords="617,178,644,194,662,216,669,239,676,261,693,282,699,287,695,291,689,286,671,263,664,241,658,219,641,198,614,182"/>
+<area shape="poly" id="edge9_Node000009_Node000009" title=" " alt="" coords="1000,104,997,94,1004,85,1021,79,1045,77,1074,80,1089,87,1087,92,1072,85,1045,83,1022,85,1007,89,1002,95,1005,103"/>
+<area shape="poly" id="edge11_Node000010_Node000009" title=" " alt="" coords="871,150,960,135,961,140,872,155"/>
+<area shape="poly" id="edge12_Node000010_Node000010" title=" " alt="" coords="754,144,752,134,759,125,775,119,800,117,829,120,844,127,842,132,827,125,800,123,776,125,762,129,757,135,759,143"/>
+<area shape="poly" id="edge14_Node000011_Node000011" title=" " alt="" coords="754,232,752,222,759,213,775,207,800,205,829,208,844,215,842,220,827,213,800,211,776,213,762,217,757,223,759,231"/>
+<area shape="rect" id="Node000013" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="964,274,1127,299"/>
+<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="909,305,950,298,951,304,910,310"/>
+<area shape="rect" id="Node000014" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="957,347,1133,373"/>
+<area shape="poly" id="edge18_Node000012_Node000014" title=" " alt="" coords="910,337,945,343,945,348,909,343"/>
+<area shape="poly" id="edge17_Node000013_Node000013" title=" " alt="" coords="1006,276,997,266,1001,256,1018,250,1045,247,1080,251,1090,256,1094,262,1089,265,1086,260,1079,256,1045,253,1019,255,1005,260,1002,265,1009,272"/>
+<area shape="poly" id="edge19_Node000014_Node000014" title=" " alt="" coords="1006,349,997,339,1001,329,1018,323,1045,321,1080,325,1090,329,1094,335,1089,338,1086,333,1079,330,1045,326,1019,328,1005,333,1002,338,1009,345"/>
+</map>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -90,80 +90,77 @@ $(function() {
 
 <p>Abstract base class for all file format writers.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;string&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="DistributionFunctions_8hpp_source.html">analysis/DistributionFunctions.hpp</a>&quot;</code><br />
+<code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &quot;<a class="el" href="DistributionFunctions_8hpp_source.html">DistributionFunctions.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for BaseWriter.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="BaseWriter_8hpp__incl.png" border="0" usemap="#ainclude_2writers_2BaseWriter_8hpp" alt=""/></div>
 <map name="ainclude_2writers_2BaseWriter_8hpp" id="ainclude_2writers_2BaseWriter_8hpp">
-<area shape="rect" title="Abstract base class for all file format writers." alt="" coords="489,5,711,31"/>
-<area shape="rect" title=" " alt="" coords="77,445,136,471"/>
-<area shape="poly" title=" " alt="" coords="489,26,341,38,261,49,183,63,114,81,58,104,37,117,21,131,11,147,8,164,8,312,15,350,34,383,58,412,82,435,78,438,54,416,29,386,10,351,3,313,3,163,6,145,17,128,34,113,56,99,112,76,182,58,260,44,341,33,489,21"/>
-<area shape="rect" title=" " alt="" coords="555,372,618,397"/>
-<area shape="poly" title=" " alt="" coords="603,31,603,163,603,239,599,304,593,359,588,358,594,304,597,239,597,163,597,31"/>
-<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="638,79,826,104"/>
-<area shape="poly" title=" " alt="" coords="622,28,700,70,697,74,620,33"/>
-<area shape="poly" title=" " alt="" coords="638,96,469,103,372,112,278,125,192,143,122,168,95,182,75,199,63,217,59,237,59,313,62,346,71,378,95,432,91,434,66,380,57,347,53,313,53,236,58,215,71,195,92,178,120,163,190,138,277,120,372,107,468,98,638,91"/>
-<area shape="poly" title=" " alt="" coords="729,105,621,325,602,361,597,358,616,323,724,103"/>
-<area shape="rect" title=" " alt="" coords="739,152,826,177"/>
-<area shape="poly" title=" " alt="" coords="743,103,769,139,764,142,738,106"/>
-<area shape="rect" title=" " alt="" coords="851,152,901,177"/>
-<area shape="poly" title=" " alt="" coords="756,102,841,143,839,148,754,106"/>
-<area shape="rect" title=" " alt="" coords="925,152,1003,177"/>
-<area shape="poly" title=" " alt="" coords="770,101,914,145,913,151,768,107"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="264,299,339,324"/>
-<area shape="poly" title=" " alt="" coords="638,97,571,102,495,112,416,129,341,154,283,181,263,198,245,226,242,243,248,259,260,275,275,288,271,292,256,278,243,262,237,243,240,224,259,195,280,176,339,150,415,124,494,107,570,96,638,91"/>
-<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="689,299,847,324"/>
-<area shape="poly" title=" " alt="" coords="734,104,731,152,731,177,744,236,761,285,756,287,739,237,725,178,725,152,728,104"/>
-<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="352,152,517,177"/>
-<area shape="poly" title=" " alt="" coords="685,107,497,151,495,146,684,101"/>
-<area shape="poly" title=" " alt="" coords="275,327,234,347,191,374,155,405,126,437,123,433,152,402,188,370,232,342,273,322"/>
-<area shape="poly" title=" " alt="" coords="340,319,543,370,542,375,339,325"/>
-<area shape="rect" title=" " alt="" coords="245,519,301,544"/>
-<area shape="poly" title=" " alt="" coords="296,326,284,347,275,373,269,408,268,444,272,505,267,505,263,444,264,407,269,371,279,345,291,323"/>
-<area shape="rect" title=" " alt="" coords="296,372,371,397"/>
-<area shape="poly" title=" " alt="" coords="309,323,325,359,320,361,304,325"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="395,372,480,397"/>
-<area shape="poly" title=" " alt="" coords="324,322,404,363,402,368,322,326"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="324,445,503,471"/>
-<area shape="poly" title=" " alt="" coords="297,325,282,359,281,378,286,396,312,421,344,438,342,443,309,426,282,399,275,379,277,358,292,323"/>
-<area shape="poly" title=" " alt="" coords="395,398,150,450,149,445,394,393"/>
-<area shape="rect" title=" " alt="" coords="668,445,753,471"/>
-<area shape="poly" title=" " alt="" coords="481,394,655,440,654,445,479,400"/>
-<area shape="rect" title=" " alt="" coords="527,445,593,471"/>
-<area shape="poly" title=" " alt="" coords="458,395,530,436,527,441,456,400"/>
-<area shape="poly" title=" " alt="" coords="436,399,424,433,419,431,431,397"/>
-<area shape="poly" title=" " alt="" coords="392,473,309,515,307,510,390,468"/>
-<area shape="rect" title=" " alt="" coords="541,519,603,544"/>
-<area shape="poly" title=" " alt="" coords="440,468,535,511,533,515,438,473"/>
-<area shape="rect" title=" " alt="" coords="687,519,774,544"/>
-<area shape="poly" title=" " alt="" coords="465,468,674,515,673,520,464,473"/>
-<area shape="rect" title=" " alt="" coords="367,519,459,544"/>
-<area shape="poly" title=" " alt="" coords="416,471,416,505,411,505,411,471"/>
-<area shape="poly" title=" " alt="" coords="740,327,630,369,628,364,738,322"/>
-<area shape="poly" title=" " alt="" coords="766,325,723,433,718,431,761,323"/>
-<area shape="poly" title=" " alt="" coords="759,326,594,510,590,506,755,323"/>
-<area shape="poly" title=" " alt="" coords="772,324,777,387,775,429,768,471,750,509,745,506,763,470,770,429,772,387,767,324"/>
-<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="829,372,982,397"/>
-<area shape="poly" title=" " alt="" coords="791,322,872,363,870,368,789,326"/>
-<area shape="rect" title=" " alt="" coords="1007,372,1081,397"/>
-<area shape="poly" title=" " alt="" coords="813,321,994,368,993,373,812,327"/>
-<area shape="poly" title=" " alt="" coords="352,175,325,182,299,192,276,207,257,227,252,242,256,257,266,273,279,287,275,291,261,276,251,259,247,241,252,224,272,203,297,188,324,177,351,170"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="363,299,511,324"/>
-<area shape="poly" title=" " alt="" coords="467,175,499,194,515,208,526,224,530,246,520,265,501,281,479,295,477,290,498,277,515,262,525,245,522,226,511,211,496,198,464,180"/>
-<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="267,225,512,251"/>
-<area shape="poly" title=" " alt="" coords="429,179,406,215,402,212,425,176"/>
-<area shape="poly" title=" " alt="" coords="462,322,551,364,549,368,460,326"/>
-<area shape="poly" title=" " alt="" coords="440,324,440,358,435,358,435,324"/>
-<area shape="poly" title=" " alt="" coords="456,322,473,337,488,355,497,376,494,398,476,423,452,441,449,436,472,419,490,396,492,377,484,358,469,340,452,326"/>
-<area shape="poly" title=" " alt="" coords="430,248,478,267,526,297,555,327,576,358,572,361,551,330,522,301,475,272,428,253"/>
-<area shape="poly" title=" " alt="" coords="377,253,328,292,325,288,374,249"/>
-<area shape="poly" title=" " alt="" coords="399,250,424,286,420,289,395,253"/>
-<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="93,299,240,324"/>
-<area shape="poly" title=" " alt="" coords="354,253,216,297,215,292,353,248"/>
-<area shape="poly" title=" " alt="" coords="163,325,141,373,118,433,113,431,136,371,158,323"/>
+<area shape="rect" title="Abstract base class for all file format writers." alt="" coords="731,5,952,31"/>
+<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="718,79,965,104"/>
+<area shape="poly" title=" " alt="" coords="844,31,844,65,839,65,839,31"/>
+<area shape="rect" title=" " alt="" coords="1008,372,1067,397"/>
+<area shape="poly" title=" " alt="" coords="914,28,1011,48,1115,77,1161,95,1199,115,1224,138,1231,150,1234,163,1234,240,1229,267,1218,291,1200,312,1178,329,1129,357,1081,375,1079,370,1126,352,1175,325,1196,308,1213,288,1224,265,1228,239,1228,164,1226,152,1220,141,1196,119,1159,100,1113,82,1010,53,913,33"/>
+<area shape="rect" title=" " alt="" coords="405,299,468,324"/>
+<area shape="poly" title=" " alt="" coords="763,33,661,52,547,78,494,95,447,113,410,132,387,154,381,166,379,187,381,215,391,250,402,270,416,287,411,290,397,272,386,252,376,216,373,187,376,165,382,150,407,128,445,108,492,89,546,73,660,47,762,28"/>
+<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="582,152,805,177"/>
+<area shape="poly" title=" " alt="" coords="819,106,731,148,729,144,817,102"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="748,225,855,251"/>
+<area shape="poly" title=" " alt="" coords="841,105,811,213,806,211,836,104"/>
+<area shape="poly" title=" " alt="" coords="966,98,1024,105,1081,115,1127,130,1145,139,1157,150,1172,178,1174,208,1166,238,1151,268,1108,323,1065,364,1061,361,1104,319,1146,265,1161,236,1169,207,1167,180,1153,154,1142,144,1125,135,1079,121,1024,110,965,103"/>
+<area shape="poly" title=" " alt="" coords="718,95,626,98,532,108,453,126,424,139,404,154,395,168,390,185,393,221,406,256,423,286,418,288,402,258,388,222,385,184,390,166,400,150,421,134,451,121,531,103,625,93,718,89"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="414,152,558,177"/>
+<area shape="poly" title=" " alt="" coords="785,107,557,152,556,147,784,101"/>
+<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="78,225,237,251"/>
+<area shape="poly" title=" " alt="" coords="718,101,546,118,451,134,358,155,267,187,192,221,190,217,265,182,357,149,450,128,545,113,718,96"/>
+<area shape="rect" title=" " alt="" coords="880,152,966,177"/>
+<area shape="poly" title=" " alt="" coords="857,102,901,141,898,145,853,106"/>
+<area shape="rect" title=" " alt="" coords="991,152,1042,177"/>
+<area shape="poly" title=" " alt="" coords="871,102,979,145,977,150,869,106"/>
+<area shape="rect" title=" " alt="" coords="1066,152,1143,177"/>
+<area shape="poly" title=" " alt="" coords="885,101,1053,147,1052,152,883,107"/>
+<area shape="poly" title=" " alt="" coords="713,175,774,215,771,220,710,180"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="544,225,724,251"/>
+<area shape="poly" title=" " alt="" coords="686,179,654,217,650,213,682,176"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="594,299,711,324"/>
+<area shape="poly" title=" " alt="" coords="779,253,690,295,688,290,777,248"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="442,372,620,397"/>
+<area shape="poly" title=" " alt="" coords="796,253,767,289,747,309,724,326,668,354,610,371,609,366,666,349,722,322,744,305,763,285,792,249"/>
+<area shape="rect" title=" " alt="" coords="748,445,804,471"/>
+<area shape="poly" title=" " alt="" coords="825,249,853,269,875,298,878,311,875,325,860,358,841,389,801,437,797,433,837,386,856,355,870,323,873,311,870,300,849,272,822,253"/>
+<area shape="poly" title=" " alt="" coords="827,248,918,296,1014,362,1011,366,915,301,825,253"/>
+<area shape="rect" title=" " alt="" coords="786,299,860,324"/>
+<area shape="poly" title=" " alt="" coords="808,250,818,285,813,286,803,252"/>
+<area shape="poly" title=" " alt="" coords="749,252,482,304,481,299,748,247"/>
+<area shape="poly" title=" " alt="" coords="634,326,564,367,561,363,632,322"/>
+<area shape="rect" title=" " alt="" coords="267,372,352,397"/>
+<area shape="poly" title=" " alt="" coords="598,327,367,374,366,369,597,321"/>
+<area shape="rect" title=" " alt="" coords="644,372,711,397"/>
+<area shape="poly" title=" " alt="" coords="659,323,672,358,667,360,654,325"/>
+<area shape="poly" title=" " alt="" coords="712,321,996,373,995,378,711,326"/>
+<area shape="poly" title=" " alt="" coords="571,395,736,442,734,447,570,400"/>
+<area shape="rect" title=" " alt="" coords="60,445,122,471"/>
+<area shape="poly" title=" " alt="" coords="461,400,136,452,135,447,460,395"/>
+<area shape="rect" title=" " alt="" coords="298,445,385,471"/>
+<area shape="poly" title=" " alt="" coords="502,400,386,443,385,438,500,395"/>
+<area shape="rect" title=" " alt="" coords="485,445,577,471"/>
+<area shape="poly" title=" " alt="" coords="534,398,534,432,528,432,528,398"/>
+<area shape="poly" title=" " alt="" coords="639,250,649,285,643,286,634,252"/>
+<area shape="poly" title=" " alt="" coords="624,253,584,300,546,362,541,359,580,297,620,249"/>
+<area shape="poly" title=" " alt="" coords="603,253,482,297,480,292,601,248"/>
+<area shape="poly" title=" " alt="" coords="537,175,738,220,737,225,536,180"/>
+<area shape="poly" title=" " alt="" coords="491,177,528,358,523,359,486,178"/>
+<area shape="poly" title=" " alt="" coords="484,179,447,287,442,285,479,177"/>
+<area shape="poly" title=" " alt="" coords="90,253,49,271,32,284,17,300,10,317,8,335,12,353,20,371,43,406,69,434,65,437,39,409,15,374,7,355,3,335,5,316,13,297,28,280,47,266,88,248"/>
+<area shape="poly" title=" " alt="" coords="163,250,174,284,192,323,221,362,257,395,312,436,309,440,253,399,217,366,187,325,169,286,158,252"/>
+<area shape="poly" title=" " alt="" coords="166,249,186,284,217,322,245,345,275,363,272,368,242,349,213,326,182,287,161,252"/>
+<area shape="poly" title=" " alt="" coords="204,248,392,296,391,301,203,253"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="228,299,381,324"/>
+<area shape="poly" title=" " alt="" coords="182,248,269,290,267,295,180,253"/>
+<area shape="rect" title=" " alt="" coords="27,299,102,324"/>
+<area shape="poly" title=" " alt="" coords="144,253,92,292,89,288,141,249"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -171,28 +168,32 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="BaseWriter_8hpp__dep__incl.png" border="0" usemap="#ainclude_2writers_2BaseWriter_8hppdep" alt=""/></div>
 <map name="ainclude_2writers_2BaseWriter_8hppdep" id="ainclude_2writers_2BaseWriter_8hppdep">
-<area shape="rect" title="Abstract base class for all file format writers." alt="" coords="377,5,599,31"/>
-<area shape="rect" href="ArrowWriter_8hpp.html" title="Writer for Apache Arrow/Parquet columnar output format." alt="" coords="5,79,232,104"/>
-<area shape="poly" title=" " alt="" coords="416,36,179,81,178,76,415,31"/>
-<area shape="rect" href="CSVWriter_8hpp.html" title="Writer for CSV tabular output format." alt="" coords="257,79,471,104"/>
-<area shape="poly" title=" " alt="" coords="458,40,386,81,383,76,455,35"/>
-<area shape="rect" href="HDF5Writer_8hpp.html" title="Writer for HDF5 hierarchical data format." alt="" coords="798,79,1023,104"/>
-<area shape="poly" title=" " alt="" coords="570,30,843,76,842,81,569,36"/>
-<area shape="rect" href="WriterFactory_8hpp.html" title="Factory for instantiating file writer objects by format." alt="" coords="496,79,731,104"/>
-<area shape="poly" title=" " alt="" coords="521,35,594,76,592,81,519,40"/>
-<area shape="rect" href="ArrowWriter_8cpp.html" title="Implementation of the Apache Arrow/Parquet writer." alt="" coords="33,152,231,177"/>
-<area shape="poly" title=" " alt="" coords="126,117,132,151,127,152,121,118"/>
-<area shape="rect" href="CSVWriter_8cpp.html" title="Implementation of the CSV writer." alt="" coords="263,152,449,177"/>
-<area shape="poly" title=" " alt="" coords="364,118,360,152,355,152,359,117"/>
-<area shape="rect" href="HDF5Writer_8cpp.html" title="Implementation of the HDF5 writer." alt="" coords="863,152,1059,177"/>
-<area shape="poly" title=" " alt="" coords="929,114,955,150,951,153,925,117"/>
-<area shape="poly" title=" " alt="" coords="523,109,210,155,209,149,522,103"/>
-<area shape="poly" title=" " alt="" coords="560,110,398,154,397,149,558,105"/>
-<area shape="poly" title=" " alt="" coords="683,104,906,149,904,155,682,109"/>
-<area shape="rect" href="FileWriter_8cpp.html" title="Implementation of the unified file writer." alt="" coords="705,152,839,177"/>
-<area shape="poly" title=" " alt="" coords="652,107,747,149,745,154,650,112"/>
-<area shape="rect" href="WriterFactory_8cpp.html" title="Implementation of the writer factory." alt="" coords="474,152,681,177"/>
-<area shape="poly" title=" " alt="" coords="604,117,586,153,581,151,599,115"/>
+<area shape="rect" title="Abstract base class for all file format writers." alt="" coords="334,5,555,31"/>
+<area shape="rect" href="ArrowWriter_8hpp.html" title="Writer for Apache Arrow/Parquet columnar output format." alt="" coords="14,79,241,104"/>
+<area shape="poly" title=" " alt="" coords="381,36,179,81,178,76,380,31"/>
+<area shape="rect" href="CSVWriter_8hpp.html" title="Writer for CSV tabular output format." alt="" coords="337,79,552,104"/>
+<area shape="poly" title=" " alt="" coords="447,44,447,79,442,79,442,44"/>
+<area shape="rect" href="writer__bindings_8cpp.html" title="Pybind11 bindings for correlation::writers types." alt="" coords="228,152,371,192"/>
+<area shape="poly" title=" " alt="" coords="390,38,356,55,327,80,316,97,309,116,303,152,297,151,304,115,311,95,323,77,353,51,387,33"/>
+<area shape="rect" href="HDF5Writer_8hpp.html" title="Writer for HDF5 hierarchical data format." alt="" coords="932,79,1157,104"/>
+<area shape="poly" title=" " alt="" coords="555,30,948,76,948,81,554,35"/>
+<area shape="rect" href="WriterFactory_8hpp.html" title="Factory for instantiating file writer objects by format." alt="" coords="577,79,811,104"/>
+<area shape="poly" title=" " alt="" coords="499,32,654,76,653,81,497,37"/>
+<area shape="rect" href="ArrowWriter_8cpp.html" title="Implementation of the Apache Arrow/Parquet writer." alt="" coords="5,159,204,185"/>
+<area shape="poly" title=" " alt="" coords="123,118,111,160,105,158,118,117"/>
+<area shape="poly" title=" " alt="" coords="413,113,336,154,333,149,410,108"/>
+<area shape="rect" href="CSVWriter_8cpp.html" title="Implementation of the CSV writer." alt="" coords="395,159,582,185"/>
+<area shape="poly" title=" " alt="" coords="460,115,484,158,480,160,456,117"/>
+<area shape="rect" href="HDF5Writer_8cpp.html" title="Implementation of the HDF5 writer." alt="" coords="1044,159,1240,185"/>
+<area shape="poly" title=" " alt="" coords="1071,111,1129,157,1126,161,1068,115"/>
+<area shape="poly" title=" " alt="" coords="579,108,216,155,169,162,169,157,215,149,578,103"/>
+<area shape="poly" title=" " alt="" coords="619,109,384,155,371,157,370,152,383,149,618,104"/>
+<area shape="poly" title=" " alt="" coords="652,111,520,162,518,157,651,106"/>
+<area shape="poly" title=" " alt="" coords="773,104,1077,157,1076,162,772,109"/>
+<area shape="rect" href="FileWriter_8cpp.html" title="Implementation of the unified file writer." alt="" coords="607,159,789,185"/>
+<area shape="poly" title=" " alt="" coords="698,118,700,159,695,159,693,118"/>
+<area shape="rect" href="WriterFactory_8cpp.html" title="Implementation of the writer factory." alt="" coords="813,159,1020,185"/>
+<area shape="poly" title=" " alt="" coords="740,106,885,157,883,162,738,111"/>
 </map>
 </div>
 </div>
@@ -200,13 +201,15 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWriter_1_1BaseWriter.html">Writer::BaseWriter</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all file writers.  <a href="classWriter_1_1BaseWriter.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html">correlation::writers::BaseWriter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all file writers.  <a href="classcorrelation_1_1writers_1_1BaseWriter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceWriter" id="r_namespaceWriter"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWriter.html">Writer</a></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1writers" id="r_namespacecorrelation_1_1writers"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1writers.html">correlation::writers</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

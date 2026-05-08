@@ -1,9 +1,0 @@
-<map id="Writer::CSVWriter::write" name="Writer::CSVWriter::write">
-<area shape="rect" id="Node000001" title="Writes the distribution function data to file(s)." alt="" coords="5,37,149,77"/>
-<area shape="rect" id="Node000002" href="$classWriter_1_1CSVWriter.html#af5569f7f58ec6badc82154092db56599" title="Writes all available histograms to appropriately named CSV files." alt="" coords="197,37,341,77"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="150,55,184,55,184,60,150,60"/>
-<area shape="rect" id="Node000003" href="$classDistributionFunctions.html#a162958be44132c0323655f4d9e4a981a" title="Access a specific calculated histogram by name." alt="" coords="391,5,551,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="341,43,377,38,378,43,342,49"/>
-<area shape="rect" id="Node000004" href="$classWriter_1_1CSVWriter.html#a047489150600de4402a612b331116758" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="389,69,552,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="342,66,376,72,375,77,341,71"/>
-</map>

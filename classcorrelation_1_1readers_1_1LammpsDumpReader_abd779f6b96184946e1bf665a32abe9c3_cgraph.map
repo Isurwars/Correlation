@@ -1,0 +1,15 @@
+<map id="correlation::readers::LammpsDumpReader::readStructure" name="correlation::readers::LammpsDumpReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,69,272,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="320,69,528,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="272,87,306,87,306,92,272,92"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="580,5,716,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="494,67,566,46,568,51,495,72"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="580,69,716,109"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="528,87,566,87,566,92,528,92"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="576,133,720,173"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="495,107,565,127,564,132,494,112"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="768,5,967,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="716,23,754,23,754,28,716,28"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1015,5,1151,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="967,23,1001,23,1001,28,967,28"/>
+</map>

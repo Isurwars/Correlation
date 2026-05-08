@@ -1,0 +1,5 @@
+<map id="correlation::app::AppController::handleSelectPlot" name="correlation::app::AppController::handleSelectPlot">
+<area shape="rect" id="Node000001" title="Handles the &quot;Select Plot&quot; signal from the UI. Generates an SVG image for the requested histogram and ..." alt="" coords="5,5,227,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1plotters.html#ada78283f13bbdc0035907beb475df118" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="275,5,455,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,23,261,23,261,28,227,28"/>
+</map>

@@ -1,5 +1,5 @@
 <map id="correlation::math::Matrix3&lt; T &gt;" name="correlation::math::Matrix3&lt; T &gt;">
-<area shape="rect" id="Node000001" title="A lightweight, constexpr, stack&#45;based 3x3 matrix. Uses column&#45;major storage." alt="" coords="7,5,150,45"/>
+<area shape="rect" id="Node000001" title="A lightweight, constexpr, stack&#45;based 3x3 matrix." alt="" coords="7,5,150,45"/>
 <area shape="rect" id="Node000002" href="$classcorrelation_1_1math_1_1Matrix3.html" title=" " alt="" coords="5,108,152,148"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="81,59,81,108,76,108,76,59"/>
 </map>

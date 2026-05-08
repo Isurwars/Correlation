@@ -1,0 +1,11 @@
+<map id="correlation::analysis::DistributionFunctions::calculateDAD" name="correlation::analysis::DistributionFunctions::calculateDAD">
+<area shape="rect" id="Node000001" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="5,77,173,132"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="221,85,413,125"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,102,208,102,208,107,174,107"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a6fe53793b881aaf80e05b7af041433dd" title="Gets a multi&#45;dimensional tensor containing dihedral angles." alt="" coords="461,5,616,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="379,82,448,59,449,64,380,87"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="471,85,607,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="414,102,457,102,457,107,414,107"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="467,149,610,189"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="388,122,457,142,455,147,387,127"/>
+</map>

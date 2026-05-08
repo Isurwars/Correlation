@@ -1,31 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classBaseCalculator.html" title="Base class for all analysis calculators." alt="" coords="5,327,125,352"/>
-<area shape="rect" id="Node000001" href="$classCNCalculator.html" title="Computes the Coordination Number (CN) distribution." alt="" coords="232,5,339,31"/>
-<area shape="poly" id="edge1_Node000000_Node000001" title=" " alt="" coords="65,312,72,255,89,182,103,143,121,105,143,70,172,40,200,24,231,16,232,21,202,29,175,44,148,74,125,108,108,145,94,183,77,256,71,313"/>
-<area shape="rect" id="Node000002" href="$classDADCalculator.html" title="Computes the Dihedral Angle Distribution (DAD)." alt="" coords="227,55,344,80"/>
-<area shape="poly" id="edge2_Node000000_Node000002" title=" " alt="" coords="67,312,77,264,96,204,126,142,147,114,172,89,198,75,226,67,227,72,200,79,175,93,151,117,131,145,101,206,82,265,73,313"/>
-<area shape="rect" id="Node000003" href="$classMSDCalculator.html" title="Computes the Mean Squared Displacement (MSD) and the diffusion coefficient via the Einstein relation." alt="" coords="226,104,345,129"/>
-<area shape="poly" id="edge3_Node000000_Node000003" title=" " alt="" coords="71,312,83,273,104,226,133,178,151,157,172,138,197,125,225,117,226,122,199,130,175,143,155,161,137,182,108,228,88,275,76,314"/>
-<area shape="rect" id="Node000004" href="$classPADCalculator.html" title="Computes the Bond Angle Distribution (BAD/PAD)." alt="" coords="228,153,343,179"/>
-<area shape="poly" id="edge4_Node000000_Node000004" title=" " alt="" coords="75,313,112,249,139,216,172,188,199,175,227,167,229,173,201,180,175,192,143,220,116,252,80,315"/>
-<area shape="rect" id="Node000005" href="$classRDCalculator.html" title="Computes the Ring Distribution (RD)." alt="" coords="232,203,339,228"/>
-<area shape="poly" id="edge5_Node000000_Node000005" title=" " alt="" coords="83,314,121,274,146,254,172,237,201,225,231,218,232,223,203,230,175,242,149,258,125,278,87,318"/>
-<area shape="rect" id="Node000006" href="$classRDFCalculator.html" title="Computes the Radial Distribution Function (RDF), also known as the pair correlation function g(r)." alt="" coords="228,252,343,277"/>
-<area shape="poly" id="edge6_Node000000_Node000006" title=" " alt="" coords="101,318,172,286,227,272,228,277,174,291,103,323"/>
-<area shape="rect" id="Node000007" href="$classSteinhardtCalculator.html" title="Computes Steinhardt Bond&#45;Orientational Parameters (Q4, Q6, W6)." alt="" coords="208,301,363,327"/>
-<area shape="poly" id="edge7_Node000000_Node000007" title=" " alt="" coords="139,328,208,320,208,326,139,334"/>
-<area shape="rect" id="Node000008" href="$classStructureFactorCalculator.html" title="Computes the static structure factor S(Q) using plane wave summation over reciprocal lattice vectors ..." alt="" coords="192,351,379,376"/>
-<area shape="poly" id="edge8_Node000000_Node000008" title=" " alt="" coords="140,345,192,350,191,356,139,350"/>
-<area shape="rect" id="Node000009" href="$classVACFCalculator.html" title="Computes the Velocity Autocorrelation Function (VACF)." alt="" coords="224,400,347,425"/>
-<area shape="poly" id="edge9_Node000000_Node000009" title=" " alt="" coords="105,356,174,385,224,399,223,404,172,390,102,361"/>
-<area shape="rect" id="Node000010" href="$classVDOSCalculator.html" title="Computes the Vibrational Density of States (VDOS) from the VACF." alt="" coords="223,449,348,475"/>
-<area shape="poly" id="edge10_Node000000_Node000010" title=" " alt="" coords="88,361,126,399,149,418,174,434,223,451,221,456,172,439,146,423,122,403,84,365"/>
-<area shape="rect" id="Node000011" href="$classXRDCalculator.html" title="Computes the X&#45;Ray Diffraction (XRD) pattern from g(r)." alt="" coords="227,499,343,524"/>
-<area shape="poly" id="edge11_Node000000_Node000011" title=" " alt="" coords="80,363,117,425,143,457,175,484,200,496,228,504,226,509,198,501,172,488,139,461,112,428,76,366"/>
-<area shape="rect" id="Node000012" href="$classcalculators_1_1AngleCalculator.html" title="Computes all unique 3&#45;body bond angles in the simulation cell." alt="" coords="183,548,387,573"/>
-<area shape="poly" id="edge12_Node000000_Node000012" title=" " alt="" coords="76,365,89,403,109,449,137,495,175,533,197,546,194,550,172,537,133,498,104,451,84,405,71,366"/>
-<area shape="rect" id="Node000013" href="$classcalculators_1_1DihedralCalculator.html" title="Computes all unique 4&#45;body dihedral (torsion) angles in the simulation cell." alt="" coords="174,597,397,623"/>
-<area shape="poly" id="edge13_Node000000_Node000013" title=" " alt="" coords="73,366,83,413,102,472,132,532,151,559,175,583,195,595,193,600,172,587,147,563,127,535,97,474,78,414,68,367"/>
-<area shape="rect" id="Node000014" href="$classcalculators_1_1DistanceCalculator.html" title=" " alt="" coords="173,647,397,672"/>
-<area shape="poly" id="edge14_Node000000_Node000014" title=" " alt="" coords="71,365,78,422,95,494,108,532,126,569,148,603,175,632,194,644,191,649,172,636,144,606,121,571,103,534,89,495,72,423,65,366"/>
+<area shape="rect" id="Node000000" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html" title="Orchestrates structural analysis across multiple frames of a trajectory." alt="" coords="5,5,160,45"/>
 </map>

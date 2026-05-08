@@ -1,0 +1,43 @@
+<map id="correlation::core::Cell::volume" name="correlation::core::Cell::volume">
+<area shape="rect" id="Node000001" title="Gets the volume of the simulation cell." alt="" coords="972,251,1108,291"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="732,77,923,117"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1002,244,851,119,855,115,1005,240"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="732,221,923,261"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="958,262,923,257,923,252,959,257"/>
+<area shape="rect" id="Node000010" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="788,290,867,315"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="959,286,867,299,867,294,958,280"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="731,440,924,480"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="1008,302,853,442,849,438,1004,298"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="451,5,683,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="740,76,639,48,641,43,742,71"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="483,70,651,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="718,100,651,100,651,95,718,95"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="251,229,355,254"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="471,131,452,140,377,187,321,231,318,226,374,183,449,135,468,126"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,262,156,287"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="238,254,156,266,156,261,237,248"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="451,149,682,189"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="740,220,639,192,641,187,742,215"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="483,214,651,269"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="718,244,651,244,651,239,718,239"/>
+<area shape="poly" id="edge9_Node000009_Node000005" title=" " alt="" coords="469,244,355,244,355,239,469,239"/>
+<area shape="poly" id="edge11_Node000010_Node000006" title=" " alt="" coords="774,303,156,280,156,275,774,298"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Cell.html#ac33a2dbf4619585c0dd11e4a8e466860" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="499,344,635,384"/>
+<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="772,437,682,399,634,384,636,378,684,393,774,432"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="492,408,641,448"/>
+<area shape="poly" id="edge14_Node000011_Node000013" title=" " alt="" coords="717,449,641,440,642,434,718,444"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="492,472,641,512"/>
+<area shape="poly" id="edge16_Node000011_Node000015" title=" " alt="" coords="718,476,642,486,641,480,717,471"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="492,536,641,576"/>
+<area shape="poly" id="edge18_Node000011_Node000017" title=" " alt="" coords="774,488,684,527,643,540,641,535,682,521,772,483"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="492,600,641,640"/>
+<area shape="poly" id="edge20_Node000011_Node000019" title=" " alt="" coords="802,492,750,543,718,568,684,590,643,607,641,602,681,586,715,564,747,539,798,489"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="206,408,401,448"/>
+<area shape="poly" id="edge15_Node000013_Node000014" title=" " alt="" coords="478,431,401,431,401,425,478,425"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="205,472,402,512"/>
+<area shape="poly" id="edge17_Node000015_Node000016" title=" " alt="" coords="478,495,402,495,402,489,478,489"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="208,536,399,576"/>
+<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="478,559,399,559,399,553,478,553"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="204,600,403,640"/>
+<area shape="poly" id="edge21_Node000019_Node000020" title=" " alt="" coords="478,623,403,623,403,617,478,617"/>
+</map>

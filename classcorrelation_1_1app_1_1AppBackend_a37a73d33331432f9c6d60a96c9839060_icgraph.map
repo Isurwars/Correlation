@@ -1,0 +1,9 @@
+<map id="correlation::app::AppBackend::run_analysis" name="correlation::app::AppBackend::run_analysis">
+<area shape="rect" id="Node000001" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,35,756,75"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
+<area shape="rect" id="Node000004" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>

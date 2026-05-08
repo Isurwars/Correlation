@@ -1,0 +1,7 @@
+<map id="src/bindings/writer_bindings.hpp" name="src/bindings/writer_bindings.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="116,5,259,45"/>
+<area shape="rect" id="Node000002" href="$module_8cpp.html" title="Root pybind11 module definition for the correlation Python package." alt="" coords="5,101,185,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="159,57,110,102,106,98,155,53"/>
+<area shape="rect" id="Node000003" href="$writer__bindings_8cpp.html" title="Pybind11 bindings for correlation::writers types." alt="" coords="209,93,352,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="220,53,262,91,258,95,216,57"/>
+</map>

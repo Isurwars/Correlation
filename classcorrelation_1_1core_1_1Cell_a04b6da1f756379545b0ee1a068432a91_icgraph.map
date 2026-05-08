@@ -1,0 +1,7 @@
+<map id="correlation::core::Cell::wrapPositions" name="correlation::core::Cell::wrapPositions">
+<area shape="rect" id="Node000001" title="Applies periodic boundary conditions to all atom positions. Wraps all atoms back into the primary sim..." alt="" coords="448,5,595,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="251,5,400,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="434,28,400,28,400,23,434,23"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="5,5,203,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="237,28,203,28,203,23,237,23"/>
+</map>

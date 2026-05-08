@@ -1,0 +1,5 @@
+<map id="include/readers/XdatcarReader.hpp" name="include/readers/XdatcarReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for VASP XDATCAR trajectory files." alt="" coords="5,5,255,31"/>
+<area shape="rect" id="Node000002" href="$XdatcarReader_8cpp.html" title="Implementation of the VASP XDATCAR trajectory file reader." alt="" coords="20,79,240,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,44,133,79,127,79,127,44"/>
+</map>

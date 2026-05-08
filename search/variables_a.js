@@ -1,26 +1,8 @@
 var searchData=
 [
-  ['m_5fasync_0',['m_async',['../classpfd_1_1internal_1_1dialog.html#a91f4b2666fb920a7859df9cdc079502d',1,'pfd::internal::dialog']]],
-  ['m_5fexit_5fcode_1',['m_exit_code',['../classpfd_1_1internal_1_1executor.html#ae93cd2a96d031923e697d5f85cc5dfe7',1,'pfd::internal::executor']]],
-  ['m_5ffd_2',['m_fd',['../classpfd_1_1internal_1_1executor.html#a2730c595c2994a227d46aa6b74b95987',1,'pfd::internal::executor']]],
-  ['m_5fmappings_3',['m_mappings',['../classpfd_1_1message.html#abd55bdeb662938db1c8e6747d3acb7b4',1,'pfd::message']]],
-  ['m_5fpid_4',['m_pid',['../classpfd_1_1internal_1_1executor.html#a7a164503ced150f7ad6c3e6084d4ff9b',1,'pfd::internal::executor']]],
-  ['m_5frunning_5',['m_running',['../classpfd_1_1internal_1_1executor.html#a70760965e1179f84aee59abd92c7129e',1,'pfd::internal::executor']]],
-  ['m_5fstdout_6',['m_stdout',['../classpfd_1_1internal_1_1executor.html#a062c9dc73980cd66d334c945c9617d9d',1,'pfd::internal::executor']]],
-  ['mass_7',['mass',['../structcorrelation_1_1physics_1_1detail_1_1ElementData.html#ab66453945a7d713fa57ac3ca7a78c76f',1,'correlation::physics::detail::ElementData']]],
-  ['max_5fframe_8',['max_frame',['../structProgramOptions.html#a5ba60852cc55dbd1b327b26da294ec09',1,'ProgramOptions']]],
-  ['max_5fring_5fsize_9',['max_ring_size',['../structProgramOptions.html#ae73d5d0ae7bc3d88eb1dbdd4177e2bbc',1,'ProgramOptions::max_ring_size'],['../structAnalysisSettings.html#ae7038e432a35b3cba21b0f9a507bace1',1,'AnalysisSettings::max_ring_size']]],
-  ['metadata_5fmap_10',['metadata_map',['../namespaceCorrelation_1_1WriterUtils.html#a4c17e2cf8c57b0f52e1de258765fe8de',1,'Correlation::WriterUtils']]],
-  ['min_5fframe_11',['min_frame',['../structProgramOptions.html#a7adedd6b8326a29ffd7b4800116241f6',1,'ProgramOptions']]],
-  ['msg_5fanalysis_5faborted_12',['MSG_ANALYSIS_ABORTED',['../structAppDefaults.html#ae56bc9150f4209b3511d6b57cf7f758d',1,'AppDefaults']]],
-  ['msg_5fanalysis_5fended_13',['MSG_ANALYSIS_ENDED',['../structAppDefaults.html#a7b706de023985788efce02511a5b85e9',1,'AppDefaults']]],
-  ['msg_5ferror_5fanalysis_14',['MSG_ERROR_ANALYSIS',['../structAppDefaults.html#af7a8c5cdf11e2c2d4b72019237dfabe5',1,'AppDefaults']]],
-  ['msg_5ferror_5floading_15',['MSG_ERROR_LOADING',['../structAppDefaults.html#ad0f4c4e47c7922549d6fb28e306799d9',1,'AppDefaults']]],
-  ['msg_5ferror_5fwriting_16',['MSG_ERROR_WRITING',['../structAppDefaults.html#acc6b35b06f49fbc196e7a2594a6abf24',1,'AppDefaults']]],
-  ['msg_5ffile_5fselection_5fcancelled_17',['MSG_FILE_SELECTION_CANCELLED',['../structAppDefaults.html#ac46b040a24c7e868176427ecbba70295',1,'AppDefaults']]],
-  ['msg_5ffiles_5fwritten_18',['MSG_FILES_WRITTEN',['../structAppDefaults.html#a488de57d937683de242dcf7b6aeaaba9',1,'AppDefaults']]],
-  ['msg_5fno_5fdata_5fto_5fwrite_19',['MSG_NO_DATA_TO_WRITE',['../structAppDefaults.html#a6912548a0166612adfdc0408952cd199',1,'AppDefaults']]],
-  ['msg_5frunning_5fanalysis_20',['MSG_RUNNING_ANALYSIS',['../structAppDefaults.html#a0d8342de069625ef3289d1aab00af36b',1,'AppDefaults']]],
-  ['msg_5fsave_5fcancelled_21',['MSG_SAVE_CANCELLED',['../structAppDefaults.html#a9514d1e7d36511ad09ca94a7c8a6a12b',1,'AppDefaults']]],
-  ['msg_5fselecting_5foutput_22',['MSG_SELECTING_OUTPUT',['../structAppDefaults.html#ae7e4811c4dac2c32d6300e0124e6d32b',1,'AppDefaults']]]
+  ['lattice_5fparameters_5f_0',['lattice_parameters_',['../classcorrelation_1_1core_1_1Cell.html#a4c25a7fcf96ecafbe9cb798b486ab768',1,'correlation::core::Cell']]],
+  ['lattice_5fvectors_5f_1',['lattice_vectors_',['../classcorrelation_1_1core_1_1Cell.html#a3dd0ec878862ef97da484b5b6c6c6eac',1,'correlation::core::Cell']]],
+  ['left_2',['left',['../structcorrelation_1_1plotters_1_1Glyph.html#a122bfe6a5db0204d2fb2b6934b2575ec',1,'correlation::plotters::Glyph']]],
+  ['load_5fthread_5f_3',['load_thread_',['../classcorrelation_1_1app_1_1AppController.html#ae34a525e3ada4e8ec9bce556f5a8e281',1,'correlation::app::AppController']]],
+  ['local_5fcycles_4',['local_cycles',['../MotifFinder_8cpp.html#a8b99dc8791651b0a76b664238ca6299c',1,'MotifFinder.cpp']]]
 ];

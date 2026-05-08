@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: include/DynamicsAnalyzer.hpp Source File</title>
+<title>Correlation: include/analysis/DynamicsAnalyzer.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,7 +82,7 @@ $(document).ready(function() { init_codefold(0); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_73d4a28092349dbf779c4e991d882038.html">analysis</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -92,43 +92,49 @@ $(document).ready(function() { init_codefold(0); });
 <a href="DynamicsAnalyzer_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="Trajectory_8hpp.html">Trajectory.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;tuple&gt;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classDynamicsAnalyzer.html">   21</a></span><span class="keyword">class </span><a class="code hl_class" href="classDynamicsAnalyzer.html">DynamicsAnalyzer</a> {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="comment">//-------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="comment">//--------------------------- Calculation Methods -------------------------//</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="comment">//-------------------------------------------------------------------------//</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keyword">static</span> std::vector&lt;double&gt;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  <a class="code hl_function" href="classDynamicsAnalyzer.html#a75bce502fd26c58fd80088c485771518">calculateVACF</a>(<span class="keyword">const</span> <a class="code hl_class" href="classTrajectory.html">Trajectory</a> &amp;traj, <span class="keywordtype">int</span> max_correlation_frames,</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>                <span class="keywordtype">size_t</span> start_frame = 0,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                <span class="keywordtype">size_t</span> end_frame = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1));</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keyword">static</span> std::vector&lt;double&gt;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <a class="code hl_function" href="classDynamicsAnalyzer.html#ae4f1e59bba121407ff094c51b83b8f3f">calculateNormalizedVACF</a>(<span class="keyword">const</span> <a class="code hl_class" href="classTrajectory.html">Trajectory</a> &amp;traj, <span class="keywordtype">int</span> max_correlation_frames,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                          <span class="keywordtype">size_t</span> start_frame = 0,</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>                          <span class="keywordtype">size_t</span> end_frame = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1));</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  <span class="keyword">static</span> std::vector&lt;double&gt;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <a class="code hl_function" href="classDynamicsAnalyzer.html#aee6f9ce7f1a650a26c39f73dc613b49f">calculateMSD</a>(<span class="keyword">const</span> <a class="code hl_class" href="classTrajectory.html">Trajectory</a> &amp;traj, <span class="keywordtype">int</span> max_correlation_frames,</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>               <span class="keywordtype">size_t</span> start_frame = 0,</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>               <span class="keywordtype">size_t</span> end_frame = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1));</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>  <span class="keyword">static</span> std::tuple&lt;std::vector&lt;double&gt;, std::vector&lt;double&gt;,</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                    std::vector&lt;double&gt;&gt;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  <a class="code hl_function" href="classDynamicsAnalyzer.html#aacc29d5cf6c1344190c0fe45fc24d612">calculateVDOS</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;vacf, <span class="keywordtype">double</span> dt);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>};</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="Trajectory_8hpp.html">core/Trajectory.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;tuple&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacecorrelation_1_1analysis.html">correlation::analysis</a> {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="};">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html">   24</a></span><span class="keyword">class </span><a class="code hl_class" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html">DynamicsAnalyzer</a> {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="comment">//-------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="comment">//--------------------------- Calculation Methods -------------------------//</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="comment">//-------------------------------------------------------------------------//</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="keyword">static</span> std::vector&lt;double&gt;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  <a class="code hl_function" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e">calculateVACF</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj,</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                <span class="keywordtype">int</span> max_correlation_frames, <span class="keywordtype">size_t</span> start_frame = 0,</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                <span class="keywordtype">size_t</span> end_frame = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1));</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keyword">static</span> std::vector&lt;double&gt;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <a class="code hl_function" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3">calculateNormalizedVACF</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>                          <span class="keywordtype">int</span> max_correlation_frames, <span class="keywordtype">size_t</span> start_frame = 0,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>                          <span class="keywordtype">size_t</span> end_frame = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1));</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  <span class="keyword">static</span> std::vector&lt;double&gt;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <a class="code hl_function" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150">calculateMSD</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj,</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>               <span class="keywordtype">int</span> max_correlation_frames, <span class="keywordtype">size_t</span> start_frame = 0,</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>               <span class="keywordtype">size_t</span> end_frame = <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1));</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keyword">static</span> std::tuple&lt;std::vector&lt;double&gt;, std::vector&lt;double&gt;,</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                    std::vector&lt;double&gt;&gt;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <a class="code hl_function" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8">calculateVDOS</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;vacf, <span class="keywordtype">double</span> dt);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>};</div>
 </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>} <span class="comment">// namespace correlation::analysis</span></div>
 <div class="ttc" id="aTrajectory_8hpp_html"><div class="ttname"><a href="Trajectory_8hpp.html">Trajectory.hpp</a></div><div class="ttdoc">Trajectory data structure for time-series atomistic simulations.</div></div>
-<div class="ttc" id="aclassDynamicsAnalyzer_html"><div class="ttname"><a href="classDynamicsAnalyzer.html">DynamicsAnalyzer</a></div><div class="ttdoc">Static class providing dynamics analysis methods.</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.hpp:21</div></div>
-<div class="ttc" id="aclassDynamicsAnalyzer_html_a75bce502fd26c58fd80088c485771518"><div class="ttname"><a href="classDynamicsAnalyzer.html#a75bce502fd26c58fd80088c485771518">DynamicsAnalyzer::calculateVACF</a></div><div class="ttdeci">static std::vector&lt; double &gt; calculateVACF(const Trajectory &amp;traj, int max_correlation_frames, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</div><div class="ttdoc">Calculates the Velocity Autocorrelation Function (VACF).</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:23</div></div>
-<div class="ttc" id="aclassDynamicsAnalyzer_html_aacc29d5cf6c1344190c0fe45fc24d612"><div class="ttname"><a href="classDynamicsAnalyzer.html#aacc29d5cf6c1344190c0fe45fc24d612">DynamicsAnalyzer::calculateVDOS</a></div><div class="ttdeci">static std::tuple&lt; std::vector&lt; double &gt;, std::vector&lt; double &gt;, std::vector&lt; double &gt; &gt; calculateVDOS(const std::vector&lt; double &gt; &amp;vacf, double dt)</div><div class="ttdoc">Calculates the Vibrational Density of States (VDOS) from the VACF.</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:293</div></div>
-<div class="ttc" id="aclassDynamicsAnalyzer_html_ae4f1e59bba121407ff094c51b83b8f3f"><div class="ttname"><a href="classDynamicsAnalyzer.html#ae4f1e59bba121407ff094c51b83b8f3f">DynamicsAnalyzer::calculateNormalizedVACF</a></div><div class="ttdeci">static std::vector&lt; double &gt; calculateNormalizedVACF(const Trajectory &amp;traj, int max_correlation_frames, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</div><div class="ttdoc">Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a...</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:278</div></div>
-<div class="ttc" id="aclassDynamicsAnalyzer_html_aee6f9ce7f1a650a26c39f73dc613b49f"><div class="ttname"><a href="classDynamicsAnalyzer.html#aee6f9ce7f1a650a26c39f73dc613b49f">DynamicsAnalyzer::calculateMSD</a></div><div class="ttdeci">static std::vector&lt; double &gt; calculateMSD(const Trajectory &amp;traj, int max_correlation_frames, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</div><div class="ttdoc">Calculates the Mean Squared Displacement (MSD).</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:141</div></div>
-<div class="ttc" id="aclassTrajectory_html"><div class="ttname"><a href="classTrajectory.html">Trajectory</a></div><div class="ttdef"><b>Definition</b> Trajectory.hpp:16</div></div>
+<div class="ttc" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_html"><div class="ttname"><a href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html">correlation::analysis::DynamicsAnalyzer</a></div><div class="ttdoc">Static class providing dynamics analysis methods.</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.hpp:24</div></div>
+<div class="ttc" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_html_a17fdbcefe4aa531faf34f5a1ecd47f8e"><div class="ttname"><a href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e">correlation::analysis::DynamicsAnalyzer::calculateVACF</a></div><div class="ttdeci">static std::vector&lt; double &gt; calculateVACF(const correlation::core::Trajectory &amp;traj, int max_correlation_frames, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</div><div class="ttdoc">Calculates the Velocity Autocorrelation Function (VACF).</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:26</div></div>
+<div class="ttc" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_html_a3192418a14189aa6c17005fa30c86150"><div class="ttname"><a href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150">correlation::analysis::DynamicsAnalyzer::calculateMSD</a></div><div class="ttdeci">static std::vector&lt; double &gt; calculateMSD(const correlation::core::Trajectory &amp;traj, int max_correlation_frames, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</div><div class="ttdoc">Calculates the Mean Squared Displacement (MSD).</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:141</div></div>
+<div class="ttc" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_html_a3320aac4b5903294dfe9f6d77e1eddc8"><div class="ttname"><a href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8">correlation::analysis::DynamicsAnalyzer::calculateVDOS</a></div><div class="ttdeci">static std::tuple&lt; std::vector&lt; double &gt;, std::vector&lt; double &gt;, std::vector&lt; double &gt; &gt; calculateVDOS(const std::vector&lt; double &gt; &amp;vacf, double dt)</div><div class="ttdoc">Calculates the Vibrational Density of States (VDOS) from the VACF.</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:291</div></div>
+<div class="ttc" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_html_a7f08bfa51cb7f706acbacc31ec6db0c3"><div class="ttname"><a href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3">correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF</a></div><div class="ttdeci">static std::vector&lt; double &gt; calculateNormalizedVACF(const correlation::core::Trajectory &amp;traj, int max_correlation_frames, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</div><div class="ttdoc">Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a...</div><div class="ttdef"><b>Definition</b> DynamicsAnalyzer.cpp:276</div></div>
+<div class="ttc" id="aclasscorrelation_1_1core_1_1Trajectory_html"><div class="ttname"><a href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a></div><div class="ttdoc">This class stores a series of snapshots of a system.</div><div class="ttdef"><b>Definition</b> Trajectory.hpp:25</div></div>
+<div class="ttc" id="anamespacecorrelation_1_1analysis_html"><div class="ttname"><a href="namespacecorrelation_1_1analysis.html">correlation::analysis</a></div><div class="ttdef"><b>Definition</b> DistributionFunctions.hpp:22</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

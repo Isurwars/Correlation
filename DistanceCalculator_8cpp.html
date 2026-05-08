@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -90,117 +90,122 @@ $(function() {
 
 <p>Implementation of pairwise distance calculations.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="LinearAlgebra_8hpp_source.html">math/LinearAlgebra.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="DistanceCalculator_8hpp_source.html">calculators/DistanceCalculator.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="DistanceCalculator_8hpp_source.html">calculators/DistanceCalculator.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="DistributionFunctions_8hpp_source.html">analysis/DistributionFunctions.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="LinearAlgebra_8hpp_source.html">math/LinearAlgebra.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="SIMDUtils_8hpp_source.html">math/SIMDUtils.hpp</a>&quot;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;numeric&gt;</code><br />
 <code>#include &lt;tbb/enumerable_thread_specific.h&gt;</code><br />
 <code>#include &lt;tbb/parallel_for_each.h&gt;</code><br />
-<code>#include &quot;<a class="el" href="DistributionFunctions_8hpp_source.html">DistributionFunctions.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="SIMDUtils_8hpp_source.html">math/SIMDUtils.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for DistanceCalculator.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="DistanceCalculator_8cpp__incl.png" border="0" usemap="#asrc_2calculators_2DistanceCalculator_8cpp" alt=""/></div>
 <map name="asrc_2calculators_2DistanceCalculator_8cpp" id="asrc_2calculators_2DistanceCalculator_8cpp">
-<area shape="rect" title="Implementation of pairwise distance calculations." alt="" coords="969,5,1146,45"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="145,475,324,500"/>
-<area shape="poly" title=" " alt="" coords="969,34,711,52,553,66,392,84,244,105,121,131,73,145,38,161,15,177,8,193,8,342,12,367,22,390,38,409,59,426,108,452,160,469,158,474,106,456,56,430,34,413,18,392,7,369,3,342,3,192,11,173,35,156,72,140,120,126,243,100,391,78,552,61,711,46,968,29"/>
-<area shape="rect" title=" " alt="" coords="979,548,1042,573"/>
-<area shape="poly" title=" " alt="" coords="1065,45,1080,110,1086,151,1088,193,1088,416,1082,452,1069,486,1051,515,1033,539,1028,536,1046,512,1064,483,1077,450,1083,415,1083,193,1080,151,1074,111,1060,46"/>
-<area shape="rect" href="DistanceCalculator_8hpp.html" title="Pairwise distance calculator." alt="" coords="514,255,761,280"/>
-<area shape="poly" title=" " alt="" coords="1026,48,671,250,668,245,1023,43"/>
-<area shape="rect" title=" " alt="" coords="973,401,1048,427"/>
-<area shape="poly" title=" " alt="" coords="1055,46,1042,111,1035,193,1035,269,1029,334,1019,388,1014,387,1024,333,1029,269,1029,193,1037,110,1050,45"/>
-<area shape="rect" title=" " alt="" coords="1174,93,1349,133"/>
-<area shape="poly" title=" " alt="" coords="1103,43,1205,86,1203,91,1101,48"/>
-<area shape="rect" title=" " alt="" coords="1373,101,1544,126"/>
-<area shape="poly" title=" " alt="" coords="1146,43,1392,95,1391,100,1145,48"/>
-<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="370,101,558,126"/>
-<area shape="poly" title=" " alt="" coords="969,42,557,101,556,96,968,37"/>
-<area shape="rect" href="SIMDUtils_8hpp.html" title="SIMD&#45;accelerated kernels for distance, integration, and normalization." alt="" coords="1123,328,1275,353"/>
-<area shape="poly" title=" " alt="" coords="1075,44,1106,92,1135,153,1160,215,1194,313,1189,315,1155,217,1131,155,1102,95,1070,47"/>
-<area shape="rect" title=" " alt="" coords="27,548,83,573"/>
-<area shape="poly" title=" " alt="" coords="207,503,97,546,95,541,205,498"/>
-<area shape="poly" title=" " alt="" coords="324,496,336,497,699,531,966,553,965,558,699,536,336,503,324,501"/>
-<area shape="rect" title=" " alt="" coords="549,548,635,573"/>
-<area shape="poly" title=" " alt="" coords="293,497,536,545,535,551,292,503"/>
-<area shape="rect" title=" " alt="" coords="189,548,281,573"/>
-<area shape="poly" title=" " alt="" coords="237,500,237,534,232,534,232,500"/>
-<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="513,328,660,353"/>
-<area shape="poly" title=" " alt="" coords="631,282,605,318,601,315,627,279"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="140,328,215,353"/>
-<area shape="poly" title=" " alt="" coords="544,283,399,302,229,330,228,325,399,297,543,277"/>
-<area shape="rect" title=" " alt="" coords="557,401,619,427"/>
-<area shape="poly" title=" " alt="" coords="651,279,673,313,679,334,674,354,655,379,630,397,627,393,651,375,670,352,673,334,668,315,646,282"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="239,328,387,353"/>
-<area shape="poly" title=" " alt="" coords="586,283,380,328,379,322,585,277"/>
-<area shape="rect" title=" " alt="" coords="439,475,497,500"/>
-<area shape="poly" title=" " alt="" coords="579,355,488,466,484,462,575,352"/>
-<area shape="poly" title=" " alt="" coords="164,355,148,370,134,388,127,407,130,425,153,450,182,467,179,472,150,454,126,428,121,406,130,385,144,366,160,352"/>
-<area shape="poly" title=" " alt="" coords="165,355,143,376,121,403,101,437,85,473,64,536,59,534,80,471,97,435,116,400,139,373,161,352"/>
-<area shape="poly" title=" " alt="" coords="197,351,256,385,329,424,427,467,425,472,327,429,253,390,195,356"/>
-<area shape="rect" title=" " alt="" coords="140,401,215,427"/>
-<area shape="poly" title=" " alt="" coords="180,354,180,388,175,388,175,354"/>
-<area shape="poly" title=" " alt="" coords="216,348,227,351,402,382,543,404,542,409,401,387,226,356,214,354"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="340,401,425,427"/>
-<area shape="poly" title=" " alt="" coords="211,351,337,394,336,399,209,356"/>
-<area shape="poly" title=" " alt="" coords="360,429,272,471,270,466,358,424"/>
-<area shape="poly" title=" " alt="" coords="398,425,445,464,442,468,395,429"/>
-<area shape="rect" title=" " alt="" coords="643,475,728,500"/>
-<area shape="poly" title=" " alt="" coords="426,423,630,470,629,475,425,428"/>
-<area shape="rect" title=" " alt="" coords="348,475,415,500"/>
-<area shape="poly" title=" " alt="" coords="385,427,384,461,379,461,380,427"/>
-<area shape="poly" title=" " alt="" coords="309,355,250,464,245,461,305,353"/>
-<area shape="poly" title=" " alt="" coords="358,351,544,399,543,404,357,356"/>
-<area shape="poly" title=" " alt="" coords="327,352,364,390,360,393,323,356"/>
-<area shape="poly" title=" " alt="" coords="494,124,531,146,548,161,561,180,565,194,561,208,548,225,532,233,517,241,504,256,482,310,471,367,468,419,469,461,463,461,463,419,466,366,477,308,499,253,514,237,530,229,544,221,556,205,560,194,556,182,544,165,528,150,492,128"/>
-<area shape="poly" title=" " alt="" coords="370,120,287,127,202,138,128,157,101,169,83,183,74,200,73,217,78,236,88,254,119,289,151,317,148,322,115,293,84,257,73,238,68,218,69,198,79,180,99,164,127,152,201,133,287,121,369,115"/>
-<area shape="poly" title=" " alt="" coords="543,123,603,139,667,164,698,181,727,202,753,225,774,253,784,278,780,302,766,324,745,344,689,377,633,401,631,396,687,372,741,340,762,321,775,300,778,279,770,256,749,229,723,206,695,186,665,169,601,144,541,129"/>
-<area shape="rect" title=" " alt="" coords="94,181,181,207"/>
-<area shape="poly" title=" " alt="" coords="417,129,195,182,193,177,416,123"/>
-<area shape="rect" title=" " alt="" coords="205,181,256,207"/>
-<area shape="poly" title=" " alt="" coords="431,129,270,182,268,177,429,123"/>
-<area shape="rect" title=" " alt="" coords="280,181,357,207"/>
-<area shape="poly" title=" " alt="" coords="444,129,353,177,351,172,441,124"/>
-<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="831,328,990,353"/>
-<area shape="poly" title=" " alt="" coords="559,121,706,143,772,159,817,179,850,209,875,246,894,283,906,314,901,316,889,285,871,249,846,213,815,184,770,164,705,148,558,126"/>
-<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="381,181,547,207"/>
-<area shape="poly" title=" " alt="" coords="467,126,467,167,461,167,461,126"/>
-<area shape="poly" title=" " alt="" coords="918,353,1002,534,997,536,914,355"/>
-<area shape="poly" title=" " alt="" coords="905,355,880,390,846,429,797,470,741,502,690,527,641,546,639,541,688,522,739,498,794,466,842,425,876,386,901,352"/>
-<area shape="poly" title=" " alt="" coords="853,356,634,404,632,398,852,351"/>
-<area shape="poly" title=" " alt="" coords="901,355,861,390,809,429,768,453,727,472,725,467,765,448,807,424,858,386,897,351"/>
-<area shape="poly" title=" " alt="" coords="928,351,985,391,982,395,925,356"/>
-<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="643,401,797,427"/>
-<area shape="poly" title=" " alt="" coords="881,356,765,399,763,394,879,351"/>
-<area shape="poly" title=" " alt="" coords="382,209,251,232,199,244,173,257,166,269,164,284,170,315,165,316,159,284,161,268,169,253,197,239,250,226,381,204"/>
-<area shape="poly" title=" " alt="" coords="386,209,260,232,210,245,185,257,179,267,179,276,184,285,192,294,219,309,253,322,251,327,217,314,189,298,179,288,174,277,174,265,181,253,208,240,259,227,385,204"/>
-<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="195,255,440,280"/>
-<area shape="poly" title=" " alt="" coords="442,209,355,251,352,246,439,204"/>
-<area shape="poly" title=" " alt="" coords="361,277,531,322,529,327,360,283"/>
-<area shape="poly" title=" " alt="" coords="296,282,213,324,211,319,294,278"/>
-<area shape="poly" title=" " alt="" coords="340,278,556,392,553,397,338,283"/>
-<area shape="poly" title=" " alt="" coords="319,280,317,315,312,314,314,280"/>
-<area shape="poly" title=" " alt="" coords="1193,355,1164,403,1138,454,1126,477,1106,502,1078,525,1049,544,1046,539,1075,521,1102,498,1122,474,1134,452,1159,400,1189,352"/>
-<area shape="poly" title=" " alt="" coords="1123,349,906,367,772,382,634,404,633,399,771,377,906,361,1122,344"/>
-<area shape="rect" href="SIMDConfig_8hpp.html" title="Configuration macros for SIMD instruction sets and compiler specifics." alt="" coords="1173,401,1336,427"/>
-<area shape="poly" title=" " alt="" coords="1210,352,1239,389,1235,392,1206,355"/>
-<area shape="rect" title=" " alt="" coords="1361,401,1431,427"/>
-<area shape="poly" title=" " alt="" coords="1231,351,1352,394,1350,399,1229,356"/>
-<area shape="rect" title=" " alt="" coords="1205,475,1304,500"/>
-<area shape="poly" title=" " alt="" coords="1257,427,1257,461,1252,461,1252,427"/>
+<area shape="rect" title="Implementation of pairwise distance calculations." alt="" coords="1075,5,1253,45"/>
+<area shape="rect" href="DistanceCalculator_8hpp.html" title="Pairwise distance calculator." alt="" coords="567,101,814,126"/>
+<area shape="poly" title=" " alt="" coords="1075,45,768,101,767,96,1074,40"/>
+<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="487,255,734,280"/>
+<area shape="poly" title=" " alt="" coords="1122,48,651,252,649,247,1120,43"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="481,548,660,573"/>
+<area shape="poly" title=" " alt="" coords="1162,46,1149,111,1141,193,1141,415,1140,463,1132,483,1115,502,1092,512,1052,522,937,537,674,557,674,551,936,532,1051,516,1090,507,1112,498,1128,480,1135,462,1136,415,1136,193,1144,110,1157,45"/>
+<area shape="rect" title=" " alt="" coords="1058,621,1121,647"/>
+<area shape="poly" title=" " alt="" coords="1171,45,1184,110,1192,193,1192,489,1184,527,1166,562,1141,592,1117,614,1114,611,1138,588,1161,559,1179,525,1187,488,1187,193,1179,111,1166,46"/>
+<area shape="rect" title=" " alt="" coords="1027,475,1101,500"/>
+<area shape="poly" title=" " alt="" coords="1151,47,1132,75,1112,110,1097,150,1091,193,1091,342,1085,407,1073,462,1068,461,1079,407,1085,342,1085,192,1092,149,1108,108,1128,72,1146,44"/>
+<area shape="rect" href="SIMDUtils_8hpp.html" title="SIMD&#45;accelerated kernels for distance, integration, and normalization." alt="" coords="1227,401,1379,427"/>
+<area shape="poly" title=" " alt="" coords="1182,44,1200,72,1220,108,1236,149,1243,192,1243,268,1247,303,1258,335,1288,389,1284,391,1254,338,1242,304,1237,269,1237,193,1231,150,1216,110,1196,75,1177,47"/>
+<area shape="rect" title=" " alt="" coords="1278,93,1453,133"/>
+<area shape="poly" title=" " alt="" coords="1209,43,1310,85,1308,90,1207,48"/>
+<area shape="rect" title=" " alt="" coords="1477,101,1648,126"/>
+<area shape="poly" title=" " alt="" coords="1252,43,1497,95,1496,100,1251,48"/>
+<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="493,181,640,207"/>
+<area shape="poly" title=" " alt="" coords="674,128,598,176,595,172,671,124"/>
+<area shape="poly" title=" " alt="" coords="689,127,675,164,654,208,630,245,626,242,650,205,670,162,684,125"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="132,401,239,427"/>
+<area shape="poly" title=" " alt="" coords="567,120,446,136,378,150,311,171,244,198,182,233,127,276,81,329,76,339,76,348,88,366,110,381,137,394,135,399,107,386,84,369,71,350,71,338,76,327,123,272,179,228,242,193,309,166,377,145,445,130,567,115"/>
+<area shape="rect" title=" " alt="" coords="609,475,671,500"/>
+<area shape="poly" title=" " alt="" coords="713,124,748,147,783,180,813,221,827,261,828,303,819,354,810,394,802,411,787,429,770,440,745,453,686,474,684,469,742,448,767,436,784,425,797,408,805,393,813,353,822,302,822,261,808,224,779,183,745,152,710,128"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="550,401,730,427"/>
+<area shape="poly" title=" " alt="" coords="705,125,743,164,785,222,801,255,810,289,809,323,796,355,767,382,732,400,730,395,764,378,791,352,804,322,805,290,796,257,781,225,739,168,702,128"/>
+<area shape="poly" title=" " alt="" coords="576,206,599,242,594,244,572,208"/>
+<area shape="rect" title=" " alt="" coords="5,548,64,573"/>
+<area shape="poly" title=" " alt="" coords="493,197,396,203,339,211,280,223,220,240,161,263,106,293,56,330,38,351,26,377,20,404,17,433,21,489,30,534,25,536,16,490,12,433,14,403,21,375,34,349,53,326,103,288,159,258,218,235,279,218,339,206,396,198,493,192"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="103,328,247,353"/>
+<area shape="poly" title=" " alt="" coords="536,209,220,326,218,321,534,204"/>
+<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="271,328,494,353"/>
+<area shape="poly" title=" " alt="" coords="575,283,434,326,432,321,573,277"/>
+<area shape="poly" title=" " alt="" coords="487,277,368,285,244,296,144,311,110,320,93,330,87,338,87,346,97,364,118,380,144,393,141,398,115,384,93,367,82,348,82,337,89,326,108,315,143,306,244,291,367,279,487,272"/>
+<area shape="poly" title=" " alt="" coords="487,277,239,297,135,312,100,321,80,330,62,352,48,377,39,405,34,433,30,489,33,534,28,534,25,489,28,433,34,403,44,375,58,349,77,326,98,316,134,307,238,292,487,272"/>
+<area shape="poly" title=" " alt="" coords="719,278,761,296,780,309,796,327,805,349,804,371,793,392,776,411,729,446,681,471,678,467,726,441,772,407,789,389,799,369,800,350,791,329,776,313,758,300,717,283"/>
+<area shape="poly" title=" " alt="" coords="541,283,259,328,258,323,540,277"/>
+<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="891,401,1050,427"/>
+<area shape="poly" title=" " alt="" coords="735,277,813,295,852,308,889,326,928,356,957,389,953,392,924,360,887,330,850,313,812,300,734,282"/>
+<area shape="rect" title=" " alt="" coords="518,328,605,353"/>
+<area shape="poly" title=" " alt="" coords="605,282,579,318,575,315,600,279"/>
+<area shape="rect" title=" " alt="" coords="629,328,680,353"/>
+<area shape="poly" title=" " alt="" coords="620,279,643,315,638,318,616,282"/>
+<area shape="rect" title=" " alt="" coords="704,328,781,353"/>
+<area shape="poly" title=" " alt="" coords="633,278,710,319,708,324,631,282"/>
+<area shape="poly" title=" " alt="" coords="352,356,231,399,230,394,350,351"/>
+<area shape="poly" title=" " alt="" coords="425,351,586,395,585,400,423,356"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="256,475,373,500"/>
+<area shape="poly" title=" " alt="" coords="207,424,282,465,280,470,205,429"/>
+<area shape="poly" title=" " alt="" coords="231,424,304,445,386,472,535,540,533,545,384,477,303,450,230,429"/>
+<area shape="rect" title=" " alt="" coords="268,621,324,647"/>
+<area shape="poly" title=" " alt="" coords="175,428,151,461,145,480,148,499,171,535,201,567,233,593,264,612,261,617,230,597,197,571,166,539,143,501,140,479,146,458,171,425"/>
+<area shape="poly" title=" " alt="" coords="167,429,136,450,103,477,75,508,52,538,48,535,71,504,100,473,133,446,164,425"/>
+<area shape="rect" title=" " alt="" coords="157,475,232,500"/>
+<area shape="poly" title=" " alt="" coords="190,427,194,461,189,462,184,427"/>
+<area shape="poly" title=" " alt="" coords="239,421,595,476,594,482,238,426"/>
+<area shape="poly" title=" " alt="" coords="357,497,517,542,516,547,355,503"/>
+<area shape="rect" title=" " alt="" coords="372,548,457,573"/>
+<area shape="poly" title=" " alt="" coords="332,498,389,538,386,542,329,502"/>
+<area shape="rect" title=" " alt="" coords="281,548,348,573"/>
+<area shape="poly" title=" " alt="" coords="317,500,317,534,312,534,312,500"/>
+<area shape="poly" title=" " alt="" coords="270,503,78,551,76,546,269,497"/>
+<area shape="poly" title=" " alt="" coords="527,576,338,625,337,619,526,571"/>
+<area shape="poly" title=" " alt="" coords="654,571,1045,624,1044,629,654,576"/>
+<area shape="rect" title=" " alt="" coords="679,621,766,647"/>
+<area shape="poly" title=" " alt="" coords="596,571,687,613,685,618,594,576"/>
+<area shape="rect" title=" " alt="" coords="525,621,617,647"/>
+<area shape="poly" title=" " alt="" coords="573,574,573,608,568,608,568,574"/>
+<area shape="poly" title=" " alt="" coords="588,429,381,474,380,469,587,424"/>
+<area shape="poly" title=" " alt="" coords="632,429,616,450,600,476,587,506,579,535,574,534,582,504,595,473,611,447,628,425"/>
+<area shape="poly" title=" " alt="" coords="643,427,643,461,637,461,637,427"/>
+<area shape="poly" title=" " alt="" coords="179,353,184,387,179,388,174,354"/>
+<area shape="poly" title=" " alt="" coords="199,351,302,402,433,472,543,539,540,543,431,477,299,407,197,356"/>
+<area shape="poly" title=" " alt="" coords="246,351,376,374,481,399,541,427,610,466,607,470,538,432,479,404,375,379,246,356"/>
+<area shape="poly" title=" " alt="" coords="979,426,1017,499,1078,608,1074,611,1012,501,974,428"/>
+<area shape="poly" title=" " alt="" coords="892,428,837,446,811,459,789,477,764,507,747,543,735,578,729,608,723,607,730,577,742,541,759,504,785,473,808,455,835,441,890,423"/>
+<area shape="poly" title=" " alt="" coords="917,429,834,450,742,477,714,490,685,503,472,550,471,545,683,497,712,485,740,472,833,444,916,424"/>
+<area shape="poly" title=" " alt="" coords="916,429,691,477,685,479,684,473,690,472,915,424"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="798,475,951,500"/>
+<area shape="poly" title=" " alt="" coords="957,429,903,468,900,464,954,425"/>
+<area shape="poly" title=" " alt="" coords="987,425,1040,464,1036,468,984,429"/>
+<area shape="poly" title=" " alt="" coords="1298,428,1269,476,1244,529,1231,551,1210,575,1173,601,1135,620,1133,615,1171,597,1206,571,1227,548,1239,526,1264,473,1293,425"/>
+<area shape="poly" title=" " alt="" coords="1227,426,685,484,685,479,1226,421"/>
+<area shape="rect" href="SIMDConfig_8hpp.html" title="Configuration macros for SIMD instruction sets and compiler specifics." alt="" coords="1373,475,1536,500"/>
+<area shape="poly" title=" " alt="" coords="1328,424,1419,466,1417,471,1326,429"/>
+<area shape="rect" title=" " alt="" coords="1278,475,1349,500"/>
+<area shape="poly" title=" " alt="" coords="1307,427,1312,461,1307,462,1302,427"/>
+<area shape="rect" title=" " alt="" coords="1405,548,1504,573"/>
+<area shape="poly" title=" " alt="" coords="1457,500,1457,534,1452,534,1452,500"/>
 </map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcalculators_1_1ThreadLocalDistances.html">calculators::ThreadLocalDistances</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1calculators_1_1ThreadLocalDistances.html">correlation::calculators::ThreadLocalDistances</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread-local storage for parallel distance calculations.  <a href="structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespacecalculators" id="r_namespacecalculators"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecalculators.html">calculators</a></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1calculators" id="r_namespacecorrelation_1_1calculators"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1calculators.html">correlation::calculators</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

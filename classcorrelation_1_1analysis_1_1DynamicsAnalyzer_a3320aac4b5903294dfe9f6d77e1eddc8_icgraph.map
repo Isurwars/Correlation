@@ -1,0 +1,13 @@
+<map id="correlation::analysis::DynamicsAnalyzer::calculateVDOS" name="correlation::analysis::DynamicsAnalyzer::calculateVDOS">
+<area shape="rect" id="Node000001" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="916,41,1172,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html#a6890f7a2df90c538a7d5de0723f70658" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="668,41,868,81"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="902,64,868,64,868,59,902,59"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,5,620,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="654,49,620,45,621,40,655,44"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a25122c9d2298582a94578327073ff835" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="404,70,572,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="655,79,573,89,572,84,654,73"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="390,100,308,100,308,95,390,95"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>

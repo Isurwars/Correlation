@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['max_5fflag_0',['max_flag',['../classpfd_1_1settings.html#a61077e0fd48da6de7bb0f5dd9d9d1aada73b7af539db867cb9edf24a3cb7b8a36',1,'pfd::settings']]],
-  ['multiselect_1',['multiselect',['../namespacepfd.html#a1a482ccd57bb939dcbf7d9caacd3f997ab66abfe0e0c2ef7c545895c12a0a8837',1,'pfd']]]
+  ['vasp_0',['Vasp',['../namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aa9e4f25c2775231296b2055ef94b2316',1,'correlation::readers']]]
 ];

@@ -1,0 +1,17 @@
+<map id="correlation::readers::CastepMdReader::read" name="correlation::readers::CastepMdReader::read">
+<area shape="rect" id="Node000001" title="Low&#45;level parser for the specific file format." alt="" coords="5,133,184,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="253,5,389,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,131,169,93,231,55,244,48,247,53,233,60,172,98,122,135"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="253,69,389,109"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="166,131,239,110,241,115,167,136"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="253,133,389,173"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="185,151,240,151,240,156,185,156"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="232,197,411,237"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="167,171,237,191,236,196,166,176"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="253,261,389,301"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="122,171,172,209,233,247,247,253,244,258,231,252,169,213,119,176"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="459,5,657,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="390,23,445,23,445,28,390,28"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="705,5,841,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="658,23,692,23,692,28,658,28"/>
+</map>

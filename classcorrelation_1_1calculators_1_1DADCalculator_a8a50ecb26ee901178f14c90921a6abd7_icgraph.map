@@ -1,0 +1,11 @@
+<map id="correlation::calculators::DADCalculator::calculate" name="correlation::calculators::DADCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="637,49,829,89"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="389,5,557,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="623,56,556,47,557,42,624,51"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1DADCalculator.html#a2b1f3680dacbe78916a2fe54c674bc18" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,85,589,125"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="624,86,590,91,589,86,623,81"/>
+<area shape="rect" id="Node000003" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="375,35,308,35,308,30,375,30"/>
+<area shape="rect" id="Node000004" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,20,156,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
+</map>

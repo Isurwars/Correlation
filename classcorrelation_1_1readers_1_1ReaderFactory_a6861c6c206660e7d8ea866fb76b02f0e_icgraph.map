@@ -1,0 +1,20 @@
+<map id="correlation::readers::ReaderFactory::getReaderForExtension" name="correlation::readers::ReaderFactory::getReaderForExtension">
+<area shape="rect" id="Node000001" title="Finds a reader that supports the given file extension." alt="" coords="1001,48,1219,103"/>
+<area shape="rect" id="Node000002" href="$io__bindings_8cpp.html#ab2440ee9944ff020b521712d6b381890" title=" " alt="" coords="847,5,910,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="987,48,909,28,911,23,988,42"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,55,953,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="988,78,954,78,954,73,988,73"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,119,953,159"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="998,109,952,122,951,117,997,104"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="575,5,725,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="834,21,726,21,726,15,834,15"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,87,756,127"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="791,90,757,95,756,90,790,85"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,58,496,98"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="530,97,496,93,497,88,531,91"/>
+<area shape="rect" id="Node000008" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,123,413,148"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="531,123,413,135,412,130,530,117"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,58,227,98"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="261,81,227,81,227,75,261,75"/>
+<area shape="poly" id="edge9_Node000009_Node000005" title=" " alt="" coords="790,130,756,125,757,120,791,124"/>
+</map>

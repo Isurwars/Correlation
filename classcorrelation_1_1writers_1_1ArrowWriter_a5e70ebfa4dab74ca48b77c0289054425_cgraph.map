@@ -1,0 +1,7 @@
+<map id="correlation::writers::ArrowWriter::writeAllParquet" name="correlation::writers::ArrowWriter::writeAllParquet">
+<area shape="rect" id="Node000001" title="Writes all available histograms to Parquet files." alt="" coords="5,53,220,93"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="293,5,461,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,54,278,45,279,50,221,59"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1writers_1_1ArrowWriter.html#a1383277fe5ff46b76a7304fbf39b530b" title="The core implementation for writing a single histogram and its smoothed histograms to a single Parque..." alt="" coords="268,84,485,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="221,86,255,91,254,96,220,91"/>
+</map>

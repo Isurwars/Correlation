@@ -1,19 +1,3 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classFileReader_1_1BaseReader.html" title="Base class for all file readers." alt="" coords="5,179,183,204"/>
-<area shape="rect" id="Node000001" href="$classFileReader_1_1ArcReader.html" title="Reads an ARC file and returns a vector of Cell objects." alt="" coords="267,5,434,31"/>
-<area shape="poly" id="edge15_Node000000_Node000001" title=" " alt="" coords="108,165,156,102,190,68,229,40,266,25,268,30,232,44,194,72,160,105,112,169"/>
-<area shape="rect" id="Node000002" href="$classFileReader_1_1CarReader.html" title="Reads a Materials Studio .car file and returns a Cell object." alt="" coords="267,55,434,80"/>
-<area shape="poly" id="edge16_Node000000_Node000002" title=" " alt="" coords="117,167,166,127,197,106,230,89,266,77,268,82,232,94,200,111,169,131,120,171"/>
-<area shape="rect" id="Node000003" href="$classFileReader_1_1CastepMdReader.html" title="Reads a sequence of frames from a CASTEP .md trajectory file." alt="" coords="245,104,456,129"/>
-<area shape="poly" id="edge17_Node000000_Node000003" title=" " alt="" coords="137,171,230,138,276,127,277,132,231,143,139,176"/>
-<area shape="rect" id="Node000004" href="$classFileReader_1_1CellReader.html" title="Reads a CASTEP .cell physical structure format." alt="" coords="265,153,436,179"/>
-<area shape="poly" id="edge18_Node000000_Node000004" title=" " alt="" coords="196,179,265,172,265,177,196,184"/>
-<area shape="rect" id="Node000005" href="$classFileReader_1_1CifReader.html" title="Reads a Crystallographic Information File (.cif)." alt="" coords="269,203,432,228"/>
-<area shape="poly" id="edge19_Node000000_Node000005" title=" " alt="" coords="196,198,269,205,269,210,196,204"/>
-<area shape="rect" id="Node000006" href="$classFileReader_1_1LammpsDumpReader.html" title="Reads one or more frames from a LAMMPS custom dump file." alt="" coords="231,252,471,277"/>
-<area shape="poly" id="edge20_Node000000_Node000006" title=" " alt="" coords="141,206,231,237,283,249,282,255,230,242,139,211"/>
-<area shape="rect" id="Node000007" href="$classFileReader_1_1OnetepDatReader.html" title="Reads a ONETEP .dat structure format." alt="" coords="243,301,458,327"/>
-<area shape="poly" id="edge21_Node000000_Node000007" title=" " alt="" coords="121,211,170,250,232,286,268,299,267,304,230,291,167,254,118,215"/>
-<area shape="rect" id="Node000008" href="$classFileReader_1_1OutmolReader.html" title="Reads a DMol3 .outmol output format." alt="" coords="254,351,447,376"/>
-<area shape="poly" id="edge22_Node000000_Node000008" title=" " alt="" coords="113,214,161,276,194,309,232,336,261,348,259,353,229,340,191,313,157,280,109,217"/>
+<area shape="rect" id="Node000000" href="$classcorrelation_1_1math_1_1Matrix3.html" title=" " alt="" coords="5,5,152,45"/>
 </map>

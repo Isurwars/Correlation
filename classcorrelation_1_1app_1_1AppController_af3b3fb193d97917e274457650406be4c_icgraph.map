@@ -1,0 +1,10 @@
+<map id="correlation::app::AppController::updateProgress" name="correlation::app::AppController::updateProgress">
+<area shape="rect" id="Node000001" title="Helper to update the UI progress bar and status text safely." alt="" coords="544,37,765,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="530,45,496,41,497,36,531,40"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="531,75,497,79,496,74,530,69"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,37,227,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="261,43,227,47,227,42,261,37"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="261,77,227,73,227,68,261,72"/>
+</map>

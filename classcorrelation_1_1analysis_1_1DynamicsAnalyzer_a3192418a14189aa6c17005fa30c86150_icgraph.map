@@ -1,0 +1,7 @@
+<map id="correlation::analysis::DynamicsAnalyzer::calculateMSD" name="correlation::analysis::DynamicsAnalyzer::calculateMSD">
+<area shape="rect" id="Node000001" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="552,5,801,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="311,5,504,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="538,28,504,28,504,23,538,23"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,5,263,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="297,28,263,28,263,23,297,23"/>
+</map>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['dihedraltensor_0',['DihedralTensor',['../namespacecalculators.html#a0b97f4209a4a01468f744e281062175e',1,'calculators']]],
-  ['distancetensor_1',['distancetensor',['../classStructureAnalyzer.html#ae61c707d25c227ce404b8c6c43e618db',1,'StructureAnalyzer::DistanceTensor'],['../namespacecalculators.html#a36fe9ad04b7866971c242ac56a9654f1',1,'calculators::DistanceTensor']]]
+  ['dihedraltensor_0',['DihedralTensor',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a2540c2a4a71ed3cf4371c104449265ce',1,'correlation::analysis::StructureAnalyzer']]],
+  ['distancetensor_1',['distancetensor',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a19462b960dca8eb90d0e8bb84a52a908',1,'correlation::analysis::StructureAnalyzer::DistanceTensor'],['../namespacecorrelation_1_1calculators.html#a4de98dcd65775f40c068937ee15a96c8',1,'correlation::calculators::DistanceTensor']]]
 ];

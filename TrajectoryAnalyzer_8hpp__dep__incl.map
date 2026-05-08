@@ -1,18 +1,22 @@
-<map id="include/TrajectoryAnalyzer.hpp" name="include/TrajectoryAnalyzer.hpp">
-<area shape="rect" id="Node000001" title="Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="352,5,573,31"/>
-<area shape="rect" id="Node000002" href="$AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="152,79,333,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="415,37,279,81,277,76,413,32"/>
-<area shape="rect" id="Node000007" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="357,79,568,104"/>
-<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="465,44,465,79,460,79,460,44"/>
-<area shape="rect" id="Node000008" href="$TrajectoryAnalyzer_8cpp.html" title="Implementation of trajectory&#45;level analysis coordination." alt="" coords="592,79,784,104"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="513,32,652,76,651,81,511,37"/>
-<area shape="rect" id="Node000003" href="$AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="16,152,205,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="211,113,134,154,131,149,208,108"/>
-<area shape="rect" id="Node000005" href="$main_8cpp.html" title="Application entry point." alt="" coords="190,225,295,251"/>
-<area shape="poly" id="edge6_Node000002_Node000005" title=" " alt="" coords="245,118,245,225,240,225,240,118"/>
-<area shape="rect" id="Node000006" href="$AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="280,152,432,177"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="274,109,339,150,336,154,271,114"/>
-<area shape="rect" id="Node000004" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,225,165,251"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="104,191,92,226,87,224,99,189"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="145,181,222,223,220,227,142,186"/>
+<map id="include/analysis/TrajectoryAnalyzer.hpp" name="include/analysis/TrajectoryAnalyzer.hpp">
+<area shape="rect" id="Node000001" title="correlation::core::Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="574,5,769,45"/>
+<area shape="rect" id="Node000002" href="$AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="229,101,439,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="585,51,380,103,378,98,583,46"/>
+<area shape="rect" id="Node000008" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="463,93,642,133"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="635,56,580,95,577,91,632,51"/>
+<area shape="rect" id="Node000009" href="$TrajectoryAnalyzer_8cpp.html" title="Implementation of trajectory&#45;level analysis coordination." alt="" coords="666,101,917,126"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="711,51,777,98,774,103,708,56"/>
+<area shape="rect" id="Node000010" href="$analysis__bindings_8cpp.html" title="Pybind11 bindings for correlation::analysis types." alt="" coords="941,93,1100,133"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="762,46,945,91,944,96,761,51"/>
+<area shape="rect" id="Node000003" href="$AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="15,181,232,207"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="291,133,155,184,153,179,289,128"/>
+<area shape="rect" id="Node000005" href="$main_8cpp.html" title="Application entry point." alt="" coords="217,255,323,280"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="322,139,299,182,275,255,270,253,294,180,317,137"/>
+<area shape="rect" id="Node000006" href="$AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="308,181,488,207"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="354,135,391,179,386,183,350,138"/>
+<area shape="rect" id="Node000007" href="$main__cli_8cpp.html" title="Headless CLI entry point for Correlation." alt="" coords="513,181,659,207"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="384,128,550,179,549,184,383,133"/>
+<area shape="rect" id="Node000004" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,255,193,280"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="118,221,106,255,101,254,113,219"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="160,210,247,252,245,257,158,215"/>
 </map>

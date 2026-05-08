@@ -1,9 +1,0 @@
-<map id="Writer::BaseWriter" name="Writer::BaseWriter">
-<area shape="rect" id="Node000001" title="Base class for all file writers." alt="" coords="175,5,317,31"/>
-<area shape="rect" id="Node000002" href="$classWriter_1_1ArrowWriter.html" title="Manages the writing of distribution function data to Parquet files via Apache Arrow." alt="" coords="5,79,153,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="208,38,108,81,106,76,206,34"/>
-<area shape="rect" id="Node000003" href="$classWriter_1_1CSVWriter.html" title="Manages the writing of distribution function data to CSV files." alt="" coords="178,79,314,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="249,44,249,79,243,79,243,44"/>
-<area shape="rect" id="Node000004" href="$classWriter_1_1HDF5Writer.html" title="Manages the writing of distribution function data to HDF5 files." alt="" coords="338,79,485,104"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="286,34,385,76,383,81,284,38"/>
-</map>

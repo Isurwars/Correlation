@@ -1,0 +1,14 @@
+<map id="correlation::analysis::StructureAnalyzer::dihedrals" name="correlation::analysis::StructureAnalyzer::dihedrals">
+<area shape="rect" id="Node000001" title="Gets a multi&#45;dimensional tensor containing dihedral angles." alt="" coords="877,107,1032,161"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="637,85,829,125"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="863,125,829,120,830,115,864,119"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,111"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="864,139,829,139,696,146,591,155,487,156,427,151,355,139,316,128,281,113,283,108,317,123,357,134,427,145,488,151,591,149,696,140,829,134,864,133"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="389,5,557,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="646,84,556,58,558,53,648,78"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1DADCalculator.html#a2b1f3680dacbe78916a2fe54c674bc18" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,85,589,125"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="623,107,589,107,589,102,623,102"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="376,64,300,88,298,83,375,59"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,111"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,101,156,101,156,95,190,95"/>
+</map>

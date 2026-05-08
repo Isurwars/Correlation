@@ -1,0 +1,23 @@
+<map id="src/bindings/module.cpp" name="src/bindings/module.cpp">
+<area shape="rect" id="Node000001" title="Root pybind11 module definition for the correlation Python package." alt="" coords="353,5,533,31"/>
+<area shape="rect" id="Node000002" href="$core__bindings_8hpp.html" title=" " alt="" coords="5,79,145,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="385,33,149,79,148,73,384,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="364,152,523,177"/>
+<area shape="poly" id="edge13_Node000001_Node000003" title=" " alt="" coords="354,33,266,52,232,65,211,80,202,98,204,112,215,124,234,134,288,149,350,157,350,162,287,154,232,139,211,128,199,114,197,97,207,77,229,60,265,47,352,28"/>
+<area shape="rect" id="Node000004" href="$io__bindings_8hpp.html" title=" " alt="" coords="221,79,345,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="419,33,323,75,321,71,417,28"/>
+<area shape="rect" id="Node000005" href="$math__bindings_8hpp.html" title=" " alt="" coords="370,79,517,104"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="446,31,446,65,441,65,441,31"/>
+<area shape="rect" id="Node000006" href="$analysis__bindings_8hpp.html" title=" " alt="" coords="541,79,708,104"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="473,28,583,71,581,76,471,33"/>
+<area shape="rect" id="Node000007" href="$calculator__bindings_8hpp.html" title=" " alt="" coords="733,79,909,104"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="504,28,747,73,746,79,503,33"/>
+<area shape="rect" id="Node000008" href="$writer__bindings_8hpp.html" title=" " alt="" coords="933,79,1084,104"/>
+<area shape="poly" id="edge11_Node000001_Node000008" title=" " alt="" coords="534,28,920,76,920,81,533,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="135,101,371,147,370,152,134,107"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="310,102,406,144,404,149,308,106"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="446,104,446,138,441,138,441,104"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="597,107,487,149,485,144,595,102"/>
+<area shape="poly" id="edge10_Node000007_Node000003" title=" " alt="" coords="761,107,518,152,517,147,760,101"/>
+<area shape="poly" id="edge12_Node000008_Node000003" title=" " alt="" coords="934,105,921,107,537,155,536,149,920,101,933,100"/>
+</map>

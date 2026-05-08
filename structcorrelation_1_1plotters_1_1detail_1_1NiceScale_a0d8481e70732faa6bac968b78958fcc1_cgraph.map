@@ -1,0 +1,5 @@
+<map id="correlation::plotters::detail::NiceScale::NiceScale" name="correlation::plotters::detail::NiceScale::NiceScale">
+<area shape="rect" id="Node000001" title="Calculates nice intervals for a range." alt="" coords="5,5,156,60"/>
+<area shape="rect" id="Node000002" href="$structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html#acb1373a5f50dca61260bb1475059947f" title="Rounds a range value to a &quot;nice&quot; human&#45;readable number." alt="" coords="204,5,355,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,30,190,30,190,35,156,35"/>
+</map>

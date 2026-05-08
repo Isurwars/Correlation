@@ -1,0 +1,12 @@
+<map id="correlation::app::AppBackend::setOptions" name="correlation::app::AppBackend::setOptions">
+<area shape="rect" id="Node000001" title="Sets the program options." alt="" coords="544,69,756,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="553,69,468,48,469,43,554,63"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="530,92,496,92,496,87,530,87"/>
+<area shape="rect" id="Node000005" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,134,413,159"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="544,115,413,144,412,138,543,110"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,37,227,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="261,43,227,47,227,42,261,37"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="261,77,227,73,227,68,261,72"/>
+</map>

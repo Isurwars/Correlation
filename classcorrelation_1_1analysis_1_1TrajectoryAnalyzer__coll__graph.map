@@ -1,0 +1,5 @@
+<map id="correlation::analysis::TrajectoryAnalyzer" name="correlation::analysis::TrajectoryAnalyzer">
+<area shape="rect" id="Node000001" title="Orchestrates structural analysis across multiple frames of a trajectory." alt="" coords="5,108,160,148"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html" title="This class stores a series of snapshots of a system." alt="" coords="15,5,151,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,59,85,108,80,108,80,59"/>
+</map>

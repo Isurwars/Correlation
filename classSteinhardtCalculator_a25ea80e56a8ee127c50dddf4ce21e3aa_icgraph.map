@@ -1,5 +1,0 @@
-<map id="SteinhardtCalculator::calculate" name="SteinhardtCalculator::calculate">
-<area shape="rect" id="Node000001" title=" " alt="" coords="208,5,363,45"/>
-<area shape="rect" id="Node000002" href="$classSteinhardtCalculator.html#a60d929283ac65ad0511e180ae2ebf5b4" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,160,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,28,161,28,161,23,194,23"/>
-</map>

@@ -1,0 +1,17 @@
+<map id="correlation::calculators::PADCalculator::calculateFrame" name="correlation::calculators::PADCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,117,236,157"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="299,5,467,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="171,114,300,63,302,68,173,119"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1PADCalculator.html#a5ea8ec1e5078da7ddc0b4dd58a0c45d9" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="289,85,478,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,120,275,115,275,120,236,125"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="284,149,483,189"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="236,148,271,152,270,158,236,153"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="299,213,467,268"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="173,154,302,206,300,211,171,159"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a7ebe8b970ea072d3b55281de5a999ebf" title="Gets a multi&#45;dimensional tensor containing bond angles." alt="" coords="531,5,685,60"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="446,82,517,59,518,64,447,87"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="540,85,676,125"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="478,102,526,102,526,107,478,107"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="537,149,679,189"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="455,122,525,142,523,147,454,127"/>
+</map>

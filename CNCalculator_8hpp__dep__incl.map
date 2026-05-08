@@ -1,7 +1,7 @@
 <map id="include/calculators/CNCalculator.hpp" name="include/calculators/CNCalculator.hpp">
-<area shape="rect" id="Node000001" title="Coordination number (CN) calculator." alt="" coords="161,5,305,45"/>
-<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,216,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,55,130,95,127,91,191,51"/>
-<area shape="rect" id="Node000003" href="$CNCalculator_8cpp.html" title="Implementation of the coordination number calculator." alt="" coords="241,93,471,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="276,51,339,91,337,95,273,55"/>
+<area shape="rect" id="Node000001" title="Coordination number (CN) calculator." alt="" coords="137,5,281,45"/>
+<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,184,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="175,56,122,95,118,91,171,52"/>
+<area shape="rect" id="Node000003" href="$CNCalculator_8cpp.html" title="Implementation of the coordination number calculator." alt="" coords="209,101,439,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="248,52,310,98,307,102,244,56"/>
 </map>

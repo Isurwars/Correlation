@@ -1,0 +1,37 @@
+<map id="init_core" name="init_core">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,461,84,486"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="161,5,297,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="44,460,52,379,68,258,93,137,110,89,130,56,147,42,150,46,134,59,115,91,99,139,73,259,57,380,50,461"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="161,69,297,109"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="45,460,54,391,72,289,97,187,113,147,130,120,147,106,150,110,134,123,117,150,102,189,77,290,59,391,50,461"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Atom.html#a11daa091c7d80d03ac34da852c78b1b9" title="Gets the element type of the atom." alt="" coords="161,133,297,173"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="43,460,46,410,57,336,68,295,83,255,104,217,130,183,147,171,150,175,134,187,108,220,88,257,73,297,62,337,51,410,49,461"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="161,197,297,237"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="45,460,51,420,65,363,90,301,108,273,130,247,147,235,150,240,134,251,112,276,95,304,70,364,56,421,50,461"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="132,261,325,301"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="47,460,57,430,73,390,98,348,130,311,137,306,140,311,134,315,102,351,78,392,62,431,52,461"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="147,325,310,365"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="52,459,83,418,106,395,130,375,141,369,143,374,134,380,109,399,88,421,57,462"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="141,389,317,429"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="78,458,131,439,153,431,154,436,133,444,80,463"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1core_1_1Atom.html#ad08b4084233efbc080abdd593398f239" title="Gets the unique ID of the atom." alt="" coords="161,453,297,493"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="84,471,147,471,147,476,84,476"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Atom.html#aab506552a0928b7e428cff13e4d50635" title="Gets the position of the atom." alt="" coords="161,517,297,557"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="80,484,133,503,154,510,153,515,131,508,78,489"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1core_1_1Atom.html#aebe7588bfa94d50323282b04d65dbe7c" title="Sets the element type of the atom." alt="" coords="159,581,298,621"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="57,485,88,525,109,548,133,567,148,575,146,580,131,572,106,552,83,529,52,488"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="161,645,297,685"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="52,485,62,515,78,554,102,596,134,631,150,642,147,646,130,635,98,599,73,557,57,517,47,487"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1core_1_1Atom.html#a2f1ed4e3d2cf0e8f99fa956de01b7b67" title="Sets the unique ID of the atom." alt="" coords="161,709,297,749"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="50,486,56,526,70,582,95,643,112,671,134,695,150,707,147,711,130,699,108,674,90,645,65,584,51,527,45,486"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1core_1_1Atom.html#a5c6907abaca8061e060ee5221930a1c0" title="Sets the position of the atom." alt="" coords="160,773,297,813"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="49,486,51,536,62,610,73,650,88,689,108,727,134,759,149,771,146,776,130,763,104,730,83,692,68,651,57,611,46,537,43,486"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1core_1_1Trajectory.html#a97aa0098ccf0937b8b1d062ff6da124a" title="Sets the time step between frames." alt="" coords="141,837,316,877"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="50,486,59,555,77,657,102,758,117,797,134,824,138,827,134,831,130,827,113,799,97,759,72,658,54,556,45,486"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="161,901,297,941"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="50,486,57,567,73,688,99,808,115,856,134,888,150,901,147,905,130,891,110,858,93,810,68,688,52,567,44,486"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="373,5,572,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="297,23,359,23,359,28,297,28"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="620,5,756,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="572,23,606,23,606,28,572,28"/>
+</map>

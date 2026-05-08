@@ -1,0 +1,23 @@
+<map id="init_writers" name="init_writers">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,249,100,274"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1writers_1_1BaseWriter.html#a0d643e304deb9c72ab87778d997c5aac" title="Returns a list of supported file extensions (e.g., {&quot;.h5&quot;}, {&quot;.csv&quot;})." alt="" coords="149,5,352,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="54,248,62,210,79,158,107,103,125,78,146,55,152,51,155,55,150,59,129,81,111,106,84,160,68,211,59,249"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1writers_1_1BaseWriter.html#af5de228b72759c84c4c54536c1749d7e" title="Returns the display name of the format (e.g., &quot;HDF5&quot;, &quot;CSV&quot;)." alt="" coords="165,69,336,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="57,247,88,186,114,150,146,119,154,114,157,118,150,123,118,154,93,189,62,250"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1writers_1_1WriterFactory.html#aadd51328510d6406d38d3f11a672b379" title="Gets a writer by its name." alt="" coords="158,133,343,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="65,246,100,215,147,183,161,176,163,181,149,188,103,219,69,250"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1writers_1_1WriterFactory.html#a16855125d7957eb13210cde60b4702a6" title="Finds a writer that supports the given file extension." alt="" coords="148,198,353,253"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="100,250,134,244,135,249,101,255"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1writers_1_1WriterFactory.html#adf7eb1ebef2ade4110e0f06b051b87c7" title="Returns all registered writers." alt="" coords="155,277,347,317"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="101,267,142,275,141,280,100,272"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="161,341,340,381"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="71,272,105,300,149,327,164,334,162,339,147,332,102,304,67,277"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1writers_1_1BaseWriter.html#a64c6c65cb34429222206bc2cce187359" title="Writes the distribution function data to file(s)." alt="" coords="178,405,323,445"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="62,273,94,330,119,363,150,391,167,401,164,406,146,395,115,367,90,333,57,276"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1writers_1_1CSVWriter.html#a980d280847450672dec384d836996e84" title="Writes all available histograms to appropriately named CSV files." alt="" coords="157,469,344,509"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="59,274,68,310,85,359,112,411,129,434,150,455,155,460,152,464,146,459,125,438,108,413,80,361,63,311,54,275"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="420,422,588,477"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="344,472,406,462,407,467,345,477"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1writers_1_1CSVWriter.html#a51d3eff63030ed8d8e149e259770ca9a" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="401,501,607,555"/>
+<area shape="poly" id="edge10_Node000009_Node000011" title=" " alt="" coords="345,501,388,508,388,513,344,506"/>
+</map>

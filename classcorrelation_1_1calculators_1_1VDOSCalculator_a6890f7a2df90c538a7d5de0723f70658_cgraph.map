@@ -1,0 +1,5 @@
+<map id="correlation::calculators::VDOSCalculator::calculate" name="correlation::calculators::VDOSCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="5,5,205,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="253,5,509,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,23,239,23,239,28,205,28"/>
+</map>

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['filetype_0',['FileType',['../namespaceFileReader.html#a034608540983c433d4efb9cc02cc4868',1,'FileReader']]],
-  ['flag_1',['flag',['../classpfd_1_1settings.html#a61077e0fd48da6de7bb0f5dd9d9d1aad',1,'pfd::settings']]]
+  ['theme_0',['Theme',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a81dbf1b06cf25282b95a20c9bf39863e',1,'correlation::plotters::PlotConfig']]]
 ];

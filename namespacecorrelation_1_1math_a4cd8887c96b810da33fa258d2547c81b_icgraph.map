@@ -1,55 +1,59 @@
 <map id="correlation::math::determinant" name="correlation::math::determinant">
-<area shape="rect" id="Node000001" title="Computes the determinant of a 3x3 matrix." alt="" coords="1656,159,1799,199"/>
-<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="1759,147,1748,140,1727,137,1709,139,1699,144,1695,150,1697,158,1691,159,1689,149,1695,140,1708,134,1727,132,1750,135,1762,142"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="1465,129,1608,169"/>
-<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="1642,168,1608,163,1608,158,1643,163"/>
-<area shape="rect" id="Node000014" href="$classCell.html#aba82db75c187e763fdff56dd6a1558ac" title=" " alt="" coords="1273,194,1417,219"/>
-<area shape="poly" id="edge28_Node000001_Node000014" title=" " alt="" coords="1643,187,1418,204,1417,199,1642,182"/>
-<area shape="poly" id="edge15_Node000002_Node000002" title=" " alt="" coords="1568,117,1557,111,1537,108,1519,110,1508,115,1504,121,1506,128,1501,130,1499,120,1504,111,1517,105,1537,103,1559,106,1571,113"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="1274,120,1417,160"/>
-<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="1452,148,1417,146,1417,141,1452,143"/>
-<area shape="poly" id="edge16_Node000002_Node000014" title=" " alt="" coords="1457,176,1390,196,1388,191,1456,171"/>
-<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="1057,88,1200,128"/>
-<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="1260,130,1200,121,1201,116,1261,125"/>
-<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a0baae262699dfc4e20867c3c24d90410" title="Convenience overload — allocates its own workspace." alt="" coords="790,5,933,45"/>
-<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="1060,86,983,60,932,45,934,40,985,55,1062,81"/>
-<area shape="rect" id="Node000006" href="$classDynamicsAnalyzer.html#aee6f9ce7f1a650a26c39f73dc613b49f" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="741,70,982,95"/>
-<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="1043,103,982,97,983,91,1044,97"/>
-<area shape="rect" id="Node000009" href="$classDynamicsAnalyzer.html#a75bce502fd26c58fd80088c485771518" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="739,119,984,145"/>
-<area shape="poly" id="edge9_Node000004_Node000009" title=" " alt="" coords="1044,118,985,124,984,118,1043,113"/>
-<area shape="rect" id="Node000007" href="$classMSDCalculator.html#aa56cae507d34d764f96a060fcc667ab2" title="Core MSD calculation returning named histograms." alt="" coords="493,61,678,86"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="727,81,678,79,678,74,727,75"/>
-<area shape="rect" id="Node000008" href="$classMSDCalculator.html#aa610a5a34e9bf345711319741ed5178e" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="245,53,430,93"/>
-<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="479,76,430,76,430,71,479,71"/>
-<area shape="rect" id="Node000010" href="$classVACFCalculator.html#ad1aa29b809be017e3857a0d7e23488d8" title=" " alt="" coords="243,143,432,169"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="725,141,480,152,432,154,432,149,480,147,725,135"/>
-<area shape="rect" id="Node000013" href="$classDynamicsAnalyzer.html#ae4f1e59bba121407ff094c51b83b8f3f" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="480,161,691,201"/>
-<area shape="poly" id="edge13_Node000009_Node000013" title=" " alt="" coords="777,150,691,165,690,160,776,144"/>
-<area shape="rect" id="Node000011" href="$classVACFCalculator.html#a409953a1255c73c6b471f9d12172e94c" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,104,195,144"/>
-<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="229,144,194,139,195,134,230,139"/>
-<area shape="rect" id="Node000012" href="$classDistributionFunctions.html#a1d186efbf628b45fb9dd3bc11f004203" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="20,168,180,208"/>
-<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="230,173,181,180,180,175,229,168"/>
-<area shape="poly" id="edge14_Node000013_Node000010" title=" " alt="" coords="466,172,432,168,433,163,467,167"/>
-<area shape="rect" id="Node000015" href="$classCell.html#ad8f270488624e1dc9cc20b82caceb2e3" title="Constructs a Cell from three lattice vectors." alt="" coords="1089,194,1169,219"/>
-<area shape="poly" id="edge17_Node000014_Node000015" title=" " alt="" coords="1259,209,1169,209,1169,204,1259,204"/>
-<area shape="rect" id="Node000016" href="$classCell.html#a3862a2d9a684203bb9ba71a4d1199b75" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="1032,262,1225,287"/>
-<area shape="poly" id="edge18_Node000014_Node000016" title=" " alt="" coords="1291,226,1171,264,1169,259,1290,221"/>
-<area shape="rect" id="Node000017" href="$classCell.html#ac2f702ac359e8d3a3dfaa60824f23326" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="821,175,901,201"/>
-<area shape="poly" id="edge19_Node000016_Node000017" title=" " alt="" coords="1086,259,983,216,901,197,902,191,985,211,1088,254"/>
-<area shape="rect" id="Node000018" href="$classFileReader_1_1CarReader.html#a24857ba8a39d3359a71fb9b2a47c90be" title=" " alt="" coords="778,225,945,265"/>
-<area shape="poly" id="edge20_Node000016_Node000018" title=" " alt="" coords="1018,265,945,257,945,252,1019,260"/>
-<area shape="rect" id="Node000020" href="$classFileReader_1_1CellReader.html#ad8585f834211096fae134989720a12ac" title=" " alt="" coords="776,289,947,329"/>
-<area shape="poly" id="edge22_Node000016_Node000020" title=" " alt="" coords="1019,292,947,301,946,296,1018,286"/>
-<area shape="rect" id="Node000022" href="$classFileReader_1_1CifReader.html#aed594e3309a748570014f2a1b9262202" title=" " alt="" coords="780,353,943,393"/>
-<area shape="poly" id="edge24_Node000016_Node000022" title=" " alt="" coords="1092,296,1042,320,985,344,944,357,942,352,983,339,1040,315,1090,291"/>
-<area shape="rect" id="Node000024" href="$classFileReader_1_1ArcReader.html#a4c785b37eab42f85ebb1b846c8f5392d" title=" " alt="" coords="778,417,945,457"/>
-<area shape="poly" id="edge26_Node000016_Node000024" title=" " alt="" coords="1110,300,1058,354,1023,383,985,408,946,424,944,419,983,403,1020,379,1054,350,1106,296"/>
-<area shape="rect" id="Node000019" href="$classFileReader_1_1CarReader.html#ab41d705dd5ad4767d6c5ebf1d458516f" title="Reads an atomic structure from a file." alt="" coords="502,225,669,265"/>
-<area shape="poly" id="edge21_Node000018_Node000019" title=" " alt="" coords="764,248,669,248,669,243,764,243"/>
-<area shape="rect" id="Node000021" href="$classFileReader_1_1CellReader.html#ad4963e2a95bb6b7b63b956a3bc7cf7e9" title="Reads an atomic structure from a file." alt="" coords="500,289,671,329"/>
-<area shape="poly" id="edge23_Node000020_Node000021" title=" " alt="" coords="762,312,671,312,671,307,762,307"/>
-<area shape="rect" id="Node000023" href="$classFileReader_1_1CifReader.html#a4a505a21a0036f7ba894f8dd5ba7d4a0" title="Reads an atomic structure from a file." alt="" coords="504,353,667,393"/>
-<area shape="poly" id="edge25_Node000022_Node000023" title=" " alt="" coords="766,376,667,376,667,371,766,371"/>
-<area shape="rect" id="Node000025" href="$classFileReader_1_1ArcReader.html#ac1a899b5d1612171f7fb88c0d21027ec" title="Reads a trajectory from a file." alt="" coords="502,417,669,457"/>
-<area shape="poly" id="edge27_Node000024_Node000025" title=" " alt="" coords="764,440,669,440,669,435,764,435"/>
+<area shape="rect" id="Node000001" title="Computes the determinant of a 3x3 matrix." alt="" coords="2163,183,2305,223"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="2266,171,2255,164,2234,161,2216,163,2205,168,2201,174,2203,182,2198,183,2196,173,2202,164,2215,158,2234,156,2256,159,2269,166"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="1972,153,2115,193"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="2149,192,2114,187,2115,182,2150,187"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="1780,211,1924,251"/>
+<area shape="poly" id="edge30_Node000001_Node000016" title=" " alt="" coords="2149,211,1924,228,1924,223,2149,206"/>
+<area shape="poly" id="edge17_Node000002_Node000002" title=" " alt="" coords="2075,141,2064,135,2043,132,2025,134,2015,139,2011,145,2013,152,2007,154,2005,144,2011,135,2024,129,2043,127,2066,130,2078,137"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="1781,139,1923,179"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="1958,169,1923,167,1924,161,1959,164"/>
+<area shape="poly" id="edge18_Node000002_Node000016" title=" " alt="" coords="1964,200,1920,213,1919,208,1962,195"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="1564,107,1707,147"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="1767,149,1707,140,1707,135,1767,144"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a0baae262699dfc4e20867c3c24d90410" title="Convenience overload — allocates its own workspace." alt="" coords="1293,5,1435,45"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="1585,103,1490,60,1435,43,1436,38,1492,55,1587,98"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="1239,69,1489,109"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="1550,118,1488,109,1489,104,1551,112"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1237,133,1491,173"/>
+<area shape="poly" id="edge9_Node000004_Node000009" title=" " alt="" coords="1551,138,1491,144,1491,138,1550,132"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="983,68,1177,108"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="1225,91,1177,91,1177,86,1225,86"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="665,68,923,108"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="969,91,923,91,923,85,969,85"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="695,161,893,201"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="1224,162,971,175,893,179,893,173,971,169,1223,157"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="971,183,1189,238"/>
+<area shape="poly" id="edge15_Node000009_Node000015" title=" " alt="" coords="1252,179,1190,191,1189,186,1251,173"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,125,617,165"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="681,171,617,163,618,158,682,166"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,190,571,245"/>
+<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="682,197,571,210,570,205,681,192"/>
+<area shape="rect" id="Node000013" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,205,308,230"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="389,220,308,220,308,215,389,215"/>
+<area shape="rect" id="Node000014" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,205,156,230"/>
+<area shape="poly" id="edge14_Node000013_Node000014" title=" " alt="" coords="190,220,156,220,156,215,190,215"/>
+<area shape="poly" id="edge16_Node000015_Node000010" title=" " alt="" coords="956,201,893,194,893,189,957,195"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1core_1_1Cell.html#a532c3b06976fe3a7ffb814677de18b93" title="Constructs a Cell from three lattice vectors." alt="" coords="1567,211,1703,251"/>
+<area shape="poly" id="edge19_Node000016_Node000017" title=" " alt="" coords="1766,233,1704,233,1704,228,1766,228"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="1539,291,1732,331"/>
+<area shape="poly" id="edge20_Node000016_Node000018" title=" " alt="" coords="1785,258,1691,293,1689,288,1783,253"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1core_1_1Cell.html#ac33a2dbf4619585c0dd11e4a8e466860" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="1296,199,1432,239"/>
+<area shape="poly" id="edge21_Node000018_Node000019" title=" " alt="" coords="1577,288,1490,253,1431,236,1433,231,1492,248,1579,283"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="1289,263,1439,303"/>
+<area shape="poly" id="edge22_Node000018_Node000020" title=" " alt="" coords="1525,302,1439,293,1439,288,1525,297"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="1289,327,1439,367"/>
+<area shape="poly" id="edge24_Node000018_Node000022" title=" " alt="" coords="1525,328,1439,339,1439,334,1525,323"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="1289,391,1439,431"/>
+<area shape="poly" id="edge26_Node000018_Node000024" title=" " alt="" coords="1586,339,1492,381,1440,397,1438,392,1490,376,1584,335"/>
+<area shape="rect" id="Node000026" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="1289,455,1439,495"/>
+<area shape="poly" id="edge28_Node000018_Node000026" title=" " alt="" coords="1611,343,1560,396,1527,422,1492,445,1440,465,1438,460,1489,440,1524,418,1556,392,1607,340"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="983,263,1177,303"/>
+<area shape="poly" id="edge23_Node000020_Node000021" title=" " alt="" coords="1276,285,1178,285,1178,280,1276,280"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="981,327,1179,367"/>
+<area shape="poly" id="edge25_Node000022_Node000023" title=" " alt="" coords="1276,349,1179,349,1179,344,1276,344"/>
+<area shape="rect" id="Node000025" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="985,391,1175,431"/>
+<area shape="poly" id="edge27_Node000024_Node000025" title=" " alt="" coords="1275,413,1176,413,1176,408,1275,408"/>
+<area shape="rect" id="Node000027" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="981,455,1179,495"/>
+<area shape="poly" id="edge29_Node000026_Node000027" title=" " alt="" coords="1275,477,1179,477,1179,472,1275,472"/>
 </map>

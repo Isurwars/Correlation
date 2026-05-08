@@ -1,0 +1,26 @@
+<map id="correlation::core::Cell::atomCount" name="correlation::core::Cell::atomCount">
+<area shape="rect" id="Node000001" title="Gets the total number of atoms in the cell." alt="" coords="875,185,1011,225"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,77,827,117"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="889,181,770,120,773,115,892,177"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="636,185,827,225"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="861,208,827,208,827,203,861,203"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="638,293,825,333"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="892,234,773,296,770,291,889,229"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="645,76,587,60,545,48,546,43,589,55,647,71"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="622,100,556,100,556,95,622,95"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,157,308,182"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="378,132,296,159,294,154,376,127"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,157,156,182"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,172,156,172,156,167,190,167"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,149,587,189"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="622,193,587,188,588,183,623,188"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="388,214,556,269"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="623,223,557,232,556,227,622,218"/>
+<area shape="poly" id="edge9_Node000009_Node000005" title=" " alt="" coords="376,212,294,185,296,179,378,207"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="393,293,551,333"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="624,316,552,316,552,311,624,311"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="393,357,551,397"/>
+<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="637,339,552,361,550,355,636,334"/>
+</map>

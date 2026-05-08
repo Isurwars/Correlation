@@ -1,7 +1,7 @@
 <map id="include/calculators/VDOSCalculator.hpp" name="include/calculators/VDOSCalculator.hpp">
-<area shape="rect" id="Node000001" title="Vibrational density of states (VDOS) calculator." alt="" coords="159,5,315,45"/>
-<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,216,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,55,131,95,128,91,193,51"/>
-<area shape="rect" id="Node000003" href="$VDOSCalculator_8cpp.html" title="Implementation of vibrational density of states calculations." alt="" coords="239,93,489,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="281,51,347,91,344,95,278,55"/>
+<area shape="rect" id="Node000001" title="Vibrational density of states (VDOS) calculator." alt="" coords="135,5,291,45"/>
+<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,184,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="177,56,122,95,119,91,174,51"/>
+<area shape="rect" id="Node000003" href="$VDOSCalculator_8cpp.html" title="Implementation of vibrational density of states calculations." alt="" coords="209,101,458,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="253,51,319,98,316,103,250,56"/>
 </map>

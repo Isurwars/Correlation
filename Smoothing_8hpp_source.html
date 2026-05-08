@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -233,21 +233,21 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>}</div>
 </div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
-<div class="foldopen" id="foldopen00181" data-start="{" data-end="}">
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno"><a class="line" href="namespacecorrelation_1_1math.html#afea4c44f2d02d37fb0d2c9ed8fe1925b">  181</a></span><span class="keyword">inline</span> std::vector&lt;double&gt; <a class="code hl_function" href="namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646">KernelSmoothing</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;r,</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>                                           <span class="keyword">const</span> std::vector&lt;double&gt; &amp;y,</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                                           <span class="keywordtype">double</span> sigma, <a class="code hl_enumeration" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">KernelType</a> type) {</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>  <span class="keywordflow">if</span> (r.size() != y.size() || r.size() &lt; 2)</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keywordflow">return</span> {};</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> dx = r[1] - r[0];</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646">KernelSmoothing</a>(dx, y, sigma, type);</div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>}</div>
+<div class="foldopen" id="foldopen00187" data-start="{" data-end="}">
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno"><a class="line" href="namespacecorrelation_1_1math.html#afea4c44f2d02d37fb0d2c9ed8fe1925b">  187</a></span><span class="keyword">inline</span> std::vector&lt;double&gt; <a class="code hl_function" href="namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646">KernelSmoothing</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;r,</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                                           <span class="keyword">const</span> std::vector&lt;double&gt; &amp;y,</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                                           <span class="keywordtype">double</span> sigma, <a class="code hl_enumeration" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">KernelType</a> type) {</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  <span class="keywordflow">if</span> (r.size() != y.size() || r.size() &lt; 2)</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> dx = r[1] - r[0];</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646">KernelSmoothing</a>(dx, y, sigma, type);</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>}</div>
 </div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>} <span class="comment">// namespace correlation::math</span></div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span> </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>} <span class="comment">// namespace correlation::math</span></div>
 <div class="ttc" id="aConstants_8hpp_html"><div class="ttname"><a href="Constants_8hpp.html">Constants.hpp</a></div><div class="ttdoc">Mathematical and physical constants for the Correlation tool.</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html"><div class="ttname"><a href="namespacecorrelation_1_1math.html">correlation::math</a></div><div class="ttdoc">Defines universal mathematical and physical constants.</div></div>
-<div class="ttc" id="anamespacecorrelation_1_1math_html_a2eb738243b58f5117a51aca3a18755c6"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6">correlation::math::two_pi</a></div><div class="ttdeci">constexpr double two_pi</div><div class="ttdoc">2 * pi</div><div class="ttdef"><b>Definition</b> Constants.hpp:36</div></div>
+<div class="ttc" id="anamespacecorrelation_1_1math_html_a2eb738243b58f5117a51aca3a18755c6"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6">correlation::math::two_pi</a></div><div class="ttdeci">constexpr double two_pi</div><div class="ttdoc">2 * pi</div><div class="ttdef"><b>Definition</b> Constants.hpp:35</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_a81adde9262c240cbcaea361a1029830f"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a81adde9262c240cbcaea361a1029830f">correlation::math::generateKernel</a></div><div class="ttdeci">std::vector&lt; double &gt; generateKernel(size_t size, double dx, double sigma, KernelType type)</div><div class="ttdoc">Generates a smoothing kernel.</div><div class="ttdef"><b>Definition</b> Smoothing.hpp:35</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_add502e8ebbd89ad601ce9aafe2271646"><div class="ttname"><a href="namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646">correlation::math::KernelSmoothing</a></div><div class="ttdeci">std::vector&lt; double &gt; KernelSmoothing(double dx, const std::vector&lt; double &gt; &amp;y, double sigma, KernelType type)</div><div class="ttdoc">Applies kernel smoothing to a data series.</div><div class="ttdef"><b>Definition</b> Smoothing.hpp:101</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_aff7fd51650599d29426c566b7767a923"><div class="ttname"><a href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a></div><div class="ttdeci">KernelType</div><div class="ttdoc">Selection of kernel types for smoothing.</div><div class="ttdef"><b>Definition</b> Smoothing.hpp:24</div></div>

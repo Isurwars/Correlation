@@ -1,0 +1,55 @@
+<map id="main" name="main">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,391,60,417"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#ac9502096e39cd33de4ad5c38c2a75a32" title="Gets the total number of frames in the trajectory." alt="" coords="108,121,320,161"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="32,391,35,349,45,290,68,227,85,197,106,171,111,167,114,171,110,175,89,200,72,229,50,292,40,350,37,391"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#ab6dc0659ce4c2ecea3d479eee4aa4d28" title="Gets the total number of atoms in the first frame." alt="" coords="108,185,320,225"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="33,390,40,359,54,317,75,273,106,235,112,231,115,235,110,239,79,276,59,319,45,361,39,392"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="108,249,320,289"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="50,389,174,295,177,300,53,393"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="108,384,320,424"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="60,401,94,401,94,407,60,407"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1app_1_1AppBackend.html#a49feaf6f5d7faafa44f176bf8d8df0fe" title="Sets the program options." alt="" coords="108,448,320,488"/>
+<area shape="poly" id="edge24_Node000001_Node000021" title=" " alt="" coords="61,414,109,434,131,441,129,446,107,438,59,419"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1app_1_1AppBackend.html#a5f8cc14eac7a5413324fa56db511b81a" title="Sets a callback function for analysis progress updates." alt="" coords="108,512,320,552"/>
+<area shape="poly" id="edge25_Node000001_Node000022" title=" " alt="" coords="43,416,69,457,88,479,110,498,118,503,116,508,106,502,84,483,64,460,38,419"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="108,719,320,759"/>
+<area shape="poly" id="edge26_Node000001_Node000023" title=" " alt="" coords="42,416,70,479,110,563,154,640,195,706,190,708,150,643,106,565,65,482,37,418"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47" title="Determines the FileType from a given filename extension." alt="" coords="377,85,527,125"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="301,247,318,235,329,224,336,212,342,187,348,161,366,136,372,131,375,135,370,139,353,164,347,188,341,214,333,227,322,239,304,251"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="377,213,527,253"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="320,251,363,244,364,249,321,256"/>
+<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="377,149,527,189"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="291,247,319,235,343,218,367,199,379,193,382,197,369,204,346,222,321,240,293,252"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a6861c6c206660e7d8ea866fb76b02f0e" title="Finds a reader that supports the given file extension." alt="" coords="597,70,815,125"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="515,211,534,199,549,184,557,168,566,151,582,135,591,129,594,134,586,139,570,155,562,170,554,187,538,203,518,216"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="613,149,799,189"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="526,212,612,190,613,195,527,217"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff" title="Reads an atomic structure from a file." alt="" coords="604,213,808,253"/>
+<area shape="poly" id="edge8_Node000006_Node000009" title=" " alt="" coords="527,231,590,231,590,236,527,236"/>
+<area shape="poly" id="edge10_Node000010_Node000007" title=" " alt="" coords="523,147,596,126,597,131,524,152"/>
+<area shape="poly" id="edge11_Node000010_Node000008" title=" " alt="" coords="527,167,599,167,599,172,527,172"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1BaseReader.html#a4e2ee1a39ed194246c9afb17d28b492b" title="Reads a trajectory from a file." alt="" coords="601,5,811,45"/>
+<area shape="poly" id="edge12_Node000010_Node000011" title=" " alt="" coords="517,147,534,135,550,116,557,96,565,75,582,55,590,50,593,54,586,59,569,78,562,98,555,118,538,139,519,151"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="368,443,536,498"/>
+<area shape="poly" id="edge14_Node000012_Node000013" title=" " alt="" coords="287,421,355,441,354,446,285,427"/>
+<area shape="rect" id="Node000020" href="$structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="607,695,805,735"/>
+<area shape="poly" id="edge23_Node000012_Node000020" title=" " alt="" coords="302,422,322,434,339,452,348,469,356,488,370,508,423,565,468,607,517,643,585,680,601,687,598,692,583,685,514,647,464,611,419,569,366,511,352,490,343,472,335,455,318,438,299,426"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="629,329,783,383"/>
+<area shape="poly" id="edge15_Node000013_Node000014" title=" " alt="" coords="494,441,536,416,583,392,615,380,617,385,585,397,539,421,496,446"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="876,304,1039,344"/>
+<area shape="poly" id="edge19_Node000013_Node000015" title=" " alt="" coords="465,442,483,410,510,374,543,340,583,314,618,300,655,291,731,284,804,288,869,299,868,304,804,294,731,290,656,296,620,305,585,318,546,344,514,377,488,413,469,444"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="629,407,783,462"/>
+<area shape="poly" id="edge17_Node000013_Node000016" title=" " alt="" coords="536,456,615,445,616,450,537,461"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="584,487,828,527"/>
+<area shape="poly" id="edge18_Node000013_Node000017" title=" " alt="" coords="537,480,570,485,570,490,536,485"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="629,551,783,606"/>
+<area shape="poly" id="edge20_Node000013_Node000018" title=" " alt="" coords="503,496,585,536,616,548,614,553,583,541,500,500"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="603,631,809,671"/>
+<area shape="poly" id="edge21_Node000013_Node000019" title=" " alt="" coords="473,497,519,557,550,588,585,615,600,623,597,627,583,620,547,592,515,560,468,500"/>
+<area shape="poly" id="edge22_Node000013_Node000020" title=" " alt="" coords="465,497,482,538,508,588,542,638,563,661,586,681,595,687,593,691,582,685,559,665,538,642,503,591,477,540,460,499"/>
+<area shape="poly" id="edge16_Node000014_Node000015" title=" " alt="" coords="783,344,862,333,863,339,784,349"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="379,737,525,777"/>
+<area shape="poly" id="edge27_Node000023_Node000024" title=" " alt="" coords="320,744,366,748,365,753,320,750"/>
+<area shape="rect" id="Node000025" href="$classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="617,759,795,799"/>
+<area shape="poly" id="edge28_Node000024_Node000025" title=" " alt="" coords="525,761,603,767,603,773,524,766"/>
+</map>

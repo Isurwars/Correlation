@@ -1,0 +1,13 @@
+<map id="correlation::calculators::RDCalculator::calculateFrame" name="correlation::calculators::RDCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,121,228,161"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="283,5,451,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,118,289,63,291,68,165,123"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1RDCalculator.html#a17a92748e93e02fae68b0198dc4e98fa" title="High&#45;performance computation of the Ring Distribution (RD)." alt="" coords="276,85,459,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="228,122,262,117,263,122,229,127"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="290,149,445,204"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="229,154,277,161,276,166,228,159"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="283,228,451,283"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="161,158,277,213,293,220,290,225,275,218,159,163"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e" title="Finds and counts all chordless rings up to a maximum size." alt="" coords="507,85,679,125"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="459,102,493,102,493,107,459,107"/>
+</map>

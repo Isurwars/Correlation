@@ -1,0 +1,27 @@
+<map id="correlation::core::Cell::updateLatticeParametersFromVectors" name="correlation::core::Cell::updateLatticeParametersFromVectors">
+<area shape="rect" id="Node000001" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="883,94,1101,149"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="691,101,835,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="869,124,835,124,835,119,869,119"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a532c3b06976fe3a7ffb814677de18b93" title="Constructs a Cell from three lattice vectors." alt="" coords="478,69,614,109"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="676,111,614,102,615,97,677,106"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="449,133,643,173"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="677,137,643,142,643,136,676,131"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#ac33a2dbf4619585c0dd11e4a8e466860" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="259,5,395,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="457,129,448,123,431,107,423,91,414,75,400,59,381,48,384,43,403,55,419,72,427,89,436,104,451,119,460,125"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="252,69,401,109"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="463,132,395,112,396,107,465,127"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="252,133,401,173"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="436,156,402,156,402,151,436,151"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="252,197,401,237"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="465,180,396,200,395,195,463,175"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="252,261,401,301"/>
+<area shape="poly" id="edge11_Node000004_Node000012" title=" " alt="" coords="508,184,459,218,403,252,379,264,376,259,400,247,456,213,505,179"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="7,69,202,109"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="238,92,202,92,202,87,238,87"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="6,133,203,173"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="238,156,204,156,204,151,238,151"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="9,197,200,237"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="238,220,200,220,200,215,238,215"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="5,261,204,301"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="238,284,204,284,204,279,238,279"/>
+</map>

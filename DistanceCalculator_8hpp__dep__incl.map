@@ -1,7 +1,7 @@
 <map id="include/calculators/DistanceCalculator.hpp" name="include/calculators/DistanceCalculator.hpp">
-<area shape="rect" id="Node000001" title="Pairwise distance calculator." alt="" coords="113,5,289,45"/>
-<area shape="rect" id="Node000002" href="$StructureAnalyzer_8cpp.html" title="Implementation of structural analysis and neighbor search." alt="" coords="5,101,192,126"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="170,56,115,102,111,98,166,52"/>
-<area shape="rect" id="Node000003" href="$DistanceCalculator_8cpp.html" title="Implementation of pairwise distance calculations." alt="" coords="217,93,394,133"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="237,52,284,91,281,95,233,56"/>
+<area shape="rect" id="Node000001" title="Pairwise distance calculator." alt="" coords="157,5,333,45"/>
+<area shape="rect" id="Node000002" href="$StructureAnalyzer_8cpp.html" title="Implementation of structural analysis and neighbor search." alt="" coords="5,101,251,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,56,145,103,142,98,207,51"/>
+<area shape="rect" id="Node000003" href="$DistanceCalculator_8cpp.html" title="Implementation of pairwise distance calculations." alt="" coords="275,93,453,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="284,51,339,91,336,95,281,56"/>
 </map>

@@ -1,0 +1,5 @@
+<map id="correlation::writers::FileWriter::write" name="correlation::writers::FileWriter::write">
+<area shape="rect" id="Node000001" title="Writes the available histograms using specified formats." alt="" coords="5,5,151,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="199,5,377,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,23,185,23,185,28,151,28"/>
+</map>

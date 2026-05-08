@@ -1,0 +1,9 @@
+<map id="correlation::calculators::CNCalculator::calculate" name="correlation::calculators::CNCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="5,69,188,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="245,5,381,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,67,232,47,233,52,166,72"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="245,69,381,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="188,87,231,87,231,92,188,92"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="236,134,391,189"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="158,107,224,129,222,134,157,112"/>
+</map>

@@ -1,0 +1,17 @@
+<map id="correlation::core::Cell::setEnergy" name="correlation::core::Cell::setEnergy">
+<area shape="rect" id="Node000001" title="Sets the energy of the cell frame." alt="" coords="523,55,659,95"/>
+<area shape="rect" id="Node000002" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="346,5,425,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="509,55,424,31,426,26,510,50"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="311,55,460,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="509,78,460,78,460,73,509,73"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="296,119,475,159"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="513,102,451,122,449,117,512,97"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="51,5,202,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="332,21,202,21,202,15,332,15"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="27,55,226,95"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="297,78,226,78,226,73,297,73"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,119,245,159"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="282,142,246,142,246,137,282,137"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,183,248,223"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="291,165,209,186,207,181,290,160"/>
+</map>

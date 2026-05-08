@@ -1,6 +1,6 @@
 <map id="correlation::math::normalize" name="correlation::math::normalize">
-<area shape="rect" id="Node000001" title="Normalizes the given vector." alt="" coords="276,29,419,69"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="386,18,373,11,347,8,325,10,312,15,307,21,310,28,304,30,302,20,309,10,324,5,347,3,374,6,389,13"/>
-<area shape="rect" id="Node000002" href="$classcalculators_1_1DihedralCalculator.html#ac107d67bd6d594a01c51a4ec7fe5870f" title="Computes and populates the dihedral angles tensor." alt="" coords="5,29,228,69"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="262,52,228,52,228,47,262,47"/>
+<area shape="rect" id="Node000001" title="Normalizes the given vector." alt="" coords="269,29,412,69"/>
+<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="379,18,366,11,341,8,319,10,306,15,301,21,303,28,298,30,296,20,303,10,318,5,341,3,367,6,382,13"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="5,29,221,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="255,52,222,52,222,47,255,47"/>
 </map>

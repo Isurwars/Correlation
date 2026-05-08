@@ -1,0 +1,9 @@
+<map id="correlation::core::Cell::lattice_parameters" name="correlation::core::Cell::lattice_parameters">
+<area shape="rect" id="Node000001" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="523,37,701,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="296,37,475,77"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="509,60,475,60,475,55,509,55"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="282,47,245,43,246,37,283,42"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,69,248,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="283,73,249,77,248,72,282,67"/>
+</map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['choice_0',['choice',['../namespacepfd.html#a70b4c2a87aca3443a4de387bedae49e8',1,'pfd']]]
+  ['kerneltype_0',['KernelType',['../namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923',1,'correlation::math']]]
 ];

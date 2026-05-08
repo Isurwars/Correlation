@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['value_0',['value',['../structElementID.html#a206e3cb41855f2bb140feed93c221c69',1,'ElementID']]],
-  ['velocities_5f_1',['velocities_',['../classTrajectory.html#a061caa4351ef1d7ee54f05ef787906d7',1,'Trajectory']]],
-  ['visited_2',['visited',['../MotifFinder_8cpp.html#a10a6b1dd4f269d9014a2a011f9642781',1,'MotifFinder.cpp']]],
-  ['volume_5f_3',['volume_',['../classCell.html#a542581c87ba4ad850cdf7d94c8bff2b3',1,'Cell']]]
+  ['ui_5f_0',['ui_',['../classcorrelation_1_1app_1_1AppController.html#aad3befd7d7ef9f7d17e41c57782b7f35',1,'correlation::app::AppController']]],
+  ['use_5fcsv_1',['use_csv',['../structcorrelation_1_1app_1_1ProgramOptions.html#a15a60d6d9aac6ba2c6bf743b033a0243',1,'correlation::app::ProgramOptions']]],
+  ['use_5fhdf5_2',['use_hdf5',['../structcorrelation_1_1app_1_1ProgramOptions.html#a1be97f34973e40bc0f6fe5bd064be064',1,'correlation::app::ProgramOptions']]],
+  ['use_5fparquet_3',['use_parquet',['../structcorrelation_1_1app_1_1ProgramOptions.html#accd5a7659eed5514ea0cfa2cfe0c2810',1,'correlation::app::ProgramOptions']]]
 ];

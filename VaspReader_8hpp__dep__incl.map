@@ -1,0 +1,5 @@
+<map id="include/readers/VaspReader.hpp" name="include/readers/VaspReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for VASP POSCAR/CONTCAR structure files." alt="" coords="5,5,236,31"/>
+<area shape="rect" id="Node000002" href="$VaspReader_8cpp.html" title="Implementation of the VASP POSCAR/CONTCAR file reader." alt="" coords="20,79,221,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,44,123,79,118,79,118,44"/>
+</map>

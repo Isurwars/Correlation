@@ -1,7 +1,7 @@
 <map id="include/calculators/DADCalculator.hpp" name="include/calculators/DADCalculator.hpp">
-<area shape="rect" id="Node000001" title="Dihedral angle distribution (DAD) calculator." alt="" coords="162,5,310,45"/>
-<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,216,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="195,55,130,95,128,91,192,51"/>
-<area shape="rect" id="Node000003" href="$DADCalculator_8cpp.html" title="Implementation of the dihedral angle distribution calculator." alt="" coords="241,93,482,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="280,51,344,91,342,95,277,55"/>
+<area shape="rect" id="Node000001" title="Dihedral angle distribution (DAD) calculator." alt="" coords="138,5,286,45"/>
+<area shape="rect" id="Node000002" href="$DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="5,93,184,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,56,122,95,119,91,173,52"/>
+<area shape="rect" id="Node000003" href="$DADCalculator_8cpp.html" title="Implementation of the dihedral angle distribution calculator." alt="" coords="209,101,450,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="250,51,315,98,312,103,247,56"/>
 </map>

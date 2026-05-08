@@ -1,0 +1,17 @@
+<map id="correlation::analysis::TrajectoryAnalyzer::getBondCutoffsSQ" name="correlation::analysis::TrajectoryAnalyzer::getBondCutoffsSQ">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1020,20,1175,75"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="804,20,972,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1006,50,972,50,972,45,1006,45"/>
+<area shape="rect" id="Node000003" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="598,5,702,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="790,38,702,27,702,22,791,33"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,55,756,95"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="791,61,757,66,756,60,790,56"/>
+<area shape="rect" id="Node000004" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="310,5,461,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="584,21,461,21,461,15,584,15"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,55,496,95"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="530,78,496,78,496,73,530,73"/>
+<area shape="rect" id="Node000008" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,120,413,145"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="544,101,413,130,412,124,543,96"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,55,227,95"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="261,78,227,78,227,73,261,73"/>
+</map>

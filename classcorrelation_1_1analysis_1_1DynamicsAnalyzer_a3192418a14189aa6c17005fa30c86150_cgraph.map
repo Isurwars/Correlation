@@ -1,0 +1,15 @@
+<map id="correlation::analysis::DynamicsAnalyzer::calculateMSD" name="correlation::analysis::DynamicsAnalyzer::calculateMSD">
+<area shape="rect" id="Node000001" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="5,61,255,101"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="313,29,455,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="254,63,299,57,300,63,255,68"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="303,93,465,133"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="255,94,289,99,289,104,254,100"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="513,29,656,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="456,47,499,47,499,52,456,52"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="704,29,847,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="656,47,691,47,691,52,656,52"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="739,30,737,20,743,11,756,5,775,3,798,6,810,13,807,17,796,11,775,8,757,10,747,15,743,21,745,28"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="895,29,1037,69"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="847,47,881,47,881,52,847,52"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="930,30,928,20,934,11,947,5,966,3,988,6,1001,13,998,17,987,11,966,8,948,10,937,15,933,21,935,28"/>
+</map>

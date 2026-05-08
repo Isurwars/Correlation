@@ -1,5 +1,5 @@
 <map id="correlation::math::Matrix3::operator()" name="correlation::math::Matrix3::operator()">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,151,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1math_1_1Matrix3.html#add29d20d2c08badaf2012fc298189aa2" title=" " alt="" coords="199,5,341,45"/>
+<area shape="rect" id="Node000001" title="Access element by row and column." alt="" coords="5,5,151,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1math_1_1Matrix3.html#add29d20d2c08badaf2012fc298189aa2" title="Converts the matrix to a nested std::array." alt="" coords="199,5,341,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,23,185,23,185,28,151,28"/>
 </map>

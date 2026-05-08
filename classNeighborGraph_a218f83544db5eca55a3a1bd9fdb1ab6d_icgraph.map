@@ -1,7 +1,0 @@
-<map id="NeighborGraph::getNeighbors" name="NeighborGraph::getNeighbors">
-<area shape="rect" id="Node000001" title=" " alt="" coords="276,45,491,70"/>
-<area shape="rect" id="Node000002" href="$classcalculators_1_1AngleCalculator.html#af950640145a90b508e5f4796f9a1f165" title="Computes and populates the bond angles tensor." alt="" coords="15,5,219,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="263,46,218,40,219,35,264,40"/>
-<area shape="rect" id="Node000003" href="$classcalculators_1_1DihedralCalculator.html#ac107d67bd6d594a01c51a4ec7fe5870f" title="Computes and populates the dihedral angles tensor." alt="" coords="5,69,228,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="264,74,229,79,228,73,264,69"/>
-</map>

@@ -1,0 +1,11 @@
+<map id="correlation::calculators::AngleCalculator::compute" name="correlation::calculators::AngleCalculator::compute">
+<area shape="rect" id="Node000001" title="Computes and populates the bond angles tensor." alt="" coords="5,101,204,141"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="291,5,427,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,99,251,55,277,46,279,51,253,60,149,104"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a28d84fe6ef64fdc47a1f9cc211aa2f5e" title="Computes dot products between a reference vector and a block of vectors." alt="" coords="288,69,431,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="204,106,274,97,274,103,204,112"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="291,133,427,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="204,131,278,140,277,146,204,136"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4" title="Retrieves the neighbor list for a specific atom." alt="" coords="252,197,467,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="149,139,253,183,275,191,273,196,251,188,147,144"/>
+</map>

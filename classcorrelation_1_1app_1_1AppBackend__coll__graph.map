@@ -1,0 +1,5 @@
+<map id="correlation::app::AppBackend" name="correlation::app::AppBackend">
+<area shape="rect" id="Node000001" title="The main backend class for the application." alt="" coords="5,108,217,133"/>
+<area shape="rect" id="Node000002" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="18,5,205,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,59,114,108,109,108,109,59"/>
+</map>

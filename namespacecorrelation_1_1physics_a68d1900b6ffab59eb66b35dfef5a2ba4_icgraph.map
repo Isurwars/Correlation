@@ -1,9 +1,13 @@
 <map id="correlation::physics::getAtomicFormFactors" name="correlation::physics::getAtomicFormFactors">
-<area shape="rect" id="Node000001" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="467,37,643,77"/>
-<area shape="rect" id="Node000002" href="$classXRDCalculator.html#a064ba7933b5b7175f31d28d88424bc93" title=" " alt="" coords="236,45,419,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="453,60,419,60,419,55,453,55"/>
-<area shape="rect" id="Node000003" href="$classXRDCalculator.html#a84c27dcba4323cd2a7ad1131ded81a96" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,188,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="222,45,188,41,189,35,223,40"/>
-<area shape="rect" id="Node000004" href="$classDistributionFunctions.html#a9cd6818382ccc113ec0e51a803918ef4" title="Calculates the XRD pattern." alt="" coords="17,69,177,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="223,75,177,81,176,76,222,69"/>
+<area shape="rect" id="Node000001" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="875,41,1051,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="861,64,827,64,827,59,861,59"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
 </map>

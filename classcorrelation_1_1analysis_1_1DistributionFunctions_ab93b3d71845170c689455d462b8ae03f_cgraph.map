@@ -1,0 +1,31 @@
+<map id="correlation::analysis::DistributionFunctions::calculateVACF" name="correlation::analysis::DistributionFunctions::calculateVACF">
+<area shape="rect" id="Node000001" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="5,189,173,243"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="221,196,419,236"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,213,208,213,208,219,174,219"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="467,98,685,153"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="377,193,484,155,486,160,378,198"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="733,132,987,172"/>
+<area shape="poly" id="edge14_Node000002_Node000004" title=" " alt="" coords="419,202,719,166,720,171,420,207"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Trajectory.html#a274566b3dc3cb72e8f0bb07ee1a2d292" title="Gets the pre&#45;calculated velocities for all atoms." alt="" coords="1035,221,1212,261"/>
+<area shape="poly" id="edge16_Node000002_Node000012" title=" " alt="" coords="419,216,1021,235,1021,241,419,222"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="488,279,664,319"/>
+<area shape="poly" id="edge15_Node000002_Node000013" title=" " alt="" coords="383,233,501,272,499,277,382,239"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="686,133,720,136,719,141,685,138"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="1052,29,1195,69"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="908,129,1034,79,1053,72,1055,76,1036,84,910,134"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="1049,93,1198,133"/>
+<area shape="poly" id="edge10_Node000004_Node000009" title=" " alt="" coords="986,131,1035,124,1035,129,987,136"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="1042,157,1205,197"/>
+<area shape="poly" id="edge12_Node000004_Node000011" title=" " alt="" coords="987,162,1029,166,1028,171,986,167"/>
+<area shape="poly" id="edge13_Node000004_Node000012" title=" " alt="" coords="921,170,1051,214,1049,219,919,175"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="1263,29,1406,69"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1195,47,1249,47,1249,52,1195,52"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="1457,29,1600,69"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="1406,47,1444,47,1444,52,1406,52"/>
+<area shape="poly" id="edge9_Node000007_Node000007" title=" " alt="" coords="1493,30,1491,20,1496,11,1509,5,1529,3,1551,6,1563,13,1560,17,1549,11,1529,8,1511,10,1500,15,1496,21,1498,28"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="1648,29,1791,69"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1600,47,1635,47,1635,52,1600,52"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="1683,30,1681,20,1687,11,1700,5,1719,3,1742,6,1754,13,1751,17,1740,11,1719,8,1701,10,1691,15,1687,21,1689,28"/>
+<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="1260,93,1409,133"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="1198,111,1246,111,1246,116,1198,116"/>
+</map>

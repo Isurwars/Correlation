@@ -1,0 +1,25 @@
+<map id="correlation::calculators::DistanceCalculator::compute" name="correlation::calculators::DistanceCalculator::compute">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,279,224,319"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="292,5,428,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,277,141,232,173,173,216,110,242,81,270,55,278,50,281,54,274,59,246,85,221,113,178,175,146,234,126,279"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a9eca03a5de0ee5364e13bb74bf54b1f7" title="Computes the squared distances from a reference point to a block of positions." alt="" coords="285,69,435,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="127,277,183,201,224,157,270,119,279,114,282,118,274,123,228,161,187,204,131,280"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="292,133,428,173"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="138,276,196,231,271,183,284,176,287,181,273,188,199,235,141,281"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="288,197,432,237"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="175,276,285,239,287,244,177,281"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="272,286,448,311"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="224,296,258,296,258,301,224,301"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a82b8dff90cec8eecf7f8ccb6b862bbf3" title="Computes the squared vector norm (length)." alt="" coords="289,360,431,400"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="177,316,287,353,285,358,175,321"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="289,424,431,464"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="141,317,199,362,273,410,287,416,284,421,271,414,196,367,138,321"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="289,488,431,528"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="131,318,187,393,228,436,274,474,282,479,279,484,270,478,224,440,183,396,127,321"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="289,552,431,592"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="126,318,146,363,178,422,221,484,246,513,274,538,280,543,277,547,270,542,242,516,216,487,173,425,141,365,121,320"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#ab842d14e564d6f04f4d12762fb0c650a" title="Computes the squared distance between two 3D points." alt="" coords="496,69,639,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="436,87,482,87,482,92,436,92"/>
+<area shape="poly" id="edge7_Node000007_Node000007" title=" " alt="" coords="326,288,319,278,323,268,337,262,360,259,389,263,400,272,397,276,386,268,360,265,338,267,327,271,324,277,330,284"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="321,360,319,350,325,341,339,335,360,333,384,336,397,344,395,348,382,341,360,339,340,341,329,345,324,351,326,359"/>
+</map>

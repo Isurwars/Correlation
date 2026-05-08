@@ -1,5 +1,0 @@
-<map id="MSDCalculator::calculate" name="MSDCalculator::calculate">
-<area shape="rect" id="Node000001" title="Core MSD calculation returning named histograms." alt="" coords="239,13,424,38"/>
-<area shape="rect" id="Node000002" href="$classMSDCalculator.html#aa610a5a34e9bf345711319741ed5178e" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,5,191,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="225,28,191,28,191,23,225,23"/>
-</map>

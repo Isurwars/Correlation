@@ -1,0 +1,5 @@
+<map id="correlation::core::Cell::inverseLatticeVectors" name="correlation::core::Cell::inverseLatticeVectors">
+<area shape="rect" id="Node000001" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="248,13,443,53"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,200,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="234,35,200,35,200,30,234,30"/>
+</map>

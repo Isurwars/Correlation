@@ -1,0 +1,17 @@
+<map id="correlation::app::AppBackend::getFrameCount" name="correlation::app::AppBackend::getFrameCount">
+<area shape="rect" id="Node000001" title="Gets the total number of frames in the trajectory." alt="" coords="813,69,1025,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="818,69,765,60,625,44,496,34,496,28,626,38,766,55,819,64"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a00d007144d21c2d5965dafa983d84c37" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="544,69,765,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="800,92,766,92,766,87,800,87"/>
+<area shape="rect" id="Node000007" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="627,134,682,159"/>
+<area shape="poly" id="edge8_Node000001_Node000007" title=" " alt="" coords="814,115,683,144,681,138,812,110"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,69,227,109"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="288,51,201,72,200,67,286,46"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="530,92,496,92,496,87,530,87"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,133,496,173"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="557,115,471,136,469,131,556,110"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="261,92,227,92,227,87,261,87"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="286,133,200,112,201,107,288,127"/>
+</map>

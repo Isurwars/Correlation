@@ -1,0 +1,19 @@
+<map id="correlation::core::Cell::isEmpty" name="correlation::core::Cell::isEmpty">
+<area shape="rect" id="Node000001" title="Checks whether the cell contains no atoms." alt="" coords="581,101,717,141"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="355,21,504,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="579,99,484,64,486,59,581,94"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="340,101,519,141"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="567,124,519,124,519,119,567,119"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="325,197,533,237"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="591,149,477,200,475,195,589,144"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="42,5,241,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="341,39,241,34,241,28,341,34"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="23,69,260,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="326,113,260,105,261,100,326,107"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="20,133,263,173"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="327,135,263,142,263,137,326,130"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="8,197,275,237"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="311,220,275,220,275,215,311,215"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="5,261,277,301"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="326,243,232,264,231,259,325,238"/>
+</map>

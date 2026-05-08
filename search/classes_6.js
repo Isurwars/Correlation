@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['hdf5writer_0',['HDF5Writer',['../classWriter_1_1HDF5Writer.html',1,'Writer']]],
-  ['histogram_1',['Histogram',['../structHistogram.html',1,'']]]
+  ['glyph_0',['Glyph',['../structcorrelation_1_1plotters_1_1Glyph.html',1,'correlation::plotters']]]
 ];

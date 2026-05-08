@@ -1,0 +1,5 @@
+<map id="correlation::analysis::TrajectoryAnalyzer::createAnalyzer" name="correlation::analysis::TrajectoryAnalyzer::createAnalyzer">
+<area shape="rect" id="Node000001" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="5,5,160,60"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="208,13,371,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,30,194,30,194,35,161,35"/>
+</map>

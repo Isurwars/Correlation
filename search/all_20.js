@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['z_0',['z',['../structcorrelation_1_1math_1_1PositionBlock.html#a13bb9b77bc43f38e6d42c16590a27dc0',1,'correlation::math::PositionBlock::z'],['../classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612',1,'correlation::math::Vector3::z() const noexcept'],['../classcorrelation_1_1math_1_1Vector3.html#a2bb9d27def06908c8d0af4d805c5b698',1,'correlation::math::Vector3::z() noexcept'],['../classcorrelation_1_1math_1_1Vector3_3_01double_01_4.html#ac1d6f39f4785e862d8726e484b6496ae',1,'correlation::math::Vector3&lt; double &gt;::z() const noexcept'],['../classcorrelation_1_1math_1_1Vector3_3_01double_01_4.html#a30f5c69f0235624829091ed286668632',1,'correlation::math::Vector3&lt; double &gt;::z() noexcept']]]
+  ['_7eappcontroller_0',['~AppController',['../classcorrelation_1_1app_1_1AppController.html#a518f4c62027946e9047af658df1f2748',1,'correlation::app::AppController']]],
+  ['_7ebasecalculator_1',['~BaseCalculator',['../classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c',1,'correlation::calculators::BaseCalculator']]],
+  ['_7ebasereader_2',['~BaseReader',['../classcorrelation_1_1readers_1_1BaseReader.html#a4fbb1b0ab1da46260f68ae04567a239f',1,'correlation::readers::BaseReader']]],
+  ['_7ebasewriter_3',['~BaseWriter',['../classcorrelation_1_1writers_1_1BaseWriter.html#a4e05678a568bcac2b4f42ea3562d61c6',1,'correlation::writers::BaseWriter']]]
 ];

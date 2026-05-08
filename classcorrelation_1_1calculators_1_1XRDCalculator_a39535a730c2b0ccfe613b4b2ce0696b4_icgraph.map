@@ -1,0 +1,11 @@
+<map id="correlation::calculators::XRDCalculator::calculate" name="correlation::calculators::XRDCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>

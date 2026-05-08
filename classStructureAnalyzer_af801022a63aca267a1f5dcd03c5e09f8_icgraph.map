@@ -1,9 +1,0 @@
-<map id="StructureAnalyzer::dihedrals" name="StructureAnalyzer::dihedrals">
-<area shape="rect" id="Node000001" title="Gets a multi&#45;dimensional tensor containing dihedral angles." alt="" coords="469,37,616,77"/>
-<area shape="rect" id="Node000002" href="$classDADCalculator.html#a601642f20f5c9dc0470492fc989c3a2b" title=" " alt="" coords="237,45,421,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="455,60,422,60,422,55,455,55"/>
-<area shape="rect" id="Node000003" href="$classDistributionFunctions.html#a3b1b36142474506e56a2a5e5559bf1d0" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="17,5,177,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="223,45,177,39,178,34,224,40"/>
-<area shape="rect" id="Node000004" href="$classDADCalculator.html#a8d0e6fa6091987a9597f73819a25f363" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,69,189,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="224,75,190,79,189,74,223,69"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="DynamicsAnalyzer::calculateNormalizedVACF" name="DynamicsAnalyzer::calculateNormalizedVACF">
-<area shape="rect" id="Node000001" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="480,37,691,77"/>
-<area shape="rect" id="Node000002" href="$classVACFCalculator.html#ad1aa29b809be017e3857a0d7e23488d8" title=" " alt="" coords="243,45,432,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="467,60,432,60,432,55,467,55"/>
-<area shape="rect" id="Node000003" href="$classVACFCalculator.html#a409953a1255c73c6b471f9d12172e94c" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,5,195,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="229,45,194,41,195,35,230,40"/>
-<area shape="rect" id="Node000004" href="$classDistributionFunctions.html#a1d186efbf628b45fb9dd3bc11f004203" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="20,69,180,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="230,74,181,81,180,76,229,69"/>
-</map>

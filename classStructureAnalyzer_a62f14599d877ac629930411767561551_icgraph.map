@@ -1,9 +1,0 @@
-<map id="StructureAnalyzer::distances" name="StructureAnalyzer::distances">
-<area shape="rect" id="Node000001" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="467,37,613,77"/>
-<area shape="rect" id="Node000002" href="$classRDFCalculator.html#a68fee493adf46fb3a1a7d0a123d92a08" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="236,45,419,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="453,60,419,60,419,55,453,55"/>
-<area shape="rect" id="Node000003" href="$classRDFCalculator.html#a0041d3f589bde799d6bcb9b774624f98" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,188,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="222,45,188,41,189,35,223,40"/>
-<area shape="rect" id="Node000004" href="$classDistributionFunctions.html#a5520225c5dfcb791f27d1769a11f0a32" title="Calculates the radial distribution function g(r)" alt="" coords="17,69,177,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="223,75,177,81,176,76,222,69"/>
-</map>

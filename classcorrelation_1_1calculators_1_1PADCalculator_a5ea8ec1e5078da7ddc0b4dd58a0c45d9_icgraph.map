@@ -1,0 +1,11 @@
+<map id="correlation::calculators::PADCalculator::calculate" name="correlation::calculators::PADCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="635,41,824,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1PADCalculator.html#aa128e5ec0338ba62bd618dd8a20ca62f" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,587,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="621,49,586,44,587,39,622,44"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a6f65b6d6b2631bd107d23114f1de1edc" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="387,70,555,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="621,79,556,88,555,83,621,74"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="373,100,308,100,308,95,373,95"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>

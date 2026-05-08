@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: include/DynamicsAnalyzer.hpp File Reference</title>
+<title>Correlation: include/analysis/DynamicsAnalyzer.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -77,77 +77,78 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_73d4a28092349dbf779c4e991d882038.html">analysis</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">DynamicsAnalyzer.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Static methods for dynamics properties (VACF, VDOS, MSD).  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">Trajectory.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
 <code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for DynamicsAnalyzer.hpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="DynamicsAnalyzer_8hpp__incl.png" border="0" usemap="#ainclude_2DynamicsAnalyzer_8hpp" alt=""/></div>
-<map name="ainclude_2DynamicsAnalyzer_8hpp" id="ainclude_2DynamicsAnalyzer_8hpp">
-<area shape="rect" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="473,5,696,31"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="419,79,531,104"/>
-<area shape="poly" title=" " alt="" coords="569,33,506,73,503,69,566,28"/>
-<area shape="rect" title=" " alt="" coords="584,225,647,251"/>
-<area shape="poly" title=" " alt="" coords="589,31,614,211,609,212,584,31"/>
-<area shape="rect" title=" " alt="" coords="623,79,677,104"/>
-<area shape="poly" title=" " alt="" coords="597,29,632,67,628,70,593,33"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="73,299,251,324"/>
-<area shape="poly" title=" " alt="" coords="434,107,383,124,323,149,262,183,207,227,186,256,172,286,167,284,181,253,203,223,259,179,321,144,381,119,432,101"/>
-<area shape="poly" title=" " alt="" coords="489,103,597,214,593,217,485,106"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="405,152,479,177"/>
-<area shape="poly" title=" " alt="" coords="472,105,456,141,451,139,467,103"/>
-<area shape="rect" title=" " alt="" coords="431,372,487,397"/>
-<area shape="poly" title=" " alt="" coords="210,321,418,371,417,376,209,327"/>
-<area shape="rect" title=" " alt="" coords="232,372,295,397"/>
-<area shape="poly" title=" " alt="" coords="180,322,237,362,234,366,177,326"/>
-<area shape="rect" title=" " alt="" coords="5,372,92,397"/>
-<area shape="poly" title=" " alt="" coords="145,326,80,367,77,362,142,322"/>
-<area shape="rect" title=" " alt="" coords="116,372,208,397"/>
-<area shape="poly" title=" " alt="" coords="165,324,165,358,159,358,159,324"/>
-<area shape="poly" title=" " alt="" coords="405,173,325,191,281,206,239,228,205,257,179,289,175,285,201,253,237,223,279,201,324,186,404,168"/>
-<area shape="poly" title=" " alt="" coords="458,176,506,224,531,259,549,298,552,312,548,325,528,350,501,368,498,364,524,347,544,323,547,312,543,300,526,262,502,228,454,180"/>
-<area shape="poly" title=" " alt="" coords="471,175,575,218,573,222,469,180"/>
-<area shape="rect" title=" " alt="" coords="250,225,325,251"/>
-<area shape="poly" title=" " alt="" coords="418,180,326,222,324,217,416,175"/>
-<area shape="rect" title=" " alt="" coords="275,299,334,324"/>
-<area shape="poly" title=" " alt="" coords="433,180,327,291,323,287,429,176"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="399,225,485,251"/>
-<area shape="poly" title=" " alt="" coords="445,178,445,212,439,212,439,178"/>
-<area shape="poly" title=" " alt="" coords="400,253,221,298,219,293,398,248"/>
-<area shape="poly" title=" " alt="" coords="421,253,340,295,338,290,419,248"/>
-<area shape="rect" title=" " alt="" coords="449,299,534,324"/>
-<area shape="poly" title=" " alt="" coords="452,249,478,286,473,289,448,253"/>
-<area shape="rect" title=" " alt="" coords="358,299,425,324"/>
-<area shape="poly" title=" " alt="" coords="436,253,410,289,405,286,431,249"/>
+<div class="center"><img src="DynamicsAnalyzer_8hpp__incl.png" border="0" usemap="#ainclude_2analysis_2DynamicsAnalyzer_8hpp" alt=""/></div>
+<map name="ainclude_2analysis_2DynamicsAnalyzer_8hpp" id="ainclude_2analysis_2DynamicsAnalyzer_8hpp">
+<area shape="rect" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="541,5,737,45"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="442,93,586,119"/>
+<area shape="poly" title=" " alt="" coords="610,48,545,88,542,84,608,43"/>
+<area shape="rect" title=" " alt="" coords="609,240,672,265"/>
+<area shape="poly" title=" " alt="" coords="642,45,643,226,638,226,637,45"/>
+<area shape="rect" title=" " alt="" coords="677,93,732,119"/>
+<area shape="poly" title=" " alt="" coords="657,44,688,81,684,84,653,47"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="443,167,550,192"/>
+<area shape="poly" title=" " alt="" coords="514,120,505,154,500,153,509,118"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="73,313,251,339"/>
+<area shape="poly" title=" " alt="" coords="470,121,415,138,349,164,281,198,218,242,193,271,175,303,170,300,189,268,215,238,278,194,347,159,413,133,468,116"/>
+<area shape="poly" title=" " alt="" coords="526,117,624,228,620,231,522,121"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="267,240,385,265"/>
+<area shape="poly" title=" " alt="" coords="470,194,367,237,365,232,468,190"/>
+<area shape="poly" title=" " alt="" coords="444,189,353,206,304,222,257,242,215,272,182,304,179,301,212,268,254,238,302,217,352,201,443,184"/>
+<area shape="rect" title=" " alt="" coords="431,387,487,412"/>
+<area shape="poly" title=" " alt="" coords="513,190,532,211,548,239,558,267,562,290,559,313,548,340,528,365,501,383,498,379,524,361,544,337,554,312,557,290,553,268,544,241,528,214,509,194"/>
+<area shape="rect" title=" " alt="" coords="475,313,534,339"/>
+<area shape="poly" title=" " alt="" coords="484,194,469,208,456,226,448,245,450,264,463,285,480,303,476,307,458,289,445,266,443,244,451,223,465,205,480,190"/>
+<area shape="rect" title=" " alt="" coords="459,240,534,265"/>
+<area shape="poly" title=" " alt="" coords="499,192,499,226,494,226,494,192"/>
+<area shape="poly" title=" " alt="" coords="521,190,606,231,604,236,519,194"/>
+<area shape="poly" title=" " alt="" coords="301,268,202,310,200,305,299,263"/>
+<area shape="rect" title=" " alt="" coords="366,313,451,339"/>
+<area shape="poly" title=" " alt="" coords="341,263,386,302,383,306,338,267"/>
+<area shape="rect" title=" " alt="" coords="275,313,342,339"/>
+<area shape="poly" title=" " alt="" coords="326,266,317,301,312,300,321,265"/>
+<area shape="poly" title=" " alt="" coords="356,263,464,306,462,311,354,268"/>
+<area shape="poly" title=" " alt="" coords="210,336,418,386,417,391,209,341"/>
+<area shape="rect" title=" " alt="" coords="232,387,295,412"/>
+<area shape="poly" title=" " alt="" coords="180,336,237,376,234,381,177,341"/>
+<area shape="rect" title=" " alt="" coords="5,387,92,412"/>
+<area shape="poly" title=" " alt="" coords="145,341,80,382,77,377,142,336"/>
+<area shape="rect" title=" " alt="" coords="116,387,208,412"/>
+<area shape="poly" title=" " alt="" coords="165,339,165,373,159,373,159,339"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="DynamicsAnalyzer_8hpp__dep__incl.png" border="0" usemap="#ainclude_2DynamicsAnalyzer_8hppdep" alt=""/></div>
-<map name="ainclude_2DynamicsAnalyzer_8hppdep" id="ainclude_2DynamicsAnalyzer_8hppdep">
-<area shape="rect" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="368,5,591,31"/>
-<area shape="rect" href="DynamicsAnalyzer_8cpp.html" title="Implementation of VACF, VDOS, and MSD analysis." alt="" coords="5,79,199,104"/>
-<area shape="poly" title=" " alt="" coords="406,36,164,81,163,76,405,31"/>
-<area shape="rect" href="MSDCalculator_8cpp.html" title="Implementation of Mean Squared Displacement calculations." alt="" coords="223,79,466,104"/>
-<area shape="poly" title=" " alt="" coords="447,39,368,81,365,76,444,35"/>
-<area shape="rect" href="VACFCalculator_8cpp.html" title="Implementation of velocity autocorrelation calculations." alt="" coords="491,79,737,104"/>
-<area shape="poly" title=" " alt="" coords="514,35,593,76,591,81,512,39"/>
-<area shape="rect" href="VDOSCalculator_8cpp.html" title="Implementation of vibrational density of states calculations." alt="" coords="761,79,1011,104"/>
-<area shape="poly" title=" " alt="" coords="558,30,821,76,820,81,558,36"/>
+<div class="center"><img src="DynamicsAnalyzer_8hpp__dep__incl.png" border="0" usemap="#ainclude_2analysis_2DynamicsAnalyzer_8hppdep" alt=""/></div>
+<map name="ainclude_2analysis_2DynamicsAnalyzer_8hppdep" id="ainclude_2analysis_2DynamicsAnalyzer_8hppdep">
+<area shape="rect" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="438,5,634,45"/>
+<area shape="rect" href="DynamicsAnalyzer_8cpp.html" title="Implementation of VACF, VDOS, and MSD analysis." alt="" coords="5,93,256,119"/>
+<area shape="poly" title=" " alt="" coords="426,51,190,96,189,91,425,45"/>
+<area shape="rect" href="MSDCalculator_8cpp.html" title="Implementation of Mean Squared Displacement calculations." alt="" coords="280,93,523,119"/>
+<area shape="poly" title=" " alt="" coords="493,55,423,95,420,91,490,50"/>
+<area shape="rect" href="VACFCalculator_8cpp.html" title="Implementation of velocity autocorrelation calculations." alt="" coords="547,93,794,119"/>
+<area shape="poly" title=" " alt="" coords="582,50,652,91,649,95,579,55"/>
+<area shape="rect" href="VDOSCalculator_8cpp.html" title="Implementation of vibrational density of states calculations." alt="" coords="818,93,1067,119"/>
+<area shape="poly" title=" " alt="" coords="647,45,884,91,883,96,646,51"/>
 </map>
 </div>
 </div>
@@ -155,8 +156,15 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDynamicsAnalyzer.html">DynamicsAnalyzer</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static class providing dynamics analysis methods.  <a href="classDynamicsAnalyzer.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html">correlation::analysis::DynamicsAnalyzer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Static class providing dynamics analysis methods.  <a href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1analysis" id="r_namespacecorrelation_1_1analysis"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1analysis.html">correlation::analysis</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

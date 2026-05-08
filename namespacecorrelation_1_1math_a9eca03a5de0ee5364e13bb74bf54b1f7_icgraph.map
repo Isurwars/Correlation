@@ -1,5 +1,5 @@
 <map id="correlation::math::compute_dsq_block" name="correlation::math::compute_dsq_block">
-<area shape="rect" id="Node000001" title="Computes the squared distances from a reference point to a block of positions." alt="" coords="277,5,428,45"/>
-<area shape="rect" id="Node000002" href="$classcalculators_1_1DistanceCalculator.html#ae3fea61e3c2fd8ed9d5b3b30f2529372" title=" " alt="" coords="5,5,229,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="264,28,230,28,230,23,264,23"/>
+<area shape="rect" id="Node000001" title="Computes the squared distances from a reference point to a block of positions." alt="" coords="272,5,423,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,5,224,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="259,28,224,28,224,23,259,23"/>
 </map>

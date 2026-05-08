@@ -1,6 +1,0 @@
-<map id="Writer::HDF5Writer::writeHDF" name="Writer::HDF5Writer::writeHDF">
-<area shape="rect" id="Node000001" title="Writes all available histograms to a single HDF5 file." alt="" coords="200,5,347,45"/>
-<area shape="rect" id="Node000002" href="$classWriter_1_1HDF5Writer.html#a70997343f0ae6ba919c45e185cc31c4f" title="Writes the distribution function data to file(s)." alt="" coords="5,5,152,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="186,37,152,37,152,31,186,32"/>
-<area shape="poly" id="edge2_Node000002_Node000001" title=" " alt="" coords="166,14,200,14,200,19,166,19"/>
-</map>

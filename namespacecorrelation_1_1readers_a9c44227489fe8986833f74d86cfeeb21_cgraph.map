@@ -1,0 +1,9 @@
+<map id="correlation::readers::readStructure" name="correlation::readers::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,85,155,125"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a6861c6c206660e7d8ea866fb76b02f0e" title="Finds a reader that supports the given file extension." alt="" coords="203,5,420,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,82,209,62,211,67,146,87"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="219,85,404,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="155,102,205,102,205,107,155,107"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff" title="Reads an atomic structure from a file." alt="" coords="209,149,413,189"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="154,122,226,142,225,148,152,127"/>
+</map>

@@ -1,7 +1,0 @@
-<map id="AppBackend::getTotalAtomCount" name="AppBackend::getTotalAtomCount">
-<area shape="rect" id="Node000001" title="Gets the total number of atoms in the first frame." alt="" coords="512,5,709,45"/>
-<area shape="rect" id="Node000002" href="$classAppController.html#a48bc06e7f6db878aa1d52ff5dff86605" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="261,5,464,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="498,28,464,28,464,23,498,23"/>
-<area shape="rect" id="Node000003" href="$classAppController.html#a1a624a2d6b3337b30cb4467f06c59df5" title="Constructs the AppController." alt="" coords="5,13,213,38"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="248,28,214,28,214,23,248,23"/>
-</map>

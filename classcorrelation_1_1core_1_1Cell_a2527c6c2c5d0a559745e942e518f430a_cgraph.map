@@ -1,0 +1,27 @@
+<map id="correlation::core::Cell::setLatticeParameters" name="correlation::core::Cell::setLatticeParameters">
+<area shape="rect" id="Node000001" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="5,177,199,217"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="247,113,391,153"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="170,175,237,155,238,160,171,180"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="251,177,387,217"/>
+<area shape="poly" id="edge14_Node000001_Node000009" title=" " alt="" coords="199,195,237,195,237,200,199,200"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="247,241,390,281"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="171,215,238,235,237,240,170,220"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="722,29,865,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="334,111,377,68,406,47,438,31,472,21,507,14,579,10,648,15,709,25,708,30,648,21,579,16,508,19,473,26,440,36,409,51,380,72,338,115"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="477,69,619,109"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="391,117,462,103,463,108,392,122"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a6ba992b818462710f63a3122c3e98669" title="Computes the transpose of a 3x3 matrix." alt="" coords="477,157,619,197"/>
+<area shape="poly" id="edge7_Node000002_Node000005" title=" " alt="" coords="392,145,463,158,462,164,391,150"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="439,222,657,277"/>
+<area shape="poly" id="edge9_Node000002_Node000006" title=" " alt="" coords="371,151,392,163,416,186,440,207,452,214,449,218,437,212,413,190,389,167,368,156"/>
+<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="748,30,745,20,752,10,769,5,793,3,822,6,837,13,835,18,820,11,793,8,770,10,755,15,750,21,753,28"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="619,75,708,60,709,66,620,80"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="505,70,503,60,509,50,525,45,548,43,575,46,589,53,587,58,573,51,548,48,526,50,513,55,508,61,510,68"/>
+<area shape="poly" id="edge8_Node000005_Node000005" title=" " alt="" coords="505,158,503,148,509,138,525,133,548,131,575,134,589,141,587,146,573,139,548,136,526,138,513,143,508,149,510,156"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="712,199,875,225"/>
+<area shape="poly" id="edge10_Node000006_Node000007" title=" " alt="" coords="657,230,698,224,699,229,658,235"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="705,273,881,298"/>
+<area shape="poly" id="edge12_Node000006_Node000008" title=" " alt="" coords="658,263,693,268,693,273,657,268"/>
+<area shape="poly" id="edge11_Node000007_Node000007" title=" " alt="" coords="754,201,745,191,749,181,766,175,793,173,828,177,838,181,842,187,837,190,834,185,827,182,793,178,767,180,753,185,750,190,757,197"/>
+<area shape="poly" id="edge13_Node000008_Node000008" title=" " alt="" coords="754,274,745,264,749,254,766,248,793,246,828,250,838,255,842,260,837,263,834,259,827,255,793,251,767,253,753,258,750,264,757,271"/>
+</map>

@@ -1,9 +1,13 @@
 <map id="correlation::math::normalize_rdf_bins" name="correlation::math::normalize_rdf_bins">
-<area shape="rect" id="Node000001" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="467,37,613,77"/>
-<area shape="rect" id="Node000002" href="$classRDFCalculator.html#a68fee493adf46fb3a1a7d0a123d92a08" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="236,45,419,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="453,60,419,60,419,55,453,55"/>
-<area shape="rect" id="Node000003" href="$classRDFCalculator.html#a0041d3f589bde799d6bcb9b774624f98" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,188,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="222,45,188,41,189,35,223,40"/>
-<area shape="rect" id="Node000004" href="$classDistributionFunctions.html#a5520225c5dfcb791f27d1769a11f0a32" title="Calculates the radial distribution function g(r)" alt="" coords="17,69,177,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="223,75,177,81,176,76,222,69"/>
+<area shape="rect" id="Node000001" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="873,41,1020,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="635,41,825,81"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="860,64,826,64,826,59,860,59"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,587,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="621,49,586,44,587,39,622,44"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="387,70,555,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="621,79,556,88,555,83,621,74"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="373,100,308,100,308,95,373,95"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
 </map>

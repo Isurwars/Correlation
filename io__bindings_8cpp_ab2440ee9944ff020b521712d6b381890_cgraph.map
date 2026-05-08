@@ -1,0 +1,7 @@
+<map id="init_io" name="init_io">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,56,68,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a6861c6c206660e7d8ea866fb76b02f0e" title="Finds a reader that supports the given file extension." alt="" coords="116,5,333,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="68,60,102,54,103,59,69,65"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="132,85,317,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="69,72,119,82,118,87,68,77"/>
+</map>

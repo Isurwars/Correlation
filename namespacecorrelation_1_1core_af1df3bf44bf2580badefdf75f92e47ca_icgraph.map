@@ -1,0 +1,5 @@
+<map id="correlation::core::distance" name="correlation::core::distance">
+<area shape="rect" id="Node000001" title="Calculates the Euclidean distance between two atoms." alt="" coords="292,5,428,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1NeighborGraph.html#a282c951c1f8aad540e00add2e2e54297" title="Adds a directed edge between two atoms." alt="" coords="5,5,244,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="279,28,244,28,244,23,279,23"/>
+</map>

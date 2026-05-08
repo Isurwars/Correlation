@@ -1,0 +1,22 @@
+<map id="src/bindings/math_bindings.cpp" name="src/bindings/math_bindings.cpp">
+<area shape="rect" id="Node000001" title="Pybind11 bindings for correlation::math types." alt="" coords="82,5,309,31"/>
+<area shape="rect" id="Node000002" href="$math__bindings_8hpp.html" title=" " alt="" coords="11,79,158,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,33,116,73,113,69,176,28"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,164,177"/>
+<area shape="poly" id="edge10_Node000001_Node000003" title=" " alt="" coords="197,31,190,66,183,87,172,106,149,129,123,147,120,143,146,125,168,102,178,84,185,65,192,30"/>
+<area shape="rect" id="Node000004" href="$Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="428,79,587,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="246,28,444,73,443,78,245,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="87,104,87,138,82,138,82,104"/>
+<area shape="rect" id="Node000005" href="$Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="188,152,341,177"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="469,107,318,151,316,146,468,101"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="366,152,451,177"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="493,106,437,146,434,142,490,102"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="476,152,539,177"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="510,104,510,138,505,138,505,104"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="563,152,638,177"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="524,102,576,141,573,146,521,106"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="663,152,749,177"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="540,102,661,145,660,150,538,107"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="773,152,836,177"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="559,101,760,149,759,154,558,107"/>
+</map>

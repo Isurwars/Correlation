@@ -1,5 +1,0 @@
-<map id="Trajectory::removeDuplicatedFrames" name="Trajectory::removeDuplicatedFrames">
-<area shape="rect" id="Node000001" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="211,5,424,45"/>
-<area shape="rect" id="Node000002" href="$classTrajectory.html#a95c9553c8190e14e7c1620237916b7a9" title=" " alt="" coords="5,13,163,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,28,163,28,163,23,197,23"/>
-</map>

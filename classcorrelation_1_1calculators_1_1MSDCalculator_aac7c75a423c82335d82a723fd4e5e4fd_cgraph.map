@@ -1,0 +1,24 @@
+<map id="correlation::calculators::MSDCalculator::calculateTrajectory" name="correlation::calculators::MSDCalculator::calculateTrajectory">
+<area shape="rect" id="Node000001" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,57,263,97"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="323,14,491,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="262,58,310,51,310,57,263,63"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="311,93,504,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="263,92,297,96,297,101,262,97"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="552,36,801,76"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="501,91,568,76,569,82,502,96"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="849,93,1012,133"/>
+<area shape="poly" id="edge11_Node000003_Node000009" title=" " alt="" coords="504,111,835,111,835,116,504,116"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="589,151,765,191"/>
+<area shape="poly" id="edge12_Node000003_Node000010" title=" " alt="" coords="502,131,576,147,575,152,501,136"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="859,29,1002,69"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="801,50,846,49,846,54,802,55"/>
+<area shape="poly" id="edge10_Node000004_Node000009" title=" " alt="" coords="766,73,836,89,835,95,765,79"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="1060,29,1203,69"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1002,47,1046,47,1046,52,1002,52"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="1251,29,1393,69"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="1203,47,1237,47,1237,52,1203,52"/>
+<area shape="poly" id="edge9_Node000007_Node000007" title=" " alt="" coords="1286,30,1284,20,1290,11,1303,5,1322,3,1344,6,1357,13,1354,17,1343,11,1322,8,1304,10,1293,15,1289,21,1291,28"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="1441,29,1584,69"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1393,47,1428,47,1428,52,1393,52"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="1477,30,1475,20,1480,11,1493,5,1513,3,1535,6,1547,13,1544,17,1533,11,1513,8,1495,10,1484,15,1480,21,1482,28"/>
+</map>

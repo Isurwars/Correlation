@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -125,8 +125,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="comment">// Cooley-Tukey with precomputed twiddle basics</span></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> len = 2; len &lt;= n; len &lt;&lt;= 1) {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordtype">double</span> <a class="code hl_function" href="Atom_8hpp.html#a692d3d5d638b8f4ceaf2e24183a6a25d">angle</a> = <a class="code hl_variable" href="namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6">correlation::math::two_pi</a> / len * (<a class="code hl_function" href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5">invert</a> ? -1 : 1);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::complex&lt;double&gt; wlen(std::cos(<a class="code hl_function" href="Atom_8hpp.html#a692d3d5d638b8f4ceaf2e24183a6a25d">angle</a>), std::sin(<a class="code hl_function" href="Atom_8hpp.html#a692d3d5d638b8f4ceaf2e24183a6a25d">angle</a>));</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordtype">double</span> angle = <a class="code hl_variable" href="namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6">correlation::math::two_pi</a> / len * (<a class="code hl_function" href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5">invert</a> ? -1 : 1);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::complex&lt;double&gt; wlen(std::cos(angle), std::sin(angle));</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; i += len) {</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>      std::complex&lt;double&gt; w(1.0, 0.0);</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>      <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; len / 2; j++) {</div>
@@ -182,20 +182,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
 </div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
-<div class="foldopen" id="foldopen00118" data-start="{" data-end="}">
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="namespacecorrelation_1_1math.html#a0baae262699dfc4e20867c3c24d90410">  118</a></span><span class="keyword">inline</span> std::vector&lt;double&gt; <a class="code hl_function" href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d">autocorrelate</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;x) {</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  std::vector&lt;std::complex&lt;double&gt;&gt; workspace;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d">autocorrelate</a>(x, workspace);</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>}</div>
+<div class="foldopen" id="foldopen00121" data-start="{" data-end="}">
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno"><a class="line" href="namespacecorrelation_1_1math.html#a0baae262699dfc4e20867c3c24d90410">  121</a></span><span class="keyword">inline</span> std::vector&lt;double&gt; <a class="code hl_function" href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d">autocorrelate</a>(<span class="keyword">const</span> std::vector&lt;double&gt; &amp;x) {</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  std::vector&lt;std::complex&lt;double&gt;&gt; workspace;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  <span class="keywordflow">return</span> <a class="code hl_function" href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d">autocorrelate</a>(x, workspace);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>}</div>
 </div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>} <span class="comment">// namespace correlation::math</span></div>
-<div class="ttc" id="aAtom_8hpp_html_a692d3d5d638b8f4ceaf2e24183a6a25d"><div class="ttname"><a href="Atom_8hpp.html#a692d3d5d638b8f4ceaf2e24183a6a25d">angle</a></div><div class="ttdeci">double angle(const Atom &amp;center, const Atom &amp;a, const Atom &amp;b) noexcept</div><div class="ttdoc">Calculates the angle (in radians) formed by three atoms.</div><div class="ttdef"><b>Definition</b> Atom.hpp:135</div></div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>} <span class="comment">// namespace correlation::math</span></div>
 <div class="ttc" id="aConstants_8hpp_html"><div class="ttname"><a href="Constants_8hpp.html">Constants.hpp</a></div><div class="ttdoc">Mathematical and physical constants for the Correlation tool.</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html"><div class="ttname"><a href="namespacecorrelation_1_1math.html">correlation::math</a></div><div class="ttdoc">Defines universal mathematical and physical constants.</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_a1bed74c49c11efa5d275e0172d2f8c2d"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d">correlation::math::autocorrelate</a></div><div class="ttdeci">std::vector&lt; double &gt; autocorrelate(const std::vector&lt; double &gt; &amp;x, std::vector&lt; std::complex&lt; double &gt; &gt; &amp;workspace)</div><div class="ttdoc">Computes the autocorrelation of a 1D real sequence using FFT.</div><div class="ttdef"><b>Definition</b> FFTUtils.hpp:81</div></div>
-<div class="ttc" id="anamespacecorrelation_1_1math_html_a2eb738243b58f5117a51aca3a18755c6"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6">correlation::math::two_pi</a></div><div class="ttdeci">constexpr double two_pi</div><div class="ttdoc">2 * pi</div><div class="ttdef"><b>Definition</b> Constants.hpp:36</div></div>
-<div class="ttc" id="anamespacecorrelation_1_1math_html_a6ac299f423349e05d79bcdaec8681ef5"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5">correlation::math::invert</a></div><div class="ttdeci">constexpr Matrix3&lt; T &gt; invert(const Matrix3&lt; T &gt; &amp;m)</div><div class="ttdoc">Computes the inverse of a 3x3 matrix.</div><div class="ttdef"><b>Definition</b> LinearAlgebra.hpp:367</div></div>
+<div class="ttc" id="anamespacecorrelation_1_1math_html_a2eb738243b58f5117a51aca3a18755c6"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6">correlation::math::two_pi</a></div><div class="ttdeci">constexpr double two_pi</div><div class="ttdoc">2 * pi</div><div class="ttdef"><b>Definition</b> Constants.hpp:35</div></div>
+<div class="ttc" id="anamespacecorrelation_1_1math_html_a6ac299f423349e05d79bcdaec8681ef5"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5">correlation::math::invert</a></div><div class="ttdeci">constexpr Matrix3&lt; T &gt; invert(const Matrix3&lt; T &gt; &amp;m)</div><div class="ttdoc">Computes the inverse of a 3x3 matrix.</div><div class="ttdef"><b>Definition</b> LinearAlgebra.hpp:605</div></div>
 <div class="ttc" id="anamespacecorrelation_1_1math_html_a955480276101c30388756894db1b77f5"><div class="ttname"><a href="namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5">correlation::math::computeFFT</a></div><div class="ttdeci">void computeFFT(std::vector&lt; std::complex&lt; double &gt; &gt; &amp;a, bool invert)</div><div class="ttdoc">Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal optimization.</div><div class="ttdef"><b>Definition</b> FFTUtils.hpp:27</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

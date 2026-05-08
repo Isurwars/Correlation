@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['xrdcalculator_0',['XRDCalculator',['../classXRDCalculator.html',1,'']]]
+  ['writerfactory_0',['WriterFactory',['../classcorrelation_1_1writers_1_1WriterFactory.html',1,'correlation::writers']]]
 ];

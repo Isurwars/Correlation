@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: src/DynamicsAnalyzer.cpp File Reference</title>
+<title>Correlation: src/analysis/DynamicsAnalyzer.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -77,17 +77,19 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_2eec376824a17f48dc36b4bd0c810e01.html">analysis</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">DynamicsAnalyzer.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Implementation of VACF, VDOS, and MSD analysis.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="DynamicsAnalyzer_8hpp_source.html">DynamicsAnalyzer.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="DynamicsAnalyzer_8hpp_source.html">analysis/DynamicsAnalyzer.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Constants_8hpp_source.html">math/Constants.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="FFTUtils_8hpp_source.html">math/FFTUtils.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="LinearAlgebra_8hpp_source.html">math/LinearAlgebra.hpp</a>&quot;</code><br />
@@ -99,75 +101,83 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for DynamicsAnalyzer.cpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="DynamicsAnalyzer_8cpp__incl.png" border="0" usemap="#asrc_2DynamicsAnalyzer_8cpp" alt=""/></div>
-<map name="asrc_2DynamicsAnalyzer_8cpp" id="asrc_2DynamicsAnalyzer_8cpp">
-<area shape="rect" title="Implementation of VACF, VDOS, and MSD analysis." alt="" coords="870,5,1064,31"/>
-<area shape="rect" href="DynamicsAnalyzer_8hpp.html" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="562,86,732,111"/>
-<area shape="poly" title=" " alt="" coords="921,33,707,85,706,80,920,28"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="351,387,530,412"/>
-<area shape="poly" title=" " alt="" coords="870,26,707,38,615,49,525,64,444,84,377,110,352,125,333,141,322,159,318,178,318,254,320,274,327,293,349,327,379,355,409,377,406,381,376,359,345,330,322,295,315,275,312,254,312,178,317,157,329,138,349,120,375,105,442,79,524,59,614,44,707,33,870,20"/>
-<area shape="rect" title=" " alt="" coords="895,387,980,412"/>
-<area shape="poly" title=" " alt="" coords="970,31,970,178,970,254,962,320,948,374,943,373,957,319,964,254,964,178,964,31"/>
-<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="1056,313,1209,339"/>
-<area shape="poly" title=" " alt="" coords="976,30,1122,300,1117,303,971,32"/>
-<area shape="rect" href="FFTUtils_8hpp.html" title="Fast Fourier Transform (FFT) and autocorrelation utilities." alt="" coords="788,240,930,265"/>
-<area shape="poly" title=" " alt="" coords="964,32,873,228,868,226,959,30"/>
-<area shape="rect" href="PhysicalData_8hpp.html" title="Database of physical properties for chemical elements (radii, masses, form factors)." alt="" coords="38,313,226,339"/>
-<area shape="poly" title=" " alt="" coords="870,26,536,46,382,62,328,71,298,81,267,103,240,130,195,191,163,252,143,301,138,299,158,250,190,188,236,126,264,99,295,76,327,66,382,56,536,41,870,21"/>
-<area shape="rect" title=" " alt="" coords="1055,86,1130,111"/>
-<area shape="poly" title=" " alt="" coords="987,29,1064,76,1061,81,984,33"/>
-<area shape="rect" title=" " alt="" coords="1154,79,1329,119"/>
-<area shape="poly" title=" " alt="" coords="1008,28,1163,72,1162,77,1006,33"/>
-<area shape="rect" title=" " alt="" coords="1353,86,1485,111"/>
-<area shape="poly" title=" " alt="" coords="1052,28,1188,49,1342,76,1362,80,1361,85,1341,81,1187,54,1051,33"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="544,167,656,192"/>
-<area shape="poly" title=" " alt="" coords="642,113,617,156,612,153,638,110"/>
-<area shape="rect" title=" " alt="" coords="662,313,725,339"/>
-<area shape="poly" title=" " alt="" coords="654,111,671,166,685,238,694,299,688,300,680,239,666,167,649,112"/>
-<area shape="rect" title=" " alt="" coords="465,167,520,192"/>
-<area shape="poly" title=" " alt="" coords="625,114,529,163,526,158,623,109"/>
-<area shape="poly" title=" " alt="" coords="558,195,514,211,466,236,424,270,406,291,394,314,391,330,396,346,418,376,413,379,391,349,386,331,389,312,402,288,420,266,464,231,512,206,556,190"/>
-<area shape="poly" title=" " alt="" coords="610,191,681,300,677,303,606,194"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="478,240,552,265"/>
-<area shape="poly" title=" " alt="" coords="588,194,541,233,538,229,585,190"/>
-<area shape="rect" title=" " alt="" coords="146,460,202,485"/>
-<area shape="poly" title=" " alt="" coords="398,415,215,463,214,458,397,409"/>
-<area shape="rect" title=" " alt="" coords="802,460,865,485"/>
-<area shape="poly" title=" " alt="" coords="504,409,789,461,788,466,503,415"/>
-<area shape="rect" title=" " alt="" coords="453,460,540,485"/>
-<area shape="poly" title=" " alt="" coords="452,411,481,448,477,451,448,414"/>
-<area shape="rect" title=" " alt="" coords="337,460,429,485"/>
-<area shape="poly" title=" " alt="" coords="433,414,403,451,399,447,429,411"/>
-<area shape="poly" title=" " alt="" coords="516,266,508,300,492,340,464,378,460,375,487,337,503,298,511,265"/>
-<area shape="poly" title=" " alt="" coords="478,258,365,265,222,277,94,293,50,304,28,315,12,338,8,361,14,385,28,410,49,432,76,448,105,458,133,465,131,470,103,464,73,453,46,437,24,414,9,387,3,361,8,337,24,311,48,299,93,288,221,271,365,260,477,253"/>
-<area shape="poly" title=" " alt="" coords="545,263,653,306,651,311,543,268"/>
-<area shape="rect" title=" " alt="" coords="403,313,478,339"/>
-<area shape="poly" title=" " alt="" coords="505,267,464,306,461,302,501,263"/>
-<area shape="rect" title=" " alt="" coords="262,387,320,412"/>
-<area shape="poly" title=" " alt="" coords="487,268,441,288,393,316,350,347,315,379,311,375,347,343,390,311,439,284,485,263"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="552,313,638,339"/>
-<area shape="poly" title=" " alt="" coords="530,263,574,302,570,306,526,267"/>
-<area shape="poly" title=" " alt="" coords="571,341,479,383,477,378,569,336"/>
-<area shape="poly" title=" " alt="" coords="553,340,340,389,335,390,333,385,338,384,551,335"/>
-<area shape="poly" title=" " alt="" coords="638,334,882,384,881,389,637,339"/>
-<area shape="rect" title=" " alt="" coords="562,387,628,412"/>
-<area shape="poly" title=" " alt="" coords="598,339,598,373,592,373,592,339"/>
-<area shape="poly" title=" " alt="" coords="884,263,927,289,972,324,990,345,1002,367,1004,390,995,413,971,438,941,454,909,465,879,471,878,465,908,460,939,449,968,433,990,411,999,390,997,369,986,348,969,328,924,293,881,268"/>
-<area shape="poly" title=" " alt="" coords="862,266,860,301,854,322,842,340,812,370,777,395,739,416,699,433,622,456,554,468,554,463,620,451,698,428,737,411,774,391,808,366,838,337,849,320,854,300,857,265"/>
-<area shape="poly" title=" " alt="" coords="834,268,734,310,732,305,831,263"/>
-<area shape="poly" title=" " alt="" coords="868,265,927,373,923,376,863,267"/>
-<area shape="poly" title=" " alt="" coords="904,263,1076,307,1074,312,902,268"/>
-<area shape="rect" title=" " alt="" coords="749,313,828,339"/>
-<area shape="poly" title=" " alt="" coords="849,268,811,306,808,302,846,264"/>
-<area shape="poly" title=" " alt="" coords="138,338,169,446,164,447,133,340"/>
-<area shape="poly" title=" " alt="" coords="147,337,191,373,220,393,251,410,326,430,440,456,439,461,325,435,249,414,217,397,188,377,143,341"/>
-<area shape="poly" title=" " alt="" coords="159,336,254,379,252,383,157,341"/>
-<area shape="poly" title=" " alt="" coords="227,333,881,390,881,396,227,338"/>
-<area shape="rect" title=" " alt="" coords="38,387,136,412"/>
-<area shape="poly" title=" " alt="" coords="127,340,104,377,100,374,123,338"/>
+<div class="center"><img src="DynamicsAnalyzer_8cpp__incl.png" border="0" usemap="#asrc_2analysis_2DynamicsAnalyzer_8cpp" alt=""/></div>
+<map name="asrc_2analysis_2DynamicsAnalyzer_8cpp" id="asrc_2analysis_2DynamicsAnalyzer_8cpp">
+<area shape="rect" title="Implementation of VACF, VDOS, and MSD analysis." alt="" coords="770,5,1021,31"/>
+<area shape="rect" href="DynamicsAnalyzer_8hpp.html" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="521,86,750,111"/>
+<area shape="poly" title=" " alt="" coords="859,33,687,85,686,80,857,28"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="560,387,738,412"/>
+<area shape="poly" title=" " alt="" coords="882,33,855,57,825,91,800,132,793,155,790,178,790,254,787,300,779,319,764,340,735,366,702,384,699,379,732,362,760,337,775,317,782,299,785,254,785,178,788,153,796,130,821,88,851,53,878,29"/>
+<area shape="rect" title=" " alt="" coords="360,387,445,412"/>
+<area shape="poly" title=" " alt="" coords="771,28,612,42,527,54,444,69,371,89,312,114,290,128,273,144,263,160,260,178,260,254,262,275,270,295,296,330,331,358,365,378,363,383,328,362,292,333,265,297,257,276,254,254,254,178,258,158,269,140,287,124,310,109,370,84,443,64,526,49,611,37,770,22"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="1082,313,1235,339"/>
+<area shape="poly" title=" " alt="" coords="908,29,1142,301,1138,305,904,33"/>
+<area shape="rect" href="FFTUtils_8hpp.html" title="Fast Fourier Transform (FFT) and autocorrelation utilities." alt="" coords="825,240,966,265"/>
+<area shape="poly" title=" " alt="" coords="898,31,898,226,893,226,893,31"/>
+<area shape="rect" href="PhysicalData_8hpp.html" title="Database of physical properties for chemical elements (radii, masses, form factors)." alt="" coords="31,313,219,339"/>
+<area shape="poly" title=" " alt="" coords="770,27,618,34,453,46,315,61,267,71,240,81,214,103,193,130,175,159,161,190,141,251,131,300,126,298,136,250,156,188,170,157,188,127,210,99,237,76,265,65,314,56,453,40,617,29,770,21"/>
+<area shape="rect" title=" " alt="" coords="998,86,1073,111"/>
+<area shape="poly" title=" " alt="" coords="918,29,1004,77,1002,82,915,33"/>
+<area shape="rect" title=" " alt="" coords="1098,79,1272,119"/>
+<area shape="poly" title=" " alt="" coords="938,28,1103,73,1102,78,937,33"/>
+<area shape="rect" title=" " alt="" coords="1296,86,1428,111"/>
+<area shape="poly" title=" " alt="" coords="985,28,1126,48,1286,76,1305,80,1304,85,1285,81,1126,54,984,33"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="476,167,620,192"/>
+<area shape="poly" title=" " alt="" coords="624,114,572,160,569,156,621,110"/>
+<area shape="rect" title=" " alt="" coords="687,313,750,339"/>
+<area shape="poly" title=" " alt="" coords="658,109,688,132,703,148,714,166,725,201,730,237,726,300,720,300,724,237,720,202,709,168,699,151,685,136,655,114"/>
+<area shape="rect" title=" " alt="" coords="644,167,699,192"/>
+<area shape="poly" title=" " alt="" coords="643,110,663,153,658,155,639,113"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="449,240,556,265"/>
+<area shape="poly" title=" " alt="" coords="542,194,519,230,515,227,538,191"/>
+<area shape="poly" title=" " alt="" coords="556,191,640,373,635,375,551,193"/>
+<area shape="poly" title=" " alt="" coords="576,190,616,210,656,238,685,269,707,300,703,303,681,272,653,242,613,214,574,194"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="444,313,561,339"/>
+<area shape="poly" title=" " alt="" coords="505,266,505,300,500,300,500,266"/>
+<area shape="poly" title=" " alt="" coords="519,264,575,311,633,374,629,378,571,315,516,268"/>
+<area shape="rect" title=" " alt="" coords="145,460,201,485"/>
+<area shape="poly" title=" " alt="" coords="449,259,199,278,81,295,41,305,20,315,12,331,8,354,12,381,27,410,49,432,76,447,105,457,132,464,131,469,103,463,74,452,46,436,23,414,7,383,3,354,7,329,16,311,39,300,80,289,199,273,449,254"/>
+<area shape="rect" title=" " alt="" coords="277,387,336,412"/>
+<area shape="poly" title=" " alt="" coords="449,263,389,280,360,295,335,315,318,343,311,374,306,373,313,341,331,312,357,290,387,275,448,258"/>
+<area shape="rect" title=" " alt="" coords="345,313,420,339"/>
+<area shape="poly" title=" " alt="" coords="484,268,415,308,413,304,482,263"/>
+<area shape="poly" title=" " alt="" coords="538,263,675,308,673,313,536,268"/>
+<area shape="poly" title=" " alt="" coords="527,336,614,378,612,383,525,341"/>
+<area shape="poly" title=" " alt="" coords="488,341,431,381,428,376,485,337"/>
+<area shape="rect" title=" " alt="" coords="469,387,536,412"/>
+<area shape="poly" title=" " alt="" coords="505,339,505,373,500,373,500,339"/>
+<area shape="poly" title=" " alt="" coords="472,341,349,385,348,380,470,336"/>
+<area shape="poly" title=" " alt="" coords="573,415,215,468,214,462,572,409"/>
+<area shape="rect" title=" " alt="" coords="920,460,983,485"/>
+<area shape="poly" title=" " alt="" coords="698,409,908,458,906,463,697,415"/>
+<area shape="rect" title=" " alt="" coords="662,460,748,485"/>
+<area shape="poly" title=" " alt="" coords="660,411,690,448,685,451,656,414"/>
+<area shape="rect" title=" " alt="" coords="546,460,638,485"/>
+<area shape="poly" title=" " alt="" coords="642,414,612,451,608,447,637,411"/>
+<area shape="poly" title=" " alt="" coords="949,263,988,281,1006,295,1021,312,1028,330,1030,350,1020,388,999,423,976,451,971,448,994,420,1015,386,1025,349,1023,332,1016,315,1003,299,986,286,947,268"/>
+<area shape="poly" title=" " alt="" coords="887,267,726,451,722,448,883,264"/>
+<area shape="poly" title=" " alt="" coords="883,268,833,305,799,325,763,341,682,365,615,374,546,379,459,389,458,384,546,373,615,369,681,360,761,336,797,320,830,300,880,263"/>
+<area shape="poly" title=" " alt="" coords="868,268,761,311,759,306,866,263"/>
+<area shape="poly" title=" " alt="" coords="939,263,1103,307,1102,312,937,268"/>
+<area shape="rect" title=" " alt="" coords="927,313,1006,339"/>
+<area shape="poly" title=" " alt="" coords="909,264,947,302,943,306,905,268"/>
+<area shape="poly" title=" " alt="" coords="132,338,149,386,168,446,163,447,144,388,127,340"/>
+<area shape="poly" title=" " alt="" coords="141,336,194,374,229,393,266,409,321,426,368,436,452,444,539,446,648,457,648,462,538,452,452,449,367,442,319,431,264,415,226,398,191,378,138,341"/>
+<area shape="poly" title=" " alt="" coords="170,336,347,381,345,386,169,341"/>
+<area shape="poly" title=" " alt="" coords="155,336,265,379,263,384,153,341"/>
+<area shape="rect" title=" " alt="" coords="38,387,135,412"/>
+<area shape="poly" title=" " alt="" coords="121,340,101,376,97,373,116,338"/>
 </map>
 </div>
-</div><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1analysis" id="r_namespacecorrelation_1_1analysis"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1analysis.html">correlation::analysis</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of VACF, VDOS, and MSD analysis. </p>
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright © 2013-2026 Isaías Rodríguez (<a href="#" onclick="location.href='mai'+'lto:'+'isu'+'rw'+'ars'+'@g'+'mai'+'l.'+'com'; return false;">isurw<span class="obfuscator">.nosp@m.</span>ars@<span class="obfuscator">.nosp@m.</span>gmail<span class="obfuscator">.nosp@m.</span>.com</a>) </dd></dl>
 <dl class="section user"><dt>License</dt><dd>SPDX-License-Identifier: MIT </dd></dl>

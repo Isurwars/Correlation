@@ -1,0 +1,5 @@
+<map id="correlation::core::Trajectory::removeDuplicatedFrames" name="correlation::core::Trajectory::removeDuplicatedFrames">
+<area shape="rect" id="Node000001" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="211,5,424,60"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="5,13,163,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,35,163,35,163,30,197,30"/>
+</map>

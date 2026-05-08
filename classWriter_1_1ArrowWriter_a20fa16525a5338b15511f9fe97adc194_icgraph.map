@@ -1,7 +1,0 @@
-<map id="Writer::ArrowWriter::writeHistogramToParquet" name="Writer::ArrowWriter::writeHistogramToParquet">
-<area shape="rect" id="Node000001" title="The core implementation for writing a single histogram and its smoothed histograms to a single Parque..." alt="" coords="397,5,592,45"/>
-<area shape="rect" id="Node000002" href="$classWriter_1_1ArrowWriter.html#a4a45c5bb5fbe26b809b014374bc23a59" title="Writes all available histograms to Parquet files." alt="" coords="201,5,349,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="384,28,350,28,350,23,384,23"/>
-<area shape="rect" id="Node000003" href="$classWriter_1_1ArrowWriter.html#aa6659c9be980dcdc57ffefbb796804c2" title="Writes the distribution function data to file(s)." alt="" coords="5,5,153,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="187,28,154,28,154,23,187,23"/>
-</map>

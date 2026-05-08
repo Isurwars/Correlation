@@ -1,47 +1,47 @@
 <map id="include/readers/ReaderFactory.hpp" name="include/readers/ReaderFactory.hpp">
-<area shape="rect" id="Node000001" title="Factory for instantiating file reader objects by format." alt="" coords="499,5,745,31"/>
-<area shape="rect" id="Node000002" href="$BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="271,79,397,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="576,33,394,78,393,73,575,28"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="475,372,534,397"/>
-<area shape="poly" id="edge26_Node000001_Node000003" title=" " alt="" coords="625,31,625,163,625,239,622,260,616,280,594,315,565,344,537,366,534,362,562,340,590,311,611,277,617,259,619,239,619,163,619,31"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="52,299,115,324"/>
-<area shape="poly" id="edge27_Node000001_Node000004" title=" " alt="" coords="512,33,392,50,264,75,204,91,152,110,111,131,84,154,75,168,69,185,66,220,70,255,77,285,72,286,64,256,60,220,64,184,70,166,80,150,108,126,150,105,203,86,263,70,392,45,511,28"/>
-<area shape="rect" id="Node000017" title=" " alt="" coords="659,79,737,104"/>
-<area shape="poly" id="edge24_Node000001_Node000017" title=" " alt="" coords="636,29,677,67,674,71,632,33"/>
-<area shape="rect" id="Node000018" title=" " alt="" coords="761,79,811,104"/>
-<area shape="poly" id="edge25_Node000001_Node000018" title=" " alt="" coords="649,28,749,71,747,76,647,33"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="345,102,405,181,442,238,476,298,500,358,495,360,472,300,438,240,400,184,341,106"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="271,103,172,123,129,137,103,154,85,185,78,220,77,255,81,285,76,285,72,255,73,219,80,183,99,150,127,132,170,118,270,98"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="249,152,336,177"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="329,106,309,141,304,139,325,103"/>
-<area shape="rect" id="Node000006" href="$Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="306,225,381,251"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="340,104,351,152,352,183,350,212,345,211,347,183,346,152,335,105"/>
-<area shape="rect" id="Node000016" href="$Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="113,152,225,177"/>
-<area shape="poly" id="edge20_Node000002_Node000016" title=" " alt="" coords="308,106,209,149,207,144,306,102"/>
-<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="371,248,408,269,446,297,474,327,494,358,490,361,469,331,443,301,405,273,368,253"/>
-<area shape="poly" id="edge9_Node000006_Node000004" title=" " alt="" coords="306,252,129,300,128,295,305,247"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="431,445,487,471"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="382,247,425,263,473,289,517,324,535,346,549,371,550,393,540,412,522,428,501,441,498,437,519,424,536,409,545,392,543,373,531,349,513,328,470,293,423,268,380,252"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="358,299,433,324"/>
-<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="354,249,381,286,377,289,350,253"/>
-<area shape="rect" id="Node000009" href="$Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="249,299,334,324"/>
-<area shape="poly" id="edge10_Node000006_Node000009" title=" " alt="" coords="337,253,310,289,306,286,333,249"/>
-<area shape="rect" id="Node000012" href="$LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="73,372,251,397"/>
-<area shape="poly" id="edge19_Node000006_Node000012" title=" " alt="" coords="318,253,279,273,238,301,206,332,180,363,176,359,202,328,235,297,277,269,316,248"/>
-<area shape="poly" id="edge13_Node000009_Node000003" title=" " alt="" coords="326,321,463,367,462,372,325,327"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="275,372,361,397"/>
-<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="298,323,311,358,306,360,293,325"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="385,372,451,397"/>
-<area shape="poly" id="edge12_Node000009_Node000011" title=" " alt="" coords="313,322,387,363,384,367,310,326"/>
-<area shape="poly" id="edge14_Node000009_Node000012" title=" " alt="" coords="272,326,197,367,194,363,269,322"/>
-<area shape="poly" id="edge15_Node000012_Node000007" title=" " alt="" coords="210,395,418,444,417,449,209,400"/>
-<area shape="rect" id="Node000013" title=" " alt="" coords="232,445,295,471"/>
-<area shape="poly" id="edge16_Node000012_Node000013" title=" " alt="" coords="180,395,237,435,234,439,177,400"/>
-<area shape="rect" id="Node000014" title=" " alt="" coords="5,445,92,471"/>
-<area shape="poly" id="edge17_Node000012_Node000014" title=" " alt="" coords="145,400,80,440,77,436,142,395"/>
-<area shape="rect" id="Node000015" title=" " alt="" coords="116,445,208,471"/>
-<area shape="poly" id="edge18_Node000012_Node000015" title=" " alt="" coords="165,398,165,432,159,432,159,398"/>
-<area shape="poly" id="edge22_Node000016_Node000004" title=" " alt="" coords="164,179,99,288,95,285,159,176"/>
-<area shape="poly" id="edge23_Node000016_Node000006" title=" " alt="" coords="198,175,303,218,301,222,196,180"/>
-<area shape="poly" id="edge21_Node000016_Node000012" title=" " alt="" coords="171,178,165,358,160,358,166,178"/>
+<area shape="rect" id="Node000001" title="Factory for instantiating file reader objects by format." alt="" coords="617,5,862,31"/>
+<area shape="rect" id="Node000002" href="$BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="396,79,523,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="695,33,518,78,517,73,694,28"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="615,372,674,397"/>
+<area shape="poly" id="edge26_Node000001_Node000012" title=" " alt="" coords="742,31,742,163,742,240,735,277,717,312,694,342,671,365,667,361,690,338,713,309,730,276,737,239,737,163,737,31"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="196,299,259,324"/>
+<area shape="poly" id="edge27_Node000001_Node000014" title=" " alt="" coords="617,31,484,46,342,70,276,86,219,106,175,128,145,154,137,170,136,188,140,207,149,225,176,260,204,288,201,292,172,263,145,228,135,208,131,189,132,169,141,150,172,124,217,101,275,81,341,65,483,40,616,26"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="777,79,827,104"/>
+<area shape="poly" id="edge24_Node000001_Node000017" title=" " alt="" coords="752,29,785,66,781,70,748,33"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="851,79,929,104"/>
+<area shape="poly" id="edge25_Node000001_Node000018" title=" " alt="" coords="765,28,854,70,852,75,762,33"/>
+<area shape="rect" id="Node000003" href="$Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="382,225,489,251"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="467,104,476,137,478,158,475,178,467,198,456,216,451,213,462,196,470,177,473,157,471,138,462,105"/>
+<area shape="poly" id="edge22_Node000002_Node000012" title=" " alt="" coords="476,102,512,132,559,177,605,233,626,265,642,298,649,329,650,358,645,358,644,329,637,300,621,267,601,236,555,180,509,136,473,106"/>
+<area shape="poly" id="edge23_Node000002_Node000014" title=" " alt="" coords="437,107,401,127,364,154,328,188,295,225,245,289,241,286,291,222,324,185,360,150,398,123,435,102"/>
+<area shape="rect" id="Node000015" href="$Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="155,152,299,177"/>
+<area shape="poly" id="edge17_Node000002_Node000015" title=" " alt="" coords="423,107,279,151,277,145,421,101"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="375,152,461,177"/>
+<area shape="poly" id="edge21_Node000002_Node000016" title=" " alt="" coords="455,106,434,141,429,139,450,103"/>
+<area shape="rect" id="Node000004" href="$Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="385,299,502,324"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="439,251,443,285,438,285,434,251"/>
+<area shape="rect" id="Node000005" href="$LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="131,372,310,397"/>
+<area shape="poly" id="edge12_Node000003_Node000005" title=" " alt="" coords="414,253,330,301,246,365,243,361,327,296,411,249"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="319,445,375,471"/>
+<area shape="poly" id="edge13_Node000003_Node000006" title=" " alt="" coords="420,253,396,273,375,300,362,334,354,369,349,432,344,432,348,369,356,332,370,297,392,269,416,249"/>
+<area shape="poly" id="edge15_Node000003_Node000012" title=" " alt="" coords="490,242,554,260,586,275,615,297,634,326,644,358,639,359,629,329,611,300,583,280,552,265,488,248"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="526,299,601,324"/>
+<area shape="poly" id="edge14_Node000003_Node000013" title=" " alt="" coords="457,248,531,289,529,294,455,253"/>
+<area shape="poly" id="edge16_Node000003_Node000014" title=" " alt="" coords="403,253,273,297,271,292,401,248"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="408,327,270,370,269,365,407,321"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="494,372,579,397"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="460,322,512,361,509,366,457,326"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="403,372,470,397"/>
+<area shape="poly" id="edge10_Node000004_Node000011" title=" " alt="" coords="445,325,442,359,436,358,440,324"/>
+<area shape="poly" id="edge11_Node000004_Node000012" title=" " alt="" coords="477,322,603,366,602,371,475,327"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="242,395,316,436,313,441,240,400"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="5,445,68,471"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="192,400,81,443,79,438,190,395"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="92,445,179,471"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="209,399,161,439,158,434,205,395"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="203,445,295,471"/>
+<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="228,397,242,432,237,434,223,399"/>
+<area shape="poly" id="edge18_Node000015_Node000003" title=" " alt="" coords="262,175,389,218,388,223,260,180"/>
+<area shape="poly" id="edge19_Node000015_Node000005" title=" " alt="" coords="222,179,207,205,192,241,183,282,182,303,186,323,194,342,205,360,200,362,189,345,181,325,177,303,177,281,187,239,202,203,217,176"/>
+<area shape="poly" id="edge20_Node000015_Node000014" title=" " alt="" coords="230,178,230,285,225,285,225,178"/>
 </map>

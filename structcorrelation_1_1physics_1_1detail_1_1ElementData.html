@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -88,7 +88,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Simple internal structure to hold element-specific data.  
+<p>Internal structure to hold element-specific physical data.  
  <a href="structcorrelation_1_1physics_1_1detail_1_1ElementData.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="PhysicalData_8hpp_source.html">PhysicalData.hpp</a>&gt;</code></p>
@@ -96,16 +96,21 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a670f28657ebf41e2979cd590403ac6f1" id="r_a670f28657ebf41e2979cd590403ac6f1"><td class="memItemLeft" align="right" valign="top">std::string_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1physics_1_1detail_1_1ElementData.html#a670f28657ebf41e2979cd590403ac6f1">symbol</a></td></tr>
+<tr class="memdesc:a670f28657ebf41e2979cd590403ac6f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chemical symbol (e.g., "Si").  <br /></td></tr>
 <tr class="separator:a670f28657ebf41e2979cd590403ac6f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7663f0b4927ed5f71b0c5d32cb7ab74" id="r_af7663f0b4927ed5f71b0c5d32cb7ab74"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1physics_1_1detail_1_1ElementData.html#af7663f0b4927ed5f71b0c5d32cb7ab74">radius</a></td></tr>
+<tr class="memdesc:af7663f0b4927ed5f71b0c5d32cb7ab74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covalent radius in Angstroms.  <br /></td></tr>
 <tr class="separator:af7663f0b4927ed5f71b0c5d32cb7ab74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab66453945a7d713fa57ac3ca7a78c76f" id="r_ab66453945a7d713fa57ac3ca7a78c76f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1physics_1_1detail_1_1ElementData.html#ab66453945a7d713fa57ac3ca7a78c76f">mass</a></td></tr>
+<tr class="memdesc:ab66453945a7d713fa57ac3ca7a78c76f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Atomic mass in atomic mass units (Da).  <br /></td></tr>
 <tr class="separator:ab66453945a7d713fa57ac3ca7a78c76f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a051db0b71432bc1c2d95222d983d90be" id="r_a051db0b71432bc1c2d95222d983d90be"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, 9 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1physics_1_1detail_1_1ElementData.html#a051db0b71432bc1c2d95222d983d90be">form_factors</a></td></tr>
+<tr class="memdesc:a051db0b71432bc1c2d95222d983d90be"><td class="mdescLeft">&#160;</td><td class="mdescRight">9 coefficients (a1, b1, a2, b2, a3, b3, a4, b4, c) for the Cromer-Mann equation used to calculate atomic form factors f(q).  <br /></td></tr>
 <tr class="separator:a051db0b71432bc1c2d95222d983d90be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Simple internal structure to hold element-specific data. </p>
+<div class="textblock"><p>Internal structure to hold element-specific physical data. </p>
+<p>This data is used for calculating density, scattering intensities, and neighbor interactions. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a051db0b71432bc1c2d95222d983d90be" name="a051db0b71432bc1c2d95222d983d90be"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a051db0b71432bc1c2d95222d983d90be">&#9670;&#160;</a></span>form_factors</h2>
@@ -118,6 +123,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>9 coefficients (a1, b1, a2, b2, a3, b3, a4, b4, c) for the Cromer-Mann equation used to calculate atomic form factors f(q). </p>
 
 </div>
 </div>
@@ -133,6 +140,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Atomic mass in atomic mass units (Da). </p>
+
 </div>
 </div>
 <a id="af7663f0b4927ed5f71b0c5d32cb7ab74" name="af7663f0b4927ed5f71b0c5d32cb7ab74"></a>
@@ -147,6 +156,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Covalent radius in Angstroms. </p>
+
 </div>
 </div>
 <a id="a670f28657ebf41e2979cd590403ac6f1" name="a670f28657ebf41e2979cd590403ac6f1"></a>
@@ -160,6 +171,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Chemical symbol (e.g., "Si"). </p>
 
 </div>
 </div>

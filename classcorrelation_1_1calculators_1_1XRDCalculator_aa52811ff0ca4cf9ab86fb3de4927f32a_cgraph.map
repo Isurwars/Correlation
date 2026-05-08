@@ -1,0 +1,29 @@
+<map id="correlation::calculators::XRDCalculator::calculateFrame" name="correlation::calculators::XRDCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,265,237,305"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="301,86,469,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="141,263,203,209,242,179,284,151,296,144,298,149,287,156,245,183,206,213,145,267"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="289,165,480,205"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="167,263,284,215,306,207,307,212,286,220,169,268"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="285,229,484,269"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="237,267,272,262,272,267,238,272"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="301,294,469,349"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="238,299,287,305,287,311,237,304"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="301,373,469,427"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="165,303,286,359,301,365,299,370,284,364,163,308"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="301,451,469,506"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="141,304,202,368,242,405,287,438,295,442,292,447,284,442,239,409,198,372,137,307"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="552,5,688,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="463,163,482,150,499,127,506,104,512,80,530,55,539,49,542,53,534,59,517,82,511,106,504,130,486,154,465,167"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="552,69,688,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="451,163,483,150,507,135,531,119,546,112,548,117,533,124,509,139,485,154,453,168"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="552,133,688,173"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="480,170,538,162,539,167,481,175"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="532,197,708,237"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="481,196,519,201,518,206,480,201"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5" title="Computes a sinc&#45;weighted integral over a range (AVX2 version)." alt="" coords="549,261,691,301"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="457,203,485,215,510,231,533,247,547,254,545,259,531,252,507,235,483,220,454,208"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="552,325,688,365"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="468,203,486,215,504,240,511,264,517,288,534,311,542,318,539,322,530,315,512,290,506,266,499,242,482,219,465,208"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="756,197,905,237"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="708,215,742,215,742,220,708,220"/>
+</map>

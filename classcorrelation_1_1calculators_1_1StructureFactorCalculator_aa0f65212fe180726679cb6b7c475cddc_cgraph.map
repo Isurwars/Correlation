@@ -1,0 +1,11 @@
+<map id="correlation::calculators::StructureFactorCalculator::calculateFrame" name="correlation::calculators::StructureFactorCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,98,200,153"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="279,5,415,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,95,247,55,267,47,269,52,249,60,159,100"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="248,69,447,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="200,108,234,103,235,109,201,114"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="263,134,431,189"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="201,137,250,144,249,150,200,142"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a9653492ad86b15295063a359961cc07a" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="250,213,445,253"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="154,150,249,198,270,206,268,211,247,202,151,155"/>
+</map>

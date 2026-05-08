@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -161,6 +161,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:a9eca03a5de0ee5364e13bb74bf54b1f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the squared distances from a reference point to a block of positions.  <br /></td></tr>
 <tr class="separator:a9eca03a5de0ee5364e13bb74bf54b1f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25697f539f403e69a8145c75acab8ad5" id="r_a25697f539f403e69a8145c75acab8ad5"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5">correlation::math::sinc_integral</a> (double Q, const double *integrand, const double *rbins, double *sinqr_scratch, std::size_t count) noexcept</td></tr>
+<tr class="memdesc:a25697f539f403e69a8145c75acab8ad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a sinc-weighted integral over a range (AVX2 version).  <br /></td></tr>
 <tr class="separator:a25697f539f403e69a8145c75acab8ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4f17b39df2368a16fb366b231703f4e7" id="r_a4f17b39df2368a16fb366b231703f4e7"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a4f17b39df2368a16fb366b231703f4e7">correlation::math::debye_sum</a> (double Q, const double *distances, double *scratch, std::size_t count) noexcept</td></tr>
 <tr class="memdesc:a4f17b39df2368a16fb366b231703f4e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the Debye scattering equation sum.  <br /></td></tr>
@@ -176,7 +177,7 @@ Functions</h2></td></tr>
 <tr class="separator:a28d84fe6ef64fdc47a1f9cc211aa2f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86e5dbd68f161ef4b7efccc6671d7f11" id="r_a86e5dbd68f161ef4b7efccc6671d7f11"><td class="memTemplParams" colspan="2">template&lt;typename AtomRange &gt; </td></tr>
 <tr class="memitem:a86e5dbd68f161ef4b7efccc6671d7f11"><td class="memTemplItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a86e5dbd68f161ef4b7efccc6671d7f11">correlation::math::fill_position_block</a> (const AtomRange &amp;atoms, std::size_t begin, std::size_t end, std::vector&lt; double &gt; &amp;xs, std::vector&lt; double &gt; &amp;ys, std::vector&lt; double &gt; &amp;zs) noexcept</td></tr>
-<tr class="memdesc:a86e5dbd68f161ef4b7efccc6671d7f11"><td class="mdescLeft">&#160;</td><td class="mdescRight">populates vectors with standard atom block positions for SIMD.  <br /></td></tr>
+<tr class="memdesc:a86e5dbd68f161ef4b7efccc6671d7f11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Populates vectors with standard atom block positions for SIMD.  <br /></td></tr>
 <tr class="separator:a86e5dbd68f161ef4b7efccc6671d7f11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20221253052e1d2e13d05b0d57e37d72" id="r_a20221253052e1d2e13d05b0d57e37d72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a20221253052e1d2e13d05b0d57e37d72">correlation::math::complex_exp_sum</a> (double qx, double qy, double qz, const double *xs, const double *ys, const double *zs, std::size_t count, double &amp;cos_sum, double &amp;sin_sum) noexcept</td></tr>
 <tr class="memdesc:a20221253052e1d2e13d05b0d57e37d72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the sum of complex exponentials for a given query vector.  <br /></td></tr>

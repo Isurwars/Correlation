@@ -1,11 +1,11 @@
 <map id="correlation::math::sph_legendre" name="correlation::math::sph_legendre">
-<area shape="rect" id="Node000001" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="613,37,756,77"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="412,5,564,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="600,46,564,40,565,35,601,41"/>
-<area shape="rect" id="Node000003" href="$classSteinhardtCalculator.html#a67a83cb7fdb5daf5c898dfa590323de9" title=" " alt="" coords="411,69,565,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="601,74,566,79,565,74,600,68"/>
-<area shape="rect" id="Node000004" href="$classSteinhardtCalculator.html#a25ea80e56a8ee127c50dddf4ce21e3aa" title=" " alt="" coords="208,69,363,109"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="397,92,363,92,363,87,397,87"/>
-<area shape="rect" id="Node000005" href="$classSteinhardtCalculator.html#a60d929283ac65ad0511e180ae2ebf5b4" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,69,160,109"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="194,92,161,92,161,87,194,87"/>
+<area shape="rect" id="Node000001" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="661,41,804,81"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="452,5,604,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="648,49,604,41,605,36,649,44"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a1af966279d10a10a96582b6ad7fe1fea" title="Computes the complex spherical harmonic ." alt="" coords="443,70,613,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="649,79,614,85,613,80,648,74"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="224,70,395,125"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="429,100,395,100,395,95,429,95"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,70,176,125"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="210,100,176,100,176,95,210,95"/>
 </map>

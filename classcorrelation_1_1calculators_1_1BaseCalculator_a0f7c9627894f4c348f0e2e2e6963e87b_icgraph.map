@@ -1,0 +1,7 @@
+<map id="correlation::calculators::BaseCalculator::getShortName" name="correlation::calculators::BaseCalculator::getShortName">
+<area shape="rect" id="Node000001" title="Returns a short, UI&#45;friendly name of the calculator (e.g. &quot;g_r&quot;, &quot;S_q&quot;)." alt="" coords="373,5,604,45"/>
+<area shape="rect" id="Node000002" href="$calculator__bindings_8cpp.html#a08a9f42b711ba7a731c0b888580f9bca" title=" " alt="" coords="204,13,325,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="359,28,326,28,326,23,359,23"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,13,156,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
+</map>

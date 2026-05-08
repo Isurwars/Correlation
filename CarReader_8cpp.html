@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.5.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,8 +82,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">CarReader.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -91,103 +90,100 @@ $(function() {
 <p>Implementation of the CAR file format reader.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="CarReader_8hpp_source.html">readers/CarReader.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Cell_8hpp_source.html">core/Cell.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ReaderFactory_8hpp_source.html">readers/ReaderFactory.hpp</a>&quot;</code><br />
 <code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cerrno&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;fstream&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;sstream&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
-<code>#include &lt;memory&gt;</code><br />
-<code>#include &lt;functional&gt;</code><br />
-<code>#include &quot;<a class="el" href="Cell_8hpp_source.html">Cell.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">Trajectory.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for CarReader.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="CarReader_8cpp__incl.png" border="0" usemap="#asrc_2readers_2CarReader_8cpp" alt=""/></div>
 <map name="asrc_2readers_2CarReader_8cpp" id="asrc_2readers_2CarReader_8cpp">
-<area shape="rect" title="Implementation of the CAR file format reader." alt="" coords="677,5,869,31"/>
-<area shape="rect" href="CarReader_8hpp.html" title="Reader for BIOVIA/Accelrys CAR structure files." alt="" coords="184,79,355,104"/>
-<area shape="poly" title=" " alt="" coords="693,33,364,79,364,74,692,28"/>
-<area shape="rect" title=" " alt="" coords="43,225,130,251"/>
-<area shape="poly" title=" " alt="" coords="677,22,548,25,401,34,266,52,212,65,173,81,142,108,119,143,104,180,94,213,89,211,99,179,114,141,138,105,171,76,211,60,265,47,400,29,548,20,677,17"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="237,299,312,324"/>
-<area shape="poly" title=" " alt="" coords="677,22,540,24,384,33,239,51,182,64,140,81,82,117,57,136,36,156,22,178,16,200,19,224,33,249,45,259,63,268,112,284,224,302,223,308,111,289,61,273,42,263,29,252,14,226,10,200,17,176,32,153,54,132,79,112,137,76,180,59,238,45,383,27,540,19,677,16"/>
-<area shape="rect" title=" " alt="" coords="552,519,608,544"/>
-<area shape="poly" title=" " alt="" coords="780,30,794,87,800,125,803,163,803,386,797,416,783,442,762,464,736,483,677,509,622,525,621,520,675,504,733,478,759,460,779,439,792,415,797,386,797,163,795,125,789,88,774,31"/>
-<area shape="rect" title=" " alt="" coords="727,519,814,544"/>
-<area shape="poly" title=" " alt="" coords="787,29,806,52,828,84,846,122,853,163,853,386,847,423,832,457,813,487,794,510,790,507,809,483,828,454,842,421,848,386,848,164,841,123,823,86,802,55,783,33"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="307,225,419,251"/>
-<area shape="poly" title=" " alt="" coords="677,28,589,45,543,60,501,81,461,111,427,147,378,215,374,212,423,144,458,107,499,76,541,55,587,40,676,23"/>
-<area shape="rect" href="ReaderFactory_8hpp.html" title="Factory for instantiating file reader objects by format." alt="" coords="512,79,707,104"/>
-<area shape="poly" title=" " alt="" coords="748,33,650,76,647,71,746,28"/>
-<area shape="rect" title=" " alt="" coords="685,152,763,177"/>
-<area shape="poly" title=" " alt="" coords="772,32,735,140,730,138,767,30"/>
-<area shape="rect" title=" " alt="" coords="889,79,951,104"/>
-<area shape="poly" title=" " alt="" coords="798,28,885,70,883,75,796,33"/>
-<area shape="rect" title=" " alt="" coords="976,79,1043,104"/>
-<area shape="poly" title=" " alt="" coords="812,28,963,73,962,79,810,33"/>
-<area shape="rect" title=" " alt="" coords="1067,79,1141,104"/>
-<area shape="poly" title=" " alt="" coords="829,28,1054,76,1053,81,828,33"/>
-<area shape="rect" title=" " alt="" coords="1165,79,1240,104"/>
-<area shape="poly" title=" " alt="" coords="858,28,992,48,1152,76,1151,81,991,53,857,33"/>
-<area shape="poly" title=" " alt="" coords="237,106,194,126,151,154,123,184,102,214,98,211,119,180,148,150,192,121,235,102"/>
-<area shape="rect" title=" " alt="" coords="81,445,140,471"/>
-<area shape="poly" title=" " alt="" coords="185,106,124,121,67,147,43,164,25,184,12,209,8,237,8,312,16,350,35,384,60,413,85,435,82,439,56,416,31,387,11,352,3,313,3,236,7,207,20,181,40,160,64,142,123,116,183,101"/>
-<area shape="rect" title=" " alt="" coords="577,372,639,397"/>
-<area shape="poly" title=" " alt="" coords="291,102,369,150,461,216,541,297,593,359,588,362,537,300,458,221,367,154,288,106"/>
-<area shape="poly" title=" " alt="" coords="246,106,218,126,205,138,196,153,193,164,196,177,208,208,224,238,258,287,254,290,219,241,203,210,191,178,188,164,191,151,201,135,215,122,243,102"/>
-<area shape="poly" title=" " alt="" coords="293,102,322,122,348,151,360,181,365,211,359,211,355,182,343,153,318,126,290,106"/>
-<area shape="rect" href="BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="206,152,333,177"/>
-<area shape="poly" title=" " alt="" coords="272,104,272,138,267,138,267,104"/>
-<area shape="poly" title=" " alt="" coords="238,326,195,345,155,374,134,402,121,433,116,431,130,400,151,370,193,341,236,322"/>
-<area shape="poly" title=" " alt="" coords="313,318,564,371,563,376,312,323"/>
-<area shape="poly" title=" " alt="" coords="313,317,368,330,435,355,469,371,501,392,531,416,557,444,572,474,580,504,575,506,567,476,552,447,528,419,498,396,466,376,433,360,367,335,312,322"/>
-<area shape="rect" title=" " alt="" coords="165,372,240,397"/>
-<area shape="poly" title=" " alt="" coords="265,326,226,364,222,360,261,322"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="315,372,400,397"/>
-<area shape="poly" title=" " alt="" coords="290,322,335,361,332,365,286,326"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="364,445,543,471"/>
-<area shape="poly" title=" " alt="" coords="313,319,364,337,390,352,414,370,436,400,449,431,444,433,431,403,410,374,387,356,362,342,312,324"/>
-<area shape="poly" title=" " alt="" coords="318,400,154,447,152,442,317,395"/>
-<area shape="rect" title=" " alt="" coords="164,445,249,471"/>
-<area shape="poly" title=" " alt="" coords="334,400,245,442,243,437,332,395"/>
-<area shape="rect" title=" " alt="" coords="273,445,340,471"/>
-<area shape="poly" title=" " alt="" coords="351,399,325,436,321,433,347,396"/>
-<area shape="poly" title=" " alt="" coords="374,395,428,435,425,439,371,400"/>
-<area shape="poly" title=" " alt="" coords="475,468,549,509,546,514,472,473"/>
-<area shape="rect" title=" " alt="" coords="443,519,506,544"/>
-<area shape="poly" title=" " alt="" coords="459,470,470,505,465,506,454,472"/>
-<area shape="poly" title=" " alt="" coords="505,468,714,515,713,520,504,473"/>
-<area shape="rect" title=" " alt="" coords="327,519,419,544"/>
-<area shape="poly" title=" " alt="" coords="442,473,398,512,395,508,439,469"/>
-<area shape="poly" title=" " alt="" coords="380,249,428,283,489,322,571,364,569,368,487,326,425,287,377,253"/>
-<area shape="poly" title=" " alt="" coords="350,253,301,292,298,288,347,249"/>
-<area shape="poly" title=" " alt="" coords="373,249,407,300,425,335,441,371,449,402,454,431,449,432,444,403,436,373,421,337,402,303,369,252"/>
-<area shape="poly" title=" " alt="" coords="241,180,130,223,128,218,239,175"/>
-<area shape="poly" title=" " alt="" coords="261,179,201,257,164,313,133,373,123,403,117,432,111,431,118,402,128,371,160,310,196,254,257,176"/>
-<area shape="poly" title=" " alt="" coords="315,175,372,194,432,223,466,247,489,269,540,322,586,361,582,365,537,326,485,273,462,251,429,228,370,199,313,180"/>
-<area shape="poly" title=" " alt="" coords="272,178,276,285,271,285,267,178"/>
-<area shape="poly" title=" " alt="" coords="286,175,338,215,335,219,283,179"/>
-<area shape="poly" title=" " alt="" coords="601,106,551,157,469,235,367,321,311,362,253,400,203,426,154,445,152,440,200,421,251,395,308,358,363,317,466,231,547,153,597,102"/>
-<area shape="poly" title=" " alt="" coords="609,105,601,152,599,210,600,267,608,358,602,359,595,267,593,210,596,152,604,104"/>
-<area shape="poly" title=" " alt="" coords="555,107,338,152,337,147,554,101"/>
-<area shape="poly" title=" " alt="" coords="629,102,695,142,692,147,626,106"/>
-<area shape="rect" title=" " alt="" coords="611,152,661,177"/>
-<area shape="poly" title=" " alt="" coords="616,103,629,138,624,140,611,105"/>
+<area shape="rect" title="Implementation of the CAR file format reader." alt="" coords="760,5,952,31"/>
+<area shape="rect" href="CarReader_8hpp.html" title="Reader for BIOVIA/Accelrys CAR structure files." alt="" coords="451,79,621,104"/>
+<area shape="poly" title=" " alt="" coords="805,33,602,78,600,73,804,28"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="225,299,332,324"/>
+<area shape="poly" title=" " alt="" coords="760,24,675,29,576,39,470,56,367,81,298,103,244,127,222,144,203,165,187,192,173,226,170,238,173,249,196,274,226,291,223,296,193,278,168,252,165,238,168,224,182,189,199,162,218,140,241,123,296,98,366,76,469,50,575,33,674,23,760,18"/>
+<area shape="rect" title=" " alt="" coords="28,519,84,544"/>
+<area shape="poly" title=" " alt="" coords="760,28,548,46,299,75,186,93,93,115,30,139,13,151,8,164,8,386,12,419,21,452,45,506,40,508,16,454,6,420,3,386,3,163,9,148,27,134,91,110,185,88,299,69,548,41,759,23"/>
+<area shape="rect" title=" " alt="" coords="759,519,846,544"/>
+<area shape="poly" title=" " alt="" coords="875,29,915,60,962,107,984,136,1002,167,1014,201,1019,236,1019,386,1014,413,1003,438,985,458,963,476,912,503,860,520,858,515,909,498,960,471,981,454,998,435,1009,412,1013,386,1013,237,1009,202,997,169,979,139,958,111,911,64,871,33"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="355,225,499,251"/>
+<area shape="poly" title=" " alt="" coords="760,22,670,26,574,36,492,53,461,66,441,81,430,95,423,111,417,146,418,181,423,211,417,212,412,182,411,146,418,109,426,92,437,77,459,61,491,48,574,30,669,21,760,17"/>
+<area shape="rect" title=" " alt="" coords="193,225,279,251"/>
+<area shape="poly" title=" " alt="" coords="760,29,570,48,481,63,418,81,368,111,322,147,284,185,256,216,252,213,280,181,319,143,365,106,416,76,480,58,569,43,760,23"/>
+<area shape="rect" href="ReaderFactory_8hpp.html" title="Factory for instantiating file reader objects by format." alt="" coords="692,79,887,104"/>
+<area shape="poly" title=" " alt="" coords="847,33,811,70,808,67,843,29"/>
+<area shape="rect" title=" " alt="" coords="901,152,979,177"/>
+<area shape="poly" title=" " alt="" coords="867,29,901,77,932,138,927,140,896,80,863,32"/>
+<area shape="rect" title=" " alt="" coords="1013,79,1075,104"/>
+<area shape="poly" title=" " alt="" coords="887,28,1001,71,1000,76,885,33"/>
+<area shape="rect" title=" " alt="" coords="1100,79,1167,104"/>
+<area shape="poly" title=" " alt="" coords="901,28,1087,76,1086,81,900,33"/>
+<area shape="rect" title=" " alt="" coords="1191,79,1265,104"/>
+<area shape="poly" title=" " alt="" coords="923,28,1178,76,1177,81,922,33"/>
+<area shape="rect" title=" " alt="" coords="1289,79,1364,104"/>
+<area shape="poly" title=" " alt="" coords="953,28,1101,48,1276,76,1275,81,1100,53,952,33"/>
+<area shape="rect" href="BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="473,152,599,177"/>
+<area shape="poly" title=" " alt="" coords="539,104,539,138,533,138,533,104"/>
+<area shape="poly" title=" " alt="" coords="451,100,382,112,307,135,272,151,238,172,208,197,184,227,179,236,179,245,190,262,210,278,234,291,232,295,207,282,186,266,174,246,174,235,179,224,205,193,235,168,269,147,305,130,381,107,450,95"/>
+<area shape="rect" title=" " alt="" coords="504,445,563,471"/>
+<area shape="poly" title=" " alt="" coords="562,102,591,122,604,135,614,151,617,164,615,178,606,209,595,235,571,276,547,317,536,342,528,372,526,403,530,432,524,432,521,403,523,372,531,340,542,314,566,273,591,233,601,208,609,177,612,164,610,153,600,138,587,126,559,106"/>
+<area shape="rect" title=" " alt="" coords="537,372,599,397"/>
+<area shape="poly" title=" " alt="" coords="588,102,627,120,644,134,658,151,670,179,672,209,667,239,656,268,624,322,591,363,587,360,619,319,651,266,662,237,667,208,665,180,654,153,640,137,624,124,586,107"/>
+<area shape="poly" title=" " alt="" coords="518,106,490,127,463,154,447,183,436,213,431,211,442,181,459,150,487,122,515,102"/>
+<area shape="poly" title=" " alt="" coords="513,107,273,222,271,217,511,102"/>
+<area shape="poly" title=" " alt="" coords="473,178,408,196,375,210,344,227,315,256,293,288,289,285,310,253,341,223,372,205,406,191,472,173"/>
+<area shape="poly" title=" " alt="" coords="548,176,576,214,607,269,619,301,625,334,624,367,614,399,596,423,572,441,569,436,592,419,610,396,619,366,620,334,614,303,602,272,572,217,544,179"/>
+<area shape="poly" title=" " alt="" coords="540,177,567,358,562,359,535,178"/>
+<area shape="poly" title=" " alt="" coords="520,180,458,220,455,215,517,175"/>
+<area shape="poly" title=" " alt="" coords="488,180,294,226,292,221,487,175"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="192,372,309,397"/>
+<area shape="poly" title=" " alt="" coords="277,325,263,360,258,358,272,323"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="301,445,480,471"/>
+<area shape="poly" title=" " alt="" coords="290,323,376,433,371,436,286,326"/>
+<area shape="poly" title=" " alt="" coords="226,316,189,321,151,332,114,348,83,374,65,405,56,440,54,475,55,505,50,505,48,475,51,439,60,403,79,370,111,344,149,327,188,316,225,311"/>
+<area shape="poly" title=" " alt="" coords="300,322,503,436,500,441,298,327"/>
+<area shape="rect" title=" " alt="" coords="93,372,168,397"/>
+<area shape="poly" title=" " alt="" coords="256,326,168,368,166,364,254,322"/>
+<area shape="poly" title=" " alt="" coords="326,321,524,370,523,375,325,327"/>
+<area shape="poly" title=" " alt="" coords="274,395,357,437,355,441,272,400"/>
+<area shape="rect" title=" " alt="" coords="192,445,277,471"/>
+<area shape="poly" title=" " alt="" coords="251,398,243,433,238,432,245,397"/>
+<area shape="rect" title=" " alt="" coords="101,445,168,471"/>
+<area shape="poly" title=" " alt="" coords="233,400,167,440,164,436,231,395"/>
+<area shape="poly" title=" " alt="" coords="299,395,491,442,490,448,298,400"/>
+<area shape="poly" title=" " alt="" coords="337,473,98,524,97,519,336,468"/>
+<area shape="rect" title=" " alt="" coords="410,519,473,544"/>
+<area shape="poly" title=" " alt="" coords="401,469,427,506,423,509,397,473"/>
+<area shape="poly" title=" " alt="" coords="457,468,746,518,745,523,456,473"/>
+<area shape="rect" title=" " alt="" coords="294,519,386,544"/>
+<area shape="poly" title=" " alt="" coords="384,473,358,509,354,506,380,469"/>
+<area shape="poly" title=" " alt="" coords="404,253,316,295,314,290,402,248"/>
+<area shape="poly" title=" " alt="" coords="427,251,397,432,392,431,422,251"/>
+<area shape="poly" title=" " alt="" coords="440,249,549,360,545,364,436,253"/>
+<area shape="poly" title=" " alt="" coords="749,107,591,151,590,146,748,101"/>
+<area shape="poly" title=" " alt="" coords="792,104,792,237,792,313,786,347,768,375,743,399,711,417,677,431,641,442,577,455,576,449,640,437,675,426,709,412,740,394,764,372,781,345,787,312,787,237,787,104"/>
+<area shape="poly" title=" " alt="" coords="786,105,736,201,695,265,647,326,624,348,600,366,597,362,621,344,643,322,691,262,731,198,782,103"/>
+<area shape="rect" title=" " alt="" coords="827,152,877,177"/>
+<area shape="poly" title=" " alt="" coords="802,103,835,140,831,143,798,106"/>
+<area shape="poly" title=" " alt="" coords="815,102,904,144,902,148,812,106"/>
 </map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceFileReader" id="r_namespaceFileReader"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html">FileReader</a></td></tr>
+<tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:a9d3cf0ef888bc8daa298b4da5849d758" id="r_a9d3cf0ef888bc8daa298b4da5849d758"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceFileReader.html#a9d3cf0ef888bc8daa298b4da5849d758">FileReader::registered</a></td></tr>
-<tr class="separator:a9d3cf0ef888bc8daa298b4da5849d758"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1readers" id="r_namespacecorrelation_1_1readers"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html">correlation::readers</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of the CAR file format reader. </p>

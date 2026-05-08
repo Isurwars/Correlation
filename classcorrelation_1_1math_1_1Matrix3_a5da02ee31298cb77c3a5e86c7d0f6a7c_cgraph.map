@@ -1,5 +1,5 @@
 <map id="correlation::math::Matrix3::operator*=" name="correlation::math::Matrix3::operator*=">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,159,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1math_1_1Matrix3.html#add29d20d2c08badaf2012fc298189aa2" title=" " alt="" coords="207,5,349,45"/>
+<area shape="rect" id="Node000001" title="In&#45;place scalar multiplication." alt="" coords="5,5,159,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1math_1_1Matrix3.html#add29d20d2c08badaf2012fc298189aa2" title="Converts the matrix to a nested std::array." alt="" coords="207,5,349,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="159,23,193,23,193,28,159,28"/>
 </map>

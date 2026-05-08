@@ -1,9 +1,0 @@
-<map id="DistributionFunctions::getAshcroftWeights" name="DistributionFunctions::getAshcroftWeights">
-<area shape="rect" id="Node000001" title=" " alt="" coords="240,69,400,109"/>
-<area shape="rect" id="Node000002" href="$classRDFCalculator.html#a0041d3f589bde799d6bcb9b774624f98" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="7,5,190,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,68,168,48,169,43,238,63"/>
-<area shape="rect" id="Node000003" href="$classStructureFactorCalculator.html#ae565df3753e877782691082de6fa44c3" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,69,192,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="226,92,192,92,192,87,226,87"/>
-<area shape="rect" id="Node000004" href="$classXRDCalculator.html#a84c27dcba4323cd2a7ad1131ded81a96" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="7,133,190,173"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="238,116,169,136,168,131,236,111"/>
-</map>

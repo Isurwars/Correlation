@@ -1,11 +1,16 @@
 var searchData=
 [
-  ['thz_5fto_5fcminv_0',['thz_to_cminv',['../namespacecorrelation_1_1math.html#a9ed21f025664cbd027ebee4ca8bec5ca',1,'correlation::math']]],
-  ['thz_5fto_5fmev_1',['thz_to_mev',['../namespacecorrelation_1_1math.html#ac20f3c6644e54ab68f609bf6a4b04871',1,'correlation::math']]],
-  ['time_5fstep_2',['time_step',['../structAppDefaults.html#a42a1902bc67922b3fe7a6fecdcdf283c',1,'AppDefaults::TIME_STEP'],['../structProgramOptions.html#a5f7c3f08cc8ec658d056d7acbdc9e2d2',1,'ProgramOptions::time_step']]],
-  ['time_5fstep_5f_3',['time_step_',['../classTrajectory.html#a057da2771905f6a739c1b602c3c5a9ad',1,'Trajectory::time_step_'],['../classTrajectoryAnalyzer.html#abbfc2cfa4ca395094ffb5b2b9d4da98d',1,'TrajectoryAnalyzer::time_step_']]],
-  ['trajectory_5f_4',['trajectory_',['../classAppBackend.html#a7901b4e01f82716606d3c33dd5ada343',1,'AppBackend::trajectory_'],['../classTrajectoryAnalyzer.html#aec7970f589f3aefadc3b2ae3c5c6af3e',1,'TrajectoryAnalyzer::trajectory_']]],
-  ['trajectory_5fanalyzer_5f_5',['trajectory_analyzer_',['../classAppBackend.html#a0d9111d8fc1a684e3169055d48c4b47f',1,'AppBackend']]],
-  ['translation_6',['translation',['../CifReader_8cpp.html#aea4a8d0af57d53c80a5b7c84900f9717',1,'CifReader.cpp']]],
-  ['two_5fpi_7',['two_pi',['../namespacecorrelation_1_1math.html#a2eb738243b58f5117a51aca3a18755c6',1,'correlation::math']]]
+  ['show_5fgrid_0',['show_grid',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a421f8827d9066879dc4b2606af408ef7',1,'correlation::plotters::PlotConfig']]],
+  ['show_5fmarkers_1',['show_markers',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a14448c36dccf0e88683b8df47cc6fd05',1,'correlation::plotters::PlotConfig']]],
+  ['smoothed_5fpartials_2',['smoothed_partials',['../structcorrelation_1_1analysis_1_1Histogram.html#aae8ad3b196f37cb3df9f6e85fc6a64dc',1,'correlation::analysis::Histogram']]],
+  ['smoothing_3',['smoothing',['../structcorrelation_1_1analysis_1_1AnalysisSettings.html#af0d838f4f0ab41a7b650ef1b232bc179',1,'correlation::analysis::AnalysisSettings::smoothing'],['../structcorrelation_1_1app_1_1ProgramOptions.html#ae7f499846ed3fae4ba5ffa75041e4517',1,'correlation::app::ProgramOptions::smoothing']]],
+  ['smoothing_5fkernel_4',['smoothing_kernel',['../structcorrelation_1_1app_1_1AppDefaults.html#aff46c0a63bdb270218fe772181b9aed0',1,'correlation::app::AppDefaults::SMOOTHING_KERNEL'],['../structcorrelation_1_1analysis_1_1AnalysisSettings.html#ac0853f0aa2d7a709029242fe21ebd8e3',1,'correlation::analysis::AnalysisSettings::smoothing_kernel'],['../structcorrelation_1_1app_1_1ProgramOptions.html#a2c1f9559280fecef3911e2cc65ce6eb3',1,'correlation::app::ProgramOptions::smoothing_kernel']]],
+  ['smoothing_5fsigma_5',['smoothing_sigma',['../structcorrelation_1_1app_1_1ProgramOptions.html#a8e417c0b019ac9cede368a9f41486e65',1,'correlation::app::ProgramOptions::smoothing_sigma'],['../structcorrelation_1_1app_1_1AppDefaults.html#af6a8428ff94d2b3cd6be37df383e483a',1,'correlation::app::AppDefaults::SMOOTHING_SIGMA'],['../structcorrelation_1_1analysis_1_1AnalysisSettings.html#adb90be94f3ba38817297d6ceed8b5597',1,'correlation::analysis::AnalysisSettings::smoothing_sigma']]],
+  ['soa_5fx_6',['soa_x',['../structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#a91b188acc81a736b1c4f9c259c858a7a',1,'correlation::calculators::ThreadLocalDistances']]],
+  ['soa_5fy_7',['soa_y',['../structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#a99bb4748738977161fa0b87e391bdad8',1,'correlation::calculators::ThreadLocalDistances']]],
+  ['soa_5fz_8',['soa_z',['../structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#a1e8f010d45735323cb67b64ae7dfda3e',1,'correlation::calculators::ThreadLocalDistances']]],
+  ['spacing_9',['spacing',['../structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html#a8023313a1447521454d4922692a02f0f',1,'correlation::plotters::detail::NiceScale']]],
+  ['start_5fframe_5f_10',['start_frame_',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a9c6c43f568b3acb3146c7400e89d599f',1,'correlation::analysis::TrajectoryAnalyzer']]],
+  ['strokes_11',['strokes',['../structcorrelation_1_1plotters_1_1Glyph.html#a3ed50c7559c1df1f420d254fbaafc999',1,'correlation::plotters::Glyph']]],
+  ['symbol_12',['symbol',['../structcorrelation_1_1core_1_1Element.html#a9d6bc1d21718ff75651a045a310601e4',1,'correlation::core::Element::symbol'],['../structcorrelation_1_1physics_1_1detail_1_1ElementData.html#a670f28657ebf41e2979cd590403ac6f1',1,'correlation::physics::detail::ElementData::symbol']]]
 ];

@@ -1,0 +1,10 @@
+<map id="correlation::app::AppController::setBondCutoffs" name="correlation::app::AppController::setBondCutoffs">
+<area shape="rect" id="Node000001" title="Updates the UI with the recommended bond cutoffs from the backend." alt="" coords="5,63,227,103"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="283,5,495,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="211,60,279,46,280,51,212,65"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="551,92,687,132"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,86,537,105,537,110,227,92"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a072d8d734ff541e32a59c99d618d136c" title="Calculates recommended bond cutoffs based on the first pair density minimum." alt="" coords="275,120,503,160"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="212,100,280,115,279,120,211,105"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="503,123,537,119,538,125,503,129"/>
+</map>

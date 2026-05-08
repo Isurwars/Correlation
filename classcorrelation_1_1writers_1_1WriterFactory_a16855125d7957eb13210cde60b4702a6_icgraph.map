@@ -1,0 +1,7 @@
+<map id="correlation::writers::WriterFactory::getWriterForExtension" name="correlation::writers::WriterFactory::getWriterForExtension">
+<area shape="rect" id="Node000001" title="Finds a writer that supports the given file extension." alt="" coords="347,5,552,60"/>
+<area shape="rect" id="Node000002" href="$writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="204,20,299,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="333,35,299,35,299,30,333,30"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,20,156,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="190,35,157,35,157,30,190,30"/>
+</map>

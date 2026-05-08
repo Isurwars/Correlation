@@ -1,0 +1,27 @@
+<map id="correlation::analysis::DistributionFunctions::getAllHistograms" name="correlation::analysis::DistributionFunctions::getAllHistograms">
+<area shape="rect" id="Node000001" title="Access all calculated histograms." alt="" coords="713,149,881,203"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="417,5,649,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="762,140,718,97,664,60,637,48,639,43,667,55,721,93,766,136"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="401,69,665,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="711,147,664,131,605,112,606,107,666,125,712,142"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="227,85,331,110"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="699,167,401,124,331,111,332,106,402,119,700,162"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1writers_1_1CSVWriter.html#a980d280847450672dec384d836996e84" title="Writes all available histograms to appropriately named CSV files." alt="" coords="440,184,627,224"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="700,189,627,197,627,191,700,184"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1writers_1_1ArrowWriter.html#a5e70ebfa4dab74ca48b77c0289054425" title="Writes all available histograms to Parquet files." alt="" coords="426,248,641,288"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="731,212,666,239,627,251,625,245,664,233,729,207"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1writers_1_1HDF5Writer.html#a8ad94d0b1079f292133a1381b416cfa8" title="Writes all available histograms to a single HDF5 file." alt="" coords="446,312,621,352"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="768,216,723,261,696,283,667,302,622,320,620,315,664,298,693,279,720,257,764,212"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,110,156,135"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="213,108,156,116,156,110,213,103"/>
+<area shape="rect" id="Node000007" href="$writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="231,134,326,159"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="430,184,326,160,327,155,431,178"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1writers_1_1CSVWriter.html#ab2dbd3d98ea8fcd7389e4e15b88f1ede" title="Writes the distribution function data to file(s)." alt="" coords="206,184,351,224"/>
+<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="426,207,352,207,352,201,426,201"/>
+<area shape="poly" id="edge7_Node000007_Node000005" title=" " alt="" coords="217,142,156,134,157,129,218,137"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1writers_1_1ArrowWriter.html#a069491824a51623607fd90f8ff01debd" title="Writes the distribution function data to file(s)." alt="" coords="204,248,353,288"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="412,271,354,271,354,265,412,265"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1writers_1_1HDF5Writer.html#a40c5c2f2ba55025a63c88e17cd628289" title="Writes the distribution function data to file(s)." alt="" coords="205,312,352,352"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="433,343,352,343,352,338,433,338"/>
+<area shape="poly" id="edge13_Node000012_Node000011" title=" " alt="" coords="366,321,446,321,446,326,366,326"/>
+</map>

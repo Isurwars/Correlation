@@ -1,5 +1,0 @@
-<map id="DistributionFunctions::smooth" name="DistributionFunctions::smooth">
-<area shape="rect" id="Node000001" title="Smooths a specific histogram." alt="" coords="213,5,373,45"/>
-<area shape="rect" id="Node000002" href="$classDistributionFunctions.html#aecdeb9e23a63ad770e75f9a615866c75" title="Smooths all available histograms." alt="" coords="5,5,165,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,28,166,28,166,23,200,23"/>
-</map>

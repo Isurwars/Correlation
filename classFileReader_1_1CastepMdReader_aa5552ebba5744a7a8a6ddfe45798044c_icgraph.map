@@ -1,7 +1,0 @@
-<map id="FileReader::CastepMdReader::read" name="FileReader::CastepMdReader::read">
-<area shape="rect" id="Node000001" title=" " alt="" coords="264,37,475,77"/>
-<area shape="rect" id="Node000002" href="$classFileReader_1_1CastepMdReader.html#a40aa4a763e995d7c0264344f40bad4fd" title="Reads an atomic structure from a file." alt="" coords="5,5,216,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,45,216,41,216,36,251,40"/>
-<area shape="rect" id="Node000003" href="$classFileReader_1_1CastepMdReader.html#a1af9f8114b7f113676d88e7dbf0e9208" title="Reads a trajectory from a file." alt="" coords="5,69,216,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="251,75,216,79,216,74,250,69"/>
-</map>

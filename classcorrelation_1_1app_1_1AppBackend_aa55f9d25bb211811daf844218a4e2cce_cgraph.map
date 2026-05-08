@@ -1,0 +1,9 @@
+<map id="correlation::app::AppBackend::getAtomCounts" name="correlation::app::AppBackend::getAtomCounts">
+<area shape="rect" id="Node000001" title="Gets the atom counts for the current structure." alt="" coords="5,69,217,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="303,5,439,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,67,289,43,290,48,194,72"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="265,69,477,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="217,87,252,87,252,92,217,92"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="303,133,439,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="194,107,290,131,289,136,193,112"/>
+</map>

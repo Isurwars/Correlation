@@ -1,0 +1,9 @@
+<map id="correlation::readers::OutmolReader::read" name="correlation::readers::OutmolReader::read">
+<area shape="rect" id="Node000001" title="Low&#45;level parser for the specific file format." alt="" coords="5,5,167,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="215,5,351,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,23,201,23,201,28,167,28"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="399,5,597,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="351,23,385,23,385,28,351,28"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="645,5,781,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="598,23,632,23,632,28,598,28"/>
+</map>

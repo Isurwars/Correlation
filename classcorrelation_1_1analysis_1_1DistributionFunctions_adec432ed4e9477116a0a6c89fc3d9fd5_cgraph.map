@@ -1,0 +1,11 @@
+<map id="correlation::analysis::DistributionFunctions::calculateCoordinationNumber" name="correlation::analysis::DistributionFunctions::calculateCoordinationNumber">
+<area shape="rect" id="Node000001" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="5,62,229,117"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="277,69,460,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="230,87,264,87,264,92,230,92"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="517,5,653,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="436,67,504,47,505,52,438,72"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="517,69,653,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="460,87,503,87,503,92,460,92"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="508,134,663,189"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="430,107,496,129,494,134,429,112"/>
+</map>

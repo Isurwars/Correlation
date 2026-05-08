@@ -1,0 +1,7 @@
+<map id="correlation::core::Trajectory::precomputeBondCutoffs" name="correlation::core::Trajectory::precomputeBondCutoffs">
+<area shape="rect" id="Node000001" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="5,5,209,60"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="257,13,411,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,30,244,30,244,35,210,35"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="459,13,608,53"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="411,30,445,30,445,35,411,35"/>
+</map>

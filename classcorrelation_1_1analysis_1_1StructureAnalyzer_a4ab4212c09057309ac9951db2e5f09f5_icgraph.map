@@ -1,0 +1,19 @@
+<map id="correlation::analysis::StructureAnalyzer::neighborGraph" name="correlation::analysis::StructureAnalyzer::neighborGraph">
+<area shape="rect" id="Node000001" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="899,149,1053,204"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="648,85,831,125"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="885,151,850,141,806,127,808,122,851,135,887,146"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="654,149,825,204"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="885,179,825,179,825,174,885,174"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1RDCalculator.html#af7885c7fe2da94e24426d75f8f39c0f8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="628,229,851,269"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="886,208,851,219,811,231,810,226,850,214,884,203"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="356,5,580,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="650,84,571,63,572,57,651,79"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,85,579,125"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="634,107,579,107,579,102,634,102"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="342,35,308,35,308,30,342,30"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,20,156,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="383,149,553,204"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="640,179,554,179,554,174,640,174"/>
+</map>

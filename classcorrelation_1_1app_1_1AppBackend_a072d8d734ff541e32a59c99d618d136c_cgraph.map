@@ -1,0 +1,5 @@
+<map id="correlation::app::AppBackend::getRecommendedBondCutoffs" name="correlation::app::AppBackend::getRecommendedBondCutoffs">
+<area shape="rect" id="Node000001" title="Calculates recommended bond cutoffs based on the first pair density minimum." alt="" coords="5,5,233,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="281,5,417,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="234,23,268,23,268,28,234,28"/>
+</map>

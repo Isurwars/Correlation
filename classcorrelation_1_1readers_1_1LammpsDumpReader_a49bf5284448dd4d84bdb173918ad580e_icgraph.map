@@ -1,0 +1,7 @@
+<map id="correlation::readers::LammpsDumpReader::read" name="correlation::readers::LammpsDumpReader::read">
+<area shape="rect" id="Node000001" title="Reads all frames from a LAMMPS dump file." alt="" coords="325,37,533,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="8,5,275,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="311,47,275,43,275,38,312,42"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="5,69,277,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="312,73,278,77,278,72,311,68"/>
+</map>

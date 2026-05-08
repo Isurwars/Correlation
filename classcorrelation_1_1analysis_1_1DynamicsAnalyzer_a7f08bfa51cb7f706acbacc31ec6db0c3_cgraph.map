@@ -1,0 +1,23 @@
+<map id="correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF" name="correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF">
+<area shape="rect" id="Node000001" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="5,118,224,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="272,125,525,165"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="224,143,258,143,258,148,224,148"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="591,29,733,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="453,123,572,79,592,72,594,77,574,84,455,128"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="587,93,737,133"/>
+<area shape="poly" id="edge8_Node000002_Node000007" title=" " alt="" coords="525,127,573,121,574,127,526,133"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="581,157,743,197"/>
+<area shape="poly" id="edge10_Node000002_Node000009" title=" " alt="" coords="526,158,568,163,567,169,525,163"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Trajectory.html#a274566b3dc3cb72e8f0bb07ee1a2d292" title="Gets the pre&#45;calculated velocities for all atoms." alt="" coords="573,221,751,261"/>
+<area shape="poly" id="edge11_Node000002_Node000010" title=" " alt="" coords="455,163,574,207,594,214,592,219,572,212,453,168"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="802,29,945,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="733,47,788,47,788,52,733,52"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="996,29,1139,69"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="945,47,982,47,982,52,945,52"/>
+<area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="1031,30,1029,20,1035,11,1048,5,1067,3,1090,6,1102,13,1099,17,1088,11,1067,8,1049,10,1039,15,1035,21,1037,28"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="1187,29,1329,69"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1139,47,1173,47,1173,52,1139,52"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="1222,30,1220,20,1226,11,1239,5,1258,3,1280,6,1293,13,1290,17,1279,11,1258,8,1240,10,1229,15,1225,21,1227,28"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="799,93,948,133"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="737,111,785,111,785,116,737,116"/>
+</map>

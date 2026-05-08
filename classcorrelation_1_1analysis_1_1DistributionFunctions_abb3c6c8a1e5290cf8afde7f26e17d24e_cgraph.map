@@ -1,0 +1,23 @@
+<map id="correlation::analysis::DistributionFunctions::calculateRDF" name="correlation::analysis::DistributionFunctions::calculateRDF">
+<area shape="rect" id="Node000001" title="Calculates the radial distribution function g(r)" alt="" coords="5,270,173,325"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="245,213,435,253"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,273,247,254,248,259,174,279"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a434cedf3f57302ee9cab106f26ff066f" title="Gets a calculator by its name." alt="" coords="221,277,459,317"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="174,295,207,295,207,300,174,300"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="237,341,443,381"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="174,316,248,335,247,340,173,321"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="516,5,652,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="354,211,415,137,458,94,505,55,514,50,517,54,508,59,461,98,419,140,358,214"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="516,69,652,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="366,211,428,166,505,119,517,113,520,118,508,124,431,171,369,215"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a64a1cb58db792c5df32b4a5952ca24ea" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="507,134,661,189"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="408,211,493,185,494,191,409,216"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="516,213,652,253"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="436,231,502,231,502,236,436,236"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a07c9132be7dfd8bcec0558594935f91b" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="511,277,657,317"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="418,251,498,272,497,277,416,256"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="513,341,655,381"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="437,250,460,263,477,279,486,295,494,311,508,327,516,332,512,337,505,331,489,314,481,298,473,282,457,267,434,255"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="516,405,652,445"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="437,248,460,263,474,279,482,296,486,328,490,360,497,376,509,392,512,395,509,399,505,395,492,378,485,361,481,329,477,297,470,282,457,267,434,252"/>
+</map>
