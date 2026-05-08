@@ -3,10 +3,18 @@ All notable changes to this project will be documented in this file.
 
 ## [2.8.2] 2026-05-08
 
+### Added
+- **UI Components**: Added a new `Horizontal` layout component to the `@material` UI library to provide a standardized wrapper for horizontal arrangements.
+
 ### Changed
+- **UI Refactor**: Migrated the entire application to use custom `@material` `Vertical` and `Horizontal` layout components, replacing the standard Slint `VerticalLayout` and `HorizontalLayout` for better consistency and design control.
 - **Documentation**: Added comprehensive API documentation for the `correlation::core` and `correlation::analysis` namespaces, ensuring all core data structures, calculators, and utility functions are fully documented.
 - **Repository Structure**: Migrated the `material-1.0` Slint library from the root directory to `ui/material` for better organization of UI assets. Updated `slint-config.json` and CMake build scripts to reflect the new path.
 - **Build System**: Updated FetchContent for HDF5 to use a variable reference for the version number, ensuring that build script logic remains consistent and reducing redundancy.
+
+### Fixed
+- **UI Polish**: Resolved a visual bug in `AppWindow.slint` where redundant vertical spacing was being applied due to nested layout containers.
+- **UI Alignment**: Standardized the width of distance input fields in the `BondCutoffsCard` to ensure consistent alignment and a cleaner interface.
 
 ## [2.8.1] 2026-05-08
 
