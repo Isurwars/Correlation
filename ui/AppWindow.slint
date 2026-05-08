@@ -156,6 +156,7 @@ export component AppWindow inherits Window {
         Horizontal {
         // 1. Sidebar: Input & File Info
             Vertical {
+                padding: 0;
                 width: 190px;
                 input_card := InputFileCard {
                     enabled: !root.timer_running;
@@ -178,7 +179,7 @@ export component AppWindow inherits Window {
 
             // 2. Center: Output & Run
             Vertical {
-
+                padding: 0;
                 width: 190px;
 
                 options_toggle := OptionsToggleCard {
@@ -216,6 +217,7 @@ export component AppWindow inherits Window {
 
             // 3. Right: Analysis Options
             if (root.show_advanced_options): Vertical {
+                padding: 0;
                 width: 240px;
 
                 property <string> local_tooltip: 
@@ -272,6 +274,7 @@ export component AppWindow inherits Window {
 
             // 4. Far-right: Distribution Function Preview
             if (root.analysis_done): Vertical {
+                padding: 0;
                 width: 576px;
 
                 property <string> local_tooltip: preview_card.hovered_tooltip_text;
