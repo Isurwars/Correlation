@@ -6,6 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include "calculators/CalculatorFactory.hpp"
 #include "app/AppBackend.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
@@ -180,7 +181,9 @@ std::string AppBackend::load_file(const std::string &path) {
   if (type == correlation::readers::FileType::Arc ||
       type == correlation::readers::FileType::CastepMd ||
       type == correlation::readers::FileType::Outmol ||
-      type == correlation::readers::FileType::Xdatcar) {
+      type == correlation::readers::FileType::Xdatcar ||
+      type == correlation::readers::FileType::Gromacs ||
+      type == correlation::readers::FileType::Pdb) {
     trajectory_ = std::make_unique<correlation::core::Trajectory>(
         correlation::readers::readTrajectory(path, type, progress_callback_));
   } else {
@@ -277,23 +280,37 @@ std::string AppBackend::run_analysis() {
         *trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
 
     if (df_) {
-      // Trajectory-wide calculators (VACF, VDOS)
-      bool run_vacf = settings.isActive("VACF");
-      bool run_vdos = settings.isActive("VDOS");
-      if (run_vdos) {
-        run_vacf = true; // VDOS requires VACF
-      }
-      if (run_vacf) {
-        if (trajectory_->getVelocities().empty()) {
-          trajectory_->calculateVelocities();
-        }
-        df_->calculateVACF(*trajectory_, -1, start_f, options_.max_frame);
-        if (run_vdos) {
-          try {
-            df_->calculateVDOS();
-          } catch (const std::exception &e) {
-            std::cerr << "VDOS calculation failed: " << e.what() << std::endl;
+      // Trajectory-wide calculators (VACF, VDOS, MSD, etc.)
+      const auto &factory_calcs =
+          ::correlation::calculators::CalculatorFactory::instance()
+              .getCalculators();
+
+      // Check if we need velocities
+      bool need_velocities = false;
+      for (const auto &calc : factory_calcs) {
+        if (calc->isTrajectoryCalculator() && settings.isActive(calc->getName())) {
+          if (calc->getName() == "VACF" || calc->getName() == "VDOS") {
+            need_velocities = true;
+            break;
           }
+        }
+      }
+
+      if (need_velocities && trajectory_->getVelocities().empty()) {
+        trajectory_->calculateVelocities();
+      }
+
+      for (const auto &calc : factory_calcs) {
+        if (!calc->isTrajectoryCalculator())
+          continue;
+        if (!settings.isActive(calc->getName()))
+          continue;
+
+        try {
+          calc->calculateTrajectory(*df_, *trajectory_, settings);
+        } catch (const std::exception &e) {
+          std::cerr << calc->getName() << " calculation failed: " << e.what()
+                    << std::endl;
         }
       }
     }

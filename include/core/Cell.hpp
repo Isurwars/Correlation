@@ -170,6 +170,18 @@ public:
   //-------------------------------------------------------------------------//
 
   /**
+   * @brief Applies the minimum image convention to a distance vector.
+   *
+   * Finds the shortest distance vector between two points under periodic
+   * boundary conditions.
+   *
+   * @param distance The Cartesian distance vector to wrap.
+   * @return The minimum image Cartesian distance vector.
+   */
+  [[nodiscard]] math::Vector3<double>
+  minimumImage(const math::Vector3<double> &distance) const;
+
+  /**
    * @brief Adds a new atom to the cell.
    * The atom's element type is automatically registered if it's the first
    * mention of this symbol.

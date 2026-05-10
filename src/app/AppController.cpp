@@ -287,7 +287,7 @@ std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
 
 void AppController::populateCalculatorGroups(AppWindow &ui) {
   const auto &calculators =
-      correlation::calculators::CalculatorFactory::instance().getCalculators();
+      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
   // Collect group names in insertion order

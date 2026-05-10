@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.9.0] 2026-05-10
+
+### Added
+- **GROMACS Support**: Integrated a new `GromacsReader` providing support for `.xtc` and `.trr` trajectory files. This allows users to analyze large-scale MD simulations from GROMACS directly.
+- **PDB Support**: Added a native `PdbReader` for Protein Data Bank files, enabling structural analysis of biological and organic systems.
+- **Common Neighbor Analysis (CNA)**: Implemented the CNA calculator for local crystal structure classification (FCC, BCC, HCP, Icosahedral).
+- **Hydrogen Bond Analysis**: Added a new `HBondCalculator` to compute hydrogen bond counts and statistics based on geometric (distance and angle) criteria.
+- **Periodic Boundary Conditions**: Enhanced the `Cell` class with a dedicated `minimumImage` method, improving the robustness and performance of distance calculations across periodic boundaries.
+
+### Changed
+- **Reader Architecture**: Refactored the `FileReader` interface and `AppController` to dynamically handle multiple trajectory formats, improving extensibility for future file types.
+- **Calculator Registration**: Updated the `CalculatorFactory` and `AppBackend` to automatically register and manage the new CNA and Hydrogen Bond calculators.
+
+### Fixed
+- **Cell Consistency**: Updated several calculators to use the new `minimumImage` logic, resolving edge cases in neighbor detection for small or highly non-orthogonal unit cells.
+
 ## [2.8.2] 2026-05-08
 
 ### Added

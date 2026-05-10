@@ -160,6 +160,20 @@ Atom &Cell::addAtom(const std::string &symbol,
   return atoms_.back();
 }
 
+math::Vector3<double>
+Cell::minimumImage(const math::Vector3<double> &distance) const {
+  // Convert Cartesian distance to fractional coordinates
+  math::Vector3<double> frac_dist = inverse_lattice_vectors_ * distance;
+
+  // Apply minimum image convention: shift to [-0.5, 0.5)
+  frac_dist.x() -= std::round(frac_dist.x());
+  frac_dist.y() -= std::round(frac_dist.y());
+  frac_dist.z() -= std::round(frac_dist.z());
+
+  // Convert back to Cartesian coordinates
+  return lattice_vectors_ * frac_dist;
+}
+
 void Cell::wrapPositions() {
   for (Atom &atom : atoms_) {
     math::Vector3<double> frac_pos = inverse_lattice_vectors_ * atom.position();

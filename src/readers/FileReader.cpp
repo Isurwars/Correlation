@@ -38,6 +38,10 @@ FileType determineFileType(const std::string &filename) {
     return FileType::Vasp;
   if (ext == ".xdatcar")
     return FileType::Xdatcar;
+  if (ext == ".gro")
+    return FileType::Gromacs;
+  if (ext == ".pdb" || ext == ".ent")
+    return FileType::Pdb;
 
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {

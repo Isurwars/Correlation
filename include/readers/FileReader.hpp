@@ -33,6 +33,8 @@ enum class FileType {
   Outmol,     ///< DMol3 .outmol format
   Vasp,       ///< VASP POSCAR/CONTCAR single-structure format
   Xdatcar,    ///< VASP XDATCAR trajectory format
+  Gromacs,    ///< GROMACS .gro format
+  Pdb,        ///< PDB .pdb format
   Unknown     ///< Unrecognized or unsupported file format
 };
 

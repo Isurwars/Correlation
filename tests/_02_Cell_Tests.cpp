@@ -246,3 +246,34 @@ TEST_F(_02_Cell_Tests, WrapPositionsHandlesNegativeCoordinates) {
   EXPECT_NEAR(final_pos.y(), 9.0, 1e-9);
   EXPECT_NEAR(final_pos.z(), 5.0, 1e-9);
 }
+TEST_F(_02_Cell_Tests, MinimumImageCalculatesCorrectly) {
+  // Arrange: 10x10x10 orthogonal cell
+  correlation::core::Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+
+  // Distance less than half box length
+  correlation::math::Vector3<double> d1{3.0, 4.0, -2.0};
+  auto mi1 = cell.minimumImage(d1);
+  EXPECT_NEAR(mi1.x(), 3.0, 1e-9);
+  EXPECT_NEAR(mi1.y(), 4.0, 1e-9);
+  EXPECT_NEAR(mi1.z(), -2.0, 1e-9);
+
+  // Distance greater than half box length (positive)
+  correlation::math::Vector3<double> d2{7.0, 8.0, 9.0};
+  auto mi2 = cell.minimumImage(d2);
+  EXPECT_NEAR(mi2.x(), -3.0, 1e-9); // 7 - 10 = -3
+  EXPECT_NEAR(mi2.y(), -2.0, 1e-9); // 8 - 10 = -2
+  EXPECT_NEAR(mi2.z(), -1.0, 1e-9); // 9 - 10 = -1
+
+  // Distance greater than half box length (negative)
+  correlation::math::Vector3<double> d3{-7.0, -8.0, -9.0};
+  auto mi3 = cell.minimumImage(d3);
+  EXPECT_NEAR(mi3.x(), 3.0, 1e-9); // -7 + 10 = 3
+  EXPECT_NEAR(mi3.y(), 2.0, 1e-9); // -8 + 10 = 2
+  EXPECT_NEAR(mi3.z(), 1.0, 1e-9); // -9 + 10 = 1
+
+  // Distance exactly half box length (rounding behavior)
+  correlation::math::Vector3<double> d4{5.0, 5.0, 5.0};
+  auto mi4 = cell.minimumImage(d4);
+  // std::round(0.5) is 1.0, so 5.0 - 10.0 = -5.0
+  EXPECT_NEAR(std::abs(mi4.x()), 5.0, 1e-9);
+}

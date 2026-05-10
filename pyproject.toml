@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "correlation-analysis"
-version = "2.8.2"
+version = "2.9.0"
 description = "High-performance structural analysis for atomistic simulations"
 readme = "README.md"
 license = {text = "MIT"}

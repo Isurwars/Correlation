@@ -428,11 +428,9 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           frame_df->setStructureAnalyzerOwned(
               analyzer.createAnalyzer(frame_idx));
 
-          frame_df->calculateCoordinationNumber();
-
           // Dispatch all active frame-based calculators from the factory
           const auto &factory_calcs =
-              correlation::calculators::CalculatorFactory::instance()
+              ::correlation::calculators::CalculatorFactory::instance()
                   .getCalculators();
           for (const auto &calc : factory_calcs) {
             if (!calc->isFrameCalculator())
