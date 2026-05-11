@@ -12,6 +12,7 @@ env:
   SCCACHE_IDLE_TIMEOUT: "0"
   SCCACHE_RETRY_DELAY: "2"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  VCPKG_BINARY_SOURCES: "clear;gha,readwrite"
 
 jobs:
   build:
