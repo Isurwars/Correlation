@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SCCACHE_GHA_ENABLED: "true"
+      SCCACHE_IDLE_TIMEOUT: "0"
+      SCCACHE_RETRY_DELAY: "2"
       RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout repository
@@ -74,6 +76,8 @@ jobs:
     runs-on: windows-latest
     env:
       SCCACHE_GHA_ENABLED: "true"
+      SCCACHE_IDLE_TIMEOUT: "0"
+      SCCACHE_RETRY_DELAY: "2"
       RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout repository
@@ -135,6 +139,8 @@ jobs:
     runs-on: macos-latest
     env:
       SCCACHE_GHA_ENABLED: "true"
+      SCCACHE_IDLE_TIMEOUT: "0"
+      SCCACHE_RETRY_DELAY: "2"
       RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout repository
