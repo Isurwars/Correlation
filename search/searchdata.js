@@ -3,12 +3,12 @@ var indexSectionsWithContent =
   0: "012345:abcdefghiklmnopqrstuvwxyz~",
   1: "abcdefghlmnoprstvwx",
   2: "c",
-  3: "abcdfhilmnoprstvwx",
+  3: "abcdfghilmnoprstvwx",
   4: "abcdefghiklmnoprstuvwxyz~",
   5: "abcdefghiklmnopqrstuvwxyz",
   6: "adv",
   7: "fkt",
-  8: "abcdglotuvx",
+  8: "abcdgloptuvx",
   9: "c",
   10: "03cors"
 };

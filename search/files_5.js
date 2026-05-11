@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hdf5writer_2ecpp_0',['HDF5Writer.cpp',['../HDF5Writer_8cpp.html',1,'']]],
-  ['hdf5writer_2ehpp_1',['HDF5Writer.hpp',['../HDF5Writer_8hpp.html',1,'']]]
+  ['gromacsreader_2ecpp_0',['GromacsReader.cpp',['../GromacsReader_8cpp.html',1,'']]],
+  ['gromacsreader_2ehpp_1',['GromacsReader.hpp',['../GromacsReader_8hpp.html',1,'']]]
 ];

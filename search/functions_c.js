@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['neighborgraph_0',['neighborgraph',['../classcorrelation_1_1core_1_1NeighborGraph.html#a6c40bfb3d3277c233e59b82f7315fdb0',1,'correlation::core::NeighborGraph::NeighborGraph()=default'],['../classcorrelation_1_1core_1_1NeighborGraph.html#aa5b404838ac83dbd3b285802ce8a2ade',1,'correlation::core::NeighborGraph::NeighborGraph(size_t node_count)'],['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5',1,'correlation::analysis::StructureAnalyzer::neighborGraph()']]],
+  ['neighborgraph_0',['neighborgraph',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5',1,'correlation::analysis::StructureAnalyzer::neighborGraph()'],['../classcorrelation_1_1core_1_1NeighborGraph.html#a6c40bfb3d3277c233e59b82f7315fdb0',1,'correlation::core::NeighborGraph::NeighborGraph()=default'],['../classcorrelation_1_1core_1_1NeighborGraph.html#aa5b404838ac83dbd3b285802ce8a2ade',1,'correlation::core::NeighborGraph::NeighborGraph(size_t node_count)']]],
   ['neighbors_1',['neighbors',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73',1,'correlation::analysis::DistributionFunctions']]],
   ['nicenum_2',['niceNum',['../structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html#acb1373a5f50dca61260bb1475059947f',1,'correlation::plotters::detail::NiceScale']]],
   ['nicescale_3',['NiceScale',['../structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html#a0d8481e70732faa6bac968b78958fcc1',1,'correlation::plotters::detail::NiceScale']]],

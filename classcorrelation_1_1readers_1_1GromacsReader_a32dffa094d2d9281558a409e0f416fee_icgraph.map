@@ -1,0 +1,5 @@
+<map id="correlation::readers::GromacsReader::readStructure" name="correlation::readers::GromacsReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="288,5,519,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="5,5,240,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="274,28,240,28,240,23,274,23"/>
+</map>

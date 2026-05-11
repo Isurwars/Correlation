@@ -1,0 +1,15 @@
+<map id="correlation::calculators::CNACalculator::calculateFrame" name="correlation::calculators::CNACalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,117,237,157"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="301,5,469,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,114,301,63,303,68,174,119"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1CNACalculator.html#a0e53ff6176e3c761fd5810611bd07cee" title="Performs CNA on a single cell." alt="" coords="289,85,480,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="237,120,275,115,276,121,238,125"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="285,149,484,189"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="238,148,272,152,272,158,237,153"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="301,213,469,268"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="174,154,303,206,301,211,172,159"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="541,49,677,89"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="480,87,528,79,528,84,481,92"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="532,113,687,168"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="481,117,519,124,518,129,480,123"/>
+</map>

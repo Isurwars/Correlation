@@ -1,0 +1,5 @@
+<map id="include/readers/GromacsReader.hpp" name="include/readers/GromacsReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for GROMACS (.gro) files." alt="" coords="5,5,263,31"/>
+<area shape="rect" id="Node000002" href="$GromacsReader_8cpp.html" title="Implementation of the GROMACS (.gro) file reader." alt="" coords="20,79,248,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,44,137,79,131,79,131,44"/>
+</map>

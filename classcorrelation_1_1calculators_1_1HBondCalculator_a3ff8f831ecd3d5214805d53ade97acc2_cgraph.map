@@ -1,0 +1,30 @@
+<map id="correlation::calculators::HBondCalculator::calculateFrame" name="correlation::calculators::HBondCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,133,252,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="319,22,487,77"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,131,316,79,318,84,183,136"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,101,507,141"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="252,136,286,132,287,138,252,142"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="304,165,503,205"/>
+<area shape="poly" id="edge13_Node000001_Node000013" title=" " alt="" coords="252,165,291,170,290,175,252,170"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="319,230,487,285"/>
+<area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="183,171,318,222,316,227,181,176"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="566,5,702,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="473,99,505,86,529,71,553,55,566,49,569,53,556,60,532,75,508,90,475,104"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="566,69,702,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="507,104,552,98,553,103,508,110"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a7c080d69380ebd16ae111a97701a88bd" title="Applies the minimum image convention to a distance vector." alt="" coords="555,133,713,173"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="508,133,541,138,541,143,507,138"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="557,198,711,253"/>
+<area shape="poly" id="edge12_Node000003_Node000012" title=" " alt="" coords="479,139,508,151,533,166,556,183,567,189,564,194,553,188,530,171,505,156,477,144"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="765,37,901,77"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="687,131,712,119,760,87,771,81,774,86,763,92,715,124,690,136"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="761,101,904,141"/>
+<area shape="poly" id="edge9_Node000006_Node000009" title=" " alt="" coords="713,138,747,132,748,138,714,143"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="761,165,904,205"/>
+<area shape="poly" id="edge10_Node000006_Node000010" title=" " alt="" coords="714,163,748,169,747,174,713,169"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="761,229,904,269"/>
+<area shape="poly" id="edge11_Node000006_Node000011" title=" " alt="" coords="690,171,715,183,763,215,774,221,771,226,760,220,712,188,687,176"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="952,45,1128,70"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="901,55,938,55,938,60,901,60"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="1006,46,999,36,1003,26,1017,20,1040,18,1069,22,1080,31,1077,35,1066,27,1040,23,1018,25,1007,30,1004,36,1010,43"/>
+</map>

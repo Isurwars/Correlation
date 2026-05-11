@@ -1,23 +1,27 @@
 <map id="correlation::readers::BaseReader" name="correlation::readers::BaseReader">
-<area shape="rect" id="Node000001" title="Base class for all file readers." alt="" coords="5,293,155,333"/>
+<area shape="rect" id="Node000001" title="Base class for all file readers." alt="" coords="5,357,155,397"/>
 <area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1ArcReader.html" title="Reads an ARC file and returns a vector of correlation::core::Cell objects." alt="" coords="213,5,363,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="86,279,100,231,123,171,156,109,177,81,201,55,218,43,221,48,204,59,181,84,161,112,128,173,105,232,91,281"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,343,93,282,114,206,130,165,149,126,173,89,201,55,216,43,220,48,205,59,177,92,154,129,135,168,119,208,98,284,88,344"/>
 <area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1CarReader.html" title="Reads a Materials Studio .car file and returns a correlation::core::Cell object." alt="" coords="213,69,363,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="92,279,109,243,133,200,164,157,201,119,220,107,222,112,204,123,168,160,138,203,114,245,97,281"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="86,343,100,295,123,235,156,173,177,145,201,119,218,107,221,112,204,123,181,148,161,176,128,237,105,296,91,345"/>
 <area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1CastepMdReader.html" title="Reads a sequence of frames from a CASTEP .md trajectory file." alt="" coords="213,133,363,173"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="102,281,145,231,172,206,201,183,223,171,225,176,204,188,175,210,149,235,106,284"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="92,343,109,307,133,264,164,221,201,183,220,171,222,176,204,187,168,224,138,267,114,309,97,345"/>
 <area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1CellReader.html" title="Reads a CASTEP .cell physical structure format." alt="" coords="213,197,363,237"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="127,284,202,247,230,235,232,240,204,252,130,289"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="102,345,145,295,172,270,201,247,223,235,225,240,204,252,175,274,149,299,106,348"/>
 <area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CifReader.html" title="Reads a Crystallographic Information File (.cif)." alt="" coords="213,261,363,301"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="168,297,213,290,214,295,169,302"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html" title="Reads one or more frames from a LAMMPS custom dump file." alt="" coords="203,325,373,365"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="168,324,203,330,202,335,168,329"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html" title="Reads a ONETEP .dat structure format." alt="" coords="213,389,363,429"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="130,338,204,375,232,387,230,392,202,380,127,342"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1OutmolReader.html" title="Reads a DMol3 .outmol output format." alt="" coords="213,453,363,493"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="106,343,149,392,175,417,204,439,225,451,223,455,201,444,172,421,145,395,102,346"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1VaspReader.html" title="Reads VASP POSCAR and CONTCAR structure files." alt="" coords="213,517,363,557"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="97,345,114,382,138,424,168,466,204,503,222,515,220,519,201,507,164,470,133,427,109,384,92,347"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1XdatcarReader.html" title="Reads VASP XDATCAR trajectory files." alt="" coords="213,581,363,621"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="91,346,105,394,128,454,161,514,181,542,204,567,221,579,218,583,201,571,177,546,156,517,123,456,100,396,86,347"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="127,348,202,311,230,299,232,304,204,316,130,353"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1GromacsReader.html" title="Handles parsing of GROMACS (.gro) structure files." alt="" coords="213,325,363,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="168,361,213,354,214,359,169,366"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html" title="Reads one or more frames from a LAMMPS custom dump file." alt="" coords="203,389,373,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="168,388,203,394,202,399,168,393"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html" title="Reads a ONETEP .dat structure format." alt="" coords="213,453,363,493"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="130,402,204,439,232,451,230,456,202,444,127,406"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1OutmolReader.html" title="Reads a DMol3 .outmol output format." alt="" coords="213,517,363,557"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="106,407,149,456,175,481,204,503,225,515,223,519,201,508,172,485,145,459,102,410"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1PdbReader.html" title="Handles parsing of PDB (.pdb) structure files." alt="" coords="213,581,363,621"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="97,409,114,446,138,488,168,530,204,567,222,579,220,583,201,571,164,534,133,491,109,448,92,411"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1VaspReader.html" title="Reads VASP POSCAR and CONTCAR structure files." alt="" coords="213,645,363,685"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="91,410,105,458,128,518,161,578,181,606,204,631,221,643,218,647,201,635,177,610,156,581,123,520,100,460,86,411"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1XdatcarReader.html" title="Reads VASP XDATCAR trajectory files." alt="" coords="213,709,363,749"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="88,411,98,471,119,547,135,587,154,626,177,663,205,695,220,707,216,711,201,699,173,666,149,629,130,589,114,549,93,472,82,412"/>
 </map>

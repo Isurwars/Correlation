@@ -1,0 +1,9 @@
+<map id="correlation::readers::PdbReader::readStructure" name="correlation::readers::PdbReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,5,201,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="249,5,385,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="202,23,236,23,236,28,202,28"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="433,5,632,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="385,23,420,23,420,28,385,28"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="680,5,816,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="632,23,666,23,666,28,632,28"/>
+</map>

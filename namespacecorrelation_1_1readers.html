@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -109,6 +109,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CifReader.html">CifReader</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a Crystallographic Information File (.cif).  <a href="classcorrelation_1_1readers_1_1CifReader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1GromacsReader.html">GromacsReader</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles parsing of GROMACS (.gro) structure files.  <a href="classcorrelation_1_1readers_1_1GromacsReader.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html">LammpsDumpReader</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one or more frames from a LAMMPS custom dump file.  <a href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -117,6 +120,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1OutmolReader.html">OutmolReader</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a DMol3 .outmol output format.  <a href="classcorrelation_1_1readers_1_1OutmolReader.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1PdbReader.html">PdbReader</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles parsing of PDB (.pdb) structure files.  <a href="classcorrelation_1_1readers_1_1PdbReader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ReaderFactory.html">ReaderFactory</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registry for all file readers, enabling automatic discovery.  <a href="classcorrelation_1_1readers_1_1ReaderFactory.html#details">More...</a><br /></td></tr>
@@ -143,7 +149,10 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aa9e4f25c2775231296b2055ef94b2316">Vasp</a>
 , <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a10b6b1dc43cc89033808b2d7e059a1af">Xdatcar</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e">Unknown</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67ad9183ec3a202aba648730b9cd822fddb">Gromacs</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67ab693cea68a050d89a00c376652df1c5e">Pdb</a>
+, <br />
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e">Unknown</a>
 <br />
  }</td></tr>
 <tr class="memdesc:a4e5071db3eb56c211c63140e5af27b67"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type-safe enum to specify the format of a structure or trajectory file.  <a href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">More...</a><br /></td></tr>
@@ -203,6 +212,10 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="a4e5071db3eb56c211c63140e5af27b67aa9e4f25c2775231296b2055ef94b2316" name="a4e5071db3eb56c211c63140e5af27b67aa9e4f25c2775231296b2055ef94b2316"></a>Vasp&#160;</td><td class="fielddoc"><p>VASP POSCAR/CONTCAR single-structure format. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4e5071db3eb56c211c63140e5af27b67a10b6b1dc43cc89033808b2d7e059a1af" name="a4e5071db3eb56c211c63140e5af27b67a10b6b1dc43cc89033808b2d7e059a1af"></a>Xdatcar&#160;</td><td class="fielddoc"><p>VASP XDATCAR trajectory format. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4e5071db3eb56c211c63140e5af27b67ad9183ec3a202aba648730b9cd822fddb" name="a4e5071db3eb56c211c63140e5af27b67ad9183ec3a202aba648730b9cd822fddb"></a>Gromacs&#160;</td><td class="fielddoc"><p>GROMACS .gro format. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4e5071db3eb56c211c63140e5af27b67ab693cea68a050d89a00c376652df1c5e" name="a4e5071db3eb56c211c63140e5af27b67ab693cea68a050d89a00c376652df1c5e"></a>Pdb&#160;</td><td class="fielddoc"><p>PDB .pdb format. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e" name="a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e"></a>Unknown&#160;</td><td class="fielddoc"><p>Unrecognized or unsupported file format. </p>
 </td></tr>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.8.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -158,6 +158,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa3178ae144a063305d68b60ca28b21ec" id="r_aa3178ae144a063305d68b60ca28b21ec"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="structcorrelation_1_1core_1_1Element.html">Element</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec">findElement</a> (const std::string &amp;symbol) const</td></tr>
 <tr class="memdesc:aa3178ae144a063305d68b60ca28b21ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the <a class="el" href="structcorrelation_1_1core_1_1Element.html" title="Represents a chemical element with its symbol and unique ID.">Element</a> properties for a given element symbol.  <br /></td></tr>
 <tr class="separator:aa3178ae144a063305d68b60ca28b21ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c080d69380ebd16ae111a97701a88bd" id="r_a7c080d69380ebd16ae111a97701a88bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Cell.html#a7c080d69380ebd16ae111a97701a88bd">minimumImage</a> (const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;<a class="el" href="namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca">distance</a>) const</td></tr>
+<tr class="memdesc:a7c080d69380ebd16ae111a97701a88bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the minimum image convention to a distance vector.  <br /></td></tr>
+<tr class="separator:a7c080d69380ebd16ae111a97701a88bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d93aad147fb82f4fda011a787b9ec34" id="r_a7d93aad147fb82f4fda011a787b9ec34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Atom.html">Atom</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34">addAtom</a> (const std::string &amp;symbol, const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;position)</td></tr>
 <tr class="memdesc:a7d93aad147fb82f4fda011a787b9ec34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a new atom to the cell. The atom's element type is automatically registered if it's the first mention of this symbol.  <br /></td></tr>
 <tr class="separator:a7d93aad147fb82f4fda011a787b9ec34"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -510,45 +513,54 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Cell_a7d93aad147fb82f4fda011a787b9ec34_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_a7d93aad147fb82f4fda011a787b9ec34_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Cell_a7d93aad147fb82f4fda011a787b9ec34_icgraph" id="aclasscorrelation_1_1core_1_1Cell_a7d93aad147fb82f4fda011a787b9ec34_icgraph">
-<area shape="rect" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="581,215,717,255"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="390,5,469,31"/>
-<area shape="poly" title=" " alt="" coords="635,203,620,166,598,123,568,81,532,46,501,30,468,23,469,18,503,25,535,41,572,77,602,120,624,164,640,201"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="355,55,504,95"/>
-<area shape="poly" title=" " alt="" coords="625,205,585,156,560,131,532,110,503,95,505,90,535,105,563,127,589,152,629,202"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="355,119,504,159"/>
-<area shape="poly" title=" " alt="" coords="603,211,532,174,501,162,503,157,534,169,606,206"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="355,183,504,223"/>
-<area shape="poly" title=" " alt="" coords="567,226,504,217,505,212,568,221"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="355,247,504,287"/>
-<area shape="poly" title=" " alt="" coords="568,250,505,259,504,254,567,245"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="340,311,519,351"/>
-<area shape="poly" title=" " alt="" coords="606,265,534,302,503,314,501,309,532,297,603,260"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="325,439,533,479"/>
-<area shape="poly" title=" " alt="" coords="624,267,535,365,455,441,451,437,531,361,620,264"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="349,567,510,607"/>
-<area shape="poly" title=" " alt="" coords="640,269,601,373,572,434,535,493,498,536,459,569,456,565,494,532,531,490,567,432,596,371,635,267"/>
+<area shape="rect" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="604,343,740,383"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="401,7,480,32"/>
+<area shape="poly" title=" " alt="" coords="666,330,658,269,639,192,625,153,606,114,583,79,554,48,538,37,519,29,480,22,481,17,520,24,540,32,558,44,587,76,611,112,630,151,645,191,663,268,671,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="366,58,515,98"/>
+<area shape="poly" title=" " alt="" coords="662,331,650,282,629,224,598,164,578,137,554,113,536,101,514,92,516,87,538,96,558,109,582,134,602,161,634,221,655,281,667,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="366,123,515,163"/>
+<area shape="poly" title=" " alt="" coords="656,331,640,296,618,256,589,216,554,181,514,161,517,156,558,177,593,212,622,253,645,294,661,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="366,191,515,231"/>
+<area shape="poly" title=" " alt="" coords="644,335,605,293,555,254,514,234,516,229,557,249,608,289,648,331"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="366,263,515,303"/>
+<area shape="poly" title=" " alt="" coords="599,341,498,306,500,301,601,336"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="351,343,530,383"/>
+<area shape="poly" title=" " alt="" coords="590,366,530,366,530,361,590,361"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="337,439,545,479"/>
+<area shape="poly" title=" " alt="" coords="611,391,491,442,489,437,609,386"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="360,567,521,607"/>
+<area shape="poly" title=" " alt="" coords="647,396,558,493,470,569,467,565,554,489,643,392"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="325,633,556,673"/>
+<area shape="poly" title=" " alt="" coords="668,397,656,447,634,507,603,568,582,597,558,621,538,635,535,630,554,617,578,593,598,566,630,505,650,445,662,396"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1PdbReader.html#ac4472deee4c13869348a362653c45782" title="Reads an atomic structure from a file." alt="" coords="343,698,539,738"/>
+<area shape="poly" title=" " alt="" coords="671,397,663,459,644,537,629,577,610,617,587,654,558,687,539,700,536,696,554,683,582,651,606,614,624,575,639,535,657,458,666,397"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1PdbReader.html#aef9379f81d1ab2713d1de1086fe1682a" title="Reads a trajectory from a file." alt="" coords="41,759,242,799"/>
+<area shape="poly" title=" " alt="" coords="668,398,653,483,629,590,597,689,579,727,558,752,521,776,480,794,437,805,393,811,306,811,229,802,230,797,306,806,392,806,436,800,478,789,518,772,554,748,574,724,592,687,624,588,648,482,663,397"/>
 <area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="66,5,217,31"/>
-<area shape="poly" title=" " alt="" coords="376,21,217,21,217,15,376,15"/>
+<area shape="poly" title=" " alt="" coords="387,22,217,21,217,16,387,16"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="44,55,239,95"/>
-<area shape="poly" title=" " alt="" coords="341,78,239,78,239,73,341,73"/>
+<area shape="poly" title=" " alt="" coords="353,80,239,79,239,74,353,75"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="43,119,240,159"/>
-<area shape="poly" title=" " alt="" coords="341,142,240,142,240,137,341,137"/>
+<area shape="poly" title=" " alt="" coords="352,145,240,143,240,138,352,139"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="46,183,237,223"/>
-<area shape="poly" title=" " alt="" coords="341,206,237,206,237,201,341,201"/>
+<area shape="poly" title=" " alt="" coords="352,212,237,209,237,203,352,206"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="42,247,241,287"/>
-<area shape="poly" title=" " alt="" coords="341,270,241,270,241,265,341,265"/>
+<area shape="poly" title=" " alt="" coords="352,281,241,275,241,270,353,276"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="23,311,260,351"/>
-<area shape="poly" title=" " alt="" coords="326,334,260,334,260,329,326,329"/>
+<area shape="poly" title=" " alt="" coords="338,355,260,347,260,341,338,350"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="20,375,263,415"/>
-<area shape="poly" title=" " alt="" coords="327,357,233,378,231,373,326,351"/>
+<area shape="poly" title=" " alt="" coords="338,377,263,385,263,380,337,372"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="8,439,275,479"/>
-<area shape="poly" title=" " alt="" coords="311,462,275,462,275,457,311,457"/>
+<area shape="poly" title=" " alt="" coords="323,462,275,462,275,457,323,457"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="5,503,277,543"/>
-<area shape="poly" title=" " alt="" coords="326,485,232,506,231,501,325,480"/>
+<area shape="poly" title=" " alt="" coords="334,485,236,506,235,501,333,480"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ad7a731fcdc2534a0a327f6c82deeb440" title="Reads an atomic structure from a file." alt="" coords="31,567,251,607"/>
-<area shape="poly" title=" " alt="" coords="335,590,252,590,252,585,335,585"/>
+<area shape="poly" title=" " alt="" coords="346,590,251,590,251,585,346,585"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#afea061c8da62eb2f21dfa0cb81b14877" title="Reads a trajectory from a file." alt="" coords="29,631,254,671"/>
-<area shape="poly" title=" " alt="" coords="336,611,233,634,232,629,335,606"/>
+<area shape="poly" title=" " alt="" coords="347,610,236,634,235,629,346,605"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="24,695,259,735"/>
+<area shape="poly" title=" " alt="" coords="332,678,238,698,237,693,331,673"/>
+<area shape="poly" title=" " alt="" coords="330,743,240,762,239,757,329,738"/>
 </map>
 </div>
 
@@ -584,30 +596,38 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Cell_a613536c235bab5a212c77e2112d1da23_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_a613536c235bab5a212c77e2112d1da23_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Cell_a613536c235bab5a212c77e2112d1da23_icgraph" id="aclasscorrelation_1_1core_1_1Cell_a613536c235bab5a212c77e2112d1da23_icgraph">
-<area shape="rect" title="Gets the total number of atoms in the cell." alt="" coords="875,185,1011,225"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,77,827,117"/>
-<area shape="poly" title=" " alt="" coords="889,181,770,120,773,115,892,177"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="636,185,827,225"/>
-<area shape="poly" title=" " alt="" coords="861,208,827,208,827,203,861,203"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="638,293,825,333"/>
-<area shape="poly" title=" " alt="" coords="892,234,773,296,770,291,889,229"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
-<area shape="poly" title=" " alt="" coords="645,76,587,60,545,48,546,43,589,55,647,71"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
-<area shape="poly" title=" " alt="" coords="622,100,556,100,556,95,622,95"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,157,308,182"/>
-<area shape="poly" title=" " alt="" coords="378,132,296,159,294,154,376,127"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,157,156,182"/>
-<area shape="poly" title=" " alt="" coords="190,172,156,172,156,167,190,167"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,149,587,189"/>
-<area shape="poly" title=" " alt="" coords="622,193,587,188,588,183,623,188"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="388,214,556,269"/>
-<area shape="poly" title=" " alt="" coords="623,223,557,232,556,227,622,218"/>
-<area shape="poly" title=" " alt="" coords="376,212,294,185,296,179,378,207"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="393,293,551,333"/>
-<area shape="poly" title=" " alt="" coords="624,316,552,316,552,311,624,311"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="393,357,551,397"/>
-<area shape="poly" title=" " alt="" coords="637,339,552,361,550,355,636,334"/>
+<area shape="rect" title="Gets the total number of atoms in the cell." alt="" coords="905,213,1041,253"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="659,77,849,117"/>
+<area shape="poly" title=" " alt="" coords="940,206,901,172,856,140,815,120,817,115,859,135,905,168,944,202"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#a0e53ff6176e3c761fd5810611bd07cee" title="Performs CNA on a single cell." alt="" coords="659,149,849,189"/>
+<area shape="poly" title=" " alt="" coords="891,212,823,192,824,187,893,207"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="651,213,857,253"/>
+<area shape="poly" title=" " alt="" coords="892,236,857,236,857,231,892,231"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="659,277,849,317"/>
+<area shape="poly" title=" " alt="" coords="893,259,824,280,823,275,891,254"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="661,421,847,461"/>
+<area shape="poly" title=" " alt="" coords="943,265,778,423,774,419,939,261"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="363,5,595,45"/>
+<area shape="poly" title=" " alt="" coords="664,76,602,60,557,48,558,43,603,55,665,71"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="395,70,563,125"/>
+<area shape="poly" title=" " alt="" coords="645,100,564,100,564,95,645,95"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,221,308,246"/>
+<area shape="poly" title=" " alt="" coords="384,126,357,140,330,159,306,182,269,222,265,218,302,178,327,155,355,135,381,122"/>
+<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,221,156,246"/>
+<area shape="poly" title=" " alt="" coords="190,236,156,236,156,231,190,231"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#aa8d293f9be7f810110d0beafe4013427" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="363,149,595,189"/>
+<area shape="poly" title=" " alt="" coords="645,172,595,172,595,167,645,167"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,213,603,253"/>
+<area shape="poly" title=" " alt="" coords="637,236,603,236,603,231,637,231"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="364,277,595,317"/>
+<area shape="poly" title=" " alt="" coords="645,300,595,300,595,295,645,295"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="395,342,563,397"/>
+<area shape="poly" title=" " alt="" coords="665,323,564,350,563,345,663,318"/>
+<area shape="poly" title=" " alt="" coords="381,345,355,332,327,312,302,289,265,248,269,245,306,285,330,308,357,327,384,340"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="400,421,559,461"/>
+<area shape="poly" title=" " alt="" coords="647,444,559,444,559,439,647,439"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="401,485,558,525"/>
+<area shape="poly" title=" " alt="" coords="655,467,559,490,558,484,653,462"/>
 </map>
 </div>
 
@@ -643,58 +663,66 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Cell_a5993dd64a45c873590e1c17109c6789d_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_a5993dd64a45c873590e1c17109c6789d_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Cell_a5993dd64a45c873590e1c17109c6789d_icgraph" id="aclasscorrelation_1_1core_1_1Cell_a5993dd64a45c873590e1c17109c6789d_icgraph">
-<area shape="rect" title="Gets the list of atoms in the cell." alt="" coords="903,559,1039,599"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="650,77,841,117"/>
-<area shape="poly" title=" " alt="" coords="961,546,948,482,926,398,895,306,852,217,833,189,811,162,768,119,772,115,815,158,837,185,857,215,900,304,931,397,953,481,966,545"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="654,228,837,268"/>
-<area shape="poly" title=" " alt="" coords="963,546,954,489,934,417,920,381,902,345,879,311,853,282,835,270,838,265,856,278,884,308,906,342,925,378,939,416,959,487,969,545"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="660,293,831,347"/>
-<area shape="poly" title=" " alt="" coords="958,546,943,504,921,455,891,405,853,362,829,346,832,342,856,358,896,402,926,453,948,502,963,544"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="650,372,841,412"/>
-<area shape="poly" title=" " alt="" coords="951,548,912,485,885,453,853,426,832,414,835,410,856,422,889,450,916,482,956,545"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a64de3368fda90127540d707ee651daef" title="Calculates weights for partial distributions based on concentrations." alt="" coords="648,437,843,491"/>
-<area shape="poly" title=" " alt="" coords="930,553,894,528,853,505,829,494,831,489,856,500,897,524,933,548"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="648,515,843,570"/>
-<area shape="poly" title=" " alt="" coords="889,568,843,561,843,556,890,563"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1AngleCalculator.html#a5c77c5193fa151fcc9cf14ebc27aa6d6" title="Computes and populates the bond angles tensor." alt="" coords="646,595,845,635"/>
-<area shape="poly" title=" " alt="" coords="889,594,845,601,844,596,889,589"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="637,659,853,699"/>
-<area shape="poly" title=" " alt="" coords="930,608,856,649,824,661,822,656,854,644,928,604"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="636,723,855,763"/>
-<area shape="poly" title=" " alt="" coords="952,612,912,664,885,690,856,713,833,725,831,720,853,708,882,686,908,660,947,609"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#aa55f9d25bb211811daf844218a4e2cce" title="Gets the atom counts for the current structure." alt="" coords="639,787,851,827"/>
-<area shape="poly" title=" " alt="" coords="961,613,946,651,924,695,894,739,856,777,837,789,834,784,853,773,890,736,919,692,941,648,956,611"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="217,531,295,557"/>
-<area shape="poly" title=" " alt="" coords="969,613,959,666,939,729,924,761,906,792,883,819,856,841,827,858,800,868,774,873,749,873,697,862,635,841,571,814,510,779,453,739,401,696,317,615,266,559,270,555,320,611,404,692,456,734,513,774,574,809,637,836,698,857,750,868,774,868,798,863,825,853,853,836,880,815,902,788,920,759,934,727,954,664,963,612"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="652,901,839,941"/>
-<area shape="poly" title=" " alt="" coords="968,613,958,671,939,743,906,818,883,853,856,885,829,903,826,899,853,881,879,850,901,816,934,741,953,669,963,612"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
-<area shape="poly" title=" " alt="" coords="655,76,548,48,549,43,656,71"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
-<area shape="poly" title=" " alt="" coords="636,100,556,100,556,95,636,95"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,307,308,333"/>
-<area shape="poly" title=" " alt="" coords="377,125,358,138,321,180,293,228,274,274,263,308,258,306,269,272,288,226,316,177,354,134,374,121"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,507,156,533"/>
-<area shape="poly" title=" " alt="" coords="237,345,95,509,91,505,233,342"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="360,149,584,203"/>
-<area shape="poly" title=" " alt="" coords="655,227,575,206,577,201,656,222"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="361,228,583,268"/>
-<area shape="poly" title=" " alt="" coords="641,251,584,251,584,245,641,245"/>
-<area shape="poly" title=" " alt="" coords="368,212,357,218,329,240,304,265,268,309,264,306,300,261,326,236,355,214,365,207"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="387,293,557,347"/>
-<area shape="poly" title=" " alt="" coords="646,323,557,323,557,317,646,317"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,372,587,412"/>
-<area shape="poly" title=" " alt="" coords="636,395,588,395,588,389,636,389"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="388,437,556,491"/>
-<area shape="poly" title=" " alt="" coords="656,418,557,444,556,439,655,413"/>
-<area shape="poly" title=" " alt="" coords="374,437,355,426,326,404,300,379,264,334,268,331,304,375,329,400,357,422,377,432"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7093452682363b3c065a7cc329fea2fe" title="Constructs a DistributionFunctions object." alt="" coords="388,515,556,570"/>
-<area shape="poly" title=" " alt="" coords="637,498,557,521,555,516,636,493"/>
-<area shape="poly" title=" " alt="" coords="203,539,156,533,157,528,203,534"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="393,901,551,941"/>
-<area shape="poly" title=" " alt="" coords="638,924,552,924,552,919,638,919"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="393,965,551,1005"/>
-<area shape="poly" title=" " alt="" coords="647,947,552,970,550,964,645,942"/>
+<area shape="rect" title="Gets the list of atoms in the cell." alt="" coords="929,623,1065,663"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="671,77,861,117"/>
+<area shape="poly" title=" " alt="" coords="990,610,980,535,959,435,927,324,905,269,879,217,860,188,837,162,792,120,795,116,841,158,864,185,884,215,910,267,932,322,965,434,985,534,995,609"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="675,228,857,268"/>
+<area shape="poly" title=" " alt="" coords="993,609,987,540,970,452,955,406,936,361,911,319,880,282,856,266,859,262,883,278,915,316,941,358,960,404,975,451,992,540,998,608"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="663,292,869,332"/>
+<area shape="poly" title=" " alt="" coords="990,610,981,552,961,481,947,444,929,408,906,375,880,346,863,334,866,330,883,342,910,372,933,406,952,442,966,479,986,551,995,609"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="681,357,851,411"/>
+<area shape="poly" title=" " alt="" coords="985,611,970,569,948,519,918,469,880,426,850,408,853,403,883,422,923,466,953,517,975,567,990,609"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="671,436,861,476"/>
+<area shape="poly" title=" " alt="" coords="978,612,939,549,912,517,880,490,859,479,861,474,883,486,915,514,943,546,983,609"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a64de3368fda90127540d707ee651daef" title="Calculates weights for partial distributions based on concentrations." alt="" coords="669,501,863,555"/>
+<area shape="poly" title=" " alt="" coords="957,616,921,592,880,569,855,558,857,553,883,564,923,587,960,612"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="669,579,863,634"/>
+<area shape="poly" title=" " alt="" coords="916,633,863,624,864,619,916,627"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1AngleCalculator.html#a5c77c5193fa151fcc9cf14ebc27aa6d6" title="Computes and populates the bond angles tensor." alt="" coords="667,659,865,699"/>
+<area shape="poly" title=" " alt="" coords="916,658,866,666,865,661,915,653"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="658,723,874,763"/>
+<area shape="poly" title=" " alt="" coords="957,672,882,713,850,725,848,720,880,708,954,668"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="657,787,875,827"/>
+<area shape="poly" title=" " alt="" coords="978,676,938,728,912,754,883,777,859,789,857,784,880,772,909,750,934,724,974,673"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#aa55f9d25bb211811daf844218a4e2cce" title="Gets the atom counts for the current structure." alt="" coords="660,851,872,891"/>
+<area shape="poly" title=" " alt="" coords="988,677,973,715,950,759,921,803,883,841,864,853,861,848,880,837,917,800,946,756,968,713,983,675"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="217,563,295,589"/>
+<area shape="poly" title=" " alt="" coords="995,677,985,730,966,793,951,825,933,856,910,883,883,905,852,923,823,934,796,939,770,939,715,928,650,905,582,875,517,835,457,790,403,742,316,652,265,591,269,587,320,649,407,738,460,786,520,831,584,870,652,900,716,923,770,934,796,934,822,929,850,918,880,900,906,879,928,852,946,823,961,791,980,728,990,676"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="651,965,881,1005"/>
+<area shape="poly" title=" " alt="" coords="995,677,985,735,966,807,951,846,933,883,910,918,883,949,856,967,853,963,880,945,906,914,928,880,946,843,961,806,980,734,990,676"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="673,1029,859,1069"/>
+<area shape="poly" title=" " alt="" coords="999,676,993,747,977,839,962,888,942,936,916,980,883,1019,861,1035,858,1030,880,1015,912,977,937,933,957,886,971,838,988,747,993,676"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="363,5,595,45"/>
+<area shape="poly" title=" " alt="" coords="672,77,559,48,560,43,673,71"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="395,70,563,125"/>
+<area shape="poly" title=" " alt="" coords="657,100,564,100,564,95,657,95"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,339,308,365"/>
+<area shape="poly" title=" " alt="" coords="384,121,358,138,336,161,317,188,288,246,271,300,262,340,257,339,266,299,284,244,312,185,331,158,354,134,381,116"/>
+<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,539,156,565"/>
+<area shape="poly" title=" " alt="" coords="237,377,95,541,91,537,233,374"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="367,149,591,203"/>
+<area shape="poly" title=" " alt="" coords="672,227,588,206,589,201,673,222"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="368,228,591,268"/>
+<area shape="poly" title=" " alt="" coords="661,251,591,251,591,245,661,245"/>
+<area shape="poly" title=" " alt="" coords="366,212,358,218,326,248,299,282,266,340,261,338,295,279,322,244,354,214,363,208"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,292,603,332"/>
+<area shape="poly" title=" " alt="" coords="649,315,603,315,603,309,649,309"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="394,357,565,411"/>
+<area shape="poly" title=" " alt="" coords="667,387,565,387,565,381,667,381"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="364,436,595,476"/>
+<area shape="poly" title=" " alt="" coords="657,459,595,459,595,453,657,453"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="395,501,563,555"/>
+<area shape="poly" title=" " alt="" coords="673,482,564,510,563,504,672,477"/>
+<area shape="poly" title=" " alt="" coords="381,506,354,490,322,460,295,425,261,366,266,364,299,422,326,456,358,486,384,501"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7093452682363b3c065a7cc329fea2fe" title="Constructs a DistributionFunctions object." alt="" coords="395,579,563,634"/>
+<area shape="poly" title=" " alt="" coords="656,561,564,586,563,581,655,556"/>
+<area shape="poly" title=" " alt="" coords="203,571,156,565,157,560,203,566"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="362,965,597,1005"/>
+<area shape="poly" title=" " alt="" coords="637,988,597,988,597,983,637,983"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="400,1029,559,1069"/>
+<area shape="poly" title=" " alt="" coords="659,1052,559,1052,559,1047,659,1047"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="401,1093,558,1133"/>
+<area shape="poly" title=" " alt="" coords="663,1075,559,1098,558,1093,662,1070"/>
 </map>
 </div>
 
@@ -854,49 +882,58 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Cell_aa3178ae144a063305d68b60ca28b21ec_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_aa3178ae144a063305d68b60ca28b21ec_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Cell_aa3178ae144a063305d68b60ca28b21ec_icgraph" id="aclasscorrelation_1_1core_1_1Cell_aa3178ae144a063305d68b60ca28b21ec_icgraph">
-<area shape="rect" title="Finds the Element properties for a given element symbol." alt="" coords="1012,215,1148,255"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="765,215,964,255"/>
-<area shape="poly" title=" " alt="" coords="998,238,964,238,964,233,998,233"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="581,215,717,255"/>
-<area shape="poly" title=" " alt="" coords="751,238,718,238,718,233,751,233"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="390,5,469,31"/>
-<area shape="poly" title=" " alt="" coords="635,203,620,166,598,123,568,81,532,46,501,30,468,23,469,18,503,25,535,41,572,77,602,120,624,164,640,201"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="355,55,504,95"/>
-<area shape="poly" title=" " alt="" coords="625,205,585,156,560,131,532,110,503,95,505,90,535,105,563,127,589,152,629,202"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="355,119,504,159"/>
-<area shape="poly" title=" " alt="" coords="603,211,532,174,501,162,503,157,534,169,606,206"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="355,183,504,223"/>
-<area shape="poly" title=" " alt="" coords="567,226,504,217,505,212,568,221"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="355,247,504,287"/>
-<area shape="poly" title=" " alt="" coords="568,250,505,259,504,254,567,245"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="340,311,519,351"/>
-<area shape="poly" title=" " alt="" coords="606,265,534,302,503,314,501,309,532,297,603,260"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="325,439,533,479"/>
-<area shape="poly" title=" " alt="" coords="624,267,535,365,455,441,451,437,531,361,620,264"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="349,567,510,607"/>
-<area shape="poly" title=" " alt="" coords="640,269,601,373,572,434,535,493,498,536,459,569,456,565,494,532,531,490,567,432,596,371,635,267"/>
+<area shape="rect" title="Finds the Element properties for a given element symbol." alt="" coords="1035,343,1171,383"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="788,343,987,383"/>
+<area shape="poly" title=" " alt="" coords="1021,366,987,366,987,361,1021,361"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="604,343,740,383"/>
+<area shape="poly" title=" " alt="" coords="774,366,740,366,740,361,774,361"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="401,7,480,32"/>
+<area shape="poly" title=" " alt="" coords="666,330,658,269,639,192,625,153,606,114,583,79,554,48,538,37,519,29,480,22,481,17,520,24,540,32,558,44,587,76,611,112,630,151,645,191,663,268,671,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="366,58,515,98"/>
+<area shape="poly" title=" " alt="" coords="662,331,650,282,629,224,598,164,578,137,554,113,536,101,514,92,516,87,538,96,558,109,582,134,602,161,634,221,655,281,667,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="366,123,515,163"/>
+<area shape="poly" title=" " alt="" coords="656,331,640,296,618,256,589,216,554,181,514,161,517,156,558,177,593,212,622,253,645,294,661,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="366,191,515,231"/>
+<area shape="poly" title=" " alt="" coords="644,335,605,293,555,254,514,234,516,229,557,249,608,289,648,331"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="366,263,515,303"/>
+<area shape="poly" title=" " alt="" coords="599,341,498,306,500,301,601,336"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="351,343,530,383"/>
+<area shape="poly" title=" " alt="" coords="590,366,530,366,530,361,590,361"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="337,439,545,479"/>
+<area shape="poly" title=" " alt="" coords="611,391,491,442,489,437,609,386"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="360,567,521,607"/>
+<area shape="poly" title=" " alt="" coords="647,396,558,493,470,569,467,565,554,489,643,392"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="325,633,556,673"/>
+<area shape="poly" title=" " alt="" coords="668,397,656,447,634,507,603,568,582,597,558,621,538,635,535,630,554,617,578,593,598,566,630,505,650,445,662,396"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1PdbReader.html#ac4472deee4c13869348a362653c45782" title="Reads an atomic structure from a file." alt="" coords="343,698,539,738"/>
+<area shape="poly" title=" " alt="" coords="671,397,663,459,644,537,629,577,610,617,587,654,558,687,539,700,536,696,554,683,582,651,606,614,624,575,639,535,657,458,666,397"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1PdbReader.html#aef9379f81d1ab2713d1de1086fe1682a" title="Reads a trajectory from a file." alt="" coords="41,759,242,799"/>
+<area shape="poly" title=" " alt="" coords="668,398,653,483,629,590,597,689,579,727,558,752,521,776,480,794,437,805,393,811,306,811,229,802,230,797,306,806,392,806,436,800,478,789,518,772,554,748,574,724,592,687,624,588,648,482,663,397"/>
 <area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="66,5,217,31"/>
-<area shape="poly" title=" " alt="" coords="376,21,217,21,217,15,376,15"/>
+<area shape="poly" title=" " alt="" coords="387,22,217,21,217,16,387,16"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="44,55,239,95"/>
-<area shape="poly" title=" " alt="" coords="341,78,239,78,239,73,341,73"/>
+<area shape="poly" title=" " alt="" coords="353,80,239,79,239,74,353,75"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="43,119,240,159"/>
-<area shape="poly" title=" " alt="" coords="341,142,240,142,240,137,341,137"/>
+<area shape="poly" title=" " alt="" coords="352,145,240,143,240,138,352,139"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="46,183,237,223"/>
-<area shape="poly" title=" " alt="" coords="341,206,237,206,237,201,341,201"/>
+<area shape="poly" title=" " alt="" coords="352,212,237,209,237,203,352,206"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="42,247,241,287"/>
-<area shape="poly" title=" " alt="" coords="341,270,241,270,241,265,341,265"/>
+<area shape="poly" title=" " alt="" coords="352,281,241,275,241,270,353,276"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="23,311,260,351"/>
-<area shape="poly" title=" " alt="" coords="326,334,260,334,260,329,326,329"/>
+<area shape="poly" title=" " alt="" coords="338,355,260,347,260,341,338,350"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="20,375,263,415"/>
-<area shape="poly" title=" " alt="" coords="327,357,233,378,231,373,326,351"/>
+<area shape="poly" title=" " alt="" coords="338,377,263,385,263,380,337,372"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="8,439,275,479"/>
-<area shape="poly" title=" " alt="" coords="311,462,275,462,275,457,311,457"/>
+<area shape="poly" title=" " alt="" coords="323,462,275,462,275,457,323,457"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="5,503,277,543"/>
-<area shape="poly" title=" " alt="" coords="326,485,232,506,231,501,325,480"/>
+<area shape="poly" title=" " alt="" coords="334,485,236,506,235,501,333,480"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ad7a731fcdc2534a0a327f6c82deeb440" title="Reads an atomic structure from a file." alt="" coords="31,567,251,607"/>
-<area shape="poly" title=" " alt="" coords="335,590,252,590,252,585,335,585"/>
+<area shape="poly" title=" " alt="" coords="346,590,251,590,251,585,346,585"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#afea061c8da62eb2f21dfa0cb81b14877" title="Reads a trajectory from a file." alt="" coords="29,631,254,671"/>
-<area shape="poly" title=" " alt="" coords="336,611,233,634,232,629,335,606"/>
+<area shape="poly" title=" " alt="" coords="347,610,236,634,235,629,346,605"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="24,695,259,735"/>
+<area shape="poly" title=" " alt="" coords="332,678,238,698,237,693,331,673"/>
+<area shape="poly" title=" " alt="" coords="330,743,240,762,239,757,329,738"/>
 </map>
 </div>
 
@@ -987,47 +1024,56 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Cell_a4045db844cd637c155d4ffb5f0f19629_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_a4045db844cd637c155d4ffb5f0f19629_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Cell_a4045db844cd637c155d4ffb5f0f19629_icgraph" id="aclasscorrelation_1_1core_1_1Cell_a4045db844cd637c155d4ffb5f0f19629_icgraph">
-<area shape="rect" title="Registers an element symbol and returns its ID." alt="" coords="765,215,964,255"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="581,215,717,255"/>
-<area shape="poly" title=" " alt="" coords="751,238,718,238,718,233,751,233"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="390,5,469,31"/>
-<area shape="poly" title=" " alt="" coords="635,203,620,166,598,123,568,81,532,46,501,30,468,23,469,18,503,25,535,41,572,77,602,120,624,164,640,201"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="355,55,504,95"/>
-<area shape="poly" title=" " alt="" coords="625,205,585,156,560,131,532,110,503,95,505,90,535,105,563,127,589,152,629,202"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="355,119,504,159"/>
-<area shape="poly" title=" " alt="" coords="603,211,532,174,501,162,503,157,534,169,606,206"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="355,183,504,223"/>
-<area shape="poly" title=" " alt="" coords="567,226,504,217,505,212,568,221"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="355,247,504,287"/>
-<area shape="poly" title=" " alt="" coords="568,250,505,259,504,254,567,245"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="340,311,519,351"/>
-<area shape="poly" title=" " alt="" coords="606,265,534,302,503,314,501,309,532,297,603,260"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="325,439,533,479"/>
-<area shape="poly" title=" " alt="" coords="624,267,535,365,455,441,451,437,531,361,620,264"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="349,567,510,607"/>
-<area shape="poly" title=" " alt="" coords="640,269,601,373,572,434,535,493,498,536,459,569,456,565,494,532,531,490,567,432,596,371,635,267"/>
+<area shape="rect" title="Registers an element symbol and returns its ID." alt="" coords="788,343,987,383"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="604,343,740,383"/>
+<area shape="poly" title=" " alt="" coords="774,366,740,366,740,361,774,361"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="401,7,480,32"/>
+<area shape="poly" title=" " alt="" coords="666,330,658,269,639,192,625,153,606,114,583,79,554,48,538,37,519,29,480,22,481,17,520,24,540,32,558,44,587,76,611,112,630,151,645,191,663,268,671,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="366,58,515,98"/>
+<area shape="poly" title=" " alt="" coords="662,331,650,282,629,224,598,164,578,137,554,113,536,101,514,92,516,87,538,96,558,109,582,134,602,161,634,221,655,281,667,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="366,123,515,163"/>
+<area shape="poly" title=" " alt="" coords="656,331,640,296,618,256,589,216,554,181,514,161,517,156,558,177,593,212,622,253,645,294,661,329"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="366,191,515,231"/>
+<area shape="poly" title=" " alt="" coords="644,335,605,293,555,254,514,234,516,229,557,249,608,289,648,331"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="366,263,515,303"/>
+<area shape="poly" title=" " alt="" coords="599,341,498,306,500,301,601,336"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="351,343,530,383"/>
+<area shape="poly" title=" " alt="" coords="590,366,530,366,530,361,590,361"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#a49bf5284448dd4d84bdb173918ad580e" title="Reads all frames from a LAMMPS dump file." alt="" coords="337,439,545,479"/>
+<area shape="poly" title=" " alt="" coords="611,391,491,442,489,437,609,386"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="360,567,521,607"/>
+<area shape="poly" title=" " alt="" coords="647,396,558,493,470,569,467,565,554,489,643,392"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="325,633,556,673"/>
+<area shape="poly" title=" " alt="" coords="668,397,656,447,634,507,603,568,582,597,558,621,538,635,535,630,554,617,578,593,598,566,630,505,650,445,662,396"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1PdbReader.html#ac4472deee4c13869348a362653c45782" title="Reads an atomic structure from a file." alt="" coords="343,698,539,738"/>
+<area shape="poly" title=" " alt="" coords="671,397,663,459,644,537,629,577,610,617,587,654,558,687,539,700,536,696,554,683,582,651,606,614,624,575,639,535,657,458,666,397"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1PdbReader.html#aef9379f81d1ab2713d1de1086fe1682a" title="Reads a trajectory from a file." alt="" coords="41,759,242,799"/>
+<area shape="poly" title=" " alt="" coords="668,398,653,483,629,590,597,689,579,727,558,752,521,776,480,794,437,805,393,811,306,811,229,802,230,797,306,806,392,806,436,800,478,789,518,772,554,748,574,724,592,687,624,588,648,482,663,397"/>
 <area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="66,5,217,31"/>
-<area shape="poly" title=" " alt="" coords="376,21,217,21,217,15,376,15"/>
+<area shape="poly" title=" " alt="" coords="387,22,217,21,217,16,387,16"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="44,55,239,95"/>
-<area shape="poly" title=" " alt="" coords="341,78,239,78,239,73,341,73"/>
+<area shape="poly" title=" " alt="" coords="353,80,239,79,239,74,353,75"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="43,119,240,159"/>
-<area shape="poly" title=" " alt="" coords="341,142,240,142,240,137,341,137"/>
+<area shape="poly" title=" " alt="" coords="352,145,240,143,240,138,352,139"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="46,183,237,223"/>
-<area shape="poly" title=" " alt="" coords="341,206,237,206,237,201,341,201"/>
+<area shape="poly" title=" " alt="" coords="352,212,237,209,237,203,352,206"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="42,247,241,287"/>
-<area shape="poly" title=" " alt="" coords="341,270,241,270,241,265,341,265"/>
+<area shape="poly" title=" " alt="" coords="352,281,241,275,241,270,353,276"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="23,311,260,351"/>
-<area shape="poly" title=" " alt="" coords="326,334,260,334,260,329,326,329"/>
+<area shape="poly" title=" " alt="" coords="338,355,260,347,260,341,338,350"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="20,375,263,415"/>
-<area shape="poly" title=" " alt="" coords="327,357,233,378,231,373,326,351"/>
+<area shape="poly" title=" " alt="" coords="338,377,263,385,263,380,337,372"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="8,439,275,479"/>
-<area shape="poly" title=" " alt="" coords="311,462,275,462,275,457,311,457"/>
+<area shape="poly" title=" " alt="" coords="323,462,275,462,275,457,323,457"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="5,503,277,543"/>
-<area shape="poly" title=" " alt="" coords="326,485,232,506,231,501,325,480"/>
+<area shape="poly" title=" " alt="" coords="334,485,236,506,235,501,333,480"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#ad7a731fcdc2534a0a327f6c82deeb440" title="Reads an atomic structure from a file." alt="" coords="31,567,251,607"/>
-<area shape="poly" title=" " alt="" coords="335,590,252,590,252,585,335,585"/>
+<area shape="poly" title=" " alt="" coords="346,590,251,590,251,585,346,585"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1OutmolReader.html#afea061c8da62eb2f21dfa0cb81b14877" title="Reads a trajectory from a file." alt="" coords="29,631,254,671"/>
-<area shape="poly" title=" " alt="" coords="336,611,233,634,232,629,335,606"/>
+<area shape="poly" title=" " alt="" coords="347,610,236,634,235,629,346,605"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="24,695,259,735"/>
+<area shape="poly" title=" " alt="" coords="332,678,238,698,237,693,331,673"/>
+<area shape="poly" title=" " alt="" coords="330,743,240,762,239,757,329,738"/>
 </map>
 </div>
 
@@ -1208,6 +1254,65 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="317,156,275,156,275,151,317,151"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="5,197,277,237"/>
 <area shape="poly" title=" " alt="" coords="330,179,234,200,233,195,328,174"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a7c080d69380ebd16ae111a97701a88bd" name="a7c080d69380ebd16ae111a97701a88bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c080d69380ebd16ae111a97701a88bd">&#9670;&#160;</a></span>minimumImage()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; correlation::core::Cell::minimumImage </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>distance</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Applies the minimum image convention to a distance vector. </p>
+<p>Finds the shortest distance vector between two points under periodic boundary conditions.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">distance</td><td>The Cartesian distance vector to wrap. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The minimum image Cartesian distance vector. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_cgraph" id="aclasscorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_cgraph">
+<area shape="rect" title="Applies the minimum image convention to a distance vector." alt="" coords="5,118,164,158"/>
+<area shape="rect" href="namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="215,22,351,62"/>
+<area shape="poly" title=" " alt="" coords="123,116,211,72,224,65,226,70,213,76,126,120"/>
+<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="212,86,355,126"/>
+<area shape="poly" title=" " alt="" coords="164,123,198,117,199,122,164,128"/>
+<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="212,150,355,190"/>
+<area shape="poly" title=" " alt="" coords="164,148,199,154,198,159,164,153"/>
+<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="212,214,355,254"/>
+<area shape="poly" title=" " alt="" coords="126,156,213,200,226,206,224,211,211,204,123,160"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="403,29,579,55"/>
+<area shape="poly" title=" " alt="" coords="352,39,389,39,389,45,352,45"/>
+<area shape="poly" title=" " alt="" coords="457,31,450,21,453,11,467,5,491,3,519,6,531,15,527,20,517,11,491,8,469,10,457,15,455,20,461,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_icgraph" id="aclasscorrelation_1_1core_1_1Cell_a7c080d69380ebd16ae111a97701a88bd_icgraph">
+<area shape="rect" title="Applies the minimum image convention to a distance vector." alt="" coords="555,5,713,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,5,507,45"/>
+<area shape="poly" title=" " alt="" coords="541,28,507,28,507,23,541,23"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,252,45"/>
+<area shape="poly" title=" " alt="" coords="286,28,252,28,252,23,286,23"/>
 </map>
 </div>
 

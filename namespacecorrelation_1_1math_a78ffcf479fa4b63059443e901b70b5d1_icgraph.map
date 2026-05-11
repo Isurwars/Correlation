@@ -1,58 +1,64 @@
 <map id="correlation::math::norm" name="correlation::math::norm">
-<area shape="rect" id="Node000001" title="Computes the vector norm (length)." alt="" coords="1265,287,1441,313"/>
-<area shape="poly" id="edge5_Node000001_Node000001" title=" " alt="" coords="1397,278,1394,273,1387,270,1353,266,1327,268,1313,273,1310,278,1317,285,1314,289,1305,279,1309,269,1326,263,1353,261,1388,265,1398,269,1402,275"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="723,84,939,124"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1328,280,1279,238,1249,217,1216,198,1158,176,1110,166,1061,160,998,148,911,127,913,121,999,143,1061,154,1111,161,1160,171,1218,194,1251,212,1282,234,1332,276"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="999,93,1217,133"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1334,278,1285,216,1252,183,1216,154,1180,136,1182,131,1219,150,1256,179,1289,213,1338,274"/>
-<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="1040,208,1176,248"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1295,286,1217,263,1175,250,1177,245,1218,257,1297,281"/>
-<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a0d52673d38d7b423ba9e839db8c86626" title="Normalizes the given vector." alt="" coords="1037,29,1179,69"/>
-<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="1341,275,1323,233,1297,181,1261,128,1239,104,1216,84,1179,64,1181,60,1219,79,1243,101,1265,125,1301,178,1328,230,1346,273"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="263,467,412,507"/>
-<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="1340,326,1320,355,1292,389,1258,421,1218,446,1150,468,1058,483,949,493,831,498,596,498,412,493,412,488,596,493,831,492,949,487,1057,478,1149,463,1216,442,1255,417,1288,385,1315,352,1335,323"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Trajectory.html#a45e541a6822b70d8f44e6dfafd0f5775" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="1001,273,1215,327"/>
-<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="1252,303,1215,303,1215,297,1252,297"/>
-<area shape="rect" id="Node000011" href="$namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="1037,352,1179,392"/>
-<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="1297,319,1178,355,1176,349,1295,314"/>
-<area shape="rect" id="Node000012" href="$namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="755,409,907,449"/>
-<area shape="poly" id="edge18_Node000001_Node000012" title=" " alt="" coords="1333,325,1284,368,1253,390,1218,406,1138,429,1054,440,975,442,908,440,908,434,975,437,1054,434,1137,424,1216,402,1250,385,1281,364,1329,321"/>
-<area shape="rect" id="Node000016" href="$classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="999,525,1217,579"/>
-<area shape="poly" id="edge19_Node000001_Node000016" title=" " alt="" coords="1344,327,1325,366,1297,414,1262,463,1219,507,1190,527,1187,522,1216,503,1258,460,1293,411,1320,363,1339,324"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1NeighborGraph.html#a282c951c1f8aad540e00add2e2e54297" title="Adds a directed edge between two atoms." alt="" coords="712,201,951,241"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1026,229,951,227,951,222,1027,223"/>
-<area shape="poly" id="edge7_Node000006_Node000002" title=" " alt="" coords="1024,69,934,87,933,81,1023,63"/>
-<area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="1150,18,1135,11,1108,8,1084,10,1070,15,1065,21,1067,28,1062,30,1060,20,1067,10,1083,5,1108,3,1137,6,1152,13"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="9,467,200,507"/>
-<area shape="poly" id="edge10_Node000007_Node000008" title=" " alt="" coords="249,489,200,489,200,484,249,484"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="753,265,910,305"/>
-<area shape="poly" id="edge12_Node000009_Node000010" title=" " alt="" coords="987,296,910,292,910,287,988,291"/>
-<area shape="poly" id="edge14_Node000011_Node000012" title=" " alt="" coords="1024,392,908,416,907,411,1023,387"/>
-<area shape="rect" id="Node000013" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a1af966279d10a10a96582b6ad7fe1fea" title="Computes the complex spherical harmonic ." alt="" coords="746,330,917,385"/>
-<area shape="poly" id="edge15_Node000011_Node000013" title=" " alt="" coords="1023,370,917,365,917,359,1023,365"/>
-<area shape="rect" id="Node000014" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="482,330,653,385"/>
-<area shape="poly" id="edge16_Node000013_Node000014" title=" " alt="" coords="732,360,653,360,653,355,732,355"/>
-<area shape="rect" id="Node000015" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="252,330,423,385"/>
-<area shape="poly" id="edge17_Node000014_Node000015" title=" " alt="" coords="468,360,423,360,423,355,468,355"/>
-<area shape="rect" id="Node000017" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="759,532,903,572"/>
-<area shape="poly" id="edge20_Node000016_Node000017" title=" " alt="" coords="985,555,904,555,904,549,985,549"/>
-<area shape="rect" id="Node000018" href="$classcorrelation_1_1core_1_1Cell.html#a532c3b06976fe3a7ffb814677de18b93" title="Constructs a Cell from three lattice vectors." alt="" coords="499,531,635,571"/>
-<area shape="poly" id="edge21_Node000017_Node000018" title=" " alt="" coords="746,554,635,554,635,548,746,549"/>
-<area shape="rect" id="Node000019" href="$classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="471,595,664,635"/>
-<area shape="poly" id="edge22_Node000017_Node000019" title=" " alt="" coords="747,575,653,597,652,592,746,569"/>
-<area shape="poly" id="edge28_Node000019_Node000007" title=" " alt="" coords="478,591,469,585,453,568,444,552,436,536,421,521,402,509,404,505,424,517,440,533,449,550,457,565,472,581,481,586"/>
-<area shape="rect" id="Node000020" href="$classcorrelation_1_1core_1_1Cell.html#ac33a2dbf4619585c0dd11e4a8e466860" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="269,659,405,699"/>
-<area shape="poly" id="edge23_Node000019_Node000020" title=" " alt="" coords="482,641,406,662,405,657,481,636"/>
-<area shape="rect" id="Node000021" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="263,723,412,763"/>
-<area shape="poly" id="edge24_Node000019_Node000021" title=" " alt="" coords="530,645,481,679,424,713,398,725,396,720,421,708,478,675,527,641"/>
-<area shape="rect" id="Node000023" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="263,531,412,571"/>
-<area shape="poly" id="edge26_Node000019_Node000023" title=" " alt="" coords="481,594,409,573,410,568,482,588"/>
-<area shape="rect" id="Node000025" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="263,595,412,635"/>
-<area shape="poly" id="edge29_Node000019_Node000025" title=" " alt="" coords="457,617,412,617,412,612,457,612"/>
-<area shape="rect" id="Node000022" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="7,723,202,763"/>
-<area shape="poly" id="edge25_Node000021_Node000022" title=" " alt="" coords="249,745,202,745,202,740,249,740"/>
-<area shape="rect" id="Node000024" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="6,531,203,571"/>
-<area shape="poly" id="edge27_Node000023_Node000024" title=" " alt="" coords="249,553,203,553,203,548,249,548"/>
-<area shape="rect" id="Node000026" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="5,595,204,635"/>
-<area shape="poly" id="edge30_Node000025_Node000026" title=" " alt="" coords="249,617,204,617,204,612,249,612"/>
+<area shape="rect" id="Node000001" title="Computes the vector norm (length)." alt="" coords="1355,287,1531,313"/>
+<area shape="poly" id="edge8_Node000001_Node000001" title=" " alt="" coords="1486,278,1484,273,1476,270,1443,266,1416,268,1402,273,1400,278,1407,285,1403,289,1394,279,1399,269,1415,263,1443,261,1477,265,1487,269,1491,275"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="813,53,1029,93"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1418,280,1368,238,1338,217,1306,198,1247,177,1199,169,1149,163,1087,148,1020,122,961,96,964,91,1022,117,1089,143,1150,158,1199,164,1248,172,1308,194,1341,212,1372,234,1421,276"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="1088,93,1307,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1423,278,1374,216,1342,183,1305,154,1269,136,1271,131,1308,150,1345,179,1378,213,1427,274"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="1129,208,1265,248"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1385,286,1306,263,1265,250,1266,245,1307,257,1386,281"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a0d52673d38d7b423ba9e839db8c86626" title="Normalizes the given vector." alt="" coords="1126,29,1269,69"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="1430,275,1413,233,1386,181,1350,128,1329,104,1305,84,1268,64,1270,60,1308,79,1333,101,1354,125,1391,178,1417,230,1435,273"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="301,441,450,481"/>
+<area shape="poly" id="edge12_Node000001_Node000010" title=" " alt="" coords="1429,326,1409,356,1381,390,1347,422,1308,448,1252,472,1194,491,1134,506,1074,518,951,530,831,532,716,525,612,512,450,482,451,477,613,507,717,519,831,526,951,525,1073,512,1133,501,1193,486,1250,467,1305,443,1344,418,1378,386,1405,353,1425,323"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Trajectory.html#a45e541a6822b70d8f44e6dfafd0f5775" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="1091,273,1304,327"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="1341,303,1304,303,1304,297,1341,297"/>
+<area shape="rect" id="Node000014" href="$namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="1126,352,1269,392"/>
+<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="1386,319,1267,355,1265,349,1385,314"/>
+<area shape="rect" id="Node000015" href="$namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="845,413,997,453"/>
+<area shape="poly" id="edge21_Node000001_Node000015" title=" " alt="" coords="1422,324,1373,368,1342,390,1308,406,1227,429,1143,441,1064,444,997,443,997,437,1064,439,1143,436,1226,424,1306,402,1339,385,1370,364,1419,321"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="1088,531,1307,586"/>
+<area shape="poly" id="edge22_Node000001_Node000019" title=" " alt="" coords="1433,327,1414,366,1387,415,1351,466,1308,511,1275,534,1272,529,1305,507,1347,463,1382,412,1410,364,1428,324"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1NeighborGraph.html#a282c951c1f8aad540e00add2e2e54297" title="Adds a directed edge between two atoms." alt="" coords="801,141,1040,181"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1116,211,1004,184,1005,179,1117,206"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a7c080d69380ebd16ae111a97701a88bd" title="Applies the minimum image convention to a distance vector." alt="" coords="841,205,1000,245"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="1116,230,1000,229,1000,223,1116,225"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="547,205,753,245"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="828,228,754,228,754,223,828,223"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="252,205,499,245"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="533,228,499,228,499,223,533,223"/>
+<area shape="poly" id="edge10_Node000009_Node000002" title=" " alt="" coords="1113,59,1029,67,1029,61,1112,54"/>
+<area shape="poly" id="edge11_Node000009_Node000009" title=" " alt="" coords="1239,18,1224,11,1197,8,1174,10,1159,15,1154,21,1157,28,1152,30,1149,20,1156,10,1173,5,1197,3,1226,6,1241,13"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="9,441,200,481"/>
+<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="287,464,200,464,200,459,287,459"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="842,269,999,309"/>
+<area shape="poly" id="edge15_Node000012_Node000013" title=" " alt="" coords="1077,298,999,295,1000,290,1077,293"/>
+<area shape="poly" id="edge17_Node000014_Node000015" title=" " alt="" coords="1113,393,997,419,996,414,1112,388"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a1af966279d10a10a96582b6ad7fe1fea" title="Computes the complex spherical harmonic ." alt="" coords="835,334,1006,389"/>
+<area shape="poly" id="edge18_Node000014_Node000016" title=" " alt="" coords="1112,371,1006,367,1006,362,1112,366"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="565,334,735,389"/>
+<area shape="poly" id="edge19_Node000016_Node000017" title=" " alt="" coords="822,364,736,364,736,359,822,359"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="290,334,461,389"/>
+<area shape="poly" id="edge20_Node000017_Node000018" title=" " alt="" coords="551,364,461,364,461,359,551,359"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="849,555,993,595"/>
+<area shape="poly" id="edge23_Node000019_Node000020" title=" " alt="" coords="1074,568,993,573,993,568,1074,563"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1core_1_1Cell.html#a532c3b06976fe3a7ffb814677de18b93" title="Constructs a Cell from three lattice vectors." alt="" coords="582,619,718,659"/>
+<area shape="poly" id="edge24_Node000020_Node000021" title=" " alt="" coords="836,597,719,625,718,620,835,592"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="553,555,747,595"/>
+<area shape="poly" id="edge25_Node000020_Node000022" title=" " alt="" coords="835,577,747,577,747,572,835,572"/>
+<area shape="poly" id="edge31_Node000022_Node000010" title=" " alt="" coords="604,550,554,522,498,496,450,480,451,475,500,491,556,517,607,545"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1core_1_1Cell.html#ac33a2dbf4619585c0dd11e4a8e466860" title="Constructs a Cell from lattice parameters {a, b, c, alpha, beta, gamma}." alt="" coords="307,697,443,737"/>
+<area shape="poly" id="edge26_Node000022_Node000023" title=" " alt="" coords="556,604,548,609,532,627,525,647,518,668,500,687,473,703,444,712,443,707,471,698,497,683,513,665,520,645,528,625,545,605,553,599"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="301,505,450,545"/>
+<area shape="poly" id="edge27_Node000022_Node000024" title=" " alt="" coords="539,558,450,541,451,536,540,552"/>
+<area shape="rect" id="Node000026" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="301,569,450,609"/>
+<area shape="poly" id="edge29_Node000022_Node000026" title=" " alt="" coords="540,583,450,588,450,583,539,578"/>
+<area shape="rect" id="Node000028" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="301,633,450,673"/>
+<area shape="poly" id="edge32_Node000022_Node000028" title=" " alt="" coords="572,601,499,624,451,637,450,632,498,619,571,596"/>
+<area shape="rect" id="Node000025" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="7,505,202,545"/>
+<area shape="poly" id="edge28_Node000024_Node000025" title=" " alt="" coords="287,528,202,528,202,523,287,523"/>
+<area shape="rect" id="Node000027" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="6,569,203,609"/>
+<area shape="poly" id="edge30_Node000026_Node000027" title=" " alt="" coords="287,592,204,592,204,587,287,587"/>
+<area shape="rect" id="Node000029" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="5,633,204,673"/>
+<area shape="poly" id="edge33_Node000028_Node000029" title=" " alt="" coords="287,656,204,656,204,651,287,651"/>
 </map>

@@ -1,0 +1,7 @@
+<map id="correlation::calculators::CNACalculator::calculate" name="correlation::calculators::CNACalculator::calculate">
+<area shape="rect" id="Node000001" title="Performs CNA on a single cell." alt="" coords="5,41,196,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="253,5,389,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,43,239,36,240,41,197,48"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="244,70,399,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="197,74,231,80,230,85,196,80"/>
+</map>

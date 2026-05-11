@@ -1,23 +1,24 @@
 <map id="correlation::calculators::CalculatorFactory::getCalculators" name="correlation::calculators::CalculatorFactory::getCalculators">
-<area shape="rect" id="Node000001" title="Returns all registered calculators." alt="" coords="1073,70,1317,110"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="831,63,999,117"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1060,93,999,93,999,87,1060,87"/>
+<area shape="rect" id="Node000001" title="Returns all registered calculators." alt="" coords="1073,93,1317,133"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="831,52,999,107"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1059,99,999,92,999,87,1060,94"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,119,756,159"/>
+<area shape="poly" id="edge12_Node000001_Node000005" title=" " alt="" coords="1060,122,756,137,756,132,1059,117"/>
 <area shape="rect" id="Node000009" href="$calculator__bindings_8cpp.html#a08a9f42b711ba7a731c0b888580f9bca" title=" " alt="" coords="589,5,711,31"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1107,69,1025,53,855,33,711,23,711,18,855,27,1026,47,1108,64"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1app_1_1AppController.html#a2402832c7a34c6c063b5bc3d192ea537" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="804,149,1025,189"/>
-<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="1111,116,987,151,986,146,1109,111"/>
-<area shape="rect" id="Node000003" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="598,55,702,80"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="817,84,702,74,702,69,817,79"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,105,756,145"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="817,105,757,113,756,108,817,100"/>
-<area shape="rect" id="Node000004" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="310,5,461,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="584,58,454,33,455,28,585,53"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,105,496,145"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="530,127,496,127,496,122,530,122"/>
-<area shape="rect" id="Node000008" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,55,413,80"/>
-<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="543,104,412,76,413,70,544,99"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,134,227,174"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="261,141,227,145,227,139,261,136"/>
-<area shape="poly" id="edge9_Node000009_Node000004" title=" " alt="" coords="576,21,461,21,461,15,576,15"/>
-<area shape="poly" id="edge11_Node000010_Node000007" title=" " alt="" coords="790,169,227,159,227,153,790,164"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1145,89,1088,63,1025,42,941,27,855,19,711,18,711,12,856,14,941,22,1026,37,1090,58,1147,84"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1app_1_1AppController.html#a2402832c7a34c6c063b5bc3d192ea537" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="804,182,1025,222"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="1119,140,979,184,978,179,1118,134"/>
+<area shape="rect" id="Node000003" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="598,63,702,88"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="817,81,702,79,702,73,817,75"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="818,104,740,122,739,117,817,99"/>
+<area shape="rect" id="Node000004" href="$module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="310,15,461,40"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="584,66,456,43,456,37,585,61"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,125,496,165"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="531,144,496,145,496,140,531,139"/>
+<area shape="rect" id="Node000008" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,75,413,100"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="534,119,412,95,413,90,535,114"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,154,227,194"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="261,161,227,165,227,159,261,156"/>
+<area shape="poly" id="edge9_Node000009_Node000004" title=" " alt="" coords="576,23,461,27,461,22,576,18"/>
+<area shape="poly" id="edge11_Node000010_Node000007" title=" " alt="" coords="790,200,227,181,227,175,790,195"/>
 </map>
