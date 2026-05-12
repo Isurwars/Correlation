@@ -84,8 +84,6 @@ jobs:
     name: Build Windows
     runs-on: windows-latest
     env:
-      VCPKG_BINARY_SOURCES: "clear;default"
-      VCPKG_FORCE_SYSTEM_BINARIES: 1
       SCCACHE_GHA_ENABLED: "true"
       SCCACHE_IDLE_TIMEOUT: "0"
       SCCACHE_RETRY_DELAY: "2"
