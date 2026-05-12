@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.24)
 project(Correlation VERSION 2.9.0 LANGUAGES CXX)
 
 # -----------------------------------------------------------

@@ -1,0 +1,12 @@
+{
+  "name": "correlation",
+  "version-string": "2.9.0",
+  "dependencies": [
+    "tbb",
+    "hdf5",
+    "arrow",
+    "parquet",
+    "pybind11",
+    "slint"
+  ]
+}
