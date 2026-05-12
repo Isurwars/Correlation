@@ -38,6 +38,7 @@ jobs:
       - name: Run vcpkg
         shell: bash
         run: |
+          $VCPKG_INSTALLATION_ROOT/vcpkg x-update-baseline --add-initial-baseline
           $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
 
       - name: Install Rust
@@ -102,6 +103,7 @@ jobs:
       - name: Run vcpkg
         shell: bash
         run: |
+          $VCPKG_INSTALLATION_ROOT/vcpkg x-update-baseline --add-initial-baseline
           $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
 
       - name: Install Rust
@@ -174,6 +176,7 @@ jobs:
       - name: Run vcpkg
         shell: bash
         run: |
+          $VCPKG_INSTALLATION_ROOT/vcpkg x-update-baseline --add-initial-baseline
           $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
 
       - name: Install Rust
