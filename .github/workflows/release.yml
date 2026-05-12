@@ -36,9 +36,9 @@ jobs:
           sudo apt-get install -y ninja-build build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
 
       - name: Run vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgJsonGlob: 'vcpkg.json'
+        shell: bash
+        run: |
+          $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -57,7 +57,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
             -DARROW_DEPENDENCY_SOURCE=SYSTEM \
             -DARROW_WITH_BOOST=OFF \
@@ -100,9 +100,9 @@ jobs:
         run: choco install nsis -y
 
       - name: Run vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgJsonGlob: 'vcpkg.json'
+        shell: bash
+        run: |
+          $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -121,7 +121,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake `
+            -DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake `
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS `
             -DARROW_DEPENDENCY_SOURCE=SYSTEM `
             -DSLINT_BUILD_COMPILER=OFF
@@ -172,9 +172,9 @@ jobs:
         run: brew install ninja
 
       - name: Run vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgJsonGlob: 'vcpkg.json'
+        shell: bash
+        run: |
+          $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -193,7 +193,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
             -DARROW_DEPENDENCY_SOURCE=SYSTEM \
             -DSLINT_BUILD_COMPILER=OFF
