@@ -44,7 +44,6 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgJsonGlob: 'vcpkg.json'
-          vcpkgDirectory: ${{ github.workspace }}/vcpkg
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -66,7 +65,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake \
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
             -DARROW_DEPENDENCY_SOURCE=SYSTEM \
             -DSLINT_BUILD_COMPILER=OFF
@@ -77,7 +76,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake `
+            -DCMAKE_TOOLCHAIN_FILE=${{ env.VCPKG_ROOT }}/scripts/buildsystems/vcpkg.cmake `
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS `
             -DARROW_DEPENDENCY_SOURCE=SYSTEM `
             -DSLINT_BUILD_COMPILER=OFF
