@@ -33,13 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
-
-      - name: Run vcpkg
-        shell: bash
-        run: |
-          $VCPKG_INSTALLATION_ROOT/vcpkg x-update-baseline --add-initial-baseline
-          $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
+          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -57,12 +51,7 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
-            -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
-            -DARROW_DEPENDENCY_SOURCE=SYSTEM \
-            -DARROW_WITH_BOOST=OFF \
-            -DSLINT_BUILD_COMPILER=OFF
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel
@@ -98,12 +87,6 @@ jobs:
       - name: Install NSIS
         run: choco install nsis -y
 
-      - name: Run vcpkg
-        shell: bash
-        run: |
-          $VCPKG_INSTALLATION_ROOT/vcpkg x-update-baseline --add-initial-baseline
-          $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -120,11 +103,7 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake `
-            -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS `
-            -DARROW_DEPENDENCY_SOURCE=SYSTEM `
-            -DSLINT_BUILD_COMPILER=OFF
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel
@@ -169,13 +148,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Install dependencies
-        run: brew install ninja
-
-      - name: Run vcpkg
-        shell: bash
-        run: |
-          $VCPKG_INSTALLATION_ROOT/vcpkg x-update-baseline --add-initial-baseline
-          $VCPKG_INSTALLATION_ROOT/vcpkg install --triplet ${{ runner.os == 'Windows' && 'x64-windows' || (runner.os == 'macOS' && 'x64-osx' || 'x64-linux') }}
+        run: brew install tbb hdf5
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -193,11 +166,7 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
-            -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
-            -DARROW_DEPENDENCY_SOURCE=SYSTEM \
-            -DSLINT_BUILD_COMPILER=OFF
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel
