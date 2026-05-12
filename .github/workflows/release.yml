@@ -33,7 +33,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev libarrow-dev libparquet-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
+          sudo apt-get install -y ninja-build build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
+
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: 'vcpkg.json'
+          vcpkgDirectory: ${{ github.workspace }}/vcpkg
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -52,6 +58,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
             -DARROW_DEPENDENCY_SOURCE=SYSTEM \
             -DARROW_WITH_BOOST=OFF \
@@ -93,6 +100,12 @@ jobs:
       - name: Install NSIS
         run: choco install nsis -y
 
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: 'vcpkg.json'
+          vcpkgDirectory: ${{ github.workspace }}/vcpkg
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
@@ -110,7 +123,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake `
+            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake `
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS `
             -DARROW_DEPENDENCY_SOURCE=SYSTEM `
             -DSLINT_BUILD_COMPILER=OFF
@@ -158,7 +171,13 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Install dependencies
-        run: brew install tbb hdf5 arrow
+        run: brew install ninja
+
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: 'vcpkg.json'
+          vcpkgDirectory: ${{ github.workspace }}/vcpkg
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -177,6 +196,7 @@ jobs:
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+            -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
             -DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS \
             -DARROW_DEPENDENCY_SOURCE=SYSTEM \
             -DSLINT_BUILD_COMPILER=OFF

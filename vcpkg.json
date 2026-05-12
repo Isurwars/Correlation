@@ -4,8 +4,12 @@
   "dependencies": [
     "tbb",
     "hdf5",
-    "arrow",
-    "parquet",
+    {
+      "name": "arrow",
+      "features": [
+        "parquet"
+      ]
+    },
     "pybind11",
     "slint"
   ]
