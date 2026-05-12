@@ -87,7 +87,7 @@ jobs:
       SCCACHE_GHA_ENABLED: "true"
       SCCACHE_IDLE_TIMEOUT: "0"
       SCCACHE_RETRY_DELAY: "2"
-      RUSTC_WRAPPER: ""
+      RUSTC_WRAPPER: sccache
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
