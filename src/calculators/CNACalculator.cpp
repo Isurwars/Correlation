@@ -17,7 +17,56 @@ namespace correlation::calculators {
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(
     std::make_unique<CNACalculator>());
+
+/**
+ * @brief DFS helper to find the longest path in the common neighbor subgraph.
+ *
+ * Since common neighbor subgraphs are extremely small (< 12 atoms),
+ * an exhaustive DFS is both correct and performant.
+ *
+ * @param node     Current node in the DFS traversal.
+ * @param visited  Set of already-visited nodes on the current path.
+ * @param adj      Adjacency list for the common neighbor subgraph.
+ * @return The length of the longest path (in edges) starting from @p node.
+ */
+size_t dfsLongestPath(size_t node,
+                      std::set<size_t> &visited,
+                      const std::map<size_t, std::vector<size_t>> &adj) {
+    size_t best = 0;
+    auto it = adj.find(node);
+    if (it == adj.end()) return 0;
+
+    for (size_t neighbor : it->second) {
+        if (visited.count(neighbor)) continue;
+        visited.insert(neighbor);
+        size_t len = 1 + dfsLongestPath(neighbor, visited, adj);
+        if (len > best) best = len;
+        visited.erase(neighbor);
+    }
+    return best;
 }
+
+/**
+ * @brief Finds the longest continuous chain of bonds in the common neighbor
+ *        subgraph by trying every node as a starting point.
+ *
+ * @param common_neighbors  Indices of the common neighbors.
+ * @param adj               Adjacency list among common neighbors.
+ * @return The longest path length (in edges).
+ */
+size_t findLongestChain(
+    const std::vector<size_t> &common_neighbors,
+    const std::map<size_t, std::vector<size_t>> &adj) {
+    size_t longest = 0;
+    for (size_t start : common_neighbors) {
+        std::set<size_t> visited;
+        visited.insert(start);
+        size_t len = dfsLongestPath(start, visited, adj);
+        if (len > longest) longest = len;
+    }
+    return longest;
+}
+} // anonymous namespace
 
 void CNACalculator::calculateFrame(
     correlation::analysis::DistributionFunctions &df,
@@ -58,7 +107,7 @@ correlation::analysis::Histogram CNACalculator::calculate(
             size_t n_common = common_neighbors.size();
             if (n_common == 0) continue;
 
-            // Count bonds between common neighbors
+            // Count bonds between common neighbors and build adjacency list
             size_t n_bonds = 0;
             std::map<size_t, std::vector<size_t>> common_adj;
             for (size_t a = 0; a < n_common; ++a) {
@@ -77,25 +126,24 @@ correlation::analysis::Histogram CNACalculator::calculate(
                 }
             }
 
-            // Find longest chain of bonds
+            // Find longest continuous chain via DFS on the common neighbor subgraph
             size_t n_longest = 0;
-            // Simple DFS for longest path in the common neighbor subgraph
-            // (Note: this is NP-hard in general, but common neighbors subgraphs are very small, < 12 atoms)
-            // For CNA, we usually just need the longest chain of bonds.
-            // Simplified: if n_bonds is 0, n_longest is 0. If n_bonds > 0, at least 1.
             if (n_bonds > 0) {
-                // For standard CNA, the third index is the longest chain of bonds connecting the common neighbors.
-                // We'll use a simple approach for now.
-                n_longest = (n_bonds >= n_common) ? n_common : n_bonds; 
+                n_longest = findLongestChain(common_neighbors, common_adj);
             }
 
-            // Standard CNA index is 1-n-m-l (1 for bonded pair, n_common, n_bonds, n_longest)
-            std::string index = "1" + std::to_string(n_common) + std::to_string(n_bonds) + std::to_string(n_longest);
+            // Standard CNA index: (1, n_common, n_bonds, n_longest)
+            std::string index = "1" + std::to_string(n_common)
+                                    + std::to_string(n_bonds)
+                                    + std::to_string(n_longest);
             cna_counts[index]++;
             total_pairs++;
         }
     }
 
+    // --- Build histogram with consistent bin/partial dimensions ---
+    // Each unique CNA index becomes one categorical bin position.
+    // All partial vectors have exactly the same length as bins.
     correlation::analysis::Histogram hist;
     hist.x_label = "CNA Index";
     hist.title = "Common Neighbor Analysis";
@@ -106,12 +154,35 @@ correlation::analysis::Histogram CNACalculator::calculate(
     hist.file_suffix = "_CNA";
 
     if (total_pairs > 0) {
-        for (const auto& [index, count] : cna_counts) {
-            hist.bins.push_back(0.0); // Bins are categorical for CNA
-            hist.partials[index].push_back(count / total_pairs);
+        // Collect sorted CNA index keys for deterministic ordering
+        std::vector<std::string> keys;
+        keys.reserve(cna_counts.size());
+        for (const auto& [k, _] : cna_counts) {
+            keys.push_back(k);
         }
-        // Add a "Total" for consistency
-        hist.partials["Total"] = {1.0};
+
+        const size_t n_bins = keys.size();
+
+        // Assign each CNA index a sequential categorical bin position
+        hist.bins.resize(n_bins);
+        for (size_t i = 0; i < n_bins; ++i) {
+            hist.bins[i] = static_cast<double>(i);
+        }
+
+        // Each CNA index partial has exactly n_bins entries (zero everywhere
+        // except at its own position) so that bins.size() == partial.size()
+        for (size_t idx = 0; idx < n_bins; ++idx) {
+            std::vector<double> values(n_bins, 0.0);
+            values[idx] = cna_counts[keys[idx]] / total_pairs;
+            hist.partials[keys[idx]] = std::move(values);
+        }
+
+        // "Total" partial: fraction at each bin position (sums to 1.0)
+        std::vector<double> total(n_bins, 0.0);
+        for (size_t idx = 0; idx < n_bins; ++idx) {
+            total[idx] = cna_counts[keys[idx]] / total_pairs;
+        }
+        hist.partials["Total"] = std::move(total);
     }
 
     return hist;

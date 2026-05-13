@@ -7,9 +7,11 @@ add_library(readers_obj OBJECT
     readers/CellReader.cpp
     readers/CastepMdReader.cpp
     readers/CifReader.cpp
+    readers/GromacsReader.cpp
     readers/LammpsDumpReader.cpp
     readers/OnetepDatReader.cpp
     readers/OutmolReader.cpp
+    readers/PdbReader.cpp
     readers/VaspReader.cpp
     readers/XdatcarReader.cpp
     readers/FileReader.cpp
@@ -28,7 +30,9 @@ endif()
 # Calculators as an OBJECT library to ensure static registration triggers
 add_library(calculators_obj OBJECT
     calculators/AngleCalculator.cpp
+    calculators/CNACalculator.cpp
     calculators/DihedralCalculator.cpp
+    calculators/HBondCalculator.cpp
     calculators/MotifFinder.cpp
     calculators/CNCalculator.cpp
     calculators/DistanceCalculator.cpp

@@ -72,6 +72,10 @@ correlation::analysis::Histogram HBondCalculator::calculate(
       correlation::math::Vector3<double> v_dh =
           cell.minimumImage(pos_h - pos_d);
 
+      // Guard against degenerate case where H and D are coincident
+      if (correlation::math::norm_sq(v_dh) < 1e-12)
+        continue;
+
       for (size_t j = 0; j < num_atoms; ++j) {
         if (i == j)
           continue;
@@ -82,12 +86,12 @@ correlation::analysis::Histogram HBondCalculator::calculate(
         // Atom j is a potential Acceptor.
         correlation::math::Vector3<double> v_da =
             cell.minimumImage(atom_j.position() - pos_d);
-        double d_da_sq = v_da.lengthSquared();
+        double d_da_sq = correlation::math::norm_sq(v_da);
 
         if (d_da_sq < R_cut_sq) {
           // Check angle H-D...A
-          double dot = v_dh.dot(v_da);
-          double cos_alpha = dot / (v_dh.length() * std::sqrt(d_da_sq));
+          double dot_val = v_dh * v_da;
+          double cos_alpha = dot_val / (correlation::math::norm(v_dh) * std::sqrt(d_da_sq));
           double alpha = std::acos(std::max(-1.0, std::min(1.0, cos_alpha))) *
                          correlation::math::rad_to_deg;
 
