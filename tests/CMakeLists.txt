@@ -36,6 +36,8 @@ add_executable(correlation_tests
     _22_SteinhardtCalculator_Tests.cpp
     _23_VaspReader_Tests.cpp
     _24_XdatcarReader_Tests.cpp
+    _25_CNACalculator_Tests.cpp
+    _26_HBondCalculator_Tests.cpp
     ../src/app/AppBackend.cpp
 )
 
