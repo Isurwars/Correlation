@@ -64,6 +64,11 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
     throw std::invalid_argument("Lattice parameters a, b, c must be positive.");
   }
 
+  if (params[3] <= 0 || params[3] >= 180 || params[4] <= 0 || params[4] >= 180 ||
+      params[5] <= 0 || params[5] >= 180) {
+    throw std::invalid_argument("Lattice angles must be between 0 and 180 degrees.");
+  }
+
   const double cos_g = std::cos(gamma);
   const double sin_g = std::sin(gamma);
 
@@ -89,8 +94,8 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
 void Cell::updateLattice(const math::Matrix3<double> &new_lattice) {
   lattice_vectors_ = new_lattice;
   volume_ = math::determinant(lattice_vectors_);
-  if (volume_ <= 1e-9) {
-    throw std::logic_error("Cell volume must be positive.");
+  if (std::isnan(volume_) || volume_ <= 1e-9) {
+    throw std::logic_error("Cell volume must be positive and finite.");
   }
   inverse_lattice_vectors_ = math::transpose(math::invert(lattice_vectors_));
   updateLatticeParametersFromVectors();

@@ -10,12 +10,12 @@
 include(GoogleTest)
 
 #-----------------------------------------------------------
-# 1. Headless tests (no Slint dependency — runs on ALL platforms)
+# 1. Unit Tests (Unitary logic and limit cases)
 #-----------------------------------------------------------
-add_executable(correlation_tests
-    _01_Atom_Tests.cpp
-    _02_Cell_Tests.cpp
-    _03_Trajectory_Tests.cpp
+add_executable(correlation_unit_tests
+    unit/core/AtomTests.cpp
+    unit/core/CellTests.cpp
+    unit/core/TrajectoryTests.cpp
     _04_FileReader_Tests.cpp
     _05_Writer_Tests.cpp
     _06_DihedralCalculator_Tests.cpp
@@ -41,7 +41,7 @@ add_executable(correlation_tests
     ../src/app/AppBackend.cpp
 )
 
-target_link_libraries(correlation_tests PRIVATE
+target_link_libraries(correlation_unit_tests PRIVATE
     correlation_lib
     readers_obj
     writers_obj
@@ -49,15 +49,31 @@ target_link_libraries(correlation_tests PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
-target_compile_definitions(correlation_tests PRIVATE _USE_MATH_DEFINES)
-
-# Call the helper function to bundle DLLs on Windows
-bundle_windows_dlls(correlation_tests)
-
-gtest_discover_tests(correlation_tests DISCOVERY_TIMEOUT 60)
+target_compile_definitions(correlation_unit_tests PRIVATE _USE_MATH_DEFINES)
+bundle_windows_dlls(correlation_unit_tests)
+gtest_discover_tests(correlation_unit_tests DISCOVERY_TIMEOUT 60)
 
 #-----------------------------------------------------------
-# 2. GUI tests (requires Slint — runs on platforms with a display)
+# 2. Functional Tests (Real-world scenarios)
+#-----------------------------------------------------------
+add_executable(correlation_functional_tests
+    functional/core/CellTests.cpp
+)
+
+target_link_libraries(correlation_functional_tests PRIVATE
+    correlation_lib
+    readers_obj
+    writers_obj
+    calculators_obj
+    GTest::gtest
+    GTest::gtest_main
+)
+target_compile_definitions(correlation_functional_tests PRIVATE _USE_MATH_DEFINES)
+bundle_windows_dlls(correlation_functional_tests)
+gtest_discover_tests(correlation_functional_tests DISCOVERY_TIMEOUT 60)
+
+#-----------------------------------------------------------
+# 3. GUI tests (requires Slint — runs on platforms with a display)
 #-----------------------------------------------------------
 add_executable(correlation_gui_tests
     _17_AppController_Tests.cpp
