@@ -8,7 +8,6 @@
 #include "math/LinearAlgebra.hpp"
 
 #include <gtest/gtest.h>
-#include <limits>
 
 namespace correlation::testing {
 
@@ -75,7 +74,8 @@ TEST_F(AtomTests, AngleFunctionCalculatesNinetyDegrees) {
   const Atom neighbor_a(element, {1.0, 0.0, 0.0}, 1);
   const Atom neighbor_b(element, {0.0, 1.0, 0.0}, 2);
 
-  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi / 2.0, 1e-9);
+  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b),
+              correlation::math::pi / 2.0, 1e-9);
 }
 
 // --- Limit Cases ---
@@ -95,7 +95,8 @@ TEST_F(AtomTests, AngleFunctionHandlesCollinearAtoms) {
   const Atom neighbor_a(element, {1.0, 0.0, 0.0}, 1);
   const Atom neighbor_b(element, {-1.0, 0.0, 0.0}, 2); // 180 degrees
 
-  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi, 1e-9);
+  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi,
+              1e-9);
 }
 
 TEST_F(AtomTests, AngleFunctionClampsFloatingPointInaccuracies) {
