@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - In Progress
+
+### Added (Planned)
+- **Spatial Distribution Functions (SDF)**: 3D probability density mapping for solvation shells and local structure.
+- **Quantum ESPRESSO & CP2K Support**: Native readers for these popular *ab initio* MD formats.
+- **Cluster Analysis**: New calculator to identify atomic clusters and molecular fragments.
+- **Interactive Plotting**: Enhanced GUI with zoom and pan support for distribution functions.
+
+### Changed (Planned)
+- **HPC Core**: Implementation of Cell-Lists (spatial partitioning) to achieve $O(N)$ complexity in neighbor searching.
+- **Task-Based Parallelism**: Migrating to advanced TBB task graphs for better high-core scaling.
+- **Pythonic API**: Refined NumPy integration for the Python bindings.
+
 ## [2.9.0] 2026-05-10
 
 ### Added

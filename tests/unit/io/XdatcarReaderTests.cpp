@@ -31,20 +31,20 @@ std::string getTestDataDir() {
 
 } // namespace
 
-class _24_XdatcarReader_Tests : public ::testing::Test {
+class XdatcarReaderTests : public ::testing::Test {
 protected:
   std::string data_dir_;
   void SetUp() override { data_dir_ = getTestDataDir(); }
 };
 
-TEST_F(_24_XdatcarReader_Tests, ParseThreeFrameTrajectory) {
+TEST_F(XdatcarReaderTests, ParseThreeFrameTrajectory) {
   auto frames =
       correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
 
   EXPECT_EQ(frames.size(), 3);
 }
 
-TEST_F(_24_XdatcarReader_Tests, FrameAtomCountConsistent) {
+TEST_F(XdatcarReaderTests, FrameAtomCountConsistent) {
   auto frames =
       correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
 
@@ -53,7 +53,7 @@ TEST_F(_24_XdatcarReader_Tests, FrameAtomCountConsistent) {
   }
 }
 
-TEST_F(_24_XdatcarReader_Tests, LatticeConsistentAcrossFrames) {
+TEST_F(XdatcarReaderTests, LatticeConsistentAcrossFrames) {
   auto frames =
       correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
 
@@ -66,7 +66,7 @@ TEST_F(_24_XdatcarReader_Tests, LatticeConsistentAcrossFrames) {
   }
 }
 
-TEST_F(_24_XdatcarReader_Tests, SpeciesAreCorrect) {
+TEST_F(XdatcarReaderTests, SpeciesAreCorrect) {
   auto frames =
       correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
 
@@ -75,7 +75,7 @@ TEST_F(_24_XdatcarReader_Tests, SpeciesAreCorrect) {
   EXPECT_EQ(frames[0].elements()[0].symbol, "Si");
 }
 
-TEST_F(_24_XdatcarReader_Tests, PositionsDifferBetweenFrames) {
+TEST_F(XdatcarReaderTests, PositionsDifferBetweenFrames) {
   auto frames =
       correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
 
@@ -90,21 +90,21 @@ TEST_F(_24_XdatcarReader_Tests, PositionsDifferBetweenFrames) {
   EXPECT_GT(dist_sq, 1e-12);
 }
 
-TEST_F(_24_XdatcarReader_Tests, ReadTrajectoryReturnsTrajectory) {
+TEST_F(XdatcarReaderTests, ReadTrajectoryReturnsTrajectory) {
   correlation::readers::XdatcarReader reader;
   auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
   EXPECT_EQ(traj.getFrameCount(), 3);
 }
 
-TEST_F(_24_XdatcarReader_Tests, ReadStructureReturnsFirstFrame) {
+TEST_F(XdatcarReaderTests, ReadStructureReturnsFirstFrame) {
   correlation::readers::XdatcarReader reader;
   auto cell = reader.readStructure(data_dir_ + "Si.xdatcar");
 
   EXPECT_EQ(cell.atomCount(), 4);
 }
 
-TEST_F(_24_XdatcarReader_Tests, ReaderIsRegisteredInFactory) {
+TEST_F(XdatcarReaderTests, ReaderIsRegisteredInFactory) {
   correlation::readers::XdatcarReader reader;
   EXPECT_EQ(reader.getName(), "VASP XDATCAR");
   EXPECT_TRUE(reader.isTrajectory());
@@ -112,7 +112,7 @@ TEST_F(_24_XdatcarReader_Tests, ReaderIsRegisteredInFactory) {
   EXPECT_EQ(reader.getExtensions()[0], "xdatcar");
 }
 
-TEST_F(_24_XdatcarReader_Tests, NonExistentFileThrows) {
+TEST_F(XdatcarReaderTests, NonExistentFileThrows) {
   EXPECT_THROW(
       correlation::readers::XdatcarReader::read("nonexistent_file.xdatcar"),
       std::runtime_error);

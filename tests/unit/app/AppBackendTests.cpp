@@ -9,9 +9,9 @@
 #include <stdexcept>
 
 // Test fixture for the AppBackend class
-class _16_AppBackend_Tests : public ::testing::Test {};
+class AppBackendTests : public ::testing::Test {};
 
-TEST_F(_16_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
+TEST_F(AppBackendTests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
   correlation::app::AppBackend backend;
   correlation::app::ProgramOptions opts = backend.options();
@@ -37,7 +37,7 @@ TEST_F(_16_AppBackend_Tests, DefaultConstructorInitializesCorrectly) {
   EXPECT_EQ(backend.getTotalAtomCount(), 0);
 }
 
-TEST_F(_16_AppBackend_Tests, SetOptionsModifiesState) {
+TEST_F(AppBackendTests, SetOptionsModifiesState) {
   // Arrange
   correlation::app::AppBackend backend;
   correlation::app::ProgramOptions opts;
@@ -57,7 +57,7 @@ TEST_F(_16_AppBackend_Tests, SetOptionsModifiesState) {
   EXPECT_EQ(new_opts.max_frame, 20);
 }
 
-TEST_F(_16_AppBackend_Tests, LoadInvalidFileThrowsException) {
+TEST_F(AppBackendTests, LoadInvalidFileThrowsException) {
   // Arrange
   correlation::app::AppBackend backend;
 
@@ -66,7 +66,7 @@ TEST_F(_16_AppBackend_Tests, LoadInvalidFileThrowsException) {
                std::runtime_error);
 }
 
-TEST_F(_16_AppBackend_Tests, RecommendedTimeStepWithNoCellReturnsDefault) {
+TEST_F(AppBackendTests, RecommendedTimeStepWithNoCellReturnsDefault) {
   // Arrange
   correlation::app::AppBackend backend;
 

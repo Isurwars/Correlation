@@ -15,7 +15,7 @@
 // This fixture handles the creation and cleanup of temporary files needed for
 // tests, ensuring that tests are self-contained and do not rely on external
 // data files.
-class _04_FileReader_Tests : public ::testing::Test {
+class FileReaderTests : public ::testing::Test {
 protected:
   // This function runs before each test to create temporary files.
   void SetUp() override {
@@ -223,7 +223,7 @@ protected:
 //--------------------------------- Test Cases -------------------------------//
 //----------------------------------------------------------------------------//
 
-TEST_F(_04_FileReader_Tests, ReadCarFileCorrectly) {
+TEST_F(FileReaderTests, ReadCarFileCorrectly) {
   // Arrange & Act
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.car");
@@ -254,7 +254,7 @@ TEST_F(_04_FileReader_Tests, ReadCarFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.5);
 }
 
-TEST_F(_04_FileReader_Tests, ReadCellFileCorrectly) {
+TEST_F(FileReaderTests, ReadCellFileCorrectly) {
   // Arrange & Act
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.cell");
@@ -285,7 +285,7 @@ TEST_F(_04_FileReader_Tests, ReadCellFileCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.6);
 }
 
-TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
+TEST_F(FileReaderTests, ReadCifFileCorrectly) {
   // Arrange & Act
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.cif");
@@ -323,7 +323,7 @@ TEST_F(_04_FileReader_Tests, ReadCifFileCorrectly) {
       << "Did not find the original Cl atom at the cell center";
 }
 
-TEST_F(_04_FileReader_Tests, ReadArcFileCorrectly) {
+TEST_F(FileReaderTests, ReadArcFileCorrectly) {
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.arc");
   EXPECT_EQ(type, correlation::readers::FileType::Arc);
@@ -347,7 +347,7 @@ TEST_F(_04_FileReader_Tests, ReadArcFileCorrectly) {
   EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 2.0);
 }
 
-TEST_F(_04_FileReader_Tests, ReadArcFileDuplicatedFrames) {
+TEST_F(FileReaderTests, ReadArcFileDuplicatedFrames) {
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test_identical.arc");
   EXPECT_EQ(type, correlation::readers::FileType::Arc);
@@ -368,7 +368,7 @@ TEST_F(_04_FileReader_Tests, ReadArcFileDuplicatedFrames) {
   EXPECT_DOUBLE_EQ(frames[1].atoms()[0].position().x(), 2.0);
 }
 
-TEST_F(_04_FileReader_Tests, ReadLammpsDumpCorrectly) {
+TEST_F(FileReaderTests, ReadLammpsDumpCorrectly) {
   // Arrange & Act
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.dump");
@@ -396,7 +396,7 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.0);
 }
 
-TEST_F(_04_FileReader_Tests, ReadLammpsDumpTrajectoryCorrectly) {
+TEST_F(FileReaderTests, ReadLammpsDumpTrajectoryCorrectly) {
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test_multi.dump");
   EXPECT_EQ(type, correlation::readers::FileType::LammpsDump);
@@ -419,7 +419,7 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpTrajectoryCorrectly) {
   EXPECT_DOUBLE_EQ(f2.atoms()[1].position().x(), 4.5);
 }
 
-TEST_F(_04_FileReader_Tests, ReadLammpsDumpElementColumnCorrectly) {
+TEST_F(FileReaderTests, ReadLammpsDumpElementColumnCorrectly) {
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test_element.dump");
   EXPECT_EQ(type, correlation::readers::FileType::LammpsDump);
@@ -438,7 +438,7 @@ TEST_F(_04_FileReader_Tests, ReadLammpsDumpElementColumnCorrectly) {
   EXPECT_DOUBLE_EQ(atoms[1].position().x(), 4.0);
 }
 
-TEST_F(_04_FileReader_Tests, ReadOnetepDatCorrectly) {
+TEST_F(FileReaderTests, ReadOnetepDatCorrectly) {
   // Arrange & Act
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.dat");
@@ -450,7 +450,7 @@ TEST_F(_04_FileReader_Tests, ReadOnetepDatCorrectly) {
   EXPECT_TRUE(result_cell.isEmpty());
 }
 
-TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
+TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
   correlation::readers::FileType type =
       correlation::readers::determineFileType("test.md");
   EXPECT_EQ(type, correlation::readers::FileType::CastepMd);
@@ -486,7 +486,7 @@ TEST_F(_04_FileReader_Tests, ReadCastepMdCorrectly) {
                    1.1 * correlation::math::bohr_to_angstrom);
 }
 
-TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {
+TEST_F(FileReaderTests, ReadCelluloseExample) {
   // Try finding the Cellulose.md example file relative to the build directory
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
   std::ifstream f(cellulose_path);
@@ -519,7 +519,7 @@ TEST_F(_04_FileReader_Tests, ReadCelluloseExample) {
   }
 }
 
-TEST_F(_04_FileReader_Tests, ReadOutmolCorrectly) {
+TEST_F(FileReaderTests, ReadOutmolCorrectly) {
   // Try finding the PdCuNiP.outmol example
   std::string file_path = "../../examples/PdCuNiP/PdCuNiP.outmol";
   std::ifstream f(file_path);

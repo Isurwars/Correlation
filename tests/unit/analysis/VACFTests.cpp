@@ -13,12 +13,12 @@
 namespace correlation::analysis {
 
 // Test fixture for VACF and VDOS tests.
-class _14_VACF_Tests : public ::testing::Test {
+class VACFTests : public ::testing::Test {
 protected:
   // No special setup needed for VACF usually, or different from Test06
 };
 
-TEST_F(_14_VACF_Tests, CalculateVACF_and_VDOS) {
+TEST_F(VACFTests, CalculateVACF_and_VDOS) {
   correlation::core::Cell c({10, 10, 10, 90, 90, 90});
   c.addAtom("Ar", {0, 0, 0});
   correlation::core::Trajectory t;
@@ -73,7 +73,7 @@ TEST_F(_14_VACF_Tests, CalculateVACF_and_VDOS) {
   EXPECT_TRUE(vdos_hist.partials.count("Frequency_cm_1"));
 }
 
-TEST_F(_14_VACF_Tests, CalculateVACF_WithFrameRange) {
+TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
   correlation::core::Trajectory tRange;
   tRange.setTimeStep(1.0);
 
@@ -110,7 +110,7 @@ TEST_F(_14_VACF_Tests, CalculateVACF_WithFrameRange) {
   EXPECT_NEAR(vacf[3], 1.0, 1e-6);
 }
 
-TEST_F(_14_VACF_Tests, CalculateVACF_GasLike) {
+TEST_F(VACFTests, CalculateVACF_GasLike) {
   correlation::core::Trajectory tGas;
   tGas.setTimeStep(1.0);
 

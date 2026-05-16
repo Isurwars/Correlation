@@ -19,7 +19,7 @@
 #include <vector>
 
 // Test fixture for FileWriter integration tests.
-class _05_FileWriter_Tests : public ::testing::Test {
+class FileWriterTests : public ::testing::Test {
 protected:
   void SetUp() override {
     // Create a temporary CAR file for an 8-atom Silicon crystal.
@@ -88,7 +88,7 @@ protected:
   }
 };
 
-TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
+TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
   correlation::readers::FileType type =
       correlation::readers::determineFileType("si_crystal.car");
@@ -152,7 +152,7 @@ TEST_F(_05_FileWriter_Tests, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 
-TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
+TEST_F(FileWriterTests, WritesHDF5File) {
   // Arrange
   correlation::readers::FileType type =
       correlation::readers::determineFileType("si_crystal.car");
@@ -233,7 +233,7 @@ TEST_F(_05_FileWriter_Tests, WritesHDF5File) {
   EXPECT_EQ(data_comment, "Si-Si");
 }
 
-TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
+TEST_F(FileWriterTests, WritesVACFMetadata) {
   // Arrange
   correlation::readers::FileType type =
       correlation::readers::determineFileType("si_crystal.car");
@@ -379,7 +379,7 @@ TEST_F(_05_FileWriter_Tests, WritesVACFMetadata) {
   EXPECT_EQ(mev_units, "arbitrary units");
 }
 
-TEST_F(_05_FileWriter_Tests, WritesParquetFiles) {
+TEST_F(FileWriterTests, WritesParquetFiles) {
   // Arrange
   correlation::readers::FileType type =
       correlation::readers::determineFileType("si_crystal.car");

@@ -33,13 +33,13 @@ std::string getTestDataDir() {
 
 } // namespace
 
-class _23_VaspReader_Tests : public ::testing::Test {
+class VaspReaderTests : public ::testing::Test {
 protected:
   std::string data_dir_;
   void SetUp() override { data_dir_ = getTestDataDir(); }
 };
 
-TEST_F(_23_VaspReader_Tests, ParseSiDiamondPoscar) {
+TEST_F(VaspReaderTests, ParseSiDiamondPoscar) {
   auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si.poscar");
 
   // 8 Si atoms
@@ -59,7 +59,7 @@ TEST_F(_23_VaspReader_Tests, ParseSiDiamondPoscar) {
   EXPECT_NEAR(params[5], 90.0, 1e-6);
 }
 
-TEST_F(_23_VaspReader_Tests, ParseCartesianCoordinates) {
+TEST_F(VaspReaderTests, ParseCartesianCoordinates) {
   auto cell =
       correlation::readers::VaspReader::read(data_dir_ + "Si_cartesian.poscar");
 
@@ -74,7 +74,7 @@ TEST_F(_23_VaspReader_Tests, ParseCartesianCoordinates) {
   EXPECT_NEAR(pos[2], 0.0, 1e-6);
 }
 
-TEST_F(_23_VaspReader_Tests, ParseSelectiveDynamics) {
+TEST_F(VaspReaderTests, ParseSelectiveDynamics) {
   auto cell =
       correlation::readers::VaspReader::read(data_dir_ + "Si_seldyn.poscar");
 
@@ -84,7 +84,7 @@ TEST_F(_23_VaspReader_Tests, ParseSelectiveDynamics) {
   EXPECT_EQ(cell.elements()[0].symbol, "Si");
 }
 
-TEST_F(_23_VaspReader_Tests, ParseMultiSpecies) {
+TEST_F(VaspReaderTests, ParseMultiSpecies) {
   auto cell =
       correlation::readers::VaspReader::read(data_dir_ + "SiO_multi.poscar");
 
@@ -103,7 +103,7 @@ TEST_F(_23_VaspReader_Tests, ParseMultiSpecies) {
   EXPECT_EQ(counts["O"], 4);
 }
 
-TEST_F(_23_VaspReader_Tests, ScalingFactorApplied) {
+TEST_F(VaspReaderTests, ScalingFactorApplied) {
   auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si.poscar");
 
   // The POSCAR has scaling factor 5.43 with unit vectors
@@ -112,7 +112,7 @@ TEST_F(_23_VaspReader_Tests, ScalingFactorApplied) {
   EXPECT_NEAR(params[0], 5.43, 1e-6);
 }
 
-TEST_F(_23_VaspReader_Tests, ReaderIsRegisteredInFactory) {
+TEST_F(VaspReaderTests, ReaderIsRegisteredInFactory) {
   correlation::readers::VaspReader reader;
   EXPECT_EQ(reader.getName(), "VASP POSCAR");
   EXPECT_FALSE(reader.isTrajectory());
@@ -124,13 +124,13 @@ TEST_F(_23_VaspReader_Tests, ReaderIsRegisteredInFactory) {
   EXPECT_EQ(exts[2], "vasp");
 }
 
-TEST_F(_23_VaspReader_Tests, ReadTrajectoryThrows) {
+TEST_F(VaspReaderTests, ReadTrajectoryThrows) {
   correlation::readers::VaspReader reader;
   EXPECT_THROW(reader.readTrajectory(data_dir_ + "Si.poscar"),
                std::runtime_error);
 }
 
-TEST_F(_23_VaspReader_Tests, NonExistentFileThrows) {
+TEST_F(VaspReaderTests, NonExistentFileThrows) {
   EXPECT_THROW(
       correlation::readers::VaspReader::read("nonexistent_file.poscar"),
       std::runtime_error);

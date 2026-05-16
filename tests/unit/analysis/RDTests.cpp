@@ -14,7 +14,7 @@
 
 namespace correlation::analysis {
 
-class _19_RD_Tests : public ::testing::Test {
+class RDTests : public ::testing::Test {
 protected:
   correlation::core::NeighborGraph graph;
 
@@ -32,7 +32,7 @@ protected:
   }
 };
 
-TEST_F(_19_RD_Tests, ComputeMotif) {
+TEST_F(RDTests, ComputeMotif) {
   size_t max_ring_size = 5;
   Histogram f_motif =
       correlation::calculators::RDCalculator::calculate(graph, max_ring_size);
@@ -52,12 +52,12 @@ TEST_F(_19_RD_Tests, ComputeMotif) {
   EXPECT_EQ(partial[2], 0.0);
 }
 
-TEST_F(_19_RD_Tests, InvalidMaxRingSize) {
+TEST_F(RDTests, InvalidMaxRingSize) {
   EXPECT_THROW(correlation::calculators::RDCalculator::calculate(graph, 2),
                std::invalid_argument);
 }
 
-TEST_F(_19_RD_Tests, CelluloseRingDistribution) {
+TEST_F(RDTests, CelluloseRingDistribution) {
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
   std::ifstream f(cellulose_path);
   if (!f.good()) {

@@ -11,7 +11,7 @@
 
 namespace correlation::calculators {
 
-class _07_MotifFinder_Tests : public ::testing::Test {
+class MotifFinderTests : public ::testing::Test {
 protected:
   correlation::core::Cell cell;
   correlation::core::NeighborGraph graph;
@@ -22,7 +22,7 @@ protected:
   }
 };
 
-TEST_F(_07_MotifFinder_Tests, DetectsSingleTriangle) {
+TEST_F(MotifFinderTests, DetectsSingleTriangle) {
   graph = correlation::core::NeighborGraph(3);
 
   // 0-1, 1-2, 2-0
@@ -43,7 +43,7 @@ TEST_F(_07_MotifFinder_Tests, DetectsSingleTriangle) {
   EXPECT_EQ(rings.count(6), 0);
 }
 
-TEST_F(_07_MotifFinder_Tests, DetectsSingleSquare) {
+TEST_F(MotifFinderTests, DetectsSingleSquare) {
   graph = correlation::core::NeighborGraph(4);
 
   // 0-1, 1-2, 2-3, 3-0

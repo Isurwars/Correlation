@@ -11,7 +11,7 @@
 
 namespace correlation::analysis {
 
-TEST(_09_TrajectoryAnalyzer_Tests, BasicUsage) {
+TEST(TrajectoryAnalyzerTests, BasicUsage) {
   // Create a dummy cell
   correlation::core::Cell cell;
   cell.setLatticeParameters({10, 10, 10, 90, 90, 90});

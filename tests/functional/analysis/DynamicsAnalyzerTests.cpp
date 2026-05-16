@@ -18,7 +18,7 @@ namespace correlation::analysis {
 // We need to locate the l-Bi.arc file
 const std::string EXAMPLE_FILE = "examples/l-Bi/l-Bi.arc";
 
-TEST(_10_DynamicsAnalyzer_Tests, CalculatesVACFFromExampletraj) {
+TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   // 1. Locate the file
   std::filesystem::path file_path = std::filesystem::absolute(EXAMPLE_FILE);
 
@@ -70,7 +70,7 @@ TEST(_10_DynamicsAnalyzer_Tests, CalculatesVACFFromExampletraj) {
   EXPECT_NEAR(norm_vacf[0], 1.0, 1e-5) << "Normalized VACF should start at 1.0";
 }
 
-TEST(_10_DynamicsAnalyzer_Tests, CalculatesVDOSCorrectly) {
+TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   // 1. Create synthetic VACF data: a simple cosine wave
   // v(t) = cos(2 * pi * f0 * t)
   // VDOS should show a peak at f0

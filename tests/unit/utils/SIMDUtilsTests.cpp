@@ -11,7 +11,7 @@
 #include <vector>
 
 // Test fixture for SIMDUtils
-class _20_SIMDUtils_Tests : public ::testing::Test {
+class SIMDUtilsTests : public ::testing::Test {
 protected:
   // Random number generator setup for generating test data
   std::mt19937 gen{1337}; // Fixed seed for reproducibility
@@ -32,7 +32,7 @@ protected:
 // -----------------------------------------------------------------------------
 // Test: sinc_integral (Fourier Transform core)
 // -----------------------------------------------------------------------------
-TEST_F(_20_SIMDUtils_Tests, SincIntegralMatchesScalar) {
+TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
   // Test both exact multiples of SIMD width and non-multiples to hit the tail
   // logic
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
@@ -63,7 +63,7 @@ TEST_F(_20_SIMDUtils_Tests, SincIntegralMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: compute_dsq_block (Distance Squared)
 // -----------------------------------------------------------------------------
-TEST_F(_20_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
+TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
 
   // Single atom A
@@ -103,7 +103,7 @@ TEST_F(_20_SIMDUtils_Tests, ComputeDsqBlockMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: normalize_rdf_bins
 // -----------------------------------------------------------------------------
-TEST_F(_20_SIMDUtils_Tests, NormalizeRDFBinsMatchesScalar) {
+TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
   const std::vector<size_t> sizes = {
       2,  5,  8,  9,
       16, 17, 33, 100}; // Need at least size 2 since bin 0 is skipped
@@ -156,7 +156,7 @@ TEST_F(_20_SIMDUtils_Tests, NormalizeRDFBinsMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: scale_bins
 // -----------------------------------------------------------------------------
-TEST_F(_20_SIMDUtils_Tests, ScaleBinsMatchesScalar) {
+TEST_F(SIMDUtilsTests, ScaleBinsMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100};
   const double scale_factor = 2.5;
 
@@ -180,7 +180,7 @@ TEST_F(_20_SIMDUtils_Tests, ScaleBinsMatchesScalar) {
 // -----------------------------------------------------------------------------
 // Test: dot_block
 // -----------------------------------------------------------------------------
-TEST_F(_20_SIMDUtils_Tests, DotBlockMatchesScalar) {
+TEST_F(SIMDUtilsTests, DotBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100};
 
   double v1x = dist(gen);

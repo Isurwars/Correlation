@@ -11,7 +11,7 @@
 
 namespace correlation::analysis {
 
-class _22_SteinhardtCalculator_Tests : public ::testing::Test {
+class SteinhardtCalculatorTests : public ::testing::Test {
 protected:
   void checkOutputs(const std::map<std::string, Histogram> &hists,
                     double expected_Q4, double expected_Q6,
@@ -47,7 +47,7 @@ protected:
   }
 };
 
-TEST_F(_22_SteinhardtCalculator_Tests, SimpleCubic) {
+TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
   correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
@@ -59,7 +59,7 @@ TEST_F(_22_SteinhardtCalculator_Tests, SimpleCubic) {
   checkOutputs(hists, 0.764, 0.354, 0.013);
 }
 
-TEST_F(_22_SteinhardtCalculator_Tests, BCC) {
+TEST_F(SteinhardtCalculatorTests, BCC) {
   correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
@@ -72,7 +72,7 @@ TEST_F(_22_SteinhardtCalculator_Tests, BCC) {
   checkOutputs(hists, 0.036, 0.511, 0.013);
 }
 
-TEST_F(_22_SteinhardtCalculator_Tests, FCC) {
+TEST_F(SteinhardtCalculatorTests, FCC) {
   correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.0});
@@ -87,7 +87,7 @@ TEST_F(_22_SteinhardtCalculator_Tests, FCC) {
   checkOutputs(hists, 0.191, 0.575, -0.013); // W6 for FCC is approx -0.013
 }
 
-TEST_F(_22_SteinhardtCalculator_Tests, Icosahedral) {
+TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 

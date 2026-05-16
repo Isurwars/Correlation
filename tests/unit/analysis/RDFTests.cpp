@@ -16,7 +16,7 @@
 namespace correlation::analysis {
 
 // Test fixture for DistributionFunctions tests.
-class _11_RDF_Tests : public ::testing::Test {
+class RDFTests : public ::testing::Test {
 protected:
   void SetUp() override {
     // A simple cubic cell containing two atoms
@@ -45,13 +45,13 @@ protected:
 //----------------------------- Constructors --------------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(_11_RDF_Tests, DefaultConstructorWorks) {
+TEST_F(RDFTests, DefaultConstructorWorks) {
   updateTrajectory();
   ASSERT_NO_THROW(
       DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
 }
 
-TEST_F(_11_RDF_Tests, MoveConstructorWorks) {
+TEST_F(RDFTests, MoveConstructorWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF(5.0, 0.1);
@@ -62,7 +62,7 @@ TEST_F(_11_RDF_Tests, MoveConstructorWorks) {
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
-TEST_F(_11_RDF_Tests, MoveAssignmentWorks) {
+TEST_F(RDFTests, MoveAssignmentWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF(5.0, 0.1);
@@ -78,7 +78,7 @@ TEST_F(_11_RDF_Tests, MoveAssignmentWorks) {
 //------------------------------- Accessors ---------------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(_11_RDF_Tests, AccessorsWork) {
+TEST_F(RDFTests, AccessorsWork) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -112,7 +112,7 @@ TEST_F(_11_RDF_Tests, AccessorsWork) {
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(_11_RDF_Tests, CalculateRDF) {
+TEST_F(RDFTests, CalculateRDF) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -136,7 +136,7 @@ TEST_F(_11_RDF_Tests, CalculateRDF) {
   EXPECT_NEAR(peak_r, 1.5, 0.001);
 }
 
-TEST_F(_11_RDF_Tests, CalculateCoordinationNumber) {
+TEST_F(RDFTests, CalculateCoordinationNumber) {
   // Use a setup where we know neighbors exactly
   correlation::core::Cell cnCall({10, 10, 10, 90, 90, 90});
   cnCall.addAtom("Si", {5, 5, 5});
@@ -163,7 +163,7 @@ TEST_F(_11_RDF_Tests, CalculateCoordinationNumber) {
   EXPECT_EQ(osi_cn[1], 2);
 }
 
-TEST_F(_11_RDF_Tests, Smoothing) {
+TEST_F(RDFTests, Smoothing) {
   updateTrajectory();
   DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df.calculateRDF(5.0, 0.1);
@@ -181,7 +181,7 @@ TEST_F(_11_RDF_Tests, Smoothing) {
   EXPECT_FALSE(cn_hist.smoothed_partials.empty());
 }
 
-TEST_F(_11_RDF_Tests, SetStructureAnalyzer) {
+TEST_F(RDFTests, SetStructureAnalyzer) {
   updateTrajectory();
   // Create an external analyzer
   StructureAnalyzer analyzer(cell_, 5.0, trajectory_.getBondCutoffsSQ());
@@ -199,7 +199,7 @@ TEST_F(_11_RDF_Tests, SetStructureAnalyzer) {
 //----------------------------- Accumulation --------------------------------//
 //---------------------------------------------------------------------------//
 
-TEST_F(_11_RDF_Tests, AddAndScale) {
+TEST_F(RDFTests, AddAndScale) {
   updateTrajectory();
   DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   df1.calculateRDF(5.0, 0.1);
@@ -235,7 +235,7 @@ TEST_F(_11_RDF_Tests, AddAndScale) {
   EXPECT_NEAR(peak, refPeak, 1e-6);
 }
 
-TEST_F(_11_RDF_Tests, ComputeMean) {
+TEST_F(RDFTests, ComputeMean) {
   updateTrajectory();
   TrajectoryAnalyzer ta(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
 
@@ -250,7 +250,7 @@ TEST_F(_11_RDF_Tests, ComputeMean) {
   EXPECT_NO_THROW(dfMean->getHistogram("g_r"));
 }
 
-TEST_F(_11_RDF_Tests, HandlesMissingPartialInAdd) {
+TEST_F(RDFTests, HandlesMissingPartialInAdd) {
   // Edge case: adding DFs with different partials (e.g. from different systems
   // or logic) Though usually DFs added should be compatible. If df2 has a key
   // that df1 doesn't, df1 should acquire it.

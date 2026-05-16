@@ -16,7 +16,7 @@ namespace correlation::calculators {
 // ============================================================================
 
 /// Passing a null neighbor pointer should return an empty histogram.
-TEST(_25_CNACalculator_Tests, NullNeighborsReturnsEmptyHistogram) {
+TEST(CNACalculatorTests, NullNeighborsReturnsEmptyHistogram) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
@@ -27,7 +27,7 @@ TEST(_25_CNACalculator_Tests, NullNeighborsReturnsEmptyHistogram) {
 }
 
 /// A single isolated atom with no neighbors produces no CNA pairs.
-TEST(_25_CNACalculator_Tests, SingleIsolatedAtomReturnsEmptyHistogram) {
+TEST(CNACalculatorTests, SingleIsolatedAtomReturnsEmptyHistogram) {
   correlation::core::Cell cell({100.0, 100.0, 100.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {50.0, 50.0, 50.0});
 
@@ -45,7 +45,7 @@ TEST(_25_CNACalculator_Tests, SingleIsolatedAtomReturnsEmptyHistogram) {
 
 /// All partial vectors must have the same size as the bins vector.
 /// This was the crash bug fixed earlier — ensure it never regresses.
-TEST(_25_CNACalculator_Tests, HistogramDimensionsAreConsistent) {
+TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
   // FCC conventional cell (4 atoms in a cube)
   correlation::core::Cell cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
   cell.addAtom("Al", {0.0, 0.0, 0.0});
@@ -68,7 +68,7 @@ TEST(_25_CNACalculator_Tests, HistogramDimensionsAreConsistent) {
 }
 
 /// The "Total" partial must sum to exactly 1.0 (within fp tolerance).
-TEST(_25_CNACalculator_Tests, TotalPartialSumsToOne) {
+TEST(CNACalculatorTests, TotalPartialSumsToOne) {
   correlation::core::Cell cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {2.0, 2.0, 0.0});
@@ -89,7 +89,7 @@ TEST(_25_CNACalculator_Tests, TotalPartialSumsToOne) {
 }
 
 /// Histogram metadata is correctly populated.
-TEST(_25_CNACalculator_Tests, HistogramMetadataIsPopulated) {
+TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
   correlation::core::Cell cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {2.0, 2.0, 0.0});
@@ -113,7 +113,7 @@ TEST(_25_CNACalculator_Tests, HistogramMetadataIsPopulated) {
 /// FCC 2×2×2 supercell (32 atoms) — standard CNA should produce
 /// non-empty results. This is a structural integration test verifying that
 /// the calculator runs correctly on a realistic periodic FCC system.
-TEST(_25_CNACalculator_Tests, FCC_Supercell_ProducesNonEmptyResult) {
+TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   double a = 4.0;
   double L = 2.0 * a; // 2×2×2 supercell
   correlation::core::Cell cell({L, L, L, 90.0, 90.0, 90.0});
@@ -153,7 +153,7 @@ TEST(_25_CNACalculator_Tests, FCC_Supercell_ProducesNonEmptyResult) {
 /// BCC CNA requires 2nd shell neighbors as common neighbors for 1st-shell pairs.
 /// With a cutoff that captures both shells (14 neighbors per atom), the
 /// resulting CNA indices depend on the full neighbor topology.
-TEST(_25_CNACalculator_Tests, BCC_Supercell_ProducesOutput) {
+TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   double a = 3.0;
   double L = 3.0 * a;
   correlation::core::Cell cell({L, L, L, 90.0, 90.0, 90.0});
@@ -192,7 +192,7 @@ TEST(_25_CNACalculator_Tests, BCC_Supercell_ProducesOutput) {
 // ============================================================================
 
 /// Two bonded atoms with no common neighbors should produce no CNA output.
-TEST(_25_CNACalculator_Tests, TwoAtomsNoCommonNeighbors) {
+TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {10.0, 10.0, 10.0});
   cell.addAtom("Ar", {12.0, 10.0, 10.0}); // 2 Å apart
@@ -211,7 +211,7 @@ TEST(_25_CNACalculator_Tests, TwoAtomsNoCommonNeighbors) {
 // ============================================================================
 
 /// Running CNA twice on the same structure should produce identical results.
-TEST(_25_CNACalculator_Tests, DeterministicResults) {
+TEST(CNACalculatorTests, DeterministicResults) {
   double a = 4.0;
   double L = 2.0 * a;
   correlation::core::Cell cell({L, L, L, 90.0, 90.0, 90.0});
@@ -251,7 +251,7 @@ TEST(_25_CNACalculator_Tests, DeterministicResults) {
 /// Tiny periodic cell: 4-atom FCC unit cell where every atom neighbors every
 /// other through multiple images. Verifies CNA doesn't crash on this edge case
 /// and still produces consistent histograms.
-TEST(_25_CNACalculator_Tests, TinyPeriodicCell_DoesNotCrash) {
+TEST(CNACalculatorTests, TinyPeriodicCell_DoesNotCrash) {
   double a = 4.0;
   correlation::core::Cell cell({a, a, a, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});

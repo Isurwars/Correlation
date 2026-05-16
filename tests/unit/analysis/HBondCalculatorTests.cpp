@@ -16,7 +16,7 @@ namespace correlation::calculators {
 // ============================================================================
 
 /// Passing a null neighbor pointer should return an empty histogram.
-TEST(_26_HBondCalculator_Tests, NullNeighborsReturnsEmptyHistogram) {
+TEST(HBondCalculatorTests, NullNeighborsReturnsEmptyHistogram) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {5.0, 5.0, 5.0});
 
@@ -33,7 +33,7 @@ TEST(_26_HBondCalculator_Tests, NullNeighborsReturnsEmptyHistogram) {
 /// A system with no electronegative atoms (O, N, F, S) produces no H-bonds.
 /// Note: the calculator still produces a histogram with bin {0} when there are
 /// no donors. We verify that the entire distribution is at N_HB=0.
-TEST(_26_HBondCalculator_Tests, NoElectronegativeAtomsNoHBonds) {
+TEST(HBondCalculatorTests, NoElectronegativeAtomsNoHBonds) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {5.0, 5.0, 5.0});
   cell.addAtom("H", {5.0, 5.0, 6.0});
@@ -56,7 +56,7 @@ TEST(_26_HBondCalculator_Tests, NoElectronegativeAtomsNoHBonds) {
 }
 
 /// A system with only hydrogens — no donors or acceptors.
-TEST(_26_HBondCalculator_Tests, OnlyHydrogensNoHBonds) {
+TEST(HBondCalculatorTests, OnlyHydrogensNoHBonds) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("H", {5.0, 5.0, 5.0});
   cell.addAtom("H", {5.0, 5.0, 6.0});
@@ -80,7 +80,7 @@ TEST(_26_HBondCalculator_Tests, OnlyHydrogensNoHBonds) {
 // ============================================================================
 
 /// Bins and all partial vectors must have matching sizes.
-TEST(_26_HBondCalculator_Tests, HistogramDimensionsAreConsistent) {
+TEST(HBondCalculatorTests, HistogramDimensionsAreConsistent) {
   // Simple water-like: O-H...O
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // Donor water
@@ -102,7 +102,7 @@ TEST(_26_HBondCalculator_Tests, HistogramDimensionsAreConsistent) {
 }
 
 /// The distribution must sum to 1.0 (normalized over electronegative atoms).
-TEST(_26_HBondCalculator_Tests, TotalDistributionSumsToOne) {
+TEST(HBondCalculatorTests, TotalDistributionSumsToOne) {
   // 3 water molecules forming H-bonds
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // Water 1: donor
@@ -133,7 +133,7 @@ TEST(_26_HBondCalculator_Tests, TotalDistributionSumsToOne) {
 }
 
 /// Histogram metadata should be correctly set.
-TEST(_26_HBondCalculator_Tests, HistogramMetadataIsPopulated) {
+TEST(HBondCalculatorTests, HistogramMetadataIsPopulated) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {10.0, 10.0, 10.0});
   cell.addAtom("H", {10.0, 10.0, 10.96});
@@ -158,7 +158,7 @@ TEST(_26_HBondCalculator_Tests, HistogramMetadataIsPopulated) {
 /// A textbook O-H...O hydrogen bond: D-A < 3.5 Å, angle H-D...A < 30°.
 /// Place atoms in a straight line: O(donor) — H — O(acceptor).
 /// Angle H-D...A = 0° (perfectly aligned), distance D-A = 2.5 Å.
-TEST(_26_HBondCalculator_Tests, LinearHBond_IsDetected) {
+TEST(HBondCalculatorTests, LinearHBond_IsDetected) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // O donor at origin
   cell.addAtom("O", {10.0, 10.0, 10.0});
@@ -190,7 +190,7 @@ TEST(_26_HBondCalculator_Tests, LinearHBond_IsDetected) {
 /// An O-H...O geometry where the H points away from the acceptor.
 /// By placing H on the opposite side of the donor from the acceptor AND
 /// ensuring H is far from the acceptor (> bond cutoff), no H-bond forms.
-TEST(_26_HBondCalculator_Tests, OppositeDirection_NotDetected) {
+TEST(HBondCalculatorTests, OppositeDirection_NotDetected) {
   correlation::core::Cell cell({40.0, 40.0, 40.0, 90.0, 90.0, 90.0});
   // O donor at center
   cell.addAtom("O", {20.0, 20.0, 20.0});
@@ -219,7 +219,7 @@ TEST(_26_HBondCalculator_Tests, OppositeDirection_NotDetected) {
 }
 
 /// D-A distance > 3.5 Å: even with perfect alignment, no H-bond.
-TEST(_26_HBondCalculator_Tests, TooFarApart_NotDetected) {
+TEST(HBondCalculatorTests, TooFarApart_NotDetected) {
   correlation::core::Cell cell({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   // O donor
   cell.addAtom("O", {10.0, 10.0, 10.0});
@@ -245,7 +245,7 @@ TEST(_26_HBondCalculator_Tests, TooFarApart_NotDetected) {
 // ============================================================================
 
 /// N-H...O hydrogen bond should also be detected.
-TEST(_26_HBondCalculator_Tests, NitrogenDonor_IsDetected) {
+TEST(HBondCalculatorTests, NitrogenDonor_IsDetected) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // N donor
   cell.addAtom("N", {10.0, 10.0, 10.0});
@@ -274,7 +274,7 @@ TEST(_26_HBondCalculator_Tests, NitrogenDonor_IsDetected) {
 }
 
 /// F-H...F hydrogen bond (fluorine donor and acceptor).
-TEST(_26_HBondCalculator_Tests, FluorineDonorAndAcceptor) {
+TEST(HBondCalculatorTests, FluorineDonorAndAcceptor) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // F donor
   cell.addAtom("F", {10.0, 10.0, 10.0});
@@ -305,7 +305,7 @@ TEST(_26_HBondCalculator_Tests, FluorineDonorAndAcceptor) {
 // ============================================================================
 
 /// H and donor at the same position (degenerate). Should not crash (NaN guard).
-TEST(_26_HBondCalculator_Tests, CoincidentHAndDonor_DoesNotCrash) {
+TEST(HBondCalculatorTests, CoincidentHAndDonor_DoesNotCrash) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // O and H at exactly the same position
   cell.addAtom("O", {10.0, 10.0, 10.0});
@@ -332,7 +332,7 @@ TEST(_26_HBondCalculator_Tests, CoincidentHAndDonor_DoesNotCrash) {
 
 /// Electronegative atom with no bonded hydrogens is just an acceptor (0 H-bonds
 /// as donor). It may still appear with 0 or more H-bonds if it's an acceptor.
-TEST(_26_HBondCalculator_Tests, AcceptorOnly_NoHydrogens) {
+TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   // O with no bonded H — can only be acceptor, not donor
   cell.addAtom("O", {10.0, 10.0, 10.0});
@@ -353,7 +353,7 @@ TEST(_26_HBondCalculator_Tests, AcceptorOnly_NoHydrogens) {
 
 /// Large system with many atoms but no valid H-bond geometry.
 /// Tests performance and correctness under bulk non-bonding conditions.
-TEST(_26_HBondCalculator_Tests, BulkMetalNoHBonds) {
+TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // 4-atom FCC copper — no H, O, N, F, S atoms at all
   double a = 3.6;
   correlation::core::Cell cell({a, a, a, 90.0, 90.0, 90.0});
@@ -378,7 +378,7 @@ TEST(_26_HBondCalculator_Tests, BulkMetalNoHBonds) {
 }
 
 /// Deterministic: running twice gives the same result.
-TEST(_26_HBondCalculator_Tests, DeterministicResults) {
+TEST(HBondCalculatorTests, DeterministicResults) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("O", {10.0, 10.0, 10.0});
   cell.addAtom("H", {10.0, 10.0, 10.96});

@@ -11,7 +11,7 @@
 
 namespace correlation::analysis {
 
-class _18_DAD_Tests : public ::testing::Test {
+class DADTests : public ::testing::Test {
 protected:
   correlation::core::Cell cell;
 
@@ -28,7 +28,7 @@ protected:
   }
 };
 
-TEST_F(_18_DAD_Tests, BasicCalculation) {
+TEST_F(DADTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
   double r_cut = 1.5;
   std::vector<std::vector<double>> bond_cutoffs(
@@ -57,7 +57,7 @@ TEST_F(_18_DAD_Tests, BasicCalculation) {
   EXPECT_NEAR(sum * bin_width, 1.0, 1e-5);
 }
 
-TEST_F(_18_DAD_Tests, IcosahedronAnglesDAD) {
+TEST_F(DADTests, IcosahedronAnglesDAD) {
   correlation::core::Cell cell_iso;
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center

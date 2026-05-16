@@ -11,7 +11,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-class _06_DihedralCalculator_Tests : public ::testing::Test {
+class DihedralCalculatorTests : public ::testing::Test {
 protected:
   correlation::core::Cell cell;
   correlation::core::NeighborGraph graph;
@@ -23,7 +23,7 @@ protected:
   }
 };
 
-TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect90DegreeDihedral) {
+TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   // 4 atoms forming a 90-degree dihedral:
   // A: (1, 0, 0)
   // B: (0, 0, 0)
@@ -78,7 +78,7 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect90DegreeDihedral) {
   EXPECT_NEAR(angles[0], correlation::math::pi / 2.0, 1e-12);
 }
 
-TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect0DegreeDihedral) {
+TEST_F(DihedralCalculatorTests, ComputesCorrect0DegreeDihedral) {
   // A: (1, 1, 0)
   // B: (0, 1, 0)
   // C: (0, -1, 0)
@@ -116,7 +116,7 @@ TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect0DegreeDihedral) {
   EXPECT_NEAR(angles[0], 0.0, 1e-12);
 }
 
-TEST_F(_06_DihedralCalculator_Tests, ComputesCorrect180DegreeDihedral) {
+TEST_F(DihedralCalculatorTests, ComputesCorrect180DegreeDihedral) {
   // A: (1, 1, 0)
   // B: (0, 1, 0)
   // C: (0, -1, 0)
