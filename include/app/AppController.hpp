@@ -49,6 +49,7 @@ private:
 
   std::unique_ptr<pfd::open_file> current_file_dialog_; ///< Active file open dialog handler.
   std::unique_ptr<pfd::save_file> current_save_dialog_; ///< Active file save dialog handler.
+  std::unique_ptr<pfd::save_file> current_plot_save_dialog_; ///< Active plot save dialog handler.
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
   std::thread load_thread_;     ///< Handle for the background file loading process.
@@ -136,5 +137,11 @@ private:
    * @param index The index of the selected plot in the dropdown menu.
    */
   void handleSelectPlot(int index);
+
+  /**
+   * @brief Handles the "Save Plot" signal from the UI.
+   * Opens a save file dialog to export the currently selected plot as SVG.
+   */
+  void handleSavePlot();
 };
 } // namespace correlation::app

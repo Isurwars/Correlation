@@ -116,6 +116,7 @@ export component AppWindow inherits Window {
     callback select_plot(int);
     callback toggle_calculator(string, bool);
     callback check_file_dialog_status();
+    callback save_plot();
 
     // ============================================================================
     // Core Layout Logic
@@ -288,6 +289,9 @@ export component AppWindow inherits Window {
                     selected_plot_index <=> root.selected_plot_index;
                     plot_selected(idx) => {
                         root.select_plot(idx);
+                    }
+                    save_plot => {
+                        root.save_plot();
                     }
                 }
             }

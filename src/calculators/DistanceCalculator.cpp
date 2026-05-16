@@ -46,6 +46,7 @@ struct ThreadLocalDistances {
   std::vector<double> soa_y;      ///< Scratch for y-coordinates.
   std::vector<double> soa_z;      ///< Scratch for z-coordinates.
   std::vector<double> dsq_scratch; ///< Scratch for squared distance results.
+  std::vector<size_t> candidate_j; ///< Scratch for candidate indices.
 
   /**
    * @brief Constructs thread-local storage.
@@ -69,38 +70,60 @@ void DistanceCalculator::compute(
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 
-  correlation::math::Vector3<double> box_sidelengths = {
-      correlation::math::norm(lattice[0]), correlation::math::norm(lattice[1]),
-      correlation::math::norm(lattice[2])};
-  int nx =
-      static_cast<int>(std::ceil(std::sqrt(cutoff_sq) / box_sidelengths.x()));
-  int ny =
-      static_cast<int>(std::ceil(std::sqrt(cutoff_sq) / box_sidelengths.y()));
-  int nz =
-      static_cast<int>(std::ceil(std::sqrt(cutoff_sq) / box_sidelengths.z()));
-
-  if (nx + ny + nz > 8) {
-    ignore_periodic_self_interactions = false;
+  // New Cell-List logic
+  math::Vector3<double> a = lattice[0];
+  math::Vector3<double> b = lattice[1];
+  math::Vector3<double> c = lattice[2];
+  
+  double vol = cell.volume();
+  double width_x = vol / correlation::math::norm(correlation::math::cross(b, c));
+  double width_y = vol / correlation::math::norm(correlation::math::cross(a, c));
+  double width_z = vol / correlation::math::norm(correlation::math::cross(a, b));
+  
+  double cutoff = std::sqrt(cutoff_sq);
+  
+  int Kx = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
+  int Ky = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
+  int Kz = std::max(1, static_cast<int>(std::floor(width_z / cutoff)));
+  
+  int max_dx = (Kx == 1) ? static_cast<int>(std::ceil(cutoff / width_x)) : 1;
+  int max_dy = (Ky == 1) ? static_cast<int>(std::ceil(cutoff / width_y)) : 1;
+  int max_dz = (Kz == 1) ? static_cast<int>(std::ceil(cutoff / width_z)) : 1;
+  
+  if (max_dx + max_dy + max_dz > 8) {
+      ignore_periodic_self_interactions = false;
   }
 
-  std::vector<correlation::math::Vector3<double>> displacements;
-  for (int i = -nx; i <= nx; ++i) {
-    for (int j = -ny; j <= ny; ++j) {
-      for (int k = -nz; k <= nz; ++k) {
-        displacements.push_back(lattice[0] * i + lattice[1] * j +
-                                lattice[2] * k);
-      }
-    }
-  }
+  size_t num_bins = static_cast<size_t>(Kx * Ky * Kz);
+  std::vector<std::vector<size_t>> bins(num_bins);
+  
+  std::vector<int> atom_bin(atom_count);
+  std::vector<correlation::math::Vector3<double>> wrapped_positions(atom_count);
 
-  std::vector<size_t> atom_indices(atom_count);
-  std::iota(atom_indices.begin(), atom_indices.end(), 0);
+  for (size_t i = 0; i < atom_count; ++i) {
+    correlation::math::Vector3<double> frac =
+        cell.inverseLatticeVectors() * atoms[i].position();
+    double fx = frac.x() - std::floor(frac.x());
+    double fy = frac.y() - std::floor(frac.y());
+    double fz = frac.z() - std::floor(frac.z());
+
+    wrapped_positions[i] = lattice[0] * fx + lattice[1] * fy + lattice[2] * fz;
+
+    int cx = std::clamp(static_cast<int>(std::floor(fx * Kx)), 0, Kx - 1);
+    int cy = std::clamp(static_cast<int>(std::floor(fy * Ky)), 0, Ky - 1);
+    int cz = std::clamp(static_cast<int>(std::floor(fz * Kz)), 0, Kz - 1);
+
+    int bin_idx = cx * (Ky * Kz) + cy * Kz + cz;
+    bins[bin_idx].push_back(i);
+    atom_bin[i] = bin_idx;
+  }
 
   tbb::enumerable_thread_specific<ThreadLocalDistances> ets(num_elements,
                                                             atom_count);
 
-  tbb::parallel_for_each(
-      atom_indices.begin(), atom_indices.end(), [&](size_t i) {
+  tbb::parallel_for(
+      tbb::blocked_range<size_t>(0, atom_count),
+      [&](const tbb::blocked_range<size_t> &r) {
         ThreadLocalDistances &local_results = ets.local();
         auto &distance_local = local_results.distance_tensor_local;
         auto &neighbor_local = local_results.neighbor_list_local;
@@ -109,97 +132,105 @@ void DistanceCalculator::compute(
         auto &soa_y = local_results.soa_y;
         auto &soa_z = local_results.soa_z;
         auto &dsq_buf = local_results.dsq_scratch;
+        auto &candidate_j = local_results.candidate_j;
 
-        const auto &atom_A = atoms[i];
-        const int type_A = atom_A.element_id();
-        const double ax = atom_A.position().x();
-        const double ay = atom_A.position().y();
-        const double az = atom_A.position().z();
+        for (size_t i = r.begin(); i != r.end(); ++i) {
+          const auto &atom_A = atoms[i];
+          const int type_A = atom_A.element_id();
+          const double ax = wrapped_positions[i].x();
+          const double ay = wrapped_positions[i].y();
+          const double az = wrapped_positions[i].z();
 
-        // j ranges from i to atom_count-1 (upper triangle + self)
-        const size_t j_count = atom_count - i;
+          int cx = atom_bin[i] / (Ky * Kz);
+          int cy = (atom_bin[i] / Kz) % Ky;
+          int cz = atom_bin[i] % Kz;
+          
+          size_t c_count = 0;
 
-        // Ensure scratch buffers are large enough
-        if (soa_x.size() < j_count) {
-          soa_x.resize(j_count);
-          soa_y.resize(j_count);
-          soa_z.resize(j_count);
-          dsq_buf.resize(j_count);
+          for (int dx = -max_dx; dx <= max_dx; ++dx) {
+            int nx_bin = cx + dx;
+            int shift_x = (nx_bin >= 0) ? (nx_bin / Kx) : ((nx_bin - Kx + 1) / Kx);
+            int wrap_x = nx_bin - shift_x * Kx;
+            
+            for (int dy = -max_dy; dy <= max_dy; ++dy) {
+                int ny_bin = cy + dy;
+                int shift_y = (ny_bin >= 0) ? (ny_bin / Ky) : ((ny_bin - Ky + 1) / Ky);
+                int wrap_y = ny_bin - shift_y * Ky;
+                
+                for (int dz = -max_dz; dz <= max_dz; ++dz) {
+                    int nz_bin = cz + dz;
+                    int shift_z = (nz_bin >= 0) ? (nz_bin / Kz) : ((nz_bin - Kz + 1) / Kz);
+                    int wrap_z = nz_bin - shift_z * Kz;
+                    
+                    int n_bin_idx = wrap_x * (Ky * Kz) + wrap_y * Kz + wrap_z;
+                    
+                    correlation::math::Vector3<double> disp = lattice[0] * shift_x + lattice[1] * shift_y + lattice[2] * shift_z;
+                    bool zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
+                    
+                    for (size_t j : bins[n_bin_idx]) {
+                        if (j < i) continue;
+                        
+                        if (i == j && zero_disp) continue;
+                        if (i == j && ignore_periodic_self_interactions) continue;
+                        
+                        auto pos_B = wrapped_positions[j];
+                        double shifted_x = pos_B.x() + disp.x();
+                        double shifted_y = pos_B.y() + disp.y();
+                        double shifted_z = pos_B.z() + disp.z();
+                        
+                        if (soa_x.size() <= c_count) {
+                            soa_x.push_back(shifted_x);
+                            soa_y.push_back(shifted_y);
+                            soa_z.push_back(shifted_z);
+                            candidate_j.push_back(j);
+                            dsq_buf.push_back(0.0);
+                        } else {
+                            soa_x[c_count] = shifted_x;
+                            soa_y[c_count] = shifted_y;
+                            soa_z[c_count] = shifted_z;
+                            candidate_j[c_count] = j;
+                        }
+                        c_count++;
+                    }
+                }
+            }
         }
 
-        // -----------------------------------------------------------------------
-        // For each periodic image displacement, build a shifted SoA block for
-        // all j in [i, atom_count) and run the SIMD squared-distance kernel.
-        // -----------------------------------------------------------------------
-        for (const auto &disp : displacements) {
-          const double disp_sq = correlation::math::norm_sq(disp);
-          const bool zero_disp = (disp_sq < 1e-9);
+        if (c_count > 0) {
+            correlation::math::PositionBlock block{soa_x.data(), soa_y.data(), soa_z.data(), c_count};
+            correlation::math::compute_dsq_block(ax, ay, az, block, dsq_buf.data());
 
-          // Build SoA: shifted positions of atom_B candidates
-          for (size_t jj = 0; jj < j_count; ++jj) {
-            const auto &pos_B = atoms[i + jj].position();
-            soa_x[jj] = pos_B.x() + disp.x();
-            soa_y[jj] = pos_B.y() + disp.y();
-            soa_z[jj] = pos_B.z() + disp.z();
-          }
-
-          // SIMD pass: compute dsq[jj] = ||atom_A - shifted_atom_B[jj]||²
-          correlation::math::PositionBlock block{soa_x.data(), soa_y.data(),
-                                                 soa_z.data(), j_count};
-          correlation::math::compute_dsq_block(ax, ay, az, block,
-                                               dsq_buf.data());
-
-          // -----------------------------------------------------------------------
-          // Scalar post-processing: apply cutoff and record output
-          // Mirrors the original logic exactly:
-          //   - i == j with zero-displacement → skip always (same atom, same
-          //   image)
-          //   - i == j with non-zero displacement → periodic self-image:
-          //       skip if ignore_periodic_self_interactions is true
-          //   - i != j → normal pair
-          // -----------------------------------------------------------------------
-          for (size_t jj = 0; jj < j_count; ++jj) {
-            const size_t j = i + jj;
-
-            // Skip self with zero displacement (exact same image of same atom)
-            if (i == j && zero_disp) {
-              continue;
+            for (size_t k = 0; k < c_count; ++k) {
+                double d_sq = dsq_buf[k];
+                if (d_sq >= cutoff_sq) continue;
+                
+                size_t j = candidate_j[k];
+                double dist = std::sqrt(d_sq);
+                int type_B = atoms[j].element_id();
+                
+                distance_local[type_A][type_B].push_back(dist);
+                if (i != j && type_A != type_B) {
+                    distance_local[type_B][type_A].push_back(dist);
+                }
+                
+                double max_bond_dist_sq = 0.0;
+                if (static_cast<size_t>(type_A) < bond_cutoffs_sq.size() &&
+                    static_cast<size_t>(type_B) < bond_cutoffs_sq[type_A].size()) {
+                    max_bond_dist_sq = bond_cutoffs_sq[type_A][type_B];
+                }
+                
+                if (d_sq <= max_bond_dist_sq) {
+                    correlation::math::Vector3<double> r_ij = {
+                        soa_x[k] - ax, soa_y[k] - ay, soa_z[k] - az
+                    };
+                    neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
+                    if (i != j) {
+                        neighbor_local[j].push_back({atom_A.id(), dist, -1.0 * r_ij});
+                    }
+                }
             }
-            // Skip periodic self-images if requested
-            if (i == j && ignore_periodic_self_interactions) {
-              continue;
-            }
-
-            const double d_sq = dsq_buf[jj];
-            if (d_sq >= cutoff_sq)
-              continue;
-
-            const double dist = std::sqrt(d_sq);
-
-            distance_local[type_A][atoms[j].element_id()].push_back(dist);
-            if (i != j && type_A != atoms[j].element_id()) {
-              distance_local[atoms[j].element_id()][type_A].push_back(dist);
-            }
-
-            // Neighbor graph
-            const int type_B = atoms[j].element_id();
-            double max_bond_dist_sq = 0.0;
-            if (static_cast<size_t>(type_A) < bond_cutoffs_sq.size() &&
-                static_cast<size_t>(type_B) < bond_cutoffs_sq[type_A].size()) {
-              max_bond_dist_sq = bond_cutoffs_sq[type_A][type_B];
-            }
-
-            if (d_sq <= max_bond_dist_sq) {
-              // r_ij = (pos_B + disp) - pos_A  — already stored in soa arrays
-              correlation::math::Vector3<double> r_ij = {
-                  soa_x[jj] - ax, soa_y[jj] - ay, soa_z[jj] - az};
-              neighbor_local[i].push_back({atoms[j].id(), dist, r_ij});
-              if (i != j) {
-                neighbor_local[j].push_back({atom_A.id(), dist, -1.0 * r_ij});
-              }
-            }
-          }
         }
+        } // close for (size_t i...)
       });
 
   for (auto &local_results : ets) {

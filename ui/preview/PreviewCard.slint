@@ -12,6 +12,7 @@ import {
     DropDownMenu,
     MenuItem,
     Vertical,
+    FilledButton,
 } from "../material/material.slint";
 
 // ============================================================================
@@ -39,6 +40,7 @@ export component PreviewCard inherits FilledCard {
     in-out property <int> selected_plot_index: -1;
 
     callback plot_selected(int);
+    callback save_plot();
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
@@ -53,19 +55,33 @@ export component PreviewCard inherits FilledCard {
             color: MaterialPalette.on_surface_variant;
         }
 
-        // Plot selector dropdown
-        plot_dropdown_area := TouchArea {
+        // Plot selector dropdown and Save Plot button
+        HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
             height: MaterialStyleMetrics.size_40;
-            DropDownMenu {
-                width: 100%;
-                height: 100%;
-                label: "Select Plot";
-                enabled: root.plot_items.length > 0;
-                items: root.plot_items;
-                current_index <=> root.selected_plot_index;
+            
+            plot_dropdown_area := TouchArea {
+                horizontal-stretch: 1;
+                DropDownMenu {
+                    width: 100%;
+                    height: 100%;
+                    label: "Select Plot";
+                    enabled: root.plot_items.length > 0;
+                    items: root.plot_items;
+                    current_index <=> root.selected_plot_index;
 
-                selected(idx) => {
-                    root.plot_selected(idx);
+                    selected(idx) => {
+                        root.plot_selected(idx);
+                    }
+                }
+            }
+
+            // Optional Save Plot Button
+            FilledButton {
+                text: "Save Plot";
+                enabled: root.preview_plot.width > 0;
+                clicked => {
+                    root.save_plot();
                 }
             }
         }

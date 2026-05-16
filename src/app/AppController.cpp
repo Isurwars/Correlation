@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
+#include <fstream>
 #include <format>
 #include <map>
 #include <string>
@@ -53,6 +54,9 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
 
   // Handle plot selection: generate SVG and push to UI
   ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
+
+  // Handle save plot request
+  ui_.on_save_plot([this]() { handleSavePlot(); });
 }
 
 AppController::~AppController() {
@@ -441,7 +445,11 @@ void AppController::handleCheckFileDialogStatus() {
 
       load_thread_ = std::thread([this, filepath]() {
         backend_.setProgressCallback([this](float p, const std::string &msg) {
-          updateProgress(p, msg);
+          slint::invoke_from_event_loop([=, this]() {
+            if (!msg.empty()) {
+              ui_.set_file_status_text(slint::SharedString(msg));
+            }
+          });
         });
 
         std::string message;
@@ -458,7 +466,6 @@ void AppController::handleCheckFileDialogStatus() {
           ui_.set_file_status_text(slint::SharedString(message));
           ui_.set_timer_running(false);
           ui_.set_text_opacity(false);
-          ui_.set_progress(1.0f);
 
           if (success && backend_.cell()) {
             ui_.set_file_loaded(true);
@@ -531,6 +538,41 @@ void AppController::handleCheckFileDialogStatus() {
     });
     current_save_dialog_.reset();
   }
+
+  if (current_plot_save_dialog_ && current_plot_save_dialog_->ready(0)) {
+    std::string result = current_plot_save_dialog_->result();
+    if (!result.empty()) {
+      int index = ui_.get_selected_plot_index();
+      if (index >= 0 && index < static_cast<int>(available_plot_keys_.size())) {
+        const std::string &name = available_plot_keys_[index];
+        const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+        if (hist) {
+          correlation::plotters::PlotConfig config;
+          config.theme = ui_.get_is_dark()
+                             ? correlation::plotters::PlotConfig::Theme::Dark
+                             : correlation::plotters::PlotConfig::Theme::Light;
+          std::string svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+          
+          std::ofstream out(result);
+          if (out.is_open()) {
+            out << svg;
+            out.close();
+            ui_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
+          } else {
+            ui_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
+          }
+        }
+      }
+    } else {
+      ui_.set_analysis_status_text(
+          slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+    }
+    slint::invoke_from_event_loop([this]() {
+      ui_.set_timer_running(false);
+      ui_.set_text_opacity(false);
+    });
+    current_plot_save_dialog_.reset();
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -598,4 +640,31 @@ void AppController::handleSelectPlot(int index) {
       "svg");
   ui_.set_preview_plot(img);
 }
+
+void AppController::handleSavePlot() {
+  int index = ui_.get_selected_plot_index();
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
+    return;
+  const std::string &name = available_plot_keys_[index];
+  const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+  if (!hist)
+    return;
+
+  std::string default_path = backend_.options().output_file_base;
+  if (!default_path.empty()) {
+      default_path += "_" + name + ".svg";
+  } else {
+      default_path = name + ".svg";
+  }
+
+  current_plot_save_dialog_ = std::make_unique<pfd::save_file>(
+      "Save SVG Plot", default_path,
+      std::vector<std::string>{"SVG Image", "*.svg", "All Files", "*"}, pfd::opt::none);
+
+  ui_.set_timer_running(true);
+  ui_.set_text_opacity(true);
+  ui_.set_analysis_status_text(
+      slint::SharedString(std::string("Saving ") + name + " plot..."));
+}
+
 } // namespace correlation::app
