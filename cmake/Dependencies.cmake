@@ -154,6 +154,22 @@ else()
   endif()
 endif()
 
+# 5.1 Google Benchmark
+find_package(benchmark QUIET)
+if(benchmark_FOUND)
+  message(STATUS "Found Google Benchmark: ${benchmark_DIR} (Version: ${benchmark_VERSION})")
+else()
+  message(STATUS "Google Benchmark not found. Downloading from GitHub...")
+  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable benchmark tests" FORCE)
+  set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "Disable benchmark install" FORCE)
+  FetchContent_Declare(
+    googlebenchmark
+    GIT_REPOSITORY https://github.com/google/benchmark.git
+    GIT_TAG v1.8.3
+  )
+  FetchContent_MakeAvailable(googlebenchmark)
+endif()
+
 # 6. Arrow/Parquet
 find_package(Arrow QUIET)
 find_package(Parquet QUIET)
