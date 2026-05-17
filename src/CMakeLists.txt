@@ -50,6 +50,7 @@ add_library(calculators_obj OBJECT
     calculators/MSDCalculator.cpp
     calculators/CalculatorFactory.cpp
     calculators/SDFCalculator.cpp
+    calculators/ClusterCalculator.cpp
 )
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include

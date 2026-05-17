@@ -29,7 +29,7 @@ Enhancing the suite of structural and dynamic analysis tools.
 - [x] **Steinhardt Bond-Orientational Parameters ($Q_4, Q_6, W_6$)**: Gold standard for liquid vs. solid structure.
 - [x] **Hydrogen Bond Analysis**: Geometric criteria and autocorrelation functions for H-bond lifetimes.
 - [x] **Spatial Distribution Functions (SDF)**: 3D probability density mapping. The initial focus will be on exporting 3D density maps (e.g., `.cube` files) for external visualization.
-- [ ] **Cluster Analysis**: Connectivity-based clustering algorithms to identify molecular fragments or crystalline grains.
+- [x] **Cluster Analysis**: Connectivity-based clustering algorithms to identify molecular fragments or crystalline grains.
 
 ## 3. Integration (Interoperability & Python)
 Expanding support to attract users from various computational chemistry and physics communities.

@@ -36,6 +36,7 @@ add_executable(correlation_unit_tests
     unit/analysis/CNACalculatorTests.cpp
     unit/analysis/HBondCalculatorTests.cpp
     unit/analysis/SDFCalculatorTests.cpp
+    unit/analysis/ClusterCalculatorTests.cpp
     unit/utils/SIMDUtilsTests.cpp
     unit/app/AppBackendTests.cpp
     ../src/app/AppBackend.cpp
