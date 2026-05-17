@@ -20,6 +20,8 @@ add_executable(correlation_unit_tests
     unit/io/WriterTests.cpp
     unit/io/VaspReaderTests.cpp
     unit/io/XdatcarReaderTests.cpp
+    unit/io/QEReaderTests.cpp
+    unit/io/CP2KReaderTests.cpp
     unit/analysis/DihedralCalculatorTests.cpp
     unit/analysis/MotifFinderTests.cpp
     unit/analysis/RDFTests.cpp
@@ -33,6 +35,7 @@ add_executable(correlation_unit_tests
     unit/analysis/SteinhardtCalculatorTests.cpp
     unit/analysis/CNACalculatorTests.cpp
     unit/analysis/HBondCalculatorTests.cpp
+    unit/analysis/SDFCalculatorTests.cpp
     unit/utils/SIMDUtilsTests.cpp
     unit/app/AppBackendTests.cpp
     ../src/app/AppBackend.cpp

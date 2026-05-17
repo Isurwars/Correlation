@@ -16,6 +16,8 @@ add_library(readers_obj OBJECT
     readers/XdatcarReader.cpp
     readers/FileReader.cpp
     readers/ReaderFactory.cpp
+    readers/QEReader.cpp
+    readers/CP2KReader.cpp
 )
 target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
@@ -47,6 +49,7 @@ add_library(calculators_obj OBJECT
     calculators/SteinhardtCalculator.cpp
     calculators/MSDCalculator.cpp
     calculators/CalculatorFactory.cpp
+    calculators/SDFCalculator.cpp
 )
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
