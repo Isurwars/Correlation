@@ -101,6 +101,7 @@ const StructureAnalyzer *DistributionFunctions::neighbors() const {
 
 const Histogram &
 DistributionFunctions::getHistogram(const std::string &name) const {
+  std::lock_guard<std::mutex> lock(histogram_mutex_);
   auto it = histograms_.find(name);
   if (it == histograms_.end()) {
     throw std::out_of_range("Histogram '" + name + "' not found.");
@@ -123,10 +124,12 @@ void DistributionFunctions::ensureNeighborsComputed(double r_max) {
 
 void DistributionFunctions::addHistogram(const std::string &name,
                                          Histogram &&histogram) {
+  std::lock_guard<std::mutex> lock(histogram_mutex_);
   histograms_[name] = std::move(histogram);
 }
 
 std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
+  std::lock_guard<std::mutex> lock(histogram_mutex_);
   std::vector<std::string> keys;
   keys.reserve(histograms_.size());
   // Iterate through the map of histograms and extract the key for each entry.
@@ -432,13 +435,17 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           const auto &factory_calcs =
               ::correlation::calculators::CalculatorFactory::instance()
                   .getCalculators();
+          tbb::task_group calc_group;
           for (const auto &calc : factory_calcs) {
             if (!calc->isFrameCalculator())
               continue;
             if (!settings.isActive(calc->getName()))
               continue;
-            calc->calculateFrame(*frame_df, settings);
+            calc_group.run([&calc, df_ptr = frame_df.get(), &settings]() {
+              calc->calculateFrame(*df_ptr, settings);
+            });
           }
+          calc_group.wait();
 
           results[i] = std::move(frame_df);
 

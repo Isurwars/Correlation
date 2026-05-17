@@ -15,6 +15,7 @@
 #include <stdexcept>
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_reduce.h>
+#include <tbb/task_group.h>
 #include <vector>
 
 namespace correlation::analysis {
@@ -88,10 +89,17 @@ StructureAnalyzer::StructureAnalyzer(
   correlation::calculators::DistanceCalculator::compute(
       cell_, cutoff_sq_, bond_cutoffs_sq_, ignore_periodic_self_interactions_,
       distance_tensor_, neighbor_graph_);
-  correlation::calculators::AngleCalculator::compute(cell_, neighbor_graph_,
-                                                     angle_tensor_);
-  correlation::calculators::DihedralCalculator::compute(cell_, neighbor_graph_,
-                                                        dihedral_tensor_);
+
+  tbb::task_group tg;
+  tg.run([&]() {
+    correlation::calculators::AngleCalculator::compute(cell_, neighbor_graph_,
+                                                       angle_tensor_);
+  });
+  tg.run([&]() {
+    correlation::calculators::DihedralCalculator::compute(cell_, neighbor_graph_,
+                                                          dihedral_tensor_);
+  });
+  tg.wait();
 }
 
 } // namespace correlation::analysis

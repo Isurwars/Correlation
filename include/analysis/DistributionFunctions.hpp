@@ -16,6 +16,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -334,6 +335,7 @@ private:
 
   std::map<std::string, Histogram> histograms_; ///< Storage for all analysis results.
   std::map<std::string, double> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
+  mutable std::mutex histogram_mutex_; ///< Protects concurrent access to histograms_.
 };
 
 } // namespace correlation::analysis

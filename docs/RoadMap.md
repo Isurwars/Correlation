@@ -17,7 +17,7 @@ Modernizing the core engine for massive datasets and pushing the limits of compu
 - [x] **Explicit SIMD Vectorization**: AVX2/AVX-512 optimization for core calculation loops.
 - [x] **Plugin/Factory Pattern**: Decoupled architecture for readers and calculators.
 - [x] **Spatial Partitioning (Cell-Lists)**: Implement $O(N)$ neighbor search to replace the current $O(N^2)$ distance tensor approach for large systems.
-- [ ] **Task-Based Parallelism**: Advanced TBB task graph implementation for better multi-core scaling.
+- [x] **Task-Based Parallelism**: Advanced TBB task graph implementation for better multi-core scaling.
 - [ ] **Memory-Mapped I/O**: Efficient loading of multi-gigabyte trajectories.
 - [ ] **GPU Acceleration**: Experimental CUDA/HIP support for heavy calculations like S(Q).
 
