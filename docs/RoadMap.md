@@ -6,10 +6,10 @@ This document outlines the strategic direction and planned features for the `3.0
 
 Based on recent progress, the following features are the primary focus for the immediate next development sprints to achieve the 3.0.0 vision:
 
-1. **Memory-Mapped I/O** (Core): Crucial for lazy loading massive trajectories (e.g., LAMMPS, GROMACS) without exceeding system memory limits.
-2. **Cluster Analysis** (Analysis): An essential feature to identify connected components, crystalline grains, and molecules within the neighbor graph.
-3. **Task-Based Parallelism** (Core): Replacing internal `parallel_for` with a TBB task graph to execute independent calculators concurrently and maximize CPU utilization.
-4. **Analysis Comparison** (UI): Quality-of-life feature allowing users to visually overlay and compare plots from multiple frames or datasets directly in the GUI.
+1. **Memory-Mapped I/O** (Core): Crucial for lazy loading massive trajectories (e.g., GROMACS, LAMMPS) without exceeding system memory limits.
+2. **Analysis Comparison** (UI): Quality-of-life feature allowing users to overlay and compare plots from multiple frames or datasets directly in the GUI.
+3. **Refined Python API** (Integration): NumPy-native integration to allow seamless, high-performance data exchange between the C++ engine and Python environments.
+4. **Extended XYZ** (Integration): Support for the Extended XYZ file format to handle custom metadata and per-atom properties.
 
 ## 1. Core (HPC & Architecture)
 Modernizing the core engine for massive datasets and pushing the limits of computational performance.
@@ -18,6 +18,7 @@ Modernizing the core engine for massive datasets and pushing the limits of compu
 - [x] **Plugin/Factory Pattern**: Decoupled architecture for readers and calculators.
 - [x] **Spatial Partitioning (Cell-Lists)**: Implement $O(N)$ neighbor search to replace the current $O(N^2)$ distance tensor approach for large systems.
 - [x] **Task-Based Parallelism**: Advanced TBB task graph implementation for better multi-core scaling.
+- [x] **Performance Benchmarking Suite**: Google Benchmark framework integration with comprehensive benchmarks for calculators and analyzers to monitor and guide optimization.
 - [ ] **Memory-Mapped I/O**: Efficient loading of multi-gigabyte trajectories.
 - [ ] **GPU Acceleration**: Experimental CUDA/HIP support for heavy calculations like S(Q).
 
@@ -47,6 +48,6 @@ Expanding support to attract users from various computational chemistry and phys
 Improving developer and user workflows through the graphical interface.
 
 - [x] **Automated Release Pipelines**: CI/CD for cross-platform binaries and installers.
-- [ ] **Static Plot Management**: Keep the UI fast and robust with static SVGs, but introduce a "Save Plot" feature directly from the UI for easy exporting.
+- [x] **Static Plot Management**: In-memory SVG generation preventing disk-bound delays, with a native file-saving dialog built into the user interface.
 - [ ] **Analysis Comparison**: Built-in functionality to overlay and compare results from multiple runs statically.
 - [ ] **WASM Web Interface**: Explore running the core engine in the browser for zero-install previews.
