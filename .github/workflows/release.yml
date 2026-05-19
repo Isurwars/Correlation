@@ -99,9 +99,15 @@ jobs:
           key: cargo-windows-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: cargo-windows-
 
+      - name: Setup MSVC
+        uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+
+
       - name: Configure CMake
         run: |
-          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release `
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
