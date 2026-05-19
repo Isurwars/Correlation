@@ -25,6 +25,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Configure MSVC debug information format to allow sccache to cache objects
+if(POLICY CMP0141)
+    cmake_policy(SET CMP0141 NEW)
+endif()
+set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "Embedded" CACHE STRING "MSVC debug info format" FORCE)
+
 # Suppress MSVC warning C4624: 'destructor was implicitly defined as deleted'
 # This is frequently triggered by Slint's internal headers.
 if (MSVC)
