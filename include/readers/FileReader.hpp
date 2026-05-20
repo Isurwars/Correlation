@@ -35,6 +35,7 @@ enum class FileType {
   Xdatcar,    ///< VASP XDATCAR trajectory format
   Gromacs,    ///< GROMACS .gro format
   Pdb,        ///< PDB .pdb format
+  Xyz,        ///< Extended XYZ .xyz format
   Unknown     ///< Unrecognized or unsupported file format
 };
 

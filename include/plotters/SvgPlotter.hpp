@@ -437,4 +437,218 @@ renderHistogramAsSvg(const correlation::analysis::Histogram &hist,
   return svg.str();
 }
 
+// ============================================================================
+// Comparison overlay renderer
+// ============================================================================
+
+/**
+ * @brief A labeled histogram for comparison rendering.
+ */
+struct LabeledHistogram {
+  std::string label;                              ///< Run / dataset label.
+  const correlation::analysis::Histogram *hist;   ///< Pointer to histogram data.
+};
+
+/**
+ * @brief Renders multiple histograms overlaid on a single plot.
+ *
+ * Each entry in @p datasets provides a display label and a pointer to the
+ * Histogram data.  The first dataset defines the axes and labels; subsequent
+ * datasets are drawn on the same grid with distinct colors.
+ *
+ * @param datasets  Vector of labeled histogram pointers.
+ * @param partial_key  Which partial to plot (e.g. "Total", "Si-O").
+ * @param config    Optional plot configuration (theme, size, etc.).
+ * @returns         A complete SVG document as `std::string`.
+ */
+inline std::string
+renderComparisonSvg(const std::vector<LabeledHistogram> &datasets,
+                    const std::string &partial_key = "Total",
+                    const PlotConfig &config = {}) {
+  if (datasets.empty())
+    return "";
+
+  // Use the first histogram for titles and axis labels.
+  const auto &ref = *datasets.front().hist;
+  std::string title = ref.title.empty() ? "Comparison" : ref.title;
+  std::string x_label = ref.x_label.empty() ? "x" : ref.x_label;
+  std::string y_label = ref.y_label.empty() ? "y" : ref.y_label;
+
+  if (!ref.x_unit.empty())
+    x_label += std::format(" ({})", ref.x_unit);
+  if (!ref.y_unit.empty()) {
+    std::string y_unit = ref.y_unit;
+    if (y_unit == "Å^-1")
+      y_unit = "Å⁻¹";
+    y_label += std::format(" ({})", y_unit);
+  }
+
+  const double kW = config.width;
+  const double kH = config.height;
+  const double kLeft = 100.0;
+  const double kRight = 40.0;
+  const double kTop = 50.0;
+  const double kBot = 90.0;
+
+  const double px0 = kLeft;
+  const double px1 = kW - kRight;
+  const double py0 = kTop;
+  const double py1 = kH - kBot;
+
+  // Compute global ranges across all datasets.
+  double raw_x_min = 1e30, raw_x_max = -1e30;
+  double raw_y_min = 0.0, raw_y_max = -1e30;
+
+  for (const auto &ds : datasets) {
+    const auto &partials =
+        ds.hist->smoothed_partials.empty() ? ds.hist->partials
+                                           : ds.hist->smoothed_partials;
+    auto it = partials.find(partial_key);
+    if (it == partials.end())
+      continue;
+    const auto &xs = ds.hist->bins;
+    const auto &ys = it->second;
+    if (!xs.empty()) {
+      raw_x_min = std::min(raw_x_min, xs.front());
+      raw_x_max = std::max(raw_x_max, xs.back());
+    }
+    for (double v : ys) {
+      raw_y_max = std::max(raw_y_max, v);
+      raw_y_min = std::min(raw_y_min, v);
+    }
+  }
+
+  if (raw_x_max <= raw_x_min || raw_y_max <= raw_y_min) {
+    return std::format(
+        "<svg width='1200' height='900' xmlns=\"http://www.w3.org/2000/svg\" "
+        "viewBox=\"0 0 {} {}\">"
+        "<rect width=\"100%\" height=\"100%\" fill=\"{}\"/>"
+        "<path d=\"{}\" fill=\"{}\" stroke=\"none\"/></svg>",
+        kW, kH, config.bg_color(),
+        Roboto::instance().render("No comparison data", kW / 2.0,
+                                  kH / 2.0 + 8.0, 24, "middle"),
+        config.text_color());
+  }
+
+  double y_padding = (raw_y_max - raw_y_min) * 0.05;
+  raw_y_max += y_padding;
+
+  detail::NiceScale xScale(raw_x_min, raw_x_max, 11);
+  detail::NiceScale yScale(raw_y_min, raw_y_max, 8);
+
+  std::ostringstream svg;
+  svg << std::format(
+      "<svg width='1200' height='900' xmlns=\"http://www.w3.org/2000/svg\" "
+      "viewBox=\"0 0 {} {}\">\n",
+      kW, kH);
+  svg << std::format(
+      "  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n",
+      config.bg_color());
+
+  // Grid, ticks, and axes — same as single-plot renderer.
+  for (double yv : yScale.ticks) {
+    double spy = detail::mapValue(yv, yScale.min, yScale.max, py1, py0);
+    if (config.show_grid) {
+      svg << std::format(
+          "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+          "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
+          px0, spy, px1, spy, config.grid_color());
+    }
+    svg << std::format(
+        "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+        px0 - 8.0, spy, px0, spy, config.axis_color());
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       Roboto::instance().render(detail::fmtScientific(yv),
+                                                 px0 - 15.0, spy + 7.0, 20,
+                                                 "end"),
+                       config.text_color());
+  }
+
+  for (double xv : xScale.ticks) {
+    double spx = detail::mapValue(xv, xScale.min, xScale.max, px0, px1);
+    if (config.show_grid) {
+      svg << std::format(
+          "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+          "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
+          spx, py0, spx, py1, config.grid_color());
+    }
+    svg << std::format(
+        "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+        spx, py1, spx, py1 + 8.0, config.axis_color());
+    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                       Roboto::instance().render(detail::fmtScientific(xv), spx,
+                                                 py1 + 25.0, 20, "middle"),
+                       config.text_color());
+  }
+
+  // Axis border
+  svg << std::format(
+      "  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
+      "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+      px0, py0, px1 - px0, py1 - py0, config.axis_color());
+
+  // Polylines — one per dataset
+  std::vector<std::pair<std::string, std::string>> legend;
+  std::size_t ci = 0;
+  for (const auto &ds : datasets) {
+    const auto &partials =
+        ds.hist->smoothed_partials.empty() ? ds.hist->partials
+                                           : ds.hist->smoothed_partials;
+    auto it = partials.find(partial_key);
+    if (it == partials.end())
+      continue;
+
+    const auto &xs = ds.hist->bins;
+    const auto &ys = it->second;
+    const std::string col = detail::color(ci++);
+
+    svg << "  <polyline fill=\"none\" stroke=\"" << col
+        << "\" stroke-width=\"3.0\" stroke-linejoin=\"round\" points=\"";
+    std::size_t n = std::min(xs.size(), ys.size());
+    for (std::size_t i = 0; i < n; ++i) {
+      double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+      double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+      svg << std::format("{:.2f},{:.2f} ", sx, sy);
+    }
+    svg << "\" />\n";
+    legend.push_back({ds.label, col});
+  }
+
+  // Legend (top right)
+  double lx = px1 - 15.0;
+  double ly = py0 + 25.0;
+  for (auto it = legend.rbegin(); it != legend.rend(); ++it) {
+    svg << std::format(
+        "  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+        "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
+        lx - 40.0, ly, lx - 10.0, ly, it->second);
+    svg << std::format(
+        "  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+        Roboto::instance().render(it->first, lx - 45.0, ly + 6.0, 18, "end"),
+        config.text_color());
+    ly += 28.0;
+  }
+
+  // X-axis label
+  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                     Roboto::instance().render(x_label, (px0 + px1) / 2.0,
+                                               py1 + 75.0, 28, "middle"),
+                     config.text_color());
+
+  // Y-axis label (rotated)
+  svg << std::format(
+      "  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0,
+      (py0 + py1) / 2.0);
+  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
+                     Roboto::instance().render(y_label, 0, 0, 28, "middle"),
+                     config.text_color());
+  svg << "  </g>\n";
+
+  svg << "</svg>\n";
+  return svg.str();
+}
+
 } // namespace correlation::plotters
+

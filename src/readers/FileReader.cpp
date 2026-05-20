@@ -7,6 +7,7 @@
  */
 #include "readers/FileReader.hpp"
 #include "readers/ReaderFactory.hpp"
+#include "core/MappedFile.hpp"
 
 #include <algorithm>
 #include <filesystem>
@@ -42,6 +43,8 @@ FileType determineFileType(const std::string &filename) {
     return FileType::Gromacs;
   if (ext == ".pdb" || ext == ".ent")
     return FileType::Pdb;
+  if (ext == ".xyz" || ext == ".exyz")
+    return FileType::Xyz;
 
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {
@@ -78,6 +81,14 @@ correlation::core::Trajectory readTrajectory(
   auto reader = ReaderFactory::instance().getReaderForExtension(ext);
 
   if (reader) {
+    // Enforce 4 GiB trajectory file size limit.
+    auto file_size = std::filesystem::file_size(filename);
+    if (static_cast<std::uint64_t>(file_size) >
+        correlation::core::kMaxTrajectoryBytes) {
+      throw std::runtime_error(
+          "Trajectory file exceeds the 4 GiB memory limit: " + filename);
+    }
+
     if (reader->isTrajectory()) {
       return reader->readTrajectory(filename, progress_callback);
     } else {

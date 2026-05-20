@@ -51,6 +51,17 @@ include(cmake/Dependencies.cmake)
 # -----------------------------------------------------------
 include(cmake/SIMD.cmake)
 
+# -----------------------------------------------------------
+# Optional GPU Acceleration (CUDA)
+# -----------------------------------------------------------
+option(BUILD_WITH_CUDA "Enable GPU-accelerated calculators via CUDA" OFF)
+if(BUILD_WITH_CUDA)
+    enable_language(CUDA)
+    find_package(CUDAToolkit REQUIRED)
+    add_compile_definitions(CORRELATION_USE_CUDA)
+    message(STATUS "CUDA enabled — GPU calculators will be built")
+endif()
+
 #-----------------------------------------------------------
 # Targets setup
 #-----------------------------------------------------------

@@ -20,6 +20,7 @@
 #include "math/Smoothing.hpp"
 
 #include <pybind11/functional.h>
+#include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
@@ -105,7 +106,33 @@ void init_analysis(py::module_ &m) {
         .def_readwrite("partials",         &Histogram::partials,
                        "Dict mapping partial key (e.g. 'Si-O') to y-values.")
         .def_readwrite("smoothed_partials",&Histogram::smoothed_partials,
-                       "Dict mapping partial key to smoothed y-values.");
+                       "Dict mapping partial key to smoothed y-values.")
+        .def("get_bins_numpy",
+            [](const Histogram &h) -> py::array_t<double> {
+                return py::array_t<double>(h.bins.size(), h.bins.data());
+            },
+            "Return x-axis bins as a NumPy array (copy).")
+        .def("get_partial_numpy",
+            [](const Histogram &h, const std::string &key) -> py::array_t<double> {
+                auto it = h.partials.find(key);
+                if (it == h.partials.end())
+                    throw std::runtime_error("Partial key not found: " + key);
+                return py::array_t<double>(it->second.size(), it->second.data());
+            },
+            py::arg("key"),
+            "Return a specific partial distribution as a NumPy array.\n\n"
+            "Parameters\n----------\n"
+            "key : str\n"
+            "    Partial key (e.g. 'Si-O' or 'Total').")
+        .def("get_smoothed_partial_numpy",
+            [](const Histogram &h, const std::string &key) -> py::array_t<double> {
+                auto it = h.smoothed_partials.find(key);
+                if (it == h.smoothed_partials.end())
+                    throw std::runtime_error("Smoothed partial key not found: " + key);
+                return py::array_t<double>(it->second.size(), it->second.data());
+            },
+            py::arg("key"),
+            "Return a specific smoothed partial distribution as a NumPy array.");
 
     // ------------------------------------------------------------------
     // StructureAnalyzer

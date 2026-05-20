@@ -18,6 +18,7 @@ add_library(readers_obj OBJECT
     readers/ReaderFactory.cpp
     readers/QEReader.cpp
     readers/CP2KReader.cpp
+    readers/XYZReader.cpp
 )
 target_include_directories(readers_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
@@ -62,6 +63,23 @@ if (CORRELATION_SIMD_FLAGS)
     target_compile_options(calculators_obj PRIVATE ${SIMD_FLAGS_LIST})
 endif()
 
+# Optional GPU-accelerated calculators (CUDA)
+if(BUILD_WITH_CUDA)
+    add_library(gpu_calculators_obj OBJECT
+        calculators/GPUSQCalculator.cu
+    )
+    target_include_directories(gpu_calculators_obj PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+    )
+    target_link_libraries(gpu_calculators_obj PRIVATE
+        CUDA::cudart TBB::tbb
+    )
+    set_target_properties(gpu_calculators_obj PROPERTIES
+        CUDA_STANDARD 17
+        POSITION_INDEPENDENT_CODE ON
+    )
+endif()
+
 # Writers as an OBJECT library to ensure static registration triggers
 add_library(writers_obj OBJECT
     writers/ArrowWriter.cpp
@@ -91,6 +109,7 @@ add_library(correlation_lib STATIC
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>
+    $<$<BOOL:${BUILD_WITH_CUDA}>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
 # Include directories
@@ -115,6 +134,9 @@ set_target_properties(correlation_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(correlation_lib PRIVATE TBB::tbb TBB::tbbmalloc)
 target_link_libraries(correlation_lib PUBLIC HighFive HDF5::HDF5 HDF5::HDF5_HL arrow_shared parquet_shared)
+if(BUILD_WITH_CUDA)
+    target_link_libraries(correlation_lib PRIVATE CUDA::cudart)
+endif()
 
 #------------------------------------------------------------------
 # Executable Target (correlation)
