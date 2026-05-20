@@ -1,2 +1,11 @@
 CompileFlags:
-  Add: [-I./build/]
+  Add:
+    - "-std=c++23"
+    - "-I/home/isurwars/Projects/Correlation/include"
+    - "-I/home/isurwars/Projects/Correlation/build/src"
+    - "-isystem/usr/include/slint"
+    - "-I./build/"
+  Remove:
+    - "-std=c++11"
+    - "-std=c++14"
+    - "-std=c++17"
