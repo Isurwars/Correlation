@@ -171,4 +171,34 @@ TEST_F(CellTests, FindElementWorksCorrectly) {
   EXPECT_FALSE(cell.findElement("Au").has_value());
 }
 
+TEST_F(CellTests, ConstructorThrowsOnZeroOrSingularVolume) {
+  // Linearly dependent lattice vectors: zero volume
+  EXPECT_THROW(Cell({1.0, 0.0, 0.0}, {2.0, 0.0, 0.0}, {0.0, 0.0, 1.0}), std::logic_error);
+  EXPECT_THROW(Cell({0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}), std::logic_error);
+  
+  // Degenerate parameters yielding volume near 0
+  EXPECT_THROW(Cell({10.0, 10.0, 10.0, 1.0, 1.0, 179.0}), std::logic_error);
+}
+
+TEST_F(CellTests, SetLatticeParametersBoundaryAngles) {
+  // Extreme but valid angles
+  EXPECT_NO_THROW(Cell({10.0, 10.0, 10.0, 0.1, 90.0, 90.0}));
+  EXPECT_NO_THROW(Cell({10.0, 10.0, 10.0, 179.9, 90.0, 90.0}));
+
+  // Invalid angles throwing invalid_argument
+  EXPECT_THROW(Cell({10.0, 10.0, 10.0, -0.1, 90.0, 90.0}), std::invalid_argument);
+  EXPECT_THROW(Cell({10.0, 10.0, 10.0, 180.0, 90.0, 90.0}), std::invalid_argument);
+}
+
+TEST_F(CellTests, MinimumImageHandlesInfiniteAndNaNDistance) {
+  Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  
+  // Checking that passing Inf or NaN distances doesn't crash but propagates or returns predictably
+  auto mi_nan = cell.minimumImage({std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0});
+  EXPECT_TRUE(std::isnan(mi_nan.x()));
+
+  auto mi_inf = cell.minimumImage({std::numeric_limits<double>::infinity(), 0.0, 0.0});
+  EXPECT_TRUE(std::isnan(mi_inf.x())); // std::round(inf) yields nan/indefinite, which makes x() NaN
+}
+
 } // namespace correlation::testing

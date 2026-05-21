@@ -210,4 +210,36 @@ TEST_F(TrajectoryTests, ParseMultipleFramesWithEnergy) {
   EXPECT_DOUBLE_EQ(traj.getFrames()[1].getEnergy(), -200.5);
 }
 
+TEST_F(TrajectoryTests, CalculateVelocitiesHandlesZeroOrNegativeTimeStep) {
+  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(1,0,0)};
+  
+  Trajectory traj_zero(frames, 0.0);
+  traj_zero.calculateVelocities();
+  ASSERT_EQ(traj_zero.getVelocities().size(), 2);
+  EXPECT_DOUBLE_EQ(traj_zero.getVelocities()[0][0].x(), 0.0);
+
+  Trajectory traj_neg(frames, -0.5);
+  traj_neg.calculateVelocities();
+  ASSERT_EQ(traj_neg.getVelocities().size(), 2);
+  EXPECT_DOUBLE_EQ(traj_neg.getVelocities()[0][0].x(), 0.0);
+}
+
+TEST_F(TrajectoryTests, ConstructorThrowsOnMismatchedFrames) {
+  std::vector<Cell> frames;
+  frames.push_back(createSimpleFrame(0.0, 0.0, 0.0));
+  Cell bad_frame = createSimpleFrame(1.0, 1.0, 1.0);
+  bad_frame.addAtom("O", {2.0, 2.0, 2.0});
+  frames.push_back(bad_frame);
+  EXPECT_THROW(Trajectory traj(frames, 1.0), std::runtime_error);
+}
+
+TEST_F(TrajectoryTests, GetBondCutoffOutOfBoundsReturnsZero) {
+  Cell frame({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame.addAtom("H", {0, 0, 0});
+  Trajectory traj({frame}, 1.0);
+  
+  EXPECT_DOUBLE_EQ(traj.getBondCutoffSQ(10, 0), 0.0);
+  EXPECT_DOUBLE_EQ(traj.getBondCutoff(0, 10), 0.0);
+}
+
 } // namespace correlation::testing

@@ -136,4 +136,49 @@ TEST_F(AtomTests, ElementIDEqualityWorks) {
   EXPECT_FALSE(id1 == id3);
 }
 
+TEST_F(AtomTests, DistanceBetweenIdenticalAtomsIsZero) {
+  const Element element = {"H", {0}};
+  const Atom atom(element, {1.2, -3.4, 5.6}, 1);
+  EXPECT_DOUBLE_EQ(distance(atom, atom), 0.0);
+}
+
+TEST_F(AtomTests, DistanceHandlesSubnormalCoordinates) {
+  const Element element = {"H", {0}};
+  const double subnormal = 1e-308;
+  const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
+  const Atom atom2(element, {subnormal, subnormal, subnormal}, 1);
+  double dist = distance(atom1, atom2);
+  EXPECT_TRUE(dist == 0.0 || std::abs(dist - std::sqrt(3.0) * subnormal) < 1e-310);
+}
+
+TEST_F(AtomTests, DistanceHandlesInfinityAndNaN) {
+  const Element element = {"H", {0}};
+  const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
+  const Atom atom_inf(element, {std::numeric_limits<double>::infinity(), 0.0, 0.0}, 1);
+  const Atom atom_nan(element, {std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0}, 2);
+
+  EXPECT_TRUE(std::isinf(distance(atom1, atom_inf)));
+  EXPECT_TRUE(std::isnan(distance(atom1, atom_nan)));
+}
+
+TEST_F(AtomTests, AngleFunctionHandlesNaNCoordinates) {
+  const Element element = {"C", {0}};
+  const Atom center(element, {0.0, 0.0, 0.0}, 0);
+  const Atom a(element, {std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0}, 1);
+  const Atom b(element, {1.0, 1.0, 1.0}, 2);
+
+  // Since NaN coordinate makes dot/norm_sq NaN or invalid, we expect standard clamp/acos behavior or nan
+  // Let's assert it safely returns 0 or NaN, without crashing.
+  EXPECT_TRUE(std::isnan(angle(center, a, b)) || angle(center, a, b) == 0.0);
+}
+
+TEST_F(AtomTests, HandlesLongAndSpecialElementSymbols) {
+  const Element element = {"Uun-110_LongSymbolTest!@#", {110}};
+  const Atom atom(element, {1.0, 2.0, 3.0}, 999999);
+
+  EXPECT_EQ(atom.element().symbol, "Uun-110_LongSymbolTest!@#");
+  EXPECT_EQ(atom.element_id(), 110);
+  EXPECT_EQ(atom.id(), 999999);
+}
+
 } // namespace correlation::testing

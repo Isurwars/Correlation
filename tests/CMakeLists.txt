@@ -16,6 +16,8 @@ add_executable(correlation_unit_tests
     unit/core/AtomTests.cpp
     unit/core/CellTests.cpp
     unit/core/TrajectoryTests.cpp
+    unit/core/NeighborGraphTests.cpp
+    unit/core/MappedFileTests.cpp
     unit/io/FileReaderTests.cpp
     unit/io/WriterTests.cpp
     unit/io/VaspReaderTests.cpp
@@ -38,6 +40,10 @@ add_executable(correlation_unit_tests
     unit/analysis/SDFCalculatorTests.cpp
     unit/analysis/ClusterCalculatorTests.cpp
     unit/utils/SIMDUtilsTests.cpp
+    unit/math/LinearAlgebraTests.cpp
+    unit/math/SpecialFunctionsTests.cpp
+    unit/math/SmoothingTests.cpp
+    unit/math/FFTUtilsTests.cpp
     unit/app/AppBackendTests.cpp
     ../src/app/AppBackend.cpp
 )
