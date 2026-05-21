@@ -131,8 +131,8 @@ public:
    * loaded.
    */
   [[nodiscard]] const correlation::core::Cell *cell() const {
-    if (trajectory_ && !trajectory_->getFrames().empty()) {
-      return &trajectory_->getFrames()[0];
+    if (trajectory_ && trajectory_->getFrameCount() > 0) {
+      return &trajectory_->firstFrame();
     }
     return nullptr;
   }

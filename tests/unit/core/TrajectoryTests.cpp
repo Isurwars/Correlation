@@ -242,4 +242,37 @@ TEST_F(TrajectoryTests, GetBondCutoffOutOfBoundsReturnsZero) {
   EXPECT_DOUBLE_EQ(traj.getBondCutoff(0, 10), 0.0);
 }
 
+TEST_F(TrajectoryTests, LazyTrajectoryLoadingAndAccess) {
+  std::string filename = "test_data/lazy_test.xyz";
+  std::ofstream out(filename);
+  out << "1\nLattice=\"10 0 0 0 10 0 0 0 10\" energy=-1.0\nSi 1.0 1.0 1.0\n";
+  out << "1\nLattice=\"10 0 0 0 10 0 0 0 10\" energy=-2.0\nSi 2.0 2.0 2.0\n";
+  out << "1\nLattice=\"10 0 0 0 10 0 0 0 10\" energy=-3.0\nSi 3.0 3.0 3.0\n";
+  out.close();
+
+  // Load trajectory using XYZReader (which returns a lazy trajectory)
+  auto traj = correlation::readers::readTrajectory(filename, correlation::readers::FileType::Xyz);
+  EXPECT_EQ(traj.getFrameCount(), 3);
+
+  // Verify that the first frame can be accessed using firstFrame()
+  const auto &first = traj.firstFrame();
+  EXPECT_EQ(first.atomCount(), 1);
+  EXPECT_EQ(first.atoms()[0].element().symbol, "Si");
+  EXPECT_DOUBLE_EQ(first.atoms()[0].position().x(), 1.0);
+
+  // Verify that subsequent frames can be accessed using getFrame()
+  Cell f1 = traj.getFrame(1);
+  EXPECT_EQ(f1.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 2.0);
+
+  Cell f2 = traj.getFrame(2);
+  EXPECT_EQ(f2.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 3.0);
+
+  // Materialize and verify
+  EXPECT_NO_THROW(traj.removeDuplicatedFrames());
+  EXPECT_EQ(traj.getFrameCount(), 3);
+  EXPECT_DOUBLE_EQ(traj.getFrames()[1].atoms()[0].position().x(), 2.0);
+}
+
 } // namespace correlation::testing

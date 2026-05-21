@@ -23,8 +23,7 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
       neighbor_cutoff_(neighbor_cutoff), bond_cutoffs_(bond_cutoffs),
       ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
 
-  auto &frames = trajectory.getFrames();
-  size_t n_frames = frames.size();
+  size_t n_frames = trajectory.getFrameCount();
 
   effective_end_ =
       (end_frame == -1 || static_cast<size_t>(end_frame) >= n_frames)
@@ -40,10 +39,10 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
 
 std::unique_ptr<StructureAnalyzer>
 TrajectoryAnalyzer::createAnalyzer(size_t frame_idx) const {
-  if (frame_idx >= trajectory_.getFrames().size())
+  if (frame_idx >= trajectory_.getFrameCount())
     return nullptr;
   return std::make_unique<StructureAnalyzer>(
-      trajectory_.getFrames()[frame_idx], neighbor_cutoff_, bond_cutoffs_,
+      trajectory_.getFrame(frame_idx), neighbor_cutoff_, bond_cutoffs_,
       ignore_periodic_self_interactions_);
 }
 

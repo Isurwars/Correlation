@@ -11,9 +11,14 @@
 #include "core/Cell.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <functional>
+#include <memory>
+#include <optional>
 #include <vector>
 
 namespace correlation::core {
+
+class MappedFile;
 
 /**
  * @brief This class stores a series of snapshots of a system.
@@ -37,6 +42,20 @@ public:
    */
   Trajectory(std::vector<Cell> frames, double time_step);
 
+  using FrameParser = std::function<Cell(const char *data, size_t size)>;
+
+  /**
+   * @brief Constructs a lazy-loading trajectory from a memory-mapped file.
+   * @param mapped_file Shared pointer to the mapped file.
+   * @param frame_offsets Byte offsets of the frames in the file.
+   * @param parser Function to parse a frame from a slice of memory.
+   * @param time_step The time interval between consecutive frames.
+   */
+  Trajectory(std::shared_ptr<MappedFile> mapped_file,
+             std::vector<size_t> frame_offsets,
+             FrameParser parser,
+             double time_step);
+
   /**
    * @brief Appends a new frame to the trajectory.
    * @param frame The Cell object to add.
@@ -50,19 +69,34 @@ public:
    * @brief Gets a mutable reference to the frames.
    * @return A vector of Cell objects representing the frames.
    */
-  [[nodiscard]] std::vector<Cell> &getFrames() { return frames_; }
+  [[nodiscard]] std::vector<Cell> &getFrames();
 
   /**
    * @brief Gets a constant reference to the frames.
    * @return A vector of Cell objects representing the frames.
    */
-  [[nodiscard]] const std::vector<Cell> &getFrames() const { return frames_; }
+  [[nodiscard]] const std::vector<Cell> &getFrames() const;
 
   /**
    * @brief Gets the total number of frames in the trajectory.
    * @return The number of frames.
    */
-  [[nodiscard]] size_t getFrameCount() const { return frames_.size(); }
+  [[nodiscard]] size_t getFrameCount() const;
+
+  /**
+   * @brief Gets a constant reference to the first frame of the trajectory.
+   * @return A Cell object representing the first frame.
+   * @throws std::runtime_error if the trajectory is empty.
+   */
+  [[nodiscard]] const Cell &firstFrame() const;
+
+  /**
+   * @brief Gets a copy of a frame at a specific index.
+   * @param index The index of the frame to retrieve.
+   * @return A Cell object representing the frame.
+   * @throws std::out_of_range if the index is invalid.
+   */
+  [[nodiscard]] Cell getFrame(size_t index) const;
 
   /**
    * @brief Gets the time step between frames.
@@ -158,12 +192,18 @@ private:
    * @throws std::invalid_argument if frame is inconsistent.
    */
   void validateFrame(const Cell &new_frame) const;
+  void ensureMaterialized() const;
 
-  std::vector<Cell> frames_; ///< Collection of simulation snapshots.
+  mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
+  mutable std::optional<Cell> first_frame_;
   mutable std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
   std::vector<std::vector<math::Vector3<double>>> velocities_; ///< Inter-frame velocities.
   double time_step_; ///< Time between snapshots.
   size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
+
+  std::shared_ptr<MappedFile> mapped_file_;
+  std::vector<size_t> frame_offsets_;
+  FrameParser parser_;
 };
 
 } // namespace correlation::core

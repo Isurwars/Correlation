@@ -7,6 +7,7 @@
  */
 
 #include "core/Trajectory.hpp"
+#include "core/MappedFile.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
 
@@ -32,9 +33,79 @@ Trajectory::Trajectory(std::vector<Cell> frames, double time_step)
   }
 }
 
+Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file,
+                       std::vector<size_t> frame_offsets,
+                       FrameParser parser,
+                       double time_step)
+    : mapped_file_(std::move(mapped_file)),
+      frame_offsets_(std::move(frame_offsets)),
+      parser_(std::move(parser)),
+      time_step_(time_step) {
+  if (getFrameCount() > 0) {
+    precomputeBondCutoffs();
+  }
+}
+
 //---------------------------------------------------------------------------//
 //------------------------------- Accessors ---------------------------------//
 //---------------------------------------------------------------------------//
+
+std::vector<Cell> &Trajectory::getFrames() {
+  ensureMaterialized();
+  return frames_;
+}
+
+const std::vector<Cell> &Trajectory::getFrames() const {
+  ensureMaterialized();
+  return frames_;
+}
+
+size_t Trajectory::getFrameCount() const {
+  if (mapped_file_) {
+    return frame_offsets_.size() - 1;
+  }
+  return frames_.size();
+}
+
+Cell Trajectory::getFrame(size_t index) const {
+  if (index >= getFrameCount()) {
+    throw std::out_of_range("Trajectory::getFrame: index out of range");
+  }
+  if (!frames_.empty()) {
+    return frames_[index];
+  }
+  if (mapped_file_) {
+    return parser_(mapped_file_->data() + frame_offsets_[index],
+                   frame_offsets_[index + 1] - frame_offsets_[index]);
+  }
+  throw std::runtime_error("Trajectory::getFrame: trajectory is empty");
+}
+
+const Cell &Trajectory::firstFrame() const {
+  if (!frames_.empty()) {
+    return frames_[0];
+  }
+  if (!first_frame_) {
+    if (getFrameCount() == 0) {
+      throw std::runtime_error("Trajectory::firstFrame: trajectory is empty");
+    }
+    first_frame_ = getFrame(0);
+  }
+  return *first_frame_;
+}
+
+void Trajectory::ensureMaterialized() const {
+  if (!mapped_file_ || !frames_.empty()) {
+    return;
+  }
+  size_t count = getFrameCount();
+  frames_.resize(count);
+  for (size_t i = 0; i < count; ++i) {
+    frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i],
+                         frame_offsets_[i + 1] - frame_offsets_[i]);
+  }
+  first_frame_.reset();
+}
 
 double Trajectory::getBondCutoffSQ(int type1, int type2) const {
   if (bond_cutoffs_sq_.empty())
@@ -55,6 +126,11 @@ double Trajectory::getBondCutoff(int type1, int type2) const {
 //---------------------------------------------------------------------------//
 
 void Trajectory::addFrame(const Cell &frame) {
+  ensureMaterialized();
+  mapped_file_.reset();
+  frame_offsets_.clear();
+  parser_ = nullptr;
+
   if (!frames_.empty()) {
     validateFrame(frame);
   }
@@ -65,10 +141,11 @@ void Trajectory::addFrame(const Cell &frame) {
 }
 
 void Trajectory::precomputeBondCutoffs() const {
-  if (frames_.empty())
+  if (getFrameCount() == 0)
     return;
 
-  const auto &elements = frames_[0].elements();
+  Cell first_frame = getFrame(0);
+  const auto &elements = first_frame.elements();
   const size_t num_elements = elements.size();
   bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
 
@@ -85,6 +162,11 @@ void Trajectory::precomputeBondCutoffs() const {
 }
 
 void Trajectory::removeDuplicatedFrames() {
+  ensureMaterialized();
+  mapped_file_.reset();
+  frame_offsets_.clear();
+  parser_ = nullptr;
+
   if (frames_.size() < 2) {
     return;
   }
@@ -130,6 +212,11 @@ void Trajectory::removeDuplicatedFrames() {
 }
 
 void Trajectory::calculateVelocities() {
+  ensureMaterialized();
+  mapped_file_.reset();
+  frame_offsets_.clear();
+  parser_ = nullptr;
+
   if (frames_.size() < 2)
     return;
   size_t num_frames = frames_.size();
@@ -192,11 +279,11 @@ void Trajectory::calculateVelocities() {
 //---------------------------------------------------------------------------//
 
 void Trajectory::validateFrame(const Cell &new_frame) const {
-  if (frames_.empty()) {
+  if (getFrameCount() == 0) {
     return;
   }
 
-  const Cell &reference = frames_[0];
+  Cell reference = getFrame(0);
 
   if (new_frame.atomCount() != reference.atomCount()) {
     throw std::runtime_error(

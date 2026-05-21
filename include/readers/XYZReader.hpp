@@ -48,6 +48,7 @@ private:
      * @return An optional array of 9 doubles (row-major: a1,a2,a3, b1,b2,b3, c1,c2,c3).
      */
     static std::optional<std::array<double, 9>> parseLattice(const std::string& comment);
+    static correlation::core::Cell parseXYZFrame(const char *data, size_t size);
 };
 
 } // namespace correlation::readers

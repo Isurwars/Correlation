@@ -108,7 +108,7 @@ public:
    * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
    */
   explicit DistributionFunctions(
-      correlation::core::Cell &cell, double cutoff = 0.0,
+      const correlation::core::Cell &cell, double cutoff = 0.0,
       const std::vector<std::vector<double>> &bond_cutoffs = {});
 
   /**
@@ -327,7 +327,7 @@ private:
    */
   void calculateAshcroftWeights();
 
-  correlation::core::Cell &cell_; ///< Reference to the cell being analyzed.
+  correlation::core::Cell cell_; ///< Reference to the cell being analyzed.
   const StructureAnalyzer *neighbors_ref_{nullptr}; ///< Pointer to external neighbor info.
   std::unique_ptr<StructureAnalyzer> neighbors_owned_; ///< Owned neighbor info.
   double current_cutoff_{-1.0}; ///< Last cutoff used for neighbor searching.

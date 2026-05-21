@@ -52,13 +52,13 @@ std::map<std::string, int> AppBackend::getAtomCounts() const {
 int AppBackend::getFrameCount() const {
   if (!trajectory_)
     return 0;
-  return trajectory_->getFrames().size();
+  return trajectory_->getFrameCount();
 }
 
 int AppBackend::getTotalAtomCount() const {
-  if (!trajectory_ || trajectory_->getFrames().empty())
+  if (!trajectory_ || trajectory_->getFrameCount() == 0)
     return 0;
-  return trajectory_->getFrames()[0].atomCount();
+  return trajectory_->firstFrame().atomCount();
 }
 
 size_t AppBackend::getRemovedFrameCount() const {
@@ -102,13 +102,13 @@ double AppBackend::getRecommendedTimeStep() const {
 }
 
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
-  if (!trajectory_ || trajectory_->getFrames().empty())
+  if (!trajectory_ || trajectory_->getFrameCount() == 0)
     return {};
 
   // Precompute on the trajectory (which updates its internal cache)
   trajectory_->precomputeBondCutoffs();
 
-  const correlation::core::Cell &c = trajectory_->getFrames()[0];
+  const correlation::core::Cell &c = trajectory_->firstFrame();
   const size_t num_elements = c.elements().size();
   std::vector<std::vector<double>> cutoffs(num_elements,
                                            std::vector<double>(num_elements));
@@ -133,9 +133,9 @@ void AppBackend::setBondCutoffs(
     return;
 
   // Calculate squared cutoffs
-  if (trajectory_->getFrames().empty())
+  if (trajectory_->getFrameCount() == 0)
     return;
-  const size_t num_elements = trajectory_->getFrames()[0].elements().size();
+  const size_t num_elements = trajectory_->firstFrame().elements().size();
   std::vector<std::vector<double>> cutoffs_sq(
       num_elements, std::vector<double>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
@@ -197,8 +197,8 @@ std::string AppBackend::load_file(const std::string &path) {
 
   // Return info from the first frame
   size_t atom_count = 0;
-  if (!trajectory_->getFrames().empty()) {
-    atom_count = trajectory_->getFrames()[0].atomCount();
+  if (trajectory_->getFrameCount() > 0) {
+    atom_count = trajectory_->firstFrame().atomCount();
   }
 
   std::string msg = "File loaded: " + display_path;
@@ -206,7 +206,7 @@ std::string AppBackend::load_file(const std::string &path) {
 }
 
 std::string AppBackend::run_analysis() {
-  if (!trajectory_ || trajectory_->getFrames().empty()) {
+  if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     std::string err = AppDefaults::MSG_ANALYSIS_ABORTED;
     std::cerr << err << std::endl;
     return err;
@@ -229,7 +229,7 @@ std::string AppBackend::run_analysis() {
 
     // Ensure min_frame is within bounds
     size_t start_f = options_.min_frame;
-    if (start_f >= trajectory_->getFrames().size())
+    if (start_f >= trajectory_->getFrameCount())
       start_f = 0; // Default to 0 if out of bounds
 
     trajectory_->setTimeStep(options_.time_step);

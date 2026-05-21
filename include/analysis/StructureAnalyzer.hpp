@@ -47,7 +47,7 @@ public:
    * @param ignore_periodic_self_interactions Flag to ignore a-a image pairs.
    */
   explicit StructureAnalyzer(
-      correlation::core::Cell &cell, double cutoff,
+      const correlation::core::Cell &cell, double cutoff,
       const std::vector<std::vector<double>> &bond_cutoffs_sq,
       bool ignore_periodic_self_interactions = true);
 
@@ -86,7 +86,7 @@ public:
   }
 
 private:
-  correlation::core::Cell &cell_;              ///< Reference to the current periodic cell.
+  correlation::core::Cell cell_;              ///< Reference to the current periodic cell.
   double cutoff_sq_;                         ///< Squared cutoff for efficiency.
   std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Internal squared bond cutoffs.
 

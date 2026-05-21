@@ -31,7 +31,7 @@ namespace correlation::analysis {
 //---------------------------------------------------------------------------//
 
 DistributionFunctions::DistributionFunctions(
-    correlation::core::Cell &cell, double cutoff,
+    const correlation::core::Cell &cell, double cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs)
     : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0),
       bond_cutoffs_sq_(bond_cutoffs) {
@@ -421,10 +421,10 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
       [&](const tbb::blocked_range<size_t> &range) {
         for (size_t i = range.begin(); i != range.end(); ++i) {
           const size_t frame_idx = start_frame + i;
-          if (frame_idx >= trajectory.getFrames().size())
+          if (frame_idx >= trajectory.getFrameCount())
             continue;
 
-          correlation::core::Cell &frame = trajectory.getFrames()[frame_idx];
+          correlation::core::Cell frame = trajectory.getFrame(frame_idx);
 
           auto frame_df =
               std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
