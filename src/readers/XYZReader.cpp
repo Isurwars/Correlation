@@ -7,12 +7,10 @@
  */
 
 #include "readers/XYZReader.hpp"
-#include "readers/ReaderFactory.hpp"
 #include "core/MappedFile.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <array>
-#include <cmath>
-#include <fstream>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -27,7 +25,8 @@ bool registered =
 // ---------------------------------------------------------------------------
 // parseXYZFrame – parses a single frame from memory
 // ---------------------------------------------------------------------------
-correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) {
+correlation::core::Cell XYZReader::parseXYZFrame(const char *data,
+                                                 size_t size) {
   std::string content(data, size);
   std::istringstream stream(content);
   std::string line;
@@ -43,13 +42,13 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
   try {
     num_atoms = std::stoi(line);
   } catch (...) {
-    throw std::runtime_error(
-        "Invalid XYZ file: expected atom count, got: " + line);
+    throw std::runtime_error("Invalid XYZ file: expected atom count, got: " +
+                             line);
   }
 
   if (num_atoms <= 0) {
-    throw std::runtime_error(
-        "Invalid XYZ file: non-positive atom count: " + line);
+    throw std::runtime_error("Invalid XYZ file: non-positive atom count: " +
+                             line);
   }
 
   // --- Line 2: comment / Extended XYZ header ---
@@ -83,8 +82,8 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
     std::string symbol;
     double x, y, z;
     if (!(iss >> symbol >> x >> y >> z)) {
-      throw std::runtime_error(
-          "Invalid XYZ file: malformed atom line: " + line);
+      throw std::runtime_error("Invalid XYZ file: malformed atom line: " +
+                               line);
     }
 
     cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
@@ -154,10 +153,11 @@ correlation::core::Trajectory XYZReader::readTrajectory(
     // Skip blank lines
     while (offset < total_size) {
       size_t line_end = offset;
-      while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
+      while (line_end < total_size && data[line_end] != '\n' &&
+             data[line_end] != '\r') {
         line_end++;
       }
-      
+
       bool is_blank = true;
       for (size_t i = offset; i < line_end; ++i) {
         if (data[i] != ' ' && data[i] != '\t') {
@@ -165,11 +165,11 @@ correlation::core::Trajectory XYZReader::readTrajectory(
           break;
         }
       }
-      
+
       if (!is_blank) {
         break;
       }
-      
+
       if (line_end < total_size && data[line_end] == '\r') {
         line_end++;
       }
@@ -178,31 +178,34 @@ correlation::core::Trajectory XYZReader::readTrajectory(
       }
       offset = line_end;
     }
-    
+
     if (offset >= total_size) {
       break;
     }
-    
+
     size_t frame_start = offset;
-    
+
     // Read the atom count line
     size_t line_end = offset;
-    while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
+    while (line_end < total_size && data[line_end] != '\n' &&
+           data[line_end] != '\r') {
       line_end++;
     }
     std::string atom_count_str(data + offset, line_end - offset);
-    
+
     int num_atoms = 0;
     try {
       num_atoms = std::stoi(atom_count_str);
     } catch (...) {
-      throw std::runtime_error("Invalid XYZ file: expected atom count, got: " + atom_count_str);
+      throw std::runtime_error("Invalid XYZ file: expected atom count, got: " +
+                               atom_count_str);
     }
-    
+
     if (num_atoms <= 0) {
-      throw std::runtime_error("Invalid XYZ file: non-positive atom count: " + atom_count_str);
+      throw std::runtime_error("Invalid XYZ file: non-positive atom count: " +
+                               atom_count_str);
     }
-    
+
     if (line_end < total_size && data[line_end] == '\r') {
       line_end++;
     }
@@ -210,13 +213,15 @@ correlation::core::Trajectory XYZReader::readTrajectory(
       line_end++;
     }
     offset = line_end;
-    
+
     // Read the comment line
     if (offset >= total_size) {
-      throw std::runtime_error("Invalid XYZ file: missing comment line after atom count");
+      throw std::runtime_error(
+          "Invalid XYZ file: missing comment line after atom count");
     }
     line_end = offset;
-    while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
+    while (line_end < total_size && data[line_end] != '\n' &&
+           data[line_end] != '\r') {
       line_end++;
     }
     if (line_end < total_size && data[line_end] == '\r') {
@@ -226,14 +231,17 @@ correlation::core::Trajectory XYZReader::readTrajectory(
       line_end++;
     }
     offset = line_end;
-    
+
     // Read coordinate lines
     for (int i = 0; i < num_atoms; ++i) {
       if (offset >= total_size) {
-        throw std::runtime_error("Invalid XYZ file: unexpected EOF while reading atom " + std::to_string(i + 1));
+        throw std::runtime_error(
+            "Invalid XYZ file: unexpected EOF while reading atom " +
+            std::to_string(i + 1));
       }
       line_end = offset;
-      while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
+      while (line_end < total_size && data[line_end] != '\n' &&
+             data[line_end] != '\r') {
         line_end++;
       }
       if (line_end < total_size && data[line_end] == '\r') {
@@ -244,12 +252,13 @@ correlation::core::Trajectory XYZReader::readTrajectory(
       }
       offset = line_end;
     }
-    
+
     frame_offsets.push_back(frame_start);
 
     // Report progress.
     if (progress_callback && total_size > 0) {
-      float progress = static_cast<float>(offset) / static_cast<float>(total_size);
+      float progress =
+          static_cast<float>(offset) / static_cast<float>(total_size);
       progress_callback(progress, "Reading XYZ frames...");
     }
   }
@@ -263,11 +272,10 @@ correlation::core::Trajectory XYZReader::readTrajectory(
   if (progress_callback)
     progress_callback(1.0f, "XYZ file loaded.");
 
-  auto parser = [](const char *d, size_t s) {
-    return parseXYZFrame(d, s);
-  };
+  auto parser = [](const char *d, size_t s) { return parseXYZFrame(d, s); };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
+  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets),
+                                       parser, 1.0);
 }
 
 } // namespace correlation::readers
