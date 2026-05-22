@@ -22,8 +22,10 @@ add_executable(correlation_unit_tests
     unit/io/WriterTests.cpp
     unit/io/VaspReaderTests.cpp
     unit/io/XdatcarReaderTests.cpp
+    unit/io/XYZReaderTests.cpp
     unit/io/QEReaderTests.cpp
     unit/io/CP2KReaderTests.cpp
+    unit/io/GromacsReaderTests.cpp
     unit/analysis/DihedralCalculatorTests.cpp
     unit/analysis/MotifFinderTests.cpp
     unit/analysis/RDFTests.cpp

@@ -38,9 +38,12 @@ export component PreviewCard inherits FilledCard {
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
+    in property <int> pinned_runs_count: 0;
 
     callback plot_selected(int);
     callback save_plot();
+    callback pin_run();
+    callback clear_pinned_runs();
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
@@ -83,6 +86,29 @@ export component PreviewCard inherits FilledCard {
                 clicked => {
                     root.save_plot();
                 }
+            }
+
+            FilledButton {
+                text: "Pin Run";
+                enabled: root.preview_plot.width > 0;
+                clicked => {
+                    root.pin_run();
+                }
+            }
+        }
+
+        // Pinned Runs Info
+        if root.pinned_runs_count > 0: HorizontalLayout {
+            spacing: MaterialStyleMetrics.spacing_8;
+            height: MaterialStyleMetrics.size_40;
+            MaterialText {
+                text: "Comparing with " + root.pinned_runs_count + " pinned run(s)";
+                color: MaterialPalette.on_surface_variant;
+                vertical-alignment: center;
+            }
+            FilledButton {
+                text: "Clear Pinned";
+                clicked => { root.clear_pinned_runs(); }
             }
         }
 

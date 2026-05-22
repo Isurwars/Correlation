@@ -155,14 +155,7 @@ public:
    */
   void calculateVelocities();
 
-  /**
-   * @brief Gets the pre-calculated velocities for all atoms.
-   * @return A vector of velocity vectors, indexed by `[frame][atom_index]`.
-   */
-  [[nodiscard]] const std::vector<std::vector<math::Vector3<double>>> &
-  getVelocities() const {
-    return velocities_;
-  }
+  // Removed getVelocities(), use frames[i].atoms()[j].velocity() instead
 
   /**
    * @brief Gets the matrix of squared bond cutoffs for element pairs.
@@ -197,7 +190,7 @@ private:
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
   mutable std::optional<Cell> first_frame_;
   mutable std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
-  std::vector<std::vector<math::Vector3<double>>> velocities_; ///< Inter-frame velocities.
+  // velocities_ removed
   double time_step_; ///< Time between snapshots.
   size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
 

@@ -37,17 +37,22 @@ public:
         std::function<void(float, const std::string&)> progress_callback = nullptr) override;
 
 private:
+    struct CommentData {
+        std::optional<std::array<double, 9>> lattice;
+        std::optional<double> energy;
+        int species_col = 0;
+        int pos_x_col = 1;
+        int pos_y_col = 2;
+        int pos_z_col = 3;
+    };
+
     /**
-     * @brief Parses lattice vectors from an Extended XYZ comment line.
-     *
-     * Looks for `Lattice="v1x v1y v1z v2x v2y v2z v3x v3y v3z"` and
-     * returns the 3×3 lattice matrix. If no Lattice key is found, returns
-     * std::nullopt.
+     * @brief Parses an Extended XYZ comment line for properties, lattice and energy.
      *
      * @param comment The comment line string.
-     * @return An optional array of 9 doubles (row-major: a1,a2,a3, b1,b2,b3, c1,c2,c3).
+     * @return CommentData struct containing parsed info.
      */
-    static std::optional<std::array<double, 9>> parseLattice(const std::string& comment);
+    static CommentData parseCommentLine(const std::string& comment);
     static correlation::core::Cell parseXYZFrame(const char *data, size_t size);
 };
 

@@ -34,6 +34,8 @@ void init_core(py::module_ &m) {
         .def_property_readonly("atoms", &Cell::atoms)
         .def("get_positions",
             [](const Cell &c) -> py::array_t<double> {
+                py::module_ warnings = py::module_::import("warnings");
+                warnings.attr("warn")("get_positions() is deprecated, use the zero-copy .positions property instead.", warnings.attr("DeprecationWarning"));
                 const auto &atoms = c.atoms();
                 const size_t n = atoms.size();
                 py::array_t<double> arr({n, size_t(3)});
@@ -46,7 +48,45 @@ void init_core(py::module_ &m) {
                 }
                 return arr;
             },
-            "Return all atom positions as a NumPy array of shape (N, 3).")
+            "Deprecated: Return all atom positions as a NumPy array. Use .positions instead.")
+        .def_property_readonly("positions", [](py::object &obj) -> py::array_t<double> {
+            auto& c = obj.cast<const Cell&>();
+            const auto &atoms = c.atoms();
+            if (atoms.empty()) return py::array_t<double>();
+            
+            ssize_t stride_row = sizeof(Atom);
+            ssize_t stride_col = sizeof(double);
+            ssize_t rows = atoms.size();
+            ssize_t cols = 3;
+            
+            const double* ptr = atoms[0].position().begin();
+            
+            return py::array_t<double>(
+                {rows, cols},
+                {stride_row, stride_col},
+                ptr,
+                obj
+            );
+        }, "Zero-copy access to atom positions as a (N, 3) NumPy array.")
+        .def_property_readonly("velocities", [](py::object &obj) -> py::array_t<double> {
+            auto& c = obj.cast<const Cell&>();
+            const auto &atoms = c.atoms();
+            if (atoms.empty()) return py::array_t<double>();
+            
+            ssize_t stride_row = sizeof(Atom);
+            ssize_t stride_col = sizeof(double);
+            ssize_t rows = atoms.size();
+            ssize_t cols = 3;
+            
+            const double* ptr = atoms[0].velocity().begin();
+            
+            return py::array_t<double>(
+                {rows, cols},
+                {stride_row, stride_col},
+                ptr,
+                obj
+            );
+        }, "Zero-copy access to atom velocities as a (N, 3) NumPy array.")
         .def("get_element_ids",
             [](const Cell &c) -> py::array_t<int> {
                 const auto &atoms = c.atoms();

@@ -24,6 +24,8 @@ namespace correlation::readers {
  * element-name variant (`element x y z`) and scaled / wrapped coordinates
  * (`xs ys zs`). When the file contains more than one timestep the reader
  * returns every frame, making it suitable for LAMMPS MD trajectories.
+ *
+ * Uses memory-mapped I/O for lazy frame loading on large trajectories.
  */
 class LammpsDumpReader : public BaseReader {
 public:
@@ -44,18 +46,15 @@ public:
           nullptr) override;
 
   /**
-   * @brief Reads all frames from a LAMMPS dump file.
+   * @brief Parses a single LAMMPS dump frame from a memory region.
    *
-   * @param file_name        Path to the dump file.
-   * @param progress_callback Optional callback invoked with (fraction,
-   * message).
-   * @return A vector of correlation::core::Cell objects, one per timestep found
-   * in the file.
+   * The region must contain a complete frame starting with "ITEM: TIMESTEP".
+   *
+   * @param data Pointer to the start of the frame data.
+   * @param size Number of bytes in the frame region.
+   * @return A parsed Cell object.
    */
-  static std::vector<correlation::core::Cell>
-  read(const std::string &file_name,
-       std::function<void(float, const std::string &)> progress_callback =
-           nullptr);
+  static correlation::core::Cell parseDumpFrame(const char *data, size_t size);
 };
 
 } // namespace correlation::readers

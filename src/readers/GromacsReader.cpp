@@ -1,16 +1,17 @@
 /**
  * @file GromacsReader.cpp
- * @brief Implementation of the GROMACS (.gro) file reader.
+ * @brief Implementation of the GROMACS (.gro) file reader with memory-mapped
+ *        lazy loading for multi-frame trajectories.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: MIT
  */
 
 #include "readers/GromacsReader.hpp"
+#include "core/MappedFile.hpp"
 #include "readers/ReaderFactory.hpp"
 
-#include <fstream>
-#include <iostream>
+#include <cstring>
 #include <sstream>
 #include <stdexcept>
 
@@ -21,27 +22,55 @@ bool registered =
     ReaderFactory::instance().registerReader(std::make_unique<GromacsReader>());
 }
 
-correlation::core::Cell GromacsReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+// ---------------------------------------------------------------------------
+// Helper: find end of line
+// ---------------------------------------------------------------------------
+static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
+  while (pos < total && data[pos] != '\n' && data[pos] != '\r')
+    ++pos;
+  return pos;
+}
 
-  std::ifstream file(filename);
-  if (!file.is_open()) {
-    throw std::runtime_error("Could not open file: " + filename);
-  }
+// ---------------------------------------------------------------------------
+// Helper: skip past line ending
+// ---------------------------------------------------------------------------
+static inline size_t skipLineEnding(const char *data, size_t total,
+                                    size_t pos) {
+  if (pos < total && data[pos] == '\r')
+    ++pos;
+  if (pos < total && data[pos] == '\n')
+    ++pos;
+  return pos;
+}
 
-  if (progress_callback)
-    progress_callback(0.1f, "Reading GROMACS structure...");
+// ---------------------------------------------------------------------------
+// Helper: extract a line as std::string from [pos, lineEnd)
+// ---------------------------------------------------------------------------
+static inline std::string extractLine(const char *data, size_t pos,
+                                      size_t lineEnd) {
+  return std::string(data + pos, lineEnd - pos);
+}
 
-  std::string line;
+// ---------------------------------------------------------------------------
+// parseGroFrame — parses a single .gro frame from memory
+// ---------------------------------------------------------------------------
+correlation::core::Cell GromacsReader::parseGroFrame(const char *data,
+                                                      size_t size) {
+  size_t offset = 0;
+  size_t lineEnd = 0;
+
+  auto nextLine = [&]() -> std::string {
+    lineEnd = findLineEnd(data, size, offset);
+    std::string line = extractLine(data, offset, lineEnd);
+    offset = skipLineEnding(data, size, lineEnd);
+    return line;
+  };
 
   // Line 1: Title/Comment
-  if (!std::getline(file, line))
-    throw std::runtime_error("Invalid GROMACS file: empty");
+  nextLine(); // skip title
 
   // Line 2: Number of atoms
-  if (!std::getline(file, line))
-    throw std::runtime_error("Invalid GROMACS file: missing atom count");
+  std::string line = nextLine();
   int num_atoms = 0;
   try {
     num_atoms = std::stoi(line);
@@ -54,22 +83,16 @@ correlation::core::Cell GromacsReader::readStructure(
   // Lines 3 to num_atoms + 2: Atoms
   // Format: 5pos 5res 5atom 5id 8x 8y 8z 8vx 8vy 8vz (last 3 optional)
   for (int i = 0; i < num_atoms; ++i) {
-    if (!std::getline(file, line))
-      throw std::runtime_error("Invalid GROMACS file: unexpected EOF");
-
+    line = nextLine();
     if (line.length() < 44)
       continue; // Basic coordinate check
 
-    std::string res_name = line.substr(5, 5);
     std::string atom_name = line.substr(10, 5);
     // Trim whitespace
     atom_name.erase(0, atom_name.find_first_not_of(" "));
     atom_name.erase(atom_name.find_last_not_of(" ") + 1);
 
-    // GROMACS atom names often start with the element (e.g., "OW", "HW1", "CL")
-    // We need to extract the element symbol.
-    // Simple heuristic: first character, or first two if it matches an element.
-    // For now, let's just take the first alphabetic characters.
+    // Extract element symbol from atom name
     std::string symbol = "";
     for (char c : atom_name) {
       if (std::isalpha(c))
@@ -86,16 +109,12 @@ correlation::core::Cell GromacsReader::readStructure(
     double z = std::stod(line.substr(36, 8)) * 10.0;
 
     cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
-
-    if (progress_callback && i % 1000 == 0) {
-      progress_callback(0.1f + 0.8f * (static_cast<float>(i) / num_atoms),
-                        "Parsing atoms...");
-    }
   }
 
   // Last line: Box vectors (v1x v2y v3z v1y v1z v2x v2z v3x v3y)
   // Most common: 3 values (orthogonal box)
-  if (std::getline(file, line)) {
+  if (offset < size) {
+    line = nextLine();
     std::stringstream ss(line);
     double bx, by, bz;
     if (ss >> bx >> by >> bz) {
@@ -105,20 +124,127 @@ correlation::core::Cell GromacsReader::readStructure(
     }
   }
 
-  if (progress_callback)
-    progress_callback(1.0f, "GROMACS file loaded.");
   return cell;
 }
 
+// ---------------------------------------------------------------------------
+// readStructure — returns the last frame
+// ---------------------------------------------------------------------------
+correlation::core::Cell GromacsReader::readStructure(
+    const std::string &filename,
+    std::function<void(float, const std::string &)> progress_callback) {
+
+  auto traj = readTrajectory(filename, progress_callback);
+  if (traj.getFrameCount() == 0) {
+    throw std::runtime_error("No structure found in GROMACS file: " + filename);
+  }
+  return traj.getFrame(traj.getFrameCount() - 1);
+}
+
+// ---------------------------------------------------------------------------
+// readTrajectory — memory-mapped lazy loading for multi-frame .gro
+// ---------------------------------------------------------------------------
 correlation::core::Trajectory GromacsReader::readTrajectory(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
-  // For .gro files, we usually only have one frame.
-  // If there are more, they just repeat the structure.
-  // For now, return a single frame trajectory.
-  std::vector<correlation::core::Cell> frames;
-  frames.push_back(readStructure(filename, progress_callback));
-  return correlation::core::Trajectory(frames, 1.0);
+
+  if (progress_callback)
+    progress_callback(0.0f, "Reading GROMACS file...");
+
+  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
+  const char *data = mapped_file->data();
+  const size_t total_size = mapped_file->size();
+
+  // A .gro frame has the structure:
+  //   Line 1: title
+  //   Line 2: atom count (N)
+  //   Lines 3..N+2: atom data
+  //   Line N+3: box vectors
+  // We scan through sequentially to find frame boundaries.
+
+  std::vector<size_t> frame_offsets;
+  size_t offset = 0;
+
+  while (offset < total_size) {
+    // Skip any blank lines between frames
+    while (offset < total_size) {
+      size_t le = findLineEnd(data, total_size, offset);
+      bool is_blank = true;
+      for (size_t i = offset; i < le; ++i) {
+        if (data[i] != ' ' && data[i] != '\t') {
+          is_blank = false;
+          break;
+        }
+      }
+      if (!is_blank)
+        break;
+      offset = skipLineEnding(data, total_size, le);
+    }
+
+    if (offset >= total_size)
+      break;
+
+    size_t frame_start = offset;
+
+    // Line 1: title — skip
+    size_t le = findLineEnd(data, total_size, offset);
+    offset = skipLineEnding(data, total_size, le);
+    if (offset >= total_size)
+      break;
+
+    // Line 2: atom count
+    le = findLineEnd(data, total_size, offset);
+    std::string count_str(data + offset, le - offset);
+    offset = skipLineEnding(data, total_size, le);
+
+    int num_atoms = 0;
+    try {
+      num_atoms = std::stoi(count_str);
+    } catch (...) {
+      break; // Not a valid frame, stop scanning
+    }
+
+    if (num_atoms <= 0)
+      break;
+
+    // Skip N atom lines
+    for (int i = 0; i < num_atoms; ++i) {
+      if (offset >= total_size)
+        break;
+      le = findLineEnd(data, total_size, offset);
+      offset = skipLineEnding(data, total_size, le);
+    }
+
+    // Skip box vector line
+    if (offset < total_size) {
+      le = findLineEnd(data, total_size, offset);
+      offset = skipLineEnding(data, total_size, le);
+    }
+
+    frame_offsets.push_back(frame_start);
+
+    // Report progress
+    if (progress_callback && total_size > 0) {
+      float progress =
+          static_cast<float>(offset) / static_cast<float>(total_size);
+      progress_callback(progress, "Scanning GROMACS frames...");
+    }
+  }
+
+  if (frame_offsets.empty()) {
+    throw std::runtime_error("No frames found in GROMACS file: " + filename);
+  }
+
+  // Sentinel offset for the last frame's end
+  frame_offsets.push_back(total_size);
+
+  if (progress_callback)
+    progress_callback(1.0f, "GROMACS file loaded.");
+
+  auto parser = [](const char *d, size_t s) { return parseGroFrame(d, s); };
+
+  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets),
+                                       parser, 1.0);
 }
 
 } // namespace correlation::readers

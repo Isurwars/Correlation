@@ -38,27 +38,29 @@ protected:
 };
 
 TEST_F(XdatcarReaderTests, ParseThreeFrameTrajectory) {
-  auto frames =
-      correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
+  correlation::readers::XdatcarReader reader;
+  auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
-  EXPECT_EQ(frames.size(), 3);
+  EXPECT_EQ(traj.getFrameCount(), 3);
 }
 
 TEST_F(XdatcarReaderTests, FrameAtomCountConsistent) {
-  auto frames =
-      correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
+  correlation::readers::XdatcarReader reader;
+  auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
-  for (const auto &frame : frames) {
+  for (size_t i = 0; i < traj.getFrameCount(); ++i) {
+    auto frame = traj.getFrame(i);
     EXPECT_EQ(frame.atomCount(), 4);
   }
 }
 
 TEST_F(XdatcarReaderTests, LatticeConsistentAcrossFrames) {
-  auto frames =
-      correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
+  correlation::readers::XdatcarReader reader;
+  auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
   // All frames should share the same lattice (5.43 Å cubic)
-  for (const auto &frame : frames) {
+  for (size_t i = 0; i < traj.getFrameCount(); ++i) {
+    auto frame = traj.getFrame(i);
     auto params = frame.lattice_parameters();
     EXPECT_NEAR(params[0], 5.43, 1e-6);
     EXPECT_NEAR(params[1], 5.43, 1e-6);
@@ -67,22 +69,25 @@ TEST_F(XdatcarReaderTests, LatticeConsistentAcrossFrames) {
 }
 
 TEST_F(XdatcarReaderTests, SpeciesAreCorrect) {
-  auto frames =
-      correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
+  correlation::readers::XdatcarReader reader;
+  auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
-  ASSERT_FALSE(frames.empty());
-  EXPECT_EQ(frames[0].elements().size(), 1);
-  EXPECT_EQ(frames[0].elements()[0].symbol, "Si");
+  ASSERT_GT(traj.getFrameCount(), 0u);
+  auto frame0 = traj.getFrame(0);
+  EXPECT_EQ(frame0.elements().size(), 1);
+  EXPECT_EQ(frame0.elements()[0].symbol, "Si");
 }
 
 TEST_F(XdatcarReaderTests, PositionsDifferBetweenFrames) {
-  auto frames =
-      correlation::readers::XdatcarReader::read(data_dir_ + "Si.xdatcar");
+  correlation::readers::XdatcarReader reader;
+  auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
-  ASSERT_GE(frames.size(), 2);
+  ASSERT_GE(traj.getFrameCount(), 2u);
   // First atom in frame 0 vs frame 1 should differ
-  auto pos0 = frames[0].atoms()[0].position();
-  auto pos1 = frames[1].atoms()[0].position();
+  auto frame0 = traj.getFrame(0);
+  auto frame1 = traj.getFrame(1);
+  auto pos0 = frame0.atoms()[0].position();
+  auto pos1 = frame1.atoms()[0].position();
 
   double dist_sq = (pos0[0] - pos1[0]) * (pos0[0] - pos1[0]) +
                    (pos0[1] - pos1[1]) * (pos0[1] - pos1[1]) +
@@ -113,7 +118,8 @@ TEST_F(XdatcarReaderTests, ReaderIsRegisteredInFactory) {
 }
 
 TEST_F(XdatcarReaderTests, NonExistentFileThrows) {
+  correlation::readers::XdatcarReader reader;
   EXPECT_THROW(
-      correlation::readers::XdatcarReader::read("nonexistent_file.xdatcar"),
+      reader.readTrajectory("nonexistent_file.xdatcar"),
       std::runtime_error);
 }

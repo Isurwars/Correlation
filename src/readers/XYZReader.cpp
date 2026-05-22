@@ -60,14 +60,19 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data,
 
   correlation::core::Cell cell;
 
-  // Try to parse Extended XYZ lattice from comment line.
-  auto lattice = parseLattice(comment);
-  if (lattice) {
-    const auto &L = *lattice;
+  // Try to parse Extended XYZ comment line
+  auto comm_data = parseCommentLine(comment);
+  
+  if (comm_data.lattice) {
+    const auto &L = *comm_data.lattice;
     correlation::math::Vector3<double> a(L[0], L[1], L[2]);
     correlation::math::Vector3<double> b(L[3], L[4], L[5]);
     correlation::math::Vector3<double> c(L[6], L[7], L[8]);
     cell = correlation::core::Cell(a, b, c);
+  }
+
+  if (comm_data.energy) {
+    cell.setEnergy(*comm_data.energy);
   }
 
   // --- Lines 3..N+2: atom data ---
@@ -79,43 +84,134 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data,
     }
 
     std::istringstream iss(line);
-    std::string symbol;
-    double x, y, z;
-    if (!(iss >> symbol >> x >> y >> z)) {
+    std::vector<std::string> tokens;
+    std::string token;
+    while (iss >> token) {
+      tokens.push_back(token);
+    }
+
+    int max_idx = std::max({comm_data.species_col, comm_data.pos_x_col, 
+                            comm_data.pos_y_col, comm_data.pos_z_col});
+
+    if (static_cast<int>(tokens.size()) <= max_idx) {
       throw std::runtime_error("Invalid XYZ file: malformed atom line: " +
                                line);
     }
 
-    cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
+    std::string symbol = tokens[comm_data.species_col];
+    try {
+      double x = std::stod(tokens[comm_data.pos_x_col]);
+      double y = std::stod(tokens[comm_data.pos_y_col]);
+      double z = std::stod(tokens[comm_data.pos_z_col]);
+      cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
+    } catch (...) {
+      throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
+    }
   }
 
   return cell;
 }
 
 // ---------------------------------------------------------------------------
-// Lattice parser  (Extended XYZ convention)
+// Comment parser (Extended XYZ convention)
 // ---------------------------------------------------------------------------
-std::optional<std::array<double, 9>>
-XYZReader::parseLattice(const std::string &comment) {
-  // Search for  Lattice="v1x v1y v1z v2x v2y v2z v3x v3y v3z"
-  const std::string key = "Lattice=\"";
-  auto pos = comment.find(key);
-  if (pos == std::string::npos)
-    return std::nullopt;
+XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
+  CommentData data;
 
-  auto start = pos + key.size();
-  auto end = comment.find('"', start);
-  if (end == std::string::npos)
-    return std::nullopt;
-
-  std::string values = comment.substr(start, end - start);
-  std::istringstream iss(values);
-  std::array<double, 9> lattice{};
-  for (int i = 0; i < 9; ++i) {
-    if (!(iss >> lattice[i]))
-      return std::nullopt;
+  // 1. Parse Lattice
+  const std::string lat_key = "Lattice=\"";
+  auto pos = comment.find(lat_key);
+  if (pos != std::string::npos) {
+    auto start = pos + lat_key.size();
+    auto end = comment.find('"', start);
+    if (end != std::string::npos) {
+      std::string values = comment.substr(start, end - start);
+      std::istringstream iss(values);
+      std::array<double, 9> lattice{};
+      bool ok = true;
+      for (int i = 0; i < 9; ++i) {
+        if (!(iss >> lattice[i])) { ok = false; break; }
+      }
+      if (ok) data.lattice = lattice;
+    }
   }
-  return lattice;
+
+  // 2. Parse Energy (looking for "energy=" or "dft_energy=")
+  // Handle both unquoted and quoted values.
+  const std::vector<std::string> energy_keys = {"energy=", "dft_energy=", "Energy="};
+  for (const auto& key : energy_keys) {
+    pos = comment.find(key);
+    if (pos != std::string::npos) {
+      auto start = pos + key.size();
+      if (start < comment.size()) {
+        size_t end = std::string::npos;
+        if (comment[start] == '"') {
+          start++;
+          end = comment.find('"', start);
+        } else {
+          end = comment.find_first_of(" \t\r\n", start);
+        }
+        if (end != std::string::npos || end == std::string::npos) {
+          std::string val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+          try { data.energy = std::stod(val_str); break; } catch(...) {}
+        }
+      }
+    }
+  }
+
+  // 3. Parse Properties
+  const std::string prop_key = "Properties=";
+  pos = comment.find(prop_key);
+  if (pos != std::string::npos) {
+    auto start = pos + prop_key.size();
+    if (start < comment.size()) {
+      size_t end;
+      if (comment[start] == '"') {
+        start++;
+        end = comment.find('"', start);
+      } else {
+        end = comment.find_first_of(" \t\r\n", start);
+      }
+      
+      std::string props = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+      
+      // format is name:type:cols:name:type:cols...
+      std::vector<std::string> parts;
+      std::istringstream p_ss(props);
+      std::string p;
+      while (std::getline(p_ss, p, ':')) {
+        parts.push_back(p);
+      }
+      
+      int col_index = 0;
+      data.species_col = -1;
+      data.pos_x_col = -1;
+      
+      for (size_t i = 0; i + 2 < parts.size(); i += 3) {
+        std::string name = parts[i];
+        int cols = 1;
+        try { cols = std::stoi(parts[i+2]); } catch(...) {}
+        
+        if (name == "species" || name == "type") {
+          data.species_col = col_index;
+        } else if (name == "pos") {
+          data.pos_x_col = col_index;
+          data.pos_y_col = col_index + 1;
+          data.pos_z_col = col_index + 2;
+        }
+        col_index += cols;
+      }
+      
+      if (data.species_col == -1) data.species_col = 0;
+      if (data.pos_x_col == -1) { 
+        data.pos_x_col = 1; 
+        data.pos_y_col = 2; 
+        data.pos_z_col = 3; 
+      }
+    }
+  }
+
+  return data;
 }
 
 // ---------------------------------------------------------------------------

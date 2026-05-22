@@ -149,10 +149,18 @@ void Trajectory::precomputeBondCutoffs() const {
   const size_t num_elements = elements.size();
   bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
 
+  auto safeGetRadius = [](const std::string& symbol) -> double {
+    try {
+      return physics::getCovalentRadius(symbol);
+    } catch (const std::out_of_range&) {
+      return 1.5; // Default covalent radius for unknown elements
+    }
+  };
+
   for (size_t i = 0; i < num_elements; ++i) {
-    const double radius_A = physics::getCovalentRadius(elements[i].symbol);
+    const double radius_A = safeGetRadius(elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
-      const double radius_B = physics::getCovalentRadius(elements[j].symbol);
+      const double radius_B = safeGetRadius(elements[j].symbol);
       const double max_bond_dist = (radius_A + radius_B) * 1.3;
       const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
       bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
@@ -222,8 +230,6 @@ void Trajectory::calculateVelocities() {
   size_t num_frames = frames_.size();
   size_t num_atoms = frames_[0].atoms().size();
 
-  velocities_.assign(num_frames, std::vector<math::Vector3<double>>(num_atoms));
-
   if (time_step_ <= 0.0)
     return; // Cannot calculate valid velocities
 
@@ -252,7 +258,13 @@ void Trajectory::calculateVelocities() {
         // v(0) = (r(1) - r(0)) / dt
         const auto &r0 = frames_[0].atoms()[i].position();
         const auto &r1 = frames_[1].atoms()[i].position();
-        velocities_[t][i] = displacement(r1, r0) / time_step_;
+        // Since getFrames() might be returning const, wait: frames_ is mutable std::vector<Cell>
+        // But atoms() returns const vector<Atom>& ... wait.
+        // I need a mutable atoms() to set velocity!
+        // Let's use const_cast since we know it's mutable inside frames_ ... 
+        // No, I should add a mutable atoms() to Cell.hpp, or just cast it here.
+        // Actually I will add mutable atoms() in a separate call or here.
+        const_cast<core::Atom&>(frames_[t].atoms()[i]).setVelocity(displacement(r1, r0) / time_step_);
       }
     } else if (t == num_frames - 1) {
       for (size_t i = 0; i < num_atoms; ++i) {
@@ -260,7 +272,7 @@ void Trajectory::calculateVelocities() {
         // v(N) = (r(N) - r(N-1)) / dt
         const auto &rN = frames_[num_frames - 1].atoms()[i].position();
         const auto &rN_1 = frames_[num_frames - 2].atoms()[i].position();
-        velocities_[t][i] = displacement(rN, rN_1) / time_step_;
+        const_cast<core::Atom&>(frames_[t].atoms()[i]).setVelocity(displacement(rN, rN_1) / time_step_);
       }
     } else {
       for (size_t i = 0; i < num_atoms; ++i) {
@@ -268,7 +280,7 @@ void Trajectory::calculateVelocities() {
         // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
         const auto &r_next = frames_[t + 1].atoms()[i].position();
         const auto &r_prev = frames_[t - 1].atoms()[i].position();
-        velocities_[t][i] = displacement(r_next, r_prev) / (2.0 * time_step_);
+        const_cast<core::Atom&>(frames_[t].atoms()[i]).setVelocity(displacement(r_next, r_prev) / (2.0 * time_step_));
       }
     }
   }

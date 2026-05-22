@@ -57,6 +57,12 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
 
   // Handle save plot request
   ui_.on_save_plot([this]() { handleSavePlot(); });
+
+  // Handle pin run request
+  ui_.on_pin_run([this]() { handlePinRun(); });
+
+  // Handle clear pinned runs request
+  ui_.on_clear_pinned_runs([this]() { handleClearPinnedRuns(); });
 }
 
 AppController::~AppController() {
@@ -551,7 +557,21 @@ void AppController::handleCheckFileDialogStatus() {
           config.theme = ui_.get_is_dark()
                              ? correlation::plotters::PlotConfig::Theme::Dark
                              : correlation::plotters::PlotConfig::Theme::Light;
-          std::string svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+          
+          std::string svg;
+          if (pinned_runs_.empty()) {
+            svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+          } else {
+            std::vector<correlation::plotters::LabeledHistogram> datasets;
+            datasets.push_back({"Current", hist});
+            for (const auto& pr : pinned_runs_) {
+              auto it = pr.histograms.find(name);
+              if (it != pr.histograms.end()) {
+                datasets.push_back({pr.label, &it->second});
+              }
+            }
+            svg = correlation::plotters::renderComparisonSvg(datasets, "Total", config);
+          }
           
           std::ofstream out(result);
           if (out.is_open()) {
@@ -627,11 +647,31 @@ void AppController::handleSelectPlot(int index) {
   const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
   if (!hist)
     return;
+
   correlation::plotters::PlotConfig config;
   config.theme = ui_.get_is_dark()
                      ? correlation::plotters::PlotConfig::Theme::Dark
                      : correlation::plotters::PlotConfig::Theme::Light;
-  std::string svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+
+  std::string svg;
+  if (pinned_runs_.empty()) {
+    svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+  } else {
+    std::vector<correlation::plotters::LabeledHistogram> datasets;
+    
+    // Add the current run first
+    datasets.push_back({"Current", hist});
+    
+    // Add pinned runs
+    for (const auto& pr : pinned_runs_) {
+      auto it = pr.histograms.find(name);
+      if (it != pr.histograms.end()) {
+        datasets.push_back({pr.label, &it->second});
+      }
+    }
+    
+    svg = correlation::plotters::renderComparisonSvg(datasets, "Total", config);
+  }
 
   // Load SVG directly from memory avoiding filesystem issues
   auto img = slint::private_api::load_image_from_embedded_data(
@@ -665,6 +705,38 @@ void AppController::handleSavePlot() {
   ui_.set_text_opacity(true);
   ui_.set_analysis_status_text(
       slint::SharedString(std::string("Saving ") + name + " plot..."));
+}
+
+void AppController::handlePinRun() {
+  const auto& hists = backend_.getHistograms();
+  if (hists.empty()) return;
+  
+  std::string label = "Run " + std::to_string(pinned_runs_.size() + 1);
+  pinned_runs_.push_back({label, hists});
+  
+  slint::invoke_from_event_loop([this]() {
+    ui_.set_pinned_runs_count(static_cast<int>(pinned_runs_.size()));
+    
+    // Refresh plot if we have one selected
+    int current_idx = ui_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      handleSelectPlot(current_idx);
+    }
+  });
+}
+
+void AppController::handleClearPinnedRuns() {
+  pinned_runs_.clear();
+  
+  slint::invoke_from_event_loop([this]() {
+    ui_.set_pinned_runs_count(0);
+    
+    // Refresh plot if we have one selected
+    int current_idx = ui_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      handleSelectPlot(current_idx);
+    }
+  });
 }
 
 } // namespace correlation::app

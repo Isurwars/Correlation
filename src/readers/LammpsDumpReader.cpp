@@ -1,24 +1,18 @@
 /**
  * @file LammpsDumpReader.cpp
- * @brief Implementation of the LAMMPS dump file reader.
+ * @brief Implementation of the LAMMPS dump file reader with memory-mapped lazy
+ *        loading.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: MIT
  */
 #include "readers/LammpsDumpReader.hpp"
-#include "core/Cell.hpp"
-#include "core/Trajectory.hpp"
+#include "core/MappedFile.hpp"
 #include "readers/ReaderFactory.hpp"
 
-#include <cerrno>
 #include <cstring>
-#include <fstream>
-#include <functional>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
-#include <string>
-#include <vector>
 
 namespace correlation::readers {
 
@@ -26,240 +20,267 @@ namespace correlation::readers {
 static bool registered = ReaderFactory::instance().registerReader(
     std::make_unique<LammpsDumpReader>());
 
+// ---------------------------------------------------------------------------
+// Helper: advance past the current line ending (\r\n or \n)
+// ---------------------------------------------------------------------------
+static inline size_t skipLineEnding(const char *data, size_t total,
+                                    size_t pos) {
+  if (pos < total && data[pos] == '\r')
+    ++pos;
+  if (pos < total && data[pos] == '\n')
+    ++pos;
+  return pos;
+}
+
+// ---------------------------------------------------------------------------
+// Helper: find end of the current line (position of \n or \r)
+// ---------------------------------------------------------------------------
+static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
+  while (pos < total && data[pos] != '\n' && data[pos] != '\r')
+    ++pos;
+  return pos;
+}
+
+// ---------------------------------------------------------------------------
+// Helper: extract a line as std::string from [pos, lineEnd)
+// ---------------------------------------------------------------------------
+static inline std::string extractLine(const char *data, size_t pos,
+                                      size_t lineEnd) {
+  return std::string(data + pos, lineEnd - pos);
+}
+
+// ---------------------------------------------------------------------------
+// parseDumpFrame — parses a single frame from a memory region
+// ---------------------------------------------------------------------------
+correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
+                                                          size_t size) {
+  size_t offset = 0;
+  size_t lineEnd = 0;
+
+  auto nextLine = [&]() -> std::string {
+    lineEnd = findLineEnd(data, size, offset);
+    std::string line = extractLine(data, offset, lineEnd);
+    offset = skipLineEnding(data, size, lineEnd);
+    return line;
+  };
+
+  // --- ITEM: TIMESTEP ---
+  std::string line = nextLine(); // "ITEM: TIMESTEP"
+  nextLine();                    // timestep value (ignored)
+
+  // --- NUMBER OF ATOMS ---
+  nextLine(); // "ITEM: NUMBER OF ATOMS"
+  line = nextLine();
+  int num_atoms = 0;
+  try {
+    num_atoms = std::stoi(line);
+  } catch (...) {
+    throw std::runtime_error("Failed to parse atom count in LAMMPS dump frame");
+  }
+
+  // --- BOX BOUNDS ---
+  line = nextLine(); // "ITEM: BOX BOUNDS ..."
+  const bool triclinic = (line.find("xy") != std::string::npos);
+
+  double xlo, xhi, ylo, yhi, zlo, zhi;
+  double xy = 0.0, xz = 0.0, yz = 0.0;
+
+  if (triclinic) {
+    line = nextLine();
+    std::stringstream(line) >> xlo >> xhi >> xy;
+    line = nextLine();
+    std::stringstream(line) >> ylo >> yhi >> xz;
+    line = nextLine();
+    std::stringstream(line) >> zlo >> zhi >> yz;
+  } else {
+    line = nextLine();
+    std::stringstream(line) >> xlo >> xhi;
+    line = nextLine();
+    std::stringstream(line) >> ylo >> yhi;
+    line = nextLine();
+    std::stringstream(line) >> zlo >> zhi;
+  }
+
+  // Build the Cell from the box definition.
+  correlation::core::Cell frame;
+  if (triclinic) {
+    const double lx = xhi - xlo;
+    const double ly = yhi - ylo;
+    const double lz = zhi - zlo;
+    frame =
+        correlation::core::Cell({lx, 0.0, 0.0}, {xy, ly, 0.0}, {xz, yz, lz});
+  } else {
+    frame = correlation::core::Cell(
+        {xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0}, {0.0, 0.0, zhi - zlo});
+  }
+
+  // --- ATOMS header — discover column layout ---
+  line = nextLine(); // "ITEM: ATOMS ..."
+
+  std::istringstream header_ss(line);
+  std::string token;
+  header_ss >> token >> token; // consume "ITEM:" and "ATOMS"
+
+  std::vector<std::string> col_names;
+  while (header_ss >> token) {
+    col_names.push_back(token);
+  }
+
+  int col_id = -1, col_type = -1, col_element = -1;
+  int col_x = -1, col_y = -1, col_z = -1;
+  bool scaled_coords = false;
+
+  for (int i = 0; i < static_cast<int>(col_names.size()); ++i) {
+    const auto &cn = col_names[i];
+    if (cn == "id")
+      col_id = i;
+    else if (cn == "type")
+      col_type = i;
+    else if (cn == "element")
+      col_element = i;
+    else if (cn == "x")
+      col_x = i;
+    else if (cn == "y")
+      col_y = i;
+    else if (cn == "z")
+      col_z = i;
+    else if (cn == "xs" || cn == "xsu") {
+      col_x = i;
+      scaled_coords = true;
+    } else if (cn == "ys" || cn == "ysu") {
+      col_y = i;
+      scaled_coords = true;
+    } else if (cn == "zs" || cn == "zsu") {
+      col_z = i;
+      scaled_coords = true;
+    }
+  }
+
+  if (col_x == -1 || col_y == -1 || col_z == -1) {
+    return frame; // Cannot parse positions — return empty frame
+  }
+
+  const auto &lv = frame.latticeVectors();
+
+  // --- Atom lines ---
+  for (int i = 0; i < num_atoms; ++i) {
+    if (offset >= size)
+      break;
+    line = nextLine();
+
+    std::istringstream atom_ss(line);
+    std::vector<std::string> fields;
+    while (atom_ss >> token) {
+      fields.push_back(token);
+    }
+
+    const int num_fields = static_cast<int>(fields.size());
+    if (col_x >= num_fields || col_y >= num_fields || col_z >= num_fields)
+      continue;
+
+    double x = std::stod(fields[col_x]);
+    double y = std::stod(fields[col_y]);
+    double z = std::stod(fields[col_z]);
+
+    // Determine element symbol.
+    std::string element_symbol;
+    if (col_element >= 0 && col_element < num_fields) {
+      element_symbol = fields[col_element];
+    } else if (col_type >= 0 && col_type < num_fields) {
+      element_symbol = fields[col_type];
+    } else {
+      element_symbol = (col_id >= 0 && col_id < num_fields)
+                           ? fields[col_id]
+                           : std::to_string(i + 1);
+    }
+
+    // Convert scaled (fractional) coordinates to Cartesian if needed.
+    correlation::math::Vector3<double> pos;
+    if (scaled_coords) {
+      pos = {x * lv[0][0] + y * lv[0][1] + z * lv[0][2],
+             x * lv[1][0] + y * lv[1][1] + z * lv[1][2],
+             x * lv[2][0] + y * lv[2][1] + z * lv[2][2]};
+    } else {
+      pos = {x, y, z};
+    }
+
+    frame.addAtom(element_symbol, pos);
+  }
+
+  return frame;
+}
+
+// ---------------------------------------------------------------------------
+// readStructure — returns the first frame
+// ---------------------------------------------------------------------------
 correlation::core::Cell LammpsDumpReader::readStructure(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
-  auto frames = read(filename, progress_callback);
-  if (frames.empty()) {
+  auto traj = readTrajectory(filename, progress_callback);
+  if (traj.getFrameCount() == 0) {
     throw std::runtime_error("No frames found in LAMMPS dump file: " +
                              filename);
   }
-  return frames.front();
+  return traj.getFrame(0);
 }
 
+// ---------------------------------------------------------------------------
+// readTrajectory — memory-mapped lazy loading
+// ---------------------------------------------------------------------------
 correlation::core::Trajectory LammpsDumpReader::readTrajectory(
     const std::string &filename,
     std::function<void(float, const std::string &)> progress_callback) {
-  return correlation::core::Trajectory(read(filename, progress_callback), 1.0);
-}
 
-// ---------------------------------------------------------------------------
-// Core parser
-// ---------------------------------------------------------------------------
+  if (progress_callback)
+    progress_callback(0.0f, "Reading LAMMPS dump file...");
 
-std::vector<correlation::core::Cell> LammpsDumpReader::read(
-    const std::string &file_name,
-    std::function<void(float, const std::string &)> progress_callback) {
+  auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
+  const char *data = mapped_file->data();
+  const size_t total_size = mapped_file->size();
 
-  std::ifstream myfile(file_name);
-  if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" +
-                             std::strerror(errno) + ").");
+  // First pass: scan for "ITEM: TIMESTEP" to find frame byte offsets.
+  std::vector<size_t> frame_offsets;
+
+  // We search for the pattern "ITEM: TIMESTEP" at the start of a line.
+  const char *needle = "ITEM: TIMESTEP";
+  const size_t needle_len = std::strlen(needle);
+
+  size_t pos = 0;
+  while (pos < total_size) {
+    // Check if current position starts with the needle
+    bool at_line_start = (pos == 0) ||
+                         (pos > 0 && (data[pos - 1] == '\n'));
+    if (at_line_start && pos + needle_len <= total_size &&
+        std::memcmp(data + pos, needle, needle_len) == 0) {
+      frame_offsets.push_back(pos);
+
+      // Report progress.
+      if (progress_callback && total_size > 0) {
+        float progress =
+            static_cast<float>(pos) / static_cast<float>(total_size);
+        progress_callback(progress, "Scanning LAMMPS dump frames...");
+      }
+    }
+    // Advance to the next line
+    pos = findLineEnd(data, total_size, pos);
+    pos = skipLineEnding(data, total_size, pos);
   }
 
-  // Determine file size for progress reporting.
-  myfile.seekg(0, std::ios::end);
-  const std::streampos file_size = myfile.tellg();
-  myfile.seekg(0, std::ios::beg);
-  std::streampos last_progress_pos = 0;
-  const size_t update_interval =
-      (file_size > 100) ? static_cast<size_t>(file_size) / 100 : 1;
-
-  std::vector<correlation::core::Cell> frames;
-  std::string line;
-
-  while (std::getline(myfile, line)) {
-    // -----------------------------------------------------------------------
-    // Progress callback
-    // -----------------------------------------------------------------------
-    if (progress_callback) {
-      std::streampos current_pos = myfile.tellg();
-      if (current_pos - last_progress_pos >
-          static_cast<std::streamoff>(update_interval)) {
-        float p =
-            static_cast<float>(current_pos) / static_cast<float>(file_size);
-        progress_callback(p, "Loading LAMMPS dump file...");
-        last_progress_pos = current_pos;
-      }
-    }
-
-    // -----------------------------------------------------------------------
-    // Each frame begins with "ITEM: TIMESTEP"
-    // -----------------------------------------------------------------------
-    if (line.find("ITEM: TIMESTEP") == std::string::npos) {
-      continue;
-    }
-
-    // --- Timestep value (ignored, but consumed) ---
-    std::getline(myfile, line);
-
-    // --- NUMBER OF ATOMS ---
-    std::getline(myfile, line); // "ITEM: NUMBER OF ATOMS"
-    std::getline(myfile, line); // number
-    int num_atoms = 0;
-    try {
-      num_atoms = std::stoi(line);
-    } catch (...) {
-      throw std::runtime_error("Failed to parse atom count in LAMMPS dump: " +
-                               file_name);
-    }
-
-    // --- BOX BOUNDS ---
-    // Format: "ITEM: BOX BOUNDS {pp|ss|ff} {pp|ss|ff} {pp|ss|ff}"
-    // May optionally have "xy xz yz" for triclinic boxes.
-    std::getline(myfile, line); // "ITEM: BOX BOUNDS ..."
-    const bool triclinic = (line.find("xy") != std::string::npos);
-
-    double xlo, xhi, ylo, yhi, zlo, zhi;
-    double xy = 0.0, xz = 0.0, yz = 0.0;
-
-    if (triclinic) {
-      std::getline(myfile, line);
-      std::stringstream(line) >> xlo >> xhi >> xy;
-      std::getline(myfile, line);
-      std::stringstream(line) >> ylo >> yhi >> xz;
-      std::getline(myfile, line);
-      std::stringstream(line) >> zlo >> zhi >> yz;
-    } else {
-      std::getline(myfile, line);
-      std::stringstream(line) >> xlo >> xhi;
-      std::getline(myfile, line);
-      std::stringstream(line) >> ylo >> yhi;
-      std::getline(myfile, line);
-      std::stringstream(line) >> zlo >> zhi;
-    }
-
-    // Build the Cell from the box definition.
-    // For orthorhombic boxes this is straightforward. For triclinic we pass
-    // the full lattice vectors following the LAMMPS convention.
-    correlation::core::Cell frame;
-    if (triclinic) {
-      // LAMMPS triclinic lattice vectors:
-      //   a = (lx,  0,  0)
-      //   b = (xy, ly,  0)
-      //   c = (xz, yz, lz)
-      const double lx = xhi - xlo;
-      const double ly = yhi - ylo;
-      const double lz = zhi - zlo;
-      frame =
-          correlation::core::Cell({lx, 0.0, 0.0}, {xy, ly, 0.0}, {xz, yz, lz});
-    } else {
-      frame = correlation::core::Cell(
-          {xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0}, {0.0, 0.0, zhi - zlo});
-    }
-
-    // --- ATOMS header — discover column layout ---
-    // e.g. "ITEM: ATOMS id type x y z"
-    //      "ITEM: ATOMS id element x y z"
-    //      "ITEM: ATOMS id type xs ys zs"
-    std::getline(myfile, line); // "ITEM: ATOMS ..."
-
-    // Parse column names from the header.
-    std::istringstream header_ss(line);
-    std::string token;
-    header_ss >> token >> token; // consume "ITEM:" and "ATOMS"
-
-    std::vector<std::string> col_names;
-    while (header_ss >> token) {
-      col_names.push_back(token);
-    }
-
-    // Locate the columns we care about. -1 means not found.
-    int col_id = -1, col_type = -1, col_element = -1;
-    int col_x = -1, col_y = -1, col_z = -1;
-    bool scaled_coords = false;
-
-    for (int i = 0; i < static_cast<int>(col_names.size()); ++i) {
-      const auto &cn = col_names[i];
-      if (cn == "id")
-        col_id = i;
-      else if (cn == "type")
-        col_type = i;
-      else if (cn == "element")
-        col_element = i;
-      else if (cn == "x")
-        col_x = i;
-      else if (cn == "y")
-        col_y = i;
-      else if (cn == "z")
-        col_z = i;
-      else if (cn == "xs" || cn == "xsu") {
-        col_x = i;
-        scaled_coords = true;
-      } else if (cn == "ys" || cn == "ysu") {
-        col_y = i;
-        scaled_coords = true;
-      } else if (cn == "zs" || cn == "zsu") {
-        col_z = i;
-        scaled_coords = true;
-      }
-    }
-
-    // We need at minimum x/y/z columns and some form of element identity.
-    if (col_x == -1 || col_y == -1 || col_z == -1) {
-      // Skip this frame — cannot parse positions.
-      for (int i = 0; i < num_atoms; ++i)
-        std::getline(myfile, line);
-      continue;
-    }
-
-    // Pre-cache the lattice matrix for scaled-coordinate conversion.
-    const auto &lv = frame.latticeVectors();
-
-    // --- Atom lines ---
-    for (int i = 0; i < num_atoms; ++i) {
-      if (!std::getline(myfile, line))
-        break;
-
-      std::istringstream atom_ss(line);
-      std::vector<std::string> fields;
-      while (atom_ss >> token) {
-        fields.push_back(token);
-      }
-
-      const int num_fields = static_cast<int>(fields.size());
-      if (col_x >= num_fields || col_y >= num_fields || col_z >= num_fields)
-        continue;
-
-      double x = std::stod(fields[col_x]);
-      double y = std::stod(fields[col_y]);
-      double z = std::stod(fields[col_z]);
-
-      // Determine element symbol.
-      std::string element_symbol;
-      if (col_element >= 0 && col_element < num_fields) {
-        // Prefer explicit element name (e.g. "Si", "O").
-        element_symbol = fields[col_element];
-      } else if (col_type >= 0 && col_type < num_fields) {
-        // Fall back to numeric type label ("1", "2", ...).
-        element_symbol = fields[col_type];
-      } else {
-        // Last resort: use atom id.
-        element_symbol = (col_id >= 0 && col_id < num_fields)
-                             ? fields[col_id]
-                             : std::to_string(i + 1);
-      }
-
-      // Convert scaled (fractional) coordinates to Cartesian if needed.
-      correlation::math::Vector3<double> pos;
-      if (scaled_coords) {
-        // Cartesian = x*a + y*b + z*c  (column vectors)
-        pos = {x * lv[0][0] + y * lv[0][1] + z * lv[0][2],
-               x * lv[1][0] + y * lv[1][1] + z * lv[1][2],
-               x * lv[2][0] + y * lv[2][1] + z * lv[2][2]};
-      } else {
-        pos = {x, y, z};
-      }
-
-      frame.addAtom(element_symbol, pos);
-    }
-
-    if (!frame.isEmpty()) {
-      frames.push_back(std::move(frame));
-    }
+  if (frame_offsets.empty()) {
+    throw std::runtime_error("No frames found in LAMMPS dump file: " +
+                             filename);
   }
 
-  return frames;
+  // Add sentinel offset for the last frame's end
+  frame_offsets.push_back(total_size);
+
+  if (progress_callback)
+    progress_callback(1.0f, "LAMMPS dump file loaded.");
+
+  auto parser = [](const char *d, size_t s) { return parseDumpFrame(d, s); };
+
+  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets),
+                                       parser, 1.0);
 }
 
 } // namespace correlation::readers

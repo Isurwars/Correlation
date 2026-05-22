@@ -157,7 +157,7 @@ TEST_F(TrajectoryTests, CalculateVelocitiesComputesCorrectVelocities) {
   std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(1,0,0), createSimpleFrame(2,0,0)};
   Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
-  EXPECT_NEAR(traj.getVelocities()[0][0].x(), 1.0, 1e-6);
+  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 1.0, 1e-6);
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
@@ -165,7 +165,7 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
   Cell f2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}}); f2.addAtom("H", {1.0, 5.0, 5.0});
   Trajectory traj({f1, f2}, 1.0);
   traj.calculateVelocities();
-  EXPECT_NEAR(traj.getVelocities()[0][0].x(), 2.0, 1e-6);
+  EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 2.0, 1e-6);
 }
 
 TEST_F(TrajectoryTests, SetBondCutoffsManuallyWorks) {
@@ -215,13 +215,13 @@ TEST_F(TrajectoryTests, CalculateVelocitiesHandlesZeroOrNegativeTimeStep) {
   
   Trajectory traj_zero(frames, 0.0);
   traj_zero.calculateVelocities();
-  ASSERT_EQ(traj_zero.getVelocities().size(), 2);
-  EXPECT_DOUBLE_EQ(traj_zero.getVelocities()[0][0].x(), 0.0);
+  // traj_zero.getVelocities() size was 2, now we just check the velocity
+  EXPECT_DOUBLE_EQ(traj_zero.getFrame(0).atoms()[0].velocity().x(), 0.0);
 
   Trajectory traj_neg(frames, -0.5);
   traj_neg.calculateVelocities();
-  ASSERT_EQ(traj_neg.getVelocities().size(), 2);
-  EXPECT_DOUBLE_EQ(traj_neg.getVelocities()[0][0].x(), 0.0);
+  // traj_neg.getVelocities() size was 2
+  EXPECT_DOUBLE_EQ(traj_neg.getFrame(0).atoms()[0].velocity().x(), 0.0);
 }
 
 TEST_F(TrajectoryTests, ConstructorThrowsOnMismatchedFrames) {

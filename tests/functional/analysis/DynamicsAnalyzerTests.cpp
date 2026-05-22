@@ -42,13 +42,15 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   // 3. Calculate Velocities
   traj.calculateVelocities();
 
-  const auto &velocities = traj.getVelocities();
-  ASSERT_EQ(velocities.size(), traj.getFrameCount());
-  ASSERT_EQ(velocities[0].size(), traj.getFrames()[0].atomCount());
+  const auto &frames = traj.getFrames();
+  ASSERT_FALSE(frames.empty());
+  EXPECT_NE(frames[1].atoms()[0].velocity().x(), 0.0);
+  ASSERT_EQ(frames[0].atomCount(), traj.getFrames()[0].atomCount());
 
   // Check if we have some non-zero velocities (it's liquid Bi, particles move)
   double max_v_sq = 0.0;
-  for (const auto &v : velocities[10]) { // Check some intermediate frame
+  for (const auto &atom : frames[10].atoms()) { // Check some intermediate frame
+    auto v = atom.velocity();
     max_v_sq = std::max(max_v_sq, correlation::math::dot(v, v));
   }
   EXPECT_GT(max_v_sq, 0.0) << "Particles should be moving";

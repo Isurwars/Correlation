@@ -23,7 +23,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(correlation, m) {
+PYBIND11_MODULE(_correlation, m) {
     m.doc() =
         "Correlation: Liquid and Amorphous Solid Analysis Tool — Python Bindings\n\n"
         "Quick-start example::\n\n"

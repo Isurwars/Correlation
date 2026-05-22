@@ -249,6 +249,16 @@ public:
   [[nodiscard]] const correlation::analysis::Histogram *
   getHistogram(const std::string &name) const;
 
+  /**
+   * @brief Returns all histograms from the last analysis.
+   * @return A map of histogram names to Histogram objects.
+   */
+  [[nodiscard]] const std::map<std::string, correlation::analysis::Histogram> &
+  getHistograms() const {
+    static const std::map<std::string, correlation::analysis::Histogram> empty_map;
+    return df_ ? df_->getAllHistograms() : empty_map;
+  }
+
   // Callbacks
   /**
    * @brief Sets a callback function for analysis progress updates.

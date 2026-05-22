@@ -105,6 +105,7 @@ export component AppWindow inherits Window {
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
+    in property <int> pinned_runs_count: 0;
     out property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
 
     // ============================================================================
@@ -117,6 +118,8 @@ export component AppWindow inherits Window {
     callback toggle_calculator(string, bool);
     callback check_file_dialog_status();
     callback save_plot();
+    callback pin_run();
+    callback clear_pinned_runs();
 
     // ============================================================================
     // Core Layout Logic
@@ -287,11 +290,18 @@ export component AppWindow inherits Window {
                     preview_plot <=> root.preview_plot;
                     plot_items <=> root.plot_items;
                     selected_plot_index <=> root.selected_plot_index;
+                    pinned_runs_count: root.pinned_runs_count;
                     plot_selected(idx) => {
                         root.select_plot(idx);
                     }
                     save_plot => {
                         root.save_plot();
+                    }
+                    pin_run => {
+                        root.pin_run();
+                    }
+                    clear_pinned_runs => {
+                        root.clear_pinned_runs();
                     }
                 }
             }

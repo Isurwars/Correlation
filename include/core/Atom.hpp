@@ -110,6 +110,20 @@ public:
   void setPosition(math::Vector3<double> pos) { position_ = pos; }
 
   /**
+   * @brief Gets the velocity of the atom.
+   * @return A const reference to the velocity vector.
+   */
+  [[nodiscard]] const math::Vector3<double> &velocity() const noexcept {
+    return velocity_;
+  }
+
+  /**
+   * @brief Sets the velocity of the atom.
+   * @param vel The new velocity vector.
+   */
+  void setVelocity(math::Vector3<double> vel) { velocity_ = vel; }
+
+  /**
    * @brief Gets the element type of the atom.
    * @return A const reference to the Element struct.
    */
@@ -130,6 +144,7 @@ public:
 private:
   AtomID id_;                    ///< Unique identification number.
   math::Vector3<double> position_; ///< Cartesian coordinates in Angstroms.
+  math::Vector3<double> velocity_; ///< Velocity in Angstroms/fs.
   Element element_;              ///< Chemical element properties.
 };
 

@@ -1,6 +1,6 @@
 /**
  * @file XdatcarReader.hpp
- * @brief Reader for VASP XDATCAR trajectory files.
+ * @brief Reader for VASP XDATCAR trajectory files with lazy loading.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: MIT
@@ -18,7 +18,7 @@
 namespace correlation::readers {
 
 /**
- * @brief Reads VASP XDATCAR trajectory files.
+ * @brief Reads VASP XDATCAR trajectory files with memory-mapped lazy loading.
  *
  * XDATCAR files contain a shared header (lattice, species, counts)
  * followed by multiple frames of atomic positions in Direct (fractional)
@@ -41,17 +41,6 @@ public:
       const std::string &filename,
       std::function<void(float, const std::string &)> progress_callback =
           nullptr) override;
-
-  /**
-   * @brief Low-level parser for XDATCAR files.
-   * @param file_name Path to the source file.
-   * @param progress_callback Optional callback for progress updates.
-   * @return A vector of parsed frames.
-   */
-  static std::vector<correlation::core::Cell>
-  read(const std::string &file_name,
-       std::function<void(float, const std::string &)> progress_callback =
-           nullptr);
 };
 
 } // namespace correlation::readers

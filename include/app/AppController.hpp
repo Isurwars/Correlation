@@ -56,6 +56,12 @@ private:
 
   std::vector<std::string> available_plot_keys_; ///< Map of UI indices to plot data keys.
 
+  struct PinnedRun {
+    std::string label;
+    std::map<std::string, correlation::analysis::Histogram> histograms;
+  };
+  std::vector<PinnedRun> pinned_runs_; ///< Pinned runs for comparison plots.
+
   /**
    * @brief Helper to update the UI progress bar and status text safely.
    * @param p Progress value between 0.0 and 1.0.
@@ -143,5 +149,15 @@ private:
    * Opens a save file dialog to export the currently selected plot as SVG.
    */
   void handleSavePlot();
+
+  /**
+   * @brief Handles pinning the current run for comparison.
+   */
+  void handlePinRun();
+
+  /**
+   * @brief Handles clearing all pinned runs.
+   */
+  void handleClearPinnedRuns();
 };
 } // namespace correlation::app

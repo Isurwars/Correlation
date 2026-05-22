@@ -5,7 +5,7 @@ Run from the build directory after building the correlation_py target:
     cmake --build . --target correlation_py -j$(nproc)
     python test.py
 """
-import correlation
+import _correlation as correlation
 import sys
 
 SEPARATOR = "─" * 60
@@ -33,6 +33,32 @@ for atom in cell.atoms:
 
 traj = correlation.Trajectory()
 print(f"  Trajectory frames: {traj.num_frames()}")
+
+# ── 2.5 NumPy zero-copy bindings ─────────────────────────────────────
+section("2.5 NumPy Zero-Copy Bindings")
+try:
+    import numpy as np
+    
+    # Generate some mock data
+    pos = cell.positions
+    print(f"  cell.positions shape: {pos.shape}, type: {type(pos)}")
+    assert pos.shape == (2, 3), "Positions shape mismatch"
+    
+    # Modify numpy array in-place and verify zero-copy behavior
+    pos[0, 0] = 9.9
+    assert cell.atoms[0].position[0] == 9.9, "Zero-copy modification failed!"
+    print("  Zero-copy positions verified.")
+    
+    # Verify velocities
+    vel = cell.velocities
+    print(f"  cell.velocities shape: {vel.shape}")
+    assert vel.shape == (2, 3), "Velocities shape mismatch"
+    vel[1, 2] = -4.5
+    # We can't access atom.velocity from python if we didn't bind it, but we can read the array again
+    assert cell.velocities[1, 2] == -4.5, "Velocity update failed"
+    print("  Zero-copy velocities verified.")
+except ImportError:
+    print("  numpy not installed. Skipping zero-copy test.")
 
 # ── 3. IO (file reading) ─────────────────────────────────────────────
 section("3. IO — read()")

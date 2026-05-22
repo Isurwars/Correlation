@@ -26,14 +26,13 @@ std::vector<double>
 DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
                                 int max_correlation_frames, size_t start_frame,
                                 size_t end_frame) {
-  const auto &velocities = traj.getVelocities();
-
-  if (velocities.empty()) {
+  const auto &frames = traj.getFrames();
+  if (frames.empty()) {
     return {};
   }
 
-  size_t total_frames = velocities.size();
-  size_t num_atoms = velocities[0].size();
+  size_t total_frames = frames.size();
+  size_t num_atoms = frames[0].atoms().size();
 
   start_frame = std::min(start_frame, total_frames > 0 ? total_frames - 1 : 0);
   end_frame = std::min(end_frame, total_frames);
@@ -49,10 +48,6 @@ DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
   }
 
   // Get masses for COM removal
-  const auto &frames = traj.getFrames();
-  if (frames.empty())
-    return {};
-  // Use the structure at start_frame for consistent masses
   const auto &atoms = frames[start_frame].atoms();
   std::vector<double> masses(num_atoms);
   double total_mass = 0.0;
@@ -74,12 +69,12 @@ DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
     const size_t traj_t = start_frame + t;
     correlation::math::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
     for (size_t i = 0; i < num_atoms; ++i) {
-      momentum_sum += velocities[traj_t][i] * masses[i];
+      momentum_sum += frames[traj_t].atoms()[i].velocity() * masses[i];
     }
     correlation::math::Vector3<double> v_com = momentum_sum / total_mass;
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      atom_velocities[i][t] = velocities[traj_t][i] - v_com;
+      atom_velocities[i][t] = frames[traj_t].atoms()[i].velocity() - v_com;
     }
   }
 
