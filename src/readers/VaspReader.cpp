@@ -207,6 +207,8 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   // Read atom positions
   int species_idx = 0;
   int atoms_in_species = 0;
+  // Cache lattice for fractional→Cartesian conversion (Direct mode).
+  const auto &lv = tempCell.latticeVectors();
   for (int i = 0; i < total_atoms; ++i) {
     if (!std::getline(myfile, line)) {
       throw std::runtime_error(
@@ -229,13 +231,23 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
                                std::to_string(i + 1) + ".");
     }
 
-    tempCell.addAtom(species[species_idx], {x, y, z});
+    // Direct (fractional) mode: convert frac→Cartesian as pos = x*a + y*b + z*c.
+    // Cartesian mode: use coordinates as-is.
+    correlation::math::Vector3<double> pos;
+    if (is_direct) {
+      pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
+             x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+             x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
+    } else {
+      pos = {x, y, z};
+    }
+    tempCell.addAtom(species[species_idx], pos);
     atoms_in_species++;
   }
 
-  if (is_direct) {
-    tempCell.wrapPositions();
-  }
+  // wrapPositions() clamps any fractional coords outside [0,1) to the primary
+  // cell. Coordinates are already Cartesian at this point in both modes.
+  tempCell.wrapPositions();
 
   return tempCell;
 }

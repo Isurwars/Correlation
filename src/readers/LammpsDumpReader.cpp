@@ -197,9 +197,11 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
     // Convert scaled (fractional) coordinates to Cartesian if needed.
     correlation::math::Vector3<double> pos;
     if (scaled_coords) {
-      pos = {x * lv[0][0] + y * lv[0][1] + z * lv[0][2],
-             x * lv[1][0] + y * lv[1][1] + z * lv[1][2],
-             x * lv[2][0] + y * lv[2][1] + z * lv[2][2]};
+      // pos = x*a + y*b + z*c  (correct column-vector combination of lattice rows)
+      // i.e. pos[k] = x*lv[0][k] + y*lv[1][k] + z*lv[2][k]
+      pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
+             x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+             x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
     } else {
       pos = {x, y, z};
     }
