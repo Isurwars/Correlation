@@ -2,14 +2,16 @@
 
 This document outlines the strategic direction and planned features for the `3.0.0` milestone of `Correlation`. This release aims to transform the software into a state-of-the-art engine for large-scale structural analysis, focusing on high-performance computing, advanced 3D spatial analysis, and seamless integration into modern scientific ecosystems.
 
-## 🚀 Best Options to Attack Next (Current Priorities)
+> **Current version:** 2.9.0 — All originally planned 3.0.0 features have been implemented. The remaining work focuses on hardening, polish, and new stretch goals.
 
-Based on recent progress, the following features are the primary focus for the immediate next development sprints to achieve the 3.0.0 vision:
+## 🚀 Stretch Goals & Next Sprints
 
-1. **Memory-Mapped I/O** (Core): Crucial for lazy loading massive trajectories (e.g., GROMACS, LAMMPS) without exceeding system memory limits.
-2. **Analysis Comparison** (UI): Quality-of-life feature allowing users to overlay and compare plots from multiple frames or datasets directly in the GUI.
-3. **Refined Python API** (Integration): NumPy-native integration to allow seamless, high-performance data exchange between the C++ engine and Python environments.
-4. **Extended XYZ** (Integration): Support for the Extended XYZ file format to handle custom metadata and per-atom properties.
+All primary 3.0.0 features are complete. The following represent the next development focus:
+
+1. **Analysis Comparison** (UI): Quality-of-life feature allowing users to overlay and compare plots from multiple frames or datasets directly in the GUI.
+2. **GPU Acceleration Hardening**: Broader CUDA kernel coverage beyond S(Q), performance benchmarks on real hardware, and automated CI testing on GPU runners.
+3. **WASM Web Interface Polish**: Expand the Emscripten bindings to support more calculators and add a standalone browser demo.
+4. **Refined Python API — Documentation & Examples**: NumPy-native integration is implemented; publish Jupyter notebook examples and add type stubs.
 
 ## 1. Core (HPC & Architecture)
 Modernizing the core engine for massive datasets and pushing the limits of computational performance.
@@ -19,8 +21,8 @@ Modernizing the core engine for massive datasets and pushing the limits of compu
 - [x] **Spatial Partitioning (Cell-Lists)**: Implement $O(N)$ neighbor search to replace the current $O(N^2)$ distance tensor approach for large systems.
 - [x] **Task-Based Parallelism**: Advanced TBB task graph implementation for better multi-core scaling.
 - [x] **Performance Benchmarking Suite**: Google Benchmark framework integration with comprehensive benchmarks for calculators and analyzers to monitor and guide optimization.
-- [ ] **Memory-Mapped I/O**: Efficient loading of multi-gigabyte trajectories.
-- [ ] **GPU Acceleration**: Experimental CUDA/HIP support for heavy calculations like S(Q).
+- [x] **Memory-Mapped I/O**: Efficient lazy loading of multi-gigabyte trajectories via `MappedFile`. All major readers (XYZ, LAMMPS, GROMACS, XDATCAR) use memory-mapped frames.
+- [x] **GPU Acceleration**: CUDA-accelerated S(Q) via `GPUSQCalculator` (`-DBUILD_WITH_CUDA=ON`), with automatic CPU fallback when no compatible device is detected.
 
 ## 2. Analysis (Distributions & Tools)
 Enhancing the suite of structural and dynamic analysis tools.
@@ -41,13 +43,13 @@ Expanding support to attract users from various computational chemistry and phys
 - [x] **Python Bindings**: Direct C++ core integration for Jupyter and automated pipelines.
 - [x] **Quantum ESPRESSO**: High priority support for *ab initio* MD output.
 - [x] **CP2K Support**: Support for this popular molecular dynamics format.
-- [ ] **Extended XYZ**: Improved support for custom metadata and per-atom properties.
-- [ ] **Refined Python API**: NumPy-native integration for seamless data exchange.
+- [x] **Extended XYZ**: Full support for standard and Extended XYZ (`comment`-line key=value metadata, custom per-atom columns, lattice vectors, and multi-frame trajectories).
+- [x] **Refined Python API**: NumPy-native zero-copy integration via `.positions` and `.velocities` buffer-protocol properties on `Cell`. Deprecation warnings guide users away from the old copy-based API.
 
 ## 4. UI (User Experience & Workflows)
 Improving developer and user workflows through the graphical interface.
 
 - [x] **Automated Release Pipelines**: CI/CD for cross-platform binaries and installers.
 - [x] **Static Plot Management**: In-memory SVG generation preventing disk-bound delays, with a native file-saving dialog built into the user interface.
+- [x] **WASM Web Interface**: Core engine runs in the browser via Emscripten (`-DBUILD_WASM=ON`). Exposes `Cell`, `Trajectory`, `DistributionFunctions`, RDF, and PAD to JavaScript via embind.
 - [ ] **Analysis Comparison**: Built-in functionality to overlay and compare results from multiple runs statically.
-- [ ] **WASM Web Interface**: Explore running the core engine in the browser for zero-install previews.
