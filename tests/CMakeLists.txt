@@ -41,6 +41,15 @@ add_executable(correlation_unit_tests
     unit/analysis/HBondCalculatorTests.cpp
     unit/analysis/SDFCalculatorTests.cpp
     unit/analysis/ClusterCalculatorTests.cpp
+    unit/physics/PhysicalDataTests.cpp
+    unit/analysis/AngleCalculatorTests.cpp
+    unit/analysis/CNCalculatorTests.cpp
+    unit/analysis/DistanceCalculatorTests.cpp
+    unit/analysis/MSDCalculatorTests.cpp
+    unit/analysis/CalculatorFactoryTests.cpp
+    unit/io/ReaderFactoryTests.cpp
+    unit/io/WriterFactoryTests.cpp
+    unit/plotters/SvgPlotterTests.cpp
     unit/utils/SIMDUtilsTests.cpp
     unit/math/LinearAlgebraTests.cpp
     unit/math/SpecialFunctionsTests.cpp
