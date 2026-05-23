@@ -135,6 +135,14 @@ public:
     return atoms_;
   }
 
+  /**
+   * @brief Gets a mutable list of atoms in the cell.
+   * @return Reference to the vector of atoms.
+   */
+  [[nodiscard]] std::vector<Atom> &atoms() noexcept {
+    return atoms_;
+  }
+
   // Elements
   /**
    * @brief Gets the list of unique chemical elements in the cell.

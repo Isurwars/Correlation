@@ -296,13 +296,12 @@ std::string AppBackend::run_analysis() {
         }
       }
 
-      if (need_velocities && trajectory_->getFrames().empty()) {
-        throw std::runtime_error("VACF requires a trajectory with frames");
+      if (need_velocities) {
+        if (trajectory_->getFrameCount() == 0) {
+          throw std::runtime_error("VACF requires a trajectory with frames");
+        }
+        trajectory_->calculateVelocities();
       }
-      // Wait, we need to know if velocities are calculated.
-      // Now, velocities are calculated if trajectory_->calculateVelocities() has been called.
-      // But AppBackend calls calculateVelocities if not calculated? Let's check the context.
-      // I'll just change it to checking frames for now.
 
       for (const auto &calc : factory_calcs) {
         if (!calc->isTrajectoryCalculator())

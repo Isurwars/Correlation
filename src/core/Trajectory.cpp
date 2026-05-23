@@ -263,8 +263,7 @@ void Trajectory::calculateVelocities() {
         // I need a mutable atoms() to set velocity!
         // Let's use const_cast since we know it's mutable inside frames_ ... 
         // No, I should add a mutable atoms() to Cell.hpp, or just cast it here.
-        // Actually I will add mutable atoms() in a separate call or here.
-        const_cast<core::Atom&>(frames_[t].atoms()[i]).setVelocity(displacement(r1, r0) / time_step_);
+        frames_[t].atoms()[i].setVelocity(displacement(r1, r0) / time_step_);
       }
     } else if (t == num_frames - 1) {
       for (size_t i = 0; i < num_atoms; ++i) {
@@ -272,7 +271,7 @@ void Trajectory::calculateVelocities() {
         // v(N) = (r(N) - r(N-1)) / dt
         const auto &rN = frames_[num_frames - 1].atoms()[i].position();
         const auto &rN_1 = frames_[num_frames - 2].atoms()[i].position();
-        const_cast<core::Atom&>(frames_[t].atoms()[i]).setVelocity(displacement(rN, rN_1) / time_step_);
+        frames_[t].atoms()[i].setVelocity(displacement(rN, rN_1) / time_step_);
       }
     } else {
       for (size_t i = 0; i < num_atoms; ++i) {
@@ -280,7 +279,7 @@ void Trajectory::calculateVelocities() {
         // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
         const auto &r_next = frames_[t + 1].atoms()[i].position();
         const auto &r_prev = frames_[t - 1].atoms()[i].position();
-        const_cast<core::Atom&>(frames_[t].atoms()[i]).setVelocity(displacement(r_next, r_prev) / (2.0 * time_step_));
+        frames_[t].atoms()[i].setVelocity(displacement(r_next, r_prev) / (2.0 * time_step_));
       }
     }
   }
