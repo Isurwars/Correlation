@@ -1,11 +1,14 @@
 CompileFlags:
   Add:
     - "-std=c++23"
-    - "-I/home/isurwars/Projects/Correlation/include"
-    - "-I/home/isurwars/Projects/Correlation/build/src"
+    - "-Iinclude"
+    - "-Ibuild/src"
     - "-isystem/usr/include/slint"
     - "-I./build/"
   Remove:
+    - "-fmodules-ts"
+    - "-fdeps-format=p1689r5"
+    - "-fmodule-mapper=*"
     - "-std=c++11"
     - "-std=c++14"
     - "-std=c++17"
