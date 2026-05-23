@@ -43,6 +43,14 @@ if(HDF5_FOUND)
   message(STATUS "Found HDF5: ${HDF5_DIR} (Version: ${HDF5_VERSION})")
 else()
   message(STATUS "HDF5 not found. Downloading HDF5 from GitHub...")
+  # Save original BUILD_TESTING cache state if it exists
+  get_property(BUILD_TESTING_EXISTS CACHE BUILD_TESTING PROPERTY VALUE SET)
+  if(BUILD_TESTING_EXISTS)
+    get_property(ORIG_BUILD_TESTING CACHE BUILD_TESTING PROPERTY VALUE)
+    get_property(ORIG_BUILD_TESTING_TYPE CACHE BUILD_TESTING PROPERTY TYPE)
+    get_property(ORIG_BUILD_TESTING_HELP CACHE BUILD_TESTING PROPERTY HELPSTRING)
+  endif()
+
   # HDF5 options for FetchContent
   set(HDF5_BUILD_CPP_LIB ON CACHE BOOL "Build HDF5 C++ Library" FORCE)
   set(HDF5_BUILD_EXAMPLES OFF CACHE BOOL "Build HDF5 Examples" FORCE)
@@ -70,6 +78,13 @@ else()
     GIT_TAG 2.1.1
   )
   FetchContent_MakeAvailable(HDF5)
+
+  # Restore original BUILD_TESTING cache state
+  if(BUILD_TESTING_EXISTS)
+    set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)
+  else()
+    unset(BUILD_TESTING CACHE)
+  endif()
 endif()
 
 # Alias logic for HighFive if we built HDF5 ourselves
