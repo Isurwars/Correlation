@@ -90,8 +90,10 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data,
       tokens.push_back(token);
     }
 
-    int max_idx = std::max({comm_data.species_col, comm_data.pos_x_col, 
-                            comm_data.pos_y_col, comm_data.pos_z_col});
+    int max_idx = std::max(comm_data.species_col,
+                           std::max(comm_data.pos_x_col,
+                                    std::max(comm_data.pos_y_col,
+                                             comm_data.pos_z_col)));
 
     if (static_cast<int>(tokens.size()) <= max_idx) {
       throw std::runtime_error("Invalid XYZ file: malformed atom line: " +
