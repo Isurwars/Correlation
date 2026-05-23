@@ -32,6 +32,10 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
 
   start_frame_ = (start_frame >= n_frames) ? n_frames : start_frame;
 
+  if (start_frame_ > effective_end_) {
+    start_frame_ = effective_end_;
+  }
+
   if (progress_callback) {
     progress_callback(1.0f, "TrajectoryAnalyzer initialized.");
   }

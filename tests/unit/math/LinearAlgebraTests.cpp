@@ -199,9 +199,8 @@ TEST_F(LinearAlgebraTests, Transpose) {
   Matrix3<double> m(c0, c1, c2);
 
   auto mt = transpose(m);
-  // Note: transpose(m) as implemented in LinearAlgebra.hpp actually returns the matrix itself (no-op).
-  EXPECT_DOUBLE_EQ(mt(0, 1), 4.0);
-  EXPECT_DOUBLE_EQ(mt(1, 0), 2.0);
+  EXPECT_DOUBLE_EQ(mt(0, 1), 2.0);
+  EXPECT_DOUBLE_EQ(mt(1, 0), 4.0);
 }
 
 } // namespace correlation::testing

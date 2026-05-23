@@ -97,7 +97,7 @@ void Cell::updateLattice(const math::Matrix3<double> &new_lattice) {
   if (std::isnan(volume_) || volume_ <= 1e-9) {
     throw std::logic_error("Cell volume must be positive and finite.");
   }
-  inverse_lattice_vectors_ = math::transpose(math::invert(lattice_vectors_));
+  inverse_lattice_vectors_ = math::invert(lattice_vectors_);
   updateLatticeParametersFromVectors();
 }
 
