@@ -26,10 +26,10 @@ std::vector<double>
 DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
                                 int max_correlation_frames, size_t start_frame,
                                 size_t end_frame) {
-  const auto &frames = traj.getFrames();
-  if (frames.empty()) {
+  if (traj.getFrameCount() == 0) {
     return {};
   }
+  const auto &frames = traj.getFrames(); // materialises lazy trajectory for computation
 
   size_t total_frames = frames.size();
   size_t num_atoms = frames[0].atoms().size();
@@ -136,10 +136,10 @@ std::vector<double>
 DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
                                int max_correlation_frames, size_t start_frame,
                                size_t end_frame) {
-  const auto &frames = traj.getFrames();
-  if (frames.empty()) {
+  if (traj.getFrameCount() == 0) {
     return {};
   }
+  const auto &frames = traj.getFrames(); // materialises lazy trajectory for computation
 
   size_t total_frames = frames.size();
   size_t num_atoms = frames[0].atoms().size();
@@ -174,31 +174,22 @@ DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
     const size_t tf = start_frame + t;
     const size_t tf_prev = start_frame + t - 1;
 
-    // Get box vectors for minimum image (use current frame)
-    const auto &lattice = frames[tf].latticeVectors();
-    correlation::math::Vector3<double> box = {lattice[0][0], lattice[1][1],
-                                              lattice[2][2]};
-    bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
+    // Use Cell::minimumImage() for correct triclinic PBC handling.
+    const bool use_pbc = (frames[tf].volume() > 1e-9);
 
     const auto &curr_atoms = frames[tf].atoms();
     const auto &prev_atoms = frames[tf_prev].atoms();
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      correlation::math::Vector3<double> dr =
+      const math::Vector3<double> dr =
           curr_atoms[i].position() - prev_atoms[i].position();
 
-      // Apply minimum image convention
-      if (use_pbc) {
-        for (int d = 0; d < 3; ++d) {
-          if (dr[d] > box[d] * 0.5)
-            dr[d] -= box[d];
-          if (dr[d] < -box[d] * 0.5)
-            dr[d] += box[d];
-        }
-      }
+      // Apply minimum image convention for correct unwrapping across PBC.
+      const math::Vector3<double> min_dr =
+          use_pbc ? frames[tf].minimumImage(dr) : dr;
 
-      // Accumulate unwrapped position: unwrapped[i][t] = unwrapped[i][t-1] + dr
-      unwrapped[i][t] = unwrapped[i][t - 1] + dr;
+      // Accumulate unwrapped position: unwrapped[i][t] = unwrapped[i][t-1] + min_dr
+      unwrapped[i][t] = unwrapped[i][t - 1] + min_dr;
     }
   }
 

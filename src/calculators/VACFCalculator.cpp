@@ -32,8 +32,8 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
                           int max_correlation_frames, size_t start_frame,
                           size_t end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
-  const auto &frames = traj.getFrames();
-  if (frames.empty()) {
+  // Use getFrameCount() to avoid materialising a memory-mapped trajectory.
+  if (traj.getFrameCount() == 0) {
     return results;
   }
 

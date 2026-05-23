@@ -62,7 +62,9 @@ void SDFCalculator::calculateFrame(
   // frames Since we accumulate/scale, this is tricky. We'll rely on the
   // description string.
 
-  double dV = (lx / nx) * (ly / ny) * (lz / nz);
+  // Voxel volume = total cell volume / number of voxels (correct for triclinic).
+  const double dV = cell.volume() / static_cast<double>(total_bins);
+  const auto &inv_lv = cell.inverseLatticeVectors();
 
   for (const auto &atom : cell.atoms()) {
     std::string sym = atom.element().symbol;
@@ -70,15 +72,16 @@ void SDFCalculator::calculateFrame(
       sdf_hist.partials[sym].assign(total_bins, 0.0);
     }
 
-    auto pos = atom.position();
-    // Apply periodic boundary conditions to wrap into [0, L)
-    double rx = pos.x() - lx * std::floor(pos.x() / lx);
-    double ry = pos.y() - ly * std::floor(pos.y() / ly);
-    double rz = pos.z() - lz * std::floor(pos.z() / lz);
+    // Convert Cartesian → fractional coordinates (correct for non-orthogonal cells)
+    auto frac = inv_lv * atom.position();
+    // Wrap to [0, 1) fractional
+    double fx = frac.x() - std::floor(frac.x());
+    double fy = frac.y() - std::floor(frac.y());
+    double fz = frac.z() - std::floor(frac.z());
 
-    size_t ix = static_cast<size_t>(rx / lx * nx) % nx;
-    size_t iy = static_cast<size_t>(ry / ly * ny) % ny;
-    size_t iz = static_cast<size_t>(rz / lz * nz) % nz;
+    size_t ix = static_cast<size_t>(fx * nx) % nx;
+    size_t iy = static_cast<size_t>(fy * ny) % ny;
+    size_t iz = static_cast<size_t>(fz * nz) % nz;
 
     size_t idx = ix * (ny * nz) + iy * nz + iz;
     sdf_hist.partials[sym][idx] += 1.0 / dV; // Density contribution per frame

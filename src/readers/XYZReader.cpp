@@ -153,10 +153,8 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
         } else {
           end = comment.find_first_of(" \t\r\n", start);
         }
-        if (end != std::string::npos || end == std::string::npos) {
-          std::string val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
-          try { data.energy = std::stod(val_str); break; } catch(...) {}
-        }
+        std::string val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+        try { data.energy = std::stod(val_str); break; } catch(...) {}
       }
     }
   }

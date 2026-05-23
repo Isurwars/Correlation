@@ -234,22 +234,15 @@ void Trajectory::calculateVelocities() {
     return; // Cannot calculate valid velocities
 
   for (size_t t = 0; t < num_frames; ++t) {
-    // Determine simulation box for PBC (using current frame)
-    const auto &lattice = frames_[t].latticeVectors();
-    math::Vector3<double> box = {lattice[0][0], lattice[1][1], lattice[2][2]};
-    // Check if box is valid (not zero), otherwise disable PBC correction
-    bool use_pbc = (box[0] > 0.0 && box[1] > 0.0 && box[2] > 0.0);
+    // Check if the frame has a valid periodic cell (volume > 0).
+    const bool use_pbc = (frames_[t].volume() > 1e-9);
 
-    // Helper lambda to get minimum image displacement
+    // Minimum-image displacement: delegates to Cell::minimumImage() which
+    // correctly handles both orthogonal and triclinic cells.
     auto displacement = [&](const math::Vector3<double> &r2,
-                            const math::Vector3<double> &r1) {
-      math::Vector3<double> dr = r2 - r1;
-      if (use_pbc) {
-        dr[0] -= box[0] * std::round(dr[0] / box[0]);
-        dr[1] -= box[1] * std::round(dr[1] / box[1]);
-        dr[2] -= box[2] * std::round(dr[2] / box[2]);
-      }
-      return dr;
+                            const math::Vector3<double> &r1) -> math::Vector3<double> {
+      const math::Vector3<double> dr = r2 - r1;
+      return use_pbc ? frames_[t].minimumImage(dr) : dr;
     };
     if (t == 0) {
       for (size_t i = 0; i < num_atoms; ++i) {

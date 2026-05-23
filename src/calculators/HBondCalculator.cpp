@@ -43,15 +43,22 @@ correlation::analysis::Histogram HBondCalculator::calculate(
   size_t total_hbonds = 0;
   std::vector<int> hbond_counts(num_atoms, 0);
 
-  // Identify Donors (D) and Acceptors (A) - commonly O, N, F, S
+  // Identify Donors (D) and Acceptors (A) - commonly O, N, F, S.
+  // Pre-filter to the electronegative subset so the inner acceptor
+  // search iterates N_en atoms rather than N (typically N_en << N).
+  // NOTE: for a full O(N_en) solution, StructureAnalyzer would need to
+  // expose a non-bonded neighbour list at R_cut = 3.5 Å per atom.
   auto is_electronegative = [](const std::string &symbol) {
     return symbol == "O" || symbol == "N" || symbol == "F" || symbol == "S";
   };
-
+  std::vector<size_t> en_indices;
+  en_indices.reserve(num_atoms / 4);
   for (size_t i = 0; i < num_atoms; ++i) {
-    const auto &atom_i = atoms[i];
-    if (!is_electronegative(atom_i.element().symbol))
-      continue;
+    if (is_electronegative(atoms[i].element().symbol))
+      en_indices.push_back(i);
+  }
+
+  for (size_t i : en_indices) {
 
     // Atom i is a potential Donor or Acceptor.
     // Let's find all hydrogens bonded to i (i is Donor).
@@ -68,7 +75,7 @@ correlation::analysis::Histogram HBondCalculator::calculate(
     // For each Hydrogen, find potential Acceptors (j)
     for (size_t h_idx : hydrogens) {
       const auto &pos_h = atoms[h_idx].position();
-      const auto &pos_d = atom_i.position();
+      const auto &pos_d = atoms[i].position();
       correlation::math::Vector3<double> v_dh =
           cell.minimumImage(pos_h - pos_d);
 
@@ -76,12 +83,11 @@ correlation::analysis::Histogram HBondCalculator::calculate(
       if (correlation::math::norm_sq(v_dh) < 1e-12)
         continue;
 
-      for (size_t j = 0; j < num_atoms; ++j) {
+      // Inner loop: only over electronegative acceptor candidates (O(N_en)).
+      for (size_t j : en_indices) {
         if (i == j)
           continue;
         const auto &atom_j = atoms[j];
-        if (!is_electronegative(atom_j.element().symbol))
-          continue;
 
         // Atom j is a potential Acceptor.
         correlation::math::Vector3<double> v_da =
@@ -105,18 +111,14 @@ correlation::analysis::Histogram HBondCalculator::calculate(
     }
   }
 
-  // Results: Distribution of H-bond counts per molecule (if we could identify
-  // them) For now, just a distribution of H-bonds per electronegative atom.
+  // Use pre-filtered en_indices for the final distribution loop.
   std::map<int, double> distribution;
   int max_hb = 0;
-  int num_en_atoms = 0;
-  for (size_t i = 0; i < num_atoms; ++i) {
-    if (is_electronegative(atoms[i].element().symbol)) {
-      distribution[hbond_counts[i]]++;
-      num_en_atoms++;
-      if (hbond_counts[i] > max_hb)
-        max_hb = hbond_counts[i];
-    }
+  int num_en_atoms = static_cast<int>(en_indices.size());
+  for (size_t i : en_indices) {
+    distribution[hbond_counts[i]]++;
+    if (hbond_counts[i] > max_hb)
+      max_hb = hbond_counts[i];
   }
 
   correlation::analysis::Histogram hist;

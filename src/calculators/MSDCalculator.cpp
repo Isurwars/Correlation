@@ -34,7 +34,8 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   std::map<std::string, correlation::analysis::Histogram> results;
 
   // MSD requires positional data only (frames), not velocity data
-  if (traj.getFrames().empty()) {
+  // Use getFrameCount() to avoid materialising a memory-mapped trajectory.
+  if (traj.getFrameCount() == 0) {
     return results;
   }
 
