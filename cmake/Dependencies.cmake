@@ -195,6 +195,10 @@ else()
   # conflicting with HDF5 FetchContent which also defines ZLIB::ZLIB.
   # ARROW_WITH_BOOST=OFF is the explicit kill switch that prevents Boost use.
   set(ARROW_DEPENDENCY_SOURCE "AUTO" CACHE INTERNAL "")
+  set(Thrift_SOURCE "BUNDLED" CACHE STRING "Build bundled Thrift" FORCE)
+  set(xsimd_SOURCE "BUNDLED" CACHE STRING "Build bundled xsimd" FORCE)
+  set(RapidJSON_SOURCE "BUNDLED" CACHE STRING "Build bundled RapidJSON" FORCE)
+  set(Boost_SOURCE "BUNDLED" CACHE STRING "Build bundled Boost" FORCE)
   set(ARROW_WITH_BOOST OFF CACHE INTERNAL "") # Never use Boost
   set(ARROW_PARQUET ON CACHE INTERNAL "")
   set(ARROW_WITH_SNAPPY OFF CACHE INTERNAL "")
