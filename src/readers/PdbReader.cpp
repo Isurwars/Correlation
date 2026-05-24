@@ -60,15 +60,17 @@ correlation::core::Cell PdbReader::readStructure(
           atom_name.erase(0, atom_name.find_first_not_of(" "));
           atom_name.erase(atom_name.find_last_not_of(" ") + 1);
 
-          for (char c : atom_name) {
+          // Common PDB fixes (e.g. 1H -> H)
+          std::string parsed_name = atom_name;
+          if (parsed_name.length() > 1 && std::isdigit(parsed_name[0])) {
+            parsed_name = parsed_name.substr(1);
+          }
+
+          for (char c : parsed_name) {
             if (std::isalpha(c))
               symbol += c;
             else
               break;
-          }
-          // Common PDB fixes (e.g. 1H -> H)
-          if (symbol.length() > 1 && std::isdigit(atom_name[0])) {
-            symbol = atom_name.substr(1, 1);
           }
         }
 
@@ -131,7 +133,14 @@ correlation::core::Trajectory PdbReader::readTrajectory(
           std::string atom_name = line.substr(12, 4);
           atom_name.erase(0, atom_name.find_first_not_of(" "));
           atom_name.erase(atom_name.find_last_not_of(" ") + 1);
-          for (char c : atom_name) {
+
+          // Common PDB fixes (e.g. 1H -> H)
+          std::string parsed_name = atom_name;
+          if (parsed_name.length() > 1 && std::isdigit(parsed_name[0])) {
+            parsed_name = parsed_name.substr(1);
+          }
+
+          for (char c : parsed_name) {
             if (std::isalpha(c))
               symbol += c;
             else

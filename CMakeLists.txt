@@ -70,6 +70,19 @@ if(BUILD_WITH_CUDA)
     add_compile_definitions(CORRELATION_USE_CUDA)
     message(STATUS "CUDA enabled — GPU calculators will be built")
 endif()
+# -----------------------------------------------------------
+# Code Coverage
+# -----------------------------------------------------------
+option(ENABLE_COVERAGE "Enable code coverage instrumentation" OFF)
+if(ENABLE_COVERAGE)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        add_compile_options(--coverage -O0 -g)
+        add_link_options(--coverage)
+        message(STATUS "Code coverage instrumentation enabled")
+    else()
+        message(WARNING "Code coverage is only supported on GCC and Clang")
+    endif()
+endif()
 
 #-----------------------------------------------------------
 # Targets setup
