@@ -41,10 +41,19 @@ endif()
 set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
 
 # -----------------------------------------------------------
+# Testing setup (early so BUILD_TESTING defaults to ON)
+# -----------------------------------------------------------
+message(STATUS "[DEBUG] BEFORE include(CTest) BUILD_TESTING: ${BUILD_TESTING}")
+include(CTest)
+message(STATUS "[DEBUG] AFTER include(CTest) BUILD_TESTING: ${BUILD_TESTING}")
+
+# -----------------------------------------------------------
 # Utils & Dependencies
 # -----------------------------------------------------------
 include(cmake/Utils.cmake)
+message(STATUS "[DEBUG] BEFORE include(cmake/Dependencies.cmake) BUILD_TESTING: ${BUILD_TESTING}")
 include(cmake/Dependencies.cmake)
+message(STATUS "[DEBUG] AFTER include(cmake/Dependencies.cmake) BUILD_TESTING: ${BUILD_TESTING}")
 
 # -----------------------------------------------------------
 # SIMD Feature Detection
@@ -70,7 +79,7 @@ add_subdirectory(src)
 #-----------------------------------------------------------
 # Testing
 #-----------------------------------------------------------
-include(CTest)
+message(STATUS "[DEBUG] BEFORE if(BUILD_TESTING) BUILD_TESTING: ${BUILD_TESTING}")
 if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()

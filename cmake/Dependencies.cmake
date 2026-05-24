@@ -5,6 +5,17 @@ include(FetchContent)
 
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Force shared libraries" FORCE)
 
+# Save original BUILD_TESTING cache state if it exists
+get_property(BUILD_TESTING_EXISTS CACHE BUILD_TESTING PROPERTY VALUE SET)
+if(BUILD_TESTING_EXISTS)
+  get_property(ORIG_BUILD_TESTING CACHE BUILD_TESTING PROPERTY VALUE)
+  get_property(ORIG_BUILD_TESTING_TYPE CACHE BUILD_TESTING PROPERTY TYPE)
+  get_property(ORIG_BUILD_TESTING_HELP CACHE BUILD_TESTING PROPERTY HELPSTRING)
+endif()
+
+# Force BUILD_TESTING to OFF for all dependencies to avoid building their tests
+set(BUILD_TESTING OFF CACHE BOOL "Disable testing for dependencies" FORCE)
+
 # 1. TBB
 find_package(TBB QUIET)
 if (TBB_FOUND)
@@ -43,13 +54,6 @@ if(HDF5_FOUND)
   message(STATUS "Found HDF5: ${HDF5_DIR} (Version: ${HDF5_VERSION})")
 else()
   message(STATUS "HDF5 not found. Downloading HDF5 from GitHub...")
-  # Save original BUILD_TESTING cache state if it exists
-  get_property(BUILD_TESTING_EXISTS CACHE BUILD_TESTING PROPERTY VALUE SET)
-  if(BUILD_TESTING_EXISTS)
-    get_property(ORIG_BUILD_TESTING CACHE BUILD_TESTING PROPERTY VALUE)
-    get_property(ORIG_BUILD_TESTING_TYPE CACHE BUILD_TESTING PROPERTY TYPE)
-    get_property(ORIG_BUILD_TESTING_HELP CACHE BUILD_TESTING PROPERTY HELPSTRING)
-  endif()
 
   # HDF5 options for FetchContent
   set(HDF5_BUILD_CPP_LIB ON CACHE BOOL "Build HDF5 C++ Library" FORCE)
@@ -58,7 +62,6 @@ else()
   set(HDF5_BUILD_TOOLS OFF CACHE BOOL "Build HDF5 Tools" FORCE)
   set(HDF5_BUILD_FORTRAN OFF CACHE BOOL "Build HDF5 Fortran" FORCE)
   set(HDF5_BUILD_JAVA OFF CACHE BOOL "Build HDF5 Java" FORCE)
-  set(BUILD_TESTING OFF CACHE BOOL "Build HDF5 Tests" FORCE)
   set(HDF5_PACK_EXAMPLES OFF CACHE BOOL "Pack HDF5 Examples" FORCE)
   set(H5_HAVE_C99_COMPLEX_NUMBERS OFF CACHE BOOL "Disable C99 Complex numbers for MSVC" FORCE)
   set(H5_HAVE_COMPLEX_NUMBERS OFF CACHE BOOL "Disable Complex numbers for MSVC" FORCE)
@@ -78,13 +81,6 @@ else()
     GIT_TAG 2.1.1
   )
   FetchContent_MakeAvailable(HDF5)
-
-  # Restore original BUILD_TESTING cache state
-  if(BUILD_TESTING_EXISTS)
-    set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)
-  else()
-    unset(BUILD_TESTING CACHE)
-  endif()
 endif()
 
 # Alias logic for HighFive if we built HDF5 ourselves
@@ -169,22 +165,6 @@ else()
   endif()
 endif()
 
-# 5.1 Google Benchmark
-find_package(benchmark QUIET)
-if(benchmark_FOUND)
-  message(STATUS "Found Google Benchmark: ${benchmark_DIR} (Version: ${benchmark_VERSION})")
-else()
-  message(STATUS "Google Benchmark not found. Downloading from GitHub...")
-  set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Disable benchmark tests" FORCE)
-  set(BENCHMARK_ENABLE_INSTALL OFF CACHE BOOL "Disable benchmark install" FORCE)
-  FetchContent_Declare(
-    googlebenchmark
-    GIT_REPOSITORY https://github.com/google/benchmark.git
-    GIT_TAG v1.8.3
-  )
-  FetchContent_MakeAvailable(googlebenchmark)
-endif()
-
 # 6. Arrow/Parquet
 find_package(Arrow QUIET)
 find_package(Parquet QUIET)
@@ -265,4 +245,11 @@ else()
     GIT_TAG        v3.0.4
   )
   FetchContent_MakeAvailable(pybind11)
+endif()
+
+# Restore original BUILD_TESTING cache state
+if(BUILD_TESTING_EXISTS)
+  set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)
+else()
+  unset(BUILD_TESTING CACHE)
 endif()

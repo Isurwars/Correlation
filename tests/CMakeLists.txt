@@ -128,29 +128,6 @@ bundle_windows_dlls(correlation_gui_tests)
 gtest_discover_tests(correlation_gui_tests DISCOVERY_TIMEOUT 60)
 
 #-----------------------------------------------------------
-# 4. Benchmarks (Performance Tests)
-#-----------------------------------------------------------
-add_executable(correlation_benchmarks
-    benchmarks/ClusterCalculatorBenchmark.cpp
-    benchmarks/StructureAnalyzerBenchmark.cpp
-    benchmarks/DistanceCalculatorBenchmark.cpp
-    benchmarks/RDFCalculatorBenchmark.cpp
-    benchmarks/CNACalculatorBenchmark.cpp
-    benchmarks/SteinhardtCalculatorBenchmark.cpp
-    benchmarks/SDFCalculatorBenchmark.cpp
-)
-
-target_link_libraries(correlation_benchmarks PRIVATE
-    correlation_lib
-    readers_obj
-    writers_obj
-    calculators_obj
-    benchmark::benchmark
-    benchmark::benchmark_main
-)
-target_compile_definitions(correlation_benchmarks PRIVATE _USE_MATH_DEFINES)
-
-#-----------------------------------------------------------
 # Python binding smoke test (only when bindings are built)
 #-----------------------------------------------------------
 if(BUILD_PYTHON_BINDINGS)
