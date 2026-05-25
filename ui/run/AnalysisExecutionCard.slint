@@ -19,7 +19,7 @@ export component AnalysisExecutionCard inherits FilledCard {
     callback run_analysis();
     callback write_files();
 
-    property <length> progress_height: (root.analysis_running || root.analysis_done) ? 45px : 0px;
+    property <length> progress_height: (root.analysis_running || root.analysis_done) ? 55px : 0px;
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
@@ -63,6 +63,10 @@ export component AnalysisExecutionCard inherits FilledCard {
                 horizontal-stretch: 1;
                 wrap: word-wrap;
             }
+            LinearProgressIndicator {
+                progress: root.progress;
+                animate progress { duration: 200ms; easing: ease-out; }
+            }
         }
 
         // Save Results
@@ -71,8 +75,8 @@ export component AnalysisExecutionCard inherits FilledCard {
                 width: 100%;
                 text: "Save Results";
                 enabled: root.analysis_done && !root.analysis_running;
-                background: MaterialPalette.error;
-                text_color: MaterialPalette.on_error;
+                background: MaterialPalette.primary;
+                text_color: MaterialPalette.on_primary;
                 clicked => {
                     root.write_files();
                 }

@@ -41,6 +41,7 @@ export component BondAngleOptionsCard inherits FilledCard {
             padding-left: MaterialStyleMetrics.spacing_8;
 
             theta_bin_area := TouchArea {
+                width: 100%;
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
@@ -50,6 +51,7 @@ export component BondAngleOptionsCard inherits FilledCard {
             }
 
             dihedral_bin_area := TouchArea {
+                width: 100%;
                 TextField {
                     enabled: root.file_loaded;
                     width: 100%;
