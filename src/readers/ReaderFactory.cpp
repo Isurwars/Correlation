@@ -23,6 +23,8 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
 
   for (const auto &ext : reader->getExtensions()) {
     std::string lower_ext = ext;
+    if (lower_ext.empty())
+      continue;
     if (lower_ext[0] != '.')
       lower_ext = "." + lower_ext;
     std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
@@ -36,6 +38,8 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
 
 BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension) {
   std::string lower_ext = extension;
+  if (lower_ext.empty())
+    return nullptr;
   if (lower_ext[0] != '.')
     lower_ext = "." + lower_ext;
   std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),

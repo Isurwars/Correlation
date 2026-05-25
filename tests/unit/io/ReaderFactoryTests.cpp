@@ -93,4 +93,10 @@ TEST(ReaderFactoryTests, LookupNonExistentReturnsNullptr) {
   EXPECT_EQ(retrieved, nullptr);
 }
 
+TEST(ReaderFactoryTests, LookupEmptyExtensionReturnsNullptr) {
+  auto &factory = ReaderFactory::instance();
+  BaseReader *retrieved = factory.getReaderForExtension("");
+  EXPECT_EQ(retrieved, nullptr);
+}
+
 } // namespace correlation::testing

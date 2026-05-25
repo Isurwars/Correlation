@@ -88,4 +88,10 @@ TEST(WriterFactoryTests, LookupNonExistentReturnsNullptr) {
   EXPECT_EQ(retrieved_name, nullptr);
 }
 
+TEST(WriterFactoryTests, LookupEmptyExtensionReturnsNullptr) {
+  auto &factory = WriterFactory::instance();
+  BaseWriter *retrieved = factory.getWriterForExtension("");
+  EXPECT_EQ(retrieved, nullptr);
+}
+
 } // namespace correlation::testing

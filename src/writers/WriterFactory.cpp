@@ -25,6 +25,8 @@ bool WriterFactory::registerWriter(std::unique_ptr<BaseWriter> writer) {
 
   for (const auto &ext : writer->getExtensions()) {
     std::string lower_ext = ext;
+    if (lower_ext.empty())
+      continue;
     if (lower_ext[0] != '.')
       lower_ext = "." + lower_ext;
     std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
@@ -38,6 +40,8 @@ bool WriterFactory::registerWriter(std::unique_ptr<BaseWriter> writer) {
 
 BaseWriter *WriterFactory::getWriterForExtension(const std::string &extension) {
   std::string lower_ext = extension;
+  if (lower_ext.empty())
+    return nullptr;
   if (lower_ext[0] != '.')
     lower_ext = "." + lower_ext;
   std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
