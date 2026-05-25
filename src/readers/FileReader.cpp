@@ -59,26 +59,57 @@ FileType determineFileType(const std::string &filename) {
   return FileType::Unknown;
 }
 
+/**
+ * @brief Finds a reader for the given filename.
+ *
+ * Tries the file extension first via ReaderFactory.  When the extension is
+ * empty (extensionless VASP files such as POSCAR, CONTCAR, XDATCAR) falls
+ * back to a case-insensitive basename check.
+ *
+ * @param filename Path to the file.
+ * @return Pointer to the matching reader, or nullptr if none found.
+ */
+static BaseReader *findReaderForFile(const std::string &filename) {
+  std::string ext = std::filesystem::path(filename).extension().string();
+
+  if (!ext.empty()) {
+    auto *reader = ReaderFactory::instance().getReaderForExtension(ext);
+    if (reader)
+      return reader;
+  }
+
+  // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
+  std::string basename =
+      std::filesystem::path(filename).filename().string();
+  std::transform(basename.begin(), basename.end(), basename.begin(),
+                 ::tolower);
+
+  if (basename == "poscar" || basename == "contcar")
+    return ReaderFactory::instance().getReaderForExtension(".poscar");
+  if (basename == "xdatcar")
+    return ReaderFactory::instance().getReaderForExtension(".xdatcar");
+
+  return nullptr;
+}
+
 correlation::core::Cell readStructure(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
 
-  std::string ext = std::filesystem::path(filename).extension().string();
-  auto reader = ReaderFactory::instance().getReaderForExtension(ext);
+  auto *reader = findReaderForFile(filename);
 
   if (reader) {
     return reader->readStructure(filename, progress_callback);
   }
 
-  throw std::runtime_error("No reader found for extension: " + ext);
+  throw std::runtime_error("No reader found for file: " + filename);
 }
 
 correlation::core::Trajectory readTrajectory(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
 
-  std::string ext = std::filesystem::path(filename).extension().string();
-  auto reader = ReaderFactory::instance().getReaderForExtension(ext);
+  auto *reader = findReaderForFile(filename);
 
   if (reader) {
     // Enforce 4 GiB trajectory file size limit.
@@ -93,9 +124,7 @@ correlation::core::Trajectory readTrajectory(
       return reader->readTrajectory(filename, progress_callback);
     } else {
       // If it's not a trajectory reader but we asked for a trajectory,
-      // maybe we just want it as a single frame trajectory?
-      // BaseReader doesn't guarantee readTrajectory works for structure-only
-      // files. But some might.
+      // wrap a single structure in a one-frame trajectory.
       try {
         correlation::core::Cell c =
             reader->readStructure(filename, progress_callback);
@@ -103,13 +132,13 @@ correlation::core::Trajectory readTrajectory(
         frames.push_back(std::move(c));
         return correlation::core::Trajectory(frames, 1.0);
       } catch (...) {
-        throw std::runtime_error("Reader for " + ext +
-                                 " does not support trajectory reading.");
+        throw std::runtime_error("Reader for \"" + filename +
+                                 "\" does not support trajectory reading.");
       }
     }
   }
 
-  throw std::runtime_error("No reader found for extension: " + ext);
+  throw std::runtime_error("No reader found for file: " + filename);
 }
 
 } // namespace correlation::readers

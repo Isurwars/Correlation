@@ -203,6 +203,54 @@ protected:
     md_file << " Si     2      4.10000000E+000      5.10000000E+000      "
                "6.10000000E+000  <-- R\n";
     md_file.close();
+
+    // Create extensionless VASP POSCAR file
+    std::ofstream poscar_file("POSCAR");
+    ASSERT_TRUE(poscar_file.is_open());
+    poscar_file << "Silicon diamond\n"
+                << "5.43\n"
+                << "  1.0  0.0  0.0\n"
+                << "  0.0  1.0  0.0\n"
+                << "  0.0  0.0  1.0\n"
+                << "Si\n"
+                << "2\n"
+                << "Direct\n"
+                << "  0.00  0.00  0.00\n"
+                << "  0.50  0.50  0.00\n";
+    poscar_file.close();
+
+    // Create extensionless VASP CONTCAR file
+    std::ofstream contcar_file("CONTCAR");
+    ASSERT_TRUE(contcar_file.is_open());
+    contcar_file << "Silicon diamond\n"
+                 << "5.43\n"
+                 << "  1.0  0.0  0.0\n"
+                 << "  0.0  1.0  0.0\n"
+                 << "  0.0  0.0  1.0\n"
+                 << "Si\n"
+                 << "2\n"
+                 << "Direct\n"
+                 << "  0.00  0.00  0.00\n"
+                 << "  0.50  0.50  0.00\n";
+    contcar_file.close();
+
+    // Create extensionless VASP XDATCAR file
+    std::ofstream xdatcar_file("XDATCAR");
+    ASSERT_TRUE(xdatcar_file.is_open());
+    xdatcar_file << "Si trajectory\n"
+                 << "5.43\n"
+                 << "  1.0  0.0  0.0\n"
+                 << "  0.0  1.0  0.0\n"
+                 << "  0.0  0.0  1.0\n"
+                 << "Si\n"
+                 << "2\n"
+                 << "Direct configuration=     1\n"
+                 << "  0.000  0.000  0.000\n"
+                 << "  0.500  0.500  0.000\n"
+                 << "Direct configuration=     2\n"
+                 << "  0.010  0.005  0.003\n"
+                 << "  0.510  0.505  0.003\n";
+    xdatcar_file.close();
   }
 
   void TearDown() override {
@@ -216,6 +264,9 @@ protected:
     remove("test_element.dump");
     remove("test.dat");
     remove("test.md");
+    remove("POSCAR");
+    remove("CONTCAR");
+    remove("XDATCAR");
   }
 };
 
@@ -556,4 +607,54 @@ TEST_F(FileReaderTests, ReadOutmolCorrectly) {
     EXPECT_NEAR(frame0.lattice_parameters()[1], 14.172, 1e-3);
     EXPECT_NEAR(frame0.lattice_parameters()[2], 14.172, 1e-3);
   }
+}
+
+TEST_F(FileReaderTests, DetermineFileTypeExtensionlessVasp) {
+  using correlation::readers::FileType;
+  using correlation::readers::determineFileType;
+
+  EXPECT_EQ(determineFileType("POSCAR"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("CONTCAR"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("XDATCAR"), FileType::Xdatcar);
+
+  // Case insensitivity
+  EXPECT_EQ(determineFileType("poscar"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("contcar"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("xdatcar"), FileType::Xdatcar);
+
+  // Mixed case
+  EXPECT_EQ(determineFileType("PosCar"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("XdatCar"), FileType::Xdatcar);
+
+  // Paths
+  EXPECT_EQ(determineFileType("/path/to/POSCAR"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("relative/path/CONTCAR"), FileType::Vasp);
+  EXPECT_EQ(determineFileType("./XDATCAR"), FileType::Xdatcar);
+}
+
+TEST_F(FileReaderTests, ReadExtensionlessVaspStructure) {
+  using correlation::readers::FileType;
+  using correlation::readers::readStructure;
+
+  // POSCAR
+  correlation::core::Cell poscar_cell = readStructure("POSCAR", FileType::Vasp);
+  EXPECT_EQ(poscar_cell.atomCount(), 2);
+  EXPECT_NEAR(poscar_cell.lattice_parameters()[0], 5.43, 1e-6);
+
+  // CONTCAR
+  correlation::core::Cell contcar_cell = readStructure("CONTCAR", FileType::Vasp);
+  EXPECT_EQ(contcar_cell.atomCount(), 2);
+  EXPECT_NEAR(contcar_cell.lattice_parameters()[0], 5.43, 1e-6);
+}
+
+TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
+  using correlation::readers::FileType;
+  using correlation::readers::readTrajectory;
+
+  correlation::core::Trajectory traj = readTrajectory("XDATCAR", FileType::Xdatcar);
+  EXPECT_EQ(traj.getFrameCount(), 2);
+
+  const auto &f1 = traj.getFrame(0);
+  EXPECT_EQ(f1.atomCount(), 2);
+  EXPECT_NEAR(f1.lattice_parameters()[0], 5.43, 1e-6);
 }

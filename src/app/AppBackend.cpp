@@ -189,6 +189,10 @@ std::string AppBackend::load_file(const std::string &path) {
     if (reader) {
       is_trajectory = reader->isTrajectory();
     }
+  } else {
+    // Extensionless files (e.g., bare POSCAR, XDATCAR): use the FileType
+    // already determined by basename in determineFileType().
+    is_trajectory = (type == correlation::readers::FileType::Xdatcar);
   }
 
   if (is_trajectory) {
