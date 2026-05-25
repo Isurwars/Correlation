@@ -19,13 +19,14 @@ export component ExpandableHeader inherits TouchArea {
         spacing: MaterialStyleMetrics.spacing_4;
         padding_left: MaterialStyleMetrics.spacing_4;
         padding_right: MaterialStyleMetrics.spacing_4;
-        Icon {
-            y: 12px;
-            colorize: MaterialPalette.on_surface_variant;
-            height: 24px;
-            width: 24px;
-            vertical-alignment: center;
-            source: root.expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+        VerticalLayout {
+            alignment: center;
+            Icon {
+                colorize: MaterialPalette.on_surface_variant;
+                height: 24px;
+                width: 24px;
+                source: root.expanded ? Icons.arrow_drop_down : Icons.arrow_right;
+            }
         }
 
         MaterialText {

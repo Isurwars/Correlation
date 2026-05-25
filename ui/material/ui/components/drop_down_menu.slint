@@ -118,7 +118,7 @@ export component DropDownMenu {
     }
 
     function update_text(index: int) {
-        if index < 0 || root.current_index >= root.items.length {
+        if index < 0 || index >= root.items.length {
             text_field.text = "";
             return;
         }

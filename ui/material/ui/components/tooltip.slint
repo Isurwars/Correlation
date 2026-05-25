@@ -19,6 +19,9 @@ export component ToolTip {
 
     z: 10000;
 
+    opacity: root.visible ? 1.0 : 0.0;
+    animate opacity { duration: 100ms; easing: ease-in; }
+
     background_layer := Rectangle {
         border_radius: 4px;
         background: MaterialPalette.inverse_surface;

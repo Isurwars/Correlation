@@ -137,6 +137,13 @@ export component AppWindow inherits Window {
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
+    // Priority order for sidebar tooltips:
+    // 1. input_card (Input file section)
+    // 2. file_info_card (File details and metadata)
+    // 3. options_toggle (Advanced options expand/collapse button)
+    // 4. frame_selection (Frame range inputs)
+    // 5. export_options (Format toggles: CSV, HDF5, Parquet)
+    // 6. execution (Run/Save analysis buttons)
     property <string> sidebar_tooltip: 
         input_card.hovered_tooltip_text != "" ? input_card.hovered_tooltip_text : file_info_card.hovered_tooltip_text != "" ? file_info_card.hovered_tooltip_text : options_toggle.hovered_tooltip_text != "" ? options_toggle.hovered_tooltip_text : frame_selection.hovered_tooltip_text != "" ? frame_selection.hovered_tooltip_text : export_options.hovered_tooltip_text != "" ? export_options.hovered_tooltip_text : execution.hovered_tooltip_text != "" ? execution.hovered_tooltip_text : "";
 
@@ -153,7 +160,7 @@ export component AppWindow inherits Window {
     background: MaterialPalette.background;
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
-    default-font-family: "sans-serif";
+    default-font-family: "Inter";
 
     // ============================================================================
     // Main UI structure

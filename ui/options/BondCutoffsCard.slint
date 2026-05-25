@@ -16,7 +16,7 @@ export component BondCutoffsCard inherits FilledCard {
     in property <bool> file_loaded;
     in-out property <[BondCutoff]> bond_cutoffs;
 
-    property <length> bond_cutoffs_height: root.expanded ? min(150px, root.bond_cutoffs.length * 50px) : 0px;
+    property <length> bond_cutoffs_height: root.expanded ? min(250px, root.bond_cutoffs.length * 50px) : 0px;
 
     Vertical {
 
