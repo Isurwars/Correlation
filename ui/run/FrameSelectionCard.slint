@@ -11,6 +11,7 @@ import {
 
 export component FrameSelectionCard inherits FilledCard {
     in property <int> num_frames;
+    in property <bool> file_loaded;
     in-out property <string> min_frame;
     in-out property <string> max_frame;
 
@@ -54,7 +55,7 @@ export component FrameSelectionCard inherits FilledCard {
 
             start_frame_area := TouchArea {
                 start_frame := TextField {
-                    enabled: root.num_frames > 1;
+                    enabled: root.file_loaded && root.num_frames > 1;
                     width: 100%;
                     label: "Start Frame";
                     text <=> root.min_frame;
@@ -68,7 +69,7 @@ export component FrameSelectionCard inherits FilledCard {
 
             end_frame_area := TouchArea {
                 end_frame := TextField {
-                    enabled: root.num_frames > 1;
+                    enabled: root.file_loaded && root.num_frames > 1;
                     width: 100%;
                     label: "End Frame";
                     text <=> root.max_frame;

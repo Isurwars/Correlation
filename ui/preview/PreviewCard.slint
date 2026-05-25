@@ -13,6 +13,8 @@ import {
     MenuItem,
     Vertical,
     FilledButton,
+    Horizontal,
+    Icons,
 } from "../material/material.slint";
 
 // ============================================================================
@@ -59,7 +61,7 @@ export component PreviewCard inherits FilledCard {
         }
 
         // Plot selector dropdown and Save Plot button
-        HorizontalLayout {
+        Horizontal {
             spacing: MaterialStyleMetrics.spacing_8;
             height: MaterialStyleMetrics.size_40;
             
@@ -82,6 +84,7 @@ export component PreviewCard inherits FilledCard {
             // Optional Save Plot Button
             FilledButton {
                 text: "Save Plot";
+                icon: Icons.save;
                 enabled: root.preview_plot.width > 0;
                 clicked => {
                     root.save_plot();
@@ -90,6 +93,7 @@ export component PreviewCard inherits FilledCard {
 
             FilledButton {
                 text: "Pin Run";
+                icon: Icons.pin;
                 enabled: root.preview_plot.width > 0;
                 clicked => {
                     root.pin_run();
@@ -98,7 +102,7 @@ export component PreviewCard inherits FilledCard {
         }
 
         // Pinned Runs Info
-        if root.pinned_runs_count > 0: HorizontalLayout {
+        if root.pinned_runs_count > 0: Horizontal {
             spacing: MaterialStyleMetrics.spacing_8;
             height: MaterialStyleMetrics.size_40;
             MaterialText {

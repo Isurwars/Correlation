@@ -6,15 +6,17 @@ import {
     TextField,
     DropDownMenu,
     Vertical,
+    CheckBoxRow,
 } from "../material/material.slint";
 
 export component SmoothingOptionsCard inherits FilledCard {
     in-out property <bool> expanded: false;
     in property <bool> file_loaded;
+    in-out property <bool> smoothing_enabled;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
 
-    property <length> smoothing_height: root.expanded ? 100px : 0px;
+    property <length> smoothing_height: root.expanded ? 140px : 0px;
 
     out property <string> hovered_tooltip_text:
         sigma_area.has-hover ? "Sigma to be used for the smoothing of the distribution functions. The recommended sigma is 0.01." : kernel_area.has-hover ? "Kernel smoother type.\nGaussian: General purpose smoothing.\nBump: Sharp cutoff, preserves high frequencies.\nTriweight: Higher weight near the center, good for noisy data." : "";
@@ -38,10 +40,20 @@ export component SmoothingOptionsCard inherits FilledCard {
                 duration: 250ms;
                 easing: ease-in-out;
             }
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.smoothing_enabled;
+                text: "Enable Smoothing";
+                checked_state_changed(s) => {
+                    root.smoothing_enabled = s;
+                }
+            }
 
             sigma_area := TouchArea {
                 TextField {
-                    enabled: root.file_loaded;
+                    enabled: root.file_loaded && root.smoothing_enabled;
                     width: 100%;
                     label: "Smoothing Sigma";
                     text <=> root.smoothing_sigma;
@@ -50,7 +62,7 @@ export component SmoothingOptionsCard inherits FilledCard {
 
             kernel_area := TouchArea {
                 DropDownMenu {
-                    enabled: root.file_loaded;
+                    enabled: root.file_loaded && root.smoothing_enabled;
                     width: 100%;
                     label: "Smoothing Kernel";
                     items: [

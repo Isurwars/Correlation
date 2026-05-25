@@ -4,6 +4,7 @@ import {
     FilledButton,
     FilledCard,
     Vertical,
+    Icons,
 } from "../material/material.slint";
 
 export component OptionsToggleCard inherits FilledCard {
@@ -19,7 +20,8 @@ export component OptionsToggleCard inherits FilledCard {
         touch_area := TouchArea {
             FilledButton {
                 width: 100%;
-                text: root.advanced_options_visible ? "◀  Options" : "Options  ▶";
+                text: "Options";
+                icon: root.advanced_options_visible ? Icons.chevron_backward : Icons.chevron_forward;
                 enabled: root.file_loaded;
                 background: MaterialPalette.warning;
                 text_color: MaterialPalette.on_warning;

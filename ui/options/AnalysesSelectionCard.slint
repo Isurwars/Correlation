@@ -21,6 +21,13 @@ export component AnalysesSelectionCard inherits FilledCard {
 
     out property <string> hovered_calculator_description: "";
 
+    property <bool> is_bg_hovered: bg_touch_area.has-hover;
+    changed is_bg_hovered => {
+        if (!root.is_bg_hovered) {
+            root.hovered_calculator_description = "";
+        }
+    }
+
     property <length> analyses_height: root.expanded ? (root.total_calculator_count * 32px + root.calculator_groups.length * 14px + 32px) : 0px;
 
     Vertical {
@@ -30,56 +37,60 @@ export component AnalysesSelectionCard inherits FilledCard {
             expanded <=> root.expanded;
         }
 
-        Vertical {
-            padding: MaterialStyleMetrics.spacing_2;
-            spacing: MaterialStyleMetrics.spacing_2;
-            alignment: start;
+        bg_touch_area := TouchArea {
+            width: 100%;
             height: root.analyses_height;
-            visible: self.height > 0.1px;
-            opacity: root.expanded ? 1.0 : 0.0;
-            animate height {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-            animate opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
 
-            for group[gi] in root.calculator_groups: Vertical {
+            Vertical {
+                width: 100%;
+                height: 100%;
+                padding: MaterialStyleMetrics.spacing_2;
                 spacing: MaterialStyleMetrics.spacing_2;
-                if gi > 0: Rectangle {
-                    height: 1px;
-                    background: MaterialPalette.outline_variant;
+                alignment: start;
+                visible: self.height > 0.1px;
+                opacity: root.expanded ? 1.0 : 0.0;
+                animate height {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                animate opacity {
+                    duration: 250ms;
+                    easing: ease-in-out;
                 }
 
-                MaterialText {
-                    text: group.name;
-                    style: MaterialTypography.label_small;
-                    color: MaterialPalette.on_surface_variant;
-                }
+                for group[gi] in root.calculator_groups: Vertical {
+                    spacing: MaterialStyleMetrics.spacing_2;
+                    if gi > 0: Rectangle {
+                        height: 1px;
+                        background: MaterialPalette.outline_variant;
+                    }
 
-                for calc[ci] in group.calculators: Horizontal {
-                    height: 28px;
-                    padding-left: MaterialStyleMetrics.spacing_2;
+                    MaterialText {
+                        text: group.name;
+                        style: MaterialTypography.label_small;
+                        color: MaterialPalette.on_surface_variant;
+                    }
 
-                    TouchArea {
-                        property <bool> _hover: self.has-hover;
-                        changed _hover => {
-                            if (self.has-hover) {
-                                root.hovered_calculator_description = calc.description;
-                            } else {
-                                root.hovered_calculator_description = "";
+                    for calc[ci] in group.calculators: Horizontal {
+                        height: 28px;
+                        padding-left: MaterialStyleMetrics.spacing_2;
+
+                        TouchArea {
+                            property <bool> _hover: self.has-hover;
+                            changed _hover => {
+                                if (self.has-hover) {
+                                    root.hovered_calculator_description = calc.description;
+                                }
                             }
-                        }
 
-                        CheckBoxRow {
-                            enabled: root.file_loaded;
-                            check_state_bool: calc.enabled;
-                            text: calc.name;
-                            horizontal-stretch: 1;
-                            checked_state_changed(s) => {
-                                root.toggle_calculator(calc.id, s);
+                            CheckBoxRow {
+                                enabled: root.file_loaded;
+                                check_state_bool: calc.enabled;
+                                text: calc.name;
+                                horizontal-stretch: 1;
+                                checked_state_changed(s) => {
+                                    root.toggle_calculator(calc.id, s);
+                                }
                             }
                         }
                     }
