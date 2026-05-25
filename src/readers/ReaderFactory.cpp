@@ -9,6 +9,7 @@
 #include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
+#include <fstream>
 
 namespace correlation::readers {
 
@@ -36,7 +37,7 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
   return true;
 }
 
-BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension) {
+BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, const std::string &filename) {
   std::string lower_ext = extension;
   if (lower_ext.empty())
     return nullptr;
@@ -44,6 +45,40 @@ BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension) {
     lower_ext = "." + lower_ext;
   std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
                  ::tolower);
+
+  if ((lower_ext == ".out" || lower_ext == ".in") && !filename.empty()) {
+    std::ifstream file(filename);
+    if (file.is_open()) {
+      std::string line;
+      // Read first 200 lines to sniff content
+      for (int i = 0; i < 200 && std::getline(file, line); ++i) {
+        // Convert to uppercase for matching
+        std::string uline = line;
+        for (auto &c : uline) c = toupper(c);
+
+        if (uline.find("CELL_PARAMETERS") != std::string::npos ||
+            uline.find("ATOMIC_POSITIONS") != std::string::npos ||
+            uline.find("QUANTUM ESPRESSO") != std::string::npos ||
+            uline.find("PWSCF") != std::string::npos ||
+            uline.find("&CONTROL") != std::string::npos ||
+            uline.find("&SYSTEM") != std::string::npos) {
+          auto it = extension_map_.find(".pwo");
+          if (it != extension_map_.end()) {
+            return it->second;
+          }
+        }
+        if (uline.find("&CELL") != std::string::npos ||
+            uline.find("&COORD") != std::string::npos ||
+            uline.find("&GLOBAL") != std::string::npos ||
+            uline.find("CP2K") != std::string::npos) {
+          auto it = extension_map_.find(".restart");
+          if (it != extension_map_.end()) {
+            return it->second;
+          }
+        }
+      }
+    }
+  }
 
   auto it = extension_map_.find(lower_ext);
   if (it != extension_map_.end()) {

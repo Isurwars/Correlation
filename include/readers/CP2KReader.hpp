@@ -14,11 +14,13 @@ namespace correlation::readers {
 /**
  * @class CP2KReader
  * @brief Handles parsing of CP2K restart and input files.
+ * @note Shares ".out" extension with Quantum ESPRESSO. Ambiguity is resolved
+ * using content sniffing.
  */
 class CP2KReader : public BaseReader {
 public:
     std::string getName() const override { return "CP2K Reader"; }
-    std::vector<std::string> getExtensions() const override { return {".inp", ".restart", ".out"}; }
+    std::vector<std::string> getExtensions() const override { return {".inp", ".restart", ".out", ".cp2k"}; }
     bool isTrajectory() const override { return true; }
 
     correlation::core::Cell readStructure(

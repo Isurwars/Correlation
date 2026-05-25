@@ -14,6 +14,8 @@ namespace correlation::readers {
 /**
  * @class QEReader
  * @brief Handles parsing of Quantum ESPRESSO output and input files.
+ * @note Shares ".out" and ".in" extensions with CP2K. Ambiguity is resolved
+ * using content sniffing.
  */
 class QEReader : public BaseReader {
 public:

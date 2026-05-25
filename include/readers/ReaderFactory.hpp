@@ -35,9 +35,10 @@ public:
   /**
    * @brief Finds a reader that supports the given file extension.
    * @param extension The file extension (e.g., ".car").
+   * @param filename Optional filename used for content-sniffing.
    * @return A pointer to the reader instance, or nullptr if not found.
    */
-  BaseReader *getReaderForExtension(const std::string &extension);
+  BaseReader *getReaderForExtension(const std::string &extension, const std::string &filename = "");
 
   /**
    * @brief Returns all registered extensions.

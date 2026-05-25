@@ -8,6 +8,8 @@
 
 #include <gtest/gtest.h>
 #include <memory>
+#include <fstream>
+#include <cstdio>
 
 namespace correlation::testing {
 
@@ -97,6 +99,40 @@ TEST(ReaderFactoryTests, LookupEmptyExtensionReturnsNullptr) {
   auto &factory = ReaderFactory::instance();
   BaseReader *retrieved = factory.getReaderForExtension("");
   EXPECT_EQ(retrieved, nullptr);
+}
+
+TEST(ReaderFactoryTests, SniffsQuantumEspressoFromOutFile) {
+  // Create a temporary .out file containing QE content
+  std::string filename = "test_qe_sniff.out";
+  std::ofstream out(filename);
+  out << "some header info\n";
+  out << "Program PWSCF v.6.8\n";
+  out << "CELL_PARAMETERS\n";
+  out.close();
+
+  auto &factory = ReaderFactory::instance();
+  BaseReader *retrieved = factory.getReaderForExtension(".out", filename);
+  ASSERT_NE(retrieved, nullptr);
+  EXPECT_EQ(retrieved->getName(), "Quantum ESPRESSO Reader");
+
+  std::remove(filename.c_str());
+}
+
+TEST(ReaderFactoryTests, SniffsCP2KFromOutFile) {
+  // Create a temporary .out file containing CP2K content
+  std::string filename = "test_cp2k_sniff.out";
+  std::ofstream out(filename);
+  out << "some header info\n";
+  out << "CP2K| version 9.1\n";
+  out << "&CELL\n";
+  out.close();
+
+  auto &factory = ReaderFactory::instance();
+  BaseReader *retrieved = factory.getReaderForExtension(".out", filename);
+  ASSERT_NE(retrieved, nullptr);
+  EXPECT_EQ(retrieved->getName(), "CP2K Reader");
+
+  std::remove(filename.c_str());
 }
 
 } // namespace correlation::testing

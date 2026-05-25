@@ -185,7 +185,7 @@ std::string AppBackend::load_file(const std::string &path) {
   if (!ext.empty()) {
     auto *reader =
         correlation::readers::ReaderFactory::instance().getReaderForExtension(
-            ext);
+            ext, path);
     if (reader) {
       is_trajectory = reader->isTrajectory();
     }
