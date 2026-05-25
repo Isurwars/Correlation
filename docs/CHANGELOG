@@ -3,16 +3,33 @@ All notable changes to this project will be documented in this file.
 
 ## [3.0.0] - In Progress
 
-### Added (Planned)
-- **Spatial Distribution Functions (SDF)**: 3D probability density mapping for solvation shells and local structure.
-- **Quantum ESPRESSO & CP2K Support**: Native readers for these popular *ab initio* MD formats.
-- **Cluster Analysis**: New calculator to identify atomic clusters and molecular fragments.
+### Added
+- **Explicit SIMD Vectorization**: AVX2/AVX-512 optimization for core calculation loops.
+- **Plugin/Factory Pattern**: Decoupled architecture for readers and calculators.
+- **Performance Benchmarking Suite**: Google Benchmark framework integration with comprehensive benchmarks for calculators and analyzers to monitor and guide optimization.
+- **Memory-Mapped I/O**: Efficient lazy loading of multi-gigabyte trajectories via `MappedFile` for all major readers (XYZ, LAMMPS, GROMACS, XDATCAR).
+- **GPU Acceleration**: CUDA-accelerated S(Q) via `GPUSQCalculator` (`-DBUILD_WITH_CUDA=ON`), with automatic CPU fallback when no compatible device is detected.
+- **Mean Squared Displacement (MSD)**: Standard diffusion coefficient ($D$) computation.
+- **Common Neighbor Analysis (CNA)**: Classification into localized crystallographic environments.
+- **Steinhardt Bond-Orientational Parameters ($Q_4, Q_6, W_6$)**: Gold standard for liquid vs. solid structure.
+- **Hydrogen Bond Analysis**: Geometric criteria and autocorrelation functions for H-bond lifetimes.
+- **Spatial Distribution Functions (SDF)**: 3D probability density mapping for solvation shells and local structure, with support for exporting 3D density maps (e.g., `.cube` files) for external visualization.
+- **Cluster Analysis**: Connectivity-based clustering algorithms to identify atomic clusters, molecular fragments, or crystalline grains.
+- **VASP Support**: Full support for VASP `POSCAR`, `CONTCAR`, and `XDATCAR` files, essential for inorganic materials and solid-state physics communities.
+- **GROMACS Support**: Support for `.gro`, `.xtc`, and `.trr` formats, opening Correlation to soft-matter and biophysics communities.
+- **Protein Data Bank Support**: Native support for `.pdb` files, the universal standard for biological and organic structures.
+- **Python Bindings**: Direct C++ core integration for Jupyter and automated pipelines.
+- **Quantum ESPRESSO & CP2K Support**: Native readers and high priority support for these popular *ab initio* MD formats.
+- **Extended XYZ**: Full support for standard and Extended XYZ (`comment`-line key=value metadata, custom per-atom columns, lattice vectors, and multi-frame trajectories).
+- **Automated Release Pipelines**: CI/CD for cross-platform binaries and installers.
+- **Static Plot Management**: In-memory SVG generation preventing disk-bound delays, with a native file-saving dialog built into the user interface.
+- **WASM Web Interface**: Core engine runs in the browser via Emscripten (`-DBUILD_WASM=ON`). Exposes `Cell`, `Trajectory`, `DistributionFunctions`, RDF, and PAD to JavaScript via embind.
 - **Interactive Plotting**: Enhanced GUI with zoom and pan support for distribution functions.
 
-### Changed (Planned)
-- **HPC Core**: Implementation of Cell-Lists (spatial partitioning) to achieve $O(N)$ complexity in neighbor searching.
+### Changed
+- **HPC Core (Spatial Partitioning)**: Implementation of Cell-Lists to achieve $O(N)$ complexity in neighbor searching (replacing the current $O(N^2)$ distance tensor approach for large systems).
 - **Task-Based Parallelism**: Migrating to advanced TBB task graphs for better high-core scaling.
-- **Pythonic API**: Refined NumPy integration for the Python bindings.
+- **Refined Python API**: NumPy-native zero-copy integration via `.positions` and `.velocities` buffer-protocol properties on `Cell`, with deprecation warnings guiding users away from the old copy-based API.
 
 ## [2.9.0] 2026-05-10
 
