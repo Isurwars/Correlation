@@ -10,7 +10,10 @@
 #include "app/AppBackend.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
+#include "readers/ReaderFactory.hpp"
 #include "writers/FileWriter.hpp"
+
+#include <filesystem>
 
 #include <cmath>
 #include <iostream>
@@ -174,16 +177,21 @@ std::string AppBackend::load_file(const std::string &path) {
   correlation::readers::FileType type =
       correlation::readers::determineFileType(path);
 
-  // For now, loading a single structure file starts a new trajectory with 1
-  // frame. The determineFileType helper is used to dispatch to the correct
-  // reader.
+  // Determine whether to load as a trajectory by checking the reader's
+  // isTrajectory() flag via the ReaderFactory, rather than maintaining a
+  // separate hard-coded list of trajectory FileTypes.
+  bool is_trajectory = false;
+  std::string ext = std::filesystem::path(path).extension().string();
+  if (!ext.empty()) {
+    auto *reader =
+        correlation::readers::ReaderFactory::instance().getReaderForExtension(
+            ext);
+    if (reader) {
+      is_trajectory = reader->isTrajectory();
+    }
+  }
 
-  if (type == correlation::readers::FileType::Arc ||
-      type == correlation::readers::FileType::CastepMd ||
-      type == correlation::readers::FileType::Outmol ||
-      type == correlation::readers::FileType::Xdatcar ||
-      type == correlation::readers::FileType::Gromacs ||
-      type == correlation::readers::FileType::Pdb) {
+  if (is_trajectory) {
     trajectory_ = std::make_unique<correlation::core::Trajectory>(
         correlation::readers::readTrajectory(path, type, progress_callback_));
   } else {
