@@ -163,7 +163,15 @@ protected:
     // Create a temporary ONETEP .dat file
     std::ofstream dat_file("test.dat");
     ASSERT_TRUE(dat_file.is_open());
-    dat_file << "Stub file contents\n";
+    dat_file << "%BLOCK LATTICE_CART\n"
+             << "10.0 0.0 0.0\n"
+             << "0.0 11.0 0.0\n"
+             << "0.0 0.0 12.0\n"
+             << "%ENDBLOCK LATTICE_CART\n\n"
+             << "%BLOCK POSITIONS_ABS\n"
+             << "C 1.0 2.0 3.0\n"
+             << "Si 4.5 5.5 6.5\n"
+             << "%ENDBLOCK POSITIONS_ABS\n";
     dat_file.close();
 
     // Create a temporary CASTEP .md file
@@ -496,9 +504,25 @@ TEST_F(FileReaderTests, ReadOnetepDatCorrectly) {
   correlation::core::Cell result_cell =
       correlation::readers::readStructure("test.dat", type);
 
-  // Assert: Check that it returns an empty correlation::core::Cell as it is a
-  // stub
-  EXPECT_TRUE(result_cell.isEmpty());
+  // Assert: Check lattice parameters
+  const auto &params = result_cell.lattice_parameters();
+  EXPECT_DOUBLE_EQ(params[0], 10.0);
+  EXPECT_DOUBLE_EQ(params[1], 11.0);
+  EXPECT_DOUBLE_EQ(params[2], 12.0);
+
+  // Assert: Check atoms
+  const auto &atoms = result_cell.atoms();
+  ASSERT_EQ(atoms.size(), 2);
+
+  EXPECT_EQ(atoms[0].element().symbol, "C");
+  EXPECT_DOUBLE_EQ(atoms[0].position().x(), 1.0);
+  EXPECT_DOUBLE_EQ(atoms[0].position().y(), 2.0);
+  EXPECT_DOUBLE_EQ(atoms[0].position().z(), 3.0);
+
+  EXPECT_EQ(atoms[1].element().symbol, "Si");
+  EXPECT_DOUBLE_EQ(atoms[1].position().x(), 4.5);
+  EXPECT_DOUBLE_EQ(atoms[1].position().y(), 5.5);
+  EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.5);
 }
 
 TEST_F(FileReaderTests, ReadCastepMdCorrectly) {

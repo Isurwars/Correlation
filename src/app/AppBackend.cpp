@@ -355,7 +355,7 @@ std::string AppBackend::write_files() {
     correlation::writers::FileWriter writer(*df_);
     writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5,
                  options_.use_parquet, options_.smoothing);
-    std::cout << "Files writen to: " << options_.output_file_base << std::endl;
+    std::cout << "Files written to: " << options_.output_file_base << std::endl;
   } catch (const std::exception &e) {
     std::string err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();
     std::cerr << err << std::endl;
