@@ -161,6 +161,8 @@ export component AppWindow inherits Window {
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Inter";
+    min-width: 390px + (root.show_advanced_options ? 240px : 0px) + (root.analysis_done ? 300px : 0px);
+    min-height: 400px + (root.analysis_done ? 140px : 0px);
 
     // ============================================================================
     // Main UI structure
