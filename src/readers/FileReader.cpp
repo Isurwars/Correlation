@@ -92,11 +92,50 @@ static BaseReader *findReaderForFile(const std::string &filename) {
   return nullptr;
 }
 
+static BaseReader *findReaderForType(FileType type) {
+  switch (type) {
+    case FileType::Car:
+      return ReaderFactory::instance().getReaderForExtension(".car");
+    case FileType::Cell:
+      return ReaderFactory::instance().getReaderForExtension(".cell");
+    case FileType::Cif:
+      return ReaderFactory::instance().getReaderForExtension(".cif");
+    case FileType::Arc:
+      return ReaderFactory::instance().getReaderForExtension(".arc");
+    case FileType::LammpsDump:
+      return ReaderFactory::instance().getReaderForExtension(".dump");
+    case FileType::OnetepDat:
+      return ReaderFactory::instance().getReaderForExtension(".dat");
+    case FileType::CastepMd:
+      return ReaderFactory::instance().getReaderForExtension(".md");
+    case FileType::Outmol:
+      return ReaderFactory::instance().getReaderForExtension(".outmol");
+    case FileType::Vasp:
+      return ReaderFactory::instance().getReaderForExtension(".poscar");
+    case FileType::Xdatcar:
+      return ReaderFactory::instance().getReaderForExtension(".xdatcar");
+    case FileType::Gromacs:
+      return ReaderFactory::instance().getReaderForExtension(".gro");
+    case FileType::Pdb:
+      return ReaderFactory::instance().getReaderForExtension(".pdb");
+    case FileType::Xyz:
+      return ReaderFactory::instance().getReaderForExtension(".xyz");
+    default:
+      return nullptr;
+  }
+}
+
 correlation::core::Cell readStructure(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
 
-  auto *reader = findReaderForFile(filename);
+  BaseReader *reader = nullptr;
+  if (type != FileType::Unknown) {
+    reader = findReaderForType(type);
+  }
+  if (!reader) {
+    reader = findReaderForFile(filename);
+  }
 
   if (reader) {
     return reader->readStructure(filename, progress_callback);
@@ -109,7 +148,13 @@ correlation::core::Trajectory readTrajectory(
     const std::string &filename, FileType type,
     std::function<void(float, const std::string &)> progress_callback) {
 
-  auto *reader = findReaderForFile(filename);
+  BaseReader *reader = nullptr;
+  if (type != FileType::Unknown) {
+    reader = findReaderForType(type);
+  }
+  if (!reader) {
+    reader = findReaderForFile(filename);
+  }
 
   if (reader) {
     // Enforce 4 GiB trajectory file size limit.
