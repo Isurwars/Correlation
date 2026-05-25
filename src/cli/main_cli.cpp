@@ -29,8 +29,8 @@ struct CliOptions {
   double angle_bin_width = 1.0;
   int min_frame = 0;
   int max_frame = -1;
-  bool csv = false;
-  bool hdf5 = true;
+  bool csv = true;
+  bool hdf5 = false;
   bool parquet = false;
   bool smoothing = true;
   bool quiet = false;
@@ -50,9 +50,10 @@ void printUsage(const char *program) {
       << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
       << "  --min-frame <int>         Start frame, 1-based (default: 1)\n"
       << "  --max-frame <int>         End frame, -1=all (default: -1)\n"
-      << "  --csv                     Enable CSV output\n"
-      << "  --hdf5                    Enable HDF5 output (default: on)\n"
-      << "  --no-hdf5                 Disable HDF5 output\n"
+      << "  --csv                     Enable CSV output (default: on)\n"
+      << "  --no-csv                  Disable CSV output\n"
+      << "  --hdf5                    Enable HDF5 output\n"
+      << "  --no-hdf5                 Disable HDF5 output (default: off)\n"
       << "  --parquet                 Enable Parquet output\n"
       << "  --no-smoothing            Disable post-processing smoothing\n"
       << "  --calculators <list>      Comma-separated calculator IDs\n"
@@ -99,6 +100,8 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
       opts.max_frame = std::stoi(argv[++i]);
     } else if (arg == "--csv") {
       opts.csv = true;
+    } else if (arg == "--no-csv") {
+      opts.csv = false;
     } else if (arg == "--hdf5") {
       opts.hdf5 = true;
     } else if (arg == "--no-hdf5") {

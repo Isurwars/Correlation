@@ -17,6 +17,20 @@ configure_file(
     @ONLY
 )
 
+# -----------------------------------------------------------
+# Build Options
+# -----------------------------------------------------------
+option(BUILD_GUI "Build the graphical user interface (requires Slint)" ON)
+option(BUILD_WITH_HDF5 "Build with HDF5 support" OFF)
+option(BUILD_WITH_ARROW "Build with Arrow/Parquet support" OFF)
+
+if(BUILD_WITH_HDF5)
+    add_compile_definitions(CORRELATION_USE_HDF5)
+endif()
+if(BUILD_WITH_ARROW)
+    add_compile_definitions(CORRELATION_USE_ARROW)
+endif()
+
 include(GNUInstallDirs)
 
 # Set the C++ standard globally.
@@ -38,7 +52,9 @@ if (MSVC)
 endif()
 
 # Set default install path
-set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory")
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Installation directory" FORCE)
+endif()
 
 # -----------------------------------------------------------
 # Testing setup (early so BUILD_TESTING defaults to ON)

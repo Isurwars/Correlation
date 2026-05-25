@@ -68,9 +68,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
-target_compile_definitions(correlation_unit_tests PRIVATE _USE_MATH_DEFINES)
-bundle_windows_dlls(correlation_unit_tests)
-gtest_discover_tests(correlation_unit_tests DISCOVERY_TIMEOUT 60)
+# (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------
 # 2. Functional Tests (Real-world scenarios)
@@ -90,43 +88,49 @@ target_link_libraries(correlation_functional_tests PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
-target_compile_definitions(correlation_functional_tests PRIVATE _USE_MATH_DEFINES)
-bundle_windows_dlls(correlation_functional_tests)
-gtest_discover_tests(correlation_functional_tests DISCOVERY_TIMEOUT 60)
+# (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------
 # 3. GUI tests (requires Slint — runs on platforms with a display)
 #-----------------------------------------------------------
-add_executable(correlation_gui_tests
-    functional/app/AppControllerTests.cpp
-    ../src/app/AppBackend.cpp
-    ../src/app/AppController.cpp
-)
+if(BUILD_GUI)
+    add_executable(correlation_gui_tests
+        functional/app/AppControllerTests.cpp
+        ../src/app/AppBackend.cpp
+        ../src/app/AppController.cpp
+    )
 
-target_link_libraries(correlation_gui_tests PRIVATE
-    correlation_lib
-    readers_obj
-    writers_obj
-    calculators_obj
-    GTest::gtest
-    GTest::gtest_main
-    Slint::Slint
-)
-target_compile_definitions(correlation_gui_tests PRIVATE _USE_MATH_DEFINES)
+    target_link_libraries(correlation_gui_tests PRIVATE
+        correlation_lib
+        readers_obj
+        writers_obj
+        calculators_obj
+        GTest::gtest
+        GTest::gtest_main
+        Slint::Slint
+    )
 
-# Add slint target sources for AppWindow
-slint_target_sources(correlation_gui_tests
-    ../ui/AppWindow.slint
-    LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
-)
-target_include_directories(correlation_gui_tests PRIVATE
-  ${CMAKE_CURRENT_BINARY_DIR}
-)
+    # Add slint target sources for AppWindow
+    slint_target_sources(correlation_gui_tests
+        ../ui/AppWindow.slint
+        LIBRARY_PATHS material=${CMAKE_CURRENT_SOURCE_DIR}/../ui/material/material.slint
+    )
+    target_include_directories(correlation_gui_tests PRIVATE
+      ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endif()
 
-# Call the helper function to bundle DLLs on Windows
-bundle_windows_dlls(correlation_gui_tests)
+# Configure common test target settings and discovery
+set(TEST_TARGETS correlation_unit_tests correlation_functional_tests)
+if(BUILD_GUI)
+    list(APPEND TEST_TARGETS correlation_gui_tests)
+endif()
 
-gtest_discover_tests(correlation_gui_tests DISCOVERY_TIMEOUT 60)
+foreach(tgt IN LISTS TEST_TARGETS)
+    target_compile_definitions(${tgt} PRIVATE _USE_MATH_DEFINES)
+    bundle_windows_dlls(${tgt})
+    gtest_discover_tests(${tgt} DISCOVERY_TIMEOUT 60)
+endforeach()
 
 #-----------------------------------------------------------
 # Python binding smoke test (only when bindings are built)

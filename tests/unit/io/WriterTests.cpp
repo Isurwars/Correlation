@@ -14,7 +14,9 @@
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
+#ifdef CORRELATION_USE_HDF5
 #include <highfive/highfive.hpp>
+#endif
 #include <iterator> // For std::distance
 #include <vector>
 
@@ -152,6 +154,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 
+#ifdef CORRELATION_USE_HDF5
 TEST_F(FileWriterTests, WritesHDF5File) {
   // Arrange
   correlation::readers::FileType type =
@@ -378,7 +381,9 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   vdos_mev_ds.getAttribute("Units").read(mev_units);
   EXPECT_EQ(mev_units, "arbitrary units");
 }
+#endif
 
+#ifdef CORRELATION_USE_ARROW
 TEST_F(FileWriterTests, WritesParquetFiles) {
   // Arrange
   correlation::readers::FileType type =
@@ -408,3 +413,4 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
   EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_S.parquet"));
 }
+#endif

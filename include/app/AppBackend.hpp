@@ -57,8 +57,8 @@ struct ProgramOptions {
   std::string input_file;       ///< Path to the input trajectory file.
   std::string output_file_base; ///< Base path/name for output files.
   bool smoothing = true;        ///< Whether to apply Gaussian smoothing to results.
-  bool use_hdf5 = true;         ///< Enable HDF5 output format.
-  bool use_csv = false;         ///< Enable CSV output format.
+  bool use_hdf5 = false;        ///< Enable HDF5 output format.
+  bool use_csv = true;          ///< Enable CSV output format.
   bool use_parquet = false;     ///< Enable Parquet output format.
   double r_max = AppDefaults::R_MAX;             ///< Max distance for RDF calculation.
   double r_bin_width = AppDefaults::R_BIN_WIDTH;   ///< Step size for RDF histogram.

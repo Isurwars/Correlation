@@ -10,8 +10,10 @@ import {
 
 export component ExportOptionsCard inherits FilledCard {
     in property <bool> file_loaded;
+    in property <bool> hdf5_available: true;
+    in property <bool> parquet_available: true;
     in-out property <bool> use_csv: true;
-    in-out property <bool> use_hdf5: true;
+    in-out property <bool> use_hdf5: false;
     in-out property <bool> use_parquet: false;
 
     // Hover state for tooltip
@@ -38,7 +40,7 @@ export component ExportOptionsCard inherits FilledCard {
         }
 
         hdf5_area := CheckBoxRow {
-            enabled: root.file_loaded;
+            enabled: root.file_loaded && root.hdf5_available;
             check_state_bool: root.use_hdf5;
             text: "Export as HDF5";
             checked_state_changed(s) => {
@@ -47,7 +49,7 @@ export component ExportOptionsCard inherits FilledCard {
         }
 
         parquet_area := CheckBoxRow {
-            enabled: root.file_loaded;
+            enabled: root.file_loaded && root.parquet_available;
             check_state_bool: root.use_parquet;
             text: "Export as Parquet";
             checked_state_changed(s) => {

@@ -79,8 +79,10 @@ export component AppWindow inherits Window {
 
     /// Analysis configuration properties
     in-out property <string> in_file_text;
+    in property <bool> hdf5_available: true;
+    in property <bool> parquet_available: true;
     in-out property <bool> use_csv: true;
-    in-out property <bool> use_hdf5: true;
+    in-out property <bool> use_hdf5: false;
     in-out property <bool> use_parquet: false;
     in-out property <string> min_frame: "0";
     in-out property <string> max_frame: "End";
@@ -199,6 +201,8 @@ export component AppWindow inherits Window {
 
                 export_options := ExportOptionsCard {
                     file_loaded: root.file_loaded;
+                    hdf5_available: root.hdf5_available;
+                    parquet_available: root.parquet_available;
                     use_csv <=> root.use_csv;
                     use_hdf5 <=> root.use_hdf5;
                     use_parquet <=> root.use_parquet;

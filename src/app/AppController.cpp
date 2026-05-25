@@ -37,6 +37,19 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   // Populate the calculator groups from the factory
   populateCalculatorGroups(ui_);
 
+  // Set export formats availability based on compile-time definitions
+#ifdef CORRELATION_USE_HDF5
+  ui_.set_hdf5_available(true);
+#else
+  ui_.set_hdf5_available(false);
+#endif
+
+#ifdef CORRELATION_USE_ARROW
+  ui_.set_parquet_available(true);
+#else
+  ui_.set_parquet_available(false);
+#endif
+
   // default options to UI
   handleOptionstoUI(ui_);
 
