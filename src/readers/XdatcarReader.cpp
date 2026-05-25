@@ -244,7 +244,13 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
       double x, y, z;
       if (!(iss >> x >> y >> z))
         break;
-      cell.addAtom(header->atom_species[i], {x, y, z});
+      // Convert fractional coordinates to Cartesian: pos = x*a + y*b + z*c
+      correlation::math::Vector3<double> pos = {
+          x * v[0][0] + y * v[1][0] + z * v[2][0],
+          x * v[0][1] + y * v[1][1] + z * v[2][1],
+          x * v[0][2] + y * v[1][2] + z * v[2][2]
+      };
+      cell.addAtom(header->atom_species[i], pos);
     }
 
     cell.wrapPositions(); // XDATCAR always uses Direct coordinates

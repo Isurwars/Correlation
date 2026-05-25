@@ -106,6 +106,7 @@ correlation::analysis::Histogram CNCalculator::calculate(
   }
 
   cn_histogram.partials["Any-Any"] = any_any_dist;
+  cn_histogram.partials["Total"] = any_any_dist;
 
   return cn_histogram;
 }

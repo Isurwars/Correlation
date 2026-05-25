@@ -583,7 +583,12 @@ void AppController::handleCheckFileDialogStatus() {
                 datasets.push_back({pr.label, &it->second});
               }
             }
-            svg = correlation::plotters::renderComparisonSvg(datasets, "Total", config);
+            std::string key = "Total";
+            const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+            if (!partials.empty() && partials.find(key) == partials.end()) {
+              key = partials.begin()->first;
+            }
+            svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
           }
           
           std::ofstream out(result);
@@ -683,7 +688,12 @@ void AppController::handleSelectPlot(int index) {
       }
     }
     
-    svg = correlation::plotters::renderComparisonSvg(datasets, "Total", config);
+    std::string key = "Total";
+    const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+    if (!partials.empty() && partials.find(key) == partials.end()) {
+      key = partials.begin()->first;
+    }
+    svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
   }
 
   // Load SVG directly from memory avoiding filesystem issues
