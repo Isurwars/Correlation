@@ -69,7 +69,11 @@ correlation::core::Trajectory QEReader::readTrajectory(
               iss >> v[i][0] >> v[i][1] >> v[i][2];
           }
       }
-      current_cell.setLatticeParameters({v[0][0], v[1][1], v[2][2], 90.0, 90.0, 90.0});
+      current_cell.updateLattice(correlation::math::Matrix3<double>(
+          {v[0][0], v[0][1], v[0][2]},
+          {v[1][0], v[1][1], v[1][2]},
+          {v[2][0], v[2][1], v[2][2]}
+      ));
       has_box = true;
       parsing_cell = false;
     } else if (line.find("ATOMIC_POSITIONS") == 0) {
@@ -79,7 +83,7 @@ correlation::core::Trajectory QEReader::readTrajectory(
           frames.push_back(current_cell);
           current_cell = correlation::core::Cell();
           if (has_box) {
-              current_cell.setLatticeParameters(frames.back().lattice_parameters());
+              current_cell.updateLattice(frames.back().latticeVectors());
           }
       }
     } else if (parsing_atoms) {
