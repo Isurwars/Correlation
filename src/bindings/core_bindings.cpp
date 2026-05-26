@@ -31,7 +31,7 @@ void init_core(py::module_ &m) {
         }, py::return_value_policy::reference)
         .def("get_volume", &Cell::volume)
         .def_property("energy", &Cell::getEnergy, &Cell::setEnergy)
-        .def_property_readonly("atoms", &Cell::atoms)
+        .def_property_readonly("atoms", [](const Cell &c) -> const std::vector<Atom>& { return c.atoms(); }, py::return_value_policy::reference_internal)
         .def("get_positions",
             [](const Cell &c) -> py::array_t<double> {
                 py::module_ warnings = py::module_::import("warnings");

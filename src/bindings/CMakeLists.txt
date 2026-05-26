@@ -12,7 +12,7 @@ pybind11_add_module(_correlation
 # The Python package python/correlation/__init__.py re-exports via:
 #   from correlation._correlation import *
 
-target_link_libraries(_correlation PRIVATE correlation_lib)
+target_link_libraries(_correlation PRIVATE correlation_lib readers_obj writers_obj calculators_obj)
 
 # Match the C++ standard used by correlation_lib
 set_target_properties(_correlation PROPERTIES CXX_STANDARD 23)
