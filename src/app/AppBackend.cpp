@@ -300,8 +300,11 @@ std::string AppBackend::run_analysis() {
       // Check if we need velocities
       bool need_velocities = false;
       for (const auto &calc : factory_calcs) {
-        if (calc->isTrajectoryCalculator() && settings.isActive(calc->getName())) {
-          if (calc->getName() == "VACF" || calc->getName() == "VDOS") {
+        bool is_active = settings.isActive(calc->getName()) ||
+                         settings.isActive(calc->getShortName());
+        if (calc->isTrajectoryCalculator() && is_active) {
+          if (calc->getName() == "VACF" || calc->getShortName() == "VACF" ||
+              calc->getName() == "vDoS" || calc->getShortName() == "vDoS") {
             need_velocities = true;
             break;
           }
@@ -318,7 +321,8 @@ std::string AppBackend::run_analysis() {
       for (const auto &calc : factory_calcs) {
         if (!calc->isTrajectoryCalculator())
           continue;
-        if (!settings.isActive(calc->getName()))
+        if (!settings.isActive(calc->getName()) &&
+            !settings.isActive(calc->getShortName()))
           continue;
 
         try {

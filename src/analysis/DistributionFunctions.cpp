@@ -439,7 +439,8 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
           for (const auto &calc : factory_calcs) {
             if (!calc->isFrameCalculator())
               continue;
-            if (!settings.isActive(calc->getName()))
+            if (!settings.isActive(calc->getName()) &&
+                !settings.isActive(calc->getShortName()))
               continue;
             calc_group.run([&calc, df_ptr = frame_df.get(), &settings]() {
               calc->calculateFrame(*df_ptr, settings);
