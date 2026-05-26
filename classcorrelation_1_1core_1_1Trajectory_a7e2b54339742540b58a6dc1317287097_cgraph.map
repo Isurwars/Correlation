@@ -1,0 +1,7 @@
+<map id="correlation::core::Trajectory::getFrames" name="correlation::core::Trajectory::getFrames">
+<area shape="rect" id="Node000001" title="Gets a constant reference to the frames." alt="" coords="5,5,168,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="216,5,435,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,23,202,23,202,28,169,28"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="483,5,676,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="435,23,469,23,469,28,435,28"/>
+</map>

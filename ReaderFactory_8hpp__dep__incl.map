@@ -1,33 +1,41 @@
 <map id="include/readers/ReaderFactory.hpp" name="include/readers/ReaderFactory.hpp">
-<area shape="rect" id="Node000001" title="Factory for instantiating file reader objects by format." alt="" coords="1565,5,1811,31"/>
-<area shape="rect" id="Node000002" href="$io__bindings_8cpp.html" title=" " alt="" coords="5,79,211,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1552,25,973,43,600,59,223,81,211,82,211,77,222,76,600,54,973,37,1552,20"/>
-<area shape="rect" id="Node000003" href="$ArcReader_8cpp.html" title="Implementation of the ARC file format reader." alt="" coords="235,79,426,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1552,26,1061,45,751,61,439,81,426,82,426,77,438,76,751,55,1060,39,1552,21"/>
-<area shape="rect" id="Node000004" href="$CarReader_8cpp.html" title="Implementation of the CAR file format reader." alt="" coords="451,79,643,104"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1552,28,1150,48,655,81,643,82,643,77,654,76,1149,43,1552,22"/>
-<area shape="rect" id="Node000005" href="$CastepMdReader_8cpp.html" title="Implementation of the CASTEP MD trajectory reader." alt="" coords="667,79,901,104"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1552,32,914,81,902,82,901,77,913,76,1551,27"/>
-<area shape="rect" id="Node000006" href="$CellReader_8cpp.html" title="Implementation of the CASTEP CELL file reader." alt="" coords="925,79,1120,104"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1568,35,1120,82,1120,77,1567,29"/>
-<area shape="rect" id="Node000007" href="$CifReader_8cpp.html" title="Implementation of the CIF file format reader." alt="" coords="1145,79,1333,104"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1603,35,1311,81,1311,76,1602,30"/>
-<area shape="rect" id="Node000008" href="$FileReader_8cpp.html" title="Implementation of the unified file reader." alt="" coords="1357,79,1550,104"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1638,37,1492,81,1491,76,1637,32"/>
-<area shape="rect" id="Node000009" href="$GromacsReader_8cpp.html" title="Implementation of the GROMACS (.gro) file reader." alt="" coords="1574,79,1802,104"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1691,44,1691,79,1685,79,1685,44"/>
-<area shape="rect" id="Node000010" href="$LammpsDumpReader_8cpp.html" title="Implementation of the LAMMPS dump file reader." alt="" coords="1826,79,2091,104"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1745,32,1916,76,1914,81,1744,37"/>
-<area shape="rect" id="Node000011" href="$OnetepDatReader_8cpp.html" title="Implementation of the ONETEP .dat file reader." alt="" coords="2116,79,2356,104"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1790,30,2148,76,2147,81,1789,35"/>
-<area shape="rect" id="Node000012" href="$OutmolReader_8cpp.html" title="Implementation of the CASTEP .outmol file reader." alt="" coords="2380,79,2599,104"/>
-<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="1825,28,2368,76,2380,77,2379,82,2368,81,1824,34"/>
-<area shape="rect" id="Node000013" href="$PdbReader_8cpp.html" title="Implementation of the PDB (.pdb) file reader." alt="" coords="2623,79,2817,104"/>
-<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="1825,24,2181,45,2611,76,2622,77,2622,82,2610,81,2180,50,1824,29"/>
-<area shape="rect" id="Node000014" href="$ReaderFactory_8cpp.html" title="Implementation of the reader factory." alt="" coords="2841,79,3057,104"/>
-<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="1825,22,2272,42,2830,76,2841,77,2841,82,2829,81,2271,48,1825,27"/>
-<area shape="rect" id="Node000015" href="$VaspReader_8cpp.html" title="Implementation of the VASP POSCAR/CONTCAR file reader." alt="" coords="3082,79,3283,104"/>
-<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="1825,20,2369,38,2718,54,3070,76,3082,77,3082,82,3069,81,2717,60,2369,44,1824,25"/>
-<area shape="rect" id="Node000016" href="$XdatcarReader_8cpp.html" title="Implementation of the VASP XDATCAR trajectory file reader." alt="" coords="3307,79,3527,104"/>
-<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="1824,19,2460,36,2875,53,3296,76,3307,77,3307,82,3296,81,2875,58,2460,42,1824,24"/>
+<area shape="rect" id="Node000001" title="Factory for instantiating file reader objects by format." alt="" coords="1998,5,2243,31"/>
+<area shape="rect" id="Node000002" href="$AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="5,79,185,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1984,23,1666,26,1224,35,715,53,198,81,186,82,185,77,198,76,715,47,1224,30,1666,21,1984,17"/>
+<area shape="rect" id="Node000003" href="$io__bindings_8cpp.html" title=" " alt="" coords="210,79,415,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1984,24,1315,40,874,57,428,81,416,82,416,77,427,76,874,51,1315,34,1984,19"/>
+<area shape="rect" id="Node000004" href="$ArcReader_8cpp.html" title="Implementation of the ARC file format reader." alt="" coords="440,79,631,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1984,24,1400,41,1023,58,642,81,631,82,630,77,642,76,1023,53,1400,36,1984,19"/>
+<area shape="rect" id="Node000005" href="$CP2KReader_8cpp.html" title="Implementation of the CP2K file reader." alt="" coords="655,79,859,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1984,26,1493,46,1184,61,872,81,859,82,859,77,871,76,1183,56,1493,40,1984,21"/>
+<area shape="rect" id="Node000006" href="$CarReader_8cpp.html" title="Implementation of the CAR file format reader." alt="" coords="883,79,1075,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1984,28,1582,48,1088,81,1076,82,1076,77,1087,76,1582,43,1984,22"/>
+<area shape="rect" id="Node000007" href="$CastepMdReader_8cpp.html" title="Implementation of the CASTEP MD trajectory reader." alt="" coords="1099,79,1334,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1984,32,1346,81,1334,82,1334,77,1346,76,1984,27"/>
+<area shape="rect" id="Node000008" href="$CellReader_8cpp.html" title="Implementation of the CASTEP CELL file reader." alt="" coords="1358,79,1553,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="2001,35,1553,82,1552,77,2000,29"/>
+<area shape="rect" id="Node000009" href="$CifReader_8cpp.html" title="Implementation of the CIF file format reader." alt="" coords="1577,79,1765,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="2035,35,1744,81,1743,76,2034,30"/>
+<area shape="rect" id="Node000010" href="$FileReader_8cpp.html" title="Implementation of the unified file reader." alt="" coords="1789,79,1983,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="2071,37,1925,81,1923,76,2069,32"/>
+<area shape="rect" id="Node000011" href="$GromacsReader_8cpp.html" title="Implementation of the GROMACS (.gro) file reader with memory&#45;mapped lazy loading for multi&#45;frame traj..." alt="" coords="2007,79,2235,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="2123,44,2123,79,2118,79,2118,44"/>
+<area shape="rect" id="Node000012" href="$LammpsDumpReader_8cpp.html" title="Implementation of the LAMMPS dump file reader with memory&#45;mapped lazy loading." alt="" coords="2259,79,2524,104"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="2178,32,2348,76,2347,81,2176,37"/>
+<area shape="rect" id="Node000013" href="$OnetepDatReader_8cpp.html" title="Implementation of the ONETEP .dat file reader." alt="" coords="2549,79,2789,104"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="2223,30,2581,76,2580,81,2222,35"/>
+<area shape="rect" id="Node000014" href="$OutmolReader_8cpp.html" title="Implementation of the CASTEP .outmol file reader." alt="" coords="2813,79,3031,104"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="2257,28,2801,76,2812,77,2812,82,2800,81,2257,34"/>
+<area shape="rect" id="Node000015" href="$PdbReader_8cpp.html" title="Implementation of the PDB (.pdb) file reader." alt="" coords="3055,79,3250,104"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="2257,24,2614,45,3044,76,3055,77,3055,82,3043,81,2613,50,2257,29"/>
+<area shape="rect" id="Node000016" href="$QEReader_8cpp.html" title="Implementation of the Quantum ESPRESSO file reader." alt="" coords="3275,79,3463,104"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="2258,21,2704,41,2983,57,3262,76,3275,77,3274,82,3262,81,2982,62,2704,46,2257,27"/>
+<area shape="rect" id="Node000017" href="$ReaderFactory_8cpp.html" title="Implementation of the reader factory." alt="" coords="3487,79,3703,104"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="2257,20,2791,39,3132,55,3476,76,3487,77,3487,82,3475,81,3131,61,2791,45,2257,26"/>
+<area shape="rect" id="Node000018" href="$VaspReader_8cpp.html" title="Implementation of the VASP POSCAR/CONTCAR file reader." alt="" coords="3728,79,3929,104"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="2257,19,2887,35,3299,52,3716,76,3728,77,3728,82,3715,81,3299,58,2887,41,2257,24"/>
+<area shape="rect" id="Node000019" href="$XYZReader_8cpp.html" title="Implementation of the Extended XYZ file reader." alt="" coords="3953,79,4149,104"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="2257,18,2560,22,2978,32,3456,49,3942,76,3953,77,3953,82,3942,81,3456,55,2977,37,2560,28,2257,23"/>
+<area shape="rect" id="Node000020" href="$XdatcarReader_8cpp.html" title="Implementation of the VASP XDATCAR trajectory file reader with memory&#45;mapped lazy loading." alt="" coords="4173,79,4393,104"/>
+<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="2257,18,2593,22,3064,31,3608,49,4162,76,4173,77,4173,82,4162,81,3608,54,3064,37,2593,27,2257,23"/>
 </map>

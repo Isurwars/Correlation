@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -99,6 +99,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1Glyph.html">Glyph</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single vector character glyph.  <a href="structcorrelation_1_1plotters_1_1Glyph.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1LabeledHistogram.html">LabeledHistogram</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A labeled histogram for comparison rendering.  <a href="structcorrelation_1_1plotters_1_1LabeledHistogram.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Theme and layout configuration for the plot.  <a href="structcorrelation_1_1plotters_1_1PlotConfig.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,8 +114,80 @@ Functions</h2></td></tr>
 <tr class="memitem:ada78283f13bbdc0035907beb475df118" id="r_ada78283f13bbdc0035907beb475df118"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#ada78283f13bbdc0035907beb475df118">renderHistogramAsSvg</a> (const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;hist, const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;config={})</td></tr>
 <tr class="memdesc:ada78283f13bbdc0035907beb475df118"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders a <code>Histogram</code> as a self-contained SVG string.  <br /></td></tr>
 <tr class="separator:ada78283f13bbdc0035907beb475df118"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05b2ab020d7fd4ccf9f4317b0d468dee" id="r_a05b2ab020d7fd4ccf9f4317b0d468dee"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#a05b2ab020d7fd4ccf9f4317b0d468dee">renderComparisonSvg</a> (const std::vector&lt; <a class="el" href="structcorrelation_1_1plotters_1_1LabeledHistogram.html">LabeledHistogram</a> &gt; &amp;datasets, const std::string &amp;partial_key=&quot;Total&quot;, const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;config={})</td></tr>
+<tr class="memdesc:a05b2ab020d7fd4ccf9f4317b0d468dee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders multiple histograms overlaid on a single plot.  <br /></td></tr>
+<tr class="separator:a05b2ab020d7fd4ccf9f4317b0d468dee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a05b2ab020d7fd4ccf9f4317b0d468dee" name="a05b2ab020d7fd4ccf9f4317b0d468dee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05b2ab020d7fd4ccf9f4317b0d468dee">&#9670;&#160;</a></span>renderComparisonSvg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string correlation::plotters::renderComparisonSvg </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="structcorrelation_1_1plotters_1_1LabeledHistogram.html">LabeledHistogram</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>datasets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>partial_key</em> = <code>&quot;Total&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;&#160;</td>
+          <td class="paramname"><em>config</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Renders multiple histograms overlaid on a single plot. </p>
+<p>Each entry in <code>datasets</code> provides a display label and a pointer to the Histogram data. The first dataset defines the axes and labels; subsequent datasets are drawn on the same grid with distinct colors.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">datasets</td><td>Vector of labeled histogram pointers. </td></tr>
+    <tr><td class="paramname">partial_key</td><td>Which partial to plot (e.g. "Total", "Si-O"). </td></tr>
+    <tr><td class="paramname">config</td><td>Optional plot configuration (theme, size, etc.). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A complete SVG document as <code>std::string</code>. </dd></dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespacecorrelation_1_1plotters_a05b2ab020d7fd4ccf9f4317b0d468dee_icgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_a05b2ab020d7fd4ccf9f4317b0d468dee_icgraph" alt=""/></div>
+<map name="anamespacecorrelation_1_1plotters_a05b2ab020d7fd4ccf9f4317b0d468dee_icgraph" id="anamespacecorrelation_1_1plotters_a05b2ab020d7fd4ccf9f4317b0d468dee_icgraph">
+<area shape="rect" title="Renders multiple histograms overlaid on a single plot." alt="" coords="813,5,988,45"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e62bb480f18f639d32d0bf3fc9388cb" title="Handles the &quot;Select Plot&quot; signal from the UI. Generates an SVG image for the requested histogram and ..." alt="" coords="544,5,765,45"/>
+<area shape="poly" title=" " alt="" coords="800,28,765,28,765,23,800,23"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="530,25,496,24,275,24,227,25,227,20,275,19,496,19,530,19"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,33,496,73"/>
+<area shape="poly" title=" " alt="" coords="531,41,497,44,496,39,530,36"/>
+<area shape="poly" title=" " alt="" coords="261,43,227,39,227,34,261,38"/>
+</map>
+</div>
+
+</div>
+</div>
 <a id="ada78283f13bbdc0035907beb475df118" name="ada78283f13bbdc0035907beb475df118"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ada78283f13bbdc0035907beb475df118">&#9670;&#160;</a></span>renderHistogramAsSvg()</h2>
 

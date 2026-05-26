@@ -1,0 +1,7 @@
+<map id="correlation::readers::GromacsReader::parseGroFrame" name="correlation::readers::GromacsReader::parseGroFrame">
+<area shape="rect" id="Node000001" title="Parses a single GROMACS .gro frame from a memory region." alt="" coords="567,5,809,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="284,5,519,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="553,28,519,28,519,23,553,23"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="5,5,236,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="270,28,236,28,236,23,270,23"/>
+</map>

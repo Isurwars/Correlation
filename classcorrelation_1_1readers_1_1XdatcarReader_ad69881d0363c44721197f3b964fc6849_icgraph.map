@@ -1,0 +1,5 @@
+<map id="correlation::readers::XdatcarReader::readTrajectory" name="correlation::readers::XdatcarReader::readTrajectory">
+<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="276,5,503,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1XdatcarReader.html#a4cd5d94a94ee9964442921c972927a14" title="Reads an atomic structure from a file." alt="" coords="5,5,228,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="262,28,228,28,228,23,262,23"/>
+</map>

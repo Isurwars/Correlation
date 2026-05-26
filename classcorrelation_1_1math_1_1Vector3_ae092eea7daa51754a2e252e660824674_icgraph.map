@@ -16,19 +16,23 @@
 <area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="878,291,837,356,808,390,775,419,739,437,736,432,772,414,805,386,833,353,873,288"/>
 <area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="318,5,489,60"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="565,35,489,35,489,30,565,30"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,129,507,169"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="571,164,507,159,507,154,571,159"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,129,252,169"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="286,151,252,151,252,146,286,146"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,125,507,165"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="571,163,507,157,507,152,571,157"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,125,252,165"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="286,147,252,147,252,142,286,142"/>
 <area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="702,225,689,218,664,215,642,217,629,222,624,228,627,236,622,237,619,227,626,218,641,212,664,210,690,213,705,220"/>
-<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a32c07e2335019155eda874e34d2f303c" title="Matrix&#45;matrix multiplication." alt="" coords="332,193,475,233"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="579,245,474,227,475,222,580,240"/>
-<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1math.html#a191c2ffcaad68c44f8279cbe6b0007e9" title="Scalar&#45;vector multiplication." alt="" coords="332,257,475,297"/>
-<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="579,266,475,274,475,269,579,261"/>
-<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="308,321,499,361"/>
-<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="576,330,499,336,499,331,575,325"/>
-<area shape="rect" id="Node000015" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="329,429,478,469"/>
-<area shape="poly" id="edge15_Node000014_Node000015" title=" " alt="" coords="577,451,478,451,478,446,577,446"/>
-<area shape="rect" id="Node000016" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="30,429,227,469"/>
-<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="315,451,228,451,228,446,315,446"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a32c07e2335019155eda874e34d2f303c" title="Matrix&#45;matrix multiplication." alt="" coords="332,189,475,229"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="579,244,474,224,475,219,580,239"/>
+<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1math.html#a191c2ffcaad68c44f8279cbe6b0007e9" title="Scalar&#45;vector multiplication." alt="" coords="332,253,475,293"/>
+<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="579,265,475,271,475,266,579,259"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="308,317,499,357"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="576,329,499,333,499,328,576,323"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="329,413,478,453"/>
+<area shape="poly" id="edge15_Node000014_Node000015" title=" " alt="" coords="577,446,478,440,478,435,577,441"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html#aad3b6ab1d02ceab192411b2e91ebec67" title="Low&#45;level parser for the specific file format." alt="" coords="312,477,495,517"/>
+<area shape="poly" id="edge17_Node000014_Node000017" title=" " alt="" coords="578,467,495,483,494,477,577,462"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="30,413,227,453"/>
+<area shape="poly" id="edge16_Node000015_Node000016" title=" " alt="" coords="315,435,228,435,228,430,315,430"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html#a991b0fbbfe639adafbd5d12e02e7eced" title="Reads an atomic structure from a file." alt="" coords="7,477,250,517"/>
+<area shape="poly" id="edge18_Node000017_Node000018" title=" " alt="" coords="298,499,250,499,250,494,298,494"/>
 </map>

@@ -15,7 +15,7 @@ var searchData=
   ['arrowwriter_12',['ArrowWriter',['../classcorrelation_1_1writers_1_1ArrowWriter.html#a2aaa8b47b145e0060e33ad066426432c',1,'correlation::writers::ArrowWriter']]],
   ['atom_13',['atom',['../classcorrelation_1_1core_1_1Atom.html#af9dab22eeb39bdffd817b70684b6ee6d',1,'correlation::core::Atom::Atom()=default'],['../classcorrelation_1_1core_1_1Atom.html#af3fcb8b0ebe04adc3c713619439aa162',1,'correlation::core::Atom::Atom(Element element, math::Vector3&lt; double &gt; pos, AtomID id) noexcept']]],
   ['atomcount_14',['atomCount',['../classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23',1,'correlation::core::Cell']]],
-  ['atoms_15',['atoms',['../classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d',1,'correlation::core::Cell']]],
+  ['atoms_15',['atoms',['../classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d',1,'correlation::core::Cell::atoms() const noexcept'],['../classcorrelation_1_1core_1_1Cell.html#a19e8a7cf60c28a94ec07b0cbe6b7331c',1,'correlation::core::Cell::atoms() noexcept']]],
   ['autocorrelate_16',['autocorrelate',['../namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d',1,'correlation::math::autocorrelate(const std::vector&lt; double &gt; &amp;x, std::vector&lt; std::complex&lt; double &gt; &gt; &amp;workspace)'],['../namespacecorrelation_1_1math.html#a0baae262699dfc4e20867c3c24d90410',1,'correlation::math::autocorrelate(const std::vector&lt; double &gt; &amp;x)']]],
   ['axis_5fcolor_17',['axis_color',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a4f466548b23ac7b0a03807825732abb8',1,'correlation::plotters::PlotConfig']]]
 ];

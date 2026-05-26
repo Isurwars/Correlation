@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -91,59 +91,65 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="ReaderFactory_8hpp_source.html">readers/ReaderFactory.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;fstream&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for ReaderFactory.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="ReaderFactory_8cpp__incl.png" border="0" usemap="#asrc_2readers_2ReaderFactory_8cpp" alt=""/></div>
 <map name="asrc_2readers_2ReaderFactory_8cpp" id="asrc_2readers_2ReaderFactory_8cpp">
-<area shape="rect" title="Implementation of the reader factory." alt="" coords="378,5,594,31"/>
-<area shape="rect" href="ReaderFactory_8hpp.html" title="Factory for instantiating file reader objects by format." alt="" coords="98,79,292,104"/>
-<area shape="poly" title=" " alt="" coords="440,33,256,78,254,73,438,28"/>
-<area shape="rect" title=" " alt="" coords="771,445,856,471"/>
-<area shape="poly" title=" " alt="" coords="594,21,669,33,706,44,741,58,771,77,795,100,811,129,816,163,816,313,816,432,811,432,811,313,811,164,806,130,791,103,768,81,739,63,705,49,668,38,594,26"/>
-<area shape="rect" href="BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="312,152,438,177"/>
-<area shape="poly" title=" " alt="" coords="225,102,334,144,332,149,223,107"/>
-<area shape="rect" title=" " alt="" coords="264,445,323,471"/>
-<area shape="poly" title=" " alt="" coords="122,107,74,124,52,137,33,154,18,173,11,191,8,237,8,312,15,349,35,378,63,401,99,419,138,433,179,442,251,452,250,457,178,447,137,438,97,424,61,405,31,381,10,351,3,313,3,237,6,190,13,170,29,150,49,133,72,119,121,102"/>
-<area shape="rect" title=" " alt="" coords="270,372,333,397"/>
-<area shape="poly" title=" " alt="" coords="202,103,295,358,290,360,197,105"/>
-<area shape="rect" title=" " alt="" coords="43,152,94,177"/>
-<area shape="poly" title=" " alt="" coords="176,106,102,147,100,143,173,102"/>
-<area shape="rect" title=" " alt="" coords="118,152,195,177"/>
-<area shape="poly" title=" " alt="" coords="191,106,172,141,167,139,186,103"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="443,299,550,324"/>
-<area shape="poly" title=" " alt="" coords="406,175,441,195,473,224,489,254,496,284,491,286,484,256,469,227,438,199,403,180"/>
-<area shape="poly" title=" " alt="" coords="368,179,313,257,283,313,260,373,258,385,260,396,279,433,274,435,255,398,253,385,255,371,278,310,308,254,363,176"/>
-<area shape="poly" title=" " alt="" coords="374,179,313,359,308,358,369,177"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="534,225,678,251"/>
-<area shape="poly" title=" " alt="" coords="413,175,556,219,555,224,411,180"/>
-<area shape="rect" title=" " alt="" coords="372,225,458,251"/>
-<area shape="poly" title=" " alt="" coords="384,176,404,212,400,215,379,179"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="558,372,675,397"/>
-<area shape="poly" title=" " alt="" coords="517,322,586,362,583,367,514,326"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="568,445,747,471"/>
-<area shape="poly" title=" " alt="" coords="550,310,586,315,624,325,660,343,689,371,696,387,694,404,678,436,674,433,689,403,690,387,685,373,657,348,623,330,585,320,549,316"/>
-<area shape="rect" title=" " alt="" coords="420,519,476,544"/>
-<area shape="poly" title=" " alt="" coords="484,326,465,346,450,373,441,408,439,443,446,505,440,506,434,444,436,407,445,371,461,343,481,322"/>
-<area shape="poly" title=" " alt="" coords="479,326,405,374,320,439,317,434,402,370,476,322"/>
-<area shape="rect" title=" " alt="" coords="459,372,534,397"/>
-<area shape="poly" title=" " alt="" coords="499,324,499,358,494,358,494,324"/>
-<area shape="poly" title=" " alt="" coords="466,327,347,370,345,365,464,322"/>
-<area shape="poly" title=" " alt="" coords="626,396,646,432,642,435,621,399"/>
-<area shape="poly" title=" " alt="" coords="649,395,770,438,768,443,647,400"/>
-<area shape="rect" title=" " alt="" coords="478,445,544,471"/>
-<area shape="poly" title=" " alt="" coords="601,400,541,440,538,435,598,395"/>
-<area shape="poly" title=" " alt="" coords="565,400,337,450,336,445,564,395"/>
-<area shape="poly" title=" " alt="" coords="625,473,490,519,489,514,623,468"/>
-<area shape="rect" title=" " alt="" coords="528,519,590,544"/>
-<area shape="poly" title=" " alt="" coords="643,473,588,513,585,508,640,469"/>
-<area shape="rect" title=" " alt="" coords="614,519,701,544"/>
-<area shape="poly" title=" " alt="" coords="660,471,660,505,655,505,655,471"/>
-<area shape="rect" title=" " alt="" coords="725,519,817,544"/>
-<area shape="poly" title=" " alt="" coords="677,468,743,509,740,514,675,473"/>
-<area shape="poly" title=" " alt="" coords="590,253,527,293,524,289,587,248"/>
-<area shape="poly" title=" " alt="" coords="621,249,668,298,693,333,711,371,713,390,707,408,685,437,681,434,702,405,707,389,706,373,688,335,664,301,617,253"/>
-<area shape="poly" title=" " alt="" coords="563,253,500,273,432,301,376,333,329,366,326,362,373,329,430,296,499,268,562,248"/>
+<area shape="rect" title="Implementation of the reader factory." alt="" coords="649,5,865,31"/>
+<area shape="rect" href="ReaderFactory_8hpp.html" title="Factory for instantiating file reader objects by format." alt="" coords="235,79,429,104"/>
+<area shape="poly" title=" " alt="" coords="690,33,414,79,414,74,689,28"/>
+<area shape="rect" title=" " alt="" coords="713,445,799,471"/>
+<area shape="poly" title=" " alt="" coords="760,31,760,163,760,313,759,432,754,432,755,313,755,163,755,31"/>
+<area shape="rect" title=" " alt="" coords="795,79,869,104"/>
+<area shape="poly" title=" " alt="" coords="771,29,812,67,808,71,768,33"/>
+<area shape="rect" href="BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="325,152,451,177"/>
+<area shape="poly" title=" " alt="" coords="343,103,373,140,368,143,339,106"/>
+<area shape="rect" title=" " alt="" coords="628,445,687,471"/>
+<area shape="poly" title=" " alt="" coords="399,101,492,122,594,151,639,169,675,189,700,211,707,224,709,236,709,313,706,347,697,380,673,434,668,432,692,378,701,346,704,313,704,237,702,226,696,215,672,193,636,174,592,156,491,127,398,107"/>
+<area shape="rect" title=" " alt="" coords="109,372,171,397"/>
+<area shape="poly" title=" " alt="" coords="291,107,224,131,144,170,105,196,68,226,37,260,12,300,8,313,10,325,18,335,29,345,61,360,96,372,94,377,59,365,26,349,14,339,6,327,3,313,7,298,32,257,65,222,102,191,142,165,222,126,289,102"/>
+<area shape="rect" title=" " alt="" coords="21,299,99,324"/>
+<area shape="poly" title=" " alt="" coords="313,106,239,154,151,228,83,291,79,287,147,224,236,150,310,102"/>
+<area shape="rect" title=" " alt="" coords="249,152,300,177"/>
+<area shape="poly" title=" " alt="" coords="325,106,295,143,291,139,321,103"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="325,299,432,324"/>
+<area shape="poly" title=" " alt="" coords="390,178,383,285,378,285,385,178"/>
+<area shape="poly" title=" " alt="" coords="404,175,464,223,512,258,557,297,589,332,616,371,649,432,644,434,611,373,585,335,553,301,509,262,461,227,401,179"/>
+<area shape="poly" title=" " alt="" coords="332,180,253,201,219,214,197,227,174,258,158,293,149,329,144,359,139,358,144,328,153,292,169,255,193,223,216,209,251,196,331,175"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="207,225,351,251"/>
+<area shape="poly" title=" " alt="" coords="372,180,310,220,307,215,369,175"/>
+<area shape="rect" title=" " alt="" coords="457,299,543,324"/>
+<area shape="poly" title=" " alt="" coords="399,176,485,286,481,290,395,179"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="451,372,568,397"/>
+<area shape="poly" title=" " alt="" coords="401,322,478,363,475,368,398,326"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="335,445,513,471"/>
+<area shape="poly" title=" " alt="" coords="385,324,419,431,414,433,380,325"/>
+<area shape="rect" title=" " alt="" coords="269,519,325,544"/>
+<area shape="poly" title=" " alt="" coords="376,325,325,446,307,506,302,504,320,444,371,323"/>
+<area shape="poly" title=" " alt="" coords="429,321,515,344,554,357,581,370,617,400,644,432,640,435,613,403,579,374,552,362,513,349,428,327"/>
+<area shape="rect" title=" " alt="" coords="251,372,325,397"/>
+<area shape="poly" title=" " alt="" coords="366,326,316,365,312,361,363,322"/>
+<area shape="poly" title=" " alt="" coords="341,327,185,373,184,368,340,321"/>
+<area shape="poly" title=" " alt="" coords="497,399,450,439,447,434,494,395"/>
+<area shape="poly" title=" " alt="" coords="550,395,704,439,702,444,548,400"/>
+<area shape="rect" title=" " alt="" coords="537,445,604,471"/>
+<area shape="poly" title=" " alt="" coords="522,396,554,433,550,437,518,399"/>
+<area shape="poly" title=" " alt="" coords="534,395,622,437,620,442,532,400"/>
+<area shape="poly" title=" " alt="" coords="405,473,331,514,329,509,402,468"/>
+<area shape="rect" title=" " alt="" coords="466,519,529,544"/>
+<area shape="poly" title=" " alt="" coords="438,469,477,507,474,511,434,473"/>
+<area shape="rect" title=" " alt="" coords="553,519,639,544"/>
+<area shape="poly" title=" " alt="" coords="453,468,556,511,554,516,451,473"/>
+<area shape="rect" title=" " alt="" coords="350,519,442,544"/>
+<area shape="poly" title=" " alt="" coords="422,472,408,507,403,505,417,470"/>
+<area shape="poly" title=" " alt="" coords="296,249,353,288,350,293,293,253"/>
+<area shape="poly" title=" " alt="" coords="272,252,254,280,237,318,231,338,229,359,232,378,241,396,257,413,277,427,322,445,320,450,274,431,254,417,237,399,227,380,224,359,226,337,232,316,250,278,268,249"/>
+<area shape="poly" title=" " alt="" coords="282,251,289,358,284,358,277,251"/>
+<area shape="poly" title=" " alt="" coords="269,253,221,301,162,363,158,360,217,297,265,249"/>
+<area shape="poly" title=" " alt="" coords="315,248,452,292,451,297,313,253"/>
+<area shape="poly" title=" " alt="" coords="244,253,109,297,108,292,243,248"/>
 </map>
 </div>
 </div><table class="memberdecls">

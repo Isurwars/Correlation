@@ -1,0 +1,5 @@
+<map id="include/readers/QEReader.hpp" name="include/readers/QEReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for Quantum ESPRESSO (.pwi, .pwo, .in, .out) files." alt="" coords="5,5,223,31"/>
+<area shape="rect" id="Node000002" href="$QEReader_8cpp.html" title="Implementation of the Quantum ESPRESSO file reader." alt="" coords="20,79,208,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,44,117,79,111,79,111,44"/>
+</map>

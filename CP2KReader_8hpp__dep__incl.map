@@ -1,0 +1,5 @@
+<map id="include/readers/CP2KReader.hpp" name="include/readers/CP2KReader.hpp">
+<area shape="rect" id="Node000001" title="Reader for CP2K (.inp, .restart, .out) files." alt="" coords="5,5,239,31"/>
+<area shape="rect" id="Node000002" href="$CP2KReader_8cpp.html" title="Implementation of the CP2K file reader." alt="" coords="20,79,224,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,44,125,79,119,79,119,44"/>
+</map>

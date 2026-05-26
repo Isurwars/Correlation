@@ -1,5 +1,8 @@
 <map id="correlation::analysis::TrajectoryAnalyzer::createAnalyzer" name="correlation::analysis::TrajectoryAnalyzer::createAnalyzer">
-<area shape="rect" id="Node000001" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="5,5,160,60"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="208,13,371,53"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="161,30,194,30,194,35,161,35"/>
+<area shape="rect" id="Node000001" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="5,27,160,82"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="208,5,363,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,41,194,36,195,41,161,46"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="411,35,604,75"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="160,54,208,55,363,55,397,54,397,60,363,60,208,60,160,59"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="363,33,397,37,396,43,362,38"/>
 </map>

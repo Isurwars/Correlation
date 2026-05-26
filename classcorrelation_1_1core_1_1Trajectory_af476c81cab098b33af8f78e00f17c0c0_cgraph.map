@@ -1,0 +1,5 @@
+<map id="correlation::core::Trajectory::getFrame" name="correlation::core::Trajectory::getFrame">
+<area shape="rect" id="Node000001" title="Gets a copy of a frame at a specific index." alt="" coords="5,5,160,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="208,5,401,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,23,194,23,194,28,160,28"/>
+</map>

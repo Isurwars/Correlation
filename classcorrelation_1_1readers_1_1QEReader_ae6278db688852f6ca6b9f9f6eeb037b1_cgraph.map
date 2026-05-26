@@ -1,0 +1,30 @@
+<map id="correlation::readers::QEReader::readStructure" name="correlation::readers::QEReader::readStructure">
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="5,72,196,112"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1QEReader.html#add0cfec3e37137ace6b8e3c7477c1af3" title="Reads a trajectory from a file." alt="" coords="244,72,439,112"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,89,230,89,230,95,196,95"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="491,7,627,47"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="408,69,477,48,479,53,410,74"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="491,72,627,112"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="439,89,477,89,477,95,439,95"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="487,139,631,179"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="408,109,480,132,479,137,406,115"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="689,5,887,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="627,24,675,23,675,29,627,29"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="965,5,1101,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="887,23,951,23,951,28,887,28"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="962,104,1105,144"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="601,136,644,117,678,105,749,96,821,95,889,99,949,106,948,111,888,104,820,100,749,101,679,111,646,122,603,141"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="717,144,859,184"/>
+<area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="631,158,703,159,703,165,631,163"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="679,209,897,263"/>
+<area shape="poly" id="edge12_Node000007_Node000010" title=" " alt="" coords="620,176,694,202,693,207,618,181"/>
+<area shape="poly" id="edge8_Node000008_Node000008" title=" " alt="" coords="988,104,985,94,992,85,1009,79,1033,77,1062,80,1077,87,1075,92,1060,85,1033,83,1010,85,995,89,990,95,993,103"/>
+<area shape="poly" id="edge10_Node000009_Node000008" title=" " alt="" coords="859,150,948,135,949,140,860,155"/>
+<area shape="poly" id="edge11_Node000009_Node000009" title=" " alt="" coords="745,144,743,134,749,125,765,119,788,117,815,120,829,127,827,132,813,125,788,123,766,125,753,129,748,135,750,143"/>
+<area shape="rect" id="Node000011" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="952,213,1115,238"/>
+<area shape="poly" id="edge13_Node000010_Node000011" title=" " alt="" coords="897,229,938,227,938,232,898,234"/>
+<area shape="rect" id="Node000012" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="945,286,1121,311"/>
+<area shape="poly" id="edge15_Node000010_Node000012" title=" " alt="" coords="896,261,970,280,968,285,895,266"/>
+<area shape="poly" id="edge14_Node000011_Node000011" title=" " alt="" coords="994,214,985,204,989,194,1006,188,1033,186,1068,190,1078,195,1082,200,1077,203,1074,199,1067,195,1033,191,1007,193,993,198,990,204,997,211"/>
+<area shape="poly" id="edge16_Node000012_Node000012" title=" " alt="" coords="994,288,985,278,989,268,1006,262,1033,259,1068,263,1078,268,1082,274,1077,277,1074,272,1067,268,1033,265,1007,267,993,272,990,277,997,284"/>
+</map>

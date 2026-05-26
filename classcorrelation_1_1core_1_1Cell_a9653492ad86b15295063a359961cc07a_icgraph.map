@@ -1,5 +1,7 @@
 <map id="correlation::core::Cell::inverseLatticeVectors" name="correlation::core::Cell::inverseLatticeVectors">
-<area shape="rect" id="Node000001" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="248,13,443,53"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,200,60"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="234,35,200,35,200,30,234,30"/>
+<area shape="rect" id="Node000001" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="272,49,467,89"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,5,212,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="258,56,212,49,213,44,259,50"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,85,224,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="259,87,224,92,224,87,258,82"/>
 </map>

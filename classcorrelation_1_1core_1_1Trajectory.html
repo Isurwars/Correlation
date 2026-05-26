@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,6 +82,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
@@ -95,6 +96,11 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="Trajectory_8hpp_source.html">Trajectory.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a1e82b73408cb1100c0c7eb33691b8df0" id="r_a1e82b73408cb1100c0c7eb33691b8df0"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a1e82b73408cb1100c0c7eb33691b8df0">FrameParser</a> = std::function&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a>(const char *data, size_t size)&gt;</td></tr>
+<tr class="separator:a1e82b73408cb1100c0c7eb33691b8df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a991b687a8e0036d827a2a6c3953823d7" id="r_a991b687a8e0036d827a2a6c3953823d7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a991b687a8e0036d827a2a6c3953823d7">Trajectory</a> ()</td></tr>
@@ -102,6 +108,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae4c251ca52c96c76c516cf90e17b3f9b" id="r_ae4c251ca52c96c76c516cf90e17b3f9b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b">Trajectory</a> (std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &gt; frames, double time_step)</td></tr>
 <tr class="memdesc:ae4c251ca52c96c76c516cf90e17b3f9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a trajectory from a vector of frames.  <br /></td></tr>
 <tr class="separator:ae4c251ca52c96c76c516cf90e17b3f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab91e91ae2f1dff2ec9771fc1cb00de90" id="r_ab91e91ae2f1dff2ec9771fc1cb00de90"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#ab91e91ae2f1dff2ec9771fc1cb00de90">Trajectory</a> (std::shared_ptr&lt; <a class="el" href="classcorrelation_1_1core_1_1MappedFile.html">MappedFile</a> &gt; mapped_file, std::vector&lt; size_t &gt; frame_offsets, <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a1e82b73408cb1100c0c7eb33691b8df0">FrameParser</a> parser, double time_step)</td></tr>
+<tr class="memdesc:ab91e91ae2f1dff2ec9771fc1cb00de90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a lazy-loading trajectory from a memory-mapped file.  <br /></td></tr>
+<tr class="separator:ab91e91ae2f1dff2ec9771fc1cb00de90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f1bd62dd79028a2eb11ef87a85c3387" id="r_a5f1bd62dd79028a2eb11ef87a85c3387"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387">addFrame</a> (const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &amp;frame)</td></tr>
 <tr class="memdesc:a5f1bd62dd79028a2eb11ef87a85c3387"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appends a new frame to the trajectory.  <br /></td></tr>
 <tr class="separator:a5f1bd62dd79028a2eb11ef87a85c3387"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,6 +123,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a56f05d920d802eb38e7634cd5c119bb1" id="r_a56f05d920d802eb38e7634cd5c119bb1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1">getFrameCount</a> () const</td></tr>
 <tr class="memdesc:a56f05d920d802eb38e7634cd5c119bb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the total number of frames in the trajectory.  <br /></td></tr>
 <tr class="separator:a56f05d920d802eb38e7634cd5c119bb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed8f9fb56f0202b6e9c51c5e351e1631" id="r_aed8f9fb56f0202b6e9c51c5e351e1631"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631">firstFrame</a> () const</td></tr>
+<tr class="memdesc:aed8f9fb56f0202b6e9c51c5e351e1631"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a constant reference to the first frame of the trajectory.  <br /></td></tr>
+<tr class="separator:aed8f9fb56f0202b6e9c51c5e351e1631"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af476c81cab098b33af8f78e00f17c0c0" id="r_af476c81cab098b33af8f78e00f17c0c0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0">getFrame</a> (size_t index) const</td></tr>
+<tr class="memdesc:af476c81cab098b33af8f78e00f17c0c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a copy of a frame at a specific index.  <br /></td></tr>
+<tr class="separator:af476c81cab098b33af8f78e00f17c0c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6c96073c6d345072c7d215f1669907d" id="r_af6c96073c6d345072c7d215f1669907d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d">getTimeStep</a> () const</td></tr>
 <tr class="memdesc:af6c96073c6d345072c7d215f1669907d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the time step between frames.  <br /></td></tr>
 <tr class="separator:af6c96073c6d345072c7d215f1669907d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -138,9 +153,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af86b085926e70cbb8a1e942867bbd1f0" id="r_af86b085926e70cbb8a1e942867bbd1f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#af86b085926e70cbb8a1e942867bbd1f0">calculateVelocities</a> ()</td></tr>
 <tr class="memdesc:af86b085926e70cbb8a1e942867bbd1f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates velocities for all atoms in the trajectory using finite differences, accounting for periodic boundary conditions. Assumes constant time step. Populates the internal velocities_ vector.  <br /></td></tr>
 <tr class="separator:af86b085926e70cbb8a1e942867bbd1f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a274566b3dc3cb72e8f0bb07ee1a2d292" id="r_a274566b3dc3cb72e8f0bb07ee1a2d292"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::vector&lt; <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a274566b3dc3cb72e8f0bb07ee1a2d292">getVelocities</a> () const</td></tr>
-<tr class="memdesc:a274566b3dc3cb72e8f0bb07ee1a2d292"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the pre-calculated velocities for all atoms.  <br /></td></tr>
-<tr class="separator:a274566b3dc3cb72e8f0bb07ee1a2d292"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2262bef056ab343cfadbd24dadebadc" id="r_aa2262bef056ab343cfadbd24dadebadc"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#aa2262bef056ab343cfadbd24dadebadc">getBondCutoffsSQ</a> () const</td></tr>
 <tr class="memdesc:aa2262bef056ab343cfadbd24dadebadc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the matrix of squared bond cutoffs for element pairs.  <br /></td></tr>
 <tr class="separator:aa2262bef056ab343cfadbd24dadebadc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,31 +165,53 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:afce0d994df53bdce4c61657891cbf09d" id="r_afce0d994df53bdce4c61657891cbf09d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d">validateFrame</a> (const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &amp;new_frame) const</td></tr>
 <tr class="memdesc:afce0d994df53bdce4c61657891cbf09d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper to validate that a new frame matches the trajectory topology.  <br /></td></tr>
 <tr class="separator:afce0d994df53bdce4c61657891cbf09d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3038455a1bfa558007d3b117c0a387ef" id="r_a3038455a1bfa558007d3b117c0a387ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef">ensureMaterialized</a> () const</td></tr>
+<tr class="separator:a3038455a1bfa558007d3b117c0a387ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:a28a0aacc6a7cc9ab7f685d9388b923f1" id="r_a28a0aacc6a7cc9ab7f685d9388b923f1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a28a0aacc6a7cc9ab7f685d9388b923f1">frames_</a></td></tr>
 <tr class="memdesc:a28a0aacc6a7cc9ab7f685d9388b923f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collection of simulation snapshots.  <br /></td></tr>
 <tr class="separator:a28a0aacc6a7cc9ab7f685d9388b923f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22232be7307b17d1f4d215fed497aea8" id="r_a22232be7307b17d1f4d215fed497aea8"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a22232be7307b17d1f4d215fed497aea8">first_frame_</a></td></tr>
+<tr class="separator:a22232be7307b17d1f4d215fed497aea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecf333648c3b570a958ec04e94cec2bf" id="r_aecf333648c3b570a958ec04e94cec2bf"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#aecf333648c3b570a958ec04e94cec2bf">bond_cutoffs_sq_</a></td></tr>
 <tr class="memdesc:aecf333648c3b570a958ec04e94cec2bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cached squared bond cutoffs.  <br /></td></tr>
 <tr class="separator:aecf333648c3b570a958ec04e94cec2bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f63f12c98d54faa9c99abc49f69960d" id="r_a8f63f12c98d54faa9c99abc49f69960d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::vector&lt; <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a8f63f12c98d54faa9c99abc49f69960d">velocities_</a></td></tr>
-<tr class="memdesc:a8f63f12c98d54faa9c99abc49f69960d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inter-frame velocities.  <br /></td></tr>
-<tr class="separator:a8f63f12c98d54faa9c99abc49f69960d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a883e1ea7b76b9a871848f468199693a8" id="r_a883e1ea7b76b9a871848f468199693a8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a883e1ea7b76b9a871848f468199693a8">time_step_</a></td></tr>
 <tr class="memdesc:a883e1ea7b76b9a871848f468199693a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time between snapshots.  <br /></td></tr>
 <tr class="separator:a883e1ea7b76b9a871848f468199693a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34f8a10e7175eea76f634ea6621d55ee" id="r_a34f8a10e7175eea76f634ea6621d55ee"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a34f8a10e7175eea76f634ea6621d55ee">removed_frames_count_</a> {0}</td></tr>
 <tr class="memdesc:a34f8a10e7175eea76f634ea6621d55ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Counter for deduplicated frames.  <br /></td></tr>
 <tr class="separator:a34f8a10e7175eea76f634ea6621d55ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af391eb5eb34086514d22a125a5b896a5" id="r_af391eb5eb34086514d22a125a5b896a5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classcorrelation_1_1core_1_1MappedFile.html">MappedFile</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#af391eb5eb34086514d22a125a5b896a5">mapped_file_</a></td></tr>
+<tr class="separator:af391eb5eb34086514d22a125a5b896a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc14d409e6b5d06a4d624487a4237d3" id="r_a3cc14d409e6b5d06a4d624487a4237d3"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a3cc14d409e6b5d06a4d624487a4237d3">frame_offsets_</a></td></tr>
+<tr class="separator:a3cc14d409e6b5d06a4d624487a4237d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2df4dd33cf260ca3f35fed235a45710b" id="r_a2df4dd33cf260ca3f35fed235a45710b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a1e82b73408cb1100c0c7eb33691b8df0">FrameParser</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a2df4dd33cf260ca3f35fed235a45710b">parser_</a></td></tr>
+<tr class="separator:a2df4dd33cf260ca3f35fed235a45710b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class stores a series of snapshots of a system. </p>
 <p>It ensures that the number of atoms and their identities are consistent across all frames. It provides methods to analyze dynamic properties of the system, such as velocity distributions. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a1e82b73408cb1100c0c7eb33691b8df0" name="a1e82b73408cb1100c0c7eb33691b8df0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e82b73408cb1100c0c7eb33691b8df0">&#9670;&#160;</a></span>FrameParser</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a1e82b73408cb1100c0c7eb33691b8df0">correlation::core::Trajectory::FrameParser</a> =  std::function&lt;<a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a>(const char *data, size_t size)&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a991b687a8e0036d827a2a6c3953823d7" name="a991b687a8e0036d827a2a6c3953823d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a991b687a8e0036d827a2a6c3953823d7">&#9670;&#160;</a></span>Trajectory() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a991b687a8e0036d827a2a6c3953823d7">&#9670;&#160;</a></span>Trajectory() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -194,7 +228,7 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <a id="ae4c251ca52c96c76c516cf90e17b3f9b" name="ae4c251ca52c96c76c516cf90e17b3f9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4c251ca52c96c76c516cf90e17b3f9b">&#9670;&#160;</a></span>Trajectory() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4c251ca52c96c76c516cf90e17b3f9b">&#9670;&#160;</a></span>Trajectory() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -232,20 +266,101 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_ae4c251ca52c96c76c516cf90e17b3f9b_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_ae4c251ca52c96c76c516cf90e17b3f9b_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_ae4c251ca52c96c76c516cf90e17b3f9b_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_ae4c251ca52c96c76c516cf90e17b3f9b_cgraph">
-<area shape="rect" title="Constructs a trajectory from a vector of frames." alt="" coords="5,83,163,123"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a45e541a6822b70d8f44e6dfafd0f5775" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="211,28,424,83"/>
-<area shape="poly" title=" " alt="" coords="162,85,197,77,198,83,163,90"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="224,119,411,159"/>
-<area shape="poly" title=" " alt="" coords="163,113,211,120,210,126,162,118"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="472,29,648,55"/>
-<area shape="poly" title=" " alt="" coords="424,47,458,45,458,50,424,52"/>
-<area shape="poly" title=" " alt="" coords="521,31,512,21,517,11,533,5,560,3,594,7,604,11,608,17,603,20,600,15,593,12,560,8,534,10,520,15,517,20,525,27"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="492,79,628,119"/>
-<area shape="poly" title=" " alt="" coords="410,121,478,110,479,115,411,127"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="492,143,628,183"/>
-<area shape="poly" title=" " alt="" coords="411,146,478,153,478,158,411,151"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="492,207,628,247"/>
-<area shape="poly" title=" " alt="" coords="375,157,492,200,490,205,373,162"/>
+<area shape="rect" title="Constructs a trajectory from a vector of frames." alt="" coords="5,173,163,213"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a45e541a6822b70d8f44e6dfafd0f5775" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="211,79,424,134"/>
+<area shape="poly" title=" " alt="" coords="138,171,230,136,232,141,140,176"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="224,227,411,267"/>
+<area shape="poly" title=" " alt="" coords="163,209,216,221,215,226,162,214"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="472,5,691,45"/>
+<area shape="poly" title=" " alt="" coords="402,77,471,55,498,47,499,52,473,60,403,82"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="493,94,669,119"/>
+<area shape="poly" title=" " alt="" coords="424,104,480,104,480,109,424,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="739,137,932,177"/>
+<area shape="poly" title=" " alt="" coords="663,43,692,55,751,90,801,126,798,131,748,94,689,60,661,48"/>
+<area shape="poly" title=" " alt="" coords="540,96,531,86,536,76,553,70,581,67,617,71,627,76,631,82,627,85,624,80,616,76,581,73,554,75,540,80,537,85,544,92"/>
+<area shape="poly" title=" " alt="" coords="356,224,410,200,471,180,536,168,602,160,725,153,725,158,603,165,537,173,473,185,412,205,358,229"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="513,195,649,235"/>
+<area shape="poly" title=" " alt="" coords="410,233,500,222,500,227,411,238"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="513,259,649,299"/>
+<area shape="poly" title=" " alt="" coords="411,255,500,266,500,271,410,261"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="513,323,649,363"/>
+<area shape="poly" title=" " alt="" coords="364,264,473,308,501,317,499,323,471,313,362,269"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="504,387,659,427"/>
+<area shape="poly" title=" " alt="" coords="339,265,396,318,433,347,473,372,492,381,490,386,471,377,430,352,393,322,336,269"/>
+<area shape="poly" title=" " alt="" coords="658,389,689,372,734,330,770,281,799,231,819,189,823,192,804,234,775,284,738,334,692,377,660,394"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="ab91e91ae2f1dff2ec9771fc1cb00de90" name="ab91e91ae2f1dff2ec9771fc1cb00de90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab91e91ae2f1dff2ec9771fc1cb00de90">&#9670;&#160;</a></span>Trajectory() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">correlation::core::Trajectory::Trajectory </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classcorrelation_1_1core_1_1MappedFile.html">MappedFile</a> &gt;&#160;</td>
+          <td class="paramname"><em>mapped_file</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; size_t &gt;&#160;</td>
+          <td class="paramname"><em>frame_offsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a1e82b73408cb1100c0c7eb33691b8df0">FrameParser</a>&#160;</td>
+          <td class="paramname"><em>parser</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>time_step</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Constructs a lazy-loading trajectory from a memory-mapped file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mapped_file</td><td>Shared pointer to the mapped file. </td></tr>
+    <tr><td class="paramname">frame_offsets</td><td>Byte offsets of the frames in the file. </td></tr>
+    <tr><td class="paramname">parser</td><td>Function to parse a frame from a slice of memory. </td></tr>
+    <tr><td class="paramname">time_step</td><td>The time interval between consecutive frames. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_ab91e91ae2f1dff2ec9771fc1cb00de90_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_ab91e91ae2f1dff2ec9771fc1cb00de90_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_ab91e91ae2f1dff2ec9771fc1cb00de90_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_ab91e91ae2f1dff2ec9771fc1cb00de90_cgraph">
+<area shape="rect" title="Constructs a lazy&#45;loading trajectory from a memory&#45;mapped file." alt="" coords="5,9,163,49"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="665,5,859,45"/>
+<area shape="poly" title=" " alt="" coords="163,25,463,21,617,21,652,22,652,27,617,27,463,27,163,31"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="211,55,415,110"/>
+<area shape="poly" title=" " alt="" coords="164,45,198,53,197,58,162,50"/>
+<area shape="poly" title=" " alt="" coords="414,57,462,48,559,36,651,29,652,34,560,42,463,53,415,62"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="472,63,608,103"/>
+<area shape="poly" title=" " alt="" coords="415,80,458,80,458,85,415,85"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="463,191,617,231"/>
+<area shape="poly" title=" " alt="" coords="354,108,405,142,464,176,476,183,474,187,461,181,403,147,351,112"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="463,127,617,167"/>
+<area shape="poly" title=" " alt="" coords="411,108,456,120,454,125,410,113"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="687,191,837,231"/>
+<area shape="poly" title=" " alt="" coords="617,208,674,208,674,213,617,213"/>
+<area shape="poly" title=" " alt="" coords="591,124,616,112,719,51,721,55,619,117,593,129"/>
 </map>
 </div>
 
@@ -280,21 +395,32 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a5f1bd62dd79028a2eb11ef87a85c3387_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a5f1bd62dd79028a2eb11ef87a85c3387_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_a5f1bd62dd79028a2eb11ef87a85c3387_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a5f1bd62dd79028a2eb11ef87a85c3387_cgraph">
-<area shape="rect" title="Appends a new frame to the trajectory." alt="" coords="5,69,164,109"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="212,13,416,67"/>
-<area shape="poly" title=" " alt="" coords="163,70,198,62,199,67,165,75"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="221,105,407,145"/>
-<area shape="poly" title=" " alt="" coords="164,99,208,106,207,111,164,104"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="464,5,617,45"/>
-<area shape="poly" title=" " alt="" coords="416,31,450,28,451,34,416,36"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="665,5,815,45"/>
-<area shape="poly" title=" " alt="" coords="617,23,651,23,651,28,617,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="473,69,609,109"/>
-<area shape="poly" title=" " alt="" coords="407,108,458,100,459,105,408,113"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="473,133,609,173"/>
-<area shape="poly" title=" " alt="" coords="408,134,459,141,458,146,407,140"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="473,197,609,237"/>
-<area shape="poly" title=" " alt="" coords="366,143,479,190,477,194,363,148"/>
+<area shape="rect" title="Appends a new frame to the trajectory." alt="" coords="5,248,164,288"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="212,365,431,405"/>
+<area shape="poly" title=" " alt="" coords="127,286,269,357,267,362,125,291"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="219,113,423,167"/>
+<area shape="poly" title=" " alt="" coords="121,246,257,172,259,176,124,250"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="228,248,415,288"/>
+<area shape="poly" title=" " alt="" coords="165,265,215,265,215,271,165,271"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="681,244,875,284"/>
+<area shape="poly" title=" " alt="" coords="377,403,432,418,497,429,566,429,600,423,632,412,672,389,706,358,734,325,756,294,760,297,739,328,710,362,675,393,634,417,601,428,567,434,497,434,431,423,375,408"/>
+<area shape="poly" title=" " alt="" coords="395,110,449,96,510,88,573,89,605,95,634,106,676,131,711,163,739,199,761,231,756,233,735,202,707,167,672,135,632,110,603,100,573,94,510,93,450,101,396,115"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="488,120,624,160"/>
+<area shape="poly" title=" " alt="" coords="423,137,474,137,474,143,423,143"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="479,5,633,45"/>
+<area shape="poly" title=" " alt="" coords="377,110,501,49,503,54,379,115"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="479,184,633,224"/>
+<area shape="poly" title=" " alt="" coords="423,165,470,178,468,183,421,170"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="703,5,853,45"/>
+<area shape="poly" title=" " alt="" coords="633,23,690,23,690,28,633,28"/>
+<area shape="poly" title=" " alt="" coords="632,222,691,238,689,243,630,227"/>
+<area shape="poly" title=" " alt="" coords="405,285,479,297,556,303,633,297,697,285,698,290,634,303,556,308,478,303,404,291"/>
+<area shape="poly" title=" " alt="" coords="351,246,409,209,477,170,490,163,493,168,480,174,411,213,354,250"/>
+<area shape="poly" title=" " alt="" coords="395,245,469,225,470,230,396,250"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="488,363,624,403"/>
+<area shape="poly" title=" " alt="" coords="365,286,503,354,500,359,362,291"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="488,248,624,288"/>
+<area shape="poly" title=" " alt="" coords="415,265,474,265,474,271,415,271"/>
 </map>
 </div>
 
@@ -316,6 +442,136 @@ Here is the call graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Calculates velocities for all atoms in the trajectory using finite differences, accounting for periodic boundary conditions. Assumes constant time step. Populates the internal velocities_ vector. </p>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_af86b085926e70cbb8a1e942867bbd1f0_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_af86b085926e70cbb8a1e942867bbd1f0_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_af86b085926e70cbb8a1e942867bbd1f0_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_af86b085926e70cbb8a1e942867bbd1f0_cgraph">
+<area shape="rect" title="Calculates velocities for all atoms in the trajectory using finite differences, accounting for period..." alt="" coords="5,5,220,45"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="268,5,487,45"/>
+<area shape="poly" title=" " alt="" coords="220,23,255,23,255,28,220,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="535,5,728,45"/>
+<area shape="poly" title=" " alt="" coords="487,23,521,23,521,28,487,28"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a3038455a1bfa558007d3b117c0a387ef" name="a3038455a1bfa558007d3b117c0a387ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3038455a1bfa558007d3b117c0a387ef">&#9670;&#160;</a></span>ensureMaterialized()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::core::Trajectory::ensureMaterialized </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,224,45"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="272,5,465,45"/>
+<area shape="poly" title=" " alt="" coords="224,23,258,23,258,28,224,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_icgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a3038455a1bfa558007d3b117c0a387ef_icgraph">
+<area shape="rect" title=" " alt="" coords="1801,133,2020,173"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="1567,5,1725,45"/>
+<area shape="poly" title=" " alt="" coords="1869,128,1815,93,1752,60,1722,48,1724,43,1754,55,1817,88,1872,123"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af86b085926e70cbb8a1e942867bbd1f0" title="Calculates velocities for all atoms in the trajectory using finite differences, accounting for period..." alt="" coords="1539,69,1753,109"/>
+<area shape="poly" title=" " alt="" coords="1813,133,1729,112,1730,107,1815,127"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="1565,133,1727,173"/>
+<area shape="poly" title=" " alt="" coords="1788,156,1728,156,1728,151,1788,151"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a7e2b54339742540b58a6dc1317287097" title="Gets a constant reference to the frames." alt="" coords="1565,197,1727,237"/>
+<area shape="poly" title=" " alt="" coords="1815,179,1728,200,1727,195,1813,174"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a45e541a6822b70d8f44e6dfafd0f5775" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="1539,262,1753,317"/>
+<area shape="poly" title=" " alt="" coords="1871,183,1816,218,1755,252,1726,264,1724,260,1752,247,1814,213,1868,179"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="1239,40,1489,80"/>
+<area shape="poly" title=" " alt="" coords="1563,132,1538,124,1419,83,1421,78,1540,119,1564,127"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1237,133,1491,173"/>
+<area shape="poly" title=" " alt="" coords="1551,156,1491,156,1491,151,1551,151"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="217,205,295,230"/>
+<area shape="poly" title=" " alt="" coords="1552,177,1491,188,1287,218,1197,226,1081,228,793,228,296,221,296,216,793,223,1081,223,1197,220,1286,213,1490,183,1551,172"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="983,17,1177,57"/>
+<area shape="poly" title=" " alt="" coords="1226,52,1177,48,1177,42,1226,46"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="665,17,923,57"/>
+<area shape="poly" title=" " alt="" coords="969,40,923,40,923,35,969,35"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="695,111,893,151"/>
+<area shape="poly" title=" " alt="" coords="1262,133,1189,123,1112,118,1033,118,893,124,893,119,1033,112,1112,113,1190,117,1263,128"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="971,133,1189,187"/>
+<area shape="poly" title=" " alt="" coords="1224,159,1189,160,1189,155,1224,154"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,68,617,108"/>
+<area shape="poly" title=" " alt="" coords="681,118,617,109,618,103,682,112"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,133,571,187"/>
+<area shape="poly" title=" " alt="" coords="682,144,571,155,571,149,681,139"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,151,308,177"/>
+<area shape="poly" title=" " alt="" coords="389,164,308,166,308,160,389,159"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,181,156,206"/>
+<area shape="poly" title=" " alt="" coords="191,178,157,183,156,178,190,172"/>
+<area shape="poly" title=" " alt="" coords="956,150,893,143,893,138,957,145"/>
+<area shape="poly" title=" " alt="" coords="203,213,156,206,157,201,203,207"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="1285,269,1443,309"/>
+<area shape="poly" title=" " alt="" coords="1525,292,1443,292,1443,287,1525,287"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aed8f9fb56f0202b6e9c51c5e351e1631" name="aed8f9fb56f0202b6e9c51c5e351e1631"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed8f9fb56f0202b6e9c51c5e351e1631">&#9670;&#160;</a></span>firstFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &amp; correlation::core::Trajectory::firstFrame </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets a constant reference to the first frame of the trajectory. </p>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box).">Cell</a> object representing the first frame. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::runtime_error</td><td>if the trajectory is empty. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_aed8f9fb56f0202b6e9c51c5e351e1631_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_aed8f9fb56f0202b6e9c51c5e351e1631_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_aed8f9fb56f0202b6e9c51c5e351e1631_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_aed8f9fb56f0202b6e9c51c5e351e1631_cgraph">
+<area shape="rect" title="Gets a constant reference to the first frame of the trajectory." alt="" coords="5,35,164,75"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="212,5,367,45"/>
+<area shape="poly" title=" " alt="" coords="164,41,198,36,199,41,164,46"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="415,35,608,75"/>
+<area shape="poly" title=" " alt="" coords="164,54,212,55,367,55,401,54,401,60,367,60,212,60,164,59"/>
+<area shape="poly" title=" " alt="" coords="367,33,401,37,400,43,366,38"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -359,15 +615,22 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a95a497894c98f001d421d4cbb1d0cd18_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a95a497894c98f001d421d4cbb1d0cd18_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_a95a497894c98f001d421d4cbb1d0cd18_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a95a497894c98f001d421d4cbb1d0cd18_cgraph">
-<area shape="rect" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,13,192,53"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,13,444,53"/>
-<area shape="poly" title=" " alt="" coords="192,30,226,30,226,35,192,35"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,5,696,60"/>
-<area shape="poly" title=" " alt="" coords="444,30,478,30,478,35,444,35"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="744,13,897,53"/>
-<area shape="poly" title=" " alt="" coords="696,30,730,30,730,35,696,35"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="945,13,1095,53"/>
-<area shape="poly" title=" " alt="" coords="897,30,931,30,931,35,897,35"/>
+<area shape="rect" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,101,192,141"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,101,444,141"/>
+<area shape="poly" title=" " alt="" coords="192,119,226,119,226,124,192,124"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,94,696,149"/>
+<area shape="poly" title=" " alt="" coords="444,119,478,119,478,124,444,124"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="753,5,889,45"/>
+<area shape="poly" title=" " alt="" coords="658,92,743,55,759,48,761,53,745,60,660,96"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="745,69,898,109"/>
+<area shape="poly" title=" " alt="" coords="696,104,731,99,732,105,697,110"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="744,133,899,173"/>
+<area shape="poly" title=" " alt="" coords="697,133,731,138,730,143,696,138"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="947,161,1140,201"/>
+<area shape="poly" title=" " alt="" coords="646,146,693,167,745,183,792,190,840,193,933,191,933,197,840,199,791,195,743,188,691,172,644,151"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="969,69,1118,109"/>
+<area shape="poly" title=" " alt="" coords="898,87,955,87,955,92,898,92"/>
+<area shape="poly" title=" " alt="" coords="899,160,933,165,933,170,898,166"/>
 </map>
 </div>
 
@@ -413,13 +676,20 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a8bb6a1aeab3dde07c457da02393bed24_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a8bb6a1aeab3dde07c457da02393bed24_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_a8bb6a1aeab3dde07c457da02393bed24_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a8bb6a1aeab3dde07c457da02393bed24_cgraph">
-<area shape="rect" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="5,13,209,53"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="257,5,461,60"/>
-<area shape="poly" title=" " alt="" coords="209,30,244,30,244,35,209,35"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="509,13,663,53"/>
-<area shape="poly" title=" " alt="" coords="462,30,496,30,496,35,462,35"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="711,13,860,53"/>
-<area shape="poly" title=" " alt="" coords="663,30,697,30,697,35,663,35"/>
+<area shape="rect" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="5,101,209,141"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="257,94,461,149"/>
+<area shape="poly" title=" " alt="" coords="209,119,244,119,244,124,209,124"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="519,5,655,45"/>
+<area shape="poly" title=" " alt="" coords="423,92,508,55,524,48,526,53,510,60,425,96"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="510,69,663,109"/>
+<area shape="poly" title=" " alt="" coords="461,104,496,99,497,105,462,110"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="509,133,664,173"/>
+<area shape="poly" title=" " alt="" coords="462,133,496,138,495,143,461,138"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="712,161,905,201"/>
+<area shape="poly" title=" " alt="" coords="411,146,458,167,510,183,557,190,606,193,698,191,698,197,606,199,557,195,509,188,456,172,409,151"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="734,69,883,109"/>
+<area shape="poly" title=" " alt="" coords="663,87,720,87,720,92,663,92"/>
+<area shape="poly" title=" " alt="" coords="664,160,699,165,698,170,664,166"/>
 </map>
 </div>
 <div class="dynheader">
@@ -463,14 +733,97 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="af476c81cab098b33af8f78e00f17c0c0" name="af476c81cab098b33af8f78e00f17c0c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af476c81cab098b33af8f78e00f17c0c0">&#9670;&#160;</a></span>getFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> correlation::core::Trajectory::getFrame </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets a copy of a frame at a specific index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The index of the frame to retrieve. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <a class="el" href="classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box).">Cell</a> object representing the frame. </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>if the index is invalid. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_cgraph">
+<area shape="rect" title="Gets a copy of a frame at a specific index." alt="" coords="5,5,160,45"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="208,5,401,45"/>
+<area shape="poly" title=" " alt="" coords="160,23,194,23,194,28,160,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_icgraph" id="aclasscorrelation_1_1core_1_1Trajectory_af476c81cab098b33af8f78e00f17c0c0_icgraph">
+<area shape="rect" title="Gets a copy of a frame at a specific index." alt="" coords="1308,191,1463,231"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="822,47,990,101"/>
+<area shape="poly" title=" " alt="" coords="1359,183,1316,139,1288,118,1259,102,1191,80,1120,69,1051,66,990,68,990,62,1051,61,1121,64,1192,75,1261,97,1291,114,1319,135,1362,179"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="1081,112,1235,167"/>
+<area shape="poly" title=" " alt="" coords="1308,190,1235,166,1236,161,1309,185"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631" title="Gets a constant reference to the first frame of the trajectory." alt="" coords="1079,191,1237,231"/>
+<area shape="poly" title=" " alt="" coords="1294,214,1238,214,1238,209,1294,209"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="1056,256,1260,311"/>
+<area shape="poly" title=" " alt="" coords="1309,238,1245,259,1244,253,1307,233"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="1065,335,1251,375"/>
+<area shape="poly" title=" " alt="" coords="1359,244,1315,285,1261,324,1233,338,1231,333,1259,320,1312,281,1355,240"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="598,123,702,148"/>
+<area shape="poly" title=" " alt="" coords="809,100,703,126,702,120,808,95"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,54,756,94"/>
+<area shape="poly" title=" " alt="" coords="808,77,756,77,756,71,808,71"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="310,123,461,148"/>
+<area shape="poly" title=" " alt="" coords="584,138,461,138,461,133,584,133"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,55,496,95"/>
+<area shape="poly" title=" " alt="" coords="530,77,496,77,496,72,530,72"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,5,413,31"/>
+<area shape="poly" title=" " alt="" coords="541,54,412,26,413,21,542,49"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,55,227,95"/>
+<area shape="poly" title=" " alt="" coords="261,78,227,78,227,73,261,73"/>
+<area shape="poly" title=" " alt="" coords="1067,119,990,98,991,93,1068,113"/>
+<area shape="poly" title=" " alt="" coords="1067,141,702,138,702,133,1067,136"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="827,327,985,367"/>
+<area shape="poly" title=" " alt="" coords="1043,315,986,330,985,325,1042,310"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="804,199,1008,239"/>
+<area shape="poly" title=" " alt="" coords="1042,257,985,242,986,237,1043,251"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ab91e91ae2f1dff2ec9771fc1cb00de90" title="Constructs a lazy&#45;loading trajectory from a memory&#45;mapped file." alt="" coords="827,263,985,303"/>
+<area shape="poly" title=" " alt="" coords="1043,286,985,286,985,281,1043,281"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a95a497894c98f001d421d4cbb1d0cd18" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="557,199,743,239"/>
+<area shape="poly" title=" " alt="" coords="790,222,744,222,744,217,790,217"/>
+<area shape="poly" title=" " alt="" coords="1051,355,985,353,986,347,1051,349"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="827,391,985,431"/>
+<area shape="poly" title=" " alt="" coords="1054,381,985,397,984,391,1053,376"/>
+</map>
+</div>
+
+</div>
+</div>
 <a id="a56f05d920d802eb38e7634cd5c119bb1" name="a56f05d920d802eb38e7634cd5c119bb1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a56f05d920d802eb38e7634cd5c119bb1">&#9670;&#160;</a></span>getFrameCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">size_t correlation::core::Trajectory::getFrameCount </td>
@@ -479,11 +832,6 @@ Here is the caller graph for this function:</div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Gets the total number of frames in the trajectory. </p>
@@ -493,11 +841,90 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a56f05d920d802eb38e7634cd5c119bb1_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a56f05d920d802eb38e7634cd5c119bb1_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_a56f05d920d802eb38e7634cd5c119bb1_icgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a56f05d920d802eb38e7634cd5c119bb1_icgraph">
-<area shape="rect" title="Gets the total number of frames in the trajectory." alt="" coords="331,5,524,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
-<area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,13,156,38"/>
-<area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
+<area shape="rect" title="Gets the total number of frames in the trajectory." alt="" coords="2068,674,2261,714"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="983,71,1177,111"/>
+<area shape="poly" title=" " alt="" coords="2156,660,2139,545,2110,393,2091,316,2069,247,2045,190,2018,153,1970,114,1918,81,1862,56,1803,36,1742,22,1680,13,1617,9,1554,8,1432,16,1319,33,1222,54,1146,74,1144,69,1220,48,1318,28,1431,11,1554,3,1617,4,1680,8,1743,17,1804,31,1864,51,1920,77,1973,109,2022,149,2049,188,2074,245,2096,314,2115,391,2144,545,2162,659"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="695,294,893,334"/>
+<area shape="poly" title=" " alt="" coords="2146,663,2125,623,2097,576,2061,528,2018,486,1927,418,1887,394,1848,377,1806,364,1760,356,1647,350,1363,350,1235,347,1108,341,893,326,893,320,1109,336,1236,342,1363,344,1647,344,1761,350,1807,359,1849,372,1890,390,1930,414,2022,482,2065,525,2101,573,2130,620,2151,660"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="1239,114,1489,154"/>
+<area shape="poly" title=" " alt="" coords="2161,660,2156,573,2149,516,2137,454,2119,391,2094,330,2060,272,2018,222,1989,198,1959,177,1891,144,1818,121,1743,109,1668,103,1595,104,1469,116,1469,111,1595,99,1668,98,1744,103,1820,116,1893,139,1961,172,1993,194,2022,219,2065,269,2098,327,2124,390,2142,453,2154,515,2161,572,2166,660"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1237,246,1491,286"/>
+<area shape="poly" title=" " alt="" coords="2159,661,2149,590,2126,498,2108,451,2085,406,2055,365,2019,331,1992,320,1945,310,1807,294,1643,282,1491,273,1491,268,1643,276,1807,288,1945,305,1994,315,2021,326,2059,361,2089,403,2113,449,2132,497,2154,589,2164,660"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="1280,773,1448,828"/>
+<area shape="poly" title=" " alt="" coords="2150,728,2129,763,2101,804,2065,843,2021,873,1954,905,1895,925,1839,936,1786,939,1732,935,1674,925,1538,892,1501,881,1465,865,1404,830,1406,826,1467,860,1503,876,1539,887,1675,919,1733,930,1786,934,1839,931,1893,920,1952,900,2019,869,2061,839,2097,801,2125,761,2145,725"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="1569,708,1723,762"/>
+<area shape="poly" title=" " alt="" coords="2054,705,1724,732,1723,726,2054,700"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="1801,496,2020,536"/>
+<area shape="poly" title=" " alt="" coords="2122,668,1939,539,1942,534,2125,664"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="1325,178,1403,204"/>
+<area shape="poly" title=" " alt="" coords="2159,661,2149,585,2126,487,2108,434,2084,383,2054,335,2018,293,1984,264,1947,240,1907,220,1865,203,1777,181,1688,170,1602,167,1523,171,1404,186,1403,181,1522,166,1602,162,1689,164,1778,175,1867,198,1909,215,1949,235,1987,260,2022,289,2059,332,2089,380,2113,432,2131,485,2154,585,2164,660"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631" title="Gets a constant reference to the first frame of the trajectory." alt="" coords="1567,838,1725,878"/>
+<area shape="poly" title=" " alt="" coords="2142,727,2091,781,2058,807,2021,828,1946,853,1867,866,1791,870,1725,868,1726,863,1791,864,1866,860,1944,848,2019,823,2055,803,2087,777,2138,723"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="1833,774,1988,814"/>
+<area shape="poly" title=" " alt="" coords="2101,722,1963,776,1961,771,2099,717"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="1544,953,1748,1008"/>
+<area shape="poly" title=" " alt="" coords="2156,728,2139,776,2111,833,2072,890,2049,915,2021,936,1990,954,1956,968,1884,986,1813,993,1748,993,1748,988,1813,988,1883,981,1954,963,1987,949,2019,932,2045,911,2068,886,2107,831,2134,774,2151,726"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ab91e91ae2f1dff2ec9771fc1cb00de90" title="Constructs a lazy&#45;loading trajectory from a memory&#45;mapped file." alt="" coords="1285,1024,1443,1064"/>
+<area shape="poly" title=" " alt="" coords="2161,728,2147,788,2122,862,2104,900,2081,937,2054,970,2021,997,1976,1018,1913,1034,1838,1044,1755,1050,1585,1054,1443,1051,1443,1046,1585,1049,1755,1045,1837,1039,1912,1029,1974,1013,2019,993,2050,966,2077,934,2099,898,2117,860,2142,786,2156,726"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="1553,643,1739,683"/>
+<area shape="poly" title=" " alt="" coords="2054,690,1739,671,1740,666,2054,685"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a64835e9582517db3f680cf228b908a81" title="Constructs a TrajectoryAnalyzer for a given trajectory." alt="" coords="1833,1084,1988,1138"/>
+<area shape="poly" title=" " alt="" coords="2162,728,2149,797,2124,886,2105,934,2083,982,2055,1026,2022,1066,1990,1090,1987,1085,2018,1063,2051,1023,2078,979,2100,932,2119,885,2144,795,2157,727"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="665,71,923,111"/>
+<area shape="poly" title=" " alt="" coords="969,94,923,94,923,88,969,88"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,294,617,334"/>
+<area shape="poly" title=" " alt="" coords="681,316,617,316,617,311,681,311"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,420,571,474"/>
+<area shape="poly" title=" " alt="" coords="735,342,552,422,550,417,732,337"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,589,308,614"/>
+<area shape="poly" title=" " alt="" coords="435,485,278,591,275,587,432,480"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,418,156,444"/>
+<area shape="poly" title=" " alt="" coords="230,581,93,446,97,442,234,577"/>
+<area shape="poly" title=" " alt="" coords="1226,116,1176,108,1177,103,1226,110"/>
+<area shape="poly" title=" " alt="" coords="1249,246,1185,239,1115,234,1042,235,971,244,897,267,833,296,831,291,895,262,970,239,1042,230,1115,229,1186,233,1250,241"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="971,254,1189,309"/>
+<area shape="poly" title=" " alt="" coords="1224,276,1190,278,1189,273,1224,271"/>
+<area shape="poly" title=" " alt="" coords="957,298,893,305,893,300,956,293"/>
+<area shape="poly" title=" " alt="" coords="1275,835,1193,859,1093,884,978,906,854,920,725,923,659,919,595,910,532,896,470,877,411,852,354,820,329,799,308,773,292,744,279,714,263,657,256,615,261,614,268,655,284,712,296,742,313,770,333,795,358,816,413,847,472,872,533,891,596,905,660,913,725,918,853,915,977,901,1092,879,1192,854,1273,830"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="974,766,1186,806"/>
+<area shape="poly" title=" " alt="" coords="1266,798,1186,794,1186,789,1266,793"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="683,766,905,806"/>
+<area shape="poly" title=" " alt="" coords="961,788,905,788,905,783,961,783"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="767,716,821,741"/>
+<area shape="poly" title=" " alt="" coords="967,766,922,756,821,736,822,731,923,751,969,760"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="376,766,597,806"/>
+<area shape="poly" title=" " alt="" coords="669,788,598,788,598,783,669,783"/>
+<area shape="poly" title=" " alt="" coords="1555,723,1339,695,1210,685,1081,680,793,680,654,673,518,657,398,636,308,617,309,611,399,630,519,651,655,668,793,675,1081,675,1211,679,1340,690,1555,718"/>
+<area shape="poly" title=" " alt="" coords="1556,759,1449,784,1448,778,1554,754"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="1285,600,1443,640"/>
+<area shape="poly" title=" " alt="" coords="1858,545,1808,566,1754,583,1672,600,1589,611,1444,622,1443,616,1588,606,1671,595,1753,578,1807,561,1856,540"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af86b085926e70cbb8a1e942867bbd1f0" title="Calculates velocities for all atoms in the trajectory using finite differences, accounting for period..." alt="" coords="1539,464,1753,504"/>
+<area shape="poly" title=" " alt="" coords="1788,504,1753,500,1754,495,1788,499"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="1565,219,1727,259"/>
+<area shape="poly" title=" " alt="" coords="1879,488,1664,261,1668,257,1883,484"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a7e2b54339742540b58a6dc1317287097" title="Gets a constant reference to the frames." alt="" coords="1565,528,1727,568"/>
+<area shape="poly" title=" " alt="" coords="1788,534,1728,541,1727,536,1788,529"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a45e541a6822b70d8f44e6dfafd0f5775" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="1539,385,1753,440"/>
+<area shape="poly" title=" " alt="" coords="1848,494,1752,455,1720,442,1722,437,1754,450,1850,489"/>
+<area shape="poly" title=" " alt="" coords="1594,215,1544,191,1490,168,1452,156,1454,151,1492,163,1547,186,1597,210"/>
+<area shape="poly" title=" " alt="" coords="1551,251,1491,256,1490,251,1551,245"/>
+<area shape="poly" title=" " alt="" coords="1551,226,1403,200,1404,195,1552,220"/>
+<area shape="poly" title=" " alt="" coords="1311,190,1087,177,795,168,485,168,451,171,417,177,352,200,291,234,236,274,187,317,146,358,94,420,90,417,142,355,183,313,232,270,288,229,350,195,416,172,450,165,485,163,795,163,1087,171,1311,185"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="1285,464,1443,504"/>
+<area shape="poly" title=" " alt="" coords="1526,446,1443,467,1442,462,1525,441"/>
+<area shape="poly" title=" " alt="" coords="1820,798,1448,802,1448,797,1820,792"/>
+<area shape="poly" title=" " alt="" coords="1819,776,1723,755,1724,750,1821,771"/>
+<area shape="poly" title=" " alt="" coords="1820,818,1726,841,1725,836,1819,813"/>
+<area shape="poly" title=" " alt="" coords="1871,824,1688,955,1684,951,1868,820"/>
+<area shape="poly" title=" " alt="" coords="1869,768,1815,733,1752,699,1719,686,1721,681,1754,694,1818,728,1872,764"/>
+<area shape="poly" title=" " alt="" coords="1591,947,1562,921,1536,891,1518,857,1511,827,1504,798,1488,763,1464,728,1437,694,1386,642,1389,639,1440,691,1468,724,1493,760,1509,796,1516,826,1523,855,1541,888,1566,917,1594,943"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="1262,960,1466,1000"/>
+<area shape="poly" title=" " alt="" coords="1530,983,1466,983,1466,978,1530,978"/>
+<area shape="poly" title=" " alt="" coords="1531,1009,1443,1029,1442,1024,1530,1004"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a95a497894c98f001d421d4cbb1d0cd18" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="987,960,1173,1000"/>
+<area shape="poly" title=" " alt="" coords="1249,983,1173,983,1173,978,1249,978"/>
+<area shape="poly" title=" " alt="" coords="1539,650,1443,635,1444,630,1539,644"/>
+<area shape="poly" title=" " alt="" coords="1600,638,1395,507,1398,502,1603,633"/>
 </map>
 </div>
 
@@ -508,9 +935,6 @@ Here is the caller graph for this function:</div>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &gt; &amp; correlation::core::Trajectory::getFrames </td>
@@ -519,63 +943,52 @@ Here is the caller graph for this function:</div>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Gets a mutable reference to the frames. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector of <a class="el" href="classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box).">Cell</a> objects representing the frames. </dd></dl>
 <div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_cgraph">
+<area shape="rect" title="Gets a mutable reference to the frames." alt="" coords="5,5,168,45"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="216,5,435,45"/>
+<area shape="poly" title=" " alt="" coords="169,23,202,23,202,28,169,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="483,5,676,45"/>
+<area shape="poly" title=" " alt="" coords="435,23,469,23,469,28,435,28"/>
+</map>
+</div>
+<div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_icgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a83c7f44c479c8790546d5122c47bda1f_icgraph">
-<area shape="rect" title="Gets a mutable reference to the frames." alt="" coords="1656,183,1819,223"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="1101,31,1294,71"/>
-<area shape="poly" title=" " alt="" coords="1701,176,1658,144,1607,117,1527,91,1444,74,1364,62,1294,56,1294,51,1365,57,1445,68,1528,86,1609,112,1661,140,1704,171"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="1357,5,1606,45"/>
-<area shape="poly" title=" " alt="" coords="1713,173,1668,118,1639,90,1607,66,1568,48,1571,43,1609,62,1642,86,1672,115,1717,170"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1355,183,1608,223"/>
-<area shape="poly" title=" " alt="" coords="1642,205,1608,205,1608,200,1642,200"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="1113,307,1281,362"/>
-<area shape="poly" title=" " alt="" coords="1644,228,1609,237,1355,296,1282,315,1281,310,1354,291,1607,232,1643,223"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="1404,306,1559,361"/>
-<area shape="poly" title=" " alt="" coords="1696,233,1609,284,1556,308,1553,303,1607,279,1693,228"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="275,193,354,218"/>
-<area shape="poly" title=" " alt="" coords="1650,182,1608,173,1493,155,1404,143,1314,138,1199,136,910,136,691,136,595,143,474,161,408,177,351,195,350,190,407,172,473,156,595,138,690,131,910,131,1199,131,1314,132,1405,138,1494,149,1608,168,1651,177"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a64835e9582517db3f680cf228b908a81" title="Constructs a TrajectoryAnalyzer for a given trajectory." alt="" coords="1404,385,1559,439"/>
-<area shape="poly" title=" " alt="" coords="1722,236,1677,306,1646,343,1610,374,1586,388,1560,398,1558,393,1583,383,1606,370,1642,339,1673,303,1717,234"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="783,31,1040,71"/>
-<area shape="poly" title=" " alt="" coords="1087,53,1040,53,1040,48,1087,48"/>
-<area shape="poly" title=" " alt="" coords="1344,40,1294,45,1294,39,1343,35"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="813,212,1010,252"/>
-<area shape="poly" title=" " alt="" coords="1391,228,1307,243,1229,248,1151,249,1010,243,1010,238,1151,244,1229,243,1306,237,1390,223"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="1088,174,1307,229"/>
-<area shape="poly" title=" " alt="" coords="1341,205,1307,205,1307,199,1341,199"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="473,171,735,211"/>
-<area shape="poly" title=" " alt="" coords="798,220,734,211,735,206,799,214"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="520,235,688,290"/>
-<area shape="poly" title=" " alt="" coords="799,246,688,257,688,252,799,241"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="263,405,367,430"/>
-<area shape="poly" title=" " alt="" coords="508,287,475,305,460,320,451,335,443,352,427,369,392,391,356,407,354,402,389,386,424,365,438,349,446,333,455,317,472,301,506,282"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,347,156,373"/>
-<area shape="poly" title=" " alt="" coords="249,404,133,375,134,370,250,399"/>
-<area shape="poly" title=" " alt="" coords="1074,217,1011,224,1010,219,1074,212"/>
-<area shape="poly" title=" " alt="" coords="1100,358,1041,369,889,400,822,411,735,420,633,426,531,427,367,423,367,417,531,421,632,420,734,415,821,406,888,395,1039,364,1099,352"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="805,315,1017,355"/>
-<area shape="poly" title=" " alt="" coords="1100,337,1018,337,1018,332,1100,332"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="493,315,715,355"/>
-<area shape="poly" title=" " alt="" coords="792,337,715,337,715,332,792,332"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="577,379,631,405"/>
-<area shape="poly" title=" " alt="" coords="792,359,632,390,631,384,792,354"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="204,315,425,355"/>
-<area shape="poly" title=" " alt="" coords="479,337,426,337,426,332,479,332"/>
-<area shape="poly" title=" " alt="" coords="1391,358,1307,376,1075,417,981,429,893,436,709,439,473,432,367,425,367,420,473,427,709,434,892,431,980,424,1075,412,1306,371,1390,352"/>
-<area shape="poly" title=" " alt="" coords="1390,336,1282,337,1282,332,1390,331"/>
-<area shape="poly" title=" " alt="" coords="284,228,103,349,100,345,281,224"/>
+<area shape="rect" title="Gets a mutable reference to the frames." alt="" coords="1539,113,1701,153"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3192418a14189aa6c17005fa30c86150" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="1239,20,1489,60"/>
+<area shape="poly" title=" " alt="" coords="1550,111,1419,63,1421,58,1552,106"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1237,113,1491,153"/>
+<area shape="poly" title=" " alt="" coords="1525,136,1491,136,1491,131,1525,131"/>
+<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="217,193,295,218"/>
+<area shape="poly" title=" " alt="" coords="1533,159,1491,168,1287,204,1197,213,1081,216,793,216,296,209,296,204,793,211,1081,211,1197,208,1287,199,1490,163,1532,154"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#a6699e68d06229e9744793b6e1d2d7073" title="Core MSD calculation returning named histograms." alt="" coords="983,5,1177,45"/>
+<area shape="poly" title=" " alt="" coords="1226,36,1177,33,1177,28,1226,30"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="665,5,923,45"/>
+<area shape="poly" title=" " alt="" coords="969,28,923,28,923,23,969,23"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="695,99,893,139"/>
+<area shape="poly" title=" " alt="" coords="1227,114,1189,111,1033,107,893,113,893,108,1033,102,1189,105,1228,109"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="971,121,1189,175"/>
+<area shape="poly" title=" " alt="" coords="1224,143,1189,145,1189,140,1224,138"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,56,617,96"/>
+<area shape="poly" title=" " alt="" coords="681,106,617,97,618,91,682,100"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,121,571,175"/>
+<area shape="poly" title=" " alt="" coords="682,132,571,143,571,137,681,127"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,139,308,165"/>
+<area shape="poly" title=" " alt="" coords="389,152,308,154,308,148,389,147"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,169,156,194"/>
+<area shape="poly" title=" " alt="" coords="191,166,157,171,156,166,190,160"/>
+<area shape="poly" title=" " alt="" coords="956,138,893,131,893,126,957,133"/>
+<area shape="poly" title=" " alt="" coords="203,201,156,194,157,189,203,195"/>
 </map>
 </div>
 
@@ -586,9 +999,6 @@ Here is the caller graph for this function:</div>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">const std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a> &gt; &amp; correlation::core::Trajectory::getFrames </td>
@@ -597,15 +1007,22 @@ Here is the caller graph for this function:</div>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Gets a constant reference to the frames. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector of <a class="el" href="classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box).">Cell</a> objects representing the frames. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a7e2b54339742540b58a6dc1317287097_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a7e2b54339742540b58a6dc1317287097_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Trajectory_a7e2b54339742540b58a6dc1317287097_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a7e2b54339742540b58a6dc1317287097_cgraph">
+<area shape="rect" title="Gets a constant reference to the frames." alt="" coords="5,5,168,45"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="216,5,435,45"/>
+<area shape="poly" title=" " alt="" coords="169,23,202,23,202,28,169,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="483,5,676,45"/>
+<area shape="poly" title=" " alt="" coords="435,23,469,23,469,28,435,28"/>
+</map>
+</div>
 
 </div>
 </div>
@@ -682,61 +1099,9 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="652,154,571,159,571,153,651,148"/>
 <area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,153,308,178"/>
 <area shape="poly" title=" " alt="" coords="389,166,308,167,308,162,389,160"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,182,156,207"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,182,156,207"/>
 <area shape="poly" title=" " alt="" coords="191,179,157,185,156,179,190,174"/>
 <area shape="poly" title=" " alt="" coords="203,214,156,208,157,202,203,209"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="a274566b3dc3cb72e8f0bb07ee1a2d292" name="a274566b3dc3cb72e8f0bb07ee1a2d292"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a274566b3dc3cb72e8f0bb07ee1a2d292">&#9670;&#160;</a></span>getVelocities()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const std::vector&lt; std::vector&lt; <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &gt; &gt; &amp; correlation::core::Trajectory::getVelocities </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Gets the pre-calculated velocities for all atoms. </p>
-<dl class="section return"><dt>Returns</dt><dd>A vector of velocity vectors, indexed by <code>[frame][atom_index]</code>. </dd></dl>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a274566b3dc3cb72e8f0bb07ee1a2d292_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a274566b3dc3cb72e8f0bb07ee1a2d292_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1core_1_1Trajectory_a274566b3dc3cb72e8f0bb07ee1a2d292_icgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a274566b3dc3cb72e8f0bb07ee1a2d292_icgraph">
-<area shape="rect" title="Gets the pre&#45;calculated velocities for all atoms." alt="" coords="1479,20,1656,60"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="665,41,863,81"/>
-<area shape="poly" title=" " alt="" coords="1465,39,1431,39,1171,37,911,49,863,53,863,48,910,44,1170,31,1431,33,1465,34"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1177,48,1431,88"/>
-<area shape="poly" title=" " alt="" coords="1465,53,1431,57,1431,52,1465,48"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,5,617,45"/>
-<area shape="poly" title=" " alt="" coords="651,49,617,45,618,40,652,44"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,70,571,125"/>
-<area shape="poly" title=" " alt="" coords="652,79,571,89,570,84,651,73"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
-<area shape="poly" title=" " alt="" coords="389,100,308,100,308,95,389,95"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,85,156,110"/>
-<area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
-<area shape="poly" title=" " alt="" coords="1163,69,863,65,863,60,1163,64"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="911,99,1129,154"/>
-<area shape="poly" title=" " alt="" coords="1194,93,1130,107,1129,102,1193,88"/>
-<area shape="poly" title=" " alt="" coords="898,98,842,84,844,79,900,93"/>
 </map>
 </div>
 
@@ -763,11 +1128,18 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_cgraph">
-<area shape="rect" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="5,5,209,60"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="257,13,411,53"/>
-<area shape="poly" title=" " alt="" coords="210,30,244,30,244,35,210,35"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="459,13,608,53"/>
-<area shape="poly" title=" " alt="" coords="411,30,445,30,445,35,411,35"/>
+<area shape="rect" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="5,94,209,149"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="267,5,403,45"/>
+<area shape="poly" title=" " alt="" coords="171,92,256,55,272,48,274,53,258,60,173,96"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="258,69,411,109"/>
+<area shape="poly" title=" " alt="" coords="209,104,244,99,245,105,210,110"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="257,133,412,173"/>
+<area shape="poly" title=" " alt="" coords="210,133,244,138,243,143,209,138"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="460,161,653,201"/>
+<area shape="poly" title=" " alt="" coords="159,146,206,167,258,183,305,190,354,193,446,191,446,197,354,199,305,195,257,188,204,172,157,151"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="482,69,631,109"/>
+<area shape="poly" title=" " alt="" coords="411,87,468,87,468,92,411,92"/>
+<area shape="poly" title=" " alt="" coords="412,160,447,165,446,170,412,166"/>
 </map>
 </div>
 <div class="dynheader">
@@ -775,11 +1147,13 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_icgraph" id="aclasscorrelation_1_1core_1_1Trajectory_afed1961138cfc701af8c741a28f3658c_icgraph">
-<area shape="rect" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,30,696,85"/>
+<area shape="rect" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,62,696,117"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="263,5,421,45"/>
-<area shape="poly" title=" " alt="" coords="478,45,421,38,422,33,479,40"/>
+<area shape="poly" title=" " alt="" coords="478,63,421,48,422,43,479,57"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,69,444,109"/>
-<area shape="poly" title=" " alt="" coords="479,75,445,79,444,74,478,69"/>
+<area shape="poly" title=" " alt="" coords="478,92,444,92,444,87,478,87"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#ab91e91ae2f1dff2ec9771fc1cb00de90" title="Constructs a lazy&#45;loading trajectory from a memory&#45;mapped file." alt="" coords="263,133,421,173"/>
+<area shape="poly" title=" " alt="" coords="479,121,422,136,420,131,478,116"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a95a497894c98f001d421d4cbb1d0cd18" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,69,192,109"/>
 <area shape="poly" title=" " alt="" coords="227,92,192,92,192,87,227,87"/>
 </map>
@@ -808,10 +1182,14 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_a45e541a6822b70d8f44e6dfafd0f5775_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_a45e541a6822b70d8f44e6dfafd0f5775_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_a45e541a6822b70d8f44e6dfafd0f5775_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_a45e541a6822b70d8f44e6dfafd0f5775_cgraph">
-<area shape="rect" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="5,15,219,69"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="267,29,443,55"/>
-<area shape="poly" title=" " alt="" coords="219,39,253,39,253,45,219,45"/>
-<area shape="poly" title=" " alt="" coords="315,31,307,21,311,11,328,5,355,3,389,7,399,11,402,17,398,20,395,15,388,12,355,8,329,10,315,15,312,20,319,27"/>
+<area shape="rect" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="5,39,219,94"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="267,5,485,45"/>
+<area shape="poly" title=" " alt="" coords="218,47,253,42,254,47,219,53"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="288,94,464,119"/>
+<area shape="poly" title=" " alt="" coords="219,80,279,89,278,95,218,85"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="533,5,727,45"/>
+<area shape="poly" title=" " alt="" coords="485,23,519,23,519,28,485,28"/>
+<area shape="poly" title=" " alt="" coords="335,96,326,86,331,76,348,70,376,67,412,71,422,76,426,82,421,85,418,80,410,76,376,73,349,75,334,80,331,85,339,92"/>
 </map>
 </div>
 <div class="dynheader">
@@ -900,7 +1278,7 @@ Here is the caller graph for this function:</div>
 <area shape="rect" title="Sets the time step between frames." alt="" coords="331,5,505,45"/>
 <area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
@@ -949,13 +1327,18 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1Trajectory_afce0d994df53bdce4c61657891cbf09d_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Trajectory_afce0d994df53bdce4c61657891cbf09d_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Trajectory_afce0d994df53bdce4c61657891cbf09d_cgraph" id="aclasscorrelation_1_1core_1_1Trajectory_afce0d994df53bdce4c61657891cbf09d_cgraph">
-<area shape="rect" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="5,69,192,109"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="240,5,376,45"/>
-<area shape="poly" title=" " alt="" coords="164,67,228,47,230,52,166,72"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="240,69,376,109"/>
-<area shape="poly" title=" " alt="" coords="192,87,226,87,226,92,192,92"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="240,133,376,173"/>
-<area shape="poly" title=" " alt="" coords="166,107,230,127,228,132,164,112"/>
+<area shape="rect" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="5,133,192,173"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="249,5,385,45"/>
+<area shape="poly" title=" " alt="" coords="124,131,176,94,239,55,251,49,253,54,241,60,179,98,127,135"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="249,69,385,109"/>
+<area shape="poly" title=" " alt="" coords="167,131,235,110,237,116,169,136"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="249,133,385,173"/>
+<area shape="poly" title=" " alt="" coords="192,151,235,151,235,156,192,156"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="240,197,395,237"/>
+<area shape="poly" title=" " alt="" coords="169,171,236,191,235,196,167,176"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="443,227,636,267"/>
+<area shape="poly" title=" " alt="" coords="122,171,173,212,206,232,241,247,287,258,336,263,429,261,429,266,336,268,287,263,239,252,204,237,170,217,119,176"/>
+<area shape="poly" title=" " alt="" coords="395,225,429,229,428,235,394,230"/>
 </map>
 </div>
 <div class="dynheader">
@@ -998,6 +1381,50 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a22232be7307b17d1f4d215fed497aea8" name="a22232be7307b17d1f4d215fed497aea8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22232be7307b17d1f4d215fed497aea8">&#9670;&#160;</a></span>first_frame_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt;<a class="el" href="classcorrelation_1_1core_1_1Cell.html">Cell</a>&gt; correlation::core::Trajectory::first_frame_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3cc14d409e6b5d06a4d624487a4237d3" name="a3cc14d409e6b5d06a4d624487a4237d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cc14d409e6b5d06a4d624487a4237d3">&#9670;&#160;</a></span>frame_offsets_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;size_t&gt; correlation::core::Trajectory::frame_offsets_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a28a0aacc6a7cc9ab7f685d9388b923f1" name="a28a0aacc6a7cc9ab7f685d9388b923f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a28a0aacc6a7cc9ab7f685d9388b923f1">&#9670;&#160;</a></span>frames_</h2>
 
@@ -1013,12 +1440,56 @@ Here is the caller graph for this function:</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">mutable</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>Collection of simulation snapshots. </p>
+
+</div>
+</div>
+<a id="af391eb5eb34086514d22a125a5b896a5" name="af391eb5eb34086514d22a125a5b896a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af391eb5eb34086514d22a125a5b896a5">&#9670;&#160;</a></span>mapped_file_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classcorrelation_1_1core_1_1MappedFile.html">MappedFile</a>&gt; correlation::core::Trajectory::mapped_file_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2df4dd33cf260ca3f35fed235a45710b" name="a2df4dd33cf260ca3f35fed235a45710b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2df4dd33cf260ca3f35fed235a45710b">&#9670;&#160;</a></span>parser_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html#a1e82b73408cb1100c0c7eb33691b8df0">FrameParser</a> correlation::core::Trajectory::parser_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1067,30 +1538,6 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Time between snapshots. </p>
-
-</div>
-</div>
-<a id="a8f63f12c98d54faa9c99abc49f69960d" name="a8f63f12c98d54faa9c99abc49f69960d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f63f12c98d54faa9c99abc49f69960d">&#9670;&#160;</a></span>velocities_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;std::vector&lt;<a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt;double&gt; &gt; &gt; correlation::core::Trajectory::velocities_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Inter-frame velocities. </p>
 
 </div>
 </div>

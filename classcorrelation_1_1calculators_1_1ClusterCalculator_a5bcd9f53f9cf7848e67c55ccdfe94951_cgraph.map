@@ -1,0 +1,11 @@
+<map id="correlation::calculators::ClusterCalculator::calculateFrame" name="correlation::calculators::ClusterCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,131,256,171"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="319,5,487,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="172,129,303,69,318,63,320,68,305,74,175,134"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="326,84,481,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="256,130,312,122,313,127,257,136"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="319,163,487,217"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="257,166,306,174,306,179,256,172"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1NeighborGraph.html#a39973b463b9195b7957362c10c3269db" title=" " alt="" coords="304,242,503,282"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="175,169,305,226,328,235,326,240,303,231,173,174"/>
+</map>

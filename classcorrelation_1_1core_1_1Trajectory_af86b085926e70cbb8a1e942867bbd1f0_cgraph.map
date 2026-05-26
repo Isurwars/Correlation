@@ -1,0 +1,7 @@
+<map id="correlation::core::Trajectory::calculateVelocities" name="correlation::core::Trajectory::calculateVelocities">
+<area shape="rect" id="Node000001" title="Calculates velocities for all atoms in the trajectory using finite differences, accounting for period..." alt="" coords="5,5,220,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="268,5,487,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,23,255,23,255,28,220,28"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="535,5,728,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="487,23,521,23,521,28,487,28"/>
+</map>

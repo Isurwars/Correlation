@@ -1,11 +1,18 @@
 <map id="correlation::core::Trajectory::getBondCutoff" name="correlation::core::Trajectory::getBondCutoff">
-<area shape="rect" id="Node000001" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,13,192,53"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,13,444,53"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,30,226,30,226,35,192,35"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,5,696,60"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="444,30,478,30,478,35,444,35"/>
-<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="744,13,897,53"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="696,30,730,30,730,35,696,35"/>
-<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="945,13,1095,53"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="897,30,931,30,931,35,897,35"/>
+<area shape="rect" id="Node000001" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,101,192,141"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a8bb6a1aeab3dde07c457da02393bed24" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,101,444,141"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,119,226,119,226,124,192,124"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="492,94,696,149"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="444,119,478,119,478,124,444,124"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="753,5,889,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="658,92,743,55,759,48,761,53,745,60,660,96"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="745,69,898,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="696,104,731,99,732,105,697,110"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="744,133,899,173"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="697,133,731,138,730,143,696,138"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="947,161,1140,201"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="646,146,693,167,745,183,792,190,840,193,933,191,933,197,840,199,791,195,743,188,691,172,644,151"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="969,69,1118,109"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="898,87,955,87,955,92,898,92"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="899,160,933,165,933,170,898,166"/>
 </map>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -164,6 +164,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6bc5b4f2df87eead46a11810817bdd61" id="r_a6bc5b4f2df87eead46a11810817bdd61"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html#a6bc5b4f2df87eead46a11810817bdd61">getHistogram</a> (const std::string &amp;name) const</td></tr>
 <tr class="memdesc:a6bc5b4f2df87eead46a11810817bdd61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a specific histogram from the last analysis.  <br /></td></tr>
 <tr class="separator:a6bc5b4f2df87eead46a11810817bdd61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a261143ea7f67676a3719562d8d0298ad" id="r_a261143ea7f67676a3719562d8d0298ad"><td class="memItemLeft" align="right" valign="top">const std::map&lt; std::string, <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html#a261143ea7f67676a3719562d8d0298ad">getHistograms</a> () const</td></tr>
+<tr class="memdesc:a261143ea7f67676a3719562d8d0298ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all histograms from the last analysis.  <br /></td></tr>
+<tr class="separator:a261143ea7f67676a3719562d8d0298ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f8cc14eac7a5413324fa56db511b81a" id="r_a5f8cc14eac7a5413324fa56db511b81a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html#a5f8cc14eac7a5413324fa56db511b81a">setProgressCallback</a> (std::function&lt; void(float, const std::string &amp;)&gt; cb)</td></tr>
 <tr class="memdesc:a5f8cc14eac7a5413324fa56db511b81a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a callback function for analysis progress updates.  <br /></td></tr>
 <tr class="separator:a5f8cc14eac7a5413324fa56db511b81a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -463,6 +466,34 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a261143ea7f67676a3719562d8d0298ad" name="a261143ea7f67676a3719562d8d0298ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a261143ea7f67676a3719562d8d0298ad">&#9670;&#160;</a></span>getHistograms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::map&lt; std::string, <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &gt; &amp; correlation::app::AppBackend::getHistograms </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns all histograms from the last analysis. </p>
+<dl class="section return"><dt>Returns</dt><dd>A map of histogram names to Histogram objects. </dd></dl>
+
+</div>
+</div>
 <a id="a072d8d734ff541e32a59c99d618d136c" name="a072d8d734ff541e32a59c99d618d136c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a072d8d734ff541e32a59c99d618d136c">&#9670;&#160;</a></span>getRecommendedBondCutoffs()</h2>
 
@@ -670,23 +701,35 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1app_1_1AppBackend_a005adbbaa7c23a3b7adf988905614b8b_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppBackend_a005adbbaa7c23a3b7adf988905614b8b_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1app_1_1AppBackend_a005adbbaa7c23a3b7adf988905614b8b_cgraph" id="aclasscorrelation_1_1app_1_1AppBackend_a005adbbaa7c23a3b7adf988905614b8b_cgraph">
-<area shape="rect" title="Loads a file from a given path." alt="" coords="5,80,217,120"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47" title="Determines the FileType from a given filename extension." alt="" coords="265,16,416,56"/>
-<area shape="poly" title=" " alt="" coords="183,77,255,57,256,62,184,82"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="266,145,415,185"/>
-<area shape="poly" title=" " alt="" coords="183,118,258,139,256,144,182,123"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="266,80,415,120"/>
-<area shape="poly" title=" " alt="" coords="217,97,252,97,252,103,217,103"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a6861c6c206660e7d8ea866fb76b02f0e" title="Finds a reader that supports the given file extension." alt="" coords="464,70,681,125"/>
-<area shape="poly" title=" " alt="" coords="409,143,465,126,466,131,410,148"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="480,149,665,189"/>
-<area shape="poly" title=" " alt="" coords="416,164,466,165,466,170,416,169"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff" title="Reads an atomic structure from a file." alt="" coords="471,213,675,253"/>
-<area shape="poly" title=" " alt="" coords="410,183,492,207,490,212,409,188"/>
-<area shape="poly" title=" " alt="" coords="416,96,450,96,451,101,416,102"/>
-<area shape="poly" title=" " alt="" coords="408,117,465,135,491,143,490,148,463,140,406,123"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#a4e2ee1a39ed194246c9afb17d28b492b" title="Reads a trajectory from a file." alt="" coords="468,5,677,45"/>
-<area shape="poly" title=" " alt="" coords="397,77,463,55,488,47,490,52,465,60,399,82"/>
+<area shape="rect" title="Loads a file from a given path." alt="" coords="5,216,217,256"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47" title="Determines the FileType from a given filename extension." alt="" coords="265,5,416,45"/>
+<area shape="poly" title=" " alt="" coords="125,214,181,143,220,100,264,62,281,50,284,54,267,66,224,104,185,146,129,217"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#add5e3884ee96a6941a7e1e2474828722" title="Finds a reader that supports the given file extension." alt="" coords="721,113,939,167"/>
+<area shape="poly" title=" " alt="" coords="157,213,264,170,362,131,406,117,464,105,522,98,568,96,674,105,708,110,708,115,673,111,568,102,523,103,464,111,407,122,364,136,266,174,159,218"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="737,248,923,288"/>
+<area shape="poly" title=" " alt="" coords="136,254,193,302,267,351,319,380,362,399,406,413,465,425,524,437,571,445,617,443,672,426,715,400,753,367,784,331,807,298,812,301,788,334,757,371,719,405,674,430,618,448,571,450,523,443,463,431,405,418,360,404,317,384,264,356,190,306,133,258"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#abff3d39ae35b8c7b8fbdd6685336bfa9" title="Returns true if this reader supports trajectory files." alt="" coords="473,376,664,416"/>
+<area shape="poly" title=" " alt="" coords="159,254,266,298,365,331,465,361,490,369,488,374,463,367,363,336,264,302,157,259"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="266,184,415,224"/>
+<area shape="poly" title=" " alt="" coords="217,219,252,214,252,219,218,224"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="266,248,415,288"/>
+<area shape="poly" title=" " alt="" coords="218,248,252,253,252,258,217,253"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a3ef99725e64408c76e5b263610489f27" title="Finds a reader for the given filename." alt="" coords="494,248,643,288"/>
+<area shape="poly" title=" " alt="" coords="413,222,484,242,483,247,412,227"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#acf1e58dcdd62c332074bc4ff2e1f2521" title=" " alt="" coords="493,120,644,160"/>
+<area shape="poly" title=" " alt="" coords="412,181,483,161,484,166,413,186"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff" title="Reads an atomic structure from a file." alt="" coords="467,184,671,224"/>
+<area shape="poly" title=" " alt="" coords="416,201,453,201,453,207,416,207"/>
+<area shape="poly" title=" " alt="" coords="642,245,672,234,727,205,777,173,780,178,730,209,674,238,644,250"/>
+<area shape="poly" title=" " alt="" coords="643,265,724,265,724,271,643,271"/>
+<area shape="poly" title=" " alt="" coords="644,137,708,137,708,143,644,143"/>
+<area shape="poly" title=" " alt="" coords="644,158,674,170,737,203,791,238,788,242,734,208,672,174,642,163"/>
+<area shape="poly" title=" " alt="" coords="365,286,409,324,465,362,480,368,477,373,463,366,406,329,361,290"/>
+<area shape="poly" title=" " alt="" coords="416,265,480,265,480,271,416,271"/>
+<area shape="poly" title=" " alt="" coords="396,246,414,234,429,218,437,202,446,186,462,170,479,160,482,164,466,174,450,189,442,205,433,221,418,238,399,250"/>
+<area shape="poly" title=" " alt="" coords="412,245,483,225,484,230,413,250"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#a4e2ee1a39ed194246c9afb17d28b492b" title="Reads a trajectory from a file." alt="" coords="464,312,673,352"/>
+<area shape="poly" title=" " alt="" coords="413,286,484,306,483,311,412,291"/>
 </map>
 </div>
 <div class="dynheader">
@@ -780,27 +823,31 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1app_1_1AppBackend_a37a73d33331432f9c6d60a96c9839060_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppBackend_a37a73d33331432f9c6d60a96c9839060_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1app_1_1AppBackend_a37a73d33331432f9c6d60a96c9839060_cgraph" id="aclasscorrelation_1_1app_1_1AppBackend_a37a73d33331432f9c6d60a96c9839060_cgraph">
-<area shape="rect" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="5,330,217,370"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="265,219,433,273"/>
-<area shape="poly" title=" " alt="" coords="157,328,272,277,274,281,159,332"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="481,294,725,334"/>
-<area shape="poly" title=" " alt="" coords="217,340,468,321,468,327,218,345"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="501,358,706,398"/>
-<area shape="poly" title=" " alt="" coords="218,353,487,369,487,374,217,359"/>
-<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="504,422,703,462"/>
-<area shape="poly" title=" " alt="" coords="218,367,491,418,490,424,217,372"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="526,84,681,139"/>
-<area shape="poly" title=" " alt="" coords="386,216,430,185,480,156,512,141,514,146,483,160,433,190,389,220"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="773,125,936,165"/>
-<area shape="poly" title=" " alt="" coords="424,216,481,199,627,171,759,152,760,157,628,176,482,205,425,221"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="526,215,681,269"/>
-<area shape="poly" title=" " alt="" coords="434,242,512,241,512,246,434,247"/>
-<area shape="poly" title=" " alt="" coords="434,266,516,288,514,293,433,271"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="526,5,681,60"/>
-<area shape="poly" title=" " alt="" coords="362,217,408,143,441,104,480,69,512,52,514,56,483,74,445,107,412,147,367,220"/>
-<area shape="poly" title=" " alt="" coords="381,271,427,309,483,344,499,351,497,356,480,348,424,313,378,276"/>
-<area shape="poly" title=" " alt="" coords="367,272,413,341,445,377,483,408,493,414,491,419,480,412,442,381,409,344,363,275"/>
-<area shape="poly" title=" " alt="" coords="681,119,760,129,760,135,681,124"/>
+<area shape="rect" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="5,365,217,405"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="265,257,433,311"/>
+<area shape="poly" title=" " alt="" coords="158,363,271,314,273,319,160,368"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="481,336,725,376"/>
+<area shape="poly" title=" " alt="" coords="217,376,468,361,468,367,218,382"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="501,400,706,440"/>
+<area shape="poly" title=" " alt="" coords="218,390,487,409,487,415,217,395"/>
+<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="504,464,703,504"/>
+<area shape="poly" title=" " alt="" coords="213,403,491,459,490,464,212,408"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="526,257,681,311"/>
+<area shape="poly" title=" " alt="" coords="434,281,512,281,512,287,434,287"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="773,88,928,128"/>
+<area shape="poly" title=" " alt="" coords="357,256,373,215,399,167,434,120,456,100,480,84,517,68,557,59,597,55,638,55,716,65,782,81,781,86,715,70,638,60,597,60,558,64,519,74,483,89,459,105,438,124,403,170,378,217,362,258"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="976,88,1169,128"/>
+<area shape="poly" title=" " alt="" coords="354,256,368,208,393,151,429,95,453,71,480,51,514,34,549,21,622,6,697,3,772,10,844,24,911,42,1016,80,1015,85,909,47,843,29,771,16,697,9,623,12,550,26,516,39,483,56,456,75,434,98,398,154,373,210,359,257"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="526,99,681,154"/>
+<area shape="poly" title=" " alt="" coords="373,254,419,208,449,184,480,163,512,148,514,153,483,168,452,188,423,212,376,258"/>
+<area shape="poly" title=" " alt="" coords="434,306,482,320,516,330,515,335,481,325,433,311"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="526,178,681,233"/>
+<area shape="poly" title=" " alt="" coords="433,255,512,231,514,236,434,261"/>
+<area shape="poly" title=" " alt="" coords="380,310,426,349,483,386,499,393,497,398,480,390,423,353,377,314"/>
+<area shape="poly" title=" " alt="" coords="367,310,412,381,445,418,483,450,493,456,490,460,480,454,441,422,408,384,362,313"/>
+<area shape="poly" title=" " alt="" coords="680,263,724,242,755,218,783,191,826,137,830,141,787,194,758,222,727,246,682,268"/>
+<area shape="poly" title=" " alt="" coords="680,257,724,241,1009,131,1011,136,726,246,682,262"/>
+<area shape="poly" title=" " alt="" coords="928,105,962,105,962,111,928,111"/>
 </map>
 </div>
 <div class="dynheader">

@@ -1,0 +1,16 @@
+<map id="correlation::readers::findReaderForFile" name="correlation::readers::findReaderForFile">
+<area shape="rect" id="Node000001" title="Finds a reader for the given filename." alt="" coords="1001,37,1151,77"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,5,953,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="987,46,953,40,954,35,988,40"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,69,953,109"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="988,74,954,80,953,75,987,69"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,37,756,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="791,40,757,45,756,40,790,35"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,8,496,48"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="530,47,496,43,497,38,531,41"/>
+<area shape="rect" id="Node000006" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,73,413,98"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="531,73,413,85,412,80,530,67"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,8,227,48"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="261,31,227,31,227,25,261,25"/>
+<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="790,80,756,75,757,70,791,74"/>
+</map>

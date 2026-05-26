@@ -1,0 +1,5 @@
+<map id="correlation::readers::QEReader::readTrajectory" name="correlation::readers::QEReader::readTrajectory">
+<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="244,5,439,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1QEReader.html#ae6278db688852f6ca6b9f9f6eeb037b1" title="Reads an atomic structure from a file." alt="" coords="5,5,196,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="230,28,196,28,196,23,230,23"/>
+</map>

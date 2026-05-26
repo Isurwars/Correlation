@@ -1,8 +1,25 @@
 var searchData=
 [
-  ['kb_5fev_5fper_5fk_0',['kb_ev_per_k',['../namespacecorrelation_1_1math.html#a235bce0d1971b7a28f59d5dd32708df8',1,'correlation::math']]],
-  ['kcolors_1',['kColors',['../namespacecorrelation_1_1plotters_1_1detail.html#a4120165fb62611315a9e4b7fd99b9c8c',1,'correlation::plotters::detail']]],
-  ['kernelsmoothing_2',['kernelsmoothing',['../namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646',1,'correlation::math::KernelSmoothing(double dx, const std::vector&lt; double &gt; &amp;y, double sigma, KernelType type)'],['../namespacecorrelation_1_1math.html#afea4c44f2d02d37fb0d2c9ed8fe1925b',1,'correlation::math::KernelSmoothing(const std::vector&lt; double &gt; &amp;r, const std::vector&lt; double &gt; &amp;y, double sigma, KernelType type)']]],
-  ['kerneltype_3',['KernelType',['../namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923',1,'correlation::math']]],
-  ['key_20features_4',['Key Features',['../index.html#autotoc_md23',1,'']]]
+  ['label_0',['label',['../structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html#abc01283ab859f54ffb000366b941f9c4',1,'correlation::app::AppController::PinnedRun::label'],['../structcorrelation_1_1plotters_1_1LabeledHistogram.html#a92e496b3a12f937006e1a18f4c464f62',1,'correlation::plotters::LabeledHistogram::label']]],
+  ['labeledhistogram_1',['LabeledHistogram',['../structcorrelation_1_1plotters_1_1LabeledHistogram.html',1,'correlation::plotters']]],
+  ['lammpsdump_2',['LammpsDump',['../namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67abd5b2d46be9431970d83ded5908f9843',1,'correlation::readers']]],
+  ['lammpsdumpreader_3',['LammpsDumpReader',['../classcorrelation_1_1readers_1_1LammpsDumpReader.html',1,'correlation::readers']]],
+  ['lammpsdumpreader_2ecpp_4',['LammpsDumpReader.cpp',['../LammpsDumpReader_8cpp.html',1,'']]],
+  ['lammpsdumpreader_2ehpp_5',['LammpsDumpReader.hpp',['../LammpsDumpReader_8hpp.html',1,'']]],
+  ['lattice_6',['lattice',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#ab349d046c3c6850599227add93967062',1,'correlation::readers::XYZReader::CommentData::lattice'],['../structcorrelation_1_1readers_1_1XdatcarHeader.html#ab4fcc2b063aa02b5eb9d5b73ec3e064e',1,'correlation::readers::XdatcarHeader::lattice']]],
+  ['lattice_5fparameters_7',['lattice_parameters',['../classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70',1,'correlation::core::Cell']]],
+  ['lattice_5fparameters_5f_8',['lattice_parameters_',['../classcorrelation_1_1core_1_1Cell.html#a4c25a7fcf96ecafbe9cb798b486ab768',1,'correlation::core::Cell']]],
+  ['lattice_5fvectors_5f_9',['lattice_vectors_',['../classcorrelation_1_1core_1_1Cell.html#a3dd0ec878862ef97da484b5b6c6c6eac',1,'correlation::core::Cell']]],
+  ['latticevectors_10',['latticeVectors',['../classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401',1,'correlation::core::Cell']]],
+  ['left_11',['left',['../structcorrelation_1_1plotters_1_1Glyph.html#a122bfe6a5db0204d2fb2b6934b2575ec',1,'correlation::plotters::Glyph']]],
+  ['license_12',['license',['../md_docs_2CONTRIBUTING.html#autotoc_md15',1,'License'],['../index.html#autotoc_md39',1,'License']]],
+  ['light_13',['Light',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a81dbf1b06cf25282b95a20c9bf39863ea9914a0ce04a7b7b6a8e39bec55064b82',1,'correlation::plotters::PlotConfig']]],
+  ['linearalgebra_2ehpp_14',['LinearAlgebra.hpp',['../LinearAlgebra_8hpp.html',1,'']]],
+  ['linux_20arch_20manjaro_15',['Linux (Arch/Manjaro)',['../index.html#autotoc_md24',1,'']]],
+  ['linux_20debian_20ubuntu_16',['Linux (Debian/Ubuntu)',['../index.html#autotoc_md23',1,'']]],
+  ['liquids_20and_20for_20amorphous_20solids_17',['&lt;tt&gt;Correlation&lt;/tt&gt;: An Analysis Tool for Liquids and for Amorphous Solids',['../index.html#autotoc_md17',1,'']]],
+  ['load_20a_20structure_20file_18',['1. Load a Structure File',['../index.html#autotoc_md32',1,'']]],
+  ['load_5ffile_19',['load_file',['../classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b',1,'correlation::app::AppBackend']]],
+  ['load_5fthread_5f_20',['load_thread_',['../classcorrelation_1_1app_1_1AppController.html#ae34a525e3ada4e8ec9bce556f5a8e281',1,'correlation::app::AppController']]],
+  ['local_5fcycles_21',['local_cycles',['../MotifFinder_8cpp.html#a8b99dc8791651b0a76b664238ca6299c',1,'MotifFinder.cpp']]]
 ];

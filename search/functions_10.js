@@ -16,12 +16,15 @@ var searchData=
   ['setstructureanalyzer_13',['setStructureAnalyzer',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#ae3bfe7288a905e33aab2bc5d4c156fab',1,'correlation::analysis::DistributionFunctions']]],
   ['setstructureanalyzerowned_14',['setStructureAnalyzerOwned',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7d92fec63d1d7e053ea576cc72178f77',1,'correlation::analysis::DistributionFunctions']]],
   ['settimestep_15',['setTimeStep',['../classcorrelation_1_1core_1_1Trajectory.html#a97aa0098ccf0937b8b1d062ff6da124a',1,'correlation::core::Trajectory']]],
-  ['simd_5flevel_5fstring_16',['simd_level_string',['../namespacecorrelation_1_1math.html#a9ca1434627f5f17697c5e643283b3119',1,'correlation::math']]],
-  ['sinc_5fintegral_17',['sinc_integral',['../namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5',1,'correlation::math']]],
-  ['smooth_18',['smooth',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0a8516792ed6cd32baf7336b4b1c5c66',1,'correlation::analysis::DistributionFunctions']]],
-  ['smoothall_19',['smoothAll',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d02157dfbf2e3c4f0a1ec3cfdbc6877',1,'correlation::analysis::DistributionFunctions']]],
-  ['sph_5flegendre_20',['sph_legendre',['../namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be',1,'correlation::math']]],
-  ['sph_5flegendre_5fbatch_21',['sph_legendre_batch',['../namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd',1,'correlation::math']]],
-  ['sphericalharmonic_22',['sphericalHarmonic',['../classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a1af966279d10a10a96582b6ad7fe1fea',1,'correlation::calculators::SteinhardtCalculator']]],
-  ['structureanalyzer_23',['StructureAnalyzer',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a99458ce589aab1049af285e34c1de1db',1,'correlation::analysis::StructureAnalyzer']]]
+  ['setvelocity_16',['setVelocity',['../classcorrelation_1_1core_1_1Atom.html#ab426958365a774fe1ba4211658106e38',1,'correlation::core::Atom']]],
+  ['simd_5flevel_5fstring_17',['simd_level_string',['../namespacecorrelation_1_1math.html#a9ca1434627f5f17697c5e643283b3119',1,'correlation::math']]],
+  ['sinc_5fintegral_18',['sinc_integral',['../namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5',1,'correlation::math']]],
+  ['size_19',['size',['../classcorrelation_1_1core_1_1MappedFile.html#a3406de00785b1d686b71a7bdb4b10522',1,'correlation::core::MappedFile']]],
+  ['skiplineending_20',['skiplineending',['../namespacecorrelation_1_1readers.html#aeecd944a6e5fb74dd8b4e905dff79d31',1,'correlation::readers::skipLineEnding(const char *data, size_t total, size_t pos)'],['../namespacecorrelation_1_1readers.html#aeecd944a6e5fb74dd8b4e905dff79d31',1,'correlation::readers::skipLineEnding(const char *data, size_t total, size_t pos)'],['../namespacecorrelation_1_1readers.html#aeecd944a6e5fb74dd8b4e905dff79d31',1,'correlation::readers::skipLineEnding(const char *data, size_t total, size_t pos)']]],
+  ['smooth_21',['smooth',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0a8516792ed6cd32baf7336b4b1c5c66',1,'correlation::analysis::DistributionFunctions']]],
+  ['smoothall_22',['smoothAll',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d02157dfbf2e3c4f0a1ec3cfdbc6877',1,'correlation::analysis::DistributionFunctions']]],
+  ['sph_5flegendre_23',['sph_legendre',['../namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be',1,'correlation::math']]],
+  ['sph_5flegendre_5fbatch_24',['sph_legendre_batch',['../namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd',1,'correlation::math']]],
+  ['sphericalharmonic_25',['sphericalHarmonic',['../classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a1af966279d10a10a96582b6ad7fe1fea',1,'correlation::calculators::SteinhardtCalculator']]],
+  ['structureanalyzer_26',['StructureAnalyzer',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a44854180f88564c4cd5b279a80792f17',1,'correlation::analysis::StructureAnalyzer']]]
 ];

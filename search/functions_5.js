@@ -5,6 +5,10 @@ var searchData=
   ['fill_5fposition_5fblock_2',['fill_position_block',['../namespacecorrelation_1_1math.html#a86e5dbd68f161ef4b7efccc6671d7f11',1,'correlation::math']]],
   ['find_3',['find',['../namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d',1,'correlation::physics::detail']]],
   ['findelement_4',['findElement',['../classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec',1,'correlation::core::Cell']]],
-  ['findrings_5',['findRings',['../classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e',1,'correlation::calculators::MotifFinder']]],
-  ['fmtscientific_6',['fmtScientific',['../namespacecorrelation_1_1plotters_1_1detail.html#acc3b146009d0bcc061f938bfd8a6d637',1,'correlation::plotters::detail']]]
+  ['findlineend_5',['findlineend',['../namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316',1,'correlation::readers::findLineEnd(const char *data, size_t total, size_t pos)'],['../namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316',1,'correlation::readers::findLineEnd(const char *data, size_t total, size_t pos)'],['../namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316',1,'correlation::readers::findLineEnd(const char *data, size_t total, size_t pos)']]],
+  ['findreaderforfile_6',['findReaderForFile',['../namespacecorrelation_1_1readers.html#a3ef99725e64408c76e5b263610489f27',1,'correlation::readers']]],
+  ['findreaderfortype_7',['findReaderForType',['../namespacecorrelation_1_1readers.html#acf1e58dcdd62c332074bc4ff2e1f2521',1,'correlation::readers']]],
+  ['findrings_8',['findRings',['../classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e',1,'correlation::calculators::MotifFinder']]],
+  ['firstframe_9',['firstFrame',['../classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631',1,'correlation::core::Trajectory']]],
+  ['fmtscientific_10',['fmtScientific',['../namespacecorrelation_1_1plotters_1_1detail.html#acc3b146009d0bcc061f938bfd8a6d637',1,'correlation::plotters::detail']]]
 ];

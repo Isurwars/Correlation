@@ -1,0 +1,17 @@
+<map id="correlation::core::Trajectory::Trajectory" name="correlation::core::Trajectory::Trajectory">
+<area shape="rect" id="Node000001" title="Constructs a lazy&#45;loading trajectory from a memory&#45;mapped file." alt="" coords="5,9,163,49"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="665,5,859,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="163,25,463,21,617,21,652,22,652,27,617,27,463,27,163,31"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c" title="Pre&#45;calculates the squared bond cutoff distances for every pair of element types using the elements f..." alt="" coords="211,55,415,110"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="164,45,198,53,197,58,162,50"/>
+<area shape="poly" id="edge8_Node000003_Node000002" title=" " alt="" coords="414,57,462,48,559,36,651,29,652,34,560,42,463,53,415,62"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="472,63,608,103"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="415,80,458,80,458,85,415,85"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1physics.html#a4e90ea9ce5cac6e6e04b66a3fa355ea5" title="Retrieves the covalent radius of a given chemical element." alt="" coords="463,191,617,231"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="354,108,405,142,464,176,476,183,474,187,461,181,403,147,351,112"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="463,127,617,167"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="411,108,456,120,454,125,410,113"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="687,191,837,231"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="617,208,674,208,674,213,617,213"/>
+<area shape="poly" id="edge7_Node000007_Node000002" title=" " alt="" coords="591,124,616,112,719,51,721,55,619,117,593,129"/>
+</map>

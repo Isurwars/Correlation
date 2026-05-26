@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -101,9 +101,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a805b22ddc4294b3244105927fefe5c0c" id="r_a805b22ddc4294b3244105927fefe5c0c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a805b22ddc4294b3244105927fefe5c0c">registerReader</a> (std::unique_ptr&lt; <a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">BaseReader</a> &gt; reader)</td></tr>
 <tr class="memdesc:a805b22ddc4294b3244105927fefe5c0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new reader.  <br /></td></tr>
 <tr class="separator:a805b22ddc4294b3244105927fefe5c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6861c6c206660e7d8ea866fb76b02f0e" id="r_a6861c6c206660e7d8ea866fb76b02f0e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">BaseReader</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a6861c6c206660e7d8ea866fb76b02f0e">getReaderForExtension</a> (const std::string &amp;extension)</td></tr>
-<tr class="memdesc:a6861c6c206660e7d8ea866fb76b02f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a reader that supports the given file extension.  <br /></td></tr>
-<tr class="separator:a6861c6c206660e7d8ea866fb76b02f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add5e3884ee96a6941a7e1e2474828722" id="r_add5e3884ee96a6941a7e1e2474828722"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">BaseReader</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ReaderFactory.html#add5e3884ee96a6941a7e1e2474828722">getReaderForExtension</a> (const std::string &amp;extension, const std::string &amp;filename=&quot;&quot;)</td></tr>
+<tr class="memdesc:add5e3884ee96a6941a7e1e2474828722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds a reader that supports the given file extension.  <br /></td></tr>
+<tr class="separator:add5e3884ee96a6941a7e1e2474828722"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa62ceba2eb2b0839489fe4bf6e3d5d35" id="r_aa62ceba2eb2b0839489fe4bf6e3d5d35"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ReaderFactory.html#aa62ceba2eb2b0839489fe4bf6e3d5d35">getAllExtensions</a> () const</td></tr>
 <tr class="memdesc:aa62ceba2eb2b0839489fe4bf6e3d5d35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all registered extensions.  <br /></td></tr>
 <tr class="separator:aa62ceba2eb2b0839489fe4bf6e3d5d35"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,8 +179,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a6861c6c206660e7d8ea866fb76b02f0e" name="a6861c6c206660e7d8ea866fb76b02f0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6861c6c206660e7d8ea866fb76b02f0e">&#9670;&#160;</a></span>getReaderForExtension()</h2>
+<a id="add5e3884ee96a6941a7e1e2474828722" name="add5e3884ee96a6941a7e1e2474828722"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add5e3884ee96a6941a7e1e2474828722">&#9670;&#160;</a></span>getReaderForExtension()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -189,8 +189,18 @@ Private Attributes</h2></td></tr>
           <td class="memname"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">BaseReader</a> * correlation::readers::ReaderFactory::getReaderForExtension </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>extension</em></td><td>)</td>
+          <td class="paramname"><em>extension</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -199,6 +209,7 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">extension</td><td>The file extension (e.g., ".car"). </td></tr>
+    <tr><td class="paramname">filename</td><td>Optional filename used for content-sniffing. </td></tr>
   </table>
   </dd>
 </dl>
@@ -206,26 +217,33 @@ Private Attributes</h2></td></tr>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1readers_1_1ReaderFactory_a6861c6c206660e7d8ea866fb76b02f0e_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ReaderFactory_a6861c6c206660e7d8ea866fb76b02f0e_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1readers_1_1ReaderFactory_a6861c6c206660e7d8ea866fb76b02f0e_icgraph" id="aclasscorrelation_1_1readers_1_1ReaderFactory_a6861c6c206660e7d8ea866fb76b02f0e_icgraph">
-<area shape="rect" title="Finds a reader that supports the given file extension." alt="" coords="1001,48,1219,103"/>
-<area shape="rect" href="io__bindings_8cpp.html#ab2440ee9944ff020b521712d6b381890" title=" " alt="" coords="847,5,910,31"/>
-<area shape="poly" title=" " alt="" coords="987,48,909,28,911,23,988,42"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,55,953,95"/>
-<area shape="poly" title=" " alt="" coords="988,78,954,78,954,73,988,73"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,119,953,159"/>
-<area shape="poly" title=" " alt="" coords="998,109,952,122,951,117,997,104"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="575,5,725,31"/>
-<area shape="poly" title=" " alt="" coords="834,21,726,21,726,15,834,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,87,756,127"/>
-<area shape="poly" title=" " alt="" coords="791,90,757,95,756,90,790,85"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,58,496,98"/>
-<area shape="poly" title=" " alt="" coords="530,97,496,93,497,88,531,91"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,123,413,148"/>
-<area shape="poly" title=" " alt="" coords="531,123,413,135,412,130,530,117"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,58,227,98"/>
-<area shape="poly" title=" " alt="" coords="261,81,227,81,227,75,261,75"/>
-<area shape="poly" title=" " alt="" coords="790,130,756,125,757,120,791,124"/>
+<div class="center"><img src="classcorrelation_1_1readers_1_1ReaderFactory_add5e3884ee96a6941a7e1e2474828722_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ReaderFactory_add5e3884ee96a6941a7e1e2474828722_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1ReaderFactory_add5e3884ee96a6941a7e1e2474828722_icgraph" id="aclasscorrelation_1_1readers_1_1ReaderFactory_add5e3884ee96a6941a7e1e2474828722_icgraph">
+<area shape="rect" title="Finds a reader that supports the given file extension." alt="" coords="1201,91,1419,146"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a3ef99725e64408c76e5b263610489f27" title="Finds a reader for the given filename." alt="" coords="1003,69,1153,109"/>
+<area shape="poly" title=" " alt="" coords="1187,106,1153,101,1153,96,1188,101"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,69,756,109"/>
+<area shape="poly" title=" " alt="" coords="1188,129,1006,134,904,131,804,124,731,112,732,107,804,119,905,126,1006,128,1187,124"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#acf1e58dcdd62c332074bc4ff2e1f2521" title=" " alt="" coords="1003,5,1153,45"/>
+<area shape="poly" title=" " alt="" coords="1228,89,1128,48,1130,43,1230,84"/>
+<area shape="rect" href="io__bindings_8cpp.html#ab2440ee9944ff020b521712d6b381890" title=" " alt="" coords="1047,185,1109,210"/>
+<area shape="poly" title=" " alt="" coords="1217,153,1111,189,1109,184,1215,148"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="805,5,954,45"/>
+<area shape="poly" title=" " alt="" coords="1001,68,941,48,943,43,1003,63"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="805,69,954,109"/>
+<area shape="poly" title=" " alt="" coords="990,92,955,92,955,87,990,87"/>
+<area shape="poly" title=" " alt="" coords="795,52,723,72,721,67,793,46"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,40,496,80"/>
+<area shape="poly" title=" " alt="" coords="530,79,496,75,497,70,531,73"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,105,413,130"/>
+<area shape="poly" title=" " alt="" coords="531,105,413,117,412,112,530,99"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,40,227,80"/>
+<area shape="poly" title=" " alt="" coords="261,63,227,63,227,57,261,57"/>
+<area shape="poly" title=" " alt="" coords="791,92,756,92,756,87,791,87"/>
+<area shape="poly" title=" " alt="" coords="989,28,954,28,954,23,989,23"/>
+<area shape="poly" title=" " alt="" coords="1003,52,943,72,941,67,1001,47"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="804,185,955,210"/>
+<area shape="poly" title=" " alt="" coords="1033,200,955,200,955,195,1033,195"/>
 </map>
 </div>
 
@@ -279,24 +297,31 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1ReaderFactory_a1d9048e4098aee797b7142e44d9e5378_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ReaderFactory_a1d9048e4098aee797b7142e44d9e5378_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1ReaderFactory_a1d9048e4098aee797b7142e44d9e5378_icgraph" id="aclasscorrelation_1_1readers_1_1ReaderFactory_a1d9048e4098aee797b7142e44d9e5378_icgraph">
-<area shape="rect" title=" " alt="" coords="1001,55,1187,95"/>
-<area shape="rect" href="io__bindings_8cpp.html#ab2440ee9944ff020b521712d6b381890" title=" " alt="" coords="847,5,910,31"/>
-<area shape="poly" title=" " alt="" coords="1004,54,910,29,911,24,1006,49"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,55,953,95"/>
-<area shape="poly" title=" " alt="" coords="988,78,953,78,953,73,988,73"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,119,953,159"/>
-<area shape="poly" title=" " alt="" coords="1013,102,947,122,946,117,1012,97"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="575,5,725,31"/>
-<area shape="poly" title=" " alt="" coords="834,21,726,21,726,15,834,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,87,756,127"/>
-<area shape="poly" title=" " alt="" coords="791,90,757,95,756,90,790,85"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,58,496,98"/>
-<area shape="poly" title=" " alt="" coords="530,97,496,93,497,88,531,91"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,123,413,148"/>
-<area shape="poly" title=" " alt="" coords="531,123,413,135,412,130,530,117"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,58,227,98"/>
-<area shape="poly" title=" " alt="" coords="261,81,227,81,227,75,261,75"/>
-<area shape="poly" title=" " alt="" coords="790,130,756,125,757,120,791,124"/>
+<area shape="rect" title=" " alt="" coords="1201,99,1387,139"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a3ef99725e64408c76e5b263610489f27" title="Finds a reader for the given filename." alt="" coords="1003,69,1153,109"/>
+<area shape="poly" title=" " alt="" coords="1187,107,1153,102,1153,97,1188,102"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,69,756,109"/>
+<area shape="poly" title=" " alt="" coords="1187,128,1008,133,905,131,804,124,731,112,732,107,804,119,906,126,1008,128,1187,123"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#acf1e58dcdd62c332074bc4ff2e1f2521" title=" " alt="" coords="1003,5,1153,45"/>
+<area shape="poly" title=" " alt="" coords="1234,95,1152,60,1125,48,1127,43,1154,55,1236,91"/>
+<area shape="rect" href="io__bindings_8cpp.html#ab2440ee9944ff020b521712d6b381890" title=" " alt="" coords="1047,185,1109,210"/>
+<area shape="poly" title=" " alt="" coords="1226,146,1111,189,1109,184,1225,141"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="805,5,954,45"/>
+<area shape="poly" title=" " alt="" coords="1001,68,941,48,943,43,1003,63"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="805,69,954,109"/>
+<area shape="poly" title=" " alt="" coords="990,92,955,92,955,87,990,87"/>
+<area shape="poly" title=" " alt="" coords="795,52,723,72,721,67,793,46"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,40,496,80"/>
+<area shape="poly" title=" " alt="" coords="530,79,496,75,497,70,531,73"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,105,413,130"/>
+<area shape="poly" title=" " alt="" coords="531,105,413,117,412,112,530,99"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,40,227,80"/>
+<area shape="poly" title=" " alt="" coords="261,63,227,63,227,57,261,57"/>
+<area shape="poly" title=" " alt="" coords="791,92,756,92,756,87,791,87"/>
+<area shape="poly" title=" " alt="" coords="989,28,954,28,954,23,989,23"/>
+<area shape="poly" title=" " alt="" coords="1003,52,943,72,941,67,1001,47"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="804,185,955,210"/>
+<area shape="poly" title=" " alt="" coords="1033,200,955,200,955,195,1033,195"/>
 </map>
 </div>
 

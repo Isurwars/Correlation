@@ -1,5 +1,9 @@
 <map id="correlation::readers::XdatcarReader::readTrajectory" name="correlation::readers::XdatcarReader::readTrajectory">
-<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="5,5,232,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1XdatcarReader.html#a488765973a4440d21b01e2fe2be053c2" title="Low&#45;level parser for XDATCAR files." alt="" coords="280,5,443,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="232,23,266,23,266,28,232,28"/>
+<area shape="rect" id="Node000001" title="Reads a trajectory from a file." alt="" coords="5,69,232,109"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1readers.html#ab8dd69741ce32648595594745c47c73f" title=" " alt="" coords="280,5,429,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,67,267,46,268,51,194,72"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316" title=" " alt="" coords="280,69,429,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,87,266,87,266,92,232,92"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1readers.html#aeecd944a6e5fb74dd8b4e905dff79d31" title=" " alt="" coords="280,133,429,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="194,107,268,127,267,132,192,112"/>
 </map>

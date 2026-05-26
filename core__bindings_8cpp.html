@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -90,6 +90,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="Atom_8hpp_source.html">core/Atom.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Cell_8hpp_source.html">core/Cell.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
+<code>#include &lt;pybind11/numpy.h&gt;</code><br />
 <code>#include &lt;pybind11/pybind11.h&gt;</code><br />
 <code>#include &lt;pybind11/stl.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -97,47 +98,54 @@ Include dependency graph for core_bindings.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="core__bindings_8cpp__incl.png" border="0" usemap="#asrc_2bindings_2core__bindings_8cpp" alt=""/></div>
 <map name="asrc_2bindings_2core__bindings_8cpp" id="asrc_2bindings_2core__bindings_8cpp">
-<area shape="rect" title=" " alt="" coords="200,5,421,31"/>
-<area shape="rect" href="core__bindings_8hpp.html" title=" " alt="" coords="107,79,247,104"/>
-<area shape="poly" title=" " alt="" coords="290,33,212,74,210,70,288,28"/>
-<area shape="rect" title=" " alt="" coords="39,152,198,177"/>
-<area shape="poly" title=" " alt="" coords="233,33,150,53,117,65,97,80,91,94,92,109,105,139,100,141,87,110,86,93,93,77,114,61,149,47,232,28"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="96,225,213,251"/>
-<area shape="poly" title=" " alt="" coords="307,32,269,96,211,179,177,217,173,214,207,176,264,94,302,30"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="323,152,429,177"/>
-<area shape="poly" title=" " alt="" coords="318,30,368,138,363,141,314,32"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="373,79,517,104"/>
-<area shape="poly" title=" " alt="" coords="334,28,412,70,410,74,331,33"/>
-<area shape="rect" title=" " alt="" coords="541,79,656,104"/>
-<area shape="poly" title=" " alt="" coords="358,28,539,73,538,78,356,33"/>
-<area shape="poly" title=" " alt="" coords="170,106,139,143,135,140,166,103"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="361,299,540,324"/>
-<area shape="poly" title=" " alt="" coords="203,248,390,293,389,298,202,253"/>
-<area shape="rect" title=" " alt="" coords="96,299,181,324"/>
-<area shape="poly" title=" " alt="" coords="155,252,147,286,142,285,149,250"/>
-<area shape="rect" title=" " alt="" coords="5,299,72,324"/>
-<area shape="poly" title=" " alt="" coords="137,253,71,294,68,289,135,248"/>
-<area shape="rect" title=" " alt="" coords="205,299,264,324"/>
-<area shape="poly" title=" " alt="" coords="169,249,213,288,210,292,166,253"/>
-<area shape="rect" title=" " alt="" coords="273,372,329,397"/>
-<area shape="poly" title=" " alt="" coords="428,326,339,368,337,364,426,322"/>
-<area shape="rect" title=" " alt="" coords="470,372,533,397"/>
-<area shape="poly" title=" " alt="" coords="461,323,487,359,483,362,457,326"/>
-<area shape="rect" title=" " alt="" coords="557,372,643,397"/>
-<area shape="poly" title=" " alt="" coords="476,322,564,364,562,368,474,326"/>
-<area shape="rect" title=" " alt="" coords="354,372,446,397"/>
-<area shape="poly" title=" " alt="" coords="444,326,418,362,414,359,440,323"/>
-<area shape="poly" title=" " alt="" coords="341,180,204,224,202,219,340,175"/>
-<area shape="poly" title=" " alt="" coords="390,176,409,197,428,224,440,255,449,284,443,286,435,257,423,227,405,200,386,179"/>
-<area shape="poly" title=" " alt="" coords="365,179,346,200,329,227,317,261,310,296,304,358,299,358,304,296,312,259,324,224,342,197,361,176"/>
-<area shape="poly" title=" " alt="" coords="353,180,318,200,285,227,263,257,247,287,242,285,258,254,281,223,315,195,350,175"/>
-<area shape="rect" title=" " alt="" coords="339,225,413,251"/>
-<area shape="poly" title=" " alt="" coords="379,178,379,212,373,212,373,178"/>
-<area shape="rect" title=" " alt="" coords="489,225,551,251"/>
-<area shape="poly" title=" " alt="" coords="400,175,485,217,483,221,398,180"/>
-<area shape="poly" title=" " alt="" coords="463,102,517,150,545,185,565,224,569,238,565,252,540,278,509,296,507,291,537,274,560,249,564,238,560,226,540,188,513,154,460,106"/>
-<area shape="poly" title=" " alt="" coords="436,106,399,144,395,140,432,102"/>
-<area shape="poly" title=" " alt="" coords="454,103,510,212,505,214,449,106"/>
+<area shape="rect" title=" " alt="" coords="205,5,426,31"/>
+<area shape="rect" href="core__bindings_8hpp.html" title=" " alt="" coords="5,79,145,104"/>
+<area shape="poly" title=" " alt="" coords="278,33,128,77,127,72,276,28"/>
+<area shape="rect" title=" " alt="" coords="17,152,176,177"/>
+<area shape="poly" title=" " alt="" coords="296,33,217,81,124,146,121,141,214,76,293,29"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="121,225,238,251"/>
+<area shape="poly" title=" " alt="" coords="310,32,196,215,192,212,306,30"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="271,152,378,177"/>
+<area shape="poly" title=" " alt="" coords="319,31,326,138,320,138,313,31"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="353,79,497,104"/>
+<area shape="poly" title=" " alt="" coords="334,28,397,69,394,73,331,33"/>
+<area shape="rect" title=" " alt="" coords="521,79,662,104"/>
+<area shape="poly" title=" " alt="" coords="360,28,534,73,533,78,359,33"/>
+<area shape="rect" title=" " alt="" coords="686,79,801,104"/>
+<area shape="poly" title=" " alt="" coords="385,28,673,76,672,81,384,33"/>
+<area shape="poly" title=" " alt="" coords="81,104,92,138,87,140,76,105"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="363,299,542,324"/>
+<area shape="poly" title=" " alt="" coords="224,248,396,293,395,298,223,253"/>
+<area shape="rect" title=" " alt="" coords="121,299,206,324"/>
+<area shape="poly" title=" " alt="" coords="179,252,171,286,166,285,174,250"/>
+<area shape="rect" title=" " alt="" coords="30,299,97,324"/>
+<area shape="poly" title=" " alt="" coords="162,253,95,294,93,289,159,248"/>
+<area shape="rect" title=" " alt="" coords="230,299,289,324"/>
+<area shape="poly" title=" " alt="" coords="194,249,238,288,234,292,190,253"/>
+<area shape="rect" title=" " alt="" coords="298,372,354,397"/>
+<area shape="poly" title=" " alt="" coords="434,326,360,367,357,363,431,322"/>
+<area shape="rect" title=" " alt="" coords="379,372,441,397"/>
+<area shape="poly" title=" " alt="" coords="448,326,426,362,422,359,443,323"/>
+<area shape="rect" title=" " alt="" coords="465,372,552,397"/>
+<area shape="poly" title=" " alt="" coords="464,323,493,360,489,363,460,326"/>
+<area shape="rect" title=" " alt="" coords="576,372,668,397"/>
+<area shape="poly" title=" " alt="" coords="481,322,583,364,581,369,479,326"/>
+<area shape="poly" title=" " alt="" coords="302,180,216,222,214,217,300,175"/>
+<area shape="poly" title=" " alt="" coords="337,176,435,287,431,290,333,180"/>
+<area shape="poly" title=" " alt="" coords="327,178,329,358,323,358,322,178"/>
+<area shape="poly" title=" " alt="" coords="322,179,273,287,268,285,317,177"/>
+<area shape="rect" title=" " alt="" coords="505,225,579,251"/>
+<area shape="poly" title=" " alt="" coords="360,175,495,218,493,224,359,180"/>
+<area shape="rect" title=" " alt="" coords="415,225,477,251"/>
+<area shape="poly" title=" " alt="" coords="346,175,416,216,413,221,343,180"/>
+<area shape="poly" title=" " alt="" coords="477,102,523,120,545,133,565,150,579,168,587,184,594,225,597,239,594,252,566,279,532,297,530,292,563,275,589,249,592,239,589,226,581,186,575,171,561,154,542,138,521,125,475,106"/>
+<area shape="poly" title=" " alt="" coords="410,106,354,146,351,142,407,102"/>
+<area shape="poly" title=" " alt="" coords="474,102,513,120,530,133,544,151,551,166,553,182,551,212,546,212,548,182,546,167,540,153,527,137,510,124,472,106"/>
+<area shape="poly" title=" " alt="" coords="429,104,445,211,440,212,424,105"/>
+<area shape="rect" title=" " alt="" coords="656,152,743,177"/>
+<area shape="poly" title=" " alt="" coords="469,101,643,146,642,151,468,107"/>
+<area shape="rect" title=" " alt="" coords="453,152,530,177"/>
+<area shape="poly" title=" " alt="" coords="438,103,473,140,469,144,434,106"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -167,41 +175,46 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="core__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_cgraph.png" border="0" usemap="#acore__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_cgraph" alt=""/></div>
 <map name="acore__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_cgraph" id="acore__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_cgraph">
-<area shape="rect" title=" " alt="" coords="5,461,84,486"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="161,5,297,45"/>
-<area shape="poly" title=" " alt="" coords="44,460,52,379,68,258,93,137,110,89,130,56,147,42,150,46,134,59,115,91,99,139,73,259,57,380,50,461"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="161,69,297,109"/>
-<area shape="poly" title=" " alt="" coords="45,460,54,391,72,289,97,187,113,147,130,120,147,106,150,110,134,123,117,150,102,189,77,290,59,391,50,461"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#a11daa091c7d80d03ac34da852c78b1b9" title="Gets the element type of the atom." alt="" coords="161,133,297,173"/>
-<area shape="poly" title=" " alt="" coords="43,460,46,410,57,336,68,295,83,255,104,217,130,183,147,171,150,175,134,187,108,220,88,257,73,297,62,337,51,410,49,461"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="161,197,297,237"/>
-<area shape="poly" title=" " alt="" coords="45,460,51,420,65,363,90,301,108,273,130,247,147,235,150,240,134,251,112,276,95,304,70,364,56,421,50,461"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="132,261,325,301"/>
-<area shape="poly" title=" " alt="" coords="47,460,57,430,73,390,98,348,130,311,137,306,140,311,134,315,102,351,78,392,62,431,52,461"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="147,325,310,365"/>
-<area shape="poly" title=" " alt="" coords="52,459,83,418,106,395,130,375,141,369,143,374,134,380,109,399,88,421,57,462"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="141,389,317,429"/>
-<area shape="poly" title=" " alt="" coords="78,458,131,439,153,431,154,436,133,444,80,463"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#ad08b4084233efbc080abdd593398f239" title="Gets the unique ID of the atom." alt="" coords="161,453,297,493"/>
-<area shape="poly" title=" " alt="" coords="84,471,147,471,147,476,84,476"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#aab506552a0928b7e428cff13e4d50635" title="Gets the position of the atom." alt="" coords="161,517,297,557"/>
-<area shape="poly" title=" " alt="" coords="80,484,133,503,154,510,153,515,131,508,78,489"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#aebe7588bfa94d50323282b04d65dbe7c" title="Sets the element type of the atom." alt="" coords="159,581,298,621"/>
-<area shape="poly" title=" " alt="" coords="57,485,88,525,109,548,133,567,148,575,146,580,131,572,106,552,83,529,52,488"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="161,645,297,685"/>
-<area shape="poly" title=" " alt="" coords="52,485,62,515,78,554,102,596,134,631,150,642,147,646,130,635,98,599,73,557,57,517,47,487"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#a2f1ed4e3d2cf0e8f99fa956de01b7b67" title="Sets the unique ID of the atom." alt="" coords="161,709,297,749"/>
-<area shape="poly" title=" " alt="" coords="50,486,56,526,70,582,95,643,112,671,134,695,150,707,147,711,130,699,108,674,90,645,65,584,51,527,45,486"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#a5c6907abaca8061e060ee5221930a1c0" title="Sets the position of the atom." alt="" coords="160,773,297,813"/>
-<area shape="poly" title=" " alt="" coords="49,486,51,536,62,610,73,650,88,689,108,727,134,759,149,771,146,776,130,763,104,730,83,692,68,651,57,611,46,537,43,486"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a97aa0098ccf0937b8b1d062ff6da124a" title="Sets the time step between frames." alt="" coords="141,837,316,877"/>
-<area shape="poly" title=" " alt="" coords="50,486,59,555,77,657,102,758,117,797,134,824,138,827,134,831,130,827,113,799,97,759,72,658,54,556,45,486"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="161,901,297,941"/>
-<area shape="poly" title=" " alt="" coords="50,486,57,567,73,688,99,808,115,856,134,888,150,901,147,905,130,891,110,858,93,810,68,688,52,567,44,486"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="373,5,572,45"/>
-<area shape="poly" title=" " alt="" coords="297,23,359,23,359,28,297,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="620,5,756,45"/>
-<area shape="poly" title=" " alt="" coords="572,23,606,23,606,28,572,28"/>
+<area shape="rect" title=" " alt="" coords="5,479,84,505"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="153,5,289,45"/>
+<area shape="poly" title=" " alt="" coords="44,479,51,395,67,268,93,141,110,91,130,56,140,46,144,50,134,59,115,93,98,143,72,269,57,395,50,479"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="153,69,289,109"/>
+<area shape="poly" title=" " alt="" coords="45,479,54,406,71,298,96,192,112,149,130,120,139,111,143,115,134,123,117,151,101,193,76,299,59,406,50,479"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#a11daa091c7d80d03ac34da852c78b1b9" title="Gets the element type of the atom." alt="" coords="153,133,289,173"/>
+<area shape="poly" title=" " alt="" coords="43,479,45,426,56,347,66,304,82,261,103,220,130,184,139,175,143,179,134,187,107,223,86,263,71,305,61,348,50,426,48,479"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="153,197,289,237"/>
+<area shape="poly" title=" " alt="" coords="45,479,51,437,65,377,90,313,108,282,130,254,143,243,147,247,134,258,113,285,95,315,70,379,56,438,50,479"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="625,283,819,323"/>
+<area shape="poly" title=" " alt="" coords="45,479,50,441,65,391,90,339,108,316,131,298,168,282,218,272,278,267,345,267,485,273,612,286,611,291,485,279,345,272,278,273,219,278,169,287,133,302,112,320,95,342,70,393,56,442,50,480"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="140,312,303,352"/>
+<area shape="poly" title=" " alt="" coords="49,478,78,423,102,390,130,362,138,357,141,361,134,366,106,394,83,425,54,480"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="133,376,309,416"/>
+<area shape="poly" title=" " alt="" coords="59,477,91,452,131,426,144,419,146,424,133,430,94,456,62,481"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#ad08b4084233efbc080abdd593398f239" title="Gets the unique ID of the atom." alt="" coords="153,440,289,480"/>
+<area shape="poly" title=" " alt="" coords="84,482,139,472,140,477,85,488"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="132,504,311,544"/>
+<area shape="poly" title=" " alt="" coords="85,496,119,503,118,508,84,502"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#aab506552a0928b7e428cff13e4d50635" title="Gets the position of the atom." alt="" coords="153,568,289,608"/>
+<area shape="poly" title=" " alt="" coords="62,503,94,528,133,554,146,560,144,565,131,558,91,532,59,507"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#aebe7588bfa94d50323282b04d65dbe7c" title="Sets the element type of the atom." alt="" coords="152,632,291,672"/>
+<area shape="poly" title=" " alt="" coords="54,504,83,559,106,590,134,618,141,623,138,628,130,622,102,594,78,561,49,506"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="153,696,289,736"/>
+<area shape="poly" title=" " alt="" coords="51,504,59,539,74,587,99,638,115,661,134,682,143,689,140,694,130,686,111,665,94,640,69,589,54,541,46,505"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#a2f1ed4e3d2cf0e8f99fa956de01b7b67" title="Sets the unique ID of the atom." alt="" coords="153,760,289,800"/>
+<area shape="poly" title=" " alt="" coords="49,505,54,550,67,615,92,685,111,717,134,746,143,754,139,758,130,750,106,720,87,687,61,616,49,551,44,505"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Atom.html#a5c6907abaca8061e060ee5221930a1c0" title="Sets the position of the atom." alt="" coords="153,824,290,864"/>
+<area shape="poly" title=" " alt="" coords="48,505,49,560,59,641,70,686,85,731,106,773,134,810,143,818,139,822,130,814,102,776,80,733,65,688,54,642,44,560,43,505"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a97aa0098ccf0937b8b1d062ff6da124a" title="Sets the time step between frames." alt="" coords="134,888,309,928"/>
+<area shape="poly" title=" " alt="" coords="50,505,59,580,75,691,101,801,116,845,134,874,138,878,134,882,130,878,112,847,96,803,70,692,53,581,45,505"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="153,952,289,992"/>
+<area shape="poly" title=" " alt="" coords="49,505,56,591,72,721,83,789,97,852,114,903,134,938,144,947,140,951,130,942,109,905,92,853,78,790,66,722,51,591,44,505"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="369,5,567,45"/>
+<area shape="poly" title=" " alt="" coords="289,23,355,23,355,28,289,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="654,5,790,45"/>
+<area shape="poly" title=" " alt="" coords="568,23,641,23,641,28,568,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="359,312,577,352"/>
+<area shape="poly" title=" " alt="" coords="303,329,345,329,345,335,303,335"/>
+<area shape="poly" title=" " alt="" coords="577,317,611,313,612,318,578,322"/>
 </map>
 </div>
 <div class="dynheader">
@@ -210,7 +223,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="core__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_icgraph.png" border="0" usemap="#acore__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_icgraph" alt=""/></div>
 <map name="acore__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_icgraph" id="acore__bindings_8cpp_a8b57c30b48d2aeb968a602bac23c387d_icgraph">
 <area shape="rect" title=" " alt="" coords="204,5,283,31"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,5,156,31"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,5,156,31"/>
 <area shape="poly" title=" " alt="" coords="190,21,156,21,156,15,190,15"/>
 </map>
 </div>

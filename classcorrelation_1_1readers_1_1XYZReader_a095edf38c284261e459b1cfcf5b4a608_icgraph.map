@@ -1,0 +1,7 @@
+<map id="correlation::readers::XYZReader::parseXYZFrame" name="correlation::readers::XYZReader::parseXYZFrame">
+<area shape="rect" id="Node000001" title=" " alt="" coords="503,5,716,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,5,455,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="489,28,455,28,455,23,489,23"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="239,28,204,28,204,23,239,23"/>
+</map>

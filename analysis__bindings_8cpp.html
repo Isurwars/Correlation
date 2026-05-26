@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -97,6 +97,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Smoothing_8hpp_source.html">math/Smoothing.hpp</a>&quot;</code><br />
 <code>#include &lt;pybind11/functional.h&gt;</code><br />
+<code>#include &lt;pybind11/numpy.h&gt;</code><br />
 <code>#include &lt;pybind11/pybind11.h&gt;</code><br />
 <code>#include &lt;pybind11/stl.h&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
@@ -105,88 +106,95 @@ Include dependency graph for analysis_bindings.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="analysis__bindings_8cpp__incl.png" border="0" usemap="#asrc_2bindings_2analysis__bindings_8cpp" alt=""/></div>
 <map name="asrc_2bindings_2analysis__bindings_8cpp" id="asrc_2bindings_2analysis__bindings_8cpp">
-<area shape="rect" title="Pybind11 bindings for correlation::analysis types." alt="" coords="920,5,1079,45"/>
+<area shape="rect" title="Pybind11 bindings for correlation::analysis types." alt="" coords="889,5,1048,45"/>
 <area shape="rect" href="analysis__bindings_8hpp.html" title=" " alt="" coords="61,93,228,119"/>
-<area shape="poly" title=" " alt="" coords="920,36,248,96,242,97,241,91,247,91,919,31"/>
+<area shape="poly" title=" " alt="" coords="889,36,248,96,242,97,241,91,247,91,889,31"/>
 <area shape="rect" title=" " alt="" coords="5,167,164,192"/>
-<area shape="poly" title=" " alt="" coords="920,29,700,30,425,39,293,47,179,59,95,75,67,85,51,95,44,108,46,123,65,154,61,157,41,125,39,107,47,92,65,80,93,70,179,54,292,42,424,33,700,25,920,24"/>
-<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="615,93,861,119"/>
-<area shape="poly" title=" " alt="" coords="938,48,790,92,789,87,936,43"/>
-<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="404,167,627,192"/>
-<area shape="poly" title=" " alt="" coords="920,29,850,34,769,44,685,64,605,96,565,124,534,157,530,154,561,120,602,91,683,59,768,39,849,28,920,24"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="389,240,495,265"/>
-<area shape="poly" title=" " alt="" coords="920,34,780,48,616,73,539,91,471,112,417,138,398,153,384,168,380,184,386,200,398,216,414,230,411,234,394,220,381,203,375,184,380,165,394,149,415,134,469,107,537,85,615,68,779,43,920,29"/>
-<area shape="rect" title=" " alt="" coords="1281,460,1368,485"/>
-<area shape="poly" title=" " alt="" coords="1080,39,1173,62,1270,93,1312,111,1346,131,1369,153,1378,178,1378,327,1374,362,1365,395,1341,449,1336,447,1360,393,1369,361,1373,327,1373,178,1365,156,1343,135,1309,116,1268,98,1171,67,1078,45"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="1090,167,1234,192"/>
-<area shape="poly" title=" " alt="" coords="1055,43,1093,63,1128,92,1147,121,1159,152,1154,154,1143,124,1124,95,1090,68,1052,48"/>
-<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="1077,240,1236,265"/>
-<area shape="poly" title=" " alt="" coords="1078,43,1125,61,1173,86,1216,121,1234,142,1249,166,1251,188,1241,207,1222,223,1200,236,1197,232,1219,219,1236,204,1246,187,1243,168,1230,145,1213,125,1170,91,1123,66,1076,48"/>
-<area shape="rect" href="TrajectoryAnalyzer_8hpp.html" title="correlation::core::Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="885,93,1113,119"/>
-<area shape="poly" title=" " alt="" coords="1002,46,1002,79,997,79,997,46"/>
-<area shape="rect" title=" " alt="" coords="1413,93,1575,119"/>
-<area shape="poly" title=" " alt="" coords="1079,37,1409,89,1408,94,1078,42"/>
-<area shape="rect" title=" " alt="" coords="1599,93,1714,119"/>
-<area shape="poly" title=" " alt="" coords="1079,32,1303,56,1586,91,1585,96,1302,61,1079,37"/>
+<area shape="poly" title=" " alt="" coords="889,29,676,31,410,40,283,48,174,60,93,76,66,85,51,95,44,108,46,123,65,154,61,157,41,125,39,108,47,92,64,80,92,70,174,55,283,43,410,34,676,26,889,24"/>
+<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="508,93,755,119"/>
+<area shape="poly" title=" " alt="" coords="890,48,694,93,693,88,889,42"/>
+<area shape="rect" href="StructureAnalyzer_8hpp.html" title="Structural analysis utilities for neighbor detection and bond topology." alt="" coords="1140,167,1363,192"/>
+<area shape="poly" title=" " alt="" coords="1005,43,1219,158,1217,162,1003,48"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="1030,240,1137,265"/>
+<area shape="poly" title=" " alt="" coords="1048,26,1130,35,1221,58,1265,76,1308,100,1346,129,1378,165,1383,180,1377,194,1350,204,1292,216,1151,243,1150,237,1291,211,1348,199,1374,190,1378,179,1373,168,1342,133,1305,104,1263,81,1219,63,1129,41,1048,31"/>
+<area shape="rect" title=" " alt="" coords="273,460,360,485"/>
+<area shape="poly" title=" " alt="" coords="889,30,714,37,611,46,509,59,415,78,339,104,309,120,287,137,273,157,269,178,269,327,272,361,281,393,305,447,301,449,276,395,267,362,263,327,263,178,269,154,283,134,306,115,336,99,414,73,508,54,611,40,714,32,889,25"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="922,167,1066,192"/>
+<area shape="poly" title=" " alt="" coords="990,44,1007,66,1021,93,1023,109,1021,126,1011,155,1006,153,1016,124,1018,109,1015,94,1003,69,986,47"/>
+<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="321,240,480,265"/>
+<area shape="poly" title=" " alt="" coords="889,30,806,35,706,46,600,66,496,96,428,120,404,138,382,168,377,182,378,197,388,227,383,229,373,198,372,181,377,165,400,134,426,115,495,91,599,60,705,41,805,30,889,25"/>
+<area shape="rect" href="TrajectoryAnalyzer_8hpp.html" title="correlation::core::Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="779,93,1007,119"/>
+<area shape="poly" title=" " alt="" coords="952,47,916,85,912,81,948,44"/>
+<area shape="rect" title=" " alt="" coords="1349,93,1511,119"/>
+<area shape="poly" title=" " alt="" coords="1049,38,1350,88,1349,94,1048,43"/>
+<area shape="rect" title=" " alt="" coords="1535,93,1677,119"/>
+<area shape="poly" title=" " alt="" coords="1048,33,1522,91,1522,96,1048,38"/>
+<area shape="rect" title=" " alt="" coords="1701,93,1815,119"/>
+<area shape="poly" title=" " alt="" coords="1048,30,1327,52,1688,91,1687,96,1326,58,1048,35"/>
 <area shape="poly" title=" " alt="" coords="137,121,105,158,101,154,133,117"/>
-<area shape="poly" title=" " alt="" coords="703,121,565,165,563,160,701,116"/>
-<area shape="poly" title=" " alt="" coords="615,115,547,121,482,132,428,147,408,157,395,168,389,183,393,198,404,214,418,229,414,233,400,218,388,201,384,182,391,165,405,153,426,142,481,127,547,116,614,110"/>
-<area shape="rect" title=" " alt="" coords="402,387,461,412"/>
-<area shape="poly" title=" " alt="" coords="615,115,545,121,477,132,420,147,399,157,384,168,369,192,363,218,363,246,370,275,392,331,418,374,413,377,387,333,365,277,358,247,358,218,364,190,380,165,396,153,418,142,475,126,544,116,614,109"/>
-<area shape="rect" title=" " alt="" coords="795,313,857,339"/>
-<area shape="poly" title=" " alt="" coords="745,118,819,299,814,301,740,120"/>
-<area shape="poly" title=" " alt="" coords="807,116,1081,162,1080,167,806,121"/>
-<area shape="poly" title=" " alt="" coords="747,117,774,154,793,174,815,190,876,216,941,234,1005,244,1064,249,1064,254,1005,249,940,239,874,221,813,194,790,178,770,158,743,120"/>
-<area shape="rect" title=" " alt="" coords="928,167,1015,192"/>
-<area shape="poly" title=" " alt="" coords="776,116,921,160,920,165,775,121"/>
-<area shape="rect" title=" " alt="" coords="650,167,701,192"/>
-<area shape="poly" title=" " alt="" coords="730,121,697,158,693,154,726,117"/>
-<area shape="rect" title=" " alt="" coords="826,167,903,192"/>
-<area shape="poly" title=" " alt="" coords="760,116,833,157,831,162,757,121"/>
-<area shape="poly" title=" " alt="" coords="505,194,466,232,462,228,501,190"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="520,240,700,265"/>
-<area shape="poly" title=" " alt="" coords="532,190,585,229,582,234,529,194"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="551,313,669,339"/>
-<area shape="poly" title=" " alt="" coords="470,263,571,305,569,310,468,268"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="730,387,909,412"/>
-<area shape="poly" title=" " alt="" coords="496,263,599,286,682,311,791,377,788,381,680,316,597,292,495,268"/>
-<area shape="rect" title=" " alt="" coords="538,460,594,485"/>
-<area shape="poly" title=" " alt="" coords="434,267,413,295,392,332,385,353,382,373,384,392,392,410,419,436,454,453,490,463,524,468,523,473,489,468,452,458,416,441,388,414,378,394,376,373,379,351,387,330,408,292,430,264"/>
-<area shape="poly" title=" " alt="" coords="444,266,436,373,431,373,438,266"/>
-<area shape="rect" title=" " alt="" coords="453,313,527,339"/>
-<area shape="poly" title=" " alt="" coords="452,264,477,301,472,304,448,267"/>
-<area shape="poly" title=" " alt="" coords="496,261,782,314,781,319,495,266"/>
-<area shape="poly" title=" " alt="" coords="644,336,773,380,771,385,643,341"/>
-<area shape="rect" title=" " alt="" coords="621,387,706,412"/>
-<area shape="poly" title=" " alt="" coords="621,337,649,374,644,377,617,341"/>
-<area shape="rect" title=" " alt="" coords="530,387,597,412"/>
-<area shape="poly" title=" " alt="" coords="605,340,581,377,576,374,600,338"/>
-<area shape="poly" title=" " alt="" coords="582,341,474,384,472,379,580,336"/>
-<area shape="poly" title=" " alt="" coords="779,415,608,462,606,457,778,409"/>
-<area shape="rect" title=" " alt="" coords="1019,460,1081,485"/>
-<area shape="poly" title=" " alt="" coords="857,409,1006,455,1005,460,856,415"/>
-<area shape="poly" title=" " alt="" coords="901,409,1268,461,1267,466,900,415"/>
-<area shape="rect" title=" " alt="" coords="773,460,865,485"/>
-<area shape="poly" title=" " alt="" coords="822,412,822,446,817,446,817,412"/>
-<area shape="poly" title=" " alt="" coords="613,266,613,300,607,300,607,266"/>
-<area shape="poly" title=" " alt="" coords="638,263,680,284,726,311,767,343,801,375,797,379,764,347,723,316,678,288,635,268"/>
-<area shape="poly" title=" " alt="" coords="646,263,782,308,781,313,644,268"/>
-<area shape="poly" title=" " alt="" coords="1090,190,509,243,509,243,508,237,508,237,1090,184"/>
-<area shape="poly" title=" " alt="" coords="1193,190,1225,209,1240,222,1251,239,1256,256,1253,274,1235,306,1213,330,1199,341,1150,360,1080,375,923,394,923,388,1079,370,1149,355,1197,336,1209,326,1231,303,1248,272,1250,256,1246,241,1236,226,1222,213,1190,194"/>
-<area shape="poly" title=" " alt="" coords="1145,195,1085,229,1008,268,937,295,871,315,870,310,935,290,1006,263,1083,225,1142,190"/>
-<area shape="poly" title=" " alt="" coords="1171,264,1196,297,1203,318,1201,340,1177,377,1147,409,1115,435,1085,455,1082,451,1112,431,1144,405,1173,374,1195,338,1198,319,1192,299,1167,267"/>
-<area shape="poly" title=" " alt="" coords="1172,264,1220,312,1274,384,1313,447,1309,450,1269,387,1216,315,1168,267"/>
-<area shape="poly" title=" " alt="" coords="1098,268,1014,288,923,316,871,341,793,367,720,387,719,382,791,362,869,336,921,311,1013,283,1097,263"/>
-<area shape="poly" title=" " alt="" coords="1102,268,877,316,871,317,870,312,876,311,1101,263"/>
-<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="933,313,1087,339"/>
-<area shape="poly" title=" " alt="" coords="1134,268,1047,310,1045,305,1132,263"/>
-<area shape="rect" title=" " alt="" coords="1111,313,1186,339"/>
-<area shape="poly" title=" " alt="" coords="1158,266,1154,300,1149,300,1153,265"/>
-<area shape="poly" title=" " alt="" coords="922,121,607,167,607,162,921,116"/>
-<area shape="poly" title=" " alt="" coords="1011,117,1030,152,1034,173,1030,193,1015,216,998,236,956,269,912,294,872,312,870,307,910,290,953,265,994,232,1011,212,1025,191,1029,173,1025,153,1006,120"/>
-<area shape="poly" title=" " alt="" coords="1027,116,1124,159,1122,163,1024,121"/>
-<area shape="poly" title=" " alt="" coords="997,120,983,155,978,153,992,118"/>
-<area shape="poly" title=" " alt="" coords="979,121,900,162,898,158,976,116"/>
+<area shape="poly" title=" " alt="" coords="731,116,1138,162,1138,168,731,121"/>
+<area shape="poly" title=" " alt="" coords="744,116,955,141,1040,153,1080,165,1089,179,1093,195,1092,226,1087,226,1088,196,1084,181,1076,169,1038,159,954,146,743,121"/>
+<area shape="rect" title=" " alt="" coords="1030,387,1089,412"/>
+<area shape="poly" title=" " alt="" coords="591,121,560,133,534,149,518,169,517,179,520,191,533,207,551,224,602,256,668,286,743,313,897,358,1017,387,1016,392,895,363,741,318,666,291,599,260,547,228,529,211,516,193,511,180,513,167,530,145,558,128,589,116"/>
+<area shape="rect" title=" " alt="" coords="860,313,923,339"/>
+<area shape="poly" title=" " alt="" coords="632,119,628,148,627,187,635,228,643,247,655,263,667,273,686,282,736,297,847,317,846,322,735,303,684,287,664,278,651,267,638,249,630,230,622,187,623,148,626,119"/>
+<area shape="poly" title=" " alt="" coords="690,116,923,161,922,167,689,121"/>
+<area shape="rect" title=" " alt="" coords="767,240,853,265"/>
+<area shape="poly" title=" " alt="" coords="648,117,787,229,783,233,644,121"/>
+<area shape="rect" title=" " alt="" coords="665,240,742,265"/>
+<area shape="poly" title=" " alt="" coords="640,118,694,226,689,229,635,120"/>
+<area shape="poly" title=" " alt="" coords="538,121,451,140,416,153,395,168,388,181,387,196,393,226,387,227,381,196,383,180,391,165,413,148,449,135,537,116"/>
+<area shape="rect" title=" " alt="" coords="405,167,455,192"/>
+<area shape="poly" title=" " alt="" coords="600,121,470,167,468,162,598,116"/>
+<area shape="rect" title=" " alt="" coords="530,167,594,192"/>
+<area shape="poly" title=" " alt="" coords="622,121,585,159,581,155,618,117"/>
+<area shape="poly" title=" " alt="" coords="1225,194,1124,237,1122,232,1223,190"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="1161,240,1341,265"/>
+<area shape="poly" title=" " alt="" coords="1254,192,1254,226,1249,226,1249,192"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="1097,313,1214,339"/>
+<area shape="poly" title=" " alt="" coords="1097,264,1136,302,1132,306,1093,268"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="1209,387,1387,412"/>
+<area shape="poly" title=" " alt="" coords="1126,263,1176,282,1228,311,1260,342,1285,373,1281,377,1256,345,1224,315,1174,287,1124,268"/>
+<area shape="rect" title=" " alt="" coords="1383,460,1439,485"/>
+<area shape="poly" title=" " alt="" coords="1125,263,1197,285,1280,314,1355,349,1383,367,1402,385,1414,415,1416,446,1411,446,1409,417,1397,388,1380,371,1352,353,1278,319,1195,290,1124,268"/>
+<area shape="poly" title=" " alt="" coords="1084,266,1066,373,1061,373,1079,265"/>
+<area shape="rect" title=" " alt="" coords="947,313,1022,339"/>
+<area shape="poly" title=" " alt="" coords="1069,268,1013,307,1010,303,1066,263"/>
+<area shape="poly" title=" " alt="" coords="1053,268,937,311,935,306,1052,263"/>
+<area shape="poly" title=" " alt="" coords="1179,336,1264,378,1261,383,1177,341"/>
+<area shape="rect" title=" " alt="" coords="663,387,749,412"/>
+<area shape="poly" title=" " alt="" coords="1097,339,763,392,762,386,1096,334"/>
+<area shape="rect" title=" " alt="" coords="1118,387,1185,412"/>
+<area shape="poly" title=" " alt="" coords="1157,339,1155,373,1150,373,1152,339"/>
+<area shape="poly" title=" " alt="" coords="1141,341,1088,380,1085,376,1138,337"/>
+<area shape="poly" title=" " alt="" coords="1318,410,1383,450,1380,455,1315,414"/>
+<area shape="rect" title=" " alt="" coords="773,460,836,485"/>
+<area shape="poly" title=" " alt="" coords="1219,415,850,467,850,462,1218,409"/>
+<area shape="poly" title=" " alt="" coords="1209,414,1197,415,722,450,374,471,374,466,721,445,1196,409,1208,408"/>
+<area shape="rect" title=" " alt="" coords="1252,460,1344,485"/>
+<area shape="poly" title=" " alt="" coords="1301,412,1301,446,1295,446,1295,412"/>
+<area shape="poly" title=" " alt="" coords="1237,268,1184,307,1181,303,1234,263"/>
+<area shape="poly" title=" " alt="" coords="1258,265,1293,373,1287,374,1253,267"/>
+<area shape="poly" title=" " alt="" coords="1184,268,937,316,936,311,1183,263"/>
+<area shape="poly" title=" " alt="" coords="1010,190,1060,229,1056,233,1007,194"/>
+<area shape="poly" title=" " alt="" coords="1067,185,1241,207,1316,222,1342,230,1356,238,1366,255,1369,273,1368,293,1362,312,1342,348,1320,378,1316,374,1338,345,1357,310,1362,291,1364,274,1361,257,1352,242,1339,234,1315,227,1240,212,1066,190"/>
+<area shape="poly" title=" " alt="" coords="996,193,989,300,984,299,991,192"/>
+<area shape="poly" title=" " alt="" coords="988,194,910,304,905,301,983,191"/>
+<area shape="poly" title=" " alt="" coords="965,195,854,237,852,232,963,190"/>
+<area shape="poly" title=" " alt="" coords="948,195,756,241,755,236,947,189"/>
+<area shape="poly" title=" " alt="" coords="402,265,403,301,409,320,419,337,455,372,498,399,544,422,592,438,685,459,760,467,759,473,684,464,590,443,542,426,495,404,452,376,415,340,404,322,398,301,397,265"/>
+<area shape="poly" title=" " alt="" coords="389,268,369,288,351,315,338,349,329,385,320,447,315,446,323,384,333,347,346,312,365,285,385,264"/>
+<area shape="poly" title=" " alt="" coords="406,265,418,301,430,320,445,337,494,365,548,383,602,392,650,396,649,401,601,398,547,388,491,370,442,341,426,324,414,303,401,267"/>
+<area shape="poly" title=" " alt="" coords="480,263,847,316,846,321,479,268"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="456,313,609,339"/>
+<area shape="poly" title=" " alt="" coords="423,263,500,304,498,309,421,268"/>
+<area shape="rect" title=" " alt="" coords="634,313,709,339"/>
+<area shape="poly" title=" " alt="" coords="445,263,621,309,620,314,443,268"/>
+<area shape="poly" title=" " alt="" coords="951,116,1180,161,1179,167,950,121"/>
+<area shape="poly" title=" " alt="" coords="895,119,894,299,889,299,890,119"/>
+<area shape="poly" title=" " alt="" coords="910,116,968,156,965,161,907,121"/>
+<area shape="poly" title=" " alt="" coords="888,120,826,229,821,227,884,118"/>
+<area shape="poly" title=" " alt="" coords="879,121,731,234,728,230,876,117"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -225,126 +233,128 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="analysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_cgraph.png" border="0" usemap="#aanalysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_cgraph" alt=""/></div>
 <map name="aanalysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_cgraph" id="aanalysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_cgraph">
-<area shape="rect" title=" " alt="" coords="5,892,109,917"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7fb2250c38f06a2241c4a8254ec7411d" title="Adds the histograms from another DistributionFunctions object to this one. Used for averaging over mu..." alt="" coords="169,57,369,97"/>
-<area shape="poly" title=" " alt="" coords="56,892,57,749,67,516,78,392,96,276,121,180,137,143,155,114,166,103,170,106,159,117,142,145,126,182,101,277,84,392,72,516,62,749,61,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a7ebe8b970ea072d3b55281de5a999ebf" title="Gets a multi&#45;dimensional tensor containing bond angles." alt="" coords="772,5,927,60"/>
-<area shape="poly" title=" " alt="" coords="56,892,56,756,66,536,77,420,95,313,121,224,137,190,156,164,181,153,234,140,397,107,758,45,759,50,398,112,235,145,182,158,159,168,141,193,126,226,100,314,83,421,71,537,61,756,61,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="157,380,381,435"/>
-<area shape="poly" title=" " alt="" coords="57,892,66,803,85,670,98,599,114,535,133,481,155,444,157,442,161,446,159,448,138,484,120,536,104,601,90,670,71,804,62,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="185,301,353,356"/>
-<area shape="poly" title=" " alt="" coords="57,892,64,790,81,633,94,550,110,473,130,410,155,366,171,351,175,355,159,369,135,412,115,475,99,551,86,633,69,791,62,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a6fe53793b881aaf80e05b7af041433dd" title="Gets a multi&#45;dimensional tensor containing dihedral angles." alt="" coords="772,84,927,139"/>
-<area shape="poly" title=" " alt="" coords="56,892,56,763,67,555,78,446,96,346,121,263,137,232,155,208,174,194,198,183,256,167,327,159,404,156,556,156,622,155,673,150,758,132,759,137,674,155,622,160,556,161,404,161,327,164,257,173,200,188,177,199,159,212,142,234,126,265,101,347,84,447,72,556,62,763,61,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a6f65b6d6b2631bd107d23114f1de1edc" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="185,223,353,277"/>
-<area shape="poly" title=" " alt="" coords="56,892,61,778,76,596,89,501,106,412,128,338,141,309,155,287,171,273,175,277,159,290,145,312,133,340,111,413,94,501,81,597,67,778,62,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="185,459,353,513"/>
-<area shape="poly" title=" " alt="" coords="55,892,56,828,66,730,78,675,96,620,121,569,155,523,172,509,175,513,159,526,126,572,101,622,83,676,71,731,61,828,61,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a64a1cb58db792c5df32b4a5952ca24ea" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="772,628,927,683"/>
-<area shape="poly" title=" " alt="" coords="56,892,61,844,75,778,88,743,105,709,127,678,156,653,177,642,203,633,268,621,346,615,432,615,609,625,758,641,758,646,608,630,432,620,346,620,269,626,204,638,179,647,159,658,131,682,110,711,93,745,81,779,66,845,62,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="185,668,353,723"/>
-<area shape="poly" title=" " alt="" coords="60,891,72,859,91,817,119,771,156,732,172,721,175,725,159,736,123,775,96,819,77,861,65,893"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a25122c9d2298582a94578327073ff835" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="185,747,353,801"/>
-<area shape="poly" title=" " alt="" coords="69,890,106,855,156,818,180,805,183,810,159,823,110,860,73,894"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="185,537,353,592"/>
-<area shape="poly" title=" " alt="" coords="57,891,62,840,77,766,90,725,107,684,128,644,155,610,172,596,175,600,159,613,133,647,112,686,95,726,82,767,67,841,62,892"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="185,877,353,932"/>
-<area shape="poly" title=" " alt="" coords="109,902,172,902,172,907,109,907"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="474,864,629,919"/>
-<area shape="poly" title=" " alt="" coords="82,890,117,875,157,863,237,854,317,854,394,861,461,870,460,876,393,866,317,860,237,860,158,869,119,880,84,894"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="474,1139,629,1193"/>
-<area shape="poly" title=" " alt="" coords="88,915,158,942,192,951,223,955,277,957,303,960,328,967,355,979,383,1000,396,1015,404,1030,409,1059,413,1089,420,1103,431,1117,463,1139,460,1144,428,1121,415,1106,408,1090,404,1060,399,1031,392,1018,380,1004,352,984,326,972,302,965,277,963,222,960,191,956,157,947,86,920"/>
-<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="452,1218,651,1258"/>
-<area shape="poly" title=" " alt="" coords="70,916,105,958,130,981,159,1000,190,1012,220,1017,275,1014,301,1013,328,1016,355,1025,383,1045,399,1065,407,1085,409,1126,410,1166,417,1185,431,1204,442,1213,438,1217,427,1208,412,1188,405,1167,403,1126,402,1086,395,1068,380,1049,353,1030,327,1021,301,1018,275,1020,219,1022,189,1017,156,1004,127,985,102,962,66,919"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="185,1059,353,1113"/>
-<area shape="poly" title=" " alt="" coords="67,916,102,974,128,1007,159,1037,178,1050,175,1054,156,1041,124,1011,97,977,63,919"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="185,1137,353,1192"/>
-<area shape="poly" title=" " alt="" coords="63,917,72,957,90,1013,118,1072,137,1100,159,1124,175,1136,172,1140,156,1128,133,1103,113,1075,85,1015,67,959,58,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a8ffbd5ae1a90a1af7a4d6d9df49581b4" title="Gets a list of names for all currently available histograms." alt="" coords="176,1216,363,1271"/>
-<area shape="poly" title=" " alt="" coords="62,917,66,969,80,1046,93,1088,109,1129,131,1168,159,1203,166,1209,163,1213,155,1206,127,1171,105,1132,88,1089,75,1047,61,970,56,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="185,1295,353,1349"/>
-<area shape="poly" title=" " alt="" coords="61,917,61,981,71,1078,83,1132,101,1186,126,1237,159,1282,175,1295,172,1299,155,1285,121,1239,96,1188,78,1134,66,1079,56,981,55,917"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a9c93e51c5155b98ac83245b3bc551213" title=" " alt="" coords="192,1373,347,1428"/>
-<area shape="poly" title=" " alt="" coords="62,917,72,1005,90,1138,104,1208,120,1272,138,1325,159,1360,181,1377,177,1381,155,1364,133,1327,114,1273,98,1209,85,1139,66,1006,57,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a5053177933e4e702cd4333bde3d8c813" title=" " alt="" coords="192,1452,347,1507"/>
-<area shape="poly" title=" " alt="" coords="62,917,69,1019,86,1175,99,1258,115,1334,135,1396,159,1439,181,1456,178,1460,155,1442,131,1399,110,1335,94,1259,81,1176,64,1019,57,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a2952742ccad874a6ecf40181664ba784" title=" " alt="" coords="192,1531,347,1585"/>
-<area shape="poly" title=" " alt="" coords="62,918,67,1032,82,1213,94,1308,111,1396,133,1468,145,1496,159,1518,181,1535,177,1539,155,1521,141,1499,128,1470,106,1397,89,1309,76,1213,61,1032,56,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adac0dd142dbd5b2ff7c99afd4ea098bf" title="Scales all histograms in this object by a factor. Used for normalizing averaged distributions." alt="" coords="185,1609,353,1664"/>
-<area shape="poly" title=" " alt="" coords="61,918,64,1045,77,1249,89,1357,107,1457,130,1540,144,1572,159,1596,175,1611,172,1615,155,1600,139,1575,125,1542,101,1458,84,1358,72,1249,59,1045,56,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0a8516792ed6cd32baf7336b4b1c5c66" title="Smooths a specific histogram." alt="" coords="185,1688,353,1743"/>
-<area shape="poly" title=" " alt="" coords="61,917,62,1057,73,1285,85,1406,102,1518,127,1612,142,1648,159,1675,175,1689,172,1693,155,1678,137,1650,122,1613,97,1519,79,1407,68,1285,57,1057,56,918"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d02157dfbf2e3c4f0a1ec3cfdbc6877" title="Smooths all available histograms." alt="" coords="185,1767,353,1821"/>
-<area shape="poly" title=" " alt="" coords="61,918,60,1070,69,1321,80,1455,98,1580,124,1683,141,1723,159,1754,175,1768,171,1772,155,1757,136,1726,119,1685,93,1581,75,1456,63,1321,55,1070,56,918"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="460,350,643,390"/>
-<area shape="poly" title=" " alt="" coords="381,390,446,381,447,387,382,395"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="781,435,917,475"/>
-<area shape="poly" title=" " alt="" coords="632,388,674,401,722,421,769,434,767,440,720,426,672,406,630,393"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="781,307,917,347"/>
-<area shape="poly" title=" " alt="" coords="642,354,768,336,768,342,643,360"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="772,228,927,283"/>
-<area shape="poly" title=" " alt="" coords="642,349,672,336,686,326,695,315,705,304,720,293,757,276,760,281,723,298,709,308,699,319,690,330,675,340,644,354"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="455,286,647,326"/>
-<area shape="poly" title=" " alt="" coords="353,319,442,312,442,317,354,325"/>
-<area shape="poly" title=" " alt="" coords="648,310,768,319,768,324,648,316"/>
-<area shape="poly" title=" " alt="" coords="646,288,672,272,684,258,691,243,695,213,699,181,707,165,719,149,738,136,758,126,760,131,740,140,723,153,711,168,705,183,700,213,696,245,688,261,675,276,649,293"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="778,163,921,203"/>
-<area shape="poly" title=" " alt="" coords="646,285,672,272,687,258,695,243,704,228,720,213,763,194,766,199,723,218,708,231,700,246,691,261,675,276,649,290"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#a5ea8ec1e5078da7ddc0b4dd58a0c45d9" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="457,222,646,262"/>
-<area shape="poly" title=" " alt="" coords="353,245,443,242,443,248,353,250"/>
-<area shape="poly" title=" " alt="" coords="586,219,629,189,671,151,686,129,693,109,702,89,720,69,758,48,760,53,723,73,706,92,698,111,690,132,675,154,632,194,589,224"/>
-<area shape="poly" title=" " alt="" coords="635,259,674,271,722,291,769,306,767,311,720,297,672,277,633,265"/>
-<area shape="poly" title=" " alt="" coords="646,221,764,197,765,203,647,226"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="456,415,647,455"/>
-<area shape="poly" title=" " alt="" coords="353,468,442,452,443,457,354,474"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a434cedf3f57302ee9cab106f26ff066f" title="Gets a calculator by its name." alt="" coords="433,479,670,519"/>
-<area shape="poly" title=" " alt="" coords="353,487,419,490,418,496,353,493"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="449,799,654,839"/>
-<area shape="poly" title=" " alt="" coords="355,502,383,523,405,557,413,591,412,625,407,658,402,690,401,722,410,754,431,786,439,793,435,796,427,789,405,756,396,723,396,689,401,657,407,624,407,592,400,559,379,526,352,506"/>
-<area shape="poly" title=" " alt="" coords="647,439,768,447,768,453,647,444"/>
-<area shape="poly" title=" " alt="" coords="642,413,672,400,686,389,695,379,705,368,720,357,767,339,768,344,723,362,709,372,699,382,690,393,675,404,644,418"/>
-<area shape="poly" title=" " alt="" coords="646,418,671,400,688,378,695,355,696,332,694,309,693,285,694,261,702,237,719,213,740,198,764,189,766,193,743,203,723,217,707,239,699,262,698,285,700,308,702,332,700,356,693,380,675,404,649,422"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="781,563,917,603"/>
-<area shape="poly" title=" " alt="" coords="648,450,675,465,693,487,700,509,707,530,723,549,745,562,769,571,767,576,742,567,720,553,702,532,695,510,688,489,672,469,646,455"/>
-<area shape="poly" title=" " alt="" coords="649,448,675,465,690,484,698,503,700,541,703,578,710,596,723,613,740,627,760,637,758,642,737,631,719,617,705,598,698,579,695,541,693,504,685,487,672,469,646,452"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a07c9132be7dfd8bcec0558594935f91b" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="776,371,923,411"/>
-<area shape="poly" title=" " alt="" coords="647,419,762,401,763,407,647,424"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="781,499,917,539"/>
-<area shape="poly" title=" " alt="" coords="635,453,674,465,722,485,769,498,767,504,720,490,672,470,633,458"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="453,671,650,711"/>
-<area shape="poly" title=" " alt="" coords="353,691,439,690,439,696,353,697"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="740,873,959,928"/>
-<area shape="poly" title=" " alt="" coords="652,706,675,721,689,739,697,756,700,791,704,826,710,842,723,859,730,865,727,869,719,863,706,845,698,827,695,792,692,758,685,741,672,725,649,710"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1025,835,1279,875"/>
-<area shape="poly" title=" " alt="" coords="632,709,674,721,722,737,794,754,850,765,906,776,978,794,1084,828,1083,833,977,799,905,781,849,771,792,760,721,742,673,726,631,714"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a274566b3dc3cb72e8f0bb07ee1a2d292" title="Gets the pre&#45;calculated velocities for all atoms." alt="" coords="1327,746,1504,786"/>
-<area shape="poly" title=" " alt="" coords="650,697,1313,755,1312,760,650,702"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="761,809,937,849"/>
-<area shape="poly" title=" " alt="" coords="651,708,675,721,692,738,700,755,708,772,723,788,750,803,748,808,720,792,703,775,695,758,687,741,672,725,649,713"/>
-<area shape="poly" title=" " alt="" coords="959,882,1011,874,1012,879,959,887"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="1334,1010,1497,1050"/>
-<area shape="poly" title=" " alt="" coords="1185,873,1374,1000,1371,1005,1182,878"/>
-<area shape="poly" title=" " alt="" coords="1211,833,1341,788,1343,793,1213,838"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a6890f7a2df90c538a7d5de0723f70658" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="451,735,651,775"/>
-<area shape="poly" title=" " alt="" coords="353,766,437,760,438,766,354,771"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="721,953,977,993"/>
-<area shape="poly" title=" " alt="" coords="653,770,675,785,690,805,698,825,700,864,702,902,709,921,723,939,728,943,724,947,719,943,704,923,697,904,695,864,693,826,686,807,672,789,650,774"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="456,543,647,583"/>
-<area shape="poly" title=" " alt="" coords="353,562,442,561,442,567,353,567"/>
-<area shape="poly" title=" " alt="" coords="646,541,672,529,686,519,695,508,705,496,720,485,767,467,769,472,723,490,708,500,699,511,690,522,675,534,648,546"/>
-<area shape="poly" title=" " alt="" coords="645,547,672,529,687,509,694,488,695,445,695,401,703,379,719,357,742,342,767,332,769,337,744,346,723,361,708,382,700,402,700,445,699,489,692,511,675,533,648,551"/>
-<area shape="poly" title=" " alt="" coords="647,567,768,575,768,581,647,572"/>
-<area shape="poly" title=" " alt="" coords="647,547,767,529,768,534,647,552"/>
-<area shape="poly" title=" " alt="" coords="348,875,429,849,457,840,459,846,430,854,350,880"/>
-<area shape="poly" title=" " alt="" coords="354,930,383,952,395,969,402,985,405,1018,410,1047,417,1061,431,1073,451,1082,485,1089,582,1099,708,1103,848,1103,1118,1093,1278,1079,1320,1068,1360,1053,1362,1058,1322,1073,1279,1085,1118,1098,848,1108,708,1108,582,1104,484,1094,450,1087,428,1078,413,1064,405,1049,400,1018,396,987,391,971,379,956,351,934"/>
-<area shape="poly" title=" " alt="" coords="353,898,460,893,460,898,353,903"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="474,1008,629,1063"/>
-<area shape="poly" title=" " alt="" coords="347,930,383,949,407,972,417,983,431,993,462,1008,460,1013,428,998,413,986,403,976,380,953,344,934"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="429,943,673,983"/>
-<area shape="poly" title=" " alt="" coords="354,919,442,938,441,943,353,925"/>
-<area shape="poly" title=" " alt="" coords="355,928,383,950,398,972,406,994,408,1036,410,1077,417,1097,431,1117,463,1141,460,1145,427,1121,412,1099,404,1078,402,1036,401,995,394,974,379,953,352,932"/>
-<area shape="poly" title=" " alt="" coords="315,930,352,961,384,1001,397,1030,403,1058,402,1109,401,1133,404,1157,413,1180,431,1204,442,1213,439,1217,427,1208,408,1183,399,1158,396,1133,396,1109,397,1058,392,1032,379,1003,348,965,312,934"/>
-<area shape="poly" title=" " alt="" coords="630,906,654,916,675,929,691,949,699,969,706,987,723,1002,797,1036,876,1059,958,1072,1040,1076,1120,1075,1194,1069,1320,1049,1321,1055,1195,1074,1120,1080,1040,1082,957,1077,875,1064,795,1041,720,1007,702,990,694,971,687,951,672,933,651,920,628,911"/>
+<area shape="rect" title=" " alt="" coords="5,957,109,982"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7fb2250c38f06a2241c4a8254ec7411d" title="Adds the histograms from another DistributionFunctions object to this one. Used for averaging over mu..." alt="" coords="169,5,369,45"/>
+<area shape="poly" title=" " alt="" coords="57,956,66,783,86,498,99,350,115,219,134,118,144,84,155,62,166,51,170,55,159,66,149,86,139,120,121,220,105,351,91,498,71,783,62,956"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a7ebe8b970ea072d3b55281de5a999ebf" title="Gets a multi&#45;dimensional tensor containing bond angles." alt="" coords="772,13,927,67"/>
+<area shape="poly" title=" " alt="" coords="57,956,65,792,84,526,98,388,114,267,133,174,144,143,156,123,187,108,243,94,407,71,596,53,758,42,759,48,596,59,407,76,244,99,189,113,159,127,149,145,138,175,119,267,103,389,90,526,70,793,62,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="157,349,381,403"/>
+<area shape="poly" title=" " alt="" coords="57,956,66,857,84,703,98,621,114,546,133,482,155,437,185,409,189,413,159,440,138,484,119,547,103,622,90,703,71,857,62,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="185,258,353,313"/>
+<area shape="poly" title=" " alt="" coords="56,956,62,840,77,654,90,556,107,464,128,388,141,358,155,334,172,317,176,321,159,338,146,360,133,390,112,466,95,557,83,655,67,840,62,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a6fe53793b881aaf80e05b7af041433dd" title="Gets a multi&#45;dimensional tensor containing dihedral angles." alt="" coords="772,91,927,146"/>
+<area shape="poly" title=" " alt="" coords="57,956,65,798,85,543,98,411,114,295,133,207,144,177,156,159,187,145,244,135,407,122,595,116,758,115,758,121,596,122,407,127,245,140,189,150,159,163,149,180,138,209,120,296,104,412,90,543,71,798,62,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a6f65b6d6b2631bd107d23114f1de1edc" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="185,174,353,229"/>
+<area shape="poly" title=" " alt="" coords="56,956,59,824,71,611,84,498,101,393,124,305,139,270,155,244,172,228,175,232,159,247,144,273,129,307,106,394,89,499,77,612,64,825,61,956"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="185,538,353,593"/>
+<area shape="poly" title=" " alt="" coords="57,956,65,904,82,826,111,738,131,694,155,653,181,624,210,599,213,603,184,627,160,656,136,696,116,739,87,827,70,905,63,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a64a1cb58db792c5df32b4a5952ca24ea" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="772,635,927,690"/>
+<area shape="poly" title=" " alt="" coords="57,956,62,909,77,844,89,809,106,775,128,744,156,718,202,695,267,678,345,666,431,659,608,654,758,656,758,661,608,659,431,664,345,672,268,683,204,700,159,722,132,747,111,777,94,811,82,845,67,910,62,956"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="185,733,353,787"/>
+<area shape="poly" title=" " alt="" coords="60,956,72,924,91,881,119,836,156,797,172,785,175,790,159,801,123,839,96,884,77,926,65,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a25122c9d2298582a94578327073ff835" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="185,811,353,866"/>
+<area shape="poly" title=" " alt="" coords="69,955,106,920,156,883,180,870,183,874,159,888,110,924,73,958"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="185,451,353,506"/>
+<area shape="poly" title=" " alt="" coords="57,956,67,871,87,742,116,612,134,560,155,524,172,508,176,512,159,527,139,562,121,613,92,743,73,872,63,957"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="185,942,353,997"/>
+<area shape="poly" title=" " alt="" coords="109,967,172,967,172,972,109,972"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="474,889,629,943"/>
+<area shape="poly" title=" " alt="" coords="83,954,118,940,157,928,236,916,317,909,460,908,460,914,317,914,237,921,158,933,119,945,85,959"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="474,1213,629,1267"/>
+<area shape="poly" title=" " alt="" coords="88,980,158,1007,192,1016,223,1019,278,1021,303,1024,329,1031,355,1043,383,1065,397,1082,405,1099,408,1133,412,1167,418,1183,431,1199,463,1220,460,1225,428,1203,414,1186,407,1168,403,1134,400,1100,393,1084,379,1069,353,1048,327,1036,302,1029,277,1027,223,1025,191,1021,157,1012,86,985"/>
+<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="452,1292,651,1332"/>
+<area shape="poly" title=" " alt="" coords="70,980,105,1023,130,1045,159,1064,190,1077,220,1082,275,1079,301,1077,328,1080,355,1090,383,1110,400,1131,408,1152,409,1195,409,1238,416,1258,431,1278,442,1287,438,1291,427,1282,411,1261,404,1239,403,1195,402,1153,395,1133,379,1114,353,1095,327,1085,301,1083,275,1084,220,1087,189,1082,156,1069,127,1050,102,1026,66,984"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="185,1123,353,1178"/>
+<area shape="poly" title=" " alt="" coords="67,981,102,1038,128,1072,159,1102,178,1114,175,1119,156,1106,124,1076,97,1041,63,984"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="185,1202,353,1257"/>
+<area shape="poly" title=" " alt="" coords="63,982,72,1022,90,1077,118,1137,137,1164,159,1189,175,1200,172,1205,156,1193,133,1168,113,1140,85,1079,67,1023,58,983"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a8ffbd5ae1a90a1af7a4d6d9df49581b4" title="Gets a list of names for all currently available histograms." alt="" coords="176,1281,363,1335"/>
+<area shape="poly" title=" " alt="" coords="62,982,66,1034,80,1110,93,1152,109,1194,131,1233,159,1268,166,1274,163,1278,155,1271,127,1236,105,1196,88,1154,75,1112,61,1035,56,982"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="185,1359,353,1414"/>
+<area shape="poly" title=" " alt="" coords="61,982,61,1046,71,1143,83,1197,101,1251,126,1301,159,1346,175,1359,172,1363,155,1350,121,1304,96,1253,78,1198,66,1144,56,1046,55,982"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a9c93e51c5155b98ac83245b3bc551213" title=" " alt="" coords="192,1438,347,1493"/>
+<area shape="poly" title=" " alt="" coords="62,982,72,1070,90,1203,104,1272,120,1337,138,1389,159,1425,181,1442,177,1446,155,1428,133,1392,114,1338,98,1274,85,1204,66,1070,57,982"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a5053177933e4e702cd4333bde3d8c813" title=" " alt="" coords="192,1517,347,1571"/>
+<area shape="poly" title=" " alt="" coords="62,982,69,1083,86,1240,99,1322,115,1398,135,1461,159,1504,181,1521,178,1525,155,1507,131,1463,110,1400,94,1323,81,1241,64,1084,57,982"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a2952742ccad874a6ecf40181664ba784" title=" " alt="" coords="192,1595,347,1650"/>
+<area shape="poly" title=" " alt="" coords="62,982,67,1097,82,1277,94,1372,111,1460,133,1533,145,1561,159,1582,181,1600,177,1604,155,1586,141,1564,128,1535,106,1461,89,1373,76,1278,61,1097,56,983"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adac0dd142dbd5b2ff7c99afd4ea098bf" title="Scales all histograms in this object by a factor. Used for normalizing averaged distributions." alt="" coords="185,1674,353,1729"/>
+<area shape="poly" title=" " alt="" coords="61,982,64,1110,77,1314,89,1422,107,1522,130,1605,144,1637,159,1661,175,1675,172,1679,155,1664,139,1639,125,1606,101,1523,84,1422,72,1314,59,1110,56,983"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0a8516792ed6cd32baf7336b4b1c5c66" title="Smooths a specific histogram." alt="" coords="185,1753,353,1807"/>
+<area shape="poly" title=" " alt="" coords="61,982,62,1122,73,1349,85,1471,102,1583,127,1676,142,1712,159,1740,175,1754,172,1758,155,1743,137,1715,122,1678,97,1584,79,1471,68,1350,57,1122,56,982"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d02157dfbf2e3c4f0a1ec3cfdbc6877" title="Smooths all available histograms." alt="" coords="185,1831,353,1886"/>
+<area shape="poly" title=" " alt="" coords="61,982,60,1134,69,1386,80,1520,98,1644,124,1748,141,1788,159,1818,175,1833,171,1836,155,1822,136,1790,119,1750,93,1645,75,1520,63,1386,55,1134,56,982"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="460,311,643,351"/>
+<area shape="poly" title=" " alt="" coords="381,355,446,345,447,350,382,361"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="781,379,917,419"/>
+<area shape="poly" title=" " alt="" coords="640,348,769,378,768,383,639,353"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="781,235,917,275"/>
+<area shape="poly" title=" " alt="" coords="628,308,721,284,767,272,768,277,722,289,630,313"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="772,299,927,354"/>
+<area shape="poly" title=" " alt="" coords="643,327,758,325,758,331,643,332"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="455,235,647,275"/>
+<area shape="poly" title=" " alt="" coords="353,274,442,264,442,269,354,279"/>
+<area shape="poly" title=" " alt="" coords="648,252,767,252,767,257,648,257"/>
+<area shape="poly" title=" " alt="" coords="646,234,672,221,687,206,695,190,704,173,720,157,757,137,760,141,723,161,708,176,700,192,691,209,675,225,649,239"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="778,171,921,211"/>
+<area shape="poly" title=" " alt="" coords="645,232,764,206,765,211,646,237"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#a5ea8ec1e5078da7ddc0b4dd58a0c45d9" title="High&#45;performance computation of the Plane Angle Distribution (PAD)." alt="" coords="457,171,646,211"/>
+<area shape="poly" title=" " alt="" coords="353,196,443,192,443,197,353,201"/>
+<area shape="poly" title=" " alt="" coords="577,168,640,123,720,76,758,61,760,66,722,81,643,127,580,172"/>
+<area shape="poly" title=" " alt="" coords="646,208,768,235,767,240,645,213"/>
+<area shape="poly" title=" " alt="" coords="646,188,764,188,764,193,646,193"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="456,511,647,551"/>
+<area shape="poly" title=" " alt="" coords="353,552,442,541,443,547,354,558"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a434cedf3f57302ee9cab106f26ff066f" title="Gets a calculator by its name." alt="" coords="433,447,670,487"/>
+<area shape="poly" title=" " alt="" coords="333,535,428,496,454,488,455,493,430,501,335,540"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="449,581,654,621"/>
+<area shape="poly" title=" " alt="" coords="354,573,435,584,435,589,353,579"/>
+<area shape="poly" title=" " alt="" coords="646,510,672,497,687,481,695,463,703,446,720,429,743,416,767,407,769,412,745,421,723,433,707,449,700,466,692,484,675,501,648,515"/>
+<area shape="poly" title=" " alt="" coords="645,515,671,497,689,471,697,446,698,419,695,393,692,366,692,339,700,312,719,285,742,269,767,259,769,264,744,273,723,289,705,314,697,340,697,366,700,392,703,419,702,446,694,474,675,501,648,519"/>
+<area shape="poly" title=" " alt="" coords="646,515,671,497,694,463,702,429,701,395,695,361,688,326,687,291,696,256,719,221,740,205,763,195,765,200,742,210,723,224,701,258,693,292,694,326,700,360,706,395,707,430,699,465,675,501,649,520"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="781,507,917,547"/>
+<area shape="poly" title=" " alt="" coords="647,527,768,525,768,530,647,532"/>
+<area shape="poly" title=" " alt="" coords="637,548,675,567,690,581,700,595,708,608,723,620,760,639,758,644,720,625,704,611,695,597,686,584,672,572,635,553"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a07c9132be7dfd8bcec0558594935f91b" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="776,571,923,611"/>
+<area shape="poly" title=" " alt="" coords="647,547,763,571,762,576,646,552"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="781,443,917,483"/>
+<area shape="poly" title=" " alt="" coords="639,508,768,478,769,484,640,513"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="453,760,650,800"/>
+<area shape="poly" title=" " alt="" coords="354,763,439,769,439,775,353,769"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="740,830,959,885"/>
+<area shape="poly" title=" " alt="" coords="630,797,731,824,730,829,628,803"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1025,903,1279,943"/>
+<area shape="poly" title=" " alt="" coords="651,796,675,810,692,832,699,855,706,876,712,885,723,894,744,903,772,911,844,921,928,925,1011,925,1011,931,928,930,844,926,771,916,742,908,720,898,708,889,701,878,694,856,688,834,672,814,649,801"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="1327,1017,1520,1057"/>
+<area shape="poly" title=" " alt="" coords="644,757,717,746,801,739,890,739,978,751,1069,774,1138,800,1202,836,1280,889,1315,916,1348,947,1400,1005,1396,1008,1344,951,1312,920,1277,893,1200,840,1136,804,1067,779,977,756,890,744,801,744,717,751,644,763"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="761,765,937,805"/>
+<area shape="poly" title=" " alt="" coords="650,779,747,781,747,786,650,784"/>
+<area shape="poly" title=" " alt="" coords="960,878,1046,897,1045,902,958,884"/>
+<area shape="poly" title=" " alt="" coords="1202,940,1364,1009,1361,1014,1200,945"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a6890f7a2df90c538a7d5de0723f70658" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="451,824,651,864"/>
+<area shape="poly" title=" " alt="" coords="353,838,438,839,438,845,353,843"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="721,960,977,1000"/>
+<area shape="poly" title=" " alt="" coords="653,862,675,874,691,890,700,907,708,924,723,939,745,952,743,957,720,943,703,927,695,910,687,893,672,878,650,866"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="456,383,647,423"/>
+<area shape="poly" title=" " alt="" coords="353,453,429,432,460,424,462,429,430,437,354,458"/>
+<area shape="poly" title=" " alt="" coords="647,399,768,397,768,402,647,404"/>
+<area shape="poly" title=" " alt="" coords="637,380,672,361,687,342,695,323,702,304,720,285,742,272,767,263,769,268,745,276,723,289,707,306,699,325,692,345,675,365,640,385"/>
+<area shape="poly" title=" " alt="" coords="648,419,675,432,691,448,700,463,708,478,723,492,745,504,769,512,767,517,743,509,720,497,704,482,695,466,687,451,672,437,646,424"/>
+<area shape="poly" title=" " alt="" coords="647,419,768,444,767,449,646,424"/>
+<area shape="poly" title=" " alt="" coords="312,940,347,911,379,876,397,843,405,813,411,783,427,747,472,682,518,630,522,633,476,685,432,749,416,784,410,814,402,844,384,879,351,915,315,944"/>
+<area shape="poly" title=" " alt="" coords="345,995,383,1017,398,1031,407,1044,416,1057,431,1068,457,1080,491,1089,573,1106,722,1124,879,1135,1002,1133,1124,1115,1278,1081,1354,1059,1356,1064,1279,1087,1125,1120,1002,1138,879,1140,721,1129,572,1111,489,1095,455,1085,428,1073,412,1061,402,1047,394,1034,380,1021,342,999"/>
+<area shape="poly" title=" " alt="" coords="353,951,460,931,461,936,354,956"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="772,1075,927,1115"/>
+<area shape="poly" title=" " alt="" coords="353,958,425,956,507,961,593,976,635,988,675,1004,691,1016,700,1029,709,1042,723,1054,760,1071,758,1076,720,1058,705,1045,696,1032,687,1020,672,1009,633,993,592,981,506,966,425,962,353,963"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="474,1134,629,1189"/>
+<area shape="poly" title=" " alt="" coords="355,994,383,1014,401,1040,408,1065,414,1089,431,1113,463,1134,460,1138,427,1117,409,1091,403,1066,396,1042,379,1018,352,998"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="429,1019,673,1059"/>
+<area shape="poly" title=" " alt="" coords="354,987,457,1013,455,1018,353,992"/>
+<area shape="poly" title=" " alt="" coords="355,992,383,1014,399,1039,407,1063,407,1110,408,1155,415,1177,431,1200,446,1212,463,1221,460,1226,443,1216,427,1203,410,1179,402,1156,402,1110,401,1064,395,1041,379,1018,352,996"/>
+<area shape="poly" title=" " alt="" coords="315,995,352,1026,384,1065,397,1096,403,1125,401,1179,400,1204,403,1228,412,1253,431,1278,442,1287,438,1291,427,1282,408,1255,398,1230,395,1204,396,1178,398,1126,392,1098,379,1068,348,1030,312,999"/>
+<area shape="poly" title=" " alt="" coords="630,939,675,962,690,975,699,988,708,1000,722,1010,770,1024,834,1034,992,1044,1163,1045,1313,1040,1313,1046,1163,1050,992,1050,833,1039,769,1029,720,1014,704,1004,694,991,686,979,672,966,628,943"/>
+<area shape="poly" title=" " alt="" coords="630,933,654,945,675,961,693,985,699,1009,706,1032,723,1054,760,1075,757,1080,720,1058,701,1034,694,1011,688,987,671,965,651,950,628,938"/>
+<area shape="poly" title=" " alt="" coords="927,1086,1278,1053,1313,1049,1313,1055,1279,1059,927,1091"/>
 </map>
 </div>
 <div class="dynheader">
@@ -353,7 +363,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="analysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_icgraph.png" border="0" usemap="#aanalysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_icgraph" alt=""/></div>
 <map name="aanalysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_icgraph" id="aanalysis__bindings_8cpp_a8af930c9d1fbee2f3ba7bf208e294886_icgraph">
 <area shape="rect" title=" " alt="" coords="204,5,308,31"/>
-<area shape="rect" href="module_8cpp.html#abb80bc305ab755de8a78a1aefd650236" title=" " alt="" coords="5,5,156,31"/>
+<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,5,156,31"/>
 <area shape="poly" title=" " alt="" coords="190,21,156,21,156,15,190,15"/>
 </map>
 </div>

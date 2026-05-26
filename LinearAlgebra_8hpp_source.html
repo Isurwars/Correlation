@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -495,8 +495,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00633" data-start="{" data-end="}">
 <div class="line"><a id="l00633" name="l00633"></a><span class="lineno"><a class="line" href="namespacecorrelation_1_1math.html#a6ba992b818462710f63a3122c3e98669">  633</a></span><span class="keyword">constexpr</span> <a class="code hl_class" href="classcorrelation_1_1math_1_1Matrix3.html">Matrix3&lt;T&gt;</a> <a class="code hl_function" href="namespacecorrelation_1_1math.html#a6ba992b818462710f63a3122c3e98669">transpose</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcorrelation_1_1math_1_1Matrix3.html">Matrix3&lt;T&gt;</a> &amp;m) <span class="keyword">noexcept</span> {</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>  <span class="keywordflow">return</span> <a class="code hl_class" href="classcorrelation_1_1math_1_1Matrix3.html">Matrix3&lt;T&gt;</a>({m(0, 0), m(1, 0), m(2, 0)}, {m(0, 1), m(1, 1), m(2, 1)},</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                    {m(0, 2), m(1, 2), m(2, 2)});</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>  <span class="keywordflow">return</span> <a class="code hl_class" href="classcorrelation_1_1math_1_1Matrix3.html">Matrix3&lt;T&gt;</a>({m(0, 0), m(0, 1), m(0, 2)}, {m(1, 0), m(1, 1), m(1, 2)},</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                    {m(2, 0), m(2, 1), m(2, 2)});</div>
 <div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>}</div>
 </div>
 <div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span> </div>

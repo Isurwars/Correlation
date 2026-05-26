@@ -1,0 +1,5 @@
+<map id="include/calculators/ClusterCalculator.hpp" name="include/calculators/ClusterCalculator.hpp">
+<area shape="rect" id="Node000001" title="Calculator for cluster analysis using Union&#45;Find on the neighbor graph." alt="" coords="52,5,217,45"/>
+<area shape="rect" id="Node000002" href="$ClusterCalculator_8cpp.html" title="Implementation of the cluster analysis calculator." alt="" coords="5,93,264,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,59,137,93,132,93,132,59"/>
+</map>

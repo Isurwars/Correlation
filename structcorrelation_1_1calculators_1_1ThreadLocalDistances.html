@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;2.9.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -118,6 +118,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a096a3790cd72f13c8fbab494444db70d" id="r_a096a3790cd72f13c8fbab494444db70d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#a096a3790cd72f13c8fbab494444db70d">dsq_scratch</a></td></tr>
 <tr class="memdesc:a096a3790cd72f13c8fbab494444db70d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scratch for squared distance results.  <br /></td></tr>
 <tr class="separator:a096a3790cd72f13c8fbab494444db70d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa197fa68a4c7a2b43f2e71e2d92805b9" id="r_aa197fa68a4c7a2b43f2e71e2d92805b9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#aa197fa68a4c7a2b43f2e71e2d92805b9">candidate_j</a></td></tr>
+<tr class="memdesc:aa197fa68a4c7a2b43f2e71e2d92805b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scratch for candidate indices.  <br /></td></tr>
+<tr class="separator:aa197fa68a4c7a2b43f2e71e2d92805b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Thread-local storage for parallel distance calculations. </p>
@@ -169,6 +172,22 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="aa197fa68a4c7a2b43f2e71e2d92805b9" name="aa197fa68a4c7a2b43f2e71e2d92805b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa197fa68a4c7a2b43f2e71e2d92805b9">&#9670;&#160;</a></span>candidate_j</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;size_t&gt; correlation::calculators::ThreadLocalDistances::candidate_j</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scratch for candidate indices. </p>
+
+</div>
+</div>
 <a id="a9c07339ece5f7802d288fd2bc5f46629" name="a9c07339ece5f7802d288fd2bc5f46629"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9c07339ece5f7802d288fd2bc5f46629">&#9670;&#160;</a></span>distance_tensor_local</h2>
 

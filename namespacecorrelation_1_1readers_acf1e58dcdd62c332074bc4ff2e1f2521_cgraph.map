@@ -1,0 +1,7 @@
+<map id="correlation::readers::findReaderForType" name="correlation::readers::findReaderForType">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,49,156,89"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#add5e3884ee96a6941a7e1e2474828722" title="Finds a reader that supports the given file extension." alt="" coords="204,5,421,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="156,54,190,49,191,54,157,60"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="220,85,405,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="157,78,207,86,206,91,156,83"/>
+</map>

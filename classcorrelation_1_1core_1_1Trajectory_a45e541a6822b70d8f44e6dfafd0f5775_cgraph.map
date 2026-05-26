@@ -1,6 +1,10 @@
 <map id="correlation::core::Trajectory::removeDuplicatedFrames" name="correlation::core::Trajectory::removeDuplicatedFrames">
-<area shape="rect" id="Node000001" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="5,15,219,69"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="267,29,443,55"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,39,253,39,253,45,219,45"/>
-<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="315,31,307,21,311,11,328,5,355,3,389,7,399,11,402,17,398,20,395,15,388,12,355,8,329,10,315,15,312,20,319,27"/>
+<area shape="rect" id="Node000001" title="Removes consecutive duplicated frames from the trajectory. Frames are considered duplicates if all at..." alt="" coords="5,39,219,94"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="267,5,485,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="218,47,253,42,254,47,219,53"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="288,94,464,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="219,80,279,89,278,95,218,85"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="533,5,727,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="485,23,519,23,519,28,485,28"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="335,96,326,86,331,76,348,70,376,67,412,71,422,76,426,82,421,85,418,80,410,76,376,73,349,75,334,80,331,85,339,92"/>
 </map>
