@@ -27,6 +27,14 @@ add_executable(correlation_unit_tests
     unit/io/CP2KReaderTests.cpp
     unit/io/GromacsReaderTests.cpp
     unit/io/PdbReaderTests.cpp
+    unit/io/ArcReaderTests.cpp
+    unit/io/CarReaderTests.cpp
+    unit/io/CellReaderTests.cpp
+    unit/io/CifReaderTests.cpp
+    unit/io/CastepMdReaderTests.cpp
+    unit/io/LammpsDumpReaderTests.cpp
+    unit/io/OnetepDatReaderTests.cpp
+    unit/io/OutmolReaderTests.cpp
     unit/analysis/DihedralCalculatorTests.cpp
     unit/analysis/MotifFinderTests.cpp
     unit/analysis/RDFTests.cpp
@@ -57,6 +65,7 @@ add_executable(correlation_unit_tests
     unit/math/SmoothingTests.cpp
     unit/math/FFTUtilsTests.cpp
     unit/app/AppBackendTests.cpp
+    unit/cli/CliParserTests.cpp
     ../src/app/AppBackend.cpp
 )
 
@@ -65,6 +74,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
     readers_obj
     writers_obj
     calculators_obj
+    cli_parser_obj
     GTest::gtest
     GTest::gtest_main
 )
@@ -88,6 +98,26 @@ target_link_libraries(correlation_functional_tests PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
+
+#-----------------------------------------------------------
+# 2b. CLI End-to-End Tests (subprocess-based)
+#-----------------------------------------------------------
+add_executable(correlation_cli_e2e_tests
+    functional/cli/CliEndToEndTests.cpp
+)
+
+target_link_libraries(correlation_cli_e2e_tests PRIVATE
+    GTest::gtest
+    GTest::gtest_main
+)
+
+# Tell the test binary where the CLI executable lives
+target_compile_definitions(correlation_cli_e2e_tests PRIVATE
+    CORRELATION_CLI_PATH="$<TARGET_FILE:correlation-cli>"
+)
+
+# The E2E tests depend on the CLI binary being built
+add_dependencies(correlation_cli_e2e_tests correlation-cli)
 # (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------
@@ -121,7 +151,7 @@ if(BUILD_GUI)
 endif()
 
 # Configure common test target settings and discovery
-set(TEST_TARGETS correlation_unit_tests correlation_functional_tests)
+set(TEST_TARGETS correlation_unit_tests correlation_functional_tests correlation_cli_e2e_tests)
 if(BUILD_GUI)
     list(APPEND TEST_TARGETS correlation_gui_tests)
 endif()

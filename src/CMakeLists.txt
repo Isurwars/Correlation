@@ -195,6 +195,17 @@ if(BUILD_GUI)
 endif()
 
 #------------------------------------------------------------------
+# CLI Parser (OBJECT library — shared with tests)
+#------------------------------------------------------------------
+add_library(cli_parser_obj OBJECT
+    cli/CliParser.cpp
+)
+target_include_directories(cli_parser_obj PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(cli_parser_obj PRIVATE correlation_simd_options)
+
+#------------------------------------------------------------------
 # CLI Executable Target (correlation-cli) — no GUI dependency
 #------------------------------------------------------------------
 add_executable(correlation-cli
@@ -202,7 +213,7 @@ add_executable(correlation-cli
     app/AppBackend.cpp
 )
 target_link_libraries(correlation-cli PRIVATE
-    correlation_lib readers_obj writers_obj calculators_obj
+    correlation_lib readers_obj writers_obj calculators_obj cli_parser_obj
 )
 target_include_directories(correlation-cli PRIVATE
     ${PROJECT_SOURCE_DIR}/include

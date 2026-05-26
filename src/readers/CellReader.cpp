@@ -129,7 +129,12 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
         line_stream.clear();
         line_stream.seekg(0);
         if (line_stream >> element >> x >> y >> z) {
-          tempCell.addAtom(element, {x, y, z});
+          const auto &lv = tempCell.latticeVectors();
+          correlation::math::Vector3<double> pos = {
+              x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
+              x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+              x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
+          tempCell.addAtom(element, pos);
         }
       }
     }

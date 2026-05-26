@@ -166,7 +166,12 @@ correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
         line_stream.seekg(0);
         std::istringstream ss(line);
         if (ss >> element >> x >> y >> z) {
-          tempCell.addAtom(element, {x, y, z});
+          const auto &lv = tempCell.latticeVectors();
+          correlation::math::Vector3<double> pos = {
+              x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
+              x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+              x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
+          tempCell.addAtom(element, pos);
         }
       }
     }
