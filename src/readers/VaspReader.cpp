@@ -122,7 +122,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
     // Peek at first token to determine if this is species or counts
     if (iss >> token) {
       try {
-        std::stoi(token);
+        static_cast<void>(std::stoi(token));
         // It's a number → VASP 4 format (no species line)
         // We don't have species names, use generic labels
         atom_counts.push_back(std::stoi(token));

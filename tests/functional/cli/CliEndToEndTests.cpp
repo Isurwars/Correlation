@@ -10,6 +10,11 @@
 #include <gtest/gtest.h>
 #include <string>
 
+#ifdef _WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
 namespace {
 
 // ---------------------------------------------------------------------------
@@ -40,7 +45,11 @@ std::string getTestDataDir() {
 
 // Run a shell command and return its exit code.
 int runCli(const std::string &args) {
+#ifdef _WIN32
+  std::string cmd = CLI_BIN + " " + args + " 2>nul";
+#else
   std::string cmd = CLI_BIN + " " + args + " 2>/dev/null";
+#endif
   int status = std::system(cmd.c_str());
 #ifdef _WIN32
   return status;
@@ -51,7 +60,11 @@ int runCli(const std::string &args) {
 
 // Run a shell command and capture its stdout.
 std::string runCliCapture(const std::string &args) {
+#ifdef _WIN32
+  std::string cmd = CLI_BIN + " " + args + " 2>nul";
+#else
   std::string cmd = CLI_BIN + " " + args + " 2>/dev/null";
+#endif
   std::array<char, 512> buffer{};
   std::string result;
   FILE *pipe = popen(cmd.c_str(), "r");
