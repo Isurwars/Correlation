@@ -3,12 +3,11 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include <gtest/gtest.h>
 #include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
-#include <fstream>
+#include <gtest/gtest.h>
 #include <string>
 
 namespace {
@@ -76,9 +75,7 @@ protected:
 
 // ===== Basic flag tests =====
 
-TEST_F(CliEndToEndTests, HelpReturnsZero) {
-  EXPECT_EQ(runCli("--help"), 0);
-}
+TEST_F(CliEndToEndTests, HelpReturnsZero) { EXPECT_EQ(runCli("--help"), 0); }
 
 TEST_F(CliEndToEndTests, VersionReturnsZero) {
   EXPECT_EQ(runCli("--version"), 0);
@@ -90,9 +87,7 @@ TEST_F(CliEndToEndTests, VersionPrintsVersionString) {
       << "Actual output: " << output;
 }
 
-TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) {
-  EXPECT_NE(runCli(""), 0);
-}
+TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) { EXPECT_NE(runCli(""), 0); }
 
 TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) {
   EXPECT_NE(runCli("--this-does-not-exist"), 0);
@@ -106,7 +101,8 @@ TEST_F(CliEndToEndTests, NonexistentFileReturnsNonZero) {
 
 TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   // Use a temp directory for output so we don't pollute the test data dir
-  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_test";
+  auto tmp_dir =
+      std::filesystem::temp_directory_path() / "correlation_e2e_test";
   std::filesystem::create_directories(tmp_dir);
   std::string out_base = (tmp_dir / "result").string();
 
@@ -120,10 +116,6 @@ TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   EXPECT_EQ(rc, 0) << "CLI should succeed on valid Si.poscar input";
 }
 
-TEST_F(CliEndToEndTests, ShortHelpFlag) {
-  EXPECT_EQ(runCli("-h"), 0);
-}
+TEST_F(CliEndToEndTests, ShortHelpFlag) { EXPECT_EQ(runCli("-h"), 0); }
 
-TEST_F(CliEndToEndTests, ShortVersionFlag) {
-  EXPECT_EQ(runCli("-v"), 0);
-}
+TEST_F(CliEndToEndTests, ShortVersionFlag) { EXPECT_EQ(runCli("-v"), 0); }

@@ -6,7 +6,6 @@
 #include "cli/CliParser.hpp"
 
 #include <gtest/gtest.h>
-#include <cstring>
 #include <string>
 #include <vector>
 
@@ -22,8 +21,7 @@ struct ArgBuilder {
   std::vector<char *> argv;
 
   // Construct from initializer list: {"correlation-cli", "--help", ...}
-  explicit ArgBuilder(std::initializer_list<std::string> args)
-      : storage(args) {
+  explicit ArgBuilder(std::initializer_list<std::string> args) : storage(args) {
     for (auto &s : storage) {
       argv.push_back(s.data());
     }
@@ -366,7 +364,7 @@ TEST_F(CliParserTests, CalculatorsOption) {
 
 TEST_F(CliParserTests, KernelGaussian) {
   ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                   "gaussian"};
+                  "gaussian"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -383,7 +381,7 @@ TEST_F(CliParserTests, KernelGauss) {
 
 TEST_F(CliParserTests, KernelGaussianCaseInsensitive) {
   ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                   "GAUSSIAN"};
+                  "GAUSSIAN"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -400,7 +398,7 @@ TEST_F(CliParserTests, KernelBump) {
 
 TEST_F(CliParserTests, KernelTriweight) {
   ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                   "triweight"};
+                  "triweight"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -409,7 +407,7 @@ TEST_F(CliParserTests, KernelTriweight) {
 
 TEST_F(CliParserTests, KernelUnknownDefaultsToGaussian) {
   ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                   "invalid_kernel"};
+                  "invalid_kernel"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -419,16 +417,23 @@ TEST_F(CliParserTests, KernelUnknownDefaultsToGaussian) {
 // ===== Combined options =====
 
 TEST_F(CliParserTests, MultipleOptionsCombined) {
-  ArgBuilder args{"correlation-cli",   "sim.xyz",
-                   "--r-max",          "30.0",
-                   "--r-bin",          "0.05",
-                   "--q-max",          "25.0",
-                   "--no-csv",
-                   "--hdf5",
-                   "--quiet",
-                   "--smoothing-kernel", "bump",
-                   "--calculators",    "RDF,PAD",
-                   "-o",              "/results/out"};
+  ArgBuilder args{"correlation-cli",
+                  "sim.xyz",
+                  "--r-max",
+                  "30.0",
+                  "--r-bin",
+                  "0.05",
+                  "--q-max",
+                  "25.0",
+                  "--no-csv",
+                  "--hdf5",
+                  "--quiet",
+                  "--smoothing-kernel",
+                  "bump",
+                  "--calculators",
+                  "RDF,PAD",
+                  "-o",
+                  "/results/out"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));

@@ -52,14 +52,26 @@ functions:
 - Steinhardt Bond-Orientational Parameters (Q4, Q6, W6)
 - Velocity Autocorrelation Function (VACF)
 - Vibrational Density of States (VDOS)
+- Common Neighbor Analysis (CNA)
+- Hydrogen Bond Analysis (H-Bond)
+- Cluster Analysis
+- Spatial Distribution Function (SDF)
+- Angle Calculator (generic bond angles)
+- Distance Calculator
 
 
-Supports structure files from:
+Supports structure and trajectory files from:
+- VASP (`.POSCAR`, `.CONTCAR`, `.VASP`, `.XDATCAR`)
 - Crystallographic Information Files (`.CIF`)
-- DMoL3 (`.CAR`, `.ARC`)
+- DMol3 / Accelrys (`.CAR`, `.ARC`)
 - CASTEP (`.CELL`, `.MD`)
 - ONETEP (`.DAT`)
-- LAMMPS (`.XYZ`, `.DUMP`)
+- LAMMPS (`.DUMP`, `.LAMMPSTRJ`)
+- Extended XYZ (`.XYZ`, `.EXYZ`)
+- GROMACS (`.GRO`)
+- PDB (`.PDB`, `.ENT`)
+- Quantum ESPRESSO (`.PWI`, `.PWO`, `.IN`, `.OUT`)
+- CP2K (`.INP`, `.RESTART`, `.OUT`, `.CP2K`)
 - DMol3/Gaussian (`.OUTMOL`)
 
 High Performance: The core calculation loops are parallelized using modern C++ techniques, enabling the analysis of systems with hundreds of thousands of atoms.
@@ -71,7 +83,7 @@ Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clea
 ### Prerequisites
 
 - A modern C++ compiler (C++23 support required)
-- CMake (version 3.20+)
+- CMake (version 3.24+)
 - git
 - Intel TBB (for parallelization)
 - Slint (for GUI)
