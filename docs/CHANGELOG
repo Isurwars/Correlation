@@ -1,7 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.0.0] - In Progress
+## [3.0.1] - 2026-05-26
+
+### Added
+- **Unit Test Suite Enhancements**: Added 34 new unit tests covering edge cases, extreme values, and robust validation across `Cell`, `Trajectory`, `NeighborGraph`, `LinearAlgebra`, `FFTUtils`, `DistanceCalculator`, `AngleCalculator`, `MSDCalculator`, `MotifFinder`, `SDFCalculator`, and `CNCalculator`.
+- **Short Name Support**: Added support for calling/activating calculators in the analysis settings and backend using their short names (e.g. "RDF", "SQ", "PAD", "VACF", "vDoS").
+
+### Fixed
+- **Zero/Negative Timestep Handling**: Strengthened trajectory velocity calculation tests to ensure pre-existing velocities are preserved when early-return logic is triggered.
+- **SDF Test Coverage**: Replaced a single-atom stub test with a proper multi-atom test verifying density distribution and correct per-element histogram structures.
+- **Isolated Atom Coordination**: Adjusted isolated atom coordination test to align with `CNCalculator` behavior for systems with no neighbors.
+- **MSD Test Deduplication**: Bypassed constructor-based frame deduplication using `addFrame()` directly to prevent stationary frames from being collapsed.
+
+## [3.0.0] - 2026-05-26
 
 ### Added
 - **Explicit SIMD Vectorization**: AVX2/AVX-512 optimization for core calculation loops.
