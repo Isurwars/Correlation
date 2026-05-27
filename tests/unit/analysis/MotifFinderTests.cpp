@@ -67,4 +67,57 @@ TEST_F(MotifFinderTests, DetectsSingleSquare) {
   EXPECT_EQ(rings.count(6), 0);
 }
 
+// --- Extreme / Edge-Case Tests ---
+
+TEST_F(MotifFinderTests, EmptyGraphReturnsNoRings) {
+  // A graph with no edges at all
+  graph = correlation::core::NeighborGraph(5);
+  
+  auto rings = MotifFinder::findRings(graph, 6);
+  
+  // No edges means no rings of any size
+  for (int size = 3; size <= 6; ++size) {
+    EXPECT_EQ(rings.count(size), 0) << "Expected no rings of size " << size;
+  }
+}
+
+TEST_F(MotifFinderTests, IsolatedNodesReturnsNoRings) {
+  // Graph with some edges but no closed loops
+  graph = correlation::core::NeighborGraph(4);
+  
+  // Linear chain: 0-1-2-3 (no cycle)
+  graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 0, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 2, 1.0, {0.0, 1.0, 0.0});
+  graph.addDirectedEdge(2, 1, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(2, 3, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(3, 2, 1.0, {-1.0, 0.0, 0.0});
+  
+  auto rings = MotifFinder::findRings(graph, 6);
+  
+  for (int size = 3; size <= 6; ++size) {
+    EXPECT_EQ(rings.count(size), 0) << "Expected no rings of size " << size;
+  }
+}
+
+TEST_F(MotifFinderTests, MaxRingSizeExcludesLargerRings) {
+  // Create a square (ring of size 4) but set max_size = 3
+  graph = correlation::core::NeighborGraph(4);
+  
+  graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 0, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 2, 1.0, {0.0, 1.0, 0.0});
+  graph.addDirectedEdge(2, 1, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(2, 3, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(3, 2, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(3, 0, 1.0, {0.0, -1.0, 0.0});
+  graph.addDirectedEdge(0, 3, 1.0, {0.0, 1.0, 0.0});
+  
+  // max_size = 3 should NOT find the size-4 ring
+  auto rings = MotifFinder::findRings(graph, 3);
+  
+  EXPECT_EQ(rings.count(3), 0);
+  EXPECT_EQ(rings.count(4), 0); // Should be excluded by max_size
+}
+
 } // namespace correlation::calculators

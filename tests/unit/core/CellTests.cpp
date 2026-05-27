@@ -201,4 +201,84 @@ TEST_F(CellTests, MinimumImageHandlesInfiniteAndNaNDistance) {
   EXPECT_TRUE(std::isnan(mi_inf.x())); // std::round(inf) yields nan/indefinite, which makes x() NaN
 }
 
+// --- Extreme / Edge-Case Tests ---
+
+TEST_F(CellTests, TriclinicCellWrapPositions) {
+  // A triclinic cell: a=10, b=10, c=10, alpha=80, beta=85, gamma=75
+  Cell cell({{10.0, 10.0, 10.0, 80.0, 85.0, 75.0}});
+  // Place an atom well outside the cell in Cartesian coordinates
+  cell.addAtom("H", {25.0, -15.0, 30.0});
+  cell.wrapPositions();
+  
+  const auto &pos = cell.atoms().front().position();
+  // After wrapping, fractional coordinates must be in [0, 1).
+  // Convert back to fractional and verify
+  auto frac = cell.inverseLatticeVectors() * pos;
+  EXPECT_GE(frac.x(), 0.0 - 1e-9);
+  EXPECT_LT(frac.x(), 1.0 + 1e-9);
+  EXPECT_GE(frac.y(), 0.0 - 1e-9);
+  EXPECT_LT(frac.y(), 1.0 + 1e-9);
+  EXPECT_GE(frac.z(), 0.0 - 1e-9);
+  EXPECT_LT(frac.z(), 1.0 + 1e-9);
+}
+
+TEST_F(CellTests, TriclinicCellMinimumImage) {
+  // Non-orthogonal cell
+  Cell cell({{5.0, 5.0, 5.0, 60.0, 60.0, 60.0}});
+  
+  // Distance vector that spans more than half the cell in some direction
+  auto mi = cell.minimumImage({4.0, 4.0, 4.0});
+  double mi_length = correlation::math::norm(mi);
+  
+  // The minimum image vector must be shorter than or equal to half the max box extent
+  // For a cell with a=5, the maximum half-diagonal is bounded
+  double half_diagonal = 0.5 * std::sqrt(5.0*5.0 * 3); // conservative upper bound
+  EXPECT_LE(mi_length, half_diagonal + 1e-6);
+  
+  // The zero vector should map to zero
+  auto mi_zero = cell.minimumImage({0.0, 0.0, 0.0});
+  EXPECT_NEAR(mi_zero.x(), 0.0, 1e-9);
+  EXPECT_NEAR(mi_zero.y(), 0.0, 1e-9);
+  EXPECT_NEAR(mi_zero.z(), 0.0, 1e-9);
+}
+
+TEST_F(CellTests, ExtremelySmallCell) {
+  // Very small cell — should not cause underflow or precision issues
+  // Note: Cell::updateLattice rejects volume <= 1e-9, so 0.01^3 = 1e-6 is valid
+  const std::array<double, 6> params = {0.01, 0.01, 0.01, 90.0, 90.0, 90.0};
+  Cell cell(params);
+  EXPECT_NEAR(cell.volume(), 1e-6, 1e-12);
+  
+  cell.addAtom("H", {0.005, 0.005, 0.005});
+  cell.wrapPositions();
+  const auto &pos = cell.atoms().front().position();
+  EXPECT_NEAR(pos.x(), 0.005, 1e-12);
+}
+
+TEST_F(CellTests, ExtremelyLargeCell) {
+  // Very large cell — should not overflow
+  const std::array<double, 6> params = {1e6, 1e6, 1e6, 90.0, 90.0, 90.0};
+  Cell cell(params);
+  EXPECT_NEAR(cell.volume(), 1e18, 1e9);
+  
+  cell.addAtom("H", {5e5, 5e5, 5e5});
+  auto mi = cell.minimumImage({3e5, 0.0, 0.0});
+  EXPECT_NEAR(mi.x(), 3e5, 1e-3);
+}
+
+TEST_F(CellTests, HighAtomCount) {
+  // Stress test: add many atoms without crashing
+  Cell cell({{100.0, 100.0, 100.0, 90.0, 90.0, 90.0}});
+  const size_t N = 10000;
+  for (size_t i = 0; i < N; ++i) {
+    double pos = static_cast<double>(i) * 0.01;
+    cell.addAtom("H", {pos, pos, pos});
+  }
+  EXPECT_EQ(cell.atomCount(), N);
+  EXPECT_EQ(cell.elements().size(), 1);
+  
+  // Wrap all positions — should not crash or take excessively long
+  EXPECT_NO_THROW(cell.wrapPositions());
+}
+
 } // namespace correlation::testing

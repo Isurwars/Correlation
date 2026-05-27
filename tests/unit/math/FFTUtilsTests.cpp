@@ -83,4 +83,22 @@ TEST_F(FFTUtilsTests, AutocorrelateReusesWorkspaceCorrectly) {
   EXPECT_GE(workspace.size(), 8); // padded to 2^3
 }
 
+// --- Extreme / Edge-Case Tests ---
+
+TEST_F(FFTUtilsTests, ComputeFFTSizeOne) {
+  // Size 1 is a valid power of two (2^0)
+  std::vector<std::complex<double>> signal = {{7.5, -2.3}};
+  auto original = signal;
+  
+  // Forward FFT of a single element is itself
+  computeFFT(signal, false);
+  EXPECT_NEAR(signal[0].real(), original[0].real(), 1e-9);
+  EXPECT_NEAR(signal[0].imag(), original[0].imag(), 1e-9);
+  
+  // Inverse FFT should return to original
+  computeFFT(signal, true);
+  EXPECT_NEAR(signal[0].real(), original[0].real(), 1e-9);
+  EXPECT_NEAR(signal[0].imag(), original[0].imag(), 1e-9);
+}
+
 } // namespace correlation::testing

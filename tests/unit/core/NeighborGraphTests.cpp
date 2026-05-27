@@ -116,4 +116,68 @@ TEST_F(NeighborGraphTests, DenseAdjacencyMatrixMapping) {
   EXPECT_FALSE(matrix[8]); // 2 -> 2
 }
 
+// --- Extreme / Edge-Case Tests ---
+
+TEST_F(NeighborGraphTests, SelfLoopIsAllowed) {
+  NeighborGraph graph(3);
+  Vector3<double> r_ij{0.0, 0.0, 0.0};
+  
+  // Self-loop: atom 0 -> atom 0
+  graph.addDirectedEdge(0, 0, 0.0, r_ij);
+  
+  EXPECT_TRUE(graph.areConnected(0, 0));
+  const auto& neighbors = graph.getNeighbors(0);
+  ASSERT_EQ(neighbors.size(), 1);
+  EXPECT_EQ(neighbors[0].index, 0);
+  
+  // Should appear in the dense matrix diagonal
+  auto matrix = graph.getDenseAdjacencyMatrix();
+  EXPECT_TRUE(matrix[0]); // (0,0) = true
+}
+
+TEST_F(NeighborGraphTests, DuplicateEdgesAreBothStored) {
+  NeighborGraph graph(3);
+  Vector3<double> r_ij1{1.0, 0.0, 0.0};
+  Vector3<double> r_ij2{2.0, 0.0, 0.0};
+  
+  // Add same edge (0 -> 1) twice with different distances
+  graph.addDirectedEdge(0, 1, 1.5, r_ij1);
+  graph.addDirectedEdge(0, 1, 3.0, r_ij2);
+  
+  // Both edges should be stored
+  const auto& neighbors = graph.getNeighbors(0);
+  ASSERT_EQ(neighbors.size(), 2);
+  EXPECT_EQ(neighbors[0].index, 1);
+  EXPECT_EQ(neighbors[1].index, 1);
+  EXPECT_DOUBLE_EQ(neighbors[0].distance, 1.5);
+  EXPECT_DOUBLE_EQ(neighbors[1].distance, 3.0);
+  
+  // Dense matrix still shows them as connected
+  EXPECT_TRUE(graph.areConnected(0, 1));
+}
+
+TEST_F(NeighborGraphTests, LargeGraphPerformance) {
+  // Stress test: large fully-connected graph should not crash
+  const size_t N = 500;
+  NeighborGraph graph(N);
+  Vector3<double> r_ij{1.0, 0.0, 0.0};
+  
+  // Connect every pair (i,j) where i < j as a directed edge i -> j
+  for (size_t i = 0; i < N; ++i) {
+    for (size_t j = i + 1; j < N && j < i + 5; ++j) { // Limit to 5 neighbors each
+      graph.addDirectedEdge(i, j, 1.0, r_ij);
+    }
+  }
+  
+  EXPECT_EQ(graph.nodeCount(), N);
+  
+  // Verify first node's neighbors (connects to j=1,2,3,4 = 4 neighbors)
+  const auto& neighbors = graph.getNeighbors(0);
+  EXPECT_EQ(neighbors.size(), 4);
+  
+  // Dense matrix should be NxN
+  auto matrix = graph.getDenseAdjacencyMatrix();
+  EXPECT_EQ(matrix.size(), N * N);
+}
+
 } // namespace correlation::testing

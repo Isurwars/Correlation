@@ -203,4 +203,84 @@ TEST_F(LinearAlgebraTests, Transpose) {
   EXPECT_DOUBLE_EQ(mt(1, 0), 4.0);
 }
 
+// --- Extreme / Edge-Case Tests ---
+
+TEST_F(LinearAlgebraTests, Vector3DivisionByZero) {
+  Vector3<double> v(1.0, 2.0, 3.0);
+  auto result = v / 0.0;
+  
+  // Division by zero should produce infinity
+  EXPECT_TRUE(std::isinf(result.x()));
+  EXPECT_TRUE(std::isinf(result.y()));
+  EXPECT_TRUE(std::isinf(result.z()));
+  
+  // Zero / zero should produce NaN
+  Vector3<double> zero_v;
+  auto nan_result = zero_v / 0.0;
+  EXPECT_TRUE(std::isnan(nan_result.x()));
+}
+
+TEST_F(LinearAlgebraTests, Matrix3IdentityInverse) {
+  // Identity matrix inverse should be identity
+  Vector3<double> c0(1.0, 0.0, 0.0);
+  Vector3<double> c1(0.0, 1.0, 0.0);
+  Vector3<double> c2(0.0, 0.0, 1.0);
+  Matrix3<double> identity(c0, c1, c2);
+  
+  EXPECT_DOUBLE_EQ(determinant(identity), 1.0);
+  
+  auto inv = invert(identity);
+  EXPECT_DOUBLE_EQ(inv(0, 0), 1.0);
+  EXPECT_DOUBLE_EQ(inv(1, 1), 1.0);
+  EXPECT_DOUBLE_EQ(inv(2, 2), 1.0);
+  EXPECT_DOUBLE_EQ(inv(0, 1), 0.0);
+  EXPECT_DOUBLE_EQ(inv(0, 2), 0.0);
+  EXPECT_DOUBLE_EQ(inv(1, 0), 0.0);
+}
+
+TEST_F(LinearAlgebraTests, Matrix3NegativeDeterminant) {
+  // Left-handed coordinate system: negative determinant
+  Vector3<double> c0(0.0, 1.0, 0.0);
+  Vector3<double> c1(1.0, 0.0, 0.0);
+  Vector3<double> c2(0.0, 0.0, 1.0);
+  Matrix3<double> m(c0, c1, c2);
+  
+  EXPECT_DOUBLE_EQ(determinant(m), -1.0);
+  
+  // Should still be invertible
+  auto inv = invert(m);
+  // M * M^-1 should give identity
+  auto product = m * inv;
+  EXPECT_NEAR(product(0, 0), 1.0, 1e-15);
+  EXPECT_NEAR(product(1, 1), 1.0, 1e-15);
+  EXPECT_NEAR(product(2, 2), 1.0, 1e-15);
+  EXPECT_NEAR(product(0, 1), 0.0, 1e-15);
+}
+
+TEST_F(LinearAlgebraTests, Matrix3ExtremeValues) {
+  // Very large values
+  double big = 1e10;
+  Vector3<double> c0(big, 0.0, 0.0);
+  Vector3<double> c1(0.0, big, 0.0);
+  Vector3<double> c2(0.0, 0.0, big);
+  Matrix3<double> m_big(c0, c1, c2);
+  
+  EXPECT_NEAR(determinant(m_big), big * big * big, big * big * 1e-6);
+  
+  auto inv_big = invert(m_big);
+  EXPECT_NEAR(inv_big(0, 0), 1.0 / big, 1e-25);
+  
+  // Very small values
+  double small = 1e-4;
+  Vector3<double> s0(small, 0.0, 0.0);
+  Vector3<double> s1(0.0, small, 0.0);
+  Vector3<double> s2(0.0, 0.0, small);
+  Matrix3<double> m_small(s0, s1, s2);
+  
+  EXPECT_NEAR(determinant(m_small), small * small * small, 1e-20);
+  
+  auto inv_small = invert(m_small);
+  EXPECT_NEAR(inv_small(0, 0), 1.0 / small, 1e-6);
+}
+
 } // namespace correlation::testing
