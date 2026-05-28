@@ -176,6 +176,55 @@ public:
    * @return Vector of histogram name strings.
    */
   std::vector<std::string> getAvailableHistograms() const;
+
+  /**
+   * @brief Gets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
+   * @return The diffusion coefficient in Å²/fs.
+   */
+  double getDiffusionCoefficientMSD() const noexcept;
+
+  /**
+   * @brief Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
+   * @param d The new diffusion coefficient value in Å²/fs.
+   */
+  void setDiffusionCoefficientMSD(double d) noexcept;
+
+  /**
+   * @brief Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
+   * @return The diffusion coefficient in Å²/fs.
+   */
+  double getDiffusionCoefficientVACF() const noexcept;
+
+  /**
+   * @brief Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
+   * @param d The new diffusion coefficient value in Å²/fs.
+   */
+  void setDiffusionCoefficientVACF(double d) noexcept;
+
+  /**
+   * @brief Gets the relaxation time computed from normalized VACF.
+   * @return The relaxation time in fs.
+   */
+  double getRelaxationTime() const noexcept;
+
+  /**
+   * @brief Sets the relaxation time computed from normalized VACF.
+   * @param tau The new relaxation time value in fs.
+   */
+  void setRelaxationTime(double tau) noexcept;
+
+  /**
+   * @brief Gets the Deborah number.
+   * @return The Deborah number.
+   */
+  double getDeborahNumber() const noexcept;
+
+  /**
+   * @brief Sets the Deborah number.
+   * @param de The new Deborah number value.
+   */
+  void setDeborahNumber(double de) noexcept;
+
   //-------------------------------------------------------------------------//
   //--------------------------- Calculation Methods -------------------------//
   //-------------------------------------------------------------------------//
@@ -336,6 +385,11 @@ private:
   std::map<std::string, Histogram> histograms_; ///< Storage for all analysis results.
   std::map<std::string, double> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
   mutable std::mutex histogram_mutex_; ///< Protects concurrent access to histograms_.
+
+  double diffusion_coefficient_msd_{0.0}; ///< Self-diffusion coefficient from MSD (Å²/fs).
+  double diffusion_coefficient_vacf_{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
+  double relaxation_time_{0.0}; ///< Relaxation time (fs).
+  double deborah_number_{0.0}; ///< Deborah number.
 };
 
 } // namespace correlation::analysis

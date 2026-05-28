@@ -170,4 +170,28 @@ TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
   EXPECT_NEAR(tau, 2.0, 1e-6);
 }
 
+TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
+  correlation::core::Cell c({10, 10, 10, 90, 90, 90});
+  c.addAtom("Ar", {0.0, 0.0, 0.0});
+  DistributionFunctions df(c, 0.0, {{0.0}});
+
+  // Verify initial state is 0.0
+  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientMSD(), 0.0);
+  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientVACF(), 0.0);
+  EXPECT_DOUBLE_EQ(df.getRelaxationTime(), 0.0);
+  EXPECT_DOUBLE_EQ(df.getDeborahNumber(), 0.0);
+
+  // Set values
+  df.setDiffusionCoefficientMSD(1.23);
+  df.setDiffusionCoefficientVACF(4.56);
+  df.setRelaxationTime(7.89);
+  df.setDeborahNumber(0.12);
+
+  // Verify updated values
+  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientMSD(), 1.23);
+  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientVACF(), 4.56);
+  EXPECT_DOUBLE_EQ(df.getRelaxationTime(), 7.89);
+  EXPECT_DOUBLE_EQ(df.getDeborahNumber(), 0.12);
+}
+
 } // namespace correlation::analysis

@@ -34,7 +34,11 @@ DistributionFunctions::DistributionFunctions(
     const correlation::core::Cell &cell, double cutoff,
     const std::vector<std::vector<double>> &bond_cutoffs)
     : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0),
-      bond_cutoffs_sq_(bond_cutoffs) {
+      bond_cutoffs_sq_(bond_cutoffs),
+      diffusion_coefficient_msd_(0.0),
+      diffusion_coefficient_vacf_(0.0),
+      relaxation_time_(0.0),
+      deborah_number_(0.0) {
   if (cutoff > 0.0) {
     if (bond_cutoffs.empty()) {
       throw std::invalid_argument(
@@ -52,10 +56,18 @@ DistributionFunctions::DistributionFunctions(
       neighbors_owned_(std::move(other.neighbors_owned_)),
       current_cutoff_(other.current_cutoff_),
       histograms_(std::move(other.histograms_)),
-      ashcroft_weights_(std::move(other.ashcroft_weights_)) {
+      ashcroft_weights_(std::move(other.ashcroft_weights_)),
+      diffusion_coefficient_msd_(other.diffusion_coefficient_msd_),
+      diffusion_coefficient_vacf_(other.diffusion_coefficient_vacf_),
+      relaxation_time_(other.relaxation_time_),
+      deborah_number_(other.deborah_number_) {
 
   other.current_cutoff_ = -1.0;
   other.neighbors_ref_ = nullptr;
+  other.diffusion_coefficient_msd_ = 0.0;
+  other.diffusion_coefficient_vacf_ = 0.0;
+  other.relaxation_time_ = 0.0;
+  other.deborah_number_ = 0.0;
 }
 
 // Move Assignment Operator
@@ -67,9 +79,17 @@ DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
     current_cutoff_ = other.current_cutoff_;
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
+    diffusion_coefficient_msd_ = other.diffusion_coefficient_msd_;
+    diffusion_coefficient_vacf_ = other.diffusion_coefficient_vacf_;
+    relaxation_time_ = other.relaxation_time_;
+    deborah_number_ = other.deborah_number_;
 
     other.current_cutoff_ = -1.0;
     other.neighbors_ref_ = nullptr;
+    other.diffusion_coefficient_msd_ = 0.0;
+    other.diffusion_coefficient_vacf_ = 0.0;
+    other.relaxation_time_ = 0.0;
+    other.deborah_number_ = 0.0;
   }
   return *this;
 }
@@ -483,6 +503,38 @@ std::unique_ptr<DistributionFunctions> DistributionFunctions::computeMean(
   }
 
   return std::move(final_df);
+}
+
+double DistributionFunctions::getDiffusionCoefficientMSD() const noexcept {
+  return diffusion_coefficient_msd_;
+}
+
+void DistributionFunctions::setDiffusionCoefficientMSD(double d) noexcept {
+  diffusion_coefficient_msd_ = d;
+}
+
+double DistributionFunctions::getDiffusionCoefficientVACF() const noexcept {
+  return diffusion_coefficient_vacf_;
+}
+
+void DistributionFunctions::setDiffusionCoefficientVACF(double d) noexcept {
+  diffusion_coefficient_vacf_ = d;
+}
+
+double DistributionFunctions::getRelaxationTime() const noexcept {
+  return relaxation_time_;
+}
+
+void DistributionFunctions::setRelaxationTime(double tau) noexcept {
+  relaxation_time_ = tau;
+}
+
+double DistributionFunctions::getDeborahNumber() const noexcept {
+  return deborah_number_;
+}
+
+void DistributionFunctions::setDeborahNumber(double de) noexcept {
+  deborah_number_ = de;
 }
 
 } // namespace correlation::analysis
