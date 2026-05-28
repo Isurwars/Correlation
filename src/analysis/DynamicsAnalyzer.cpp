@@ -407,4 +407,65 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   return {frequencies, intensities_real, intensities_imag};
 }
 
+double DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<double> &time,
+                                                       const std::vector<double> &msd) {
+  if (time.size() < 2 || time.size() != msd.size()) {
+    return 0.0;
+  }
+  // Fit on the second half of the data
+  size_t start_idx = time.size() / 2;
+  size_t n = time.size() - start_idx;
+  if (n < 2) return 0.0;
+
+  double sum_x = 0.0;
+  double sum_y = 0.0;
+  double sum_xx = 0.0;
+  double sum_xy = 0.0;
+
+  for (size_t i = start_idx; i < time.size(); ++i) {
+    double x = time[i];
+    double y = msd[i];
+    sum_x += x;
+    sum_y += y;
+    sum_xx += x * x;
+    sum_xy += x * y;
+  }
+
+  double denominator = (static_cast<double>(n) * sum_xx - sum_x * sum_x);
+  if (std::abs(denominator) < 1e-12) {
+    return 0.0;
+  }
+
+  double slope = (static_cast<double>(n) * sum_xy - sum_x * sum_y) / denominator;
+  // D = slope / 6.0
+  return slope / 6.0;
+}
+
+double DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<double> &time,
+                                                        const std::vector<double> &vacf) {
+  if (time.size() < 2 || time.size() != vacf.size()) {
+    return 0.0;
+  }
+  double integral = 0.0;
+  for (size_t i = 0; i < time.size() - 1; ++i) {
+    double dt = time[i + 1] - time[i];
+    integral += 0.5 * (vacf[i] + vacf[i + 1]) * dt;
+  }
+  // Green-Kubo: D = 1/3 * integral
+  return integral / 3.0;
+}
+
+double DynamicsAnalyzer::computeRelaxationTime(const std::vector<double> &time,
+                                               const std::vector<double> &norm_vacf) {
+  if (time.size() < 2 || time.size() != norm_vacf.size()) {
+    return 0.0;
+  }
+  double integral = 0.0;
+  for (size_t i = 0; i < time.size() - 1; ++i) {
+    double dt = time[i + 1] - time[i];
+    integral += 0.5 * (norm_vacf[i] + norm_vacf[i + 1]) * dt;
+  }
+  return integral;
+}
+
 } // namespace correlation::analysis

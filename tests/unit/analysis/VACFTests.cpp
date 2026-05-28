@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -156,4 +157,17 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   EXPECT_LT(vacf[4], vacf[3]);
   EXPECT_GT(vacf[4], 0.0);
 }
+
+TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
+  std::vector<double> time = {0.0, 1.0, 2.0};
+  std::vector<double> vacf = {3.0, 3.0, 3.0};
+  std::vector<double> norm_vacf = {1.0, 1.0, 1.0};
+
+  double d = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
+  double tau = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
+
+  EXPECT_NEAR(d, 2.0, 1e-6);
+  EXPECT_NEAR(tau, 2.0, 1e-6);
+}
+
 } // namespace correlation::analysis

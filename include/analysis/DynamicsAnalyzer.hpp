@@ -98,6 +98,33 @@ public:
   static std::tuple<std::vector<double>, std::vector<double>,
                     std::vector<double>>
   calculateVDOS(const std::vector<double> &vacf, double dt);
+
+  /**
+   * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time series.
+   * @param time The time values (bins).
+   * @param msd The MSD values.
+   * @return The diffusion coefficient in Å²/fs.
+   */
+  static double computeDiffusionCoefficientMSD(const std::vector<double> &time,
+                                               const std::vector<double> &msd);
+
+  /**
+   * @brief Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule).
+   * @param time The time values (bins).
+   * @param vacf The VACF values.
+   * @return The diffusion coefficient in Å²/fs.
+   */
+  static double computeDiffusionCoefficientVACF(const std::vector<double> &time,
+                                                const std::vector<double> &vacf);
+
+  /**
+   * @brief Computes the relaxation time tau from the normalized VACF using trapezoidal integration.
+   * @param time The time values (bins).
+   * @param norm_vacf The normalized VACF values.
+   * @return The relaxation time in fs.
+   */
+  static double computeRelaxationTime(const std::vector<double> &time,
+                                      const std::vector<double> &norm_vacf);
 };
 
 } // namespace correlation::analysis

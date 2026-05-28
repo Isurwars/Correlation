@@ -5,6 +5,7 @@
 
 #include "calculators/MSDCalculator.hpp"
 #include "core/Trajectory.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -121,6 +122,16 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
   EXPECT_NEAR(msd[0], 0.0, 1e-6);
   // Lag 1: displacement is always 1.0 (uniform motion) -> MSD = 1.0
   EXPECT_NEAR(msd[1], 1.0, 1e-6);
+}
+
+TEST(MSDCalculatorTests, ComputeDiffusionCoefficientMSD) {
+  // Create a linear MSD trajectory: MSD(t) = 6.0 * t
+  // Slope is 6.0, so D should be 1.0
+  std::vector<double> time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  std::vector<double> msd = {0.0, 6.0, 12.0, 18.0, 24.0};
+
+  double d = correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
+  EXPECT_NEAR(d, 1.0, 1e-6);
 }
 
 } // namespace correlation::testing
