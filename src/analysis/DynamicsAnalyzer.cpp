@@ -437,6 +437,9 @@ double DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<double
   }
 
   double slope = (static_cast<double>(n) * sum_xy - sum_x * sum_y) / denominator;
+  if (slope < 0.0) {
+    return 0.0; // Self-diffusion coefficient cannot be negative
+  }
   // D = slope / 6.0
   return slope / 6.0;
 }
@@ -449,7 +452,13 @@ double DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<doubl
   double integral = 0.0;
   for (size_t i = 0; i < time.size() - 1; ++i) {
     double dt = time[i + 1] - time[i];
+    if (dt <= 0.0) {
+      return 0.0; // Time must be strictly increasing
+    }
     integral += 0.5 * (vacf[i] + vacf[i + 1]) * dt;
+  }
+  if (integral < 0.0) {
+    return 0.0; // Self-diffusion coefficient cannot be negative
   }
   // Green-Kubo: D = 1/3 * integral
   return integral / 3.0;
@@ -463,7 +472,13 @@ double DynamicsAnalyzer::computeRelaxationTime(const std::vector<double> &time,
   double integral = 0.0;
   for (size_t i = 0; i < time.size() - 1; ++i) {
     double dt = time[i + 1] - time[i];
+    if (dt <= 0.0) {
+      return 0.0; // Time must be strictly increasing
+    }
     integral += 0.5 * (norm_vacf[i] + norm_vacf[i + 1]) * dt;
+  }
+  if (integral < 0.0) {
+    return 0.0; // Relaxation time must be non-negative
   }
   return integral;
 }

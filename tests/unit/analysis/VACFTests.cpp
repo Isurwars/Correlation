@@ -194,4 +194,61 @@ TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
   EXPECT_DOUBLE_EQ(df.getDeborahNumber(), 0.12);
 }
 
+TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
+  // Test mismatched size / empty inputs
+  std::vector<double> time_empty = {};
+  std::vector<double> vacf_empty = {};
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_empty, vacf_empty), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_empty, vacf_empty), 0.0);
+
+  std::vector<double> time_small = {0.0};
+  std::vector<double> vacf_small = {1.0};
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_small, vacf_small), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_small, vacf_small), 0.0);
+
+  std::vector<double> time_mismatch = {0.0, 1.0};
+  std::vector<double> vacf_mismatch = {1.0, 1.0, 1.0};
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_mismatch, vacf_mismatch), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_mismatch, vacf_mismatch), 0.0);
+
+  // Test non-increasing time values (dt <= 0)
+  std::vector<double> time_non_inc = {0.0, 0.0, 1.0};
+  std::vector<double> vacf_valid = {1.0, 1.0, 1.0};
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_non_inc, vacf_valid), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_non_inc, vacf_valid), 0.0);
+
+  // Test negative result handling (Green-Kubo integral < 0)
+  std::vector<double> time_valid = {0.0, 1.0, 2.0};
+  std::vector<double> vacf_neg = {-5.0, -10.0, -5.0};
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_valid, vacf_neg), 0.0);
+  EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_valid, vacf_neg), 0.0);
+}
+
+TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
+  correlation::core::Cell c({10, 10, 10, 90, 90, 90});
+  c.addAtom("Ar", {0.0, 0.0, 0.0});
+  DistributionFunctions df(c, 0.0, {{0.0}});
+
+  // calculateRDF guards
+  EXPECT_THROW(df.calculateRDF(-5.0, 0.05), std::invalid_argument);
+  EXPECT_THROW(df.calculateRDF(20.0, -0.05), std::invalid_argument);
+  EXPECT_THROW(df.calculateRDF(0.0, 0.05), std::invalid_argument);
+  EXPECT_THROW(df.calculateRDF(20.0, 0.0), std::invalid_argument);
+
+  // calculatePAD guards
+  EXPECT_THROW(df.calculatePAD(-1.0), std::invalid_argument);
+  EXPECT_THROW(df.calculatePAD(0.0), std::invalid_argument);
+
+  // calculateDAD guards
+  EXPECT_THROW(df.calculateDAD(-1.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateDAD(0.0), std::invalid_argument);
+
+  // calculateXRD guards
+  EXPECT_THROW(df.calculateXRD(-1.0, 5.0, 90.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateXRD(1.54, -5.0, 90.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateXRD(1.54, 5.0, -90.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateXRD(1.54, 90.0, 5.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(df.calculateXRD(1.54, 5.0, 90.0, -1.0), std::invalid_argument);
+}
+
 } // namespace correlation::analysis

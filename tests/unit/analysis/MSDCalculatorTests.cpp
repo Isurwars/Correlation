@@ -134,4 +134,20 @@ TEST(MSDCalculatorTests, ComputeDiffusionCoefficientMSD) {
   EXPECT_NEAR(d, 1.0, 1e-6);
 }
 
+TEST(MSDCalculatorTests, DynamicsAnalyzerMSDNonPhysicalInputs) {
+  // Mismatched size / empty inputs
+  std::vector<double> time_empty = {};
+  std::vector<double> msd_empty = {};
+  EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time_empty, msd_empty), 0.0);
+
+  std::vector<double> time_small = {0.0};
+  std::vector<double> msd_small = {0.0};
+  EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time_small, msd_small), 0.0);
+
+  // Negative slope (non-physical diffusion)
+  std::vector<double> time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  std::vector<double> msd_neg_slope = {24.0, 18.0, 12.0, 6.0, 0.0};
+  EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg_slope), 0.0);
+}
+
 } // namespace correlation::testing

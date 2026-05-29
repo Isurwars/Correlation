@@ -146,6 +146,49 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
     return false;
   }
 
+  if (!opts.show_help && !opts.show_version) {
+    if (opts.r_max <= 0.0) {
+      std::cerr << "Error: --r-max must be strictly positive.\n";
+      return false;
+    }
+    if (opts.r_bin_width <= 0.0) {
+      std::cerr << "Error: --r-bin must be strictly positive.\n";
+      return false;
+    }
+    if (opts.q_max <= 0.0) {
+      std::cerr << "Error: --q-max must be strictly positive.\n";
+      return false;
+    }
+    if (opts.q_bin_width <= 0.0) {
+      std::cerr << "Error: --q-bin must be strictly positive.\n";
+      return false;
+    }
+    if (opts.angle_bin_width <= 0.0) {
+      std::cerr << "Error: --angle-bin must be strictly positive.\n";
+      return false;
+    }
+    if (opts.dihedral_bin_width <= 0.0) {
+      std::cerr << "Error: --dihedral-bin must be strictly positive.\n";
+      return false;
+    }
+    if (opts.time_step <= 0.0) {
+      std::cerr << "Error: --time-step must be strictly positive.\n";
+      return false;
+    }
+    if (opts.r_int_max <= 0.0) {
+      std::cerr << "Error: --r-int-max must be strictly positive.\n";
+      return false;
+    }
+    if (opts.max_ring_size <= 0) {
+      std::cerr << "Error: --max-ring-size must be strictly positive.\n";
+      return false;
+    }
+    if (opts.smoothing_sigma < 0.0) {
+      std::cerr << "Error: --smoothing-sigma cannot be negative.\n";
+      return false;
+    }
+  }
+
   // Default output base: same directory and stem as input
   if (opts.output_base.empty() && !opts.input_file.empty()) {
     std::filesystem::path p(opts.input_file);

@@ -282,6 +282,13 @@ void DistributionFunctions::calculateCoordinationNumber() {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
+  if (r_max <= 0.0) {
+    throw std::invalid_argument("r_max must be strictly positive");
+  }
+  if (r_bin_width <= 0.0) {
+    throw std::invalid_argument("r_bin_width must be strictly positive");
+  }
+
   const auto *calc =
       correlation::calculators::CalculatorFactory::instance().getCalculator(
           "RDF");
@@ -304,6 +311,9 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculatePAD(double bin_width) {
+  if (bin_width <= 0.0) {
+    throw std::invalid_argument("bin_width must be strictly positive");
+  }
   histograms_["BAD"] = correlation::calculators::PADCalculator::calculate(
       cell_, neighbors(), bin_width);
 }
@@ -313,6 +323,9 @@ void DistributionFunctions::calculatePAD(double bin_width) {
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateDAD(double bin_width) {
+  if (bin_width <= 0.0) {
+    throw std::invalid_argument("bin_width must be strictly positive");
+  }
   histograms_["DAD"] = correlation::calculators::DADCalculator::calculate(
       cell_, neighbors(), bin_width);
 }
@@ -346,6 +359,19 @@ void DistributionFunctions::calculateVDOS() {
 
 void DistributionFunctions::calculateXRD(double lambda, double theta_min,
                                          double theta_max, double bin_width) {
+  if (lambda <= 0.0) {
+    throw std::invalid_argument("lambda must be strictly positive");
+  }
+  if (theta_min < 0.0 || theta_max < 0.0) {
+    throw std::invalid_argument("theta angles must be non-negative");
+  }
+  if (theta_min >= theta_max) {
+    throw std::invalid_argument("theta_min must be less than theta_max");
+  }
+  if (bin_width <= 0.0) {
+    throw std::invalid_argument("bin_width must be strictly positive");
+  }
+
   if (histograms_.find("g_r") == histograms_.end()) {
     throw std::logic_error(
         "Cannot calculate XRD. Please calculate g_r first by calling "

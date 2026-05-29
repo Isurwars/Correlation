@@ -120,6 +120,20 @@ assert df_props.get_relaxation_time() == 0.0
 assert df_props.get_deborah_number() == 0.0
 print("  Dynamic properties bindings verified: OK")
 
+# ── 5.6 Non-physical parameter guards in Python ──────────────────────
+section("5.6 Non-physical Parameter Guards in Python")
+try:
+    df_props.calculate_rdf(r_max=-1.0, bin_width=0.05)
+    assert False, "Should have thrown ValueError/RuntimeError for negative r_max"
+except (ValueError, RuntimeError) as e:
+    print(f"  Passed negative r_max test (threw expected error): {e}")
+
+try:
+    df_props.calculate_pad(bin_width=-1.0)
+    assert False, "Should have thrown ValueError/RuntimeError for negative bin_width"
+except (ValueError, RuntimeError) as e:
+    print(f"  Passed negative bin_width test (threw expected error): {e}")
+
 # ── 6. Calculator access ─────────────────────────────────────────────
 section("6. Calculators")
 calcs = correlation.get_all_calculators()
