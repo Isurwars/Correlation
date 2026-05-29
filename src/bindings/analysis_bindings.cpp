@@ -265,6 +265,14 @@ void init_analysis(py::module_ &m) {
             },
             py::return_value_policy::reference_internal,
             "Return the Ashcroft-Langreth weights used for S(Q) partials.")
+        .def("get_diffusion_coefficient_msd", &DistributionFunctions::getDiffusionCoefficientMSD,
+             "Get the self-diffusion coefficient computed from MSD (Å²/fs).")
+        .def("get_diffusion_coefficient_vacf", &DistributionFunctions::getDiffusionCoefficientVACF,
+             "Get the self-diffusion coefficient computed from VACF (Å²/fs).")
+        .def("get_relaxation_time", &DistributionFunctions::getRelaxationTime,
+             "Get the relaxation time computed from normalized VACF (fs).")
+        .def("get_deborah_number", &DistributionFunctions::getDeborahNumber,
+             "Get the Deborah number.")
 
         // Calculations
         .def("calculate_rdf",

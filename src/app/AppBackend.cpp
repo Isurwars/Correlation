@@ -12,6 +12,7 @@
 #include "readers/FileReader.hpp"
 #include "readers/ReaderFactory.hpp"
 #include "writers/FileWriter.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
 
 #include <filesystem>
 
@@ -331,6 +332,56 @@ std::string AppBackend::run_analysis() {
           std::cerr << calc->getName() << " calculation failed: " << e.what()
                     << std::endl;
         }
+      }
+
+      // Check for dynamic properties and calculate/set them
+      const auto &hists = df_->getAllHistograms();
+
+      auto it_msd = hists.find("MSD");
+      if (it_msd != hists.end()) {
+        const auto &hist = it_msd->second;
+        auto it_total = hist.partials.find("Total");
+        if (it_total != hist.partials.end()) {
+          double d_msd = correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
+          df_->setDiffusionCoefficientMSD(d_msd);
+        }
+      }
+
+      auto it_vacf = hists.find("VACF");
+      if (it_vacf != hists.end()) {
+        const auto &hist = it_vacf->second;
+        auto it_total = hist.partials.find("Total");
+        if (it_total != hist.partials.end()) {
+          double d_vacf = correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
+          df_->setDiffusionCoefficientVACF(d_vacf);
+        }
+      }
+
+      auto it_norm = hists.find("Normalized VACF");
+      if (it_norm != hists.end()) {
+        const auto &hist = it_norm->second;
+        auto it_total = hist.partials.find("Total");
+        if (it_total != hist.partials.end()) {
+          double tau = correlation::analysis::DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
+          df_->setRelaxationTime(tau);
+          double de = 0.0;
+          if (!hist.bins.empty() && hist.bins.back() > 0.0) {
+            de = tau / hist.bins.back();
+          }
+          df_->setDeborahNumber(de);
+        }
+      }
+
+      // Log the calculated values to the console
+      if (df_->getDiffusionCoefficientMSD() > 0.0) {
+        std::cout << "Self-diffusion coefficient (from MSD): " << df_->getDiffusionCoefficientMSD() << " Å²/fs" << std::endl;
+      }
+      if (df_->getDiffusionCoefficientVACF() > 0.0) {
+        std::cout << "Self-diffusion coefficient (from VACF): " << df_->getDiffusionCoefficientVACF() << " Å²/fs" << std::endl;
+      }
+      if (df_->getRelaxationTime() > 0.0) {
+        std::cout << "Relaxation time (from VACF): " << df_->getRelaxationTime() << " fs" << std::endl;
+        std::cout << "Deborah number: " << df_->getDeborahNumber() << std::endl;
       }
     }
 

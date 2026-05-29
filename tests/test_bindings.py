@@ -107,6 +107,19 @@ try:
 except Exception as e:
     print(f"  DistributionFunctions error (expected if cell lacks lattice): {e}")
 
+# ── 5.5 Dynamic properties getters ──────────────────────────────────
+section("5.5 Dynamic Properties Getters")
+df_props = correlation.DistributionFunctions(cell2, 0.0, [])
+print(f"  Initial MSD diffusion: {df_props.get_diffusion_coefficient_msd()}")
+print(f"  Initial VACF diffusion: {df_props.get_diffusion_coefficient_vacf()}")
+print(f"  Initial relaxation time: {df_props.get_relaxation_time()}")
+print(f"  Initial Deborah number: {df_props.get_deborah_number()}")
+assert df_props.get_diffusion_coefficient_msd() == 0.0
+assert df_props.get_diffusion_coefficient_vacf() == 0.0
+assert df_props.get_relaxation_time() == 0.0
+assert df_props.get_deborah_number() == 0.0
+print("  Dynamic properties bindings verified: OK")
+
 # ── 6. Calculator access ─────────────────────────────────────────────
 section("6. Calculators")
 calcs = correlation.get_all_calculators()
