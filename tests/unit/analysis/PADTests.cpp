@@ -126,12 +126,9 @@ TEST_F(PADTests_AngleReproduction, PBCAngleDetection) {
 TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
   cell_.addAtom("Si", {5.0, 5.0, 5.0}); // Center
   cell_.addAtom("Si", {6.0, 6.0, 6.0}); // correlation::core::Neighbor 1 (1,1,1)
-  cell_.addAtom("Si",
-                {6.0, 4.0, 4.0}); // correlation::core::Neighbor 2 (1,-1,-1)
-  cell_.addAtom("Si",
-                {4.0, 6.0, 4.0}); // correlation::core::Neighbor 3 (-1,1,-1)
-  cell_.addAtom("Si",
-                {4.0, 4.0, 6.0}); // correlation::core::Neighbor 4 (-1,-1,1)
+  cell_.addAtom("Si", {6.0, 4.0, 4.0}); // correlation::core::Neighbor 2 (1,-1,-1)
+  cell_.addAtom("Si", {4.0, 6.0, 4.0}); // correlation::core::Neighbor 3 (-1,1,-1)
+  cell_.addAtom("Si", {4.0, 4.0, 6.0}); // correlation::core::Neighbor 4 (-1,-1,1)
   updateTrajectory();
 
   // With 4 neighbors, we have C(4,2) = 6 angles.
@@ -167,10 +164,9 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 
   double phi = (1.0 + std::sqrt(5.0)) / 2.0;
   // Vertices of icosahedron (edge length 2) relative to center
-  std::vector<std::vector<double>> verts = {
-      {0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<double>> verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+                                            {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+                                            {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &v : verts) {
     cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
@@ -226,15 +222,12 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
   }
 
   EXPECT_EQ(count_63, 30) << "Should find 30 Center-Edge angles (~63.4 deg)";
-  EXPECT_EQ(count_116, 30)
-      << "Should find 30 Center-Diagonal angles (~116.6 deg)";
+  EXPECT_EQ(count_116, 30) << "Should find 30 Center-Diagonal angles (~116.6 deg)";
   EXPECT_EQ(count_180, 6) << "Should find 6 Center-Opposite angles (180 deg)";
   EXPECT_EQ(count_60, 60) << "Should find 60 Surface-Triangle angles (60 deg)";
-  EXPECT_EQ(count_108, 60)
-      << "Should find 60 Surface-Pentagon angles (108 deg)";
-  EXPECT_EQ(count_58, 60)
-      << "Should find 60 Surface-Center angles "
-         "(Center-S-correlation::core::Neighbor, ~58.3 deg)";
+  EXPECT_EQ(count_108, 60) << "Should find 60 Surface-Pentagon angles (108 deg)";
+  EXPECT_EQ(count_58, 60) << "Should find 60 Surface-Center angles "
+                             "(Center-S-correlation::core::Neighbor, ~58.3 deg)";
   EXPECT_EQ(total_angles, 246) << "Total angles should be 246";
 }
 
@@ -243,9 +236,7 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 // ============================================================================
 
 // Helper to sum a partial histogram
-double sumHistogram(const std::vector<double> &hist) {
-  return std::accumulate(hist.begin(), hist.end(), 0.0);
-}
+double sumHistogram(const std::vector<double> &hist) { return std::accumulate(hist.begin(), hist.end(), 0.0); }
 
 class PADTests : public ::testing::Test {
 protected:
@@ -269,9 +260,7 @@ TEST_F(PADTests, EmptyCellThrows) {
   // Current implementation throws explicitly if atoms are empty in
   // calculateAshcroftWeights or implicitly via other checks.
   updateTrajectory();
-  EXPECT_THROW(
-      { DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()); },
-      std::invalid_argument);
+  EXPECT_THROW({ DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()); }, std::invalid_argument);
 }
 
 TEST_F(PADTests, SingleAtomNoAngles) {
@@ -294,9 +283,7 @@ TEST_F(PADTests, SingleAtomNoAngles) {
 
 TEST_F(PADTests, NullNeighborsThrows) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  EXPECT_THROW(
-      { correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); },
-      std::logic_error);
+  EXPECT_THROW({ correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); }, std::logic_error);
 }
 
 // 2. Geometry Verification
@@ -319,8 +306,7 @@ TEST_F(PADTests, LinearGeometry180) {
   const auto &neighborGraph = analyzer.neighborGraph();
   // Si is atom index 1 (0-based)
   ASSERT_GT(neighborGraph.nodeCount(), 1);
-  EXPECT_EQ(neighborGraph.getNeighbors(1).size(), 2)
-      << "Si should have 2 neighbors (O atoms)";
+  EXPECT_EQ(neighborGraph.getNeighbors(1).size(), 2) << "Si should have 2 neighbors (O atoms)";
 
   // Bond length 1.0. Cutoff needs to be > 1.0
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
@@ -335,8 +321,7 @@ TEST_F(PADTests, LinearGeometry180) {
   // Bin for 180 degrees.
   // Multiply counts/density by bin width (0.001) to get the probability sum
   double total_prob = sumHistogram(partial) * 0.001;
-  EXPECT_NEAR(total_prob, 1.0, 1e-5)
-      << "Should be normalized to 1 angle (normalized by counts * bin_width)";
+  EXPECT_NEAR(total_prob, 1.0, 1e-5) << "Should be normalized to 1 angle (normalized by counts * bin_width)";
 
   // Check peak location
   double peak_val = 0;
@@ -410,8 +395,7 @@ TEST_F(PADTests, EquilateralTriangle60) {
 
   // Search max around 60
   size_t bin_60 = 60;
-  EXPECT_GT(partial[bin_60] + partial[bin_60 - 1], 0.1)
-      << "Should have peak near 60 degrees";
+  EXPECT_GT(partial[bin_60] + partial[bin_60 - 1], 0.1) << "Should have peak near 60 degrees";
 }
 
 TEST_F(PADTests, TetrahedralAngle) {
@@ -521,10 +505,9 @@ TEST_F(PADTests, FullNormalizationCheck) {
 TEST_F(PADTests, IcosahedronAnglesPAD) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   double phi = (1.0 + std::sqrt(5.0)) / 2.0;
-  std::vector<std::vector<double>> verts = {
-      {0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<double>> verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+                                            {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+                                            {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &v : verts) {
     cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});

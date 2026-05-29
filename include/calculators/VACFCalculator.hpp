@@ -26,30 +26,26 @@ public:
   std::string getName() const override { return "VACF"; }
   std::string getShortName() const override { return "VACF"; }
   std::string getGroup() const override { return "Dynamic"; }
-  std::string getDescription() const override {
-    return "Computes the Velocity Autocorrelation Function (VACF).";
-  }
+  std::string getDescription() const override { return "Computes the Velocity Autocorrelation Function (VACF)."; }
 
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::core::Trajectory &traj,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateTrajectory(correlation::analysis::DistributionFunctions &df, const correlation::core::Trajectory &traj,
+                           const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of the Velocity Autocorrelation Function (VACF).
-   * 
+   *
    * @param traj The source trajectory containing atomic velocities.
    * @param max_correlation_frames Maximum time lag (dt) for correlation.
    * @param start_frame Index of the first frame to include.
    * @param end_frame Index of the last frame to include.
    * @return A map of histograms (VACF per element).
    */
-  static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Trajectory &traj,
-            int max_correlation_frames, size_t start_frame, size_t end_frame);
+  static std::map<std::string, correlation::analysis::Histogram> calculate(const correlation::core::Trajectory &traj,
+                                                                           int max_correlation_frames,
+                                                                           size_t start_frame, size_t end_frame);
 };
 
 } // namespace correlation::calculators

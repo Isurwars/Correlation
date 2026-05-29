@@ -24,33 +24,29 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<CellReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CellReader>());
 
-correlation::core::Cell CellReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell CellReader::readStructure(const std::string &filename,
+                                                  std::function<void(float, const std::string &)> progress_callback) {
   return read(filename);
 }
 
-correlation::core::Trajectory CellReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+CellReader::readTrajectory(const std::string &filename,
+                           std::function<void(float, const std::string &)> progress_callback) {
   throw std::runtime_error("Cell files are structures, use readStructure.");
 }
 
 namespace {
 void toLower(std::string &s) {
-  std::transform(s.begin(), s.end(), s.begin(),
-                 [](unsigned char c) { return std::tolower(c); });
+  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
 }
 } // namespace
 
 correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" +
-                             std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
   }
 
   correlation::core::Cell tempCell;
@@ -87,12 +83,10 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
         double v[3][3];
         line_stream.clear();
         line_stream.seekg(0); // Reread the full line
-        if (line_stream >> v[lattice_row_count][0] >> v[lattice_row_count][1] >>
-            v[lattice_row_count][2]) {
+        if (line_stream >> v[lattice_row_count][0] >> v[lattice_row_count][1] >> v[lattice_row_count][2]) {
           lattice_row_count++;
           if (lattice_row_count == 3) {
-            tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]},
-                                               {v[1][0], v[1][1], v[1][2]},
+            tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
                                                {v[2][0], v[2][1], v[2][2]});
           }
         }
@@ -102,8 +96,8 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
 
         line_stream.clear();
         line_stream.seekg(0);
-        if (line_stream >> lat[0 + 3 * lattice_row_count] >>
-            lat[1 + 3 * lattice_row_count] >> lat[2 + 3 * lattice_row_count]) {
+        if (line_stream >> lat[0 + 3 * lattice_row_count] >> lat[1 + 3 * lattice_row_count] >>
+            lat[2 + 3 * lattice_row_count]) {
           lattice_row_count++;
           if (lattice_row_count == 2) {
             tempCell.setLatticeParameters(lat);
@@ -130,10 +124,9 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
         line_stream.seekg(0);
         if (line_stream >> element >> x >> y >> z) {
           const auto &lv = tempCell.latticeVectors();
-          correlation::math::Vector3<double> pos = {
-              x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
-              x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
-              x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
+          correlation::math::Vector3<double> pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
+                                                    x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+                                                    x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
           tempCell.addAtom(element, pos);
         }
       }

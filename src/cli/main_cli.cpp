@@ -77,8 +77,7 @@ int main(int argc, char *argv[]) {
   // Set up progress callback
   if (!cli.quiet) {
     backend.setProgressCallback([](float p, const std::string &msg) {
-      std::cerr << "\r[" << static_cast<int>(p * 100) << "%] " << msg
-                << std::flush;
+      std::cerr << "\r[" << static_cast<int>(p * 100) << "%] " << msg << std::flush;
     });
   }
 
@@ -94,8 +93,7 @@ int main(int argc, char *argv[]) {
     backend.setOptions(opts);
     if (!cli.quiet) {
       std::cerr << msg << "\n";
-      std::cerr << "Frames: " << backend.getFrameCount()
-                << "  Atoms: " << backend.getTotalAtomCount() << "\n";
+      std::cerr << "Frames: " << backend.getFrameCount() << "  Atoms: " << backend.getTotalAtomCount() << "\n";
     }
   } catch (const std::exception &e) {
     std::cerr << "Error loading file: " << e.what() << "\n";

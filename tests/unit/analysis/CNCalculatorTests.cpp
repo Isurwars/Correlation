@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "calculators/CNCalculator.hpp"
 #include "analysis/StructureAnalyzer.hpp"
+#include "calculators/CNCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>
@@ -69,7 +69,7 @@ TEST(CNCalculatorTests, IsolatedAtomHasZeroCoordination) {
   // (it only creates keys for atoms that HAVE neighbors of a given type).
   // But "Any-Any" is always created and should be all zeros for an isolated atom.
   ASSERT_TRUE(hist.partials.find("Any-Any") != hist.partials.end());
-  const auto& any_any = hist.partials.at("Any-Any");
+  const auto &any_any = hist.partials.at("Any-Any");
   double total = 0.0;
   for (double v : any_any) {
     total += v;
@@ -96,7 +96,7 @@ TEST(CNCalculatorTests, HighCoordinationFCC) {
 
   // In FCC, each atom should have CN=12
   ASSERT_TRUE(hist.partials.find("Cu-Cu") != hist.partials.end());
-  const auto& cu_cn = hist.partials.at("Cu-Cu");
+  const auto &cu_cn = hist.partials.at("Cu-Cu");
   ASSERT_GT(cu_cn.size(), 12);
   // All 4 atoms should have CN=12
   EXPECT_DOUBLE_EQ(cu_cn[12], 4.0);

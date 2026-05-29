@@ -28,14 +28,14 @@ class TrajectoryAnalyzer;
  * @brief Configuration settings for distribution function analysis.
  */
 struct AnalysisSettings {
-  double r_max = 20.0;           ///< Maximum radius for RDF calculations (Angstroms).
-  double r_bin_width = 0.02;     ///< Bin width for radial distributions (Angstroms).
-  double q_max = 20.0;           ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
-  double q_bin_width = 0.02;     ///< Bin width for S(Q) (Angstroms^-1).
-  double r_int_max = 10.0;       ///< Cutoff for integration-based properties.
-  double angle_bin_width = 1.0;  ///< Bin width for bond angle distributions (degrees).
+  double r_max = 20.0;             ///< Maximum radius for RDF calculations (Angstroms).
+  double r_bin_width = 0.02;       ///< Bin width for radial distributions (Angstroms).
+  double q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  double q_bin_width = 0.02;       ///< Bin width for S(Q) (Angstroms^-1).
+  double r_int_max = 10.0;         ///< Cutoff for integration-based properties.
+  double angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
   double dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
-  size_t max_ring_size = 8;      ///< Maximum size of rings to search for.
+  size_t max_ring_size = 8;        ///< Maximum size of rings to search for.
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
   /// An empty map means all calculators are enabled by default.
@@ -53,8 +53,8 @@ struct AnalysisSettings {
     return it != active_calculators.end() && it->second;
   }
 
-  bool smoothing = true;         ///< Whether to apply post-processing smoothing.
-  double smoothing_sigma = 0.1;  ///< Gaussian smoothing standard deviation.
+  bool smoothing = true;        ///< Whether to apply post-processing smoothing.
+  double smoothing_sigma = 0.1; ///< Gaussian smoothing standard deviation.
   correlation::math::KernelType smoothing_kernel =
       correlation::math::KernelType::Gaussian; ///< The kernel to use for smoothing.
 };
@@ -64,14 +64,14 @@ struct AnalysisSettings {
  * @brief Container for a single calculated distribution function.
  */
 struct Histogram {
-  std::vector<double> bins;      ///< The x-axis values (radii, angles, etc.).
-  std::string title;             ///< Descriptive title for the plot.
-  std::string x_label;           ///< Label for the x-axis.
-  std::string y_label;           ///< Label for the y-axis.
-  std::string x_unit;            ///< Physical unit for the x-axis (e.g. "A").
-  std::string y_unit;            ///< Physical unit for the y-axis (e.g. "A^-3").
-  std::string description;       ///< Internal description of what this data represents.
-  std::string file_suffix;       ///< Default suffix for saving this histogram to disk.
+  std::vector<double> bins; ///< The x-axis values (radii, angles, etc.).
+  std::string title;        ///< Descriptive title for the plot.
+  std::string x_label;      ///< Label for the x-axis.
+  std::string y_label;      ///< Label for the y-axis.
+  std::string x_unit;       ///< Physical unit for the x-axis (e.g. "A").
+  std::string y_unit;       ///< Physical unit for the y-axis (e.g. "A^-3").
+  std::string description;  ///< Internal description of what this data represents.
+  std::string file_suffix;  ///< Default suffix for saving this histogram to disk.
 
   /// Maps a partial key (e.g., "Si-O" or "Total") to its histogram values.
   std::map<std::string, std::vector<double>> partials;
@@ -107,9 +107,8 @@ public:
    * computed).
    * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
    */
-  explicit DistributionFunctions(
-      const correlation::core::Cell &cell, double cutoff = 0.0,
-      const std::vector<std::vector<double>> &bond_cutoffs = {});
+  explicit DistributionFunctions(const correlation::core::Cell &cell, double cutoff = 0.0,
+                                 const std::vector<std::vector<double>> &bond_cutoffs = {});
 
   /**
    * @brief Move constructor.
@@ -146,17 +145,13 @@ public:
    * @brief Access all calculated histograms.
    * @return A map of histogram names to Histogram objects.
    */
-  const std::map<std::string, Histogram> &getAllHistograms() const {
-    return histograms_;
-  }
+  const std::map<std::string, Histogram> &getAllHistograms() const { return histograms_; }
 
   /**
    * @brief Gets the Ashcroft-Langreth weights used for S(Q) partials.
    * @return A map of element pair strings to weight values.
    */
-  const std::map<std::string, double> &getAshcroftWeights() const {
-    return ashcroft_weights_;
-  }
+  const std::map<std::string, double> &getAshcroftWeights() const { return ashcroft_weights_; }
 
   /**
    * @brief Manually add a histogram to the collection.
@@ -263,8 +258,7 @@ public:
    * @param start_frame Starting frame index.
    * @param end_frame Ending frame index (exclusive).
    */
-  void calculateVACF(const correlation::core::Trajectory &traj,
-                     int max_correlation_frames = -1, size_t start_frame = 0,
+  void calculateVACF(const correlation::core::Trajectory &traj, int max_correlation_frames = -1, size_t start_frame = 0,
                      size_t end_frame = static_cast<size_t>(-1));
 
   /**
@@ -280,8 +274,7 @@ public:
    * @param theta_max Maximum 2-theta angle.
    * @param bin_width Bin width for 2-theta.
    */
-  void calculateXRD(double lambda = 1.5406, double theta_min = 5.0,
-                    double theta_max = 90.0, double bin_width = 1.0);
+  void calculateXRD(double lambda = 1.5406, double theta_min = 5.0, double theta_max = 90.0, double bin_width = 1.0);
 
   /**
    * @brief Smooths a specific histogram.
@@ -290,16 +283,14 @@ public:
    * @param kernel The smoothing kernel type.
    */
   void smooth(const std::string &name, double sigma,
-              correlation::math::KernelType kernel =
-                  correlation::math::KernelType::Gaussian);
+              correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Smooths all available histograms.
    * @param sigma Smoothing width.
    * @param kernel The smoothing kernel type.
    */
-  void smoothAll(double sigma, correlation::math::KernelType kernel =
-                                   correlation::math::KernelType::Gaussian);
+  void smoothAll(double sigma, correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Uses an external StructureAnalyzer for neighborhood/bond info.
@@ -341,12 +332,10 @@ public:
    * @param progress_callback Optional callback to report completion progress.
    * @return A unique_ptr to the newly created and populated DistributionFunctions object.
    */
-  static std::unique_ptr<DistributionFunctions> computeMean(
-      correlation::core::Trajectory &trajectory,
-      const TrajectoryAnalyzer &analyzer, size_t start_frame,
-      const AnalysisSettings &settings,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr);
+  static std::unique_ptr<DistributionFunctions>
+  computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t start_frame,
+              const AnalysisSettings &settings,
+              std::function<void(float, const std::string &)> progress_callback = nullptr);
 
 private:
   /**
@@ -376,20 +365,20 @@ private:
    */
   void calculateAshcroftWeights();
 
-  correlation::core::Cell cell_; ///< Reference to the cell being analyzed.
-  const StructureAnalyzer *neighbors_ref_{nullptr}; ///< Pointer to external neighbor info.
+  correlation::core::Cell cell_;                       ///< Reference to the cell being analyzed.
+  const StructureAnalyzer *neighbors_ref_{nullptr};    ///< Pointer to external neighbor info.
   std::unique_ptr<StructureAnalyzer> neighbors_owned_; ///< Owned neighbor info.
-  double current_cutoff_{-1.0}; ///< Last cutoff used for neighbor searching.
-  std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
+  double current_cutoff_{-1.0};                        ///< Last cutoff used for neighbor searching.
+  std::vector<std::vector<double>> bond_cutoffs_sq_;   ///< Cached squared bond cutoffs.
 
-  std::map<std::string, Histogram> histograms_; ///< Storage for all analysis results.
+  std::map<std::string, Histogram> histograms_;    ///< Storage for all analysis results.
   std::map<std::string, double> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
-  mutable std::mutex histogram_mutex_; ///< Protects concurrent access to histograms_.
+  mutable std::mutex histogram_mutex_;             ///< Protects concurrent access to histograms_.
 
-  double diffusion_coefficient_msd_{0.0}; ///< Self-diffusion coefficient from MSD (Å²/fs).
+  double diffusion_coefficient_msd_{0.0};  ///< Self-diffusion coefficient from MSD (Å²/fs).
   double diffusion_coefficient_vacf_{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
-  double relaxation_time_{0.0}; ///< Relaxation time (fs).
-  double deborah_number_{0.0}; ///< Deborah number.
+  double relaxation_time_{0.0};            ///< Relaxation time (fs).
+  double deborah_number_{0.0};             ///< Deborah number.
 };
 
 } // namespace correlation::analysis

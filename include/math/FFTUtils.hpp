@@ -20,7 +20,7 @@ namespace correlation::math {
 /**
  * @brief Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal
  * optimization.
- * 
+ *
  * @param a The input/output vector of complex numbers. Modifies in-place.
  * @param invert If true, performs an inverse FFT and scales the result by 1/N.
  */
@@ -77,9 +77,7 @@ inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
  *                  loops) to avoid repeated heap allocation.
  * @return Autocorrelation array of length n.
  */
-inline std::vector<double>
-autocorrelate(const std::vector<double> &x,
-              std::vector<std::complex<double>> &workspace) {
+inline std::vector<double> autocorrelate(const std::vector<double> &x, std::vector<std::complex<double>> &workspace) {
   const size_t n = x.size();
   if (n == 0)
     return {};
@@ -114,7 +112,7 @@ autocorrelate(const std::vector<double> &x,
  * @brief Convenience overload — allocates its own workspace.
  *
  * Prefer the two-argument overload in tight loops to recycle the allocation.
- * 
+ *
  * @param x Input signal vector.
  * @return The autocorrelation vector.
  */

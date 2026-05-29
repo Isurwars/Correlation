@@ -40,8 +40,7 @@ public:
    * @param df The DistributionFunctions object containing the data.
    * @param smoothing Whether to include smoothed data.
    */
-  virtual void write(const std::string &base_path,
-                     const correlation::analysis::DistributionFunctions &df,
+  virtual void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
                      bool smoothing) const = 0;
 };
 

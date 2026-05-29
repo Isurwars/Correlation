@@ -29,11 +29,9 @@ public:
   /** @brief Tensor for storing pair distances [element1][element2][pair_index]. */
   using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
   /** @brief Tensor for storing bond angles [center][outer1][outer2][angle_index]. */
-  using AngleTensor =
-      std::vector<std::vector<std::vector<std::vector<double>>>>;
+  using AngleTensor = std::vector<std::vector<std::vector<std::vector<double>>>>;
   /** @brief Tensor for storing dihedrals [e1][e2][e3][e4][dihedral_index]. */
-  using DihedralTensor =
-      std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
+  using DihedralTensor = std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
 
   //-------------------------------------------------------------------------//
   //----------------------------- Constructors ------------------------------//
@@ -46,10 +44,9 @@ public:
    * @param bond_cutoffs_sq Squared bond cutoffs per element pair.
    * @param ignore_periodic_self_interactions Flag to ignore a-a image pairs.
    */
-  explicit StructureAnalyzer(
-      const correlation::core::Cell &cell, double cutoff,
-      const std::vector<std::vector<double>> &bond_cutoffs_sq,
-      bool ignore_periodic_self_interactions = true);
+  explicit StructureAnalyzer(const correlation::core::Cell &cell, double cutoff,
+                             const std::vector<std::vector<double>> &bond_cutoffs_sq,
+                             bool ignore_periodic_self_interactions = true);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -72,30 +69,26 @@ public:
    * @return The dihedral tensor
    * `[element1][element2][element3][element4][dihedral_index]`.
    */
-  const DihedralTensor &dihedrals() const {
-    return dihedral_tensor_;
-  }
+  const DihedralTensor &dihedrals() const { return dihedral_tensor_; }
 
   /**
    * @brief Gets the corresponding neighbor graph capturing topological
    * connections.
    * @return Constant reference to the correlation::core::NeighborGraph object.
    */
-  const correlation::core::NeighborGraph &neighborGraph() const {
-    return neighbor_graph_;
-  }
+  const correlation::core::NeighborGraph &neighborGraph() const { return neighbor_graph_; }
 
 private:
-  correlation::core::Cell cell_;              ///< Reference to the current periodic cell.
-  double cutoff_sq_;                         ///< Squared cutoff for efficiency.
+  correlation::core::Cell cell_;                     ///< Reference to the current periodic cell.
+  double cutoff_sq_;                                 ///< Squared cutoff for efficiency.
   std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Internal squared bond cutoffs.
 
-  bool ignore_periodic_self_interactions_;    ///< Interaction guard.
+  bool ignore_periodic_self_interactions_; ///< Interaction guard.
 
   correlation::core::NeighborGraph neighbor_graph_; ///< Graph of topological bonds.
-  DistanceTensor distance_tensor_;           ///< Pairwise distance storage.
-  AngleTensor angle_tensor_;                 ///< Bond angle storage.
-  DihedralTensor dihedral_tensor_;           ///< Dihedral angle storage.
+  DistanceTensor distance_tensor_;                  ///< Pairwise distance storage.
+  AngleTensor angle_tensor_;                        ///< Bond angle storage.
+  DihedralTensor dihedral_tensor_;                  ///< Dihedral angle storage.
 };
 
 } // namespace correlation::analysis

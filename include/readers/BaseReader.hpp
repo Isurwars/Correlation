@@ -48,10 +48,9 @@ public:
    * @param progress_callback Optional callback to report progress [0.0, 1.0].
    * @return A Cell object containing the loaded structure.
    */
-  virtual correlation::core::Cell readStructure(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) = 0;
+  virtual correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) = 0;
 
   /**
    * @brief Reads a trajectory from a file.
@@ -59,10 +58,9 @@ public:
    * @param progress_callback Optional callback to report progress [0.0, 1.0].
    * @return A Trajectory object containing all loaded frames.
    */
-  virtual correlation::core::Trajectory readTrajectory(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) = 0;
+  virtual correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) = 0;
 };
 
 } // namespace correlation::readers

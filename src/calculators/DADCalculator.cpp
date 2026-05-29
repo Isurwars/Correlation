@@ -16,21 +16,17 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<DADCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<DADCalculator>());
 } // namespace
 
-void DADCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
-  df.addHistogram(
-      "DAD", calculate(df.cell(), df.neighbors(), settings.dihedral_bin_width));
+void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                   const correlation::analysis::AnalysisSettings &settings) const {
+  df.addHistogram("DAD", calculate(df.cell(), df.neighbors(), settings.dihedral_bin_width));
 }
 
-correlation::analysis::Histogram DADCalculator::calculate(
-    const correlation::core::Cell &cell,
-    const correlation::analysis::StructureAnalyzer *neighbors,
-    double bin_width) {
+correlation::analysis::Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
+                                                          const correlation::analysis::StructureAnalyzer *neighbors,
+                                                          double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
@@ -72,8 +68,8 @@ correlation::analysis::Histogram DADCalculator::calculate(
           if (angles_rad.empty())
             continue;
 
-          std::string key = elements[a].symbol + "-" + elements[b].symbol +
-                            "-" + elements[c].symbol + "-" + elements[d].symbol;
+          std::string key =
+              elements[a].symbol + "-" + elements[b].symbol + "-" + elements[c].symbol + "-" + elements[d].symbol;
 
           auto &partial_hist = f_dihedral.partials[key];
           if (partial_hist.empty()) {
@@ -90,8 +86,7 @@ correlation::analysis::Histogram DADCalculator::calculate(
               angle_deg -= 360.0;
 
             if (angle_deg >= theta_min && angle_deg <= theta_max) {
-              size_t bin =
-                  static_cast<size_t>((angle_deg - theta_min) / bin_width);
+              size_t bin = static_cast<size_t>((angle_deg - theta_min) / bin_width);
 
               if (bin == num_bins && bin > 0) {
                 bin = num_bins - 1;
@@ -126,8 +121,7 @@ correlation::analysis::Histogram DADCalculator::calculate(
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_dihedral.partials) {
-    correlation::math::scale_bins(partial.data(), normalization_factor,
-                                  num_bins);
+    correlation::math::scale_bins(partial.data(), normalization_factor, num_bins);
   }
   return f_dihedral;
 }

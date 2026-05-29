@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "readers/VaspReader.hpp"
 #include "core/Cell.hpp"
+#include "readers/VaspReader.hpp"
 
-#include <gtest/gtest.h>
 #include <cmath>
 #include <filesystem>
+#include <gtest/gtest.h>
 #include <stdexcept>
 
 namespace {
@@ -17,10 +17,10 @@ namespace {
 std::string getTestDataDir() {
   // Try common paths relative to the build directory
   std::vector<std::string> candidates = {
-      "../../tests/data/",   // build/tests -> tests/data
-      "../tests/data/",      // build -> tests/data
-      "tests/data/",         // project root
-      "data/",               // tests/data (if cwd is tests)
+      "../../tests/data/", // build/tests -> tests/data
+      "../tests/data/",    // build -> tests/data
+      "tests/data/",       // project root
+      "data/",             // tests/data (if cwd is tests)
   };
   for (const auto &dir : candidates) {
     if (std::filesystem::exists(dir + "Si.poscar")) {
@@ -60,8 +60,7 @@ TEST_F(VaspReaderTests, ParseSiDiamondPoscar) {
 }
 
 TEST_F(VaspReaderTests, ParseCartesianCoordinates) {
-  auto cell =
-      correlation::readers::VaspReader::read(data_dir_ + "Si_cartesian.poscar");
+  auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si_cartesian.poscar");
 
   EXPECT_EQ(cell.atomCount(), 8);
   EXPECT_EQ(cell.elements().size(), 1);
@@ -75,8 +74,7 @@ TEST_F(VaspReaderTests, ParseCartesianCoordinates) {
 }
 
 TEST_F(VaspReaderTests, ParseSelectiveDynamics) {
-  auto cell =
-      correlation::readers::VaspReader::read(data_dir_ + "Si_seldyn.poscar");
+  auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si_seldyn.poscar");
 
   // Should have 4 atoms despite the Selective Dynamics line
   EXPECT_EQ(cell.atomCount(), 4);
@@ -85,8 +83,7 @@ TEST_F(VaspReaderTests, ParseSelectiveDynamics) {
 }
 
 TEST_F(VaspReaderTests, ParseMultiSpecies) {
-  auto cell =
-      correlation::readers::VaspReader::read(data_dir_ + "SiO_multi.poscar");
+  auto cell = correlation::readers::VaspReader::read(data_dir_ + "SiO_multi.poscar");
 
   // 4 Si + 4 O = 8 total atoms
   EXPECT_EQ(cell.atomCount(), 8);
@@ -126,12 +123,9 @@ TEST_F(VaspReaderTests, ReaderIsRegisteredInFactory) {
 
 TEST_F(VaspReaderTests, ReadTrajectoryThrows) {
   correlation::readers::VaspReader reader;
-  EXPECT_THROW(reader.readTrajectory(data_dir_ + "Si.poscar"),
-               std::runtime_error);
+  EXPECT_THROW(reader.readTrajectory(data_dir_ + "Si.poscar"), std::runtime_error);
 }
 
 TEST_F(VaspReaderTests, NonExistentFileThrows) {
-  EXPECT_THROW(
-      correlation::readers::VaspReader::read("nonexistent_file.poscar"),
-      std::runtime_error);
+  EXPECT_THROW(correlation::readers::VaspReader::read("nonexistent_file.poscar"), std::runtime_error);
 }

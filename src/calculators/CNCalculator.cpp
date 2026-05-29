@@ -15,23 +15,19 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<CNCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<CNCalculator>());
 } // namespace
 
-void CNCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void CNCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                  const correlation::analysis::AnalysisSettings &settings) const {
   df.addHistogram("CN", calculate(df.cell(), df.neighbors()));
 }
 
-correlation::analysis::Histogram CNCalculator::calculate(
-    const correlation::core::Cell &cell,
-    const correlation::analysis::StructureAnalyzer *neighbors) {
+correlation::analysis::Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
+                                                         const correlation::analysis::StructureAnalyzer *neighbors) {
   if (!neighbors) {
-    throw std::logic_error(
-        "Cannot calculate Coordination Number. Neighbor list has not been "
-        "computed.");
+    throw std::logic_error("Cannot calculate Coordination Number. Neighbor list has not been "
+                           "computed.");
   }
 
   const auto &atoms = cell.atoms();

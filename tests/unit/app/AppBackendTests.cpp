@@ -18,18 +18,13 @@ TEST_F(AppBackendTests, DefaultConstructorInitializesCorrectly) {
 
   // Assert
   EXPECT_DOUBLE_EQ(opts.r_max, correlation::app::AppDefaults::R_MAX);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width,
-                   correlation::app::AppDefaults::R_BIN_WIDTH);
+  EXPECT_DOUBLE_EQ(opts.r_bin_width, correlation::app::AppDefaults::R_BIN_WIDTH);
   EXPECT_DOUBLE_EQ(opts.q_max, correlation::app::AppDefaults::Q_MAX);
-  EXPECT_DOUBLE_EQ(opts.q_bin_width,
-                   correlation::app::AppDefaults::Q_BIN_WIDTH);
+  EXPECT_DOUBLE_EQ(opts.q_bin_width, correlation::app::AppDefaults::Q_BIN_WIDTH);
   EXPECT_DOUBLE_EQ(opts.r_int_max, correlation::app::AppDefaults::R_INT_MAX);
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width,
-                   correlation::app::AppDefaults::ANGLE_BIN_WIDTH);
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma,
-                   correlation::app::AppDefaults::SMOOTHING_SIGMA);
-  EXPECT_EQ(opts.smoothing_kernel,
-            correlation::app::AppDefaults::SMOOTHING_KERNEL);
+  EXPECT_DOUBLE_EQ(opts.angle_bin_width, correlation::app::AppDefaults::ANGLE_BIN_WIDTH);
+  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, correlation::app::AppDefaults::SMOOTHING_SIGMA);
+  EXPECT_EQ(opts.smoothing_kernel, correlation::app::AppDefaults::SMOOTHING_KERNEL);
   EXPECT_DOUBLE_EQ(opts.time_step, correlation::app::AppDefaults::TIME_STEP);
 
   EXPECT_EQ(backend.cell(), nullptr);
@@ -62,8 +57,7 @@ TEST_F(AppBackendTests, LoadInvalidFileThrowsException) {
   correlation::app::AppBackend backend;
 
   // Act & Assert
-  EXPECT_THROW(backend.load_file("nonexistent_file_that_should_not_exist.xyz"),
-               std::runtime_error);
+  EXPECT_THROW(backend.load_file("nonexistent_file_that_should_not_exist.xyz"), std::runtime_error);
 }
 
 TEST_F(AppBackendTests, RecommendedTimeStepWithNoCellReturnsDefault) {

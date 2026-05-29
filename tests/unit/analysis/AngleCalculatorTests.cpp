@@ -38,10 +38,8 @@ TEST(AngleCalculatorTests, ComputesCorrect90DegreeAngle) {
 
   // Initialize AngleTensor
   size_t num_elements = cell.elements().size();
-  AngleTensor out_angles(
-      num_elements,
-      std::vector<std::vector<std::vector<double>>>(
-          num_elements, std::vector<std::vector<double>>(num_elements)));
+  AngleTensor out_angles(num_elements, std::vector<std::vector<std::vector<double>>>(
+                                           num_elements, std::vector<std::vector<double>>(num_elements)));
 
   // Act
   AngleCalculator::compute(cell, graph, out_angles);
@@ -67,10 +65,8 @@ TEST(AngleCalculatorTests, ComputesCorrect180DegreeAngle) {
   graph.addDirectedEdge(0, 2, 1.0, {-1.0, 0.0, 0.0});
 
   size_t num_elements = cell.elements().size();
-  AngleTensor out_angles(
-      num_elements,
-      std::vector<std::vector<std::vector<double>>>(
-          num_elements, std::vector<std::vector<double>>(num_elements)));
+  AngleTensor out_angles(num_elements, std::vector<std::vector<std::vector<double>>>(
+                                           num_elements, std::vector<std::vector<double>>(num_elements)));
 
   AngleCalculator::compute(cell, graph, out_angles);
 
@@ -81,19 +77,17 @@ TEST(AngleCalculatorTests, ComputesCorrect180DegreeAngle) {
 TEST(AngleCalculatorTests, ComputesCorrect60DegreeAngle) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   // Equilateral triangle arrangement: 60 degrees
-  cell.addAtom("C", {5.0, 5.0, 5.0});                      // Center
-  cell.addAtom("C", {6.0, 5.0, 5.0});                      // +x
-  cell.addAtom("C", {5.5, 5.0 + std::sqrt(3.0)/2.0, 5.0}); // 60° offset
+  cell.addAtom("C", {5.0, 5.0, 5.0});                        // Center
+  cell.addAtom("C", {6.0, 5.0, 5.0});                        // +x
+  cell.addAtom("C", {5.5, 5.0 + std::sqrt(3.0) / 2.0, 5.0}); // 60° offset
 
   NeighborGraph graph(3);
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
-  graph.addDirectedEdge(0, 2, 1.0, {0.5, std::sqrt(3.0)/2.0, 0.0});
+  graph.addDirectedEdge(0, 2, 1.0, {0.5, std::sqrt(3.0) / 2.0, 0.0});
 
   size_t num_elements = cell.elements().size();
-  AngleTensor out_angles(
-      num_elements,
-      std::vector<std::vector<std::vector<double>>>(
-          num_elements, std::vector<std::vector<double>>(num_elements)));
+  AngleTensor out_angles(num_elements, std::vector<std::vector<std::vector<double>>>(
+                                           num_elements, std::vector<std::vector<double>>(num_elements)));
 
   AngleCalculator::compute(cell, graph, out_angles);
 
@@ -112,10 +106,8 @@ TEST(AngleCalculatorTests, SingleNeighborProducesNoAngles) {
   graph.addDirectedEdge(0, 1, 1.0, {1.0, 0.0, 0.0});
 
   size_t num_elements = cell.elements().size();
-  AngleTensor out_angles(
-      num_elements,
-      std::vector<std::vector<std::vector<double>>>(
-          num_elements, std::vector<std::vector<double>>(num_elements)));
+  AngleTensor out_angles(num_elements, std::vector<std::vector<std::vector<double>>>(
+                                           num_elements, std::vector<std::vector<double>>(num_elements)));
 
   AngleCalculator::compute(cell, graph, out_angles);
 
@@ -140,10 +132,8 @@ TEST(AngleCalculatorTests, OverlappingAtomsProduceNoAngles) {
   graph.addDirectedEdge(0, 2, 0.0, {0.0, 0.0, 0.0});
 
   size_t num_elements = cell.elements().size();
-  AngleTensor out_angles(
-      num_elements,
-      std::vector<std::vector<std::vector<double>>>(
-          num_elements, std::vector<std::vector<double>>(num_elements)));
+  AngleTensor out_angles(num_elements, std::vector<std::vector<std::vector<double>>>(
+                                           num_elements, std::vector<std::vector<double>>(num_elements)));
 
   AngleCalculator::compute(cell, graph, out_angles);
 

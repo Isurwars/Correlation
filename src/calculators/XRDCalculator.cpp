@@ -20,27 +20,23 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<XRDCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<XRDCalculator>());
 } // namespace
 
-void XRDCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                   const correlation::analysis::AnalysisSettings &settings) const {
   if (df.getAllHistograms().find("g(r)") == df.getAllHistograms().end()) {
     return; // g(r) hasn't been calculated yet
   }
-  df.addHistogram("XRD", calculate(df.getHistogram("g(r)"), df.cell(),
-                                   df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
+  df.addHistogram("XRD", calculate(df.getHistogram("g(r)"), df.cell(), df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
                                    settings.q_bin_width));
 }
 
-correlation::analysis::Histogram
-XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
-                         const correlation::core::Cell &cell,
-                         const std::map<std::string, double> &ashcroft_weights,
-                         double lambda, double theta_min, double theta_max,
-                         double bin_width) {
+correlation::analysis::Histogram XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
+                                                          const correlation::core::Cell &cell,
+                                                          const std::map<std::string, double> &ashcroft_weights,
+                                                          double lambda, double theta_min, double theta_max,
+                                                          double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive.");
   }
@@ -56,8 +52,7 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
   const double total_rho = cell.atomCount() / cell.volume();
   const double max_r = r_bins.back();
 
-  size_t num_bins =
-      static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
+  size_t num_bins = static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
   correlation::analysis::Histogram xrd_hist;
   xrd_hist.x_label = "2θ";
   xrd_hist.title = "XRD Pattern";
@@ -121,52 +116,48 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
 
   // Thread-local sin(Q*r) scratch buffer
   const size_t r_count = r_bins.size();
-  tbb::enumerable_thread_specific<std::vector<double>> sinqr_ets(
-      [&] { return std::vector<double>(r_count, 0.0); });
+  tbb::enumerable_thread_specific<std::vector<double>> sinqr_ets([&] { return std::vector<double>(r_count, 0.0); });
 
-  tbb::parallel_for(
-      tbb::blocked_range<size_t>(0, num_bins),
-      [&](const tbb::blocked_range<size_t> &range) {
-        auto &sinqr = sinqr_ets.local();
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_bins), [&](const tbb::blocked_range<size_t> &range) {
+    auto &sinqr = sinqr_ets.local();
 
-        for (size_t i = range.begin(); i != range.end(); ++i) {
-          double two_theta = theta_min + i * bin_width;
-          xrd_hist.bins[i] = two_theta;
+    for (size_t i = range.begin(); i != range.end(); ++i) {
+      double two_theta = theta_min + i * bin_width;
+      xrd_hist.bins[i] = two_theta;
 
-          double theta_rad = (two_theta / 2.0) * correlation::math::deg_to_rad;
-          double Q = correlation::math::four_pi * std::sin(theta_rad) / lambda;
+      double theta_rad = (two_theta / 2.0) * correlation::math::deg_to_rad;
+      double Q = correlation::math::four_pi * std::sin(theta_rad) / lambda;
 
-          if (Q < 1e-6) {
-            intensities[i] = 0.0;
-            continue;
-          }
+      if (Q < 1e-6) {
+        intensities[i] = 0.0;
+        continue;
+      }
 
-          double I_Q = 0.0;
+      double I_Q = 0.0;
 
-          for (const auto &[sym, c] : concentrations) {
-            double f = get_f_Q(sym, Q);
-            I_Q += c * f * f;
-          }
+      for (const auto &[sym, c] : concentrations) {
+        double f = get_f_Q(sym, Q);
+        I_Q += c * f * f;
+      }
 
-          for (size_t p = 0; p < num_xrd_partials; ++p) {
-            const PartialXRD &px = xrd_partials[p];
-            // Clamp integrand to r_bins size (partial_integrands was built
-            // from g_partial which may be shorter than r_bins)
-            const size_t pcount = std::min(px.integrand->size(), r_count);
+      for (size_t p = 0; p < num_xrd_partials; ++p) {
+        const PartialXRD &px = xrd_partials[p];
+        // Clamp integrand to r_bins size (partial_integrands was built
+        // from g_partial which may be shorter than r_bins)
+        const size_t pcount = std::min(px.integrand->size(), r_count);
 
-            double integral = correlation::math::sinc_integral(
-                Q, px.integrand->data(), r_bins.data(), sinqr.data(), pcount);
+        double integral =
+            correlation::math::sinc_integral(Q, px.integrand->data(), r_bins.data(), sinqr.data(), pcount);
 
-            double f1 = get_f_Q(px.sym1, Q);
-            double f2 = get_f_Q(px.sym2, Q);
+        double f1 = get_f_Q(px.sym1, Q);
+        double f2 = get_f_Q(px.sym2, Q);
 
-            I_Q += px.weight * f1 * f2 *
-                   (correlation::math::four_pi * total_rho / Q) * integral;
-          }
+        I_Q += px.weight * f1 * f2 * (correlation::math::four_pi * total_rho / Q) * integral;
+      }
 
-          intensities[i] = I_Q;
-        }
-      });
+      intensities[i] = I_Q;
+    }
+  });
 
   xrd_hist.partials["Total"] = std::move(intensities);
 

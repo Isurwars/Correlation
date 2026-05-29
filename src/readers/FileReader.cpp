@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: MIT
  */
 #include "readers/FileReader.hpp"
-#include "readers/ReaderFactory.hpp"
 #include "core/MappedFile.hpp"
+#include "readers/ReaderFactory.hpp"
 
 #include <algorithm>
 #include <filesystem>
@@ -79,10 +79,8 @@ static BaseReader *findReaderForFile(const std::string &filename) {
   }
 
   // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
-  std::string basename =
-      std::filesystem::path(filename).filename().string();
-  std::transform(basename.begin(), basename.end(), basename.begin(),
-                 ::tolower);
+  std::string basename = std::filesystem::path(filename).filename().string();
+  std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
 
   if (basename == "poscar" || basename == "contcar")
     return ReaderFactory::instance().getReaderForExtension(".poscar");
@@ -94,40 +92,39 @@ static BaseReader *findReaderForFile(const std::string &filename) {
 
 static BaseReader *findReaderForType(FileType type) {
   switch (type) {
-    case FileType::Car:
-      return ReaderFactory::instance().getReaderForExtension(".car");
-    case FileType::Cell:
-      return ReaderFactory::instance().getReaderForExtension(".cell");
-    case FileType::Cif:
-      return ReaderFactory::instance().getReaderForExtension(".cif");
-    case FileType::Arc:
-      return ReaderFactory::instance().getReaderForExtension(".arc");
-    case FileType::LammpsDump:
-      return ReaderFactory::instance().getReaderForExtension(".dump");
-    case FileType::OnetepDat:
-      return ReaderFactory::instance().getReaderForExtension(".dat");
-    case FileType::CastepMd:
-      return ReaderFactory::instance().getReaderForExtension(".md");
-    case FileType::Outmol:
-      return ReaderFactory::instance().getReaderForExtension(".outmol");
-    case FileType::Vasp:
-      return ReaderFactory::instance().getReaderForExtension(".poscar");
-    case FileType::Xdatcar:
-      return ReaderFactory::instance().getReaderForExtension(".xdatcar");
-    case FileType::Gromacs:
-      return ReaderFactory::instance().getReaderForExtension(".gro");
-    case FileType::Pdb:
-      return ReaderFactory::instance().getReaderForExtension(".pdb");
-    case FileType::Xyz:
-      return ReaderFactory::instance().getReaderForExtension(".xyz");
-    default:
-      return nullptr;
+  case FileType::Car:
+    return ReaderFactory::instance().getReaderForExtension(".car");
+  case FileType::Cell:
+    return ReaderFactory::instance().getReaderForExtension(".cell");
+  case FileType::Cif:
+    return ReaderFactory::instance().getReaderForExtension(".cif");
+  case FileType::Arc:
+    return ReaderFactory::instance().getReaderForExtension(".arc");
+  case FileType::LammpsDump:
+    return ReaderFactory::instance().getReaderForExtension(".dump");
+  case FileType::OnetepDat:
+    return ReaderFactory::instance().getReaderForExtension(".dat");
+  case FileType::CastepMd:
+    return ReaderFactory::instance().getReaderForExtension(".md");
+  case FileType::Outmol:
+    return ReaderFactory::instance().getReaderForExtension(".outmol");
+  case FileType::Vasp:
+    return ReaderFactory::instance().getReaderForExtension(".poscar");
+  case FileType::Xdatcar:
+    return ReaderFactory::instance().getReaderForExtension(".xdatcar");
+  case FileType::Gromacs:
+    return ReaderFactory::instance().getReaderForExtension(".gro");
+  case FileType::Pdb:
+    return ReaderFactory::instance().getReaderForExtension(".pdb");
+  case FileType::Xyz:
+    return ReaderFactory::instance().getReaderForExtension(".xyz");
+  default:
+    return nullptr;
   }
 }
 
-correlation::core::Cell readStructure(
-    const std::string &filename, FileType type,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell readStructure(const std::string &filename, FileType type,
+                                      std::function<void(float, const std::string &)> progress_callback) {
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {
@@ -144,9 +141,8 @@ correlation::core::Cell readStructure(
   throw std::runtime_error("No reader found for file: " + filename);
 }
 
-correlation::core::Trajectory readTrajectory(
-    const std::string &filename, FileType type,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
+                                             std::function<void(float, const std::string &)> progress_callback) {
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {
@@ -159,10 +155,8 @@ correlation::core::Trajectory readTrajectory(
   if (reader) {
     // Enforce 4 GiB trajectory file size limit.
     auto file_size = std::filesystem::file_size(filename);
-    if (static_cast<std::uint64_t>(file_size) >
-        correlation::core::kMaxTrajectoryBytes) {
-      throw std::runtime_error(
-          "Trajectory file exceeds the 4 GiB memory limit: " + filename);
+    if (static_cast<std::uint64_t>(file_size) > correlation::core::kMaxTrajectoryBytes) {
+      throw std::runtime_error("Trajectory file exceeds the 4 GiB memory limit: " + filename);
     }
 
     if (reader->isTrajectory()) {
@@ -171,14 +165,12 @@ correlation::core::Trajectory readTrajectory(
       // If it's not a trajectory reader but we asked for a trajectory,
       // wrap a single structure in a one-frame trajectory.
       try {
-        correlation::core::Cell c =
-            reader->readStructure(filename, progress_callback);
+        correlation::core::Cell c = reader->readStructure(filename, progress_callback);
         std::vector<correlation::core::Cell> frames;
         frames.push_back(std::move(c));
         return correlation::core::Trajectory(frames, 1.0);
       } catch (...) {
-        throw std::runtime_error("Reader for \"" + filename +
-                                 "\" does not support trajectory reading.");
+        throw std::runtime_error("Reader for \"" + filename + "\" does not support trajectory reading.");
       }
     }
   }

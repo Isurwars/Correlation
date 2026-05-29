@@ -18,8 +18,7 @@
 namespace correlation::readers {
 
 namespace {
-bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<GromacsReader>());
+bool registered = ReaderFactory::instance().registerReader(std::make_unique<GromacsReader>());
 }
 
 // ---------------------------------------------------------------------------
@@ -34,8 +33,7 @@ static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
 // ---------------------------------------------------------------------------
 // Helper: skip past line ending
 // ---------------------------------------------------------------------------
-static inline size_t skipLineEnding(const char *data, size_t total,
-                                    size_t pos) {
+static inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
   if (pos < total && data[pos] == '\r')
     ++pos;
   if (pos < total && data[pos] == '\n')
@@ -46,16 +44,14 @@ static inline size_t skipLineEnding(const char *data, size_t total,
 // ---------------------------------------------------------------------------
 // Helper: extract a line as std::string from [pos, lineEnd)
 // ---------------------------------------------------------------------------
-static inline std::string extractLine(const char *data, size_t pos,
-                                      size_t lineEnd) {
+static inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
   return std::string(data + pos, lineEnd - pos);
 }
 
 // ---------------------------------------------------------------------------
 // parseGroFrame — parses a single .gro frame from memory
 // ---------------------------------------------------------------------------
-correlation::core::Cell GromacsReader::parseGroFrame(const char *data,
-                                                      size_t size) {
+correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t size) {
   size_t offset = 0;
   size_t lineEnd = 0;
 
@@ -119,8 +115,7 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data,
     double bx, by, bz;
     if (ss >> bx >> by >> bz) {
       // GROMACS uses nm; convert to Angstroms. Assume orthogonal box.
-      cell.setLatticeParameters(
-          {bx * 10.0, by * 10.0, bz * 10.0, 90.0, 90.0, 90.0});
+      cell.setLatticeParameters({bx * 10.0, by * 10.0, bz * 10.0, 90.0, 90.0, 90.0});
     }
   }
 
@@ -130,9 +125,9 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data,
 // ---------------------------------------------------------------------------
 // readStructure — returns the last frame
 // ---------------------------------------------------------------------------
-correlation::core::Cell GromacsReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+GromacsReader::readStructure(const std::string &filename,
+                             std::function<void(float, const std::string &)> progress_callback) {
 
   auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
@@ -144,9 +139,9 @@ correlation::core::Cell GromacsReader::readStructure(
 // ---------------------------------------------------------------------------
 // readTrajectory — memory-mapped lazy loading for multi-frame .gro
 // ---------------------------------------------------------------------------
-correlation::core::Trajectory GromacsReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+GromacsReader::readTrajectory(const std::string &filename,
+                              std::function<void(float, const std::string &)> progress_callback) {
 
   if (progress_callback)
     progress_callback(0.0f, "Reading GROMACS file...");
@@ -225,8 +220,7 @@ correlation::core::Trajectory GromacsReader::readTrajectory(
 
     // Report progress
     if (progress_callback && total_size > 0) {
-      float progress =
-          static_cast<float>(offset) / static_cast<float>(total_size);
+      float progress = static_cast<float>(offset) / static_cast<float>(total_size);
       progress_callback(progress, "Scanning GROMACS frames...");
     }
   }
@@ -243,8 +237,7 @@ correlation::core::Trajectory GromacsReader::readTrajectory(
 
   auto parser = [](const char *d, size_t s) { return parseGroFrame(d, s); };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets),
-                                       parser, 1.0);
+  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
 }
 
 } // namespace correlation::readers

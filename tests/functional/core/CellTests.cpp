@@ -52,34 +52,32 @@ TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   // Calculate distance between atom 0 and 1
   auto dist_vec = cell.atoms()[1].position() - cell.atoms()[0].position();
   auto mi_vec = cell.minimumImage(dist_vec);
-  
+
   EXPECT_NEAR(correlation::math::norm(mi_vec), expected_nn, 1e-6);
 }
 
 TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // Simple water molecule in a large box
   Cell cell({{20.0, 20.0, 20.0, 90.0, 90.0, 90.0}});
-  
+
   // O at origin, H atoms at typical distance/angle
   // OH distance ~ 0.96 A, HOH angle ~ 104.5
   const double oh_dist = 0.9584;
   const double hoh_angle_rad = 104.45 * (correlation::math::pi / 180.0);
-  
+
   cell.addAtom("O", {10.0, 10.0, 10.0});
   cell.addAtom("H", {10.0 + oh_dist, 10.0, 10.0});
-  cell.addAtom("H", {10.0 + oh_dist * std::cos(hoh_angle_rad), 
-                     10.0 + oh_dist * std::sin(hoh_angle_rad), 
-                     10.0});
+  cell.addAtom("H", {10.0 + oh_dist * std::cos(hoh_angle_rad), 10.0 + oh_dist * std::sin(hoh_angle_rad), 10.0});
 
   // Now move the molecule across the boundary
-  for (auto &atom : const_cast<std::vector<Atom>&>(cell.atoms())) {
+  for (auto &atom : const_cast<std::vector<Atom> &>(cell.atoms())) {
     auto pos = atom.position();
     pos.x() += 15.0; // Moves from 10 to 25, which should wrap to 5
     atom.setPosition(pos);
   }
-  
+
   cell.wrapPositions();
-  
+
   // Verify that the internal geometry (bond length/angle) is preserved
   const auto &atoms = cell.atoms();
   double d1 = distance(atoms[0], atoms[1]);
@@ -89,16 +87,16 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // Use minimum image for distance if they were wrapped differently
   auto v1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
   auto v2 = cell.minimumImage(atoms[2].position() - atoms[0].position());
-  
+
   EXPECT_NEAR(correlation::math::norm(v1), oh_dist, 1e-6);
   EXPECT_NEAR(correlation::math::norm(v2), oh_dist, 1e-6);
-  
-  // Angle function doesn't use PBC, so we must be careful. 
+
+  // Angle function doesn't use PBC, so we must be careful.
   // If we wrap them, they might be on opposite sides of the box.
   // We should calculate angle using minimum image vectors.
   double cos_theta = correlation::math::dot(v1, v2) / (correlation::math::norm(v1) * correlation::math::norm(v2));
   double calc_angle = std::acos(std::clamp(cos_theta, -1.0, 1.0));
-  
+
   EXPECT_NEAR(calc_angle, hoh_angle_rad, 1e-6);
 }
 

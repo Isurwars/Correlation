@@ -17,15 +17,12 @@ namespace correlation::calculators {
 namespace {
 
 // Static registration of the calculator in the factory
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<ClusterCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<ClusterCalculator>());
 
 // Disjoint-Set (Union-Find) data structure for identifying connected components
 class UnionFind {
 public:
-  explicit UnionFind(size_t n) : parent(n), sz(n, 1) {
-    std::iota(parent.begin(), parent.end(), 0);
-  }
+  explicit UnionFind(size_t n) : parent(n), sz(n, 1) { std::iota(parent.begin(), parent.end(), 0); }
 
   size_t find(size_t i) {
     size_t root = i;
@@ -55,9 +52,7 @@ public:
     }
   }
 
-  size_t getSize(size_t i) {
-    return sz[find(i)];
-  }
+  size_t getSize(size_t i) { return sz[find(i)]; }
 
 private:
   std::vector<size_t> parent;
@@ -66,15 +61,16 @@ private:
 
 } // namespace
 
-void ClusterCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                       const correlation::analysis::AnalysisSettings &settings) const {
   const auto *analyzer = df.neighbors();
-  if (!analyzer) return;
+  if (!analyzer)
+    return;
 
   const auto &graph = analyzer->neighborGraph();
   size_t n_atoms = graph.nodeCount();
-  if (n_atoms == 0) return;
+  if (n_atoms == 0)
+    return;
 
   // Initialize Union-Find
   UnionFind uf(n_atoms);
@@ -103,7 +99,8 @@ void ClusterCalculator::calculateFrame(
     }
   }
 
-  if (max_size == 0) return;
+  if (max_size == 0)
+    return;
 
   // Create the histogram
   correlation::analysis::Histogram hist;

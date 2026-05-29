@@ -5,8 +5,8 @@
 
 #include "math/SpecialFunctions.hpp"
 
-#include <gtest/gtest.h>
 #include <cmath>
+#include <gtest/gtest.h>
 #include <vector>
 
 namespace correlation::testing {
@@ -41,7 +41,7 @@ TEST_F(SpecialFunctionsTests, SphLegendreBoundaryCases) {
 
 TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
   const double theta = 0.5; // in radians
-  
+
   // l=0, m=0: Y_0^0 = 1 / sqrt(4 * pi)
   double y00_expected = 1.0 / std::sqrt(4.0 * M_PI);
   EXPECT_NEAR(sph_legendre(0, 0, theta), y00_expected, 1e-9);
@@ -56,21 +56,18 @@ TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
-  std::vector<double> angles = {0.0, 0.2, 0.5, M_PI/2.0, 2.1, M_PI - 0.1, M_PI};
+  std::vector<double> angles = {0.0, 0.2, 0.5, M_PI / 2.0, 2.1, M_PI - 0.1, M_PI};
   size_t count = angles.size();
   std::vector<double> batch_results(count);
 
   // Test different combinations of l and m
-  std::vector<std::pair<int, int>> l_m_pairs = {
-    {0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2}
-  };
+  std::vector<std::pair<int, int>> l_m_pairs = {{0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2}};
 
-  for (const auto& [l, m] : l_m_pairs) {
+  for (const auto &[l, m] : l_m_pairs) {
     sph_legendre_batch(l, m, angles.data(), batch_results.data(), count);
     for (size_t i = 0; i < count; ++i) {
       double expected = sph_legendre(l, m, angles[i]);
-      EXPECT_NEAR(batch_results[i], expected, 1e-9)
-          << "Mismatch at index " << i << " for l=" << l << ", m=" << m;
+      EXPECT_NEAR(batch_results[i], expected, 1e-9) << "Mismatch at index " << i << " for l=" << l << ", m=" << m;
     }
   }
 }

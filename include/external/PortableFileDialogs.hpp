@@ -206,8 +206,7 @@ protected:
     template <typename T> class proc {
     public:
       proc(dll const &lib, std::string const &sym)
-          : m_proc(reinterpret_cast<T *>(
-                (void *)::GetProcAddress(lib.handle, sym.c_str()))) {}
+          : m_proc(reinterpret_cast<T *>((void *)::GetProcAddress(lib.handle, sym.c_str()))) {}
 
       operator bool() const { return m_proc != nullptr; }
       operator T *() const { return m_proc; }
@@ -272,10 +271,8 @@ protected:
     folder,
   };
 
-  file_dialog(type in_type, std::string const &title,
-              std::string const &default_path = "",
-              std::vector<std::string> const &filters = {},
-              opt options = opt::none);
+  file_dialog(type in_type, std::string const &title, std::string const &default_path = "",
+              std::vector<std::string> const &filters = {}, opt options = opt::none);
 
 protected:
   std::string string_result();
@@ -284,8 +281,7 @@ protected:
 #if _WIN32
   static int CALLBACK bffcallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM pData);
 #if PFD_HAS_IFILEDIALOG
-  std::string select_folder_vista(IFileDialog *ifd, bool force_path,
-                                  HWND parent_window);
+  std::string select_folder_vista(IFileDialog *ifd, bool force_path, HWND parent_window);
 #endif
 
   std::wstring m_wtitle;
@@ -313,8 +309,7 @@ public:
 
 class notify : public internal::dialog {
 public:
-  notify(std::string const &title, std::string const &message,
-         icon _icon = icon::info);
+  notify(std::string const &title, std::string const &message, icon _icon = icon::info);
 };
 
 //
@@ -323,8 +318,8 @@ public:
 
 class message : public internal::dialog {
 public:
-  message(std::string const &title, std::string const &text,
-          choice _choice = choice::ok_cancel, icon _icon = icon::info);
+  message(std::string const &title, std::string const &text, choice _choice = choice::ok_cancel,
+          icon _icon = icon::info);
 
   button result();
 
@@ -340,8 +335,7 @@ private:
 class open_file : public internal::file_dialog {
 public:
   open_file(std::string const &title, std::string const &default_path = "",
-            std::vector<std::string> const &filters = {"All Files", "*"},
-            opt options = opt::none);
+            std::vector<std::string> const &filters = {"All Files", "*"}, opt options = opt::none);
 
 #if defined(__has_cpp_attribute)
 #if __has_cpp_attribute(deprecated)
@@ -349,8 +343,8 @@ public:
   [[deprecated("Use pfd::opt::multiselect instead of allow_multiselect")]]
 #endif
 #endif
-  open_file(std::string const &title, std::string const &default_path,
-            std::vector<std::string> const &filters, bool allow_multiselect);
+  open_file(std::string const &title, std::string const &default_path, std::vector<std::string> const &filters,
+            bool allow_multiselect);
 
   std::vector<std::string> result();
 };
@@ -358,8 +352,7 @@ public:
 class save_file : public internal::file_dialog {
 public:
   save_file(std::string const &title, std::string const &default_path = "",
-            std::vector<std::string> const &filters = {"All Files", "*"},
-            opt options = opt::none);
+            std::vector<std::string> const &filters = {"All Files", "*"}, opt options = opt::none);
 
 #if defined(__has_cpp_attribute)
 #if __has_cpp_attribute(deprecated)
@@ -367,16 +360,15 @@ public:
   [[deprecated("Use pfd::opt::force_overwrite instead of confirm_overwrite")]]
 #endif
 #endif
-  save_file(std::string const &title, std::string const &default_path,
-            std::vector<std::string> const &filters, bool confirm_overwrite);
+  save_file(std::string const &title, std::string const &default_path, std::vector<std::string> const &filters,
+            bool confirm_overwrite);
 
   std::string result();
 };
 
 class select_folder : public internal::file_dialog {
 public:
-  select_folder(std::string const &title, std::string const &default_path = "",
-                opt options = opt::none);
+  select_folder(std::string const &title, std::string const &default_path = "", opt options = opt::none);
 
   std::string result();
 };
@@ -395,54 +387,43 @@ namespace internal {
 
 #if _WIN32
 static inline std::wstring str2wstr(std::string const &str) {
-  int len =
-      MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
+  int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
   std::wstring ret(len, '\0');
-  MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(),
-                      (LPWSTR)ret.data(), (int)ret.size());
+  MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), (LPWSTR)ret.data(), (int)ret.size());
   return ret;
 }
 
 static inline std::string wstr2str(std::wstring const &str) {
-  int len = WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(),
-                                nullptr, 0, nullptr, nullptr);
+  int len = WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0, nullptr, nullptr);
   std::string ret(len, '\0');
-  WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(),
-                      (LPSTR)ret.data(), (int)ret.size(), nullptr, nullptr);
+  WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)str.size(), (LPSTR)ret.data(), (int)ret.size(), nullptr, nullptr);
   return ret;
 }
 
 static inline bool is_vista() {
   OSVERSIONINFOEXW osvi;
   memset(&osvi, 0, sizeof(osvi));
-  DWORDLONG const mask = VerSetConditionMask(
-      VerSetConditionMask(
-          VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL),
-          VER_MINORVERSION, VER_GREATER_EQUAL),
-      VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+  DWORDLONG const mask =
+      VerSetConditionMask(VerSetConditionMask(VerSetConditionMask(0, VER_MAJORVERSION, VER_GREATER_EQUAL),
+                                              VER_MINORVERSION, VER_GREATER_EQUAL),
+                          VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
   osvi.dwOSVersionInfoSize = sizeof(osvi);
   osvi.dwMajorVersion = HIBYTE(_WIN32_WINNT_VISTA);
   osvi.dwMinorVersion = LOBYTE(_WIN32_WINNT_VISTA);
   osvi.wServicePackMajor = 0;
 
-  return VerifyVersionInfoW(
-             &osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR,
-             mask) != FALSE;
+  return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, mask) != FALSE;
 }
 #endif
 
 // This is necessary until C++20 which will have std::string::ends_with() etc.
 
-static inline bool ends_with(std::string const &str,
-                             std::string const &suffix) {
-  return suffix.size() <= str.size() &&
-         str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+static inline bool ends_with(std::string const &str, std::string const &suffix) {
+  return suffix.size() <= str.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
-static inline bool starts_with(std::string const &str,
-                               std::string const &prefix) {
-  return prefix.size() <= str.size() &&
-         str.compare(0, prefix.size(), prefix) == 0;
+static inline bool starts_with(std::string const &str, std::string const &prefix) {
+  return prefix.size() <= str.size() && str.compare(0, prefix.size(), prefix) == 0;
 }
 
 // This is necessary until C++17 which will have std::filesystem::is_directory
@@ -521,14 +502,12 @@ inline bool settings::available() {
   return false;
 #else
   settings tmp;
-  return tmp.flags(flag::has_zenity) || tmp.flags(flag::has_matedialog) ||
-         tmp.flags(flag::has_qarma) || tmp.flags(flag::has_kdialog);
+  return tmp.flags(flag::has_zenity) || tmp.flags(flag::has_matedialog) || tmp.flags(flag::has_qarma) ||
+         tmp.flags(flag::has_kdialog);
 #endif
 }
 
-inline void settings::verbose(bool value) {
-  settings().flags(flag::is_verbose) = value;
-}
+inline void settings::verbose(bool value) { settings().flags(flag::is_verbose) = value; }
 
 inline void settings::rescan() { settings(/* resync = */ true); }
 
@@ -558,8 +537,7 @@ inline bool settings::is_osascript() const {
 }
 
 inline bool settings::is_zenity() const {
-  return flags(flag::has_zenity) || flags(flag::has_matedialog) ||
-         flags(flag::has_qarma);
+  return flags(flag::has_zenity) || flags(flag::has_matedialog) || flags(flag::has_qarma);
 }
 
 inline bool settings::is_kdialog() const { return flags(flag::has_kdialog); }
@@ -570,8 +548,7 @@ inline bool const &settings::flags(flag in_flag) const {
 }
 
 inline bool &settings::flags(flag in_flag) {
-  return const_cast<bool &>(
-      static_cast<settings const *>(this)->flags(in_flag));
+  return const_cast<bool &>(static_cast<settings const *>(this)->flags(in_flag));
 }
 
 // path implementation
@@ -587,8 +564,7 @@ inline std::string path::home() {
   char buf[MAX_PATH] = {'\0'};
   if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token)) {
     dll userenv("userenv.dll");
-    dll::proc<BOOL WINAPI(HANDLE, LPSTR, LPDWORD)> get_user_profile_directory(
-        userenv, "GetUserProfileDirectoryA");
+    dll::proc<BOOL WINAPI(HANDLE, LPSTR, LPDWORD)> get_user_profile_directory(userenv, "GetUserProfileDirectoryA");
     get_user_profile_directory(token, buf, &len);
     CloseHandle(token);
     if (*buf)
@@ -657,8 +633,7 @@ inline bool internal::executor::kill() {
 }
 
 #if _WIN32
-inline BOOL CALLBACK internal::executor::enum_windows_callback(HWND hwnd,
-                                                               LPARAM lParam) {
+inline BOOL CALLBACK internal::executor::enum_windows_callback(HWND hwnd, LPARAM lParam) {
   auto that = (executor *)lParam;
 
   DWORD pid;
@@ -670,8 +645,7 @@ inline BOOL CALLBACK internal::executor::enum_windows_callback(HWND hwnd,
 #endif
 
 #if _WIN32
-inline void
-internal::executor::start_func(std::function<std::string(int *)> const &fun) {
+inline void internal::executor::start_func(std::function<std::string(int *)> const &fun) {
   stop();
 
   auto trampoline = [fun, this]() {
@@ -689,13 +663,10 @@ internal::executor::start_func(std::function<std::string(int *)> const &fun) {
 }
 
 #elif __EMSCRIPTEN__
-inline void internal::executor::start(int exit_code) {
-  m_exit_code = exit_code;
-}
+inline void internal::executor::start(int exit_code) { m_exit_code = exit_code; }
 
 #else
-inline void
-internal::executor::start_process(std::vector<std::string> const &command) {
+inline void internal::executor::start_process(std::vector<std::string> const &command) {
   stop();
   m_stdout.clear();
   m_exit_code = -1;
@@ -722,9 +693,8 @@ internal::executor::start_process(std::vector<std::string> const &command) {
     close(fd);
 
     std::vector<char *> args;
-    std::transform(
-        command.cbegin(), command.cend(), std::back_inserter(args),
-        [](std::string const &s) { return const_cast<char *>(s.c_str()); });
+    std::transform(command.cbegin(), command.cend(), std::back_inserter(args),
+                   [](std::string const &s) { return const_cast<char *>(s.c_str()); });
     args.push_back(nullptr); // null-terminate argv[]
 
     execvp(args[0], args.data());
@@ -742,8 +712,7 @@ internal::executor::start_process(std::vector<std::string> const &command) {
 
 inline internal::executor::~executor() { stop(); }
 
-inline bool
-internal::executor::ready(int timeout /* = default_wait_timeout */) {
+inline bool internal::executor::ready(int timeout /* = default_wait_timeout */) {
   if (!m_running)
     return true;
 
@@ -804,8 +773,7 @@ inline void internal::executor::stop() {
 // dll implementation
 
 #if _WIN32
-inline internal::platform::dll::dll(std::string const &name)
-    : handle(::LoadLibraryA(name.c_str())) {}
+inline internal::platform::dll::dll(std::string const &name) : handle(::LoadLibraryA(name.c_str())) {}
 
 inline internal::platform::dll::~dll() {
   if (handle)
@@ -828,9 +796,7 @@ inline internal::platform::ole32_dll::~ole32_dll() {
     proc<void WINAPI()>(*this, "CoUninitialize")();
 }
 
-inline bool internal::platform::ole32_dll::is_initialized() {
-  return m_state == S_OK || m_state == S_FALSE;
-}
+inline bool internal::platform::ole32_dll::is_initialized() { return m_state == S_OK || m_state == S_FALSE; }
 #endif
 
 // new_style_context implementation
@@ -844,9 +810,7 @@ inline internal::platform::new_style_context::new_style_context() {
     ActivateActCtx(hctx, &m_cookie);
 }
 
-inline internal::platform::new_style_context::~new_style_context() {
-  DeactivateActCtx(0, m_cookie);
-}
+inline internal::platform::new_style_context::~new_style_context() { DeactivateActCtx(0, m_cookie); }
 
 inline HANDLE internal::platform::new_style_context::create() {
   // This “hack” seems to be necessary for this code to work on windows XP.
@@ -883,10 +847,7 @@ inline HANDLE internal::platform::new_style_context::create() {
 
 // dialog implementation
 
-inline bool
-internal::dialog::ready(int timeout /* = default_wait_timeout */) const {
-  return m_async->ready(timeout);
-}
+inline bool internal::dialog::ready(int timeout /* = default_wait_timeout */) const { return m_async->ready(timeout); }
 
 inline bool internal::dialog::kill() const { return m_async->kill(); }
 
@@ -940,8 +901,7 @@ inline std::string internal::dialog::get_icon_name(icon _icon) {
 }
 
 // This is only used for debugging purposes
-inline std::ostream &operator<<(std::ostream &s,
-                                std::vector<std::string> const &v) {
+inline std::ostream &operator<<(std::ostream &s, std::vector<std::string> const &v) {
   int not_first = 0;
   for (auto &e : v)
     s << (not_first++ ? " " : "") << e;
@@ -952,16 +912,14 @@ inline std::ostream &operator<<(std::ostream &s,
 // FIXME: we should probably get rid of newlines!
 // FIXME: the \" sequence seems unsafe, too!
 // XXX: this is no longer used but I would like to keep it around just in case
-inline std::string
-internal::dialog::powershell_quote(std::string const &str) const {
+inline std::string internal::dialog::powershell_quote(std::string const &str) const {
   return "'" + std::regex_replace(str, std::regex("['\"]"), "$&$&") + "'";
 }
 
 // Properly quote a string for osascript: replace \ or " with \\ or \"
 // XXX: this also used to replace ' with \' when popen was used, but it would be
 // smarter to do shell_quote(osascript_quote(...)) if this is needed again.
-inline std::string
-internal::dialog::osascript_quote(std::string const &str) const {
+inline std::string internal::dialog::osascript_quote(std::string const &str) const {
   return "\"" + std::regex_replace(str, std::regex("[\\\\\"]"), "\\$&") + "\"";
 }
 
@@ -973,11 +931,10 @@ inline std::string internal::dialog::shell_quote(std::string const &str) const {
 
 // file_dialog implementation
 
-inline internal::file_dialog::file_dialog(
-    type in_type, std::string const &title,
-    std::string const &default_path /* = "" */,
-    std::vector<std::string> const &filters /* = {} */,
-    opt options /* = opt::none */) {
+inline internal::file_dialog::file_dialog(type in_type, std::string const &title,
+                                          std::string const &default_path /* = "" */,
+                                          std::vector<std::string> const &filters /* = {} */,
+                                          opt options /* = opt::none */) {
 #if _WIN32
   std::string filter_list;
   std::regex whitespace("  *");
@@ -988,137 +945,129 @@ inline internal::file_dialog::file_dialog(
   filter_list += '\0';
   HWND parent_hwnd = GetActiveWindow();
 
-  m_async->start_func([this, in_type, title, default_path, filter_list, options,
-                       parent_hwnd](int *exit_code) -> std::string {
-    (void)exit_code;
-    m_wtitle = internal::str2wstr(title);
-    m_wdefault_path = internal::str2wstr(default_path);
-    auto wfilter_list = internal::str2wstr(filter_list);
+  m_async->start_func(
+      [this, in_type, title, default_path, filter_list, options, parent_hwnd](int *exit_code) -> std::string {
+        (void)exit_code;
+        m_wtitle = internal::str2wstr(title);
+        m_wdefault_path = internal::str2wstr(default_path);
+        auto wfilter_list = internal::str2wstr(filter_list);
 
-    // Initialise COM. This is required for the new folder selection window,
-    // (see https://github.com/samhocevar/portable-file-dialogs/pull/21)
-    // and to avoid random crashes with GetOpenFileNameW() (see
-    // https://github.com/samhocevar/portable-file-dialogs/issues/51)
-    ole32_dll ole32;
+        // Initialise COM. This is required for the new folder selection window,
+        // (see https://github.com/samhocevar/portable-file-dialogs/pull/21)
+        // and to avoid random crashes with GetOpenFileNameW() (see
+        // https://github.com/samhocevar/portable-file-dialogs/issues/51)
+        ole32_dll ole32;
 
-    // Folder selection uses a different method
-    if (in_type == type::folder) {
+        // Folder selection uses a different method
+        if (in_type == type::folder) {
 #if PFD_HAS_IFILEDIALOG
-      if (flags(flag::is_vista)) {
-        // On Vista and higher we should be able to use IFileDialog for folder
-        // selection
-        IFileDialog *ifd;
-        HRESULT hr =
-            dll::proc<HRESULT WINAPI(REFCLSID, LPUNKNOWN, DWORD, REFIID,
-                                     LPVOID *)>(ole32, "CoCreateInstance")(
-                CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER,
-                IID_PPV_ARGS(&ifd));
+          if (flags(flag::is_vista)) {
+            // On Vista and higher we should be able to use IFileDialog for folder
+            // selection
+            IFileDialog *ifd;
+            HRESULT hr = dll::proc<HRESULT WINAPI(REFCLSID, LPUNKNOWN, DWORD, REFIID, LPVOID *)>(
+                ole32, "CoCreateInstance")(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&ifd));
 
-        // In case CoCreateInstance fails (which it should not), try legacy
-        // approach
-        if (SUCCEEDED(hr))
-          return select_folder_vista(ifd, options & opt::force_path,
-                                     parent_hwnd);
-      }
+            // In case CoCreateInstance fails (which it should not), try legacy
+            // approach
+            if (SUCCEEDED(hr))
+              return select_folder_vista(ifd, options & opt::force_path, parent_hwnd);
+          }
 #endif
 
-      BROWSEINFOW bi;
-      memset(&bi, 0, sizeof(bi));
+          BROWSEINFOW bi;
+          memset(&bi, 0, sizeof(bi));
 
-      bi.lpfn = &bffcallback;
-      bi.lParam = (LPARAM)this;
+          bi.lpfn = &bffcallback;
+          bi.lParam = (LPARAM)this;
 
-      if (flags(flag::is_vista)) {
-        if (ole32.is_initialized())
-          bi.ulFlags |= BIF_NEWDIALOGSTYLE;
-        bi.ulFlags |= BIF_EDITBOX;
-        bi.ulFlags |= BIF_STATUSTEXT;
-      }
+          if (flags(flag::is_vista)) {
+            if (ole32.is_initialized())
+              bi.ulFlags |= BIF_NEWDIALOGSTYLE;
+            bi.ulFlags |= BIF_EDITBOX;
+            bi.ulFlags |= BIF_STATUSTEXT;
+          }
 
-      auto *list = SHBrowseForFolderW(&bi);
-      std::string ret;
-      if (list) {
-        auto buffer = new wchar_t[MAX_PATH];
-        SHGetPathFromIDListW(list, buffer);
-        dll::proc<void WINAPI(LPVOID)>(ole32, "CoTaskMemFree")(list);
-        ret = internal::wstr2str(buffer);
-        delete[] buffer;
-      }
-      return ret;
-    }
+          auto *list = SHBrowseForFolderW(&bi);
+          std::string ret;
+          if (list) {
+            auto buffer = new wchar_t[MAX_PATH];
+            SHGetPathFromIDListW(list, buffer);
+            dll::proc<void WINAPI(LPVOID)>(ole32, "CoTaskMemFree")(list);
+            ret = internal::wstr2str(buffer);
+            delete[] buffer;
+          }
+          return ret;
+        }
 
-    OPENFILENAMEW ofn;
-    memset(&ofn, 0, sizeof(ofn));
-    ofn.lStructSize = sizeof(OPENFILENAMEW);
-    ofn.hwndOwner = parent_hwnd;
+        OPENFILENAMEW ofn;
+        memset(&ofn, 0, sizeof(ofn));
+        ofn.lStructSize = sizeof(OPENFILENAMEW);
+        ofn.hwndOwner = parent_hwnd;
 
-    ofn.lpstrFilter = wfilter_list.c_str();
+        ofn.lpstrFilter = wfilter_list.c_str();
 
-    auto woutput = std::wstring(MAX_PATH * 256, L'\0');
-    ofn.lpstrFile = (LPWSTR)woutput.data();
-    ofn.nMaxFile = (DWORD)woutput.size();
-    if (!m_wdefault_path.empty()) {
-      // If a directory was provided, use it as the initial directory. If
-      // a valid path was provided, use it as the initial file. Otherwise,
-      // let the Windows API decide.
-      auto path_attr = GetFileAttributesW(m_wdefault_path.c_str());
-      if (path_attr != INVALID_FILE_ATTRIBUTES &&
-          (path_attr & FILE_ATTRIBUTE_DIRECTORY))
-        ofn.lpstrInitialDir = m_wdefault_path.c_str();
-      else if (m_wdefault_path.size() <= woutput.size())
-        // second argument is size of buffer, not length of string
-        StringCchCopyW(ofn.lpstrFile, MAX_PATH * 256 + 1,
-                       m_wdefault_path.c_str());
-      else {
-        ofn.lpstrFileTitle = (LPWSTR)m_wdefault_path.data();
-        ofn.nMaxFileTitle = (DWORD)m_wdefault_path.size();
-      }
-    }
-    ofn.lpstrTitle = m_wtitle.c_str();
-    ofn.Flags = OFN_NOCHANGEDIR | OFN_EXPLORER;
+        auto woutput = std::wstring(MAX_PATH * 256, L'\0');
+        ofn.lpstrFile = (LPWSTR)woutput.data();
+        ofn.nMaxFile = (DWORD)woutput.size();
+        if (!m_wdefault_path.empty()) {
+          // If a directory was provided, use it as the initial directory. If
+          // a valid path was provided, use it as the initial file. Otherwise,
+          // let the Windows API decide.
+          auto path_attr = GetFileAttributesW(m_wdefault_path.c_str());
+          if (path_attr != INVALID_FILE_ATTRIBUTES && (path_attr & FILE_ATTRIBUTE_DIRECTORY))
+            ofn.lpstrInitialDir = m_wdefault_path.c_str();
+          else if (m_wdefault_path.size() <= woutput.size())
+            // second argument is size of buffer, not length of string
+            StringCchCopyW(ofn.lpstrFile, MAX_PATH * 256 + 1, m_wdefault_path.c_str());
+          else {
+            ofn.lpstrFileTitle = (LPWSTR)m_wdefault_path.data();
+            ofn.nMaxFileTitle = (DWORD)m_wdefault_path.size();
+          }
+        }
+        ofn.lpstrTitle = m_wtitle.c_str();
+        ofn.Flags = OFN_NOCHANGEDIR | OFN_EXPLORER;
 
-    dll comdlg32("comdlg32.dll");
+        dll comdlg32("comdlg32.dll");
 
-    // Apply new visual style (required for windows XP)
-    new_style_context ctx;
+        // Apply new visual style (required for windows XP)
+        new_style_context ctx;
 
-    if (in_type == type::save) {
-      if (!(options & opt::force_overwrite))
-        ofn.Flags |= OFN_OVERWRITEPROMPT;
+        if (in_type == type::save) {
+          if (!(options & opt::force_overwrite))
+            ofn.Flags |= OFN_OVERWRITEPROMPT;
 
-      dll::proc<BOOL WINAPI(LPOPENFILENAMEW)> get_save_file_name(
-          comdlg32, "GetSaveFileNameW");
-      if (get_save_file_name(&ofn) == 0)
+          dll::proc<BOOL WINAPI(LPOPENFILENAMEW)> get_save_file_name(comdlg32, "GetSaveFileNameW");
+          if (get_save_file_name(&ofn) == 0)
+            return "";
+          return internal::wstr2str(woutput.c_str());
+        } else {
+          if (options & opt::multiselect)
+            ofn.Flags |= OFN_ALLOWMULTISELECT;
+          ofn.Flags |= OFN_PATHMUSTEXIST;
+
+          dll::proc<BOOL WINAPI(LPOPENFILENAMEW)> get_open_file_name(comdlg32, "GetOpenFileNameW");
+          if (get_open_file_name(&ofn) == 0)
+            return "";
+        }
+
+        std::string prefix;
+        for (wchar_t const *p = woutput.c_str(); *p;) {
+          auto filename = internal::wstr2str(p);
+          p += wcslen(p);
+          // In multiselect mode, we advance p one wchar further and
+          // check for another filename. If there is one and the
+          // prefix is empty, it means we just read the prefix.
+          if ((options & opt::multiselect) && *++p && prefix.empty()) {
+            prefix = filename + "/";
+            continue;
+          }
+
+          m_vector_result.push_back(prefix + filename);
+        }
+
         return "";
-      return internal::wstr2str(woutput.c_str());
-    } else {
-      if (options & opt::multiselect)
-        ofn.Flags |= OFN_ALLOWMULTISELECT;
-      ofn.Flags |= OFN_PATHMUSTEXIST;
-
-      dll::proc<BOOL WINAPI(LPOPENFILENAMEW)> get_open_file_name(
-          comdlg32, "GetOpenFileNameW");
-      if (get_open_file_name(&ofn) == 0)
-        return "";
-    }
-
-    std::string prefix;
-    for (wchar_t const *p = woutput.c_str(); *p;) {
-      auto filename = internal::wstr2str(p);
-      p += wcslen(p);
-      // In multiselect mode, we advance p one wchar further and
-      // check for another filename. If there is one and the
-      // prefix is empty, it means we just read the prefix.
-      if ((options & opt::multiselect) && *++p && prefix.empty()) {
-        prefix = filename + "/";
-        continue;
-      }
-
-      m_vector_result.push_back(prefix + filename);
-    }
-
-    return "";
-  });
+      });
 #elif __EMSCRIPTEN__
   // FIXME: do something
   (void)in_type;
@@ -1168,8 +1117,7 @@ inline internal::file_dialog::file_dialog(
       std::regex sep("\\s+");
       std::string filter_list;
       bool has_filter = true;
-      std::sregex_token_iterator iter(patterns.begin(), patterns.end(), sep,
-                                      -1);
+      std::sregex_token_iterator iter(patterns.begin(), patterns.end(), sep, -1);
       std::sregex_token_iterator end;
       for (; iter != end; ++iter) {
         auto pat = iter->str();
@@ -1207,8 +1155,7 @@ inline internal::file_dialog::file_dialog(
     // If the default path is a directory, make sure it ends with "/" otherwise
     // zenity will open the file dialog in the parent directory.
     auto filename_arg = "--filename=" + default_path;
-    if (in_type != type::folder && !ends_with(default_path, "/") &&
-        internal::is_directory(default_path))
+    if (in_type != type::folder && !ends_with(default_path, "/") && internal::is_directory(default_path))
       filename_arg += "/";
     command.push_back(filename_arg);
 
@@ -1250,8 +1197,7 @@ inline internal::file_dialog::file_dialog(
 
     std::string filter;
     for (size_t i = 0; i < filters.size() / 2; ++i)
-      filter += (i == 0 ? "" : " | ") + filters[2 * i] + "(" +
-                filters[2 * i + 1] + ")";
+      filter += (i == 0 ? "" : " | ") + filters[2 * i] + "(" + filters[2 * i + 1] + ")";
     command.push_back(filter);
 
     command.push_back("--title");
@@ -1299,22 +1245,18 @@ inline std::vector<std::string> internal::file_dialog::vector_result() {
 
 #if _WIN32
 // Use a static function to pass as BFFCALLBACK for legacy folder select
-inline int CALLBACK internal::file_dialog::bffcallback(HWND hwnd, UINT uMsg,
-                                                       LPARAM, LPARAM pData) {
+inline int CALLBACK internal::file_dialog::bffcallback(HWND hwnd, UINT uMsg, LPARAM, LPARAM pData) {
   auto inst = (file_dialog *)pData;
   switch (uMsg) {
   case BFFM_INITIALIZED:
-    SendMessage(hwnd, BFFM_SETSELECTIONW, TRUE,
-                (LPARAM)inst->m_wdefault_path.c_str());
+    SendMessage(hwnd, BFFM_SETSELECTIONW, TRUE, (LPARAM)inst->m_wdefault_path.c_str());
     break;
   }
   return 0;
 }
 
 #if PFD_HAS_IFILEDIALOG
-inline std::string
-internal::file_dialog::select_folder_vista(IFileDialog *ifd, bool force_path,
-                                           HWND parent_window) {
+inline std::string internal::file_dialog::select_folder_vista(IFileDialog *ifd, bool force_path, HWND parent_window) {
   std::string result;
 
   IShellItem *folder;
@@ -1322,14 +1264,12 @@ internal::file_dialog::select_folder_vista(IFileDialog *ifd, bool force_path,
   // Load library at runtime so app doesn't link it at load time (which will
   // fail on windows XP)
   dll shell32("shell32.dll");
-  dll::proc<HRESULT WINAPI(PCWSTR, IBindCtx *, REFIID, void **)> create_item(
-      shell32, "SHCreateItemFromParsingName");
+  dll::proc<HRESULT WINAPI(PCWSTR, IBindCtx *, REFIID, void **)> create_item(shell32, "SHCreateItemFromParsingName");
 
   if (!create_item)
     return "";
 
-  auto hr =
-      create_item(m_wdefault_path.c_str(), nullptr, IID_PPV_ARGS(&folder));
+  auto hr = create_item(m_wdefault_path.c_str(), nullptr, IID_PPV_ARGS(&folder));
 
   // Set default folder if found. This only sets the default folder. If
   // Windows has any info about the most recently selected folder, it
@@ -1382,8 +1322,7 @@ internal::file_dialog::select_folder_vista(IFileDialog *ifd, bool force_path,
 
 // notify implementation
 
-inline notify::notify(std::string const &title, std::string const &message,
-                      icon _icon /* = icon::info */) {
+inline notify::notify(std::string const &title, std::string const &message, icon _icon /* = icon::info */) {
   if (_icon == icon::question) // Not supported by notifications
     _icon = icon::info;
 
@@ -1438,23 +1377,18 @@ inline notify::notify(std::string const &title, std::string const &message,
     break;
   }
 
-  ENUMRESNAMEPROC icon_enum_callback = [](HMODULE, LPCTSTR, LPTSTR lpName,
-                                          LONG_PTR lParam) -> BOOL {
-    ((NOTIFYICONDATAW *)lParam)->hIcon =
-        ::LoadIcon(GetModuleHandle(nullptr), lpName);
+  ENUMRESNAMEPROC icon_enum_callback = [](HMODULE, LPCTSTR, LPTSTR lpName, LONG_PTR lParam) -> BOOL {
+    ((NOTIFYICONDATAW *)lParam)->hIcon = ::LoadIcon(GetModuleHandle(nullptr), lpName);
     return false;
   };
 
   nid->hIcon = ::LoadIcon(nullptr, IDI_APPLICATION);
-  ::EnumResourceNames(nullptr, RT_GROUP_ICON, icon_enum_callback,
-                      (LONG_PTR)nid.get());
+  ::EnumResourceNames(nullptr, RT_GROUP_ICON, icon_enum_callback, (LONG_PTR)nid.get());
 
   nid->uTimeout = 5000;
 
-  StringCchCopyW(nid->szInfoTitle, ARRAYSIZE(nid->szInfoTitle),
-                 internal::str2wstr(title).c_str());
-  StringCchCopyW(nid->szInfo, ARRAYSIZE(nid->szInfo),
-                 internal::str2wstr(message).c_str());
+  StringCchCopyW(nid->szInfoTitle, ARRAYSIZE(nid->szInfoTitle), internal::str2wstr(title).c_str());
+  StringCchCopyW(nid->szInfo, ARRAYSIZE(nid->szInfo), internal::str2wstr(message).c_str());
 
   // Display the new icon
   Shell_NotifyIconW(NIM_ADD, nid.get());
@@ -1467,8 +1401,7 @@ inline notify::notify(std::string const &title, std::string const &message,
 
   if (is_osascript()) {
     command.push_back("-e");
-    command.push_back("display notification " + osascript_quote(message) +
-                      " with title " + osascript_quote(title));
+    command.push_back("display notification " + osascript_quote(message) + " with title " + osascript_quote(title));
   } else if (is_zenity()) {
     command.push_back("--notification");
     command.push_back("--window-icon");
@@ -1494,8 +1427,7 @@ inline notify::notify(std::string const &title, std::string const &message,
 
 // message implementation
 
-inline message::message(std::string const &title, std::string const &text,
-                        choice _choice /* = choice::ok_cancel */,
+inline message::message(std::string const &title, std::string const &text, choice _choice /* = choice::ok_cancel */,
                         icon _icon /* = icon::info */) {
 #if _WIN32
   // Use MB_SYSTEMMODAL rather than MB_TOPMOST to ensure the message window is
@@ -1548,8 +1480,7 @@ inline message::message(std::string const &title, std::string const &text,
 
   HWND parent_hwnd = GetActiveWindow();
 
-  m_async->start_func([text, title, style,
-                       parent_hwnd](int *exit_code) -> std::string {
+  m_async->start_func([text, title, style, parent_hwnd](int *exit_code) -> std::string {
     auto wtext = internal::str2wstr(text);
     auto wtitle = internal::str2wstr(title);
     // Apply new visual style (required for all Windows versions)
@@ -1591,8 +1522,7 @@ inline message::message(std::string const &title, std::string const &text,
   auto command = desktop_helper();
 
   if (is_osascript()) {
-    std::string script = "display dialog " + osascript_quote(text) +
-                         " with title " + osascript_quote(title);
+    std::string script = "display dialog " + osascript_quote(text) + " with title " + osascript_quote(title);
     auto if_cancel = button::cancel;
     switch (_choice) {
     case choice::ok_cancel:
@@ -1634,8 +1564,8 @@ inline message::message(std::string const &title, std::string const &text,
     m_mappings[256] = if_cancel; // XXX: I think this was never correct
     script += " with icon ";
     switch (_icon) {
-#define PFD_OSX_ICON(n)                                                        \
-  "alias ((path to library folder from system domain) as text "                \
+#define PFD_OSX_ICON(n)                                                                                                \
+  "alias ((path to library folder from system domain) as text "                                                        \
   "& \"CoreServices:CoreTypes.bundle:Contents:Resources:" n ".icns\")"
     case icon::info:
     default:
@@ -1658,30 +1588,23 @@ inline message::message(std::string const &title, std::string const &text,
   } else if (is_zenity()) {
     switch (_choice) {
     case choice::ok_cancel:
-      command.insert(command.end(),
-                     {"--question", "--cancel-label=Cancel", "--ok-label=OK"});
+      command.insert(command.end(), {"--question", "--cancel-label=Cancel", "--ok-label=OK"});
       break;
     case choice::yes_no:
       // Do not use standard --question because it causes “No” to return -1,
       // which is inconsistent with the “Yes/No/Cancel” mode below.
-      command.insert(command.end(),
-                     {"--question", "--switch", "--extra-button=No",
-                      "--extra-button=Yes"});
+      command.insert(command.end(), {"--question", "--switch", "--extra-button=No", "--extra-button=Yes"});
       break;
     case choice::yes_no_cancel:
       command.insert(command.end(),
-                     {"--question", "--switch", "--extra-button=Cancel",
-                      "--extra-button=No", "--extra-button=Yes"});
+                     {"--question", "--switch", "--extra-button=Cancel", "--extra-button=No", "--extra-button=Yes"});
       break;
     case choice::retry_cancel:
-      command.insert(command.end(),
-                     {"--question", "--switch", "--extra-button=Cancel",
-                      "--extra-button=Retry"});
+      command.insert(command.end(), {"--question", "--switch", "--extra-button=Cancel", "--extra-button=Retry"});
       break;
     case choice::abort_retry_ignore:
-      command.insert(command.end(),
-                     {"--question", "--switch", "--extra-button=Ignore",
-                      "--extra-button=Abort", "--extra-button=Retry"});
+      command.insert(command.end(), {"--question", "--switch", "--extra-button=Ignore", "--extra-button=Abort",
+                                     "--extra-button=Retry"});
       break;
     case choice::ok:
     default:
@@ -1698,11 +1621,9 @@ inline message::message(std::string const &title, std::string const &text,
       }
     }
 
-    command.insert(
-        command.end(),
-        {"--title", title, "--width=300", "--height=0", // sensible defaults
-         "--no-markup", // do not interpret text as Pango markup
-         "--text", text, "--icon-name=dialog-" + get_icon_name(_icon)});
+    command.insert(command.end(), {"--title", title, "--width=300", "--height=0", // sensible defaults
+                                   "--no-markup", // do not interpret text as Pango markup
+                                   "--text", text, "--icon-name=dialog-" + get_icon_name(_icon)});
   } else if (is_kdialog()) {
     if (_choice == choice::ok) {
       switch (_icon) {
@@ -1736,8 +1657,7 @@ inline message::message(std::string const &title, std::string const &text,
 
     // Must be after the above part
     if (_choice == choice::ok_cancel)
-      command.insert(command.end(),
-                     {"--yes-label", "OK", "--no-label", "Cancel"});
+      command.insert(command.end(), {"--yes-label", "OK", "--no-label", "Cancel"});
   }
 
   if (flags(flag::is_verbose))
@@ -1773,42 +1693,33 @@ inline button message::result() {
 
 // open_file implementation
 
-inline open_file::open_file(
-    std::string const &title, std::string const &default_path /* = "" */,
-    std::vector<std::string> const &filters /* = { "All Files", "*" } */,
-    opt options /* = opt::none */)
+inline open_file::open_file(std::string const &title, std::string const &default_path /* = "" */,
+                            std::vector<std::string> const &filters /* = { "All Files", "*" } */,
+                            opt options /* = opt::none */)
     : file_dialog(type::open, title, default_path, filters, options) {}
 
-inline open_file::open_file(std::string const &title,
-                            std::string const &default_path,
-                            std::vector<std::string> const &filters,
-                            bool allow_multiselect)
-    : open_file(title, default_path, filters,
-                (allow_multiselect ? opt::multiselect : opt::none)) {}
+inline open_file::open_file(std::string const &title, std::string const &default_path,
+                            std::vector<std::string> const &filters, bool allow_multiselect)
+    : open_file(title, default_path, filters, (allow_multiselect ? opt::multiselect : opt::none)) {}
 
 inline std::vector<std::string> open_file::result() { return vector_result(); }
 
 // save_file implementation
 
-inline save_file::save_file(
-    std::string const &title, std::string const &default_path /* = "" */,
-    std::vector<std::string> const &filters /* = { "All Files", "*" } */,
-    opt options /* = opt::none */)
+inline save_file::save_file(std::string const &title, std::string const &default_path /* = "" */,
+                            std::vector<std::string> const &filters /* = { "All Files", "*" } */,
+                            opt options /* = opt::none */)
     : file_dialog(type::save, title, default_path, filters, options) {}
 
-inline save_file::save_file(std::string const &title,
-                            std::string const &default_path,
-                            std::vector<std::string> const &filters,
-                            bool confirm_overwrite)
-    : save_file(title, default_path, filters,
-                (confirm_overwrite ? opt::none : opt::force_overwrite)) {}
+inline save_file::save_file(std::string const &title, std::string const &default_path,
+                            std::vector<std::string> const &filters, bool confirm_overwrite)
+    : save_file(title, default_path, filters, (confirm_overwrite ? opt::none : opt::force_overwrite)) {}
 
 inline std::string save_file::result() { return string_result(); }
 
 // select_folder implementation
 
-inline select_folder::select_folder(std::string const &title,
-                                    std::string const &default_path /* = "" */,
+inline select_folder::select_folder(std::string const &title, std::string const &default_path /* = "" */,
                                     opt options /* = opt::none */)
     : file_dialog(type::folder, title, default_path, {}, options) {}
 

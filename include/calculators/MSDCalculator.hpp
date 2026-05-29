@@ -42,10 +42,8 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::core::Trajectory &traj,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateTrajectory(correlation::analysis::DistributionFunctions &df, const correlation::core::Trajectory &traj,
+                           const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Core MSD calculation returning named histograms.
@@ -58,9 +56,9 @@ public:
    *  - "MSD"   : raw MSD (Angstrom^2) vs time (fs)
    *  - "D_eff" : running diffusion coefficient D(t) = MSD(t) / (6t) (Angstrom^2/fs)
    */
-  static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Trajectory &traj,
-            int max_correlation_frames, size_t start_frame, size_t end_frame);
+  static std::map<std::string, correlation::analysis::Histogram> calculate(const correlation::core::Trajectory &traj,
+                                                                           int max_correlation_frames,
+                                                                           size_t start_frame, size_t end_frame);
 };
 
 } // namespace correlation::calculators

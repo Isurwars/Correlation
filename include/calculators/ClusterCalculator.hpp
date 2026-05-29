@@ -15,7 +15,7 @@ namespace correlation::calculators {
 /**
  * @class ClusterCalculator
  * @brief Identifies connected components in the atomic structure.
- * 
+ *
  * Uses a disjoint-set (Union-Find) algorithm to traverse the neighbor graph
  * and group atoms into clusters based on the connectivity radius. It then
  * outputs the cluster size distribution.
@@ -31,9 +31,8 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 };
 
 } // namespace correlation::calculators

@@ -32,14 +32,12 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   // Arrange: Create an 8-atom conventional unit cell of Silicon.
   // The diamond lattice structure is a robust test for neighbor finding.
   const double lattice_const = 5.43; // Angstroms
-  correlation::core::Cell si_cell(
-      {lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
+  correlation::core::Cell si_cell({lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
 
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
   std::vector<correlation::math::Vector3<double>> fractional_coords = {
-      {0.0, 0.0, 0.0},    {0.5, 0.5, 0.0},    {0.5, 0.0, 0.5},
-      {0.0, 0.5, 0.5},    {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25},
-      {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75}};
+      {0.0, 0.0, 0.0},    {0.5, 0.5, 0.0},    {0.5, 0.0, 0.5},    {0.0, 0.5, 0.5},
+      {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25}, {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75}};
 
   for (const auto &frac_pos : fractional_coords) {
     // Convert fractional to Cartesian coordinates before adding to the cell
@@ -98,8 +96,7 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
   mixed_cell.addAtom("Xe", {0.0, 4.0, 0.0});
   updateTrajectory(mixed_cell);
 
-  StructureAnalyzer mixed_analyzer(mixed_cell, 5.0,
-                                   trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer mixed_analyzer(mixed_cell, 5.0, trajectory_.getBondCutoffsSQ());
   const auto &mixed_distances = mixed_analyzer.distances();
 
   int id_Ar_m = mixed_cell.findElement("Ar")->id.value;
@@ -125,9 +122,8 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});
   water_cell.addAtom("H", {10.0 + bond_length, 10.0, 10.0});
-  water_cell.addAtom("H",
-                     {10.0 + bond_length * std::cos(bond_angle_rad),
-                      10.0 + bond_length * std::sin(bond_angle_rad), 10.0});
+  water_cell.addAtom(
+      "H", {10.0 + bond_length * std::cos(bond_angle_rad), 10.0 + bond_length * std::sin(bond_angle_rad), 10.0});
   updateTrajectory(water_cell);
 
   // Act: Calculate neighbors and angles.
@@ -141,16 +137,14 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   ASSERT_EQ(o_id, 0);
 
   // The angle tensor is indexed by [type1][central_type][type2].
-  ASSERT_TRUE(angles.size() > h_id && angles[h_id].size() > o_id &&
-              angles[h_id][o_id].size() > h_id);
+  ASSERT_TRUE(angles.size() > h_id && angles[h_id].size() > o_id && angles[h_id][o_id].size() > h_id);
 
   const auto &hoh_angles = angles[h_id][o_id][h_id];
 
   // There should be exactly one H-O-H angle in this system.
   ASSERT_EQ(hoh_angles.size(), 1);
   // The calculated angle should match the known value.
-  EXPECT_NEAR(hoh_angles[0] * correlation::math::rad_to_deg, bond_angle_deg,
-              1e-4);
+  EXPECT_NEAR(hoh_angles[0] * correlation::math::rad_to_deg, bond_angle_deg, 1e-4);
 }
 
 TEST_F(StructureAnalyzerTests, CalculatesCorrectAngleWithPBC) {
@@ -166,8 +160,7 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAngleWithPBC) {
   // Calculate pi/2 explicitly using acos(-1.0) = pi.
   const double expected_angle_rad = std::acos(-1.0) / 2.0;
 
-  correlation::core::Cell pbc_cell(
-      {side_length, side_length, side_length, 90.0, 90.0, 90.0});
+  correlation::core::Cell pbc_cell({side_length, side_length, side_length, 90.0, 90.0, 90.0});
 
   // B (Central) at (0.5, 0.5, 0.5)
   // A at (9.0, 0.5, 0.5) -> Wrapped dist to B is 1.5
@@ -286,9 +279,8 @@ TEST_F(StructureAnalyzerTests, EnforcesNeighborSymmetry) {
           break;
         }
       }
-      EXPECT_TRUE(found_reverse)
-          << "Symmetry broken: correlation::core::Atom " << i << " sees " << j
-          << " but " << j << " does not see " << i;
+      EXPECT_TRUE(found_reverse) << "Symmetry broken: correlation::core::Atom " << i << " sees " << j << " but " << j
+                                 << " does not see " << i;
     }
   }
 }
@@ -304,8 +296,7 @@ TEST_F(StructureAnalyzerTests, HandlesPeriodicSelfInteractions) {
 
   // Case 1: Ignore Periodic Self Interactions = true (Reference default)
   {
-    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(),
-                               true);
+    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(), true);
     const auto &neighborGraph = analyzer.neighborGraph();
     ASSERT_EQ(neighborGraph.nodeCount(), 1);
     // Should NOT see itself
@@ -314,8 +305,7 @@ TEST_F(StructureAnalyzerTests, HandlesPeriodicSelfInteractions) {
 
   // Case 2: Ignore Periodic Self Interactions = false
   {
-    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(),
-                               false);
+    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(), false);
     const auto &neighborGraph = analyzer.neighborGraph();
     ASSERT_EQ(neighborGraph.nodeCount(), 1);
 

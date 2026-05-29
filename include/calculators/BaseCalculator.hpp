@@ -67,9 +67,8 @@ public:
    * @param df The DistributionFunctions object to store the results.
    * @param settings The analysis settings and parameters.
    */
-  virtual void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const {}
+  virtual void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                              const correlation::analysis::AnalysisSettings &settings) const {}
 
   /**
    * @brief Calculate multi-frame properties or post-processing.
@@ -78,10 +77,9 @@ public:
    * @param traj The complete trajectory data.
    * @param settings The analysis settings and parameters.
    */
-  virtual void calculateTrajectory(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::core::Trajectory &traj,
-      const correlation::analysis::AnalysisSettings &settings) const {}
+  virtual void calculateTrajectory(correlation::analysis::DistributionFunctions &df,
+                                   const correlation::core::Trajectory &traj,
+                                   const correlation::analysis::AnalysisSettings &settings) const {}
 };
 
 } // namespace correlation::calculators

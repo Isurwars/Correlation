@@ -49,8 +49,7 @@ TEST(HBondCalculatorTests, NoElectronegativeAtomsNoHBonds) {
   // Either way, no non-zero H-bond counts should exist.
   for (size_t i = 0; i < hist.bins.size(); ++i) {
     if (hist.bins[i] > 0) {
-      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12)
-          << "Non-zero H-bond count should have zero probability.";
+      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12) << "Non-zero H-bond count should have zero probability.";
     }
   }
 }
@@ -96,8 +95,7 @@ TEST(HBondCalculatorTests, HistogramDimensionsAreConsistent) {
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   for (const auto &[key, values] : hist.partials) {
-    EXPECT_EQ(values.size(), hist.bins.size())
-        << "Partial '" << key << "' size mismatch with bins.";
+    EXPECT_EQ(values.size(), hist.bins.size()) << "Partial '" << key << "' size mismatch with bins.";
   }
 }
 
@@ -183,8 +181,7 @@ TEST(HBondCalculatorTests, LinearHBond_IsDetected) {
       break;
     }
   }
-  EXPECT_TRUE(found_nonzero)
-      << "Linear O-H...O bond should produce non-zero H-bond counts.";
+  EXPECT_TRUE(found_nonzero) << "Linear O-H...O bond should produce non-zero H-bond counts.";
 }
 
 /// An O-H...O geometry where the H points away from the acceptor.
@@ -212,8 +209,7 @@ TEST(HBondCalculatorTests, OppositeDirection_NotDetected) {
   // All electronegative atoms should have 0 H-bonds.
   for (size_t i = 0; i < hist.bins.size(); ++i) {
     if (hist.bins[i] > 0) {
-      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12)
-          << "Opposite-direction geometry should yield zero H-bonds.";
+      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12) << "Opposite-direction geometry should yield zero H-bonds.";
     }
   }
 }
@@ -235,8 +231,7 @@ TEST(HBondCalculatorTests, TooFarApart_NotDetected) {
 
   // All electronegative atoms should have 0 H-bonds
   if (!hist.bins.empty()) {
-    EXPECT_NEAR(hist.partials.at("Total")[0], 1.0, 1e-12)
-        << "D-A > 3.5 Å should yield zero H-bonds.";
+    EXPECT_NEAR(hist.partials.at("Total")[0], 1.0, 1e-12) << "D-A > 3.5 Å should yield zero H-bonds.";
   }
 }
 
@@ -323,8 +318,7 @@ TEST(HBondCalculatorTests, CoincidentHAndDonor_DoesNotCrash) {
     // Verify no NaN values in the output
     for (const auto &[key, values] : hist.partials) {
       for (double v : values) {
-        EXPECT_FALSE(std::isnan(v))
-            << "NaN detected in partial '" << key << "'";
+        EXPECT_FALSE(std::isnan(v)) << "NaN detected in partial '" << key << "'";
       }
     }
   });
@@ -392,8 +386,7 @@ TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // The histogram may still exist but should have no non-zero H-bond counts.
   for (size_t i = 0; i < hist.bins.size(); ++i) {
     if (hist.bins[i] > 0) {
-      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12)
-          << "Pure metal should have no H-bonds.";
+      EXPECT_NEAR(hist.partials.at("Total")[i], 0.0, 1e-12) << "Pure metal should have no H-bonds.";
     }
   }
 }

@@ -70,8 +70,7 @@ std::string runCliCapture(const std::string &args) {
   FILE *pipe = popen(cmd.c_str(), "r");
   if (!pipe)
     return "";
-  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe) !=
-         nullptr) {
+  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe) != nullptr) {
     result += buffer.data();
   }
   pclose(pipe);
@@ -90,38 +89,29 @@ protected:
 
 TEST_F(CliEndToEndTests, HelpReturnsZero) { EXPECT_EQ(runCli("--help"), 0); }
 
-TEST_F(CliEndToEndTests, VersionReturnsZero) {
-  EXPECT_EQ(runCli("--version"), 0);
-}
+TEST_F(CliEndToEndTests, VersionReturnsZero) { EXPECT_EQ(runCli("--version"), 0); }
 
 TEST_F(CliEndToEndTests, VersionPrintsVersionString) {
   std::string output = runCliCapture("--version");
-  EXPECT_NE(output.find("Correlation version"), std::string::npos)
-      << "Actual output: " << output;
+  EXPECT_NE(output.find("Correlation version"), std::string::npos) << "Actual output: " << output;
 }
 
 TEST_F(CliEndToEndTests, NoArgsReturnsNonZero) { EXPECT_NE(runCli(""), 0); }
 
-TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) {
-  EXPECT_NE(runCli("--this-does-not-exist"), 0);
-}
+TEST_F(CliEndToEndTests, UnknownOptionReturnsNonZero) { EXPECT_NE(runCli("--this-does-not-exist"), 0); }
 
 // ===== File loading tests =====
 
-TEST_F(CliEndToEndTests, NonexistentFileReturnsNonZero) {
-  EXPECT_NE(runCli("nonexistent_file_xyz.poscar --quiet"), 0);
-}
+TEST_F(CliEndToEndTests, NonexistentFileReturnsNonZero) { EXPECT_NE(runCli("nonexistent_file_xyz.poscar --quiet"), 0); }
 
 TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   // Use a temp directory for output so we don't pollute the test data dir
-  auto tmp_dir =
-      std::filesystem::temp_directory_path() / "correlation_e2e_test";
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_test";
   std::filesystem::create_directories(tmp_dir);
   std::string out_base = (tmp_dir / "result").string();
 
   std::string input = data_dir_ + "Si.poscar";
-  int rc = runCli(input + " --quiet -o " + out_base +
-                  " --calculators RDF --r-max 10 --r-bin 0.1");
+  int rc = runCli(input + " --quiet -o " + out_base + " --calculators RDF --r-max 10 --r-bin 0.1");
 
   // Clean up
   std::filesystem::remove_all(tmp_dir);

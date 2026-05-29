@@ -13,8 +13,7 @@ namespace correlation::analysis {
 
 class SteinhardtCalculatorTests : public ::testing::Test {
 protected:
-  void checkOutputs(const std::map<std::string, Histogram> &hists,
-                    double expected_Q4, double expected_Q6,
+  void checkOutputs(const std::map<std::string, Histogram> &hists, double expected_Q4, double expected_Q6,
                     double expected_W6_hat) {
     const auto &hist_Q4 = hists.at("Q4").partials.at("Total");
     const auto &hist_Q6 = hists.at("Q6").partials.at("Total");
@@ -53,8 +52,7 @@ TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
 
   // ignore_periodic_self_interactions = false
   StructureAnalyzer analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
-  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
-      cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   checkOutputs(hists, 0.764, 0.354, 0.013);
 }
@@ -66,8 +64,7 @@ TEST_F(SteinhardtCalculatorTests, BCC) {
 
   StructureAnalyzer analyzer(cell, 1.1, {{1.1 * 1.1}},
                              false); // dist = sqrt(0.75) ~ 0.866 and 1.0
-  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
-      cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   checkOutputs(hists, 0.036, 0.511, 0.013);
 }
@@ -81,8 +78,7 @@ TEST_F(SteinhardtCalculatorTests, FCC) {
 
   StructureAnalyzer analyzer(cell, 0.8, {{0.8 * 0.8}},
                              false); // dist = sqrt(0.5) ~ 0.707
-  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
-      cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   checkOutputs(hists, 0.191, 0.575, -0.013); // W6 for FCC is approx -0.013
 }
@@ -114,8 +110,7 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from
   // histogram!
   StructureAnalyzer analyzer(cell, 1.02, {{1.02 * 1.02}}, true);
-  auto hists = correlation::calculators::SteinhardtCalculator::calculate(
-      cell, &analyzer);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
 
   checkOutputs(hists, 0.000, 0.663,
                -0.169); // W6_hat for Icosahedral is approx -0.1697

@@ -51,9 +51,7 @@ public:
    * @param parser Function to parse a frame from a slice of memory.
    * @param time_step The time interval between consecutive frames.
    */
-  Trajectory(std::shared_ptr<MappedFile> mapped_file,
-             std::vector<size_t> frame_offsets,
-             FrameParser parser,
+  Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets, FrameParser parser,
              double time_step);
 
   /**
@@ -130,9 +128,7 @@ public:
    * @brief Sets the squared bond cutoffs for neighbor searching.
    * @param cutoffs Matrix of squared distance cutoffs [type1][type2].
    */
-  void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) {
-    bond_cutoffs_sq_ = cutoffs;
-  }
+  void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) { bond_cutoffs_sq_ = cutoffs; }
 
   /**
    * @brief Removes consecutive duplicated frames from the trajectory.
@@ -161,18 +157,13 @@ public:
    * @brief Gets the matrix of squared bond cutoffs for element pairs.
    * @return The squared bond cutoff matrix.
    */
-  [[nodiscard]] const std::vector<std::vector<double>> &
-  getBondCutoffsSQ() const {
-    return bond_cutoffs_sq_;
-  }
+  [[nodiscard]] const std::vector<std::vector<double>> &getBondCutoffsSQ() const { return bond_cutoffs_sq_; }
 
   /**
    * @brief Returns the number of frames removed during deduplication.
    * @return Count of duplicate frames found and removed.
    */
-  [[nodiscard]] size_t getRemovedFrameCount() const {
-    return removed_frames_count_;
-  }
+  [[nodiscard]] size_t getRemovedFrameCount() const { return removed_frames_count_; }
 
 private:
   //-------------------------------------------------------------------------//
@@ -191,7 +182,7 @@ private:
   mutable std::optional<Cell> first_frame_;
   mutable std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
   // velocities_ removed
-  double time_step_; ///< Time between snapshots.
+  double time_step_;               ///< Time between snapshots.
   size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
 
   std::shared_ptr<MappedFile> mapped_file_;

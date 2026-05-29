@@ -16,13 +16,11 @@
 namespace correlation::readers {
 
 namespace {
-bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
+bool registered = ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
 }
 
-correlation::core::Cell PdbReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell PdbReader::readStructure(const std::string &filename,
+                                                 std::function<void(float, const std::string &)> progress_callback) {
 
   std::ifstream file(filename);
   if (!file.is_open()) {
@@ -91,9 +89,9 @@ correlation::core::Cell PdbReader::readStructure(
   return cell;
 }
 
-correlation::core::Trajectory PdbReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+PdbReader::readTrajectory(const std::string &filename,
+                          std::function<void(float, const std::string &)> progress_callback) {
 
   std::ifstream file(filename);
   if (!file.is_open()) {
@@ -150,8 +148,7 @@ correlation::core::Trajectory PdbReader::readTrajectory(
         double x = std::stod(line.substr(30, 8));
         double y = std::stod(line.substr(38, 8));
         double z = std::stod(line.substr(46, 8));
-        current_cell.addAtom(symbol,
-                             correlation::math::Vector3<double>(x, y, z));
+        current_cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
       } catch (...) {
       }
     } else if (line.substr(0, 6) == "ENDMDL") {

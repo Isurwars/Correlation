@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "writers/WriterFactory.hpp"
 #include "writers/BaseWriter.hpp"
+#include "writers/WriterFactory.hpp"
 
 #include <gtest/gtest.h>
 #include <memory>
@@ -17,9 +17,8 @@ class MockWriter : public BaseWriter {
 public:
   std::string getName() const override { return "MockWriter"; }
   std::vector<std::string> getExtensions() const override { return {".mockw", ".mkw"}; }
-  
-  void write(const std::string &base_path,
-             const correlation::analysis::DistributionFunctions &df,
+
+  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
              bool smoothing) const override {
     // No-op for mock
   }
@@ -39,7 +38,7 @@ TEST(WriterFactoryTests, GetRegisteredWriters) {
 
 TEST(WriterFactoryTests, GetWriterForExtension) {
   auto &factory = WriterFactory::instance();
-  
+
   // Try querying standard format by extension
   BaseWriter *retrieved = factory.getWriterForExtension(".csv");
   ASSERT_NE(retrieved, nullptr);
@@ -48,7 +47,7 @@ TEST(WriterFactoryTests, GetWriterForExtension) {
 
 TEST(WriterFactoryTests, GetWriterByName) {
   auto &factory = WriterFactory::instance();
-  
+
   // Try querying standard format by name
   // Standard writer names could be e.g., "CSV", "HDF5", "Arrow/Parquet"
   const auto &writers = factory.getWriters();
@@ -62,12 +61,12 @@ TEST(WriterFactoryTests, GetWriterByName) {
 
 TEST(WriterFactoryTests, RegisterAndLookupCustomWriter) {
   auto &factory = WriterFactory::instance();
-  
+
   // Register a custom mock writer
   auto mock = std::make_unique<MockWriter>();
   bool result = factory.registerWriter(std::move(mock));
   EXPECT_TRUE(result);
-  
+
   // Verify it resolves by extension
   BaseWriter *retrieved_ext = factory.getWriterForExtension(".mockw");
   ASSERT_NE(retrieved_ext, nullptr);

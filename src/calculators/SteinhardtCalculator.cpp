@@ -18,13 +18,10 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<SteinhardtCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<SteinhardtCalculator>());
 } // namespace
 
-std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m,
-                                                             double theta,
-                                                             double phi) {
+std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m, double theta, double phi) {
   if (m >= 0) {
     double P_lm = correlation::math::sph_legendre(l, m, theta);
     return P_lm * std::polar(1.0, m * phi);
@@ -41,8 +38,7 @@ std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m,
   }
 }
 
-double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
-                                      int m3) {
+double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2, int m3) {
   if (m1 + m2 + m3 != 0)
     return 0.0;
   if (j3 < std::abs(j1 - j2) || j3 > j1 + j2)
@@ -50,18 +46,13 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
   if (std::abs(m1) > j1 || std::abs(m2) > j2 || std::abs(m3) > j3)
     return 0.0;
 
-  double delta = correlation::math::factorial(j1 + j2 - j3) *
-                 correlation::math::factorial(j1 - j2 + j3) *
-                 correlation::math::factorial(-j1 + j2 + j3) /
-                 correlation::math::factorial(j1 + j2 + j3 + 1);
+  double delta = correlation::math::factorial(j1 + j2 - j3) * correlation::math::factorial(j1 - j2 + j3) *
+                 correlation::math::factorial(-j1 + j2 + j3) / correlation::math::factorial(j1 + j2 + j3 + 1);
   delta = std::sqrt(delta);
 
-  double comp = correlation::math::factorial(j1 - m1) *
-                correlation::math::factorial(j1 + m1) *
-                correlation::math::factorial(j2 - m2) *
-                correlation::math::factorial(j2 + m2) *
-                correlation::math::factorial(j3 - m3) *
-                correlation::math::factorial(j3 + m3);
+  double comp = correlation::math::factorial(j1 - m1) * correlation::math::factorial(j1 + m1) *
+                correlation::math::factorial(j2 - m2) * correlation::math::factorial(j2 + m2) *
+                correlation::math::factorial(j3 - m3) * correlation::math::factorial(j3 + m3);
   comp = std::sqrt(comp);
 
   double phase1 = ((j1 - j2 - m3) % 2 != 0) ? -1.0 : 1.0;
@@ -72,21 +63,17 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2,
   double sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
     double k_phase = (k % 2 != 0) ? -1.0 : 1.0;
-    double denom = correlation::math::factorial(k) *
-                   correlation::math::factorial(j1 + j2 - j3 - k) *
-                   correlation::math::factorial(j1 - m1 - k) *
-                   correlation::math::factorial(j2 + m2 - k) *
-                   correlation::math::factorial(j3 - j2 + m1 + k) *
-                   correlation::math::factorial(j3 - j1 - m2 + k);
+    double denom = correlation::math::factorial(k) * correlation::math::factorial(j1 + j2 - j3 - k) *
+                   correlation::math::factorial(j1 - m1 - k) * correlation::math::factorial(j2 + m2 - k) *
+                   correlation::math::factorial(j3 - j2 + m1 + k) * correlation::math::factorial(j3 - j1 - m2 + k);
     sum += k_phase / denom;
   }
 
   return phase1 * delta * comp * sum;
 }
 
-void SteinhardtCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void SteinhardtCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                          const correlation::analysis::AnalysisSettings &settings) const {
   auto histograms = calculate(df.cell(), df.neighbors());
   for (auto &[name, hist] : histograms) {
     df.addHistogram(name, std::move(hist));
@@ -94,13 +81,11 @@ void SteinhardtCalculator::calculateFrame(
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-SteinhardtCalculator::calculate(
-    const correlation::core::Cell &cell,
-    const correlation::analysis::StructureAnalyzer *neighbors) {
+SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
+                                const correlation::analysis::StructureAnalyzer *neighbors) {
   if (!neighbors) {
-    throw std::logic_error(
-        "Cannot calculate Steinhardt Parameters. Neighbor list has not been "
-        "computed.");
+    throw std::logic_error("Cannot calculate Steinhardt Parameters. Neighbor list has not been "
+                           "computed.");
   }
 
   const auto &atoms = cell.atoms();
@@ -109,10 +94,8 @@ SteinhardtCalculator::calculate(
 
   // We want to compute Q4, Q6, W6 histograms mapping Q values to probability.
   // First we calculate q_lm(i) for l=4, l=6.
-  std::vector<std::vector<std::complex<double>>> q4m(
-      num_atoms, std::vector<std::complex<double>>(9, 0.0));
-  std::vector<std::vector<std::complex<double>>> q6m(
-      num_atoms, std::vector<std::complex<double>>(13, 0.0));
+  std::vector<std::vector<std::complex<double>>> q4m(num_atoms, std::vector<std::complex<double>>(9, 0.0));
+  std::vector<std::vector<std::complex<double>>> q6m(num_atoms, std::vector<std::complex<double>>(13, 0.0));
 
   std::vector<double> Q4(num_atoms, 0.0);
   std::vector<double> Q6(num_atoms, 0.0);
@@ -177,8 +160,7 @@ SteinhardtCalculator::calculate(
         if (w3j == 0.0)
           continue;
 
-        std::complex<double> prod =
-            q6m[i][m1 + 6] * q6m[i][m2 + 6] * q6m[i][m3 + 6];
+        std::complex<double> prod = q6m[i][m1 + 6] * q6m[i][m2 + 6] * q6m[i][m3 + 6];
         w6 += w3j * prod.real(); // product should be real theoretically
       }
     }
@@ -228,8 +210,7 @@ SteinhardtCalculator::calculate(
   hist_W6.y_label = "Probability";
   hist_W6.x_unit = "arbitrary units";
   hist_W6.y_unit = "counts";
-  hist_W6.description =
-      "Steinhardt Normalized W6 Bond Orientational Order Parameter";
+  hist_W6.description = "Steinhardt Normalized W6 Bond Orientational Order Parameter";
   hist_W6.file_suffix = "_W6_hat";
   hist_W6.bins.resize(bins_W);
   for (size_t b = 0; b < bins_W; ++b)

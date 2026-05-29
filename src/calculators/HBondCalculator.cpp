@@ -14,19 +14,16 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<HBondCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<HBondCalculator>());
 }
 
-void HBondCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void HBondCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                     const correlation::analysis::AnalysisSettings &settings) const {
   df.addHistogram("HBond", calculate(df.cell(), df.neighbors()));
 }
 
-correlation::analysis::Histogram HBondCalculator::calculate(
-    const correlation::core::Cell &cell,
-    const correlation::analysis::StructureAnalyzer *neighbors) {
+correlation::analysis::Histogram HBondCalculator::calculate(const correlation::core::Cell &cell,
+                                                            const correlation::analysis::StructureAnalyzer *neighbors) {
 
   if (!neighbors)
     return {};
@@ -76,8 +73,7 @@ correlation::analysis::Histogram HBondCalculator::calculate(
     for (size_t h_idx : hydrogens) {
       const auto &pos_h = atoms[h_idx].position();
       const auto &pos_d = atoms[i].position();
-      correlation::math::Vector3<double> v_dh =
-          cell.minimumImage(pos_h - pos_d);
+      correlation::math::Vector3<double> v_dh = cell.minimumImage(pos_h - pos_d);
 
       // Guard against degenerate case where H and D are coincident
       if (correlation::math::norm_sq(v_dh) < 1e-12)
@@ -90,16 +86,14 @@ correlation::analysis::Histogram HBondCalculator::calculate(
         const auto &atom_j = atoms[j];
 
         // Atom j is a potential Acceptor.
-        correlation::math::Vector3<double> v_da =
-            cell.minimumImage(atom_j.position() - pos_d);
+        correlation::math::Vector3<double> v_da = cell.minimumImage(atom_j.position() - pos_d);
         double d_da_sq = correlation::math::norm_sq(v_da);
 
         if (d_da_sq < R_cut_sq && d_da_sq >= 1e-12) {
           // Check angle H-D...A
           double dot_val = v_dh * v_da;
           double cos_alpha = dot_val / (correlation::math::norm(v_dh) * std::sqrt(d_da_sq));
-          double alpha = std::acos(std::max(-1.0, std::min(1.0, cos_alpha))) *
-                         correlation::math::rad_to_deg;
+          double alpha = std::acos(std::max(-1.0, std::min(1.0, cos_alpha))) * correlation::math::rad_to_deg;
 
           if (alpha < Alpha_cut) {
             total_hbonds++;

@@ -17,21 +17,17 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<PADCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<PADCalculator>());
 } // namespace
 
-void PADCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
-  df.addHistogram(
-      "BAD", calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
+void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                   const correlation::analysis::AnalysisSettings &settings) const {
+  df.addHistogram("BAD", calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
 }
 
-correlation::analysis::Histogram PADCalculator::calculate(
-    const correlation::core::Cell &cell,
-    const correlation::analysis::StructureAnalyzer *neighbors,
-    double bin_width) {
+correlation::analysis::Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
+                                                          const correlation::analysis::StructureAnalyzer *neighbors,
+                                                          double bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
@@ -64,8 +60,7 @@ correlation::analysis::Histogram PADCalculator::calculate(
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       for (size_t k = j; k < num_elements; ++k) {
-        std::string key = elements[j].symbol + "-" + elements[i].symbol + "-" +
-                          elements[k].symbol;
+        std::string key = elements[j].symbol + "-" + elements[i].symbol + "-" + elements[k].symbol;
         auto &partial_hist = f_theta.partials[key];
         partial_hist.assign(num_bins, 0.0);
 
@@ -107,8 +102,7 @@ correlation::analysis::Histogram PADCalculator::calculate(
 
   const double normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_theta.partials) {
-    correlation::math::scale_bins(partial.data(), normalization_factor,
-                                  num_bins);
+    correlation::math::scale_bins(partial.data(), normalization_factor, num_bins);
   }
   return f_theta;
 }

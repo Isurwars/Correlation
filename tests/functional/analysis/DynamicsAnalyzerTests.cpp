@@ -30,14 +30,12 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
     }
   }
 
-  ASSERT_TRUE(std::filesystem::exists(file_path))
-      << "Could not find example file: " << EXAMPLE_FILE;
+  ASSERT_TRUE(std::filesystem::exists(file_path)) << "Could not find example file: " << EXAMPLE_FILE;
 
   // 2. Read correlation::core::Trajectory
-  correlation::core::Trajectory traj = correlation::readers::readTrajectory(
-      file_path.string(), correlation::readers::FileType::Arc);
-  ASSERT_GT(traj.getFrameCount(), 0)
-      << "correlation::core::Trajectory should not be empty";
+  correlation::core::Trajectory traj =
+      correlation::readers::readTrajectory(file_path.string(), correlation::readers::FileType::Arc);
+  ASSERT_GT(traj.getFrameCount(), 0) << "correlation::core::Trajectory should not be empty";
 
   // 3. Calculate Velocities
   traj.calculateVelocities();
@@ -65,8 +63,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   EXPECT_GT(vacf[0], 0.0);
 
   // 5. Calculate Normalized VACF
-  std::vector<double> norm_vacf =
-      DynamicsAnalyzer::calculateNormalizedVACF(traj, max_lag);
+  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(traj, max_lag);
 
   ASSERT_EQ(norm_vacf.size(), max_lag + 1);
   EXPECT_NEAR(norm_vacf[0], 1.0, 1e-5) << "Normalized VACF should start at 1.0";
@@ -92,21 +89,18 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   }
 
   // 2. Calculate VDOS
-  auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf, dt);
+  auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, dt);
 
   ASSERT_FALSE(frequencies.empty());
   ASSERT_EQ(frequencies.size(), intensities_real.size());
   ASSERT_EQ(frequencies.size(), intensities_imag.size());
 
   // 3. Find peak in real part
-  auto max_it =
-      std::max_element(intensities_real.begin(), intensities_real.end());
+  auto max_it = std::max_element(intensities_real.begin(), intensities_real.end());
   size_t peak_idx = std::distance(intensities_real.begin(), max_it);
   double peak_freq = frequencies[peak_idx];
 
   // 4. Verify peak location
-  EXPECT_NEAR(peak_freq, f0, 0.5)
-      << "VDOS Peak should be near the source frequency";
+  EXPECT_NEAR(peak_freq, f0, 0.5) << "VDOS Peak should be near the source frequency";
 }
 } // namespace correlation::analysis

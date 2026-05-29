@@ -19,8 +19,7 @@ protected:
   std::uniform_real_distribution<double> pos_dist{0.1, 15.0}; // For distances
 
   // Helper to generate a vector of random doubles
-  std::vector<double> generateRandomData(size_t size,
-                                         bool positive_only = false) {
+  std::vector<double> generateRandomData(size_t size, bool positive_only = false) {
     std::vector<double> data(size);
     for (size_t i = 0; i < size; ++i) {
       data[i] = positive_only ? pos_dist(gen) : dist(gen);
@@ -40,8 +39,7 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
 
   for (size_t size : sizes) {
     std::vector<double> integrand = generateRandomData(size);
-    std::vector<double> rbins =
-        generateRandomData(size, true); // r must be positive
+    std::vector<double> rbins = generateRandomData(size, true); // r must be positive
     std::vector<double> scratch(size, 0.0);
 
     // Calculate expected result using the scalar fallback logic
@@ -51,8 +49,7 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
     }
 
     // Call the SIMD implementation
-    double actual_acc = correlation::math::sinc_integral(
-        Q, integrand.data(), rbins.data(), scratch.data(), size);
+    double actual_acc = correlation::math::sinc_integral(Q, integrand.data(), rbins.data(), scratch.data(), size);
 
     // Assert with a small tolerance due to potential floating point reordering
     // in SIMD
@@ -77,8 +74,7 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
     std::vector<double> by = generateRandomData(size);
     std::vector<double> bz = generateRandomData(size);
 
-    correlation::math::PositionBlock block{bx.data(), by.data(), bz.data(),
-                                           size};
+    correlation::math::PositionBlock block{bx.data(), by.data(), bz.data(), size};
 
     // Output array, initialized to -1 to detect unwritten values
     std::vector<double> actual_dsq(size, -1.0);
@@ -86,16 +82,14 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
     // Calculate expected scalar result
     std::vector<double> expected_dsq(size);
     for (size_t k = 0; k < size; ++k) {
-      expected_dsq[k] =
-          correlation::math::dist_sq_scalar(ax, ay, az, bx[k], by[k], bz[k]);
+      expected_dsq[k] = correlation::math::dist_sq_scalar(ax, ay, az, bx[k], by[k], bz[k]);
     }
 
     // Call SIMD implementation
     correlation::math::compute_dsq_block(ax, ay, az, block, actual_dsq.data());
 
     for (size_t k = 0; k < size; ++k) {
-      EXPECT_NEAR(actual_dsq[k], expected_dsq[k], 1e-9)
-          << "Failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(actual_dsq[k], expected_dsq[k], 1e-9) << "Failed at index " << k << " for size: " << size;
     }
   }
 }
@@ -104,9 +98,7 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
 // Test: normalize_rdf_bins
 // -----------------------------------------------------------------------------
 TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
-  const std::vector<size_t> sizes = {
-      2,  5,  8,  9,
-      16, 17, 33, 100}; // Need at least size 2 since bin 0 is skipped
+  const std::vector<size_t> sizes = {2, 5, 8, 9, 16, 17, 33, 100}; // Need at least size 2 since bin 0 is skipped
 
   const double g_norm = 1.5;
   const double inv_Ni_dr = 0.1;
@@ -125,10 +117,8 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
     std::vector<double> actual_Jinv(size, 0.0);
 
     // Call SIMD implementation
-    correlation::math::normalize_rdf_bins(
-        H.data(), rbins.data(), g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
-        actual_g.data(), actual_G.data(), actual_J.data(), actual_Jinv.data(),
-        size);
+    correlation::math::normalize_rdf_bins(H.data(), rbins.data(), g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
+                                          actual_g.data(), actual_G.data(), actual_J.data(), actual_Jinv.data(), size);
 
     // Compare with scalar logic from index 1
     for (size_t k = 1; k < size; ++k) {
@@ -141,14 +131,10 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
       const double expected_J = H[k] * inv_Ni_dr;
       const double expected_Jinv = H[k] * inv_Nj_dr;
 
-      EXPECT_NEAR(actual_g[k], expected_g, 1e-9)
-          << "g failed at index " << k << " for size: " << size;
-      EXPECT_NEAR(actual_G[k], expected_G, 1e-9)
-          << "G failed at index " << k << " for size: " << size;
-      EXPECT_NEAR(actual_J[k], expected_J, 1e-9)
-          << "J failed at index " << k << " for size: " << size;
-      EXPECT_NEAR(actual_Jinv[k], expected_Jinv, 1e-9)
-          << "Jinv failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(actual_g[k], expected_g, 1e-9) << "g failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(actual_G[k], expected_G, 1e-9) << "G failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(actual_J[k], expected_J, 1e-9) << "J failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(actual_Jinv[k], expected_Jinv, 1e-9) << "Jinv failed at index " << k << " for size: " << size;
     }
   }
 }
@@ -171,8 +157,7 @@ TEST_F(SIMDUtilsTests, ScaleBinsMatchesScalar) {
     correlation::math::scale_bins(data.data(), scale_factor, size);
 
     for (size_t k = 0; k < size; ++k) {
-      EXPECT_NEAR(data[k], expected[k], 1e-9)
-          << "Failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(data[k], expected[k], 1e-9) << "Failed at index " << k << " for size: " << size;
     }
   }
 }
@@ -199,12 +184,10 @@ TEST_F(SIMDUtilsTests, DotBlockMatchesScalar) {
       expected_out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
     }
 
-    correlation::math::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(),
-                                 v2z.data(), actual_out.data(), size);
+    correlation::math::dot_block(v1x, v1y, v1z, v2x.data(), v2y.data(), v2z.data(), actual_out.data(), size);
 
     for (size_t k = 0; k < size; ++k) {
-      EXPECT_NEAR(actual_out[k], expected_out[k], 1e-9)
-          << "Failed at index " << k << " for size: " << size;
+      EXPECT_NEAR(actual_out[k], expected_out[k], 1e-9) << "Failed at index " << k << " for size: " << size;
     }
   }
 }

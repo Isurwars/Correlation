@@ -40,8 +40,7 @@ public:
    * @param use_parquet Whether to write Parquet files.
    * @param smoothing Whether to include smoothed data.
    */
-  void write(const std::string &base_path, bool use_csv, bool use_hdf5,
-             bool use_parquet, bool smoothing) const;
+  void write(const std::string &base_path, bool use_csv, bool use_hdf5, bool use_parquet, bool smoothing) const;
 
 private:
   /** @brief Reference to the analysis data structure. */

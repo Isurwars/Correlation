@@ -27,15 +27,13 @@ public:
   std::vector<std::string> getExtensions() const override { return {"car"}; }
   bool isTrajectory() const override { return false; }
 
-  correlation::core::Cell readStructure(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) override;
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory readTrajectory(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) override;
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @brief Low-level parser for the specific file format.

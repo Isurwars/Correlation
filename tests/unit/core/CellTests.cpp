@@ -7,8 +7,8 @@
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 
-#include <gtest/gtest.h>
 #include <cmath>
+#include <gtest/gtest.h>
 
 namespace correlation::testing {
 
@@ -55,8 +55,7 @@ TEST_F(CellTests, NonOrthogonalVolumeIsCorrect) {
   const double cos_a = std::cos(80.0 * correlation::math::deg_to_rad);
   const double cos_b = std::cos(90.0 * correlation::math::deg_to_rad);
   const double cos_g = std::cos(100.0 * correlation::math::deg_to_rad);
-  const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g +
-                          2 * cos_a * cos_b * cos_g;
+  const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g + 2 * cos_a * cos_b * cos_g;
   const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
 
   EXPECT_NEAR(cell.volume(), expected_volume, 1e-9);
@@ -84,7 +83,7 @@ TEST_F(CellTests, RuleOfFiveWorksCorrectly) {
 TEST_F(CellTests, MoveSemanticsLeavesMovedFromStateEmpty) {
   Cell cell({{4.0, 4.0, 4.0, 90.0, 90.0, 90.0}});
   cell.addAtom("H", {0.5, 0.5, 0.5});
-  
+
   Cell cell_moved(std::move(cell));
   EXPECT_TRUE(cell.isEmpty());
   EXPECT_EQ(cell_moved.atomCount(), 1);
@@ -94,7 +93,7 @@ TEST_F(CellTests, AccessorsWorkCorrectly) {
   Cell cell{};
   cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   EXPECT_NEAR(cell.volume(), 1000.0, 1e-9);
-  
+
   cell.setEnergy(-13.6);
   EXPECT_DOUBLE_EQ(cell.getEnergy(), -13.6);
 }
@@ -175,7 +174,7 @@ TEST_F(CellTests, ConstructorThrowsOnZeroOrSingularVolume) {
   // Linearly dependent lattice vectors: zero volume
   EXPECT_THROW(Cell({1.0, 0.0, 0.0}, {2.0, 0.0, 0.0}, {0.0, 0.0, 1.0}), std::logic_error);
   EXPECT_THROW(Cell({0.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}), std::logic_error);
-  
+
   // Degenerate parameters yielding volume near 0
   EXPECT_THROW(Cell({10.0, 10.0, 10.0, 1.0, 1.0, 179.0}), std::logic_error);
 }
@@ -192,7 +191,7 @@ TEST_F(CellTests, SetLatticeParametersBoundaryAngles) {
 
 TEST_F(CellTests, MinimumImageHandlesInfiniteAndNaNDistance) {
   Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  
+
   // Checking that passing Inf or NaN distances doesn't crash but propagates or returns predictably
   auto mi_nan = cell.minimumImage({std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0});
   EXPECT_TRUE(std::isnan(mi_nan.x()));
@@ -209,7 +208,7 @@ TEST_F(CellTests, TriclinicCellWrapPositions) {
   // Place an atom well outside the cell in Cartesian coordinates
   cell.addAtom("H", {25.0, -15.0, 30.0});
   cell.wrapPositions();
-  
+
   const auto &pos = cell.atoms().front().position();
   // After wrapping, fractional coordinates must be in [0, 1).
   // Convert back to fractional and verify
@@ -225,16 +224,16 @@ TEST_F(CellTests, TriclinicCellWrapPositions) {
 TEST_F(CellTests, TriclinicCellMinimumImage) {
   // Non-orthogonal cell
   Cell cell({{5.0, 5.0, 5.0, 60.0, 60.0, 60.0}});
-  
+
   // Distance vector that spans more than half the cell in some direction
   auto mi = cell.minimumImage({4.0, 4.0, 4.0});
   double mi_length = correlation::math::norm(mi);
-  
+
   // The minimum image vector must be shorter than or equal to half the max box extent
   // For a cell with a=5, the maximum half-diagonal is bounded
-  double half_diagonal = 0.5 * std::sqrt(5.0*5.0 * 3); // conservative upper bound
+  double half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
   EXPECT_LE(mi_length, half_diagonal + 1e-6);
-  
+
   // The zero vector should map to zero
   auto mi_zero = cell.minimumImage({0.0, 0.0, 0.0});
   EXPECT_NEAR(mi_zero.x(), 0.0, 1e-9);
@@ -248,7 +247,7 @@ TEST_F(CellTests, ExtremelySmallCell) {
   const std::array<double, 6> params = {0.01, 0.01, 0.01, 90.0, 90.0, 90.0};
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e-6, 1e-12);
-  
+
   cell.addAtom("H", {0.005, 0.005, 0.005});
   cell.wrapPositions();
   const auto &pos = cell.atoms().front().position();
@@ -260,7 +259,7 @@ TEST_F(CellTests, ExtremelyLargeCell) {
   const std::array<double, 6> params = {1e6, 1e6, 1e6, 90.0, 90.0, 90.0};
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e18, 1e9);
-  
+
   cell.addAtom("H", {5e5, 5e5, 5e5});
   auto mi = cell.minimumImage({3e5, 0.0, 0.0});
   EXPECT_NEAR(mi.x(), 3e5, 1e-3);
@@ -276,7 +275,7 @@ TEST_F(CellTests, HighAtomCount) {
   }
   EXPECT_EQ(cell.atomCount(), N);
   EXPECT_EQ(cell.elements().size(), 1);
-  
+
   // Wrap all positions — should not crash or take excessively long
   EXPECT_NO_THROW(cell.wrapPositions());
 }

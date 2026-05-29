@@ -24,17 +24,13 @@
 namespace correlation::writers {
 
 // Automatic registration
-static bool registered =
-    WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>());
+static bool registered = WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>());
 
-void ArrowWriter::writeAllParquet(
-    const std::string &base_path,
-    const correlation::analysis::DistributionFunctions &df,
-    bool /*write_smoothed*/) const {
+void ArrowWriter::writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+                                  bool /*write_smoothed*/) const {
   for (const auto &[name, hist] : df.getAllHistograms()) {
     try {
-      if (hist.partials.empty() || hist.bins.empty() ||
-          hist.file_suffix.empty()) {
+      if (hist.partials.empty() || hist.bins.empty() || hist.file_suffix.empty()) {
         continue;
       }
 
@@ -42,15 +38,13 @@ void ArrowWriter::writeAllParquet(
       writeHistogramToParquet(filename, name, hist);
 
     } catch (const std::exception &e) {
-      std::cerr << "Error writing Parquet file for '" << name
-                << "': " << e.what() << std::endl;
+      std::cerr << "Error writing Parquet file for '" << name << "': " << e.what() << std::endl;
     }
   }
 }
 
-void ArrowWriter::writeHistogramToParquet(
-    const std::string &filename, const std::string &name,
-    const correlation::analysis::Histogram &hist) const {
+void ArrowWriter::writeHistogramToParquet(const std::string &filename, const std::string &name,
+                                          const correlation::analysis::Histogram &hist) const {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
   }
@@ -98,8 +92,7 @@ void ArrowWriter::writeHistogramToParquet(
     std::string col_name = key + "_smoothed";
     fields.push_back(arrow::field(col_name, arrow::float64()));
     arrow::DoubleBuilder smoothed_builder;
-    PARQUET_THROW_NOT_OK(
-        smoothed_builder.AppendValues(hist.smoothed_partials.at(key)));
+    PARQUET_THROW_NOT_OK(smoothed_builder.AppendValues(hist.smoothed_partials.at(key)));
     std::shared_ptr<arrow::Array> smoothed_array;
     PARQUET_THROW_NOT_OK(smoothed_builder.Finish(&smoothed_array));
     arrays.push_back(smoothed_array);
@@ -115,12 +108,9 @@ void ArrowWriter::writeHistogramToParquet(
 
   // Writer properties
   std::shared_ptr<parquet::WriterProperties> props =
-      parquet::WriterProperties::Builder()
-          .compression(parquet::Compression::UNCOMPRESSED)
-          ->build();
+      parquet::WriterProperties::Builder().compression(parquet::Compression::UNCOMPRESSED)->build();
 
-  PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(
-      *table, arrow::default_memory_pool(), outfile, 1024 * 1024, props));
+  PARQUET_THROW_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 1024 * 1024, props));
 }
 
 } // namespace correlation::writers

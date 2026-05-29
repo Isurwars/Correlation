@@ -32,9 +32,7 @@ struct ElementID {
    * @param other The other ID to compare against.
    * @return True if values are equal.
    */
-  constexpr bool operator==(const ElementID other) const {
-    return value == other.value;
-  };
+  constexpr bool operator==(const ElementID other) const { return value == other.value; };
 };
 
 /**
@@ -49,9 +47,7 @@ struct Element {
    * @param other The other element to compare against.
    * @return True if symbols are identical.
    */
-  constexpr bool operator==(const Element other) const {
-    return symbol == other.symbol;
-  };
+  constexpr bool operator==(const Element other) const { return symbol == other.symbol; };
 };
 
 /**
@@ -99,9 +95,7 @@ public:
    * @brief Gets the position of the atom.
    * @return A const reference to the position vector.
    */
-  [[nodiscard]] const math::Vector3<double> &position() const noexcept {
-    return position_;
-  }
+  [[nodiscard]] const math::Vector3<double> &position() const noexcept { return position_; }
 
   /**
    * @brief Sets the position of the atom.
@@ -113,9 +107,7 @@ public:
    * @brief Gets the velocity of the atom.
    * @return A const reference to the velocity vector.
    */
-  [[nodiscard]] const math::Vector3<double> &velocity() const noexcept {
-    return velocity_;
-  }
+  [[nodiscard]] const math::Vector3<double> &velocity() const noexcept { return velocity_; }
 
   /**
    * @brief Sets the velocity of the atom.
@@ -142,10 +134,10 @@ public:
   [[nodiscard]] int element_id() const { return element_.id.value; }
 
 private:
-  AtomID id_;                    ///< Unique identification number.
+  AtomID id_;                      ///< Unique identification number.
   math::Vector3<double> position_; ///< Cartesian coordinates in Angstroms.
   math::Vector3<double> velocity_; ///< Velocity in Angstroms/fs.
-  Element element_;              ///< Chemical element properties.
+  Element element_;                ///< Chemical element properties.
 };
 
 /**
@@ -165,8 +157,7 @@ private:
  * @param b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
-[[nodiscard]] inline double angle(const Atom &center, const Atom &a,
-                                  const Atom &b) noexcept {
+[[nodiscard]] inline double angle(const Atom &center, const Atom &a, const Atom &b) noexcept {
   const math::Vector3<double> vA = a.position() - center.position();
   const math::Vector3<double> vB = b.position() - center.position();
 

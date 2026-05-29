@@ -25,9 +25,7 @@ namespace correlation::calculators {
  */
 class SDFCalculator : public BaseCalculator {
 public:
-  std::string getName() const override {
-    return "Spatial Distribution Function (3D)";
-  }
+  std::string getName() const override { return "Spatial Distribution Function (3D)"; }
   std::string getShortName() const override { return "SDF"; }
   std::string getGroup() const override { return "Spatial"; }
   std::string getDescription() const override {
@@ -37,9 +35,8 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 };
 
 } // namespace correlation::calculators

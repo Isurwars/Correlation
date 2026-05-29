@@ -22,26 +22,23 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<CarReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CarReader>());
 
-correlation::core::Cell CarReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell CarReader::readStructure(const std::string &filename,
+                                                 std::function<void(float, const std::string &)> progress_callback) {
   return read(filename);
 }
 
-correlation::core::Trajectory CarReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+CarReader::readTrajectory(const std::string &filename,
+                          std::function<void(float, const std::string &)> progress_callback) {
   throw std::runtime_error("CAR files are structures, use readStructure.");
 }
 
 correlation::core::Cell CarReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" +
-                             std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
   }
 
   correlation::core::Cell tempCell;
@@ -61,8 +58,7 @@ correlation::core::Cell CarReader::read(const std::string &file_name) {
     if (first_token == "PBC") {
       std::array<double, 6> lat;
       // The token "PBC" is consumed, so we read the 6 numbers that follow.
-      if (line_stream >> lat[0] >> lat[1] >> lat[2] >> lat[3] >> lat[4] >>
-          lat[5]) {
+      if (line_stream >> lat[0] >> lat[1] >> lat[2] >> lat[3] >> lat[4] >> lat[5]) {
         tempCell.setLatticeParameters(lat);
       }
       continue;

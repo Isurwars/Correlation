@@ -22,10 +22,8 @@ namespace correlation::analysis {
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
-std::vector<double>
-DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
-                                int max_correlation_frames, size_t start_frame,
-                                size_t end_frame) {
+std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
+                                                    int max_correlation_frames, size_t start_frame, size_t end_frame) {
   if (traj.getFrameCount() == 0) {
     return {};
   }
@@ -42,8 +40,7 @@ DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
 
   size_t num_frames = end_frame - start_frame;
 
-  if (max_correlation_frames < 0 ||
-      static_cast<size_t>(max_correlation_frames) >= num_frames) {
+  if (max_correlation_frames < 0 || static_cast<size_t>(max_correlation_frames) >= num_frames) {
     max_correlation_frames = static_cast<int>(num_frames) - 1;
   }
 
@@ -53,8 +50,7 @@ DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
   double total_mass = 0.0;
   for (size_t i = 0; i < num_atoms; ++i) {
     try {
-      masses[i] =
-          correlation::physics::getAtomicMass(atoms[i].element().symbol);
+      masses[i] = correlation::physics::getAtomicMass(atoms[i].element().symbol);
     } catch (const std::out_of_range &) {
       masses[i] = 1.0;
     }
@@ -132,10 +128,8 @@ DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
   return vacf;
 }
 
-std::vector<double>
-DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
-                               int max_correlation_frames, size_t start_frame,
-                               size_t end_frame) {
+std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
+                                                   int max_correlation_frames, size_t start_frame, size_t end_frame) {
   if (traj.getFrameCount() == 0) {
     return {};
   }
@@ -153,8 +147,7 @@ DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
   size_t num_frames = end_frame - start_frame;
 
   // Default: use half the trajectory length to ensure good statistics
-  if (max_correlation_frames < 0 ||
-      static_cast<size_t>(max_correlation_frames) >= num_frames) {
+  if (max_correlation_frames < 0 || static_cast<size_t>(max_correlation_frames) >= num_frames) {
     max_correlation_frames = static_cast<int>(num_frames / 2);
   }
   if (max_correlation_frames == 0) {
@@ -167,8 +160,7 @@ DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
   // This correctly handles PBC crossings without needing explicit unwrapping.
 
   std::vector<std::vector<correlation::math::Vector3<double>>> unwrapped(
-      num_atoms, std::vector<correlation::math::Vector3<double>>(
-                     num_frames, {0.0, 0.0, 0.0}));
+      num_atoms, std::vector<correlation::math::Vector3<double>>(num_frames, {0.0, 0.0, 0.0}));
 
   for (size_t t = 1; t < num_frames; ++t) {
     const size_t tf = start_frame + t;
@@ -181,12 +173,10 @@ DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
     const auto &prev_atoms = frames[tf_prev].atoms();
 
     for (size_t i = 0; i < num_atoms; ++i) {
-      const math::Vector3<double> dr =
-          curr_atoms[i].position() - prev_atoms[i].position();
+      const math::Vector3<double> dr = curr_atoms[i].position() - prev_atoms[i].position();
 
       // Apply minimum image convention for correct unwrapping across PBC.
-      const math::Vector3<double> min_dr =
-          use_pbc ? frames[tf].minimumImage(dr) : dr;
+      const math::Vector3<double> min_dr = use_pbc ? frames[tf].minimumImage(dr) : dr;
 
       // Accumulate unwrapped position: unwrapped[i][t] = unwrapped[i][t-1] + min_dr
       unwrapped[i][t] = unwrapped[i][t - 1] + min_dr;
@@ -259,11 +249,10 @@ DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
   return msd;
 }
 
-std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(
-    const correlation::core::Trajectory &traj, int max_correlation_frames,
-    size_t start_frame, size_t end_frame) {
-  std::vector<double> vacf =
-      calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
+std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(const correlation::core::Trajectory &traj,
+                                                              int max_correlation_frames, size_t start_frame,
+                                                              size_t end_frame) {
+  std::vector<double> vacf = calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (!vacf.empty() && vacf[0] != 0.0) {
     double normalization_factor = 1.0 / vacf[0];
     for (double &val : vacf) {
@@ -343,10 +332,8 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
       double sin_theta = std::sin(theta);
       double cos_theta = std::cos(theta);
 
-      double alpha = 1.0 / theta + sin_theta * cos_theta / theta2 -
-                     2.0 * sin_theta * sin_theta / theta3;
-      double beta = 2.0 * ((1.0 + cos_theta * cos_theta) / theta2 -
-                           2.0 * sin_theta * cos_theta / theta3);
+      double alpha = 1.0 / theta + sin_theta * cos_theta / theta2 - 2.0 * sin_theta * sin_theta / theta3;
+      double beta = 2.0 * ((1.0 + cos_theta * cos_theta) / theta2 - 2.0 * sin_theta * cos_theta / theta3);
       double gamma = 4.0 * (sin_theta / theta3 - cos_theta / theta2);
 
       size_t two_N = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
@@ -372,18 +359,14 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
         sum_even_sin += windowed_vacf[i] * std::sin(arg);
       }
 
-      double even_cos_trapz =
-          sum_even_cos + 0.5 * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N));
-      double even_sin_trapz =
-          sum_even_sin + 0.5 * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N));
+      double even_cos_trapz = sum_even_cos + 0.5 * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N));
+      double even_sin_trapz = sum_even_sin + 0.5 * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N));
 
       double bound_cos = f_2N * std::sin(arg_2N);
       double bound_sin = f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N);
 
-      integral_real = dt * (alpha * bound_cos + beta * even_cos_trapz +
-                            gamma * sum_odd_cos);
-      integral_imag = dt * (alpha * bound_sin + beta * even_sin_trapz +
-                            gamma * sum_odd_sin);
+      integral_real = dt * (alpha * bound_cos + beta * even_cos_trapz + gamma * sum_odd_cos);
+      integral_imag = dt * (alpha * bound_sin + beta * even_sin_trapz + gamma * sum_odd_sin);
 
       if (num_frames % 2 == 0 && num_frames > 1) {
         double val1 = windowed_vacf[num_frames - 2];
@@ -392,10 +375,8 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
         double arg1 = theta * (num_frames - 2);
         double arg2 = theta * (num_frames - 1);
 
-        integral_real +=
-            0.5 * dt * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
-        integral_imag +=
-            0.5 * dt * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
+        integral_real += 0.5 * dt * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
+        integral_imag += 0.5 * dt * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
       }
     }
 
@@ -408,14 +389,15 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
 }
 
 double DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<double> &time,
-                                                       const std::vector<double> &msd) {
+                                                        const std::vector<double> &msd) {
   if (time.size() < 2 || time.size() != msd.size()) {
     return 0.0;
   }
   // Fit on the second half of the data
   size_t start_idx = time.size() / 2;
   size_t n = time.size() - start_idx;
-  if (n < 2) return 0.0;
+  if (n < 2)
+    return 0.0;
 
   double sum_x = 0.0;
   double sum_y = 0.0;
@@ -445,7 +427,7 @@ double DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<double
 }
 
 double DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<double> &time,
-                                                        const std::vector<double> &vacf) {
+                                                         const std::vector<double> &vacf) {
   if (time.size() < 2 || time.size() != vacf.size()) {
     return 0.0;
   }
@@ -464,8 +446,7 @@ double DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<doubl
   return integral / 3.0;
 }
 
-double DynamicsAnalyzer::computeRelaxationTime(const std::vector<double> &time,
-                                               const std::vector<double> &norm_vacf) {
+double DynamicsAnalyzer::computeRelaxationTime(const std::vector<double> &time, const std::vector<double> &norm_vacf) {
   if (time.size() < 2 || time.size() != norm_vacf.size()) {
     return 0.0;
   }

@@ -19,8 +19,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<XdatcarReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<XdatcarReader>());
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -31,8 +30,7 @@ static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
   return pos;
 }
 
-static inline size_t skipLineEnding(const char *data, size_t total,
-                                    size_t pos) {
+static inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
   if (pos < total && data[pos] == '\r')
     ++pos;
   if (pos < total && data[pos] == '\n')
@@ -40,8 +38,7 @@ static inline size_t skipLineEnding(const char *data, size_t total,
   return pos;
 }
 
-static inline std::string extractLine(const char *data, size_t pos,
-                                      size_t lineEnd) {
+static inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
   return std::string(data + pos, lineEnd - pos);
 }
 
@@ -50,19 +47,19 @@ static inline std::string extractLine(const char *data, size_t pos,
  *        individual frames without re-reading the header.
  */
 struct XdatcarHeader {
-  double lattice[3][3];                ///< Scaled lattice vectors.
-  std::vector<std::string> species;    ///< Element symbols.
-  std::vector<int> atom_counts;        ///< Count per species.
-  int total_atoms{0};                  ///< Sum of atom_counts.
+  double lattice[3][3];                  ///< Scaled lattice vectors.
+  std::vector<std::string> species;      ///< Element symbols.
+  std::vector<int> atom_counts;          ///< Count per species.
+  int total_atoms{0};                    ///< Sum of atom_counts.
   std::vector<std::string> atom_species; ///< Per-atom species assignment.
 };
 
 // ---------------------------------------------------------------------------
 // readStructure
 // ---------------------------------------------------------------------------
-correlation::core::Cell XdatcarReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+XdatcarReader::readStructure(const std::string &filename,
+                             std::function<void(float, const std::string &)> progress_callback) {
   auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
     throw std::runtime_error("XDATCAR: no frames found in file.");
@@ -73,9 +70,9 @@ correlation::core::Cell XdatcarReader::readStructure(
 // ---------------------------------------------------------------------------
 // readTrajectory — memory-mapped lazy loading
 // ---------------------------------------------------------------------------
-correlation::core::Trajectory XdatcarReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+XdatcarReader::readTrajectory(const std::string &filename,
+                              std::function<void(float, const std::string &)> progress_callback) {
 
   if (progress_callback)
     progress_callback(0.0f, "Reading XDATCAR file...");
@@ -108,11 +105,8 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
   for (int i = 0; i < 3; ++i) {
     line = nextLine();
     std::istringstream iss(line);
-    if (!(iss >> header->lattice[i][0] >> header->lattice[i][1] >>
-          header->lattice[i][2])) {
-      throw std::runtime_error(
-          "XDATCAR: failed to parse lattice vector on line " +
-          std::to_string(i + 3) + ".");
+    if (!(iss >> header->lattice[i][0] >> header->lattice[i][1] >> header->lattice[i][2])) {
+      throw std::runtime_error("XDATCAR: failed to parse lattice vector on line " + std::to_string(i + 3) + ".");
     }
   }
 
@@ -125,8 +119,7 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
     double target_volume = std::abs(scaling_factor);
     const auto &v = header->lattice;
     double current_volume =
-        std::abs(v[0][0] * (v[1][1] * v[2][2] - v[1][2] * v[2][1]) -
-                 v[0][1] * (v[1][0] * v[2][2] - v[1][2] * v[2][0]) +
+        std::abs(v[0][0] * (v[1][1] * v[2][2] - v[1][2] * v[2][1]) - v[0][1] * (v[1][0] * v[2][2] - v[1][2] * v[2][0]) +
                  v[0][2] * (v[1][0] * v[2][1] - v[1][1] * v[2][0]));
     double scale = std::cbrt(target_volume / current_volume);
     for (int i = 0; i < 3; ++i)
@@ -153,8 +146,7 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
   }
 
   if (header->species.size() != header->atom_counts.size()) {
-    throw std::runtime_error(
-        "XDATCAR: species count does not match atom count entries.");
+    throw std::runtime_error("XDATCAR: species count does not match atom count entries.");
   }
 
   header->total_atoms = 0;
@@ -200,8 +192,7 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
 
     // Report progress
     if (progress_callback && total_size > 0) {
-      float progress =
-          static_cast<float>(offset) / static_cast<float>(total_size);
+      float progress = static_cast<float>(offset) / static_cast<float>(total_size);
       progress_callback(progress, "Scanning XDATCAR frames...");
     }
   }
@@ -232,9 +223,7 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
     nextLn();
 
     const auto &v = header->lattice;
-    correlation::core::Cell cell({v[0][0], v[0][1], v[0][2]},
-                                 {v[1][0], v[1][1], v[1][2]},
-                                 {v[2][0], v[2][1], v[2][2]});
+    correlation::core::Cell cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]}, {v[2][0], v[2][1], v[2][2]});
 
     for (int i = 0; i < header->total_atoms; ++i) {
       if (off >= s)
@@ -245,11 +234,9 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
       if (!(iss >> x >> y >> z))
         break;
       // Convert fractional coordinates to Cartesian: pos = x*a + y*b + z*c
-      correlation::math::Vector3<double> pos = {
-          x * v[0][0] + y * v[1][0] + z * v[2][0],
-          x * v[0][1] + y * v[1][1] + z * v[2][1],
-          x * v[0][2] + y * v[1][2] + z * v[2][2]
-      };
+      correlation::math::Vector3<double> pos = {x * v[0][0] + y * v[1][0] + z * v[2][0],
+                                                x * v[0][1] + y * v[1][1] + z * v[2][1],
+                                                x * v[0][2] + y * v[1][2] + z * v[2][2]};
       cell.addAtom(header->atom_species[i], pos);
     }
 
@@ -257,8 +244,7 @@ correlation::core::Trajectory XdatcarReader::readTrajectory(
     return cell;
   };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets),
-                                       parser, 1.0);
+  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
 }
 
 } // namespace correlation::readers

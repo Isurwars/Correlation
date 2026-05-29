@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "readers/XdatcarReader.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "readers/XdatcarReader.hpp"
 
-#include <gtest/gtest.h>
 #include <cmath>
 #include <filesystem>
+#include <gtest/gtest.h>
 #include <stdexcept>
 
 namespace {
@@ -89,8 +89,7 @@ TEST_F(XdatcarReaderTests, PositionsDifferBetweenFrames) {
   auto pos0 = frame0.atoms()[0].position();
   auto pos1 = frame1.atoms()[0].position();
 
-  double dist_sq = (pos0[0] - pos1[0]) * (pos0[0] - pos1[0]) +
-                   (pos0[1] - pos1[1]) * (pos0[1] - pos1[1]) +
+  double dist_sq = (pos0[0] - pos1[0]) * (pos0[0] - pos1[0]) + (pos0[1] - pos1[1]) * (pos0[1] - pos1[1]) +
                    (pos0[2] - pos1[2]) * (pos0[2] - pos1[2]);
   EXPECT_GT(dist_sq, 1e-12);
 }
@@ -119,7 +118,5 @@ TEST_F(XdatcarReaderTests, ReaderIsRegisteredInFactory) {
 
 TEST_F(XdatcarReaderTests, NonExistentFileThrows) {
   correlation::readers::XdatcarReader reader;
-  EXPECT_THROW(
-      reader.readTrajectory("nonexistent_file.xdatcar"),
-      std::runtime_error);
+  EXPECT_THROW(reader.readTrajectory("nonexistent_file.xdatcar"), std::runtime_error);
 }

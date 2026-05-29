@@ -126,8 +126,7 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   // r(7) = 2.71875
   // r(8) = 2.734375
 
-  std::vector<double> positions = {0.0,   1.0,    1.75,    2.25,    2.5,
-                                   2.625, 2.6875, 2.71875, 2.734375};
+  std::vector<double> positions = {0.0, 1.0, 1.75, 2.25, 2.5, 2.625, 2.6875, 2.71875, 2.734375};
 
   for (double x : positions) {
     correlation::core::Cell c({10, 10, 10, 90, 90, 90});

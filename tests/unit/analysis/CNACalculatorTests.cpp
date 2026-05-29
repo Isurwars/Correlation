@@ -54,16 +54,14 @@ TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
   cell.addAtom("Al", {0.0, 2.0, 2.0});
 
   double cutoff = 3.0;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty());
 
   for (const auto &[key, values] : hist.partials) {
     EXPECT_EQ(values.size(), hist.bins.size())
-        << "Partial '" << key << "' has size " << values.size()
-        << " but bins has size " << hist.bins.size();
+        << "Partial '" << key << "' has size " << values.size() << " but bins has size " << hist.bins.size();
   }
 }
 
@@ -76,8 +74,7 @@ TEST(CNACalculatorTests, TotalPartialSumsToOne) {
   cell.addAtom("Cu", {0.0, 2.0, 2.0});
 
   double cutoff = 3.0;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.count("Total"));
@@ -95,8 +92,7 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
   cell.addAtom("Cu", {2.0, 2.0, 0.0});
 
   double cutoff = 3.0;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   EXPECT_EQ(hist.title, "Common Neighbor Analysis");
@@ -131,16 +127,14 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
 
   // 1st NN distance = a/sqrt(2) ≈ 2.83; cutoff between 1st and 2nd NN
   double cutoff = 3.2;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   // Should produce non-empty results
   ASSERT_FALSE(hist.bins.empty()) << "FCC supercell should produce CNA output.";
 
   // 1421 should be the dominant index for FCC
-  EXPECT_TRUE(hist.partials.count("1421"))
-      << "FCC should produce CNA index 1421.";
+  EXPECT_TRUE(hist.partials.count("1421")) << "FCC should produce CNA index 1421.";
 
   // The Total partial should sum to 1.0
   double sum = 0;
@@ -168,16 +162,14 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
 
   // Include both 1st NN (a*sqrt(3)/2 ≈ 2.598) and 2nd NN (a = 3.0)
   double cutoff = 3.1;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_FALSE(hist.bins.empty()) << "BCC supercell should produce CNA output.";
 
   // Validate histogram consistency
   for (const auto &[key, vals] : hist.partials) {
-    EXPECT_EQ(vals.size(), hist.bins.size())
-        << "Partial '" << key << "' size mismatch.";
+    EXPECT_EQ(vals.size(), hist.bins.size()) << "Partial '" << key << "' size mismatch.";
   }
 
   // Total should sum to 1.0
@@ -198,8 +190,7 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   cell.addAtom("Ar", {12.0, 10.0, 10.0}); // 2 Å apart
 
   double cutoff = 3.0;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, true);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, true);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   // Two atoms that are neighbors but share no common neighbors ⟹ no CNA pairs
@@ -226,8 +217,7 @@ TEST(CNACalculatorTests, DeterministicResults) {
       }
 
   double cutoff = 3.2;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
 
   auto hist1 = CNACalculator::calculate(cell, &analyzer);
   auto hist2 = CNACalculator::calculate(cell, &analyzer);
@@ -260,15 +250,13 @@ TEST(CNACalculatorTests, TinyPeriodicCell_DoesNotCrash) {
   cell.addAtom("Cu", {0.0, a / 2, a / 2});
 
   double cutoff = 3.2;
-  analysis::StructureAnalyzer analyzer(cell, cutoff,
-                                       {{cutoff * cutoff}}, false);
+  analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
 
   ASSERT_NO_THROW({
     auto hist = CNACalculator::calculate(cell, &analyzer);
     // Whatever indices are produced, they must be dimensionally consistent
     for (const auto &[key, vals] : hist.partials) {
-      EXPECT_EQ(vals.size(), hist.bins.size())
-          << "Partial '" << key << "' has inconsistent size.";
+      EXPECT_EQ(vals.size(), hist.bins.size()) << "Partial '" << key << "' has inconsistent size.";
     }
   });
 }

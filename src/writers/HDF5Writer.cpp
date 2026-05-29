@@ -24,16 +24,11 @@
 namespace correlation::writers {
 
 // Automatic registration
-static bool registered =
-    WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>());
+static bool registered = WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>());
 
-void HDF5Writer::writeHDF(
-    const std::string &filename,
-    const correlation::analysis::DistributionFunctions &df) const {
+void HDF5Writer::writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &df) const {
   try {
-    HighFive::File file(filename, HighFive::File::ReadWrite |
-                                      HighFive::File::Create |
-                                      HighFive::File::Truncate);
+    HighFive::File file(filename, HighFive::File::ReadWrite | HighFive::File::Create | HighFive::File::Truncate);
 
     // Iterate over all calculated histograms and write them as HDF5 groups
     for (const auto &[name, hist] : df.getAllHistograms()) {
@@ -44,8 +39,7 @@ void HDF5Writer::writeHDF(
       // Sanitize group name: replace '(' with '_' and remove ')'
       std::string group_name = name;
       std::replace(group_name.begin(), group_name.end(), '(', '_');
-      group_name.erase(std::remove(group_name.begin(), group_name.end(), ')'),
-                       group_name.end());
+      group_name.erase(std::remove(group_name.begin(), group_name.end(), ')'), group_name.end());
 
       // Also replace '/' with '_' just in case
       std::replace(group_name.begin(), group_name.end(), '/', '_');
@@ -54,26 +48,19 @@ void HDF5Writer::writeHDF(
 
       // Create a property list for group creation
       HighFive::GroupCreateProps props;
-      props.add(HighFive::LinkCreationOrder(HighFive::CreationOrder::Tracked |
-                                            HighFive::CreationOrder::Indexed));
+      props.add(HighFive::LinkCreationOrder(HighFive::CreationOrder::Tracked | HighFive::CreationOrder::Indexed));
 
       HighFive::Group group = file.createGroup(group_name, props);
 
       // Get metadata if available
-      std::string bin_unit =
-          hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
-      std::string data_unit =
-          hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
-      std::string description =
-          hist.description.empty() ? "" : hist.description;
+      std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+      std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+      std::string description = hist.description.empty() ? "" : hist.description;
       std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
       // Add description attribute to the group
       if (!description.empty()) {
-        group
-            .createAttribute<std::string>(
-                "description", HighFive::DataSpace::From(description))
-            .write(description);
+        group.createAttribute<std::string>("description", HighFive::DataSpace::From(description)).write(description);
       }
 
       // Prepare headers and data keys
@@ -95,8 +82,7 @@ void HDF5Writer::writeHDF(
           smoothed_keys.push_back(key + "_smoothed");
         }
         std::sort(smoothed_keys.begin(), smoothed_keys.end());
-        headers.insert(headers.end(), smoothed_keys.begin(),
-                       smoothed_keys.end());
+        headers.insert(headers.end(), smoothed_keys.begin(), smoothed_keys.end());
       }
 
       // Determine dimensions
@@ -132,35 +118,25 @@ void HDF5Writer::writeHDF(
 
         // Add attributes
         if (col == 0) {
-          ds.createAttribute<std::string>("Long Name",
-                                          HighFive::DataSpace::From(dim_label))
-              .write(dim_label);
-          ds.createAttribute<std::string>("Units",
-                                          HighFive::DataSpace::From(bin_unit))
-              .write(bin_unit);
-          ds.createAttribute<std::string>(
-                "Comments", HighFive::DataSpace::From(description))
-              .write(description);
+          ds.createAttribute<std::string>("Long Name", HighFive::DataSpace::From(dim_label)).write(dim_label);
+          ds.createAttribute<std::string>("Units", HighFive::DataSpace::From(bin_unit)).write(bin_unit);
+          ds.createAttribute<std::string>("Comments", HighFive::DataSpace::From(description)).write(description);
 
           // Make this a dimension scale
           herr_t status = H5DSset_scale(ds.getId(), dim_label.c_str());
           if (status < 0) {
-            std::cerr << "Warning: Failed to set dimension scale for "
-                      << dataset_name << std::endl;
+            std::cerr << "Warning: Failed to set dimension scale for " << dataset_name << std::endl;
           }
         } else {
           std::string current_long_name = headers[col];
           std::string current_data_unit = data_unit;
           std::string current_comment = headers[col];
 
-          ds.createAttribute<std::string>(
-                "Long Name", HighFive::DataSpace::From(current_long_name))
+          ds.createAttribute<std::string>("Long Name", HighFive::DataSpace::From(current_long_name))
               .write(current_long_name);
-          ds.createAttribute<std::string>(
-                "Units", HighFive::DataSpace::From(current_data_unit))
+          ds.createAttribute<std::string>("Units", HighFive::DataSpace::From(current_data_unit))
               .write(current_data_unit);
-          ds.createAttribute<std::string>(
-                "Comments", HighFive::DataSpace::From(current_comment))
+          ds.createAttribute<std::string>("Comments", HighFive::DataSpace::From(current_comment))
               .write(current_comment);
           std::stringstream ss_bin;
           ss_bin << std::setw(2) << std::setfill('0') << 0 << "_" << headers[0];
@@ -179,8 +155,7 @@ void HDF5Writer::writeHDF(
             HighFive::DataSet bin_ds = group.getDataSet(bin_ds_name);
             herr_t status = H5DSattach_scale(ds.getId(), bin_ds.getId(), 0);
             if (status < 0) {
-              std::cerr << "Warning: Failed to attach dimension scale for "
-                        << dataset_name << std::endl;
+              std::cerr << "Warning: Failed to attach dimension scale for " << dataset_name << std::endl;
             }
           }
         }

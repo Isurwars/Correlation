@@ -23,28 +23,24 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<OutmolReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<OutmolReader>());
 
-correlation::core::Cell OutmolReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell OutmolReader::readStructure(const std::string &filename,
+                                                    std::function<void(float, const std::string &)> progress_callback) {
   return read(filename, progress_callback).at(0);
 }
 
-correlation::core::Trajectory OutmolReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+OutmolReader::readTrajectory(const std::string &filename,
+                             std::function<void(float, const std::string &)> progress_callback) {
   return correlation::core::Trajectory(read(filename, progress_callback), 1.0);
 }
 
-std::vector<correlation::core::Cell> OutmolReader::read(
-    const std::string &file_name,
-    std::function<void(float, const std::string &)> progress_callback) {
+std::vector<correlation::core::Cell>
+OutmolReader::read(const std::string &file_name, std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" +
-                             std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
   }
 
   std::vector<correlation::core::Cell> frames;
@@ -67,8 +63,7 @@ std::vector<correlation::core::Cell> OutmolReader::read(
     if (progress_callback) {
       std::streampos current_pos = myfile.tellg();
       if (current_pos - last_progress_pos > update_interval) {
-        float p =
-            static_cast<float>(current_pos) / static_cast<float>(file_size);
+        float p = static_cast<float>(current_pos) / static_cast<float>(file_size);
         progress_callback(p, "Loading Outmol file...");
         last_progress_pos = current_pos;
       }
@@ -102,8 +97,7 @@ std::vector<correlation::core::Cell> OutmolReader::read(
     }
 
     if (line.find("$coordinates") != std::string::npos) {
-      correlation::core::Cell tempCell(
-          {h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
+      correlation::core::Cell tempCell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
       while (std::getline(myfile, line)) {
         if (line.find("$end") != std::string::npos) {
           break;
@@ -113,8 +107,7 @@ std::vector<correlation::core::Cell> OutmolReader::read(
         std::string symbol;
         double x, y, z;
         if (ss >> symbol >> x >> y >> z) {
-          tempCell.addAtom(symbol, {x * correlation::math::bohr_to_angstrom,
-                                    y * correlation::math::bohr_to_angstrom,
+          tempCell.addAtom(symbol, {x * correlation::math::bohr_to_angstrom, y * correlation::math::bohr_to_angstrom,
                                     z * correlation::math::bohr_to_angstrom});
         }
       }
@@ -126,8 +119,7 @@ std::vector<correlation::core::Cell> OutmolReader::read(
 
     if (line.find("ATOMIC  COORDINATES (au)") != std::string::npos) {
       std::getline(myfile, line); // Next line is header: df x y z ...
-      correlation::core::Cell tempCell(
-          {h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
+      correlation::core::Cell tempCell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
       while (std::getline(myfile, line)) {
         // Look for the "df" prefix
         if (line.find("df") == std::string::npos) {
@@ -139,8 +131,7 @@ std::vector<correlation::core::Cell> OutmolReader::read(
         double x, y, z;
         if (ss >> df >> symbol >> x >> y >> z) {
           if (df == "df") {
-            tempCell.addAtom(symbol, {x * correlation::math::bohr_to_angstrom,
-                                      y * correlation::math::bohr_to_angstrom,
+            tempCell.addAtom(symbol, {x * correlation::math::bohr_to_angstrom, y * correlation::math::bohr_to_angstrom,
                                       z * correlation::math::bohr_to_angstrom});
           }
         }

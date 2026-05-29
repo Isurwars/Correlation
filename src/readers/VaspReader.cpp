@@ -22,27 +22,23 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered =
-    ReaderFactory::instance().registerReader(std::make_unique<VaspReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<VaspReader>());
 
-correlation::core::Cell VaspReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell VaspReader::readStructure(const std::string &filename,
+                                                  std::function<void(float, const std::string &)> progress_callback) {
   return read(filename);
 }
 
-correlation::core::Trajectory VaspReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
-  throw std::runtime_error(
-      "POSCAR/CONTCAR files are single structures, use readStructure.");
+correlation::core::Trajectory
+VaspReader::readTrajectory(const std::string &filename,
+                           std::function<void(float, const std::string &)> progress_callback) {
+  throw std::runtime_error("POSCAR/CONTCAR files are single structures, use readStructure.");
 }
 
 correlation::core::Cell VaspReader::read(const std::string &file_name) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" +
-                             std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
   }
 
   std::string line;
@@ -54,8 +50,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
 
   // Line 2: Scaling factor
   if (!std::getline(myfile, line)) {
-    throw std::runtime_error(
-        "POSCAR: unexpected end of file (scaling factor).");
+    throw std::runtime_error("POSCAR: unexpected end of file (scaling factor).");
   }
   double scaling_factor = std::stod(line);
 
@@ -63,14 +58,11 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   double v[3][3];
   for (int i = 0; i < 3; ++i) {
     if (!std::getline(myfile, line)) {
-      throw std::runtime_error(
-          "POSCAR: unexpected end of file (lattice vector).");
+      throw std::runtime_error("POSCAR: unexpected end of file (lattice vector).");
     }
     std::istringstream iss(line);
     if (!(iss >> v[i][0] >> v[i][1] >> v[i][2])) {
-      throw std::runtime_error(
-          "POSCAR: failed to parse lattice vector on line " +
-          std::to_string(i + 3) + ".");
+      throw std::runtime_error("POSCAR: failed to parse lattice vector on line " + std::to_string(i + 3) + ".");
     }
   }
 
@@ -88,8 +80,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
     // V_current = a . (b x c)
     double target_volume = std::abs(scaling_factor);
     double current_volume =
-        std::abs(v[0][0] * (v[1][1] * v[2][2] - v[1][2] * v[2][1]) -
-                 v[0][1] * (v[1][0] * v[2][2] - v[1][2] * v[2][0]) +
+        std::abs(v[0][0] * (v[1][1] * v[2][2] - v[1][2] * v[2][1]) - v[0][1] * (v[1][0] * v[2][2] - v[1][2] * v[2][0]) +
                  v[0][2] * (v[1][0] * v[2][1] - v[1][1] * v[2][0]));
     double scale = std::cbrt(target_volume / current_volume);
     for (int i = 0; i < 3; ++i) {
@@ -99,16 +90,14 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
     }
   }
 
-  correlation::core::Cell tempCell({v[0][0], v[0][1], v[0][2]},
-                                   {v[1][0], v[1][1], v[1][2]},
+  correlation::core::Cell tempCell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
                                    {v[2][0], v[2][1], v[2][2]});
 
   // Line 6: Species names (VASP 5+ format)
   // Could also be atom counts (VASP 4 format) — detect by checking if
   // the first token is a number.
   if (!std::getline(myfile, line)) {
-    throw std::runtime_error(
-        "POSCAR: unexpected end of file (species/counts).");
+    throw std::runtime_error("POSCAR: unexpected end of file (species/counts).");
   }
 
   std::vector<std::string> species;
@@ -146,8 +135,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
     // If we read species names, next line is atom counts
     if (is_species_line) {
       if (!std::getline(myfile, line)) {
-        throw std::runtime_error(
-            "POSCAR: unexpected end of file (atom counts).");
+        throw std::runtime_error("POSCAR: unexpected end of file (atom counts).");
       }
       std::istringstream count_iss(line);
       int count;
@@ -158,10 +146,8 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   }
 
   if (species.size() != atom_counts.size()) {
-    throw std::runtime_error("POSCAR: species count (" +
-                             std::to_string(species.size()) +
-                             ") does not match atom count entries (" +
-                             std::to_string(atom_counts.size()) + ").");
+    throw std::runtime_error("POSCAR: species count (" + std::to_string(species.size()) +
+                             ") does not match atom count entries (" + std::to_string(atom_counts.size()) + ").");
   }
 
   int total_atoms = 0;
@@ -171,8 +157,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
 
   // Next line: "Selective dynamics" (optional) or coordinate type
   if (!std::getline(myfile, line)) {
-    throw std::runtime_error(
-        "POSCAR: unexpected end of file (coordinate type).");
+    throw std::runtime_error("POSCAR: unexpected end of file (coordinate type).");
   }
 
   // Check for Selective Dynamics
@@ -187,9 +172,8 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   if (first_char == 'S' || first_char == 's') {
     // Skip selective dynamics line, read next line for coordinate type
     if (!std::getline(myfile, line)) {
-      throw std::runtime_error(
-          "POSCAR: unexpected end of file (coordinate type after selective "
-          "dynamics).");
+      throw std::runtime_error("POSCAR: unexpected end of file (coordinate type after selective "
+                               "dynamics).");
     }
     // Re-read first char
     for (char c : line) {
@@ -211,14 +195,12 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   const auto &lv = tempCell.latticeVectors();
   for (int i = 0; i < total_atoms; ++i) {
     if (!std::getline(myfile, line)) {
-      throw std::runtime_error(
-          "POSCAR: unexpected end of file (atom position " +
-          std::to_string(i + 1) + " of " + std::to_string(total_atoms) + ").");
+      throw std::runtime_error("POSCAR: unexpected end of file (atom position " + std::to_string(i + 1) + " of " +
+                               std::to_string(total_atoms) + ").");
     }
 
     // Determine which species this atom belongs to
-    while (species_idx < static_cast<int>(atom_counts.size()) &&
-           atoms_in_species >= atom_counts[species_idx]) {
+    while (species_idx < static_cast<int>(atom_counts.size()) && atoms_in_species >= atom_counts[species_idx]) {
       atoms_in_species = 0;
       species_idx++;
     }
@@ -235,8 +217,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
     // Cartesian mode: use coordinates as-is.
     correlation::math::Vector3<double> pos;
     if (is_direct) {
-      pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
-             x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+      pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0], x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
              x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
     } else {
       pos = {x, y, z};

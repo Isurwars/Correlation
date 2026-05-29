@@ -54,8 +54,8 @@ public:
 
 private:
   ReaderFactory() = default;
-  std::vector<std::unique_ptr<BaseReader>> readers_;    ///< Storage for reader instances.
-  std::map<std::string, BaseReader *> extension_map_;    ///< Lookup map for file extensions.
+  std::vector<std::unique_ptr<BaseReader>> readers_;  ///< Storage for reader instances.
+  std::map<std::string, BaseReader *> extension_map_; ///< Lookup map for file extensions.
 };
 
 } // namespace correlation::readers

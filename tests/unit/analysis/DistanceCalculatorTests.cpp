@@ -46,7 +46,7 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   EXPECT_TRUE(out_graph.areConnected(0, 1));
   EXPECT_TRUE(out_graph.areConnected(1, 0));
 
-  const auto& neighbors = out_graph.getNeighbors(0);
+  const auto &neighbors = out_graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
   EXPECT_EQ(neighbors[0].index, 1);
   EXPECT_DOUBLE_EQ(neighbors[0].distance, 1.5);
@@ -57,8 +57,8 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
 TEST(DistanceCalculatorTests, DistanceAcrossPeriodicBoundary) {
   // Atom near box edge: distance should be computed across PBC
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
-  cell.addAtom("Si", {0.5, 5.0, 5.0});  // Near left edge
-  cell.addAtom("Si", {9.5, 5.0, 5.0});  // Near right edge
+  cell.addAtom("Si", {0.5, 5.0, 5.0}); // Near left edge
+  cell.addAtom("Si", {9.5, 5.0, 5.0}); // Near right edge
   // PBC distance = 1.0 (not 9.0)
 
   double cutoff_sq = 4.0; // cutoff = 2.0
@@ -73,7 +73,7 @@ TEST(DistanceCalculatorTests, DistanceAcrossPeriodicBoundary) {
   // Should find one pair at distance 1.0
   ASSERT_GE(out_distances[0][0].size(), 1);
   EXPECT_NEAR(out_distances[0][0][0], 1.0, 1e-9);
-  
+
   // Neighbor graph should reflect the bond
   EXPECT_TRUE(out_graph.areConnected(0, 1));
   EXPECT_TRUE(out_graph.areConnected(1, 0));
@@ -124,14 +124,11 @@ TEST(DistanceCalculatorTests, NonOrthogonalCell) {
 TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  cell.addAtom("O", {4.0, 0.0, 0.0});  // Distance = 4.0
+  cell.addAtom("O", {4.0, 0.0, 0.0}); // Distance = 4.0
 
   // Cutoff = 2.0, so this pair should NOT be found
   double cutoff_sq = 4.0;
-  std::vector<std::vector<double>> bond_cutoffs_sq = {
-      {4.0, 4.0},
-      {4.0, 4.0}
-  };
+  std::vector<std::vector<double>> bond_cutoffs_sq = {{4.0, 4.0}, {4.0, 4.0}};
 
   size_t num_elements = cell.elements().size();
   DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
@@ -154,12 +151,10 @@ TEST(DistanceCalculatorTests, ThrowsOnInvalidCutoff) {
   DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
   NeighborGraph out_graph(1);
 
-  EXPECT_THROW(
-      DistanceCalculator::compute(cell, -1.0, bond_cutoffs_sq, true, out_distances, out_graph),
-      std::invalid_argument);
-  EXPECT_THROW(
-      DistanceCalculator::compute(cell, 0.0, bond_cutoffs_sq, true, out_distances, out_graph),
-      std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, -1.0, bond_cutoffs_sq, true, out_distances, out_graph),
+               std::invalid_argument);
+  EXPECT_THROW(DistanceCalculator::compute(cell, 0.0, bond_cutoffs_sq, true, out_distances, out_graph),
+               std::invalid_argument);
 }
 
 } // namespace correlation::testing

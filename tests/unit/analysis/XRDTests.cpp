@@ -146,9 +146,8 @@ TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
   EXPECT_THROW(df.calculateXRD(-1.0, 5.0, 90.0, 0.5), std::invalid_argument);
 
   Histogram empty_gr;
-  EXPECT_THROW(
-      correlation::calculators::XRDCalculator::calculate(empty_gr, cell_, {}, 1.5406, 5.0, 90.0, 0.5),
-      std::invalid_argument);
+  EXPECT_THROW(correlation::calculators::XRDCalculator::calculate(empty_gr, cell_, {}, 1.5406, 5.0, 90.0, 0.5),
+               std::invalid_argument);
 }
 
 } // namespace correlation::analysis

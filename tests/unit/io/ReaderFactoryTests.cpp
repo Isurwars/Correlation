@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "readers/ReaderFactory.hpp"
 #include "readers/BaseReader.hpp"
+#include "readers/ReaderFactory.hpp"
 
+#include <cstdio>
+#include <fstream>
 #include <gtest/gtest.h>
 #include <memory>
-#include <fstream>
-#include <cstdio>
 
 namespace correlation::testing {
 
@@ -20,16 +20,16 @@ public:
   std::string getName() const override { return "MockReader"; }
   std::vector<std::string> getExtensions() const override { return {".mock", ".mck"}; }
   bool isTrajectory() const override { return false; }
-  
-  correlation::core::Cell readStructure(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback = nullptr) override {
+
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override {
     return correlation::core::Cell();
   }
 
-  correlation::core::Trajectory readTrajectory(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback = nullptr) override {
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override {
     return correlation::core::Trajectory();
   }
 };
@@ -50,7 +50,7 @@ TEST(ReaderFactoryTests, GetAllExtensions) {
   auto &factory = ReaderFactory::instance();
   std::vector<std::string> extensions = factory.getAllExtensions();
   EXPECT_GT(extensions.size(), 0);
-  
+
   // At least standard formats like .car or .cif should exist
   bool found_car = false;
   for (const auto &ext : extensions) {
@@ -64,7 +64,7 @@ TEST(ReaderFactoryTests, GetAllExtensions) {
 
 TEST(ReaderFactoryTests, GetReaderForExtension) {
   auto &factory = ReaderFactory::instance();
-  
+
   // Try querying a standard reader by extension
   BaseReader *retrieved = factory.getReaderForExtension(".car");
   ASSERT_NE(retrieved, nullptr);
@@ -73,12 +73,12 @@ TEST(ReaderFactoryTests, GetReaderForExtension) {
 
 TEST(ReaderFactoryTests, RegisterAndLookupCustomReader) {
   auto &factory = ReaderFactory::instance();
-  
+
   // Register a custom mock reader
   auto mock = std::make_unique<MockReader>();
   bool result = factory.registerReader(std::move(mock));
   EXPECT_TRUE(result);
-  
+
   // Verify it resolves by extension
   BaseReader *retrieved1 = factory.getReaderForExtension(".mock");
   ASSERT_NE(retrieved1, nullptr);

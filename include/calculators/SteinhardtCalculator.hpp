@@ -31,36 +31,33 @@ public:
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of Steinhardt parameters (Q4, Q6, W6).
-   * 
+   *
    * @param cell The periodic cell.
    * @param neighbors Structural analyzer containing the neighbor graph.
    * @return A map of histograms for each requested parameter.
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell,
-            const correlation::analysis::StructureAnalyzer *neighbors);
+  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors);
 
   /**
    * @brief Computes the complex spherical harmonic @f$ Y_l^m(\theta, \phi) @f$.
-   * 
+   *
    * @param l Degree of the harmonic.
    * @param m Order of the harmonic.
    * @param theta Inclination angle (radians).
    * @param phi Azimuthal angle (radians).
    * @return The complex value of the spherical harmonic.
    */
-  static std::complex<double> sphericalHarmonic(int l, int m, double theta,
-                                                double phi);
+  static std::complex<double> sphericalHarmonic(int l, int m, double theta, double phi);
 
   /**
    * @brief Computes the Wigner 3-j symbol using the Racah formula.
-   * 
+   *
    * @param j1, j2, j3 Angular momenta.
    * @param m1, m2, m3 Magnetic projections.
    * @return The scalar value of the 3-j symbol.

@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "calculators/CalculatorFactory.hpp"
 #include "calculators/BaseCalculator.hpp"
+#include "calculators/CalculatorFactory.hpp"
 
 #include <gtest/gtest.h>
 #include <memory>
@@ -47,7 +47,7 @@ TEST(CalculatorFactoryTests, LookupStandardCalculators) {
   const auto &calculators = factory.getCalculators();
   ASSERT_FALSE(calculators.empty());
   std::string first_calc_name = calculators[0]->getName();
-  
+
   const BaseCalculator *retrieved = factory.getCalculator(first_calc_name);
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), first_calc_name);
@@ -55,12 +55,12 @@ TEST(CalculatorFactoryTests, LookupStandardCalculators) {
 
 TEST(CalculatorFactoryTests, RegisterAndLookupCustomCalculator) {
   auto &factory = CalculatorFactory::instance();
-  
+
   // Register a custom mock calculator
   auto mock = std::make_unique<MockCalculator>();
   bool result = factory.registerCalculator(std::move(mock));
   EXPECT_TRUE(result);
-  
+
   // Verify it can be retrieved
   const BaseCalculator *retrieved = factory.getCalculator("MockCalculator");
   ASSERT_NE(retrieved, nullptr);

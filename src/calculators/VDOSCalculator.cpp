@@ -16,14 +16,12 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<VDOSCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<VDOSCalculator>());
 } // namespace
 
-void VDOSCalculator::calculateTrajectory(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::core::Trajectory &traj,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &df,
+                                         const correlation::core::Trajectory &traj,
+                                         const correlation::analysis::AnalysisSettings &settings) const {
   const auto &all = df.getAllHistograms();
   if (all.find("VACF") == all.end()) {
     return; // VACF must be computed first
@@ -31,8 +29,7 @@ void VDOSCalculator::calculateTrajectory(
   df.addHistogram("VDOS", calculate(df.getHistogram("VACF")));
 }
 
-correlation::analysis::Histogram
-VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist) {
+correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist) {
   const auto &vacf_data = vacf_hist.partials.at("Total");
 
   if (vacf_data.size() < 2) {
@@ -58,19 +55,15 @@ VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist) {
 
   for (size_t i = num_points - 1; i > 0; --i) {
     combined_frequencies.push_back(-frequencies[i]);
-    combined_frequencies_cmInv.push_back(-frequencies[i] *
-                                         correlation::math::thz_to_cminv);
-    combined_frequencies_meV.push_back(-frequencies[i] *
-                                       correlation::math::thz_to_mev);
+    combined_frequencies_cmInv.push_back(-frequencies[i] * correlation::math::thz_to_cminv);
+    combined_frequencies_meV.push_back(-frequencies[i] * correlation::math::thz_to_mev);
     combined_intensities.push_back(intensities_imag[i]);
   }
 
   for (size_t i = 0; i < num_points; ++i) {
     combined_frequencies.push_back(frequencies[i]);
-    combined_frequencies_cmInv.push_back(frequencies[i] *
-                                         correlation::math::thz_to_cminv);
-    combined_frequencies_meV.push_back(frequencies[i] *
-                                       correlation::math::thz_to_mev);
+    combined_frequencies_cmInv.push_back(frequencies[i] * correlation::math::thz_to_cminv);
+    combined_frequencies_meV.push_back(frequencies[i] * correlation::math::thz_to_mev);
     combined_intensities.push_back(intensities_real[i]);
   }
 

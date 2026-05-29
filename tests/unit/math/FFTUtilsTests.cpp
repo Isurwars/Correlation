@@ -5,8 +5,8 @@
 
 #include "math/FFTUtils.hpp"
 
-#include <gtest/gtest.h>
 #include <complex>
+#include <gtest/gtest.h>
 #include <vector>
 
 namespace correlation::testing {
@@ -17,10 +17,8 @@ class FFTUtilsTests : public ::testing::Test {};
 
 TEST_F(FFTUtilsTests, ComputeFFTHandlesPowerOfTwoAndInvert) {
   // Test forward and inverse FFT on size 8
-  std::vector<std::complex<double>> signal = {
-    {1.0, 0.0}, {2.0, 0.0}, {3.0, 0.0}, {4.0, 0.0},
-    {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}
-  };
+  std::vector<std::complex<double>> signal = {{1.0, 0.0}, {2.0, 0.0}, {3.0, 0.0}, {4.0, 0.0},
+                                              {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}, {0.0, 0.0}};
   auto original = signal;
 
   // Forward FFT
@@ -56,13 +54,13 @@ TEST_F(FFTUtilsTests, AutocorrelateEmptyReturnsEmpty) {
 
 TEST_F(FFTUtilsTests, AutocorrelateMatchesMathematicalDefinition) {
   std::vector<double> x = {1.0, 2.0, 3.0};
-  
+
   // Linear autocorrelation:
   // R[0] = 1*1 + 2*2 + 3*3 = 14
   // R[1] = 1*2 + 2*3 = 8
   // R[2] = 1*3 = 3
   auto r = autocorrelate(x);
-  
+
   ASSERT_EQ(r.size(), 3);
   EXPECT_NEAR(r[0], 14.0, 1e-9);
   EXPECT_NEAR(r[1], 8.0, 1e-9);
@@ -89,12 +87,12 @@ TEST_F(FFTUtilsTests, ComputeFFTSizeOne) {
   // Size 1 is a valid power of two (2^0)
   std::vector<std::complex<double>> signal = {{7.5, -2.3}};
   auto original = signal;
-  
+
   // Forward FFT of a single element is itself
   computeFFT(signal, false);
   EXPECT_NEAR(signal[0].real(), original[0].real(), 1e-9);
   EXPECT_NEAR(signal[0].imag(), original[0].imag(), 1e-9);
-  
+
   // Inverse FFT should return to original
   computeFFT(signal, true);
   EXPECT_NEAR(signal[0].real(), original[0].real(), 1e-9);

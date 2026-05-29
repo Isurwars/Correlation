@@ -21,10 +21,10 @@ namespace correlation::math {
 /**
  * @class Vector3
  * @brief A lightweight, constexpr, stack-based 3D vector.
- * 
+ *
  * Provides basic linear algebra operations for 3D geometric calculations.
  * Supports SIMD optimization for specific types (e.g., double).
- * 
+ *
  * @tparam T The scalar type stored by the vector (e.g., float, double, int).
  */
 template <typename T> class Vector3 {
@@ -93,9 +93,7 @@ public:
    * @brief Checks if the vector is a zero vector.
    * @return True if every component is exactly zero.
    */
-  constexpr bool empty() const noexcept {
-    return data_[0] == T{} && data_[1] == T{} && data_[2] == T{};
-  }
+  constexpr bool empty() const noexcept { return data_[0] == T{} && data_[1] == T{} && data_[2] == T{}; }
 
   /** @return Pointer to the beginning of the underlying data. */
   constexpr const T *begin() const noexcept { return data_.data(); }
@@ -129,18 +127,14 @@ public:
    * @param s The scalar factor.
    * @return A new vector scaled by s.
    */
-  constexpr Vector3 operator*(T s) const noexcept {
-    return {data_[0] * s, data_[1] * s, data_[2] * s};
-  }
+  constexpr Vector3 operator*(T s) const noexcept { return {data_[0] * s, data_[1] * s, data_[2] * s}; }
 
   /**
    * @brief Scalar division.
    * @param s The scalar divisor.
    * @return A new vector scaled by 1/s.
    */
-  constexpr Vector3 operator/(T s) const noexcept {
-    return {data_[0] / s, data_[1] / s, data_[2] / s};
-  }
+  constexpr Vector3 operator/(T s) const noexcept { return {data_[0] / s, data_[1] / s, data_[2] / s}; }
 
   /**
    * @brief In-place addition.
@@ -192,10 +186,10 @@ protected:
 /**
  * @class Matrix3
  * @brief A lightweight, constexpr, stack-based 3x3 matrix.
- * 
+ *
  * Uses column-major storage format (standard for OpenGL and BLAS).
  * This means data is stored as an array of three column vectors.
- * 
+ *
  * @tparam T The scalar type stored by the matrix.
  */
 template <typename T> class Matrix3 {
@@ -210,17 +204,13 @@ public:
    * @param c1 Second column vector.
    * @param c2 Third column vector.
    */
-  constexpr Matrix3(const Vector3<T> &c0, const Vector3<T> &c1,
-                    const Vector3<T> &c2) noexcept
-      : data_{c0, c1, c2} {}
+  constexpr Matrix3(const Vector3<T> &c0, const Vector3<T> &c1, const Vector3<T> &c2) noexcept : data_{c0, c1, c2} {}
   /**
    * @brief Access column vector by index.
    * @param c Column index (0, 1, or 2).
    * @return Constant reference to the column vector.
    */
-  constexpr const Vector3<T> &operator[](std::size_t c) const noexcept {
-    return data_[c];
-  }
+  constexpr const Vector3<T> &operator[](std::size_t c) const noexcept { return data_[c]; }
 
   /**
    * @brief Access mutable column vector by index.
@@ -235,9 +225,7 @@ public:
    * @param c Column index.
    * @return The element value.
    */
-  constexpr T operator()(std::size_t r, std::size_t c) const noexcept {
-    return data_[c][r];
-  }
+  constexpr T operator()(std::size_t r, std::size_t c) const noexcept { return data_[c][r]; }
 
   /**
    * @brief Access mutable element by row and column.
@@ -245,9 +233,7 @@ public:
    * @param c Column index.
    * @return Reference to the element.
    */
-  constexpr T &operator()(std::size_t r, std::size_t c) noexcept {
-    return data_[c][r];
-  }
+  constexpr T &operator()(std::size_t r, std::size_t c) noexcept { return data_[c][r]; }
 
   /**
    * @brief Converts the matrix to a nested std::array.
@@ -263,18 +249,14 @@ public:
    * @brief Computes the matrix trace.
    * @return Sum of the diagonal elements.
    */
-  constexpr T trace() const noexcept {
-    return data_[0][0] + data_[1][1] + data_[2][2];
-  }
+  constexpr T trace() const noexcept { return data_[0][0] + data_[1][1] + data_[2][2]; }
 
   /**
    * @brief Matrix-scalar multiplication.
    * @param s Scalar factor.
    * @return A scaled matrix object.
    */
-  constexpr Matrix3 operator*(T s) const noexcept {
-    return Matrix3(data_[0] * s, data_[1] * s, data_[2] * s);
-  }
+  constexpr Matrix3 operator*(T s) const noexcept { return Matrix3(data_[0] * s, data_[1] * s, data_[2] * s); }
 
   /**
    * @brief In-place scalar multiplication.
@@ -388,9 +370,7 @@ public:
   double &operator()(std::size_t i) noexcept { return data_[i]; }
 
   /** @return True if x, y, and z are all 0.0. */
-  bool empty() const noexcept {
-    return data_[0] == 0.0 && data_[1] == 0.0 && data_[2] == 0.0;
-  }
+  bool empty() const noexcept { return data_[0] == 0.0 && data_[1] == 0.0 && data_[2] == 0.0; }
 
   // Arithmetic with SIMD
   /**
@@ -400,8 +380,7 @@ public:
    */
   Vector3 operator+(const Vector3 &rhs) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_add_pd(_mm256_load_pd(data_),
-                                             _mm256_load_pd(rhs.data_)));
+    _mm256_store_pd(res.data_, _mm256_add_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
     return res;
   }
 
@@ -412,8 +391,7 @@ public:
    */
   Vector3 operator-(const Vector3 &rhs) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_sub_pd(_mm256_load_pd(data_),
-                                             _mm256_load_pd(rhs.data_)));
+    _mm256_store_pd(res.data_, _mm256_sub_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
     return res;
   }
 
@@ -424,8 +402,7 @@ public:
    */
   Vector3 operator*(double s) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_,
-                    _mm256_mul_pd(_mm256_load_pd(data_), _mm256_set1_pd(s)));
+    _mm256_store_pd(res.data_, _mm256_mul_pd(_mm256_load_pd(data_), _mm256_set1_pd(s)));
     return res;
   }
 
@@ -436,8 +413,7 @@ public:
    */
   Vector3 operator/(double s) const noexcept {
     Vector3 res;
-    _mm256_store_pd(res.data_,
-                    _mm256_div_pd(_mm256_load_pd(data_), _mm256_set1_pd(s)));
+    _mm256_store_pd(res.data_, _mm256_div_pd(_mm256_load_pd(data_), _mm256_set1_pd(s)));
     return res;
   }
 
@@ -447,8 +423,7 @@ public:
    * @return Reference to this vector.
    */
   Vector3 &operator+=(const Vector3 &rhs) noexcept {
-    _mm256_store_pd(
-        data_, _mm256_add_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
+    _mm256_store_pd(data_, _mm256_add_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
     return *this;
   }
 
@@ -458,8 +433,7 @@ public:
    * @return Reference to this vector.
    */
   Vector3 &operator-=(const Vector3 &rhs) noexcept {
-    _mm256_store_pd(
-        data_, _mm256_sub_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
+    _mm256_store_pd(data_, _mm256_sub_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
     return *this;
   }
 
@@ -469,8 +443,7 @@ public:
    * @return Scalar result.
    */
   double operator*(const Vector3 &rhs) const noexcept {
-    __m256d mult =
-        _mm256_mul_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_));
+    __m256d mult = _mm256_mul_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_));
     // Mask out the 4th element (just in case) or just sum the first 3.
     // Actually, since 4th component is 0, we can sum all 4.
     __m128d lo = _mm256_castpd256_pd128(mult);
@@ -484,9 +457,7 @@ public:
    * @brief Converts the vector to a std::array.
    * @return Array containing {x, y, z}.
    */
-  std::array<double, 3> array() const noexcept {
-    return {data_[0], data_[1], data_[2]};
-  }
+  std::array<double, 3> array() const noexcept { return {data_[0], data_[1], data_[2]}; }
 
   /** @return Constant pointer to the beginning of the SIMD-aligned data. */
   const double *begin() const noexcept { return data_; }
@@ -509,32 +480,27 @@ private:
 
 /**
  * @brief Computes the dot product of two vectors.
- * 
+ *
  * @param a The first vector.
  * @param b The second vector.
  * @return The scalar dot product.
  */
-template <typename T>
-constexpr T dot(const Vector3<T> &a, const Vector3<T> &b) noexcept {
-  return a * b;
-}
+template <typename T> constexpr T dot(const Vector3<T> &a, const Vector3<T> &b) noexcept { return a * b; }
 
 /**
  * @brief Computes the cross product of two 3D vectors.
- * 
+ *
  * @param a The first vector.
  * @param b The second vector.
  * @return A new Vector3 representing the cross product a x b.
  */
-template <typename T>
-constexpr Vector3<T> cross(const Vector3<T> &a, const Vector3<T> &b) noexcept {
-  return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
-          a[0] * b[1] - a[1] * b[0]};
+template <typename T> constexpr Vector3<T> cross(const Vector3<T> &a, const Vector3<T> &b) noexcept {
+  return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]};
 }
 
 /**
  * @brief Computes the cross product of two 3D vectors.
- * 
+ *
  * Optimized specialization for double using manual calculations to help the
  * compiler generate aligned SIMD code.
  *
@@ -543,35 +509,29 @@ constexpr Vector3<T> cross(const Vector3<T> &a, const Vector3<T> &b) noexcept {
  * @return A new Vector3 representing the cross product a x b.
  */
 #if defined(CORRELATION_SIMD_AVX2) || defined(CORRELATION_SIMD_AVX512)
-inline Vector3<double> cross(const Vector3<double> &a,
-                             const Vector3<double> &b) noexcept {
-  return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2],
-          a[0] * b[1] - a[1] * b[0]};
+inline Vector3<double> cross(const Vector3<double> &a, const Vector3<double> &b) noexcept {
+  return {a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]};
 }
 #endif
 
 /**
  * @brief Computes the squared vector norm (length).
- * 
+ *
  * @param v The vector.
  * @return The squared length of the vector.
  */
-template <typename T> constexpr T norm_sq(const Vector3<T> &v) noexcept {
-  return v * v;
-}
+template <typename T> constexpr T norm_sq(const Vector3<T> &v) noexcept { return v * v; }
 /**
  * @brief Computes the vector norm (length).
- * 
+ *
  * @param v The vector.
  * @return The length of the vector.
  */
-template <typename T> constexpr T norm(const Vector3<T> &v) noexcept {
-  return std::sqrt(v * v);
-}
+template <typename T> constexpr T norm(const Vector3<T> &v) noexcept { return std::sqrt(v * v); }
 
 /**
  * @brief Normalizes the given vector.
- * 
+ *
  * @param v The vector to normalize.
  * @return A normalized copy of the vector.
  * @throws std::domain_error if the vector length is too close to zero.
@@ -585,19 +545,18 @@ template <typename T> inline Vector3<T> normalize(const Vector3<T> &v) {
 
 /**
  * @brief Computes the determinant of a 3x3 matrix.
- * 
+ *
  * @param m The matrix.
  * @return The determinant.
  */
 template <typename T> constexpr T determinant(const Matrix3<T> &m) noexcept {
-  return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
-         m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+  return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
          m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 }
 
 /**
  * @brief Computes the inverse of a 3x3 matrix.
- * 
+ *
  * @param m The matrix to invert.
  * @return The inverted matrix.
  * @throws std::runtime_error if the matrix is singular (determinant near zero).
@@ -608,16 +567,13 @@ template <typename T> constexpr Matrix3<T> invert(const Matrix3<T> &m) {
     throw std::runtime_error("singular matrix");
   T inv = T{1} / det;
 
-  Vector3<T> c0{m[1][1] * m[2][2] - m[1][2] * m[2][1],
-                m[0][2] * m[2][1] - m[0][1] * m[2][2],
+  Vector3<T> c0{m[1][1] * m[2][2] - m[1][2] * m[2][1], m[0][2] * m[2][1] - m[0][1] * m[2][2],
                 m[0][1] * m[1][2] - m[0][2] * m[1][1]};
 
-  Vector3<T> c1{m[1][2] * m[2][0] - m[1][0] * m[2][2],
-                m[0][0] * m[2][2] - m[0][2] * m[2][0],
+  Vector3<T> c1{m[1][2] * m[2][0] - m[1][0] * m[2][2], m[0][0] * m[2][2] - m[0][2] * m[2][0],
                 m[0][2] * m[1][0] - m[0][0] * m[1][2]};
 
-  Vector3<T> c2{m[1][0] * m[2][1] - m[1][1] * m[2][0],
-                m[0][1] * m[2][0] - m[0][0] * m[2][1],
+  Vector3<T> c2{m[1][0] * m[2][1] - m[1][1] * m[2][0], m[0][1] * m[2][0] - m[0][0] * m[2][1],
                 m[0][0] * m[1][1] - m[0][1] * m[1][0]};
 
   return Matrix3<T>(c0 * inv, c1 * inv, c2 * inv);
@@ -625,14 +581,12 @@ template <typename T> constexpr Matrix3<T> invert(const Matrix3<T> &m) {
 
 /**
  * @brief Computes the transpose of a 3x3 matrix.
- * 
+ *
  * @param m The matrix to transpose.
  * @return The transposed matrix.
  */
-template <typename T>
-constexpr Matrix3<T> transpose(const Matrix3<T> &m) noexcept {
-  return Matrix3<T>({m(0, 0), m(0, 1), m(0, 2)}, {m(1, 0), m(1, 1), m(1, 2)},
-                    {m(2, 0), m(2, 1), m(2, 2)});
+template <typename T> constexpr Matrix3<T> transpose(const Matrix3<T> &m) noexcept {
+  return Matrix3<T>({m(0, 0), m(0, 1), m(0, 2)}, {m(1, 0), m(1, 1), m(1, 2)}, {m(2, 0), m(2, 1), m(2, 2)});
 }
 
 /**
@@ -642,9 +596,7 @@ constexpr Matrix3<T> transpose(const Matrix3<T> &m) noexcept {
  * @param v 3D vector.
  * @return Transformed vector m*v.
  */
-template <typename T>
-constexpr Vector3<T> operator*(const Matrix3<T> &m,
-                               const Vector3<T> &v) noexcept {
+template <typename T> constexpr Vector3<T> operator*(const Matrix3<T> &m, const Vector3<T> &v) noexcept {
   Vector3<T> res;
   res += m[0] * v.x();
   res += m[1] * v.y();
@@ -659,9 +611,7 @@ constexpr Vector3<T> operator*(const Matrix3<T> &m,
  * @param b Right matrix.
  * @return Resulting matrix product a*b.
  */
-template <typename T>
-constexpr Matrix3<T> operator*(const Matrix3<T> &a,
-                               const Matrix3<T> &b) noexcept {
+template <typename T> constexpr Matrix3<T> operator*(const Matrix3<T> &a, const Matrix3<T> &b) noexcept {
   return Matrix3<T>(a * b[0], a * b[1], a * b[2]);
 }
 
@@ -674,8 +624,8 @@ constexpr Matrix3<T> operator*(const Matrix3<T> &a,
  * @return Scaled vector s*v.
  */
 template <typename Scalar, typename T>
-constexpr std::enable_if_t<std::is_arithmetic<Scalar>::value, Vector3<T>>
-operator*(Scalar s, const Vector3<T> &v) noexcept {
+constexpr std::enable_if_t<std::is_arithmetic<Scalar>::value, Vector3<T>> operator*(Scalar s,
+                                                                                    const Vector3<T> &v) noexcept {
   return v * static_cast<T>(s);
 }
 

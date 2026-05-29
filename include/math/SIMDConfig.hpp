@@ -27,14 +27,14 @@
 #if defined(CORRELATION_SIMD_AVX512)
 #include <immintrin.h>
 /** @brief Number of 64-bit float elements per SIMD register. */
-#define CORRELATION_SIMD_WIDTH 8 
+#define CORRELATION_SIMD_WIDTH 8
 #elif defined(CORRELATION_SIMD_AVX2)
 #include <immintrin.h>
 /** @brief Number of 64-bit float elements per SIMD register. */
-#define CORRELATION_SIMD_WIDTH 4 
+#define CORRELATION_SIMD_WIDTH 4
 #else
 /** @brief Number of 64-bit float elements per SIMD register. */
-#define CORRELATION_SIMD_WIDTH 1 
+#define CORRELATION_SIMD_WIDTH 1
 #endif
 
 // ---------------------------------------------------------------------------

@@ -48,10 +48,8 @@ protected:
     std::ofstream cif_file("test.cif");
     ASSERT_TRUE(cif_file.is_open());
     cif_file << "data_NaCl\n";
-    cif_file
-        << "_cell_length_a 5.64\n_cell_length_b 5.64\n_cell_length_c 5.64\n";
-    cif_file
-        << "_cell_angle_alpha 90\n_cell_angle_beta 90\n_cell_angle_gamma 90\n";
+    cif_file << "_cell_length_a 5.64\n_cell_length_b 5.64\n_cell_length_c 5.64\n";
+    cif_file << "_cell_angle_alpha 90\n_cell_angle_beta 90\n_cell_angle_gamma 90\n";
     cif_file << "loop_\n_atom_site_type_symbol\n_atom_site_fract_x\n_atom_site_"
                 "fract_y\n_atom_site_fract_z\n";
     cif_file << " Na 0.0 0.0 0.0\n Cl 0.5 0.5 0.5\n";
@@ -177,8 +175,7 @@ protected:
     // Create a temporary CASTEP .md file
     std::ofstream md_file("test.md");
     ASSERT_TRUE(md_file.is_open());
-    md_file
-        << " BEGIN header\n\n This is 8 atom cubic Si cell\n END header\n\n";
+    md_file << " BEGIN header\n\n This is 8 atom cubic Si cell\n END header\n\n";
     md_file << "               0.00000000E+000\n";
     md_file << "              -3.18206146E+001     -3.18108683E+001      "
                "9.74270683E-003  <-- E\n";
@@ -284,10 +281,8 @@ protected:
 
 TEST_F(FileReaderTests, ReadCarFileCorrectly) {
   // Arrange & Act
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.car");
-  correlation::core::Cell result_cell =
-      correlation::readers::readStructure("test.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.car");
+  correlation::core::Cell result_cell = correlation::readers::readStructure("test.car", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -315,10 +310,8 @@ TEST_F(FileReaderTests, ReadCarFileCorrectly) {
 
 TEST_F(FileReaderTests, ReadCellFileCorrectly) {
   // Arrange & Act
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.cell");
-  correlation::core::Cell result_cell =
-      correlation::readers::readStructure("test.cell", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.cell");
+  correlation::core::Cell result_cell = correlation::readers::readStructure("test.cell", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -346,10 +339,8 @@ TEST_F(FileReaderTests, ReadCellFileCorrectly) {
 
 TEST_F(FileReaderTests, ReadCifFileCorrectly) {
   // Arrange & Act
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.cif");
-  correlation::core::Cell result_cell =
-      correlation::readers::readStructure("test.cif", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.cif");
+  correlation::core::Cell result_cell = correlation::readers::readStructure("test.cif", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -366,29 +357,23 @@ TEST_F(FileReaderTests, ReadCifFileCorrectly) {
   bool na_origin_found = false;
   bool cl_center_found = false;
   for (const auto &atom : atoms) {
-    if (atom.element().symbol == "Na" &&
-        correlation::math::norm(atom.position()) < 1e-4) {
+    if (atom.element().symbol == "Na" && correlation::math::norm(atom.position()) < 1e-4) {
       na_origin_found = true;
     }
     correlation::math::Vector3<double> expected_cl_pos = {2.82, 2.82, 2.82};
-    if (atom.element().symbol == "Cl" &&
-        correlation::math::norm(atom.position() - expected_cl_pos) < 1e-4) {
+    if (atom.element().symbol == "Cl" && correlation::math::norm(atom.position() - expected_cl_pos) < 1e-4) {
       cl_center_found = true;
     }
   }
-  EXPECT_TRUE(na_origin_found)
-      << "Did not find the original Na atom at (0,0,0)";
-  EXPECT_TRUE(cl_center_found)
-      << "Did not find the original Cl atom at the cell center";
+  EXPECT_TRUE(na_origin_found) << "Did not find the original Na atom at (0,0,0)";
+  EXPECT_TRUE(cl_center_found) << "Did not find the original Cl atom at the cell center";
 }
 
 TEST_F(FileReaderTests, ReadArcFileCorrectly) {
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.arc");
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.arc");
   EXPECT_EQ(type, correlation::readers::FileType::Arc);
 
-  correlation::core::Trajectory traj =
-      correlation::readers::readTrajectory("test.arc", type);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory("test.arc", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
@@ -407,12 +392,10 @@ TEST_F(FileReaderTests, ReadArcFileCorrectly) {
 }
 
 TEST_F(FileReaderTests, ReadArcFileDuplicatedFrames) {
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test_identical.arc");
+  correlation::readers::FileType type = correlation::readers::determineFileType("test_identical.arc");
   EXPECT_EQ(type, correlation::readers::FileType::Arc);
 
-  correlation::core::Trajectory traj =
-      correlation::readers::readTrajectory("test_identical.arc", type);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory("test_identical.arc", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
@@ -429,10 +412,8 @@ TEST_F(FileReaderTests, ReadArcFileDuplicatedFrames) {
 
 TEST_F(FileReaderTests, ReadLammpsDumpCorrectly) {
   // Arrange & Act
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.dump");
-  correlation::core::Cell result_cell =
-      correlation::readers::readStructure("test.dump", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.dump");
+  correlation::core::Cell result_cell = correlation::readers::readStructure("test.dump", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -456,12 +437,10 @@ TEST_F(FileReaderTests, ReadLammpsDumpCorrectly) {
 }
 
 TEST_F(FileReaderTests, ReadLammpsDumpTrajectoryCorrectly) {
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test_multi.dump");
+  correlation::readers::FileType type = correlation::readers::determineFileType("test_multi.dump");
   EXPECT_EQ(type, correlation::readers::FileType::LammpsDump);
 
-  correlation::core::Trajectory traj =
-      correlation::readers::readTrajectory("test_multi.dump", type);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory("test_multi.dump", type);
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
 
@@ -479,12 +458,10 @@ TEST_F(FileReaderTests, ReadLammpsDumpTrajectoryCorrectly) {
 }
 
 TEST_F(FileReaderTests, ReadLammpsDumpElementColumnCorrectly) {
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test_element.dump");
+  correlation::readers::FileType type = correlation::readers::determineFileType("test_element.dump");
   EXPECT_EQ(type, correlation::readers::FileType::LammpsDump);
 
-  correlation::core::Cell result_cell =
-      correlation::readers::readStructure("test_element.dump", type);
+  correlation::core::Cell result_cell = correlation::readers::readStructure("test_element.dump", type);
 
   const auto &atoms = result_cell.atoms();
   ASSERT_EQ(atoms.size(), 2);
@@ -499,10 +476,8 @@ TEST_F(FileReaderTests, ReadLammpsDumpElementColumnCorrectly) {
 
 TEST_F(FileReaderTests, ReadOnetepDatCorrectly) {
   // Arrange & Act
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.dat");
-  correlation::core::Cell result_cell =
-      correlation::readers::readStructure("test.dat", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.dat");
+  correlation::core::Cell result_cell = correlation::readers::readStructure("test.dat", type);
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
@@ -526,39 +501,30 @@ TEST_F(FileReaderTests, ReadOnetepDatCorrectly) {
 }
 
 TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("test.md");
+  correlation::readers::FileType type = correlation::readers::determineFileType("test.md");
   EXPECT_EQ(type, correlation::readers::FileType::CastepMd);
 
-  correlation::core::Trajectory traj =
-      correlation::readers::readTrajectory("test.md", type);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory("test.md", type);
 
   const auto &frames = traj.getFrames();
   ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
   const auto &f1 = frames[0];
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0],
-                   10.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1],
-                   11.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2],
-                   12.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * correlation::math::bohr_to_angstrom);
   ASSERT_EQ(f1.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(),
-                   1.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(),
-                   4.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * correlation::math::bohr_to_angstrom);
 
   // Check the energy is parsed correctly
   EXPECT_DOUBLE_EQ(f1.getEnergy(), -31.8206146);
 
   // Check Frame 2
   const auto &f2 = frames[1];
-  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0],
-                   10.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(),
-                   1.1 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * correlation::math::bohr_to_angstrom);
 }
 
 TEST_F(FileReaderTests, ReadCelluloseExample) {
@@ -578,13 +544,11 @@ TEST_F(FileReaderTests, ReadCelluloseExample) {
     }
   }
 
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType(cellulose_path);
+  correlation::readers::FileType type = correlation::readers::determineFileType(cellulose_path);
   EXPECT_EQ(type, correlation::readers::FileType::CastepMd);
 
   // This should not crash or throw
-  correlation::core::Trajectory traj =
-      correlation::readers::readTrajectory(cellulose_path, type);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
   const auto &frames = traj.getFrames();
 
   // The Cellulose.md has 1001 frames
@@ -611,8 +575,8 @@ TEST_F(FileReaderTests, ReadOutmolCorrectly) {
     }
   }
 
-  correlation::core::Trajectory traj = correlation::readers::readTrajectory(
-      file_path, correlation::readers::FileType::Outmol);
+  correlation::core::Trajectory traj =
+      correlation::readers::readTrajectory(file_path, correlation::readers::FileType::Outmol);
   const auto &frames = traj.getFrames();
 
   // Verify we have a trajectory with frames
@@ -634,8 +598,8 @@ TEST_F(FileReaderTests, ReadOutmolCorrectly) {
 }
 
 TEST_F(FileReaderTests, DetermineFileTypeExtensionlessVasp) {
-  using correlation::readers::FileType;
   using correlation::readers::determineFileType;
+  using correlation::readers::FileType;
 
   EXPECT_EQ(determineFileType("POSCAR"), FileType::Vasp);
   EXPECT_EQ(determineFileType("CONTCAR"), FileType::Vasp);

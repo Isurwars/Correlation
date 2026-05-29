@@ -22,17 +22,13 @@
 namespace correlation::writers {
 
 // Automatic registration
-static bool registered =
-    WriterFactory::instance().registerWriter(std::make_unique<CSVWriter>());
+static bool registered = WriterFactory::instance().registerWriter(std::make_unique<CSVWriter>());
 
-void CSVWriter::writeAllCSVs(
-    const std::string &base_path,
-    const correlation::analysis::DistributionFunctions &df,
-    bool /*write_smoothed*/) const {
+void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+                             bool /*write_smoothed*/) const {
   for (const auto &[name, hist] : df.getAllHistograms()) {
     try {
-      if (hist.partials.empty() || hist.bins.empty() ||
-          hist.file_suffix.empty()) {
+      if (hist.partials.empty() || hist.bins.empty() || hist.file_suffix.empty()) {
         continue;
       }
 
@@ -40,15 +36,13 @@ void CSVWriter::writeAllCSVs(
       writeHistogramToCSV(filename, name, hist);
 
     } catch (const std::exception &e) {
-      std::cerr << "Error writing file for '" << name << "': " << e.what()
-                << std::endl;
+      std::cerr << "Error writing file for '" << name << "': " << e.what() << std::endl;
     }
   }
 }
 
-void CSVWriter::writeHistogramToCSV(
-    const std::string &filename, const std::string &name,
-    const correlation::analysis::Histogram &hist) const {
+void CSVWriter::writeHistogramToCSV(const std::string &filename, const std::string &name,
+                                    const correlation::analysis::Histogram &hist) const {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
   }
@@ -74,8 +68,7 @@ void CSVWriter::writeHistogramToCSV(
   // Get metadata if available
   std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
   std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
-  std::string description =
-      hist.description.empty() ? "Data export" : hist.description;
+  std::string description = hist.description.empty() ? "Data export" : hist.description;
   std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
 
   // --- Write Header ---

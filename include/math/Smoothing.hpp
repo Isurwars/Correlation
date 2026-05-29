@@ -32,8 +32,7 @@ enum class KernelType { Gaussian, Bump, Triweight };
  * @return A vector containing the normalized kernel.
  */
 
-inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
-                                          KernelType type) {
+inline std::vector<double> generateKernel(size_t size, double dx, double sigma, KernelType type) {
   std::vector<double> kernel(size);
   // Center of the discrete kernel in bin index units.
   const double center = static_cast<double>(size - 1) / 2.0;
@@ -98,15 +97,12 @@ inline std::vector<double> generateKernel(size_t size, double dx, double sigma,
  * @param type  Kernel type to use.
  * @return A vector containing the smoothed data (same length as `y`).
  */
-inline std::vector<double> KernelSmoothing(double dx,
-                                           const std::vector<double> &y,
-                                           double sigma, KernelType type) {
+inline std::vector<double> KernelSmoothing(double dx, const std::vector<double> &y, double sigma, KernelType type) {
   if (y.empty()) {
     return {};
   }
   if (dx <= 0) {
-    throw std::invalid_argument(
-        "'dx' must be a positive bin width for smoothing.");
+    throw std::invalid_argument("'dx' must be a positive bin width for smoothing.");
   }
   if (sigma <= 0.0) {
     throw std::invalid_argument("Smoothing sigma must be positive.");
@@ -136,9 +132,8 @@ inline std::vector<double> KernelSmoothing(double dx,
   // Phase 1 – left boundary (bins 0 .. kernel_radius-1): needs index clamping.
   for (size_t i = 0; i < std::min(kernel_radius, n); ++i) {
     for (size_t j = 0; j < kernel_size; ++j) {
-      const long long idx = static_cast<long long>(i) +
-                            static_cast<long long>(j) -
-                            static_cast<long long>(kernel_radius);
+      const long long idx =
+          static_cast<long long>(i) + static_cast<long long>(j) - static_cast<long long>(kernel_radius);
       smoothed[i] += y[static_cast<size_t>(std::max(0LL, idx))] * kernel[j];
     }
   }
@@ -161,9 +156,8 @@ inline std::vector<double> KernelSmoothing(double dx,
   const size_t right_start = (n > kernel_radius) ? n - kernel_radius : n;
   for (size_t i = right_start; i < n; ++i) {
     for (size_t j = 0; j < kernel_size; ++j) {
-      const long long idx = static_cast<long long>(i) +
-                            static_cast<long long>(j) -
-                            static_cast<long long>(kernel_radius);
+      const long long idx =
+          static_cast<long long>(i) + static_cast<long long>(j) - static_cast<long long>(kernel_radius);
       const long long clamped = std::min(idx, static_cast<long long>(n) - 1);
       smoothed[i] += y[static_cast<size_t>(clamped)] * kernel[j];
     }
@@ -177,16 +171,15 @@ inline std::vector<double> KernelSmoothing(double dx,
  *
  * Prefer the `(dx, y, sigma, type)` overload when the bin width is already
  * known to avoid recomputing it.
- * 
+ *
  * @param r The independent variable grid (e.g., radial distances).
  * @param y The dependent variable values to be smoothed.
  * @param sigma Kernel bandwidth.
  * @param type Kernel type to use.
  * @return A vector containing the smoothed data.
  */
-inline std::vector<double> KernelSmoothing(const std::vector<double> &r,
-                                           const std::vector<double> &y,
-                                           double sigma, KernelType type) {
+inline std::vector<double> KernelSmoothing(const std::vector<double> &r, const std::vector<double> &y, double sigma,
+                                           KernelType type) {
   if (r.size() != y.size() || r.size() < 2)
     return {};
   const double dx = r[1] - r[0];

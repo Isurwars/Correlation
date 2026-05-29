@@ -24,8 +24,7 @@ TEST(TrajectoryAnalyzerTests, BasicUsage) {
   trajectory.addFrame(cell);
 
   double neighbor_cutoff = 2.0;
-  std::vector<std::vector<double>> bond_cutoffs = {
-      {1.1}}; // Assuming H-H is index 0-0, simplified
+  std::vector<std::vector<double>> bond_cutoffs = {{1.1}}; // Assuming H-H is index 0-0, simplified
 
   TrajectoryAnalyzer analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 

@@ -22,27 +22,23 @@ public:
   std::string getName() const override { return "RD"; }
   std::string getShortName() const override { return "RD"; }
   std::string getGroup() const override { return "Rings"; }
-  std::string getDescription() const override {
-    return "Computes the Ring Distribution (RD).";
-  }
+  std::string getDescription() const override { return "Computes the Ring Distribution (RD)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of the Ring Distribution (RD).
-   * 
+   *
    * @param graph The pre-computed neighbor graph.
    * @param max_ring_size The maximum number of atoms in a single ring.
    * @return A histogram representing the ring size distribution.
    */
-  static correlation::analysis::Histogram
-  calculate(const correlation::core::NeighborGraph &graph,
-            size_t max_ring_size);
+  static correlation::analysis::Histogram calculate(const correlation::core::NeighborGraph &graph,
+                                                    size_t max_ring_size);
 };
 
 } // namespace correlation::calculators

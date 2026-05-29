@@ -54,9 +54,9 @@ public:
 
 private:
   WriterFactory() = default;
-  std::vector<std::unique_ptr<BaseWriter>> writers_;    ///< Storage for writer instances.
-  std::map<std::string, BaseWriter *> extension_map_;    ///< Lookup map for file extensions.
-  std::map<std::string, BaseWriter *> name_map_;         ///< Lookup map for format names.
+  std::vector<std::unique_ptr<BaseWriter>> writers_;  ///< Storage for writer instances.
+  std::map<std::string, BaseWriter *> extension_map_; ///< Lookup map for file extensions.
+  std::map<std::string, BaseWriter *> name_map_;      ///< Lookup map for format names.
 };
 
 } // namespace correlation::writers

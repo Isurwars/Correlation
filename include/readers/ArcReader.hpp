@@ -27,15 +27,13 @@ public:
   std::vector<std::string> getExtensions() const override { return {"arc"}; }
   bool isTrajectory() const override { return true; }
 
-  correlation::core::Cell readStructure(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) override;
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory readTrajectory(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) override;
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @brief Low-level parser for the specific file format.
@@ -44,9 +42,7 @@ public:
    * @return A vector of parsed frames.
    */
   static std::vector<correlation::core::Cell>
-  read(const std::string &file_name,
-       std::function<void(float, const std::string &)> progress_callback =
-           nullptr);
+  read(const std::string &file_name, std::function<void(float, const std::string &)> progress_callback = nullptr);
 };
 
 } // namespace correlation::readers

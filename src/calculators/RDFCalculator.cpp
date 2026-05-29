@@ -19,16 +19,14 @@
 namespace correlation::calculators {
 
 namespace {
-std::string getPartialKey(const correlation::core::Cell &cell, int type1,
-                          int type2) {
+std::string getPartialKey(const correlation::core::Cell &cell, int type1, int type2) {
   const auto &elements = cell.elements();
   if (type1 > type2)
     std::swap(type1, type2);
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
-std::string getInversePartialKey(const correlation::core::Cell &cell, int type1,
-                                 int type2) {
+std::string getInversePartialKey(const correlation::core::Cell &cell, int type1, int type2) {
   const auto &elements = cell.elements();
   if (type1 < type2)
     std::swap(type1, type2);
@@ -36,39 +34,30 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, int type1,
 }
 
 // Static registration
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<RDFCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<RDFCalculator>());
 } // namespace
 
-void RDFCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
-  auto results = calculate(df.cell(), df.neighbors(), df.getAshcroftWeights(),
-                           settings.r_max, settings.r_bin_width);
+void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                   const correlation::analysis::AnalysisSettings &settings) const {
+  auto results = calculate(df.cell(), df.neighbors(), df.getAshcroftWeights(), settings.r_max, settings.r_bin_width);
   for (auto &[name, histogram] : results) {
     df.addHistogram(name, std::move(histogram));
   }
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-RDFCalculator::calculate(
-    const correlation::core::Cell &cell,
-    const correlation::analysis::StructureAnalyzer *neighbors,
-    const std::map<std::string, double> &ashcroft_weights, double r_max,
-    double r_bin_width) {
+RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+                         const std::map<std::string, double> &ashcroft_weights, double r_max, double r_bin_width) {
   if (r_bin_width <= 0) {
-    throw std::invalid_argument("Bin width must be positive, got: " +
-                                std::to_string(r_bin_width));
+    throw std::invalid_argument("Bin width must be positive, got: " + std::to_string(r_bin_width));
   }
   if (r_max <= 0) {
-    throw std::invalid_argument("Cutoff radius must be positive, got: " +
-                                std::to_string(r_max));
+    throw std::invalid_argument("Cutoff radius must be positive, got: " + std::to_string(r_max));
   }
 
   const double volume = cell.volume();
   if (volume <= std::numeric_limits<double>::epsilon()) {
-    throw std::logic_error("Cell volume must be positive, got: " +
-                           std::to_string(volume));
+    throw std::logic_error("Cell volume must be positive, got: " + std::to_string(volume));
   }
 
   const auto &elements = cell.elements();
@@ -180,17 +169,15 @@ RDFCalculator::calculate(
       // Second Pass: Normalize the raw counts H(r) into target distribution
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
-      const double g_norm_constant =
-          V / (correlation::math::four_pi * dr * Ni * Nj);
+      const double g_norm_constant = V / (correlation::math::four_pi * dr * Ni * Nj);
       const double rho_j = Nj / V;
       const double inv_Ni_dr = 1.0 / (Ni * dr);
       const double inv_Nj_dr = 1.0 / (Nj * dr);
       const double pi4_rho_j = correlation::math::four_pi * rho_j;
 
-      correlation::math::normalize_rdf_bins(
-          H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr,
-          pi4_rho_j, g_r.partials[key].data(), G_r.partials[key].data(),
-          J_r.partials[key].data(), J_r.partials[inversekey].data(), num_bins);
+      correlation::math::normalize_rdf_bins(H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr,
+                                            pi4_rho_j, g_r.partials[key].data(), G_r.partials[key].data(),
+                                            J_r.partials[key].data(), J_r.partials[inversekey].data(), num_bins);
     }
   }
 

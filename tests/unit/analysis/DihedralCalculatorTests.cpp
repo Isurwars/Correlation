@@ -18,8 +18,7 @@ protected:
 
   void SetUp() override {
     // Setup a non-periodic cell large enough
-    cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0},
-                                   {0.0, 0.0, 20.0});
+    cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
   }
 };
 
@@ -37,28 +36,21 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
 
   graph = correlation::core::NeighborGraph(4);
   // Bind A-B (dist 1.0)
-  graph.addDirectedEdge(
-      0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
-  graph.addDirectedEdge(
-      1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
+  graph.addDirectedEdge(1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
 
   // Bind B-C (dist 1.0)
-  graph.addDirectedEdge(
-      1, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[1].position());
-  graph.addDirectedEdge(
-      2, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(1, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(2, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[2].position());
 
   // Bind C-D (dist 1.0)
-  graph.addDirectedEdge(
-      2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
-  graph.addDirectedEdge(
-      3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
+  graph.addDirectedEdge(2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(
-                                   1, std::vector<double>()))));
+                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
@@ -90,24 +82,17 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect0DegreeDihedral) {
   cell.addAtom("C", {1.0, -1.0, 0.0}); // D
 
   graph = correlation::core::NeighborGraph(4);
-  graph.addDirectedEdge(
-      0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
-  graph.addDirectedEdge(
-      1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
-  graph.addDirectedEdge(
-      1, 2, 2.0, cell.atoms()[2].position() - cell.atoms()[1].position());
-  graph.addDirectedEdge(
-      2, 1, 2.0, cell.atoms()[1].position() - cell.atoms()[2].position());
-  graph.addDirectedEdge(
-      2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
-  graph.addDirectedEdge(
-      3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
+  graph.addDirectedEdge(0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
+  graph.addDirectedEdge(1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(1, 2, 2.0, cell.atoms()[2].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(2, 1, 2.0, cell.atoms()[1].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(
-                                   1, std::vector<double>()))));
+                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
@@ -128,24 +113,17 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect180DegreeDihedral) {
   cell.addAtom("C", {-1.0, -1.0, 0.0}); // D
 
   graph = correlation::core::NeighborGraph(4);
-  graph.addDirectedEdge(
-      0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
-  graph.addDirectedEdge(
-      1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
-  graph.addDirectedEdge(
-      1, 2, 2.0, cell.atoms()[2].position() - cell.atoms()[1].position());
-  graph.addDirectedEdge(
-      2, 1, 2.0, cell.atoms()[1].position() - cell.atoms()[2].position());
-  graph.addDirectedEdge(
-      2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
-  graph.addDirectedEdge(
-      3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
+  graph.addDirectedEdge(0, 1, 1.0, cell.atoms()[1].position() - cell.atoms()[0].position());
+  graph.addDirectedEdge(1, 0, 1.0, cell.atoms()[0].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(1, 2, 2.0, cell.atoms()[2].position() - cell.atoms()[1].position());
+  graph.addDirectedEdge(2, 1, 2.0, cell.atoms()[1].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(2, 3, 1.0, cell.atoms()[3].position() - cell.atoms()[2].position());
+  graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(
-                                   1, std::vector<double>()))));
+                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
@@ -161,18 +139,17 @@ TEST_F(DihedralCalculatorTests, HandlesCoincidentCentralBondSafely) {
   cell.addAtom("C", {0.0, 0.0, 1.0}); // D
 
   graph = correlation::core::NeighborGraph(4);
-  graph.addDirectedEdge(0, 1, 1.0, { -1.0, 0.0, 0.0 });
-  graph.addDirectedEdge(1, 0, 1.0, { 1.0, 0.0, 0.0 });
-  graph.addDirectedEdge(1, 2, 0.0, { 0.0, 0.0, 0.0 });
-  graph.addDirectedEdge(2, 1, 0.0, { 0.0, 0.0, 0.0 });
-  graph.addDirectedEdge(2, 3, 1.0, { 0.0, 0.0, 1.0 });
-  graph.addDirectedEdge(3, 2, 1.0, { 0.0, 0.0, -1.0 });
+  graph.addDirectedEdge(0, 1, 1.0, {-1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 0, 1.0, {1.0, 0.0, 0.0});
+  graph.addDirectedEdge(1, 2, 0.0, {0.0, 0.0, 0.0});
+  graph.addDirectedEdge(2, 1, 0.0, {0.0, 0.0, 0.0});
+  graph.addDirectedEdge(2, 3, 1.0, {0.0, 0.0, 1.0});
+  graph.addDirectedEdge(3, 2, 1.0, {0.0, 0.0, -1.0});
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
   dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
                      1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(
-                                   1, std::vector<double>()))));
+                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 

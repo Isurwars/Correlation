@@ -21,8 +21,7 @@ protected:
 TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
   const double a = 3.0;
-  correlation::core::Cell cell(
-      std::array<double, 6>{2 * a, 2 * a, 2 * a, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell(std::array<double, 6>{2 * a, 2 * a, 2 * a, 90.0, 90.0, 90.0});
 
   // 8 atoms at corners of a 2x2x2 supercell
   for (int ix = 0; ix < 2; ++ix)
@@ -56,8 +55,7 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
 
 // For a single atom, S(Q) = 1 for all Q.
 TEST_F(StructureFactorCalculatorTests, SingleAtomGivesOne) {
-  correlation::core::Cell cell(
-      std::array<double, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell(std::array<double, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   DistributionFunctions df(cell);
@@ -124,8 +122,7 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
 
 // For N identical atoms, S(Q->0) should approach N.
 // Using a 4-atom Si cluster and a very small Q bin.
-TEST_F(StructureFactorCalculatorTests,
-       VerifiesPartialsExistForMulticomponent) {
+TEST_F(StructureFactorCalculatorTests, VerifiesPartialsExistForMulticomponent) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("C", {0.0, 0.0, 0.0});
   cell.addAtom("O", {1.2, 0.0, 0.0});

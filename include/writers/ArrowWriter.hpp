@@ -29,12 +29,9 @@ public:
   ArrowWriter() = default;
 
   std::string getName() const override { return "Parquet"; }
-  std::vector<std::string> getExtensions() const override {
-    return {".parquet"};
-  }
+  std::vector<std::string> getExtensions() const override { return {".parquet"}; }
 
-  void write(const std::string &base_path,
-             const correlation::analysis::DistributionFunctions &df,
+  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
              bool smoothing) const override {
     writeAllParquet(base_path, df, smoothing);
   }
@@ -51,8 +48,7 @@ public:
    * @param df The DistributionFunctions object containing the data.
    * @param write_smoothed If true, also writes smoothed data columns.
    */
-  void writeAllParquet(const std::string &base_path,
-                       const correlation::analysis::DistributionFunctions &df,
+  void writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
                        bool write_smoothed = false) const;
 
 private:
@@ -63,9 +59,8 @@ private:
    * @param name The name of the histogram.
    * @param hist The Histogram data structure to write.
    */
-  void
-  writeHistogramToParquet(const std::string &filename, const std::string &name,
-                          const correlation::analysis::Histogram &hist) const;
+  void writeHistogramToParquet(const std::string &filename, const std::string &name,
+                               const correlation::analysis::Histogram &hist) const;
 };
 
 } // namespace correlation::writers

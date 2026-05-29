@@ -42,6 +42,5 @@ TEST_F(AppControllerTests, ConstructorInitializesCorrectly) {
   correlation::app::AppBackend backend;
 
   // Act & Assert
-  EXPECT_NO_THROW(
-      { correlation::app::AppController controller(*ui, backend); });
+  EXPECT_NO_THROW({ correlation::app::AppController controller(*ui, backend); });
 }

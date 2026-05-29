@@ -34,8 +34,7 @@ protected:
 
 TEST_F(RDTests, ComputeMotif) {
   size_t max_ring_size = 5;
-  Histogram f_motif =
-      correlation::calculators::RDCalculator::calculate(graph, max_ring_size);
+  Histogram f_motif = correlation::calculators::RDCalculator::calculate(graph, max_ring_size);
 
   EXPECT_EQ(f_motif.x_label, "Ring Size");
   EXPECT_EQ(f_motif.bins.size(), 3);
@@ -53,8 +52,7 @@ TEST_F(RDTests, ComputeMotif) {
 }
 
 TEST_F(RDTests, InvalidMaxRingSize) {
-  EXPECT_THROW(correlation::calculators::RDCalculator::calculate(graph, 2),
-               std::invalid_argument);
+  EXPECT_THROW(correlation::calculators::RDCalculator::calculate(graph, 2), std::invalid_argument);
 }
 
 TEST_F(RDTests, CelluloseRingDistribution) {
@@ -73,10 +71,8 @@ TEST_F(RDTests, CelluloseRingDistribution) {
     }
   }
 
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType(cellulose_path);
-  correlation::core::Trajectory traj =
-      correlation::readers::readTrajectory(cellulose_path, type);
+  correlation::readers::FileType type = correlation::readers::determineFileType(cellulose_path);
+  correlation::core::Trajectory traj = correlation::readers::readTrajectory(cellulose_path, type);
   if (traj.getFrames().empty()) {
     GTEST_SKIP() << "No frames found in Cellulose.md";
     return;
@@ -107,13 +103,11 @@ TEST_F(RDTests, CelluloseRingDistribution) {
 
   correlation::core::Cell frame = traj.getFrames()[0];
   StructureAnalyzer analyzer(frame, 3.0, traj.getBondCutoffsSQ(), true);
-  const correlation::core::NeighborGraph &graph_cellulose =
-      analyzer.neighborGraph();
+  const correlation::core::NeighborGraph &graph_cellulose = analyzer.neighborGraph();
 
   size_t max_ring_size = 10;
 
-  Histogram f_motif = correlation::calculators::RDCalculator::calculate(
-      graph_cellulose, max_ring_size);
+  Histogram f_motif = correlation::calculators::RDCalculator::calculate(graph_cellulose, max_ring_size);
 
   EXPECT_EQ(f_motif.x_label, "Ring Size");
   ASSERT_EQ(f_motif.bins.size(), max_ring_size - 2);
@@ -124,11 +118,9 @@ TEST_F(RDTests, CelluloseRingDistribution) {
   double sum_rings = 0.0;
   for (size_t i = 0; i < partial.size(); ++i) {
     if (i == 3) { // Bin 3 corresponds to ring size 6 (since bins start at 3)
-      EXPECT_NEAR(partial[i], 1.0, 1e-6)
-          << "Ring size 6 should have all the counts.";
+      EXPECT_NEAR(partial[i], 1.0, 1e-6) << "Ring size 6 should have all the counts.";
     } else {
-      EXPECT_NEAR(partial[i], 0.0, 1e-6)
-          << "Ring size " << (i + 3) << " should be empty.";
+      EXPECT_NEAR(partial[i], 0.0, 1e-6) << "Ring size " << (i + 3) << " should be empty.";
     }
     sum_rings += partial[i];
   }

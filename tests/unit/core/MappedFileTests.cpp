@@ -5,9 +5,9 @@
 
 #include "core/MappedFile.hpp"
 
-#include <gtest/gtest.h>
 #include <filesystem>
 #include <fstream>
+#include <gtest/gtest.h>
 #include <string>
 
 namespace correlation::testing {
@@ -27,16 +27,14 @@ protected:
     out.close();
   }
 
-  void TearDown() override {
-    std::filesystem::remove_all(test_dir_);
-  }
+  void TearDown() override { std::filesystem::remove_all(test_dir_); }
 };
 
 TEST_F(MappedFileTests, MapsValidFileSuccessfully) {
   MappedFile mf(valid_file_path_);
   EXPECT_EQ(mf.size(), file_content_.size());
   ASSERT_NE(mf.data(), nullptr);
-  
+
   std::string read_content(mf.data(), mf.size());
   EXPECT_EQ(read_content, file_content_);
   EXPECT_EQ(mf.end(), mf.data() + mf.size());
@@ -46,17 +44,15 @@ TEST_F(MappedFileTests, ThrowsOnNonExistentFile) {
   EXPECT_THROW(MappedFile{"non_existent_file_xyz_123.txt"}, std::runtime_error);
 }
 
-TEST_F(MappedFileTests, ThrowsOnDirectoryPath) {
-  EXPECT_THROW(MappedFile{test_dir_}, std::runtime_error);
-}
+TEST_F(MappedFileTests, ThrowsOnDirectoryPath) { EXPECT_THROW(MappedFile{test_dir_}, std::runtime_error); }
 
 TEST_F(MappedFileTests, MoveConstructorTransfersOwnership) {
   MappedFile mf1(valid_file_path_);
-  const char* original_ptr = mf1.data();
+  const char *original_ptr = mf1.data();
   size_t original_size = mf1.size();
 
   MappedFile mf2(std::move(mf1));
-  
+
   // mf2 should own the resource
   EXPECT_EQ(mf2.data(), original_ptr);
   EXPECT_EQ(mf2.size(), original_size);
@@ -68,7 +64,7 @@ TEST_F(MappedFileTests, MoveConstructorTransfersOwnership) {
 
 TEST_F(MappedFileTests, MoveAssignmentOperatorTransfersOwnership) {
   MappedFile mf1(valid_file_path_);
-  const char* original_ptr = mf1.data();
+  const char *original_ptr = mf1.data();
   size_t original_size = mf1.size();
 
   MappedFile mf2 = std::move(mf1);

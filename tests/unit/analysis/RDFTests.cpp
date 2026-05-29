@@ -47,8 +47,7 @@ protected:
 
 TEST_F(RDFTests, DefaultConstructorWorks) {
   updateTrajectory();
-  ASSERT_NO_THROW(
-      DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
+  ASSERT_NO_THROW(DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
 }
 
 TEST_F(RDFTests, MoveConstructorWorks) {
@@ -93,8 +92,7 @@ TEST_F(RDFTests, AccessorsWork) {
   df.calculateRDF(5.0, 0.1);
   histNames = df.getAvailableHistograms();
   EXPECT_FALSE(histNames.empty());
-  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"),
-            histNames.end());
+  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"), histNames.end());
 
   // getHistogram()
   EXPECT_NO_THROW(df.getHistogram("g_r"));
@@ -118,7 +116,7 @@ TEST_F(RDFTests, CalculateRDF) {
 
   // Invalid parameters
   EXPECT_THROW(df.calculateRDF(5.0, 0.0),
-               std::invalid_argument); // Zero bin width
+               std::invalid_argument);                            // Zero bin width
   EXPECT_THROW(df.calculateRDF(0.0, 0.1), std::invalid_argument); // Zero r_max
 
   // Valid calculation with tight bins for numerical accuracy
@@ -228,9 +226,8 @@ TEST_F(RDFTests, AddAndScale) {
   // consistent. Let's compare with a fresh one
   DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfRef.calculateRDF(5.0, 0.1);
-  double refPeak =
-      *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
-                        dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
+  double refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
+                                     dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
 
   EXPECT_NEAR(peak, refPeak, 1e-6);
 }
@@ -244,8 +241,7 @@ TEST_F(RDFTests, ComputeMean) {
   settings.r_bin_width = 0.1;
   settings.smoothing = false;
 
-  auto dfMean =
-      DistributionFunctions::computeMean(trajectory_, ta, 0, settings);
+  auto dfMean = DistributionFunctions::computeMean(trajectory_, ta, 0, settings);
   ASSERT_TRUE(dfMean != nullptr);
   EXPECT_NO_THROW(dfMean->getHistogram("g_r"));
 }

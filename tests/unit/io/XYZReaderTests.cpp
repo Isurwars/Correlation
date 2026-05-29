@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "readers/XYZReader.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "readers/XYZReader.hpp"
 
-#include <gtest/gtest.h>
-#include <fstream>
 #include <filesystem>
+#include <fstream>
+#include <gtest/gtest.h>
 
 class XYZReaderTests : public ::testing::Test {
 protected:
@@ -25,7 +25,8 @@ protected:
     // Create Extended XYZ
     std::ofstream xyz2("test_extended.xyz");
     xyz2 << "2\n";
-    xyz2 << "Properties=species:S:1:pos:R:3:forces:R:3 energy=-15.2 Lattice=\"10.0 0.0 0.0 0.0 10.0 0.0 0.0 0.0 10.0\"\n";
+    xyz2
+        << "Properties=species:S:1:pos:R:3:forces:R:3 energy=-15.2 Lattice=\"10.0 0.0 0.0 0.0 10.0 0.0 0.0 0.0 10.0\"\n";
     xyz2 << "C 0.0 0.0 0.0 0.1 0.2 0.3\n";
     xyz2 << "O 1.2 0.0 0.0 -0.1 -0.2 -0.3\n";
     xyz2.close();
@@ -64,7 +65,7 @@ TEST_F(XYZReaderTests, ReadExtendedXYZ) {
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
-  
+
   // Check energy
   EXPECT_DOUBLE_EQ(cell.getEnergy(), -15.2);
 
@@ -87,7 +88,7 @@ TEST_F(XYZReaderTests, ReadExtendedXYZCustomColumns) {
 
   // Check energy
   EXPECT_DOUBLE_EQ(cell.getEnergy(), -10.0);
-  
+
   // Pos should be in cols 1,2,3
   EXPECT_DOUBLE_EQ(cell.atoms()[1].position().x(), 1.2);
 }

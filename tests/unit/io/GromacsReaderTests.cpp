@@ -3,13 +3,13 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "readers/GromacsReader.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "readers/GromacsReader.hpp"
 
-#include <gtest/gtest.h>
-#include <fstream>
 #include <filesystem>
+#include <fstream>
+#include <gtest/gtest.h>
 
 class GromacsReaderTests : public ::testing::Test {
 protected:
@@ -33,19 +33,17 @@ protected:
     gro << "    1SOL    HW1    2   0.160   0.260   0.360 -0.1000 -0.2000 -0.3000\n";
     gro << "    1SOL    HW2    3   0.060   0.160   0.260  0.0500  0.0500  0.0500\n";
     gro << "   1.10000   2.10000   3.10000\n";
-    
+
     gro.close();
   }
 
-  void TearDown() override {
-    std::filesystem::remove("test_multi.gro");
-  }
+  void TearDown() override { std::filesystem::remove("test_multi.gro"); }
 };
 
 TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
   correlation::readers::GromacsReader reader;
   EXPECT_TRUE(reader.isTrajectory());
-  
+
   auto traj = reader.readTrajectory("test_multi.gro");
   EXPECT_EQ(traj.getFrameCount(), 2);
 
@@ -54,7 +52,7 @@ TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
   EXPECT_EQ(frame1.atomCount(), 3);
   EXPECT_EQ(frame1.atoms()[0].element().symbol, "O"); // "OW" -> "O"
   EXPECT_EQ(frame1.atoms()[1].element().symbol, "H"); // "HW1" -> "H"
-  
+
   auto pos1 = frame1.atoms()[0].position();
   // GROMACS is in nm, we convert to Angstroms (* 10)
   EXPECT_DOUBLE_EQ(pos1.x(), 1.0);
@@ -81,7 +79,7 @@ TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
 TEST_F(GromacsReaderTests, ReadStructureReturnsLastFrame) {
   correlation::readers::GromacsReader reader;
   auto cell = reader.readStructure("test_multi.gro");
-  
+
   EXPECT_EQ(cell.atomCount(), 3);
   auto pos = cell.atoms()[0].position();
   // Should be Frame 2

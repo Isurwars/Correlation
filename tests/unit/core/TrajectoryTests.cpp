@@ -8,10 +8,10 @@
 #include "math/LinearAlgebra.hpp"
 #include "readers/FileReader.hpp"
 
-#include <gtest/gtest.h>
-#include <vector>
 #include <filesystem>
 #include <fstream>
+#include <gtest/gtest.h>
+#include <vector>
 
 namespace correlation::testing {
 
@@ -25,13 +25,9 @@ protected:
     return frame;
   }
 
-  void SetUp() override {
-    std::filesystem::create_directory("test_data");
-  }
+  void SetUp() override { std::filesystem::create_directory("test_data"); }
 
-  void TearDown() override {
-    std::filesystem::remove_all("test_data");
-  }
+  void TearDown() override { std::filesystem::remove_all("test_data"); }
 };
 
 // --- Unitary Tests: Constructors & Basic Accessors ---
@@ -121,9 +117,9 @@ TEST_F(TrajectoryTests, AddFrameThrowsOnElementCountMismatch) {
 // --- Unitary Tests: Deduplication ---
 
 TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
-  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(0,0,0), createSimpleFrame(1,1,1)};
+  std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0), createSimpleFrame(1, 1, 1)};
   Trajectory traj;
-  for(const auto& f : frames) {
+  for (const auto &f : frames) {
     // AddFrame doesn't deduplicate automatically, but Trajectory(vector) does.
     // Let's test the explicit call.
     traj.getFrames().push_back(f);
@@ -134,19 +130,19 @@ TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
 }
 
 TEST_F(TrajectoryTests, RemovesConsecutiveTriplicates) {
-  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(0,0,0), createSimpleFrame(0,0,0)};
+  std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0)};
   Trajectory traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
 
 TEST_F(TrajectoryTests, HandlesNoDuplicates) {
-  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(1,1,1)};
+  std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 1, 1)};
   Trajectory traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 2);
 }
 
 TEST_F(TrajectoryTests, HandlesAllDuplicates) {
-  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(0,0,0)};
+  std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0)};
   Trajectory traj(frames, 1.0);
   EXPECT_EQ(traj.getFrameCount(), 1);
 }
@@ -154,15 +150,17 @@ TEST_F(TrajectoryTests, HandlesAllDuplicates) {
 // --- Unitary Tests: Physics & State ---
 
 TEST_F(TrajectoryTests, CalculateVelocitiesComputesCorrectVelocities) {
-  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(1,0,0), createSimpleFrame(2,0,0)};
+  std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 0, 0), createSimpleFrame(2, 0, 0)};
   Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
   EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 1.0, 1e-6);
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
-  Cell f1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}}); f1.addAtom("H", {9.0, 5.0, 5.0});
-  Cell f2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}}); f2.addAtom("H", {1.0, 5.0, 5.0});
+  Cell f1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  f1.addAtom("H", {9.0, 5.0, 5.0});
+  Cell f2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  f2.addAtom("H", {1.0, 5.0, 5.0});
   Trajectory traj({f1, f2}, 1.0);
   traj.calculateVelocities();
   EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 2.0, 1e-6);
@@ -211,12 +209,12 @@ TEST_F(TrajectoryTests, ParseMultipleFramesWithEnergy) {
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesHandlesZeroOrNegativeTimeStep) {
-  std::vector<Cell> frames = {createSimpleFrame(0,0,0), createSimpleFrame(1,0,0)};
-  
+  std::vector<Cell> frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(1, 0, 0)};
+
   // Set pre-existing velocities to a known non-zero value to verify they're preserved
   frames[0].atoms()[0].setVelocity({42.0, 42.0, 42.0});
   frames[1].atoms()[0].setVelocity({42.0, 42.0, 42.0});
-  
+
   Trajectory traj_zero(frames, 0.0);
   traj_zero.calculateVelocities();
   // With zero timestep, calculateVelocities() returns early — pre-existing velocities stay
@@ -242,7 +240,7 @@ TEST_F(TrajectoryTests, GetBondCutoffOutOfBoundsReturnsZero) {
   Cell frame({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   frame.addAtom("H", {0, 0, 0});
   Trajectory traj({frame}, 1.0);
-  
+
   EXPECT_DOUBLE_EQ(traj.getBondCutoffSQ(10, 0), 0.0);
   EXPECT_DOUBLE_EQ(traj.getBondCutoff(0, 10), 0.0);
 }
@@ -290,10 +288,10 @@ TEST_F(TrajectoryTests, FirstFrameThrowsOnEmptyTrajectory) {
 TEST_F(TrajectoryTests, GetFrameThrowsOnOutOfRange) {
   Trajectory traj;
   traj.addFrame(createSimpleFrame(0, 0, 0));
-  
+
   // Valid index
   EXPECT_NO_THROW(traj.getFrame(0));
-  
+
   // Out of range
   EXPECT_THROW(traj.getFrame(1), std::out_of_range);
   EXPECT_THROW(traj.getFrame(100), std::out_of_range);
@@ -304,7 +302,7 @@ TEST_F(TrajectoryTests, CalculateVelocitiesSingleFrame) {
   std::vector<Cell> frames = {createSimpleFrame(5.0, 3.0, 1.0)};
   Trajectory traj(frames, 1.0);
   traj.calculateVelocities();
-  
+
   // Velocity should remain at default {0,0,0} since there's nothing to diff
   EXPECT_DOUBLE_EQ(traj.getFrame(0).atoms()[0].velocity().x(), 0.0);
   EXPECT_DOUBLE_EQ(traj.getFrame(0).atoms()[0].velocity().y(), 0.0);
@@ -313,14 +311,12 @@ TEST_F(TrajectoryTests, CalculateVelocitiesSingleFrame) {
 
 TEST_F(TrajectoryTests, RemoveDuplicatedFramesCounter) {
   std::vector<Cell> frames = {
-    createSimpleFrame(0,0,0),
-    createSimpleFrame(0,0,0),  // dup
-    createSimpleFrame(0,0,0),  // dup
-    createSimpleFrame(1,1,1),
-    createSimpleFrame(1,1,1),  // dup
+      createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0), // dup
+      createSimpleFrame(0, 0, 0),                             // dup
+      createSimpleFrame(1, 1, 1), createSimpleFrame(1, 1, 1), // dup
   };
   Trajectory traj(frames, 1.0);
-  
+
   // Constructor deduplicates: 5 frames → 2 unique
   EXPECT_EQ(traj.getFrameCount(), 2);
   EXPECT_EQ(traj.getRemovedFrameCount(), 3);
@@ -329,13 +325,13 @@ TEST_F(TrajectoryTests, RemoveDuplicatedFramesCounter) {
 TEST_F(TrajectoryTests, RemoveDuplicatedFramesAlternating) {
   // Alternating pattern: no consecutive duplicates
   std::vector<Cell> frames = {
-    createSimpleFrame(0,0,0),
-    createSimpleFrame(1,1,1),
-    createSimpleFrame(0,0,0),
-    createSimpleFrame(1,1,1),
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(1, 1, 1),
+      createSimpleFrame(0, 0, 0),
+      createSimpleFrame(1, 1, 1),
   };
   Trajectory traj(frames, 1.0);
-  
+
   // No consecutive duplicates, so nothing removed
   EXPECT_EQ(traj.getFrameCount(), 4);
   EXPECT_EQ(traj.getRemovedFrameCount(), 0);

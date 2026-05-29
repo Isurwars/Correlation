@@ -17,14 +17,12 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<LammpsDumpReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<LammpsDumpReader>());
 
 // ---------------------------------------------------------------------------
 // Helper: advance past the current line ending (\r\n or \n)
 // ---------------------------------------------------------------------------
-static inline size_t skipLineEnding(const char *data, size_t total,
-                                    size_t pos) {
+static inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
   if (pos < total && data[pos] == '\r')
     ++pos;
   if (pos < total && data[pos] == '\n')
@@ -44,16 +42,14 @@ static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
 // ---------------------------------------------------------------------------
 // Helper: extract a line as std::string from [pos, lineEnd)
 // ---------------------------------------------------------------------------
-static inline std::string extractLine(const char *data, size_t pos,
-                                      size_t lineEnd) {
+static inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
   return std::string(data + pos, lineEnd - pos);
 }
 
 // ---------------------------------------------------------------------------
 // parseDumpFrame — parses a single frame from a memory region
 // ---------------------------------------------------------------------------
-correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
-                                                          size_t size) {
+correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data, size_t size) {
   size_t offset = 0;
   size_t lineEnd = 0;
 
@@ -110,11 +106,9 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
     const double lx = xhi - xlo;
     const double ly = yhi - ylo;
     const double lz = zhi - zlo;
-    frame =
-        correlation::core::Cell({lx, 0.0, 0.0}, {xy, ly, 0.0}, {xz, yz, lz});
+    frame = correlation::core::Cell({lx, 0.0, 0.0}, {xy, ly, 0.0}, {xz, yz, lz});
   } else {
-    frame = correlation::core::Cell(
-        {xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0}, {0.0, 0.0, zhi - zlo});
+    frame = correlation::core::Cell({xhi - xlo, 0.0, 0.0}, {0.0, yhi - ylo, 0.0}, {0.0, 0.0, zhi - zlo});
   }
 
   // --- ATOMS header — discover column layout ---
@@ -192,9 +186,7 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
     } else if (col_type >= 0 && col_type < num_fields) {
       element_symbol = fields[col_type];
     } else {
-      element_symbol = (col_id >= 0 && col_id < num_fields)
-                           ? fields[col_id]
-                           : std::to_string(i + 1);
+      element_symbol = (col_id >= 0 && col_id < num_fields) ? fields[col_id] : std::to_string(i + 1);
     }
 
     // Convert scaled (fractional) coordinates to Cartesian if needed.
@@ -202,8 +194,7 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
     if (scaled_coords) {
       // pos = x*a + y*b + z*c  (correct column-vector combination of lattice rows)
       // i.e. pos[k] = x*lv[0][k] + y*lv[1][k] + z*lv[2][k]
-      pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
-             x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
+      pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0], x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
              x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
     } else {
       pos = {x, y, z};
@@ -218,13 +209,12 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
 // ---------------------------------------------------------------------------
 // readStructure — returns the first frame
 // ---------------------------------------------------------------------------
-correlation::core::Cell LammpsDumpReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+LammpsDumpReader::readStructure(const std::string &filename,
+                                std::function<void(float, const std::string &)> progress_callback) {
   auto traj = readTrajectory(filename, progress_callback);
   if (traj.getFrameCount() == 0) {
-    throw std::runtime_error("No frames found in LAMMPS dump file: " +
-                             filename);
+    throw std::runtime_error("No frames found in LAMMPS dump file: " + filename);
   }
   return traj.getFrame(0);
 }
@@ -232,9 +222,9 @@ correlation::core::Cell LammpsDumpReader::readStructure(
 // ---------------------------------------------------------------------------
 // readTrajectory — memory-mapped lazy loading
 // ---------------------------------------------------------------------------
-correlation::core::Trajectory LammpsDumpReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Trajectory
+LammpsDumpReader::readTrajectory(const std::string &filename,
+                                 std::function<void(float, const std::string &)> progress_callback) {
 
   if (progress_callback)
     progress_callback(0.0f, "Reading LAMMPS dump file...");
@@ -253,16 +243,13 @@ correlation::core::Trajectory LammpsDumpReader::readTrajectory(
   size_t pos = 0;
   while (pos < total_size) {
     // Check if current position starts with the needle
-    bool at_line_start = (pos == 0) ||
-                         (pos > 0 && (data[pos - 1] == '\n'));
-    if (at_line_start && pos + needle_len <= total_size &&
-        std::memcmp(data + pos, needle, needle_len) == 0) {
+    bool at_line_start = (pos == 0) || (pos > 0 && (data[pos - 1] == '\n'));
+    if (at_line_start && pos + needle_len <= total_size && std::memcmp(data + pos, needle, needle_len) == 0) {
       frame_offsets.push_back(pos);
 
       // Report progress.
       if (progress_callback && total_size > 0) {
-        float progress =
-            static_cast<float>(pos) / static_cast<float>(total_size);
+        float progress = static_cast<float>(pos) / static_cast<float>(total_size);
         progress_callback(progress, "Scanning LAMMPS dump frames...");
       }
     }
@@ -272,8 +259,7 @@ correlation::core::Trajectory LammpsDumpReader::readTrajectory(
   }
 
   if (frame_offsets.empty()) {
-    throw std::runtime_error("No frames found in LAMMPS dump file: " +
-                             filename);
+    throw std::runtime_error("No frames found in LAMMPS dump file: " + filename);
   }
 
   // Add sentinel offset for the last frame's end
@@ -284,8 +270,7 @@ correlation::core::Trajectory LammpsDumpReader::readTrajectory(
 
   auto parser = [](const char *d, size_t s) { return parseDumpFrame(d, s); };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets),
-                                       parser, 1.0);
+  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
 }
 
 } // namespace correlation::readers

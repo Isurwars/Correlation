@@ -31,16 +31,13 @@ public:
   std::string getName() const override { return "Dihedral"; }
   std::string getShortName() const override { return "Dihedral"; }
   std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override {
-    return "Computes all unique 4-body dihedral (torsion) angles.";
-  }
+  std::string getDescription() const override { return "Computes all unique 4-body dihedral (torsion) angles."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes and populates the dihedral angles tensor.
@@ -52,10 +49,8 @@ public:
    * C][correlation::core::Element D][angle_idx]` where elements are the
    * indices, populated with angles in radians [-pi, pi].
    */
-  static void compute(
-      const correlation::core::Cell &cell,
-      const correlation::core::NeighborGraph &graph,
-      correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals);
+  static void compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
+                      correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals);
 };
 
 } // namespace correlation::calculators

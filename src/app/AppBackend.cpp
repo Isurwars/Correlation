@@ -6,13 +6,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "calculators/CalculatorFactory.hpp"
 #include "app/AppBackend.hpp"
+#include "analysis/DynamicsAnalyzer.hpp"
+#include "calculators/CalculatorFactory.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
 #include "readers/ReaderFactory.hpp"
 #include "writers/FileWriter.hpp"
-#include "analysis/DynamicsAnalyzer.hpp"
 
 #include <filesystem>
 
@@ -114,8 +114,7 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
 
   const correlation::core::Cell &c = trajectory_->firstFrame();
   const size_t num_elements = c.elements().size();
-  std::vector<std::vector<double>> cutoffs(num_elements,
-                                           std::vector<double>(num_elements));
+  std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       // getBondCutoff uses indices.
@@ -131,8 +130,7 @@ double AppBackend::getBondCutoff(int type1, int type2) const {
   return trajectory_->getBondCutoff(type1, type2);
 }
 
-void AppBackend::setBondCutoffs(
-    const std::vector<std::vector<double>> &cutoffs) {
+void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
   if (!trajectory_)
     return;
 
@@ -140,8 +138,7 @@ void AppBackend::setBondCutoffs(
   if (trajectory_->getFrameCount() == 0)
     return;
   const size_t num_elements = trajectory_->firstFrame().elements().size();
-  std::vector<std::vector<double>> cutoffs_sq(
-      num_elements, std::vector<double>(num_elements));
+  std::vector<std::vector<double>> cutoffs_sq(num_elements, std::vector<double>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
@@ -157,8 +154,7 @@ std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
   return df_->getAvailableHistograms();
 }
 
-const correlation::analysis::Histogram *
-AppBackend::getHistogram(const std::string &name) const {
+const correlation::analysis::Histogram *AppBackend::getHistogram(const std::string &name) const {
   if (!df_)
     return nullptr;
   try {
@@ -175,8 +171,7 @@ AppBackend::getHistogram(const std::string &name) const {
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;
   std::replace(display_path.begin(), display_path.end(), '\\', '/');
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType(path);
+  correlation::readers::FileType type = correlation::readers::determineFileType(path);
 
   // Determine whether to load as a trajectory by checking the reader's
   // isTrajectory() flag via the ReaderFactory, rather than maintaining a
@@ -184,9 +179,7 @@ std::string AppBackend::load_file(const std::string &path) {
   bool is_trajectory = false;
   std::string ext = std::filesystem::path(path).extension().string();
   if (!ext.empty()) {
-    auto *reader =
-        correlation::readers::ReaderFactory::instance().getReaderForExtension(
-            ext, path);
+    auto *reader = correlation::readers::ReaderFactory::instance().getReaderForExtension(ext, path);
     if (reader) {
       is_trajectory = reader->isTrajectory();
     }
@@ -201,8 +194,7 @@ std::string AppBackend::load_file(const std::string &path) {
         correlation::readers::readTrajectory(path, type, progress_callback_));
   } else {
     trajectory_ = std::make_unique<correlation::core::Trajectory>();
-    trajectory_->addFrame(
-        correlation::readers::readStructure(path, type, progress_callback_));
+    trajectory_->addFrame(correlation::readers::readStructure(path, type, progress_callback_));
   }
 
   options_.input_file = path;
@@ -267,9 +259,8 @@ std::string AppBackend::run_analysis() {
     }
     // Determine which cutoffs to use: explicit overrides or precomputed
     // defaults.
-    const auto &active_cutoffs = !options_.bond_cutoffs_sq.empty()
-                                     ? options_.bond_cutoffs_sq
-                                     : trajectory_->getBondCutoffsSQ();
+    const auto &active_cutoffs =
+        !options_.bond_cutoffs_sq.empty() ? options_.bond_cutoffs_sq : trajectory_->getBondCutoffsSQ();
 
     // Ensure min_frame is within bounds
     size_t start_f = options_.min_frame;
@@ -298,10 +289,8 @@ std::string AppBackend::run_analysis() {
 
     // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
     // structural analysis
-    trajectory_analyzer_ =
-        std::make_unique<correlation::analysis::TrajectoryAnalyzer>(
-            *trajectory_, options_.r_max, active_cutoffs, start_f,
-            options_.max_frame, true, cb_structure);
+    trajectory_analyzer_ = std::make_unique<correlation::analysis::TrajectoryAnalyzer>(
+        *trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame, true, cb_structure);
 
     // Prepare settings
     correlation::analysis::AnalysisSettings settings;
@@ -320,23 +309,20 @@ std::string AppBackend::run_analysis() {
 
     // Run parallel analysis to compute distribution functions
     // This accumulates results from all processed frames.
-    df_ = correlation::analysis::DistributionFunctions::computeMean(
-        *trajectory_, *trajectory_analyzer_, start_f, settings, cb_dist);
+    df_ = correlation::analysis::DistributionFunctions::computeMean(*trajectory_, *trajectory_analyzer_, start_f,
+                                                                    settings, cb_dist);
 
     if (df_) {
       // Trajectory-wide calculators (VACF, VDOS, MSD, etc.)
-      const auto &factory_calcs =
-          ::correlation::calculators::CalculatorFactory::instance()
-              .getCalculators();
+      const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
 
       // Check if we need velocities
       bool need_velocities = false;
       for (const auto &calc : factory_calcs) {
-        bool is_active = settings.isActive(calc->getName()) ||
-                         settings.isActive(calc->getShortName());
+        bool is_active = settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
         if (calc->isTrajectoryCalculator() && is_active) {
-          if (calc->getName() == "VACF" || calc->getShortName() == "VACF" ||
-              calc->getName() == "vDoS" || calc->getShortName() == "vDoS") {
+          if (calc->getName() == "VACF" || calc->getShortName() == "VACF" || calc->getName() == "vDoS" ||
+              calc->getShortName() == "vDoS") {
             need_velocities = true;
             break;
           }
@@ -353,15 +339,13 @@ std::string AppBackend::run_analysis() {
       for (const auto &calc : factory_calcs) {
         if (!calc->isTrajectoryCalculator())
           continue;
-        if (!settings.isActive(calc->getName()) &&
-            !settings.isActive(calc->getShortName()))
+        if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName()))
           continue;
 
         try {
           calc->calculateTrajectory(*df_, *trajectory_, settings);
         } catch (const std::exception &e) {
-          std::cerr << calc->getName() << " calculation failed: " << e.what()
-                    << std::endl;
+          std::cerr << calc->getName() << " calculation failed: " << e.what() << std::endl;
         }
       }
 
@@ -373,7 +357,8 @@ std::string AppBackend::run_analysis() {
         const auto &hist = it_msd->second;
         auto it_total = hist.partials.find("Total");
         if (it_total != hist.partials.end()) {
-          double d_msd = correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
+          double d_msd =
+              correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
           df_->setDiffusionCoefficientMSD(d_msd);
         }
       }
@@ -383,7 +368,8 @@ std::string AppBackend::run_analysis() {
         const auto &hist = it_vacf->second;
         auto it_total = hist.partials.find("Total");
         if (it_total != hist.partials.end()) {
-          double d_vacf = correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
+          double d_vacf =
+              correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
           df_->setDiffusionCoefficientVACF(d_vacf);
         }
       }
@@ -405,10 +391,12 @@ std::string AppBackend::run_analysis() {
 
       // Log the calculated values to the console
       if (df_->getDiffusionCoefficientMSD() > 0.0) {
-        std::cout << "Self-diffusion coefficient (from MSD): " << df_->getDiffusionCoefficientMSD() << " Å²/fs" << std::endl;
+        std::cout << "Self-diffusion coefficient (from MSD): " << df_->getDiffusionCoefficientMSD() << " Å²/fs"
+                  << std::endl;
       }
       if (df_->getDiffusionCoefficientVACF() > 0.0) {
-        std::cout << "Self-diffusion coefficient (from VACF): " << df_->getDiffusionCoefficientVACF() << " Å²/fs" << std::endl;
+        std::cout << "Self-diffusion coefficient (from VACF): " << df_->getDiffusionCoefficientVACF() << " Å²/fs"
+                  << std::endl;
       }
       if (df_->getRelaxationTime() > 0.0) {
         std::cout << "Relaxation time (from VACF): " << df_->getRelaxationTime() << " fs" << std::endl;
@@ -421,8 +409,7 @@ std::string AppBackend::run_analysis() {
     std::cerr << "Analysis Exception: " << e.what() << std::endl;
     return err;
   } catch (...) {
-    std::string err =
-        std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
+    std::string err = std::string(AppDefaults::MSG_ERROR_ANALYSIS) + "Unknown error.";
     std::cerr << "Analysis Exception: Unknown error." << std::endl;
     return err;
   }
@@ -439,8 +426,8 @@ std::string AppBackend::write_files() {
   try {
     // --- Write results ---
     correlation::writers::FileWriter writer(*df_);
-    writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5,
-                 options_.use_parquet, options_.smoothing);
+    writer.write(options_.output_file_base, options_.use_csv, options_.use_hdf5, options_.use_parquet,
+                 options_.smoothing);
     std::cout << "Files written to: " << options_.output_file_base << std::endl;
   } catch (const std::exception &e) {
     std::string err = std::string(AppDefaults::MSG_ERROR_WRITING) + e.what();

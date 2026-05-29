@@ -25,29 +25,25 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(
-    std::make_unique<CastepMdReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CastepMdReader>());
 
-correlation::core::Cell CastepMdReader::readStructure(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
+correlation::core::Cell
+CastepMdReader::readStructure(const std::string &filename,
+                              std::function<void(float, const std::string &)> progress_callback) {
   return CastepMdReader::read(filename, progress_callback).at(0);
 }
 
-correlation::core::Trajectory CastepMdReader::readTrajectory(
-    const std::string &filename,
-    std::function<void(float, const std::string &)> progress_callback) {
-  return correlation::core::Trajectory(
-      CastepMdReader::read(filename, progress_callback), 1.0);
+correlation::core::Trajectory
+CastepMdReader::readTrajectory(const std::string &filename,
+                               std::function<void(float, const std::string &)> progress_callback) {
+  return correlation::core::Trajectory(CastepMdReader::read(filename, progress_callback), 1.0);
 }
 
-std::vector<correlation::core::Cell> CastepMdReader::read(
-    const std::string &file_name,
-    std::function<void(float, const std::string &)> progress_callback) {
+std::vector<correlation::core::Cell>
+CastepMdReader::read(const std::string &file_name, std::function<void(float, const std::string &)> progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
-    throw std::runtime_error("Unable to read file: " + file_name + " (" +
-                             std::strerror(errno) + ").");
+    throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
   }
 
   std::vector<correlation::core::Cell> frames;
@@ -80,8 +76,7 @@ std::vector<correlation::core::Cell> CastepMdReader::read(
     if (progress_callback) {
       std::streampos current_pos = myfile.tellg();
       if (current_pos - last_progress_pos > update_interval) {
-        float p =
-            static_cast<float>(current_pos) / static_cast<float>(file_size);
+        float p = static_cast<float>(current_pos) / static_cast<float>(file_size);
         progress_callback(p, "Loading CASTEP MD file...");
         last_progress_pos = current_pos;
       }
@@ -113,8 +108,7 @@ std::vector<correlation::core::Cell> CastepMdReader::read(
       continue;
     }
 
-    if (line.find("<-- h") != std::string::npos &&
-        line.find("<-- hv") == std::string::npos) {
+    if (line.find("<-- h") != std::string::npos && line.find("<-- hv") == std::string::npos) {
       // Lattice vectors h are given row by row in Bohr
       // The first <-- h is row 1
       std::array<double, 3> h1{}, h2{}, h3{};
@@ -141,8 +135,7 @@ std::vector<correlation::core::Cell> CastepMdReader::read(
         h3[i] *= correlation::math::bohr_to_angstrom;
       }
 
-      tempCell = correlation::core::Cell(
-          {h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
+      tempCell = correlation::core::Cell({h1[0], h1[1], h1[2]}, {h2[0], h2[1], h2[2]}, {h3[0], h3[1], h3[2]});
       continue;
     }
 
@@ -155,12 +148,10 @@ std::vector<correlation::core::Cell> CastepMdReader::read(
       int id;
       double x, y, z;
       if (ss >> symbol >> id >> x >> y >> z) {
-        tempCell.addAtom(symbol, correlation::math::Vector3<double>(
-                                     x * correlation::math::bohr_to_angstrom,
-                                     y * correlation::math::bohr_to_angstrom,
-                                     z * correlation::math::bohr_to_angstrom));
-        tempCell.setEnergy(
-            current_energy); // Assign energy once per atom or frame
+        tempCell.addAtom(symbol, correlation::math::Vector3<double>(x * correlation::math::bohr_to_angstrom,
+                                                                    y * correlation::math::bohr_to_angstrom,
+                                                                    z * correlation::math::bohr_to_angstrom));
+        tempCell.setEnergy(current_energy); // Assign energy once per atom or frame
         cell_has_atoms = true;
       }
       continue;

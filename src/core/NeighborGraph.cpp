@@ -13,16 +13,14 @@ namespace correlation::core {
 
 NeighborGraph::NeighborGraph(size_t node_count) : adj_list_(node_count) {}
 
-void NeighborGraph::addDirectedEdge(size_t from, size_t to, double distance,
-                                    const math::Vector3<double> &r_ij) {
+void NeighborGraph::addDirectedEdge(size_t from, size_t to, double distance, const math::Vector3<double> &r_ij) {
   if (from >= adj_list_.size()) {
     return;
   }
   adj_list_[from].push_back({static_cast<AtomID>(to), distance, r_ij});
 }
 
-const std::vector<Neighbor> &
-NeighborGraph::getNeighbors(size_t atom_index) const {
+const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) const {
   static const std::vector<Neighbor> empty_list;
   if (atom_index >= adj_list_.size()) {
     return empty_list;

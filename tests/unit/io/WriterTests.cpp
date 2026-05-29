@@ -45,35 +45,34 @@ protected:
 
   void TearDown() override {
     // Clean up all generated files.
-    std::vector<std::string> files_to_remove = {
-        "si_crystal.car",
-        "test_si_g.csv",
-        "test_si_J.csv",
-        "test_si_G_reduced.csv",
-        "test_si_PAD.csv",
-        "test_si_DAD.csv",
-        "test_si_RD.csv",
-        "test_si_S.csv",
-        "test_si_XRD.csv",
-        "test_si_CN.csv",
-        "test_si_g_smoothed.csv",
-        "test_si_J_smoothed.csv",
-        "test_si_G_reduced_smoothed.csv",
-        "test_si_PAD_smoothed.csv",
-        "test_si.h5",
-        "test_vacf.h5",
-        "test_vacf_new.h5",
-        "test_vacf_new_VACF.csv",
-        "test_vacf_new_VACF_norm.csv",
-        "test_vacf_new_VDOS.csv",
-        "test_vacf_vdos.h5",
-        "test_vacf_vdos_VACF.csv",
-        "test_vacf_vdos_VACF_norm.csv",
-        "test_vacf_vdos_VDOS.csv",
-        "test_si_g.parquet",
-        "test_si_J.parquet",
-        "test_si_G_reduced.parquet",
-        "test_si_PAD.parquet"};
+    std::vector<std::string> files_to_remove = {"si_crystal.car",
+                                                "test_si_g.csv",
+                                                "test_si_J.csv",
+                                                "test_si_G_reduced.csv",
+                                                "test_si_PAD.csv",
+                                                "test_si_DAD.csv",
+                                                "test_si_RD.csv",
+                                                "test_si_S.csv",
+                                                "test_si_XRD.csv",
+                                                "test_si_CN.csv",
+                                                "test_si_g_smoothed.csv",
+                                                "test_si_J_smoothed.csv",
+                                                "test_si_G_reduced_smoothed.csv",
+                                                "test_si_PAD_smoothed.csv",
+                                                "test_si.h5",
+                                                "test_vacf.h5",
+                                                "test_vacf_new.h5",
+                                                "test_vacf_new_VACF.csv",
+                                                "test_vacf_new_VACF_norm.csv",
+                                                "test_vacf_new_VDOS.csv",
+                                                "test_vacf_vdos.h5",
+                                                "test_vacf_vdos_VACF.csv",
+                                                "test_vacf_vdos_VACF_norm.csv",
+                                                "test_vacf_vdos_VDOS.csv",
+                                                "test_si_g.parquet",
+                                                "test_si_J.parquet",
+                                                "test_si_G_reduced.parquet",
+                                                "test_si_PAD.parquet"};
 
     for (const auto &file : files_to_remove) {
       std::error_code ec;
@@ -92,16 +91,13 @@ protected:
 
 TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("si_crystal.car");
-  correlation::core::Cell si_cell =
-      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions df(
-      si_cell, 20.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions df(si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
   const double rdf_bin = 0.05;
@@ -121,8 +117,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 
   // Helper to find the index of the maximum value in a given range.
   auto find_peak_idx = [&](size_t start, size_t end) {
-    auto it =
-        std::max_element(si_si_rdf.begin() + start, si_si_rdf.begin() + end);
+    auto it = std::max_element(si_si_rdf.begin() + start, si_si_rdf.begin() + end);
     return std::distance(si_si_rdf.begin(), it);
   };
 
@@ -157,17 +152,14 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 #ifdef CORRELATION_USE_HDF5
 TEST_F(FileWriterTests, WritesHDF5File) {
   // Arrange
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("si_crystal.car");
-  correlation::core::Cell si_cell =
-      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions df(
-      si_cell, 5.0,
-      trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
+  correlation::analysis::DistributionFunctions df(si_cell, 5.0,
+                                                  trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);
@@ -238,10 +230,8 @@ TEST_F(FileWriterTests, WritesHDF5File) {
 
 TEST_F(FileWriterTests, WritesVACFMetadata) {
   // Arrange
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("si_crystal.car");
-  correlation::core::Cell frame1 =
-      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell frame1 = correlation::readers::readStructure("si_crystal.car", type);
 
   // Create frame2 with same lattice
   auto lv = frame1.latticeVectors();
@@ -265,8 +255,7 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
   trajectory.calculateVelocities();
 
-  correlation::analysis::DistributionFunctions df(
-      frame1, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffsSQ());
   df.calculateVACF(trajectory, 1);
 
   correlation::writers::FileWriter writer(df);
@@ -386,16 +375,13 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
 #ifdef CORRELATION_USE_ARROW
 TEST_F(FileWriterTests, WritesParquetFiles) {
   // Arrange
-  correlation::readers::FileType type =
-      correlation::readers::determineFileType("si_crystal.car");
-  correlation::core::Cell si_cell =
-      correlation::readers::readStructure("si_crystal.car", type);
+  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions df(
-      si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffsSQ());
 
   df.calculateRDF(5.0, 0.1);
   df.calculatePAD(2.0);

@@ -38,8 +38,7 @@ using namespace correlation::readers;
 // Helper: write a string buffer to the Emscripten virtual filesystem, read it
 // back via the normal reader pipeline.
 // ---------------------------------------------------------------------------
-static Trajectory readFromBuffer(const std::string &data,
-                                 const std::string &filename) {
+static Trajectory readFromBuffer(const std::string &data, const std::string &filename) {
   // Write to virtual FS.
   {
     std::ofstream f("/" + filename, std::ios::binary);
@@ -52,9 +51,7 @@ static Trajectory readFromBuffer(const std::string &data,
 // ---------------------------------------------------------------------------
 // Helper: extract histogram bins as a JS Float64Array.
 // ---------------------------------------------------------------------------
-static val getBinsJS(const Histogram &h) {
-  return val(typed_memory_view(h.bins.size(), h.bins.data()));
-}
+static val getBinsJS(const Histogram &h) { return val(typed_memory_view(h.bins.size(), h.bins.data())); }
 
 // ---------------------------------------------------------------------------
 // Helper: extract a partial as a JS Float64Array.
@@ -84,10 +81,7 @@ static val getPartialKeysJS(const Histogram &h) {
 EMSCRIPTEN_BINDINGS(correlation_wasm) {
 
   // ---- Cell ----
-  class_<Cell>("Cell")
-      .constructor<>()
-      .function("atomCount", &Cell::atomCount)
-      .function("getVolume", &Cell::volume);
+  class_<Cell>("Cell").constructor<>().function("atomCount", &Cell::atomCount).function("getVolume", &Cell::volume);
 
   // ---- Trajectory ----
   class_<Trajectory>("Trajectory")
@@ -119,10 +113,8 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
       .function("calculateRDF", &DistributionFunctions::calculateRDF)
       .function("calculatePAD", &DistributionFunctions::calculatePAD)
       .function("getHistogram",
-                select_overload<const Histogram &(const std::string &) const>(
-                    &DistributionFunctions::getHistogram))
-      .function("getAvailableHistograms",
-                &DistributionFunctions::getAvailableHistograms);
+                select_overload<const Histogram &(const std::string &) const>(&DistributionFunctions::getHistogram))
+      .function("getAvailableHistograms", &DistributionFunctions::getAvailableHistograms);
 
   // ---- Free functions ----
   function("readFromBuffer", &readFromBuffer);

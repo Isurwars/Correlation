@@ -20,26 +20,26 @@ namespace correlation::readers {
  */
 class GromacsReader : public BaseReader {
 public:
-    std::string getName() const override { return "GROMACS Reader"; }
-    std::vector<std::string> getExtensions() const override { return {".gro"}; }
-    bool isTrajectory() const override { return true; }
+  std::string getName() const override { return "GROMACS Reader"; }
+  std::vector<std::string> getExtensions() const override { return {".gro"}; }
+  bool isTrajectory() const override { return true; }
 
-    correlation::core::Cell readStructure(
-        const std::string& filename,
-        std::function<void(float, const std::string&)> progress_callback = nullptr) override;
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-    correlation::core::Trajectory readTrajectory(
-        const std::string& filename,
-        std::function<void(float, const std::string&)> progress_callback = nullptr) override;
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-    /**
-     * @brief Parses a single GROMACS .gro frame from a memory region.
-     *
-     * @param data Pointer to the start of the frame data.
-     * @param size Number of bytes in the frame region.
-     * @return A parsed Cell object.
-     */
-    static correlation::core::Cell parseGroFrame(const char *data, size_t size);
+  /**
+   * @brief Parses a single GROMACS .gro frame from a memory region.
+   *
+   * @param data Pointer to the start of the frame data.
+   * @param size Number of bytes in the frame region.
+   * @return A parsed Cell object.
+   */
+  static correlation::core::Cell parseGroFrame(const char *data, size_t size);
 };
 
 } // namespace correlation::readers

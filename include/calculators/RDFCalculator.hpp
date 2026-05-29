@@ -33,16 +33,13 @@ public:
   std::string getName() const override { return "g(r), J(r), G(r)"; }
   std::string getShortName() const override { return "RDF"; }
   std::string getGroup() const override { return "Radial"; }
-  std::string getDescription() const override {
-    return "Computes the Radial Distribution Function g_r, J_r, and G_r.";
-  }
+  std::string getDescription() const override { return "Computes the Radial Distribution Function g_r, J_r, and G_r."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Calculates the J(r), g(r), and G(r) histograms for the given cell
@@ -60,10 +57,8 @@ public:
    * partial and total.
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell,
-            const correlation::analysis::StructureAnalyzer *neighbors,
-            const std::map<std::string, double> &ashcroft_weights, double r_max,
-            double r_bin_width);
+  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+            const std::map<std::string, double> &ashcroft_weights, double r_max, double r_bin_width);
 };
 
 } // namespace correlation::calculators

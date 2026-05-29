@@ -24,36 +24,36 @@ namespace correlation::readers {
  */
 class XYZReader : public BaseReader {
 public:
-    std::string getName() const override { return "XYZ Reader"; }
-    std::vector<std::string> getExtensions() const override { return {".xyz", ".exyz"}; }
-    bool isTrajectory() const override { return true; }
+  std::string getName() const override { return "XYZ Reader"; }
+  std::vector<std::string> getExtensions() const override { return {".xyz", ".exyz"}; }
+  bool isTrajectory() const override { return true; }
 
-    correlation::core::Cell readStructure(
-        const std::string& filename,
-        std::function<void(float, const std::string&)> progress_callback = nullptr) override;
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-    correlation::core::Trajectory readTrajectory(
-        const std::string& filename,
-        std::function<void(float, const std::string&)> progress_callback = nullptr) override;
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
 private:
-    struct CommentData {
-        std::optional<std::array<double, 9>> lattice;
-        std::optional<double> energy;
-        int species_col = 0;
-        int pos_x_col = 1;
-        int pos_y_col = 2;
-        int pos_z_col = 3;
-    };
+  struct CommentData {
+    std::optional<std::array<double, 9>> lattice;
+    std::optional<double> energy;
+    int species_col = 0;
+    int pos_x_col = 1;
+    int pos_y_col = 2;
+    int pos_z_col = 3;
+  };
 
-    /**
-     * @brief Parses an Extended XYZ comment line for properties, lattice and energy.
-     *
-     * @param comment The comment line string.
-     * @return CommentData struct containing parsed info.
-     */
-    static CommentData parseCommentLine(const std::string& comment);
-    static correlation::core::Cell parseXYZFrame(const char *data, size_t size);
+  /**
+   * @brief Parses an Extended XYZ comment line for properties, lattice and energy.
+   *
+   * @param comment The comment line string.
+   * @return CommentData struct containing parsed info.
+   */
+  static CommentData parseCommentLine(const std::string &comment);
+  static correlation::core::Cell parseXYZFrame(const char *data, size_t size);
 };
 
 } // namespace correlation::readers

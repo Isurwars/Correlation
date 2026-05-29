@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
-#include "plotters/SvgPlotter.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "plotters/SvgPlotter.hpp"
 
 #include <gtest/gtest.h>
 #include <string>
@@ -35,7 +35,7 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
   hist.y_label = "g";
   hist.x_unit = "A";
   hist.y_unit = "A^-1";
-  
+
   // 5 bins
   hist.bins = {1.0, 2.0, 3.0, 4.0, 5.0};
   hist.partials["Total"] = {0.1, 0.5, 1.2, 0.8, 0.2};
@@ -51,7 +51,7 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("<svg"), std::string::npos);
   EXPECT_NE(svg.find("</svg>"), std::string::npos);
-  
+
   // Verify labels are in the SVG output (they are converted to SVG paths by PathFont/Roboto)
   // Let's verify that the structure draws polylines/lines
   EXPECT_NE(svg.find("<polyline"), std::string::npos);
@@ -84,10 +84,7 @@ TEST(SvgPlotterTests, RendersComparisonOverlayCorrectly) {
   hist2.bins = {1.0, 2.0, 3.0};
   hist2.partials["Total"] = {0.6, 1.1, 1.6};
 
-  std::vector<LabeledHistogram> datasets = {
-    {"Run A", &hist1},
-    {"Run B", &hist2}
-  };
+  std::vector<LabeledHistogram> datasets = {{"Run A", &hist1}, {"Run B", &hist2}};
 
   // Act
   std::string svg = renderComparisonSvg(datasets, "Total");

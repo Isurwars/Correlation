@@ -364,8 +364,7 @@ TEST_F(CliParserTests, CalculatorsOption) {
 // ===== Smoothing kernel parsing =====
 
 TEST_F(CliParserTests, KernelGaussian) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                  "gaussian"};
+  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel", "gaussian"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -381,8 +380,7 @@ TEST_F(CliParserTests, KernelGauss) {
 }
 
 TEST_F(CliParserTests, KernelGaussianCaseInsensitive) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                  "GAUSSIAN"};
+  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel", "GAUSSIAN"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -398,8 +396,7 @@ TEST_F(CliParserTests, KernelBump) {
 }
 
 TEST_F(CliParserTests, KernelTriweight) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                  "triweight"};
+  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel", "triweight"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
@@ -407,8 +404,7 @@ TEST_F(CliParserTests, KernelTriweight) {
 }
 
 TEST_F(CliParserTests, KernelUnknownDefaultsToGaussian) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel",
-                  "invalid_kernel"};
+  ArgBuilder args{"correlation-cli", "f.poscar", "--smoothing-kernel", "invalid_kernel"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));

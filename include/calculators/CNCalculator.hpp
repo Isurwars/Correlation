@@ -22,9 +22,7 @@ public:
   std::string getName() const override { return "CN"; }
   std::string getShortName() const override { return "CN"; }
   std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override {
-    return "Computes the Coordination Number (CN).";
-  }
+  std::string getDescription() const override { return "Computes the Coordination Number (CN)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
@@ -34,13 +32,13 @@ public:
 
   /**
    * @brief High-performance computation of the Coordination Number (CN).
-   * 
+   *
    * @param cell The periodic cell.
    * @param neighbors Structural analyzer containing the neighbor graph.
    * @return A histogram representing the CN distribution (count vs coordination).
    */
   static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
-                             const correlation::analysis::StructureAnalyzer *neighbors);
+                                                    const correlation::analysis::StructureAnalyzer *neighbors);
 };
 
 } // namespace correlation::calculators

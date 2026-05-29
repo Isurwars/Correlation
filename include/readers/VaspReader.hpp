@@ -24,20 +24,16 @@ namespace correlation::readers {
 class VaspReader : public BaseReader {
 public:
   std::string getName() const override { return "VASP POSCAR"; }
-  std::vector<std::string> getExtensions() const override {
-    return {"poscar", "contcar", "vasp"};
-  }
+  std::vector<std::string> getExtensions() const override { return {"poscar", "contcar", "vasp"}; }
   bool isTrajectory() const override { return false; }
 
-  correlation::core::Cell readStructure(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) override;
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-  correlation::core::Trajectory readTrajectory(
-      const std::string &filename,
-      std::function<void(float, const std::string &)> progress_callback =
-          nullptr) override;
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
   /**
    * @brief Low-level parser for POSCAR/CONTCAR files.

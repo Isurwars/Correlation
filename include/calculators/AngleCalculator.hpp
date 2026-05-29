@@ -38,16 +38,13 @@ public:
   std::string getName() const override { return "Angle"; }
   std::string getShortName() const override { return "BAD"; }
   std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override {
-    return "Computes the Bond Angle Distribution (BAD).";
-  }
+  std::string getDescription() const override { return "Computes the Bond Angle Distribution (BAD)."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief Computes and populates the bond angles tensor.
@@ -57,8 +54,7 @@ public:
    * @param out_angles A 4D tensor `[outer1][central][outer2][angle_idx]`
    * populated with angles in radians.
    */
-  static void compute(const correlation::core::Cell &cell,
-                      const correlation::core::NeighborGraph &graph,
+  static void compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
                       AngleTensor &out_angles);
 };
 

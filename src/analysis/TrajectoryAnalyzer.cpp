@@ -14,21 +14,17 @@ namespace correlation::analysis {
 //----------------------------- Constructors --------------------------------//
 //---------------------------------------------------------------------------//
 
-TrajectoryAnalyzer::TrajectoryAnalyzer(
-    correlation::core::Trajectory &trajectory, double neighbor_cutoff,
-    const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame,
-    long long end_frame, bool ignore_periodic_self_interactions,
-    std::function<void(float, const std::string &)> progress_callback)
-    : trajectory_(trajectory), time_step_(trajectory.getTimeStep()),
-      neighbor_cutoff_(neighbor_cutoff), bond_cutoffs_(bond_cutoffs),
-      ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
+TrajectoryAnalyzer::TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, double neighbor_cutoff,
+                                       const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame,
+                                       long long end_frame, bool ignore_periodic_self_interactions,
+                                       std::function<void(float, const std::string &)> progress_callback)
+    : trajectory_(trajectory), time_step_(trajectory.getTimeStep()), neighbor_cutoff_(neighbor_cutoff),
+      bond_cutoffs_(bond_cutoffs), ignore_periodic_self_interactions_(ignore_periodic_self_interactions) {
 
   size_t n_frames = trajectory.getFrameCount();
 
   effective_end_ =
-      (end_frame == -1 || static_cast<size_t>(end_frame) >= n_frames)
-          ? n_frames
-          : static_cast<size_t>(end_frame);
+      (end_frame == -1 || static_cast<size_t>(end_frame) >= n_frames) ? n_frames : static_cast<size_t>(end_frame);
 
   start_frame_ = (start_frame >= n_frames) ? n_frames : start_frame;
 
@@ -41,13 +37,11 @@ TrajectoryAnalyzer::TrajectoryAnalyzer(
   }
 }
 
-std::unique_ptr<StructureAnalyzer>
-TrajectoryAnalyzer::createAnalyzer(size_t frame_idx) const {
+std::unique_ptr<StructureAnalyzer> TrajectoryAnalyzer::createAnalyzer(size_t frame_idx) const {
   if (frame_idx >= trajectory_.getFrameCount())
     return nullptr;
-  return std::make_unique<StructureAnalyzer>(
-      trajectory_.getFrame(frame_idx), neighbor_cutoff_, bond_cutoffs_,
-      ignore_periodic_self_interactions_);
+  return std::make_unique<StructureAnalyzer>(trajectory_.getFrame(frame_idx), neighbor_cutoff_, bond_cutoffs_,
+                                             ignore_periodic_self_interactions_);
 }
 
 } // namespace correlation::analysis

@@ -13,14 +13,12 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<MSDCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<MSDCalculator>());
 } // namespace
 
-void MSDCalculator::calculateTrajectory(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::core::Trajectory &traj,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void MSDCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &df,
+                                        const correlation::core::Trajectory &traj,
+                                        const correlation::analysis::AnalysisSettings &settings) const {
   auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
   for (auto &[name, histogram] : results) {
     df.addHistogram(name, std::move(histogram));
@@ -28,8 +26,7 @@ void MSDCalculator::calculateTrajectory(
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-MSDCalculator::calculate(const correlation::core::Trajectory &traj,
-                         int max_correlation_frames, size_t start_frame,
+MSDCalculator::calculate(const correlation::core::Trajectory &traj, int max_correlation_frames, size_t start_frame,
                          size_t end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
 
@@ -40,8 +37,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   }
 
   std::vector<double> raw_msd =
-      correlation::analysis::DynamicsAnalyzer::calculateMSD(
-          traj, max_correlation_frames, start_frame, end_frame);
+      correlation::analysis::DynamicsAnalyzer::calculateMSD(traj, max_correlation_frames, start_frame, end_frame);
 
   if (raw_msd.empty()) {
     return results;

@@ -44,11 +44,11 @@ public:
   ~AppController();
 
 private:
-  AppWindow &ui_;         ///< Reference to the managed UI window.
-  AppBackend &backend_;   ///< Reference to the logic backend.
+  AppWindow &ui_;       ///< Reference to the managed UI window.
+  AppBackend &backend_; ///< Reference to the logic backend.
 
-  std::unique_ptr<pfd::open_file> current_file_dialog_; ///< Active file open dialog handler.
-  std::unique_ptr<pfd::save_file> current_save_dialog_; ///< Active file save dialog handler.
+  std::unique_ptr<pfd::open_file> current_file_dialog_;      ///< Active file open dialog handler.
+  std::unique_ptr<pfd::save_file> current_save_dialog_;      ///< Active file save dialog handler.
   std::unique_ptr<pfd::save_file> current_plot_save_dialog_; ///< Active plot save dialog handler.
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.

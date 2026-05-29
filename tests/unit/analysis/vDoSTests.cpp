@@ -21,8 +21,7 @@ TEST(vDoSTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   std::vector<double> vacf(100, 1.0); // Constant VACF
   double dt = 1.0;
 
-  auto [frequencies, intensities, _] =
-      DynamicsAnalyzer::calculateVDOS(vacf, dt);
+  auto [frequencies, intensities, _] = DynamicsAnalyzer::calculateVDOS(vacf, dt);
 
   ASSERT_FALSE(frequencies.empty());
   ASSERT_EQ(frequencies[0], 0.0);
@@ -30,8 +29,7 @@ TEST(vDoSTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // The integral of a constant 1.0 over 100 points with dt=1.0 is roughly
   // 100.0. With windowing and normalization, it might vary, but it should
   // definitely be non-zero.
-  EXPECT_GT(intensities[0], 1.0)
-      << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
+  EXPECT_GT(intensities[0], 1.0) << "VDOS at 0 THz should be non-zero for a constant VACF (DC component)";
 }
 
 TEST(vDoSTests, PerfectSolidShowsSinglePeak) {
@@ -50,16 +48,13 @@ TEST(vDoSTests, PerfectSolidShowsSinglePeak) {
   for (size_t i = 0; i < num_frames; ++i) {
     double t_fs = i * dt;
     // 0.001 converts fs to ps for THz frequency
-    vacf[i] =
-        std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001);
+    vacf[i] = std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001);
   }
 
-  auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf, dt);
+  auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, dt);
 
   // Find the maximum intensity in the real part
-  auto max_it =
-      std::max_element(intensities_real.begin(), intensities_real.end());
+  auto max_it = std::max_element(intensities_real.begin(), intensities_real.end());
   size_t max_idx = std::distance(intensities_real.begin(), max_it);
 
   // Delta nu is the frequency resolution
@@ -69,8 +64,7 @@ TEST(vDoSTests, PerfectSolidShowsSinglePeak) {
   // acceptable resolution margin
   EXPECT_NEAR(frequencies[max_idx], target_nu_thz, 2.0 * d_nu)
       << "The calculated VDOS max frequency " << frequencies[max_idx]
-      << " THz does not correspond to the input VACF frequency "
-      << target_nu_thz << " THz.";
+      << " THz does not correspond to the input VACF frequency " << target_nu_thz << " THz.";
 
   EXPECT_GT(*max_it, 0.0) << "The peak real intensity should be positive.";
 }
@@ -95,28 +89,23 @@ TEST(vDoSTests, IdealGasShowsImaginaryPeak) {
     vacf[i] = std::exp(-a * t_ps);
   }
 
-  auto [frequencies, intensities_real, intensities_imag] =
-      DynamicsAnalyzer::calculateVDOS(vacf, dt);
+  auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, dt);
 
   // 1. The Real part should peak at exactly 0 Hz for pure exponential decay
-  auto max_real_it =
-      std::max_element(intensities_real.begin(), intensities_real.end());
+  auto max_real_it = std::max_element(intensities_real.begin(), intensities_real.end());
   size_t max_real_idx = std::distance(intensities_real.begin(), max_real_it);
 
-  EXPECT_EQ(frequencies[max_real_idx], 0.0)
-      << "The real VDOS for an exponential decay should have its maximum at 0 "
-         "THz.";
+  EXPECT_EQ(frequencies[max_real_idx], 0.0) << "The real VDOS for an exponential decay should have its maximum at 0 "
+                                               "THz.";
 
   // 2. The Imaginary part should peak at target_nu_peak
-  auto max_imag_it =
-      std::max_element(intensities_imag.begin(), intensities_imag.end());
+  auto max_imag_it = std::max_element(intensities_imag.begin(), intensities_imag.end());
   size_t max_imag_idx = std::distance(intensities_imag.begin(), max_imag_it);
 
   double d_nu = frequencies[1] - frequencies[0];
 
   EXPECT_NEAR(frequencies[max_imag_idx], target_nu_peak, 2.0 * d_nu)
       << "The imaginary VDOS peak " << frequencies[max_imag_idx]
-      << " THz does not correspond to the decay constant frequency "
-      << target_nu_peak << " THz.";
+      << " THz does not correspond to the decay constant frequency " << target_nu_peak << " THz.";
 }
 } // namespace correlation::analysis

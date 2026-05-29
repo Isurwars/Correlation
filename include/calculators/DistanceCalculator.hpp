@@ -29,20 +29,17 @@ public:
   std::string getName() const override { return "Distance"; }
   std::string getShortName() const override { return "Distance"; }
   std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override {
-    return "Computes all unique 2-body distances.";
-  }
+  std::string getDescription() const override { return "Computes all unique 2-body distances."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(
-      correlation::analysis::DistributionFunctions &df,
-      const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
    * @brief High-performance computation of the distance tensor and neighbor graph.
-   * 
+   *
    * @param cell The periodic cell container.
    * @param cutoff_sq Squared cutoff radius for neighbor search.
    * @param bond_cutoffs_sq Squared bond cutoffs per element pair.
@@ -51,10 +48,8 @@ public:
    * @param out_graph Graph object to be populated with adjacency data.
    */
   static void compute(const correlation::core::Cell &cell, double cutoff_sq,
-                      const std::vector<std::vector<double>> &bond_cutoffs_sq,
-                      bool ignore_periodic_self_interactions,
-                      DistanceTensor &out_distances,
-                      correlation::core::NeighborGraph &out_graph);
+                      const std::vector<std::vector<double>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
+                      DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph);
 };
 
 } // namespace correlation::calculators

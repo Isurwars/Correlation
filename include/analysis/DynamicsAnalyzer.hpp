@@ -39,10 +39,8 @@ public:
    * @return A vector containing the VACF values for lag times 0 to
    * max_correlation_frames.
    */
-  static std::vector<double>
-  calculateVACF(const correlation::core::Trajectory &traj,
-                int max_correlation_frames, size_t start_frame = 0,
-                size_t end_frame = static_cast<size_t>(-1));
+  static std::vector<double> calculateVACF(const correlation::core::Trajectory &traj, int max_correlation_frames,
+                                           size_t start_frame = 0, size_t end_frame = static_cast<size_t>(-1));
 
   /**
    * @brief Calculates the Normalized Velocity Autocorrelation Function.
@@ -54,10 +52,9 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector containing the normalized VACF values.
    */
-  static std::vector<double>
-  calculateNormalizedVACF(const correlation::core::Trajectory &traj,
-                          int max_correlation_frames, size_t start_frame = 0,
-                          size_t end_frame = static_cast<size_t>(-1));
+  static std::vector<double> calculateNormalizedVACF(const correlation::core::Trajectory &traj,
+                                                     int max_correlation_frames, size_t start_frame = 0,
+                                                     size_t end_frame = static_cast<size_t>(-1));
 
   /**
    * @brief Calculates the Mean Squared Displacement (MSD).
@@ -77,10 +74,8 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector of MSD values indexed by lag (in Å²).
    */
-  static std::vector<double>
-  calculateMSD(const correlation::core::Trajectory &traj,
-               int max_correlation_frames, size_t start_frame = 0,
-               size_t end_frame = static_cast<size_t>(-1));
+  static std::vector<double> calculateMSD(const correlation::core::Trajectory &traj, int max_correlation_frames,
+                                          size_t start_frame = 0, size_t end_frame = static_cast<size_t>(-1));
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
@@ -95,18 +90,17 @@ public:
    * @param dt The time step between frames (in femtoseconds).
    * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
    */
-  static std::tuple<std::vector<double>, std::vector<double>,
-                    std::vector<double>>
+  static std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
   calculateVDOS(const std::vector<double> &vacf, double dt);
 
   /**
-   * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time series.
+   * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time
+   * series.
    * @param time The time values (bins).
    * @param msd The MSD values.
    * @return The diffusion coefficient in Å²/fs.
    */
-  static double computeDiffusionCoefficientMSD(const std::vector<double> &time,
-                                               const std::vector<double> &msd);
+  static double computeDiffusionCoefficientMSD(const std::vector<double> &time, const std::vector<double> &msd);
 
   /**
    * @brief Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule).
@@ -114,8 +108,7 @@ public:
    * @param vacf The VACF values.
    * @return The diffusion coefficient in Å²/fs.
    */
-  static double computeDiffusionCoefficientVACF(const std::vector<double> &time,
-                                                const std::vector<double> &vacf);
+  static double computeDiffusionCoefficientVACF(const std::vector<double> &time, const std::vector<double> &vacf);
 
   /**
    * @brief Computes the relaxation time tau from the normalized VACF using trapezoidal integration.
@@ -123,8 +116,7 @@ public:
    * @param norm_vacf The normalized VACF values.
    * @return The relaxation time in fs.
    */
-  static double computeRelaxationTime(const std::vector<double> &time,
-                                      const std::vector<double> &norm_vacf);
+  static double computeRelaxationTime(const std::vector<double> &time, const std::vector<double> &norm_vacf);
 };
 
 } // namespace correlation::analysis

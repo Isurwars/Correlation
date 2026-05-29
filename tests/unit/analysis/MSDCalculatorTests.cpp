@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: MIT
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
+#include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/MSDCalculator.hpp"
 #include "core/Trajectory.hpp"
-#include "analysis/DynamicsAnalyzer.hpp"
 
 #include <gtest/gtest.h>
 #include <vector>

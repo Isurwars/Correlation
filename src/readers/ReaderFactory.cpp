@@ -28,8 +28,7 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
       continue;
     if (lower_ext[0] != '.')
       lower_ext = "." + lower_ext;
-    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
-                   ::tolower);
+    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
     extension_map_[lower_ext] = reader.get();
   }
 
@@ -43,8 +42,7 @@ BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, c
     return nullptr;
   if (lower_ext[0] != '.')
     lower_ext = "." + lower_ext;
-  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(),
-                 ::tolower);
+  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
 
   if ((lower_ext == ".out" || lower_ext == ".in") && !filename.empty()) {
     std::ifstream file(filename);
@@ -54,23 +52,19 @@ BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, c
       for (int i = 0; i < 200 && std::getline(file, line); ++i) {
         // Convert to uppercase for matching
         std::string uline = line;
-        for (auto &c : uline) c = toupper(c);
+        for (auto &c : uline)
+          c = toupper(c);
 
-        if (uline.find("CELL_PARAMETERS") != std::string::npos ||
-            uline.find("ATOMIC_POSITIONS") != std::string::npos ||
-            uline.find("QUANTUM ESPRESSO") != std::string::npos ||
-            uline.find("PWSCF") != std::string::npos ||
-            uline.find("&CONTROL") != std::string::npos ||
-            uline.find("&SYSTEM") != std::string::npos) {
+        if (uline.find("CELL_PARAMETERS") != std::string::npos || uline.find("ATOMIC_POSITIONS") != std::string::npos ||
+            uline.find("QUANTUM ESPRESSO") != std::string::npos || uline.find("PWSCF") != std::string::npos ||
+            uline.find("&CONTROL") != std::string::npos || uline.find("&SYSTEM") != std::string::npos) {
           auto it = extension_map_.find(".pwo");
           if (it != extension_map_.end()) {
             return it->second;
           }
         }
-        if (uline.find("&CELL") != std::string::npos ||
-            uline.find("&COORD") != std::string::npos ||
-            uline.find("&GLOBAL") != std::string::npos ||
-            uline.find("CP2K") != std::string::npos) {
+        if (uline.find("&CELL") != std::string::npos || uline.find("&COORD") != std::string::npos ||
+            uline.find("&GLOBAL") != std::string::npos || uline.find("CP2K") != std::string::npos) {
           auto it = extension_map_.find(".restart");
           if (it != extension_map_.end()) {
             return it->second;
@@ -96,9 +90,6 @@ std::vector<std::string> ReaderFactory::getAllExtensions() const {
   return extensions;
 }
 
-const std::vector<std::unique_ptr<BaseReader>> &
-ReaderFactory::getReaders() const {
-  return readers_;
-}
+const std::vector<std::unique_ptr<BaseReader>> &ReaderFactory::getReaders() const { return readers_; }
 
 } // namespace correlation::readers

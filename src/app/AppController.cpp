@@ -18,8 +18,8 @@
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
-#include <fstream>
 #include <format>
+#include <fstream>
 #include <map>
 #include <string>
 #include <thread>
@@ -31,8 +31,7 @@ namespace correlation::app {
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
 
-AppController::AppController(AppWindow &ui, AppBackend &backend)
-    : ui_(ui), backend_(backend) {
+AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), backend_(backend) {
 
   // Populate the calculator groups from the factory
   populateCalculatorGroups(ui_);
@@ -61,9 +60,8 @@ AppController::AppController(AppWindow &ui, AppBackend &backend)
   ui_.on_check_file_dialog_status([this]() { handleCheckFileDialogStatus(); });
 
   // Handle calculator toggle: update backend options and refresh the UI model
-  ui_.on_toggle_calculator([this](slint::SharedString id, bool enabled) {
-    backend_.setCalculatorActive(std::string(id.data()), enabled);
-  });
+  ui_.on_toggle_calculator(
+      [this](slint::SharedString id, bool enabled) { backend_.setCalculatorActive(std::string(id.data()), enabled); });
 
   // Handle plot selection: generate SVG and push to UI
   ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
@@ -130,23 +128,17 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_use_csv(opt.use_csv);
   ui.set_use_parquet(opt.use_parquet);
   ui.set_r_max(slint::SharedString(std::format("{:.2f}", opt.r_max)));
-  ui.set_r_bin_width(
-      slint::SharedString(std::format("{:.2f}", opt.r_bin_width)));
+  ui.set_r_bin_width(slint::SharedString(std::format("{:.2f}", opt.r_bin_width)));
   ui.set_q_max(slint::SharedString(std::format("{:.2f}", opt.q_max)));
-  ui.set_q_bin_width(
-      slint::SharedString(std::format("{:.2f}", opt.q_bin_width)));
+  ui.set_q_bin_width(slint::SharedString(std::format("{:.2f}", opt.q_bin_width)));
   ui.set_r_int_max(slint::SharedString(std::format("{:.2f}", opt.r_int_max)));
-  ui.set_angle_bin_width(
-      slint::SharedString(std::format("{:.2f}", opt.angle_bin_width)));
-  ui.set_dihedral_bin_width(
-      slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width)));
+  ui.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", opt.angle_bin_width)));
+  ui.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width)));
   ui.set_max_ring_size(slint::SharedString(std::to_string(opt.max_ring_size)));
-  ui.set_smoothing_sigma(
-      slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
+  ui.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
   ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
 
-  ui.set_min_frame(
-      slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
+  ui.set_min_frame(slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
   if (opt.max_frame == -1) {
     ui.set_max_frame("End");
   } else {
@@ -159,8 +151,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   ProgramOptions opt;
   const std::string input_path_str = ui_.get_in_file_text().data();
   std::filesystem::path full_path(input_path_str);
-  std::filesystem::path output_path =
-      full_path.parent_path() / full_path.stem();
+  std::filesystem::path output_path = full_path.parent_path() / full_path.stem();
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
@@ -172,12 +163,9 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.q_max = safe_stof(ui_.get_q_max(), opt.q_max);
   opt.q_bin_width = safe_stof(ui_.get_q_bin_width(), opt.q_bin_width);
   opt.r_int_max = safe_stof(ui_.get_r_int_max(), opt.r_int_max);
-  opt.angle_bin_width =
-      safe_stof(ui_.get_angle_bin_width(), opt.angle_bin_width);
-  opt.dihedral_bin_width =
-      safe_stof(ui_.get_dihedral_bin_width(), opt.dihedral_bin_width);
-  opt.max_ring_size = static_cast<size_t>(safe_stof(
-      ui_.get_max_ring_size(), static_cast<float>(opt.max_ring_size)));
+  opt.angle_bin_width = safe_stof(ui_.get_angle_bin_width(), opt.angle_bin_width);
+  opt.dihedral_bin_width = safe_stof(ui_.get_dihedral_bin_width(), opt.dihedral_bin_width);
+  opt.max_ring_size = static_cast<size_t>(safe_stof(ui_.get_max_ring_size(), static_cast<float>(opt.max_ring_size)));
 
   // Collect active_calculators from the UI model
   auto groups = ui_.get_calculator_groups();
@@ -189,10 +177,8 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     }
   }
 
-  opt.smoothing_sigma =
-      safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
-  opt.smoothing_kernel =
-      static_cast<correlation::math::KernelType>(ui_.get_smoothing_kernel());
+  opt.smoothing_sigma = safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
+  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(ui_.get_smoothing_kernel());
 
   // Frame Selection Logic:
   // - "Start" maps to 0
@@ -203,8 +189,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   // Helper lambda for case-insensitive comparison
   auto to_lower = [](const std::string &s) {
     std::string data = s;
-    std::transform(data.begin(), data.end(), data.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
+    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c) { return std::tolower(c); });
     return data;
   };
 
@@ -268,10 +253,8 @@ void AppController::setBondCutoffs(AppWindow &ui) {
 
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
-      slint_cutoffs->push_back(
-          {slint::SharedString(elements[i].symbol),
-           slint::SharedString(elements[j].symbol),
-           slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
+      slint_cutoffs->push_back({slint::SharedString(elements[i].symbol), slint::SharedString(elements[j].symbol),
+                                slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
     }
   }
   ui.set_bond_cutoffs(slint_cutoffs);
@@ -283,8 +266,7 @@ std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
     return {};
   auto elements = backend_.cell()->elements();
   size_t num_elements = elements.size();
-  std::vector<std::vector<double>> cutoffs(
-      num_elements, std::vector<double>(num_elements, 0.0));
+  std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements, 0.0));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto item = slint_cutoffs->row_data(k).value();
@@ -309,15 +291,12 @@ std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
 }
 
 void AppController::populateCalculatorGroups(AppWindow &ui) {
-  const auto &calculators =
-      ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
   // Collect group names in insertion order
   std::vector<std::string> group_order;
-  std::map<std::string,
-           std::vector<const correlation::calculators::BaseCalculator *>>
-      groups_map;
+  std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
   for (const auto &calc : calculators) {
     const std::string &grp = calc->getGroup();
     if (groups_map.find(grp) == groups_map.end()) {
@@ -359,15 +338,13 @@ void AppController::handleRunAnalysis() {
   ui_.set_analysis_done(false); // Reset done state
   ui_.set_analysis_running(true);
   ui_.set_progress(0.0f);
-  ui_.set_analysis_status_text(
-      slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));
+  ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));
 
   // Create a ProgramOptions object from the UI properties
   backend_.setOptions(handleOptionsfromUI(ui_));
 
   // Set the progress callback
-  backend_.setProgressCallback(
-      [this](float p, const std::string &msg) { updateProgress(p, msg); });
+  backend_.setProgressCallback([this](float p, const std::string &msg) { updateProgress(p, msg); });
 
   // run analysis in a separate thread
   if (analysis_thread_.joinable()) {
@@ -380,8 +357,7 @@ void AppController::handleRunAnalysis() {
     slint::invoke_from_event_loop([this, err]() {
       ui_.set_analysis_running(false);
       if (err.empty()) {
-        ui_.set_analysis_status_text(
-            slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
+        ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
       } else {
         ui_.set_analysis_status_text(slint::SharedString(err));
       }
@@ -405,43 +381,40 @@ void AppController::handleWriteFiles() {
 
   std::string default_path = backend_.options().output_file_base;
 
-  current_save_dialog_ = std::make_unique<pfd::save_file>(
-      "Select Output File Name", default_path,
-      std::vector<std::string>{"All Files", "*"}, pfd::opt::none);
+  current_save_dialog_ = std::make_unique<pfd::save_file>("Select Output File Name", default_path,
+                                                          std::vector<std::string>{"All Files", "*"}, pfd::opt::none);
 
   ui_.set_timer_running(true);
   ui_.set_text_opacity(true);
-  ui_.set_analysis_status_text(
-      slint::SharedString(AppDefaults::MSG_SELECTING_OUTPUT));
+  ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SELECTING_OUTPUT));
 }
 
 void AppController::handleBrowseFile() {
-  std::vector<std::string> filters = {
-      "Supported Structure Files",
-      "*arc *.car *.cell *.cif *.dat *.md *.outmol *.poscar *.contcar *.vasp *.xdatcar",
-      "Materials Studio CAR",
-      "*.car",
-      "Materials Studio ARC",
-      "*.arc",
-      "CASTEP CELL",
-      "*.cell",
-      "CASTEP MD",
-      "*.md",
-      "CIF files",
-      "*.cif",
-      "ONETEP DAT",
-      "*.dat",
-      "DMol3 Outmol",
-      "*.outmol",
-      "VASP POSCAR/CONTCAR",
-      "POSCAR CONTCAR *.poscar *.contcar *.vasp",
-      "VASP XDATCAR",
-      "XDATCAR *.xdatcar",
-      "All Files",
-      "*"};
+  std::vector<std::string> filters = {"Supported Structure Files",
+                                      "*arc *.car *.cell *.cif *.dat *.md *.outmol *.poscar *.contcar *.vasp *.xdatcar",
+                                      "Materials Studio CAR",
+                                      "*.car",
+                                      "Materials Studio ARC",
+                                      "*.arc",
+                                      "CASTEP CELL",
+                                      "*.cell",
+                                      "CASTEP MD",
+                                      "*.md",
+                                      "CIF files",
+                                      "*.cif",
+                                      "ONETEP DAT",
+                                      "*.dat",
+                                      "DMol3 Outmol",
+                                      "*.outmol",
+                                      "VASP POSCAR/CONTCAR",
+                                      "POSCAR CONTCAR *.poscar *.contcar *.vasp",
+                                      "VASP XDATCAR",
+                                      "XDATCAR *.xdatcar",
+                                      "All Files",
+                                      "*"};
 
-  current_file_dialog_ = std::make_unique<pfd::open_file>(
-      "Select a structure file", "", filters, pfd::opt::multiselect);
+  current_file_dialog_ =
+      std::make_unique<pfd::open_file>("Select a structure file", "", filters, pfd::opt::multiselect);
 
   ui_.set_timer_running(true);
   ui_.set_text_opacity(true);
@@ -477,8 +450,7 @@ void AppController::handleCheckFileDialogStatus() {
           message = backend_.load_file(filepath);
           success = true;
         } catch (const std::exception &e) {
-          message = std::string(AppDefaults::MSG_ERROR_LOADING) +
-                    std::string(e.what());
+          message = std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
         }
 
         slint::invoke_from_event_loop([this, message, success]() {
@@ -491,11 +463,9 @@ void AppController::handleCheckFileDialogStatus() {
 
             // Atom Counts
             auto atom_counts_map = backend_.getAtomCounts();
-            auto slint_atom_counts =
-                std::make_shared<slint::VectorModel<AtomCount>>();
+            auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
             for (const auto &[symbol, count] : atom_counts_map) {
-              slint_atom_counts->push_back(
-                  {slint::SharedString(symbol), count});
+              slint_atom_counts->push_back({slint::SharedString(symbol), count});
             }
             ui_.set_atom_counts(slint_atom_counts);
 
@@ -505,15 +475,12 @@ void AppController::handleCheckFileDialogStatus() {
             // File Info
             ui_.set_num_frames(backend_.getFrameCount());
             ui_.set_total_atoms(backend_.getTotalAtomCount());
-            ui_.set_removed_frames_count(
-                static_cast<int>(backend_.getRemovedFrameCount()));
-            ui_.set_time_step(slint::SharedString(
-                std::format("{:.2f}", backend_.getRecommendedTimeStep())));
+            ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
+            ui_.set_time_step(slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep())));
 
             // Update Run Analysis Card Frame Info
             ui_.set_min_frame("1");
-            ui_.set_max_frame(
-                slint::SharedString(std::to_string(backend_.getFrameCount())));
+            ui_.set_max_frame(slint::SharedString(std::to_string(backend_.getFrameCount())));
           }
         });
       });
@@ -542,14 +509,12 @@ void AppController::handleCheckFileDialogStatus() {
       backend_.setOptions(opts);
       std::string err = backend_.write_files();
       if (err.empty()) {
-        ui_.set_analysis_status_text(
-            slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
+        ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
       } else {
         ui_.set_analysis_status_text(slint::SharedString(err));
       }
     } else {
-      ui_.set_analysis_status_text(
-          slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
     }
     slint::invoke_from_event_loop([this]() {
       ui_.set_timer_running(false);
@@ -567,17 +532,16 @@ void AppController::handleCheckFileDialogStatus() {
         const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
         if (hist) {
           correlation::plotters::PlotConfig config;
-          config.theme = ui_.get_is_dark()
-                             ? correlation::plotters::PlotConfig::Theme::Dark
-                             : correlation::plotters::PlotConfig::Theme::Light;
-          
+          config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
+                                           : correlation::plotters::PlotConfig::Theme::Light;
+
           std::string svg;
           if (pinned_runs_.empty()) {
             svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
           } else {
             std::vector<correlation::plotters::LabeledHistogram> datasets;
             datasets.push_back({"Current", hist});
-            for (const auto& pr : pinned_runs_) {
+            for (const auto &pr : pinned_runs_) {
               auto it = pr.histograms.find(name);
               if (it != pr.histograms.end()) {
                 datasets.push_back({pr.label, &it->second});
@@ -590,7 +554,7 @@ void AppController::handleCheckFileDialogStatus() {
             }
             svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
           }
-          
+
           std::ofstream out(result);
           if (out.is_open()) {
             out << svg;
@@ -602,8 +566,7 @@ void AppController::handleCheckFileDialogStatus() {
         }
       }
     } else {
-      ui_.set_analysis_status_text(
-          slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
     }
     slint::invoke_from_event_loop([this]() {
       ui_.set_timer_running(false);
@@ -625,19 +588,17 @@ void AppController::populatePlotList() {
   // 2. Scattering: S_q, XRD
   // 3. Angular: BAD, PAD, DAD, CN, RD
   // 4. Trajectory: MSD, VACF, VDOS
-  std::map<std::string, int> priority = {
-      {"g_r", 0},  {"G_r", 1},   {"J_r", 2},  {"S_q", 10}, {"XRD", 11},
-      {"BAD", 20}, {"PAD", 21},  {"DAD", 22}, {"CN", 23},  {"RD", 24},
-      {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}};
+  std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},   {"J_r", 2},  {"S_q", 10}, {"XRD", 11},
+                                         {"BAD", 20}, {"PAD", 21},  {"DAD", 22}, {"CN", 23},  {"RD", 24},
+                                         {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}};
 
-  std::sort(names.begin(), names.end(),
-            [&](const std::string &a, const std::string &b) {
-              int p1 = priority.contains(a) ? priority.at(a) : 100;
-              int p2 = priority.contains(b) ? priority.at(b) : 100;
-              if (p1 != p2)
-                return p1 < p2;
-              return a < b; // Fallback to alphabetical
-            });
+  std::sort(names.begin(), names.end(), [&](const std::string &a, const std::string &b) {
+    int p1 = priority.contains(a) ? priority.at(a) : 100;
+    int p2 = priority.contains(b) ? priority.at(b) : 100;
+    if (p1 != p2)
+      return p1 < p2;
+    return a < b; // Fallback to alphabetical
+  });
 
   available_plot_keys_ = names; // Store keys corresponding to indices
 
@@ -646,8 +607,7 @@ void AppController::populatePlotList() {
   for (const auto &name : names) {
     MenuItem item;
     const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-    std::string display_text =
-        (hist && !hist->title.empty()) ? hist->title : name;
+    std::string display_text = (hist && !hist->title.empty()) ? hist->title : name;
     item.text = slint::SharedString(display_text);
     item.enabled = true;
     menu_model->push_back(item);
@@ -667,27 +627,26 @@ void AppController::handleSelectPlot(int index) {
     return;
 
   correlation::plotters::PlotConfig config;
-  config.theme = ui_.get_is_dark()
-                     ? correlation::plotters::PlotConfig::Theme::Dark
-                     : correlation::plotters::PlotConfig::Theme::Light;
+  config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
+                                   : correlation::plotters::PlotConfig::Theme::Light;
 
   std::string svg;
   if (pinned_runs_.empty()) {
     svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
   } else {
     std::vector<correlation::plotters::LabeledHistogram> datasets;
-    
+
     // Add the current run first
     datasets.push_back({"Current", hist});
-    
+
     // Add pinned runs
-    for (const auto& pr : pinned_runs_) {
+    for (const auto &pr : pinned_runs_) {
       auto it = pr.histograms.find(name);
       if (it != pr.histograms.end()) {
         datasets.push_back({pr.label, &it->second});
       }
     }
-    
+
     std::string key = "Total";
     const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
     if (!partials.empty() && partials.find(key) == partials.end()) {
@@ -698,9 +657,7 @@ void AppController::handleSelectPlot(int index) {
 
   // Load SVG directly from memory avoiding filesystem issues
   auto img = slint::private_api::load_image_from_embedded_data(
-      std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()),
-                               svg.size()),
-      "svg");
+      std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
   ui_.set_preview_plot(img);
 }
 
@@ -715,31 +672,30 @@ void AppController::handleSavePlot() {
 
   std::string default_path = backend_.options().output_file_base;
   if (!default_path.empty()) {
-      default_path += "_" + name + ".svg";
+    default_path += "_" + name + ".svg";
   } else {
-      default_path = name + ".svg";
+    default_path = name + ".svg";
   }
 
   current_plot_save_dialog_ = std::make_unique<pfd::save_file>(
-      "Save SVG Plot", default_path,
-      std::vector<std::string>{"SVG Image", "*.svg", "All Files", "*"}, pfd::opt::none);
+      "Save SVG Plot", default_path, std::vector<std::string>{"SVG Image", "*.svg", "All Files", "*"}, pfd::opt::none);
 
   ui_.set_timer_running(true);
   ui_.set_text_opacity(true);
-  ui_.set_analysis_status_text(
-      slint::SharedString(std::string("Saving ") + name + " plot..."));
+  ui_.set_analysis_status_text(slint::SharedString(std::string("Saving ") + name + " plot..."));
 }
 
 void AppController::handlePinRun() {
-  const auto& hists = backend_.getHistograms();
-  if (hists.empty()) return;
-  
+  const auto &hists = backend_.getHistograms();
+  if (hists.empty())
+    return;
+
   std::string label = "Run " + std::to_string(pinned_runs_.size() + 1);
   pinned_runs_.push_back({label, hists});
-  
+
   slint::invoke_from_event_loop([this]() {
     ui_.set_pinned_runs_count(static_cast<int>(pinned_runs_.size()));
-    
+
     // Refresh plot if we have one selected
     int current_idx = ui_.get_selected_plot_index();
     if (current_idx >= 0) {
@@ -750,10 +706,10 @@ void AppController::handlePinRun() {
 
 void AppController::handleClearPinnedRuns() {
   pinned_runs_.clear();
-  
+
   slint::invoke_from_event_loop([this]() {
     ui_.set_pinned_runs_count(0);
-    
+
     // Refresh plot if we have one selected
     int current_idx = ui_.get_selected_plot_index();
     if (current_idx >= 0) {

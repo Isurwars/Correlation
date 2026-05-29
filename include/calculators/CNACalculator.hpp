@@ -17,29 +17,27 @@ namespace correlation::calculators {
  */
 class CNACalculator : public BaseCalculator {
 public:
-    std::string getName() const override { return "CNA"; }
-    std::string getShortName() const override { return "CNA"; }
-    std::string getGroup() const override { return "Structural"; }
-    std::string getDescription() const override {
-        return "Common Neighbor Analysis for local environment classification.";
-    }
+  std::string getName() const override { return "CNA"; }
+  std::string getShortName() const override { return "CNA"; }
+  std::string getGroup() const override { return "Structural"; }
+  std::string getDescription() const override {
+    return "Common Neighbor Analysis for local environment classification.";
+  }
 
-    bool isFrameCalculator() const override { return true; }
-    bool isTrajectoryCalculator() const override { return false; }
+  bool isFrameCalculator() const override { return true; }
+  bool isTrajectoryCalculator() const override { return false; }
 
-    void calculateFrame(
-        correlation::analysis::DistributionFunctions &df,
-        const correlation::analysis::AnalysisSettings &settings) const override;
+  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+                      const correlation::analysis::AnalysisSettings &settings) const override;
 
-    /**
-     * @brief Performs CNA on a single cell.
-     * @param cell The simulation cell.
-     * @param neighbors The structural analyzer with neighbor info.
-     * @return A histogram of CNA indices.
-     */
-    static correlation::analysis::Histogram calculate(
-        const correlation::core::Cell& cell,
-        const correlation::analysis::StructureAnalyzer* neighbors);
+  /**
+   * @brief Performs CNA on a single cell.
+   * @param cell The simulation cell.
+   * @param neighbors The structural analyzer with neighbor info.
+   * @return A histogram of CNA indices.
+   */
+  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
+                                                    const correlation::analysis::StructureAnalyzer *neighbors);
 };
 
 } // namespace correlation::calculators

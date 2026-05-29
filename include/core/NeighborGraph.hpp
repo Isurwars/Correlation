@@ -28,7 +28,7 @@ struct Neighbor {
  * @class NeighborGraph
  * @brief Adjacency-list based graph representing atomic connectivity and proximity.
  *
- * This class stores bonds and neighbor interactions as directed edges. 
+ * This class stores bonds and neighbor interactions as directed edges.
  * It is primarily used by calculators that require topological information,
  * such as Ring Statistics (RD) or Steinhardt Order Parameters.
  */
@@ -45,22 +45,20 @@ public:
 
   /**
    * @brief Adds a directed edge between two atoms.
-   * 
+   *
    * @param from Index of the source atom.
    * @param to Index of the target atom.
    * @param distance Separation distance (Angstrom).
    * @param r_ij Relative position vector (to - from).
    */
-  void addDirectedEdge(size_t from, size_t to, double distance,
-                       const math::Vector3<double> &r_ij);
+  void addDirectedEdge(size_t from, size_t to, double distance, const math::Vector3<double> &r_ij);
 
   /**
    * @brief Retrieves the neighbor list for a specific atom.
    * @param atom_index Index of the atom.
    * @return Constant reference to the vector of Neighbor objects.
    */
-  [[nodiscard]] const std::vector<Neighbor> &
-  getNeighbors(size_t atom_index) const;
+  [[nodiscard]] const std::vector<Neighbor> &getNeighbors(size_t atom_index) const;
 
   /**
    * @brief Checks if two atoms are connected by an edge.

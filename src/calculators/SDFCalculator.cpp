@@ -15,13 +15,11 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(
-    std::make_unique<SDFCalculator>());
+bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<SDFCalculator>());
 } // namespace
 
-void SDFCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
-    const correlation::analysis::AnalysisSettings &settings) const {
+void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+                                   const correlation::analysis::AnalysisSettings &settings) const {
 
   const auto &cell = df.cell();
   const double dx = settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5;
@@ -51,9 +49,8 @@ void SDFCalculator::calculateFrame(
   sdf_hist.y_label = "Density";
   sdf_hist.x_unit = "-";
   sdf_hist.y_unit = "atoms/A^3";
-  sdf_hist.description = "Flattened 3D Spatial Distribution Grid (" +
-                         std::to_string(nx) + "x" + std::to_string(ny) + "x" +
-                         std::to_string(nz) + ")";
+  sdf_hist.description = "Flattened 3D Spatial Distribution Grid (" + std::to_string(nx) + "x" + std::to_string(ny) +
+                         "x" + std::to_string(nz) + ")";
   sdf_hist.file_suffix = "_sdf";
 
   // Dummy bins to satisfy dimensions

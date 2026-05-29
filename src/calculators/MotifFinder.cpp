@@ -8,13 +8,13 @@
 
 #include "calculators/MotifFinder.hpp"
 
-#include <tbb/blocked_range.h>
-#include <tbb/enumerable_thread_specific.h>
-#include <tbb/parallel_for.h>
 #include <algorithm>
 #include <cmath>
 #include <iterator>
 #include <map>
+#include <tbb/blocked_range.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_for.h>
 #include <vector>
 
 namespace correlation::calculators {
@@ -54,11 +54,9 @@ struct BFSScratch {
 // ---------------------------------------------------------------------------
 // Reconstruct paths from a BFS node back to root (unchanged from original).
 // ---------------------------------------------------------------------------
-void get_paths(
-    size_t node, size_t root,
-    const std::vector<std::vector<correlation::core::AtomID>> &parents,
-    std::vector<correlation::core::AtomID> &current_path,
-    std::vector<std::vector<correlation::core::AtomID>> &all_paths) {
+void get_paths(size_t node, size_t root, const std::vector<std::vector<correlation::core::AtomID>> &parents,
+               std::vector<correlation::core::AtomID> &current_path,
+               std::vector<std::vector<correlation::core::AtomID>> &all_paths) {
   if (node == root) {
     current_path.push_back(static_cast<correlation::core::AtomID>(root));
     all_paths.push_back(current_path);
@@ -76,8 +74,7 @@ void get_paths(
 // King-ring check.  Uses dist_king / q_king from the caller-supplied scratch
 // so no heap allocations occur here (unchanged algorithm, scalar state only).
 // ---------------------------------------------------------------------------
-bool isKingRing(const correlation::core::NeighborGraph &graph,
-                const std::vector<correlation::core::AtomID> &cycle,
+bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector<correlation::core::AtomID> &cycle,
                 std::vector<int> &dist_king, std::vector<size_t> &q_king) {
   int n = cycle.size();
   if (n < 3)
@@ -122,8 +119,7 @@ bool isKingRing(const correlation::core::NeighborGraph &graph,
         continue;
       size_t target_node = cycle[j];
       int dist_in_cycle = std::min(std::abs(j - i), n - std::abs(j - i));
-      if (dist_king[target_node] != -1 &&
-          dist_king[target_node] < dist_in_cycle) {
+      if (dist_king[target_node] != -1 && dist_king[target_node] < dist_in_cycle) {
         is_king = false;
         break;
       }
@@ -149,8 +145,7 @@ bool isKingRing(const correlation::core::NeighborGraph &graph,
 // needed during the parallel section.  A final sort+unique after the
 // parallel_for handles any remaining orientation duplicates.
 // ---------------------------------------------------------------------------
-void process_root(const correlation::core::NeighborGraph &graph, size_t root,
-                  size_t max_size, BFSScratch &sc) {
+void process_root(const correlation::core::NeighborGraph &graph, size_t root, size_t max_size, BFSScratch &sc) {
   sc.visited.clear();
   sc.cross_edges.clear();
   sc.q.clear();
@@ -182,8 +177,7 @@ void process_root(const correlation::core::NeighborGraph &graph, size_t root,
         if (u < v)
           sc.cross_edges.push_back({u, v});
       } else if (sc.dist[v] == sc.dist[u] + 1) {
-        if (std::find(sc.parents[v].begin(), sc.parents[v].end(),
-                      static_cast<correlation::core::AtomID>(u)) ==
+        if (std::find(sc.parents[v].begin(), sc.parents[v].end(), static_cast<correlation::core::AtomID>(u)) ==
             sc.parents[v].end()) {
           sc.parents[v].push_back(static_cast<correlation::core::AtomID>(u));
           sc.cross_edges.push_back({u, v});
@@ -251,9 +245,8 @@ void process_root(const correlation::core::NeighborGraph &graph, size_t root,
 // ---------------------------------------------------------------------------
 // Main ring-finding function — now parallel over roots.
 // ---------------------------------------------------------------------------
-std::vector<std::vector<correlation::core::AtomID>>
-getAllShortestRings(const correlation::core::NeighborGraph &graph,
-                    size_t max_size) {
+std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const correlation::core::NeighborGraph &graph,
+                                                                        size_t max_size) {
   std::vector<std::vector<correlation::core::AtomID>> all_cycles;
   if (max_size < 3)
     return all_cycles;
@@ -264,8 +257,7 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph,
 
   // Each TBB thread owns one BFSScratch, sized at construction and reused
   // across all root iterations assigned to that thread.
-  tbb::enumerable_thread_specific<BFSScratch> ets(
-      [num_nodes] { return BFSScratch(num_nodes); });
+  tbb::enumerable_thread_specific<BFSScratch> ets([num_nodes] { return BFSScratch(num_nodes); });
 
   // Grain size 16: balances TBB overhead (~µs per task) against load
   // imbalance (root-0 does far more work than root-N-1).
@@ -281,16 +273,14 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph,
 
   // Serial merge of all per-thread cycle lists
   for (auto &sc : ets) {
-    all_cycles.insert(all_cycles.end(),
-                      std::make_move_iterator(sc.local_cycles.begin()),
+    all_cycles.insert(all_cycles.end(), std::make_move_iterator(sc.local_cycles.begin()),
                       std::make_move_iterator(sc.local_cycles.end()));
   }
 
   // Final deduplication (oriented cycles may still have orientation variants
   // produced by different paths within the same root's BFS)
   std::sort(all_cycles.begin(), all_cycles.end());
-  all_cycles.erase(std::unique(all_cycles.begin(), all_cycles.end()),
-                   all_cycles.end());
+  all_cycles.erase(std::unique(all_cycles.begin(), all_cycles.end()), all_cycles.end());
 
   return all_cycles;
 }
@@ -300,9 +290,7 @@ getAllShortestRings(const correlation::core::NeighborGraph &graph,
 // ---------------------------------------------------------------------------
 // Public API — unchanged
 // ---------------------------------------------------------------------------
-std::map<int, size_t>
-MotifFinder::findRings(const correlation::core::NeighborGraph &graph,
-                       size_t max_size) {
+std::map<int, size_t> MotifFinder::findRings(const correlation::core::NeighborGraph &graph, size_t max_size) {
   auto all_cycles = getAllShortestRings(graph, max_size);
   std::map<int, size_t> ring_counts;
   for (const auto &cycle : all_cycles)
@@ -311,8 +299,7 @@ MotifFinder::findRings(const correlation::core::NeighborGraph &graph,
 }
 
 std::vector<std::vector<correlation::core::AtomID>>
-MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph,
-                           size_t target_size) {
+MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph, size_t target_size) {
   auto all_cycles = getAllShortestRings(graph, target_size);
   std::vector<std::vector<correlation::core::AtomID>> exact_cycles;
   exact_cycles.reserve(all_cycles.size());

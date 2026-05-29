@@ -19,17 +19,17 @@ namespace correlation::readers {
  */
 class CP2KReader : public BaseReader {
 public:
-    std::string getName() const override { return "CP2K Reader"; }
-    std::vector<std::string> getExtensions() const override { return {".inp", ".restart", ".out", ".cp2k"}; }
-    bool isTrajectory() const override { return true; }
+  std::string getName() const override { return "CP2K Reader"; }
+  std::vector<std::string> getExtensions() const override { return {".inp", ".restart", ".out", ".cp2k"}; }
+  bool isTrajectory() const override { return true; }
 
-    correlation::core::Cell readStructure(
-        const std::string& filename,
-        std::function<void(float, const std::string&)> progress_callback = nullptr) override;
+  correlation::core::Cell
+  readStructure(const std::string &filename,
+                std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 
-    correlation::core::Trajectory readTrajectory(
-        const std::string& filename,
-        std::function<void(float, const std::string&)> progress_callback = nullptr) override;
+  correlation::core::Trajectory
+  readTrajectory(const std::string &filename,
+                 std::function<void(float, const std::string &)> progress_callback = nullptr) override;
 };
 
 } // namespace correlation::readers
