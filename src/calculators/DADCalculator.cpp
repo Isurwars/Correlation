@@ -34,6 +34,9 @@ correlation::analysis::Histogram DADCalculator::calculate(
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
+  if (!neighbors) {
+    throw std::logic_error("Cannot calculate DAD. Neighbor list has not been computed.");
+  }
 
   // Dihedral angles are from -180 to 180 degrees.
   const double theta_min = -180.0;

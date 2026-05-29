@@ -129,4 +129,31 @@ TEST(AngleCalculatorTests, SingleNeighborProducesNoAngles) {
   }
 }
 
+TEST(AngleCalculatorTests, OverlappingAtomsProduceNoAngles) {
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("O", {0.0, 0.0, 0.0});
+  cell.addAtom("H", {0.0, 0.0, 0.0});
+  cell.addAtom("H", {0.0, 0.0, 0.0});
+
+  NeighborGraph graph(3);
+  graph.addDirectedEdge(0, 1, 0.0, {0.0, 0.0, 0.0});
+  graph.addDirectedEdge(0, 2, 0.0, {0.0, 0.0, 0.0});
+
+  size_t num_elements = cell.elements().size();
+  AngleTensor out_angles(
+      num_elements,
+      std::vector<std::vector<std::vector<double>>>(
+          num_elements, std::vector<std::vector<double>>(num_elements)));
+
+  AngleCalculator::compute(cell, graph, out_angles);
+
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = 0; j < num_elements; ++j) {
+      for (size_t k = 0; k < num_elements; ++k) {
+        EXPECT_TRUE(out_angles[i][j][k].empty());
+      }
+    }
+  }
+}
+
 } // namespace correlation::testing

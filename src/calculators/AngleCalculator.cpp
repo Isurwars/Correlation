@@ -93,13 +93,19 @@ void AngleCalculator::compute(const correlation::core::Cell &cell,
 
             const int type1 = atoms[neighbors[j].index].element_id();
             const double d1 = sc.nb_dist[j];
+            if (d1 < 1e-6)
+              continue;
 
             for (size_t m = 0; m < k_count; ++m) {
               const size_t k = j + 1 + m;
+              const double d2 = sc.nb_dist[k];
+              if (d2 < 1e-6)
+                continue;
+
               const int type2 = atoms[neighbors[k].index].element_id();
 
               double cos_theta =
-                  std::clamp(sc.dots[m] / (d1 * sc.nb_dist[k]), -1.0, 1.0);
+                  std::clamp(sc.dots[m] / (d1 * d2), -1.0, 1.0);
               double angle_rad = std::acos(cos_theta);
 
               local_tensor[type1][type_central][type2].push_back(angle_rad);

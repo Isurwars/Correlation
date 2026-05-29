@@ -136,7 +136,7 @@ SteinhardtCalculator::calculate(
       if (r == 0)
         continue; // Safety check
 
-      double theta = std::acos(r_ij.z() / r);
+      double theta = std::acos(std::clamp(r_ij.z() / r, -1.0, 1.0));
       double phi = std::atan2(r_ij.y(), r_ij.x());
 
       for (int m = -4; m <= 4; ++m) {

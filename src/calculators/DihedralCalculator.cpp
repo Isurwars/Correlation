@@ -130,8 +130,11 @@ void DihedralCalculator::compute(
                 n2 = correlation::math::normalize(n2);
 
                 // m = n1 x (b2 / |b2|)
-                correlation::math::Vector3<double> b2_hat =
-                    correlation::math::normalize(b2);
+                double b2_norm = correlation::math::norm(b2);
+                if (b2_norm < 1e-8) {
+                  continue; // Coincident central bond, dihedral undefined.
+                }
+                correlation::math::Vector3<double> b2_hat = b2 / b2_norm;
                 correlation::math::Vector3<double> m =
                     correlation::math::cross(n1, b2_hat);
 

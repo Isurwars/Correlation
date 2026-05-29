@@ -65,6 +65,10 @@ void DistanceCalculator::compute(
     bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
     correlation::core::NeighborGraph &out_graph) {
 
+  if (cutoff_sq <= 0.0) {
+    throw std::invalid_argument("Cutoff squared must be strictly positive.");
+  }
+
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();

@@ -145,4 +145,21 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
   EXPECT_FALSE(out_graph.areConnected(0, 1));
 }
 
+TEST(DistanceCalculatorTests, ThrowsOnInvalidCutoff) {
+  Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+
+  std::vector<std::vector<double>> bond_cutoffs_sq = {{4.0}};
+  size_t num_elements = cell.elements().size();
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  NeighborGraph out_graph(1);
+
+  EXPECT_THROW(
+      DistanceCalculator::compute(cell, -1.0, bond_cutoffs_sq, true, out_distances, out_graph),
+      std::invalid_argument);
+  EXPECT_THROW(
+      DistanceCalculator::compute(cell, 0.0, bond_cutoffs_sq, true, out_distances, out_graph),
+      std::invalid_argument);
+}
+
 } // namespace correlation::testing

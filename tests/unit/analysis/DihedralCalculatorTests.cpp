@@ -153,3 +153,29 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect180DegreeDihedral) {
   ASSERT_EQ(angles.size(), 1);
   EXPECT_NEAR(std::abs(angles[0]), correlation::math::pi, 1e-12);
 }
+
+TEST_F(DihedralCalculatorTests, HandlesCoincidentCentralBondSafely) {
+  cell.addAtom("C", {1.0, 0.0, 0.0}); // A
+  cell.addAtom("C", {0.0, 0.0, 0.0}); // B
+  cell.addAtom("C", {0.0, 0.0, 0.0}); // C
+  cell.addAtom("C", {0.0, 0.0, 1.0}); // D
+
+  graph = correlation::core::NeighborGraph(4);
+  graph.addDirectedEdge(0, 1, 1.0, { -1.0, 0.0, 0.0 });
+  graph.addDirectedEdge(1, 0, 1.0, { 1.0, 0.0, 0.0 });
+  graph.addDirectedEdge(1, 2, 0.0, { 0.0, 0.0, 0.0 });
+  graph.addDirectedEdge(2, 1, 0.0, { 0.0, 0.0, 0.0 });
+  graph.addDirectedEdge(2, 3, 1.0, { 0.0, 0.0, 1.0 });
+  graph.addDirectedEdge(3, 2, 1.0, { 0.0, 0.0, -1.0 });
+
+  correlation::analysis::StructureAnalyzer::DihedralTensor dict;
+  dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
+                     1, std::vector<std::vector<std::vector<double>>>(
+                            1, std::vector<std::vector<double>>(
+                                   1, std::vector<double>()))));
+
+  correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
+
+  const auto &angles = dict[0][0][0][0];
+  EXPECT_TRUE(angles.empty());
+}

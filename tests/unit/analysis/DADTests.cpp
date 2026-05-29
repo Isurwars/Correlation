@@ -101,4 +101,11 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
     EXPECT_TRUE(found) << "Should find DAD peak near " << target << " degrees";
   }
 }
+
+TEST_F(DADTests, NullNeighborsThrows) {
+  EXPECT_THROW(
+      { correlation::calculators::DADCalculator::calculate(cell, nullptr, 10.0); },
+      std::logic_error);
+}
+
 } // namespace correlation::analysis

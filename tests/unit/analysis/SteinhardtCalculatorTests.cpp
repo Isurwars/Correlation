@@ -120,4 +120,18 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   checkOutputs(hists, 0.000, 0.663,
                -0.169); // W6_hat for Icosahedral is approx -0.1697
 }
+
+TEST_F(SteinhardtCalculatorTests, HandlesAcosNumericalNoiseSafely) {
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});
+  cell.addAtom("Ar", {5.0, 5.0, 6.000000000000001});
+  cell.addAtom("Ar", {5.0, 5.0, 4.0});
+
+  StructureAnalyzer analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
+  ASSERT_NO_THROW({
+    auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
+    EXPECT_FALSE(hists.empty());
+  });
+}
+
 } // namespace correlation::analysis

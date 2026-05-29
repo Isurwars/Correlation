@@ -35,6 +35,9 @@ correlation::analysis::Histogram PADCalculator::calculate(
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
+  if (!neighbors) {
+    throw std::logic_error("Cannot calculate BAD/PAD. Neighbor list has not been computed.");
+  }
 
   const double theta_cut = 180.0;
 

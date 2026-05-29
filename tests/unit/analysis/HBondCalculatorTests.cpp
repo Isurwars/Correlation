@@ -330,6 +330,27 @@ TEST(HBondCalculatorTests, CoincidentHAndDonor_DoesNotCrash) {
   });
 }
 
+/// Donor and acceptor at the same position. Should not crash.
+TEST(HBondCalculatorTests, CoincidentDonorAndAcceptor_DoesNotCrash) {
+  correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  cell.addAtom("O", {10.0, 10.0, 10.0});
+  cell.addAtom("H", {10.0, 10.0, 10.96});
+  cell.addAtom("O", {10.0, 10.0, 10.0});
+
+  double cutoff = 5.0;
+  std::vector<std::vector<double>> bcsq(2, std::vector<double>(2, cutoff * cutoff));
+  analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, true);
+
+  ASSERT_NO_THROW({
+    auto hist = HBondCalculator::calculate(cell, &analyzer);
+    for (const auto &[key, values] : hist.partials) {
+      for (double v : values) {
+        EXPECT_FALSE(std::isnan(v));
+      }
+    }
+  });
+}
+
 /// Electronegative atom with no bonded hydrogens is just an acceptor (0 H-bonds
 /// as donor). It may still appear with 0 or more H-bonds if it's an acceptor.
 TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {

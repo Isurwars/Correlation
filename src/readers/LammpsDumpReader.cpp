@@ -77,12 +77,15 @@ correlation::core::Cell LammpsDumpReader::parseDumpFrame(const char *data,
   } catch (...) {
     throw std::runtime_error("Failed to parse atom count in LAMMPS dump frame");
   }
+  if (num_atoms <= 0) {
+    throw std::runtime_error("Invalid LAMMPS dump frame: non-positive atom count: " + std::to_string(num_atoms));
+  }
 
   // --- BOX BOUNDS ---
   line = nextLine(); // "ITEM: BOX BOUNDS ..."
   const bool triclinic = (line.find("xy") != std::string::npos);
 
-  double xlo, xhi, ylo, yhi, zlo, zhi;
+  double xlo = 0.0, xhi = 0.0, ylo = 0.0, yhi = 0.0, zlo = 0.0, zhi = 0.0;
   double xy = 0.0, xz = 0.0, yz = 0.0;
 
   if (triclinic) {

@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/DistributionFunctions.hpp"
+#include "calculators/XRDCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -135,4 +136,19 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
   // shifts to lower angles (~28.5 degrees).
   EXPECT_NEAR(max_theta, 28.5, 1.0);
 }
+
+TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
+  updateTrajectory();
+  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  df.calculateRDF(5.0, 0.05);
+
+  EXPECT_THROW(df.calculateXRD(0.0, 5.0, 90.0, 0.5), std::invalid_argument);
+  EXPECT_THROW(df.calculateXRD(-1.0, 5.0, 90.0, 0.5), std::invalid_argument);
+
+  Histogram empty_gr;
+  EXPECT_THROW(
+      correlation::calculators::XRDCalculator::calculate(empty_gr, cell_, {}, 1.5406, 5.0, 90.0, 0.5),
+      std::invalid_argument);
+}
+
 } // namespace correlation::analysis

@@ -94,7 +94,7 @@ correlation::analysis::Histogram HBondCalculator::calculate(
             cell.minimumImage(atom_j.position() - pos_d);
         double d_da_sq = correlation::math::norm_sq(v_da);
 
-        if (d_da_sq < R_cut_sq) {
+        if (d_da_sq < R_cut_sq && d_da_sq >= 1e-12) {
           // Check angle H-D...A
           double dot_val = v_dh * v_da;
           double cos_alpha = dot_val / (correlation::math::norm(v_dh) * std::sqrt(d_da_sq));

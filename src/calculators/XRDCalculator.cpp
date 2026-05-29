@@ -44,6 +44,12 @@ XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive.");
   }
+  if (g_r_hist.bins.size() < 2) {
+    throw std::invalid_argument("g(r) histogram must contain at least 2 bins.");
+  }
+  if (lambda <= 0.0) {
+    throw std::invalid_argument("Wavelength lambda must be strictly positive.");
+  }
 
   const auto &r_bins = g_r_hist.bins;
   const double dr = r_bins[1] - r_bins[0];

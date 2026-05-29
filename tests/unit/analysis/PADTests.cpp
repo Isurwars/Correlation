@@ -5,6 +5,7 @@
 
 #include "analysis/DistributionFunctions.hpp"
 #include "analysis/StructureAnalyzer.hpp"
+#include "calculators/PADCalculator.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
@@ -289,6 +290,13 @@ TEST_F(PADTests, SingleAtomNoAngles) {
       }
     }
   }
+}
+
+TEST_F(PADTests, NullNeighborsThrows) {
+  cell_.addAtom("Si", {10.0, 10.0, 10.0});
+  EXPECT_THROW(
+      { correlation::calculators::PADCalculator::calculate(cell_, nullptr, 1.0); },
+      std::logic_error);
 }
 
 // 2. Geometry Verification

@@ -303,9 +303,9 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
         std::stod(cif_data.at("_cell_angle_beta")),
         std::stod(cif_data.at("_cell_angle_gamma"))};
     tempCell.setLatticeParameters(params);
-  } catch (const std::out_of_range &oor) {
+  } catch (const std::exception &e) {
     throw std::runtime_error(
-        "CIF Error: Missing one or more required cell parameters.");
+        "CIF Error: Missing or invalid cell parameters: " + std::string(e.what()));
   }
 
   // 2. Generate all atoms by applying symmetry

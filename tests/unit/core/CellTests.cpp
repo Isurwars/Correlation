@@ -281,4 +281,12 @@ TEST_F(CellTests, HighAtomCount) {
   EXPECT_NO_THROW(cell.wrapPositions());
 }
 
+TEST_F(CellTests, AcosNumericalNoiseClamping) {
+  Cell cell({1.0, 0.0, 0.0}, {-1.0, 1.01e-8, 0.0}, {0.0, 0.0, 1.0});
+  auto params = cell.lattice_parameters();
+  EXPECT_FALSE(std::isnan(params[3]));
+  EXPECT_FALSE(std::isnan(params[4]));
+  EXPECT_FALSE(std::isnan(params[5]));
+}
+
 } // namespace correlation::testing

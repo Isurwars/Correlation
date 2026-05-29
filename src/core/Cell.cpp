@@ -11,6 +11,7 @@
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace correlation::core {
@@ -117,9 +118,9 @@ void Cell::updateLatticeParametersFromVectors() {
     return;
   }
 
-  const double alpha_rad = std::acos(math::dot(b_vec, c_vec) / (b * c));
-  const double beta_rad = std::acos(math::dot(a_vec, c_vec) / (a * c));
-  const double gamma_rad = std::acos(math::dot(a_vec, b_vec) / (a * b));
+  const double alpha_rad = std::acos(std::clamp(math::dot(b_vec, c_vec) / (b * c), -1.0, 1.0));
+  const double beta_rad = std::acos(std::clamp(math::dot(a_vec, c_vec) / (a * c), -1.0, 1.0));
+  const double gamma_rad = std::acos(std::clamp(math::dot(a_vec, b_vec) / (a * b), -1.0, 1.0));
 
   lattice_parameters_ = {a,
                          b,
