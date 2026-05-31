@@ -23,7 +23,7 @@ export component AnalysisExecutionCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        analysis_area.has-hover ? "Start the selected analyses." : write_area.has-hover ? "Export the analysis results to files." : "";
+        analysis_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : write_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
 
     Vertical {
         // Main Action Button

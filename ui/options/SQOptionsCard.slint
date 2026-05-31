@@ -17,7 +17,7 @@ export component SQOptionsCard inherits FilledCard {
     property <length> sq_height: root.expanded ? 150px : 0px;
 
     out property <string> hovered_tooltip_text:
-        q_max_area.has-hover ? "Maximum scattering vector (Q) to calculate the Structure Factor (S(Q)). The recommended max scattering vector is 20.0 Å⁻¹" : q_bin_area.has-hover ? "Bin width used to calculate the histograms for the Structure Factor. The recommended bin is 0.02 Å⁻¹." : r_int_area.has-hover ? "Maximum radius for the Fourier Transform of the g(r) used to calculate the Structure Factor. The recommended max radius is 10.0 Å" : "";
+        q_max_area.has-hover ? "Maximum scattering vector Q for the Structure Factor S(Q).\n\n📏 Recommended: 20.0 Å⁻¹.\n\n🔬 Physics: Higher Q probes shorter real-space distances (Q ≈ 2π/r). Q_max = 20 Å⁻¹ resolves features down to ~0.3 Å. For X-ray comparison, match the experimental 2θ range." : q_bin_area.has-hover ? "Bin width for the S(Q) histogram.\n\n📏 Recommended: 0.02 Å⁻¹.\n\n🔬 Physics: Related to r_max by the Nyquist criterion — finer Q bins require larger real-space integration radii. Too coarse bins smear sharp diffraction peaks." : r_int_area.has-hover ? "Upper integration limit for the Fourier transform of g(r) → S(Q).\n\n📏 Recommended: 10.0 Å.\n\n🔬 Physics: This is the real-space cutoff for the sine transform. Too short truncates long-range correlations (causing ripples in S(Q)). Too long amplifies noise from the g(r) tail." : "";
 
     Vertical {
 

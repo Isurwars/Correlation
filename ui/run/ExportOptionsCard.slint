@@ -18,7 +18,7 @@ export component ExportOptionsCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        csv_area.has-hover ? "If enabled, the results will be exported as CSV files." : hdf5_area.has-hover ? "If enabled, the results will be exported to a single HDF5 file." : parquet_area.has-hover ? "If enabled, the results will be exported as Parquet files." : "";
+        csv_area.has-hover ? "Export results as CSV (Comma-Separated Values) files.\n\n📏 Best for: Quick plotting in Excel, gnuplot, or Python (pandas.read_csv). One file per distribution function.\n\n💡 Tip: CSV is universally compatible and human-readable — good for sharing results and debugging." : hdf5_area.has-hover ? "Export results to a single HDF5 binary file.\n\n📏 Best for: Large datasets, Python (h5py) and MATLAB workflows. All results in one structured file.\n\n💡 Tip: HDF5 preserves metadata and is more compact than CSV for multi-frame trajectories." : parquet_area.has-hover ? "Export results as Apache Parquet files.\n\n📏 Best for: Columnar data analytics, Python (pandas/pyarrow), and integration with data science pipelines.\n\n💡 Tip: Parquet offers excellent compression and fast column-wise reads for large datasets." : "";
 
     Vertical {
         padding: MaterialStyleMetrics.spacing_8;

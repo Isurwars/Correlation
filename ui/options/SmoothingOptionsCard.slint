@@ -19,7 +19,7 @@ export component SmoothingOptionsCard inherits FilledCard {
     property <length> smoothing_height: root.expanded ? 140px : 0px;
 
     out property <string> hovered_tooltip_text:
-        sigma_area.has-hover ? "Sigma to be used for the smoothing of the distribution functions. The recommended sigma is 0.01." : kernel_area.has-hover ? "Kernel smoother type.\nGaussian: General purpose smoothing.\nBump: Sharp cutoff, preserves high frequencies.\nTriweight: Higher weight near the center, good for noisy data." : "";
+        sigma_area.has-hover ? "Standard deviation (σ) for the smoothing kernel.\n\n📏 Recommended: 0.01 Å.\n\n🔬 Physics: Controls the width of the convolution kernel applied to distribution functions. Larger σ smooths more noise but broadens real peaks — important for resolving the first g(r) peak. As a rule of thumb, σ should be comparable to or smaller than the bin width to avoid over-smoothing physical features." : kernel_area.has-hover ? "Type of smoothing kernel applied to distribution functions.\n\n🔬 Gaussian: Standard choice — smooth, infinite support. Best for general-purpose smoothing.\n\n🔬 Bump: Compact support with a sharp cutoff. Preserves high-frequency features better than Gaussian — use for crystalline systems with sharp peaks.\n\n🔬 Triweight: Compact support with higher weight near the center. Good for noisy data from small simulation cells, as it suppresses outliers more aggressively." : "";
 
     Vertical {
 

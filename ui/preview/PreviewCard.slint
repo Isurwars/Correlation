@@ -49,7 +49,7 @@ export component PreviewCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview." : "";
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : "";
 
     Vertical {
 

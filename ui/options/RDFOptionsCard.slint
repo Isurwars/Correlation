@@ -16,7 +16,7 @@ export component RDFOptionsCard inherits FilledCard {
     property <length> rdf_height: root.expanded ? 100px : 0px;
 
     out property <string> hovered_tooltip_text:
-        r_max_area.has-hover ? "Maximum radius to calculate Radial Distribution Functions (g(r), J(r), G(r)). The recommended max radius is 20 Å." : r_bin_area.has-hover ? "Bin width used to calculate the histograms for the Radial Distribution Functions (g(r), J(r), G(r)). The recommended bin is 0.02 Å." : "";
+        r_max_area.has-hover ? "Maximum radius for RDF calculations g(r), J(r), G(r).\n\n📏 Recommended: 20 Å (half the simulation box length).\n\n🔬 Physics: Should be ≤ L/2 to avoid self-correlation artifacts from periodic boundary conditions. For liquids, g(r) converges to 1.0 well before this limit." : r_bin_area.has-hover ? "Bin width for the RDF histograms g(r), J(r), G(r).\n\n📏 Recommended: 0.02 Å.\n\n🔬 Physics: Smaller bins resolve finer features in the pair distribution but increase noise for small systems. 0.02 Å balances resolution and statistical quality for most simulations (>500 atoms)." : "";
 
     Vertical {
 
