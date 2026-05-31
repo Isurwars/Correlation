@@ -7,6 +7,7 @@ import {
     MaterialText,
     LinearProgressIndicator,
     Vertical,
+    CheckBoxRow,
 } from "../material/material.slint";
 
 export component AnalysisExecutionCard inherits FilledCard {
@@ -16,6 +17,13 @@ export component AnalysisExecutionCard inherits FilledCard {
     in property <float> progress;
     in property <string> analysis_status_text;
 
+    // Export formats configuration
+    in property <bool> hdf5_available: true;
+    in property <bool> parquet_available: true;
+    in-out property <bool> use_csv: true;
+    in-out property <bool> use_hdf5: false;
+    in-out property <bool> use_parquet: false;
+
     callback run_analysis();
     callback write_files();
 
@@ -23,7 +31,11 @@ export component AnalysisExecutionCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        analysis_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : write_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
+        analysis_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : 
+        csv_area.has-hover ? "Export results as CSV (Comma-Separated Values) files.\n\n📏 Best for: Quick plotting in Excel, gnuplot, or Python (pandas.read_csv). One file per distribution function.\n\n💡 Tip: CSV is universally compatible and human-readable — good for sharing results and debugging." : 
+        hdf5_area.has-hover ? "Export results to a single HDF5 binary file.\n\n📏 Best for: Large datasets, Python (h5py) and MATLAB workflows. All results in one structured file.\n\n💡 Tip: HDF5 preserves metadata and is more compact than CSV for multi-frame trajectories." : 
+        parquet_area.has-hover ? "Export results as Apache Parquet files.\n\n📏 Best for: Columnar data analytics, Python (pandas/pyarrow), and integration with data science pipelines.\n\n💡 Tip: Parquet offers excellent compression and fast column-wise reads for large datasets." :
+        write_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
 
     Vertical {
         // Main Action Button
@@ -66,6 +78,45 @@ export component AnalysisExecutionCard inherits FilledCard {
             LinearProgressIndicator {
                 progress: root.progress;
                 animate progress { duration: 200ms; easing: ease-out; }
+            }
+        }
+
+        // Export formats selection
+        Vertical {
+            padding: MaterialStyleMetrics.spacing_4;
+            spacing: MaterialStyleMetrics.spacing_2;
+
+            MaterialText {
+                text: "Export Formats";
+                style: MaterialTypography.label_large;
+                color: MaterialPalette.on_surface_variant;
+            }
+
+            csv_area := CheckBoxRow {
+                enabled: root.file_loaded;
+                check_state_bool: root.use_csv;
+                text: "Export as CSV";
+                checked_state_changed(s) => {
+                    root.use_csv = s;
+                }
+            }
+
+            hdf5_area := CheckBoxRow {
+                enabled: root.file_loaded && root.hdf5_available;
+                check_state_bool: root.use_hdf5;
+                text: "Export as HDF5";
+                checked_state_changed(s) => {
+                    root.use_hdf5 = s;
+                }
+            }
+
+            parquet_area := CheckBoxRow {
+                enabled: root.file_loaded && root.parquet_available;
+                check_state_bool: root.use_parquet;
+                text: "Export as Parquet";
+                checked_state_changed(s) => {
+                    root.use_parquet = s;
+                }
             }
         }
 
