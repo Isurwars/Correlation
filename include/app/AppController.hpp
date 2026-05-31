@@ -76,6 +76,12 @@ private:
   void handleOptionstoUI(AppWindow &ui);
 
   /**
+   * @brief Updates active group flags in the UI based on active calculators.
+   * @param ui Reference to the main application window.
+   */
+  void updateActiveGroupFlags(AppWindow &ui);
+
+  /**
    * @brief Retrieves the current user-selected options from the UI.
    * @param ui Reference to the main application window.
    * @return The populated ProgramOptions struct.

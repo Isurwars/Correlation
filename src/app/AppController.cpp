@@ -61,7 +61,10 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
 
   // Handle calculator toggle: update backend options and refresh the UI model
   ui_.on_toggle_calculator(
-      [this](slint::SharedString id, bool enabled) { backend_.setCalculatorActive(std::string(id.data()), enabled); });
+      [this](slint::SharedString id, bool enabled) {
+        backend_.setCalculatorActive(std::string(id.data()), enabled);
+        updateActiveGroupFlags(ui_);
+      });
 
   // Handle plot selection: generate SVG and push to UI
   ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
@@ -145,7 +148,43 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
     ui.set_max_frame(slint::SharedString(std::to_string(opt.max_frame)));
   }
   ui.set_time_step(slint::SharedString(std::format("{:.2f}", opt.time_step)));
+  updateActiveGroupFlags(ui);
 };
+
+void AppController::updateActiveGroupFlags(AppWindow &ui) {
+  const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  const auto &opts = backend_.options();
+
+  bool has_radial = false;
+  bool has_scattering = false;
+  bool has_angular = false;
+  bool has_rings = false;
+
+  for (const auto &calc : calculators) {
+    const std::string &grp = calc->getGroup();
+    bool enabled = true; // default on
+    auto it = opts.active_calculators.find(calc->getName());
+    if (it != opts.active_calculators.end()) {
+      enabled = it->second;
+    }
+    if (enabled) {
+      if (grp == "Radial") {
+        has_radial = true;
+      } else if (grp == "Scattering") {
+        has_scattering = true;
+      } else if (grp == "Angular") {
+        has_angular = true;
+      } else if (grp == "Rings") {
+        has_rings = true;
+      }
+    }
+  }
+
+  ui.set_has_radial_active(has_radial);
+  ui.set_has_scattering_active(has_scattering);
+  ui.set_has_angular_active(has_angular);
+  ui.set_has_rings_active(has_rings);
+}
 
 ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   ProgramOptions opt;
