@@ -215,6 +215,8 @@ void DistributionFunctions::smooth(const std::string &name, double sigma, correl
 
   // Constants are the same for every partial of this histogram.
   const double dx = hist.bins[1] - hist.bins[0];
+  if (dx <= 0.0)
+    return;
   const double min_sigma = std::max(dx, sigma);
 
   // Flatten partials into a read-only list so we can access them safely from

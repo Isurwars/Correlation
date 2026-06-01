@@ -351,14 +351,28 @@ TEST_F(CliParserTests, DefaultOutputBaseIsStemOfInput) {
   EXPECT_EQ(opts.output_base, (std::filesystem::path("/data/experiment") / "sample").string());
 }
 
-// ===== Calculators option =====
-
 TEST_F(CliParserTests, CalculatorsOption) {
   ArgBuilder args{"correlation-cli", "f.poscar", "--calculators", "RDF,SQ,PAD"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.calculators, "RDF,SQ,PAD");
+}
+
+TEST_F(CliParserTests, GroupsOption) {
+  ArgBuilder args{"correlation-cli", "f.poscar", "--groups", "radial,scattering"};
+  correlation::cli::CliOptions opts;
+
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  EXPECT_EQ(opts.groups, "radial,scattering");
+}
+
+TEST_F(CliParserTests, GroupsShortOption) {
+  ArgBuilder args{"correlation-cli", "f.poscar", "-g", "structural"};
+  correlation::cli::CliOptions opts;
+
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  EXPECT_EQ(opts.groups, "structural");
 }
 
 // ===== Smoothing kernel parsing =====

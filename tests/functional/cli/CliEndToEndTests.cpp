@@ -122,3 +122,67 @@ TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
 TEST_F(CliEndToEndTests, ShortHelpFlag) { EXPECT_EQ(runCli("-h"), 0); }
 
 TEST_F(CliEndToEndTests, ShortVersionFlag) { EXPECT_EQ(runCli("-v"), 0); }
+
+TEST_F(CliEndToEndTests, DefaultGroupsExecutesRadialOnly) {
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_default_groups";
+  std::filesystem::create_directories(tmp_dir);
+  std::string out_base = (tmp_dir / "result").string();
+
+  std::string input = data_dir_ + "Si.poscar";
+  // Run with no groups/calculators flags -> should default to radial group
+  int rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+
+  EXPECT_EQ(rc, 0);
+  
+  // Radial files should exist
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_G_reduced.csv"));
+
+  // Structural/rings files should NOT exist
+  EXPECT_FALSE(std::filesystem::exists(out_base + "_CN.csv"));
+  EXPECT_FALSE(std::filesystem::exists(out_base + "_RD.csv"));
+
+  std::filesystem::remove_all(tmp_dir);
+}
+
+TEST_F(CliEndToEndTests, GroupsStructuralOnly) {
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_structural_groups";
+  std::filesystem::create_directories(tmp_dir);
+  std::string out_base = (tmp_dir / "result").string();
+
+  std::string input = data_dir_ + "Si.poscar";
+  // Run with structural group
+  int rc = runCli(input + " --quiet -o " + out_base + " --groups structural");
+
+  EXPECT_EQ(rc, 0);
+
+  // CN (structural) should exist
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_CN.csv"));
+
+  // Radial files should NOT exist
+  EXPECT_FALSE(std::filesystem::exists(out_base + "_g.csv"));
+  EXPECT_FALSE(std::filesystem::exists(out_base + "_J.csv"));
+  EXPECT_FALSE(std::filesystem::exists(out_base + "_G_reduced.csv"));
+
+  std::filesystem::remove_all(tmp_dir);
+}
+
+TEST_F(CliEndToEndTests, GroupsAllOption) {
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_all_groups";
+  std::filesystem::create_directories(tmp_dir);
+  std::string out_base = (tmp_dir / "result").string();
+
+  std::string input = data_dir_ + "Si.poscar";
+  // Run with 'all' groups
+  int rc = runCli(input + " --quiet -o " + out_base + " --groups all --r-max 10 --r-bin 0.1");
+
+  EXPECT_EQ(rc, 0);
+
+  // Both radial and structural should exist
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_CN.csv"));
+
+  std::filesystem::remove_all(tmp_dir);
+}
+

@@ -13,7 +13,11 @@
 #include "app/AppBackend.hpp"
 #include "cli/CliParser.hpp"
 
+#include "calculators/CalculatorFactory.hpp"
+
+#include <algorithm>
 #include <iostream>
+#include <set>
 #include <sstream>
 #include <string>
 
@@ -54,19 +58,59 @@ int main(int argc, char *argv[]) {
   opts.smoothing_sigma = cli.smoothing_sigma;
   opts.smoothing_kernel = cli.smoothing_kernel;
 
-  // Parse calculator list if provided
+  // Helper lambdas for string cleanup
+  auto trim = [](std::string s) {
+    s.erase(0, s.find_first_not_of(" \t"));
+    s.erase(s.find_last_not_of(" \t") + 1);
+    return s;
+  };
+  auto lowercase = [](std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+  };
+
+  const auto &factory_calcs = correlation::calculators::CalculatorFactory::instance().getCalculators();
+
+  // Populate active_calculators
   if (!cli.calculators.empty()) {
-    // First, disable all calculators
-    // Then enable only the specified ones
+    // Disable all calculators first
+    for (const auto &calc : factory_calcs) {
+      opts.active_calculators[calc->getName()] = false;
+      opts.active_calculators[calc->getShortName()] = false;
+    }
+    // Enable explicitly requested ones
     std::istringstream ss(cli.calculators);
     std::string id;
     while (std::getline(ss, id, ',')) {
-      // Trim whitespace
-      id.erase(0, id.find_first_not_of(" \t"));
-      id.erase(id.find_last_not_of(" \t") + 1);
+      id = trim(id);
       if (!id.empty()) {
         opts.active_calculators[id] = true;
       }
+    }
+  } else {
+    // Parse groups
+    std::set<std::string> enabled_groups;
+    if (!cli.groups.empty()) {
+      std::istringstream ss(cli.groups);
+      std::string group_name;
+      while (std::getline(ss, group_name, ',')) {
+        group_name = lowercase(trim(group_name));
+        if (!group_name.empty()) {
+          enabled_groups.insert(group_name);
+        }
+      }
+    } else {
+      // Default: radial group only
+      enabled_groups.insert("radial");
+    }
+
+    bool all_groups = enabled_groups.count("all") > 0;
+
+    for (const auto &calc : factory_calcs) {
+      std::string calc_group = lowercase(calc->getGroup());
+      bool active = all_groups || (enabled_groups.count(calc_group) > 0);
+      opts.active_calculators[calc->getName()] = active;
+      opts.active_calculators[calc->getShortName()] = active;
     }
   }
 

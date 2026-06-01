@@ -19,32 +19,43 @@ namespace correlation::cli {
 void printUsage(const char *program) {
   std::cerr << "Correlation — Structural Analysis Tool (CLI Mode)\n"
             << "Usage: " << program << " <input_file> [options]\n\n"
-            << "Options:\n"
+            << "General Options:\n"
             << "  -o, --output <path>       Output base path (default: input stem)\n"
-            << "  --r-max <float>           Max radius for RDF (default: 20.0)\n"
-            << "  --r-bin <float>           RDF bin width (default: 0.02)\n"
-            << "  --q-max <float>           Max q for S(Q) (default: 20.0)\n"
-            << "  --q-bin <float>           S(Q) bin width (default: 0.02)\n"
-            << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
-            << "  --dihedral-bin <float>    Dihedral bin width (default: copy angle-bin)\n"
-            << "  --time-step <float>       Simulation time step in fs (default: 1.0)\n"
-            << "  --r-int-max <float>       Max radius for g(r) integration (default: 10.0)\n"
-            << "  --max-ring-size <int>     Max ring size for topology (default: 8)\n"
-            << "  --smoothing-sigma <float> Bandwidth for kernel smoothing (default: 0.1)\n"
-            << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight) (default: gaussian)\n"
+            << "  -q, --quiet               Suppress progress output\n"
+            << "  -v, --version             Show version info\n"
+            << "  -h, --help                Show this help message\n\n"
+            << "Calculator Selection:\n"
+            << "  -g, --groups <list>       Comma-separated groups to run: radial, scattering,\n"
+            << "                            structural, spatial, angular, dynamic, rings,\n"
+            << "                            topology, or 'all' (default: radial)\n"
+            << "  --calculators <list>      Comma-separated individual calculator IDs\n"
+            << "                            (overrides group-level selection)\n\n"
+            << "Simulation / Frame Range:\n"
             << "  --min-frame <int>         Start frame, 1-based (default: 1)\n"
             << "  --max-frame <int>         End frame, -1=all (default: -1)\n"
+            << "  --time-step <float>       Simulation time step in fs (default: 1.0)\n\n"
+            << "Radial Parameters (--groups radial):\n"
+            << "  --r-max <float>           Max radius for RDF (default: 20.0)\n"
+            << "  --r-bin <float>           RDF bin width (default: 0.02)\n"
+            << "  --r-int-max <float>       Max radius for g(r) integration (default: 10.0)\n\n"
+            << "Scattering Parameters (--groups scattering):\n"
+            << "  --q-max <float>           Max q for S(Q) (default: 20.0)\n"
+            << "  --q-bin <float>           S(Q) bin width (default: 0.02)\n\n"
+            << "Angular Parameters (--groups angular/structural):\n"
+            << "  --angle-bin <float>       Angular bin width (default: 1.0)\n"
+            << "  --dihedral-bin <float>    Dihedral bin width (default: copy angle-bin)\n\n"
+            << "Ring Parameters (--groups rings):\n"
+            << "  --max-ring-size <int>     Max ring size for topology (default: 8)\n\n"
+            << "Post-Processing & Output Formats:\n"
+            << "  --smoothing-sigma <float> Bandwidth for kernel smoothing (default: 0.1)\n"
+            << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight) (default: gaussian)\n"
+            << "  --no-smoothing            Disable post-processing smoothing\n"
             << "  --csv                     Enable CSV output (default: on)\n"
             << "  --no-csv                  Disable CSV output\n"
             << "  --hdf5                    Enable HDF5 output\n"
             << "  --no-hdf5                 Disable HDF5 output (default: off)\n"
             << "  --parquet                 Enable Parquet output\n"
-            << "  --no-parquet              Disable Parquet output\n"
-            << "  --no-smoothing            Disable post-processing smoothing\n"
-            << "  --calculators <list>      Comma-separated calculator IDs\n"
-            << "  -q, --quiet               Suppress progress output\n"
-            << "  -v, --version             Show version info\n"
-            << "  -h, --help                Show this help message\n";
+            << "  --no-parquet              Disable Parquet output\n";
 }
 
 bool parseArgs(int argc, char *argv[], CliOptions &opts) {
@@ -126,6 +137,8 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
       opts.parquet = false;
     } else if (arg == "--no-smoothing") {
       opts.smoothing = false;
+    } else if ((arg == "-g" || arg == "--groups") && i + 1 < argc) {
+      opts.groups = argv[++i];
     } else if (arg == "--calculators" && i + 1 < argc) {
       opts.calculators = argv[++i];
     } else if (arg == "-q" || arg == "--quiet") {
