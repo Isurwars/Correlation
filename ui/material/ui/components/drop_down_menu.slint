@@ -38,6 +38,10 @@ export component DropDownMenu {
         menu.show();
     }
 
+    init => {
+        root.update_text(root.current_index);
+    }
+
     text_field := TextField {
         width: 100%;
         height: 100%;
