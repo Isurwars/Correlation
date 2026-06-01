@@ -369,6 +369,7 @@ export component AppWindow inherits Window {
                                 delete_preset(idx) => {
                                     root.delete_preset(idx);
                                 }
+                                height: self.preferred-height;
                             }
 
                             analyses_card := AnalysesSelectionCard {
@@ -378,6 +379,7 @@ export component AppWindow inherits Window {
                                 toggle_calculator(id, enabled) => {
                                     root.toggle_calculator(id, enabled);
                                 }
+                                height: self.preferred-height;
                             }
 
                             rdf_card := RDFOptionsCard {
@@ -426,11 +428,13 @@ export component AppWindow inherits Window {
                                 smoothing_sigma <=> root.smoothing_sigma;
                                 smoothing_kernel <=> root.smoothing_kernel;
                                 smoothing_sigma_error: root.smoothing_sigma_error;
+                                height: self.preferred-height;
                             }
 
                             bond_cutoffs_card := BondCutoffsCard {
                                 file_loaded: root.file_loaded;
                                 bond_cutoffs <=> root.bond_cutoffs;
+                                height: self.preferred-height;
                             }
                         }
                     }

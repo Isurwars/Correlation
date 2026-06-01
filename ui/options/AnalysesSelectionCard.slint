@@ -36,7 +36,12 @@ export component AnalysesSelectionCard inherits FilledCard {
 
         bg_touch_area := TouchArea {
             width: 100%;
-            visible: root.expanded;
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            animate height {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
 
             Vertical {
                 width: 100%;

@@ -26,9 +26,10 @@ export component BondAngleOptionsCard inherits FilledCard {
         }
 
         Vertical {
-            visible: root.expanded;
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
             opacity: root.expanded ? 1.0 : 0.0;
-            animate opacity {
+            animate height, opacity {
                 duration: 250ms;
                 easing: ease-in-out;
             }
