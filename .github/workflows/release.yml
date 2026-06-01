@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev
+          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev rpm
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -51,7 +51,9 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+            -DBUILD_WITH_HDF5=ON \
+            -DBUILD_WITH_ARROW=ON
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel
@@ -59,14 +61,14 @@ jobs:
       - name: Package Release
         run: |
           cd build
-          cpack -G DEB
-          cpack -G TGZ
+          cpack
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
         with:
           files: |
             build/correlation-*-Linux.deb
+            build/correlation-*-Linux.rpm
             build/correlation-*-Linux.tar.gz
 
   build-windows:
@@ -109,7 +111,9 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
+            -DBUILD_WITH_HDF5=ON `
+            -DBUILD_WITH_ARROW=ON
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel
@@ -172,7 +176,9 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+            -DBUILD_WITH_HDF5=ON \
+            -DBUILD_WITH_ARROW=ON
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel

@@ -112,7 +112,7 @@ Improving the end-user workflow remains a high priority, particularly for resear
 * **Objective:** Allow users to import and overlay multiple results directly within the Slint GUI.
 * **Key Features:**
   * Compare distribution curves ($g(r)$, $S(Q)$, etc.) from different frames, temperatures, or trajectory files.
-  * Dynamic difference plots ($Y_{\text{Diff}} = Y_1 - Y_2$) with custom styling.
+  * Dynamic difference plots ($Y_{Diff} = Y_1 - Y_2$) with custom styling.
   * Export comparison plots directly as SVG/PNG images.
 
 ### 5.2 Hosted Standalone WASM Web Application
