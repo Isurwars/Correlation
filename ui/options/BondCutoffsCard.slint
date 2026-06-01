@@ -4,7 +4,6 @@ import {
     FilledCard,
     ExpandableHeader,
     TextField,
-    ScrollView,
     MaterialText,
     Vertical,
     Horizontal,
@@ -16,8 +15,6 @@ export component BondCutoffsCard inherits FilledCard {
     in property <bool> file_loaded;
     in-out property <[BondCutoff]> bond_cutoffs;
 
-    property <length> bond_cutoffs_height: root.expanded ? min(250px, root.bond_cutoffs.length * 50px) : 0px;
-
     Vertical {
 
         ExpandableHeader {
@@ -26,41 +23,32 @@ export component BondCutoffsCard inherits FilledCard {
         }
 
         Vertical {
-            height: root.bond_cutoffs_height;
-            visible: self.height > 0.1px;
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
             opacity: root.expanded ? 1.0 : 0.0;
-            animate height {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-            animate opacity {
+            padding_left: MaterialStyleMetrics.spacing_8;
+            padding_right: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_8;
+            animate height, opacity {
                 duration: 250ms;
                 easing: ease-in-out;
             }
 
-            ScrollView {
-                vertical-stretch: 0;
-                height: min(list_layout.preferred-height, root.bond_cutoffs_height);
-                viewport-height: list_layout.preferred-height;
-                viewport-width: list_layout.preferred-width;
-                list_layout := Vertical {
-                    for cutoff[i] in root.bond_cutoffs: Horizontal {
-                        alignment: center;
-                        MaterialText {
-                            text: cutoff.element1 + " - " + cutoff.element2 + ":";
-                            vertical-alignment: center;
-                            horizontal-stretch: 1;
-                        }
+            for cutoff[i] in root.bond_cutoffs: Horizontal {
+                spacing: MaterialStyleMetrics.spacing_8;
+                MaterialText {
+                    text: cutoff.element1 + " - " + cutoff.element2 + ":";
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
 
-                        TextField {
-                            width: 140px;
-                            enabled: root.file_loaded;
-                            text: cutoff.distance;
-                            label: "Cutoff (Å)";
-                            edited(s) => {
-                                root.bond_cutoffs[i].distance = s;
-                            }
-                        }
+                TextField {
+                    width: 140px;
+                    enabled: root.file_loaded;
+                    text: cutoff.distance;
+                    label: "Cutoff (Å)";
+                    edited(s) => {
+                        root.bond_cutoffs[i].distance = s;
                     }
                 }
             }
