@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.1.0] - 2026-05-31
+
+### Added
+- **Real-Time Input Validation**: Active boundary and numeric format verification for all simulation settings (radius, bin widths, scattering ranges, frame limits). Displays inline error feedback and disables calculation runs on invalid state.
+- **Publication-Ready Export**: Added configurable SVG/PDF plot export directly from the GUI preview. Includes standard sizing presets (Single Column, Double Column, Presentation), colorblind-friendly/printing-friendly palettes (Okabe-Ito, Viridis, Grayscale), grid/legend toggles, and vector-scale settings.
+- **PDF Export Pipeline**: Integrated automated PDF conversion from dynamically generated SVGs using `rsvg-convert` or `inkscape`.
+- **Parameter Presets**: Implemented a local JSON parameter serialization system to save, load, and delete workspace configurations, stored under `~/.correlation/presets/`.
+- **CLI Command Mirror**: Added a real-time command line syntax generator with a clipboard copy utility to simplify transitions to cluster jobs.
+
+### Changed
+- **Compact UI Layout**: Refactored publication export settings to be permanently visible under the plot area in a space-saving 2-row layout.
+- **Slint Layout Optimizations**:
+  - Standardized options card layout collapsing by binding content heights to collapse to `0px` when folded, removing layout gaps.
+  - Set the primary Radial Distribution and Bond Angle options to be expanded by default.
+  - Aligned bond cutoff controls with left-justified element pair labels and right-justified numeric inputs.
+
+### Fixed
+- **DropDownMenu Default Labels**: Added an `init` callback to `DropDownMenu` to ensure the preselected default options (e.g. Gaussian smoothing kernel) show up correctly on startup.
+- **Redundant Scrollbars**: Removed a nested ScrollView in `BondCutoffsCard` to avoid layout conflicts with the primary sidebar scrollbar.
+
 ## [3.0.1] - 2026-05-26
 
 ### Added
