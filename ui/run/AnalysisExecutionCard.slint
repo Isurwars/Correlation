@@ -24,6 +24,8 @@ export component AnalysisExecutionCard inherits FilledCard {
     in-out property <bool> use_hdf5: false;
     in-out property <bool> use_parquet: false;
 
+    in property <bool> has_validation_errors: false;
+
     callback run_analysis();
     callback write_files();
 
@@ -42,10 +44,11 @@ export component AnalysisExecutionCard inherits FilledCard {
         analysis_area := TouchArea {
             FilledButton {
                 width: 100%;
-                text: root.analysis_running ? "In Progress..." : "Run Analysis";
-                enabled: root.file_loaded && !root.analysis_running;
-                background: MaterialPalette.run;
-                text_color: MaterialPalette.on_run;
+                text: root.analysis_running ? "In Progress..." : 
+                      root.has_validation_errors ? "Fix Errors Above" : "Run Analysis";
+                enabled: root.file_loaded && !root.analysis_running && !root.has_validation_errors;
+                background: root.has_validation_errors ? MaterialPalette.error : MaterialPalette.run;
+                text_color: root.has_validation_errors ? MaterialPalette.on_error : MaterialPalette.on_run;
                 clicked => {
                     root.run_analysis();
                 }

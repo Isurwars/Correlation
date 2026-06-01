@@ -15,8 +15,7 @@ export component SmoothingOptionsCard inherits FilledCard {
     in-out property <bool> smoothing_enabled;
     in-out property <string> smoothing_sigma;
     in-out property <int> smoothing_kernel;
-
-    property <length> smoothing_height: root.expanded ? 140px : 0px;
+    in property <string> smoothing_sigma_error: "";
 
     out property <string> hovered_tooltip_text:
         sigma_area.has-hover ? "Standard deviation (σ) for the smoothing kernel.\n\n📏 Recommended: 0.01 Å.\n\n🔬 Physics: Controls the width of the convolution kernel applied to distribution functions. Larger σ smooths more noise but broadens real peaks — important for resolving the first g(r) peak. As a rule of thumb, σ should be comparable to or smaller than the bin width to avoid over-smoothing physical features." : kernel_area.has-hover ? "Type of smoothing kernel applied to distribution functions.\n\n🔬 Gaussian: Standard choice — smooth, infinite support. Best for general-purpose smoothing.\n\n🔬 Bump: Compact support with a sharp cutoff. Preserves high-frequency features better than Gaussian — use for crystalline systems with sharp peaks.\n\n🔬 Triweight: Compact support with higher weight near the center. Good for noisy data from small simulation cells, as it suppresses outliers more aggressively." : "";
@@ -29,13 +28,8 @@ export component SmoothingOptionsCard inherits FilledCard {
         }
 
         Vertical {
-            height: root.smoothing_height;
-            visible: self.height > 0.1px;
+            visible: root.expanded;
             opacity: root.expanded ? 1.0 : 0.0;
-            animate height {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
             animate opacity {
                 duration: 250ms;
                 easing: ease-in-out;
@@ -57,6 +51,8 @@ export component SmoothingOptionsCard inherits FilledCard {
                     width: 100%;
                     label: "Smoothing Sigma";
                     text <=> root.smoothing_sigma;
+                    has_error: root.smoothing_sigma_error != "";
+                    supporting_text: root.smoothing_sigma_error;
                 }
             }
 

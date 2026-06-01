@@ -1,8 +1,3 @@
-// Correlation - Liquid and Amorphous Solid Analysis Tool
-// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
-// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
-
 import {
     MaterialPalette,
     MaterialStyleMetrics,
@@ -16,6 +11,7 @@ import {
     Horizontal,
     Icons,
 } from "../material/material.slint";
+import { ExportSettingsCard } from "ExportSettingsCard.slint";
 
 // ============================================================================
 // PreviewCard Component
@@ -42,16 +38,28 @@ export component PreviewCard inherits FilledCard {
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
 
+    in-out property <int> export_size_preset: 0;
+    in-out property <int> export_palette: 0;
+    in-out property <string> export_font_scale: "1.0";
+    in-out property <string> export_line_width: "3.0";
+    in-out property <bool> export_show_legend: true;
+    in-out property <bool> export_show_grid: true;
+
+    in property <string> export_font_scale_error: "";
+    in property <string> export_line_width_error: "";
+
     callback plot_selected(int);
     callback save_plot();
+    callback save_pdf();
     callback pin_run();
     callback clear_pinned_runs();
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : "";
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : export_settings.hovered_tooltip_text != "" ? export_settings.hovered_tooltip_text : "";
 
     Vertical {
+        spacing: MaterialStyleMetrics.spacing_8;
 
         // Header
         MaterialText {
@@ -81,13 +89,23 @@ export component PreviewCard inherits FilledCard {
                 }
             }
 
-            // Optional Save Plot Button
+            // Save SVG Button
             FilledButton {
-                text: "Save Plot";
+                text: "Save SVG";
                 icon: Icons.save;
                 enabled: root.preview_plot.width > 0;
                 clicked => {
                     root.save_plot();
+                }
+            }
+
+            // Save PDF Button
+            FilledButton {
+                text: "Save PDF";
+                icon: Icons.save;
+                enabled: root.preview_plot.width > 0;
+                clicked => {
+                    root.save_pdf();
                 }
             }
 
@@ -146,5 +164,18 @@ export component PreviewCard inherits FilledCard {
                 image-fit: contain;
             }
         }
+
+        export_settings := ExportSettingsCard {
+            enabled: root.preview_plot.width > 0;
+            export_size_preset <=> root.export_size_preset;
+            export_palette <=> root.export_palette;
+            export_font_scale <=> root.export_font_scale;
+            export_line_width <=> root.export_line_width;
+            export_show_legend <=> root.export_show_legend;
+            export_show_grid <=> root.export_show_grid;
+            export_font_scale_error: root.export_font_scale_error;
+            export_line_width_error: root.export_line_width_error;
+        }
     }
 }
+

@@ -1,0 +1,133 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+    Vertical,
+    Horizontal,
+    DropDownMenu,
+    MenuItem,
+    FilledButton,
+    Icons,
+} from "../material/material.slint";
+
+export component PresetManagerCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> enabled: true;
+
+    in property <[MenuItem]> preset_items: [];
+    in-out property <int> selected_preset: -1;
+
+    callback load_preset(int);
+    callback save_preset(string); // name
+    callback delete_preset(int);
+
+    property <string> save_name: "";
+
+    out property <string> hovered_tooltip_text:
+        preset_dropdown_area.has-hover ? "Select a previously saved preset configuration." :
+        load_btn_area.has-hover ? "Load the selected preset parameters into the active workspace." :
+        delete_btn_area.has-hover ? "Permanently delete the selected preset configuration." :
+        save_input_area.has-hover ? "Enter a unique name to save your current parameter settings." :
+        save_btn_area.has-hover ? "Save the current parameters as a named preset for future use." : "";
+
+    Vertical {
+        ExpandableHeader {
+            text: "Parameter Presets";
+            expanded <=> root.expanded;
+        }
+
+        Vertical {
+            visible: root.expanded;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            padding: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_12;
+
+            // Load and Delete
+            VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                preset_dropdown_area := TouchArea {
+                    DropDownMenu {
+                        width: 100%;
+                        label: "Saved Presets";
+                        enabled: root.enabled && root.preset_items.length > 0;
+                        items: root.preset_items;
+                        current_index <=> root.selected_preset;
+                    }
+                }
+
+                HorizontalLayout {
+                    spacing: MaterialStyleMetrics.spacing_8;
+                    height: MaterialStyleMetrics.size_40;
+
+                    load_btn_area := TouchArea {
+                        horizontal-stretch: 1;
+                        FilledButton {
+                            width: 100%;
+                            height: 100%;
+                            text: "Load Preset";
+                            enabled: root.enabled && root.selected_preset >= 0 && root.preset_items.length > 0;
+                            clicked => {
+                                root.load_preset(root.selected_preset);
+                            }
+                        }
+                    }
+
+                    delete_btn_area := TouchArea {
+                        horizontal-stretch: 1;
+                        FilledButton {
+                            width: 100%;
+                            height: 100%;
+                            text: "Delete";
+                            enabled: root.enabled && root.selected_preset >= 0 && root.preset_items.length > 0;
+                            clicked => {
+                                root.delete_preset(root.selected_preset);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Save new preset
+            VerticalLayout {
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                save_input_area := TouchArea {
+                    TextField {
+                        width: 100%;
+                        label: "New Preset Name";
+                        enabled: root.enabled;
+                        text <=> root.save_name;
+                    }
+                }
+
+                save_btn_area := TouchArea {
+                    height: MaterialStyleMetrics.size_40;
+                    FilledButton {
+                        width: 100%;
+                        height: 100%;
+                        text: "Save Current Options";
+                        icon: Icons.save;
+                        enabled: root.enabled && root.save_name != "";
+                        clicked => {
+                            root.save_preset(root.save_name);
+                            root.save_name = ""; // Clear input field
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

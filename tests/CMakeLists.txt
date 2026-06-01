@@ -65,8 +65,10 @@ add_executable(correlation_unit_tests
     unit/math/SmoothingTests.cpp
     unit/math/FFTUtilsTests.cpp
     unit/app/AppBackendTests.cpp
+    unit/app/PresetManagerTests.cpp
     unit/cli/CliParserTests.cpp
     ../src/app/AppBackend.cpp
+    ../src/app/PresetManager.cpp
 )
 
 target_link_libraries(correlation_unit_tests PRIVATE
@@ -128,6 +130,7 @@ if(BUILD_GUI)
         functional/app/AppControllerTests.cpp
         ../src/app/AppBackend.cpp
         ../src/app/AppController.cpp
+        ../src/app/PresetManager.cpp
     )
 
     target_link_libraries(correlation_gui_tests PRIVATE

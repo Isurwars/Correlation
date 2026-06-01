@@ -1,0 +1,56 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledCard,
+    MaterialText,
+    FilledButton,
+    Vertical,
+} from "../material/material.slint";
+
+export component CliCommandCard inherits FilledCard {
+    in property <string> cli_command: "";
+    
+    callback copy_command();
+
+    Vertical {
+        padding: MaterialStyleMetrics.spacing_8;
+        spacing: MaterialStyleMetrics.spacing_4;
+
+        MaterialText {
+            text: "Equivalent CLI Command";
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
+        }
+
+        // Display the command in a read-only visual area
+        Rectangle {
+            background: MaterialPalette.surface_container_low;
+            border_radius: MaterialStyleMetrics.border_radius_4;
+            border_width: 1px;
+            border_color: MaterialPalette.outline_variant;
+
+            Vertical {
+                padding: MaterialStyleMetrics.padding_4;
+                MaterialText {
+                    text: root.cli_command;
+                    wrap: word-wrap;
+                    color: MaterialPalette.on_surface;
+                    style: MaterialTypography.body_small;
+                }
+            }
+        }
+
+        FilledButton {
+            width: 100%;
+            text: "Copy Command";
+            clicked => {
+                root.copy_command();
+            }
+        }
+    }
+}

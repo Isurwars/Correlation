@@ -40,6 +40,7 @@ export component FileInfoCard inherits FilledCard {
     in property <int> removed_frames_count;
     in property <[AtomCount]> atom_counts;
     in-out property <string> time_step;
+    in property <string> time_step_error: "";
 
     out property <string> hovered_tooltip_text:
         frames_layout.has-hover ? "Number of structural frames parsed from the file.\n\n🔬 Physics: More frames improve statistical averaging for distribution functions. For converged g(r) in a liquid, typically 100+ frames are recommended." : atoms_layout.has-hover ? "Total number of atoms found in a single frame.\n\n🔬 Physics: Larger systems reduce finite-size effects in correlation functions. For reliable RDF, systems with >200 atoms are recommended. For ring statistics, >500 atoms is preferred." : removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data.\n\n⚠️ If this number is large relative to total frames, check the input file for formatting issues or incomplete trajectory data." : time_step_area.has-hover ? "Time interval between parsed frames in femtoseconds (fs).\n\n📏 Auto-calculated from atomic masses using √(9m/5), where m is the lightest element's mass.\n\n🔬 Physics: The time step determines the time axis for dynamic properties (MSD, VACF, vDoS). Verify this matches your simulation's actual time step for accurate diffusion coefficients and vibrational spectra." : "";
@@ -48,7 +49,6 @@ export component FileInfoCard inherits FilledCard {
     property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
     property <length> frames_height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
     property <length> removed_height: (root.num_frames > 1 && root.removed_frames_count > 0) ? MaterialStyleMetrics.size_40 : 0px;
-    property <length> time_step_height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
 
     Vertical {
         MaterialText {
@@ -115,12 +115,8 @@ export component FileInfoCard inherits FilledCard {
         }
 
         time_step_area := TouchArea {
+            visible: root.num_frames > 1;
             opacity: root.num_frames > 1 ? 1.0 : 0.0;
-            height: root.time_step_height;
-            animate height {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
             animate opacity {
                 duration: 250ms;
                 easing: ease-in-out;
@@ -131,12 +127,9 @@ export component FileInfoCard inherits FilledCard {
                     label: "Time Step (fs)";
                     horizontal-stretch: 1;
                     text <=> root.time_step;
-                    height: root.time_step_height;
-                    animate height {
-                        duration: 250ms;
-                        easing: ease-in-out;
-                    }
                     enabled: root.num_frames > 1;
+                    has_error: root.time_step_error != "";
+                    supporting_text: root.time_step_error;
                 }
             }
         }

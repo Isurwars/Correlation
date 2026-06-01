@@ -10,6 +10,8 @@
 
 #include "AppWindow.h"
 #include "app/AppBackend.hpp"
+#include "app/PresetManager.hpp"
+#include "plotters/SvgPlotter.hpp"
 #include "external/PortableFileDialogs.hpp"
 
 #include <memory>
@@ -50,6 +52,7 @@ private:
   std::unique_ptr<pfd::open_file> current_file_dialog_;      ///< Active file open dialog handler.
   std::unique_ptr<pfd::save_file> current_save_dialog_;      ///< Active file save dialog handler.
   std::unique_ptr<pfd::save_file> current_plot_save_dialog_; ///< Active plot save dialog handler.
+  std::unique_ptr<pfd::save_file> current_plot_save_pdf_dialog_; ///< Active plot PDF save dialog handler.
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
   std::thread load_thread_;     ///< Handle for the background file loading process.
@@ -61,6 +64,7 @@ private:
     std::map<std::string, correlation::analysis::Histogram> histograms;
   };
   std::vector<PinnedRun> pinned_runs_; ///< Pinned runs for comparison plots.
+  std::vector<Preset> presets_;        ///< List of loaded parameter presets.
 
   /**
    * @brief Helper to update the UI progress bar and status text safely.
@@ -95,6 +99,11 @@ private:
   void setBondCutoffs(AppWindow &ui);
 
   /**
+   * @brief Constructs a SvgPlotter PlotConfig based on current UI settings.
+   */
+  correlation::plotters::PlotConfig buildPlotConfigFromUI();
+
+  /**
    * @brief Parses and retrieves the user-modified bond cutoffs from the UI.
    * @param ui Reference to the main application window.
    * @return A nested vector representing the bond cutoff matrix.
@@ -106,6 +115,22 @@ private:
    * @param ui Reference to the main application window.
    */
   void populateCalculatorGroups(AppWindow &ui);
+
+  /**
+   * @brief Validates all numeric input fields and pushes error states to the UI.
+   * @return true if all inputs are valid, false otherwise.
+   */
+  bool validateInputs();
+
+  /**
+   * @brief Generates and updates the equivalent CLI command in the UI.
+   */
+  void updateCliCommand();
+
+  /**
+   * @brief Copies the equivalent CLI command to the clipboard.
+   */
+  void handleCopyCliCommand();
 
   //-------------------------------------------------------------------------//
   //-------------------------------- Methods --------------------------------//
@@ -157,6 +182,12 @@ private:
   void handleSavePlot();
 
   /**
+   * @brief Handles the "Save Plot PDF" signal from the UI.
+   * Opens a save file dialog to export the currently selected plot as PDF.
+   */
+  void handleSavePlotPdf();
+
+  /**
    * @brief Handles pinning the current run for comparison.
    */
   void handlePinRun();
@@ -165,5 +196,13 @@ private:
    * @brief Handles clearing all pinned runs.
    */
   void handleClearPinnedRuns();
+
+  /**
+   * @brief Preset management handlers.
+   */
+  void handleLoadPreset(int index);
+  void handleSavePreset(const std::string &name);
+  void handleDeletePreset(int index);
+  void refreshPresetList();
 };
 } // namespace correlation::app

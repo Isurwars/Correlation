@@ -1,0 +1,153 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+    Vertical,
+    Horizontal,
+    DropDownMenu,
+    MenuItem,
+    CheckBoxRow,
+} from "../material/material.slint";
+
+export component ExportSettingsCard inherits FilledCard {
+    in-out property <bool> expanded: false;
+    in property <bool> enabled: true;
+
+    in-out property <int> export_size_preset: 0;
+    in-out property <int> export_palette: 0;
+    in-out property <string> export_font_scale: "1.0";
+    in-out property <string> export_line_width: "3.0";
+    in-out property <bool> export_show_legend: true;
+    in-out property <bool> export_show_grid: true;
+
+    in property <string> export_font_scale_error: "";
+    in property <string> export_line_width_error: "";
+
+    out property <string> hovered_tooltip_text:
+        size_area.has-hover ? "Select a standard publication size preset.\n\n📏 Default: 1200×900 px\n📏 Single Column: 3.5\" at 300 DPI\n📏 Double Column: 7\" at 300 DPI\n📏 Presentation: 10\" at 300 DPI" :
+        palette_area.has-hover ? "Choose color palette for publication lines.\n\n🎨 Okabe-Ito: Colorblind-safe palette (8 colors)\n🎨 Grayscale: Black/white/gray shades\n🎨 Viridis: Perceptually uniform colors" :
+        font_area.has-hover ? "Font scale multiplier for all labels.\n\n💡 Tip: Use 1.5–2.0 for single/double column LaTeX figures to ensure label readability." :
+        line_area.has-hover ? "Stroke width for plot curves (in px).\n\n💡 Tip: Wider strokes (3.0px+) look much cleaner in paper figures." :
+        grid_area.has-hover ? "Toggle the background reference grid lines on the plot." :
+        legend_area.has-hover ? "Toggle the interactive color legend in the upper-right corner." : "";
+
+    property <[MenuItem]> size_items: [
+        { text: "Default (1200x900)", enabled: true },
+        { text: "Single Column (3.5\" @ 300 DPI)", enabled: true },
+        { text: "Double Column (7.0\" @ 300 DPI)", enabled: true },
+        { text: "Presentation (10.0\" @ 300 DPI)", enabled: true }
+    ];
+
+    property <[MenuItem]> palette_items: [
+        { text: "Okabe-Ito (Colorblind)", enabled: true },
+        { text: "Grayscale (B&W)", enabled: true },
+        { text: "Viridis", enabled: true }
+    ];
+
+    Vertical {
+        ExpandableHeader {
+            text: "Publication Plot Settings";
+            expanded <=> root.expanded;
+        }
+
+        Vertical {
+            visible: root.expanded;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            padding: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_12;
+
+            // Size and Palette
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_16;
+
+                size_area := TouchArea {
+                    horizontal-stretch: 1;
+                    DropDownMenu {
+                        width: 100%;
+                        label: "Preset Size";
+                        enabled: root.enabled;
+                        items: root.size_items;
+                        current_index <=> root.export_size_preset;
+                    }
+                }
+
+                palette_area := TouchArea {
+                    horizontal-stretch: 1;
+                    DropDownMenu {
+                        width: 100%;
+                        label: "Color Palette";
+                        enabled: root.enabled;
+                        items: root.palette_items;
+                        current_index <=> root.export_palette;
+                    }
+                }
+            }
+
+            // Font scale and Line width
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_16;
+
+                font_area := TouchArea {
+                    horizontal-stretch: 1;
+                    TextField {
+                        width: 100%;
+                        label: "Font Scale";
+                        enabled: root.enabled;
+                        text <=> root.export_font_scale;
+                        has_error: root.export_font_scale_error != "";
+                        supporting_text: root.export_font_scale_error;
+                    }
+                }
+
+                line_area := TouchArea {
+                    horizontal-stretch: 1;
+                    TextField {
+                        width: 100%;
+                        label: "Line Width (px)";
+                        enabled: root.enabled;
+                        text <=> root.export_line_width;
+                        has_error: root.export_line_width_error != "";
+                        supporting_text: root.export_line_width_error;
+                    }
+                }
+            }
+
+            // Grid and Legend Toggles
+            HorizontalLayout {
+                spacing: MaterialStyleMetrics.spacing_16;
+
+                grid_area := TouchArea {
+                    horizontal-stretch: 1;
+                    CheckBoxRow {
+                        width: 100%;
+                        text: "Show Grid Lines";
+                        enabled: root.enabled;
+                        check_state_bool <=> root.export_show_grid;
+                    }
+                }
+
+                legend_area := TouchArea {
+                    horizontal-stretch: 1;
+                    CheckBoxRow {
+                        width: 100%;
+                        text: "Show Legend";
+                        enabled: root.enabled;
+                        check_state_bool <=> root.export_show_legend;
+                    }
+                }
+            }
+        }
+    }
+}

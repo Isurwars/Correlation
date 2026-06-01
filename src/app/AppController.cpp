@@ -58,12 +58,15 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   ui_.on_write_files([this]() { handleWriteFiles(); });
   ui_.on_browse_file([this]() { handleBrowseFile(); });
   ui_.on_check_file_dialog_status([this]() { handleCheckFileDialogStatus(); });
+  ui_.on_validate_inputs([this]() { validateInputs(); });
+  ui_.on_copy_cli_command([this]() { handleCopyCliCommand(); });
 
   // Handle calculator toggle: update backend options and refresh the UI model
   ui_.on_toggle_calculator(
       [this](slint::SharedString id, bool enabled) {
         backend_.setCalculatorActive(std::string(id.data()), enabled);
         updateActiveGroupFlags(ui_);
+        updateCliCommand();
       });
 
   // Handle plot selection: generate SVG and push to UI
@@ -72,11 +75,22 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   // Handle save plot request
   ui_.on_save_plot([this]() { handleSavePlot(); });
 
+  // Handle save plot PDF request
+  ui_.on_save_plot_pdf([this]() { handleSavePlotPdf(); });
+
   // Handle pin run request
   ui_.on_pin_run([this]() { handlePinRun(); });
 
   // Handle clear pinned runs request
   ui_.on_clear_pinned_runs([this]() { handleClearPinnedRuns(); });
+
+  // Handle preset load, save, delete requests
+  ui_.on_load_preset([this](int index) { handleLoadPreset(index); });
+  ui_.on_save_preset([this](slint::SharedString name) { handleSavePreset(std::string(name.data())); });
+  ui_.on_delete_preset([this](int index) { handleDeletePreset(index); });
+
+  // Initial load of preset list
+  refreshPresetList();
 }
 
 AppController::~AppController() {
@@ -149,6 +163,7 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   }
   ui.set_time_step(slint::SharedString(std::format("{:.2f}", opt.time_step)));
   updateActiveGroupFlags(ui);
+  updateCliCommand();
 };
 
 void AppController::updateActiveGroupFlags(AppWindow &ui) {
@@ -299,6 +314,43 @@ void AppController::setBondCutoffs(AppWindow &ui) {
   ui.set_bond_cutoffs(slint_cutoffs);
 }
 
+correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
+  correlation::plotters::PlotConfig config;
+  config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
+                                   : correlation::plotters::PlotConfig::Theme::Light;
+
+  int size_preset_val = ui_.get_export_size_preset();
+  if (size_preset_val == 1) {
+    config.preset_size = correlation::plotters::PlotConfig::PresetSize::SingleColumn;
+  } else if (size_preset_val == 2) {
+    config.preset_size = correlation::plotters::PlotConfig::PresetSize::DoubleColumn;
+  } else if (size_preset_val == 3) {
+    config.preset_size = correlation::plotters::PlotConfig::PresetSize::Presentation;
+  } else {
+    config.preset_size = correlation::plotters::PlotConfig::PresetSize::Default;
+  }
+
+  int palette_val = ui_.get_export_palette();
+  if (palette_val == 1) {
+    config.palette = correlation::plotters::PlotConfig::Palette::Grayscale;
+  } else if (palette_val == 2) {
+    config.palette = correlation::plotters::PlotConfig::Palette::Viridis;
+  } else {
+    config.palette = correlation::plotters::PlotConfig::Palette::OkabeIto;
+  }
+
+  config.font_scale = safe_stof(ui_.get_export_font_scale(), 1.0f);
+  if (config.font_scale <= 0.0f) config.font_scale = 1.0f;
+
+  config.line_width = safe_stof(ui_.get_export_line_width(), 3.0f);
+  if (config.line_width <= 0.0f) config.line_width = 3.0f;
+
+  config.show_grid = ui_.get_export_show_grid();
+  config.show_legend = ui_.get_export_show_legend();
+
+  return config;
+}
+
 std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
   auto slint_cutoffs = ui.get_bond_cutoffs();
   if (!backend_.cell())
@@ -374,6 +426,10 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
 //---------------------------------------------------------------------------//
 
 void AppController::handleRunAnalysis() {
+  if (!validateInputs()) {
+    return;
+  }
+
   ui_.set_analysis_done(false); // Reset done state
   ui_.set_analysis_running(true);
   ui_.set_progress(0.0f);
@@ -520,6 +576,7 @@ void AppController::handleCheckFileDialogStatus() {
             // Update Run Analysis Card Frame Info
             ui_.set_min_frame("1");
             ui_.set_max_frame(slint::SharedString(std::to_string(backend_.getFrameCount())));
+            validateInputs();
           }
         });
       });
@@ -570,9 +627,7 @@ void AppController::handleCheckFileDialogStatus() {
         const std::string &name = available_plot_keys_[index];
         const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
         if (hist) {
-          correlation::plotters::PlotConfig config;
-          config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
-                                           : correlation::plotters::PlotConfig::Theme::Light;
+          correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
 
           std::string svg;
           if (pinned_runs_.empty()) {
@@ -612,6 +667,71 @@ void AppController::handleCheckFileDialogStatus() {
       ui_.set_text_opacity(false);
     });
     current_plot_save_dialog_.reset();
+  }
+
+  if (current_plot_save_pdf_dialog_ && current_plot_save_pdf_dialog_->ready(0)) {
+    std::string result = current_plot_save_pdf_dialog_->result();
+    if (!result.empty()) {
+      int index = ui_.get_selected_plot_index();
+      if (index >= 0 && index < static_cast<int>(available_plot_keys_.size())) {
+        const std::string &name = available_plot_keys_[index];
+        const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+        if (hist) {
+          correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
+
+          std::string svg;
+          if (pinned_runs_.empty()) {
+            svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+          } else {
+            std::vector<correlation::plotters::LabeledHistogram> datasets;
+            datasets.push_back({"Current", hist});
+            for (const auto &pr : pinned_runs_) {
+              auto it = pr.histograms.find(name);
+              if (it != pr.histograms.end()) {
+                datasets.push_back({pr.label, &it->second});
+              }
+            }
+            std::string key = "Total";
+            const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+            if (!partials.empty() && partials.find(key) == partials.end()) {
+              key = partials.begin()->first;
+            }
+            svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
+          }
+
+          std::string temp_svg_path = result + ".tmp.svg";
+          std::ofstream out(temp_svg_path);
+          if (out.is_open()) {
+            out << svg;
+            out.close();
+
+            std::string cmd = "rsvg-convert -f pdf -o \"" + result + "\" \"" + temp_svg_path + "\"";
+            int ret = std::system(cmd.c_str());
+            if (ret != 0) {
+              std::string inkscape_cmd = "inkscape --export-filename=\"" + result + "\" \"" + temp_svg_path + "\"";
+              ret = std::system(inkscape_cmd.c_str());
+            }
+
+            std::filesystem::remove(temp_svg_path);
+
+            if (ret == 0) {
+              ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
+            } else {
+              ui_.set_analysis_status_text(slint::SharedString("Failed to convert SVG to PDF."));
+            }
+          } else {
+            ui_.set_analysis_status_text(slint::SharedString("Failed to write temporary SVG."));
+          }
+        }
+      }
+    } else {
+      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+    }
+    slint::invoke_from_event_loop([this]() {
+      ui_.set_timer_running(false);
+      ui_.set_text_opacity(false);
+    });
+    current_plot_save_pdf_dialog_.reset();
   }
 }
 
@@ -665,9 +785,7 @@ void AppController::handleSelectPlot(int index) {
   if (!hist)
     return;
 
-  correlation::plotters::PlotConfig config;
-  config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
-                                   : correlation::plotters::PlotConfig::Theme::Light;
+  correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
 
   std::string svg;
   if (pinned_runs_.empty()) {
@@ -724,6 +842,30 @@ void AppController::handleSavePlot() {
   ui_.set_analysis_status_text(slint::SharedString(std::string("Saving ") + name + " plot..."));
 }
 
+void AppController::handleSavePlotPdf() {
+  int index = ui_.get_selected_plot_index();
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
+    return;
+  const std::string &name = available_plot_keys_[index];
+  const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
+  if (!hist)
+    return;
+
+  std::string default_path = backend_.options().output_file_base;
+  if (!default_path.empty()) {
+    default_path += "_" + name + ".pdf";
+  } else {
+    default_path = name + ".pdf";
+  }
+
+  current_plot_save_pdf_dialog_ = std::make_unique<pfd::save_file>(
+      "Save PDF Plot", default_path, std::vector<std::string>{"PDF Document", "*.pdf", "All Files", "*"}, pfd::opt::none);
+
+  ui_.set_timer_running(true);
+  ui_.set_text_opacity(true);
+  ui_.set_analysis_status_text(slint::SharedString(std::string("Saving ") + name + " PDF plot..."));
+}
+
 void AppController::handlePinRun() {
   const auto &hists = backend_.getHistograms();
   if (hists.empty())
@@ -755,6 +897,448 @@ void AppController::handleClearPinnedRuns() {
       handleSelectPlot(current_idx);
     }
   });
+}
+
+bool AppController::validateInputs() {
+  bool valid = true;
+
+  auto to_lower = [](const std::string &s) {
+    std::string data = s;
+    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c) { return std::tolower(c); });
+    return data;
+  };
+
+  auto is_positive_float = [](const std::string &s, float &val) {
+    try {
+      size_t idx;
+      float v = std::stof(s, &idx);
+      if (idx < s.size()) {
+        return false;
+      }
+      if (v <= 0.0f) return false;
+      val = v;
+      return true;
+    } catch (...) {
+      return false;
+    }
+  };
+
+  auto is_non_negative_float = [](const std::string &s, float &val) {
+    try {
+      size_t idx;
+      float v = std::stof(s, &idx);
+      if (idx < s.size()) {
+        return false;
+      }
+      if (v < 0.0f) return false;
+      val = v;
+      return true;
+    } catch (...) {
+      return false;
+    }
+  };
+
+  auto is_positive_int = [](const std::string &s, int &val) {
+    try {
+      size_t idx;
+      int v = std::stoi(s, &idx);
+      if (idx < s.size()) {
+        return false;
+      }
+      if (v <= 0) return false;
+      val = v;
+      return true;
+    } catch (...) {
+      return false;
+    }
+  };
+
+  float r_max_val = 0.0f;
+  float r_bin_val = 0.0f;
+  float q_max_val = 0.0f;
+  float q_bin_val = 0.0f;
+
+  // 1. r_max
+  std::string r_max_s = ui_.get_r_max().data();
+  if (!is_positive_float(r_max_s, r_max_val)) {
+    ui_.set_r_max_error("Must be a positive number");
+    valid = false;
+  } else {
+    ui_.set_r_max_error("");
+  }
+
+  // 2. r_bin_width
+  std::string r_bin_s = ui_.get_r_bin_width().data();
+  if (!is_positive_float(r_bin_s, r_bin_val)) {
+    ui_.set_r_bin_error("Must be a positive number");
+    valid = false;
+  } else if (r_max_val > 0.0f && r_bin_val > r_max_val) {
+    ui_.set_r_bin_error("Must be ≤ r_max");
+    valid = false;
+  } else {
+    ui_.set_r_bin_error("");
+  }
+
+  // 3. q_max
+  std::string q_max_s = ui_.get_q_max().data();
+  if (!is_positive_float(q_max_s, q_max_val)) {
+    ui_.set_q_max_error("Must be a positive number");
+    valid = false;
+  } else {
+    ui_.set_q_max_error("");
+  }
+
+  // 4. q_bin_width
+  std::string q_bin_s = ui_.get_q_bin_width().data();
+  if (!is_positive_float(q_bin_s, q_bin_val)) {
+    ui_.set_q_bin_error("Must be a positive number");
+    valid = false;
+  } else if (q_max_val > 0.0f && q_bin_val > q_max_val) {
+    ui_.set_q_bin_error("Must be ≤ q_max");
+    valid = false;
+  } else {
+    ui_.set_q_bin_error("");
+  }
+
+  // 5. r_int_max
+  float r_int_max_val = 0.0f;
+  std::string r_int_max_s = ui_.get_r_int_max().data();
+  if (!is_positive_float(r_int_max_s, r_int_max_val)) {
+    ui_.set_r_int_max_error("Must be a positive number");
+    valid = false;
+  } else {
+    ui_.set_r_int_max_error("");
+  }
+
+  // 6. angle_bin_width
+  float angle_bin_val = 0.0f;
+  std::string angle_bin_s = ui_.get_angle_bin_width().data();
+  if (!is_positive_float(angle_bin_s, angle_bin_val)) {
+    ui_.set_angle_bin_error("Must be a positive number");
+    valid = false;
+  } else if (angle_bin_val > 180.0f) {
+    ui_.set_angle_bin_error("Must be ≤ 180°");
+    valid = false;
+  } else {
+    ui_.set_angle_bin_error("");
+  }
+
+  // 7. dihedral_bin_width
+  float dihedral_bin_val = 0.0f;
+  std::string dihedral_bin_s = ui_.get_dihedral_bin_width().data();
+  if (!is_positive_float(dihedral_bin_s, dihedral_bin_val)) {
+    ui_.set_dihedral_bin_error("Must be a positive number");
+    valid = false;
+  } else if (dihedral_bin_val > 360.0f) {
+    ui_.set_dihedral_bin_error("Must be ≤ 360°");
+    valid = false;
+  } else {
+    ui_.set_dihedral_bin_error("");
+  }
+
+  // 8. max_ring_size
+  int max_ring_val = 0;
+  std::string max_ring_s = ui_.get_max_ring_size().data();
+  if (!is_positive_int(max_ring_s, max_ring_val) || max_ring_val < 3) {
+    ui_.set_max_ring_error("Must be an integer ≥ 3");
+    valid = false;
+  } else {
+    ui_.set_max_ring_error("");
+  }
+
+  // 9. smoothing_sigma
+  float smoothing_sigma_val = 0.0f;
+  std::string smoothing_sigma_s = ui_.get_smoothing_sigma().data();
+  if (!is_non_negative_float(smoothing_sigma_s, smoothing_sigma_val)) {
+    ui_.set_smoothing_sigma_error("Must be a non-negative number");
+    valid = false;
+  } else {
+    ui_.set_smoothing_sigma_error("");
+  }
+
+  // 10. time_step
+  float time_step_val = 0.0f;
+  std::string time_step_s = ui_.get_time_step().data();
+  if (!is_positive_float(time_step_s, time_step_val)) {
+    ui_.set_time_step_error("Must be a positive number");
+    valid = false;
+  } else {
+    ui_.set_time_step_error("");
+  }
+
+  // 11. min_frame and max_frame
+  int min_frame_val = -1;
+  int max_frame_val = -1;
+  bool min_frame_valid = true;
+  bool max_frame_valid = true;
+
+  std::string min_frame_s = ui_.get_min_frame().data();
+  std::string min_frame_lower = to_lower(min_frame_s);
+  int total_frames = ui_.get_num_frames();
+
+  if (min_frame_lower == "start" || min_frame_s.empty()) {
+    min_frame_val = 0;
+    ui_.set_min_frame_error("");
+  } else if (min_frame_lower == "end") {
+    if (total_frames > 0) {
+      min_frame_val = total_frames - 1;
+    } else {
+      min_frame_val = 0;
+    }
+    ui_.set_min_frame_error("");
+  } else {
+    int parsed_val;
+    if (!is_positive_int(min_frame_s, parsed_val)) {
+      ui_.set_min_frame_error("Must be positive integer, 'Start', or 'End'");
+      min_frame_valid = false;
+      valid = false;
+    } else if (total_frames > 0 && parsed_val > total_frames) {
+      ui_.set_min_frame_error(slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames)));
+      min_frame_valid = false;
+      valid = false;
+    } else {
+      min_frame_val = parsed_val - 1;
+      ui_.set_min_frame_error("");
+    }
+  }
+
+  std::string max_frame_s = ui_.get_max_frame().data();
+  std::string max_frame_lower = to_lower(max_frame_s);
+
+  if (max_frame_lower == "end" || max_frame_s.empty()) {
+    max_frame_val = total_frames > 0 ? total_frames - 1 : -1;
+    ui_.set_max_frame_error("");
+  } else if (max_frame_lower == "start") {
+    max_frame_val = 0;
+    ui_.set_max_frame_error("");
+  } else {
+    int parsed_val;
+    if (!is_positive_int(max_frame_s, parsed_val)) {
+      ui_.set_max_frame_error("Must be positive integer or 'End'");
+      max_frame_valid = false;
+      valid = false;
+    } else if (total_frames > 0 && parsed_val > total_frames) {
+      ui_.set_max_frame_error(slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames)));
+      max_frame_valid = false;
+      valid = false;
+    } else {
+      max_frame_val = parsed_val - 1;
+      ui_.set_max_frame_error("");
+    }
+  }
+
+  // Cross-validation of min_frame and max_frame
+  if (min_frame_valid && max_frame_valid && min_frame_val >= 0 && max_frame_val >= 0) {
+    if (min_frame_val > max_frame_val) {
+      ui_.set_min_frame_error("Start frame must be ≤ End frame");
+      ui_.set_max_frame_error("End frame must be ≥ Start frame");
+      valid = false;
+    }
+  }
+
+  // 12. export_font_scale and export_line_width
+  float font_scale_val = 0.0f;
+  std::string font_scale_s = ui_.get_export_font_scale().data();
+  if (!is_positive_float(font_scale_s, font_scale_val)) {
+    ui_.set_export_font_scale_error("Must be a positive number");
+    valid = false;
+  } else {
+    ui_.set_export_font_scale_error("");
+  }
+
+  float line_width_val = 0.0f;
+  std::string line_width_s = ui_.get_export_line_width().data();
+  if (!is_positive_float(line_width_s, line_width_val)) {
+    ui_.set_export_line_width_error("Must be a positive number");
+    valid = false;
+  } else {
+    ui_.set_export_line_width_error("");
+  }
+
+  ui_.set_has_validation_errors(!valid);
+  updateCliCommand();
+  return valid;
+}
+
+void AppController::updateCliCommand() {
+  ProgramOptions opt = handleOptionsfromUI(ui_);
+  
+  std::string cmd = "correlation-cli";
+
+  if (!opt.input_file.empty()) {
+    cmd += " \"" + opt.input_file + "\"";
+  } else {
+    cmd += " <input_file>";
+  }
+
+  cmd += " --r-max " + std::string(ui_.get_r_max().data());
+  cmd += " --r-bin " + std::string(ui_.get_r_bin_width().data());
+
+  if (ui_.get_has_scattering_active()) {
+    cmd += " --q-max " + std::string(ui_.get_q_max().data());
+    cmd += " --q-bin " + std::string(ui_.get_q_bin_width().data());
+    cmd += " --r-int-max " + std::string(ui_.get_r_int_max().data());
+  }
+
+  if (ui_.get_has_angular_active()) {
+    cmd += " --angle-bin " + std::string(ui_.get_angle_bin_width().data());
+    cmd += " --dihedral-bin " + std::string(ui_.get_dihedral_bin_width().data());
+  }
+
+  if (ui_.get_has_rings_active()) {
+    cmd += " --max-ring-size " + std::string(ui_.get_max_ring_size().data());
+  }
+
+  if (ui_.get_num_frames() > 1) {
+    cmd += " --time-step " + std::string(ui_.get_time_step().data());
+    cmd += " --min-frame " + std::string(ui_.get_min_frame().data());
+    cmd += " --max-frame " + std::string(ui_.get_max_frame().data());
+  }
+
+  if (opt.smoothing) {
+    cmd += " --smoothing-sigma " + std::string(ui_.get_smoothing_sigma().data());
+    std::string kernel_str = "gaussian";
+    if (opt.smoothing_kernel == correlation::math::KernelType::Bump) {
+      kernel_str = "bump";
+    } else if (opt.smoothing_kernel == correlation::math::KernelType::Triweight) {
+      kernel_str = "triweight";
+    }
+    cmd += " --smoothing-kernel " + kernel_str;
+  } else {
+    cmd += " --no-smoothing";
+  }
+
+  // Active calculators comma-separated
+  std::string calculators_list = "";
+  for (const auto &[id, active] : opt.active_calculators) {
+    if (active) {
+      if (!calculators_list.empty()) {
+        calculators_list += ",";
+      }
+      calculators_list += id;
+    }
+  }
+  if (!calculators_list.empty()) {
+    cmd += " --calculators " + calculators_list;
+  }
+
+  if (opt.use_csv) {
+    cmd += " --csv";
+  } else {
+    cmd += " --no-csv";
+  }
+
+  if (opt.use_hdf5) {
+    cmd += " --hdf5";
+  } else {
+    cmd += " --no-hdf5";
+  }
+
+  if (opt.use_parquet) {
+    cmd += " --parquet";
+  } else {
+    cmd += " --no-parquet";
+  }
+
+  ui_.set_cli_command(slint::SharedString(cmd));
+}
+
+void AppController::handleCopyCliCommand() {
+  std::string cmd = ui_.get_cli_command().data();
+  
+  // Platform-specific clipboard copy helper
+#if defined(__linux__)
+  FILE *pipe = popen("xclip -selection clipboard", "w");
+  if (pipe) {
+    fwrite(cmd.c_str(), 1, cmd.size(), pipe);
+    pclose(pipe);
+  }
+#elif defined(_WIN32)
+  if (OpenClipboard(nullptr)) {
+    EmptyClipboard();
+    HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, cmd.size() + 1);
+    if (hGlob) {
+      void *pMem = GlobalLock(hGlob);
+      if (pMem) {
+        memcpy(pMem, cmd.c_str(), cmd.size() + 1);
+        GlobalUnlock(hGlob);
+        SetClipboardData(CF_TEXT, hGlob);
+      }
+    }
+    CloseClipboard();
+  }
+#elif defined(__APPLE__)
+  FILE *pipe = popen("pbcopy", "w");
+  if (pipe) {
+    fwrite(cmd.c_str(), 1, cmd.size(), pipe);
+    pclose(pipe);
+  }
+#endif
+}
+
+void AppController::handleLoadPreset(int index) {
+  if (index < 0 || index >= static_cast<int>(presets_.size()))
+    return;
+  const Preset &preset = presets_[index];
+
+  // Update backend options
+  ProgramOptions current_opts = backend_.options();
+  // Keep input_file and output_file_base
+  std::string input = current_opts.input_file;
+  std::string output = current_opts.output_file_base;
+  current_opts = preset.options;
+  current_opts.input_file = input;
+  current_opts.output_file_base = output;
+  backend_.setOptions(current_opts);
+
+  // Update UI components with the new options
+  handleOptionstoUI(ui_);
+  populateCalculatorGroups(ui_);
+  updateActiveGroupFlags(ui_);
+  validateInputs();
+  updateCliCommand();
+
+  ui_.set_analysis_status_text(slint::SharedString(std::string("Loaded preset: ") + preset.name));
+}
+
+void AppController::handleSavePreset(const std::string &name) {
+  if (name.empty()) return;
+
+  Preset preset;
+  preset.name = name;
+  preset.description = "Saved from Correlation UI";
+  preset.options = handleOptionsfromUI(ui_);
+
+  PresetManager::save(preset);
+
+  ui_.set_analysis_status_text(slint::SharedString(std::string("Saved preset: ") + name));
+  refreshPresetList();
+}
+
+void AppController::handleDeletePreset(int index) {
+  if (index < 0 || index >= static_cast<int>(presets_.size()))
+    return;
+
+  std::string name = presets_[index].name;
+  PresetManager::remove(name);
+
+  ui_.set_analysis_status_text(slint::SharedString(std::string("Deleted preset: ") + name));
+  refreshPresetList();
+}
+
+void AppController::refreshPresetList() {
+  presets_ = PresetManager::loadAll();
+
+  auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
+  for (const auto &p : presets_) {
+    MenuItem item;
+    item.text = slint::SharedString(p.name);
+    item.enabled = true;
+    menu_model->push_back(item);
+  }
+
+  ui_.set_preset_items(menu_model);
+  ui_.set_selected_preset(-1);
 }
 
 } // namespace correlation::app

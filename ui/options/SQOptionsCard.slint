@@ -13,8 +13,9 @@ export component SQOptionsCard inherits FilledCard {
     in-out property <string> q_max;
     in-out property <string> q_bin_width;
     in-out property <string> r_int_max;
-
-    property <length> sq_height: root.expanded ? 150px : 0px;
+    in property <string> q_max_error: "";
+    in property <string> q_bin_error: "";
+    in property <string> r_int_max_error: "";
 
     out property <string> hovered_tooltip_text:
         q_max_area.has-hover ? "Maximum scattering vector Q for the Structure Factor S(Q).\n\n📏 Recommended: 20.0 Å⁻¹.\n\n🔬 Physics: Higher Q probes shorter real-space distances (Q ≈ 2π/r). Q_max = 20 Å⁻¹ resolves features down to ~0.3 Å. For X-ray comparison, match the experimental 2θ range." : q_bin_area.has-hover ? "Bin width for the S(Q) histogram.\n\n📏 Recommended: 0.02 Å⁻¹.\n\n🔬 Physics: Related to r_max by the Nyquist criterion — finer Q bins require larger real-space integration radii. Too coarse bins smear sharp diffraction peaks." : r_int_area.has-hover ? "Upper integration limit for the Fourier transform of g(r) → S(Q).\n\n📏 Recommended: 10.0 Å.\n\n🔬 Physics: This is the real-space cutoff for the sine transform. Too short truncates long-range correlations (causing ripples in S(Q)). Too long amplifies noise from the g(r) tail." : "";
@@ -27,13 +28,8 @@ export component SQOptionsCard inherits FilledCard {
         }
 
         Vertical {
-            height: root.sq_height;
-            visible: self.height > 0.1px;
+            visible: root.expanded;
             opacity: root.expanded ? 1.0 : 0.0;
-            animate height {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
             animate opacity {
                 duration: 250ms;
                 easing: ease-in-out;
@@ -46,6 +42,8 @@ export component SQOptionsCard inherits FilledCard {
                     width: 100%;
                     label: "Max Q (Å⁻¹)";
                     text <=> root.q_max;
+                    has_error: root.q_max_error != "";
+                    supporting_text: root.q_max_error;
                 }
             }
 
@@ -56,6 +54,8 @@ export component SQOptionsCard inherits FilledCard {
                     width: 100%;
                     label: "S(Q) Bin Width (Å⁻¹)";
                     text <=> root.q_bin_width;
+                    has_error: root.q_bin_error != "";
+                    supporting_text: root.q_bin_error;
                 }
             }
 
@@ -66,6 +66,8 @@ export component SQOptionsCard inherits FilledCard {
                     width: 100%;
                     label: "Max r for the FFT (Å)";
                     text <=> root.r_int_max;
+                    has_error: root.r_int_max_error != "";
+                    supporting_text: root.r_int_max_error;
                 }
             }
         }

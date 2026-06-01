@@ -12,8 +12,8 @@ export component RDFOptionsCard inherits FilledCard {
     in property <bool> file_loaded;
     in-out property <string> r_max;
     in-out property <string> r_bin_width;
-
-    property <length> rdf_height: root.expanded ? 100px : 0px;
+    in property <string> r_max_error: "";
+    in property <string> r_bin_error: "";
 
     out property <string> hovered_tooltip_text:
         r_max_area.has-hover ? "Maximum radius for RDF calculations g(r), J(r), G(r).\n\n📏 Recommended: 20 Å (half the simulation box length).\n\n🔬 Physics: Should be ≤ L/2 to avoid self-correlation artifacts from periodic boundary conditions. For liquids, g(r) converges to 1.0 well before this limit." : r_bin_area.has-hover ? "Bin width for the RDF histograms g(r), J(r), G(r).\n\n📏 Recommended: 0.02 Å.\n\n🔬 Physics: Smaller bins resolve finer features in the pair distribution but increase noise for small systems. 0.02 Å balances resolution and statistical quality for most simulations (>500 atoms)." : "";
@@ -26,13 +26,8 @@ export component RDFOptionsCard inherits FilledCard {
         }
 
         Vertical {
-            height: root.rdf_height;
-            visible: self.height > 0.1px;
+            visible: root.expanded;
             opacity: root.expanded ? 1.0 : 0.0;
-            animate height {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
             animate opacity {
                 duration: 250ms;
                 easing: ease-in-out;
@@ -45,6 +40,8 @@ export component RDFOptionsCard inherits FilledCard {
                     width: 100%;
                     label: "RDF Max r (Å)";
                     text <=> root.r_max;
+                    has_error: root.r_max_error != "";
+                    supporting_text: root.r_max_error;
                 }
             }
 
@@ -55,6 +52,8 @@ export component RDFOptionsCard inherits FilledCard {
                     width: 100%;
                     label: "RDF Bin Width (Å)";
                     text <=> root.r_bin_width;
+                    has_error: root.r_bin_error != "";
+                    supporting_text: root.r_bin_error;
                 }
             }
         }

@@ -28,7 +28,9 @@ import { InputFileCard } from "file/InputFileCard.slint";
 import { FileInfoCard } from "file/FileInfoCard.slint";
 import { FrameSelectionCard } from "run/FrameSelectionCard.slint";
 import { AnalysisExecutionCard } from "run/AnalysisExecutionCard.slint";
+import { CliCommandCard } from "run/CliCommandCard.slint";
 import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
+import { PresetManagerCard } from "options/PresetManagerCard.slint";
 import { RDFOptionsCard } from "options/RDFOptionsCard.slint";
 import { SQOptionsCard } from "options/SQOptionsCard.slint";
 import { BondAngleOptionsCard } from "options/BondAngleOptionsCard.slint";
@@ -100,6 +102,38 @@ export component AppWindow inherits Window {
     in-out property <int> smoothing_kernel: 0;
     in-out property <[BondCutoff]> bond_cutoffs: [];
 
+    // Validation error messages (empty string = valid)
+    in-out property <string> r_max_error: "";
+    in-out property <string> r_bin_error: "";
+    in-out property <string> q_max_error: "";
+    in-out property <string> q_bin_error: "";
+    in-out property <string> r_int_max_error: "";
+    in-out property <string> angle_bin_error: "";
+    in-out property <string> dihedral_bin_error: "";
+    in-out property <string> max_ring_error: "";
+    in-out property <string> smoothing_sigma_error: "";
+    in-out property <string> min_frame_error: "";
+    in-out property <string> max_frame_error: "";
+    in-out property <string> time_step_error: "";
+
+    // Export settings properties and errors
+    in-out property <int> export_size_preset: 0;
+    in-out property <int> export_palette: 0;
+    in-out property <string> export_font_scale: "1.0";
+    in-out property <string> export_line_width: "3.0";
+    in-out property <bool> export_show_legend: true;
+    in-out property <bool> export_show_grid: true;
+    in-out property <string> export_font_scale_error: "";
+    in-out property <string> export_line_width_error: "";
+
+    // Global: any validation error prevents running analysis
+    in-out property <bool> has_validation_errors: false;
+    in-out property <string> cli_command: "";
+
+    // Presets properties
+    in property <[MenuItem]> preset_items: [];
+    in-out property <int> selected_preset: -1;
+
     /// Dynamic calculator groups from CalculatorFactory via C++
     in-out property <[CalculatorGroup]> calculator_groups: [];
     in property <int> total_calculator_count: 0;
@@ -127,13 +161,42 @@ export component AppWindow inherits Window {
     callback toggle_calculator(string, bool);
     callback check_file_dialog_status();
     callback save_plot();
+    callback save_plot_pdf();
     callback pin_run();
     callback clear_pinned_runs();
+    callback validate_inputs();
+    callback copy_cli_command();
+
+    // Presets callbacks
+    callback load_preset(int);
+    callback save_preset(string);
+    callback delete_preset(int);
 
     // ============================================================================
     // Core Layout Logic
     // ============================================================================
     
+    changed r_max => { root.validate_inputs(); }
+    changed r_bin_width => { root.validate_inputs(); }
+    changed q_max => { root.validate_inputs(); }
+    changed q_bin_width => { root.validate_inputs(); }
+    changed r_int_max => { root.validate_inputs(); }
+    changed angle_bin_width => { root.validate_inputs(); }
+    changed dihedral_bin_width => { root.validate_inputs(); }
+    changed max_ring_size => { root.validate_inputs(); }
+    changed smoothing => { root.validate_inputs(); }
+    changed smoothing_sigma => { root.validate_inputs(); }
+    changed min_frame => { root.validate_inputs(); }
+    changed max_frame => { root.validate_inputs(); }
+    changed time_step => { root.validate_inputs(); }
+
+    changed export_size_preset => { root.select_plot(root.selected_plot_index); }
+    changed export_palette => { root.select_plot(root.selected_plot_index); }
+    changed export_font_scale => { root.validate_inputs(); root.select_plot(root.selected_plot_index); }
+    changed export_line_width => { root.validate_inputs(); root.select_plot(root.selected_plot_index); }
+    changed export_show_legend => { root.select_plot(root.selected_plot_index); }
+    changed export_show_grid => { root.select_plot(root.selected_plot_index); }
+
     Timer {
         interval: 100ms;
         running: root.timer_running;
@@ -196,6 +259,7 @@ export component AppWindow inherits Window {
                     removed_frames_count: root.removed_frames_count;
                     atom_counts: root.atom_counts;
                     time_step <=> root.time_step;
+                    time_step_error: root.time_step_error;
                 }
 
                 frame_selection := FrameSelectionCard {
@@ -203,6 +267,8 @@ export component AppWindow inherits Window {
                     file_loaded: root.file_loaded;
                     min_frame <=> root.min_frame;
                     max_frame <=> root.max_frame;
+                    min_frame_error: root.min_frame_error;
+                    max_frame_error: root.max_frame_error;
                 }
 
                 options_toggle_area := TouchArea {
@@ -239,7 +305,7 @@ export component AppWindow inherits Window {
                     padding: 0;
 
                     property <string> local_tooltip: 
-                        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : "";
+                        preset_card.hovered_tooltip_text != "" ? preset_card.hovered_tooltip_text : analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : rdf_card.hovered_tooltip_text != "" ? rdf_card.hovered_tooltip_text : sq_card.hovered_tooltip_text != "" ? sq_card.hovered_tooltip_text : angle_card.hovered_tooltip_text != "" ? angle_card.hovered_tooltip_text : rings_card.hovered_tooltip_text != "" ? rings_card.hovered_tooltip_text : smoothing_card.hovered_tooltip_text != "" ? smoothing_card.hovered_tooltip_text : "";
 
                     changed local_tooltip => {
                         root.options_hovered_tooltip = self.local_tooltip;
@@ -250,6 +316,20 @@ export component AppWindow inherits Window {
                         options_layout := Vertical {
                             padding: 0;
                             spacing: MaterialStyleMetrics.spacing_4;
+
+                            preset_card := PresetManagerCard {
+                                preset_items: root.preset_items;
+                                selected_preset <=> root.selected_preset;
+                                load_preset(idx) => {
+                                    root.load_preset(idx);
+                                }
+                                save_preset(name) => {
+                                    root.save_preset(name);
+                                }
+                                delete_preset(idx) => {
+                                    root.delete_preset(idx);
+                                }
+                            }
 
                             analyses_card := AnalysesSelectionCard {
                                 file_loaded: root.file_loaded;
@@ -264,6 +344,8 @@ export component AppWindow inherits Window {
                                 file_loaded: root.file_loaded;
                                 r_max <=> root.r_max;
                                 r_bin_width <=> root.r_bin_width;
+                                r_max_error: root.r_max_error;
+                                r_bin_error: root.r_bin_error;
                                 visible: root.has_radial_active;
                                 height: root.has_radial_active ? self.preferred-height : 0px;
                             }
@@ -273,6 +355,9 @@ export component AppWindow inherits Window {
                                 q_max <=> root.q_max;
                                 q_bin_width <=> root.q_bin_width;
                                 r_int_max <=> root.r_int_max;
+                                q_max_error: root.q_max_error;
+                                q_bin_error: root.q_bin_error;
+                                r_int_max_error: root.r_int_max_error;
                                 visible: root.has_scattering_active;
                                 height: root.has_scattering_active ? self.preferred-height : 0px;
                             }
@@ -281,6 +366,8 @@ export component AppWindow inherits Window {
                                 file_loaded: root.file_loaded;
                                 angle_bin_width <=> root.angle_bin_width;
                                 dihedral_bin_width <=> root.dihedral_bin_width;
+                                angle_bin_error: root.angle_bin_error;
+                                dihedral_bin_error: root.dihedral_bin_error;
                                 visible: root.has_angular_active;
                                 height: root.has_angular_active ? self.preferred-height : 0px;
                             }
@@ -288,6 +375,7 @@ export component AppWindow inherits Window {
                             rings_card := RingsOptionsCard {
                                 file_loaded: root.file_loaded;
                                 max_ring_size <=> root.max_ring_size;
+                                max_ring_error: root.max_ring_error;
                                 visible: root.has_rings_active;
                                 height: root.has_rings_active ? self.preferred-height : 0px;
                             }
@@ -297,6 +385,7 @@ export component AppWindow inherits Window {
                                 smoothing_enabled <=> root.smoothing;
                                 smoothing_sigma <=> root.smoothing_sigma;
                                 smoothing_kernel <=> root.smoothing_kernel;
+                                smoothing_sigma_error: root.smoothing_sigma_error;
                             }
 
                             bond_cutoffs_card := BondCutoffsCard {
@@ -330,11 +419,19 @@ export component AppWindow inherits Window {
                         use_csv <=> root.use_csv;
                         use_hdf5 <=> root.use_hdf5;
                         use_parquet <=> root.use_parquet;
+                        has_validation_errors: root.has_validation_errors;
                         run_analysis => {
                             root.run_analysis();
                         }
                         write_files => {
                             root.write_files();
+                        }
+                    }
+
+                    CliCommandCard {
+                        cli_command: root.cli_command;
+                        copy_command => {
+                            root.copy_cli_command();
                         }
                     }
                 }
@@ -359,11 +456,24 @@ export component AppWindow inherits Window {
                         plot_items <=> root.plot_items;
                         selected_plot_index <=> root.selected_plot_index;
                         pinned_runs_count: root.pinned_runs_count;
+
+                        export_size_preset <=> root.export_size_preset;
+                        export_palette <=> root.export_palette;
+                        export_font_scale <=> root.export_font_scale;
+                        export_line_width <=> root.export_line_width;
+                        export_show_legend <=> root.export_show_legend;
+                        export_show_grid <=> root.export_show_grid;
+                        export_font_scale_error: root.export_font_scale_error;
+                        export_line_width_error: root.export_line_width_error;
+
                         plot_selected(idx) => {
                             root.select_plot(idx);
                         }
                         save_plot => {
                             root.save_plot();
+                        }
+                        save_pdf => {
+                            root.save_plot_pdf();
                         }
                         pin_run => {
                             root.pin_run();

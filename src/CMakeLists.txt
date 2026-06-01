@@ -146,6 +146,7 @@ if(BUILD_GUI)
         main.cpp
         app/AppBackend.cpp
         app/AppController.cpp
+        app/PresetManager.cpp
     )
 
     if (WIN32)
