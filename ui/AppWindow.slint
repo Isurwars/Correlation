@@ -176,26 +176,66 @@ export component AppWindow inherits Window {
     // Core Layout Logic
     // ============================================================================
     
-    changed r_max => { root.validate_inputs(); }
-    changed r_bin_width => { root.validate_inputs(); }
-    changed q_max => { root.validate_inputs(); }
-    changed q_bin_width => { root.validate_inputs(); }
-    changed r_int_max => { root.validate_inputs(); }
-    changed angle_bin_width => { root.validate_inputs(); }
-    changed dihedral_bin_width => { root.validate_inputs(); }
-    changed max_ring_size => { root.validate_inputs(); }
-    changed smoothing => { root.validate_inputs(); }
-    changed smoothing_sigma => { root.validate_inputs(); }
-    changed min_frame => { root.validate_inputs(); }
-    changed max_frame => { root.validate_inputs(); }
-    changed time_step => { root.validate_inputs(); }
+    changed r_max => {
+        root.validate_inputs();
+    }
+    changed r_bin_width => {
+        root.validate_inputs();
+    }
+    changed q_max => {
+        root.validate_inputs();
+    }
+    changed q_bin_width => {
+        root.validate_inputs();
+    }
+    changed r_int_max => {
+        root.validate_inputs();
+    }
+    changed angle_bin_width => {
+        root.validate_inputs();
+    }
+    changed dihedral_bin_width => {
+        root.validate_inputs();
+    }
+    changed max_ring_size => {
+        root.validate_inputs();
+    }
+    changed smoothing => {
+        root.validate_inputs();
+    }
+    changed smoothing_sigma => {
+        root.validate_inputs();
+    }
+    changed min_frame => {
+        root.validate_inputs();
+    }
+    changed max_frame => {
+        root.validate_inputs();
+    }
+    changed time_step => {
+        root.validate_inputs();
+    }
 
-    changed export_size_preset => { root.select_plot(root.selected_plot_index); }
-    changed export_palette => { root.select_plot(root.selected_plot_index); }
-    changed export_font_scale => { root.validate_inputs(); root.select_plot(root.selected_plot_index); }
-    changed export_line_width => { root.validate_inputs(); root.select_plot(root.selected_plot_index); }
-    changed export_show_legend => { root.select_plot(root.selected_plot_index); }
-    changed export_show_grid => { root.select_plot(root.selected_plot_index); }
+    changed export_size_preset => {
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_palette => {
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_font_scale => {
+        root.validate_inputs();
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_line_width => {
+        root.validate_inputs();
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_show_legend => {
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_show_grid => {
+        root.select_plot(root.selected_plot_index);
+    }
 
     Timer {
         interval: 100ms;
@@ -230,8 +270,8 @@ export component AppWindow inherits Window {
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Inter";
-    min-width: 410px + (root.show_advanced_options ? 280px : 0px) + (root.analysis_done ? 500px : 0px);
-    min-height: 490px + (root.analysis_done ? 140px : 0px);
+    min-width: 410px + (root.show_advanced_options ? 280px : 0px) + (root.analysis_done ? 600px : 0px);
+    min-height: 510px + (root.analysis_done ? 140px : 0px);
 
     // ============================================================================
     // Main UI structure

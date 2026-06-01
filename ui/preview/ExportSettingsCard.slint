@@ -6,8 +6,9 @@
 import {
     MaterialStyleMetrics,
     MaterialPalette,
+    MaterialTypography,
+    MaterialText,
     FilledCard,
-    ExpandableHeader,
     TextField,
     Vertical,
     Horizontal,
@@ -17,7 +18,6 @@ import {
 } from "../material/material.slint";
 
 export component ExportSettingsCard inherits FilledCard {
-    in-out property <bool> expanded: false;
     in property <bool> enabled: true;
 
     in-out property <int> export_size_preset: 0;
@@ -52,20 +52,16 @@ export component ExportSettingsCard inherits FilledCard {
     ];
 
     Vertical {
-        ExpandableHeader {
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        MaterialText {
             text: "Publication Plot Settings";
-            expanded <=> root.expanded;
+            style: MaterialTypography.label_large;
+            color: MaterialPalette.on_surface_variant;
         }
 
         Vertical {
-            visible: root.expanded;
-            opacity: root.expanded ? 1.0 : 0.0;
-            animate opacity {
-                duration: 250ms;
-                easing: ease-in-out;
-            }
-
-            padding: MaterialStyleMetrics.spacing_8;
+            padding: MaterialStyleMetrics.spacing_4;
             spacing: MaterialStyleMetrics.spacing_12;
 
             // Size and Palette
@@ -95,7 +91,7 @@ export component ExportSettingsCard inherits FilledCard {
                 }
             }
 
-            // Font scale and Line width
+            // Font scale, Line width, and Toggles
             HorizontalLayout {
                 spacing: MaterialStyleMetrics.spacing_16;
 
@@ -122,29 +118,25 @@ export component ExportSettingsCard inherits FilledCard {
                         supporting_text: root.export_line_width_error;
                     }
                 }
-            }
 
-            // Grid and Legend Toggles
-            HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_16;
+                VerticalLayout {
+                    spacing: 2px;
+                    alignment: center;
 
-                grid_area := TouchArea {
-                    horizontal-stretch: 1;
-                    CheckBoxRow {
-                        width: 100%;
-                        text: "Show Grid Lines";
-                        enabled: root.enabled;
-                        check_state_bool <=> root.export_show_grid;
+                    grid_area := TouchArea {
+                        CheckBoxRow {
+                            text: "Show Grid";
+                            enabled: root.enabled;
+                            check_state_bool <=> root.export_show_grid;
+                        }
                     }
-                }
 
-                legend_area := TouchArea {
-                    horizontal-stretch: 1;
-                    CheckBoxRow {
-                        width: 100%;
-                        text: "Show Legend";
-                        enabled: root.enabled;
-                        check_state_bool <=> root.export_show_legend;
+                    legend_area := TouchArea {
+                        CheckBoxRow {
+                            text: "Show Legend";
+                            enabled: root.enabled;
+                            check_state_bool <=> root.export_show_legend;
+                        }
                     }
                 }
             }
