@@ -60,6 +60,10 @@ void printUsage(const char *program) {
 bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   CLI::App app{"Correlation — Structural Analysis Tool (CLI Mode)"};
 
+  // Disable Windows-style options (like /opt) so that absolute paths starting
+  // with / (e.g. /data/experiment/sample.poscar) are not parsed as options on Windows.
+  app.allow_windows_style_options(false);
+
   // Configure help and version flags in CLI11
   app.set_help_flag("-h,--help");
   app.set_version_flag("-v,--version");
