@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.2.0] - 2026-06-01
+
+### Added
+- **Comprehensive Bounds and Cross-Validation Guards**: Added strict parameter validation to both the CLI and Backend to fail early on invalid inputs:
+  - Validates that bin widths are strictly less than their respective maximum bounds (`r_bin_width < r_max` and `q_bin_width < q_max`).
+  - Limits angular bin widths (`angle_bin_width <= 180.0°` and `dihedral_bin_width <= 360.0°`).
+  - Ensures frame limits are valid (`max_frame >= -1`) and cross-validates frame ranges (`min_frame <= max_frame`).
+  - Rejects zero-value smoothing bandwidths (`smoothing_sigma > 0.0`) when post-processing smoothing is enabled.
+  - Ensures at least one export format (CSV, HDF5, or Parquet) is enabled when running calculations.
+- **Robust Parameter Validation Tests**: Added 18 new unit tests verifying all parameter boundary conditions and validation failure paths.
+
+### Fixed
+- **Path Separation and Normalization**: Applied `lexically_normal()` to all default output base path generation logic to prevent platform/standard library separator and trailing slash discrepancies (e.g., resolving duplicate slashes like `//` in paths).
+
 ## [3.1.0] - 2026-05-31
 
 ### Added
