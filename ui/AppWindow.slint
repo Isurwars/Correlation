@@ -161,7 +161,6 @@ export component AppWindow inherits Window {
     callback toggle_calculator(string, bool);
     callback check_file_dialog_status();
     callback save_plot();
-    callback save_plot_pdf();
     callback pin_run();
     callback clear_pinned_runs();
     callback validate_inputs();
@@ -334,7 +333,7 @@ export component AppWindow inherits Window {
                 horizontal-stretch: 1;
 
                 // Computed offset for the preview card
-                property <length> options_width: root.show_advanced_options ? 284px : 0px;
+                property <length> options_width: root.show_advanced_options ? 280px : 0px;
 
                 // 2. Card 2: Analysis Options (fixed width, conditional)
                 if (root.show_advanced_options): Vertical {
@@ -443,7 +442,7 @@ export component AppWindow inherits Window {
 
                 // Computed offset for the preview card column
                 property <length> exec_width: 200px;
-                property <length> preview_offset: root.show_advanced_options ? 284px + self.exec_width : self.exec_width;
+                property <length> preview_offset: root.show_advanced_options ? 280px + self.exec_width : self.exec_width;
 
                 // 3. Card 3: Execution controls (fixed narrow column)
                 Vertical {
@@ -516,9 +515,6 @@ export component AppWindow inherits Window {
                         }
                         save_plot => {
                             root.save_plot();
-                        }
-                        save_pdf => {
-                            root.save_plot_pdf();
                         }
                         pin_run => {
                             root.pin_run();

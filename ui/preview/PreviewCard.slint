@@ -50,7 +50,6 @@ export component PreviewCard inherits FilledCard {
 
     callback plot_selected(int);
     callback save_plot();
-    callback save_pdf();
     callback pin_run();
     callback clear_pinned_runs();
 
@@ -89,23 +88,13 @@ export component PreviewCard inherits FilledCard {
                 }
             }
 
-            // Save SVG Button
+            // Save Button
             FilledButton {
-                text: "Save SVG";
+                text: "Save Plot";
                 icon: Icons.save;
                 enabled: root.preview_plot.width > 0;
                 clicked => {
                     root.save_plot();
-                }
-            }
-
-            // Save PDF Button
-            FilledButton {
-                text: "Save PDF";
-                icon: Icons.save;
-                enabled: root.preview_plot.width > 0;
-                clicked => {
-                    root.save_pdf();
                 }
             }
 

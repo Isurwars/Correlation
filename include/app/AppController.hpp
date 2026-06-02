@@ -55,7 +55,6 @@ private:
   std::unique_ptr<pfd::open_file> current_file_dialog_;      ///< Active file open dialog handler.
   std::unique_ptr<pfd::save_file> current_save_dialog_;      ///< Active file save dialog handler.
   std::unique_ptr<pfd::save_file> current_plot_save_dialog_; ///< Active plot save dialog handler.
-  std::unique_ptr<pfd::save_file> current_plot_save_pdf_dialog_; ///< Active plot PDF save dialog handler.
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
   std::thread load_thread_;     ///< Handle for the background file loading process.
@@ -180,15 +179,9 @@ private:
 
   /**
    * @brief Handles the "Save Plot" signal from the UI.
-   * Opens a save file dialog to export the currently selected plot as SVG.
+   * Opens a save file dialog to export the currently selected plot (SVG or PDF).
    */
   void handleSavePlot();
-
-  /**
-   * @brief Handles the "Save Plot PDF" signal from the UI.
-   * Opens a save file dialog to export the currently selected plot as PDF.
-   */
-  void handleSavePlotPdf();
 
   /**
    * @brief Handles pinning the current run for comparison.

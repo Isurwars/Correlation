@@ -72,11 +72,8 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   // Handle plot selection: generate SVG and push to UI
   ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
 
-  // Handle save plot request
+  // Handle save plot request (SVG or PDF)
   ui_.on_save_plot([this]() { handleSavePlot(); });
-
-  // Handle save plot PDF request
-  ui_.on_save_plot_pdf([this]() { handleSavePlotPdf(); });
 
   // Handle pin run request
   ui_.on_pin_run([this]() { handlePinRun(); });
@@ -649,13 +646,49 @@ void AppController::handleCheckFileDialogStatus() {
             svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
           }
 
-          std::ofstream out(result);
-          if (out.is_open()) {
-            out << svg;
-            out.close();
-            ui_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
+          // Check if file extension is PDF (case-insensitive)
+          bool save_as_pdf = false;
+          if (result.size() >= 4) {
+            std::string ext = result.substr(result.size() - 4);
+            if (ext == ".pdf" || ext == ".PDF") {
+              save_as_pdf = true;
+            }
+          }
+
+          if (save_as_pdf) {
+            std::string temp_svg_path = result + ".tmp.svg";
+            std::ofstream out(temp_svg_path);
+            if (out.is_open()) {
+              out << svg;
+              out.close();
+
+              std::string cmd = "rsvg-convert -f pdf -o \"" + result + "\" \"" + temp_svg_path + "\"";
+              int ret = std::system(cmd.c_str());
+              if (ret != 0) {
+                std::string inkscape_cmd = "inkscape --export-filename=\"" + result + "\" \"" + temp_svg_path + "\"";
+                ret = std::system(inkscape_cmd.c_str());
+              }
+
+              std::filesystem::remove(temp_svg_path);
+
+              if (ret == 0) {
+                ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
+              } else {
+                ui_.set_analysis_status_text(slint::SharedString("Failed to convert SVG to PDF."));
+              }
+            } else {
+              ui_.set_analysis_status_text(slint::SharedString("Failed to write temporary SVG."));
+            }
           } else {
-            ui_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
+            // Save as SVG
+            std::ofstream out(result);
+            if (out.is_open()) {
+              out << svg;
+              out.close();
+              ui_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
+            } else {
+              ui_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
+            }
           }
         }
       }
@@ -667,71 +700,6 @@ void AppController::handleCheckFileDialogStatus() {
       ui_.set_text_opacity(false);
     });
     current_plot_save_dialog_.reset();
-  }
-
-  if (current_plot_save_pdf_dialog_ && current_plot_save_pdf_dialog_->ready(0)) {
-    std::string result = current_plot_save_pdf_dialog_->result();
-    if (!result.empty()) {
-      int index = ui_.get_selected_plot_index();
-      if (index >= 0 && index < static_cast<int>(available_plot_keys_.size())) {
-        const std::string &name = available_plot_keys_[index];
-        const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-        if (hist) {
-          correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
-
-          std::string svg;
-          if (pinned_runs_.empty()) {
-            svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
-          } else {
-            std::vector<correlation::plotters::LabeledHistogram> datasets;
-            datasets.push_back({"Current", hist});
-            for (const auto &pr : pinned_runs_) {
-              auto it = pr.histograms.find(name);
-              if (it != pr.histograms.end()) {
-                datasets.push_back({pr.label, &it->second});
-              }
-            }
-            std::string key = "Total";
-            const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-            if (!partials.empty() && partials.find(key) == partials.end()) {
-              key = partials.begin()->first;
-            }
-            svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
-          }
-
-          std::string temp_svg_path = result + ".tmp.svg";
-          std::ofstream out(temp_svg_path);
-          if (out.is_open()) {
-            out << svg;
-            out.close();
-
-            std::string cmd = "rsvg-convert -f pdf -o \"" + result + "\" \"" + temp_svg_path + "\"";
-            int ret = std::system(cmd.c_str());
-            if (ret != 0) {
-              std::string inkscape_cmd = "inkscape --export-filename=\"" + result + "\" \"" + temp_svg_path + "\"";
-              ret = std::system(inkscape_cmd.c_str());
-            }
-
-            std::filesystem::remove(temp_svg_path);
-
-            if (ret == 0) {
-              ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
-            } else {
-              ui_.set_analysis_status_text(slint::SharedString("Failed to convert SVG to PDF."));
-            }
-          } else {
-            ui_.set_analysis_status_text(slint::SharedString("Failed to write temporary SVG."));
-          }
-        }
-      }
-    } else {
-      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-    }
-    slint::invoke_from_event_loop([this]() {
-      ui_.set_timer_running(false);
-      ui_.set_text_opacity(false);
-    });
-    current_plot_save_pdf_dialog_.reset();
   }
 }
 
@@ -835,35 +803,11 @@ void AppController::handleSavePlot() {
   }
 
   current_plot_save_dialog_ = std::make_unique<pfd::save_file>(
-      "Save SVG Plot", default_path, std::vector<std::string>{"SVG Image", "*.svg", "All Files", "*"}, pfd::opt::none);
+      "Save Plot", default_path, std::vector<std::string>{"SVG Image", "*.svg", "PDF Document", "*.pdf", "All Files", "*"}, pfd::opt::none);
 
   ui_.set_timer_running(true);
   ui_.set_text_opacity(true);
   ui_.set_analysis_status_text(slint::SharedString(std::string("Saving ") + name + " plot..."));
-}
-
-void AppController::handleSavePlotPdf() {
-  int index = ui_.get_selected_plot_index();
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
-    return;
-  const std::string &name = available_plot_keys_[index];
-  const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-  if (!hist)
-    return;
-
-  std::string default_path = backend_.options().output_file_base;
-  if (!default_path.empty()) {
-    default_path += "_" + name + ".pdf";
-  } else {
-    default_path = name + ".pdf";
-  }
-
-  current_plot_save_pdf_dialog_ = std::make_unique<pfd::save_file>(
-      "Save PDF Plot", default_path, std::vector<std::string>{"PDF Document", "*.pdf", "All Files", "*"}, pfd::opt::none);
-
-  ui_.set_timer_running(true);
-  ui_.set_text_opacity(true);
-  ui_.set_analysis_status_text(slint::SharedString(std::string("Saving ") + name + " PDF plot..."));
 }
 
 void AppController::handlePinRun() {
