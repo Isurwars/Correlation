@@ -156,6 +156,10 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
     std::cerr << "Error: --r-bin must be strictly positive.\n";
     return false;
   }
+  if (opts.r_bin_width >= opts.r_max) {
+    std::cerr << "Error: --r-bin must be strictly less than --r-max.\n";
+    return false;
+  }
   if (opts.q_max <= 0.0) {
     std::cerr << "Error: --q-max must be strictly positive.\n";
     return false;
@@ -164,12 +168,24 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
     std::cerr << "Error: --q-bin must be strictly positive.\n";
     return false;
   }
+  if (opts.q_bin_width >= opts.q_max) {
+    std::cerr << "Error: --q-bin must be strictly less than --q-max.\n";
+    return false;
+  }
   if (opts.angle_bin_width <= 0.0) {
     std::cerr << "Error: --angle-bin must be strictly positive.\n";
     return false;
   }
+  if (opts.angle_bin_width > 180.0) {
+    std::cerr << "Error: --angle-bin must be at most 180.0 degrees.\n";
+    return false;
+  }
   if (opts.dihedral_bin_width <= 0.0) {
     std::cerr << "Error: --dihedral-bin must be strictly positive.\n";
+    return false;
+  }
+  if (opts.dihedral_bin_width > 360.0) {
+    std::cerr << "Error: --dihedral-bin must be at most 360.0 degrees.\n";
     return false;
   }
   if (opts.time_step <= 0.0) {
@@ -184,8 +200,24 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
     std::cerr << "Error: --max-ring-size must be strictly positive.\n";
     return false;
   }
+  if (opts.max_frame < -1) {
+    std::cerr << "Error: --max-frame cannot be less than -1.\n";
+    return false;
+  }
+  if (opts.max_frame >= 0 && opts.min_frame > opts.max_frame) {
+    std::cerr << "Error: --min-frame cannot be greater than --max-frame.\n";
+    return false;
+  }
+  if (opts.smoothing && opts.smoothing_sigma <= 0.0) {
+    std::cerr << "Error: --smoothing-sigma must be strictly positive when smoothing is enabled.\n";
+    return false;
+  }
   if (opts.smoothing_sigma < 0.0) {
     std::cerr << "Error: --smoothing-sigma cannot be negative.\n";
+    return false;
+  }
+  if (!opts.csv && !opts.hdf5 && !opts.parquet) {
+    std::cerr << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
     return false;
   }
 

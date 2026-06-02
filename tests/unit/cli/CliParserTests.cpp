@@ -252,11 +252,12 @@ TEST_F(CliParserTests, MaxFrameOption) {
 // ===== Boolean toggle options =====
 
 TEST_F(CliParserTests, CsvToggle) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--no-csv"};
+  ArgBuilder args{"correlation-cli", "f.poscar", "--no-csv", "--hdf5"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_FALSE(opts.csv);
+  EXPECT_TRUE(opts.hdf5);
 }
 
 TEST_F(CliParserTests, CsvEnableExplicit) {
@@ -470,3 +471,133 @@ TEST_F(CliParserTests, VersionAfterInputFileStillSetsVersion) {
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_TRUE(opts.show_version);
 }
+
+// ===== Validation failure tests =====
+
+TEST_F(CliParserTests, RMaxMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--r-max", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  ArgBuilder args2{"correlation-cli", "input.poscar", "--r-max", "-5.0"};
+  EXPECT_FALSE(correlation::cli::parseArgs(args2.argc(), args2.data(), opts));
+}
+
+TEST_F(CliParserTests, RBinMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--r-bin", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  ArgBuilder args2{"correlation-cli", "input.poscar", "--r-bin", "-0.1"};
+  EXPECT_FALSE(correlation::cli::parseArgs(args2.argc(), args2.data(), opts));
+}
+
+TEST_F(CliParserTests, RBinCannotBeGreaterThanOrEqualRMax) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--r-max", "10.0", "--r-bin", "10.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  ArgBuilder args2{"correlation-cli", "input.poscar", "--r-max", "10.0", "--r-bin", "12.5"};
+  EXPECT_FALSE(correlation::cli::parseArgs(args2.argc(), args2.data(), opts));
+}
+
+TEST_F(CliParserTests, QMaxMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--q-max", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  ArgBuilder args2{"correlation-cli", "input.poscar", "--q-max", "-1.0"};
+  EXPECT_FALSE(correlation::cli::parseArgs(args2.argc(), args2.data(), opts));
+}
+
+TEST_F(CliParserTests, QBinMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--q-bin", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  ArgBuilder args2{"correlation-cli", "input.poscar", "--q-bin", "-0.01"};
+  EXPECT_FALSE(correlation::cli::parseArgs(args2.argc(), args2.data(), opts));
+}
+
+TEST_F(CliParserTests, QBinCannotBeGreaterThanOrEqualQMax) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--q-max", "15.0", "--q-bin", "15.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+
+  ArgBuilder args2{"correlation-cli", "input.poscar", "--q-max", "15.0", "--q-bin", "16.0"};
+  EXPECT_FALSE(correlation::cli::parseArgs(args2.argc(), args2.data(), opts));
+}
+
+TEST_F(CliParserTests, AngleBinMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--angle-bin", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, AngleBinCannotExceed180) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--angle-bin", "180.1"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, DihedralBinMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--dihedral-bin", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, DihedralBinCannotExceed360) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--dihedral-bin", "360.5"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, TimeStepMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--time-step", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, RIntMaxMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--r-int-max", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, MaxRingSizeMustBePositive) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--max-ring-size", "0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, MaxFrameCannotBeLessThanMinusOne) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--max-frame", "-2"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, MinFrameCannotBeGreaterThanMaxFrame) {
+  // Use a min-frame of 5 (maps to index 4) and max-frame of 3 (maps to index 3)
+  ArgBuilder args{"correlation-cli", "input.poscar", "--min-frame", "5", "--max-frame", "3"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, SmoothingSigmaCannotBeNegative) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--smoothing-sigma", "-0.1"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, SmoothingSigmaMustBePositiveWhenSmoothingEnabled) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--smoothing-sigma", "0.0"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+
+TEST_F(CliParserTests, AtLeastOneOutputFormatMustBeEnabled) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--no-csv", "--no-hdf5", "--no-parquet"};
+  correlation::cli::CliOptions opts;
+  EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+}
+

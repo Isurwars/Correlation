@@ -223,17 +223,29 @@ std::string AppBackend::run_analysis() {
   if (options_.r_bin_width <= 0.0) {
     return "Error: r_bin_width must be strictly positive.";
   }
+  if (options_.r_bin_width >= options_.r_max) {
+    return "Error: r_bin_width must be strictly less than r_max.";
+  }
   if (options_.q_max <= 0.0) {
     return "Error: q_max must be strictly positive.";
   }
   if (options_.q_bin_width <= 0.0) {
     return "Error: q_bin_width must be strictly positive.";
   }
+  if (options_.q_bin_width >= options_.q_max) {
+    return "Error: q_bin_width must be strictly less than q_max.";
+  }
   if (options_.angle_bin_width <= 0.0) {
     return "Error: angle_bin_width must be strictly positive.";
   }
+  if (options_.angle_bin_width > 180.0) {
+    return "Error: angle_bin_width must be at most 180.0 degrees.";
+  }
   if (options_.dihedral_bin_width <= 0.0) {
     return "Error: dihedral_bin_width must be strictly positive.";
+  }
+  if (options_.dihedral_bin_width > 360.0) {
+    return "Error: dihedral_bin_width must be at most 360.0 degrees.";
   }
   if (options_.time_step <= 0.0) {
     return "Error: time_step must be strictly positive.";
@@ -244,8 +256,20 @@ std::string AppBackend::run_analysis() {
   if (options_.max_ring_size <= 0) {
     return "Error: max_ring_size must be strictly positive.";
   }
+  if (options_.max_frame < -1) {
+    return "Error: max_frame cannot be less than -1.";
+  }
+  if (options_.max_frame >= 0 && options_.min_frame > options_.max_frame) {
+    return "Error: min_frame cannot be greater than max_frame.";
+  }
+  if (options_.smoothing && options_.smoothing_sigma <= 0.0) {
+    return "Error: smoothing_sigma must be strictly positive when smoothing is enabled.";
+  }
   if (options_.smoothing_sigma < 0.0) {
     return "Error: smoothing_sigma cannot be negative.";
+  }
+  if (!options_.use_csv && !options_.use_hdf5 && !options_.use_parquet) {
+    return "Error: At least one output format (CSV, HDF5, or Parquet) must be enabled.";
   }
 
   try {
