@@ -71,47 +71,24 @@ int main(int argc, char *argv[]) {
 
   const auto &factory_calcs = correlation::calculators::CalculatorFactory::instance().getCalculators();
 
-  // Populate active_calculators
-  if (!cli.calculators.empty()) {
-    // Disable all calculators first
-    for (const auto &calc : factory_calcs) {
-      opts.active_calculators[calc->getName()] = false;
-      opts.active_calculators[calc->getShortName()] = false;
-    }
-    // Enable explicitly requested ones
-    std::istringstream ss(cli.calculators);
-    std::string id;
-    while (std::getline(ss, id, ',')) {
-      id = trim(id);
-      if (!id.empty()) {
-        opts.active_calculators[id] = true;
+  // Parse disabled groups
+  std::set<std::string> disabled_groups;
+  if (!cli.disable_groups.empty()) {
+    std::istringstream ss(cli.disable_groups);
+    std::string group_name;
+    while (std::getline(ss, group_name, ',')) {
+      group_name = lowercase(trim(group_name));
+      if (!group_name.empty()) {
+        disabled_groups.insert(group_name);
       }
     }
-  } else {
-    // Parse groups
-    std::set<std::string> enabled_groups;
-    if (!cli.groups.empty()) {
-      std::istringstream ss(cli.groups);
-      std::string group_name;
-      while (std::getline(ss, group_name, ',')) {
-        group_name = lowercase(trim(group_name));
-        if (!group_name.empty()) {
-          enabled_groups.insert(group_name);
-        }
-      }
-    } else {
-      // Default: radial group only
-      enabled_groups.insert("radial");
-    }
+  }
 
-    bool all_groups = enabled_groups.count("all") > 0;
-
-    for (const auto &calc : factory_calcs) {
-      std::string calc_group = lowercase(calc->getGroup());
-      bool active = all_groups || (enabled_groups.count(calc_group) > 0);
-      opts.active_calculators[calc->getName()] = active;
-      opts.active_calculators[calc->getShortName()] = active;
-    }
+  for (const auto &calc : factory_calcs) {
+    std::string calc_group = lowercase(calc->getGroup());
+    bool active = (disabled_groups.count(calc_group) == 0);
+    opts.active_calculators[calc->getName()] = active;
+    opts.active_calculators[calc->getShortName()] = active;
   }
 
   // Create backend

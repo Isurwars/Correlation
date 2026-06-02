@@ -39,8 +39,7 @@ struct CliOptions {
   bool parquet = false;
   bool smoothing = true;
   bool quiet = false;
-  std::string calculators; // comma-separated list
-  std::string groups;      // comma-separated list of groups
+  std::string disable_groups; // comma-separated list of groups to disable
   double time_step = 1.0;
   double r_int_max = 10.0;
   int max_ring_size = 8;

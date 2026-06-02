@@ -111,7 +111,7 @@ TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   std::string out_base = (tmp_dir / "result").string();
 
   std::string input = data_dir_ + "Si.poscar";
-  int rc = runCli(input + " --quiet -o " + out_base + " --calculators RDF --r-max 10 --r-bin 0.1");
+  int rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
 
   // Clean up
   std::filesystem::remove_all(tmp_dir);
@@ -123,13 +123,13 @@ TEST_F(CliEndToEndTests, ShortHelpFlag) { EXPECT_EQ(runCli("-h"), 0); }
 
 TEST_F(CliEndToEndTests, ShortVersionFlag) { EXPECT_EQ(runCli("-v"), 0); }
 
-TEST_F(CliEndToEndTests, DefaultGroupsExecutesRadialOnly) {
+TEST_F(CliEndToEndTests, DefaultExecutesAllCalculators) {
   auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_default_groups";
   std::filesystem::create_directories(tmp_dir);
   std::string out_base = (tmp_dir / "result").string();
 
   std::string input = data_dir_ + "Si.poscar";
-  // Run with no groups/calculators flags -> should default to radial group
+  // Run with no disable-groups flags -> should default to running all groups
   int rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
 
   EXPECT_EQ(rc, 0);
@@ -139,21 +139,20 @@ TEST_F(CliEndToEndTests, DefaultGroupsExecutesRadialOnly) {
   EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));
   EXPECT_TRUE(std::filesystem::exists(out_base + "_G_reduced.csv"));
 
-  // Structural/rings files should NOT exist
-  EXPECT_FALSE(std::filesystem::exists(out_base + "_CN.csv"));
-  EXPECT_FALSE(std::filesystem::exists(out_base + "_RD.csv"));
+  // Structural/rings files should also exist because they are enabled by default
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_CN.csv"));
 
   std::filesystem::remove_all(tmp_dir);
 }
 
-TEST_F(CliEndToEndTests, GroupsStructuralOnly) {
-  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_structural_groups";
+TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_disable_radial";
   std::filesystem::create_directories(tmp_dir);
   std::string out_base = (tmp_dir / "result").string();
 
   std::string input = data_dir_ + "Si.poscar";
-  // Run with structural group
-  int rc = runCli(input + " --quiet -o " + out_base + " --groups structural");
+  // Run with radial and scattering groups disabled
+  int rc = runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering");
 
   EXPECT_EQ(rc, 0);
 
@@ -168,20 +167,22 @@ TEST_F(CliEndToEndTests, GroupsStructuralOnly) {
   std::filesystem::remove_all(tmp_dir);
 }
 
-TEST_F(CliEndToEndTests, GroupsAllOption) {
-  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_all_groups";
+TEST_F(CliEndToEndTests, DisableStructuralGroup) {
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_disable_structural";
   std::filesystem::create_directories(tmp_dir);
   std::string out_base = (tmp_dir / "result").string();
 
   std::string input = data_dir_ + "Si.poscar";
-  // Run with 'all' groups
-  int rc = runCli(input + " --quiet -o " + out_base + " --groups all --r-max 10 --r-bin 0.1");
+  // Run disabling structural group
+  int rc = runCli(input + " --quiet -o " + out_base + " --disable-groups structural --r-max 10 --r-bin 0.1");
 
   EXPECT_EQ(rc, 0);
 
-  // Both radial and structural should exist
+  // Radial should exist
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
-  EXPECT_TRUE(std::filesystem::exists(out_base + "_CN.csv"));
+
+  // CN (structural) should NOT exist
+  EXPECT_FALSE(std::filesystem::exists(out_base + "_CN.csv"));
 
   std::filesystem::remove_all(tmp_dir);
 }

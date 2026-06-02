@@ -204,7 +204,7 @@ add_library(cli_parser_obj OBJECT
 target_include_directories(cli_parser_obj PUBLIC
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(cli_parser_obj PRIVATE correlation_simd_options)
+target_link_libraries(cli_parser_obj PRIVATE correlation_simd_options CLI11::CLI11)
 
 #------------------------------------------------------------------
 # CLI Executable Target (correlation-cli) — no GUI dependency

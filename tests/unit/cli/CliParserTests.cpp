@@ -60,7 +60,7 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
   EXPECT_FALSE(opts.parquet);
   EXPECT_TRUE(opts.smoothing);
   EXPECT_FALSE(opts.quiet);
-  EXPECT_TRUE(opts.calculators.empty());
+  EXPECT_TRUE(opts.disable_groups.empty());
   EXPECT_DOUBLE_EQ(opts.time_step, 1.0);
   EXPECT_DOUBLE_EQ(opts.r_int_max, 10.0);
   EXPECT_EQ(opts.max_ring_size, 8);
@@ -351,28 +351,20 @@ TEST_F(CliParserTests, DefaultOutputBaseIsStemOfInput) {
   EXPECT_EQ(opts.output_base, (std::filesystem::path("/data/experiment") / "sample").string());
 }
 
-TEST_F(CliParserTests, CalculatorsOption) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--calculators", "RDF,SQ,PAD"};
+TEST_F(CliParserTests, DisableGroupsOption) {
+  ArgBuilder args{"correlation-cli", "f.poscar", "--disable-groups", "radial,scattering"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_EQ(opts.calculators, "RDF,SQ,PAD");
+  EXPECT_EQ(opts.disable_groups, "radial,scattering");
 }
 
-TEST_F(CliParserTests, GroupsOption) {
-  ArgBuilder args{"correlation-cli", "f.poscar", "--groups", "radial,scattering"};
-  correlation::cli::CliOptions opts;
-
-  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_EQ(opts.groups, "radial,scattering");
-}
-
-TEST_F(CliParserTests, GroupsShortOption) {
+TEST_F(CliParserTests, DisableGroupsShortOption) {
   ArgBuilder args{"correlation-cli", "f.poscar", "-g", "structural"};
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_EQ(opts.groups, "structural");
+  EXPECT_EQ(opts.disable_groups, "structural");
 }
 
 // ===== Smoothing kernel parsing =====
@@ -441,8 +433,8 @@ TEST_F(CliParserTests, MultipleOptionsCombined) {
                   "--quiet",
                   "--smoothing-kernel",
                   "bump",
-                  "--calculators",
-                  "RDF,PAD",
+                  "--disable-groups",
+                  "scattering,rings",
                   "-o",
                   "/results/out"};
   correlation::cli::CliOptions opts;
@@ -456,7 +448,7 @@ TEST_F(CliParserTests, MultipleOptionsCombined) {
   EXPECT_TRUE(opts.hdf5);
   EXPECT_TRUE(opts.quiet);
   EXPECT_EQ(opts.smoothing_kernel, correlation::math::KernelType::Bump);
-  EXPECT_EQ(opts.calculators, "RDF,PAD");
+  EXPECT_EQ(opts.disable_groups, "scattering,rings");
   EXPECT_EQ(opts.output_base, "/results/out");
 }
 

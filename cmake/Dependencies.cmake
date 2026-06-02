@@ -263,6 +263,20 @@ if(BUILD_PYTHON_BINDINGS)
   endif()
 endif()
 
+# 8. CLI11
+find_package(CLI11 QUIET)
+if (CLI11_FOUND)
+  message(STATUS "Found CLI11: ${CLI11_DIR}")
+else()
+  message(STATUS "CLI11 not found. Downloading CLI11 from GitHub...")
+  FetchContent_Declare(
+    cli11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG        v2.4.2
+  )
+  FetchContent_MakeAvailable(cli11)
+endif()
+
 # Restore original BUILD_TESTING cache state
 if(BUILD_TESTING_EXISTS)
   set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)

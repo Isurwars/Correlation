@@ -1208,18 +1208,39 @@ void AppController::updateCliCommand() {
     cmd += " --no-smoothing";
   }
 
-  // Active calculators comma-separated
-  std::string calculators_list = "";
-  for (const auto &[id, active] : opt.active_calculators) {
-    if (active) {
-      if (!calculators_list.empty()) {
-        calculators_list += ",";
+  // Check if any groups are completely disabled in GUI to add to --disable-groups list
+  std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
+  const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  for (const auto &calc : calculators) {
+    groups_map[calc->getGroup()].push_back(calc.get());
+  }
+
+  std::vector<std::string> disabled_groups;
+  for (const auto &[grp_name, grp_calcs] : groups_map) {
+    bool all_disabled = true;
+    for (const auto *calc : grp_calcs) {
+      auto it = opt.active_calculators.find(calc->getName());
+      if (it != opt.active_calculators.end() && it->second) {
+        all_disabled = false;
+        break;
       }
-      calculators_list += id;
+    }
+    if (all_disabled) {
+      std::string grp_lower = grp_name;
+      std::transform(grp_lower.begin(), grp_lower.end(), grp_lower.begin(), ::tolower);
+      disabled_groups.push_back(grp_lower);
     }
   }
-  if (!calculators_list.empty()) {
-    cmd += " --calculators " + calculators_list;
+
+  if (!disabled_groups.empty()) {
+    std::string disabled_list = "";
+    for (const auto &grp : disabled_groups) {
+      if (!disabled_list.empty()) {
+        disabled_list += ",";
+      }
+      disabled_list += grp;
+    }
+    cmd += " --disable-groups " + disabled_list;
   }
 
   if (opt.use_csv) {
