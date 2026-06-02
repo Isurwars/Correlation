@@ -192,7 +192,7 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   // Default output base: same directory and stem as input
   if (opts.output_base.empty()) {
     std::filesystem::path p(opts.input_file);
-    opts.output_base = (p.parent_path() / p.stem()).string();
+    opts.output_base = (p.parent_path() / p.stem()).lexically_normal().string();
   }
 
   return true;

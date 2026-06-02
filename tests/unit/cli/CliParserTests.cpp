@@ -348,7 +348,7 @@ TEST_F(CliParserTests, DefaultOutputBaseIsStemOfInput) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_EQ(opts.output_base, (std::filesystem::path("/data/experiment") / "sample").string());
+  EXPECT_EQ(opts.output_base, (std::filesystem::path("/data/experiment") / "sample").lexically_normal().string());
 }
 
 TEST_F(CliParserTests, DisableGroupsOption) {
