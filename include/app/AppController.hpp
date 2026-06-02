@@ -17,6 +17,8 @@
 #include <memory>
 #include <thread>
 
+class AppControllerTests;
+
 namespace correlation::app {
 
 /**
@@ -46,6 +48,7 @@ public:
   ~AppController();
 
 private:
+  friend class ::AppControllerTests;
   AppWindow &ui_;       ///< Reference to the managed UI window.
   AppBackend &backend_; ///< Reference to the logic backend.
 

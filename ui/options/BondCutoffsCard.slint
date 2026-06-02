@@ -1,19 +1,43 @@
 import {
     MaterialStyleMetrics,
     MaterialTypography,
+    MaterialPalette,
     FilledCard,
     ExpandableHeader,
     TextField,
     MaterialText,
     Vertical,
     Horizontal,
+    Matrix,
 } from "../material/material.slint";
-import { BondCutoff } from "../Types.slint";
+import { BondCutoff, AtomCount } from "../Types.slint";
 
 export component BondCutoffsCard inherits FilledCard {
-    in-out property <bool> expanded: false;
+    in-out property <bool> expanded: true;
     in property <bool> file_loaded;
+    in property <[AtomCount]> atom_counts;
     in-out property <[BondCutoff]> bond_cutoffs;
+
+    pure function get_flat_index(i: int, j: int, N: int) -> int {
+        let r = min(i, j);
+        let c = max(i, j);
+        let r_term = (r == 0) ? 0 : 
+                     (r == 1) ? 1 : 
+                     (r == 2) ? 3 : 
+                     (r == 3) ? 6 : 
+                     (r == 4) ? 10 : 
+                     (r == 5) ? 15 : 
+                     (r == 6) ? 21 : 
+                     (r == 7) ? 28 : 
+                     (r == 8) ? 36 : 
+                     (r == 9) ? 45 : 
+                     (r == 10) ? 55 : 
+                     (r == 11) ? 66 : 
+                     (r == 12) ? 78 : 
+                     (r == 13) ? 91 : 
+                     (r == 14) ? 105 : 120;
+        return r * N - r_term + c;
+    }
 
     Vertical {
 
@@ -28,30 +52,33 @@ export component BondCutoffsCard inherits FilledCard {
             opacity: root.expanded ? 1.0 : 0.0;
             padding_left: MaterialStyleMetrics.spacing_8;
             padding_right: MaterialStyleMetrics.spacing_8;
+            padding_bottom: MaterialStyleMetrics.spacing_8;
             spacing: MaterialStyleMetrics.spacing_8;
             animate height, opacity {
                 duration: 250ms;
                 easing: ease-in-out;
             }
 
-            for cutoff[i] in root.bond_cutoffs: Horizontal {
-                spacing: MaterialStyleMetrics.spacing_8;
-                MaterialText {
-                    text: cutoff.element1 + " - " + cutoff.element2 + ":";
-                    vertical-alignment: center;
-                    horizontal-stretch: 1;
-                }
+            if (!root.file_loaded): MaterialText {
+                text: "No file loaded.";
+                color: MaterialPalette.on_surface_variant;
+            }
 
-                TextField {
-                    width: 140px;
-                    enabled: root.file_loaded;
-                    text: cutoff.distance;
-                    label: "Cutoff (Å)";
-                    edited(s) => {
-                        root.bond_cutoffs[i].distance = s;
+            if (root.file_loaded): Matrix {
+                headers: root.atom_counts;
+                enabled: root.file_loaded;
+                cell_value(r, c) => {
+                    let idx = root.get_flat_index(r, c, root.atom_counts.length);
+                    return (idx < root.bond_cutoffs.length) ? root.bond_cutoffs[idx].distance : "";
+                }
+                cell_edited(r, c, val) => {
+                    let idx = root.get_flat_index(r, c, root.atom_counts.length);
+                    if (idx < root.bond_cutoffs.length) {
+                        root.bond_cutoffs[idx].distance = val;
                     }
                 }
             }
         }
     }
 }
+

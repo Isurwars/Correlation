@@ -1,0 +1,142 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import { ScrollView } from "./scroll_view.slint";
+import { MaterialText } from "./material_text.slint";
+import { MaterialStyleMetrics } from "../styling/material_style_metrics.slint";
+import { MaterialPalette } from "../styling/material_palette.slint";
+import { MaterialTypography } from "../styling/material_typography.slint";
+import { AtomCount } from "../../../Types.slint";
+
+component MatrixCell {
+    in-out property <string> text;
+    in property <bool> enabled: true;
+    in property <bool> read_only: false;
+    in property <bool> is_diagonal: false;
+    callback edited(string);
+
+    property <bool> has_focus: input.has_focus;
+
+    width: 60px;
+    height: 32px;
+
+    container := Rectangle {
+        width: 100%;
+        height: 100%;
+        background: root.read_only ? MaterialPalette.surface_container_low : 
+                    root.is_diagonal ? MaterialPalette.secondary_container.with_alpha(50%) : 
+                    MaterialPalette.surface_container_highest;
+        border-radius: MaterialStyleMetrics.border_radius_4;
+        border-width: root.has_focus ? 2px : 1px;
+        border-color: root.has_focus ? MaterialPalette.primary : 
+                      root.read_only ? MaterialPalette.outline_variant.with_alpha(30%) : 
+                      root.is_diagonal ? MaterialPalette.secondary : 
+                      MaterialPalette.outline_variant;
+
+        input := TextInput {
+            x: 4px;
+            width: parent.width - 8px;
+            height: parent.height - 4px;
+            font_size: MaterialTypography.body_medium.font_size;
+            font_weight: root.is_diagonal ? MaterialTypography.medium : MaterialTypography.regular;
+            vertical-alignment: center;
+            horizontal-alignment: center;
+            single-line: true;
+            color: root.read_only ? MaterialPalette.on_surface.with_alpha(50%) : 
+                   root.enabled ? MaterialPalette.on_surface : 
+                   MaterialPalette.on_surface.with_alpha(38%);
+            text <=> root.text;
+            enabled: root.enabled;
+            read-only: root.read_only;
+
+            edited => {
+                root.edited(self.text);
+            }
+        }
+    }
+}
+
+export component Matrix {
+    in property <[AtomCount]> headers;
+    in property <bool> enabled: true;
+    
+    // Callbacks to read and write cell data (reading must be pure/side-effect free)
+    pure callback cell_value(int, int) -> string;
+    callback cell_edited(int, int, string);
+
+    // Styling properties
+    in property <length> cell_width: 60px;
+    in property <length> cell_height: 32px;
+    in property <length> header_height: 24px;
+    in property <length> header_width: 32px;
+
+    preferred-height: matrix_layout.preferred-height + 12px;
+    height: self.preferred-height;
+    width: 100%;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+        vertical_scrollbar_policy: ScrollBarPolicy.always_off;
+        horizontal_scrollbar_policy: ScrollBarPolicy.as_needed;
+        
+        viewport-width: matrix_layout.preferred-width;
+        viewport-height: matrix_layout.preferred-height;
+
+        matrix_layout := VerticalLayout {
+            padding: 4px;
+            spacing: 4px;
+
+            // Header Row
+            HorizontalLayout {
+                spacing: 4px;
+                Rectangle {
+                    width: root.header_width;
+                    height: root.header_height;
+                }
+                for col[j] in root.headers: Rectangle {
+                    width: root.cell_width;
+                    height: root.header_height;
+                    MaterialText {
+                        text: col.symbol;
+                        font-weight: MaterialTypography.semibold;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        style: MaterialTypography.label_medium;
+                    }
+                }
+            }
+
+            // Data Rows
+            for row[i] in root.headers: HorizontalLayout {
+                spacing: 4px;
+                Rectangle {
+                    width: root.header_width;
+                    height: root.cell_height;
+                    MaterialText {
+                        text: row.symbol;
+                        font-weight: MaterialTypography.semibold;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        style: MaterialTypography.label_medium;
+                    }
+                }
+                for col[j] in root.headers: MatrixCell {
+                    property <bool> is_diag: i == j;
+                    property <bool> is_lower: i > j;
+
+                    text: root.cell_value(i, j);
+                    enabled: root.enabled;
+                    read_only: is_lower;
+                    is_diagonal: is_diag;
+
+                    edited(val) => {
+                        root.cell_edited(i, j, val);
+                    }
+                }
+            }
+        }
+    }
+}

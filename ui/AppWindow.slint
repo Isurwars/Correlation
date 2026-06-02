@@ -271,7 +271,7 @@ export component AppWindow inherits Window {
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Inter";
     min-width: 410px + (root.show_advanced_options ? 280px : 0px) + (root.analysis_done ? 600px : 0px);
-    min-height: 510px + (root.analysis_done ? 140px : 0px);
+    min-height: 540px + (root.analysis_done ? 140px : 0px);
 
     // ============================================================================
     // Main UI structure
@@ -434,6 +434,7 @@ export component AppWindow inherits Window {
                             bond_cutoffs_card := BondCutoffsCard {
                                 file_loaded: root.file_loaded;
                                 bond_cutoffs <=> root.bond_cutoffs;
+                                atom_counts: root.atom_counts;
                                 height: self.preferred-height;
                             }
                         }
