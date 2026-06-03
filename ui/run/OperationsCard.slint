@@ -1,0 +1,221 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: MIT
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialTypography,
+    MaterialPalette,
+    FilledCard,
+    MaterialText,
+    FilledButton,
+    LinearProgressIndicator,
+    ExpandableHeader,
+    InfoRow,
+    Vertical,
+    Horizontal,
+} from "../material/material.slint";
+import { AtomCount } from "../Types.slint";
+
+// ============================================================================
+// OperationsCard Component
+// ============================================================================
+/// This component consolidates the main workflow triggers (Load, Run, Save)
+/// and file metadata info in a single sidebar card.
+// ============================================================================
+export component OperationsCard inherits FilledCard {
+    // File Loading
+    in property <bool> load_enabled: true;
+    callback browse_file();
+
+    // File Status & Metadata
+    in-out property <string> file_status_text;
+    in property <bool> file_loaded;
+    in property <int> num_frames;
+    in property <int> total_atoms;
+    in property <int> removed_frames_count;
+    in property <[AtomCount]> atom_counts;
+
+    // Analysis Execution
+    in property <bool> analysis_running;
+    in property <bool> analysis_done;
+    in property <float> progress;
+    in property <string> analysis_status_text;
+    in property <bool> has_validation_errors;
+    callback run_analysis();
+    callback write_files();
+
+    out property <string> hovered_tooltip_text:
+        load_area.has-hover ? "Load a structure or trajectory file" :
+        atoms_layout.has-hover ? "Total number of atoms found in a single frame.\n\n🔬 Physics: Larger systems reduce finite-size effects in correlation functions. For reliable RDF, systems with >200 atoms are recommended. For ring statistics, >500 atoms is preferred." : 
+        frames_layout.has-hover ? "Number of structural frames parsed from the file.\n\n🔬 Physics: More frames improve statistical averaging for distribution functions. For converged g(r) in a liquid, typically 100+ frames are recommended." : 
+        removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data.\n\n⚠️ If this number is large relative to total frames, check the input file for formatting issues or incomplete trajectory data." :
+        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." :
+        save_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
+
+    in-out property <bool> atoms_expanded: false;
+    property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
+    property <length> progress_height: (root.analysis_running || root.analysis_done) ? 55px : 0px;
+
+    Vertical {
+        spacing: MaterialStyleMetrics.spacing_12;
+        padding: MaterialStyleMetrics.spacing_12;
+
+        // --- File Loading ---
+        Vertical {
+            spacing: MaterialStyleMetrics.spacing_4;
+            MaterialText {
+                text: "Input File";
+                style: MaterialTypography.label_large;
+                color: MaterialPalette.on_surface_variant;
+            }
+            load_area := TouchArea {
+                min-height: 40px;
+                FilledButton {
+                    enabled: root.load_enabled;
+                    height: 40px;
+                    width: 100%;
+                    text: "Load file";
+                    clicked => {
+                        root.browse_file();
+                    }
+                }
+            }
+        }
+
+        // --- File Status/Info ---
+        Vertical {
+            spacing: MaterialStyleMetrics.spacing_4;
+            
+            MaterialText {
+                text: root.file_loaded ? root.file_status_text : "No file loaded.";
+                horizontal-stretch: 1;
+                wrap: word-wrap;
+                color: root.file_loaded ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+            }
+
+            atoms_layout := ExpandableHeader {
+                text: "Total Atoms: " + root.total_atoms;
+                expanded <=> root.atoms_expanded;
+                enabled: root.file_loaded;
+                opacity: root.file_loaded ? 1.0 : 0.4;
+            }
+
+            Vertical {
+                height: root.atoms_height;
+                opacity: root.atoms_expanded ? 1.0 : 0.0;
+                animate height {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                animate opacity {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                spacing: MaterialStyleMetrics.spacing_2;
+                for info in root.atom_counts: InfoRow {
+                    label: info.symbol + ":";
+                    value: info.count;
+                }
+            }
+
+            frames_layout := InfoRow {
+                opacity: root.num_frames > 1 ? 1.0 : 0.0;
+                height: root.num_frames > 1 ? MaterialStyleMetrics.size_40 : 0px;
+                animate height {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                animate opacity {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                label: "Frames:";
+                value: root.num_frames;
+            }
+
+            removed_layout := InfoRow {
+                opacity: (root.num_frames > 1 && root.removed_frames_count > 0) ? 1.0 : 0.0;
+                height: (root.num_frames > 1 && root.removed_frames_count > 0) ? MaterialStyleMetrics.size_40 : 0px;
+                animate height {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                animate opacity {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                label: "Removed Frames:";
+                value: root.removed_frames_count;
+                text-color: MaterialPalette.error;
+            }
+        }
+
+        // Spacer/Divider
+        Rectangle {
+            height: 1px;
+            background: MaterialPalette.outline_variant;
+            opacity: root.file_loaded ? 1.0 : 0.2;
+        }
+
+        // --- Analysis Execution ---
+        Vertical {
+            spacing: MaterialStyleMetrics.spacing_8;
+
+            run_area := TouchArea {
+                FilledButton {
+                    width: 100%;
+                    text: root.analysis_running ? "In Progress..." : 
+                          root.has_validation_errors ? "Fix Errors" : "Run Analysis";
+                    enabled: root.file_loaded && !root.analysis_running && !root.has_validation_errors;
+                    background: root.has_validation_errors ? MaterialPalette.error : MaterialPalette.run;
+                    text_color: root.has_validation_errors ? MaterialPalette.on_error : MaterialPalette.on_run;
+                    clicked => {
+                        root.run_analysis();
+                    }
+                }
+            }
+
+            Vertical {
+                height: root.progress_height;
+                visible: self.height > 0.1px;
+                opacity: (root.analysis_running || root.analysis_done) ? 1.0 : 0.0;
+                animate height {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                animate opacity {
+                    duration: 250ms;
+                    easing: ease-in-out;
+                }
+                spacing: MaterialStyleMetrics.spacing_2;
+                MaterialText {
+                    text: root.analysis_status_text;
+                    color: MaterialPalette.on_surface_variant;
+                    horizontal-alignment: center;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                    wrap: word-wrap;
+                }
+                LinearProgressIndicator {
+                    progress: root.progress;
+                    animate progress { duration: 200ms; easing: ease-out; }
+                }
+            }
+
+            save_area := TouchArea {
+                FilledButton {
+                    width: 100%;
+                    text: "Save Results";
+                    enabled: root.analysis_done && !root.analysis_running;
+                    background: MaterialPalette.primary;
+                    text_color: MaterialPalette.on_primary;
+                    clicked => {
+                        root.write_files();
+                    }
+                }
+            }
+        }
+    }
+}
