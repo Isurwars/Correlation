@@ -11,6 +11,11 @@ All notable changes to this project will be documented in this file.
   - Rejects zero-value smoothing bandwidths (`smoothing_sigma > 0.0`) when post-processing smoothing is enabled.
   - Ensures at least one export format (CSV, HDF5, or Parquet) is enabled when running calculations.
 - **Robust Parameter Validation Tests**: Added 18 new unit tests verifying all parameter boundary conditions and validation failure paths.
+- **Restructured GUI Layout**: Reorganized the Slint-based Graphical User Interface into a modern, stable 3-column dashboard:
+  - Consolidates file loading, metadata summary, and analysis run/save triggers into a single control card on the left.
+  - Groups all settings into a central tabbed card (Trajectory options, calculator parameters, file export formats, and preset/analyses setup).
+  - Places a stable, always-visible plot preview panel on the right.
+  - Implements state-based opacity transitions and overlay blocking to disable the options and preview panels until their prerequisites (loading a file and running an analysis) are completed.
 
 ### Fixed
 - **Path Separation and Normalization**: Applied `lexically_normal()` to all default output base path generation logic to prevent platform/standard library separator and trailing slash discrepancies (e.g., resolving duplicate slashes like `//` in paths).
