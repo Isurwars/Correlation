@@ -185,9 +185,10 @@ jobs:
 
       - name: Package Release
         run: |
+          cd build
           # Brief pause to ensure the build releases all file handles on macOS
           sleep 15
-          cpack -G DragNDrop --config build/CPackConfig.cmake
+          cpack -G DragNDrop
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v3
