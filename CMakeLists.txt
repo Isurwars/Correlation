@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.24)
-project(Correlation VERSION 3.2.0 LANGUAGES CXX)
+project(Correlation VERSION 3.2.1 LANGUAGES CXX)
 
 # -----------------------------------------------------------
 # Auto-generate packaging files from templates.

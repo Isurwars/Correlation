@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.2.1] - 2026-06-03
+
+### Added
+- **Dynamic Plot Format Switch**: Removed the hardcoded `.svg` extension from the default filename in the plot save dialog, allowing the dialog's native filter selection to automatically append either `.svg` or `.pdf` to the output file path.
+
+### Changed
+- **Modern Dialog Integration**: Migrated the desktop dialog backend from the patched header-only `portable-file-dialogs` to the native, cross-platform library `nativefiledialog-extended`.
+- **Synchronous UX**: Converted the file open/save dialog interactions from a polled asynchronous model (using a 100ms UI timer) to a synchronous blocking model.
+- **UI Code Cleanup**: Removed the polling `Timer` and the `check_file_dialog_status` callback declaration from the frontend Slint UI.
+
+### Fixed
+- **Linux Dependency Binding**: Configured automatic installation of GTK3 development headers (`libgtk-3-dev`) in GitHub Actions workflows to ensure cross-platform GUI builds compile successfully.
+
 ## [3.2.0] - 2026-06-01
 
 ### Added
