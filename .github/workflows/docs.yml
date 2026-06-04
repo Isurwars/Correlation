@@ -49,7 +49,8 @@ jobs:
         run: |
           cmake -B build -S . -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_TESTING=OFF
+            -DBUILD_TESTING=OFF \
+            -DBUILD_GUI=OFF
 
       - name: Build Documentation
         run: cmake --build build --target doxygen

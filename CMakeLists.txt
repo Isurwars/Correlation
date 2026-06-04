@@ -123,19 +123,23 @@ endif()
 #-----------------------------------------------------------
 
 # Install the executable and the library.
-install(TARGETS correlation
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT correlation
-)
+if(BUILD_GUI)
+    install(TARGETS correlation
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT correlation
+    )
+endif()
 
 # -----------------------------------------------------------
 # Install setup for Linux shared libraries
 # -----------------------------------------------------------
 if (NOT WIN32)
     # Ensure correlation finds shared libraries in <prefix>/lib
-    set_target_properties(correlation PROPERTIES
-        INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-    )
+    if(BUILD_GUI)
+        set_target_properties(correlation PROPERTIES
+            INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+        )
+    endif()
     # If Arrow/Parquet were built from source, install them
     if (TARGET arrow_shared AND TARGET parquet_shared AND NOT Arrow_FOUND)
         install(TARGETS arrow_shared parquet_shared
@@ -149,7 +153,7 @@ endif()
 # -----------------------------------------------------------
 # Install setup for Linux Desktop Integration
 # -----------------------------------------------------------
-if (NOT WIN32)
+if (NOT WIN32 AND BUILD_GUI)
     # 1. Install the Icon (adjust path if you use a different icon directory)
     install(FILES "${PROJECT_SOURCE_DIR}/Images/Logo.png"
             DESTINATION share/icons/hicolor/scalable/apps
