@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - **Linux Dependency Binding**: Configured automatic installation of GTK3 development headers (`libgtk-3-dev`) in GitHub Actions workflows to ensure cross-platform GUI builds compile successfully.
+- **CMake GUI Build Guards**: Wrapped GUI-specific target installation and desktop setup settings inside `if(BUILD_GUI)` conditions, allowing CLI-only or documentation-only workflows (such as `docs.yml`) to configure and run without GTK/GUI package dependencies.
 
 ## [3.2.0] - 2026-06-01
 
