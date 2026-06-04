@@ -141,6 +141,7 @@ if(BUILD_GUI)
         GTest::gtest
         GTest::gtest_main
         Slint::Slint
+        nfd
     )
 
     # Add slint target sources for AppWindow

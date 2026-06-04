@@ -210,7 +210,6 @@ export component AppWindow inherits Window {
     callback write_files();
     callback select_plot(int);
     callback toggle_calculator(string, bool);
-    callback check_file_dialog_status();
     callback save_plot();
     callback pin_run();
     callback clear_pinned_runs();
@@ -287,13 +286,7 @@ export component AppWindow inherits Window {
         root.select_plot(root.selected_plot_index);
     }
 
-    Timer {
-        interval: 100ms;
-        running: root.timer_running;
-        triggered() => {
-            root.check_file_dialog_status();
-        }
-    }
+
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.

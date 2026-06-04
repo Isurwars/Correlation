@@ -277,6 +277,18 @@ else()
   FetchContent_MakeAvailable(cli11)
 endif()
 
+# 9. nativefiledialog-extended
+if(BUILD_GUI)
+  message(STATUS "Downloading nativefiledialog-extended from GitHub...")
+  set(NFD_BUILD_TESTS OFF CACHE BOOL "Disable NFD tests" FORCE)
+  FetchContent_Declare(
+    nfd
+    GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
+    GIT_TAG        v1.2.1
+  )
+  FetchContent_MakeAvailable(nfd)
+endif()
+
 # Restore original BUILD_TESTING cache state
 if(BUILD_TESTING_EXISTS)
   set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)

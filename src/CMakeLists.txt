@@ -163,7 +163,7 @@ if(BUILD_GUI)
     endif()
 
     # Link correlation_lib to correlation
-    set(CORRELATION_LIBS correlation_lib Slint::Slint)
+    set(CORRELATION_LIBS correlation_lib Slint::Slint nfd)
 
     target_link_libraries(correlation PRIVATE correlation_simd_options)
 

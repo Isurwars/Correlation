@@ -12,7 +12,7 @@
 #include "app/AppBackend.hpp"
 #include "app/PresetManager.hpp"
 #include "plotters/SvgPlotter.hpp"
-#include "external/PortableFileDialogs.hpp"
+#include <nfd.h>
 
 #include <memory>
 #include <thread>
@@ -52,9 +52,7 @@ private:
   AppWindow &ui_;       ///< Reference to the managed UI window.
   AppBackend &backend_; ///< Reference to the logic backend.
 
-  std::unique_ptr<pfd::open_file> current_file_dialog_;      ///< Active file open dialog handler.
-  std::unique_ptr<pfd::save_file> current_save_dialog_;      ///< Active file save dialog handler.
-  std::unique_ptr<pfd::save_file> current_plot_save_dialog_; ///< Active plot save dialog handler.
+
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
   std::thread load_thread_;     ///< Handle for the background file loading process.
@@ -156,12 +154,7 @@ private:
    */
   void handleBrowseFile();
 
-  /**
-   * @brief Periodic check for file dialog status.
-   * Since file dialogs might be non-blocking or running in a separate
-   * process/thread, this method checks if they have returned a result.
-   */
-  void handleCheckFileDialogStatus();
+
 
   /**
    * @brief Populates the UI plot dropdown with the available histogram names

@@ -32,6 +32,8 @@ namespace correlation::app {
 //---------------------------------------------------------------------------//
 
 AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), backend_(backend) {
+  // Initialize Native File Dialog
+  NFD_Init();
 
   // Populate the calculator groups from the factory
   populateCalculatorGroups(ui_);
@@ -57,7 +59,6 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   ui_.on_run_analysis([this]() { handleRunAnalysis(); });
   ui_.on_write_files([this]() { handleWriteFiles(); });
   ui_.on_browse_file([this]() { handleBrowseFile(); });
-  ui_.on_check_file_dialog_status([this]() { handleCheckFileDialogStatus(); });
   ui_.on_validate_inputs([this]() { validateInputs(); });
   ui_.on_copy_cli_command([this]() { handleCopyCliCommand(); });
 
@@ -97,6 +98,8 @@ AppController::~AppController() {
   if (load_thread_.joinable()) {
     load_thread_.join();
   }
+  // Quit Native File Dialog
+  NFD_Quit();
 }
 
 //---------------------------------------------------------------------------//
@@ -472,234 +475,135 @@ void AppController::handleWriteFiles() {
   backend_.setOptions(handleOptionsfromUI(ui_));
 
   std::string default_path = backend_.options().output_file_base;
+  std::filesystem::path dp(default_path);
+  std::string default_dir = dp.parent_path().string();
+  std::string default_name = dp.filename().string();
 
-  current_save_dialog_ = std::make_unique<pfd::save_file>("Select Output File Name", default_path,
-                                                          std::vector<std::string>{"All Files", "*"}, pfd::opt::none);
+  nfdchar_t *outPath = nullptr;
+  nfdresult_t result = NFD_SaveDialogU8(&outPath, nullptr, 0,
+                                        default_dir.empty() ? nullptr : default_dir.c_str(),
+                                        default_name.empty() ? nullptr : default_name.c_str());
 
-  ui_.set_timer_running(true);
-  ui_.set_text_opacity(true);
-  ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SELECTING_OUTPUT));
+  if (result == NFD_OKAY) {
+    std::string filepath(outPath);
+    NFD_FreePathU8(outPath);
+
+    std::filesystem::path p(filepath);
+    if (p.has_extension()) {
+      p.replace_extension("");
+    }
+
+    ProgramOptions opts = handleOptionsfromUI(ui_);
+    opts.output_file_base = p.string();
+    backend_.setOptions(opts);
+    std::string err = backend_.write_files();
+    if (err.empty()) {
+      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
+    } else {
+      ui_.set_analysis_status_text(slint::SharedString(err));
+    }
+  } else if (result == NFD_CANCEL) {
+    ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+  } else {
+    std::string error_msg = "Error: ";
+    error_msg += NFD_GetError();
+    ui_.set_analysis_status_text(slint::SharedString(error_msg));
+  }
 }
 
 void AppController::handleBrowseFile() {
-  std::vector<std::string> filters = {"Supported Structure Files",
-                                      "*arc *.car *.cell *.cif *.dat *.md *.outmol *.poscar *.contcar *.vasp *.xdatcar",
-                                      "Materials Studio CAR",
-                                      "*.car",
-                                      "Materials Studio ARC",
-                                      "*.arc",
-                                      "CASTEP CELL",
-                                      "*.cell",
-                                      "CASTEP MD",
-                                      "*.md",
-                                      "CIF files",
-                                      "*.cif",
-                                      "ONETEP DAT",
-                                      "*.dat",
-                                      "DMol3 Outmol",
-                                      "*.outmol",
-                                      "VASP POSCAR/CONTCAR",
-                                      "POSCAR CONTCAR *.poscar *.contcar *.vasp",
-                                      "VASP XDATCAR",
-                                      "XDATCAR *.xdatcar",
-                                      "All Files",
-                                      "*"};
+  nfdfilteritem_t filterList[] = {
+      {"Supported Structure Files", "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar"},
+      {"Materials Studio CAR", "car"},
+      {"Materials Studio ARC", "arc"},
+      {"CASTEP CELL", "cell"},
+      {"CASTEP MD", "md"},
+      {"CIF files", "cif"},
+      {"ONETEP DAT", "dat"},
+      {"DMol3 Outmol", "outmol"},
+      {"VASP POSCAR/CONTCAR", "poscar,contcar,vasp"},
+      {"VASP XDATCAR", "xdatcar"}
+  };
+  nfdfiltersize_t filterCount = sizeof(filterList) / sizeof(filterList[0]);
 
-  current_file_dialog_ =
-      std::make_unique<pfd::open_file>("Select a structure file", "", filters, pfd::opt::multiselect);
+  nfdchar_t *outPath = nullptr;
+  nfdresult_t result = NFD_OpenDialogU8(&outPath, filterList, filterCount, nullptr);
 
-  ui_.set_timer_running(true);
-  ui_.set_text_opacity(true);
-}
+  if (result == NFD_OKAY) {
+    std::string filepath(outPath);
+    NFD_FreePathU8(outPath);
 
-void AppController::handleCheckFileDialogStatus() {
-  if (current_file_dialog_ && current_file_dialog_->ready(0)) {
-    auto selection = current_file_dialog_->result();
-    if (!selection.empty()) {
-      std::string filepath = selection[0];
-      ui_.set_in_file_text(slint::SharedString(filepath));
-      ui_.set_file_status_text(slint::SharedString("Loading file..."));
-      ui_.set_timer_running(true);
-      ui_.set_text_opacity(true);
-      ui_.set_progress(0.0f);
+    ui_.set_in_file_text(slint::SharedString(filepath));
+    ui_.set_file_status_text(slint::SharedString("Loading file..."));
+    ui_.set_timer_running(true);
+    ui_.set_text_opacity(true);
+    ui_.set_progress(0.0f);
 
-      if (load_thread_.joinable()) {
-        load_thread_.join();
-      }
+    if (load_thread_.joinable()) {
+      load_thread_.join();
+    }
 
-      load_thread_ = std::thread([this, filepath]() {
-        backend_.setProgressCallback([this](float p, const std::string &msg) {
-          slint::invoke_from_event_loop([=, this]() {
-            if (!msg.empty()) {
-              ui_.set_file_status_text(slint::SharedString(msg));
-            }
-          });
-        });
-
-        std::string message;
-        bool success = false;
-        try {
-          message = backend_.load_file(filepath);
-          success = true;
-        } catch (const std::exception &e) {
-          message = std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
-        }
-
-        slint::invoke_from_event_loop([this, message, success]() {
-          ui_.set_file_status_text(slint::SharedString(message));
-          ui_.set_timer_running(false);
-          ui_.set_text_opacity(false);
-
-          if (success && backend_.cell()) {
-            ui_.set_file_loaded(true);
-
-            // Atom Counts
-            auto atom_counts_map = backend_.getAtomCounts();
-            auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
-            for (const auto &[symbol, count] : atom_counts_map) {
-              slint_atom_counts->push_back({slint::SharedString(symbol), count});
-            }
-            ui_.set_atom_counts(slint_atom_counts);
-
-            // Bond Cutoffs
-            setBondCutoffs(ui_);
-
-            // File Info
-            ui_.set_num_frames(backend_.getFrameCount());
-            ui_.set_total_atoms(backend_.getTotalAtomCount());
-            ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
-            ui_.set_time_step(slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep())));
-
-            // Update Run Analysis Card Frame Info
-            ui_.set_min_frame("1");
-            ui_.set_max_frame(slint::SharedString(std::to_string(backend_.getFrameCount())));
-            validateInputs();
+    load_thread_ = std::thread([this, filepath]() {
+      backend_.setProgressCallback([this](float p, const std::string &msg) {
+        slint::invoke_from_event_loop([=, this]() {
+          if (!msg.empty()) {
+            ui_.set_file_status_text(slint::SharedString(msg));
           }
         });
       });
-    } else {
-      std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
-      ui_.set_file_status_text(slint::SharedString(message));
-      slint::invoke_from_event_loop([this]() {
+
+      std::string message;
+      bool success = false;
+      try {
+        message = backend_.load_file(filepath);
+        success = true;
+      } catch (const std::exception &e) {
+        message = std::string(AppDefaults::MSG_ERROR_LOADING) + std::string(e.what());
+      }
+
+      slint::invoke_from_event_loop([this, message, success]() {
+        ui_.set_file_status_text(slint::SharedString(message));
         ui_.set_timer_running(false);
         ui_.set_text_opacity(false);
-      });
-    }
 
-    current_file_dialog_.reset();
-  }
+        if (success && backend_.cell()) {
+          ui_.set_file_loaded(true);
 
-  if (current_save_dialog_ && current_save_dialog_->ready(0)) {
-    std::string result = current_save_dialog_->result();
-    if (!result.empty()) {
-      std::filesystem::path p(result);
-      if (p.has_extension()) {
-        p.replace_extension("");
-      }
-
-      ProgramOptions opts = handleOptionsfromUI(ui_);
-      opts.output_file_base = p.string();
-      backend_.setOptions(opts);
-      std::string err = backend_.write_files();
-      if (err.empty()) {
-        ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
-      } else {
-        ui_.set_analysis_status_text(slint::SharedString(err));
-      }
-    } else {
-      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-    }
-    slint::invoke_from_event_loop([this]() {
-      ui_.set_timer_running(false);
-      ui_.set_text_opacity(false);
-    });
-    current_save_dialog_.reset();
-  }
-
-  if (current_plot_save_dialog_ && current_plot_save_dialog_->ready(0)) {
-    std::string result = current_plot_save_dialog_->result();
-    if (!result.empty()) {
-      int index = ui_.get_selected_plot_index();
-      if (index >= 0 && index < static_cast<int>(available_plot_keys_.size())) {
-        const std::string &name = available_plot_keys_[index];
-        const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-        if (hist) {
-          correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
-
-          std::string svg;
-          if (pinned_runs_.empty()) {
-            svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
-          } else {
-            std::vector<correlation::plotters::LabeledHistogram> datasets;
-            datasets.push_back({"Current", hist});
-            for (const auto &pr : pinned_runs_) {
-              auto it = pr.histograms.find(name);
-              if (it != pr.histograms.end()) {
-                datasets.push_back({pr.label, &it->second});
-              }
-            }
-            std::string key = "Total";
-            const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-            if (!partials.empty() && partials.find(key) == partials.end()) {
-              key = partials.begin()->first;
-            }
-            svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
+          // Atom Counts
+          auto atom_counts_map = backend_.getAtomCounts();
+          auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
+          for (const auto &[symbol, count] : atom_counts_map) {
+            slint_atom_counts->push_back({slint::SharedString(symbol), count});
           }
+          ui_.set_atom_counts(slint_atom_counts);
 
-          // Check if file extension is PDF (case-insensitive)
-          bool save_as_pdf = false;
-          if (result.size() >= 4) {
-            std::string ext = result.substr(result.size() - 4);
-            if (ext == ".pdf" || ext == ".PDF") {
-              save_as_pdf = true;
-            }
-          }
+          // Bond Cutoffs
+          setBondCutoffs(ui_);
 
-          if (save_as_pdf) {
-            std::string temp_svg_path = result + ".tmp.svg";
-            std::ofstream out(temp_svg_path);
-            if (out.is_open()) {
-              out << svg;
-              out.close();
+          // File Info
+          ui_.set_num_frames(backend_.getFrameCount());
+          ui_.set_total_atoms(backend_.getTotalAtomCount());
+          ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
+          ui_.set_time_step(slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep())));
 
-              std::string cmd = "rsvg-convert -f pdf -o \"" + result + "\" \"" + temp_svg_path + "\"";
-              int ret = std::system(cmd.c_str());
-              if (ret != 0) {
-                std::string inkscape_cmd = "inkscape --export-filename=\"" + result + "\" \"" + temp_svg_path + "\"";
-                ret = std::system(inkscape_cmd.c_str());
-              }
-
-              std::filesystem::remove(temp_svg_path);
-
-              if (ret == 0) {
-                ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
-              } else {
-                ui_.set_analysis_status_text(slint::SharedString("Failed to convert SVG to PDF."));
-              }
-            } else {
-              ui_.set_analysis_status_text(slint::SharedString("Failed to write temporary SVG."));
-            }
-          } else {
-            // Save as SVG
-            std::ofstream out(result);
-            if (out.is_open()) {
-              out << svg;
-              out.close();
-              ui_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
-            } else {
-              ui_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
-            }
-          }
+          // Update Run Analysis Card Frame Info
+          ui_.set_min_frame("1");
+          ui_.set_max_frame(slint::SharedString(std::to_string(backend_.getFrameCount())));
+          validateInputs();
         }
-      }
-    } else {
-      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-    }
-    slint::invoke_from_event_loop([this]() {
-      ui_.set_timer_running(false);
-      ui_.set_text_opacity(false);
+      });
     });
-    current_plot_save_dialog_.reset();
+  } else if (result == NFD_CANCEL) {
+    std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
+    ui_.set_file_status_text(slint::SharedString(message));
+    ui_.set_timer_running(false);
+    ui_.set_text_opacity(false);
+  } else {
+    std::string error_msg = "Error opening file dialog: ";
+    error_msg += NFD_GetError();
+    ui_.set_file_status_text(slint::SharedString(error_msg));
+    ui_.set_timer_running(false);
+    ui_.set_text_opacity(false);
   }
 }
 
@@ -802,12 +706,98 @@ void AppController::handleSavePlot() {
     default_path = name + ".svg";
   }
 
-  current_plot_save_dialog_ = std::make_unique<pfd::save_file>(
-      "Save Plot", default_path, std::vector<std::string>{"SVG Image", "*.svg", "PDF Document", "*.pdf", "All Files", "*"}, pfd::opt::none);
+  std::filesystem::path dp(default_path);
+  std::string default_dir = dp.parent_path().string();
+  std::string default_name = dp.filename().string();
 
-  ui_.set_timer_running(true);
-  ui_.set_text_opacity(true);
-  ui_.set_analysis_status_text(slint::SharedString(std::string("Saving ") + name + " plot..."));
+  nfdfilteritem_t filterList[] = {
+      {"SVG Image", "svg"},
+      {"PDF Document", "pdf"}
+  };
+  nfdfiltersize_t filterCount = sizeof(filterList) / sizeof(filterList[0]);
+
+  nfdchar_t *outPath = nullptr;
+  nfdresult_t result = NFD_SaveDialogU8(&outPath, filterList, filterCount,
+                                        default_dir.empty() ? nullptr : default_dir.c_str(),
+                                        default_name.empty() ? nullptr : default_name.c_str());
+
+  if (result == NFD_OKAY) {
+    std::string filepath(outPath);
+    NFD_FreePathU8(outPath);
+
+    correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
+
+    std::string svg;
+    if (pinned_runs_.empty()) {
+      svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+    } else {
+      std::vector<correlation::plotters::LabeledHistogram> datasets;
+      datasets.push_back({"Current", hist});
+      for (const auto &pr : pinned_runs_) {
+        auto it = pr.histograms.find(name);
+        if (it != pr.histograms.end()) {
+          datasets.push_back({pr.label, &it->second});
+        }
+      }
+      std::string key = "Total";
+      const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+      if (!partials.empty() && partials.find(key) == partials.end()) {
+        key = partials.begin()->first;
+      }
+      svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
+    }
+
+    // Check if file extension is PDF (case-insensitive)
+    bool save_as_pdf = false;
+    if (filepath.size() >= 4) {
+      std::string ext = filepath.substr(filepath.size() - 4);
+      if (ext == ".pdf" || ext == ".PDF") {
+        save_as_pdf = true;
+      }
+    }
+
+    if (save_as_pdf) {
+      std::string temp_svg_path = filepath + ".tmp.svg";
+      std::ofstream out(temp_svg_path);
+      if (out.is_open()) {
+        out << svg;
+        out.close();
+
+        std::string cmd = "rsvg-convert -f pdf -o \"" + filepath + "\" \"" + temp_svg_path + "\"";
+        int ret = std::system(cmd.c_str());
+        if (ret != 0) {
+          std::string inkscape_cmd = "inkscape --export-filename=\"" + filepath + "\" \"" + temp_svg_path + "\"";
+          ret = std::system(inkscape_cmd.c_str());
+        }
+
+        std::filesystem::remove(temp_svg_path);
+
+        if (ret == 0) {
+          ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
+        } else {
+          ui_.set_analysis_status_text(slint::SharedString("Failed to convert SVG to PDF."));
+        }
+      } else {
+        ui_.set_analysis_status_text(slint::SharedString("Failed to write temporary SVG."));
+      }
+    } else {
+      // Save as SVG
+      std::ofstream out(filepath);
+      if (out.is_open()) {
+        out << svg;
+        out.close();
+        ui_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
+      } else {
+        ui_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
+      }
+    }
+  } else if (result == NFD_CANCEL) {
+    ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+  } else {
+    std::string error_msg = "Error: ";
+    error_msg += NFD_GetError();
+    ui_.set_analysis_status_text(slint::SharedString(error_msg));
+  }
 }
 
 void AppController::handlePinRun() {
