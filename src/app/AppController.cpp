@@ -701,9 +701,9 @@ void AppController::handleSavePlot() {
 
   std::string default_path = backend_.options().output_file_base;
   if (!default_path.empty()) {
-    default_path += "_" + name + ".svg";
+    default_path += "_" + name;
   } else {
-    default_path = name + ".svg";
+    default_path = name;
   }
 
   std::filesystem::path dp(default_path);
