@@ -123,19 +123,21 @@ export component ExportSettingsCard inherits FilledCard {
                     spacing: 2px;
                     alignment: center;
 
-                    grid_area := TouchArea {
-                        CheckBoxRow {
-                            text: "Show Grid";
-                            enabled: root.enabled;
-                            check_state_bool <=> root.export_show_grid;
+                    grid_area := CheckBoxRow {
+                        text: "Show Grid";
+                        enabled: root.enabled;
+                        check_state_bool: root.export_show_grid;
+                        checked_state_changed(s) => {
+                            root.export_show_grid = s;
                         }
                     }
 
-                    legend_area := TouchArea {
-                        CheckBoxRow {
-                            text: "Show Legend";
-                            enabled: root.enabled;
-                            check_state_bool <=> root.export_show_legend;
+                    legend_area := CheckBoxRow {
+                        text: "Show Legend";
+                        enabled: root.enabled;
+                        check_state_bool: root.export_show_legend;
+                        checked_state_changed(s) => {
+                            root.export_show_legend = s;
                         }
                     }
                 }

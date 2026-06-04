@@ -122,6 +122,12 @@ target_include_directories(correlation_lib PUBLIC
 )
 
 target_compile_definitions(correlation_lib PUBLIC _PSTL_PAR_BACKEND_TBB)
+if(BUILD_WITH_HDF5)
+    target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_HDF5)
+endif()
+if(BUILD_WITH_ARROW)
+    target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_ARROW)
+endif()
 
 target_link_libraries(correlation_lib PUBLIC correlation_simd_options)
 
