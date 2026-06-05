@@ -14,7 +14,7 @@
 #include "plotters/SvgPlotter.hpp"
 #include <nfd.h>
 
-#include <memory>
+#include <chrono>
 #include <thread>
 
 class AppControllerTests;
@@ -52,8 +52,6 @@ private:
   AppWindow &ui_;       ///< Reference to the managed UI window.
   AppBackend &backend_; ///< Reference to the logic backend.
 
-
-
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
   std::thread load_thread_;     ///< Handle for the background file loading process.
 
@@ -71,6 +69,16 @@ private:
   bool mouse_hover_ = false;
   float last_plot_width_ = 0.0f;
   float last_plot_height_ = 0.0f;
+
+  // Cache and throttling variables for mouse hover / select plot
+  std::chrono::steady_clock::time_point last_replot_time_;
+  slint::Timer hover_timer_;
+  bool timer_scheduled_ = false;
+
+  int last_rendered_index_ = -1;
+  correlation::plotters::PlotConfig last_config_;
+  correlation::plotters::HoverInfo last_hover_;
+  std::size_t last_pinned_runs_count_ = 0;
 
   /**
    * @brief Helper to update the UI progress bar and status text safely.
@@ -159,8 +167,6 @@ private:
    * Opens an open file dialog to select the input trajectory/structure.
    */
   void handleBrowseFile();
-
-
 
   /**
    * @brief Populates the UI plot dropdown with the available histogram names

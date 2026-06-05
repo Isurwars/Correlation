@@ -46,6 +46,7 @@ struct PlotConfig {
   double font_scale = 1.0;     ///< Multiplier for all font sizes
   double line_width = 3.0;     ///< Data line stroke width
   bool show_legend = true;     ///< Toggle legend visibility
+  bool use_native_text = false; ///< Use standard SVG <text> elements instead of Hershey paths.
 
   /** @brief Color palette selections */
   enum class Palette {
@@ -296,9 +297,17 @@ inline std::string fmtScientific(double v) {
  * @brief Renders text as a filled SVG path using the Roboto outline font.
  * Uses evenodd fill-rule to render the font's inner holes properly.
  */
-inline std::string renderTextAsPath(const std::string &text, double x, double y, double size, const std::string &anchor, const std::string &color) {
-  std::string path_d = Roboto::instance().render(text, x, y, size, anchor);
-  return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n", path_d, color);
+inline std::string renderTextAsPath(const std::string &text, double x, double y, double size, const std::string &anchor, const std::string &color, bool use_native_text = false) {
+  if (use_native_text) {
+    std::string text_anchor = "start";
+    if (anchor == "middle") text_anchor = "middle";
+    else if (anchor == "end") text_anchor = "end";
+    return std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{:.1f}\" text-anchor=\"{}\" fill=\"{}\">{}</text>\n",
+                       x, y, size, text_anchor, color, text);
+  } else {
+    std::string path_d = Roboto::instance().render(text, x, y, size, anchor);
+    return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n", path_d, color);
+  }
 }
 
 /**
@@ -344,11 +353,18 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
   const auto &xs = hist.bins;
 
   if (xs.empty() || partials.empty()) {
-    std::string no_data_path = Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
-    return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
-                       "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-                       "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
-                       kW, kH, config.bg_color(), no_data_path, config.text_color());
+    if (config.use_native_text) {
+      return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
+                         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
+                         "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
+                         kW, kH, config.bg_color(), kW / 2.0, kH / 2.0 + 8.0, 24.0 * config.font_scale, config.text_color());
+    } else {
+      std::string no_data_path = Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
+      return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
+                         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
+                         "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
+                         kW, kH, config.bg_color(), no_data_path, config.text_color());
+    }
   }
 
   // ---- Compute ranges and nice ticks -----------------------------------
@@ -388,7 +404,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        px0 - 8.0, spy, px0, spy, config.axis_color());
     // Label
-    svg << renderTextAsPath(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20.0 * config.font_scale, "end", config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20.0 * config.font_scale, "end", config.text_color(), config.use_native_text);
   }
 
   for (double xv : xScale.ticks) {
@@ -402,7 +418,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        spx, py1, spx, py1 + 8.0, config.axis_color());
     // Label
-    svg << renderTextAsPath(detail::fmtScientific(xv), spx, py1 + 25.0, 20.0 * config.font_scale, "middle", config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(xv), spx, py1 + 25.0, 20.0 * config.font_scale, "middle", config.text_color(), config.use_native_text);
   }
 
   // Draw axis border
@@ -456,17 +472,17 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                          lx - 40.0, ly, lx - 10.0, ly, it->second);
-      svg << renderTextAsPath(it->first, lx - 45.0, ly + 6.0, 18.0 * config.font_scale, "end", config.text_color());
+      svg << renderTextAsPath(it->first, lx - 45.0, ly + 6.0, 18.0 * config.font_scale, "end", config.text_color(), config.use_native_text);
       ly += 28.0;
     }
   }
 
   // Titles/Labels
-  svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config.font_scale, "middle", config.text_color());
+  svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config.font_scale, "middle", config.text_color(), config.use_native_text);
 
   // Y label rotated
   svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
-  svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config.font_scale, "middle", config.text_color());
+  svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config.font_scale, "middle", config.text_color(), config.use_native_text);
   svg << "  </g>\n";
 
   // Hover tracking interaction
@@ -541,7 +557,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
         
         // Tooltip position (flip sides depending on cursor location)
         double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
-        double ty = std::clamp(sy - 30.0, py0 + 10.0, py1 - tooltip_h - 10.0);
+        double ty = py0 + 15.0;
 
         std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
         std::string card_border = (config.theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
@@ -560,7 +576,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
           header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), target_x);
         }
         
-        svg << renderTextAsPath(header_txt, tx + 12.0, ty + 20.0, 14.0 * config.font_scale, "start", text_col);
+        svg << renderTextAsPath(header_txt, tx + 12.0, ty + 20.0, 14.0 * config.font_scale, "start", text_col, config.use_native_text);
 
         double cur_y = ty + 42.0;
         for (const auto &[name, val, col] : hover_values) {
@@ -569,7 +585,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
                              tx + 18.0, cur_y - 4.0, col);
           // Label and value
           std::string line_txt = std::format("{}: {:.4f}", name, val);
-          svg << renderTextAsPath(line_txt, tx + 30.0, cur_y, 13.0 * config.font_scale, "start", text_col);
+          svg << renderTextAsPath(line_txt, tx + 30.0, cur_y, 13.0 * config.font_scale, "start", text_col, config.use_native_text);
           cur_y += 22.0;
         }
       }
@@ -659,12 +675,18 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
   }
 
   if (raw_x_max <= raw_x_min || raw_y_max <= raw_y_min) {
-    std::string no_data_path = Roboto::instance().render("No comparison data", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
-    return std::format("<svg width='{}' height='{}' xmlns=\"http://www.w3.org/2000/svg\" "
-                       "viewBox=\"0 0 {} {}\">"
-                       "<rect width=\"100%\" height=\"100%\" fill=\"{}\"/>"
-                       "<path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
-                       kW, kH, kW, kH, config.bg_color(), no_data_path, config.text_color());
+    if (config.use_native_text) {
+      return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
+                         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
+                         "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No comparison data</text></svg>",
+                         kW, kH, config.bg_color(), kW / 2.0, kH / 2.0 + 8.0, 24.0 * config.font_scale, config.text_color());
+    } else {
+      std::string no_data_path = Roboto::instance().render("No comparison data", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
+      return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
+                         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
+                         "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
+                         kW, kH, config.bg_color(), no_data_path, config.text_color());
+    }
   }
 
   double y_padding = (raw_y_max - raw_y_min) * 0.05;
@@ -689,7 +711,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        px0 - 8.0, spy, px0, spy, config.axis_color());
-    svg << renderTextAsPath(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20.0 * config.font_scale, "end", config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20.0 * config.font_scale, "end", config.text_color(), config.use_native_text);
   }
 
   for (double xv : xScale.ticks) {
@@ -702,7 +724,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        spx, py1, spx, py1 + 8.0, config.axis_color());
-    svg << renderTextAsPath(detail::fmtScientific(xv), spx, py1 + 25.0, 20.0 * config.font_scale, "middle", config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(xv), spx, py1 + 25.0, 20.0 * config.font_scale, "middle", config.text_color(), config.use_native_text);
   }
 
   // Axis border
@@ -743,17 +765,17 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                          lx - 40.0, ly, lx - 10.0, ly, it->second);
-      svg << renderTextAsPath(it->first, lx - 45.0, ly + 6.0, 18.0 * config.font_scale, "end", config.text_color());
+      svg << renderTextAsPath(it->first, lx - 45.0, ly + 6.0, 18.0 * config.font_scale, "end", config.text_color(), config.use_native_text);
       ly += 28.0;
     }
   }
 
   // X-axis label
-  svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config.font_scale, "middle", config.text_color());
+  svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config.font_scale, "middle", config.text_color(), config.use_native_text);
 
   // Y-axis label (rotated)
   svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
-  svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config.font_scale, "middle", config.text_color());
+  svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config.font_scale, "middle", config.text_color(), config.use_native_text);
   svg << "  </g>\n";
 
   // Hover tracking interaction for comparison plot
@@ -834,7 +856,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
           double tooltip_h = 35.0 + 22.0 * hover_values.size();
           
           double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
-          double ty = std::clamp(sy - 30.0, py0 + 10.0, py1 - tooltip_h - 10.0);
+          double ty = py0 + 15.0;
 
           std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
           std::string card_border = (config.theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
@@ -852,17 +874,14 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
             header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), target_x);
           }
 
-          svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Inter', 'Roboto', sans-serif\" "
-                             "font-size=\"14\" font-weight=\"bold\" fill=\"{}\">{}</text>\n",
-                             tx + 12.0, ty + 24.0, text_col, header_txt);
+          svg << renderTextAsPath(header_txt, tx + 12.0, ty + 24.0, 14.0 * config.font_scale, "start", text_col, config.use_native_text);
 
           double cur_y = ty + 46.0;
           for (const auto &[name, val, col] : hover_values) {
             svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
                                tx + 18.0, cur_y - 5.0, col);
-            svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Inter', 'Roboto', sans-serif\" "
-                               "font-size=\"13\" fill=\"{}\">{}: {:.4f}</text>\n",
-                               tx + 30.0, cur_y, text_col, name, val);
+            std::string line_txt = std::format("{}: {:.4f}", name, val);
+            svg << renderTextAsPath(line_txt, tx + 30.0, cur_y, 13.0 * config.font_scale, "start", text_col, config.use_native_text);
             cur_y += 22.0;
           }
         }

@@ -21,10 +21,13 @@ TEST(SvgPlotterTests, RendersEmptyHistogramGracefully) {
   empty_hist.x_label = "Distance";
   empty_hist.y_label = "g(r)";
 
-  std::string svg = renderHistogramAsSvg(empty_hist);
+  PlotConfig config;
+  config.use_native_text = true;
+  std::string svg = renderHistogramAsSvg(empty_hist, config);
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("<svg"), std::string::npos);
   EXPECT_NE(svg.find("<text"), std::string::npos);
+  EXPECT_NE(svg.find("No data available"), std::string::npos);
   EXPECT_EQ(svg.find("<polyline"), std::string::npos);
 }
 
@@ -45,6 +48,7 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
   PlotConfig config;
   config.theme = PlotConfig::Theme::Light;
   config.show_grid = true;
+  config.use_native_text = true;
   std::string svg = renderHistogramAsSvg(hist, config);
 
   // Assert
@@ -52,8 +56,12 @@ TEST(SvgPlotterTests, RendersValidHistogramCorrectly) {
   EXPECT_NE(svg.find("<svg"), std::string::npos);
   EXPECT_NE(svg.find("</svg>"), std::string::npos);
 
-  // Verify labels are in the SVG output (they are converted to SVG paths by PathFont/Roboto)
-  // Let's verify that the structure draws polylines/lines
+  // Verify labels are in the SVG output
+  EXPECT_NE(svg.find("<text"), std::string::npos);
+  EXPECT_NE(svg.find("r (A)"), std::string::npos);
+  EXPECT_NE(svg.find("g (A^-1)"), std::string::npos);
+
+  // Verify that the structure draws polylines/lines
   EXPECT_NE(svg.find("<polyline"), std::string::npos);
   EXPECT_NE(svg.find("stroke=\"#E69F00\""), std::string::npos); // First color Orange
   EXPECT_NE(svg.find("stroke=\"#56B4E9\""), std::string::npos); // Second color Sky Blue
@@ -104,6 +112,7 @@ TEST(SvgPlotterTests, RendersWithHoverActive) {
   hist.partials["Total"] = {0.5, 1.0, 1.5};
 
   PlotConfig config;
+  config.use_native_text = true;
   HoverInfo hover;
   hover.active = true;
   hover.mouse_x = 200.0;

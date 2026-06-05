@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.3.0] - 2026-06-05
+
+### Added
+- **High-Fidelity Roboto Font Paths**: Integrated high-resolution glyph coordinates extracted directly from `Roboto-Regular.ttf` using 16-step Bezier-flattening. Normalized paths to a standard EM square $[0, 1]$ and restructured the rendering loop for beautiful and crisp vector rendering.
+- **Dynamic Superscript Generation**: Added automatic generation of scientific superscripts (`⁰`-`⁹`, `⁺`, `⁻`, `⁼`, `⁽`, `⁾`, `ⁿ`) via scaling and shifting the native base Roboto glyphs.
+- **UI Freeze Prevention**: Added sophisticated event caching and timer-based throttling (100ms) for mouse hover and plot selection events to prevent the GUI from entering infinite layout recalculation loops triggered by floating-point drift or parent widget resize events.
+
+### Fixed
+- **Mouse Hover Lag and CPU Spike**: Throttled mouse movement events to 100ms intervals using `slint::Timer` and added caching of active parameters (coordinates, config, plot selection) to prevent redundant replotting, breaking the infinite layout-recalculation loop and ensuring buttery-smooth guide line tracking in the GUI.
+
 ## [3.2.2] - 2026-06-04
 
 ### Changed

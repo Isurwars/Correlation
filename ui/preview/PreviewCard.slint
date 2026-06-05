@@ -147,11 +147,20 @@ export component PreviewCard inherits FilledCard {
             }
 
             // The rendered SVG plot
-            if root.preview_plot.width > 0: plot_touch := TouchArea {
+            plot_touch := TouchArea {
                 width: 100%;
                 height: 100%;
+                visible: root.preview_plot.width > 0;
 
                 changed has-hover => {
+                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                }
+
+                changed mouse-x => {
+                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                }
+
+                changed mouse-y => {
                     root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                 }
 
