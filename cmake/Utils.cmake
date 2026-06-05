@@ -15,6 +15,28 @@ function(bundle_windows_dlls target_name)
     endif()
 endfunction()
 
+# -----------------------------------------------------------
+# Helper: Link platform-specific dependencies for static Slint
+# -----------------------------------------------------------
+# When Slint is built from source as a static library, its Rust
+# internals depend on system frameworks/libraries that are NOT
+# propagated transitively through CMake.  Call this function on
+# every target that links Slint::Slint.
+function(link_slint_platform_deps target_name)
+    if (APPLE)
+        foreach(_fw IN ITEMS
+            OpenGL CoreVideo Cocoa Carbon IOKit QuartzCore
+            AppKit CoreGraphics Metal CoreFoundation Foundation Security)
+            find_library(_${_fw}_FW ${_fw} REQUIRED)
+            target_link_libraries(${target_name} PRIVATE ${_${_fw}_FW})
+            unset(_${_fw}_FW CACHE)          # don't pollute the cache
+        endforeach()
+    elseif (NOT WIN32)
+        find_package(Fontconfig REQUIRED)
+        target_link_libraries(${target_name} PRIVATE Fontconfig::Fontconfig)
+    endif()
+endfunction()
+
 # Ensure that runtime DLLs are correctly included in the CPack installation
 function(install_windows_dlls target_name dest_dir)
     if(WIN32)

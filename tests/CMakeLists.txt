@@ -144,6 +144,9 @@ if(BUILD_GUI)
         nfd
     )
 
+    # Link platform-specific deps required by a statically-built Slint
+    link_slint_platform_deps(correlation_gui_tests)
+
     # Add slint target sources for AppWindow
     slint_target_sources(correlation_gui_tests
         ../ui/AppWindow.slint

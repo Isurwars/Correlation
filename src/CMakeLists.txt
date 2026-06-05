@@ -171,6 +171,9 @@ if(BUILD_GUI)
         list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme)
     endif()
 
+    # Link platform-specific deps required by a statically-built Slint
+    link_slint_platform_deps(correlation)
+
     # We link readers_obj directly to ensure static registration
     target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS} readers_obj writers_obj calculators_obj)
 
