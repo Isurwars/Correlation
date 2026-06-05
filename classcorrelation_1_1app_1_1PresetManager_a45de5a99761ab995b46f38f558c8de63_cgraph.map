@@ -1,0 +1,7 @@
+<map id="correlation::app::PresetManager::save" name="correlation::app::PresetManager::save">
+<area shape="rect" id="Node000001" title="Saves a preset to a JSON file in the presets directory." alt="" coords="5,37,179,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetManager.html#af7e5ef56ac5c6990918b2521133a05f1" title="Gets the folder path where user presets are saved (~/.correlation/presets/)." alt="" coords="227,5,421,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,43,213,38,213,43,179,48"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PresetManager.html#afa81ecbc5124892fab324afafedd6021" title="Serializes a Preset object to a JSON string." alt="" coords="237,69,411,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="179,67,224,73,223,78,178,72"/>
+</map>

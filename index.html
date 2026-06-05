@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.2.2</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -81,178 +81,325 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_README"></a> <img src="Images/Banner.png" alt="" class="inline"/></p>
-<h1><a class="anchor" id="autotoc_md17"></a>
+<h1><a class="anchor" id="correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids"></a>
 &lt;tt&gt;Correlation&lt;/tt&gt;: An Analysis Tool for Liquids and for Amorphous Solids</h1>
-<p><a href="https://doi.org/10.5281/zenodo.5514113"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a> <a href="https://img.shields.io/badge/version-3.0.0-green"><img src="https://img.shields.io/badge/version-3.0.0-green" alt="Version" class="inline"/></a> <a href="https://img.shields.io/badge/license-MIT-brightgreen"><img src="https://img.shields.io/badge/license-MIT-brightgreen" alt="License" class="inline"/></a> <a class="el" href="md_docs_2CODE__OF__CONDUCT.html">![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)</a> <a href="https://doi.org/10.21105/joss.02976"><img src="https://joss.theoj.org/papers/10.21105/joss.02976/status.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a></p>
-<p><code>Correlation</code> is a high-performance, user-friendly tool for calculating and analyzing the structural properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, and crystalline structures.</p>
-<p>The software computes key correlation functions from atomic coordinate files and exports the results in clean, ready-to-plot CSV files, making it easy to integrate into scientific workflows.</p>
-<h2><a class="anchor" id="autotoc_md18"></a>
+<p><a href="https://doi.org/10.5281/zenodo.5514113"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.5514113.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a> <a href="https://img.shields.io/badge/version-3.2.2-green"><img src="https://img.shields.io/badge/version-3.2.2-green" alt="Version" class="inline"/></a> <a href="https://img.shields.io/badge/license-MIT-brightgreen"><img src="https://img.shields.io/badge/license-MIT-brightgreen" alt="License" class="inline"/></a> <a class="el" href="md_docs_2CODE__OF__CONDUCT.html">![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)</a> <a href="https://doi.org/10.5281/zenodo.5514113"><img src="https://joss.theoj.org/papers/10.21105/joss.02976/status.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a></p>
+<p><code>Correlation</code> is a high-performance, user-friendly tool for calculating and analyzing the structural and dynamic properties of materials. It is designed for researchers working with atomistic simulations of liquids, amorphous solids, crystalline structures, and soft-matter systems.</p>
+<p>The software computes key correlation functions from atomic coordinate trajectories and exports results in multiple formats (CSV, Parquet, HDF5), making it easy to integrate into scientific workflows.</p>
+<hr  />
+<h2><a class="anchor" id="table-of-contents"></a>
 Table of Contents</h2>
 <ul>
-<li><a href="#correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids"><code>Correlation</code>: An Analysis Tool for Liquids and for Amorphous Solids</a><ul>
-<li><a href="#table-of-contents">Table of Contents</a></li>
-<li><a href="#key-features">Key Features</a></li>
-<li><a href="#quick-start-installation">Quick Start: Installation</a><ul>
-<li><a href="#prerequisites">Prerequisites</a></li>
-<li><a href="#windows">Windows</a></li>
-<li><a href="#linux-debianubuntu">Linux (Debian/Ubuntu)</a></li>
-<li><a href="#linux-archmanjaro">Linux (Arch/Manjaro)</a></li>
-<li><a href="#macos">MacOS</a></li>
-<li><a href="#build-instructions">Build Instructions</a><ul>
-<li><a href="#clone-the-repository">Clone the repository:</a></li>
-<li><a href="#build-the-project">Build the project:</a></li>
-<li><a href="#run-tests">Run tests:</a></li>
-<li><a href="#optional-install-system-wide">(OPTIONAL) Install system-wide:</a></li>
+<li><a class="el" href="index.html#correlation-an-analysis-tool-for-liquids-and-for-amorphous-solids">`Correlation`: An Analysis Tool for Liquids and for Amorphous Solids</a><ul>
+<li><a class="el" href="index.html#table-of-contents">Table of Contents</a></li>
+<li><a class="el" href="index.html#key-features">Key Features</a><ul>
+<li><a class="el" href="index.html#autotoc_md-comprehensive-calculator-suite">📊 Comprehensive Calculator Suite</a></li>
+<li><a class="el" href="index.html#autotoc_md-broad-file-format-support">📂 Broad File Format Support</a></li>
+<li><a class="el" href="index.html#autotoc_md-high-performance-core">🚀 High Performance Core</a></li>
+</ul>
+</li>
+<li><a class="el" href="index.html#installation">Installation</a><ul>
+<li><a class="el" href="index.html#prerequisites">Prerequisites</a><ul>
+<li><a class="el" href="index.html#package-managers-installation-examples">Package Managers Installation Examples</a><ul>
+<li><a class="el" href="index.html#linux-debianubuntu">Linux (Debian/Ubuntu)</a></li>
+<li><a class="el" href="index.html#linux-archmanjaro">Linux (Arch/Manjaro)</a></li>
+<li><a class="el" href="index.html#macos-homebrew">MacOS (Homebrew)</a></li>
+<li><a class="el" href="index.html#windows">Windows</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#usage">Usage</a><ul>
-<li><a href="#1-load-a-structure-file">1. Load a Structure File</a></li>
-<li><a href="#2-file-information">2. File Information</a></li>
-<li><a href="#3-configure-analysis-options">3. Configure Analysis Options</a></li>
-<li><a href="#4-bond-cutoffs">4. Bond Cutoffs</a></li>
-<li><a href="#5-run-analysis">5. Run Analysis</a></li>
+<li><a class="el" href="index.html#build-instructions">Build Instructions</a></li>
+<li><a class="el" href="index.html#cmake-build-options">CMake Build Options</a></li>
 </ul>
 </li>
-<li><a href="#built-with">Built with</a></li>
-<li><a href="#authors">Authors</a></li>
-<li><a href="#license">License</a></li>
-<li><a href="#acknowledgments">Acknowledgments</a></li>
+<li><a class="el" href="index.html#usage-modes">Usage Modes</a><ul>
+<li><a class="el" href="index.html#autotoc_md1-graphical-user-interface-gui">1. Graphical User Interface (GUI)</a><ul>
+<li><a class="el" href="index.html#gui-workflow">GUI Workflow:</a></li>
+</ul>
+</li>
+<li><a class="el" href="index.html#autotoc_md2-command-line-interface-cli">2. Command Line Interface (CLI)</a><ul>
+<li><a class="el" href="index.html#usage-example">Usage Example:</a></li>
+<li><a class="el" href="index.html#command-options">Command Options:</a></li>
+<li><a class="el" href="index.html#calculator-ids-for---calculators">Calculator IDs for `--calculators`:</a></li>
+</ul>
+</li>
+<li><a class="el" href="index.html#autotoc_md3-python-bindings">3. Python Bindings</a><ul>
+<li><a class="el" href="index.html#installation-1">Installation</a></li>
+<li><a class="el" href="index.html#code-example">Code Example</a></li>
 </ul>
 </li>
 </ul>
-<h2><a class="anchor" id="autotoc_md19"></a>
+</li>
+<li><a class="el" href="index.html#built-with">Built with</a></li>
+<li><a class="el" href="index.html#authors">Authors</a></li>
+<li><a class="el" href="contributing.html#license">License</a></li>
+<li><a class="el" href="index.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+</ul>
+<hr  />
+<h2><a class="anchor" id="key-features"></a>
 Key Features</h2>
-<p>Comprehensive Analysis: Calculates a full suite of standard correlation functions:</p>
+<h3><a class="anchor" id="autotoc_md-comprehensive-calculator-suite"></a>
+📊 Comprehensive Calculator Suite</h3>
+<p><code>Correlation</code> computes a rich set of structural, angular, ring, and dynamic properties:</p><ul>
+<li><b>Radial/Pair Distributions</b>: Radial Distribution Function ($J(r)$), Pair Distribution Function ($g(r)$), and Reduced Pair Distribution Function ($G(r)$).</li>
+<li><b>Structure Factor &amp; Diffraction</b>: Structure Factor ($S(Q)$ or $S(K)$) and X-ray Diffraction (XRD) patterns.</li>
+<li><b>Angular Distributions</b>: Plane-Angle Distribution (PAD), Dihedral-Angle Distribution (DAD), and generic bond angles.</li>
+<li><b>Topological &amp; Neighbors</b>: Coordination Number (CN), Common Neighbor Analysis (CNA), Ring Distribution (RD), and Cluster Analysis.</li>
+<li><b>Dynamics</b>: Mean Squared Displacement (MSD), Velocity Autocorrelation Function (VACF), and Vibrational Density of States (VDOS).</li>
+<li><b>Advanced Mapping</b>: Steinhardt Bond-Orientational Parameters ($Q_4, Q_6, W_6$), Hydrogen Bond Analysis, and 3D Spatial Distribution Functions (SDF).</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md-broad-file-format-support"></a>
+📂 Broad File Format Support</h3>
+<p>Compatible with structure and trajectory files from:</p><ul>
+<li><b>VASP</b> (<code>.poscar</code>, <code>.contcar</code>, <code>.vasp</code>, <code>.xdatcar</code>)</li>
+<li><b>LAMMPS</b> (<code>.dump</code>, <code>.lammpstrj</code>)</li>
+<li><b>GROMACS</b> (<code>.gro</code>, <code>.xtc</code>, <code>.trr</code>)</li>
+<li><b>PDB</b> (<code>.pdb</code>, <code>.ent</code>)</li>
+<li><b>Quantum ESPRESSO</b> (<code>.pwi</code>, <code>.pwo</code>, <code>.in</code>, <code>.out</code>)</li>
+<li><b>CP2K</b> (<code>.inp</code>, <code>.restart</code>, <code>.out</code>, <code>.cp2k</code>)</li>
+<li><b>Extended XYZ</b> (<code>.xyz</code>, <code>.exyz</code>)</li>
+<li><b>Crystallographic Information</b> (<code>.cif</code>)</li>
+<li><b>Materials Studio / Accelrys</b> (<code>.car</code>, <code>.arc</code>)</li>
+<li><b>CASTEP</b> (<code>.cell</code>, <code>.md</code>)</li>
+<li><b>ONETEP</b> (<code>.dat</code>)</li>
+</ul>
+<h3><a class="anchor" id="autotoc_md-high-performance-core"></a>
+🚀 High Performance Core</h3>
 <ul>
-<li>Radial Distribution Function (J(r))</li>
-<li>Pair Distribution Function (g(r))</li>
-<li>Reduced Pair Distribution Function (G(r))</li>
-<li>Coordination Number (CN)</li>
-<li>Structure Factor (S(Q))</li>
-<li>X-Ray Diffraction (XRD)</li>
-<li>Plane-Angle Distribution (PAD)</li>
-<li>Dihedral-Angle Distribution (DAD)</li>
-<li>Ring Distribution (RD)</li>
-<li>Mean Squared Displacement (MSD)</li>
-<li>Steinhardt Bond-Orientational Parameters (Q4, Q6, W6)</li>
-<li>Velocity Autocorrelation Function (VACF)</li>
-<li>Vibrational Density of States (VDOS)</li>
-<li>Common Neighbor Analysis (CNA)</li>
-<li>Hydrogen Bond Analysis (H-Bond)</li>
-<li>Cluster Analysis</li>
-<li>Spatial Distribution Function (SDF)</li>
-<li>Angle Calculator (generic bond angles)</li>
-<li>Distance Calculator</li>
+<li><b>Cell-Lists Partitioning</b>: Neighbor searching scales at $O(N)$ complexity instead of $O(N^2)$ for large systems.</li>
+<li><b>SIMD Vectorization</b>: Optimization using AVX2/AVX-512 vector execution.</li>
+<li><b>Task-Based Parallelism</b>: Advanced parallelization using Intel Threading Building Blocks (TBB).</li>
+<li><b>Optional GPU Acceleration</b>: CUDA-accelerated $S(Q)$ computation (<code>-DBUILD_WITH_CUDA=ON</code>) with automatic CPU fallback.</li>
+<li><b>Memory-Mapped I/O</b>: Efficient lazy loading of multi-gigabyte trajectory files via <code>MappedFile</code>.</li>
 </ul>
-<p>Supports structure and trajectory files from:</p><ul>
-<li>VASP (<code>.POSCAR</code>, <code>.CONTCAR</code>, <code>.VASP</code>, <code>.XDATCAR</code>)</li>
-<li>Crystallographic Information Files (<code>.CIF</code>)</li>
-<li>DMol3 / Accelrys (<code>.CAR</code>, <code>.ARC</code>)</li>
-<li>CASTEP (<code>.CELL</code>, <code>.MD</code>)</li>
-<li>ONETEP (<code>.DAT</code>)</li>
-<li>LAMMPS (<code>.DUMP</code>, <code>.LAMMPSTRJ</code>)</li>
-<li>Extended XYZ (<code>.XYZ</code>, <code>.EXYZ</code>)</li>
-<li>GROMACS (<code>.GRO</code>)</li>
-<li>PDB (<code>.PDB</code>, <code>.ENT</code>)</li>
-<li>Quantum ESPRESSO (<code>.PWI</code>, <code>.PWO</code>, <code>.IN</code>, <code>.OUT</code>)</li>
-<li>CP2K (<code>.INP</code>, <code>.RESTART</code>, <code>.OUT</code>, <code>.CP2K</code>)</li>
-<li>DMol3/Gaussian (<code>.OUTMOL</code>)</li>
-</ul>
-<p>High Performance: The core calculation loops are parallelized using modern C++ techniques, enabling the analysis of systems with hundreds of thousands of atoms.</p>
-<p>Data Smoothing: Includes built-in kernel smoothing (Gaussian, Triweight) to clean up noisy data for better presentation and analysis.</p>
-<h2><a class="anchor" id="autotoc_md20"></a>
-Quick Start: Installation</h2>
-<h3><a class="anchor" id="autotoc_md21"></a>
+<hr  />
+<h2><a class="anchor" id="installation"></a>
+Installation</h2>
+<blockquote class="doxtable">
+<p>&zwj;[!TIP] <b>Pre-compiled Packages</b>: Pre-built packages for <b>Ubuntu/Debian</b> (<code>.deb</code>), <b>Arch Linux</b> (via <b>AUR</b>), <b>macOS</b> (<code>.dmg</code>), and <b>Windows</b> (installer) are provided directly in the GitHub <a href="https://github.com/Isurwars/Correlation/releases">Releases</a> section. </p>
+</blockquote>
+<h3><a class="anchor" id="prerequisites"></a>
 Prerequisites</h3>
 <ul>
-<li>A modern C++ compiler (C++23 support required)</li>
-<li>CMake (version 3.24+)</li>
-<li>git</li>
-<li>Intel TBB (for parallelization)</li>
-<li>Slint (for GUI)</li>
+<li><b>Compiler</b>: Modern C++ compiler with C++23 support (GCC 13+, Clang 16+, MSVC 2022+)</li>
+<li><b>CMake</b>: Version 3.24 or higher</li>
+<li><b>Git</b>: To clone the repository</li>
+<li><b>Intel TBB</b>: For parallelization</li>
+<li><b>Slint</b>: Required for GUI compilation</li>
+<li><b>Optional Dependencies</b>:<ul>
+<li><b>HDF5</b>: For HDF5 output format support</li>
+<li><b>Apache Arrow/Parquet</b>: For Parquet output format support</li>
+<li><b>CUDA Toolkit</b>: For GPU acceleration</li>
+<li><b>Python 3.9+ &amp; pybind11</b>: For compiling Python bindings</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md22"></a>
-Windows</h3>
-<ol type="1">
-<li><b>Install Visual Studio</b>: Download and install <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio</a> with the "Desktop development with C++" workload. This includes the MSVC compiler and CMake.</li>
-<li><b>Install Rust</b>: Download and install Rust from <a href="https://www.rust-lang.org/tools/install">rust-lang.org</a>.</li>
-<li><b>Install Git</b>: Download and install Git from <a href="https://git-scm.com/download/win">git-scm.com</a>.</li>
-</ol>
-<h3><a class="anchor" id="autotoc_md23"></a>
-Linux (Debian/Ubuntu)</h3>
+</li>
+</ul>
+<h4><a class="anchor" id="package-managers-installation-examples"></a>
+Package Managers Installation Examples</h4>
+<p><a class="anchor" id="linux-debianubuntu"></a> </p><h5>Linux (Debian/Ubuntu)</h5>
 <div class="fragment"><div class="line">sudo apt update</div>
-<div class="line">sudo apt install build-essential cmake git rustc cargo</div>
-<div class="line"># Optional: Install TBB and HDF5 if you prefer system libs over fetching</div>
-<div class="line">sudo apt install libtbb-dev libhdf5-dev</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md24"></a>
-Linux (Arch/Manjaro)</h3>
+<div class="line">sudo apt install build-essential cmake git rustc cargo libtbb-dev</div>
+<div class="line"># Optional:</div>
+<div class="line">sudo apt install libhdf5-dev</div>
+</div><!-- fragment --><p><a class="anchor" id="linux-archmanjaro"></a> </p><h5>Linux (Arch/Manjaro)</h5>
 <div class="fragment"><div class="line">sudo pacman -Syu</div>
-<div class="line">sudo pacman -S base-devel cmake git rust</div>
-<div class="line"># Optional: Install TBB and HDF5 if you prefer system libs over fetching</div>
-<div class="line">sudo pacman -S intel-tbb hdf5</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md25"></a>
-MacOS</h3>
+<div class="line">sudo pacman -S base-devel cmake git rust intel-tbb</div>
+<div class="line"># Optional:</div>
+<div class="line">sudo pacman -S hdf5</div>
+</div><!-- fragment --><p><a class="anchor" id="macos-homebrew"></a> </p><h5>MacOS (Homebrew)</h5>
 <div class="fragment"><div class="line">xcode-select --install</div>
-<div class="line">brew install cmake git rustup</div>
-<div class="line"># Optional: Install TBB and HDF5 if you prefer system libs over fetching</div>
-<div class="line">brew install tbb hdf5</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md26"></a>
+<div class="line">brew install cmake git rustup tbb</div>
+<div class="line"># Optional:</div>
+<div class="line">brew install hdf5</div>
+</div><!-- fragment --><p><a class="anchor" id="windows"></a> </p><h5>Windows</h5>
+<ol type="1">
+<li>Install <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio</a> with the "Desktop development with C++" workload (includes MSVC and CMake).</li>
+<li>Install <a href="https://www.rust-lang.org/tools/install">Rust</a> (required by the Slint GUI compiler).</li>
+<li>Install <a href="https://git-scm.com/download/win">Git</a>.</li>
+</ol>
+<hr  />
+<h3><a class="anchor" id="build-instructions"></a>
 Build Instructions</h3>
-<h4><a class="anchor" id="autotoc_md27"></a>
-Clone the repository:</h4>
-<div class="fragment"><div class="line">git clone https://github.com/isurwars/correlation.git</div>
+<ol type="1">
+<li><b>Clone the repository:</b> <div class="fragment"><div class="line">git clone https://github.com/isurwars/correlation.git</div>
 <div class="line">cd correlation</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md28"></a>
-Build the project:</h4>
-<div class="fragment"><div class="line">rm -rf build &amp;&amp; mkdir build &amp;&amp; cd build</div>
+</div><!-- fragment --></li>
+<li><b>Configure and Build:</b> <div class="fragment"><div class="line">mkdir build &amp;&amp; cd build</div>
 <div class="line">cmake ..</div>
 <div class="line">cmake --build .</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md29"></a>
-Run tests:</h4>
-<div class="fragment"><div class="line">ctest -V</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md30"></a>
-(OPTIONAL) Install system-wide:</h4>
-<div class="fragment"><div class="line">sudo cmake --install .</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md31"></a>
-Usage</h2>
-<p><code>Correlation</code> features an intuitive graphical user interface (GUI) to guide you through the analysis process. To start the application, run the executable:</p>
-<div class="fragment"><div class="line">./build/correlation</div>
+</div><!-- fragment --></li>
+<li><b>Run Tests:</b> <div class="fragment"><div class="line">ctest -V</div>
+</div><!-- fragment --></li>
+<li><b>Install (Optional):</b> <div class="fragment"><div class="line">sudo cmake --install .</div>
+</div><!-- fragment --></li>
+</ol>
+<hr  />
+<h3><a class="anchor" id="cmake-build-options"></a>
+CMake Build Options</h3>
+<p>Configure these options using <code>cmake .. -D&lt;OPTION&gt;=&lt;ON|OFF&gt;</code> during compilation:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadLeft">Option   </th><th class="markdownTableHeadLeft">Default   </th><th class="markdownTableHeadLeft">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>BUILD_GUI</code>   </td><td class="markdownTableBodyLeft"><code>ON</code>   </td><td class="markdownTableBodyLeft">Compiles the Slint-based Graphical User Interface (<code>correlation</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>BUILD_PYTHON_BINDINGS</code>   </td><td class="markdownTableBodyLeft"><code>OFF</code>   </td><td class="markdownTableBodyLeft">Compiles Python bindings via pybind11    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>BUILD_WITH_HDF5</code>   </td><td class="markdownTableBodyLeft"><code>OFF</code>   </td><td class="markdownTableBodyLeft">Enables HDF5 output format support (requires HDF5 library)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>BUILD_WITH_ARROW</code>   </td><td class="markdownTableBodyLeft"><code>OFF</code>   </td><td class="markdownTableBodyLeft">Enables Parquet output format support (requires Apache Arrow)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>BUILD_WITH_CUDA</code>   </td><td class="markdownTableBodyLeft"><code>OFF</code>   </td><td class="markdownTableBodyLeft">Enables CUDA GPU acceleration for structure factors (requires CUDA)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>ENABLE_COVERAGE</code>   </td><td class="markdownTableBodyLeft"><code>OFF</code>   </td><td class="markdownTableBodyLeft">Instruments binaries with coverage profiling (GCC/Clang only)   </td></tr>
+</table>
+<hr  />
+<h2><a class="anchor" id="usage-modes"></a>
+Usage Modes</h2>
+<p><code>Correlation</code> can be executed in three ways: via GUI, headless CLI, or Python.</p>
+<h3><a class="anchor" id="autotoc_md1-graphical-user-interface-gui"></a>
+1. Graphical User Interface (GUI)</h3>
+<p>Start the GUI version by running the main executable: </p><div class="fragment"><div class="line">./build/src/correlation</div>
 </div><!-- fragment --><p><img src="Images/demo.gif" alt="Correlation Demo" class="inline"/></p>
-<h3><a class="anchor" id="autotoc_md32"></a>
-1. Load a Structure File</h3>
-<p>Click the **"Load a structure file"** button in the <b>Input File</b> card. This opens a file dialog to select your material structure. Supported formats include <code>.car</code>, <code>.cell</code>, <code>.dat</code>, and <code>.xyz</code>.</p>
-<h3><a class="anchor" id="autotoc_md33"></a>
-2. File Information</h3>
-<p>Once a file is loaded, the <b>File Info</b> card displays the total atom count and the breakdown by element type.</p>
-<h3><a class="anchor" id="autotoc_md34"></a>
-3. Configure Analysis Options</h3>
-<p>Adjust the calculation parameters in the <b>Options</b> card:</p><ul>
-<li><b>Radial Distribution:</b> Set the maximum radius ($r_{max}$) and the bin width for Radial Distribution Functions.</li>
-<li><b>Structure Factor:</b> Set the maximum scattering vector ($Q_{max}$), the S(Q) bin width, and the maximum integration radius for the FFT.</li>
-<li><b>Bond Angle:</b> Set the bin widths for the Plane-Angle and Dihedral-Angle Distributions.</li>
-<li><b>Topological Rings:</b> Set the maximum ring size to search for in the Ring Distribution analysis.</li>
-<li><b>Smoothing:</b> Enable kernel smoothing and select the kernel type (Gaussian, Bump, or Triweight) and sigma value.</li>
-</ul>
-<h3><a class="anchor" id="autotoc_md35"></a>
-4. Bond Cutoffs</h3>
-<p>The <b>Bond Cutoffs</b> card allows you to review and manually adjust the distances used to define atomic bonds, which are used for coordination number, angle computations, and ring finding.</p>
-<h3><a class="anchor" id="autotoc_md36"></a>
-5. Run Analysis</h3>
-<p>Configure the final output and execution settings:</p><ul>
-<li><b>Select Analyses</b>: Check the boxes under the <b>Options</b> card for the specific analyses you wish to compute (e.g., Structural, Angular, Rings, Dynamic).</li>
-<li><b>Export Format</b>: In the <b>Run Analysis</b> card, choose to export results as <b>CSV</b>, <b>Parquet</b>, or <b>HDF5</b>.</li>
-<li><b>Frame Selection</b>: Specify the <b>Start Frame</b> and <b>End Frame</b> to analyze a specific subset of your trajectory.</li>
-<li><b>Run Analysis</b>: Click the **"Run Analysis"** button to start the computations. Progress will be displayed in the bar below.</li>
-<li><b>Write Files</b>: Once the analysis is complete, click **"Write Files"** to save the results to disk. </li>
-</ul>
-<h2><a class="anchor" id="autotoc_md37"></a>
+<h4><a class="anchor" id="gui-workflow"></a>
+GUI Workflow:</h4>
+<ol type="1">
+<li><b>Load File</b>: Click **"Load a structure file"** to import trajectories or structures.</li>
+<li><b>Verify File Info</b>: Check element distributions and frames in the <b>File Info</b> card.</li>
+<li><b>Configure Options</b>: Adjust thresholds, maximum integration lengths, bin widths, and smoothing parameters (Gaussian, Bump, Triweight).</li>
+<li><b>Define Bond Cutoffs</b>: Review or customize element-pair bond distance cutoffs.</li>
+<li><b>Run &amp; Save</b>: Choose output formats (CSV, HDF5, Parquet), run calculations, inspect the interactive dynamic plot preview, and save plots (SVG) or output datasets.</li>
+</ol>
+<hr  />
+<h3><a class="anchor" id="autotoc_md2-command-line-interface-cli"></a>
+2. Command Line Interface (CLI)</h3>
+<p>Run calculations headlessly using <code>correlation-cli</code> without requiring any graphical shell: </p><div class="fragment"><div class="line">./build/src/correlation-cli &lt;input_file&gt; [options]</div>
+</div><!-- fragment --><h4><a class="anchor" id="usage-example"></a>
+Usage Example:</h4>
+<div class="fragment"><div class="line">./build/src/correlation-cli Trajectory.xdatcar -o ./output/run_1 --calculators RDF,CNA,MSD --r-max 12.0 --csv --hdf5</div>
+</div><!-- fragment --><h4><a class="anchor" id="command-options"></a>
+Command Options:</h4>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadLeft">Flag   </th><th class="markdownTableHeadLeft">Parameter   </th><th class="markdownTableHeadLeft">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>-o</code>, <code>--output</code>   </td><td class="markdownTableBodyLeft"><code>&lt;path&gt;</code>   </td><td class="markdownTableBodyLeft">Base output path (default: input stem)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--r-max</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Max radius for RDF calculations (default: <code>20.0</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--r-bin</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Bin width for RDF (default: <code>0.02</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--q-max</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Max momentum vector $Q$ for $S(Q)$ (default: <code>20.0</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--q-bin</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Bin width for $S(Q)$ (default: <code>0.02</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--angle-bin</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Angular bin width in degrees (default: <code>1.0</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--max-ring-size</code>   </td><td class="markdownTableBodyLeft"><code>&lt;int&gt;</code>   </td><td class="markdownTableBodyLeft">Maximum size of topological rings to find (default: <code>8</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--time-step</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Simulation time step in fs (default: <code>1.0</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--min-frame</code>   </td><td class="markdownTableBodyLeft"><code>&lt;int&gt;</code>   </td><td class="markdownTableBodyLeft">Start frame index, 1-based (default: <code>1</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--max-frame</code>   </td><td class="markdownTableBodyLeft"><code>&lt;int&gt;</code>   </td><td class="markdownTableBodyLeft">End frame index, <code>-1</code> for all (default: <code>-1</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--csv</code> / <code>--no-csv</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Enable / Disable CSV tabular output (default: <code>ON</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--hdf5</code> / <code>--no-hdf5</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Enable / Disable HDF5 consolidated binary output (default: <code>OFF</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--parquet</code> / <code>--no-parquet</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Enable / Disable Parquet/Arrow tabular format (default: <code>OFF</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--calculators</code>   </td><td class="markdownTableBodyLeft"><code>&lt;list&gt;</code>   </td><td class="markdownTableBodyLeft">Comma-separated list of Calculator IDs to run (default: all)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--smoothing-sigma</code>   </td><td class="markdownTableBodyLeft"><code>&lt;float&gt;</code>   </td><td class="markdownTableBodyLeft">Standard deviation for Gaussian kernel smoothing (default: <code>0.1</code>)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>--smoothing-kernel</code>   </td><td class="markdownTableBodyLeft"><code>&lt;str&gt;</code>   </td><td class="markdownTableBodyLeft">Kernel type: <code>gaussian</code>, <code>bump</code>, or <code>triweight</code> (default: <code>gaussian</code>)    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>--no-smoothing</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Disable post-processing data smoothing    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>-q</code>, <code>--quiet</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Suppress command progress console messages    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>-h</code>, <code>--help</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Show usage help information    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>-v</code>, <code>--version</code>   </td><td class="markdownTableBodyLeft"></td><td class="markdownTableBodyLeft">Show program version   </td></tr>
+</table>
+<h4><a class="anchor" id="calculator-ids-for---calculators"></a>
+Calculator IDs for &lt;tt&gt;--calculators&lt;/tt&gt;:</h4>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadLeft">ID   </th><th class="markdownTableHeadLeft">Full Name   </th><th class="markdownTableHeadLeft">Group   </th><th class="markdownTableHeadLeft">Description    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>RDF</code>   </td><td class="markdownTableBodyLeft"><code>g(r), J(r), G(r)</code>   </td><td class="markdownTableBodyLeft">Radial   </td><td class="markdownTableBodyLeft">Radial, pair, and reduced distribution functions    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>S_K</code>   </td><td class="markdownTableBodyLeft"><code>S(K)</code>   </td><td class="markdownTableBodyLeft">Scattering   </td><td class="markdownTableBodyLeft">Static structure factor    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>S_Q_GPU</code>   </td><td class="markdownTableBodyLeft"><code>S(Q) — GPU Accelerated</code>   </td><td class="markdownTableBodyLeft">Scattering   </td><td class="markdownTableBodyLeft">GPU-powered structure factor    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>XRD</code>   </td><td class="markdownTableBodyLeft"><code>XRD</code>   </td><td class="markdownTableBodyLeft">Scattering   </td><td class="markdownTableBodyLeft">Powder X-ray diffraction pattern    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>PAD</code>   </td><td class="markdownTableBodyLeft"><code>PAD</code>   </td><td class="markdownTableBodyLeft">Angular   </td><td class="markdownTableBodyLeft">Plane-Angle distribution    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>DAD</code>   </td><td class="markdownTableBodyLeft"><code>DAD</code>   </td><td class="markdownTableBodyLeft">Angular   </td><td class="markdownTableBodyLeft">Dihedral-Angle distribution    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>CN</code>   </td><td class="markdownTableBodyLeft"><code>CN</code>   </td><td class="markdownTableBodyLeft">Structural   </td><td class="markdownTableBodyLeft">Coordination number counts    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>CNA</code>   </td><td class="markdownTableBodyLeft"><code>CNA</code>   </td><td class="markdownTableBodyLeft">Structural   </td><td class="markdownTableBodyLeft">Common Neighbor Analysis crystal topology    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>RD</code>   </td><td class="markdownTableBodyLeft"><code>RD</code>   </td><td class="markdownTableBodyLeft">Rings   </td><td class="markdownTableBodyLeft">Ring size distribution    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>MSD</code>   </td><td class="markdownTableBodyLeft"><code>MSD</code>   </td><td class="markdownTableBodyLeft">Dynamic   </td><td class="markdownTableBodyLeft">Mean squared displacement    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>VACF</code>   </td><td class="markdownTableBodyLeft"><code>VACF</code>   </td><td class="markdownTableBodyLeft">Dynamic   </td><td class="markdownTableBodyLeft">Velocity autocorrelation function    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>vDoS</code>   </td><td class="markdownTableBodyLeft"><code>vDoS</code>   </td><td class="markdownTableBodyLeft">Dynamic   </td><td class="markdownTableBodyLeft">Vibrational density of states    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>Steinhardt</code>   </td><td class="markdownTableBodyLeft"><code>Steinhardt Parameter</code>   </td><td class="markdownTableBodyLeft">Structural   </td><td class="markdownTableBodyLeft">Bond-orientational parameters ($Q_4, Q_6$)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>HBond</code>   </td><td class="markdownTableBodyLeft"><code>Hydrogen Bond</code>   </td><td class="markdownTableBodyLeft">Structural   </td><td class="markdownTableBodyLeft">Hydrogen bond analysis    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyLeft"><code>Clusters</code>   </td><td class="markdownTableBodyLeft"><code>Cluster Analysis</code>   </td><td class="markdownTableBodyLeft">Structural   </td><td class="markdownTableBodyLeft">Atomic cluster connectivity analysis    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><code>SDF</code>   </td><td class="markdownTableBodyLeft"><code>Spatial Distribution Function (3D)</code>   </td><td class="markdownTableBodyLeft">Spatial   </td><td class="markdownTableBodyLeft">3D local density map   </td></tr>
+</table>
+<hr  />
+<h3><a class="anchor" id="autotoc_md3-python-bindings"></a>
+3. Python Bindings</h3>
+<p>Integrate <code>Correlation</code> directly into Python data-science workflows (e.g., Jupyter Notebooks):</p>
+<h4><a class="anchor" id="installation-1"></a>
+Installation</h4>
+<p>Build and install the Python library from the repository root: </p><div class="fragment"><div class="line">pip install .</div>
+</div><!-- fragment --><h4><a class="anchor" id="code-example"></a>
+Code Example</h4>
+<div class="fragment"><div class="line"><span class="keyword">import</span> correlation</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Load structure or trajectory file</span></div>
+<div class="line">cell = correlation.Cell.from_file(<span class="stringliteral">&quot;structure.poscar&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Set up distribution functions analysis</span></div>
+<div class="line">df = correlation.DistributionFunctions(cell, cutoff=8.0)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Calculate RDF g(r), G(r), J(r)</span></div>
+<div class="line">df.calculate_rdf(r_max=15.0, bin_width=0.05)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Access calculated histogram datasets</span></div>
+<div class="line">rdf_hist = df.get_histogram(<span class="stringliteral">&quot;g_r&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Retrieve values</span></div>
+<div class="line">bins = rdf_hist.get_bins()          <span class="comment"># numpy float64 view</span></div>
+<div class="line">total_gr = rdf_hist.get_partial(<span class="stringliteral">&quot;Total&quot;</span>)  <span class="comment"># total RDF list</span></div>
+<div class="line"> </div>
+<div class="line">print(<span class="stringliteral">&quot;Bins:&quot;</span>, bins[:5])</div>
+<div class="line">print(<span class="stringliteral">&quot;Total g(r):&quot;</span>, total_gr[:5])</div>
+</div><!-- fragment --><hr  />
+<h2><a class="anchor" id="built-with"></a>
 Built with</h2>
 <ul>
 <li><a href="https://www.gnu.org/software/emacs/">emacs</a> - An extensible, customizable, free/libre text editor — and more.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md38"></a>
+<h2><a class="anchor" id="authors"></a>
 Authors</h2>
 <ul>
 <li><b>Isaías Rodríguez</b> - <em>Corresponding Author</em> - <a href="https://github.com/Isurwars">Isurwars</a> <a href="#" onclick="location.href='mai'+'lto:'+'isu'+'rw'+'ars'+'@g'+'mai'+'l.'+'com'; return false;">isurw<span class="obfuscator">.nosp@m.</span>ars@<span class="obfuscator">.nosp@m.</span>gmail<span class="obfuscator">.nosp@m.</span>.com</a></li>
@@ -263,12 +410,21 @@ Authors</h2>
 <li><b>Ulises Santiago</b></li>
 <li><b>Ariel A. Valladares</b> <a href="#" onclick="location.href='mai'+'lto:'+'val'+'la'+'dar'+'@u'+'nam'+'.m'+'x'; return false;">valla<span class="obfuscator">.nosp@m.</span>dar@<span class="obfuscator">.nosp@m.</span>unam.<span class="obfuscator">.nosp@m.</span>mx</a></li>
 </ul>
-<h2><a class="anchor" id="autotoc_md39"></a>
+<h2><a class="anchor" id="license-1"></a>
 License</h2>
-<p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details</p>
-<h2><a class="anchor" id="autotoc_md40"></a>
+<p>This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.</p>
+<h2><a class="anchor" id="acknowledgments"></a>
 Acknowledgments</h2>
-<p>I.R. acknowledge PAPIIT, DGAPA-UNAM for his postdoctoral fellowship. D.H.R. acknowledge Consejo Nacional de Ciencia y Tecnología (CONACyT) for supporting his graduate studies. A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617, IN116520 and IIN118223. M. T. Vázquez and O. Jiménez provided the information requested. A. López and A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM. Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM. I.R. would like to express his gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Villareal and A. de Leon, for their time invested in testing the code, as well as the structures provided for benchmarks and tests. </p>
+<ul>
+<li>I.R. acknowledge SECIHTI and DGAPA-UNAM for his postdoctoral fellowship.</li>
+<li>D.H.R. acknowledge DGAPA-UNAM for his postdoctoral fellowship.</li>
+<li>A.A.V., R.M.V., and A.V. thank DGAPA-UNAM for continued financial support to carry out research projects under Grant No. IN104617, IN116520, IIN118223 and IN119226.</li>
+<li>A.A.V., R.M.V., A.V., and I.R. acknowledge SECIHTI for the financial support to carry out research projects under Grant No. CBF-2025-G-886.</li>
+<li>M. T. Vázquez and O. Jiménez provided the information requested.</li>
+<li>A. Pompa helped with the maintenance and support of the supercomputer in IIM-UNAM.</li>
+<li>Simulations were partially carried out in the Supercomputing Center of DGTIC-UNAM.</li>
+<li>I.R. would like to express his gratitude to F. B. Quiroga, M. A. Carrillo, R. S. Vilchis, S. Calderón, A. de Leon, J.A. Albarran, David A. de Jésus and A. Perez-Aguiar for their time invested in testing the code, as well as the structures provided for benchmarks and tests. </li>
+</ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

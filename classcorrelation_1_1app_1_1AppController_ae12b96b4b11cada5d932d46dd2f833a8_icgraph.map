@@ -1,0 +1,11 @@
+<map id="correlation::app::AppController::validateInputs" name="correlation::app::AppController::validateInputs">
+<area shape="rect" id="Node000001" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="544,25,765,65"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,25,227,65"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="557,25,496,15,385,8,275,15,201,27,200,22,274,10,385,3,496,10,558,19"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,25,496,65"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="530,47,496,47,496,42,530,42"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,89,496,129"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="557,71,471,91,469,86,556,65"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="261,47,227,47,227,42,261,42"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="286,88,200,67,201,62,288,83"/>
+</map>

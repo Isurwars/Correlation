@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.2.2</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -195,9 +195,14 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="SvgPlotter_8hpp__dep__incl.png" border="0" usemap="#ainclude_2plotters_2SvgPlotter_8hppdep" alt=""/></div>
 <map name="ainclude_2plotters_2SvgPlotter_8hppdep" id="ainclude_2plotters_2SvgPlotter_8hppdep">
-<area shape="rect" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="5,5,227,31"/>
-<area shape="rect" href="AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="22,79,210,104"/>
-<area shape="poly" title=" " alt="" coords="119,44,119,79,113,79,113,44"/>
+<area shape="rect" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="62,5,283,31"/>
+<area shape="rect" href="AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="137,79,355,104"/>
+<area shape="poly" title=" " alt="" coords="196,38,236,77,232,80,193,42"/>
+<area shape="rect" href="AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,152,193,177"/>
+<area shape="poly" title=" " alt="" coords="154,43,127,80,112,119,104,152,99,151,107,117,122,77,150,39"/>
+<area shape="poly" title=" " alt="" coords="212,112,124,154,122,149,209,107"/>
+<area shape="rect" href="main_8cpp.html" title="Application entry point." alt="" coords="217,152,323,177"/>
+<area shape="poly" title=" " alt="" coords="257,116,269,151,264,153,252,118"/>
 </map>
 </div>
 </div>
@@ -226,9 +231,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af602ea63b3b440bb52fb442bb8d04cc3" id="r_af602ea63b3b440bb52fb442bb8d04cc3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#af602ea63b3b440bb52fb442bb8d04cc3">correlation::plotters::detail::color</a> (std::size_t i)</td></tr>
-<tr class="memdesc:af602ea63b3b440bb52fb442bb8d04cc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a color from the Okabe-Ito palette.  <br /></td></tr>
-<tr class="separator:af602ea63b3b440bb52fb442bb8d04cc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7821bb073924c3793f15ddc646ef1a3" id="r_ac7821bb073924c3793f15ddc646ef1a3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#ac7821bb073924c3793f15ddc646ef1a3">correlation::plotters::detail::color</a> (std::size_t i, <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html#a2b3d4f7c7956a735588e81aa8505e3c6">PlotConfig::Palette</a> pal)</td></tr>
+<tr class="memdesc:ac7821bb073924c3793f15ddc646ef1a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a color from the selected palette.  <br /></td></tr>
+<tr class="separator:ac7821bb073924c3793f15ddc646ef1a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd06030a0fc45c610fa740f72d301f78" id="r_abd06030a0fc45c610fa740f72d301f78"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#abd06030a0fc45c610fa740f72d301f78">correlation::plotters::detail::mapValue</a> (double v, double data_min, double data_max, double svg_min, double svg_max)</td></tr>
 <tr class="memdesc:abd06030a0fc45c610fa740f72d301f78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a value from data space to SVG coordinate space.  <br /></td></tr>
 <tr class="separator:abd06030a0fc45c610fa740f72d301f78"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -247,6 +252,12 @@ Variables</h2></td></tr>
 <tr class="memitem:a4120165fb62611315a9e4b7fd99b9c8c" id="r_a4120165fb62611315a9e4b7fd99b9c8c"><td class="memItemLeft" align="right" valign="top">static const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#a4120165fb62611315a9e4b7fd99b9c8c">correlation::plotters::detail::kColors</a></td></tr>
 <tr class="memdesc:a4120165fb62611315a9e4b7fd99b9c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Okabe-Ito colorblind-safe palette.  <br /></td></tr>
 <tr class="separator:a4120165fb62611315a9e4b7fd99b9c8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a971ff71a75ba9449a96cf3e81aa91eac" id="r_a971ff71a75ba9449a96cf3e81aa91eac"><td class="memItemLeft" align="right" valign="top">static const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#a971ff71a75ba9449a96cf3e81aa91eac">correlation::plotters::detail::kGrayscale</a></td></tr>
+<tr class="memdesc:a971ff71a75ba9449a96cf3e81aa91eac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Grayscale palette for B&amp;W printing.  <br /></td></tr>
+<tr class="separator:a971ff71a75ba9449a96cf3e81aa91eac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a398c29760a4f80d71c5b490b39908e14" id="r_a398c29760a4f80d71c5b490b39908e14"><td class="memItemLeft" align="right" valign="top">static const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#a398c29760a4f80d71c5b490b39908e14">correlation::plotters::detail::kViridis</a></td></tr>
+<tr class="memdesc:a398c29760a4f80d71c5b490b39908e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Viridis perceptually uniform palette.  <br /></td></tr>
+<tr class="separator:a398c29760a4f80d71c5b490b39908e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Scientifically precise SVG generator for distribution function histograms. </p>

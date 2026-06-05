@@ -1,13 +1,17 @@
 <map id="correlation::app::AppBackend::options" name="correlation::app::AppBackend::options">
-<area shape="rect" id="Node000001" title="Gets the current program options." alt="" coords="544,69,756,109"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#adba38f5bdc7f195ae4e0b69f6226b539" title="Propagates the current backend options to the UI elements." alt="" coords="275,5,496,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="553,69,468,48,469,43,554,63"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,69,496,109"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="530,92,496,92,496,87,530,87"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#a2402832c7a34c6c063b5bc3d192ea537" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="275,133,496,173"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="554,115,469,136,468,131,553,110"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,69,227,109"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="288,51,201,72,200,67,286,46"/>
-<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="261,92,227,92,227,87,261,87"/>
-<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="286,133,200,112,201,107,288,127"/>
+<area shape="rect" id="Node000001" title="Gets the current program options." alt="" coords="813,85,1025,125"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#adba38f5bdc7f195ae4e0b69f6226b539" title="Propagates the current backend options to the UI elements." alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="799,104,496,95,497,90,799,99"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="799,88,765,83,496,43,497,38,766,77,800,83"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#a2402832c7a34c6c063b5bc3d192ea537" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="544,177,765,217"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="859,133,766,168,729,180,727,175,764,163,857,128"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#a3f30efa4654e7c924f6a3afc8ffe6422" title="Updates active group flags in the UI based on active calculators." alt="" coords="544,113,765,153"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="800,121,766,124,765,119,800,115"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,99,227,139"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="261,106,227,109,227,104,261,100"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="300,52,276,60,166,101,165,96,274,55,298,47"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="530,182,227,137,227,132,531,177"/>
+<area shape="poly" id="edge9_Node000006_Node000002" title=" " alt="" coords="530,116,496,110,497,105,531,110"/>
+<area shape="poly" id="edge8_Node000006_Node000003" title=" " alt="" coords="530,133,227,124,227,119,530,127"/>
 </map>

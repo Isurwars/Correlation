@@ -5,6 +5,8 @@ var searchData=
   ['pinnedrun_2',['PinnedRun',['../structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html',1,'correlation::app::AppController']]],
   ['plotconfig_3',['PlotConfig',['../structcorrelation_1_1plotters_1_1PlotConfig.html',1,'correlation::plotters']]],
   ['positionblock_4',['PositionBlock',['../structcorrelation_1_1math_1_1PositionBlock.html',1,'correlation::math']]],
-  ['programoptions_5',['ProgramOptions',['../structcorrelation_1_1app_1_1ProgramOptions.html',1,'correlation::app']]],
-  ['pybasecalculator_6',['PyBaseCalculator',['../classPyBaseCalculator.html',1,'']]]
+  ['preset_5',['Preset',['../structcorrelation_1_1app_1_1Preset.html',1,'correlation::app']]],
+  ['presetmanager_6',['PresetManager',['../classcorrelation_1_1app_1_1PresetManager.html',1,'correlation::app']]],
+  ['programoptions_7',['ProgramOptions',['../structcorrelation_1_1app_1_1ProgramOptions.html',1,'correlation::app']]],
+  ['pybasecalculator_8',['PyBaseCalculator',['../classPyBaseCalculator.html',1,'']]]
 ];

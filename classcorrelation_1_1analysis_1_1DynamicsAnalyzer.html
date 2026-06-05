@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.2.2</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -107,6 +107,15 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a3320aac4b5903294dfe9f6d77e1eddc8" id="r_a3320aac4b5903294dfe9f6d77e1eddc8"><td class="memItemLeft" align="right" valign="top">static std::tuple&lt; std::vector&lt; double &gt;, std::vector&lt; double &gt;, std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8">calculateVDOS</a> (const std::vector&lt; double &gt; &amp;vacf, double dt)</td></tr>
 <tr class="memdesc:a3320aac4b5903294dfe9f6d77e1eddc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Vibrational Density of States (VDOS) from the VACF.  <br /></td></tr>
 <tr class="separator:a3320aac4b5903294dfe9f6d77e1eddc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9df03a3f349d9c78c3c96568daf58fb6" id="r_a9df03a3f349d9c78c3c96568daf58fb6"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a9df03a3f349d9c78c3c96568daf58fb6">computeDiffusionCoefficientMSD</a> (const std::vector&lt; double &gt; &amp;time, const std::vector&lt; double &gt; &amp;msd)</td></tr>
+<tr class="memdesc:a9df03a3f349d9c78c3c96568daf58fb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time series.  <br /></td></tr>
+<tr class="separator:a9df03a3f349d9c78c3c96568daf58fb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ef9fc3bec2884a6aafd366f6f2f22da" id="r_a7ef9fc3bec2884a6aafd366f6f2f22da"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7ef9fc3bec2884a6aafd366f6f2f22da">computeDiffusionCoefficientVACF</a> (const std::vector&lt; double &gt; &amp;time, const std::vector&lt; double &gt; &amp;vacf)</td></tr>
+<tr class="memdesc:a7ef9fc3bec2884a6aafd366f6f2f22da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule).  <br /></td></tr>
+<tr class="separator:a7ef9fc3bec2884a6aafd366f6f2f22da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2527d1ba87054053672ace64e213ee7" id="r_ac2527d1ba87054053672ace64e213ee7"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#ac2527d1ba87054053672ace64e213ee7">computeRelaxationTime</a> (const std::vector&lt; double &gt; &amp;time, const std::vector&lt; double &gt; &amp;norm_vacf)</td></tr>
+<tr class="memdesc:ac2527d1ba87054053672ace64e213ee7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the relaxation time tau from the normalized VACF using trapezoidal integration.  <br /></td></tr>
+<tr class="separator:ac2527d1ba87054053672ace64e213ee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Static class providing dynamics analysis methods. </p>
@@ -498,6 +507,192 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="390,100,308,100,308,95,390,95"/>
 <area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,85,156,110"/>
 <area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a9df03a3f349d9c78c3c96568daf58fb6" name="a9df03a3f349d9c78c3c96568daf58fb6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9df03a3f349d9c78c3c96568daf58fb6">&#9670;&#160;</a></span>computeDiffusionCoefficientMSD()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>msd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time series. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">time</td><td>The time values (bins). </td></tr>
+    <tr><td class="paramname">msd</td><td>The MSD values. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The diffusion coefficient in Å²/fs. </dd></dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DynamicsAnalyzer_a9df03a3f349d9c78c3c96568daf58fb6_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_a9df03a3f349d9c78c3c96568daf58fb6_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_a9df03a3f349d9c78c3c96568daf58fb6_icgraph" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_a9df03a3f349d9c78c3c96568daf58fb6_icgraph">
+<area shape="rect" title="Computes the self&#45;diffusion coefficient D from MSD using linear regression on the second half of the ..." alt="" coords="804,27,1021,82"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,35,756,75"/>
+<area shape="poly" title=" " alt="" coords="790,57,756,57,756,52,790,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,5,496,45"/>
+<area shape="poly" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
+<area shape="poly" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a7ef9fc3bec2884a6aafd366f6f2f22da" name="a7ef9fc3bec2884a6aafd366f6f2f22da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ef9fc3bec2884a6aafd366f6f2f22da">&#9670;&#160;</a></span>computeDiffusionCoefficientVACF()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>vacf</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">time</td><td>The time values (bins). </td></tr>
+    <tr><td class="paramname">vacf</td><td>The VACF values. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The diffusion coefficient in Å²/fs. </dd></dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DynamicsAnalyzer_a7ef9fc3bec2884a6aafd366f6f2f22da_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_a7ef9fc3bec2884a6aafd366f6f2f22da_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_a7ef9fc3bec2884a6aafd366f6f2f22da_icgraph" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_a7ef9fc3bec2884a6aafd366f6f2f22da_icgraph">
+<area shape="rect" title="Computes the self&#45;diffusion coefficient D from VACF using Green&#45;Kubo integration (trapezoidal rule)." alt="" coords="804,27,1021,82"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,35,756,75"/>
+<area shape="poly" title=" " alt="" coords="790,57,756,57,756,52,790,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,5,496,45"/>
+<area shape="poly" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
+<area shape="poly" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="ac2527d1ba87054053672ace64e213ee7" name="ac2527d1ba87054053672ace64e213ee7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2527d1ba87054053672ace64e213ee7">&#9670;&#160;</a></span>computeRelaxationTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double correlation::analysis::DynamicsAnalyzer::computeRelaxationTime </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>norm_vacf</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Computes the relaxation time tau from the normalized VACF using trapezoidal integration. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">time</td><td>The time values (bins). </td></tr>
+    <tr><td class="paramname">norm_vacf</td><td>The normalized VACF values. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The relaxation time in fs. </dd></dl>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DynamicsAnalyzer_ac2527d1ba87054053672ace64e213ee7_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_ac2527d1ba87054053672ace64e213ee7_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_ac2527d1ba87054053672ace64e213ee7_icgraph" id="aclasscorrelation_1_1analysis_1_1DynamicsAnalyzer_ac2527d1ba87054053672ace64e213ee7_icgraph">
+<area shape="rect" title="Computes the relaxation time tau from the normalized VACF using trapezoidal integration." alt="" coords="804,27,1021,82"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,35,756,75"/>
+<area shape="poly" title=" " alt="" coords="790,57,756,57,756,52,790,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,5,496,45"/>
+<area shape="poly" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
+<area shape="poly" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
 </map>
 </div>
 

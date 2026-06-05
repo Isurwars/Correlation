@@ -1,0 +1,5 @@
+<map id="correlation::app::Preset" name="correlation::app::Preset">
+<area shape="rect" id="Node000001" title="Represents a named set of user options for materials simulation analysis." alt="" coords="12,108,185,133"/>
+<area shape="rect" id="Node000002" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="5,5,192,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,59,101,108,96,108,96,59"/>
+</map>

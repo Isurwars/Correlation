@@ -1,0 +1,17 @@
+<map id="correlation::analysis::DistributionFunctions::getRelaxationTime" name="correlation::analysis::DistributionFunctions::getRelaxationTime">
+<area shape="rect" id="Node000001" title="Gets the relaxation time computed from normalized VACF." alt="" coords="997,20,1165,75"/>
+<area shape="rect" id="Node000002" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="825,5,929,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="983,36,929,28,929,23,984,31"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="804,55,949,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="984,63,950,68,950,63,984,58"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="575,5,725,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="811,21,726,21,726,15,811,15"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,55,756,95"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="790,78,756,78,756,73,790,73"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,26,496,66"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="530,65,496,61,497,56,531,59"/>
+<area shape="rect" id="Node000008" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,91,413,116"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="531,91,413,103,412,98,530,85"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,26,227,66"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="261,49,227,49,227,43,261,43"/>
+</map>

@@ -3,21 +3,21 @@
 <area shape="rect" id="Node000002" href="$MotifFinder_8hpp.html" title="Ring and structural motif finder using neighbour graph search." alt="" coords="143,86,342,111"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="360,33,276,81,273,77,357,29"/>
 <area shape="rect" id="Node000007" title=" " alt="" coords="79,387,142,412"/>
-<area shape="poly" id="edge20_Node000001_Node000007" title=" " alt="" coords="269,24,181,36,137,47,97,62,61,82,33,108,15,139,8,178,8,254,12,298,33,337,54,360,78,377,75,382,50,364,28,340,7,300,3,254,3,178,10,138,29,104,58,78,94,57,136,42,180,31,268,19"/>
+<area shape="poly" id="edge17_Node000001_Node000007" title=" " alt="" coords="269,24,181,36,137,47,97,62,61,82,33,108,15,139,8,178,8,254,12,298,33,337,54,360,78,377,75,382,50,364,28,340,7,300,3,254,3,178,10,138,29,104,58,78,94,57,136,42,180,31,268,19"/>
 <area shape="rect" id="Node000010" title=" " alt="" coords="43,313,128,339"/>
-<area shape="poly" id="edge19_Node000001_Node000010" title=" " alt="" coords="270,33,176,52,138,65,114,81,97,105,85,134,77,164,74,194,75,253,82,300,77,300,70,254,69,194,72,163,79,132,92,103,110,77,135,60,174,47,269,28"/>
+<area shape="poly" id="edge16_Node000001_Node000010" title=" " alt="" coords="270,33,176,52,138,65,114,81,97,105,85,134,77,164,74,194,75,253,82,300,77,300,70,254,69,194,72,163,79,132,92,103,110,77,135,60,174,47,269,28"/>
 <area shape="rect" id="Node000013" title=" " alt="" coords="123,240,186,265"/>
 <area shape="poly" id="edge23_Node000001_Node000013" title=" " alt="" coords="280,33,191,52,156,65,134,80,124,97,119,115,120,155,130,194,144,227,139,229,125,196,115,156,114,115,119,95,130,77,153,60,189,47,279,28"/>
 <area shape="rect" id="Node000014" title=" " alt="" coords="400,167,451,192"/>
-<area shape="poly" id="edge22_Node000001_Node000014" title=" " alt="" coords="384,30,408,118,419,153,414,154,403,119,379,32"/>
-<area shape="rect" id="Node000015" title=" " alt="" coords="417,86,570,111"/>
-<area shape="poly" id="edge16_Node000001_Node000015" title=" " alt="" coords="397,29,467,76,464,80,394,33"/>
-<area shape="rect" id="Node000016" title=" " alt="" coords="594,79,769,119"/>
-<area shape="poly" id="edge17_Node000001_Node000016" title=" " alt="" coords="423,28,596,73,595,78,422,33"/>
-<area shape="rect" id="Node000017" title=" " alt="" coords="793,86,925,111"/>
-<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="473,28,618,48,782,76,802,80,801,85,781,81,618,54,472,33"/>
-<area shape="rect" id="Node000018" title=" " alt="" coords="949,86,1019,111"/>
-<area shape="poly" id="edge21_Node000001_Node000018" title=" " alt="" coords="489,19,586,25,699,35,819,52,938,76,947,79,946,84,937,81,818,57,698,41,585,30,489,25"/>
+<area shape="poly" id="edge19_Node000001_Node000014" title=" " alt="" coords="384,30,408,118,419,153,414,154,403,119,379,32"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="417,86,487,111"/>
+<area shape="poly" id="edge18_Node000001_Node000015" title=" " alt="" coords="391,29,434,74,430,77,388,33"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="511,86,665,111"/>
+<area shape="poly" id="edge20_Node000001_Node000016" title=" " alt="" coords="410,28,546,79,544,84,408,33"/>
+<area shape="rect" id="Node000017" title=" " alt="" coords="689,79,863,119"/>
+<area shape="poly" id="edge21_Node000001_Node000017" title=" " alt="" coords="437,28,676,75,675,80,436,33"/>
+<area shape="rect" id="Node000018" title=" " alt="" coords="887,86,1019,111"/>
+<area shape="poly" id="edge22_Node000001_Node000018" title=" " alt="" coords="489,26,671,46,876,76,897,80,896,86,876,81,670,51,489,31"/>
 <area shape="rect" id="Node000003" href="$NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="195,167,375,192"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="251,110,275,153,270,156,247,113"/>
 <area shape="poly" id="edge15_Node000002_Node000013" title=" " alt="" coords="232,113,209,137,186,168,172,198,163,228,158,226,167,196,182,165,205,134,228,110"/>

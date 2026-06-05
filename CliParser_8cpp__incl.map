@@ -1,15 +1,17 @@
 <map id="src/cli/CliParser.cpp" name="src/cli/CliParser.cpp">
-<area shape="rect" id="Node000001" title="Implementation of the command&#45;line argument parser." alt="" coords="537,5,683,31"/>
+<area shape="rect" id="Node000001" title="Implementation of the command&#45;line argument parser." alt="" coords="579,5,726,31"/>
 <area shape="rect" id="Node000002" href="$CliParser_8hpp.html" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="397,79,522,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="587,33,498,75,495,70,585,28"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="623,33,504,76,503,71,621,28"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="567,225,653,251"/>
-<area shape="poly" id="edge10_Node000001_Node000005" title=" " alt="" coords="613,31,613,211,607,211,607,31"/>
+<area shape="poly" id="edge11_Node000001_Node000005" title=" " alt="" coords="652,32,639,79,616,212,611,211,634,78,647,30"/>
 <area shape="rect" id="Node000010" title=" " alt="" coords="514,152,573,177"/>
-<area shape="poly" id="edge13_Node000001_Node000010" title=" " alt="" coords="607,32,557,141,552,138,602,30"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="647,79,738,104"/>
-<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="625,29,670,67,667,72,622,33"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="762,79,842,104"/>
-<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="642,28,759,71,757,76,640,33"/>
+<area shape="poly" id="edge14_Node000001_Node000010" title=" " alt="" coords="640,33,617,54,593,80,573,111,557,141,552,138,568,108,589,77,613,50,637,29"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="648,79,743,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="662,30,684,66,679,68,657,32"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="767,79,858,104"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="679,28,775,71,773,75,677,33"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="882,79,962,104"/>
+<area shape="poly" id="edge13_Node000001_Node000013" title=" " alt="" coords="697,28,870,74,868,79,695,33"/>
 <area shape="rect" id="Node000003" href="$Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="331,152,489,177"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="453,106,428,142,424,139,449,103"/>
 <area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="475,102,521,141,517,145,471,106"/>

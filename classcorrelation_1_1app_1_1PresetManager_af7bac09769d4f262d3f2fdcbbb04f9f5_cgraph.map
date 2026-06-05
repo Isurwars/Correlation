@@ -1,0 +1,5 @@
+<map id="correlation::app::PresetManager::remove" name="correlation::app::PresetManager::remove">
+<area shape="rect" id="Node000001" title="Deletes a saved preset by name." alt="" coords="5,5,179,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetManager.html#af7e5ef56ac5c6990918b2521133a05f1" title="Gets the folder path where user presets are saved (~/.correlation/presets/)." alt="" coords="227,5,421,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,23,213,23,213,28,179,28"/>
+</map>

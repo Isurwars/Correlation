@@ -1,0 +1,5 @@
+<map id="correlation::app::PresetManager::fromJson" name="correlation::app::PresetManager::fromJson">
+<area shape="rect" id="Node000001" title="Deserializes a Preset object from a JSON string." alt="" coords="227,5,400,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetManager.html#a52facd6422021ed43b06213fb3a3e6c1" title="Loads all saved presets from the presets directory." alt="" coords="5,5,179,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="213,28,179,28,179,23,213,23"/>
+</map>

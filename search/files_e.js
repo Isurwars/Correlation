@@ -6,5 +6,6 @@ var searchData=
   ['rdfcalculator_2ehpp_3',['RDFCalculator.hpp',['../RDFCalculator_8hpp.html',1,'']]],
   ['readerfactory_2ecpp_4',['ReaderFactory.cpp',['../ReaderFactory_8cpp.html',1,'']]],
   ['readerfactory_2ehpp_5',['ReaderFactory.hpp',['../ReaderFactory_8hpp.html',1,'']]],
-  ['readme_2emd_6',['README.md',['../README_8md.html',1,'']]]
+  ['readme_2emd_6',['README.md',['../README_8md.html',1,'']]],
+  ['roadmap_2emd_7',['RoadMap.md',['../RoadMap_8md.html',1,'']]]
 ];

@@ -1,7 +1,15 @@
 <map id="correlation::app::AppBackend::write_files" name="correlation::app::AppBackend::write_files">
-<area shape="rect" id="Node000001" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="5,5,217,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="265,5,411,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,23,252,23,252,28,217,28"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="459,5,637,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="411,23,445,23,445,28,411,28"/>
+<area shape="rect" id="Node000001" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="5,170,217,210"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="265,170,411,210"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,187,252,187,252,193,217,193"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#acf410dfc1dfa001ceda6f0cdb5166ee0" title="Gets the Deborah number." alt="" coords="481,5,649,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="353,168,397,119,426,93,457,69,468,63,471,67,460,74,429,97,401,123,357,171"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1f238238a5ddad1acd3e95a4408a5075" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="461,84,670,139"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="396,167,472,141,474,146,397,172"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac54c99e87f29ca619370e521f546a260" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="459,163,672,217"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="411,187,445,187,445,193,411,193"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a66f6a22f9700f76d47cf3bd7810cbb95" title="Gets the relaxation time computed from normalized VACF." alt="" coords="481,241,649,296"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="397,208,474,234,472,239,396,213"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="476,321,655,361"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="357,209,400,257,429,283,460,305,474,313,472,317,457,310,425,287,396,261,353,212"/>
 </map>

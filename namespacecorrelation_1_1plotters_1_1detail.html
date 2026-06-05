@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.0.0</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.2.2</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -97,9 +97,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:af602ea63b3b440bb52fb442bb8d04cc3" id="r_af602ea63b3b440bb52fb442bb8d04cc3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#af602ea63b3b440bb52fb442bb8d04cc3">color</a> (std::size_t i)</td></tr>
-<tr class="memdesc:af602ea63b3b440bb52fb442bb8d04cc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a color from the Okabe-Ito palette.  <br /></td></tr>
-<tr class="separator:af602ea63b3b440bb52fb442bb8d04cc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7821bb073924c3793f15ddc646ef1a3" id="r_ac7821bb073924c3793f15ddc646ef1a3"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#ac7821bb073924c3793f15ddc646ef1a3">color</a> (std::size_t i, <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html#a2b3d4f7c7956a735588e81aa8505e3c6">PlotConfig::Palette</a> pal)</td></tr>
+<tr class="memdesc:ac7821bb073924c3793f15ddc646ef1a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a color from the selected palette.  <br /></td></tr>
+<tr class="separator:ac7821bb073924c3793f15ddc646ef1a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd06030a0fc45c610fa740f72d301f78" id="r_abd06030a0fc45c610fa740f72d301f78"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#abd06030a0fc45c610fa740f72d301f78">mapValue</a> (double v, double data_min, double data_max, double svg_min, double svg_max)</td></tr>
 <tr class="memdesc:abd06030a0fc45c610fa740f72d301f78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a value from data space to SVG coordinate space.  <br /></td></tr>
 <tr class="separator:abd06030a0fc45c610fa740f72d301f78"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -112,10 +112,16 @@ Variables</h2></td></tr>
 <tr class="memitem:a4120165fb62611315a9e4b7fd99b9c8c" id="r_a4120165fb62611315a9e4b7fd99b9c8c"><td class="memItemLeft" align="right" valign="top">static const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#a4120165fb62611315a9e4b7fd99b9c8c">kColors</a></td></tr>
 <tr class="memdesc:a4120165fb62611315a9e4b7fd99b9c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Okabe-Ito colorblind-safe palette.  <br /></td></tr>
 <tr class="separator:a4120165fb62611315a9e4b7fd99b9c8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a971ff71a75ba9449a96cf3e81aa91eac" id="r_a971ff71a75ba9449a96cf3e81aa91eac"><td class="memItemLeft" align="right" valign="top">static const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#a971ff71a75ba9449a96cf3e81aa91eac">kGrayscale</a></td></tr>
+<tr class="memdesc:a971ff71a75ba9449a96cf3e81aa91eac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Grayscale palette for B&amp;W printing.  <br /></td></tr>
+<tr class="separator:a971ff71a75ba9449a96cf3e81aa91eac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a398c29760a4f80d71c5b490b39908e14" id="r_a398c29760a4f80d71c5b490b39908e14"><td class="memItemLeft" align="right" valign="top">static const std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters_1_1detail.html#a398c29760a4f80d71c5b490b39908e14">kViridis</a></td></tr>
+<tr class="memdesc:a398c29760a4f80d71c5b490b39908e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Viridis perceptually uniform palette.  <br /></td></tr>
+<tr class="separator:a398c29760a4f80d71c5b490b39908e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="af602ea63b3b440bb52fb442bb8d04cc3" name="af602ea63b3b440bb52fb442bb8d04cc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af602ea63b3b440bb52fb442bb8d04cc3">&#9670;&#160;</a></span>color()</h2>
+<a id="ac7821bb073924c3793f15ddc646ef1a3" name="ac7821bb073924c3793f15ddc646ef1a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7821bb073924c3793f15ddc646ef1a3">&#9670;&#160;</a></span>color()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -127,8 +133,18 @@ Variables</h2></td></tr>
           <td class="memname">std::string correlation::plotters::detail::color </td>
           <td>(</td>
           <td class="paramtype">std::size_t&#160;</td>
-          <td class="paramname"><em>i</em></td><td>)</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html#a2b3d4f7c7956a735588e81aa8505e3c6">PlotConfig::Palette</a>&#160;</td>
+          <td class="paramname"><em>pal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -138,10 +154,11 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Retrieves a color from the Okabe-Ito palette. </p>
+<p>Retrieves a color from the selected palette. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>Index (automatically wrapped using kColors size). </td></tr>
+    <tr><td class="paramname">i</td><td>Index. </td></tr>
+    <tr><td class="paramname">pal</td><td>Selected palette. </td></tr>
   </table>
   </dd>
 </dl>
@@ -284,6 +301,60 @@ Variables</h2></td></tr>
 <div class="line">}</div>
 </div><!-- fragment -->
 <p>Okabe-Ito colorblind-safe palette. </p>
+
+</div>
+</div>
+<a id="a971ff71a75ba9449a96cf3e81aa91eac" name="a971ff71a75ba9449a96cf3e81aa91eac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a971ff71a75ba9449a96cf3e81aa91eac">&#9670;&#160;</a></span>kGrayscale</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;std::string&gt; correlation::plotters::detail::kGrayscale</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    <span class="stringliteral">&quot;#000000&quot;</span>, <span class="stringliteral">&quot;#404040&quot;</span>, <span class="stringliteral">&quot;#808080&quot;</span>, <span class="stringliteral">&quot;#B0B0B0&quot;</span>, <span class="stringliteral">&quot;#D0D0D0&quot;</span></div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>Grayscale palette for B&amp;W printing. </p>
+
+</div>
+</div>
+<a id="a398c29760a4f80d71c5b490b39908e14" name="a398c29760a4f80d71c5b490b39908e14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a398c29760a4f80d71c5b490b39908e14">&#9670;&#160;</a></span>kViridis</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::vector&lt;std::string&gt; correlation::plotters::detail::kViridis</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div>
+<div class="line">    <span class="stringliteral">&quot;#440154&quot;</span>, <span class="stringliteral">&quot;#3B528B&quot;</span>, <span class="stringliteral">&quot;#21908C&quot;</span>, <span class="stringliteral">&quot;#5DC863&quot;</span>, <span class="stringliteral">&quot;#FDE725&quot;</span></div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>Viridis perceptually uniform palette. </p>
 
 </div>
 </div>

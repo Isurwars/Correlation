@@ -9,6 +9,7 @@ var searchData=
   ['populateplotlist_6',['populatePlotList',['../classcorrelation_1_1app_1_1AppController.html#a8b2473755dafc652e3834cee21b4be69',1,'correlation::app::AppController']]],
   ['position_7',['position',['../classcorrelation_1_1core_1_1Atom.html#aab506552a0928b7e428cff13e4d50635',1,'correlation::core::Atom']]],
   ['precomputebondcutoffs_8',['precomputeBondCutoffs',['../classcorrelation_1_1core_1_1Trajectory.html#afed1961138cfc701af8c741a28f3658c',1,'correlation::core::Trajectory']]],
-  ['printusage_9',['printUsage',['../namespacecorrelation_1_1cli.html#ac90f03bf6a7300cc29c964bee8785de8',1,'correlation::cli']]],
-  ['pybind11_5fmodule_10',['PYBIND11_MODULE',['../module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab',1,'module.cpp']]]
+  ['presetsdirectory_9',['presetsDirectory',['../classcorrelation_1_1app_1_1PresetManager.html#af7e5ef56ac5c6990918b2521133a05f1',1,'correlation::app::PresetManager']]],
+  ['printusage_10',['printUsage',['../namespacecorrelation_1_1cli.html#ac90f03bf6a7300cc29c964bee8785de8',1,'correlation::cli']]],
+  ['pybind11_5fmodule_11',['PYBIND11_MODULE',['../module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab',1,'module.cpp']]]
 ];

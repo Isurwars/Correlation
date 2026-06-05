@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['triweight_0',['Triweight',['../namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923a087b1aad0b071f3a371fb1813ad49263',1,'correlation::math']]]
+  ['singlecolumn_0',['SingleColumn',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a8f5220058de13b5f7e7ef5875bdc2781a224dc78c6ef7472c8aea7b36e12dcd97',1,'correlation::plotters::PlotConfig']]]
 ];

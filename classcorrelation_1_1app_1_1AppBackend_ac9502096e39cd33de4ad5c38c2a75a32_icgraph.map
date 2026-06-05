@@ -1,6 +1,6 @@
 <map id="correlation::app::AppBackend::getFrameCount" name="correlation::app::AppBackend::getFrameCount">
 <area shape="rect" id="Node000001" title="Gets the total number of frames in the trajectory." alt="" coords="813,69,1025,109"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,5,496,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,5,496,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="818,69,765,60,625,44,496,34,496,28,626,38,766,55,819,64"/>
 <area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a00d007144d21c2d5965dafa983d84c37" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="544,69,765,109"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="800,92,766,92,766,87,800,87"/>

@@ -10,5 +10,6 @@ var searchData=
   ['findreaderfortype_7',['findReaderForType',['../namespacecorrelation_1_1readers.html#acf1e58dcdd62c332074bc4ff2e1f2521',1,'correlation::readers']]],
   ['findrings_8',['findRings',['../classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e',1,'correlation::calculators::MotifFinder']]],
   ['firstframe_9',['firstFrame',['../classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631',1,'correlation::core::Trajectory']]],
-  ['fmtscientific_10',['fmtScientific',['../namespacecorrelation_1_1plotters_1_1detail.html#acc3b146009d0bcc061f938bfd8a6d637',1,'correlation::plotters::detail']]]
+  ['fmtscientific_10',['fmtScientific',['../namespacecorrelation_1_1plotters_1_1detail.html#acc3b146009d0bcc061f938bfd8a6d637',1,'correlation::plotters::detail']]],
+  ['fromjson_11',['fromJson',['../classcorrelation_1_1app_1_1PresetManager.html#a246863a61a4ae2e50be9f4a1a288fec3',1,'correlation::app::PresetManager']]]
 ];

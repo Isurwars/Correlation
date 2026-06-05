@@ -1,6 +1,6 @@
 <map id="correlation::app::AppBackend::setProgressCallback" name="correlation::app::AppBackend::setProgressCallback">
 <area shape="rect" id="Node000001" title="Sets a callback function for analysis progress updates." alt="" coords="544,69,756,109"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,5,496,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,5,496,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="553,69,468,48,469,43,554,63"/>
 <area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,69,496,109"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="530,92,496,92,496,87,530,87"/>

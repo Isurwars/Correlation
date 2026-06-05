@@ -1,5 +1,16 @@
 <map id="correlation::app::AppController::handleOptionstoUI" name="correlation::app::AppController::handleOptionstoUI">
-<area shape="rect" id="Node000001" title="Propagates the current backend options to the UI elements." alt="" coords="5,5,227,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a389c5114967f1724ff5b5c381a77ec6d" title="Gets the current program options." alt="" coords="275,5,487,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,23,261,23,261,28,227,28"/>
+<area shape="rect" id="Node000001" title="Propagates the current backend options to the UI elements." alt="" coords="5,67,227,107"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a389c5114967f1724ff5b5c381a77ec6d" title="Gets the current program options." alt="" coords="560,5,772,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="206,64,274,52,415,37,546,28,546,33,415,42,275,57,206,69"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a3f30efa4654e7c924f6a3afc8ffe6422" title="Updates active group flags in the UI based on active calculators." alt="" coords="275,67,496,107"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,84,261,84,261,89,227,89"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#afe2348790295ac012aa43283d934df56" title="Generates and updates the equivalent CLI command in the UI." alt="" coords="275,131,496,171"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="202,104,288,125,287,130,200,109"/>
+<area shape="poly" id="edge5_Node000003_Node000002" title=" " alt="" coords="477,64,560,46,561,51,478,69"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="544,133,788,173"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="471,104,568,128,567,133,469,109"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="563,69,769,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="496,85,550,86,550,91,496,90"/>
+<area shape="poly" id="edge7_Node000006_Node000004" title=" " alt="" coords="496,149,530,149,530,155,496,154"/>
+<area shape="poly" id="edge8_Node000006_Node000005" title=" " alt="" coords="477,128,560,110,561,115,478,133"/>
 </map>

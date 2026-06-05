@@ -83,7 +83,7 @@
 <area shape="poly" id="edge35_Node000031_Node000030" title=" " alt="" coords="261,1158,227,1158,227,1153,261,1153"/>
 <area shape="poly" id="edge38_Node000033_Node000021" title=" " alt="" coords="841,954,758,932,759,926,843,949"/>
 <area shape="poly" id="edge40_Node000034_Node000035" title=" " alt="" coords="828,1286,758,1271,759,1266,829,1281"/>
-<area shape="rect" id="Node000036" href="$classcorrelation_1_1app_1_1AppController.html#a44658e9edbc5547811be6b7a337c8462" title="Periodic check for file dialog status. Since file dialogs might be non&#45;blocking or running in a separ..." alt="" coords="275,1199,496,1239"/>
+<area shape="rect" id="Node000036" href="$classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,1199,496,1239"/>
 <area shape="poly" id="edge41_Node000035_Node000036" title=" " alt="" coords="536,1238,496,1234,496,1228,537,1233"/>
 <area shape="poly" id="edge42_Node000036_Node000030" title=" " alt="" coords="286,1199,200,1178,201,1173,288,1193"/>
 <area shape="poly" id="edge44_Node000037_Node000036" title=" " alt="" coords="819,1200,497,1216,496,1211,819,1195"/>

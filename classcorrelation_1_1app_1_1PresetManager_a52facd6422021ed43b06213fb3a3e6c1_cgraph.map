@@ -1,0 +1,7 @@
+<map id="correlation::app::PresetManager::loadAll" name="correlation::app::PresetManager::loadAll">
+<area shape="rect" id="Node000001" title="Loads all saved presets from the presets directory." alt="" coords="5,37,179,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetManager.html#a246863a61a4ae2e50be9f4a1a288fec3" title="Deserializes a Preset object from a JSON string." alt="" coords="237,5,411,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,43,223,37,224,42,179,48"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PresetManager.html#af7e5ef56ac5c6990918b2521133a05f1" title="Gets the folder path where user presets are saved (~/.correlation/presets/)." alt="" coords="227,69,421,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="179,67,213,71,213,77,178,72"/>
+</map>
