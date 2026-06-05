@@ -19,15 +19,12 @@
 class AppControllerTests : public ::testing::Test {
 protected:
   void SetUp() override {
-    // Ensure Slint uses the headless backend during tests to avoid UI/X11
-    // requirements
+    // Ensure Slint uses the software backend during tests to avoid OpenGL
+    // requirements in headless CI/Xvfb environments
 #if !defined(_WIN32)
-    setenv("SLINT_BACKEND", "winit-headless", 1);
-    setenv("WINIT_UNIX_BACKEND", "x11",
-           1); // sometimes winit headless needs this or just use
-               // SLINT_BACKEND=software or testing
+    setenv("SLINT_BACKEND", "software", 1);
 #else
-    _putenv_s("SLINT_BACKEND", "winit-headless");
+    _putenv_s("SLINT_BACKEND", "software");
 #endif
   }
 
