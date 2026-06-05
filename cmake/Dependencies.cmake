@@ -58,30 +58,35 @@ if(BUILD_GUI)
   endif()
 
   # Transitively propagate platform dependencies for statically built Slint
-  if(TARGET Slint::Slint)
-    set(_slint_target "Slint::Slint")
-    get_target_property(_aliased_target Slint::Slint ALIASED_TARGET)
-    if(_aliased_target)
-      set(_slint_target "${_aliased_target}")
-    endif()
+  foreach(_target IN ITEMS Slint::Slint Slint slint_cpp slint_cpp-static)
+    if(TARGET ${_target})
+      set(_real_target "${_target}")
+      get_target_property(_aliased_target ${_target} ALIASED_TARGET)
+      if(_aliased_target)
+        set(_real_target "${_aliased_target}")
+      endif()
 
-    if(APPLE)
-      foreach(_fw IN ITEMS
-          OpenGL CoreVideo Cocoa Carbon IOKit QuartzCore
-          AppKit CoreGraphics Metal CoreFoundation Foundation Security)
-        find_library(_${_fw}_FW ${_fw} REQUIRED)
-        set_property(TARGET ${_slint_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${_${_fw}_FW}")
-        unset(_${_fw}_FW CACHE)
-      endforeach()
-    elseif(WIN32)
-      set_property(TARGET ${_slint_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES
-        Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme
-      )
-    else()
-      find_package(Fontconfig REQUIRED)
-      set_property(TARGET ${_slint_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${Fontconfig_LIBRARIES}")
+      get_target_property(_target_type ${_real_target} TYPE)
+      if(NOT "${_target_type}" STREQUAL "UTILITY")
+        if(APPLE)
+          foreach(_fw IN ITEMS
+              OpenGL CoreVideo Cocoa Carbon IOKit QuartzCore
+              AppKit CoreGraphics Metal CoreFoundation Foundation Security)
+            find_library(_${_fw}_FW ${_fw} REQUIRED)
+            set_property(TARGET ${_real_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${_${_fw}_FW}")
+            unset(_${_fw}_FW CACHE)
+          endforeach()
+        elseif(WIN32)
+          set_property(TARGET ${_real_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+            Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme
+          )
+        else()
+          find_package(Fontconfig REQUIRED)
+          set_property(TARGET ${_real_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${Fontconfig_LIBRARIES}")
+        endif()
+      endif()
     endif()
-  endif()
+  endforeach()
 endif()
 
 # 3. HDF5

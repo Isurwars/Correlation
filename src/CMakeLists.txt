@@ -239,7 +239,7 @@ target_include_directories(correlation-cli PRIVATE
 target_compile_definitions(correlation-cli PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(correlation-cli PRIVATE correlation_simd_options)
 bundle_windows_dlls(correlation-cli)
-install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT correlation)
 
 #------------------------------------------------------------------
 # Python Bindings
