@@ -39,6 +39,11 @@ if(BUILD_GUI)
   else()
     set(SLINT_STYLE "material-dark" CACHE STRING "Slint style to use")
     message(STATUS "Slint not found. Downloading Slint from GitHub...")
+
+    # Temporarily disable BUILD_SHARED_LIBS so Slint is built statically
+    set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+
     FetchContent_Declare(
       Slint
       GIT_REPOSITORY https://github.com/slint-ui/slint.git
@@ -47,6 +52,9 @@ if(BUILD_GUI)
     )
     set(SLINT_FEATURE_JEMALLOC OFF CACHE BOOL "Disable jemalloc on macOS" FORCE)
     FetchContent_MakeAvailable(Slint)
+
+    # Restore BUILD_SHARED_LIBS
+    set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
   endif()
 endif()
 
@@ -73,9 +81,9 @@ if(BUILD_WITH_HDF5)
     set(HDF5_ENABLE_NONSTANDARD_FEATURE_COMPLEX OFF CACHE BOOL "Disable _Complex support" FORCE)
     set(HDF5_ENABLE_NONSTANDARD_FEATURE_COMPLEX_H OFF CACHE BOOL "Disable _Complex_H support" FORCE)
     # Shared specific options
-    set(HDF5_BUILD_SHARED_LIBS ON CACHE BOOL "Build HDF5 Shared Library" FORCE)
-    set(HDF5_USE_STATIC_LIBRARIES OFF CACHE BOOL "Use HDF5 Static Libraries" FORCE)
-    set(HDF5_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build HDF5 Static Tools" FORCE)
+    set(HDF5_BUILD_SHARED_LIBS OFF CACHE BOOL "Build HDF5 Shared Library" FORCE)
+    set(HDF5_USE_STATIC_LIBRARIES ON CACHE BOOL "Use HDF5 Static Libraries" FORCE)
+    set(HDF5_BUILD_STATIC_TOOLS ON CACHE BOOL "Build HDF5 Static Tools" FORCE)
 
 
     FetchContent_Declare(
@@ -182,12 +190,24 @@ if(BUILD_WITH_ARROW)
     message(STATUS "Found Parquet: ${Parquet_DIR} (Version: ${Parquet_VERSION})")
 
     # Create ALIAS targets so the rest of the project can just link 'arrow_shared' and 'parquet_shared'
-    if (NOT TARGET arrow_shared AND TARGET Arrow::arrow_shared)
-      add_library(arrow_shared ALIAS Arrow::arrow_shared)
+    if (NOT TARGET arrow_shared)
+      if (TARGET Arrow::arrow_shared)
+        add_library(arrow_shared ALIAS Arrow::arrow_shared)
+      elseif (TARGET arrow_static)
+        add_library(arrow_shared ALIAS arrow_static)
+      elseif (TARGET Arrow::arrow_static)
+        add_library(arrow_shared ALIAS Arrow::arrow_static)
+      endif()
     endif()
 
-    if (NOT TARGET parquet_shared AND TARGET Parquet::parquet_shared)
-      add_library(parquet_shared ALIAS Parquet::parquet_shared)
+    if (NOT TARGET parquet_shared)
+      if (TARGET Parquet::parquet_shared)
+        add_library(parquet_shared ALIAS Parquet::parquet_shared)
+      elseif (TARGET parquet_static)
+        add_library(parquet_shared ALIAS parquet_static)
+      elseif (TARGET Parquet::parquet_static)
+        add_library(parquet_shared ALIAS Parquet::parquet_static)
+      endif()
     endif()
   else()
     message(STATUS "Arrow/Parquet not found. Downloading Arrow from GitHub...")
@@ -215,8 +235,8 @@ if(BUILD_WITH_ARROW)
     set(ARROW_WITH_LZ4 OFF CACHE INTERNAL "")
     set(ARROW_WITH_BROTLI OFF CACHE INTERNAL "")
     set(ARROW_WITH_BZ2 OFF CACHE INTERNAL "")
-    set(ARROW_BUILD_STATIC OFF CACHE INTERNAL "")
-    set(ARROW_BUILD_SHARED ON CACHE INTERNAL "")
+    set(ARROW_BUILD_STATIC ON CACHE INTERNAL "")
+    set(ARROW_BUILD_SHARED OFF CACHE INTERNAL "")
     set(ARROW_COMPUTE OFF CACHE INTERNAL "")
     set(ARROW_CSV OFF CACHE INTERNAL "")
     set(ARROW_JSON OFF CACHE INTERNAL "")
@@ -233,16 +253,48 @@ if(BUILD_WITH_ARROW)
 
     FetchContent_MakeAvailable(arrow)
 
+    # Create alias targets for the static libraries built from source
+    if (NOT TARGET arrow_shared)
+      if (TARGET arrow_static)
+        add_library(arrow_shared ALIAS arrow_static)
+      elseif (TARGET Arrow::arrow_static)
+        add_library(arrow_shared ALIAS Arrow::arrow_static)
+      endif()
+    endif()
+
+    if (NOT TARGET parquet_shared)
+      if (TARGET parquet_static)
+        add_library(parquet_shared ALIAS parquet_static)
+      elseif (TARGET Parquet::parquet_static)
+        add_library(parquet_shared ALIAS Parquet::parquet_static)
+      endif()
+    endif()
+
     # Arrow targets built from source don't set the correct INCLUDE directories by default
     # We manually expose source and generated header folders.
-    target_include_directories(arrow_shared INTERFACE 
-      $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
-      $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
-    )
-    target_include_directories(parquet_shared INTERFACE 
-      $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
-      $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
-    )
+    if (TARGET arrow_static)
+      target_include_directories(arrow_static INTERFACE 
+        $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
+        $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
+      )
+    elseif (TARGET arrow_shared)
+      target_include_directories(arrow_shared INTERFACE 
+        $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
+        $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
+      )
+    endif()
+
+    if (TARGET parquet_static)
+      target_include_directories(parquet_static INTERFACE 
+        $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
+        $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
+      )
+    elseif (TARGET parquet_shared)
+      target_include_directories(parquet_shared INTERFACE 
+        $<BUILD_INTERFACE:${arrow_SOURCE_DIR}/cpp/src>
+        $<BUILD_INTERFACE:${arrow_BINARY_DIR}/src>
+      )
+    endif()
   endif()
 endif()
 
@@ -281,12 +333,20 @@ endif()
 if(BUILD_GUI)
   message(STATUS "Downloading nativefiledialog-extended from GitHub...")
   set(NFD_BUILD_TESTS OFF CACHE BOOL "Disable NFD tests" FORCE)
+
+  # Temporarily disable BUILD_SHARED_LIBS so nfd is built statically
+  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+
   FetchContent_Declare(
     nfd
     GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
     GIT_TAG        v1.2.1
   )
   FetchContent_MakeAvailable(nfd)
+
+  # Restore BUILD_SHARED_LIBS
+  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
 endif()
 
 # Restore original BUILD_TESTING cache state

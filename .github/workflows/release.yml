@@ -58,6 +58,15 @@ jobs:
       - name: Build correlation
         run: cmake --build build --config Release --parallel
 
+      - name: Verify Static Linking
+        run: |
+          ldd build/src/correlation
+          if ldd build/src/correlation | grep -q "libnfd"; then
+            echo "ERROR: NFD was dynamically linked!"
+            exit 1
+          fi
+          echo "Success: NFD is statically linked!"
+
       - name: Package Release
         run: |
           cd build
@@ -182,6 +191,27 @@ jobs:
 
       - name: Build correlation
         run: cmake --build build --config Release --parallel
+
+      - name: Verify Bundle Dependencies
+        run: |
+          # Perform a temporary test installation
+          cmake --install build --prefix install_test
+          
+          # Inspect linked libraries of the GUI and CLI binaries
+          echo "==== Executable Library Dependencies ===="
+          otool -L install_test/bin/correlation
+          otool -L install_test/bin/correlation-cli
+          
+          # Assert that TBB and HDF5 are not referenced at absolute paths
+          if otool -L install_test/bin/correlation | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
+            echo "ERROR: GUI executable still references absolute external library paths!"
+            exit 1
+          fi
+          if otool -L install_test/bin/correlation-cli | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
+            echo "ERROR: CLI executable still references absolute external library paths!"
+            exit 1
+          fi
+          echo "Success: macOS dependencies are successfully bundled and paths updated!"
 
       - name: Package Release
         run: |

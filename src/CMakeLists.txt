@@ -195,9 +195,15 @@ if(BUILD_GUI)
     install_windows_dlls(correlation ${CMAKE_INSTALL_BINDIR})
 
     if (NOT WIN32)
-        set_target_properties(correlation PROPERTIES
-            INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-        )
+        if(APPLE)
+            set_target_properties(correlation PROPERTIES
+                INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+            )
+        else()
+            set_target_properties(correlation PROPERTIES
+                INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+            )
+        endif()
     endif()
 endif()
 

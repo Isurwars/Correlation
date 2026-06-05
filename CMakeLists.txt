@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.24)
-project(Correlation VERSION 3.2.1 LANGUAGES CXX)
+project(Correlation VERSION 3.2.2 LANGUAGES CXX)
 
 # -----------------------------------------------------------
 # Auto-generate packaging files from templates.
@@ -136,17 +136,40 @@ endif()
 if (NOT WIN32)
     # Ensure correlation finds shared libraries in <prefix>/lib
     if(BUILD_GUI)
-        set_target_properties(correlation PROPERTIES
-            INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-        )
+        if(APPLE)
+            set_target_properties(correlation PROPERTIES
+                INSTALL_RPATH "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+            )
+        else()
+            set_target_properties(correlation PROPERTIES
+                INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+            )
+        endif()
     endif()
     # If Arrow/Parquet were built from source, install them
     if (TARGET arrow_shared AND TARGET parquet_shared AND NOT Arrow_FOUND)
-        install(TARGETS arrow_shared parquet_shared
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            COMPONENT correlation
-        )
+        get_target_property(is_arrow_alias arrow_shared ALIASED_TARGET)
+        if (is_arrow_alias STREQUAL "is_arrow_alias-NOTFOUND" OR NOT is_arrow_alias)
+            install(TARGETS arrow_shared parquet_shared
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                COMPONENT correlation
+            )
+        endif()
+    endif()
+
+    if (APPLE)
+        # On macOS, fixup the bundle (embed dynamic libraries like TBB, HDF5, etc.)
+        if(BUILD_GUI)
+            install(CODE "
+                include(BundleUtilities)
+                fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/correlation\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
+            " COMPONENT correlation)
+        endif()
+        install(CODE "
+            include(BundleUtilities)
+            fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/correlation-cli\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
+        " COMPONENT correlation)
     endif()
 endif()
 

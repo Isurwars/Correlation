@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.2.2] - 2026-06-04
+
+### Changed
+- **Static Third-Party Builds**: Configured `nativefiledialog-extended` (`nfd`), `Slint`, `HDF5`, and `Arrow`/`Parquet` to compile statically when built from source (`FetchContent`). This resolves dynamic library loading issues for target deployment platforms (such as AUR and macOS bundles).
+- **macOS App Bundling**: Integrated CMake's standard `BundleUtilities` (`fixup_bundle`) during macOS installation to copy and bundle TBB, HDF5, and Slint libraries from Homebrew or local paths, rewriting library load paths to relative `@executable_path` references for completely standalone DMG execution.
+- **Dynamic Link RPATH on macOS**: Changed macOS `INSTALL_RPATH` from Linux-style `$ORIGIN` to macOS-native `@loader_path` in CMake targets.
+
+### Added
+- **Release Dependency Verification**: Integrated automated post-build checks into the GitHub Actions release workflow (`release.yml`), asserting static linking of `libnfd` on Linux via `ldd` and verifying dynamic library relocation on macOS using `otool -L` to prevent release packages with broken library paths.
+
 ## [3.2.1] - 2026-06-03
 
 ### Added
