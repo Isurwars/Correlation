@@ -92,6 +92,17 @@ struct PlotConfig {
   std::string text_color() const { return (theme == Theme::Light) ? "#333333" : "#a6adc8"; }
 };
 
+/**
+ * @brief Information about the mouse hover position.
+ */
+struct HoverInfo {
+  bool active = false;
+  double mouse_x = -1.0;
+  double mouse_y = -1.0;
+  double widget_width = 0.0;
+  double widget_height = 0.0;
+};
+
 // ============================================================================
 // Internal helpers
 // ============================================================================
@@ -282,13 +293,23 @@ inline std::string fmtScientific(double v) {
 // ============================================================================
 
 /**
+ * @brief Renders text as a filled SVG path using the Roboto outline font.
+ * Uses evenodd fill-rule to render the font's inner holes properly.
+ */
+inline std::string renderTextAsPath(const std::string &text, double x, double y, double size, const std::string &anchor, const std::string &color) {
+  std::string path_d = Roboto::instance().render(text, x, y, size, anchor);
+  return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n", path_d, color);
+}
+
+/**
  * @brief Renders a `Histogram` as a self-contained SVG string.
  *
  * @param hist     The Histogram to render.
  * @param config   Optional plot configuration (theme, size, etc.).
+ * @param hover    Optional hover interaction info.
  * @returns        A complete SVG document as `std::string`.
  */
-inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {}) {
+inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {}, const HoverInfo &hover = {}) {
   std::string title = hist.title.empty() ? "Histogram" : hist.title;
   std::string x_label = hist.x_label.empty() ? "x" : hist.x_label;
   std::string y_label = hist.y_label.empty() ? "y" : hist.y_label;
@@ -323,12 +344,11 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
   const auto &xs = hist.bins;
 
   if (xs.empty() || partials.empty()) {
+    std::string no_data_path = Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
     return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
                        "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-                       "<path d=\"{3}\" fill=\"{4}\" stroke=\"none\"/></svg>",
-                       kW, kH, config.bg_color(),
-                       Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0, static_cast<int>(24 * config.font_scale), "middle"),
-                       config.text_color());
+                       "<path d=\"{3}\" fill=\"{4}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
+                       kW, kH, config.bg_color(), no_data_path, config.text_color());
   }
 
   // ---- Compute ranges and nice ticks -----------------------------------
@@ -368,9 +388,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        px0 - 8.0, spy, px0, spy, config.axis_color());
     // Label
-    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                       Roboto::instance().render(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, static_cast<int>(20 * config.font_scale), "end"),
-                       config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20.0 * config.font_scale, "end", config.text_color());
   }
 
   for (double xv : xScale.ticks) {
@@ -384,9 +402,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        spx, py1, spx, py1 + 8.0, config.axis_color());
     // Label
-    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                       Roboto::instance().render(detail::fmtScientific(xv), spx, py1 + 25.0, static_cast<int>(20 * config.font_scale), "middle"),
-                       config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(xv), spx, py1 + 25.0, 20.0 * config.font_scale, "middle", config.text_color());
   }
 
   // Draw axis border
@@ -440,22 +456,125 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                          lx - 40.0, ly, lx - 10.0, ly, it->second);
-      svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                         Roboto::instance().render(it->first, lx - 45.0, ly + 6.0, static_cast<int>(18 * config.font_scale), "end"), config.text_color());
+      svg << renderTextAsPath(it->first, lx - 45.0, ly + 6.0, 18.0 * config.font_scale, "end", config.text_color());
       ly += 28.0;
     }
   }
 
   // Titles/Labels
-  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                     Roboto::instance().render(x_label, (px0 + px1) / 2.0, py1 + 75.0, static_cast<int>(28 * config.font_scale), "middle"),
-                     config.text_color());
+  svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config.font_scale, "middle", config.text_color());
 
   // Y label rotated
   svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
-  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                     Roboto::instance().render(y_label, 0, 0, static_cast<int>(28 * config.font_scale), "middle"), config.text_color());
+  svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config.font_scale, "middle", config.text_color());
   svg << "  </g>\n";
+
+  // Hover tracking interaction
+  if (hover.active && hover.widget_width > 0.0 && hover.widget_height > 0.0) {
+    double svg_aspect = kW / kH;
+    double widget_aspect = hover.widget_width / hover.widget_height;
+    double scale = 1.0;
+    double dx = 0.0;
+    double dy = 0.0;
+
+    if (widget_aspect > svg_aspect) {
+      scale = hover.widget_height / kH;
+      dx = (hover.widget_width - kW * scale) / 2.0;
+    } else {
+      scale = hover.widget_width / kW;
+      dy = (hover.widget_height - kH * scale) / 2.0;
+    }
+
+    double sx = (hover.mouse_x - dx) / scale;
+    double sy = (hover.mouse_y - dy) / scale;
+
+    if (sx >= px0 && sx <= px1) {
+      // Map to data space
+      double x_val = xScale.min + (sx - px0) / (px1 - px0) * (xScale.max - xScale.min);
+      
+      // Find nearest index in bins
+      auto it = std::lower_bound(xs.begin(), xs.end(), x_val);
+      std::size_t idx = 0;
+      if (it == xs.end()) {
+        idx = xs.size() - 1;
+      } else if (it == xs.begin()) {
+        idx = 0;
+      } else {
+        double d1 = *it - x_val;
+        double d2 = x_val - *(it - 1);
+        if (d2 < d1) {
+          idx = std::distance(xs.begin(), it - 1);
+        } else {
+          idx = std::distance(xs.begin(), it);
+        }
+      }
+
+      double target_x = xs[idx];
+      double sx_data = detail::mapValue(target_x, xScale.min, xScale.max, px0, px1);
+
+      // Draw vertical guide line
+      svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                         "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
+                         sx_data, py0, sx_data, py1, config.axis_color());
+
+      // Collect values and draw markers on curves
+      std::vector<std::tuple<std::string, double, std::string>> hover_values; // name, value, color
+      std::size_t ci = 0;
+      for (const auto &[key, ys] : partials) {
+        if (idx < ys.size()) {
+          const std::string col = detail::color(ci++, config.palette);
+          double y_val = ys[idx];
+          double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
+
+          // Bullet marker
+          svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
+                             sx_data, sy_data, col, config.bg_color());
+          
+          hover_values.push_back({key, y_val, col});
+        }
+      }
+
+      // Draw Tooltip Box
+      if (!hover_values.empty()) {
+        double tooltip_w = 200.0;
+        double tooltip_h = 35.0 + 22.0 * hover_values.size();
+        
+        // Tooltip position (flip sides depending on cursor location)
+        double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
+        double ty = std::clamp(sy - 30.0, py0 + 10.0, py1 - tooltip_h - 10.0);
+
+        std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
+        std::string card_border = (config.theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
+        std::string text_col = (config.theme == PlotConfig::Theme::Light) ? "#333333" : "#cdd6f4";
+
+        svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" rx=\"6\" "
+                           "fill=\"{}\" fill-opacity=\"0.92\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                           tx, ty, tooltip_w, tooltip_h, card_bg, card_border);
+
+        // Header: x value (with unit or pure label)
+        std::string x_unit_str = hist.x_unit;
+        std::string header_txt = std::format("{} = {:.4f}{}", x_label, target_x, x_unit_str.empty() ? "" : " " + x_unit_str);
+        // Clean up title (remove parenthesis unit if present, e.g. "r (Å)" to "r")
+        auto paren = x_label.find(" (");
+        if (paren != std::string::npos) {
+          header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), target_x);
+        }
+        
+        svg << renderTextAsPath(header_txt, tx + 12.0, ty + 20.0, 14.0 * config.font_scale, "start", text_col);
+
+        double cur_y = ty + 42.0;
+        for (const auto &[name, val, col] : hover_values) {
+          // Color swatch dot
+          svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
+                             tx + 18.0, cur_y - 4.0, col);
+          // Label and value
+          std::string line_txt = std::format("{}: {:.4f}", name, val);
+          svg << renderTextAsPath(line_txt, tx + 30.0, cur_y, 13.0 * config.font_scale, "start", text_col);
+          cur_y += 22.0;
+        }
+      }
+    }
+  }
 
   svg << "</svg>\n";
   return svg.str();
@@ -483,10 +602,11 @@ struct LabeledHistogram {
  * @param datasets  Vector of labeled histogram pointers.
  * @param partial_key  Which partial to plot (e.g. "Total", "Si-O").
  * @param config    Optional plot configuration (theme, size, etc.).
+ * @param hover     Optional hover interaction info.
  * @returns         A complete SVG document as `std::string`.
  */
 inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &datasets,
-                                       const std::string &partial_key = "Total", const PlotConfig &config = {}) {
+                                       const std::string &partial_key = "Total", const PlotConfig &config = {}, const HoverInfo &hover = {}) {
   if (datasets.empty())
     return "";
 
@@ -539,13 +659,12 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
   }
 
   if (raw_x_max <= raw_x_min || raw_y_max <= raw_y_min) {
+    std::string no_data_path = Roboto::instance().render("No comparison data", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
     return std::format("<svg width='{}' height='{}' xmlns=\"http://www.w3.org/2000/svg\" "
                        "viewBox=\"0 0 {} {}\">"
                        "<rect width=\"100%\" height=\"100%\" fill=\"{}\"/>"
-                       "<path d=\"{}\" fill=\"{}\" stroke=\"none\"/></svg>",
-                       kW, kH, kW, kH, config.bg_color(),
-                       Roboto::instance().render("No comparison data", kW / 2.0, kH / 2.0 + 8.0, static_cast<int>(24 * config.font_scale), "middle"),
-                       config.text_color());
+                       "<path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/></svg>",
+                       kW, kH, kW, kH, config.bg_color(), no_data_path, config.text_color());
   }
 
   double y_padding = (raw_y_max - raw_y_min) * 0.05;
@@ -555,8 +674,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
   detail::NiceScale yScale(raw_y_min, raw_y_max, 8);
 
   std::ostringstream svg;
-  svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" "
-                     "viewBox=\"0 0 {} {}\">\n",
+  svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\">\n",
                      kW, kH, kW, kH);
   svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n", config.bg_color());
 
@@ -571,9 +689,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        px0 - 8.0, spy, px0, spy, config.axis_color());
-    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                       Roboto::instance().render(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, static_cast<int>(20 * config.font_scale), "end"),
-                       config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(yv), px0 - 15.0, spy + 7.0, 20.0 * config.font_scale, "end", config.text_color());
   }
 
   for (double xv : xScale.ticks) {
@@ -586,9 +702,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                        spx, py1, spx, py1 + 8.0, config.axis_color());
-    svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                       Roboto::instance().render(detail::fmtScientific(xv), spx, py1 + 25.0, static_cast<int>(20 * config.font_scale), "middle"),
-                       config.text_color());
+    svg << renderTextAsPath(detail::fmtScientific(xv), spx, py1 + 25.0, 20.0 * config.font_scale, "middle", config.text_color());
   }
 
   // Axis border
@@ -629,22 +743,132 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
                          lx - 40.0, ly, lx - 10.0, ly, it->second);
-      svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                         Roboto::instance().render(it->first, lx - 45.0, ly + 6.0, static_cast<int>(18 * config.font_scale), "end"), config.text_color());
+      svg << renderTextAsPath(it->first, lx - 45.0, ly + 6.0, 18.0 * config.font_scale, "end", config.text_color());
       ly += 28.0;
     }
   }
 
   // X-axis label
-  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                     Roboto::instance().render(x_label, (px0 + px1) / 2.0, py1 + 75.0, static_cast<int>(28 * config.font_scale), "middle"),
-                     config.text_color());
+  svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config.font_scale, "middle", config.text_color());
 
   // Y-axis label (rotated)
   svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
-  svg << std::format("  <path d=\"{}\" fill=\"{}\" stroke=\"none\"/>\n",
-                     Roboto::instance().render(y_label, 0, 0, static_cast<int>(28 * config.font_scale), "middle"), config.text_color());
+  svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config.font_scale, "middle", config.text_color());
   svg << "  </g>\n";
+
+  // Hover tracking interaction for comparison plot
+  if (hover.active && hover.widget_width > 0.0 && hover.widget_height > 0.0) {
+    double svg_aspect = kW / kH;
+    double widget_aspect = hover.widget_width / hover.widget_height;
+    double scale = 1.0;
+    double dx = 0.0;
+    double dy = 0.0;
+
+    if (widget_aspect > svg_aspect) {
+      scale = hover.widget_height / kH;
+      dx = (hover.widget_width - kW * scale) / 2.0;
+    } else {
+      scale = hover.widget_width / kW;
+      dy = (hover.widget_height - kH * scale) / 2.0;
+    }
+
+    double sx = (hover.mouse_x - dx) / scale;
+    double sy = (hover.mouse_y - dy) / scale;
+
+    if (sx >= px0 && sx <= px1) {
+      // Map to data space
+      double x_val = xScale.min + (sx - px0) / (px1 - px0) * (xScale.max - xScale.min);
+      
+      // We assume first dataset's bins for the X coordinates
+      const auto &xs = datasets.front().hist->bins;
+      if (!xs.empty()) {
+        auto it = std::lower_bound(xs.begin(), xs.end(), x_val);
+        std::size_t idx = 0;
+        if (it == xs.end()) {
+          idx = xs.size() - 1;
+        } else if (it == xs.begin()) {
+          idx = 0;
+        } else {
+          double d1 = *it - x_val;
+          double d2 = x_val - *(it - 1);
+          if (d2 < d1) {
+            idx = std::distance(xs.begin(), it - 1);
+          } else {
+            idx = std::distance(xs.begin(), it);
+          }
+        }
+
+        double target_x = xs[idx];
+        double sx_data = detail::mapValue(target_x, xScale.min, xScale.max, px0, px1);
+
+        // Draw vertical guide line
+        svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                           "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
+                           sx_data, py0, sx_data, py1, config.axis_color());
+
+        // Collect values from each dataset and draw markers
+        std::vector<std::tuple<std::string, double, std::string>> hover_values; // label, value, color
+        std::size_t ci = 0;
+        for (const auto &ds : datasets) {
+          const auto &partials = ds.hist->smoothed_partials.empty() ? ds.hist->partials : ds.hist->smoothed_partials;
+          auto pit = partials.find(partial_key);
+          if (pit != partials.end() && idx < pit->second.size()) {
+            const std::string col = detail::color(ci++, config.palette);
+            double y_val = pit->second[idx];
+            double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
+
+            // Bullet marker
+            svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
+                               sx_data, sy_data, col, config.bg_color());
+            
+            hover_values.push_back({ds.label, y_val, col});
+          } else {
+            // Keep the color index aligned
+            ci++;
+          }
+        }
+
+        // Draw Tooltip Box
+        if (!hover_values.empty()) {
+          double tooltip_w = 200.0;
+          double tooltip_h = 35.0 + 22.0 * hover_values.size();
+          
+          double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
+          double ty = std::clamp(sy - 30.0, py0 + 10.0, py1 - tooltip_h - 10.0);
+
+          std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
+          std::string card_border = (config.theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
+          std::string text_col = (config.theme == PlotConfig::Theme::Light) ? "#333333" : "#cdd6f4";
+
+          svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" rx=\"6\" "
+                             "fill=\"{}\" fill-opacity=\"0.92\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                             tx, ty, tooltip_w, tooltip_h, card_bg, card_border);
+
+          // Header
+          std::string x_unit_str = ref.x_unit;
+          std::string header_txt = std::format("{} = {:.4f}{}", x_label, target_x, x_unit_str.empty() ? "" : " " + x_unit_str);
+          auto paren = x_label.find(" (");
+          if (paren != std::string::npos) {
+            header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), target_x);
+          }
+
+          svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Inter', 'Roboto', sans-serif\" "
+                             "font-size=\"14\" font-weight=\"bold\" fill=\"{}\">{}</text>\n",
+                             tx + 12.0, ty + 24.0, text_col, header_txt);
+
+          double cur_y = ty + 46.0;
+          for (const auto &[name, val, col] : hover_values) {
+            svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
+                               tx + 18.0, cur_y - 5.0, col);
+            svg << std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Inter', 'Roboto', sans-serif\" "
+                               "font-size=\"13\" fill=\"{}\">{}: {:.4f}</text>\n",
+                               tx + 30.0, cur_y, text_col, name, val);
+            cur_y += 22.0;
+          }
+        }
+      }
+    }
+  }
 
   svg << "</svg>\n";
   return svg.str();

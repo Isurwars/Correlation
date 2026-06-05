@@ -215,6 +215,7 @@ export component AppWindow inherits Window {
     callback clear_pinned_runs();
     callback validate_inputs();
     callback copy_cli_command();
+    callback mouse_move(length, length, bool, length, length);
 
     // Presets callbacks
     callback load_preset(int);
@@ -283,6 +284,9 @@ export component AppWindow inherits Window {
         root.select_plot(root.selected_plot_index);
     }
     changed export_show_grid => {
+        root.select_plot(root.selected_plot_index);
+    }
+    changed is_dark => {
         root.select_plot(root.selected_plot_index);
     }
 
@@ -598,6 +602,9 @@ export component AppWindow inherits Window {
                         }
                         clear_pinned_runs => {
                             root.clear_pinned_runs();
+                        }
+                        mouse_move(mx, my, hover, w, h) => {
+                            root.mouse_move(mx, my, hover, w, h);
                         }
                     }
                 }

@@ -52,6 +52,7 @@ export component PreviewCard inherits FilledCard {
     callback save_plot();
     callback pin_run();
     callback clear_pinned_runs();
+    callback mouse_move(length, length, bool, length, length);
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
@@ -146,11 +147,24 @@ export component PreviewCard inherits FilledCard {
             }
 
             // The rendered SVG plot
-            if root.preview_plot.width > 0: Image {
+            if root.preview_plot.width > 0: plot_touch := TouchArea {
                 width: 100%;
                 height: 100%;
-                source: root.preview_plot;
-                image-fit: contain;
+
+                changed has-hover => {
+                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                }
+
+                pointer-event(event) => {
+                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                }
+
+                Image {
+                    width: 100%;
+                    height: 100%;
+                    source: root.preview_plot;
+                    image-fit: contain;
+                }
             }
         }
 

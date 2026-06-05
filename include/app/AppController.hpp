@@ -66,6 +66,12 @@ private:
   std::vector<PinnedRun> pinned_runs_; ///< Pinned runs for comparison plots.
   std::vector<Preset> presets_;        ///< List of loaded parameter presets.
 
+  float last_mouse_x_ = -1.0f;
+  float last_mouse_y_ = -1.0f;
+  bool mouse_hover_ = false;
+  float last_plot_width_ = 0.0f;
+  float last_plot_height_ = 0.0f;
+
   /**
    * @brief Helper to update the UI progress bar and status text safely.
    * @param p Progress value between 0.0 and 1.0.
@@ -169,6 +175,11 @@ private:
    * @param index The index of the selected plot in the dropdown menu.
    */
   void handleSelectPlot(int index);
+
+  /**
+   * @brief Handles mouse movements over the preview plot area.
+   */
+  void handleMouseMove(float mx, float my, bool hover, float w, float h);
 
   /**
    * @brief Handles the "Save Plot" signal from the UI.

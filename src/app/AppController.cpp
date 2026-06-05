@@ -73,6 +73,11 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   // Handle plot selection: generate SVG and push to UI
   ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
 
+  // Handle mouse move on preview plot
+  ui_.on_mouse_move([this](float mx, float my, bool hover, float w, float h) {
+    handleMouseMove(mx, my, hover, w, h);
+  });
+
   // Handle save plot request (SVG or PDF)
   ui_.on_save_plot([this]() { handleSavePlot(); });
 
@@ -657,11 +662,21 @@ void AppController::handleSelectPlot(int index) {
   if (!hist)
     return;
 
+  if (ui_.get_selected_plot_index() != index) {
+    ui_.set_selected_plot_index(index);
+  }
+
   correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
+  correlation::plotters::HoverInfo hover;
+  hover.active = mouse_hover_;
+  hover.mouse_x = last_mouse_x_;
+  hover.mouse_y = last_mouse_y_;
+  hover.widget_width = last_plot_width_;
+  hover.widget_height = last_plot_height_;
 
   std::string svg;
   if (pinned_runs_.empty()) {
-    svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+    svg = correlation::plotters::renderHistogramAsSvg(*hist, config, hover);
   } else {
     std::vector<correlation::plotters::LabeledHistogram> datasets;
 
@@ -681,13 +696,26 @@ void AppController::handleSelectPlot(int index) {
     if (!partials.empty() && partials.find(key) == partials.end()) {
       key = partials.begin()->first;
     }
-    svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
+    svg = correlation::plotters::renderComparisonSvg(datasets, key, config, hover);
   }
 
   // Load SVG directly from memory avoiding filesystem issues
   auto img = slint::private_api::load_image_from_embedded_data(
       std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
   ui_.set_preview_plot(img);
+}
+
+void AppController::handleMouseMove(float mx, float my, bool hover, float w, float h) {
+  last_mouse_x_ = mx;
+  last_mouse_y_ = my;
+  mouse_hover_ = hover;
+  last_plot_width_ = w;
+  last_plot_height_ = h;
+
+  int current_idx = ui_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    handleSelectPlot(current_idx);
+  }
 }
 
 void AppController::handleSavePlot() {

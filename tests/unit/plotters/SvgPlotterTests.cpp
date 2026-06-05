@@ -24,7 +24,7 @@ TEST(SvgPlotterTests, RendersEmptyHistogramGracefully) {
   std::string svg = renderHistogramAsSvg(empty_hist);
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("<svg"), std::string::npos);
-  EXPECT_NE(svg.find("<path"), std::string::npos);
+  EXPECT_NE(svg.find("<text"), std::string::npos);
   EXPECT_EQ(svg.find("<polyline"), std::string::npos);
 }
 
@@ -93,6 +93,32 @@ TEST(SvgPlotterTests, RendersComparisonOverlayCorrectly) {
   EXPECT_FALSE(svg.empty());
   EXPECT_NE(svg.find("<svg"), std::string::npos);
   EXPECT_NE(svg.find("<polyline"), std::string::npos);
+}
+
+TEST(SvgPlotterTests, RendersWithHoverActive) {
+  Histogram hist;
+  hist.title = "Hover Plot";
+  hist.x_label = "r";
+  hist.y_label = "g";
+  hist.bins = {1.0, 2.0, 3.0};
+  hist.partials["Total"] = {0.5, 1.0, 1.5};
+
+  PlotConfig config;
+  HoverInfo hover;
+  hover.active = true;
+  hover.mouse_x = 200.0;
+  hover.mouse_y = 150.0;
+  hover.widget_width = 800.0;
+  hover.widget_height = 600.0;
+
+  std::string svg = renderHistogramAsSvg(hist, config, hover);
+  EXPECT_FALSE(svg.empty());
+  // Should draw the dashed guide line
+  EXPECT_NE(svg.find("stroke-dasharray=\"4,4\""), std::string::npos);
+  // Should draw a bullet marker circle
+  EXPECT_NE(svg.find("<circle"), std::string::npos);
+  // Should render tooltip text
+  EXPECT_NE(svg.find("<text"), std::string::npos);
 }
 
 } // namespace correlation::testing
