@@ -160,15 +160,19 @@ if (NOT WIN32)
 
     if (APPLE)
         # On macOS, fixup the bundle (embed dynamic libraries like TBB, HDF5, etc.)
+        # BundleUtilities requires absolute paths; resolve CMAKE_INSTALL_PREFIX
+        # in case the user passes a relative --prefix to cmake --install.
         if(BUILD_GUI)
             install(CODE "
                 include(BundleUtilities)
-                fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/correlation\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
+                get_filename_component(_abs_prefix \"\${CMAKE_INSTALL_PREFIX}\" ABSOLUTE)
+                fixup_bundle(\"\${_abs_prefix}/${CMAKE_INSTALL_BINDIR}/correlation\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
             " COMPONENT correlation)
         endif()
         install(CODE "
             include(BundleUtilities)
-            fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/correlation-cli\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
+            get_filename_component(_abs_prefix \"\${CMAKE_INSTALL_PREFIX}\" ABSOLUTE)
+            fixup_bundle(\"\${_abs_prefix}/${CMAKE_INSTALL_BINDIR}/correlation-cli\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
         " COMPONENT correlation)
     endif()
 endif()

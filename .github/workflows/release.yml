@@ -201,7 +201,7 @@ jobs:
       - name: Verify Bundle Dependencies
         run: |
           # Perform a temporary test installation
-          cmake --install build --prefix install_test
+          cmake --install build --prefix $PWD/install_test
           
           # Inspect linked libraries of the GUI and CLI binaries
           echo "==== Executable Library Dependencies ===="
