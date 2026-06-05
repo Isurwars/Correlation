@@ -11,6 +11,7 @@ pkgbase = correlation
 	makedepends = pkgconf
 	depends = intel-oneapi-tbb
 	depends = hdf5
+	depends = arrow
 	depends = fontconfig
 	depends = freetype2
 	depends = libxcb

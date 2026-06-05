@@ -675,7 +675,7 @@ void AppController::handleSelectPlot(int index) {
   hover.widget_width = last_plot_width_;
   hover.widget_height = last_plot_height_;
 
-  // Cache verification to avoid redundant replotting
+  // Cache verification to avoid redundant replotting (ignoring mouse Y since SVG only depends on X)
   if (index == last_rendered_index_ &&
       pinned_runs_.size() == last_pinned_runs_count_ &&
       config.theme == last_config_.theme &&
@@ -687,7 +687,6 @@ void AppController::handleSelectPlot(int index) {
       config.show_legend == last_config_.show_legend &&
       hover.active == last_hover_.active &&
       std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
-      std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
       std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
       std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2) {
     return;
@@ -730,25 +729,45 @@ void AppController::handleSelectPlot(int index) {
 }
 
 void AppController::handleMouseMove(float mx, float my, bool hover, float w, float h) {
-  // Ignore duplicate events
+  // Trust hover directly from Slint since we made TouchArea visibility stable
+  bool actual_hover = hover;
+
+  // Ignore vertical movement duplicate events if horizontal position and hover state are identical
   if (std::abs(mx - last_mouse_x_) < 1e-2f &&
-      std::abs(my - last_mouse_y_) < 1e-2f &&
-      hover == mouse_hover_ &&
+      actual_hover == mouse_hover_ &&
       std::abs(w - last_plot_width_) < 1e-2f &&
       std::abs(h - last_plot_height_) < 1e-2f) {
     return;
   }
 
+  bool hover_changed = (actual_hover != mouse_hover_);
+
   last_mouse_x_ = mx;
   last_mouse_y_ = my;
-  mouse_hover_ = hover;
+  mouse_hover_ = actual_hover;
   last_plot_width_ = w;
   last_plot_height_ = h;
 
   auto now = std::chrono::steady_clock::now();
-  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_replot_time_).count();
 
-  if (elapsed >= 100) {
+  if (hover_changed || !actual_hover) {
+    // Update immediately on transition (enter/exit) to make tooltip toggle feel crisp
+    last_replot_time_ = now;
+    if (timer_scheduled_) {
+      hover_timer_.stop();
+      timer_scheduled_ = false;
+    }
+    int current_idx = ui_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      handleSelectPlot(current_idx);
+    }
+    return;
+  }
+
+  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_replot_time_).count();
+  const int throttle_ms = 200; // 200ms throttle as requested
+
+  if (elapsed >= throttle_ms) {
     last_replot_time_ = now;
     if (timer_scheduled_) {
       hover_timer_.stop();
@@ -760,7 +779,7 @@ void AppController::handleMouseMove(float mx, float my, bool hover, float w, flo
     }
   } else if (!timer_scheduled_) {
     timer_scheduled_ = true;
-    auto delay = 100 - elapsed;
+    auto delay = throttle_ms - elapsed;
     hover_timer_.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(delay), [this]() {
       timer_scheduled_ = false;
       last_replot_time_ = std::chrono::steady_clock::now();

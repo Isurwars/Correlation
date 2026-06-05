@@ -93,7 +93,7 @@ export component PreviewCard inherits FilledCard {
             FilledButton {
                 text: "Save Plot";
                 icon: Icons.save;
-                enabled: root.preview_plot.width > 0;
+                enabled: root.selected_plot_index >= 0;
                 clicked => {
                     root.save_plot();
                 }
@@ -102,7 +102,7 @@ export component PreviewCard inherits FilledCard {
             FilledButton {
                 text: "Pin Run";
                 icon: Icons.pin;
-                enabled: root.preview_plot.width > 0;
+                enabled: root.selected_plot_index >= 0;
                 clicked => {
                     root.pin_run();
                 }
@@ -135,7 +135,7 @@ export component PreviewCard inherits FilledCard {
             visible: self.width > 0.1px && self.height > 0.1px;
 
             // Placeholder text when no image is available
-            if root.preview_plot.width == 0: Vertical {
+            if root.selected_plot_index < 0: Vertical {
                 padding: MaterialStyleMetrics.spacing_8;
                 MaterialText {
                     text: "Select a plot from the dropdown above.";
@@ -150,21 +150,13 @@ export component PreviewCard inherits FilledCard {
             plot_touch := TouchArea {
                 width: 100%;
                 height: 100%;
-                visible: root.preview_plot.width > 0;
+                visible: root.selected_plot_index >= 0;
 
                 changed has-hover => {
                     root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                 }
 
                 changed mouse-x => {
-                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                }
-
-                changed mouse-y => {
-                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
-                }
-
-                pointer-event(event) => {
                     root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
                 }
 
@@ -178,7 +170,7 @@ export component PreviewCard inherits FilledCard {
         }
 
         export_settings := ExportSettingsCard {
-            enabled: root.preview_plot.width > 0;
+            enabled: root.selected_plot_index >= 0;
             export_size_preset <=> root.export_size_preset;
             export_palette <=> root.export_palette;
             export_font_scale <=> root.export_font_scale;

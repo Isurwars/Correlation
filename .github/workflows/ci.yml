@@ -22,11 +22,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        build_opts: [""]
-        include:
-          # Extra Linux job with HDF5 + Arrow enabled
-          - os: ubuntu-latest
-            build_opts: "-DBUILD_WITH_HDF5=ON -DBUILD_WITH_ARROW=ON"
 
     env:
       SCCACHE_GHA_ENABLED: "true"
@@ -71,8 +66,7 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
-            ${{ matrix.build_opts }}
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
