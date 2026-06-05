@@ -56,6 +56,28 @@ if(BUILD_GUI)
     # Restore BUILD_SHARED_LIBS
     set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
   endif()
+
+  # Transitively propagate platform dependencies for statically built Slint
+  if(TARGET Slint::Slint)
+    set(_slint_target "Slint::Slint")
+    get_target_property(_aliased_target Slint::Slint ALIASED_TARGET)
+    if(_aliased_target)
+      set(_slint_target "${_aliased_target}")
+    endif()
+
+    if(APPLE)
+      foreach(_fw IN ITEMS
+          OpenGL CoreVideo Cocoa Carbon IOKit QuartzCore
+          AppKit CoreGraphics Metal CoreFoundation Foundation Security)
+        find_library(_${_fw}_FW ${_fw} REQUIRED)
+        set_property(TARGET ${_slint_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "${_${_fw}_FW}")
+        unset(_${_fw}_FW CACHE)
+      endforeach()
+    elseif(NOT WIN32)
+      find_package(Fontconfig REQUIRED)
+      set_property(TARGET ${_slint_target} APPEND PROPERTY INTERFACE_LINK_LIBRARIES Fontconfig::Fontconfig)
+    endif()
+  endif()
 endif()
 
 # 3. HDF5
