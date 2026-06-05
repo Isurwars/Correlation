@@ -162,14 +162,22 @@ if (NOT WIN32)
         # On macOS, fixup the bundle (embed dynamic libraries like TBB, HDF5, etc.)
         # BundleUtilities requires absolute paths; resolve CMAKE_INSTALL_PREFIX
         # in case the user passes a relative --prefix to cmake --install.
+        # Force all dynamic libraries to be placed directly in the same bin/ folder
+        # as the executables using gp_item_default_embedded_path_override.
         if(BUILD_GUI)
             install(CODE "
+                function(gp_item_default_embedded_path_override item default_embedded_path_var)
+                    set(\${default_embedded_path_var} \"@executable_path\" PARENT_SCOPE)
+                endfunction()
                 include(BundleUtilities)
                 get_filename_component(_abs_prefix \"\${CMAKE_INSTALL_PREFIX}\" ABSOLUTE)
                 fixup_bundle(\"\${_abs_prefix}/${CMAKE_INSTALL_BINDIR}/correlation\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
             " COMPONENT correlation)
         endif()
         install(CODE "
+            function(gp_item_default_embedded_path_override item default_embedded_path_var)
+                set(\${default_embedded_path_var} \"@executable_path\" PARENT_SCOPE)
+            endfunction()
             include(BundleUtilities)
             get_filename_component(_abs_prefix \"\${CMAKE_INSTALL_PREFIX}\" ABSOLUTE)
             fixup_bundle(\"\${_abs_prefix}/${CMAKE_INSTALL_BINDIR}/correlation-cli\" \"\" \"/opt/homebrew/lib;/usr/local/lib\")
