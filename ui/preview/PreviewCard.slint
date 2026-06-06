@@ -53,10 +53,24 @@ export component PreviewCard inherits FilledCard {
     callback pin_run();
     callback clear_pinned_runs();
     callback mouse_move(length, length, bool, length, length);
+    callback plot_resized(length, length);
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
         plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : export_settings.hovered_tooltip_text != "" ? export_settings.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x :
+        export_settings.hovered_tooltip_text != "" ? export_settings.hovered_x : 0px;
+    out property <length> hovered_y:
+        plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y :
+        export_settings.hovered_tooltip_text != "" ? export_settings.hovered_y : 0px;
+    out property <length> hovered_width:
+        plot_dropdown_area.has-hover ? plot_dropdown_area.width :
+        export_settings.hovered_tooltip_text != "" ? export_settings.hovered_width : 0px;
+    out property <length> hovered_height:
+        plot_dropdown_area.has-hover ? plot_dropdown_area.height :
+        export_settings.hovered_tooltip_text != "" ? export_settings.hovered_height : 0px;
 
     Vertical {
         spacing: MaterialStyleMetrics.spacing_8;
@@ -125,7 +139,7 @@ export component PreviewCard inherits FilledCard {
         }
 
         // SVG plot image area — fills remaining space
-        Rectangle {
+        plot_container := Rectangle {
             horizontal-stretch: 1;
             vertical-stretch: 1;
             // Desired height is managed by the parent layout's vertical-stretch
@@ -133,6 +147,17 @@ export component PreviewCard inherits FilledCard {
             border-radius: MaterialStyleMetrics.border_radius_2;
             clip: self.width > 1px && self.height > 1px;
             visible: self.width > 0.1px && self.height > 0.1px;
+
+            // Re-render the SVG when the container is resized so the plot
+            // adapts its layout (axes, labels, margins) to the new dimensions.
+            // These observers live on the Rectangle (not on a TouchArea) to
+            // avoid conflicts with the nested window_area / blocking TouchAreas.
+            changed width => {
+                root.plot_resized(self.width, self.height);
+            }
+            changed height => {
+                root.plot_resized(self.width, self.height);
+            }
 
             // Placeholder text when no image is available
             if root.selected_plot_index < 0: Vertical {

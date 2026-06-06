@@ -37,6 +37,23 @@ export component TrajectoryOptionsCard inherits FilledCard {
         start_frame_area.has-hover ? "First frame to include in the analysis.\n\n📏 Tip: Use 'Start' or '1' for the first frame.\n\n🔬 Physics: In molecular dynamics, the initial frames may represent an equilibration phase. Excluding early frames ensures only the production run is analyzed. A common practice is to discard the first 10–20% of frames." :
         end_frame_area.has-hover ? "Last frame to include in the analysis.\n\n📏 Tip: Use 'End' to include all remaining frames.\n\n🔬 Physics: Selecting a subset of frames can speed up analysis during parameter exploration. Once you find good settings, use the full range for publication-quality results." : "";
 
+    out property <length> hovered_x:
+        time_step_area.has-hover ? time_step_area.absolute-position.x :
+        start_frame_area.has-hover ? start_frame_area.absolute-position.x :
+        end_frame_area.has-hover ? end_frame_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        time_step_area.has-hover ? time_step_area.absolute-position.y :
+        start_frame_area.has-hover ? start_frame_area.absolute-position.y :
+        end_frame_area.has-hover ? end_frame_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        time_step_area.has-hover ? time_step_area.width :
+        start_frame_area.has-hover ? start_frame_area.width :
+        end_frame_area.has-hover ? end_frame_area.width : 0px;
+    out property <length> hovered_height:
+        time_step_area.has-hover ? time_step_area.height :
+        start_frame_area.has-hover ? start_frame_area.height :
+        end_frame_area.has-hover ? end_frame_area.height : 0px;
+
     Vertical {
         spacing: MaterialStyleMetrics.spacing_12;
         padding: MaterialStyleMetrics.spacing_12;

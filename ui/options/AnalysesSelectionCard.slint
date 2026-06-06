@@ -19,11 +19,19 @@ export component AnalysesSelectionCard inherits FilledCard {
     callback toggle_calculator(string, bool);
 
     out property <string> hovered_calculator_description: "";
+    out property <length> hovered_x: 0px;
+    out property <length> hovered_y: 0px;
+    out property <length> hovered_width: 0px;
+    out property <length> hovered_height: 0px;
 
     property <bool> is_bg_hovered: bg_touch_area.has-hover;
     changed is_bg_hovered => {
         if (!root.is_bg_hovered) {
             root.hovered_calculator_description = "";
+            root.hovered_x = 0px;
+            root.hovered_y = 0px;
+            root.hovered_width = 0px;
+            root.hovered_height = 0px;
         }
     }
 
@@ -77,6 +85,10 @@ export component AnalysesSelectionCard inherits FilledCard {
                                 changed _hover => {
                                     if (self.has-hover) {
                                         root.hovered_calculator_description = calc.description;
+                                        root.hovered_x = self.absolute-position.x;
+                                        root.hovered_y = self.absolute-position.y;
+                                        root.hovered_width = self.width;
+                                        root.hovered_height = self.height;
                                     }
                                 }
 

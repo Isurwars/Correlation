@@ -18,6 +18,19 @@ export component BondAngleOptionsCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         theta_bin_area.has-hover ? "Bin width for the Plane-Angle Distribution (PAD).\n\n📏 Recommended: 1.0°.\n\n🔬 Physics: The PAD measures bond angles between triplets of bonded atoms (e.g., O–Si–O ≈ 109.5° in tetrahedral coordination). 1° resolves distinct coordination geometries while maintaining good statistics. Finer bins (0.5°) help for crystalline systems with sharp angular peaks." : dihedral_bin_area.has-hover ? "Bin width for the Dihedral-Angle Distribution (DAD).\n\n📏 Recommended: 1.0°.\n\n🔬 Physics: Dihedral angles measure torsion across four-atom chains (A–B–C–D). They reveal rotational conformations and ring puckering. 1° is sufficient for most amorphous systems; use finer bins for molecular crystals with distinct torsional states." : "";
 
+    out property <length> hovered_x:
+        theta_bin_area.has-hover ? theta_bin_area.absolute-position.x :
+        dihedral_bin_area.has-hover ? dihedral_bin_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        theta_bin_area.has-hover ? theta_bin_area.absolute-position.y :
+        dihedral_bin_area.has-hover ? dihedral_bin_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        theta_bin_area.has-hover ? theta_bin_area.width :
+        dihedral_bin_area.has-hover ? dihedral_bin_area.width : 0px;
+    out property <length> hovered_height:
+        theta_bin_area.has-hover ? theta_bin_area.height :
+        dihedral_bin_area.has-hover ? dihedral_bin_area.height : 0px;
+
     Vertical {
 
         ExpandableHeader {

@@ -216,6 +216,7 @@ export component AppWindow inherits Window {
     callback validate_inputs();
     callback copy_cli_command();
     callback mouse_move(length, length, bool, length, length);
+    callback plot_resized(length, length);
 
     // Presets callbacks
     callback load_preset(int);
@@ -296,11 +297,31 @@ export component AppWindow inherits Window {
     ///   hovered component.
     property <string> sidebar_tooltip: operations_card.hovered_tooltip_text;
 
-    property <string> options_hovered_tooltip: "";
-    property <string> preview_hovered_tooltip: "";
+    property <string> options_hovered_tooltip: options_container.local_tooltip;
+    property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
 
     property <string> hovered_tooltip_text: 
         sidebar_tooltip != "" ? sidebar_tooltip : options_hovered_tooltip != "" ? options_hovered_tooltip : preview_hovered_tooltip;
+
+    property <length> hovered_x:
+        sidebar_tooltip != "" ? operations_card.hovered_x :
+        options_hovered_tooltip != "" ? options_container.local_hovered_x :
+        preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
+
+    property <length> hovered_y:
+        sidebar_tooltip != "" ? operations_card.hovered_y :
+        options_hovered_tooltip != "" ? options_container.local_hovered_y :
+        preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
+
+    property <length> hovered_width:
+        sidebar_tooltip != "" ? operations_card.hovered_width :
+        options_hovered_tooltip != "" ? options_container.local_hovered_width :
+        preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
+
+    property <length> hovered_height:
+        sidebar_tooltip != "" ? operations_card.hovered_height :
+        options_hovered_tooltip != "" ? options_container.local_hovered_height :
+        preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
     title: "Correlation";
     background: MaterialPalette.background;
@@ -315,7 +336,6 @@ export component AppWindow inherits Window {
     // ============================================================================
     // Main UI structure
     // ============================================================================
-    window_area := TouchArea {
         Horizontal {
             // 1. Left column: Operations & CLI command
             Vertical {
@@ -411,6 +431,50 @@ export component AppWindow inherits Window {
                         (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text :
                         (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
                         (options_container.active_tab == 2 && file_export_card.hovered_tooltip_text != "") ? file_export_card.hovered_tooltip_text : "";
+
+                    property <length> local_hovered_x:
+                        (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_x :
+                        (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
+                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_x :
+                        (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_x :
+                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
+                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x :
+                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
+                        (options_container.active_tab == 2 && file_export_card.hovered_tooltip_text != "") ? file_export_card.hovered_x : 0px;
+
+                    property <length> local_hovered_y:
+                        (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_y :
+                        (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
+                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_y :
+                        (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_y :
+                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
+                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y :
+                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
+                        (options_container.active_tab == 2 && file_export_card.hovered_tooltip_text != "") ? file_export_card.hovered_y : 0px;
+
+                    property <length> local_hovered_width:
+                        (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_width :
+                        (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
+                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_width :
+                        (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_width :
+                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
+                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width :
+                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
+                        (options_container.active_tab == 2 && file_export_card.hovered_tooltip_text != "") ? file_export_card.hovered_width : 0px;
+
+                    property <length> local_hovered_height:
+                        (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_height :
+                        (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
+                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_height :
+                        (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_height :
+                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
+                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_height :
+                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
+                        (options_container.active_tab == 2 && file_export_card.hovered_tooltip_text != "") ? file_export_card.hovered_height : 0px;
 
                     changed local_tooltip => {
                         root.options_hovered_tooltip = self.local_tooltip;
@@ -582,6 +646,8 @@ export component AppWindow inherits Window {
                         selected_plot_index <=> root.selected_plot_index;
                         pinned_runs_count: root.pinned_runs_count;
 
+
+
                         export_size_preset <=> root.export_size_preset;
                         export_palette <=> root.export_palette;
                         export_font_scale <=> root.export_font_scale;
@@ -606,6 +672,9 @@ export component AppWindow inherits Window {
                         mouse_move(mx, my, hover, w, h) => {
                             root.mouse_move(mx, my, hover, w, h);
                         }
+                        plot_resized(w, h) => {
+                            root.plot_resized(w, h);
+                        }
                     }
                 }
 
@@ -616,13 +685,16 @@ export component AppWindow inherits Window {
                 }
             }
         }
-    }
 
     AppToolTips {
         x: 0;
         y: 0;
-        mouse_x: window_area.mouse-x;
-        mouse_y: window_area.mouse-y;
+        width: 100%;
+        height: 100%;
+        hovered_x: root.hovered_x;
+        hovered_y: root.hovered_y;
+        hovered_width: root.hovered_width;
+        hovered_height: root.hovered_height;
         hovered_tooltip_text: root.hovered_tooltip_text;
     }
 }

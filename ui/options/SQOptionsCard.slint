@@ -20,6 +20,23 @@ export component SQOptionsCard inherits FilledCard {
     out property <string> hovered_tooltip_text:
         q_max_area.has-hover ? "Maximum scattering vector Q for the Structure Factor S(Q).\n\n📏 Recommended: 20.0 Å⁻¹.\n\n🔬 Physics: Higher Q probes shorter real-space distances (Q ≈ 2π/r). Q_max = 20 Å⁻¹ resolves features down to ~0.3 Å. For X-ray comparison, match the experimental 2θ range." : q_bin_area.has-hover ? "Bin width for the S(Q) histogram.\n\n📏 Recommended: 0.02 Å⁻¹.\n\n🔬 Physics: Related to r_max by the Nyquist criterion — finer Q bins require larger real-space integration radii. Too coarse bins smear sharp diffraction peaks." : r_int_area.has-hover ? "Upper integration limit for the Fourier transform of g(r) → S(Q).\n\n📏 Recommended: 10.0 Å.\n\n🔬 Physics: This is the real-space cutoff for the sine transform. Too short truncates long-range correlations (causing ripples in S(Q)). Too long amplifies noise from the g(r) tail." : "";
 
+    out property <length> hovered_x:
+        q_max_area.has-hover ? q_max_area.absolute-position.x :
+        q_bin_area.has-hover ? q_bin_area.absolute-position.x :
+        r_int_area.has-hover ? r_int_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        q_max_area.has-hover ? q_max_area.absolute-position.y :
+        q_bin_area.has-hover ? q_bin_area.absolute-position.y :
+        r_int_area.has-hover ? r_int_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        q_max_area.has-hover ? q_max_area.width :
+        q_bin_area.has-hover ? q_bin_area.width :
+        r_int_area.has-hover ? r_int_area.width : 0px;
+    out property <length> hovered_height:
+        q_max_area.has-hover ? q_max_area.height :
+        q_bin_area.has-hover ? q_bin_area.height :
+        r_int_area.has-hover ? r_int_area.height : 0px;
+
     Vertical {
 
         ExpandableHeader {

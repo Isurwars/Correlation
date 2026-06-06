@@ -37,6 +37,31 @@ export component PresetManagerCard inherits FilledCard {
         save_input_area.has-hover ? "Enter a unique name to save your current parameter settings." :
         save_btn_area.has-hover ? "Save the current parameters as a named preset for future use." : "";
 
+    out property <length> hovered_x:
+        preset_dropdown_area.has-hover ? preset_dropdown_area.absolute-position.x :
+        load_btn_area.has-hover ? load_btn_area.absolute-position.x :
+        delete_btn_area.has-hover ? delete_btn_area.absolute-position.x :
+        save_input_area.has-hover ? save_input_area.absolute-position.x :
+        save_btn_area.has-hover ? save_btn_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        preset_dropdown_area.has-hover ? preset_dropdown_area.absolute-position.y :
+        load_btn_area.has-hover ? load_btn_area.absolute-position.y :
+        delete_btn_area.has-hover ? delete_btn_area.absolute-position.y :
+        save_input_area.has-hover ? save_input_area.absolute-position.y :
+        save_btn_area.has-hover ? save_btn_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        preset_dropdown_area.has-hover ? preset_dropdown_area.width :
+        load_btn_area.has-hover ? load_btn_area.width :
+        delete_btn_area.has-hover ? delete_btn_area.width :
+        save_input_area.has-hover ? save_input_area.width :
+        save_btn_area.has-hover ? save_btn_area.width : 0px;
+    out property <length> hovered_height:
+        preset_dropdown_area.has-hover ? preset_dropdown_area.height :
+        load_btn_area.has-hover ? load_btn_area.height :
+        delete_btn_area.has-hover ? delete_btn_area.height :
+        save_input_area.has-hover ? save_input_area.height :
+        save_btn_area.has-hover ? save_btn_area.height : 0px;
+
     Vertical {
         ExpandableHeader {
             text: "Parameter Presets";

@@ -9,13 +9,15 @@ import { MaterialTypography } from "../styling/material_typography.slint";
 
 export component ToolTip {
     in property <string> text;
-    in property <length> mouse_x;
-    in property <length> mouse_y;
+    in property <length> hovered_x;
+    in property <length> hovered_y;
+    in property <length> hovered_width;
+    in property <length> hovered_height;
     in property <length> parent_width;
     in property <length> parent_height;
 
-    x: root.mouse_x + self.width + 20px > root.parent_width ? root.mouse_x - self.width - 4px : root.mouse_x + 20px;
-    y: root.mouse_y + self.height + 20px > root.parent_height ? root.mouse_y - self.height - 4px : root.mouse_y + 20px;
+    x: max(8px, min(root.parent_width - self.width - 8px, root.hovered_x + (root.hovered_width - self.width) / 2));
+    y: (root.hovered_y + root.hovered_height + self.height + 6px > root.parent_height) ? (root.hovered_y - self.height - 6px) : (root.hovered_y + root.hovered_height + 6px);
 
     z: 10000;
 

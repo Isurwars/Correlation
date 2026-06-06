@@ -92,6 +92,24 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   ui_.on_save_preset([this](slint::SharedString name) { handleSavePreset(std::string(name.data())); });
   ui_.on_delete_preset([this](int index) { handleDeletePreset(index); });
 
+  // Handle plot resized callback from UI
+  ui_.on_plot_resized([this](float w, float h) {
+    last_plot_width_ = w;
+    last_plot_height_ = h;
+    int current_idx = ui_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      handleSelectPlot(current_idx);
+    }
+  });
+
+  // Start periodic 200ms timer to poll config and re-plot if anything changes
+  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(200), [this]() {
+    int current_idx = ui_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      handleSelectPlot(current_idx);
+    }
+  });
+
   // Initial load of preset list
   refreshPresetList();
 }
@@ -333,6 +351,14 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::Presentation;
   } else {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::Default;
+    // When using the Default preset, adapt the SVG canvas to the actual
+    // widget dimensions so the plot fills the preview panel without
+    // letterboxing.  Fall back to the built-in 1200×900 if the widget
+    // has not been laid out yet.
+    if (last_plot_width_ > 1.0f && last_plot_height_ > 1.0f) {
+      config.width = static_cast<double>(last_plot_width_);
+      config.height = static_cast<double>(last_plot_height_);
+    }
   }
 
   int palette_val = ui_.get_export_palette();
@@ -680,6 +706,8 @@ void AppController::handleSelectPlot(int index) {
       pinned_runs_.size() == last_pinned_runs_count_ &&
       config.theme == last_config_.theme &&
       config.preset_size == last_config_.preset_size &&
+      std::abs(config.width - last_config_.width) < 1e-2 &&
+      std::abs(config.height - last_config_.height) < 1e-2 &&
       config.palette == last_config_.palette &&
       std::abs(config.font_scale - last_config_.font_scale) < 1e-4 &&
       std::abs(config.line_width - last_config_.line_width) < 1e-4 &&
@@ -828,6 +856,15 @@ void AppController::handleSavePlot() {
 
     correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
     config.use_native_text = true;
+
+    // For file export, always use a fixed high-resolution canvas so saved
+    // plots have consistent, publication-ready dimensions regardless of the
+    // current window size.  Only override when the user picked Default;
+    // explicit presets (SingleColumn, etc.) are already handled.
+    if (config.preset_size == correlation::plotters::PlotConfig::PresetSize::Default) {
+      config.width = 1200.0;
+      config.height = 900.0;
+    }
 
     std::string svg;
     if (pinned_runs_.empty()) {

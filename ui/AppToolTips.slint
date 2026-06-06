@@ -17,16 +17,20 @@ import { ToolTip } from "material/material.slint";
 /// - It acts purely as a presentation layer for UI hints.
 // ============================================================================
 export component AppToolTips inherits Rectangle {
-    in property <length> mouse_x;
-    in property <length> mouse_y;
+    in property <length> hovered_x;
+    in property <length> hovered_y;
+    in property <length> hovered_width;
+    in property <length> hovered_height;
     background: transparent;
     
     // Hover text to display
     in property <string> hovered_tooltip_text: "";
 
     ToolTip {
-        mouse_x: root.mouse_x;
-        mouse_y: root.mouse_y;
+        hovered_x: root.hovered_x;
+        hovered_y: root.hovered_y;
+        hovered_width: root.hovered_width;
+        hovered_height: root.hovered_height;
         parent_width: root.width;
         parent_height: root.height;
         visible: root.hovered_tooltip_text != "";

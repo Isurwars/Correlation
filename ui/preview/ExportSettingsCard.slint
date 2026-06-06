@@ -38,6 +38,35 @@ export component ExportSettingsCard inherits FilledCard {
         grid_area.has-hover ? "Toggle the background reference grid lines on the plot." :
         legend_area.has-hover ? "Toggle the interactive color legend in the upper-right corner." : "";
 
+    out property <length> hovered_x:
+        size_area.has-hover ? size_area.absolute-position.x :
+        palette_area.has-hover ? palette_area.absolute-position.x :
+        font_area.has-hover ? font_area.absolute-position.x :
+        line_area.has-hover ? line_area.absolute-position.x :
+        grid_area.has-hover ? grid_area.absolute-position.x :
+        legend_area.has-hover ? legend_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        size_area.has-hover ? size_area.absolute-position.y :
+        palette_area.has-hover ? palette_area.absolute-position.y :
+        font_area.has-hover ? font_area.absolute-position.y :
+        line_area.has-hover ? line_area.absolute-position.y :
+        grid_area.has-hover ? grid_area.absolute-position.y :
+        legend_area.has-hover ? legend_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        size_area.has-hover ? size_area.width :
+        palette_area.has-hover ? palette_area.width :
+        font_area.has-hover ? font_area.width :
+        line_area.has-hover ? line_area.width :
+        grid_area.has-hover ? grid_area.width :
+        legend_area.has-hover ? legend_area.width : 0px;
+    out property <length> hovered_height:
+        size_area.has-hover ? size_area.height :
+        palette_area.has-hover ? palette_area.height :
+        font_area.has-hover ? font_area.height :
+        line_area.has-hover ? line_area.height :
+        grid_area.has-hover ? grid_area.height :
+        legend_area.has-hover ? legend_area.height : 0px;
+
     property <[MenuItem]> size_items: [
         { text: "Default (1200x900)", enabled: true },
         { text: "Single Column (3.5\" @ 300 DPI)", enabled: true },

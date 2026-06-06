@@ -33,6 +33,23 @@ export component FileExportCard inherits FilledCard {
         hdf5_area.has-hover ? "Export results to a single HDF5 binary file.\n\n📏 Best for: Large datasets, Python (h5py) and MATLAB workflows. All results in one structured file.\n\n💡 Tip: HDF5 preserves metadata and is more compact than CSV for multi-frame trajectories." : 
         parquet_area.has-hover ? "Export results as Apache Parquet files.\n\n📏 Best for: Columnar data analytics, Python (pandas/pyarrow), and integration with data science pipelines.\n\n💡 Tip: Parquet offers excellent compression and fast column-wise reads for large datasets." : "";
 
+    out property <length> hovered_x:
+        csv_area.has-hover ? csv_area.absolute-position.x :
+        hdf5_area.has-hover ? hdf5_area.absolute-position.x :
+        parquet_area.has-hover ? parquet_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        csv_area.has-hover ? csv_area.absolute-position.y :
+        hdf5_area.has-hover ? hdf5_area.absolute-position.y :
+        parquet_area.has-hover ? parquet_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        csv_area.has-hover ? csv_area.width :
+        hdf5_area.has-hover ? hdf5_area.width :
+        parquet_area.has-hover ? parquet_area.width : 0px;
+    out property <length> hovered_height:
+        csv_area.has-hover ? csv_area.height :
+        hdf5_area.has-hover ? hdf5_area.height :
+        parquet_area.has-hover ? parquet_area.height : 0px;
+
     Vertical {
         spacing: MaterialStyleMetrics.spacing_12;
         padding: MaterialStyleMetrics.spacing_12;

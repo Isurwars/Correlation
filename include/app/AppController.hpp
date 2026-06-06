@@ -73,6 +73,7 @@ private:
   // Cache and throttling variables for mouse hover / select plot
   std::chrono::steady_clock::time_point last_replot_time_;
   slint::Timer hover_timer_;
+  slint::Timer update_timer_;
   bool timer_scheduled_ = false;
 
   int last_rendered_index_ = -1;
