@@ -44,6 +44,8 @@ export component PreviewCard inherits FilledCard {
     in-out property <string> export_line_width: "3.0";
     in-out property <bool> export_show_legend: true;
     in-out property <bool> export_show_grid: true;
+    in-out property <bool> export_show_markers: false;
+    in-out property <bool> export_fill_area: false;
 
     in property <string> export_font_scale_error: "";
     in property <string> export_line_width_error: "";
@@ -202,6 +204,8 @@ export component PreviewCard inherits FilledCard {
             export_line_width <=> root.export_line_width;
             export_show_legend <=> root.export_show_legend;
             export_show_grid <=> root.export_show_grid;
+            export_show_markers <=> root.export_show_markers;
+            export_fill_area <=> root.export_fill_area;
             export_font_scale_error: root.export_font_scale_error;
             export_line_width_error: root.export_line_width_error;
         }

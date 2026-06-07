@@ -174,6 +174,8 @@ export component AppWindow inherits Window {
     in-out property <string> export_line_width: "3.0";
     in-out property <bool> export_show_legend: true;
     in-out property <bool> export_show_grid: true;
+    in-out property <bool> export_show_markers: false;
+    in-out property <bool> export_fill_area: false;
     in-out property <string> export_font_scale_error: "";
     in-out property <string> export_line_width_error: "";
 
@@ -285,6 +287,12 @@ export component AppWindow inherits Window {
         root.select_plot(root.selected_plot_index);
     }
     changed export_show_grid => {
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_show_markers => {
+        root.select_plot(root.selected_plot_index);
+    }
+    changed export_fill_area => {
         root.select_plot(root.selected_plot_index);
     }
     changed is_dark => {
@@ -654,6 +662,8 @@ export component AppWindow inherits Window {
                         export_line_width <=> root.export_line_width;
                         export_show_legend <=> root.export_show_legend;
                         export_show_grid <=> root.export_show_grid;
+                        export_show_markers <=> root.export_show_markers;
+                        export_fill_area <=> root.export_fill_area;
                         export_font_scale_error: root.export_font_scale_error;
                         export_line_width_error: root.export_line_width_error;
 

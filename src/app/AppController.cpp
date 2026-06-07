@@ -71,7 +71,7 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
       });
 
   // Handle plot selection: generate SVG and push to UI
-  ui_.on_select_plot([this](int index) { handleSelectPlot(index); });
+  ui_.on_select_plot([this](int index) { requestPlotUpdate(index, true); });
 
   // Handle mouse move on preview plot
   ui_.on_mouse_move([this](float mx, float my, bool hover, float w, float h) {
@@ -98,15 +98,15 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
     last_plot_height_ = h;
     int current_idx = ui_.get_selected_plot_index();
     if (current_idx >= 0) {
-      handleSelectPlot(current_idx);
+      requestPlotUpdate(current_idx, true);
     }
   });
 
-  // Start periodic 200ms timer to poll config and re-plot if anything changes
-  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(200), [this]() {
+  // Start periodic 1s timer to poll config and re-plot if anything changes
+  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000), [this]() {
     int current_idx = ui_.get_selected_plot_index();
     if (current_idx >= 0) {
-      handleSelectPlot(current_idx);
+      requestPlotUpdate(current_idx, false);
     }
   });
 
@@ -378,6 +378,8 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
 
   config.show_grid = ui_.get_export_show_grid();
   config.show_legend = ui_.get_export_show_legend();
+  config.show_markers = ui_.get_export_show_markers();
+  config.fill_area = ui_.get_export_fill_area();
 
   return config;
 }
@@ -493,7 +495,7 @@ void AppController::handleRunAnalysis() {
       // Populate the plot dropdown and auto-preview the first histogram
       populatePlotList();
       if (!available_plot_keys_.empty()) {
-        handleSelectPlot(0);
+        requestPlotUpdate(0, true);
       }
     });
   });
@@ -702,7 +704,7 @@ void AppController::handleSelectPlot(int index) {
   hover.widget_height = last_plot_height_;
 
   // Cache verification to avoid redundant replotting (ignoring mouse Y since SVG only depends on X)
-  if (index == last_rendered_index_ &&
+  bool cache_hit = (index == last_rendered_index_ &&
       pinned_runs_.size() == last_pinned_runs_count_ &&
       config.theme == last_config_.theme &&
       config.preset_size == last_config_.preset_size &&
@@ -713,13 +715,18 @@ void AppController::handleSelectPlot(int index) {
       std::abs(config.line_width - last_config_.line_width) < 1e-4 &&
       config.show_grid == last_config_.show_grid &&
       config.show_legend == last_config_.show_legend &&
+      config.show_markers == last_config_.show_markers &&
+      config.fill_area == last_config_.fill_area &&
       hover.active == last_hover_.active &&
       std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
       std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
-      std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2) {
+      std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
+
+  if (cache_hit && !needs_redraw_) {
     return;
   }
 
+  needs_redraw_ = false;
   last_rendered_index_ = index;
   last_pinned_runs_count_ = pinned_runs_.size();
   last_config_ = config;
@@ -776,44 +783,39 @@ void AppController::handleMouseMove(float mx, float my, bool hover, float w, flo
   last_plot_width_ = w;
   last_plot_height_ = h;
 
-  auto now = std::chrono::steady_clock::now();
+  int current_idx = ui_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, hover_changed || !actual_hover);
+  }
+}
 
-  if (hover_changed || !actual_hover) {
-    // Update immediately on transition (enter/exit) to make tooltip toggle feel crisp
-    last_replot_time_ = now;
-    if (timer_scheduled_) {
-      hover_timer_.stop();
-      timer_scheduled_ = false;
-    }
-    int current_idx = ui_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      handleSelectPlot(current_idx);
-    }
-    return;
+void AppController::requestPlotUpdate(int index, bool immediate) {
+  if (index < 0) return;
+  pending_plot_index_ = index;
+
+  if (immediate) {
+    needs_redraw_ = true;
   }
 
+  auto now = std::chrono::steady_clock::now();
   auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_replot_time_).count();
-  const int throttle_ms = 200; // 200ms throttle as requested
+  const int throttle_ms = 200;
 
-  if (elapsed >= throttle_ms) {
-    last_replot_time_ = now;
-    if (timer_scheduled_) {
+  if (immediate || elapsed >= throttle_ms) {
+    if (update_scheduled_) {
       hover_timer_.stop();
-      timer_scheduled_ = false;
+      update_scheduled_ = false;
     }
-    int current_idx = ui_.get_selected_plot_index();
-    if (current_idx >= 0) {
-      handleSelectPlot(current_idx);
-    }
-  } else if (!timer_scheduled_) {
-    timer_scheduled_ = true;
+    last_replot_time_ = now;
+    handleSelectPlot(index);
+  } else if (!update_scheduled_) {
+    update_scheduled_ = true;
     auto delay = throttle_ms - elapsed;
     hover_timer_.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(delay), [this]() {
-      timer_scheduled_ = false;
+      update_scheduled_ = false;
       last_replot_time_ = std::chrono::steady_clock::now();
-      int current_idx = ui_.get_selected_plot_index();
-      if (current_idx >= 0) {
-        handleSelectPlot(current_idx);
+      if (pending_plot_index_ >= 0) {
+        handleSelectPlot(pending_plot_index_);
       }
     });
   }
@@ -953,7 +955,7 @@ void AppController::handlePinRun() {
     // Refresh plot if we have one selected
     int current_idx = ui_.get_selected_plot_index();
     if (current_idx >= 0) {
-      handleSelectPlot(current_idx);
+      requestPlotUpdate(current_idx, true);
     }
   });
 }
@@ -967,7 +969,7 @@ void AppController::handleClearPinnedRuns() {
     // Refresh plot if we have one selected
     int current_idx = ui_.get_selected_plot_index();
     if (current_idx >= 0) {
-      handleSelectPlot(current_idx);
+      requestPlotUpdate(current_idx, true);
     }
   });
 }

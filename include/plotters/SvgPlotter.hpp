@@ -41,6 +41,7 @@ struct PlotConfig {
   double height = 900.0;      ///< SVG canvas height (px).
   bool show_grid = true;      ///< Whether to render background grid lines.
   bool show_markers = false;  ///< Whether to render data point markers (dots).
+  bool fill_area = false;     ///< Whether to render matching gradient fills under the curves.
 
   // Publication settings
   double font_scale = 1.0;     ///< Multiplier for all font sizes
@@ -385,8 +386,25 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
 
   // ---- Build SVG -------------------------------------------------------
   std::ostringstream svg;
-  svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\">\n", kW,
+  svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n", kW,
                      kH, kW, kH);
+  svg << "  <defs>\n"
+      << "    <filter id=\"tooltip-shadow\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\">\n"
+      << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
+      << "    </filter>\n";
+
+  // Create linear gradients for area fills
+  std::size_t color_idx = 0;
+  for (const auto &[key, ys] : partials) {
+    std::string col = detail::color(color_idx, config.palette);
+    std::string grad_id = std::format("area-grad-{}", color_idx);
+    svg << std::format("    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
+                       "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.12\"/>\n"
+                       "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
+                       "    </linearGradient>\n", grad_id, col, col);
+    color_idx++;
+  }
+  svg << "  </defs>\n";
   svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n", config.bg_color());
 
   // Grid and Axes
@@ -447,6 +465,31 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
     }
   }
 
+  // Area Fills (underneath lines)
+  if (config.fill_area) {
+    std::size_t fill_ci = 0;
+    for (const auto &[key, ys] : partials) {
+      std::string col = detail::color(fill_ci, config.palette);
+      std::string grad_id = std::format("area-grad-{}", fill_ci);
+      std::size_t n = std::min(xs.size(), ys.size());
+      if (n > 1) {
+        svg << std::format("  <polygon fill=\"url(#{})\" stroke=\"none\" points=\"", grad_id);
+        double sx_start = detail::mapValue(xs[0], xScale.min, xScale.max, px0, px1);
+        svg << std::format("{:.2f},{:.2f} ", sx_start, py1);
+        for (std::size_t i = 0; i < n; ++i) {
+          double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+          double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+          double sy_clamped = std::min(sy, py1);
+          svg << std::format("{:.2f},{:.2f} ", sx, sy_clamped);
+        }
+        double sx_end = detail::mapValue(xs[n - 1], xScale.min, xScale.max, px0, px1);
+        svg << std::format("{:.2f},{:.2f}", sx_end, py1);
+        svg << "\" />\n";
+      }
+      fill_ci++;
+    }
+  }
+
   // Polylines
   std::vector<std::pair<std::string, std::string>> legend;
   std::size_t ci = 0;
@@ -462,6 +505,21 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
     }
     svg << "\" />\n";
     legend.push_back({key, col});
+  }
+
+  // Markers
+  if (config.show_markers) {
+    std::size_t marker_ci = 0;
+    for (const auto &[key, ys] : partials) {
+      const std::string col = detail::color(marker_ci++, config.palette);
+      std::size_t n = std::min(xs.size(), ys.size());
+      for (std::size_t i = 0; i < n; ++i) {
+        double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+        double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+        svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"{}\" stroke-width=\"1.0\"/>\n",
+                           sx, sy, col, config.bg_color());
+      }
+    }
   }
 
   // Legend (Top Right)
@@ -536,11 +594,16 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
       // Collect values and draw markers on curves
       std::vector<std::tuple<std::string, double, std::string>> hover_values; // name, value, color
       std::size_t ci = 0;
+      double first_sy_data = -1.0;
       for (const auto &[key, ys] : partials) {
         if (idx < ys.size()) {
           const std::string col = detail::color(ci++, config.palette);
           double y_val = ys[idx];
           double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
+
+          if (first_sy_data < 0.0) {
+            first_sy_data = sy_data;
+          }
 
           // Bullet marker
           svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
@@ -550,6 +613,13 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
         }
       }
 
+      // Draw horizontal guide line to the primary data point
+      if (first_sy_data >= py0 && first_sy_data <= py1) {
+        svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                           "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
+                           px0, first_sy_data, sx_data, first_sy_data, config.axis_color());
+      }
+
       // Draw Tooltip Box
       if (!hover_values.empty()) {
         double tooltip_w = 200.0;
@@ -557,14 +627,15 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
         
         // Tooltip position (flip sides depending on cursor location)
         double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
-        double ty = py0 + 15.0;
+        double ty = (first_sy_data >= 0.0) ? first_sy_data - tooltip_h / 2.0 : py0 + 15.0;
+        ty = std::max(py0 + 8.0, std::min(py1 - tooltip_h - 8.0, ty));
 
         std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
         std::string card_border = (config.theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
         std::string text_col = (config.theme == PlotConfig::Theme::Light) ? "#333333" : "#cdd6f4";
 
         svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" rx=\"6\" "
-                           "fill=\"{}\" fill-opacity=\"0.92\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                           "fill=\"{}\" fill-opacity=\"0.92\" stroke=\"{}\" stroke-width=\"1.5\" filter=\"url(#tooltip-shadow)\"/>\n",
                            tx, ty, tooltip_w, tooltip_h, card_bg, card_border);
 
         // Header: x value (with unit or pure label)
@@ -696,8 +767,25 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
   detail::NiceScale yScale(raw_y_min, raw_y_max, 8);
 
   std::ostringstream svg;
-  svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\">\n",
+  svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
                      kW, kH, kW, kH);
+  svg << "  <defs>\n"
+      << "    <filter id=\"tooltip-shadow\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\">\n"
+      << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
+      << "    </filter>\n";
+
+  // Create linear gradients for area fills in comparison
+  std::size_t color_idx = 0;
+  for (const auto &ds : datasets) {
+    std::string col = detail::color(color_idx, config.palette);
+    std::string grad_id = std::format("area-grad-{}", color_idx);
+    svg << std::format("    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
+                       "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.12\"/>\n"
+                       "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
+                       "    </linearGradient>\n", grad_id, col, col);
+    color_idx++;
+  }
+  svg << "  </defs>\n";
   svg << std::format("  <rect width=\"100%\" height=\"100%\" fill=\"{}\" rx=\"6\"/>\n", config.bg_color());
 
   // Grid, ticks, and axes — same as single-plot renderer.
@@ -732,6 +820,37 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
                      "fill=\"none\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
                      px0, py0, px1 - px0, py1 - py0, config.axis_color());
 
+  // Area Fills (underneath lines)
+  if (config.fill_area) {
+    std::size_t fill_ci = 0;
+    for (const auto &ds : datasets) {
+      const auto &partials = ds.hist->smoothed_partials.empty() ? ds.hist->partials : ds.hist->smoothed_partials;
+      auto it = partials.find(partial_key);
+      if (it != partials.end()) {
+        const auto &xs = ds.hist->bins;
+        const auto &ys = it->second;
+        std::string col = detail::color(fill_ci, config.palette);
+        std::string grad_id = std::format("area-grad-{}", fill_ci);
+        std::size_t n = std::min(xs.size(), ys.size());
+        if (n > 1) {
+          svg << std::format("  <polygon fill=\"url(#{})\" stroke=\"none\" points=\"", grad_id);
+          double sx_start = detail::mapValue(xs[0], xScale.min, xScale.max, px0, px1);
+          svg << std::format("{:.2f},{:.2f} ", sx_start, py1);
+          for (std::size_t i = 0; i < n; ++i) {
+            double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+            double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+            double sy_clamped = std::min(sy, py1);
+            svg << std::format("{:.2f},{:.2f} ", sx, sy_clamped);
+          }
+          double sx_end = detail::mapValue(xs[n - 1], xScale.min, xScale.max, px0, px1);
+          svg << std::format("{:.2f},{:.2f}", sx_end, py1);
+          svg << "\" />\n";
+        }
+      }
+      fill_ci++;
+    }
+  }
+
   // Polylines — one per dataset
   std::vector<std::pair<std::string, std::string>> legend;
   std::size_t ci = 0;
@@ -755,6 +874,29 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     }
     svg << "\" />\n";
     legend.push_back({ds.label, col});
+  }
+
+  // Markers
+  if (config.show_markers) {
+    std::size_t marker_ci = 0;
+    for (const auto &ds : datasets) {
+      const auto &partials = ds.hist->smoothed_partials.empty() ? ds.hist->partials : ds.hist->smoothed_partials;
+      auto it = partials.find(partial_key);
+      if (it != partials.end()) {
+        const auto &xs = ds.hist->bins;
+        const auto &ys = it->second;
+        const std::string col = detail::color(marker_ci++, config.palette);
+        std::size_t n = std::min(xs.size(), ys.size());
+        for (std::size_t i = 0; i < n; ++i) {
+          double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+          double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+          svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"{}\" stroke-width=\"1.0\"/>\n",
+                             sx, sy, col, config.bg_color());
+        }
+      } else {
+        marker_ci++;
+      }
+    }
   }
 
   // Legend (top right)
@@ -831,6 +973,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
         // Collect values from each dataset and draw markers
         std::vector<std::tuple<std::string, double, std::string>> hover_values; // label, value, color
         std::size_t ci = 0;
+        double first_sy_data = -1.0;
         for (const auto &ds : datasets) {
           const auto &partials = ds.hist->smoothed_partials.empty() ? ds.hist->partials : ds.hist->smoothed_partials;
           auto pit = partials.find(partial_key);
@@ -838,6 +981,10 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
             const std::string col = detail::color(ci++, config.palette);
             double y_val = pit->second[idx];
             double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
+
+            if (first_sy_data < 0.0) {
+              first_sy_data = sy_data;
+            }
 
             // Bullet marker
             svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"6\" fill=\"{}\" stroke=\"{}\" stroke-width=\"2\"/>\n",
@@ -850,20 +997,28 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
           }
         }
 
+        // Draw horizontal guide line to the primary data point
+        if (first_sy_data >= py0 && first_sy_data <= py1) {
+          svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
+                             "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
+                             px0, first_sy_data, sx_data, first_sy_data, config.axis_color());
+        }
+
         // Draw Tooltip Box
         if (!hover_values.empty()) {
           double tooltip_w = 200.0;
           double tooltip_h = 35.0 + 22.0 * hover_values.size();
           
           double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
-          double ty = py0 + 15.0;
+          double ty = (first_sy_data >= 0.0) ? first_sy_data - tooltip_h / 2.0 : py0 + 15.0;
+          ty = std::max(py0 + 8.0, std::min(py1 - tooltip_h - 8.0, ty));
 
           std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
           std::string card_border = (config.theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
           std::string text_col = (config.theme == PlotConfig::Theme::Light) ? "#333333" : "#cdd6f4";
 
           svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" rx=\"6\" "
-                             "fill=\"{}\" fill-opacity=\"0.92\" stroke=\"{}\" stroke-width=\"1.5\"/>\n",
+                             "fill=\"{}\" fill-opacity=\"0.92\" stroke=\"{}\" stroke-width=\"1.5\" filter=\"url(#tooltip-shadow)\"/>\n",
                              tx, ty, tooltip_w, tooltip_h, card_bg, card_border);
 
           // Header

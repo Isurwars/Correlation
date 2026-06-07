@@ -26,6 +26,8 @@ export component ExportSettingsCard inherits FilledCard {
     in-out property <string> export_line_width: "3.0";
     in-out property <bool> export_show_legend: true;
     in-out property <bool> export_show_grid: true;
+    in-out property <bool> export_show_markers: false;
+    in-out property <bool> export_fill_area: false;
 
     in property <string> export_font_scale_error: "";
     in property <string> export_line_width_error: "";
@@ -36,7 +38,9 @@ export component ExportSettingsCard inherits FilledCard {
         font_area.has-hover ? "Font scale multiplier for all labels.\n\n💡 Tip: Use 1.5–2.0 for single/double column LaTeX figures to ensure label readability." :
         line_area.has-hover ? "Stroke width for plot curves (in px).\n\n💡 Tip: Wider strokes (3.0px+) look much cleaner in paper figures." :
         grid_area.has-hover ? "Toggle the background reference grid lines on the plot." :
-        legend_area.has-hover ? "Toggle the interactive color legend in the upper-right corner." : "";
+        legend_area.has-hover ? "Toggle the interactive color legend in the upper-right corner." :
+        markers_area.has-hover ? "Toggle data point markers (dots) along the curves." :
+        fill_area_checkbox_area.has-hover ? "Toggle a soft transparent background shading under the curves." : "";
 
     out property <length> hovered_x:
         size_area.has-hover ? size_area.absolute-position.x :
@@ -44,28 +48,36 @@ export component ExportSettingsCard inherits FilledCard {
         font_area.has-hover ? font_area.absolute-position.x :
         line_area.has-hover ? line_area.absolute-position.x :
         grid_area.has-hover ? grid_area.absolute-position.x :
-        legend_area.has-hover ? legend_area.absolute-position.x : 0px;
+        legend_area.has-hover ? legend_area.absolute-position.x :
+        markers_area.has-hover ? markers_area.absolute-position.x :
+        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.x : 0px;
     out property <length> hovered_y:
         size_area.has-hover ? size_area.absolute-position.y :
         palette_area.has-hover ? palette_area.absolute-position.y :
         font_area.has-hover ? font_area.absolute-position.y :
         line_area.has-hover ? line_area.absolute-position.y :
         grid_area.has-hover ? grid_area.absolute-position.y :
-        legend_area.has-hover ? legend_area.absolute-position.y : 0px;
+        legend_area.has-hover ? legend_area.absolute-position.y :
+        markers_area.has-hover ? markers_area.absolute-position.y :
+        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.absolute-position.y : 0px;
     out property <length> hovered_width:
         size_area.has-hover ? size_area.width :
         palette_area.has-hover ? palette_area.width :
         font_area.has-hover ? font_area.width :
         line_area.has-hover ? line_area.width :
         grid_area.has-hover ? grid_area.width :
-        legend_area.has-hover ? legend_area.width : 0px;
+        legend_area.has-hover ? legend_area.width :
+        markers_area.has-hover ? markers_area.width :
+        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.width : 0px;
     out property <length> hovered_height:
         size_area.has-hover ? size_area.height :
         palette_area.has-hover ? palette_area.height :
         font_area.has-hover ? font_area.height :
         line_area.has-hover ? line_area.height :
         grid_area.has-hover ? grid_area.height :
-        legend_area.has-hover ? legend_area.height : 0px;
+        legend_area.has-hover ? legend_area.height :
+        markers_area.has-hover ? markers_area.height :
+        fill_area_checkbox_area.has-hover ? fill_area_checkbox_area.height : 0px;
 
     property <[MenuItem]> size_items: [
         { text: "Default (1200x900)", enabled: true },
@@ -167,6 +179,24 @@ export component ExportSettingsCard inherits FilledCard {
                         check_state_bool: root.export_show_legend;
                         checked_state_changed(s) => {
                             root.export_show_legend = s;
+                        }
+                    }
+
+                    markers_area := CheckBoxRow {
+                        text: "Show Markers";
+                        enabled: root.enabled;
+                        check_state_bool: root.export_show_markers;
+                        checked_state_changed(s) => {
+                            root.export_show_markers = s;
+                        }
+                    }
+
+                    fill_area_checkbox_area := CheckBoxRow {
+                        text: "Shade Curves";
+                        enabled: root.enabled;
+                        check_state_bool: root.export_fill_area;
+                        checked_state_changed(s) => {
+                            root.export_fill_area = s;
                         }
                     }
                 }

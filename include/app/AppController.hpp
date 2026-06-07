@@ -75,6 +75,9 @@ private:
   slint::Timer hover_timer_;
   slint::Timer update_timer_;
   bool timer_scheduled_ = false;
+  bool update_scheduled_ = false;
+  int pending_plot_index_ = -1;
+  bool needs_redraw_ = false;
 
   int last_rendered_index_ = -1;
   correlation::plotters::PlotConfig last_config_;
@@ -187,6 +190,13 @@ private:
    * @brief Handles mouse movements over the preview plot area.
    */
   void handleMouseMove(float mx, float my, bool hover, float w, float h);
+
+  /**
+   * @brief Requests a plot update, throttling redraws to every 200ms unless immediate is true.
+   * @param index The index of the selected plot.
+   * @param immediate If true, bypasses the throttle and redraws immediately.
+   */
+  void requestPlotUpdate(int index, bool immediate = false);
 
   /**
    * @brief Handles the "Save Plot" signal from the UI.
