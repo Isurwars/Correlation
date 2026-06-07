@@ -1,15 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.3.0] - 2026-06-05
+## [3.3.0] - 2026-06-07
 
 ### Added
 - **High-Fidelity Roboto Font Paths**: Integrated high-resolution glyph coordinates extracted directly from `Roboto-Regular.ttf` using 16-step Bezier-flattening. Normalized paths to a standard EM square $[0, 1]$ and restructured the rendering loop for beautiful and crisp vector rendering.
 - **Dynamic Superscript Generation**: Added automatic generation of scientific superscripts (`⁰`-`⁹`, `⁺`, `⁻`, `⁼`, `⁽`, `⁾`, `ⁿ`) via scaling and shifting the native base Roboto glyphs.
 - **UI Freeze Prevention**: Added sophisticated event caching and timer-based throttling (100ms) for mouse hover and plot selection events to prevent the GUI from entering infinite layout recalculation loops triggered by floating-point drift or parent widget resize events.
+- **Interactive Plot Hover Tracking**: Implemented real-time coordinate tracking and interactive hover guides on SVG plots in the GUI, updating the Slint UI dynamically to display values under the cursor.
+- **Customizable SVG Export Options**: Added options to enable/disable markers and fill under the curves in the exported SVG/PDF plots, with dedicated controls in the plot export panel.
+- **Apache Arrow / Parquet Packaging**: Enabled Apache Arrow and Parquet packaging dependencies and compile options (`-DBUILD_WITH_ARROW=ON`) by default in the official Arch Linux (AUR) package descriptors.
+
+### Changed
+- **License Migration**: Relicensed the codebase from MIT to the GNU Affero General Public License v3 (AGPL-3.0-only) to protect scientific contribution and ensure downstream open-source compliance.
 
 ### Fixed
 - **Mouse Hover Lag and CPU Spike**: Throttled mouse movement events to 100ms intervals using `slint::Timer` and added caching of active parameters (coordinates, config, plot selection) to prevent redundant replotting, breaking the infinite layout-recalculation loop and ensuring buttery-smooth guide line tracking in the GUI.
+- **Bypassed Slint Image Cache Collisions**: Resolved visual rendering glitches caused by Slint's image cache collision by saving generated SVGs to temporary files before loading them.
+- **Component-Relative Tooltips**: Redesigned UI tooltip positioning to anchor to hovered components rather than absolute mouse coordinates, improving accessibility and layout.
 
 ## [3.2.2] - 2026-06-04
 
