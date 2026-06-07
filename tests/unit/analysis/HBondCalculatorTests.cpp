@@ -1,6 +1,6 @@
 // Correlation - Liquid and Amorphous Solid Analysis Tool
 // Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-only
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "analysis/StructureAnalyzer.hpp"

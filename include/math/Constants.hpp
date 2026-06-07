@@ -3,7 +3,7 @@
  * @brief Mathematical and physical constants for the Correlation tool.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 #pragma once

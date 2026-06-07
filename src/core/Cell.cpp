@@ -3,7 +3,7 @@
  * @brief Implementation of the simulation cell and periodic boundary logic.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 #include "core/Cell.hpp"

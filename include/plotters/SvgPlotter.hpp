@@ -4,7 +4,7 @@
  * histograms.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  *
  * @details
  * Produces a self-contained SVG string from a `Histogram` object with
@@ -303,7 +303,7 @@ inline std::string renderTextAsPath(const std::string &text, double x, double y,
     std::string text_anchor = "start";
     if (anchor == "middle") text_anchor = "middle";
     else if (anchor == "end") text_anchor = "end";
-    return std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{:.1f}\" text-anchor=\"{}\" fill=\"{}\">{}</text>\n",
+    return std::format("  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{:.1f}\" text-anchor=\"{}\" fill=\"{}\">{}</text>\n",
                        x, y, size, text_anchor, color, text);
   } else {
     std::string path_d = Roboto::instance().render(text, x, y, size, anchor);
@@ -319,7 +319,7 @@ inline std::string renderTextAsPath(const std::string &text, double x, double y,
  * @param hover    Optional hover interaction info.
  * @returns        A complete SVG document as `std::string`.
  */
-inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {}, const HoverInfo &hover = {}) {
+inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {}, const HoverInfo &hover = {}, const std::map<std::string, double> &weights = {}) {
   std::string title = hist.title.empty() ? "Histogram" : hist.title;
   std::string x_label = hist.x_label.empty() ? "x" : hist.x_label;
   std::string y_label = hist.y_label.empty() ? "y" : hist.y_label;
@@ -350,14 +350,52 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
   const double py1 = kH - kBot;
 
   // ---- Data source -----------------------------------------------------
-  const auto &partials = hist.smoothed_partials.empty() ? hist.partials : hist.smoothed_partials;
+  const auto &raw_partials = hist.smoothed_partials.empty() ? hist.partials : hist.smoothed_partials;
   const auto &xs = hist.bins;
+
+  // Filter partials to the 10 most important ones based on weights or absolute integral sum, plus "Total"
+  std::map<std::string, std::vector<double>> partials;
+  
+  auto total_it = raw_partials.find("Total");
+  if (total_it != raw_partials.end()) {
+    partials["Total"] = total_it->second;
+  }
+
+  std::vector<std::pair<std::string, double>> candidates;
+  for (const auto &[key, ys] : raw_partials) {
+    if (key == "Total") continue;
+    double score = 0.0;
+    if (!weights.empty()) {
+      auto wit = weights.find(key);
+      if (wit != weights.end()) {
+        score = wit->second;
+      }
+    } else {
+      for (double y : ys) {
+        score += std::abs(y);
+      }
+    }
+    candidates.push_back({key, score});
+  }
+
+  std::sort(candidates.begin(), candidates.end(), [](const auto &a, const auto &b) {
+    return a.second > b.second;
+  });
+
+  std::size_t limit = std::min(candidates.size(), std::size_t(10));
+  for (std::size_t i = 0; i < limit; ++i) {
+    const std::string &key = candidates[i].first;
+    auto it = raw_partials.find(key);
+    if (it != raw_partials.end()) {
+      partials[key] = it->second;
+    }
+  }
 
   if (xs.empty() || partials.empty()) {
     if (config.use_native_text) {
       return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
                          "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-                         "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
+                         "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
                          kW, kH, config.bg_color(), kW / 2.0, kH / 2.0 + 8.0, 24.0 * config.font_scale, config.text_color());
     } else {
       std::string no_data_path = Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");
@@ -749,7 +787,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     if (config.use_native_text) {
       return std::format("<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
                          "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
-                         "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No comparison data</text></svg>",
+                         "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No comparison data</text></svg>",
                          kW, kH, config.bg_color(), kW / 2.0, kH / 2.0 + 8.0, 24.0 * config.font_scale, config.text_color());
     } else {
       std::string no_data_path = Roboto::instance().render("No comparison data", kW / 2.0, kH / 2.0 + 8.0, 24 * config.font_scale, "middle");

@@ -1,4 +1,4 @@
-[![Version](<https://img.shields.io/badge/version-1.0.0(RC6)-green>)](<https://img.shields.io/badge/version-1.0.0(RC6)-green>) [![License](https://img.shields.io/badge/license-MIT-brightgreen)](https://img.shields.io/badge/license-MIT-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![Version](<https://img.shields.io/badge/version-1.0.0(RC6)-green>)](<https://img.shields.io/badge/version-1.0.0(RC6)-green>) [![License](https://img.shields.io/badge/license-AGPLv3-brightgreen)](https://img.shields.io/badge/license-AGPLv3-brightgreen)[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 # Correlation: Contributing Guidelines
 
@@ -48,7 +48,7 @@ If you have isolated and resolved an algorithmic error, computational bug, or pe
 
 ## License
 
-By contributing to **Correlation**, you agree that your contributions will be licensed under the MIT License.
+By contributing to **Correlation**, you agree that your contributions will be licensed under the GNU Affero General Public License v3 (AGPLv3).
 
 ## Attribution
 

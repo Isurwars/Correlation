@@ -7,7 +7,7 @@ name = "correlation-analysis"
 version = "3.3.0"
 description = "High-performance structural analysis for atomistic simulations"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "AGPL-3.0-only"}
 requires-python = ">=3.9"
 authors = [{name = "Isaías Rodríguez", email = "isurwars@gmail.com"}]
 classifiers = [
@@ -15,7 +15,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Programming Language :: C++",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Topic :: Scientific/Engineering :: Chemistry",
     "Topic :: Scientific/Engineering :: Physics",
 ]

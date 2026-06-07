@@ -1,6 +1,6 @@
 # Correlation - Liquid and Amorphous Solid Analysis Tool
 # Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: AGPL-3.0-only
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.24)
@@ -248,7 +248,7 @@ else ()
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "libtbb12 (>= 2021.5), libhdf5-103-1 | libhdf5-103") # Approximated dependencies
     set(CPACK_DEBIAN_PACKAGE_SECTION "science")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-    set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+    set(CPACK_RPM_PACKAGE_LICENSE "AGPL-3.0-only")
     set(CPACK_RPM_PACKAGE_RELEASE "1")
     set(CPACK_RPM_PACKAGE_AUTOREQ ON)
     set(CPACK_STRIP_FILES TRUE)

@@ -3,7 +3,7 @@
  * @brief Application backend interface between the UI and analysis engine.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 #pragma once
@@ -245,6 +245,12 @@ public:
    * run.
    */
   [[nodiscard]] const correlation::analysis::Histogram *getHistogram(const std::string &name) const;
+
+  /**
+   * @brief Returns the Ashcroft-Langreth weights from the last completed analysis.
+   * @return A map of element pair strings to weight values.
+   */
+  [[nodiscard]] std::map<std::string, double> getAshcroftWeights() const;
 
   /**
    * @brief Returns all histograms from the last analysis.

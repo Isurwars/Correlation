@@ -3,7 +3,7 @@
  * @brief Implementation of the application backend.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 #include "app/AppBackend.hpp"
@@ -162,6 +162,10 @@ const correlation::analysis::Histogram *AppBackend::getHistogram(const std::stri
   } catch (const std::out_of_range &) {
     return nullptr;
   }
+}
+
+std::map<std::string, double> AppBackend::getAshcroftWeights() const {
+  return df_ ? df_->getAshcroftWeights() : std::map<std::string, double>{};
 }
 
 //---------------------------------------------------------------------------//

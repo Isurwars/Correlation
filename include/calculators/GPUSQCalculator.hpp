@@ -3,7 +3,7 @@
  * @brief GPU-accelerated structure factor S(Q) calculator with CPU fallback.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  *
  * When compiled with CORRELATION_USE_CUDA, this calculator performs the
  * plane-wave summation on an Nvidia GPU. If no compatible device is found

@@ -3,7 +3,7 @@
  * @brief Implementation of the application controller.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 
 #if defined(_WIN32)
@@ -735,7 +735,7 @@ void AppController::handleSelectPlot(int index) {
 
   std::string svg;
   if (pinned_runs_.empty()) {
-    svg = correlation::plotters::renderHistogramAsSvg(*hist, config, hover);
+    svg = correlation::plotters::renderHistogramAsSvg(*hist, config, hover, backend_.getAshcroftWeights());
   } else {
     std::vector<correlation::plotters::LabeledHistogram> datasets;
 
@@ -886,7 +886,7 @@ void AppController::handleSavePlot() {
 
     std::string svg;
     if (pinned_runs_.empty()) {
-      svg = correlation::plotters::renderHistogramAsSvg(*hist, config);
+      svg = correlation::plotters::renderHistogramAsSvg(*hist, config, {}, backend_.getAshcroftWeights());
     } else {
       std::vector<correlation::plotters::LabeledHistogram> datasets;
       datasets.push_back({"Current", hist});

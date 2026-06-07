@@ -3,7 +3,7 @@
  * @brief Implementation of the VASP POSCAR/CONTCAR file reader.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  */
 #include "readers/VaspReader.hpp"
 #include "core/Cell.hpp"

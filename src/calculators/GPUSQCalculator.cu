@@ -3,7 +3,7 @@
  * @brief CUDA implementation of GPU-accelerated S(Q) calculation.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: AGPL-3.0-only
  *
  * This file is only compiled when BUILD_WITH_CUDA=ON.
  */
