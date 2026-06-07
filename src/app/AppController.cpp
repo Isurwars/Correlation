@@ -16,6 +16,7 @@
 #include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
+#include <atomic>
 #include <cctype>
 #include <filesystem>
 #include <format>
@@ -757,10 +758,25 @@ void AppController::handleSelectPlot(int index) {
     svg = correlation::plotters::renderComparisonSvg(datasets, key, config, hover);
   }
 
-  // Load SVG directly from memory avoiding filesystem issues
-  auto img = slint::private_api::load_image_from_embedded_data(
-      std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
-  ui_.set_preview_plot(img);
+  // Load SVG using a unique temporary file to bypass Slint's path/pointer cache collisions.
+  static std::atomic<uint64_t> file_counter{0};
+  auto temp_dir = std::filesystem::temp_directory_path();
+  auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
+
+  std::ofstream out(temp_path);
+  if (out) {
+    out << svg;
+    out.close();
+    auto img = slint::Image::load_from_path(slint::SharedString(temp_path.string()));
+    ui_.set_preview_plot(img);
+    std::error_code ec;
+    std::filesystem::remove(temp_path, ec);
+  } else {
+    // Fallback if writing to temp dir fails
+    auto img = slint::private_api::load_image_from_embedded_data(
+        std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
+    ui_.set_preview_plot(img);
+  }
 }
 
 void AppController::handleMouseMove(float mx, float my, bool hover, float w, float h) {

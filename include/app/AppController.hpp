@@ -74,7 +74,6 @@ private:
   std::chrono::steady_clock::time_point last_replot_time_;
   slint::Timer hover_timer_;
   slint::Timer update_timer_;
-  bool timer_scheduled_ = false;
   bool update_scheduled_ = false;
   int pending_plot_index_ = -1;
   bool needs_redraw_ = false;
