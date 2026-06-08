@@ -68,7 +68,7 @@ var searchData=
   ['steinhardtcalculator_65',['SteinhardtCalculator',['../classcorrelation_1_1calculators_1_1SteinhardtCalculator.html',1,'correlation::calculators']]],
   ['steinhardtcalculator_2ecpp_66',['SteinhardtCalculator.cpp',['../SteinhardtCalculator_8cpp.html',1,'']]],
   ['steinhardtcalculator_2ehpp_67',['SteinhardtCalculator.hpp',['../SteinhardtCalculator_8hpp.html',1,'']]],
-  ['strokes_68',['strokes',['../structcorrelation_1_1plotters_1_1Glyph.html#a3ed50c7559c1df1f420d254fbaafc999',1,'correlation::plotters::Glyph']]],
+  ['strokes_68',['strokes',['../structcorrelation_1_1plotters_1_1Glyph.html#adb1111e60f0f9758d5996604eb673aee',1,'correlation::plotters::Glyph']]],
   ['strong_20correlation_20strong_69',['How to Contribute to &lt;strong&gt;Correlation&lt;/strong&gt;',['../contributing.html#how-to-contribute-to-correlation',1,'']]],
   ['strong_20correlation_20strong_20code_20of_20conduct_70',['&lt;strong&gt;Correlation&lt;/strong&gt; Code of Conduct',['../md_docs_2CODE__OF__CONDUCT.html',1,'']]],
   ['strong_20discussing_20the_20current_20state_20of_20the_20code_3a_20strong_71',['&lt;strong&gt;Discussing the current state of the code:&lt;/strong&gt;',['../contributing.html#discussing-the-current-state-of-the-code',1,'']]],

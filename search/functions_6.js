@@ -3,7 +3,7 @@ var searchData=
   ['generatekernel_0',['generateKernel',['../namespacecorrelation_1_1math.html#a81adde9262c240cbcaea361a1029830f',1,'correlation::math']]],
   ['getallextensions_1',['getAllExtensions',['../classcorrelation_1_1readers_1_1ReaderFactory.html#aa62ceba2eb2b0839489fe4bf6e3d5d35',1,'correlation::readers::ReaderFactory']]],
   ['getallhistograms_2',['getAllHistograms',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1',1,'correlation::analysis::DistributionFunctions']]],
-  ['getashcroftweights_3',['getAshcroftWeights',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f',1,'correlation::analysis::DistributionFunctions']]],
+  ['getashcroftweights_3',['getashcroftweights',['../classcorrelation_1_1app_1_1AppBackend.html#a494c4576ad42837ab54785ff568fc907',1,'correlation::app::AppBackend::getAshcroftWeights()'],['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f',1,'correlation::analysis::DistributionFunctions::getAshcroftWeights()']]],
   ['getatomcounts_4',['getAtomCounts',['../classcorrelation_1_1app_1_1AppBackend.html#aa55f9d25bb211811daf844218a4e2cce',1,'correlation::app::AppBackend']]],
   ['getatomicformfactors_5',['getAtomicFormFactors',['../namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4',1,'correlation::physics']]],
   ['getatomicmass_6',['getAtomicMass',['../namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd',1,'correlation::physics']]],
@@ -50,7 +50,7 @@ var searchData=
   ['getwriter_47',['getWriter',['../classcorrelation_1_1writers_1_1WriterFactory.html#aadd51328510d6406d38d3f11a672b379',1,'correlation::writers::WriterFactory']]],
   ['getwriterforextension_48',['getWriterForExtension',['../classcorrelation_1_1writers_1_1WriterFactory.html#a16855125d7957eb13210cde60b4702a6',1,'correlation::writers::WriterFactory']]],
   ['getwriters_49',['getWriters',['../classcorrelation_1_1writers_1_1WriterFactory.html#adf7eb1ebef2ade4110e0f06b051b87c7',1,'correlation::writers::WriterFactory']]],
-  ['glyph_50',['glyph',['../structcorrelation_1_1plotters_1_1Glyph.html#a205c21a453913b0a2082dcf4f9aa797b',1,'correlation::plotters::Glyph::Glyph()'],['../structcorrelation_1_1plotters_1_1Glyph.html#a6031e9ce985b32a007542a73d0ab82f5',1,'correlation::plotters::Glyph::Glyph(int l, int r, std::vector&lt; std::vector&lt; std::pair&lt; int, int &gt; &gt; &gt; s)']]],
+  ['glyph_50',['glyph',['../structcorrelation_1_1plotters_1_1Glyph.html#a205c21a453913b0a2082dcf4f9aa797b',1,'correlation::plotters::Glyph::Glyph()'],['../structcorrelation_1_1plotters_1_1Glyph.html#aeea7dac7351358332a517649cdfdc326',1,'correlation::plotters::Glyph::Glyph(double l, double r, std::vector&lt; std::vector&lt; std::pair&lt; double, double &gt; &gt; &gt; s)']]],
   ['gpusqcalculator_51',['GPUSQCalculator',['../classcorrelation_1_1calculators_1_1GPUSQCalculator.html#ad26e7efb2ce3b98115b2f49942392abe',1,'correlation::calculators::GPUSQCalculator']]],
   ['grid_5fcolor_52',['grid_color',['../structcorrelation_1_1plotters_1_1PlotConfig.html#abe5bf8b9ffb58f5676cc8de3f5326155',1,'correlation::plotters::PlotConfig']]]
 ];

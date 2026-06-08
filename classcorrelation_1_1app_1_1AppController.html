@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.2.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.3.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -101,17 +101,23 @@ Collaboration diagram for correlation::app::AppController:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1app_1_1AppController__coll__graph.png" border="0" usemap="#acorrelation_1_1app_1_1AppController_coll__map" alt="Collaboration graph"/></div>
 <map name="acorrelation_1_1app_1_1AppController_coll__map" id="acorrelation_1_1app_1_1AppController_coll__map">
-<area shape="rect" title="Controller class for the application." alt="" coords="5,196,227,221"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="10,108,222,133"/>
-<area shape="poly" title=" " alt="" coords="119,147,119,195,113,195,113,147"/>
-<area shape="rect" href="structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="23,5,209,45"/>
-<area shape="poly" title=" " alt="" coords="119,59,119,108,113,108,113,59"/>
+<area shape="rect" title="Controller class for the application." alt="" coords="641,70,863,95"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="300,13,512,38"/>
+<area shape="poly" title=" " alt="" coords="497,38,675,67,674,73,496,43"/>
+<area shape="rect" href="structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="5,5,192,45"/>
+<area shape="poly" title=" " alt="" coords="206,23,300,23,300,28,206,28"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1PlotConfig.html" title="Theme and layout configuration for the plot." alt="" coords="331,63,481,103"/>
+<area shape="poly" title=" " alt="" coords="495,80,641,80,641,85,495,85"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1HoverInfo.html" title="Information about the mouse hover position." alt="" coords="331,127,481,167"/>
+<area shape="poly" title=" " alt="" coords="494,128,682,93,683,98,495,133"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html">PinnedRun</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1app_1_1AppController_1_1RenderTaskData.html">RenderTaskData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -170,9 +176,12 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a8b2473755dafc652e3834cee21b4be69" id="r_a8b2473755dafc652e3834cee21b4be69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a8b2473755dafc652e3834cee21b4be69">populatePlotList</a> ()</td></tr>
 <tr class="memdesc:a8b2473755dafc652e3834cee21b4be69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Populates the UI plot dropdown with the available histogram names from the last completed analysis.  <br /></td></tr>
 <tr class="separator:a8b2473755dafc652e3834cee21b4be69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e62bb480f18f639d32d0bf3fc9388cb" id="r_a8e62bb480f18f639d32d0bf3fc9388cb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a8e62bb480f18f639d32d0bf3fc9388cb">handleSelectPlot</a> (int index)</td></tr>
-<tr class="memdesc:a8e62bb480f18f639d32d0bf3fc9388cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the "Select Plot" signal from the UI. Generates an SVG image for the requested histogram and pushes it to the UI via <code>ui_.set_preview_plot()</code>.  <br /></td></tr>
-<tr class="separator:a8e62bb480f18f639d32d0bf3fc9388cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a962dda38ef6a507b72139da95523be16" id="r_a962dda38ef6a507b72139da95523be16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a962dda38ef6a507b72139da95523be16">handleMouseMove</a> (float mx, float my, bool hover, float w, float h)</td></tr>
+<tr class="memdesc:a962dda38ef6a507b72139da95523be16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles mouse movements over the preview plot area.  <br /></td></tr>
+<tr class="separator:a962dda38ef6a507b72139da95523be16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef4e8d6461b641f537f0721bd071caf2" id="r_aef4e8d6461b641f537f0721bd071caf2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#aef4e8d6461b641f537f0721bd071caf2">requestPlotUpdate</a> (int index, bool immediate=false)</td></tr>
+<tr class="memdesc:aef4e8d6461b641f537f0721bd071caf2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests a plot update, throttling redraws to every 200ms unless immediate is true.  <br /></td></tr>
+<tr class="separator:aef4e8d6461b641f537f0721bd071caf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b50f8eaf27b0d80e3b236b0df6f9e0c" id="r_a2b50f8eaf27b0d80e3b236b0df6f9e0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a2b50f8eaf27b0d80e3b236b0df6f9e0c">handleSavePlot</a> ()</td></tr>
 <tr class="memdesc:a2b50f8eaf27b0d80e3b236b0df6f9e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handles the "Save Plot" signal from the UI. Opens a save file dialog to export the currently selected plot (SVG or PDF).  <br /></td></tr>
 <tr class="separator:a2b50f8eaf27b0d80e3b236b0df6f9e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -206,6 +215,15 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:ae34a525e3ada4e8ec9bce556f5a8e281" id="r_ae34a525e3ada4e8ec9bce556f5a8e281"><td class="memItemLeft" align="right" valign="top">std::thread&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#ae34a525e3ada4e8ec9bce556f5a8e281">load_thread_</a></td></tr>
 <tr class="memdesc:ae34a525e3ada4e8ec9bce556f5a8e281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle for the background file loading process.  <br /></td></tr>
 <tr class="separator:ae34a525e3ada4e8ec9bce556f5a8e281"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4406926dcc3278ebb66f0798294c8dca" id="r_a4406926dcc3278ebb66f0798294c8dca"><td class="memItemLeft" align="right" valign="top">std::thread&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a4406926dcc3278ebb66f0798294c8dca">render_thread_</a></td></tr>
+<tr class="memdesc:a4406926dcc3278ebb66f0798294c8dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle for the background SVG rendering process.  <br /></td></tr>
+<tr class="separator:a4406926dcc3278ebb66f0798294c8dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06f625bfc2b4b3cb6d9227e7a70dd187" id="r_a06f625bfc2b4b3cb6d9227e7a70dd187"><td class="memItemLeft" align="right" valign="top">std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a06f625bfc2b4b3cb6d9227e7a70dd187">is_rendering_</a> {false}</td></tr>
+<tr class="memdesc:a06f625bfc2b4b3cb6d9227e7a70dd187"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a background render is currently active.  <br /></td></tr>
+<tr class="separator:a06f625bfc2b4b3cb6d9227e7a70dd187"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accc52671653bbb8252a6d5988afd27b0" id="r_accc52671653bbb8252a6d5988afd27b0"><td class="memItemLeft" align="right" valign="top">std::atomic&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#accc52671653bbb8252a6d5988afd27b0">render_pending_</a> {false}</td></tr>
+<tr class="memdesc:accc52671653bbb8252a6d5988afd27b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether another render request is pending.  <br /></td></tr>
+<tr class="separator:accc52671653bbb8252a6d5988afd27b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba791950b9b1bd87aab716cdef140d61" id="r_aba791950b9b1bd87aab716cdef140d61"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#aba791950b9b1bd87aab716cdef140d61">available_plot_keys_</a></td></tr>
 <tr class="memdesc:aba791950b9b1bd87aab716cdef140d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of UI indices to plot data keys.  <br /></td></tr>
 <tr class="separator:aba791950b9b1bd87aab716cdef140d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -215,6 +233,36 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a130746b035cf52ee18e6beb14574dc90" id="r_a130746b035cf52ee18e6beb14574dc90"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structcorrelation_1_1app_1_1Preset.html">Preset</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a130746b035cf52ee18e6beb14574dc90">presets_</a></td></tr>
 <tr class="memdesc:a130746b035cf52ee18e6beb14574dc90"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of loaded parameter presets.  <br /></td></tr>
 <tr class="separator:a130746b035cf52ee18e6beb14574dc90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac22ef06b8ba1370bc40b2fba7b7782dd" id="r_ac22ef06b8ba1370bc40b2fba7b7782dd"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#ac22ef06b8ba1370bc40b2fba7b7782dd">last_mouse_x_</a> = -1.0f</td></tr>
+<tr class="separator:ac22ef06b8ba1370bc40b2fba7b7782dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68f3e233d0296689ce71f865434dd25f" id="r_a68f3e233d0296689ce71f865434dd25f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a68f3e233d0296689ce71f865434dd25f">last_mouse_y_</a> = -1.0f</td></tr>
+<tr class="separator:a68f3e233d0296689ce71f865434dd25f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3d03226617b2ae0be7f06e8ad63ef6a" id="r_ab3d03226617b2ae0be7f06e8ad63ef6a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#ab3d03226617b2ae0be7f06e8ad63ef6a">mouse_hover_</a> = false</td></tr>
+<tr class="separator:ab3d03226617b2ae0be7f06e8ad63ef6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a894a16a157183fd97bc48de8c6db343b" id="r_a894a16a157183fd97bc48de8c6db343b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a894a16a157183fd97bc48de8c6db343b">last_plot_width_</a> = 0.0f</td></tr>
+<tr class="separator:a894a16a157183fd97bc48de8c6db343b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef974566258c491e2337e55ba8dc3ad7" id="r_aef974566258c491e2337e55ba8dc3ad7"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#aef974566258c491e2337e55ba8dc3ad7">last_plot_height_</a> = 0.0f</td></tr>
+<tr class="separator:aef974566258c491e2337e55ba8dc3ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab60b5d18116f6cbec5a2f48527de1d50" id="r_ab60b5d18116f6cbec5a2f48527de1d50"><td class="memItemLeft" align="right" valign="top">std::chrono::steady_clock::time_point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#ab60b5d18116f6cbec5a2f48527de1d50">last_replot_time_</a></td></tr>
+<tr class="separator:ab60b5d18116f6cbec5a2f48527de1d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41c15dc6eb683f81982d7405ce0de424" id="r_a41c15dc6eb683f81982d7405ce0de424"><td class="memItemLeft" align="right" valign="top">slint::Timer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a41c15dc6eb683f81982d7405ce0de424">hover_timer_</a></td></tr>
+<tr class="separator:a41c15dc6eb683f81982d7405ce0de424"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3498ae43052ce2761e12ee5220a3c6bc" id="r_a3498ae43052ce2761e12ee5220a3c6bc"><td class="memItemLeft" align="right" valign="top">slint::Timer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a3498ae43052ce2761e12ee5220a3c6bc">update_timer_</a></td></tr>
+<tr class="separator:a3498ae43052ce2761e12ee5220a3c6bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4989a2d3c153e27086014647827e6b4d" id="r_a4989a2d3c153e27086014647827e6b4d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a4989a2d3c153e27086014647827e6b4d">update_scheduled_</a> = false</td></tr>
+<tr class="separator:a4989a2d3c153e27086014647827e6b4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d396d687d7902ed805a77359a2e0748" id="r_a3d396d687d7902ed805a77359a2e0748"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a3d396d687d7902ed805a77359a2e0748">pending_plot_index_</a> = -1</td></tr>
+<tr class="separator:a3d396d687d7902ed805a77359a2e0748"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b8a9eabe2452d7f8a3b89d3d8ae8ff1" id="r_a2b8a9eabe2452d7f8a3b89d3d8ae8ff1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a2b8a9eabe2452d7f8a3b89d3d8ae8ff1">needs_redraw_</a> = false</td></tr>
+<tr class="separator:a2b8a9eabe2452d7f8a3b89d3d8ae8ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42fb3ce4a61f195a7f1c5d34924c3abc" id="r_a42fb3ce4a61f195a7f1c5d34924c3abc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a42fb3ce4a61f195a7f1c5d34924c3abc">last_rendered_index_</a> = -1</td></tr>
+<tr class="separator:a42fb3ce4a61f195a7f1c5d34924c3abc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36c9e8bbe9f66fe75121506a29ae078e" id="r_a36c9e8bbe9f66fe75121506a29ae078e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">correlation::plotters::PlotConfig</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a36c9e8bbe9f66fe75121506a29ae078e">last_config_</a></td></tr>
+<tr class="separator:a36c9e8bbe9f66fe75121506a29ae078e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d9b6fa62d13997b4c537213fee5559e" id="r_a8d9b6fa62d13997b4c537213fee5559e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">correlation::plotters::HoverInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#a8d9b6fa62d13997b4c537213fee5559e">last_hover_</a></td></tr>
+<tr class="separator:a8d9b6fa62d13997b4c537213fee5559e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af78f4243c27dfbdf51ec4c5935566bee" id="r_af78f4243c27dfbdf51ec4c5935566bee"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppController.html#af78f4243c27dfbdf51ec4c5935566bee">last_pinned_runs_count_</a> = 0</td></tr>
+<tr class="separator:af78f4243c27dfbdf51ec4c5935566bee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -264,132 +312,131 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1app_1_1AppController_a8e7ffb29943a88266be239d85cec95a6_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_a8e7ffb29943a88266be239d85cec95a6_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1app_1_1AppController_a8e7ffb29943a88266be239d85cec95a6_cgraph" id="aclasscorrelation_1_1app_1_1AppController_a8e7ffb29943a88266be239d85cec95a6_cgraph">
-<area shape="rect" title="Constructs the AppController." alt="" coords="5,1465,227,1505"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,587,496,627"/>
-<area shape="poly" title=" " alt="" coords="119,1464,173,1225,219,1051,272,874,322,742,366,639,371,641,327,744,277,876,224,1053,179,1227,124,1466"/>
+<area shape="rect" title="Constructs the AppController." alt="" coords="5,1595,227,1635"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,657,496,697"/>
+<area shape="poly" title=" " alt="" coords="117,1594,134,1488,165,1318,211,1114,240,1009,272,907,318,796,364,708,368,711,323,799,277,909,245,1011,217,1115,171,1319,139,1489,123,1595"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ae12b96b4b11cada5d932d46dd2f833a8" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="544,807,765,847"/>
-<area shape="poly" title=" " alt="" coords="115,1465,123,1380,133,1320,147,1253,167,1183,194,1113,229,1046,273,985,299,958,329,934,395,895,464,867,530,847,531,852,465,872,397,900,332,939,303,962,277,988,233,1048,198,1115,172,1185,152,1255,138,1321,129,1380,121,1465"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#aefee94a97386baf047e6168fcc6d99fe" title="Handles clearing all pinned runs." alt="" coords="275,1548,496,1588"/>
-<area shape="poly" title=" " alt="" coords="183,1503,307,1541,305,1546,181,1508"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ae2c010c9046be1a6a2a3b72f01ebd94e" title="Copies the equivalent CLI command to the clipboard." alt="" coords="275,1612,496,1652"/>
-<area shape="poly" title=" " alt="" coords="141,1503,200,1550,237,1576,276,1598,292,1605,289,1609,273,1602,234,1580,197,1555,138,1508"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a546f286c3ecf9004c17d031e7de63d48" title=" " alt="" coords="275,1676,496,1716"/>
-<area shape="poly" title=" " alt="" coords="132,1504,155,1539,188,1581,229,1625,276,1662,287,1668,284,1673,273,1666,225,1629,184,1585,151,1542,128,1507"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#af1d858ba0517fe3a942522f9ca7d609b" title="Preset management handlers." alt="" coords="275,1740,496,1780"/>
-<area shape="poly" title=" " alt="" coords="127,1504,147,1550,178,1610,222,1673,248,1701,276,1726,284,1731,281,1736,273,1730,244,1705,217,1676,174,1613,142,1552,122,1506"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#adba38f5bdc7f195ae4e0b69f6226b539" title="Propagates the current backend options to the UI elements." alt="" coords="275,1383,496,1423"/>
-<area shape="poly" title=" " alt="" coords="181,1463,305,1424,307,1429,183,1468"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a3f30efa4654e7c924f6a3afc8ffe6422" title="Updates active group flags in the UI based on active calculators." alt="" coords="544,1447,765,1487"/>
-<area shape="poly" title=" " alt="" coords="227,1479,530,1468,530,1474,227,1484"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#afe2348790295ac012aa43283d934df56" title="Generates and updates the equivalent CLI command in the UI." alt="" coords="544,1383,765,1423"/>
-<area shape="poly" title=" " alt="" coords="135,1463,193,1412,231,1387,274,1368,313,1358,353,1353,435,1352,512,1362,578,1376,577,1382,511,1367,434,1358,354,1358,314,1363,276,1373,234,1392,196,1417,138,1467"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a0bc40e2aad01ecdfdbbf6bfd69bcf924" title="Handles pinning the current run for comparison." alt="" coords="275,1804,496,1844"/>
-<area shape="poly" title=" " alt="" coords="124,1505,140,1562,170,1639,190,1680,214,1720,243,1757,276,1790,283,1795,279,1799,273,1794,239,1761,210,1723,185,1682,165,1641,135,1563,119,1506"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,999,496,1039"/>
-<area shape="poly" title=" " alt="" coords="117,1465,129,1393,156,1288,176,1231,202,1173,234,1118,273,1069,307,1043,310,1047,277,1073,238,1121,207,1176,181,1233,161,1290,134,1394,122,1466"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e62bb480f18f639d32d0bf3fc9388cb" title="Handles the &quot;Select Plot&quot; signal from the UI. Generates an SVG image for the requested histogram and ..." alt="" coords="544,1063,765,1103"/>
-<area shape="poly" title=" " alt="" coords="120,1464,137,1410,167,1336,187,1297,212,1258,240,1223,273,1191,333,1153,399,1124,466,1104,530,1091,531,1097,467,1109,400,1129,335,1157,276,1195,244,1226,216,1261,192,1300,172,1339,142,1412,125,1466"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2b50f8eaf27b0d80e3b236b0df6f9e0c" title="Handles the &quot;Save Plot&quot; signal from the UI. Opens a save file dialog to export the currently selected..." alt="" coords="544,1127,765,1167"/>
-<area shape="poly" title=" " alt="" coords="123,1464,143,1421,176,1364,219,1305,245,1277,273,1254,334,1218,400,1191,467,1171,530,1158,531,1163,468,1176,402,1196,336,1223,276,1258,248,1281,223,1308,180,1367,148,1423,128,1466"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2de588b22c95c1dd0680ab0f17699f64" title=" " alt="" coords="275,1868,496,1908"/>
-<area shape="poly" title=" " alt="" coords="122,1505,135,1572,162,1666,182,1717,207,1767,239,1814,276,1854,282,1858,279,1863,273,1858,234,1817,203,1770,177,1719,157,1668,130,1573,117,1506"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,1268,496,1308"/>
-<area shape="poly" title=" " alt="" coords="130,1463,188,1396,229,1358,273,1324,298,1311,301,1316,276,1329,232,1362,192,1400,135,1467"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2402832c7a34c6c063b5bc3d192ea537" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="544,1511,765,1551"/>
-<area shape="poly" title=" " alt="" coords="227,1492,530,1518,530,1523,227,1497"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a7273e3c6bd221c092a96f80e2dde4ed2" title=" " alt="" coords="275,1932,496,1972"/>
-<area shape="poly" title=" " alt="" coords="121,1505,130,1582,139,1635,154,1694,174,1754,200,1814,234,1869,277,1918,281,1922,278,1926,273,1922,230,1873,195,1816,169,1756,149,1695,134,1636,125,1583,116,1506"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a9ae49b4cb1fb036138cd297c24f55b8b" title="Updates the enabled state of a single calculator." alt="" coords="279,1996,491,2036"/>
-<area shape="poly" title=" " alt="" coords="120,1505,125,1592,133,1653,146,1720,165,1790,193,1860,229,1925,277,1982,281,1986,277,1990,273,1986,225,1928,188,1862,160,1792,141,1721,128,1653,120,1592,115,1506"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="1105,500,1317,540"/>
-<area shape="poly" title=" " alt="" coords="398,585,421,553,454,515,495,478,543,448,591,432,653,418,725,408,801,402,877,401,948,404,1010,413,1059,428,1076,441,1085,456,1093,472,1107,486,1117,492,1114,496,1104,490,1088,475,1080,459,1072,445,1056,433,1009,418,948,409,877,406,801,407,725,413,654,423,592,437,545,453,499,482,458,519,425,556,402,588"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#ac9502096e39cd33de4ad5c38c2a75a32" title="Gets the total number of frames in the trajectory." alt="" coords="829,672,1041,712"/>
-<area shape="poly" title=" " alt="" coords="466,584,533,574,610,569,690,577,729,586,767,600,784,613,792,629,800,644,815,658,825,664,823,668,812,662,796,647,788,631,780,617,764,605,728,591,689,582,610,575,533,579,467,589"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a4820aee1671d9baa3b93105aff4ae33d" title="Calculates a recommended time step in fs based on the smallest atomic mass. Uses formula: sqrt(9 * Mi..." alt="" coords="829,443,1041,483"/>
-<area shape="poly" title=" " alt="" coords="404,584,462,532,501,506,543,486,611,466,682,455,752,450,816,450,816,456,752,456,683,460,613,471,545,490,504,511,465,537,407,588"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a051d6ec8c13592e4fbcf0cbe1802ab89" title="Gets the count of frames removed/skipped during loading/processing." alt="" coords="549,615,761,655"/>
-<area shape="poly" title=" " alt="" coords="497,616,535,620,535,625,496,621"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#ab6dc0659ce4c2ecea3d479eee4aa4d28" title="Gets the total number of atoms in the first frame." alt="" coords="549,679,761,719"/>
-<area shape="poly" title=" " alt="" coords="437,624,545,664,570,672,568,677,543,669,435,629"/>
+<area shape="poly" title=" " alt="" coords="116,1594,124,1502,148,1361,168,1281,194,1201,229,1122,272,1049,303,1009,332,977,360,952,390,931,457,896,543,856,560,849,562,854,545,861,459,901,393,936,364,956,336,981,307,1012,277,1052,234,1124,199,1202,173,1283,153,1362,129,1502,121,1594"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#aefee94a97386baf047e6168fcc6d99fe" title="Handles clearing all pinned runs." alt="" coords="275,1659,496,1699"/>
+<area shape="poly" title=" " alt="" coords="202,1632,288,1653,287,1658,200,1637"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ae2c010c9046be1a6a2a3b72f01ebd94e" title="Copies the equivalent CLI command to the clipboard." alt="" coords="275,1723,496,1763"/>
+<area shape="poly" title=" " alt="" coords="147,1632,205,1670,276,1708,294,1716,292,1721,274,1713,202,1675,144,1637"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a546f286c3ecf9004c17d031e7de63d48" title=" " alt="" coords="275,1787,496,1827"/>
+<area shape="poly" title=" " alt="" coords="134,1633,191,1702,231,1740,276,1772,288,1779,285,1783,273,1777,228,1744,187,1705,130,1637"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#af1d858ba0517fe3a942522f9ca7d609b" title="Preset management handlers." alt="" coords="275,1851,496,1891"/>
+<area shape="poly" title=" " alt="" coords="128,1634,149,1676,181,1731,224,1788,249,1814,276,1837,285,1842,282,1847,273,1841,245,1818,220,1791,177,1734,144,1679,123,1636"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a962dda38ef6a507b72139da95523be16" title="Handles mouse movements over the preview plot area." alt="" coords="275,1915,496,1955"/>
+<area shape="poly" title=" " alt="" coords="125,1634,142,1688,172,1760,192,1798,217,1836,244,1870,276,1901,283,1905,280,1910,273,1905,241,1874,212,1839,188,1801,167,1762,137,1689,120,1636"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#adba38f5bdc7f195ae4e0b69f6226b539" title="Propagates the current backend options to the UI elements." alt="" coords="275,1595,496,1635"/>
+<area shape="poly" title=" " alt="" coords="227,1612,261,1612,261,1617,227,1617"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a3f30efa4654e7c924f6a3afc8ffe6422" title="Updates active group flags in the UI based on active calculators." alt="" coords="544,1676,765,1716"/>
+<area shape="poly" title=" " alt="" coords="165,1592,234,1570,319,1554,365,1551,411,1553,455,1563,497,1580,516,1597,524,1617,531,1637,546,1655,565,1668,562,1672,542,1659,526,1639,519,1619,512,1600,495,1585,454,1568,410,1559,365,1556,320,1559,235,1575,166,1597"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#afe2348790295ac012aa43283d934df56" title="Generates and updates the equivalent CLI command in the UI." alt="" coords="544,1497,765,1537"/>
+<area shape="poly" title=" " alt="" coords="138,1592,196,1548,234,1527,274,1511,339,1497,405,1491,470,1491,531,1495,530,1501,470,1497,405,1496,339,1502,275,1516,236,1532,199,1553,141,1597"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a0bc40e2aad01ecdfdbbf6bfd69bcf924" title="Handles pinning the current run for comparison." alt="" coords="275,1979,496,2019"/>
+<area shape="poly" title=" " alt="" coords="123,1634,136,1698,164,1788,184,1836,209,1883,240,1927,276,1965,282,1969,279,1973,273,1969,236,1930,205,1885,179,1838,159,1789,131,1700,118,1635"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,1063,496,1103"/>
+<area shape="poly" title=" " alt="" coords="119,1594,136,1524,167,1421,212,1304,240,1246,272,1190,308,1146,346,1110,350,1113,312,1150,277,1194,245,1248,217,1306,172,1423,141,1525,124,1595"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#aef4e8d6461b641f537f0721bd071caf2" title="Requests a plot update, throttling redraws to every 200ms unless immediate is true." alt="" coords="544,1127,765,1167"/>
+<area shape="poly" title=" " alt="" coords="120,1594,137,1537,168,1460,213,1376,241,1336,273,1301,334,1253,402,1216,472,1188,538,1168,539,1173,474,1193,404,1221,336,1258,276,1305,245,1340,217,1379,173,1462,142,1539,125,1595"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2b50f8eaf27b0d80e3b236b0df6f9e0c" title="Handles the &quot;Save Plot&quot; signal from the UI. Opens a save file dialog to export the currently selected..." alt="" coords="275,1379,496,1419"/>
+<area shape="poly" title=" " alt="" coords="128,1593,185,1517,226,1473,273,1435,297,1422,300,1426,276,1440,230,1477,189,1521,132,1596"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2de588b22c95c1dd0680ab0f17699f64" title=" " alt="" coords="275,2043,496,2083"/>
+<area shape="poly" title=" " alt="" coords="121,1635,131,1709,156,1815,176,1873,202,1930,235,1983,277,2029,281,2033,278,2037,273,2033,231,1986,198,1932,171,1875,151,1817,126,1710,116,1635"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,1315,496,1355"/>
+<area shape="poly" title=" " alt="" coords="122,1593,141,1547,173,1485,217,1420,243,1390,273,1365,281,1359,284,1364,276,1369,247,1394,221,1423,178,1487,146,1549,127,1596"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2402832c7a34c6c063b5bc3d192ea537" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="544,1561,765,1601"/>
+<area shape="poly" title=" " alt="" coords="147,1592,204,1561,239,1547,274,1536,336,1525,385,1523,496,1536,574,1555,573,1560,496,1541,385,1528,336,1530,275,1541,240,1552,207,1566,150,1597"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a7273e3c6bd221c092a96f80e2dde4ed2" title=" " alt="" coords="275,2107,496,2147"/>
+<area shape="poly" title=" " alt="" coords="120,1635,127,1719,135,1777,148,1842,168,1909,195,1976,231,2038,277,2093,281,2097,277,2101,273,2097,226,2041,190,1978,163,1911,143,1843,130,1778,121,1719,115,1635"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a9ae49b4cb1fb036138cd297c24f55b8b" title="Updates the enabled state of a single calculator." alt="" coords="279,2171,491,2211"/>
+<area shape="poly" title=" " alt="" coords="119,1635,122,1728,129,1795,141,1868,160,1946,188,2022,226,2094,250,2127,277,2157,281,2161,277,2165,273,2161,246,2130,222,2097,183,2024,155,1947,135,1869,123,1795,117,1729,114,1635"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="1105,589,1317,629"/>
+<area shape="poly" title=" " alt="" coords="425,655,480,632,543,613,649,603,795,599,1092,603,1092,608,795,604,650,608,545,619,482,637,427,660"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#ac9502096e39cd33de4ad5c38c2a75a32" title="Gets the total number of frames in the trajectory." alt="" coords="829,685,1041,725"/>
+<area shape="poly" title=" " alt="" coords="496,680,815,697,815,702,496,686"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a4820aee1671d9baa3b93105aff4ae33d" title="Calculates a recommended time step in fs based on the smallest atomic mass. Uses formula: sqrt(9 * Mi..." alt="" coords="829,392,1041,432"/>
+<area shape="poly" title=" " alt="" coords="397,655,420,621,453,578,494,535,543,499,609,467,680,444,750,428,815,418,816,423,751,433,681,449,611,472,545,504,498,539,457,582,424,624,401,658"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a051d6ec8c13592e4fbcf0cbe1802ab89" title="Gets the count of frames removed/skipped during loading/processing." alt="" coords="549,628,761,668"/>
+<area shape="poly" title=" " alt="" coords="496,663,535,658,535,664,497,668"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#ab6dc0659ce4c2ecea3d479eee4aa4d28" title="Gets the total number of atoms in the first frame." alt="" coords="549,743,761,783"/>
+<area shape="poly" title=" " alt="" coords="450,695,579,736,577,741,448,700"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="549,184,761,224"/>
-<area shape="poly" title=" " alt="" coords="398,585,630,234,635,237,402,588"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a191c032b6d3612318a86ee1cd2ac8369" title="Updates the UI with the recommended bond cutoffs from the backend." alt="" coords="544,500,765,540"/>
-<area shape="poly" title=" " alt="" coords="448,584,578,542,579,547,449,589"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a5f8cc14eac7a5413324fa56db511b81a" title="Sets a callback function for analysis progress updates." alt="" coords="549,743,761,783"/>
-<area shape="poly" title=" " alt="" coords="408,625,467,676,505,704,545,728,561,735,558,740,543,733,502,709,464,680,405,629"/>
-<area shape="poly" title=" " alt="" coords="400,626,423,662,456,707,497,753,546,792,556,798,553,803,542,797,494,757,452,710,419,665,396,628"/>
-<area shape="poly" title=" " alt="" coords="1033,480,1102,495,1101,500,1032,485"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="1143,585,1279,625"/>
-<area shape="poly" title=" " alt="" coords="975,480,1107,550,1159,577,1157,582,1104,554,973,485"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="1137,436,1286,476"/>
-<area shape="poly" title=" " alt="" coords="1041,457,1123,455,1123,461,1042,463"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47" title="Determines the FileType from a given filename extension." alt="" coords="860,248,1011,288"/>
-<area shape="poly" title=" " alt="" coords="744,221,847,245,846,250,743,227"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#add5e3884ee96a6941a7e1e2474828722" title="Finds a reader that supports the given file extension." alt="" coords="827,313,1044,367"/>
-<area shape="poly" title=" " alt="" coords="686,222,744,259,814,298,832,305,830,310,812,302,741,264,683,226"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="843,5,1028,45"/>
-<area shape="poly" title=" " alt="" coords="671,182,730,123,769,90,812,62,841,48,843,53,815,66,772,95,734,127,675,186"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#abff3d39ae35b8c7b8fbdd6685336bfa9" title="Returns true if this reader supports trajectory files." alt="" coords="1116,92,1307,132"/>
-<area shape="poly" title=" " alt="" coords="678,182,736,140,773,120,813,105,887,91,963,85,1036,87,1102,92,1102,97,1036,92,963,91,887,96,814,111,776,125,739,145,681,186"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="861,184,1010,224"/>
-<area shape="poly" title=" " alt="" coords="761,201,847,201,847,207,761,207"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="861,120,1010,160"/>
+<area shape="poly" title=" " alt="" coords="396,656,633,235,638,237,400,658"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a191c032b6d3612318a86ee1cd2ac8369" title="Updates the UI with the recommended bond cutoffs from the backend." alt="" coords="544,513,765,553"/>
+<area shape="poly" title=" " alt="" coords="411,655,469,613,543,570,574,556,577,561,545,574,472,618,414,659"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a5f8cc14eac7a5413324fa56db511b81a" title="Sets a callback function for analysis progress updates." alt="" coords="549,871,761,911"/>
+<area shape="poly" title=" " alt="" coords="401,696,424,731,457,774,498,819,546,856,556,863,554,867,542,861,494,822,453,778,419,734,396,699"/>
+<area shape="poly" title=" " alt="" coords="410,696,469,744,506,770,545,792,561,799,559,804,543,797,503,774,466,748,407,700"/>
+<area shape="poly" title=" " alt="" coords="1040,430,1059,442,1078,463,1086,483,1093,505,1107,528,1136,556,1167,579,1164,584,1133,560,1103,531,1088,507,1081,485,1073,465,1056,446,1037,435"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="1143,477,1279,517"/>
+<area shape="poly" title=" " alt="" coords="1017,430,1058,441,1144,470,1142,475,1057,447,1015,435"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="1137,392,1286,432"/>
+<area shape="poly" title=" " alt="" coords="1042,409,1123,409,1123,415,1042,415"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47" title="Determines the FileType from a given filename extension." alt="" coords="860,184,1011,224"/>
+<area shape="poly" title=" " alt="" coords="761,201,846,201,846,207,761,207"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#add5e3884ee96a6941a7e1e2474828722" title="Finds a reader that supports the given file extension." alt="" coords="827,249,1044,303"/>
+<area shape="poly" title=" " alt="" coords="734,221,816,243,815,248,733,227"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="843,328,1028,368"/>
+<area shape="poly" title=" " alt="" coords="680,222,739,268,776,293,814,314,832,321,830,326,812,318,773,297,736,273,677,226"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1BaseReader.html#abff3d39ae35b8c7b8fbdd6685336bfa9" title="Returns true if this reader supports trajectory files." alt="" coords="1116,35,1307,75"/>
+<area shape="poly" title=" " alt="" coords="680,182,738,142,775,122,812,105,886,84,962,69,1102,55,1102,60,963,75,887,89,814,111,777,127,741,146,683,186"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="861,120,1010,160"/>
 <area shape="poly" title=" " alt="" coords="743,181,847,157,848,163,744,187"/>
-<area shape="poly" title=" " alt="" coords="1010,130,1102,120,1102,126,1011,135"/>
-<area shape="poly" title=" " alt="" coords="765,517,1092,517,1092,523,765,523"/>
-<area shape="poly" title=" " alt="" coords="766,534,1130,590,1129,596,765,539"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a072d8d734ff541e32a59c99d618d136c" title="Calculates recommended bond cutoffs based on the first pair density minimum." alt="" coords="821,608,1049,648"/>
-<area shape="poly" title=" " alt="" coords="722,538,767,556,791,572,815,587,849,601,847,606,812,592,788,576,764,561,720,543"/>
-<area shape="poly" title=" " alt="" coords="1049,616,1129,609,1130,615,1050,621"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a389c5114967f1724ff5b5c381a77ec6d" title="Gets the current program options." alt="" coords="829,1539,1041,1579"/>
-<area shape="poly" title=" " alt="" coords="406,1421,498,1534,511,1556,518,1575,528,1591,545,1604,587,1621,631,1629,677,1631,723,1627,809,1607,879,1582,881,1587,810,1612,724,1632,677,1636,631,1635,586,1626,543,1609,524,1594,514,1577,506,1559,494,1538,402,1425"/>
-<area shape="poly" title=" " alt="" coords="471,1420,557,1441,556,1446,470,1425"/>
-<area shape="poly" title=" " alt="" coords="496,1400,530,1400,530,1405,496,1405"/>
-<area shape="poly" title=" " alt="" coords="728,1484,766,1496,868,1531,866,1536,765,1501,726,1489"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="813,1447,1057,1487"/>
-<area shape="poly" title=" " alt="" coords="765,1464,800,1464,800,1469,765,1469"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="833,1383,1038,1423"/>
-<area shape="poly" title=" " alt="" coords="743,1444,834,1423,835,1428,744,1449"/>
-<area shape="poly" title=" " alt="" coords="744,1420,835,1441,834,1446,743,1425"/>
-<area shape="poly" title=" " alt="" coords="765,1400,819,1400,819,1405,765,1405"/>
-<area shape="poly" title=" " alt="" coords="393,997,413,955,446,899,489,842,515,815,542,793,551,787,554,791,546,797,518,819,493,845,450,902,418,957,398,1000"/>
-<area shape="poly" title=" " alt="" coords="406,997,494,910,516,881,526,869,543,856,554,850,556,855,545,861,530,873,520,885,498,914,410,1001"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a00d007144d21c2d5965dafa983d84c37" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="544,999,765,1039"/>
-<area shape="poly" title=" " alt="" coords="496,1016,530,1016,530,1021,496,1021"/>
-<area shape="poly" title=" " alt="" coords="471,1036,557,1057,556,1062,470,1041"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8b2473755dafc652e3834cee21b4be69" title="Populates the UI plot dropdown with the available histogram names from the last completed analysis." alt="" coords="544,871,765,911"/>
-<area shape="poly" title=" " alt="" coords="413,996,471,958,543,920,561,913,563,918,545,925,474,963,416,1001"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="861,5,1010,45"/>
+<area shape="poly" title=" " alt="" coords="671,182,730,123,769,90,812,62,846,46,849,51,815,66,772,95,734,127,675,186"/>
+<area shape="poly" title=" " alt="" coords="1011,31,1102,40,1102,46,1010,36"/>
+<area shape="poly" title=" " alt="" coords="766,546,1092,590,1091,596,765,551"/>
+<area shape="poly" title=" " alt="" coords="765,524,1057,505,1129,500,1130,506,1058,511,766,529"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a072d8d734ff541e32a59c99d618d136c" title="Calculates recommended bond cutoffs based on the first pair density minimum." alt="" coords="821,456,1049,496"/>
+<area shape="poly" title=" " alt="" coords="753,511,823,496,824,501,754,516"/>
+<area shape="poly" title=" " alt="" coords="1050,482,1130,488,1129,494,1049,487"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a389c5114967f1724ff5b5c381a77ec6d" title="Gets the current program options." alt="" coords="829,1651,1041,1691"/>
+<area shape="poly" title=" " alt="" coords="478,1632,498,1645,515,1666,521,1688,528,1709,545,1726,588,1744,633,1752,679,1753,726,1747,771,1737,813,1723,883,1694,885,1699,815,1728,772,1742,726,1752,679,1758,632,1757,586,1749,543,1730,524,1712,516,1690,510,1669,494,1649,475,1637"/>
+<area shape="poly" title=" " alt="" coords="457,1632,497,1644,578,1669,577,1674,495,1649,455,1637"/>
+<area shape="poly" title=" " alt="" coords="430,1592,543,1547,567,1539,569,1544,545,1552,432,1597"/>
+<area shape="poly" title=" " alt="" coords="765,1683,816,1679,816,1684,766,1689"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="813,1497,1057,1537"/>
+<area shape="poly" title=" " alt="" coords="685,1674,724,1646,763,1611,777,1594,785,1578,795,1562,812,1547,822,1541,825,1546,815,1551,799,1566,790,1581,782,1597,767,1615,727,1650,689,1678"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="833,1561,1038,1601"/>
+<area shape="poly" title=" " alt="" coords="704,1673,872,1604,874,1609,706,1678"/>
+<area shape="poly" title=" " alt="" coords="765,1515,800,1515,800,1520,765,1520"/>
+<area shape="poly" title=" " alt="" coords="744,1535,835,1556,834,1561,743,1540"/>
+<area shape="poly" title=" " alt="" coords="399,1061,457,992,497,953,543,920,555,914,557,919,545,925,501,958,461,996,403,1064"/>
+<area shape="poly" title=" " alt="" coords="402,1061,446,1009,494,944,507,919,514,898,523,877,542,857,549,852,552,856,546,861,528,880,519,900,511,921,498,947,450,1012,407,1064"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a00d007144d21c2d5965dafa983d84c37" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="544,1063,765,1103"/>
+<area shape="poly" title=" " alt="" coords="496,1080,530,1080,530,1085,496,1085"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8b2473755dafc652e3834cee21b4be69" title="Populates the UI plot dropdown with the available histogram names from the last completed analysis." alt="" coords="544,935,765,975"/>
+<area shape="poly" title=" " alt="" coords="413,1060,471,1022,543,984,561,977,563,982,545,989,474,1027,416,1065"/>
+<area shape="poly" title=" " alt="" coords="471,1100,557,1121,556,1126,470,1105"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="549,1191,761,1231"/>
-<area shape="poly" title=" " alt="" coords="403,1037,461,1106,501,1144,545,1176,557,1183,555,1187,543,1181,497,1148,457,1109,399,1041"/>
+<area shape="poly" title=" " alt="" coords="416,1100,474,1138,545,1176,563,1184,561,1189,543,1181,471,1143,413,1105"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a49feaf6f5d7faafa44f176bf8d8df0fe" title="Sets the program options." alt="" coords="549,1255,761,1295"/>
-<area shape="poly" title=" " alt="" coords="398,1038,418,1080,450,1135,493,1192,518,1218,546,1241,554,1246,551,1251,542,1245,515,1222,489,1195,446,1138,413,1083,393,1040"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#af3b3fb193d97917e274457650406be4c" title="Helper to update the UI progress bar and status text safely." alt="" coords="544,935,765,975"/>
-<area shape="poly" title=" " alt="" coords="470,996,556,975,557,980,471,1001"/>
-<area shape="poly" title=" " alt="" coords="750,996,763,985,784,953,792,920,792,888,786,855,781,822,780,789,789,756,811,722,817,717,820,721,815,726,794,758,786,790,786,822,792,855,797,888,798,921,789,955,767,988,753,1001"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a50b026bfdba39bad613b60cbba9ebd47" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="825,736,1046,776"/>
-<area shape="poly" title=" " alt="" coords="743,996,764,984,815,939,859,885,893,832,917,787,921,790,897,834,863,888,819,942,767,989,746,1001"/>
-<area shape="rect" href="namespacecorrelation_1_1app.html#ab1b1f18acde26d9de32292d33558ae01" title="Safely converts a Slint SharedString to a float with a default fallback." alt="" coords="839,1006,1031,1031"/>
-<area shape="poly" title=" " alt="" coords="765,1016,826,1016,826,1021,765,1021"/>
-<area shape="poly" title=" " alt="" coords="1040,734,1055,722,1070,704,1077,687,1081,650,1083,612,1090,592,1103,572,1119,556,1138,544,1140,549,1123,561,1107,575,1095,594,1088,613,1086,651,1082,688,1074,707,1059,726,1043,738"/>
-<area shape="poly" title=" " alt="" coords="1027,733,1056,722,1091,702,1124,679,1178,633,1181,637,1127,683,1094,706,1059,726,1029,738"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#a05b2ab020d7fd4ccf9f4317b0d468dee" title="Renders multiple histograms overlaid on a single plot." alt="" coords="848,1063,1023,1103"/>
-<area shape="poly" title=" " alt="" coords="765,1080,834,1080,834,1085,765,1085"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#ada78283f13bbdc0035907beb475df118" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="845,1127,1025,1167"/>
-<area shape="poly" title=" " alt="" coords="744,1100,835,1121,834,1126,743,1105"/>
-<area shape="poly" title=" " alt="" coords="752,1229,767,1241,785,1265,792,1290,794,1315,792,1339,790,1363,791,1387,798,1410,815,1433,819,1436,815,1440,811,1436,794,1412,786,1388,784,1363,786,1339,788,1315,787,1291,780,1268,763,1244,749,1233"/>
-<area shape="poly" title=" " alt="" coords="741,1228,767,1240,810,1270,850,1305,911,1370,908,1374,846,1308,807,1274,764,1245,739,1233"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a9df03a3f349d9c78c3c96568daf58fb6" title="Computes the self&#45;diffusion coefficient D from MSD using linear regression on the second half of the ..." alt="" coords="827,1191,1044,1246"/>
-<area shape="poly" title=" " alt="" coords="761,1211,813,1213,813,1218,761,1216"/>
-<area shape="poly" title=" " alt="" coords="743,1124,834,1103,835,1108,744,1129"/>
-<area shape="poly" title=" " alt="" coords="765,1144,831,1144,831,1149,765,1149"/>
-<area shape="poly" title=" " alt="" coords="427,1306,465,1333,498,1369,512,1397,517,1424,515,1474,514,1497,517,1519,526,1540,546,1561,564,1570,590,1577,658,1583,737,1580,815,1573,816,1578,737,1585,658,1588,589,1582,562,1575,542,1565,522,1543,512,1521,508,1498,510,1474,512,1424,507,1399,494,1372,461,1337,424,1310"/>
-<area shape="poly" title=" " alt="" coords="392,1267,412,1221,444,1163,487,1101,514,1073,542,1049,550,1043,553,1048,546,1053,517,1077,492,1105,448,1165,417,1224,397,1269"/>
-<area shape="poly" title=" " alt="" coords="496,1280,535,1278,535,1283,496,1285"/>
+<area shape="poly" title=" " alt="" coords="403,1101,461,1170,501,1208,545,1240,557,1247,555,1251,543,1245,497,1212,457,1173,399,1105"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#af3b3fb193d97917e274457650406be4c" title="Helper to update the UI progress bar and status text safely." alt="" coords="544,999,765,1039"/>
+<area shape="poly" title=" " alt="" coords="470,1060,556,1039,557,1044,471,1065"/>
+<area shape="poly" title=" " alt="" coords="750,1061,763,1049,778,1029,788,1010,796,972,794,933,786,894,779,855,777,815,786,776,796,756,811,736,816,730,820,734,815,739,801,758,791,777,782,816,784,854,791,893,799,932,801,972,793,1012,782,1032,767,1052,753,1065"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a50b026bfdba39bad613b60cbba9ebd47" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="825,749,1046,789"/>
+<area shape="poly" title=" " alt="" coords="744,1060,764,1049,794,1022,821,991,866,922,899,856,921,801,926,803,904,858,871,925,825,994,798,1025,767,1053,747,1065"/>
+<area shape="rect" href="namespacecorrelation_1_1app.html#ab1b1f18acde26d9de32292d33558ae01" title="Safely converts a Slint SharedString to a float with a default fallback." alt="" coords="839,1070,1031,1095"/>
+<area shape="poly" title=" " alt="" coords="765,1080,826,1080,826,1085,765,1085"/>
+<area shape="poly" title=" " alt="" coords="1028,747,1056,735,1092,713,1126,687,1181,637,1184,641,1129,692,1095,718,1059,740,1030,752"/>
+<area shape="poly" title=" " alt="" coords="1040,747,1055,735,1071,717,1079,698,1083,661,1085,620,1091,599,1103,576,1130,546,1160,523,1163,527,1133,550,1108,579,1096,601,1090,621,1088,661,1084,700,1075,720,1059,739,1043,751"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193" title="Renders multiple histograms overlaid on a single plot." alt="" coords="848,1251,1023,1291"/>
+<area shape="poly" title=" " alt="" coords="734,1164,766,1176,833,1208,892,1241,889,1246,831,1213,764,1181,732,1169"/>
+<area shape="poly" title=" " alt="" coords="747,1229,767,1241,795,1276,837,1343,918,1484,914,1487,832,1346,791,1280,764,1245,744,1233"/>
+<area shape="poly" title=" " alt="" coords="753,1229,767,1241,782,1261,792,1280,801,1320,799,1359,791,1397,784,1435,782,1473,791,1510,801,1529,815,1548,823,1555,819,1559,811,1551,796,1532,786,1512,777,1473,779,1434,786,1396,794,1358,796,1320,787,1282,778,1263,763,1244,750,1233"/>
+<area shape="poly" title=" " alt="" coords="496,1401,558,1400,626,1395,697,1385,765,1368,801,1354,836,1336,896,1297,899,1301,839,1340,803,1359,766,1373,698,1390,627,1400,558,1405,496,1406"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters.html#a5306f3b1f4524595c3bbdb77ae4c3280" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="565,1433,745,1473"/>
+<area shape="poly" title=" " alt="" coords="485,1416,552,1430,550,1435,484,1421"/>
+<area shape="poly" title=" " alt="" coords="484,1353,498,1365,519,1397,527,1429,526,1461,521,1492,516,1523,516,1553,524,1583,546,1611,580,1624,647,1637,816,1658,815,1663,646,1642,579,1630,542,1615,519,1585,510,1554,510,1523,515,1492,520,1460,521,1429,514,1399,494,1368,480,1357"/>
+<area shape="poly" title=" " alt="" coords="393,1313,414,1271,447,1217,490,1161,515,1135,542,1113,551,1107,554,1111,546,1117,518,1139,494,1164,451,1220,419,1274,398,1315"/>
+<area shape="poly" title=" " alt="" coords="475,1312,550,1295,552,1300,476,1317"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="549,1319,761,1359"/>
-<area shape="poly" title=" " alt="" coords="493,1305,536,1314,535,1319,492,1311"/>
-<area shape="poly" title=" " alt="" coords="766,1539,816,1544,816,1549,765,1544"/>
-<area shape="poly" title=" " alt="" coords="743,1508,834,1487,835,1492,744,1513"/>
-<area shape="poly" title=" " alt="" coords="742,1508,764,1497,779,1481,787,1465,795,1449,812,1433,822,1426,825,1431,815,1437,800,1452,792,1468,783,1484,767,1501,745,1513"/>
+<area shape="poly" title=" " alt="" coords="496,1334,535,1334,535,1340,496,1339"/>
+<area shape="poly" title=" " alt="" coords="719,1599,859,1644,857,1649,718,1604"/>
+<area shape="poly" title=" " alt="" coords="743,1559,834,1538,835,1543,744,1564"/>
+<area shape="poly" title=" " alt="" coords="765,1579,819,1579,819,1584,765,1584"/>
 </map>
 </div>
 
@@ -767,6 +814,72 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a962dda38ef6a507b72139da95523be16" name="a962dda38ef6a507b72139da95523be16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a962dda38ef6a507b72139da95523be16">&#9670;&#160;</a></span>handleMouseMove()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::app::AppController::handleMouseMove </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>mx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>my</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>hover</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>h</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handles mouse movements over the preview plot area. </p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1app_1_1AppController_a962dda38ef6a507b72139da95523be16_icgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_a962dda38ef6a507b72139da95523be16_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1app_1_1AppController_a962dda38ef6a507b72139da95523be16_icgraph" id="aclasscorrelation_1_1app_1_1AppController_a962dda38ef6a507b72139da95523be16_icgraph">
+<area shape="rect" title="Handles mouse movements over the preview plot area." alt="" coords="275,5,496,45"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>
+</div>
+
+</div>
+</div>
 <a id="a00d007144d21c2d5965dafa983d84c37" name="a00d007144d21c2d5965dafa983d84c37"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a00d007144d21c2d5965dafa983d84c37">&#9670;&#160;</a></span>handleOptionsfromUI()</h2>
 
@@ -966,67 +1079,65 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1app_1_1AppController_a645af3d5f62fc7132821d906d5ab4a67_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_a645af3d5f62fc7132821d906d5ab4a67_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1app_1_1AppController_a645af3d5f62fc7132821d906d5ab4a67_cgraph" id="aclasscorrelation_1_1app_1_1AppController_a645af3d5f62fc7132821d906d5ab4a67_cgraph">
-<area shape="rect" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="5,485,227,525"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a00d007144d21c2d5965dafa983d84c37" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="275,131,496,171"/>
-<area shape="poly" title=" " alt="" coords="127,483,187,388,273,266,351,179,355,183,277,270,191,391,132,486"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e62bb480f18f639d32d0bf3fc9388cb" title="Handles the &quot;Select Plot&quot; signal from the UI. Generates an SVG image for the requested histogram and ..." alt="" coords="275,280,496,320"/>
-<area shape="poly" title=" " alt="" coords="139,483,273,375,342,326,345,330,276,379,143,487"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8b2473755dafc652e3834cee21b4be69" title="Populates the UI plot dropdown with the available histogram names from the last completed analysis." alt="" coords="275,389,496,429"/>
-<area shape="poly" title=" " alt="" coords="162,483,274,439,298,431,299,436,276,444,164,488"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="279,453,491,493"/>
-<area shape="poly" title=" " alt="" coords="227,490,265,485,266,490,227,495"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a49feaf6f5d7faafa44f176bf8d8df0fe" title="Sets the program options." alt="" coords="279,517,491,557"/>
-<area shape="poly" title=" " alt="" coords="227,516,266,520,265,526,227,521"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a5f8cc14eac7a5413324fa56db511b81a" title="Sets a callback function for analysis progress updates." alt="" coords="279,581,491,621"/>
-<area shape="poly" title=" " alt="" coords="164,523,276,567,299,575,298,580,274,572,162,528"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#af3b3fb193d97917e274457650406be4c" title="Helper to update the UI progress bar and status text safely." alt="" coords="275,645,496,685"/>
-<area shape="poly" title=" " alt="" coords="139,524,197,577,235,606,276,631,290,638,288,643,273,636,232,610,194,581,135,528"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ae12b96b4b11cada5d932d46dd2f833a8" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="275,709,496,749"/>
-<area shape="poly" title=" " alt="" coords="131,524,153,561,186,607,227,655,276,695,286,701,283,706,273,700,224,658,182,610,149,564,126,527"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a50b026bfdba39bad613b60cbba9ebd47" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="544,37,765,77"/>
-<area shape="poly" title=" " alt="" coords="434,128,543,87,568,79,569,84,545,92,436,133"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#ac9502096e39cd33de4ad5c38c2a75a32" title="Gets the total number of frames in the trajectory." alt="" coords="549,101,761,141"/>
-<area shape="poly" title=" " alt="" coords="496,136,535,132,535,137,497,141"/>
-<area shape="rect" href="namespacecorrelation_1_1app.html#ab1b1f18acde26d9de32292d33558ae01" title="Safely converts a Slint SharedString to a float with a default fallback." alt="" coords="559,166,751,191"/>
-<area shape="poly" title=" " alt="" coords="497,160,545,165,545,170,496,165"/>
+<area shape="rect" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="5,560,227,600"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a00d007144d21c2d5965dafa983d84c37" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="275,211,496,251"/>
+<area shape="poly" title=" " alt="" coords="131,558,358,260,362,263,135,561"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8b2473755dafc652e3834cee21b4be69" title="Populates the UI plot dropdown with the available histogram names from the last completed analysis." alt="" coords="275,400,496,440"/>
+<area shape="poly" title=" " alt="" coords="135,558,194,504,232,475,273,450,288,443,290,448,276,454,235,479,197,508,139,562"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#aef4e8d6461b641f537f0721bd071caf2" title="Requests a plot update, throttling redraws to every 200ms unless immediate is true." alt="" coords="275,464,496,504"/>
+<area shape="poly" title=" " alt="" coords="162,558,274,513,298,506,299,511,276,519,164,562"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="279,528,491,568"/>
+<area shape="poly" title=" " alt="" coords="227,564,265,560,266,565,227,569"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a49feaf6f5d7faafa44f176bf8d8df0fe" title="Sets the program options." alt="" coords="279,592,491,632"/>
+<area shape="poly" title=" " alt="" coords="227,591,266,595,265,600,227,596"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a5f8cc14eac7a5413324fa56db511b81a" title="Sets a callback function for analysis progress updates." alt="" coords="279,656,491,696"/>
+<area shape="poly" title=" " alt="" coords="164,598,276,641,299,649,298,654,274,647,162,602"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#af3b3fb193d97917e274457650406be4c" title="Helper to update the UI progress bar and status text safely." alt="" coords="275,720,496,760"/>
+<area shape="poly" title=" " alt="" coords="139,598,197,652,235,681,276,706,290,712,288,717,273,710,232,685,194,656,135,602"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ae12b96b4b11cada5d932d46dd2f833a8" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="275,784,496,824"/>
+<area shape="poly" title=" " alt="" coords="131,599,153,636,186,682,227,729,276,770,286,776,283,780,273,774,224,733,182,685,149,639,126,602"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a50b026bfdba39bad613b60cbba9ebd47" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="544,69,765,109"/>
+<area shape="poly" title=" " alt="" coords="424,208,602,113,605,118,426,213"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#ac9502096e39cd33de4ad5c38c2a75a32" title="Gets the total number of frames in the trajectory." alt="" coords="549,181,761,221"/>
+<area shape="poly" title=" " alt="" coords="496,216,535,212,535,217,497,221"/>
+<area shape="rect" href="namespacecorrelation_1_1app.html#ab1b1f18acde26d9de32292d33558ae01" title="Safely converts a Slint SharedString to a float with a default fallback." alt="" coords="559,246,751,271"/>
+<area shape="poly" title=" " alt="" coords="497,240,545,245,545,250,496,245"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="829,5,1041,45"/>
-<area shape="poly" title=" " alt="" coords="765,42,816,36,816,42,766,47"/>
+<area shape="poly" title=" " alt="" coords="743,67,834,46,835,51,744,72"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="867,69,1003,109"/>
-<area shape="poly" title=" " alt="" coords="766,67,854,77,853,83,765,73"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#a05b2ab020d7fd4ccf9f4317b0d468dee" title="Renders multiple histograms overlaid on a single plot." alt="" coords="567,216,742,256"/>
-<area shape="poly" title=" " alt="" coords="470,277,556,257,557,262,471,283"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#ada78283f13bbdc0035907beb475df118" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="565,280,745,320"/>
-<area shape="poly" title=" " alt="" coords="496,297,551,297,551,303,496,303"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a9df03a3f349d9c78c3c96568daf58fb6" title="Computes the self&#45;diffusion coefficient D from MSD using linear regression on the second half of the ..." alt="" coords="546,525,763,579"/>
-<area shape="poly" title=" " alt="" coords="456,491,497,503,549,518,547,523,495,508,455,496"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7ef9fc3bec2884a6aafd366f6f2f22da" title="Computes the self&#45;diffusion coefficient D from VACF using Green&#45;Kubo integration (trapezoidal rule)." alt="" coords="546,603,763,658"/>
-<area shape="poly" title=" " alt="" coords="479,491,498,503,516,525,523,548,530,569,546,590,550,594,547,598,542,594,525,572,518,549,511,528,494,507,476,496"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="571,682,739,737"/>
-<area shape="poly" title=" " alt="" coords="482,491,498,503,514,524,522,546,523,587,525,628,531,649,546,669,561,681,557,685,542,672,527,651,519,629,518,588,516,547,509,527,494,507,479,495"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="813,812,1057,852"/>
-<area shape="poly" title=" " alt="" coords="484,492,498,504,519,535,527,567,526,598,521,629,517,659,517,689,525,718,546,748,572,770,601,789,666,815,734,830,800,836,800,841,733,835,664,820,599,793,569,774,542,751,520,721,512,690,512,659,516,628,521,597,521,567,514,537,494,507,480,496"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="833,339,1038,379"/>
-<area shape="poly" title=" " alt="" coords="465,451,495,439,518,422,543,407,612,386,684,371,755,362,819,357,819,363,755,367,685,376,614,391,545,412,521,427,497,444,467,456"/>
-<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="836,407,1035,447"/>
-<area shape="poly" title=" " alt="" coords="454,451,544,432,688,421,822,420,822,425,689,426,544,437,455,456"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#ac2527d1ba87054053672ace64e213ee7" title="Computes the relaxation time tau from the normalized VACF using trapezoidal integration." alt="" coords="546,446,763,501"/>
-<area shape="poly" title=" " alt="" coords="492,471,532,471,532,476,492,476"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="858,682,1013,737"/>
-<area shape="poly" title=" " alt="" coords="739,707,844,707,844,712,739,712"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="1105,640,1260,680"/>
-<area shape="poly" title=" " alt="" coords="737,688,763,669,777,649,783,630,784,589,783,568,786,548,794,529,812,511,844,491,874,477,903,470,931,469,960,474,991,482,1059,511,1094,534,1125,564,1149,596,1167,626,1163,629,1145,599,1121,568,1091,538,1056,516,989,488,959,479,931,475,903,476,875,482,846,495,815,515,799,532,791,550,788,568,789,588,789,630,782,652,767,673,740,692"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="1308,697,1501,737"/>
-<area shape="poly" title=" " alt="" coords="739,732,814,747,942,756,1072,753,1193,744,1294,732,1295,737,1193,750,1072,759,942,761,813,752,738,737"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="858,525,1013,579"/>
-<area shape="poly" title=" " alt="" coords="737,685,764,669,779,650,787,630,794,610,812,590,844,571,847,576,815,594,799,613,792,632,784,652,767,673,740,689"/>
-<area shape="poly" title=" " alt="" coords="703,734,756,763,814,791,852,805,850,810,812,796,754,768,701,739"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="858,603,1013,658"/>
-<area shape="poly" title=" " alt="" coords="738,683,844,653,845,659,740,688"/>
-<area shape="poly" title=" " alt="" coords="738,689,763,669,785,634,792,600,791,566,786,532,780,498,780,463,788,428,811,393,820,384,824,388,815,396,793,430,785,464,786,498,791,531,797,566,798,601,790,636,767,672,741,693"/>
-<area shape="poly" title=" " alt="" coords="737,688,763,669,780,644,788,619,789,594,787,569,784,544,786,518,794,492,811,466,829,451,832,456,815,470,798,495,791,519,790,544,792,569,794,594,793,620,785,646,767,673,740,693"/>
-<area shape="poly" title=" " alt="" coords="1012,691,1091,675,1092,681,1013,697"/>
-<area shape="poly" title=" " alt="" coords="1013,708,1294,713,1294,718,1013,713"/>
-<area shape="poly" title=" " alt="" coords="1261,677,1314,691,1313,696,1259,682"/>
+<area shape="poly" title=" " alt="" coords="765,87,854,87,854,92,765,92"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193" title="Renders multiple histograms overlaid on a single plot." alt="" coords="567,340,742,380"/>
+<area shape="poly" title=" " alt="" coords="472,462,494,450,509,436,518,421,527,406,542,391,555,384,558,388,546,395,531,409,522,424,514,439,498,454,475,466"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a9df03a3f349d9c78c3c96568daf58fb6" title="Computes the self&#45;diffusion coefficient D from MSD using linear regression on the second half of the ..." alt="" coords="546,715,763,770"/>
+<area shape="poly" title=" " alt="" coords="481,566,498,578,511,594,518,610,523,641,527,672,534,687,546,702,549,705,546,709,542,706,529,690,522,674,518,642,513,611,507,597,494,582,478,570"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7ef9fc3bec2884a6aafd366f6f2f22da" title="Computes the self&#45;diffusion coefficient D from VACF using Green&#45;Kubo integration (trapezoidal rule)." alt="" coords="546,794,763,849"/>
+<area shape="poly" title=" " alt="" coords="483,566,498,578,516,604,524,630,526,656,523,681,521,706,522,731,529,756,546,781,548,783,544,787,542,784,524,758,517,732,516,706,518,680,520,655,519,631,511,606,494,582,480,570"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="571,405,739,459"/>
+<area shape="poly" title=" " alt="" coords="467,525,495,514,519,496,543,476,568,463,570,468,545,481,522,500,497,518,469,530"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="813,473,1057,513"/>
+<area shape="poly" title=" " alt="" coords="491,535,799,504,800,509,492,540"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="833,537,1038,577"/>
+<area shape="poly" title=" " alt="" coords="492,547,819,553,819,558,492,552"/>
+<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="836,601,1035,641"/>
+<area shape="poly" title=" " alt="" coords="492,559,823,604,822,609,491,565"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#ac2527d1ba87054053672ace64e213ee7" title="Computes the relaxation time tau from the normalized VACF using trapezoidal integration." alt="" coords="546,637,763,691"/>
+<area shape="poly" title=" " alt="" coords="469,566,497,578,522,596,545,615,570,628,568,633,543,620,519,600,495,582,467,571"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="858,343,1013,398"/>
+<area shape="poly" title=" " alt="" coords="738,411,844,388,845,393,740,416"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="1105,401,1260,441"/>
+<area shape="poly" title=" " alt="" coords="739,428,1092,420,1092,426,739,433"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="1308,344,1501,384"/>
+<area shape="poly" title=" " alt="" coords="738,405,764,390,778,375,786,359,795,343,812,330,880,305,951,291,1024,286,1096,289,1165,297,1229,309,1335,337,1334,342,1228,314,1164,302,1095,294,1024,291,952,296,881,310,815,334,799,347,791,361,782,378,767,394,740,409"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="858,134,1013,189"/>
+<area shape="poly" title=" " alt="" coords="738,410,763,390,779,366,787,343,788,319,786,296,785,272,786,247,794,223,811,198,827,185,844,176,846,180,830,190,815,202,799,225,791,248,790,272,792,295,793,319,792,344,784,369,767,394,741,414"/>
+<area shape="poly" title=" " alt="" coords="740,448,831,468,829,473,738,453"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="858,213,1013,267"/>
+<area shape="poly" title=" " alt="" coords="737,408,764,390,774,377,781,365,787,339,793,312,800,298,812,285,844,263,847,267,815,289,804,301,798,314,792,340,786,367,779,380,767,394,740,412"/>
+<area shape="poly" title=" " alt="" coords="697,457,751,491,814,523,835,531,833,536,812,528,749,496,694,462"/>
+<area shape="poly" title=" " alt="" coords="678,458,735,523,773,558,815,587,827,593,825,598,812,592,769,562,731,527,674,462"/>
+<area shape="poly" title=" " alt="" coords="1013,384,1092,400,1091,405,1012,389"/>
+<area shape="poly" title=" " alt="" coords="1013,367,1294,363,1294,368,1013,372"/>
+<area shape="poly" title=" " alt="" coords="1259,399,1313,385,1314,390,1261,404"/>
 </map>
 </div>
 <div class="dynheader">
@@ -1072,9 +1183,9 @@ Here is the call graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1app_1_1AppController_a2b50f8eaf27b0d80e3b236b0df6f9e0c_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_a2b50f8eaf27b0d80e3b236b0df6f9e0c_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1app_1_1AppController_a2b50f8eaf27b0d80e3b236b0df6f9e0c_cgraph" id="aclasscorrelation_1_1app_1_1AppController_a2b50f8eaf27b0d80e3b236b0df6f9e0c_cgraph">
 <area shape="rect" title="Handles the &quot;Save Plot&quot; signal from the UI. Opens a save file dialog to export the currently selected..." alt="" coords="5,37,227,77"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#a05b2ab020d7fd4ccf9f4317b0d468dee" title="Renders multiple histograms overlaid on a single plot." alt="" coords="277,5,452,45"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193" title="Renders multiple histograms overlaid on a single plot." alt="" coords="277,5,452,45"/>
 <area shape="poly" title=" " alt="" coords="227,40,263,36,264,41,227,46"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#ada78283f13bbdc0035907beb475df118" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="275,69,455,109"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters.html#a5306f3b1f4524595c3bbdb77ae4c3280" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="275,69,455,109"/>
 <area shape="poly" title=" " alt="" coords="227,69,261,73,261,79,227,74"/>
 </map>
 </div>
@@ -1122,65 +1233,6 @@ Here is the caller graph for this function:</div>
 <area shape="rect" title=" " alt="" coords="275,5,496,45"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
 <area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="a8e62bb480f18f639d32d0bf3fc9388cb" name="a8e62bb480f18f639d32d0bf3fc9388cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e62bb480f18f639d32d0bf3fc9388cb">&#9670;&#160;</a></span>handleSelectPlot()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void correlation::app::AppController::handleSelectPlot </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>index</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Handles the "Select Plot" signal from the UI. Generates an SVG image for the requested histogram and pushes it to the UI via <code>ui_.set_preview_plot()</code>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">index</td><td>The index of the selected plot in the dropdown menu. </td></tr>
-  </table>
-  </dd>
-</dl>
-<div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_cgraph" id="aclasscorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_cgraph">
-<area shape="rect" title="Handles the &quot;Select Plot&quot; signal from the UI. Generates an SVG image for the requested histogram and ..." alt="" coords="5,37,227,77"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#a05b2ab020d7fd4ccf9f4317b0d468dee" title="Renders multiple histograms overlaid on a single plot." alt="" coords="277,5,452,45"/>
-<area shape="poly" title=" " alt="" coords="227,40,263,36,264,41,227,46"/>
-<area shape="rect" href="namespacecorrelation_1_1plotters.html#ada78283f13bbdc0035907beb475df118" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="275,69,455,109"/>
-<area shape="poly" title=" " alt="" coords="227,69,261,73,261,79,227,74"/>
-</map>
-</div>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_icgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_icgraph" id="aclasscorrelation_1_1app_1_1AppController_a8e62bb480f18f639d32d0bf3fc9388cb_icgraph">
-<area shape="rect" title="Handles the &quot;Select Plot&quot; signal from the UI. Generates an SVG image for the requested histogram and ..." alt="" coords="544,5,765,45"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" title=" " alt="" coords="530,25,496,24,275,24,227,25,227,20,275,19,496,19,530,19"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,33,496,73"/>
-<area shape="poly" title=" " alt="" coords="531,41,497,44,496,39,530,36"/>
-<area shape="poly" title=" " alt="" coords="261,43,227,39,227,34,261,38"/>
 </map>
 </div>
 
@@ -1388,6 +1440,74 @@ Here is the caller graph for this function:</div>
 <area shape="rect" title=" " alt="" coords="275,5,496,45"/>
 <area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
 <area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aef4e8d6461b641f537f0721bd071caf2" name="aef4e8d6461b641f537f0721bd071caf2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef4e8d6461b641f537f0721bd071caf2">&#9670;&#160;</a></span>requestPlotUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::app::AppController::requestPlotUpdate </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>immediate</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Requests a plot update, throttling redraws to every 200ms unless immediate is true. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>The index of the selected plot. </td></tr>
+    <tr><td class="paramname">immediate</td><td>If true, bypasses the throttle and redraws immediately. </td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_cgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_cgraph" id="aclasscorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_cgraph">
+<area shape="rect" title="Requests a plot update, throttling redraws to every 200ms unless immediate is true." alt="" coords="5,5,227,45"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193" title="Renders multiple histograms overlaid on a single plot." alt="" coords="275,5,449,45"/>
+<area shape="poly" title=" " alt="" coords="227,23,261,23,261,28,227,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_icgraph.png" border="0" usemap="#aclasscorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_icgraph" id="aclasscorrelation_1_1app_1_1AppController_aef4e8d6461b641f537f0721bd071caf2_icgraph">
+<area shape="rect" title="Requests a plot update, throttling redraws to every 200ms unless immediate is true." alt="" coords="544,5,765,45"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="530,25,496,24,275,24,227,25,227,20,275,19,496,19,530,19"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,33,496,73"/>
+<area shape="poly" title=" " alt="" coords="531,41,497,44,496,39,530,36"/>
+<area shape="poly" title=" " alt="" coords="261,43,227,39,227,34,261,38"/>
 </map>
 </div>
 
@@ -1764,6 +1884,250 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a41c15dc6eb683f81982d7405ce0de424" name="a41c15dc6eb683f81982d7405ce0de424"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41c15dc6eb683f81982d7405ce0de424">&#9670;&#160;</a></span>hover_timer_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">slint::Timer correlation::app::AppController::hover_timer_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a06f625bfc2b4b3cb6d9227e7a70dd187" name="a06f625bfc2b4b3cb6d9227e7a70dd187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06f625bfc2b4b3cb6d9227e7a70dd187">&#9670;&#160;</a></span>is_rendering_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::atomic&lt;bool&gt; correlation::app::AppController::is_rendering_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a background render is currently active. </p>
+
+</div>
+</div>
+<a id="a36c9e8bbe9f66fe75121506a29ae078e" name="a36c9e8bbe9f66fe75121506a29ae078e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36c9e8bbe9f66fe75121506a29ae078e">&#9670;&#160;</a></span>last_config_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">correlation::plotters::PlotConfig</a> correlation::app::AppController::last_config_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8d9b6fa62d13997b4c537213fee5559e" name="a8d9b6fa62d13997b4c537213fee5559e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d9b6fa62d13997b4c537213fee5559e">&#9670;&#160;</a></span>last_hover_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">correlation::plotters::HoverInfo</a> correlation::app::AppController::last_hover_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac22ef06b8ba1370bc40b2fba7b7782dd" name="ac22ef06b8ba1370bc40b2fba7b7782dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac22ef06b8ba1370bc40b2fba7b7782dd">&#9670;&#160;</a></span>last_mouse_x_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float correlation::app::AppController::last_mouse_x_ = -1.0f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a68f3e233d0296689ce71f865434dd25f" name="a68f3e233d0296689ce71f865434dd25f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68f3e233d0296689ce71f865434dd25f">&#9670;&#160;</a></span>last_mouse_y_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float correlation::app::AppController::last_mouse_y_ = -1.0f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af78f4243c27dfbdf51ec4c5935566bee" name="af78f4243c27dfbdf51ec4c5935566bee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af78f4243c27dfbdf51ec4c5935566bee">&#9670;&#160;</a></span>last_pinned_runs_count_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t correlation::app::AppController::last_pinned_runs_count_ = 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aef974566258c491e2337e55ba8dc3ad7" name="aef974566258c491e2337e55ba8dc3ad7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef974566258c491e2337e55ba8dc3ad7">&#9670;&#160;</a></span>last_plot_height_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float correlation::app::AppController::last_plot_height_ = 0.0f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a894a16a157183fd97bc48de8c6db343b" name="a894a16a157183fd97bc48de8c6db343b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a894a16a157183fd97bc48de8c6db343b">&#9670;&#160;</a></span>last_plot_width_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float correlation::app::AppController::last_plot_width_ = 0.0f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a42fb3ce4a61f195a7f1c5d34924c3abc" name="a42fb3ce4a61f195a7f1c5d34924c3abc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42fb3ce4a61f195a7f1c5d34924c3abc">&#9670;&#160;</a></span>last_rendered_index_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int correlation::app::AppController::last_rendered_index_ = -1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab60b5d18116f6cbec5a2f48527de1d50" name="ab60b5d18116f6cbec5a2f48527de1d50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab60b5d18116f6cbec5a2f48527de1d50">&#9670;&#160;</a></span>last_replot_time_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::chrono::steady_clock::time_point correlation::app::AppController::last_replot_time_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae34a525e3ada4e8ec9bce556f5a8e281" name="ae34a525e3ada4e8ec9bce556f5a8e281"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae34a525e3ada4e8ec9bce556f5a8e281">&#9670;&#160;</a></span>load_thread_</h2>
 
@@ -1785,6 +2149,72 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Handle for the background file loading process. </p>
+
+</div>
+</div>
+<a id="ab3d03226617b2ae0be7f06e8ad63ef6a" name="ab3d03226617b2ae0be7f06e8ad63ef6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3d03226617b2ae0be7f06e8ad63ef6a">&#9670;&#160;</a></span>mouse_hover_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool correlation::app::AppController::mouse_hover_ = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2b8a9eabe2452d7f8a3b89d3d8ae8ff1" name="a2b8a9eabe2452d7f8a3b89d3d8ae8ff1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b8a9eabe2452d7f8a3b89d3d8ae8ff1">&#9670;&#160;</a></span>needs_redraw_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool correlation::app::AppController::needs_redraw_ = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3d396d687d7902ed805a77359a2e0748" name="a3d396d687d7902ed805a77359a2e0748"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d396d687d7902ed805a77359a2e0748">&#9670;&#160;</a></span>pending_plot_index_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int correlation::app::AppController::pending_plot_index_ = -1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1836,6 +2266,54 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="accc52671653bbb8252a6d5988afd27b0" name="accc52671653bbb8252a6d5988afd27b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accc52671653bbb8252a6d5988afd27b0">&#9670;&#160;</a></span>render_pending_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::atomic&lt;bool&gt; correlation::app::AppController::render_pending_ {false}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether another render request is pending. </p>
+
+</div>
+</div>
+<a id="a4406926dcc3278ebb66f0798294c8dca" name="a4406926dcc3278ebb66f0798294c8dca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4406926dcc3278ebb66f0798294c8dca">&#9670;&#160;</a></span>render_thread_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::thread correlation::app::AppController::render_thread_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Handle for the background SVG rendering process. </p>
+
+</div>
+</div>
 <a id="aad3befd7d7ef9f7d17e41c57782b7f35" name="aad3befd7d7ef9f7d17e41c57782b7f35"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aad3befd7d7ef9f7d17e41c57782b7f35">&#9670;&#160;</a></span>ui_</h2>
 
@@ -1857,6 +2335,50 @@ Here is the caller graph for this function:</div>
 </div><div class="memdoc">
 
 <p>Reference to the managed UI window. </p>
+
+</div>
+</div>
+<a id="a4989a2d3c153e27086014647827e6b4d" name="a4989a2d3c153e27086014647827e6b4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4989a2d3c153e27086014647827e6b4d">&#9670;&#160;</a></span>update_scheduled_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool correlation::app::AppController::update_scheduled_ = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3498ae43052ce2761e12ee5220a3c6bc" name="a3498ae43052ce2761e12ee5220a3c6bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3498ae43052ce2761e12ee5220a3c6bc">&#9670;&#160;</a></span>update_timer_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">slint::Timer correlation::app::AppController::update_timer_</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

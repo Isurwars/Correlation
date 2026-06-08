@@ -1,5 +1,5 @@
 <map id="include/plotters/PathFont.hpp" name="include/plotters/PathFont.hpp">
-<area shape="rect" id="Node000001" title="High&#45;fidelity Hershey Simplex vector font for SVG path rendering." alt="" coords="67,5,278,31"/>
+<area shape="rect" id="Node000001" title="High&#45;fidelity Roboto vector font for SVG path rendering." alt="" coords="67,5,278,31"/>
 <area shape="rect" id="Node000002" href="$SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="62,79,283,104"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="175,44,175,79,170,79,170,44"/>
 <area shape="rect" id="Node000003" href="$AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="137,152,355,177"/>

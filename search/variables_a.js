@@ -1,11 +1,20 @@
 var searchData=
 [
-  ['label_0',['label',['../structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html#abc01283ab859f54ffb000366b941f9c4',1,'correlation::app::AppController::PinnedRun::label'],['../structcorrelation_1_1plotters_1_1LabeledHistogram.html#a92e496b3a12f937006e1a18f4c464f62',1,'correlation::plotters::LabeledHistogram::label']]],
-  ['lattice_1',['lattice',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#ab349d046c3c6850599227add93967062',1,'correlation::readers::XYZReader::CommentData::lattice'],['../structcorrelation_1_1readers_1_1XdatcarHeader.html#ab4fcc2b063aa02b5eb9d5b73ec3e064e',1,'correlation::readers::XdatcarHeader::lattice']]],
-  ['lattice_5fparameters_5f_2',['lattice_parameters_',['../classcorrelation_1_1core_1_1Cell.html#a4c25a7fcf96ecafbe9cb798b486ab768',1,'correlation::core::Cell']]],
-  ['lattice_5fvectors_5f_3',['lattice_vectors_',['../classcorrelation_1_1core_1_1Cell.html#a3dd0ec878862ef97da484b5b6c6c6eac',1,'correlation::core::Cell']]],
-  ['left_4',['left',['../structcorrelation_1_1plotters_1_1Glyph.html#a122bfe6a5db0204d2fb2b6934b2575ec',1,'correlation::plotters::Glyph']]],
-  ['line_5fwidth_5',['line_width',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a399ece8fea8842d0eb70049c357f0b3b',1,'correlation::plotters::PlotConfig']]],
-  ['load_5fthread_5f_6',['load_thread_',['../classcorrelation_1_1app_1_1AppController.html#ae34a525e3ada4e8ec9bce556f5a8e281',1,'correlation::app::AppController']]],
-  ['local_5fcycles_7',['local_cycles',['../MotifFinder_8cpp.html#a8b99dc8791651b0a76b664238ca6299c',1,'MotifFinder.cpp']]]
+  ['label_0',['label',['../structcorrelation_1_1plotters_1_1LabeledHistogram.html#a92e496b3a12f937006e1a18f4c464f62',1,'correlation::plotters::LabeledHistogram::label'],['../structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html#abc01283ab859f54ffb000366b941f9c4',1,'correlation::app::AppController::PinnedRun::label']]],
+  ['last_5fconfig_5f_1',['last_config_',['../classcorrelation_1_1app_1_1AppController.html#a36c9e8bbe9f66fe75121506a29ae078e',1,'correlation::app::AppController']]],
+  ['last_5fhover_5f_2',['last_hover_',['../classcorrelation_1_1app_1_1AppController.html#a8d9b6fa62d13997b4c537213fee5559e',1,'correlation::app::AppController']]],
+  ['last_5fmouse_5fx_5f_3',['last_mouse_x_',['../classcorrelation_1_1app_1_1AppController.html#ac22ef06b8ba1370bc40b2fba7b7782dd',1,'correlation::app::AppController']]],
+  ['last_5fmouse_5fy_5f_4',['last_mouse_y_',['../classcorrelation_1_1app_1_1AppController.html#a68f3e233d0296689ce71f865434dd25f',1,'correlation::app::AppController']]],
+  ['last_5fpinned_5fruns_5fcount_5f_5',['last_pinned_runs_count_',['../classcorrelation_1_1app_1_1AppController.html#af78f4243c27dfbdf51ec4c5935566bee',1,'correlation::app::AppController']]],
+  ['last_5fplot_5fheight_5f_6',['last_plot_height_',['../classcorrelation_1_1app_1_1AppController.html#aef974566258c491e2337e55ba8dc3ad7',1,'correlation::app::AppController']]],
+  ['last_5fplot_5fwidth_5f_7',['last_plot_width_',['../classcorrelation_1_1app_1_1AppController.html#a894a16a157183fd97bc48de8c6db343b',1,'correlation::app::AppController']]],
+  ['last_5frendered_5findex_5f_8',['last_rendered_index_',['../classcorrelation_1_1app_1_1AppController.html#a42fb3ce4a61f195a7f1c5d34924c3abc',1,'correlation::app::AppController']]],
+  ['last_5freplot_5ftime_5f_9',['last_replot_time_',['../classcorrelation_1_1app_1_1AppController.html#ab60b5d18116f6cbec5a2f48527de1d50',1,'correlation::app::AppController']]],
+  ['lattice_10',['lattice',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#ab349d046c3c6850599227add93967062',1,'correlation::readers::XYZReader::CommentData::lattice'],['../structcorrelation_1_1readers_1_1XdatcarHeader.html#ab4fcc2b063aa02b5eb9d5b73ec3e064e',1,'correlation::readers::XdatcarHeader::lattice']]],
+  ['lattice_5fparameters_5f_11',['lattice_parameters_',['../classcorrelation_1_1core_1_1Cell.html#a4c25a7fcf96ecafbe9cb798b486ab768',1,'correlation::core::Cell']]],
+  ['lattice_5fvectors_5f_12',['lattice_vectors_',['../classcorrelation_1_1core_1_1Cell.html#a3dd0ec878862ef97da484b5b6c6c6eac',1,'correlation::core::Cell']]],
+  ['left_13',['left',['../structcorrelation_1_1plotters_1_1Glyph.html#a779db93195d51609a7420b2419b72a0c',1,'correlation::plotters::Glyph']]],
+  ['line_5fwidth_14',['line_width',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a399ece8fea8842d0eb70049c357f0b3b',1,'correlation::plotters::PlotConfig']]],
+  ['load_5fthread_5f_15',['load_thread_',['../classcorrelation_1_1app_1_1AppController.html#ae34a525e3ada4e8ec9bce556f5a8e281',1,'correlation::app::AppController']]],
+  ['local_5fcycles_16',['local_cycles',['../MotifFinder_8cpp.html#a8b99dc8791651b0a76b664238ca6299c',1,'MotifFinder.cpp']]]
 ];

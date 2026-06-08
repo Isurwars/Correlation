@@ -17,7 +17,7 @@ var searchData=
   ['species_14',['species',['../structcorrelation_1_1readers_1_1XdatcarHeader.html#a58ed2be3437b512f44e2909f4007906b',1,'correlation::readers::XdatcarHeader']]],
   ['species_5fcol_15',['species_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#a4f005cc6ef323b1e161ee4f7af439505',1,'correlation::readers::XYZReader::CommentData']]],
   ['start_5fframe_5f_16',['start_frame_',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a9c6c43f568b3acb3146c7400e89d599f',1,'correlation::analysis::TrajectoryAnalyzer']]],
-  ['strokes_17',['strokes',['../structcorrelation_1_1plotters_1_1Glyph.html#a3ed50c7559c1df1f420d254fbaafc999',1,'correlation::plotters::Glyph']]],
+  ['strokes_17',['strokes',['../structcorrelation_1_1plotters_1_1Glyph.html#adb1111e60f0f9758d5996604eb673aee',1,'correlation::plotters::Glyph']]],
   ['symbol_18',['symbol',['../structcorrelation_1_1core_1_1Element.html#a9d6bc1d21718ff75651a045a310601e4',1,'correlation::core::Element::symbol'],['../structcorrelation_1_1physics_1_1detail_1_1ElementData.html#a670f28657ebf41e2979cd590403ac6f1',1,'correlation::physics::detail::ElementData::symbol']]],
   ['sz_19',['sz',['../ClusterCalculator_8cpp.html#a93cd273831f924bab32fcc909a436015',1,'ClusterCalculator.cpp']]]
 ];

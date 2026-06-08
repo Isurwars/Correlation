@@ -6,13 +6,14 @@ var searchData=
   ['parquet_3',['parquet',['../structcorrelation_1_1cli_1_1CliOptions.html#a3b68be72969f90bfa7e987e5e5d39a4c',1,'correlation::cli::CliOptions']]],
   ['parser_5f_4',['parser_',['../classcorrelation_1_1core_1_1Trajectory.html#a2df4dd33cf260ca3f35fed235a45710b',1,'correlation::core::Trajectory']]],
   ['partials_5',['partials',['../structcorrelation_1_1analysis_1_1Histogram.html#afa0337a264eb32939528e3d8ca57bc54',1,'correlation::analysis::Histogram']]],
-  ['pi_6',['pi',['../namespacecorrelation_1_1math.html#a1df7bd5c59218ce78c1b6b41dbdf2709',1,'correlation::math']]],
-  ['pinned_5fruns_5f_7',['pinned_runs_',['../classcorrelation_1_1app_1_1AppController.html#af0adcca3f82c550eb3d20ef7e60333f1',1,'correlation::app::AppController']]],
-  ['pos_5fx_5fcol_8',['pos_x_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#a3ba4d92c7ff2005d5ab63a2c907f35f2',1,'correlation::readers::XYZReader::CommentData']]],
-  ['pos_5fy_5fcol_9',['pos_y_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#aafdbaf97c17c4bac981e8e10eac98f43',1,'correlation::readers::XYZReader::CommentData']]],
-  ['pos_5fz_5fcol_10',['pos_z_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#a99085f3c0f4a5a807f6cf7b690b47e09',1,'correlation::readers::XYZReader::CommentData']]],
-  ['position_5f_11',['position_',['../classcorrelation_1_1core_1_1Atom.html#a8062864e5aab212adb408b9beeeb89cd',1,'correlation::core::Atom']]],
-  ['preset_5fsize_12',['preset_size',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a049ca692e87661b32089c6df67da56e4',1,'correlation::plotters::PlotConfig']]],
-  ['presets_5f_13',['presets_',['../classcorrelation_1_1app_1_1AppController.html#a130746b035cf52ee18e6beb14574dc90',1,'correlation::app::AppController']]],
-  ['progress_5fcallback_5f_14',['progress_callback_',['../classcorrelation_1_1app_1_1AppBackend.html#a119089714d0beaedf42c023d24c2d2e2',1,'correlation::app::AppBackend']]]
+  ['pending_5fplot_5findex_5f_6',['pending_plot_index_',['../classcorrelation_1_1app_1_1AppController.html#a3d396d687d7902ed805a77359a2e0748',1,'correlation::app::AppController']]],
+  ['pi_7',['pi',['../namespacecorrelation_1_1math.html#a1df7bd5c59218ce78c1b6b41dbdf2709',1,'correlation::math']]],
+  ['pinned_5fruns_5f_8',['pinned_runs_',['../classcorrelation_1_1app_1_1AppController.html#af0adcca3f82c550eb3d20ef7e60333f1',1,'correlation::app::AppController']]],
+  ['pos_5fx_5fcol_9',['pos_x_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#a3ba4d92c7ff2005d5ab63a2c907f35f2',1,'correlation::readers::XYZReader::CommentData']]],
+  ['pos_5fy_5fcol_10',['pos_y_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#aafdbaf97c17c4bac981e8e10eac98f43',1,'correlation::readers::XYZReader::CommentData']]],
+  ['pos_5fz_5fcol_11',['pos_z_col',['../structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html#a99085f3c0f4a5a807f6cf7b690b47e09',1,'correlation::readers::XYZReader::CommentData']]],
+  ['position_5f_12',['position_',['../classcorrelation_1_1core_1_1Atom.html#a8062864e5aab212adb408b9beeeb89cd',1,'correlation::core::Atom']]],
+  ['preset_5fsize_13',['preset_size',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a049ca692e87661b32089c6df67da56e4',1,'correlation::plotters::PlotConfig']]],
+  ['presets_5f_14',['presets_',['../classcorrelation_1_1app_1_1AppController.html#a130746b035cf52ee18e6beb14574dc90',1,'correlation::app::AppController']]],
+  ['progress_5fcallback_5f_15',['progress_callback_',['../classcorrelation_1_1app_1_1AppBackend.html#a119089714d0beaedf42c023d24c2d2e2',1,'correlation::app::AppBackend']]]
 ];

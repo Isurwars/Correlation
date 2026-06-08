@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.2.2</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.3.1</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -164,6 +164,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6bc5b4f2df87eead46a11810817bdd61" id="r_a6bc5b4f2df87eead46a11810817bdd61"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html#a6bc5b4f2df87eead46a11810817bdd61">getHistogram</a> (const std::string &amp;name) const</td></tr>
 <tr class="memdesc:a6bc5b4f2df87eead46a11810817bdd61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to a specific histogram from the last analysis.  <br /></td></tr>
 <tr class="separator:a6bc5b4f2df87eead46a11810817bdd61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a494c4576ad42837ab54785ff568fc907" id="r_a494c4576ad42837ab54785ff568fc907"><td class="memItemLeft" align="right" valign="top">std::map&lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html#a494c4576ad42837ab54785ff568fc907">getAshcroftWeights</a> () const</td></tr>
+<tr class="memdesc:a494c4576ad42837ab54785ff568fc907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the Ashcroft-Langreth weights from the last completed analysis.  <br /></td></tr>
+<tr class="separator:a494c4576ad42837ab54785ff568fc907"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a261143ea7f67676a3719562d8d0298ad" id="r_a261143ea7f67676a3719562d8d0298ad"><td class="memItemLeft" align="right" valign="top">const std::map&lt; std::string, <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1app_1_1AppBackend.html#a261143ea7f67676a3719562d8d0298ad">getHistograms</a> () const</td></tr>
 <tr class="memdesc:a261143ea7f67676a3719562d8d0298ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns all histograms from the last analysis.  <br /></td></tr>
 <tr class="separator:a261143ea7f67676a3719562d8d0298ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -302,6 +305,26 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="815,248,749,233,750,228,816,242"/>
 </map>
 </div>
+
+</div>
+</div>
+<a id="a494c4576ad42837ab54785ff568fc907" name="a494c4576ad42837ab54785ff568fc907"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a494c4576ad42837ab54785ff568fc907">&#9670;&#160;</a></span>getAshcroftWeights()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt; std::string, double &gt; correlation::app::AppBackend::getAshcroftWeights </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the Ashcroft-Langreth weights from the last completed analysis. </p>
+<dl class="section return"><dt>Returns</dt><dd>A map of element pair strings to weight values. </dd></dl>
 
 </div>
 </div>

@@ -8,5 +8,7 @@ var searchData=
   ['hist_5',['hist',['../structcorrelation_1_1plotters_1_1LabeledHistogram.html#adc0cb27f67f6d360d3ac163c02e23962',1,'correlation::plotters::LabeledHistogram']]],
   ['histogram_5fmutex_5f_6',['histogram_mutex_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a217510c993732320f086b65476b1f6e3',1,'correlation::analysis::DistributionFunctions']]],
   ['histograms_7',['histograms',['../structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html#ada570b34cdbbcc53670c6978d44ddc70',1,'correlation::app::AppController::PinnedRun']]],
-  ['histograms_5f_8',['histograms_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#aa5b6a30a2e7ede948aa7434ec5e1e69d',1,'correlation::analysis::DistributionFunctions']]]
+  ['histograms_5f_8',['histograms_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#aa5b6a30a2e7ede948aa7434ec5e1e69d',1,'correlation::analysis::DistributionFunctions']]],
+  ['hover_9',['hover',['../structcorrelation_1_1app_1_1AppController_1_1RenderTaskData.html#a36c3f033da3c055c507f34c83118ff96',1,'correlation::app::AppController::RenderTaskData']]],
+  ['hover_5ftimer_5f_10',['hover_timer_',['../classcorrelation_1_1app_1_1AppController.html#a41c15dc6eb683f81982d7405ce0de424',1,'correlation::app::AppController']]]
 ];
