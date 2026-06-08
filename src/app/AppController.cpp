@@ -692,8 +692,9 @@ void AppController::handleMouseMove(float mx, float my, bool hover, float w, flo
   // Trust hover directly from Slint since we made TouchArea visibility stable
   bool actual_hover = hover;
 
-  // Ignore vertical movement duplicate events if horizontal position and hover state are identical
+  // Ignore duplicate events if horizontal position, vertical position, and hover state are identical
   if (std::abs(mx - last_mouse_x_) < 1e-2f &&
+      std::abs(my - last_mouse_y_) < 1e-2f &&
       actual_hover == mouse_hover_ &&
       std::abs(w - last_plot_width_) < 1e-2f &&
       std::abs(h - last_plot_height_) < 1e-2f) {
@@ -735,7 +736,7 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
   hover.widget_width = last_plot_width_;
   hover.widget_height = last_plot_height_;
 
-  // Cache verification to avoid redundant replotting (ignoring mouse Y since SVG only depends on X)
+  // Cache verification to avoid redundant replotting (comparing both mouse X and Y coordinates)
   bool cache_hit = (index == last_rendered_index_ &&
       pinned_runs_.size() == last_pinned_runs_count_ &&
       config.theme == last_config_.theme &&
@@ -751,6 +752,7 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
       config.fill_area == last_config_.fill_area &&
       hover.active == last_hover_.active &&
       std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
+      std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
       std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
       std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
 

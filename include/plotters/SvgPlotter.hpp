@@ -601,27 +601,29 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
     double sx = (hover.mouse_x - dx) / scale;
     double sy = (hover.mouse_y - dy) / scale;
 
-    if (sx >= px0 && sx <= px1) {
-      // Map to data space
-      double x_val = xScale.min + (sx - px0) / (px1 - px0) * (xScale.max - xScale.min);
-      
-      // Find nearest index in bins
-      auto it = std::lower_bound(xs.begin(), xs.end(), x_val);
-      std::size_t idx = 0;
-      if (it == xs.end()) {
-        idx = xs.size() - 1;
-      } else if (it == xs.begin()) {
-        idx = 0;
-      } else {
-        double d1 = *it - x_val;
-        double d2 = x_val - *(it - 1);
-        if (d2 < d1) {
-          idx = std::distance(xs.begin(), it - 1);
-        } else {
-          idx = std::distance(xs.begin(), it);
+    if (sx >= px0 && sx <= px1 && sy >= py0 && sy <= py1) {
+      // Find the nearest data point on any curve in 2D SVG space.
+      double min_dist_sq = 1e30;
+      std::size_t best_idx = 0;
+      std::string best_key = "";
+
+      for (const auto &[key, ys] : partials) {
+        std::size_t n = std::min(xs.size(), ys.size());
+        for (std::size_t i = 0; i < n; ++i) {
+          double sx_i = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+          double sy_i = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+          double dx_i = sx_i - sx;
+          double dy_i = sy_i - sy;
+          double dist_sq = dx_i * dx_i + dy_i * dy_i;
+          if (dist_sq < min_dist_sq) {
+            min_dist_sq = dist_sq;
+            best_idx = i;
+            best_key = key;
+          }
         }
       }
 
+      std::size_t idx = best_idx;
       double target_x = xs[idx];
       double sx_data = detail::mapValue(target_x, xScale.min, xScale.max, px0, px1);
 
@@ -633,15 +635,15 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
       // Collect values and draw markers on curves
       std::vector<std::tuple<std::string, double, std::string>> hover_values; // name, value, color
       std::size_t ci = 0;
-      double first_sy_data = -1.0;
+      double snapped_sy_data = -1.0;
       for (const auto &[key, ys] : partials) {
         if (idx < ys.size()) {
           const std::string col = detail::color(ci++, config.palette);
           double y_val = ys[idx];
           double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
 
-          if (first_sy_data < 0.0) {
-            first_sy_data = sy_data;
+          if (key == best_key) {
+            snapped_sy_data = sy_data;
           }
 
           // Bullet marker
@@ -652,11 +654,11 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
         }
       }
 
-      // Draw horizontal guide line to the primary data point
-      if (first_sy_data >= py0 && first_sy_data <= py1) {
+      // Draw horizontal guide line to the snapped data point of the closest curve
+      if (snapped_sy_data >= py0 && snapped_sy_data <= py1) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                           px0, first_sy_data, sx_data, first_sy_data, config.axis_color());
+                           px0, snapped_sy_data, sx_data, snapped_sy_data, config.axis_color());
       }
 
       // Draw Tooltip Box
@@ -666,7 +668,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
         
         // Tooltip position (flip sides depending on cursor location)
         double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
-        double ty = (first_sy_data >= 0.0) ? first_sy_data - tooltip_h / 2.0 : py0 + 15.0;
+        double ty = (snapped_sy_data >= 0.0) ? snapped_sy_data - tooltip_h / 2.0 : py0 + 15.0;
         ty = std::max(py0 + 8.0, std::min(py1 - tooltip_h - 8.0, ty));
 
         std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
@@ -695,6 +697,9 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
                              tx + 18.0, cur_y - 4.0, col);
           // Label and value
           std::string line_txt = std::format("{}: {:.4f}", name, val);
+          if (name == best_key) {
+            line_txt += " (nearest)";
+          }
           svg << renderTextAsPath(line_txt, tx + 30.0, cur_y, 13.0 * config.font_scale, "start", text_col, config.use_native_text);
           cur_y += 22.0;
         }
@@ -978,29 +983,36 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     double sx = (hover.mouse_x - dx) / scale;
     double sy = (hover.mouse_y - dy) / scale;
 
-    if (sx >= px0 && sx <= px1) {
-      // Map to data space
-      double x_val = xScale.min + (sx - px0) / (px1 - px0) * (xScale.max - xScale.min);
-      
-      // We assume first dataset's bins for the X coordinates
-      const auto &xs = datasets.front().hist->bins;
-      if (!xs.empty()) {
-        auto it = std::lower_bound(xs.begin(), xs.end(), x_val);
-        std::size_t idx = 0;
-        if (it == xs.end()) {
-          idx = xs.size() - 1;
-        } else if (it == xs.begin()) {
-          idx = 0;
-        } else {
-          double d1 = *it - x_val;
-          double d2 = x_val - *(it - 1);
-          if (d2 < d1) {
-            idx = std::distance(xs.begin(), it - 1);
-          } else {
-            idx = std::distance(xs.begin(), it);
+    if (sx >= px0 && sx <= px1 && sy >= py0 && sy <= py1) {
+      double min_dist_sq = 1e30;
+      std::size_t best_idx = 0;
+      std::string best_label = "";
+
+      for (const auto &ds : datasets) {
+        const auto &partials = ds.hist->smoothed_partials.empty() ? ds.hist->partials : ds.hist->smoothed_partials;
+        auto pit = partials.find(partial_key);
+        if (pit == partials.end())
+          continue;
+        const auto &xs = ds.hist->bins;
+        const auto &ys = pit->second;
+        std::size_t n = std::min(xs.size(), ys.size());
+        for (std::size_t i = 0; i < n; ++i) {
+          double sx_i = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
+          double sy_i = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
+          double dx_i = sx_i - sx;
+          double dy_i = sy_i - sy;
+          double dist_sq = dx_i * dx_i + dy_i * dy_i;
+          if (dist_sq < min_dist_sq) {
+            min_dist_sq = dist_sq;
+            best_idx = i;
+            best_label = ds.label;
           }
         }
+      }
 
+      std::size_t idx = best_idx;
+      const auto &xs = datasets.front().hist->bins;
+      if (!xs.empty() && idx < xs.size()) {
         double target_x = xs[idx];
         double sx_data = detail::mapValue(target_x, xScale.min, xScale.max, px0, px1);
 
@@ -1012,7 +1024,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
         // Collect values from each dataset and draw markers
         std::vector<std::tuple<std::string, double, std::string>> hover_values; // label, value, color
         std::size_t ci = 0;
-        double first_sy_data = -1.0;
+        double snapped_sy_data = -1.0;
         for (const auto &ds : datasets) {
           const auto &partials = ds.hist->smoothed_partials.empty() ? ds.hist->partials : ds.hist->smoothed_partials;
           auto pit = partials.find(partial_key);
@@ -1021,8 +1033,8 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
             double y_val = pit->second[idx];
             double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
 
-            if (first_sy_data < 0.0) {
-              first_sy_data = sy_data;
+            if (ds.label == best_label) {
+              snapped_sy_data = sy_data;
             }
 
             // Bullet marker
@@ -1036,11 +1048,11 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
           }
         }
 
-        // Draw horizontal guide line to the primary data point
-        if (first_sy_data >= py0 && first_sy_data <= py1) {
+        // Draw horizontal guide line to the snapped data point of the closest dataset
+        if (snapped_sy_data >= py0 && snapped_sy_data <= py1) {
           svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                              "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
-                             px0, first_sy_data, sx_data, first_sy_data, config.axis_color());
+                             px0, snapped_sy_data, sx_data, snapped_sy_data, config.axis_color());
         }
 
         // Draw Tooltip Box
@@ -1049,7 +1061,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
           double tooltip_h = 35.0 + 22.0 * hover_values.size();
           
           double tx = (sx_data < kW / 2.0) ? sx_data + 15.0 : sx_data - tooltip_w - 15.0;
-          double ty = (first_sy_data >= 0.0) ? first_sy_data - tooltip_h / 2.0 : py0 + 15.0;
+          double ty = (snapped_sy_data >= 0.0) ? snapped_sy_data - tooltip_h / 2.0 : py0 + 15.0;
           ty = std::max(py0 + 8.0, std::min(py1 - tooltip_h - 8.0, ty));
 
           std::string card_bg = (config.theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
@@ -1075,6 +1087,9 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
             svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
                                tx + 18.0, cur_y - 5.0, col);
             std::string line_txt = std::format("{}: {:.4f}", name, val);
+            if (name == best_label) {
+              line_txt += " (nearest)";
+            }
             svg << renderTextAsPath(line_txt, tx + 30.0, cur_y, 13.0 * config.font_scale, "start", text_col, config.use_native_text);
             cur_y += 22.0;
           }

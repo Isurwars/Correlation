@@ -130,4 +130,32 @@ TEST(SvgPlotterTests, RendersWithHoverActive) {
   EXPECT_NE(svg.find("<text"), std::string::npos);
 }
 
+TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
+  Histogram hist;
+  hist.title = "Hover Plot 2D";
+  hist.x_label = "r";
+  hist.y_label = "g";
+  hist.bins = {1.0, 2.0, 3.0};
+  hist.partials["Total"] = {10.0, 10.0, 10.0};
+  hist.partials["Si-O"] = {1.0, 1.0, 1.0};
+
+  PlotConfig config;
+  config.use_native_text = true;
+  
+  // xScale maps [1.0, 3.0] to [100.0, 1160.0] (x=2.0 -> 630.0)
+  // yScale maps [0.0, 10.5] to [810.0, 50.0] (y=1.0 -> 737.6)
+  HoverInfo hover;
+  hover.active = true;
+  hover.mouse_x = 630.0;
+  hover.mouse_y = 737.6;
+  hover.widget_width = 1200.0;
+  hover.widget_height = 900.0;
+
+  std::string svg = renderHistogramAsSvg(hist, config, hover);
+  EXPECT_FALSE(svg.empty());
+  
+  // Verify that "Si-O" is identified as the nearest curve
+  EXPECT_NE(svg.find("Si-O: 1.0000 (nearest)"), std::string::npos);
+}
+
 } // namespace correlation::testing
