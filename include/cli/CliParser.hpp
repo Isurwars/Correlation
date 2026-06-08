@@ -45,6 +45,7 @@ struct CliOptions {
   int max_ring_size = 8;
   double smoothing_sigma = 0.1;
   correlation::math::KernelType smoothing_kernel = correlation::math::KernelType::Gaussian;
+  int material_type = 0;
   bool show_version = false;
   bool show_help = false;
 };

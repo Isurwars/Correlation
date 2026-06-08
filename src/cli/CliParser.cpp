@@ -23,6 +23,7 @@ void printUsage(const char *program) {
             << "General Options:\n"
             << "  -o, --output <path>       Output base path (default: input stem)\n"
             << "  -q, --quiet               Suppress progress output\n"
+            << "  --material <str>          Material type: amorphous, liquid, crystalline (default: amorphous)\n"
             << "  -v, --version             Show version info\n"
             << "  -h, --help                Show this help message\n\n"
             << "Calculator Selection:\n"
@@ -99,6 +100,10 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   std::string k_str = "gaussian";
   app.add_option("--smoothing-kernel", k_str);
 
+  std::map<std::string, int> mat_map = {{"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
+  app.add_option("--material", opts.material_type, "Material type (amorphous, liquid, crystalline)")
+     ->transform(CLI::CheckedTransformer(mat_map, CLI::ignore_case));
+
   app.add_flag("--csv,!--no-csv", opts.csv);
   app.add_flag("--hdf5,!--no-hdf5", opts.hdf5);
   app.add_flag("--parquet,!--no-parquet", opts.parquet);
@@ -121,6 +126,41 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   // Check if dihedral-bin was explicitly set
   if (app.count("--dihedral-bin")) {
     opts.has_dihedral_bin = true;
+  }
+
+  // Adjust defaults based on material type if not explicitly set
+  if (opts.material_type == 2) { // Crystalline
+    if (!app.count("--r-bin")) {
+      opts.r_bin_width = 0.002;
+    }
+    if (!app.count("--q-bin")) {
+      opts.q_bin_width = 0.002;
+    }
+    if (!app.count("--angle-bin")) {
+      opts.angle_bin_width = 0.1;
+    }
+    if (!app.count("--dihedral-bin") && !app.count("--angle-bin")) {
+      opts.dihedral_bin_width = 0.1;
+    }
+    if (!app.count("--smoothing-sigma")) {
+      opts.smoothing_sigma = 0.01;
+    }
+  } else if (opts.material_type == 1) { // Liquid
+    if (!app.count("--r-bin")) {
+      opts.r_bin_width = 0.05;
+    }
+    if (!app.count("--q-bin")) {
+      opts.q_bin_width = 0.05;
+    }
+    if (!app.count("--angle-bin")) {
+      opts.angle_bin_width = 2.0;
+    }
+    if (!app.count("--dihedral-bin") && !app.count("--angle-bin")) {
+      opts.dihedral_bin_width = 2.0;
+    }
+    if (!app.count("--smoothing-sigma")) {
+      opts.smoothing_sigma = 0.15;
+    }
   }
 
   // Handle min-frame conversion

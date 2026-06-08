@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
   opts.max_ring_size = cli.max_ring_size;
   opts.smoothing_sigma = cli.smoothing_sigma;
   opts.smoothing_kernel = cli.smoothing_kernel;
+  opts.material_type = cli.material_type;
 
   // Helper lambdas for string cleanup
   auto trim = [](std::string s) {

@@ -36,6 +36,7 @@ import { BondAngleOptionsCard } from "options/BondAngleOptionsCard.slint";
 import { RingsOptionsCard } from "options/RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "options/SmoothingOptionsCard.slint";
 import { BondCutoffsCard } from "options/BondCutoffsCard.slint";
+import { MaterialTypeCard } from "options/MaterialTypeCard.slint";
 import { PreviewCard } from "preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
 
@@ -152,6 +153,7 @@ export component AppWindow inherits Window {
     in-out property <string> smoothing_sigma: "0.01";
     in-out property <int> smoothing_kernel: 0;
     in-out property <[BondCutoff]> bond_cutoffs: [];
+    in-out property <int> material_type: 0;
 
     // Validation error messages (empty string = valid)
     in-out property <string> r_max_error: "";
@@ -224,6 +226,7 @@ export component AppWindow inherits Window {
     callback load_preset(int);
     callback save_preset(string);
     callback delete_preset(int);
+    callback material_type_changed(int);
 
     // ============================================================================
     // Core Layout Logic
@@ -267,6 +270,9 @@ export component AppWindow inherits Window {
     }
     changed time_step => {
         root.validate_inputs();
+    }
+    changed material_type => {
+        root.material_type_changed(root.material_type);
     }
 
     changed export_size_preset => {
@@ -433,6 +439,7 @@ export component AppWindow inherits Window {
                         (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_tooltip_text :
                         (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
                         (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_tooltip_text :
+                        (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_tooltip_text :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_tooltip_text :
                         (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
                         (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
@@ -444,6 +451,7 @@ export component AppWindow inherits Window {
                         (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_x :
                         (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
                         (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_x :
+                        (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_x :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_x :
                         (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
                         (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
@@ -455,6 +463,7 @@ export component AppWindow inherits Window {
                         (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_y :
                         (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
                         (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_y :
+                        (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_y :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_y :
                         (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
                         (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
@@ -466,6 +475,7 @@ export component AppWindow inherits Window {
                         (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_width :
                         (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
                         (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_width :
+                        (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_width :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_width :
                         (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
                         (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
@@ -477,6 +487,7 @@ export component AppWindow inherits Window {
                         (options_container.active_tab == 3 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_height :
                         (options_container.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
                         (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_height :
+                        (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_height :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_height :
                         (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
                         (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
@@ -509,6 +520,13 @@ export component AppWindow inherits Window {
                             }
 
                             // Parameters Tab (Bond Cutoffs, RDF, SQ, Angular, Rings, Smoothing Options)
+                            material_card := MaterialTypeCard {
+                                file_loaded: root.file_loaded;
+                                material_type <=> root.material_type;
+                                visible: options_container.active_tab == 0;
+                                height: options_container.active_tab == 0 ? self.preferred-height : 0px;
+                            }
+
                             bond_cutoffs_card := BondCutoffsCard {
                                 file_loaded: root.file_loaded;
                                 bond_cutoffs <=> root.bond_cutoffs;

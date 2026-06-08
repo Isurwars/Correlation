@@ -92,6 +92,7 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   ui_.on_load_preset([this](int index) { handleLoadPreset(index); });
   ui_.on_save_preset([this](slint::SharedString name) { handleSavePreset(std::string(name.data())); });
   ui_.on_delete_preset([this](int index) { handleDeletePreset(index); });
+  ui_.on_material_type_changed([this](int type) { handleMaterialTypeChanged(type); });
 
   // Handle plot resized callback from UI
   ui_.on_plot_resized([this](float w, float h) {
@@ -181,6 +182,7 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ui.set_max_ring_size(slint::SharedString(std::to_string(opt.max_ring_size)));
   ui.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
   ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
+  ui.set_material_type(opt.material_type);
 
   ui.set_min_frame(slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
   if (opt.max_frame == -1) {
@@ -260,6 +262,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
   opt.smoothing_sigma = safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<correlation::math::KernelType>(ui_.get_smoothing_kernel());
+  opt.material_type = ui_.get_material_type();
 
   // Frame Selection Logic:
   // - "Start" maps to 0
@@ -1471,6 +1474,29 @@ void AppController::refreshPresetList() {
 
   ui_.set_preset_items(menu_model);
   ui_.set_selected_preset(-1);
+}
+
+void AppController::handleMaterialTypeChanged(int type) {
+  if (type == 2) { // Crystalline
+    ui_.set_r_bin_width(slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL)));
+    ui_.set_q_bin_width(slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL)));
+    ui_.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL)));
+    ui_.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL)));
+    ui_.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL)));
+  } else if (type == 1) { // Liquid
+    ui_.set_r_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID)));
+    ui_.set_q_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID)));
+    ui_.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID)));
+    ui_.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID)));
+    ui_.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID)));
+  } else { // Amorphous (0)
+    ui_.set_r_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH)));
+    ui_.set_q_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH)));
+    ui_.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH)));
+    ui_.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH)));
+    ui_.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA)));
+  }
+  validateInputs();
 }
 
 } // namespace correlation::app

@@ -257,6 +257,7 @@ std::string PresetManager::toJson(const Preset &preset) {
     "  \"min_frame\": {},\n"
     "  \"max_frame\": {},\n"
     "  \"time_step\": {:.6f},\n"
+    "  \"material_type\": {},\n"
     "  \"active_calculators\": {{{}}}\n"
     "}}",
     escapeJsonString(preset.name),
@@ -278,6 +279,7 @@ std::string PresetManager::toJson(const Preset &preset) {
     preset.options.min_frame,
     preset.options.max_frame,
     preset.options.time_step,
+    preset.options.material_type,
     active_calcs_json
   );
 }
@@ -307,6 +309,7 @@ Preset PresetManager::fromJson(const std::string &json) {
   p.options.min_frame = parseIntValue(json, "min_frame", 0);
   p.options.max_frame = parseIntValue(json, "max_frame", -1);
   p.options.time_step = parseDoubleValue(json, "time_step", AppDefaults::TIME_STEP);
+  p.options.material_type = parseIntValue(json, "material_type", 0);
   
   p.options.active_calculators = parseActiveCalculators(json);
   

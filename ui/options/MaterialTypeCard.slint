@@ -1,0 +1,65 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    DropDownMenu,
+    Vertical,
+} from "../material/material.slint";
+
+export component MaterialTypeCard inherits FilledCard {
+    in-out property <bool> expanded: true;
+    in property <bool> file_loaded;
+    in-out property <int> material_type: 0; // 0: Amorphous, 1: Liquid, 2: Crystalline
+
+    out property <string> hovered_tooltip_text:
+        material_dropdown_area.has-hover ? "Select the material type to load recommended parameter defaults." : "";
+
+    out property <length> hovered_x:
+        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        material_dropdown_area.has-hover ? material_dropdown_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        material_dropdown_area.has-hover ? material_dropdown_area.width : 0px;
+    out property <length> hovered_height:
+        material_dropdown_area.has-hover ? material_dropdown_area.height : 0px;
+
+    Vertical {
+        ExpandableHeader {
+            text: "Material Type";
+            expanded <=> root.expanded;
+        }
+
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height, opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+
+            padding: MaterialStyleMetrics.spacing_8;
+            spacing: MaterialStyleMetrics.spacing_12;
+
+            material_dropdown_area := TouchArea {
+                DropDownMenu {
+                    width: 100%;
+                    label: "Material Defaults";
+                    enabled: root.file_loaded;
+                    items: [
+                        { text: "Amorphous", enabled: true },
+                        { text: "Liquid", enabled: true },
+                        { text: "Crystalline", enabled: true }
+                    ];
+                    current_index <=> root.material_type;
+                }
+            }
+        }
+    }
+}

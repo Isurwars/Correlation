@@ -601,3 +601,39 @@ TEST_F(CliParserTests, AtLeastOneOutputFormatMustBeEnabled) {
   EXPECT_FALSE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
 }
 
+TEST_F(CliParserTests, LiquidMaterialDefaults) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--material", "liquid"};
+  correlation::cli::CliOptions opts;
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  EXPECT_EQ(opts.material_type, 1);
+  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.05);
+  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.05);
+  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 2.0);
+  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 2.0);
+  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.15);
+}
+
+TEST_F(CliParserTests, CrystallineMaterialDefaults) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--material", "crystalline"};
+  correlation::cli::CliOptions opts;
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  EXPECT_EQ(opts.material_type, 2);
+  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.002);
+  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.002);
+  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 0.1);
+  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 0.1);
+  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.01);
+}
+
+TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
+  ArgBuilder args{"correlation-cli", "input.poscar", "--material", "crystalline", "--r-bin", "0.01", "--smoothing-sigma", "0.05"};
+  correlation::cli::CliOptions opts;
+  ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
+  EXPECT_EQ(opts.material_type, 2);
+  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.01);         // Overridden
+  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.002);        // Crystal default
+  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 0.1);      // Crystal default
+  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 0.1);   // Crystal default
+  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.05);     // Overridden
+}
+

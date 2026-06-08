@@ -225,5 +225,6 @@ private:
   void handleSavePreset(const std::string &name);
   void handleDeletePreset(int index);
   void refreshPresetList();
+  void handleMaterialTypeChanged(int type);
 };
 } // namespace correlation::app

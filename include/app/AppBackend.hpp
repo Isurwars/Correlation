@@ -30,6 +30,19 @@ struct AppDefaults {
   static constexpr double ANGLE_BIN_WIDTH = 1.0; ///< Default bin width for ADF (Degrees).
   static constexpr double SMOOTHING_SIGMA = 0.1; ///< Default Gaussian smoothing sigma.
 
+  // Crystalline Defaults (1 order of magnitude smaller)
+  static constexpr double R_BIN_WIDTH_CRYSTAL = 0.002;
+  static constexpr double Q_BIN_WIDTH_CRYSTAL = 0.002;
+  static constexpr double ANGLE_BIN_WIDTH_CRYSTAL = 0.1;
+  static constexpr double SMOOTHING_SIGMA_CRYSTAL = 0.01;
+
+  // Liquid Defaults (broad/diffuse features)
+  static constexpr double R_BIN_WIDTH_LIQUID = 0.05;
+  static constexpr double Q_BIN_WIDTH_LIQUID = 0.05;
+  static constexpr double ANGLE_BIN_WIDTH_LIQUID = 2.0;
+  static constexpr double SMOOTHING_SIGMA_LIQUID = 0.15;
+
+
   /** @brief Default smoothing kernel. */
   static constexpr decltype(correlation::math::KernelType::Gaussian) SMOOTHING_KERNEL =
       correlation::math::KernelType::Gaussian;
@@ -78,6 +91,8 @@ struct ProgramOptions {
   int min_frame = 0;                                                              ///< Starting frame index.
   int max_frame = -1;                                                             ///< Ending frame index (-1 for all).
   double time_step = AppDefaults::TIME_STEP;                                      ///< Simulation time step in fs.
+
+  int material_type = 0;                                                          ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
 
   /** @brief Bond cutoffs for S(Q) calculations. */
   std::vector<std::vector<double>> bond_cutoffs_sq;
