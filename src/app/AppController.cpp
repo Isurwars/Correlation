@@ -116,6 +116,9 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
 }
 
 AppController::~AppController() {
+  if (render_thread_.joinable()) {
+    render_thread_.join();
+  }
   if (analysis_thread_.joinable()) {
     analysis_thread_.join();
   }
@@ -684,16 +687,44 @@ void AppController::populatePlotList() {
   ui_.set_selected_plot_index(names.empty() ? -1 : 0);
 }
 
-void AppController::handleSelectPlot(int index) {
+
+void AppController::handleMouseMove(float mx, float my, bool hover, float w, float h) {
+  // Trust hover directly from Slint since we made TouchArea visibility stable
+  bool actual_hover = hover;
+
+  // Ignore vertical movement duplicate events if horizontal position and hover state are identical
+  if (std::abs(mx - last_mouse_x_) < 1e-2f &&
+      actual_hover == mouse_hover_ &&
+      std::abs(w - last_plot_width_) < 1e-2f &&
+      std::abs(h - last_plot_height_) < 1e-2f) {
+    return;
+  }
+
+  bool hover_changed = (actual_hover != mouse_hover_);
+
+  last_mouse_x_ = mx;
+  last_mouse_y_ = my;
+  mouse_hover_ = actual_hover;
+  last_plot_width_ = w;
+  last_plot_height_ = h;
+
+  int current_idx = ui_.get_selected_plot_index();
+  if (current_idx >= 0) {
+    requestPlotUpdate(current_idx, hover_changed || !actual_hover);
+  }
+}
+
+void AppController::requestPlotUpdate(int index, bool immediate) {
   if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
     return;
+
   const std::string &name = available_plot_keys_[index];
   const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
   if (!hist)
     return;
 
-  if (ui_.get_selected_plot_index() != index) {
-    ui_.set_selected_plot_index(index);
+  if (immediate) {
+    needs_redraw_ = true;
   }
 
   correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
@@ -727,114 +758,101 @@ void AppController::handleSelectPlot(int index) {
     return;
   }
 
+  // If a render is already running, queue this request as pending and return
+  if (is_rendering_) {
+    render_pending_ = true;
+    pending_plot_index_ = index;
+    return;
+  }
+
+  // Start rendering
+  is_rendering_ = true;
   needs_redraw_ = false;
   last_rendered_index_ = index;
   last_pinned_runs_count_ = pinned_runs_.size();
   last_config_ = config;
   last_hover_ = hover;
 
-  std::string svg;
-  if (pinned_runs_.empty()) {
-    svg = correlation::plotters::renderHistogramAsSvg(*hist, config, hover, backend_.getAshcroftWeights());
-  } else {
-    std::vector<correlation::plotters::LabeledHistogram> datasets;
+  // Prepare data for the thread (deep copies)
+  RenderTaskData data;
+  data.active_hist = *hist;
+  data.config = config;
+  data.hover = hover;
+  data.ashcroft_weights = backend_.getAshcroftWeights();
 
-    // Add the current run first
-    datasets.push_back({"Current", hist});
+  for (const auto &pr : pinned_runs_) {
+    auto it = pr.histograms.find(name);
+    if (it != pr.histograms.end()) {
+      data.comparison_hists.push_back({pr.label, it->second});
+    }
+  }
 
-    // Add pinned runs
-    for (const auto &pr : pinned_runs_) {
-      auto it = pr.histograms.find(name);
-      if (it != pr.histograms.end()) {
-        datasets.push_back({pr.label, &it->second});
+  // Join previous render thread if it exists and is done
+  if (render_thread_.joinable()) {
+    render_thread_.join();
+  }
+
+  // Ensure selection index in UI is correct (must be on main/UI thread)
+  if (ui_.get_selected_plot_index() != index) {
+    ui_.set_selected_plot_index(index);
+  }
+
+  // Launch background rendering thread
+  render_thread_ = std::thread([this, data, name]() {
+    std::string svg;
+    if (data.comparison_hists.empty()) {
+      svg = correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights);
+    } else {
+      std::vector<correlation::plotters::LabeledHistogram> datasets;
+      datasets.push_back({"Current", &data.active_hist});
+      for (const auto &pair : data.comparison_hists) {
+        datasets.push_back({pair.first, &pair.second});
       }
+
+      std::string key = "Total";
+      const auto &partials = data.active_hist.smoothed_partials.empty() ? data.active_hist.partials : data.active_hist.smoothed_partials;
+      if (!partials.empty() && partials.find(key) == partials.end()) {
+        key = partials.begin()->first;
+      }
+      svg = correlation::plotters::renderComparisonSvg(datasets, key, data.config, data.hover);
     }
 
-    std::string key = "Total";
-    const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-    if (!partials.empty() && partials.find(key) == partials.end()) {
-      key = partials.begin()->first;
+    // Write SVG to a unique temporary file
+    static std::atomic<uint64_t> file_counter{0};
+    auto temp_dir = std::filesystem::temp_directory_path();
+    auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
+
+    std::string final_temp_path;
+    std::ofstream out(temp_path);
+    if (out) {
+      out << svg;
+      out.close();
+      final_temp_path = temp_path.string();
     }
-    svg = correlation::plotters::renderComparisonSvg(datasets, key, config, hover);
-  }
 
-  // Load SVG using a unique temporary file to bypass Slint's path/pointer cache collisions.
-  static std::atomic<uint64_t> file_counter{0};
-  auto temp_dir = std::filesystem::temp_directory_path();
-  auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
+    // Dispatch UI updates back to the Slint event loop
+    slint::invoke_from_event_loop([this, final_temp_path, svg]() {
+      if (!final_temp_path.empty()) {
+        auto img = slint::Image::load_from_path(slint::SharedString(final_temp_path));
+        ui_.set_preview_plot(img);
+        std::error_code ec;
+        std::filesystem::remove(final_temp_path, ec);
+      } else {
+        // Fallback
+        auto img = slint::private_api::load_image_from_embedded_data(
+            std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
+        ui_.set_preview_plot(img);
+      }
 
-  std::ofstream out(temp_path);
-  if (out) {
-    out << svg;
-    out.close();
-    auto img = slint::Image::load_from_path(slint::SharedString(temp_path.string()));
-    ui_.set_preview_plot(img);
-    std::error_code ec;
-    std::filesystem::remove(temp_path, ec);
-  } else {
-    // Fallback if writing to temp dir fails
-    auto img = slint::private_api::load_image_from_embedded_data(
-        std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
-    ui_.set_preview_plot(img);
-  }
-}
+      is_rendering_ = false;
 
-void AppController::handleMouseMove(float mx, float my, bool hover, float w, float h) {
-  // Trust hover directly from Slint since we made TouchArea visibility stable
-  bool actual_hover = hover;
-
-  // Ignore vertical movement duplicate events if horizontal position and hover state are identical
-  if (std::abs(mx - last_mouse_x_) < 1e-2f &&
-      actual_hover == mouse_hover_ &&
-      std::abs(w - last_plot_width_) < 1e-2f &&
-      std::abs(h - last_plot_height_) < 1e-2f) {
-    return;
-  }
-
-  bool hover_changed = (actual_hover != mouse_hover_);
-
-  last_mouse_x_ = mx;
-  last_mouse_y_ = my;
-  mouse_hover_ = actual_hover;
-  last_plot_width_ = w;
-  last_plot_height_ = h;
-
-  int current_idx = ui_.get_selected_plot_index();
-  if (current_idx >= 0) {
-    requestPlotUpdate(current_idx, hover_changed || !actual_hover);
-  }
-}
-
-void AppController::requestPlotUpdate(int index, bool immediate) {
-  if (index < 0) return;
-  pending_plot_index_ = index;
-
-  if (immediate) {
-    needs_redraw_ = true;
-  }
-
-  auto now = std::chrono::steady_clock::now();
-  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_replot_time_).count();
-  const int throttle_ms = 200;
-
-  if (immediate || elapsed >= throttle_ms) {
-    if (update_scheduled_) {
-      hover_timer_.stop();
-      update_scheduled_ = false;
-    }
-    last_replot_time_ = now;
-    handleSelectPlot(index);
-  } else if (!update_scheduled_) {
-    update_scheduled_ = true;
-    auto delay = throttle_ms - elapsed;
-    hover_timer_.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(delay), [this]() {
-      update_scheduled_ = false;
-      last_replot_time_ = std::chrono::steady_clock::now();
-      if (pending_plot_index_ >= 0) {
-        handleSelectPlot(pending_plot_index_);
+      // If another render was requested during this drawing, run it now
+      if (render_pending_) {
+        render_pending_ = false;
+        requestPlotUpdate(pending_plot_index_, true);
       }
     });
-  }
+  });
 }
 
 void AppController::handleSavePlot() {

@@ -14,6 +14,7 @@
 #include "plotters/SvgPlotter.hpp"
 #include <nfd.h>
 
+#include <atomic>
 #include <chrono>
 #include <thread>
 
@@ -54,6 +55,18 @@ private:
 
   std::thread analysis_thread_; ///< Handle for the background analysis computation.
   std::thread load_thread_;     ///< Handle for the background file loading process.
+  std::thread render_thread_;   ///< Handle for the background SVG rendering process.
+
+  struct RenderTaskData {
+    correlation::analysis::Histogram active_hist;
+    std::vector<std::pair<std::string, correlation::analysis::Histogram>> comparison_hists;
+    correlation::plotters::PlotConfig config;
+    correlation::plotters::HoverInfo hover;
+    std::map<std::string, double> ashcroft_weights;
+  };
+
+  std::atomic<bool> is_rendering_{false};  ///< Whether a background render is currently active.
+  std::atomic<bool> render_pending_{false}; ///< Whether another render request is pending.
 
   std::vector<std::string> available_plot_keys_; ///< Map of UI indices to plot data keys.
 
@@ -176,14 +189,6 @@ private:
    *        from the last completed analysis.
    */
   void populatePlotList();
-
-  /**
-   * @brief Handles the "Select Plot" signal from the UI.
-   *        Generates an SVG image for the requested histogram and pushes it
-   *        to the UI via `ui_.set_preview_plot()`.
-   * @param index The index of the selected plot in the dropdown menu.
-   */
-  void handleSelectPlot(int index);
 
   /**
    * @brief Handles mouse movements over the preview plot area.
