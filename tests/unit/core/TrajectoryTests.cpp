@@ -282,7 +282,7 @@ TEST_F(TrajectoryTests, LazyTrajectoryLoadingAndAccess) {
 
 TEST_F(TrajectoryTests, FirstFrameThrowsOnEmptyTrajectory) {
   Trajectory traj;
-  EXPECT_THROW(traj.firstFrame(), std::runtime_error);
+  EXPECT_THROW((void)traj.firstFrame(), std::runtime_error);
 }
 
 TEST_F(TrajectoryTests, GetFrameThrowsOnOutOfRange) {
@@ -290,11 +290,11 @@ TEST_F(TrajectoryTests, GetFrameThrowsOnOutOfRange) {
   traj.addFrame(createSimpleFrame(0, 0, 0));
 
   // Valid index
-  EXPECT_NO_THROW(traj.getFrame(0));
+  EXPECT_NO_THROW((void)traj.getFrame(0));
 
   // Out of range
-  EXPECT_THROW(traj.getFrame(1), std::out_of_range);
-  EXPECT_THROW(traj.getFrame(100), std::out_of_range);
+  EXPECT_THROW((void)traj.getFrame(1), std::out_of_range);
+  EXPECT_THROW((void)traj.getFrame(100), std::out_of_range);
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesSingleFrame) {

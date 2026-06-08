@@ -47,7 +47,7 @@ struct PlotConfig {
   double font_scale = 1.0;     ///< Multiplier for all font sizes
   double line_width = 3.0;     ///< Data line stroke width
   bool show_legend = true;     ///< Toggle legend visibility
-  bool use_native_text = false; ///< Use standard SVG <text> elements instead of Hershey paths.
+  bool use_native_text = false; ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
 
   /** @brief Color palette selections */
   enum class Palette {
@@ -317,6 +317,7 @@ inline std::string renderTextAsPath(const std::string &text, double x, double y,
  * @param hist     The Histogram to render.
  * @param config   Optional plot configuration (theme, size, etc.).
  * @param hover    Optional hover interaction info.
+ * @param weights  Optional weights for each partial component to prioritize rendering.
  * @returns        A complete SVG document as `std::string`.
  */
 inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {}, const HoverInfo &hover = {}, const std::map<std::string, double> &weights = {}) {
