@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.3.1] - 2026-06-08
+
+### Added
+- **2D Hover Snapping**: Implemented a 2D nearest-neighbor hover snapping mechanism on SVG plots in the GUI, mapping the cursor `(sx, sy)` to the nearest data point across all plotted curves.
+- **Y-Axis Mouse Hovering**: Updated the plot preview to capture vertical cursor movements and update the UI immediately when the mouse moves along the Y-axis.
+- **Hover Nearest Highlight**: Snapped the horizontal guide line to the nearest curve's Y value at the hovered bin index and added a ` (nearest)` suffix in the tooltip list to clearly indicate the hovered curve.
+
 ## [3.3.0] - 2026-06-07
 
 ### Added
