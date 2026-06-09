@@ -1,13 +1,15 @@
 <map id="correlation::core::Cell::lattice_parameters" name="correlation::core::Cell::lattice_parameters">
-<area shape="rect" id="Node000001" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="523,27,701,67"/>
-<area shape="rect" id="Node000002" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="346,5,425,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="508,37,425,26,425,20,509,31"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="296,55,475,95"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="509,63,475,67,475,62,508,57"/>
-<area shape="rect" id="Node000003" href="$module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="51,5,202,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="332,21,202,21,202,15,332,15"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,55,245,95"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="282,78,246,78,246,73,282,73"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,119,248,159"/>
-<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="291,101,209,122,207,117,290,96"/>
+<area shape="rect" id="Node000001" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="575,63,753,103"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1SDFCalculator.html#a22449340309b1d36c3d8a05f1db9b14c" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="296,5,527,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="561,62,499,48,501,43,563,57"/>
+<area shape="rect" id="Node000003" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="372,70,451,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="561,85,451,85,451,80,561,80"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="322,120,501,160"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="563,108,501,123,499,117,561,103"/>
+<area shape="rect" id="Node000004" href="$module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="51,70,202,95"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="359,85,202,85,202,80,359,80"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,120,245,160"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="308,143,245,143,245,137,308,137"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,184,248,224"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="309,166,217,187,216,181,308,160"/>
 </map>

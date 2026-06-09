@@ -1,7 +1,9 @@
 <map id="correlation::calculators::SDFCalculator::calculateFrame" name="correlation::calculators::SDFCalculator::calculateFrame">
-<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,49,236,89"/>
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,85,236,125"/>
 <area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="299,5,467,60"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="236,50,286,43,286,49,236,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,82,285,57,286,62,195,87"/>
 <area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="284,85,483,125"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,82,271,87,270,92,236,87"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="236,102,270,102,270,107,236,107"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="294,149,473,189"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="204,122,288,143,287,148,203,127"/>
 </map>
