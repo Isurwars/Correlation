@@ -59,6 +59,10 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
     f_dihedral.bins[i] = theta_min + (i + 0.5) * bin_width;
   }
 
+  auto &total_f = f_dihedral.partials["Total"];
+  total_f.assign(num_bins, 0.0);
+  double total_counts = 0;
+
   for (size_t a = 0; a < num_elements; ++a) {
     for (size_t b = 0; b < num_elements; ++b) {
       for (size_t c = 0; c < num_elements; ++c) {
@@ -94,23 +98,16 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
 
               if (bin < num_bins) {
                 partial_hist[bin]++;
+                
+                // Only count canonical representation to avoid double counting symmetric pairs
+                if ((a < d) || (a == d && b <= c)) {
+                  total_f[bin]++;
+                  total_counts++;
+                }
               }
             }
           }
         }
-      }
-    }
-  }
-
-  auto &total_f = f_dihedral.partials["Total"];
-  total_f.assign(num_bins, 0.0);
-  double total_counts = 0;
-
-  for (const auto &[key, partial] : f_dihedral.partials) {
-    if (key != "Total") {
-      for (size_t i = 0; i < num_bins; ++i) {
-        total_f[i] += partial[i];
-        total_counts += partial[i];
       }
     }
   }

@@ -14,11 +14,34 @@
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
 
 namespace correlation::calculators {
 
 namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<SteinhardtCalculator>());
+
+struct Wigner666Cache {
+  double table[13][13];
+  Wigner666Cache() {
+    for (int m1 = -6; m1 <= 6; ++m1) {
+      for (int m2 = -6; m2 <= 6; ++m2) {
+        int m3 = -(m1 + m2);
+        if (m3 < -6 || m3 > 6) {
+          table[m1 + 6][m2 + 6] = 0.0;
+        } else {
+          table[m1 + 6][m2 + 6] = SteinhardtCalculator::wigner3j(6, 6, 6, m1, m2, m3);
+        }
+      }
+    }
+  }
+};
+
+double getWigner666(int m1, int m2) {
+  static const Wigner666Cache cache;
+  return cache.table[m1 + 6][m2 + 6];
+}
 } // namespace
 
 std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m, double theta, double phi) {
@@ -105,70 +128,72 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   double global_Q4_factor = std::sqrt(correlation::math::four_pi / 9.0);
   double global_Q6_factor = std::sqrt(correlation::math::four_pi / 13.0);
 
-  for (size_t i = 0; i < num_atoms; ++i) {
-    const auto &atom_neighbors = neighbor_graph.getNeighbors(i);
-    size_t nb = atom_neighbors.size();
-    if (nb < 2) {
-      continue;
-    }
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &r) {
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      const auto &atom_neighbors = neighbor_graph.getNeighbors(i);
+      size_t nb = atom_neighbors.size();
+      if (nb < 2) {
+        continue;
+      }
 
-    for (const auto &neighbor : atom_neighbors) {
-      // r_ij vector
-      correlation::math::Vector3<double> r_ij = neighbor.r_ij;
-      double r = neighbor.distance;
-      if (r == 0)
-        continue; // Safety check
+      for (const auto &neighbor : atom_neighbors) {
+        // r_ij vector
+        correlation::math::Vector3<double> r_ij = neighbor.r_ij;
+        double r = neighbor.distance;
+        if (r == 0)
+          continue; // Safety check
 
-      double theta = std::acos(std::clamp(r_ij.z() / r, -1.0, 1.0));
-      double phi = std::atan2(r_ij.y(), r_ij.x());
+        double theta = std::acos(std::clamp(r_ij.z() / r, -1.0, 1.0));
+        double phi = std::atan2(r_ij.y(), r_ij.x());
+
+        for (int m = -4; m <= 4; ++m) {
+          q4m[i][m + 4] += sphericalHarmonic(4, m, theta, phi);
+        }
+        for (int m = -6; m <= 6; ++m) {
+          q6m[i][m + 6] += sphericalHarmonic(6, m, theta, phi);
+        }
+      }
 
       for (int m = -4; m <= 4; ++m) {
-        q4m[i][m + 4] += sphericalHarmonic(4, m, theta, phi);
+        q4m[i][m + 4] /= static_cast<double>(nb);
       }
       for (int m = -6; m <= 6; ++m) {
-        q6m[i][m + 6] += sphericalHarmonic(6, m, theta, phi);
+        q6m[i][m + 6] /= static_cast<double>(nb);
+      }
+
+      double sum_sq_4 = 0.0;
+      for (int m = -4; m <= 4; ++m) {
+        sum_sq_4 += std::norm(q4m[i][m + 4]);
+      }
+      Q4[i] = global_Q4_factor * std::sqrt(sum_sq_4);
+
+      double sum_sq_6 = 0.0;
+      for (int m = -6; m <= 6; ++m) {
+        sum_sq_6 += std::norm(q6m[i][m + 6]);
+      }
+      Q6[i] = global_Q6_factor * std::sqrt(sum_sq_6);
+
+      // Compute W6
+      double w6 = 0.0;
+      for (int m1 = -6; m1 <= 6; ++m1) {
+        for (int m2 = -6; m2 <= 6; ++m2) {
+          int m3 = -(m1 + m2);
+          if (m3 < -6 || m3 > 6)
+            continue;
+          double w3j = getWigner666(m1, m2);
+          if (w3j == 0.0)
+            continue;
+
+          std::complex<double> prod = q6m[i][m1 + 6] * q6m[i][m2 + 6] * q6m[i][m3 + 6];
+          w6 += w3j * prod.real(); // product should be real theoretically
+        }
+      }
+      W6[i] = w6;
+      if (sum_sq_6 > 1e-12) {
+        W6_hat[i] = w6 / std::pow(sum_sq_6, 1.5);
       }
     }
-
-    for (int m = -4; m <= 4; ++m) {
-      q4m[i][m + 4] /= static_cast<double>(nb);
-    }
-    for (int m = -6; m <= 6; ++m) {
-      q6m[i][m + 6] /= static_cast<double>(nb);
-    }
-
-    double sum_sq_4 = 0.0;
-    for (int m = -4; m <= 4; ++m) {
-      sum_sq_4 += std::norm(q4m[i][m + 4]);
-    }
-    Q4[i] = global_Q4_factor * std::sqrt(sum_sq_4);
-
-    double sum_sq_6 = 0.0;
-    for (int m = -6; m <= 6; ++m) {
-      sum_sq_6 += std::norm(q6m[i][m + 6]);
-    }
-    Q6[i] = global_Q6_factor * std::sqrt(sum_sq_6);
-
-    // Compute W6
-    double w6 = 0.0;
-    for (int m1 = -6; m1 <= 6; ++m1) {
-      for (int m2 = -6; m2 <= 6; ++m2) {
-        int m3 = -(m1 + m2);
-        if (m3 < -6 || m3 > 6)
-          continue;
-        double w3j = wigner3j(6, 6, 6, m1, m2, m3);
-        if (w3j == 0.0)
-          continue;
-
-        std::complex<double> prod = q6m[i][m1 + 6] * q6m[i][m2 + 6] * q6m[i][m3 + 6];
-        w6 += w3j * prod.real(); // product should be real theoretically
-      }
-    }
-    W6[i] = w6;
-    if (sum_sq_6 > 1e-12) {
-      W6_hat[i] = w6 / std::pow(sum_sq_6, 1.5);
-    }
-  }
+  });
 
   // Distribution settings
   size_t bins_Q = 100;

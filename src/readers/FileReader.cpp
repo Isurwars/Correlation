@@ -11,6 +11,8 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
+#include <sstream>
 #include <stdexcept>
 
 namespace correlation::readers {
@@ -60,11 +62,103 @@ FileType determineFileType(const std::string &filename) {
 }
 
 /**
+ * @brief Sniffs the content of a file to determine the correct reader.
+ * @param filename Path to the file.
+ * @return Pointer to the matching reader, or nullptr if none found.
+ */
+static BaseReader *sniffReaderFromContent(const std::string &filename) {
+  std::ifstream file(filename);
+  if (!file.is_open())
+    return nullptr;
+
+  std::string line;
+  std::vector<std::string> lines;
+  for (int i = 0; i < 200 && std::getline(file, line); ++i) {
+    lines.push_back(line);
+  }
+
+  if (lines.empty())
+    return nullptr;
+
+  // 1. LAMMPS Dump: look for ITEM: TIMESTEP or ITEM: NUMBER OF ATOMS
+  for (const auto &l : lines) {
+    if (l.find("ITEM: TIMESTEP") != std::string::npos || l.find("ITEM: NUMBER OF ATOMS") != std::string::npos) {
+      return ReaderFactory::instance().getReaderForExtension(".dump");
+    }
+  }
+
+  // 2. PDB: look for HEADER or CRYST1 or ATOM
+  for (const auto &l : lines) {
+    if (l.find("HEADER") == 0 || l.find("CRYST1") == 0 || l.find("ATOM  ") == 0) {
+      return ReaderFactory::instance().getReaderForExtension(".pdb");
+    }
+  }
+
+  // 3. Quantum Espresso
+  for (const auto &l : lines) {
+    std::string uline = l;
+    std::transform(uline.begin(), uline.end(), uline.begin(), ::toupper);
+    if (uline.find("CELL_PARAMETERS") != std::string::npos || uline.find("ATOMIC_POSITIONS") != std::string::npos ||
+        uline.find("QUANTUM ESPRESSO") != std::string::npos || uline.find("PWSCF") != std::string::npos ||
+        uline.find("&CONTROL") != std::string::npos || uline.find("&SYSTEM") != std::string::npos) {
+      return ReaderFactory::instance().getReaderForExtension(".pwo");
+    }
+  }
+
+  // 4. CP2K
+  for (const auto &l : lines) {
+    std::string uline = l;
+    std::transform(uline.begin(), uline.end(), uline.begin(), ::toupper);
+    if (uline.find("&CELL") != std::string::npos || uline.find("&COORD") != std::string::npos ||
+        uline.find("&GLOBAL") != std::string::npos || uline.find("CP2K") != std::string::npos) {
+      return ReaderFactory::instance().getReaderForExtension(".restart");
+    }
+  }
+
+  // 5. VASP (POSCAR/CONTCAR or XDATCAR)
+  for (const auto &l : lines) {
+    std::string uline = l;
+    std::transform(uline.begin(), uline.end(), uline.begin(), ::toupper);
+    if (uline.find("DIRECT CONFIGURATION") != std::string::npos) {
+      return ReaderFactory::instance().getReaderForExtension(".xdatcar");
+    }
+  }
+  bool has_direct_or_cartesian = false;
+  for (const auto &l : lines) {
+    std::string uline = l;
+    std::transform(uline.begin(), uline.end(), uline.begin(), ::toupper);
+    if (uline.find("DIRECT") != std::string::npos || uline.find("CARTESIAN") != std::string::npos) {
+      has_direct_or_cartesian = true;
+      break;
+    }
+  }
+  if (has_direct_or_cartesian) {
+    return ReaderFactory::instance().getReaderForExtension(".poscar");
+  }
+
+  // 6. XYZ or Gromacs
+  if (lines.size() >= 3) {
+    try {
+      size_t count1 = std::stoul(lines[0]);
+      std::istringstream iss(lines[2]);
+      std::string sym;
+      double x, y, z;
+      if (iss >> sym >> x >> y >> z) {
+        return ReaderFactory::instance().getReaderForExtension(".xyz");
+      }
+    } catch (...) {}
+  }
+
+  return nullptr;
+}
+
+/**
  * @brief Finds a reader for the given filename.
  *
  * Tries the file extension first via ReaderFactory.  When the extension is
  * empty (extensionless VASP files such as POSCAR, CONTCAR, XDATCAR) falls
- * back to a case-insensitive basename check.
+ * back to a case-insensitive basename check. If both fail, performs content
+ * sniffing as a fallback.
  *
  * @param filename Path to the file.
  * @return Pointer to the matching reader, or nullptr if none found.
@@ -87,7 +181,8 @@ static BaseReader *findReaderForFile(const std::string &filename) {
   if (basename == "xdatcar")
     return ReaderFactory::instance().getReaderForExtension(".xdatcar");
 
-  return nullptr;
+  // Fallback to content sniffing
+  return sniffReaderFromContent(filename);
 }
 
 static BaseReader *findReaderForType(FileType type) {

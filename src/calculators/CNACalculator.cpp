@@ -11,6 +11,9 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <tbb/blocked_range.h>
+#include <tbb/parallel_for.h>
+#include <tbb/enumerable_thread_specific.h>
 
 namespace correlation::calculators {
 
@@ -81,63 +84,79 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
   const auto &neighbor_graph = neighbors->neighborGraph();
   const size_t num_atoms = cell.atomCount();
 
-  // Map to store CNA index counts (e.g., "1421" -> count)
-  std::map<std::string, double> cna_counts;
-  double total_pairs = 0;
+  tbb::enumerable_thread_specific<std::map<std::string, double>> local_counts_ets;
+  tbb::enumerable_thread_specific<double> local_total_pairs_ets(0.0);
 
-  for (size_t i = 0; i < num_atoms; ++i) {
-    const auto &neighbors_i = neighbor_graph.getNeighbors(i);
-    std::set<size_t> set_i;
-    for (const auto &n : neighbors_i)
-      set_i.insert(n.index);
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &r) {
+    auto &local_cna_counts = local_counts_ets.local();
+    auto &local_total_pairs = local_total_pairs_ets.local();
 
-    for (const auto &neighbor_j : neighbors_i) {
-      size_t j = neighbor_j.index;
-      if (i >= j)
-        continue; // Only count each pair once
+    for (size_t i = r.begin(); i < r.end(); ++i) {
+      const auto &neighbors_i = neighbor_graph.getNeighbors(i);
+      std::set<size_t> set_i;
+      for (const auto &n : neighbors_i)
+        set_i.insert(n.index);
 
-      const auto &neighbors_j = neighbor_graph.getNeighbors(j);
-      std::vector<size_t> common_neighbors;
-      for (const auto &n : neighbors_j) {
-        if (set_i.count(n.index)) {
-          common_neighbors.push_back(n.index);
+      for (const auto &neighbor_j : neighbors_i) {
+        size_t j = neighbor_j.index;
+        if (i >= j)
+          continue; // Only count each pair once
+
+        const auto &neighbors_j = neighbor_graph.getNeighbors(j);
+        std::vector<size_t> common_neighbors;
+        for (const auto &n : neighbors_j) {
+          if (set_i.count(n.index)) {
+            common_neighbors.push_back(n.index);
+          }
         }
-      }
 
-      size_t n_common = common_neighbors.size();
-      if (n_common == 0)
-        continue;
+        size_t n_common = common_neighbors.size();
+        if (n_common == 0)
+          continue;
 
-      // Count bonds between common neighbors and build adjacency list
-      size_t n_bonds = 0;
-      std::map<size_t, std::vector<size_t>> common_adj;
-      for (size_t a = 0; a < n_common; ++a) {
-        size_t idx_a = common_neighbors[a];
-        const auto &n_a = neighbor_graph.getNeighbors(idx_a);
-        for (size_t b = a + 1; b < n_common; ++b) {
-          size_t idx_b = common_neighbors[b];
-          for (const auto &nb : n_a) {
-            if (nb.index == idx_b) {
-              n_bonds++;
-              common_adj[idx_a].push_back(idx_b);
-              common_adj[idx_b].push_back(idx_a);
-              break;
+        // Count bonds between common neighbors and build adjacency list
+        size_t n_bonds = 0;
+        std::map<size_t, std::vector<size_t>> common_adj;
+        for (size_t a = 0; a < n_common; ++a) {
+          size_t idx_a = common_neighbors[a];
+          const auto &n_a = neighbor_graph.getNeighbors(idx_a);
+          for (size_t b = a + 1; b < n_common; ++b) {
+            size_t idx_b = common_neighbors[b];
+            for (const auto &nb : n_a) {
+              if (nb.index == idx_b) {
+                n_bonds++;
+                common_adj[idx_a].push_back(idx_b);
+                common_adj[idx_b].push_back(idx_a);
+                break;
+              }
             }
           }
         }
-      }
 
-      // Find longest continuous chain via DFS on the common neighbor subgraph
-      size_t n_longest = 0;
-      if (n_bonds > 0) {
-        n_longest = findLongestChain(common_neighbors, common_adj);
-      }
+        // Find longest continuous chain via DFS on the common neighbor subgraph
+        size_t n_longest = 0;
+        if (n_bonds > 0) {
+          n_longest = findLongestChain(common_neighbors, common_adj);
+        }
 
-      // Standard CNA index: (1, n_common, n_bonds, n_longest)
-      std::string index = "1" + std::to_string(n_common) + std::to_string(n_bonds) + std::to_string(n_longest);
-      cna_counts[index]++;
-      total_pairs++;
+        // Standard CNA index: (1, n_common, n_bonds, n_longest)
+        std::string index = "1" + std::to_string(n_common) + std::to_string(n_bonds) + std::to_string(n_longest);
+        local_cna_counts[index]++;
+        local_total_pairs++;
+      }
     }
+  });
+
+  // Merge thread-local counts and total pairs
+  std::map<std::string, double> cna_counts;
+  double total_pairs = 0.0;
+  for (const auto &local_cna_counts : local_counts_ets) {
+    for (const auto &[key, val] : local_cna_counts) {
+      cna_counts[key] += val;
+    }
+  }
+  for (double val : local_total_pairs_ets) {
+    total_pairs += val;
   }
 
   // --- Build histogram with consistent bin/partial dimensions ---

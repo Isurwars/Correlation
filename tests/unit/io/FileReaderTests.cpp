@@ -646,3 +646,34 @@ TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
   EXPECT_EQ(f1.atomCount(), 2);
   EXPECT_NEAR(f1.lattice_parameters()[0], 5.43, 1e-6);
 }
+
+TEST_F(FileReaderTests, SniffContentExtensionlessGeneric) {
+  // 1. Create a generic extensionless file with PDB content
+  std::ofstream pdb_sniff("pdb_temp_file");
+  ASSERT_TRUE(pdb_sniff.is_open());
+  pdb_sniff << "HEADER    PROTEIN                                 08-JUN-26   1ABC\n";
+  pdb_sniff << "CRYST1   10.000   10.000   10.000  90.00  90.00  90.00 P 1           1\n";
+  pdb_sniff << "ATOM      1  CA  ALA A   1       0.000   0.000   0.000  1.00  0.00           C\n";
+  pdb_sniff << "END\n";
+  pdb_sniff.close();
+
+  // Read structure with FileType::Unknown to force content-based sniffing
+  correlation::core::Cell result_cell = correlation::readers::readStructure("pdb_temp_file", correlation::readers::FileType::Unknown);
+  EXPECT_EQ(result_cell.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(result_cell.lattice_parameters()[0], 10.0);
+  remove("pdb_temp_file");
+
+  // 2. Create a generic file with XYZ content and generic .txt extension
+  std::ofstream xyz_sniff("xyz_temp_file.txt");
+  ASSERT_TRUE(xyz_sniff.is_open());
+  xyz_sniff << "2\n";
+  xyz_sniff << "Silicon dimer\n";
+  xyz_sniff << "Si 0.0 0.0 0.0\n";
+  xyz_sniff << "Si 0.0 0.0 2.35\n";
+  xyz_sniff.close();
+
+  correlation::core::Cell result_cell2 = correlation::readers::readStructure("xyz_temp_file.txt", correlation::readers::FileType::Unknown);
+  EXPECT_EQ(result_cell2.atomCount(), 2);
+  EXPECT_EQ(result_cell2.atoms()[0].element().symbol, "Si");
+  remove("xyz_temp_file.txt");
+}
