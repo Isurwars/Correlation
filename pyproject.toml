@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "correlation-analysis"
-version = "3.3.1"
+version = "3.4.0"
 description = "High-performance structural analysis for atomistic simulations"
 readme = "README.md"
 license = {text = "AGPL-3.0-only"}

@@ -169,9 +169,6 @@ void AppController::handleOptionstoUI(AppWindow &ui) {
   ProgramOptions opt = backend_.options();
   ui.set_in_file_text(slint::SharedString(opt.input_file));
   ui.set_smoothing(opt.smoothing);
-  ui.set_use_hdf5(opt.use_hdf5);
-  ui.set_use_csv(opt.use_csv);
-  ui.set_use_parquet(opt.use_parquet);
   ui.set_r_max(slint::SharedString(std::format("{:.2f}", opt.r_max)));
   ui.set_r_bin_width(slint::SharedString(std::format("{:.2f}", opt.r_bin_width)));
   ui.set_q_max(slint::SharedString(std::format("{:.2f}", opt.q_max)));
@@ -238,9 +235,6 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
-  opt.use_hdf5 = ui_.get_use_hdf5();
-  opt.use_csv = ui_.get_use_csv();
-  opt.use_parquet = ui_.get_use_parquet();
   opt.r_max = safe_stof(ui_.get_r_max(), opt.r_max);
   opt.r_bin_width = safe_stof(ui_.get_r_bin_width(), opt.r_bin_width);
   opt.q_max = safe_stof(ui_.get_q_max(), opt.q_max);
@@ -512,15 +506,22 @@ void AppController::handleRunAnalysis() {
 }
 
 void AppController::handleWriteFiles() {
-  backend_.setOptions(handleOptionsfromUI(ui_));
-
   std::string default_path = backend_.options().output_file_base;
   std::filesystem::path dp(default_path);
   std::string default_dir = dp.parent_path().string();
   std::string default_name = dp.filename().string();
 
+  std::vector<nfdfilteritem_t> filterList;
+  filterList.push_back({"CSV (Comma-Separated Values)", "csv"});
+#ifdef CORRELATION_USE_HDF5
+  filterList.push_back({"HDF5 Files", "h5,hdf5"});
+#endif
+#ifdef CORRELATION_USE_ARROW
+  filterList.push_back({"Parquet Files", "parquet"});
+#endif
+
   nfdchar_t *outPath = nullptr;
-  nfdresult_t result = NFD_SaveDialogU8(&outPath, nullptr, 0,
+  nfdresult_t result = NFD_SaveDialogU8(&outPath, filterList.data(), filterList.size(),
                                         default_dir.empty() ? nullptr : default_dir.c_str(),
                                         default_name.empty() ? nullptr : default_name.c_str());
 
@@ -529,13 +530,45 @@ void AppController::handleWriteFiles() {
     NFD_FreePathU8(outPath);
 
     std::filesystem::path p(filepath);
+    std::string ext = p.extension().string();
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
+    bool use_csv = false;
+    bool use_hdf5 = false;
+    bool use_parquet = false;
+
+    if (ext == ".h5" || ext == ".hdf5") {
+#ifdef CORRELATION_USE_HDF5
+      use_hdf5 = true;
+#else
+      ui_.set_analysis_status_text("Error: HDF5 format is not available.");
+      return;
+#endif
+    } else if (ext == ".parquet") {
+#ifdef CORRELATION_USE_ARROW
+      use_parquet = true;
+#else
+      ui_.set_analysis_status_text("Error: Parquet format is not available.");
+      return;
+#endif
+    } else {
+      use_csv = true;
+      if (ext != ".csv") {
+        p.replace_extension(".csv");
+      }
+    }
+
     if (p.has_extension()) {
       p.replace_extension("");
     }
 
     ProgramOptions opts = handleOptionsfromUI(ui_);
     opts.output_file_base = p.string();
+    opts.use_csv = use_csv;
+    opts.use_hdf5 = use_hdf5;
+    opts.use_parquet = use_parquet;
     backend_.setOptions(opts);
+
     std::string err = backend_.write_files();
     if (err.empty()) {
       ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));

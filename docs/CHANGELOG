@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.4.0] - 2026-06-08
+
+### Added
+- **Extension-Based Saving**: Enabled automatic determination of the save file format (CSV, HDF5, or Parquet) based on the user's selected file extension in the save dialog.
+- **Dynamic Save Filters**: Integrated dynamic save dialog filters that conditionally offer HDF5 and Parquet formats depending on compile-time dependencies.
+
+### Changed
+- **Simplified GUI**: Removed the "Export" options tab from the middle settings pane, streamlining options configuration.
+- **Enabled HDF5 support**: Configured CMake build with `BUILD_WITH_HDF5=ON` to link and enable HDF5 output by default.
+
 ## [3.3.1] - 2026-06-08
 
 ### Added

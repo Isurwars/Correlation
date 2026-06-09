@@ -272,9 +272,6 @@ std::string AppBackend::run_analysis() {
   if (options_.smoothing_sigma < 0.0) {
     return "Error: smoothing_sigma cannot be negative.";
   }
-  if (!options_.use_csv && !options_.use_hdf5 && !options_.use_parquet) {
-    return "Error: At least one output format (CSV, HDF5, or Parquet) must be enabled.";
-  }
 
   try {
     // Apply custom bond cutoffs if they were set in options
