@@ -22,7 +22,9 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
                                    const correlation::analysis::AnalysisSettings &settings) const {
 
   const auto &cell = df.cell();
-  const double dx = settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5;
+  // SDF is a 3D grid and requires a coarser resolution than 1D radial distributions.
+  // We enforce a minimum grid spacing of 0.5 Å to prevent memory explosion.
+  const double dx = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
@@ -38,7 +40,7 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   size_t nz = static_cast<size_t>(std::ceil(lz / dx));
   size_t total_bins = nx * ny * nz;
 
-  if (total_bins == 0 || total_bins > 100000000) {
+  if (total_bins == 0 || total_bins > 1000000) {
     // Prevent memory explosion if grid is too fine
     return;
   }
