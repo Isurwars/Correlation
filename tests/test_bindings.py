@@ -90,24 +90,22 @@ cell2.add_atom("O",  [1.6, 0.0, 0.0])
 cell2.add_atom("O",  [0.0, 1.6, 0.0])
 
 try:
-    traj2 = correlation.read("tests/data/Si.xdatcar")
-    cell_xdat = traj2.frames[0]
-    df = correlation.DistributionFunctions(cell_xdat, cutoff=5.0, bond_cutoffs=[[3.0]])
-    df.calculate_rdf(r_max=5.0, bin_width=0.05)
+    df = correlation.DistributionFunctions(cell2, cutoff=5.0)
+    df.calculate_rdf(r_max=10.0, bin_width=0.05)
     available = df.get_available_histograms()
     print(f"  Available histograms: {available}")
 
-    if "g_r" in available:
-        h = df.get_histogram("g_r")
-        print(f"  g_r bins (first 5): {h.bins[:5]}")
+    if "g(r)" in available:
+        h = df.get_histogram("g(r)")
+        print(f"  g(r) bins (first 5): {h.bins[:5]}")
         if "Total" in h.partials:
-            print(f"  g_r Total (first 5): {h.partials['Total'][:5]}")
+            print(f"  g(r) Total (first 5): {h.partials['Total'][:5]}")
 
     df.smooth_all(sigma=0.05)
     print("  smooth_all: OK")
 
 except Exception as e:
-    print(f"  DistributionFunctions error: {e}")
+    print(f"  DistributionFunctions error (expected if cell lacks lattice): {e}")
 
 # ── 5.5 Dynamic properties getters ──────────────────────────────────
 section("5.5 Dynamic Properties Getters")

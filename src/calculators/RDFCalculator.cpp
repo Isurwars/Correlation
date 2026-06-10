@@ -208,34 +208,6 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     total_G[k] = correlation::math::four_pi * rho_0 * r * (total_g[k] - 1.0);
   }
 
-  // Weight the partials of g(r) and G(r) so that the reported and plotted
-  // partials are weighted contributions, summing to the Total curves.
-  for (size_t i = 0; i < num_elements; ++i) {
-    for (size_t j = i; j < num_elements; ++j) {
-      std::string key = getPartialKey(cell, i, j);
-      double weight = ashcroft_weights.at(key);
-
-      // 1. Weight g_r partial: g_ij_weighted(r) = w_ij * g_ij(r)
-      auto &g_part = g_r.partials.at(key);
-      for (size_t k = 0; k < num_bins; ++k) {
-        g_part[k] *= weight;
-      }
-
-      // 2. Weight G_r partial: G_ij_weighted(r) = w_ij * 4 * pi * rho_0 * r * (g_ij(r) - 1)
-      // Since we already weighted g_part, we have g_part[k] = w_ij * g_ij(r).
-      // Thus, G_ij_weighted(r) = 4 * pi * rho_0 * r * (g_part[k] - w_ij)
-      auto &G_part = G_r.partials.at(key);
-      for (size_t k = 0; k < num_bins; ++k) {
-        const double r = g_r.bins[k];
-        if (r < 1e-9) {
-          G_part[k] = 0.0;
-        } else {
-          G_part[k] = correlation::math::four_pi * rho_0 * r * (g_part[k] - weight);
-        }
-      }
-    }
-  }
-
   std::map<std::string, correlation::analysis::Histogram> results;
   results["J_r"] = std::move(J_r);
   results["g_r"] = std::move(g_r);
