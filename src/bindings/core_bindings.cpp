@@ -121,6 +121,17 @@ void init_core(py::module_ &m) {
       .def(py::init<>())
       .def_property("time_step", &Trajectory::getTimeStep, &Trajectory::setTimeStep)
       .def("num_frames", &Trajectory::getFrameCount)
+      .def("__len__", &Trajectory::getFrameCount)
+      .def("__getitem__", [](const Trajectory &t, int index) -> Cell {
+            int count = static_cast<int>(t.getFrameCount());
+            if (index < 0) {
+              index += count;
+            }
+            if (index < 0 || index >= count) {
+              throw py::index_error("Trajectory index out of range");
+            }
+            return t.getFrame(static_cast<size_t>(index));
+          })
       .def_property_readonly(
           "frames", [](Trajectory &t) -> std::vector<Cell> & { return t.getFrames(); },
           py::return_value_policy::reference_internal);
