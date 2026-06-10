@@ -64,15 +64,8 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
   xrd_hist.bins.resize(num_bins);
   std::vector<double> intensities(num_bins, 0.0);
 
-  auto safe_get_form_factors = [](const std::string &symbol) -> std::array<double, 9> {
-    try {
-      return correlation::physics::getAtomicFormFactors(symbol);
-    } catch (...) {
-      return {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    }
-  };
-
-  auto evaluate_f_Q = [](const std::array<double, 9> &coeffs, double Q) -> double {
+  auto get_f_Q = [](const std::string &symbol, double Q) -> double {
+    const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
     double s = Q / correlation::math::four_pi;
     double s2 = s * s;
     double f = coeffs[8];
@@ -92,21 +85,14 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
     }
   }
 
-  struct ConcentrationInfo {
-    double c;
-    std::array<double, 9> coeffs;
-  };
-  std::vector<ConcentrationInfo> conc_info;
+  std::map<std::string, double> concentrations;
   for (const auto &elem : cell.elements()) {
     double count = 0;
     for (const auto &atom : cell.atoms()) {
       if (atom.element().symbol == elem.symbol)
         count++;
     }
-    double c = count / cell.atomCount();
-    if (c > 0.0) {
-      conc_info.push_back({c, safe_get_form_factors(elem.symbol)});
-    }
+    concentrations[elem.symbol] = count / cell.atomCount();
   }
 
   // Collect partials as a flat vector for parallel access (avoids map iteration
@@ -115,8 +101,7 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
     const std::string *key;
     const std::vector<double> *integrand;
     double weight;
-    std::array<double, 9> coeffs1;
-    std::array<double, 9> coeffs2;
+    std::string sym1, sym2;
   };
   std::vector<PartialXRD> xrd_partials;
   xrd_partials.reserve(partial_integrands.size());
@@ -125,7 +110,7 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
     size_t dash_pos = key.find('-');
     std::string s1 = key.substr(0, dash_pos);
     std::string s2 = key.substr(dash_pos + 1);
-    xrd_partials.push_back({&key, &integ, weight, safe_get_form_factors(s1), safe_get_form_factors(s2)});
+    xrd_partials.push_back({&key, &integ, weight, s1, s2});
   }
   const size_t num_xrd_partials = xrd_partials.size();
 
@@ -150,9 +135,9 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
 
       double I_Q = 0.0;
 
-      for (const auto &ci : conc_info) {
-        double f = evaluate_f_Q(ci.coeffs, Q);
-        I_Q += ci.c * f * f;
+      for (const auto &[sym, c] : concentrations) {
+        double f = get_f_Q(sym, Q);
+        I_Q += c * f * f;
       }
 
       for (size_t p = 0; p < num_xrd_partials; ++p) {
@@ -164,8 +149,8 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
         double integral =
             correlation::math::sinc_integral(Q, px.integrand->data(), r_bins.data(), sinqr.data(), pcount);
 
-        double f1 = evaluate_f_Q(px.coeffs1, Q);
-        double f2 = evaluate_f_Q(px.coeffs2, Q);
+        double f1 = get_f_Q(px.sym1, Q);
+        double f2 = get_f_Q(px.sym2, Q);
 
         I_Q += px.weight * f1 * f2 * (correlation::math::four_pi * total_rho / Q) * integral;
       }
