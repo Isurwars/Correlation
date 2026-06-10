@@ -25,10 +25,10 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 
 void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  if (df.getAllHistograms().find("g(r)") == df.getAllHistograms().end()) {
+  if (df.getAllHistograms().find("g_r") == df.getAllHistograms().end()) {
     return; // g(r) hasn't been calculated yet
   }
-  df.addHistogram("XRD", calculate(df.getHistogram("g(r)"), df.cell(), df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
+  df.addHistogram("XRD", calculate(df.getHistogram("g_r"), df.cell(), df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
                                    settings.q_bin_width));
 }
 
@@ -79,9 +79,10 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
   for (const auto &[key, g_partial] : g_r_hist.partials) {
     if (key == "Total")
       continue;
+    double weight = ashcroft_weights.at(key);
     partial_integrands[key].resize(g_partial.size());
     for (size_t k = 0; k < g_partial.size(); ++k) {
-      partial_integrands[key][k] = r_bins[k] * (g_partial[k] - 1.0) * dr;
+      partial_integrands[key][k] = r_bins[k] * (g_partial[k] - weight) * dr;
     }
   }
 
@@ -152,7 +153,7 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
         double f1 = get_f_Q(px.sym1, Q);
         double f2 = get_f_Q(px.sym2, Q);
 
-        I_Q += px.weight * f1 * f2 * (correlation::math::four_pi * total_rho / Q) * integral;
+        I_Q += f1 * f2 * (correlation::math::four_pi * total_rho / Q) * integral;
       }
 
       intensities[i] = I_Q;
