@@ -78,6 +78,8 @@ struct Histogram {
 
   /// Maps a partial key to its smoothed histogram values.
   std::map<std::string, std::vector<double>> smoothed_partials;
+
+  int compute_count = 1; ///< Number of frames/contributions accumulated in this histogram.
 };
 
 /**

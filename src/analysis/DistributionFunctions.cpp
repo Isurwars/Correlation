@@ -385,6 +385,8 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
 
     // Clear smoothed partials as they are no longer valid after accumulation
     this_hist.smoothed_partials.clear();
+
+    this_hist.compute_count += other_hist.compute_count;
   }
 }
 
@@ -473,8 +475,20 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
     }
   }
 
-  if (num_frames > 1) {
-    final_df->scale(1.0 / static_cast<double>(num_frames));
+  for (auto &[name, hist] : final_df->histograms_) {
+    if (hist.compute_count > 1) {
+      double factor = 1.0 / static_cast<double>(hist.compute_count);
+      for (auto &[key, partial] : hist.partials) {
+        for (size_t i = 0; i < partial.size(); ++i) {
+          partial[i] *= factor;
+        }
+      }
+      for (auto &[key, smoothed_partial] : hist.smoothed_partials) {
+        for (size_t i = 0; i < smoothed_partial.size(); ++i) {
+          smoothed_partial[i] *= factor;
+        }
+      }
+    }
   }
 
   if (settings.smoothing) {

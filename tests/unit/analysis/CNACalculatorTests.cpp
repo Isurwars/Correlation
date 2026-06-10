@@ -183,7 +183,7 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
 // Two Atoms – Bonded But No Common Neighbors
 // ============================================================================
 
-/// Two bonded atoms with no common neighbors should produce no CNA output.
+/// Two bonded atoms with no common neighbors should produce CNA index 1000.
 TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   correlation::core::Cell cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {10.0, 10.0, 10.0});
@@ -193,8 +193,11 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   analysis::StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, true);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
-  // Two atoms that are neighbors but share no common neighbors ⟹ no CNA pairs
-  EXPECT_TRUE(hist.bins.empty());
+  // Two atoms that are neighbors but share no common neighbors ⟹ classified as "1000"
+  ASSERT_FALSE(hist.bins.empty());
+  ASSERT_EQ(hist.bins.size(), 1);
+  EXPECT_TRUE(hist.partials.count("1000"));
+  EXPECT_DOUBLE_EQ(hist.partials.at("1000")[0], 1.0);
 }
 
 // ============================================================================

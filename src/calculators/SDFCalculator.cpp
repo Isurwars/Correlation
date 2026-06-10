@@ -92,6 +92,10 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     sdf_hist.partials["Total"][idx] += 1.0 / dV;
   }
 
+  if (sdf_hist.partials.find("Total") == sdf_hist.partials.end()) {
+    sdf_hist.partials["Total"].assign(total_bins, 0.0);
+  }
+
   df.addHistogram("SDF", std::move(sdf_hist));
 }
 

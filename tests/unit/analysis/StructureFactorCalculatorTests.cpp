@@ -165,4 +165,31 @@ TEST_F(StructureFactorCalculatorTests, HomonuclearClusterPartialsPresent) {
   EXPECT_TRUE(hist.partials.count("Si-Si"));
   EXPECT_TRUE(hist.partials.count("Total"));
 }
+
+TEST_F(StructureFactorCalculatorTests, CalculateSF_InvalidInputsThrow) {
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Si", {0.0, 0.0, 0.0});
+  DistributionFunctions df(cell);
+  correlation::calculators::StructureFactorCalculator calc;
+
+  AnalysisSettings settings_invalid_q;
+  settings_invalid_q.q_max = -1.0;
+  settings_invalid_q.q_bin_width = 0.1;
+  EXPECT_THROW(calc.calculateFrame(df, settings_invalid_q), std::invalid_argument);
+
+  AnalysisSettings settings_invalid_bin;
+  settings_invalid_bin.q_max = 5.0;
+  settings_invalid_bin.q_bin_width = -0.1;
+  EXPECT_THROW(calc.calculateFrame(df, settings_invalid_bin), std::invalid_argument);
+
+  AnalysisSettings settings_bin_too_large;
+  settings_bin_too_large.q_max = 5.0;
+  settings_bin_too_large.q_bin_width = 10.0;
+  EXPECT_THROW(calc.calculateFrame(df, settings_bin_too_large), std::invalid_argument);
+}
+
+TEST_F(StructureFactorCalculatorTests, CalculateSF_EmptyCellThrows) {
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  EXPECT_THROW(DistributionFunctions df(cell), std::invalid_argument);
+}
 } // namespace correlation::analysis

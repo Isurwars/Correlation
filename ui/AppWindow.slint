@@ -305,7 +305,9 @@ export component AppWindow inherits Window {
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
-    property <string> sidebar_tooltip: operations_card.hovered_tooltip_text;
+    property <string> sidebar_tooltip: 
+        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_tooltip_text :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text : "");
 
     property <string> options_hovered_tooltip: options_container.local_tooltip;
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
@@ -314,22 +316,26 @@ export component AppWindow inherits Window {
         sidebar_tooltip != "" ? sidebar_tooltip : options_hovered_tooltip != "" ? options_hovered_tooltip : preview_hovered_tooltip;
 
     property <length> hovered_x:
-        sidebar_tooltip != "" ? operations_card.hovered_x :
+        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_x :
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
         options_hovered_tooltip != "" ? options_container.local_hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
-        sidebar_tooltip != "" ? operations_card.hovered_y :
+        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_y :
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
         options_hovered_tooltip != "" ? options_container.local_hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
-        sidebar_tooltip != "" ? operations_card.hovered_width :
+        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_width :
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_width :
         options_hovered_tooltip != "" ? options_container.local_hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
-        sidebar_tooltip != "" ? operations_card.hovered_height :
+        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_height :
+        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_height :
         options_hovered_tooltip != "" ? options_container.local_hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
@@ -379,6 +385,18 @@ export component AppWindow inherits Window {
                     }
                 }
 
+                trajectory_card := TrajectoryOptionsCard {
+                    file_loaded: root.file_loaded;
+                    num_frames: root.num_frames;
+                    time_step <=> root.time_step;
+                    time_step_error: root.time_step_error;
+                    min_frame <=> root.min_frame;
+                    max_frame <=> root.max_frame;
+                    min_frame_error: root.min_frame_error;
+                    max_frame_error: root.max_frame_error;
+                    opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
+                }
+
                 //CliCommandCard {
                 //    cli_command: root.cli_command;
                 //    copy_command => {
@@ -407,78 +425,68 @@ export component AppWindow inherits Window {
                         padding-bottom: 4px;
 
                         TabItem {
-                            text: "Parameters";
+                            text: "Common";
                             active: options_container.active_tab == 0;
                             clicked => { options_container.active_tab = 0; }
                         }
 
                         TabItem {
-                            text: "Trajectory";
+                            text: "Advanced";
                             active: options_container.active_tab == 1;
                             clicked => { options_container.active_tab = 1; }
                         }
 
                         TabItem {
-                            text: "Setup";
+                            text: "Distribution";
                             active: options_container.active_tab == 2;
                             clicked => { options_container.active_tab = 2; }
                         }
                     }
 
                     property <string> local_tooltip: 
-                        (options_container.active_tab == 2 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_tooltip_text :
                         (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
-                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_tooltip_text :
+                        (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
+                        (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
+                        (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
                         (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_tooltip_text :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_tooltip_text :
-                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
-                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
-                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text :
-                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text : "";
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text : "";
 
                     property <length> local_hovered_x:
-                        (options_container.active_tab == 2 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_x :
                         (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
-                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_x :
+                        (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
+                        (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
+                        (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
                         (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_x :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_x :
-                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
-                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
-                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x :
-                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x : 0px;
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x : 0px;
 
                     property <length> local_hovered_y:
-                        (options_container.active_tab == 2 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_y :
                         (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
-                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_y :
+                        (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
+                        (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
+                        (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
                         (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_y :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_y :
-                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
-                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
-                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y :
-                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y : 0px;
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y : 0px;
 
                     property <length> local_hovered_width:
-                        (options_container.active_tab == 2 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_width :
                         (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
-                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_width :
+                        (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
+                        (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
+                        (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
                         (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_width :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_width :
-                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
-                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
-                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width :
-                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width : 0px;
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width : 0px;
 
                     property <length> local_hovered_height:
-                        (options_container.active_tab == 2 && preset_card.hovered_tooltip_text != "") ? preset_card.hovered_height :
                         (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
-                        (options_container.active_tab == 1 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_height :
+                        (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
+                        (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
+                        (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
                         (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_height :
                         (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_height :
-                        (options_container.active_tab == 0 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
-                        (options_container.active_tab == 0 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
-                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_height :
-                        (options_container.active_tab == 0 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height : 0px;
+                        (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_height : 0px;
 
                     changed local_tooltip => {
                         root.options_hovered_tooltip = self.local_tooltip;
@@ -490,21 +498,7 @@ export component AppWindow inherits Window {
                             padding: 0;
                             spacing: MaterialStyleMetrics.spacing_4;
 
-                            // Trajectory Tab (Time Step & Frame Range)
-                            trajectory_card := TrajectoryOptionsCard {
-                                file_loaded: root.file_loaded;
-                                num_frames: root.num_frames;
-                                time_step <=> root.time_step;
-                                time_step_error: root.time_step_error;
-                                min_frame <=> root.min_frame;
-                                max_frame <=> root.max_frame;
-                                min_frame_error: root.min_frame_error;
-                                max_frame_error: root.max_frame_error;
-                                visible: options_container.active_tab == 1;
-                                height: options_container.active_tab == 1 ? self.preferred-height : 0px;
-                            }
-
-                            // Parameters Tab (Bond Cutoffs, RDF, SQ, Angular, Rings, Smoothing Options)
+                            // Common Tab Options (Material Type, Bond Cutoffs, RDF, Angular)
                             material_card := MaterialTypeCard {
                                 file_loaded: root.file_loaded;
                                 material_type <=> root.material_type;
@@ -540,6 +534,7 @@ export component AppWindow inherits Window {
                                 height: (options_container.active_tab == 0 && root.has_angular_active) ? self.preferred-height : 0px;
                             }
 
+                            // Advanced Tab Options (SQ, Rings, Smoothing)
                             sq_card := SQOptionsCard {
                                 file_loaded: root.file_loaded;
                                 q_max <=> root.q_max;
@@ -548,8 +543,16 @@ export component AppWindow inherits Window {
                                 q_max_error: root.q_max_error;
                                 q_bin_error: root.q_bin_error;
                                 r_int_max_error: root.r_int_max_error;
-                                visible: options_container.active_tab == 0 && root.has_scattering_active;
-                                height: (options_container.active_tab == 0 && root.has_scattering_active) ? self.preferred-height : 0px;
+                                visible: options_container.active_tab == 1 && root.has_scattering_active;
+                                height: (options_container.active_tab == 1 && root.has_scattering_active) ? self.preferred-height : 0px;
+                            }
+
+                            rings_card := RingsOptionsCard {
+                                file_loaded: root.file_loaded;
+                                max_ring_size <=> root.max_ring_size;
+                                max_ring_error: root.max_ring_error;
+                                visible: options_container.active_tab == 1 && root.has_rings_active;
+                                height: (options_container.active_tab == 1 && root.has_rings_active) ? self.preferred-height : 0px;
                             }
 
                             smoothing_card := SmoothingOptionsCard {
@@ -558,36 +561,11 @@ export component AppWindow inherits Window {
                                 smoothing_sigma <=> root.smoothing_sigma;
                                 smoothing_kernel <=> root.smoothing_kernel;
                                 smoothing_sigma_error: root.smoothing_sigma_error;
-                                visible: options_container.active_tab == 0;
-                                height: options_container.active_tab == 0 ? self.preferred-height : 0px;
+                                visible: options_container.active_tab == 1;
+                                height: options_container.active_tab == 1 ? self.preferred-height : 0px;
                             }
 
-                            rings_card := RingsOptionsCard {
-                                file_loaded: root.file_loaded;
-                                max_ring_size <=> root.max_ring_size;
-                                max_ring_error: root.max_ring_error;
-                                visible: options_container.active_tab == 0 && root.has_rings_active;
-                                height: (options_container.active_tab == 0 && root.has_rings_active) ? self.preferred-height : 0px;
-                            }
-
-                            // Setup Tab (Presets, Calculator Selections)
-                            preset_card := PresetManagerCard {
-                                enabled: root.file_loaded;
-                                preset_items: root.preset_items;
-                                selected_preset <=> root.selected_preset;
-                                load_preset(idx) => {
-                                    root.load_preset(idx);
-                                }
-                                save_preset(name) => {
-                                    root.save_preset(name);
-                                }
-                                delete_preset(idx) => {
-                                    root.delete_preset(idx);
-                                }
-                                visible: options_container.active_tab == 2;
-                                height: options_container.active_tab == 2 ? self.preferred-height : 0px;
-                            }
-
+                            // Distribution Tab Options (Calculator Selections)
                             analyses_card := AnalysesSelectionCard {
                                 file_loaded: root.file_loaded;
                                 calculator_groups: root.calculator_groups;
@@ -597,18 +575,6 @@ export component AppWindow inherits Window {
                                 }
                                 visible: options_container.active_tab == 2;
                                 height: options_container.active_tab == 2 ? self.preferred-height : 0px;
-                            }
-
-                            // Tab placeholder if no options active
-                            if (options_container.active_tab == 0 && !root.has_radial_active && !root.has_scattering_active && !root.has_angular_active && !root.has_rings_active): Vertical {
-                                alignment: center;
-                                padding: 16px;
-                                spacing: 8px;
-                                MaterialText {
-                                    text: "No parameters available for active calculators.";
-                                    style: MaterialTypography.body_medium;
-                                    horizontal-alignment: center;
-                                }
                             }
                         }
                     }

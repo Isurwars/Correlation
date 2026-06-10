@@ -105,8 +105,6 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
       }
 
       size_t n_common = common_neighbors.size();
-      if (n_common == 0)
-        continue;
 
       // Count bonds between common neighbors and build adjacency list
       size_t n_bonds = 0;

@@ -7,6 +7,8 @@ Run from the build directory after building the correlation_py target:
 """
 import _correlation as correlation
 import sys
+import os
+
 
 SEPARATOR = "─" * 60
 
@@ -64,6 +66,7 @@ except ImportError:
 section("3. IO — read()")
 try:
     correlation.read("nonexistent.xyz")
+    assert False, "Should have thrown RuntimeError for nonexistent file"
 except RuntimeError as e:
     print(f"  Expected error (no reader for .xyz or file missing): {e}")
 
@@ -83,29 +86,57 @@ print(f"  RDF active   = {settings.is_active('RDF')}")
 print(f"  SQ active    = {settings.is_active('SQ')} (not in map -> False)")
 
 # ── 5. DistributionFunctions on a minimal cell ───────────────────────
+# ── 5. DistributionFunctions on a trailing / single cell ───────────────────
 section("5. DistributionFunctions — single cell")
 cell2 = correlation.Cell()
 cell2.add_atom("Si", [0.0, 0.0, 0.0])
 cell2.add_atom("O",  [1.6, 0.0, 0.0])
 cell2.add_atom("O",  [0.0, 1.6, 0.0])
 
+# Resolve trajectory path relative to this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+xdatcar_path = os.path.join(script_dir, "data", "Si.xdatcar")
+
+traj2 = correlation.read(xdatcar_path)
+assert traj2.num_frames() > 0, "No frames loaded"
+assert len(traj2) == traj2.num_frames(), "Trajectory __len__ mismatch"
+
+# Test lazy indexing (__getitem__)
+cell_xdat = traj2[0]
+assert type(cell_xdat) == correlation.Cell, "traj2[0] type mismatch"
+assert len(cell_xdat.atoms) > 0, "Cell has no atoms"
+
+# Test negative indexing
+cell_last = traj2[-1]
+assert type(cell_last) == correlation.Cell, "traj2[-1] type mismatch"
+
+# Test out of bounds indexing raises IndexError
 try:
-    df = correlation.DistributionFunctions(cell2, cutoff=5.0)
-    df.calculate_rdf(r_max=10.0, bin_width=0.05)
-    available = df.get_available_histograms()
-    print(f"  Available histograms: {available}")
+    traj2[len(traj2)]
+    assert False, "traj2[len(traj2)] should have raised IndexError"
+except IndexError:
+    pass
 
-    if "g(r)" in available:
-        h = df.get_histogram("g(r)")
-        print(f"  g(r) bins (first 5): {h.bins[:5]}")
-        if "Total" in h.partials:
-            print(f"  g(r) Total (first 5): {h.partials['Total'][:5]}")
+try:
+    traj2[-len(traj2) - 1]
+    assert False, "traj2[-len(traj2) - 1] should have raised IndexError"
+except IndexError:
+    pass
 
-    df.smooth_all(sigma=0.05)
-    print("  smooth_all: OK")
+df = correlation.DistributionFunctions(cell_xdat, cutoff=5.0, bond_cutoffs=[[3.0]])
+df.calculate_rdf(r_max=5.0, bin_width=0.05)
+available = df.get_available_histograms()
+print(f"  Available histograms: {available}")
 
-except Exception as e:
-    print(f"  DistributionFunctions error (expected if cell lacks lattice): {e}")
+if "g_r" in available:
+    h = df.get_histogram("g_r")
+    print(f"  g_r bins (first 5): {h.bins[:5]}")
+    if "Total" in h.partials:
+        print(f"  g_r Total (first 5): {h.partials['Total'][:5]}")
+
+df.smooth_all(sigma=0.05)
+print("  smooth_all: OK")
+
 
 # ── 5.5 Dynamic properties getters ──────────────────────────────────
 section("5.5 Dynamic Properties Getters")

@@ -12,7 +12,7 @@ import {
 import { CalculatorGroup } from "../Types.slint";
 
 export component AnalysesSelectionCard inherits FilledCard {
-    in-out property <bool> expanded: false;
+    in-out property <bool> expanded: true;
     in property <bool> file_loaded;
     in property <[CalculatorGroup]> calculator_groups: [];
     in property <int> total_calculator_count: 0;
@@ -109,4 +109,3 @@ export component AnalysesSelectionCard inherits FilledCard {
         }
     }
 }
-
