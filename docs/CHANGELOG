@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.4.1] - 2026-06-10
+
+### Added
+- **Trajectory Lazy Indexing**: Implemented lazy frame indexing (`__getitem__`, `__len__`, negative indices) on Python trajectory bindings to prevent RAM exhaustion.
+
+### Changed
+- **UI Tab Reorganization**: Reorganized setting tabs into **Common** (Material type, Bond cutoffs, RDF, Angular), **Advanced** (S(Q), Rings, Smoothing), and **Distribution** (Analyses checklist) and removed the preset manager card.
+- **Auto-Expanded Option Panels**: Configured all cards in the Common and Advanced settings tabs to be expanded by default.
+
+### Fixed
+- **Python Bindings Test Path Resolution**: Resolved relative path locating for `Si.xdatcar` and removed silent loader exception catching.
+- **CNA Classification Bug**: Fixed neighbor classification logic for bonds with 0 common neighbors, storing them under CNA index `"1000"` instead of omitting them.
+
 ## [3.4.0] - 2026-06-08
 
 ### Added
