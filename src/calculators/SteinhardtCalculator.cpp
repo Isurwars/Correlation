@@ -261,18 +261,25 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
     for (auto &[key, vec] : partials_Q4) {
       for (auto &val : vec)
         val /= (num_atoms_f * dQ);
-      hist_Q4.partials[key] = vec;
     }
     for (auto &[key, vec] : partials_Q6) {
       for (auto &val : vec)
         val /= (num_atoms_f * dQ);
-      hist_Q6.partials[key] = vec;
     }
     for (auto &[key, vec] : partials_W6) {
       for (auto &val : vec)
         val /= (num_atoms_f * dW);
-      hist_W6.partials[key] = vec;
     }
+  }
+
+  for (auto &[key, vec] : partials_Q4) {
+    hist_Q4.partials[key] = vec;
+  }
+  for (auto &[key, vec] : partials_Q6) {
+    hist_Q6.partials[key] = vec;
+  }
+  for (auto &[key, vec] : partials_W6) {
+    hist_W6.partials[key] = vec;
   }
 
   std::map<std::string, correlation::analysis::Histogram> hists;

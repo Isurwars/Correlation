@@ -129,4 +129,26 @@ TEST_F(SteinhardtCalculatorTests, HandlesAcosNumericalNoiseSafely) {
   });
 }
 
+TEST_F(SteinhardtCalculatorTests, EmptySystemOrNoNeighborsFillsPartialsWithZeros) {
+  // Cell with 1 atom (no neighbors)
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Ar", {5.0, 5.0, 5.0});
+
+  StructureAnalyzer analyzer(cell, 1.1, {{1.1 * 1.1}}, false);
+  auto hists = correlation::calculators::SteinhardtCalculator::calculate(cell, &analyzer);
+
+  EXPECT_FALSE(hists.empty());
+  for (const auto &name : {"Q4", "Q6", "W6_hat"}) {
+    ASSERT_TRUE(hists.count(name));
+    const auto &hist = hists.at(name);
+    ASSERT_TRUE(hist.partials.count("Total"));
+    
+    // Check that all bins in Total are exactly 0
+    const auto &total = hist.partials.at("Total");
+    for (double val : total) {
+      EXPECT_DOUBLE_EQ(val, 0.0);
+    }
+  }
+}
+
 } // namespace correlation::analysis

@@ -27,8 +27,45 @@ std::string escapeJsonString(const std::string &s) {
   return out;
 }
 
+size_t findRootKey(const std::string &json, const std::string &key) {
+  bool in_string = false;
+  int brace_level = 0;
+  int bracket_level = 0;
+  for (size_t i = 0; i < json.size(); ++i) {
+    char c = json[i];
+    if (c == '\\' && in_string) {
+      i++; // skip next char
+      continue;
+    }
+    if (c == '"') {
+      in_string = !in_string;
+      if (in_string) {
+        if (brace_level == 1 && bracket_level == 0) {
+          if (i + 1 + key.size() < json.size() &&
+              json.compare(i + 1, key.size(), key) == 0 &&
+              json[i + 1 + key.size()] == '"') {
+            // Verify it is followed by a colon (skipping whitespace)
+            size_t colon_pos = json.find_first_not_of(" \t\n\r", i + 1 + key.size() + 1);
+            if (colon_pos != std::string::npos && json[colon_pos] == ':') {
+              return i;
+            }
+          }
+        }
+      }
+      continue;
+    }
+    if (!in_string) {
+      if (c == '{') brace_level++;
+      else if (c == '}') brace_level--;
+      else if (c == '[') bracket_level++;
+      else if (c == ']') bracket_level--;
+    }
+  }
+  return std::string::npos;
+}
+
 std::string parseStringValue(const std::string &json, const std::string &key) {
-  size_t pos = json.find("\"" + key + "\"");
+  size_t pos = findRootKey(json, key);
   if (pos == std::string::npos) return "";
   pos = json.find(":", pos);
   if (pos == std::string::npos) return "";
@@ -67,7 +104,7 @@ std::string parseStringValue(const std::string &json, const std::string &key) {
 }
 
 double parseDoubleValue(const std::string &json, const std::string &key, double fallback) {
-  size_t pos = json.find("\"" + key + "\"");
+  size_t pos = findRootKey(json, key);
   if (pos == std::string::npos) return fallback;
   pos = json.find(":", pos);
   if (pos == std::string::npos) return fallback;
@@ -83,7 +120,7 @@ double parseDoubleValue(const std::string &json, const std::string &key, double 
 }
 
 int parseIntValue(const std::string &json, const std::string &key, int fallback) {
-  size_t pos = json.find("\"" + key + "\"");
+  size_t pos = findRootKey(json, key);
   if (pos == std::string::npos) return fallback;
   pos = json.find(":", pos);
   if (pos == std::string::npos) return fallback;
@@ -99,7 +136,7 @@ int parseIntValue(const std::string &json, const std::string &key, int fallback)
 }
 
 bool parseBoolValue(const std::string &json, const std::string &key, bool fallback) {
-  size_t pos = json.find("\"" + key + "\"");
+  size_t pos = findRootKey(json, key);
   if (pos == std::string::npos) return fallback;
   pos = json.find(":", pos);
   if (pos == std::string::npos) return fallback;
@@ -113,7 +150,7 @@ bool parseBoolValue(const std::string &json, const std::string &key, bool fallba
 
 std::map<std::string, bool> parseActiveCalculators(const std::string &json) {
   std::map<std::string, bool> active;
-  size_t pos = json.find("\"active_calculators\"");
+  size_t pos = findRootKey(json, "active_calculators");
   if (pos == std::string::npos) return active;
   size_t obj_start = json.find("{", pos);
   if (obj_start == std::string::npos) return active;

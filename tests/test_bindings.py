@@ -64,6 +64,7 @@ except ImportError:
 section("3. IO — read()")
 try:
     correlation.read("nonexistent.xyz")
+    assert False, "Should have thrown RuntimeError for nonexistent file"
 except RuntimeError as e:
     print(f"  Expected error (no reader for .xyz or file missing): {e}")
 

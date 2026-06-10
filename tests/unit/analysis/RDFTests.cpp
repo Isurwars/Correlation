@@ -247,26 +247,92 @@ TEST_F(RDFTests, ComputeMean) {
 }
 
 TEST_F(RDFTests, HandlesMissingPartialInAdd) {
-  // Edge case: adding DFs with different partials (e.g. from different systems
-  // or logic) Though usually DFs added should be compatible. If df2 has a key
-  // that df1 doesn't, df1 should acquire it.
+  // Build cell 1: pure Ar
+  correlation::core::Cell c1({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  c1.addAtom("Ar", {0.0, 0.0, 0.0});
+  c1.addAtom("Ar", {2.0, 0.0, 0.0});
 
-  updateTrajectory();
-  DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  DistributionFunctions df2(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  // Build cell 2: Ar and Xe
+  correlation::core::Cell c2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  c2.addAtom("Ar", {0.0, 0.0, 0.0});
+  c2.addAtom("Xe", {2.5, 0.0, 0.0});
 
-  // Hack: manually inject a histogram if possible, or use different calculation
-  // Hard to simulate without different system composition.
-  // Let's try different calculation. df1 has RDF, df2 has CN.
-  // Add df2 to df1. df1 should have CN now?
-  // add() implementation usually iterates over other's histograms.
+  correlation::core::Trajectory t1;
+  t1.addFrame(c1);
+  t1.precomputeBondCutoffs();
+
+  correlation::core::Trajectory t2;
+  t2.addFrame(c2);
+  t2.precomputeBondCutoffs();
+
+  DistributionFunctions df1(c1, 5.0, t1.getBondCutoffsSQ());
+  DistributionFunctions df2(c2, 5.0, t2.getBondCutoffsSQ());
 
   df1.calculateRDF(5.0, 0.1);
-  df2.calculateCoordinationNumber();
+  df2.calculateRDF(5.0, 0.1);
 
+  // df1 initially only has Ar-Ar (plus Total)
+  const auto &g_r_df1_before = df1.getHistogram("g_r");
+  EXPECT_TRUE(g_r_df1_before.partials.count("Ar-Ar"));
+  EXPECT_FALSE(g_r_df1_before.partials.count("Ar-Xe"));
+
+  // Act
   df1.add(df2);
 
-  EXPECT_NO_THROW(df1.getHistogram("g_r"));
-  EXPECT_NO_THROW(df1.getHistogram("CN"));
+  // df1 should now have acquired Ar-Xe and Xe-Xe partials
+  const auto &g_r_df1_after = df1.getHistogram("g_r");
+  EXPECT_TRUE(g_r_df1_after.partials.count("Ar-Ar"));
+  EXPECT_TRUE(g_r_df1_after.partials.count("Ar-Xe"));
+  EXPECT_TRUE(g_r_df1_after.partials.count("Xe-Xe"));
+}
+
+TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
+  // Build cell with 3 Ar atoms and 1 Xe atom (total 4 atoms)
+  // Concentration: x_Ar = 0.75, x_Xe = 0.25
+  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  cell.addAtom("Ar", {1.0, 1.0, 1.0});
+  cell.addAtom("Ar", {2.0, 2.0, 2.0});
+  cell.addAtom("Ar", {3.0, 3.0, 3.0});
+  cell.addAtom("Xe", {4.0, 4.0, 4.0});
+
+  correlation::core::Trajectory traj;
+  traj.addFrame(cell);
+  traj.precomputeBondCutoffs();
+
+  DistributionFunctions df(cell, 5.0, traj.getBondCutoffsSQ());
+
+  // 1. Verify calculated Ashcroft weights
+  const auto &weights = df.getAshcroftWeights();
+  double expected_w_ArAr = 0.75 * 0.75;        // 0.5625
+  double expected_w_XeXe = 0.25 * 0.25;        // 0.0625
+  double expected_w_ArXe = 2.0 * 0.75 * 0.25;  // 0.375 (doubled!)
+
+  EXPECT_NEAR(weights.at("Ar-Ar"), expected_w_ArAr, 1e-6);
+  EXPECT_NEAR(weights.at("Xe-Xe"), expected_w_XeXe, 1e-6);
+  EXPECT_NEAR(weights.at("Ar-Xe"), expected_w_ArXe, 1e-6);
+
+  // 2. Verify RDF total is the sum of weighted partials
+  df.calculateRDF(5.0, 0.1);
+  const auto &g_r = df.getHistogram("g_r");
+  const auto &G_r = df.getHistogram("G_r");
+
+  const auto &g_ArAr = g_r.partials.at("Ar-Ar");
+  const auto &g_XeXe = g_r.partials.at("Xe-Xe");
+  const auto &g_ArXe = g_r.partials.at("Ar-Xe");
+  const auto &g_Total = g_r.partials.at("Total");
+
+  const auto &G_ArAr = G_r.partials.at("Ar-Ar");
+  const auto &G_XeXe = G_r.partials.at("Xe-Xe");
+  const auto &G_ArXe = G_r.partials.at("Ar-Xe");
+  const auto &G_Total = G_r.partials.at("Total");
+
+  ASSERT_EQ(g_Total.size(), g_ArAr.size());
+  for (size_t i = 0; i < g_Total.size(); ++i) {
+    double sum_g_partials = g_ArAr[i] + g_XeXe[i] + g_ArXe[i];
+    EXPECT_NEAR(g_Total[i], sum_g_partials, 1e-6);
+
+    double sum_G_partials = G_ArAr[i] + G_XeXe[i] + G_ArXe[i];
+    EXPECT_NEAR(G_Total[i], sum_G_partials, 1e-6);
+  }
 }
 } // namespace correlation::analysis
