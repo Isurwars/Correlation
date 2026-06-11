@@ -96,6 +96,8 @@ private:
   correlation::plotters::HoverInfo last_hover_;
   std::size_t last_pinned_runs_count_ = 0;
 
+  std::shared_ptr<std::string> current_svg_;
+
   /**
    * @brief Helper to update the UI progress bar and status text safely.
    * @param p Progress value between 0.0 and 1.0.

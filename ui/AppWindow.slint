@@ -207,6 +207,7 @@ export component AppWindow inherits Window {
     // ============================================================================
     callback browse_file();
     callback run_analysis();
+    callback cancel_analysis();
     callback write_files();
     callback select_plot(int);
     callback toggle_calculator(string, bool);
@@ -379,6 +380,9 @@ export component AppWindow inherits Window {
                 has_validation_errors: root.has_validation_errors;
                 run_analysis => {
                     root.run_analysis();
+                }
+                cancel_analysis => {
+                    root.cancel_analysis();
                 }
                 write_files => {
                     root.write_files();

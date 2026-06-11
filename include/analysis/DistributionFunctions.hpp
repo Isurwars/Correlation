@@ -13,6 +13,7 @@
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
+#include <atomic>
 #include <functional>
 #include <map>
 #include <memory>
@@ -57,6 +58,8 @@ struct AnalysisSettings {
   double smoothing_sigma = 0.1; ///< Gaussian smoothing standard deviation.
   correlation::math::KernelType smoothing_kernel =
       correlation::math::KernelType::Gaussian; ///< The kernel to use for smoothing.
+
+  std::atomic<bool> *cancel_flag = nullptr; ///< Pointer to a cancellation flag.
 };
 
 // A structure to hold all data related to a single histogram.

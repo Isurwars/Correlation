@@ -109,6 +109,7 @@ add_library(correlation_lib STATIC
     analysis/StructureAnalyzer.cpp
     core/Trajectory.cpp
     analysis/TrajectoryAnalyzer.cpp
+    plotters/pdfgen.c
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>

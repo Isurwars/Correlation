@@ -128,6 +128,7 @@ add_dependencies(correlation_cli_e2e_tests correlation-cli)
 if(BUILD_GUI)
     add_executable(correlation_gui_tests
         functional/app/AppControllerTests.cpp
+        functional/app/SlintSvgIntegrationTests.cpp
         ../src/app/AppBackend.cpp
         ../src/app/AppController.cpp
         ../src/app/PresetManager.cpp

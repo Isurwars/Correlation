@@ -13,6 +13,7 @@
 
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <vector>
 
@@ -177,6 +178,7 @@ private:
    */
   void validateFrame(const Cell &new_frame) const;
   void ensureMaterialized() const;
+  mutable std::unique_ptr<std::mutex> init_mutex_{std::make_unique<std::mutex>()};
 
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
   mutable std::optional<Cell> first_frame_;

@@ -13,6 +13,7 @@
 #include "core/Trajectory.hpp"
 #include "math/Smoothing.hpp"
 
+#include <atomic>
 #include <functional>
 #include <map>
 #include <memory>
@@ -283,6 +284,16 @@ public:
    */
   void setProgressCallback(std::function<void(float, const std::string &)> cb) { progress_callback_ = cb; }
 
+  /**
+   * @brief Cancels the currently running analysis.
+   */
+  void cancel_analysis() { cancel_flag_ = true; }
+
+  /**
+   * @brief Checks if analysis has been cancelled.
+   */
+  bool is_cancelled() const { return cancel_flag_; }
+
 private:
   /**
    * @brief Main function executed by the analysis thread.
@@ -300,5 +311,6 @@ private:
 
   ProgramOptions options_;                                            ///< Active configuration.
   std::function<void(float, const std::string &)> progress_callback_; ///< Progress notification hook.
+  std::atomic<bool> cancel_flag_{false};                              ///< Flag to cancel ongoing analysis.
 };
 } // namespace correlation::app

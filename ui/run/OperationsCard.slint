@@ -44,6 +44,7 @@ export component OperationsCard inherits FilledCard {
     in property <string> analysis_status_text;
     in property <bool> has_validation_errors;
     callback run_analysis();
+    callback cancel_analysis();
     callback write_files();
 
     out property <string> hovered_tooltip_text:
@@ -195,13 +196,18 @@ export component OperationsCard inherits FilledCard {
             run_area := TouchArea {
                 FilledButton {
                     width: 100%;
-                    text: root.analysis_running ? "In Progress..." : 
+                    text: root.analysis_running ? "Cancel Analysis" : 
                           root.has_validation_errors ? "Fix Errors" : "Run Analysis";
-                    enabled: root.file_loaded && !root.analysis_running && !root.has_validation_errors;
-                    background: root.has_validation_errors ? MaterialPalette.error : MaterialPalette.run;
+                    enabled: root.file_loaded && !root.has_validation_errors;
+                    background: root.analysis_running ? MaterialPalette.error :
+                                root.has_validation_errors ? MaterialPalette.error : MaterialPalette.run;
                     text_color: root.has_validation_errors ? MaterialPalette.on_error : MaterialPalette.on_run;
                     clicked => {
-                        root.run_analysis();
+                        if (root.analysis_running) {
+                            root.cancel_analysis();
+                        } else {
+                            root.run_analysis();
+                        }
                     }
                 }
             }

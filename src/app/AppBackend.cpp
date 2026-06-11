@@ -221,6 +221,8 @@ std::string AppBackend::run_analysis() {
     return err;
   }
 
+  cancel_flag_ = false;
+
   if (options_.r_max <= 0.0) {
     return "Error: r_max must be strictly positive.";
   }
@@ -331,6 +333,7 @@ std::string AppBackend::run_analysis() {
     settings.smoothing = options_.smoothing;
     settings.smoothing_sigma = options_.smoothing_sigma;
     settings.smoothing_kernel = options_.smoothing_kernel;
+    settings.cancel_flag = &cancel_flag_;
 
     // Run parallel analysis to compute distribution functions
     // This accumulates results from all processed frames.

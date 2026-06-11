@@ -89,15 +89,18 @@ const Cell &Trajectory::firstFrame() const {
 }
 
 void Trajectory::ensureMaterialized() const {
-  if (!mapped_file_ || !frames_.empty()) {
-    return;
+  if (mapped_file_) {
+    std::lock_guard<std::mutex> lock(*init_mutex_);
+    if (!mapped_file_ || !frames_.empty()) {
+      return;
+    }
+    size_t count = getFrameCount();
+    frames_.resize(count);
+    for (size_t i = 0; i < count; ++i) {
+      frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i], frame_offsets_[i + 1] - frame_offsets_[i]);
+    }
+    first_frame_.reset();
   }
-  size_t count = getFrameCount();
-  frames_.resize(count);
-  for (size_t i = 0; i < count; ++i) {
-    frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i], frame_offsets_[i + 1] - frame_offsets_[i]);
-  }
-  first_frame_.reset();
 }
 
 double Trajectory::getBondCutoffSQ(int type1, int type2) const {
@@ -235,22 +238,12 @@ void Trajectory::calculateVelocities() {
     };
     if (t == 0) {
       for (size_t i = 0; i < num_atoms; ++i) {
-
-        // Forward difference for the first frame
-        // v(0) = (r(1) - r(0)) / dt
         const auto &r0 = frames_[0].atoms()[i].position();
         const auto &r1 = frames_[1].atoms()[i].position();
-        // Since getFrames() might be returning const, wait: frames_ is mutable std::vector<Cell>
-        // But atoms() returns const vector<Atom>& ... wait.
-        // I need a mutable atoms() to set velocity!
-        // Let's use const_cast since we know it's mutable inside frames_ ...
-        // No, I should add a mutable atoms() to Cell.hpp, or just cast it here.
         frames_[t].atoms()[i].setVelocity(displacement(r1, r0) / time_step_);
       }
     } else if (t == num_frames - 1) {
       for (size_t i = 0; i < num_atoms; ++i) {
-        // Backward difference for the last frame
-        // v(N) = (r(N) - r(N-1)) / dt
         const auto &rN = frames_[num_frames - 1].atoms()[i].position();
         const auto &rN_1 = frames_[num_frames - 2].atoms()[i].position();
         frames_[t].atoms()[i].setVelocity(displacement(rN, rN_1) / time_step_);

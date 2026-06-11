@@ -12,8 +12,10 @@
 #endif
 
 #include "app/AppController.hpp"
+#include "app/AppBackend.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "plotters/SvgPlotter.hpp"
+#include "plotters/PdfPlotter.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -58,6 +60,7 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
   // Connect the UI signals to the controller's member functions.
   // We use lambdas to capture 'this' and call the appropriate method.
   ui_.on_run_analysis([this]() { handleRunAnalysis(); });
+  ui_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
   ui_.on_write_files([this]() { handleWriteFiles(); });
   ui_.on_browse_file([this]() { handleBrowseFile(); });
   ui_.on_validate_inputs([this]() { validateInputs(); });
@@ -486,7 +489,11 @@ void AppController::handleRunAnalysis() {
     slint::invoke_from_event_loop([this, err]() {
       ui_.set_analysis_running(false);
       if (err.empty()) {
-        ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
+        if (backend_.is_cancelled()) {
+          ui_.set_analysis_status_text(slint::SharedString("Analysis Cancelled."));
+        } else {
+          ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
+        }
       } else {
         ui_.set_analysis_status_text(slint::SharedString(err));
       }
@@ -855,7 +862,9 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
       svg = correlation::plotters::renderComparisonSvg(datasets, key, data.config, data.hover);
     }
 
-    // Write SVG to a unique temporary file
+    // Write SVG to a unique temporary file to enable asynchronous parsing by Slint's background thread.
+    // (This avoids UI stutter since load_image_from_embedded_data forces synchronous parsing on the UI thread).
+    // Note: /tmp is mounted as tmpfs (RAM) on Linux, so this does not cause mechanical disk thrashing.
     static std::atomic<uint64_t> file_counter{0};
     auto temp_dir = std::filesystem::temp_directory_path();
     auto temp_path = temp_dir / ("correlation_preview_" + std::to_string(file_counter++) + ".svg");
@@ -873,10 +882,11 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
       if (!final_temp_path.empty()) {
         auto img = slint::Image::load_from_path(slint::SharedString(final_temp_path));
         ui_.set_preview_plot(img);
+        
+        // Remove the temporary file. Slint has already captured the path and deferred the load.
         std::error_code ec;
         std::filesystem::remove(final_temp_path, ec);
       } else {
-        // Fallback
         auto img = slint::private_api::load_image_from_embedded_data(
             std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
         ui_.set_preview_plot(img);
@@ -970,29 +980,25 @@ void AppController::handleSavePlot() {
     }
 
     if (save_as_pdf) {
-      std::string temp_svg_path = filepath + ".tmp.svg";
-      std::ofstream out(temp_svg_path);
-      if (out.is_open()) {
-        out << svg;
-        out.close();
-
-        std::string cmd = "rsvg-convert -f pdf -o \"" + filepath + "\" \"" + temp_svg_path + "\"";
-        int ret = std::system(cmd.c_str());
-        if (ret != 0) {
-          std::string inkscape_cmd = "inkscape --export-filename=\"" + filepath + "\" \"" + temp_svg_path + "\"";
-          ret = std::system(inkscape_cmd.c_str());
-        }
-
-        std::filesystem::remove(temp_svg_path);
-
-        if (ret == 0) {
-          ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
-        } else {
-          ui_.set_analysis_status_text(slint::SharedString("Failed to convert SVG to PDF."));
-        }
+      if (pinned_runs_.empty()) {
+        correlation::plotters::renderHistogramAsPdf(*hist, filepath, config);
       } else {
-        ui_.set_analysis_status_text(slint::SharedString("Failed to write temporary SVG."));
+        std::vector<correlation::plotters::LabeledHistogram> datasets;
+        datasets.push_back({"Current", hist});
+        for (const auto &pr : pinned_runs_) {
+          auto it = pr.histograms.find(name);
+          if (it != pr.histograms.end()) {
+            datasets.push_back({pr.label, &it->second});
+          }
+        }
+        std::string key = "Total";
+        const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+        if (!partials.empty() && partials.find(key) == partials.end()) {
+          key = partials.begin()->first;
+        }
+        correlation::plotters::renderComparisonPdf(datasets, key, filepath, config);
       }
+      ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
     } else {
       // Save as SVG
       std::ofstream out(filepath);

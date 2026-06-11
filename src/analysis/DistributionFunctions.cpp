@@ -431,6 +431,9 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
   // TBB parallel_for nests cleanly with TBB calls inside each frame's
   tbb::parallel_for(tbb::blocked_range<size_t>(0, num_frames), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
+      if (settings.cancel_flag && settings.cancel_flag->load()) {
+        continue;
+      }
       const size_t frame_idx = start_frame + i;
       if (frame_idx >= trajectory.getFrameCount())
         continue;
