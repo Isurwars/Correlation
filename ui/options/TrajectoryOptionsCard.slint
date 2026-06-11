@@ -23,10 +23,10 @@ import {
 export component TrajectoryOptionsCard inherits FilledCard {
     in property <bool> file_loaded;
     in property <int> num_frames;
-    
+
     in-out property <string> time_step;
     in property <string> time_step_error: "";
-    
+
     in-out property <string> min_frame;
     in-out property <string> max_frame;
     in property <string> min_frame_error: "";
@@ -70,6 +70,7 @@ export component TrajectoryOptionsCard inherits FilledCard {
                 TextField {
                     label: "Time Step (fs)";
                     horizontal-stretch: 1;
+                    vertical-stretch: 0;
                     text <=> root.time_step;
                     enabled: root.file_loaded && root.num_frames > 1;
                     has_error: root.time_step_error != "";
