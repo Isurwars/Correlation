@@ -10,7 +10,6 @@
 #include "readers/ReaderFactory.hpp"
 
 #include <fstream>
-#include <iostream>
 #include <stdexcept>
 
 namespace correlation::readers {

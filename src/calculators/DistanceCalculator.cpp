@@ -12,7 +12,6 @@
 #include "math/SIMDUtils.hpp"
 
 #include <cmath>
-#include <numeric>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
 

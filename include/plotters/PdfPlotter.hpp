@@ -12,8 +12,6 @@
 #include "plotters/SvgPlotter.hpp" // For PlotConfig
 #include "plotters/pdfgen.h"
 
-#include <algorithm>
-#include <cmath>
 #include <format>
 #include <map>
 #include <string>

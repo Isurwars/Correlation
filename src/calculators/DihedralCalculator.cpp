@@ -10,7 +10,6 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
 
-#include <cmath>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 

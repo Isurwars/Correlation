@@ -9,7 +9,6 @@
 #pragma once
 
 #include "core/Cell.hpp"
-#include "math/LinearAlgebra.hpp"
 
 #include <functional>
 #include <memory>

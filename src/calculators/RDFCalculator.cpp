@@ -11,7 +11,6 @@
 #include "math/Constants.hpp"
 #include "math/SIMDUtils.hpp"
 
-#include <algorithm>
 #include <cmath>
 #include <limits>
 #include <stdexcept>

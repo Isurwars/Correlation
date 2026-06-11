@@ -9,7 +9,6 @@
 #pragma once
 
 #include "math/Constants.hpp"
-#include <algorithm>
 #include <cmath>
 #include <complex>
 #include <stdexcept>
