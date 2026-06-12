@@ -12,7 +12,6 @@
 #include "plotters/SvgPlotter.hpp" // For PlotConfig
 #include "plotters/pdfgen.h"
 
-#include <format>
 #include <map>
 #include <string>
 #include <vector>
@@ -31,7 +30,8 @@ inline uint32_t parseHexColor(const std::string &hex) {
   return PDF_BLACK;
 }
 
-inline void drawPdfAxes(pdf_doc *pdf, struct pdf_object *page, double pad_left, double pad_right, double pad_top, double pad_bottom, double width, double height, uint32_t text_col) {
+inline void drawPdfAxes(pdf_doc *pdf, struct pdf_object *page, double pad_left, double pad_right, double pad_top,
+                        double pad_bottom, double width, double height, uint32_t text_col) {
   // Y-axis
   pdf_add_line(pdf, page, pad_left, height - pad_bottom, pad_left, pad_top, 2.0, text_col);
   // X-axis
@@ -46,10 +46,10 @@ inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist, c
   pdf_info info = {};
   pdf_doc *pdf = pdf_create(config.width, config.height, &info);
   struct pdf_object *page = pdf_append_page(pdf);
-  
+
   uint32_t bg_col = (config.theme == PlotConfig::Theme::Dark) ? PDF_RGB(30, 30, 46) : PDF_RGB(255, 255, 255);
   uint32_t text_col = (config.theme == PlotConfig::Theme::Dark) ? PDF_RGB(205, 214, 244) : PDF_RGB(33, 33, 33);
-  
+
   // Background
   pdf_add_rectangle(pdf, page, 0, 0, config.width, config.height, 0, bg_col);
 
@@ -60,8 +60,9 @@ inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist, c
 
   detail::drawPdfAxes(pdf, page, pad_left, pad_right, pad_top, pad_bottom, config.width, config.height, text_col);
   pdf_set_font(pdf, "Helvetica");
-  pdf_add_text(pdf, page, hist.title.c_str(), 20 * config.font_scale, config.width/2.0 - 50.0, 40, text_col);
-  pdf_add_text(pdf, page, hist.x_label.c_str(), 14 * config.font_scale, config.width/2.0 - 20.0, config.height - 20, text_col);
+  pdf_add_text(pdf, page, hist.title.c_str(), 20 * config.font_scale, config.width / 2.0 - 50.0, 40, text_col);
+  pdf_add_text(pdf, page, hist.x_label.c_str(), 14 * config.font_scale, config.width / 2.0 - 20.0, config.height - 20,
+               text_col);
 
   if (hist.bins.empty() || hist.partials.empty()) {
     pdf_save(pdf, filepath.c_str());
@@ -79,16 +80,24 @@ inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist, c
 
   for (const auto &[key, vals] : partials) {
     for (double v : vals) {
-      if (v > max_y) max_y = v;
-      if (v < min_y) min_y = v;
+      if (v > max_y)
+        max_y = v;
+      if (v < min_y)
+        min_y = v;
     }
   }
 
-  if (max_y == min_y) max_y += 1.0;
-  if (max_x == min_x) max_x += 1.0;
+  if (max_y == min_y)
+    max_y += 1.0;
+  if (max_x == min_x)
+    max_x += 1.0;
 
-  auto mapX = [&](double x) { return pad_left + (x - min_x) / (max_x - min_x) * (config.width - pad_left - pad_right); };
-  auto mapY = [&](double y) { return config.height - pad_bottom - (y - min_y) / (max_y - min_y) * (config.height - pad_top - pad_bottom); };
+  auto mapX = [&](double x) {
+    return pad_left + (x - min_x) / (max_x - min_x) * (config.width - pad_left - pad_right);
+  };
+  auto mapY = [&](double y) {
+    return config.height - pad_bottom - (y - min_y) / (max_y - min_y) * (config.height - pad_top - pad_bottom);
+  };
 
   int color_idx = 0;
   for (const auto &[key, vals] : partials) {
@@ -110,7 +119,8 @@ inline void renderHistogramAsPdf(const correlation::analysis::Histogram &hist, c
 inline void renderComparisonPdf(const std::vector<LabeledHistogram> &datasets, const std::string &key,
                                 const std::string &filepath, const PlotConfig &config) {
   // Simple fallback for comparison PDF
-  if (datasets.empty()) return;
+  if (datasets.empty())
+    return;
   renderHistogramAsPdf(*datasets[0].hist, filepath, config);
 }
 
