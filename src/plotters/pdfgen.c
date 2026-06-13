@@ -1037,7 +1037,6 @@ struct pdf_doc *pdf_create(float width, float height,
         obj->info->subject[sizeof(obj->info->subject) - 1] = '\0';
         obj->info->date[sizeof(obj->info->date) - 1] = '\0';
     }
-    /* FIXME: Should be quoting PDF strings? */
     if (!obj->info->date[0]) {
         time_t now = time(NULL);
         struct tm tm;
@@ -1587,9 +1586,22 @@ static void pdf_crypt_data(const struct pdf_crypt *crypt, int obj_index,
 static void pdf_print_escaped_string(FILE *fp, const char *str)
 {
     while (*str) {
-        if (*str == '(' || *str == ')' || *str == '\\')
+        switch (*str) {
+        case '\n': fprintf(fp, "\\n"); break;
+        case '\r': fprintf(fp, "\\r"); break;
+        case '\t': fprintf(fp, "\\t"); break;
+        case '\b': fprintf(fp, "\\b"); break;
+        case '\f': fprintf(fp, "\\f"); break;
+        case '(':
+        case ')':
+        case '\\':
             fputc('\\', fp);
-        fputc(*str, fp);
+            fputc(*str, fp);
+            break;
+        default:
+            fputc(*str, fp);
+            break;
+        }
         str++;
     }
 }

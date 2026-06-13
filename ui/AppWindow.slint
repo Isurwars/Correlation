@@ -22,6 +22,9 @@ import {
     BondCutoff,
     CalculatorInfo,
     CalculatorGroup,
+    AnalysisOptions,
+    AppErrors,
+    ExportConfig,
 } from "Types.slint";
 
 import { OperationsCard } from "run/OperationsCard.slint";
@@ -44,6 +47,9 @@ export {
     BondCutoff,
     CalculatorInfo,
     CalculatorGroup,
+    AnalysisOptions,
+    AppErrors,
+    ExportConfig,
 }
 
 // ============================================================================
@@ -122,7 +128,7 @@ export component AppWindow inherits Window {
     in property <int> removed_frames_count: 0;
     in property <[AtomCount]> atom_counts: [];
     in-out property <string> file_status_text: "No file loaded.";
-    in-out property <string> time_step: "1.0";
+
 
     /// Analysis execution state
     in property <bool> analysis_running: false;
@@ -135,47 +141,59 @@ export component AppWindow inherits Window {
     in-out property <string> in_file_text;
     in property <bool> hdf5_available: true;
     in property <bool> parquet_available: true;
-    in-out property <string> min_frame: "0";
-    in-out property <string> max_frame: "End";
-    in-out property <string> r_max: "20.0";
-    in-out property <string> r_bin_width: "0.02";
-    in-out property <string> q_max: "20.0";
-    in-out property <string> q_bin_width: "0.02";
-    in-out property <string> r_int_max: "10.0";
-    in-out property <string> angle_bin_width: "1.0";
-    in-out property <string> dihedral_bin_width: "1.0";
-    in-out property <string> max_ring_size: "12";
-    in-out property <bool> smoothing: true;
-    in-out property <string> smoothing_sigma: "0.01";
-    in-out property <int> smoothing_kernel: 0;
+    in-out property <AnalysisOptions> analysis_options: {
+        r_max: "20.0", r_bin_width: "0.02", q_max: "20.0", q_bin_width: "0.02",
+        r_int_max: "10.0", angle_bin_width: "1.0", dihedral_bin_width: "1.0",
+        max_ring_size: "12", smoothing_sigma: "0.01", smoothing_kernel: 0,
+        smoothing_enabled: true, min_frame: "0", max_frame: "End",
+        time_step: "1.0", material_type: 0
+    };
+    in-out property <AppErrors> app_errors;
     in-out property <[BondCutoff]> bond_cutoffs: [];
-    in-out property <int> material_type: 0;
+    in-out property <ExportConfig> export_config: {
+        size_preset: 0, palette: 0, font_scale: "1.0", line_width: "3.0",
+        show_legend: true, show_grid: true, show_markers: false, fill_area: false
+    };
 
-    // Validation error messages (empty string = valid)
-    in-out property <string> r_max_error: "";
-    in-out property <string> r_bin_error: "";
-    in-out property <string> q_max_error: "";
-    in-out property <string> q_bin_error: "";
-    in-out property <string> r_int_max_error: "";
-    in-out property <string> angle_bin_error: "";
-    in-out property <string> dihedral_bin_error: "";
-    in-out property <string> max_ring_error: "";
-    in-out property <string> smoothing_sigma_error: "";
-    in-out property <string> min_frame_error: "";
-    in-out property <string> max_frame_error: "";
-    in-out property <string> time_step_error: "";
+    property <string> min_frame <=> analysis_options.min_frame;
+    property <string> max_frame <=> analysis_options.max_frame;
+    property <string> r_max <=> analysis_options.r_max;
+    property <string> r_bin_width <=> analysis_options.r_bin_width;
+    property <string> q_max <=> analysis_options.q_max;
+    property <string> q_bin_width <=> analysis_options.q_bin_width;
+    property <string> r_int_max <=> analysis_options.r_int_max;
+    property <string> angle_bin_width <=> analysis_options.angle_bin_width;
+    property <string> dihedral_bin_width <=> analysis_options.dihedral_bin_width;
+    property <string> max_ring_size <=> analysis_options.max_ring_size;
+    property <bool> smoothing <=> analysis_options.smoothing_enabled;
+    property <string> smoothing_sigma <=> analysis_options.smoothing_sigma;
+    property <int> smoothing_kernel <=> analysis_options.smoothing_kernel;
+    property <string> time_step <=> analysis_options.time_step;
+    property <int> material_type <=> analysis_options.material_type;
 
-    // Export settings properties and errors
-    in-out property <int> export_size_preset: 0;
-    in-out property <int> export_palette: 0;
-    in-out property <string> export_font_scale: "1.0";
-    in-out property <string> export_line_width: "3.0";
-    in-out property <bool> export_show_legend: true;
-    in-out property <bool> export_show_grid: true;
-    in-out property <bool> export_show_markers: false;
-    in-out property <bool> export_fill_area: false;
-    in-out property <string> export_font_scale_error: "";
-    in-out property <string> export_line_width_error: "";
+    property <string> r_max_error <=> app_errors.r_max_error;
+    property <string> r_bin_error <=> app_errors.r_bin_error;
+    property <string> q_max_error <=> app_errors.q_max_error;
+    property <string> q_bin_error <=> app_errors.q_bin_error;
+    property <string> r_int_max_error <=> app_errors.r_int_max_error;
+    property <string> angle_bin_error <=> app_errors.angle_bin_error;
+    property <string> dihedral_bin_error <=> app_errors.dihedral_bin_error;
+    property <string> max_ring_error <=> app_errors.max_ring_error;
+    property <string> smoothing_sigma_error <=> app_errors.smoothing_sigma_error;
+    property <string> min_frame_error <=> app_errors.min_frame_error;
+    property <string> max_frame_error <=> app_errors.max_frame_error;
+    property <string> time_step_error <=> app_errors.time_step_error;
+
+    property <int> export_size_preset <=> export_config.size_preset;
+    property <int> export_palette <=> export_config.palette;
+    property <string> export_font_scale <=> export_config.font_scale;
+    property <string> export_line_width <=> export_config.line_width;
+    property <bool> export_show_legend <=> export_config.show_legend;
+    property <bool> export_show_grid <=> export_config.show_grid;
+    property <bool> export_show_markers <=> export_config.show_markers;
+    property <bool> export_fill_area <=> export_config.fill_area;
+    property <string> export_font_scale_error <=> app_errors.export_font_scale_error;
+    property <string> export_line_width_error <=> app_errors.export_line_width_error;
 
     // Global: any validation error prevents running analysis
     in-out property <bool> has_validation_errors: false;

@@ -171,26 +171,90 @@ void AppController::updateProgress(float p, const std::string &msg) {
 void AppController::handleOptionstoUI(AppWindow &ui) {
   ProgramOptions opt = backend_.options();
   ui.set_in_file_text(slint::SharedString(opt.input_file));
-  ui.set_smoothing(opt.smoothing);
-  ui.set_r_max(slint::SharedString(std::format("{:.2f}", opt.r_max)));
-  ui.set_r_bin_width(slint::SharedString(std::format("{:.2f}", opt.r_bin_width)));
-  ui.set_q_max(slint::SharedString(std::format("{:.2f}", opt.q_max)));
-  ui.set_q_bin_width(slint::SharedString(std::format("{:.2f}", opt.q_bin_width)));
-  ui.set_r_int_max(slint::SharedString(std::format("{:.2f}", opt.r_int_max)));
-  ui.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", opt.angle_bin_width)));
-  ui.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width)));
-  ui.set_max_ring_size(slint::SharedString(std::to_string(opt.max_ring_size)));
-  ui.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma)));
-  ui.set_smoothing_kernel(static_cast<int>(opt.smoothing_kernel));
-  ui.set_material_type(opt.material_type);
-
-  ui.set_min_frame(slint::SharedString(std::to_string(opt.min_frame + 1))); // UI is 1-based
-  if (opt.max_frame == -1) {
-    ui.set_max_frame("End");
-  } else {
-    ui.set_max_frame(slint::SharedString(std::to_string(opt.max_frame)));
+  {
+    auto opts = ui.get_analysis_options();
+    opts.smoothing_enabled = opt.smoothing;
+    ui.set_analysis_options(opts);
   }
-  ui.set_time_step(slint::SharedString(std::format("{:.2f}", opt.time_step)));
+  {
+    auto opts = ui.get_analysis_options();
+    opts.r_max = slint::SharedString(std::format("{:.2f}", opt.r_max));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", opt.r_bin_width));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.q_max = slint::SharedString(std::format("{:.2f}", opt.q_max));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", opt.q_bin_width));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.r_int_max = slint::SharedString(std::format("{:.2f}", opt.r_int_max));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", opt.angle_bin_width));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.max_ring_size = slint::SharedString(std::to_string(opt.max_ring_size));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma));
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.smoothing_kernel = static_cast<int>(opt.smoothing_kernel);
+    ui.set_analysis_options(opts);
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.material_type = opt.material_type;
+    ui.set_analysis_options(opts);
+  }
+
+  {
+    auto opts = ui.get_analysis_options();
+    opts.min_frame = slint::SharedString(std::to_string(opt.min_frame + 1));
+    ui.set_analysis_options(opts);
+  } // UI is 1-based
+  if (opt.max_frame == -1) {
+    {
+    auto opts = ui.get_analysis_options();
+    opts.max_frame = "End";
+    ui.set_analysis_options(opts);
+  }
+  } else {
+    {
+    auto opts = ui.get_analysis_options();
+    opts.max_frame = slint::SharedString(std::to_string(opt.max_frame));
+    ui.set_analysis_options(opts);
+  }
+  }
+  {
+    auto opts = ui.get_analysis_options();
+    opts.time_step = slint::SharedString(std::format("{:.2f}", opt.time_step));
+    ui.set_analysis_options(opts);
+  }
   updateActiveGroupFlags(ui);
   updateCliCommand();
 };
@@ -238,14 +302,14 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
-  opt.r_max = safe_stof(ui_.get_r_max(), opt.r_max);
-  opt.r_bin_width = safe_stof(ui_.get_r_bin_width(), opt.r_bin_width);
-  opt.q_max = safe_stof(ui_.get_q_max(), opt.q_max);
-  opt.q_bin_width = safe_stof(ui_.get_q_bin_width(), opt.q_bin_width);
-  opt.r_int_max = safe_stof(ui_.get_r_int_max(), opt.r_int_max);
-  opt.angle_bin_width = safe_stof(ui_.get_angle_bin_width(), opt.angle_bin_width);
-  opt.dihedral_bin_width = safe_stof(ui_.get_dihedral_bin_width(), opt.dihedral_bin_width);
-  opt.max_ring_size = static_cast<size_t>(safe_stof(ui_.get_max_ring_size(), static_cast<float>(opt.max_ring_size)));
+  opt.r_max = safe_stof(ui_.get_analysis_options().r_max, opt.r_max);
+  opt.r_bin_width = safe_stof(ui_.get_analysis_options().r_bin_width, opt.r_bin_width);
+  opt.q_max = safe_stof(ui_.get_analysis_options().q_max, opt.q_max);
+  opt.q_bin_width = safe_stof(ui_.get_analysis_options().q_bin_width, opt.q_bin_width);
+  opt.r_int_max = safe_stof(ui_.get_analysis_options().r_int_max, opt.r_int_max);
+  opt.angle_bin_width = safe_stof(ui_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
+  opt.dihedral_bin_width = safe_stof(ui_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
+  opt.max_ring_size = static_cast<size_t>(safe_stof(ui_.get_analysis_options().max_ring_size, static_cast<float>(opt.max_ring_size)));
 
   // Collect active_calculators from the UI model
   auto groups = ui_.get_calculator_groups();
@@ -257,9 +321,9 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     }
   }
 
-  opt.smoothing_sigma = safe_stof(ui_.get_smoothing_sigma(), opt.smoothing_sigma);
-  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(ui_.get_smoothing_kernel());
-  opt.material_type = ui_.get_material_type();
+  opt.smoothing_sigma = safe_stof(ui_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
+  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(ui_.get_analysis_options().smoothing_kernel);
+  opt.material_type = ui_.get_analysis_options().material_type;
 
   // Frame Selection Logic:
   // - "Start" maps to 0
@@ -276,7 +340,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
 
   // Frame Selection
   try {
-    std::string min_s = ui_.get_min_frame().data();
+    std::string min_s = ui_.get_analysis_options().min_frame.data();
     std::string min_s_lower = to_lower(min_s);
 
     if (min_s_lower == "start") {
@@ -295,7 +359,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   }
 
   try {
-    std::string max_s = ui_.get_max_frame().data();
+    std::string max_s = ui_.get_analysis_options().max_frame.data();
     std::string max_s_lower = to_lower(max_s);
 
     if (max_s_lower == "end" || max_s.empty()) {
@@ -312,7 +376,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     opt.max_frame = -1;
   }
 
-  opt.time_step = safe_stof(ui_.get_time_step(), opt.time_step);
+  opt.time_step = safe_stof(ui_.get_analysis_options().time_step, opt.time_step);
 
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs(ui_);
@@ -346,7 +410,7 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
   config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
                                    : correlation::plotters::PlotConfig::Theme::Light;
 
-  int size_preset_val = ui_.get_export_size_preset();
+  int size_preset_val = ui_.get_export_config().size_preset;
   if (size_preset_val == 1) {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::SingleColumn;
   } else if (size_preset_val == 2) {
@@ -365,7 +429,7 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
     }
   }
 
-  int palette_val = ui_.get_export_palette();
+  int palette_val = ui_.get_export_config().palette;
   if (palette_val == 1) {
     config.palette = correlation::plotters::PlotConfig::Palette::Grayscale;
   } else if (palette_val == 2) {
@@ -374,16 +438,16 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
     config.palette = correlation::plotters::PlotConfig::Palette::OkabeIto;
   }
 
-  config.font_scale = safe_stof(ui_.get_export_font_scale(), 1.0f);
+  config.font_scale = safe_stof(ui_.get_export_config().font_scale, 1.0f);
   if (config.font_scale <= 0.0f) config.font_scale = 1.0f;
 
-  config.line_width = safe_stof(ui_.get_export_line_width(), 3.0f);
+  config.line_width = safe_stof(ui_.get_export_config().line_width, 3.0f);
   if (config.line_width <= 0.0f) config.line_width = 3.0f;
 
-  config.show_grid = ui_.get_export_show_grid();
-  config.show_legend = ui_.get_export_show_legend();
-  config.show_markers = ui_.get_export_show_markers();
-  config.fill_area = ui_.get_export_fill_area();
+  config.show_grid = ui_.get_export_config().show_grid;
+  config.show_legend = ui_.get_export_config().show_legend;
+  config.show_markers = ui_.get_export_config().show_markers;
+  config.fill_area = ui_.get_export_config().fill_area;
 
   return config;
 }
@@ -664,11 +728,23 @@ void AppController::handleBrowseFile() {
           ui_.set_num_frames(backend_.getFrameCount());
           ui_.set_total_atoms(backend_.getTotalAtomCount());
           ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
-          ui_.set_time_step(slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep())));
+          {
+    auto opts = ui_.get_analysis_options();
+    opts.time_step = slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
+    ui_.set_analysis_options(opts);
+  }
 
           // Update Run Analysis Card Frame Info
-          ui_.set_min_frame("1");
-          ui_.set_max_frame(slint::SharedString(std::to_string(backend_.getFrameCount())));
+          {
+    auto opts = ui_.get_analysis_options();
+    opts.min_frame = "1";
+    ui_.set_analysis_options(opts);
+  }
+          {
+    auto opts = ui_.get_analysis_options();
+    opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
+    ui_.set_analysis_options(opts);
+  }
           validateInputs();
         }
       });
@@ -1112,111 +1188,207 @@ bool AppController::validateInputs() {
   float q_bin_val = 0.0f;
 
   // 1. r_max
-  std::string r_max_s = ui_.get_r_max().data();
+  std::string r_max_s = ui_.get_analysis_options().r_max.data();
   if (!is_positive_float(r_max_s, r_max_val)) {
-    ui_.set_r_max_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_max_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_r_max_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_max_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 2. r_bin_width
-  std::string r_bin_s = ui_.get_r_bin_width().data();
+  std::string r_bin_s = ui_.get_analysis_options().r_bin_width.data();
   if (!is_positive_float(r_bin_s, r_bin_val)) {
-    ui_.set_r_bin_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_bin_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else if (r_max_val > 0.0f && r_bin_val > r_max_val) {
-    ui_.set_r_bin_error("Must be ≤ r_max");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_bin_error = "Must be ≤ r_max";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_r_bin_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_bin_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 3. q_max
-  std::string q_max_s = ui_.get_q_max().data();
+  std::string q_max_s = ui_.get_analysis_options().q_max.data();
   if (!is_positive_float(q_max_s, q_max_val)) {
-    ui_.set_q_max_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.q_max_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_q_max_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.q_max_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 4. q_bin_width
-  std::string q_bin_s = ui_.get_q_bin_width().data();
+  std::string q_bin_s = ui_.get_analysis_options().q_bin_width.data();
   if (!is_positive_float(q_bin_s, q_bin_val)) {
-    ui_.set_q_bin_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.q_bin_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else if (q_max_val > 0.0f && q_bin_val > q_max_val) {
-    ui_.set_q_bin_error("Must be ≤ q_max");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.q_bin_error = "Must be ≤ q_max";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_q_bin_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.q_bin_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 5. r_int_max
   float r_int_max_val = 0.0f;
-  std::string r_int_max_s = ui_.get_r_int_max().data();
+  std::string r_int_max_s = ui_.get_analysis_options().r_int_max.data();
   if (!is_positive_float(r_int_max_s, r_int_max_val)) {
-    ui_.set_r_int_max_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_int_max_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_r_int_max_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.r_int_max_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 6. angle_bin_width
   float angle_bin_val = 0.0f;
-  std::string angle_bin_s = ui_.get_angle_bin_width().data();
+  std::string angle_bin_s = ui_.get_analysis_options().angle_bin_width.data();
   if (!is_positive_float(angle_bin_s, angle_bin_val)) {
-    ui_.set_angle_bin_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.angle_bin_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else if (angle_bin_val > 180.0f) {
-    ui_.set_angle_bin_error("Must be ≤ 180°");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.angle_bin_error = "Must be ≤ 180°";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_angle_bin_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.angle_bin_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 7. dihedral_bin_width
   float dihedral_bin_val = 0.0f;
-  std::string dihedral_bin_s = ui_.get_dihedral_bin_width().data();
+  std::string dihedral_bin_s = ui_.get_analysis_options().dihedral_bin_width.data();
   if (!is_positive_float(dihedral_bin_s, dihedral_bin_val)) {
-    ui_.set_dihedral_bin_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.dihedral_bin_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else if (dihedral_bin_val > 360.0f) {
-    ui_.set_dihedral_bin_error("Must be ≤ 360°");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.dihedral_bin_error = "Must be ≤ 360°";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_dihedral_bin_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.dihedral_bin_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 8. max_ring_size
   int max_ring_val = 0;
-  std::string max_ring_s = ui_.get_max_ring_size().data();
+  std::string max_ring_s = ui_.get_analysis_options().max_ring_size.data();
   if (!is_positive_int(max_ring_s, max_ring_val) || max_ring_val < 3) {
-    ui_.set_max_ring_error("Must be an integer ≥ 3");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.max_ring_error = "Must be an integer ≥ 3";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_max_ring_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.max_ring_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 9. smoothing_sigma
   float smoothing_sigma_val = 0.0f;
-  std::string smoothing_sigma_s = ui_.get_smoothing_sigma().data();
+  std::string smoothing_sigma_s = ui_.get_analysis_options().smoothing_sigma.data();
   if (!is_non_negative_float(smoothing_sigma_s, smoothing_sigma_val)) {
-    ui_.set_smoothing_sigma_error("Must be a non-negative number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.smoothing_sigma_error = "Must be a non-negative number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_smoothing_sigma_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.smoothing_sigma_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 10. time_step
   float time_step_val = 0.0f;
-  std::string time_step_s = ui_.get_time_step().data();
+  std::string time_step_s = ui_.get_analysis_options().time_step.data();
   if (!is_positive_float(time_step_s, time_step_val)) {
-    ui_.set_time_step_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.time_step_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_time_step_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.time_step_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   // 11. min_frame and max_frame
@@ -1225,87 +1397,151 @@ bool AppController::validateInputs() {
   bool min_frame_valid = true;
   bool max_frame_valid = true;
 
-  std::string min_frame_s = ui_.get_min_frame().data();
+  std::string min_frame_s = ui_.get_analysis_options().min_frame.data();
   std::string min_frame_lower = to_lower(min_frame_s);
   int total_frames = ui_.get_num_frames();
 
   if (min_frame_lower == "start" || min_frame_s.empty()) {
     min_frame_val = 0;
-    ui_.set_min_frame_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.min_frame_error = "";
+    ui_.set_app_errors(errs);
+  }
   } else if (min_frame_lower == "end") {
     if (total_frames > 0) {
       min_frame_val = total_frames - 1;
     } else {
       min_frame_val = 0;
     }
-    ui_.set_min_frame_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.min_frame_error = "";
+    ui_.set_app_errors(errs);
+  }
   } else {
     int parsed_val;
     if (!is_positive_int(min_frame_s, parsed_val)) {
-      ui_.set_min_frame_error("Must be positive integer, 'Start', or 'End'");
+      {
+    auto errs = ui_.get_app_errors();
+    errs.min_frame_error = "Must be positive integer, 'Start', or 'End'";
+    ui_.set_app_errors(errs);
+  }
       min_frame_valid = false;
       valid = false;
     } else if (total_frames > 0 && parsed_val > total_frames) {
-      ui_.set_min_frame_error(slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames)));
+      {
+    auto errs = ui_.get_app_errors();
+    errs.min_frame_error = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
+    ui_.set_app_errors(errs);
+  }
       min_frame_valid = false;
       valid = false;
     } else {
       min_frame_val = parsed_val - 1;
-      ui_.set_min_frame_error("");
+      {
+    auto errs = ui_.get_app_errors();
+    errs.min_frame_error = "";
+    ui_.set_app_errors(errs);
+  }
     }
   }
 
-  std::string max_frame_s = ui_.get_max_frame().data();
+  std::string max_frame_s = ui_.get_analysis_options().max_frame.data();
   std::string max_frame_lower = to_lower(max_frame_s);
 
   if (max_frame_lower == "end" || max_frame_s.empty()) {
     max_frame_val = total_frames > 0 ? total_frames - 1 : -1;
-    ui_.set_max_frame_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.max_frame_error = "";
+    ui_.set_app_errors(errs);
+  }
   } else if (max_frame_lower == "start") {
     max_frame_val = 0;
-    ui_.set_max_frame_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.max_frame_error = "";
+    ui_.set_app_errors(errs);
+  }
   } else {
     int parsed_val;
     if (!is_positive_int(max_frame_s, parsed_val)) {
-      ui_.set_max_frame_error("Must be positive integer or 'End'");
+      {
+    auto errs = ui_.get_app_errors();
+    errs.max_frame_error = "Must be positive integer or 'End'";
+    ui_.set_app_errors(errs);
+  }
       max_frame_valid = false;
       valid = false;
     } else if (total_frames > 0 && parsed_val > total_frames) {
-      ui_.set_max_frame_error(slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames)));
+      {
+    auto errs = ui_.get_app_errors();
+    errs.max_frame_error = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
+    ui_.set_app_errors(errs);
+  }
       max_frame_valid = false;
       valid = false;
     } else {
       max_frame_val = parsed_val - 1;
-      ui_.set_max_frame_error("");
+      {
+    auto errs = ui_.get_app_errors();
+    errs.max_frame_error = "";
+    ui_.set_app_errors(errs);
+  }
     }
   }
 
   // Cross-validation of min_frame and max_frame
   if (min_frame_valid && max_frame_valid && min_frame_val >= 0 && max_frame_val >= 0) {
     if (min_frame_val > max_frame_val) {
-      ui_.set_min_frame_error("Start frame must be ≤ End frame");
-      ui_.set_max_frame_error("End frame must be ≥ Start frame");
+      {
+    auto errs = ui_.get_app_errors();
+    errs.min_frame_error = "Start frame must be ≤ End frame";
+    ui_.set_app_errors(errs);
+  }
+      {
+    auto errs = ui_.get_app_errors();
+    errs.max_frame_error = "End frame must be ≥ Start frame";
+    ui_.set_app_errors(errs);
+  }
       valid = false;
     }
   }
 
   // 12. export_font_scale and export_line_width
   float font_scale_val = 0.0f;
-  std::string font_scale_s = ui_.get_export_font_scale().data();
+  std::string font_scale_s = ui_.get_export_config().font_scale.data();
   if (!is_positive_float(font_scale_s, font_scale_val)) {
-    ui_.set_export_font_scale_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.export_font_scale_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_export_font_scale_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.export_font_scale_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   float line_width_val = 0.0f;
-  std::string line_width_s = ui_.get_export_line_width().data();
+  std::string line_width_s = ui_.get_export_config().line_width.data();
   if (!is_positive_float(line_width_s, line_width_val)) {
-    ui_.set_export_line_width_error("Must be a positive number");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.export_line_width_error = "Must be a positive number";
+    ui_.set_app_errors(errs);
+  }
     valid = false;
   } else {
-    ui_.set_export_line_width_error("");
+    {
+    auto errs = ui_.get_app_errors();
+    errs.export_line_width_error = "";
+    ui_.set_app_errors(errs);
+  }
   }
 
   ui_.set_has_validation_errors(!valid);
@@ -1324,32 +1560,32 @@ void AppController::updateCliCommand() {
     cmd += " <input_file>";
   }
 
-  cmd += " --r-max " + std::string(ui_.get_r_max().data());
-  cmd += " --r-bin " + std::string(ui_.get_r_bin_width().data());
+  cmd += " --r-max " + std::string(ui_.get_analysis_options().r_max.data());
+  cmd += " --r-bin " + std::string(ui_.get_analysis_options().r_bin_width.data());
 
   if (ui_.get_has_scattering_active()) {
-    cmd += " --q-max " + std::string(ui_.get_q_max().data());
-    cmd += " --q-bin " + std::string(ui_.get_q_bin_width().data());
-    cmd += " --r-int-max " + std::string(ui_.get_r_int_max().data());
+    cmd += " --q-max " + std::string(ui_.get_analysis_options().q_max.data());
+    cmd += " --q-bin " + std::string(ui_.get_analysis_options().q_bin_width.data());
+    cmd += " --r-int-max " + std::string(ui_.get_analysis_options().r_int_max.data());
   }
 
   if (ui_.get_has_angular_active()) {
-    cmd += " --angle-bin " + std::string(ui_.get_angle_bin_width().data());
-    cmd += " --dihedral-bin " + std::string(ui_.get_dihedral_bin_width().data());
+    cmd += " --angle-bin " + std::string(ui_.get_analysis_options().angle_bin_width.data());
+    cmd += " --dihedral-bin " + std::string(ui_.get_analysis_options().dihedral_bin_width.data());
   }
 
   if (ui_.get_has_rings_active()) {
-    cmd += " --max-ring-size " + std::string(ui_.get_max_ring_size().data());
+    cmd += " --max-ring-size " + std::string(ui_.get_analysis_options().max_ring_size.data());
   }
 
   if (ui_.get_num_frames() > 1) {
-    cmd += " --time-step " + std::string(ui_.get_time_step().data());
-    cmd += " --min-frame " + std::string(ui_.get_min_frame().data());
-    cmd += " --max-frame " + std::string(ui_.get_max_frame().data());
+    cmd += " --time-step " + std::string(ui_.get_analysis_options().time_step.data());
+    cmd += " --min-frame " + std::string(ui_.get_analysis_options().min_frame.data());
+    cmd += " --max-frame " + std::string(ui_.get_analysis_options().max_frame.data());
   }
 
   if (opt.smoothing) {
-    cmd += " --smoothing-sigma " + std::string(ui_.get_smoothing_sigma().data());
+    cmd += " --smoothing-sigma " + std::string(ui_.get_analysis_options().smoothing_sigma.data());
     std::string kernel_str = "gaussian";
     if (opt.smoothing_kernel == correlation::math::KernelType::Bump) {
       kernel_str = "bump";
@@ -1517,23 +1753,83 @@ void AppController::refreshPresetList() {
 
 void AppController::handleMaterialTypeChanged(int type) {
   if (type == 2) { // Crystalline
-    ui_.set_r_bin_width(slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL)));
-    ui_.set_q_bin_width(slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL)));
-    ui_.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL)));
-    ui_.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL)));
-    ui_.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL)));
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
+    ui_.set_analysis_options(opts);
+  }
   } else if (type == 1) { // Liquid
-    ui_.set_r_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID)));
-    ui_.set_q_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID)));
-    ui_.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID)));
-    ui_.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID)));
-    ui_.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID)));
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
+    ui_.set_analysis_options(opts);
+  }
   } else { // Amorphous (0)
-    ui_.set_r_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH)));
-    ui_.set_q_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH)));
-    ui_.set_angle_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH)));
-    ui_.set_dihedral_bin_width(slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH)));
-    ui_.set_smoothing_sigma(slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA)));
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    ui_.set_analysis_options(opts);
+  }
+    {
+    auto opts = ui_.get_analysis_options();
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
+    ui_.set_analysis_options(opts);
+  }
   }
   validateInputs();
 }

@@ -36,3 +36,49 @@ export struct CalculatorGroup {
     name: string,
     calculators: [CalculatorInfo],
 }
+
+export struct AnalysisOptions {
+    r_max: string,
+    r_bin_width: string,
+    q_max: string,
+    q_bin_width: string,
+    r_int_max: string,
+    angle_bin_width: string,
+    dihedral_bin_width: string,
+    max_ring_size: string,
+    smoothing_sigma: string,
+    smoothing_kernel: int,
+    smoothing_enabled: bool,
+    min_frame: string,
+    max_frame: string,
+    time_step: string,
+    material_type: int,
+}
+
+export struct AppErrors {
+    r_max_error: string,
+    r_bin_error: string,
+    q_max_error: string,
+    q_bin_error: string,
+    r_int_max_error: string,
+    angle_bin_error: string,
+    dihedral_bin_error: string,
+    max_ring_error: string,
+    smoothing_sigma_error: string,
+    min_frame_error: string,
+    max_frame_error: string,
+    time_step_error: string,
+    export_font_scale_error: string,
+    export_line_width_error: string,
+}
+
+export struct ExportConfig {
+    size_preset: int,
+    palette: int,
+    font_scale: string,
+    line_width: string,
+    show_legend: bool,
+    show_grid: bool,
+    show_markers: bool,
+    fill_area: bool,
+}
