@@ -15,7 +15,10 @@ import {
     InfoRow,
     Vertical,
     Horizontal,
+    IconButton,
+    Icons,
 } from "../material/material.slint";
+import { Palette } from "std-widgets.slint";
 import { AtomCount } from "../Types.slint";
 
 // ============================================================================
@@ -95,10 +98,20 @@ export component OperationsCard inherits FilledCard {
         // --- File Loading ---
         Vertical {
             spacing: MaterialStyleMetrics.spacing_4;
-            MaterialText {
-                text: "Input File";
-                style: MaterialTypography.label_large;
-                color: MaterialPalette.on_surface_variant;
+            Horizontal {
+                MaterialText {
+                    text: "Input File";
+                    style: MaterialTypography.label_large;
+                    color: MaterialPalette.on_surface_variant;
+                    vertical-alignment: center;
+                }
+                Rectangle { horizontal-stretch: 1; }
+                theme_toggle := IconButton {
+                    icon: Palette.color-scheme == ColorScheme.dark ? Icons.light_mode : Icons.dark_mode;
+                    clicked => {
+                        Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
+                    }
+                }
             }
             load_area := TouchArea {
                 min-height: 40px;

@@ -89,7 +89,7 @@ struct PlotConfig {
   /** @return Hex color string for axes and ticks. */
   std::string axis_color() const { return (theme == Theme::Light) ? "#000000" : "#cdd6f4"; }
   /** @return Hex color string for grid lines. */
-  std::string grid_color() const { return (theme == Theme::Light) ? "#e0e0e0" : "#45475a"; }
+  std::string grid_color() const { return (theme == Theme::Light) ? "#808080" : "#45475a"; }
   /** @return Hex color string for labels and titles. */
   std::string text_color() const { return (theme == Theme::Light) ? "#333333" : "#a6adc8"; }
 };
