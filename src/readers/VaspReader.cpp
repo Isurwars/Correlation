@@ -150,10 +150,19 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
                              ") does not match atom count entries (" + std::to_string(atom_counts.size()) + ").");
   }
 
-  int total_atoms = 0;
+  long long total_atoms_sum = 0;
   for (int c : atom_counts) {
-    total_atoms += c;
+    if (c < 0) {
+      throw std::runtime_error("POSCAR: negative atom count encountered: " + std::to_string(c));
+    }
+    total_atoms_sum += c;
   }
+  constexpr int kMaxAtomCount = 100'000'000;
+  if (total_atoms_sum > kMaxAtomCount) {
+    throw std::runtime_error("POSCAR: total atom count exceeds limit: " + std::to_string(total_atoms_sum));
+  }
+  int total_atoms = static_cast<int>(total_atoms_sum);
+
 
   // Next line: "Selective dynamics" (optional) or coordinate type
   if (!std::getline(myfile, line)) {

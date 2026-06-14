@@ -55,7 +55,8 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::string current_block_type;
   std::string line;
   int lattice_row_count = 0;
-  std::array<double, 6> lat;
+  std::array<double, 6> lat = {0, 0, 0, 0, 0, 0};
+  double v[3][3] = {{0.0}};
 
   while (std::getline(myfile, line)) {
     /* Read line by line */
@@ -80,27 +81,29 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
 
     if (in_block) {
       if (current_block_type == "lattice_cart") {
-        double v[3][3];
-        line_stream.clear();
-        line_stream.seekg(0); // Reread the full line
-        if (line_stream >> v[lattice_row_count][0] >> v[lattice_row_count][1] >> v[lattice_row_count][2]) {
-          lattice_row_count++;
-          if (lattice_row_count == 3) {
-            tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
-                                               {v[2][0], v[2][1], v[2][2]});
+        if (lattice_row_count < 3) {
+          line_stream.clear();
+          line_stream.seekg(0); // Reread the full line
+          if (line_stream >> v[lattice_row_count][0] >> v[lattice_row_count][1] >> v[lattice_row_count][2]) {
+            lattice_row_count++;
+            if (lattice_row_count == 3) {
+              tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
+                                                 {v[2][0], v[2][1], v[2][2]});
+            }
           }
         }
       }
 
       if (current_block_type == "lattice_abc") {
-
-        line_stream.clear();
-        line_stream.seekg(0);
-        if (line_stream >> lat[0 + 3 * lattice_row_count] >> lat[1 + 3 * lattice_row_count] >>
-            lat[2 + 3 * lattice_row_count]) {
-          lattice_row_count++;
-          if (lattice_row_count == 2) {
-            tempCell.setLatticeParameters(lat);
+        if (lattice_row_count < 2) {
+          line_stream.clear();
+          line_stream.seekg(0);
+          if (line_stream >> lat[0 + 3 * lattice_row_count] >> lat[1 + 3 * lattice_row_count] >>
+              lat[2 + 3 * lattice_row_count]) {
+            lattice_row_count++;
+            if (lattice_row_count == 2) {
+              tempCell.setLatticeParameters(lat);
+            }
           }
         }
       }

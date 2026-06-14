@@ -3,9 +3,16 @@
 .vs
 .vscode
 compile_commands.json
-build
+build*/
 installers
 
 aur/
 packaging/correlation.iss
 scripts/
+
+# Fuzzing
+tests/fuzz/corpus/*/*
+!tests/fuzz/corpus/*/minimal.*
+!tests/fuzz/corpus/*/*.poscar
+!tests/fuzz/corpus/*/*.xdatcar
+!tests/fuzz/corpus/*/Si*

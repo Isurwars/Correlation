@@ -149,9 +149,26 @@ XdatcarReader::readTrajectory(const std::string &filename,
     throw std::runtime_error("XDATCAR: species count does not match atom count entries.");
   }
 
-  header->total_atoms = 0;
-  for (int c : header->atom_counts)
-    header->total_atoms += c;
+  long long total_atoms_sum = 0;
+  for (int c : header->atom_counts) {
+    if (c < 0) {
+      throw std::runtime_error("XDATCAR: negative atom count: " + std::to_string(c));
+    }
+    total_atoms_sum += c;
+  }
+
+  constexpr int kMaxAtomCount = 100'000'000;
+  if (total_atoms_sum > kMaxAtomCount) {
+    throw std::runtime_error("XDATCAR: total atom count exceeds limit: " + std::to_string(total_atoms_sum));
+  }
+
+  // The number of atoms cannot exceed the file size in bytes
+  if (static_cast<size_t>(total_atoms_sum) > total_size) {
+    throw std::runtime_error("XDATCAR: total atom count (" + std::to_string(total_atoms_sum) +
+                             ") exceeds file size (" + std::to_string(total_size) + " bytes)");
+  }
+
+  header->total_atoms = static_cast<int>(total_atoms_sum);
 
   // Build per-atom species list
   header->atom_species.reserve(header->total_atoms);
@@ -160,6 +177,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
       header->atom_species.push_back(header->species[s]);
     }
   }
+
 
   // --- Scan for "Direct" lines to find frame offsets ---
   std::vector<size_t> frame_offsets;

@@ -1,0 +1,11 @@
+%block lattice_cart
+angstrom
+5.43 0.00 0.00
+0.00 5.43 0.00
+0.00 0.00 5.43
+%endblock lattice_cart
+%block positions_abs
+angstrom
+Si 0.000 0.000 0.000
+Si 1.360 1.360 1.360
+%endblock positions_abs

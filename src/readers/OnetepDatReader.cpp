@@ -57,6 +57,7 @@ correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
   std::string line;
   int lattice_row_count = 0;
   std::array<double, 6> lat = {0, 0, 0, 0, 0, 0};
+  double v[3][3] = {{0.0}};
 
   while (std::getline(myfile, line)) {
     // Strip comments
@@ -92,7 +93,6 @@ correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
 
     if (in_block) {
       if (current_block_type == "lattice_cart") {
-        double v[3][3];
         line_stream.clear();
         line_stream.seekg(0);
         std::string first_val;
@@ -102,12 +102,14 @@ correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
           if (lower_first == "angstrom" || lower_first == "bohr") {
             continue;
           }
-          std::stringstream ss(line);
-          if (ss >> v[lattice_row_count][0] >> v[lattice_row_count][1] >> v[lattice_row_count][2]) {
-            lattice_row_count++;
-            if (lattice_row_count == 3) {
-              tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
-                                                 {v[2][0], v[2][1], v[2][2]});
+          if (lattice_row_count < 3) {
+            std::stringstream ss(line);
+            if (ss >> v[lattice_row_count][0] >> v[lattice_row_count][1] >> v[lattice_row_count][2]) {
+              lattice_row_count++;
+              if (lattice_row_count == 3) {
+                tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
+                                                   {v[2][0], v[2][1], v[2][2]});
+              }
             }
           }
         }
@@ -123,12 +125,14 @@ correlation::core::Cell OnetepDatReader::read(const std::string &file_name) {
           if (lower_first == "angstrom" || lower_first == "bohr") {
             continue;
           }
-          std::stringstream ss(line);
-          if (ss >> lat[0 + 3 * lattice_row_count] >> lat[1 + 3 * lattice_row_count] >>
-              lat[2 + 3 * lattice_row_count]) {
-            lattice_row_count++;
-            if (lattice_row_count == 2) {
-              tempCell.setLatticeParameters(lat);
+          if (lattice_row_count < 2) {
+            std::stringstream ss(line);
+            if (ss >> lat[0 + 3 * lattice_row_count] >> lat[1 + 3 * lattice_row_count] >>
+                lat[2 + 3 * lattice_row_count]) {
+              lattice_row_count++;
+              if (lattice_row_count == 2) {
+                tempCell.setLatticeParameters(lat);
+              }
             }
           }
         }

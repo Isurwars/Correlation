@@ -74,6 +74,24 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
     throw std::runtime_error("Invalid GROMACS file: non-numeric atom count");
   }
 
+  // Guard against malformed files with absurd atom counts.  Each GRO atom line
+  // is at least 44 characters, so we can estimate a reasonable upper bound from
+  // the remaining data.  Additionally cap at 100 million as an absolute limit.
+  if (num_atoms <= 0) {
+    throw std::runtime_error("Invalid GROMACS file: non-positive atom count: " + std::to_string(num_atoms));
+  }
+  constexpr int kMaxAtomCount = 100'000'000;
+  if (num_atoms > kMaxAtomCount) {
+    throw std::runtime_error("Invalid GROMACS file: atom count exceeds limit: " + std::to_string(num_atoms));
+  }
+  const size_t remaining = (offset < size) ? (size - offset) : 0;
+  // Each atom line needs at least ~20 bytes (even short lines). If the claimed
+  // count cannot possibly fit in the remaining data, reject early.
+  if (static_cast<size_t>(num_atoms) > remaining) {
+    throw std::runtime_error("Invalid GROMACS file: atom count (" + std::to_string(num_atoms) +
+                             ") exceeds remaining data (" + std::to_string(remaining) + " bytes)");
+  }
+
   correlation::core::Cell cell;
 
   // Lines 3 to num_atoms + 2: Atoms
@@ -200,6 +218,11 @@ GromacsReader::readTrajectory(const std::string &filename,
     }
 
     if (num_atoms <= 0)
+      break;
+
+    // Sanity check: the claimed atom count must be plausible given remaining data
+    const size_t remaining_bytes = (offset < total_size) ? (total_size - offset) : 0;
+    if (static_cast<size_t>(num_atoms) > remaining_bytes || num_atoms > 100'000'000)
       break;
 
     // Skip N atom lines
