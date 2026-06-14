@@ -8,6 +8,11 @@
 #             -DBUILD_FUZZ_TESTS=ON -DBUILD_GUI=OFF
 #             cmake --build build-fuzz
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    message(STATUS "Fuzz tests skipped: Apple Clang does not support libFuzzer out-of-the-box.")
+    return()
+endif()
+
 if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message(STATUS "Fuzz tests skipped: Clang compiler (libFuzzer) is required.")
     return()
