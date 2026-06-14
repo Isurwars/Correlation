@@ -1,0 +1,58 @@
+# Correlation project – clang-tidy configuration
+# SPDX-License-Identifier: AGPL-3.0-only
+
+# Run a curated set of checks:
+#  - bugprone-*        : catches common bug patterns
+#  - cert-*            : SEI CERT coding guidelines
+#  - clang-analyzer-*  : dataflow-based static analysis
+#  - cppcoreguidelines-* : C++ Core Guidelines
+#  - misc-*            : miscellaneous checks
+#  - modernize-*       : C++ modernisation suggestions
+#  - performance-*     : performance improvements
+#  - readability-*     : code clarity
+#
+# Excluded checks:
+#  - fuchsia-*            : Fuchsia OS-specific rules, not applicable
+#  - abseil-*             : Abseil library-specific rules
+#  - zircon-*             : Zircon kernel rules, not applicable
+#  - google-*             : Google style guide (project uses its own style)
+#  - llvm-*               : LLVM project-specific rules
+#  - altera-*             : OpenCL/FPGA-specific rules
+#  - modernize-use-trailing-return-type : subjective style choice
+#  - cppcoreguidelines-avoid-magic-numbers : too noisy for scientific code
+#  - readability-magic-numbers            : same as above
+
+Checks: >
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  -fuchsia-*,
+  -abseil-*,
+  -zircon-*,
+  -google-*,
+  -llvm-*,
+  -altera-*,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers
+
+# Only report diagnostics from our own source files, never from third-party
+# headers fetched via FetchContent (build/_deps/) or system includes.
+HeaderFilterRegex: '^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$'
+
+WarningsAsErrors: ''
+
+CheckOptions:
+  - key:   readability-identifier-length.MinimumParameterNameLength
+    value: '2'
+  - key:   readability-identifier-length.MinimumVariableNameLength
+    value: '2'
+  - key:   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value: 'true'
+  - key:   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: 'true'

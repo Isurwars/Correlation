@@ -72,7 +72,7 @@ public:
    * @param pos The position vector of the atom.
    * @param id The unique ID of the atom.
    */
-  explicit Atom(Element element, math::Vector3<double> pos, AtomID id) noexcept
+  explicit Atom(Element element, const math::Vector3<double> &pos, AtomID id) noexcept
       : element_(std::move(element)), position_(pos), id_(id) {}
 
   //-------------------------------------------------------------------------//
@@ -101,7 +101,7 @@ public:
    * @brief Sets the position of the atom.
    * @param pos The new position vector.
    */
-  void setPosition(math::Vector3<double> pos) { position_ = pos; }
+  void setPosition(const math::Vector3<double> &pos) { position_ = pos; }
 
   /**
    * @brief Gets the velocity of the atom.
@@ -113,7 +113,7 @@ public:
    * @brief Sets the velocity of the atom.
    * @param vel The new velocity vector.
    */
-  void setVelocity(math::Vector3<double> vel) { velocity_ = vel; }
+  void setVelocity(const math::Vector3<double> &vel) { velocity_ = vel; }
 
   /**
    * @brief Gets the element type of the atom.
@@ -134,7 +134,7 @@ public:
   [[nodiscard]] int element_id() const { return element_.id.value; }
 
 private:
-  AtomID id_;                      ///< Unique identification number.
+  AtomID id_{0};                    ///< Unique identification number.
   math::Vector3<double> position_; ///< Cartesian coordinates in Angstroms.
   math::Vector3<double> velocity_; ///< Velocity in Angstroms/fs.
   Element element_;                ///< Chemical element properties.

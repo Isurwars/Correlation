@@ -222,7 +222,7 @@ public:
 
   math::Matrix3<double> lattice_vectors_;         ///< Basis vectors of the box.
   math::Matrix3<double> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.
-  std::array<double, 6> lattice_parameters_;      ///< {a, b, c, alpha, beta, gamma}.
+  std::array<double, 6> lattice_parameters_{};    ///< {a, b, c, alpha, beta, gamma}.
   double volume_{0.0};                            ///< Cached volume in Angstroms^3.
   double energy_{0.0};                            ///< Potential energy of this specific coordinate set.
   std::vector<Atom> atoms_;                       ///< Collection of atoms in the cell.
