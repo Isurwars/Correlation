@@ -89,3 +89,37 @@ jobs:
       - name: Test (Windows)
         if: runner.os == 'Windows'
         run: cd build && ctest -C Release --output-on-failure -E PythonBindings
+
+  fuzz:
+    name: Fuzz Testing (Ubuntu, Clang)
+    runs-on: ubuntu-latest
+    env:
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: "sccache"
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up sccache
+        uses: mozilla-actions/sccache-action@v0.0.10
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config
+
+      - name: Configure CMake
+        run: |
+          cmake -B build-fuzz -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DBUILD_FUZZ_TESTS=ON \
+            -DBUILD_GUI=OFF \
+            -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+
+      - name: Build Fuzz Targets
+        run: cmake --build build-fuzz --config Release --parallel
+
+      - name: Run Fuzz Smoke Tests
+        run: cd build-fuzz && ctest -L fuzz --output-on-failure
+
