@@ -8,14 +8,16 @@
 
 #include "readers/CP2KReader.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <string>
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-  if (size > 1 * 1024 * 1024)
+  if (size > static_cast<size_t>(1 * 1024 * 1024)) {
     return 0;
+}
 
   const std::string path = "/dev/shm/fuzz_cp2k.inp";
   {

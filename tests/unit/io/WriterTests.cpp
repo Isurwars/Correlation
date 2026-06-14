@@ -45,7 +45,7 @@ protected:
 
   void TearDown() override {
     // Clean up all generated files.
-    std::vector<std::string> files_to_remove = {"si_crystal.car",
+    std::vector<std::string> const files_to_remove = {"si_crystal.car",
                                                 "test_si_g.csv",
                                                 "test_si_J.csv",
                                                 "test_si_G_reduced.csv",
@@ -81,7 +81,7 @@ protected:
   }
 
   // Helper to check if a file exists and is not empty.
-  bool fileExistsAndIsNotEmpty(const std::string &name) {
+  static bool fileExistsAndIsNotEmpty(const std::string &name) {
     if (std::ifstream f(name); f.good()) {
       return f.peek() != std::ifstream::traits_type::eof();
     }
@@ -91,8 +91,8 @@ protected:
 
 TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  correlation::readers::FileType type = correlation::readers::determineFileType("si_crystal.car");
-  correlation::core::Cell si_cell = correlation::readers::readStructure("si_crystal.car", type);
+  correlation::readers::FileType const type = correlation::readers::determineFileType("si_crystal.car");
+  correlation::core::Cell const si_cell = correlation::readers::readStructure("si_crystal.car", type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
@@ -106,7 +106,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   df.calculatePAD(pad_bin);
   df.smoothAll(0.1);
 
-  correlation::writers::FileWriter writer(df);
+  correlation::writers::FileWriter const writer(df);
   writer.write("test_si", true, false, false, true);
 
   // Assert: Part 1 - Validate content of the calculated g_r histogram.
@@ -123,9 +123,9 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 
   // Find peaks in expected regions for crystalline silicon.
   // 1st neighbor shell: ~2.35 Å. Search from 2.0 to 3.0 Å.
-  size_t first_peak_idx = find_peak_idx(2.0 / rdf_bin, 3.0 / rdf_bin);
+  size_t const first_peak_idx = find_peak_idx(2.0 / rdf_bin, 3.0 / rdf_bin);
   // 2nd neighbor shell: ~3.84 Å. Search from 3.5 to 4.2 Å.
-  size_t second_peak_idx = find_peak_idx(3.5 / rdf_bin, 4.2 / rdf_bin);
+  size_t const second_peak_idx = find_peak_idx(3.5 / rdf_bin, 4.2 / rdf_bin);
 
   EXPECT_NEAR(bins[first_peak_idx], 2.35, rdf_bin * 2);
   EXPECT_NEAR(bins[second_peak_idx], 3.84, rdf_bin * 2);
@@ -136,8 +136,8 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   const auto &pad_bins = pad_hist.bins;
   const auto &si_si_si_pad = pad_hist.partials.at("Si-Si-Si");
 
-  auto max_it = std::max_element(si_si_si_pad.begin(), si_si_si_pad.end());
-  size_t peak_index = std::distance(si_si_si_pad.begin(), max_it);
+  auto max_it = std::ranges::max_element(si_si_si_pad);
+  size_t const peak_index = std::distance(si_si_si_pad.begin(), max_it);
 
   // The dominant peak angle should be the tetrahedral angle in silicon.
   EXPECT_NEAR(pad_bins[peak_index], 109.5, pad_bin * 2.0);

@@ -23,10 +23,10 @@ TEST(TrajectoryAnalyzerTests, BasicUsage) {
   trajectory.addFrame(cell);
   trajectory.addFrame(cell);
 
-  double neighbor_cutoff = 2.0;
-  std::vector<std::vector<double>> bond_cutoffs = {{1.1}}; // Assuming H-H is index 0-0, simplified
+  double const neighbor_cutoff = 2.0;
+  std::vector<std::vector<double>> const bond_cutoffs = {{1.1}}; // Assuming H-H is index 0-0, simplified
 
-  TrajectoryAnalyzer analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
+  TrajectoryAnalyzer const analyzer(trajectory, neighbor_cutoff, bond_cutoffs);
 
   EXPECT_EQ(analyzer.getNumFrames(), 2);
   EXPECT_EQ(analyzer.getNeighborCutoff(), neighbor_cutoff);

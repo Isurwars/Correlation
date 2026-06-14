@@ -29,13 +29,13 @@ TEST(ClusterCalculatorTests, BasicClustering) {
   cell.addAtom("Ar", {15.0, 15.0, 15.0});
 
   DistributionFunctions df(cell);
-  AnalysisSettings settings;
+  AnalysisSettings const settings;
 
-  double cutoff = 1.5;
-  StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  double const cutoff = 1.5;
+  StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   df.setStructureAnalyzer(&analyzer);
 
-  ClusterCalculator calc;
+  ClusterCalculator const calc;
   calc.calculateFrame(df, settings);
 
   const auto &hist = df.getHistogram("Cluster Size");
@@ -64,13 +64,13 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
   }
 
   DistributionFunctions df(cell);
-  AnalysisSettings settings;
+  AnalysisSettings const settings;
 
-  double cutoff = 1.5;
-  StructureAnalyzer analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
+  double const cutoff = 1.5;
+  StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   df.setStructureAnalyzer(&analyzer);
 
-  ClusterCalculator calc;
+  ClusterCalculator const calc;
   calc.calculateFrame(df, settings);
 
   const auto &hist = df.getHistogram("Cluster Size");

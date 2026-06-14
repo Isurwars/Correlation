@@ -28,7 +28,7 @@ struct ArgBuilder {
     }
   }
 
-  int argc() const { return static_cast<int>(argv.size()); }
+  [[nodiscard]] int argc() const { return static_cast<int>(argv.size()); }
   char **data() { return argv.data(); }
 };
 

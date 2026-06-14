@@ -18,6 +18,7 @@
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::readers {
 
@@ -25,13 +26,13 @@ namespace correlation::readers {
 static bool registered = ReaderFactory::instance().registerReader(std::make_unique<VaspReader>());
 
 correlation::core::Cell VaspReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)> progress_callback) {
+                                                  std::function<void(float, const std::string &)>  /*progress_callback*/) {
   return read(filename);
 }
 
 correlation::core::Trajectory
-VaspReader::readTrajectory(const std::string &filename,
-                           std::function<void(float, const std::string &)> progress_callback) {
+VaspReader::readTrajectory(const std::string & /*filename*/,
+                           std::function<void(float, const std::string &)>  /*progress_callback*/) {
   throw std::runtime_error("POSCAR/CONTCAR files are single structures, use readStructure.");
 }
 
@@ -52,7 +53,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   if (!std::getline(myfile, line)) {
     throw std::runtime_error("POSCAR: unexpected end of file (scaling factor).");
   }
-  double scaling_factor = std::stod(line);
+  double const scaling_factor = std::stod(line);
 
   // Lines 3-5: Lattice vectors
   double v[3][3];
@@ -69,23 +70,23 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   // Apply scaling factor
   if (scaling_factor > 0.0) {
     // Positive: multiply all vectors by scaling factor
-    for (int i = 0; i < 3; ++i) {
+    for (auto & i : v) {
       for (int j = 0; j < 3; ++j) {
-        v[i][j] *= scaling_factor;
+        i[j] *= scaling_factor;
       }
     }
   } else if (scaling_factor < 0.0) {
     // Negative: interpret as target volume
     // V_target = |scaling_factor|
     // V_current = a . (b x c)
-    double target_volume = std::abs(scaling_factor);
-    double current_volume =
+    double const target_volume = std::abs(scaling_factor);
+    double const current_volume =
         std::abs(v[0][0] * (v[1][1] * v[2][2] - v[1][2] * v[2][1]) - v[0][1] * (v[1][0] * v[2][2] - v[1][2] * v[2][0]) +
                  v[0][2] * (v[1][0] * v[2][1] - v[1][1] * v[2][0]));
-    double scale = std::cbrt(target_volume / current_volume);
-    for (int i = 0; i < 3; ++i) {
+    double const scale = std::cbrt(target_volume / current_volume);
+    for (auto & i : v) {
       for (int j = 0; j < 3; ++j) {
-        v[i][j] *= scale;
+        i[j] *= scale;
       }
     }
   }
@@ -138,7 +139,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
         throw std::runtime_error("POSCAR: unexpected end of file (atom counts).");
       }
       std::istringstream count_iss(line);
-      int count;
+      int count = 0;
       while (count_iss >> count) {
         atom_counts.push_back(count);
       }
@@ -151,7 +152,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   }
 
   long long total_atoms_sum = 0;
-  for (int c : atom_counts) {
+  for (int const c : atom_counts) {
     if (c < 0) {
       throw std::runtime_error("POSCAR: negative atom count encountered: " + std::to_string(c));
     }
@@ -161,7 +162,7 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
   if (total_atoms_sum > kMaxAtomCount) {
     throw std::runtime_error("POSCAR: total atom count exceeds limit: " + std::to_string(total_atoms_sum));
   }
-  int total_atoms = static_cast<int>(total_atoms_sum);
+  int const total_atoms = static_cast<int>(total_atoms_sum);
 
 
   // Next line: "Selective dynamics" (optional) or coordinate type
@@ -171,8 +172,8 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
 
   // Check for Selective Dynamics
   char first_char = ' ';
-  for (char c : line) {
-    if (!std::isspace(static_cast<unsigned char>(c))) {
+  for (char const c : line) {
+    if (std::isspace(static_cast<unsigned char>(c)) == 0) {
       first_char = c;
       break;
     }
@@ -185,15 +186,15 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
                                "dynamics).");
     }
     // Re-read first char
-    for (char c : line) {
-      if (!std::isspace(static_cast<unsigned char>(c))) {
+    for (char const c : line) {
+      if (std::isspace(static_cast<unsigned char>(c)) == 0) {
         first_char = c;
         break;
       }
     }
   }
 
-  bool is_direct = (first_char == 'D' || first_char == 'd');
+  bool const is_direct = (first_char == 'D' || first_char == 'd');
   // Cartesian: first_char == 'C' || first_char == 'c' || first_char == 'K' ||
   // first_char == 'k'
 
@@ -209,13 +210,15 @@ correlation::core::Cell VaspReader::read(const std::string &file_name) {
     }
 
     // Determine which species this atom belongs to
-    while (species_idx < static_cast<int>(atom_counts.size()) && atoms_in_species >= atom_counts[species_idx]) {
+    while (std::cmp_less(species_idx ,atom_counts.size()) && atoms_in_species >= atom_counts[species_idx]) {
       atoms_in_species = 0;
       species_idx++;
     }
 
     std::istringstream iss(line);
-    double x, y, z;
+    double x;
+    double y;
+    double z;
     if (!(iss >> x >> y >> z)) {
       throw std::runtime_error("POSCAR: failed to parse atom coordinates on "
                                "atom " +

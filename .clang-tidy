@@ -21,6 +21,10 @@
 #  - modernize-use-trailing-return-type : subjective style choice
 #  - cppcoreguidelines-avoid-magic-numbers : too noisy for scientific code
 #  - readability-magic-numbers            : same as above
+#  - cppcoreguidelines-pro-bounds-avoid-unchecked-container-access : vector[] is standard
+#  - misc-include-cleaner                 : noisy false positives
+#  - readability-math-missing-parentheses : standard order of ops is fine
+#  - cppcoreguidelines-pro-bounds-pointer-arithmetic : necessary for memory mapping
 
 Checks: >
   bugprone-*,
@@ -39,7 +43,14 @@ Checks: >
   -altera-*,
   -modernize-use-trailing-return-type,
   -cppcoreguidelines-avoid-magic-numbers,
-  -readability-magic-numbers
+  -readability-magic-numbers,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+  -misc-include-cleaner,
+  -readability-math-missing-parentheses,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -bugprone-throwing-static-initialization,
+  -cert-err58-cpp,
+  -bugprone-narrowing-conversions
 
 # Only report diagnostics from our own source files, never from third-party
 # headers fetched via FetchContent (build/_deps/) or system includes.
@@ -48,10 +59,6 @@ HeaderFilterRegex: '^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$'
 WarningsAsErrors: ''
 
 CheckOptions:
-  - key:   readability-identifier-length.MinimumParameterNameLength
-    value: '2'
-  - key:   readability-identifier-length.MinimumVariableNameLength
-    value: '2'
   - key:   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
     value: 'true'
   - key:   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic

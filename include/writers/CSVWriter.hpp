@@ -59,8 +59,8 @@ private:
    * @param name The name of the histogram.
    * @param hist The Histogram data structure to write.
    */
-  void writeHistogramToCSV(const std::string &filename, const std::string &name,
-                           const correlation::analysis::Histogram &hist) const;
+  static void writeHistogramToCSV(const std::string &filename, const std::string &name,
+                           const correlation::analysis::Histogram &hist) ;
 };
 
 } // namespace correlation::writers

@@ -41,7 +41,7 @@ jobs:
 
       - name: Install dependencies (macOS)
         if: runner.os == 'macOS'
-        run: brew install tbb hdf5 llvm
+        run: brew install tbb hdf5 llvm@18
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -65,8 +65,8 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           if [ "${{ runner.os }}" = "macOS" ]; then
-            export CC="$(brew --prefix llvm)/bin/clang"
-            export CXX="$(brew --prefix llvm)/bin/clang++"
+            export CC="$(brew --prefix llvm@18)/bin/clang"
+            export CXX="$(brew --prefix llvm@18)/bin/clang++"
           fi
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \

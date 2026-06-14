@@ -31,7 +31,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
-  if (!neighbors) {
+  if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate BAD/PAD. Neighbor list has not been computed.");
   }
 
@@ -39,10 +39,11 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
 
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
-  if (num_elements == 0)
+  if (num_elements == 0) {
     return {};
+}
 
-  const size_t num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
+  const auto num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
   correlation::analysis::Histogram f_theta;
   f_theta.x_label = "θ";
@@ -60,15 +61,15 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       for (size_t k = j; k < num_elements; ++k) {
-        std::string key = elements[j].symbol + "-" + elements[i].symbol + "-" + elements[k].symbol;
+        std::string const key = elements[j].symbol + "-" + elements[i].symbol + "-" + elements[k].symbol;
         auto &partial_hist = f_theta.partials[key];
         partial_hist.assign(num_bins, 0.0);
 
         for (const auto &angle_rad : neighbors->angles()[j][i][k]) {
-          double angle_deg = angle_rad * correlation::math::rad_to_deg;
+          double const angle_deg = angle_rad * correlation::math::rad_to_deg;
 
           if (angle_deg <= theta_cut + 1e-5) {
-            size_t bin = static_cast<size_t>(angle_deg / bin_width);
+            auto bin = static_cast<size_t>(angle_deg / bin_width);
 
             if (bin == num_bins && bin > 0) {
               bin = num_bins - 1;

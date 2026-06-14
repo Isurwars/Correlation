@@ -27,19 +27,19 @@ namespace correlation::readers {
 static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CellReader>());
 
 correlation::core::Cell CellReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)> progress_callback) {
+                                                  std::function<void(float, const std::string &)>  /*progress_callback*/) {
   return read(filename);
 }
 
 correlation::core::Trajectory
-CellReader::readTrajectory(const std::string &filename,
-                           std::function<void(float, const std::string &)> progress_callback) {
+CellReader::readTrajectory(const std::string & /*filename*/,
+                           std::function<void(float, const std::string &)>  /*progress_callback*/) {
   throw std::runtime_error("Cell files are structures, use readStructure.");
 }
 
 namespace {
 void toLower(std::string &s) {
-  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
+  std::ranges::transform(s, s.begin(), [](unsigned char c) { return std::tolower(c); });
 }
 } // namespace
 
@@ -110,7 +110,9 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
 
       if (current_block_type == "positions_abs") {
         std::string element;
-        double x, y, z;
+        double x;
+        double y;
+        double z;
         line_stream.clear();
         line_stream.seekg(0);
         if (line_stream >> element >> x >> y >> z) {
@@ -120,14 +122,16 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
 
       if (current_block_type == "positions_frac") {
         std::string element;
-        double x, y, z;
+        double x;
+        double y;
+        double z;
 
         frac_flag = true;
         line_stream.clear();
         line_stream.seekg(0);
         if (line_stream >> element >> x >> y >> z) {
           const auto &lv = tempCell.latticeVectors();
-          correlation::math::Vector3<double> pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
+          correlation::math::Vector3<double> const pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
                                                     x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
                                                     x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
           tempCell.addAtom(element, pos);
@@ -136,8 +140,9 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
     }
   }
 
-  if (frac_flag)
+  if (frac_flag) {
     tempCell.wrapPositions();
+}
   return tempCell;
 }
 

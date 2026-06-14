@@ -47,7 +47,7 @@ TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   EXPECT_EQ(cell.atomCount(), 4);
 
   // In FCC, the nearest neighbor distance is a/sqrt(2)
-  const double expected_nn = a / std::sqrt(2.0);
+  const double expected_nn = a / std::numbers::sqrt2;
 
   // Calculate distance between atom 0 and 1
   auto dist_vec = cell.atoms()[1].position() - cell.atoms()[0].position();
@@ -80,9 +80,9 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
 
   // Verify that the internal geometry (bond length/angle) is preserved
   const auto &atoms = cell.atoms();
-  double d1 = distance(atoms[0], atoms[1]);
-  double d2 = distance(atoms[0], atoms[2]);
-  double ang = angle(atoms[0], atoms[1], atoms[2]);
+  double const d1 = distance(atoms[0], atoms[1]);
+  double const d2 = distance(atoms[0], atoms[2]);
+  double const ang = angle(atoms[0], atoms[1], atoms[2]);
 
   // Use minimum image for distance if they were wrapped differently
   auto v1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
@@ -94,8 +94,8 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // Angle function doesn't use PBC, so we must be careful.
   // If we wrap them, they might be on opposite sides of the box.
   // We should calculate angle using minimum image vectors.
-  double cos_theta = correlation::math::dot(v1, v2) / (correlation::math::norm(v1) * correlation::math::norm(v2));
-  double calc_angle = std::acos(std::clamp(cos_theta, -1.0, 1.0));
+  double const cos_theta = correlation::math::dot(v1, v2) / (correlation::math::norm(v1) * correlation::math::norm(v2));
+  double const calc_angle = std::acos(std::clamp(cos_theta, -1.0, 1.0));
 
   EXPECT_NEAR(calc_angle, hoh_angle_rad, 1e-6);
 }

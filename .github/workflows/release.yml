@@ -206,7 +206,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Install dependencies
-        run: brew install ninja tbb hdf5 llvm
+        run: brew install ninja tbb hdf5 llvm@18
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -222,8 +222,8 @@ jobs:
 
       - name: Configure CMake
         run: |
-          export CC="$(brew --prefix llvm)/bin/clang"
-          export CXX="$(brew --prefix llvm)/bin/clang++"
+          export CC="$(brew --prefix llvm@18)/bin/clang"
+          export CXX="$(brew --prefix llvm@18)/bin/clang++"
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \

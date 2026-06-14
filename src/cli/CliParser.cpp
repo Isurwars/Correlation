@@ -100,7 +100,7 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   std::string k_str = "gaussian";
   app.add_option("--smoothing-kernel", k_str);
 
-  std::map<std::string, int> mat_map = {{"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
+  std::map<std::string, int> const mat_map = {{"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
   app.add_option("--material", opts.material_type, "Material type (amorphous, liquid, crystalline)")
      ->transform(CLI::CheckedTransformer(mat_map, CLI::ignore_case));
 
@@ -124,55 +124,53 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   }
 
   // Check if dihedral-bin was explicitly set
-  if (app.count("--dihedral-bin")) {
+  if (app.count("--dihedral-bin") != 0u) {
     opts.has_dihedral_bin = true;
   }
 
   // Adjust defaults based on material type if not explicitly set
   if (opts.material_type == 2) { // Crystalline
-    if (!app.count("--r-bin")) {
+    if (app.count("--r-bin") == 0u) {
       opts.r_bin_width = 0.002;
     }
-    if (!app.count("--q-bin")) {
+    if (app.count("--q-bin") == 0u) {
       opts.q_bin_width = 0.002;
     }
-    if (!app.count("--angle-bin")) {
+    if (app.count("--angle-bin") == 0u) {
       opts.angle_bin_width = 0.1;
     }
-    if (!app.count("--dihedral-bin") && !app.count("--angle-bin")) {
+    if ((app.count("--dihedral-bin") == 0u) && (app.count("--angle-bin") == 0u)) {
       opts.dihedral_bin_width = 0.1;
     }
-    if (!app.count("--smoothing-sigma")) {
+    if (app.count("--smoothing-sigma") == 0u) {
       opts.smoothing_sigma = 0.01;
     }
   } else if (opts.material_type == 1) { // Liquid
-    if (!app.count("--r-bin")) {
+    if (app.count("--r-bin") == 0u) {
       opts.r_bin_width = 0.05;
     }
-    if (!app.count("--q-bin")) {
+    if (app.count("--q-bin") == 0u) {
       opts.q_bin_width = 0.05;
     }
-    if (!app.count("--angle-bin")) {
+    if (app.count("--angle-bin") == 0u) {
       opts.angle_bin_width = 2.0;
     }
-    if (!app.count("--dihedral-bin") && !app.count("--angle-bin")) {
+    if ((app.count("--dihedral-bin") == 0u) && (app.count("--angle-bin") == 0u)) {
       opts.dihedral_bin_width = 2.0;
     }
-    if (!app.count("--smoothing-sigma")) {
+    if (app.count("--smoothing-sigma") == 0u) {
       opts.smoothing_sigma = 0.15;
     }
   }
 
   // Handle min-frame conversion
-  if (app.count("--min-frame")) {
+  if (app.count("--min-frame") != 0u) {
     opts.min_frame = min_frame_temp - 1;
-    if (opts.min_frame < 0) {
-      opts.min_frame = 0;
-    }
+    opts.min_frame = std::max(opts.min_frame, 0);
   }
 
   // Process smoothing kernel string (case insensitive, fallback to gaussian)
-  std::transform(k_str.begin(), k_str.end(), k_str.begin(), ::tolower);
+  std::ranges::transform(k_str, k_str.begin(), ::tolower);
   if (k_str == "gaussian" || k_str == "gauss") {
     opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
   } else if (k_str == "bump") {
@@ -267,7 +265,7 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
 
   // Default output base: same directory and stem as input
   if (opts.output_base.empty()) {
-    std::filesystem::path p(opts.input_file);
+    std::filesystem::path const p(opts.input_file);
     opts.output_base = (p.parent_path() / p.stem()).lexically_normal().string();
   }
 

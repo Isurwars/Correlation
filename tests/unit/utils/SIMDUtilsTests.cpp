@@ -37,7 +37,7 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
   const double Q = 2.5;
 
-  for (size_t size : sizes) {
+  for (size_t const size : sizes) {
     std::vector<double> integrand = generateRandomData(size);
     std::vector<double> rbins = generateRandomData(size, true); // r must be positive
     std::vector<double> scratch(size, 0.0);
@@ -49,7 +49,7 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
     }
 
     // Call the SIMD implementation
-    double actual_acc = correlation::math::sinc_integral(Q, integrand.data(), rbins.data(), scratch.data(), size);
+    double const actual_acc = correlation::math::sinc_integral(Q, integrand.data(), rbins.data(), scratch.data(), size);
 
     // Assert with a small tolerance due to potential floating point reordering
     // in SIMD
@@ -64,17 +64,17 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
 
   // Single atom A
-  double ax = dist(gen);
-  double ay = dist(gen);
-  double az = dist(gen);
+  double const ax = dist(gen);
+  double const ay = dist(gen);
+  double const az = dist(gen);
 
-  for (size_t size : sizes) {
+  for (size_t const size : sizes) {
     // Block of atoms B
     std::vector<double> bx = generateRandomData(size);
     std::vector<double> by = generateRandomData(size);
     std::vector<double> bz = generateRandomData(size);
 
-    correlation::math::PositionBlock block{bx.data(), by.data(), bz.data(), size};
+    correlation::math::PositionBlock const block{.x=bx.data(), .y=by.data(), .z=bz.data(), .count=size};
 
     // Output array, initialized to -1 to detect unwritten values
     std::vector<double> actual_dsq(size, -1.0);
@@ -105,7 +105,7 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
   const double inv_Nj_dr = 0.2;
   const double pi4_rho_j = 3.14;
 
-  for (size_t size : sizes) {
+  for (size_t const size : sizes) {
     std::vector<double> H = generateRandomData(size, true);
     std::vector<double> rbins = generateRandomData(size, true);
     // Ensure rbins[0] is very small/zero as happens in practice
@@ -123,8 +123,9 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
     // Compare with scalar logic from index 1
     for (size_t k = 1; k < size; ++k) {
       const double r = rbins[k];
-      if (r < 1e-9)
+      if (r < 1e-9) {
         continue;
+}
 
       const double expected_g = H[k] * g_norm / (r * r);
       const double expected_G = pi4_rho_j * r * (expected_g - 1.0);
@@ -146,7 +147,7 @@ TEST_F(SIMDUtilsTests, ScaleBinsMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100};
   const double scale_factor = 2.5;
 
-  for (size_t size : sizes) {
+  for (size_t const size : sizes) {
     std::vector<double> data = generateRandomData(size);
     std::vector<double> expected = data;
 
@@ -168,11 +169,11 @@ TEST_F(SIMDUtilsTests, ScaleBinsMatchesScalar) {
 TEST_F(SIMDUtilsTests, DotBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100};
 
-  double v1x = dist(gen);
-  double v1y = dist(gen);
-  double v1z = dist(gen);
+  double const v1x = dist(gen);
+  double const v1y = dist(gen);
+  double const v1z = dist(gen);
 
-  for (size_t size : sizes) {
+  for (size_t const size : sizes) {
     std::vector<double> v2x = generateRandomData(size);
     std::vector<double> v2y = generateRandomData(size);
     std::vector<double> v2z = generateRandomData(size);

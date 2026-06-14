@@ -27,19 +27,19 @@ Cell::Cell(const std::array<double, 6> &params) { setLatticeParameters(params); 
 
 // Move Constructor
 Cell::Cell(Cell &&other) noexcept
-    : lattice_vectors_(std::move(other.lattice_vectors_)),
-      inverse_lattice_vectors_(std::move(other.inverse_lattice_vectors_)),
-      lattice_parameters_(std::move(other.lattice_parameters_)), volume_(std::move(other.volume_)),
-      energy_(std::move(other.energy_)), atoms_(std::move(other.atoms_)), elements_(std::move(other.elements_)) {}
+    : lattice_vectors_(other.lattice_vectors_),
+      inverse_lattice_vectors_(other.inverse_lattice_vectors_),
+      lattice_parameters_(other.lattice_parameters_), volume_(other.volume_),
+      energy_(other.energy_), atoms_(std::move(other.atoms_)), elements_(std::move(other.elements_)) {}
 
 // Move Assignment Operator
 Cell &Cell::operator=(Cell &&other) noexcept {
   if (this != &other) {
-    lattice_vectors_ = std::move(other.lattice_vectors_);
-    inverse_lattice_vectors_ = std::move(other.inverse_lattice_vectors_);
-    lattice_parameters_ = std::move(other.lattice_parameters_);
-    volume_ = std::move(other.volume_);
-    energy_ = std::move(other.energy_);
+    lattice_vectors_ = other.lattice_vectors_;
+    inverse_lattice_vectors_ = other.inverse_lattice_vectors_;
+    lattice_parameters_ = other.lattice_parameters_;
+    volume_ = other.volume_;
+    energy_ = other.energy_;
     atoms_ = std::move(other.atoms_);
     elements_ = std::move(other.elements_);
   }
@@ -52,7 +52,9 @@ Cell &Cell::operator=(Cell &&other) noexcept {
 
 void Cell::setLatticeParameters(std::array<double, 6> params) {
   lattice_parameters_ = params;
-  const double a = params[0], b = params[1], c = params[2];
+  const double a = params[0];
+  const double b = params[1];
+  const double c = params[2];
   const double alpha = params[3] * math::deg_to_rad;
   const double beta = params[4] * math::deg_to_rad;
   const double gamma = params[5] * math::deg_to_rad;
@@ -70,8 +72,8 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
 
   // Standard conversion from lattice parameters (lengths and angles) to lattice
   // vectors. We align 'a' with the x-axis, and 'b' in the xy-plane.
-  math::Vector3<double> v_a = {a, 0.0, 0.0};
-  math::Vector3<double> v_b = {b * cos_g, b * sin_g, 0.0};
+  math::Vector3<double> const v_a = {a, 0.0, 0.0};
+  math::Vector3<double> const v_b = {b * cos_g, b * sin_g, 0.0};
   math::Vector3<double> v_c = {
       c * std::cos(beta), c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g,
       0.0 // z-component is calculated from volume
@@ -124,7 +126,7 @@ void Cell::updateLatticeParametersFromVectors() {
 //---------------------------------------------------------------------------//
 
 std::optional<Element> Cell::findElement(const std::string &symbol) const {
-  auto it = std::find_if(elements_.begin(), elements_.end(), [&](const Element &e) { return e.symbol == symbol; });
+  auto it = std::ranges::find_if(elements_, [&](const Element &e) { return e.symbol == symbol; });
   if (it != elements_.end()) {
     return *it;
   }
@@ -137,16 +139,16 @@ ElementID Cell::getOrRegisterElement(const std::string &symbol) {
   }
   // Register the new element
   ElementID new_id{static_cast<int>(elements_.size())};
-  elements_.push_back({symbol, new_id});
+  elements_.push_back({.symbol=symbol, .id=new_id});
   return new_id;
 }
 
 Atom &Cell::addAtom(const std::string &symbol, const math::Vector3<double> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
-  auto element_it = std::find_if(elements_.begin(), elements_.end(),
+  auto element_it = std::ranges::find_if(elements_,
                                  [&](const Element &e) { return e.id.value == element_id.value; });
 
-  AtomID new_atom_id{static_cast<std::uint32_t>(atoms_.size())};
+  AtomID const new_atom_id{static_cast<std::uint32_t>(atoms_.size())};
   atoms_.emplace_back(*element_it, position, new_atom_id);
   return atoms_.back();
 }

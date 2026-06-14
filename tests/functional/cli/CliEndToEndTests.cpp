@@ -29,7 +29,7 @@ const std::string CLI_BIN = CORRELATION_CLI_PATH;
 
 // Helper to find the test data directory relative to the build dir.
 std::string getTestDataDir() {
-  std::vector<std::string> candidates = {
+  std::vector<std::string> const candidates = {
       "../../tests/data/", // build/tests -> tests/data
       "../tests/data/",    // build -> tests/data
       "tests/data/",       // project root
@@ -48,9 +48,9 @@ int runCli(const std::string &args) {
 #ifdef _WIN32
   std::string cmd = CLI_BIN + " " + args + " 2>nul";
 #else
-  std::string cmd = CLI_BIN + " " + args + " 2>/dev/null";
+  std::string const cmd = CLI_BIN + " " + args + " 2>/dev/null";
 #endif
-  int status = std::system(cmd.c_str());
+  int const status = std::system(cmd.c_str());
 #ifdef _WIN32
   return status;
 #else
@@ -63,13 +63,14 @@ std::string runCliCapture(const std::string &args) {
 #ifdef _WIN32
   std::string cmd = CLI_BIN + " " + args + " 2>nul";
 #else
-  std::string cmd = CLI_BIN + " " + args + " 2>/dev/null";
+  std::string const cmd = CLI_BIN + " " + args + " 2>/dev/null";
 #endif
   std::array<char, 512> buffer{};
   std::string result;
   FILE *pipe = popen(cmd.c_str(), "r");
-  if (!pipe)
+  if (pipe == nullptr) {
     return "";
+}
   while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe) != nullptr) {
     result += buffer.data();
   }
@@ -92,7 +93,7 @@ TEST_F(CliEndToEndTests, HelpReturnsZero) { EXPECT_EQ(runCli("--help"), 0); }
 TEST_F(CliEndToEndTests, VersionReturnsZero) { EXPECT_EQ(runCli("--version"), 0); }
 
 TEST_F(CliEndToEndTests, VersionPrintsVersionString) {
-  std::string output = runCliCapture("--version");
+  std::string const output = runCliCapture("--version");
   EXPECT_NE(output.find("Correlation version"), std::string::npos) << "Actual output: " << output;
 }
 
@@ -108,10 +109,10 @@ TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   // Use a temp directory for output so we don't pollute the test data dir
   auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_test";
   std::filesystem::create_directories(tmp_dir);
-  std::string out_base = (tmp_dir / "result").string();
+  std::string const out_base = (tmp_dir / "result").string();
 
-  std::string input = data_dir_ + "Si.poscar";
-  int rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+  std::string const input = data_dir_ + "Si.poscar";
+  int const rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
 
   // Clean up
   std::filesystem::remove_all(tmp_dir);
@@ -126,11 +127,11 @@ TEST_F(CliEndToEndTests, ShortVersionFlag) { EXPECT_EQ(runCli("-v"), 0); }
 TEST_F(CliEndToEndTests, DefaultExecutesAllCalculators) {
   auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_default_groups";
   std::filesystem::create_directories(tmp_dir);
-  std::string out_base = (tmp_dir / "result").string();
+  std::string const out_base = (tmp_dir / "result").string();
 
-  std::string input = data_dir_ + "Si.poscar";
+  std::string const input = data_dir_ + "Si.poscar";
   // Run with no disable-groups flags -> should default to running all groups
-  int rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+  int const rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
 
   EXPECT_EQ(rc, 0);
   
@@ -148,11 +149,11 @@ TEST_F(CliEndToEndTests, DefaultExecutesAllCalculators) {
 TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
   auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_disable_radial";
   std::filesystem::create_directories(tmp_dir);
-  std::string out_base = (tmp_dir / "result").string();
+  std::string const out_base = (tmp_dir / "result").string();
 
-  std::string input = data_dir_ + "Si.poscar";
+  std::string const input = data_dir_ + "Si.poscar";
   // Run with radial and scattering groups disabled
-  int rc = runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering");
+  int const rc = runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering");
 
   EXPECT_EQ(rc, 0);
 
@@ -170,11 +171,11 @@ TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
 TEST_F(CliEndToEndTests, DisableStructuralGroup) {
   auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_e2e_disable_structural";
   std::filesystem::create_directories(tmp_dir);
-  std::string out_base = (tmp_dir / "result").string();
+  std::string const out_base = (tmp_dir / "result").string();
 
-  std::string input = data_dir_ + "Si.poscar";
+  std::string const input = data_dir_ + "Si.poscar";
   // Run disabling structural group
-  int rc = runCli(input + " --quiet -o " + out_base + " --disable-groups structural --r-max 10 --r-bin 0.1");
+  int const rc = runCli(input + " --quiet -o " + out_base + " --disable-groups structural --r-max 10 --r-bin 0.1");
 
   EXPECT_EQ(rc, 0);
 

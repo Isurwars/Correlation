@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #define NOMINMAX
 #define IDI_ICON1 101
 #include <Windows.h>
@@ -16,7 +16,7 @@
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 /**
  * @brief Main entry point of the application.
@@ -28,7 +28,7 @@
  */
 int main() {
 
-#if defined(_WIN32)
+#ifdef _WIN32
   // Load the icon from the application's resource file
   HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
 #endif
@@ -37,7 +37,7 @@ int main() {
   correlation::app::AppBackend backend;
 
   // Instantiate the controller, which sets up all callbacks
-  correlation::app::AppController controller(*ui, backend);
+  correlation::app::AppController const controller(*ui, backend);
 
   ui->run();
 

@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <iterator>
 #include <map>
 #include <tbb/blocked_range.h>
@@ -64,7 +65,7 @@ void get_paths(size_t node, size_t root, const std::vector<std::vector<correlati
     return;
   }
   current_path.push_back(static_cast<correlation::core::AtomID>(node));
-  for (correlation::core::AtomID p : parents[node]) {
+  for (correlation::core::AtomID const p : parents[node]) {
     get_paths(p, root, parents, current_path, all_paths);
   }
   current_path.pop_back();
@@ -76,15 +77,16 @@ void get_paths(size_t node, size_t root, const std::vector<std::vector<correlati
 // ---------------------------------------------------------------------------
 bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector<correlation::core::AtomID> &cycle,
                 std::vector<int> &dist_king, std::vector<size_t> &q_king) {
-  int n = cycle.size();
-  if (n < 3)
+  int const n = cycle.size();
+  if (n < 3) {
     return false;
+}
 
   std::vector<size_t> visited_nodes;
-  visited_nodes.reserve(n * 10);
+  visited_nodes.reserve(static_cast<size_t>(n * 10));
 
   for (int i = 0; i < n; ++i) {
-    size_t start_node = cycle[i];
+    size_t const start_node = cycle[i];
 
     q_king.clear();
     visited_nodes.clear();
@@ -94,17 +96,18 @@ bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector
     visited_nodes.push_back(start_node);
 
     size_t q_head = 0;
-    int max_check_dist = n / 2;
+    int const max_check_dist = n / 2;
 
     while (q_head < q_king.size()) {
-      size_t u = q_king[q_head++];
-      int current_dist = dist_king[u];
+      size_t const u = q_king[q_head++];
+      int const current_dist = dist_king[u];
 
-      if (current_dist >= max_check_dist)
+      if (current_dist >= max_check_dist) {
         continue;
+}
 
       for (const auto &neighbor : graph.getNeighbors(u)) {
-        size_t v = neighbor.index;
+        size_t const v = neighbor.index;
         if (dist_king[v] == -1) {
           dist_king[v] = current_dist + 1;
           q_king.push_back(v);
@@ -115,21 +118,24 @@ bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector
 
     bool is_king = true;
     for (int j = 0; j < n; ++j) {
-      if (i == j)
+      if (i == j) {
         continue;
-      size_t target_node = cycle[j];
-      int dist_in_cycle = std::min(std::abs(j - i), n - std::abs(j - i));
+}
+      size_t const target_node = cycle[j];
+      int const dist_in_cycle = std::min(std::abs(j - i), n - std::abs(j - i));
       if (dist_king[target_node] != -1 && dist_king[target_node] < dist_in_cycle) {
         is_king = false;
         break;
       }
     }
 
-    for (size_t v : visited_nodes)
+    for (size_t const v : visited_nodes) {
       dist_king[v] = -1;
+}
 
-    if (!is_king)
+    if (!is_king) {
       return false;
+}
   }
 
   return true;
@@ -160,41 +166,48 @@ void process_root(const correlation::core::NeighborGraph &graph, size_t root, si
     size_t u = sc.q[q_head++];
 
     for (const auto &neighbor : graph.getNeighbors(u)) {
-      size_t v = neighbor.index;
+      size_t const v = neighbor.index;
 
-      if (v == u)
+      if (v == u) {
         continue;
-      if (v < root)
+}
+      if (v < root) {
         continue;
+}
 
       if (sc.dist[v] == -1) {
         sc.dist[v] = sc.dist[u] + 1;
         sc.parents[v].push_back(static_cast<correlation::core::AtomID>(u));
         sc.visited.push_back(v);
-        if (2 * sc.dist[v] + 1 <= static_cast<int>(max_size))
+        if (2 * sc.dist[v] + 1 <= static_cast<int>(max_size)) {
           sc.q.push_back(v);
+}
       } else if (sc.dist[v] == sc.dist[u]) {
-        if (u < v)
-          sc.cross_edges.push_back({u, v});
+        if (u < v) {
+          sc.cross_edges.emplace_back(u, v);
+}
       } else if (sc.dist[v] == sc.dist[u] + 1) {
         if (std::find(sc.parents[v].begin(), sc.parents[v].end(), static_cast<correlation::core::AtomID>(u)) ==
             sc.parents[v].end()) {
           sc.parents[v].push_back(static_cast<correlation::core::AtomID>(u));
-          sc.cross_edges.push_back({u, v});
+          sc.cross_edges.emplace_back(u, v);
         }
       }
     }
   }
 
   for (const auto &edge : sc.cross_edges) {
-    size_t u = edge.first;
-    size_t v = edge.second;
+    size_t const u = edge.first;
+    size_t const v = edge.second;
 
-    if (sc.dist[u] + sc.dist[v] + 1 > static_cast<int>(max_size))
+    if (sc.dist[u] + sc.dist[v] + 1 > static_cast<int>(max_size)) {
       continue;
+}
 
-    std::vector<std::vector<correlation::core::AtomID>> paths_u, paths_v;
-    std::vector<correlation::core::AtomID> cur_u, cur_v;
+    std::vector<std::vector<correlation::core::AtomID>> paths_u;
+    std::vector<std::vector<correlation::core::AtomID>> paths_v;
+    std::vector<correlation::core::AtomID> cur_u;
+    std::vector<correlation::core::AtomID> cur_v;
     cur_u.reserve(max_size);
     cur_v.reserve(max_size);
 
@@ -204,39 +217,47 @@ void process_root(const correlation::core::NeighborGraph &graph, size_t root, si
     for (const auto &pu : paths_u) {
       for (const auto &pv : paths_v) {
         bool intersect = false;
-        for (size_t i = 0; i < pu.size() - 1 && !intersect; ++i)
-          for (size_t j = 0; j < pv.size() - 1; ++j)
+        for (size_t i = 0; i < pu.size() - 1 && !intersect; ++i) {
+          for (size_t j = 0; j < pv.size() - 1; ++j) {
             if (pu[i] == pv[j]) {
               intersect = true;
               break;
             }
+}
+}
 
-        if (intersect)
+        if (intersect) {
           continue;
+}
 
         std::vector<correlation::core::AtomID> cycle;
         cycle.reserve(pu.size() + pv.size() - 1);
         cycle.push_back(static_cast<correlation::core::AtomID>(root));
-        for (int i = static_cast<int>(pu.size()) - 2; i >= 0; --i)
+        for (int i = static_cast<int>(pu.size()) - 2; i >= 0; --i) {
           cycle.push_back(pu[i]);
-        for (size_t i = 0; i < pv.size() - 1; ++i)
+}
+        for (size_t i = 0; i < pv.size() - 1; ++i) {
           cycle.push_back(pv[i]);
+}
 
-        if (cycle.size() < 3 || cycle.size() > max_size)
+        if (cycle.size() < 3 || cycle.size() > max_size) {
           continue;
+}
 
         // Normalise direction
-        if (cycle[1] > cycle.back())
+        if (cycle[1] > cycle.back()) {
           std::reverse(cycle.begin() + 1, cycle.end());
+}
 
-        if (isKingRing(graph, cycle, sc.dist_king, sc.q_king))
+        if (isKingRing(graph, cycle, sc.dist_king, sc.q_king)) {
           sc.local_cycles.push_back(std::move(cycle));
+}
       }
     }
   }
 
   // Selective reset: only touch the nodes we visited
-  for (size_t v : sc.visited) {
+  for (size_t const v : sc.visited) {
     sc.dist[v] = -1;
     sc.parents[v].clear();
   }
@@ -248,12 +269,14 @@ void process_root(const correlation::core::NeighborGraph &graph, size_t root, si
 std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const correlation::core::NeighborGraph &graph,
                                                                         size_t max_size) {
   std::vector<std::vector<correlation::core::AtomID>> all_cycles;
-  if (max_size < 3)
+  if (max_size < 3) {
     return all_cycles;
+}
 
   const size_t num_nodes = graph.nodeCount();
-  if (num_nodes == 0)
+  if (num_nodes == 0) {
     return all_cycles;
+}
 
   // Each TBB thread owns one BFSScratch, sized at construction and reused
   // across all root iterations assigned to that thread.
@@ -266,8 +289,9 @@ std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const co
       tbb::blocked_range<size_t>(0, num_nodes, /*grain=*/16),
       [&](const tbb::blocked_range<size_t> &range) {
         BFSScratch &sc = ets.local();
-        for (size_t root = range.begin(); root != range.end(); ++root)
+        for (size_t root = range.begin(); root != range.end(); ++root) {
           process_root(graph, root, max_size, sc);
+}
       },
       tbb::auto_partitioner{});
 
@@ -279,8 +303,9 @@ std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const co
 
   // Final deduplication (oriented cycles may still have orientation variants
   // produced by different paths within the same root's BFS)
-  std::sort(all_cycles.begin(), all_cycles.end());
-  all_cycles.erase(std::unique(all_cycles.begin(), all_cycles.end()), all_cycles.end());
+  std::ranges::sort(all_cycles);
+  auto [first, last] = std::ranges::unique(all_cycles);
+  all_cycles.erase(first, last);
 
   return all_cycles;
 }
@@ -293,8 +318,9 @@ std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const co
 std::map<int, size_t> MotifFinder::findRings(const correlation::core::NeighborGraph &graph, size_t max_size) {
   auto all_cycles = getAllShortestRings(graph, max_size);
   std::map<int, size_t> ring_counts;
-  for (const auto &cycle : all_cycles)
+  for (const auto &cycle : all_cycles) {
     ring_counts[static_cast<int>(cycle.size())]++;
+}
   return ring_counts;
 }
 
@@ -303,9 +329,11 @@ MotifFinder::extractCycles(const correlation::core::NeighborGraph &graph, size_t
   auto all_cycles = getAllShortestRings(graph, target_size);
   std::vector<std::vector<correlation::core::AtomID>> exact_cycles;
   exact_cycles.reserve(all_cycles.size());
-  for (auto &cycle : all_cycles)
-    if (cycle.size() == target_size)
+  for (auto &cycle : all_cycles) {
+    if (cycle.size() == target_size) {
       exact_cycles.push_back(std::move(cycle));
+}
+}
   return exact_cycles;
 }
 

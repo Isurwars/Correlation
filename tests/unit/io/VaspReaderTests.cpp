@@ -16,7 +16,7 @@ namespace {
 // Helper to find the test data directory relative to the executable
 std::string getTestDataDir() {
   // Try common paths relative to the build directory
-  std::vector<std::string> candidates = {
+  std::vector<std::string> const candidates = {
       "../../tests/data/", // build/tests -> tests/data
       "../tests/data/",    // build -> tests/data
       "tests/data/",       // project root
@@ -110,7 +110,7 @@ TEST_F(VaspReaderTests, ScalingFactorApplied) {
 }
 
 TEST_F(VaspReaderTests, ReaderIsRegisteredInFactory) {
-  correlation::readers::VaspReader reader;
+  correlation::readers::VaspReader const reader;
   EXPECT_EQ(reader.getName(), "VASP POSCAR");
   EXPECT_FALSE(reader.isTrajectory());
 

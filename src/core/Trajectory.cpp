@@ -11,6 +11,7 @@
 #include "math/LinearAlgebra.hpp"
 #include "physics/PhysicalData.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
@@ -90,11 +91,11 @@ const Cell &Trajectory::firstFrame() const {
 
 void Trajectory::ensureMaterialized() const {
   if (mapped_file_) {
-    std::lock_guard<std::mutex> lock(*init_mutex_);
+    std::scoped_lock const lock(*init_mutex_);
     if (!mapped_file_ || !frames_.empty()) {
       return;
     }
-    size_t count = getFrameCount();
+    size_t const count = getFrameCount();
     frames_.resize(count);
     for (size_t i = 0; i < count; ++i) {
       frames_[i] = parser_(mapped_file_->data() + frame_offsets_[i], frame_offsets_[i + 1] - frame_offsets_[i]);
@@ -104,11 +105,13 @@ void Trajectory::ensureMaterialized() const {
 }
 
 double Trajectory::getBondCutoffSQ(int type1, int type2) const {
-  if (bond_cutoffs_sq_.empty())
+  if (bond_cutoffs_sq_.empty()) {
     precomputeBondCutoffs();
+}
 
-  if (type1 >= bond_cutoffs_sq_.size() || type2 >= bond_cutoffs_sq_.size())
+  if (type1 >= bond_cutoffs_sq_.size() || type2 >= bond_cutoffs_sq_.size()) {
     return 0.0;
+}
 
   return bond_cutoffs_sq_[type1][type2];
 }
@@ -135,10 +138,11 @@ void Trajectory::addFrame(const Cell &frame) {
 }
 
 void Trajectory::precomputeBondCutoffs() const {
-  if (getFrameCount() == 0)
+  if (getFrameCount() == 0) {
     return;
+}
 
-  Cell first_frame = getFrame(0);
+  Cell const first_frame = getFrame(0);
   const auto &elements = first_frame.elements();
   const size_t num_elements = elements.size();
   bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
@@ -218,13 +222,15 @@ void Trajectory::calculateVelocities() {
   frame_offsets_.clear();
   parser_ = nullptr;
 
-  if (frames_.size() < 2)
+  if (frames_.size() < 2) {
     return;
-  size_t num_frames = frames_.size();
-  size_t num_atoms = frames_[0].atoms().size();
+}
+  size_t const num_frames = frames_.size();
+  size_t const num_atoms = frames_[0].atoms().size();
 
-  if (time_step_ <= 0.0)
+  if (time_step_ <= 0.0) {
     return; // Cannot calculate valid velocities
+}
 
   for (size_t t = 0; t < num_frames; ++t) {
     // Check if the frame has a valid periodic cell (volume > 0).
@@ -288,7 +294,7 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   // Map new element IDs to reference element IDs for fast comparison
   std::vector<int> new_to_ref(new_elements.size(), -1);
   for (size_t i = 0; i < new_elements.size(); ++i) {
-    auto it = std::find(ref_elements.begin(), ref_elements.end(), new_elements[i]);
+    auto it = std::ranges::find(ref_elements, new_elements[i]);
     if (it == ref_elements.end()) {
       throw std::runtime_error("Frame validation failed: Element symbol mismatch at index " + std::to_string(i) +
                                ". Expected " + ref_elements[i].symbol + ", but got " + new_elements[i].symbol);

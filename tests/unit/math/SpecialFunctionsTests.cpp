@@ -43,30 +43,30 @@ TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
   const double theta = 0.5; // in radians
 
   // l=0, m=0: Y_0^0 = 1 / sqrt(4 * pi)
-  double y00_expected = 1.0 / std::sqrt(4.0 * M_PI);
+  double const y00_expected = 1.0 / std::sqrt(4.0 * M_PI);
   EXPECT_NEAR(sph_legendre(0, 0, theta), y00_expected, 1e-9);
 
   // l=1, m=0: Y_1^0 = sqrt(3 / (4 * pi)) * cos(theta)
-  double y10_expected = std::sqrt(3.0 / (4.0 * M_PI)) * std::cos(theta);
+  double const y10_expected = std::sqrt(3.0 / (4.0 * M_PI)) * std::cos(theta);
   EXPECT_NEAR(sph_legendre(1, 0, theta), y10_expected, 1e-9);
 
   // l=1, m=1: Y_1^1 = sqrt(3 / (8 * pi)) * sin(theta) (without Condon-Shortley phase)
-  double y11_expected = std::sqrt(3.0 / (8.0 * M_PI)) * std::sin(theta);
+  double const y11_expected = std::sqrt(3.0 / (8.0 * M_PI)) * std::sin(theta);
   EXPECT_NEAR(sph_legendre(1, 1, theta), y11_expected, 1e-9);
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
   std::vector<double> angles = {0.0, 0.2, 0.5, M_PI / 2.0, 2.1, M_PI - 0.1, M_PI};
-  size_t count = angles.size();
+  size_t const count = angles.size();
   std::vector<double> batch_results(count);
 
   // Test different combinations of l and m
-  std::vector<std::pair<int, int>> l_m_pairs = {{0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2}};
+  std::vector<std::pair<int, int>> const l_m_pairs = {{0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2}};
 
   for (const auto &[l, m] : l_m_pairs) {
     sph_legendre_batch(l, m, angles.data(), batch_results.data(), count);
     for (size_t i = 0; i < count; ++i) {
-      double expected = sph_legendre(l, m, angles[i]);
+      double const expected = sph_legendre(l, m, angles[i]);
       EXPECT_NEAR(batch_results[i], expected, 1e-9) << "Mismatch at index " << i << " for l=" << l << ", m=" << m;
     }
   }

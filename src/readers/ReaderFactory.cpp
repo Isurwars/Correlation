@@ -19,16 +19,19 @@ ReaderFactory &ReaderFactory::instance() {
 }
 
 bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
-  if (!reader)
+  if (!reader) {
     return false;
+}
 
   for (const auto &ext : reader->getExtensions()) {
     std::string lower_ext = ext;
-    if (lower_ext.empty())
+    if (lower_ext.empty()) {
       continue;
-    if (lower_ext[0] != '.')
+}
+    if (lower_ext[0] != '.') {
       lower_ext = "." + lower_ext;
-    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
+}
+    std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
     extension_map_[lower_ext] = reader.get();
   }
 
@@ -38,11 +41,13 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
 
 BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, const std::string &filename) {
   std::string lower_ext = extension;
-  if (lower_ext.empty())
+  if (lower_ext.empty()) {
     return nullptr;
-  if (lower_ext[0] != '.')
+}
+  if (lower_ext[0] != '.') {
     lower_ext = "." + lower_ext;
-  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
+}
+  std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
 
   if ((lower_ext == ".out" || lower_ext == ".in") && !filename.empty()) {
     std::ifstream file(filename);
@@ -52,19 +57,20 @@ BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, c
       for (int i = 0; i < 200 && std::getline(file, line); ++i) {
         // Convert to uppercase for matching
         std::string uline = line;
-        for (auto &c : uline)
+        for (auto &c : uline) {
           c = toupper(c);
+}
 
-        if (uline.find("CELL_PARAMETERS") != std::string::npos || uline.find("ATOMIC_POSITIONS") != std::string::npos ||
-            uline.find("QUANTUM ESPRESSO") != std::string::npos || uline.find("PWSCF") != std::string::npos ||
-            uline.find("&CONTROL") != std::string::npos || uline.find("&SYSTEM") != std::string::npos) {
+        if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||
+            uline.contains("QUANTUM ESPRESSO") || uline.contains("PWSCF") ||
+            uline.contains("&CONTROL") || uline.contains("&SYSTEM")) {
           auto it = extension_map_.find(".pwo");
           if (it != extension_map_.end()) {
             return it->second;
           }
         }
-        if (uline.find("&CELL") != std::string::npos || uline.find("&COORD") != std::string::npos ||
-            uline.find("&GLOBAL") != std::string::npos || uline.find("CP2K") != std::string::npos) {
+        if (uline.contains("&CELL") || uline.contains("&COORD") ||
+            uline.contains("&GLOBAL") || uline.contains("CP2K")) {
           auto it = extension_map_.find(".restart");
           if (it != extension_map_.end()) {
             return it->second;

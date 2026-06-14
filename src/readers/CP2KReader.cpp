@@ -49,18 +49,20 @@ CP2KReader::readTrajectory(const std::string &filename,
     line.erase(0, line.find_first_not_of(" \t\r\n"));
     line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
-    if (line.empty() || line[0] == '#' || line[0] == '!')
+    if (line.empty() || line[0] == '#' || line[0] == '!') {
       continue;
+}
 
     // To uppercase for easier matching
     std::string uline = line;
-    for (auto &c : uline)
+    for (auto &c : uline) {
       c = toupper(c);
+}
 
-    if (uline.find("&CELL") == 0) {
+    if (uline.starts_with("&CELL")) {
       parsing_cell = true;
       parsing_coords = false;
-    } else if (uline.find("&COORD") == 0) {
+    } else if (uline.starts_with("&COORD")) {
       parsing_coords = true;
       parsing_cell = false;
       if (current_cell.atomCount() > 0) {
@@ -70,7 +72,7 @@ CP2KReader::readTrajectory(const std::string &filename,
           current_cell.setLatticeParameters(frames.back().lattice_parameters());
         }
       }
-    } else if (uline.find("&END CELL") == 0 || uline.find("&END COORD") == 0) {
+    } else if (uline.starts_with("&END CELL") || uline.starts_with("&END COORD")) {
       parsing_cell = false;
       parsing_coords = false;
     } else if (parsing_cell) {
@@ -78,7 +80,9 @@ CP2KReader::readTrajectory(const std::string &filename,
       std::string token;
       iss >> token;
       if (token == "ABC") {
-        double a, b, c;
+        double a;
+        double b;
+        double c;
         if (iss >> a >> b >> c) {
           current_cell.setLatticeParameters({a, b, c, 90.0, 90.0, 90.0});
           has_box = true;
@@ -89,7 +93,9 @@ CP2KReader::readTrajectory(const std::string &filename,
     } else if (parsing_coords) {
       std::istringstream iss(line); // Original line for case sensitivity in symbols
       std::string symbol;
-      double x, y, z;
+      double x;
+      double y;
+      double z;
       if (iss >> symbol >> x >> y >> z) {
         current_cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
       }
@@ -106,10 +112,11 @@ CP2KReader::readTrajectory(const std::string &filename,
     throw std::runtime_error("No structure found in CP2K file: " + filename);
   }
 
-  if (progress_callback)
-    progress_callback(1.0f, "CP2K trajectory loaded.");
+  if (progress_callback) {
+    progress_callback(1.0F, "CP2K trajectory loaded.");
+}
 
-  return correlation::core::Trajectory(frames, 1.0);
+  return {frames, 1.0};
 }
 
 } // namespace correlation::readers

@@ -32,12 +32,13 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   const correlation::core::Cell &cell = df.cell();
   const auto &atoms = cell.atoms();
   const size_t N = atoms.size();
-  if (N == 0)
+  if (N == 0) {
     return;
+}
 
   const double q_max = settings.q_max;
   const double q_bin_width = settings.q_bin_width;
-  const size_t num_q_bins = static_cast<size_t>(std::floor(q_max / q_bin_width));
+  const auto num_q_bins = static_cast<size_t>(std::floor(q_max / q_bin_width));
   if (num_q_bins == 0) {
     throw std::invalid_argument("Q_max is too small for the given Q_bin_width.");
   }
@@ -82,14 +83,15 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   for (int h = -hmax; h <= hmax; ++h) {
     for (int k = -kmax; k <= kmax; ++k) {
       for (int l = -lmax; l <= lmax; ++l) {
-        if (h == 0 && k == 0 && l == 0)
+        if (h == 0 && k == 0 && l == 0) {
           continue;
+}
         const double qx = h * bx_x + k * by_x + l * bz_x;
         const double qy = h * bx_y + k * by_y + l * bz_y;
         const double qz = h * bx_z + k * by_z + l * bz_z;
         const double qmag_sq = qx * qx + qy * qy + qz * qz;
         if (qmag_sq <= q_max_sq) {
-          q_vectors.push_back({h, k, l, std::sqrt(qmag_sq)});
+          q_vectors.push_back({.h=h, .k=k, .l=l, .qmag=std::sqrt(qmag_sq)});
         }
       }
     }
@@ -124,12 +126,14 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   // We'll store positions contiguously: all of type0, then type1, etc.
   struct TypeBlock {
     std::string symbol;
-    size_t offset; // start index in flat position arrays
-    size_t count;
+    size_t offset{}; // start index in flat position arrays
+    size_t count{};
   };
   std::vector<TypeBlock> type_blocks;
   type_blocks.reserve(indices_by_type.size());
-  std::vector<double> xs(N), ys(N), zs(N);
+  std::vector<double> xs(N);
+  std::vector<double> ys(N);
+  std::vector<double> zs(N);
 
   size_t flat_offset = 0;
   for (const auto &[sym, idxs] : indices_by_type) {
@@ -152,13 +156,14 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
     for (size_t tj = ti; tj < type_blocks.size(); ++tj) {
       const auto &tbA = type_blocks[ti];
       const auto &tbB = type_blocks[tj];
-      bool is_identical = (ti == tj);
-      std::string key = (tbA.symbol < tbB.symbol) ? (tbA.symbol + "-" + tbB.symbol) : (tbB.symbol + "-" + tbA.symbol);
+      bool const is_identical = (ti == tj);
+      std::string const key = (tbA.symbol < tbB.symbol) ? (tbA.symbol + "-" + tbB.symbol) : (tbB.symbol + "-" + tbA.symbol);
       double w = 0.0;
       auto wit = ashcroft_weights.find(key);
-      if (wit != ashcroft_weights.end())
+      if (wit != ashcroft_weights.end()) {
         w = wit->second;
-      partials_info.push_back({key, ti, tj, tbA.count, tbB.count, is_identical, w});
+}
+      partials_info.push_back({.key=key, .typeA_idx=ti, .typeB_idx=tj, .N_A=tbA.count, .N_B=tbB.count, .is_identical=is_identical, .weight=w});
     }
   }
 
@@ -173,14 +178,19 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
       double *cos_h = &E_cos[(h + max_idx) * N];
       double *sin_h = &E_sin[(h + max_idx) * N];
       for (size_t j = 0; j < N; ++j) {
-        double phase = h * (bx * xs[j] + by * ys[j] + bz * zs[j]);
+        double const phase = h * (bx * xs[j] + by * ys[j] + bz * zs[j]);
         cos_h[j] = std::cos(phase);
         sin_h[j] = std::sin(phase);
       }
     }
   };
 
-  std::vector<double> E1_cos, E1_sin, E2_cos, E2_sin, E3_cos, E3_sin;
+  std::vector<double> E1_cos;
+  std::vector<double> E1_sin;
+  std::vector<double> E2_cos;
+  std::vector<double> E2_sin;
+  std::vector<double> E3_cos;
+  std::vector<double> E3_sin;
   precompute_phases(hmax, bx_x, bx_y, bx_z, E1_cos, E1_sin);
   precompute_phases(kmax, by_x, by_y, by_z, E2_cos, E2_sin);
   precompute_phases(lmax, bz_x, bz_y, bz_z, E3_cos, E3_sin);
@@ -197,11 +207,13 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   s_q_hist.y_unit = "arbitrary units";
   s_q_hist.description = "Structure Factor S(Q)";
   s_q_hist.file_suffix = "_S";
-  for (size_t i = 0; i < num_q_bins; ++i)
+  for (size_t i = 0; i < num_q_bins; ++i) {
     s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
+}
 
-  for (const auto &pi : partials_info)
+  for (const auto &pi : partials_info) {
     s_q_hist.partials[pi.key].assign(num_q_bins, 0.0);
+}
 
   std::vector<double> sq_total_sum(num_q_bins, 0.0);
   std::vector<size_t> sq_total_count(num_q_bins, 0);
@@ -227,9 +239,10 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
 
     for (size_t qi = range.begin(); qi != range.end(); ++qi) {
       const auto &q = q_vectors[qi];
-      const size_t bin = static_cast<size_t>(q.qmag / q_bin_width);
-      if (bin >= num_q_bins)
+      const auto bin = static_cast<size_t>(q.qmag / q_bin_width);
+      if (bin >= num_q_bins) {
         continue;
+}
 
       // Compute cos/sin sums for each type block by multiplying the
       // per-index contributions (already factored by Miller h,k,l).
@@ -239,7 +252,8 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
       for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
         const size_t off = type_blocks[ti].offset;
         const size_t cnt = type_blocks[ti].count;
-        double c_sum = 0.0, s_sum = 0.0;
+        double c_sum = 0.0;
+        double s_sum = 0.0;
         correlation::math::miller_phase_sum(&E1_cos[(q.h + hmax) * N] + off, &E1_sin[(q.h + hmax) * N] + off,
                                             &E2_cos[(q.k + kmax) * N] + off, &E2_sin[(q.k + kmax) * N] + off,
                                             &E3_cos[(q.l + lmax) * N] + off, &E3_sin[(q.l + lmax) * N] + off, cnt,
@@ -249,7 +263,8 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
       }
 
       // Accumulate total S(Q) via the full sum |rho(q)|^2 / N.
-      double full_cos = 0.0, full_sin = 0.0;
+      double full_cos = 0.0;
+      double full_sin = 0.0;
       for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
         full_cos += type_cos[ti];
         full_sin += type_sin[ti];
@@ -264,9 +279,9 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
         const size_t tiA = pinfo.typeA_idx;
         const size_t tiB = pinfo.typeB_idx;
         // Re[rho_A* rho_B] = cosA*cosB + sinA*sinB
-        double cross = type_cos[tiA] * type_cos[tiB] + type_sin[tiA] * type_sin[tiB];
-        double denom = std::sqrt(static_cast<double>(pinfo.N_A) * static_cast<double>(pinfo.N_B));
-        double sq_partial = (denom > 0.0) ? cross / denom : 0.0;
+        double const cross = type_cos[tiA] * type_cos[tiB] + type_sin[tiA] * type_sin[tiB];
+        double const denom = std::sqrt(static_cast<double>(pinfo.N_A) * static_cast<double>(pinfo.N_B));
+        double const sq_partial = (denom > 0.0) ? cross / denom : 0.0;
         local_partial_sums[pi][bin] += sq_partial;
         local_partial_counts[pi][bin] += 1;
       }
@@ -291,15 +306,17 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   // Average and store.
   std::vector<double> total_sq(num_q_bins, 0.0);
   for (size_t i = 0; i < num_q_bins; ++i) {
-    if (sq_total_count[i] > 0)
+    if (sq_total_count[i] > 0) {
       total_sq[i] = sq_total_sum[i] / static_cast<double>(sq_total_count[i]);
+}
   }
 
   for (size_t pi = 0; pi < np; ++pi) {
     auto &out = s_q_hist.partials[partials_info[pi].key];
     for (size_t i = 0; i < num_q_bins; ++i) {
-      if (partial_counts[pi][i] > 0)
+      if (partial_counts[pi][i] > 0) {
         out[i] = partial_sums[pi][i] / static_cast<double>(partial_counts[pi][i]);
+}
     }
   }
 

@@ -42,7 +42,7 @@ void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::an
 }
 
 void CSVWriter::writeHistogramToCSV(const std::string &filename, const std::string &name,
-                                    const correlation::analysis::Histogram &hist) const {
+                                    const correlation::analysis::Histogram &hist) {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
   }

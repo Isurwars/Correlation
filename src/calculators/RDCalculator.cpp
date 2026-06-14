@@ -11,6 +11,7 @@
 #include "calculators/MotifFinder.hpp"
 
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::calculators {
 
@@ -20,7 +21,7 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 
 void RDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
                                   const correlation::analysis::AnalysisSettings &settings) const {
-  if (!df.neighbors()) {
+  if (df.neighbors() == nullptr) {
     return;
   }
   df.addHistogram("RD", calculate(df.neighbors()->neighborGraph(), settings.max_ring_size));
@@ -43,7 +44,7 @@ correlation::analysis::Histogram RDCalculator::calculate(const correlation::core
   f_motif.description = "Ring Distribution";
   f_motif.file_suffix = "_RD";
 
-  size_t num_bins = max_ring_size >= 3 ? (max_ring_size - 2) : 0;
+  size_t const num_bins = max_ring_size >= 3 ? (max_ring_size - 2) : 0;
   f_motif.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
     f_motif.bins[i] = static_cast<double>(i + 3);
@@ -54,8 +55,8 @@ correlation::analysis::Histogram RDCalculator::calculate(const correlation::core
 
   double total_counts = 0;
   for (const auto &[size, count] : rings) {
-    if (size >= 3 && size <= static_cast<int>(max_ring_size)) {
-      size_t bin = static_cast<size_t>(size - 3);
+    if (size >= 3 && std::cmp_less_equal(size ,max_ring_size)) {
+      auto const bin = static_cast<size_t>(size - 3);
       partial_hist[bin] = static_cast<double>(count);
       total_counts += count;
     }

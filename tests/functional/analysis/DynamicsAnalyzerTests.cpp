@@ -8,8 +8,10 @@
 #include "math/LinearAlgebra.hpp"
 #include "readers/FileReader.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <numbers>
 #include <vector>
 
 namespace correlation::analysis {
@@ -54,7 +56,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   EXPECT_GT(max_v_sq, 0.0) << "Particles should be moving";
 
   // 4. Calculate VACF
-  int max_lag = 50; // Calculate for 50 frames lag
+  int const max_lag = 50; // Calculate for 50 frames lag
   std::vector<double> vacf = DynamicsAnalyzer::calculateVACF(traj, max_lag);
 
   ASSERT_EQ(vacf.size(), max_lag + 1);
@@ -74,15 +76,15 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   // v(t) = cos(2 * pi * f0 * t)
   // VDOS should show a peak at f0
 
-  double dt = 1.0;          // 1 fs
-  double f0 = 10.0;         // 10 THz frequency
-  size_t num_frames = 1000; // 1 ps total time
+  double const dt = 1.0;          // 1 fs
+  double const f0 = 10.0;         // 10 THz frequency
+  size_t const num_frames = 1000; // 1 ps total time
 
   std::vector<double> vacf(num_frames);
-  const double PI = 3.14159265358979323846;
+  const double PI = std::numbers::pi;
 
   for (size_t i = 0; i < num_frames; ++i) {
-    double t = i * dt;
+    double const t = i * dt;
     // f0 is in THz (10^12 Hz), t in fs (10^-15 s). product is 10^-3
     // cos(2 * pi * f0 * 10^12 * t * 10^-15) = cos(2 * pi * f0 * t * 0.001)
     vacf[i] = std::cos(2.0 * PI * f0 * t * 0.001);
@@ -96,9 +98,9 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   ASSERT_EQ(frequencies.size(), intensities_imag.size());
 
   // 3. Find peak in real part
-  auto max_it = std::max_element(intensities_real.begin(), intensities_real.end());
-  size_t peak_idx = std::distance(intensities_real.begin(), max_it);
-  double peak_freq = frequencies[peak_idx];
+  auto max_it = std::ranges::max_element(intensities_real);
+  size_t const peak_idx = std::distance(intensities_real.begin(), max_it);
+  double const peak_freq = frequencies[peak_idx];
 
   // 4. Verify peak location
   EXPECT_NEAR(peak_freq, f0, 0.5) << "VDOS Peak should be near the source frequency";

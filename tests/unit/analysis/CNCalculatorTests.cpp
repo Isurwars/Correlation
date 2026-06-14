@@ -25,14 +25,14 @@ TEST(CNCalculatorTests, CalculatesCorrectCoordinationNumbers) {
   cell.addAtom("H", {1.0, 0.0, 0.0});
 
   // Define cutoffs
-  double neighbor_cutoff = 1.5;
-  std::vector<std::vector<double>> bond_cutoffs_sq = {
+  double const neighbor_cutoff = 1.5;
+  std::vector<std::vector<double>> const bond_cutoffs_sq = {
       {2.25, 2.25}, // C-C, C-H
       {2.25, 2.25}  // H-C, H-H
   };
 
   // Build StructureAnalyzer to compute neighbor list
-  StructureAnalyzer analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, true);
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, true);
 
   // Act
   auto hist = CNCalculator::calculate(cell, &analyzer);
@@ -59,10 +59,10 @@ TEST(CNCalculatorTests, IsolatedAtomHasZeroCoordination) {
   Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
   cell.addAtom("Ar", {10.0, 10.0, 10.0});
 
-  double neighbor_cutoff = 3.0;
-  std::vector<std::vector<double>> bond_cutoffs_sq = {{9.0}};
+  double const neighbor_cutoff = 3.0;
+  std::vector<std::vector<double>> const bond_cutoffs_sq = {{9.0}};
 
-  StructureAnalyzer analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, true);
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, true);
   auto hist = CNCalculator::calculate(cell, &analyzer);
 
   // With no neighbors, the CN calculator doesn't create an "Ar-Ar" key at all
@@ -71,7 +71,7 @@ TEST(CNCalculatorTests, IsolatedAtomHasZeroCoordination) {
   ASSERT_TRUE(hist.partials.find("Any-Any") != hist.partials.end());
   const auto &any_any = hist.partials.at("Any-Any");
   double total = 0.0;
-  for (double v : any_any) {
+  for (double const v : any_any) {
     total += v;
   }
   EXPECT_DOUBLE_EQ(total, 0.0) << "Isolated atom should contribute no CN counts";
@@ -87,11 +87,11 @@ TEST(CNCalculatorTests, HighCoordinationFCC) {
 
   // FCC nearest-neighbor distance = a/sqrt(2) ≈ 0.707
   // Use cutoff slightly above that
-  double neighbor_cutoff = 0.75;
-  std::vector<std::vector<double>> bond_cutoffs_sq = {{0.75 * 0.75}};
+  double const neighbor_cutoff = 0.75;
+  std::vector<std::vector<double>> const bond_cutoffs_sq = {{0.75 * 0.75}};
 
   // Need to consider periodic images (ignore_periodic_self_interactions = false)
-  StructureAnalyzer analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, false);
+  StructureAnalyzer const analyzer(cell, neighbor_cutoff, bond_cutoffs_sq, false);
   auto hist = CNCalculator::calculate(cell, &analyzer);
 
   // In FCC, each atom should have CN=12

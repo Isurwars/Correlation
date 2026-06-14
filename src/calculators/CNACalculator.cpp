@@ -8,6 +8,7 @@
 
 #include "calculators/CNACalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include <algorithm>
 #include <map>
 #include <set>
 #include <vector>
@@ -31,16 +32,17 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 size_t dfsLongestPath(size_t node, std::set<size_t> &visited, const std::map<size_t, std::vector<size_t>> &adj) {
   size_t best = 0;
   auto it = adj.find(node);
-  if (it == adj.end())
+  if (it == adj.end()) {
     return 0;
+}
 
-  for (size_t neighbor : it->second) {
-    if (visited.count(neighbor))
+  for (size_t const neighbor : it->second) {
+    if (visited.contains(neighbor) != 0u) {
       continue;
+}
     visited.insert(neighbor);
-    size_t len = 1 + dfsLongestPath(neighbor, visited, adj);
-    if (len > best)
-      best = len;
+    size_t const len = 1 + dfsLongestPath(neighbor, visited, adj);
+    best = std::max(len, best);
     visited.erase(neighbor);
   }
   return best;
@@ -56,27 +58,27 @@ size_t dfsLongestPath(size_t node, std::set<size_t> &visited, const std::map<siz
  */
 size_t findLongestChain(const std::vector<size_t> &common_neighbors, const std::map<size_t, std::vector<size_t>> &adj) {
   size_t longest = 0;
-  for (size_t start : common_neighbors) {
+  for (size_t const start : common_neighbors) {
     std::set<size_t> visited;
     visited.insert(start);
-    size_t len = dfsLongestPath(start, visited, adj);
-    if (len > longest)
-      longest = len;
+    size_t const len = dfsLongestPath(start, visited, adj);
+    longest = std::max(len, longest);
   }
   return longest;
 }
 } // anonymous namespace
 
 void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
-                                   const correlation::analysis::AnalysisSettings &settings) const {
+                                   const correlation::analysis::AnalysisSettings & /*settings*/) const {
   df.addHistogram("CNA", calculate(df.cell(), df.neighbors()));
 }
 
 correlation::analysis::Histogram CNACalculator::calculate(const correlation::core::Cell &cell,
                                                           const correlation::analysis::StructureAnalyzer *neighbors) {
 
-  if (!neighbors)
+  if (neighbors == nullptr) {
     return {};
+}
 
   const auto &neighbor_graph = neighbors->neighborGraph();
   const size_t num_atoms = cell.atomCount();
@@ -88,32 +90,34 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
   for (size_t i = 0; i < num_atoms; ++i) {
     const auto &neighbors_i = neighbor_graph.getNeighbors(i);
     std::set<size_t> set_i;
-    for (const auto &n : neighbors_i)
+    for (const auto &n : neighbors_i) {
       set_i.insert(n.index);
+}
 
     for (const auto &neighbor_j : neighbors_i) {
-      size_t j = neighbor_j.index;
-      if (i >= j)
+      size_t const j = neighbor_j.index;
+      if (i >= j) {
         continue; // Only count each pair once
+}
 
       const auto &neighbors_j = neighbor_graph.getNeighbors(j);
       std::vector<size_t> common_neighbors;
       for (const auto &n : neighbors_j) {
-        if (set_i.count(n.index)) {
+        if (set_i.contains(n.index) != 0u) {
           common_neighbors.push_back(n.index);
         }
       }
 
-      size_t n_common = common_neighbors.size();
+      size_t const n_common = common_neighbors.size();
 
       // Count bonds between common neighbors and build adjacency list
       size_t n_bonds = 0;
       std::map<size_t, std::vector<size_t>> common_adj;
       for (size_t a = 0; a < n_common; ++a) {
-        size_t idx_a = common_neighbors[a];
+        size_t const idx_a = common_neighbors[a];
         const auto &n_a = neighbor_graph.getNeighbors(idx_a);
         for (size_t b = a + 1; b < n_common; ++b) {
-          size_t idx_b = common_neighbors[b];
+          size_t const idx_b = common_neighbors[b];
           for (const auto &nb : n_a) {
             if (nb.index == idx_b) {
               n_bonds++;
@@ -132,7 +136,7 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
       }
 
       // Standard CNA index: (1, n_common, n_bonds, n_longest)
-      std::string index = "1" + std::to_string(n_common) + std::to_string(n_bonds) + std::to_string(n_longest);
+      std::string const index = "1" + std::to_string(n_common) + std::to_string(n_bonds) + std::to_string(n_longest);
       cna_counts[index]++;
       total_pairs++;
     }

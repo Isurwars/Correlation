@@ -30,7 +30,7 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
-  if (!neighbors) {
+  if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate DAD. Neighbor list has not been computed.");
   }
 
@@ -41,10 +41,11 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
 
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
-  if (num_elements == 0)
+  if (num_elements == 0) {
     return {};
+}
 
-  const size_t num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
+  const auto num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
 
   correlation::analysis::Histogram f_dihedral;
   f_dihedral.x_label = "φ";
@@ -65,10 +66,11 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
         for (size_t d = 0; d < num_elements; ++d) {
 
           const auto &angles_rad = neighbors->dihedrals()[a][b][c][d];
-          if (angles_rad.empty())
+          if (angles_rad.empty()) {
             continue;
+}
 
-          std::string key =
+          std::string const key =
               elements[a].symbol + "-" + elements[b].symbol + "-" + elements[c].symbol + "-" + elements[d].symbol;
 
           auto &partial_hist = f_dihedral.partials[key];
@@ -80,13 +82,15 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
             double angle_deg = angle_rad * correlation::math::rad_to_deg;
 
             // clamp angle into [-180, 180]
-            while (angle_deg <= -180.0)
+            while (angle_deg <= -180.0) {
               angle_deg += 360.0;
-            while (angle_deg > 180.0)
+}
+            while (angle_deg > 180.0) {
               angle_deg -= 360.0;
+}
 
             if (angle_deg >= theta_min && angle_deg <= theta_max) {
-              size_t bin = static_cast<size_t>((angle_deg - theta_min) / bin_width);
+              auto bin = static_cast<size_t>((angle_deg - theta_min) / bin_width);
 
               if (bin == num_bins && bin > 0) {
                 bin = num_bins - 1;

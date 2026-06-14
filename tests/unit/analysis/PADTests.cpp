@@ -10,6 +10,7 @@
 #include "core/Trajectory.hpp"
 
 #include "math/Constants.hpp"
+#include <algorithm>
 #include <cmath>
 #include <gtest/gtest.h>
 #include <numeric>
@@ -48,7 +49,7 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   correlation::core::Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
   water.addAtom("H", {6, 5, 5});
-  double angRad = 104.5 * correlation::math::deg_to_rad;
+  double const angRad = 104.5 * correlation::math::deg_to_rad;
   water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
 
   updateTrajectory(water);
@@ -58,9 +59,9 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   const auto &hist = df.getHistogram("BAD");
   const auto &hoh = hist.partials.at("H-O-H");
 
-  auto max_it = std::max_element(hoh.begin(), hoh.end());
-  size_t idx = std::distance(hoh.begin(), max_it);
-  double angle = hist.bins[idx];
+  auto max_it = std::ranges::max_element(hoh);
+  size_t const idx = std::distance(hoh.begin(), max_it);
+  double const angle = hist.bins[idx];
   // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to
   // precision
   EXPECT_NEAR(angle, 104.5, 0.001);
@@ -81,13 +82,13 @@ TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
   // Bond cutoff for Si-O is likely around 1.6 * 1.2 = 1.92 or similar.
   // Distance is 1.0.
   {
-    StructureAnalyzer analyzer(cell_, 1.1, trajectory_.getBondCutoffsSQ());
+    StructureAnalyzer const analyzer(cell_, 1.1, trajectory_.getBondCutoffsSQ());
     const auto &angles = analyzer.angles();
     bool found = false;
     for (const auto &t1 : angles) {
       for (const auto &center : t1) {
         for (const auto &t2 : center) {
-          for (double angle : t2) {
+          for (double const angle : t2) {
             if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
               found = true;
             }
@@ -105,14 +106,14 @@ TEST_F(PADTests_AngleReproduction, PBCAngleDetection) {
   cell_.addAtom("O", {0.5, 9.6, 0.5});
   updateTrajectory();
 
-  StructureAnalyzer analyzer(cell_, 1.2, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 1.2, trajectory_.getBondCutoffsSQ());
 
   bool found = false;
   const auto &angles = analyzer.angles();
   for (const auto &t1 : angles) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
-        for (double angle : t2) {
+        for (double const angle : t2) {
           if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
             found = true;
           }
@@ -137,15 +138,15 @@ TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
   // Si radius 1.16. Bond cutoff ~ 2.78.
   // Thus neighbors are NOT connected to each other.
 
-  StructureAnalyzer analyzer(cell_, 3.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &angles = analyzer.angles();
 
   int angle_count = 0;
   for (const auto &t1 : angles) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
-        for (double angle : t2) {
-          double degrees = angle * 180.0 / correlation::math::pi;
+        for (double const angle : t2) {
+          double const degrees = angle * 180.0 / correlation::math::pi;
           // std::cout << "Angle: " << degrees << " degrees\n";
           // Expected angle is acos(-1/3) ~ 109.47 degrees
           if (std::abs(degrees - 109.47) < 1.0) {
@@ -162,9 +163,9 @@ TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
 TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
 
-  double phi = (1.0 + std::sqrt(5.0)) / 2.0;
+  double phi = std::numbers::phi;
   // Vertices of icosahedron (edge length 2) relative to center
-  std::vector<std::vector<double>> verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+  std::vector<std::vector<double>> const verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
                                             {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
                                             {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
@@ -174,7 +175,7 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
   updateTrajectory();
 
   // Cutoff ~ 2.5 covers bonds (1.902, 2.0) but avoids next-nearest (3.236)
-  StructureAnalyzer analyzer(cell_, 2.5, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 2.5, trajectory_.getBondCutoffsSQ());
   const auto &angles = analyzer.angles();
 
   int count_63 = 0;  // Center-Edge (approx 63.43)
@@ -189,22 +190,23 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
   for (const auto &t1 : angles) {
     for (const auto &center : t1) {
       for (const auto &t2 : center) {
-        for (double angle : t2) {
-          double deg = angle * 180.0 / correlation::math::pi;
+        for (double const angle : t2) {
+          double const deg = angle * 180.0 / correlation::math::pi;
           total_angles++;
 
-          if (std::abs(deg - 63.43) < 1.0)
+          if (std::abs(deg - 63.43) < 1.0) {
             count_63++;
-          else if (std::abs(deg - 116.57) < 1.0)
+          } else if (std::abs(deg - 116.57) < 1.0) {
             count_116++;
-          else if (std::abs(deg - 180.0) < 1.0)
+          } else if (std::abs(deg - 180.0) < 1.0) {
             count_180++;
-          else if (std::abs(deg - 60.0) < 1.0)
+          } else if (std::abs(deg - 60.0) < 1.0) {
             count_60++;
-          else if (std::abs(deg - 108.0) < 1.0)
+          } else if (std::abs(deg - 108.0) < 1.0) {
             count_108++;
-          else if (std::abs(deg - 58.28) < 1.0)
+          } else if (std::abs(deg - 58.28) < 1.0) {
             count_58++;
+}
         }
       }
     }
@@ -236,7 +238,7 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 // ============================================================================
 
 // Helper to sum a partial histogram
-double sumHistogram(const std::vector<double> &hist) { return std::accumulate(hist.begin(), hist.end(), 0.0); }
+static double sumHistogram(const std::vector<double> &hist) { return std::accumulate(hist.begin(), hist.end(), 0.0); }
 
 class PADTests : public ::testing::Test {
 protected:
@@ -271,10 +273,10 @@ TEST_F(PADTests, SingleAtomNoAngles) {
   // Might have partials created but empty, or just no "BAD" if logic
   // handles it. Actually implementation might create partials if atoms exist
   // but no angles found. Let's check total counts.
-  if (df.getAllHistograms().count("BAD")) {
+  if (df.getAllHistograms().contains("BAD") != 0u) {
     const auto &hist = df.getHistogram("BAD");
     if (!hist.partials.empty()) {
-      if (hist.partials.count("Total")) {
+      if (hist.partials.contains("Total") != 0u) {
         EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
       }
     }
@@ -294,15 +296,15 @@ TEST_F(PADTests, LinearGeometry180) {
   cell_.addAtom("O", {11.0, 10.0, 10.0});
   updateTrajectory();
 
-  int id_O = cell_.findElement("O")->id.value;
-  int id_Si = cell_.findElement("Si")->id.value;
+  int const id_O = cell_.findElement("O")->id.value;
+  int const id_Si = cell_.findElement("Si")->id.value;
 
   // O(0.73) + Si(1.11) = 1.84 * 1.3 = 2.392.
   // EXPECT_GT(cutoff, 1.1) << "Bond cutoff must be larger than bond
   // distance 1.0";
 
   // Verify StructureAnalyzer finds neighbors
-  StructureAnalyzer analyzer(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 1.5, trajectory_.getBondCutoffsSQ());
   const auto &neighborGraph = analyzer.neighborGraph();
   // Si is atom index 1 (0-based)
   ASSERT_GT(neighborGraph.nodeCount(), 1);
@@ -320,7 +322,7 @@ TEST_F(PADTests, LinearGeometry180) {
 
   // Bin for 180 degrees.
   // Multiply counts/density by bin width (0.001) to get the probability sum
-  double total_prob = sumHistogram(partial) * 0.001;
+  double const total_prob = sumHistogram(partial) * 0.001;
   EXPECT_NEAR(total_prob, 1.0, 1e-5) << "Should be normalized to 1 angle (normalized by counts * bin_width)";
 
   // Check peak location
@@ -334,7 +336,7 @@ TEST_F(PADTests, LinearGeometry180) {
   }
 
   if (peak_bin >= 0) {
-    double peak_angle = hist.bins[peak_bin];
+    double const peak_angle = hist.bins[peak_bin];
     // A 180 degree angle lands in the last bin
     // Depending on exactly how 180 is handled, it's very close to 180
     EXPECT_NEAR(peak_angle, 180.0, 1e-3);
@@ -365,7 +367,7 @@ TEST_F(PADTests, RightAngle90) {
       peak_bin = i;
     }
   }
-  double peak_angle = hist.bins[peak_bin];
+  double const peak_angle = hist.bins[peak_bin];
   // 90.0 / 0.001 could land in 89.9995 or 90.0005
   EXPECT_NEAR(peak_angle, 90.0, 0.001);
 }
@@ -376,7 +378,7 @@ TEST_F(PADTests, EquilateralTriangle60) {
   // O at (0.5, sqrt(3)/2, 0)
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   cell_.addAtom("O", {11.0, 10.0, 10.0});
-  cell_.addAtom("O", {10.5, 10.0 + std::sqrt(3.0) / 2.0, 10.0});
+  cell_.addAtom("O", {10.5, 10.0 + std::numbers::sqrt3 / 2.0, 10.0});
   updateTrajectory();
 
   DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
@@ -387,14 +389,14 @@ TEST_F(PADTests, EquilateralTriangle60) {
   const auto &partial = hist.partials.at("O-Si-O");
 
   // Find peak near 60
-  double val_at_60 = 0;
+  double const val_at_60 = 0;
   // index for 60 deg is 60 or 59 depending on binning.
   // 59.5 (idx 59) -> [59, 60)
   // 60.5 (idx 60) -> [60, 61)
   // Exact 60 might land in 60.
 
   // Search max around 60
-  size_t bin_60 = 60;
+  size_t const bin_60 = 60;
   EXPECT_GT(partial[bin_60] + partial[bin_60 - 1], 0.1) << "Should have peak near 60 degrees";
 }
 
@@ -407,7 +409,7 @@ TEST_F(PADTests, TetrahedralAngle) {
   // Vector 2: (1,-1,-1) normalized
   // Dot product = (1-1-1)/3 = -1/3. acos(-1/3) = 109.47 deg
 
-  double L = 1.0 / std::sqrt(3.0);
+  double const L = std::numbers::inv_sqrt3;
   cell_.addAtom("O", {10.0 + L, 10.0 + L, 10.0 + L});
   cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
   updateTrajectory();
@@ -446,10 +448,12 @@ TEST_F(PADTests, SymmetryAndSorting) {
 
   // Check if we have O-Si-N or N-Si-O
   bool found = false;
-  if (hist.partials.count("O-Si-N"))
+  if (hist.partials.contains("O-Si-N") != 0u) {
     found = true;
-  if (hist.partials.count("N-Si-O"))
+}
+  if (hist.partials.contains("N-Si-O") != 0u) {
     found = true;
+}
 
   EXPECT_TRUE(found) << "Should have mixed species angle distribution";
 }
@@ -461,7 +465,7 @@ TEST_F(PADTests, FullNormalizationCheck) {
   // All 6 angles are 109.47
 
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  double L = 1.0 / std::sqrt(3.0);
+  double const L = std::numbers::inv_sqrt3;
 
   // Tetrahedral vertices
   cell_.addAtom("O", {10.0 + L, 10.0 + L, 10.0 + L});
@@ -473,7 +477,7 @@ TEST_F(PADTests, FullNormalizationCheck) {
   // Custom bond cutoffs to avoid O-O bonds (distance ~1.63) which would create
   // extra angles
   auto cutoffs = trajectory_.getBondCutoffsSQ();
-  int id_O = cell_.findElement("O")->id.value;
+  int const id_O = cell_.findElement("O")->id.value;
   cutoffs[id_O][id_O] = 1.44;
 
   DistributionFunctions df(cell_, 1.5, cutoffs);
@@ -483,18 +487,20 @@ TEST_F(PADTests, FullNormalizationCheck) {
 
   double sum_partial = 0;
   double sum_total = 0;
-  double bin_width = 1.0;
+  double const bin_width = 1.0;
 
-  if (hist.partials.count("O-Si-O")) {
+  if (hist.partials.contains("O-Si-O") != 0u) {
     const auto &partial = hist.partials.at("O-Si-O");
-    for (double v : partial)
+    for (double const v : partial) {
       sum_partial += v * bin_width;
+}
   }
 
-  if (hist.partials.count("Total")) {
+  if (hist.partials.contains("Total") != 0u) {
     const auto &total = hist.partials.at("Total");
-    for (double v : total)
+    for (double const v : total) {
       sum_total += v * bin_width;
+}
   }
 
   EXPECT_NEAR(sum_partial, 1.0,
@@ -504,8 +510,8 @@ TEST_F(PADTests, FullNormalizationCheck) {
 
 TEST_F(PADTests, IcosahedronAnglesPAD) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  double phi = (1.0 + std::sqrt(5.0)) / 2.0;
-  std::vector<std::vector<double>> verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+  double phi = std::numbers::phi;
+  std::vector<std::vector<double>> const verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
                                             {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
                                             {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
@@ -530,19 +536,25 @@ TEST_F(PADTests, IcosahedronAnglesPAD) {
 
   for (size_t i = 0; i < partial.size(); ++i) {
     if (partial[i] > 0.01) { // some density exists
-      double angle = hist.bins[i];
-      if (std::abs(angle - 58.28) < 0.5)
+      double const angle = hist.bins[i];
+      if (std::abs(angle - 58.28) < 0.5) {
         found_58 = true;
-      if (std::abs(angle - 60.0) < 0.5)
+}
+      if (std::abs(angle - 60.0) < 0.5) {
         found_60 = true;
-      if (std::abs(angle - 63.43) < 0.5)
+}
+      if (std::abs(angle - 63.43) < 0.5) {
         found_63 = true;
-      if (std::abs(angle - 108.0) < 0.5)
+}
+      if (std::abs(angle - 108.0) < 0.5) {
         found_108 = true;
-      if (std::abs(angle - 116.57) < 0.5)
+}
+      if (std::abs(angle - 116.57) < 0.5) {
         found_116 = true;
-      if (std::abs(angle - 180.0) < 0.5)
+}
+      if (std::abs(angle - 180.0) < 0.5) {
         found_180 = true;
+}
     }
   }
 

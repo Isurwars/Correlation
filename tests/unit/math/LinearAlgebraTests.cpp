@@ -31,7 +31,7 @@ TEST_F(LinearAlgebraTests, Vector3ConstructorsAndAccessors) {
   EXPECT_FALSE(v2.empty());
 
   // Array constructor
-  std::array<double, 3> arr = {10.0, 20.0, 30.0};
+  std::array<double, 3> const arr = {10.0, 20.0, 30.0};
   Vector3<double> v3(arr);
   EXPECT_DOUBLE_EQ(v3[0], 10.0);
   EXPECT_DOUBLE_EQ(v3[1], 20.0);
@@ -48,8 +48,8 @@ TEST_F(LinearAlgebraTests, Vector3ConstructorsAndAccessors) {
 }
 
 TEST_F(LinearAlgebraTests, Vector3Arithmetic) {
-  Vector3<double> a(1.0, 2.0, 3.0);
-  Vector3<double> b(4.0, 5.0, 6.0);
+  Vector3<double> const a(1.0, 2.0, 3.0);
+  Vector3<double> const b(4.0, 5.0, 6.0);
 
   // Addition
   auto c = a + b;
@@ -83,13 +83,13 @@ TEST_F(LinearAlgebraTests, Vector3Arithmetic) {
   EXPECT_DOUBLE_EQ(g.x(), 1.0);
 
   // Dot product operator
-  double dot_ab = a * b;
+  double const dot_ab = a * b;
   EXPECT_DOUBLE_EQ(dot_ab, 32.0);
 }
 
 TEST_F(LinearAlgebraTests, Vector3FreeFunctions) {
-  Vector3<double> a(1.0, 2.0, 3.0);
-  Vector3<double> b(4.0, -5.0, 6.0);
+  Vector3<double> const a(1.0, 2.0, 3.0);
+  Vector3<double> const b(4.0, -5.0, 6.0);
 
   // dot
   EXPECT_DOUBLE_EQ(dot(a, b), 12.0);
@@ -101,7 +101,7 @@ TEST_F(LinearAlgebraTests, Vector3FreeFunctions) {
   EXPECT_DOUBLE_EQ(cr.z(), 1.0 * (-5.0) - 2.0 * 4.0); // -13
 
   // norm_sq and norm
-  Vector3<double> v(3.0, 4.0, 0.0);
+  Vector3<double> const v(3.0, 4.0, 0.0);
   EXPECT_DOUBLE_EQ(norm_sq(v), 25.0);
   EXPECT_DOUBLE_EQ(norm(v), 5.0);
 
@@ -112,10 +112,10 @@ TEST_F(LinearAlgebraTests, Vector3FreeFunctions) {
   EXPECT_DOUBLE_EQ(vn.z(), 0.0);
 
   // normalize singular vector throws
-  Vector3<double> zero_v;
+  Vector3<double> const zero_v;
   EXPECT_THROW(normalize(zero_v), std::domain_error);
 
-  Vector3<double> tiny_v(1e-301, 1e-301, 1e-301);
+  Vector3<double> const tiny_v(1e-301, 1e-301, 1e-301);
   EXPECT_THROW(normalize(tiny_v), std::domain_error);
 }
 
@@ -128,9 +128,9 @@ TEST_F(LinearAlgebraTests, Matrix3ConstructorsAndAccessors) {
   EXPECT_DOUBLE_EQ(m1.trace(), 0.0);
 
   // Column constructor
-  Vector3<double> c0(1.0, 2.0, 3.0);
-  Vector3<double> c1(4.0, 5.0, 6.0);
-  Vector3<double> c2(7.0, 8.0, 9.0);
+  Vector3<double> const c0(1.0, 2.0, 3.0);
+  Vector3<double> const c1(4.0, 5.0, 6.0);
+  Vector3<double> const c2(7.0, 8.0, 9.0);
   Matrix3<double> m2(c0, c1, c2);
 
   EXPECT_DOUBLE_EQ(m2(0, 0), 1.0);
@@ -145,13 +145,13 @@ TEST_F(LinearAlgebraTests, Matrix3ConstructorsAndAccessors) {
 }
 
 TEST_F(LinearAlgebraTests, Matrix3Operations) {
-  Vector3<double> c0(1.0, 0.0, 0.0);
-  Vector3<double> c1(0.0, 2.0, 0.0);
-  Vector3<double> c2(0.0, 0.0, 3.0);
-  Matrix3<double> m(c0, c1, c2);
+  Vector3<double> const c0(1.0, 0.0, 0.0);
+  Vector3<double> const c1(0.0, 2.0, 0.0);
+  Vector3<double> const c2(0.0, 0.0, 3.0);
+  Matrix3<double> const m(c0, c1, c2);
 
   // Matrix * Vector
-  Vector3<double> v(1.0, 2.0, 3.0);
+  Vector3<double> const v(1.0, 2.0, 3.0);
   auto mv = m * v;
   EXPECT_DOUBLE_EQ(mv.x(), 1.0);
   EXPECT_DOUBLE_EQ(mv.y(), 4.0);
@@ -170,10 +170,10 @@ TEST_F(LinearAlgebraTests, Matrix3Operations) {
 
 TEST_F(LinearAlgebraTests, DeterminantAndInversion) {
   // Simple orthogonal matrix
-  Vector3<double> c0(2.0, 0.0, 0.0);
-  Vector3<double> c1(0.0, 4.0, 0.0);
-  Vector3<double> c2(0.0, 0.0, 5.0);
-  Matrix3<double> m(c0, c1, c2);
+  Vector3<double> const c0(2.0, 0.0, 0.0);
+  Vector3<double> const c1(0.0, 4.0, 0.0);
+  Vector3<double> const c2(0.0, 0.0, 5.0);
+  Matrix3<double> const m(c0, c1, c2);
 
   EXPECT_DOUBLE_EQ(determinant(m), 40.0);
 
@@ -183,20 +183,20 @@ TEST_F(LinearAlgebraTests, DeterminantAndInversion) {
   EXPECT_DOUBLE_EQ(minv(2, 2), 0.2);
 
   // singular matrix determinant = 0
-  Vector3<double> c_deg0(1.0, 2.0, 3.0);
-  Vector3<double> c_deg1(2.0, 4.0, 6.0); // Linearly dependent
-  Vector3<double> c_deg2(0.0, 0.0, 1.0);
-  Matrix3<double> m_deg(c_deg0, c_deg1, c_deg2);
+  Vector3<double> const c_deg0(1.0, 2.0, 3.0);
+  Vector3<double> const c_deg1(2.0, 4.0, 6.0); // Linearly dependent
+  Vector3<double> const c_deg2(0.0, 0.0, 1.0);
+  Matrix3<double> const m_deg(c_deg0, c_deg1, c_deg2);
 
   EXPECT_NEAR(determinant(m_deg), 0.0, 1e-15);
   EXPECT_THROW(invert(m_deg), std::runtime_error);
 }
 
 TEST_F(LinearAlgebraTests, Transpose) {
-  Vector3<double> c0(1.0, 2.0, 3.0);
-  Vector3<double> c1(4.0, 5.0, 6.0);
-  Vector3<double> c2(7.0, 8.0, 9.0);
-  Matrix3<double> m(c0, c1, c2);
+  Vector3<double> const c0(1.0, 2.0, 3.0);
+  Vector3<double> const c1(4.0, 5.0, 6.0);
+  Vector3<double> const c2(7.0, 8.0, 9.0);
+  Matrix3<double> const m(c0, c1, c2);
 
   auto mt = transpose(m);
   EXPECT_DOUBLE_EQ(mt(0, 1), 2.0);
@@ -206,7 +206,7 @@ TEST_F(LinearAlgebraTests, Transpose) {
 // --- Extreme / Edge-Case Tests ---
 
 TEST_F(LinearAlgebraTests, Vector3DivisionByZero) {
-  Vector3<double> v(1.0, 2.0, 3.0);
+  Vector3<double> const v(1.0, 2.0, 3.0);
   auto result = v / 0.0;
 
   // Division by zero should produce infinity
@@ -215,17 +215,17 @@ TEST_F(LinearAlgebraTests, Vector3DivisionByZero) {
   EXPECT_TRUE(std::isinf(result.z()));
 
   // Zero / zero should produce NaN
-  Vector3<double> zero_v;
+  Vector3<double> const zero_v;
   auto nan_result = zero_v / 0.0;
   EXPECT_TRUE(std::isnan(nan_result.x()));
 }
 
 TEST_F(LinearAlgebraTests, Matrix3IdentityInverse) {
   // Identity matrix inverse should be identity
-  Vector3<double> c0(1.0, 0.0, 0.0);
-  Vector3<double> c1(0.0, 1.0, 0.0);
-  Vector3<double> c2(0.0, 0.0, 1.0);
-  Matrix3<double> identity(c0, c1, c2);
+  Vector3<double> const c0(1.0, 0.0, 0.0);
+  Vector3<double> const c1(0.0, 1.0, 0.0);
+  Vector3<double> const c2(0.0, 0.0, 1.0);
+  Matrix3<double> const identity(c0, c1, c2);
 
   EXPECT_DOUBLE_EQ(determinant(identity), 1.0);
 
@@ -240,10 +240,10 @@ TEST_F(LinearAlgebraTests, Matrix3IdentityInverse) {
 
 TEST_F(LinearAlgebraTests, Matrix3NegativeDeterminant) {
   // Left-handed coordinate system: negative determinant
-  Vector3<double> c0(0.0, 1.0, 0.0);
-  Vector3<double> c1(1.0, 0.0, 0.0);
-  Vector3<double> c2(0.0, 0.0, 1.0);
-  Matrix3<double> m(c0, c1, c2);
+  Vector3<double> const c0(0.0, 1.0, 0.0);
+  Vector3<double> const c1(1.0, 0.0, 0.0);
+  Vector3<double> const c2(0.0, 0.0, 1.0);
+  Matrix3<double> const m(c0, c1, c2);
 
   EXPECT_DOUBLE_EQ(determinant(m), -1.0);
 
@@ -259,11 +259,11 @@ TEST_F(LinearAlgebraTests, Matrix3NegativeDeterminant) {
 
 TEST_F(LinearAlgebraTests, Matrix3ExtremeValues) {
   // Very large values
-  double big = 1e10;
-  Vector3<double> c0(big, 0.0, 0.0);
-  Vector3<double> c1(0.0, big, 0.0);
-  Vector3<double> c2(0.0, 0.0, big);
-  Matrix3<double> m_big(c0, c1, c2);
+  double const big = 1e10;
+  Vector3<double> const c0(big, 0.0, 0.0);
+  Vector3<double> const c1(0.0, big, 0.0);
+  Vector3<double> const c2(0.0, 0.0, big);
+  Matrix3<double> const m_big(c0, c1, c2);
 
   EXPECT_NEAR(determinant(m_big), big * big * big, big * big * 1e-6);
 
@@ -271,11 +271,11 @@ TEST_F(LinearAlgebraTests, Matrix3ExtremeValues) {
   EXPECT_NEAR(inv_big(0, 0), 1.0 / big, 1e-25);
 
   // Very small values
-  double small = 1e-4;
-  Vector3<double> s0(small, 0.0, 0.0);
-  Vector3<double> s1(0.0, small, 0.0);
-  Vector3<double> s2(0.0, 0.0, small);
-  Matrix3<double> m_small(s0, s1, s2);
+  double const small = 1e-4;
+  Vector3<double> const s0(small, 0.0, 0.0);
+  Vector3<double> const s1(0.0, small, 0.0);
+  Vector3<double> const s2(0.0, 0.0, small);
+  Matrix3<double> const m_small(s0, s1, s2);
 
   EXPECT_NEAR(determinant(m_small), small * small * small, 1e-20);
 

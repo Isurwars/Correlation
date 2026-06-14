@@ -28,17 +28,18 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
-  double lx = cell.lattice_parameters()[0];
-  double ly = cell.lattice_parameters()[1];
-  double lz = cell.lattice_parameters()[2];
+  double const lx = cell.lattice_parameters()[0];
+  double const ly = cell.lattice_parameters()[1];
+  double const lz = cell.lattice_parameters()[2];
 
-  if (lx <= 0 || ly <= 0 || lz <= 0)
+  if (lx <= 0 || ly <= 0 || lz <= 0) {
     return;
+}
 
-  size_t nx = static_cast<size_t>(std::ceil(lx / dx));
-  size_t ny = static_cast<size_t>(std::ceil(ly / dx));
-  size_t nz = static_cast<size_t>(std::ceil(lz / dx));
-  size_t total_bins = nx * ny * nz;
+  auto const nx = static_cast<size_t>(std::ceil(lx / dx));
+  auto const ny = static_cast<size_t>(std::ceil(ly / dx));
+  auto const nz = static_cast<size_t>(std::ceil(lz / dx));
+  size_t const total_bins = nx * ny * nz;
 
   if (total_bins == 0 || total_bins > 1000000) {
     // Prevent memory explosion if grid is too fine
@@ -66,33 +67,33 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   const auto &inv_lv = cell.inverseLatticeVectors();
 
   for (const auto &atom : cell.atoms()) {
-    std::string sym = atom.element().symbol;
-    if (sdf_hist.partials.find(sym) == sdf_hist.partials.end()) {
+    std::string const sym = atom.element().symbol;
+    if (!sdf_hist.partials.contains(sym)) {
       sdf_hist.partials[sym].assign(total_bins, 0.0);
     }
 
     // Convert Cartesian → fractional coordinates (correct for non-orthogonal cells)
     auto frac = inv_lv * atom.position();
     // Wrap to [0, 1) fractional
-    double fx = frac.x() - std::floor(frac.x());
-    double fy = frac.y() - std::floor(frac.y());
-    double fz = frac.z() - std::floor(frac.z());
+    double const fx = frac.x() - std::floor(frac.x());
+    double const fy = frac.y() - std::floor(frac.y());
+    double const fz = frac.z() - std::floor(frac.z());
 
-    size_t ix = static_cast<size_t>(fx * nx) % nx;
-    size_t iy = static_cast<size_t>(fy * ny) % ny;
-    size_t iz = static_cast<size_t>(fz * nz) % nz;
+    size_t const ix = static_cast<size_t>(fx * nx) % nx;
+    size_t const iy = static_cast<size_t>(fy * ny) % ny;
+    size_t const iz = static_cast<size_t>(fz * nz) % nz;
 
-    size_t idx = ix * (ny * nz) + iy * nz + iz;
+    size_t const idx = ix * (ny * nz) + iy * nz + iz;
     sdf_hist.partials[sym][idx] += 1.0 / dV; // Density contribution per frame
 
     // Also accumulate to total
-    if (sdf_hist.partials.find("Total") == sdf_hist.partials.end()) {
+    if (!sdf_hist.partials.contains("Total")) {
       sdf_hist.partials["Total"].assign(total_bins, 0.0);
     }
     sdf_hist.partials["Total"][idx] += 1.0 / dV;
   }
 
-  if (sdf_hist.partials.find("Total") == sdf_hist.partials.end()) {
+  if (!sdf_hist.partials.contains("Total")) {
     sdf_hist.partials["Total"].assign(total_bins, 0.0);
   }
 

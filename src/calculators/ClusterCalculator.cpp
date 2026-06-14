@@ -9,6 +9,7 @@
 #include "calculators/ClusterCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 
+#include <algorithm>
 #include <numeric>
 #include <vector>
 
@@ -22,7 +23,7 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 // Disjoint-Set (Union-Find) data structure for identifying connected components
 class UnionFind {
 public:
-  explicit UnionFind(size_t n) : parent(n), sz(n, 1) { std::iota(parent.begin(), parent.end(), 0); }
+  explicit UnionFind(size_t n) : parent(n), sz(n, 1) { std::ranges::iota(parent, 0); }
 
   size_t find(size_t i) {
     size_t root = i;
@@ -32,7 +33,7 @@ public:
     // Path compression
     size_t curr = i;
     while (curr != root) {
-      size_t nxt = parent[curr];
+      size_t const nxt = parent[curr];
       parent[curr] = root;
       curr = nxt;
     }
@@ -62,15 +63,17 @@ private:
 } // namespace
 
 void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
-                                       const correlation::analysis::AnalysisSettings &settings) const {
+                                       const correlation::analysis::AnalysisSettings & /*settings*/) const {
   const auto *analyzer = df.neighbors();
-  if (!analyzer)
+  if (analyzer == nullptr) {
     return;
+}
 
   const auto &graph = analyzer->neighborGraph();
-  size_t n_atoms = graph.nodeCount();
-  if (n_atoms == 0)
+  size_t const n_atoms = graph.nodeCount();
+  if (n_atoms == 0) {
     return;
+}
 
   // Initialize Union-Find
   UnionFind uf(n_atoms);
@@ -93,14 +96,13 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
 
   // Determine the maximum cluster size for histogram bins
   size_t max_size = 0;
-  for (size_t s : root_sizes) {
-    if (s > max_size) {
-      max_size = s;
-    }
+  for (size_t const s : root_sizes) {
+    max_size = std::max(s, max_size);
   }
 
-  if (max_size == 0)
+  if (max_size == 0) {
     return;
+}
 
   // Create the histogram
   correlation::analysis::Histogram hist;
@@ -119,7 +121,7 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   auto &partial = hist.partials["Total"];
   partial.assign(max_size, 0.0);
 
-  for (size_t s : root_sizes) {
+  for (size_t const s : root_sizes) {
     if (s > 0) {
       // Cluster size 's' corresponds to bin index 's - 1'
       partial[s - 1] += 1.0;

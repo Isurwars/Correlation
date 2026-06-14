@@ -15,12 +15,12 @@ using namespace correlation::calculators;
 
 class MockCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "MockCalculator"; }
-  std::string getShortName() const override { return "Mock"; }
-  std::string getGroup() const override { return "Test"; }
-  std::string getDescription() const override { return "A mock calculator for testing."; }
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] std::string getName() const override { return "MockCalculator"; }
+  [[nodiscard]] std::string getShortName() const override { return "Mock"; }
+  [[nodiscard]] std::string getGroup() const override { return "Test"; }
+  [[nodiscard]] std::string getDescription() const override { return "A mock calculator for testing."; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 };
 
 TEST(CalculatorFactoryTests, SingletonInstanceIsUnique) {
@@ -46,7 +46,7 @@ TEST(CalculatorFactoryTests, LookupStandardCalculators) {
   // Let's check getCalculator with different potential names or just use any from getCalculators()
   const auto &calculators = factory.getCalculators();
   ASSERT_FALSE(calculators.empty());
-  std::string first_calc_name = calculators[0]->getName();
+  std::string const first_calc_name = calculators[0]->getName();
 
   const BaseCalculator *retrieved = factory.getCalculator(first_calc_name);
   ASSERT_NE(retrieved, nullptr);
@@ -58,7 +58,7 @@ TEST(CalculatorFactoryTests, RegisterAndLookupCustomCalculator) {
 
   // Register a custom mock calculator
   auto mock = std::make_unique<MockCalculator>();
-  bool result = factory.registerCalculator(std::move(mock));
+  bool const result = factory.registerCalculator(std::move(mock));
   EXPECT_TRUE(result);
 
   // Verify it can be retrieved

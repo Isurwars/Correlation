@@ -7,7 +7,7 @@
 using namespace correlation::readers;
 
 TEST(OutmolReaderTests, Properties) {
-  OutmolReader reader;
+  OutmolReader const reader;
   EXPECT_EQ(reader.getName(), "Outmol");
   EXPECT_TRUE(reader.isTrajectory());
   auto exts = reader.getExtensions();

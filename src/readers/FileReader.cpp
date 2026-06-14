@@ -12,48 +12,64 @@
 #include <algorithm>
 #include <filesystem>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::readers {
 
 FileType determineFileType(const std::string &filename) {
   std::string ext = std::filesystem::path(filename).extension().string();
-  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+  std::ranges::transform(ext, ext.begin(), ::tolower);
 
-  if (ext == ".car")
+  if (ext == ".car") {
     return FileType::Car;
-  if (ext == ".cell")
+}
+  if (ext == ".cell") {
     return FileType::Cell;
-  if (ext == ".cif")
+}
+  if (ext == ".cif") {
     return FileType::Cif;
-  if (ext == ".arc")
+}
+  if (ext == ".arc") {
     return FileType::Arc;
-  if (ext == ".dump" || ext == ".lammpstrj")
+}
+  if (ext == ".dump" || ext == ".lammpstrj") {
     return FileType::LammpsDump;
-  if (ext == ".dat")
+}
+  if (ext == ".dat") {
     return FileType::OnetepDat;
-  if (ext == ".md")
+}
+  if (ext == ".md") {
     return FileType::CastepMd;
-  if (ext == ".outmol")
+}
+  if (ext == ".outmol") {
     return FileType::Outmol;
-  if (ext == ".poscar" || ext == ".contcar" || ext == ".vasp")
+}
+  if (ext == ".poscar" || ext == ".contcar" || ext == ".vasp") {
     return FileType::Vasp;
-  if (ext == ".xdatcar")
+}
+  if (ext == ".xdatcar") {
     return FileType::Xdatcar;
-  if (ext == ".gro")
+}
+  if (ext == ".gro") {
     return FileType::Gromacs;
-  if (ext == ".pdb" || ext == ".ent")
+}
+  if (ext == ".pdb" || ext == ".ent") {
     return FileType::Pdb;
-  if (ext == ".xyz" || ext == ".exyz")
+}
+  if (ext == ".xyz" || ext == ".exyz") {
     return FileType::Xyz;
+}
 
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {
     std::string basename = std::filesystem::path(filename).filename().string();
-    std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
-    if (basename == "poscar" || basename == "contcar")
+    std::ranges::transform(basename, basename.begin(), ::tolower);
+    if (basename == "poscar" || basename == "contcar") {
       return FileType::Vasp;
-    if (basename == "xdatcar")
+}
+    if (basename == "xdatcar") {
       return FileType::Xdatcar;
+}
   }
 
   return FileType::Unknown;
@@ -70,22 +86,25 @@ FileType determineFileType(const std::string &filename) {
  * @return Pointer to the matching reader, or nullptr if none found.
  */
 static BaseReader *findReaderForFile(const std::string &filename) {
-  std::string ext = std::filesystem::path(filename).extension().string();
+  std::string const ext = std::filesystem::path(filename).extension().string();
 
   if (!ext.empty()) {
     auto *reader = ReaderFactory::instance().getReaderForExtension(ext, filename);
-    if (reader)
+    if (reader != nullptr) {
       return reader;
+}
   }
 
   // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
   std::string basename = std::filesystem::path(filename).filename().string();
-  std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
+  std::ranges::transform(basename, basename.begin(), ::tolower);
 
-  if (basename == "poscar" || basename == "contcar")
+  if (basename == "poscar" || basename == "contcar") {
     return ReaderFactory::instance().getReaderForExtension(".poscar");
-  if (basename == "xdatcar")
+}
+  if (basename == "xdatcar") {
     return ReaderFactory::instance().getReaderForExtension(".xdatcar");
+}
 
   return nullptr;
 }
@@ -130,29 +149,29 @@ correlation::core::Cell readStructure(const std::string &filename, FileType type
   if (type != FileType::Unknown) {
     reader = findReaderForType(type);
   }
-  if (!reader) {
+  if (reader == nullptr) {
     reader = findReaderForFile(filename);
   }
 
-  if (reader) {
-    return reader->readStructure(filename, progress_callback);
+  if (reader != nullptr) {
+    return reader->readStructure(filename, std::move(progress_callback));
   }
 
   throw std::runtime_error("No reader found for file: " + filename);
 }
 
 correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
-                                             std::function<void(float, const std::string &)> progress_callback) {
+                                             const std::function<void(float, const std::string &)>& progress_callback) {
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {
     reader = findReaderForType(type);
   }
-  if (!reader) {
+  if (reader == nullptr) {
     reader = findReaderForFile(filename);
   }
 
-  if (reader) {
+  if (reader != nullptr) {
     // Enforce 4 GiB trajectory file size limit.
     auto file_size = std::filesystem::file_size(filename);
     if (static_cast<std::uint64_t>(file_size) > correlation::core::kMaxTrajectoryBytes) {
@@ -161,8 +180,7 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
 
     if (reader->isTrajectory()) {
       return reader->readTrajectory(filename, progress_callback);
-    } else {
-      // If it's not a trajectory reader but we asked for a trajectory,
+    }       // If it's not a trajectory reader but we asked for a trajectory,
       // wrap a single structure in a one-frame trajectory.
       try {
         correlation::core::Cell c = reader->readStructure(filename, progress_callback);
@@ -172,7 +190,7 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
       } catch (...) {
         throw std::runtime_error("Reader for \"" + filename + "\" does not support trajectory reading.");
       }
-    }
+   
   }
 
   throw std::runtime_error("No reader found for file: " + filename);

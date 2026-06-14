@@ -68,7 +68,7 @@ TEST_F(CellTests, RuleOfFiveWorksCorrectly) {
   cell.setEnergy(1.23);
 
   // Copy Constructor
-  Cell cell_copy(cell);
+  Cell const cell_copy(cell);
   EXPECT_EQ(cell_copy.volume(), cell.volume());
   EXPECT_EQ(cell_copy.atomCount(), cell.atomCount());
   EXPECT_DOUBLE_EQ(cell_copy.getEnergy(), 1.23);
@@ -84,7 +84,7 @@ TEST_F(CellTests, MoveSemanticsLeavesMovedFromStateEmpty) {
   Cell cell({{4.0, 4.0, 4.0, 90.0, 90.0, 90.0}});
   cell.addAtom("H", {0.5, 0.5, 0.5});
 
-  Cell cell_moved(std::move(cell));
+  Cell const cell_moved(std::move(cell));
   EXPECT_TRUE(cell.isEmpty());
   EXPECT_EQ(cell_moved.atomCount(), 1);
 }
@@ -129,7 +129,7 @@ TEST_F(CellTests, WrapPositionsHandlesLargeDisplacements) {
 }
 
 TEST_F(CellTests, MinimumImageCalculatesShortestVector) {
-  Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   auto mi = cell.minimumImage({7.0, -8.0, 2.0});
   EXPECT_NEAR(mi.x(), -3.0, 1e-9);
   EXPECT_NEAR(mi.y(), 2.0, 1e-9);
@@ -137,7 +137,7 @@ TEST_F(CellTests, MinimumImageCalculatesShortestVector) {
 }
 
 TEST_F(CellTests, MinimumImageHandlesDistancesLargerThanBox) {
-  Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   auto mi = cell.minimumImage({15.0, 0.0, 0.0});
   EXPECT_NEAR(std::abs(mi.x()), 5.0, 1e-9);
 }
@@ -190,7 +190,7 @@ TEST_F(CellTests, SetLatticeParametersBoundaryAngles) {
 }
 
 TEST_F(CellTests, MinimumImageHandlesInfiniteAndNaNDistance) {
-  Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
 
   // Checking that passing Inf or NaN distances doesn't crash but propagates or returns predictably
   auto mi_nan = cell.minimumImage({std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0});
@@ -223,15 +223,15 @@ TEST_F(CellTests, TriclinicCellWrapPositions) {
 
 TEST_F(CellTests, TriclinicCellMinimumImage) {
   // Non-orthogonal cell
-  Cell cell({{5.0, 5.0, 5.0, 60.0, 60.0, 60.0}});
+  Cell const cell({{5.0, 5.0, 5.0, 60.0, 60.0, 60.0}});
 
   // Distance vector that spans more than half the cell in some direction
   auto mi = cell.minimumImage({4.0, 4.0, 4.0});
-  double mi_length = correlation::math::norm(mi);
+  double const mi_length = correlation::math::norm(mi);
 
   // The minimum image vector must be shorter than or equal to half the max box extent
   // For a cell with a=5, the maximum half-diagonal is bounded
-  double half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
+  double const half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
   EXPECT_LE(mi_length, half_diagonal + 1e-6);
 
   // The zero vector should map to zero
@@ -270,7 +270,7 @@ TEST_F(CellTests, HighAtomCount) {
   Cell cell({{100.0, 100.0, 100.0, 90.0, 90.0, 90.0}});
   const size_t N = 10000;
   for (size_t i = 0; i < N; ++i) {
-    double pos = static_cast<double>(i) * 0.01;
+    double const pos = static_cast<double>(i) * 0.01;
     cell.addAtom("H", {pos, pos, pos});
   }
   EXPECT_EQ(cell.atomCount(), N);
@@ -281,7 +281,7 @@ TEST_F(CellTests, HighAtomCount) {
 }
 
 TEST_F(CellTests, AcosNumericalNoiseClamping) {
-  Cell cell({1.0, 0.0, 0.0}, {-1.0, 1.01e-8, 0.0}, {0.0, 0.0, 1.0});
+  Cell const cell({1.0, 0.0, 0.0}, {-1.0, 1.01e-8, 0.0}, {0.0, 0.0, 1.0});
   auto params = cell.lattice_parameters();
   EXPECT_FALSE(std::isnan(params[3]));
   EXPECT_FALSE(std::isnan(params[4]));

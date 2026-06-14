@@ -8,14 +8,16 @@
 
 #include "readers/LammpsDumpReader.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <string>
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
-  if (size > 1 * 1024 * 1024)
+  if (size > static_cast<size_t>(1 * 1024 * 1024)) {
     return 0;
+}
 
   try {
     correlation::readers::LammpsDumpReader::parseDumpFrame(

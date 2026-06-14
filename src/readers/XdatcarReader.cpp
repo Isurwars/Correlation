@@ -15,6 +15,7 @@
 #include <cstring>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::readers {
 
@@ -25,16 +26,19 @@ static bool registered = ReaderFactory::instance().registerReader(std::make_uniq
 // Helpers
 // ---------------------------------------------------------------------------
 static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
-  while (pos < total && data[pos] != '\n' && data[pos] != '\r')
+  while (pos < total && data[pos] != '\n' && data[pos] != '\r') {
     ++pos;
+}
   return pos;
 }
 
 static inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
-  if (pos < total && data[pos] == '\r')
+  if (pos < total && data[pos] == '\r') {
     ++pos;
-  if (pos < total && data[pos] == '\n')
+}
+  if (pos < total && data[pos] == '\n') {
     ++pos;
+}
   return pos;
 }
 
@@ -47,7 +51,7 @@ static inline std::string extractLine(const char *data, size_t pos, size_t lineE
  *        individual frames without re-reading the header.
  */
 struct XdatcarHeader {
-  double lattice[3][3];                  ///< Scaled lattice vectors.
+  double lattice[3][3]{};                  ///< Scaled lattice vectors.
   std::vector<std::string> species;      ///< Element symbols.
   std::vector<int> atom_counts;          ///< Count per species.
   int total_atoms{0};                    ///< Sum of atom_counts.
@@ -74,8 +78,9 @@ correlation::core::Trajectory
 XdatcarReader::readTrajectory(const std::string &filename,
                               std::function<void(float, const std::string &)> progress_callback) {
 
-  if (progress_callback)
-    progress_callback(0.0f, "Reading XDATCAR file...");
+  if (progress_callback) {
+    progress_callback(0.0F, "Reading XDATCAR file...");
+}
 
   auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
@@ -99,7 +104,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
 
   // Line 2: Scaling factor
   std::string line = nextLine();
-  double scaling_factor = std::stod(line);
+  double const scaling_factor = std::stod(line);
 
   // Lines 3-5: Lattice vectors
   for (int i = 0; i < 3; ++i) {
@@ -112,19 +117,23 @@ XdatcarReader::readTrajectory(const std::string &filename,
 
   // Apply scaling factor
   if (scaling_factor > 0.0) {
-    for (int i = 0; i < 3; ++i)
-      for (int j = 0; j < 3; ++j)
-        header->lattice[i][j] *= scaling_factor;
+    for (auto & i : header->lattice) {
+      for (int j = 0; j < 3; ++j) {
+        i[j] *= scaling_factor;
+}
+}
   } else if (scaling_factor < 0.0) {
-    double target_volume = std::abs(scaling_factor);
+    double const target_volume = std::abs(scaling_factor);
     const auto &v = header->lattice;
-    double current_volume =
+    double const current_volume =
         std::abs(v[0][0] * (v[1][1] * v[2][2] - v[1][2] * v[2][1]) - v[0][1] * (v[1][0] * v[2][2] - v[1][2] * v[2][0]) +
                  v[0][2] * (v[1][0] * v[2][1] - v[1][1] * v[2][0]));
-    double scale = std::cbrt(target_volume / current_volume);
-    for (int i = 0; i < 3; ++i)
-      for (int j = 0; j < 3; ++j)
-        header->lattice[i][j] *= scale;
+    double const scale = std::cbrt(target_volume / current_volume);
+    for (auto & i : header->lattice) {
+      for (int j = 0; j < 3; ++j) {
+        i[j] *= scale;
+}
+}
   }
 
   // Line 6: Species names
@@ -132,17 +141,19 @@ XdatcarReader::readTrajectory(const std::string &filename,
   {
     std::istringstream iss(line);
     std::string tok;
-    while (iss >> tok)
+    while (iss >> tok) {
       header->species.push_back(tok);
+}
   }
 
   // Line 7: Atom counts
   line = nextLine();
   {
     std::istringstream iss(line);
-    int count;
-    while (iss >> count)
+    int count = 0;
+    while (iss >> count) {
       header->atom_counts.push_back(count);
+}
   }
 
   if (header->species.size() != header->atom_counts.size()) {
@@ -150,7 +161,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
   }
 
   long long total_atoms_sum = 0;
-  for (int c : header->atom_counts) {
+  for (int const c : header->atom_counts) {
     if (c < 0) {
       throw std::runtime_error("XDATCAR: negative atom count: " + std::to_string(c));
     }
@@ -163,7 +174,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
   }
 
   // The number of atoms cannot exceed the file size in bytes
-  if (static_cast<size_t>(total_atoms_sum) > total_size) {
+  if (std::cmp_greater(total_atoms_sum, total_size)) {
     throw std::runtime_error("XDATCAR: total atom count (" + std::to_string(total_atoms_sum) +
                              ") exceeds file size (" + std::to_string(total_size) + " bytes)");
   }
@@ -184,11 +195,11 @@ XdatcarReader::readTrajectory(const std::string &filename,
 
   while (offset < total_size) {
     // Skip empty lines
-    size_t le = findLineEnd(data, total_size, offset);
+    size_t const le = findLineEnd(data, total_size, offset);
     std::string trimmed = extractLine(data, offset, le);
 
     // Trim leading whitespace
-    size_t start = trimmed.find_first_not_of(" \t");
+    size_t const start = trimmed.find_first_not_of(" \t");
     if (start == std::string::npos) {
       offset = skipLineEnding(data, total_size, le);
       continue;
@@ -198,7 +209,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
     // Detect "Direct" keyword (case-insensitive check on first 6 chars)
     if (trimmed.size() >= 6) {
       std::string prefix = trimmed.substr(0, 6);
-      std::transform(prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
+      std::ranges::transform(prefix, prefix.begin(), ::tolower);
       if (prefix == "direct") {
         // The frame data starts AFTER the "Direct" line — the frame_offset
         // points to the "Direct" line itself so the parser knows where it is.
@@ -210,7 +221,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
 
     // Report progress
     if (progress_callback && total_size > 0) {
-      float progress = static_cast<float>(offset) / static_cast<float>(total_size);
+      float const progress = static_cast<float>(offset) / static_cast<float>(total_size);
       progress_callback(progress, "Scanning XDATCAR frames...");
     }
   }
@@ -222,8 +233,9 @@ XdatcarReader::readTrajectory(const std::string &filename,
   // Add sentinel
   frame_offsets.push_back(total_size);
 
-  if (progress_callback)
-    progress_callback(1.0f, "XDATCAR file loaded.");
+  if (progress_callback) {
+    progress_callback(1.0F, "XDATCAR file loaded.");
+}
 
   // Build the parser lambda that captures the shared header.
   auto parser = [header](const char *d, size_t s) -> correlation::core::Cell {
@@ -244,15 +256,19 @@ XdatcarReader::readTrajectory(const std::string &filename,
     correlation::core::Cell cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]}, {v[2][0], v[2][1], v[2][2]});
 
     for (int i = 0; i < header->total_atoms; ++i) {
-      if (off >= s)
+      if (off >= s) {
         break;
-      std::string line = nextLn();
+}
+      std::string const line = nextLn();
       std::istringstream iss(line);
-      double x, y, z;
-      if (!(iss >> x >> y >> z))
+      double x;
+      double y;
+      double z;
+      if (!(iss >> x >> y >> z)) {
         break;
+}
       // Convert fractional coordinates to Cartesian: pos = x*a + y*b + z*c
-      correlation::math::Vector3<double> pos = {x * v[0][0] + y * v[1][0] + z * v[2][0],
+      correlation::math::Vector3<double> const pos = {x * v[0][0] + y * v[1][0] + z * v[2][0],
                                                 x * v[0][1] + y * v[1][1] + z * v[2][1],
                                                 x * v[0][2] + y * v[1][2] + z * v[2][2]};
       cell.addAtom(header->atom_species[i], pos);
@@ -262,7 +278,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
     return cell;
   };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
+  return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }
 
 } // namespace correlation::readers

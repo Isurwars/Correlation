@@ -6,7 +6,7 @@
 using namespace correlation::readers;
 
 TEST(CarReaderTests, Properties) {
-  CarReader reader;
+  CarReader const reader;
   EXPECT_EQ(reader.getName(), "Accelrys CAR");
   EXPECT_FALSE(reader.isTrajectory());
   auto exts = reader.getExtensions();

@@ -20,10 +20,10 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 } // namespace
 
 void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &df,
-                                         const correlation::core::Trajectory &traj,
-                                         const correlation::analysis::AnalysisSettings &settings) const {
+                                         const correlation::core::Trajectory & /*traj*/,
+                                         const correlation::analysis::AnalysisSettings & /*settings*/) const {
   const auto &all = df.getAllHistograms();
-  if (all.find("VACF") == all.end()) {
+  if (!all.contains("VACF")) {
     return; // VACF must be computed first
   }
   df.addHistogram("VDOS", calculate(df.getHistogram("VACF")));
@@ -36,13 +36,13 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
     throw std::logic_error("VACF data is too short for VDOS calculation.");
   }
 
-  double dt = vacf_hist.bins[1] - vacf_hist.bins[0];
+  double const dt = vacf_hist.bins[1] - vacf_hist.bins[0];
 
   auto [frequencies, intensities_real, intensities_imag] =
       correlation::analysis::DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
 
-  size_t num_points = frequencies.size();
-  size_t total_points = 2 * num_points - 1;
+  size_t const num_points = frequencies.size();
+  size_t const total_points = 2 * num_points - 1;
 
   std::vector<double> combined_frequencies;
   std::vector<double> combined_frequencies_cmInv;

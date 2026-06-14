@@ -13,8 +13,8 @@ class AppBackendTests : public ::testing::Test {};
 
 TEST_F(AppBackendTests, DefaultConstructorInitializesCorrectly) {
   // Arrange & Act
-  correlation::app::AppBackend backend;
-  correlation::app::ProgramOptions opts = backend.options();
+  correlation::app::AppBackend const backend;
+  correlation::app::ProgramOptions const opts = backend.options();
 
   // Assert
   EXPECT_DOUBLE_EQ(opts.r_max, correlation::app::AppDefaults::R_MAX);
@@ -45,7 +45,7 @@ TEST_F(AppBackendTests, SetOptionsModifiesState) {
   backend.setOptions(opts);
 
   // Assert
-  correlation::app::ProgramOptions new_opts = backend.options();
+  correlation::app::ProgramOptions const new_opts = backend.options();
   EXPECT_DOUBLE_EQ(new_opts.r_max, 50.0);
   EXPECT_DOUBLE_EQ(new_opts.smoothing_sigma, 0.5);
   EXPECT_EQ(new_opts.min_frame, 10);
@@ -62,10 +62,10 @@ TEST_F(AppBackendTests, LoadInvalidFileThrowsException) {
 
 TEST_F(AppBackendTests, RecommendedTimeStepWithNoCellReturnsDefault) {
   // Arrange
-  correlation::app::AppBackend backend;
+  correlation::app::AppBackend const backend;
 
   // Act
-  double time_step = backend.getRecommendedTimeStep();
+  double const time_step = backend.getRecommendedTimeStep();
 
   // Assert
   EXPECT_DOUBLE_EQ(time_step, correlation::app::AppDefaults::TIME_STEP);

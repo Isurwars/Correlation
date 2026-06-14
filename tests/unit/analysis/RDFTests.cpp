@@ -37,7 +37,7 @@ protected:
     trajectory_.precomputeBondCutoffs();
   }
 
-  correlation::core::Cell cell_{};
+  correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
 
@@ -55,7 +55,7 @@ TEST_F(RDFTests, MoveConstructorWorks) {
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF(5.0, 0.1);
 
-  DistributionFunctions dfDest(std::move(dfSource));
+  DistributionFunctions const dfDest(std::move(dfSource));
 
   EXPECT_NO_THROW(dfDest.getHistogram("g_r"));
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
@@ -92,7 +92,7 @@ TEST_F(RDFTests, AccessorsWork) {
   df.calculateRDF(5.0, 0.1);
   histNames = df.getAvailableHistograms();
   EXPECT_FALSE(histNames.empty());
-  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"), histNames.end());
+  EXPECT_NE(std::ranges::find(histNames, "g_r"), histNames.end());
 
   // getHistogram()
   EXPECT_NO_THROW(df.getHistogram("g_r"));
@@ -125,9 +125,9 @@ TEST_F(RDFTests, CalculateRDF) {
   const auto &total = hist.partials.at("Ar-Ar");
 
   // High precision peak location
-  auto max_it = std::max_element(total.begin(), total.end());
-  size_t peak_idx = std::distance(total.begin(), max_it);
-  double peak_r = hist.bins[peak_idx];
+  auto max_it = std::ranges::max_element(total);
+  size_t const peak_idx = std::distance(total.begin(), max_it);
+  double const peak_r = hist.bins[peak_idx];
 
   // Bin size is 0.001. Bin containing 1.50 is index 1500 (center 1.5005) or
   // 1499 (1.4995)
@@ -182,7 +182,7 @@ TEST_F(RDFTests, Smoothing) {
 TEST_F(RDFTests, SetStructureAnalyzer) {
   updateTrajectory();
   // Create an external analyzer
-  StructureAnalyzer analyzer(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   DistributionFunctions df(cell_, 0.0, {});
   // Should depend on analyzer for RDF
@@ -219,14 +219,14 @@ TEST_F(RDFTests, AddAndScale) {
 
   // Should be back to original magnitude
   // We check peak value
-  auto max_it = std::max_element(h1_scaled.begin(), h1_scaled.end());
-  double peak = *max_it;
+  auto max_it = std::ranges::max_element(h1_scaled);
+  double const peak = *max_it;
 
   // Single frame RDF peak value depends on volume and density, but it's
   // consistent. Let's compare with a fresh one
   DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfRef.calculateRDF(5.0, 0.1);
-  double refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
+  double const refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
                                      dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
 
   EXPECT_NEAR(peak, refPeak, 1e-6);
@@ -234,7 +234,7 @@ TEST_F(RDFTests, AddAndScale) {
 
 TEST_F(RDFTests, ComputeMean) {
   updateTrajectory();
-  TrajectoryAnalyzer ta(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
+  TrajectoryAnalyzer const ta(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
 
   AnalysisSettings settings;
   settings.r_max = 5.0;
@@ -303,9 +303,9 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
 
   // 1. Verify calculated Ashcroft weights
   const auto &weights = df.getAshcroftWeights();
-  double expected_w_ArAr = 0.75 * 0.75;        // 0.5625
-  double expected_w_XeXe = 0.25 * 0.25;        // 0.0625
-  double expected_w_ArXe = 2.0 * 0.75 * 0.25;  // 0.375 (doubled!)
+  double const expected_w_ArAr = 0.75 * 0.75;        // 0.5625
+  double const expected_w_XeXe = 0.25 * 0.25;        // 0.0625
+  double const expected_w_ArXe = 2.0 * 0.75 * 0.25;  // 0.375 (doubled!)
 
   EXPECT_NEAR(weights.at("Ar-Ar"), expected_w_ArAr, 1e-6);
   EXPECT_NEAR(weights.at("Xe-Xe"), expected_w_XeXe, 1e-6);
@@ -328,10 +328,10 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
 
   ASSERT_EQ(g_Total.size(), g_ArAr.size());
   for (size_t i = 0; i < g_Total.size(); ++i) {
-    double sum_g_partials = g_ArAr[i] + g_XeXe[i] + g_ArXe[i];
+    double const sum_g_partials = g_ArAr[i] + g_XeXe[i] + g_ArXe[i];
     EXPECT_NEAR(g_Total[i], sum_g_partials, 1e-6);
 
-    double sum_G_partials = G_ArAr[i] + G_XeXe[i] + G_ArXe[i];
+    double const sum_G_partials = G_ArAr[i] + G_XeXe[i] + G_ArXe[i];
     EXPECT_NEAR(G_Total[i], sum_G_partials, 1e-6);
   }
 }

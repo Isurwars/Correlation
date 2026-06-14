@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
 
@@ -59,12 +60,14 @@ void AngleCalculator::compute(const correlation::core::Cell &cell, const correla
     for (size_t i = r.begin(); i != r.end(); ++i) {
       const auto &neighbors = graph.getNeighbors(i);
       const size_t cn = neighbors.size();
-      if (cn < 2)
+      if (cn < 2) {
         continue;
+}
 
       const int type_central = atoms[i].element_id();
-      if (type_central < 0 || type_central >= static_cast<int>(num_elements))
+      if (type_central < 0 || std::cmp_greater_equal(type_central ,num_elements)) {
         continue;
+}
 
       // Build SoA for all neighbors of atom i (once per atom)
       sc.ensure(cn);
@@ -87,27 +90,32 @@ void AngleCalculator::compute(const correlation::core::Cell &cell, const correla
 
         const int type1 = atoms[neighbors[j].index].element_id();
         const double d1 = sc.nb_dist[j];
-        if (d1 < 1e-6)
+        if (d1 < 1e-6) {
           continue;
-        if (type1 < 0 || type1 >= static_cast<int>(num_elements))
+}
+        if (type1 < 0 || std::cmp_greater_equal(type1 ,num_elements)) {
           continue;
+}
 
         for (size_t m = 0; m < k_count; ++m) {
           const size_t k = j + 1 + m;
           const double d2 = sc.nb_dist[k];
-          if (d2 < 1e-6)
+          if (d2 < 1e-6) {
             continue;
+}
 
           const int type2 = atoms[neighbors[k].index].element_id();
-          if (type2 < 0 || type2 >= static_cast<int>(num_elements))
+          if (type2 < 0 || std::cmp_greater_equal(type2 ,num_elements)) {
             continue;
+}
 
-          double cos_theta = std::clamp(sc.dots[m] / (d1 * d2), -1.0, 1.0);
-          double angle_rad = std::acos(cos_theta);
+          double const cos_theta = std::clamp(sc.dots[m] / (d1 * d2), -1.0, 1.0);
+          double const angle_rad = std::acos(cos_theta);
 
           local_tensor[type1][type_central][type2].push_back(angle_rad);
-          if (type1 != type2)
+          if (type1 != type2) {
             local_tensor[type2][type_central][type1].push_back(angle_rad);
+}
         }
       }
     }

@@ -19,7 +19,7 @@ TEST(SDFCalculatorTests, CalculateSDF) {
   AnalysisSettings settings;
   settings.r_bin_width = 1.0;
 
-  SDFCalculator calc;
+  SDFCalculator const calc;
   calc.calculateFrame(df, settings);
 
   const auto &hist = df.getHistogram("SDF");
@@ -41,7 +41,7 @@ TEST(SDFCalculatorTests, MultiAtomSDFHasNonzeroDensity) {
   AnalysisSettings settings;
   settings.r_bin_width = 1.0;
 
-  SDFCalculator calc;
+  SDFCalculator const calc;
   calc.calculateFrame(df, settings);
 
   const auto &hist = df.getHistogram("SDF");
@@ -50,7 +50,7 @@ TEST(SDFCalculatorTests, MultiAtomSDFHasNonzeroDensity) {
   // With 2 atoms, the total SDF should have non-zero values somewhere
   const auto &total = hist.partials.at("Total");
   double sum = 0.0;
-  for (double val : total) {
+  for (double const val : total) {
     sum += val;
   }
   EXPECT_GT(sum, 0.0) << "SDF with 2 atoms should have non-zero density";
@@ -58,7 +58,7 @@ TEST(SDFCalculatorTests, MultiAtomSDFHasNonzeroDensity) {
   // Per-element partial should also have values
   const auto &ar_partial = hist.partials.at("Ar");
   double ar_sum = 0.0;
-  for (double val : ar_partial) {
+  for (double const val : ar_partial) {
     ar_sum += val;
   }
   EXPECT_GT(ar_sum, 0.0) << "Ar partial SDF should have non-zero density";

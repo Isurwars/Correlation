@@ -35,7 +35,7 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   correlation::core::Cell si_cell({lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
 
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
-  std::vector<correlation::math::Vector3<double>> fractional_coords = {
+  std::vector<correlation::math::Vector3<double>> const fractional_coords = {
       {0.0, 0.0, 0.0},    {0.5, 0.5, 0.0},    {0.5, 0.0, 0.5},    {0.0, 0.5, 0.5},
       {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25}, {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75}};
 
@@ -48,7 +48,7 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   // Act: Calculate neighbors with a cutoff just beyond the first neighbor
   // shell. The first nearest neighbor distance in Si is (sqrt(3)/4)*a
   // approx 2.35 Å.
-  StructureAnalyzer neighbors(si_cell, 3.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const neighbors(si_cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &neighborGraph = neighbors.neighborGraph();
   const auto &atoms = si_cell.atoms();
 
@@ -76,11 +76,11 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
 
   // Act: Calculate distances
   // Cutoff 5.0 covers the 3.0 distance
-  StructureAnalyzer analyzer(cell, 5.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell, 5.0, trajectory_.getBondCutoffsSQ());
   const auto &distances = analyzer.distances();
 
   // Assert Same Species
-  int id_Ar = cell.findElement("Ar")->id.value;
+  int const id_Ar = cell.findElement("Ar")->id.value;
   ASSERT_EQ(id_Ar, 0);
 
   // StructureAnalyzer stores unique pairs for same-species (i < j logic)
@@ -96,11 +96,11 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
   mixed_cell.addAtom("Xe", {0.0, 4.0, 0.0});
   updateTrajectory(mixed_cell);
 
-  StructureAnalyzer mixed_analyzer(mixed_cell, 5.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const mixed_analyzer(mixed_cell, 5.0, trajectory_.getBondCutoffsSQ());
   const auto &mixed_distances = mixed_analyzer.distances();
 
-  int id_Ar_m = mixed_cell.findElement("Ar")->id.value;
-  int id_Xe_m = mixed_cell.findElement("Xe")->id.value;
+  int const id_Ar_m = mixed_cell.findElement("Ar")->id.value;
+  int const id_Xe_m = mixed_cell.findElement("Xe")->id.value;
 
   // StructureAnalyzer stores symmetric pairs for different species
   // So we expect 1 in [Ar][Xe] and 1 in [Xe][Ar]
@@ -127,7 +127,7 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   updateTrajectory(water_cell);
 
   // Act: Calculate neighbors and angles.
-  StructureAnalyzer neighbors(water_cell, 3.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const neighbors(water_cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &angles = neighbors.angles();
 
   // Assert: We need to get the element IDs to index the angle tensor correctly.
@@ -173,7 +173,7 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAngleWithPBC) {
   updateTrajectory(pbc_cell);
 
   // Act: Calculate neighbors and angles.
-  StructureAnalyzer analyzer(pbc_cell, cutoff, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(pbc_cell, cutoff, trajectory_.getBondCutoffsSQ());
   const auto &angles = analyzer.angles();
 
   // Assert
@@ -200,7 +200,7 @@ TEST_F(StructureAnalyzerTests, FindsNoNeighborsForIsolatedAtom) {
   // Use default bond factor.
 
   // Act: Calculate neighbors with a moderate cutoff.
-  StructureAnalyzer analyzer(large_cell, 5.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(large_cell, 5.0, trajectory_.getBondCutoffsSQ());
   const auto &neighborGraph = analyzer.neighborGraph();
 
   // Assert: The single atom should have no neighbors.
@@ -219,7 +219,7 @@ TEST_F(StructureAnalyzerTests, FindsNeighborsBasedOnBondCutoff) {
     cell.addAtom("Ar", {5.0, 5.0, 5.0});
     cell.addAtom("Ar", {7.0, 5.0, 5.0}); // Distance = 2.0 < 2.304
     updateTrajectory(cell);
-    StructureAnalyzer analyzer(cell, 3.1, trajectory_.getBondCutoffsSQ());
+    StructureAnalyzer const analyzer(cell, 3.1, trajectory_.getBondCutoffsSQ());
     const auto &neighborGraph = analyzer.neighborGraph();
     ASSERT_EQ(neighborGraph.nodeCount(), 2);
     ASSERT_EQ(neighborGraph.getNeighbors(0).size(), 1);
@@ -233,7 +233,7 @@ TEST_F(StructureAnalyzerTests, FindsNeighborsBasedOnBondCutoff) {
     cell.addAtom("Ar", {5.0, 5.0, 5.0});
     cell.addAtom("Ar", {8.0, 5.0, 5.0}); // Distance = 3.0 > 2.304
     updateTrajectory(cell);
-    StructureAnalyzer analyzer(cell, 3.5, trajectory_.getBondCutoffsSQ());
+    StructureAnalyzer const analyzer(cell, 3.5, trajectory_.getBondCutoffsSQ());
     const auto &neighborGraph = analyzer.neighborGraph();
     ASSERT_EQ(neighborGraph.nodeCount(), 2);
     EXPECT_TRUE(neighborGraph.getNeighbors(0).empty());
@@ -257,13 +257,13 @@ TEST_F(StructureAnalyzerTests, EnforcesNeighborSymmetry) {
   // So A-B should be neighbors.
   // A-D should be neighbors.
   // Act
-  StructureAnalyzer analyzer(random_cell, 3.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(random_cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &neighborGraph = analyzer.neighborGraph();
 
   // Assert: Check symmetry for all pairs.
   for (size_t i = 0; i < neighborGraph.nodeCount(); ++i) {
     for (const auto &neighbor : neighborGraph.getNeighbors(i)) {
-      size_t j = neighbor.index;
+      size_t const j = neighbor.index;
 
       // If i sees j, then j must see i
       bool found_reverse = false;
@@ -296,7 +296,7 @@ TEST_F(StructureAnalyzerTests, HandlesPeriodicSelfInteractions) {
 
   // Case 1: Ignore Periodic Self Interactions = true (Reference default)
   {
-    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(), true);
+    StructureAnalyzer const analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(), true);
     const auto &neighborGraph = analyzer.neighborGraph();
     ASSERT_EQ(neighborGraph.nodeCount(), 1);
     // Should NOT see itself
@@ -305,7 +305,7 @@ TEST_F(StructureAnalyzerTests, HandlesPeriodicSelfInteractions) {
 
   // Case 2: Ignore Periodic Self Interactions = false
   {
-    StructureAnalyzer analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(), false);
+    StructureAnalyzer const analyzer(small_cell, 3.0, trajectory_.getBondCutoffsSQ(), false);
     const auto &neighborGraph = analyzer.neighborGraph();
     ASSERT_EQ(neighborGraph.nodeCount(), 1);
 
@@ -335,7 +335,7 @@ TEST_F(StructureAnalyzerTests, TriangleMoleculeConnectivity) {
   updateTrajectory(cell);
 
   // Act
-  StructureAnalyzer analyzer(cell, 3.0, trajectory_.getBondCutoffsSQ());
+  StructureAnalyzer const analyzer(cell, 3.0, trajectory_.getBondCutoffsSQ());
   const auto &neighborGraph = analyzer.neighborGraph();
 
   // Assert

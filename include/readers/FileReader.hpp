@@ -65,7 +65,7 @@ correlation::core::Cell readStructure(const std::string &filename, FileType type
  */
 correlation::core::Trajectory
 readTrajectory(const std::string &filename, FileType type,
-               std::function<void(float, const std::string &)> progress_callback = nullptr);
+               const std::function<void(float, const std::string &)>& progress_callback = nullptr);
 
 /**
  * @brief Determines the FileType from a given filename extension.

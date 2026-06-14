@@ -4,6 +4,7 @@
 // Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 #include "app/PresetManager.hpp"
+#include <algorithm>
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
@@ -16,13 +17,14 @@ namespace {
 
 std::string escapeJsonString(const std::string &s) {
   std::string out;
-  for (char c : s) {
-    if (c == '"') out += "\\\"";
-    else if (c == '\\') out += "\\\\";
-    else if (c == '\n') out += "\\n";
-    else if (c == '\r') out += "\\r";
-    else if (c == '\t') out += "\\t";
-    else out += c;
+  for (char const c : s) {
+    if (c == '"') { out += "\\\"";
+    } else if (c == '\\') { out += "\\\\";
+    } else if (c == '\n') { out += "\\n";
+    } else if (c == '\r') { out += "\\r";
+    } else if (c == '\t') { out += "\\t";
+    } else { out += c;
+}
   }
   return out;
 }
@@ -32,7 +34,7 @@ size_t findRootKey(const std::string &json, const std::string &key) {
   int brace_level = 0;
   int bracket_level = 0;
   for (size_t i = 0; i < json.size(); ++i) {
-    char c = json[i];
+    char const c = json[i];
     if (c == '\\' && in_string) {
       i++; // skip next char
       continue;
@@ -45,7 +47,7 @@ size_t findRootKey(const std::string &json, const std::string &key) {
               json.compare(i + 1, key.size(), key) == 0 &&
               json[i + 1 + key.size()] == '"') {
             // Verify it is followed by a colon (skipping whitespace)
-            size_t colon_pos = json.find_first_not_of(" \t\n\r", i + 1 + key.size() + 1);
+            size_t const colon_pos = json.find_first_not_of(" \t\n\r", i + 1 + key.size() + 1);
             if (colon_pos != std::string::npos && json[colon_pos] == ':') {
               return i;
             }
@@ -55,10 +57,11 @@ size_t findRootKey(const std::string &json, const std::string &key) {
       continue;
     }
     if (!in_string) {
-      if (c == '{') brace_level++;
-      else if (c == '}') brace_level--;
-      else if (c == '[') bracket_level++;
-      else if (c == ']') bracket_level--;
+      if (c == '{') { brace_level++;
+      } else if (c == '}') { brace_level--;
+      } else if (c == '[') { bracket_level++;
+      } else if (c == ']') { bracket_level--;
+}
     }
   }
   return std::string::npos;
@@ -66,11 +69,14 @@ size_t findRootKey(const std::string &json, const std::string &key) {
 
 std::string parseStringValue(const std::string &json, const std::string &key) {
   size_t pos = findRootKey(json, key);
-  if (pos == std::string::npos) return "";
-  pos = json.find(":", pos);
-  if (pos == std::string::npos) return "";
-  size_t start = json.find("\"", pos);
-  if (start == std::string::npos) return "";
+  if (pos == std::string::npos) { return "";
+}
+  pos = json.find(':', pos);
+  if (pos == std::string::npos) { return "";
+}
+  size_t const start = json.find('\"', pos);
+  if (start == std::string::npos) { return "";
+}
   
   // Find the end quote, skipping escaped characters
   size_t end = std::string::npos;
@@ -82,14 +88,15 @@ std::string parseStringValue(const std::string &json, const std::string &key) {
       break;
     }
   }
-  if (end == std::string::npos) return "";
+  if (end == std::string::npos) { return "";
+}
   std::string val = json.substr(start + 1, end - start - 1);
   
   // Unescape
   std::string unescaped;
   for (size_t i = 0; i < val.size(); ++i) {
     if (val[i] == '\\' && i + 1 < val.size()) {
-      char next = val[i + 1];
+      char const next = val[i + 1];
       if (next == '"') { unescaped += '"'; i++; }
       else if (next == '\\') { unescaped += '\\'; i++; }
       else if (next == 'n') { unescaped += '\n'; i++; }
@@ -105,13 +112,17 @@ std::string parseStringValue(const std::string &json, const std::string &key) {
 
 double parseDoubleValue(const std::string &json, const std::string &key, double fallback) {
   size_t pos = findRootKey(json, key);
-  if (pos == std::string::npos) return fallback;
-  pos = json.find(":", pos);
-  if (pos == std::string::npos) return fallback;
-  size_t start = json.find_first_not_of(" \t\n\r:", pos + 1);
-  if (start == std::string::npos) return fallback;
+  if (pos == std::string::npos) { return fallback;
+}
+  pos = json.find(':', pos);
+  if (pos == std::string::npos) { return fallback;
+}
+  size_t const start = json.find_first_not_of(" \t\n\r:", pos + 1);
+  if (start == std::string::npos) { return fallback;
+}
   size_t end = json.find_first_of(",}\n\r", start);
-  if (end == std::string::npos) end = json.size();
+  if (end == std::string::npos) { end = json.size();
+}
   try {
     return std::stod(json.substr(start, end - start));
   } catch (...) {
@@ -121,13 +132,17 @@ double parseDoubleValue(const std::string &json, const std::string &key, double 
 
 int parseIntValue(const std::string &json, const std::string &key, int fallback) {
   size_t pos = findRootKey(json, key);
-  if (pos == std::string::npos) return fallback;
-  pos = json.find(":", pos);
-  if (pos == std::string::npos) return fallback;
-  size_t start = json.find_first_not_of(" \t\n\r:", pos + 1);
-  if (start == std::string::npos) return fallback;
+  if (pos == std::string::npos) { return fallback;
+}
+  pos = json.find(':', pos);
+  if (pos == std::string::npos) { return fallback;
+}
+  size_t const start = json.find_first_not_of(" \t\n\r:", pos + 1);
+  if (start == std::string::npos) { return fallback;
+}
   size_t end = json.find_first_of(",}\n\r", start);
-  if (end == std::string::npos) end = json.size();
+  if (end == std::string::npos) { end = json.size();
+}
   try {
     return std::stoi(json.substr(start, end - start));
   } catch (...) {
@@ -137,39 +152,51 @@ int parseIntValue(const std::string &json, const std::string &key, int fallback)
 
 bool parseBoolValue(const std::string &json, const std::string &key, bool fallback) {
   size_t pos = findRootKey(json, key);
-  if (pos == std::string::npos) return fallback;
-  pos = json.find(":", pos);
-  if (pos == std::string::npos) return fallback;
-  size_t start = json.find_first_not_of(" \t\n\r:", pos + 1);
-  if (start == std::string::npos) return fallback;
-  std::string val = json.substr(start, 5);
-  if (val.starts_with("true")) return true;
-  if (val.starts_with("false")) return false;
+  if (pos == std::string::npos) { return fallback;
+}
+  pos = json.find(':', pos);
+  if (pos == std::string::npos) { return fallback;
+}
+  size_t const start = json.find_first_not_of(" \t\n\r:", pos + 1);
+  if (start == std::string::npos) { return fallback;
+}
+  std::string const val = json.substr(start, 5);
+  if (val.starts_with("true")) { return true;
+}
+  if (val.starts_with("false")) { return false;
+}
   return fallback;
 }
 
 std::map<std::string, bool> parseActiveCalculators(const std::string &json) {
   std::map<std::string, bool> active;
-  size_t pos = findRootKey(json, "active_calculators");
-  if (pos == std::string::npos) return active;
-  size_t obj_start = json.find("{", pos);
-  if (obj_start == std::string::npos) return active;
-  size_t obj_end = json.find("}", obj_start);
-  if (obj_end == std::string::npos) return active;
+  size_t const pos = findRootKey(json, "active_calculators");
+  if (pos == std::string::npos) { return active;
+}
+  size_t const obj_start = json.find('{', pos);
+  if (obj_start == std::string::npos) { return active;
+}
+  size_t const obj_end = json.find('}', obj_start);
+  if (obj_end == std::string::npos) { return active;
+}
   
-  std::string inner = json.substr(obj_start + 1, obj_end - obj_start - 1);
+  std::string const inner = json.substr(obj_start + 1, obj_end - obj_start - 1);
   size_t idx = 0;
   while (true) {
-    size_t key_start = inner.find("\"", idx);
-    if (key_start == std::string::npos) break;
-    size_t key_end = inner.find("\"", key_start + 1);
-    if (key_end == std::string::npos) break;
-    std::string key = inner.substr(key_start + 1, key_end - key_start - 1);
+    size_t const key_start = inner.find('\"', idx);
+    if (key_start == std::string::npos) { break;
+}
+    size_t const key_end = inner.find('\"', key_start + 1);
+    if (key_end == std::string::npos) { break;
+}
+    std::string const key = inner.substr(key_start + 1, key_end - key_start - 1);
     
-    size_t colon = inner.find(":", key_end);
-    if (colon == std::string::npos) break;
-    size_t val_start = inner.find_first_not_of(" \t\n\r", colon + 1);
-    if (val_start == std::string::npos) break;
+    size_t const colon = inner.find(':', key_end);
+    if (colon == std::string::npos) { break;
+}
+    size_t const val_start = inner.find_first_not_of(" \t\n\r", colon + 1);
+    if (val_start == std::string::npos) { break;
+}
     
     bool val = false;
     if (inner.substr(val_start, 4) == "true") {
@@ -193,7 +220,8 @@ std::filesystem::path PresetManager::presetsDirectory() {
   if (userprofile) home = userprofile;
 #else
   const char *home_env = std::getenv("HOME");
-  if (home_env) home = home_env;
+  if (home_env != nullptr) { home = home_env;
+}
 #endif
   if (home.empty()) {
     home = std::filesystem::current_path();
@@ -203,7 +231,7 @@ std::filesystem::path PresetManager::presetsDirectory() {
 
 std::vector<Preset> PresetManager::loadAll() {
   std::vector<Preset> presets;
-  std::filesystem::path dir = presetsDirectory();
+  std::filesystem::path const dir = presetsDirectory();
   if (!std::filesystem::exists(dir)) {
     return presets;
   }
@@ -215,9 +243,9 @@ std::vector<Preset> PresetManager::loadAll() {
         std::stringstream ss;
         ss << in.rdbuf();
         try {
-          Preset p = fromJson(ss.str());
+          Preset const p = fromJson(ss.str());
           presets.push_back(p);
-        } catch (...) {
+        } catch (...) { // NOLINT(bugprone-empty-catch)
           // Skip corrupt presets
         }
       }
@@ -225,7 +253,7 @@ std::vector<Preset> PresetManager::loadAll() {
   }
 
   // Sort alphabetically
-  std::sort(presets.begin(), presets.end(), [](const Preset &a, const Preset &b) {
+  std::ranges::sort(presets, [](const Preset &a, const Preset &b) {
     return a.name < b.name;
   });
 
@@ -233,16 +261,16 @@ std::vector<Preset> PresetManager::loadAll() {
 }
 
 void PresetManager::save(const Preset &preset) {
-  std::filesystem::path dir = presetsDirectory();
+  std::filesystem::path const dir = presetsDirectory();
   std::filesystem::create_directories(dir);
 
   // Filename is safe name
   std::string filename = preset.name;
-  std::replace_if(filename.begin(), filename.end(), [](char c) {
+  std::ranges::replace_if(filename, [](char c) {
     return !std::isalnum(c) && c != '-' && c != '_';
   }, '_');
 
-  std::filesystem::path filepath = dir / (filename + ".json");
+  std::filesystem::path const filepath = dir / (filename + ".json");
   std::ofstream out(filepath);
   if (out.is_open()) {
     out << toJson(preset);
@@ -250,22 +278,23 @@ void PresetManager::save(const Preset &preset) {
 }
 
 void PresetManager::remove(const std::string &name) {
-  std::filesystem::path dir = presetsDirectory();
-  if (!std::filesystem::exists(dir)) return;
+  std::filesystem::path const dir = presetsDirectory();
+  if (!std::filesystem::exists(dir)) { return;
+}
 
   std::string filename = name;
-  std::replace_if(filename.begin(), filename.end(), [](char c) {
+  std::ranges::replace_if(filename, [](char c) {
     return !std::isalnum(c) && c != '-' && c != '_';
   }, '_');
 
-  std::filesystem::path filepath = dir / (filename + ".json");
+  std::filesystem::path const filepath = dir / (filename + ".json");
   if (std::filesystem::exists(filepath)) {
     std::filesystem::remove(filepath);
   }
 }
 
 std::string PresetManager::toJson(const Preset &preset) {
-  std::string active_calcs_json = "";
+  std::string active_calcs_json;
   for (auto it = preset.options.active_calculators.begin(); it != preset.options.active_calculators.end(); ++it) {
     if (it != preset.options.active_calculators.begin()) {
       active_calcs_json += ", ";

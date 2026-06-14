@@ -31,7 +31,7 @@ TEST_F(PresetManagerTests, RoundTripSerialization) {
     preset.options.active_calculators = {{"RDF", true}, {"S_K", false}};
 
     // Serialize
-    std::string json = correlation::app::PresetManager::toJson(preset);
+    std::string const json = correlation::app::PresetManager::toJson(preset);
 
     // Deserialize
     correlation::app::Preset loaded = correlation::app::PresetManager::fromJson(json);

@@ -6,7 +6,7 @@
 using namespace correlation::readers;
 
 TEST(ArcReaderTests, Properties) {
-  ArcReader reader;
+  ArcReader const reader;
   EXPECT_EQ(reader.getName(), "Accelrys ARC");
   EXPECT_TRUE(reader.isTrajectory());
   auto exts = reader.getExtensions();

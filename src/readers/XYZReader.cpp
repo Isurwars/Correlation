@@ -10,10 +10,12 @@
 #include "core/MappedFile.hpp"
 #include "readers/ReaderFactory.hpp"
 
+#include <algorithm>
 #include <array>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::readers {
 
@@ -25,7 +27,7 @@ bool registered = ReaderFactory::instance().registerReader(std::make_unique<XYZR
 // parseXYZFrame – parses a single frame from memory
 // ---------------------------------------------------------------------------
 correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) {
-  std::string content(data, size);
+  std::string const content(data, size);
   std::istringstream stream(content);
   std::string line;
 
@@ -60,9 +62,9 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
 
   if (comm_data.lattice) {
     const auto &L = *comm_data.lattice;
-    correlation::math::Vector3<double> a(L[0], L[1], L[2]);
-    correlation::math::Vector3<double> b(L[3], L[4], L[5]);
-    correlation::math::Vector3<double> c(L[6], L[7], L[8]);
+    correlation::math::Vector3<double> const a(L[0], L[1], L[2]);
+    correlation::math::Vector3<double> const b(L[3], L[4], L[5]);
+    correlation::math::Vector3<double> const c(L[6], L[7], L[8]);
     cell = correlation::core::Cell(a, b, c);
   }
 
@@ -83,18 +85,18 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
       tokens.push_back(token);
     }
 
-    int max_idx = (std::max)(comm_data.species_col,
-                             (std::max)(comm_data.pos_x_col, (std::max)(comm_data.pos_y_col, comm_data.pos_z_col)));
+    int const max_idx = (std::max)({comm_data.species_col,
+                             comm_data.pos_x_col, comm_data.pos_y_col, comm_data.pos_z_col});
 
-    if (static_cast<int>(tokens.size()) <= max_idx) {
+    if (std::cmp_less_equal(tokens.size(), max_idx)) {
       throw std::runtime_error("Invalid XYZ file: malformed atom line: " + line);
     }
 
-    std::string symbol = tokens[comm_data.species_col];
+    std::string const symbol = tokens[comm_data.species_col];
     try {
-      double x = std::stod(tokens[comm_data.pos_x_col]);
-      double y = std::stod(tokens[comm_data.pos_y_col]);
-      double z = std::stod(tokens[comm_data.pos_z_col]);
+      double const x = std::stod(tokens[comm_data.pos_x_col]);
+      double const y = std::stod(tokens[comm_data.pos_y_col]);
+      double const z = std::stod(tokens[comm_data.pos_z_col]);
       cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
     } catch (...) {
       throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
@@ -117,7 +119,7 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
     auto start = pos + lat_key.size();
     auto end = comment.find('"', start);
     if (end != std::string::npos) {
-      std::string values = comment.substr(start, end - start);
+      std::string const values = comment.substr(start, end - start);
       std::istringstream iss(values);
       std::array<double, 9> lattice{};
       bool ok = true;
@@ -127,8 +129,9 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
           break;
         }
       }
-      if (ok)
+      if (ok) {
         data.lattice = lattice;
+}
     }
   }
 
@@ -147,11 +150,11 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
         } else {
           end = comment.find_first_of(" \t\r\n", start);
         }
-        std::string val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+        std::string const val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
         try {
           data.energy = std::stod(val_str);
           break;
-        } catch (...) {
+        } catch (...) { // NOLINT(bugprone-empty-catch)
         }
       }
     }
@@ -163,7 +166,7 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
   if (pos != std::string::npos) {
     auto start = pos + prop_key.size();
     if (start < comment.size()) {
-      size_t end;
+      size_t end = 0;
       if (comment[start] == '"') {
         start++;
         end = comment.find('"', start);
@@ -171,7 +174,7 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
         end = comment.find_first_of(" \t\r\n", start);
       }
 
-      std::string props = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
+      std::string const props = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
 
       // format is name:type:cols:name:type:cols...
       std::vector<std::string> parts;
@@ -186,7 +189,7 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
       data.pos_x_col = -1;
 
       for (size_t i = 0; i + 2 < parts.size(); i += 3) {
-        std::string name = parts[i];
+        const std::string& name = parts[i];
         int cols = 1;
         try {
           cols = std::stoi(parts[i + 2]);
@@ -203,8 +206,9 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
         col_index += cols;
       }
 
-      if (data.species_col == -1)
+      if (data.species_col == -1) {
         data.species_col = 0;
+}
       if (data.pos_x_col == -1) {
         data.pos_x_col = 1;
         data.pos_y_col = 2;
@@ -236,8 +240,9 @@ correlation::core::Trajectory
 XYZReader::readTrajectory(const std::string &filename,
                           std::function<void(float, const std::string &)> progress_callback) {
 
-  if (progress_callback)
-    progress_callback(0.0f, "Reading XYZ file...");
+  if (progress_callback) {
+    progress_callback(0.0F, "Reading XYZ file...");
+}
 
   auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
@@ -279,14 +284,14 @@ XYZReader::readTrajectory(const std::string &filename,
       break;
     }
 
-    size_t frame_start = offset;
+    size_t const frame_start = offset;
 
     // Read the atom count line
     size_t line_end = offset;
     while (line_end < total_size && data[line_end] != '\n' && data[line_end] != '\r') {
       line_end++;
     }
-    std::string atom_count_str(data + offset, line_end - offset);
+    std::string const atom_count_str(data + offset, line_end - offset);
 
     int num_atoms = 0;
     try {
@@ -345,7 +350,7 @@ XYZReader::readTrajectory(const std::string &filename,
 
     // Report progress.
     if (progress_callback && total_size > 0) {
-      float progress = static_cast<float>(offset) / static_cast<float>(total_size);
+      float const progress = static_cast<float>(offset) / static_cast<float>(total_size);
       progress_callback(progress, "Reading XYZ frames...");
     }
   }
@@ -356,12 +361,13 @@ XYZReader::readTrajectory(const std::string &filename,
 
   frame_offsets.push_back(offset);
 
-  if (progress_callback)
-    progress_callback(1.0f, "XYZ file loaded.");
+  if (progress_callback) {
+    progress_callback(1.0F, "XYZ file loaded.");
+}
 
   auto parser = [](const char *d, size_t s) { return parseXYZFrame(d, s); };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
+  return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }
 
 } // namespace correlation::readers

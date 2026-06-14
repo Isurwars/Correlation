@@ -41,41 +41,46 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell, const corr
     // Let atom `i` be atom `B` in the A-B-C-D sequence
     for (size_t B = r.begin(); B != r.end(); ++B) {
       const auto &B_neighbors = graph.getNeighbors(B);
-      if (B_neighbors.size() < 2)
+      if (B_neighbors.size() < 2) {
         continue;
+}
 
       const int type_B = atoms[B].element_id();
 
       // Loop over all neighbors of B, which we consider as `C`
       for (const auto &neighbor_C : B_neighbors) {
-        size_t C = neighbor_C.index;
+        size_t const C = neighbor_C.index;
 
         // To prevent double counting the identical bond B-C as C-B,
         // we enforce an ordering constraint: B < C
-        if (B >= C)
+        if (B >= C) {
           continue;
+}
 
         const auto &C_neighbors = graph.getNeighbors(C);
-        if (C_neighbors.size() < 2)
+        if (C_neighbors.size() < 2) {
           continue;
+}
 
         const int type_C = atoms[C].element_id();
         const correlation::math::Vector3<double> &r_BC = neighbor_C.r_ij; // B -> C
 
         // Now, find all A bonded to B (where A != C)
         for (const auto &neighbor_A : B_neighbors) {
-          size_t A = neighbor_A.index;
-          if (A == C)
+          size_t const A = neighbor_A.index;
+          if (A == C) {
             continue;
+}
 
           const int type_A = atoms[A].element_id();
           const correlation::math::Vector3<double> &r_BA = neighbor_A.r_ij; // B -> A
 
           // And find all D bonded to C (where D != B and D != A)
           for (const auto &neighbor_D : C_neighbors) {
-            size_t D = neighbor_D.index;
-            if (D == B || D == A)
+            size_t const D = neighbor_D.index;
+            if (D == B || D == A) {
               continue;
+}
 
             const int type_D = atoms[D].element_id();
 
@@ -93,17 +98,17 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell, const corr
             // IUPAC: b1 = r_AB (A to B) = -r_BA b2 = r_BC (B to C) b3 =
             // r_CD (C to D)
 
-            correlation::math::Vector3<double> b1 = -1.0 * r_BA;
-            correlation::math::Vector3<double> b2 = r_BC;
-            correlation::math::Vector3<double> b3 = r_CD;
+            correlation::math::Vector3<double> const b1 = -1.0 * r_BA;
+            correlation::math::Vector3<double> const b2 = r_BC;
+            correlation::math::Vector3<double> const b3 = r_CD;
 
             // n1 = b1 x b2
             // n2 = b2 x b3
             correlation::math::Vector3<double> n1 = correlation::math::cross(b1, b2);
             correlation::math::Vector3<double> n2 = correlation::math::cross(b2, b3);
 
-            double n1_norm = correlation::math::norm(n1);
-            double n2_norm = correlation::math::norm(n2);
+            double const n1_norm = correlation::math::norm(n1);
+            double const n2_norm = correlation::math::norm(n2);
 
             if (n1_norm < 1e-8 || n2_norm < 1e-8) {
               continue; // Collinear atoms, dihedral undefined.
@@ -114,19 +119,19 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell, const corr
             n2 = correlation::math::normalize(n2);
 
             // m = n1 x (b2 / |b2|)
-            double b2_norm = correlation::math::norm(b2);
+            double const b2_norm = correlation::math::norm(b2);
             if (b2_norm < 1e-8) {
               continue; // Coincident central bond, dihedral undefined.
             }
-            correlation::math::Vector3<double> b2_hat = b2 / b2_norm;
-            correlation::math::Vector3<double> m = correlation::math::cross(n1, b2_hat);
+            correlation::math::Vector3<double> const b2_hat = b2 / b2_norm;
+            correlation::math::Vector3<double> const m = correlation::math::cross(n1, b2_hat);
 
             // cos(phi) = n1 . n2
             // sin(phi) = m . n2
-            double x = correlation::math::dot(n1, n2);
-            double y = correlation::math::dot(m, n2);
+            double const x = correlation::math::dot(n1, n2);
+            double const y = correlation::math::dot(m, n2);
 
-            double dihedral_angle = std::atan2(y, x); // Returns range [-pi, pi]
+            double const dihedral_angle = std::atan2(y, x); // Returns range [-pi, pi]
 
             local_tensor[type_A][type_B][type_C][type_D].push_back(dihedral_angle);
 

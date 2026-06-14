@@ -16,26 +16,26 @@ using namespace correlation::math;
 class SmoothingTests : public ::testing::Test {};
 
 TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
-  size_t size = 11;
-  double dx = 0.1;
-  double sigma = 0.3;
+  size_t const size = 11;
+  double const dx = 0.1;
+  double const sigma = 0.3;
 
   // Gaussian
   auto k_gauss = generateKernel(size, dx, sigma, KernelType::Gaussian);
   EXPECT_EQ(k_gauss.size(), size);
-  double sum_gauss = std::accumulate(k_gauss.begin(), k_gauss.end(), 0.0);
+  double const sum_gauss = std::accumulate(k_gauss.begin(), k_gauss.end(), 0.0);
   EXPECT_NEAR(sum_gauss, 1.0, 1e-9);
 
   // Triweight
   auto k_tri = generateKernel(size, dx, sigma, KernelType::Triweight);
   EXPECT_EQ(k_tri.size(), size);
-  double sum_tri = std::accumulate(k_tri.begin(), k_tri.end(), 0.0);
+  double const sum_tri = std::accumulate(k_tri.begin(), k_tri.end(), 0.0);
   EXPECT_NEAR(sum_tri, 1.0, 1e-9);
 
   // Bump
   auto k_bump = generateKernel(size, dx, sigma, KernelType::Bump);
   EXPECT_EQ(k_bump.size(), size);
-  double sum_bump = std::accumulate(k_bump.begin(), k_bump.end(), 0.0);
+  double const sum_bump = std::accumulate(k_bump.begin(), k_bump.end(), 0.0);
   EXPECT_NEAR(sum_bump, 1.0, 1e-9);
 
   // Invalid kernel type throws invalid_argument
@@ -44,12 +44,12 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
 
 TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
   // Empty data
-  std::vector<double> empty_y;
+  std::vector<double> const empty_y;
   auto empty_res = KernelSmoothing(0.1, empty_y, 0.5, KernelType::Gaussian);
   EXPECT_TRUE(empty_res.empty());
 
   // Invalid dx
-  std::vector<double> y = {1.0, 2.0, 3.0, 4.0, 5.0};
+  std::vector<double> const y = {1.0, 2.0, 3.0, 4.0, 5.0};
   EXPECT_THROW(KernelSmoothing(0.0, y, 0.5, KernelType::Gaussian), std::invalid_argument);
   EXPECT_THROW(KernelSmoothing(-0.1, y, 0.5, KernelType::Gaussian), std::invalid_argument);
 
@@ -60,9 +60,9 @@ TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
 
 TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
   // Simple step signal
-  std::vector<double> y = {0.0, 0.0, 0.0, 10.0, 10.0, 10.0};
-  double dx = 0.2;
-  double sigma = 0.4;
+  std::vector<double> const y = {0.0, 0.0, 0.0, 10.0, 10.0, 10.0};
+  double const dx = 0.2;
+  double const sigma = 0.4;
 
   auto smoothed = KernelSmoothing(dx, y, sigma, KernelType::Gaussian);
   ASSERT_EQ(smoothed.size(), y.size());
@@ -75,9 +75,9 @@ TEST_F(SmoothingTests, KernelSmoothingComputesConvolutions) {
 }
 
 TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
-  std::vector<double> r = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0};
-  std::vector<double> y = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
-  double sigma = 0.5;
+  std::vector<double> const r = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0};
+  std::vector<double> const y = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0};
+  double const sigma = 0.5;
 
   auto smoothed_r = KernelSmoothing(r, y, sigma, KernelType::Gaussian);
   auto smoothed_dx = KernelSmoothing(0.2, y, sigma, KernelType::Gaussian);
@@ -88,12 +88,12 @@ TEST_F(SmoothingTests, CompatibilityOverloadDerivesBinWidth) {
   }
 
   // Size mismatch returns empty
-  std::vector<double> r_bad = {0.0, 0.2};
+  std::vector<double> const r_bad = {0.0, 0.2};
   EXPECT_TRUE(KernelSmoothing(r_bad, y, sigma, KernelType::Gaussian).empty());
 
   // Size < 2 returns empty
-  std::vector<double> r_short = {0.0};
-  std::vector<double> y_short = {1.0};
+  std::vector<double> const r_short = {0.0};
+  std::vector<double> const y_short = {1.0};
   EXPECT_TRUE(KernelSmoothing(r_short, y_short, sigma, KernelType::Gaussian).empty());
 }
 

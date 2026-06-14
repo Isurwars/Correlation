@@ -18,7 +18,7 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 
 void VACFCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &df,
                                          const correlation::core::Trajectory &traj,
-                                         const correlation::analysis::AnalysisSettings &settings) const {
+                                         const correlation::analysis::AnalysisSettings & /*settings*/) const {
   auto results = calculate(traj, -1, 0, static_cast<size_t>(-1));
   for (auto &[name, histogram] : results) {
     df.addHistogram(name, std::move(histogram));
@@ -34,13 +34,14 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj, int max_cor
     return results;
   }
 
-  std::vector<double> raw_vacf =
+  std::vector<double> const raw_vacf =
       correlation::analysis::DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
-  if (raw_vacf.empty())
+  if (raw_vacf.empty()) {
     return results;
+}
 
-  size_t num_frames = raw_vacf.size();
-  double dt = traj.getTimeStep();
+  size_t const num_frames = raw_vacf.size();
+  double const dt = traj.getTimeStep();
 
   correlation::analysis::Histogram vacf_hist;
   vacf_hist.x_label = "t";
@@ -58,7 +59,7 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj, int max_cor
   vacf_hist.partials["Total"] = raw_vacf;
   results["VACF"] = std::move(vacf_hist);
 
-  std::vector<double> norm_vacf = correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(
+  std::vector<double> const norm_vacf = correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(
       traj, max_correlation_frames, start_frame, end_frame);
   if (!norm_vacf.empty()) {
     correlation::analysis::Histogram norm_vacf_hist;

@@ -6,7 +6,7 @@
 using namespace correlation::readers;
 
 TEST(OnetepDatReaderTests, Properties) {
-  OnetepDatReader reader;
+  OnetepDatReader const reader;
   EXPECT_EQ(reader.getName(), "ONETEP DAT");
   EXPECT_FALSE(reader.isTrajectory());
   auto exts = reader.getExtensions();

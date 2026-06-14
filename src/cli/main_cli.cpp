@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     return s;
   };
   auto lowercase = [](std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    std::ranges::transform(s, s.begin(), ::tolower);
     return s;
   };
 
@@ -86,8 +86,8 @@ int main(int argc, char *argv[]) {
   }
 
   for (const auto &calc : factory_calcs) {
-    std::string calc_group = lowercase(calc->getGroup());
-    bool active = (disabled_groups.count(calc_group) == 0);
+    std::string const calc_group = lowercase(calc->getGroup());
+    bool const active = (!disabled_groups.contains(calc_group));
     opts.active_calculators[calc->getName()] = active;
     opts.active_calculators[calc->getShortName()] = active;
   }
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Loading: " << cli.input_file << "\n";
     }
-    std::string msg = backend.load_file(cli.input_file);
+    std::string const msg = backend.load_file(cli.input_file);
 
     // Re-apply options since load_file overwrites output_file_base
     opts.output_file_base = cli.output_base;
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
     if (!cli.quiet) {
       std::cerr << "Running analysis...\n";
     }
-    std::string err = backend.run_analysis();
+    std::string const err = backend.run_analysis();
     if (!err.empty()) {
       std::cerr << "\nAnalysis error: " << err << "\n";
       return 1;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 
   // Write output files
   try {
-    std::string err = backend.write_files();
+    std::string const err = backend.write_files();
     if (!err.empty()) {
       std::cerr << "Write error: " << err << "\n";
       return 1;

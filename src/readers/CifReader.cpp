@@ -28,13 +28,13 @@ namespace correlation::readers {
 static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CifReader>());
 
 correlation::core::Cell CifReader::readStructure(const std::string &filename,
-                                                 std::function<void(float, const std::string &)> progress_callback) {
+                                                 std::function<void(float, const std::string &)>  /*progress_callback*/) {
   return read(filename);
 }
 
 correlation::core::Trajectory
-CifReader::readTrajectory(const std::string &filename,
-                          std::function<void(float, const std::string &)> progress_callback) {
+CifReader::readTrajectory(const std::string & /*filename*/,
+                          std::function<void(float, const std::string &)>  /*progress_callback*/) {
   throw std::runtime_error("CIF files are structures, use readStructure.");
 }
 
@@ -46,7 +46,7 @@ struct SymmetryOp {
   correlation::math::Vector3<double> translation{0, 0, 0};
 
   // Applies the operation: new_pos = rotation * old_pos + translation
-  correlation::math::Vector3<double> apply(const correlation::math::Vector3<double> &pos) const {
+  [[nodiscard]] correlation::math::Vector3<double> apply(const correlation::math::Vector3<double> &pos) const {
     return rotation * pos + translation;
   }
 };
@@ -58,7 +58,7 @@ std::string cleanCifValue(std::string str) {
   // Trim trailing whitespace
   str.erase(str.find_last_not_of(" \t\n\r") + 1);
   // Remove uncertainty in parentheses, e.g., "1.234(5)" -> "1.234"
-  size_t p_pos = str.find('(');
+  size_t const p_pos = str.find('(');
   if (p_pos != std::string::npos) {
     str.erase(p_pos);
   }
@@ -71,7 +71,7 @@ std::string cleanCifValue(std::string str) {
 
 // Parses a single component of a symmetry string like "-y+1/2"
 void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &op) {
-  comp_str.erase(std::remove_if(comp_str.begin(), comp_str.end(), ::isspace), comp_str.end());
+  std::erase_if(comp_str, ::isspace);
 
   double sign = 1.0;
   size_t current_pos = 0;
@@ -97,13 +97,13 @@ void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &op) {
       current_pos++;
     }
     // Check for translation part
-    else if (isdigit(comp_str[current_pos])) {
-      size_t next_pos;
-      double num = std::stod(comp_str.substr(current_pos), &next_pos);
+    else if (isdigit(comp_str[current_pos]) != 0) {
+      size_t next_pos = 0;
+      double const num = std::stod(comp_str.substr(current_pos), &next_pos);
       current_pos += next_pos;
       if (current_pos < comp_str.length() && comp_str[current_pos] == '/') {
         current_pos++; // Skip '/'
-        double den = std::stod(comp_str.substr(current_pos), &next_pos);
+        double const den = std::stod(comp_str.substr(current_pos), &next_pos);
         current_pos += next_pos;
         op.translation[row] += sign * (num / den);
       } else {
@@ -139,7 +139,7 @@ std::vector<std::string> tokenizeCifLine(const std::string &line) {
   char quote_char = '\0';
   bool in_token = false;
 
-  for (char c : line) {
+  for (char const c : line) {
     if (quote_char != '\0') { // Inside a quoted string
       if (c == quote_char) {
         quote_char = '\0'; // End of quoted string
@@ -152,7 +152,7 @@ std::vector<std::string> tokenizeCifLine(const std::string &line) {
           quote_char = c;
           in_token = true;
         }
-      } else if (isspace(c)) {
+      } else if (isspace(c) != 0) {
         if (in_token) {
           tokens.push_back(current_token);
           current_token.clear();
@@ -202,17 +202,18 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
   while (std::getline(file, line)) {
     // Trim leading whitespace
     line.erase(0, line.find_first_not_of(" \t\n\r"));
-    if (line.empty() || line[0] == '#')
+    if (line.empty() || line[0] == '#') {
       continue;
+}
 
     // A new global tag or a new loop definition ends a previous loop's data
     // section
-    if (state == ParseState::LOOP_DATA && (line[0] == '_' || line.rfind("loop_", 0) == 0)) {
+    if (state == ParseState::LOOP_DATA && (line[0] == '_' || line.starts_with("loop_"))) {
       state = ParseState::GLOBAL;
       loop_headers.clear();
     }
 
-    if (line.rfind("loop_", 0) == 0) {
+    if (line.starts_with("loop_")) {
       state = ParseState::LOOP_HEADER;
       loop_headers.clear();
       continue;
@@ -221,7 +222,8 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
     if (state == ParseState::GLOBAL) {
       if (line[0] == '_') {
         std::stringstream ss(line);
-        std::string key, value;
+        std::string key;
+        std::string value;
         ss >> key;
         std::getline(ss, value); // The rest of the line is the value
         cif_data[key] = cleanCifValue(value);
@@ -243,33 +245,35 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
       }
 
       // Check which loop we're in by looking for key headers
-      bool is_atom_loop = header_map.count("_atom_site_fract_x");
-      bool is_symm_loop =
-          header_map.count("_symmetry_equiv_pos_as_xyz") || header_map.count("_space_group_symop_operation_xyz");
+      bool const is_atom_loop = header_map.contains("_atom_site_fract_x") != 0u;
+      bool const is_symm_loop =
+          (header_map.contains("_symmetry_equiv_pos_as_xyz") != 0u) || (header_map.contains("_space_group_symop_operation_xyz") != 0u);
 
       auto tokens = tokenizeCifLine(line);
-      if (tokens.empty())
+      if (tokens.empty()) {
         continue;
+}
 
       if (is_atom_loop) {
-        if (tokens.size() < 3)
+        if (tokens.size() < 3) {
           continue; // Malformed line
+}
         try {
           std::string element = cleanCifValue(tokens.at(header_map.at("_atom_site_type_symbol")));
-          element.erase(std::remove_if(element.begin(), element.end(), ::isdigit), element.end());
+          std::erase_if(element, ::isdigit);
 
-          correlation::math::Vector3<double> pos = {
+          correlation::math::Vector3<double> const pos = {
               std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x")))),
               std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y")))),
               std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z"))))};
-          asymmetric_atoms.push_back({element, pos});
+          asymmetric_atoms.push_back({.symbol=element, .frac_pos=pos});
         } catch (const std::out_of_range &oor) {
           throw std::runtime_error("CIF Error: Missing required atom site data "
                                    "(e.g., _atom_site_fract_x).");
         }
       } else if (is_symm_loop) {
         // The symmetry operation might be the only token on the line
-        std::string op_key = header_map.count("_symmetry_equiv_pos_as_xyz") ? "_symmetry_equiv_pos_as_xyz"
+        std::string const op_key = (header_map.contains("_symmetry_equiv_pos_as_xyz") != 0u) ? "_symmetry_equiv_pos_as_xyz"
                                                                             : "_space_group_symop_operation_xyz";
         symmetry_ops.push_back(parseSymmetryString(tokens.at(header_map.at(op_key))));
       }
@@ -280,7 +284,7 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
 
   // 1. Set Lattice Parameters
   try {
-    std::array<double, 6> params = {
+    std::array<double, 6> const params = {
         std::stod(cif_data.at("_cell_length_a")),   std::stod(cif_data.at("_cell_length_b")),
         std::stod(cif_data.at("_cell_length_c")),   std::stod(cif_data.at("_cell_angle_alpha")),
         std::stod(cif_data.at("_cell_angle_beta")), std::stod(cif_data.at("_cell_angle_gamma"))};
@@ -302,32 +306,39 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
 
       // Normalize fractional coordinates to be within [0-epsilon, 1-epsilon)
       frac_pos.x() = std::fmod(frac_pos.x(), 1.0);
-      if (frac_pos.x() < 0)
+      if (frac_pos.x() < 0) {
         frac_pos.x() += 1.0;
+}
       frac_pos.y() = std::fmod(frac_pos.y(), 1.0);
-      if (frac_pos.y() < 0)
+      if (frac_pos.y() < 0) {
         frac_pos.y() += 1.0;
+}
       frac_pos.z() = std::fmod(frac_pos.z(), 1.0);
-      if (frac_pos.z() < 0)
+      if (frac_pos.z() < 0) {
         frac_pos.z() += 1.0;
+}
 
       // Avoid adding duplicate atoms
       bool exists = false;
       for (const auto &final_atom : final_atoms) {
-        if (final_atom.symbol != atom.symbol)
+        if (final_atom.symbol != atom.symbol) {
           continue;
+}
 
         correlation::math::Vector3<double> diff = frac_pos - final_atom.frac_pos;
         // Account for periodic boundary wrapping
         diff.x() = std::fmod(diff.x(), 1.0);
-        if (std::abs(diff.x()) > 0.5)
+        if (std::abs(diff.x()) > 0.5) {
           diff.x() -= std::copysign(1.0, diff.x());
+}
         diff.y() = std::fmod(diff.y(), 1.0);
-        if (std::abs(diff.y()) > 0.5)
+        if (std::abs(diff.y()) > 0.5) {
           diff.y() -= std::copysign(1.0, diff.y());
+}
         diff.z() = std::fmod(diff.z(), 1.0);
-        if (std::abs(diff.z()) > 0.5)
+        if (std::abs(diff.z()) > 0.5) {
           diff.z() -= std::copysign(1.0, diff.z());
+}
 
         if (correlation::math::norm(diff) < tolerance) {
           exists = true;
@@ -335,7 +346,7 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
         }
       }
       if (!exists) {
-        final_atoms.push_back({atom.symbol, frac_pos});
+        final_atoms.push_back({.symbol=atom.symbol, .frac_pos=frac_pos});
       }
     }
   }

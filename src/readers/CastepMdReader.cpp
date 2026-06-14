@@ -20,6 +20,7 @@
 #include <memory>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::readers {
 
@@ -35,7 +36,7 @@ CastepMdReader::readStructure(const std::string &filename,
 correlation::core::Trajectory
 CastepMdReader::readTrajectory(const std::string &filename,
                                std::function<void(float, const std::string &)> progress_callback) {
-  return correlation::core::Trajectory(CastepMdReader::read(filename, progress_callback), 1.0);
+  return {CastepMdReader::read(filename, progress_callback), 1.0};
 }
 
 std::vector<correlation::core::Cell>
@@ -50,11 +51,11 @@ CastepMdReader::read(const std::string &file_name, std::function<void(float, con
 
   // Parse frames
   myfile.seekg(0, std::ios::end);
-  std::streampos file_size = myfile.tellg();
+  std::streampos const file_size = myfile.tellg();
   myfile.clear();
   myfile.seekg(0, std::ios::beg);
   std::streampos last_progress_pos = 0;
-  size_t update_interval = file_size / 100;
+  size_t const update_interval = file_size / 100;
 
   // Skip the header
   bool in_header = true;
@@ -73,22 +74,22 @@ CastepMdReader::read(const std::string &file_name, std::function<void(float, con
 
   while (std::getline(myfile, line)) {
     if (progress_callback) {
-      std::streampos current_pos = myfile.tellg();
-      if (current_pos - last_progress_pos > update_interval) {
-        float p = static_cast<float>(current_pos) / static_cast<float>(file_size);
+      std::streampos const current_pos = myfile.tellg();
+      if (std::cmp_greater(current_pos - last_progress_pos , update_interval)) {
+        float const p = static_cast<float>(current_pos) / static_cast<float>(file_size);
         progress_callback(p, "Loading CASTEP MD file...");
         last_progress_pos = current_pos;
       }
     }
     // If line represents energies/time
-    if (line.find("<-- E") != std::string::npos) {
+    if (line.contains("<-- E")) {
       // For CASTEP MD, the frame usually starts with time (single float on a
       // line without tag) We skip it and read E. If we have atoms in tempCell,
       // it means this is a new frame starting
       if (cell_has_atoms) {
         // Save lattice parameters and energy
-        std::array<double, 6> last_lattice = tempCell.lattice_parameters();
-        double last_energy = tempCell.getEnergy();
+        std::array<double, 6> const last_lattice = tempCell.lattice_parameters();
+        double const last_energy = tempCell.getEnergy();
 
         frames.push_back(std::move(tempCell));
 
@@ -107,10 +108,12 @@ CastepMdReader::read(const std::string &file_name, std::function<void(float, con
       continue;
     }
 
-    if (line.find("<-- h") != std::string::npos && line.find("<-- hv") == std::string::npos) {
+    if (line.contains("<-- h") && !line.contains("<-- hv")) {
       // Lattice vectors h are given row by row in Bohr
       // The first <-- h is row 1
-      std::array<double, 3> h1{}, h2{}, h3{};
+      std::array<double, 3> h1{};
+      std::array<double, 3> h2{};
+      std::array<double, 3> h3{};
       ss.clear();
       ss.str(line);
       ss >> h1[0] >> h1[1] >> h1[2];
@@ -138,14 +141,17 @@ CastepMdReader::read(const std::string &file_name, std::function<void(float, con
       continue;
     }
 
-    if (line.find("<-- R") != std::string::npos) {
+    if (line.contains("<-- R")) {
       // Positions R are given in Bohr
       // Format: Symbol ID x y z <-- R
       ss.clear();
       ss.str(line);
-      std::string symbol, tag;
-      int id;
-      double x, y, z;
+      std::string symbol;
+      std::string tag;
+      int id = 0;
+      double x;
+      double y;
+      double z;
       if (ss >> symbol >> id >> x >> y >> z) {
         tempCell.addAtom(symbol, correlation::math::Vector3<double>(x * correlation::math::bohr_to_angstrom,
                                                                     y * correlation::math::bohr_to_angstrom,

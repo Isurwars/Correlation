@@ -30,11 +30,11 @@ protected:
 
 TEST_F(DADTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
-  double r_cut = 1.5;
-  std::vector<std::vector<double>> bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
-  StructureAnalyzer analyzer(cell, r_cut, bond_cutoffs, true);
+  double const r_cut = 1.5;
+  std::vector<std::vector<double>> const bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
+  StructureAnalyzer const analyzer(cell, r_cut, bond_cutoffs, true);
 
-  double bin_width = 10.0;
+  double const bin_width = 10.0;
   Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell, &analyzer, bin_width);
 
   // We only expect one type of dihedral for C-C-C-C.
@@ -59,8 +59,8 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   correlation::core::Cell cell_iso;
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  double phi = (1.0 + std::sqrt(5.0)) / 2.0;
-  std::vector<std::vector<double>> verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+  double phi = std::numbers::phi;
+  std::vector<std::vector<double>> const verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
                                             {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
                                             {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
@@ -68,24 +68,24 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
     cell_iso.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
   }
 
-  double r_cut = 2.5;
-  std::vector<std::vector<double>> bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
-  StructureAnalyzer analyzer(cell_iso, r_cut, bond_cutoffs, true);
+  double const r_cut = 2.5;
+  std::vector<std::vector<double>> const bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
+  StructureAnalyzer const analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
-  double bin_width = 1.0;
+  double const bin_width = 1.0;
   Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell_iso, &analyzer, bin_width);
 
   ASSERT_FALSE(f_dihedral.partials.empty());
   auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
 
   // DAD expects multiple angles due to Center-Vertex and Vertex-Vertex chains
-  std::vector<double> expected_angles = {0.0, 31.7, 36.0, 63.4, 72.0, 100.0, 108.0, 138.19, 144.0, 180.0};
+  std::vector<double> const expected_angles = {0.0, 31.7, 36.0, 63.4, 72.0, 100.0, 108.0, 138.19, 144.0, 180.0};
 
-  for (double target : expected_angles) {
+  for (double const target : expected_angles) {
     bool found = false;
     for (size_t i = 0; i < partial.size(); ++i) {
       if (partial[i] > 1e-4) {
-        double angle = std::abs(f_dihedral.bins[i]);
+        double const angle = std::abs(f_dihedral.bins[i]);
         if (std::abs(angle - target) < 2.0) { // Tolerance considering binning
           found = true;
           break;

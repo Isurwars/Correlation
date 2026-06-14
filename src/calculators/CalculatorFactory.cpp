@@ -16,8 +16,9 @@ CalculatorFactory &CalculatorFactory::instance() {
 }
 
 bool CalculatorFactory::registerCalculator(std::unique_ptr<BaseCalculator> calculator) {
-  if (!calculator)
+  if (!calculator) {
     return false;
+}
   calculators_.push_back(std::move(calculator));
   return true;
 }

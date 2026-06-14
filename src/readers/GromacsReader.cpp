@@ -14,6 +14,7 @@
 #include <cstring>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace correlation::readers {
 
@@ -25,8 +26,9 @@ bool registered = ReaderFactory::instance().registerReader(std::make_unique<Grom
 // Helper: find end of line
 // ---------------------------------------------------------------------------
 static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
-  while (pos < total && data[pos] != '\n' && data[pos] != '\r')
+  while (pos < total && data[pos] != '\n' && data[pos] != '\r') {
     ++pos;
+}
   return pos;
 }
 
@@ -34,10 +36,12 @@ static inline size_t findLineEnd(const char *data, size_t total, size_t pos) {
 // Helper: skip past line ending
 // ---------------------------------------------------------------------------
 static inline size_t skipLineEnding(const char *data, size_t total, size_t pos) {
-  if (pos < total && data[pos] == '\r')
+  if (pos < total && data[pos] == '\r') {
     ++pos;
-  if (pos < total && data[pos] == '\n')
+}
+  if (pos < total && data[pos] == '\n') {
     ++pos;
+}
   return pos;
 }
 
@@ -87,7 +91,7 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   const size_t remaining = (offset < size) ? (size - offset) : 0;
   // Each atom line needs at least ~20 bytes (even short lines). If the claimed
   // count cannot possibly fit in the remaining data, reject early.
-  if (static_cast<size_t>(num_atoms) > remaining) {
+  if (std::cmp_greater(num_atoms, remaining)) {
     throw std::runtime_error("Invalid GROMACS file: atom count (" + std::to_string(num_atoms) +
                              ") exceeds remaining data (" + std::to_string(remaining) + " bytes)");
   }
@@ -98,29 +102,32 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   // Format: 5pos 5res 5atom 5id 8x 8y 8z 8vx 8vy 8vz (last 3 optional)
   for (int i = 0; i < num_atoms; ++i) {
     line = nextLine();
-    if (line.length() < 44)
+    if (line.length() < 44) {
       continue; // Basic coordinate check
+}
 
     std::string atom_name = line.substr(10, 5);
     // Trim whitespace
-    atom_name.erase(0, atom_name.find_first_not_of(" "));
-    atom_name.erase(atom_name.find_last_not_of(" ") + 1);
+    atom_name.erase(0, atom_name.find_first_not_of(' '));
+    atom_name.erase(atom_name.find_last_not_of(' ') + 1);
 
     // Extract element symbol from atom name
-    std::string symbol = "";
-    for (char c : atom_name) {
-      if (std::isalpha(c))
+    std::string symbol;
+    for (char const c : atom_name) {
+      if (std::isalpha(c) != 0) {
         symbol += c;
-      else
+      } else {
         break;
+}
     }
     // Common GROMACS fixes
-    if (symbol == "OW" || symbol == "HW")
+    if (symbol == "OW" || symbol == "HW") {
       symbol = symbol.substr(0, 1);
+}
 
-    double x = std::stod(line.substr(20, 8)) * 10.0; // nm to A
-    double y = std::stod(line.substr(28, 8)) * 10.0;
-    double z = std::stod(line.substr(36, 8)) * 10.0;
+    double const x = std::stod(line.substr(20, 8)) * 10.0; // nm to A
+    double const y = std::stod(line.substr(28, 8)) * 10.0;
+    double const z = std::stod(line.substr(36, 8)) * 10.0;
 
     cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
   }
@@ -130,7 +137,9 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   if (offset < size) {
     line = nextLine();
     std::stringstream ss(line);
-    double bx, by, bz;
+    double bx;
+    double by;
+    double bz;
     if (ss >> bx >> by >> bz) {
       // GROMACS uses nm; convert to Angstroms. Assume orthogonal box.
       cell.setLatticeParameters({bx * 10.0, by * 10.0, bz * 10.0, 90.0, 90.0, 90.0});
@@ -161,8 +170,9 @@ correlation::core::Trajectory
 GromacsReader::readTrajectory(const std::string &filename,
                               std::function<void(float, const std::string &)> progress_callback) {
 
-  if (progress_callback)
-    progress_callback(0.0f, "Reading GROMACS file...");
+  if (progress_callback) {
+    progress_callback(0.0F, "Reading GROMACS file...");
+}
 
   auto mapped_file = std::make_shared<correlation::core::MappedFile>(filename);
   const char *data = mapped_file->data();
@@ -181,7 +191,7 @@ GromacsReader::readTrajectory(const std::string &filename,
   while (offset < total_size) {
     // Skip any blank lines between frames
     while (offset < total_size) {
-      size_t le = findLineEnd(data, total_size, offset);
+      size_t const le = findLineEnd(data, total_size, offset);
       bool is_blank = true;
       for (size_t i = offset; i < le; ++i) {
         if (data[i] != ' ' && data[i] != '\t') {
@@ -189,25 +199,28 @@ GromacsReader::readTrajectory(const std::string &filename,
           break;
         }
       }
-      if (!is_blank)
+      if (!is_blank) {
         break;
+}
       offset = skipLineEnding(data, total_size, le);
     }
 
-    if (offset >= total_size)
+    if (offset >= total_size) {
       break;
+}
 
-    size_t frame_start = offset;
+    size_t const frame_start = offset;
 
     // Line 1: title — skip
     size_t le = findLineEnd(data, total_size, offset);
     offset = skipLineEnding(data, total_size, le);
-    if (offset >= total_size)
+    if (offset >= total_size) {
       break;
+}
 
     // Line 2: atom count
     le = findLineEnd(data, total_size, offset);
-    std::string count_str(data + offset, le - offset);
+    std::string const count_str(data + offset, le - offset);
     offset = skipLineEnding(data, total_size, le);
 
     int num_atoms = 0;
@@ -217,18 +230,21 @@ GromacsReader::readTrajectory(const std::string &filename,
       break; // Not a valid frame, stop scanning
     }
 
-    if (num_atoms <= 0)
+    if (num_atoms <= 0) {
       break;
+}
 
     // Sanity check: the claimed atom count must be plausible given remaining data
     const size_t remaining_bytes = (offset < total_size) ? (total_size - offset) : 0;
-    if (static_cast<size_t>(num_atoms) > remaining_bytes || num_atoms > 100'000'000)
+    if (std::cmp_greater(num_atoms, remaining_bytes) || num_atoms > 100'000'000) {
       break;
+}
 
     // Skip N atom lines
     for (int i = 0; i < num_atoms; ++i) {
-      if (offset >= total_size)
+      if (offset >= total_size) {
         break;
+}
       le = findLineEnd(data, total_size, offset);
       offset = skipLineEnding(data, total_size, le);
     }
@@ -243,7 +259,7 @@ GromacsReader::readTrajectory(const std::string &filename,
 
     // Report progress
     if (progress_callback && total_size > 0) {
-      float progress = static_cast<float>(offset) / static_cast<float>(total_size);
+      float const progress = static_cast<float>(offset) / static_cast<float>(total_size);
       progress_callback(progress, "Scanning GROMACS frames...");
     }
   }
@@ -255,12 +271,13 @@ GromacsReader::readTrajectory(const std::string &filename,
   // Sentinel offset for the last frame's end
   frame_offsets.push_back(total_size);
 
-  if (progress_callback)
-    progress_callback(1.0f, "GROMACS file loaded.");
+  if (progress_callback) {
+    progress_callback(1.0F, "GROMACS file loaded.");
+}
 
   auto parser = [](const char *d, size_t s) { return parseGroFrame(d, s); };
 
-  return correlation::core::Trajectory(mapped_file, std::move(frame_offsets), parser, 1.0);
+  return {mapped_file, std::move(frame_offsets), parser, 1.0};
 }
 
 } // namespace correlation::readers

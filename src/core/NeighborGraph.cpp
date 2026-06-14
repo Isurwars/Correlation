@@ -17,7 +17,7 @@ void NeighborGraph::addDirectedEdge(size_t from, size_t to, double distance, con
   if (from >= adj_list_.size()) {
     return;
   }
-  adj_list_[from].push_back({static_cast<AtomID>(to), distance, r_ij});
+  adj_list_[from].push_back({.index=static_cast<AtomID>(to), .distance=distance, .r_ij=r_ij});
 }
 
 const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) const {
@@ -29,8 +29,9 @@ const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) cons
 }
 
 bool NeighborGraph::areConnected(size_t i, size_t j) const {
-  if (i >= adj_list_.size())
+  if (i >= adj_list_.size()) {
     return false;
+}
   for (const auto &neighbor : adj_list_[i]) {
     if (neighbor.index == static_cast<AtomID>(j)) {
       return true;
@@ -40,7 +41,7 @@ bool NeighborGraph::areConnected(size_t i, size_t j) const {
 }
 
 std::vector<bool> NeighborGraph::getDenseAdjacencyMatrix() const {
-  size_t n = adj_list_.size();
+  size_t const n = adj_list_.size();
   std::vector<bool> matrix(n * n, false);
   for (size_t i = 0; i < n; ++i) {
     for (const auto &neighbor : adj_list_[i]) {

@@ -6,7 +6,7 @@
 using namespace correlation::readers;
 
 TEST(CifReaderTests, Properties) {
-  CifReader reader;
+  CifReader const reader;
   EXPECT_EQ(reader.getName(), "CIF");
   EXPECT_FALSE(reader.isTrajectory());
   auto exts = reader.getExtensions();

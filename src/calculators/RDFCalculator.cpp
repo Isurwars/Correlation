@@ -20,15 +20,17 @@ namespace correlation::calculators {
 namespace {
 std::string getPartialKey(const correlation::core::Cell &cell, int type1, int type2) {
   const auto &elements = cell.elements();
-  if (type1 > type2)
+  if (type1 > type2) {
     std::swap(type1, type2);
+}
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
 std::string getInversePartialKey(const correlation::core::Cell &cell, int type1, int type2) {
   const auto &elements = cell.elements();
-  if (type1 < type2)
+  if (type1 < type2) {
     std::swap(type1, type2);
+}
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
@@ -61,21 +63,25 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
-  const double num_atoms = static_cast<double>(cell.atomCount());
-  if (num_atoms == 0.0)
+  const auto num_atoms = static_cast<double>(cell.atomCount());
+  if (num_atoms == 0.0) {
     return {};
+}
 
   std::map<std::string, double> element_counts;
   for (const auto &atom : cell.atoms()) {
     element_counts[atom.element().symbol]++;
   }
 
-  const size_t num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
+  const auto num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
   const double V = cell.volume();
   const double dr = r_bin_width;
   const double rho_0 = num_atoms / V;
 
-  correlation::analysis::Histogram H_r, g_r, G_r, J_r;
+  correlation::analysis::Histogram H_r;
+  correlation::analysis::Histogram g_r;
+  correlation::analysis::Histogram G_r;
+  correlation::analysis::Histogram J_r;
   H_r.bins.resize(num_bins);
   g_r.bins.resize(num_bins);
   G_r.bins.resize(num_bins);
@@ -122,7 +128,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
-      std::string key = getPartialKey(cell, i, j);
+      std::string const key = getPartialKey(cell, i, j);
       auto &partial_hist = H_r.partials[key];
       partial_hist.assign(num_bins, 0.0);
 
@@ -131,7 +137,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
       // `StructureAnalyzer::distance_tensor_`.
       for (const auto &dist : neighbors->distances()[i][j]) {
         if (dist < r_max) {
-          size_t bin = static_cast<size_t>(dist / r_bin_width);
+          auto const bin = static_cast<size_t>(dist / r_bin_width);
           if (bin < num_bins) {
             partial_hist[bin] += 1.0;
           }
@@ -149,8 +155,8 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
-      std::string key = getPartialKey(cell, i, j);
-      std::string inversekey = getInversePartialKey(cell, i, j);
+      std::string const key = getPartialKey(cell, i, j);
+      std::string const inversekey = getInversePartialKey(cell, i, j);
 
       const std::string &sym_i = elements[i].symbol;
       const std::string &sym_j = elements[j].symbol;
@@ -183,10 +189,11 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   auto &total_g = g_r.partials["Total"];
   total_g.assign(num_bins, 0.0);
   for (const auto &[key, g_partial] : g_r.partials) {
-    if (key == "Total")
+    if (key == "Total") {
       continue;
+}
 
-    double weight = ashcroft_weights.at(key);
+    double const weight = ashcroft_weights.at(key);
 
     for (size_t k = 0; k < num_bins; ++k) {
       total_g[k] += g_partial[k] * weight;
@@ -200,8 +207,9 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   for (size_t k = 0; k < num_bins; ++k) {
     const double r = g_r.bins[k];
-    if (r < 1e-9)
+    if (r < 1e-9) {
       continue;
+}
 
     total_J[k] = correlation::math::four_pi * r * r * rho_0 * total_g[k];
     total_G[k] = correlation::math::four_pi * rho_0 * r * (total_g[k] - 1.0);
@@ -211,8 +219,8 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   // partials are weighted contributions, summing to the Total curves.
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
-      std::string key = getPartialKey(cell, i, j);
-      double weight = ashcroft_weights.at(key);
+      std::string const key = getPartialKey(cell, i, j);
+      double const weight = ashcroft_weights.at(key);
 
       // 1. Weight g_r partial: g_ij_weighted(r) = w_ij * g_ij(r)
       auto &g_part = g_r.partials.at(key);
