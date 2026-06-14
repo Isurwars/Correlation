@@ -25,7 +25,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CastepMdReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CastepMdReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 correlation::core::Cell
 CastepMdReader::readStructure(const std::string &filename,

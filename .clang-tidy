@@ -47,10 +47,7 @@ Checks: >
   -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
   -misc-include-cleaner,
   -readability-math-missing-parentheses,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  -bugprone-throwing-static-initialization,
-  -cert-err58-cpp,
-  -bugprone-narrowing-conversions
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic
 
 # Only report diagnostics from our own source files, never from third-party
 # headers fetched via FetchContent (build/_deps/) or system includes.

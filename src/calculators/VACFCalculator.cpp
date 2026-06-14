@@ -53,7 +53,7 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj, int max_cor
   vacf_hist.file_suffix = "_VACF";
   vacf_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    vacf_hist.bins[i] = i * dt;
+    vacf_hist.bins[i] = i * dt; // NOLINT(bugprone-narrowing-conversions)
   }
 
   vacf_hist.partials["Total"] = raw_vacf;

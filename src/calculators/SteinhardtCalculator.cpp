@@ -195,7 +195,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_Q4.file_suffix = "_Q4";
   hist_Q4.bins.resize(bins_Q);
   for (size_t b = 0; b < bins_Q; ++b) {
-    hist_Q4.bins[b] = (b + 0.5) * dQ;
+    hist_Q4.bins[b] = (b + 0.5) * dQ; // NOLINT(bugprone-narrowing-conversions)
 }
 
   correlation::analysis::Histogram hist_Q6;
@@ -208,7 +208,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_Q6.file_suffix = "_Q6";
   hist_Q6.bins.resize(bins_Q);
   for (size_t b = 0; b < bins_Q; ++b) {
-    hist_Q6.bins[b] = (b + 0.5) * dQ;
+    hist_Q6.bins[b] = (b + 0.5) * dQ; // NOLINT(bugprone-narrowing-conversions)
 }
 
   correlation::analysis::Histogram hist_W6;
@@ -221,7 +221,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_W6.file_suffix = "_W6_hat";
   hist_W6.bins.resize(bins_W);
   for (size_t b = 0; b < bins_W; ++b) {
-    hist_W6.bins[b] = W_min + (b + 0.5) * dW;
+    hist_W6.bins[b] = W_min + (b + 0.5) * dW; // NOLINT(bugprone-narrowing-conversions)
 }
 
   // Track partials by element symbol and total

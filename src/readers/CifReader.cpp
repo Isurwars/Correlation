@@ -25,7 +25,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CifReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CifReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 correlation::core::Cell CifReader::readStructure(const std::string &filename,
                                                  std::function<void(float, const std::string &)>  /*progress_callback*/) {
@@ -241,7 +241,7 @@ correlation::core::Cell CifReader::read(const std::string &file_name) {
       // Map headers to their column index for efficient lookup
       std::map<std::string, int> header_map;
       for (size_t i = 0; i < loop_headers.size(); ++i) {
-        header_map[loop_headers[i]] = i;
+        header_map[loop_headers[i]] = i; // NOLINT(bugprone-narrowing-conversions)
       }
 
       // Check which loop we're in by looking for key headers

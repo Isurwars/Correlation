@@ -77,7 +77,7 @@ void get_paths(size_t node, size_t root, const std::vector<std::vector<correlati
 // ---------------------------------------------------------------------------
 bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector<correlation::core::AtomID> &cycle,
                 std::vector<int> &dist_king, std::vector<size_t> &q_king) {
-  int const n = cycle.size();
+  int const n = cycle.size(); // NOLINT(bugprone-narrowing-conversions)
   if (n < 3) {
     return false;
 }

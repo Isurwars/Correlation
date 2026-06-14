@@ -20,7 +20,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<XdatcarReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<XdatcarReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 // ---------------------------------------------------------------------------
 // Helpers

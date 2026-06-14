@@ -22,7 +22,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CarReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CarReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 correlation::core::Cell CarReader::readStructure(const std::string &filename,
                                                  std::function<void(float, const std::string &)> progress_callback) {

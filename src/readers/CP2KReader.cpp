@@ -56,7 +56,7 @@ CP2KReader::readTrajectory(const std::string &filename,
     // To uppercase for easier matching
     std::string uline = line;
     for (auto &c : uline) {
-      c = toupper(c);
+      c = toupper(c); // NOLINT(bugprone-narrowing-conversions)
 }
 
     if (uline.starts_with("&CELL")) {

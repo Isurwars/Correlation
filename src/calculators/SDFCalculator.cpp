@@ -79,9 +79,9 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     double const fy = frac.y() - std::floor(frac.y());
     double const fz = frac.z() - std::floor(frac.z());
 
-    size_t const ix = static_cast<size_t>(fx * nx) % nx;
-    size_t const iy = static_cast<size_t>(fy * ny) % ny;
-    size_t const iz = static_cast<size_t>(fz * nz) % nz;
+    size_t const ix = static_cast<size_t>(fx * nx) % nx; // NOLINT(bugprone-narrowing-conversions)
+    size_t const iy = static_cast<size_t>(fy * ny) % ny; // NOLINT(bugprone-narrowing-conversions)
+    size_t const iz = static_cast<size_t>(fz * nz) % nz; // NOLINT(bugprone-narrowing-conversions)
 
     size_t const idx = ix * (ny * nz) + iy * nz + iz;
     sdf_hist.partials[sym][idx] += 1.0 / dV; // Density contribution per frame

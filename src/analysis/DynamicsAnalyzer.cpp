@@ -80,7 +80,7 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
 
   // Count time origins per lag analytically
   for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-    counts[lag] = num_frames - lag;
+    counts[lag] = num_frames - lag; // NOLINT(bugprone-narrowing-conversions)
   }
 
   // Thread-local VACF accumulators: eliminates all mutex acquisitions.
@@ -274,7 +274,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   }
 
   size_t num_frames = vacf.size();
-  double const t_max = (num_frames - 1) * dt; // Total time of correlation
+  double const t_max = (num_frames - 1) * dt; // Total time of correlation // NOLINT(bugprone-narrowing-conversions)
 
   // Define frequency range
   // Max frequency (Nyquist) is 1 / (2 * dt)
@@ -298,7 +298,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   // sigma at t_max)
   double const sigma = t_max >= 1e-6 ? t_max / 3.0 : 1.0;
   for (size_t i = 0; i < num_frames; ++i) {
-    double const t = i * dt;
+    double const t = i * dt; // NOLINT(bugprone-narrowing-conversions)
     double const window = std::exp(-0.5 * std::pow(t / sigma, 2.0));
     windowed_vacf[i] = vacf[i] * window;
   }
@@ -307,7 +307,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   std::ranges::iota(freq_indices, 0);
 
   tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t k) {
-    double const nu = k * d_nu; // Frequency in THz
+    double const nu = k * d_nu; // Frequency in THz // NOLINT(bugprone-narrowing-conversions)
     frequencies[k] = nu;
 
     double integral_real = 0.0;
@@ -320,7 +320,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
     if (std::abs(theta) < 1e-6) {
       for (size_t i = 0; i < num_frames; ++i) {
         double const val = windowed_vacf[i];
-        double const arg = theta * i;
+        double const arg = theta * i; // NOLINT(bugprone-narrowing-conversions)
 
         double const term_real = val * std::cos(arg);
 
@@ -347,12 +347,12 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
       double const f_0 = windowed_vacf[0];
       double const f_2N = windowed_vacf[two_N];
 
-      double const arg_2N = theta * two_N;
+      double const arg_2N = theta * two_N; // NOLINT(bugprone-narrowing-conversions)
 
       double sum_odd_cos = 0.0;
       double sum_odd_sin = 0.0;
       for (size_t i = 1; i < two_N; i += 2) {
-        double const arg = theta * i;
+        double const arg = theta * i; // NOLINT(bugprone-narrowing-conversions)
         sum_odd_cos += windowed_vacf[i] * std::cos(arg);
         sum_odd_sin += windowed_vacf[i] * std::sin(arg);
       }
@@ -360,7 +360,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
       double sum_even_cos = 0.0;
       double sum_even_sin = 0.0;
       for (size_t i = 2; i < two_N; i += 2) {
-        double const arg = theta * i;
+        double const arg = theta * i; // NOLINT(bugprone-narrowing-conversions)
         sum_even_cos += windowed_vacf[i] * std::cos(arg);
         sum_even_sin += windowed_vacf[i] * std::sin(arg);
       }
@@ -378,8 +378,8 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
         double const val1 = windowed_vacf[num_frames - 2];
         double const val2 = windowed_vacf[num_frames - 1];
 
-        double const arg1 = theta * (num_frames - 2);
-        double const arg2 = theta * (num_frames - 1);
+        double const arg1 = theta * (num_frames - 2); // NOLINT(bugprone-narrowing-conversions)
+        double const arg2 = theta * (num_frames - 1); // NOLINT(bugprone-narrowing-conversions)
 
         integral_real += 0.5 * dt * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
         integral_imag += 0.5 * dt * (val1 * std::sin(arg1) + val2 * std::sin(arg2));

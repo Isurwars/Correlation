@@ -17,7 +17,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<LammpsDumpReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<LammpsDumpReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 // ---------------------------------------------------------------------------
 // Helper: advance past the current line ending (\r\n or \n)

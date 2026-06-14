@@ -208,7 +208,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   s_q_hist.description = "Structure Factor S(Q)";
   s_q_hist.file_suffix = "_S";
   for (size_t i = 0; i < num_q_bins; ++i) {
-    s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
+    s_q_hist.bins[i] = (i + 0.5) * q_bin_width; // NOLINT(bugprone-narrowing-conversions)
 }
 
   for (const auto &pi : partials_info) {

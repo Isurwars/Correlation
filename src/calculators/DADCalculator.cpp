@@ -57,7 +57,7 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
   f_dihedral.file_suffix = "_DAD";
   f_dihedral.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
-    f_dihedral.bins[i] = theta_min + (i + 0.5) * bin_width;
+    f_dihedral.bins[i] = theta_min + (i + 0.5) * bin_width; // NOLINT(bugprone-narrowing-conversions)
   }
 
   for (size_t a = 0; a < num_elements; ++a) {

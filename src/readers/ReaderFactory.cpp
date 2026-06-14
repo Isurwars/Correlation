@@ -58,7 +58,7 @@ BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, c
         // Convert to uppercase for matching
         std::string uline = line;
         for (auto &c : uline) {
-          c = toupper(c);
+          c = toupper(c); // NOLINT(bugprone-narrowing-conversions)
 }
 
         if (uline.contains("CELL_PARAMETERS") || uline.contains("ATOMIC_POSITIONS") ||

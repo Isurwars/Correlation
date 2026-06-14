@@ -185,7 +185,7 @@ void DistributionFunctions::calculateAshcroftWeights() {
       const double count_i = static_cast<double>(element_counts.at(element_i.symbol));
       const double count_j = static_cast<double>(element_counts.at(element_j.symbol));
 
-      double weight = (count_i * count_j) / (num_atoms * num_atoms);
+      double weight = (count_i * count_j) / (num_atoms * num_atoms); // NOLINT(bugprone-narrowing-conversions)
       if (i != j) {
         weight *= 2.0;
       }

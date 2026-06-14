@@ -49,7 +49,7 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
 
   const auto &r_bins = g_r_hist.bins;
   const double dr = r_bins[1] - r_bins[0];
-  const double total_rho = cell.atomCount() / cell.volume();
+  const double total_rho = cell.atomCount() / cell.volume(); // NOLINT(bugprone-narrowing-conversions)
   const double max_r = r_bins.back();
 
   size_t num_bins = static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
@@ -93,7 +93,7 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
       if (atom.element().symbol == elem.symbol)
         count++;
     }
-    concentrations[elem.symbol] = count / cell.atomCount();
+    concentrations[elem.symbol] = count / cell.atomCount(); // NOLINT(bugprone-narrowing-conversions)
   }
 
   // Collect partials as a flat vector for parallel access (avoids map iteration
@@ -123,7 +123,7 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
     auto &sinqr = sinqr_ets.local();
 
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      double two_theta = theta_min + i * bin_width;
+      double two_theta = theta_min + i * bin_width; // NOLINT(bugprone-narrowing-conversions)
       xrd_hist.bins[i] = two_theta;
 
       double theta_rad = (two_theta / 2.0) * correlation::math::deg_to_rad;

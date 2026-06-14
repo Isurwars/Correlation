@@ -58,7 +58,7 @@ correlation::analysis::Histogram RDCalculator::calculate(const correlation::core
     if (size >= 3 && std::cmp_less_equal(size ,max_ring_size)) {
       auto const bin = static_cast<size_t>(size - 3);
       partial_hist[bin] = static_cast<double>(count);
-      total_counts += count;
+      total_counts += count; // NOLINT(bugprone-narrowing-conversions)
     }
   }
 

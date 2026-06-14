@@ -59,14 +59,14 @@ int AppBackend::getFrameCount() const {
   if (!trajectory_) {
     return 0;
 }
-  return trajectory_->getFrameCount();
+  return trajectory_->getFrameCount(); // NOLINT(bugprone-narrowing-conversions)
 }
 
 int AppBackend::getTotalAtomCount() const {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     return 0;
 }
-  return trajectory_->firstFrame().atomCount();
+  return trajectory_->firstFrame().atomCount(); // NOLINT(bugprone-narrowing-conversions)
 }
 
 size_t AppBackend::getRemovedFrameCount() const {
@@ -125,7 +125,7 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       // getBondCutoff uses indices.
-      cutoffs[i][j] = trajectory_->getBondCutoff(i, j);
+      cutoffs[i][j] = trajectory_->getBondCutoff(i, j); // NOLINT(bugprone-narrowing-conversions)
     }
   }
   return cutoffs;

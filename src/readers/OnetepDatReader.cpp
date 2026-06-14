@@ -24,7 +24,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<OnetepDatReader>());
+static bool registered = ReaderFactory::instance().registerReader(std::make_unique<OnetepDatReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 correlation::core::Cell
 OnetepDatReader::readStructure(const std::string &filename,

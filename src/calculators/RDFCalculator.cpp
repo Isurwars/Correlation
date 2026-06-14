@@ -119,7 +119,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   J_r.file_suffix = "_J";
 
   for (size_t i = 0; i < num_bins; ++i) {
-    const double r = (i + 0.5) * r_bin_width;
+    const double r = (i + 0.5) * r_bin_width; // NOLINT(bugprone-narrowing-conversions)
     H_r.bins[i] = r;
     g_r.bins[i] = r;
     G_r.bins[i] = r;
@@ -128,7 +128,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
-      std::string const key = getPartialKey(cell, i, j);
+      std::string const key = getPartialKey(cell, i, j); // NOLINT(bugprone-narrowing-conversions)
       auto &partial_hist = H_r.partials[key];
       partial_hist.assign(num_bins, 0.0);
 
@@ -155,8 +155,8 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
-      std::string const key = getPartialKey(cell, i, j);
-      std::string const inversekey = getInversePartialKey(cell, i, j);
+      std::string const key = getPartialKey(cell, i, j); // NOLINT(bugprone-narrowing-conversions)
+      std::string const inversekey = getInversePartialKey(cell, i, j); // NOLINT(bugprone-narrowing-conversions)
 
       const std::string &sym_i = elements[i].symbol;
       const std::string &sym_j = elements[j].symbol;
@@ -219,7 +219,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   // partials are weighted contributions, summing to the Total curves.
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
-      std::string const key = getPartialKey(cell, i, j);
+      std::string const key = getPartialKey(cell, i, j); // NOLINT(bugprone-narrowing-conversions)
       double const weight = ashcroft_weights.at(key);
 
       // 1. Weight g_r partial: g_ij_weighted(r) = w_ij * g_ij(r)

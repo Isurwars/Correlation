@@ -302,13 +302,13 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
-  opt.r_max = safe_stof(ui_.get_analysis_options().r_max, opt.r_max);
-  opt.r_bin_width = safe_stof(ui_.get_analysis_options().r_bin_width, opt.r_bin_width);
-  opt.q_max = safe_stof(ui_.get_analysis_options().q_max, opt.q_max);
-  opt.q_bin_width = safe_stof(ui_.get_analysis_options().q_bin_width, opt.q_bin_width);
-  opt.r_int_max = safe_stof(ui_.get_analysis_options().r_int_max, opt.r_int_max);
-  opt.angle_bin_width = safe_stof(ui_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
-  opt.dihedral_bin_width = safe_stof(ui_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
+  opt.r_max = safe_stof(ui_.get_analysis_options().r_max, opt.r_max); // NOLINT(bugprone-narrowing-conversions)
+  opt.r_bin_width = safe_stof(ui_.get_analysis_options().r_bin_width, opt.r_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.q_max = safe_stof(ui_.get_analysis_options().q_max, opt.q_max); // NOLINT(bugprone-narrowing-conversions)
+  opt.q_bin_width = safe_stof(ui_.get_analysis_options().q_bin_width, opt.q_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.r_int_max = safe_stof(ui_.get_analysis_options().r_int_max, opt.r_int_max); // NOLINT(bugprone-narrowing-conversions)
+  opt.angle_bin_width = safe_stof(ui_.get_analysis_options().angle_bin_width, opt.angle_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.dihedral_bin_width = safe_stof(ui_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width); // NOLINT(bugprone-narrowing-conversions)
   opt.max_ring_size = static_cast<size_t>(safe_stof(ui_.get_analysis_options().max_ring_size, static_cast<float>(opt.max_ring_size)));
 
   // Collect active_calculators from the UI model
@@ -321,7 +321,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     }
   }
 
-  opt.smoothing_sigma = safe_stof(ui_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
+  opt.smoothing_sigma = safe_stof(ui_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma); // NOLINT(bugprone-narrowing-conversions)
   opt.smoothing_kernel = static_cast<correlation::math::KernelType>(ui_.get_analysis_options().smoothing_kernel);
   opt.material_type = ui_.get_analysis_options().material_type;
 
@@ -376,7 +376,7 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     opt.max_frame = -1;
   }
 
-  opt.time_step = safe_stof(ui_.get_analysis_options().time_step, opt.time_step);
+  opt.time_step = safe_stof(ui_.get_analysis_options().time_step, opt.time_step); // NOLINT(bugprone-narrowing-conversions)
 
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs(ui_);
