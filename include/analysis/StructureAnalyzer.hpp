@@ -55,28 +55,28 @@ public:
    * @brief Gets a multi-dimensional tensor containing pair distances.
    * @return The distance tensor `[element1][element2][pair_index]`.
    */
-  const DistanceTensor &distances() const { return distance_tensor_; }
+  [[nodiscard]] const DistanceTensor &distances() const { return distance_tensor_; }
 
   /**
    * @brief Gets a multi-dimensional tensor containing bond angles.
    * @return The angle tensor
    * `[center_element][outer_element1][outer_element2][angle_index]`.
    */
-  const AngleTensor &angles() const { return angle_tensor_; }
+  [[nodiscard]] const AngleTensor &angles() const { return angle_tensor_; }
 
   /**
    * @brief Gets a multi-dimensional tensor containing dihedral angles.
    * @return The dihedral tensor
    * `[element1][element2][element3][element4][dihedral_index]`.
    */
-  const DihedralTensor &dihedrals() const { return dihedral_tensor_; }
+  [[nodiscard]] const DihedralTensor &dihedrals() const { return dihedral_tensor_; }
 
   /**
    * @brief Gets the corresponding neighbor graph capturing topological
    * connections.
    * @return Constant reference to the correlation::core::NeighborGraph object.
    */
-  const correlation::core::NeighborGraph &neighborGraph() const { return neighbor_graph_; }
+  [[nodiscard]] const correlation::core::NeighborGraph &neighborGraph() const { return neighbor_graph_; }
 
 private:
   correlation::core::Cell cell_;                     ///< Reference to the current periodic cell.

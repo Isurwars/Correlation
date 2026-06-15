@@ -39,8 +39,8 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double
   double max_bond_dist = 0.0;
   max_bond_dist = tbb::parallel_reduce(
       tbb::blocked_range<size_t>(0, elements.size()), 0.0,
-      [&](const tbb::blocked_range<size_t> &r, double init) {
-        for (size_t i = r.begin(); i != r.end(); ++i) {
+      [&](const tbb::blocked_range<size_t> &range, double init) {
+        for (size_t i = range.begin(); i != range.end(); ++i) {
           for (size_t j = i; j < elements.size(); ++j) {
             // Find element indices in the cutoff matrix
             // Assuming bond_cutoffs_sq indices match element indices in frame
@@ -52,7 +52,7 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double
         }
         return init;
       },
-      [](double x, double y) { return std::max(x, y); });
+      [](double lhs, double rhs) { return std::max(lhs, rhs); });
   if (cutoff < max_bond_dist) {
     cutoff = max_bond_dist;
     cutoff_sq_ = cutoff * cutoff;
@@ -82,10 +82,11 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double
   correlation::calculators::DistanceCalculator::compute(
       cell_, cutoff_sq_, bond_cutoffs_sq_, ignore_periodic_self_interactions_, distance_tensor_, neighbor_graph_);
 
-  tbb::task_group tg;
-  tg.run([&]() { correlation::calculators::AngleCalculator::compute(cell_, neighbor_graph_, angle_tensor_); });
-  tg.run([&]() { correlation::calculators::DihedralCalculator::compute(cell_, neighbor_graph_, dihedral_tensor_); });
-  tg.wait();
+  tbb::task_group task_group;
+  task_group.run([&]() { correlation::calculators::AngleCalculator::compute(cell_, neighbor_graph_, angle_tensor_); });
+  task_group.run(
+      [&]() { correlation::calculators::DihedralCalculator::compute(cell_, neighbor_graph_, dihedral_tensor_); });
+  task_group.wait();
 }
 
 } // namespace correlation::analysis
