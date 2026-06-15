@@ -333,7 +333,8 @@ std::string AppBackend::run_analysis() {
     // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
     // structural analysis
     trajectory_analyzer_ = std::make_unique<correlation::analysis::TrajectoryAnalyzer>(
-        *trajectory_, options_.r_max, active_cutoffs, start_f, options_.max_frame, true, cb_structure);
+        *trajectory_, options_.r_max, active_cutoffs, correlation::analysis::StartFrame{start_f},
+        correlation::analysis::EndFrame{static_cast<size_t>(options_.max_frame)}, true, cb_structure);
 
     // Prepare settings
     correlation::analysis::AnalysisSettings settings;

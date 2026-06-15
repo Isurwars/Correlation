@@ -151,8 +151,14 @@ void init_analysis(py::module_ &m) {
   py::class_<TrajectoryAnalyzer>(m, "TrajectoryAnalyzer",
                                  "Orchestrates structural analysis across multiple frames of a trajectory.\n\n"
                                  "Provides per-frame StructureAnalyzer factories and trajectory metadata.")
-      .def(py::init<Trajectory &, double, const std::vector<std::vector<double>> &, size_t, long long, bool,
-                    std::function<void(float, const std::string &)>>(),
+      .def(py::init([](Trajectory &trajectory, double neighbor_cutoff,
+                       const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame, long long end_frame,
+                       bool ignore_periodic_self_interactions,
+                       std::function<void(float, const std::string &)> progress_callback) {
+             return std::make_unique<TrajectoryAnalyzer>(
+                 trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{start_frame},
+                 EndFrame{static_cast<size_t>(end_frame)}, ignore_periodic_self_interactions, progress_callback);
+           }),
            py::arg("trajectory"), py::arg("neighbor_cutoff"), py::arg("bond_cutoffs"), py::arg("start_frame") = 0,
            py::arg("end_frame") = -1LL, py::arg("ignore_periodic_self_interactions") = true,
            py::arg("progress_callback") = nullptr,

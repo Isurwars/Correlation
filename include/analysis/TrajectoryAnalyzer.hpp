@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "analysis/AnalysisTypes.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "core/Trajectory.hpp"
 
@@ -44,9 +45,9 @@ public:
    * @param progress_callback Callback for tracking progress (0.0 to 1.0).
    */
   TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, double neighbor_cutoff,
-                     const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame = 0,
-                     long long end_frame = -1, bool ignore_periodic_self_interactions = true,
-                     std::function<void(float, const std::string &)> progress_callback = nullptr);
+                     const std::vector<std::vector<double>> &bond_cutoffs, StartFrame start_frame = {0},
+                     EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
+                     const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -73,7 +74,7 @@ public:
   [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
 
 private:
-  correlation::core::Trajectory &trajectory_;     ///< Reference to the source trajectory.
+  correlation::core::Trajectory *trajectory_;     ///< Pointer to the source trajectory.
   size_t start_frame_;                            ///< Analysis window start.
   size_t effective_end_;                          ///< Analysis window end (exclusive).
   double time_step_;                              ///< Time step between frames.
