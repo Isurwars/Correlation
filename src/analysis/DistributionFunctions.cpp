@@ -315,8 +315,8 @@ void DistributionFunctions::calculateDAD(double bin_width) {
 //----------------------------- Calculation VACF ----------------------------//
 //---------------------------------------------------------------------------//
 
-void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &traj, int max_correlation_frames,
-                                          size_t start_frame, size_t end_frame) {
+void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+                                          StartFrame start_frame, EndFrame end_frame) {
   auto results =
       correlation::calculators::VACFCalculator::calculate(traj, max_correlation_frames, start_frame, end_frame);
   for (auto &[name, histogram] : results) {

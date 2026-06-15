@@ -57,7 +57,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
 
   // 4. Calculate VACF
   int const max_lag = 50; // Calculate for 50 frames lag
-  std::vector<double> vacf = DynamicsAnalyzer::calculateVACF(traj, max_lag);
+  std::vector<double> vacf = DynamicsAnalyzer::calculateVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(vacf.size(), max_lag + 1);
 
@@ -65,7 +65,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   EXPECT_GT(vacf[0], 0.0);
 
   // 5. Calculate Normalized VACF
-  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(traj, max_lag);
+  std::vector<double> norm_vacf = DynamicsAnalyzer::calculateNormalizedVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(norm_vacf.size(), max_lag + 1);
   EXPECT_NEAR(norm_vacf[0], 1.0, 1e-5) << "Normalized VACF should start at 1.0";

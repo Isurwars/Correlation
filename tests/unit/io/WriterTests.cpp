@@ -256,7 +256,7 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   trajectory.calculateVelocities();
 
   correlation::analysis::DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffsSQ());
-  df.calculateVACF(trajectory, 1);
+  df.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
 
   correlation::writers::FileWriter writer(df);
   std::string base_filename = "test_vacf_new";

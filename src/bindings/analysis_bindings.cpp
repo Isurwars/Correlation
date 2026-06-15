@@ -250,7 +250,9 @@ void init_analysis(py::module_ &m) {
       .def(
           "calculate_vacf",
           [](DistributionFunctions &df, const Trajectory &traj, int max_correlation_frames, size_t start_frame,
-             size_t end_frame) { df.calculateVACF(traj, max_correlation_frames, start_frame, end_frame); },
+             size_t end_frame) {
+            df.calculateVACF(traj, MaxFrames{max_correlation_frames}, StartFrame{start_frame}, EndFrame{end_frame});
+          },
           py::arg("traj"), py::arg("max_correlation_frames") = -1, py::arg("start_frame") = 0,
           py::arg("end_frame") = static_cast<size_t>(-1),
           "Calculate the Velocity Autocorrelation Function (VACF).\n\n"

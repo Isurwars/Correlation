@@ -29,7 +29,7 @@ TEST_F(VACFTests, CalculateVACF_and_VDOS) {
 
   DistributionFunctions df(c, 0.0, {{0.0}});
 
-  df.calculateVACF(t, 1);
+  df.calculateVACF(t, correlation::analysis::MaxFrames{1});
   EXPECT_NO_THROW(df.getHistogram("VACF"));
   const auto &vacf = df.getHistogram("VACF").partials.at("Total");
   // Should be 1.0 normalized (if constant 0 velocity? Wait 0 velocity -> ??)
@@ -62,7 +62,7 @@ TEST_F(VACFTests, CalculateVACF_and_VDOS) {
   tMoving.setTimeStep(1.0);
   tMoving.calculateVelocities();
 
-  df.calculateVACF(tMoving, 1);
+  df.calculateVACF(tMoving, correlation::analysis::MaxFrames{1});
   const auto &vacf2 = df.getHistogram("Normalized VACF").partials.at("Total");
   EXPECT_NEAR(vacf2[0], 1.0, 1e-6); // t=0
   EXPECT_NEAR(vacf2[1], 1.0, 1e-6); // t=1, const velocity
@@ -93,7 +93,8 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
   DistributionFunctions df(base_cell, 0.0, {{0.0}});
 
   // Restrict VACF to frames 2 through 7 (5 frames total)
-  df.calculateVACF(tRange, 3, 2, 7);
+  df.calculateVACF(tRange, correlation::analysis::MaxFrames{3}, correlation::analysis::StartFrame{2},
+                   correlation::analysis::EndFrame{7});
 
   EXPECT_NO_THROW(df.getHistogram("VACF"));
   const auto &vacf = df.getHistogram("VACF").partials.at("Total");
@@ -141,7 +142,7 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   base_cell.addAtom("Ar", {0, 0, 0});
   DistributionFunctions df(base_cell, 0.0, {{0.0}});
 
-  df.calculateVACF(tGas, 4); // Calculate up to 4 lags
+  df.calculateVACF(tGas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
   EXPECT_NO_THROW(df.getHistogram("Normalized VACF"));
 
   const auto &vacf = df.getHistogram("Normalized VACF").partials.at("Total");

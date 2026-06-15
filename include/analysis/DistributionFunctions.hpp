@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "analysis/AnalysisTypes.hpp"
 #include "analysis/StructureAnalyzer.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
@@ -279,8 +280,8 @@ public:
    * @param start_frame Starting frame index.
    * @param end_frame Ending frame index (exclusive).
    */
-  void calculateVACF(const correlation::core::Trajectory &traj, int max_correlation_frames = -1, size_t start_frame = 0,
-                     size_t end_frame = static_cast<size_t>(-1));
+  void calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames = {-1},
+                     StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.

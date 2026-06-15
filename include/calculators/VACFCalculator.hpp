@@ -44,8 +44,9 @@ public:
    * @return A map of histograms (VACF per element).
    */
   static std::map<std::string, correlation::analysis::Histogram> calculate(const correlation::core::Trajectory &traj,
-                                                                           int max_correlation_frames,
-                                                                           size_t start_frame, size_t end_frame);
+                                                                           correlation::analysis::MaxFrames max_correlation_frames,
+                                                                           correlation::analysis::StartFrame start_frame,
+                                                                           correlation::analysis::EndFrame end_frame);
 };
 
 } // namespace correlation::calculators

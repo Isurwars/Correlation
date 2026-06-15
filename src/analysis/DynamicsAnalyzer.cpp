@@ -13,18 +13,102 @@
 
 #include <algorithm>
 #include <numeric>
-#include <utility>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
+#include <utility>
 
 namespace correlation::analysis {
+
+namespace {
+std::pair<double, double> integrate_vdos_frequency(double theta, const std::vector<double> &windowed_vacf,
+                                                   double time_step) {
+  size_t const num_frames = windowed_vacf.size();
+  double integral_real = 0.0;
+  double integral_imag = 0.0;
+
+  if (std::abs(theta) < 1e-6) {
+    for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
+      double const val = windowed_vacf[frame_idx];
+      double const arg = theta * static_cast<double>(frame_idx);
+
+      double const term_real = val * std::cos(arg);
+
+      if (frame_idx == 0 || frame_idx == num_frames - 1) {
+        integral_real += 0.5 * term_real;
+      } else {
+        integral_real += term_real;
+      }
+    }
+    integral_real *= time_step;
+  } else {
+    double const theta2 = theta * theta;
+    double const theta3 = theta2 * theta;
+    double const sin_theta = std::sin(theta);
+    double const cos_theta = std::cos(theta);
+
+    double const alpha = 1.0 / theta + sin_theta * cos_theta / theta2 - 2.0 * sin_theta * sin_theta / theta3;
+    double const beta = 2.0 * ((1.0 + cos_theta * cos_theta) / theta2 - 2.0 * sin_theta * cos_theta / theta3);
+    double const gamma = 4.0 * (sin_theta / theta3 - cos_theta / theta2);
+
+    size_t two_N = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
+    two_N = std::max<size_t>(two_N, 0);
+
+    double const f_0 = windowed_vacf[0];
+    double const f_2N = windowed_vacf[two_N];
+
+    double const arg_2N = theta * static_cast<double>(two_N);
+
+    double sum_odd_cos = 0.0;
+    double sum_odd_sin = 0.0;
+    for (size_t frame_idx = 1; frame_idx < two_N; frame_idx += 2) {
+      double const arg = theta * static_cast<double>(frame_idx);
+      sum_odd_cos += windowed_vacf[frame_idx] * std::cos(arg);
+      sum_odd_sin += windowed_vacf[frame_idx] * std::sin(arg);
+    }
+
+    double sum_even_cos = 0.0;
+    double sum_even_sin = 0.0;
+    for (size_t frame_idx = 2; frame_idx < two_N; frame_idx += 2) {
+      double const arg = theta * static_cast<double>(frame_idx);
+      sum_even_cos += windowed_vacf[frame_idx] * std::cos(arg);
+      sum_even_sin += windowed_vacf[frame_idx] * std::sin(arg);
+    }
+
+    double const even_cos_trapz = sum_even_cos + 0.5 * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N));
+    double const even_sin_trapz = sum_even_sin + 0.5 * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N));
+
+    double const bound_cos = f_2N * std::sin(arg_2N);
+    double const bound_sin = f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N);
+
+    integral_real = time_step * (alpha * bound_cos + beta * even_cos_trapz + gamma * sum_odd_cos);
+    integral_imag = time_step * (alpha * bound_sin + beta * even_sin_trapz + gamma * sum_odd_sin);
+
+    if (num_frames % 2 == 0 && num_frames > 1) {
+      double const val1 = windowed_vacf[num_frames - 2];
+      double const val2 = windowed_vacf[num_frames - 1];
+
+      double const arg1 = theta * static_cast<double>(num_frames - 2);
+      double const arg2 = theta * static_cast<double>(num_frames - 1);
+
+      integral_real += 0.5 * time_step * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
+      integral_imag += 0.5 * time_step * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
+    }
+  }
+
+  return {integral_real, integral_imag};
+}
+} // namespace
 
 //---------------------------------------------------------------------------//
 //--------------------------- Calculation Methods ---------------------------//
 //---------------------------------------------------------------------------//
 
 std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
-                                                    int max_correlation_frames, size_t start_frame, size_t end_frame) {
+                                                    MaxFrames max_correlation_frames_arg, StartFrame start_frame_arg,
+                                                    EndFrame end_frame_arg) {
+  int max_correlation_frames = max_correlation_frames_arg.value;
+  size_t start_frame = start_frame_arg.value;
+  size_t end_frame = end_frame_arg.value;
   if (traj.getFrameCount() == 0) {
     return {};
   }
@@ -49,29 +133,29 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
   const auto &atoms = frames[start_frame].atoms();
   std::vector<double> masses(num_atoms);
   double total_mass = 0.0;
-  for (size_t i = 0; i < num_atoms; ++i) {
+  for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
     try {
-      masses[i] = correlation::physics::getAtomicMass(atoms[i].element().symbol);
+      masses[atom_idx] = correlation::physics::getAtomicMass(atoms[atom_idx].element().symbol);
     } catch (const std::out_of_range &) {
-      masses[i] = 1.0;
+      masses[atom_idx] = 1.0;
     }
-    total_mass += masses[i];
+    total_mass += masses[atom_idx];
   }
 
   // Create corrected velocities (COM removed) mapped relative to start_frame
   std::vector<std::vector<correlation::math::Vector3<double>>> atom_velocities(
       num_atoms, std::vector<correlation::math::Vector3<double>>(num_frames));
 
-  for (size_t t = 0; t < num_frames; ++t) {
-    const size_t traj_t = start_frame + t;
+  for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
+    const size_t traj_t = start_frame + frame_idx;
     correlation::math::Vector3<double> momentum_sum = {0.0, 0.0, 0.0};
-    for (size_t i = 0; i < num_atoms; ++i) {
-      momentum_sum += frames[traj_t].atoms()[i].velocity() * masses[i];
+    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+      momentum_sum += frames[traj_t].atoms()[atom_idx].velocity() * masses[atom_idx];
     }
     correlation::math::Vector3<double> const v_com = momentum_sum / total_mass;
 
-    for (size_t i = 0; i < num_atoms; ++i) {
-      atom_velocities[i][t] = frames[traj_t].atoms()[i].velocity() - v_com;
+    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+      atom_velocities[atom_idx][frame_idx] = frames[traj_t].atoms()[atom_idx].velocity() - v_com;
     }
   }
 
@@ -80,7 +164,7 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
 
   // Count time origins per lag analytically
   for (int lag = 0; lag <= max_correlation_frames; ++lag) {
-    counts[lag] = num_frames - lag; // NOLINT(bugprone-narrowing-conversions)
+    counts[lag] = static_cast<int>(num_frames - static_cast<size_t>(lag));
   }
 
   // Thread-local VACF accumulators: eliminates all mutex acquisitions.
@@ -91,23 +175,23 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
   // per-atom across all three autocorrelate calls.
   tbb::enumerable_thread_specific<std::vector<std::complex<double>>> ets_ws;
 
-  tbb::parallel_for(static_cast<size_t>(0), num_atoms, [&](size_t i) {
+  tbb::parallel_for(static_cast<size_t>(0), num_atoms, [&](size_t atom_idx) {
     auto &local_vacf = ets_vacf.local();
-    auto &ws = ets_ws.local();
-    const auto &v_i = atom_velocities[i];
+    auto &workspace = ets_ws.local();
+    const auto &v_i = atom_velocities[atom_idx];
 
-    std::vector<double> vx(num_frames);
-    std::vector<double> vy(num_frames);
-    std::vector<double> vz(num_frames);
-    for (size_t t = 0; t < num_frames; ++t) {
-      vx[t] = v_i[t].x();
-      vy[t] = v_i[t].y();
-      vz[t] = v_i[t].z();
+    std::vector<double> vel_x(num_frames);
+    std::vector<double> vel_y(num_frames);
+    std::vector<double> vel_z(num_frames);
+    for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
+      vel_x[frame_idx] = v_i[frame_idx].x();
+      vel_y[frame_idx] = v_i[frame_idx].y();
+      vel_z[frame_idx] = v_i[frame_idx].z();
     }
 
-    auto S2_x = correlation::math::autocorrelate(vx, ws);
-    auto S2_y = correlation::math::autocorrelate(vy, ws);
-    auto S2_z = correlation::math::autocorrelate(vz, ws);
+    auto S2_x = correlation::math::autocorrelate(vel_x, workspace);
+    auto S2_y = correlation::math::autocorrelate(vel_y, workspace);
+    auto S2_z = correlation::math::autocorrelate(vel_z, workspace);
 
     for (int lag = 0; lag <= max_correlation_frames; ++lag) {
       local_vacf[lag] += S2_x[lag] + S2_y[lag] + S2_z[lag];
@@ -132,7 +216,11 @@ std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
 }
 
 std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Trajectory &traj,
-                                                   int max_correlation_frames, size_t start_frame, size_t end_frame) {
+                                                   MaxFrames max_correlation_frames_arg, StartFrame start_frame_arg,
+                                                   EndFrame end_frame_arg) {
+  int max_correlation_frames = max_correlation_frames_arg.value;
+  size_t start_frame = start_frame_arg.value;
+  size_t end_frame = end_frame_arg.value;
   if (traj.getFrameCount() == 0) {
     return {};
   }
@@ -158,31 +246,31 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
   }
 
   // --- Build unwrapped trajectories using minimum image convention ---
-  // For each atom i and frame t (relative to start_frame):
-  //   unwrapped[i][t] = sum_{s=0}^{t-1} min_image( r(s+1) - r(s) )
+  // For each atom i and frame frame_idx (relative to start_frame):
+  //   unwrapped[i][frame_idx] = sum_{s=0}^{frame_idx-1} min_image( r(s+1) - r(s) )
   // This correctly handles PBC crossings without needing explicit unwrapping.
 
   std::vector<std::vector<correlation::math::Vector3<double>>> unwrapped(
       num_atoms, std::vector<correlation::math::Vector3<double>>(num_frames, {0.0, 0.0, 0.0}));
 
-  for (size_t t = 1; t < num_frames; ++t) {
-    const size_t tf = start_frame + t;
-    const size_t tf_prev = start_frame + t - 1;
+  for (size_t frame_idx = 1; frame_idx < num_frames; ++frame_idx) {
+    const size_t traj_frame = start_frame + frame_idx;
+    const size_t traj_frame_prev = start_frame + frame_idx - 1;
 
     // Use Cell::minimumImage() for correct triclinic PBC handling.
-    const bool use_pbc = (frames[tf].volume() > 1e-9);
+    const bool use_pbc = (frames[traj_frame].volume() > 1e-9);
 
-    const auto &curr_atoms = frames[tf].atoms();
-    const auto &prev_atoms = frames[tf_prev].atoms();
+    const auto &curr_atoms = frames[traj_frame].atoms();
+    const auto &prev_atoms = frames[traj_frame_prev].atoms();
 
-    for (size_t i = 0; i < num_atoms; ++i) {
-      const math::Vector3<double> dr = curr_atoms[i].position() - prev_atoms[i].position();
+    for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+      const math::Vector3<double> delta_r = curr_atoms[atom_idx].position() - prev_atoms[atom_idx].position();
 
       // Apply minimum image convention for correct unwrapping across PBC.
-      const math::Vector3<double> min_dr = use_pbc ? frames[tf].minimumImage(dr) : dr;
+      const math::Vector3<double> min_delta_r = use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
 
-      // Accumulate unwrapped position: unwrapped[i][t] = unwrapped[i][t-1] + min_dr
-      unwrapped[i][t] = unwrapped[i][t - 1] + min_dr;
+      // Accumulate unwrapped position: unwrapped[atom_idx][frame_idx] = unwrapped[atom_idx][frame_idx-1] + min_delta_r
+      unwrapped[atom_idx][frame_idx] = unwrapped[atom_idx][frame_idx - 1] + min_delta_r;
     }
   }
 
@@ -203,35 +291,36 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
   // Thread-local FFT workspace reused across per-atom autocorrelate calls.
   tbb::enumerable_thread_specific<std::vector<std::complex<double>>> ets_ws_msd;
 
-  tbb::parallel_for(static_cast<size_t>(0), num_atoms, [&](size_t i) {
+  tbb::parallel_for(static_cast<size_t>(0), num_atoms, [&](size_t atom_idx) {
     auto &local_msd = ets_msd.local();
-    auto &ws = ets_ws_msd.local();
-    const auto &u_i = unwrapped[i];
+    auto &workspace = ets_ws_msd.local();
+    const auto &u_i = unwrapped[atom_idx];
 
-    std::vector<double> x(num_frames);
-    std::vector<double> y(num_frames);
-    std::vector<double> z(num_frames);
+    std::vector<double> pos_x(num_frames);
+    std::vector<double> pos_y(num_frames);
+    std::vector<double> pos_z(num_frames);
     std::vector<double> r_sq(num_frames);
-    for (size_t t = 0; t < num_frames; ++t) {
-      x[t] = u_i[t].x();
-      y[t] = u_i[t].y();
-      z[t] = u_i[t].z();
-      r_sq[t] = x[t] * x[t] + y[t] * y[t] + z[t] * z[t];
+    for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
+      pos_x[frame_idx] = u_i[frame_idx].x();
+      pos_y[frame_idx] = u_i[frame_idx].y();
+      pos_z[frame_idx] = u_i[frame_idx].z();
+      r_sq[frame_idx] = pos_x[frame_idx] * pos_x[frame_idx] + pos_y[frame_idx] * pos_y[frame_idx] +
+                        pos_z[frame_idx] * pos_z[frame_idx];
     }
 
-    auto S2_x = correlation::math::autocorrelate(x, ws);
-    auto S2_y = correlation::math::autocorrelate(y, ws);
-    auto S2_z = correlation::math::autocorrelate(z, ws);
+    auto S2_x = correlation::math::autocorrelate(pos_x, workspace);
+    auto S2_y = correlation::math::autocorrelate(pos_y, workspace);
+    auto S2_z = correlation::math::autocorrelate(pos_z, workspace);
 
-    std::vector<double> S1(max_correlation_frames + 1, 0.0);
-    S1[0] = 2.0 * std::accumulate(r_sq.begin(), r_sq.end(), 0.0);
-    for (int k = 1; k <= max_correlation_frames; ++k) {
-      S1[k] = S1[k - 1] - r_sq[k - 1] - r_sq[num_frames - k];
+    std::vector<double> sum_S1(max_correlation_frames + 1, 0.0);
+    sum_S1[0] = 2.0 * std::accumulate(r_sq.begin(), r_sq.end(), 0.0);
+    for (int lag_idx = 1; lag_idx <= max_correlation_frames; ++lag_idx) {
+      sum_S1[lag_idx] = sum_S1[lag_idx - 1] - r_sq[lag_idx - 1] - r_sq[num_frames - lag_idx];
     }
 
     for (int lag = 1; lag <= max_correlation_frames; ++lag) {
-      double const S2 = S2_x[lag] + S2_y[lag] + S2_z[lag];
-      local_msd[lag] += (S1[lag] - 2.0 * S2);
+      double const sum_S2 = S2_x[lag] + S2_y[lag] + S2_z[lag];
+      local_msd[lag] += (sum_S1[lag] - 2.0 * sum_S2);
     }
   });
 
@@ -255,8 +344,8 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
 }
 
 std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(const correlation::core::Trajectory &traj,
-                                                              int max_correlation_frames, size_t start_frame,
-                                                              size_t end_frame) {
+                                                              MaxFrames max_correlation_frames, StartFrame start_frame,
+                                                              EndFrame end_frame) {
   std::vector<double> vacf = calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (!vacf.empty() && vacf[0] != 0.0) {
     double const normalization_factor = 1.0 / vacf[0];
@@ -268,21 +357,21 @@ std::vector<double> DynamicsAnalyzer::calculateNormalizedVACF(const correlation:
 }
 
 std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
-DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
+DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double time_step) {
   if (vacf.empty()) {
     return {};
   }
 
   size_t num_frames = vacf.size();
-  double const t_max = (num_frames - 1) * dt; // Total time of correlation // NOLINT(bugprone-narrowing-conversions)
+  double const t_max = static_cast<double>(num_frames - 1) * time_step; // Total time of correlation
 
   // Define frequency range
   // Max frequency (Nyquist) is 1 / (2 * dt)
   // But we are interested in physical vibrations, usually up to ~100 THz or
-  // ~3000 cm^-1 dt is in fs. 1 fs = 10^-15 s. 1 THz = 10^12 Hz. Nyquist freq in
-  // THz = 1 / (2 * dt * 10^-15) * 10^-12 = 1000 / (2 * dt)
+  // ~3000 cm^-1 time_step is in fs. 1 fs = 10^-15 s. 1 THz = 10^12 Hz. Nyquist freq in
+  // THz = 1 / (2 * time_step * 10^-15) * 10^-12 = 1000 / (2 * time_step)
 
-  double nyquist_thz = 1000.0 / (2.0 * dt);
+  double nyquist_thz = 1000.0 / (2.0 * time_step);
 
   // Number of frequency points. Let's make it high resolution.
   size_t const num_freq_points = 2000;
@@ -297,98 +386,28 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   // Define standard deviation for the Gaussian window (e.g., stopping at 3
   // sigma at t_max)
   double const sigma = t_max >= 1e-6 ? t_max / 3.0 : 1.0;
-  for (size_t i = 0; i < num_frames; ++i) {
-    double const t = i * dt; // NOLINT(bugprone-narrowing-conversions)
-    double const window = std::exp(-0.5 * std::pow(t / sigma, 2.0));
-    windowed_vacf[i] = vacf[i] * window;
+  for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
+    double const time_val = static_cast<double>(frame_idx) * time_step;
+    double const window = std::exp(-0.5 * std::pow(time_val / sigma, 2.0));
+    windowed_vacf[frame_idx] = vacf[frame_idx] * window;
   }
 
   std::vector<size_t> freq_indices(num_freq_points);
   std::iota(freq_indices.begin(), freq_indices.end(), 0);
 
-  tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t k) {
-    double const nu = k * d_nu; // Frequency in THz // NOLINT(bugprone-narrowing-conversions)
-    frequencies[k] = nu;
-
-    double integral_real = 0.0;
-    double integral_imag = 0.0;
+  tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t freq_idx) {
+    double const freq_val = static_cast<double>(freq_idx) * d_nu; // Frequency in THz
+    frequencies[freq_idx] = freq_val;
 
     // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
     // scale)
-    double const theta = correlation::math::two_pi * nu * dt * 0.001;
+    double const theta = correlation::math::two_pi * freq_val * time_step * 0.001;
 
-    if (std::abs(theta) < 1e-6) {
-      for (size_t i = 0; i < num_frames; ++i) {
-        double const val = windowed_vacf[i];
-        double const arg = theta * i; // NOLINT(bugprone-narrowing-conversions)
+    auto [integral_real, integral_imag] = integrate_vdos_frequency(theta, windowed_vacf, time_step);
 
-        double const term_real = val * std::cos(arg);
-
-        if (i == 0 || i == num_frames - 1) {
-          integral_real += 0.5 * term_real;
-        } else {
-          integral_real += term_real;
-        }
-      }
-      integral_real *= dt;
-    } else {
-      double const theta2 = theta * theta;
-      double const theta3 = theta2 * theta;
-      double const sin_theta = std::sin(theta);
-      double const cos_theta = std::cos(theta);
-
-      double const alpha = 1.0 / theta + sin_theta * cos_theta / theta2 - 2.0 * sin_theta * sin_theta / theta3;
-      double const beta = 2.0 * ((1.0 + cos_theta * cos_theta) / theta2 - 2.0 * sin_theta * cos_theta / theta3);
-      double const gamma = 4.0 * (sin_theta / theta3 - cos_theta / theta2);
-
-      size_t two_N = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
-      two_N = std::max<size_t>(two_N, 0);
-
-      double const f_0 = windowed_vacf[0];
-      double const f_2N = windowed_vacf[two_N];
-
-      double const arg_2N = theta * two_N; // NOLINT(bugprone-narrowing-conversions)
-
-      double sum_odd_cos = 0.0;
-      double sum_odd_sin = 0.0;
-      for (size_t i = 1; i < two_N; i += 2) {
-        double const arg = theta * i; // NOLINT(bugprone-narrowing-conversions)
-        sum_odd_cos += windowed_vacf[i] * std::cos(arg);
-        sum_odd_sin += windowed_vacf[i] * std::sin(arg);
-      }
-
-      double sum_even_cos = 0.0;
-      double sum_even_sin = 0.0;
-      for (size_t i = 2; i < two_N; i += 2) {
-        double const arg = theta * i; // NOLINT(bugprone-narrowing-conversions)
-        sum_even_cos += windowed_vacf[i] * std::cos(arg);
-        sum_even_sin += windowed_vacf[i] * std::sin(arg);
-      }
-
-      double const even_cos_trapz = sum_even_cos + 0.5 * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N));
-      double const even_sin_trapz = sum_even_sin + 0.5 * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N));
-
-      double const bound_cos = f_2N * std::sin(arg_2N);
-      double const bound_sin = f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N);
-
-      integral_real = dt * (alpha * bound_cos + beta * even_cos_trapz + gamma * sum_odd_cos);
-      integral_imag = dt * (alpha * bound_sin + beta * even_sin_trapz + gamma * sum_odd_sin);
-
-      if (num_frames % 2 == 0 && num_frames > 1) {
-        double const val1 = windowed_vacf[num_frames - 2];
-        double const val2 = windowed_vacf[num_frames - 1];
-
-        double const arg1 = theta * (num_frames - 2); // NOLINT(bugprone-narrowing-conversions)
-        double const arg2 = theta * (num_frames - 1); // NOLINT(bugprone-narrowing-conversions)
-
-        integral_real += 0.5 * dt * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
-        integral_imag += 0.5 * dt * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
-      }
-    }
-
-    double const damping = std::exp(-0.5 * std::pow(nu / (0.5 * nyquist_thz), 2.0));
-    intensities_real[k] = integral_real * damping;
-    intensities_imag[k] = integral_imag * damping;
+    double const damping = std::exp(-0.5 * std::pow(freq_val / (0.5 * nyquist_thz), 2.0));
+    intensities_real[freq_idx] = integral_real * damping;
+    intensities_imag[freq_idx] = integral_imag * damping;
   });
 
   return {frequencies, intensities_real, intensities_imag};
@@ -401,31 +420,31 @@ double DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<double
   }
   // Fit on the second half of the data
   size_t const start_idx = time.size() / 2;
-  size_t const n = time.size() - start_idx;
-  if (n < 2) {
+  size_t const num_points = time.size() - start_idx;
+  if (num_points < 2) {
     return 0.0;
-}
+  }
 
   double sum_x = 0.0;
   double sum_y = 0.0;
   double sum_xx = 0.0;
   double sum_xy = 0.0;
 
-  for (size_t i = start_idx; i < time.size(); ++i) {
-    double const x = time[i];
-    double const y = msd[i];
-    sum_x += x;
-    sum_y += y;
-    sum_xx += x * x;
-    sum_xy += x * y;
+  for (size_t time_idx = start_idx; time_idx < time.size(); ++time_idx) {
+    double const time_val = time[time_idx];
+    double const msd_val = msd[time_idx];
+    sum_x += time_val;
+    sum_y += msd_val;
+    sum_xx += time_val * time_val;
+    sum_xy += time_val * msd_val;
   }
 
-  double const denominator = (static_cast<double>(n) * sum_xx - sum_x * sum_x);
+  double const denominator = (static_cast<double>(num_points) * sum_xx - sum_x * sum_x);
   if (std::abs(denominator) < 1e-12) {
     return 0.0;
   }
 
-  double const slope = (static_cast<double>(n) * sum_xy - sum_x * sum_y) / denominator;
+  double const slope = (static_cast<double>(num_points) * sum_xy - sum_x * sum_y) / denominator;
   if (slope < 0.0) {
     return 0.0; // Self-diffusion coefficient cannot be negative
   }
@@ -439,12 +458,12 @@ double DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<doubl
     return 0.0;
   }
   double integral = 0.0;
-  for (size_t i = 0; i < time.size() - 1; ++i) {
-    double const dt = time[i + 1] - time[i];
-    if (dt <= 0.0) {
+  for (size_t time_idx = 0; time_idx < time.size() - 1; ++time_idx) {
+    double const dt_step = time[time_idx + 1] - time[time_idx];
+    if (dt_step <= 0.0) {
       return 0.0; // Time must be strictly increasing
     }
-    integral += 0.5 * (vacf[i] + vacf[i + 1]) * dt;
+    integral += 0.5 * (vacf[time_idx] + vacf[time_idx + 1]) * dt_step;
   }
   if (integral < 0.0) {
     return 0.0; // Self-diffusion coefficient cannot be negative
@@ -453,17 +472,18 @@ double DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<doubl
   return integral / 3.0;
 }
 
-double DynamicsAnalyzer::computeRelaxationTime(const std::vector<double> &time, const std::vector<double> &norm_vacf) {
-  if (time.size() < 2 || time.size() != norm_vacf.size()) {
+double DynamicsAnalyzer::computeRelaxationTime(const std::vector<double> &time,
+                                               const std::vector<double> &normalized_vacf) {
+  if (time.size() < 2 || time.size() != normalized_vacf.size()) {
     return 0.0;
   }
   double integral = 0.0;
-  for (size_t i = 0; i < time.size() - 1; ++i) {
-    double const dt = time[i + 1] - time[i];
-    if (dt <= 0.0) {
+  for (size_t time_idx = 0; time_idx < time.size() - 1; ++time_idx) {
+    double const dt_step = time[time_idx + 1] - time[time_idx];
+    if (dt_step <= 0.0) {
       return 0.0; // Time must be strictly increasing
     }
-    integral += 0.5 * (norm_vacf[i] + norm_vacf[i + 1]) * dt;
+    integral += 0.5 * (normalized_vacf[time_idx] + normalized_vacf[time_idx + 1]) * dt_step;
   }
   if (integral < 0.0) {
     return 0.0; // Relaxation time must be non-negative
