@@ -129,7 +129,6 @@ export component AppWindow inherits Window {
     in property <[AtomCount]> atom_counts: [];
     in-out property <string> file_status_text: "No file loaded.";
 
-
     /// Analysis execution state
     in property <bool> analysis_running: false;
     in property <bool> analysis_done: false;
@@ -142,17 +141,33 @@ export component AppWindow inherits Window {
     in property <bool> hdf5_available: true;
     in property <bool> parquet_available: true;
     in-out property <AnalysisOptions> analysis_options: {
-        r_max: "20.0", r_bin_width: "0.02", q_max: "20.0", q_bin_width: "0.02",
-        r_int_max: "10.0", angle_bin_width: "1.0", dihedral_bin_width: "1.0",
-        max_ring_size: "12", smoothing_sigma: "0.01", smoothing_kernel: 0,
-        smoothing_enabled: true, min_frame: "0", max_frame: "End",
-        time_step: "1.0", material_type: 0
+        r_max: "20.0",
+        r_bin_width: "0.02",
+        q_max: "20.0",
+        q_bin_width: "0.02",
+        r_int_max: "10.0",
+        angle_bin_width: "1.0",
+        dihedral_bin_width: "1.0",
+        max_ring_size: "12",
+        smoothing_sigma: "0.01",
+        smoothing_kernel: 0,
+        smoothing_enabled: true,
+        min_frame: "0",
+        max_frame: "End",
+        time_step: "1.0",
+        material_type: 0
     };
     in-out property <AppErrors> app_errors;
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in-out property <ExportConfig> export_config: {
-        size_preset: 0, palette: 0, font_scale: "1.0", line_width: "3.0",
-        show_legend: true, show_grid: true, show_markers: false, fill_area: false
+        size_preset: 0,
+        palette: 0,
+        font_scale: "1.0",
+        line_width: "3.0",
+        show_legend: true,
+        show_grid: true,
+        show_markers: false,
+        fill_area: false
     };
 
     property <string> min_frame <=> analysis_options.min_frame;
@@ -247,9 +262,6 @@ export component AppWindow inherits Window {
     // Core Layout Logic
     // ============================================================================
     
-    init => {
-        Palette.color-scheme = ColorScheme.light;
-    }
 
     changed r_max => {
         root.validate_inputs();

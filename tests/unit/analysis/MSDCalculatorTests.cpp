@@ -14,6 +14,7 @@ namespace correlation::testing {
 
 using namespace correlation::calculators;
 using namespace correlation::core;
+using namespace correlation::analysis;
 
 TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
   // Construct a trajectory of 5 frames with 1 atom moving linearly
@@ -29,7 +30,7 @@ TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
   Trajectory traj(std::move(frames), time_step);
 
   // Act
-  auto results = MSDCalculator::calculate(traj, 2, 0, 5);
+  auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{5});
 
   // Assert
   ASSERT_TRUE(results.find("MSD") != results.end());
@@ -68,7 +69,7 @@ TEST(MSDCalculatorTests, StationaryAtomsMSDIsZero) {
     traj.addFrame(cell);
   }
 
-  auto results = MSDCalculator::calculate(traj, 3, 0, 5);
+  auto results = MSDCalculator::calculate(traj, MaxFrames{3}, StartFrame{0}, EndFrame{5});
 
   ASSERT_TRUE(results.find("MSD") != results.end());
   const auto &msd = results.at("MSD").partials.at("Total");
@@ -89,7 +90,7 @@ TEST(MSDCalculatorTests, MultiAtomAveraging) {
   }
 
   Trajectory traj(std::move(frames), 1.0);
-  auto results = MSDCalculator::calculate(traj, 2, 0, 4);
+  auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{4});
 
   ASSERT_TRUE(results.find("MSD") != results.end());
   const auto &msd = results.at("MSD").partials.at("Total");
@@ -113,7 +114,7 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
 
   Trajectory traj(std::move(frames), 1.0);
   // Restrict to frames [3, 7) with max correlation lag 2
-  auto results = MSDCalculator::calculate(traj, 2, 3, 7);
+  auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{3}, EndFrame{7});
 
   ASSERT_TRUE(results.find("MSD") != results.end());
   const auto &msd = results.at("MSD").partials.at("Total");
