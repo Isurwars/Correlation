@@ -34,11 +34,12 @@ public:
 
   /**
    * @brief Constructs a Cell from three lattice vectors.
-   * @param a The first lattice vector.
-   * @param b The second lattice vector.
-   * @param c The third lattice vector.
+   * @param vec_a The first lattice vector.
+   * @param vec_b The second lattice vector.
+   * @param vec_c The third lattice vector.
    */
-  explicit Cell(const math::Vector3<double> &a, const math::Vector3<double> &b, const math::Vector3<double> &c);
+  explicit Cell(const math::Vector3<double> &vec_a, const math::Vector3<double> &vec_b,
+                const math::Vector3<double> &vec_c);
 
   /**
    * @brief Constructs a Cell from lattice parameters {a, b, c, alpha, beta,

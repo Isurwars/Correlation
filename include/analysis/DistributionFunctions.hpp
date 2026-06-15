@@ -44,14 +44,15 @@ struct AnalysisSettings {
 
   /**
    * @brief Helper to check if a specific calculator is enabled.
-   * @param id The identifier of the calculator (e.g. "RDF").
+   * @param calc_id The identifier of the calculator (e.g. "RDF").
    * @return True if active or if no active calculators are specified.
    */
-  bool isActive(const std::string &id) const {
-    if (active_calculators.empty())
+  bool isActive(const std::string &calc_id) const {
+    if (active_calculators.empty()) {
       return true; // default: all enabled
-    auto it = active_calculators.find(id);
-    return it != active_calculators.end() && it->second;
+    }
+    auto iter = active_calculators.find(calc_id);
+    return iter != active_calculators.end() && iter->second;
   }
 
   bool smoothing = true;        ///< Whether to apply post-processing smoothing.
@@ -128,6 +129,21 @@ public:
    */
   DistributionFunctions &operator=(DistributionFunctions &&other) noexcept;
 
+  /**
+   * @brief Default destructor.
+   */
+  ~DistributionFunctions() = default;
+
+  /**
+   * @brief Deleted copy constructor (contains non-copyable std::mutex).
+   */
+  DistributionFunctions(const DistributionFunctions &) = delete;
+
+  /**
+   * @brief Deleted copy assignment operator (contains non-copyable std::mutex).
+   */
+  DistributionFunctions &operator=(const DistributionFunctions &) = delete;
+
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
   //-------------------------------------------------------------------------//
@@ -185,9 +201,9 @@ public:
 
   /**
    * @brief Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
-   * @param d The new diffusion coefficient value in Å²/fs.
+   * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
-  void setDiffusionCoefficientMSD(double d) noexcept;
+  void setDiffusionCoefficientMSD(double diff_coeff) noexcept;
 
   /**
    * @brief Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
@@ -197,9 +213,9 @@ public:
 
   /**
    * @brief Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
-   * @param d The new diffusion coefficient value in Å²/fs.
+   * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
-  void setDiffusionCoefficientVACF(double d) noexcept;
+  void setDiffusionCoefficientVACF(double diff_coeff) noexcept;
 
   /**
    * @brief Gets the relaxation time computed from normalized VACF.
@@ -209,9 +225,9 @@ public:
 
   /**
    * @brief Sets the relaxation time computed from normalized VACF.
-   * @param tau The new relaxation time value in fs.
+   * @param relax_time The new relaxation time value in fs.
    */
-  void setRelaxationTime(double tau) noexcept;
+  void setRelaxationTime(double relax_time) noexcept;
 
   /**
    * @brief Gets the Deborah number.
@@ -221,9 +237,9 @@ public:
 
   /**
    * @brief Sets the Deborah number.
-   * @param de The new Deborah number value.
+   * @param deborah_num The new Deborah number value.
    */
-  void setDeborahNumber(double de) noexcept;
+  void setDeborahNumber(double deborah_num) noexcept;
 
   //-------------------------------------------------------------------------//
   //--------------------------- Calculation Methods -------------------------//
@@ -343,11 +359,18 @@ public:
               std::function<void(float, const std::string &)> progress_callback = nullptr);
 
 private:
+  static std::unique_ptr<DistributionFunctions>
+  processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+                     size_t frame_idx, const AnalysisSettings &settings,
+                     const std::vector<std::vector<double>> &bond_cutoffs);
+
+  static void normalizeHistograms(DistributionFunctions &dist_funcs);
+
   /**
    * @brief Ensures neighbors are computed for the given cutoff.
-   * @param r_cut Cutoff radius.
+   * @param r_max Cutoff radius.
    */
-  void ensureNeighborsComputed(double r_cut);
+  void ensureNeighborsComputed(double r_max);
 
   /**
    * @brief Generates a unique string key for a pair of element types.

@@ -18,7 +18,7 @@ namespace correlation::readers {
 
 FileType determineFileType(const std::string &filename) {
   std::string ext = std::filesystem::path(filename).extension().string();
-  std::ranges::transform(ext, ext.begin(), ::tolower);
+  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
   if (ext == ".car") {
     return FileType::Car;
@@ -63,7 +63,7 @@ FileType determineFileType(const std::string &filename) {
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {
     std::string basename = std::filesystem::path(filename).filename().string();
-    std::ranges::transform(basename, basename.begin(), ::tolower);
+    std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
     if (basename == "poscar" || basename == "contcar") {
       return FileType::Vasp;
 }
@@ -97,7 +97,7 @@ static BaseReader *findReaderForFile(const std::string &filename) {
 
   // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
   std::string basename = std::filesystem::path(filename).filename().string();
-  std::ranges::transform(basename, basename.begin(), ::tolower);
+  std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
 
   if (basename == "poscar" || basename == "contcar") {
     return ReaderFactory::instance().getReaderForExtension(".poscar");

@@ -32,7 +32,7 @@ bool WriterFactory::registerWriter(std::unique_ptr<BaseWriter> writer) {
     if (lower_ext[0] != '.') {
       lower_ext = "." + lower_ext;
 }
-    std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
     extension_map_[lower_ext] = writer.get();
   }
 
@@ -48,7 +48,7 @@ BaseWriter *WriterFactory::getWriterForExtension(const std::string &extension) {
   if (lower_ext[0] != '.') {
     lower_ext = "." + lower_ext;
 }
-  std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
 
   auto it = extension_map_.find(lower_ext);
   if (it != extension_map_.end()) {

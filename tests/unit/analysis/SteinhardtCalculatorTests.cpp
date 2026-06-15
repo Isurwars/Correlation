@@ -8,6 +8,7 @@
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>
+#include <numbers>
 
 namespace correlation::analysis {
 

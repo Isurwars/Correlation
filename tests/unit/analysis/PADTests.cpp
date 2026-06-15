@@ -14,6 +14,7 @@
 #include <cmath>
 #include <gtest/gtest.h>
 #include <numeric>
+#include <numbers>
 
 namespace correlation::analysis {
 
@@ -59,7 +60,7 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   const auto &hist = df.getHistogram("BAD");
   const auto &hoh = hist.partials.at("H-O-H");
 
-  auto max_it = std::ranges::max_element(hoh);
+  auto max_it = std::max_element(hoh.begin(), hoh.end());
   size_t const idx = std::distance(hoh.begin(), max_it);
   double const angle = hist.bins[idx];
   // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to

@@ -39,7 +39,7 @@ CellReader::readTrajectory(const std::string & /*filename*/,
 
 namespace {
 void toLower(std::string &s) {
-  std::ranges::transform(s, s.begin(), [](unsigned char c) { return std::tolower(c); });
+  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
 }
 } // namespace
 

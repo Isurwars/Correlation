@@ -303,9 +303,9 @@ std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const co
 
   // Final deduplication (oriented cycles may still have orientation variants
   // produced by different paths within the same root's BFS)
-  std::ranges::sort(all_cycles);
-  auto [first, last] = std::ranges::unique(all_cycles);
-  all_cycles.erase(first, last);
+  std::sort(all_cycles.begin(), all_cycles.end());
+  auto last = std::unique(all_cycles.begin(), all_cycles.end());
+  all_cycles.erase(last, all_cycles.end());
 
   return all_cycles;
 }

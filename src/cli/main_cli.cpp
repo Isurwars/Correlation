@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     return s;
   };
   auto lowercase = [](std::string s) {
-    std::ranges::transform(s, s.begin(), ::tolower);
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
   };
 

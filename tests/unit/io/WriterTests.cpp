@@ -136,7 +136,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   const auto &pad_bins = pad_hist.bins;
   const auto &si_si_si_pad = pad_hist.partials.at("Si-Si-Si");
 
-  auto max_it = std::ranges::max_element(si_si_si_pad);
+  auto max_it = std::max_element(si_si_si_pad.begin(), si_si_si_pad.end());
   size_t const peak_index = std::distance(si_si_si_pad.begin(), max_it);
 
   // The dominant peak angle should be the tetrahedral angle in silicon.

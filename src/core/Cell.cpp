@@ -19,25 +19,25 @@ namespace correlation::core {
 //---------------------------------------------------------------------------//
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
-Cell::Cell(const math::Vector3<double> &a, const math::Vector3<double> &b, const math::Vector3<double> &c) {
-  updateLattice(math::Matrix3<double>(a, b, c));
+Cell::Cell(const math::Vector3<double> &vec_a, const math::Vector3<double> &vec_b, const math::Vector3<double> &vec_c) {
+  updateLattice(math::Matrix3<double>(vec_a, vec_b, vec_c));
 }
 
 Cell::Cell(const std::array<double, 6> &params) { setLatticeParameters(params); }
 
 // Move Constructor
 Cell::Cell(Cell &&other) noexcept
-    : lattice_vectors_(other.lattice_vectors_),
-      inverse_lattice_vectors_(other.inverse_lattice_vectors_),
-      lattice_parameters_(other.lattice_parameters_), volume_(other.volume_),
+    : lattice_vectors_(std::move(other.lattice_vectors_)),
+      inverse_lattice_vectors_(std::move(other.inverse_lattice_vectors_)),
+      lattice_parameters_(std::move(other.lattice_parameters_)), volume_(other.volume_),
       energy_(other.energy_), atoms_(std::move(other.atoms_)), elements_(std::move(other.elements_)) {}
 
 // Move Assignment Operator
 Cell &Cell::operator=(Cell &&other) noexcept {
   if (this != &other) {
-    lattice_vectors_ = other.lattice_vectors_;
-    inverse_lattice_vectors_ = other.inverse_lattice_vectors_;
-    lattice_parameters_ = other.lattice_parameters_;
+    lattice_vectors_ = std::move(other.lattice_vectors_);
+    inverse_lattice_vectors_ = std::move(other.inverse_lattice_vectors_);
+    lattice_parameters_ = std::move(other.lattice_parameters_);
     volume_ = other.volume_;
     energy_ = other.energy_;
     atoms_ = std::move(other.atoms_);
@@ -52,14 +52,14 @@ Cell &Cell::operator=(Cell &&other) noexcept {
 
 void Cell::setLatticeParameters(std::array<double, 6> params) {
   lattice_parameters_ = params;
-  const double a = params[0];
-  const double b = params[1];
-  const double c = params[2];
+  const double len_a = params[0];
+  const double len_b = params[1];
+  const double len_c = params[2];
   const double alpha = params[3] * math::deg_to_rad;
   const double beta = params[4] * math::deg_to_rad;
   const double gamma = params[5] * math::deg_to_rad;
 
-  if (a <= 0 || b <= 0 || c <= 0) {
+  if (len_a <= 0 || len_b <= 0 || len_c <= 0) {
     throw std::invalid_argument("Lattice parameters a, b, c must be positive.");
   }
 
@@ -71,19 +71,19 @@ void Cell::setLatticeParameters(std::array<double, 6> params) {
   const double sin_g = std::sin(gamma);
 
   // Standard conversion from lattice parameters (lengths and angles) to lattice
-  // vectors. We align 'a' with the x-axis, and 'b' in the xy-plane.
-  math::Vector3<double> const v_a = {a, 0.0, 0.0};
-  math::Vector3<double> const v_b = {b * cos_g, b * sin_g, 0.0};
+  // vectors. We align 'len_a' with the x-axis, and 'len_b' in the xy-plane.
+  math::Vector3<double> const v_a = {len_a, 0.0, 0.0};
+  math::Vector3<double> const v_b = {len_b * cos_g, len_b * sin_g, 0.0};
   math::Vector3<double> v_c = {
-      c * std::cos(beta), c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g,
+      len_c * std::cos(beta), len_c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g,
       0.0 // z-component is calculated from volume
   };
   // Re-calculate z-component of v_c from volume to ensure orthogonality
   const double volume =
-      a * b * c *
+      len_a * len_b * len_c *
       std::sqrt(1.0 - std::pow(std::cos(alpha), 2) - std::pow(std::cos(beta), 2) - std::pow(std::cos(gamma), 2) +
                 2.0 * std::cos(alpha) * std::cos(beta) * std::cos(gamma));
-  v_c.z() = volume / (a * b * sin_g);
+  v_c.z() = volume / (len_a * len_b * sin_g);
   updateLattice(math::Matrix3<double>(v_a, v_b, v_c));
 }
 
@@ -102,23 +102,23 @@ void Cell::updateLatticeParametersFromVectors() {
   const auto &b_vec = lattice_vectors_[1];
   const auto &c_vec = lattice_vectors_[2];
 
-  const double a = math::norm(a_vec);
-  const double b = math::norm(b_vec);
-  const double c = math::norm(c_vec);
+  const double len_a = math::norm(a_vec);
+  const double len_b = math::norm(b_vec);
+  const double len_c = math::norm(c_vec);
 
-  if (a < 1e-9 || b < 1e-9 || c < 1e-9) {
+  if (len_a < 1e-9 || len_b < 1e-9 || len_c < 1e-9) {
     // Handle case of zero-length vectors, though updateLattice would likely
     // throw first.
     lattice_parameters_ = {0, 0, 0, 0, 0, 0};
     return;
   }
 
-  const double alpha_rad = std::acos(std::clamp(math::dot(b_vec, c_vec) / (b * c), -1.0, 1.0));
-  const double beta_rad = std::acos(std::clamp(math::dot(a_vec, c_vec) / (a * c), -1.0, 1.0));
-  const double gamma_rad = std::acos(std::clamp(math::dot(a_vec, b_vec) / (a * b), -1.0, 1.0));
+  const double alpha_rad = std::acos(std::clamp(math::dot(b_vec, c_vec) / (len_b * len_c), -1.0, 1.0));
+  const double beta_rad = std::acos(std::clamp(math::dot(a_vec, c_vec) / (len_a * len_c), -1.0, 1.0));
+  const double gamma_rad = std::acos(std::clamp(math::dot(a_vec, b_vec) / (len_a * len_b), -1.0, 1.0));
 
   lattice_parameters_ = {
-      a, b, c, alpha_rad * math::rad_to_deg, beta_rad * math::rad_to_deg, gamma_rad * math::rad_to_deg};
+      len_a, len_b, len_c, alpha_rad * math::rad_to_deg, beta_rad * math::rad_to_deg, gamma_rad * math::rad_to_deg};
 }
 
 //---------------------------------------------------------------------------//
@@ -126,9 +126,9 @@ void Cell::updateLatticeParametersFromVectors() {
 //---------------------------------------------------------------------------//
 
 std::optional<Element> Cell::findElement(const std::string &symbol) const {
-  auto it = std::ranges::find_if(elements_, [&](const Element &e) { return e.symbol == symbol; });
-  if (it != elements_.end()) {
-    return *it;
+  auto iter = std::find_if(elements_.begin(), elements_.end(), [&](const Element &elem) { return elem.symbol == symbol; });
+  if (iter != elements_.end()) {
+    return *iter;
   }
   return std::nullopt;
 }
@@ -145,8 +145,7 @@ ElementID Cell::getOrRegisterElement(const std::string &symbol) {
 
 Atom &Cell::addAtom(const std::string &symbol, const math::Vector3<double> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
-  auto element_it = std::ranges::find_if(elements_,
-                                 [&](const Element &e) { return e.id.value == element_id.value; });
+  auto element_it = std::find_if(elements_.begin(), elements_.end(), [&](const Element &elem) { return elem.id.value == element_id.value; });
 
   AtomID const new_atom_id{static_cast<std::uint32_t>(atoms_.size())};
   atoms_.emplace_back(*element_it, position, new_atom_id);

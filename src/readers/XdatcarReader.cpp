@@ -209,7 +209,7 @@ XdatcarReader::readTrajectory(const std::string &filename,
     // Detect "Direct" keyword (case-insensitive check on first 6 chars)
     if (trimmed.size() >= 6) {
       std::string prefix = trimmed.substr(0, 6);
-      std::ranges::transform(prefix, prefix.begin(), ::tolower);
+      std::transform(prefix.begin(), prefix.end(), prefix.begin(), ::tolower);
       if (prefix == "direct") {
         // The frame data starts AFTER the "Direct" line — the frame_offset
         // points to the "Direct" line itself so the parser knows where it is.

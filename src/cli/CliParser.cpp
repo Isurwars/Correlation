@@ -170,7 +170,7 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
   }
 
   // Process smoothing kernel string (case insensitive, fallback to gaussian)
-  std::ranges::transform(k_str, k_str.begin(), ::tolower);
+  std::transform(k_str.begin(), k_str.end(), k_str.begin(), ::tolower);
   if (k_str == "gaussian" || k_str == "gauss") {
     opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
   } else if (k_str == "bump") {

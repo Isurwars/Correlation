@@ -253,7 +253,7 @@ std::vector<Preset> PresetManager::loadAll() {
   }
 
   // Sort alphabetically
-  std::ranges::sort(presets, [](const Preset &a, const Preset &b) {
+  std::sort(presets.begin(), presets.end(), [](const Preset &a, const Preset &b) {
     return a.name < b.name;
   });
 
@@ -266,7 +266,7 @@ void PresetManager::save(const Preset &preset) {
 
   // Filename is safe name
   std::string filename = preset.name;
-  std::ranges::replace_if(filename, [](char c) {
+  std::replace_if(filename.begin(), filename.end(), [](char c) {
     return !std::isalnum(c) && c != '-' && c != '_';
   }, '_');
 
@@ -283,7 +283,7 @@ void PresetManager::remove(const std::string &name) {
 }
 
   std::string filename = name;
-  std::ranges::replace_if(filename, [](char c) {
+  std::replace_if(filename.begin(), filename.end(), [](char c) {
     return !std::isalnum(c) && c != '-' && c != '_';
   }, '_');
 

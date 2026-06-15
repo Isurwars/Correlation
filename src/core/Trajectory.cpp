@@ -294,7 +294,7 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   // Map new element IDs to reference element IDs for fast comparison
   std::vector<int> new_to_ref(new_elements.size(), -1);
   for (size_t i = 0; i < new_elements.size(); ++i) {
-    auto it = std::ranges::find(ref_elements, new_elements[i]);
+    auto it = std::find(ref_elements.begin(), ref_elements.end(), new_elements[i]);
     if (it == ref_elements.end()) {
       throw std::runtime_error("Frame validation failed: Element symbol mismatch at index " + std::to_string(i) +
                                ". Expected " + ref_elements[i].symbol + ", but got " + new_elements[i].symbol);

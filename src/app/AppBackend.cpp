@@ -186,7 +186,7 @@ std::map<std::string, double> AppBackend::getAshcroftWeights() const {
 
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;
-  std::ranges::replace(display_path, '\\', '/');
+  std::replace(display_path.begin(), display_path.end(), \'\\\', \'/\');
   correlation::readers::FileType const type = correlation::readers::determineFileType(path);
 
   // Determine whether to load as a trajectory by checking the reader's

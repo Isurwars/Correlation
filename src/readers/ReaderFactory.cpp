@@ -31,7 +31,7 @@ bool ReaderFactory::registerReader(std::unique_ptr<BaseReader> reader) {
     if (lower_ext[0] != '.') {
       lower_ext = "." + lower_ext;
 }
-    std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+    std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
     extension_map_[lower_ext] = reader.get();
   }
 
@@ -47,7 +47,7 @@ BaseReader *ReaderFactory::getReaderForExtension(const std::string &extension, c
   if (lower_ext[0] != '.') {
     lower_ext = "." + lower_ext;
 }
-  std::ranges::transform(lower_ext, lower_ext.begin(), ::tolower);
+  std::transform(lower_ext.begin(), lower_ext.end(), lower_ext.begin(), ::tolower);
 
   if ((lower_ext == ".out" || lower_ext == ".in") && !filename.empty()) {
     std::ifstream file(filename);

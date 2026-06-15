@@ -98,7 +98,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   ASSERT_EQ(frequencies.size(), intensities_imag.size());
 
   // 3. Find peak in real part
-  auto max_it = std::ranges::max_element(intensities_real);
+  auto max_it = std::max_element(intensities_real.begin(), intensities_real.end());
   size_t const peak_idx = std::distance(intensities_real.begin(), max_it);
   double const peak_freq = frequencies[peak_idx];
 

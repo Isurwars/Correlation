@@ -23,7 +23,7 @@ bool registered = CalculatorFactory::instance().registerCalculator(std::make_uni
 // Disjoint-Set (Union-Find) data structure for identifying connected components
 class UnionFind {
 public:
-  explicit UnionFind(size_t n) : parent(n), sz(n, 1) { std::ranges::iota(parent, 0); }
+  explicit UnionFind(size_t n) : parent(n), sz(n, 1) { std::iota(parent.begin(), parent.end(), 0); }
 
   size_t find(size_t i) {
     size_t root = i;

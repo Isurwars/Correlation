@@ -92,7 +92,7 @@ TEST_F(RDFTests, AccessorsWork) {
   df.calculateRDF(5.0, 0.1);
   histNames = df.getAvailableHistograms();
   EXPECT_FALSE(histNames.empty());
-  EXPECT_NE(std::ranges::find(histNames, "g_r"), histNames.end());
+  EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"), histNames.end());
 
   // getHistogram()
   EXPECT_NO_THROW(df.getHistogram("g_r"));
@@ -125,7 +125,7 @@ TEST_F(RDFTests, CalculateRDF) {
   const auto &total = hist.partials.at("Ar-Ar");
 
   // High precision peak location
-  auto max_it = std::ranges::max_element(total);
+  auto max_it = std::max_element(total.begin(), total.end());
   size_t const peak_idx = std::distance(total.begin(), max_it);
   double const peak_r = hist.bins[peak_idx];
 
@@ -219,7 +219,7 @@ TEST_F(RDFTests, AddAndScale) {
 
   // Should be back to original magnitude
   // We check peak value
-  auto max_it = std::ranges::max_element(h1_scaled);
+  auto max_it = std::max_element(h1_scaled.begin(), h1_scaled.end());
   double const peak = *max_it;
 
   // Single frame RDF peak value depends on volume and density, but it's

@@ -32,8 +32,7 @@ namespace correlation::analysis {
 
 DistributionFunctions::DistributionFunctions(const correlation::core::Cell &cell, double cutoff,
                                              const std::vector<std::vector<double>> &bond_cutoffs)
-    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0), bond_cutoffs_sq_(bond_cutoffs),
-      diffusion_coefficient_msd_(0.0), diffusion_coefficient_vacf_(0.0), relaxation_time_(0.0), deborah_number_(0.0) {
+    : cell_(cell), neighbors_owned_(nullptr), current_cutoff_(0.0), bond_cutoffs_sq_(bond_cutoffs) {
   if (cutoff > 0.0) {
     if (bond_cutoffs.empty()) {
       throw std::invalid_argument("Bond cutoffs must be provided if cutoff > 0.0");
@@ -45,8 +44,8 @@ DistributionFunctions::DistributionFunctions(const correlation::core::Cell &cell
 
 // Move Constructor
 DistributionFunctions::DistributionFunctions(DistributionFunctions &&other) noexcept
-    : cell_(other.cell_), neighbors_ref_(other.neighbors_ref_), neighbors_owned_(std::move(other.neighbors_owned_)),
-      current_cutoff_(other.current_cutoff_), histograms_(std::move(other.histograms_)),
+    : cell_(std::move(other.cell_)), neighbors_ref_(other.neighbors_ref_), neighbors_owned_(std::move(other.neighbors_owned_)),
+      current_cutoff_(other.current_cutoff_), bond_cutoffs_sq_(std::move(other.bond_cutoffs_sq_)), histograms_(std::move(other.histograms_)),
       ashcroft_weights_(std::move(other.ashcroft_weights_)),
       diffusion_coefficient_msd_(other.diffusion_coefficient_msd_),
       diffusion_coefficient_vacf_(other.diffusion_coefficient_vacf_), relaxation_time_(other.relaxation_time_),
@@ -63,9 +62,11 @@ DistributionFunctions::DistributionFunctions(DistributionFunctions &&other) noex
 // Move Assignment Operator
 DistributionFunctions &DistributionFunctions::operator=(DistributionFunctions &&other) noexcept {
   if (this != &other) {
+    cell_ = std::move(other.cell_);
     neighbors_ref_ = other.neighbors_ref_;
     neighbors_owned_ = std::move(other.neighbors_owned_);
     current_cutoff_ = other.current_cutoff_;
+    bond_cutoffs_sq_ = std::move(other.bond_cutoffs_sq_);
     histograms_ = std::move(other.histograms_);
     ashcroft_weights_ = std::move(other.ashcroft_weights_);
     diffusion_coefficient_msd_ = other.diffusion_coefficient_msd_;
@@ -89,7 +90,7 @@ DistributionFunctions &DistributionFunctions::operator=(DistributionFunctions &&
 
 void DistributionFunctions::setStructureAnalyzer(const StructureAnalyzer *analyzer) {
   neighbors_ref_ = analyzer;
-  if (neighbors_ref_) {
+  if (neighbors_ref_ != nullptr) {
     neighbors_owned_.reset();
   }
 }
@@ -100,7 +101,7 @@ void DistributionFunctions::setStructureAnalyzerOwned(std::unique_ptr<StructureA
 }
 
 const StructureAnalyzer *DistributionFunctions::neighbors() const {
-  if (neighbors_ref_) {
+  if (neighbors_ref_ != nullptr) {
     return neighbors_ref_;
   }
   return neighbors_owned_.get();
@@ -108,20 +109,20 @@ const StructureAnalyzer *DistributionFunctions::neighbors() const {
 
 const Histogram &DistributionFunctions::getHistogram(const std::string &name) const {
   std::lock_guard<std::mutex> lock(histogram_mutex_);
-  auto it = histograms_.find(name);
-  if (it == histograms_.end()) {
+  auto iter = histograms_.find(name);
+  if (iter == histograms_.end()) {
     throw std::out_of_range("Histogram '" + name + "' not found.");
   }
-  return it->second;
+  return iter->second;
 }
 
 void DistributionFunctions::ensureNeighborsComputed(double r_max) {
   // If we have an external reference, we assume it's valid and sufficient.
-  if (neighbors_ref_) {
+  if (neighbors_ref_ != nullptr) {
     return;
   }
 
-  if (!neighbors_owned_ || r_max > current_cutoff_) {
+  if (neighbors_owned_ == nullptr || r_max > current_cutoff_) {
     neighbors_owned_ = std::make_unique<StructureAnalyzer>(cell_, r_max, bond_cutoffs_sq_, true);
     current_cutoff_ = r_max;
   }
@@ -146,16 +147,18 @@ std::vector<std::string> DistributionFunctions::getAvailableHistograms() const {
 std::string DistributionFunctions::getPartialKey(int type1, int type2) const {
   const auto &elements = cell_.elements();
   // Ensure consistent ordering for pairs (e.g., Si-O is same as O-Si)
-  if (type1 > type2)
+  if (type1 > type2) {
     std::swap(type1, type2);
+  }
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
 std::string DistributionFunctions::getInversePartialKey(int type1, int type2) const {
   const auto &elements = cell_.elements();
   // Ensure consistent ordering for pairs (e.g., Si-O is same as O-Si)
-  if (type1 < type2)
+  if (type1 < type2) {
     std::swap(type1, type2);
+  }
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
@@ -182,10 +185,11 @@ void DistributionFunctions::calculateAshcroftWeights() {
       const auto &element_i = elements[i];
       const auto &element_j = elements[j];
 
-      const double count_i = static_cast<double>(element_counts.at(element_i.symbol));
-      const double count_j = static_cast<double>(element_counts.at(element_j.symbol));
+      const auto count_i = static_cast<double>(element_counts.at(element_i.symbol));
+      const auto count_j = static_cast<double>(element_counts.at(element_j.symbol));
 
-      double weight = (count_i * count_j) / (num_atoms * num_atoms); // NOLINT(bugprone-narrowing-conversions)
+      const auto num_atoms_d = static_cast<double>(num_atoms);
+      double weight = (count_i * count_j) / (num_atoms_d * num_atoms_d);
       if (i != j) {
         weight *= 2.0;
       }
@@ -203,40 +207,45 @@ void DistributionFunctions::calculateAshcroftWeights() {
 //---------------------------- Smoothing Methods ----------------------------//
 //---------------------------------------------------------------------------//
 void DistributionFunctions::smooth(const std::string &name, double sigma, correlation::math::KernelType kernel) {
-  if (histograms_.find(name) == histograms_.end()) {
+  if (!histograms_.contains(name)) {
     throw std::runtime_error("Histogram '" + name + "' not found for smoothing.");
   }
 
   auto &hist = histograms_.at(name);
   hist.smoothed_partials.clear();
 
-  if (hist.bins.size() < 2)
+  if (hist.bins.size() < 2) {
     return;
+  }
 
   // Constants are the same for every partial of this histogram.
-  const double dx = hist.bins[1] - hist.bins[0];
-  if (dx <= 0.0)
+  const double bin_dx = hist.bins[1] - hist.bins[0];
+  if (bin_dx <= 0.0) {
     return;
-  const double min_sigma = std::max(dx, sigma);
+  }
+  const double min_sigma = std::max(bin_dx, sigma);
 
   // Flatten partials into a read-only list so we can access them safely from
   // parallel tasks (std::map is not thread-safe for concurrent reads + writes).
   using PartialEntry = std::pair<const std::string *, const std::vector<double> *>;
   std::vector<PartialEntry> entries;
   entries.reserve(hist.partials.size());
-  for (const auto &[key, vals] : hist.partials)
-    entries.push_back({&key, &vals});
+  for (const auto &[key, vals] : hist.partials) {
+    entries.emplace_back(&key, &vals);
+  }
 
   // Compute each partial's smoothed values in parallel.
   std::vector<std::vector<double>> results(entries.size());
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &r) {
-    for (size_t i = r.begin(); i != r.end(); ++i)
-      results[i] = correlation::math::KernelSmoothing(dx, *entries[i].second, min_sigma, kernel);
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
+    for (size_t i = range.begin(); i != range.end(); ++i) {
+      results[i] = correlation::math::KernelSmoothing(bin_dx, *entries[i].second, min_sigma, kernel);
+    }
   });
 
   // Serial writeback — map insertions are not thread-safe.
-  for (size_t i = 0; i < entries.size(); ++i)
+  for (size_t i = 0; i < entries.size(); ++i) {
     hist.smoothed_partials[*entries[i].first] = std::move(results[i]);
+  }
 }
 
 void DistributionFunctions::smoothAll(double sigma, correlation::math::KernelType kernel) {
@@ -266,7 +275,7 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
   }
 
   const auto *calc = correlation::calculators::CalculatorFactory::instance().getCalculator("RDF");
-  if (calc) {
+  if (calc != nullptr) {
     AnalysisSettings settings;
     settings.r_max = r_max;
     settings.r_bin_width = r_bin_width;
@@ -320,7 +329,7 @@ void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &t
 //---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateVDOS() {
-  if (histograms_.find("VACF") == histograms_.end()) {
+  if (!histograms_.contains("VACF")) {
     throw std::logic_error("Cannot calculate VDOS. Please calculate VACF first.");
   }
   histograms_["VDOS"] = correlation::calculators::VDOSCalculator::calculate(histograms_.at("VACF"));
@@ -340,7 +349,7 @@ void DistributionFunctions::calculateXRD(double lambda, double theta_min, double
     throw std::invalid_argument("bin_width must be strictly positive");
   }
 
-  if (histograms_.find("g_r") == histograms_.end()) {
+  if (!histograms_.contains("g_r")) {
     throw std::logic_error("Cannot calculate XRD. Please calculate g_r first by calling "
                            "calculateRDF().");
   }
@@ -356,15 +365,15 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
   // Iterate over all histograms in the other object
   for (const auto &[name, other_hist] : other.histograms_) {
     // Check if this object has the corresponding histogram
-    auto it = histograms_.find(name);
-    if (it == histograms_.end()) {
+    auto iter = histograms_.find(name);
+    if (iter == histograms_.end()) {
       // If not found, copy it entirely (e.g. if this is the first accumulation
       // but it shouldn't happen if we initialize with one frame)
       histograms_[name] = other_hist;
       continue;
     }
 
-    auto &this_hist = it->second;
+    auto &this_hist = iter->second;
 
     // Consistency check (optional but recommended)
     if (this_hist.bins.size() != other_hist.bins.size()) {
@@ -373,7 +382,7 @@ void DistributionFunctions::add(const DistributionFunctions &other) {
 
     // Accumulate Partials
     for (const auto &[key, other_partial] : other_hist.partials) {
-      if (this_hist.partials.find(key) == this_hist.partials.end()) {
+      if (!this_hist.partials.contains(key)) {
         this_hist.partials[key] = other_partial;
       } else {
         auto &this_partial = this_hist.partials[key];
@@ -411,6 +420,53 @@ void DistributionFunctions::scale(double factor) {
 //---------------------------------------------------------------------------//
 
 std::unique_ptr<DistributionFunctions>
+DistributionFunctions::processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
+                                          size_t frame_idx, const AnalysisSettings &settings,
+                                          const std::vector<std::vector<double>> &bond_cutoffs) {
+  if (frame_idx >= trajectory.getFrameCount()) {
+    return nullptr;
+  }
+
+  correlation::core::Cell frame = trajectory.getFrame(frame_idx);
+  auto frame_df = std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
+  frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
+
+  // Dispatch all active frame-based calculators from the factory
+  const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+  tbb::task_group calc_group;
+  for (const auto &calc : factory_calcs) {
+    if (!calc->isFrameCalculator()) {
+      continue;
+    }
+    if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
+      continue;
+    }
+    calc_group.run([&calc, df_ptr = frame_df.get(), &settings]() { calc->calculateFrame(*df_ptr, settings); });
+  }
+  calc_group.wait();
+
+  return frame_df;
+}
+
+void DistributionFunctions::normalizeHistograms(DistributionFunctions &dist_funcs) {
+  for (auto &[name, hist] : dist_funcs.histograms_) {
+    if (hist.compute_count > 1) {
+      double factor = 1.0 / static_cast<double>(hist.compute_count);
+      for (auto &[key, partial] : hist.partials) {
+        for (size_t i = 0; i < partial.size(); ++i) {
+          partial[i] *= factor;
+        }
+      }
+      for (auto &[key, smoothed_partial] : hist.smoothed_partials) {
+        for (size_t i = 0; i < smoothed_partial.size(); ++i) {
+          smoothed_partial[i] *= factor;
+        }
+      }
+    }
+  }
+}
+
+std::unique_ptr<DistributionFunctions>
 DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
                                    size_t start_frame, const AnalysisSettings &settings,
                                    std::function<void(float, const std::string &)> progress_callback) {
@@ -435,27 +491,11 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
         continue;
       }
       const size_t frame_idx = start_frame + i;
-      if (frame_idx >= trajectory.getFrameCount())
+
+      results[i] = processSingleFrame(trajectory, analyzer, frame_idx, settings, bond_cutoffs);
+      if (!results[i]) {
         continue;
-
-      correlation::core::Cell frame = trajectory.getFrame(frame_idx);
-
-      auto frame_df = std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
-      frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
-
-      // Dispatch all active frame-based calculators from the factory
-      const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-      tbb::task_group calc_group;
-      for (const auto &calc : factory_calcs) {
-        if (!calc->isFrameCalculator())
-          continue;
-        if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName()))
-          continue;
-        calc_group.run([&calc, df_ptr = frame_df.get(), &settings]() { calc->calculateFrame(*df_ptr, settings); });
       }
-      calc_group.wait();
-
-      results[i] = std::move(frame_df);
 
       const size_t current_completed = ++completed_frames;
       if (progress_callback) {
@@ -478,21 +518,7 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
     }
   }
 
-  for (auto &[name, hist] : final_df->histograms_) {
-    if (hist.compute_count > 1) {
-      double factor = 1.0 / static_cast<double>(hist.compute_count);
-      for (auto &[key, partial] : hist.partials) {
-        for (size_t i = 0; i < partial.size(); ++i) {
-          partial[i] *= factor;
-        }
-      }
-      for (auto &[key, smoothed_partial] : hist.smoothed_partials) {
-        for (size_t i = 0; i < smoothed_partial.size(); ++i) {
-          smoothed_partial[i] *= factor;
-        }
-      }
-    }
-  }
+  normalizeHistograms(*final_df);
 
   if (settings.smoothing) {
     final_df->smoothAll(settings.smoothing_sigma, settings.smoothing_kernel);
@@ -503,18 +529,22 @@ DistributionFunctions::computeMean(correlation::core::Trajectory &trajectory, co
 
 double DistributionFunctions::getDiffusionCoefficientMSD() const noexcept { return diffusion_coefficient_msd_; }
 
-void DistributionFunctions::setDiffusionCoefficientMSD(double d) noexcept { diffusion_coefficient_msd_ = d; }
+void DistributionFunctions::setDiffusionCoefficientMSD(double diff_coeff) noexcept {
+  diffusion_coefficient_msd_ = diff_coeff;
+}
 
 double DistributionFunctions::getDiffusionCoefficientVACF() const noexcept { return diffusion_coefficient_vacf_; }
 
-void DistributionFunctions::setDiffusionCoefficientVACF(double d) noexcept { diffusion_coefficient_vacf_ = d; }
+void DistributionFunctions::setDiffusionCoefficientVACF(double diff_coeff) noexcept {
+  diffusion_coefficient_vacf_ = diff_coeff;
+}
 
 double DistributionFunctions::getRelaxationTime() const noexcept { return relaxation_time_; }
 
-void DistributionFunctions::setRelaxationTime(double tau) noexcept { relaxation_time_ = tau; }
+void DistributionFunctions::setRelaxationTime(double relax_time) noexcept { relaxation_time_ = relax_time; }
 
 double DistributionFunctions::getDeborahNumber() const noexcept { return deborah_number_; }
 
-void DistributionFunctions::setDeborahNumber(double de) noexcept { deborah_number_ = de; }
+void DistributionFunctions::setDeborahNumber(double deborah_num) noexcept { deborah_number_ = deborah_num; }
 
 } // namespace correlation::analysis

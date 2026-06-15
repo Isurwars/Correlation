@@ -304,7 +304,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<double> &vacf, double dt) {
   }
 
   std::vector<size_t> freq_indices(num_freq_points);
-  std::ranges::iota(freq_indices, 0);
+  std::iota(freq_indices.begin(), freq_indices.end(), 0);
 
   tbb::parallel_for(static_cast<size_t>(0), num_freq_points, [&](size_t k) {
     double const nu = k * d_nu; // Frequency in THz // NOLINT(bugprone-narrowing-conversions)
