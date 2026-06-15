@@ -43,7 +43,6 @@ struct AppDefaults {
   static constexpr double ANGLE_BIN_WIDTH_LIQUID = 2.0;
   static constexpr double SMOOTHING_SIGMA_LIQUID = 0.15;
 
-
   /** @brief Default smoothing kernel. */
   static constexpr decltype(correlation::math::KernelType::Gaussian) SMOOTHING_KERNEL =
       correlation::math::KernelType::Gaussian;
@@ -93,7 +92,7 @@ struct ProgramOptions {
   int max_frame = -1;                                                             ///< Ending frame index (-1 for all).
   double time_step = AppDefaults::TIME_STEP;                                      ///< Simulation time step in fs.
 
-  int material_type = 0;                                                          ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
+  int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
 
   /** @brief Bond cutoffs for S(Q) calculations. */
   std::vector<std::vector<double>> bond_cutoffs_sq;
@@ -135,10 +134,10 @@ public:
 
   /**
    * @brief Updates the enabled state of a single calculator.
-   * @param id Calculator ID (e.g., "RDF", "SQ").
+   * @param calc_id Calculator ID (e.g., "RDF", "SQ").
    * @param enabled Whether this calculator should run.
    */
-  void setCalculatorActive(const std::string &id, bool enabled) { options_.active_calculators[id] = enabled; }
+  void setCalculatorActive(const std::string &calc_id, bool enabled) { options_.active_calculators[calc_id] = enabled; }
 
   /**
    * @brief Gets a pointer to the current cell (first frame of trajectory).
@@ -198,13 +197,13 @@ public:
    * @brief Gets the total number of frames in the trajectory.
    * @return Number of frames.
    */
-  [[nodiscard]] int getFrameCount() const;
+  [[nodiscard]] size_t getFrameCount() const;
 
   /**
    * @brief Gets the total number of atoms in the first frame.
    * @return Number of atoms.
    */
-  [[nodiscard]] int getTotalAtomCount() const;
+  [[nodiscard]] size_t getTotalAtomCount() const;
 
   /**
    * @brief Gets the count of frames removed/skipped during loading/processing.
@@ -238,7 +237,7 @@ public:
    * @param type2 Index of the second element type.
    * @return The cutoff distance.
    */
-  [[nodiscard]] double getBondCutoff(int type1, int type2) const;
+  [[nodiscard]] double getBondCutoff(size_t type1, size_t type2) const;
 
   /**
    * @brief Sets the bond cutoffs to be used in analysis.
@@ -280,9 +279,11 @@ public:
   // Callbacks
   /**
    * @brief Sets a callback function for analysis progress updates.
-   * @param cb Callback: void(float progress, const std::string &message).
+   * @param callback Callback: void(float progress, const std::string &message).
    */
-  void setProgressCallback(std::function<void(float, const std::string &)> cb) { progress_callback_ = cb; }
+  void setProgressCallback(std::function<void(float, const std::string &)> callback) {
+    progress_callback_ = std::move(callback);
+  }
 
   /**
    * @brief Cancels the currently running analysis.
@@ -303,6 +304,11 @@ private:
    * This is typically run via std::async or std::thread.
    */
   void analysis_thread_func();
+
+  std::string validateOptions() const;
+  void setupTrajectorySettings(size_t& start_f);
+  void runTrajectoryCalculators(const correlation::analysis::AnalysisSettings& settings);
+  void calculateDynamicProperties();
 
   // --- Private Data Members ---
   std::unique_ptr<correlation::core::Trajectory> trajectory_;                      ///< Loaded trajectory data.

@@ -114,7 +114,7 @@ public:
    * @param type2 ID of the second element type.
    * @return The linear bond cutoff distance.
    */
-  [[nodiscard]] double getBondCutoff(int type1, int type2) const;
+  [[nodiscard]] double getBondCutoff(size_t type1, size_t type2) const;
 
   /**
    * @brief Gets a squared bond cutoff distance for two given element types.
@@ -122,7 +122,7 @@ public:
    * @param type2 ID of the second element type.
    * @return The squared bond cutoff distance.
    */
-  [[nodiscard]] double getBondCutoffSQ(int type1, int type2) const;
+  [[nodiscard]] double getBondCutoffSQ(size_t type1, size_t type2) const;
 
   /**
    * @brief Sets the squared bond cutoffs for neighbor searching.

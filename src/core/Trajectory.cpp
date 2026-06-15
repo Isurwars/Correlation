@@ -104,7 +104,7 @@ void Trajectory::ensureMaterialized() const {
   }
 }
 
-double Trajectory::getBondCutoffSQ(int type1, int type2) const {
+double Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
   if (bond_cutoffs_sq_.empty()) {
     precomputeBondCutoffs();
 }
@@ -116,7 +116,7 @@ double Trajectory::getBondCutoffSQ(int type1, int type2) const {
   return bond_cutoffs_sq_[type1][type2];
 }
 
-double Trajectory::getBondCutoff(int type1, int type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
+double Trajectory::getBondCutoff(size_t type1, size_t type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
 
 //---------------------------------------------------------------------------//
 //-------------------------------- Methods ----------------------------------//

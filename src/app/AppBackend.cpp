@@ -34,15 +34,15 @@ AppBackend::AppBackend() = default;
 
 std::map<std::string, int> AppBackend::getAtomCounts() const {
   std::map<std::string, int> counts;
-  const correlation::core::Cell *c = cell();
-  if (c == nullptr) {
+  const correlation::core::Cell *current_cell = cell();
+  if (current_cell == nullptr) {
     return counts;
-}
+  }
 
-  const auto &elements = c->elements();
+  const auto &elements = current_cell->elements();
   std::vector<int> id_counts(elements.size(), 0);
 
-  for (const auto &atom : c->atoms()) {
+  for (const auto &atom : current_cell->atoms()) {
     id_counts[atom.element_id()]++;
   }
 
@@ -55,44 +55,44 @@ std::map<std::string, int> AppBackend::getAtomCounts() const {
   return counts;
 }
 
-int AppBackend::getFrameCount() const {
+size_t AppBackend::getFrameCount() const {
   if (!trajectory_) {
     return 0;
-}
-  return trajectory_->getFrameCount(); // NOLINT(bugprone-narrowing-conversions)
+  }
+  return trajectory_->getFrameCount();
 }
 
-int AppBackend::getTotalAtomCount() const {
+size_t AppBackend::getTotalAtomCount() const {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     return 0;
-}
-  return trajectory_->firstFrame().atomCount(); // NOLINT(bugprone-narrowing-conversions)
+  }
+  return trajectory_->firstFrame().atomCount();
 }
 
 size_t AppBackend::getRemovedFrameCount() const {
   if (!trajectory_) {
     return 0;
-}
+  }
   return trajectory_->getRemovedFrameCount();
 }
 
 double AppBackend::getTimeStep() const {
   if (!trajectory_) {
     return 1.0;
-}
+  }
   return trajectory_->getTimeStep();
 }
 
 double AppBackend::getRecommendedTimeStep() const {
-  const correlation::core::Cell *c = cell();
-  if ((c == nullptr) || c->elements().empty()) {
+  const correlation::core::Cell *current_cell = cell();
+  if ((current_cell == nullptr) || current_cell->elements().empty()) {
     return AppDefaults::TIME_STEP;
   }
 
   double min_mass = std::numeric_limits<double>::max();
   bool found = false;
 
-  for (const auto &element : c->elements()) {
+  for (const auto &element : current_cell->elements()) {
     try {
       double const mass = correlation::physics::getAtomicMass(element.symbol);
       if (mass < min_mass) {
@@ -114,39 +114,39 @@ double AppBackend::getRecommendedTimeStep() const {
 std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     return {};
-}
+  }
 
   // Precompute on the trajectory (which updates its internal cache)
   trajectory_->precomputeBondCutoffs();
 
-  const correlation::core::Cell &c = trajectory_->firstFrame();
-  const size_t num_elements = c.elements().size();
+  const correlation::core::Cell &current_cell = trajectory_->firstFrame();
+  const size_t num_elements = current_cell.elements().size();
   std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       // getBondCutoff uses indices.
-      cutoffs[i][j] = trajectory_->getBondCutoff(i, j); // NOLINT(bugprone-narrowing-conversions)
+      cutoffs[i][j] = trajectory_->getBondCutoff(i, j);
     }
   }
   return cutoffs;
 }
 
-double AppBackend::getBondCutoff(int type1, int type2) const {
+double AppBackend::getBondCutoff(size_t type1, size_t type2) const {
   if (!trajectory_) {
     return 0.0;
-}
+  }
   return trajectory_->getBondCutoff(type1, type2);
 }
 
 void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
   if (!trajectory_) {
     return;
-}
+  }
 
   // Calculate squared cutoffs
   if (trajectory_->getFrameCount() == 0) {
     return;
-}
+  }
   const size_t num_elements = trajectory_->firstFrame().elements().size();
   std::vector<std::vector<double>> cutoffs_sq(num_elements, std::vector<double>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
@@ -161,14 +161,14 @@ void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs)
 std::vector<std::string> AppBackend::getAvailableHistogramNames() const {
   if (!df_) {
     return {};
-}
+  }
   return df_->getAvailableHistograms();
 }
 
 const correlation::analysis::Histogram *AppBackend::getHistogram(const std::string &name) const {
   if (!df_) {
     return nullptr;
-}
+  }
   try {
     return &df_->getHistogram(name);
   } catch (const std::out_of_range &) {
@@ -226,15 +226,7 @@ std::string AppBackend::load_file(const std::string &path) {
   return msg;
 }
 
-std::string AppBackend::run_analysis() {
-  if (!trajectory_ || trajectory_->getFrameCount() == 0) {
-    std::string err = AppDefaults::MSG_ANALYSIS_ABORTED;
-    std::cerr << err << '\n';
-    return err;
-  }
-
-  cancel_flag_ = false;
-
+std::string AppBackend::validateOptions() const {
   if (options_.r_max <= 0.0) {
     return "Error: r_max must be strictly positive.";
   }
@@ -286,48 +278,160 @@ std::string AppBackend::run_analysis() {
   if (options_.smoothing_sigma < 0.0) {
     return "Error: smoothing_sigma cannot be negative.";
   }
+  return "";
+}
 
-  try {
-    // Apply custom bond cutoffs if they were set in options
-    if (!options_.bond_cutoffs_sq.empty()) {
-      trajectory_->setBondCutoffsSQ(options_.bond_cutoffs_sq);
-    } else {
-      if (trajectory_->getBondCutoffsSQ().empty()) {
-        trajectory_->precomputeBondCutoffs();
+void AppBackend::setupTrajectorySettings(size_t &start_f) {
+  // Apply custom bond cutoffs if they were set in options
+  if (!options_.bond_cutoffs_sq.empty()) {
+    trajectory_->setBondCutoffsSQ(options_.bond_cutoffs_sq);
+  } else {
+    if (trajectory_->getBondCutoffsSQ().empty()) {
+      trajectory_->precomputeBondCutoffs();
+    }
+  }
+
+  // Ensure min_frame is within bounds
+  start_f = options_.min_frame;
+  if (start_f >= trajectory_->getFrameCount()) {
+    start_f = 0; // Default to 0 if out of bounds
+  }
+
+  trajectory_->setTimeStep(options_.time_step);
+}
+
+void AppBackend::runTrajectoryCalculators(const correlation::analysis::AnalysisSettings &settings) {
+  const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
+
+  // Check if we need velocities
+  bool need_velocities = false;
+  for (const auto &calc : factory_calcs) {
+    bool const is_active = settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
+    if (calc->isTrajectoryCalculator() && is_active) {
+      if (calc->getName() == "VACF" || calc->getShortName() == "VACF" || calc->getName() == "vDoS" ||
+          calc->getShortName() == "vDoS") {
+        need_velocities = true;
+        break;
       }
     }
-    // Determine which cutoffs to use: explicit overrides or precomputed
-    // defaults.
+  }
+
+  if (need_velocities) {
+    if (trajectory_->getFrameCount() == 0) {
+      throw std::runtime_error("VACF requires a trajectory with frames");
+    }
+    trajectory_->calculateVelocities();
+  }
+
+  for (const auto &calc : factory_calcs) {
+    if (!calc->isTrajectoryCalculator()) {
+      continue;
+    }
+    if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
+      continue;
+    }
+
+    try {
+      calc->calculateTrajectory(*df_, *trajectory_, settings);
+    } catch (const std::exception &e) {
+      std::cerr << calc->getName() << " calculation failed: " << e.what() << '\n';
+    }
+  }
+}
+
+void AppBackend::calculateDynamicProperties() {
+  const auto &hists = df_->getAllHistograms();
+
+  auto it_msd = hists.find("MSD");
+  if (it_msd != hists.end()) {
+    const auto &hist = it_msd->second;
+    auto it_total = hist.partials.find("Total");
+    if (it_total != hist.partials.end()) {
+      double const d_msd =
+          correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
+      df_->setDiffusionCoefficientMSD(d_msd);
+    }
+  }
+
+  auto it_vacf = hists.find("VACF");
+  if (it_vacf != hists.end()) {
+    const auto &hist = it_vacf->second;
+    auto it_total = hist.partials.find("Total");
+    if (it_total != hist.partials.end()) {
+      double const d_vacf =
+          correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
+      df_->setDiffusionCoefficientVACF(d_vacf);
+    }
+  }
+
+  auto it_norm = hists.find("Normalized VACF");
+  if (it_norm != hists.end()) {
+    const auto &hist = it_norm->second;
+    auto it_total = hist.partials.find("Total");
+    if (it_total != hist.partials.end()) {
+      double const tau = correlation::analysis::DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
+      df_->setRelaxationTime(tau);
+      double deborah = 0.0;
+      if (!hist.bins.empty() && hist.bins.back() > 0.0) {
+        deborah = tau / hist.bins.back();
+      }
+      df_->setDeborahNumber(deborah);
+    }
+  }
+
+  // Log the calculated values to the console
+  if (df_->getDiffusionCoefficientMSD() > 0.0) {
+    std::cout << "Self-diffusion coefficient (from MSD): " << df_->getDiffusionCoefficientMSD() << " Å²/fs" << '\n';
+  }
+  if (df_->getDiffusionCoefficientVACF() > 0.0) {
+    std::cout << "Self-diffusion coefficient (from VACF): " << df_->getDiffusionCoefficientVACF() << " Å²/fs" << '\n';
+  }
+  if (df_->getRelaxationTime() > 0.0) {
+    std::cout << "Relaxation time (from VACF): " << df_->getRelaxationTime() << " fs" << '\n';
+    std::cout << "Deborah number: " << df_->getDeborahNumber() << '\n';
+  }
+}
+
+std::string AppBackend::run_analysis() {
+  if (!trajectory_ || trajectory_->getFrameCount() == 0) {
+    std::string err = AppDefaults::MSG_ANALYSIS_ABORTED;
+    std::cerr << err << '\n';
+    return err;
+  }
+
+  cancel_flag_ = false;
+
+  std::string validation_error = validateOptions();
+  if (!validation_error.empty()) {
+    return validation_error;
+  }
+
+  try {
+    size_t start_f = 0;
+    setupTrajectorySettings(start_f);
+
+    // Determine which cutoffs to use: explicit overrides or precomputed defaults.
     const auto &active_cutoffs =
         !options_.bond_cutoffs_sq.empty() ? options_.bond_cutoffs_sq : trajectory_->getBondCutoffsSQ();
 
-    // Ensure min_frame is within bounds
-    size_t start_f = options_.min_frame;
-    if (start_f >= trajectory_->getFrameCount()) {
-      start_f = 0; // Default to 0 if out of bounds
-}
-
-    trajectory_->setTimeStep(options_.time_step);
-
     if (progress_callback_) {
       progress_callback_(0.0F, "Starting analysis...");
-}
+    }
 
     // Define progress callbacks
     // Since TrajectoryAnalyzer no longer does heavy lifting during
     // initialization, we give the entire progress duration to the
     // DistributionFunctions::computeMean phase.
-    auto cb_structure = [this](float  /*p*/, const std::string &msg) {
+    auto cb_structure = [this](float /*p*/, const std::string &msg) {
       if (progress_callback_) {
-        progress_callback_(0.0F,
-                           msg); // just show message, progress is negligible
-}
+        progress_callback_(0.0F, msg); // just show message, progress is negligible
+      }
     };
 
-    auto cb_dist = [this](float p, const std::string &msg) {
+    auto cb_dist = [this](float progress, const std::string &msg) {
       if (progress_callback_) {
-        progress_callback_(p, msg);
-}
+        progress_callback_(progress, msg);
+      }
     };
 
     // Initialize the TrajectoryAnalyzer, which handles frame-by-frame
@@ -359,96 +463,10 @@ std::string AppBackend::run_analysis() {
 
     if (df_) {
       // Trajectory-wide calculators (VACF, VDOS, MSD, etc.)
-      const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-
-      // Check if we need velocities
-      bool need_velocities = false;
-      for (const auto &calc : factory_calcs) {
-        bool const is_active = settings.isActive(calc->getName()) || settings.isActive(calc->getShortName());
-        if (calc->isTrajectoryCalculator() && is_active) {
-          if (calc->getName() == "VACF" || calc->getShortName() == "VACF" || calc->getName() == "vDoS" ||
-              calc->getShortName() == "vDoS") {
-            need_velocities = true;
-            break;
-          }
-        }
-      }
-
-      if (need_velocities) {
-        if (trajectory_->getFrameCount() == 0) {
-          throw std::runtime_error("VACF requires a trajectory with frames");
-        }
-        trajectory_->calculateVelocities();
-      }
-
-      for (const auto &calc : factory_calcs) {
-        if (!calc->isTrajectoryCalculator()) {
-          continue;
-}
-        if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
-          continue;
-}
-
-        try {
-          calc->calculateTrajectory(*df_, *trajectory_, settings);
-        } catch (const std::exception &e) {
-          std::cerr << calc->getName() << " calculation failed: " << e.what() << '\n';
-        }
-      }
+      runTrajectoryCalculators(settings);
 
       // Check for dynamic properties and calculate/set them
-      const auto &hists = df_->getAllHistograms();
-
-      auto it_msd = hists.find("MSD");
-      if (it_msd != hists.end()) {
-        const auto &hist = it_msd->second;
-        auto it_total = hist.partials.find("Total");
-        if (it_total != hist.partials.end()) {
-          double const d_msd =
-              correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
-          df_->setDiffusionCoefficientMSD(d_msd);
-        }
-      }
-
-      auto it_vacf = hists.find("VACF");
-      if (it_vacf != hists.end()) {
-        const auto &hist = it_vacf->second;
-        auto it_total = hist.partials.find("Total");
-        if (it_total != hist.partials.end()) {
-          double const d_vacf =
-              correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
-          df_->setDiffusionCoefficientVACF(d_vacf);
-        }
-      }
-
-      auto it_norm = hists.find("Normalized VACF");
-      if (it_norm != hists.end()) {
-        const auto &hist = it_norm->second;
-        auto it_total = hist.partials.find("Total");
-        if (it_total != hist.partials.end()) {
-          double const tau = correlation::analysis::DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
-          df_->setRelaxationTime(tau);
-          double de = 0.0;
-          if (!hist.bins.empty() && hist.bins.back() > 0.0) {
-            de = tau / hist.bins.back();
-          }
-          df_->setDeborahNumber(de);
-        }
-      }
-
-      // Log the calculated values to the console
-      if (df_->getDiffusionCoefficientMSD() > 0.0) {
-        std::cout << "Self-diffusion coefficient (from MSD): " << df_->getDiffusionCoefficientMSD() << " Å²/fs"
-                  << '\n';
-      }
-      if (df_->getDiffusionCoefficientVACF() > 0.0) {
-        std::cout << "Self-diffusion coefficient (from VACF): " << df_->getDiffusionCoefficientVACF() << " Å²/fs"
-                  << '\n';
-      }
-      if (df_->getRelaxationTime() > 0.0) {
-        std::cout << "Relaxation time (from VACF): " << df_->getRelaxationTime() << " fs" << '\n';
-        std::cout << "Deborah number: " << df_->getDeborahNumber() << '\n';
-      }
+      calculateDynamicProperties();
     }
 
   } catch (const std::exception &e) {
