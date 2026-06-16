@@ -11,11 +11,12 @@
 #include <Windows.h>
 #endif
 
-#include "app/AppController.hpp"
 #include "app/AppBackend.hpp"
+#include "app/AppController.hpp"
 #include "calculators/CalculatorFactory.hpp"
-#include "plotters/SvgPlotter.hpp"
+#include <stdlib.h>
 #include "plotters/PdfPlotter.hpp"
+#include "plotters/SvgPlotter.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -34,74 +35,78 @@ namespace correlation::app {
 //------------------------------- Constructors ------------------------------//
 //---------------------------------------------------------------------------//
 
-AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), backend_(backend) {
+AppController::AppController(AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
+#if defined(__linux__)
+  // Prevent GTK3 from hanging for 25 seconds if xdg-desktop-portal is missing or failing
+  setenv("GTK_USE_PORTAL", "0", 0);
+#endif
+
   // Initialize Native File Dialog
   NFD_Init();
 
   // Populate the calculator groups from the factory
-  populateCalculatorGroups(ui_);
+  populateCalculatorGroups();
 
   // Set export formats availability based on compile-time definitions
 #ifdef CORRELATION_USE_HDF5
-  ui_.set_hdf5_available(true);
+  window_.set_hdf5_available(true);
 #else
-  ui_.set_hdf5_available(false);
+  window_.set_hdf5_available(false);
 #endif
 
 #ifdef CORRELATION_USE_ARROW
-  ui_.set_parquet_available(true);
+  window_.set_parquet_available(true);
 #else
-  ui_.set_parquet_available(false);
+  window_.set_parquet_available(false);
 #endif
 
   // default options to UI
-  handleOptionstoUI(ui_);
+  handleOptionstoUI();
 
   // Connect the UI signals to the controller's member functions.
   // We use lambdas to capture 'this' and call the appropriate method.
-  ui_.on_run_analysis([this]() { handleRunAnalysis(); });
-  ui_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
-  ui_.on_write_files([this]() { handleWriteFiles(); });
-  ui_.on_browse_file([this]() { handleBrowseFile(); });
-  ui_.on_validate_inputs([this]() { validateInputs(); });
-  ui_.on_copy_cli_command([this]() { handleCopyCliCommand(); });
+  window_.on_run_analysis([this]() { handleRunAnalysis(); });
+  window_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
+  window_.on_write_files([this]() { handleWriteFiles(); });
+  window_.on_browse_file([this]() { handleBrowseFile(); });
+  window_.on_validate_inputs([this]() { validateInputs(); });
+  window_.on_copy_cli_command([this]() { handleCopyCliCommand(); });
 
   // Handle calculator toggle: update backend options and refresh the UI model
-  ui_.on_toggle_calculator(
-      [this](slint::SharedString id, bool enabled) {
-        backend_.setCalculatorActive(std::string(id.data()), enabled);
-        updateActiveGroupFlags(ui_);
-        updateCliCommand();
-      });
+  window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
+    backend_.setCalculatorActive(std::string(calc_id.data()), enabled);
+    updateActiveGroupFlags();
+    updateCliCommand();
+  });
 
   // Handle plot selection: generate SVG and push to UI
-  ui_.on_select_plot([this](int index) { requestPlotUpdate(index, true); });
+  window_.on_select_plot([this](int index) { requestPlotUpdate(index, true); });
 
   // Handle mouse move on preview plot
-  ui_.on_mouse_move([this](float mx, float my, bool hover, float w, float h) {
-    handleMouseMove(mx, my, hover, w, h);
+  window_.on_mouse_move([this](float mouse_x, float mouse_y, bool hover, float width, float height) {
+    handleMouseMove(mouse_x, mouse_y, hover, width, height);
   });
 
   // Handle save plot request (SVG or PDF)
-  ui_.on_save_plot([this]() { handleSavePlot(); });
+  window_.on_save_plot([this]() { handleSavePlot(); });
 
   // Handle pin run request
-  ui_.on_pin_run([this]() { handlePinRun(); });
+  window_.on_pin_run([this]() { handlePinRun(); });
 
   // Handle clear pinned runs request
-  ui_.on_clear_pinned_runs([this]() { handleClearPinnedRuns(); });
+  window_.on_clear_pinned_runs([this]() { handleClearPinnedRuns(); });
 
   // Handle preset load, save, delete requests
-  ui_.on_load_preset([this](int index) { handleLoadPreset(index); });
-  ui_.on_save_preset([this](slint::SharedString name) { handleSavePreset(std::string(name.data())); });
-  ui_.on_delete_preset([this](int index) { handleDeletePreset(index); });
-  ui_.on_material_type_changed([this](int type) { handleMaterialTypeChanged(type); });
+  window_.on_load_preset([this](int index) { handleLoadPreset(index); });
+  window_.on_save_preset([this](const slint::SharedString &name) { handleSavePreset(std::string(name.data())); });
+  window_.on_delete_preset([this](int index) { handleDeletePreset(index); });
+  window_.on_material_type_changed([this](int type) { handleMaterialTypeChanged(type); });
 
   // Handle plot resized callback from UI
-  ui_.on_plot_resized([this](float w, float h) {
-    last_plot_width_ = w;
-    last_plot_height_ = h;
-    int current_idx = ui_.get_selected_plot_index();
+  window_.on_plot_resized([this](float width, float height) {
+    last_plot_width_ = width;
+    last_plot_height_ = height;
+    int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
@@ -109,7 +114,7 @@ AppController::AppController(AppWindow &ui, AppBackend &backend) : ui_(ui), back
 
   // Start periodic 1s timer to poll config and re-plot if anything changes
   update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000), [this]() {
-    int current_idx = ui_.get_selected_plot_index();
+    int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, false);
     }
@@ -138,128 +143,134 @@ AppController::~AppController() {
 //---------------------------------------------------------------------------//
 
 // Safe conversion helper
+namespace {
 /**
- * @brief Safely converts a Slint SharedString to a float with a default
+ * @brief Safely converts a Slint SharedString to a numeric type with a default
  * fallback.
  *
- * @param s The Slint string to parse.
+ * @tparam T The numeric type to return (e.g., float, double).
+ * @param str The Slint string to parse.
  * @param default_value The value to return if parsing fails.
- * @return The parsed float or default_value on error.
+ * @return The parsed value or default_value on error.
  */
-float safe_stof(const slint::SharedString &s, float default_value) {
+template <typename T> T safe_parse(const slint::SharedString &str, T default_value) {
   try {
-    return std::stof(s.data());
+    if constexpr (std::is_same_v<T, float>) {
+      return std::stof(str.data());
+    } else if constexpr (std::is_same_v<T, double>) {
+      return std::stod(str.data());
+    } else {
+      return default_value;
+    }
   } catch (const std::exception &e) {
     // Optionally, log the error or update a UI status message
     return default_value;
   }
 }
+} // namespace
 
-void AppController::updateProgress(float p, const std::string &msg) {
-  if (p < 0.0f)
-    p = 0.0f;
-  if (p > 1.0f)
-    p = 1.0f;
-  slint::invoke_from_event_loop([=, this]() {
-    ui_.set_progress(p);
+void AppController::updateProgress(float progress, const std::string &msg) {
+  progress = std::clamp(progress, 0.0F, 1.0F);
+  slint::invoke_from_event_loop([progress, msg, this]() {
+    window_.set_progress(progress);
     if (!msg.empty()) {
-      ui_.set_analysis_status_text(slint::SharedString(msg));
+      window_.set_analysis_status_text(slint::SharedString(msg));
     }
   });
 }
 
-void AppController::handleOptionstoUI(AppWindow &ui) {
+void AppController::handleOptionstoUI() {
   ProgramOptions opt = backend_.options();
-  ui.set_in_file_text(slint::SharedString(opt.input_file));
+  window_.set_in_file_text(slint::SharedString(opt.input_file));
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.smoothing_enabled = opt.smoothing;
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.r_max = slint::SharedString(std::format("{:.2f}", opt.r_max));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.r_bin_width = slint::SharedString(std::format("{:.2f}", opt.r_bin_width));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.q_max = slint::SharedString(std::format("{:.2f}", opt.q_max));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.q_bin_width = slint::SharedString(std::format("{:.2f}", opt.q_bin_width));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.r_int_max = slint::SharedString(std::format("{:.2f}", opt.r_int_max));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", opt.angle_bin_width));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", opt.dihedral_bin_width));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.max_ring_size = slint::SharedString(std::to_string(opt.max_ring_size));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", opt.smoothing_sigma));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.smoothing_kernel = static_cast<int>(opt.smoothing_kernel);
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.material_type = opt.material_type;
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
 
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.min_frame = slint::SharedString(std::to_string(opt.min_frame + 1));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   } // UI is 1-based
   if (opt.max_frame == -1) {
     {
-    auto opts = ui.get_analysis_options();
-    opts.max_frame = "End";
-    ui.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.max_frame = "End";
+      window_.set_analysis_options(opts);
+    }
   } else {
     {
-    auto opts = ui.get_analysis_options();
-    opts.max_frame = slint::SharedString(std::to_string(opt.max_frame));
-    ui.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.max_frame = slint::SharedString(std::to_string(opt.max_frame));
+      window_.set_analysis_options(opts);
+    }
   }
   {
-    auto opts = ui.get_analysis_options();
+    auto opts = window_.get_analysis_options();
     opts.time_step = slint::SharedString(std::format("{:.2f}", opt.time_step));
-    ui.set_analysis_options(opts);
+    window_.set_analysis_options(opts);
   }
-  updateActiveGroupFlags(ui);
+  updateActiveGroupFlags();
   updateCliCommand();
 };
 
-void AppController::updateActiveGroupFlags(AppWindow &ui) {
+void AppController::updateActiveGroupFlags() {
   const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
@@ -271,9 +282,9 @@ void AppController::updateActiveGroupFlags(AppWindow &ui) {
   for (const auto &calc : calculators) {
     const std::string &grp = calc->getGroup();
     bool enabled = true; // default on
-    auto it = opts.active_calculators.find(calc->getName());
-    if (it != opts.active_calculators.end()) {
-      enabled = it->second;
+    auto calc_it = opts.active_calculators.find(calc->getName());
+    if (calc_it != opts.active_calculators.end()) {
+      enabled = calc_it->second;
     }
     if (enabled) {
       if (grp == "Radial") {
@@ -288,31 +299,37 @@ void AppController::updateActiveGroupFlags(AppWindow &ui) {
     }
   }
 
-  ui.set_has_radial_active(has_radial);
-  ui.set_has_scattering_active(has_scattering);
-  ui.set_has_angular_active(has_angular);
-  ui.set_has_rings_active(has_rings);
+  window_.set_has_radial_active(has_radial);
+  window_.set_has_scattering_active(has_scattering);
+  window_.set_has_angular_active(has_angular);
+  window_.set_has_rings_active(has_rings);
 }
 
-ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
+ProgramOptions AppController::handleOptionsfromUI() {
   ProgramOptions opt;
-  const std::string input_path_str = ui_.get_in_file_text().data();
+  const std::string input_path_str = window_.get_in_file_text().data();
   std::filesystem::path full_path(input_path_str);
   std::filesystem::path output_path = full_path.parent_path() / full_path.stem();
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
-  opt.r_max = safe_stof(ui_.get_analysis_options().r_max, opt.r_max); // NOLINT(bugprone-narrowing-conversions)
-  opt.r_bin_width = safe_stof(ui_.get_analysis_options().r_bin_width, opt.r_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.q_max = safe_stof(ui_.get_analysis_options().q_max, opt.q_max); // NOLINT(bugprone-narrowing-conversions)
-  opt.q_bin_width = safe_stof(ui_.get_analysis_options().q_bin_width, opt.q_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.r_int_max = safe_stof(ui_.get_analysis_options().r_int_max, opt.r_int_max); // NOLINT(bugprone-narrowing-conversions)
-  opt.angle_bin_width = safe_stof(ui_.get_analysis_options().angle_bin_width, opt.angle_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.dihedral_bin_width = safe_stof(ui_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.max_ring_size = static_cast<size_t>(safe_stof(ui_.get_analysis_options().max_ring_size, static_cast<float>(opt.max_ring_size)));
+  opt.r_max = safe_parse(window_.get_analysis_options().r_max, opt.r_max); // NOLINT(bugprone-narrowing-conversions)
+  opt.r_bin_width =
+      safe_parse(window_.get_analysis_options().r_bin_width, opt.r_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.q_max = safe_parse(window_.get_analysis_options().q_max, opt.q_max);     // NOLINT(bugprone-narrowing-conversions)
+  opt.q_bin_width =
+      safe_parse(window_.get_analysis_options().q_bin_width, opt.q_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.r_int_max =
+      safe_parse(window_.get_analysis_options().r_int_max, opt.r_int_max); // NOLINT(bugprone-narrowing-conversions)
+  opt.angle_bin_width = safe_parse(window_.get_analysis_options().angle_bin_width,
+                                   opt.angle_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.dihedral_bin_width = safe_parse(window_.get_analysis_options().dihedral_bin_width,
+                                      opt.dihedral_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.max_ring_size = static_cast<size_t>(
+      safe_parse(window_.get_analysis_options().max_ring_size, static_cast<double>(opt.max_ring_size)));
 
   // Collect active_calculators from the UI model
-  auto groups = ui_.get_calculator_groups();
+  auto groups = window_.get_calculator_groups();
   for (size_t gi = 0; gi < groups->row_count(); ++gi) {
     auto group = groups->row_data(gi).value();
     for (size_t ci = 0; ci < group.calculators->row_count(); ++ci) {
@@ -321,9 +338,10 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     }
   }
 
-  opt.smoothing_sigma = safe_stof(ui_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma); // NOLINT(bugprone-narrowing-conversions)
-  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(ui_.get_analysis_options().smoothing_kernel);
-  opt.material_type = ui_.get_analysis_options().material_type;
+  opt.smoothing_sigma = safe_parse(window_.get_analysis_options().smoothing_sigma,
+                                   opt.smoothing_sigma); // NOLINT(bugprone-narrowing-conversions)
+  opt.smoothing_kernel = static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
+  opt.material_type = window_.get_analysis_options().material_type;
 
   // Frame Selection Logic:
   // - "Start" maps to 0
@@ -332,34 +350,30 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   // - Numeric values are 1-based in UI, converted to 0-based for backend.
 
   // Helper lambda for case-insensitive comparison
-  auto to_lower = [](const std::string &s) {
-    std::string data = s;
-    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c) { return std::tolower(c); });
+  auto to_lower = [](const std::string &str) -> std::string {
+    std::string data = str;
+    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char chr) { return std::tolower(chr); });
     return data;
   };
 
   // Frame Selection
   try {
-    std::string min_s = ui_.get_analysis_options().min_frame.data();
+    std::string min_s = window_.get_analysis_options().min_frame.data();
     std::string min_s_lower = to_lower(min_s);
 
     if (min_s_lower == "start") {
       opt.min_frame = 0;
     } else if (min_s_lower == "end") {
-      opt.min_frame = backend_.getFrameCount() - 1;
-      if (opt.min_frame < 0)
-        opt.min_frame = 0;
+      opt.min_frame = std::max(0, static_cast<int>(backend_.getFrameCount()) - 1);
     } else {
-      opt.min_frame = std::stoi(min_s) - 1; // UI is 1-based
+      opt.min_frame = std::max(0, std::stoi(min_s) - 1); // UI is 1-based
     }
-    if (opt.min_frame < 0)
-      opt.min_frame = 0;
   } catch (...) {
     opt.min_frame = 0;
   }
 
   try {
-    std::string max_s = ui_.get_analysis_options().max_frame.data();
+    std::string max_s = window_.get_analysis_options().max_frame.data();
     std::string max_s_lower = to_lower(max_s);
 
     if (max_s_lower == "end" || max_s.empty()) {
@@ -376,14 +390,14 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
     opt.max_frame = -1;
   }
 
-  opt.time_step = safe_stof(ui_.get_analysis_options().time_step, opt.time_step); // NOLINT(bugprone-narrowing-conversions)
+  opt.time_step = safe_parse(window_.get_analysis_options().time_step, opt.time_step);
 
   // Handle Bond Cutoffs
-  auto cutoffs = getBondCutoffs(ui_);
-  size_t n = cutoffs.size();
-  opt.bond_cutoffs_sq.resize(n, std::vector<double>(n));
-  for (size_t i = 0; i < n; ++i) {
-    for (size_t j = 0; j < n; ++j) {
+  auto cutoffs = getBondCutoffs();
+  size_t num_elements = cutoffs.size();
+  opt.bond_cutoffs_sq.resize(num_elements, std::vector<double>(num_elements));
+  for (size_t i = 0; i < num_elements; ++i) {
+    for (size_t j = 0; j < num_elements; ++j) {
       opt.bond_cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
     }
   }
@@ -391,26 +405,27 @@ ProgramOptions AppController::handleOptionsfromUI(AppWindow &ui) {
   return opt;
 };
 
-void AppController::setBondCutoffs(AppWindow &ui) {
+void AppController::setBondCutoffs() {
   auto recommended = backend_.getRecommendedBondCutoffs();
   auto elements = backend_.cell()->elements();
   auto slint_cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
 
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
-      slint_cutoffs->push_back({slint::SharedString(elements[i].symbol), slint::SharedString(elements[j].symbol),
-                                slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
+      slint_cutoffs->push_back({.element1 = slint::SharedString(elements[i].symbol),
+                                .element2 = slint::SharedString(elements[j].symbol),
+                                .distance = slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
     }
   }
-  ui.set_bond_cutoffs(slint_cutoffs);
+  window_.set_bond_cutoffs(slint_cutoffs);
 }
 
 correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
   correlation::plotters::PlotConfig config;
-  config.theme = ui_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
-                                   : correlation::plotters::PlotConfig::Theme::Light;
+  config.theme = window_.get_is_dark() ? correlation::plotters::PlotConfig::Theme::Dark
+                                       : correlation::plotters::PlotConfig::Theme::Light;
 
-  int size_preset_val = ui_.get_export_config().size_preset;
+  int size_preset_val = window_.get_export_config().size_preset;
   if (size_preset_val == 1) {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::SingleColumn;
   } else if (size_preset_val == 2) {
@@ -423,13 +438,13 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
     // widget dimensions so the plot fills the preview panel without
     // letterboxing.  Fall back to the built-in 1200×900 if the widget
     // has not been laid out yet.
-    if (last_plot_width_ > 1.0f && last_plot_height_ > 1.0f) {
+    if (last_plot_width_ > 1.0F && last_plot_height_ > 1.0F) {
       config.width = static_cast<double>(last_plot_width_);
       config.height = static_cast<double>(last_plot_height_);
     }
   }
 
-  int palette_val = ui_.get_export_config().palette;
+  int palette_val = window_.get_export_config().palette;
   if (palette_val == 1) {
     config.palette = correlation::plotters::PlotConfig::Palette::Grayscale;
   } else if (palette_val == 2) {
@@ -438,51 +453,59 @@ correlation::plotters::PlotConfig AppController::buildPlotConfigFromUI() {
     config.palette = correlation::plotters::PlotConfig::Palette::OkabeIto;
   }
 
-  config.font_scale = safe_stof(ui_.get_export_config().font_scale, 1.0f);
-  if (config.font_scale <= 0.0f) config.font_scale = 1.0f;
+  config.font_scale = safe_parse(window_.get_export_config().font_scale, 1.0F);
+  if (config.font_scale <= 0.0F) {
+    config.font_scale = 1.0F;
+  }
 
-  config.line_width = safe_stof(ui_.get_export_config().line_width, 3.0f);
-  if (config.line_width <= 0.0f) config.line_width = 3.0f;
+  config.line_width = safe_parse(window_.get_export_config().line_width, 3.0F);
+  if (config.line_width <= 0.0F) {
+    config.line_width = 3.0F;
+  }
 
-  config.show_grid = ui_.get_export_config().show_grid;
-  config.show_legend = ui_.get_export_config().show_legend;
-  config.show_markers = ui_.get_export_config().show_markers;
-  config.fill_area = ui_.get_export_config().fill_area;
+  config.show_grid = window_.get_export_config().show_grid;
+  config.show_legend = window_.get_export_config().show_legend;
+  config.show_markers = window_.get_export_config().show_markers;
+  config.fill_area = window_.get_export_config().fill_area;
 
   return config;
 }
 
-std::vector<std::vector<double>> AppController::getBondCutoffs(AppWindow &ui) {
-  auto slint_cutoffs = ui.get_bond_cutoffs();
-  if (!backend_.cell())
+std::vector<std::vector<double>> AppController::getBondCutoffs() {
+  auto slint_cutoffs = window_.get_bond_cutoffs();
+  if (backend_.cell() == nullptr) {
     return {};
+  }
   auto elements = backend_.cell()->elements();
   size_t num_elements = elements.size();
   std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements, 0.0));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto item = slint_cutoffs->row_data(k).value();
-    std::string s1 = item.element1.data();
-    std::string s2 = item.element2.data();
+    std::string symbol1 = item.element1.data();
+    std::string symbol2 = item.element2.data();
     double dist = std::stod(item.distance.data());
 
-    int i = -1, j = -1;
-    for (size_t e = 0; e < num_elements; ++e) {
-      if (elements[e].symbol == s1)
-        i = (int)e;
-      if (elements[e].symbol == s2)
-        j = (int)e;
+    int idx1 = -1;
+    int idx2 = -1;
+    for (size_t elem_idx = 0; elem_idx < num_elements; ++elem_idx) {
+      if (elements[elem_idx].symbol == symbol1) {
+        idx1 = static_cast<int>(elem_idx);
+      }
+      if (elements[elem_idx].symbol == symbol2) {
+        idx2 = static_cast<int>(elem_idx);
+      }
     }
 
-    if (i != -1 && j != -1) {
-      cutoffs[i][j] = dist;
-      cutoffs[j][i] = dist;
+    if (idx1 != -1 && idx2 != -1) {
+      cutoffs[idx1][idx2] = dist;
+      cutoffs[idx2][idx1] = dist;
     }
   }
   return cutoffs;
 }
 
-void AppController::populateCalculatorGroups(AppWindow &ui) {
+void AppController::populateCalculatorGroups() {
   const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   const auto &opts = backend_.options();
 
@@ -491,7 +514,7 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
   std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
   for (const auto &calc : calculators) {
     const std::string &grp = calc->getGroup();
-    if (groups_map.find(grp) == groups_map.end()) {
+    if (!groups_map.contains(grp)) {
       group_order.push_back(grp);
     }
     groups_map[grp].push_back(calc.get());
@@ -502,9 +525,9 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
     auto calcs_model = std::make_shared<slint::VectorModel<CalculatorInfo>>();
     for (const auto *calc : groups_map.at(grp_name)) {
       bool enabled = true; // default on
-      auto it = opts.active_calculators.find(calc->getName());
-      if (it != opts.active_calculators.end()) {
-        enabled = it->second;
+      auto calc_it = opts.active_calculators.find(calc->getName());
+      if (calc_it != opts.active_calculators.end()) {
+        enabled = calc_it->second;
       }
       CalculatorInfo info;
       info.id = slint::SharedString(calc->getName());
@@ -518,8 +541,8 @@ void AppController::populateCalculatorGroups(AppWindow &ui) {
     group.calculators = calcs_model;
     groups_model->push_back(group);
   }
-  ui.set_calculator_groups(groups_model);
-  ui.set_total_calculator_count(static_cast<int>(calculators.size()));
+  window_.set_calculator_groups(groups_model);
+  window_.set_total_calculator_count(static_cast<int>(calculators.size()));
 }
 
 //---------------------------------------------------------------------------//
@@ -531,16 +554,16 @@ void AppController::handleRunAnalysis() {
     return;
   }
 
-  ui_.set_analysis_done(false); // Reset done state
-  ui_.set_analysis_running(true);
-  ui_.set_progress(0.0f);
-  ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));
+  window_.set_analysis_done(false); // Reset done state
+  window_.set_analysis_running(true);
+  window_.set_progress(0.0F);
+  window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_RUNNING_ANALYSIS));
 
   // Create a ProgramOptions object from the UI properties
-  backend_.setOptions(handleOptionsfromUI(ui_));
+  backend_.setOptions(handleOptionsfromUI());
 
   // Set the progress callback
-  backend_.setProgressCallback([this](float p, const std::string &msg) { updateProgress(p, msg); });
+  backend_.setProgressCallback([this](float progress, const std::string &msg) { updateProgress(progress, msg); });
 
   // run analysis in a separate thread
   if (analysis_thread_.joinable()) {
@@ -551,18 +574,18 @@ void AppController::handleRunAnalysis() {
     std::string err = backend_.run_analysis();
 
     slint::invoke_from_event_loop([this, err]() {
-      ui_.set_analysis_running(false);
+      window_.set_analysis_running(false);
       if (err.empty()) {
         if (backend_.is_cancelled()) {
-          ui_.set_analysis_status_text(slint::SharedString("Analysis Cancelled."));
+          window_.set_analysis_status_text(slint::SharedString("Analysis Cancelled."));
         } else {
-          ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
+          window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_ANALYSIS_ENDED));
         }
       } else {
-        ui_.set_analysis_status_text(slint::SharedString(err));
+        window_.set_analysis_status_text(slint::SharedString(err));
       }
-      ui_.set_analysis_done(true);
-      ui_.set_progress(1.0f);
+      window_.set_analysis_done(true);
+      window_.set_progress(1.0F);
 
       // Populate the plot dropdown and auto-preview the first histogram
       populatePlotList();
@@ -578,17 +601,17 @@ void AppController::handleRunAnalysis() {
 
 void AppController::handleWriteFiles() {
   std::string default_path = backend_.options().output_file_base;
-  std::filesystem::path dp(default_path);
-  std::string default_dir = dp.parent_path().string();
-  std::string default_name = dp.filename().string();
+  std::filesystem::path def_path(default_path);
+  std::string default_dir = def_path.parent_path().string();
+  std::string default_name = def_path.filename().string();
 
   std::vector<nfdfilteritem_t> filterList;
-  filterList.push_back({"CSV (Comma-Separated Values)", "csv"});
+  filterList.push_back({.name = "CSV (Comma-Separated Values)", .spec = "csv"});
 #ifdef CORRELATION_USE_HDF5
-  filterList.push_back({"HDF5 Files", "h5,hdf5"});
+  filterList.push_back({.name = "HDF5 Files", .spec = "h5,hdf5"});
 #endif
 #ifdef CORRELATION_USE_ARROW
-  filterList.push_back({"Parquet Files", "parquet"});
+  filterList.push_back({.name = "Parquet Files", .spec = "parquet"});
 #endif
 
   nfdchar_t *outPath = nullptr;
@@ -600,8 +623,8 @@ void AppController::handleWriteFiles() {
     std::string filepath(outPath);
     NFD_FreePathU8(outPath);
 
-    std::filesystem::path p(filepath);
-    std::string ext = p.extension().string();
+    std::filesystem::path file_path_obj(filepath);
+    std::string ext = file_path_obj.extension().string();
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
     bool use_csv = false;
@@ -612,29 +635,29 @@ void AppController::handleWriteFiles() {
 #ifdef CORRELATION_USE_HDF5
       use_hdf5 = true;
 #else
-      ui_.set_analysis_status_text("Error: HDF5 format is not available.");
+      window_.set_analysis_status_text("Error: HDF5 format is not available.");
       return;
 #endif
     } else if (ext == ".parquet") {
 #ifdef CORRELATION_USE_ARROW
       use_parquet = true;
 #else
-      ui_.set_analysis_status_text("Error: Parquet format is not available.");
+      window_.set_analysis_status_text("Error: Parquet format is not available.");
       return;
 #endif
     } else {
       use_csv = true;
       if (ext != ".csv") {
-        p.replace_extension(".csv");
+        file_path_obj.replace_extension(".csv");
       }
     }
 
-    if (p.has_extension()) {
-      p.replace_extension("");
+    if (file_path_obj.has_extension()) {
+      file_path_obj.replace_extension("");
     }
 
-    ProgramOptions opts = handleOptionsfromUI(ui_);
-    opts.output_file_base = p.string();
+    ProgramOptions opts = handleOptionsfromUI();
+    opts.output_file_base = file_path_obj.string();
     opts.use_csv = use_csv;
     opts.use_hdf5 = use_hdf5;
     opts.use_parquet = use_parquet;
@@ -642,56 +665,56 @@ void AppController::handleWriteFiles() {
 
     std::string err = backend_.write_files();
     if (err.empty()) {
-      ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
+      window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
     } else {
-      ui_.set_analysis_status_text(slint::SharedString(err));
+      window_.set_analysis_status_text(slint::SharedString(err));
     }
   } else if (result == NFD_CANCEL) {
-    ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+    window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
   } else {
     std::string error_msg = "Error: ";
     error_msg += NFD_GetError();
-    ui_.set_analysis_status_text(slint::SharedString(error_msg));
+    window_.set_analysis_status_text(slint::SharedString(error_msg));
   }
 }
 
 void AppController::handleBrowseFile() {
-  nfdfilteritem_t filterList[] = {
-      {"Supported Structure Files", "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar"},
-      {"Materials Studio CAR", "car"},
-      {"Materials Studio ARC", "arc"},
-      {"CASTEP CELL", "cell"},
-      {"CASTEP MD", "md"},
-      {"CIF files", "cif"},
-      {"ONETEP DAT", "dat"},
-      {"DMol3 Outmol", "outmol"},
-      {"VASP POSCAR/CONTCAR", "poscar,contcar,vasp"},
-      {"VASP XDATCAR", "xdatcar"}
-  };
-  nfdfiltersize_t filterCount = sizeof(filterList) / sizeof(filterList[0]);
+  std::array<nfdfilteritem_t, 10> filterList = {
+      {{.name = "Supported Structure Files", .spec = "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar"},
+       {.name = "Materials Studio CAR", .spec = "car"},
+       {.name = "Materials Studio ARC", .spec = "arc"},
+       {.name = "CASTEP CELL", .spec = "cell"},
+       {.name = "CASTEP MD", .spec = "md"},
+       {.name = "CIF files", .spec = "cif"},
+       {.name = "ONETEP DAT", .spec = "dat"},
+       {.name = "DMol3 Outmol", .spec = "outmol"},
+       {.name = "VASP POSCAR/CONTCAR", .spec = "poscar,contcar,vasp"},
+       {.name = "VASP XDATCAR", .spec = "xdatcar"}}};
+  nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;
-  nfdresult_t result = NFD_OpenDialogU8(&outPath, filterList, filterCount, nullptr);
+  nfdresult_t result = NFD_OpenDialogU8(&outPath, filterList.data(), filterCount, nullptr);
 
   if (result == NFD_OKAY) {
     std::string filepath(outPath);
     NFD_FreePathU8(outPath);
 
-    ui_.set_in_file_text(slint::SharedString(filepath));
-    ui_.set_file_status_text(slint::SharedString("Loading file..."));
-    ui_.set_timer_running(true);
-    ui_.set_text_opacity(true);
-    ui_.set_progress(0.0f);
+    window_.set_in_file_text(slint::SharedString(filepath));
+    window_.set_file_status_text(slint::SharedString("Loading file..."));
+    window_.set_timer_running(true);
+    window_.set_text_opacity(true);
+    window_.set_progress(0.0F);
 
     if (load_thread_.joinable()) {
       load_thread_.join();
     }
 
     load_thread_ = std::thread([this, filepath]() {
-      backend_.setProgressCallback([this](float p, const std::string &msg) {
-        slint::invoke_from_event_loop([=, this]() {
+      backend_.setProgressCallback([this](float progress, const std::string &msg) {
+        slint::invoke_from_event_loop([progress, msg, this]() {
+          window_.set_progress(progress);
           if (!msg.empty()) {
-            ui_.set_file_status_text(slint::SharedString(msg));
+            window_.set_file_status_text(slint::SharedString(msg));
           }
         });
       });
@@ -706,12 +729,12 @@ void AppController::handleBrowseFile() {
       }
 
       slint::invoke_from_event_loop([this, message, success]() {
-        ui_.set_file_status_text(slint::SharedString(message));
-        ui_.set_timer_running(false);
-        ui_.set_text_opacity(false);
+        window_.set_file_status_text(slint::SharedString(message));
+        window_.set_timer_running(false);
+        window_.set_text_opacity(false);
 
-        if (success && backend_.cell()) {
-          ui_.set_file_loaded(true);
+        if (success && backend_.cell() != nullptr) {
+          window_.set_file_loaded(true);
 
           // Atom Counts
           auto atom_counts_map = backend_.getAtomCounts();
@@ -719,47 +742,47 @@ void AppController::handleBrowseFile() {
           for (const auto &[symbol, count] : atom_counts_map) {
             slint_atom_counts->push_back({slint::SharedString(symbol), count});
           }
-          ui_.set_atom_counts(slint_atom_counts);
+          window_.set_atom_counts(slint_atom_counts);
 
           // Bond Cutoffs
-          setBondCutoffs(ui_);
+          setBondCutoffs();
 
           // File Info
-          ui_.set_num_frames(backend_.getFrameCount());
-          ui_.set_total_atoms(backend_.getTotalAtomCount());
-          ui_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
+          window_.set_num_frames(static_cast<int>(backend_.getFrameCount()));
+          window_.set_total_atoms(static_cast<int>(backend_.getTotalAtomCount()));
+          window_.set_removed_frames_count(static_cast<int>(backend_.getRemovedFrameCount()));
           {
-    auto opts = ui_.get_analysis_options();
-    opts.time_step = slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
-    ui_.set_analysis_options(opts);
-  }
+            auto opts = window_.get_analysis_options();
+            opts.time_step = slint::SharedString(std::format("{:.2f}", backend_.getRecommendedTimeStep()));
+            window_.set_analysis_options(opts);
+          }
 
           // Update Run Analysis Card Frame Info
           {
-    auto opts = ui_.get_analysis_options();
-    opts.min_frame = "1";
-    ui_.set_analysis_options(opts);
-  }
+            auto opts = window_.get_analysis_options();
+            opts.min_frame = "1";
+            window_.set_analysis_options(opts);
+          }
           {
-    auto opts = ui_.get_analysis_options();
-    opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
-    ui_.set_analysis_options(opts);
-  }
+            auto opts = window_.get_analysis_options();
+            opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
+            window_.set_analysis_options(opts);
+          }
           validateInputs();
         }
       });
     });
   } else if (result == NFD_CANCEL) {
     std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
-    ui_.set_file_status_text(slint::SharedString(message));
-    ui_.set_timer_running(false);
-    ui_.set_text_opacity(false);
+    window_.set_file_status_text(slint::SharedString(message));
+    window_.set_timer_running(false);
+    window_.set_text_opacity(false);
   } else {
     std::string error_msg = "Error opening file dialog: ";
     error_msg += NFD_GetError();
-    ui_.set_file_status_text(slint::SharedString(error_msg));
-    ui_.set_timer_running(false);
-    ui_.set_text_opacity(false);
+    window_.set_file_status_text(slint::SharedString(error_msg));
+    window_.set_timer_running(false);
+    window_.set_text_opacity(false);
   }
 }
 
@@ -780,12 +803,13 @@ void AppController::populatePlotList() {
                                          {"BAD", 20}, {"PAD", 21},  {"DAD", 22}, {"CN", 23},  {"RD", 24},
                                          {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}};
 
-  std::sort(names.begin(), names.end(), [&](const std::string &a, const std::string &b) {
-    int p1 = priority.contains(a) ? priority.at(a) : 100;
-    int p2 = priority.contains(b) ? priority.at(b) : 100;
-    if (p1 != p2)
-      return p1 < p2;
-    return a < b; // Fallback to alphabetical
+  std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
+    int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
+    int prio_b = priority.contains(rhs) ? priority.at(rhs) : 100;
+    if (prio_a != prio_b) {
+      return prio_a < prio_b;
+    }
+    return lhs < rhs; // Fallback to alphabetical
   });
 
   available_plot_keys_ = names; // Store keys corresponding to indices
@@ -795,53 +819,52 @@ void AppController::populatePlotList() {
   for (const auto &name : names) {
     MenuItem item;
     const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-    std::string display_text = (hist && !hist->title.empty()) ? hist->title : name;
+    std::string display_text = (hist != nullptr && !hist->title.empty()) ? hist->title : name;
     item.text = slint::SharedString(display_text);
     item.enabled = true;
     menu_model->push_back(item);
   }
-  ui_.set_plot_items(menu_model);
+  window_.set_plot_items(menu_model);
 
   // Reset selection index
-  ui_.set_selected_plot_index(names.empty() ? -1 : 0);
+  window_.set_selected_plot_index(names.empty() ? -1 : 0);
 }
 
-
-void AppController::handleMouseMove(float mx, float my, bool hover, float w, float h) {
+void AppController::handleMouseMove(float mouse_x, float mouse_y, bool hover, float width, float height) {
   // Trust hover directly from Slint since we made TouchArea visibility stable
   bool actual_hover = hover;
 
   // Ignore duplicate events if horizontal position, vertical position, and hover state are identical
-  if (std::abs(mx - last_mouse_x_) < 1e-2f &&
-      std::abs(my - last_mouse_y_) < 1e-2f &&
-      actual_hover == mouse_hover_ &&
-      std::abs(w - last_plot_width_) < 1e-2f &&
-      std::abs(h - last_plot_height_) < 1e-2f) {
+  if (std::abs(mouse_x - last_mouse_x_) < 1e-2F && std::abs(mouse_y - last_mouse_y_) < 1e-2F &&
+      actual_hover == mouse_hover_ && std::abs(width - last_plot_width_) < 1e-2F &&
+      std::abs(height - last_plot_height_) < 1e-2F) {
     return;
   }
 
   bool hover_changed = (actual_hover != mouse_hover_);
 
-  last_mouse_x_ = mx;
-  last_mouse_y_ = my;
+  last_mouse_x_ = mouse_x;
+  last_mouse_y_ = mouse_y;
   mouse_hover_ = actual_hover;
-  last_plot_width_ = w;
-  last_plot_height_ = h;
+  last_plot_width_ = width;
+  last_plot_height_ = height;
 
-  int current_idx = ui_.get_selected_plot_index();
+  int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     requestPlotUpdate(current_idx, hover_changed || !actual_hover);
   }
 }
 
 void AppController::requestPlotUpdate(int index, bool immediate) {
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) {
     return;
+  }
 
   const std::string &name = available_plot_keys_[index];
   const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-  if (!hist)
+  if (hist == nullptr) {
     return;
+  }
 
   if (immediate) {
     needs_redraw_ = true;
@@ -855,27 +878,7 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
   hover.widget_width = last_plot_width_;
   hover.widget_height = last_plot_height_;
 
-  // Cache verification to avoid redundant replotting (comparing both mouse X and Y coordinates)
-  bool cache_hit = (index == last_rendered_index_ &&
-      pinned_runs_.size() == last_pinned_runs_count_ &&
-      config.theme == last_config_.theme &&
-      config.preset_size == last_config_.preset_size &&
-      std::abs(config.width - last_config_.width) < 1e-2 &&
-      std::abs(config.height - last_config_.height) < 1e-2 &&
-      config.palette == last_config_.palette &&
-      std::abs(config.font_scale - last_config_.font_scale) < 1e-4 &&
-      std::abs(config.line_width - last_config_.line_width) < 1e-4 &&
-      config.show_grid == last_config_.show_grid &&
-      config.show_legend == last_config_.show_legend &&
-      config.show_markers == last_config_.show_markers &&
-      config.fill_area == last_config_.fill_area &&
-      hover.active == last_hover_.active &&
-      std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
-      std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
-      std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
-      std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
-
-  if (cache_hit && !needs_redraw_) {
+  if (isPlotCacheHit(index, config, hover) && !needs_redraw_) {
     return;
   }
 
@@ -901,10 +904,10 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
   data.hover = hover;
   data.ashcroft_weights = backend_.getAshcroftWeights();
 
-  for (const auto &pr : pinned_runs_) {
-    auto it = pr.histograms.find(name);
-    if (it != pr.histograms.end()) {
-      data.comparison_hists.push_back({pr.label, it->second});
+  for (const auto &pinned_run : pinned_runs_) {
+    auto hist_it = pinned_run.histograms.find(name);
+    if (hist_it != pinned_run.histograms.end()) {
+      data.comparison_hists.emplace_back(pinned_run.label, hist_it->second);
     }
   }
 
@@ -914,15 +917,34 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
   }
 
   // Ensure selection index in UI is correct (must be on main/UI thread)
-  if (ui_.get_selected_plot_index() != index) {
-    ui_.set_selected_plot_index(index);
+  if (window_.get_selected_plot_index() != index) {
+    window_.set_selected_plot_index(index);
   }
 
-  // Launch background rendering thread
-  render_thread_ = std::thread([this, data, name]() {
+  executePlotRender(std::move(data));
+}
+
+bool AppController::isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
+                                   const correlation::plotters::HoverInfo &hover) const {
+  return (index == last_rendered_index_ && pinned_runs_.size() == last_pinned_runs_count_ &&
+          config.theme == last_config_.theme && config.preset_size == last_config_.preset_size &&
+          std::abs(config.width - last_config_.width) < 1e-2 && std::abs(config.height - last_config_.height) < 1e-2 &&
+          config.palette == last_config_.palette && std::abs(config.font_scale - last_config_.font_scale) < 1e-4 &&
+          std::abs(config.line_width - last_config_.line_width) < 1e-4 && config.show_grid == last_config_.show_grid &&
+          config.show_legend == last_config_.show_legend && config.show_markers == last_config_.show_markers &&
+          config.fill_area == last_config_.fill_area && hover.active == last_hover_.active &&
+          std::abs(hover.mouse_x - last_hover_.mouse_x) < 1e-2 &&
+          std::abs(hover.mouse_y - last_hover_.mouse_y) < 1e-2 &&
+          std::abs(hover.widget_width - last_hover_.widget_width) < 1e-2 &&
+          std::abs(hover.widget_height - last_hover_.widget_height) < 1e-2);
+}
+
+void AppController::executePlotRender(RenderTaskData data) {
+  render_thread_ = std::thread([this, data]() {
     std::string svg;
     if (data.comparison_hists.empty()) {
-      svg = correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights);
+      svg =
+          correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights);
     } else {
       std::vector<correlation::plotters::LabeledHistogram> datasets;
       datasets.push_back({"Current", &data.active_hist});
@@ -931,8 +953,9 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
       }
 
       std::string key = "Total";
-      const auto &partials = data.active_hist.smoothed_partials.empty() ? data.active_hist.partials : data.active_hist.smoothed_partials;
-      if (!partials.empty() && partials.find(key) == partials.end()) {
+      const auto &partials =
+          data.active_hist.smoothed_partials.empty() ? data.active_hist.partials : data.active_hist.smoothed_partials;
+      if (!partials.empty() && !partials.contains(key)) {
         key = partials.begin()->first;
       }
       svg = correlation::plotters::renderComparisonSvg(datasets, key, data.config, data.hover);
@@ -957,15 +980,16 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
     slint::invoke_from_event_loop([this, final_temp_path, svg]() {
       if (!final_temp_path.empty()) {
         auto img = slint::Image::load_from_path(slint::SharedString(final_temp_path));
-        ui_.set_preview_plot(img);
-        
+        window_.set_preview_plot(img);
+
         // Remove the temporary file. Slint has already captured the path and deferred the load.
-        std::error_code ec;
-        std::filesystem::remove(final_temp_path, ec);
+        std::error_code error_code;
+        std::filesystem::remove(final_temp_path, error_code);
       } else {
         auto img = slint::private_api::load_image_from_embedded_data(
-            std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), "svg");
-        ui_.set_preview_plot(img);
+            std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), // NOLINT
+            "svg");
+        window_.set_preview_plot(img);
       }
 
       is_rendering_ = false;
@@ -980,13 +1004,15 @@ void AppController::requestPlotUpdate(int index, bool immediate) {
 }
 
 void AppController::handleSavePlot() {
-  int index = ui_.get_selected_plot_index();
-  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size()))
+  int index = window_.get_selected_plot_index();
+  if (index < 0 || index >= static_cast<int>(available_plot_keys_.size())) {
     return;
+  }
   const std::string &name = available_plot_keys_[index];
   const correlation::analysis::Histogram *hist = backend_.getHistogram(name);
-  if (!hist)
+  if (hist == nullptr) {
     return;
+  }
 
   std::string default_path = backend_.options().output_file_base;
   if (!default_path.empty()) {
@@ -995,119 +1021,108 @@ void AppController::handleSavePlot() {
     default_path = name;
   }
 
-  std::filesystem::path dp(default_path);
-  std::string default_dir = dp.parent_path().string();
-  std::string default_name = dp.filename().string();
+  std::filesystem::path def_path(default_path);
+  std::string default_dir = def_path.parent_path().string();
+  std::string default_name = def_path.filename().string();
 
-  nfdfilteritem_t filterList[] = {
-      {"SVG Image", "svg"},
-      {"PDF Document", "pdf"}
-  };
-  nfdfiltersize_t filterCount = sizeof(filterList) / sizeof(filterList[0]);
+  std::array<nfdfilteritem_t, 2> filterList = {
+      {{.name = "SVG Image", .spec = "svg"}, {.name = "PDF Document", .spec = "pdf"}}};
+  nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;
-  nfdresult_t result = NFD_SaveDialogU8(&outPath, filterList, filterCount,
-                                        default_dir.empty() ? nullptr : default_dir.c_str(),
-                                        default_name.empty() ? nullptr : default_name.c_str());
+  nfdresult_t result =
+      NFD_SaveDialogU8(&outPath, filterList.data(), filterCount, default_dir.empty() ? nullptr : default_dir.c_str(),
+                       default_name.empty() ? nullptr : default_name.c_str());
 
   if (result == NFD_OKAY) {
     std::string filepath(outPath);
     NFD_FreePathU8(outPath);
 
-    correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
-    config.use_native_text = true;
+    executeSavePlot(filepath, hist, name);
+  } else if (result == NFD_CANCEL) {
+    window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
+  } else {
+    std::string error_msg = "Error: ";
+    error_msg += NFD_GetError();
+    window_.set_analysis_status_text(slint::SharedString(error_msg));
+  }
+}
 
-    // For file export, always use a fixed high-resolution canvas so saved
-    // plots have consistent, publication-ready dimensions regardless of the
-    // current window size.  Only override when the user picked Default;
-    // explicit presets (SingleColumn, etc.) are already handled.
-    if (config.preset_size == correlation::plotters::PlotConfig::PresetSize::Default) {
-      config.width = 1200.0;
-      config.height = 900.0;
+namespace {
+std::string getComparisonKey(const correlation::analysis::Histogram *hist) {
+  std::string key = "Total";
+  const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+  if (!partials.empty() && !partials.contains(key)) {
+    key = partials.begin()->first;
+  }
+  return key;
+}
+} // namespace
+
+void AppController::executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
+                                    const std::string &name) {
+  correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
+  config.use_native_text = true;
+
+  if (config.preset_size == correlation::plotters::PlotConfig::PresetSize::Default) {
+    config.width = 1200.0;
+    config.height = 900.0;
+  }
+
+  std::string ext = std::filesystem::path(filepath).extension().string();
+  bool save_as_pdf = (ext == ".pdf" || ext == ".PDF");
+
+  auto build_datasets = [&]() {
+    std::vector<correlation::plotters::LabeledHistogram> datasets;
+    datasets.push_back({"Current", hist});
+    for (const auto &pinned_run : pinned_runs_) {
+      auto hist_it = pinned_run.histograms.find(name);
+      if (hist_it != pinned_run.histograms.end()) {
+        datasets.push_back({pinned_run.label, &hist_it->second});
+      }
     }
+    return datasets;
+  };
 
+  if (save_as_pdf) {
+    if (pinned_runs_.empty()) {
+      correlation::plotters::renderHistogramAsPdf(*hist, filepath, config);
+    } else {
+      correlation::plotters::renderComparisonPdf(build_datasets(), getComparisonKey(hist), filepath, config);
+    }
+    window_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
+  } else {
     std::string svg;
     if (pinned_runs_.empty()) {
       svg = correlation::plotters::renderHistogramAsSvg(*hist, config, {}, backend_.getAshcroftWeights());
     } else {
-      std::vector<correlation::plotters::LabeledHistogram> datasets;
-      datasets.push_back({"Current", hist});
-      for (const auto &pr : pinned_runs_) {
-        auto it = pr.histograms.find(name);
-        if (it != pr.histograms.end()) {
-          datasets.push_back({pr.label, &it->second});
-        }
-      }
-      std::string key = "Total";
-      const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-      if (!partials.empty() && partials.find(key) == partials.end()) {
-        key = partials.begin()->first;
-      }
-      svg = correlation::plotters::renderComparisonSvg(datasets, key, config);
+      svg = correlation::plotters::renderComparisonSvg(build_datasets(), getComparisonKey(hist), config);
     }
-
-    // Check if file extension is PDF (case-insensitive)
-    bool save_as_pdf = false;
-    if (filepath.size() >= 4) {
-      std::string ext = filepath.substr(filepath.size() - 4);
-      if (ext == ".pdf" || ext == ".PDF") {
-        save_as_pdf = true;
-      }
-    }
-
-    if (save_as_pdf) {
-      if (pinned_runs_.empty()) {
-        correlation::plotters::renderHistogramAsPdf(*hist, filepath, config);
-      } else {
-        std::vector<correlation::plotters::LabeledHistogram> datasets;
-        datasets.push_back({"Current", hist});
-        for (const auto &pr : pinned_runs_) {
-          auto it = pr.histograms.find(name);
-          if (it != pr.histograms.end()) {
-            datasets.push_back({pr.label, &it->second});
-          }
-        }
-        std::string key = "Total";
-        const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
-        if (!partials.empty() && partials.find(key) == partials.end()) {
-          key = partials.begin()->first;
-        }
-        correlation::plotters::renderComparisonPdf(datasets, key, filepath, config);
-      }
-      ui_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
+    std::ofstream out(filepath);
+    if (out.is_open()) {
+      out << svg;
+      out.close();
+      window_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
     } else {
-      // Save as SVG
-      std::ofstream out(filepath);
-      if (out.is_open()) {
-        out << svg;
-        out.close();
-        ui_.set_analysis_status_text(slint::SharedString(name + " plot saved successfully."));
-      } else {
-        ui_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
-      }
+      window_.set_analysis_status_text(slint::SharedString("Failed to open file for saving plot."));
     }
-  } else if (result == NFD_CANCEL) {
-    ui_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_SAVE_CANCELLED));
-  } else {
-    std::string error_msg = "Error: ";
-    error_msg += NFD_GetError();
-    ui_.set_analysis_status_text(slint::SharedString(error_msg));
   }
 }
 
 void AppController::handlePinRun() {
   const auto &hists = backend_.getHistograms();
-  if (hists.empty())
+  if (hists.empty()) {
     return;
+  }
 
   std::string label = "Run " + std::to_string(pinned_runs_.size() + 1);
   pinned_runs_.push_back({label, hists});
 
   slint::invoke_from_event_loop([this]() {
-    ui_.set_pinned_runs_count(static_cast<int>(pinned_runs_.size()));
+    window_.set_pinned_runs_count(static_cast<int>(pinned_runs_.size()));
 
     // Refresh plot if we have one selected
-    int current_idx = ui_.get_selected_plot_index();
+    int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
@@ -1118,486 +1133,124 @@ void AppController::handleClearPinnedRuns() {
   pinned_runs_.clear();
 
   slint::invoke_from_event_loop([this]() {
-    ui_.set_pinned_runs_count(0);
+    window_.set_pinned_runs_count(0);
 
     // Refresh plot if we have one selected
-    int current_idx = ui_.get_selected_plot_index();
+    int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);
     }
   });
 }
 
-bool AppController::validateInputs() {
-  bool valid = true;
-
-  auto to_lower = [](const std::string &s) {
-    std::string data = s;
-    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c) { return std::tolower(c); });
-    return data;
-  };
-
-  auto is_positive_float = [](const std::string &s, float &val) {
-    try {
-      size_t idx;
-      float v = std::stof(s, &idx);
-      if (idx < s.size()) {
-        return false;
-      }
-      if (v <= 0.0f) return false;
-      val = v;
-      return true;
-    } catch (...) {
-      return false;
-    }
-  };
-
-  auto is_non_negative_float = [](const std::string &s, float &val) {
-    try {
-      size_t idx;
-      float v = std::stof(s, &idx);
-      if (idx < s.size()) {
-        return false;
-      }
-      if (v < 0.0f) return false;
-      val = v;
-      return true;
-    } catch (...) {
-      return false;
-    }
-  };
-
-  auto is_positive_int = [](const std::string &s, int &val) {
-    try {
-      size_t idx;
-      int v = std::stoi(s, &idx);
-      if (idx < s.size()) {
-        return false;
-      }
-      if (v <= 0) return false;
-      val = v;
-      return true;
-    } catch (...) {
-      return false;
-    }
-  };
-
-  float r_max_val = 0.0f;
-  float r_bin_val = 0.0f;
-  float q_max_val = 0.0f;
-  float q_bin_val = 0.0f;
-
-  // 1. r_max
-  std::string r_max_s = ui_.get_analysis_options().r_max.data();
-  if (!is_positive_float(r_max_s, r_max_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_max_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_max_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 2. r_bin_width
-  std::string r_bin_s = ui_.get_analysis_options().r_bin_width.data();
-  if (!is_positive_float(r_bin_s, r_bin_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_bin_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else if (r_max_val > 0.0f && r_bin_val > r_max_val) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_bin_error = "Must be ≤ r_max";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_bin_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 3. q_max
-  std::string q_max_s = ui_.get_analysis_options().q_max.data();
-  if (!is_positive_float(q_max_s, q_max_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.q_max_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.q_max_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 4. q_bin_width
-  std::string q_bin_s = ui_.get_analysis_options().q_bin_width.data();
-  if (!is_positive_float(q_bin_s, q_bin_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.q_bin_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else if (q_max_val > 0.0f && q_bin_val > q_max_val) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.q_bin_error = "Must be ≤ q_max";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.q_bin_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 5. r_int_max
-  float r_int_max_val = 0.0f;
-  std::string r_int_max_s = ui_.get_analysis_options().r_int_max.data();
-  if (!is_positive_float(r_int_max_s, r_int_max_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_int_max_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.r_int_max_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 6. angle_bin_width
-  float angle_bin_val = 0.0f;
-  std::string angle_bin_s = ui_.get_analysis_options().angle_bin_width.data();
-  if (!is_positive_float(angle_bin_s, angle_bin_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.angle_bin_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else if (angle_bin_val > 180.0f) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.angle_bin_error = "Must be ≤ 180°";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.angle_bin_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 7. dihedral_bin_width
-  float dihedral_bin_val = 0.0f;
-  std::string dihedral_bin_s = ui_.get_analysis_options().dihedral_bin_width.data();
-  if (!is_positive_float(dihedral_bin_s, dihedral_bin_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.dihedral_bin_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else if (dihedral_bin_val > 360.0f) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.dihedral_bin_error = "Must be ≤ 360°";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.dihedral_bin_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 8. max_ring_size
-  int max_ring_val = 0;
-  std::string max_ring_s = ui_.get_analysis_options().max_ring_size.data();
-  if (!is_positive_int(max_ring_s, max_ring_val) || max_ring_val < 3) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.max_ring_error = "Must be an integer ≥ 3";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.max_ring_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 9. smoothing_sigma
-  float smoothing_sigma_val = 0.0f;
-  std::string smoothing_sigma_s = ui_.get_analysis_options().smoothing_sigma.data();
-  if (!is_non_negative_float(smoothing_sigma_s, smoothing_sigma_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.smoothing_sigma_error = "Must be a non-negative number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.smoothing_sigma_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 10. time_step
-  float time_step_val = 0.0f;
-  std::string time_step_s = ui_.get_analysis_options().time_step.data();
-  if (!is_positive_float(time_step_s, time_step_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.time_step_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.time_step_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  // 11. min_frame and max_frame
-  int min_frame_val = -1;
-  int max_frame_val = -1;
-  bool min_frame_valid = true;
-  bool max_frame_valid = true;
-
-  std::string min_frame_s = ui_.get_analysis_options().min_frame.data();
-  std::string min_frame_lower = to_lower(min_frame_s);
-  int total_frames = ui_.get_num_frames();
-
-  if (min_frame_lower == "start" || min_frame_s.empty()) {
-    min_frame_val = 0;
-    {
-    auto errs = ui_.get_app_errors();
-    errs.min_frame_error = "";
-    ui_.set_app_errors(errs);
-  }
-  } else if (min_frame_lower == "end") {
-    if (total_frames > 0) {
-      min_frame_val = total_frames - 1;
-    } else {
-      min_frame_val = 0;
-    }
-    {
-    auto errs = ui_.get_app_errors();
-    errs.min_frame_error = "";
-    ui_.set_app_errors(errs);
-  }
-  } else {
-    int parsed_val;
-    if (!is_positive_int(min_frame_s, parsed_val)) {
-      {
-    auto errs = ui_.get_app_errors();
-    errs.min_frame_error = "Must be positive integer, 'Start', or 'End'";
-    ui_.set_app_errors(errs);
-  }
-      min_frame_valid = false;
-      valid = false;
-    } else if (total_frames > 0 && parsed_val > total_frames) {
-      {
-    auto errs = ui_.get_app_errors();
-    errs.min_frame_error = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
-    ui_.set_app_errors(errs);
-  }
-      min_frame_valid = false;
-      valid = false;
-    } else {
-      min_frame_val = parsed_val - 1;
-      {
-    auto errs = ui_.get_app_errors();
-    errs.min_frame_error = "";
-    ui_.set_app_errors(errs);
-  }
-    }
-  }
-
-  std::string max_frame_s = ui_.get_analysis_options().max_frame.data();
-  std::string max_frame_lower = to_lower(max_frame_s);
-
-  if (max_frame_lower == "end" || max_frame_s.empty()) {
-    max_frame_val = total_frames > 0 ? total_frames - 1 : -1;
-    {
-    auto errs = ui_.get_app_errors();
-    errs.max_frame_error = "";
-    ui_.set_app_errors(errs);
-  }
-  } else if (max_frame_lower == "start") {
-    max_frame_val = 0;
-    {
-    auto errs = ui_.get_app_errors();
-    errs.max_frame_error = "";
-    ui_.set_app_errors(errs);
-  }
-  } else {
-    int parsed_val;
-    if (!is_positive_int(max_frame_s, parsed_val)) {
-      {
-    auto errs = ui_.get_app_errors();
-    errs.max_frame_error = "Must be positive integer or 'End'";
-    ui_.set_app_errors(errs);
-  }
-      max_frame_valid = false;
-      valid = false;
-    } else if (total_frames > 0 && parsed_val > total_frames) {
-      {
-    auto errs = ui_.get_app_errors();
-    errs.max_frame_error = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
-    ui_.set_app_errors(errs);
-  }
-      max_frame_valid = false;
-      valid = false;
-    } else {
-      max_frame_val = parsed_val - 1;
-      {
-    auto errs = ui_.get_app_errors();
-    errs.max_frame_error = "";
-    ui_.set_app_errors(errs);
-  }
-    }
-  }
-
-  // Cross-validation of min_frame and max_frame
-  if (min_frame_valid && max_frame_valid && min_frame_val >= 0 && max_frame_val >= 0) {
-    if (min_frame_val > max_frame_val) {
-      {
-    auto errs = ui_.get_app_errors();
-    errs.min_frame_error = "Start frame must be ≤ End frame";
-    ui_.set_app_errors(errs);
-  }
-      {
-    auto errs = ui_.get_app_errors();
-    errs.max_frame_error = "End frame must be ≥ Start frame";
-    ui_.set_app_errors(errs);
-  }
-      valid = false;
-    }
-  }
-
-  // 12. export_font_scale and export_line_width
-  float font_scale_val = 0.0f;
-  std::string font_scale_s = ui_.get_export_config().font_scale.data();
-  if (!is_positive_float(font_scale_s, font_scale_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.export_font_scale_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.export_font_scale_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  float line_width_val = 0.0f;
-  std::string line_width_s = ui_.get_export_config().line_width.data();
-  if (!is_positive_float(line_width_s, line_width_val)) {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.export_line_width_error = "Must be a positive number";
-    ui_.set_app_errors(errs);
-  }
-    valid = false;
-  } else {
-    {
-    auto errs = ui_.get_app_errors();
-    errs.export_line_width_error = "";
-    ui_.set_app_errors(errs);
-  }
-  }
-
-  ui_.set_has_validation_errors(!valid);
-  updateCliCommand();
-  return valid;
+namespace {
+std::string to_lower_str(const std::string &str) {
+  std::string data = str;
+  std::ranges::transform(data, data.begin(), [](const unsigned char chr) { return std::tolower(chr); });
+  return data;
 }
 
-void AppController::updateCliCommand() {
-  ProgramOptions opt = handleOptionsfromUI(ui_);
-  
-  std::string cmd = "correlation-cli";
-
-  if (!opt.input_file.empty()) {
-    cmd += " \"" + opt.input_file + "\"";
-  } else {
-    cmd += " <input_file>";
-  }
-
-  cmd += " --r-max " + std::string(ui_.get_analysis_options().r_max.data());
-  cmd += " --r-bin " + std::string(ui_.get_analysis_options().r_bin_width.data());
-
-  if (ui_.get_has_scattering_active()) {
-    cmd += " --q-max " + std::string(ui_.get_analysis_options().q_max.data());
-    cmd += " --q-bin " + std::string(ui_.get_analysis_options().q_bin_width.data());
-    cmd += " --r-int-max " + std::string(ui_.get_analysis_options().r_int_max.data());
-  }
-
-  if (ui_.get_has_angular_active()) {
-    cmd += " --angle-bin " + std::string(ui_.get_analysis_options().angle_bin_width.data());
-    cmd += " --dihedral-bin " + std::string(ui_.get_analysis_options().dihedral_bin_width.data());
-  }
-
-  if (ui_.get_has_rings_active()) {
-    cmd += " --max-ring-size " + std::string(ui_.get_analysis_options().max_ring_size.data());
-  }
-
-  if (ui_.get_num_frames() > 1) {
-    cmd += " --time-step " + std::string(ui_.get_analysis_options().time_step.data());
-    cmd += " --min-frame " + std::string(ui_.get_analysis_options().min_frame.data());
-    cmd += " --max-frame " + std::string(ui_.get_analysis_options().max_frame.data());
-  }
-
-  if (opt.smoothing) {
-    cmd += " --smoothing-sigma " + std::string(ui_.get_analysis_options().smoothing_sigma.data());
-    std::string kernel_str = "gaussian";
-    if (opt.smoothing_kernel == correlation::math::KernelType::Bump) {
-      kernel_str = "bump";
-    } else if (opt.smoothing_kernel == correlation::math::KernelType::Triweight) {
-      kernel_str = "triweight";
+bool is_positive_float(const std::string &str, float &val) {
+  try {
+    size_t idx = 0;
+    float parsed_val = std::stof(str, &idx);
+    if (idx < str.size() || parsed_val <= 0.0F) {
+      return false;
     }
-    cmd += " --smoothing-kernel " + kernel_str;
-  } else {
-    cmd += " --no-smoothing";
+    val = parsed_val;
+    return true;
+  } catch (...) {
+    return false;
+  }
+}
+
+bool is_non_negative_float(const std::string &str, float &val) {
+  try {
+    size_t idx = 0;
+    float parsed_val = std::stof(str, &idx);
+    if (idx < str.size() || parsed_val < 0.0F) {
+      return false;
+    }
+    val = parsed_val;
+    return true;
+  } catch (...) {
+    return false;
+  }
+}
+
+bool is_positive_int(const std::string &str, int &val) {
+  try {
+    size_t idx = 0;
+    int parsed_val = std::stoi(str, &idx);
+    if (idx < str.size() || parsed_val <= 0) {
+      return false;
+    }
+    val = parsed_val;
+    return true;
+  } catch (...) {
+    return false;
+  }
+}
+
+bool validate_min_frame_input(const std::string &frame_s, int total_frames, int &frame_val,
+                              slint::SharedString &error_out) {
+  std::string frame_lower = to_lower_str(frame_s);
+
+  if (frame_lower == "start" || frame_s.empty()) {
+    frame_val = 0;
+    return true;
   }
 
-  // Check if any groups are completely disabled in GUI to add to --disable-groups list
+  if (frame_lower == "end") {
+    frame_val = total_frames > 0 ? total_frames - 1 : 0;
+    return true;
+  }
+
+  int parsed_val = 0;
+  if (!is_positive_int(frame_s, parsed_val)) {
+    error_out = "Must be positive integer, 'Start', or 'End'";
+    return false;
+  }
+
+  if (total_frames > 0 && parsed_val > total_frames) {
+    error_out = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
+    return false;
+  }
+
+  frame_val = parsed_val - 1;
+  return true;
+}
+
+bool validate_max_frame_input(const std::string &frame_s, int total_frames, int &frame_val,
+                              slint::SharedString &error_out) {
+  std::string frame_lower = to_lower_str(frame_s);
+
+  if (frame_lower == "end" || frame_s.empty()) {
+    frame_val = total_frames > 0 ? total_frames - 1 : -1;
+    return true;
+  }
+
+  if (frame_lower == "start") {
+    frame_val = 0;
+    return true;
+  }
+
+  int parsed_val = 0;
+  if (!is_positive_int(frame_s, parsed_val)) {
+    error_out = "Must be positive integer or 'End'";
+    return false;
+  }
+
+  if (total_frames > 0 && parsed_val > total_frames) {
+    error_out = slint::SharedString(std::format("Must be ≤ total frames ({})", total_frames));
+    return false;
+  }
+
+  frame_val = parsed_val - 1;
+  return true;
+}
+
+std::string getDisabledGroupsArg(const ProgramOptions &opt) {
   std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
   const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   for (const auto &calc : calculators) {
@@ -1608,8 +1261,8 @@ void AppController::updateCliCommand() {
   for (const auto &[grp_name, grp_calcs] : groups_map) {
     bool all_disabled = true;
     for (const auto *calc : grp_calcs) {
-      auto it = opt.active_calculators.find(calc->getName());
-      if (it != opt.active_calculators.end() && it->second) {
+      auto calc_it = opt.active_calculators.find(calc->getName());
+      if (calc_it != opt.active_calculators.end() && calc_it->second) {
         all_disabled = false;
         break;
       }
@@ -1621,16 +1274,215 @@ void AppController::updateCliCommand() {
     }
   }
 
-  if (!disabled_groups.empty()) {
-    std::string disabled_list = "";
-    for (const auto &grp : disabled_groups) {
-      if (!disabled_list.empty()) {
-        disabled_list += ",";
-      }
-      disabled_list += grp;
-    }
-    cmd += " --disable-groups " + disabled_list;
+  if (disabled_groups.empty()) {
+    return "";
   }
+
+  std::string disabled_list;
+  for (const auto &grp : disabled_groups) {
+    if (!disabled_list.empty()) {
+      disabled_list += ",";
+    }
+    disabled_list += grp;
+  }
+  return " --disable-groups " + disabled_list;
+}
+} // namespace
+
+bool AppController::validateInputs() {
+  bool valid = true;
+  auto errs = window_.get_app_errors();
+
+  errs.r_max_error = "";
+  errs.r_bin_error = "";
+  errs.q_max_error = "";
+  errs.q_bin_error = "";
+  errs.r_int_max_error = "";
+  errs.angle_bin_error = "";
+  errs.dihedral_bin_error = "";
+  errs.max_ring_error = "";
+  errs.smoothing_sigma_error = "";
+  errs.time_step_error = "";
+  errs.min_frame_error = "";
+  errs.max_frame_error = "";
+  errs.export_font_scale_error = "";
+  errs.export_line_width_error = "";
+
+  float r_max_val = 0.0F;
+  std::string r_max_s = window_.get_analysis_options().r_max.data();
+  if (!is_positive_float(r_max_s, r_max_val)) {
+    errs.r_max_error = "Must be a positive number";
+    valid = false;
+  }
+
+  float r_bin_val = 0.0F;
+  std::string r_bin_s = window_.get_analysis_options().r_bin_width.data();
+  if (!is_positive_float(r_bin_s, r_bin_val)) {
+    errs.r_bin_error = "Must be a positive number";
+    valid = false;
+  } else if (r_max_val > 0.0F && r_bin_val > r_max_val) {
+    errs.r_bin_error = "Must be ≤ r_max";
+    valid = false;
+  }
+
+  float q_max_val = 0.0F;
+  std::string q_max_s = window_.get_analysis_options().q_max.data();
+  if (!is_positive_float(q_max_s, q_max_val)) {
+    errs.q_max_error = "Must be a positive number";
+    valid = false;
+  }
+
+  float q_bin_val = 0.0F;
+  std::string q_bin_s = window_.get_analysis_options().q_bin_width.data();
+  if (!is_positive_float(q_bin_s, q_bin_val)) {
+    errs.q_bin_error = "Must be a positive number";
+    valid = false;
+  } else if (q_max_val > 0.0F && q_bin_val > q_max_val) {
+    errs.q_bin_error = "Must be ≤ q_max";
+    valid = false;
+  }
+
+  float r_int_max_val = 0.0F;
+  std::string r_int_max_s = window_.get_analysis_options().r_int_max.data();
+  if (!is_positive_float(r_int_max_s, r_int_max_val)) {
+    errs.r_int_max_error = "Must be a positive number";
+    valid = false;
+  }
+
+  float angle_bin_val = 0.0F;
+  std::string angle_bin_s = window_.get_analysis_options().angle_bin_width.data();
+  if (!is_positive_float(angle_bin_s, angle_bin_val)) {
+    errs.angle_bin_error = "Must be a positive number";
+    valid = false;
+  } else if (angle_bin_val > 180.0F) {
+    errs.angle_bin_error = "Must be ≤ 180°";
+    valid = false;
+  }
+
+  float dihedral_bin_val = 0.0F;
+  std::string dihedral_bin_s = window_.get_analysis_options().dihedral_bin_width.data();
+  if (!is_positive_float(dihedral_bin_s, dihedral_bin_val)) {
+    errs.dihedral_bin_error = "Must be a positive number";
+    valid = false;
+  } else if (dihedral_bin_val > 360.0F) {
+    errs.dihedral_bin_error = "Must be ≤ 360°";
+    valid = false;
+  }
+
+  int max_ring_val = 0;
+  std::string max_ring_s = window_.get_analysis_options().max_ring_size.data();
+  if (!is_positive_int(max_ring_s, max_ring_val) || max_ring_val < 3) {
+    errs.max_ring_error = "Must be an integer ≥ 3";
+    valid = false;
+  }
+
+  float smoothing_sigma_val = 0.0F;
+  std::string smoothing_sigma_s = window_.get_analysis_options().smoothing_sigma.data();
+  if (!is_non_negative_float(smoothing_sigma_s, smoothing_sigma_val)) {
+    errs.smoothing_sigma_error = "Must be a non-negative number";
+    valid = false;
+  }
+
+  float time_step_val = 0.0F;
+  std::string time_step_s = window_.get_analysis_options().time_step.data();
+  if (!is_positive_float(time_step_s, time_step_val)) {
+    errs.time_step_error = "Must be a positive number";
+    valid = false;
+  }
+
+  int min_frame_val = -1;
+  int max_frame_val = -1;
+  int total_frames = window_.get_num_frames();
+
+  std::string min_frame_s = window_.get_analysis_options().min_frame.data();
+  bool min_frame_valid = validate_min_frame_input(min_frame_s, total_frames, min_frame_val, errs.min_frame_error);
+  if (!min_frame_valid) {
+    valid = false;
+  }
+
+  std::string max_frame_s = window_.get_analysis_options().max_frame.data();
+  bool max_frame_valid = validate_max_frame_input(max_frame_s, total_frames, max_frame_val, errs.max_frame_error);
+  if (!max_frame_valid) {
+    valid = false;
+  }
+
+  if (min_frame_valid && max_frame_valid && min_frame_val >= 0 && max_frame_val >= 0) {
+    if (min_frame_val > max_frame_val) {
+      errs.min_frame_error = "Start frame must be ≤ End frame";
+      errs.max_frame_error = "End frame must be ≥ Start frame";
+      valid = false;
+    }
+  }
+
+  float font_scale_val = 0.0F;
+  std::string font_scale_s = window_.get_export_config().font_scale.data();
+  if (!is_positive_float(font_scale_s, font_scale_val)) {
+    errs.export_font_scale_error = "Must be a positive number";
+    valid = false;
+  }
+
+  float line_width_val = 0.0F;
+  std::string line_width_s = window_.get_export_config().line_width.data();
+  if (!is_positive_float(line_width_s, line_width_val)) {
+    errs.export_line_width_error = "Must be a positive number";
+    valid = false;
+  }
+
+  window_.set_app_errors(errs);
+  window_.set_has_validation_errors(!valid);
+  updateCliCommand();
+  return valid;
+}
+
+void AppController::updateCliCommand() {
+  ProgramOptions opt = handleOptionsfromUI();
+
+  std::string cmd = "correlation-cli";
+
+  if (!opt.input_file.empty()) {
+    cmd += " \"" + opt.input_file + "\"";
+  } else {
+    cmd += " <input_file>";
+  }
+
+  cmd += " --r-max " + std::string(window_.get_analysis_options().r_max.data());
+  cmd += " --r-bin " + std::string(window_.get_analysis_options().r_bin_width.data());
+
+  if (window_.get_has_scattering_active()) {
+    cmd += " --q-max " + std::string(window_.get_analysis_options().q_max.data());
+    cmd += " --q-bin " + std::string(window_.get_analysis_options().q_bin_width.data());
+    cmd += " --r-int-max " + std::string(window_.get_analysis_options().r_int_max.data());
+  }
+
+  if (window_.get_has_angular_active()) {
+    cmd += " --angle-bin " + std::string(window_.get_analysis_options().angle_bin_width.data());
+    cmd += " --dihedral-bin " + std::string(window_.get_analysis_options().dihedral_bin_width.data());
+  }
+
+  if (window_.get_has_rings_active()) {
+    cmd += " --max-ring-size " + std::string(window_.get_analysis_options().max_ring_size.data());
+  }
+
+  if (window_.get_num_frames() > 1) {
+    cmd += " --time-step " + std::string(window_.get_analysis_options().time_step.data());
+    cmd += " --min-frame " + std::string(window_.get_analysis_options().min_frame.data());
+    cmd += " --max-frame " + std::string(window_.get_analysis_options().max_frame.data());
+  }
+
+  if (opt.smoothing) {
+    cmd += " --smoothing-sigma " + std::string(window_.get_analysis_options().smoothing_sigma.data());
+    std::string kernel_str = "gaussian";
+    if (opt.smoothing_kernel == correlation::math::KernelType::Bump) {
+      kernel_str = "bump";
+    } else if (opt.smoothing_kernel == correlation::math::KernelType::Triweight) {
+      kernel_str = "triweight";
+    }
+    cmd += " --smoothing-kernel " + kernel_str;
+  } else {
+    cmd += " --no-smoothing";
+  }
+
+  cmd += getDisabledGroupsArg(opt);
 
   if (opt.use_csv) {
     cmd += " --csv";
@@ -1650,17 +1502,18 @@ void AppController::updateCliCommand() {
     cmd += " --no-parquet";
   }
 
-  ui_.set_cli_command(slint::SharedString(cmd));
+  window_.set_cli_command(slint::SharedString(cmd));
 }
 
 void AppController::handleCopyCliCommand() {
-  std::string cmd = ui_.get_cli_command().data();
-  
+  std::string cmd = window_.get_cli_command().data();
+
   // Platform-specific clipboard copy helper
 #if defined(__linux__)
+  // NOLINTNEXTLINE(cert-env33-c)
   FILE *pipe = popen("xclip -selection clipboard", "w");
-  if (pipe) {
-    fwrite(cmd.c_str(), 1, cmd.size(), pipe);
+  if (pipe != nullptr) {
+    (void)fwrite(cmd.c_str(), 1, cmd.size(), pipe);
     pclose(pipe);
   }
 #elif defined(_WIN32)
@@ -1678,17 +1531,20 @@ void AppController::handleCopyCliCommand() {
     CloseClipboard();
   }
 #elif defined(__APPLE__)
+  // NOLINTNEXTLINE(cert-env33-c)
   FILE *pipe = popen("pbcopy", "w");
-  if (pipe) {
-    fwrite(cmd.c_str(), 1, cmd.size(), pipe);
+  if (pipe != nullptr) {
+    (void)fwrite(cmd.c_str(), 1, cmd.size(), pipe);
     pclose(pipe);
   }
 #endif
 }
 
 void AppController::handleLoadPreset(int index) {
-  if (index < 0 || index >= static_cast<int>(presets_.size()))
+  if (index < 0 || index >= static_cast<int>(presets_.size())) {
     return;
+  }
+
   const Preset &preset = presets_[index];
 
   // Update backend options
@@ -1702,37 +1558,40 @@ void AppController::handleLoadPreset(int index) {
   backend_.setOptions(current_opts);
 
   // Update UI components with the new options
-  handleOptionstoUI(ui_);
-  populateCalculatorGroups(ui_);
-  updateActiveGroupFlags(ui_);
+  handleOptionstoUI();
+  populateCalculatorGroups();
+  updateActiveGroupFlags();
   validateInputs();
   updateCliCommand();
 
-  ui_.set_analysis_status_text(slint::SharedString(std::string("Loaded preset: ") + preset.name));
+  window_.set_analysis_status_text(slint::SharedString(std::string("Loaded preset: ") + preset.name));
 }
 
 void AppController::handleSavePreset(const std::string &name) {
-  if (name.empty()) return;
+  if (name.empty()) {
+    return;
+  }
 
   Preset preset;
   preset.name = name;
   preset.description = "Saved from Correlation UI";
-  preset.options = handleOptionsfromUI(ui_);
+  preset.options = handleOptionsfromUI();
 
   PresetManager::save(preset);
 
-  ui_.set_analysis_status_text(slint::SharedString(std::string("Saved preset: ") + name));
+  window_.set_analysis_status_text(slint::SharedString(std::string("Saved preset: ") + name));
   refreshPresetList();
 }
 
 void AppController::handleDeletePreset(int index) {
-  if (index < 0 || index >= static_cast<int>(presets_.size()))
+  if (index < 0 || index >= static_cast<int>(presets_.size())) {
     return;
+  }
 
   std::string name = presets_[index].name;
   PresetManager::remove(name);
 
-  ui_.set_analysis_status_text(slint::SharedString(std::string("Deleted preset: ") + name));
+  window_.set_analysis_status_text(slint::SharedString(std::string("Deleted preset: ") + name));
   refreshPresetList();
 }
 
@@ -1740,96 +1599,96 @@ void AppController::refreshPresetList() {
   presets_ = PresetManager::loadAll();
 
   auto menu_model = std::make_shared<slint::VectorModel<MenuItem>>();
-  for (const auto &p : presets_) {
+  for (const auto &preset : presets_) {
     MenuItem item;
-    item.text = slint::SharedString(p.name);
+    item.text = slint::SharedString(preset.name);
     item.enabled = true;
     menu_model->push_back(item);
   }
 
-  ui_.set_preset_items(menu_model);
-  ui_.set_selected_preset(-1);
+  window_.set_preset_items(menu_model);
+  window_.set_selected_preset(-1);
 }
 
 void AppController::handleMaterialTypeChanged(int type) {
   if (type == 2) { // Crystalline
     {
-    auto opts = ui_.get_analysis_options();
-    opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
+      window_.set_analysis_options(opts);
+    }
   } else if (type == 1) { // Liquid
     {
-    auto opts = ui_.get_analysis_options();
-    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
+      window_.set_analysis_options(opts);
+    }
   } else { // Amorphous (0)
     {
-    auto opts = ui_.get_analysis_options();
-    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+      window_.set_analysis_options(opts);
+    }
     {
-    auto opts = ui_.get_analysis_options();
-    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
-    ui_.set_analysis_options(opts);
-  }
+      auto opts = window_.get_analysis_options();
+      opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
+      window_.set_analysis_options(opts);
+    }
   }
   validateInputs();
 }

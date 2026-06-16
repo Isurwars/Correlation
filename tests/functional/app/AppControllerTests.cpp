@@ -28,8 +28,8 @@ protected:
 #endif
   }
 
-  correlation::app::ProgramOptions callHandleOptionsfromUI(correlation::app::AppController &controller, AppWindow &ui) {
-    return controller.handleOptionsfromUI(ui);
+  correlation::app::ProgramOptions callHandleOptionsfromUI(correlation::app::AppController &controller) {
+    return controller.handleOptionsfromUI();
   }
 };
 
@@ -77,7 +77,7 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   ui->set_bond_cutoffs(cutoffs);
 
   // Act
-  auto opts = callHandleOptionsfromUI(controller, *ui);
+  auto opts = callHandleOptionsfromUI(controller);
 
   // Assert: verify that the flat cutoffs are mapped to symmetric 2D matrix
   ASSERT_EQ(opts.bond_cutoffs_sq.size(), 2);
