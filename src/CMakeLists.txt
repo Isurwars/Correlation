@@ -151,8 +151,13 @@ endif()
 if(BUILD_GUI)
     set(CORRELATION_SOURCES
         main.cpp
+        app/AnalysisRunner.cpp
         app/AppBackend.cpp
         app/AppController.cpp
+        app/FileIOHandler.cpp
+        app/InputValidator.cpp
+        app/PlotController.cpp
+        app/PresetController.cpp
         app/PresetManager.cpp
     )
 

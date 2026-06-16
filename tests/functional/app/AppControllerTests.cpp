@@ -6,9 +6,9 @@
 #include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
+#include <filesystem>
 
 #include <gtest/gtest.h>
-#include <stdlib.h>
 
 #ifdef _WIN32
 #define NOMINMAX
@@ -28,7 +28,7 @@ protected:
 #endif
   }
 
-  correlation::app::ProgramOptions callHandleOptionsfromUI(correlation::app::AppController &controller) {
+  static correlation::app::ProgramOptions callHandleOptionsfromUI(correlation::app::AppController &controller) {
     return controller.handleOptionsfromUI();
   }
 };
@@ -50,7 +50,7 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   // Arrange
   auto ui = AppWindow::create();
   correlation::app::AppBackend backend;
-  
+
   std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
   if (!std::filesystem::exists(file_path)) {
     file_path = "../examples/a-PdSi/a-PdSi.car";
@@ -71,9 +71,9 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   // Set up cutoffs: Pd-Pd, Pd-Si, Si-Si
   // In upper-triangular order: Pd-Pd, Pd-Si, Si-Si
   auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  cutoffs->push_back({"Pd", "Pd", "2.80"});
-  cutoffs->push_back({"Pd", "Si", "3.10"});
-  cutoffs->push_back({"Si", "Si", "2.50"});
+  cutoffs->push_back({.element1 = "Pd", .element2 = "Pd", .distance = "2.80"});
+  cutoffs->push_back({.element1 = "Pd", .element2 = "Si", .distance = "3.10"});
+  cutoffs->push_back({.element1 = "Si", .element2 = "Si", .distance = "2.50"});
   ui->set_bond_cutoffs(cutoffs);
 
   // Act
@@ -89,4 +89,3 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
   EXPECT_NEAR(opts.bond_cutoffs_sq[1][0], 3.10 * 3.10, 1e-5); // Pd-Si
   EXPECT_NEAR(opts.bond_cutoffs_sq[1][1], 2.80 * 2.80, 1e-5); // Pd-Pd
 }
-

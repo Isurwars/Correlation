@@ -158,4 +158,23 @@ TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
   EXPECT_NE(svg.find("Si-O: 1.0000 (nearest)"), std::string::npos);
 }
 
+TEST(SvgPlotterTests, RendersShadedCurveCorrectly) {
+  Histogram hist;
+  hist.title = "Shaded Plot";
+  hist.bins = {1.0, 2.0, 3.0};
+  hist.partials["Total"] = {1.0, 2.0, 1.5};
+
+  PlotConfig config;
+  config.fill_area = true;
+  config.use_native_text = true;
+
+  std::string svg = renderHistogramAsSvg(hist, config);
+  std::cout << "--- GENERATED SVG ---\n" << svg << "\n---------------------\n";
+  EXPECT_FALSE(svg.empty());
+  
+  // Verify that linearGradient and polygon elements are in the SVG output
+  EXPECT_NE(svg.find("<linearGradient id=\"area-grad-0\""), std::string::npos);
+  EXPECT_NE(svg.find("<polygon fill=\"url(#area-grad-0)\""), std::string::npos);
+}
+
 } // namespace correlation::testing

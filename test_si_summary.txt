@@ -1,0 +1,9 @@
+Correlation Analysis Summary
+============================
+
+Calculated Dynamic Properties:
+------------------------------
+Self-diffusion coefficient (from MSD): N/A
+Self-diffusion coefficient (from VACF): N/A
+Relaxation time (from VACF): N/A
+Deborah number: N/A

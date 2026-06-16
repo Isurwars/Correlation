@@ -129,8 +129,13 @@ if(BUILD_GUI)
     add_executable(correlation_gui_tests
         functional/app/AppControllerTests.cpp
         functional/app/SlintSvgIntegrationTests.cpp
+        ../src/app/AnalysisRunner.cpp
         ../src/app/AppBackend.cpp
         ../src/app/AppController.cpp
+        ../src/app/FileIOHandler.cpp
+        ../src/app/InputValidator.cpp
+        ../src/app/PlotController.cpp
+        ../src/app/PresetController.cpp
         ../src/app/PresetManager.cpp
     )
 

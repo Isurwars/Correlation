@@ -438,7 +438,7 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
     std::string col = detail::color(color_idx, config.palette);
     std::string grad_id = std::format("area-grad-{}", color_idx);
     svg << std::format("    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
-                       "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.12\"/>\n"
+                       "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
                        "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
                        "    </linearGradient>\n", grad_id, col, col);
     color_idx++;
@@ -555,8 +555,8 @@ inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &
       for (std::size_t i = 0; i < n; ++i) {
         double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
         double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
-        svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"{}\" stroke-width=\"1.0\"/>\n",
-                           sx, sy, col, config.bg_color());
+        svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"none\"/>\n",
+                           sx, sy, col);
       }
     }
   }
@@ -824,7 +824,7 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
     std::string col = detail::color(color_idx, config.palette);
     std::string grad_id = std::format("area-grad-{}", color_idx);
     svg << std::format("    <linearGradient id=\"{}\" x1=\"0%\" y1=\"0%\" x2=\"0%\" y2=\"100%\">\n"
-                       "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.12\"/>\n"
+                       "      <stop offset=\"0%\" stop-color=\"{}\" stop-opacity=\"0.35\"/>\n"
                        "      <stop offset=\"100%\" stop-color=\"{}\" stop-opacity=\"0.0\"/>\n"
                        "    </linearGradient>\n", grad_id, col, col);
     color_idx++;
@@ -934,8 +934,8 @@ inline std::string renderComparisonSvg(const std::vector<LabeledHistogram> &data
         for (std::size_t i = 0; i < n; ++i) {
           double sx = detail::mapValue(xs[i], xScale.min, xScale.max, px0, px1);
           double sy = detail::mapValue(ys[i], yScale.min, yScale.max, py1, py0);
-          svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"{}\" stroke-width=\"1.0\"/>\n",
-                             sx, sy, col, config.bg_color());
+          svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"none\"/>\n",
+                             sx, sy, col);
         }
       } else {
         marker_ci++;
