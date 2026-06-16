@@ -35,7 +35,9 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, int type1,
 }
 
 // Static registration
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<RDFCalculator>());
+// Static registration of the calculator in the factory
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<RDFCalculator>("RDFCalculator");
 } // namespace
 
 void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,

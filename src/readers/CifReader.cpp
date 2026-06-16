@@ -25,7 +25,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<CifReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CifReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 correlation::core::Cell CifReader::readStructure(const std::string &filename,
                                                  std::function<void(float, const std::string &)>  /*progress_callback*/) {

@@ -15,7 +15,7 @@
 namespace correlation::readers {
 
 namespace {
-bool registered = ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
+const bool registered = ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
 }
 
 correlation::core::Cell PdbReader::readStructure(const std::string &filename,

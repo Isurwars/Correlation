@@ -16,7 +16,9 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<VDOSCalculator>());
+// Static registration of the calculator in the factory
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<VDOSCalculator>("VDOSCalculator");
 } // namespace
 
 void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,

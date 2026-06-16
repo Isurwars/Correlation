@@ -20,7 +20,9 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<StructureFactorCalculator>());
+// Static registration of the calculator in the factory
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<StructureFactorCalculator>("StructureFactorCalculator");
 } // namespace
 
 void StructureFactorCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,

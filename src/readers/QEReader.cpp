@@ -16,7 +16,7 @@
 namespace correlation::readers {
 
 namespace {
-bool registered = ReaderFactory::instance().registerReader(std::make_unique<QEReader>());
+const bool registered = ReaderFactory::instance().registerReader(std::make_unique<QEReader>());
 }
 
 correlation::core::Cell QEReader::readStructure(const std::string &filename,

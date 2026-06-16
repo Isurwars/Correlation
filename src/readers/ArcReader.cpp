@@ -23,7 +23,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-static bool registered = ReaderFactory::instance().registerReader(std::make_unique<ArcReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<ArcReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 correlation::core::Cell ArcReader::readStructure(const std::string & /*filename*/,
                                                  std::function<void(float, const std::string &)>  /*progress_callback*/) {

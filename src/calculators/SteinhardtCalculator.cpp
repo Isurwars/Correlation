@@ -18,7 +18,9 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<SteinhardtCalculator>());
+// Static registration of the calculator in the factory
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<SteinhardtCalculator>("SteinhardtCalculator");
 } // namespace
 
 std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m, double theta, double phi) {

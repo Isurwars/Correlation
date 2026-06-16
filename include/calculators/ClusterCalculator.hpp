@@ -22,14 +22,14 @@ namespace correlation::calculators {
  */
 class ClusterCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Cluster Analysis"; }
-  std::string getShortName() const override { return "Clusters"; }
-  std::string getGroup() const override { return "Topology"; }
-  std::string getDescription() const override {
+  [[nodiscard]] std::string getName() const override { return "Cluster Analysis"; }
+  [[nodiscard]] std::string getShortName() const override { return "Clusters"; }
+  [[nodiscard]] std::string getGroup() const override { return "Topology"; }
+  [[nodiscard]] std::string getDescription() const override {
     return "Identifies connected components (clusters) using the neighbor graph.";
   }
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;

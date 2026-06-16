@@ -24,7 +24,7 @@
 namespace correlation::writers {
 
 // Automatic registration
-static bool registered = WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
 void HDF5Writer::writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &dists) const {
   try {

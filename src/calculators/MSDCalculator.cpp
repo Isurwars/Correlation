@@ -13,7 +13,9 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<MSDCalculator>());
+// Static registration of the calculator in the factory
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<MSDCalculator>("MSDCalculator");
 } // namespace
 
 void MSDCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,

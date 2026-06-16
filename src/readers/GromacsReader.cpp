@@ -19,7 +19,7 @@
 namespace correlation::readers {
 
 namespace {
-bool registered = ReaderFactory::instance().registerReader(std::make_unique<GromacsReader>());
+const bool registered = ReaderFactory::instance().registerReader(std::make_unique<GromacsReader>());
 }
 
 // ---------------------------------------------------------------------------

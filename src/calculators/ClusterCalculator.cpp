@@ -18,20 +18,21 @@ namespace correlation::calculators {
 namespace {
 
 // Static registration of the calculator in the factory
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<ClusterCalculator>());
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<ClusterCalculator>("ClusterCalculator");
 
 // Disjoint-Set (Union-Find) data structure for identifying connected components
 class UnionFind {
 public:
-  explicit UnionFind(size_t n) : parent(n), sz(n, 1) { std::iota(parent.begin(), parent.end(), 0); }
+  explicit UnionFind(size_t num_nodes) : parent(num_nodes), sz(num_nodes, 1) { std::ranges::iota(parent, 0); }
 
-  size_t find(size_t i) {
-    size_t root = i;
+  size_t find(size_t node) {
+    size_t root = node;
     while (root != parent[root]) {
       root = parent[root];
     }
     // Path compression
-    size_t curr = i;
+    size_t curr = node;
     while (curr != root) {
       size_t const nxt = parent[curr];
       parent[curr] = root;
@@ -40,9 +41,9 @@ public:
     return root;
   }
 
-  void unite(size_t i, size_t j) {
-    size_t root_i = find(i);
-    size_t root_j = find(j);
+  void unite(size_t node_i, size_t node_j) {
+    size_t root_i = find(node_i);
+    size_t root_j = find(node_j);
     if (root_i != root_j) {
       // Union by size
       if (sz[root_i] < sz[root_j]) {
@@ -53,7 +54,7 @@ public:
     }
   }
 
-  size_t getSize(size_t i) { return sz[find(i)]; }
+  size_t getSize(size_t node) { return sz[find(node)]; }
 
 private:
   std::vector<size_t> parent;
@@ -67,21 +68,21 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   const auto *analyzer = dists.neighbors();
   if (analyzer == nullptr) {
     return;
-}
+  }
 
   const auto &graph = analyzer->neighborGraph();
   size_t const n_atoms = graph.nodeCount();
   if (n_atoms == 0) {
     return;
-}
+  }
 
   // Initialize Union-Find
-  UnionFind uf(n_atoms);
+  UnionFind union_find(n_atoms);
 
   // Traverse the graph and union connected atoms
   for (size_t i = 0; i < n_atoms; ++i) {
     for (const auto &neighbor : graph.getNeighbors(i)) {
-      uf.unite(i, neighbor.index);
+      union_find.unite(i, neighbor.index);
     }
   }
 
@@ -89,20 +90,20 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   std::vector<size_t> root_sizes(n_atoms, 0);
   for (size_t i = 0; i < n_atoms; ++i) {
     // We only count sizes for actual roots to avoid double counting
-    if (uf.find(i) == i) {
-      root_sizes[i] = uf.getSize(i);
+    if (union_find.find(i) == i) {
+      root_sizes[i] = union_find.getSize(i);
     }
   }
 
   // Determine the maximum cluster size for histogram bins
   size_t max_size = 0;
-  for (size_t const s : root_sizes) {
-    max_size = std::max(s, max_size);
+  for (size_t const size : root_sizes) {
+    max_size = std::max(size, max_size);
   }
 
   if (max_size == 0) {
     return;
-}
+  }
 
   // Create the histogram
   correlation::analysis::Histogram hist;
@@ -121,10 +122,10 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   auto &partial = hist.partials["Total"];
   partial.assign(max_size, 0.0);
 
-  for (size_t const s : root_sizes) {
-    if (s > 0) {
+  for (size_t const size : root_sizes) {
+    if (size > 0) {
       // Cluster size 's' corresponds to bin index 's - 1'
-      partial[s - 1] += 1.0;
+      partial[size - 1] += 1.0;
     }
   }
 

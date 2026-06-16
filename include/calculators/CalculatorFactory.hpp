@@ -10,6 +10,7 @@
 
 #include "BaseCalculator.hpp"
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -32,17 +33,37 @@ public:
   bool registerCalculator(std::unique_ptr<BaseCalculator> calculator);
 
   /**
+   * @brief Exception-safe template helper for static auto-registration.
+   * @tparam T The specific Calculator class type to instantiate.
+   * @param name The human-readable name of the calculator (for error logging).
+   * @return true if registration succeeded, false if an exception occurred.
+   */
+  template <typename T> static bool registerTypeSafe(const char *name) noexcept {
+    try {
+      return instance().registerCalculator(std::make_unique<T>());
+    } catch (const std::exception &e) {
+      std::cerr << "[FATAL] Failed to statically register calculator '" << (name != nullptr ? name : "unknown")
+                << "': " << e.what() << '\n';
+      return false;
+    } catch (...) {
+      std::cerr << "[FATAL] Failed to statically register calculator '" << (name != nullptr ? name : "unknown")
+                << "' due to an unknown exception." << '\n';
+      return false;
+    }
+  }
+
+  /**
    * @brief Returns all registered calculators.
    * @return Constant reference to the internal vector of calculators.
    */
-  const std::vector<std::unique_ptr<BaseCalculator>> &getCalculators() const;
+  [[nodiscard]] const std::vector<std::unique_ptr<BaseCalculator>> &getCalculators() const;
 
   /**
    * @brief Gets a calculator by its name.
    * @param name The name of the calculator.
    * @return Pointer to the calculator, or nullptr if not found.
    */
-  const BaseCalculator *getCalculator(const std::string &name) const;
+  [[nodiscard]] const BaseCalculator *getCalculator(const std::string &name) const;
 
 private:
   CalculatorFactory() = default;

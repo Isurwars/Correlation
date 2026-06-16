@@ -16,7 +16,7 @@
 namespace correlation::readers {
 
 namespace {
-bool registered = ReaderFactory::instance().registerReader(std::make_unique<CP2KReader>());
+const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CP2KReader>());
 }
 
 correlation::core::Cell CP2KReader::readStructure(const std::string &filename,

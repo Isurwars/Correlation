@@ -15,7 +15,9 @@
 namespace correlation::calculators {
 
 namespace {
-bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<SDFCalculator>());
+// Static registration of the calculator in the factory
+// NOLINTNEXTLINE(cert-err58-cpp)
+const bool registered = CalculatorFactory::registerTypeSafe<SDFCalculator>("SDFCalculator");
 } // namespace
 
 void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
