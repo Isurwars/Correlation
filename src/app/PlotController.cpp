@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <map>
 #include <span>
 
@@ -45,9 +44,7 @@ template <typename T> T safe_parse(const slint::SharedString &str, T default_val
 } // namespace
 
 PlotController::PlotController(AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
-  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000), [this]() {
-    handleUpdateTimer();
-  });
+  update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000), [this]() { handleUpdateTimer(); });
 }
 
 PlotController::~PlotController() {
@@ -56,9 +53,9 @@ PlotController::~PlotController() {
   }
 }
 
-void PlotController::handlePlotResized(float width, float height) {
-  last_plot_width_ = width;
-  last_plot_height_ = height;
+void PlotController::handlePlotResized(PlotSize size) {
+  last_plot_width_ = size.width;
+  last_plot_height_ = size.height;
   int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
     requestPlotUpdate(current_idx, true);
@@ -197,8 +194,6 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   hover.widget_width = last_plot_width_;
   hover.widget_height = last_plot_height_;
 
-  std::cout << "DEBUG requestPlotUpdate: show_markers=" << config.show_markers << " fill_area=" << config.fill_area << std::endl;
-
   if (isPlotCacheHit(index, config, hover) && !needs_redraw_) {
     return;
   }
@@ -241,7 +236,7 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
 }
 
 bool PlotController::isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
-                                   const correlation::plotters::HoverInfo &hover) const {
+                                    const correlation::plotters::HoverInfo &hover) const {
   return (index == last_rendered_index_ && pinned_runs_.size() == last_pinned_runs_count_ &&
           config.theme == last_config_.theme && config.preset_size == last_config_.preset_size &&
           std::abs(config.width - last_config_.width) < 1e-2 && std::abs(config.height - last_config_.height) < 1e-2 &&
@@ -358,7 +353,7 @@ void PlotController::handleSavePlot() {
 }
 
 void PlotController::executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
-                                    const std::string &name) {
+                                     const std::string &name) {
   correlation::plotters::PlotConfig config = buildPlotConfigFromUI();
   config.use_native_text = true;
 

@@ -11,7 +11,6 @@
 #include "app/InputValidator.hpp"
 #include "app/PresetManager.hpp"
 #include <format>
-#include <iostream>
 
 namespace correlation::app {
 

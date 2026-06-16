@@ -100,12 +100,11 @@ ArcReader::read(const std::string &file_name, std::function<void(float, const st
     // Check if it is a single token line (Energy)
     std::string second_token;
     if (!(line_stream >> second_token)) {
-      try {
-        double const energy = std::stod(first_token);
+      double energy = 0.0;
+      std::istringstream parse_stream(first_token);
+      if (parse_stream >> energy) {
         tempCell.setEnergy(energy);
         continue;
-      } catch (...) { // NOLINT(bugprone-empty-catch)
-        // Not a number, move on
       }
     }
 

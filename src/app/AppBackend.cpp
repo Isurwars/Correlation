@@ -99,8 +99,9 @@ double AppBackend::getRecommendedTimeStep() const {
         min_mass = mass;
         found = true;
       }
-    } catch (const std::out_of_range &) { // NOLINT(bugprone-empty-catch)
-      // Ignore unknown elements for this calculation
+    } catch (const std::out_of_range &err) {
+      std::cerr << "Warning: Unknown element symbol '" << element.symbol
+                << "' ignored in mass calculation: " << err.what() << '\n';
     }
   }
 

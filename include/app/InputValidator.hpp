@@ -46,9 +46,9 @@ public:
   void handleCopyCliCommand();
 
 private:
-  AppWindow &window_;
-  AppBackend &backend_;
-  AppController &controller_;
+  AppWindow *window_;
+  AppBackend *backend_;
+  AppController *controller_;
 };
 
 } // namespace correlation::app

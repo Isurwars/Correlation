@@ -110,7 +110,9 @@ AppController::AppController(AppWindow &window, AppBackend &backend) : window_(w
   window_.on_material_type_changed([this](int type) { preset_controller_->handleMaterialTypeChanged(type); });
 
   // Handle plot resized callback from UI
-  window_.on_plot_resized([this](float width, float height) { plot_controller_->handlePlotResized(width, height); });
+  window_.on_plot_resized([this](float width, float height) {
+    plot_controller_->handlePlotResized({.width = width, .height = height});
+  });
 
   // Initial load of preset list
   preset_controller_->refreshPresetList();

@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <array>
+#include <iostream>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -154,7 +155,8 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
         try {
           data.energy = std::stod(val_str);
           break;
-        } catch (...) { // NOLINT(bugprone-empty-catch)
+        } catch (const std::exception &err) {
+          std::cerr << "Warning: Failed to parse energy value '" << val_str << "' in comment line: " << err.what() << std::endl;
         }
       }
     }
@@ -193,7 +195,8 @@ XYZReader::CommentData XYZReader::parseCommentLine(const std::string &comment) {
         int cols = 1;
         try {
           cols = std::stoi(parts[i + 2]);
-        } catch (...) {
+        } catch (const std::exception &err) {
+          std::cerr << "Warning: Failed to parse column count '" << parts[i + 2] << "' in Properties header: " << err.what() << std::endl;
         }
 
         if (name == "species" || name == "type") {

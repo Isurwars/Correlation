@@ -26,6 +26,11 @@ class AppController;
 class PresetController {
 public:
   PresetController(AppWindow &window, AppBackend &backend, AppController &controller);
+  ~PresetController() = default;
+  PresetController(const PresetController &) = delete;
+  PresetController &operator=(const PresetController &) = delete;
+  PresetController(PresetController &&) = delete;
+  PresetController &operator=(PresetController &&) = delete;
 
   void handleLoadPreset(int index);
   void handleSavePreset(const std::string &name);

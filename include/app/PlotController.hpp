@@ -22,6 +22,11 @@
 
 namespace correlation::app {
 
+struct PlotSize {
+  float width;
+  float height;
+};
+
 /**
  * @class PlotController
  * @brief Manages plot rendering, caching, interactions, and exports.
@@ -37,11 +42,11 @@ public:
   void handleSavePlot();
   void handlePinRun();
   void handleClearPinnedRuns();
-  
+
   /**
    * @brief Handles plot resized callback from UI
    */
-  void handlePlotResized(float width, float height);
+  void handlePlotResized(PlotSize size);
 
   /**
    * @brief Timer callback for periodic plot updates
