@@ -15,14 +15,14 @@ TEST(SDFCalculatorTests, CalculateSDF) {
   cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   AnalysisSettings settings;
   settings.r_bin_width = 1.0;
 
   SDFCalculator const calc;
-  calc.calculateFrame(df, settings);
+  calc.calculateFrame(dists, settings);
 
-  const auto &hist = df.getHistogram("SDF");
+  const auto &hist = dists.getHistogram("SDF");
   EXPECT_EQ(hist.bins.size(), 1000); // 10x10x10 grid
   EXPECT_TRUE(hist.partials.count("Ar") > 0);
   EXPECT_TRUE(hist.partials.count("Total") > 0);
@@ -37,14 +37,14 @@ TEST(SDFCalculatorTests, MultiAtomSDFHasNonzeroDensity) {
   cell.addAtom("Ar", {2.0, 5.0, 5.0});
   cell.addAtom("Ar", {8.0, 5.0, 5.0});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   AnalysisSettings settings;
   settings.r_bin_width = 1.0;
 
   SDFCalculator const calc;
-  calc.calculateFrame(df, settings);
+  calc.calculateFrame(dists, settings);
 
-  const auto &hist = df.getHistogram("SDF");
+  const auto &hist = dists.getHistogram("SDF");
   EXPECT_EQ(hist.bins.size(), 1000);
 
   // With 2 atoms, the total SDF should have non-zero values somewhere

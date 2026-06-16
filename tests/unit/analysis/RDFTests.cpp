@@ -47,7 +47,7 @@ protected:
 
 TEST_F(RDFTests, DefaultConstructorWorks) {
   updateTrajectory();
-  ASSERT_NO_THROW(DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
+  ASSERT_NO_THROW(DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()));
 }
 
 TEST_F(RDFTests, MoveConstructorWorks) {
@@ -79,27 +79,27 @@ TEST_F(RDFTests, MoveAssignmentWorks) {
 
 TEST_F(RDFTests, AccessorsWork) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // cell()
-  EXPECT_EQ(df.cell().atomCount(), 2);
+  EXPECT_EQ(dists.cell().atomCount(), 2);
 
   // getAvailableHistograms() - initially empty or minimal
-  auto histNames = df.getAvailableHistograms();
+  auto histNames = dists.getAvailableHistograms();
   EXPECT_TRUE(histNames.empty());
 
   // Calculate something
-  df.calculateRDF(5.0, 0.1);
-  histNames = df.getAvailableHistograms();
+  dists.calculateRDF(5.0, 0.1);
+  histNames = dists.getAvailableHistograms();
   EXPECT_FALSE(histNames.empty());
   EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"), histNames.end());
 
   // getHistogram()
-  EXPECT_NO_THROW(df.getHistogram("g_r"));
-  EXPECT_THROW(df.getHistogram("NonExistent"), std::out_of_range);
+  EXPECT_NO_THROW(dists.getHistogram("g_r"));
+  EXPECT_THROW(dists.getHistogram("NonExistent"), std::out_of_range);
 
   // getAllHistograms()
-  const auto &allHists = df.getAllHistograms();
+  const auto &allHists = dists.getAllHistograms();
   EXPECT_EQ(allHists.size(), 3);
   EXPECT_TRUE(allHists.count("g_r"));
   EXPECT_TRUE(allHists.count("J_r"));
@@ -112,16 +112,16 @@ TEST_F(RDFTests, AccessorsWork) {
 
 TEST_F(RDFTests, CalculateRDF) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Invalid parameters
-  EXPECT_THROW(df.calculateRDF(5.0, 0.0),
+  EXPECT_THROW(dists.calculateRDF(5.0, 0.0),
                std::invalid_argument);                            // Zero bin width
-  EXPECT_THROW(df.calculateRDF(0.0, 0.1), std::invalid_argument); // Zero r_max
+  EXPECT_THROW(dists.calculateRDF(0.0, 0.1), std::invalid_argument); // Zero r_max
 
   // Valid calculation with tight bins for numerical accuracy
-  df.calculateRDF(5.0, 0.001);
-  const auto &hist = df.getHistogram("g_r");
+  dists.calculateRDF(5.0, 0.001);
+  const auto &hist = dists.getHistogram("g_r");
   const auto &total = hist.partials.at("Ar-Ar");
 
   // High precision peak location
@@ -143,11 +143,11 @@ TEST_F(RDFTests, CalculateCoordinationNumber) {
   // Si has 2 O neighbors at 1.0.
 
   updateTrajectory(cnCall);
-  DistributionFunctions df(cnCall, 2.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cnCall, 2.0, trajectory_.getBondCutoffsSQ());
 
-  df.calculateCoordinationNumber();
+  dists.calculateCoordinationNumber();
 
-  const auto &hist = df.getHistogram("CN");
+  const auto &hist = dists.getHistogram("CN");
   const auto &sio_cn = hist.partials.at("Si-O");
 
   // Si has 2 O neighbors. So bin 2 should be 1.
@@ -163,19 +163,19 @@ TEST_F(RDFTests, CalculateCoordinationNumber) {
 
 TEST_F(RDFTests, Smoothing) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  df.calculateRDF(5.0, 0.1);
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF(5.0, 0.1);
 
   // Checks "smooth" single
-  ASSERT_NO_THROW(df.smooth("g_r", 0.2));
-  const auto &hist = df.getHistogram("g_r");
+  ASSERT_NO_THROW(dists.smooth("g_r", 0.2));
+  const auto &hist = dists.getHistogram("g_r");
   EXPECT_FALSE(hist.smoothed_partials.empty());
 
   // Check "smoothAll"
   // Add another histogram
-  df.calculateCoordinationNumber();
-  df.smoothAll(0.2);
-  const auto &cn_hist = df.getHistogram("CN");
+  dists.calculateCoordinationNumber();
+  dists.smoothAll(0.2);
+  const auto &cn_hist = dists.getHistogram("CN");
   EXPECT_FALSE(cn_hist.smoothed_partials.empty());
 }
 
@@ -184,13 +184,13 @@ TEST_F(RDFTests, SetStructureAnalyzer) {
   // Create an external analyzer
   StructureAnalyzer const analyzer(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
-  DistributionFunctions df(cell_, 0.0, {});
+  DistributionFunctions dists(cell_, 0.0, {});
   // Should depend on analyzer for RDF
-  df.setStructureAnalyzer(&analyzer);
+  dists.setStructureAnalyzer(&analyzer);
 
-  df.calculateRDF(5.0, 0.1);
-  EXPECT_NO_THROW(df.getHistogram("g_r"));
-  EXPECT_FALSE(df.getHistogram("g_r").partials.empty());
+  dists.calculateRDF(5.0, 0.1);
+  EXPECT_NO_THROW(dists.getHistogram("g_r"));
+  EXPECT_FALSE(dists.getHistogram("g_r").partials.empty());
 }
 
 //---------------------------------------------------------------------------//
@@ -299,10 +299,10 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
   traj.addFrame(cell);
   traj.precomputeBondCutoffs();
 
-  DistributionFunctions df(cell, 5.0, traj.getBondCutoffsSQ());
+  DistributionFunctions dists(cell, 5.0, traj.getBondCutoffsSQ());
 
   // 1. Verify calculated Ashcroft weights
-  const auto &weights = df.getAshcroftWeights();
+  const auto &weights = dists.getAshcroftWeights();
   double const expected_w_ArAr = 0.75 * 0.75;        // 0.5625
   double const expected_w_XeXe = 0.25 * 0.25;        // 0.0625
   double const expected_w_ArXe = 2.0 * 0.75 * 0.25;  // 0.375 (doubled!)
@@ -312,9 +312,9 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
   EXPECT_NEAR(weights.at("Ar-Xe"), expected_w_ArXe, 1e-6);
 
   // 2. Verify RDF total is the sum of weighted partials
-  df.calculateRDF(5.0, 0.1);
-  const auto &g_r = df.getHistogram("g_r");
-  const auto &G_r = df.getHistogram("G_r");
+  dists.calculateRDF(5.0, 0.1);
+  const auto &g_r = dists.getHistogram("g_r");
+  const auto &G_r = dists.getHistogram("G_r");
 
   const auto &g_ArAr = g_r.partials.at("Ar-Ar");
   const auto &g_XeXe = g_r.partials.at("Xe-Xe");

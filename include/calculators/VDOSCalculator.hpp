@@ -27,7 +27,7 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(correlation::analysis::DistributionFunctions &df, const correlation::core::Trajectory &traj,
+  void calculateTrajectory(correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
                            const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**

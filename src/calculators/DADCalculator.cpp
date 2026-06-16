@@ -19,9 +19,9 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<DADCalculator>());
 } // namespace
 
-void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  df.addHistogram("DAD", calculate(df.cell(), df.neighbors(), settings.dihedral_bin_width));
+  dists.addHistogram("DAD", calculate(dists.cell(), dists.neighbors(), settings.dihedral_bin_width));
 }
 
 correlation::analysis::Histogram DADCalculator::calculate(const correlation::core::Cell &cell,

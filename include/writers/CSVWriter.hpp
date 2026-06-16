@@ -31,9 +31,9 @@ public:
   std::string getName() const override { return "CSV"; }
   std::vector<std::string> getExtensions() const override { return {".csv"}; }
 
-  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
              bool smoothing) const override {
-    writeAllCSVs(base_path, df, smoothing);
+    writeAllCSVs(base_path, dists, smoothing);
   }
 
   /**
@@ -44,11 +44,11 @@ public:
    *
    * @param base_path The base name for the output files (e.g.,
    * "output/my_sample").
-   * @param df The DistributionFunctions object containing the data.
+   * @param dists The DistributionFunctions object containing the data.
    * @param write_smoothed If true, also writes smoothed data to separate files
    * (e.g., "base_path_g_smoothed.csv").
    */
-  void writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+  void writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
                     bool write_smoothed = false) const;
 
 private:

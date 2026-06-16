@@ -54,10 +54,10 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
 
   updateTrajectory(water);
-  DistributionFunctions df(water, 2.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(water, 2.0, trajectory_.getBondCutoffsSQ());
 
-  df.calculatePAD(0.001);
-  const auto &hist = df.getHistogram("BAD");
+  dists.calculatePAD(0.001);
+  const auto &hist = dists.getHistogram("BAD");
   const auto &hoh = hist.partials.at("H-O-H");
 
   auto max_it = std::max_element(hoh.begin(), hoh.end());
@@ -263,19 +263,19 @@ TEST_F(PADTests, EmptyCellThrows) {
   // Current implementation throws explicitly if atoms are empty in
   // calculateAshcroftWeights or implicitly via other checks.
   updateTrajectory();
-  EXPECT_THROW({ DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ()); }, std::invalid_argument);
+  EXPECT_THROW({ DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ()); }, std::invalid_argument);
 }
 
 TEST_F(PADTests, SingleAtomNoAngles) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  df.calculatePAD(1.0);
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculatePAD(1.0);
   // Might have partials created but empty, or just no "BAD" if logic
   // handles it. Actually implementation might create partials if atoms exist
   // but no angles found. Let's check total counts.
-  if (df.getAllHistograms().contains("BAD") != 0u) {
-    const auto &hist = df.getHistogram("BAD");
+  if (dists.getAllHistograms().contains("BAD") != 0u) {
+    const auto &hist = dists.getHistogram("BAD");
     if (!hist.partials.empty()) {
       if (hist.partials.contains("Total") != 0u) {
         EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
@@ -312,11 +312,11 @@ TEST_F(PADTests, LinearGeometry180) {
   EXPECT_EQ(neighborGraph.getNeighbors(1).size(), 2) << "Si should have 2 neighbors (O atoms)";
 
   // Bond length 1.0. Cutoff needs to be > 1.0
-  DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
   // Fine binning for accuracy
-  df.calculatePAD(0.001);
+  dists.calculatePAD(0.001);
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
   // Should have O-Si-O peak at 180
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
   const auto &partial = hist.partials.at("O-Si-O");
@@ -352,10 +352,10 @@ TEST_F(PADTests, RightAngle90) {
   cell_.addAtom("O", {11.0, 10.0, 10.0});
   updateTrajectory();
 
-  DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  df.calculatePAD(0.001);
+  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  dists.calculatePAD(0.001);
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
   ASSERT_EQ(hist.partials.count("O-Si-O"), 1);
 
   // Find peak
@@ -382,10 +382,10 @@ TEST_F(PADTests, EquilateralTriangle60) {
   cell_.addAtom("O", {10.5, 10.0 + std::numbers::sqrt3 / 2.0, 10.0});
   updateTrajectory();
 
-  DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  df.calculatePAD(1.0);
+  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  dists.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
   // Should have O-Si-O
   const auto &partial = hist.partials.at("O-Si-O");
 
@@ -415,11 +415,11 @@ TEST_F(PADTests, TetrahedralAngle) {
   cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
   updateTrajectory();
 
-  DistributionFunctions df(cell_, 1.5,
+  DistributionFunctions dists(cell_, 1.5,
                            trajectory_.getBondCutoffsSQ()); // Distance is 1.0
-  df.calculatePAD(0.001);                                   // Hyperfine bins
+  dists.calculatePAD(0.001);                                   // Hyperfine bins
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
   const auto &partial = hist.partials.at("O-Si-O");
 
   // Expected ~109.471
@@ -442,10 +442,10 @@ TEST_F(PADTests, SymmetryAndSorting) {
   cell_.addAtom("N", {10.0, 11.0, 10.0}); // 90 degrees
   updateTrajectory();
 
-  DistributionFunctions df(cell_, 1.5, trajectory_.getBondCutoffsSQ());
-  df.calculatePAD(1.0);
+  DistributionFunctions dists(cell_, 1.5, trajectory_.getBondCutoffsSQ());
+  dists.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
 
   // Check if we have O-Si-N or N-Si-O
   bool found = false;
@@ -481,10 +481,10 @@ TEST_F(PADTests, FullNormalizationCheck) {
   int const id_O = cell_.findElement("O")->id.value;
   cutoffs[id_O][id_O] = 1.44;
 
-  DistributionFunctions df(cell_, 1.5, cutoffs);
-  df.calculatePAD(1.0);
+  DistributionFunctions dists(cell_, 1.5, cutoffs);
+  dists.calculatePAD(1.0);
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
 
   double sum_partial = 0;
   double sum_total = 0;
@@ -521,10 +521,10 @@ TEST_F(PADTests, IcosahedronAnglesPAD) {
   }
   updateTrajectory();
 
-  DistributionFunctions df(cell_, 2.5, trajectory_.getBondCutoffsSQ());
-  df.calculatePAD(0.01);
+  DistributionFunctions dists(cell_, 2.5, trajectory_.getBondCutoffsSQ());
+  dists.calculatePAD(0.01);
 
-  const auto &hist = df.getHistogram("BAD");
+  const auto &hist = dists.getHistogram("BAD");
   ASSERT_EQ(hist.partials.count("Si-Si-Si"), 1);
   const auto &partial = hist.partials.at("Si-Si-Si");
 

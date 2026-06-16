@@ -18,7 +18,7 @@
 
 namespace correlation::calculators {
 
-void AngleCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void AngleCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                      const correlation::analysis::AnalysisSettings &settings) const {
   // AngleCalculator is a foundational calculator. It is currently
   // called by StructureAnalyzer during its construction.

@@ -28,17 +28,17 @@ TEST(ClusterCalculatorTests, BasicClustering) {
   // Cluster 3: 1 atom
   cell.addAtom("Ar", {15.0, 15.0, 15.0});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   AnalysisSettings const settings;
 
   double const cutoff = 1.5;
   StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
-  df.setStructureAnalyzer(&analyzer);
+  dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;
-  calc.calculateFrame(df, settings);
+  calc.calculateFrame(dists, settings);
 
-  const auto &hist = df.getHistogram("Cluster Size");
+  const auto &hist = dists.getHistogram("Cluster Size");
   // Max size is 3, so bins should be [1, 2, 3]
   ASSERT_EQ(hist.bins.size(), 3);
   EXPECT_DOUBLE_EQ(hist.bins[0], 1.0);
@@ -63,17 +63,17 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
     cell.addAtom("C", {static_cast<double>(i) * 1.0 + 0.5, 5.0, 5.0});
   }
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   AnalysisSettings const settings;
 
   double const cutoff = 1.5;
   StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
-  df.setStructureAnalyzer(&analyzer);
+  dists.setStructureAnalyzer(&analyzer);
 
   ClusterCalculator const calc;
-  calc.calculateFrame(df, settings);
+  calc.calculateFrame(dists, settings);
 
-  const auto &hist = df.getHistogram("Cluster Size");
+  const auto &hist = dists.getHistogram("Cluster Size");
   EXPECT_EQ(hist.bins.size(), 10);
   const auto &total = hist.partials.at("Total");
 
@@ -86,5 +86,5 @@ TEST(ClusterCalculatorTests, SingleGiantCluster) {
 TEST(ClusterCalculatorTests, EmptyCell) {
   correlation::core::Cell cell;
   cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  EXPECT_THROW(DistributionFunctions df(cell), std::invalid_argument);
+  EXPECT_THROW(DistributionFunctions dists(cell), std::invalid_argument);
 }

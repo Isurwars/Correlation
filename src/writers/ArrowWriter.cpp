@@ -26,9 +26,9 @@ namespace correlation::writers {
 // Automatic registration
 static bool registered = WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
-void ArrowWriter::writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+void ArrowWriter::writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
                                   bool /*write_smoothed*/) const {
-  for (const auto &[name, hist] : df.getAllHistograms()) {
+  for (const auto &[name, hist] : dists.getAllHistograms()) {
     try {
       if (hist.partials.empty() || hist.bins.empty() || hist.file_suffix.empty()) {
         continue;

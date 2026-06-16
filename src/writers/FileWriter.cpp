@@ -13,7 +13,7 @@
 
 namespace correlation::writers {
 
-FileWriter::FileWriter(const correlation::analysis::DistributionFunctions &df) : df_(df) {}
+FileWriter::FileWriter(const correlation::analysis::DistributionFunctions &dists) : df_(dists) {}
 
 void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5, bool use_parquet,
                        bool smoothing) const {

@@ -64,20 +64,20 @@ public:
    * @brief Calculate per-frame properties.
    *        Called concurrently on different DistributionFunctions objects.
    *        Must be thread-safe (const).
-   * @param df The DistributionFunctions object to store the results.
+   * @param dists The DistributionFunctions object to store the results.
    * @param settings The analysis settings and parameters.
    */
-  virtual void calculateFrame(correlation::analysis::DistributionFunctions &df,
+  virtual void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                               const correlation::analysis::AnalysisSettings &settings) const {}
 
   /**
    * @brief Calculate multi-frame properties or post-processing.
    *        Called once after all frames are accumulated.
-   * @param df The DistributionFunctions container to store trajectory-wide results.
+   * @param dists The DistributionFunctions container to store trajectory-wide results.
    * @param traj The complete trajectory data.
    * @param settings The analysis settings and parameters.
    */
-  virtual void calculateTrajectory(correlation::analysis::DistributionFunctions &df,
+  virtual void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::core::Trajectory &traj,
                                    const correlation::analysis::AnalysisSettings &settings) const {}
 };

@@ -37,10 +37,10 @@ public:
   /**
    * @brief Writes the distribution function data to file(s).
    * @param base_path The base name for the output files.
-   * @param df The DistributionFunctions object containing the data.
+   * @param dists The DistributionFunctions object containing the data.
    * @param smoothing Whether to include smoothed data.
    */
-  virtual void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+  virtual void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
                      bool smoothing) const = 0;
 };
 

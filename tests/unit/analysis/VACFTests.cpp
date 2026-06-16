@@ -27,11 +27,11 @@ TEST_F(VACFTests, CalculateVACF_and_VDOS) {
   t.addFrame(c); // Static
   t.calculateVelocities();
 
-  DistributionFunctions df(c, 0.0, {{0.0}});
+  DistributionFunctions dists(c, 0.0, {{0.0}});
 
-  df.calculateVACF(t, correlation::analysis::MaxFrames{1});
-  EXPECT_NO_THROW(df.getHistogram("VACF"));
-  const auto &vacf = df.getHistogram("VACF").partials.at("Total");
+  dists.calculateVACF(t, correlation::analysis::MaxFrames{1});
+  EXPECT_NO_THROW(dists.getHistogram("VACF"));
+  const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
   // Should be 1.0 normalized (if constant 0 velocity? Wait 0 velocity -> ??)
   // If static, position constant -> velocity 0. Correlation of 0 with 0 is 0.
   // Let's give it velocity.
@@ -62,15 +62,15 @@ TEST_F(VACFTests, CalculateVACF_and_VDOS) {
   tMoving.setTimeStep(1.0);
   tMoving.calculateVelocities();
 
-  df.calculateVACF(tMoving, correlation::analysis::MaxFrames{1});
-  const auto &vacf2 = df.getHistogram("Normalized VACF").partials.at("Total");
+  dists.calculateVACF(tMoving, correlation::analysis::MaxFrames{1});
+  const auto &vacf2 = dists.getHistogram("Normalized VACF").partials.at("Total");
   EXPECT_NEAR(vacf2[0], 1.0, 1e-6); // t=0
   EXPECT_NEAR(vacf2[1], 1.0, 1e-6); // t=1, const velocity
 
   // VDOS
-  df.calculateVDOS();
-  EXPECT_NO_THROW(df.getHistogram("VDOS"));
-  const auto &vdos_hist = df.getHistogram("VDOS");
+  dists.calculateVDOS();
+  EXPECT_NO_THROW(dists.getHistogram("VDOS"));
+  const auto &vdos_hist = dists.getHistogram("VDOS");
   EXPECT_TRUE(vdos_hist.partials.count("Frequency_cm_1"));
 }
 
@@ -90,14 +90,14 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
   correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
-  DistributionFunctions df(base_cell, 0.0, {{0.0}});
+  DistributionFunctions dists(base_cell, 0.0, {{0.0}});
 
   // Restrict VACF to frames 2 through 7 (5 frames total)
-  df.calculateVACF(tRange, correlation::analysis::MaxFrames{3}, correlation::analysis::StartFrame{2},
+  dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3}, correlation::analysis::StartFrame{2},
                    correlation::analysis::EndFrame{7});
 
-  EXPECT_NO_THROW(df.getHistogram("VACF"));
-  const auto &vacf = df.getHistogram("VACF").partials.at("Total");
+  EXPECT_NO_THROW(dists.getHistogram("VACF"));
+  const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
 
   // Since we requested max correlation frames = 3, size should be 4 (includes
   // lag 0)
@@ -140,12 +140,12 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   correlation::core::Cell base_cell({10, 10, 10, 90, 90, 90});
   base_cell.addAtom("Ar", {0, 0, 0});
   base_cell.addAtom("Ar", {0, 0, 0});
-  DistributionFunctions df(base_cell, 0.0, {{0.0}});
+  DistributionFunctions dists(base_cell, 0.0, {{0.0}});
 
-  df.calculateVACF(tGas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
-  EXPECT_NO_THROW(df.getHistogram("Normalized VACF"));
+  dists.calculateVACF(tGas, correlation::analysis::MaxFrames{4}); // Calculate up to 4 lags
+  EXPECT_NO_THROW(dists.getHistogram("Normalized VACF"));
 
-  const auto &vacf = df.getHistogram("Normalized VACF").partials.at("Total");
+  const auto &vacf = dists.getHistogram("Normalized VACF").partials.at("Total");
 
   // Since velocities strictly decrease, the normalized VACF should strictly
   // decrease but remain positive (gas-like monotonic decay).
@@ -173,25 +173,25 @@ TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
 TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
   correlation::core::Cell c({10, 10, 10, 90, 90, 90});
   c.addAtom("Ar", {0.0, 0.0, 0.0});
-  DistributionFunctions df(c, 0.0, {{0.0}});
+  DistributionFunctions dists(c, 0.0, {{0.0}});
 
   // Verify initial state is 0.0
-  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientMSD(), 0.0);
-  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientVACF(), 0.0);
-  EXPECT_DOUBLE_EQ(df.getRelaxationTime(), 0.0);
-  EXPECT_DOUBLE_EQ(df.getDeborahNumber(), 0.0);
+  EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientMSD(), 0.0);
+  EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientVACF(), 0.0);
+  EXPECT_DOUBLE_EQ(dists.getRelaxationTime(), 0.0);
+  EXPECT_DOUBLE_EQ(dists.getDeborahNumber(), 0.0);
 
   // Set values
-  df.setDiffusionCoefficientMSD(1.23);
-  df.setDiffusionCoefficientVACF(4.56);
-  df.setRelaxationTime(7.89);
-  df.setDeborahNumber(0.12);
+  dists.setDiffusionCoefficientMSD(1.23);
+  dists.setDiffusionCoefficientVACF(4.56);
+  dists.setRelaxationTime(7.89);
+  dists.setDeborahNumber(0.12);
 
   // Verify updated values
-  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientMSD(), 1.23);
-  EXPECT_DOUBLE_EQ(df.getDiffusionCoefficientVACF(), 4.56);
-  EXPECT_DOUBLE_EQ(df.getRelaxationTime(), 7.89);
-  EXPECT_DOUBLE_EQ(df.getDeborahNumber(), 0.12);
+  EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientMSD(), 1.23);
+  EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientVACF(), 4.56);
+  EXPECT_DOUBLE_EQ(dists.getRelaxationTime(), 7.89);
+  EXPECT_DOUBLE_EQ(dists.getDeborahNumber(), 0.12);
 }
 
 TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
@@ -227,28 +227,28 @@ TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
 TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
   correlation::core::Cell c({10, 10, 10, 90, 90, 90});
   c.addAtom("Ar", {0.0, 0.0, 0.0});
-  DistributionFunctions df(c, 0.0, {{0.0}});
+  DistributionFunctions dists(c, 0.0, {{0.0}});
 
   // calculateRDF guards
-  EXPECT_THROW(df.calculateRDF(-5.0, 0.05), std::invalid_argument);
-  EXPECT_THROW(df.calculateRDF(20.0, -0.05), std::invalid_argument);
-  EXPECT_THROW(df.calculateRDF(0.0, 0.05), std::invalid_argument);
-  EXPECT_THROW(df.calculateRDF(20.0, 0.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF(-5.0, 0.05), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF(20.0, -0.05), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF(0.0, 0.05), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF(20.0, 0.0), std::invalid_argument);
 
   // calculatePAD guards
-  EXPECT_THROW(df.calculatePAD(-1.0), std::invalid_argument);
-  EXPECT_THROW(df.calculatePAD(0.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculatePAD(-1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculatePAD(0.0), std::invalid_argument);
 
   // calculateDAD guards
-  EXPECT_THROW(df.calculateDAD(-1.0), std::invalid_argument);
-  EXPECT_THROW(df.calculateDAD(0.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateDAD(-1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateDAD(0.0), std::invalid_argument);
 
   // calculateXRD guards
-  EXPECT_THROW(df.calculateXRD(-1.0, 5.0, 90.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(df.calculateXRD(1.54, -5.0, 90.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(df.calculateXRD(1.54, 5.0, -90.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(df.calculateXRD(1.54, 90.0, 5.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(df.calculateXRD(1.54, 5.0, 90.0, -1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(-1.0, 5.0, 90.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(1.54, -5.0, 90.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(1.54, 5.0, -90.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(1.54, 90.0, 5.0, 1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(1.54, 5.0, 90.0, -1.0), std::invalid_argument);
 }
 
 } // namespace correlation::analysis

@@ -38,11 +38,11 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, int type1,
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<RDFCalculator>());
 } // namespace
 
-void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  auto results = calculate(df.cell(), df.neighbors(), df.getAshcroftWeights(), settings.r_max, settings.r_bin_width);
+  auto results = calculate(dists.cell(), dists.neighbors(), dists.getAshcroftWeights(), settings.r_max, settings.r_bin_width);
   for (auto &[name, histogram] : results) {
-    df.addHistogram(name, std::move(histogram));
+    dists.addHistogram(name, std::move(histogram));
   }
 }
 

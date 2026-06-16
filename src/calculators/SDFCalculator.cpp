@@ -18,10 +18,10 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<SDFCalculator>());
 } // namespace
 
-void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
 
-  const auto &cell = df.cell();
+  const auto &cell = dists.cell();
   // SDF is a 3D grid and requires a coarser resolution than 1D radial distributions.
   // We enforce a minimum grid spacing of 0.5 Å to prevent memory explosion.
   const double dx = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
@@ -97,7 +97,7 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     sdf_hist.partials["Total"].assign(total_bins, 0.0);
   }
 
-  df.addHistogram("SDF", std::move(sdf_hist));
+  dists.addHistogram("SDF", std::move(sdf_hist));
 }
 
 } // namespace correlation::calculators

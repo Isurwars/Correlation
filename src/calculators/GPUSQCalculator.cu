@@ -78,13 +78,13 @@ GPUSQCalculator::GPUSQCalculator() {
 // calculateFrame — GPU path or CPU fallback.
 // -------------------------------------------------------------------------
 void GPUSQCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &df,
+    correlation::analysis::DistributionFunctions &dists,
     const correlation::analysis::AnalysisSettings &settings) const {
 
   // ---------- CPU fallback ----------
   if (!has_gpu_) {
     StructureFactorCalculator cpu_calc;
-    cpu_calc.calculateFrame(df, settings);
+    cpu_calc.calculateFrame(dists, settings);
     return;
   }
 
@@ -93,7 +93,7 @@ void GPUSQCalculator::calculateFrame(
     throw std::invalid_argument("Q-space parameters must be positive.");
   }
 
-  const auto &cell = df.cell();
+  const auto &cell = dists.cell();
   const auto &atoms = cell.atoms();
   const size_t N = atoms.size();
   if (N == 0)
@@ -241,7 +241,7 @@ void GPUSQCalculator::calculateFrame(
     s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
   s_q_hist.partials["Total"] = std::move(total_sq);
 
-  df.addHistogram("S_q_gpu", std::move(s_q_hist));
+  dists.addHistogram("S_q_gpu", std::move(s_q_hist));
 }
 
 } // namespace correlation::calculators

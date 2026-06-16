@@ -17,14 +17,14 @@
 
 namespace correlation::calculators {
 
-void DistanceCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void DistanceCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                         const correlation::analysis::AnalysisSettings &settings) const {
   // DistanceCalculator is a foundational calculator. In the current
-  // architecture, it's called by StructureAnalyzer, which df already has.
+  // architecture, it's called by StructureAnalyzer, which dists already has.
   // We provide this implementation for completeness within the BaseCalculator
   // framework.
   // Note: Since StructureAnalyzer already runs this in its constructor,
-  // calling it again here might be redundant if df.neighbors() is already
+  // calling it again here might be redundant if dists.neighbors() is already
   // populated.
 }
 

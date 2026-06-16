@@ -213,24 +213,24 @@ void init_analysis(py::module_ &m) {
       // Accessors
       .def(
           "get_histogram",
-          [](const DistributionFunctions &df, const std::string &name) -> const Histogram & {
-            return df.getHistogram(name);
+          [](const DistributionFunctions &dists, const std::string &name) -> const Histogram & {
+            return dists.getHistogram(name);
           },
           py::arg("name"), py::return_value_policy::reference_internal,
           "Return the Histogram for the given key (e.g. 'g(r)', 'S(Q)').\n"
           "Raises KeyError if the histogram has not been calculated.")
       .def(
           "get_all_histograms",
-          [](const DistributionFunctions &df) -> const std::map<std::string, Histogram> & {
-            return df.getAllHistograms();
+          [](const DistributionFunctions &dists) -> const std::map<std::string, Histogram> & {
+            return dists.getAllHistograms();
           },
           py::return_value_policy::reference_internal, "Return a dict of all calculated histograms.")
       .def("get_available_histograms", &DistributionFunctions::getAvailableHistograms,
            "Return a list of names for all currently available histograms.")
       .def(
           "get_ashcroft_weights",
-          [](const DistributionFunctions &df) -> const std::map<std::string, double> & {
-            return df.getAshcroftWeights();
+          [](const DistributionFunctions &dists) -> const std::map<std::string, double> & {
+            return dists.getAshcroftWeights();
           },
           py::return_value_policy::reference_internal, "Return the Ashcroft-Langreth weights used for S(Q) partials.")
       .def("get_diffusion_coefficient_msd", &DistributionFunctions::getDiffusionCoefficientMSD,
@@ -255,9 +255,9 @@ void init_analysis(py::module_ &m) {
            "bin_width : float\n    Angular bin width (°). Default 1.0.")
       .def(
           "calculate_vacf",
-          [](DistributionFunctions &df, const Trajectory &traj, int max_correlation_frames, size_t start_frame,
+          [](DistributionFunctions &dists, const Trajectory &traj, int max_correlation_frames, size_t start_frame,
              size_t end_frame) {
-            df.calculateVACF(traj, MaxFrames{max_correlation_frames}, StartFrame{start_frame}, EndFrame{end_frame});
+            dists.calculateVACF(traj, MaxFrames{max_correlation_frames}, StartFrame{start_frame}, EndFrame{end_frame});
           },
           py::arg("traj"), py::arg("max_correlation_frames") = -1, py::arg("start_frame") = 0,
           py::arg("end_frame") = static_cast<size_t>(-1),
@@ -285,8 +285,8 @@ void init_analysis(py::module_ &m) {
       // Smoothing
       .def(
           "smooth",
-          [](DistributionFunctions &df, const std::string &name, double sigma, KernelType kernel) {
-            df.smooth(name, sigma, kernel);
+          [](DistributionFunctions &dists, const std::string &name, double sigma, KernelType kernel) {
+            dists.smooth(name, sigma, kernel);
           },
           py::arg("name"), py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
           "Smooth a specific histogram.\n\n"
@@ -295,7 +295,7 @@ void init_analysis(py::module_ &m) {
           "sigma : float\n    Kernel bandwidth.\n"
           "kernel : KernelType\n    Smoothing kernel. Default Gaussian.")
       .def(
-          "smooth_all", [](DistributionFunctions &df, double sigma, KernelType kernel) { df.smoothAll(sigma, kernel); },
+          "smooth_all", [](DistributionFunctions &dists, double sigma, KernelType kernel) { dists.smoothAll(sigma, kernel); },
           py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
           "Smooth all available histograms.\n\n"
           "sigma : float\n    Kernel bandwidth.\n"

@@ -74,11 +74,11 @@ double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2, in
   return phase1 * delta * comp * sum;
 }
 
-void SteinhardtCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void SteinhardtCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                           const correlation::analysis::AnalysisSettings & /*settings*/) const {
-  auto histograms = calculate(df.cell(), df.neighbors());
+  auto histograms = calculate(dists.cell(), dists.neighbors());
   for (auto &[name, hist] : histograms) {
-    df.addHistogram(name, std::move(hist));
+    dists.addHistogram(name, std::move(hist));
   }
 }
 

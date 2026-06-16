@@ -25,10 +25,10 @@ class FileWriter {
 public:
   /**
    * @brief Constructs a FileWriter linked to a DistributionFunctions object.
-   * @param df The DistributionFunctions object containing the data to be
+   * @param dists The DistributionFunctions object containing the data to be
    * written.
    */
-  explicit FileWriter(const correlation::analysis::DistributionFunctions &df);
+  explicit FileWriter(const correlation::analysis::DistributionFunctions &dists);
 
   /**
    * @brief Writes the available histograms using specified formats.

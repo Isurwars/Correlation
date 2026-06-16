@@ -38,15 +38,15 @@ void init_writers(py::module_ &m) {
       .def("get_extensions", &BaseWriter::getExtensions, "List of supported file extensions (e.g. ['.csv']).")
       .def(
           "write",
-          [](const BaseWriter &w, const std::string &base_path, const DistributionFunctions &df, bool smoothing) {
-            w.write(base_path, df, smoothing);
+          [](const BaseWriter &w, const std::string &base_path, const DistributionFunctions &dists, bool smoothing) {
+            w.write(base_path, dists, smoothing);
           },
-          py::arg("base_path"), py::arg("df"), py::arg("smoothing") = false,
+          py::arg("base_path"), py::arg("dists"), py::arg("smoothing") = false,
           "Write distribution function data to file(s).\n\n"
           "Parameters\n----------\n"
           "base_path : str\n"
           "    Base name for output files (without extension).\n"
-          "df : DistributionFunctions\n"
+          "dists : DistributionFunctions\n"
           "    The analysis results to write.\n"
           "smoothing : bool, optional\n"
           "    If True, also write smoothed data. Default is False.");
@@ -61,10 +61,10 @@ void init_writers(py::module_ &m) {
       .def(py::init<>())
       .def(
           "write_all_csvs",
-          [](const CSVWriter &w, const std::string &base_path, const DistributionFunctions &df, bool write_smoothed) {
-            w.writeAllCSVs(base_path, df, write_smoothed);
+          [](const CSVWriter &w, const std::string &base_path, const DistributionFunctions &dists, bool write_smoothed) {
+            w.writeAllCSVs(base_path, dists, write_smoothed);
           },
-          py::arg("base_path"), py::arg("df"), py::arg("write_smoothed") = false,
+          py::arg("base_path"), py::arg("dists"), py::arg("write_smoothed") = false,
           "Write all available histograms to individual CSV files.");
 
   // ------------------------------------------------------------------
@@ -114,16 +114,16 @@ void init_writers(py::module_ &m) {
   // ------------------------------------------------------------------
   m.def(
       "write_csv",
-      [](const std::string &base_path, const DistributionFunctions &df, bool write_smoothed) {
+      [](const std::string &base_path, const DistributionFunctions &dists, bool write_smoothed) {
         CSVWriter w;
-        w.writeAllCSVs(base_path, df, write_smoothed);
+        w.writeAllCSVs(base_path, dists, write_smoothed);
       },
-      py::arg("base_path"), py::arg("df"), py::arg("write_smoothed") = false,
-      "Convenience function: write all histograms in *df* to CSV files.\n\n"
+      py::arg("base_path"), py::arg("dists"), py::arg("write_smoothed") = false,
+      "Convenience function: write all histograms in *dists* to CSV files.\n\n"
       "Parameters\n----------\n"
       "base_path : str\n"
       "    Base name for output files (e.g. 'output/sample').\n"
-      "df : DistributionFunctions\n"
+      "dists : DistributionFunctions\n"
       "    The analysis results to export.\n"
       "write_smoothed : bool, optional\n"
       "    If True, also write smoothed data files. Default is False.");

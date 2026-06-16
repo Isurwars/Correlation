@@ -19,12 +19,12 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<RDCalculator>());
 } // namespace
 
-void RDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void RDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                   const correlation::analysis::AnalysisSettings &settings) const {
-  if (df.neighbors() == nullptr) {
+  if (dists.neighbors() == nullptr) {
     return;
   }
-  df.addHistogram("RD", calculate(df.neighbors()->neighborGraph(), settings.max_ring_size));
+  dists.addHistogram("RD", calculate(dists.neighbors()->neighborGraph(), settings.max_ring_size));
 }
 
 correlation::analysis::Histogram RDCalculator::calculate(const correlation::core::NeighborGraph &graph,

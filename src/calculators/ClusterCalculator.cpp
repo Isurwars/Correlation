@@ -62,9 +62,9 @@ private:
 
 } // namespace
 
-void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                        const correlation::analysis::AnalysisSettings & /*settings*/) const {
-  const auto *analyzer = df.neighbors();
+  const auto *analyzer = dists.neighbors();
   if (analyzer == nullptr) {
     return;
 }
@@ -129,7 +129,7 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   }
 
   // Add the result safely to the distribution functions manager
-  df.addHistogram("Cluster Size", std::move(hist));
+  dists.addHistogram("Cluster Size", std::move(hist));
 }
 
 } // namespace correlation::calculators

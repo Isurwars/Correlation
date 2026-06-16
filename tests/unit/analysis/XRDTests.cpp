@@ -35,16 +35,16 @@ protected:
 
 TEST_F(XRDTests, CalculateXRD) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Needs RDF first
-  df.calculateRDF(5.0, 0.05);
+  dists.calculateRDF(5.0, 0.05);
 
   // Calling calculateXRD
-  df.calculateXRD(1.5406, 5.0, 90.0, 0.5);
+  dists.calculateXRD(1.5406, 5.0, 90.0, 0.5);
 
-  EXPECT_NO_THROW(df.getHistogram("XRD"));
-  const auto &hist = df.getHistogram("XRD");
+  EXPECT_NO_THROW(dists.getHistogram("XRD"));
+  const auto &hist = dists.getHistogram("XRD");
   EXPECT_FALSE(hist.bins.empty());
 
   // Check bins range
@@ -54,35 +54,35 @@ TEST_F(XRDTests, CalculateXRD) {
 
 TEST_F(XRDTests, CalculateXRD_ThrowsIfNoRDF) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Calling calculateXRD before calculateRDF should throw
-  EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, 0.5), std::logic_error);
+  EXPECT_THROW(dists.calculateXRD(1.5406, 5.0, 90.0, 0.5), std::logic_error);
 }
 
 TEST_F(XRDTests, CalculateXRD_InvalidBinWidth) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
-  df.calculateRDF(5.0, 0.05);
+  dists.calculateRDF(5.0, 0.05);
 
   // Calling calculateXRD with invalid bin width should throw
-  EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, 0.0), std::invalid_argument);
-  EXPECT_THROW(df.calculateXRD(1.5406, 5.0, 90.0, -0.5), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(1.5406, 5.0, 90.0, 0.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(1.5406, 5.0, 90.0, -0.5), std::invalid_argument);
 }
 
 TEST_F(XRDTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Needs RDF first
-  df.calculateRDF(5.0, 0.05);
+  dists.calculateRDF(5.0, 0.05);
 
   // Calling calculateXRD with range starting at 0.0
-  df.calculateXRD(1.5406, 0.0, 10.0, 0.5);
+  dists.calculateXRD(1.5406, 0.0, 10.0, 0.5);
 
-  EXPECT_NO_THROW(df.getHistogram("XRD"));
-  const auto &hist = df.getHistogram("XRD");
+  EXPECT_NO_THROW(dists.getHistogram("XRD"));
+  const auto &hist = dists.getHistogram("XRD");
   const auto &intensities = hist.partials.at("Total");
 
   // Since Q(theta=0) = 0, Q < 1e-6 will branch and intensity should be exactly
@@ -106,14 +106,14 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
   traj.addFrame(cubic_cell);
   traj.precomputeBondCutoffs();
 
-  DistributionFunctions df(cubic_cell, 4.5, traj.getBondCutoffsSQ());
-  df.calculateRDF(4.5, 0.05);
+  DistributionFunctions dists(cubic_cell, 4.5, traj.getBondCutoffsSQ());
+  dists.calculateRDF(4.5, 0.05);
 
   // Calculate XRD for Cu K-alpha
-  df.calculateXRD(1.5406, 10.0, 90.0, 0.1);
+  dists.calculateXRD(1.5406, 10.0, 90.0, 0.1);
 
-  EXPECT_NO_THROW(df.getHistogram("XRD"));
-  const auto &hist = df.getHistogram("XRD");
+  EXPECT_NO_THROW(dists.getHistogram("XRD"));
+  const auto &hist = dists.getHistogram("XRD");
   EXPECT_FALSE(hist.bins.empty());
 
   const auto &total_intensity = hist.partials.at("Total");
@@ -139,11 +139,11 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
 
 TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
   updateTrajectory();
-  DistributionFunctions df(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  df.calculateRDF(5.0, 0.05);
+  DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF(5.0, 0.05);
 
-  EXPECT_THROW(df.calculateXRD(0.0, 5.0, 90.0, 0.5), std::invalid_argument);
-  EXPECT_THROW(df.calculateXRD(-1.0, 5.0, 90.0, 0.5), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(0.0, 5.0, 90.0, 0.5), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD(-1.0, 5.0, 90.0, 0.5), std::invalid_argument);
 
   Histogram empty_gr;
   EXPECT_THROW(correlation::calculators::XRDCalculator::calculate(empty_gr, cell_, {}, 1.5406, 5.0, 90.0, 0.5),

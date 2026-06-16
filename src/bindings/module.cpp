@@ -29,12 +29,12 @@ PYBIND11_MODULE(_correlation, m) {
             "    import correlation\n\n"
             "    traj = correlation.read('my_sim.lammps')\n"
             "    cell = traj.frames[0]\n\n"
-            "    df = correlation.DistributionFunctions(cell, cutoff=6.0)\n"
-            "    df.calculate_rdf(r_max=15.0, bin_width=0.02)\n"
-            "    df.smooth_all(sigma=0.05)\n\n"
-            "    hist = df.get_histogram('g(r)')\n"
+            "    dists = correlation.DistributionFunctions(cell, cutoff=6.0)\n"
+            "    dists.calculate_rdf(r_max=15.0, bin_width=0.02)\n"
+            "    dists.smooth_all(sigma=0.05)\n\n"
+            "    hist = dists.get_histogram('g(r)')\n"
             "    print(hist.bins[:5], hist.partials['Total'][:5])\n\n"
-            "    correlation.write_csv('output/sample', df)\n";
+            "    correlation.write_csv('output/sample', dists)\n";
 
   init_math(m);
   init_core(m);

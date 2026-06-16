@@ -20,9 +20,9 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<PADCalculator>());
 } // namespace
 
-void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  df.addHistogram("BAD", calculate(df.cell(), df.neighbors(), settings.angle_bin_width));
+  dists.addHistogram("BAD", calculate(dists.cell(), dists.neighbors(), settings.angle_bin_width));
 }
 
 correlation::analysis::Histogram PADCalculator::calculate(const correlation::core::Cell &cell,

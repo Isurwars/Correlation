@@ -97,21 +97,21 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions df(si_cell, 20.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions dists(si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
   const double rdf_bin = 0.05;
   const double pad_bin = 1.0;
-  df.calculateRDF(20.0, rdf_bin);
-  df.calculatePAD(pad_bin);
-  df.smoothAll(0.1);
+  dists.calculateRDF(20.0, rdf_bin);
+  dists.calculatePAD(pad_bin);
+  dists.smoothAll(0.1);
 
-  correlation::writers::FileWriter const writer(df);
+  correlation::writers::FileWriter const writer(dists);
   writer.write("test_si", true, false, false, true);
 
   // Assert: Part 1 - Validate content of the calculated g_r histogram.
 
-  const auto &rdf_hist = df.getHistogram("g_r");
+  const auto &rdf_hist = dists.getHistogram("g_r");
   const auto &bins = rdf_hist.bins;
   const auto &si_si_rdf = rdf_hist.partials.at("Si-Si");
 
@@ -132,7 +132,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 
   // Assert: Part 2 - Validate content of the calculated BAD histogram.
 
-  const auto &pad_hist = df.getHistogram("BAD");
+  const auto &pad_hist = dists.getHistogram("BAD");
   const auto &pad_bins = pad_hist.bins;
   const auto &si_si_si_pad = pad_hist.partials.at("Si-Si-Si");
 
@@ -158,13 +158,13 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions df(si_cell, 5.0,
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0,
                                                   trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
-  df.calculateRDF(5.0, 0.1);
-  df.calculatePAD(2.0);
+  dists.calculateRDF(5.0, 0.1);
+  dists.calculatePAD(2.0);
 
-  correlation::writers::FileWriter writer(df);
+  correlation::writers::FileWriter writer(dists);
   writer.write("test_si", false, true, false, false);
 
   // Assert
@@ -255,10 +255,10 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   trajectory.precomputeBondCutoffs(); // Required for DistributionFunctions
   trajectory.calculateVelocities();
 
-  correlation::analysis::DistributionFunctions df(frame1, 5.0, trajectory.getBondCutoffsSQ());
-  df.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
+  correlation::analysis::DistributionFunctions dists(frame1, 5.0, trajectory.getBondCutoffsSQ());
+  dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
 
-  correlation::writers::FileWriter writer(df);
+  correlation::writers::FileWriter writer(dists);
   std::string base_filename = "test_vacf_new";
   writer.write(base_filename, false, true, false, false);
   std::string filename = base_filename + ".h5";
@@ -328,7 +328,7 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   } // Close file
 
   // Calculate and Check VDOS
-  df.calculateVDOS();
+  dists.calculateVDOS();
 
   std::string vdos_base = "test_vacf_vdos";
   writer.write(vdos_base, true, true, false, true);
@@ -381,12 +381,12 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions df(si_cell, 5.0, trajectory.getBondCutoffsSQ());
+  correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
 
-  df.calculateRDF(5.0, 0.1);
-  df.calculatePAD(2.0);
+  dists.calculateRDF(5.0, 0.1);
+  dists.calculatePAD(2.0);
 
-  correlation::writers::FileWriter writer(df);
+  correlation::writers::FileWriter writer(dists);
 
   // Act
   // write(base_path, use_csv, use_hdf5, use_parquet, smoothing)

@@ -19,14 +19,14 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<VDOSCalculator>());
 } // namespace
 
-void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &df,
+void VDOSCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                                          const correlation::core::Trajectory & /*traj*/,
                                          const correlation::analysis::AnalysisSettings & /*settings*/) const {
-  const auto &all = df.getAllHistograms();
+  const auto &all = dists.getAllHistograms();
   if (!all.contains("VACF")) {
     return; // VACF must be computed first
   }
-  df.addHistogram("VDOS", calculate(df.getHistogram("VACF")));
+  dists.addHistogram("VDOS", calculate(dists.getHistogram("VACF")));
 }
 
 correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist) {

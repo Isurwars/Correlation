@@ -26,12 +26,12 @@ namespace correlation::writers {
 // Automatic registration
 static bool registered = WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
 
-void HDF5Writer::writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &df) const {
+void HDF5Writer::writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &dists) const {
   try {
     HighFive::File file(filename, HighFive::File::ReadWrite | HighFive::File::Create | HighFive::File::Truncate);
 
     // Iterate over all calculated histograms and write them as HDF5 groups
-    for (const auto &[name, hist] : df.getAllHistograms()) {
+    for (const auto &[name, hist] : dists.getAllHistograms()) {
       if (hist.partials.empty() || hist.bins.empty()) {
         continue;
       }

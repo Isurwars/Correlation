@@ -16,12 +16,12 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<VACFCalculator>());
 } // namespace
 
-void VACFCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &df,
+void VACFCalculator::calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
                                          const correlation::core::Trajectory &traj,
                                          const correlation::analysis::AnalysisSettings & /*settings*/) const {
   auto results = calculate(traj, {-1}, {0}, {static_cast<size_t>(-1)});
   for (auto &[name, histogram] : results) {
-    df.addHistogram(name, std::move(histogram));
+    dists.addHistogram(name, std::move(histogram));
   }
 }
 

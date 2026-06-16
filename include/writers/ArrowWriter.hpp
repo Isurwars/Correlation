@@ -31,9 +31,9 @@ public:
   std::string getName() const override { return "Parquet"; }
   std::vector<std::string> getExtensions() const override { return {".parquet"}; }
 
-  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
              bool smoothing) const override {
-    writeAllParquet(base_path, df, smoothing);
+    writeAllParquet(base_path, dists, smoothing);
   }
 
   /**
@@ -45,10 +45,10 @@ public:
    *
    * @param base_path The base name for the output files (e.g.,
    * "output/my_sample").
-   * @param df The DistributionFunctions object containing the data.
+   * @param dists The DistributionFunctions object containing the data.
    * @param write_smoothed If true, also writes smoothed data columns.
    */
-  void writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+  void writeAllParquet(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
                        bool write_smoothed = false) const;
 
 private:

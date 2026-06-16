@@ -68,9 +68,9 @@ size_t findLongestChain(const std::vector<size_t> &common_neighbors, const std::
 }
 } // anonymous namespace
 
-void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings & /*settings*/) const {
-  df.addHistogram("CNA", calculate(df.cell(), df.neighbors()));
+  dists.addHistogram("CNA", calculate(dists.cell(), dists.neighbors()));
 }
 
 correlation::analysis::Histogram CNACalculator::calculate(const correlation::core::Cell &cell,

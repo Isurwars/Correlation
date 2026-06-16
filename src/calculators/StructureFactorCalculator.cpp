@@ -23,13 +23,13 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<StructureFactorCalculator>());
 } // namespace
 
-void StructureFactorCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void StructureFactorCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                                const correlation::analysis::AnalysisSettings &settings) const {
   if (settings.q_bin_width <= 0 || settings.q_max <= 0) {
     throw std::invalid_argument("Q-space parameters must be positive.");
   }
 
-  const correlation::core::Cell &cell = df.cell();
+  const correlation::core::Cell &cell = dists.cell();
   const auto &atoms = cell.atoms();
   const size_t N = atoms.size();
   if (N == 0) {
@@ -120,7 +120,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
     double weight;
   };
   std::vector<PartialInfo> partials_info;
-  const auto &ashcroft_weights = df.getAshcroftWeights();
+  const auto &ashcroft_weights = dists.getAshcroftWeights();
 
   // Build a flat array of per-type start offsets into the global xs/ys/zs.
   // We'll store positions contiguously: all of type0, then type1, etc.
@@ -321,7 +321,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   }
 
   s_q_hist.partials["Total"] = std::move(total_sq);
-  df.addHistogram("S_q", std::move(s_q_hist));
+  dists.addHistogram("S_q", std::move(s_q_hist));
 }
 
 } // namespace correlation::calculators

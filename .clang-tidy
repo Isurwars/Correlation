@@ -51,9 +51,9 @@ Checks: >
 
 # Only report diagnostics from our own source files, never from third-party
 # headers fetched via FetchContent (build/_deps/) or system includes.
-HeaderFilterRegex: '^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$'
+HeaderFilterRegex: "^(?!.*(build/_deps|build-fuzz/_deps|/usr/|/opt/)).*$"
 
-WarningsAsErrors: ''
+WarningsAsErrors: ""
 
 CheckOptions:
   - key:   cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor

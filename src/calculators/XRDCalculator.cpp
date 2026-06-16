@@ -23,12 +23,12 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<XRDCalculator>());
 } // namespace
 
-void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  if (df.getAllHistograms().find("g_r") == df.getAllHistograms().end()) {
+  if (dists.getAllHistograms().find("g_r") == dists.getAllHistograms().end()) {
     return; // g(r) hasn't been calculated yet
   }
-  df.addHistogram("XRD", calculate(df.getHistogram("g_r"), df.cell(), df.getAshcroftWeights(), 1.5406, 5.0, 90.0,
+  dists.addHistogram("XRD", calculate(dists.getHistogram("g_r"), dists.cell(), dists.getAshcroftWeights(), 1.5406, 5.0, 90.0,
                                    settings.q_bin_width));
 }
 

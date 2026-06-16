@@ -18,9 +18,9 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<CNCalculator>());
 } // namespace
 
-void CNCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void CNCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                   const correlation::analysis::AnalysisSettings &settings) const {
-  df.addHistogram("CN", calculate(df.cell(), df.neighbors()));
+  dists.addHistogram("CN", calculate(dists.cell(), dists.neighbors()));
 }
 
 correlation::analysis::Histogram CNCalculator::calculate(const correlation::core::Cell &cell,

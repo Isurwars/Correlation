@@ -29,15 +29,15 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
       for (int iz = 0; iz < 2; ++iz)
         cell.addAtom("Si", {ix * a, iy * a, iz * a});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.05;
 
-  calc.calculateFrame(df, settings);
+  calc.calculateFrame(dists, settings);
 
-  const auto &hist = df.getHistogram("S_q");
+  const auto &hist = dists.getHistogram("S_q");
   EXPECT_FALSE(hist.bins.empty());
   EXPECT_TRUE(hist.partials.count("Total"));
 
@@ -58,14 +58,14 @@ TEST_F(StructureFactorCalculatorTests, SingleAtomGivesOne) {
   correlation::core::Cell cell(std::array<double, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.1;
 
-  calc.calculateFrame(df, settings);
-  const auto &hist = df.getHistogram("S_q");
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
 
   ASSERT_FALSE(hist.bins.empty());
   for (size_t i = 0; i < hist.bins.size(); ++i) {
@@ -85,16 +85,16 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
   cell.addAtom("Ar", {6.5, 5.0, 5.0}); // Distance 1.5 Å
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 10.0;
   settings.q_bin_width = 0.1;
 
-  calc.calculateFrame(df, settings);
+  calc.calculateFrame(dists, settings);
 
-  EXPECT_NO_THROW(df.getHistogram("S_q"));
-  const auto &hist = df.getHistogram("S_q");
+  EXPECT_NO_THROW(dists.getHistogram("S_q"));
+  const auto &hist = dists.getHistogram("S_q");
   EXPECT_FALSE(hist.bins.empty());
   EXPECT_TRUE(hist.partials.count("Total"));
 
@@ -127,14 +127,14 @@ TEST_F(StructureFactorCalculatorTests, VerifiesPartialsExistForMulticomponent) {
   cell.addAtom("C", {0.0, 0.0, 0.0});
   cell.addAtom("O", {1.2, 0.0, 0.0});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 10.0;
   settings.q_bin_width = 1.0;
 
-  calc.calculateFrame(df, settings);
-  const auto &hist = df.getHistogram("S_q");
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
 
   // Verify all expected partials are present
   EXPECT_TRUE(hist.partials.count("C-C"));
@@ -153,14 +153,14 @@ TEST_F(StructureFactorCalculatorTests, HomonuclearClusterPartialsPresent) {
   cell.addAtom("Si", {0.0, 2.0, 0.0});
   cell.addAtom("Si", {0.0, 0.0, 2.0});
 
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
   AnalysisSettings settings;
   settings.q_max = 5.0;
   settings.q_bin_width = 0.5;
 
-  calc.calculateFrame(df, settings);
-  const auto &hist = df.getHistogram("S_q");
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
 
   EXPECT_TRUE(hist.partials.count("Si-Si"));
   EXPECT_TRUE(hist.partials.count("Total"));
@@ -169,27 +169,27 @@ TEST_F(StructureFactorCalculatorTests, HomonuclearClusterPartialsPresent) {
 TEST_F(StructureFactorCalculatorTests, CalculateSF_InvalidInputsThrow) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
-  DistributionFunctions df(cell);
+  DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
 
   AnalysisSettings settings_invalid_q;
   settings_invalid_q.q_max = -1.0;
   settings_invalid_q.q_bin_width = 0.1;
-  EXPECT_THROW(calc.calculateFrame(df, settings_invalid_q), std::invalid_argument);
+  EXPECT_THROW(calc.calculateFrame(dists, settings_invalid_q), std::invalid_argument);
 
   AnalysisSettings settings_invalid_bin;
   settings_invalid_bin.q_max = 5.0;
   settings_invalid_bin.q_bin_width = -0.1;
-  EXPECT_THROW(calc.calculateFrame(df, settings_invalid_bin), std::invalid_argument);
+  EXPECT_THROW(calc.calculateFrame(dists, settings_invalid_bin), std::invalid_argument);
 
   AnalysisSettings settings_bin_too_large;
   settings_bin_too_large.q_max = 5.0;
   settings_bin_too_large.q_bin_width = 10.0;
-  EXPECT_THROW(calc.calculateFrame(df, settings_bin_too_large), std::invalid_argument);
+  EXPECT_THROW(calc.calculateFrame(dists, settings_bin_too_large), std::invalid_argument);
 }
 
 TEST_F(StructureFactorCalculatorTests, CalculateSF_EmptyCellThrows) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  EXPECT_THROW(DistributionFunctions df(cell), std::invalid_argument);
+  EXPECT_THROW(DistributionFunctions dists(cell), std::invalid_argument);
 }
 } // namespace correlation::analysis

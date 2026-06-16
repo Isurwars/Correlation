@@ -35,15 +35,15 @@ using AngleTensor = std::vector<std::vector<std::vector<std::vector<double>>>>;
  */
 class AngleCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Angle"; }
-  std::string getShortName() const override { return "BAD"; }
-  std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override { return "Computes the Bond Angle Distribution (BAD)."; }
+  [[nodiscard]] std::string getName() const override { return "Angle"; }
+  [[nodiscard]] std::string getShortName() const override { return "BAD"; }
+  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string getDescription() const override { return "Computes the Bond Angle Distribution (BAD)."; }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
-  void calculateFrame(correlation::analysis::DistributionFunctions &df,
+  void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**

@@ -18,7 +18,7 @@ public:
   [[nodiscard]] std::string getName() const override { return "MockWriter"; }
   [[nodiscard]] std::vector<std::string> getExtensions() const override { return {".mockw", ".mkw"}; }
 
-  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &df,
+  void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
              bool smoothing) const override {
     // No-op for mock
   }

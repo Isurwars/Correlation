@@ -17,9 +17,9 @@ namespace {
 bool registered = CalculatorFactory::instance().registerCalculator(std::make_unique<HBondCalculator>());
 }
 
-void HBondCalculator::calculateFrame(correlation::analysis::DistributionFunctions &df,
+void HBondCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                      const correlation::analysis::AnalysisSettings &settings) const {
-  df.addHistogram("HBond", calculate(df.cell(), df.neighbors()));
+  dists.addHistogram("HBond", calculate(dists.cell(), dists.neighbors()));
 }
 
 correlation::analysis::Histogram HBondCalculator::calculate(const correlation::core::Cell &cell,

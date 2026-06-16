@@ -39,12 +39,12 @@ public:
   std::string getDescription() const override { PYBIND11_OVERRIDE_PURE(std::string, BaseCalculator, getDescription); }
   bool isFrameCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isFrameCalculator); }
   bool isTrajectoryCalculator() const override { PYBIND11_OVERRIDE_PURE(bool, BaseCalculator, isTrajectoryCalculator); }
-  void calculateFrame(DistributionFunctions &df, const AnalysisSettings &settings) const override {
-    PYBIND11_OVERRIDE(void, BaseCalculator, calculateFrame, df, settings);
+  void calculateFrame(DistributionFunctions &dists, const AnalysisSettings &settings) const override {
+    PYBIND11_OVERRIDE(void, BaseCalculator, calculateFrame, dists, settings);
   }
-  void calculateTrajectory(DistributionFunctions &df, const correlation::core::Trajectory &traj,
+  void calculateTrajectory(DistributionFunctions &dists, const correlation::core::Trajectory &traj,
                            const AnalysisSettings &settings) const override {
-    PYBIND11_OVERRIDE(void, BaseCalculator, calculateTrajectory, df, traj, settings);
+    PYBIND11_OVERRIDE(void, BaseCalculator, calculateTrajectory, dists, traj, settings);
   }
 };
 

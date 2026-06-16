@@ -15,7 +15,7 @@
 
 namespace correlation::calculators {
 
-void DihedralCalculator::calculateFrame(correlation::analysis::DistributionFunctions & /*df*/,
+void DihedralCalculator::calculateFrame(correlation::analysis::DistributionFunctions & /*dists*/,
                                         const correlation::analysis::AnalysisSettings & /*settings*/) const {
   // DihedralCalculator is a foundational calculator — called by
   // StructureAnalyzer during its construction. Nothing to do here.
