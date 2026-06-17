@@ -18,16 +18,51 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<CNCalculator>("CNCalculator");
+
+/**
+ * @brief Helper to compute the "Any" and "Total" partial distributions for the histogram.
+ */
+void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
+                                 const correlation::core::Cell &cell,
+                                 size_t num_bins) {
+  const auto &elements = cell.elements();
+  std::vector<double> any_any_dist(num_bins, 0.0);
+
+  for (const auto &elem : elements) {
+    const std::string element_any_key = elem.symbol + "-Any";
+    std::vector<double> element_any_dist(num_bins, 0.0);
+    bool found_any = false;
+
+    for (const auto &[key, dist_vector] : cn_histogram.partials) {
+      if (key.starts_with(elem.symbol + "-")) {
+        found_any = true;
+        for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+          element_any_dist[bin_idx] += dist_vector[bin_idx];
+        }
+      }
+    }
+
+    if (found_any) {
+      cn_histogram.partials[element_any_key] = element_any_dist;
+      for (size_t bin_idx = 0; bin_idx < num_bins; ++bin_idx) {
+        any_any_dist[bin_idx] += element_any_dist[bin_idx];
+      }
+    }
+  }
+
+  cn_histogram.partials["Any-Any"] = any_any_dist;
+  cn_histogram.partials["Total"] = std::move(any_any_dist);
+}
 } // namespace
 
 void CNCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                  const correlation::analysis::AnalysisSettings &settings) const {
+                                   const correlation::analysis::AnalysisSettings & /*settings*/) const {
   dists.addHistogram("CN", calculate(dists.cell(), dists.neighbors()));
 }
 
 correlation::analysis::Histogram CNCalculator::calculate(const correlation::core::Cell &cell,
                                                          const correlation::analysis::StructureAnalyzer *neighbors) {
-  if (!neighbors) {
+  if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate Coordination Number. Neighbor list has not been "
                            "computed.");
   }
@@ -42,21 +77,22 @@ correlation::analysis::Histogram CNCalculator::calculate(const correlation::core
     const auto &central_atom = atoms[i];
     const std::string &central_symbol = central_atom.element().symbol;
 
-    std::map<std::string, int> neighbor_counts_for_this_atom;
+    std::map<std::string, size_t> neighbor_counts_for_this_atom;
     for (const auto &neighbor : neighbor_graph.getNeighbors(i)) {
       const auto &neighbor_atom = atoms[neighbor.index];
       neighbor_counts_for_this_atom[neighbor_atom.element().symbol]++;
     }
 
     for (const auto &[neighbor_symbol, count] : neighbor_counts_for_this_atom) {
-      std::string key = central_symbol + "-" + neighbor_symbol;
-      if (static_cast<size_t>(count) >= partial_dists[key].size()) {
+      std::string key = central_symbol;
+      key += "-";
+      key += neighbor_symbol;
+
+      if (count >= partial_dists[key].size()) {
         partial_dists[key].resize(count + 1, 0);
       }
       partial_dists[key][count]++;
-      if (static_cast<size_t>(count) > max_cn) {
-        max_cn = count;
-      }
+      max_cn = std::max(max_cn, count);
     }
   }
 
@@ -71,6 +107,7 @@ correlation::analysis::Histogram CNCalculator::calculate(const correlation::core
   cn_histogram.file_suffix = "_CN";
 
   cn_histogram.bins.resize(num_bins);
+  // NOLINTNEXTLINE(modernize-use-ranges)
   std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), 0.0);
 
   for (auto &[key, dist_vector] : partial_dists) {
@@ -78,33 +115,7 @@ correlation::analysis::Histogram CNCalculator::calculate(const correlation::core
     cn_histogram.partials[key].assign(dist_vector.begin(), dist_vector.end());
   }
 
-  const auto &elements = cell.elements();
-  std::vector<double> any_any_dist(num_bins, 0.0);
-
-  for (const auto &elem : elements) {
-    std::string element_any_key = elem.symbol + "-Any";
-    std::vector<double> element_any_dist(num_bins, 0.0);
-    bool found_any = false;
-
-    for (const auto &[key, dist_vector] : cn_histogram.partials) {
-      if (key.rfind(elem.symbol + "-", 0) == 0) {
-        found_any = true;
-        for (size_t b = 0; b < num_bins; ++b) {
-          element_any_dist[b] += dist_vector[b];
-        }
-      }
-    }
-
-    if (found_any) {
-      cn_histogram.partials[element_any_key] = element_any_dist;
-      for (size_t b = 0; b < num_bins; ++b) {
-        any_any_dist[b] += element_any_dist[b];
-      }
-    }
-  }
-
-  cn_histogram.partials["Any-Any"] = any_any_dist;
-  cn_histogram.partials["Total"] = any_any_dist;
+  populateCombinationPartials(cn_histogram, cell, num_bins);
 
   return cn_histogram;
 }
