@@ -21,6 +21,124 @@ void DihedralCalculator::calculateFrame(correlation::analysis::DistributionFunct
   // StructureAnalyzer during its construction. Nothing to do here.
 }
 
+#include <optional>
+
+namespace {
+
+/**
+ * @brief Bundled displacement vectors for calculating a dihedral angle.
+ */
+struct DihedralVectors {
+  correlation::math::Vector3<double> r_ba;
+  correlation::math::Vector3<double> r_bc;
+  correlation::math::Vector3<double> r_cd;
+};
+
+/**
+ * @brief Helper to calculate a dihedral angle from displacement vectors.
+ */
+std::optional<double> calculateDihedralAngle(const DihedralVectors &vectors) {
+  correlation::math::Vector3<double> const vec_b1 = -1.0 * vectors.r_ba;
+  correlation::math::Vector3<double> const vec_b2 = vectors.r_bc;
+  correlation::math::Vector3<double> const vec_b3 = vectors.r_cd;
+
+  correlation::math::Vector3<double> normal_n1 = correlation::math::cross(vec_b1, vec_b2);
+  correlation::math::Vector3<double> normal_n2 = correlation::math::cross(vec_b2, vec_b3);
+
+  double const n1_norm = correlation::math::norm(normal_n1);
+  double const n2_norm = correlation::math::norm(normal_n2);
+
+  if (n1_norm < 1e-8 || n2_norm < 1e-8) {
+    return std::nullopt; // Collinear atoms, dihedral undefined.
+  }
+
+  normal_n1 = correlation::math::normalize(normal_n1);
+  normal_n2 = correlation::math::normalize(normal_n2);
+
+  double const b2_norm = correlation::math::norm(vec_b2);
+  if (b2_norm < 1e-8) {
+    return std::nullopt; // Coincident central bond, dihedral undefined.
+  }
+  correlation::math::Vector3<double> const b2_hat = vec_b2 / b2_norm;
+  correlation::math::Vector3<double> const vec_m = correlation::math::cross(normal_n1, b2_hat);
+
+  double const dot_x = correlation::math::dot(normal_n1, normal_n2);
+  double const dot_y = correlation::math::dot(vec_m, normal_n2);
+
+  return std::atan2(dot_y, dot_x);
+}
+
+/**
+ * @brief Helper to find and bin dihedral angles for a specific central pair B-C.
+ */
+void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlation::core::NeighborGraph &graph,
+                                    const std::vector<correlation::core::Atom> &atoms,
+                                    const correlation::core::Neighbor &neighbor_c,
+                                    correlation::analysis::StructureAnalyzer::DihedralTensor &local_tensor) {
+  const auto &neighbors_b = graph.getNeighbors(idx_b);
+  const auto &neighbors_c = graph.getNeighbors(idx_c);
+
+  const int type_b = atoms[idx_b].element_id();
+  const int type_c = atoms[idx_c].element_id();
+  const correlation::math::Vector3<double> &r_bc = neighbor_c.r_ij;
+
+  for (const auto &neighbor_a : neighbors_b) {
+    size_t const idx_a = neighbor_a.index;
+    if (idx_a == idx_c) {
+      continue;
+    }
+
+    const int type_a = atoms[idx_a].element_id();
+    const correlation::math::Vector3<double> &r_ba = neighbor_a.r_ij;
+
+    for (const auto &neighbor_d : neighbors_c) {
+      size_t const idx_d = neighbor_d.index;
+      if (idx_d == idx_b || idx_d == idx_a) {
+        continue;
+      }
+
+      const int type_d = atoms[idx_d].element_id();
+      const correlation::math::Vector3<double> &r_cd = neighbor_d.r_ij;
+
+      auto const dihedral_angle_opt = calculateDihedralAngle({.r_ba = r_ba, .r_bc = r_bc, .r_cd = r_cd});
+      if (!dihedral_angle_opt.has_value()) {
+        continue;
+      }
+      double const dihedral_angle = dihedral_angle_opt.value();
+
+      local_tensor[type_a][type_b][type_c][type_d].push_back(dihedral_angle);
+
+      if (type_a != type_d || type_b != type_c) {
+        local_tensor[type_d][type_c][type_b][type_a].push_back(dihedral_angle);
+      }
+    }
+  }
+}
+
+/**
+ * @brief Helper to merge thread-local tensors into the final dihedral tensor.
+ */
+void mergeThreadLocalTensors(
+    correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals,
+    const tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor> &ets,
+    size_t num_elements) {
+  for (const auto &local_tensor : ets) {
+    for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
+      for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
+        for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
+          for (size_t idx_d = 0; idx_d < num_elements; ++idx_d) {
+            out_dihedrals[idx_a][idx_b][idx_c][idx_d].insert(out_dihedrals[idx_a][idx_b][idx_c][idx_d].end(),
+                                                             local_tensor[idx_a][idx_b][idx_c][idx_d].begin(),
+                                                             local_tensor[idx_a][idx_b][idx_c][idx_d].end());
+          }
+        }
+      }
+    }
+  }
+}
+
+} // namespace
+
 void DihedralCalculator::compute(const correlation::core::Cell &cell, const correlation::core::NeighborGraph &graph,
                                  correlation::analysis::StructureAnalyzer::DihedralTensor &out_dihedrals) {
   const auto &atoms = cell.atoms();
@@ -35,131 +153,37 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell, const corr
                                             num_elements, std::vector<std::vector<double>>(num_elements))));
   });
 
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &r) {
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &blocked_range) {
     auto &local_tensor = ets.local();
 
-    // Let atom `i` be atom `B` in the A-B-C-D sequence
-    for (size_t B = r.begin(); B != r.end(); ++B) {
-      const auto &B_neighbors = graph.getNeighbors(B);
-      if (B_neighbors.size() < 2) {
+    // Let atom `idx_b` be atom `B` in the A-B-C-D sequence
+    for (size_t idx_b = blocked_range.begin(); idx_b != blocked_range.end(); ++idx_b) {
+      const auto &neighbors_b = graph.getNeighbors(idx_b);
+      if (neighbors_b.size() < 2) {
         continue;
-}
-
-      const int type_B = atoms[B].element_id();
+      }
 
       // Loop over all neighbors of B, which we consider as `C`
-      for (const auto &neighbor_C : B_neighbors) {
-        size_t const C = neighbor_C.index;
+      for (const auto &neighbor_c : neighbors_b) {
+        size_t const idx_c = neighbor_c.index;
 
         // To prevent double counting the identical bond B-C as C-B,
         // we enforce an ordering constraint: B < C
-        if (B >= C) {
+        if (idx_b >= idx_c) {
           continue;
-}
-
-        const auto &C_neighbors = graph.getNeighbors(C);
-        if (C_neighbors.size() < 2) {
-          continue;
-}
-
-        const int type_C = atoms[C].element_id();
-        const correlation::math::Vector3<double> &r_BC = neighbor_C.r_ij; // B -> C
-
-        // Now, find all A bonded to B (where A != C)
-        for (const auto &neighbor_A : B_neighbors) {
-          size_t const A = neighbor_A.index;
-          if (A == C) {
-            continue;
-}
-
-          const int type_A = atoms[A].element_id();
-          const correlation::math::Vector3<double> &r_BA = neighbor_A.r_ij; // B -> A
-
-          // And find all D bonded to C (where D != B and D != A)
-          for (const auto &neighbor_D : C_neighbors) {
-            size_t const D = neighbor_D.index;
-            if (D == B || D == A) {
-              continue;
-}
-
-            const int type_D = atoms[D].element_id();
-
-            // Vector C -> D.
-            // Wait, r_ij in Neighbor array is Central -> Neighbor.
-            // So neighbor_D.r_ij is C -> D.
-            const correlation::math::Vector3<double> &r_CD = neighbor_D.r_ij;
-
-            // We have vectors:
-            // b1 = r_BA  (B to A)
-            // b2 = r_BC  (B to C)
-            // b3 = r_CD  (C to D)
-            //
-            // The planes are defined by B-C-A and C-B-D? No, standard
-            // IUPAC: b1 = r_AB (A to B) = -r_BA b2 = r_BC (B to C) b3 =
-            // r_CD (C to D)
-
-            correlation::math::Vector3<double> const b1 = -1.0 * r_BA;
-            correlation::math::Vector3<double> const b2 = r_BC;
-            correlation::math::Vector3<double> const b3 = r_CD;
-
-            // n1 = b1 x b2
-            // n2 = b2 x b3
-            correlation::math::Vector3<double> n1 = correlation::math::cross(b1, b2);
-            correlation::math::Vector3<double> n2 = correlation::math::cross(b2, b3);
-
-            double const n1_norm = correlation::math::norm(n1);
-            double const n2_norm = correlation::math::norm(n2);
-
-            if (n1_norm < 1e-8 || n2_norm < 1e-8) {
-              continue; // Collinear atoms, dihedral undefined.
-            }
-
-            // Normalizing
-            n1 = correlation::math::normalize(n1);
-            n2 = correlation::math::normalize(n2);
-
-            // m = n1 x (b2 / |b2|)
-            double const b2_norm = correlation::math::norm(b2);
-            if (b2_norm < 1e-8) {
-              continue; // Coincident central bond, dihedral undefined.
-            }
-            correlation::math::Vector3<double> const b2_hat = b2 / b2_norm;
-            correlation::math::Vector3<double> const m = correlation::math::cross(n1, b2_hat);
-
-            // cos(phi) = n1 . n2
-            // sin(phi) = m . n2
-            double const x = correlation::math::dot(n1, n2);
-            double const y = correlation::math::dot(m, n2);
-
-            double const dihedral_angle = std::atan2(y, x); // Returns range [-pi, pi]
-
-            local_tensor[type_A][type_B][type_C][type_D].push_back(dihedral_angle);
-
-            // For unordered element types, depending on symmetry you might
-            // also store reverse D-C-B-A. However to keep it clean, we
-            // store A-B-C-D only, and the parser can query both later.
-            if (type_A != type_D || type_B != type_C) {
-              local_tensor[type_D][type_C][type_B][type_A].push_back(dihedral_angle);
-            }
-          }
         }
+
+        const auto &neighbors_c = graph.getNeighbors(idx_c);
+        if (neighbors_c.size() < 2) {
+          continue;
+        }
+
+        findAndProcessDihedralsForPair(idx_b, idx_c, graph, atoms, neighbor_c, local_tensor);
       }
     }
   });
 
-  // Merge results
-  for (const auto &local_tensor : ets) {
-    for (size_t a = 0; a < num_elements; ++a) {
-      for (size_t b = 0; b < num_elements; ++b) {
-        for (size_t c = 0; c < num_elements; ++c) {
-          for (size_t d = 0; d < num_elements; ++d) {
-            out_dihedrals[a][b][c][d].insert(out_dihedrals[a][b][c][d].end(), local_tensor[a][b][c][d].begin(),
-                                             local_tensor[a][b][c][d].end());
-          }
-        }
-      }
-    }
-  }
+  mergeThreadLocalTensors(out_dihedrals, ets, num_elements);
 }
 
 } // namespace correlation::calculators

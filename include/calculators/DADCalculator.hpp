@@ -19,13 +19,15 @@ namespace correlation::calculators {
  */
 class DADCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "DAD"; }
-  std::string getShortName() const override { return "DAD"; }
-  std::string getGroup() const override { return "Angular"; }
-  std::string getDescription() const override { return "Computes the Dihedral Angle Distribution (DAD)."; }
+  [[nodiscard]] std::string getName() const override { return "DAD"; }
+  [[nodiscard]] std::string getShortName() const override { return "DAD"; }
+  [[nodiscard]] std::string getGroup() const override { return "Angular"; }
+  [[nodiscard]] std::string getDescription() const override {
+    return "Computes the Dihedral Angle Distribution (DAD).";
+  }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;

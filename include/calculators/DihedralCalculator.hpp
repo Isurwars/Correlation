@@ -28,13 +28,15 @@ namespace correlation::calculators {
  */
 class DihedralCalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "Dihedral"; }
-  std::string getShortName() const override { return "Dihedral"; }
-  std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override { return "Computes all unique 4-body dihedral (torsion) angles."; }
+  [[nodiscard]] std::string getName() const override { return "Dihedral"; }
+  [[nodiscard]] std::string getShortName() const override { return "Dihedral"; }
+  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string getDescription() const override {
+    return "Computes all unique 4-body dihedral (torsion) angles.";
+  }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;
