@@ -19,6 +19,83 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<DADCalculator>("DADCalculator");
+
+/**
+ * @brief Helper to initialize the Dihedral-Angle Distribution histogram.
+ */
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+correlation::analysis::Histogram initializeHistogram(size_t num_bins, double theta_min, double bin_width) {
+  correlation::analysis::Histogram f_dihedral;
+  f_dihedral.x_label = "φ";
+  f_dihedral.title = "Dihedral-Angle Distribution";
+  f_dihedral.y_label = "P(φ)";
+  f_dihedral.x_unit = "°";
+  f_dihedral.y_unit = "°⁻¹";
+  f_dihedral.description = "Dihedral Angle Distribution";
+  f_dihedral.file_suffix = "_DAD";
+  f_dihedral.bins.resize(num_bins);
+  for (size_t idx = 0; idx < num_bins; ++idx) {
+    f_dihedral.bins[idx] = theta_min + (static_cast<double>(idx) + 0.5) * bin_width;
+  }
+  return f_dihedral;
+}
+
+/**
+ * @brief Helper to process and bin a vector of dihedral angles.
+ */
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+void processDihedralAngles(const std::vector<double> &angles_rad, std::vector<double> &partial_hist, double bin_width,
+                           size_t num_bins, double theta_min, double theta_max) {
+  for (const auto &angle_rad : angles_rad) {
+    double angle_deg = angle_rad * correlation::math::rad_to_deg;
+
+    // clamp angle into [-180, 180]
+    while (angle_deg <= -180.0) {
+      angle_deg += 360.0;
+    }
+    while (angle_deg > 180.0) {
+      angle_deg -= 360.0;
+    }
+
+    if (angle_deg >= theta_min && angle_deg <= theta_max) {
+      auto bin = static_cast<size_t>((angle_deg - theta_min) / bin_width);
+
+      if (bin == num_bins && bin > 0) {
+        bin = num_bins - 1;
+      }
+
+      if (bin < num_bins) {
+        partial_hist[bin]++;
+      }
+    }
+  }
+}
+
+/**
+ * @brief Helper to sum partial histograms and normalize them.
+ */
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+void normalizeAndScale(correlation::analysis::Histogram &f_dihedral, size_t num_bins, double bin_width) {
+  auto &total_f = f_dihedral.partials["Total"];
+  total_f.assign(num_bins, 0.0);
+  double total_counts = 0;
+
+  for (const auto &[key, partial] : f_dihedral.partials) {
+    if (key != "Total") {
+      for (size_t idx = 0; idx < num_bins; ++idx) {
+        total_f[idx] += partial[idx];
+        total_counts += partial[idx];
+      }
+    }
+  }
+
+  if (total_counts >= 1.0) {
+    const double normalization_factor = 1.0 / (total_counts * bin_width);
+    for (auto &[key, partial] : f_dihedral.partials) {
+      correlation::math::scale_bins(partial.data(), normalization_factor, num_bins);
+    }
+  }
+}
 } // namespace
 
 void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
@@ -45,90 +122,36 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
   const size_t num_elements = elements.size();
   if (num_elements == 0) {
     return {};
-}
-
-  const auto num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
-
-  correlation::analysis::Histogram f_dihedral;
-  f_dihedral.x_label = "φ";
-  f_dihedral.title = "Dihedral-Angle Distribution";
-  f_dihedral.y_label = "P(φ)";
-  f_dihedral.x_unit = "°";
-  f_dihedral.y_unit = "°⁻¹";
-  f_dihedral.description = "Dihedral Angle Distribution";
-  f_dihedral.file_suffix = "_DAD";
-  f_dihedral.bins.resize(num_bins);
-  for (size_t i = 0; i < num_bins; ++i) {
-    f_dihedral.bins[i] = theta_min + (i + 0.5) * bin_width; // NOLINT(bugprone-narrowing-conversions)
   }
 
-  for (size_t a = 0; a < num_elements; ++a) {
-    for (size_t b = 0; b < num_elements; ++b) {
-      for (size_t c = 0; c < num_elements; ++c) {
-        for (size_t d = 0; d < num_elements; ++d) {
+  const auto num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
+  correlation::analysis::Histogram f_dihedral = initializeHistogram(num_bins, theta_min, bin_width);
 
-          const auto &angles_rad = neighbors->dihedrals()[a][b][c][d];
+  for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
+    for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
+      for (size_t idx_c = 0; idx_c < num_elements; ++idx_c) {
+        for (size_t idx_d = 0; idx_d < num_elements; ++idx_d) {
+
+          const auto &angles_rad = neighbors->dihedrals()[idx_a][idx_b][idx_c][idx_d];
           if (angles_rad.empty()) {
             continue;
-}
+          }
 
-          std::string const key =
-              elements[a].symbol + "-" + elements[b].symbol + "-" + elements[c].symbol + "-" + elements[d].symbol;
+          std::string const key = elements[idx_a].symbol + "-" + elements[idx_b].symbol + "-" + elements[idx_c].symbol +
+                                  "-" + elements[idx_d].symbol;
 
           auto &partial_hist = f_dihedral.partials[key];
           if (partial_hist.empty()) {
             partial_hist.assign(num_bins, 0.0);
           }
 
-          for (const auto &angle_rad : angles_rad) {
-            double angle_deg = angle_rad * correlation::math::rad_to_deg;
-
-            // clamp angle into [-180, 180]
-            while (angle_deg <= -180.0) {
-              angle_deg += 360.0;
-}
-            while (angle_deg > 180.0) {
-              angle_deg -= 360.0;
-}
-
-            if (angle_deg >= theta_min && angle_deg <= theta_max) {
-              auto bin = static_cast<size_t>((angle_deg - theta_min) / bin_width);
-
-              if (bin == num_bins && bin > 0) {
-                bin = num_bins - 1;
-              }
-
-              if (bin < num_bins) {
-                partial_hist[bin]++;
-              }
-            }
-          }
+          processDihedralAngles(angles_rad, partial_hist, bin_width, num_bins, theta_min, theta_max);
         }
       }
     }
   }
 
-  auto &total_f = f_dihedral.partials["Total"];
-  total_f.assign(num_bins, 0.0);
-  double total_counts = 0;
-
-  for (const auto &[key, partial] : f_dihedral.partials) {
-    if (key != "Total") {
-      for (size_t i = 0; i < num_bins; ++i) {
-        total_f[i] += partial[i];
-        total_counts += partial[i];
-      }
-    }
-  }
-
-  if (total_counts < 1) {
-    return f_dihedral;
-  }
-
-  const double normalization_factor = 1.0 / (total_counts * bin_width);
-  for (auto &[key, partial] : f_dihedral.partials) {
-    correlation::math::scale_bins(partial.data(), normalization_factor, num_bins);
-  }
+  normalizeAndScale(f_dihedral, num_bins, bin_width);
   return f_dihedral;
 }
 
