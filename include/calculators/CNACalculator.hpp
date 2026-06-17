@@ -17,15 +17,15 @@ namespace correlation::calculators {
  */
 class CNACalculator : public BaseCalculator {
 public:
-  std::string getName() const override { return "CNA"; }
-  std::string getShortName() const override { return "CNA"; }
-  std::string getGroup() const override { return "Structural"; }
-  std::string getDescription() const override {
+  [[nodiscard]] std::string getName() const override { return "CNA"; }
+  [[nodiscard]] std::string getShortName() const override { return "CNA"; }
+  [[nodiscard]] std::string getGroup() const override { return "Structural"; }
+  [[nodiscard]] std::string getDescription() const override {
     return "Common Neighbor Analysis for local environment classification.";
   }
 
-  bool isFrameCalculator() const override { return true; }
-  bool isTrajectoryCalculator() const override { return false; }
+  [[nodiscard]] bool isFrameCalculator() const override { return true; }
+  [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 
   void calculateFrame(correlation::analysis::DistributionFunctions &dists,
                       const correlation::analysis::AnalysisSettings &settings) const override;

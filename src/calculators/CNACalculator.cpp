@@ -26,28 +26,53 @@ const bool registered = CalculatorFactory::registerTypeSafe<CNACalculator>("CNAC
  * Since common neighbor subgraphs are extremely small (< 12 atoms),
  * an exhaustive DFS is both correct and performant.
  *
- * @param node     Current node in the DFS traversal.
- * @param visited  Set of already-visited nodes on the current path.
- * @param adj      Adjacency list for the common neighbor subgraph.
- * @return The length of the longest path (in edges) starting from @p node.
+ * @param start_node  Current node in the DFS traversal.
+ * @param adj         Adjacency list for the common neighbor subgraph.
+ * @return The length of the longest path (in edges) starting from @p start_node.
  */
-size_t dfsLongestPath(size_t node, std::set<size_t> &visited, const std::map<size_t, std::vector<size_t>> &adj) {
-  size_t best = 0;
-  auto it = adj.find(node);
-  if (it == adj.end()) {
-    return 0;
-}
+size_t dfsLongestPath(size_t start_node, const std::map<size_t, std::vector<size_t>> &adj) {
+  struct StackFrame {
+    size_t node;
+    size_t neighbor_idx;
+    size_t max_child_len;
+  };
 
-  for (size_t const neighbor : it->second) {
-    if (visited.contains(neighbor) != 0u) {
-      continue;
-}
-    visited.insert(neighbor);
-    size_t const len = 1 + dfsLongestPath(neighbor, visited, adj);
-    best = std::max(len, best);
-    visited.erase(neighbor);
+  std::set<size_t> visited;
+  visited.insert(start_node);
+
+  std::vector<StackFrame> stack;
+  stack.reserve(12);
+  stack.push_back({.node = start_node, .neighbor_idx = 0, .max_child_len = 0});
+
+  size_t final_best = 0;
+
+  while (!stack.empty()) {
+    size_t const current_node = stack.back().node;
+    size_t const neighbor_idx = stack.back().neighbor_idx;
+    auto const adj_iterator = adj.find(current_node);
+
+    if (adj_iterator == adj.end() || neighbor_idx >= adj_iterator->second.size()) {
+      size_t const max_child_len = stack.back().max_child_len;
+      stack.pop_back();
+      visited.erase(current_node);
+
+      if (!stack.empty()) {
+        stack.back().max_child_len = std::max(stack.back().max_child_len, 1 + max_child_len);
+      } else {
+        final_best = max_child_len;
+      }
+    } else {
+      size_t const neighbor = adj_iterator->second[neighbor_idx];
+      stack.back().neighbor_idx++;
+
+      if (!visited.contains(neighbor)) {
+        visited.insert(neighbor);
+        stack.push_back({.node = neighbor, .neighbor_idx = 0, .max_child_len = 0});
+      }
+    }
   }
-  return best;
+
+  return final_best;
 }
 
 /**
@@ -61,92 +86,67 @@ size_t dfsLongestPath(size_t node, std::set<size_t> &visited, const std::map<siz
 size_t findLongestChain(const std::vector<size_t> &common_neighbors, const std::map<size_t, std::vector<size_t>> &adj) {
   size_t longest = 0;
   for (size_t const start : common_neighbors) {
-    std::set<size_t> visited;
-    visited.insert(start);
-    size_t const len = dfsLongestPath(start, visited, adj);
+    size_t const len = dfsLongestPath(start, adj);
     longest = std::max(len, longest);
   }
   return longest;
 }
-} // anonymous namespace
 
-void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                   const correlation::analysis::AnalysisSettings & /*settings*/) const {
-  dists.addHistogram("CNA", calculate(dists.cell(), dists.neighbors()));
-}
-
-correlation::analysis::Histogram CNACalculator::calculate(const correlation::core::Cell &cell,
-                                                          const correlation::analysis::StructureAnalyzer *neighbors) {
-
-  if (neighbors == nullptr) {
-    return {};
-}
-
-  const auto &neighbor_graph = neighbors->neighborGraph();
-  const size_t num_atoms = cell.atomCount();
-
-  // Map to store CNA index counts (e.g., "1421" -> count)
-  std::map<std::string, double> cna_counts;
-  double total_pairs = 0;
-
-  for (size_t i = 0; i < num_atoms; ++i) {
-    const auto &neighbors_i = neighbor_graph.getNeighbors(i);
-    std::set<size_t> set_i;
-    for (const auto &n : neighbors_i) {
-      set_i.insert(n.index);
-}
-
-    for (const auto &neighbor_j : neighbors_i) {
-      size_t const j = neighbor_j.index;
-      if (i >= j) {
-        continue; // Only count each pair once
-}
-
-      const auto &neighbors_j = neighbor_graph.getNeighbors(j);
-      std::vector<size_t> common_neighbors;
-      for (const auto &n : neighbors_j) {
-        if (set_i.contains(n.index) != 0u) {
-          common_neighbors.push_back(n.index);
-        }
-      }
-
-      size_t const n_common = common_neighbors.size();
-
-      // Count bonds between common neighbors and build adjacency list
-      size_t n_bonds = 0;
-      std::map<size_t, std::vector<size_t>> common_adj;
-      for (size_t a = 0; a < n_common; ++a) {
-        size_t const idx_a = common_neighbors[a];
-        const auto &n_a = neighbor_graph.getNeighbors(idx_a);
-        for (size_t b = a + 1; b < n_common; ++b) {
-          size_t const idx_b = common_neighbors[b];
-          for (const auto &nb : n_a) {
-            if (nb.index == idx_b) {
-              n_bonds++;
-              common_adj[idx_a].push_back(idx_b);
-              common_adj[idx_b].push_back(idx_a);
-              break;
-            }
-          }
-        }
-      }
-
-      // Find longest continuous chain via DFS on the common neighbor subgraph
-      size_t n_longest = 0;
-      if (n_bonds > 0) {
-        n_longest = findLongestChain(common_neighbors, common_adj);
-      }
-
-      // Standard CNA index: (1, n_common, n_bonds, n_longest)
-      std::string const index = "1" + std::to_string(n_common) + std::to_string(n_bonds) + std::to_string(n_longest);
-      cna_counts[index]++;
-      total_pairs++;
+/**
+ * @brief Helper to find the common neighbors between atom_i and atom_j.
+ */
+std::vector<size_t> findCommonNeighbors(const std::set<size_t> &neighbors_set_i,
+                                        const correlation::core::NeighborGraph &neighbor_graph,
+                                        size_t atom_j) {
+  const auto &neighbors_j = neighbor_graph.getNeighbors(atom_j);
+  std::vector<size_t> common_neighbors;
+  for (const auto &neighbor : neighbors_j) {
+    if (neighbors_set_i.contains(neighbor.index)) {
+      common_neighbors.push_back(neighbor.index);
     }
   }
+  return common_neighbors;
+}
 
-  // --- Build histogram with consistent bin/partial dimensions ---
-  // Each unique CNA index becomes one categorical bin position.
-  // All partial vectors have exactly the same length as bins.
+struct CommonNeighborAdjacency {
+  size_t bond_count;
+  std::map<size_t, std::vector<size_t>> adjacency_list;
+};
+
+/**
+ * @brief Helper to build the adjacency list and count the bonds between common neighbors.
+ */
+CommonNeighborAdjacency buildCommonNeighborAdjacency(
+    const std::vector<size_t> &common_neighbors,
+    const correlation::core::NeighborGraph &neighbor_graph) {
+  size_t bond_count = 0;
+  std::map<size_t, std::vector<size_t>> adjacency_list;
+  size_t const n_common = common_neighbors.size();
+
+  for (size_t idx_a_pos = 0; idx_a_pos < n_common; ++idx_a_pos) {
+    size_t const idx_a = common_neighbors[idx_a_pos];
+    const auto &neighbors_a = neighbor_graph.getNeighbors(idx_a);
+    for (size_t idx_b_pos = idx_a_pos + 1; idx_b_pos < n_common; ++idx_b_pos) {
+      size_t const idx_b = common_neighbors[idx_b_pos];
+      for (const auto &neighbor : neighbors_a) {
+        if (neighbor.index == idx_b) {
+          bond_count++;
+          adjacency_list[idx_a].push_back(idx_b);
+          adjacency_list[idx_b].push_back(idx_a);
+          break;
+        }
+      }
+    }
+  }
+  return {.bond_count = bond_count, .adjacency_list = std::move(adjacency_list)};
+}
+
+/**
+ * @brief Helper to build the final CNA histogram from counted configurations.
+ */
+correlation::analysis::Histogram buildCNAHistogram(
+    const std::map<std::string, double> &cna_counts,
+    double total_pairs) {
   correlation::analysis::Histogram hist;
   hist.x_label = "CNA Index";
   hist.title = "Common Neighbor Analysis";
@@ -157,38 +157,81 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
   hist.file_suffix = "_CNA";
 
   if (total_pairs > 0) {
-    // Collect sorted CNA index keys for deterministic ordering
     std::vector<std::string> keys;
     keys.reserve(cna_counts.size());
-    for (const auto &[k, _] : cna_counts) {
-      keys.push_back(k);
+    for (const auto &[key, val] : cna_counts) {
+      keys.push_back(key);
     }
 
     const size_t n_bins = keys.size();
 
-    // Assign each CNA index a sequential categorical bin position
     hist.bins.resize(n_bins);
-    for (size_t i = 0; i < n_bins; ++i) {
-      hist.bins[i] = static_cast<double>(i);
+    for (size_t idx = 0; idx < n_bins; ++idx) {
+      hist.bins[idx] = static_cast<double>(idx);
     }
 
-    // Each CNA index partial has exactly n_bins entries (zero everywhere
-    // except at its own position) so that bins.size() == partial.size()
     for (size_t idx = 0; idx < n_bins; ++idx) {
       std::vector<double> values(n_bins, 0.0);
-      values[idx] = cna_counts[keys[idx]] / total_pairs;
+      values[idx] = cna_counts.at(keys[idx]) / total_pairs;
       hist.partials[keys[idx]] = std::move(values);
     }
 
-    // "Total" partial: fraction at each bin position (sums to 1.0)
     std::vector<double> total(n_bins, 0.0);
     for (size_t idx = 0; idx < n_bins; ++idx) {
-      total[idx] = cna_counts[keys[idx]] / total_pairs;
+      total[idx] = cna_counts.at(keys[idx]) / total_pairs;
     }
     hist.partials["Total"] = std::move(total);
   }
 
   return hist;
+}
+} // anonymous namespace
+
+void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
+                                   const correlation::analysis::AnalysisSettings & /*settings*/) const {
+  dists.addHistogram("CNA", calculate(dists.cell(), dists.neighbors()));
+}
+
+correlation::analysis::Histogram CNACalculator::calculate(const correlation::core::Cell &cell,
+                                                          const correlation::analysis::StructureAnalyzer *neighbors) {
+  if (neighbors == nullptr) {
+    return {};
+  }
+
+  const auto &neighbor_graph = neighbors->neighborGraph();
+  const size_t num_atoms = cell.atomCount();
+
+  std::map<std::string, double> cna_counts;
+  double total_pairs = 0;
+
+  for (size_t atom_i = 0; atom_i < num_atoms; ++atom_i) {
+    const auto &neighbors_i = neighbor_graph.getNeighbors(atom_i);
+    std::set<size_t> neighbors_set_i;
+    for (const auto &neighbor : neighbors_i) {
+      neighbors_set_i.insert(neighbor.index);
+    }
+
+    for (const auto &neighbor_j : neighbors_i) {
+      size_t const atom_j = neighbor_j.index;
+      if (atom_i >= atom_j) {
+        continue;
+      }
+
+      std::vector<size_t> const common_neighbors = findCommonNeighbors(neighbors_set_i, neighbor_graph, atom_j);
+      auto const [n_bonds, common_adj] = buildCommonNeighborAdjacency(common_neighbors, neighbor_graph);
+
+      size_t n_longest = 0;
+      if (n_bonds > 0) {
+        n_longest = findLongestChain(common_neighbors, common_adj);
+      }
+
+      std::string const index = "1" + std::to_string(common_neighbors.size()) + std::to_string(n_bonds) + std::to_string(n_longest);
+      cna_counts[index]++;
+      total_pairs++;
+    }
+  }
+
+  return buildCNAHistogram(cna_counts, total_pairs);
 }
 
 } // namespace correlation::calculators
