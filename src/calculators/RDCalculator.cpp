@@ -55,18 +55,19 @@ correlation::analysis::Histogram RDCalculator::calculate(const correlation::core
   auto &partial_hist = f_motif.partials["Rings"];
   partial_hist.assign(num_bins, 0.0);
 
-  double total_counts = 0;
+  size_t total_counts = 0;
   for (const auto &[size, count] : rings) {
-    if (size >= 3 && std::cmp_less_equal(size ,max_ring_size)) {
+    if (size >= 3 && std::cmp_less_equal(size, max_ring_size)) {
       auto const bin = static_cast<size_t>(size - 3);
       partial_hist[bin] = static_cast<double>(count);
-      total_counts += count; // NOLINT(bugprone-narrowing-conversions)
+      total_counts += count;
     }
   }
 
-  if (total_counts > 0.0) {
+  if (total_counts > 0) {
+    double const total_counts_d = static_cast<double>(total_counts);
     for (size_t i = 0; i < num_bins; ++i) {
-      partial_hist[i] /= total_counts;
+      partial_hist[i] /= total_counts_d;
     }
   }
 
