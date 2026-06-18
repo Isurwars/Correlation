@@ -26,22 +26,22 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   const auto &cell = dists.cell();
   // SDF is a 3D grid and requires a coarser resolution than 1D radial distributions.
   // We enforce a minimum grid spacing of 0.5 Å to prevent memory explosion.
-  const double dx = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
+  const double d_x = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
-  double const lx = cell.lattice_parameters()[0];
-  double const ly = cell.lattice_parameters()[1];
-  double const lz = cell.lattice_parameters()[2];
+  double const l_x = cell.lattice_parameters()[0];
+  double const l_y = cell.lattice_parameters()[1];
+  double const l_z = cell.lattice_parameters()[2];
 
-  if (lx <= 0 || ly <= 0 || lz <= 0) {
+  if (l_x <= 0 || l_y <= 0 || l_z <= 0) {
     return;
-}
+  }
 
-  auto const nx = static_cast<size_t>(std::ceil(lx / dx));
-  auto const ny = static_cast<size_t>(std::ceil(ly / dx));
-  auto const nz = static_cast<size_t>(std::ceil(lz / dx));
-  size_t const total_bins = nx * ny * nz;
+  auto const n_x = static_cast<size_t>(std::ceil(l_x / d_x));
+  auto const n_y = static_cast<size_t>(std::ceil(l_y / d_x));
+  auto const n_z = static_cast<size_t>(std::ceil(l_z / d_x));
+  size_t const total_bins = n_x * n_y * n_z;
 
   if (total_bins == 0 || total_bins > 1000000) {
     // Prevent memory explosion if grid is too fine
@@ -54,8 +54,8 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   sdf_hist.y_label = "Density";
   sdf_hist.x_unit = "-";
   sdf_hist.y_unit = "atoms/A^3";
-  sdf_hist.description = "Flattened 3D Spatial Distribution Grid (" + std::to_string(nx) + "x" + std::to_string(ny) +
-                         "x" + std::to_string(nz) + ")";
+  sdf_hist.description = "Flattened 3D Spatial Distribution Grid (" + std::to_string(n_x) + "x" + std::to_string(n_y) +
+                         "x" + std::to_string(n_z) + ")";
   sdf_hist.file_suffix = "_sdf";
 
   // Dummy bins to satisfy dimensions
@@ -65,7 +65,7 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   // description string.
 
   // Voxel volume = total cell volume / number of voxels (correct for triclinic).
-  const double dV = cell.volume() / static_cast<double>(total_bins);
+  const double d_V = cell.volume() / static_cast<double>(total_bins);
   const auto &inv_lv = cell.inverseLatticeVectors();
 
   for (const auto &atom : cell.atoms()) {
@@ -77,22 +77,22 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     // Convert Cartesian → fractional coordinates (correct for non-orthogonal cells)
     auto frac = inv_lv * atom.position();
     // Wrap to [0, 1) fractional
-    double const fx = frac.x() - std::floor(frac.x());
-    double const fy = frac.y() - std::floor(frac.y());
-    double const fz = frac.z() - std::floor(frac.z());
+    double const f_x = frac.x() - std::floor(frac.x());
+    double const f_y = frac.y() - std::floor(frac.y());
+    double const f_z = frac.z() - std::floor(frac.z());
 
-    size_t const ix = static_cast<size_t>(fx * nx) % nx; // NOLINT(bugprone-narrowing-conversions)
-    size_t const iy = static_cast<size_t>(fy * ny) % ny; // NOLINT(bugprone-narrowing-conversions)
-    size_t const iz = static_cast<size_t>(fz * nz) % nz; // NOLINT(bugprone-narrowing-conversions)
+    size_t const i_x = static_cast<size_t>(f_x * static_cast<double>(n_x)) % n_x;
+    size_t const i_y = static_cast<size_t>(f_y * static_cast<double>(n_y)) % n_y;
+    size_t const i_z = static_cast<size_t>(f_z * static_cast<double>(n_z)) % n_z;
 
-    size_t const idx = ix * (ny * nz) + iy * nz + iz;
-    sdf_hist.partials[sym][idx] += 1.0 / dV; // Density contribution per frame
+    size_t const idx = i_x * (n_y * n_z) + i_y * n_z + i_z;
+    sdf_hist.partials[sym][idx] += 1.0 / d_V; // Density contribution per frame
 
     // Also accumulate to total
     if (!sdf_hist.partials.contains("Total")) {
       sdf_hist.partials["Total"].assign(total_bins, 0.0);
     }
-    sdf_hist.partials["Total"][idx] += 1.0 / dV;
+    sdf_hist.partials["Total"][idx] += 1.0 / d_V;
   }
 
   if (!sdf_hist.partials.contains("Total")) {

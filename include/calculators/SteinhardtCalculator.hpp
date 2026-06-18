@@ -44,16 +44,20 @@ public:
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors);
 
+  struct SphericalAngles {
+    double theta;
+    double phi;
+  };
+
   /**
    * @brief Computes the complex spherical harmonic @f$ Y_l^m(\theta, \phi) @f$.
    *
    * @param degree Degree of the harmonic.
    * @param order Order of the harmonic.
-   * @param theta Inclination angle (radians).
-   * @param phi Azimuthal angle (radians).
+   * @param angles Structure containing the theta and phi angles.
    * @return The complex value of the spherical harmonic.
    */
-  static std::complex<double> sphericalHarmonic(int degree, int order, double theta, double phi);
+  static std::complex<double> sphericalHarmonic(int degree, int order, SphericalAngles angles);
 
   /**
    * @brief Computes the Wigner 3-j symbol using the Racah formula.

@@ -21,21 +21,208 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<SteinhardtCalculator>("SteinhardtCalculator");
+
+struct SteinhardtParams {
+  std::vector<double> Q4;
+  std::vector<double> Q6;
+  std::vector<double> W6_hat;
+};
+
+struct SingleAtomSteinhardt {
+  double Q4;
+  double Q6;
+  double W6_hat;
+};
+
+struct GlobalSteinhardtFactors {
+  double global_Q4_factor;
+  double global_Q6_factor;
+};
+
+struct HistogramConfigs {
+  size_t bins_Q;
+  double Q_max;
+  double dQ;
+  size_t bins_W;
+  double W_min;
+  double W_max;
+  double dW;
+};
+
+double computeW6(const std::vector<std::complex<double>> &q6m) {
+  double w6_val = 0.0;
+  for (int m_one = -6; m_one <= 6; ++m_one) {
+    for (int m_two = -6; m_two <= 6; ++m_two) {
+      int const m_three = -(m_one + m_two);
+      if (m_three < -6 || m_three > 6) {
+        continue;
+      }
+      double const w3j = SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
+      if (w3j == 0.0) {
+        continue;
+      }
+
+      std::complex<double> const prod = q6m[m_one + 6] * q6m[m_two + 6] * q6m[m_three + 6];
+      w6_val += w3j * prod.real();
+    }
+  }
+  return w6_val;
+}
+
+SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
+                                                 const correlation::core::NeighborGraph &neighbor_graph,
+                                                 GlobalSteinhardtFactors factors) {
+  const auto &atom_neighbors = neighbor_graph.getNeighbors(atom_idx);
+  size_t const num_neighbors = atom_neighbors.size();
+  if (num_neighbors < 2) {
+    return {.Q4 = 0.0, .Q6 = 0.0, .W6_hat = 0.0};
+  }
+
+  std::vector<std::complex<double>> q4m(9, 0.0);
+  std::vector<std::complex<double>> q6m(13, 0.0);
+
+  for (const auto &neighbor : atom_neighbors) {
+    correlation::math::Vector3<double> r_ij = neighbor.r_ij;
+    double const distance = neighbor.distance;
+    if (distance == 0) {
+      continue;
+    }
+
+    double const theta = std::acos(std::clamp(r_ij.z() / distance, -1.0, 1.0));
+    double const phi = std::atan2(r_ij.y(), r_ij.x());
+
+    for (int m_val = -4; m_val <= 4; ++m_val) {
+      q4m[m_val + 4] += SteinhardtCalculator::sphericalHarmonic(4, m_val, {.theta = theta, .phi = phi});
+    }
+    for (int m_val = -6; m_val <= 6; ++m_val) {
+      q6m[m_val + 6] += SteinhardtCalculator::sphericalHarmonic(6, m_val, {.theta = theta, .phi = phi});
+    }
+  }
+
+  for (int m_val = -4; m_val <= 4; ++m_val) {
+    q4m[m_val + 4] /= static_cast<double>(num_neighbors);
+  }
+  for (int m_val = -6; m_val <= 6; ++m_val) {
+    q6m[m_val + 6] /= static_cast<double>(num_neighbors);
+  }
+
+  double sum_sq_4 = 0.0;
+  for (int m_val = -4; m_val <= 4; ++m_val) {
+    sum_sq_4 += std::norm(q4m[m_val + 4]);
+  }
+  double const Q4_val = factors.global_Q4_factor * std::sqrt(sum_sq_4);
+
+  double sum_sq_6 = 0.0;
+  for (int m_val = -6; m_val <= 6; ++m_val) {
+    sum_sq_6 += std::norm(q6m[m_val + 6]);
+  }
+  double const Q6_val = factors.global_Q6_factor * std::sqrt(sum_sq_6);
+
+  double const w6_val = computeW6(q6m);
+
+  double W6_hat_val = 0.0;
+  if (sum_sq_6 > 1e-12) {
+    W6_hat_val = w6_val / std::pow(sum_sq_6, 1.5);
+  }
+
+  return {.Q4 = Q4_val, .Q6 = Q6_val, .W6_hat = W6_hat_val};
+}
+
+void normalizeHistogramMap(std::map<std::string, std::vector<double>> &partials, double factor) {
+  if (factor <= 0.0) {
+    return;
+  }
+  for (auto &[key, vec] : partials) {
+    for (auto &val : vec) {
+      val /= factor;
+    }
+  }
+}
+
+struct BinningConfig {
+  double min_val;
+  double max_val;
+  double d_val;
+};
+
+void addValueToHistogram(std::map<std::string, std::vector<double>> &partials, const std::string &symbol, double val,
+                         BinningConfig config) {
+  if (val >= config.min_val && val < config.max_val) {
+    auto const bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
+    partials[symbol][bin_idx] += 1.0;
+    partials["Total"][bin_idx] += 1.0;
+  }
+}
+
+void populateHistograms(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
+                        const SteinhardtParams &params, HistogramConfigs configs,
+                        correlation::analysis::Histogram &hist_Q4, correlation::analysis::Histogram &hist_Q6,
+                        correlation::analysis::Histogram &hist_W6) {
+  const auto &atoms = cell.atoms();
+  const auto &neighbor_graph = neighbors->neighborGraph();
+  size_t const num_atoms = atoms.size();
+
+  std::map<std::string, std::vector<double>> partials_Q4;
+  std::map<std::string, std::vector<double>> partials_Q6;
+  std::map<std::string, std::vector<double>> partials_W6;
+
+  for (const auto &elem : cell.elements()) {
+    partials_Q4[elem.symbol].assign(configs.bins_Q, 0.0);
+    partials_Q6[elem.symbol].assign(configs.bins_Q, 0.0);
+    partials_W6[elem.symbol].assign(configs.bins_W, 0.0);
+  }
+  partials_Q4["Total"].assign(configs.bins_Q, 0.0);
+  partials_Q6["Total"].assign(configs.bins_Q, 0.0);
+  partials_W6["Total"].assign(configs.bins_W, 0.0);
+
+  double num_atoms_f = 0.0;
+  for (size_t i = 0; i < num_atoms; ++i) {
+    if (neighbor_graph.getNeighbors(i).size() < 2) {
+      continue;
+    }
+
+    num_atoms_f += 1.0;
+    const std::string &symbol = atoms[i].element().symbol;
+
+    addValueToHistogram(partials_Q4, symbol, params.Q4[i],
+                        {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
+    addValueToHistogram(partials_Q6, symbol, params.Q6[i],
+                        {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
+    addValueToHistogram(partials_W6, symbol, params.W6_hat[i],
+                        {.min_val = configs.W_min, .max_val = configs.W_max, .d_val = configs.dW});
+  }
+
+  if (num_atoms_f > 0) {
+    normalizeHistogramMap(partials_Q4, num_atoms_f * configs.dQ);
+    normalizeHistogramMap(partials_Q6, num_atoms_f * configs.dQ);
+    normalizeHistogramMap(partials_W6, num_atoms_f * configs.dW);
+  }
+
+  for (auto &[key, vec] : partials_Q4) {
+    hist_Q4.partials[key] = vec;
+  }
+  for (auto &[key, vec] : partials_Q6) {
+    hist_Q6.partials[key] = vec;
+  }
+  for (auto &[key, vec] : partials_W6) {
+    hist_W6.partials[key] = vec;
+  }
+}
 } // namespace
 
-std::complex<double> SteinhardtCalculator::sphericalHarmonic(int degree, int order, double theta, double phi) {
+std::complex<double> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
   if (order >= 0) {
-    double const P_lm = correlation::math::sph_legendre(degree, order, theta);
-    return P_lm * std::polar(1.0, order * phi);
-  }     // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
-    int abs_m = -order;
-    double P_lm = correlation::math::sph_legendre(degree, abs_m, theta);
-    std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * phi);
-    std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
-    if (abs_m % 2 != 0) {
-      Y_l_minus_m = -Y_l_minus_m;
-    }
-    return Y_l_minus_m;
+    double const P_lm = correlation::math::sph_legendre(degree, order, angles.theta);
+    return P_lm * std::polar(1.0, order * angles.phi);
+  } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
+  int const abs_m = -order;
+  double const P_lm = correlation::math::sph_legendre(degree, abs_m, angles.theta);
+  std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * angles.phi);
+  std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
+  if (abs_m % 2 != 0) {
+    Y_l_minus_m = -Y_l_minus_m;
+  }
+  return Y_l_minus_m;
 }
 
 double SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three) {
@@ -49,8 +236,10 @@ double SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_o
     return 0.0;
   }
 
-  double delta = correlation::math::factorial(j_one + j_two - j_three) * correlation::math::factorial(j_one - j_two + j_three) *
-                 correlation::math::factorial(-j_one + j_two + j_three) / correlation::math::factorial(j_one + j_two + j_three + 1);
+  double delta = correlation::math::factorial(j_one + j_two - j_three) *
+                 correlation::math::factorial(j_one - j_two + j_three) *
+                 correlation::math::factorial(-j_one + j_two + j_three) /
+                 correlation::math::factorial(j_one + j_two + j_three + 1);
   delta = std::sqrt(delta);
 
   double comp = correlation::math::factorial(j_one - m_one) * correlation::math::factorial(j_one + m_one) *
@@ -67,8 +256,10 @@ double SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_o
   for (int k = k_min; k <= k_max; ++k) {
     double const k_phase = (k % 2 != 0) ? -1.0 : 1.0;
     double const denom = correlation::math::factorial(k) * correlation::math::factorial(j_one + j_two - j_three - k) *
-                   correlation::math::factorial(j_one - m_one - k) * correlation::math::factorial(j_two + m_two - k) *
-                   correlation::math::factorial(j_three - j_two + m_one + k) * correlation::math::factorial(j_three - j_one - m_two + k);
+                         correlation::math::factorial(j_one - m_one - k) *
+                         correlation::math::factorial(j_two + m_two - k) *
+                         correlation::math::factorial(j_three - j_two + m_one + k) *
+                         correlation::math::factorial(j_three - j_one - m_two + k);
     sum += k_phase / denom;
   }
 
@@ -95,96 +286,32 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   const auto &neighbor_graph = neighbors->neighborGraph();
   size_t const num_atoms = atoms.size();
 
-  // We want to compute Q4, Q6, W6 histograms mapping Q values to probability.
-  // First we calculate q_lm(i) for l=4, l=6.
-  std::vector<std::vector<std::complex<double>>> q4m(num_atoms, std::vector<std::complex<double>>(9, 0.0));
-  std::vector<std::vector<std::complex<double>>> q6m(num_atoms, std::vector<std::complex<double>>(13, 0.0));
-
-  std::vector<double> Q4(num_atoms, 0.0);
-  std::vector<double> Q6(num_atoms, 0.0);
-  std::vector<double> W6(num_atoms, 0.0);
-  std::vector<double> W6_hat(num_atoms, 0.0);
+  // 1. Compute Q4, Q6, W6_hat for all atoms
+  SteinhardtParams params;
+  params.Q4.resize(num_atoms, 0.0);
+  params.Q6.resize(num_atoms, 0.0);
+  params.W6_hat.resize(num_atoms, 0.0);
 
   double const global_Q4_factor = std::sqrt(correlation::math::four_pi / 9.0);
   double const global_Q6_factor = std::sqrt(correlation::math::four_pi / 13.0);
 
   for (size_t i = 0; i < num_atoms; ++i) {
-    const auto &atom_neighbors = neighbor_graph.getNeighbors(i);
-    size_t const nb = atom_neighbors.size();
-    if (nb < 2) {
-      continue;
-    }
-
-    for (const auto &neighbor : atom_neighbors) {
-      // r_ij vector
-      correlation::math::Vector3<double> r_ij = neighbor.r_ij;
-      double const r = neighbor.distance;
-      if (r == 0) {
-        continue; // Safety check
-}
-
-      double const theta = std::acos(std::clamp(r_ij.z() / r, -1.0, 1.0));
-      double const phi = std::atan2(r_ij.y(), r_ij.x());
-
-      for (int m = -4; m <= 4; ++m) {
-        q4m[i][m + 4] += sphericalHarmonic(4, m, theta, phi);
-      }
-      for (int m = -6; m <= 6; ++m) {
-        q6m[i][m + 6] += sphericalHarmonic(6, m, theta, phi);
-      }
-    }
-
-    for (int m = -4; m <= 4; ++m) {
-      q4m[i][m + 4] /= static_cast<double>(nb);
-    }
-    for (int m = -6; m <= 6; ++m) {
-      q6m[i][m + 6] /= static_cast<double>(nb);
-    }
-
-    double sum_sq_4 = 0.0;
-    for (int m = -4; m <= 4; ++m) {
-      sum_sq_4 += std::norm(q4m[i][m + 4]);
-    }
-    Q4[i] = global_Q4_factor * std::sqrt(sum_sq_4);
-
-    double sum_sq_6 = 0.0;
-    for (int m = -6; m <= 6; ++m) {
-      sum_sq_6 += std::norm(q6m[i][m + 6]);
-    }
-    Q6[i] = global_Q6_factor * std::sqrt(sum_sq_6);
-
-    // Compute W6
-    double w6 = 0.0;
-    for (int m1 = -6; m1 <= 6; ++m1) {
-      for (int m2 = -6; m2 <= 6; ++m2) {
-        int const m3 = -(m1 + m2);
-        if (m3 < -6 || m3 > 6) {
-          continue;
-}
-        double const w3j = wigner3j(6, 6, 6, m1, m2, m3);
-        if (w3j == 0.0) {
-          continue;
-}
-
-        std::complex<double> const prod = q6m[i][m1 + 6] * q6m[i][m2 + 6] * q6m[i][m3 + 6];
-        w6 += w3j * prod.real(); // product should be real theoretically
-      }
-    }
-    W6[i] = w6;
-    if (sum_sq_6 > 1e-12) {
-      W6_hat[i] = w6 / std::pow(sum_sq_6, 1.5);
-    }
+    auto const res = computeSingleAtomSteinhardt(
+        i, neighbor_graph, {.global_Q4_factor = global_Q4_factor, .global_Q6_factor = global_Q6_factor});
+    params.Q4[i] = res.Q4;
+    params.Q6[i] = res.Q6;
+    params.W6_hat[i] = res.W6_hat;
   }
 
-  // Distribution settings
+  // 2. Initialize Histograms
   size_t const bins_Q = 100;
   double const Q_max = 1.0;
-  double const dQ = Q_max / bins_Q;
+  double const d_q = Q_max / bins_Q;
 
   size_t const bins_W = 100;
   double const W_min = -0.2;
   double const W_max = 0.2;
-  double const dW = (W_max - W_min) / bins_W;
+  double const d_w = (W_max - W_min) / bins_W;
 
   correlation::analysis::Histogram hist_Q4;
   hist_Q4.x_label = "Q4";
@@ -195,9 +322,9 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_Q4.description = "Steinhardt Q4 Bond Orientational Order Parameter";
   hist_Q4.file_suffix = "_Q4";
   hist_Q4.bins.resize(bins_Q);
-  for (size_t b = 0; b < bins_Q; ++b) {
-    hist_Q4.bins[b] = (b + 0.5) * dQ; // NOLINT(bugprone-narrowing-conversions)
-}
+  for (size_t bin_idx = 0; bin_idx < bins_Q; ++bin_idx) {
+    hist_Q4.bins[bin_idx] = (static_cast<double>(bin_idx) + 0.5) * d_q;
+  }
 
   correlation::analysis::Histogram hist_Q6;
   hist_Q6.x_label = "Q6";
@@ -208,9 +335,9 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_Q6.description = "Steinhardt Q6 Bond Orientational Order Parameter";
   hist_Q6.file_suffix = "_Q6";
   hist_Q6.bins.resize(bins_Q);
-  for (size_t b = 0; b < bins_Q; ++b) {
-    hist_Q6.bins[b] = (b + 0.5) * dQ; // NOLINT(bugprone-narrowing-conversions)
-}
+  for (size_t bin_idx = 0; bin_idx < bins_Q; ++bin_idx) {
+    hist_Q6.bins[bin_idx] = (static_cast<double>(bin_idx) + 0.5) * d_q;
+  }
 
   correlation::analysis::Histogram hist_W6;
   hist_W6.x_label = "W6_hat";
@@ -221,79 +348,15 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_W6.description = "Steinhardt Normalized W6 Bond Orientational Order Parameter";
   hist_W6.file_suffix = "_W6_hat";
   hist_W6.bins.resize(bins_W);
-  for (size_t b = 0; b < bins_W; ++b) {
-    hist_W6.bins[b] = W_min + (b + 0.5) * dW; // NOLINT(bugprone-narrowing-conversions)
-}
-
-  // Track partials by element symbol and total
-  std::map<std::string, std::vector<double>> partials_Q4;
-  std::map<std::string, std::vector<double>> partials_Q6;
-  std::map<std::string, std::vector<double>> partials_W6;
-
-  for (const auto &elem : cell.elements()) {
-    partials_Q4[elem.symbol].assign(bins_Q, 0.0);
-    partials_Q6[elem.symbol].assign(bins_Q, 0.0);
-    partials_W6[elem.symbol].assign(bins_W, 0.0);
-  }
-  partials_Q4["Total"].assign(bins_Q, 0.0);
-  partials_Q6["Total"].assign(bins_Q, 0.0);
-  partials_W6["Total"].assign(bins_W, 0.0);
-
-  double num_atoms_f = 0.0;
-  for (size_t i = 0; i < num_atoms; ++i) {
-    if (neighbor_graph.getNeighbors(i).size() < 2) {
-      continue;
-}
-
-    num_atoms_f += 1.0;
-    const std::string &symbol = atoms[i].element().symbol;
-
-    if (Q4[i] >= 0 && Q4[i] < Q_max) {
-      auto const b = static_cast<size_t>(Q4[i] / dQ);
-      partials_Q4[symbol][b] += 1.0;
-      partials_Q4["Total"][b] += 1.0;
-    }
-
-    if (Q6[i] >= 0 && Q6[i] < Q_max) {
-      auto const b = static_cast<size_t>(Q6[i] / dQ);
-      partials_Q6[symbol][b] += 1.0;
-      partials_Q6["Total"][b] += 1.0;
-    }
-
-    if (W6_hat[i] >= W_min && W6_hat[i] < W_max) {
-      auto const b = static_cast<size_t>((W6_hat[i] - W_min) / dW);
-      partials_W6[symbol][b] += 1.0;
-      partials_W6["Total"][b] += 1.0;
-    }
+  for (size_t bin_idx = 0; bin_idx < bins_W; ++bin_idx) {
+    hist_W6.bins[bin_idx] = W_min + (static_cast<double>(bin_idx) + 0.5) * d_w;
   }
 
-  if (num_atoms_f > 0) {
-    for (auto &[key, vec] : partials_Q4) {
-      for (auto &val : vec) {
-        val /= (num_atoms_f * dQ);
-}
-    }
-    for (auto &[key, vec] : partials_Q6) {
-      for (auto &val : vec) {
-        val /= (num_atoms_f * dQ);
-}
-    }
-    for (auto &[key, vec] : partials_W6) {
-      for (auto &val : vec) {
-        val /= (num_atoms_f * dW);
-}
-    }
-  }
-
-  for (auto &[key, vec] : partials_Q4) {
-    hist_Q4.partials[key] = vec;
-  }
-  for (auto &[key, vec] : partials_Q6) {
-    hist_Q6.partials[key] = vec;
-  }
-  for (auto &[key, vec] : partials_W6) {
-    hist_W6.partials[key] = vec;
-  }
+  // 3. Populate Histograms
+  populateHistograms(
+      cell, neighbors, params,
+      {.bins_Q = bins_Q, .Q_max = Q_max, .dQ = d_q, .bins_W = bins_W, .W_min = W_min, .W_max = W_max, .dW = d_w},
+      hist_Q4, hist_Q6, hist_W6);
 
   std::map<std::string, correlation::analysis::Histogram> hists;
   hists["Q4"] = std::move(hist_Q4);
