@@ -33,8 +33,8 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
 
   const correlation::core::Cell &cell = dists.cell();
   const auto &atoms = cell.atoms();
-  const size_t N = atoms.size();
-  if (N == 0) {
+  const size_t num_atoms = atoms.size();
+  if (num_atoms == 0) {
     return;
 }
 
@@ -107,7 +107,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   // Group atom indices by element type for partial S(Q) calculation.
   // -----------------------------------------------------------------------
   std::map<std::string, std::vector<size_t>> indices_by_type;
-  for (size_t j = 0; j < N; ++j) {
+  for (size_t j = 0; j < num_atoms; ++j) {
     indices_by_type[atoms[j].element().symbol].push_back(j);
   }
 
@@ -133,9 +133,9 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   };
   std::vector<TypeBlock> type_blocks;
   type_blocks.reserve(indices_by_type.size());
-  std::vector<double> xs(N);
-  std::vector<double> ys(N);
-  std::vector<double> zs(N);
+  std::vector<double> xs(num_atoms);
+  std::vector<double> ys(num_atoms);
+  std::vector<double> zs(num_atoms);
 
   size_t flat_offset = 0;
   for (const auto &[sym, idxs] : indices_by_type) {
@@ -174,12 +174,12 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   // -----------------------------------------------------------------------
   auto precompute_phases = [&](int max_idx, double bx, double by, double bz, std::vector<double> &E_cos,
                                std::vector<double> &E_sin) {
-    E_cos.resize((2 * max_idx + 1) * N);
-    E_sin.resize((2 * max_idx + 1) * N);
+    E_cos.resize((2 * max_idx + 1) * num_atoms);
+    E_sin.resize((2 * max_idx + 1) * num_atoms);
     for (int h = -max_idx; h <= max_idx; ++h) {
-      double *cos_h = &E_cos[(h + max_idx) * N];
-      double *sin_h = &E_sin[(h + max_idx) * N];
-      for (size_t j = 0; j < N; ++j) {
+      double *cos_h = &E_cos[(h + max_idx) * num_atoms];
+      double *sin_h = &E_sin[(h + max_idx) * num_atoms];
+      for (size_t j = 0; j < num_atoms; ++j) {
         double const phase = h * (bx * xs[j] + by * ys[j] + bz * zs[j]);
         cos_h[j] = std::cos(phase);
         sin_h[j] = std::sin(phase);
@@ -210,7 +210,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   s_q_hist.description = "Structure Factor S(Q)";
   s_q_hist.file_suffix = "_S";
   for (size_t i = 0; i < num_q_bins; ++i) {
-    s_q_hist.bins[i] = (i + 0.5) * q_bin_width; // NOLINT(bugprone-narrowing-conversions)
+    s_q_hist.bins[i] = (static_cast<double>(i) + 0.5) * q_bin_width;
 }
 
   for (const auto &pi : partials_info) {
@@ -256,9 +256,9 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
         const size_t cnt = type_blocks[ti].count;
         double c_sum = 0.0;
         double s_sum = 0.0;
-        correlation::math::miller_phase_sum(&E1_cos[(q.h + hmax) * N] + off, &E1_sin[(q.h + hmax) * N] + off,
-                                            &E2_cos[(q.k + kmax) * N] + off, &E2_sin[(q.k + kmax) * N] + off,
-                                            &E3_cos[(q.l + lmax) * N] + off, &E3_sin[(q.l + lmax) * N] + off, cnt,
+        correlation::math::miller_phase_sum(&E1_cos[(q.h + hmax) * num_atoms] + off, &E1_sin[(q.h + hmax) * num_atoms] + off,
+                                            &E2_cos[(q.k + kmax) * num_atoms] + off, &E2_sin[(q.k + kmax) * num_atoms] + off,
+                                            &E3_cos[(q.l + lmax) * num_atoms] + off, &E3_sin[(q.l + lmax) * num_atoms] + off, cnt,
                                             c_sum, s_sum);
         type_cos[ti] = c_sum;
         type_sin[ti] = s_sum;
@@ -271,7 +271,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
         full_cos += type_cos[ti];
         full_sin += type_sin[ti];
       }
-      const double sq_total = (full_cos * full_cos + full_sin * full_sin) / static_cast<double>(N);
+      const double sq_total = (full_cos * full_cos + full_sin * full_sin) / static_cast<double>(num_atoms);
       local_total_sum[bin] += sq_total;
       local_total_count[bin] += 1;
 

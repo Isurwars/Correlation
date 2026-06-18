@@ -8,8 +8,8 @@
  * This file is only compiled when BUILD_WITH_CUDA=ON.
  */
 
-#include "calculators/GPUSQCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "calculators/GPUSQCalculator.hpp"
 #include "calculators/StructureFactorCalculator.hpp"
 #include "math/Constants.hpp"
 
@@ -25,89 +25,32 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<GPUSQCalculator>("GPUSQCalculator");
-} // namespace
 
-// -------------------------------------------------------------------------
-// CUDA kernel: compute rho_cos and rho_sin for a batch of q-vectors.
-//
-// Each thread handles one q-vector. For each q, it sums:
-//   rho_cos[q] = sum_j cos(qx * xj + qy * yj + qz * zj)
-//   rho_sin[q] = sum_j sin(qx * xj + qy * yj + qz * zj)
-// -------------------------------------------------------------------------
+struct QVectorsData {
+  std::vector<double> qx;
+  std::vector<double> qy;
+  std::vector<double> qz;
+  std::vector<double> qmag;
+};
 
-__global__ void sq_kernel(const double *__restrict__ d_x,
-                          const double *__restrict__ d_y,
-                          const double *__restrict__ d_z, int N,
-                          const double *__restrict__ d_qx,
-                          const double *__restrict__ d_qy,
-                          const double *__restrict__ d_qz, int num_q,
-                          double *__restrict__ d_rho_cos,
-                          double *__restrict__ d_rho_sin) {
-  int qi = blockIdx.x * blockDim.x + threadIdx.x;
-  if (qi >= num_q)
-    return;
+struct DeviceAtoms {
+  const double *__restrict__ x;
+  const double *__restrict__ y;
+  const double *__restrict__ z;
+};
 
-  double qx = d_qx[qi];
-  double qy = d_qy[qi];
-  double qz = d_qz[qi];
+struct DeviceQVectors {
+  const double *__restrict__ qx;
+  const double *__restrict__ qy;
+  const double *__restrict__ qz;
+};
 
-  double cos_sum = 0.0;
-  double sin_sum = 0.0;
+struct DeviceResults {
+  double *__restrict__ rho_cos;
+  double *__restrict__ rho_sin;
+};
 
-  for (int j = 0; j < N; ++j) {
-    double phase = qx * d_x[j] + qy * d_y[j] + qz * d_z[j];
-    double s, c;
-    sincos(phase, &s, &c);
-    cos_sum += c;
-    sin_sum += s;
-  }
-
-  d_rho_cos[qi] = cos_sum;
-  d_rho_sin[qi] = sin_sum;
-}
-
-// -------------------------------------------------------------------------
-// Constructor — probes for a CUDA device.
-// -------------------------------------------------------------------------
-GPUSQCalculator::GPUSQCalculator() {
-  int device_count = 0;
-  cudaError_t err = cudaGetDeviceCount(&device_count);
-  has_gpu_ = (err == cudaSuccess && device_count > 0);
-}
-
-// -------------------------------------------------------------------------
-// calculateFrame — GPU path or CPU fallback.
-// -------------------------------------------------------------------------
-void GPUSQCalculator::calculateFrame(
-    correlation::analysis::DistributionFunctions &dists,
-    const correlation::analysis::AnalysisSettings &settings) const {
-
-  // ---------- CPU fallback ----------
-  if (!has_gpu_) {
-    StructureFactorCalculator cpu_calc;
-    cpu_calc.calculateFrame(dists, settings);
-    return;
-  }
-
-  // ---------- GPU path ----------
-  if (settings.q_bin_width <= 0 || settings.q_max <= 0) {
-    throw std::invalid_argument("Q-space parameters must be positive.");
-  }
-
-  const auto &cell = dists.cell();
-  const auto &atoms = cell.atoms();
-  const size_t N = atoms.size();
-  if (N == 0)
-    return;
-
-  const double q_max = settings.q_max;
-  const double q_bin_width = settings.q_bin_width;
-  const size_t num_q_bins =
-      static_cast<size_t>(std::floor(q_max / q_bin_width));
-  if (num_q_bins == 0)
-    throw std::invalid_argument("Q_max too small for Q_bin_width.");
-
-  // Reciprocal lattice vectors.
+QVectorsData generateQVectors(const correlation::core::Cell &cell, double q_max) {
   const auto &inv = cell.inverseLatticeVectors();
   const double bx_x = correlation::math::two_pi * inv(0, 0);
   const double bx_y = correlation::math::two_pi * inv(0, 1);
@@ -127,76 +70,191 @@ void GPUSQCalculator::calculateFrame(
   const int kmax = (b2_norm > 1e-10) ? static_cast<int>(std::ceil(q_max / b2_norm)) : 0;
   const int lmax = (b3_norm > 1e-10) ? static_cast<int>(std::ceil(q_max / b3_norm)) : 0;
 
-  // Generate q-vectors.
   const double q_max_sq = q_max * q_max;
-  std::vector<double> h_qx, h_qy, h_qz, h_qmag;
-  for (int h = -hmax; h <= hmax; ++h) {
-    for (int k = -kmax; k <= kmax; ++k) {
-      for (int l = -lmax; l <= lmax; ++l) {
-        if (h == 0 && k == 0 && l == 0)
+  QVectorsData q_data;
+  for (int h_idx = -hmax; h_idx <= hmax; ++h_idx) {
+    for (int k_idx = -kmax; k_idx <= kmax; ++k_idx) {
+      for (int l_idx = -lmax; l_idx <= lmax; ++l_idx) {
+        if (h_idx == 0 && k_idx == 0 && l_idx == 0) {
           continue;
-        double qx = h * bx_x + k * by_x + l * bz_x;
-        double qy = h * bx_y + k * by_y + l * bz_y;
-        double qz = h * bx_z + k * by_z + l * bz_z;
-        double qmag_sq = qx * qx + qy * qy + qz * qz;
+        }
+        double q_x = h_idx * bx_x + k_idx * by_x + l_idx * bz_x;
+        double q_y = h_idx * bx_y + k_idx * by_y + l_idx * bz_y;
+        double q_z = h_idx * bx_z + k_idx * by_z + l_idx * bz_z;
+        double qmag_sq = q_x * q_x + q_y * q_y + q_z * q_z;
         if (qmag_sq <= q_max_sq) {
-          h_qx.push_back(qx);
-          h_qy.push_back(qy);
-          h_qz.push_back(qz);
-          h_qmag.push_back(std::sqrt(qmag_sq));
+          q_data.qx.push_back(q_x);
+          q_data.qy.push_back(q_y);
+          q_data.qz.push_back(q_z);
+          q_data.qmag.push_back(std::sqrt(qmag_sq));
         }
       }
     }
   }
-  if (h_qx.empty())
-    return;
+  return q_data;
+}
 
-  const int num_q = static_cast<int>(h_qx.size());
+std::vector<double> averageBinnedSQ(const std::vector<double> &rho_cos, size_t num_q_bins,
+                                    const std::vector<double> &rho_sin, double q_bin_width,
+                                    const std::vector<double> &qmag, size_t num_atoms) {
+  std::vector<double> total_sq(num_q_bins, 0.0);
+  std::vector<size_t> total_count(num_q_bins, 0);
+  const int num_q = static_cast<int>(qmag.size());
+
+  for (int qi = 0; qi < num_q; ++qi) {
+    auto bin = static_cast<size_t>(qmag[qi] / q_bin_width);
+    if (bin >= num_q_bins) {
+      continue;
+    }
+    double sq_val = (rho_cos[qi] * rho_cos[qi] + rho_sin[qi] * rho_sin[qi]) / static_cast<double>(num_atoms);
+    total_sq[bin] += sq_val;
+    total_count[bin] += 1;
+  }
+
+  for (size_t i = 0; i < num_q_bins; ++i) {
+    if (total_count[i] > 0) {
+      total_sq[i] /= static_cast<double>(total_count[i]);
+    }
+  }
+
+  return total_sq;
+}
+
+// -------------------------------------------------------------------------
+// CUDA kernel: compute rho_cos and rho_sin for a batch of q-vectors.
+//
+// Each thread handles one q-vector. For each q, it sums:
+//   rho_cos[q] = sum_j cos(qx * xj + qy * yj + qz * zj)
+//   rho_sin[q] = sum_j sin(qx * xj + qy * yj + qz * zj)
+// -------------------------------------------------------------------------
+
+__global__ void sq_kernel(DeviceAtoms atoms, int num_atoms, DeviceQVectors q_vecs, int num_q, DeviceResults results) {
+  int q_i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
+  if (q_i >= num_q) {
+    return;
+  }
+
+  double q_x = q_vecs.qx[q_i];
+  double q_y = q_vecs.qy[q_i];
+  double q_z = q_vecs.qz[q_i];
+
+  double cos_sum = 0.0;
+  double sin_sum = 0.0;
+
+  for (int j = 0; j < num_atoms; ++j) {
+    double phase = q_x * atoms.x[j] + q_y * atoms.y[j] + q_z * atoms.z[j];
+    double sin_val = 0.0;
+    double cos_val = 0.0;
+    sincos(phase, &sin_val, &cos_val);
+    cos_sum += cos_val;
+    sin_sum += sin_val;
+  }
+
+  results.rho_cos[q_i] = cos_sum;
+  results.rho_sin[q_i] = sin_sum;
+}
+} // namespace
+
+// -------------------------------------------------------------------------
+// Constructor — probes for a CUDA device.
+// -------------------------------------------------------------------------
+GPUSQCalculator::GPUSQCalculator() {
+  int device_count = 0;
+  cudaError_t err = cudaGetDeviceCount(&device_count);
+  has_gpu_ = (err == cudaSuccess && device_count > 0);
+}
+
+// -------------------------------------------------------------------------
+// calculateFrame — GPU path or CPU fallback.
+// -------------------------------------------------------------------------
+void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
+                                     const correlation::analysis::AnalysisSettings &settings) const {
+
+  // ---------- CPU fallback ----------
+  if (!has_gpu_) {
+    StructureFactorCalculator cpu_calc;
+    cpu_calc.calculateFrame(dists, settings);
+    return;
+  }
+
+  // ---------- GPU path ----------
+  if (settings.q_bin_width <= 0 || settings.q_max <= 0) {
+    throw std::invalid_argument("Q-space parameters must be positive.");
+  }
+
+  const auto &cell = dists.cell();
+  const auto &atoms = cell.atoms();
+  const size_t num_atoms = atoms.size();
+  if (num_atoms == 0) {
+    return;
+  }
+
+  const double q_max = settings.q_max;
+  const double q_bin_width = settings.q_bin_width;
+  const auto num_q_bins = static_cast<size_t>(std::floor(q_max / q_bin_width));
+  if (num_q_bins == 0) {
+    throw std::invalid_argument("Q_max too small for Q_bin_width.");
+  }
+
+  // Generate q-vectors.
+  QVectorsData q_data = generateQVectors(cell, q_max);
+  if (q_data.qx.empty()) {
+    return;
+  }
+
+  const int num_q = static_cast<int>(q_data.qx.size());
 
   // Prepare host position arrays.
-  std::vector<double> h_x(N), h_y(N), h_z(N);
-  for (size_t j = 0; j < N; ++j) {
-    const auto &p = atoms[j].position();
-    h_x[j] = p.x();
-    h_y[j] = p.y();
-    h_z[j] = p.z();
+  std::vector<double> h_x(num_atoms);
+  std::vector<double> h_y(num_atoms);
+  std::vector<double> h_z(num_atoms);
+  for (size_t j = 0; j < num_atoms; ++j) {
+    const auto &pos = atoms[j].position();
+    h_x[j] = pos.x();
+    h_y[j] = pos.y();
+    h_z[j] = pos.z();
   }
 
   // Allocate device memory.
-  double *d_x, *d_y, *d_z;
-  double *d_qx, *d_qy, *d_qz;
-  double *d_rho_cos, *d_rho_sin;
+  double *d_x = nullptr;
+  double *d_y = nullptr;
+  double *d_z = nullptr;
+  double *d_qx = nullptr;
+  double *d_qy = nullptr;
+  double *d_qz = nullptr;
+  double *d_rho_cos = nullptr;
+  double *d_rho_sin = nullptr;
 
-  cudaMalloc(&d_x, N * sizeof(double));
-  cudaMalloc(&d_y, N * sizeof(double));
-  cudaMalloc(&d_z, N * sizeof(double));
+  cudaMalloc(&d_x, num_atoms * sizeof(double));
+  cudaMalloc(&d_y, num_atoms * sizeof(double));
+  cudaMalloc(&d_z, num_atoms * sizeof(double));
   cudaMalloc(&d_qx, num_q * sizeof(double));
   cudaMalloc(&d_qy, num_q * sizeof(double));
   cudaMalloc(&d_qz, num_q * sizeof(double));
   cudaMalloc(&d_rho_cos, num_q * sizeof(double));
   cudaMalloc(&d_rho_sin, num_q * sizeof(double));
 
-  cudaMemcpy(d_x, h_x.data(), N * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_y, h_y.data(), N * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_z, h_z.data(), N * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_qx, h_qx.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_qy, h_qy.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_qz, h_qz.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_x, h_x.data(), num_atoms * sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_y, h_y.data(), num_atoms * sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_z, h_z.data(), num_atoms * sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_qx, q_data.qx.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_qy, q_data.qy.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
+  cudaMemcpy(d_qz, q_data.qz.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
 
   // Launch kernel.
   const int block_size = 256;
   const int grid_size = (num_q + block_size - 1) / block_size;
-  sq_kernel<<<grid_size, block_size>>>(d_x, d_y, d_z, static_cast<int>(N),
-                                       d_qx, d_qy, d_qz, num_q,
-                                       d_rho_cos, d_rho_sin);
+  DeviceAtoms device_atoms{.x = d_x, .y = d_y, .z = d_z};
+  DeviceQVectors device_q_vecs{.qx = d_qx, .qy = d_qy, .qz = d_qz};
+  DeviceResults device_results{.rho_cos = d_rho_cos, .rho_sin = d_rho_sin};
+  sq_kernel<<<grid_size, block_size>>>(device_atoms, static_cast<int>(num_atoms), device_q_vecs, num_q, device_results);
   cudaDeviceSynchronize();
 
   // Copy results back.
-  std::vector<double> rho_cos(num_q), rho_sin(num_q);
-  cudaMemcpy(rho_cos.data(), d_rho_cos, num_q * sizeof(double),
-             cudaMemcpyDeviceToHost);
-  cudaMemcpy(rho_sin.data(), d_rho_sin, num_q * sizeof(double),
-             cudaMemcpyDeviceToHost);
+  std::vector<double> rho_cos(num_q, 0.0);
+  std::vector<double> rho_sin(num_q, 0.0);
+  cudaMemcpy(rho_cos.data(), d_rho_cos, num_q * sizeof(double), cudaMemcpyDeviceToHost);
+  cudaMemcpy(rho_sin.data(), d_rho_sin, num_q * sizeof(double), cudaMemcpyDeviceToHost);
 
   // Free device memory.
   cudaFree(d_x);
@@ -209,24 +267,7 @@ void GPUSQCalculator::calculateFrame(
   cudaFree(d_rho_sin);
 
   // Bin-average S(Q) = |rho(q)|^2 / N.
-  std::vector<double> total_sq(num_q_bins, 0.0);
-  std::vector<size_t> total_count(num_q_bins, 0);
-
-  for (int qi = 0; qi < num_q; ++qi) {
-    size_t bin = static_cast<size_t>(h_qmag[qi] / q_bin_width);
-    if (bin >= num_q_bins)
-      continue;
-    double sq_val =
-        (rho_cos[qi] * rho_cos[qi] + rho_sin[qi] * rho_sin[qi]) /
-        static_cast<double>(N);
-    total_sq[bin] += sq_val;
-    total_count[bin] += 1;
-  }
-
-  for (size_t i = 0; i < num_q_bins; ++i) {
-    if (total_count[i] > 0)
-      total_sq[i] /= static_cast<double>(total_count[i]);
-  }
+  std::vector<double> total_sq = averageBinnedSQ(rho_cos, num_q_bins, rho_sin, q_bin_width, q_data.qmag, num_atoms);
 
   // Build histogram.
   correlation::analysis::Histogram s_q_hist;
@@ -238,8 +279,9 @@ void GPUSQCalculator::calculateFrame(
   s_q_hist.y_unit = "arbitrary units";
   s_q_hist.description = "Structure Factor S(Q) — GPU accelerated";
   s_q_hist.file_suffix = "_S_gpu";
-  for (size_t i = 0; i < num_q_bins; ++i)
-    s_q_hist.bins[i] = (i + 0.5) * q_bin_width;
+  for (size_t q_idx = 0; q_idx < num_q_bins; ++q_idx) {
+    s_q_hist.bins[q_idx] = (static_cast<double>(q_idx) + 0.5) * q_bin_width;
+  }
   s_q_hist.partials["Total"] = std::move(total_sq);
 
   dists.addHistogram("S_q_gpu", std::move(s_q_hist));
