@@ -65,7 +65,7 @@ correlation::analysis::Histogram RDCalculator::calculate(const correlation::core
   }
 
   if (total_counts > 0) {
-    double const total_counts_d = static_cast<double>(total_counts);
+    auto const total_counts_d = static_cast<double>(total_counts);
     for (size_t i = 0; i < num_bins; ++i) {
       partial_hist[i] /= total_counts_d;
     }
