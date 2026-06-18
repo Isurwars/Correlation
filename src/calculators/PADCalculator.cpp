@@ -20,6 +20,31 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<PADCalculator>("PADCalculator");
+
+struct PADSettings {
+  double bin_width;
+  size_t num_bins;
+  double theta_cut;
+};
+
+void populateTripletHistogram(const std::vector<double> &angles, PADSettings settings,
+                              std::vector<double> &partial_hist) {
+  for (const auto &angle_rad : angles) {
+    double const angle_deg = angle_rad * correlation::math::rad_to_deg;
+
+    if (angle_deg <= settings.theta_cut + 1e-5) {
+      auto bin = static_cast<size_t>(angle_deg / settings.bin_width);
+
+      if (bin == settings.num_bins && bin > 0) {
+        bin = settings.num_bins - 1;
+      }
+
+      if (bin < settings.num_bins) {
+        partial_hist[bin]++;
+      }
+    }
+  }
+}
 } // namespace
 
 void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
@@ -43,7 +68,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
   const size_t num_elements = elements.size();
   if (num_elements == 0) {
     return {};
-}
+  }
 
   const auto num_bins = static_cast<size_t>((theta_cut / bin_width) + 1);
 
@@ -57,7 +82,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
   f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
-    f_theta.bins[i] = (i + 0.5) * bin_width; // NOLINT(bugprone-narrowing-conversions)
+    f_theta.bins[i] = (static_cast<double>(i) + 0.5) * bin_width;
   }
 
   for (size_t i = 0; i < num_elements; ++i) {
@@ -67,21 +92,8 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
         auto &partial_hist = f_theta.partials[key];
         partial_hist.assign(num_bins, 0.0);
 
-        for (const auto &angle_rad : neighbors->angles()[j][i][k]) {
-          double const angle_deg = angle_rad * correlation::math::rad_to_deg;
-
-          if (angle_deg <= theta_cut + 1e-5) {
-            auto bin = static_cast<size_t>(angle_deg / bin_width);
-
-            if (bin == num_bins && bin > 0) {
-              bin = num_bins - 1;
-            }
-
-            if (bin < num_bins) {
-              partial_hist[bin]++;
-            }
-          }
-        }
+        populateTripletHistogram(neighbors->angles()[j][i][k],
+                                 {.bin_width = bin_width, .num_bins = num_bins, .theta_cut = theta_cut}, partial_hist);
       }
     }
   }
