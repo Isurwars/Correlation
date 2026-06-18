@@ -28,7 +28,8 @@ void MSDCalculator::calculateTrajectory(correlation::analysis::DistributionFunct
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-MSDCalculator::calculate(const correlation::core::Trajectory &traj, correlation::analysis::MaxFrames max_correlation_frames,
+MSDCalculator::calculate(const correlation::core::Trajectory &traj,
+                         correlation::analysis::MaxFrames max_correlation_frames,
                          correlation::analysis::StartFrame start_frame, correlation::analysis::EndFrame end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
 
@@ -46,7 +47,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj, correlation:
   }
 
   const size_t num_frames = raw_msd.size();
-  const double dt = traj.getTimeStep();
+  const double time_step = traj.getTimeStep();
 
   // --- MSD histogram: bins = time (fs), partials["Total"] = MSD (Å²) ---
   correlation::analysis::Histogram msd_hist;
@@ -59,7 +60,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj, correlation:
   msd_hist.file_suffix = "_MSD";
   msd_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    msd_hist.bins[i] = static_cast<double>(i) * dt;
+    msd_hist.bins[i] = static_cast<double>(i) * time_step;
   }
   msd_hist.partials["Total"] = raw_msd;
   results["MSD"] = std::move(msd_hist);
@@ -77,9 +78,9 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj, correlation:
   deff_hist.bins = results["MSD"].bins; // Same time axis
   std::vector<double> d_eff(num_frames, 0.0);
   for (size_t i = 1; i < num_frames; ++i) {
-    const double t = static_cast<double>(i) * dt;
-    if (t > 0.0) {
-      d_eff[i] = raw_msd[i] / (6.0 * t);
+    const double time = static_cast<double>(i) * time_step;
+    if (time > 0.0) {
+      d_eff[i] = raw_msd[i] / (6.0 * time);
     }
   }
   deff_hist.partials["Total"] = d_eff;

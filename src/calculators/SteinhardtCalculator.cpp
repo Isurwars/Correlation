@@ -23,53 +23,52 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<SteinhardtCalculator>("SteinhardtCalculator");
 } // namespace
 
-std::complex<double> SteinhardtCalculator::sphericalHarmonic(int l, int m, double theta, double phi) {
-  if (m >= 0) {
-    double const P_lm = correlation::math::sph_legendre(l, m, theta);
-    return P_lm * std::polar(1.0, m * phi);
+std::complex<double> SteinhardtCalculator::sphericalHarmonic(int degree, int order, double theta, double phi) {
+  if (order >= 0) {
+    double const P_lm = correlation::math::sph_legendre(degree, order, theta);
+    return P_lm * std::polar(1.0, order * phi);
   }     // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
-    int abs_m = -m;
-    double P_lm = correlation::math::sph_legendre(l, abs_m, theta);
+    int abs_m = -order;
+    double P_lm = correlation::math::sph_legendre(degree, abs_m, theta);
     std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * phi);
     std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
     if (abs_m % 2 != 0) {
       Y_l_minus_m = -Y_l_minus_m;
     }
     return Y_l_minus_m;
- 
 }
 
-double SteinhardtCalculator::wigner3j(int j1, int j2, int j3, int m1, int m2, int m3) {
-  if (m1 + m2 + m3 != 0) {
+double SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three) {
+  if (m_one + m_two + m_three != 0) {
     return 0.0;
-}
-  if (j3 < std::abs(j1 - j2) || j3 > j1 + j2) {
+  }
+  if (j_three < std::abs(j_one - j_two) || j_three > j_one + j_two) {
     return 0.0;
-}
-  if (std::abs(m1) > j1 || std::abs(m2) > j2 || std::abs(m3) > j3) {
+  }
+  if (std::abs(m_one) > j_one || std::abs(m_two) > j_two || std::abs(m_three) > j_three) {
     return 0.0;
-}
+  }
 
-  double delta = correlation::math::factorial(j1 + j2 - j3) * correlation::math::factorial(j1 - j2 + j3) *
-                 correlation::math::factorial(-j1 + j2 + j3) / correlation::math::factorial(j1 + j2 + j3 + 1);
+  double delta = correlation::math::factorial(j_one + j_two - j_three) * correlation::math::factorial(j_one - j_two + j_three) *
+                 correlation::math::factorial(-j_one + j_two + j_three) / correlation::math::factorial(j_one + j_two + j_three + 1);
   delta = std::sqrt(delta);
 
-  double comp = correlation::math::factorial(j1 - m1) * correlation::math::factorial(j1 + m1) *
-                correlation::math::factorial(j2 - m2) * correlation::math::factorial(j2 + m2) *
-                correlation::math::factorial(j3 - m3) * correlation::math::factorial(j3 + m3);
+  double comp = correlation::math::factorial(j_one - m_one) * correlation::math::factorial(j_one + m_one) *
+                correlation::math::factorial(j_two - m_two) * correlation::math::factorial(j_two + m_two) *
+                correlation::math::factorial(j_three - m_three) * correlation::math::factorial(j_three + m_three);
   comp = std::sqrt(comp);
 
-  double const phase1 = ((j1 - j2 - m3) % 2 != 0) ? -1.0 : 1.0;
+  double const phase1 = ((j_one - j_two - m_three) % 2 != 0) ? -1.0 : 1.0;
 
-  int const k_min = std::max({0, j2 - j3 - m1, j1 - j3 + m2});
-  int const k_max = std::min({j1 + j2 - j3, j1 - m1, j2 + m2});
+  int const k_min = std::max({0, j_two - j_three - m_one, j_one - j_three + m_two});
+  int const k_max = std::min({j_one + j_two - j_three, j_one - m_one, j_two + m_two});
 
   double sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
     double const k_phase = (k % 2 != 0) ? -1.0 : 1.0;
-    double const denom = correlation::math::factorial(k) * correlation::math::factorial(j1 + j2 - j3 - k) *
-                   correlation::math::factorial(j1 - m1 - k) * correlation::math::factorial(j2 + m2 - k) *
-                   correlation::math::factorial(j3 - j2 + m1 + k) * correlation::math::factorial(j3 - j1 - m2 + k);
+    double const denom = correlation::math::factorial(k) * correlation::math::factorial(j_one + j_two - j_three - k) *
+                   correlation::math::factorial(j_one - m_one - k) * correlation::math::factorial(j_two + m_two - k) *
+                   correlation::math::factorial(j_three - j_two + m_one + k) * correlation::math::factorial(j_three - j_one - m_two + k);
     sum += k_phase / denom;
   }
 
