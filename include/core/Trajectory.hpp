@@ -104,9 +104,9 @@ public:
 
   /**
    * @brief Sets the time step between frames.
-   * @param dt The new time step value.
+   * @param time_step The new time step value.
    */
-  void setTimeStep(double dt) { time_step_ = dt; }
+  void setTimeStep(double time_step) { time_step_ = time_step; }
 
   /**
    * @brief Gets a linear bond cutoff distance for two given element types.

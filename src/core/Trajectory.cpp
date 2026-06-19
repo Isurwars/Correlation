@@ -107,11 +107,11 @@ void Trajectory::ensureMaterialized() const {
 double Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
   if (bond_cutoffs_sq_.empty()) {
     precomputeBondCutoffs();
-}
+  }
 
   if (type1 >= bond_cutoffs_sq_.size() || type2 >= bond_cutoffs_sq_.size()) {
     return 0.0;
-}
+  }
 
   return bond_cutoffs_sq_[type1][type2];
 }
@@ -140,7 +140,7 @@ void Trajectory::addFrame(const Cell &frame) {
 void Trajectory::precomputeBondCutoffs() const {
   if (getFrameCount() == 0) {
     return;
-}
+  }
 
   Cell const first_frame = getFrame(0);
   const auto &elements = first_frame.elements();
@@ -224,43 +224,44 @@ void Trajectory::calculateVelocities() {
 
   if (frames_.size() < 2) {
     return;
-}
+  }
   size_t const num_frames = frames_.size();
   size_t const num_atoms = frames_[0].atoms().size();
 
   if (time_step_ <= 0.0) {
     return; // Cannot calculate valid velocities
-}
+  }
 
-  for (size_t t = 0; t < num_frames; ++t) {
+  for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
     // Check if the frame has a valid periodic cell (volume > 0).
-    const bool use_pbc = (frames_[t].volume() > 1e-9);
+    const bool use_pbc = (frames_[frame_idx].volume() > 1e-9);
 
     // Minimum-image displacement: delegates to Cell::minimumImage() which
     // correctly handles both orthogonal and triclinic cells.
-    auto displacement = [&](const math::Vector3<double> &r2, const math::Vector3<double> &r1) -> math::Vector3<double> {
-      const math::Vector3<double> dr = r2 - r1;
-      return use_pbc ? frames_[t].minimumImage(dr) : dr;
+    auto displacement = [&](const math::Vector3<double> &target_pos,
+                            const math::Vector3<double> &source_pos) -> math::Vector3<double> {
+      const math::Vector3<double> delta_r = target_pos - source_pos;
+      return use_pbc ? frames_[frame_idx].minimumImage(delta_r) : delta_r;
     };
-    if (t == 0) {
-      for (size_t i = 0; i < num_atoms; ++i) {
-        const auto &r0 = frames_[0].atoms()[i].position();
-        const auto &r1 = frames_[1].atoms()[i].position();
-        frames_[t].atoms()[i].setVelocity(displacement(r1, r0) / time_step_);
+    if (frame_idx == 0) {
+      for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+        const auto &pos0 = frames_[0].atoms()[atom_idx].position();
+        const auto &pos1 = frames_[1].atoms()[atom_idx].position();
+        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos1, pos0) / time_step_);
       }
-    } else if (t == num_frames - 1) {
-      for (size_t i = 0; i < num_atoms; ++i) {
-        const auto &rN = frames_[num_frames - 1].atoms()[i].position();
-        const auto &rN_1 = frames_[num_frames - 2].atoms()[i].position();
-        frames_[t].atoms()[i].setVelocity(displacement(rN, rN_1) / time_step_);
+    } else if (frame_idx == num_frames - 1) {
+      for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
+        const auto &posN = frames_[num_frames - 1].atoms()[atom_idx].position();
+        const auto &posN_1 = frames_[num_frames - 2].atoms()[atom_idx].position();
+        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(posN, posN_1) / time_step_);
       }
     } else {
-      for (size_t i = 0; i < num_atoms; ++i) {
+      for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
         // Central difference for internal frames
         // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
-        const auto &r_next = frames_[t + 1].atoms()[i].position();
-        const auto &r_prev = frames_[t - 1].atoms()[i].position();
-        frames_[t].atoms()[i].setVelocity(displacement(r_next, r_prev) / (2.0 * time_step_));
+        const auto &pos_next = frames_[frame_idx + 1].atoms()[atom_idx].position();
+        const auto &pos_prev = frames_[frame_idx - 1].atoms()[atom_idx].position();
+        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos_next, pos_prev) / (2.0 * time_step_));
       }
     }
   }
@@ -294,12 +295,12 @@ void Trajectory::validateFrame(const Cell &new_frame) const {
   // Map new element IDs to reference element IDs for fast comparison
   std::vector<int> new_to_ref(new_elements.size(), -1);
   for (size_t i = 0; i < new_elements.size(); ++i) {
-    auto it = std::find(ref_elements.begin(), ref_elements.end(), new_elements[i]);
-    if (it == ref_elements.end()) {
+    auto element_iterator = std::ranges::find(ref_elements, new_elements[i]);
+    if (element_iterator == ref_elements.end()) {
       throw std::runtime_error("Frame validation failed: Element symbol mismatch at index " + std::to_string(i) +
                                ". Expected " + ref_elements[i].symbol + ", but got " + new_elements[i].symbol);
     }
-    new_to_ref[i] = static_cast<int>(std::distance(ref_elements.begin(), it));
+    new_to_ref[i] = static_cast<int>(std::distance(ref_elements.begin(), element_iterator));
   }
 
   // Check if the element IDs match in strict order
