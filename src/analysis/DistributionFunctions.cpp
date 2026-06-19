@@ -354,7 +354,11 @@ void DistributionFunctions::calculateXRD(double lambda, double theta_min, double
                            "calculateRDF().");
   }
   histograms_["XRD"] = correlation::calculators::XRDCalculator::calculate(
-      histograms_.at("g_r"), cell_, ashcroft_weights_, lambda, theta_min, theta_max, bin_width);
+      histograms_.at("g_r"), cell_, ashcroft_weights_,
+      correlation::calculators::Wavelength{lambda},
+      correlation::calculators::MinTheta{theta_min},
+      correlation::calculators::MaxTheta{theta_max},
+      correlation::calculators::BinWidth{bin_width});
 }
 
 //---------------------------------------------------------------------------//

@@ -27,34 +27,40 @@ const bool registered = CalculatorFactory::registerTypeSafe<XRDCalculator>("XRDC
 
 void XRDCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                    const correlation::analysis::AnalysisSettings &settings) const {
-  if (dists.getAllHistograms().find("g_r") == dists.getAllHistograms().end()) {
+  if (!dists.getAllHistograms().contains("g_r")) {
     return; // g(r) hasn't been calculated yet
   }
-  dists.addHistogram("XRD", calculate(dists.getHistogram("g_r"), dists.cell(), dists.getAshcroftWeights(), 1.5406, 5.0, 90.0,
-                                   settings.q_bin_width));
+  dists.addHistogram("XRD",
+                     calculate(dists.getHistogram("g_r"), dists.cell(), dists.getAshcroftWeights(), Wavelength{1.5406},
+                               MinTheta{5.0}, MaxTheta{90.0}, BinWidth{settings.q_bin_width}));
 }
 
 correlation::analysis::Histogram XRDCalculator::calculate(const correlation::analysis::Histogram &g_r_hist,
                                                           const correlation::core::Cell &cell,
                                                           const std::map<std::string, double> &ashcroft_weights,
-                                                          double lambda, double theta_min, double theta_max,
-                                                          double bin_width) {
-  if (bin_width <= 0) {
+                                                          Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
+                                                          BinWidth bin_width) {
+  double const lambda_val = lambda.value;
+  double const theta_min_val = theta_min.value;
+  double const theta_max_val = theta_max.value;
+  double const bin_width_val = bin_width.value;
+
+  if (bin_width_val <= 0) {
     throw std::invalid_argument("Bin width must be positive.");
   }
   if (g_r_hist.bins.size() < 2) {
     throw std::invalid_argument("g(r) histogram must contain at least 2 bins.");
   }
-  if (lambda <= 0.0) {
+  if (lambda_val <= 0.0) {
     throw std::invalid_argument("Wavelength lambda must be strictly positive.");
   }
 
   const auto &r_bins = g_r_hist.bins;
-  const double dr = r_bins[1] - r_bins[0];
-  const double total_rho = cell.atomCount() / cell.volume(); // NOLINT(bugprone-narrowing-conversions)
+  const double delta_r = r_bins[1] - r_bins[0];
+  const double total_rho = static_cast<double>(cell.atomCount()) / cell.volume();
   const double max_r = r_bins.back();
 
-  size_t num_bins = static_cast<size_t>((theta_max - theta_min) / bin_width) + 1;
+  size_t num_bins = static_cast<size_t>((theta_max_val - theta_min_val) / bin_width_val) + 1;
   correlation::analysis::Histogram xrd_hist;
   xrd_hist.x_label = "2θ";
   xrd_hist.title = "XRD Pattern";
@@ -66,37 +72,8 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
   xrd_hist.bins.resize(num_bins);
   std::vector<double> intensities(num_bins, 0.0);
 
-  auto get_f_Q = [](const std::string &symbol, double Q) -> double {
-    const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
-    double s = Q / correlation::math::four_pi;
-    double s2 = s * s;
-    double f = coeffs[8];
-    for (size_t i = 0; i < 4; ++i) {
-      f += coeffs[2 * i] * std::exp(-coeffs[2 * i + 1] * s2);
-    }
-    return f;
-  };
-
-  std::map<std::string, std::vector<double>> partial_integrands;
-  for (const auto &[key, g_partial] : g_r_hist.partials) {
-    if (key == "Total")
-      continue;
-    double weight = ashcroft_weights.at(key);
-    partial_integrands[key].resize(g_partial.size());
-    for (size_t k = 0; k < g_partial.size(); ++k) {
-      partial_integrands[key][k] = r_bins[k] * (g_partial[k] - weight) * dr;
-    }
-  }
-
-  std::map<std::string, double> concentrations;
-  for (const auto &elem : cell.elements()) {
-    double count = 0;
-    for (const auto &atom : cell.atoms()) {
-      if (atom.element().symbol == elem.symbol)
-        count++;
-    }
-    concentrations[elem.symbol] = count / cell.atomCount(); // NOLINT(bugprone-narrowing-conversions)
-  }
+  auto partial_integrands = calculatePartialIntegrands(g_r_hist, ashcroft_weights, delta_r);
+  auto concentrations = calculateConcentrations(cell);
 
   // Collect partials as a flat vector for parallel access (avoids map iteration
   // inside the parallel region)
@@ -111,9 +88,9 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
   for (const auto &[key, integ] : partial_integrands) {
     double weight = ashcroft_weights.at(key);
     size_t dash_pos = key.find('-');
-    std::string s1 = key.substr(0, dash_pos);
-    std::string s2 = key.substr(dash_pos + 1);
-    xrd_partials.push_back({&key, &integ, weight, s1, s2});
+    std::string sym1 = key.substr(0, dash_pos);
+    std::string sym2 = key.substr(dash_pos + 1);
+    xrd_partials.push_back({.key = &key, .integrand = &integ, .weight = weight, .sym1 = sym1, .sym2 = sym2});
   }
   const size_t num_xrd_partials = xrd_partials.size();
 
@@ -125,46 +102,89 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
     auto &sinqr = sinqr_ets.local();
 
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      double two_theta = theta_min + i * bin_width; // NOLINT(bugprone-narrowing-conversions)
+      double two_theta = theta_min_val + static_cast<double>(i) * bin_width_val;
       xrd_hist.bins[i] = two_theta;
 
       double theta_rad = (two_theta / 2.0) * correlation::math::deg_to_rad;
-      double Q = correlation::math::four_pi * std::sin(theta_rad) / lambda;
+      double q_value = correlation::math::four_pi * std::sin(theta_rad) / lambda_val;
 
-      if (Q < 1e-6) {
+      if (q_value < 1e-6) {
         intensities[i] = 0.0;
         continue;
       }
 
-      double I_Q = 0.0;
+      double intensity_Q = 0.0;
 
-      for (const auto &[sym, c] : concentrations) {
-        double f = get_f_Q(sym, Q);
-        I_Q += c * f * f;
+      for (const auto &[sym, concentration] : concentrations) {
+        double form_factor = getAtomicFormFactor(sym, q_value);
+        intensity_Q += concentration * form_factor * form_factor;
       }
 
-      for (size_t p = 0; p < num_xrd_partials; ++p) {
-        const PartialXRD &px = xrd_partials[p];
-        // Clamp integrand to r_bins size (partial_integrands was built
-        // from g_partial which may be shorter than r_bins)
-        const size_t pcount = std::min(px.integrand->size(), r_count);
+      for (size_t partial_idx = 0; partial_idx < num_xrd_partials; ++partial_idx) {
+        const PartialXRD &partial_xrd = xrd_partials[partial_idx];
+        const size_t pcount = std::min(partial_xrd.integrand->size(), r_count);
+        double integral = correlation::math::sinc_integral(q_value, partial_xrd.integrand->data(), r_bins.data(),
+                                                           sinqr.data(), pcount);
+        double form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
+        double form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 
-        double integral =
-            correlation::math::sinc_integral(Q, px.integrand->data(), r_bins.data(), sinqr.data(), pcount);
-
-        double f1 = get_f_Q(px.sym1, Q);
-        double f2 = get_f_Q(px.sym2, Q);
-
-        I_Q += f1 * f2 * (correlation::math::four_pi * total_rho / Q) * integral;
+        intensity_Q += form_factor_1 * form_factor_2 * (correlation::math::four_pi * total_rho / q_value) * integral;
       }
 
-      intensities[i] = I_Q;
+      intensities[i] = intensity_Q;
     }
   });
 
   xrd_hist.partials["Total"] = std::move(intensities);
 
   return xrd_hist;
+}
+
+double XRDCalculator::getAtomicFormFactor(const std::string &symbol, double q_value) {
+  const auto &coeffs = correlation::physics::getAtomicFormFactors(symbol);
+  double s_value = q_value / correlation::math::four_pi;
+  double s_squared = s_value * s_value;
+  double form_factor = coeffs.at(8);
+  for (size_t i = 0; i < 4; ++i) {
+    form_factor += coeffs.at(2 * i) * std::exp(-coeffs.at(2 * i + 1) * s_squared);
+  }
+  return form_factor;
+}
+
+std::map<std::string, double> XRDCalculator::calculateConcentrations(const correlation::core::Cell &cell) {
+  std::map<std::string, double> concentrations;
+  double const total_atoms = static_cast<double>(cell.atomCount());
+  if (total_atoms == 0) {
+    return concentrations;
+  }
+  for (const auto &elem : cell.elements()) {
+    double count = 0;
+    for (const auto &atom : cell.atoms()) {
+      if (atom.element().symbol == elem.symbol) {
+        count++;
+      }
+    }
+    concentrations[elem.symbol] = count / total_atoms;
+  }
+  return concentrations;
+}
+
+std::map<std::string, std::vector<double>>
+XRDCalculator::calculatePartialIntegrands(const correlation::analysis::Histogram &g_r_hist,
+                                          const std::map<std::string, double> &ashcroft_weights, double delta_r) {
+  std::map<std::string, std::vector<double>> partial_integrands;
+  const auto &r_bins = g_r_hist.bins;
+  for (const auto &[key, g_partial] : g_r_hist.partials) {
+    if (key == "Total") {
+      continue;
+    }
+    double const weight = ashcroft_weights.at(key);
+    partial_integrands[key].resize(g_partial.size());
+    for (size_t k = 0; k < g_partial.size(); ++k) {
+      partial_integrands[key][k] = r_bins[k] * (g_partial[k] - weight) * delta_r;
+    }
+  }
+  return partial_integrands;
 }
 
 } // namespace correlation::calculators
