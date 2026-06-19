@@ -38,10 +38,10 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
     throw std::logic_error("VACF data is too short for VDOS calculation.");
   }
 
-  double const dt = vacf_hist.bins[1] - vacf_hist.bins[0];
+  double const time_step = vacf_hist.bins[1] - vacf_hist.bins[0];
 
   auto [frequencies, intensities_real, intensities_imag] =
-      correlation::analysis::DynamicsAnalyzer::calculateVDOS(vacf_data, dt);
+      correlation::analysis::DynamicsAnalyzer::calculateVDOS(vacf_data, time_step);
 
   size_t const num_points = frequencies.size();
   size_t const total_points = 2 * num_points - 1;
