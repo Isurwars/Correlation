@@ -24,22 +24,88 @@
 namespace correlation::readers {
 
 // Automatic registration
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CellReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CellReader>());
 
-correlation::core::Cell CellReader::readStructure(const std::string &filename,
-                                                  std::function<void(float, const std::string &)>  /*progress_callback*/) {
+correlation::core::Cell
+CellReader::readStructure(const std::string &filename,
+                          std::function<void(float, const std::string &)> /*progress_callback*/) {
   return read(filename);
 }
 
 correlation::core::Trajectory
 CellReader::readTrajectory(const std::string & /*filename*/,
-                           std::function<void(float, const std::string &)>  /*progress_callback*/) {
+                           std::function<void(float, const std::string &)> /*progress_callback*/) {
   throw std::runtime_error("Cell files are structures, use readStructure.");
 }
 
 namespace {
-void toLower(std::string &s) {
-  std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
+void toLower(std::string &str) {
+  std::transform(str.begin(), str.end(), str.begin(), [](unsigned char chr) { return std::tolower(chr); });
+}
+
+void parseLatticeCart(std::stringstream &line_stream, int &lattice_row_count,
+                      std::array<std::array<double, 3>, 3> &lat_vec, correlation::core::Cell &tempCell) {
+  if (lattice_row_count >= 3) {
+    return;
+  }
+  line_stream.clear();
+  line_stream.seekg(0); // Reread the full line
+  if (line_stream >> lat_vec.at(lattice_row_count).at(0) >> lat_vec.at(lattice_row_count).at(1) >>
+      lat_vec.at(lattice_row_count).at(2)) {
+    lattice_row_count++;
+    if (lattice_row_count == 3) {
+      tempCell = correlation::core::Cell({lat_vec.at(0).at(0), lat_vec.at(0).at(1), lat_vec.at(0).at(2)},
+                                         {lat_vec.at(1).at(0), lat_vec.at(1).at(1), lat_vec.at(1).at(2)},
+                                         {lat_vec.at(2).at(0), lat_vec.at(2).at(1), lat_vec.at(2).at(2)});
+    }
+  }
+}
+
+void parseLatticeAbc(std::stringstream &line_stream, int &lattice_row_count, std::array<double, 6> &lat,
+                     correlation::core::Cell &tempCell) {
+  if (lattice_row_count >= 2) {
+    return;
+  }
+  line_stream.clear();
+  line_stream.seekg(0);
+  if (line_stream >> lat.at(0 + 3 * lattice_row_count) >> lat.at(1 + 3 * lattice_row_count) >>
+      lat.at(2 + 3 * lattice_row_count)) {
+    lattice_row_count++;
+    if (lattice_row_count == 2) {
+      tempCell.setLatticeParameters(lat);
+    }
+  }
+}
+
+void parsePositionsAbs(std::stringstream &line_stream, correlation::core::Cell &tempCell) {
+  std::string element;
+  double coord_x = 0.0;
+  double coord_y = 0.0;
+  double coord_z = 0.0;
+  line_stream.clear();
+  line_stream.seekg(0);
+  if (line_stream >> element >> coord_x >> coord_y >> coord_z) {
+    tempCell.addAtom(element, {coord_x, coord_y, coord_z});
+  }
+}
+
+void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell &tempCell, bool &frac_flag) {
+  std::string element;
+  double coord_x = 0.0;
+  double coord_y = 0.0;
+  double coord_z = 0.0;
+  line_stream.clear();
+  line_stream.seekg(0);
+  if (line_stream >> element >> coord_x >> coord_y >> coord_z) {
+    frac_flag = true;
+    const auto &lattice_vectors = tempCell.latticeVectors();
+    correlation::math::Vector3<double> const pos = {
+        coord_x * lattice_vectors[0].x() + coord_y * lattice_vectors[1].x() + coord_z * lattice_vectors[2].x(),
+        coord_x * lattice_vectors[0].y() + coord_y * lattice_vectors[1].y() + coord_z * lattice_vectors[2].y(),
+        coord_x * lattice_vectors[0].z() + coord_y * lattice_vectors[1].z() + coord_z * lattice_vectors[2].z()};
+    tempCell.addAtom(element, pos);
+  }
 }
 } // namespace
 
@@ -56,7 +122,7 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::string line;
   int lattice_row_count = 0;
   std::array<double, 6> lat = {0, 0, 0, 0, 0, 0};
-  double v[3][3] = {{0.0}};
+  std::array<std::array<double, 3>, 3> lattice_matrix = {};
 
   while (std::getline(myfile, line)) {
     /* Read line by line */
@@ -81,68 +147,20 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
 
     if (in_block) {
       if (current_block_type == "lattice_cart") {
-        if (lattice_row_count < 3) {
-          line_stream.clear();
-          line_stream.seekg(0); // Reread the full line
-          if (line_stream >> v[lattice_row_count][0] >> v[lattice_row_count][1] >> v[lattice_row_count][2]) {
-            lattice_row_count++;
-            if (lattice_row_count == 3) {
-              tempCell = correlation::core::Cell({v[0][0], v[0][1], v[0][2]}, {v[1][0], v[1][1], v[1][2]},
-                                                 {v[2][0], v[2][1], v[2][2]});
-            }
-          }
-        }
-      }
-
-      if (current_block_type == "lattice_abc") {
-        if (lattice_row_count < 2) {
-          line_stream.clear();
-          line_stream.seekg(0);
-          if (line_stream >> lat[0 + 3 * lattice_row_count] >> lat[1 + 3 * lattice_row_count] >>
-              lat[2 + 3 * lattice_row_count]) {
-            lattice_row_count++;
-            if (lattice_row_count == 2) {
-              tempCell.setLatticeParameters(lat);
-            }
-          }
-        }
-      }
-
-      if (current_block_type == "positions_abs") {
-        std::string element;
-        double x;
-        double y;
-        double z;
-        line_stream.clear();
-        line_stream.seekg(0);
-        if (line_stream >> element >> x >> y >> z) {
-          tempCell.addAtom(element, {x, y, z});
-        }
-      }
-
-      if (current_block_type == "positions_frac") {
-        std::string element;
-        double x;
-        double y;
-        double z;
-
-        frac_flag = true;
-        line_stream.clear();
-        line_stream.seekg(0);
-        if (line_stream >> element >> x >> y >> z) {
-          const auto &lv = tempCell.latticeVectors();
-          correlation::math::Vector3<double> const pos = {x * lv[0][0] + y * lv[1][0] + z * lv[2][0],
-                                                    x * lv[0][1] + y * lv[1][1] + z * lv[2][1],
-                                                    x * lv[0][2] + y * lv[1][2] + z * lv[2][2]};
-          tempCell.addAtom(element, pos);
-        }
+        parseLatticeCart(line_stream, lattice_row_count, lattice_matrix, tempCell);
+      } else if (current_block_type == "lattice_abc") {
+        parseLatticeAbc(line_stream, lattice_row_count, lat, tempCell);
+      } else if (current_block_type == "positions_abs") {
+        parsePositionsAbs(line_stream, tempCell);
+      } else if (current_block_type == "positions_frac") {
+        parsePositionsFrac(line_stream, tempCell, frac_flag);
       }
     }
   }
 
   if (frac_flag) {
     tempCell.wrapPositions();
-}
+  }
   return tempCell;
 }
 
