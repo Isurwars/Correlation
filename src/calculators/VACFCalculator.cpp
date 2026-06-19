@@ -28,7 +28,8 @@ void VACFCalculator::calculateTrajectory(correlation::analysis::DistributionFunc
 }
 
 std::map<std::string, correlation::analysis::Histogram>
-VACFCalculator::calculate(const correlation::core::Trajectory &traj, correlation::analysis::MaxFrames max_correlation_frames,
+VACFCalculator::calculate(const correlation::core::Trajectory &traj,
+                          correlation::analysis::MaxFrames max_correlation_frames,
                           correlation::analysis::StartFrame start_frame, correlation::analysis::EndFrame end_frame) {
   std::map<std::string, correlation::analysis::Histogram> results;
   // Use getFrameCount() to avoid materialising a memory-mapped trajectory.
@@ -40,10 +41,10 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj, correlation
       correlation::analysis::DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (raw_vacf.empty()) {
     return results;
-}
+  }
 
   size_t const num_frames = raw_vacf.size();
-  double const dt = traj.getTimeStep();
+  double const time_step = traj.getTimeStep();
 
   correlation::analysis::Histogram vacf_hist;
   vacf_hist.x_label = "t";
@@ -55,7 +56,7 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj, correlation
   vacf_hist.file_suffix = "_VACF";
   vacf_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    vacf_hist.bins[i] = i * dt; // NOLINT(bugprone-narrowing-conversions)
+    vacf_hist.bins[i] = static_cast<double>(i) * time_step;
   }
 
   vacf_hist.partials["Total"] = raw_vacf;
