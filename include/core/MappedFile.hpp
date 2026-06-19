@@ -59,10 +59,15 @@ public:
    * @throws std::runtime_error on I/O or mapping errors, or if the file
    *         exceeds the 4 GiB limit while enforce_size_limit is true.
    */
-  explicit MappedFile(const std::string &path, bool enforce_size_limit = true) {
+  explicit MappedFile(const std::string &path, bool enforce_size_limit = true)
 #ifdef _WIN32
-    file_handle_ = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-                               FILE_ATTRIBUTE_NORMAL, nullptr);
+      : file_handle_(CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+                                 FILE_ATTRIBUTE_NORMAL, nullptr))
+#else
+      : fd_(::open(path.c_str(), O_RDONLY)) // NOLINT(cppcoreguidelines-pro-type-vararg)
+#endif
+  {
+#ifdef _WIN32
     if (file_handle_ == INVALID_HANDLE_VALUE)
       throw std::runtime_error("MappedFile: cannot open: " + path);
 
@@ -79,35 +84,35 @@ public:
     }
 
     mapping_ = CreateFileMappingA(file_handle_, nullptr, PAGE_READONLY, 0, 0, nullptr);
-    if (!mapping_) {
+    if (mapping_ == nullptr) {
       CloseHandle(file_handle_);
       throw std::runtime_error("MappedFile: CreateFileMapping failed: " + path);
     }
 
-    data_ = static_cast<const char *>(MapViewOfFile(mapping_, FILE_MAP_READ, 0, 0, 0));
-    if (!data_) {
+    data_ = MapViewOfFile(mapping_, FILE_MAP_READ, 0, 0, 0);
+    if (data_ == nullptr) {
       CloseHandle(mapping_);
       CloseHandle(file_handle_);
       throw std::runtime_error("MappedFile: MapViewOfFile failed: " + path);
     }
 #else
-    fd_ = ::open(path.c_str(), O_RDONLY);
-    if (fd_ < 0)
+    if (fd_ < 0) {
       throw std::runtime_error("MappedFile: cannot open: " + path);
+    }
 
-    struct stat st{};
-    if (::fstat(fd_, &st) != 0) {
+    struct stat file_stat{};
+    if (::fstat(fd_, &file_stat) != 0) {
       ::close(fd_);
       throw std::runtime_error("MappedFile: cannot stat: " + path);
     }
-    size_ = static_cast<std::size_t>(st.st_size);
+    size_ = static_cast<std::size_t>(file_stat.st_size);
 
     if (enforce_size_limit && static_cast<std::uint64_t>(size_) > kMaxTrajectoryBytes) {
       ::close(fd_);
       throw std::runtime_error("MappedFile: file exceeds 4 GiB trajectory limit: " + path);
     }
 
-    data_ = static_cast<const char *>(::mmap(nullptr, size_, PROT_READ, MAP_PRIVATE, fd_, 0));
+    data_ = ::mmap(nullptr, size_, PROT_READ, MAP_PRIVATE, fd_, 0);
     if (data_ == MAP_FAILED) {
       data_ = nullptr;
       ::close(fd_);
@@ -163,34 +168,36 @@ public:
   MappedFile &operator=(const MappedFile &) = delete;
 
   /// Pointer to the start of the mapped file contents.
-  [[nodiscard]] const char *data() const noexcept { return data_; }
+  [[nodiscard]] const char *data() const noexcept { return static_cast<const char *>(data_); }
 
   /// Size of the mapped region in bytes.
   [[nodiscard]] std::size_t size() const noexcept { return size_; }
 
   /// Convenience: pointer past the end.
-  [[nodiscard]] const char *end() const noexcept { return data_ + size_; }
+  [[nodiscard]] const char *end() const noexcept { return static_cast<const char *>(data_) + size_; }
 
 private:
   void release() noexcept {
 #ifdef _WIN32
-    if (data_)
+    if (data_ != nullptr)
       UnmapViewOfFile(data_);
-    if (mapping_)
+    if (mapping_ != nullptr)
       CloseHandle(mapping_);
     if (file_handle_ != INVALID_HANDLE_VALUE)
       CloseHandle(file_handle_);
 #else
-    if (data_)
-      ::munmap(const_cast<char *>(data_), size_);
-    if (fd_ >= 0)
+    if (data_ != nullptr) {
+      ::munmap(data_, size_);
+    }
+    if (fd_ >= 0) {
       ::close(fd_);
+    }
 #endif
     data_ = nullptr;
     size_ = 0;
   }
 
-  const char *data_{nullptr};
+  void *data_{nullptr};
   std::size_t size_{0};
 
 #ifdef _WIN32
