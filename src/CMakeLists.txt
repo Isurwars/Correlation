@@ -110,6 +110,10 @@ add_library(correlation_lib STATIC
     core/Trajectory.cpp
     analysis/TrajectoryAnalyzer.cpp
     plotters/pdfgen.c
+    plotters/PathFont.cpp
+    plotters/RobotoData_ASCII_1.cpp
+    plotters/RobotoData_ASCII_2.cpp
+    plotters/RobotoData_Extended.cpp
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>
