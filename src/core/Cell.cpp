@@ -25,26 +25,7 @@ Cell::Cell(const math::Vector3<double> &vec_a, const math::Vector3<double> &vec_
 
 Cell::Cell(const std::array<double, 6> &params) { setLatticeParameters(params); }
 
-// Move Constructor
-Cell::Cell(Cell &&other) noexcept
-    : lattice_vectors_(std::move(other.lattice_vectors_)),
-      inverse_lattice_vectors_(std::move(other.inverse_lattice_vectors_)),
-      lattice_parameters_(std::move(other.lattice_parameters_)), volume_(other.volume_),
-      energy_(other.energy_), atoms_(std::move(other.atoms_)), elements_(std::move(other.elements_)) {}
 
-// Move Assignment Operator
-Cell &Cell::operator=(Cell &&other) noexcept {
-  if (this != &other) {
-    lattice_vectors_ = std::move(other.lattice_vectors_);
-    inverse_lattice_vectors_ = std::move(other.inverse_lattice_vectors_);
-    lattice_parameters_ = std::move(other.lattice_parameters_);
-    volume_ = other.volume_;
-    energy_ = other.energy_;
-    atoms_ = std::move(other.atoms_);
-    elements_ = std::move(other.elements_);
-  }
-  return *this;
-}
 
 //---------------------------------------------------------------------------//
 //-------------------------------- Accessors --------------------------------//

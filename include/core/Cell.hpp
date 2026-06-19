@@ -59,14 +59,14 @@ public:
    * Transfers ownership of lattice vectors and atom data.
    * @param other Cell object to move from.
    */
-  Cell(Cell &&other) noexcept;
+  Cell(Cell &&other) noexcept = default;
 
   /**
    * @brief Move assignment operator.
    * @param other Cell object to move from.
    * @return Reference to this cell.
    */
-  Cell &operator=(Cell &&other) noexcept;
+  Cell &operator=(Cell &&other) noexcept = default;
 
   /**
    * @brief Copy constructor.
@@ -80,6 +80,11 @@ public:
    * @return Reference to this cell.
    */
   Cell &operator=(const Cell &other) = default;
+
+  /**
+   * @brief Destructor.
+   */
+  ~Cell() = default;
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//

@@ -47,7 +47,7 @@ struct Element {
    * @param other The other element to compare against.
    * @return True if symbols are identical.
    */
-  constexpr bool operator==(const Element other) const { return symbol == other.symbol; };
+  constexpr bool operator==(const Element &other) const { return symbol == other.symbol; };
 };
 
 /**
@@ -72,8 +72,8 @@ public:
    * @param pos The position vector of the atom.
    * @param id The unique ID of the atom.
    */
-  explicit Atom(Element element, const math::Vector3<double> &pos, AtomID id) noexcept
-      : element_(std::move(element)), position_(pos), id_(id) {}
+  explicit Atom(Element element, const math::Vector3<double> &pos, AtomID atom_id) noexcept
+      : element_(std::move(element)), position_(pos), id_(atom_id) {}
 
   //-------------------------------------------------------------------------//
   //------------------------------- Accessors -------------------------------//
@@ -134,7 +134,7 @@ public:
   [[nodiscard]] int element_id() const { return element_.id.value; }
 
 private:
-  AtomID id_{0};                    ///< Unique identification number.
+  AtomID id_{0};                   ///< Unique identification number.
   math::Vector3<double> position_; ///< Cartesian coordinates in Angstroms.
   math::Vector3<double> velocity_; ///< Velocity in Angstroms/fs.
   Element element_;                ///< Chemical element properties.
@@ -146,8 +146,8 @@ private:
  * @param b The second atom.
  * @return The straight-line distance between atoms (not accounting for PBC).
  */
-[[nodiscard]] inline double distance(const Atom &a, const Atom &b) noexcept {
-  return math::norm(a.position() - b.position());
+[[nodiscard]] inline double distance(const Atom &atom_a, const Atom &atom_b) noexcept {
+  return math::norm(atom_a.position() - atom_b.position());
 }
 
 /**
@@ -157,18 +157,18 @@ private:
  * @param b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
-[[nodiscard]] inline double angle(const Atom &center, const Atom &a, const Atom &b) noexcept {
-  const math::Vector3<double> vA = a.position() - center.position();
-  const math::Vector3<double> vB = b.position() - center.position();
+[[nodiscard]] inline double angle(const Atom &center, const Atom &atom_a, const Atom &atom_b) noexcept {
+  const math::Vector3<double> vec_A = atom_a.position() - center.position();
+  const math::Vector3<double> vec_B = atom_b.position() - center.position();
 
-  const double norm_sq_A = math::dot(vA, vA);
-  const double norm_sq_B = math::dot(vB, vB);
+  const double norm_sq_A = math::dot(vec_A, vec_A);
+  const double norm_sq_B = math::dot(vec_B, vec_B);
 
   if (norm_sq_A == 0.0 || norm_sq_B == 0.0) {
     return 0.0;
   }
 
-  double cos_theta = math::dot(vA, vB) / std::sqrt(norm_sq_A * norm_sq_B);
+  double cos_theta = math::dot(vec_A, vec_B) / std::sqrt(norm_sq_A * norm_sq_B);
 
   // Clamp for numerical stability
   cos_theta = std::clamp(cos_theta, -1.0, 1.0);
