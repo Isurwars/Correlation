@@ -15,6 +15,7 @@
 
 #include "math/Smoothing.hpp"
 
+#include <span>
 #include <string>
 
 namespace correlation::cli {
@@ -63,6 +64,11 @@ void printUsage(const char *program);
  * @param opts [out] Filled on success.
  * @return true if parsing succeeded, false on error (message already printed).
  */
-bool parseArgs(int argc, char *argv[], CliOptions &opts);
+bool parseArgs(std::span<char *> argv, CliOptions &opts);
+
+// NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
+inline bool parseArgs(int argc, char *argv[], CliOptions &opts) {
+  return parseArgs(std::span<char *>(argv, argc), opts);
+}
 
 } // namespace correlation::cli

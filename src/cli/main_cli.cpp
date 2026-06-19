@@ -18,12 +18,13 @@
 #include <algorithm>
 #include <iostream>
 #include <set>
+#include <span>
 #include <sstream>
 #include <string>
 
 int main(int argc, char *argv[]) {
   correlation::cli::CliOptions cli;
-  if (!correlation::cli::parseArgs(argc, argv, cli)) {
+  if (!correlation::cli::parseArgs(std::span<char *>(argv, argc), cli)) {
     return 1;
   }
 
@@ -60,14 +61,15 @@ int main(int argc, char *argv[]) {
   opts.material_type = cli.material_type;
 
   // Helper lambdas for string cleanup
-  auto trim = [](std::string s) {
-    s.erase(0, s.find_first_not_of(" \t"));
-    s.erase(s.find_last_not_of(" \t") + 1);
-    return s;
+  auto trim = [](std::string str) {
+    str.erase(0, str.find_first_not_of(" \t"));
+    str.erase(str.find_last_not_of(" \t") + 1);
+    return str;
   };
-  auto lowercase = [](std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-    return s;
+
+  auto to_lower = [](std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
   };
 
   const auto &factory_calcs = correlation::calculators::CalculatorFactory::instance().getCalculators();
@@ -75,10 +77,10 @@ int main(int argc, char *argv[]) {
   // Parse disabled groups
   std::set<std::string> disabled_groups;
   if (!cli.disable_groups.empty()) {
-    std::istringstream ss(cli.disable_groups);
+    std::istringstream str_stream(cli.disable_groups);
     std::string group_name;
-    while (std::getline(ss, group_name, ',')) {
-      group_name = lowercase(trim(group_name));
+    while (std::getline(str_stream, group_name, ',')) {
+      group_name = to_lower(trim(group_name));
       if (!group_name.empty()) {
         disabled_groups.insert(group_name);
       }
@@ -86,7 +88,7 @@ int main(int argc, char *argv[]) {
   }
 
   for (const auto &calc : factory_calcs) {
-    std::string const calc_group = lowercase(calc->getGroup());
+    std::string const calc_group = to_lower(calc->getGroup());
     bool const active = (!disabled_groups.contains(calc_group));
     opts.active_calculators[calc->getName()] = active;
     opts.active_calculators[calc->getShortName()] = active;
@@ -98,8 +100,8 @@ int main(int argc, char *argv[]) {
 
   // Set up progress callback
   if (!cli.quiet) {
-    backend.setProgressCallback([](float p, const std::string &msg) {
-      std::cerr << "\r[" << static_cast<int>(p * 100) << "%] " << msg << std::flush;
+    backend.setProgressCallback([](float progress, const std::string &msg) {
+      std::cerr << "\r[" << static_cast<int>(progress * 100) << "%] " << msg << std::flush;
     });
   }
 

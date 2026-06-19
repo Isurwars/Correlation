@@ -58,138 +58,45 @@ void printUsage(const char *program) {
             << "  --no-parquet              Disable Parquet output\n";
 }
 
-bool parseArgs(int argc, char *argv[], CliOptions &opts) {
-  CLI::App app{"Correlation — Structural Analysis Tool (CLI Mode)"};
+namespace {
 
-  // Disable Windows-style options (like /opt) so that absolute paths starting
-  // with / (e.g. /data/experiment/sample.poscar) are not parsed as options on Windows.
-  app.allow_windows_style_options(false);
-
-  // Configure help and version flags in CLI11
-  app.set_help_flag("-h,--help");
-  app.set_version_flag("-v,--version");
-
-  // Parse positional input file
-  app.add_option("input_file", opts.input_file, "Input structure/trajectory file");
-
-  // Options mapping
-  app.add_option("-o,--output", opts.output_base);
-  app.add_flag("-q,--quiet", opts.quiet);
-  
-  app.add_option("-g,--disable-groups", opts.disable_groups);
-
-  int min_frame_temp = 1;
-  app.add_option("--min-frame", min_frame_temp);
-  app.add_option("--max-frame", opts.max_frame);
-  app.add_option("--time-step", opts.time_step);
-
-  app.add_option("--r-max", opts.r_max);
-  app.add_option("--r-bin", opts.r_bin_width);
-  app.add_option("--r-int-max", opts.r_int_max);
-
-  app.add_option("--q-max", opts.q_max);
-  app.add_option("--q-bin", opts.q_bin_width);
-
-  app.add_option("--angle-bin", opts.angle_bin_width);
-  app.add_option("--dihedral-bin", opts.dihedral_bin_width);
-
-  app.add_option("--max-ring-size", opts.max_ring_size);
-
-  app.add_option("--smoothing-sigma", opts.smoothing_sigma);
-  
-  std::string k_str = "gaussian";
-  app.add_option("--smoothing-kernel", k_str);
-
-  std::map<std::string, int> const mat_map = {{"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
-  app.add_option("--material", opts.material_type, "Material type (amorphous, liquid, crystalline)")
-     ->transform(CLI::CheckedTransformer(mat_map, CLI::ignore_case));
-
-  app.add_flag("--csv,!--no-csv", opts.csv);
-  app.add_flag("--hdf5,!--no-hdf5", opts.hdf5);
-  app.add_flag("--parquet,!--no-parquet", opts.parquet);
-  app.add_flag("--smoothing,!--no-smoothing", opts.smoothing);
-
-  try {
-    app.parse(argc, argv);
-  } catch (const CLI::CallForHelp &e) {
-    printUsage(argv[0]);
-    opts.show_help = true;
-    return true;
-  } catch (const CLI::CallForVersion &e) {
-    opts.show_version = true;
-    return true;
-  } catch (const CLI::ParseError &e) {
-    printUsage(argv[0]);
-    return false;
-  }
-
-  // Check if dihedral-bin was explicitly set
-  if (app.count("--dihedral-bin") != 0u) {
-    opts.has_dihedral_bin = true;
-  }
-
-  // Adjust defaults based on material type if not explicitly set
+void applyMaterialDefaults(const CLI::App &app, CliOptions &opts) {
   if (opts.material_type == 2) { // Crystalline
-    if (app.count("--r-bin") == 0u) {
+    if (app.count("--r-bin") == 0U) {
       opts.r_bin_width = 0.002;
     }
-    if (app.count("--q-bin") == 0u) {
+    if (app.count("--q-bin") == 0U) {
       opts.q_bin_width = 0.002;
     }
-    if (app.count("--angle-bin") == 0u) {
+    if (app.count("--angle-bin") == 0U) {
       opts.angle_bin_width = 0.1;
     }
-    if ((app.count("--dihedral-bin") == 0u) && (app.count("--angle-bin") == 0u)) {
+    if ((app.count("--dihedral-bin") == 0U) && (app.count("--angle-bin") == 0U)) {
       opts.dihedral_bin_width = 0.1;
     }
-    if (app.count("--smoothing-sigma") == 0u) {
+    if (app.count("--smoothing-sigma") == 0U) {
       opts.smoothing_sigma = 0.01;
     }
   } else if (opts.material_type == 1) { // Liquid
-    if (app.count("--r-bin") == 0u) {
+    if (app.count("--r-bin") == 0U) {
       opts.r_bin_width = 0.05;
     }
-    if (app.count("--q-bin") == 0u) {
+    if (app.count("--q-bin") == 0U) {
       opts.q_bin_width = 0.05;
     }
-    if (app.count("--angle-bin") == 0u) {
+    if (app.count("--angle-bin") == 0U) {
       opts.angle_bin_width = 2.0;
     }
-    if ((app.count("--dihedral-bin") == 0u) && (app.count("--angle-bin") == 0u)) {
+    if ((app.count("--dihedral-bin") == 0U) && (app.count("--angle-bin") == 0U)) {
       opts.dihedral_bin_width = 2.0;
     }
-    if (app.count("--smoothing-sigma") == 0u) {
+    if (app.count("--smoothing-sigma") == 0U) {
       opts.smoothing_sigma = 0.15;
     }
   }
+}
 
-  // Handle min-frame conversion
-  if (app.count("--min-frame") != 0u) {
-    opts.min_frame = min_frame_temp - 1;
-    opts.min_frame = std::max(opts.min_frame, 0);
-  }
-
-  // Process smoothing kernel string (case insensitive, fallback to gaussian)
-  std::transform(k_str.begin(), k_str.end(), k_str.begin(), ::tolower);
-  if (k_str == "gaussian" || k_str == "gauss") {
-    opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
-  } else if (k_str == "bump") {
-    opts.smoothing_kernel = correlation::math::KernelType::Bump;
-  } else if (k_str == "triweight") {
-    opts.smoothing_kernel = correlation::math::KernelType::Triweight;
-  } else {
-    std::cerr << "Warning: Unknown kernel type '" << k_str << "', defaulting to gaussian\n";
-    opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
-  }
-
-  // Missing input file check
-  if (opts.input_file.empty()) {
-    std::cerr << "Error: no input file specified.\n";
-    printUsage(argv[0]);
-    return false;
-  }
-
-  // Validation logic
+bool validateOptions(const CliOptions &opts) {
   if (opts.r_max <= 0.0) {
     std::cerr << "Error: --r-max must be strictly positive.\n";
     return false;
@@ -262,11 +169,117 @@ bool parseArgs(int argc, char *argv[], CliOptions &opts) {
     std::cerr << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
     return false;
   }
+  return true;
+}
+
+} // namespace
+
+bool parseArgs(std::span<char *> argv, CliOptions &opts) {
+  CLI::App app{"Correlation — Structural Analysis Tool (CLI Mode)"};
+
+  // Disable Windows-style options (like /opt) so that absolute paths starting
+  // with / (e.g. /data/experiment/sample.poscar) are not parsed as options on Windows.
+  app.allow_windows_style_options(false);
+
+  // Configure help and version flags in CLI11
+  app.set_help_flag("-h,--help");
+  app.set_version_flag("-v,--version");
+
+  // Parse positional input file
+  app.add_option("input_file", opts.input_file, "Input structure/trajectory file");
+
+  // Options mapping
+  app.add_option("-o,--output", opts.output_base);
+  app.add_flag("-q,--quiet", opts.quiet);
+
+  app.add_option("-g,--disable-groups", opts.disable_groups);
+
+  int min_frame_temp = 1;
+  app.add_option("--min-frame", min_frame_temp);
+  app.add_option("--max-frame", opts.max_frame);
+  app.add_option("--time-step", opts.time_step);
+
+  app.add_option("--r-max", opts.r_max);
+  app.add_option("--r-bin", opts.r_bin_width);
+  app.add_option("--r-int-max", opts.r_int_max);
+
+  app.add_option("--q-max", opts.q_max);
+  app.add_option("--q-bin", opts.q_bin_width);
+
+  app.add_option("--angle-bin", opts.angle_bin_width);
+  app.add_option("--dihedral-bin", opts.dihedral_bin_width);
+
+  app.add_option("--max-ring-size", opts.max_ring_size);
+
+  app.add_option("--smoothing-sigma", opts.smoothing_sigma);
+
+  std::string k_str = "gaussian";
+  app.add_option("--smoothing-kernel", k_str);
+
+  std::map<std::string, int> const mat_map = {{"amorphous", 0}, {"liquid", 1}, {"crystalline", 2}, {"crystal", 2}};
+  app.add_option("--material", opts.material_type, "Material type (amorphous, liquid, crystalline)")
+      ->transform(CLI::CheckedTransformer(mat_map, CLI::ignore_case));
+
+  app.add_flag("--csv,!--no-csv", opts.csv);
+  app.add_flag("--hdf5,!--no-hdf5", opts.hdf5);
+  app.add_flag("--parquet,!--no-parquet", opts.parquet);
+  app.add_flag("--smoothing,!--no-smoothing", opts.smoothing);
+
+  try {
+    app.parse(static_cast<int>(argv.size()), argv.data());
+  } catch (const CLI::CallForHelp &e) {
+    printUsage(argv[0]);
+    opts.show_help = true;
+    return true;
+  } catch (const CLI::CallForVersion &e) {
+    opts.show_version = true;
+    return true;
+  } catch (const CLI::ParseError &e) {
+    printUsage(argv[0]);
+    return false;
+  }
+
+  // Check if dihedral-bin was explicitly set
+  if (app.count("--dihedral-bin") != 0U) {
+    opts.has_dihedral_bin = true;
+  }
+
+  applyMaterialDefaults(app, opts);
+
+  // Handle min-frame conversion
+  if (app.count("--min-frame") != 0U) {
+    opts.min_frame = min_frame_temp - 1;
+    opts.min_frame = std::max(opts.min_frame, 0);
+  }
+
+  // Process smoothing kernel string (case insensitive, fallback to gaussian)
+  std::ranges::transform(k_str, k_str.begin(), [](unsigned char character) { return std::tolower(character); });
+  if (k_str == "gaussian" || k_str == "gauss") {
+    opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
+  } else if (k_str == "bump") {
+    opts.smoothing_kernel = correlation::math::KernelType::Bump;
+  } else if (k_str == "triweight") {
+    opts.smoothing_kernel = correlation::math::KernelType::Triweight;
+  } else {
+    std::cerr << "Warning: Unknown kernel type '" << k_str << "', defaulting to gaussian\n";
+    opts.smoothing_kernel = correlation::math::KernelType::Gaussian;
+  }
+
+  // Missing input file check
+  if (opts.input_file.empty()) {
+    std::cerr << "Error: no input file specified.\n";
+    printUsage(argv[0]);
+    return false;
+  }
+
+  if (!validateOptions(opts)) {
+    return false;
+  }
 
   // Default output base: same directory and stem as input
   if (opts.output_base.empty()) {
-    std::filesystem::path const p(opts.input_file);
-    opts.output_base = (p.parent_path() / p.stem()).lexically_normal().string();
+    std::filesystem::path const input_path(opts.input_file);
+    opts.output_base = (input_path.parent_path() / input_path.stem()).lexically_normal().string();
   }
 
   return true;
