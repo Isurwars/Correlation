@@ -10,6 +10,7 @@
 #include <vector>
 
 namespace correlation::testing {
+namespace {
 
 using namespace correlation::core;
 using namespace correlation::math;
@@ -38,8 +39,8 @@ TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
   Vector3<double> r_ij{1.0, 2.0, 3.0};
   graph.addDirectedEdge(0, 1, 3.74, r_ij);
 
-  EXPECT_TRUE(graph.areConnected(0, 1));
-  EXPECT_FALSE(graph.areConnected(1, 0));
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{1}, AtomIndex{0}));
 
   const auto &neighbors = graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
@@ -56,11 +57,11 @@ TEST_F(NeighborGraphTests, OutOfBoundsEdgeAdditionDoesNotCrash) {
 
   // from index >= size is safely ignored (returns immediately)
   EXPECT_NO_THROW(graph.addDirectedEdge(3, 1, 1.0, r_ij));
-  EXPECT_FALSE(graph.areConnected(3, 1));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{3}, AtomIndex{1}));
 
   // to index >= size is added to the adjacency list but filtered out in the dense matrix
   EXPECT_NO_THROW(graph.addDirectedEdge(0, 5, 1.0, r_ij));
-  EXPECT_TRUE(graph.areConnected(0, 5));
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{5}));
 
   auto matrix = graph.getDenseAdjacencyMatrix();
   ASSERT_EQ(matrix.size(), 9);
@@ -85,9 +86,9 @@ TEST_F(NeighborGraphTests, OutOfBoundsAreConnectedReturnsFalse) {
   Vector3<double> r_ij{0.0, 0.0, 0.0};
   graph.addDirectedEdge(0, 1, 1.0, r_ij);
 
-  EXPECT_FALSE(graph.areConnected(3, 1));
-  EXPECT_FALSE(graph.areConnected(0, 3));
-  EXPECT_FALSE(graph.areConnected(5, 5));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{3}, AtomIndex{1}));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{0}, AtomIndex{3}));
+  EXPECT_FALSE(graph.areConnected(AtomIndex{5}, AtomIndex{5}));
 }
 
 TEST_F(NeighborGraphTests, DenseAdjacencyMatrixMapping) {
@@ -125,7 +126,7 @@ TEST_F(NeighborGraphTests, SelfLoopIsAllowed) {
   // Self-loop: atom 0 -> atom 0
   graph.addDirectedEdge(0, 0, 0.0, r_ij);
 
-  EXPECT_TRUE(graph.areConnected(0, 0));
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{0}));
   const auto &neighbors = graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
   EXPECT_EQ(neighbors[0].index, 0);
@@ -153,23 +154,23 @@ TEST_F(NeighborGraphTests, DuplicateEdgesAreBothStored) {
   EXPECT_DOUBLE_EQ(neighbors[1].distance, 3.0);
 
   // Dense matrix still shows them as connected
-  EXPECT_TRUE(graph.areConnected(0, 1));
+  EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
 }
 
 TEST_F(NeighborGraphTests, LargeGraphPerformance) {
   // Stress test: large fully-connected graph should not crash
-  const size_t N = 500;
-  NeighborGraph graph(N);
+  const size_t num_nodes = 500;
+  NeighborGraph graph(num_nodes);
   Vector3<double> r_ij{1.0, 0.0, 0.0};
 
   // Connect every pair (i,j) where i < j as a directed edge i -> j
-  for (size_t i = 0; i < N; ++i) {
-    for (size_t j = i + 1; j < N && j < i + 5; ++j) { // Limit to 5 neighbors each
+  for (size_t i = 0; i < num_nodes; ++i) {
+    for (size_t j = i + 1; j < num_nodes && j < i + 5; ++j) { // Limit to 5 neighbors each
       graph.addDirectedEdge(i, j, 1.0, r_ij);
     }
   }
 
-  EXPECT_EQ(graph.nodeCount(), N);
+  EXPECT_EQ(graph.nodeCount(), num_nodes);
 
   // Verify first node's neighbors (connects to j=1,2,3,4 = 4 neighbors)
   const auto &neighbors = graph.getNeighbors(0);
@@ -177,7 +178,8 @@ TEST_F(NeighborGraphTests, LargeGraphPerformance) {
 
   // Dense matrix should be NxN
   auto matrix = graph.getDenseAdjacencyMatrix();
-  EXPECT_EQ(matrix.size(), N * N);
+  EXPECT_EQ(matrix.size(), num_nodes * num_nodes);
 }
 
+} // namespace
 } // namespace correlation::testing

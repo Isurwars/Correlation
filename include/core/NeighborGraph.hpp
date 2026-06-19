@@ -15,12 +15,16 @@
 
 namespace correlation::core {
 
+struct AtomIndex {
+  size_t id;
+};
+
 /**
  * @brief Represents a neighbor atom in a neighbor list.
  */
 struct Neighbor {
-  AtomID index;               ///< Index of the neighbor in the atom list
-  double distance;            ///< Distance to the neighbor
+  AtomID index{0};            ///< Index of the neighbor in the atom list
+  double distance{0.0};       ///< Distance to the neighbor
   math::Vector3<double> r_ij; ///< Vector from central atom to neighbor
 };
 
@@ -46,12 +50,12 @@ public:
   /**
    * @brief Adds a directed edge between two atoms.
    *
-   * @param from Index of the source atom.
-   * @param to Index of the target atom.
+   * @param source Index of the source atom.
+   * @param target Index of the target atom.
    * @param distance Separation distance (Angstrom).
-   * @param r_ij Relative position vector (to - from).
+   * @param r_ij Relative position vector (target - source).
    */
-  void addDirectedEdge(size_t from, size_t to, double distance, const math::Vector3<double> &r_ij);
+  void addDirectedEdge(size_t source, size_t target, double distance, const math::Vector3<double> &r_ij); // NOLINT(bugprone-easily-swappable-parameters)
 
   /**
    * @brief Retrieves the neighbor list for a specific atom.
@@ -62,11 +66,11 @@ public:
 
   /**
    * @brief Checks if two atoms are connected by an edge.
-   * @param i First atom index.
-   * @param j Second atom index.
-   * @return True if j is a neighbor of i.
+   * @param first_atom First atom index.
+   * @param second_atom Second atom index.
+   * @return True if second_atom is a neighbor of first_atom.
    */
-  [[nodiscard]] bool areConnected(size_t i, size_t j) const;
+  [[nodiscard]] bool areConnected(AtomIndex first_atom, AtomIndex second_atom) const;
 
   /**
    * @brief Generates a flattened dense adjacency matrix.

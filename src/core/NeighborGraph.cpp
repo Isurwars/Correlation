@@ -9,15 +9,18 @@
 #include "core/NeighborGraph.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <algorithm>
+
 namespace correlation::core {
 
 NeighborGraph::NeighborGraph(size_t node_count) : adj_list_(node_count) {}
 
-void NeighborGraph::addDirectedEdge(size_t from, size_t to, double distance, const math::Vector3<double> &r_ij) {
-  if (from >= adj_list_.size()) {
+void NeighborGraph::addDirectedEdge(size_t source, size_t target, double distance,
+                                    const math::Vector3<double> &r_ij) { // NOLINT(bugprone-easily-swappable-parameters)
+  if (source >= adj_list_.size()) {
     return;
   }
-  adj_list_[from].push_back({.index=static_cast<AtomID>(to), .distance=distance, .r_ij=r_ij});
+  adj_list_[source].push_back({.index = static_cast<AtomID>(target), .distance = distance, .r_ij = r_ij});
 }
 
 const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) const {
@@ -28,25 +31,22 @@ const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) cons
   return adj_list_[atom_index];
 }
 
-bool NeighborGraph::areConnected(size_t i, size_t j) const {
-  if (i >= adj_list_.size()) {
+bool NeighborGraph::areConnected(AtomIndex first_atom, AtomIndex second_atom) const {
+  if (first_atom.id >= adj_list_.size()) {
     return false;
-}
-  for (const auto &neighbor : adj_list_[i]) {
-    if (neighbor.index == static_cast<AtomID>(j)) {
-      return true;
-    }
   }
-  return false;
+  auto target_id = static_cast<AtomID>(second_atom.id);
+  return std::ranges::any_of(adj_list_[first_atom.id],
+                             [target_id](const auto &neighbor) { return neighbor.index == target_id; });
 }
 
 std::vector<bool> NeighborGraph::getDenseAdjacencyMatrix() const {
-  size_t const n = adj_list_.size();
-  std::vector<bool> matrix(n * n, false);
-  for (size_t i = 0; i < n; ++i) {
+  size_t const num_nodes = adj_list_.size();
+  std::vector<bool> matrix(num_nodes * num_nodes, false);
+  for (size_t i = 0; i < num_nodes; ++i) {
     for (const auto &neighbor : adj_list_[i]) {
-      if (neighbor.index < n) {
-        matrix[i * n + neighbor.index] = true;
+      if (neighbor.index < num_nodes) {
+        matrix[i * num_nodes + neighbor.index] = true;
       }
     }
   }

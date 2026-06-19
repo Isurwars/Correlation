@@ -43,8 +43,8 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   EXPECT_DOUBLE_EQ(out_distances[0][1][0], 1.5);
 
   // Assert: Check neighbor graph connections
-  EXPECT_TRUE(out_graph.areConnected(0, 1));
-  EXPECT_TRUE(out_graph.areConnected(1, 0));
+  EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
+  EXPECT_TRUE(out_graph.areConnected(AtomIndex{1}, AtomIndex{0}));
 
   const auto &neighbors = out_graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
@@ -75,8 +75,8 @@ TEST(DistanceCalculatorTests, DistanceAcrossPeriodicBoundary) {
   EXPECT_NEAR(out_distances[0][0][0], 1.0, 1e-9);
 
   // Neighbor graph should reflect the bond
-  EXPECT_TRUE(out_graph.areConnected(0, 1));
-  EXPECT_TRUE(out_graph.areConnected(1, 0));
+  EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
+  EXPECT_TRUE(out_graph.areConnected(AtomIndex{1}, AtomIndex{0}));
 }
 
 TEST(DistanceCalculatorTests, SingleAtomProducesNoDistances) {
@@ -139,7 +139,7 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
   // Distance = 4.0 >= cutoff_sq = 4.0, so no pair found
   EXPECT_TRUE(out_distances[0][1].empty());
   EXPECT_TRUE(out_distances[1][0].empty());
-  EXPECT_FALSE(out_graph.areConnected(0, 1));
+  EXPECT_FALSE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
 }
 
 TEST(DistanceCalculatorTests, ThrowsOnInvalidCutoff) {
