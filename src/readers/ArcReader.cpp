@@ -37,7 +37,7 @@ ArcReader::readTrajectory(const std::string &filename,
 }
 
 std::vector<correlation::core::Cell>
-ArcReader::read(const std::string &file_name, std::function<void(float, const std::string &)> progress_callback) {
+ArcReader::read(const std::string &file_name, const std::function<void(float, const std::string &)> &progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
@@ -55,79 +55,89 @@ ArcReader::read(const std::string &file_name, std::function<void(float, const st
 
   while (std::getline(myfile, line)) {
     if (progress_callback) {
-      std::streampos const current_pos = myfile.tellg();
-      if (std::cmp_greater(current_pos - last_progress_pos , update_interval)) {
-        float const p = static_cast<float>(current_pos) / static_cast<float>(file_size);
-        progress_callback(p, "Loading ARC file...");
-        last_progress_pos = current_pos;
-      }
+      updateProgress(myfile.tellg(), file_size, last_progress_pos, update_interval, progress_callback);
     }
-    // Ignore empty lines or comment lines
-    if (line.empty() || line[0] == '!') {
-      continue;
-    }
-
-    std::stringstream line_stream(line);
-    std::string first_token;
-    line_stream >> first_token;
-
-    if (first_token == "end") {
-      if (!tempCell.isEmpty()) {
-        frames.push_back(std::move(tempCell));
-        tempCell = correlation::core::Cell(); // Reset for next frame
-      }
-      continue;
-    }
-
-    if (first_token == "PBC") {
-      std::array<double, 6> lat{};
-      if (line_stream >> lat[0] >> lat[1] >> lat[2] >> lat[3] >> lat[4] >> lat[5]) {
-        tempCell.setLatticeParameters(lat);
-      }
-      continue;
-    }
-
-    if (first_token == "PBC=OFF") {
-      std::array<double, 6> const lat = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
-      tempCell.setLatticeParameters(lat);
-      continue;
-    }
-
-    if (first_token == "PBC=ON") {
-      continue;
-    }
-
-    // Check if it is a single token line (Energy)
-    std::string second_token;
-    if (!(line_stream >> second_token)) {
-      double energy = 0.0;
-      std::istringstream parse_stream(first_token);
-      if (parse_stream >> energy) {
-        tempCell.setEnergy(energy);
-        continue;
-      }
-    }
-
-    // Attempt to parse atom
-    // Reset stream to start of line
-    line_stream.clear();
-    line_stream.seekg(0);
-
-    std::string u1;
-    std::string u5;
-    std::string u6;
-    std::string u7;
-    std::string element;
-    double x;
-    double y;
-    double z;
-
-    if (line_stream >> u1 >> x >> y >> z >> u5 >> u6 >> u7 >> element) {
-      tempCell.addAtom(element, {x, y, z});
-    }
+    parseLine(line, tempCell, frames);
   }
 
   return frames;
+}
+
+void ArcReader::updateProgress(std::streampos current_pos, std::streampos file_size,
+                               std::streampos &last_progress_pos, size_t update_interval,
+                               const std::function<void(float, const std::string &)> &progress_callback) {
+  if (std::cmp_greater(current_pos - last_progress_pos, update_interval)) {
+    const float progress = static_cast<float>(current_pos) / static_cast<float>(file_size);
+    progress_callback(progress, "Loading ARC file...");
+    last_progress_pos = current_pos;
+  }
+}
+
+void ArcReader::parseLine(const std::string &line, correlation::core::Cell &tempCell,
+                          std::vector<correlation::core::Cell> &frames) {
+  // Ignore empty lines or comment lines
+  if (line.empty() || line[0] == '!') {
+    return;
+  }
+
+  std::stringstream line_stream(line);
+  std::string first_token;
+  line_stream >> first_token;
+
+  if (first_token == "end") {
+    if (!tempCell.isEmpty()) {
+      frames.push_back(std::move(tempCell));
+      tempCell = correlation::core::Cell(); // Reset for next frame
+    }
+    return;
+  }
+
+  if (first_token == "PBC") {
+    std::array<double, 6> lattice_params{};
+    if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >> lattice_params[4] >> lattice_params[5]) {
+      tempCell.setLatticeParameters(lattice_params);
+    }
+    return;
+  }
+
+  if (first_token == "PBC=OFF") {
+    const std::array<double, 6> lattice_params = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
+    tempCell.setLatticeParameters(lattice_params);
+    return;
+  }
+
+  if (first_token == "PBC=ON") {
+    return;
+  }
+
+  // Check if it is a single token line (Energy)
+  std::string second_token;
+  if (!(line_stream >> second_token)) {
+    double energy = 0.0;
+    std::istringstream parse_stream(first_token);
+    if (parse_stream >> energy) {
+      tempCell.setEnergy(energy);
+      return;
+    }
+  }
+
+  // Attempt to parse atom
+  // Reset stream to start of line
+  line_stream.clear();
+  line_stream.seekg(0);
+
+  std::string dummy_token_1;
+  std::string dummy_token_5;
+  std::string dummy_token_6;
+  std::string dummy_token_7;
+  std::string element;
+  double coord_x = 0.0;
+  double coord_y = 0.0;
+  double coord_z = 0.0;
+
+  if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >> dummy_token_7 >> element) {
+    tempCell.addAtom(element, {coord_x, coord_y, coord_z});
+  }
 }
 
 } // namespace correlation::readers
