@@ -10,17 +10,84 @@
 #include "readers/ReaderFactory.hpp"
 
 #include <fstream>
+#include <optional>
 #include <stdexcept>
 
 namespace correlation::readers {
 
 namespace {
+
+// Automatic registration
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
 const bool registered = ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
+
+struct PdbCrystParams {
+  double a = 0.0;
+  double b = 0.0;
+  double c = 0.0;
+};
+
+struct PdbAtomData {
+  std::string symbol;
+  double x = 0.0;
+  double y = 0.0;
+  double z = 0.0;
+};
+
+std::optional<PdbCrystParams> parsePdbCrystLine(const std::string &line) {
+  try {
+    double const param_a = std::stod(line.substr(6, 9));
+    double const param_b = std::stod(line.substr(15, 9));
+    double const param_c = std::stod(line.substr(24, 9));
+    return PdbCrystParams{.a = param_a, .b = param_b, .c = param_c};
+  } catch (...) {
+    return std::nullopt;
+  }
 }
+
+std::optional<PdbAtomData> parsePdbAtomLine(const std::string &line) {
+  try {
+    std::string symbol;
+    if (line.length() >= 78) {
+      symbol = line.substr(76, 2);
+      symbol.erase(0, symbol.find_first_not_of(' '));
+      symbol.erase(symbol.find_last_not_of(' ') + 1);
+    }
+
+    if (symbol.empty()) {
+      // Fallback to atom name columns 12-16
+      std::string atom_name = line.substr(12, 4);
+      atom_name.erase(0, atom_name.find_first_not_of(' '));
+      atom_name.erase(atom_name.find_last_not_of(' ') + 1);
+
+      // Common PDB fixes (e.g. 1H -> H)
+      std::string parsed_name = atom_name;
+      if (parsed_name.length() > 1 && (std::isdigit(parsed_name[0]) != 0)) {
+        parsed_name = parsed_name.substr(1);
+      }
+
+      for (char const chr : parsed_name) {
+        if (std::isalpha(chr) != 0) {
+          symbol += chr;
+        } else {
+          break;
+        }
+      }
+    }
+
+    double const frac_x = std::stod(line.substr(30, 8));
+    double const frac_y = std::stod(line.substr(38, 8));
+    double const frac_z = std::stod(line.substr(46, 8));
+    return PdbAtomData{.symbol = symbol, .x = frac_x, .y = frac_y, .z = frac_z};
+  } catch (...) {
+    return std::nullopt;
+  }
+}
+
+} // namespace
 
 correlation::core::Cell PdbReader::readStructure(const std::string &filename,
                                                  std::function<void(float, const std::string &)> progress_callback) {
-
   std::ifstream file(filename);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + filename);
@@ -32,54 +99,13 @@ correlation::core::Cell PdbReader::readStructure(const std::string &filename,
 
   while (std::getline(file, line)) {
     if (line.starts_with("CRYST1")) {
-      // CRYST1   50.000   50.000   50.000  90.00  90.00  90.00 P 1           1
-      try {
-        double const a = std::stod(line.substr(6, 9));
-        double const b = std::stod(line.substr(15, 9));
-        double const c = std::stod(line.substr(24, 9));
-        cell.setLatticeParameters({a, b, c, 90.0, 90.0, 90.0});
+      if (auto params = parsePdbCrystLine(line)) {
+        cell.setLatticeParameters({params->a, params->b, params->c, 90.0, 90.0, 90.0});
         has_box = true;
-      } catch (...) {
-        /* ignore malformed cell line */
       }
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
-      // ATOM      1  N   ALA A   1      11.104   6.134  -1.267  1.00  0.00 N
-      try {
-        std::string symbol;
-        if (line.length() >= 78) {
-          symbol = line.substr(76, 2);
-          symbol.erase(0, symbol.find_first_not_of(' '));
-          symbol.erase(symbol.find_last_not_of(' ') + 1);
-        }
-
-        if (symbol.empty()) {
-          // Fallback to atom name columns 12-16
-          std::string atom_name = line.substr(12, 4);
-          atom_name.erase(0, atom_name.find_first_not_of(' '));
-          atom_name.erase(atom_name.find_last_not_of(' ') + 1);
-
-          // Common PDB fixes (e.g. 1H -> H)
-          std::string parsed_name = atom_name;
-          if (parsed_name.length() > 1 && (std::isdigit(parsed_name[0]) != 0)) {
-            parsed_name = parsed_name.substr(1);
-          }
-
-          for (char const c : parsed_name) {
-            if (std::isalpha(c) != 0) {
-              symbol += c;
-            } else {
-              break;
-}
-          }
-        }
-
-        double const x = std::stod(line.substr(30, 8));
-        double const y = std::stod(line.substr(38, 8));
-        double const z = std::stod(line.substr(46, 8));
-
-        cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
-      } catch (...) {
-        /* ignore malformed atom line */
+      if (auto atom = parsePdbAtomLine(line)) {
+        cell.addAtom(atom->symbol, correlation::math::Vector3<double>(atom->x, atom->y, atom->z));
       }
     } else if (line.starts_with("ENDMDL") || line.starts_with("END")) {
       break;
@@ -88,14 +114,13 @@ correlation::core::Cell PdbReader::readStructure(const std::string &filename,
 
   if (progress_callback) {
     progress_callback(1.0F, "PDB structure loaded.");
-}
+  }
   return cell;
 }
 
 correlation::core::Trajectory
 PdbReader::readTrajectory(const std::string &filename,
                           std::function<void(float, const std::string &)> progress_callback) {
-
   std::ifstream file(filename);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + filename);
@@ -106,59 +131,27 @@ PdbReader::readTrajectory(const std::string &filename,
   correlation::core::Cell current_cell;
   bool in_model = false;
   bool has_box = false;
-  double a = 0;
-  double b = 0;
-  double c = 0;
+  double param_a = 0.0;
+  double param_b = 0.0;
+  double param_c = 0.0;
 
   while (std::getline(file, line)) {
     if (line.starts_with("CRYST1")) {
-      try {
-        a = std::stod(line.substr(6, 9));
-        b = std::stod(line.substr(15, 9));
-        c = std::stod(line.substr(24, 9));
+      if (auto params = parsePdbCrystLine(line)) {
+        param_a = params->a;
+        param_b = params->b;
+        param_c = params->c;
         has_box = true;
-      } catch (...) {
-        /* ignore malformed cell line */
       }
     } else if (line.starts_with("MODEL")) {
       current_cell = correlation::core::Cell();
       if (has_box) {
-        current_cell.setLatticeParameters({a, b, c, 90.0, 90.0, 90.0});
-}
+        current_cell.setLatticeParameters({param_a, param_b, param_c, 90.0, 90.0, 90.0});
+      }
       in_model = true;
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
-      try {
-        std::string symbol;
-        if (line.length() >= 78) {
-          symbol = line.substr(76, 2);
-          symbol.erase(0, symbol.find_first_not_of(' '));
-          symbol.erase(symbol.find_last_not_of(' ') + 1);
-        }
-        if (symbol.empty()) {
-          std::string atom_name = line.substr(12, 4);
-          atom_name.erase(0, atom_name.find_first_not_of(' '));
-          atom_name.erase(atom_name.find_last_not_of(' ') + 1);
-
-          // Common PDB fixes (e.g. 1H -> H)
-          std::string parsed_name = atom_name;
-          if (parsed_name.length() > 1 && (std::isdigit(parsed_name[0]) != 0)) {
-            parsed_name = parsed_name.substr(1);
-          }
-
-          for (char const c : parsed_name) {
-            if (std::isalpha(c) != 0) {
-              symbol += c;
-            } else {
-              break;
-}
-          }
-        }
-        double const x = std::stod(line.substr(30, 8));
-        double const y = std::stod(line.substr(38, 8));
-        double const z = std::stod(line.substr(46, 8));
-        current_cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
-      } catch (...) {
-        /* ignore malformed atom line */
+      if (auto atom = parsePdbAtomLine(line)) {
+        current_cell.addAtom(atom->symbol, correlation::math::Vector3<double>(atom->x, atom->y, atom->z));
       }
     } else if (line.starts_with("ENDMDL")) {
       frames.push_back(std::move(current_cell));
@@ -176,7 +169,7 @@ PdbReader::readTrajectory(const std::string &filename,
 
   if (progress_callback) {
     progress_callback(1.0F, "PDB trajectory loaded.");
-}
+  }
   return {frames, 1.0};
 }
 

@@ -23,8 +23,6 @@
 
 namespace correlation::readers {
 
-// Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
 namespace {
 
 // Automatic registration
