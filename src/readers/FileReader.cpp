@@ -91,7 +91,7 @@ BaseReader *findReaderForFile(const std::string &filename) {
   std::string const ext = std::filesystem::path(filename).extension().string();
 
   if (!ext.empty()) {
-    auto *reader = ReaderFactory::instance().getReaderForExtension(ext, filename);
+    auto *reader = ReaderFactory::instance().getReaderForExtension({ext, filename});
     if (reader != nullptr) {
       return reader;
     }

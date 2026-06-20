@@ -18,6 +18,19 @@
 namespace correlation::readers {
 
 /**
+ * @brief Parameters for querying a reader by extension and optional filename.
+ */
+struct ReaderExtensionQuery {
+  std::string extension;
+  std::string filename;
+
+  ReaderExtensionQuery(const char *ext) : extension(ext) {}
+  ReaderExtensionQuery(std::string ext) : extension(std::move(ext)) {}
+  ReaderExtensionQuery(std::string ext, std::string file)
+      : extension(std::move(ext)), filename(std::move(file)) {}
+};
+
+/**
  * @brief Registry for all file readers, enabling automatic discovery.
  */
 class ReaderFactory {
@@ -34,11 +47,10 @@ public:
 
   /**
    * @brief Finds a reader that supports the given file extension.
-   * @param extension The file extension (e.g., ".car").
-   * @param filename Optional filename used for content-sniffing.
+   * @param query The reader extension query parameters.
    * @return A pointer to the reader instance, or nullptr if not found.
    */
-  BaseReader *getReaderForExtension(const std::string &extension, const std::string &filename = "");
+  BaseReader *getReaderForExtension(const ReaderExtensionQuery &query);
 
   /**
    * @brief Returns all registered extensions.

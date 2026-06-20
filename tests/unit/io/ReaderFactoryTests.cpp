@@ -111,7 +111,7 @@ TEST(ReaderFactoryTests, SniffsQuantumEspressoFromOutFile) {
   out.close();
 
   auto &factory = ReaderFactory::instance();
-  BaseReader *retrieved = factory.getReaderForExtension(".out", filename);
+  BaseReader *retrieved = factory.getReaderForExtension({".out", filename});
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), "Quantum ESPRESSO Reader");
 
@@ -128,7 +128,7 @@ TEST(ReaderFactoryTests, SniffsCP2KFromOutFile) {
   out.close();
 
   auto &factory = ReaderFactory::instance();
-  BaseReader *retrieved = factory.getReaderForExtension(".out", filename);
+  BaseReader *retrieved = factory.getReaderForExtension({".out", filename});
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), "CP2K Reader");
 
