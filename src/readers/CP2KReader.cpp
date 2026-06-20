@@ -7,17 +7,20 @@
  */
 
 #include "readers/CP2KReader.hpp"
-#include "readers/ReaderFactory.hpp"
 
+#include "readers/ReaderFactory.hpp"
+#include <math.h>
+
+#include <cctype>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 
 namespace correlation::readers {
 
-namespace {
+// Automatic registration
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
 const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CP2KReader>());
-}
 
 correlation::core::Cell CP2KReader::readStructure(const std::string &filename,
                                                   std::function<void(float, const std::string &)> progress_callback) {
@@ -28,6 +31,65 @@ correlation::core::Cell CP2KReader::readStructure(const std::string &filename,
   }
   return traj.getFrames()[traj.getFrameCount() - 1];
 }
+
+namespace {
+
+struct Cp2kParserState {
+  bool parsing_coords = false;
+  bool parsing_cell = false;
+  bool has_box = false;
+};
+
+void processCp2kLine(const std::string &line, std::vector<correlation::core::Cell> &frames,
+                     correlation::core::Cell &current_cell, Cp2kParserState &state) {
+  // To uppercase for easier matching
+  std::string uline = line;
+  for (auto &chr : uline) {
+    chr = static_cast<char>(std::toupper(static_cast<unsigned char>(chr)));
+  }
+
+  if (uline.starts_with("&CELL")) {
+    state.parsing_cell = true;
+    state.parsing_coords = false;
+  } else if (uline.starts_with("&COORD")) {
+    state.parsing_coords = true;
+    state.parsing_cell = false;
+    if (current_cell.atomCount() > 0) {
+      frames.push_back(current_cell);
+      current_cell = correlation::core::Cell();
+      if (state.has_box) {
+        current_cell.setLatticeParameters(frames.back().lattice_parameters());
+      }
+    }
+  } else if (uline.starts_with("&END CELL") || uline.starts_with("&END COORD")) {
+    state.parsing_cell = false;
+    state.parsing_coords = false;
+  } else if (state.parsing_cell) {
+    std::istringstream iss(uline);
+    std::string token;
+    iss >> token;
+    if (token == "ABC") {
+      double param_a = 0.0;
+      double param_b = 0.0;
+      double param_c = 0.0;
+      if (iss >> param_a >> param_b >> param_c) {
+        current_cell.setLatticeParameters({param_a, param_b, param_c, 90.0, 90.0, 90.0});
+        state.has_box = true;
+      }
+    }
+  } else if (state.parsing_coords) {
+    std::istringstream iss(line); // Original line for case sensitivity in symbols
+    std::string symbol;
+    double pos_x = 0.0;
+    double pos_y = 0.0;
+    double pos_z = 0.0;
+    if (iss >> symbol >> pos_x >> pos_y >> pos_z) {
+      current_cell.addAtom(symbol, correlation::math::Vector3<double>(pos_x, pos_y, pos_z));
+    }
+  }
+}
+
+} // namespace
 
 correlation::core::Trajectory
 CP2KReader::readTrajectory(const std::string &filename,
@@ -41,9 +103,7 @@ CP2KReader::readTrajectory(const std::string &filename,
   std::vector<correlation::core::Cell> frames;
   std::string line;
   correlation::core::Cell current_cell;
-  bool parsing_coords = false;
-  bool parsing_cell = false;
-  bool has_box = false;
+  Cp2kParserState parser_state;
 
   while (std::getline(file, line)) {
     line.erase(0, line.find_first_not_of(" \t\r\n"));
@@ -51,55 +111,9 @@ CP2KReader::readTrajectory(const std::string &filename,
 
     if (line.empty() || line[0] == '#' || line[0] == '!') {
       continue;
-}
-
-    // To uppercase for easier matching
-    std::string uline = line;
-    for (auto &c : uline) {
-      c = toupper(c); // NOLINT(bugprone-narrowing-conversions)
-}
-
-    if (uline.starts_with("&CELL")) {
-      parsing_cell = true;
-      parsing_coords = false;
-    } else if (uline.starts_with("&COORD")) {
-      parsing_coords = true;
-      parsing_cell = false;
-      if (current_cell.atomCount() > 0) {
-        frames.push_back(current_cell);
-        current_cell = correlation::core::Cell();
-        if (has_box) {
-          current_cell.setLatticeParameters(frames.back().lattice_parameters());
-        }
-      }
-    } else if (uline.starts_with("&END CELL") || uline.starts_with("&END COORD")) {
-      parsing_cell = false;
-      parsing_coords = false;
-    } else if (parsing_cell) {
-      std::istringstream iss(uline);
-      std::string token;
-      iss >> token;
-      if (token == "ABC") {
-        double a;
-        double b;
-        double c;
-        if (iss >> a >> b >> c) {
-          current_cell.setLatticeParameters({a, b, c, 90.0, 90.0, 90.0});
-          has_box = true;
-        }
-      } else if (token == "ALPHA_BETA_GAMMA") {
-        // Can parse angles if needed
-      }
-    } else if (parsing_coords) {
-      std::istringstream iss(line); // Original line for case sensitivity in symbols
-      std::string symbol;
-      double x;
-      double y;
-      double z;
-      if (iss >> symbol >> x >> y >> z) {
-        current_cell.addAtom(symbol, correlation::math::Vector3<double>(x, y, z));
-      }
     }
+
+    processCp2kLine(line, frames, current_cell, parser_state);
   }
 
   if (current_cell.atomCount() > 0) {
@@ -114,7 +128,7 @@ CP2KReader::readTrajectory(const std::string &filename,
 
   if (progress_callback) {
     progress_callback(1.0F, "CP2K trajectory loaded.");
-}
+  }
 
   return {frames, 1.0};
 }
