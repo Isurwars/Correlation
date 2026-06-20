@@ -46,6 +46,11 @@ private:
     int pos_z_col = 3;
   };
 
+  static void parseLattice(const std::string &comment, CommentData &data);
+  static void parseEnergy(const std::string &comment, CommentData &data);
+  static void parseProperties(const std::string &comment, CommentData &data);
+  static void parsePropertiesParts(const std::vector<std::string> &parts, CommentData &data);
+
   /**
    * @brief Parses an Extended XYZ comment line for properties, lattice and energy.
    *
