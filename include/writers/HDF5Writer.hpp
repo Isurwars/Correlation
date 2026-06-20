@@ -40,7 +40,7 @@ public:
    * @param filename The full path of the HDF5 file to write.
    * @param dists The DistributionFunctions object containing the data.
    */
-  void writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &dists) const;
+  static void writeHDF(const std::string &filename, const correlation::analysis::DistributionFunctions &dists);
 };
 
 } // namespace correlation::writers

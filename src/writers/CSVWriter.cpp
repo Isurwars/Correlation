@@ -22,10 +22,11 @@
 namespace correlation::writers {
 
 // Automatic registration
-static const bool registered = WriterFactory::instance().registerWriter(std::make_unique<CSVWriter>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = WriterFactory::instance().registerWriter(std::make_unique<CSVWriter>());
 
 void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
-                             bool /*write_smoothed*/) const {
+                             bool /*write_smoothed*/) {
   for (const auto &[name, hist] : dists.getAllHistograms()) {
     try {
       if (hist.partials.empty() || hist.bins.empty() || hist.file_suffix.empty()) {
@@ -33,16 +34,15 @@ void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::an
       }
 
       std::string filename = base_path + hist.file_suffix + ".csv";
-      writeHistogramToCSV(filename, name, hist);
+      writeHistogramToCSV(filename, hist);
 
     } catch (const std::exception &e) {
-      std::cerr << "Error writing file for '" << name << "': " << e.what() << std::endl;
+      std::cerr << "Error writing file for '" << name << "': " << e.what() << "\n";
     }
   }
 }
 
-void CSVWriter::writeHistogramToCSV(const std::string &filename, const std::string &name,
-                                    const correlation::analysis::Histogram &hist) {
+void CSVWriter::writeHistogramToCSV(const std::string &filename, const correlation::analysis::Histogram &hist) {
   if (hist.partials.empty() || hist.bins.empty()) {
     return;
   }
@@ -54,16 +54,18 @@ void CSVWriter::writeHistogramToCSV(const std::string &filename, const std::stri
 
   // Get sorted keys for both raw and smoothed data
   std::vector<std::string> raw_keys;
-  for (const auto &[k, v] : hist.partials) {
-    raw_keys.push_back(k);
+  raw_keys.reserve(hist.partials.size());
+  for (const auto &[key, value] : hist.partials) {
+    raw_keys.push_back(key);
   }
-  std::sort(raw_keys.begin(), raw_keys.end());
+  std::ranges::sort(raw_keys);
 
   std::vector<std::string> smoothed_keys;
-  for (const auto &[k, v] : hist.smoothed_partials) {
-    smoothed_keys.push_back(k);
+  smoothed_keys.reserve(hist.smoothed_partials.size());
+  for (const auto &[key, value] : hist.smoothed_partials) {
+    smoothed_keys.push_back(key);
   }
-  std::sort(smoothed_keys.begin(), smoothed_keys.end());
+  std::ranges::sort(smoothed_keys);
 
   // Get metadata if available
   std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;

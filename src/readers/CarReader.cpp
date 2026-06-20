@@ -22,15 +22,17 @@
 namespace correlation::readers {
 
 // Automatic registration
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CarReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CarReader>());
 
-correlation::core::Cell CarReader::readStructure(const std::string &filename,
-                                                 std::function<void(float, const std::string &)> /*progress_callback*/) {
+correlation::core::Cell
+CarReader::readStructure(const std::string &filename,
+                         std::function<void(float, const std::string &)> /*progress_callback*/) {
   return read(filename);
 }
 
 correlation::core::Trajectory
-CarReader::readTrajectory(const std::string &/*filename*/,
+CarReader::readTrajectory(const std::string & /*filename*/,
                           std::function<void(float, const std::string &)> /*progress_callback*/) {
   throw std::runtime_error("CAR files are structures, use readStructure.");
 }
@@ -58,7 +60,8 @@ correlation::core::Cell CarReader::read(const std::string &file_name) {
     if (first_token == "PBC") {
       std::array<double, 6> lattice_params{};
       // The token "PBC" is consumed, so we read the 6 numbers that follow.
-      if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >> lattice_params[4] >> lattice_params[5]) {
+      if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >>
+          lattice_params[4] >> lattice_params[5]) {
         tempCell.setLatticeParameters(lattice_params);
       }
       continue;
@@ -85,7 +88,8 @@ correlation::core::Cell CarReader::read(const std::string &file_name) {
     double coord_z = 0.0;
 
     // Read exactly 8 columns to get the element.
-    if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >> dummy_token_7 >> element) {
+    if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >>
+        dummy_token_7 >> element) {
       tempCell.addAtom(element, {coord_x, coord_y, coord_z});
     }
   }

@@ -48,8 +48,8 @@ public:
    * @param write_smoothed If true, also writes smoothed data to separate files
    * (e.g., "base_path_g_smoothed.csv").
    */
-  void writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
-                    bool write_smoothed = false) const;
+  static void writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
+                    bool write_smoothed = false);
 
 private:
   /**
@@ -59,8 +59,8 @@ private:
    * @param name The name of the histogram.
    * @param hist The Histogram data structure to write.
    */
-  static void writeHistogramToCSV(const std::string &filename, const std::string &name,
-                           const correlation::analysis::Histogram &hist) ;
+  static void writeHistogramToCSV(const std::string &filename,
+                                  const correlation::analysis::Histogram &hist);
 };
 
 } // namespace correlation::writers

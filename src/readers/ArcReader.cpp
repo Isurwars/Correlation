@@ -23,10 +23,12 @@
 namespace correlation::readers {
 
 // Automatic registration
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<ArcReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<ArcReader>());
 
-correlation::core::Cell ArcReader::readStructure(const std::string & /*filename*/,
-                                                 std::function<void(float, const std::string &)>  /*progress_callback*/) {
+correlation::core::Cell
+ArcReader::readStructure(const std::string & /*filename*/,
+                         std::function<void(float, const std::string &)> /*progress_callback*/) {
   throw std::runtime_error("ARC files are trajectories, use readTrajectory.");
 }
 
@@ -37,7 +39,8 @@ ArcReader::readTrajectory(const std::string &filename,
 }
 
 std::vector<correlation::core::Cell>
-ArcReader::read(const std::string &file_name, const std::function<void(float, const std::string &)> &progress_callback) {
+ArcReader::read(const std::string &file_name,
+                const std::function<void(float, const std::string &)> &progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
@@ -63,8 +66,8 @@ ArcReader::read(const std::string &file_name, const std::function<void(float, co
   return frames;
 }
 
-void ArcReader::updateProgress(std::streampos current_pos, std::streampos file_size,
-                               std::streampos &last_progress_pos, size_t update_interval,
+void ArcReader::updateProgress(std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
+                               size_t update_interval,
                                const std::function<void(float, const std::string &)> &progress_callback) {
   if (std::cmp_greater(current_pos - last_progress_pos, update_interval)) {
     const float progress = static_cast<float>(current_pos) / static_cast<float>(file_size);
@@ -94,7 +97,8 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
 
   if (first_token == "PBC") {
     std::array<double, 6> lattice_params{};
-    if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >> lattice_params[4] >> lattice_params[5]) {
+    if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >>
+        lattice_params[4] >> lattice_params[5]) {
       tempCell.setLatticeParameters(lattice_params);
     }
     return;
@@ -135,7 +139,8 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   double coord_y = 0.0;
   double coord_z = 0.0;
 
-  if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >> dummy_token_7 >> element) {
+  if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >>
+      dummy_token_7 >> element) {
     tempCell.addAtom(element, {coord_x, coord_y, coord_z});
   }
 }

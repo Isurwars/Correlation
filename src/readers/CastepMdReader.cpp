@@ -25,7 +25,8 @@
 namespace correlation::readers {
 
 // Automatic registration
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CastepMdReader>()); // NOLINT(cert-err58-cpp, bugprone-throwing-static-initialization)
+// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
+static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CastepMdReader>());
 
 correlation::core::Cell
 CastepMdReader::readStructure(const std::string &filename,
@@ -40,7 +41,8 @@ CastepMdReader::readTrajectory(const std::string &filename,
 }
 
 std::vector<correlation::core::Cell>
-CastepMdReader::read(const std::string &file_name, const std::function<void(float, const std::string &)> &progress_callback) {
+CastepMdReader::read(const std::string &file_name,
+                     const std::function<void(float, const std::string &)> &progress_callback) {
   std::ifstream myfile(file_name);
   if (!myfile.is_open()) {
     throw std::runtime_error("Unable to read file: " + file_name + " (" + std::strerror(errno) + ").");
@@ -109,9 +111,8 @@ void CastepMdReader::updateProgress(std::streampos current_pos, std::streampos f
   }
 }
 
-void CastepMdReader::parseEnergyLine(const std::string &line, double &current_energy,
-                                     correlation::core::Cell &tempCell, bool &cell_has_atoms,
-                                     std::vector<correlation::core::Cell> &frames) {
+void CastepMdReader::parseEnergyLine(const std::string &line, double &current_energy, correlation::core::Cell &tempCell,
+                                     bool &cell_has_atoms, std::vector<correlation::core::Cell> &frames) {
   // For CASTEP MD, the frame usually starts with time (single float on a
   // line without tag) We skip it and read E. If we have atoms in tempCell,
   // it means this is a new frame starting
@@ -135,7 +136,8 @@ void CastepMdReader::parseEnergyLine(const std::string &line, double &current_en
   }
 }
 
-void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &line, correlation::core::Cell &tempCell) {
+void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &line,
+                                      correlation::core::Cell &tempCell) {
   // Lattice vectors h are given row by row in Bohr
   // The first <-- h is row 1
   std::array<double, 3> lattice_vector_1{};
@@ -168,15 +170,13 @@ void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &
   lattice_vector_3[1] *= correlation::math::bohr_to_angstrom;
   lattice_vector_3[2] *= correlation::math::bohr_to_angstrom;
 
-  tempCell = correlation::core::Cell(
-      {lattice_vector_1[0], lattice_vector_1[1], lattice_vector_1[2]},
-      {lattice_vector_2[0], lattice_vector_2[1], lattice_vector_2[2]},
-      {lattice_vector_3[0], lattice_vector_3[1], lattice_vector_3[2]}
-  );
+  tempCell = correlation::core::Cell({lattice_vector_1[0], lattice_vector_1[1], lattice_vector_1[2]},
+                                     {lattice_vector_2[0], lattice_vector_2[1], lattice_vector_2[2]},
+                                     {lattice_vector_3[0], lattice_vector_3[1], lattice_vector_3[2]});
 }
 
-void CastepMdReader::parseAtomLine(const std::string &line, double current_energy,
-                                   correlation::core::Cell &tempCell, bool &cell_has_atoms) {
+void CastepMdReader::parseAtomLine(const std::string &line, double current_energy, correlation::core::Cell &tempCell,
+                                   bool &cell_has_atoms) {
   // Positions R are given in Bohr
   // Format: Symbol ID x y z <-- R
   std::stringstream line_stream(line);
