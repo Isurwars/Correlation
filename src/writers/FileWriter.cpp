@@ -13,31 +13,37 @@
 
 namespace correlation::writers {
 
-FileWriter::FileWriter(const correlation::analysis::DistributionFunctions &dists) : df_(dists) {}
+FileWriter::FileWriter(const correlation::analysis::DistributionFunctions &dists) : df_(&dists) {}
 
 void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5, bool use_parquet,
                        bool smoothing) const {
   auto &factory = WriterFactory::instance();
 
-  if (use_csv) {
-    if (auto writer = factory.getWriter("CSV")) {
-      writer->write(base_path, df_, smoothing);
+  if (use_csv && df_ != nullptr) {
+    if (auto *writer = factory.getWriter("CSV")) {
+      writer->write(base_path, *df_, smoothing);
     }
   }
 
-  if (use_hdf5) {
-    if (auto writer = factory.getWriter("HDF5")) {
-      writer->write(base_path, df_, smoothing);
+  if (use_hdf5 && df_ != nullptr) {
+    if (auto *writer = factory.getWriter("HDF5")) {
+      writer->write(base_path, *df_, smoothing);
     }
   }
 
-  if (use_parquet) {
-    if (auto writer = factory.getWriter("Parquet")) {
-      writer->write(base_path, df_, smoothing);
+  if (use_parquet && df_ != nullptr) {
+    if (auto *writer = factory.getWriter("Parquet")) {
+      writer->write(base_path, *df_, smoothing);
     }
   }
 
-  // Write the human-readable summary file
+  writeSummaryFile(base_path);
+}
+
+void FileWriter::writeSummaryFile(const std::string &base_path) const {
+  if (df_ == nullptr) {
+    return;
+  }
   std::string summary_filename = base_path + "_summary.txt";
   std::ofstream summary_file(summary_filename);
   if (summary_file.is_open()) {
@@ -46,10 +52,10 @@ void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5
     summary_file << "Calculated Dynamic Properties:\n";
     summary_file << "------------------------------\n";
 
-    double d_msd = df_.getDiffusionCoefficientMSD();
-    double d_vacf = df_.getDiffusionCoefficientVACF();
-    double tau = df_.getRelaxationTime();
-    double de = df_.getDeborahNumber();
+    double d_msd = df_->getDiffusionCoefficientMSD();
+    double d_vacf = df_->getDiffusionCoefficientVACF();
+    double tau = df_->getRelaxationTime();
+    double deb = df_->getDeborahNumber();
 
     summary_file << "Self-diffusion coefficient (from MSD): ";
     if (d_msd > 0.0) {
@@ -73,8 +79,8 @@ void FileWriter::write(const std::string &base_path, bool use_csv, bool use_hdf5
     }
 
     summary_file << "Deborah number: ";
-    if (de > 0.0) {
-      summary_file << de << "\n";
+    if (deb > 0.0) {
+      summary_file << deb << "\n";
     } else {
       summary_file << "N/A\n";
     }

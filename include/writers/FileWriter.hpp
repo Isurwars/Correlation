@@ -43,8 +43,10 @@ public:
   void write(const std::string &base_path, bool use_csv, bool use_hdf5, bool use_parquet, bool smoothing) const;
 
 private:
-  /** @brief Reference to the analysis data structure. */
-  const correlation::analysis::DistributionFunctions &df_;
+  void writeSummaryFile(const std::string &base_path) const;
+
+  /** @brief Pointer to the analysis data structure. */
+  const correlation::analysis::DistributionFunctions *df_ = nullptr;
 };
 
 } // namespace correlation::writers

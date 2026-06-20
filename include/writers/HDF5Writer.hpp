@@ -31,7 +31,7 @@ public:
   std::vector<std::string> getExtensions() const override { return {".h5", ".hdf5"}; }
 
   void write(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
-             bool smoothing) const override {
+             bool /*smoothing*/) const override {
     writeHDF(base_path + ".h5", dists);
   }
 
