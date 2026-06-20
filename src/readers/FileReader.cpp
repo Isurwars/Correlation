@@ -22,43 +22,43 @@ FileType determineFileType(const std::string &filename) {
 
   if (ext == ".car") {
     return FileType::Car;
-}
+  }
   if (ext == ".cell") {
     return FileType::Cell;
-}
+  }
   if (ext == ".cif") {
     return FileType::Cif;
-}
+  }
   if (ext == ".arc") {
     return FileType::Arc;
-}
+  }
   if (ext == ".dump" || ext == ".lammpstrj") {
     return FileType::LammpsDump;
-}
+  }
   if (ext == ".dat") {
     return FileType::OnetepDat;
-}
+  }
   if (ext == ".md") {
     return FileType::CastepMd;
-}
+  }
   if (ext == ".outmol") {
     return FileType::Outmol;
-}
+  }
   if (ext == ".poscar" || ext == ".contcar" || ext == ".vasp") {
     return FileType::Vasp;
-}
+  }
   if (ext == ".xdatcar") {
     return FileType::Xdatcar;
-}
+  }
   if (ext == ".gro") {
     return FileType::Gromacs;
-}
+  }
   if (ext == ".pdb" || ext == ".ent") {
     return FileType::Pdb;
-}
+  }
   if (ext == ".xyz" || ext == ".exyz") {
     return FileType::Xyz;
-}
+  }
 
   // Check basename for extensionless VASP files (POSCAR, CONTCAR, XDATCAR)
   if (ext.empty() || ext == ".") {
@@ -66,14 +66,16 @@ FileType determineFileType(const std::string &filename) {
     std::transform(basename.begin(), basename.end(), basename.begin(), ::tolower);
     if (basename == "poscar" || basename == "contcar") {
       return FileType::Vasp;
-}
+    }
     if (basename == "xdatcar") {
       return FileType::Xdatcar;
-}
+    }
   }
 
   return FileType::Unknown;
 }
+
+namespace {
 
 /**
  * @brief Finds a reader for the given filename.
@@ -85,14 +87,14 @@ FileType determineFileType(const std::string &filename) {
  * @param filename Path to the file.
  * @return Pointer to the matching reader, or nullptr if none found.
  */
-static BaseReader *findReaderForFile(const std::string &filename) {
+BaseReader *findReaderForFile(const std::string &filename) {
   std::string const ext = std::filesystem::path(filename).extension().string();
 
   if (!ext.empty()) {
     auto *reader = ReaderFactory::instance().getReaderForExtension(ext, filename);
     if (reader != nullptr) {
       return reader;
-}
+    }
   }
 
   // Extensionless files: try basename (handles POSCAR, CONTCAR, XDATCAR)
@@ -101,15 +103,15 @@ static BaseReader *findReaderForFile(const std::string &filename) {
 
   if (basename == "poscar" || basename == "contcar") {
     return ReaderFactory::instance().getReaderForExtension(".poscar");
-}
+  }
   if (basename == "xdatcar") {
     return ReaderFactory::instance().getReaderForExtension(".xdatcar");
-}
+  }
 
   return nullptr;
 }
 
-static BaseReader *findReaderForType(FileType type) {
+BaseReader *findReaderForType(FileType type) {
   switch (type) {
   case FileType::Car:
     return ReaderFactory::instance().getReaderForExtension(".car");
@@ -142,6 +144,8 @@ static BaseReader *findReaderForType(FileType type) {
   }
 }
 
+} // namespace
+
 correlation::core::Cell readStructure(const std::string &filename, FileType type,
                                       std::function<void(float, const std::string &)> progress_callback) {
 
@@ -161,7 +165,7 @@ correlation::core::Cell readStructure(const std::string &filename, FileType type
 }
 
 correlation::core::Trajectory readTrajectory(const std::string &filename, FileType type,
-                                             const std::function<void(float, const std::string &)>& progress_callback) {
+                                             const std::function<void(float, const std::string &)> &progress_callback) {
 
   BaseReader *reader = nullptr;
   if (type != FileType::Unknown) {
@@ -180,17 +184,16 @@ correlation::core::Trajectory readTrajectory(const std::string &filename, FileTy
 
     if (reader->isTrajectory()) {
       return reader->readTrajectory(filename, progress_callback);
-    }       // If it's not a trajectory reader but we asked for a trajectory,
-      // wrap a single structure in a one-frame trajectory.
-      try {
-        correlation::core::Cell c = reader->readStructure(filename, progress_callback);
-        std::vector<correlation::core::Cell> frames;
-        frames.push_back(std::move(c));
-        return correlation::core::Trajectory(frames, 1.0);
-      } catch (...) {
-        throw std::runtime_error("Reader for \"" + filename + "\" does not support trajectory reading.");
-      }
-   
+    }
+    // wrap a single structure in a one-frame trajectory.
+    try {
+      correlation::core::Cell cell = reader->readStructure(filename, progress_callback);
+      std::vector<correlation::core::Cell> frames;
+      frames.push_back(std::move(cell));
+      return {frames, 1.0};
+    } catch (...) {
+      throw std::runtime_error("Reader for \"" + filename + "\" does not support trajectory reading.");
+    }
   }
 
   throw std::runtime_error("No reader found for file: " + filename);

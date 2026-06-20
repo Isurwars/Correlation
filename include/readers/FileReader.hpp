@@ -11,6 +11,7 @@
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
+#include <cstdint>
 #include <functional>
 #include <string>
 
@@ -22,7 +23,7 @@ namespace correlation::readers {
  * @brief A type-safe enum to specify the format of a structure or trajectory
  * file.
  */
-enum class FileType {
+enum class FileType : std::uint8_t {
   Car,        ///< Accelrys .car file format
   Cell,       ///< CASTEP .cell physical structure format
   Cif,        ///< Crystallographic Information File (.cif)
