@@ -82,7 +82,7 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
     // Calculate expected scalar result
     std::vector<double> expected_dsq(size);
     for (size_t k = 0; k < size; ++k) {
-      expected_dsq[k] = correlation::math::dist_sq_scalar(ax, ay, az, bx[k], by[k], bz[k]);
+      expected_dsq[k] = correlation::math::dist_sq_scalar({ax, ay, az}, {bx[k], by[k], bz[k]});
     }
 
     // Call SIMD implementation

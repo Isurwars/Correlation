@@ -510,10 +510,10 @@ constexpr const ElementData *find(std::string_view symbol) noexcept {
   // @param symbol Chemical symbol.
   // @return Constant pointer to ElementData or nullptr.
   const auto *iterator =
-      std::lower_bound(database.begin(), database.end(), symbol,
+      std::lower_bound(database.data(), database.data() + database.size(), symbol,
                        [](const ElementData &data, std::string_view sym) { return data.symbol < sym; });
-  if (iterator != database.end() && iterator->symbol == symbol) {
-    return &(*iterator);
+  if (iterator != database.data() + database.size() && iterator->symbol == symbol) {
+    return iterator;
   }
   return nullptr;
 }

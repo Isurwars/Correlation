@@ -33,21 +33,30 @@ struct PositionBlock {
 // Scalar helper
 // ---------------------------------------------------------------------------
 /**
+ * @struct Point3
+ * @brief Lightweight POD for passing 3D coordinates to scalar SIMD helpers.
+ *
+ * Unlike Vector3, this struct has no alignment requirements and is used
+ * exclusively for parameter grouping in low-level SIMD utility functions.
+ */
+struct Point3 {
+  double x; ///< X-coordinate.
+  double y; ///< Y-coordinate.
+  double z; ///< Z-coordinate.
+};
+
+/**
  * @brief Computes the squared distance between two 3D points.
  *
- * @param ax x-coordinate of the first point.
- * @param ay y-coordinate of the first point.
- * @param az z-coordinate of the first point.
- * @param bx x-coordinate of the second point.
- * @param by y-coordinate of the second point.
- * @param bz z-coordinate of the second point.
+ * @param point_a The first point.
+ * @param point_b The second point.
  * @return The scalar squared distance.
  */
-inline double dist_sq_scalar(double ax, double ay, double az, double bx, double by, double bz) noexcept {
-  double dx = bx - ax;
-  double dy = by - ay;
-  double dz = bz - az;
-  return dx * dx + dy * dy + dz * dz;
+inline double dist_sq_scalar(Point3 point_a, Point3 point_b) noexcept {
+  const double dist_x = point_b.x - point_a.x;
+  const double dist_y = point_b.y - point_a.y;
+  const double dist_z = point_b.z - point_a.z;
+  return dist_x * dist_x + dist_y * dist_y + dist_z * dist_z;
 }
 
 // ---------------------------------------------------------------------------
@@ -129,7 +138,7 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
     _mm256_storeu_pd(out_dsq + k, dsq);
   }
   for (; k < block.count; ++k) {
-    out_dsq[k] = dist_sq_scalar(ax, ay, az, block.x[k], block.y[k], block.z[k]);
+    out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
   }
 }
 
@@ -175,7 +184,7 @@ inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integra
 inline void compute_dsq_block(double ax, double ay, double az, const PositionBlock &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t k = 0; k < block.count; ++k) {
-    out_dsq[k] = dist_sq_scalar(ax, ay, az, block.x[k], block.y[k], block.z[k]);
+    out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
   }
 }
 
