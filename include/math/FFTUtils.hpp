@@ -20,49 +20,50 @@ namespace correlation::math {
  * @brief Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal
  * optimization.
  *
- * @param a The input/output vector of complex numbers. Modifies in-place.
+ * @param data The input/output vector of complex numbers. Modifies in-place.
  * @param invert If true, performs an inverse FFT and scales the result by 1/N.
  */
-inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
-  size_t n = a.size();
-  if (n == 0)
+inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
+  size_t size = data.size();
+  if (size == 0) {
     return;
+  }
 
-  if ((n & (n - 1)) != 0) {
+  if ((size & (size - 1)) != 0) {
     throw std::invalid_argument("FFT length must be a power of 2");
   }
 
   // Bit-reversal permutation (Optimized)
-  for (size_t i = 1, j = 0; i < n; i++) {
-    size_t bit = n >> 1;
-    for (; j & bit; bit >>= 1) {
+  for (size_t i = 1, j = 0; i < size; i++) {
+    size_t bit = size >> 1;
+    for (; (j & bit) != 0; bit >>= 1) {
       j ^= bit;
     }
     j ^= bit;
     if (i < j) {
-      std::swap(a[i], a[j]);
+      std::swap(data[i], data[j]);
     }
   }
 
   // Cooley-Tukey with precomputed twiddle basics
-  for (size_t len = 2; len <= n; len <<= 1) {
-    double angle = correlation::math::two_pi / len * (invert ? -1 : 1);
+  for (size_t len = 2; len <= size; len <<= 1) {
+    double angle = correlation::math::two_pi / static_cast<double>(len) * (invert ? -1 : 1);
     std::complex<double> wlen(std::cos(angle), std::sin(angle));
-    for (size_t i = 0; i < n; i += len) {
-      std::complex<double> w(1.0, 0.0);
+    for (size_t i = 0; i < size; i += len) {
+      std::complex<double> twiddle(1.0, 0.0);
       for (size_t j = 0; j < len / 2; j++) {
-        std::complex<double> u = a[i + j];
-        std::complex<double> v = a[i + j + len / 2] * w;
-        a[i + j] = u + v;
-        a[i + j + len / 2] = u - v;
-        w *= wlen;
+        std::complex<double> even_val = data[i + j];
+        std::complex<double> odd_val = data[i + j + len / 2] * twiddle;
+        data[i + j] = even_val + odd_val;
+        data[i + j + len / 2] = even_val - odd_val;
+        twiddle *= wlen;
       }
     }
   }
 
   if (invert) {
-    for (auto &x : a) {
-      x /= static_cast<double>(n);
+    for (auto &val : data) {
+      val /= static_cast<double>(size);
     }
   }
 }
@@ -70,40 +71,45 @@ inline void computeFFT(std::vector<std::complex<double>> &a, bool invert) {
 /**
  * @brief Computes the autocorrelation of a 1D real sequence using FFT.
  *
- * @param x         Input signal.
+ * @param signal    Input signal.
  * @param workspace Reusable scratch buffer. Resized automatically when needed.
  *                  Pass the same buffer across repeated calls (e.g. per-atom
  *                  loops) to avoid repeated heap allocation.
  * @return Autocorrelation array of length n.
  */
-inline std::vector<double> autocorrelate(const std::vector<double> &x, std::vector<std::complex<double>> &workspace) {
-  const size_t n = x.size();
-  if (n == 0)
+inline std::vector<double> autocorrelate(const std::vector<double> &signal,
+                                         std::vector<std::complex<double>> &workspace) {
+  const size_t size = signal.size();
+  if (size == 0) {
     return {};
+  }
 
   size_t len = 1;
-  while (len < 2 * n)
+  while (len < 2 * size) {
     len <<= 1;
+  }
 
   // Reuse caller-supplied workspace; only reallocates when length grows.
   workspace.assign(len, {0.0, 0.0});
-  for (size_t i = 0; i < n; ++i)
-    workspace[i] = {x[i], 0.0};
+  for (size_t i = 0; i < size; ++i) {
+    workspace[i] = {signal[i], 0.0};
+  }
 
   computeFFT(workspace, false);
 
   // In-place |X[k]|² — no intermediate vector needed.
   for (size_t i = 0; i < len; ++i) {
-    const double re = workspace[i].real();
-    const double im = workspace[i].imag();
-    workspace[i] = {re * re + im * im, 0.0};
+    const double real_part = workspace[i].real();
+    const double imag_part = workspace[i].imag();
+    workspace[i] = {real_part * real_part + imag_part * imag_part, 0.0};
   }
 
   computeFFT(workspace, true);
 
-  std::vector<double> result(n);
-  for (size_t i = 0; i < n; ++i)
+  std::vector<double> result(size);
+  for (size_t i = 0; i < size; ++i) {
     result[i] = workspace[i].real();
+  }
   return result;
 }
 
@@ -112,12 +118,12 @@ inline std::vector<double> autocorrelate(const std::vector<double> &x, std::vect
  *
  * Prefer the two-argument overload in tight loops to recycle the allocation.
  *
- * @param x Input signal vector.
+ * @param signal Input signal vector.
  * @return The autocorrelation vector.
  */
-inline std::vector<double> autocorrelate(const std::vector<double> &x) {
+inline std::vector<double> autocorrelate(const std::vector<double> &signal) {
   std::vector<std::complex<double>> workspace;
-  return autocorrelate(x, workspace);
+  return autocorrelate(signal, workspace);
 }
 
 } // namespace correlation::math

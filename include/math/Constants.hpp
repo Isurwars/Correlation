@@ -20,7 +20,7 @@ namespace correlation::math {
 
 /** @brief High-precision mathematical pi constant. */
 #if __cplusplus >= 202002L
-constexpr double pi = std::numbers::pi;
+constexpr double pi = std::numbers::pi; // NOLINT(readability-identifier-length)
 #else
 constexpr double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062;
 #endif
