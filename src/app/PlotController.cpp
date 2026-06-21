@@ -381,7 +381,7 @@ void PlotController::executeSavePlot(const std::string &filepath, const correlat
     if (pinned_runs_.empty()) {
       correlation::plotters::renderHistogramAsPdf(*hist, filepath, config);
     } else {
-      correlation::plotters::renderComparisonPdf(build_datasets(), getComparisonKey(hist), filepath, config);
+      correlation::plotters::renderComparisonPdf(build_datasets(), {getComparisonKey(hist), filepath}, config);
     }
     window_.set_analysis_status_text(slint::SharedString(name + " plot saved as PDF successfully."));
   } else {

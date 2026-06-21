@@ -10,13 +10,12 @@
 #define NOMINMAX
 #define IDI_ICON1 101
 #include <Windows.h>
+#include <cstdlib>
 #endif
 
 #include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
-
-#include <cstdlib>
 
 /**
  * @brief Main entry point of the application.
@@ -33,13 +32,13 @@ int main() {
   HICON hIcon = LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
 #endif
 
-  auto ui = AppWindow::create();
+  auto window = AppWindow::create();
   correlation::app::AppBackend backend;
 
   // Instantiate the controller, which sets up all callbacks
-  correlation::app::AppController const controller(*ui, backend);
+  correlation::app::AppController const controller(*window, backend);
 
-  ui->run();
+  window->run();
 
   return 0;
 }
