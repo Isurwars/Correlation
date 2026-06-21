@@ -59,6 +59,7 @@ add_executable(correlation_unit_tests
     unit/io/ReaderFactoryTests.cpp
     unit/io/WriterFactoryTests.cpp
     unit/plotters/SvgPlotterTests.cpp
+    unit/plotters/PdfPlotterTests.cpp
     unit/utils/SIMDUtilsTests.cpp
     unit/math/LinearAlgebraTests.cpp
     unit/math/SpecialFunctionsTests.cpp
