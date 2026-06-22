@@ -48,7 +48,8 @@ void printUsage(const char *program) {
             << "  --max-ring-size <int>     Max ring size for topology (default: 8)\n\n"
             << "Post-Processing & Output Formats:\n"
             << "  --smoothing-sigma <float> Bandwidth for kernel smoothing (default: 0.1)\n"
-            << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight) (default: gaussian)\n"
+            << "  --smoothing-kernel <str>  Kernel type (gaussian, bump, triweight, \n"
+            << "                            epanechnikov, cosine, biweight) (default: gaussian)\n"
             << "  --no-smoothing            Disable post-processing smoothing\n"
             << "  --csv                     Enable CSV output (default: on)\n"
             << "  --no-csv                  Disable CSV output\n"
@@ -260,6 +261,12 @@ bool parseArgs(std::span<char *> argv, CliOptions &opts) {
     opts.smoothing_kernel = correlation::math::KernelType::Bump;
   } else if (k_str == "triweight") {
     opts.smoothing_kernel = correlation::math::KernelType::Triweight;
+  } else if (k_str == "epanechnikov" || k_str == "epan") {
+    opts.smoothing_kernel = correlation::math::KernelType::Epanechnikov;
+  } else if (k_str == "cosine" || k_str == "cos") {
+    opts.smoothing_kernel = correlation::math::KernelType::Cosine;
+  } else if (k_str == "biweight") {
+    opts.smoothing_kernel = correlation::math::KernelType::Biweight;
   } else {
     std::cerr << "Warning: Unknown kernel type '" << k_str << "', defaulting to gaussian\n";
     opts.smoothing_kernel = correlation::math::KernelType::Gaussian;

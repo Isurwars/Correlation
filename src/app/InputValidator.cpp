@@ -361,6 +361,12 @@ void InputValidator::updateCliCommand() {
       kernel_str = "bump";
     } else if (opt.smoothing_kernel == correlation::math::KernelType::Triweight) {
       kernel_str = "triweight";
+    } else if (opt.smoothing_kernel == correlation::math::KernelType::Epanechnikov) {
+      kernel_str = "epanechnikov";
+    } else if (opt.smoothing_kernel == correlation::math::KernelType::Cosine) {
+      kernel_str = "cosine";
+    } else if (opt.smoothing_kernel == correlation::math::KernelType::Biweight) {
+      kernel_str = "biweight";
     }
     cmd += " --smoothing-kernel " + kernel_str;
   } else {

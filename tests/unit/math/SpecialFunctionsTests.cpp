@@ -34,9 +34,9 @@ TEST_F(SpecialFunctionsTests, FactorialCorrectness) {
 
 TEST_F(SpecialFunctionsTests, SphLegendreBoundaryCases) {
   // Out of bounds m
-  EXPECT_DOUBLE_EQ(sph_legendre(1, -1, 0.5), 0.0);
-  EXPECT_DOUBLE_EQ(sph_legendre(2, 3, 0.5), 0.0);
-  EXPECT_DOUBLE_EQ(sph_legendre(0, 1, 0.5), 0.0);
+  EXPECT_DOUBLE_EQ(sph_legendre({.degree = 1, .order = -1}, 0.5), 0.0);
+  EXPECT_DOUBLE_EQ(sph_legendre({.degree = 2, .order = 3}, 0.5), 0.0);
+  EXPECT_DOUBLE_EQ(sph_legendre({.degree = 0, .order = 1}, 0.5), 0.0);
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
@@ -44,15 +44,15 @@ TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
 
   // l=0, m=0: Y_0^0 = 1 / sqrt(4 * pi)
   double const y00_expected = 1.0 / std::sqrt(4.0 * M_PI);
-  EXPECT_NEAR(sph_legendre(0, 0, theta), y00_expected, 1e-9);
+  EXPECT_NEAR(sph_legendre({.degree = 0, .order = 0}, theta), y00_expected, 1e-9);
 
   // l=1, m=0: Y_1^0 = sqrt(3 / (4 * pi)) * cos(theta)
   double const y10_expected = std::sqrt(3.0 / (4.0 * M_PI)) * std::cos(theta);
-  EXPECT_NEAR(sph_legendre(1, 0, theta), y10_expected, 1e-9);
+  EXPECT_NEAR(sph_legendre({.degree = 1, .order = 0}, theta), y10_expected, 1e-9);
 
   // l=1, m=1: Y_1^1 = sqrt(3 / (8 * pi)) * sin(theta) (without Condon-Shortley phase)
   double const y11_expected = std::sqrt(3.0 / (8.0 * M_PI)) * std::sin(theta);
-  EXPECT_NEAR(sph_legendre(1, 1, theta), y11_expected, 1e-9);
+  EXPECT_NEAR(sph_legendre({.degree = 1, .order = 1}, theta), y11_expected, 1e-9);
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
@@ -64,9 +64,9 @@ TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
   std::vector<std::pair<int, int>> const l_m_pairs = {{0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2}};
 
   for (const auto &[l, m] : l_m_pairs) {
-    sph_legendre_batch(l, m, angles.data(), batch_results.data(), count);
+    sph_legendre_batch({.degree = l, .order = m}, angles.data(), batch_results.data(), count);
     for (size_t i = 0; i < count; ++i) {
-      double const expected = sph_legendre(l, m, angles[i]);
+      double const expected = sph_legendre({.degree = l, .order = m}, angles[i]);
       EXPECT_NEAR(batch_results[i], expected, 1e-9) << "Mismatch at index " << i << " for l=" << l << ", m=" << m;
     }
   }
@@ -76,7 +76,7 @@ TEST_F(SpecialFunctionsTests, SphLegendreBatchOutOfBoundsmPopulatesZero) {
   std::vector<double> angles = {0.1, 0.2, 0.3};
   std::vector<double> results(3, 1.23); // Prefill with dummy data
 
-  sph_legendre_batch(2, 3, angles.data(), results.data(), 3);
+  sph_legendre_batch({.degree = 2, .order = 3}, angles.data(), results.data(), 3);
   EXPECT_DOUBLE_EQ(results[0], 0.0);
   EXPECT_DOUBLE_EQ(results[1], 0.0);
   EXPECT_DOUBLE_EQ(results[2], 0.0);

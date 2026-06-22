@@ -22,5 +22,8 @@ void init_math(py::module_ &m) {
       .value("Gaussian", KernelType::Gaussian, "Gaussian (normal) kernel — smooth, infinite support.")
       .value("Bump", KernelType::Bump, "Infinitely-smooth bump function with compact support.")
       .value("Triweight", KernelType::Triweight, "Triweight polynomial kernel with compact support.")
+      .value("Epanechnikov", KernelType::Epanechnikov, "Optimal MISE kernel — parabolic, compact support.")
+      .value("Cosine", KernelType::Cosine, "Cosine kernel with compact support.")
+      .value("Biweight", KernelType::Biweight, "Quartic (biweight) kernel with compact support.")
       .export_values();
 }

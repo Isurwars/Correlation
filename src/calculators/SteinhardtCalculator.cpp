@@ -212,11 +212,11 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
 
 std::complex<double> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
   if (order >= 0) {
-    double const P_lm = correlation::math::sph_legendre(degree, order, angles.theta);
+    double const P_lm = correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta);
     return P_lm * std::polar(1.0, order * angles.phi);
   } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
   int const abs_m = -order;
-  double const P_lm = correlation::math::sph_legendre(degree, abs_m, angles.theta);
+  double const P_lm = correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta);
   std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * angles.phi);
   std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
   if (abs_m % 2 != 0) {
