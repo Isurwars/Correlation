@@ -29,6 +29,7 @@ using namespace correlation::analysis;
 // ------------------------------------------------------------------
 // Trampoline — lets users subclass BaseCalculator in Python
 // ------------------------------------------------------------------
+namespace {
 class PyBaseCalculator : public BaseCalculator {
 public:
   using BaseCalculator::BaseCalculator;
@@ -47,12 +48,13 @@ public:
     PYBIND11_OVERRIDE(void, BaseCalculator, calculateTrajectory, dists, traj, settings);
   }
 };
+} // namespace
 
-void init_calculators(py::module_ &m) {
+void init_calculators(py::module_ &mod) {
   // ------------------------------------------------------------------
   // BaseCalculator
   // ------------------------------------------------------------------
-  py::class_<BaseCalculator, PyBaseCalculator>(m, "BaseCalculator",
+  py::class_<BaseCalculator, PyBaseCalculator>(mod, "BaseCalculator",
                                                "Abstract base class for all analysis calculators.\n\n"
                                                "Subclass this in Python to create custom calculators.")
       .def(py::init<>())
@@ -68,24 +70,26 @@ void init_calculators(py::module_ &m) {
   // CalculatorFactory access — module-level free functions
   // (CalculatorFactory holds unique_ptrs and cannot be copy-constructed)
   // ------------------------------------------------------------------
-  m.def(
+  mod.def(
       "list_calculators",
       []() {
         std::vector<std::string> names;
-        for (const auto &c : CalculatorFactory::instance().getCalculators())
-          names.push_back(c->getShortName());
+        for (const auto &calculator : CalculatorFactory::instance().getCalculators()) {
+          names.push_back(calculator->getShortName());
+        }
         return names;
       },
       "Return a list of short names for all registered calculators\n"
       "(e.g. ['RDF', 'SQ', 'PAD', ...]).");
 
-  m.def(
+  mod.def(
       "get_calculator",
       [](const std::string &name) -> const BaseCalculator * {
-        const auto *c = CalculatorFactory::instance().getCalculator(name);
-        if (!c)
+        const auto *calculator = CalculatorFactory::instance().getCalculator(name);
+        if (!calculator) {
           throw std::runtime_error("No calculator registered with name: " + name);
-        return c;
+        }
+        return calculator;
       },
       py::arg("name"), py::return_value_policy::reference,
       "Look up a registered calculator by its short name (e.g. 'RDF').\n\n"
@@ -97,12 +101,13 @@ void init_calculators(py::module_ &m) {
       "RuntimeError\n"
       "    If no calculator with that name is registered.");
 
-  m.def(
+  mod.def(
       "get_all_calculators",
       []() {
         std::vector<const BaseCalculator *> out;
-        for (const auto &c : CalculatorFactory::instance().getCalculators())
-          out.push_back(c.get());
+        for (const auto &calculator : CalculatorFactory::instance().getCalculators()) {
+          out.push_back(calculator.get());
+        }
         return out;
       },
       py::return_value_policy::reference, "Return a list of all registered calculator objects.");

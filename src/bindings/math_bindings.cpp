@@ -14,11 +14,11 @@
 namespace py = pybind11;
 using namespace correlation::math;
 
-void init_math(py::module_ &m) {
+void init_math(py::module_ &mod) {
   // ------------------------------------------------------------------
   // KernelType enum
   // ------------------------------------------------------------------
-  py::enum_<KernelType>(m, "KernelType", "Kernel type used for post-processing smoothing of histograms.")
+  py::enum_<KernelType>(mod, "KernelType", "Kernel type used for post-processing smoothing of histograms.")
       .value("Gaussian", KernelType::Gaussian, "Gaussian (normal) kernel — smooth, infinite support.")
       .value("Bump", KernelType::Bump, "Infinitely-smooth bump function with compact support.")
       .value("Triweight", KernelType::Triweight, "Triweight polynomial kernel with compact support.")

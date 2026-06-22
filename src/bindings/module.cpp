@@ -21,25 +21,23 @@
 
 #include <pybind11/pybind11.h>
 
-namespace py = pybind11;
+PYBIND11_MODULE(_correlation, mod) {
+  mod.doc() = "Correlation: Liquid and Amorphous Solid Analysis Tool — Python Bindings\n\n"
+              "Quick-start example::\n\n"
+              "    import correlation\n\n"
+              "    traj = correlation.read('my_sim.lammps')\n"
+              "    cell = traj.frames[0]\n\n"
+              "    dists = correlation.DistributionFunctions(cell, cutoff=6.0)\n"
+              "    dists.calculate_rdf(r_max=15.0, bin_width=0.02)\n"
+              "    dists.smooth_all(sigma=0.05)\n\n"
+              "    hist = dists.get_histogram('g(r)')\n"
+              "    print(hist.bins[:5], hist.partials['Total'][:5])\n\n"
+              "    correlation.write_csv('output/sample', dists)\n";
 
-PYBIND11_MODULE(_correlation, m) {
-  m.doc() = "Correlation: Liquid and Amorphous Solid Analysis Tool — Python Bindings\n\n"
-            "Quick-start example::\n\n"
-            "    import correlation\n\n"
-            "    traj = correlation.read('my_sim.lammps')\n"
-            "    cell = traj.frames[0]\n\n"
-            "    dists = correlation.DistributionFunctions(cell, cutoff=6.0)\n"
-            "    dists.calculate_rdf(r_max=15.0, bin_width=0.02)\n"
-            "    dists.smooth_all(sigma=0.05)\n\n"
-            "    hist = dists.get_histogram('g(r)')\n"
-            "    print(hist.bins[:5], hist.partials['Total'][:5])\n\n"
-            "    correlation.write_csv('output/sample', dists)\n";
-
-  init_math(m);
-  init_core(m);
-  init_io(m);
-  init_analysis(m);
-  init_calculators(m);
-  init_writers(m);
+  init_math(mod);
+  init_core(mod);
+  init_io(mod);
+  init_analysis(mod);
+  init_calculators(mod);
+  init_writers(mod);
 }

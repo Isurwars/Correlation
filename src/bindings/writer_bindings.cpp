@@ -29,18 +29,17 @@ namespace py = pybind11;
 using namespace correlation::writers;
 using namespace correlation::analysis;
 
-void init_writers(py::module_ &m) {
+void init_writers(py::module_ &mod) {
   // ------------------------------------------------------------------
   // BaseWriter — abstract base (not directly instantiable from Python)
   // ------------------------------------------------------------------
-  py::class_<BaseWriter>(m, "BaseWriter", "Abstract base class for all file-format writers.")
+  py::class_<BaseWriter>(mod, "BaseWriter", "Abstract base class for all file-format writers.")
       .def("get_name", &BaseWriter::getName, "Display name of this writer (e.g. 'CSV', 'HDF5').")
       .def("get_extensions", &BaseWriter::getExtensions, "List of supported file extensions (e.g. ['.csv']).")
       .def(
           "write",
-          [](const BaseWriter &w, const std::string &base_path, const DistributionFunctions &dists, bool smoothing) {
-            w.write(base_path, dists, smoothing);
-          },
+          [](const BaseWriter &writer, const std::string &base_path, const DistributionFunctions &dists,
+             bool smoothing) { writer.write(base_path, dists, smoothing); },
           py::arg("base_path"), py::arg("dists"), py::arg("smoothing") = false,
           "Write distribution function data to file(s).\n\n"
           "Parameters\n----------\n"
@@ -54,15 +53,15 @@ void init_writers(py::module_ &m) {
   // ------------------------------------------------------------------
   // CSVWriter
   // ------------------------------------------------------------------
-  py::class_<CSVWriter, BaseWriter>(m, "CSVWriter",
+  py::class_<CSVWriter, BaseWriter>(mod, "CSVWriter",
                                     "Writes distribution function histograms to CSV files.\n\n"
                                     "For each histogram (e.g. g(r)) a separate .csv file is created\n"
                                     "with all partials as columns.")
       .def(py::init<>())
       .def(
           "write_all_csvs",
-          [](const CSVWriter &w, const std::string &base_path, const DistributionFunctions &dists, bool write_smoothed) {
-            w.writeAllCSVs(base_path, dists, write_smoothed);
+          [](const CSVWriter &, const std::string &base_path, const DistributionFunctions &dists, bool write_smoothed) {
+            CSVWriter::writeAllCSVs(base_path, dists, write_smoothed);
           },
           py::arg("base_path"), py::arg("dists"), py::arg("write_smoothed") = false,
           "Write all available histograms to individual CSV files.");
@@ -71,13 +70,14 @@ void init_writers(py::module_ &m) {
   // WriterFactory access — exposed as module-level free functions
   // because WriterFactory holds unique_ptrs and cannot be copied.
   // ------------------------------------------------------------------
-  m.def(
+  mod.def(
       "get_writer",
       [](const std::string &name) -> BaseWriter * {
-        auto *w = WriterFactory::instance().getWriter(name);
-        if (!w)
+        auto *writer = WriterFactory::instance().getWriter(name);
+        if (!writer) {
           throw std::runtime_error("No writer registered with name: " + name);
-        return w;
+        }
+        return writer;
       },
       py::arg("name"), py::return_value_policy::reference,
       "Look up a file writer by name (e.g. 'CSV', 'HDF5').\n\n"
@@ -89,22 +89,24 @@ void init_writers(py::module_ &m) {
       "RuntimeError\n"
       "    If no writer with that name is registered.");
 
-  m.def(
+  mod.def(
       "get_writer_for_extension",
       [](const std::string &ext) -> BaseWriter * {
-        auto *w = WriterFactory::instance().getWriterForExtension(ext);
-        if (!w)
+        auto *writer = WriterFactory::instance().getWriterForExtension(ext);
+        if (!writer) {
           throw std::runtime_error("No writer found for extension: " + ext);
-        return w;
+        }
+        return writer;
       },
       py::arg("extension"), py::return_value_policy::reference, "Look up a writer by file extension (e.g. '.csv').");
 
-  m.def(
+  mod.def(
       "list_writers",
       []() {
         std::vector<std::string> names;
-        for (const auto &w : WriterFactory::instance().getWriters())
-          names.push_back(w->getName());
+        for (const auto &writer : WriterFactory::instance().getWriters()) {
+          names.push_back(writer->getName());
+        }
         return names;
       },
       "Return the names of all registered file writers.");
@@ -112,11 +114,10 @@ void init_writers(py::module_ &m) {
   // ------------------------------------------------------------------
   // Convenience free functions
   // ------------------------------------------------------------------
-  m.def(
+  mod.def(
       "write_csv",
       [](const std::string &base_path, const DistributionFunctions &dists, bool write_smoothed) {
-        CSVWriter w;
-        w.writeAllCSVs(base_path, dists, write_smoothed);
+        CSVWriter::writeAllCSVs(base_path, dists, write_smoothed);
       },
       py::arg("base_path"), py::arg("dists"), py::arg("write_smoothed") = false,
       "Convenience function: write all histograms in *dists* to CSV files.\n\n"

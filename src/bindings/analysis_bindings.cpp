@@ -25,18 +25,19 @@
 #include <pybind11/stl.h>
 
 #include <stdexcept>
+#include <utility>
 
 namespace py = pybind11;
 using namespace correlation::analysis;
 using namespace correlation::core;
 using namespace correlation::math;
 
-void init_analysis(py::module_ &m) {
+void init_analysis(py::module_ &mod) {
 
   // ------------------------------------------------------------------
   // AnalysisSettings
   // ------------------------------------------------------------------
-  py::class_<AnalysisSettings>(m, "AnalysisSettings",
+  py::class_<AnalysisSettings>(mod, "AnalysisSettings",
                                "Configuration bag for all distribution-function calculations.\n\n"
                                "All parameters have sensible defaults so only the fields you want\n"
                                "to override need to be set.")
@@ -69,13 +70,13 @@ void init_analysis(py::module_ &m) {
       .def_readwrite("smoothing_kernel", &AnalysisSettings::smoothing_kernel,
                      "Kernel type for smoothing (KernelType enum). Default Gaussian.")
       .def(
-          "is_active", [](const AnalysisSettings &s, const std::string &id) { return s.isActive(id); }, py::arg("id"),
-          "Return True if the given calculator ID is enabled.");
+          "is_active", [](const AnalysisSettings &settings, const std::string &idx) { return settings.isActive(idx); },
+          py::arg("idx"), "Return True if the given calculator index is enabled.");
 
   // ------------------------------------------------------------------
   // Histogram
   // ------------------------------------------------------------------
-  py::class_<Histogram>(m, "Histogram",
+  py::class_<Histogram>(mod, "Histogram",
                         "Container for a single calculated distribution function.\n\n"
                         "Holds the x-axis bins, all partial distributions, and optional\n"
                         "smoothed variants.")
@@ -93,15 +94,18 @@ void init_analysis(py::module_ &m) {
                      "Dict mapping partial key to smoothed y-values.")
       .def(
           "get_bins_numpy",
-          [](const Histogram &h) -> py::array_t<double> { return py::array_t<double>(h.bins.size(), h.bins.data()); },
+          [](const Histogram &hist) -> py::array_t<double> {
+            return py::array_t<double>(static_cast<py::ssize_t>(hist.bins.size()), hist.bins.data());
+          },
           "Return x-axis bins as a NumPy array (copy).")
       .def(
           "get_partial_numpy",
-          [](const Histogram &h, const std::string &key) -> py::array_t<double> {
-            auto it = h.partials.find(key);
-            if (it == h.partials.end())
+          [](const Histogram &hist, const std::string &key) -> py::array_t<double> {
+            auto iter = hist.partials.find(key);
+            if (iter == hist.partials.end()) {
               throw std::runtime_error("Partial key not found: " + key);
-            return py::array_t<double>(it->second.size(), it->second.data());
+            }
+            return py::array_t<double>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
           },
           py::arg("key"),
           "Return a specific partial distribution as a NumPy array.\n\n"
@@ -110,18 +114,19 @@ void init_analysis(py::module_ &m) {
           "    Partial key (e.g. 'Si-O' or 'Total').")
       .def(
           "get_smoothed_partial_numpy",
-          [](const Histogram &h, const std::string &key) -> py::array_t<double> {
-            auto it = h.smoothed_partials.find(key);
-            if (it == h.smoothed_partials.end())
+          [](const Histogram &hist, const std::string &key) -> py::array_t<double> {
+            auto iter = hist.smoothed_partials.find(key);
+            if (iter == hist.smoothed_partials.end()) {
               throw std::runtime_error("Smoothed partial key not found: " + key);
-            return py::array_t<double>(it->second.size(), it->second.data());
+            }
+            return py::array_t<double>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
           },
           py::arg("key"), "Return a specific smoothed partial distribution as a NumPy array.");
 
   // ------------------------------------------------------------------
   // StructureAnalyzer
   // ------------------------------------------------------------------
-  py::class_<StructureAnalyzer>(m, "StructureAnalyzer",
+  py::class_<StructureAnalyzer>(mod, "StructureAnalyzer",
                                 "Computes pairwise distances, bond angles, and dihedral angles\n"
                                 "for a single simulation cell (frame).\n\n"
                                 "The tensors are indexed by element type: distances[e1][e2][pair_idx],\n"
@@ -148,13 +153,13 @@ void init_analysis(py::module_ &m) {
   // ------------------------------------------------------------------
   // TrajectoryAnalyzer
   // ------------------------------------------------------------------
-  py::class_<TrajectoryAnalyzer>(m, "TrajectoryAnalyzer",
+  py::class_<TrajectoryAnalyzer>(mod, "TrajectoryAnalyzer",
                                  "Orchestrates structural analysis across multiple frames of a trajectory.\n\n"
                                  "Provides per-frame StructureAnalyzer factories and trajectory metadata.")
       .def(py::init([](Trajectory &trajectory, double neighbor_cutoff,
                        const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame, long long end_frame,
                        bool ignore_periodic_self_interactions,
-                       std::function<void(float, const std::string &)> progress_callback) {
+                       const std::function<void(float, const std::string &)> &progress_callback) {
              return std::make_unique<TrajectoryAnalyzer>(
                  trajectory, neighbor_cutoff, bond_cutoffs, StartFrame{start_frame},
                  EndFrame{static_cast<size_t>(end_frame)}, ignore_periodic_self_interactions, progress_callback);
@@ -184,13 +189,15 @@ void init_analysis(py::module_ &m) {
       .def("get_neighbor_cutoff", &TrajectoryAnalyzer::getNeighborCutoff, "Global neighbor search cutoff radius (Å).")
       .def(
           "create_analyzer",
-          [](const TrajectoryAnalyzer &ta, size_t frame_idx) { return ta.createAnalyzer(frame_idx); },
+          [](const TrajectoryAnalyzer &trajectory_analyser, size_t frame_idx) {
+            return trajectory_analyser.createAnalyzer(frame_idx);
+          },
           py::arg("frame_idx"), "Create a StructureAnalyzer for the given frame index.");
 
   // ------------------------------------------------------------------
   // DistributionFunctions
   // ------------------------------------------------------------------
-  py::class_<DistributionFunctions>(m, "DistributionFunctions",
+  py::class_<DistributionFunctions>(mod, "DistributionFunctions",
                                     "Manager for distribution function calculations (RDF, PAD, S(Q), …).\n\n"
                                     "This is the primary analysis object. Construct it with a Cell (or obtain\n"
                                     "a trajectory-averaged instance via compute_mean), then call the desired\n"
@@ -295,7 +302,8 @@ void init_analysis(py::module_ &m) {
           "sigma : float\n    Kernel bandwidth.\n"
           "kernel : KernelType\n    Smoothing kernel. Default Gaussian.")
       .def(
-          "smooth_all", [](DistributionFunctions &dists, double sigma, KernelType kernel) { dists.smoothAll(sigma, kernel); },
+          "smooth_all",
+          [](DistributionFunctions &dists, double sigma, KernelType kernel) { dists.smoothAll(sigma, kernel); },
           py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
           "Smooth all available histograms.\n\n"
           "sigma : float\n    Kernel bandwidth.\n"
@@ -313,7 +321,8 @@ void init_analysis(py::module_ &m) {
           "compute_mean",
           [](Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t start_frame,
              const AnalysisSettings &settings, std::function<void(float, const std::string &)> progress_callback) {
-            return DistributionFunctions::computeMean(trajectory, analyzer, start_frame, settings, progress_callback);
+            return DistributionFunctions::computeMean(trajectory, analyzer, start_frame, settings,
+                                                      std::move(progress_callback));
           },
           py::arg("trajectory"), py::arg("analyzer"), py::arg("start_frame") = 0,
           py::arg("settings") = AnalysisSettings{}, py::arg("progress_callback") = nullptr,

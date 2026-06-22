@@ -9,12 +9,12 @@ namespace py = pybind11;
 using namespace correlation::readers;
 using namespace correlation::core;
 
-void init_io(py::module_ &m) {
-  m.def(
+void init_io(py::module_ &mod) {
+  mod.def(
       "read",
       [](const std::string &filepath) -> Trajectory {
-        std::filesystem::path p(filepath);
-        auto extension = p.extension().string();
+        std::filesystem::path path(filepath);
+        auto extension = path.extension().string();
 
         auto *reader = ReaderFactory::instance().getReaderForExtension({extension, filepath});
         if (!reader) {

@@ -10,48 +10,52 @@
 namespace py = pybind11;
 using namespace correlation::core;
 
-void init_core(py::module_ &m) {
-  py::class_<Element>(m, "Element")
+void init_core(py::module_ &mod) {
+  py::class_<Element>(mod, "Element")
       .def(py::init<>())
       .def_readwrite("symbol", &Element::symbol)
-      .def_property("id", [](const Element &e) { return e.id.value; }, [](Element &e, int v) { e.id.value = v; });
+      .def_property(
+          "id", [](const Element &element) { return element.id.value; },
+          [](Element &element, int value) { element.id.value = value; });
 
-  py::class_<Atom>(m, "Atom")
+  py::class_<Atom>(mod, "Atom")
       .def(py::init<>())
       .def_property(
-          "position", [](const Atom &a) { return a.position().array(); },
-          [](Atom &a, const std::array<double, 3> &pos) { a.setPosition(correlation::math::Vector3<double>(pos)); })
+          "position", [](const Atom &atom) { return atom.position().array(); },
+          [](Atom &atom, const std::array<double, 3> &pos) {
+            atom.setPosition(correlation::math::Vector3<double>(pos));
+          })
       .def_property("id", &Atom::id, &Atom::setID)
       .def_property("element", &Atom::element, &Atom::setElement);
 
-  py::class_<Cell>(m, "Cell")
+  py::class_<Cell>(mod, "Cell")
       .def(py::init<>())
       .def(
           "add_atom",
-          [](Cell &c, const std::string &symbol, const std::array<double, 3> &pos) -> Atom & {
-            return c.addAtom(symbol, correlation::math::Vector3<double>(pos));
+          [](Cell &cell, const std::string &symbol, const std::array<double, 3> &pos) -> Atom & {
+            return cell.addAtom(symbol, correlation::math::Vector3<double>(pos));
           },
           py::return_value_policy::reference)
       .def("get_volume", &Cell::volume)
       .def_property("energy", &Cell::getEnergy, &Cell::setEnergy)
       .def_property_readonly(
-          "atoms", [](const Cell &c) -> const std::vector<Atom> & { return c.atoms(); },
+          "atoms", [](const Cell &cell) -> const std::vector<Atom> & { return cell.atoms(); },
           py::return_value_policy::reference_internal)
       .def(
           "get_positions",
-          [](const Cell &c) -> py::array_t<double> {
+          [](const Cell &cell) -> py::array_t<double> {
             py::module_ warnings = py::module_::import("warnings");
             warnings.attr("warn")("get_positions() is deprecated, use the zero-copy .positions property instead.",
                                   warnings.attr("DeprecationWarning"));
-            const auto &atoms = c.atoms();
-            const size_t n = atoms.size();
-            py::array_t<double> arr({n, size_t(3)});
+            const auto &atoms = cell.atoms();
+            const size_t num_atoms = atoms.size();
+            py::array_t<double> arr({static_cast<py::ssize_t>(num_atoms), py::ssize_t(3)});
             auto buf = arr.mutable_unchecked<2>();
-            for (size_t i = 0; i < n; ++i) {
-              const auto &p = atoms[i].position();
-              buf(i, 0) = p[0];
-              buf(i, 1) = p[1];
-              buf(i, 2) = p[2];
+            for (size_t i = 0; i < num_atoms; ++i) {
+              const auto &position = atoms[i].position();
+              buf(i, 0) = position[0];
+              buf(i, 1) = position[1];
+              buf(i, 2) = position[2];
             }
             return arr;
           },
@@ -59,14 +63,15 @@ void init_core(py::module_ &m) {
       .def_property_readonly(
           "positions",
           [](py::object &obj) -> py::array_t<double> {
-            auto &c = obj.cast<const Cell &>();
-            const auto &atoms = c.atoms();
-            if (atoms.empty())
+            const auto &cell = obj.cast<const Cell &>();
+            const auto &atoms = cell.atoms();
+            if (atoms.empty()) {
               return py::array_t<double>();
+            }
 
             ssize_t stride_row = sizeof(Atom);
             ssize_t stride_col = sizeof(double);
-            ssize_t rows = atoms.size();
+            ssize_t rows = static_cast<ssize_t>(atoms.size());
             ssize_t cols = 3;
 
             const double *ptr = atoms[0].position().begin();
@@ -77,14 +82,15 @@ void init_core(py::module_ &m) {
       .def_property_readonly(
           "velocities",
           [](py::object &obj) -> py::array_t<double> {
-            auto &c = obj.cast<const Cell &>();
-            const auto &atoms = c.atoms();
-            if (atoms.empty())
+            const auto &cell = obj.cast<const Cell &>();
+            const auto &atoms = cell.atoms();
+            if (atoms.empty()) {
               return py::array_t<double>();
+            }
 
             ssize_t stride_row = sizeof(Atom);
             ssize_t stride_col = sizeof(double);
-            ssize_t rows = atoms.size();
+            ssize_t rows = static_cast<ssize_t>(atoms.size());
             ssize_t cols = 3;
 
             const double *ptr = atoms[0].velocity().begin();
@@ -94,12 +100,12 @@ void init_core(py::module_ &m) {
           "Zero-copy access to atom velocities as a (N, 3) NumPy array.")
       .def(
           "get_element_ids",
-          [](const Cell &c) -> py::array_t<int> {
-            const auto &atoms = c.atoms();
-            const size_t n = atoms.size();
-            py::array_t<int> arr(n);
+          [](const Cell &cell) -> py::array_t<int> {
+            const auto &atoms = cell.atoms();
+            const size_t num_atoms = atoms.size();
+            py::array_t<int> arr(static_cast<py::ssize_t>(num_atoms));
             auto buf = arr.mutable_unchecked<1>();
-            for (size_t i = 0; i < n; ++i) {
+            for (size_t i = 0; i < num_atoms; ++i) {
               buf(i) = atoms[i].element_id();
             }
             return arr;
@@ -107,32 +113,34 @@ void init_core(py::module_ &m) {
           "Return element type IDs for all atoms as a NumPy array of shape (N,).")
       .def(
           "get_lattice_parameters",
-          [](const Cell &c) -> py::array_t<double> {
-            const auto &lp = c.lattice_parameters();
+          [](const Cell &cell) -> py::array_t<double> {
+            const auto &lattice_parameters = cell.lattice_parameters();
             py::array_t<double> arr(6);
             auto buf = arr.mutable_unchecked<1>();
-            for (int i = 0; i < 6; ++i)
-              buf(i) = lp[i];
+            for (int i = 0; i < 6; ++i) {
+              buf(i) = lattice_parameters.at(i);
+            }
             return arr;
           },
           "Return lattice parameters [a, b, c, alpha, beta, gamma] as a NumPy array.");
 
-  py::class_<Trajectory>(m, "Trajectory")
+  py::class_<Trajectory>(mod, "Trajectory")
       .def(py::init<>())
       .def_property("time_step", &Trajectory::getTimeStep, &Trajectory::setTimeStep)
       .def("num_frames", &Trajectory::getFrameCount)
       .def("__len__", &Trajectory::getFrameCount)
-      .def("__getitem__", [](const Trajectory &t, int index) -> Cell {
-            int count = static_cast<int>(t.getFrameCount());
-            if (index < 0) {
-              index += count;
-            }
-            if (index < 0 || index >= count) {
-              throw py::index_error("Trajectory index out of range");
-            }
-            return t.getFrame(static_cast<size_t>(index));
-          })
+      .def("__getitem__",
+           [](const Trajectory &trajectory, int index) -> Cell {
+             int count = static_cast<int>(trajectory.getFrameCount());
+             if (index < 0) {
+               index += count;
+             }
+             if (index < 0 || index >= count) {
+               throw py::index_error("Trajectory index out of range");
+             }
+             return trajectory.getFrame(static_cast<size_t>(index));
+           })
       .def_property_readonly(
-          "frames", [](Trajectory &t) -> std::vector<Cell> & { return t.getFrames(); },
+          "frames", [](Trajectory &trajectory) -> std::vector<Cell> & { return trajectory.getFrames(); },
           py::return_value_policy::reference_internal);
 }
