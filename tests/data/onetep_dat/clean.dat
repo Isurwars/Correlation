@@ -1,0 +1,13 @@
+# Comment at the start
+%BLOCK LATTICE_CART
+bohr
+10.0 0.0 0.0
+0.0 10.0 0.0
+0.0 0.0 10.0
+%ENDBLOCK LATTICE_CART
+
+! Comment before positions
+%BLOCK POSITIONS_ABS
+angstrom
+C 1.0 2.0 3.0 # inline comment
+%ENDBLOCK POSITIONS_ABS

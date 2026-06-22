@@ -1,0 +1,7 @@
+!BIOSYM archive 3
+PBC=ON
+PBC 10.5 11.5 12.5 90.0 90.0 90.0
+C1      1.00  2.00  3.00 XXXX 1      xx      C    0.000
+Si2     4.50  5.50  6.50 XXXX 1      xx      Si   0.000
+end
+end

@@ -1,0 +1,7 @@
+CRYST1   15.000   15.000   15.000                                               
+MODEL        1
+ATOM        H                    0.000   0.000   0.000                      H   
+ENDMDL
+MODEL        2
+ATOM        H                    1.000   1.000   1.000                      H   
+ENDMDL

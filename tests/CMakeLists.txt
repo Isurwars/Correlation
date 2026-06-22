@@ -18,46 +18,46 @@ add_executable(correlation_unit_tests
     unit/core/TrajectoryTests.cpp
     unit/core/NeighborGraphTests.cpp
     unit/core/MappedFileTests.cpp
-    unit/io/FileReaderTests.cpp
-    unit/io/WriterTests.cpp
-    unit/io/VaspReaderTests.cpp
-    unit/io/XdatcarReaderTests.cpp
-    unit/io/XYZReaderTests.cpp
-    unit/io/QEReaderTests.cpp
-    unit/io/CP2KReaderTests.cpp
-    unit/io/GromacsReaderTests.cpp
-    unit/io/PdbReaderTests.cpp
-    unit/io/ArcReaderTests.cpp
-    unit/io/CarReaderTests.cpp
-    unit/io/CellReaderTests.cpp
-    unit/io/CifReaderTests.cpp
-    unit/io/CastepMdReaderTests.cpp
-    unit/io/LammpsDumpReaderTests.cpp
-    unit/io/OnetepDatReaderTests.cpp
-    unit/io/OutmolReaderTests.cpp
-    unit/analysis/DihedralCalculatorTests.cpp
-    unit/analysis/MotifFinderTests.cpp
-    unit/analysis/RDFTests.cpp
-    unit/analysis/XRDTests.cpp
-    unit/analysis/PADTests.cpp
-    unit/analysis/VACFTests.cpp
-    unit/analysis/vDoSTests.cpp
-    unit/analysis/DADTests.cpp
-    unit/analysis/RDTests.cpp
-    unit/analysis/StructureFactorCalculatorTests.cpp
-    unit/analysis/SteinhardtCalculatorTests.cpp
-    unit/analysis/CNACalculatorTests.cpp
-    unit/analysis/HBondCalculatorTests.cpp
-    unit/analysis/SDFCalculatorTests.cpp
-    unit/analysis/ClusterCalculatorTests.cpp
+    unit/readers/FileReaderTests.cpp
+    unit/writers/WriterTests.cpp
+    unit/readers/VaspReaderTests.cpp
+    unit/readers/XdatcarReaderTests.cpp
+    unit/readers/XYZReaderTests.cpp
+    unit/readers/QEReaderTests.cpp
+    unit/readers/CP2KReaderTests.cpp
+    unit/readers/GromacsReaderTests.cpp
+    unit/readers/PdbReaderTests.cpp
+    unit/readers/ArcReaderTests.cpp
+    unit/readers/CarReaderTests.cpp
+    unit/readers/CellReaderTests.cpp
+    unit/readers/CifReaderTests.cpp
+    unit/readers/CastepMdReaderTests.cpp
+    unit/readers/LammpsDumpReaderTests.cpp
+    unit/readers/OnetepDatReaderTests.cpp
+    unit/readers/OutmolReaderTests.cpp
+    unit/calculators/DihedralCalculatorTests.cpp
+    unit/calculators/MotifFinderTests.cpp
+    unit/calculators/RDFTests.cpp
+    unit/calculators/XRDTests.cpp
+    unit/calculators/PADTests.cpp
+    unit/calculators/VACFTests.cpp
+    unit/calculators/vDoSTests.cpp
+    unit/calculators/DADTests.cpp
+    unit/calculators/RDTests.cpp
+    unit/calculators/StructureFactorCalculatorTests.cpp
+    unit/calculators/SteinhardtCalculatorTests.cpp
+    unit/calculators/CNACalculatorTests.cpp
+    unit/calculators/HBondCalculatorTests.cpp
+    unit/calculators/SDFCalculatorTests.cpp
+    unit/calculators/ClusterCalculatorTests.cpp
     unit/physics/PhysicalDataTests.cpp
-    unit/analysis/AngleCalculatorTests.cpp
-    unit/analysis/CNCalculatorTests.cpp
-    unit/analysis/DistanceCalculatorTests.cpp
-    unit/analysis/MSDCalculatorTests.cpp
-    unit/analysis/CalculatorFactoryTests.cpp
-    unit/io/ReaderFactoryTests.cpp
-    unit/io/WriterFactoryTests.cpp
+    unit/calculators/AngleCalculatorTests.cpp
+    unit/calculators/CNCalculatorTests.cpp
+    unit/calculators/DistanceCalculatorTests.cpp
+    unit/calculators/MSDCalculatorTests.cpp
+    unit/calculators/CalculatorFactoryTests.cpp
+    unit/readers/ReaderFactoryTests.cpp
+    unit/writers/WriterFactoryTests.cpp
     unit/plotters/SvgPlotterTests.cpp
     unit/plotters/PdfPlotterTests.cpp
     unit/utils/SIMDUtilsTests.cpp

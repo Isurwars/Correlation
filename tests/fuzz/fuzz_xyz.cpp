@@ -14,6 +14,8 @@
 #include <fstream>
 #include <string>
 
+#include "fuzz_utils.hpp"
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (size > static_cast<size_t>(1 * 1024 * 1024)) {
     return 0;
@@ -22,7 +24,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   // XYZReader has an in-memory parseXYZFrame, but it's private.
   // Use the file-based entry point for full coverage of both
   // readStructure and readTrajectory.
-  const std::string path = "/dev/shm/fuzz_xyz.xyz";
+  std::string const path = correlation::fuzz::getTempFuzzPath(".xyz");
   {
     std::ofstream f(path, std::ios::binary | std::ios::trunc);
     f.write(reinterpret_cast<const char *>(data), size);

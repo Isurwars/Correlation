@@ -95,7 +95,7 @@ cell2.add_atom("O",  [0.0, 1.6, 0.0])
 
 # Resolve trajectory path relative to this script
 script_dir = os.path.dirname(os.path.abspath(__file__))
-xdatcar_path = os.path.join(script_dir, "data", "Si.xdatcar")
+xdatcar_path = os.path.join(script_dir, "data", "xdatcar", "Si.xdatcar")
 
 traj2 = correlation.read(xdatcar_path)
 assert traj2.num_frames() > 0, "No frames loaded"

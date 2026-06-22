@@ -1,0 +1,4 @@
+!BIOSYM archive 3
+PBC=OFF
+O1      1.00  2.00  3.00 XXXX 1      xx      O    0.000
+end

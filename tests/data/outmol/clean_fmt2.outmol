@@ -1,0 +1,9 @@
+$cell vectors
+ 12.0 0.0 0.0
+ 0.0 12.0 0.0
+ 0.0 0.0 12.0
+ATOMIC  COORDINATES (au)
+  Header line
+  df  Si  2.0 3.0 4.0
+  df  O   2.5 3.5 4.5
+  other line ends the block

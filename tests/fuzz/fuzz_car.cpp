@@ -14,12 +14,14 @@
 #include <fstream>
 #include <string>
 
+#include "fuzz_utils.hpp"
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (size > static_cast<size_t>(1 * 1024 * 1024)) {
     return 0;
 }
 
-  const std::string path = "/dev/shm/fuzz_car.car";
+  std::string const path = correlation::fuzz::getTempFuzzPath(".car");
   {
     std::ofstream f(path, std::ios::binary | std::ios::trunc);
     f.write(reinterpret_cast<const char *>(data), size);

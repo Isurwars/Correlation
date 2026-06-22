@@ -36,11 +36,11 @@ std::string getTestDataDir() {
       "data/",             // if cwd is tests
   };
   for (const auto &dir : candidates) {
-    if (std::filesystem::exists(dir + "Si.poscar")) {
-      return dir;
+    if (std::filesystem::exists(dir + "vasp/Si.poscar")) {
+      return dir + "vasp/";
     }
   }
-  return "../../tests/data/";
+  return "../../tests/data/vasp/";
 }
 
 // Run a shell command and return its exit code.
