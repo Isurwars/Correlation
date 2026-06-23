@@ -16,3 +16,4 @@ tests/fuzz/corpus/*/*
 !tests/fuzz/corpus/*/*.poscar
 !tests/fuzz/corpus/*/*.xdatcar
 !tests/fuzz/corpus/*/Si*
+project_analysis.md

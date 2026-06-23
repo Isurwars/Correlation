@@ -12,6 +12,7 @@
 #include "math/LinearAlgebra.hpp"
 #include "math/SpecialFunctions.hpp"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <stdexcept>
 
@@ -49,7 +50,25 @@ struct HistogramConfigs {
   double dW;
 };
 
+struct Wigner6Table {
+  std::array<std::array<double, 13>, 13> table{};
+  Wigner6Table() {
+    for (int m_one = -6; m_one <= 6; ++m_one) {
+      for (int m_two = -6; m_two <= 6; ++m_two) {
+        int const m_three = -(m_one + m_two);
+        if (m_three >= -6 && m_three <= 6) {
+          table.at(m_one + 6).at(m_two + 6) =
+              SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
+        } else {
+          table.at(m_one + 6).at(m_two + 6) = 0.0;
+        }
+      }
+    }
+  }
+};
+
 double computeW6(const std::vector<std::complex<double>> &q6m) {
+  static const Wigner6Table wigner6;
   double w6_val = 0.0;
   for (int m_one = -6; m_one <= 6; ++m_one) {
     for (int m_two = -6; m_two <= 6; ++m_two) {
@@ -57,7 +76,7 @@ double computeW6(const std::vector<std::complex<double>> &q6m) {
       if (m_three < -6 || m_three > 6) {
         continue;
       }
-      double const w3j = SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
+      double const w3j = wigner6.table.at(m_one + 6).at(m_two + 6);
       if (w3j == 0.0) {
         continue;
       }
@@ -217,7 +236,7 @@ std::complex<double> SteinhardtCalculator::sphericalHarmonic(int degree, int ord
   } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
   int const abs_m = -order;
   double const P_lm = correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta);
-  std::complex<double> Y_l_m = P_lm * std::polar(1.0, abs_m * angles.phi);
+  std::complex<double> const Y_l_m = P_lm * std::polar(1.0, abs_m * angles.phi);
   std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
   if (abs_m % 2 != 0) {
     Y_l_minus_m = -Y_l_minus_m;
