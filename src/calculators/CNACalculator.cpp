@@ -13,6 +13,10 @@
 #include <set>
 #include <vector>
 
+#include <tbb/blocked_range.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_for.h>
+
 namespace correlation::calculators {
 
 namespace {
@@ -193,7 +197,7 @@ void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 }
 
 correlation::analysis::Histogram CNACalculator::calculate(const correlation::core::Cell &cell,
-                                                          const correlation::analysis::StructureAnalyzer *neighbors) {
+                                                           const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
     return {};
   }
@@ -201,34 +205,52 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
   const auto &neighbor_graph = neighbors->neighborGraph();
   const size_t num_atoms = cell.atomCount();
 
+  struct ThreadLocalCNA {
+    std::map<std::string, double> counts;
+    double total_pairs = 0.0;
+  };
+
+  tbb::enumerable_thread_specific<ThreadLocalCNA> ets;
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
+    auto &local = ets.local();
+
+    for (size_t atom_i = range.begin(); atom_i != range.end(); ++atom_i) {
+      const auto &neighbors_i = neighbor_graph.getNeighbors(atom_i);
+      std::set<size_t> neighbors_set_i;
+      for (const auto &neighbor : neighbors_i) {
+        neighbors_set_i.insert(neighbor.index);
+      }
+
+      for (const auto &neighbor_j : neighbors_i) {
+        size_t const atom_j = neighbor_j.index;
+        if (atom_i >= atom_j) {
+          continue;
+        }
+
+        std::vector<size_t> const common_neighbors = findCommonNeighbors(neighbors_set_i, neighbor_graph, atom_j);
+        auto const [n_bonds, common_adj] = buildCommonNeighborAdjacency(common_neighbors, neighbor_graph);
+
+        size_t n_longest = 0;
+        if (n_bonds > 0) {
+          n_longest = findLongestChain(common_neighbors, common_adj);
+        }
+
+        std::string const index = "1" + std::to_string(common_neighbors.size()) + std::to_string(n_bonds) + std::to_string(n_longest);
+        local.counts[index]++;
+        local.total_pairs++;
+      }
+    }
+  });
+
+  // Reduce thread-local results
   std::map<std::string, double> cna_counts;
-  double total_pairs = 0;
-
-  for (size_t atom_i = 0; atom_i < num_atoms; ++atom_i) {
-    const auto &neighbors_i = neighbor_graph.getNeighbors(atom_i);
-    std::set<size_t> neighbors_set_i;
-    for (const auto &neighbor : neighbors_i) {
-      neighbors_set_i.insert(neighbor.index);
+  double total_pairs = 0.0;
+  for (const auto &local : ets) {
+    for (const auto &[key, val] : local.counts) {
+      cna_counts[key] += val;
     }
-
-    for (const auto &neighbor_j : neighbors_i) {
-      size_t const atom_j = neighbor_j.index;
-      if (atom_i >= atom_j) {
-        continue;
-      }
-
-      std::vector<size_t> const common_neighbors = findCommonNeighbors(neighbors_set_i, neighbor_graph, atom_j);
-      auto const [n_bonds, common_adj] = buildCommonNeighborAdjacency(common_neighbors, neighbor_graph);
-
-      size_t n_longest = 0;
-      if (n_bonds > 0) {
-        n_longest = findLongestChain(common_neighbors, common_adj);
-      }
-
-      std::string const index = "1" + std::to_string(common_neighbors.size()) + std::to_string(n_bonds) + std::to_string(n_longest);
-      cna_counts[index]++;
-      total_pairs++;
-    }
+    total_pairs += local.total_pairs;
   }
 
   return buildCNAHistogram(cna_counts, total_pairs);

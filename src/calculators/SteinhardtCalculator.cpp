@@ -16,6 +16,10 @@
 #include <cmath>
 #include <stdexcept>
 
+#include <tbb/blocked_range.h>
+#include <tbb/enumerable_thread_specific.h>
+#include <tbb/parallel_for.h>
+
 namespace correlation::calculators {
 
 namespace {
@@ -57,8 +61,7 @@ struct Wigner6Table {
       for (int m_two = -6; m_two <= 6; ++m_two) {
         int const m_three = -(m_one + m_two);
         if (m_three >= -6 && m_three <= 6) {
-          table.at(m_one + 6).at(m_two + 6) =
-              SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
+          table.at(m_one + 6).at(m_two + 6) = SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
         } else {
           table.at(m_one + 6).at(m_two + 6) = 0.0;
         }
@@ -173,6 +176,31 @@ void addValueToHistogram(std::map<std::string, std::vector<double>> &partials, c
   }
 }
 
+void initHistogramMap(std::map<std::string, std::vector<double>> &partials,
+                      const std::vector<std::string> &element_symbols, size_t bins) {
+  for (const auto &sym : element_symbols) {
+    partials[sym].assign(bins, 0.0);
+  }
+  partials["Total"].assign(bins, 0.0);
+}
+
+void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
+                            const std::map<std::string, std::vector<double>> &src) {
+  for (const auto &[key, vec] : src) {
+    auto &dest_vec = dest[key];
+    for (size_t bin_idx = 0; bin_idx < vec.size(); ++bin_idx) {
+      dest_vec[bin_idx] += vec[bin_idx];
+    }
+  }
+}
+
+void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
+                             const std::map<std::string, std::vector<double>> &partials) {
+  for (const auto &[key, vec] : partials) {
+    hist.partials[key] = vec;
+  }
+}
+
 void populateHistograms(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
                         const SteinhardtParams &params, HistogramConfigs configs,
                         correlation::analysis::Histogram &hist_Q4, correlation::analysis::Histogram &hist_Q6,
@@ -181,34 +209,62 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
   const auto &neighbor_graph = neighbors->neighborGraph();
   size_t const num_atoms = atoms.size();
 
+  // Collect element symbols for pre-sizing thread-local maps
+  std::vector<std::string> element_symbols;
+  for (const auto &elem : cell.elements()) {
+    element_symbols.push_back(elem.symbol);
+  }
+
+  struct ThreadLocalHist {
+    std::map<std::string, std::vector<double>> partials_Q4;
+    std::map<std::string, std::vector<double>> partials_Q6;
+    std::map<std::string, std::vector<double>> partials_W6;
+    double num_atoms_f = 0.0;
+  };
+
+  tbb::enumerable_thread_specific<ThreadLocalHist> ets([&]() {
+    ThreadLocalHist local;
+    initHistogramMap(local.partials_Q4, element_symbols, configs.bins_Q);
+    initHistogramMap(local.partials_Q6, element_symbols, configs.bins_Q);
+    initHistogramMap(local.partials_W6, element_symbols, configs.bins_W);
+    return local;
+  });
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
+    auto &local = ets.local();
+
+    for (size_t i = range.begin(); i != range.end(); ++i) {
+      if (neighbor_graph.getNeighbors(i).size() < 2) {
+        continue;
+      }
+
+      local.num_atoms_f += 1.0;
+      const std::string &symbol = atoms[i].element().symbol;
+
+      addValueToHistogram(local.partials_Q4, symbol, params.Q4[i],
+                          {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
+      addValueToHistogram(local.partials_Q6, symbol, params.Q6[i],
+                          {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
+      addValueToHistogram(local.partials_W6, symbol, params.W6_hat[i],
+                          {.min_val = configs.W_min, .max_val = configs.W_max, .d_val = configs.dW});
+    }
+  });
+
+  // Reduce thread-local histograms
   std::map<std::string, std::vector<double>> partials_Q4;
   std::map<std::string, std::vector<double>> partials_Q6;
   std::map<std::string, std::vector<double>> partials_W6;
 
-  for (const auto &elem : cell.elements()) {
-    partials_Q4[elem.symbol].assign(configs.bins_Q, 0.0);
-    partials_Q6[elem.symbol].assign(configs.bins_Q, 0.0);
-    partials_W6[elem.symbol].assign(configs.bins_W, 0.0);
-  }
-  partials_Q4["Total"].assign(configs.bins_Q, 0.0);
-  partials_Q6["Total"].assign(configs.bins_Q, 0.0);
-  partials_W6["Total"].assign(configs.bins_W, 0.0);
+  initHistogramMap(partials_Q4, element_symbols, configs.bins_Q);
+  initHistogramMap(partials_Q6, element_symbols, configs.bins_Q);
+  initHistogramMap(partials_W6, element_symbols, configs.bins_W);
 
   double num_atoms_f = 0.0;
-  for (size_t i = 0; i < num_atoms; ++i) {
-    if (neighbor_graph.getNeighbors(i).size() < 2) {
-      continue;
-    }
-
-    num_atoms_f += 1.0;
-    const std::string &symbol = atoms[i].element().symbol;
-
-    addValueToHistogram(partials_Q4, symbol, params.Q4[i],
-                        {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
-    addValueToHistogram(partials_Q6, symbol, params.Q6[i],
-                        {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
-    addValueToHistogram(partials_W6, symbol, params.W6_hat[i],
-                        {.min_val = configs.W_min, .max_val = configs.W_max, .d_val = configs.dW});
+  for (const auto &local : ets) {
+    num_atoms_f += local.num_atoms_f;
+    accumulateHistogramMap(partials_Q4, local.partials_Q4);
+    accumulateHistogramMap(partials_Q6, local.partials_Q6);
+    accumulateHistogramMap(partials_W6, local.partials_W6);
   }
 
   if (num_atoms_f > 0) {
@@ -217,15 +273,9 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
     normalizeHistogramMap(partials_W6, num_atoms_f * configs.dW);
   }
 
-  for (auto &[key, vec] : partials_Q4) {
-    hist_Q4.partials[key] = vec;
-  }
-  for (auto &[key, vec] : partials_Q6) {
-    hist_Q6.partials[key] = vec;
-  }
-  for (auto &[key, vec] : partials_W6) {
-    hist_W6.partials[key] = vec;
-  }
+  copyPartialsToHistogram(hist_Q4, partials_Q4);
+  copyPartialsToHistogram(hist_Q6, partials_Q6);
+  copyPartialsToHistogram(hist_W6, partials_W6);
 }
 } // namespace
 
@@ -314,13 +364,15 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   double const global_Q4_factor = std::sqrt(correlation::math::four_pi / 9.0);
   double const global_Q6_factor = std::sqrt(correlation::math::four_pi / 13.0);
 
-  for (size_t i = 0; i < num_atoms; ++i) {
-    auto const res = computeSingleAtomSteinhardt(
-        i, neighbor_graph, {.global_Q4_factor = global_Q4_factor, .global_Q6_factor = global_Q6_factor});
-    params.Q4[i] = res.Q4;
-    params.Q6[i] = res.Q6;
-    params.W6_hat[i] = res.W6_hat;
-  }
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
+    for (size_t i = range.begin(); i != range.end(); ++i) {
+      auto const res = computeSingleAtomSteinhardt(
+          i, neighbor_graph, {.global_Q4_factor = global_Q4_factor, .global_Q6_factor = global_Q6_factor});
+      params.Q4[i] = res.Q4;
+      params.Q6[i] = res.Q6;
+      params.W6_hat[i] = res.W6_hat;
+    }
+  });
 
   // 2. Initialize Histograms
   size_t const bins_Q = 100;
