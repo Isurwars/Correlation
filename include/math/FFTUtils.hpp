@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "math/Constants.hpp"
 #include <complex>
 #include <stdexcept>
 #include <vector>
