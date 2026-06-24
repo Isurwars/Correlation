@@ -224,7 +224,9 @@ jobs:
         run: |
           export CC="$(brew --prefix llvm@18)/bin/clang"
           export CXX="$(brew --prefix llvm@18)/bin/clang++"
+          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
+            -DCMAKE_OSX_SYSROOT="$SDKROOT" \
             -DCMAKE_C_COMPILER_LAUNCHER=sccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
             -DBUILD_WITH_HDF5=ON \
