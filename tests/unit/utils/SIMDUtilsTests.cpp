@@ -58,6 +58,30 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
 }
 
 // -----------------------------------------------------------------------------
+// Test: simd_dot (Dot Product core)
+// -----------------------------------------------------------------------------
+TEST_F(SIMDUtilsTests, SimdDotMatchesScalar) {
+  const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
+
+  for (size_t const size : sizes) {
+    std::vector<double> a = generateRandomData(size);
+    std::vector<double> b = generateRandomData(size);
+
+    // Calculate expected result using the scalar fallback logic
+    double expected_acc = 0.0;
+    for (size_t j = 0; j < size; ++j) {
+      expected_acc += a[j] * b[j];
+    }
+
+    // Call the SIMD implementation
+    double const actual_acc = correlation::math::simd_dot(a.data(), b.data(), size);
+
+    // Assert with a small tolerance due to potential floating point reordering in SIMD
+    EXPECT_NEAR(actual_acc, expected_acc, 1e-9) << "Failed for size: " << size;
+  }
+}
+
+// -----------------------------------------------------------------------------
 // Test: compute_dsq_block (Distance Squared)
 // -----------------------------------------------------------------------------
 TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {

@@ -120,11 +120,15 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
         intensity_Q += concentration * form_factor * form_factor;
       }
 
+      // Precompute sinqr once per theta step (angle bin)
+      for (size_t j = 0; j < r_count; ++j) {
+        sinqr[j] = std::sin(q_value * r_bins[j]);
+      }
+
       for (size_t partial_idx = 0; partial_idx < num_xrd_partials; ++partial_idx) {
         const PartialXRD &partial_xrd = xrd_partials[partial_idx];
         const size_t pcount = std::min(partial_xrd.integrand->size(), r_count);
-        double integral = correlation::math::sinc_integral(q_value, partial_xrd.integrand->data(), r_bins.data(),
-                                                           sinqr.data(), pcount);
+        double integral = correlation::math::simd_dot(partial_xrd.integrand->data(), sinqr.data(), pcount);
         double form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
         double form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 

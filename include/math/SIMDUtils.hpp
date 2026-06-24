@@ -98,23 +98,36 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
   }
 }
 
+/**
+ * @brief Computes the dot product of two double arrays (AVX-512 version).
+ *
+ * @param a First array.
+ * @param b Second array.
+ * @param count Number of elements.
+ * @return The dot product value.
+ */
+inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRELATION_RESTRICT b,
+                       std::size_t count) noexcept {
+  __m512d vacc = _mm512_setzero_pd();
+  std::size_t j = 0;
+  for (; j + 8 <= count; j += 8) {
+    __m512d va = _mm512_loadu_pd(a + j);
+    __m512d vb = _mm512_loadu_pd(b + j);
+    vacc = _mm512_fmadd_pd(va, vb, vacc);
+  }
+  double acc = _mm512_reduce_add_pd(vacc);
+  for (; j < count; ++j)
+    acc += a[j] * b[j];
+  return acc;
+}
+
 inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integrand,
                             const double *CORRELATION_RESTRICT rbins, double *CORRELATION_RESTRICT sinqr_scratch,
                             std::size_t count) noexcept {
   for (std::size_t j = 0; j < count; ++j) {
     sinqr_scratch[j] = std::sin(Q * rbins[j]);
   }
-  __m512d vacc = _mm512_setzero_pd();
-  std::size_t j = 0;
-  for (; j + 8 <= count; j += 8) {
-    __m512d vi = _mm512_loadu_pd(integrand + j);
-    __m512d vs = _mm512_loadu_pd(sinqr_scratch + j);
-    vacc = _mm512_fmadd_pd(vi, vs, vacc);
-  }
-  double acc = _mm512_reduce_add_pd(vacc);
-  for (; j < count; ++j)
-    acc += integrand[j] * sinqr_scratch[j];
-  return acc;
+  return simd_dot(integrand, sinqr_scratch, count);
 }
 
 #elif defined(CORRELATION_SIMD_AVX2)
@@ -143,6 +156,37 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
 }
 
 /**
+ * @brief Computes the dot product of two double arrays (AVX2 version).
+ *
+ * @param a First array.
+ * @param b Second array.
+ * @param count Number of elements.
+ * @return The dot product value.
+ */
+inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRELATION_RESTRICT b,
+                       std::size_t count) noexcept {
+  __m256d vacc = _mm256_setzero_pd();
+  std::size_t j = 0;
+  for (; j + 4 <= count; j += 4) {
+    __m256d va = _mm256_loadu_pd(a + j);
+    __m256d vb = _mm256_loadu_pd(b + j);
+#if defined(__FMA__)
+    vacc = _mm256_fmadd_pd(va, vb, vacc);
+#else
+    vacc = _mm256_add_pd(vacc, _mm256_mul_pd(va, vb));
+#endif
+  }
+  __m128d lo = _mm256_castpd256_pd128(vacc);
+  __m128d hi = _mm256_extractf128_pd(vacc, 1);
+  __m128d sum2 = _mm_add_pd(lo, hi);
+  __m128d sum1 = _mm_hadd_pd(sum2, sum2);
+  double acc = _mm_cvtsd_f64(sum1);
+  for (; j < count; ++j)
+    acc += a[j] * b[j];
+  return acc;
+}
+
+/**
  * @brief Computes a sinc-weighted integral over a range (AVX2 version).
  *
  * @param Q The scattering vector magnitude.
@@ -158,25 +202,7 @@ inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integra
   for (std::size_t j = 0; j < count; ++j) {
     sinqr_scratch[j] = std::sin(Q * rbins[j]);
   }
-  __m256d vacc = _mm256_setzero_pd();
-  std::size_t j = 0;
-  for (; j + 4 <= count; j += 4) {
-    __m256d vi = _mm256_loadu_pd(integrand + j);
-    __m256d vs = _mm256_loadu_pd(sinqr_scratch + j);
-#if defined(__FMA__)
-    vacc = _mm256_fmadd_pd(vi, vs, vacc);
-#else
-    vacc = _mm256_add_pd(vacc, _mm256_mul_pd(vi, vs));
-#endif
-  }
-  __m128d lo = _mm256_castpd256_pd128(vacc);
-  __m128d hi = _mm256_extractf128_pd(vacc, 1);
-  __m128d sum2 = _mm_add_pd(lo, hi);
-  __m128d sum1 = _mm_hadd_pd(sum2, sum2);
-  double acc = _mm_cvtsd_f64(sum1);
-  for (; j < count; ++j)
-    acc += integrand[j] * sinqr_scratch[j];
-  return acc;
+  return simd_dot(integrand, sinqr_scratch, count);
 }
 
 #else // Scalar fallback
@@ -189,23 +215,39 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
 }
 
 /**
+ * @brief Computes the dot product of two double arrays (Scalar fallback).
+ *
+ * @param a First array.
+ * @param b Second array.
+ * @param count Number of elements.
+ * @return The dot product value.
+ */
+inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRELATION_RESTRICT b,
+                       std::size_t count) noexcept {
+  double acc = 0.0;
+  for (std::size_t j = 0; j < count; ++j) {
+    acc += a[j] * b[j];
+  }
+  return acc;
+}
+
+/**
  * @brief Computes a sinc-weighted integral over a range (Scalar fallback).
  *
  * @param Q The scattering vector magnitude.
  * @param integrand Values to be integrated (usually correlation data).
  * @param rbins Radial distances for each point in the integrand.
- * @param sinqr_scratch Unused in scalar fallback.
+ * @param sinqr_scratch Scratchpad memory for sinc calculations.
  * @param count Number of data points.
  * @return The accumulated integral value.
  */
 inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integrand,
-                            const double *CORRELATION_RESTRICT rbins, double *CORRELATION_RESTRICT /*sinqr_scratch*/,
+                            const double *CORRELATION_RESTRICT rbins, double *CORRELATION_RESTRICT sinqr_scratch,
                             std::size_t count) noexcept {
-  double acc = 0.0;
   for (std::size_t j = 0; j < count; ++j) {
-    acc += integrand[j] * std::sin(Q * rbins[j]);
+    sinqr_scratch[j] = std::sin(Q * rbins[j]);
   }
-  return acc;
+  return simd_dot(integrand, sinqr_scratch, count);
 }
 
 #endif
