@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "math/Constants.hpp"
 #include <complex>
 #include <stdexcept>
 #include <vector>
@@ -20,6 +19,8 @@
 #elif defined(CORRELATION_USE_MKL)
 #include <mkl_dfti.h>
 #include <unordered_map>
+#else
+#include "math/Constants.hpp"
 #endif
 
 namespace correlation::math {
@@ -238,7 +239,6 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
     }
   }
 }
-
 #endif
 
 /**

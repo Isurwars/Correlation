@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config
+          sudo apt-get install -y clang ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfftw3-dev
 
       - name: Configure CMake
         run: |
@@ -67,7 +67,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-x11-0 xvfb rpm libgtk-3-dev
+          sudo apt-get install -y ninja-build libtbb-dev libhdf5-dev build-essential cmake pkg-config libfontconfig-dev libfreetype6-dev libexpat1-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-x11-0 xvfb rpm libgtk-3-dev libfftw3-dev
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -206,7 +206,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.10
 
       - name: Install dependencies
-        run: brew install ninja tbb hdf5 llvm@18
+        run: brew install ninja tbb hdf5 llvm@18 fftw
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
