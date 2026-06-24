@@ -23,7 +23,7 @@ configure_file(
 option(BUILD_GUI "Build the graphical user interface (requires Slint)" ON)
 option(BUILD_WITH_HDF5 "Build with HDF5 support" OFF)
 option(BUILD_WITH_ARROW "Build with Arrow/Parquet support" OFF)
-option(BUILD_FUZZ_TESTS "Build libFuzzer fuzz testing targets (requires Clang)" ON)
+option(BUILD_FUZZ_TESTS "Build libFuzzer fuzz testing targets (requires Clang)" OFF)
 
 include(GNUInstallDirs)
 
