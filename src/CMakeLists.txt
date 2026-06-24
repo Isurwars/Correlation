@@ -134,7 +134,7 @@ if(BUILD_WITH_ARROW)
     target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_ARROW)
 endif()
 
-target_link_libraries(correlation_lib PUBLIC correlation_simd_options)
+target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlation_fft)
 
 # Pybind11 creates a shared module and requires PIC (handled globally via CMAKE_POSITION_INDEPENDENT_CODE ON)
 
