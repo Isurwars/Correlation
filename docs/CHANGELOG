@@ -1,6 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.5.0] - 2026-06-24
+
+### Added
+- **Configurable FFT Backends**: Implemented configurable FFT backend support for FFTW3 and Intel MKL with dynamic plan caching.
+- **Native PDF Export**: Added high-performance PDF export support using a custom native vector drawing generator.
+- **Dark Mode Support**: Added a dark theme toggle to the UI with optimized colors.
+- **Automated Fuzzing**: Integrated libFuzzer test harnesses for all primary trajectory readers with automated corpus and CI/CD validation.
+- **Wigner 3-j Caching**: Precomputed and cached Wigner 3-j symbol lookups to accelerate Steinhardt parameter calculations.
+- **RDF Ashcroft Weighting**: Applied Ashcroft weighting to RDF partials and updated structural calculations.
+
+### Changed & Refactored
+- **Iterative CNA DFS**: Replaced recursive DFS with a fast iterative stack-based approach for Common Neighbor Analysis.
+- **TBB Parallelization**: Parallelized CNA and Steinhardt calculator computation loops using Intel TBB.
+- **High-Performance SIMD Distance**: Optimized distance calculations with flat cell lists and pre-allocated thread-local buffers.
+- **Modular Reader Parsers**: Refactored and modularized parsing algorithms (CIF state machine, CP2K line parsing, Gromacs frame scanning, VASP, PDB, QE, etc.) into dedicated parser helper structures.
+- **Type Safety**: Switched raw indices to strong types (`AtomIndex`, etc.) and introduced structural wrappers for parameters.
+- **Test Reorganization**: Migrated and split the unit test suite into dedicated subdirectory structures.
+- **Roboto Vector Font**: Extracted the Roboto font coordinates and glyph rendering into a standalone utility.
+- **Broader Compiler Compatibility**: Replaced C++20 ranges algorithms with C++17-compatible standard library equivalents.
+
+### Fixed
+- **FFT Reinterpret Cast Warnings**: Silenced C++ Core Guidelines `reinterpret_cast` warnings in `FFTUtils.hpp` using explicit `NOLINT` annotations.
+- **Linkage Warning Suppression**: Wrapped `FFTUtilsTests` in an anonymous namespace to prevent external symbol export.
+- **Path Normalization**: Corrected character escape sequence issues during path normalization.
+
 ## [3.4.1] - 2026-06-10
 
 ### Added
