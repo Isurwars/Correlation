@@ -19,24 +19,23 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (size > 1 * 1024 * 1024)
     return 0;
 
-  std::string const path = correlation::fuzz::getTempFuzzPath(".pdb");
-  {
-    std::ofstream f(path, std::ios::binary | std::ios::trunc);
-    f.write(reinterpret_cast<const char *>(data), size);
+  static thread_local correlation::fuzz::FuzzFile fuzz_file(".pdb");
+  fuzz_file.write(data, size);
+
+  try {
+    correlation::readers::PdbReader reader;
+    reader.readStructure(fuzz_file.path());
+  } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
   try {
     correlation::readers::PdbReader reader;
-    reader.readStructure(path);
+    reader.readTrajectory(fuzz_file.path());
   } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
-  try {
-    correlation::readers::PdbReader reader;
-    reader.readTrajectory(path);
-  } catch (...) {
-  }
-
-  std::remove(path.c_str());
+  
   return 0;
 }

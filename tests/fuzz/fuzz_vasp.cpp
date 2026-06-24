@@ -21,18 +21,16 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     return 0;
 }
 
-  std::string const path = correlation::fuzz::getTempFuzzPath(".poscar");
-  {
-    std::ofstream f(path, std::ios::binary | std::ios::trunc);
-    f.write(reinterpret_cast<const char *>(data), size);
-  }
+  static thread_local correlation::fuzz::FuzzFile fuzz_file(".poscar");
+  fuzz_file.write(data, size);
 
   try {
     correlation::readers::VaspReader reader;
-    reader.readStructure(path);
+    reader.readStructure(fuzz_file.path());
   } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
-  std::remove(path.c_str());
+  
   return 0;
 }

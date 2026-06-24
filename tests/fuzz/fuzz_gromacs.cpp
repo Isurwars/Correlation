@@ -25,27 +25,27 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     correlation::readers::GromacsReader::parseGroFrame(
         reinterpret_cast<const char *>(data), size);
   } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
-  std::string const path = correlation::fuzz::getTempFuzzPath(".gro");
-  {
-    std::ofstream f(path, std::ios::binary | std::ios::trunc);
-    f.write(reinterpret_cast<const char *>(data), size);
+  static thread_local correlation::fuzz::FuzzFile fuzz_file(".gro");
+  fuzz_file.write(data, size);
+
+  try {
+    correlation::readers::GromacsReader reader;
+    reader.readStructure(fuzz_file.path());
+  } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
   try {
     correlation::readers::GromacsReader reader;
-    reader.readStructure(path);
+    reader.readTrajectory(fuzz_file.path());
   } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
-  try {
-    correlation::readers::GromacsReader reader;
-    reader.readTrajectory(path);
-  } catch (...) {
-  }
-
-  std::remove(path.c_str());
+  
   return 0;
 }
 

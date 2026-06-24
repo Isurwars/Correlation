@@ -24,24 +24,22 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   // XYZReader has an in-memory parseXYZFrame, but it's private.
   // Use the file-based entry point for full coverage of both
   // readStructure and readTrajectory.
-  std::string const path = correlation::fuzz::getTempFuzzPath(".xyz");
-  {
-    std::ofstream f(path, std::ios::binary | std::ios::trunc);
-    f.write(reinterpret_cast<const char *>(data), size);
+  static thread_local correlation::fuzz::FuzzFile fuzz_file(".xyz");
+  fuzz_file.write(data, size);
+
+  try {
+    correlation::readers::XYZReader reader;
+    reader.readStructure(fuzz_file.path());
+  } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
   try {
     correlation::readers::XYZReader reader;
-    reader.readStructure(path);
+    reader.readTrajectory(fuzz_file.path());
   } catch (...) {
+    // Catch-all to prevent fuzzer crashes on invalid inputs.
   }
 
-  try {
-    correlation::readers::XYZReader reader;
-    reader.readTrajectory(path);
-  } catch (...) {
-  }
-
-  std::remove(path.c_str());
   return 0;
 }
