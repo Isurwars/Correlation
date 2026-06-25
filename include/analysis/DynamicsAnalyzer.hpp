@@ -88,7 +88,7 @@ public:
    * t)\,\mathrm{d}t @f]
    *
    * @param vacf The Velocity Autocorrelation Function.
-   * @param dt The time step between frames (in femtoseconds).
+   * @param time_step The time step between frames (in femtoseconds).
    * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
    */
   static std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>

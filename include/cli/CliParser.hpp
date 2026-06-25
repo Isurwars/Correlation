@@ -59,7 +59,6 @@ void printUsage(const char *program);
 
 /**
  * @brief Parses the command-line arguments into a CliOptions struct.
- * @param argc Argument count.
  * @param argv Argument values.
  * @param opts [out] Filled on success.
  * @return true if parsing succeeded, false on error (message already printed).

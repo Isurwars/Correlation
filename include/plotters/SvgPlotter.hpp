@@ -152,7 +152,7 @@ constexpr std::array<std::string_view, 5> kViridis = {"#440154", "#3B528B", "#21
 
 /**
  * @brief Retrieves a color from the selected palette.
- * @param i Index.
+ * @param index Index.
  * @param pal Selected palette.
  * @return Hex color string.
  */
@@ -169,7 +169,7 @@ inline std::string color(std::size_t index, PlotConfig::Palette pal) {
 
 /**
  * @brief Maps a value from data space to SVG coordinate space.
- * @param v The coordinate in data space.
+ * @param value The coordinate in data space.
  * @param data_min Minimum data value.
  * @param data_max Maximum data value.
  * @param svg_min Target SVG start coordinate.

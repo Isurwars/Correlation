@@ -70,7 +70,7 @@ public:
    * @brief Parameterized constructor.
    * @param element The element type of the atom.
    * @param pos The position vector of the atom.
-   * @param id The unique ID of the atom.
+   * @param atom_id The unique ID of the atom.
    */
   explicit Atom(Element element, const math::Vector3<double> &pos, AtomID atom_id) noexcept
       : element_(std::move(element)), position_(pos), id_(atom_id) {}
@@ -142,8 +142,8 @@ private:
 
 /**
  * @brief Calculates the Euclidean distance between two atoms.
- * @param a The first atom.
- * @param b The second atom.
+ * @param atom_a The first atom.
+ * @param atom_b The second atom.
  * @return The straight-line distance between atoms (not accounting for PBC).
  */
 [[nodiscard]] inline double distance(const Atom &atom_a, const Atom &atom_b) noexcept {
@@ -153,8 +153,8 @@ private:
 /**
  * @brief Calculates the angle (in radians) formed by three atoms.
  * @param center The atom at the vertex of the angle.
- * @param a One of the outer atoms.
- * @param b The other outer atom.
+ * @param atom_a One of the outer atoms.
+ * @param atom_b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
 [[nodiscard]] inline double angle(const Atom &center, const Atom &atom_a, const Atom &atom_b) noexcept {

@@ -12,6 +12,7 @@
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
+#include <optional>
 
 namespace correlation::calculators {
 
@@ -20,8 +21,6 @@ void DihedralCalculator::calculateFrame(correlation::analysis::DistributionFunct
   // DihedralCalculator is a foundational calculator — called by
   // StructureAnalyzer during its construction. Nothing to do here.
 }
-
-#include <optional>
 
 namespace {
 
