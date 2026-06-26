@@ -282,14 +282,14 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, double cut
   const auto &lattice = cell.latticeVectors();
 
   // New Cell-List logic
-  math::Vector3<double> vec_a = lattice[0];
-  math::Vector3<double> vec_b = lattice[1];
-  math::Vector3<double> vec_c = lattice[2];
+  math::Vector3<double> lattice_a = lattice[0];
+  math::Vector3<double> lattice_b = lattice[1];
+  math::Vector3<double> lattice_c = lattice[2];
 
   double vol = cell.volume();
-  double width_x = vol / correlation::math::norm(correlation::math::cross(vec_b, vec_c));
-  double width_y = vol / correlation::math::norm(correlation::math::cross(vec_a, vec_c));
-  double width_z = vol / correlation::math::norm(correlation::math::cross(vec_a, vec_b));
+  double width_x = vol / correlation::math::norm(correlation::math::cross(lattice_b, lattice_c));
+  double width_y = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_c));
+  double width_z = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_b));
 
   double cutoff = std::sqrt(cutoff_sq);
 
