@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <string>
+#include <string_view>
 
 #ifdef _WIN32
 #define popen _popen
@@ -25,7 +26,7 @@ namespace {
 #error "CORRELATION_CLI_PATH must be defined — check tests/CMakeLists.txt"
 #endif
 
-const std::string CLI_BIN = CORRELATION_CLI_PATH;
+constexpr std::string_view CLI_BIN = CORRELATION_CLI_PATH;
 
 // Helper to find the test data directory relative to the build dir.
 std::string getTestDataDir() {
@@ -46,11 +47,13 @@ std::string getTestDataDir() {
 // Run a shell command and return its exit code.
 int runCli(const std::string &args) {
 #ifdef _WIN32
-  std::string cmd = CLI_BIN + " " + args + " 2>nul";
+  std::string cmd = std::string(CLI_BIN) + " " + args + " 2>nul";
 #else
-  std::string const cmd = CLI_BIN + " " + args + " 2>/dev/null";
+  std::string const cmd = std::string(CLI_BIN) + " " + args + " 2>/dev/null";
 #endif
+  // NOLINTNEXTLINE(cert-env33-c)
   int const status = std::system(cmd.c_str());
+
 #ifdef _WIN32
   return status;
 #else
@@ -61,16 +64,17 @@ int runCli(const std::string &args) {
 // Run a shell command and capture its stdout.
 std::string runCliCapture(const std::string &args) {
 #ifdef _WIN32
-  std::string cmd = CLI_BIN + " " + args + " 2>nul";
+  std::string cmd = std::string(CLI_BIN) + " " + args + " 2>nul";
 #else
-  std::string const cmd = CLI_BIN + " " + args + " 2>/dev/null";
+  std::string const cmd = std::string(CLI_BIN) + " " + args + " 2>/dev/null";
 #endif
   std::array<char, 512> buffer{};
   std::string result;
+  // NOLINTNEXTLINE(cert-env33-c)
   FILE *pipe = popen(cmd.c_str(), "r");
   if (pipe == nullptr) {
     return "";
-}
+  }
   while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe) != nullptr) {
     result += buffer.data();
   }
@@ -78,12 +82,14 @@ std::string runCliCapture(const std::string &args) {
   return result;
 }
 
-} // namespace
-
 class CliEndToEndTests : public ::testing::Test {
 protected:
-  std::string data_dir_;
+  [[nodiscard]] const std::string &dataDir() const { return data_dir_; }
+
   void SetUp() override { data_dir_ = getTestDataDir(); }
+
+private:
+  std::string data_dir_;
 };
 
 // ===== Basic flag tests =====
@@ -111,13 +117,13 @@ TEST_F(CliEndToEndTests, ValidFileRunsSuccessfully) {
   std::filesystem::create_directories(tmp_dir);
   std::string const out_base = (tmp_dir / "result").string();
 
-  std::string const input = data_dir_ + "Si.poscar";
-  int const rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+  std::string const input = dataDir() + "Si.poscar";
+  int const run_cli_status = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
 
   // Clean up
   std::filesystem::remove_all(tmp_dir);
 
-  EXPECT_EQ(rc, 0) << "CLI should succeed on valid Si.poscar input";
+  EXPECT_EQ(run_cli_status, 0) << "CLI should succeed on valid Si.poscar input";
 }
 
 TEST_F(CliEndToEndTests, ShortHelpFlag) { EXPECT_EQ(runCli("-h"), 0); }
@@ -129,12 +135,12 @@ TEST_F(CliEndToEndTests, DefaultExecutesAllCalculators) {
   std::filesystem::create_directories(tmp_dir);
   std::string const out_base = (tmp_dir / "result").string();
 
-  std::string const input = data_dir_ + "Si.poscar";
+  std::string const input = dataDir() + "Si.poscar";
   // Run with no disable-groups flags -> should default to running all groups
-  int const rc = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
+  int const run_cli_status = runCli(input + " --quiet -o " + out_base + " --r-max 10 --r-bin 0.1");
 
-  EXPECT_EQ(rc, 0);
-  
+  EXPECT_EQ(run_cli_status, 0);
+
   // Radial files should exist
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
   EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));
@@ -151,11 +157,11 @@ TEST_F(CliEndToEndTests, DisableRadialAndScatteringGroups) {
   std::filesystem::create_directories(tmp_dir);
   std::string const out_base = (tmp_dir / "result").string();
 
-  std::string const input = data_dir_ + "Si.poscar";
+  std::string const input = dataDir() + "Si.poscar";
   // Run with radial and scattering groups disabled
-  int const rc = runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering");
+  int const run_cli_status = runCli(input + " --quiet -o " + out_base + " --disable-groups radial,scattering");
 
-  EXPECT_EQ(rc, 0);
+  EXPECT_EQ(run_cli_status, 0);
 
   // CN (structural) should exist
   EXPECT_TRUE(std::filesystem::exists(out_base + "_CN.csv"));
@@ -173,11 +179,12 @@ TEST_F(CliEndToEndTests, DisableStructuralGroup) {
   std::filesystem::create_directories(tmp_dir);
   std::string const out_base = (tmp_dir / "result").string();
 
-  std::string const input = data_dir_ + "Si.poscar";
+  std::string const input = dataDir() + "Si.poscar";
   // Run disabling structural group
-  int const rc = runCli(input + " --quiet -o " + out_base + " --disable-groups structural --r-max 10 --r-bin 0.1");
+  int const run_cli_status =
+      runCli(input + " --quiet -o " + out_base + " --disable-groups structural --r-max 10 --r-bin 0.1");
 
-  EXPECT_EQ(rc, 0);
+  EXPECT_EQ(run_cli_status, 0);
 
   // Radial should exist
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
@@ -188,3 +195,4 @@ TEST_F(CliEndToEndTests, DisableStructuralGroup) {
   std::filesystem::remove_all(tmp_dir);
 }
 
+} // namespace
