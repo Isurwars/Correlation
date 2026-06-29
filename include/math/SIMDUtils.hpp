@@ -116,8 +116,14 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
     vacc = _mm512_fmadd_pd(va, vb, vacc);
   }
   double acc = _mm512_reduce_add_pd(vacc);
-  for (; j < count; ++j)
-    acc += a[j] * b[j];
+  double c = 0.0;
+  for (; j < count; ++j) {
+    double val = a[j] * b[j];
+    double y = val - c;
+    double t = acc + y;
+    c = (t - acc) - y;
+    acc = t;
+  }
   return acc;
 }
 
@@ -181,8 +187,14 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
   __m128d sum2 = _mm_add_pd(lo, hi);
   __m128d sum1 = _mm_hadd_pd(sum2, sum2);
   double acc = _mm_cvtsd_f64(sum1);
-  for (; j < count; ++j)
-    acc += a[j] * b[j];
+  double c = 0.0;
+  for (; j < count; ++j) {
+    double val = a[j] * b[j];
+    double y = val - c;
+    double t = acc + y;
+    c = (t - acc) - y;
+    acc = t;
+  }
   return acc;
 }
 
@@ -225,8 +237,13 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
 inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRELATION_RESTRICT b,
                        std::size_t count) noexcept {
   double acc = 0.0;
+  double c = 0.0;
   for (std::size_t j = 0; j < count; ++j) {
-    acc += a[j] * b[j];
+    double val = a[j] * b[j];
+    double y = val - c;
+    double t = acc + y;
+    c = (t - acc) - y;
+    acc = t;
   }
   return acc;
 }
@@ -290,8 +307,14 @@ inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances, 
   for (; j + 8 <= count; j += 8)
     vacc = _mm512_add_pd(vacc, _mm512_loadu_pd(scratch + j));
   double acc = _mm512_reduce_add_pd(vacc);
-  for (; j < count; ++j)
-    acc += scratch[j];
+  double c = 0.0;
+  for (; j < count; ++j) {
+    double val = scratch[j];
+    double y = val - c;
+    double t = acc + y;
+    c = (t - acc) - y;
+    acc = t;
+  }
   return acc;
 }
 
@@ -320,8 +343,14 @@ inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances, 
   __m128d sum2 = _mm_add_pd(lo, hi);
   __m128d sum1 = _mm_hadd_pd(sum2, sum2);
   double acc = _mm_cvtsd_f64(sum1);
-  for (; j < count; ++j)
-    acc += scratch[j];
+  double c = 0.0;
+  for (; j < count; ++j) {
+    double val = scratch[j];
+    double y = val - c;
+    double t = acc + y;
+    c = (t - acc) - y;
+    acc = t;
+  }
   return acc;
 }
 
@@ -332,12 +361,14 @@ inline double debye_sum(double Q, const double *CORRELATION_RESTRICT distances,
   if (Q < 1e-9)
     return static_cast<double>(count);
   double acc = 0.0;
+  double c = 0.0;
   for (std::size_t j = 0; j < count; ++j) {
     const double x = Q * distances[j];
-    if (x < 1e-4)
-      acc += 1.0 - (x * x) / 6.0;
-    else
-      acc += std::sin(x) / x;
+    double val = (x < 1e-4) ? (1.0 - (x * x) / 6.0) : (std::sin(x) / x);
+    double y = val - c;
+    double t = acc + y;
+    c = (t - acc) - y;
+    acc = t;
   }
   return acc;
 }

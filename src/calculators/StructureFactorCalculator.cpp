@@ -84,6 +84,8 @@ struct ThreadAccumulators {
   std::vector<size_t> *total_count;
   std::vector<std::vector<double>> *partial_sums;
   std::vector<std::vector<size_t>> *partial_counts;
+  std::vector<double> *c_total_sum;
+  std::vector<std::vector<double>> *c_partial_sums;
 };
 
 struct QBinning {
@@ -285,7 +287,12 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
     full_sin += type_sin[ti];
   }
   const double sq_total = (full_cos * full_cos + full_sin * full_sin) / static_cast<double>(num_atoms);
-  (*accum.total_sum)[bin] += sq_total;
+  {
+    double const y_total = sq_total - (*accum.c_total_sum)[bin];
+    double const t_total = (*accum.total_sum)[bin] + y_total;
+    (*accum.c_total_sum)[bin] = (t_total - (*accum.total_sum)[bin]) - y_total;
+    (*accum.total_sum)[bin] = t_total;
+  }
   (*accum.total_count)[bin] += 1;
 
   // Per-partial: S_AB(Q) = Re[rho_A(q)* · rho_B(q)] / sqrt(N_A * N_B)
@@ -298,7 +305,10 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
     double const cross = type_cos[tiA] * type_cos[tiB] + type_sin[tiA] * type_sin[tiB];
     double const denom = std::sqrt(static_cast<double>(pinfo.N_A) * static_cast<double>(pinfo.N_B));
     double const sq_partial = (denom > 0.0) ? cross / denom : 0.0;
-    (*accum.partial_sums)[pi][bin] += sq_partial;
+    double const y_partial = sq_partial - (*accum.c_partial_sums)[pi][bin];
+    double const t_partial = (*accum.partial_sums)[pi][bin] + y_partial;
+    (*accum.c_partial_sums)[pi][bin] = (t_partial - (*accum.partial_sums)[pi][bin]) - y_partial;
+    (*accum.partial_sums)[pi][bin] = t_partial;
     (*accum.partial_counts)[pi][bin] += 1;
   }
 }
@@ -380,17 +390,19 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   std::vector<std::vector<size_t>> partial_counts(num_partials, std::vector<size_t>(num_q_bins, 0));
 
   using LocalTuple = std::tuple<std::vector<double>, std::vector<size_t>, std::vector<std::vector<double>>,
-                                std::vector<std::vector<size_t>>>;
+                                std::vector<std::vector<size_t>>, std::vector<double>, std::vector<std::vector<double>>>;
   tbb::enumerable_thread_specific<LocalTuple> local_ets([&] {
     return std::make_tuple(std::vector<double>(num_q_bins, 0.0), std::vector<size_t>(num_q_bins, 0),
                            std::vector<std::vector<double>>(num_partials, std::vector<double>(num_q_bins, 0.0)),
-                           std::vector<std::vector<size_t>>(num_partials, std::vector<size_t>(num_q_bins, 0)));
+                           std::vector<std::vector<size_t>>(num_partials, std::vector<size_t>(num_q_bins, 0)),
+                           std::vector<double>(num_q_bins, 0.0),
+                           std::vector<std::vector<double>>(num_partials, std::vector<double>(num_q_bins, 0.0)));
   });
 
   QBinning const binning{.width = q_bin_width, .num_bins = num_q_bins};
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, q_vectors.size()), [&](const tbb::blocked_range<size_t> &range) {
-    auto &[local_total_sum, local_total_count, local_partial_sums, local_partial_counts] = local_ets.local();
+    auto &[local_total_sum, local_total_count, local_partial_sums, local_partial_counts, local_c_total_sum, local_c_partial_sums] = local_ets.local();
 
     for (size_t qi = range.begin(); qi != range.end(); ++qi) {
       processSingleQVector(q_vectors[qi], binning, num_atoms, basis, type_blocks, partials_info,
@@ -403,19 +415,33 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
                            {.total_sum = &local_total_sum,
                             .total_count = &local_total_count,
                             .partial_sums = &local_partial_sums,
-                            .partial_counts = &local_partial_counts});
+                            .partial_counts = &local_partial_counts,
+                            .c_total_sum = &local_c_total_sum,
+                            .c_partial_sums = &local_c_partial_sums}
+      );
     }
   });
 
+  std::vector<double> c_sq_total_sum(num_q_bins, 0.0);
+  std::vector<std::vector<double>> c_partial_sums(num_partials, std::vector<double>(num_q_bins, 0.0));
+
   local_ets.combine_each([&](const auto &local) {
-    const auto &[lt_sum, lt_count, lp_sums, lp_counts] = local;
+    const auto &[lt_sum, lt_count, lp_sums, lp_counts, lc_sum, lcp_sums] = local;
     for (size_t i = 0; i < num_q_bins; ++i) {
-      sq_total_sum[i] += lt_sum[i];
+      double const y = lt_sum[i] - c_sq_total_sum[i];
+      double const t = sq_total_sum[i] + y;
+      c_sq_total_sum[i] = (t - sq_total_sum[i]) - y;
+      sq_total_sum[i] = t;
+
       sq_total_count[i] += lt_count[i];
     }
     for (size_t pi = 0; pi < num_partials; ++pi) {
       for (size_t i = 0; i < num_q_bins; ++i) {
-        partial_sums[pi][i] += lp_sums[pi][i];
+        double const y = lp_sums[pi][i] - c_partial_sums[pi][i];
+        double const t = partial_sums[pi][i] + y;
+        c_partial_sums[pi][i] = (t - partial_sums[pi][i]) - y;
+        partial_sums[pi][i] = t;
+
         partial_counts[pi][i] += lp_counts[pi][i];
       }
     }

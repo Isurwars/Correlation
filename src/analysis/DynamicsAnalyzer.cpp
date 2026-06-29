@@ -253,6 +253,8 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
   std::vector<std::vector<correlation::math::Vector3<double>>> unwrapped(
       num_atoms, std::vector<correlation::math::Vector3<double>>(num_frames, {0.0, 0.0, 0.0}));
 
+  std::vector<correlation::math::Vector3<double>> compensation(num_atoms, {0.0, 0.0, 0.0});
+
   for (size_t frame_idx = 1; frame_idx < num_frames; ++frame_idx) {
     const size_t traj_frame = start_frame + frame_idx;
     const size_t traj_frame_prev = start_frame + frame_idx - 1;
@@ -269,8 +271,22 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
       // Apply minimum image convention for correct unwrapping across PBC.
       const math::Vector3<double> min_delta_r = use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
 
-      // Accumulate unwrapped position: unwrapped[atom_idx][frame_idx] = unwrapped[atom_idx][frame_idx-1] + min_delta_r
-      unwrapped[atom_idx][frame_idx] = unwrapped[atom_idx][frame_idx - 1] + min_delta_r;
+      // Kahan compensated summation component-wise
+      const math::Vector3<double> prev_unwrapped = unwrapped[atom_idx][frame_idx - 1];
+
+      double const y_x = min_delta_r.x() - compensation[atom_idx].x();
+      double const t_x = prev_unwrapped.x() + y_x;
+      compensation[atom_idx].x() = (t_x - prev_unwrapped.x()) - y_x;
+
+      double const y_y = min_delta_r.y() - compensation[atom_idx].y();
+      double const t_y = prev_unwrapped.y() + y_y;
+      compensation[atom_idx].y() = (t_y - prev_unwrapped.y()) - y_y;
+
+      double const y_z = min_delta_r.z() - compensation[atom_idx].z();
+      double const t_z = prev_unwrapped.z() + y_z;
+      compensation[atom_idx].z() = (t_z - prev_unwrapped.z()) - y_z;
+
+      unwrapped[atom_idx][frame_idx] = {t_x, t_y, t_z};
     }
   }
 

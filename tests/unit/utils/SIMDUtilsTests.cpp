@@ -216,3 +216,27 @@ TEST_F(SIMDUtilsTests, DotBlockMatchesScalar) {
     }
   }
 }
+
+// -----------------------------------------------------------------------------
+// Test: Kahan Summation Precision
+// -----------------------------------------------------------------------------
+TEST_F(SIMDUtilsTests, KahanSummationPrecision) {
+  // Construct inputs where standard summation would truncate small contributions
+  std::vector<double> a = {1.0, 1e-16, 1e-16};
+  std::vector<double> b = {1.0, 1.0, 1.0};
+
+  double std_sum = 1.0;
+  std_sum += a[1] * b[1];
+  std_sum += a[2] * b[2];
+
+  double kahan_sum = correlation::math::simd_dot(a.data(), b.data(), 3);
+
+  // Standard addition of 1e-16 to 1.0 rounds down to 1.0 immediately
+  EXPECT_EQ(std_sum, 1.0);
+  
+  // Kahan compensated summation preserves the accumulated low-order bits,
+  // yielding a result strictly greater than 1.0
+  EXPECT_GT(kahan_sum, 1.0);
+  EXPECT_DOUBLE_EQ(kahan_sum, 1.0000000000000002);
+}
+

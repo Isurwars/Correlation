@@ -779,12 +779,13 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3
  * @return Transformed vector matrix * vector.
  */
 template <typename T> [[nodiscard]] constexpr Vector3<T> operator*(const Matrix3<T> &matrix, const Vector3<T> &vector) noexcept {
-  Vector3<T> res;
-  res += matrix[0] * vector.x();
-  res += matrix[1] * vector.y();
-  res += matrix[2] * vector.z();
-  return res;
+  return Vector3<T>(
+      std::fma(vector.z(), matrix[2].x(), std::fma(vector.y(), matrix[1].x(), vector.x() * matrix[0].x())),
+      std::fma(vector.z(), matrix[2].y(), std::fma(vector.y(), matrix[1].y(), vector.x() * matrix[0].y())),
+      std::fma(vector.z(), matrix[2].z(), std::fma(vector.y(), matrix[1].z(), vector.x() * matrix[0].z()))
+  );
 }
+
 
 /**
  * @brief Matrix-matrix multiplication.
