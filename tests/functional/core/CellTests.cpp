@@ -14,41 +14,42 @@ namespace correlation::testing {
 
 using namespace correlation::core;
 
+namespace {
 class CellFunctionalTests : public ::testing::Test {};
 
 TEST_F(CellFunctionalTests, BuildBCCLatticeAndVerifyDensity) {
   // Iron (Fe) has a BCC structure with a lattice parameter of ~2.866 Angstroms
-  const double a = 2.866;
-  Cell cell({{a, a, a, 90.0, 90.0, 90.0}});
+  const double lattice_parameter = 2.866;
+  Cell cell({{lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0}});
 
   // BCC basis: (0,0,0) and (0.5, 0.5, 0.5) in fractional coordinates
   cell.addAtom("Fe", {0.0, 0.0, 0.0});
-  cell.addAtom("Fe", {a * 0.5, a * 0.5, a * 0.5});
+  cell.addAtom("Fe", {lattice_parameter * 0.5, lattice_parameter * 0.5, lattice_parameter * 0.5});
 
   EXPECT_EQ(cell.atomCount(), 2);
-  EXPECT_NEAR(cell.volume(), std::pow(a, 3), 1e-6);
+  EXPECT_NEAR(cell.volume(), std::pow(lattice_parameter, 3), 1e-6);
 
   // Verify that wrapPositions doesn't move them if they are already inside
   cell.wrapPositions();
   EXPECT_NEAR(cell.atoms()[0].position().x(), 0.0, 1e-9);
-  EXPECT_NEAR(cell.atoms()[1].position().x(), a * 0.5, 1e-9);
+  EXPECT_NEAR(cell.atoms()[1].position().x(), lattice_parameter * 0.5, 1e-9);
 }
 
 TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   // Aluminum (Al) has an FCC structure with a lattice parameter of ~4.046 Angstroms
-  const double a = 4.046;
-  Cell cell({{a, a, a, 90.0, 90.0, 90.0}});
+  const double lattice_parameter = 4.046;
+  Cell cell({{lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0}});
 
   // FCC basis
   cell.addAtom("Al", {0.0, 0.0, 0.0});
-  cell.addAtom("Al", {0.0, a * 0.5, a * 0.5});
-  cell.addAtom("Al", {a * 0.5, 0.0, a * 0.5});
-  cell.addAtom("Al", {a * 0.5, a * 0.5, 0.0});
+  cell.addAtom("Al", {0.0, lattice_parameter * 0.5, lattice_parameter * 0.5});
+  cell.addAtom("Al", {lattice_parameter * 0.5, 0.0, lattice_parameter * 0.5});
+  cell.addAtom("Al", {lattice_parameter * 0.5, lattice_parameter * 0.5, 0.0});
 
   EXPECT_EQ(cell.atomCount(), 4);
 
   // In FCC, the nearest neighbor distance is a/sqrt(2)
-  const double expected_nn = a / std::numbers::sqrt2;
+  const double expected_nn = lattice_parameter / std::numbers::sqrt2;
 
   // Calculate distance between atom 0 and 1
   auto dist_vec = cell.atoms()[1].position() - cell.atoms()[0].position();
@@ -81,24 +82,25 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
 
   // Verify that the internal geometry (bond length/angle) is preserved
   const auto &atoms = cell.atoms();
-  double const d1 = distance(atoms[0], atoms[1]);
-  double const d2 = distance(atoms[0], atoms[2]);
-  double const ang = angle(atoms[0], atoms[1], atoms[2]);
+  double const distance_1_2 = distance(atoms[0], atoms[1]);
+  double const distance_1_3 = distance(atoms[0], atoms[2]);
+  double const angle_1_2_3 = angle(atoms[0], atoms[1], atoms[2]);
 
   // Use minimum image for distance if they were wrapped differently
-  auto v1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
-  auto v2 = cell.minimumImage(atoms[2].position() - atoms[0].position());
+  auto image_1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
+  auto image_2 = cell.minimumImage(atoms[2].position() - atoms[0].position());
 
-  EXPECT_NEAR(correlation::math::norm(v1), oh_dist, 1e-6);
-  EXPECT_NEAR(correlation::math::norm(v2), oh_dist, 1e-6);
+  EXPECT_NEAR(correlation::math::norm(image_1), oh_dist, 1e-6);
+  EXPECT_NEAR(correlation::math::norm(image_2), oh_dist, 1e-6);
 
   // Angle function doesn't use PBC, so we must be careful.
   // If we wrap them, they might be on opposite sides of the box.
   // We should calculate angle using minimum image vectors.
-  double const cos_theta = correlation::math::dot(v1, v2) / (correlation::math::norm(v1) * correlation::math::norm(v2));
+  double const cos_theta =
+      correlation::math::dot(image_1, image_2) / (correlation::math::norm(image_1) * correlation::math::norm(image_2));
   double const calc_angle = std::acos(std::clamp(cos_theta, -1.0, 1.0));
 
   EXPECT_NEAR(calc_angle, hoh_angle_rad, 1e-6);
 }
-
+} // namespace
 } // namespace correlation::testing

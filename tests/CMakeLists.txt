@@ -88,6 +88,10 @@ target_link_libraries(correlation_unit_tests PRIVATE
 #-----------------------------------------------------------
 add_executable(correlation_functional_tests
     functional/core/CellTests.cpp
+    functional/core/AtomTests.cpp
+    functional/core/NeighborGraphTests.cpp
+    functional/core/TrajectoryTests.cpp
+    functional/core/MappedFileTests.cpp
     functional/analysis/StructureAnalyzerTests.cpp
     functional/analysis/TrajectoryAnalyzerTests.cpp
     functional/analysis/DynamicsAnalyzerTests.cpp
