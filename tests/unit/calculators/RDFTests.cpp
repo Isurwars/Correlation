@@ -15,6 +15,7 @@
 
 namespace correlation::analysis {
 
+namespace {
 // Test fixture for DistributionFunctions tests.
 class RDFTests : public ::testing::Test {
 protected:
@@ -31,16 +32,17 @@ protected:
     trajectory_.precomputeBondCutoffs();
   }
 
-  void updateTrajectory(const correlation::core::Cell &c) {
+  void updateTrajectory(const correlation::core::Cell &cell) {
     trajectory_ = correlation::core::Trajectory();
-    trajectory_.addFrame(c);
+    trajectory_.addFrame(cell);
     trajectory_.precomputeBondCutoffs();
   }
 
+public:
   correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
-
+} // namespace
 //---------------------------------------------------------------------------//
 //----------------------------- Constructors --------------------------------//
 //---------------------------------------------------------------------------//
@@ -116,7 +118,7 @@ TEST_F(RDFTests, CalculateRDF) {
 
   // Invalid parameters
   EXPECT_THROW(dists.calculateRDF(5.0, 0.0),
-               std::invalid_argument);                            // Zero bin width
+               std::invalid_argument);                               // Zero bin width
   EXPECT_THROW(dists.calculateRDF(0.0, 0.1), std::invalid_argument); // Zero r_max
 
   // Valid calculation with tight bins for numerical accuracy
@@ -207,7 +209,7 @@ TEST_F(RDFTests, AddAndScale) {
 
   // Add
   df1.add(df2);
-  const auto &h1 = df1.getHistogram("g_r").partials.at("Ar-Ar");
+  const auto &h_1 = df1.getHistogram("g_r").partials.at("Ar-Ar");
 
   // Peak should be doubled roughly (since they are identical)
   // Actually add() sums the bins.
@@ -219,7 +221,7 @@ TEST_F(RDFTests, AddAndScale) {
 
   // Should be back to original magnitude
   // We check peak value
-  auto max_it = std::max_element(h1_scaled.begin(), h1_scaled.end());
+  auto max_it = std::ranges::max_element(h1_scaled);
   double const peak = *max_it;
 
   // Single frame RDF peak value depends on volume and density, but it's
@@ -227,46 +229,46 @@ TEST_F(RDFTests, AddAndScale) {
   DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfRef.calculateRDF(5.0, 0.1);
   double const refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
-                                     dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
+                                           dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
 
   EXPECT_NEAR(peak, refPeak, 1e-6);
 }
 
 TEST_F(RDFTests, ComputeMean) {
   updateTrajectory();
-  TrajectoryAnalyzer const ta(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
+  TrajectoryAnalyzer const analyzer(trajectory_, 5.0, trajectory_.getBondCutoffsSQ());
 
   AnalysisSettings settings;
   settings.r_max = 5.0;
   settings.r_bin_width = 0.1;
   settings.smoothing = false;
 
-  auto dfMean = DistributionFunctions::computeMean(trajectory_, ta, 0, settings);
+  auto dfMean = DistributionFunctions::computeMean(trajectory_, analyzer, 0, settings);
   ASSERT_TRUE(dfMean != nullptr);
   EXPECT_NO_THROW(dfMean->getHistogram("g_r"));
 }
 
 TEST_F(RDFTests, HandlesMissingPartialInAdd) {
   // Build cell 1: pure Ar
-  correlation::core::Cell c1({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  c1.addAtom("Ar", {0.0, 0.0, 0.0});
-  c1.addAtom("Ar", {2.0, 0.0, 0.0});
+  correlation::core::Cell c_1({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  c_1.addAtom("Ar", {0.0, 0.0, 0.0});
+  c_1.addAtom("Ar", {2.0, 0.0, 0.0});
 
   // Build cell 2: Ar and Xe
-  correlation::core::Cell c2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  c2.addAtom("Ar", {0.0, 0.0, 0.0});
-  c2.addAtom("Xe", {2.5, 0.0, 0.0});
+  correlation::core::Cell c_2({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  c_2.addAtom("Ar", {0.0, 0.0, 0.0});
+  c_2.addAtom("Xe", {2.5, 0.0, 0.0});
 
-  correlation::core::Trajectory t1;
-  t1.addFrame(c1);
-  t1.precomputeBondCutoffs();
+  correlation::core::Trajectory t_1;
+  t_1.addFrame(c_1);
+  t_1.precomputeBondCutoffs();
 
-  correlation::core::Trajectory t2;
-  t2.addFrame(c2);
-  t2.precomputeBondCutoffs();
+  correlation::core::Trajectory t_2;
+  t_2.addFrame(c_2);
+  t_2.precomputeBondCutoffs();
 
-  DistributionFunctions df1(c1, 5.0, t1.getBondCutoffsSQ());
-  DistributionFunctions df2(c2, 5.0, t2.getBondCutoffsSQ());
+  DistributionFunctions df1(c_1, 5.0, t_1.getBondCutoffsSQ());
+  DistributionFunctions df2(c_2, 5.0, t_2.getBondCutoffsSQ());
 
   df1.calculateRDF(5.0, 0.1);
   df2.calculateRDF(5.0, 0.1);
@@ -303,9 +305,9 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
 
   // 1. Verify calculated Ashcroft weights
   const auto &weights = dists.getAshcroftWeights();
-  double const expected_w_ArAr = 0.75 * 0.75;        // 0.5625
-  double const expected_w_XeXe = 0.25 * 0.25;        // 0.0625
-  double const expected_w_ArXe = 2.0 * 0.75 * 0.25;  // 0.375 (doubled!)
+  double const expected_w_ArAr = 0.75 * 0.75;       // 0.5625
+  double const expected_w_XeXe = 0.25 * 0.25;       // 0.0625
+  double const expected_w_ArXe = 2.0 * 0.75 * 0.25; // 0.375 (doubled!)
 
   EXPECT_NEAR(weights.at("Ar-Ar"), expected_w_ArAr, 1e-6);
   EXPECT_NEAR(weights.at("Xe-Xe"), expected_w_XeXe, 1e-6);

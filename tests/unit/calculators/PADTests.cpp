@@ -13,15 +13,15 @@
 #include <algorithm>
 #include <cmath>
 #include <gtest/gtest.h>
-#include <numeric>
 #include <numbers>
+#include <numeric>
 
 namespace correlation::analysis {
 
 // ============================================================================
 // Part 1: Angle Reproduction Tests
 // ============================================================================
-
+namespace {
 class PADTests_AngleReproduction : public ::testing::Test {
 protected:
   void SetUp() override {
@@ -35,15 +35,38 @@ protected:
     trajectory_.precomputeBondCutoffs();
   }
 
-  void updateTrajectory(const correlation::core::Cell &c) {
+  void updateTrajectory(const correlation::core::Cell &cell) {
     trajectory_ = correlation::core::Trajectory();
-    trajectory_.addFrame(c);
+    trajectory_.addFrame(cell);
     trajectory_.precomputeBondCutoffs();
   }
 
+public:
   correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
+
+// Helper to sum a partial histogram
+double sumHistogram(const std::vector<double> &hist) { return std::accumulate(hist.begin(), hist.end(), 0.0); }
+
+class PADTests : public ::testing::Test {
+protected:
+  void SetUp() override {
+    // Large box to avoid PBC issues by default
+    cell_ = correlation::core::Cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
+  }
+
+  void updateTrajectory() {
+    trajectory_ = correlation::core::Trajectory();
+    trajectory_.addFrame(cell_);
+    trajectory_.precomputeBondCutoffs();
+  }
+
+public:
+  correlation::core::Cell cell_;
+  correlation::core::Trajectory trajectory_;
+};
+} // namespace
 
 TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   // Water molecule angle 104.5ish
@@ -86,10 +109,10 @@ TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
     StructureAnalyzer const analyzer(cell_, 1.1, trajectory_.getBondCutoffsSQ());
     const auto &angles = analyzer.angles();
     bool found = false;
-    for (const auto &t1 : angles) {
-      for (const auto &center : t1) {
-        for (const auto &t2 : center) {
-          for (double const angle : t2) {
+    for (const auto &t_1 : angles) {
+      for (const auto &t_2 : t_1) {
+        for (const auto &t_3 : t_2) {
+          for (double const angle : t_3) {
             if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
               found = true;
             }
@@ -111,10 +134,10 @@ TEST_F(PADTests_AngleReproduction, PBCAngleDetection) {
 
   bool found = false;
   const auto &angles = analyzer.angles();
-  for (const auto &t1 : angles) {
-    for (const auto &center : t1) {
-      for (const auto &t2 : center) {
-        for (double const angle : t2) {
+  for (const auto &t_1 : angles) {
+    for (const auto &t_2 : t_1) {
+      for (const auto &t_3 : t_2) {
+        for (double const angle : t_3) {
           if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
             found = true;
           }
@@ -143,10 +166,10 @@ TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
   const auto &angles = analyzer.angles();
 
   int angle_count = 0;
-  for (const auto &t1 : angles) {
-    for (const auto &center : t1) {
-      for (const auto &t2 : center) {
-        for (double const angle : t2) {
+  for (const auto &t_1 : angles) {
+    for (const auto &t_2 : t_1) {
+      for (const auto &t_3 : t_2) {
+        for (double const angle : t_3) {
           double const degrees = angle * 180.0 / correlation::math::pi;
           // std::cout << "Angle: " << degrees << " degrees\n";
           // Expected angle is acos(-1/3) ~ 109.47 degrees
@@ -166,12 +189,12 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 
   double phi = std::numbers::phi;
   // Vertices of icosahedron (edge length 2) relative to center
-  std::vector<std::vector<double>> const verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-                                            {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-                                            {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<double>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+                                                     {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+                                                     {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
-  for (const auto &v : verts) {
-    cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
+  for (const auto &vertex : vertices) {
+    cell_.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
   }
   updateTrajectory();
 
@@ -188,10 +211,10 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 
   int total_angles = 0;
 
-  for (const auto &t1 : angles) {
-    for (const auto &center : t1) {
-      for (const auto &t2 : center) {
-        for (double const angle : t2) {
+  for (const auto &t_1 : angles) {
+    for (const auto &t_2 : t_1) {
+      for (const auto &t_3 : t_2) {
+        for (double const angle : t_3) {
           double const deg = angle * 180.0 / correlation::math::pi;
           total_angles++;
 
@@ -207,7 +230,7 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
             count_108++;
           } else if (std::abs(deg - 58.28) < 1.0) {
             count_58++;
-}
+          }
         }
       }
     }
@@ -237,27 +260,6 @@ TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
 // ============================================================================
 // Part 2: Plane Angle Distribution (PAD) Tests
 // ============================================================================
-
-// Helper to sum a partial histogram
-static double sumHistogram(const std::vector<double> &hist) { return std::accumulate(hist.begin(), hist.end(), 0.0); }
-
-class PADTests : public ::testing::Test {
-protected:
-  void SetUp() override {
-    // Large box to avoid PBC issues by default
-    cell_ = correlation::core::Cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
-  }
-
-  void updateTrajectory() {
-    trajectory_ = correlation::core::Trajectory();
-    trajectory_.addFrame(cell_);
-    trajectory_.precomputeBondCutoffs();
-  }
-
-  correlation::core::Cell cell_;
-  correlation::core::Trajectory trajectory_;
-};
-
 // 1. Trivial Cases
 TEST_F(PADTests, EmptyCellThrows) {
   // Current implementation throws explicitly if atoms are empty in
@@ -274,10 +276,10 @@ TEST_F(PADTests, SingleAtomNoAngles) {
   // Might have partials created but empty, or just no "BAD" if logic
   // handles it. Actually implementation might create partials if atoms exist
   // but no angles found. Let's check total counts.
-  if (dists.getAllHistograms().contains("BAD") != 0u) {
+  if (static_cast<unsigned int>(dists.getAllHistograms().contains("BAD")) != 0U) {
     const auto &hist = dists.getHistogram("BAD");
     if (!hist.partials.empty()) {
-      if (hist.partials.contains("Total") != 0u) {
+      if (static_cast<unsigned int>(hist.partials.contains("Total")) != 0U) {
         EXPECT_DOUBLE_EQ(sumHistogram(hist.partials.at("Total")), 0.0);
       }
     }
@@ -293,7 +295,7 @@ TEST_F(PADTests, NullNeighborsThrows) {
 TEST_F(PADTests, LinearGeometry180) {
   // A-B-C line
   cell_.addAtom("O", {9.0, 10.0, 10.0});
-  auto &si = cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
+  cell_.addAtom("Si", {10.0, 10.0, 10.0});
   cell_.addAtom("O", {11.0, 10.0, 10.0});
   updateTrajectory();
 
@@ -332,7 +334,7 @@ TEST_F(PADTests, LinearGeometry180) {
   for (size_t i = 0; i < partial.size(); ++i) {
     if (partial[i] > peak_val) {
       peak_val = partial[i];
-      peak_bin = i;
+      peak_bin = static_cast<int>(i);
     }
   }
 
@@ -365,7 +367,7 @@ TEST_F(PADTests, RightAngle90) {
   for (size_t i = 0; i < partial.size(); ++i) {
     if (partial[i] > peak_val) {
       peak_val = partial[i];
-      peak_bin = i;
+      peak_bin = static_cast<int>(i);
     }
   }
   double const peak_angle = hist.bins[peak_bin];
@@ -410,13 +412,13 @@ TEST_F(PADTests, TetrahedralAngle) {
   // Vector 2: (1,-1,-1) normalized
   // Dot product = (1-1-1)/3 = -1/3. acos(-1/3) = 109.47 deg
 
-  double const L = std::numbers::inv_sqrt3;
-  cell_.addAtom("O", {10.0 + L, 10.0 + L, 10.0 + L});
-  cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
+  double const lattice_constant = std::numbers::inv_sqrt3;
+  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 + lattice_constant, 10.0 + lattice_constant});
+  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 - lattice_constant, 10.0 - lattice_constant});
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 1.5,
-                           trajectory_.getBondCutoffsSQ()); // Distance is 1.0
+                              trajectory_.getBondCutoffsSQ()); // Distance is 1.0
   dists.calculatePAD(0.001);                                   // Hyperfine bins
 
   const auto &hist = dists.getHistogram("BAD");
@@ -449,12 +451,12 @@ TEST_F(PADTests, SymmetryAndSorting) {
 
   // Check if we have O-Si-N or N-Si-O
   bool found = false;
-  if (hist.partials.contains("O-Si-N") != 0u) {
+  if (static_cast<unsigned int>(hist.partials.contains("O-Si-N")) != 0U) {
     found = true;
-}
-  if (hist.partials.contains("N-Si-O") != 0u) {
+  }
+  if (static_cast<unsigned int>(hist.partials.contains("N-Si-O")) != 0U) {
     found = true;
-}
+  }
 
   EXPECT_TRUE(found) << "Should have mixed species angle distribution";
 }
@@ -466,13 +468,13 @@ TEST_F(PADTests, FullNormalizationCheck) {
   // All 6 angles are 109.47
 
   cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  double const L = std::numbers::inv_sqrt3;
+  double const lattice_constant = std::numbers::inv_sqrt3;
 
   // Tetrahedral vertices
-  cell_.addAtom("O", {10.0 + L, 10.0 + L, 10.0 + L});
-  cell_.addAtom("O", {10.0 + L, 10.0 - L, 10.0 - L});
-  cell_.addAtom("O", {10.0 - L, 10.0 + L, 10.0 - L});
-  cell_.addAtom("O", {10.0 - L, 10.0 - L, 10.0 + L});
+  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 + lattice_constant, 10.0 + lattice_constant});
+  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 - lattice_constant, 10.0 - lattice_constant});
+  cell_.addAtom("O", {10.0 - lattice_constant, 10.0 + lattice_constant, 10.0 - lattice_constant});
+  cell_.addAtom("O", {10.0 - lattice_constant, 10.0 - lattice_constant, 10.0 + lattice_constant});
   updateTrajectory();
 
   // Custom bond cutoffs to avoid O-O bonds (distance ~1.63) which would create
@@ -490,18 +492,18 @@ TEST_F(PADTests, FullNormalizationCheck) {
   double sum_total = 0;
   double const bin_width = 1.0;
 
-  if (hist.partials.contains("O-Si-O") != 0u) {
+  if (static_cast<unsigned int>(hist.partials.contains("O-Si-O")) != 0U) {
     const auto &partial = hist.partials.at("O-Si-O");
-    for (double const v : partial) {
-      sum_partial += v * bin_width;
-}
+    for (double const val : partial) {
+      sum_partial += val * bin_width;
+    }
   }
 
-  if (hist.partials.contains("Total") != 0u) {
+  if (static_cast<unsigned int>(hist.partials.contains("Total")) != 0U) {
     const auto &total = hist.partials.at("Total");
-    for (double const v : total) {
-      sum_total += v * bin_width;
-}
+    for (double const val : total) {
+      sum_total += val * bin_width;
+    }
   }
 
   EXPECT_NEAR(sum_partial, 1.0,
@@ -512,12 +514,12 @@ TEST_F(PADTests, FullNormalizationCheck) {
 TEST_F(PADTests, IcosahedronAnglesPAD) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   double phi = std::numbers::phi;
-  std::vector<std::vector<double>> const verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-                                            {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-                                            {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<double>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+                                                     {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+                                                     {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
-  for (const auto &v : verts) {
-    cell_.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
+  for (const auto &vertex : vertices) {
+    cell_.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
   }
   updateTrajectory();
 
@@ -540,22 +542,22 @@ TEST_F(PADTests, IcosahedronAnglesPAD) {
       double const angle = hist.bins[i];
       if (std::abs(angle - 58.28) < 0.5) {
         found_58 = true;
-}
+      }
       if (std::abs(angle - 60.0) < 0.5) {
         found_60 = true;
-}
+      }
       if (std::abs(angle - 63.43) < 0.5) {
         found_63 = true;
-}
+      }
       if (std::abs(angle - 108.0) < 0.5) {
         found_108 = true;
-}
+      }
       if (std::abs(angle - 116.57) < 0.5) {
         found_116 = true;
-}
+      }
       if (std::abs(angle - 180.0) < 0.5) {
         found_180 = true;
-}
+      }
     }
   }
 

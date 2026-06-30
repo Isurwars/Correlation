@@ -14,10 +14,12 @@
 
 namespace correlation::analysis {
 
+namespace {
 class RDTests : public ::testing::Test {
-protected:
+public:
   correlation::core::NeighborGraph graph;
 
+protected:
   void SetUp() override {
     // Generate a simple triangle (3-ring)
     graph = correlation::core::NeighborGraph(3);
@@ -31,6 +33,7 @@ protected:
     graph.addDirectedEdge(0, 2, 1.414, {1, 1, 0});
   }
 };
+} // namespace
 
 TEST_F(RDTests, ComputeMotif) {
   size_t max_ring_size = 5;
@@ -57,14 +60,14 @@ TEST_F(RDTests, InvalidMaxRingSize) {
 
 TEST_F(RDTests, CelluloseRingDistribution) {
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
-  std::ifstream f(cellulose_path);
-  if (!f.good()) {
+  std::ifstream file(cellulose_path);
+  if (!file.good()) {
     cellulose_path = "../examples/Cellulose/Cellulose.md";
-    std::ifstream f2(cellulose_path);
-    if (!f2.good()) {
+    std::ifstream file_2(cellulose_path);
+    if (!file_2.good()) {
       cellulose_path = "examples/Cellulose/Cellulose.md";
-      std::ifstream f3(cellulose_path);
-      if (!f3.good()) {
+      std::ifstream file_3(cellulose_path);
+      if (!file_3.good()) {
         GTEST_SKIP() << "Cellulose.md example file not found. Skipping test.";
         return;
       }
@@ -91,7 +94,7 @@ TEST_F(RDTests, CelluloseRingDistribution) {
   const auto &elements = traj.getFrames()[0].elements();
   for (size_t i = 0; i < elements.size(); ++i) {
     if (elements[i].symbol == "O") {
-      o_idx = i;
+      o_idx = static_cast<int>(i);
       break;
     }
   }
