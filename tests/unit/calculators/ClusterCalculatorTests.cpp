@@ -45,7 +45,7 @@ TEST(ClusterCalculatorTests, BasicClustering) {
   EXPECT_DOUBLE_EQ(hist.bins[1], 2.0);
   EXPECT_DOUBLE_EQ(hist.bins[2], 3.0);
 
-  EXPECT_TRUE(hist.partials.count("Total") > 0);
+  EXPECT_TRUE(hist.partials.contains("Total"));
 
   const auto &total = hist.partials.at("Total");
   ASSERT_EQ(total.size(), 3);

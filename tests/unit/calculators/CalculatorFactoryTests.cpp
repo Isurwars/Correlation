@@ -12,7 +12,7 @@
 namespace correlation::testing {
 
 using namespace correlation::calculators;
-
+namespace {
 class MockCalculator : public BaseCalculator {
 public:
   [[nodiscard]] std::string getName() const override { return "MockCalculator"; }
@@ -22,7 +22,7 @@ public:
   [[nodiscard]] bool isFrameCalculator() const override { return true; }
   [[nodiscard]] bool isTrajectoryCalculator() const override { return false; }
 };
-
+} // namespace
 TEST(CalculatorFactoryTests, SingletonInstanceIsUnique) {
   auto &factory1 = CalculatorFactory::instance();
   auto &factory2 = CalculatorFactory::instance();
