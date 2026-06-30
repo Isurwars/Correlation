@@ -5,13 +5,13 @@
 
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "core/Trajectory.hpp"
+#include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "readers/FileReader.hpp"
 
 #include <algorithm>
 #include <filesystem>
 #include <gtest/gtest.h>
-#include <numbers>
 #include <string_view>
 #include <vector>
 
@@ -85,7 +85,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   std::vector<double> vacf(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
     double const time = static_cast<double>(i) * time_step;
-    vacf[i] = std::cos(2.0 * std::numbers::pi * frequency * time * 0.001);
+    vacf[i] = std::cos(2.0 * correlation::math::pi * frequency * time * 0.001);
   }
 
   // 2. Calculate VDOS
@@ -217,4 +217,3 @@ TEST(DynamicsAnalyzerTests, HandlesEmptyAndInvalidTrajectories) {
 }
 
 } // namespace correlation::analysis
-

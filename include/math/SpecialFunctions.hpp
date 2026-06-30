@@ -8,10 +8,10 @@
 
 #pragma once
 
+#include "math/Constants.hpp"
 #include "math/SIMDConfig.hpp"
 #include <array>
 #include <cmath>
-#include <numbers>
 
 namespace correlation::math {
 
@@ -113,7 +113,7 @@ inline double sph_legendre(LegendreParams params, double theta) {
   }
 
   // Normalization factor
-  double norm = std::sqrt((2.0 * degree + 1.0) / (4.0 * std::numbers::pi) * factorial(degree - order) /
+  double norm = std::sqrt((2.0 * degree + 1.0) / (4.0 * correlation::math::pi) * factorial(degree - order) /
                           factorial(degree + order));
 
   // Cancel Condon-Shortley phase to match std::sph_legendre
@@ -145,7 +145,7 @@ inline void sph_legendre_batch(LegendreParams params, const double *CORRELATION_
   }
 
   // Precompute normalization factor and Condon-Shortley phase
-  double norm = std::sqrt((2.0 * degree + 1.0) / (4.0 * std::numbers::pi) * factorial(degree - order) /
+  double norm = std::sqrt((2.0 * degree + 1.0) / (4.0 * correlation::math::pi) * factorial(degree - order) /
                           factorial(degree + order));
   if (order % 2 != 0) {
     norm = -norm;

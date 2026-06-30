@@ -386,7 +386,7 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectDihedralAngles) {
   const auto &c_c_c_c_dihedrals = dihedrals[carbon_id][carbon_id][carbon_id][carbon_id];
   // Since we have a single chain, we expect exactly 1 unique dihedral angle (A-B-C-D)
   ASSERT_EQ(c_c_c_c_dihedrals.size(), 1);
-  EXPECT_NEAR(c_c_c_c_dihedrals[0], -std::numbers::pi / 2.0, 1e-6);
+  EXPECT_NEAR(c_c_c_c_dihedrals[0], -correlation::math::pi / 2.0, 1e-6);
 }
 
 TEST_F(StructureAnalyzerTests, ThrowsOnInvalidCutoff) {
