@@ -12,53 +12,44 @@
 #include <vector>
 
 namespace correlation::analysis {
-
+namespace {
 // Test fixture for VACF and VDOS tests.
 class VACFTests : public ::testing::Test {
 protected:
   // No special setup needed for VACF usually, or different from Test06
 };
+} // namespace
 
 TEST_F(VACFTests, CalculateVACF_and_VDOS) {
-  correlation::core::Cell c({10, 10, 10, 90, 90, 90});
-  c.addAtom("Ar", {0, 0, 0});
-  correlation::core::Trajectory t;
-  t.addFrame(c);
-  t.addFrame(c); // Static
-  t.calculateVelocities();
+  correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
+  cell.addAtom("Ar", {0, 0, 0});
+  correlation::core::Trajectory trajectory;
+  trajectory.addFrame(cell);
+  trajectory.addFrame(cell); // Static
+  trajectory.calculateVelocities();
 
-  DistributionFunctions dists(c, 0.0, {{0.0}});
+  DistributionFunctions dists(cell, 0.0, {{0.0}});
 
-  dists.calculateVACF(t, correlation::analysis::MaxFrames{1});
+  dists.calculateVACF(trajectory, correlation::analysis::MaxFrames{1});
   EXPECT_NO_THROW(dists.getHistogram("VACF"));
   const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
-  // Should be 1.0 normalized (if constant 0 velocity? Wait 0 velocity -> ??)
-  // If static, position constant -> velocity 0. Correlation of 0 with 0 is 0.
-  // Let's give it velocity.
 
   correlation::core::Trajectory tMoving;
-  correlation::core::Cell c1 = c;
+  correlation::core::Cell c_1({10, 10, 10, 90, 90, 90});
+  c_1.addAtom("Ar", {0.0, 0.0, 0.0});
+  c_1.addAtom("Ar", {0.0, 0.0, 0.0});
 
-  correlation::core::Cell c2({10, 10, 10, 90, 90, 90});
-  // correlation::core::Atom 1 moves +1.0 in x
-  c2.addAtom("Ar", {1.0, 0.0, 0.0});
-  // correlation::core::Atom 2 moves -1.0 in x (balancing COM)
-  c2.addAtom("Ar", {-1.0, 0.0, 0.0});
+  correlation::core::Cell c_2({10, 10, 10, 90, 90, 90});
+  c_2.addAtom("Ar", {1.0, 0.0, 0.0});
+  c_2.addAtom("Ar", {-1.0, 0.0, 0.0});
 
-  correlation::core::Cell c3({10, 10, 10, 90, 90, 90});
-  // correlation::core::Atom 1 moves to +2.0
-  c3.addAtom("Ar", {2.0, 0.0, 0.0});
-  // correlation::core::Atom 2 moves to -2.0
-  c3.addAtom("Ar", {-2.0, 0.0, 0.0});
+  correlation::core::Cell c_3({10, 10, 10, 90, 90, 90});
+  c_3.addAtom("Ar", {2.0, 0.0, 0.0});
+  c_3.addAtom("Ar", {-2.0, 0.0, 0.0});
 
-  // Need to update c1 (frame 0) to have 2 atoms at 0
-  c1 = correlation::core::Cell({10, 10, 10, 90, 90, 90});
-  c1.addAtom("Ar", {0.0, 0.0, 0.0});
-  c1.addAtom("Ar", {0.0, 0.0, 0.0});
-
-  tMoving.addFrame(c1);
-  tMoving.addFrame(c2);
-  tMoving.addFrame(c3);
+  tMoving.addFrame(c_1);
+  tMoving.addFrame(c_2);
+  tMoving.addFrame(c_3);
   tMoving.setTimeStep(1.0);
   tMoving.calculateVelocities();
 
@@ -78,12 +69,11 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
   correlation::core::Trajectory tRange;
   tRange.setTimeStep(1.0);
 
-  // Create 10 frames
   for (int i = 0; i < 10; ++i) {
-    correlation::core::Cell c({10, 10, 10, 90, 90, 90});
-    c.addAtom("Ar", {static_cast<double>(i), 0.0, 0.0});
-    c.addAtom("Ar", {-static_cast<double>(i), 0.0, 0.0});
-    tRange.addFrame(c);
+    correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
+    cell.addAtom("Ar", {static_cast<double>(i), 0.0, 0.0});
+    cell.addAtom("Ar", {-static_cast<double>(i), 0.0, 0.0});
+    tRange.addFrame(cell);
   }
   tRange.calculateVelocities();
 
@@ -94,7 +84,7 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
 
   // Restrict VACF to frames 2 through 7 (5 frames total)
   dists.calculateVACF(tRange, correlation::analysis::MaxFrames{3}, correlation::analysis::StartFrame{2},
-                   correlation::analysis::EndFrame{7});
+                      correlation::analysis::EndFrame{7});
 
   EXPECT_NO_THROW(dists.getHistogram("VACF"));
   const auto &vacf = dists.getHistogram("VACF").partials.at("Total");
@@ -129,11 +119,11 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
 
   std::vector<double> positions = {0.0, 1.0, 1.75, 2.25, 2.5, 2.625, 2.6875, 2.71875, 2.734375};
 
-  for (double x : positions) {
-    correlation::core::Cell c({10, 10, 10, 90, 90, 90});
-    c.addAtom("Ar", {x, 0.0, 0.0});
-    c.addAtom("Ar", {-x, 0.0, 0.0}); // To balance COM
-    tGas.addFrame(c);
+  for (double pos : positions) {
+    correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
+    cell.addAtom("Ar", {pos, 0.0, 0.0});
+    cell.addAtom("Ar", {-pos, 0.0, 0.0}); // To balance COM
+    tGas.addFrame(cell);
   }
   tGas.calculateVelocities();
 
@@ -163,17 +153,17 @@ TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
   std::vector<double> vacf = {3.0, 3.0, 3.0};
   std::vector<double> norm_vacf = {1.0, 1.0, 1.0};
 
-  double d = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
-  double tau = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
+  double vacf_diffusion = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
+  double relaxation_time = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
 
-  EXPECT_NEAR(d, 2.0, 1e-6);
-  EXPECT_NEAR(tau, 2.0, 1e-6);
+  EXPECT_NEAR(vacf_diffusion, 2.0, 1e-6);
+  EXPECT_NEAR(relaxation_time, 2.0, 1e-6);
 }
 
 TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
-  correlation::core::Cell c({10, 10, 10, 90, 90, 90});
-  c.addAtom("Ar", {0.0, 0.0, 0.0});
-  DistributionFunctions dists(c, 0.0, {{0.0}});
+  correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
+  cell.addAtom("Ar", {0.0, 0.0, 0.0});
+  DistributionFunctions dists(cell, 0.0, {{0.0}});
 
   // Verify initial state is 0.0
   EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientMSD(), 0.0);
@@ -225,9 +215,9 @@ TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
 }
 
 TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
-  correlation::core::Cell c({10, 10, 10, 90, 90, 90});
-  c.addAtom("Ar", {0.0, 0.0, 0.0});
-  DistributionFunctions dists(c, 0.0, {{0.0}});
+  correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
+  cell.addAtom("Ar", {0.0, 0.0, 0.0});
+  DistributionFunctions dists(cell, 0.0, {{0.0}});
 
   // calculateRDF guards
   EXPECT_THROW(dists.calculateRDF(-5.0, 0.05), std::invalid_argument);

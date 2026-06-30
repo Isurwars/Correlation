@@ -12,7 +12,7 @@
 #include <vector>
 
 namespace correlation::analysis {
-
+namespace {
 // Test fixture for XRD tests.
 class XRDTests : public ::testing::Test {
 protected:
@@ -29,9 +29,11 @@ protected:
     trajectory_.precomputeBondCutoffs();
   }
 
-  correlation::core::Cell cell_{};
+public:
+  correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
+} // namespace
 
 TEST_F(XRDTests, CalculateXRD) {
   updateTrajectory();
@@ -94,10 +96,10 @@ TEST_F(XRDTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
 TEST_F(XRDTests, CalculateXRDCubicCell) {
   // Simple cubic cell a = 3.0, 3x3x3 supercell
   correlation::core::Cell cubic_cell({9.0, 9.0, 9.0, 90.0, 90.0, 90.0});
-  for (int x = 0; x < 2; ++x) {
-    for (int y = 0; y < 2; ++y) {
-      for (int z = 0; z < 2; ++z) {
-        cubic_cell.addAtom("Ar", {x * 3.0, y * 3.0, z * 3.0});
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 2; ++j) {
+      for (int k = 0; k < 2; ++k) {
+        cubic_cell.addAtom("Ar", {i * 3.0, j * 3.0, k * 3.0});
       }
     }
   }
@@ -147,10 +149,8 @@ TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
 
   Histogram empty_gr;
   EXPECT_THROW(correlation::calculators::XRDCalculator::calculate(
-                   empty_gr, cell_, {},
-                   correlation::calculators::Wavelength{1.5406},
-                   correlation::calculators::MinTheta{5.0},
-                   correlation::calculators::MaxTheta{90.0},
+                   empty_gr, cell_, {}, correlation::calculators::Wavelength{1.5406},
+                   correlation::calculators::MinTheta{5.0}, correlation::calculators::MaxTheta{90.0},
                    correlation::calculators::BinWidth{0.5}),
                std::invalid_argument);
 }
