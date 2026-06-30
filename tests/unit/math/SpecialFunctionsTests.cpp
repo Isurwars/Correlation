@@ -12,8 +12,9 @@
 namespace correlation::testing {
 
 using namespace correlation::math;
-
+namespace {
 class SpecialFunctionsTests : public ::testing::Test {};
+} // namespace
 
 TEST_F(SpecialFunctionsTests, FactorialCorrectness) {
   // Negative bounds
@@ -63,11 +64,12 @@ TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
   // Test different combinations of l and m
   std::vector<std::pair<int, int>> const l_m_pairs = {{0, 0}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {2, 2}, {3, 1}, {4, 2}};
 
-  for (const auto &[l, m] : l_m_pairs) {
-    sph_legendre_batch({.degree = l, .order = m}, angles.data(), batch_results.data(), count);
+  for (const auto &[degree, order] : l_m_pairs) {
+    sph_legendre_batch({.degree = degree, .order = order}, angles.data(), batch_results.data(), count);
     for (size_t i = 0; i < count; ++i) {
-      double const expected = sph_legendre({.degree = l, .order = m}, angles[i]);
-      EXPECT_NEAR(batch_results[i], expected, 1e-9) << "Mismatch at index " << i << " for l=" << l << ", m=" << m;
+      double const expected = sph_legendre({.degree = degree, .order = order}, angles[i]);
+      EXPECT_NEAR(batch_results[i], expected, 1e-9)
+          << "Mismatch at index " << i << " for l=" << degree << ", m=" << order;
     }
   }
 }

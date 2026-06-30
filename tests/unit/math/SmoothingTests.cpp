@@ -12,8 +12,9 @@
 namespace correlation::testing {
 
 using namespace correlation::math;
-
+namespace {
 class SmoothingTests : public ::testing::Test {};
+} // namespace
 
 TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
   size_t const size = 11;
@@ -57,7 +58,7 @@ TEST_F(SmoothingTests, GenerateKernelNormalizesAndCalculatesCorrectly) {
   EXPECT_NEAR(sum_biw, 1.0, 1e-9);
 
   // Invalid kernel type throws invalid_argument
-  EXPECT_THROW(generateKernel({size, bin_width, sigma, static_cast<KernelType>(-1)}), std::invalid_argument);
+  EXPECT_THROW((void)generateKernel({size, bin_width, sigma, static_cast<KernelType>(-1)}), std::invalid_argument);
 }
 
 TEST_F(SmoothingTests, KernelSmoothingBoundaryInputsAndErrors) {
