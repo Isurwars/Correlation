@@ -20,11 +20,24 @@
 #include <iterator> // For std::distance
 #include <vector>
 
+namespace {
+
+// Helper to find the index of the maximum value in a given range.
+size_t find_peak_idx(const std::vector<double> &vec, size_t start, size_t end) {
+  auto const iterator = std::max_element(vec.begin() + static_cast<std::ptrdiff_t>(start),
+                                         vec.begin() + static_cast<std::ptrdiff_t>(end));
+  return static_cast<size_t>(std::distance(vec.begin(), iterator));
+}
+
 // Test fixture for FileWriter integration tests.
 class FileWriterTests : public ::testing::Test {
 protected:
+  [[nodiscard]] std::string const &getDataDir() const { return data_dir_; }
+
+private:
   std::string data_dir_;
 
+protected:
   void SetUp() override {
     std::vector<std::string> const candidates = {
         "../../tests/data/",
@@ -44,53 +57,56 @@ protected:
 
   void TearDown() override {
     // Clean up all generated files.
-    std::vector<std::string> const files_to_remove = {
-                                                "test_si_g.csv",
-                                                "test_si_J.csv",
-                                                "test_si_G_reduced.csv",
-                                                "test_si_PAD.csv",
-                                                "test_si_DAD.csv",
-                                                "test_si_RD.csv",
-                                                "test_si_S.csv",
-                                                "test_si_XRD.csv",
-                                                "test_si_CN.csv",
-                                                "test_si_g_smoothed.csv",
-                                                "test_si_J_smoothed.csv",
-                                                "test_si_G_reduced_smoothed.csv",
-                                                "test_si_PAD_smoothed.csv",
-                                                "test_si.h5",
-                                                "test_vacf.h5",
-                                                "test_vacf_new.h5",
-                                                "test_vacf_new_VACF.csv",
-                                                "test_vacf_new_VACF_norm.csv",
-                                                "test_vacf_new_VDOS.csv",
-                                                "test_vacf_vdos.h5",
-                                                "test_vacf_vdos_VACF.csv",
-                                                "test_vacf_vdos_VACF_norm.csv",
-                                                "test_vacf_vdos_VDOS.csv",
-                                                "test_si_g.parquet",
-                                                "test_si_J.parquet",
-                                                "test_si_G_reduced.parquet",
-                                                "test_si_PAD.parquet"};
+    std::vector<std::string> const files_to_remove = {"test_si_g.csv",
+                                                      "test_si_J.csv",
+                                                      "test_si_G_reduced.csv",
+                                                      "test_si_PAD.csv",
+                                                      "test_si_DAD.csv",
+                                                      "test_si_RD.csv",
+                                                      "test_si_S.csv",
+                                                      "test_si_XRD.csv",
+                                                      "test_si_CN.csv",
+                                                      "test_si_g_smoothed.csv",
+                                                      "test_si_J_smoothed.csv",
+                                                      "test_si_G_reduced_smoothed.csv",
+                                                      "test_si_PAD_smoothed.csv",
+                                                      "test_si.h5",
+                                                      "test_vacf.h5",
+                                                      "test_vacf_new.h5",
+                                                      "test_vacf_new_VACF.csv",
+                                                      "test_vacf_new_VACF_norm.csv",
+                                                      "test_vacf_new_VDOS.csv",
+                                                      "test_vacf_vdos.h5",
+                                                      "test_vacf_vdos_VACF.csv",
+                                                      "test_vacf_vdos_VACF_norm.csv",
+                                                      "test_vacf_vdos_VDOS.csv",
+                                                      "test_si_g.parquet",
+                                                      "test_si_J.parquet",
+                                                      "test_si_G_reduced.parquet",
+                                                      "test_si_PAD.parquet",
+                                                      "test_si_summary.txt",
+                                                      "test_vacf_new_summary.txt",
+                                                      "test_vacf_vdos_summary.txt"};
 
     for (const auto &file : files_to_remove) {
-      std::error_code ec;
-      std::filesystem::remove(file, ec);
+      std::error_code error_code;
+      std::filesystem::remove(file, error_code);
     }
   }
 
   // Helper to check if a file exists and is not empty.
   static bool fileExistsAndIsNotEmpty(const std::string &name) {
-    if (std::ifstream f(name); f.good()) {
-      return f.peek() != std::ifstream::traits_type::eof();
+    if (std::ifstream file(name); file.good()) {
+      return file.peek() != std::ifstream::traits_type::eof();
     }
     return false;
   }
 };
+} // namespace
 
 TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Arrange
-  std::string const path = data_dir_ + "si_crystal.car";
+  std::string const path = getDataDir() + "si_crystal.car";
   correlation::readers::FileType const type = correlation::readers::determineFileType(path);
   correlation::core::Cell const si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;
@@ -115,17 +131,13 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   const auto &bins = rdf_hist.bins;
   const auto &si_si_rdf = rdf_hist.partials.at("Si-Si");
 
-  // Helper to find the index of the maximum value in a given range.
-  auto find_peak_idx = [&](size_t start, size_t end) {
-    auto it = std::max_element(si_si_rdf.begin() + start, si_si_rdf.begin() + end);
-    return std::distance(si_si_rdf.begin(), it);
-  };
-
   // Find peaks in expected regions for crystalline silicon.
   // 1st neighbor shell: ~2.35 Å. Search from 2.0 to 3.0 Å.
-  size_t const first_peak_idx = find_peak_idx(2.0 / rdf_bin, 3.0 / rdf_bin);
+  size_t const first_peak_idx =
+      find_peak_idx(si_si_rdf, static_cast<size_t>(2.0 / rdf_bin), static_cast<size_t>(3.0 / rdf_bin));
   // 2nd neighbor shell: ~3.84 Å. Search from 3.5 to 4.2 Å.
-  size_t const second_peak_idx = find_peak_idx(3.5 / rdf_bin, 4.2 / rdf_bin);
+  size_t const second_peak_idx =
+      find_peak_idx(si_si_rdf, static_cast<size_t>(3.5 / rdf_bin), static_cast<size_t>(4.2 / rdf_bin));
 
   EXPECT_NEAR(bins[first_peak_idx], 2.35, rdf_bin * 2);
   EXPECT_NEAR(bins[second_peak_idx], 3.84, rdf_bin * 2);
@@ -152,15 +164,16 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
 #ifdef CORRELATION_USE_HDF5
 TEST_F(FileWriterTests, WritesHDF5File) {
   // Arrange
-  std::string const path = data_dir_ + "si_crystal.car";
+  std::string const path = getDataDir() + "si_crystal.car";
   correlation::readers::FileType type = correlation::readers::determineFileType(path);
   correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;
   trajectory.addFrame(si_cell);
   trajectory.precomputeBondCutoffs();
 
-  correlation::analysis::DistributionFunctions dists(si_cell, 5.0,
-                                                  trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
+  correlation::analysis::DistributionFunctions dists(
+      si_cell, 5.0,
+      trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
   dists.calculateRDF(5.0, 0.1);
   dists.calculatePAD(2.0);
@@ -231,13 +244,13 @@ TEST_F(FileWriterTests, WritesHDF5File) {
 
 TEST_F(FileWriterTests, WritesVACFMetadata) {
   // Arrange
-  std::string const path = data_dir_ + "si_crystal.car";
+  std::string const path = getDataDir() + "si_crystal.car";
   correlation::readers::FileType type = correlation::readers::determineFileType(path);
   correlation::core::Cell frame1 = correlation::readers::readStructure(path, type);
 
   // Create frame2 with same lattice
-  auto lv = frame1.latticeVectors();
-  correlation::core::Cell frame2(lv[0], lv[1], lv[2]);
+  auto lattice_vectors = frame1.latticeVectors();
+  correlation::core::Cell frame2(lattice_vectors[0], lattice_vectors[1], lattice_vectors[2]);
 
   // Modify frame2 slightly to create velocity
   // Use alternating signs to ensure zero net momentum (approx) for CoM removal
@@ -377,7 +390,7 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
 #ifdef CORRELATION_USE_ARROW
 TEST_F(FileWriterTests, WritesParquetFiles) {
   // Arrange
-  std::string const path = data_dir_ + "si_crystal.car";
+  std::string const path = getDataDir() + "si_crystal.car";
   correlation::readers::FileType type = correlation::readers::determineFileType(path);
   correlation::core::Cell si_cell = correlation::readers::readStructure(path, type);
   correlation::core::Trajectory trajectory;

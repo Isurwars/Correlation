@@ -5,8 +5,29 @@
 
 #include "app/AppBackend.hpp"
 
+#include <algorithm>
+#include <filesystem>
 #include <gtest/gtest.h>
 #include <stdexcept>
+#include <string>
+#include <vector>
+
+namespace {
+
+std::string getTestDataDir() {
+  std::vector<std::string> const candidates = {
+      "../../tests/data/",
+      "../tests/data/",
+      "tests/data/",
+      "data/",
+  };
+  for (const auto &dir : candidates) {
+    if (std::filesystem::exists(dir + "xyz/clean.xyz")) {
+      return dir;
+    }
+  }
+  return "../../tests/data/";
+}
 
 // Test fixture for the AppBackend class
 class AppBackendTests : public ::testing::Test {};
@@ -71,7 +92,105 @@ TEST_F(AppBackendTests, RecommendedTimeStepWithNoCellReturnsDefault) {
   EXPECT_DOUBLE_EQ(time_step, correlation::app::AppDefaults::TIME_STEP);
 }
 
-// Additional rigorous test for recommended step logic should be added by
-// loading a mock cell, but since AppBackend deals with reading from file,
-// creating an artificial trajectory internally is complex here. We can assume
-// the math is straightforward.
+TEST_F(AppBackendTests, LoadValidXYZFile) {
+  // Arrange
+  correlation::app::AppBackend backend;
+  std::string const data_dir = getTestDataDir();
+  std::string const filepath = data_dir + "xyz/clean.xyz";
+
+  // Act
+  std::string const load_status = backend.load_file(filepath);
+
+  // Assert
+  EXPECT_NE(load_status.find("File loaded:"), std::string::npos);
+  EXPECT_EQ(backend.getFrameCount(), 1);
+  EXPECT_EQ(backend.getTotalAtomCount(), 2);
+
+  auto const counts = backend.getAtomCounts();
+  EXPECT_EQ(counts.at("C"), 1);
+  EXPECT_EQ(counts.at("O"), 1);
+
+  const correlation::core::Cell *cell = backend.cell();
+  ASSERT_NE(cell, nullptr);
+  EXPECT_EQ(cell->atomCount(), 2);
+}
+
+TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
+  // Arrange
+  correlation::app::AppBackend backend;
+  std::string const data_dir = getTestDataDir();
+  std::string const filepath = data_dir + "car/clean.car";
+
+  // Act & Assert 1: Load file
+  std::string const load_status = backend.load_file(filepath);
+  EXPECT_NE(load_status.find("File loaded:"), std::string::npos);
+  EXPECT_EQ(backend.getFrameCount(), 1);
+  EXPECT_EQ(backend.getTotalAtomCount(), 2);
+
+  const correlation::core::Cell *cell = backend.cell();
+  ASSERT_NE(cell, nullptr);
+  EXPECT_EQ(cell->atomCount(), 2);
+
+  // Act & Assert 2: Recommended values
+  double const rec_time_step = backend.getRecommendedTimeStep();
+  EXPECT_NEAR(rec_time_step, 1.3470, 1e-3);
+
+  auto const cutoffs = backend.getRecommendedBondCutoffs();
+  ASSERT_FALSE(cutoffs.empty());
+  EXPECT_EQ(cutoffs.size(), cell->elements().size());
+
+  // Act & Assert 3: Setup options and run analysis
+  correlation::app::ProgramOptions opts = backend.options();
+  opts.r_max = 5.0;
+  opts.r_bin_width = 0.1;
+  opts.smoothing = true;
+  opts.smoothing_sigma = 0.1;
+  // Enable RDF calculator
+  opts.active_calculators["RDF"] = true;
+  backend.setOptions(opts);
+
+  std::string const run_status = backend.run_analysis();
+  EXPECT_TRUE(run_status.empty()) << "Analysis failed: " << run_status;
+
+  // Verify histograms
+  auto const hist_names = backend.getAvailableHistogramNames();
+  EXPECT_FALSE(hist_names.empty());
+  EXPECT_NE(std::ranges::find(hist_names, "g_r"), hist_names.end());
+
+  const auto *rdf_hist = backend.getHistogram("g_r");
+  ASSERT_NE(rdf_hist, nullptr);
+  EXPECT_FALSE(rdf_hist->bins.empty());
+
+  const auto weights = backend.getAshcroftWeights();
+  EXPECT_FALSE(weights.empty());
+
+  // Act & Assert 4: Write output files to a temp directory
+  auto tmp_dir = std::filesystem::temp_directory_path() / "correlation_backend_test";
+  std::filesystem::create_directories(tmp_dir);
+  struct TempDirGuard {
+    std::filesystem::path path;
+    explicit TempDirGuard(std::filesystem::path tmp_path) : path(std::move(tmp_path)) {}
+    TempDirGuard(const TempDirGuard &) = delete;
+    TempDirGuard &operator=(const TempDirGuard &) = delete;
+    TempDirGuard(TempDirGuard &&) = delete;
+    TempDirGuard &operator=(TempDirGuard &&) = delete;
+    ~TempDirGuard() { std::filesystem::remove_all(path); }
+  };
+  const TempDirGuard guard{tmp_dir};
+
+  std::string const out_base = (tmp_dir / "result").string();
+
+  opts.output_file_base = out_base;
+  opts.use_csv = true;
+  opts.use_hdf5 = false;
+  opts.use_parquet = false;
+  backend.setOptions(opts);
+
+  std::string const write_status = backend.write_files();
+  EXPECT_TRUE(write_status.empty()) << "Write files failed: " << write_status;
+
+  // Verify file was written
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
+}
+
+} // namespace
