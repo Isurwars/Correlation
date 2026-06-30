@@ -124,8 +124,8 @@ TEST(HBondCalculatorTests, TotalDistributionSumsToOne) {
 
   ASSERT_TRUE(hist.partials.count("Total"));
   double sum = 0.0;
-  for (double v : hist.partials.at("Total")) {
-    sum += v;
+  for (double const value : hist.partials.at("Total")) {
+    sum += value;
   }
   EXPECT_NEAR(sum, 1.0, 1e-12);
 }
@@ -175,8 +175,8 @@ TEST(HBondCalculatorTests, LinearHBond_IsDetected) {
 
   // Check that some atoms have non-zero H-bond counts
   bool found_nonzero = false;
-  for (const auto &v : hist.partials.at("Total")) {
-    if (v > 0 && hist.bins[&v - &hist.partials.at("Total")[0]] > 0) {
+  for (const auto &value : hist.partials.at("Total")) {
+    if (value > 0 && hist.bins[&value - hist.partials.at("Total").data()] > 0) {
       found_nonzero = true;
       break;
     }
@@ -317,8 +317,8 @@ TEST(HBondCalculatorTests, CoincidentHAndDonor_DoesNotCrash) {
 
     // Verify no NaN values in the output
     for (const auto &[key, values] : hist.partials) {
-      for (double v : values) {
-        EXPECT_FALSE(std::isnan(v)) << "NaN detected in partial '" << key << "'";
+      for (double const value : values) {
+        EXPECT_FALSE(std::isnan(value)) << "NaN detected in partial '" << key << "'";
       }
     }
   });
@@ -338,8 +338,8 @@ TEST(HBondCalculatorTests, CoincidentDonorAndAcceptor_DoesNotCrash) {
   ASSERT_NO_THROW({
     auto hist = HBondCalculator::calculate(cell, &analyzer);
     for (const auto &[key, values] : hist.partials) {
-      for (double v : values) {
-        EXPECT_FALSE(std::isnan(v));
+      for (double const value : values) {
+        EXPECT_FALSE(std::isnan(value));
       }
     }
   });
@@ -370,16 +370,16 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
 /// Tests performance and correctness under bulk non-bonding conditions.
 TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // 4-atom FCC copper — no H, O, N, F, S atoms at all
-  double a = 3.6;
-  correlation::core::Cell cell({a, a, a, 90.0, 90.0, 90.0});
+  double const lattice_parameter = 3.6;
+  correlation::core::Cell cell({lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
-  cell.addAtom("Cu", {a / 2, a / 2, 0.0});
-  cell.addAtom("Cu", {a / 2, 0.0, a / 2});
-  cell.addAtom("Cu", {0.0, a / 2, a / 2});
+  cell.addAtom("Cu", {lattice_parameter / 2, lattice_parameter / 2, 0.0});
+  cell.addAtom("Cu", {lattice_parameter / 2, 0.0, lattice_parameter / 2});
+  cell.addAtom("Cu", {0.0, lattice_parameter / 2, lattice_parameter / 2});
 
-  double cutoff = 3.0;
-  std::vector<std::vector<double>> bcsq(1, std::vector<double>(1, cutoff * cutoff));
-  analysis::StructureAnalyzer analyzer(cell, cutoff, bcsq, false);
+  double const cutoff = 3.0;
+  std::vector<std::vector<double>> const bond_cutoffs_sq(1, std::vector<double>(1, cutoff * cutoff));
+  analysis::StructureAnalyzer const analyzer(cell, cutoff, bond_cutoffs_sq, false);
   auto hist = HBondCalculator::calculate(cell, &analyzer);
 
   // Pure metal: no electronegative atoms, so no H-bond counting.

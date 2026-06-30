@@ -20,9 +20,9 @@ TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
   // Construct a trajectory of 5 frames with 1 atom moving linearly
   // x(t) = t, y(t) = 0, z(t) = 0
   std::vector<Cell> frames;
-  for (int t = 0; t < 5; ++t) {
+  for (int i = 0; i < 5; ++i) {
     Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
-    cell.addAtom("Si", {static_cast<double>(t), 0.0, 0.0});
+    cell.addAtom("Si", {static_cast<double>(i), 0.0, 0.0});
     frames.push_back(std::move(cell));
   }
 
@@ -33,8 +33,8 @@ TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
   auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{5});
 
   // Assert
-  ASSERT_TRUE(results.find("MSD") != results.end());
-  ASSERT_TRUE(results.find("D_eff") != results.end());
+  ASSERT_TRUE(results.contains("MSD"));
+  ASSERT_TRUE(results.contains("D_eff"));
 
   const auto &msd_hist = results.at("MSD");
   const auto &deff_hist = results.at("D_eff");
@@ -63,7 +63,7 @@ TEST(MSDCalculatorTests, StationaryAtomsMSDIsZero) {
   // Use addFrame() to bypass the constructor's automatic deduplication.
   Trajectory traj;
   traj.setTimeStep(1.0);
-  for (int t = 0; t < 5; ++t) {
+  for (int i = 0; i < 5; ++i) {
     Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
     cell.addAtom("Ar", {5.0, 5.0, 5.0}); // Same position every frame
     traj.addFrame(cell);
@@ -71,7 +71,7 @@ TEST(MSDCalculatorTests, StationaryAtomsMSDIsZero) {
 
   auto results = MSDCalculator::calculate(traj, MaxFrames{3}, StartFrame{0}, EndFrame{5});
 
-  ASSERT_TRUE(results.find("MSD") != results.end());
+  ASSERT_TRUE(results.contains("MSD"));
   const auto &msd = results.at("MSD").partials.at("Total");
 
   for (size_t i = 0; i < msd.size(); ++i) {
@@ -82,17 +82,17 @@ TEST(MSDCalculatorTests, StationaryAtomsMSDIsZero) {
 TEST(MSDCalculatorTests, MultiAtomAveraging) {
   // Two atoms: one moves +x, one moves +y. MSD should average contributions.
   std::vector<Cell> frames;
-  for (int t = 0; t < 4; ++t) {
+  for (int i = 0; i < 4; ++i) {
     Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
-    cell.addAtom("Si", {static_cast<double>(t), 5.0, 5.0}); // Moves +x
-    cell.addAtom("Si", {5.0, static_cast<double>(t), 5.0}); // Moves +y
+    cell.addAtom("Si", {static_cast<double>(i), 5.0, 5.0}); // Moves +x
+    cell.addAtom("Si", {5.0, static_cast<double>(i), 5.0}); // Moves +y
     frames.push_back(std::move(cell));
   }
 
   Trajectory traj(std::move(frames), 1.0);
   auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{0}, EndFrame{4});
 
-  ASSERT_TRUE(results.find("MSD") != results.end());
+  ASSERT_TRUE(results.contains("MSD"));
   const auto &msd = results.at("MSD").partials.at("Total");
 
   // At lag 0: MSD = 0
@@ -106,9 +106,9 @@ TEST(MSDCalculatorTests, MultiAtomAveraging) {
 TEST(MSDCalculatorTests, FrameRangeSubset) {
   // Create 10 frames, but only compute MSD over frames 3-7
   std::vector<Cell> frames;
-  for (int t = 0; t < 10; ++t) {
+  for (int i = 0; i < 10; ++i) {
     Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
-    cell.addAtom("Si", {static_cast<double>(t), 0.0, 0.0});
+    cell.addAtom("Si", {static_cast<double>(i), 0.0, 0.0});
     frames.push_back(std::move(cell));
   }
 
@@ -116,7 +116,7 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
   // Restrict to frames [3, 7) with max correlation lag 2
   auto results = MSDCalculator::calculate(traj, MaxFrames{2}, StartFrame{3}, EndFrame{7});
 
-  ASSERT_TRUE(results.find("MSD") != results.end());
+  ASSERT_TRUE(results.contains("MSD"));
   const auto &msd = results.at("MSD").partials.at("Total");
 
   // Lag 0 should always be 0
@@ -128,11 +128,12 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
 TEST(MSDCalculatorTests, ComputeDiffusionCoefficientMSD) {
   // Create a linear MSD trajectory: MSD(t) = 6.0 * t
   // Slope is 6.0, so D should be 1.0
-  std::vector<double> time = {0.0, 1.0, 2.0, 3.0, 4.0};
-  std::vector<double> msd = {0.0, 6.0, 12.0, 18.0, 24.0};
+  std::vector<double> const time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  std::vector<double> const msd = {0.0, 6.0, 12.0, 18.0, 24.0};
 
-  double d = correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
-  EXPECT_NEAR(d, 1.0, 1e-6);
+  double const diffusion_coefficient =
+      correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
+  EXPECT_NEAR(diffusion_coefficient, 1.0, 1e-6);
 }
 
 TEST(MSDCalculatorTests, DynamicsAnalyzerMSDNonPhysicalInputs) {
