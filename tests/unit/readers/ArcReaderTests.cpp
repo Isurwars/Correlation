@@ -1,6 +1,5 @@
 #include "readers/ArcReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -44,18 +43,18 @@ TEST(ArcReaderTests, ReadsTrajectory) {
   EXPECT_EQ(traj.getFrameCount(), 2);
 
   // Frame 1 check
-  const auto &f1 = traj.getFrame(0);
-  EXPECT_EQ(f1.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0);
-  EXPECT_DOUBLE_EQ(f1.getEnergy(), -12.345);
-  EXPECT_EQ(f1.atoms()[0].element().symbol, "C");
+  const auto &frame_1 = traj.getFrame(0);
+  EXPECT_EQ(frame_1.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(frame_1.lattice_parameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(frame_1.getEnergy(), -12.345);
+  EXPECT_EQ(frame_1.atoms()[0].element().symbol, "C");
 
   // Frame 2 check
-  const auto &f2 = traj.getFrame(1);
-  EXPECT_EQ(f2.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 100.0); // PBC=OFF sets 100.0
-  EXPECT_DOUBLE_EQ(f2.getEnergy(), 42.0);
-  EXPECT_EQ(f2.atoms()[0].element().symbol, "C");
+  const auto &frame_2 = traj.getFrame(1);
+  EXPECT_EQ(frame_2.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(frame_2.lattice_parameters()[0], 100.0); // PBC=OFF sets 100.0
+  EXPECT_DOUBLE_EQ(frame_2.getEnergy(), 42.0);
+  EXPECT_EQ(frame_2.atoms()[0].element().symbol, "C");
 }
 
 TEST(ArcReaderTests, ThrowsOnReadStructure) {
