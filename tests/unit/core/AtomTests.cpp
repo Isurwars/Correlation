@@ -12,9 +12,9 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
-
+namespace {
 class AtomTests : public ::testing::Test {};
-
+} // namespace
 // --- Unitary Tests: Constructors & Accessors ---
 
 TEST_F(AtomTests, DefaultConstructorInitializesCorrectly) {
@@ -160,18 +160,18 @@ TEST_F(AtomTests, DistanceHandlesInfinityAndNaN) {
 }
 
 TEST_F(AtomTests, AngleFunctionHandlesNaNCoordinates) {
-  const Element element = {"C", {0}};
+  const Element element = {.symbol = "C", .id = {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
-  const Atom a(element, {std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0}, 1);
-  const Atom b(element, {1.0, 1.0, 1.0}, 2);
+  const Atom atom_a(element, {std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0}, 1);
+  const Atom atom_b(element, {1.0, 1.0, 1.0}, 2);
 
   // Since NaN coordinate makes dot/norm_sq NaN or invalid, we expect standard clamp/acos behavior or nan
   // Let's assert it safely returns 0 or NaN, without crashing.
-  EXPECT_TRUE(std::isnan(angle(center, a, b)) || angle(center, a, b) == 0.0);
+  EXPECT_TRUE(std::isnan(angle(center, atom_a, atom_b)) || angle(center, atom_a, atom_b) == 0.0);
 }
 
 TEST_F(AtomTests, HandlesLongAndSpecialElementSymbols) {
-  const Element element = {"Uun-110_LongSymbolTest!@#", {110}};
+  const Element element = {.symbol = "Uun-110_LongSymbolTest!@#", .id = {110}};
   const Atom atom(element, {1.0, 2.0, 3.0}, 999999);
 
   EXPECT_EQ(atom.element().symbol, "Uun-110_LongSymbolTest!@#");

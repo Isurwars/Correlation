@@ -23,18 +23,16 @@ struct ArgBuilder {
 
   // Construct from initializer list: {"correlation-cli", "--help", ...}
   explicit ArgBuilder(std::initializer_list<std::string> args) : storage(args) {
-    for (auto &s : storage) {
-      argv.push_back(s.data());
+    for (auto &store : storage) {
+      argv.push_back(store.data());
     }
   }
 
   [[nodiscard]] int argc() const { return static_cast<int>(argv.size()); }
   char **data() { return argv.data(); }
 };
-
-} // namespace
-
 class CliParserTests : public ::testing::Test {};
+} // namespace
 
 // ===== Default values =====
 
@@ -626,14 +624,14 @@ TEST_F(CliParserTests, CrystallineMaterialDefaults) {
 }
 
 TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
-  ArgBuilder args{"correlation-cli", "input.poscar", "--material", "crystalline", "--r-bin", "0.01", "--smoothing-sigma", "0.05"};
+  ArgBuilder args{"correlation-cli", "input.poscar", "--material",        "crystalline",
+                  "--r-bin",         "0.01",         "--smoothing-sigma", "0.05"};
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 2);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.01);         // Overridden
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.002);        // Crystal default
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 0.1);      // Crystal default
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 0.1);   // Crystal default
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.05);     // Overridden
+  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.01);       // Overridden
+  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.002);      // Crystal default
+  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 0.1);    // Crystal default
+  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 0.1); // Crystal default
+  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.05);   // Overridden
 }
-

@@ -13,11 +13,12 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
-
+namespace {
 class CellTests : public ::testing::Test {
 protected:
   Cell orthogonal_cell_{{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}};
 };
+} // namespace
 
 // --- Unitary Tests: Constructors & Lattice ---
 
@@ -130,16 +131,16 @@ TEST_F(CellTests, WrapPositionsHandlesLargeDisplacements) {
 
 TEST_F(CellTests, MinimumImageCalculatesShortestVector) {
   Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  auto mi = cell.minimumImage({7.0, -8.0, 2.0});
-  EXPECT_NEAR(mi.x(), -3.0, 1e-9);
-  EXPECT_NEAR(mi.y(), 2.0, 1e-9);
-  EXPECT_NEAR(mi.z(), 2.0, 1e-9);
+  auto image = cell.minimumImage({7.0, -8.0, 2.0});
+  EXPECT_NEAR(image.x(), -3.0, 1e-9);
+  EXPECT_NEAR(image.y(), 2.0, 1e-9);
+  EXPECT_NEAR(image.z(), 2.0, 1e-9);
 }
 
 TEST_F(CellTests, MinimumImageHandlesDistancesLargerThanBox) {
   Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  auto mi = cell.minimumImage({15.0, 0.0, 0.0});
-  EXPECT_NEAR(std::abs(mi.x()), 5.0, 1e-9);
+  auto image = cell.minimumImage({15.0, 0.0, 0.0});
+  EXPECT_NEAR(std::abs(image.x()), 5.0, 1e-9);
 }
 
 TEST_F(CellTests, InverseLatticeVectorsAreCorrect) {
@@ -226,19 +227,19 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
   Cell const cell({{5.0, 5.0, 5.0, 60.0, 60.0, 60.0}});
 
   // Distance vector that spans more than half the cell in some direction
-  auto mi = cell.minimumImage({4.0, 4.0, 4.0});
-  double const mi_length = correlation::math::norm(mi);
+  auto image = cell.minimumImage({4.0, 4.0, 4.0});
+  double const image_length = correlation::math::norm(image);
 
   // The minimum image vector must be shorter than or equal to half the max box extent
   // For a cell with a=5, the maximum half-diagonal is bounded
   double const half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
-  EXPECT_LE(mi_length, half_diagonal + 1e-6);
+  EXPECT_LE(image_length, half_diagonal + 1e-6);
 
   // The zero vector should map to zero
-  auto mi_zero = cell.minimumImage({0.0, 0.0, 0.0});
-  EXPECT_NEAR(mi_zero.x(), 0.0, 1e-9);
-  EXPECT_NEAR(mi_zero.y(), 0.0, 1e-9);
-  EXPECT_NEAR(mi_zero.z(), 0.0, 1e-9);
+  auto zero_image = cell.minimumImage({0.0, 0.0, 0.0});
+  EXPECT_NEAR(zero_image.x(), 0.0, 1e-9);
+  EXPECT_NEAR(zero_image.y(), 0.0, 1e-9);
+  EXPECT_NEAR(zero_image.z(), 0.0, 1e-9);
 }
 
 TEST_F(CellTests, ExtremelySmallCell) {
@@ -261,19 +262,19 @@ TEST_F(CellTests, ExtremelyLargeCell) {
   EXPECT_NEAR(cell.volume(), 1e18, 1e9);
 
   cell.addAtom("H", {5e5, 5e5, 5e5});
-  auto mi = cell.minimumImage({3e5, 0.0, 0.0});
-  EXPECT_NEAR(mi.x(), 3e5, 1e-3);
+  auto image = cell.minimumImage({3e5, 0.0, 0.0});
+  EXPECT_NEAR(image.x(), 3e5, 1e-3);
 }
 
 TEST_F(CellTests, HighAtomCount) {
   // Stress test: add many atoms without crashing
   Cell cell({{100.0, 100.0, 100.0, 90.0, 90.0, 90.0}});
-  const size_t N = 10000;
-  for (size_t i = 0; i < N; ++i) {
+  const size_t N_ATOMS = 10000;
+  for (size_t i = 0; i < N_ATOMS; ++i) {
     double const pos = static_cast<double>(i) * 0.01;
     cell.addAtom("H", {pos, pos, pos});
   }
-  EXPECT_EQ(cell.atomCount(), N);
+  EXPECT_EQ(cell.atomCount(), N_ATOMS);
   EXPECT_EQ(cell.elements().size(), 1);
 
   // Wrap all positions — should not crash or take excessively long

@@ -16,19 +16,21 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
-
+namespace {
 class TrajectoryTests : public ::testing::Test {
-protected:
-  static Cell createSimpleFrame(double x, double y, double z) {
+public:
+  static Cell createSimpleFrame(double pos_x, double pos_y, double pos_z) {
     Cell frame({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-    frame.addAtom("H", {x, y, z});
+    frame.addAtom("H", {pos_x, pos_y, pos_z});
     return frame;
   }
 
+protected:
   void SetUp() override { std::filesystem::create_directory("test_data"); }
 
   void TearDown() override { std::filesystem::remove_all("test_data"); }
 };
+} // namespace
 
 // --- Unitary Tests: Constructors & Basic Accessors ---
 
@@ -90,28 +92,28 @@ TEST_F(TrajectoryTests, AddFrameThrowsOnElementMismatch) {
 
 TEST_F(TrajectoryTests, AddFrameThrowsOnAtomOrderMismatch) {
   Trajectory traj;
-  Cell f1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  f1.addAtom("H", {0, 0, 0});
-  f1.addAtom("O", {1, 1, 1});
-  traj.addFrame(f1);
+  Cell frame_1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_1.addAtom("H", {0, 0, 0});
+  frame_1.addAtom("O", {1, 1, 1});
+  traj.addFrame(frame_1);
 
-  Cell f2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  f2.addAtom("O", {1, 1, 1});
-  f2.addAtom("H", {0, 0, 0});
-  EXPECT_THROW(traj.addFrame(f2), std::runtime_error);
+  Cell frame_2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_2.addAtom("O", {1, 1, 1});
+  frame_2.addAtom("H", {0, 0, 0});
+  EXPECT_THROW(traj.addFrame(frame_2), std::runtime_error);
 }
 
 TEST_F(TrajectoryTests, AddFrameThrowsOnElementCountMismatch) {
   Trajectory traj;
-  Cell f1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  f1.addAtom("H", {0, 0, 0});
-  f1.addAtom("O", {1, 1, 1});
-  traj.addFrame(f1);
+  Cell frame_1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_1.addAtom("H", {0, 0, 0});
+  frame_1.addAtom("O", {1, 1, 1});
+  traj.addFrame(frame_1);
 
-  Cell f2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  f2.addAtom("H", {0, 0, 0});
-  f2.addAtom("H", {1, 1, 1});
-  EXPECT_THROW(traj.addFrame(f2), std::runtime_error);
+  Cell frame_2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_2.addAtom("H", {0, 0, 0});
+  frame_2.addAtom("H", {1, 1, 1});
+  EXPECT_THROW(traj.addFrame(frame_2), std::runtime_error);
 }
 
 // --- Unitary Tests: Deduplication ---
@@ -119,10 +121,10 @@ TEST_F(TrajectoryTests, AddFrameThrowsOnElementCountMismatch) {
 TEST_F(TrajectoryTests, RemoveDuplicatedFrames) {
   std::vector<Cell> const frames = {createSimpleFrame(0, 0, 0), createSimpleFrame(0, 0, 0), createSimpleFrame(1, 1, 1)};
   Trajectory traj;
-  for (const auto &f : frames) {
+  for (const auto &frame : frames) {
     // AddFrame doesn't deduplicate automatically, but Trajectory(vector) does.
     // Let's test the explicit call.
-    traj.getFrames().push_back(f);
+    traj.getFrames().push_back(frame);
   }
   EXPECT_EQ(traj.getFrameCount(), 3);
   traj.removeDuplicatedFrames();
@@ -157,11 +159,11 @@ TEST_F(TrajectoryTests, CalculateVelocitiesComputesCorrectVelocities) {
 }
 
 TEST_F(TrajectoryTests, CalculateVelocitiesHandlesPBC) {
-  Cell f1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  f1.addAtom("H", {9.0, 5.0, 5.0});
-  Cell f2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
-  f2.addAtom("H", {1.0, 5.0, 5.0});
-  Trajectory traj({f1, f2}, 1.0);
+  Cell frame_1({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_1.addAtom("H", {9.0, 5.0, 5.0});
+  Cell frame_2({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  frame_2.addAtom("H", {1.0, 5.0, 5.0});
+  Trajectory traj({frame_1, frame_2}, 1.0);
   traj.calculateVelocities();
   EXPECT_NEAR(traj.getFrame(0).atoms()[0].velocity().x(), 2.0, 1e-6);
 }
@@ -264,13 +266,13 @@ TEST_F(TrajectoryTests, LazyTrajectoryLoadingAndAccess) {
   EXPECT_DOUBLE_EQ(first.atoms()[0].position().x(), 1.0);
 
   // Verify that subsequent frames can be accessed using getFrame()
-  Cell f1 = traj.getFrame(1);
-  EXPECT_EQ(f1.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 2.0);
+  Cell frame_1 = traj.getFrame(1);
+  EXPECT_EQ(frame_1.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(frame_1.atoms()[0].position().x(), 2.0);
 
-  Cell f2 = traj.getFrame(2);
-  EXPECT_EQ(f2.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 3.0);
+  Cell frame_2 = traj.getFrame(2);
+  EXPECT_EQ(frame_2.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(frame_2.atoms()[0].position().x(), 3.0);
 
   // Materialize and verify
   EXPECT_NO_THROW(traj.removeDuplicatedFrames());

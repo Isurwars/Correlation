@@ -13,9 +13,9 @@
 namespace correlation::testing {
 
 using namespace correlation::core;
-
+namespace {
 class MappedFileTests : public ::testing::Test {
-protected:
+public:
   std::string test_dir_ = "mapped_file_test_data";
   std::string valid_file_path_ = test_dir_ + "/valid_test.txt";
   std::string file_content_ = "Hello, memory-mapped world! This is a test file for MappedFile RAII class.";
@@ -29,15 +29,16 @@ protected:
 
   void TearDown() override { std::filesystem::remove_all(test_dir_); }
 };
+} // namespace
 
 TEST_F(MappedFileTests, MapsValidFileSuccessfully) {
-  MappedFile mf(valid_file_path_);
-  EXPECT_EQ(mf.size(), file_content_.size());
-  ASSERT_NE(mf.data(), nullptr);
+  MappedFile file(valid_file_path_);
+  EXPECT_EQ(file.size(), file_content_.size());
+  ASSERT_NE(file.data(), nullptr);
 
-  std::string read_content(mf.data(), mf.size());
+  std::string read_content(file.data(), file.size());
   EXPECT_EQ(read_content, file_content_);
-  EXPECT_EQ(mf.end(), mf.data() + mf.size());
+  EXPECT_EQ(file.end(), file.data() + file.size());
 }
 
 TEST_F(MappedFileTests, ThrowsOnNonExistentFile) {
@@ -80,8 +81,8 @@ TEST_F(MappedFileTests, MoveAssignmentOperatorTransfersOwnership) {
 
 TEST_F(MappedFileTests, EnforceSizeLimitCheck) {
   // We can test that the constructor works with enforce_size_limit = false
-  MappedFile mf(valid_file_path_, false);
-  EXPECT_EQ(mf.size(), file_content_.size());
+  MappedFile file(valid_file_path_, false);
+  EXPECT_EQ(file.size(), file_content_.size());
 }
 
 } // namespace correlation::testing
