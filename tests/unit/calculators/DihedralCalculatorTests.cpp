@@ -11,24 +11,22 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+namespace {
 class DihedralCalculatorTests : public ::testing::Test {
-protected:
+public:
   correlation::core::Cell cell;
   correlation::core::NeighborGraph graph;
 
+protected:
   void SetUp() override {
     // Setup a non-periodic cell large enough
     cell = correlation::core::Cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
   }
 };
+} // namespace
 
 TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   // 4 atoms forming a 90-degree dihedral:
-  // A: (1, 0, 0)
-  // B: (0, 0, 0)
-  // C: (0, 1, 0)
-  // D: (0, 1, 1)
-
   cell.addAtom("C", {1.0, 0.0, 0.0}); // A
   cell.addAtom("C", {0.0, 0.0, 0.0}); // B
   cell.addAtom("C", {0.0, 1.0, 0.0}); // C
@@ -55,15 +53,6 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
   const auto &angles = dict[0][0][0][0];
-  // Expected: either 1 angle if we only do A-B-C-D, or 2 if we do A-B-C-D and
-  // D-C-B-A. The implementation only stores A-B-C-D once for the same element
-  // types if we didn't add the reverse condition. Wait, the implementation
-  // handles reverse based on element types, but for same elements, A-B-C-D is
-  // pushed, and D-C-B-A is pushed if types differ. Since types are same, it
-  // pushes once per sequence. However, the loop will traverse B=1, C=2 (which
-  // gives A=0, D=3 -> A-B-C-D). And it will NOT traverse B=2, C=1 because B < C
-  // restriction. So there should be exactly 1 angle.
-
   ASSERT_EQ(angles.size(), 1);
 
   // Test the angle: expected pi/2.

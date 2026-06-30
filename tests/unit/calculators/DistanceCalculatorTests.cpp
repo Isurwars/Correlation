@@ -115,9 +115,9 @@ TEST(DistanceCalculatorTests, NonOrthogonalCell) {
   // Should find at least one pair
   EXPECT_GE(out_distances[0][0].size(), 1);
   // The computed distance should be the actual shortest distance under PBC
-  for (double const d : out_distances[0][0]) {
-    EXPECT_GT(d, 0.0);
-    EXPECT_LE(d, 3.0); // Within cutoff
+  for (double const distance : out_distances[0][0]) {
+    EXPECT_GT(distance, 0.0);
+    EXPECT_LE(distance, 3.0); // Within cutoff
   }
 }
 

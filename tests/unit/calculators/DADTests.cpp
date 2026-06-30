@@ -11,32 +11,34 @@
 #include <numbers>
 
 namespace correlation::analysis {
-
+namespace {
 class DADTests : public ::testing::Test {
-protected:
-  correlation::core::Cell cell;
+public:
+  correlation::core::Cell cell_;
 
+protected:
   void SetUp() override {
     // We will place 4 atoms in a sequence A-B-C-D to test dihedral.
     // Let's use 4 carbons for simplicity.
-    cell.addAtom("C", {1.0, 0.0, 0.0});
-    cell.addAtom("C", {0.0, 0.0, 0.0});
-    cell.addAtom("C", {0.0, 1.0, 0.0});
-    cell.addAtom("C", {0.0, 1.0, 1.0});
+    cell_.addAtom("C", {1.0, 0.0, 0.0});
+    cell_.addAtom("C", {0.0, 0.0, 0.0});
+    cell_.addAtom("C", {0.0, 1.0, 0.0});
+    cell_.addAtom("C", {0.0, 1.0, 1.0});
 
     // To prevent interactions across periodic boundaries, use a large cell.
-    cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+    cell_.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   }
 };
+} // namespace
 
 TEST_F(DADTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
   double const r_cut = 1.5;
   std::vector<std::vector<double>> const bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
-  StructureAnalyzer const analyzer(cell, r_cut, bond_cutoffs, true);
+  StructureAnalyzer const analyzer(cell_, r_cut, bond_cutoffs, true);
 
   double const bin_width = 10.0;
-  Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell, &analyzer, bin_width);
+  Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell_, &analyzer, bin_width);
 
   // We only expect one type of dihedral for C-C-C-C.
   ASSERT_FALSE(f_dihedral.partials.empty());
@@ -61,12 +63,12 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
   double phi = std::numbers::phi;
-  std::vector<std::vector<double>> const verts = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
-                                            {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
-                                            {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
+  std::vector<std::vector<double>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+                                                     {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
+                                                     {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
-  for (const auto &v : verts) {
-    cell_iso.addAtom("Si", {10.0 + v[0], 10.0 + v[1], 10.0 + v[2]});
+  for (const auto &vertex : vertices) {
+    cell_iso.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
   }
 
   double const r_cut = 2.5;
@@ -98,7 +100,7 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
 }
 
 TEST_F(DADTests, NullNeighborsThrows) {
-  EXPECT_THROW({ correlation::calculators::DADCalculator::calculate(cell, nullptr, 10.0); }, std::logic_error);
+  EXPECT_THROW({ correlation::calculators::DADCalculator::calculate(cell_, nullptr, 10.0); }, std::logic_error);
 }
 
 } // namespace correlation::analysis
