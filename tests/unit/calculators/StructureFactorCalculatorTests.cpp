@@ -10,24 +10,28 @@
 #include <gtest/gtest.h>
 
 namespace correlation::analysis {
-
+namespace {
 class StructureFactorCalculatorTests : public ::testing::Test {
 protected:
   void SetUp() override {}
 };
+} // namespace
 
 // For a simple cubic crystal, S(Q) should show peaks at the allowed Bragg
 // reflections. The first peak for a simple cubic lattice is at Q = 2*pi/a.
 TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
-  const double a = 3.0;
-  correlation::core::Cell cell(std::array<double, 6>{2 * a, 2 * a, 2 * a, 90.0, 90.0, 90.0});
+  const double vec_a = 3.0;
+  correlation::core::Cell cell(std::array<double, 6>{2 * vec_a, 2 * vec_a, 2 * vec_a, 90.0, 90.0, 90.0});
 
   // 8 atoms at corners of a 2x2x2 supercell
-  for (int ix = 0; ix < 2; ++ix)
-    for (int iy = 0; iy < 2; ++iy)
-      for (int iz = 0; iz < 2; ++iz)
-        cell.addAtom("Si", {ix * a, iy * a, iz * a});
+  for (int ix = 0; ix < 2; ++ix) {
+    for (int iy = 0; iy < 2; ++iy) {
+      for (int iz = 0; iz < 2; ++iz) {
+        cell.addAtom("Si", {ix * vec_a, iy * vec_a, iz * vec_a});
+      }
+    }
+  }
 
   DistributionFunctions dists(cell);
   correlation::calculators::StructureFactorCalculator calc;
@@ -101,10 +105,10 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
   // For a homonuclear dimer of 2 atoms at distance d=1.5 A, S(Q) = 1 +
   // sin(Q*d)/(Q*d)
   for (size_t i = 0; i < hist.bins.size(); ++i) {
-    double q = hist.bins[i];
+    double q_val = hist.bins[i];
     double expected_sq = 1.0;
-    if (q > 1e-6) {
-      expected_sq += std::sin(q * 1.5) / (q * 1.5);
+    if (q_val > 1e-6) {
+      expected_sq += std::sin(q_val * 1.5) / (q_val * 1.5);
     } else {
       expected_sq = 2.0;
     }

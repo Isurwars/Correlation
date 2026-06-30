@@ -24,8 +24,8 @@ TEST(SDFCalculatorTests, CalculateSDF) {
 
   const auto &hist = dists.getHistogram("SDF");
   EXPECT_EQ(hist.bins.size(), 1000); // 10x10x10 grid
-  EXPECT_TRUE(hist.partials.count("Ar") > 0);
-  EXPECT_TRUE(hist.partials.count("Total") > 0);
+  EXPECT_TRUE(hist.partials.contains("Ar"));
+  EXPECT_TRUE(hist.partials.contains("Total"));
 }
 
 // --- Strengthened & Edge-Case Tests ---
