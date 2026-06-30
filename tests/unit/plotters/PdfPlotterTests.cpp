@@ -6,21 +6,22 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "plotters/PdfPlotter.hpp"
 
+#include <filesystem>
 #include <gtest/gtest.h>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <filesystem>
 
 namespace correlation::testing {
 
 using namespace correlation::plotters;
 using namespace correlation::analysis;
 
+namespace {
 class PdfPlotterTests : public ::testing::Test {
-protected:
+public:
   std::string temp_pdf_path;
 
+protected:
   void SetUp() override {
     auto temp_dir = std::filesystem::temp_directory_path();
     temp_pdf_path = (temp_dir / "test_output.pdf").string();
@@ -32,13 +33,14 @@ protected:
     }
   }
 
-  bool fileExistsAndIsNotEmpty(const std::string &path) {
+  static bool fileExistsAndIsNotEmpty(const std::string &path) {
     if (!std::filesystem::exists(path)) {
       return false;
     }
     return std::filesystem::file_size(path) > 0;
   }
 };
+} // namespace
 
 TEST_F(PdfPlotterTests, RendersEmptyHistogramAsPdfGracefully) {
   Histogram empty_hist;
