@@ -11,7 +11,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <fstream>
+#include <cstdlib>
+#include <exception>
+#include <print>
 #include <string>
 
 #include "fuzz_utils.hpp"
@@ -19,7 +21,7 @@
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (size > static_cast<size_t>(1 * 1024 * 1024)) {
     return 0;
-}
+  }
 
   static thread_local correlation::fuzz::FuzzFile fuzz_file(".cif");
   fuzz_file.write(data, size);
@@ -27,10 +29,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   try {
     correlation::readers::CifReader reader;
     reader.readStructure(fuzz_file.path());
+  } catch (const std::exception &e) {
+    if (std::getenv("FUZZ_VERBOSE") != nullptr) {
+      std::println(stderr, "Error parsing file: {}", e.what());
+    }
   } catch (...) {
-    // Catch-all to prevent fuzzer crashes on invalid inputs.
+    if (std::getenv("FUZZ_VERBOSE") != nullptr) {
+      std::println(stderr, "Unknown error parsing file");
+    }
   }
 
-  
   return 0;
 }

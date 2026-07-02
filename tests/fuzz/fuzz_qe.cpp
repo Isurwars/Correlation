@@ -8,10 +8,11 @@
 
 #include "readers/QEReader.hpp"
 
+#include <cstdlib>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <fstream>
+#include <exception>
 #include <string>
 
 #include "fuzz_utils.hpp"
@@ -19,7 +20,7 @@
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   if (size > static_cast<size_t>(1 * 1024 * 1024)) {
     return 0;
-}
+  }
 
   static thread_local correlation::fuzz::FuzzFile fuzz_file(".in");
   fuzz_file.write(data, size);
@@ -27,10 +28,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   try {
     correlation::readers::QEReader reader;
     reader.readTrajectory(fuzz_file.path());
+  } catch (const std::exception &e) {
+    if (std::getenv("FUZZ_VERBOSE") != nullptr) {
+      std::fprintf(stderr, "Error parsing file: %s\n", e.what());
+    }
   } catch (...) {
-    // Catch-all to prevent fuzzer crashes on invalid inputs.
+    if (std::getenv("FUZZ_VERBOSE") != nullptr) {
+      std::fprintf(stderr, "Unknown error parsing file\n");
+    }
   }
 
-  
   return 0;
 }
