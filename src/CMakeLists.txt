@@ -32,6 +32,7 @@ target_link_libraries(readers_obj PRIVATE correlation_simd_options)
 add_library(calculators_obj OBJECT
     calculators/AngleCalculator.cpp
     calculators/CNACalculator.cpp
+    calculators/ChiralityCalculator.cpp
     calculators/DihedralCalculator.cpp
     calculators/HBondCalculator.cpp
     calculators/MotifFinder.cpp

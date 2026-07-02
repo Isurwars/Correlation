@@ -52,6 +52,7 @@ add_executable(correlation_unit_tests
     unit/calculators/ClusterCalculatorTests.cpp
     unit/calculators/LocalEntropyCalculatorTests.cpp
     unit/calculators/VoronoiCalculatorTests.cpp
+    unit/calculators/ChiralityCalculatorTests.cpp
     unit/physics/PhysicalDataTests.cpp
     unit/calculators/AngleCalculatorTests.cpp
     unit/calculators/CNCalculatorTests.cpp
