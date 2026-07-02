@@ -13,6 +13,7 @@ namespace correlation::testing {
 
 using namespace correlation::writers;
 
+namespace {
 class MockWriter : public BaseWriter {
 public:
   [[nodiscard]] std::string getName() const override { return "MockWriter"; }
@@ -23,6 +24,7 @@ public:
     // No-op for mock
   }
 };
+} // namespace
 
 TEST(WriterFactoryTests, SingletonInstanceIsUnique) {
   auto &factory1 = WriterFactory::instance();
@@ -40,7 +42,7 @@ TEST(WriterFactoryTests, GetWriterForExtension) {
   auto &factory = WriterFactory::instance();
 
   // Try querying standard format by extension
-  BaseWriter  const*retrieved = factory.getWriterForExtension(".csv");
+  BaseWriter const *retrieved = factory.getWriterForExtension(".csv");
   ASSERT_NE(retrieved, nullptr);
   EXPECT_FALSE(retrieved->getName().empty());
 }
@@ -54,7 +56,7 @@ TEST(WriterFactoryTests, GetWriterByName) {
   ASSERT_FALSE(writers.empty());
   std::string const first_writer_name = writers[0]->getName();
 
-  BaseWriter  const*retrieved = factory.getWriter(first_writer_name);
+  BaseWriter const *retrieved = factory.getWriter(first_writer_name);
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), first_writer_name);
 }
@@ -68,28 +70,28 @@ TEST(WriterFactoryTests, RegisterAndLookupCustomWriter) {
   EXPECT_TRUE(result);
 
   // Verify it resolves by extension
-  BaseWriter  const*retrieved_ext = factory.getWriterForExtension(".mockw");
+  BaseWriter const *retrieved_ext = factory.getWriterForExtension(".mockw");
   ASSERT_NE(retrieved_ext, nullptr);
   EXPECT_EQ(retrieved_ext->getName(), "MockWriter");
 
   // Verify it resolves by name
-  BaseWriter  const*retrieved_name = factory.getWriter("MockWriter");
+  BaseWriter const *retrieved_name = factory.getWriter("MockWriter");
   ASSERT_NE(retrieved_name, nullptr);
   EXPECT_EQ(retrieved_name->getName(), "MockWriter");
 }
 
 TEST(WriterFactoryTests, LookupNonExistentReturnsNullptr) {
   auto &factory = WriterFactory::instance();
-  BaseWriter  const*retrieved_ext = factory.getWriterForExtension(".non_existent_writer_ext");
+  BaseWriter const *retrieved_ext = factory.getWriterForExtension(".non_existent_writer_ext");
   EXPECT_EQ(retrieved_ext, nullptr);
 
-  BaseWriter  const*retrieved_name = factory.getWriter("NonExistentWriterName");
+  BaseWriter const *retrieved_name = factory.getWriter("NonExistentWriterName");
   EXPECT_EQ(retrieved_name, nullptr);
 }
 
 TEST(WriterFactoryTests, LookupEmptyExtensionReturnsNullptr) {
   auto &factory = WriterFactory::instance();
-  BaseWriter  const*retrieved = factory.getWriterForExtension("");
+  BaseWriter const *retrieved = factory.getWriterForExtension("");
   EXPECT_EQ(retrieved, nullptr);
 }
 

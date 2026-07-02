@@ -10,14 +10,17 @@
 #include <random>
 #include <vector>
 
+namespace {
 // Test fixture for SIMDUtils
 class SIMDUtilsTests : public ::testing::Test {
-protected:
+public:
   // Random number generator setup for generating test data
+  // NOLINTNEXTLINE(cert-msc51-cpp,cert-msc32-c,bugprone-random-generator-seed)
   std::mt19937 gen{1337}; // Fixed seed for reproducibility
   std::uniform_real_distribution<double> dist{-10.0, 10.0};
   std::uniform_real_distribution<double> pos_dist{0.1, 15.0}; // For distances
 
+protected:
   // Helper to generate a vector of random doubles
   std::vector<double> generateRandomData(size_t size, bool positive_only = false) {
     std::vector<double> data(size);
@@ -27,6 +30,7 @@ protected:
     return data;
   }
 };
+} // namespace
 
 // -----------------------------------------------------------------------------
 // Test: sinc_integral (Fourier Transform core)
@@ -35,7 +39,7 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
   // Test both exact multiples of SIMD width and non-multiples to hit the tail
   // logic
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
-  const double Q = 2.5;
+  const double Q_value = 2.5;
 
   for (size_t const size : sizes) {
     std::vector<double> integrand = generateRandomData(size);
@@ -45,11 +49,12 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
     // Calculate expected result using the scalar fallback logic
     double expected_acc = 0.0;
     for (size_t j = 0; j < size; ++j) {
-      expected_acc += integrand[j] * std::sin(Q * rbins[j]);
+      expected_acc += integrand[j] * std::sin(Q_value * rbins[j]);
     }
 
     // Call the SIMD implementation
-    double const actual_acc = correlation::math::sinc_integral(Q, integrand.data(), rbins.data(), scratch.data(), size);
+    double const actual_acc =
+        correlation::math::sinc_integral(Q_value, integrand.data(), rbins.data(), scratch.data(), size);
 
     // Assert with a small tolerance due to potential floating point reordering
     // in SIMD
@@ -64,17 +69,17 @@ TEST_F(SIMDUtilsTests, SimdDotMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
 
   for (size_t const size : sizes) {
-    std::vector<double> a = generateRandomData(size);
-    std::vector<double> b = generateRandomData(size);
+    std::vector<double> vec_a = generateRandomData(size);
+    std::vector<double> vec_b = generateRandomData(size);
 
     // Calculate expected result using the scalar fallback logic
     double expected_acc = 0.0;
     for (size_t j = 0; j < size; ++j) {
-      expected_acc += a[j] * b[j];
+      expected_acc += vec_a[j] * vec_b[j];
     }
 
     // Call the SIMD implementation
-    double const actual_acc = correlation::math::simd_dot(a.data(), b.data(), size);
+    double const actual_acc = correlation::math::simd_dot(vec_a.data(), vec_b.data(), size);
 
     // Assert with a small tolerance due to potential floating point reordering in SIMD
     EXPECT_NEAR(actual_acc, expected_acc, 1e-9) << "Failed for size: " << size;
@@ -88,17 +93,18 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
   const std::vector<size_t> sizes = {1, 4, 7, 8, 15, 16, 33, 100, 1024, 1025};
 
   // Single atom A
-  double const ax = dist(gen);
-  double const ay = dist(gen);
-  double const az = dist(gen);
+  double const vec_ax = dist(gen);
+  double const vec_ay = dist(gen);
+  double const vec_az = dist(gen);
 
   for (size_t const size : sizes) {
     // Block of atoms B
-    std::vector<double> bx = generateRandomData(size);
-    std::vector<double> by = generateRandomData(size);
-    std::vector<double> bz = generateRandomData(size);
+    std::vector<double> vec_bx = generateRandomData(size);
+    std::vector<double> vec_by = generateRandomData(size);
+    std::vector<double> vec_bz = generateRandomData(size);
 
-    correlation::math::PositionBlock const block{.x=bx.data(), .y=by.data(), .z=bz.data(), .count=size};
+    correlation::math::PositionBlock const block{
+        .x = vec_bx.data(), .y = vec_by.data(), .z = vec_bz.data(), .count = size};
 
     // Output array, initialized to -1 to detect unwritten values
     std::vector<double> actual_dsq(size, -1.0);
@@ -106,11 +112,12 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
     // Calculate expected scalar result
     std::vector<double> expected_dsq(size);
     for (size_t k = 0; k < size; ++k) {
-      expected_dsq[k] = correlation::math::dist_sq_scalar({ax, ay, az}, {bx[k], by[k], bz[k]});
+      expected_dsq[k] = correlation::math::dist_sq_scalar({.x = vec_ax, .y = vec_ay, .z = vec_az},
+                                                          {.x = vec_bx[k], .y = vec_by[k], .z = vec_bz[k]});
     }
 
     // Call SIMD implementation
-    correlation::math::compute_dsq_block(ax, ay, az, block, actual_dsq.data());
+    correlation::math::compute_dsq_block(vec_ax, vec_ay, vec_az, block, actual_dsq.data());
 
     for (size_t k = 0; k < size; ++k) {
       EXPECT_NEAR(actual_dsq[k], expected_dsq[k], 1e-9) << "Failed at index " << k << " for size: " << size;
@@ -130,7 +137,7 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
   const double pi4_rho_j = 3.14;
 
   for (size_t const size : sizes) {
-    std::vector<double> H = generateRandomData(size, true);
+    std::vector<double> vec_H = generateRandomData(size, true);
     std::vector<double> rbins = generateRandomData(size, true);
     // Ensure rbins[0] is very small/zero as happens in practice
     rbins[0] = 0.0;
@@ -141,20 +148,20 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
     std::vector<double> actual_Jinv(size, 0.0);
 
     // Call SIMD implementation
-    correlation::math::normalize_rdf_bins(H.data(), rbins.data(), g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
+    correlation::math::normalize_rdf_bins(vec_H.data(), rbins.data(), g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j,
                                           actual_g.data(), actual_G.data(), actual_J.data(), actual_Jinv.data(), size);
 
     // Compare with scalar logic from index 1
     for (size_t k = 1; k < size; ++k) {
-      const double r = rbins[k];
-      if (r < 1e-9) {
+      const double r_val = rbins[k];
+      if (r_val < 1e-9) {
         continue;
-}
+      }
 
-      const double expected_g = H[k] * g_norm / (r * r);
-      const double expected_G = pi4_rho_j * r * (expected_g - 1.0);
-      const double expected_J = H[k] * inv_Ni_dr;
-      const double expected_Jinv = H[k] * inv_Nj_dr;
+      const double expected_g = vec_H[k] * g_norm / (r_val * r_val);
+      const double expected_G = pi4_rho_j * r_val * (expected_g - 1.0);
+      const double expected_J = vec_H[k] * inv_Ni_dr;
+      const double expected_Jinv = vec_H[k] * inv_Nj_dr;
 
       EXPECT_NEAR(actual_g[k], expected_g, 1e-9) << "g failed at index " << k << " for size: " << size;
       EXPECT_NEAR(actual_G[k], expected_G, 1e-9) << "G failed at index " << k << " for size: " << size;
@@ -222,21 +229,20 @@ TEST_F(SIMDUtilsTests, DotBlockMatchesScalar) {
 // -----------------------------------------------------------------------------
 TEST_F(SIMDUtilsTests, KahanSummationPrecision) {
   // Construct inputs where standard summation would truncate small contributions
-  std::vector<double> a = {1.0, 1e-16, 1e-16};
-  std::vector<double> b = {1.0, 1.0, 1.0};
+  std::vector<double> vec_a = {1.0, 1e-16, 1e-16};
+  std::vector<double> vec_b = {1.0, 1.0, 1.0};
 
   double std_sum = 1.0;
-  std_sum += a[1] * b[1];
-  std_sum += a[2] * b[2];
+  std_sum += vec_a[1] * vec_b[1];
+  std_sum += vec_a[2] * vec_b[2];
 
-  double kahan_sum = correlation::math::simd_dot(a.data(), b.data(), 3);
+  double kahan_sum = correlation::math::simd_dot(vec_a.data(), vec_b.data(), 3);
 
   // Standard addition of 1e-16 to 1.0 rounds down to 1.0 immediately
   EXPECT_EQ(std_sum, 1.0);
-  
+
   // Kahan compensated summation preserves the accumulated low-order bits,
   // yielding a result strictly greater than 1.0
   EXPECT_GT(kahan_sum, 1.0);
   EXPECT_DOUBLE_EQ(kahan_sum, 1.0000000000000002);
 }
-
