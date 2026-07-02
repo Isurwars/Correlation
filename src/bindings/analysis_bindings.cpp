@@ -69,6 +69,11 @@ void init_analysis(py::module_ &mod) {
                      "Gaussian smoothing standard deviation. Default 0.1.")
       .def_readwrite("smoothing_kernel", &AnalysisSettings::smoothing_kernel,
                      "Kernel type for smoothing (KernelType enum). Default Gaussian.")
+      // Local Entropy (LEF)
+      .def_readwrite("lef_cutoff", &AnalysisSettings::lef_cutoff,
+                     "Cutoff radius for local entropy integration (Å). Default 5.0.")
+      .def_readwrite("lef_sigma", &AnalysisSettings::lef_sigma,
+                     "Gaussian standard deviation for local entropy smoothing (Å). Default 0.2.")
       .def(
           "is_active", [](const AnalysisSettings &settings, const std::string &idx) { return settings.isActive(idx); },
           py::arg("idx"), "Return True if the given calculator index is enabled.");

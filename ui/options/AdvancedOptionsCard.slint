@@ -1,0 +1,75 @@
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    FilledCard,
+    ExpandableHeader,
+    TextField,
+    Vertical,
+} from "../material/material.slint";
+
+export component AdvancedOptionsCard inherits FilledCard {
+    in-out property <bool> expanded: true;
+    in property <bool> file_loaded;
+    in-out property <string> lef_cutoff;
+    in-out property <string> lef_sigma;
+    in property <string> lef_cutoff_error: "";
+    in property <string> lef_sigma_error: "";
+
+    out property <string> hovered_tooltip_text:
+        cutoff_area.has-hover ? "Cutoff radius (Rc) for the local entropy integration.\n\n📏 Recommended: 5.0 Å.\n\n🔬 Physics: Defines the maximum distance to consider when calculating the local entropic fingerprint around each atom. Integrates local correlations up to this distance." :
+        sigma_area.has-hover ? "Gaussian kernel width (σ) for the local entropic fingerprint.\n\n📏 Recommended: 0.2 Å.\n\n🔬 Physics: Controls the width of the Gaussian used to broaden the local pair distribution. Too small causes discrete binning noise; too large smears structural detail." : "";
+
+    out property <length> hovered_x:
+        cutoff_area.has-hover ? cutoff_area.absolute-position.x :
+        sigma_area.has-hover ? sigma_area.absolute-position.x : 0px;
+    out property <length> hovered_y:
+        cutoff_area.has-hover ? cutoff_area.absolute-position.y :
+        sigma_area.has-hover ? sigma_area.absolute-position.y : 0px;
+    out property <length> hovered_width:
+        cutoff_area.has-hover ? cutoff_area.width :
+        sigma_area.has-hover ? sigma_area.width : 0px;
+    out property <length> hovered_height:
+        cutoff_area.has-hover ? cutoff_area.height :
+        sigma_area.has-hover ? sigma_area.height : 0px;
+
+    Vertical {
+
+        ExpandableHeader {
+            text: "Advanced Order Parameters";
+            expanded <=> root.expanded;
+        }
+
+        Vertical {
+            height: root.expanded ? self.preferred-height : 0px;
+            visible: self.height > 0px;
+            opacity: root.expanded ? 1.0 : 0.0;
+            animate height, opacity {
+                duration: 250ms;
+                easing: ease-in-out;
+            }
+            spacing: MaterialStyleMetrics.spacing_4;
+
+            cutoff_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Local Entropy Cutoff (Rc)";
+                    text <=> root.lef_cutoff;
+                    has_error: root.lef_cutoff_error != "";
+                    supporting_text: root.lef_cutoff_error;
+                }
+            }
+
+            sigma_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Local Entropy Sigma (σ)";
+                    text <=> root.lef_sigma;
+                    has_error: root.lef_sigma_error != "";
+                    supporting_text: root.lef_sigma_error;
+                }
+            }
+        }
+    }
+}

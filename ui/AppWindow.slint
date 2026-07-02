@@ -37,6 +37,7 @@ import { SQOptionsCard } from "options/SQOptionsCard.slint";
 import { BondAngleOptionsCard } from "options/BondAngleOptionsCard.slint";
 import { RingsOptionsCard } from "options/RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "options/SmoothingOptionsCard.slint";
+import { AdvancedOptionsCard } from "options/AdvancedOptionsCard.slint";
 import { BondCutoffsCard } from "options/BondCutoffsCard.slint";
 import { MaterialTypeCard } from "options/MaterialTypeCard.slint";
 import { PreviewCard } from "preview/PreviewCard.slint";
@@ -155,7 +156,9 @@ export component AppWindow inherits Window {
         min_frame: "0",
         max_frame: "End",
         time_step: "1.0",
-        material_type: 0
+        material_type: 0,
+        lef_cutoff: "5.0",
+        lef_sigma: "0.2"
     };
     in-out property <AppErrors> app_errors;
     in-out property <[BondCutoff]> bond_cutoffs: [];
@@ -185,6 +188,8 @@ export component AppWindow inherits Window {
     property <int> smoothing_kernel <=> analysis_options.smoothing_kernel;
     property <string> time_step <=> analysis_options.time_step;
     property <int> material_type <=> analysis_options.material_type;
+    property <string> lef_cutoff <=> analysis_options.lef_cutoff;
+    property <string> lef_sigma <=> analysis_options.lef_sigma;
 
     property <string> r_max_error <=> app_errors.r_max_error;
     property <string> r_bin_error <=> app_errors.r_bin_error;
@@ -198,6 +203,8 @@ export component AppWindow inherits Window {
     property <string> min_frame_error <=> app_errors.min_frame_error;
     property <string> max_frame_error <=> app_errors.max_frame_error;
     property <string> time_step_error <=> app_errors.time_step_error;
+    property <string> lef_cutoff_error <=> app_errors.lef_cutoff_error;
+    property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
 
     property <int> export_size_preset <=> export_config.size_preset;
     property <int> export_palette <=> export_config.palette;
@@ -300,6 +307,12 @@ export component AppWindow inherits Window {
         root.validate_inputs();
     }
     changed time_step => {
+        root.validate_inputs();
+    }
+    changed lef_cutoff => {
+        root.validate_inputs();
+    }
+    changed lef_sigma => {
         root.validate_inputs();
     }
     changed material_type => {
@@ -592,6 +605,16 @@ export component AppWindow inherits Window {
                             smoothing_sigma <=> root.smoothing_sigma;
                             smoothing_kernel <=> root.smoothing_kernel;
                             smoothing_sigma_error: root.smoothing_sigma_error;
+                            visible: options_container.active_tab == 1;
+                            height: options_container.active_tab == 1 ? self.preferred-height : 0px;
+                        }
+
+                        advanced_card := AdvancedOptionsCard {
+                            file_loaded: root.file_loaded;
+                            lef_cutoff <=> root.lef_cutoff;
+                            lef_sigma <=> root.lef_sigma;
+                            lef_cutoff_error: root.lef_cutoff_error;
+                            lef_sigma_error: root.lef_sigma_error;
                             visible: options_container.active_tab == 1;
                             height: options_container.active_tab == 1 ? self.preferred-height : 0px;
                         }

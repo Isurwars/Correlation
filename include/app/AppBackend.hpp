@@ -30,6 +30,8 @@ struct AppDefaults {
   static constexpr double R_INT_MAX = 10.0;      ///< Default max radius for integration (Angstrom).
   static constexpr double ANGLE_BIN_WIDTH = 1.0; ///< Default bin width for ADF (Degrees).
   static constexpr double SMOOTHING_SIGMA = 0.1; ///< Default Gaussian smoothing sigma.
+  static constexpr double LEF_CUTOFF = 5.0;      ///< Default cutoff for local entropy.
+  static constexpr double LEF_SIGMA = 0.2;       ///< Default Gaussian sigma for local entropy.
 
   // Crystalline Defaults (1 order of magnitude smaller)
   static constexpr double R_BIN_WIDTH_CRYSTAL = 0.002;
@@ -87,6 +89,8 @@ struct ProgramOptions {
   std::map<std::string, bool> active_calculators;
 
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;                          ///< Sigma for Gaussian kernel.
+  double lef_cutoff = AppDefaults::LEF_CUTOFF;                                    ///< Cutoff radius for local entropy.
+  double lef_sigma = AppDefaults::LEF_SIGMA;                                      ///< Gaussian standard deviation for local entropy.
   correlation::math::KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL; ///< Smoothing kernel type.
   int min_frame = 0;                                                              ///< Starting frame index.
   int max_frame = -1;                                                             ///< Ending frame index (-1 for all).

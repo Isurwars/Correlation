@@ -217,6 +217,16 @@ void AppController::handleOptionstoUI() {
     opts.material_type = opt.material_type;
     window_.set_analysis_options(opts);
   }
+  {
+    auto opts = window_.get_analysis_options();
+    opts.lef_cutoff = slint::SharedString(std::format("{:.2f}", opt.lef_cutoff));
+    window_.set_analysis_options(opts);
+  }
+  {
+    auto opts = window_.get_analysis_options();
+    opts.lef_sigma = slint::SharedString(std::format("{:.2f}", opt.lef_sigma));
+    window_.set_analysis_options(opts);
+  }
 
   {
     auto opts = window_.get_analysis_options();
@@ -317,6 +327,11 @@ ProgramOptions AppController::handleOptionsfromUI() {
                                    opt.smoothing_sigma); // NOLINT(bugprone-narrowing-conversions)
   opt.smoothing_kernel = static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
   opt.material_type = window_.get_analysis_options().material_type;
+
+  opt.lef_cutoff = safe_parse(window_.get_analysis_options().lef_cutoff,
+                              opt.lef_cutoff); // NOLINT(bugprone-narrowing-conversions)
+  opt.lef_sigma = safe_parse(window_.get_analysis_options().lef_sigma,
+                             opt.lef_sigma); // NOLINT(bugprone-narrowing-conversions)
 
   // Frame Selection Logic:
   // - "Start" maps to 0

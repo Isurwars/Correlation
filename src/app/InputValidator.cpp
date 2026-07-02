@@ -150,7 +150,7 @@ std::string getDisabledGroupsArg(const ProgramOptions &opt) {
     }
     if (all_disabled) {
       std::string grp_lower = grp_name;
-      std::transform(grp_lower.begin(), grp_lower.end(), grp_lower.begin(), ::tolower);
+      std::ranges::transform(grp_lower, grp_lower.begin(), ::tolower);
       disabled_groups.push_back(grp_lower);
     }
   }
@@ -174,26 +174,9 @@ std::string getDisabledGroupsArg(const ProgramOptions &opt) {
 InputValidator::InputValidator(AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(&window), backend_(&backend), controller_(&controller) {}
 
-bool InputValidator::validateInputs() {
+bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val) {
   bool valid = true;
-  auto errs = window_->get_app_errors();
 
-  errs.r_max_error = "";
-  errs.r_bin_error = "";
-  errs.q_max_error = "";
-  errs.q_bin_error = "";
-  errs.r_int_max_error = "";
-  errs.angle_bin_error = "";
-  errs.dihedral_bin_error = "";
-  errs.max_ring_error = "";
-  errs.smoothing_sigma_error = "";
-  errs.time_step_error = "";
-  errs.min_frame_error = "";
-  errs.max_frame_error = "";
-  errs.export_font_scale_error = "";
-  errs.export_line_width_error = "";
-
-  float r_max_val = 0.0F;
   std::string r_max_s = window_->get_analysis_options().r_max.data();
   if (!is_positive_float(r_max_s, r_max_val)) {
     errs.r_max_error = "Must be a positive number";
@@ -210,7 +193,6 @@ bool InputValidator::validateInputs() {
     valid = false;
   }
 
-  float q_max_val = 0.0F;
   std::string q_max_s = window_->get_analysis_options().q_max.data();
   if (!is_positive_float(q_max_s, q_max_val)) {
     errs.q_max_error = "Must be a positive number";
@@ -233,6 +215,12 @@ bool InputValidator::validateInputs() {
     errs.r_int_max_error = "Must be a positive number";
     valid = false;
   }
+
+  return valid;
+}
+
+bool InputValidator::validateAngularAndRings(AppErrors &errs) {
+  bool valid = true;
 
   float angle_bin_val = 0.0F;
   std::string angle_bin_s = window_->get_analysis_options().angle_bin_width.data();
@@ -261,6 +249,12 @@ bool InputValidator::validateInputs() {
     valid = false;
   }
 
+  return valid;
+}
+
+bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
+  bool valid = true;
+
   float smoothing_sigma_val = 0.0F;
   std::string smoothing_sigma_s = window_->get_analysis_options().smoothing_sigma.data();
   if (!is_non_negative_float(smoothing_sigma_s, smoothing_sigma_val)) {
@@ -274,6 +268,26 @@ bool InputValidator::validateInputs() {
     errs.time_step_error = "Must be a positive number";
     valid = false;
   }
+
+  float lef_cutoff_val = 0.0F;
+  std::string lef_cutoff_s = window_->get_analysis_options().lef_cutoff.data();
+  if (!is_positive_float(lef_cutoff_s, lef_cutoff_val)) {
+    errs.lef_cutoff_error = "Must be a positive number";
+    valid = false;
+  }
+
+  float lef_sigma_val = 0.0F;
+  std::string lef_sigma_s = window_->get_analysis_options().lef_sigma.data();
+  if (!is_positive_float(lef_sigma_s, lef_sigma_val)) {
+    errs.lef_sigma_error = "Must be a positive number";
+    valid = false;
+  }
+
+  return valid;
+}
+
+bool InputValidator::validateFrames(AppErrors &errs) {
+  bool valid = true;
 
   int min_frame_val = -1;
   int max_frame_val = -1;
@@ -299,6 +313,12 @@ bool InputValidator::validateInputs() {
     }
   }
 
+  return valid;
+}
+
+bool InputValidator::validateExportConfig(AppErrors &errs) {
+  bool valid = true;
+
   float font_scale_val = 0.0F;
   std::string font_scale_s = window_->get_export_config().font_scale.data();
   if (!is_positive_float(font_scale_s, font_scale_val)) {
@@ -310,6 +330,49 @@ bool InputValidator::validateInputs() {
   std::string line_width_s = window_->get_export_config().line_width.data();
   if (!is_positive_float(line_width_s, line_width_val)) {
     errs.export_line_width_error = "Must be a positive number";
+    valid = false;
+  }
+
+  return valid;
+}
+
+bool InputValidator::validateInputs() {
+  bool valid = true;
+  auto errs = window_->get_app_errors();
+
+  errs.r_max_error = "";
+  errs.r_bin_error = "";
+  errs.q_max_error = "";
+  errs.q_bin_error = "";
+  errs.r_int_max_error = "";
+  errs.angle_bin_error = "";
+  errs.dihedral_bin_error = "";
+  errs.max_ring_error = "";
+  errs.smoothing_sigma_error = "";
+  errs.time_step_error = "";
+  errs.min_frame_error = "";
+  errs.max_frame_error = "";
+  errs.export_font_scale_error = "";
+  errs.export_line_width_error = "";
+  errs.lef_cutoff_error = "";
+  errs.lef_sigma_error = "";
+
+  float r_max_val = 0.0F;
+  float q_max_val = 0.0F;
+
+  if (!validateRadialAndScattering(errs, r_max_val, q_max_val)) {
+    valid = false;
+  }
+  if (!validateAngularAndRings(errs)) {
+    valid = false;
+  }
+  if (!validateOtherAnalysisOptions(errs)) {
+    valid = false;
+  }
+  if (!validateFrames(errs)) {
+    valid = false;
+  }
+  if (!validateExportConfig(errs)) {
     valid = false;
   }
 
@@ -372,6 +435,9 @@ void InputValidator::updateCliCommand() {
   } else {
     cmd += " --no-smoothing";
   }
+
+  cmd += " --lef-cutoff " + std::string(window_->get_analysis_options().lef_cutoff.data());
+  cmd += " --lef-sigma " + std::string(window_->get_analysis_options().lef_sigma.data());
 
   cmd += getDisabledGroupsArg(opt);
 

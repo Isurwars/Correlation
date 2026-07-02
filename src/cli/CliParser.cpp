@@ -56,7 +56,10 @@ void printUsage(const char *program) {
             << "  --hdf5                    Enable HDF5 output\n"
             << "  --no-hdf5                 Disable HDF5 output (default: off)\n"
             << "  --parquet                 Enable Parquet output\n"
-            << "  --no-parquet              Disable Parquet output\n";
+            << "  --no-parquet              Disable Parquet output\n\n"
+            << "Local Entropy Parameters:\n"
+            << "  --lef-cutoff <float>      Cutoff radius for local entropy (default: 5.0)\n"
+            << "  --lef-sigma <float>       Gaussian standard deviation for local entropy (default: 0.2)\n";
 }
 
 namespace {
@@ -166,6 +169,14 @@ bool validateOptions(const CliOptions &opts) {
     std::cerr << "Error: --smoothing-sigma cannot be negative.\n";
     return false;
   }
+  if (opts.lef_cutoff <= 0.0) {
+    std::cerr << "Error: --lef-cutoff must be strictly positive.\n";
+    return false;
+  }
+  if (opts.lef_sigma <= 0.0) {
+    std::cerr << "Error: --lef-sigma must be strictly positive.\n";
+    return false;
+  }
   if (!opts.csv && !opts.hdf5 && !opts.parquet) {
     std::cerr << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
     return false;
@@ -213,6 +224,9 @@ bool parseArgs(std::span<char *> argv, CliOptions &opts) {
   app.add_option("--max-ring-size", opts.max_ring_size);
 
   app.add_option("--smoothing-sigma", opts.smoothing_sigma);
+
+  app.add_option("--lef-cutoff", opts.lef_cutoff);
+  app.add_option("--lef-sigma", opts.lef_sigma);
 
   std::string k_str = "gaussian";
   app.add_option("--smoothing-kernel", k_str);

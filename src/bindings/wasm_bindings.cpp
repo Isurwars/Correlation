@@ -104,7 +104,9 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
       .property("rBinWidth", &AnalysisSettings::r_bin_width)
       .property("qMax", &AnalysisSettings::q_max)
       .property("qBinWidth", &AnalysisSettings::q_bin_width)
-      .property("angleBinWidth", &AnalysisSettings::angle_bin_width);
+      .property("angleBinWidth", &AnalysisSettings::angle_bin_width)
+      .property("lefCutoff", &AnalysisSettings::lef_cutoff)
+      .property("lefSigma", &AnalysisSettings::lef_sigma);
 
   // ---- DistributionFunctions ----
   class_<DistributionFunctions>("DistributionFunctions")

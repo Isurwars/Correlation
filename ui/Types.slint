@@ -53,6 +53,8 @@ export struct AnalysisOptions {
     max_frame: string,
     time_step: string,
     material_type: int,
+    lef_cutoff: string,
+    lef_sigma: string,
 }
 
 export struct AppErrors {
@@ -70,6 +72,8 @@ export struct AppErrors {
     time_step_error: string,
     export_font_scale_error: string,
     export_line_width_error: string,
+    lef_cutoff_error: string,
+    lef_sigma_error: string,
 }
 
 export struct ExportConfig {

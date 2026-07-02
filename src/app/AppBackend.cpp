@@ -279,6 +279,12 @@ std::string AppBackend::validateOptions() const {
   if (options_.smoothing_sigma < 0.0) {
     return "Error: smoothing_sigma cannot be negative.";
   }
+  if (options_.lef_cutoff <= 0.0) {
+    return "Error: lef_cutoff must be strictly positive.";
+  }
+  if (options_.lef_sigma <= 0.0) {
+    return "Error: lef_sigma must be strictly positive.";
+  }
   return "";
 }
 
@@ -455,6 +461,8 @@ std::string AppBackend::run_analysis() {
     settings.smoothing = options_.smoothing;
     settings.smoothing_sigma = options_.smoothing_sigma;
     settings.smoothing_kernel = options_.smoothing_kernel;
+    settings.lef_cutoff = options_.lef_cutoff;
+    settings.lef_sigma = options_.lef_sigma;
     settings.cancel_flag = &cancel_flag_;
 
     // Run parallel analysis to compute distribution functions

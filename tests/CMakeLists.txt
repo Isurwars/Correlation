@@ -50,6 +50,7 @@ add_executable(correlation_unit_tests
     unit/calculators/HBondCalculatorTests.cpp
     unit/calculators/SDFCalculatorTests.cpp
     unit/calculators/ClusterCalculatorTests.cpp
+    unit/calculators/LocalEntropyCalculatorTests.cpp
     unit/physics/PhysicalDataTests.cpp
     unit/calculators/AngleCalculatorTests.cpp
     unit/calculators/CNCalculatorTests.cpp

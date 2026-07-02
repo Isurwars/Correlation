@@ -378,6 +378,8 @@ std::string PresetManager::toJson(const Preset &preset) {
       "  \"dihedral_bin_width\": {:.6f},\n"
       "  \"max_ring_size\": {},\n"
       "  \"smoothing_sigma\": {:.6f},\n"
+      "  \"lef_cutoff\": {:.6f},\n"
+      "  \"lef_sigma\": {:.6f},\n"
       "  \"smoothing_kernel\": {},\n"
       "  \"min_frame\": {},\n"
       "  \"max_frame\": {},\n"
@@ -390,6 +392,7 @@ std::string PresetManager::toJson(const Preset &preset) {
       preset.options.use_parquet ? "true" : "false", preset.options.r_max, preset.options.r_bin_width,
       preset.options.q_max, preset.options.q_bin_width, preset.options.r_int_max, preset.options.angle_bin_width,
       preset.options.dihedral_bin_width, preset.options.max_ring_size, preset.options.smoothing_sigma,
+      preset.options.lef_cutoff, preset.options.lef_sigma,
       static_cast<int>(preset.options.smoothing_kernel), preset.options.min_frame, preset.options.max_frame,
       preset.options.time_step, preset.options.material_type, active_calcs_json);
 }
@@ -414,6 +417,8 @@ Preset PresetManager::fromJson(const std::string &json) {
 
   preset.options.max_ring_size = static_cast<size_t>(parseIntValue(json, "max_ring_size", 8));
   preset.options.smoothing_sigma = parseDoubleValue(json, "smoothing_sigma", AppDefaults::SMOOTHING_SIGMA);
+  preset.options.lef_cutoff = parseDoubleValue(json, "lef_cutoff", AppDefaults::LEF_CUTOFF);
+  preset.options.lef_sigma = parseDoubleValue(json, "lef_sigma", AppDefaults::LEF_SIGMA);
   preset.options.smoothing_kernel =
       static_cast<correlation::math::KernelType>(parseIntValue(json, "smoothing_kernel", 0));
 

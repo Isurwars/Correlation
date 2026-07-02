@@ -46,6 +46,12 @@ public:
   void handleCopyCliCommand();
 
 private:
+  bool validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val);
+  bool validateAngularAndRings(AppErrors &errs);
+  bool validateOtherAnalysisOptions(AppErrors &errs);
+  bool validateFrames(AppErrors &errs);
+  bool validateExportConfig(AppErrors &errs);
+
   AppWindow *window_;
   AppBackend *backend_;
   AppController *controller_;
