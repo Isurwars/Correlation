@@ -1,6 +1,5 @@
 #include "readers/LammpsDumpReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -43,13 +42,13 @@ TEST(LammpsDumpReaderTests, ReadsTrajectoryOrtho) {
   auto traj = reader.readTrajectory(data_dir + "clean.dump");
 
   EXPECT_EQ(traj.getFrameCount(), 1);
-  const auto &f = traj.getFrame(0);
-  EXPECT_EQ(f.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f.lattice_parameters()[0], 10.0);
-  EXPECT_DOUBLE_EQ(f.lattice_parameters()[1], 11.0);
-  EXPECT_DOUBLE_EQ(f.lattice_parameters()[2], 12.0);
+  const auto &frame = traj.getFrame(0);
+  EXPECT_EQ(frame.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(frame.lattice_parameters()[0], 10.0);
+  EXPECT_DOUBLE_EQ(frame.lattice_parameters()[1], 11.0);
+  EXPECT_DOUBLE_EQ(frame.lattice_parameters()[2], 12.0);
   // Standard atom mapping should fall back to type since no element was specified
-  EXPECT_EQ(f.atoms()[0].element().symbol, "2");
+  EXPECT_EQ(frame.atoms()[0].element().symbol, "2");
 }
 
 TEST(LammpsDumpReaderTests, ReadsTrajectoryTriclinicScaledAndElement) {
@@ -58,12 +57,12 @@ TEST(LammpsDumpReaderTests, ReadsTrajectoryTriclinicScaledAndElement) {
   auto traj = reader.readTrajectory(data_dir + "clean_tri.dump");
 
   EXPECT_EQ(traj.getFrameCount(), 1);
-  const auto &f = traj.getFrame(0);
-  EXPECT_EQ(f.atomCount(), 2);
+  const auto &frame = traj.getFrame(0);
+  EXPECT_EQ(frame.atomCount(), 2);
 
   // Check elements
-  EXPECT_EQ(f.atoms()[0].element().symbol, "C");
-  EXPECT_EQ(f.atoms()[1].element().symbol, "H");
+  EXPECT_EQ(frame.atoms()[0].element().symbol, "C");
+  EXPECT_EQ(frame.atoms()[1].element().symbol, "H");
 
   // Triclinic lattice:
   // lx = 10, ly = 10, lz = 10
@@ -72,7 +71,7 @@ TEST(LammpsDumpReaderTests, ReadsTrajectoryTriclinicScaledAndElement) {
   // c = (xz, yz, lz) = (2, 3, 10)
   // For Atom 1 (xs=0.5, ys=0.5, zs=0.5):
   // pos = 0.5*a + 0.5*b + 0.5*c = (5.0, 0.0, 0.0) + (0.5, 5.0, 0.0) + (1.0, 1.5, 5.0) = (6.5, 6.5, 5.0)
-  const auto &pos1 = f.atoms()[0].position();
+  const auto &pos1 = frame.atoms()[0].position();
   EXPECT_NEAR(pos1.x(), 6.5, 1e-5);
   EXPECT_NEAR(pos1.y(), 6.5, 1e-5);
   EXPECT_NEAR(pos1.z(), 5.0, 1e-5);

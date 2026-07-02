@@ -1,7 +1,6 @@
 #include "math/Constants.hpp"
 #include "readers/OutmolReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -45,14 +44,14 @@ TEST(OutmolReaderTests, ReadsTrajectoryFormat1) {
   auto cell = reader.readStructure(data_dir + "clean_fmt1.outmol");
 
   EXPECT_EQ(traj.getFrameCount(), 1);
-  const auto &f = traj.getFrame(0);
-  EXPECT_EQ(f.atomCount(), 2);
+  const auto &frame = traj.getFrame(0);
+  EXPECT_EQ(frame.atomCount(), 2);
 
   // Bohr to angstrom check
-  EXPECT_NEAR(f.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom, 1e-5);
-  EXPECT_NEAR(f.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom, 1e-5);
-  EXPECT_EQ(f.atoms()[0].element().symbol, "C");
-  EXPECT_EQ(f.atoms()[1].element().symbol, "H");
+  EXPECT_NEAR(frame.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom, 1e-5);
+  EXPECT_NEAR(frame.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom, 1e-5);
+  EXPECT_EQ(frame.atoms()[0].element().symbol, "C");
+  EXPECT_EQ(frame.atoms()[1].element().symbol, "H");
 
   EXPECT_EQ(cell.atomCount(), 2);
 }
@@ -64,13 +63,13 @@ TEST(OutmolReaderTests, ReadsTrajectoryFormat2) {
   auto traj = reader.readTrajectory(data_dir + "clean_fmt2.outmol");
 
   EXPECT_EQ(traj.getFrameCount(), 1);
-  const auto &f = traj.getFrame(0);
-  EXPECT_EQ(f.atomCount(), 2);
+  const auto &frame = traj.getFrame(0);
+  EXPECT_EQ(frame.atomCount(), 2);
 
-  EXPECT_NEAR(f.lattice_parameters()[0], 12.0 * correlation::math::bohr_to_angstrom, 1e-5);
-  EXPECT_NEAR(f.atoms()[0].position().x(), 2.0 * correlation::math::bohr_to_angstrom, 1e-5);
-  EXPECT_EQ(f.atoms()[0].element().symbol, "Si");
-  EXPECT_EQ(f.atoms()[1].element().symbol, "O");
+  EXPECT_NEAR(frame.lattice_parameters()[0], 12.0 * correlation::math::bohr_to_angstrom, 1e-5);
+  EXPECT_NEAR(frame.atoms()[0].position().x(), 2.0 * correlation::math::bohr_to_angstrom, 1e-5);
+  EXPECT_EQ(frame.atoms()[0].element().symbol, "Si");
+  EXPECT_EQ(frame.atoms()[1].element().symbol, "O");
 }
 
 TEST(OutmolReaderTests, ThrowsOnInvalidFile) {

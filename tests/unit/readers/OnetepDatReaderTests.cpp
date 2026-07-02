@@ -1,6 +1,5 @@
 #include "readers/OnetepDatReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -62,15 +61,15 @@ TEST(OnetepDatReaderTests, ReadsStructureLatticeAbcAndPositionsFrac) {
   EXPECT_EQ(cell.atoms()[0].element().symbol, "H");
   EXPECT_EQ(cell.atoms()[1].element().symbol, "O");
 
-  const auto &p1 = cell.atoms()[0].position();
-  EXPECT_NEAR(p1.x(), 1.5, 1e-5);
-  EXPECT_NEAR(p1.y(), 1.5, 1e-5);
-  EXPECT_NEAR(p1.z(), 1.5, 1e-5);
+  const auto &pos_1 = cell.atoms()[0].position();
+  EXPECT_NEAR(pos_1.x(), 1.5, 1e-5);
+  EXPECT_NEAR(pos_1.y(), 1.5, 1e-5);
+  EXPECT_NEAR(pos_1.z(), 1.5, 1e-5);
 
-  const auto &p2 = cell.atoms()[1].position();
-  EXPECT_NEAR(p2.x(), 3.0, 1e-5);
-  EXPECT_NEAR(p2.y(), 3.0, 1e-5);
-  EXPECT_NEAR(p2.z(), 13.5, 1e-5);
+  const auto &pos_2 = cell.atoms()[1].position();
+  EXPECT_NEAR(pos_2.x(), 3.0, 1e-5);
+  EXPECT_NEAR(pos_2.y(), 3.0, 1e-5);
+  EXPECT_NEAR(pos_2.z(), 13.5, 1e-5);
 }
 
 TEST(OnetepDatReaderTests, ThrowsOnReadTrajectory) {

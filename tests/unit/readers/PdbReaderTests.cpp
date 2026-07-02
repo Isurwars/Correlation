@@ -7,14 +7,11 @@
 #include "core/Trajectory.hpp"
 #include "readers/PdbReader.hpp"
 
-#include <algorithm>
-#include <cstdio>
 #include <filesystem>
-#include <fstream>
 #include <gtest/gtest.h>
 
 namespace correlation::testing {
-
+namespace {
 std::string getTestDataDir() {
   std::vector<std::string> const candidates = {
       "../../tests/data/",
@@ -31,12 +28,13 @@ std::string getTestDataDir() {
 }
 
 class PdbReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
-  void SetUp() override {
-    data_dir_ = getTestDataDir();
-  }
+
+protected:
+  void SetUp() override { data_dir_ = getTestDataDir(); }
 };
+} // namespace
 
 TEST_F(PdbReaderTests, ReadSingleStructure) {
   correlation::readers::PdbReader reader;
