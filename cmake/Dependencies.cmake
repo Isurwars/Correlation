@@ -476,6 +476,18 @@ elseif(CORRELATION_USE_MKL)
 endif()
 
 
+# 11. voro++
+message(STATUS "Downloading voro++ from GitHub...")
+set(VORO_BUILD_EXAMPLES OFF CACHE BOOL "Disable voro++ examples" FORCE)
+set(VORO_BUILD_CMD_LINE OFF CACHE BOOL "Disable voro++ command line" FORCE)
+set(VORO_ENABLE_DOXYGEN OFF CACHE BOOL "Disable voro++ doxygen" FORCE)
+FetchContent_Declare(
+  voro
+  GIT_REPOSITORY https://github.com/chr1shr/voro.git
+  GIT_TAG        b0dac575a47af0f90b5b100e6dc199a493c7cb83
+)
+FetchContent_MakeAvailable(voro)
+
 # Restore original BUILD_TESTING cache state
 if(BUILD_TESTING_EXISTS)
   set(BUILD_TESTING "${ORIG_BUILD_TESTING}" CACHE ${ORIG_BUILD_TESTING_TYPE} "${ORIG_BUILD_TESTING_HELP}" FORCE)

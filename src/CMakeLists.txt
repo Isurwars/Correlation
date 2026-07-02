@@ -51,11 +51,12 @@ add_library(calculators_obj OBJECT
     calculators/SDFCalculator.cpp
     calculators/ClusterCalculator.cpp
     calculators/LocalEntropyCalculator.cpp
+    calculators/VoronoiCalculator.cpp
 )
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
-target_link_libraries(calculators_obj PRIVATE TBB::tbb)
+target_link_libraries(calculators_obj PRIVATE TBB::tbb voro++)
 target_compile_definitions(calculators_obj PRIVATE _PSTL_PAR_BACKEND_TBB)
 target_link_libraries(calculators_obj PRIVATE correlation_simd_options)
 
@@ -135,7 +136,7 @@ if(BUILD_WITH_ARROW)
     target_compile_definitions(correlation_lib PUBLIC CORRELATION_USE_ARROW)
 endif()
 
-target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlation_fft)
+target_link_libraries(correlation_lib PUBLIC correlation_simd_options correlation_fft voro++)
 
 # Pybind11 creates a shared module and requires PIC (handled globally via CMAKE_POSITION_INDEPENDENT_CODE ON)
 

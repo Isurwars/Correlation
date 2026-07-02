@@ -30,7 +30,7 @@ protected:
   }
 };
 
-TEST_F(LocalEntropyCalculatorTests, FourStructuresTest) {
+TEST_F(LocalEntropyCalculatorTests, SimpleCubic) {
   // 1. Simple Cubic (SC) Structure
   // Box length 12.0 with SC lattice spacing 4.0 (27 atoms)
   correlation::core::Cell cell_sc({12.0, 12.0, 12.0, 90.0, 90.0, 90.0});
@@ -45,7 +45,10 @@ TEST_F(LocalEntropyCalculatorTests, FourStructuresTest) {
   StructureAnalyzer const analyzer_sc(cell_sc, 6.5, {{6.5 * 6.5}}, false);
   auto hist_sc = correlation::calculators::LocalEntropyCalculator::calculate(cell_sc, &analyzer_sc, 6.0, 0.2);
   double const entropy_sc = getPeakEntropy(hist_sc);
+  EXPECT_NEAR(entropy_sc, -6.15, 1e-4);
+}
 
+TEST_F(LocalEntropyCalculatorTests, BodyCenteredCubic) {
   // 2. Body-Centered Cubic (BCC) Structure
   // Box length 10.0 with BCC lattice spacing 5.0 (16 atoms)
   correlation::core::Cell cell_bcc({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
@@ -61,7 +64,10 @@ TEST_F(LocalEntropyCalculatorTests, FourStructuresTest) {
   StructureAnalyzer const analyzer_bcc(cell_bcc, 6.5, {{6.5 * 6.5}}, false);
   auto hist_bcc = correlation::calculators::LocalEntropyCalculator::calculate(cell_bcc, &analyzer_bcc, 6.0, 0.2);
   double const entropy_bcc = getPeakEntropy(hist_bcc);
+  EXPECT_NEAR(entropy_bcc, -5.95, 1e-4);
+}
 
+TEST_F(LocalEntropyCalculatorTests, FaceCenteredCubic) {
   // 3. Face-Centered Cubic (FCC) Structure
   // Box length 10.0 with FCC lattice spacing 5.0 (32 atoms)
   correlation::core::Cell cell_fcc({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
@@ -78,7 +84,10 @@ TEST_F(LocalEntropyCalculatorTests, FourStructuresTest) {
   StructureAnalyzer const analyzer_fcc(cell_fcc, 6.5, {{6.5 * 6.5}}, false);
   auto hist_fcc = correlation::calculators::LocalEntropyCalculator::calculate(cell_fcc, &analyzer_fcc, 6.0, 0.2);
   double const entropy_fcc = getPeakEntropy(hist_fcc);
+  EXPECT_NEAR(entropy_fcc, -8.95, 1e-4);
+}
 
+TEST_F(LocalEntropyCalculatorTests, Random) {
   // 4. Random / Gas Structure (Poisson distribution)
   // Box length 12.0 with 30 randomly placed atoms
   correlation::core::Cell cell_rand({12.0, 12.0, 12.0, 90.0, 90.0, 90.0});
@@ -91,15 +100,7 @@ TEST_F(LocalEntropyCalculatorTests, FourStructuresTest) {
   StructureAnalyzer const analyzer_rand(cell_rand, 6.5, {{6.5 * 6.5}}, false);
   auto hist_rand = correlation::calculators::LocalEntropyCalculator::calculate(cell_rand, &analyzer_rand, 6.0, 0.2);
   double const entropy_rand = getPeakEntropy(hist_rand);
-
-  // Assert thermodynamic/physical order:
-  EXPECT_LT(entropy_fcc, entropy_sc);
-  EXPECT_LT(entropy_sc, entropy_bcc);
-  EXPECT_LT(entropy_bcc, entropy_rand);
-
-  // Assert reasonable range values
-  EXPECT_GT(entropy_rand, -3.0);
-  EXPECT_LT(entropy_fcc, -7.0);
+  EXPECT_NEAR(entropy_rand, -2.05, 1e-4);
 }
 
 } // namespace
