@@ -1,6 +1,5 @@
 #include "readers/CP2KReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -25,15 +24,14 @@ std::string getTestDataDir() {
   return "../../tests/data/cp2k/";
 }
 
-} // namespace
-
 class CP2KReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
-  void SetUp() override {
-    data_dir_ = getTestDataDir();
-  }
+
+protected:
+  void SetUp() override { data_dir_ = getTestDataDir(); }
 };
+} // namespace
 
 TEST_F(CP2KReaderTests, ReadsSingleFrame) {
   CP2KReader reader;

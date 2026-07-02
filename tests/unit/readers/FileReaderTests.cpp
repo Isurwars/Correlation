@@ -10,13 +10,15 @@
 
 #include <filesystem>
 #include <fstream>
-#include <vector>
 #include <gtest/gtest.h>
+#include <vector>
 
+namespace {
 class FileReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
 
+protected:
   static std::string getTestDataDir() {
     std::vector<std::string> const candidates = {
         "../../tests/data/", // build/tests -> tests/data
@@ -32,10 +34,9 @@ protected:
     return "../../tests/data/";
   }
 
-  void SetUp() override {
-    data_dir_ = getTestDataDir();
-  }
+  void SetUp() override { data_dir_ = getTestDataDir(); }
 };
+} // namespace
 
 //----------------------------------------------------------------------------//
 //--------------------------------- Test Cases -------------------------------//
@@ -142,16 +143,16 @@ TEST_F(FileReaderTests, ReadArcFileCorrectly) {
   ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
-  const auto &f1 = frames[0];
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0);
-  ASSERT_EQ(f1.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0);
+  const auto &file_1 = frames[0];
+  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[0], 10.0);
+  ASSERT_EQ(file_1.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(file_1.atoms()[0].position().x(), 1.0);
 
   // Check Frame 2
-  const auto &f2 = frames[1];
-  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 11.0);
-  ASSERT_EQ(f2.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 2.0);
+  const auto &file_2 = frames[1];
+  EXPECT_DOUBLE_EQ(file_2.lattice_parameters()[0], 11.0);
+  ASSERT_EQ(file_2.atomCount(), 1);
+  EXPECT_DOUBLE_EQ(file_2.atoms()[0].position().x(), 2.0);
 }
 
 TEST_F(FileReaderTests, ReadArcFileDuplicatedFrames) {
@@ -209,16 +210,16 @@ TEST_F(FileReaderTests, ReadLammpsDumpTrajectoryCorrectly) {
   ASSERT_EQ(frames.size(), 2);
 
   // Frame 1 positions
-  const auto &f1 = frames[0];
-  ASSERT_EQ(f1.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0);
-  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0);
+  const auto &file_1 = frames[0];
+  ASSERT_EQ(file_1.atomCount(), 2);
+  EXPECT_DOUBLE_EQ(file_1.atoms()[0].position().x(), 1.0);
+  EXPECT_DOUBLE_EQ(file_1.atoms()[1].position().x(), 4.0);
 
   // Frame 2 positions
-  const auto &f2 = frames[1];
-  ASSERT_EQ(f2.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.5);
-  EXPECT_DOUBLE_EQ(f2.atoms()[1].position().x(), 4.5);
+  const auto &file_2 = frames[1];
+  ASSERT_EQ(file_2.atomCount(), 2);
+  EXPECT_DOUBLE_EQ(file_2.atoms()[0].position().x(), 1.5);
+  EXPECT_DOUBLE_EQ(file_2.atoms()[1].position().x(), 4.5);
 }
 
 TEST_F(FileReaderTests, ReadLammpsDumpElementColumnCorrectly) {
@@ -275,32 +276,32 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
   ASSERT_EQ(frames.size(), 2);
 
   // Check Frame 1
-  const auto &f1 = frames[0];
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[1], 11.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f1.lattice_parameters()[2], 12.0 * correlation::math::bohr_to_angstrom);
-  ASSERT_EQ(f1.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(f1.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f1.atoms()[1].position().x(), 4.0 * correlation::math::bohr_to_angstrom);
+  const auto &file_1 = frames[0];
+  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[1], 11.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[2], 12.0 * correlation::math::bohr_to_angstrom);
+  ASSERT_EQ(file_1.atomCount(), 2);
+  EXPECT_DOUBLE_EQ(file_1.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(file_1.atoms()[1].position().x(), 4.0 * correlation::math::bohr_to_angstrom);
 
-  EXPECT_DOUBLE_EQ(f1.getEnergy(), -31.8206146);
+  EXPECT_DOUBLE_EQ(file_1.getEnergy(), -31.8206146);
 
   // Check Frame 2
-  const auto &f2 = frames[1];
-  EXPECT_DOUBLE_EQ(f2.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(f2.atoms()[0].position().x(), 1.1 * correlation::math::bohr_to_angstrom);
+  const auto &file_2 = frames[1];
+  EXPECT_DOUBLE_EQ(file_2.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_DOUBLE_EQ(file_2.atoms()[0].position().x(), 1.1 * correlation::math::bohr_to_angstrom);
 }
 
 TEST_F(FileReaderTests, ReadCelluloseExample) {
   std::string cellulose_path = "../../examples/Cellulose/Cellulose.md";
-  std::ifstream f(cellulose_path);
-  if (!f.good()) {
+  std::ifstream file(cellulose_path);
+  if (!file.good()) {
     cellulose_path = "../examples/Cellulose/Cellulose.md";
-    std::ifstream f2(cellulose_path);
-    if (!f2.good()) {
+    std::ifstream file2(cellulose_path);
+    if (!file2.good()) {
       cellulose_path = "examples/Cellulose/Cellulose.md";
-      std::ifstream f3(cellulose_path);
-      if (!f3.good()) {
+      std::ifstream file3(cellulose_path);
+      if (!file3.good()) {
         GTEST_SKIP() << "Cellulose.md example file not found. Skipping test.";
         return;
       }
@@ -321,14 +322,14 @@ TEST_F(FileReaderTests, ReadCelluloseExample) {
 
 TEST_F(FileReaderTests, ReadOutmolCorrectly) {
   std::string file_path = "../../examples/PdCuNiP/PdCuNiP.outmol";
-  std::ifstream f(file_path);
-  if (!f.good()) {
+  std::ifstream file(file_path);
+  if (!file.good()) {
     file_path = "../examples/PdCuNiP/PdCuNiP.outmol";
-    std::ifstream f2(file_path);
-    if (!f2.good()) {
+    std::ifstream file2(file_path);
+    if (!file2.good()) {
       file_path = "examples/PdCuNiP/PdCuNiP.outmol";
-      std::ifstream f3(file_path);
-      if (!f3.good()) {
+      std::ifstream file3(file_path);
+      if (!file3.good()) {
         GTEST_SKIP() << "PdCuNiP.outmol example file not found. Skipping test.";
         return;
       }
@@ -392,7 +393,7 @@ TEST_F(FileReaderTests, ReadExtensionlessVaspTrajectory) {
   correlation::core::Trajectory traj = readTrajectory(data_dir_ + "xdatcar/XDATCAR", FileType::Xdatcar);
   EXPECT_EQ(traj.getFrameCount(), 2);
 
-  const auto &f1 = traj.getFrame(0);
-  EXPECT_EQ(f1.atomCount(), 2);
-  EXPECT_NEAR(f1.lattice_parameters()[0], 5.43, 1e-6);
+  const auto &file_1 = traj.getFrame(0);
+  EXPECT_EQ(file_1.atomCount(), 2);
+  EXPECT_NEAR(file_1.lattice_parameters()[0], 5.43, 1e-6);
 }
