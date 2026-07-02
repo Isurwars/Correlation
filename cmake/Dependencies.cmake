@@ -112,9 +112,9 @@ if(BUILD_WITH_HDF5)
     set(HDF5_ENABLE_NONSTANDARD_FEATURE_COMPLEX OFF CACHE BOOL "Disable _Complex support" FORCE)
     set(HDF5_ENABLE_NONSTANDARD_FEATURE_COMPLEX_H OFF CACHE BOOL "Disable _Complex_H support" FORCE)
     # Shared specific options
-    set(HDF5_BUILD_SHARED_LIBS OFF CACHE BOOL "Build HDF5 Shared Library" FORCE)
-    set(HDF5_USE_STATIC_LIBRARIES ON CACHE BOOL "Use HDF5 Static Libraries" FORCE)
-    set(HDF5_BUILD_STATIC_TOOLS ON CACHE BOOL "Build HDF5 Static Tools" FORCE)
+    set(HDF5_BUILD_SHARED_LIBS ON CACHE BOOL "Build HDF5 Shared Library" FORCE)
+    set(HDF5_USE_STATIC_LIBRARIES OFF CACHE BOOL "Use HDF5 Static Libraries" FORCE)
+    set(HDF5_BUILD_STATIC_TOOLS OFF CACHE BOOL "Build HDF5 Static Tools" FORCE)
 
 
     FetchContent_Declare(
@@ -142,16 +142,16 @@ if(BUILD_WITH_HDF5)
   # Ensure HDF5::HDF5_HL is available for linkage
   if(NOT TARGET HDF5::HDF5_HL)
     message(STATUS "Attempting to find HDF5 HL target to alias...")
-    if(TARGET hdf5::hdf5_hl-static)
-       add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl-static)
-    elseif(TARGET hdf5::hdf5_hl-shared)
+    if(TARGET hdf5::hdf5_hl-shared)
        add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl-shared)
-    elseif(TARGET hdf5::hdf5_hl)
-       add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl)
-    elseif(TARGET hdf5_hl-static)
-       add_library(HDF5::HDF5_HL ALIAS hdf5_hl-static)
     elseif(TARGET hdf5_hl-shared)
        add_library(HDF5::HDF5_HL ALIAS hdf5_hl-shared)
+    elseif(TARGET hdf5::hdf5_hl)
+       add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl)
+    elseif(TARGET hdf5::hdf5_hl-static)
+       add_library(HDF5::HDF5_HL ALIAS hdf5::hdf5_hl-static)
+    elseif(TARGET hdf5_hl-static)
+       add_library(HDF5::HDF5_HL ALIAS hdf5_hl-static)
     endif()
   endif()
 endif()
@@ -266,8 +266,8 @@ if(BUILD_WITH_ARROW)
     set(ARROW_WITH_LZ4 OFF CACHE INTERNAL "")
     set(ARROW_WITH_BROTLI OFF CACHE INTERNAL "")
     set(ARROW_WITH_BZ2 OFF CACHE INTERNAL "")
-    set(ARROW_BUILD_STATIC ON CACHE INTERNAL "")
-    set(ARROW_BUILD_SHARED OFF CACHE INTERNAL "")
+    set(ARROW_BUILD_STATIC OFF CACHE INTERNAL "")
+    set(ARROW_BUILD_SHARED ON CACHE INTERNAL "")
     set(ARROW_COMPUTE OFF CACHE INTERNAL "")
     set(ARROW_CSV OFF CACHE INTERNAL "")
     set(ARROW_JSON OFF CACHE INTERNAL "")
@@ -284,9 +284,11 @@ if(BUILD_WITH_ARROW)
 
     FetchContent_MakeAvailable(arrow)
 
-    # Create alias targets for the static libraries built from source
+    # Create alias targets for the shared/static libraries built from source
     if (NOT TARGET arrow_shared)
-      if (TARGET arrow_static)
+      if (TARGET Arrow::arrow_shared)
+        add_library(arrow_shared ALIAS Arrow::arrow_shared)
+      elseif (TARGET arrow_static)
         add_library(arrow_shared ALIAS arrow_static)
       elseif (TARGET Arrow::arrow_static)
         add_library(arrow_shared ALIAS Arrow::arrow_static)
@@ -294,7 +296,9 @@ if(BUILD_WITH_ARROW)
     endif()
 
     if (NOT TARGET parquet_shared)
-      if (TARGET parquet_static)
+      if (TARGET Parquet::parquet_shared)
+        add_library(parquet_shared ALIAS Parquet::parquet_shared)
+      elseif (TARGET parquet_static)
         add_library(parquet_shared ALIAS parquet_static)
       elseif (TARGET Parquet::parquet_static)
         add_library(parquet_shared ALIAS Parquet::parquet_static)
@@ -365,19 +369,12 @@ if(BUILD_GUI)
   message(STATUS "Downloading nativefiledialog-extended from GitHub...")
   set(NFD_BUILD_TESTS OFF CACHE BOOL "Disable NFD tests" FORCE)
 
-  # Temporarily disable BUILD_SHARED_LIBS so nfd is built statically
-  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
-
   FetchContent_Declare(
     nfd
     GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
     GIT_TAG        v1.2.1
   )
   FetchContent_MakeAvailable(nfd)
-
-  # Restore BUILD_SHARED_LIBS
-  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
 endif()
 
 # 10. FFT Library Configuration
@@ -482,10 +479,12 @@ set(VORO_BUILD_EXAMPLES OFF CACHE BOOL "Disable voro++ examples" FORCE)
 set(VORO_BUILD_CMD_LINE OFF CACHE BOOL "Disable voro++ command line" FORCE)
 set(VORO_ENABLE_DOXYGEN OFF CACHE BOOL "Disable voro++ doxygen" FORCE)
 
-# Temporarily disable BUILD_SHARED_LIBS so voro++ is built statically.
-# This avoids DLL linkage issues on Windows where MSVC requires __declspec(dllexport) to generate a import library (.lib).
-set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+# voro++ does not export symbols and cannot be built as a DLL under MSVC.
+# We build it statically on Windows, but let it build as a shared library on macOS/Linux.
+if(WIN32)
+  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+endif()
 
 FetchContent_Declare(
   voro
@@ -494,8 +493,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(voro)
 
-# Restore BUILD_SHARED_LIBS
-set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+if(WIN32)
+  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+endif()
 
 # Ensure voro++ is built with position-independent code (PIC) since it might be linked into shared libraries/modules
 if(TARGET voro++)
