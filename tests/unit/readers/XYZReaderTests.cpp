@@ -8,7 +8,6 @@
 #include "readers/XYZReader.hpp"
 
 #include <filesystem>
-#include <fstream>
 #include <gtest/gtest.h>
 
 namespace {
@@ -28,15 +27,14 @@ std::string getTestDataDir() {
   return "../../tests/data/xyz/";
 }
 
-} // namespace
-
 class XYZReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
-  void SetUp() override {
-    data_dir_ = getTestDataDir();
-  }
+
+protected:
+  void SetUp() override { data_dir_ = getTestDataDir(); }
 };
+} // namespace
 
 TEST_F(XYZReaderTests, ReadStandardXYZ) {
   correlation::readers::XYZReader reader;

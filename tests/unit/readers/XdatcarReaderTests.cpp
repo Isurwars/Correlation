@@ -7,7 +7,6 @@
 #include "core/Trajectory.hpp"
 #include "readers/XdatcarReader.hpp"
 
-#include <cmath>
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <stdexcept>
@@ -29,13 +28,14 @@ std::string getTestDataDir() {
   return "../../tests/data/xdatcar/";
 }
 
-} // namespace
-
 class XdatcarReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
+
+protected:
   void SetUp() override { data_dir_ = getTestDataDir(); }
 };
+} // namespace
 
 TEST_F(XdatcarReaderTests, ParseThreeFrameTrajectory) {
   correlation::readers::XdatcarReader reader;
@@ -72,7 +72,7 @@ TEST_F(XdatcarReaderTests, SpeciesAreCorrect) {
   correlation::readers::XdatcarReader reader;
   auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
-  ASSERT_GT(traj.getFrameCount(), 0u);
+  ASSERT_GT(traj.getFrameCount(), 0U);
   auto frame0 = traj.getFrame(0);
   EXPECT_EQ(frame0.elements().size(), 1);
   EXPECT_EQ(frame0.elements()[0].symbol, "Si");
@@ -82,7 +82,7 @@ TEST_F(XdatcarReaderTests, PositionsDifferBetweenFrames) {
   correlation::readers::XdatcarReader reader;
   auto traj = reader.readTrajectory(data_dir_ + "Si.xdatcar");
 
-  ASSERT_GE(traj.getFrameCount(), 2u);
+  ASSERT_GE(traj.getFrameCount(), 2U);
   // First atom in frame 0 vs frame 1 should differ
   auto frame0 = traj.getFrame(0);
   auto frame1 = traj.getFrame(1);

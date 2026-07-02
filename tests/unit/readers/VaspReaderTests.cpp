@@ -6,7 +6,6 @@
 #include "core/Cell.hpp"
 #include "readers/VaspReader.hpp"
 
-#include <cmath>
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <stdexcept>
@@ -31,13 +30,14 @@ std::string getTestDataDir() {
   return "../../tests/data/";
 }
 
-} // namespace
-
 class VaspReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
+
+protected:
   void SetUp() override { data_dir_ = getTestDataDir() + "vasp/"; }
 };
+} // namespace
 
 TEST_F(VaspReaderTests, ParseSiDiamondPoscar) {
   auto cell = correlation::readers::VaspReader::read(data_dir_ + "Si.poscar");

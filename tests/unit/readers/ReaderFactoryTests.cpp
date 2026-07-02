@@ -14,25 +14,26 @@
 namespace correlation::testing {
 
 using namespace correlation::readers;
-
+namespace {
 class MockReader : public BaseReader {
 public:
-  std::string getName() const override { return "MockReader"; }
-  std::vector<std::string> getExtensions() const override { return {".mock", ".mck"}; }
-  bool isTrajectory() const override { return false; }
+  [[nodiscard]] std::string getName() const override { return "MockReader"; }
+  [[nodiscard]] std::vector<std::string> getExtensions() const override { return {".mock", ".mck"}; }
+  [[nodiscard]] bool isTrajectory() const override { return false; }
 
   correlation::core::Cell
-  readStructure(const std::string &filename,
-                std::function<void(float, const std::string &)> progress_callback = nullptr) override {
+  readStructure(const std::string & /*filename*/,
+                std::function<void(float, const std::string &)> /*progress_callback*/ = nullptr) override {
     return correlation::core::Cell();
   }
 
   correlation::core::Trajectory
-  readTrajectory(const std::string &filename,
-                 std::function<void(float, const std::string &)> progress_callback = nullptr) override {
+  readTrajectory(const std::string & /*filename*/,
+                 std::function<void(float, const std::string &)> /*progress_callback*/ = nullptr) override {
     return correlation::core::Trajectory();
   }
 };
+} // namespace
 
 TEST(ReaderFactoryTests, SingletonInstanceIsUnique) {
   auto &factory1 = ReaderFactory::instance();
@@ -115,7 +116,7 @@ TEST(ReaderFactoryTests, SniffsQuantumEspressoFromOutFile) {
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), "Quantum ESPRESSO Reader");
 
-  std::remove(filename.c_str());
+  static_cast<void>(std::remove(filename.c_str()));
 }
 
 TEST(ReaderFactoryTests, SniffsCP2KFromOutFile) {
@@ -132,7 +133,7 @@ TEST(ReaderFactoryTests, SniffsCP2KFromOutFile) {
   ASSERT_NE(retrieved, nullptr);
   EXPECT_EQ(retrieved->getName(), "CP2K Reader");
 
-  std::remove(filename.c_str());
+  static_cast<void>(std::remove(filename.c_str()));
 }
 
 } // namespace correlation::testing

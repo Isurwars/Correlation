@@ -1,6 +1,5 @@
 #include "readers/QEReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -25,15 +24,14 @@ std::string getTestDataDir() {
   return "../../tests/data/qe/";
 }
 
-} // namespace
-
 class QEReaderTests : public ::testing::Test {
-protected:
+public:
   std::string data_dir_;
-  void SetUp() override {
-    data_dir_ = getTestDataDir();
-  }
+
+protected:
+  void SetUp() override { data_dir_ = getTestDataDir(); }
 };
+} // namespace
 
 TEST_F(QEReaderTests, ReadsSingleFrame) {
   QEReader reader;
