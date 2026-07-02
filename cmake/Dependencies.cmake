@@ -481,12 +481,26 @@ message(STATUS "Downloading voro++ from GitHub...")
 set(VORO_BUILD_EXAMPLES OFF CACHE BOOL "Disable voro++ examples" FORCE)
 set(VORO_BUILD_CMD_LINE OFF CACHE BOOL "Disable voro++ command line" FORCE)
 set(VORO_ENABLE_DOXYGEN OFF CACHE BOOL "Disable voro++ doxygen" FORCE)
+
+# Temporarily disable BUILD_SHARED_LIBS so voro++ is built statically.
+# This avoids DLL linkage issues on Windows where MSVC requires __declspec(dllexport) to generate a import library (.lib).
+set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+
 FetchContent_Declare(
   voro
   GIT_REPOSITORY https://github.com/chr1shr/voro.git
   GIT_TAG        b0dac575a47af0f90b5b100e6dc199a493c7cb83
 )
 FetchContent_MakeAvailable(voro)
+
+# Restore BUILD_SHARED_LIBS
+set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+
+# Ensure voro++ is built with position-independent code (PIC) since it might be linked into shared libraries/modules
+if(TARGET voro++)
+  set_target_properties(voro++ PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 # Restore original BUILD_TESTING cache state
 if(BUILD_TESTING_EXISTS)
