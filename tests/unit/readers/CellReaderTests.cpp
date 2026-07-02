@@ -1,6 +1,5 @@
 #include "readers/CellReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
@@ -61,16 +60,16 @@ TEST(CellReaderTests, ReadsStructureLatticeCartAndFrac) {
   EXPECT_EQ(cell.atoms()[1].element().symbol, "O");
 
   // Wrapped position check: Si should be (5.0, 5.0, 5.0)
-  const auto &p1 = cell.atoms()[0].position();
-  EXPECT_NEAR(p1.x(), 5.0, 1e-5);
-  EXPECT_NEAR(p1.y(), 5.0, 1e-5);
-  EXPECT_NEAR(p1.z(), 5.0, 1e-5);
+  const auto &pos_1 = cell.atoms()[0].position();
+  EXPECT_NEAR(pos_1.x(), 5.0, 1e-5);
+  EXPECT_NEAR(pos_1.y(), 5.0, 1e-5);
+  EXPECT_NEAR(pos_1.z(), 5.0, 1e-5);
 
   // Wrapped position check: O (1.2 0.1 -0.3) -> (0.2 0.1 0.7) -> (2.0, 1.0, 7.0)
-  const auto &p2 = cell.atoms()[1].position();
-  EXPECT_NEAR(p2.x(), 2.0, 1e-5);
-  EXPECT_NEAR(p2.y(), 1.0, 1e-5);
-  EXPECT_NEAR(p2.z(), 7.0, 1e-5);
+  const auto &pos_2 = cell.atoms()[1].position();
+  EXPECT_NEAR(pos_2.x(), 2.0, 1e-5);
+  EXPECT_NEAR(pos_2.y(), 1.0, 1e-5);
+  EXPECT_NEAR(pos_2.z(), 7.0, 1e-5);
 }
 
 TEST(CellReaderTests, ThrowsOnReadTrajectory) {

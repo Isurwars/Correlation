@@ -1,6 +1,5 @@
 #include "readers/CarReader.hpp"
-#include <cstdio>
-#include <fstream>
+
 #include <gtest/gtest.h>
 
 using namespace correlation::readers;
