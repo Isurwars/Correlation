@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.6.0] - 2026-07-02
+
+### Added
+- **Automated PyPI Publishing**: Added CI/CD workflows for building and publishing Python source distributions and wheels to PyPI.
+- **Functional Testing Suite**: Integrated comprehensive functional tests for core application components and UI state synchronization (`AppController`).
+- **Fuzzer Debugging**: Added optional verbose logging to fuzzer exception handlers for debugging failed fuzzer inputs.
+
+### Changed & Refactored
+- **Kahan Summation Precision**: Implemented Kahan summation algorithm across math utilities and analysis calculators to significantly reduce floating-point drift and improve numerical precision.
+- **Modernized Test Suite**: Extensively refactored the entire unit and integration test codebase for modern C++ standards, applying strict const-correctness, better namespace scoping, resource cleanup, and encapsulating test suites in anonymous namespaces.
+- **Pi Constant Standardization**: Replaced `std::numbers::pi` usage with the internal `correlation::math::pi` constant for platform consistency.
+- **Optimized Distance Calculator**: Streamlined internal logic and cleaned up temporary files in `DistanceCalculator` and test suites.
+
+### Fixed
+- **Fuzzer Linter Compliance**: Resolved Clang-Tidy warnings (`reinterpret_cast`, const correctness, varargs, and print usage) in fuzzer targets.
+- **Windows SmartScreen Trust**: Generated standard Windows version resource metadata (`VS_VERSION_INFO`) and updated the Inno Setup configuration with publisher properties and relaxed compression to avoid false-positive virus warnings.
+- **Documentation Parameters**: Cleaned up dynamic documentation parameters and optimized header includes across calculators and readers.
+
 ## [3.5.0] - 2026-06-24
 
 ### Added

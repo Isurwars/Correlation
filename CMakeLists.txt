@@ -4,7 +4,7 @@
 # Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
 
 cmake_minimum_required(VERSION 3.24)
-project(Correlation VERSION 3.5.0 LANGUAGES CXX C)
+project(Correlation VERSION 3.6.0 LANGUAGES CXX C)
 
 # -----------------------------------------------------------
 # Auto-generate packaging files from templates.
@@ -14,6 +14,11 @@ project(Correlation VERSION 3.5.0 LANGUAGES CXX C)
 configure_file(
     "${PROJECT_SOURCE_DIR}/packaging/correlation.iss.in"
     "${PROJECT_SOURCE_DIR}/packaging/correlation.iss"
+    @ONLY
+)
+configure_file(
+    "${PROJECT_SOURCE_DIR}/packaging/resource.rc.in"
+    "${PROJECT_SOURCE_DIR}/packaging/resource.rc"
     @ONLY
 )
 

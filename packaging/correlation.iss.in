@@ -18,9 +18,14 @@ ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 OutputDir=Installers
 OutputBaseFilename=CorrelationSetup_v@PROJECT_VERSION@
-Compression=lzma2/ultra64
-SolidCompression=yes
+Compression=lzma
+SolidCompression=no
 WizardStyle=modern
+VersionInfoVersion=@PROJECT_VERSION@.0
+VersionInfoCompany=Isaías Rodríguez
+VersionInfoDescription=Correlation Setup
+VersionInfoTextVersion=@PROJECT_VERSION@
+VersionInfoCopyright=Copyright © 2013-2026 Isaías Rodríguez
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

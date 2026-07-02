@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (cli.show_version) {
-    std::cout << "Correlation version 3.5.0\n";
+    std::cout << "Correlation version 3.6.0\n";
     return 0;
   }
 
