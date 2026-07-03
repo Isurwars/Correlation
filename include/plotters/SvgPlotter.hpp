@@ -396,7 +396,7 @@ struct SvgHistogramRenderer {
 
     std::vector<std::pair<std::string, double>> candidates;
     for (const auto &[key, value] : raw_partials) {
-      if (key == "Total") {
+      if (key == "Total" || key.starts_with("Frequency_")) {
         continue;
       }
       double score = 0.0;

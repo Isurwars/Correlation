@@ -74,7 +74,7 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
   vdos_hist.title = "Vibrational Density of States";
   vdos_hist.description = "Vibrational Density of States";
   vdos_hist.file_suffix = "_VDOS";
-  vdos_hist.y_label = "g(ν)";
+  vdos_hist.y_label = "f(ω)";
   vdos_hist.x_unit = "THz";
   vdos_hist.y_unit = "arbitrary units";
   vdos_hist.bins = combined_frequencies;
