@@ -1,20 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.6.0] - 2026-07-02
+## [3.6.0] - 2026-07-03
 
 ### Added
+- **Greek Character Vector Support**: Integrated complete high-fidelity vector glyph path definitions for all uppercase (`0x0391`-`0x03AA`) and lowercase (`0x03B1`-`0x03CA`) Greek characters from the NotoSans font into the custom Roboto vector font.
+- **Unified TabItem UI Component**: Created a shared, style-consistent `TabItem` component in the material UI library, replacing duplicate local tab button definitions.
+- **Modular OptionsCard UI**: Extracted and unified all setup, parameter setting, trajectory, and export cards into a cohesive `OptionsCard` container component.
 - **Automated PyPI Publishing**: Added CI/CD workflows for building and publishing Python source distributions and wheels to PyPI.
 - **Functional Testing Suite**: Integrated comprehensive functional tests for core application components and UI state synchronization (`AppController`).
 - **Fuzzer Debugging**: Added optional verbose logging to fuzzer exception handlers for debugging failed fuzzer inputs.
 
 ### Changed & Refactored
+- **PlotController Complexity Reduction**: Refactored the `PlotController::requestPlotUpdate` function to extract UI table data formatting and row populating logic into a private helper function, reducing cognitive complexity from 26 to 12.
+- **Analyses Selection Simplification**: Removed the redundant outer expandable header in `AnalysesSelectionCard`, set subgroups to be expanded by default, and renamed the options tab from "Distribution" to "Analyses".
+- **vDoS Y-Axis Labeling**: Updated the Y-axis label of the Vibrational Density of States (vDoS) plot to `"f(ω)"` since the Greek omega character is now fully supported.
 - **Kahan Summation Precision**: Implemented Kahan summation algorithm across math utilities and analysis calculators to significantly reduce floating-point drift and improve numerical precision.
 - **Modernized Test Suite**: Extensively refactored the entire unit and integration test codebase for modern C++ standards, applying strict const-correctness, better namespace scoping, resource cleanup, and encapsulating test suites in anonymous namespaces.
 - **Pi Constant Standardization**: Replaced `std::numbers::pi` usage with the internal `correlation::math::pi` constant for platform consistency.
 - **Optimized Distance Calculator**: Streamlined internal logic and cleaned up temporary files in `DistanceCalculator` and test suites.
 
 ### Fixed
+- **Calculator Model Synchronization**: Fixed a critical synchronization bug where checking/unchecking calculators in the Slint UI was not mutating the underlying UI model, causing calculations to not run or display in the plot preview dropdown.
+- **Checkbox Click Interception**: Resolved a click interception bug in `AnalysesSelectionCard.slint` by removing a redundant outer `TouchArea` wrapping the `CheckBoxRow` and attaching the hover logic directly to `CheckBoxRow`.
+- **Plotting Alternative Frequencies**: Excluded alternative frequency X-axis columns (such as `"Frequency_cm_1"` and `"Frequency_meV"`) from being plotted as curves on the Y axis in the SVG plotter.
+- **Distribution Preview Label**: Removed the redundant "Distribution Preview" title from the preview header card to clean up the UI layout.
 - **Fuzzer Linter Compliance**: Resolved Clang-Tidy warnings (`reinterpret_cast`, const correctness, varargs, and print usage) in fuzzer targets.
 - **Windows SmartScreen Trust**: Generated standard Windows version resource metadata (`VS_VERSION_INFO`) and updated the Inno Setup configuration with publisher properties and relaxed compression to avoid false-positive virus warnings.
 - **Documentation Parameters**: Cleaned up dynamic documentation parameters and optimized header includes across calculators and readers.
