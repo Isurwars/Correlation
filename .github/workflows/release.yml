@@ -95,14 +95,14 @@ jobs:
       - name: Test
         run: cd build && xvfb-run ctest --output-on-failure
 
-      - name: Verify Static Linking
+      - name: Verify Shared Linking
         run: |
           ldd build/src/correlation
-          if ldd build/src/correlation | grep -q "libnfd"; then
-            echo "ERROR: NFD was dynamically linked!"
+          if ! ldd build/src/correlation | grep -q "libnfd"; then
+            echo "ERROR: libnfd was NOT dynamically linked as required!"
             exit 1
           fi
-          echo "Success: NFD is statically linked!"
+          echo "Success: NFD is verified as a shared library dependency."
 
       - name: Package Release
         run: |
@@ -152,7 +152,6 @@ jobs:
         uses: TheMrMilchmann/setup-msvc-dev@v4
         with:
           arch: x64
-
 
       - name: Configure CMake
         run: |
@@ -242,12 +241,12 @@ jobs:
         run: |
           # Perform a temporary test installation
           cmake --install build --prefix $PWD/install_test
-          
+
           # Inspect linked libraries of the GUI and CLI binaries
           echo "==== Executable Library Dependencies ===="
           otool -L install_test/bin/correlation
           otool -L install_test/bin/correlation-cli
-          
+
           # Assert that TBB and HDF5 are not referenced at absolute paths
           if otool -L install_test/bin/correlation | grep -E "(/opt/homebrew|/usr/local/Cellar|/usr/local/lib/libtbb|/usr/local/lib/libhdf5)"; then
             echo "ERROR: GUI executable still references absolute external library paths!"
@@ -454,7 +453,7 @@ jobs:
       name: pypi
       url: https://pypi.org/p/correlation-analysis
     permissions:
-      id-token: write  # Crucial for Trusted Publishing (OIDC)
+      id-token: write # Crucial for Trusted Publishing (OIDC)
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -464,4 +463,3 @@ jobs:
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-
