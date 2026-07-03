@@ -10,8 +10,14 @@ import {
     FilledButton,
     Horizontal,
     Icons,
+    InfoRow,
+    ScrollView,
+    TabItem,
 } from "../material/material.slint";
 import { ExportSettingsCard } from "ExportSettingsCard.slint";
+import { TableRow } from "../Types.slint";
+
+// ============================================================================
 
 // ============================================================================
 // PreviewCard Component
@@ -37,6 +43,16 @@ export component PreviewCard inherits FilledCard {
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
+
+    // Table data and calculated scalar properties
+    in property <[string]> table_headers: [];
+    in property <[TableRow]> table_rows: [];
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+
+    property <int> active_tab: 0;
 
     in-out property <int> export_size_preset: 0;
     in-out property <int> export_palette: 0;
@@ -77,11 +93,24 @@ export component PreviewCard inherits FilledCard {
     Vertical {
         spacing: MaterialStyleMetrics.spacing_8;
 
-        // Header
-        MaterialText {
-            text: "Distribution Preview";
-            style: MaterialTypography.label_large;
-            color: MaterialPalette.on_surface_variant;
+        // Header and Tabs row
+        Horizontal {
+            alignment: center;
+            
+            // Tab Buttons
+            Horizontal {
+                spacing: 8px;
+                TabItem {
+                    text: "Plot";
+                    active: root.active_tab == 0;
+                    clicked => { root.active_tab = 0; }
+                }
+                TabItem {
+                    text: "Data & Stats";
+                    active: root.active_tab == 1;
+                    clicked => { root.active_tab = 1; }
+                }
+            }
         }
 
         // Plot selector dropdown and Save Plot button
@@ -114,15 +143,6 @@ export component PreviewCard inherits FilledCard {
                     root.save_plot();
                 }
             }
-
-            FilledButton {
-                text: "Pin Run";
-                icon: Icons.pin;
-                enabled: root.selected_plot_index >= 0;
-                clicked => {
-                    root.pin_run();
-                }
-            }
         }
 
         // Pinned Runs Info
@@ -140,63 +160,66 @@ export component PreviewCard inherits FilledCard {
             }
         }
 
-        // SVG plot image area — fills remaining space
-        plot_container := Rectangle {
-            horizontal-stretch: 1;
+        // Tab Content Switcher
+        if root.active_tab == 0: Vertical {
             vertical-stretch: 1;
-            // Desired height is managed by the parent layout's vertical-stretch
-            background: MaterialPalette.surface;
-            border-radius: MaterialStyleMetrics.border_radius_2;
-            clip: self.width > 1px && self.height > 1px;
-            visible: self.width > 0.1px && self.height > 0.1px;
+            spacing: MaterialStyleMetrics.spacing_8;
 
-            // Re-render the SVG when the container is resized so the plot
-            // adapts its layout (axes, labels, margins) to the new dimensions.
-            // These observers live on the Rectangle (not on a TouchArea) to
-            // avoid conflicts with the nested window_area / blocking TouchAreas.
-            changed width => {
-                root.plot_resized(self.width, self.height);
-            }
-            changed height => {
-                root.plot_resized(self.width, self.height);
-            }
+            // SVG plot image area — fills remaining space
+            plot_container := Rectangle {
+                horizontal-stretch: 1;
+                vertical-stretch: 1;
+                background: MaterialPalette.surface;
+                border-radius: MaterialStyleMetrics.border_radius_2;
+                clip: self.width > 1px && self.height > 1px;
+                visible: self.width > 0.1px && self.height > 0.1px;
 
-            // Placeholder text when no image is available
-            if root.selected_plot_index < 0: Vertical {
-                padding: MaterialStyleMetrics.spacing_8;
-                MaterialText {
-                    text: "Select a plot from the dropdown above.";
-                    color: MaterialPalette.on_surface_variant;
-                    horizontal-alignment: center;
-                    vertical-alignment: center;
-                    wrap: word-wrap;
+                changed width => {
+                    root.plot_resized(self.width, self.height);
                 }
-            }
-
-            // The rendered SVG plot
-            plot_touch := TouchArea {
-                width: 100%;
-                height: 100%;
-                visible: root.selected_plot_index >= 0;
-
-                changed has-hover => {
-                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                changed height => {
+                    root.plot_resized(self.width, self.height);
                 }
 
-                changed mouse-x => {
-                    root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                // Placeholder text when no image is available
+                if root.selected_plot_index < 0: Vertical {
+                    padding: MaterialStyleMetrics.spacing_8;
+                    MaterialText {
+                        text: "Select a plot from the dropdown above.";
+                        color: MaterialPalette.on_surface_variant;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        wrap: word-wrap;
+                    }
                 }
 
-                Image {
+                // The rendered SVG plot
+                plot_touch := TouchArea {
                     width: 100%;
                     height: 100%;
-                    source: root.preview_plot;
-                    image-fit: contain;
+                    visible: root.selected_plot_index >= 0;
+
+                    changed has-hover => {
+                        root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                    }
+
+                    changed mouse-x => {
+                        root.mouse_move(self.mouse-x, self.mouse-y, self.has-hover, self.width, self.height);
+                    }
+
+                    Image {
+                        width: 100%;
+                        height: 100%;
+                        source: root.preview_plot;
+                        image-fit: contain;
+                    }
                 }
             }
         }
 
         export_settings := ExportSettingsCard {
+            visible: root.active_tab == 0;
+            height: root.active_tab == 0 ? self.preferred-height : 0px;
             enabled: root.selected_plot_index >= 0;
             export_size_preset <=> root.export_size_preset;
             export_palette <=> root.export_palette;
@@ -208,6 +231,151 @@ export component PreviewCard inherits FilledCard {
             export_fill_area <=> root.export_fill_area;
             export_font_scale_error: root.export_font_scale_error;
             export_line_width_error: root.export_line_width_error;
+        }
+
+        if root.active_tab == 1: Vertical {
+            vertical-stretch: 1;
+            spacing: MaterialStyleMetrics.spacing_12;
+
+            // Calculated Dynamic Properties
+            if (root.diff_msd != "" || root.diff_vacf != "" || root.relaxation_time != "" || root.deborah_number != "") : Vertical {
+                spacing: MaterialStyleMetrics.spacing_4;
+
+                MaterialText {
+                    text: "Calculated Dynamic Properties";
+                    style: MaterialTypography.title_small;
+                    color: MaterialPalette.on_surface;
+                }
+
+                Rectangle {
+                    background: MaterialPalette.surface_container_low;
+                    border-radius: MaterialStyleMetrics.border_radius_2;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant;
+
+                    VerticalLayout {
+                        padding: MaterialStyleMetrics.spacing_8;
+                        spacing: MaterialStyleMetrics.spacing_8;
+
+                        if root.diff_msd != "" : InfoRow {
+                            label: "Self-diffusion coefficient (from MSD)";
+                            value: root.diff_msd;
+                        }
+                        if root.diff_vacf != "" : InfoRow {
+                            label: "Self-diffusion coefficient (from VACF)";
+                            value: root.diff_vacf;
+                        }
+                        if root.relaxation_time != "" : InfoRow {
+                            label: "Relaxation time (from VACF)";
+                            value: root.relaxation_time;
+                        }
+                        if root.deborah_number != "" : InfoRow {
+                            label: "Deborah number";
+                            value: root.deborah_number;
+                        }
+                    }
+                }
+            }
+
+            // Dataset Values Table
+            Vertical {
+                vertical-stretch: 1;
+                spacing: MaterialStyleMetrics.spacing_4;
+
+                MaterialText {
+                    text: "Dataset Values";
+                    style: MaterialTypography.title_small;
+                    color: MaterialPalette.on_surface;
+                }
+
+                if root.table_rows.length == 0 : Rectangle {
+                    vertical-stretch: 1;
+                    background: MaterialPalette.surface;
+                    border-radius: MaterialStyleMetrics.border_radius_2;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant;
+
+                    MaterialText {
+                        text: "No dataset values available.";
+                        color: MaterialPalette.on_surface_variant;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                    }
+                }
+
+                if root.table_rows.length > 0 : Rectangle {
+                    vertical-stretch: 1;
+                    background: MaterialPalette.surface;
+                    border-radius: MaterialStyleMetrics.border_radius_2;
+                    border-width: 1px;
+                    border-color: MaterialPalette.outline_variant;
+                    clip: true;
+
+                    VerticalLayout {
+                        padding: 1px;
+
+                        // Header Row
+                        Rectangle {
+                            background: MaterialPalette.surface_container_high;
+                            height: 36px;
+                            
+                            HorizontalLayout {
+                                padding-left: 8px;
+                                padding-right: 8px;
+                                spacing: 8px;
+                                for header_text in root.table_headers : Vertical {
+                                    alignment: center;
+                                    MaterialText {
+                                        text: header_text;
+                                        style: MaterialTypography.label_medium;
+                                        font_weight: MaterialTypography.semibold;
+                                        color: MaterialPalette.on_surface;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Divider line
+                        Rectangle {
+                            height: 1px;
+                            background: MaterialPalette.outline_variant;
+                        }
+
+                        // Scrollable Rows
+                        ScrollView {
+                            viewport-height: root.table_rows.length * 32px;
+
+                            VerticalLayout {
+                                for row[row_idx] in root.table_rows : Rectangle {
+                                    height: 32px;
+
+                                    VerticalLayout {
+                                        HorizontalLayout {
+                                            padding-left: 8px;
+                                            padding-right: 8px;
+                                            spacing: 8px;
+                                            for val in row.values : Vertical {
+                                                alignment: center;
+                                                MaterialText {
+                                                    text: val;
+                                                    style: MaterialTypography.body_medium;
+                                                    color: MaterialPalette.on_surface;
+                                                }
+                                            }
+                                        }
+
+                                        // Divider line between rows
+                                        Rectangle {
+                                            height: 1px;
+                                            background: MaterialPalette.outline_variant.with_alpha(15%);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -1,0 +1,258 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialPalette,
+    MaterialStyleMetrics,
+    MaterialTypography,
+    FilledCard,
+    Vertical,
+    Horizontal,
+    TabItem,
+    ScrollView,
+} from "../material/material.slint";
+import { MaterialTypeCard } from "MaterialTypeCard.slint";
+import { BondCutoffsCard } from "BondCutoffsCard.slint";
+import { RDFOptionsCard } from "RDFOptionsCard.slint";
+import { BondAngleOptionsCard } from "BondAngleOptionsCard.slint";
+import { SQOptionsCard } from "SQOptionsCard.slint";
+import { RingsOptionsCard } from "RingsOptionsCard.slint";
+import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
+import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
+import { AnalysesSelectionCard } from "AnalysesSelectionCard.slint";
+import { AtomCount, BondCutoff, CalculatorGroup } from "../Types.slint";
+
+export component OptionsCard inherits FilledCard {
+    in property <bool> file_loaded: false;
+    in property <bool> has_radial_active: false;
+    in property <bool> has_angular_active: false;
+    in property <bool> has_scattering_active: false;
+    in property <bool> has_rings_active: false;
+
+    in-out property <int> material_type: 0;
+    in-out property <[BondCutoff]> bond_cutoffs: [];
+    in property <[AtomCount]> atom_counts: [];
+
+    in-out property <string> r_max: "";
+    in-out property <string> r_bin_width: "";
+    in property <string> r_max_error: "";
+    in property <string> r_bin_error: "";
+
+    in-out property <string> angle_bin_width: "";
+    in-out property <string> dihedral_bin_width: "";
+    in property <string> angle_bin_error: "";
+    in property <string> dihedral_bin_error: "";
+
+    in-out property <string> q_max: "";
+    in-out property <string> q_bin_width: "";
+    in-out property <string> r_int_max: "";
+    in property <string> q_max_error: "";
+    in property <string> q_bin_error: "";
+    in property <string> r_int_max_error: "";
+
+    in-out property <string> max_ring_size: "";
+    in property <string> max_ring_error: "";
+
+    in-out property <bool> smoothing: false;
+    in-out property <string> smoothing_sigma: "";
+    in-out property <int> smoothing_kernel: 0;
+    in property <string> smoothing_sigma_error: "";
+
+    in-out property <string> lef_cutoff: "";
+    in-out property <string> lef_sigma: "";
+    in property <string> lef_cutoff_error: "";
+    in property <string> lef_sigma_error: "";
+
+    in-out property <string> hyper_samples: "";
+    in property <string> hyper_samples_error: "";
+
+    in property <[CalculatorGroup]> calculator_groups: [];
+    in property <int> total_calculator_count: 0;
+
+    callback toggle_calculator(string, bool);
+
+    in-out property <int> active_tab: 0;
+
+    out property <string> hovered_tooltip_text: 
+        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
+        (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
+        (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
+        (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
+        (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_tooltip_text :
+        (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_tooltip_text :
+        (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text : "";
+
+    out property <length> hovered_x:
+        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
+        (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
+        (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
+        (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
+        (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_x :
+        (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_x :
+        (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x : 0px;
+
+    out property <length> hovered_y:
+        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
+        (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
+        (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
+        (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
+        (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_y :
+        (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_y :
+        (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y : 0px;
+
+    out property <length> hovered_width:
+        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
+        (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
+        (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
+        (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
+        (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_width :
+        (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_width :
+        (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width : 0px;
+
+    out property <length> hovered_height:
+        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
+        (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
+        (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
+        (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
+        (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_height :
+        (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_height :
+        (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_height : 0px;
+
+    Vertical {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+
+        // TAB NAVIGATION BAR (3 tabs)
+        Horizontal {
+            height: 40px;
+            spacing: 4px;
+            padding-bottom: 4px;
+
+            TabItem {
+                text: "Common";
+                active: root.active_tab == 0;
+                clicked => { root.active_tab = 0; }
+            }
+
+            TabItem {
+                text: "Advanced";
+                active: root.active_tab == 1;
+                clicked => { root.active_tab = 1; }
+            }
+
+            TabItem {
+                text: "Analyses";
+                active: root.active_tab == 2;
+                clicked => { root.active_tab = 2; }
+            }
+        }
+
+        ScrollView {
+            viewport-height: options_layout.preferred-height;
+            options_layout := Vertical {
+                padding: 0;
+                spacing: MaterialStyleMetrics.spacing_4;
+
+                // Common Tab Options (Material Type, Bond Cutoffs, RDF, Angular)
+                material_card := MaterialTypeCard {
+                    file_loaded: root.file_loaded;
+                    material_type <=> root.material_type;
+                    visible: root.active_tab == 0;
+                    height: root.active_tab == 0 ? self.preferred-height : 0px;
+                }
+
+                bond_cutoffs_card := BondCutoffsCard {
+                    file_loaded: root.file_loaded;
+                    bond_cutoffs <=> root.bond_cutoffs;
+                    atom_counts: root.atom_counts;
+                    visible: root.active_tab == 0;
+                    height: root.active_tab == 0 ? self.preferred-height : 0px;
+                }
+
+                rdf_card := RDFOptionsCard {
+                    file_loaded: root.file_loaded;
+                    r_max <=> root.r_max;
+                    r_bin_width <=> root.r_bin_width;
+                    r_max_error: root.r_max_error;
+                    r_bin_error: root.r_bin_error;
+                    visible: root.active_tab == 0 && root.has_radial_active;
+                    height: (root.active_tab == 0 && root.has_radial_active) ? self.preferred-height : 0px;
+                }
+
+                angle_card := BondAngleOptionsCard {
+                    file_loaded: root.file_loaded;
+                    angle_bin_width <=> root.angle_bin_width;
+                    dihedral_bin_width <=> root.dihedral_bin_width;
+                    angle_bin_error: root.angle_bin_error;
+                    dihedral_bin_error: root.dihedral_bin_error;
+                    visible: root.active_tab == 0 && root.has_angular_active;
+                    height: (root.active_tab == 0 && root.has_angular_active) ? self.preferred-height : 0px;
+                }
+
+                // Advanced Tab Options (SQ, Rings, Smoothing)
+                sq_card := SQOptionsCard {
+                    file_loaded: root.file_loaded;
+                    q_max <=> root.q_max;
+                    q_bin_width <=> root.q_bin_width;
+                    r_int_max <=> root.r_int_max;
+                    q_max_error: root.q_max_error;
+                    q_bin_error: root.q_bin_error;
+                    r_int_max_error: root.r_int_max_error;
+                    visible: root.active_tab == 1 && root.has_scattering_active;
+                    height: (root.active_tab == 1 && root.has_scattering_active) ? self.preferred-height : 0px;
+                }
+
+                rings_card := RingsOptionsCard {
+                    file_loaded: root.file_loaded;
+                    max_ring_size <=> root.max_ring_size;
+                    max_ring_error: root.max_ring_error;
+                    visible: root.active_tab == 1 && root.has_rings_active;
+                    height: (root.active_tab == 1 && root.has_rings_active) ? self.preferred-height : 0px;
+                }
+
+                smoothing_card := SmoothingOptionsCard {
+                    file_loaded: root.file_loaded;
+                    smoothing_enabled <=> root.smoothing;
+                    smoothing_sigma <=> root.smoothing_sigma;
+                    smoothing_kernel <=> root.smoothing_kernel;
+                    smoothing_sigma_error: root.smoothing_sigma_error;
+                    visible: root.active_tab == 1;
+                    height: root.active_tab == 1 ? self.preferred-height : 0px;
+                }
+
+                advanced_card := AdvancedOptionsCard {
+                    file_loaded: root.file_loaded;
+                    lef_cutoff <=> root.lef_cutoff;
+                    lef_sigma <=> root.lef_sigma;
+                    lef_cutoff_error: root.lef_cutoff_error;
+                    lef_sigma_error: root.lef_sigma_error;
+                    hyper_samples <=> root.hyper_samples;
+                    hyper_samples_error: root.hyper_samples_error;
+                    visible: root.active_tab == 1;
+                    height: root.active_tab == 1 ? self.preferred-height : 0px;
+                }
+
+                // Distribution Tab Options (Calculator Selections)
+                analyses_card := AnalysesSelectionCard {
+                    file_loaded: root.file_loaded;
+                    calculator_groups: root.calculator_groups;
+                    total_calculator_count: root.total_calculator_count;
+                    toggle_calculator(id, enabled) => {
+                        root.toggle_calculator(id, enabled);
+                    }
+                    visible: root.active_tab == 2;
+                    height: root.active_tab == 2 ? self.preferred-height : 0px;
+                }
+            }
+        }
+    }
+
+    // Block interactions if not file_loaded
+    if !root.file_loaded : TouchArea {
+        width: 100%;
+        height: 100%;
+    }
+}

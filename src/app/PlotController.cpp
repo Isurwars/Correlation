@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <map>
 #include <span>
@@ -120,10 +121,9 @@ void PlotController::populatePlotList() {
   last_rendered_index_ = -1;
   auto names = backend_.getAvailableHistogramNames();
 
-  std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},   {"J_r", 2},  {"S_q", 10}, {"XRD", 11},
-                                         {"BAD", 20}, {"PAD", 21},  {"DAD", 22}, {"CN", 23},  {"RD", 24},
-                                         {"MSD", 30}, {"VACF", 31}, {"VDOS", 32},
-                                         {"sigma2_N", 40}, {"chi_H", 41}};
+  std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},   {"J_r", 2},   {"S_q", 10},      {"XRD", 11},
+                                         {"BAD", 20}, {"PAD", 21},  {"DAD", 22},  {"CN", 23},       {"RD", 24},
+                                         {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}, {"sigma2_N", 40}, {"chi_H", 41}};
 
   std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
     int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
@@ -146,6 +146,44 @@ void PlotController::populatePlotList() {
     menu_model->push_back(item);
   }
   window_.set_plot_items(menu_model);
+
+  // Update dynamic properties
+  const auto *distribution_functions = backend_.getDistributionFunctions();
+  if (distribution_functions != nullptr) {
+    double msd = distribution_functions->getDiffusionCoefficientMSD();
+    if (msd > 0.0) {
+      window_.set_diff_msd(slint::SharedString(std::format("{:.6f} Å²/fs", msd)));
+    } else {
+      window_.set_diff_msd("");
+    }
+
+    double vacf = distribution_functions->getDiffusionCoefficientVACF();
+    if (vacf > 0.0) {
+      window_.set_diff_vacf(slint::SharedString(std::format("{:.6f} Å²/fs", vacf)));
+    } else {
+      window_.set_diff_vacf("");
+    }
+
+    double tau = distribution_functions->getRelaxationTime();
+    if (tau > 0.0) {
+      window_.set_relaxation_time(slint::SharedString(std::format("{:.4f} fs", tau)));
+    } else {
+      window_.set_relaxation_time("");
+    }
+
+    double deb = distribution_functions->getDeborahNumber();
+    if (deb > 0.0) {
+      window_.set_deborah_number(slint::SharedString(std::format("{:.4f}", deb)));
+    } else {
+      window_.set_deborah_number("");
+    }
+  } else {
+    window_.set_diff_msd("");
+    window_.set_diff_vacf("");
+    window_.set_relaxation_time("");
+    window_.set_deborah_number("");
+  }
+
   window_.set_selected_plot_index(names.empty() ? -1 : 0);
 }
 
@@ -182,6 +220,8 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   if (hist == nullptr) {
     return;
   }
+
+  updateTableData(hist);
 
   if (immediate) {
     needs_redraw_ = true;
@@ -234,6 +274,56 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   }
 
   executePlotRender(std::move(data));
+}
+
+void PlotController::updateTableData(const correlation::analysis::Histogram *hist) {
+  // Update table data
+  const auto &partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
+  std::vector<std::string> keys;
+  for (const auto &pair : partials) {
+    if (pair.first != "Total") {
+      keys.push_back(pair.first);
+    }
+  }
+  std::sort(keys.begin(), keys.end());
+  if (partials.contains("Total")) {
+    keys.insert(keys.begin(), "Total");
+  }
+
+  auto slint_headers = std::make_shared<slint::VectorModel<slint::SharedString>>();
+  std::string x_header = hist->x_label;
+  if (!hist->x_unit.empty()) {
+    x_header += " (" + hist->x_unit + ")";
+  }
+  slint_headers->push_back(slint::SharedString(x_header));
+  for (const auto &key : keys) {
+    slint_headers->push_back(slint::SharedString(key));
+  }
+  window_.set_table_headers(slint_headers);
+
+  auto slint_rows = std::make_shared<slint::VectorModel<TableRow>>();
+  size_t num_bins = hist->bins.size();
+  for (size_t i = 0; i < num_bins; ++i) {
+    TableRow row;
+    auto row_values = std::make_shared<slint::VectorModel<slint::SharedString>>();
+
+    // First column: bin value
+    row_values->push_back(slint::SharedString(std::format("{:.4f}", hist->bins[i])));
+
+    // Other columns: partial values
+    for (const auto &key : keys) {
+      double val = 0.0;
+      auto iterator = partials.find(key);
+      if (iterator != partials.end() && i < iterator->second.size()) {
+        val = iterator->second[i];
+      }
+      row_values->push_back(slint::SharedString(std::format("{:.6g}", val)));
+    }
+
+    row.values = row_values;
+    slint_rows->push_back(row);
+  }
+  window_.set_table_rows(slint_rows);
 }
 
 bool PlotController::isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,

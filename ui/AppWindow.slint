@@ -14,6 +14,7 @@ import {
     Icons,
     FilledButton,
     ScrollView,
+    TabItem,
 } from "material/material.slint";
 import { Palette } from "std-widgets.slint";
 
@@ -25,21 +26,13 @@ import {
     AnalysisOptions,
     AppErrors,
     ExportConfig,
+    TableRow,
 } from "Types.slint";
 
 import { OperationsCard } from "run/OperationsCard.slint";
 import { TrajectoryOptionsCard } from "options/TrajectoryOptionsCard.slint";
 import { CliCommandCard } from "run/CliCommandCard.slint";
-import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
-import { PresetManagerCard } from "options/PresetManagerCard.slint";
-import { RDFOptionsCard } from "options/RDFOptionsCard.slint";
-import { SQOptionsCard } from "options/SQOptionsCard.slint";
-import { BondAngleOptionsCard } from "options/BondAngleOptionsCard.slint";
-import { RingsOptionsCard } from "options/RingsOptionsCard.slint";
-import { SmoothingOptionsCard } from "options/SmoothingOptionsCard.slint";
-import { AdvancedOptionsCard } from "options/AdvancedOptionsCard.slint";
-import { BondCutoffsCard } from "options/BondCutoffsCard.slint";
-import { MaterialTypeCard } from "options/MaterialTypeCard.slint";
+import { OptionsCard } from "options/OptionsCard.slint";
 import { PreviewCard } from "preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
 
@@ -51,6 +44,7 @@ export {
     AnalysisOptions,
     AppErrors,
     ExportConfig,
+    TableRow,
 }
 
 // ============================================================================
@@ -67,51 +61,6 @@ export {
 /// - hovered_tooltip_text: A string that is dynamically updated based on the
 ///   hovered component.
 // ============================================================================
-component TabItem inherits Rectangle {
-    in property <string> text;
-    in property <bool> active;
-    callback clicked();
-
-    height: 36px;
-    background: transparent;
-
-    property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
-
-    states [
-        hover when touch.has-hover: {
-            background: root.is_dark ? #ffffff.with_alpha(5%) : #000000.with_alpha(5%);
-        }
-    ]
-
-    touch := TouchArea {
-        clicked => { root.clicked(); }
-    }
-
-    Vertical {
-        alignment: center;
-        MaterialText {
-            text: root.text;
-            style: MaterialTypography.label_medium;
-            font_weight: active ? MaterialTypography.semibold : MaterialTypography.medium;
-            color: active ? MaterialPalette.primary : MaterialPalette.on_surface_variant;
-            horizontal-alignment: center;
-        }
-    }
-
-    // Bottom active indicator line
-    Rectangle {
-        y: parent.height - 2px;
-        height: 2px;
-        width: active ? 80% : 0%;
-        background: MaterialPalette.primary;
-        border_radius: 1px;
-
-        animate width {
-            duration: 150ms;
-            easing: ease-in-out;
-        }
-    }
-}
 
 // ============================================================================
 export component AppWindow inherits Window {
@@ -238,12 +187,19 @@ export component AppWindow inherits Window {
     in property <bool> has_angular_active: false;
     in property <bool> has_rings_active: false;
 
-    /// Analysis results and preview
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
     out property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
+
+    // Table data and calculated scalar properties
+    in property <[string]> table_headers: [];
+    in property <[TableRow]> table_rows: [];
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
 
     // ============================================================================
     // Callbacks (Bound to AppController.cpp)
@@ -363,7 +319,7 @@ export component AppWindow inherits Window {
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_tooltip_text :
         (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text : "");
 
-    property <string> options_hovered_tooltip: options_container.local_tooltip;
+    property <string> options_hovered_tooltip: options_card.hovered_tooltip_text;
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
 
     property <string> hovered_tooltip_text: 
@@ -372,25 +328,25 @@ export component AppWindow inherits Window {
     property <length> hovered_x:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_x :
         trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
-        options_hovered_tooltip != "" ? options_container.local_hovered_x :
+        options_hovered_tooltip != "" ? options_card.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_y :
         trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
-        options_hovered_tooltip != "" ? options_container.local_hovered_y :
+        options_hovered_tooltip != "" ? options_card.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_width :
         trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_width :
-        options_hovered_tooltip != "" ? options_container.local_hovered_width :
+        options_hovered_tooltip != "" ? options_card.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_height :
         trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_height :
-        options_hovered_tooltip != "" ? options_container.local_hovered_height :
+        options_hovered_tooltip != "" ? options_card.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
     title: "Correlation";
@@ -456,196 +412,47 @@ export component AppWindow inherits Window {
         }
 
         // 2. Middle column: Options Tabbed Card (Setup, Trajectory, Parameters, Export)
-            Rectangle {
+        options_card := OptionsCard {
             width: 340px;
             horizontal-stretch: 0;
-
-            options_container := Vertical {
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                opacity: root.file_loaded ? 1.0 : 0.5;
-                animate opacity { duration: 150ms; }
-
-                // TAB NAVIGATION BAR (3 tabs)
-                    property <int> active_tab: 0;
-                Horizontal {
-                    height: 40px;
-                    spacing: 4px;
-                    padding-bottom: 4px;
-
-                    TabItem {
-                        text: "Common";
-                        active: options_container.active_tab == 0;
-                        clicked => { options_container.active_tab = 0; }
-                    }
-
-                    TabItem {
-                        text: "Advanced";
-                        active: options_container.active_tab == 1;
-                        clicked => { options_container.active_tab = 1; }
-                    }
-
-                    TabItem {
-                        text: "Distribution";
-                        active: options_container.active_tab == 2;
-                        clicked => { options_container.active_tab = 2; }
-                    }
-                }
-
-                property <string> local_tooltip: 
-                        (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
-                    (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
-                    (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
-                    (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
-                    (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_tooltip_text :
-                    (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_tooltip_text :
-                    (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text : "";
-
-                property <length> local_hovered_x:
-                        (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
-                    (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
-                    (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
-                    (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
-                    (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_x :
-                    (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_x :
-                    (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x : 0px;
-
-                property <length> local_hovered_y:
-                        (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
-                    (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
-                    (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
-                    (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
-                    (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_y :
-                    (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_y :
-                    (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y : 0px;
-
-                property <length> local_hovered_width:
-                        (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
-                    (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
-                    (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
-                    (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
-                    (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_width :
-                    (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_width :
-                    (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width : 0px;
-
-                property <length> local_hovered_height:
-                        (options_container.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
-                    (options_container.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
-                    (options_container.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
-                    (options_container.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
-                    (options_container.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_height :
-                    (options_container.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_height :
-                    (options_container.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_height : 0px;
-
-                changed local_tooltip => {
-                    root.options_hovered_tooltip = self.local_tooltip;
-                }
-
-                ScrollView {
-                    viewport-height: options_layout.preferred-height;
-                    options_layout := Vertical {
-                        padding: 0;
-                        spacing: MaterialStyleMetrics.spacing_4;
-
-                        // Common Tab Options (Material Type, Bond Cutoffs, RDF, Angular)
-                            material_card := MaterialTypeCard {
-                            file_loaded: root.file_loaded;
-                            material_type <=> root.material_type;
-                            visible: options_container.active_tab == 0;
-                            height: options_container.active_tab == 0 ? self.preferred-height : 0px;
-                        }
-
-                        bond_cutoffs_card := BondCutoffsCard {
-                            file_loaded: root.file_loaded;
-                            bond_cutoffs <=> root.bond_cutoffs;
-                            atom_counts: root.atom_counts;
-                            visible: options_container.active_tab == 0;
-                            height: options_container.active_tab == 0 ? self.preferred-height : 0px;
-                        }
-
-                        rdf_card := RDFOptionsCard {
-                            file_loaded: root.file_loaded;
-                            r_max <=> root.r_max;
-                            r_bin_width <=> root.r_bin_width;
-                            r_max_error: root.r_max_error;
-                            r_bin_error: root.r_bin_error;
-                            visible: options_container.active_tab == 0 && root.has_radial_active;
-                            height: (options_container.active_tab == 0 && root.has_radial_active) ? self.preferred-height : 0px;
-                        }
-
-                        angle_card := BondAngleOptionsCard {
-                            file_loaded: root.file_loaded;
-                            angle_bin_width <=> root.angle_bin_width;
-                            dihedral_bin_width <=> root.dihedral_bin_width;
-                            angle_bin_error: root.angle_bin_error;
-                            dihedral_bin_error: root.dihedral_bin_error;
-                            visible: options_container.active_tab == 0 && root.has_angular_active;
-                            height: (options_container.active_tab == 0 && root.has_angular_active) ? self.preferred-height : 0px;
-                        }
-
-                        // Advanced Tab Options (SQ, Rings, Smoothing)
-                            sq_card := SQOptionsCard {
-                            file_loaded: root.file_loaded;
-                            q_max <=> root.q_max;
-                            q_bin_width <=> root.q_bin_width;
-                            r_int_max <=> root.r_int_max;
-                            q_max_error: root.q_max_error;
-                            q_bin_error: root.q_bin_error;
-                            r_int_max_error: root.r_int_max_error;
-                            visible: options_container.active_tab == 1 && root.has_scattering_active;
-                            height: (options_container.active_tab == 1 && root.has_scattering_active) ? self.preferred-height : 0px;
-                        }
-
-                        rings_card := RingsOptionsCard {
-                            file_loaded: root.file_loaded;
-                            max_ring_size <=> root.max_ring_size;
-                            max_ring_error: root.max_ring_error;
-                            visible: options_container.active_tab == 1 && root.has_rings_active;
-                            height: (options_container.active_tab == 1 && root.has_rings_active) ? self.preferred-height : 0px;
-                        }
-
-                        smoothing_card := SmoothingOptionsCard {
-                            file_loaded: root.file_loaded;
-                            smoothing_enabled <=> root.smoothing;
-                            smoothing_sigma <=> root.smoothing_sigma;
-                            smoothing_kernel <=> root.smoothing_kernel;
-                            smoothing_sigma_error: root.smoothing_sigma_error;
-                            visible: options_container.active_tab == 1;
-                            height: options_container.active_tab == 1 ? self.preferred-height : 0px;
-                        }
-
-                        advanced_card := AdvancedOptionsCard {
-                            file_loaded: root.file_loaded;
-                            lef_cutoff <=> root.lef_cutoff;
-                            lef_sigma <=> root.lef_sigma;
-                            lef_cutoff_error: root.lef_cutoff_error;
-                            lef_sigma_error: root.lef_sigma_error;
-                            hyper_samples <=> root.hyper_samples;
-                            hyper_samples_error: root.hyper_samples_error;
-                            visible: options_container.active_tab == 1;
-                            height: options_container.active_tab == 1 ? self.preferred-height : 0px;
-                        }
-
-                        // Distribution Tab Options (Calculator Selections)
-                            analyses_card := AnalysesSelectionCard {
-                            file_loaded: root.file_loaded;
-                            calculator_groups: root.calculator_groups;
-                            total_calculator_count: root.total_calculator_count;
-                            toggle_calculator(id, enabled) => {
-                                root.toggle_calculator(id, enabled);
-                            }
-                            visible: options_container.active_tab == 2;
-                            height: options_container.active_tab == 2 ? self.preferred-height : 0px;
-                        }
-                    }
-                }
-            }
-
-            // Block interactions if not file_loaded
-                if !root.file_loaded: TouchArea {
-                width: 100%;
-                height: 100%;
+            file_loaded: root.file_loaded;
+            has_radial_active: root.has_radial_active;
+            has_angular_active: root.has_angular_active;
+            has_scattering_active: root.has_scattering_active;
+            has_rings_active: root.has_rings_active;
+            material_type <=> root.material_type;
+            bond_cutoffs <=> root.bond_cutoffs;
+            atom_counts: root.atom_counts;
+            r_max <=> root.r_max;
+            r_bin_width <=> root.r_bin_width;
+            r_max_error: root.r_max_error;
+            r_bin_error: root.r_bin_error;
+            angle_bin_width <=> root.angle_bin_width;
+            dihedral_bin_width <=> root.dihedral_bin_width;
+            angle_bin_error: root.angle_bin_error;
+            dihedral_bin_error: root.dihedral_bin_error;
+            q_max <=> root.q_max;
+            q_bin_width <=> root.q_bin_width;
+            r_int_max <=> root.r_int_max;
+            q_max_error: root.q_max_error;
+            q_bin_error: root.q_bin_error;
+            r_int_max_error: root.r_int_max_error;
+            max_ring_size <=> root.max_ring_size;
+            max_ring_error: root.max_ring_error;
+            smoothing <=> root.smoothing;
+            smoothing_sigma <=> root.smoothing_sigma;
+            smoothing_kernel <=> root.smoothing_kernel;
+            smoothing_sigma_error: root.smoothing_sigma_error;
+            lef_cutoff <=> root.lef_cutoff;
+            lef_sigma <=> root.lef_sigma;
+            lef_cutoff_error: root.lef_cutoff_error;
+            lef_sigma_error: root.lef_sigma_error;
+            hyper_samples <=> root.hyper_samples;
+            hyper_samples_error: root.hyper_samples_error;
+            calculator_groups: root.calculator_groups;
+            total_calculator_count: root.total_calculator_count;
+            toggle_calculator(id, enabled) => {
+                root.toggle_calculator(id, enabled);
             }
         }
 
@@ -667,6 +474,13 @@ export component AppWindow inherits Window {
                     plot_items <=> root.plot_items;
                     selected_plot_index <=> root.selected_plot_index;
                     pinned_runs_count: root.pinned_runs_count;
+
+                    table_headers: root.table_headers;
+                    table_rows: root.table_rows;
+                    diff_msd: root.diff_msd;
+                    diff_vacf: root.diff_vacf;
+                    relaxation_time: root.relaxation_time;
+                    deborah_number: root.deborah_number;
 
                     export_size_preset <=> root.export_size_preset;
                     export_palette <=> root.export_palette;

@@ -81,6 +81,7 @@ AppController::AppController(AppWindow &window, AppBackend &backend) : window_(w
   // Handle calculator toggle: update backend options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
     backend_.setCalculatorActive(std::string(calc_id.data()), enabled);
+    populateCalculatorGroups();
     updateActiveGroupFlags();
     input_validator_->updateCliCommand();
   });

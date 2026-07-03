@@ -102,6 +102,7 @@ private:
   bool isPlotCacheHit(int index, const correlation::plotters::PlotConfig &config,
                       const correlation::plotters::HoverInfo &hover) const;
   void executePlotRender(RenderTaskData data);
+  void updateTableData(const correlation::analysis::Histogram *hist);
   void executeSavePlot(const std::string &filepath, const correlation::analysis::Histogram *hist,
                        const std::string &name);
 };

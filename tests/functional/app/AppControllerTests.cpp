@@ -6,6 +6,7 @@
 #include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
+#include "app/PlotController.hpp"
 #include <filesystem>
 
 #include <gtest/gtest.h>
@@ -226,3 +227,46 @@ TEST_F(AppControllerTests, HandlesCalculatorToggleSignal) {
   window->invoke_toggle_calculator("g(r), J(r), G(r)", true);
   EXPECT_TRUE(backend.options().active_calculators.at("g(r), J(r), G(r)"));
 }
+
+TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
+  auto window = AppWindow::create();
+  correlation::app::AppBackend backend;
+
+  std::string file_path = "../../examples/a-PdSi/a-PdSi.car";
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "../examples/a-PdSi/a-PdSi.car";
+  }
+  if (!std::filesystem::exists(file_path)) {
+    file_path = "examples/a-PdSi/a-PdSi.car";
+  }
+  backend.load_file(file_path);
+
+  // Set the RDF calculator active
+  correlation::app::ProgramOptions opts = backend.options();
+  opts.active_calculators["g(r), J(r), G(r)"] = true;
+  backend.setOptions(opts);
+
+  correlation::app::AppController controller(*window, backend);
+
+  // Run analysis
+  EXPECT_TRUE(backend.run_analysis().empty());
+
+  // Populate plot list (which also sets dynamic properties)
+  controller.getPlotController()->populatePlotList();
+
+  // Verify plot items is not empty
+  auto plot_items = window->get_plot_items();
+  ASSERT_GT(plot_items->row_count(), 0);
+
+  // Trigger plot update for index 0
+  controller.getPlotController()->requestPlotUpdate(0, true);
+
+  // Verify table headers are set
+  auto headers = window->get_table_headers();
+  ASSERT_GT(headers->row_count(), 0);
+
+  // Verify table rows are set
+  auto rows = window->get_table_rows();
+  ASSERT_GT(rows->row_count(), 0);
+}
+

@@ -281,6 +281,14 @@ public:
     return df_ ? df_->getAllHistograms() : empty_map;
   }
 
+  /**
+   * @brief Returns the DistributionFunctions results.
+   * @return Pointer to the active DistributionFunctions container.
+   */
+  [[nodiscard]] const correlation::analysis::DistributionFunctions* getDistributionFunctions() const {
+    return df_.get();
+  }
+
   // Callbacks
   /**
    * @brief Sets a callback function for analysis progress updates.
