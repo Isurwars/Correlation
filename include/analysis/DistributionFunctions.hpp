@@ -106,9 +106,8 @@ struct Histogram {
  */
 class DistributionFunctions {
 public:
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
+  /** @name Constructors */
+  ///@{
 
   /**
    * @brief Constructs a DistributionFunctions object.
@@ -148,9 +147,10 @@ public:
    */
   DistributionFunctions &operator=(const DistributionFunctions &) = delete;
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Accessors -------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accessors */
+  ///@{
 
   /**
    * @brief Access the underlying simulation cell.
@@ -245,9 +245,10 @@ public:
    */
   void setDeborahNumber(double deborah_num) noexcept;
 
-  //-------------------------------------------------------------------------//
-  //--------------------------- Calculation Methods -------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Calculation Methods */
+  ///@{
 
   /**
    * @brief Calculates the Coordination Number (CN) distribution.
@@ -329,9 +330,10 @@ public:
    */
   void setStructureAnalyzerOwned(std::unique_ptr<StructureAnalyzer> analyzer);
 
-  //-------------------------------------------------------------------------//
-  //----------------------------- Accumulation ------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accumulation */
+  ///@{
 
   /**
    * @brief Adds the histograms from another DistributionFunctions object to
@@ -361,6 +363,8 @@ public:
   computeMean(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t start_frame,
               const AnalysisSettings &settings,
               std::function<void(float, const std::string &)> progress_callback = nullptr);
+
+  ///@}
 
 private:
   static std::unique_ptr<DistributionFunctions>

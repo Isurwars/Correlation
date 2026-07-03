@@ -20,9 +20,6 @@
 
 namespace correlation::analysis {
 
-//---------------------------------------------------------------------------//
-//------------------------------- Constructors ------------------------------//
-//---------------------------------------------------------------------------//
 StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double cutoff,
                                      const std::vector<std::vector<double>> &bond_cutoffs_sq,
                                      bool ignore_periodic_self_interactions)

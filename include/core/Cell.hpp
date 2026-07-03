@@ -27,9 +27,8 @@ namespace correlation::core {
 class Cell {
 
 public:
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
+  /** @name Constructors */
+  ///@{
   explicit Cell() = default;
 
   /**
@@ -86,9 +85,10 @@ public:
    */
   ~Cell() = default;
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Accessors -------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accessors */
+  ///@{
 
   // Lattice Parameters
   /**
@@ -164,9 +164,10 @@ public:
    */
   [[nodiscard]] std::optional<Element> findElement(const std::string &symbol) const;
 
-  //-------------------------------------------------------------------------//
-  //-------------------------------- Methods --------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Methods */
+  ///@{
 
   /**
    * @brief Applies the minimum image convention to a distance vector.
@@ -225,6 +226,8 @@ public:
    * @return The existing or newly assigned ElementID.
    */
   ElementID getOrRegisterElement(const std::string &symbol);
+
+  ///@}
 
   math::Matrix3<double> lattice_vectors_;         ///< Basis vectors of the box.
   math::Matrix3<double> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.

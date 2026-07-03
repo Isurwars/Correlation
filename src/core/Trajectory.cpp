@@ -17,9 +17,7 @@
 
 namespace correlation::core {
 
-//---------------------------------------------------------------------------//
-//----------------------------- Constructors --------------------------------//
-//---------------------------------------------------------------------------//
+
 
 Trajectory::Trajectory() : time_step_(1.0) {}
 
@@ -42,9 +40,7 @@ Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size
   }
 }
 
-//---------------------------------------------------------------------------//
-//------------------------------- Accessors ---------------------------------//
-//---------------------------------------------------------------------------//
+
 
 std::vector<Cell> &Trajectory::getFrames() {
   ensureMaterialized();
@@ -118,9 +114,7 @@ double Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
 
 double Trajectory::getBondCutoff(size_t type1, size_t type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
 
-//---------------------------------------------------------------------------//
-//-------------------------------- Methods ----------------------------------//
-//---------------------------------------------------------------------------//
+
 
 void Trajectory::addFrame(const Cell &frame) {
   ensureMaterialized();
@@ -267,9 +261,7 @@ void Trajectory::calculateVelocities() {
   }
 }
 
-//---------------------------------------------------------------------------//
-//--------------------------- Private Methods -------------------------------//
-//---------------------------------------------------------------------------//
+
 
 void Trajectory::validateFrame(const Cell &new_frame) const {
   if (getFrameCount() == 0) {

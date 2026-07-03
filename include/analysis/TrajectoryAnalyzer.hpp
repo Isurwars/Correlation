@@ -30,28 +30,17 @@ namespace correlation::analysis {
  */
 class TrajectoryAnalyzer {
 public:
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
-  /**
-   * @brief Constructs a TrajectoryAnalyzer for a given trajectory.
-   *
-   * @param trajectory The trajectory to analyze.
-   * @param neighbor_cutoff Cutoff distance for neighbor detection (Angstrom).
-   * @param bond_cutoffs Per-element-pair bond cutoffs (Angstrom).
-   * @param start_frame Index of the first frame to analyze.
-   * @param end_frame Index of the last frame to analyze (-1 for all).
-   * @param ignore_periodic_self_interactions If true, atoms don't interact with their own periodic images.
-   * @param progress_callback Callback for tracking progress (0.0 to 1.0).
-   */
+  /** @name Constructors */
+  ///@{
   TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, double neighbor_cutoff,
                      const std::vector<std::vector<double>> &bond_cutoffs, StartFrame start_frame = {0},
                      EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
                      const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Accessors -------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accessors */
+  ///@{
   /**
    * @brief Factory method to create a StructureAnalyzer for a specific frame.
    * @param frame_idx The frame index within the trajectory.
@@ -72,6 +61,8 @@ public:
   [[nodiscard]] const std::vector<std::vector<double>> &getBondCutoffsSQ() const { return bond_cutoffs_; }
   /** @return True if periodic self-interactions are being ignored. */
   [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
+
+  ///@}
 
 private:
   correlation::core::Trajectory *trajectory_;     ///< Pointer to the source trajectory.

@@ -11,9 +11,6 @@
 
 namespace correlation::analysis {
 
-//---------------------------------------------------------------------------//
-//----------------------------- Constructors --------------------------------//
-//---------------------------------------------------------------------------//
 
 TrajectoryAnalyzer::TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, double neighbor_cutoff,
                                        const std::vector<std::vector<double>> &bond_cutoffs, StartFrame start_frame,

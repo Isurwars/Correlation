@@ -30,9 +30,8 @@ class MappedFile;
 class Trajectory {
 
 public:
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
+  /** @name Constructors */
+  ///@{
   Trajectory();
 
   /**
@@ -60,9 +59,10 @@ public:
    */
   void addFrame(const Cell &frame);
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Accessors -------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accessors */
+  ///@{
   /**
    * @brief Gets a mutable reference to the frames.
    * @return A vector of Cell objects representing the frames.
@@ -165,10 +165,11 @@ public:
    */
   [[nodiscard]] size_t getRemovedFrameCount() const { return removed_frames_count_; }
 
+  ///@}
+
 private:
-  //-------------------------------------------------------------------------//
-  //--------------------------- Private Methods -----------------------------//
-  //-------------------------------------------------------------------------//
+  /** @name Private Methods */
+  ///@{
   /**
    * @brief Internal helper to validate that a new frame matches the trajectory
    * topology.
@@ -177,6 +178,9 @@ private:
    */
   void validateFrame(const Cell &new_frame) const;
   void ensureMaterialized() const;
+
+  ///@}
+
   mutable std::unique_ptr<std::mutex> init_mutex_{std::make_unique<std::mutex>()};
 
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.

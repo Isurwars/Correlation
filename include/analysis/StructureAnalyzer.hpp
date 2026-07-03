@@ -33,24 +33,16 @@ public:
   /** @brief Tensor for storing dihedrals [e1][e2][e3][e4][dihedral_index]. */
   using DihedralTensor = std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>>;
 
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
-  /**
-   * @brief Constructs a StructureAnalyzer for a single frame (Cell).
-   *
-   * @param cell The periodic cell containing atomic positions.
-   * @param cutoff The neighbor search cutoff radius (Angstrom).
-   * @param bond_cutoffs_sq Squared bond cutoffs per element pair.
-   * @param ignore_periodic_self_interactions Flag to ignore a-a image pairs.
-   */
+  /** @name Constructors */
+  ///@{
   explicit StructureAnalyzer(const correlation::core::Cell &cell, double cutoff,
                              const std::vector<std::vector<double>> &bond_cutoffs_sq,
                              bool ignore_periodic_self_interactions = true);
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Accessors -------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accessors */
+  ///@{
   /**
    * @brief Gets a multi-dimensional tensor containing pair distances.
    * @return The distance tensor `[element1][element2][pair_index]`.
@@ -77,6 +69,8 @@ public:
    * @return Constant reference to the correlation::core::NeighborGraph object.
    */
   [[nodiscard]] const correlation::core::NeighborGraph &neighborGraph() const { return neighbor_graph_; }
+
+  ///@}
 
 private:
   correlation::core::Cell cell_;                     ///< Reference to the current periodic cell.

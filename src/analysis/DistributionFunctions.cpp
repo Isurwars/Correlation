@@ -26,9 +26,6 @@
 
 namespace correlation::analysis {
 
-//---------------------------------------------------------------------------//
-//------------------------------- Constructor -------------------------------//
-//---------------------------------------------------------------------------//
 
 DistributionFunctions::DistributionFunctions(const correlation::core::Cell &cell, double cutoff,
                                              const std::vector<std::vector<double>> &bond_cutoffs)
@@ -84,9 +81,6 @@ DistributionFunctions &DistributionFunctions::operator=(DistributionFunctions &&
   return *this;
 }
 
-//--------------------------------------------------------------------------//
-//---------------------------- Helper Functions ----------------------------//
-//--------------------------------------------------------------------------//
 
 void DistributionFunctions::setStructureAnalyzer(const StructureAnalyzer *analyzer) {
   neighbors_ref_ = analyzer;
@@ -203,9 +197,6 @@ void DistributionFunctions::calculateAshcroftWeights() {
   // calculation.
 }
 
-//---------------------------------------------------------------------------//
-//---------------------------- Smoothing Methods ----------------------------//
-//---------------------------------------------------------------------------//
 void DistributionFunctions::smooth(const std::string &name, double sigma, correlation::math::KernelType kernel) {
   if (!histograms_.contains(name)) {
     throw std::runtime_error("Histogram '" + name + "' not found for smoothing.");
@@ -254,17 +245,11 @@ void DistributionFunctions::smoothAll(double sigma, correlation::math::KernelTyp
   }
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Calculation CN ------------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateCoordinationNumber() {
   histograms_["CN"] = correlation::calculators::CNCalculator::calculate(cell_, neighbors());
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Calculation RDF -----------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
   if (r_max <= 0.0) {
@@ -289,9 +274,6 @@ void DistributionFunctions::calculateRDF(double r_max, double r_bin_width) {
   }
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Calculation PAD -----------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculatePAD(double bin_width) {
   if (bin_width <= 0.0) {
@@ -300,9 +282,6 @@ void DistributionFunctions::calculatePAD(double bin_width) {
   histograms_["BAD"] = correlation::calculators::PADCalculator::calculate(cell_, neighbors(), bin_width);
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Calculation DAD -----------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateDAD(double bin_width) {
   if (bin_width <= 0.0) {
@@ -311,9 +290,6 @@ void DistributionFunctions::calculateDAD(double bin_width) {
   histograms_["DAD"] = correlation::calculators::DADCalculator::calculate(cell_, neighbors(), bin_width);
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Calculation VACF ----------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
                                           StartFrame start_frame, EndFrame end_frame) {
@@ -324,9 +300,6 @@ void DistributionFunctions::calculateVACF(const correlation::core::Trajectory &t
   }
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Calculation VDOS ----------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::calculateVDOS() {
   if (!histograms_.contains("VACF")) {
@@ -361,9 +334,6 @@ void DistributionFunctions::calculateXRD(double lambda, double theta_min, double
       correlation::calculators::BinWidth{bin_width});
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Accumulation --------------------------------//
-//---------------------------------------------------------------------------//
 
 void DistributionFunctions::add(const DistributionFunctions &other) {
   // Iterate over all histograms in the other object
@@ -419,9 +389,6 @@ void DistributionFunctions::scale(double factor) {
     }
   }
 }
-//---------------------------------------------------------------------------//
-//----------------------------- Mean Calculation ----------------------------//
-//---------------------------------------------------------------------------//
 
 std::unique_ptr<DistributionFunctions>
 DistributionFunctions::processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,

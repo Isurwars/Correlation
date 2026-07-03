@@ -43,9 +43,6 @@ public:
   correlation::core::Trajectory trajectory_;
 };
 } // namespace
-//---------------------------------------------------------------------------//
-//----------------------------- Constructors --------------------------------//
-//---------------------------------------------------------------------------//
 
 TEST_F(RDFTests, DefaultConstructorWorks) {
   updateTrajectory();
@@ -75,9 +72,6 @@ TEST_F(RDFTests, MoveAssignmentWorks) {
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
 
-//---------------------------------------------------------------------------//
-//------------------------------- Accessors ---------------------------------//
-//---------------------------------------------------------------------------//
 
 TEST_F(RDFTests, AccessorsWork) {
   updateTrajectory();
@@ -108,9 +102,6 @@ TEST_F(RDFTests, AccessorsWork) {
   EXPECT_TRUE(allHists.count("G_r"));
 }
 
-//---------------------------------------------------------------------------//
-//--------------------------- Calculation Methods ---------------------------//
-//---------------------------------------------------------------------------//
 
 TEST_F(RDFTests, CalculateRDF) {
   updateTrajectory();
@@ -195,9 +186,6 @@ TEST_F(RDFTests, SetStructureAnalyzer) {
   EXPECT_FALSE(dists.getHistogram("g_r").partials.empty());
 }
 
-//---------------------------------------------------------------------------//
-//----------------------------- Accumulation --------------------------------//
-//---------------------------------------------------------------------------//
 
 TEST_F(RDFTests, AddAndScale) {
   updateTrajectory();

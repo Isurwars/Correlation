@@ -57,13 +57,8 @@ struct Element {
  */
 class Atom {
 public:
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
-
-  /**
-   * @brief Default constructor.
-   */
+  /** @name Constructors */
+  ///@{
   explicit Atom() = default;
 
   /**
@@ -75,9 +70,10 @@ public:
   explicit Atom(Element element, const math::Vector3<double> &pos, AtomID atom_id) noexcept
       : element_(std::move(element)), position_(pos), id_(atom_id) {}
 
-  //-------------------------------------------------------------------------//
-  //------------------------------- Accessors -------------------------------//
-  //-------------------------------------------------------------------------//
+  ///@}
+
+  /** @name Accessors */
+  ///@{
 
   /**
    * @brief Gets the unique ID of the atom.
@@ -132,6 +128,8 @@ public:
    * @return The element ID value.
    */
   [[nodiscard]] int element_id() const { return element_.id.value; }
+
+  ///@}
 
 private:
   AtomID id_{0};                   ///< Unique identification number.

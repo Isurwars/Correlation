@@ -34,9 +34,8 @@ class PresetController;
  */
 class AppController {
 public:
-  //-------------------------------------------------------------------------//
-  //----------------------------- Constructors ------------------------------//
-  //-------------------------------------------------------------------------//
+  /** @name Constructors & Methods */
+  ///@{
 
   /**
    * @brief Constructs the AppController.
@@ -90,6 +89,8 @@ public:
    * @brief Returns the PlotController instance.
    */
   PlotController *getPlotController() { return plot_controller_.get(); }
+
+  ///@}
 
 private:
   friend class ::AppControllerTests;

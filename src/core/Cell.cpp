@@ -16,9 +16,7 @@
 
 namespace correlation::core {
 
-//---------------------------------------------------------------------------//
-//------------------------------- Constructors ------------------------------//
-//---------------------------------------------------------------------------//
+
 Cell::Cell(const math::Vector3<double> &vec_a, const math::Vector3<double> &vec_b, const math::Vector3<double> &vec_c) {
   updateLattice(math::Matrix3<double>(vec_a, vec_b, vec_c));
 }
@@ -27,9 +25,7 @@ Cell::Cell(const std::array<double, 6> &params) { setLatticeParameters(params); 
 
 
 
-//---------------------------------------------------------------------------//
-//-------------------------------- Accessors --------------------------------//
-//---------------------------------------------------------------------------//
+
 
 void Cell::setLatticeParameters(std::array<double, 6> params) {
   lattice_parameters_ = params;
@@ -102,9 +98,7 @@ void Cell::updateLatticeParametersFromVectors() {
       len_a, len_b, len_c, alpha_rad * math::rad_to_deg, beta_rad * math::rad_to_deg, gamma_rad * math::rad_to_deg};
 }
 
-//---------------------------------------------------------------------------//
-//--------------------------------- Methods ---------------------------------//
-//---------------------------------------------------------------------------//
+
 
 std::optional<Element> Cell::findElement(const std::string &symbol) const {
   auto iter = std::find_if(elements_.begin(), elements_.end(), [&](const Element &elem) { return elem.symbol == symbol; });

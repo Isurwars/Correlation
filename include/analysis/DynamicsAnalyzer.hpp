@@ -24,9 +24,8 @@ namespace correlation::analysis {
  */
 class DynamicsAnalyzer {
 public:
-  //-------------------------------------------------------------------------//
-  //--------------------------- Calculation Methods -------------------------//
-  //-------------------------------------------------------------------------//
+  /** @name Calculation Methods */
+  ///@{
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
    *
@@ -118,6 +117,8 @@ public:
    * @return The relaxation time in fs.
    */
   static double computeRelaxationTime(const std::vector<double> &time, const std::vector<double> &normalized_vacf);
+
+  ///@}
 };
 
 } // namespace correlation::analysis

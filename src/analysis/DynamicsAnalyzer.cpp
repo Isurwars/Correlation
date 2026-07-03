@@ -99,9 +99,6 @@ std::pair<double, double> integrate_vdos_frequency(double theta, const std::vect
 }
 } // namespace
 
-//---------------------------------------------------------------------------//
-//--------------------------- Calculation Methods ---------------------------//
-//---------------------------------------------------------------------------//
 
 std::vector<double> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
                                                     MaxFrames max_correlation_frames_arg, StartFrame start_frame_arg,
