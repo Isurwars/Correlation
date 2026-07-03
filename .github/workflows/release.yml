@@ -416,6 +416,8 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
           # Build x86_64 and aarch64 on Linux
           CIBW_ARCHS_LINUX: "x86_64 aarch64"
+          # Prevents the oneTBB compilation crash on older Python runtimes (e.g., cp39)
+          MACOSX_DEPLOYMENT_TARGET: "13.0"
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4

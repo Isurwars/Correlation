@@ -173,6 +173,16 @@ if (NOT WIN32)
         # in case the user passes a relative --prefix to cmake --install.
         # Force all dynamic libraries to be placed directly in the same bin/ folder
         # as the executables using gp_item_default_embedded_path_override.
+
+        # Define the exact workspace directories where our compiled shared dependencies live
+        set(MAC_DEPENDENCY_DIRS
+            "${PROJECT_BINARY_DIR}/src"
+            "${PROJECT_BINARY_DIR}/_deps/nfd-build/src"
+            "${PROJECT_BINARY_DIR}/_deps/arrow-build/release"
+            "/opt/homebrew/lib"
+            "/usr/local/lib"
+        )
+
         if(BUILD_GUI)
             install(CODE "
                 function(gp_item_default_embedded_path_override item default_embedded_path_var)
