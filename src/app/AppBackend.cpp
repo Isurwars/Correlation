@@ -267,6 +267,9 @@ std::string AppBackend::validateOptions() const {
   if (options_.max_ring_size <= 0) {
     return "Error: max_ring_size must be strictly positive.";
   }
+  if (options_.hyper_samples == 0) {
+    return "Error: hyper_samples must be strictly positive.";
+  }
   if (options_.max_frame < -1) {
     return "Error: max_frame cannot be less than -1.";
   }
@@ -463,6 +466,7 @@ std::string AppBackend::run_analysis() {
     settings.smoothing_kernel = options_.smoothing_kernel;
     settings.lef_cutoff = options_.lef_cutoff;
     settings.lef_sigma = options_.lef_sigma;
+    settings.hyperuniformity_samples = options_.hyper_samples;
     settings.cancel_flag = &cancel_flag_;
 
     // Run parallel analysis to compute distribution functions

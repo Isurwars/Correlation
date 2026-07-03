@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
   opts.smoothing_sigma = cli.smoothing_sigma;
   opts.lef_cutoff = cli.lef_cutoff;
   opts.lef_sigma = cli.lef_sigma;
+  opts.hyper_samples = cli.hyper_samples;
   opts.smoothing_kernel = cli.smoothing_kernel;
   opts.material_type = cli.material_type;
 

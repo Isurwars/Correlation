@@ -177,6 +177,10 @@ bool validateOptions(const CliOptions &opts) {
     std::cerr << "Error: --lef-sigma must be strictly positive.\n";
     return false;
   }
+  if (opts.hyper_samples <= 0) {
+    std::cerr << "Error: --hyper-samples must be strictly positive.\n";
+    return false;
+  }
   if (!opts.csv && !opts.hdf5 && !opts.parquet) {
     std::cerr << "Error: At least one output format (--csv, --hdf5, or --parquet) must be enabled.\n";
     return false;
@@ -227,6 +231,8 @@ bool parseArgs(std::span<char *> argv, CliOptions &opts) {
 
   app.add_option("--lef-cutoff", opts.lef_cutoff);
   app.add_option("--lef-sigma", opts.lef_sigma);
+
+  app.add_option("--hyper-samples", opts.hyper_samples);
 
   std::string k_str = "gaussian";
   app.add_option("--smoothing-kernel", k_str);

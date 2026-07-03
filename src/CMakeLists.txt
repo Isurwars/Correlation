@@ -53,6 +53,7 @@ add_library(calculators_obj OBJECT
     calculators/ClusterCalculator.cpp
     calculators/LocalEntropyCalculator.cpp
     calculators/VoronoiCalculator.cpp
+    calculators/HyperuniformityCalculator.cpp
 )
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include

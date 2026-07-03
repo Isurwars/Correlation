@@ -91,6 +91,7 @@ struct ProgramOptions {
   double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;                          ///< Sigma for Gaussian kernel.
   double lef_cutoff = AppDefaults::LEF_CUTOFF;                                    ///< Cutoff radius for local entropy.
   double lef_sigma = AppDefaults::LEF_SIGMA;                                      ///< Gaussian standard deviation for local entropy.
+  size_t hyper_samples = 10000;                                                   ///< Number of random samples for hyperuniformity.
   correlation::math::KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL; ///< Smoothing kernel type.
   int min_frame = 0;                                                              ///< Starting frame index.
   int max_frame = -1;                                                             ///< Ending frame index (-1 for all).

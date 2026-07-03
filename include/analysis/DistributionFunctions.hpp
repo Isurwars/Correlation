@@ -40,6 +40,7 @@ struct AnalysisSettings {
   size_t max_ring_size = 8;        ///< Maximum size of rings to search for.
   double lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
   double lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
+  size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
   /// An empty map means all calculators are enabled by default.

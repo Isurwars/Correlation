@@ -12,25 +12,32 @@ export component AdvancedOptionsCard inherits FilledCard {
     in property <bool> file_loaded;
     in-out property <string> lef_cutoff;
     in-out property <string> lef_sigma;
+    in-out property <string> hyper_samples;
     in property <string> lef_cutoff_error: "";
     in property <string> lef_sigma_error: "";
+    in property <string> hyper_samples_error: "";
 
     out property <string> hovered_tooltip_text:
         cutoff_area.has-hover ? "Cutoff radius (Rc) for the local entropy integration.\n\n📏 Recommended: 5.0 Å.\n\n🔬 Physics: Defines the maximum distance to consider when calculating the local entropic fingerprint around each atom. Integrates local correlations up to this distance." :
-        sigma_area.has-hover ? "Gaussian kernel width (σ) for the local entropic fingerprint.\n\n📏 Recommended: 0.2 Å.\n\n🔬 Physics: Controls the width of the Gaussian used to broaden the local pair distribution. Too small causes discrete binning noise; too large smears structural detail." : "";
+        sigma_area.has-hover ? "Gaussian kernel width (σ) for the local entropic fingerprint.\n\n📏 Recommended: 0.2 Å.\n\n🔬 Physics: Controls the width of the Gaussian used to broaden the local pair distribution. Too small causes discrete binning noise; too large smears structural detail." :
+        hyper_area.has-hover ? "Number of random sample points for hyperuniformity calculation.\n\n📏 Recommended: 10000.\n\n🔬 Physics: More samples improve the statistical accuracy of the local number variance σ²_N(R) and hyperuniformity index χ_H(R). Higher values yield smoother curves but increase computation time." : "";
 
     out property <length> hovered_x:
         cutoff_area.has-hover ? cutoff_area.absolute-position.x :
-        sigma_area.has-hover ? sigma_area.absolute-position.x : 0px;
+        sigma_area.has-hover ? sigma_area.absolute-position.x :
+        hyper_area.has-hover ? hyper_area.absolute-position.x : 0px;
     out property <length> hovered_y:
         cutoff_area.has-hover ? cutoff_area.absolute-position.y :
-        sigma_area.has-hover ? sigma_area.absolute-position.y : 0px;
+        sigma_area.has-hover ? sigma_area.absolute-position.y :
+        hyper_area.has-hover ? hyper_area.absolute-position.y : 0px;
     out property <length> hovered_width:
         cutoff_area.has-hover ? cutoff_area.width :
-        sigma_area.has-hover ? sigma_area.width : 0px;
+        sigma_area.has-hover ? sigma_area.width :
+        hyper_area.has-hover ? hyper_area.width : 0px;
     out property <length> hovered_height:
         cutoff_area.has-hover ? cutoff_area.height :
-        sigma_area.has-hover ? sigma_area.height : 0px;
+        sigma_area.has-hover ? sigma_area.height :
+        hyper_area.has-hover ? hyper_area.height : 0px;
 
     Vertical {
 
@@ -68,6 +75,17 @@ export component AdvancedOptionsCard inherits FilledCard {
                     text <=> root.lef_sigma;
                     has_error: root.lef_sigma_error != "";
                     supporting_text: root.lef_sigma_error;
+                }
+            }
+
+            hyper_area := TouchArea {
+                TextField {
+                    enabled: root.file_loaded;
+                    width: 100%;
+                    label: "Hyperuniformity Samples";
+                    text <=> root.hyper_samples;
+                    has_error: root.hyper_samples_error != "";
+                    supporting_text: root.hyper_samples_error;
                 }
             }
         }

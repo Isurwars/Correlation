@@ -158,7 +158,8 @@ export component AppWindow inherits Window {
         time_step: "1.0",
         material_type: 0,
         lef_cutoff: "5.0",
-        lef_sigma: "0.2"
+        lef_sigma: "0.2",
+        hyper_samples: "10000"
     };
     in-out property <AppErrors> app_errors;
     in-out property <[BondCutoff]> bond_cutoffs: [];
@@ -190,6 +191,7 @@ export component AppWindow inherits Window {
     property <int> material_type <=> analysis_options.material_type;
     property <string> lef_cutoff <=> analysis_options.lef_cutoff;
     property <string> lef_sigma <=> analysis_options.lef_sigma;
+    property <string> hyper_samples <=> analysis_options.hyper_samples;
 
     property <string> r_max_error <=> app_errors.r_max_error;
     property <string> r_bin_error <=> app_errors.r_bin_error;
@@ -205,6 +207,7 @@ export component AppWindow inherits Window {
     property <string> time_step_error <=> app_errors.time_step_error;
     property <string> lef_cutoff_error <=> app_errors.lef_cutoff_error;
     property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
+    property <string> hyper_samples_error <=> app_errors.hyper_samples_error;
 
     property <int> export_size_preset <=> export_config.size_preset;
     property <int> export_palette <=> export_config.palette;
@@ -313,6 +316,9 @@ export component AppWindow inherits Window {
         root.validate_inputs();
     }
     changed lef_sigma => {
+        root.validate_inputs();
+    }
+    changed hyper_samples => {
         root.validate_inputs();
     }
     changed material_type => {
@@ -615,6 +621,8 @@ export component AppWindow inherits Window {
                             lef_sigma <=> root.lef_sigma;
                             lef_cutoff_error: root.lef_cutoff_error;
                             lef_sigma_error: root.lef_sigma_error;
+                            hyper_samples <=> root.hyper_samples;
+                            hyper_samples_error: root.hyper_samples_error;
                             visible: options_container.active_tab == 1;
                             height: options_container.active_tab == 1 ? self.preferred-height : 0px;
                         }

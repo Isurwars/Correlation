@@ -227,6 +227,11 @@ void AppController::handleOptionstoUI() {
     opts.lef_sigma = slint::SharedString(std::format("{:.2f}", opt.lef_sigma));
     window_.set_analysis_options(opts);
   }
+  {
+    auto opts = window_.get_analysis_options();
+    opts.hyper_samples = slint::SharedString(std::to_string(opt.hyper_samples));
+    window_.set_analysis_options(opts);
+  }
 
   {
     auto opts = window_.get_analysis_options();
@@ -312,6 +317,8 @@ ProgramOptions AppController::handleOptionsfromUI() {
                                       opt.dihedral_bin_width); // NOLINT(bugprone-narrowing-conversions)
   opt.max_ring_size = static_cast<size_t>(
       safe_parse(window_.get_analysis_options().max_ring_size, static_cast<double>(opt.max_ring_size)));
+  opt.hyper_samples = static_cast<size_t>(
+      safe_parse(window_.get_analysis_options().hyper_samples, static_cast<double>(opt.hyper_samples)));
 
   // Collect active_calculators from the UI model
   auto groups = window_.get_calculator_groups();

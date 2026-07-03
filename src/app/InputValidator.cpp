@@ -283,6 +283,13 @@ bool InputValidator::validateOtherAnalysisOptions(AppErrors &errs) {
     valid = false;
   }
 
+  int hyper_samples_val = 0;
+  std::string hyper_samples_s = window_->get_analysis_options().hyper_samples.data();
+  if (!is_positive_int(hyper_samples_s, hyper_samples_val)) {
+    errs.hyper_samples_error = "Must be a positive integer";
+    valid = false;
+  }
+
   return valid;
 }
 
@@ -438,6 +445,7 @@ void InputValidator::updateCliCommand() {
 
   cmd += " --lef-cutoff " + std::string(window_->get_analysis_options().lef_cutoff.data());
   cmd += " --lef-sigma " + std::string(window_->get_analysis_options().lef_sigma.data());
+  cmd += " --hyper-samples " + std::string(window_->get_analysis_options().hyper_samples.data());
 
   cmd += getDisabledGroupsArg(opt);
 

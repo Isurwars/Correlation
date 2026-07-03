@@ -122,7 +122,8 @@ void PlotController::populatePlotList() {
 
   std::map<std::string, int> priority = {{"g_r", 0},  {"G_r", 1},   {"J_r", 2},  {"S_q", 10}, {"XRD", 11},
                                          {"BAD", 20}, {"PAD", 21},  {"DAD", 22}, {"CN", 23},  {"RD", 24},
-                                         {"MSD", 30}, {"VACF", 31}, {"VDOS", 32}};
+                                         {"MSD", 30}, {"VACF", 31}, {"VDOS", 32},
+                                         {"sigma2_N", 40}, {"chi_H", 41}};
 
   std::ranges::sort(names, [&](const std::string &lhs, const std::string &rhs) {
     int prio_a = priority.contains(lhs) ? priority.at(lhs) : 100;
