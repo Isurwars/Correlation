@@ -72,14 +72,26 @@ include(cmake/Dependencies.cmake)
 include(cmake/SIMD.cmake)
 
 # -----------------------------------------------------------
-# Optional GPU Acceleration (CUDA)
+# Optional GPU Acceleration (CUDA or HIP)
 # -----------------------------------------------------------
 option(BUILD_WITH_CUDA "Enable GPU-accelerated calculators via CUDA" OFF)
+option(BUILD_WITH_HIP "Enable GPU-accelerated calculators via HIP" OFF)
+
+if(BUILD_WITH_CUDA AND BUILD_WITH_HIP)
+    message(FATAL_ERROR "Cannot build with both BUILD_WITH_CUDA and BUILD_WITH_HIP enabled. Choose one GPU backend.")
+endif()
+
 if(BUILD_WITH_CUDA)
     enable_language(CUDA)
     find_package(CUDAToolkit REQUIRED)
-    add_compile_definitions(CORRELATION_USE_CUDA)
+    add_compile_definitions(CORRELATION_USE_CUDA CORRELATION_USE_GPU)
     message(STATUS "CUDA enabled — GPU calculators will be built")
+endif()
+
+if(BUILD_WITH_HIP)
+    enable_language(HIP)
+    add_compile_definitions(CORRELATION_USE_HIP CORRELATION_USE_GPU)
+    message(STATUS "HIP enabled — GPU calculators will be built")
 endif()
 # -----------------------------------------------------------
 # Code Coverage

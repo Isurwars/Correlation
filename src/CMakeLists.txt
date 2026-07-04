@@ -62,21 +62,30 @@ target_link_libraries(calculators_obj PRIVATE TBB::tbb voro++)
 target_compile_definitions(calculators_obj PRIVATE _PSTL_PAR_BACKEND_TBB)
 target_link_libraries(calculators_obj PRIVATE correlation_simd_options)
 
-# Optional GPU-accelerated calculators (CUDA)
-if(BUILD_WITH_CUDA)
+# Optional GPU-accelerated calculators (CUDA / HIP)
+if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     add_library(gpu_calculators_obj OBJECT
         calculators/GPUSQCalculator.cu
+        calculators/GPUDistanceCalculator.cu
     )
     target_include_directories(gpu_calculators_obj PRIVATE
         ${PROJECT_SOURCE_DIR}/include
     )
     target_link_libraries(gpu_calculators_obj PRIVATE
-        CUDA::cudart TBB::tbb
+        TBB::tbb
     )
-    set_target_properties(gpu_calculators_obj PROPERTIES
-        CUDA_STANDARD 17
-        POSITION_INDEPENDENT_CODE ON
-    )
+    if(BUILD_WITH_CUDA)
+        target_link_libraries(gpu_calculators_obj PRIVATE CUDA::cudart)
+        set_target_properties(gpu_calculators_obj PROPERTIES
+            CUDA_STANDARD 20
+            POSITION_INDEPENDENT_CODE ON
+        )
+    elseif(BUILD_WITH_HIP)
+        set_target_properties(gpu_calculators_obj PROPERTIES
+            HIP_STANDARD 20
+            POSITION_INDEPENDENT_CODE ON
+        )
+    endif()
 endif()
 
 # Writers as an OBJECT library to ensure static registration triggers
@@ -121,7 +130,7 @@ add_library(correlation_lib STATIC
     $<TARGET_OBJECTS:readers_obj>
     $<TARGET_OBJECTS:calculators_obj>
     $<TARGET_OBJECTS:writers_obj>
-    $<$<BOOL:${BUILD_WITH_CUDA}>:$<TARGET_OBJECTS:gpu_calculators_obj>>
+    $<$<OR:$<BOOL:${BUILD_WITH_CUDA}>,$<BOOL:${BUILD_WITH_HIP}>>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
 # Include directories
@@ -151,6 +160,10 @@ if(BUILD_WITH_ARROW)
 endif()
 if(BUILD_WITH_CUDA)
     target_link_libraries(correlation_lib PRIVATE CUDA::cudart)
+    set_target_properties(correlation_lib PROPERTIES CUDA_STANDARD 20)
+endif()
+if(BUILD_WITH_HIP)
+    set_target_properties(correlation_lib PROPERTIES HIP_STANDARD 20)
 endif()
 
 #------------------------------------------------------------------
@@ -224,6 +237,12 @@ if(BUILD_GUI)
             )
         endif()
     endif()
+    if(BUILD_WITH_CUDA)
+        set_target_properties(correlation PROPERTIES CUDA_STANDARD 20)
+    endif()
+    if(BUILD_WITH_HIP)
+        set_target_properties(correlation PROPERTIES HIP_STANDARD 20)
+    endif()
 endif()
 
 #------------------------------------------------------------------
@@ -254,6 +273,12 @@ target_compile_definitions(correlation-cli PRIVATE _USE_MATH_DEFINES)
 target_link_libraries(correlation-cli PRIVATE correlation_simd_options)
 bundle_windows_dlls(correlation-cli)
 install(TARGETS correlation-cli RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT correlation)
+if(BUILD_WITH_CUDA)
+    set_target_properties(correlation-cli PROPERTIES CUDA_STANDARD 20)
+endif()
+if(BUILD_WITH_HIP)
+    set_target_properties(correlation-cli PROPERTIES HIP_STANDARD 20)
+endif()
 
 #------------------------------------------------------------------
 # Python Bindings

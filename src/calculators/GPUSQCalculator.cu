@@ -14,7 +14,7 @@
 #include "math/Constants.hpp"
 
 #include <cmath>
-#include <cuda_runtime.h>
+#include "core/GPUPortability.hpp"
 #include <map>
 #include <stdexcept>
 #include <vector>
@@ -160,8 +160,8 @@ __global__ void sq_kernel(DeviceAtoms atoms, int num_atoms, DeviceQVectors q_vec
 // -------------------------------------------------------------------------
 GPUSQCalculator::GPUSQCalculator() {
   int device_count = 0;
-  cudaError_t err = cudaGetDeviceCount(&device_count);
-  has_gpu_ = (err == cudaSuccess && device_count > 0);
+  hipError_t err = hipGetDeviceCount(&device_count);
+  has_gpu_ = (err == hipSuccess && device_count > 0);
 }
 
 // -------------------------------------------------------------------------
@@ -225,21 +225,21 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   double *d_rho_cos = nullptr;
   double *d_rho_sin = nullptr;
 
-  cudaMalloc(&d_x, num_atoms * sizeof(double));
-  cudaMalloc(&d_y, num_atoms * sizeof(double));
-  cudaMalloc(&d_z, num_atoms * sizeof(double));
-  cudaMalloc(&d_qx, num_q * sizeof(double));
-  cudaMalloc(&d_qy, num_q * sizeof(double));
-  cudaMalloc(&d_qz, num_q * sizeof(double));
-  cudaMalloc(&d_rho_cos, num_q * sizeof(double));
-  cudaMalloc(&d_rho_sin, num_q * sizeof(double));
+  hipMalloc(&d_x, num_atoms * sizeof(double));
+  hipMalloc(&d_y, num_atoms * sizeof(double));
+  hipMalloc(&d_z, num_atoms * sizeof(double));
+  hipMalloc(&d_qx, num_q * sizeof(double));
+  hipMalloc(&d_qy, num_q * sizeof(double));
+  hipMalloc(&d_qz, num_q * sizeof(double));
+  hipMalloc(&d_rho_cos, num_q * sizeof(double));
+  hipMalloc(&d_rho_sin, num_q * sizeof(double));
 
-  cudaMemcpy(d_x, h_x.data(), num_atoms * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_y, h_y.data(), num_atoms * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_z, h_z.data(), num_atoms * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_qx, q_data.qx.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_qy, q_data.qy.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
-  cudaMemcpy(d_qz, q_data.qz.data(), num_q * sizeof(double), cudaMemcpyHostToDevice);
+  hipMemcpy(d_x, h_x.data(), num_atoms * sizeof(double), hipMemcpyHostToDevice);
+  hipMemcpy(d_y, h_y.data(), num_atoms * sizeof(double), hipMemcpyHostToDevice);
+  hipMemcpy(d_z, h_z.data(), num_atoms * sizeof(double), hipMemcpyHostToDevice);
+  hipMemcpy(d_qx, q_data.qx.data(), num_q * sizeof(double), hipMemcpyHostToDevice);
+  hipMemcpy(d_qy, q_data.qy.data(), num_q * sizeof(double), hipMemcpyHostToDevice);
+  hipMemcpy(d_qz, q_data.qz.data(), num_q * sizeof(double), hipMemcpyHostToDevice);
 
   // Launch kernel.
   const int block_size = 256;
@@ -247,24 +247,24 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   DeviceAtoms device_atoms{.x = d_x, .y = d_y, .z = d_z};
   DeviceQVectors device_q_vecs{.qx = d_qx, .qy = d_qy, .qz = d_qz};
   DeviceResults device_results{.rho_cos = d_rho_cos, .rho_sin = d_rho_sin};
-  sq_kernel<<<grid_size, block_size>>>(device_atoms, static_cast<int>(num_atoms), device_q_vecs, num_q, device_results);
-  cudaDeviceSynchronize();
+  hipLaunchKernelGGL(sq_kernel, grid_size, block_size, 0, 0, device_atoms, static_cast<int>(num_atoms), device_q_vecs, num_q, device_results);
+  hipDeviceSynchronize();
 
   // Copy results back.
   std::vector<double> rho_cos(num_q, 0.0);
   std::vector<double> rho_sin(num_q, 0.0);
-  cudaMemcpy(rho_cos.data(), d_rho_cos, num_q * sizeof(double), cudaMemcpyDeviceToHost);
-  cudaMemcpy(rho_sin.data(), d_rho_sin, num_q * sizeof(double), cudaMemcpyDeviceToHost);
+  hipMemcpy(rho_cos.data(), d_rho_cos, num_q * sizeof(double), hipMemcpyDeviceToHost);
+  hipMemcpy(rho_sin.data(), d_rho_sin, num_q * sizeof(double), hipMemcpyDeviceToHost);
 
   // Free device memory.
-  cudaFree(d_x);
-  cudaFree(d_y);
-  cudaFree(d_z);
-  cudaFree(d_qx);
-  cudaFree(d_qy);
-  cudaFree(d_qz);
-  cudaFree(d_rho_cos);
-  cudaFree(d_rho_sin);
+  hipFree(d_x);
+  hipFree(d_y);
+  hipFree(d_z);
+  hipFree(d_qx);
+  hipFree(d_qy);
+  hipFree(d_qz);
+  hipFree(d_rho_cos);
+  hipFree(d_rho_sin);
 
   // Bin-average S(Q) = |rho(q)|^2 / N.
   std::vector<double> total_sq = averageBinnedSQ(rho_cos, num_q_bins, rho_sin, q_bin_width, q_data.qmag, num_atoms);

@@ -11,6 +11,10 @@
 #include "math/LinearAlgebra.hpp"
 #include "math/SIMDUtils.hpp"
 
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+#include "calculators/GPUDistanceCalculator.hpp"
+#endif
+
 #include <cmath>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for_each.h>
@@ -275,6 +279,13 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, double cut
   if (cutoff_sq <= 0.0) {
     throw std::invalid_argument("Cutoff squared must be strictly positive.");
   }
+
+#if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
+  if (gpu::has_gpu_device()) {
+    gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, ignore_periodic_self_interactions, out_distances, out_graph);
+    return;
+  }
+#endif
 
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
