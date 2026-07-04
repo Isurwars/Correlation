@@ -99,8 +99,7 @@ inline const std::array<double, 9> &getAtomicFormFactors(std::string_view symbol
 }
 
 namespace detail {
-constexpr const ElementData *find(std::string_view symbol) noexcept {
-  static constexpr std::array<ElementData, 98> database = {{
+inline constexpr std::array<ElementData, 98> database = {{
       {.symbol = "Ac",
        .radius = 1.86,
        .mass = 227.0,
@@ -505,6 +504,8 @@ constexpr const ElementData *find(std::string_view symbol) noexcept {
        .mass = 91.224,
        .form_factors = {17.859772, 1.310692, 10.911038, 12.319285, 5.821115, 0.104353, 3.512513, 91.777542, 1.124859}},
   }};
+
+constexpr const ElementData *find(std::string_view symbol) noexcept {
   // Binary search implementation for element data retrieval.
   // This function provides O(log N) lookup complexity.
   // @param symbol Chemical symbol.
