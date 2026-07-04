@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['unknown_0',['Unknown',['../namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e',1,'correlation::readers']]]
+  ['vasp_0',['Vasp',['../namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230aa9e4f25c2775231296b2055ef94b2316',1,'correlation::readers']]]
 ];

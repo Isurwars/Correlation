@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -102,15 +102,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa5b404838ac83dbd3b285802ce8a2ade" id="r_aa5b404838ac83dbd3b285802ce8a2ade"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#aa5b404838ac83dbd3b285802ce8a2ade">NeighborGraph</a> (size_t node_count)</td></tr>
 <tr class="memdesc:aa5b404838ac83dbd3b285802ce8a2ade"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a graph with a fixed number of nodes.  <br /></td></tr>
 <tr class="separator:aa5b404838ac83dbd3b285802ce8a2ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a282c951c1f8aad540e00add2e2e54297" id="r_a282c951c1f8aad540e00add2e2e54297"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#a282c951c1f8aad540e00add2e2e54297">addDirectedEdge</a> (size_t from, size_t to, double <a class="el" href="namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca">distance</a>, const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;r_ij)</td></tr>
-<tr class="memdesc:a282c951c1f8aad540e00add2e2e54297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a directed edge between two atoms.  <br /></td></tr>
-<tr class="separator:a282c951c1f8aad540e00add2e2e54297"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4948d9efb651fcab7a6e3e205c826c0b" id="r_a4948d9efb651fcab7a6e3e205c826c0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#a4948d9efb651fcab7a6e3e205c826c0b">addDirectedEdge</a> (size_t source, size_t target, double <a class="el" href="namespacecorrelation_1_1core.html#a90351b877b16b17d786a4268c961d85f">distance</a>, const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;<a class="el" href="DistanceCalculator_8cpp.html#a64ecbb3573e96f091e11dcb8fb520baa">r_ij</a>)</td></tr>
+<tr class="memdesc:a4948d9efb651fcab7a6e3e205c826c0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a directed edge between two atoms.  <br /></td></tr>
+<tr class="separator:a4948d9efb651fcab7a6e3e205c826c0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0561713c3df3fe24718e4f2384581a4" id="r_ad0561713c3df3fe24718e4f2384581a4"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="structcorrelation_1_1core_1_1Neighbor.html">Neighbor</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4">getNeighbors</a> (size_t atom_index) const</td></tr>
 <tr class="memdesc:ad0561713c3df3fe24718e4f2384581a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the neighbor list for a specific atom.  <br /></td></tr>
 <tr class="separator:ad0561713c3df3fe24718e4f2384581a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c577c5ae33f7e8baea4d565f78d0b87" id="r_a3c577c5ae33f7e8baea4d565f78d0b87"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#a3c577c5ae33f7e8baea4d565f78d0b87">areConnected</a> (size_t i, size_t j) const</td></tr>
-<tr class="memdesc:a3c577c5ae33f7e8baea4d565f78d0b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if two atoms are connected by an edge.  <br /></td></tr>
-<tr class="separator:a3c577c5ae33f7e8baea4d565f78d0b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd0b2bfcd6002fdb0fa53f6db8db4049" id="r_afd0b2bfcd6002fdb0fa53f6db8db4049"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#afd0b2bfcd6002fdb0fa53f6db8db4049">areConnected</a> (<a class="el" href="structcorrelation_1_1core_1_1AtomIndex.html">AtomIndex</a> first_atom, <a class="el" href="structcorrelation_1_1core_1_1AtomIndex.html">AtomIndex</a> second_atom) const</td></tr>
+<tr class="memdesc:afd0b2bfcd6002fdb0fa53f6db8db4049"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if two atoms are connected by an edge.  <br /></td></tr>
+<tr class="separator:afd0b2bfcd6002fdb0fa53f6db8db4049"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d857c7a68cae6658b2037cf7b4509e4" id="r_a0d857c7a68cae6658b2037cf7b4509e4"><td class="memItemLeft" align="right" valign="top">std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1NeighborGraph.html#a0d857c7a68cae6658b2037cf7b4509e4">getDenseAdjacencyMatrix</a> () const</td></tr>
 <tr class="memdesc:a0d857c7a68cae6658b2037cf7b4509e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a flattened dense adjacency matrix.  <br /></td></tr>
 <tr class="separator:a0d857c7a68cae6658b2037cf7b4509e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,8 +189,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a282c951c1f8aad540e00add2e2e54297" name="a282c951c1f8aad540e00add2e2e54297"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a282c951c1f8aad540e00add2e2e54297">&#9670;&#160;</a></span>addDirectedEdge()</h2>
+<a id="a4948d9efb651fcab7a6e3e205c826c0b" name="a4948d9efb651fcab7a6e3e205c826c0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4948d9efb651fcab7a6e3e205c826c0b">&#9670;&#160;</a></span>addDirectedEdge()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,13 +199,13 @@ Private Attributes</h2></td></tr>
           <td class="memname">void correlation::core::NeighborGraph::addDirectedEdge </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>from</em>, </td>
+          <td class="paramname"><em>source</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>to</em>, </td>
+          <td class="paramname"><em>target</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -230,31 +230,18 @@ Private Attributes</h2></td></tr>
 <p>Adds a directed edge between two atoms. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">from</td><td>Index of the source atom. </td></tr>
-    <tr><td class="paramname">to</td><td>Index of the target atom. </td></tr>
+    <tr><td class="paramname">source</td><td>Index of the source atom. </td></tr>
+    <tr><td class="paramname">target</td><td>Index of the target atom. </td></tr>
     <tr><td class="paramname">distance</td><td>Separation distance (Angstrom). </td></tr>
-    <tr><td class="paramname">r_ij</td><td>Relative position vector (to - from). </td></tr>
+    <tr><td class="paramname">r_ij</td><td>Relative position vector (target - source). </td></tr>
   </table>
   </dd>
 </dl>
 <div class="dynheader">
-Here is the call graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_cgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_cgraph" id="aclasscorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_cgraph">
-<area shape="rect" title="Adds a directed edge between two atoms." alt="" coords="5,22,244,62"/>
-<area shape="rect" href="namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="292,22,428,62"/>
-<area shape="poly" title=" " alt="" coords="244,39,279,39,279,45,244,45"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="476,29,652,55"/>
-<area shape="poly" title=" " alt="" coords="428,39,462,39,462,45,428,45"/>
-<area shape="poly" title=" " alt="" coords="531,31,524,21,527,11,541,5,564,3,592,6,604,16,600,20,590,11,564,8,542,10,531,15,529,20,535,28"/>
-</map>
-</div>
-<div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_icgraph" id="aclasscorrelation_1_1core_1_1NeighborGraph_a282c951c1f8aad540e00add2e2e54297_icgraph">
+<div class="center"><img src="classcorrelation_1_1core_1_1NeighborGraph_a4948d9efb651fcab7a6e3e205c826c0b_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1NeighborGraph_a4948d9efb651fcab7a6e3e205c826c0b_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1NeighborGraph_a4948d9efb651fcab7a6e3e205c826c0b_icgraph" id="aclasscorrelation_1_1core_1_1NeighborGraph_a4948d9efb651fcab7a6e3e205c826c0b_icgraph">
 <area shape="rect" title="Adds a directed edge between two atoms." alt="" coords="272,5,511,45"/>
 <area shape="rect" href="classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,5,224,45"/>
 <area shape="poly" title=" " alt="" coords="258,28,224,28,224,23,258,23"/>
@@ -263,8 +250,8 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a id="a3c577c5ae33f7e8baea4d565f78d0b87" name="a3c577c5ae33f7e8baea4d565f78d0b87"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c577c5ae33f7e8baea4d565f78d0b87">&#9670;&#160;</a></span>areConnected()</h2>
+<a id="afd0b2bfcd6002fdb0fa53f6db8db4049" name="afd0b2bfcd6002fdb0fa53f6db8db4049"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd0b2bfcd6002fdb0fa53f6db8db4049">&#9670;&#160;</a></span>areConnected()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,14 +259,14 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">bool correlation::core::NeighborGraph::areConnected </td>
           <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>i</em>, </td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1core_1_1AtomIndex.html">AtomIndex</a>&#160;</td>
+          <td class="paramname"><em>first_atom</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>j</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1core_1_1AtomIndex.html">AtomIndex</a>&#160;</td>
+          <td class="paramname"><em>second_atom</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -292,12 +279,12 @@ Here is the caller graph for this function:</div>
 <p>Checks if two atoms are connected by an edge. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>First atom index. </td></tr>
-    <tr><td class="paramname">j</td><td>Second atom index. </td></tr>
+    <tr><td class="paramname">first_atom</td><td>First atom index. </td></tr>
+    <tr><td class="paramname">second_atom</td><td>Second atom index. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True if j is a neighbor of i. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True if second_atom is a neighbor of first_atom. </dd></dl>
 
 </div>
 </div>
@@ -350,11 +337,19 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1core_1_1NeighborGraph_ad0561713c3df3fe24718e4f2384581a4_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1NeighborGraph_ad0561713c3df3fe24718e4f2384581a4_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1NeighborGraph_ad0561713c3df3fe24718e4f2384581a4_icgraph" id="aclasscorrelation_1_1core_1_1NeighborGraph_ad0561713c3df3fe24718e4f2384581a4_icgraph">
-<area shape="rect" title="Retrieves the neighbor list for a specific atom." alt="" coords="269,37,484,77"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1AngleCalculator.html#a5c77c5193fa151fcc9cf14ebc27aa6d6" title="Computes and populates the bond angles tensor." alt="" coords="14,5,213,45"/>
-<area shape="poly" title=" " alt="" coords="255,45,213,40,213,35,256,40"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="5,69,221,109"/>
-<area shape="poly" title=" " alt="" coords="256,75,222,79,221,74,256,69"/>
+<area shape="rect" title="Retrieves the neighbor list for a specific atom." alt="" coords="768,69,983,109"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#a0e53ff6176e3c761fd5810611bd07cee" title="Performs CNA on a single cell." alt="" coords="517,5,707,45"/>
+<area shape="poly" title=" " alt="" coords="779,69,694,48,695,43,780,63"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="504,69,720,109"/>
+<area shape="poly" title=" " alt="" coords="755,92,720,92,720,87,755,87"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ChiralityCalculator.html#a36725fa25cdc01b4febb6b5dff33b2e0" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="507,134,717,189"/>
+<area shape="poly" title=" " alt="" coords="789,116,713,137,712,131,788,110"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#a33fd116c876c72a5f6a1d9ed157b8014" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="224,5,456,45"/>
+<area shape="poly" title=" " alt="" coords="503,28,456,28,456,23,503,23"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ChiralityCalculator.html#aa31a344c893ef452816fb53b87f877c5" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="255,134,425,189"/>
+<area shape="poly" title=" " alt="" coords="494,164,426,164,426,159,494,159"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,134,176,189"/>
+<area shape="poly" title=" " alt="" coords="241,164,176,164,176,159,241,159"/>
 </map>
 </div>
 
@@ -381,7 +376,7 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1core_1_1NeighborGraph_a39973b463b9195b7957362c10c3269db_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1NeighborGraph_a39973b463b9195b7957362c10c3269db_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1NeighborGraph_a39973b463b9195b7957362c10c3269db_icgraph" id="aclasscorrelation_1_1core_1_1NeighborGraph_a39973b463b9195b7957362c10c3269db_icgraph">
 <area shape="rect" title=" " alt="" coords="304,5,503,45"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1ClusterCalculator.html#a5bcd9f53f9cf7848e67c55ccdfe94951" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,256,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ClusterCalculator.html#a01736f0997cccf7fa60a09db175edb4b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,256,45"/>
 <area shape="poly" title=" " alt="" coords="290,28,256,28,256,23,290,23"/>
 </map>
 </div>

@@ -1,0 +1,27 @@
+<map id="correlation::calculators::ChiralityCalculator::calculateFrame" name="correlation::calculators::ChiralityCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,169,176,223"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="239,54,407,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="134,166,223,118,235,112,237,117,225,122,137,171"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#aa31a344c893ef452816fb53b87f877c5" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="238,133,409,187"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="176,180,224,173,225,178,177,185"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="224,212,423,252"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="177,207,211,212,210,217,176,212"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="239,277,407,331"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="144,221,225,262,241,269,239,274,223,266,142,226"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="507,68,643,108"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="408,133,493,109,495,114,409,138"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#a36725fa25cdc01b4febb6b5dff33b2e0" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="471,133,680,187"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="409,157,457,157,457,163,409,163"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="507,212,643,252"/>
+<area shape="poly" id="edge11_Node000003_Node000010" title=" " alt="" coords="409,182,495,206,493,211,408,187"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#af4a6542661edaf9e8c2ef1c2f445b328" title="Computes the cross product of two 3D vectors." alt="" coords="764,29,907,69"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="654,130,679,118,702,98,727,79,749,69,751,74,729,84,705,102,681,122,656,135"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="754,118,917,143"/>
+<area shape="poly" id="edge7_Node000005_Node000007" title=" " alt="" coords="680,146,740,139,741,144,681,151"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4" title="Retrieves the neighbor list for a specific atom." alt="" coords="728,168,943,208"/>
+<area shape="poly" id="edge9_Node000005_Node000008" title=" " alt="" coords="681,169,715,172,714,178,680,174"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="758,233,913,287"/>
+<area shape="poly" id="edge10_Node000005_Node000009" title=" " alt="" coords="649,185,681,198,729,218,749,225,747,230,727,222,679,202,647,190"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="787,30,784,20,792,10,809,5,835,3,865,6,882,13,880,18,864,11,835,8,810,10,795,15,790,21,792,28"/>
+<area shape="poly" id="edge8_Node000007_Node000007" title=" " alt="" coords="794,120,784,110,789,100,806,93,835,91,872,95,882,100,886,106,882,109,879,104,870,100,835,97,808,99,793,104,790,109,797,116"/>
+</map>

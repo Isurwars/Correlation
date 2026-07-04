@@ -1,15 +1,20 @@
 var searchData=
 [
   ['factorial_0',['factorial',['../namespacecorrelation_1_1math.html#a048d202e6ed055a5776eea44c1a60cb1',1,'correlation::math']]],
-  ['filewriter_1',['FileWriter',['../classcorrelation_1_1writers_1_1FileWriter.html#a766415c8e384f02d88eef85ab2f0c56b',1,'correlation::writers::FileWriter']]],
-  ['fill_5fposition_5fblock_2',['fill_position_block',['../namespacecorrelation_1_1math.html#a86e5dbd68f161ef4b7efccc6671d7f11',1,'correlation::math']]],
-  ['find_3',['find',['../namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d',1,'correlation::physics::detail']]],
-  ['findelement_4',['findElement',['../classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec',1,'correlation::core::Cell']]],
-  ['findlineend_5',['findlineend',['../namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316',1,'correlation::readers::findLineEnd(const char *data, size_t total, size_t pos)'],['../namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316',1,'correlation::readers::findLineEnd(const char *data, size_t total, size_t pos)'],['../namespacecorrelation_1_1readers.html#a362a28da9c22ac27e9bebec0ab50b316',1,'correlation::readers::findLineEnd(const char *data, size_t total, size_t pos)']]],
-  ['findreaderforfile_6',['findReaderForFile',['../namespacecorrelation_1_1readers.html#a3ef99725e64408c76e5b263610489f27',1,'correlation::readers']]],
-  ['findreaderfortype_7',['findReaderForType',['../namespacecorrelation_1_1readers.html#acf1e58dcdd62c332074bc4ff2e1f2521',1,'correlation::readers']]],
-  ['findrings_8',['findRings',['../classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e',1,'correlation::calculators::MotifFinder']]],
-  ['firstframe_9',['firstFrame',['../classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631',1,'correlation::core::Trajectory']]],
-  ['fmtscientific_10',['fmtScientific',['../namespacecorrelation_1_1plotters_1_1detail.html#acc3b146009d0bcc061f938bfd8a6d637',1,'correlation::plotters::detail']]],
-  ['fromjson_11',['fromJson',['../classcorrelation_1_1app_1_1PresetManager.html#a246863a61a4ae2e50be9f4a1a288fec3',1,'correlation::app::PresetManager']]]
+  ['fileiohandler_1',['FileIOHandler',['../classcorrelation_1_1app_1_1FileIOHandler.html#a0f8745d4732f818da4d5fd9c7840d88f',1,'correlation::app::FileIOHandler']]],
+  ['filewriter_2',['FileWriter',['../classcorrelation_1_1writers_1_1FileWriter.html#a278f2b5d9a2aef2bdf896481c9cbc19d',1,'correlation::writers::FileWriter']]],
+  ['fill_5fposition_5fblock_3',['fill_position_block',['../namespacecorrelation_1_1math.html#a86e5dbd68f161ef4b7efccc6671d7f11',1,'correlation::math']]],
+  ['fillbiweight_4',['fillBiweight',['../namespacecorrelation_1_1math_1_1detail.html#a3a5577352e8b31e36d53c3db494eee41',1,'correlation::math::detail']]],
+  ['fillbump_5',['fillBump',['../namespacecorrelation_1_1math_1_1detail.html#a7940119997ebcfd3309b6e50992d4609',1,'correlation::math::detail']]],
+  ['fillcosine_6',['fillCosine',['../namespacecorrelation_1_1math_1_1detail.html#a991636d87e801eb88c88bf36a273b248',1,'correlation::math::detail']]],
+  ['fillepanechnikov_7',['fillEpanechnikov',['../namespacecorrelation_1_1math_1_1detail.html#a98b763c7b30a7035a8223afeba57275b',1,'correlation::math::detail']]],
+  ['fillgaussian_8',['fillGaussian',['../namespacecorrelation_1_1math_1_1detail.html#aaec32721985fe45bc68349674fa9164c',1,'correlation::math::detail']]],
+  ['filltriweight_9',['fillTriweight',['../namespacecorrelation_1_1math_1_1detail.html#a12bdf5873a7757e395d2e87b3a342a18',1,'correlation::math::detail']]],
+  ['find_10',['find',['../namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d',1,'correlation::physics::detail']]],
+  ['findelement_11',['findElement',['../classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec',1,'correlation::core::Cell']]],
+  ['findnextgoodfftsize_12',['findNextGoodFFTSize',['../namespacecorrelation_1_1math.html#a13ddbfff3eb1f186243a00bac5ccadf8',1,'correlation::math']]],
+  ['findrings_13',['findRings',['../classcorrelation_1_1calculators_1_1MotifFinder.html#abd697986a63ae9b4c4b20b08005eeb4e',1,'correlation::calculators::MotifFinder']]],
+  ['firstframe_14',['firstFrame',['../classcorrelation_1_1core_1_1Trajectory.html#aed8f9fb56f0202b6e9c51c5e351e1631',1,'correlation::core::Trajectory']]],
+  ['fmtscientificpdf_15',['fmtScientificPdf',['../namespacecorrelation_1_1plotters_1_1detail.html#aca30c16cdd4646b76e950d9dcaa611b0',1,'correlation::plotters::detail']]],
+  ['fromjson_16',['fromJson',['../classcorrelation_1_1app_1_1PresetManager.html#a246863a61a4ae2e50be9f4a1a288fec3',1,'correlation::app::PresetManager']]]
 ];

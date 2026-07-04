@@ -1,12 +1,20 @@
 var searchData=
 [
   ['fd_5f_0',['fd_',['../classcorrelation_1_1core_1_1MappedFile.html#a5e59fa9b3596e6f67fc570bebff2e6c3',1,'correlation::core::MappedFile']]],
-  ['file_5fsuffix_1',['file_suffix',['../structcorrelation_1_1analysis_1_1Histogram.html#ab78d884543df2fd7803d38cd39740c97',1,'correlation::analysis::Histogram']]],
-  ['fill_5farea_2',['fill_area',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a5ee6262422cf3a56b951b1ff7cec2841',1,'correlation::plotters::PlotConfig']]],
-  ['first_5fframe_5f_3',['first_frame_',['../classcorrelation_1_1core_1_1Trajectory.html#a22232be7307b17d1f4d215fed497aea8',1,'correlation::core::Trajectory']]],
-  ['font_5fscale_4',['font_scale',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a4fb208fd4a816f2911be04471efdbbfa',1,'correlation::plotters::PlotConfig']]],
-  ['form_5ffactors_5',['form_factors',['../structcorrelation_1_1physics_1_1detail_1_1ElementData.html#a051db0b71432bc1c2d95222d983d90be',1,'correlation::physics::detail::ElementData']]],
-  ['four_5fpi_6',['four_pi',['../namespacecorrelation_1_1math.html#aa3a4cb13ad809035156eb98c1724e486',1,'correlation::math']]],
-  ['frame_5foffsets_5f_7',['frame_offsets_',['../classcorrelation_1_1core_1_1Trajectory.html#a3cc14d409e6b5d06a4d624487a4237d3',1,'correlation::core::Trajectory']]],
-  ['frames_5f_8',['frames_',['../classcorrelation_1_1core_1_1Trajectory.html#a28a0aacc6a7cc9ab7f685d9388b923f1',1,'correlation::core::Trajectory']]]
+  ['fg_1',['fg',['../structcorrelation_1_1plotters_1_1detail_1_1BlendParams.html#a517971d4ba4b1606ef2865b75ff49df7',1,'correlation::plotters::detail::BlendParams']]],
+  ['file_2',['file',['../QEReader_8cpp.html#a29e2cea7ce1c30255ab366abaca90df2',1,'file:&#160;QEReader.cpp'],['../VaspReader_8cpp.html#a29e2cea7ce1c30255ab366abaca90df2',1,'file:&#160;VaspReader.cpp']]],
+  ['file_5fio_5fhandler_5f_3',['file_io_handler_',['../classcorrelation_1_1app_1_1AppController.html#a4de5147d20dd0ae4ff1184e408674c68',1,'correlation::app::AppController']]],
+  ['file_5fsize_4',['file_size',['../OutmolReader_8cpp.html#a3d954a047a53683d88d6865d04bd6f98',1,'OutmolReader.cpp']]],
+  ['file_5fsuffix_5',['file_suffix',['../structcorrelation_1_1analysis_1_1Histogram.html#ab78d884543df2fd7803d38cd39740c97',1,'correlation::analysis::Histogram']]],
+  ['filename_6',['filename',['../structcorrelation_1_1readers_1_1ReaderExtensionQuery.html#afb74d3158e530abbaef232fe726c79b9',1,'correlation::readers::ReaderExtensionQuery']]],
+  ['filepath_7',['filepath',['../structcorrelation_1_1plotters_1_1ComparisonQuery.html#a38c3921b721d21823a747bdb8c98e0a4',1,'correlation::plotters::ComparisonQuery']]],
+  ['first_5fframe_5f_8',['first_frame_',['../classcorrelation_1_1core_1_1Trajectory.html#a22232be7307b17d1f4d215fed497aea8',1,'correlation::core::Trajectory']]],
+  ['form_5ffactors_9',['form_factors',['../structcorrelation_1_1physics_1_1detail_1_1ElementData.html#a051db0b71432bc1c2d95222d983d90be',1,'correlation::physics::detail::ElementData']]],
+  ['four_5fpi_10',['four_pi',['../namespacecorrelation_1_1math.html#aa3a4cb13ad809035156eb98c1724e486',1,'correlation::math']]],
+  ['frac_5fflag_11',['frac_flag',['../OnetepDatReader_8cpp.html#a67164cf199f321e441b4dd3b55543d0c',1,'OnetepDatReader.cpp']]],
+  ['frac_5fpos_12',['frac_pos',['../CifReader_8cpp.html#a80521cf0ff59873efbfc926f46010dd7',1,'CifReader.cpp']]],
+  ['frame_5foffsets_5f_13',['frame_offsets_',['../classcorrelation_1_1core_1_1Trajectory.html#a3cc14d409e6b5d06a4d624487a4237d3',1,'correlation::core::Trajectory']]],
+  ['frames_14',['frames',['../OutmolReader_8cpp.html#a0564b34b992f61e06f7b1fa86dd1fa54',1,'frames:&#160;OutmolReader.cpp'],['../QEReader_8cpp.html#a0564b34b992f61e06f7b1fa86dd1fa54',1,'frames:&#160;QEReader.cpp']]],
+  ['frames_5f_15',['frames_',['../classcorrelation_1_1core_1_1Trajectory.html#a28a0aacc6a7cc9ab7f685d9388b923f1',1,'correlation::core::Trajectory']]],
+  ['from_16',['from',['../DistanceCalculator_8cpp.html#a66a6152caa0d2dec6985ed86838ba876',1,'DistanceCalculator.cpp']]]
 ];

@@ -1,43 +1,49 @@
 <map id="correlation::calculators::BaseCalculator" name="correlation::calculators::BaseCalculator">
-<area shape="rect" id="Node000001" title="Base class for all analysis calculators." alt="" coords="5,599,176,639"/>
-<area shape="rect" id="Node000002" href="$classPyBaseCalculator.html" title=" " alt="" coords="253,5,389,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="93,585,107,465,132,302,150,220,171,145,195,84,222,42,236,31,252,23,254,28,239,35,226,45,199,86,176,147,155,221,138,303,112,466,98,586"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1AngleCalculator.html" title="Computes all unique 3&#45;body bond angles in the simulation cell." alt="" coords="236,55,407,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="94,585,110,477,138,334,156,262,176,197,198,143,222,106,237,93,240,97,226,109,202,145,181,199,161,264,143,335,116,478,99,586"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1CNACalculator.html" title="Performs Common Neighbor Analysis (CNA) to classify local structures." alt="" coords="236,119,407,159"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="89,585,95,502,113,391,130,332,153,273,183,218,222,169,237,157,241,162,226,173,188,221,158,276,135,334,118,392,100,503,95,585"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1CNCalculator.html" title="Computes the Coordination Number (CN) distribution." alt="" coords="236,183,407,223"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="91,585,100,513,121,419,138,369,160,320,188,274,222,233,238,221,241,226,226,237,192,277,165,323,143,371,126,421,105,514,97,586"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1ClusterCalculator.html" title="Identifies connected components in the atomic structure." alt="" coords="236,247,407,287"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="94,585,106,524,130,447,147,407,167,367,192,330,222,297,239,285,242,290,226,301,197,333,172,370,151,409,135,449,111,526,99,586"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1DADCalculator.html" title="Computes the Dihedral Angle Distribution (DAD)." alt="" coords="236,311,407,351"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="98,585,114,536,139,476,175,415,197,386,222,361,240,349,243,354,226,365,201,390,179,418,144,478,119,538,103,587"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html" title="Computes all unique 4&#45;body dihedral (torsion) angles in the simulation cell." alt="" coords="236,375,407,415"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="104,585,123,548,149,505,183,462,222,425,242,413,245,418,226,429,187,466,154,508,128,551,109,588"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html" title="High&#45;performance calculator for pairwise atomic distances." alt="" coords="236,439,407,479"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="114,587,161,537,191,511,223,489,246,477,249,482,225,494,194,516,165,541,118,591"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1GPUSQCalculator.html" title="Computes S(Q) on the GPU (CUDA) with automatic CPU fallback." alt="" coords="236,503,407,543"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="141,591,223,553,255,541,257,546,225,558,143,595"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html" title="Computes hydrogen bond statistics based on geometric criteria." alt="" coords="236,567,407,607"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="189,603,235,597,236,602,190,608"/>
-<area shape="rect" id="Node000012" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html" title="Computes the Mean Squared Displacement (MSD) and the diffusion coefficient via the Einstein relation." alt="" coords="236,631,407,671"/>
-<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="190,630,236,637,235,642,189,636"/>
-<area shape="rect" id="Node000013" href="$classcorrelation_1_1calculators_1_1PADCalculator.html" title="Computes the Bond Angle Distribution (BAD/PAD)." alt="" coords="236,695,407,735"/>
-<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="143,643,225,681,257,693,255,698,223,686,141,648"/>
-<area shape="rect" id="Node000014" href="$classcorrelation_1_1calculators_1_1RDCalculator.html" title="Computes the Ring Distribution (RD)." alt="" coords="236,759,407,799"/>
-<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="118,648,165,698,194,723,225,745,249,757,246,762,223,750,191,727,161,701,114,652"/>
-<area shape="rect" id="Node000015" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html" title="Computes the Radial Distribution Function (RDF), also known as the pair correlation function g(r)." alt="" coords="236,823,407,863"/>
-<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="109,651,128,688,154,730,187,773,226,809,245,821,242,825,222,813,183,776,149,733,123,690,104,653"/>
-<area shape="rect" id="Node000016" href="$classcorrelation_1_1calculators_1_1SDFCalculator.html" title="Computes the Spatial Distribution Function (SDF) in 3D." alt="" coords="236,887,407,927"/>
-<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="103,652,119,701,144,760,179,821,201,849,226,873,243,885,240,889,222,877,197,852,175,824,139,763,114,703,98,653"/>
-<area shape="rect" id="Node000017" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html" title="Computes Steinhardt Bond&#45;Orientational Parameters (Q4, Q6, W6)." alt="" coords="236,951,407,991"/>
-<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="99,652,111,713,135,790,151,830,172,869,197,905,226,937,242,949,239,953,222,941,192,909,167,871,147,832,130,791,106,714,94,653"/>
-<area shape="rect" id="Node000018" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html" title="Computes the static structure factor S(Q) using plane wave summation over reciprocal lattice vectors ..." alt="" coords="224,1015,419,1055"/>
-<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="97,653,105,725,126,818,143,868,165,916,192,961,226,1001,241,1013,238,1017,222,1005,188,964,160,919,138,870,121,820,100,726,91,653"/>
-<area shape="rect" id="Node000019" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html" title="Computes the Velocity Autocorrelation Function (VACF)." alt="" coords="236,1079,407,1119"/>
-<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="95,653,100,736,118,846,135,905,158,963,188,1017,226,1065,241,1077,237,1081,222,1069,183,1020,153,965,130,907,113,847,95,736,89,654"/>
-<area shape="rect" id="Node000020" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html" title="Computes the Vibrational Density of States (VDOS) from the VACF." alt="" coords="236,1143,407,1183"/>
-<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="99,653,116,761,143,903,161,975,181,1040,202,1093,226,1130,240,1141,237,1145,222,1133,198,1096,176,1042,156,976,138,905,110,761,94,654"/>
-<area shape="rect" id="Node000021" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html" title="Computes the X&#45;Ray Diffraction (XRD) pattern from g(r)." alt="" coords="236,1207,407,1247"/>
-<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="98,653,113,772,139,934,156,1016,177,1091,200,1152,226,1194,240,1205,236,1209,222,1197,195,1154,172,1093,151,1018,134,935,107,773,93,653"/>
+<area shape="rect" id="Node000001" title="Base class for all analysis calculators." alt="" coords="5,709,176,749"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1AngleCalculator.html" title="Computes all unique 3&#45;body bond angles in the simulation cell." alt="" coords="240,5,411,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,696,103,558,127,367,145,269,166,180,192,107,206,78,222,56,238,42,242,46,226,59,211,81,196,109,171,182,150,270,133,368,109,559,97,696"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1CNACalculator.html" title="Performs Common Neighbor Analysis (CNA) to classify local structures." alt="" coords="240,69,411,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="92,695,106,569,131,397,149,310,170,230,194,165,207,139,222,119,238,106,241,111,226,123,212,142,199,167,175,232,154,311,137,398,111,570,98,696"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1CNCalculator.html" title="Computes the Coordination Number (CN) distribution." alt="" coords="240,133,411,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="93,695,109,581,136,428,153,351,173,281,196,223,222,184,238,171,241,175,226,187,201,226,178,283,158,353,141,429,114,582,99,696"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html" title="Computes the Chiral Order Parameter (COP) for all atoms." alt="" coords="240,197,411,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="88,696,92,607,98,550,109,488,125,423,149,360,181,300,222,247,238,235,242,239,226,251,185,303,154,362,130,425,114,489,103,551,97,608,94,696"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1ClusterCalculator.html" title="Identifies connected components in the atomic structure." alt="" coords="240,261,411,301"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="90,695,97,618,117,515,134,460,156,406,185,356,222,311,238,299,241,303,226,315,190,359,161,409,139,462,122,516,102,618,95,696"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1DADCalculator.html" title="Computes the Dihedral Angle Distribution (DAD)." alt="" coords="240,325,411,365"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="92,696,103,629,125,543,142,498,163,453,190,412,222,375,238,363,241,368,226,379,194,415,168,456,147,500,130,545,108,630,98,696"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html" title="Computes all unique 4&#45;body dihedral (torsion) angles in the simulation cell." alt="" coords="240,389,411,429"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="96,695,110,640,134,571,171,501,195,468,222,439,240,427,243,432,226,443,199,471,175,503,139,573,115,641,101,697"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html" title="High&#45;performance calculator for pairwise atomic distances." alt="" coords="240,453,411,493"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="100,695,118,652,144,600,179,548,222,503,241,491,244,496,226,507,183,551,148,603,123,654,105,697"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1GPUSQCalculator.html" title="Computes S(Q) on the GPU (CUDA) with automatic CPU fallback." alt="" coords="240,517,411,557"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="108,696,155,631,187,597,223,567,245,555,247,560,225,572,190,600,159,634,113,699"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html" title="Computes hydrogen bond statistics based on geometric criteria." alt="" coords="240,581,411,621"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="124,698,169,664,223,631,251,619,253,624,225,636,172,668,127,703"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html" title="Computes the local number variance σ²_N(R) and hyperuniformity index χ_H(R) by sampling random observ..." alt="" coords="224,645,427,685"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="177,703,251,683,252,688,178,708"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html" title="Computes the Local Entropic Fingerprint (LEF) for all atoms." alt="" coords="235,709,415,749"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="190,727,235,727,235,732,190,732"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html" title="Computes the Mean Squared Displacement (MSD) and the diffusion coefficient via the Einstein relation." alt="" coords="240,773,411,813"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="178,750,252,771,251,776,177,756"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1calculators_1_1PADCalculator.html" title="Computes the Bond Angle Distribution (BAD/PAD)." alt="" coords="240,837,411,877"/>
+<area shape="poly" id="edge14_Node000001_Node000015" title=" " alt="" coords="127,756,172,791,225,823,253,835,251,840,223,828,169,795,124,760"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1calculators_1_1RDCalculator.html" title="Computes the Ring Distribution (RD)." alt="" coords="240,901,411,941"/>
+<area shape="poly" id="edge15_Node000001_Node000016" title=" " alt="" coords="113,760,159,825,190,858,225,887,247,899,245,904,223,892,187,862,155,828,108,763"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html" title="Computes the Radial Distribution Function (RDF), also known as the pair correlation function g(r)." alt="" coords="240,965,411,1005"/>
+<area shape="poly" id="edge16_Node000001_Node000017" title=" " alt="" coords="105,762,123,805,148,856,183,907,226,951,244,963,241,967,222,955,179,911,144,858,118,807,100,764"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1calculators_1_1SDFCalculator.html" title="Computes the Spatial Distribution Function (SDF) in 3D." alt="" coords="240,1029,411,1069"/>
+<area shape="poly" id="edge17_Node000001_Node000018" title=" " alt="" coords="101,762,115,817,139,885,175,955,199,987,226,1015,243,1027,240,1031,222,1019,195,991,171,958,134,887,110,819,96,763"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html" title="Computes Steinhardt Bond&#45;Orientational Parameters (Q4, Q6, W6)." alt="" coords="240,1093,411,1133"/>
+<area shape="poly" id="edge18_Node000001_Node000019" title=" " alt="" coords="98,762,108,829,130,914,147,959,168,1003,194,1043,226,1079,241,1091,238,1095,222,1083,190,1047,163,1005,142,961,125,916,103,830,92,763"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html" title="Computes the static structure factor S(Q) using plane wave summation over reciprocal lattice vectors ..." alt="" coords="228,1157,423,1197"/>
+<area shape="poly" id="edge19_Node000001_Node000020" title=" " alt="" coords="95,763,102,840,122,942,139,997,161,1050,190,1100,226,1143,241,1155,238,1159,222,1147,185,1103,156,1052,134,998,117,944,97,841,90,763"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html" title="Computes the Velocity Autocorrelation Function (VACF)." alt="" coords="240,1221,411,1261"/>
+<area shape="poly" id="edge20_Node000001_Node000021" title=" " alt="" coords="94,763,97,851,103,908,114,970,130,1034,154,1097,185,1155,226,1207,242,1220,238,1224,222,1211,181,1158,149,1099,125,1035,109,971,98,909,92,851,88,763"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1calculators_1_1VDOSCalculator.html" title="Computes the Vibrational Density of States (VDOS) from the VACF." alt="" coords="240,1285,411,1325"/>
+<area shape="poly" id="edge21_Node000001_Node000022" title=" " alt="" coords="99,763,114,877,141,1029,158,1106,178,1176,201,1233,226,1272,241,1284,238,1288,222,1275,196,1235,173,1177,153,1107,136,1030,109,878,93,763"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html" title="Computes Voronoi cell volumes, coordination numbers, sphericity, and polyhedral signatures." alt="" coords="240,1349,411,1389"/>
+<area shape="poly" id="edge22_Node000001_Node000023" title=" " alt="" coords="98,763,111,889,137,1061,154,1148,175,1227,199,1292,212,1317,226,1335,241,1348,238,1352,222,1339,207,1319,194,1294,170,1228,149,1149,131,1062,106,890,92,764"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html" title="Computes the X&#45;Ray Diffraction (XRD) pattern from g(r)." alt="" coords="240,1413,411,1453"/>
+<area shape="poly" id="edge23_Node000001_Node000024" title=" " alt="" coords="97,763,109,900,133,1091,150,1188,171,1277,196,1350,211,1378,226,1400,242,1412,238,1417,222,1403,206,1381,192,1352,166,1279,145,1189,127,1092,103,901,91,763"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="correlation::core::NeighborGraph::nodeCount" name="correlation::core::NeighborGraph::nodeCount">
 <area shape="rect" id="Node000001" title=" " alt="" coords="304,5,503,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1ClusterCalculator.html#a5bcd9f53f9cf7848e67c55ccdfe94951" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,256,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1ClusterCalculator.html#a01736f0997cccf7fa60a09db175edb4b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,256,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="290,28,256,28,256,23,290,23"/>
 </map>

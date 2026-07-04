@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,7 +82,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classcorrelation_1_1core_1_1Atom-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::core::Atom Class Reference</div></div>
@@ -110,12 +109,13 @@ Collaboration diagram for correlation::core::Atom:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Constructors</div></td></tr>
 <tr class="memitem:af9dab22eeb39bdffd817b70684b6ee6d" id="r_af9dab22eeb39bdffd817b70684b6ee6d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#af9dab22eeb39bdffd817b70684b6ee6d">Atom</a> ()=default</td></tr>
-<tr class="memdesc:af9dab22eeb39bdffd817b70684b6ee6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <br /></td></tr>
 <tr class="separator:af9dab22eeb39bdffd817b70684b6ee6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3fcb8b0ebe04adc3c713619439aa162" id="r_af3fcb8b0ebe04adc3c713619439aa162"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#af3fcb8b0ebe04adc3c713619439aa162">Atom</a> (<a class="el" href="structcorrelation_1_1core_1_1Element.html">Element</a> <a class="el" href="classcorrelation_1_1core_1_1Atom.html#a11daa091c7d80d03ac34da852c78b1b9">element</a>, <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; pos, <a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a> <a class="el" href="classcorrelation_1_1core_1_1Atom.html#ad08b4084233efbc080abdd593398f239">id</a>) noexcept</td></tr>
-<tr class="memdesc:af3fcb8b0ebe04adc3c713619439aa162"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameterized constructor.  <br /></td></tr>
-<tr class="separator:af3fcb8b0ebe04adc3c713619439aa162"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ab60c301b894ca93c56fa401939f1ae" id="r_a9ab60c301b894ca93c56fa401939f1ae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a9ab60c301b894ca93c56fa401939f1ae">Atom</a> (<a class="el" href="structcorrelation_1_1core_1_1Element.html">Element</a> <a class="el" href="classcorrelation_1_1core_1_1Atom.html#a11daa091c7d80d03ac34da852c78b1b9">element</a>, const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;pos, <a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a> atom_id) noexcept</td></tr>
+<tr class="memdesc:a9ab60c301b894ca93c56fa401939f1ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameterized constructor.  <br /></td></tr>
+<tr class="separator:a9ab60c301b894ca93c56fa401939f1ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Accessors</div></td></tr>
 <tr class="memitem:ad08b4084233efbc080abdd593398f239" id="r_ad08b4084233efbc080abdd593398f239"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#ad08b4084233efbc080abdd593398f239">id</a> () const noexcept</td></tr>
 <tr class="memdesc:ad08b4084233efbc080abdd593398f239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the unique ID of the atom.  <br /></td></tr>
 <tr class="separator:ad08b4084233efbc080abdd593398f239"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -125,15 +125,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aab506552a0928b7e428cff13e4d50635" id="r_aab506552a0928b7e428cff13e4d50635"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#aab506552a0928b7e428cff13e4d50635">position</a> () const noexcept</td></tr>
 <tr class="memdesc:aab506552a0928b7e428cff13e4d50635"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the position of the atom.  <br /></td></tr>
 <tr class="separator:aab506552a0928b7e428cff13e4d50635"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c6907abaca8061e060ee5221930a1c0" id="r_a5c6907abaca8061e060ee5221930a1c0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a5c6907abaca8061e060ee5221930a1c0">setPosition</a> (<a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; pos)</td></tr>
-<tr class="memdesc:a5c6907abaca8061e060ee5221930a1c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the position of the atom.  <br /></td></tr>
-<tr class="separator:a5c6907abaca8061e060ee5221930a1c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1722c81838cabf4d418476f31922cf01" id="r_a1722c81838cabf4d418476f31922cf01"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a1722c81838cabf4d418476f31922cf01">setPosition</a> (const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;pos)</td></tr>
+<tr class="memdesc:a1722c81838cabf4d418476f31922cf01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the position of the atom.  <br /></td></tr>
+<tr class="separator:a1722c81838cabf4d418476f31922cf01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6081af028516be522036b70e2d9d5d70" id="r_a6081af028516be522036b70e2d9d5d70"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a6081af028516be522036b70e2d9d5d70">velocity</a> () const noexcept</td></tr>
 <tr class="memdesc:a6081af028516be522036b70e2d9d5d70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the velocity of the atom.  <br /></td></tr>
 <tr class="separator:a6081af028516be522036b70e2d9d5d70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab426958365a774fe1ba4211658106e38" id="r_ab426958365a774fe1ba4211658106e38"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#ab426958365a774fe1ba4211658106e38">setVelocity</a> (<a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; vel)</td></tr>
-<tr class="memdesc:ab426958365a774fe1ba4211658106e38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the velocity of the atom.  <br /></td></tr>
-<tr class="separator:ab426958365a774fe1ba4211658106e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f9271b4433f93629e1ab6337f3db82d" id="r_a0f9271b4433f93629e1ab6337f3db82d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a0f9271b4433f93629e1ab6337f3db82d">setVelocity</a> (const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;vel)</td></tr>
+<tr class="memdesc:a0f9271b4433f93629e1ab6337f3db82d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the velocity of the atom.  <br /></td></tr>
+<tr class="separator:a0f9271b4433f93629e1ab6337f3db82d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11daa091c7d80d03ac34da852c78b1b9" id="r_a11daa091c7d80d03ac34da852c78b1b9"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structcorrelation_1_1core_1_1Element.html">Element</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a11daa091c7d80d03ac34da852c78b1b9">element</a> () const</td></tr>
 <tr class="memdesc:a11daa091c7d80d03ac34da852c78b1b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the element type of the atom.  <br /></td></tr>
 <tr class="separator:a11daa091c7d80d03ac34da852c78b1b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,7 +146,7 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a7121567496dc2b3df82bcdd83c914048" id="r_a7121567496dc2b3df82bcdd83c914048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a7121567496dc2b3df82bcdd83c914048">id_</a></td></tr>
+<tr class="memitem:a7121567496dc2b3df82bcdd83c914048" id="r_a7121567496dc2b3df82bcdd83c914048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a7121567496dc2b3df82bcdd83c914048">id_</a> {0}</td></tr>
 <tr class="memdesc:a7121567496dc2b3df82bcdd83c914048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique identification number.  <br /></td></tr>
 <tr class="separator:a7121567496dc2b3df82bcdd83c914048"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8062864e5aab212adb408b9beeeb89cd" id="r_a8062864e5aab212adb408b9beeeb89cd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1core_1_1Atom.html#a8062864e5aab212adb408b9beeeb89cd">position_</a></td></tr>
@@ -186,12 +186,10 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Default constructor. </p>
-
 </div>
 </div>
-<a id="af3fcb8b0ebe04adc3c713619439aa162" name="af3fcb8b0ebe04adc3c713619439aa162"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3fcb8b0ebe04adc3c713619439aa162">&#9670;&#160;</a></span>Atom() <span class="overload">[2/2]</span></h2>
+<a id="a9ab60c301b894ca93c56fa401939f1ae" name="a9ab60c301b894ca93c56fa401939f1ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ab60c301b894ca93c56fa401939f1ae">&#9670;&#160;</a></span>Atom() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -208,14 +206,14 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;&#160;</td>
           <td class="paramname"><em>pos</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a>&#160;</td>
-          <td class="paramname"><em>id</em>&#160;</td>
+          <td class="paramname"><em>atom_id</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -235,7 +233,7 @@ Private Attributes</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">element</td><td>The element type of the atom. </td></tr>
     <tr><td class="paramname">pos</td><td>The position vector of the atom. </td></tr>
-    <tr><td class="paramname">id</td><td>The unique ID of the atom. </td></tr>
+    <tr><td class="paramname">atom_id</td><td>The unique ID of the atom. </td></tr>
   </table>
   </dd>
 </dl>
@@ -274,9 +272,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1core_1_1Atom_a11daa091c7d80d03ac34da852c78b1b9_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_a11daa091c7d80d03ac34da852c78b1b9_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Atom_a11daa091c7d80d03ac34da852c78b1b9_icgraph" id="aclasscorrelation_1_1core_1_1Atom_a11daa091c7d80d03ac34da852c78b1b9_icgraph">
 <area shape="rect" title="Gets the element type of the atom." alt="" coords="331,5,467,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
+<area shape="rect" href="core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
@@ -342,9 +340,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1core_1_1Atom_ad08b4084233efbc080abdd593398f239_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_ad08b4084233efbc080abdd593398f239_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Atom_ad08b4084233efbc080abdd593398f239_icgraph" id="aclasscorrelation_1_1core_1_1Atom_ad08b4084233efbc080abdd593398f239_icgraph">
 <area shape="rect" title="Gets the unique ID of the atom." alt="" coords="331,5,467,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
+<area shape="rect" href="core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
@@ -382,9 +380,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1core_1_1Atom_aab506552a0928b7e428cff13e4d50635_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_aab506552a0928b7e428cff13e4d50635_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Atom_aab506552a0928b7e428cff13e4d50635_icgraph" id="aclasscorrelation_1_1core_1_1Atom_aab506552a0928b7e428cff13e4d50635_icgraph">
 <area shape="rect" title="Gets the position of the atom." alt="" coords="331,5,467,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
+<area shape="rect" href="core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
@@ -428,9 +426,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1core_1_1Atom_aebe7588bfa94d50323282b04d65dbe7c_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_aebe7588bfa94d50323282b04d65dbe7c_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Atom_aebe7588bfa94d50323282b04d65dbe7c_icgraph" id="aclasscorrelation_1_1core_1_1Atom_aebe7588bfa94d50323282b04d65dbe7c_icgraph">
 <area shape="rect" title="Sets the element type of the atom." alt="" coords="331,5,469,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
+<area shape="rect" href="core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
@@ -474,17 +472,17 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1core_1_1Atom_a2f1ed4e3d2cf0e8f99fa956de01b7b67_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_a2f1ed4e3d2cf0e8f99fa956de01b7b67_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1core_1_1Atom_a2f1ed4e3d2cf0e8f99fa956de01b7b67_icgraph" id="aclasscorrelation_1_1core_1_1Atom_a2f1ed4e3d2cf0e8f99fa956de01b7b67_icgraph">
 <area shape="rect" title="Sets the unique ID of the atom." alt="" coords="331,5,467,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
+<area shape="rect" href="core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a5c6907abaca8061e060ee5221930a1c0" name="a5c6907abaca8061e060ee5221930a1c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5c6907abaca8061e060ee5221930a1c0">&#9670;&#160;</a></span>setPosition()</h2>
+<a id="a1722c81838cabf4d418476f31922cf01" name="a1722c81838cabf4d418476f31922cf01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1722c81838cabf4d418476f31922cf01">&#9670;&#160;</a></span>setPosition()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -495,7 +493,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">void correlation::core::Atom::setPosition </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;&#160;</td>
           <td class="paramname"><em>pos</em></td><td>)</td>
           <td></td>
         </tr>
@@ -517,20 +515,20 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1core_1_1Atom_a5c6907abaca8061e060ee5221930a1c0_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_a5c6907abaca8061e060ee5221930a1c0_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1core_1_1Atom_a5c6907abaca8061e060ee5221930a1c0_icgraph" id="aclasscorrelation_1_1core_1_1Atom_a5c6907abaca8061e060ee5221930a1c0_icgraph">
+<div class="center"><img src="classcorrelation_1_1core_1_1Atom_a1722c81838cabf4d418476f31922cf01_icgraph.png" border="0" usemap="#aclasscorrelation_1_1core_1_1Atom_a1722c81838cabf4d418476f31922cf01_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1core_1_1Atom_a1722c81838cabf4d418476f31922cf01_icgraph" id="aclasscorrelation_1_1core_1_1Atom_a1722c81838cabf4d418476f31922cf01_icgraph">
 <area shape="rect" title="Sets the position of the atom." alt="" coords="331,5,468,45"/>
-<area shape="rect" href="core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="204,13,283,38"/>
+<area shape="rect" href="core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="204,13,283,38"/>
 <area shape="poly" title=" " alt="" coords="317,28,283,28,283,23,317,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ab426958365a774fe1ba4211658106e38" name="ab426958365a774fe1ba4211658106e38"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab426958365a774fe1ba4211658106e38">&#9670;&#160;</a></span>setVelocity()</h2>
+<a id="a0f9271b4433f93629e1ab6337f3db82d" name="a0f9271b4433f93629e1ab6337f3db82d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f9271b4433f93629e1ab6337f3db82d">&#9670;&#160;</a></span>setVelocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -541,7 +539,7 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="memname">void correlation::core::Atom::setVelocity </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1math_1_1Vector3.html">math::Vector3</a>&lt; double &gt; &amp;&#160;</td>
           <td class="paramname"><em>vel</em></td><td>)</td>
           <td></td>
         </tr>
@@ -626,7 +624,7 @@ Here is the caller graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a> correlation::core::Atom::id_</td>
+          <td class="memname"><a class="el" href="namespacecorrelation_1_1core.html#a3ef136d86aac2cc63a44fc931f14d8c9">AtomID</a> correlation::core::Atom::id_ {0}</td>
         </tr>
       </table>
   </td>

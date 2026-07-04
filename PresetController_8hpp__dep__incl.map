@@ -1,0 +1,7 @@
+<map id="include/app/PresetController.hpp" name="include/app/PresetController.hpp">
+<area shape="rect" id="Node000001" title="Preset management logic." alt="" coords="92,5,325,31"/>
+<area shape="rect" id="Node000002" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,79,193,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="181,40,119,81,116,76,178,36"/>
+<area shape="rect" id="Node000003" href="$PresetController_8cpp.html" title="Implementation of PresetController." alt="" coords="217,79,421,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="239,36,303,76,300,81,237,40"/>
+</map>

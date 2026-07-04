@@ -1,0 +1,8 @@
+<map id="correlation::math::norm_sq" name="correlation::math::norm_sq">
+<area shape="rect" id="Node000001" title="Computes the squared vector norm (length)." alt="" coords="507,29,649,69"/>
+<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="615,18,602,11,578,8,557,10,544,15,540,21,542,28,537,30,535,20,541,10,556,5,578,3,604,6,618,13"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#a4c0bd41a712da3f10d003219f83873fb" title="Computes σ²_N(R) and χ_H(R) histograms." alt="" coords="256,22,459,77"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="493,52,459,52,459,47,493,47"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#aba2b7cd0e9c38092b26458b1043c0252" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,22,208,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="242,52,208,52,208,47,242,47"/>
+</map>

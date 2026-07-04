@@ -1,7 +1,11 @@
 <map id="correlation::core::Cell::inverseLatticeVectors" name="correlation::core::Cell::inverseLatticeVectors">
-<area shape="rect" id="Node000001" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="272,49,467,89"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,5,212,60"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="258,56,212,49,213,44,259,50"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,85,224,125"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="259,87,224,92,224,87,258,82"/>
+<area shape="rect" id="Node000001" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="905,37,1100,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="603,5,821,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="891,48,821,40,822,35,892,42"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#ab6e70976c64686155d7eb632436c4d3e" title="Build the Voronoi tessellation and extract per&#45;atom cell data." alt="" coords="567,69,857,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="892,72,858,76,858,71,891,67"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a030b26e4b66bda2e2fd212a0f3e1da25" title="Computes Voronoi tessellation and extracts metric histograms." alt="" coords="307,69,519,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="553,92,519,92,519,87,553,87"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,69,259,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="293,92,259,92,259,87,293,87"/>
 </map>

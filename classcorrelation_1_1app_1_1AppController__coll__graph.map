@@ -1,11 +1,7 @@
 <map id="correlation::app::AppController" name="correlation::app::AppController">
-<area shape="rect" id="Node000001" title="Controller class for the application." alt="" coords="641,70,863,95"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="300,13,512,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="497,38,675,67,674,73,496,43"/>
-<area shape="rect" id="Node000003" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="5,5,192,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="206,23,300,23,300,28,206,28"/>
-<area shape="rect" id="Node000004" href="$structcorrelation_1_1plotters_1_1PlotConfig.html" title="Theme and layout configuration for the plot." alt="" coords="331,63,481,103"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="495,80,641,80,641,85,495,85"/>
-<area shape="rect" id="Node000005" href="$structcorrelation_1_1plotters_1_1HoverInfo.html" title="Information about the mouse hover position." alt="" coords="331,127,481,167"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="494,128,682,93,683,98,495,133"/>
+<area shape="rect" id="Node000001" title="Controller class for the application." alt="" coords="5,196,227,221"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="10,108,222,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,147,119,195,113,195,113,147"/>
+<area shape="rect" id="Node000003" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="23,5,209,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="119,59,119,108,113,108,113,59"/>
 </map>

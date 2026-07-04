@@ -1,0 +1,18 @@
+<map id="correlation::analysis::DistributionFunctions::processSingleFrame" name="correlation::analysis::DistributionFunctions::processSingleFrame">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,145,173,200"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="266,50,421,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="162,142,255,107,257,112,164,147"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="513,8,668,48"/>
+<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="106,143,152,85,184,57,220,35,255,22,291,13,365,4,436,4,500,10,499,15,436,9,365,9,292,18,256,27,222,40,187,61,156,89,110,146"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="716,66,909,106"/>
+<area shape="poly" id="edge7_Node000001_Node000004" title=" " alt="" coords="173,160,702,96,703,101,174,165"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="221,180,465,220"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="174,179,208,183,207,188,173,184"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="241,244,446,284"/>
+<area shape="poly" id="edge8_Node000001_Node000006" title=" " alt="" coords="146,197,222,230,247,238,245,243,220,235,144,202"/>
+<area shape="rect" id="Node000007" href="$structcorrelation_1_1analysis_1_1AnalysisSettings.html#ae53b91ac4928ba8a0c4e4e56680b8dc9" title="Helper to check if a specific calculator is enabled." alt="" coords="244,308,443,348"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="114,198,161,247,190,272,223,294,236,301,234,305,220,299,187,277,157,251,110,201"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="420,60,499,44,500,49,421,65"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="421,76,702,81,702,86,421,82"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="669,46,722,59,721,65,667,51"/>
+</map>

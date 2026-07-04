@@ -1,5 +1,7 @@
 <map id="correlation::app::PresetManager::toJson" name="correlation::app::PresetManager::toJson">
-<area shape="rect" id="Node000001" title="Serializes a Preset object to a JSON string." alt="" coords="227,5,400,45"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetManager.html#a45de5a99761ab995b46f38f558c8de63" title="Saves a preset to a JSON file in the presets directory." alt="" coords="5,5,179,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="213,28,179,28,179,23,213,23"/>
+<area shape="rect" id="Node000001" title="Serializes a Preset object to a JSON string." alt="" coords="485,5,659,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetManager.html#a45de5a99761ab995b46f38f558c8de63" title="Saves a preset to a JSON file in the presets directory." alt="" coords="264,5,437,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="471,28,438,28,438,23,471,23"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PresetController.html#ab2b8e4e42b7e9178bc788f180b582ce3" title=" " alt="" coords="5,5,216,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="250,28,216,28,216,23,250,23"/>
 </map>

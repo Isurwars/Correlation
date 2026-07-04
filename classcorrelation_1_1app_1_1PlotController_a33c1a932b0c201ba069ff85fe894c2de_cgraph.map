@@ -1,0 +1,16 @@
+<map id="correlation::app::PlotController::executePlotRender" name="correlation::app::PlotController::executePlotRender">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,133,227,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PlotController.html#a4b2e91c838716f4bd77d48bb84a674b2" title=" " alt="" coords="275,133,496,173"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,160,261,160,261,165,227,165"/>
+<area shape="poly" id="edge3_Node000002_Node000001" title=" " alt="" coords="274,147,241,147,241,142,274,142"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PlotController.html#ab04f2e3acbe0b71a60716f3a8aa28ffa" title=" " alt="" coords="544,5,765,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="413,131,471,93,543,55,561,47,563,52,545,60,474,98,416,136"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a494c4576ad42837ab54785ff568fc907" title="Returns the Ashcroft&#45;Langreth weights from the last completed analysis." alt="" coords="549,69,761,109"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="470,131,556,110,557,115,471,136"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a6bc5b4f2df87eead46a11810817bdd61" title="Returns a pointer to a specific histogram from the last analysis." alt="" coords="549,133,761,173"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="496,151,535,151,535,156,496,156"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1PlotController.html#a0d93f69ea53b74d01a0ce055d04a56ab" title=" " alt="" coords="544,197,765,237"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="471,171,557,192,556,197,470,176"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1PlotController.html#ad3092a812ddf0a1480f9dd6f41866b37" title=" " alt="" coords="544,261,765,301"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="416,171,474,209,545,247,563,254,561,259,543,252,471,214,413,176"/>
+</map>

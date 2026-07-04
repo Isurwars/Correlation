@@ -1,0 +1,20 @@
+<map id="correlation::calculators::HyperuniformityCalculator::calculate" name="correlation::calculators::HyperuniformityCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes σ²_N(R) and χ_H(R) histograms." alt="" coords="5,126,208,181"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="277,5,413,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,123,195,89,255,55,269,48,272,53,257,60,198,93,147,128"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="256,69,435,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="207,124,256,110,257,116,209,129"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="273,133,417,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="208,151,259,151,259,156,208,156"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a7c080d69380ebd16ae111a97701a88bd" title="Applies the minimum image convention to a distance vector." alt="" coords="266,197,425,237"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="209,178,257,191,256,196,207,183"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1math.html#a7cb318fb15ba297fe0e1386b1e112122" title="Computes the squared vector norm (length)." alt="" coords="274,285,417,325"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="151,179,257,247,302,276,299,280,255,252,149,183"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="483,133,625,173"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="410,195,475,175,476,180,412,200"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="483,197,625,237"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="425,215,469,215,469,220,425,220"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="483,261,625,301"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="412,235,476,255,475,260,410,240"/>
+<area shape="poly" id="edge9_Node000009_Node000009" title=" " alt="" coords="306,286,304,276,310,266,324,261,345,259,370,262,383,269,380,274,368,267,345,264,325,266,313,271,309,277,311,284"/>
+</map>

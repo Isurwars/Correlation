@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -84,6 +84,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="classcorrelation_1_1readers_1_1CastepMdReader-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::readers::CastepMdReader Class Reference</div></div>
 </div><!--header-->
@@ -125,10 +126,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a57ca939d793036a422b24ee7b75176c1" id="r_a57ca939d793036a422b24ee7b75176c1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a57ca939d793036a422b24ee7b75176c1">isTrajectory</a> () const override</td></tr>
 <tr class="memdesc:a57ca939d793036a422b24ee7b75176c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this reader supports trajectory files.  <br /></td></tr>
 <tr class="separator:a57ca939d793036a422b24ee7b75176c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a510e0fd1702256311f35154ff88bfb" id="r_a9a510e0fd1702256311f35154ff88bfb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr) override</td></tr>
+<tr class="memitem:a9a510e0fd1702256311f35154ff88bfb" id="r_a9a510e0fd1702256311f35154ff88bfb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr) override</td></tr>
 <tr class="memdesc:a9a510e0fd1702256311f35154ff88bfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
 <tr class="separator:a9a510e0fd1702256311f35154ff88bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81c47a3e4725ca4fc61565113c69c5c8" id="r_a81c47a3e4725ca4fc61565113c69c5c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr) override</td></tr>
+<tr class="memitem:a81c47a3e4725ca4fc61565113c69c5c8" id="r_a81c47a3e4725ca4fc61565113c69c5c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr) override</td></tr>
 <tr class="memdesc:a81c47a3e4725ca4fc61565113c69c5c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
 <tr class="separator:a81c47a3e4725ca4fc61565113c69c5c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1readers_1_1BaseReader"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1readers_1_1BaseReader')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">correlation::readers::BaseReader</a></td></tr>
@@ -137,9 +138,20 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa65b940a9e9d6a62d44fedebb37d303d" id="r_aa65b940a9e9d6a62d44fedebb37d303d"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d">read</a> (const std::string &amp;file_name, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
-<tr class="memdesc:aa65b940a9e9d6a62d44fedebb37d303d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Low-level parser for the specific file format.  <br /></td></tr>
-<tr class="separator:aa65b940a9e9d6a62d44fedebb37d303d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52dc92d805330b19f3e7ac65e3ec732b" id="r_a52dc92d805330b19f3e7ac65e3ec732b"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b">read</a> (const std::string &amp;file_name, const std::function&lt; void(float, const std::string &amp;)&gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)</td></tr>
+<tr class="memdesc:a52dc92d805330b19f3e7ac65e3ec732b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Low-level parser for the specific file format.  <br /></td></tr>
+<tr class="separator:a52dc92d805330b19f3e7ac65e3ec732b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a73f1682a4b346075a03c1f5cf2bcdaf7" id="r_a73f1682a4b346075a03c1f5cf2bcdaf7"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a73f1682a4b346075a03c1f5cf2bcdaf7">updateProgress</a> (std::streampos current_pos, std::streampos <a class="el" href="OutmolReader_8cpp.html#a3d954a047a53683d88d6865d04bd6f98">file_size</a>, std::streampos &amp;<a class="el" href="OutmolReader_8cpp.html#ace64c15e7a862fd4f77077a2ce0e4035">last_progress_pos</a>, size_t <a class="el" href="OutmolReader_8cpp.html#aa236e51044c4d1279227653f3743615a">update_interval</a>, const std::function&lt; void(float, const std::string &amp;)&gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>)</td></tr>
+<tr class="separator:a73f1682a4b346075a03c1f5cf2bcdaf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb70a80035b433f9855697615ef46f21" id="r_aeb70a80035b433f9855697615ef46f21"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aeb70a80035b433f9855697615ef46f21">parseEnergyLine</a> (const std::string &amp;line, double &amp;current_energy, <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;<a class="el" href="OnetepDatReader_8cpp.html#a6d0d231b16beb25d6e1f478a96c5317c">tempCell</a>, bool &amp;cell_has_atoms, std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a0564b34b992f61e06f7b1fa86dd1fa54">frames</a>)</td></tr>
+<tr class="separator:aeb70a80035b433f9855697615ef46f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52a601b3d7d6531714a092e3d42678eb" id="r_a52a601b3d7d6531714a092e3d42678eb"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52a601b3d7d6531714a092e3d42678eb">parseLatticeLine</a> (std::ifstream &amp;<a class="el" href="OutmolReader_8cpp.html#a665f69ed5241d7d4300a4142a6a2acb1">myfile</a>, const std::string &amp;line, <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;<a class="el" href="OnetepDatReader_8cpp.html#a6d0d231b16beb25d6e1f478a96c5317c">tempCell</a>)</td></tr>
+<tr class="separator:a52a601b3d7d6531714a092e3d42678eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a345d8b2fb74d1d0045f3986025d4af70" id="r_a345d8b2fb74d1d0045f3986025d4af70"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a345d8b2fb74d1d0045f3986025d4af70">parseAtomLine</a> (const std::string &amp;line, double current_energy, <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;<a class="el" href="OnetepDatReader_8cpp.html#a6d0d231b16beb25d6e1f478a96c5317c">tempCell</a>, bool &amp;cell_has_atoms)</td></tr>
+<tr class="separator:a345d8b2fb74d1d0045f3986025d4af70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reads a sequence of frames from a CASTEP .md trajectory file. </p>
@@ -234,8 +246,224 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aa65b940a9e9d6a62d44fedebb37d303d" name="aa65b940a9e9d6a62d44fedebb37d303d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa65b940a9e9d6a62d44fedebb37d303d">&#9670;&#160;</a></span>read()</h2>
+<a id="a345d8b2fb74d1d0045f3986025d4af70" name="a345d8b2fb74d1d0045f3986025d4af70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a345d8b2fb74d1d0045f3986025d4af70">&#9670;&#160;</a></span>parseAtomLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::CastepMdReader::parseAtomLine </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>current_energy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;&#160;</td>
+          <td class="paramname"><em>tempCell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool &amp;&#160;</td>
+          <td class="paramname"><em>cell_has_atoms</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_cgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_cgraph">
+<area shape="rect" title=" " alt="" coords="5,37,252,77"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="300,5,436,45"/>
+<area shape="poly" title=" " alt="" coords="252,38,286,34,286,39,253,43"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="300,69,436,109"/>
+<area shape="poly" title=" " alt="" coords="253,71,286,76,286,81,252,76"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="484,5,683,45"/>
+<area shape="poly" title=" " alt="" coords="436,23,471,23,471,28,436,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="731,5,867,45"/>
+<area shape="poly" title=" " alt="" coords="683,23,717,23,717,28,683,28"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_icgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a345d8b2fb74d1d0045f3986025d4af70_icgraph">
+<area shape="rect" title=" " alt="" coords="523,37,769,77"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="296,37,475,77"/>
+<area shape="poly" title=" " alt="" coords="509,60,475,60,475,55,509,55"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
+<area shape="poly" title=" " alt="" coords="282,47,245,43,246,37,283,42"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,69,248,109"/>
+<area shape="poly" title=" " alt="" coords="283,73,249,77,248,72,282,67"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="aeb70a80035b433f9855697615ef46f21" name="aeb70a80035b433f9855697615ef46f21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb70a80035b433f9855697615ef46f21">&#9670;&#160;</a></span>parseEnergyLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::CastepMdReader::parseEnergyLine </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>current_energy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;&#160;</td>
+          <td class="paramname"><em>tempCell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool &amp;&#160;</td>
+          <td class="paramname"><em>cell_has_atoms</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>frames</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_cgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_cgraph">
+<area shape="rect" title=" " alt="" coords="5,69,263,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="332,5,468,45"/>
+<area shape="poly" title=" " alt="" coords="217,67,318,42,319,47,219,72"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="311,69,489,109"/>
+<area shape="poly" title=" " alt="" coords="263,87,297,87,297,92,263,92"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="332,133,468,173"/>
+<area shape="poly" title=" " alt="" coords="219,107,319,131,318,136,217,112"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_icgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_aeb70a80035b433f9855697615ef46f21_icgraph">
+<area shape="rect" title=" " alt="" coords="523,37,780,77"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="296,37,475,77"/>
+<area shape="poly" title=" " alt="" coords="509,60,475,60,475,55,509,55"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
+<area shape="poly" title=" " alt="" coords="282,47,245,43,246,37,283,42"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,69,248,109"/>
+<area shape="poly" title=" " alt="" coords="283,73,249,77,248,72,282,67"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a52a601b3d7d6531714a092e3d42678eb" name="a52a601b3d7d6531714a092e3d42678eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52a601b3d7d6531714a092e3d42678eb">&#9670;&#160;</a></span>parseLatticeLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::CastepMdReader::parseLatticeLine </td>
+          <td>(</td>
+          <td class="paramtype">std::ifstream &amp;&#160;</td>
+          <td class="paramname"><em>myfile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;&#160;</td>
+          <td class="paramname"><em>tempCell</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a52a601b3d7d6531714a092e3d42678eb_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a52a601b3d7d6531714a092e3d42678eb_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a52a601b3d7d6531714a092e3d42678eb_icgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a52a601b3d7d6531714a092e3d42678eb_icgraph">
+<area shape="rect" title=" " alt="" coords="523,37,779,77"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="296,37,475,77"/>
+<area shape="poly" title=" " alt="" coords="509,60,475,60,475,55,509,55"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
+<area shape="poly" title=" " alt="" coords="282,47,245,43,246,37,283,42"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,69,248,109"/>
+<area shape="poly" title=" " alt="" coords="283,73,249,77,248,72,282,67"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a52dc92d805330b19f3e7ac65e3ec732b" name="a52dc92d805330b19f3e7ac65e3ec732b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52dc92d805330b19f3e7ac65e3ec732b">&#9670;&#160;</a></span>read()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +480,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::function&lt; void(float, const std::string &amp;)&gt;&#160;</td>
+          <td class="paramtype">const std::function&lt; void(float, const std::string &amp;)&gt; &amp;&#160;</td>
           <td class="paramname"><em>progress_callback</em> = <code>nullptr</code>&#160;</td>
         </tr>
         <tr>
@@ -280,30 +508,39 @@ Static Public Member Functions</h2></td></tr>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_cgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_cgraph">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_cgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_cgraph">
 <area shape="rect" title="Low&#45;level parser for the specific file format." alt="" coords="5,133,184,173"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="253,5,389,45"/>
-<area shape="poly" title=" " alt="" coords="119,131,169,93,231,55,244,48,247,53,233,60,172,98,122,135"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="253,69,389,109"/>
-<area shape="poly" title=" " alt="" coords="166,131,239,110,241,115,167,136"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="253,133,389,173"/>
-<area shape="poly" title=" " alt="" coords="185,151,240,151,240,156,185,156"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="232,197,411,237"/>
-<area shape="poly" title=" " alt="" coords="167,171,237,191,236,196,166,176"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="253,261,389,301"/>
-<area shape="poly" title=" " alt="" coords="122,171,172,209,233,247,247,253,244,258,231,252,169,213,119,176"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="459,5,657,45"/>
-<area shape="poly" title=" " alt="" coords="390,23,445,23,445,28,390,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="705,5,841,45"/>
-<area shape="poly" title=" " alt="" coords="658,23,692,23,692,28,658,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="293,5,429,45"/>
+<area shape="poly" title=" " alt="" coords="117,131,167,92,231,55,278,38,280,43,233,60,170,97,121,135"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a345d8b2fb74d1d0045f3986025d4af70" title=" " alt="" coords="237,69,484,109"/>
+<area shape="poly" title=" " alt="" coords="178,131,263,110,265,115,179,136"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aeb70a80035b433f9855697615ef46f21" title=" " alt="" coords="232,133,489,173"/>
+<area shape="poly" title=" " alt="" coords="184,151,218,151,218,156,184,156"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52a601b3d7d6531714a092e3d42678eb" title=" " alt="" coords="233,197,489,237"/>
+<area shape="poly" title=" " alt="" coords="179,171,265,192,263,197,178,176"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a73f1682a4b346075a03c1f5cf2bcdaf7" title=" " alt="" coords="235,261,486,301"/>
+<area shape="poly" title=" " alt="" coords="121,171,170,210,233,247,251,254,249,259,231,252,167,214,117,176"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="559,5,695,45"/>
+<area shape="poly" title=" " alt="" coords="444,67,544,42,546,47,445,72"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="559,69,695,109"/>
+<area shape="poly" title=" " alt="" coords="484,87,545,87,545,92,484,92"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="764,5,963,45"/>
+<area shape="poly" title=" " alt="" coords="695,23,750,23,750,28,695,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1011,5,1147,45"/>
+<area shape="poly" title=" " alt="" coords="963,23,997,23,997,28,963,28"/>
+<area shape="poly" title=" " alt="" coords="444,131,544,106,546,111,445,136"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="559,133,695,173"/>
+<area shape="poly" title=" " alt="" coords="489,151,545,151,545,156,489,156"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="537,197,716,237"/>
+<area shape="poly" title=" " alt="" coords="445,171,531,192,529,197,444,176"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_icgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_aa65b940a9e9d6a62d44fedebb37d303d_icgraph">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_icgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a52dc92d805330b19f3e7ac65e3ec732b_icgraph">
 <area shape="rect" title="Low&#45;level parser for the specific file format." alt="" coords="296,37,475,77"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
 <area shape="poly" title=" " alt="" coords="282,47,245,43,246,37,283,42"/>
@@ -365,22 +602,31 @@ Here is the call graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a9a510e0fd1702256311f35154ff88bfb_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a9a510e0fd1702256311f35154ff88bfb_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a9a510e0fd1702256311f35154ff88bfb_cgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a9a510e0fd1702256311f35154ff88bfb_cgraph">
 <area shape="rect" title="Reads an atomic structure from a file." alt="" coords="5,133,243,173"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="291,133,469,173"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="291,133,469,173"/>
 <area shape="poly" title=" " alt="" coords="243,151,277,151,277,156,243,156"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="539,5,675,45"/>
-<area shape="poly" title=" " alt="" coords="404,131,454,93,516,55,530,48,532,53,519,60,457,98,407,135"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="539,69,675,109"/>
-<area shape="poly" title=" " alt="" coords="451,131,525,110,526,115,452,136"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="539,133,675,173"/>
-<area shape="poly" title=" " alt="" coords="470,151,525,151,525,156,470,156"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="517,197,696,237"/>
-<area shape="poly" title=" " alt="" coords="452,171,523,191,521,196,451,176"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="539,261,675,301"/>
-<area shape="poly" title=" " alt="" coords="407,171,457,209,519,247,532,253,530,258,516,252,454,213,404,176"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="744,5,943,45"/>
-<area shape="poly" title=" " alt="" coords="675,23,730,23,730,28,675,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="991,5,1127,45"/>
-<area shape="poly" title=" " alt="" coords="943,23,977,23,977,28,943,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="578,5,714,45"/>
+<area shape="poly" title=" " alt="" coords="403,131,453,92,516,55,564,38,565,43,518,60,456,97,406,135"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a345d8b2fb74d1d0045f3986025d4af70" title=" " alt="" coords="523,69,769,109"/>
+<area shape="poly" title=" " alt="" coords="463,131,549,110,550,115,465,136"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aeb70a80035b433f9855697615ef46f21" title=" " alt="" coords="517,133,775,173"/>
+<area shape="poly" title=" " alt="" coords="469,151,504,151,504,156,469,156"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52a601b3d7d6531714a092e3d42678eb" title=" " alt="" coords="518,197,774,237"/>
+<area shape="poly" title=" " alt="" coords="465,171,550,192,549,197,463,176"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a73f1682a4b346075a03c1f5cf2bcdaf7" title=" " alt="" coords="521,261,771,301"/>
+<area shape="poly" title=" " alt="" coords="406,171,456,210,519,247,537,254,535,259,516,252,453,214,403,176"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="844,5,980,45"/>
+<area shape="poly" title=" " alt="" coords="729,67,830,42,831,47,731,72"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="844,69,980,109"/>
+<area shape="poly" title=" " alt="" coords="769,87,830,87,830,92,769,92"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="1049,5,1248,45"/>
+<area shape="poly" title=" " alt="" coords="980,23,1036,23,1036,28,980,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1296,5,1432,45"/>
+<area shape="poly" title=" " alt="" coords="1248,23,1282,23,1282,28,1248,28"/>
+<area shape="poly" title=" " alt="" coords="729,131,830,106,831,111,731,136"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="844,133,980,173"/>
+<area shape="poly" title=" " alt="" coords="775,151,830,151,830,156,775,156"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="823,197,1001,237"/>
+<area shape="poly" title=" " alt="" coords="731,171,816,192,815,197,729,176"/>
 </map>
 </div>
 
@@ -437,22 +683,99 @@ Here is the call graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a81c47a3e4725ca4fc61565113c69c5c8_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a81c47a3e4725ca4fc61565113c69c5c8_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a81c47a3e4725ca4fc61565113c69c5c8_cgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a81c47a3e4725ca4fc61565113c69c5c8_cgraph">
 <area shape="rect" title="Reads a trajectory from a file." alt="" coords="5,133,248,173"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="296,133,475,173"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="296,133,475,173"/>
 <area shape="poly" title=" " alt="" coords="248,151,282,151,282,156,248,156"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="544,5,680,45"/>
-<area shape="poly" title=" " alt="" coords="409,131,459,93,521,55,535,48,537,53,524,60,463,98,413,135"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="544,69,680,109"/>
-<area shape="poly" title=" " alt="" coords="456,131,530,110,531,115,458,136"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="544,133,680,173"/>
-<area shape="poly" title=" " alt="" coords="475,151,530,151,530,156,475,156"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="523,197,701,237"/>
-<area shape="poly" title=" " alt="" coords="458,171,528,191,527,196,456,176"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="544,261,680,301"/>
-<area shape="poly" title=" " alt="" coords="413,171,463,209,524,247,537,253,535,258,521,252,459,213,409,176"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="749,5,948,45"/>
-<area shape="poly" title=" " alt="" coords="680,23,736,23,736,28,680,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="996,5,1132,45"/>
-<area shape="poly" title=" " alt="" coords="948,23,982,23,982,28,948,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="583,5,719,45"/>
+<area shape="poly" title=" " alt="" coords="408,131,458,92,522,55,569,38,571,43,524,60,461,97,411,135"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a345d8b2fb74d1d0045f3986025d4af70" title=" " alt="" coords="528,69,775,109"/>
+<area shape="poly" title=" " alt="" coords="469,131,554,110,555,115,470,136"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#aeb70a80035b433f9855697615ef46f21" title=" " alt="" coords="523,133,780,173"/>
+<area shape="poly" title=" " alt="" coords="475,151,509,151,509,156,475,156"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52a601b3d7d6531714a092e3d42678eb" title=" " alt="" coords="523,197,779,237"/>
+<area shape="poly" title=" " alt="" coords="470,171,555,192,554,197,469,176"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a73f1682a4b346075a03c1f5cf2bcdaf7" title=" " alt="" coords="526,261,777,301"/>
+<area shape="poly" title=" " alt="" coords="411,171,461,210,524,247,542,254,540,259,521,252,458,214,408,176"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="849,5,985,45"/>
+<area shape="poly" title=" " alt="" coords="735,67,835,42,836,47,736,72"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="849,69,985,109"/>
+<area shape="poly" title=" " alt="" coords="775,87,836,87,836,92,775,92"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="1055,5,1253,45"/>
+<area shape="poly" title=" " alt="" coords="986,23,1041,23,1041,28,986,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1301,5,1437,45"/>
+<area shape="poly" title=" " alt="" coords="1254,23,1288,23,1288,28,1254,28"/>
+<area shape="poly" title=" " alt="" coords="735,131,835,106,836,111,736,136"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="849,133,985,173"/>
+<area shape="poly" title=" " alt="" coords="780,151,835,151,835,156,780,156"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="828,197,1007,237"/>
+<area shape="poly" title=" " alt="" coords="736,171,821,192,820,197,735,176"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a73f1682a4b346075a03c1f5cf2bcdaf7" name="a73f1682a4b346075a03c1f5cf2bcdaf7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73f1682a4b346075a03c1f5cf2bcdaf7">&#9670;&#160;</a></span>updateProgress()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::CastepMdReader::updateProgress </td>
+          <td>(</td>
+          <td class="paramtype">std::streampos&#160;</td>
+          <td class="paramname"><em>current_pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::streampos&#160;</td>
+          <td class="paramname"><em>file_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::streampos &amp;&#160;</td>
+          <td class="paramname"><em>last_progress_pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>update_interval</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(float, const std::string &amp;)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>progress_callback</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1CastepMdReader_a73f1682a4b346075a03c1f5cf2bcdaf7_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1CastepMdReader_a73f1682a4b346075a03c1f5cf2bcdaf7_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1CastepMdReader_a73f1682a4b346075a03c1f5cf2bcdaf7_icgraph" id="aclasscorrelation_1_1readers_1_1CastepMdReader_a73f1682a4b346075a03c1f5cf2bcdaf7_icgraph">
+<area shape="rect" title=" " alt="" coords="523,37,773,77"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="296,37,475,77"/>
+<area shape="poly" title=" " alt="" coords="509,60,475,60,475,55,509,55"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
+<area shape="poly" title=" " alt="" coords="282,47,245,43,246,37,283,42"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,69,248,109"/>
+<area shape="poly" title=" " alt="" coords="283,73,249,77,248,72,282,67"/>
 </map>
 </div>
 

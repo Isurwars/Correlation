@@ -1,0 +1,7 @@
+<map id="correlation::app::AppBackend::getAvailableHistogramNames" name="correlation::app::AppBackend::getAvailableHistogramNames">
+<area shape="rect" id="Node000001" title="Returns the names of all histograms available from the last analysis." alt="" coords="275,37,500,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AnalysisRunner.html#a80974f9ff0cf9cc11759b3975f7182c4" title=" " alt="" coords="16,5,216,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="260,45,216,40,216,34,261,40"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PlotController.html#ad96919466c801b1578d970e4abdbfc30" title=" " alt="" coords="5,69,227,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="261,75,227,79,227,74,261,70"/>
+</map>

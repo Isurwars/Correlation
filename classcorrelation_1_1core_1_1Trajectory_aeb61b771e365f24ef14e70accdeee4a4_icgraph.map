@@ -1,0 +1,5 @@
+<map id="correlation::core::Trajectory::getBondCutoffSQ" name="correlation::core::Trajectory::getBondCutoffSQ">
+<area shape="rect" id="Node000001" title="Gets a squared bond cutoff distance for two given element types." alt="" coords="240,5,444,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Trajectory.html#ac61cb9e4b7556dae329c3063d486319b" title="Gets a linear bond cutoff distance for two given element types." alt="" coords="5,5,192,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,28,192,28,192,23,227,23"/>
+</map>

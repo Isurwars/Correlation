@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -83,7 +83,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="classcorrelation_1_1writers_1_1CSVWriter-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::writers::CSVWriter Class Reference</div></div>
 </div><!--header-->
@@ -124,21 +125,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7d14e402dc4a657c5877aefe1894179d" id="r_a7d14e402dc4a657c5877aefe1894179d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#a7d14e402dc4a657c5877aefe1894179d">getExtensions</a> () const override</td></tr>
 <tr class="memdesc:a7d14e402dc4a657c5877aefe1894179d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of supported file extensions (e.g., {".h5"}, {".csv"}).  <br /></td></tr>
 <tr class="separator:a7d14e402dc4a657c5877aefe1894179d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2dbd3d98ea8fcd7389e4e15b88f1ede" id="r_ab2dbd3d98ea8fcd7389e4e15b88f1ede"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#ab2dbd3d98ea8fcd7389e4e15b88f1ede">write</a> (const std::string &amp;base_path, const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, bool smoothing) const override</td></tr>
-<tr class="memdesc:ab2dbd3d98ea8fcd7389e4e15b88f1ede"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the distribution function data to file(s).  <br /></td></tr>
-<tr class="separator:ab2dbd3d98ea8fcd7389e4e15b88f1ede"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a980d280847450672dec384d836996e84" id="r_a980d280847450672dec384d836996e84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#a980d280847450672dec384d836996e84">writeAllCSVs</a> (const std::string &amp;base_path, const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, bool write_smoothed=false) const</td></tr>
-<tr class="memdesc:a980d280847450672dec384d836996e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes all available histograms to appropriately named CSV files.  <br /></td></tr>
-<tr class="separator:a980d280847450672dec384d836996e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dbd5f2e379e173516eb88c7dfb909a4" id="r_a6dbd5f2e379e173516eb88c7dfb909a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#a6dbd5f2e379e173516eb88c7dfb909a4">write</a> (const std::string &amp;base_path, const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, bool smoothing) const override</td></tr>
+<tr class="memdesc:a6dbd5f2e379e173516eb88c7dfb909a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the distribution function data to <a class="el" href="QEReader_8cpp.html#a29e2cea7ce1c30255ab366abaca90df2">file(s)</a>.  <br /></td></tr>
+<tr class="separator:a6dbd5f2e379e173516eb88c7dfb909a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1writers_1_1BaseWriter"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1writers_1_1BaseWriter')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html">correlation::writers::BaseWriter</a></td></tr>
 <tr class="memitem:a4e05678a568bcac2b4f42ea3562d61c6 inherit pub_methods_classcorrelation_1_1writers_1_1BaseWriter" id="r_a4e05678a568bcac2b4f42ea3562d61c6"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html#a4e05678a568bcac2b4f42ea3562d61c6">~BaseWriter</a> ()=default</td></tr>
 <tr class="separator:a4e05678a568bcac2b4f42ea3562d61c6 inherit pub_methods_classcorrelation_1_1writers_1_1BaseWriter"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:a51d3eff63030ed8d8e149e259770ca9a" id="r_a51d3eff63030ed8d8e149e259770ca9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#a51d3eff63030ed8d8e149e259770ca9a">writeHistogramToCSV</a> (const std::string &amp;filename, const std::string &amp;name, const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;hist) const</td></tr>
-<tr class="memdesc:a51d3eff63030ed8d8e149e259770ca9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The core implementation for writing a single histogram and it's smoothed histograms to a single CSV file.  <br /></td></tr>
-<tr class="separator:a51d3eff63030ed8d8e149e259770ca9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a76cdea12443b2bec7381c21473d1b6ae" id="r_a76cdea12443b2bec7381c21473d1b6ae"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#a76cdea12443b2bec7381c21473d1b6ae">writeAllCSVs</a> (const std::string &amp;base_path, const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, bool write_smoothed=false)</td></tr>
+<tr class="memdesc:a76cdea12443b2bec7381c21473d1b6ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes all available histograms to appropriately named CSV files.  <br /></td></tr>
+<tr class="separator:a76cdea12443b2bec7381c21473d1b6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:adb48b363bad003373887b6fda3e37964" id="r_adb48b363bad003373887b6fda3e37964"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#adb48b363bad003373887b6fda3e37964">writeHistogramToCSV</a> (const std::string &amp;filename, const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;hist)</td></tr>
+<tr class="memdesc:adb48b363bad003373887b6fda3e37964"><td class="mdescLeft">&#160;</td><td class="mdescRight">The core implementation for writing a single histogram and it's smoothed histograms to a single CSV file.  <br /></td></tr>
+<tr class="separator:adb48b363bad003373887b6fda3e37964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages the writing of distribution function data to CSV files. </p>
@@ -230,8 +234,8 @@ Private Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab2dbd3d98ea8fcd7389e4e15b88f1ede" name="ab2dbd3d98ea8fcd7389e4e15b88f1ede"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2dbd3d98ea8fcd7389e4e15b88f1ede">&#9670;&#160;</a></span>write()</h2>
+<a id="a6dbd5f2e379e173516eb88c7dfb909a4" name="a6dbd5f2e379e173516eb88c7dfb909a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dbd5f2e379e173516eb88c7dfb909a4">&#9670;&#160;</a></span>write()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -249,7 +253,7 @@ Private Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -270,39 +274,42 @@ Private Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Writes the distribution function data to file(s). </p>
+<p>Writes the distribution function data to <a class="el" href="QEReader_8cpp.html#a29e2cea7ce1c30255ab366abaca90df2">file(s)</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">base_path</td><td>The base name for the output files. </td></tr>
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object containing the data. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object containing the data. </td></tr>
     <tr><td class="paramname">smoothing</td><td>Whether to include smoothed data. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html#a64c6c65cb34429222206bc2cce187359">correlation::writers::BaseWriter</a>.</p>
+<p>Implements <a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html#abadf28dd7a6c7b1ef1e15a2baf173654">correlation::writers::BaseWriter</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_ab2dbd3d98ea8fcd7389e4e15b88f1ede_cgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_ab2dbd3d98ea8fcd7389e4e15b88f1ede_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1writers_1_1CSVWriter_ab2dbd3d98ea8fcd7389e4e15b88f1ede_cgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_ab2dbd3d98ea8fcd7389e4e15b88f1ede_cgraph">
+<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_a6dbd5f2e379e173516eb88c7dfb909a4_cgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_a6dbd5f2e379e173516eb88c7dfb909a4_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1CSVWriter_a6dbd5f2e379e173516eb88c7dfb909a4_cgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_a6dbd5f2e379e173516eb88c7dfb909a4_cgraph">
 <area shape="rect" title="Writes the distribution function data to file(s)." alt="" coords="5,53,151,93"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a980d280847450672dec384d836996e84" title="Writes all available histograms to appropriately named CSV files." alt="" coords="199,53,385,93"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a76cdea12443b2bec7381c21473d1b6ae" title="Writes all available histograms to appropriately named CSV files." alt="" coords="199,53,385,93"/>
 <area shape="poly" title=" " alt="" coords="151,70,185,70,185,75,151,75"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="452,5,620,60"/>
 <area shape="poly" title=" " alt="" coords="385,55,438,46,439,51,386,60"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a51d3eff63030ed8d8e149e259770ca9a" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="433,84,639,139"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#adb48b363bad003373887b6fda3e37964" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="433,84,639,139"/>
 <area shape="poly" title=" " alt="" coords="386,85,420,90,419,96,385,90"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a980d280847450672dec384d836996e84" name="a980d280847450672dec384d836996e84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a980d280847450672dec384d836996e84">&#9670;&#160;</a></span>writeAllCSVs()</h2>
+<a id="a76cdea12443b2bec7381c21473d1b6ae" name="a76cdea12443b2bec7381c21473d1b6ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76cdea12443b2bec7381c21473d1b6ae">&#9670;&#160;</a></span>writeAllCSVs()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void correlation::writers::CSVWriter::writeAllCSVs </td>
@@ -314,7 +321,7 @@ Here is the call graph for this function:</div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -325,9 +332,14 @@ Here is the call graph for this function:</div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> const</td>
+          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Writes all available histograms to appropriately named CSV files. </p>
@@ -335,7 +347,7 @@ Here is the call graph for this function:</div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">base_path</td><td>The base name for the output files (e.g., "output/my_sample"). </td></tr>
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object containing the data. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object containing the data. </td></tr>
     <tr><td class="paramname">write_smoothed</td><td>If true, also writes smoothed data to separate files (e.g., "base_path_g_smoothed.csv"). </td></tr>
   </table>
   </dd>
@@ -343,34 +355,34 @@ Here is the call graph for this function:</div>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_cgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_cgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_cgraph">
+<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_cgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_cgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_cgraph">
 <area shape="rect" title="Writes all available histograms to appropriately named CSV files." alt="" coords="5,53,192,93"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="259,5,427,60"/>
 <area shape="poly" title=" " alt="" coords="192,55,245,46,246,51,193,60"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a51d3eff63030ed8d8e149e259770ca9a" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="240,84,445,139"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#adb48b363bad003373887b6fda3e37964" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="240,84,445,139"/>
 <area shape="poly" title=" " alt="" coords="193,85,227,90,226,96,192,90"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_icgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_a980d280847450672dec384d836996e84_icgraph">
+<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_icgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_a76cdea12443b2bec7381c21473d1b6ae_icgraph">
 <area shape="rect" title="Writes all available histograms to appropriately named CSV files." alt="" coords="397,27,584,67"/>
-<area shape="rect" href="writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="229,5,324,31"/>
+<area shape="rect" href="writer__bindings_8cpp.html#a6c7de34af4a67d96dd3d5459d0b0d5ef" title=" " alt="" coords="229,5,324,31"/>
 <area shape="poly" title=" " alt="" coords="383,35,324,27,325,22,384,30"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#ab2dbd3d98ea8fcd7389e4e15b88f1ede" title="Writes the distribution function data to file(s)." alt="" coords="204,55,349,95"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a6dbd5f2e379e173516eb88c7dfb909a4" title="Writes the distribution function data to file(s)." alt="" coords="204,55,349,95"/>
 <area shape="poly" title=" " alt="" coords="384,64,350,69,349,63,383,59"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,5,156,31"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,5,156,31"/>
 <area shape="poly" title=" " alt="" coords="215,21,156,21,156,15,215,15"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a51d3eff63030ed8d8e149e259770ca9a" name="a51d3eff63030ed8d8e149e259770ca9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51d3eff63030ed8d8e149e259770ca9a">&#9670;&#160;</a></span>writeHistogramToCSV()</h2>
+<a id="adb48b363bad003373887b6fda3e37964" name="adb48b363bad003373887b6fda3e37964"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb48b363bad003373887b6fda3e37964">&#9670;&#160;</a></span>writeHistogramToCSV()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,24 +399,18 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;&#160;</td>
           <td class="paramname"><em>hist</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> const</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -413,7 +419,6 @@ Here is the caller graph for this function:</div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filename</td><td>The full path of the file to write. </td></tr>
-    <tr><td class="paramname">name</td><td>The name of the histogram. </td></tr>
     <tr><td class="paramname">hist</td><td>The Histogram data structure to write. </td></tr>
   </table>
   </dd>
@@ -421,16 +426,16 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_a51d3eff63030ed8d8e149e259770ca9a_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_a51d3eff63030ed8d8e149e259770ca9a_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1writers_1_1CSVWriter_a51d3eff63030ed8d8e149e259770ca9a_icgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_a51d3eff63030ed8d8e149e259770ca9a_icgraph">
+<div class="center"><img src="classcorrelation_1_1writers_1_1CSVWriter_adb48b363bad003373887b6fda3e37964_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1CSVWriter_adb48b363bad003373887b6fda3e37964_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1CSVWriter_adb48b363bad003373887b6fda3e37964_icgraph" id="aclasscorrelation_1_1writers_1_1CSVWriter_adb48b363bad003373887b6fda3e37964_icgraph">
 <area shape="rect" title="The core implementation for writing a single histogram and it&#39;s smoothed histograms to a single CSV f..." alt="" coords="632,20,837,75"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a980d280847450672dec384d836996e84" title="Writes all available histograms to appropriately named CSV files." alt="" coords="397,27,584,67"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a76cdea12443b2bec7381c21473d1b6ae" title="Writes all available histograms to appropriately named CSV files." alt="" coords="397,27,584,67"/>
 <area shape="poly" title=" " alt="" coords="618,50,584,50,584,45,618,45"/>
-<area shape="rect" href="writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="229,5,324,31"/>
+<area shape="rect" href="writer__bindings_8cpp.html#a6c7de34af4a67d96dd3d5459d0b0d5ef" title=" " alt="" coords="229,5,324,31"/>
 <area shape="poly" title=" " alt="" coords="383,35,324,27,325,22,384,30"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#ab2dbd3d98ea8fcd7389e4e15b88f1ede" title="Writes the distribution function data to file(s)." alt="" coords="204,55,349,95"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a6dbd5f2e379e173516eb88c7dfb909a4" title="Writes the distribution function data to file(s)." alt="" coords="204,55,349,95"/>
 <area shape="poly" title=" " alt="" coords="384,64,350,69,349,63,383,59"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,5,156,31"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,5,156,31"/>
 <area shape="poly" title=" " alt="" coords="215,21,156,21,156,15,215,15"/>
 </map>
 </div>

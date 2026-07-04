@@ -1,0 +1,6 @@
+<map id="correlation::math::distance" name="correlation::math::distance">
+<area shape="rect" id="Node000001" title="Computes the distance between two vectors." alt="" coords="5,22,148,62"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a22d977f8c2db20e7a6994c26c1eb182b" title="Computes the vector norm (length)." alt="" coords="196,29,372,55"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,39,182,39,182,45,148,45"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="250,31,243,21,247,11,261,5,284,3,313,6,324,15,321,20,310,11,284,8,262,10,251,15,248,20,254,28"/>
+</map>

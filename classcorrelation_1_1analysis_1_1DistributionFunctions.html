@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,9 +82,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pri-methods">Private Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classcorrelation_1_1analysis_1_1DistributionFunctions-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::analysis::DistributionFunctions Class Reference</div></div>
@@ -117,7 +116,8 @@ Collaboration diagram for correlation::analysis::DistributionFunctions:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a67e45acdc51ce9964993e1e96e8ce041" id="r_a67e45acdc51ce9964993e1e96e8ce041"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a67e45acdc51ce9964993e1e96e8ce041">DistributionFunctions</a> (const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56">cell</a>, double cutoff=0.0, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;bond_cutoffs={})</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Constructors</div></td></tr>
+<tr class="memitem:a67e45acdc51ce9964993e1e96e8ce041" id="r_a67e45acdc51ce9964993e1e96e8ce041"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a67e45acdc51ce9964993e1e96e8ce041">DistributionFunctions</a> (const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56">cell</a>, double <a class="el" href="LocalEntropyCalculator_8cpp.html#a034fbedcce0aee66ee125138543e2703">cutoff</a>=0.0, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;bond_cutoffs={})</td></tr>
 <tr class="memdesc:a67e45acdc51ce9964993e1e96e8ce041"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html" title="Manages the calculation and storage of various distribution functions.">DistributionFunctions</a> object.  <br /></td></tr>
 <tr class="separator:a67e45acdc51ce9964993e1e96e8ce041"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a491e4f79817b89fcaa6935e5a05a73e7" id="r_a491e4f79817b89fcaa6935e5a05a73e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a491e4f79817b89fcaa6935e5a05a73e7">DistributionFunctions</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&amp;other) noexcept</td></tr>
@@ -126,6 +126,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa17f8d732f46f126de8acda74ac365f1" id="r_aa17f8d732f46f126de8acda74ac365f1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#aa17f8d732f46f126de8acda74ac365f1">operator=</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&amp;other) noexcept</td></tr>
 <tr class="memdesc:aa17f8d732f46f126de8acda74ac365f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment operator.  <br /></td></tr>
 <tr class="separator:aa17f8d732f46f126de8acda74ac365f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a474b3cd7f39f75d12e8ba1aa6a14b417" id="r_a474b3cd7f39f75d12e8ba1aa6a14b417"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a474b3cd7f39f75d12e8ba1aa6a14b417">~DistributionFunctions</a> ()=default</td></tr>
+<tr class="memdesc:a474b3cd7f39f75d12e8ba1aa6a14b417"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default destructor.  <br /></td></tr>
+<tr class="separator:a474b3cd7f39f75d12e8ba1aa6a14b417"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d8a351ecb3ac3111bb812a9f33eff8b" id="r_a4d8a351ecb3ac3111bb812a9f33eff8b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a4d8a351ecb3ac3111bb812a9f33eff8b">DistributionFunctions</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a4d8a351ecb3ac3111bb812a9f33eff8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy constructor (contains non-copyable std::mutex).  <br /></td></tr>
+<tr class="separator:a4d8a351ecb3ac3111bb812a9f33eff8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a114d63bbfa6a735fbc208b8a92e1c5d2" id="r_a114d63bbfa6a735fbc208b8a92e1c5d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a114d63bbfa6a735fbc208b8a92e1c5d2">operator=</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;)=delete</td></tr>
+<tr class="memdesc:a114d63bbfa6a735fbc208b8a92e1c5d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deleted copy assignment operator (contains non-copyable std::mutex).  <br /></td></tr>
+<tr class="separator:a114d63bbfa6a735fbc208b8a92e1c5d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Accessors</div></td></tr>
 <tr class="memitem:a0469afdf0190fc0e851dee1bb8895b56" id="r_a0469afdf0190fc0e851dee1bb8895b56"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56">cell</a> () const</td></tr>
 <tr class="memdesc:a0469afdf0190fc0e851dee1bb8895b56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Access the underlying simulation cell.  <br /></td></tr>
 <tr class="separator:a0469afdf0190fc0e851dee1bb8895b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,52 +160,53 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1f238238a5ddad1acd3e95a4408a5075" id="r_a1f238238a5ddad1acd3e95a4408a5075"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1f238238a5ddad1acd3e95a4408a5075">getDiffusionCoefficientMSD</a> () const noexcept</td></tr>
 <tr class="memdesc:a1f238238a5ddad1acd3e95a4408a5075"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).  <br /></td></tr>
 <tr class="separator:a1f238238a5ddad1acd3e95a4408a5075"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae460160e28f0cbb252c6b0e26c90d221" id="r_ae460160e28f0cbb252c6b0e26c90d221"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ae460160e28f0cbb252c6b0e26c90d221">setDiffusionCoefficientMSD</a> (double d) noexcept</td></tr>
-<tr class="memdesc:ae460160e28f0cbb252c6b0e26c90d221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).  <br /></td></tr>
-<tr class="separator:ae460160e28f0cbb252c6b0e26c90d221"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d03dcb24729cf7d74ac7a0a43ed1c02" id="r_a0d03dcb24729cf7d74ac7a0a43ed1c02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d03dcb24729cf7d74ac7a0a43ed1c02">setDiffusionCoefficientMSD</a> (double diff_coeff) noexcept</td></tr>
+<tr class="memdesc:a0d03dcb24729cf7d74ac7a0a43ed1c02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).  <br /></td></tr>
+<tr class="separator:a0d03dcb24729cf7d74ac7a0a43ed1c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac54c99e87f29ca619370e521f546a260" id="r_ac54c99e87f29ca619370e521f546a260"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac54c99e87f29ca619370e521f546a260">getDiffusionCoefficientVACF</a> () const noexcept</td></tr>
 <tr class="memdesc:ac54c99e87f29ca619370e521f546a260"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).  <br /></td></tr>
 <tr class="separator:ac54c99e87f29ca619370e521f546a260"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a674f6f461e52cdc9b870b7a25e802a9a" id="r_a674f6f461e52cdc9b870b7a25e802a9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a674f6f461e52cdc9b870b7a25e802a9a">setDiffusionCoefficientVACF</a> (double d) noexcept</td></tr>
-<tr class="memdesc:a674f6f461e52cdc9b870b7a25e802a9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).  <br /></td></tr>
-<tr class="separator:a674f6f461e52cdc9b870b7a25e802a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a158d6f3c575e97951b00878e19260368" id="r_a158d6f3c575e97951b00878e19260368"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a158d6f3c575e97951b00878e19260368">setDiffusionCoefficientVACF</a> (double diff_coeff) noexcept</td></tr>
+<tr class="memdesc:a158d6f3c575e97951b00878e19260368"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).  <br /></td></tr>
+<tr class="separator:a158d6f3c575e97951b00878e19260368"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66f6a22f9700f76d47cf3bd7810cbb95" id="r_a66f6a22f9700f76d47cf3bd7810cbb95"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a66f6a22f9700f76d47cf3bd7810cbb95">getRelaxationTime</a> () const noexcept</td></tr>
 <tr class="memdesc:a66f6a22f9700f76d47cf3bd7810cbb95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the relaxation time computed from normalized VACF.  <br /></td></tr>
 <tr class="separator:a66f6a22f9700f76d47cf3bd7810cbb95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a011da8b23d8ae924145cb06af9184bcb" id="r_a011da8b23d8ae924145cb06af9184bcb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a011da8b23d8ae924145cb06af9184bcb">setRelaxationTime</a> (double tau) noexcept</td></tr>
-<tr class="memdesc:a011da8b23d8ae924145cb06af9184bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the relaxation time computed from normalized VACF.  <br /></td></tr>
-<tr class="separator:a011da8b23d8ae924145cb06af9184bcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a06501831c31e8d7eab3c6007bfefb4" id="r_a1a06501831c31e8d7eab3c6007bfefb4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1a06501831c31e8d7eab3c6007bfefb4">setRelaxationTime</a> (double relax_time) noexcept</td></tr>
+<tr class="memdesc:a1a06501831c31e8d7eab3c6007bfefb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the relaxation time computed from normalized VACF.  <br /></td></tr>
+<tr class="separator:a1a06501831c31e8d7eab3c6007bfefb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf410dfc1dfa001ceda6f0cdb5166ee0" id="r_acf410dfc1dfa001ceda6f0cdb5166ee0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#acf410dfc1dfa001ceda6f0cdb5166ee0">getDeborahNumber</a> () const noexcept</td></tr>
 <tr class="memdesc:acf410dfc1dfa001ceda6f0cdb5166ee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the Deborah number.  <br /></td></tr>
 <tr class="separator:acf410dfc1dfa001ceda6f0cdb5166ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d0330da8bdb2f6e381e408f0c802f4b" id="r_a8d0330da8bdb2f6e381e408f0c802f4b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a8d0330da8bdb2f6e381e408f0c802f4b">setDeborahNumber</a> (double de) noexcept</td></tr>
-<tr class="memdesc:a8d0330da8bdb2f6e381e408f0c802f4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the Deborah number.  <br /></td></tr>
-<tr class="separator:a8d0330da8bdb2f6e381e408f0c802f4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a457d2dc4cba067dff6a9ff554f5b0143" id="r_a457d2dc4cba067dff6a9ff554f5b0143"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a457d2dc4cba067dff6a9ff554f5b0143">setDeborahNumber</a> (double deborah_num) noexcept</td></tr>
+<tr class="memdesc:a457d2dc4cba067dff6a9ff554f5b0143"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the Deborah number.  <br /></td></tr>
+<tr class="separator:a457d2dc4cba067dff6a9ff554f5b0143"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Calculation Methods</div></td></tr>
 <tr class="memitem:adec432ed4e9477116a0a6c89fc3d9fd5" id="r_adec432ed4e9477116a0a6c89fc3d9fd5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5">calculateCoordinationNumber</a> ()</td></tr>
 <tr class="memdesc:adec432ed4e9477116a0a6c89fc3d9fd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed.  <br /></td></tr>
 <tr class="separator:adec432ed4e9477116a0a6c89fc3d9fd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb3c6c8a1e5290cf8afde7f26e17d24e" id="r_abb3c6c8a1e5290cf8afde7f26e17d24e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e">calculateRDF</a> (double r_max=20.0, double bin_width=0.05)</td></tr>
+<tr class="memitem:abb3c6c8a1e5290cf8afde7f26e17d24e" id="r_abb3c6c8a1e5290cf8afde7f26e17d24e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e">calculateRDF</a> (double <a class="el" href="RDFCalculator_8cpp.html#af222f423d9296573604c48d390e11563">r_max</a>=20.0, double <a class="el" href="PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19">bin_width</a>=0.05)</td></tr>
 <tr class="memdesc:abb3c6c8a1e5290cf8afde7f26e17d24e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the radial distribution function g(r)  <br /></td></tr>
 <tr class="separator:abb3c6c8a1e5290cf8afde7f26e17d24e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f65b6d6b2631bd107d23114f1de1edc" id="r_a6f65b6d6b2631bd107d23114f1de1edc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a6f65b6d6b2631bd107d23114f1de1edc">calculatePAD</a> (double bin_width=1.0)</td></tr>
+<tr class="memitem:a6f65b6d6b2631bd107d23114f1de1edc" id="r_a6f65b6d6b2631bd107d23114f1de1edc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a6f65b6d6b2631bd107d23114f1de1edc">calculatePAD</a> (double <a class="el" href="PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19">bin_width</a>=1.0)</td></tr>
 <tr class="memdesc:a6f65b6d6b2631bd107d23114f1de1edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Plane Angle Distribution (PAD).  <br /></td></tr>
 <tr class="separator:a6f65b6d6b2631bd107d23114f1de1edc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09605eb07ffc69511be01cf664db3771" id="r_a09605eb07ffc69511be01cf664db3771"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771">calculateDAD</a> (double bin_width=1.0)</td></tr>
+<tr class="memitem:a09605eb07ffc69511be01cf664db3771" id="r_a09605eb07ffc69511be01cf664db3771"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a09605eb07ffc69511be01cf664db3771">calculateDAD</a> (double <a class="el" href="PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19">bin_width</a>=1.0)</td></tr>
 <tr class="memdesc:a09605eb07ffc69511be01cf664db3771"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Dihedral Angle Distribution (DAD).  <br /></td></tr>
 <tr class="separator:a09605eb07ffc69511be01cf664db3771"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab93b3d71845170c689455d462b8ae03f" id="r_ab93b3d71845170c689455d462b8ae03f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab93b3d71845170c689455d462b8ae03f">calculateVACF</a> (const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, int max_correlation_frames=-1, size_t start_frame=0, size_t end_frame=static_cast&lt; size_t &gt;(-1))</td></tr>
-<tr class="memdesc:ab93b3d71845170c689455d462b8ae03f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Velocity Autocorrelation Function (VACF).  <br /></td></tr>
-<tr class="separator:ab93b3d71845170c689455d462b8ae03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00952804939fe6812befa744a46d9547" id="r_a00952804939fe6812befa744a46d9547"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a00952804939fe6812befa744a46d9547">calculateVACF</a> (const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, <a class="el" href="structcorrelation_1_1analysis_1_1MaxFrames.html">MaxFrames</a> max_correlation_frames={-1}, <a class="el" href="structcorrelation_1_1analysis_1_1StartFrame.html">StartFrame</a> start_frame={0}, <a class="el" href="structcorrelation_1_1analysis_1_1EndFrame.html">EndFrame</a> end_frame={static_cast&lt; size_t &gt;(-1)})</td></tr>
+<tr class="memdesc:a00952804939fe6812befa744a46d9547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Velocity Autocorrelation Function (VACF).  <br /></td></tr>
+<tr class="separator:a00952804939fe6812befa744a46d9547"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25122c9d2298582a94578327073ff835" id="r_a25122c9d2298582a94578327073ff835"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a25122c9d2298582a94578327073ff835">calculateVDOS</a> ()</td></tr>
 <tr class="memdesc:a25122c9d2298582a94578327073ff835"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be called first.  <br /></td></tr>
 <tr class="separator:a25122c9d2298582a94578327073ff835"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3921182bd9359630a3f66f288019f29e" id="r_a3921182bd9359630a3f66f288019f29e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e">calculateXRD</a> (double lambda=1.5406, double theta_min=5.0, double theta_max=90.0, double bin_width=1.0)</td></tr>
+<tr class="memitem:a3921182bd9359630a3f66f288019f29e" id="r_a3921182bd9359630a3f66f288019f29e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e">calculateXRD</a> (double lambda=1.5406, double theta_min=5.0, double theta_max=90.0, double <a class="el" href="PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19">bin_width</a>=1.0)</td></tr>
 <tr class="memdesc:a3921182bd9359630a3f66f288019f29e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the XRD pattern.  <br /></td></tr>
 <tr class="separator:a3921182bd9359630a3f66f288019f29e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a8516792ed6cd32baf7336b4b1c5c66" id="r_a0a8516792ed6cd32baf7336b4b1c5c66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0a8516792ed6cd32baf7336b4b1c5c66">smooth</a> (const std::string &amp;name, double sigma, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a> kernel=<a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a>)</td></tr>
+<tr class="memitem:a0a8516792ed6cd32baf7336b4b1c5c66" id="r_a0a8516792ed6cd32baf7336b4b1c5c66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0a8516792ed6cd32baf7336b4b1c5c66">smooth</a> (const std::string &amp;name, double <a class="el" href="LocalEntropyCalculator_8cpp.html#a4ef930be9d7ab47d59cc0668d0d1fac8">sigma</a>, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a> kernel=<a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a>)</td></tr>
 <tr class="memdesc:a0a8516792ed6cd32baf7336b4b1c5c66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Smooths a specific histogram.  <br /></td></tr>
 <tr class="separator:a0a8516792ed6cd32baf7336b4b1c5c66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d02157dfbf2e3c4f0a1ec3cfdbc6877" id="r_a0d02157dfbf2e3c4f0a1ec3cfdbc6877"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d02157dfbf2e3c4f0a1ec3cfdbc6877">smoothAll</a> (double sigma, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a> kernel=<a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a>)</td></tr>
+<tr class="memitem:a0d02157dfbf2e3c4f0a1ec3cfdbc6877" id="r_a0d02157dfbf2e3c4f0a1ec3cfdbc6877"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0d02157dfbf2e3c4f0a1ec3cfdbc6877">smoothAll</a> (double <a class="el" href="LocalEntropyCalculator_8cpp.html#a4ef930be9d7ab47d59cc0668d0d1fac8">sigma</a>, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a> kernel=<a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a>)</td></tr>
 <tr class="memdesc:a0d02157dfbf2e3c4f0a1ec3cfdbc6877"><td class="mdescLeft">&#160;</td><td class="mdescRight">Smooths all available histograms.  <br /></td></tr>
 <tr class="separator:a0d02157dfbf2e3c4f0a1ec3cfdbc6877"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3bfe7288a905e33aab2bc5d4c156fab" id="r_ae3bfe7288a905e33aab2bc5d4c156fab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ae3bfe7288a905e33aab2bc5d4c156fab">setStructureAnalyzer</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html">StructureAnalyzer</a> *analyzer)</td></tr>
@@ -204,24 +215,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7d92fec63d1d7e053ea576cc72178f77" id="r_a7d92fec63d1d7e053ea576cc72178f77"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7d92fec63d1d7e053ea576cc72178f77">setStructureAnalyzerOwned</a> (std::unique_ptr&lt; <a class="el" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html">StructureAnalyzer</a> &gt; analyzer)</td></tr>
 <tr class="memdesc:a7d92fec63d1d7e053ea576cc72178f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Takes ownership of a <a class="el" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html" title="Computes and stores pairwise distances and bond angles in tensors indexed by element type.">StructureAnalyzer</a> for neighborhood/bond info.  <br /></td></tr>
 <tr class="separator:a7d92fec63d1d7e053ea576cc72178f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fb2250c38f06a2241c4a8254ec7411d" id="r_a7fb2250c38f06a2241c4a8254ec7411d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7fb2250c38f06a2241c4a8254ec7411d">add</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;other)</td></tr>
-<tr class="memdesc:a7fb2250c38f06a2241c4a8254ec7411d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the histograms from another <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html" title="Manages the calculation and storage of various distribution functions.">DistributionFunctions</a> object to this one. Used for averaging over multiple frames.  <br /></td></tr>
-<tr class="separator:a7fb2250c38f06a2241c4a8254ec7411d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adac0dd142dbd5b2ff7c99afd4ea098bf" id="r_adac0dd142dbd5b2ff7c99afd4ea098bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adac0dd142dbd5b2ff7c99afd4ea098bf">scale</a> (double factor)</td></tr>
-<tr class="memdesc:adac0dd142dbd5b2ff7c99afd4ea098bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scales all histograms in this object by a factor. Used for normalizing averaged distributions.  <br /></td></tr>
-<tr class="separator:adac0dd142dbd5b2ff7c99afd4ea098bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:af0d3f80a436c29f9b500d11886e8f79e" id="r_af0d3f80a436c29f9b500d11886e8f79e"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e">computeMean</a> (<a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;trajectory, const <a class="el" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html">TrajectoryAnalyzer</a> &amp;analyzer, size_t start_frame, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">AnalysisSettings</a> &amp;settings, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
-<tr class="memdesc:af0d3f80a436c29f9b500d11886e8f79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calculation.  <br /></td></tr>
-<tr class="separator:af0d3f80a436c29f9b500d11886e8f79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
-<tr class="memitem:aebb03905d358fc6c90332270447f466d" id="r_aebb03905d358fc6c90332270447f466d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#aebb03905d358fc6c90332270447f466d">ensureNeighborsComputed</a> (double r_cut)</td></tr>
-<tr class="memdesc:aebb03905d358fc6c90332270447f466d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensures neighbors are computed for the given cutoff.  <br /></td></tr>
-<tr class="separator:aebb03905d358fc6c90332270447f466d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2aab3856e2f1b3c216a3da439effb3a2" id="r_a2aab3856e2f1b3c216a3da439effb3a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a2aab3856e2f1b3c216a3da439effb3a2">ensureNeighborsComputed</a> (double <a class="el" href="RDFCalculator_8cpp.html#af222f423d9296573604c48d390e11563">r_max</a>)</td></tr>
+<tr class="memdesc:a2aab3856e2f1b3c216a3da439effb3a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensures neighbors are computed for the given cutoff.  <br /></td></tr>
+<tr class="separator:a2aab3856e2f1b3c216a3da439effb3a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1feb8a0faa6e2fbb82eaff66c4b3b62" id="r_ac1feb8a0faa6e2fbb82eaff66c4b3b62"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac1feb8a0faa6e2fbb82eaff66c4b3b62">getPartialKey</a> (int type1, int type2) const</td></tr>
 <tr class="memdesc:ac1feb8a0faa6e2fbb82eaff66c4b3b62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a unique string key for a pair of element types.  <br /></td></tr>
 <tr class="separator:ac1feb8a0faa6e2fbb82eaff66c4b3b62"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -231,6 +230,13 @@ Private Member Functions</h2></td></tr>
 <tr class="memitem:a64de3368fda90127540d707ee651daef" id="r_a64de3368fda90127540d707ee651daef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a64de3368fda90127540d707ee651daef">calculateAshcroftWeights</a> ()</td></tr>
 <tr class="memdesc:a64de3368fda90127540d707ee651daef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates weights for partial distributions based on concentrations.  <br /></td></tr>
 <tr class="separator:a64de3368fda90127540d707ee651daef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a7d23032f516472e374ea6c8c8a407591" id="r_a7d23032f516472e374ea6c8c8a407591"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7d23032f516472e374ea6c8c8a407591">processSingleFrame</a> (<a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;trajectory, const <a class="el" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html">TrajectoryAnalyzer</a> &amp;analyzer, size_t frame_idx, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">AnalysisSettings</a> &amp;settings, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;bond_cutoffs)</td></tr>
+<tr class="separator:a7d23032f516472e374ea6c8c8a407591"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafeb85ce3d3c3139e828e5752ef67de2" id="r_aafeb85ce3d3c3139e828e5752ef67de2"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#aafeb85ce3d3c3139e828e5752ef67de2">normalizeHistograms</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;dist_funcs)</td></tr>
+<tr class="separator:aafeb85ce3d3c3139e828e5752ef67de2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -270,6 +276,17 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:abc1e3b0e9e646ecee7af1083d6aef973" id="r_abc1e3b0e9e646ecee7af1083d6aef973"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#abc1e3b0e9e646ecee7af1083d6aef973">deborah_number_</a> {0.0}</td></tr>
 <tr class="memdesc:abc1e3b0e9e646ecee7af1083d6aef973"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deborah number.  <br /></td></tr>
 <tr class="separator:abc1e3b0e9e646ecee7af1083d6aef973"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader">Accumulation</h2></td></tr>
+<tr class="memitem:a7fb2250c38f06a2241c4a8254ec7411d" id="r_a7fb2250c38f06a2241c4a8254ec7411d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7fb2250c38f06a2241c4a8254ec7411d">add</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;other)</td></tr>
+<tr class="memdesc:a7fb2250c38f06a2241c4a8254ec7411d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds the histograms from another <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html" title="Manages the calculation and storage of various distribution functions.">DistributionFunctions</a> object to this one. Used for averaging over multiple frames.  <br /></td></tr>
+<tr class="separator:a7fb2250c38f06a2241c4a8254ec7411d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adac0dd142dbd5b2ff7c99afd4ea098bf" id="r_adac0dd142dbd5b2ff7c99afd4ea098bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adac0dd142dbd5b2ff7c99afd4ea098bf">scale</a> (double factor)</td></tr>
+<tr class="memdesc:adac0dd142dbd5b2ff7c99afd4ea098bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scales all histograms in this object by a factor. Used for normalizing averaged distributions.  <br /></td></tr>
+<tr class="separator:adac0dd142dbd5b2ff7c99afd4ea098bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0d3f80a436c29f9b500d11886e8f79e" id="r_af0d3f80a436c29f9b500d11886e8f79e"><td class="memItemLeft" align="right" valign="top">static std::unique_ptr&lt; <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e">computeMean</a> (<a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;trajectory, const <a class="el" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html">TrajectoryAnalyzer</a> &amp;analyzer, size_t start_frame, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">AnalysisSettings</a> &amp;settings, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)</td></tr>
+<tr class="memdesc:af0d3f80a436c29f9b500d11886e8f79e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calculation.  <br /></td></tr>
+<tr class="separator:af0d3f80a436c29f9b500d11886e8f79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages the calculation and storage of various distribution functions. </p>
@@ -284,7 +301,7 @@ Private Attributes</h2></td></tr>
 <p>It acts as a container for all analysis results associated with a <a class="el" href="classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box).">correlation::core::Cell</a> or <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html" title="This class stores a series of snapshots of a system.">correlation::core::Trajectory</a>. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a67e45acdc51ce9964993e1e96e8ce041" name="a67e45acdc51ce9964993e1e96e8ce041"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67e45acdc51ce9964993e1e96e8ce041">&#9670;&#160;</a></span>DistributionFunctions() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a67e45acdc51ce9964993e1e96e8ce041">&#9670;&#160;</a></span>DistributionFunctions() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -340,7 +357,7 @@ Here is the call graph for this function:</div>
 <area shape="rect" title="Constructs a DistributionFunctions object." alt="" coords="5,95,173,150"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a64de3368fda90127540d707ee651daef" title="Calculates weights for partial distributions based on concentrations." alt="" coords="227,55,422,110"/>
 <area shape="poly" title=" " alt="" coords="173,106,213,99,214,104,174,111"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#aebb03905d358fc6c90332270447f466d" title="Ensures neighbors are computed for the given cutoff." alt="" coords="221,134,428,189"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a2aab3856e2f1b3c216a3da439effb3a2" title="Ensures neighbors are computed for the given cutoff." alt="" coords="221,134,428,189"/>
 <area shape="poly" title=" " alt="" coords="174,134,208,139,207,145,173,139"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="492,5,628,45"/>
 <area shape="poly" title=" " alt="" coords="422,56,478,42,479,48,423,62"/>
@@ -355,7 +372,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <a id="a491e4f79817b89fcaa6935e5a05a73e7" name="a491e4f79817b89fcaa6935e5a05a73e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a491e4f79817b89fcaa6935e5a05a73e7">&#9670;&#160;</a></span>DistributionFunctions() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a491e4f79817b89fcaa6935e5a05a73e7">&#9670;&#160;</a></span>DistributionFunctions() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -385,6 +402,61 @@ Here is the call graph for this function:</div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a474b3cd7f39f75d12e8ba1aa6a14b417" name="a474b3cd7f39f75d12e8ba1aa6a14b417"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a474b3cd7f39f75d12e8ba1aa6a14b417">&#9670;&#160;</a></span>~DistributionFunctions()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">correlation::analysis::DistributionFunctions::~DistributionFunctions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default destructor. </p>
+
+</div>
+</div>
+<a id="a4d8a351ecb3ac3111bb812a9f33eff8b" name="a4d8a351ecb3ac3111bb812a9f33eff8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d8a351ecb3ac3111bb812a9f33eff8b">&#9670;&#160;</a></span>DistributionFunctions() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">correlation::analysis::DistributionFunctions::DistributionFunctions </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Deleted copy constructor (contains non-copyable std::mutex). </p>
 
 </div>
 </div>
@@ -418,9 +490,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a7fb2250c38f06a2241c4a8254ec7411d_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a7fb2250c38f06a2241c4a8254ec7411d_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a7fb2250c38f06a2241c4a8254ec7411d_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a7fb2250c38f06a2241c4a8254ec7411d_icgraph">
 <area shape="rect" title="Adds the histograms from another DistributionFunctions object to this one. Used for averaging over mu..." alt="" coords="356,5,556,45"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,13,308,38"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,13,308,38"/>
 <area shape="poly" title=" " alt="" coords="342,28,308,28,308,23,342,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,156,28,156,23,190,23"/>
 </map>
 </div>
@@ -466,35 +538,43 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a384e1c482383124902de3016e1e8e8ee_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a384e1c482383124902de3016e1e8e8ee_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a384e1c482383124902de3016e1e8e8ee_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a384e1c482383124902de3016e1e8e8ee_icgraph">
-<area shape="rect" title="Manually add a histogram to the collection." alt="" coords="317,414,485,469"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1ClusterCalculator.html#a5bcd9f53f9cf7848e67c55ccdfe94951" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="12,5,263,45"/>
-<area shape="poly" title=" " alt="" coords="396,401,387,327,367,235,350,187,329,140,301,97,268,59,251,48,254,43,271,55,306,94,333,137,355,185,372,233,393,326,401,400"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#aa8d293f9be7f810110d0beafe4013427" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,69,253,109"/>
-<area shape="poly" title=" " alt="" coords="393,401,381,339,358,264,341,225,321,188,297,153,268,123,250,112,253,107,271,119,301,150,326,185,346,223,363,262,386,338,398,400"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="26,133,249,173"/>
-<area shape="poly" title=" " alt="" coords="388,401,373,352,348,294,313,236,292,210,268,187,248,175,250,170,271,183,296,206,318,233,353,291,378,350,393,400"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a2b1f3680dacbe78916a2fe54c674bc18" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,197,254,237"/>
-<area shape="poly" title=" " alt="" coords="381,403,363,366,337,325,306,285,268,252,247,240,250,235,271,247,310,281,342,322,367,363,386,400"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="14,261,261,301"/>
-<area shape="poly" title=" " alt="" coords="369,405,324,358,297,335,268,316,242,304,244,299,271,311,301,331,328,354,373,402"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#aa128e5ec0338ba62bd618dd8a20ca62f" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="22,325,253,365"/>
-<area shape="poly" title=" " alt="" coords="337,410,268,380,230,368,232,363,270,375,339,405"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDCalculator.html#af7885c7fe2da94e24426d75f8f39c0f8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="26,389,249,429"/>
-<area shape="poly" title=" " alt="" coords="304,432,249,425,249,420,304,427"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="22,453,253,493"/>
-<area shape="poly" title=" " alt="" coords="304,456,253,462,252,457,303,450"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SDFCalculator.html#a22449340309b1d36c3d8a05f1db9b14c" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="22,517,253,557"/>
-<area shape="poly" title=" " alt="" coords="339,478,270,508,232,520,230,515,268,503,337,473"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="52,582,223,637"/>
-<area shape="poly" title=" " alt="" coords="372,481,327,528,300,551,271,572,224,593,222,588,268,567,297,547,324,524,368,477"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,661,253,701"/>
-<area shape="poly" title=" " alt="" coords="388,482,370,522,344,568,311,612,271,650,248,663,245,659,268,646,307,609,340,565,365,520,383,480"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#aac7c75a423c82335d82a723fd4e5e4fd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="9,725,266,765"/>
-<area shape="poly" title=" " alt="" coords="395,483,380,536,355,599,320,662,297,690,271,715,252,727,250,723,268,711,293,687,315,659,351,597,375,534,389,481"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a6f83c61d4f9344b3d5e83f18c60dcbcd" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="7,789,268,829"/>
-<area shape="poly" title=" " alt="" coords="399,483,388,548,365,628,349,670,328,710,302,747,271,779,254,791,251,787,268,775,298,743,323,707,344,667,360,626,382,547,393,482"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,853,269,893"/>
-<area shape="poly" title=" " alt="" coords="402,483,394,559,374,657,358,708,335,757,307,803,271,843,255,855,252,851,268,839,303,800,331,755,353,706,369,655,389,559,396,482"/>
+<area shape="rect" title="Manually add a histogram to the collection." alt="" coords="317,588,485,643"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="52,5,223,60"/>
+<area shape="poly" title=" " alt="" coords="393,575,377,459,351,309,334,235,314,167,292,112,267,74,247,58,222,47,224,42,249,54,271,71,296,109,319,165,339,233,356,308,382,458,398,574"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ClusterCalculator.html#a01736f0997cccf7fa60a09db175edb4b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="12,85,263,125"/>
+<area shape="poly" title=" " alt="" coords="391,574,374,470,347,340,330,275,311,217,290,170,267,139,252,127,255,123,271,135,295,168,316,215,335,274,352,338,380,469,397,573"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#a33fd116c876c72a5f6a1d9ed157b8014" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,149,253,189"/>
+<area shape="poly" title=" " alt="" coords="397,574,390,495,371,395,355,342,332,291,304,244,268,203,252,191,255,187,271,199,308,241,337,289,360,340,376,393,396,494,402,574"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ad7a5dd8acfa4f02324f61b15bfd4d716" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="26,213,249,253"/>
+<area shape="poly" title=" " alt="" coords="394,575,384,507,362,423,346,380,325,339,299,300,268,267,248,253,251,249,271,263,303,297,329,336,351,378,367,422,389,506,399,574"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#aeceb917b91a77436fe17ce6b4a94c977" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,277,254,317"/>
+<area shape="poly" title=" " alt="" coords="390,575,377,519,353,453,317,387,294,357,268,331,250,319,253,314,271,327,298,353,322,384,358,451,382,518,396,574"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a06a2b86934553f1b4b0555f358299b1d" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="14,341,261,381"/>
+<area shape="poly" title=" " alt="" coords="385,576,368,533,343,484,310,435,268,395,248,383,251,378,271,391,314,432,347,481,373,531,390,574"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#aba2b7cd0e9c38092b26458b1043c0252" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="36,405,239,460"/>
+<area shape="poly" title=" " alt="" coords="372,579,327,524,299,497,268,474,238,458,240,454,271,469,302,493,331,520,376,575"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html#ae04ff79281302013d1488c20037cafa5" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="47,484,227,539"/>
+<area shape="poly" title=" " alt="" coords="336,584,268,554,227,539,228,534,270,549,338,579"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#a51949ee81421ced581b8e242faac509e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="22,563,253,603"/>
+<area shape="poly" title=" " alt="" coords="303,606,252,600,253,595,304,601"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDCalculator.html#a0eda50cd7008a28af2a92953d76d41ef" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="26,627,249,667"/>
+<area shape="poly" title=" " alt="" coords="304,630,249,636,249,631,304,624"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a2b62f85b00bec286c7fe76a54256ebbb" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="22,691,253,731"/>
+<area shape="poly" title=" " alt="" coords="339,652,270,682,232,694,230,689,268,677,337,647"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SDFCalculator.html#a71748e24097487359ac54708447c57fe" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="22,755,253,795"/>
+<area shape="poly" title=" " alt="" coords="373,655,328,703,301,726,271,746,244,758,242,753,268,741,297,722,324,699,369,651"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a23cbce6a55837fabb17371aa3c6b01e8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="52,820,223,875"/>
+<area shape="poly" title=" " alt="" coords="385,656,366,693,341,734,309,775,271,809,248,823,224,833,222,828,246,818,268,805,305,771,336,731,362,690,381,654"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="11,899,264,939"/>
+<area shape="poly" title=" " alt="" coords="394,657,379,710,355,772,320,835,297,863,271,888,250,902,247,897,268,884,293,860,315,832,350,770,374,708,389,655"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,963,253,1003"/>
+<area shape="poly" title=" " alt="" coords="399,657,388,722,365,802,349,844,328,884,302,921,271,953,254,965,251,961,268,949,298,917,323,881,344,841,360,800,382,721,393,656"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1MSDCalculator.html#a76c9c5a8c262e5770d5958d55dcedced" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="9,1027,266,1067"/>
+<area shape="poly" title=" " alt="" coords="402,657,394,733,374,831,358,882,335,931,307,977,271,1017,255,1029,252,1025,268,1013,303,974,331,929,353,880,369,829,389,733,396,656"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#aa950883b3e7966d9a08315910f40ea49" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="7,1091,268,1131"/>
+<area shape="poly" title=" " alt="" coords="404,657,400,744,394,800,383,859,366,919,343,978,312,1033,271,1081,255,1093,252,1089,267,1077,307,1030,338,976,361,918,378,858,389,799,395,744,399,656"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a87d6d815927afc68c1728ef3b2b83780" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,1155,269,1195"/>
+<area shape="poly" title=" " alt="" coords="398,657,382,770,356,916,339,989,319,1055,297,1108,271,1145,256,1157,253,1153,267,1142,292,1106,314,1053,334,988,351,915,377,770,393,656"/>
 </map>
 </div>
 
@@ -573,15 +653,13 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_cgraph">
-<area shape="rect" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="5,62,229,117"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="277,69,460,109"/>
-<area shape="poly" title=" " alt="" coords="230,87,264,87,264,92,230,92"/>
+<area shape="rect" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="5,34,229,89"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="277,41,460,81"/>
+<area shape="poly" title=" " alt="" coords="230,59,264,59,264,64,230,64"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="517,5,653,45"/>
-<area shape="poly" title=" " alt="" coords="436,67,504,47,505,52,438,72"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="517,69,653,109"/>
-<area shape="poly" title=" " alt="" coords="460,87,503,87,503,92,460,92"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="508,134,663,189"/>
-<area shape="poly" title=" " alt="" coords="430,107,496,129,494,134,429,112"/>
+<area shape="poly" title=" " alt="" coords="460,44,503,36,504,42,461,49"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="508,70,663,125"/>
+<area shape="poly" title=" " alt="" coords="461,74,495,80,494,85,460,79"/>
 </map>
 </div>
 <div class="dynheader">
@@ -590,9 +668,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_adec432ed4e9477116a0a6c89fc3d9fd5_icgraph">
 <area shape="rect" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="356,5,580,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="342,35,308,35,308,30,342,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -627,15 +705,13 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_cgraph">
-<area shape="rect" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="5,77,173,132"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="221,85,413,125"/>
-<area shape="poly" title=" " alt="" coords="174,102,208,102,208,107,174,107"/>
+<area shape="rect" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="5,41,173,96"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a8a50ecb26ee901178f14c90921a6abd7" title="High&#45;performance computation of the Dihedral Angle Distribution (DAD)." alt="" coords="221,49,413,89"/>
+<area shape="poly" title=" " alt="" coords="174,66,208,66,208,71,174,71"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a6fe53793b881aaf80e05b7af041433dd" title="Gets a multi&#45;dimensional tensor containing dihedral angles." alt="" coords="461,5,616,60"/>
-<area shape="poly" title=" " alt="" coords="379,82,448,59,449,64,380,87"/>
+<area shape="poly" title=" " alt="" coords="414,50,447,45,448,50,414,56"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="471,85,607,125"/>
-<area shape="poly" title=" " alt="" coords="414,102,457,102,457,107,414,107"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="467,149,610,189"/>
-<area shape="poly" title=" " alt="" coords="388,122,457,142,455,147,387,127"/>
+<area shape="poly" title=" " alt="" coords="414,82,458,89,457,94,414,87"/>
 </map>
 </div>
 <div class="dynheader">
@@ -644,9 +720,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a09605eb07ffc69511be01cf664db3771_icgraph">
 <area shape="rect" title="Calculates the Dihedral Angle Distribution (DAD)." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -698,9 +774,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a6f65b6d6b2631bd107d23114f1de1edc_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a6f65b6d6b2631bd107d23114f1de1edc_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a6f65b6d6b2631bd107d23114f1de1edc_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a6f65b6d6b2631bd107d23114f1de1edc_icgraph">
 <area shape="rect" title="Calculates the Plane Angle Distribution (PAD)." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -753,27 +829,21 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_cgraph">
-<area shape="rect" title="Calculates the radial distribution function g(r)" alt="" coords="5,270,173,325"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="245,213,435,253"/>
-<area shape="poly" title=" " alt="" coords="173,273,247,254,248,259,174,279"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a434cedf3f57302ee9cab106f26ff066f" title="Gets a calculator by its name." alt="" coords="221,277,459,317"/>
-<area shape="poly" title=" " alt="" coords="174,295,207,295,207,300,174,300"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="237,341,443,381"/>
-<area shape="poly" title=" " alt="" coords="174,316,248,335,247,340,173,321"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="516,5,652,45"/>
-<area shape="poly" title=" " alt="" coords="354,211,415,137,458,94,505,55,514,50,517,54,508,59,461,98,419,140,358,214"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="516,69,652,109"/>
-<area shape="poly" title=" " alt="" coords="366,211,428,166,505,119,517,113,520,118,508,124,431,171,369,215"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a64a1cb58db792c5df32b4a5952ca24ea" title="Gets a multi&#45;dimensional tensor containing pair distances." alt="" coords="507,134,661,189"/>
-<area shape="poly" title=" " alt="" coords="408,211,493,185,494,191,409,216"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="516,213,652,253"/>
-<area shape="poly" title=" " alt="" coords="436,231,502,231,502,236,436,236"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a07c9132be7dfd8bcec0558594935f91b" title="Normalizes Radial Distribution Function (RDF) bins." alt="" coords="511,277,657,317"/>
-<area shape="poly" title=" " alt="" coords="418,251,498,272,497,277,416,256"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a90ebd8599bca0509bf44d18ff0533d58" title="Scales an array by a constant scalar factor." alt="" coords="513,341,655,381"/>
-<area shape="poly" title=" " alt="" coords="437,250,460,263,477,279,486,295,494,311,508,327,516,332,512,337,505,331,489,314,481,298,473,282,457,267,434,255"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="516,405,652,445"/>
-<area shape="poly" title=" " alt="" coords="437,248,460,263,474,279,482,296,486,328,490,360,497,376,509,392,512,395,509,399,505,395,492,378,485,361,481,329,477,297,470,282,457,267,434,252"/>
+<area shape="rect" title="Calculates the radial distribution function g(r)" alt="" coords="5,158,173,213"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="245,101,435,141"/>
+<area shape="poly" title=" " alt="" coords="173,161,247,142,248,147,174,167"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a434cedf3f57302ee9cab106f26ff066f" title="Gets a calculator by its name." alt="" coords="221,165,459,205"/>
+<area shape="poly" title=" " alt="" coords="174,183,207,183,207,188,174,188"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="237,229,443,269"/>
+<area shape="poly" title=" " alt="" coords="174,204,248,223,247,228,173,209"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="507,5,643,45"/>
+<area shape="poly" title=" " alt="" coords="389,99,511,48,513,53,391,104"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="507,69,643,109"/>
+<area shape="poly" title=" " alt="" coords="435,106,493,98,494,103,436,111"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="507,133,643,173"/>
+<area shape="poly" title=" " alt="" coords="436,132,494,140,493,145,435,137"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="507,197,643,237"/>
+<area shape="poly" title=" " alt="" coords="429,139,460,151,485,166,508,183,518,189,516,193,505,188,482,171,457,156,427,144"/>
 </map>
 </div>
 <div class="dynheader">
@@ -782,17 +852,17 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_abb3c6c8a1e5290cf8afde7f26e17d24e_icgraph">
 <area shape="rect" title="Calculates the radial distribution function g(r)" alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ab93b3d71845170c689455d462b8ae03f" name="ab93b3d71845170c689455d462b8ae03f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab93b3d71845170c689455d462b8ae03f">&#9670;&#160;</a></span>calculateVACF()</h2>
+<a id="a00952804939fe6812befa744a46d9547" name="a00952804939fe6812befa744a46d9547"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00952804939fe6812befa744a46d9547">&#9670;&#160;</a></span>calculateVACF()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -806,20 +876,20 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_correlation_frames</em> = <code>-1</code>, </td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1analysis_1_1MaxFrames.html">MaxFrames</a>&#160;</td>
+          <td class="paramname"><em>max_correlation_frames</em> = <code>{-1}</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>start_frame</em> = <code>0</code>, </td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1analysis_1_1StartFrame.html">StartFrame</a>&#160;</td>
+          <td class="paramname"><em>start_frame</em> = <code>{0}</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>end_frame</em> = <code>static_cast&lt;size_t&gt;(-1)</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1analysis_1_1EndFrame.html">EndFrame</a>&#160;</td>
+          <td class="paramname"><em>end_frame</em> = <code>{static_cast&lt;size_t&gt;(-1)}</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -842,51 +912,55 @@ Here is the caller graph for this function:</div>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_cgraph">
-<area shape="rect" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="5,233,173,287"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a614b70c8cce9a66ee82e0ebe41cc420e" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="221,240,419,280"/>
-<area shape="poly" title=" " alt="" coords="174,257,208,257,208,263,174,263"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7f08bfa51cb7f706acbacc31ec6db0c3" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="467,142,685,197"/>
-<area shape="poly" title=" " alt="" coords="377,237,484,199,486,204,378,242"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a17fdbcefe4aa531faf34f5a1ecd47f8e" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="733,151,987,191"/>
-<area shape="poly" title=" " alt="" coords="419,245,685,205,758,191,759,196,686,211,419,251"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="1512,208,1705,248"/>
-<area shape="poly" title=" " alt="" coords="419,265,622,276,859,283,1117,283,1291,278,1464,257,1514,248,1515,253,1464,263,1291,284,1117,288,859,288,621,282,419,270"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="488,323,664,363"/>
-<area shape="poly" title=" " alt="" coords="383,277,501,316,499,321,382,283"/>
-<area shape="poly" title=" " alt="" coords="686,167,720,167,720,173,686,173"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="1045,29,1187,69"/>
-<area shape="poly" title=" " alt="" coords="897,148,1034,79,1049,72,1051,77,1036,84,899,153"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="1041,93,1191,133"/>
-<area shape="poly" title=" " alt="" coords="949,148,1027,130,1028,136,951,153"/>
-<area shape="poly" title=" " alt="" coords="987,167,1210,172,1338,180,1464,193,1516,202,1515,208,1464,199,1337,185,1210,177,987,172"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="1035,208,1197,248"/>
-<area shape="poly" title=" " alt="" coords="951,188,1022,204,1021,209,949,193"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="1283,29,1426,69"/>
-<area shape="poly" title=" " alt="" coords="1188,47,1270,47,1270,52,1188,52"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="1537,29,1680,69"/>
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_cgraph">
+<area shape="rect" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="5,297,173,351"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VACFCalculator.html#a9e11c5231c31cee449f2e1f6e28ba204" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="221,304,419,344"/>
+<area shape="poly" title=" " alt="" coords="174,321,208,321,208,327,174,327"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#aac5531eedc15619d8e66cba6b1874aa2" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="467,206,685,261"/>
+<area shape="poly" title=" " alt="" coords="377,301,484,263,486,268,378,306"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a1000913e170b1d002b61cc362c9af788" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="733,215,987,255"/>
+<area shape="poly" title=" " alt="" coords="419,309,685,269,758,255,759,260,686,275,419,315"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="1512,272,1705,312"/>
+<area shape="poly" title=" " alt="" coords="419,329,622,340,859,347,1117,347,1291,342,1464,321,1514,312,1515,317,1464,327,1291,348,1117,352,859,352,621,346,419,334"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af6c96073c6d345072c7d215f1669907d" title="Gets the time step between frames." alt="" coords="488,387,664,427"/>
+<area shape="poly" title=" " alt="" coords="383,341,501,380,499,385,382,347"/>
+<area shape="poly" title=" " alt="" coords="686,231,720,231,720,237,686,237"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a0f3c899bcbeb2b3eec4516f9acd2a643" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="1045,93,1187,133"/>
+<area shape="poly" title=" " alt="" coords="897,212,1034,143,1049,136,1051,141,1036,148,899,217"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="1041,157,1191,197"/>
+<area shape="poly" title=" " alt="" coords="949,212,1027,194,1028,200,951,217"/>
+<area shape="poly" title=" " alt="" coords="987,231,1210,236,1338,244,1464,257,1516,266,1515,272,1464,263,1337,249,1210,241,987,236"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="1035,272,1197,312"/>
+<area shape="poly" title=" " alt="" coords="951,252,1022,268,1021,273,949,257"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#af4b46526a1ffe1c38188bae87c34a99e" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="1283,29,1426,69"/>
+<area shape="poly" title=" " alt="" coords="1187,92,1269,69,1271,74,1188,97"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a13ddbfff3eb1f186243a00bac5ccadf8" title="Finds the next &quot;good&quot; FFT size &gt;= target." alt="" coords="1274,93,1435,133"/>
+<area shape="poly" title=" " alt="" coords="1188,111,1260,111,1260,116,1188,116"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="1537,29,1680,69"/>
 <area shape="poly" title=" " alt="" coords="1426,47,1524,47,1524,52,1426,52"/>
 <area shape="poly" title=" " alt="" coords="1568,30,1566,20,1572,10,1587,5,1609,3,1634,6,1648,13,1645,18,1632,11,1609,8,1588,10,1575,15,1571,21,1573,28"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="1753,29,1896,69"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="1753,29,1896,69"/>
 <area shape="poly" title=" " alt="" coords="1680,47,1740,47,1740,52,1680,52"/>
 <area shape="poly" title=" " alt="" coords="1784,30,1782,20,1788,10,1803,5,1825,3,1850,6,1864,13,1861,18,1848,11,1825,8,1804,10,1791,15,1787,21,1789,28"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="1280,93,1429,133"/>
-<area shape="poly" title=" " alt="" coords="1191,111,1266,111,1266,116,1191,116"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="1245,208,1464,248"/>
-<area shape="poly" title=" " alt="" coords="1198,225,1232,225,1232,231,1198,231"/>
-<area shape="poly" title=" " alt="" coords="1464,225,1498,225,1498,231,1464,231"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a9fab196f3961705514a0ef08724f302b" title="Helper to check if a size is a product of small prime factors (2, 3, 5). Highly optimized for FFTW3 a..." alt="" coords="1537,93,1680,133"/>
+<area shape="poly" title=" " alt="" coords="1436,111,1524,111,1524,116,1436,116"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="1280,157,1429,197"/>
+<area shape="poly" title=" " alt="" coords="1191,175,1266,175,1266,180,1191,180"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="1245,272,1464,312"/>
+<area shape="poly" title=" " alt="" coords="1198,289,1232,289,1232,295,1198,295"/>
+<area shape="poly" title=" " alt="" coords="1464,289,1498,289,1498,295,1464,295"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab93b3d71845170c689455d462b8ae03f_icgraph">
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a00952804939fe6812befa744a46d9547_icgraph">
 <area shape="rect" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -917,7 +991,7 @@ Here is the call graph for this function:</div>
 <area shape="rect" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="5,5,173,60"/>
 <area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a6890f7a2df90c538a7d5de0723f70658" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="221,13,421,53"/>
 <area shape="poly" title=" " alt="" coords="173,30,208,30,208,35,173,35"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="469,13,725,53"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#ac1f021d5004f0a608f3644b6460f309b" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="469,13,725,53"/>
 <area shape="poly" title=" " alt="" coords="421,30,455,30,455,35,421,35"/>
 </map>
 </div>
@@ -927,9 +1001,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a25122c9d2298582a94578327073ff835_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a25122c9d2298582a94578327073ff835_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a25122c9d2298582a94578327073ff835_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a25122c9d2298582a94578327073ff835_icgraph">
 <area shape="rect" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -989,23 +1063,30 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_cgraph">
-<area shape="rect" title="Calculates the XRD pattern." alt="" coords="5,158,173,213"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="221,165,412,205"/>
-<area shape="poly" title=" " alt="" coords="174,183,208,183,208,188,174,188"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="480,5,616,45"/>
-<area shape="poly" title=" " alt="" coords="334,163,387,110,421,81,459,55,470,49,472,54,461,60,425,85,390,114,338,167"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="480,69,616,109"/>
-<area shape="poly" title=" " alt="" coords="359,163,459,119,477,112,479,117,461,124,362,168"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="480,133,616,173"/>
-<area shape="poly" title=" " alt="" coords="412,169,466,162,466,167,413,175"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="460,197,636,237"/>
-<area shape="poly" title=" " alt="" coords="413,196,447,201,446,206,412,201"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5" title="Computes a sinc&#45;weighted integral over a range (AVX2 version)." alt="" coords="477,261,619,301"/>
-<area shape="poly" title=" " alt="" coords="362,203,461,247,479,254,477,259,459,252,359,208"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="480,325,616,365"/>
-<area shape="poly" title=" " alt="" coords="338,204,390,257,425,285,461,311,472,317,470,322,459,316,421,290,387,260,334,208"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="684,197,833,237"/>
-<area shape="poly" title=" " alt="" coords="636,215,670,215,670,220,636,220"/>
+<area shape="rect" title="Calculates the XRD pattern." alt="" coords="5,171,173,226"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="221,179,412,219"/>
+<area shape="poly" title=" " alt="" coords="174,196,208,196,208,201,174,201"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="817,5,953,45"/>
+<area shape="poly" title=" " alt="" coords="329,177,350,147,379,113,416,79,459,52,502,35,547,23,640,10,728,8,804,12,803,17,728,13,640,15,548,28,504,41,461,57,419,83,383,116,354,151,333,180"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#ae27d325d09bfb34c8731daf5ce987e17" title=" " alt="" coords="460,67,749,107"/>
+<area shape="poly" title=" " alt="" coords="346,176,398,145,459,116,483,108,485,113,461,121,400,150,349,181"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a30c395dbc7ac727f6ea3a45db1d01497" title=" " alt="" coords="489,131,721,186"/>
+<area shape="poly" title=" " alt="" coords="412,183,474,174,475,179,413,188"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a95a057ce17c44e8b594e0bd474242a51" title=" " alt="" coords="489,210,721,265"/>
+<area shape="poly" title=" " alt="" coords="413,209,475,217,474,223,412,214"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aa2e8aa0b93b198ae9c14d5be0c64b591" title="Computes the dot product of two double arrays (AVX2 version)." alt="" coords="533,289,676,329"/>
+<area shape="poly" title=" " alt="" coords="350,217,401,247,461,275,520,292,519,297,459,280,398,251,347,221"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="537,353,673,393"/>
+<area shape="poly" title=" " alt="" coords="334,217,385,278,421,311,461,339,492,352,524,361,522,366,490,357,459,344,418,316,382,282,330,221"/>
+<area shape="poly" title=" " alt="" coords="696,64,803,40,804,46,698,69"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="817,69,953,109"/>
+<area shape="poly" title=" " alt="" coords="750,85,804,86,804,91,749,91"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="817,133,953,173"/>
+<area shape="poly" title=" " alt="" coords="698,104,750,116,805,130,804,135,749,121,697,109"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="797,217,973,257"/>
+<area shape="poly" title=" " alt="" coords="721,235,783,235,783,240,721,240"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="1021,217,1171,257"/>
+<area shape="poly" title=" " alt="" coords="974,235,1008,235,1008,240,974,240"/>
 </map>
 </div>
 <div class="dynheader">
@@ -1014,9 +1095,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a3921182bd9359630a3f66f288019f29e_icgraph">
 <area shape="rect" title="Calculates the XRD pattern." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -1053,27 +1134,35 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a0469afdf0190fc0e851dee1bb8895b56_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0469afdf0190fc0e851dee1bb8895b56_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0469afdf0190fc0e851dee1bb8895b56_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0469afdf0190fc0e851dee1bb8895b56_icgraph">
-<area shape="rect" title="Access the underlying simulation cell." alt="" coords="300,293,499,333"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#aa8d293f9be7f810110d0beafe4013427" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="13,5,245,45"/>
-<area shape="poly" title=" " alt="" coords="386,281,368,231,340,171,301,111,277,83,250,59,231,48,234,43,254,55,281,79,305,107,344,169,373,229,391,279"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,69,240,109"/>
-<area shape="poly" title=" " alt="" coords="380,282,358,245,329,202,293,159,251,124,228,112,231,107,253,119,297,156,334,199,363,242,384,279"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a2b1f3680dacbe78916a2fe54c674bc18" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="12,133,245,173"/>
-<area shape="poly" title=" " alt="" coords="370,285,318,235,285,209,251,188,224,176,226,171,253,183,288,205,321,231,373,281"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,197,252,237"/>
-<area shape="poly" title=" " alt="" coords="343,290,251,252,213,240,215,235,253,247,345,285"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#aa128e5ec0338ba62bd618dd8a20ca62f" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="13,261,244,301"/>
-<area shape="poly" title=" " alt="" coords="286,303,244,298,244,292,287,297"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="13,325,244,365"/>
-<area shape="poly" title=" " alt="" coords="287,329,244,334,244,329,286,324"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SDFCalculator.html#a22449340309b1d36c3d8a05f1db9b14c" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="13,389,244,429"/>
-<area shape="poly" title=" " alt="" coords="345,342,253,380,215,392,213,387,251,375,343,337"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="43,454,214,509"/>
-<area shape="poly" title=" " alt="" coords="373,345,320,395,288,421,253,444,216,461,213,456,251,439,285,417,317,391,369,341"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="31,533,226,587"/>
-<area shape="poly" title=" " alt="" coords="386,347,365,387,335,434,298,481,254,522,228,537,225,533,250,518,294,478,331,431,360,384,381,345"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="13,612,245,652"/>
-<area shape="poly" title=" " alt="" coords="393,347,376,403,349,471,308,541,283,573,254,601,233,614,230,610,250,597,279,569,304,538,344,469,371,401,388,346"/>
+<area shape="rect" title="Access the underlying simulation cell." alt="" coords="307,463,505,503"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="47,5,217,60"/>
+<area shape="poly" title=" " alt="" coords="400,450,390,373,366,272,348,219,324,166,294,118,257,75,238,60,216,50,219,45,241,56,260,71,298,114,329,164,353,217,372,271,395,372,405,449"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#a33fd116c876c72a5f6a1d9ed157b8014" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="16,85,248,125"/>
+<area shape="poly" title=" " alt="" coords="398,450,385,384,360,300,341,256,318,213,290,173,257,139,240,127,243,123,260,135,294,170,323,210,346,253,365,298,390,383,403,449"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ad7a5dd8acfa4f02324f61b15bfd4d716" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,149,243,189"/>
+<area shape="poly" title=" " alt="" coords="395,451,378,396,351,329,311,261,286,230,257,203,238,191,241,186,260,199,290,226,315,257,355,327,383,395,400,450"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#aeceb917b91a77436fe17ce6b4a94c977" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="15,213,249,253"/>
+<area shape="poly" title=" " alt="" coords="389,451,369,409,341,359,303,309,257,267,237,255,239,251,260,263,307,305,345,356,374,406,394,449"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a06a2b86934553f1b4b0555f358299b1d" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="9,277,255,317"/>
+<area shape="poly" title=" " alt="" coords="382,454,330,391,295,358,257,331,233,319,235,314,260,326,299,354,334,387,386,451"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#aba2b7cd0e9c38092b26458b1043c0252" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="31,341,233,396"/>
+<area shape="poly" title=" " alt="" coords="357,459,258,410,227,399,229,394,260,405,359,454"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html#ae04ff79281302013d1488c20037cafa5" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="42,420,222,475"/>
+<area shape="poly" title=" " alt="" coords="292,471,222,462,223,456,293,466"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#a51949ee81421ced581b8e242faac509e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,499,247,539"/>
+<area shape="poly" title=" " alt="" coords="293,501,248,507,247,502,292,496"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a2b62f85b00bec286c7fe76a54256ebbb" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,563,247,603"/>
+<area shape="poly" title=" " alt="" coords="355,512,260,554,221,566,220,561,258,549,353,507"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SDFCalculator.html#a71748e24097487359ac54708447c57fe" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,627,247,667"/>
+<area shape="poly" title=" " alt="" coords="381,516,329,568,296,595,260,618,233,630,231,625,257,613,292,591,325,564,377,512"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a23cbce6a55837fabb17371aa3c6b01e8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="47,692,217,747"/>
+<area shape="poly" title=" " alt="" coords="391,518,369,555,340,599,303,644,260,682,219,703,216,698,257,677,299,640,336,596,365,553,386,515"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#a989c3207175972327ef2e8636bea471c" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="35,771,229,825"/>
+<area shape="poly" title=" " alt="" coords="399,517,381,570,353,636,313,702,288,733,260,760,231,778,228,774,257,756,284,729,309,699,348,633,376,568,393,516"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,850,259,890"/>
+<area shape="poly" title=" " alt="" coords="403,518,391,585,365,672,347,717,323,762,295,803,260,839,241,852,238,848,257,835,291,799,319,759,342,715,360,670,385,584,398,517"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="16,914,248,954"/>
+<area shape="poly" title=" " alt="" coords="406,517,397,596,375,700,356,756,331,810,300,860,260,904,244,916,241,912,257,900,295,857,327,807,351,754,369,699,392,595,401,517"/>
 </map>
 </div>
 
@@ -1148,26 +1237,11 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_cgraph">
-<area shape="rect" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="5,224,173,278"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="266,57,421,112"/>
-<area shape="poly" title=" " alt="" coords="113,222,160,175,220,129,252,112,255,117,223,133,163,179,117,225"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="513,15,668,55"/>
-<area shape="poly" title=" " alt="" coords="96,222,112,180,137,130,173,81,195,59,220,42,253,26,289,15,363,4,435,5,500,12,499,18,435,10,363,9,290,20,255,31,223,47,198,64,177,84,142,133,117,182,101,224"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="716,72,909,112"/>
-<area shape="poly" title=" " alt="" coords="128,221,171,196,220,174,312,152,439,132,702,100,702,106,440,137,313,157,222,179,174,201,131,226"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="266,188,421,242"/>
-<area shape="poly" title=" " alt="" coords="173,237,252,225,253,230,174,242"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="221,267,465,307"/>
-<area shape="poly" title=" " alt="" coords="174,260,208,265,207,270,173,266"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="266,332,421,386"/>
-<area shape="poly" title=" " alt="" coords="140,276,222,317,253,329,252,334,220,321,138,281"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="241,411,446,451"/>
-<area shape="poly" title=" " alt="" coords="110,277,156,338,187,370,223,397,234,403,232,408,220,401,184,374,152,341,105,280"/>
-<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="244,475,443,515"/>
-<area shape="poly" title=" " alt="" coords="102,277,119,319,145,368,179,419,200,441,223,461,233,467,230,472,220,465,196,445,175,422,140,371,114,321,97,279"/>
-<area shape="poly" title=" " alt="" coords="420,66,499,50,500,56,421,72"/>
-<area shape="poly" title=" " alt="" coords="421,83,702,88,702,93,421,88"/>
-<area shape="poly" title=" " alt="" coords="669,52,722,66,721,71,667,58"/>
+<area shape="rect" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="5,45,173,100"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="221,5,376,60"/>
+<area shape="poly" title=" " alt="" coords="173,54,207,47,208,53,174,59"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="221,84,376,139"/>
+<area shape="poly" title=" " alt="" coords="174,86,208,92,207,97,173,91"/>
 </map>
 </div>
 <div class="dynheader">
@@ -1175,26 +1249,24 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_af0d3f80a436c29f9b500d11886e8f79e_icgraph">
-<area shape="rect" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="804,20,972,75"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="598,5,702,31"/>
-<area shape="poly" title=" " alt="" coords="790,38,702,27,702,22,791,33"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="544,55,756,95"/>
-<area shape="poly" title=" " alt="" coords="791,61,757,66,756,60,790,56"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="310,5,461,31"/>
-<area shape="poly" title=" " alt="" coords="584,21,461,21,461,15,584,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,55,496,95"/>
-<area shape="poly" title=" " alt="" coords="530,78,496,78,496,73,530,73"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,120,413,145"/>
-<area shape="poly" title=" " alt="" coords="544,101,413,130,412,124,543,96"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,55,227,95"/>
-<area shape="poly" title=" " alt="" coords="261,78,227,78,227,73,261,73"/>
+<area shape="rect" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="513,20,681,75"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="307,5,411,31"/>
+<area shape="poly" title=" " alt="" coords="499,38,411,27,412,22,500,33"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="253,55,465,95"/>
+<area shape="poly" title=" " alt="" coords="500,61,466,66,465,60,499,56"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="30,5,181,31"/>
+<area shape="poly" title=" " alt="" coords="293,21,181,21,181,15,293,15"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AnalysisRunner.html#a80974f9ff0cf9cc11759b3975f7182c4" title=" " alt="" coords="5,55,205,95"/>
+<area shape="poly" title=" " alt="" coords="240,78,206,78,206,73,240,73"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="78,120,133,145"/>
+<area shape="poly" title=" " alt="" coords="257,101,133,129,132,124,256,96"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="aebb03905d358fc6c90332270447f466d" name="aebb03905d358fc6c90332270447f466d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebb03905d358fc6c90332270447f466d">&#9670;&#160;</a></span>ensureNeighborsComputed()</h2>
+<a id="a2aab3856e2f1b3c216a3da439effb3a2" name="a2aab3856e2f1b3c216a3da439effb3a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2aab3856e2f1b3c216a3da439effb3a2">&#9670;&#160;</a></span>ensureNeighborsComputed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1206,7 +1278,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::analysis::DistributionFunctions::ensureNeighborsComputed </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>r_cut</em></td><td>)</td>
+          <td class="paramname"><em>r_max</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1220,15 +1292,15 @@ Here is the caller graph for this function:</div>
 <p>Ensures neighbors are computed for the given cutoff. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">r_cut</td><td>Cutoff radius. </td></tr>
+    <tr><td class="paramname">r_max</td><td>Cutoff radius. </td></tr>
   </table>
   </dd>
 </dl>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_aebb03905d358fc6c90332270447f466d_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_aebb03905d358fc6c90332270447f466d_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_aebb03905d358fc6c90332270447f466d_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_aebb03905d358fc6c90332270447f466d_icgraph">
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a2aab3856e2f1b3c216a3da439effb3a2_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a2aab3856e2f1b3c216a3da439effb3a2_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a2aab3856e2f1b3c216a3da439effb3a2_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a2aab3856e2f1b3c216a3da439effb3a2_icgraph">
 <area shape="rect" title="Ensures neighbors are computed for the given cutoff." alt="" coords="221,5,428,60"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a67e45acdc51ce9964993e1e96e8ce041" title="Constructs a DistributionFunctions object." alt="" coords="5,5,173,60"/>
 <area shape="poly" title=" " alt="" coords="208,35,173,35,173,30,208,30"/>
@@ -1268,30 +1340,29 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a60eb8e42379f6bbd98f334da0a95dcb1_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a60eb8e42379f6bbd98f334da0a95dcb1_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a60eb8e42379f6bbd98f334da0a95dcb1_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a60eb8e42379f6bbd98f334da0a95dcb1_icgraph">
 <area shape="rect" title="Access all calculated histograms." alt="" coords="713,149,881,203"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="417,5,649,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="417,5,649,45"/>
 <area shape="poly" title=" " alt="" coords="762,140,718,97,664,60,637,48,639,43,667,55,721,93,766,136"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="401,69,665,109"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a87d6d815927afc68c1728ef3b2b83780" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="401,69,665,109"/>
 <area shape="poly" title=" " alt="" coords="711,147,664,131,605,112,606,107,666,125,712,142"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="227,85,331,110"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="227,85,331,110"/>
 <area shape="poly" title=" " alt="" coords="699,167,401,124,331,111,332,106,402,119,700,162"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a980d280847450672dec384d836996e84" title="Writes all available histograms to appropriately named CSV files." alt="" coords="440,184,627,224"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a76cdea12443b2bec7381c21473d1b6ae" title="Writes all available histograms to appropriately named CSV files." alt="" coords="440,184,627,224"/>
 <area shape="poly" title=" " alt="" coords="700,189,627,197,627,191,700,184"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1ArrowWriter.html#a5e70ebfa4dab74ca48b77c0289054425" title="Writes all available histograms to Parquet files." alt="" coords="426,248,641,288"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1ArrowWriter.html#a45d53722533fb0c3d98236e2976878b4" title="Writes all available histograms to Parquet files." alt="" coords="426,248,641,288"/>
 <area shape="poly" title=" " alt="" coords="731,212,666,239,627,251,625,245,664,233,729,207"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1HDF5Writer.html#a8ad94d0b1079f292133a1381b416cfa8" title="Writes all available histograms to a single HDF5 file." alt="" coords="446,312,621,352"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1HDF5Writer.html#ace3b764df9cfb8e8bf657332f47a452d" title="Writes all available histograms to a single HDF5 file." alt="" coords="446,312,621,352"/>
 <area shape="poly" title=" " alt="" coords="768,216,723,261,696,283,667,302,622,320,620,315,664,298,693,279,720,257,764,212"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,110,156,135"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,110,156,135"/>
 <area shape="poly" title=" " alt="" coords="213,108,156,116,156,110,213,103"/>
-<area shape="rect" href="writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="231,134,326,159"/>
+<area shape="rect" href="writer__bindings_8cpp.html#a6c7de34af4a67d96dd3d5459d0b0d5ef" title=" " alt="" coords="231,134,326,159"/>
 <area shape="poly" title=" " alt="" coords="430,184,326,160,327,155,431,178"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#ab2dbd3d98ea8fcd7389e4e15b88f1ede" title="Writes the distribution function data to file(s)." alt="" coords="206,184,351,224"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1CSVWriter.html#a6dbd5f2e379e173516eb88c7dfb909a4" title="Writes the distribution function data to file(s)." alt="" coords="206,184,351,224"/>
 <area shape="poly" title=" " alt="" coords="426,207,352,207,352,201,426,201"/>
 <area shape="poly" title=" " alt="" coords="217,142,156,134,157,129,218,137"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1ArrowWriter.html#a069491824a51623607fd90f8ff01debd" title="Writes the distribution function data to file(s)." alt="" coords="204,248,353,288"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1ArrowWriter.html#a20161428811efbdb3675ce4bc73aada0" title="Writes the distribution function data to file(s)." alt="" coords="204,248,353,288"/>
 <area shape="poly" title=" " alt="" coords="412,271,354,271,354,265,412,265"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1HDF5Writer.html#a40c5c2f2ba55025a63c88e17cd628289" title="Writes the distribution function data to file(s)." alt="" coords="205,312,352,352"/>
-<area shape="poly" title=" " alt="" coords="433,343,352,343,352,338,433,338"/>
-<area shape="poly" title=" " alt="" coords="366,321,446,321,446,326,366,326"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1HDF5Writer.html#a6bd641791d58f96cf1335e143a03a27b" title="Writes the distribution function data to file(s)." alt="" coords="205,312,352,352"/>
+<area shape="poly" title=" " alt="" coords="433,335,352,335,352,329,433,329"/>
 </map>
 </div>
 
@@ -1328,15 +1399,15 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a998c1e396109bba5440a8704a4896e7f_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a998c1e396109bba5440a8704a4896e7f_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a998c1e396109bba5440a8704a4896e7f_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a998c1e396109bba5440a8704a4896e7f_icgraph">
 <area shape="rect" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="484,106,652,161"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="205,5,435,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a2b62f85b00bec286c7fe76a54256ebbb" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="205,5,435,45"/>
 <area shape="poly" title=" " alt="" coords="513,101,435,60,402,48,404,43,437,55,515,96"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="223,70,417,125"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#a989c3207175972327ef2e8636bea471c" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="223,70,417,125"/>
 <area shape="poly" title=" " alt="" coords="470,122,417,114,418,109,471,117"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="204,149,436,189"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="204,149,436,189"/>
 <area shape="poly" title=" " alt="" coords="471,150,437,155,436,150,470,145"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="268,214,372,239"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="268,214,372,239"/>
 <area shape="poly" title=" " alt="" coords="510,170,437,204,373,221,372,216,435,199,508,165"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,214,156,239"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,214,156,239"/>
 <area shape="poly" title=" " alt="" coords="254,229,156,229,156,224,254,224"/>
 </map>
 </div>
@@ -1366,9 +1437,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a8ffbd5ae1a90a1af7a4d6d9df49581b4_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a8ffbd5ae1a90a1af7a4d6d9df49581b4_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a8ffbd5ae1a90a1af7a4d6d9df49581b4_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a8ffbd5ae1a90a1af7a4d6d9df49581b4_icgraph">
 <area shape="rect" title="Gets a list of names for all currently available histograms." alt="" coords="356,5,543,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="342,35,308,35,308,30,342,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -1405,21 +1476,21 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_acf410dfc1dfa001ceda6f0cdb5166ee0_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_acf410dfc1dfa001ceda6f0cdb5166ee0_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_acf410dfc1dfa001ceda6f0cdb5166ee0_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_acf410dfc1dfa001ceda6f0cdb5166ee0_icgraph">
-<area shape="rect" title="Gets the Deborah number." alt="" coords="997,20,1165,75"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="825,5,929,31"/>
-<area shape="poly" title=" " alt="" coords="983,36,929,28,929,23,984,31"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="804,55,949,95"/>
-<area shape="poly" title=" " alt="" coords="984,63,950,68,950,63,984,58"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="575,5,725,31"/>
-<area shape="poly" title=" " alt="" coords="811,21,726,21,726,15,811,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,55,756,95"/>
-<area shape="poly" title=" " alt="" coords="790,78,756,78,756,73,790,73"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,26,496,66"/>
-<area shape="poly" title=" " alt="" coords="530,65,496,61,497,56,531,59"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,91,413,116"/>
-<area shape="poly" title=" " alt="" coords="531,91,413,103,412,98,530,85"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,26,227,66"/>
-<area shape="poly" title=" " alt="" coords="261,49,227,49,227,43,261,43"/>
+<area shape="rect" title="Gets the Deborah number." alt="" coords="1000,20,1168,75"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="790,5,894,31"/>
+<area shape="poly" title=" " alt="" coords="986,38,894,27,895,22,987,33"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#a6078694545f6f3373e836ed9ef3f3959" title=" " alt="" coords="732,55,952,95"/>
+<area shape="poly" title=" " alt="" coords="987,61,953,65,952,60,986,56"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="533,5,684,31"/>
+<area shape="poly" title=" " alt="" coords="776,21,684,21,684,15,776,15"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="536,55,681,95"/>
+<area shape="poly" title=" " alt="" coords="718,78,682,78,682,73,718,73"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,55,485,95"/>
+<area shape="poly" title=" " alt="" coords="522,78,485,78,485,73,522,73"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,26,225,66"/>
+<area shape="poly" title=" " alt="" coords="260,65,225,61,226,56,260,59"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,91,143,116"/>
+<area shape="poly" title=" " alt="" coords="260,91,143,103,143,98,259,85"/>
 </map>
 </div>
 
@@ -1455,21 +1526,23 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a1f238238a5ddad1acd3e95a4408a5075_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a1f238238a5ddad1acd3e95a4408a5075_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a1f238238a5ddad1acd3e95a4408a5075_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a1f238238a5ddad1acd3e95a4408a5075_icgraph">
-<area shape="rect" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="997,20,1207,75"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="825,5,929,31"/>
-<area shape="poly" title=" " alt="" coords="983,35,929,27,930,22,984,29"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="804,55,949,95"/>
-<area shape="poly" title=" " alt="" coords="984,65,950,69,949,64,984,59"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="575,5,725,31"/>
-<area shape="poly" title=" " alt="" coords="811,21,726,21,726,15,811,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,55,756,95"/>
-<area shape="poly" title=" " alt="" coords="790,78,756,78,756,73,790,73"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,26,496,66"/>
-<area shape="poly" title=" " alt="" coords="530,65,496,61,497,56,531,59"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,91,413,116"/>
-<area shape="poly" title=" " alt="" coords="531,91,413,103,412,98,530,85"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,26,227,66"/>
-<area shape="poly" title=" " alt="" coords="261,49,227,49,227,43,261,43"/>
+<area shape="rect" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="1001,48,1211,103"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="791,5,895,31"/>
+<area shape="poly" title=" " alt="" coords="987,52,894,32,896,27,988,47"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1PlotController.html#ad96919466c801b1578d970e4abdbfc30" title=" " alt="" coords="732,55,953,95"/>
+<area shape="poly" title=" " alt="" coords="988,78,954,78,954,73,988,73"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#a6078694545f6f3373e836ed9ef3f3959" title=" " alt="" coords="733,119,953,159"/>
+<area shape="poly" title=" " alt="" coords="989,107,926,122,925,117,988,101"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="533,5,684,31"/>
+<area shape="poly" title=" " alt="" coords="777,21,684,21,684,15,777,15"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="536,119,681,159"/>
+<area shape="poly" title=" " alt="" coords="719,142,681,142,681,137,719,137"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,119,485,159"/>
+<area shape="poly" title=" " alt="" coords="522,142,485,142,485,137,522,137"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,90,225,130"/>
+<area shape="poly" title=" " alt="" coords="260,129,225,125,226,120,260,123"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,155,143,180"/>
+<area shape="poly" title=" " alt="" coords="260,155,143,167,143,162,259,149"/>
 </map>
 </div>
 
@@ -1505,21 +1578,21 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_ac54c99e87f29ca619370e521f546a260_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_ac54c99e87f29ca619370e521f546a260_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ac54c99e87f29ca619370e521f546a260_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ac54c99e87f29ca619370e521f546a260_icgraph">
-<area shape="rect" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="997,20,1211,75"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="825,5,929,31"/>
-<area shape="poly" title=" " alt="" coords="983,34,929,27,929,22,984,29"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="804,55,949,95"/>
-<area shape="poly" title=" " alt="" coords="984,65,950,69,950,64,983,60"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="575,5,725,31"/>
-<area shape="poly" title=" " alt="" coords="811,21,726,21,726,15,811,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,55,756,95"/>
-<area shape="poly" title=" " alt="" coords="790,78,756,78,756,73,790,73"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,26,496,66"/>
-<area shape="poly" title=" " alt="" coords="530,65,496,61,497,56,531,59"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,91,413,116"/>
-<area shape="poly" title=" " alt="" coords="531,91,413,103,412,98,530,85"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,26,227,66"/>
-<area shape="poly" title=" " alt="" coords="261,49,227,49,227,43,261,43"/>
+<area shape="rect" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="1000,20,1213,75"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="790,5,894,31"/>
+<area shape="poly" title=" " alt="" coords="986,37,894,26,895,21,987,31"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#a6078694545f6f3373e836ed9ef3f3959" title=" " alt="" coords="732,55,952,95"/>
+<area shape="poly" title=" " alt="" coords="987,63,953,66,952,61,986,57"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="533,5,684,31"/>
+<area shape="poly" title=" " alt="" coords="776,21,684,21,684,15,776,15"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="536,55,681,95"/>
+<area shape="poly" title=" " alt="" coords="718,78,682,78,682,73,718,73"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,55,485,95"/>
+<area shape="poly" title=" " alt="" coords="522,78,485,78,485,73,522,73"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,26,225,66"/>
+<area shape="poly" title=" " alt="" coords="260,65,225,61,226,56,260,59"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,91,143,116"/>
+<area shape="poly" title=" " alt="" coords="260,91,143,103,143,98,259,85"/>
 </map>
 </div>
 
@@ -1561,13 +1634,13 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_ac5747ed2aeffcf06aaf596b69f330c74_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_ac5747ed2aeffcf06aaf596b69f330c74_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ac5747ed2aeffcf06aaf596b69f330c74_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ac5747ed2aeffcf06aaf596b69f330c74_icgraph">
 <area shape="rect" title="Access a specific calculated histogram by name." alt="" coords="516,62,684,117"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="220,5,452,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="220,5,452,45"/>
 <area shape="poly" title=" " alt="" coords="502,68,418,48,420,43,503,63"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="204,69,468,109"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a87d6d815927afc68c1728ef3b2b83780" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="204,69,468,109"/>
 <area shape="poly" title=" " alt="" coords="503,92,468,92,468,87,503,87"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="284,134,388,159"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="284,134,388,159"/>
 <area shape="poly" title=" " alt="" coords="503,116,469,124,389,140,388,135,467,119,502,111"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,134,156,159"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,134,156,159"/>
 <area shape="poly" title=" " alt="" coords="270,149,156,149,156,144,270,144"/>
 </map>
 </div>
@@ -1728,21 +1801,21 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a66f6a22f9700f76d47cf3bd7810cbb95_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a66f6a22f9700f76d47cf3bd7810cbb95_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a66f6a22f9700f76d47cf3bd7810cbb95_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a66f6a22f9700f76d47cf3bd7810cbb95_icgraph">
-<area shape="rect" title="Gets the relaxation time computed from normalized VACF." alt="" coords="997,20,1165,75"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="825,5,929,31"/>
-<area shape="poly" title=" " alt="" coords="983,36,929,28,929,23,984,31"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="804,55,949,95"/>
-<area shape="poly" title=" " alt="" coords="984,63,950,68,950,63,984,58"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="575,5,725,31"/>
-<area shape="poly" title=" " alt="" coords="811,21,726,21,726,15,811,15"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,55,756,95"/>
-<area shape="poly" title=" " alt="" coords="790,78,756,78,756,73,790,73"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,26,496,66"/>
-<area shape="poly" title=" " alt="" coords="530,65,496,61,497,56,531,59"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,91,413,116"/>
-<area shape="poly" title=" " alt="" coords="531,91,413,103,412,98,530,85"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,26,227,66"/>
-<area shape="poly" title=" " alt="" coords="261,49,227,49,227,43,261,43"/>
+<area shape="rect" title="Gets the relaxation time computed from normalized VACF." alt="" coords="1000,20,1168,75"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="790,5,894,31"/>
+<area shape="poly" title=" " alt="" coords="986,38,894,27,895,22,987,33"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#a6078694545f6f3373e836ed9ef3f3959" title=" " alt="" coords="732,55,952,95"/>
+<area shape="poly" title=" " alt="" coords="987,61,953,65,952,60,986,56"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="533,5,684,31"/>
+<area shape="poly" title=" " alt="" coords="776,21,684,21,684,15,776,15"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="536,55,681,95"/>
+<area shape="poly" title=" " alt="" coords="718,78,682,78,682,73,718,73"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,55,485,95"/>
+<area shape="poly" title=" " alt="" coords="522,78,485,78,485,73,522,73"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,26,225,66"/>
+<area shape="poly" title=" " alt="" coords="260,65,225,61,226,56,260,59"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,91,143,116"/>
+<area shape="poly" title=" " alt="" coords="260,91,143,103,143,98,259,85"/>
 </map>
 </div>
 
@@ -1770,32 +1843,92 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_ab3ba12c9ee0794c5d9ef4eaf1e336e73_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab3ba12c9ee0794c5d9ef4eaf1e336e73_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab3ba12c9ee0794c5d9ef4eaf1e336e73_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_ab3ba12c9ee0794c5d9ef4eaf1e336e73_icgraph">
-<area shape="rect" title="Returns the structure analyzer providing neighbor information." alt="" coords="304,254,472,309"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1ClusterCalculator.html#a5bcd9f53f9cf7848e67c55ccdfe94951" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,256,45"/>
-<area shape="poly" title=" " alt="" coords="372,242,354,199,329,149,296,101,254,59,235,48,238,43,258,55,300,97,334,147,359,197,377,240"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#aa8d293f9be7f810110d0beafe4013427" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="15,69,247,109"/>
-<area shape="poly" title=" " alt="" coords="362,243,318,181,288,150,255,124,232,112,234,107,257,119,292,146,322,178,367,240"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="19,133,242,173"/>
-<area shape="poly" title=" " alt="" coords="344,247,302,215,255,188,225,176,227,171,257,183,305,211,347,243"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#a2b1f3680dacbe78916a2fe54c674bc18" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="14,197,247,237"/>
-<area shape="poly" title=" " alt="" coords="290,260,211,240,212,235,292,255"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="7,261,254,301"/>
-<area shape="poly" title=" " alt="" coords="290,284,254,284,254,279,290,279"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#aa128e5ec0338ba62bd618dd8a20ca62f" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="15,325,246,365"/>
-<area shape="poly" title=" " alt="" coords="292,308,212,328,211,323,290,303"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDCalculator.html#af7885c7fe2da94e24426d75f8f39c0f8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="19,389,242,429"/>
-<area shape="poly" title=" " alt="" coords="347,320,305,352,257,380,227,392,225,387,255,375,302,347,344,316"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="15,453,246,493"/>
-<area shape="poly" title=" " alt="" coords="367,322,322,385,292,417,257,444,234,456,232,451,255,439,288,413,318,382,362,319"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="45,518,216,573"/>
-<area shape="poly" title=" " alt="" coords="376,323,358,366,333,416,299,465,258,507,218,530,215,525,254,503,295,462,328,413,353,364,371,321"/>
+<area shape="rect" title="Returns the structure analyzer providing neighbor information." alt="" coords="307,369,475,424"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="47,5,217,60"/>
+<area shape="poly" title=" " alt="" coords="382,356,369,294,346,218,330,179,310,141,285,106,257,75,238,61,217,51,219,46,241,56,260,71,290,103,314,138,334,177,351,217,374,293,387,355"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1ClusterCalculator.html#a01736f0997cccf7fa60a09db175edb4b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="7,85,257,125"/>
+<area shape="poly" title=" " alt="" coords="378,357,362,306,338,247,303,188,282,162,257,139,239,127,242,123,260,135,285,158,307,185,343,245,367,304,383,355"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNACalculator.html#a33fd116c876c72a5f6a1d9ed157b8014" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="16,149,248,189"/>
+<area shape="poly" title=" " alt="" coords="371,358,352,320,327,278,295,237,257,203,237,191,239,187,260,199,299,234,332,275,357,318,376,356"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ad7a5dd8acfa4f02324f61b15bfd4d716" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,213,243,253"/>
+<area shape="poly" title=" " alt="" coords="359,360,314,311,287,287,257,267,232,255,234,250,260,262,290,283,318,307,363,356"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1DADCalculator.html#aeceb917b91a77436fe17ce6b4a94c977" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="15,277,249,317"/>
+<area shape="poly" title=" " alt="" coords="330,365,258,331,222,319,223,314,260,326,332,360"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a06a2b86934553f1b4b0555f358299b1d" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="9,341,255,381"/>
+<area shape="poly" title=" " alt="" coords="293,386,255,380,256,375,294,381"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html#ae04ff79281302013d1488c20037cafa5" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="42,405,222,460"/>
+<area shape="poly" title=" " alt="" coords="293,413,223,423,222,417,293,408"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1PADCalculator.html#a51949ee81421ced581b8e242faac509e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,485,247,525"/>
+<area shape="poly" title=" " alt="" coords="337,434,260,474,221,487,220,482,258,469,335,429"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDCalculator.html#a0eda50cd7008a28af2a92953d76d41ef" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="21,549,243,589"/>
+<area shape="poly" title=" " alt="" coords="365,437,320,490,291,517,260,539,235,551,233,546,257,534,288,512,316,487,361,434"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1RDFCalculator.html#a2b62f85b00bec286c7fe76a54256ebbb" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="17,613,247,653"/>
+<area shape="poly" title=" " alt="" coords="377,438,358,478,333,522,300,566,260,603,239,615,237,610,257,599,296,562,328,519,354,475,372,436"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a23cbce6a55837fabb17371aa3c6b01e8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="47,677,217,732"/>
+<area shape="poly" title=" " alt="" coords="383,438,367,490,343,551,308,613,286,642,260,667,241,680,219,690,217,686,238,676,257,663,282,638,303,610,338,549,362,488,378,437"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,757,259,797"/>
+<area shape="poly" title=" " alt="" coords="388,438,378,505,356,588,339,631,318,673,292,711,260,745,241,759,238,754,257,741,288,708,313,670,334,629,350,586,372,504,383,437"/>
 </map>
 </div>
 
 </div>
 </div>
+<a id="aafeb85ce3d3c3139e828e5752ef67de2" name="aafeb85ce3d3c3139e828e5752ef67de2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafeb85ce3d3c3139e828e5752ef67de2">&#9670;&#160;</a></span>normalizeHistograms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::analysis::DistributionFunctions::normalizeHistograms </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td>
+          <td class="paramname"><em>dist_funcs</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a114d63bbfa6a735fbc208b8a92e1c5d2" name="a114d63bbfa6a735fbc208b8a92e1c5d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a114d63bbfa6a735fbc208b8a92e1c5d2">&#9670;&#160;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp; correlation::analysis::DistributionFunctions::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Deleted copy assignment operator (contains non-copyable std::mutex). </p>
+
+</div>
+</div>
 <a id="aa17f8d732f46f126de8acda74ac365f1" name="aa17f8d732f46f126de8acda74ac365f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa17f8d732f46f126de8acda74ac365f1">&#9670;&#160;</a></span>operator=()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa17f8d732f46f126de8acda74ac365f1">&#9670;&#160;</a></span>operator=() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1829,6 +1962,83 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
+<a id="a7d23032f516472e374ea6c8c8a407591" name="a7d23032f516472e374ea6c8c8a407591"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d23032f516472e374ea6c8c8a407591">&#9670;&#160;</a></span>processSingleFrame()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">DistributionFunctions</a> &gt; correlation::analysis::DistributionFunctions::processSingleFrame </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;&#160;</td>
+          <td class="paramname"><em>trajectory</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html">TrajectoryAnalyzer</a> &amp;&#160;</td>
+          <td class="paramname"><em>analyzer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>frame_idx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">AnalysisSettings</a> &amp;&#160;</td>
+          <td class="paramname"><em>settings</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>bond_cutoffs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a7d23032f516472e374ea6c8c8a407591_cgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a7d23032f516472e374ea6c8c8a407591_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a7d23032f516472e374ea6c8c8a407591_cgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a7d23032f516472e374ea6c8c8a407591_cgraph">
+<area shape="rect" title=" " alt="" coords="5,145,173,200"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="266,50,421,105"/>
+<area shape="poly" title=" " alt="" coords="162,142,255,107,257,112,164,147"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="513,8,668,48"/>
+<area shape="poly" title=" " alt="" coords="106,143,152,85,184,57,220,35,255,22,291,13,365,4,436,4,500,10,499,15,436,9,365,9,292,18,256,27,222,40,187,61,156,89,110,146"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="716,66,909,106"/>
+<area shape="poly" title=" " alt="" coords="173,160,702,96,703,101,174,165"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="221,180,465,220"/>
+<area shape="poly" title=" " alt="" coords="174,179,208,183,207,188,173,184"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="241,244,446,284"/>
+<area shape="poly" title=" " alt="" coords="146,197,222,230,247,238,245,243,220,235,144,202"/>
+<area shape="rect" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html#ae53b91ac4928ba8a0c4e4e56680b8dc9" title="Helper to check if a specific calculator is enabled." alt="" coords="244,308,443,348"/>
+<area shape="poly" title=" " alt="" coords="114,198,161,247,190,272,223,294,236,301,234,305,220,299,187,277,157,251,110,201"/>
+<area shape="poly" title=" " alt="" coords="420,60,499,44,500,49,421,65"/>
+<area shape="poly" title=" " alt="" coords="421,76,702,81,702,86,421,82"/>
+<area shape="poly" title=" " alt="" coords="669,46,722,59,721,65,667,51"/>
+</map>
+</div>
+
+</div>
+</div>
 <a id="adac0dd142dbd5b2ff7c99afd4ea098bf" name="adac0dd142dbd5b2ff7c99afd4ea098bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adac0dd142dbd5b2ff7c99afd4ea098bf">&#9670;&#160;</a></span>scale()</h2>
 
@@ -1858,17 +2068,17 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_adac0dd142dbd5b2ff7c99afd4ea098bf_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_adac0dd142dbd5b2ff7c99afd4ea098bf_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_adac0dd142dbd5b2ff7c99afd4ea098bf_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_adac0dd142dbd5b2ff7c99afd4ea098bf_icgraph">
 <area shape="rect" title="Scales all histograms in this object by a factor. Used for normalizing averaged distributions." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a8d0330da8bdb2f6e381e408f0c802f4b" name="a8d0330da8bdb2f6e381e408f0c802f4b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d0330da8bdb2f6e381e408f0c802f4b">&#9670;&#160;</a></span>setDeborahNumber()</h2>
+<a id="a457d2dc4cba067dff6a9ff554f5b0143" name="a457d2dc4cba067dff6a9ff554f5b0143"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a457d2dc4cba067dff6a9ff554f5b0143">&#9670;&#160;</a></span>setDeborahNumber()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1880,7 +2090,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::analysis::DistributionFunctions::setDeborahNumber </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>de</em></td><td>)</td>
+          <td class="paramname"><em>deborah_num</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1894,15 +2104,15 @@ Here is the caller graph for this function:</div>
 <p>Sets the Deborah number. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">de</td><td>The new Deborah number value. </td></tr>
+    <tr><td class="paramname">deborah_num</td><td>The new Deborah number value. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="ae460160e28f0cbb252c6b0e26c90d221" name="ae460160e28f0cbb252c6b0e26c90d221"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae460160e28f0cbb252c6b0e26c90d221">&#9670;&#160;</a></span>setDiffusionCoefficientMSD()</h2>
+<a id="a0d03dcb24729cf7d74ac7a0a43ed1c02" name="a0d03dcb24729cf7d74ac7a0a43ed1c02"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d03dcb24729cf7d74ac7a0a43ed1c02">&#9670;&#160;</a></span>setDiffusionCoefficientMSD()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1914,7 +2124,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::analysis::DistributionFunctions::setDiffusionCoefficientMSD </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>d</em></td><td>)</td>
+          <td class="paramname"><em>diff_coeff</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1928,15 +2138,15 @@ Here is the caller graph for this function:</div>
 <p>Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">d</td><td>The new diffusion coefficient value in Å²/fs. </td></tr>
+    <tr><td class="paramname">diff_coeff</td><td>The new diffusion coefficient value in Å²/fs. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a674f6f461e52cdc9b870b7a25e802a9a" name="a674f6f461e52cdc9b870b7a25e802a9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a674f6f461e52cdc9b870b7a25e802a9a">&#9670;&#160;</a></span>setDiffusionCoefficientVACF()</h2>
+<a id="a158d6f3c575e97951b00878e19260368" name="a158d6f3c575e97951b00878e19260368"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a158d6f3c575e97951b00878e19260368">&#9670;&#160;</a></span>setDiffusionCoefficientVACF()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1948,7 +2158,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::analysis::DistributionFunctions::setDiffusionCoefficientVACF </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>d</em></td><td>)</td>
+          <td class="paramname"><em>diff_coeff</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1962,15 +2172,15 @@ Here is the caller graph for this function:</div>
 <p>Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">d</td><td>The new diffusion coefficient value in Å²/fs. </td></tr>
+    <tr><td class="paramname">diff_coeff</td><td>The new diffusion coefficient value in Å²/fs. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="a011da8b23d8ae924145cb06af9184bcb" name="a011da8b23d8ae924145cb06af9184bcb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a011da8b23d8ae924145cb06af9184bcb">&#9670;&#160;</a></span>setRelaxationTime()</h2>
+<a id="a1a06501831c31e8d7eab3c6007bfefb4" name="a1a06501831c31e8d7eab3c6007bfefb4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a06501831c31e8d7eab3c6007bfefb4">&#9670;&#160;</a></span>setRelaxationTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1982,7 +2192,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::analysis::DistributionFunctions::setRelaxationTime </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>tau</em></td><td>)</td>
+          <td class="paramname"><em>relax_time</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1996,7 +2206,7 @@ Here is the caller graph for this function:</div>
 <p>Sets the relaxation time computed from normalized VACF. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tau</td><td>The new relaxation time value in fs. </td></tr>
+    <tr><td class="paramname">relax_time</td><td>The new relaxation time value in fs. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2076,8 +2286,8 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a>&#160;</td>
-          <td class="paramname"><em>kernel</em> = <code><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a>&#160;</td>
+          <td class="paramname"><em>kernel</em> = <code><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2102,9 +2312,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a0a8516792ed6cd32baf7336b4b1c5c66_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0a8516792ed6cd32baf7336b4b1c5c66_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0a8516792ed6cd32baf7336b4b1c5c66_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0a8516792ed6cd32baf7336b4b1c5c66_icgraph">
 <area shape="rect" title="Smooths a specific histogram." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
@@ -2126,8 +2336,8 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a>&#160;</td>
-          <td class="paramname"><em>kernel</em> = <code><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a>&#160;</td>
+          <td class="paramname"><em>kernel</em> = <code><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2151,9 +2361,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1analysis_1_1DistributionFunctions_a0d02157dfbf2e3c4f0a1ec3cfdbc6877_icgraph.png" border="0" usemap="#aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0d02157dfbf2e3c4f0a1ec3cfdbc6877_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0d02157dfbf2e3c4f0a1ec3cfdbc6877_icgraph" id="aclasscorrelation_1_1analysis_1_1DistributionFunctions_a0d02157dfbf2e3c4f0a1ec3cfdbc6877_icgraph">
 <area shape="rect" title="Smooths all available histograms." alt="" coords="356,5,524,60"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="343,35,308,35,308,30,343,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>

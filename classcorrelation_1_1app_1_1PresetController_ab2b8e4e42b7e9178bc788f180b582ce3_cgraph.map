@@ -1,0 +1,26 @@
+<map id="correlation::app::PresetController::handleSavePreset" name="correlation::app::PresetController::handleSavePreset">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,136,216,176"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#aa5b046789fca9e3a2efce67ef89109ba" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="264,72,485,112"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="193,133,278,113,279,118,195,139"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1PresetController.html#ac8e3e894df303952b757b9ec7611f6dd" title=" " alt="" coords="273,136,477,176"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="216,153,259,153,259,159,216,159"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1app_1_1PresetManager.html#a45de5a99761ab995b46f38f558c8de63" title="Saves a preset to a JSON file in the presets directory." alt="" coords="288,200,461,240"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="195,173,279,194,278,199,193,179"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a12fb48d5f1b926e23ef49c3759c69ab1" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="533,8,755,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="459,69,545,49,547,54,460,75"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppBackend.html#a7a8c9ba96b855efa52cc530ef156a4ab" title="Gets the total number of frames in the trajectory." alt="" coords="538,72,750,112"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="486,89,524,89,524,95,486,95"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="803,5,1015,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="755,24,789,24,789,29,755,30"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="841,69,977,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="732,45,828,68,827,73,731,51"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1app_1_1PresetManager.html#a52facd6422021ed43b06213fb3a3e6c1" title="Loads all saved presets from the presets directory." alt="" coords="557,136,731,176"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="477,153,544,153,544,159,477,159"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1app_1_1PresetManager.html#a246863a61a4ae2e50be9f4a1a288fec3" title="Deserializes a Preset object from a JSON string." alt="" coords="822,133,995,173"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="731,152,808,152,808,157,731,158"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1app_1_1PresetManager.html#af7e5ef56ac5c6990918b2521133a05f1" title="Gets the folder path where user presets are saved (~/.correlation/presets/)." alt="" coords="811,197,1006,237"/>
+<area shape="poly" id="edge9_Node000008_Node000010" title=" " alt="" coords="731,173,809,192,808,197,730,179"/>
+<area shape="poly" id="edge11_Node000011_Node000010" title=" " alt="" coords="461,217,797,215,797,221,461,222"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1app_1_1PresetManager.html#afa81ecbc5124892fab324afafedd6021" title="Serializes a Preset object to a JSON string." alt="" coords="557,255,731,295"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="462,235,545,252,544,257,461,240"/>
+</map>

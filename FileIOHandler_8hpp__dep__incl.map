@@ -1,0 +1,7 @@
+<map id="include/app/FileIOHandler.hpp" name="include/app/FileIOHandler.hpp">
+<area shape="rect" id="Node000001" title="Handles file operations and native file dialogs." alt="" coords="97,5,313,31"/>
+<area shape="rect" id="Node000002" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,79,193,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,41,118,81,115,76,175,36"/>
+<area shape="rect" id="Node000003" href="$FileIOHandler_8cpp.html" title="Implementation of FileIOHandler." alt="" coords="218,79,405,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="234,36,295,76,292,81,232,40"/>
+</map>

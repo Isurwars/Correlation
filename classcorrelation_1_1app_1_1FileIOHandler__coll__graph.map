@@ -1,0 +1,10 @@
+<map id="correlation::app::FileIOHandler" name="correlation::app::FileIOHandler">
+<area shape="rect" id="Node000001" title="Manages open/save file dialogs and background file loading." alt="" coords="5,284,225,309"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="9,108,221,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,147,109,182,109,221,116,284,111,284,103,221,104,182,108,147"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html" title="Controller class for the application." alt="" coords="183,196,405,221"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="153,137,271,193,269,198,150,142"/>
+<area shape="rect" id="Node000003" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="22,5,209,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="118,59,118,108,113,108,113,59"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="259,230,141,286,138,281,257,225"/>
+</map>

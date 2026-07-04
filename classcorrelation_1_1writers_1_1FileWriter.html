@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -83,6 +83,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classcorrelation_1_1writers_1_1FileWriter-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::writers::FileWriter Class Reference</div></div>
@@ -117,25 +118,30 @@ Collaboration diagram for correlation::writers::FileWriter:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a766415c8e384f02d88eef85ab2f0c56b" id="r_a766415c8e384f02d88eef85ab2f0c56b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html#a766415c8e384f02d88eef85ab2f0c56b">FileWriter</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df)</td></tr>
-<tr class="memdesc:a766415c8e384f02d88eef85ab2f0c56b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html" title="Facade class that manages writing data to various file formats.">FileWriter</a> linked to a DistributionFunctions object.  <br /></td></tr>
-<tr class="separator:a766415c8e384f02d88eef85ab2f0c56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a278f2b5d9a2aef2bdf896481c9cbc19d" id="r_a278f2b5d9a2aef2bdf896481c9cbc19d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html#a278f2b5d9a2aef2bdf896481c9cbc19d">FileWriter</a> (const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists)</td></tr>
+<tr class="memdesc:a278f2b5d9a2aef2bdf896481c9cbc19d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html" title="Facade class that manages writing data to various file formats.">FileWriter</a> linked to a DistributionFunctions object.  <br /></td></tr>
+<tr class="separator:a278f2b5d9a2aef2bdf896481c9cbc19d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1870aa3f0049e7f451edb9b6111fe7a" id="r_ab1870aa3f0049e7f451edb9b6111fe7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a">write</a> (const std::string &amp;base_path, bool use_csv, bool use_hdf5, bool use_parquet, bool smoothing) const</td></tr>
 <tr class="memdesc:ab1870aa3f0049e7f451edb9b6111fe7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the available histograms using specified formats.  <br /></td></tr>
 <tr class="separator:ab1870aa3f0049e7f451edb9b6111fe7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a6078694545f6f3373e836ed9ef3f3959" id="r_a6078694545f6f3373e836ed9ef3f3959"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html#a6078694545f6f3373e836ed9ef3f3959">writeSummaryFile</a> (const std::string &amp;base_path) const</td></tr>
+<tr class="separator:a6078694545f6f3373e836ed9ef3f3959"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:ac9070a90171df84c6ed632eadc2ab73d" id="r_ac9070a90171df84c6ed632eadc2ab73d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html#ac9070a90171df84c6ed632eadc2ab73d">df_</a></td></tr>
-<tr class="memdesc:ac9070a90171df84c6ed632eadc2ab73d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference to the analysis data structure.  <br /></td></tr>
-<tr class="separator:ac9070a90171df84c6ed632eadc2ab73d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bd1de2b77e11cf4c989133cc4a92b46" id="r_a4bd1de2b77e11cf4c989133cc4a92b46"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html#a4bd1de2b77e11cf4c989133cc4a92b46">df_</a> = nullptr</td></tr>
+<tr class="memdesc:a4bd1de2b77e11cf4c989133cc4a92b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the analysis data structure.  <br /></td></tr>
+<tr class="separator:a4bd1de2b77e11cf4c989133cc4a92b46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Facade class that manages writing data to various file formats. </p>
 <p>This class orchestrates the usage of specific writers (CSV, HDF5, Parquet) based on provided options. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a766415c8e384f02d88eef85ab2f0c56b" name="a766415c8e384f02d88eef85ab2f0c56b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a766415c8e384f02d88eef85ab2f0c56b">&#9670;&#160;</a></span>FileWriter()</h2>
+<a id="a278f2b5d9a2aef2bdf896481c9cbc19d" name="a278f2b5d9a2aef2bdf896481c9cbc19d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a278f2b5d9a2aef2bdf896481c9cbc19d">&#9670;&#160;</a></span>FileWriter()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,7 +153,7 @@ Private Attributes</h2></td></tr>
           <td class="memname">correlation::writers::FileWriter::FileWriter </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em></td><td>)</td>
+          <td class="paramname"><em>dists</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -161,7 +167,7 @@ Private Attributes</h2></td></tr>
 <p>Constructs a <a class="el" href="classcorrelation_1_1writers_1_1FileWriter.html" title="Facade class that manages writing data to various file formats.">FileWriter</a> linked to a DistributionFunctions object. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object containing the data to be written. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object containing the data to be written. </td></tr>
   </table>
   </dd>
 </dl>
@@ -229,17 +235,19 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_cgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_cgraph" id="aclasscorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_cgraph">
-<area shape="rect" title="Writes the available histograms using specified formats." alt="" coords="5,170,151,210"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#acf410dfc1dfa001ceda6f0cdb5166ee0" title="Gets the Deborah number." alt="" coords="221,5,389,60"/>
-<area shape="poly" title=" " alt="" coords="93,168,137,119,166,93,197,69,208,63,211,67,200,74,169,97,141,123,97,171"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1f238238a5ddad1acd3e95a4408a5075" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="201,84,410,139"/>
-<area shape="poly" title=" " alt="" coords="136,167,212,141,214,146,137,172"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac54c99e87f29ca619370e521f546a260" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="199,163,412,217"/>
-<area shape="poly" title=" " alt="" coords="151,187,185,187,185,193,151,193"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a66f6a22f9700f76d47cf3bd7810cbb95" title="Gets the relaxation time computed from normalized VACF." alt="" coords="221,241,389,296"/>
-<area shape="poly" title=" " alt="" coords="137,208,214,234,212,239,136,213"/>
-<area shape="rect" href="classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="216,321,395,361"/>
-<area shape="poly" title=" " alt="" coords="97,209,140,257,169,283,200,305,214,313,212,317,197,310,165,287,136,261,93,212"/>
+<area shape="rect" title="Writes the available histograms using specified formats." alt="" coords="5,99,151,139"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1WriterFactory.html#a3b584ac643a28b9b5976fe55312d4f48" title=" " alt="" coords="219,67,398,107"/>
+<area shape="poly" title=" " alt="" coords="150,107,205,99,206,104,151,112"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#a6078694545f6f3373e836ed9ef3f3959" title=" " alt="" coords="199,131,419,171"/>
+<area shape="poly" title=" " alt="" coords="151,127,186,132,185,137,150,132"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#acf410dfc1dfa001ceda6f0cdb5166ee0" title="Gets the Deborah number." alt="" coords="489,5,657,60"/>
+<area shape="poly" title=" " alt="" coords="393,129,417,117,432,106,441,94,450,82,465,69,476,63,479,67,468,74,454,85,445,97,435,109,420,122,395,134"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1f238238a5ddad1acd3e95a4408a5075" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="469,84,678,139"/>
+<area shape="poly" title=" " alt="" coords="418,132,455,127,455,132,419,137"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac54c99e87f29ca619370e521f546a260" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="467,163,680,217"/>
+<area shape="poly" title=" " alt="" coords="419,165,454,170,453,175,418,170"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a66f6a22f9700f76d47cf3bd7810cbb95" title="Gets the relaxation time computed from normalized VACF." alt="" coords="489,241,657,296"/>
+<area shape="poly" title=" " alt="" coords="349,169,468,226,485,234,483,239,466,231,347,174"/>
 </map>
 </div>
 <div class="dynheader">
@@ -247,23 +255,20 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_icgraph" id="aclasscorrelation_1_1writers_1_1FileWriter_ab1870aa3f0049e7f451edb9b6111fe7a_icgraph">
-<area shape="rect" title="Writes the available histograms using specified formats." alt="" coords="804,35,949,75"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,35,756,75"/>
-<area shape="poly" title=" " alt="" coords="790,57,756,57,756,52,790,52"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,5,496,45"/>
-<area shape="poly" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
-<area shape="poly" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+<area shape="rect" title="Writes the available histograms using specified formats." alt="" coords="533,35,679,75"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,35,485,75"/>
+<area shape="poly" title=" " alt="" coords="520,57,485,57,485,52,520,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
 </map>
 </div>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ac9070a90171df84c6ed632eadc2ab73d" name="ac9070a90171df84c6ed632eadc2ab73d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9070a90171df84c6ed632eadc2ab73d">&#9670;&#160;</a></span>df_</h2>
+<a id="a6078694545f6f3373e836ed9ef3f3959" name="a6078694545f6f3373e836ed9ef3f3959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6078694545f6f3373e836ed9ef3f3959">&#9670;&#160;</a></span>writeSummaryFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,7 +277,66 @@ Here is the caller graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a>&amp; correlation::writers::FileWriter::df_</td>
+          <td class="memname">void correlation::writers::FileWriter::writeSummaryFile </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>base_path</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_cgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_cgraph" id="aclasscorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_cgraph">
+<area shape="rect" title=" " alt="" coords="5,131,225,171"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#acf410dfc1dfa001ceda6f0cdb5166ee0" title="Gets the Deborah number." alt="" coords="296,5,464,60"/>
+<area shape="poly" title=" " alt="" coords="152,129,272,69,287,63,289,68,274,74,154,134"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1f238238a5ddad1acd3e95a4408a5075" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="275,84,485,139"/>
+<area shape="poly" title=" " alt="" coords="225,132,261,127,262,132,226,137"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac54c99e87f29ca619370e521f546a260" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="273,163,487,217"/>
+<area shape="poly" title=" " alt="" coords="226,165,260,170,259,175,225,170"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a66f6a22f9700f76d47cf3bd7810cbb95" title="Gets the relaxation time computed from normalized VACF." alt="" coords="296,241,464,296"/>
+<area shape="poly" title=" " alt="" coords="156,169,274,226,292,234,290,239,272,231,154,174"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_icgraph" id="aclasscorrelation_1_1writers_1_1FileWriter_a6078694545f6f3373e836ed9ef3f3959_icgraph">
+<area shape="rect" title=" " alt="" coords="727,35,947,75"/>
+<area shape="rect" href="classcorrelation_1_1writers_1_1FileWriter.html#ab1870aa3f0049e7f451edb9b6111fe7a" title="Writes the available histograms using specified formats." alt="" coords="533,35,679,75"/>
+<area shape="poly" title=" " alt="" coords="713,57,679,57,679,52,713,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,35,485,75"/>
+<area shape="poly" title=" " alt="" coords="520,57,485,57,485,52,520,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
+</map>
+</div>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a4bd1de2b77e11cf4c989133cc4a92b46" name="a4bd1de2b77e11cf4c989133cc4a92b46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bd1de2b77e11cf4c989133cc4a92b46">&#9670;&#160;</a></span>df_</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a>* correlation::writers::FileWriter::df_ = nullptr</td>
         </tr>
       </table>
   </td>
@@ -282,7 +346,7 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Reference to the analysis data structure. </p>
+<p>Pointer to the analysis data structure. </p>
 
 </div>
 </div>

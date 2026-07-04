@@ -1,29 +1,33 @@
 <map id="src/cli/CliParser.cpp" name="src/cli/CliParser.cpp">
-<area shape="rect" id="Node000001" title="Implementation of the command&#45;line argument parser." alt="" coords="579,5,726,31"/>
-<area shape="rect" id="Node000002" href="$CliParser_8hpp.html" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="397,79,522,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="623,33,504,76,503,71,621,28"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="567,225,653,251"/>
-<area shape="poly" id="edge11_Node000001_Node000005" title=" " alt="" coords="652,32,639,79,616,212,611,211,634,78,647,30"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="514,152,573,177"/>
-<area shape="poly" id="edge14_Node000001_Node000010" title=" " alt="" coords="640,33,617,54,593,80,573,111,557,141,552,138,568,108,589,77,613,50,637,29"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="648,79,743,104"/>
-<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="662,30,684,66,679,68,657,32"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="767,79,858,104"/>
-<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="679,28,775,71,773,75,677,33"/>
-<area shape="rect" id="Node000013" title=" " alt="" coords="882,79,962,104"/>
-<area shape="poly" id="edge13_Node000001_Node000013" title=" " alt="" coords="697,28,870,74,868,79,695,33"/>
-<area shape="rect" id="Node000003" href="$Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="331,152,489,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="453,106,428,142,424,139,449,103"/>
-<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="475,102,521,141,517,145,471,106"/>
+<area shape="rect" id="Node000001" title="Implementation of the command&#45;line argument parser." alt="" coords="665,5,811,31"/>
+<area shape="rect" id="Node000002" href="$CliParser_8hpp.html" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="482,79,607,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="708,33,590,76,588,71,706,28"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="658,225,743,251"/>
+<area shape="poly" id="edge13_Node000001_Node000005" title=" " alt="" coords="737,32,725,79,713,151,706,212,700,211,708,151,719,78,732,30"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="598,152,657,177"/>
+<area shape="poly" id="edge16_Node000001_Node000012" title=" " alt="" coords="726,33,679,80,658,111,641,141,636,138,653,108,675,77,722,29"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="733,79,828,104"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="747,30,769,66,765,68,743,32"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="853,79,943,104"/>
+<area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="765,28,860,71,858,75,763,33"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="967,79,1047,104"/>
+<area shape="poly" id="edge15_Node000001_Node000015" title=" " alt="" coords="782,28,955,74,954,79,781,33"/>
+<area shape="rect" id="Node000003" href="$Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="329,152,488,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="524,106,444,148,442,143,522,102"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="518,152,571,177"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="547,104,547,138,542,138,542,104"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="560,102,605,141,602,145,556,106"/>
 <area shape="rect" id="Node000004" href="$Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="5,225,159,251"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="358,180,149,225,148,220,357,175"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="443,175,565,218,563,223,441,180"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="357,180,149,225,148,220,356,175"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="456,175,645,221,644,226,455,180"/>
 <area shape="rect" id="Node000006" title=" " alt="" coords="183,225,245,251"/>
-<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="379,180,259,223,257,218,378,175"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="270,225,345,251"/>
-<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="395,180,337,219,334,215,392,175"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="369,225,456,251"/>
-<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="413,178,414,212,409,212,408,178"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="480,225,543,251"/>
-<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="428,175,485,215,482,219,425,180"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="378,180,259,223,258,218,376,175"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="270,225,337,251"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="393,180,333,220,330,215,390,175"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="361,225,435,251"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="410,178,404,212,399,211,404,177"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="460,225,547,251"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="425,175,478,215,475,219,422,179"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="571,225,633,251"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="441,175,559,218,557,223,439,180"/>
 </map>

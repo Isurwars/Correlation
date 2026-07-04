@@ -1,0 +1,7 @@
+<map id="correlation::math::sph_legendre" name="correlation::math::sph_legendre">
+<area shape="rect" id="Node000001" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="224,41,367,81"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a31b7c55b212b4e4023e9fee6085645bb" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="15,5,167,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,49,166,41,167,36,211,44"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#ae7b9c6e3a0add59671202036270238a6" title="Computes the complex spherical harmonic ." alt="" coords="5,70,176,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="211,79,177,85,176,80,210,74"/>
+</map>

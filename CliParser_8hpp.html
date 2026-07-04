@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -92,29 +92,34 @@ $(function() {
 <p>Command-line argument parsing for correlation-cli.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="Smoothing_8hpp_source.html">math/Smoothing.hpp</a>&quot;</code><br />
+<code>#include &lt;span&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for CliParser.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="CliParser_8hpp__incl.png" border="0" usemap="#ainclude_2cli_2CliParser_8hpp" alt=""/></div>
 <map name="ainclude_2cli_2CliParser_8hpp" id="ainclude_2cli_2CliParser_8hpp">
-<area shape="rect" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="350,5,526,31"/>
-<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="292,79,451,104"/>
-<area shape="poly" title=" " alt="" coords="429,33,393,70,390,67,425,29"/>
-<area shape="rect" title=" " alt="" coords="475,79,534,104"/>
-<area shape="poly" title=" " alt="" coords="451,29,486,67,483,70,447,33"/>
+<area shape="rect" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="457,5,633,31"/>
+<area shape="rect" href="Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="335,79,493,104"/>
+<area shape="poly" title=" " alt="" coords="525,33,448,74,446,70,522,28"/>
+<area shape="rect" title=" " alt="" coords="518,79,571,104"/>
+<area shape="poly" title=" " alt="" coords="547,31,547,65,542,65,542,31"/>
+<area shape="rect" title=" " alt="" coords="595,79,654,104"/>
+<area shape="poly" title=" " alt="" coords="559,29,603,68,600,72,556,33"/>
 <area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="5,152,159,177"/>
-<area shape="poly" title=" " alt="" coords="325,107,143,151,141,146,324,101"/>
+<area shape="poly" title=" " alt="" coords="361,107,150,152,148,146,360,101"/>
 <area shape="rect" title=" " alt="" coords="183,152,269,177"/>
-<area shape="poly" title=" " alt="" coords="349,106,263,148,261,144,347,102"/>
+<area shape="poly" title=" " alt="" coords="385,107,270,149,269,144,383,102"/>
 <area shape="rect" title=" " alt="" coords="293,152,356,177"/>
-<area shape="poly" title=" " alt="" coords="366,106,342,142,338,139,361,103"/>
-<area shape="rect" title=" " alt="" coords="381,152,455,177"/>
-<area shape="poly" title=" " alt="" coords="381,103,405,139,401,142,377,106"/>
-<area shape="rect" title=" " alt="" coords="480,152,567,177"/>
-<area shape="poly" title=" " alt="" coords="397,102,487,144,485,149,395,106"/>
-<area shape="rect" title=" " alt="" coords="591,152,653,177"/>
-<area shape="poly" title=" " alt="" coords="412,101,578,148,577,153,411,107"/>
+<area shape="poly" title=" " alt="" coords="401,106,352,145,348,141,398,102"/>
+<area shape="rect" title=" " alt="" coords="381,152,447,177"/>
+<area shape="poly" title=" " alt="" coords="417,104,417,138,411,138,411,104"/>
+<area shape="rect" title=" " alt="" coords="471,152,546,177"/>
+<area shape="poly" title=" " alt="" coords="431,102,484,141,481,146,428,106"/>
+<area shape="rect" title=" " alt="" coords="571,152,657,177"/>
+<area shape="poly" title=" " alt="" coords="447,102,569,145,567,150,445,107"/>
+<area shape="rect" title=" " alt="" coords="681,152,744,177"/>
+<area shape="poly" title=" " alt="" coords="466,101,669,149,667,154,465,107"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -150,8 +155,10 @@ Functions</h2></td></tr>
 <tr class="memitem:ac90f03bf6a7300cc29c964bee8785de8" id="r_ac90f03bf6a7300cc29c964bee8785de8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1cli.html#ac90f03bf6a7300cc29c964bee8785de8">correlation::cli::printUsage</a> (const char *program)</td></tr>
 <tr class="memdesc:ac90f03bf6a7300cc29c964bee8785de8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints the usage / help message to stderr.  <br /></td></tr>
 <tr class="separator:ac90f03bf6a7300cc29c964bee8785de8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab79405b541ef2cd21f34816a7beed49e" id="r_ab79405b541ef2cd21f34816a7beed49e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1cli.html#ab79405b541ef2cd21f34816a7beed49e">correlation::cli::parseArgs</a> (std::span&lt; char * &gt; argv, <a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html">CliOptions</a> &amp;opts)</td></tr>
+<tr class="memdesc:ab79405b541ef2cd21f34816a7beed49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the command-line arguments into a <a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html" title="All options that can be set via the command line.">CliOptions</a> struct.  <br /></td></tr>
+<tr class="separator:ab79405b541ef2cd21f34816a7beed49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fa2076ebb6b3be66236df716cf65616" id="r_a6fa2076ebb6b3be66236df716cf65616"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1cli.html#a6fa2076ebb6b3be66236df716cf65616">correlation::cli::parseArgs</a> (int argc, char *argv[], <a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html">CliOptions</a> &amp;opts)</td></tr>
-<tr class="memdesc:a6fa2076ebb6b3be66236df716cf65616"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses the command-line arguments into a <a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html" title="All options that can be set via the command line.">CliOptions</a> struct.  <br /></td></tr>
 <tr class="separator:a6fa2076ebb6b3be66236df716cf65616"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>

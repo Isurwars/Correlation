@@ -1,0 +1,13 @@
+<map id="correlation::calculators::ChiralityCalculator::computeSingleAtomChirality" name="correlation::calculators::ChiralityCalculator::computeSingleAtomChirality">
+<area shape="rect" id="Node000001" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="5,133,215,187"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#af4a6542661edaf9e8c2ef1c2f445b328" title="Computes the cross product of two 3D vectors." alt="" coords="299,29,441,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,130,207,104,262,79,284,70,286,75,264,84,209,109,160,135"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="289,118,451,143"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="215,146,275,139,276,144,215,151"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4" title="Retrieves the neighbor list for a specific atom." alt="" coords="263,168,477,208"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="215,169,249,172,249,178,215,174"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="293,233,447,287"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="181,185,264,218,284,225,282,230,262,222,179,190"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="322,30,319,20,327,10,344,5,370,3,400,6,416,13,414,18,399,11,370,8,345,10,330,15,324,21,327,28"/>
+<area shape="poly" id="edge4_Node000003_Node000003" title=" " alt="" coords="328,120,319,110,324,100,341,93,370,91,407,95,417,100,421,106,416,109,413,104,405,100,370,97,342,99,327,104,324,109,332,116"/>
+</map>

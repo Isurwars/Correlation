@@ -1,0 +1,9 @@
+<map id="correlation::app::AppBackend::calculateDynamicProperties" name="correlation::app::AppBackend::calculateDynamicProperties">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,91,219,131"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a9df03a3f349d9c78c3c96568daf58fb6" title="Computes the self&#45;diffusion coefficient D from MSD using linear regression on the second half of the ..." alt="" coords="267,5,484,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,89,269,61,271,67,181,94"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7ef9fc3bec2884a6aafd366f6f2f22da" title="Computes the self&#45;diffusion coefficient D from VACF using Green&#45;Kubo integration (trapezoidal rule)." alt="" coords="267,84,484,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="219,109,253,109,253,114,219,114"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a227fecb7b9ac843cea23e27a2085c619" title="Computes the relaxation time tau from the normalized VACF using trapezoidal integration." alt="" coords="267,163,484,217"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="181,129,271,156,269,161,179,134"/>
+</map>

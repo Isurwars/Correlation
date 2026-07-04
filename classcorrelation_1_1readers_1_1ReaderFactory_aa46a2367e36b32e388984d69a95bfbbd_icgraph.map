@@ -1,0 +1,13 @@
+<map id="correlation::readers::ReaderFactory::getReaderForExtension" name="correlation::readers::ReaderFactory::getReaderForExtension">
+<area shape="rect" id="Node000001" title="Finds a reader that supports the given file extension." alt="" coords="533,20,751,75"/>
+<area shape="rect" id="Node000002" href="$io__bindings_8cpp.html#a5ee079a32d1b1670f1791fbf7c633cd6" title=" " alt="" coords="348,5,411,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="519,36,411,24,411,19,520,31"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="273,55,485,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="520,63,486,67,485,61,519,58"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="40,5,191,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="334,21,191,21,191,15,334,15"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,55,225,95"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="260,78,226,78,226,73,260,73"/>
+<area shape="rect" id="Node000006" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,120,143,145"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="274,101,144,129,143,124,273,96"/>
+</map>

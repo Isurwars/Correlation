@@ -1,0 +1,6 @@
+<map id="correlation::math::operator*" name="correlation::math::operator*">
+<area shape="rect" id="Node000001" title="Matrix&#45;matrix multiplication." alt="" coords="5,29,148,69"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#aec409601ee2e80326411b377969aa022" title="Matrix&#45;vector multiplication." alt="" coords="196,29,339,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,47,183,47,183,52,148,52"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="231,30,229,20,235,11,248,5,267,3,290,6,302,13,299,17,288,11,267,8,249,10,239,15,235,21,237,28"/>
+</map>

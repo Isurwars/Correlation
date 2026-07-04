@@ -1,0 +1,7 @@
+<map id="correlation::calculators::ChiralityCalculator::computeSingleAtomChirality" name="correlation::calculators::ChiralityCalculator::computeSingleAtomChirality">
+<area shape="rect" id="Node000001" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="443,5,652,60"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#aa31a344c893ef452816fb53b87f877c5" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="224,5,395,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="429,35,395,35,395,30,429,30"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,176,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="210,35,176,35,176,30,210,30"/>
+</map>

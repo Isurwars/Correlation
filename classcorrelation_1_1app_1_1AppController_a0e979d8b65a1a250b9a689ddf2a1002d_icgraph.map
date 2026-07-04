@@ -1,0 +1,5 @@
+<map id="correlation::app::AppController::setBondCutoffs" name="correlation::app::AppController::setBondCutoffs">
+<area shape="rect" id="Node000001" title="Updates the UI with the recommended bond cutoffs from the backend." alt="" coords="273,5,495,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="260,28,226,28,226,23,260,23"/>
+</map>

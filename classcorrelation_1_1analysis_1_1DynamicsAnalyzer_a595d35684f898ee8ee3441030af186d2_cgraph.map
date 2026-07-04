@@ -1,0 +1,30 @@
+<map id="correlation::analysis::DynamicsAnalyzer::calculateMSD" name="correlation::analysis::DynamicsAnalyzer::calculateMSD">
+<area shape="rect" id="Node000001" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="5,240,255,280"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a0f3c899bcbeb2b3eec4516f9acd2a643" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="313,93,455,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,238,224,196,301,150,325,137,327,142,304,154,227,200,162,242"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="780,183,973,223"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="171,237,232,213,302,193,426,179,551,175,667,179,766,187,766,192,667,184,551,180,426,184,303,199,234,218,173,242"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Trajectory.html#a83c7f44c479c8790546d5122c47bda1f" title="Gets a mutable reference to the frames." alt="" coords="303,208,465,248"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="254,242,289,237,289,243,255,247"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="313,272,455,312"/>
+<area shape="poly" id="edge13_Node000001_Node000011" title=" " alt="" coords="255,273,300,279,299,284,254,278"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="313,336,455,376"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="185,278,319,329,317,334,183,283"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="313,400,455,440"/>
+<area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="156,278,221,330,304,386,316,392,313,397,301,390,217,335,153,282"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#af4b46526a1ffe1c38188bae87c34a99e" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="551,29,694,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="455,92,537,69,539,74,456,97"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a13ddbfff3eb1f186243a00bac5ccadf8" title="Finds the next &quot;good&quot; FFT size &gt;= target." alt="" coords="542,93,703,133"/>
+<area shape="poly" id="edge7_Node000002_Node000006" title=" " alt="" coords="456,111,528,111,528,116,456,116"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="805,29,948,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="694,47,792,47,792,52,694,52"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="836,30,834,20,840,10,855,5,877,3,902,6,916,13,913,18,900,11,877,8,856,10,843,15,839,21,841,28"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="1021,29,1164,69"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="948,47,1008,47,1008,52,948,52"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="1052,30,1050,20,1056,10,1071,5,1093,3,1118,6,1132,13,1129,18,1116,11,1093,8,1072,10,1059,15,1055,21,1057,28"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a9fab196f3961705514a0ef08724f302b" title="Helper to check if a size is a product of small prime factors (2, 3, 5). Highly optimized for FFTW3 a..." alt="" coords="805,93,948,133"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="704,111,792,111,792,116,704,116"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Trajectory.html#a3038455a1bfa558007d3b117c0a387ef" title=" " alt="" coords="513,208,732,248"/>
+<area shape="poly" id="edge11_Node000009_Node000010" title=" " alt="" coords="466,225,500,225,500,231,466,231"/>
+<area shape="poly" id="edge12_Node000010_Node000008" title=" " alt="" coords="732,214,766,211,766,216,732,220"/>
+</map>

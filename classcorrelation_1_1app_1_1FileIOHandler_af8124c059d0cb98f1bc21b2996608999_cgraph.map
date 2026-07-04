@@ -1,0 +1,72 @@
+<map id="correlation::app::FileIOHandler::handleBrowseFile" name="correlation::app::FileIOHandler::handleBrowseFile">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,487,225,527"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="1361,747,1573,787"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,486,132,423,161,335,181,287,206,240,236,195,271,155,318,113,361,78,402,51,444,31,488,18,536,9,655,3,928,3,956,5,985,12,1046,37,1108,73,1168,115,1267,198,1315,248,1354,310,1385,378,1410,448,1430,517,1455,642,1466,732,1461,733,1450,643,1424,518,1405,449,1380,380,1349,313,1311,251,1263,202,1164,119,1105,78,1043,42,983,17,955,10,928,8,655,8,537,14,489,23,446,36,405,56,364,82,322,117,275,159,240,199,211,243,186,290,166,337,137,425,123,487"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a7a8c9ba96b855efa52cc530ef156a4ab" title="Gets the total number of frames in the trajectory." alt="" coords="1093,261,1305,301"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="123,485,144,440,177,379,220,313,271,252,337,187,393,142,457,108,543,79,591,68,651,59,793,49,866,50,934,54,993,64,1038,79,1065,94,1089,114,1131,159,1163,206,1186,248,1181,250,1159,209,1127,162,1086,118,1062,99,1036,84,991,69,933,60,865,55,793,55,652,64,592,73,545,84,459,113,396,146,340,191,275,255,224,316,182,382,149,442,128,488"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a2acea29929cfae44080b8631ad2bd8a1" title="Returns the InputValidator instance." alt="" coords="274,265,495,305"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="126,485,148,448,181,402,223,355,272,315,282,309,285,314,275,320,227,359,185,406,153,451,130,488"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a4820aee1671d9baa3b93105aff4ae33d" title="Calculates a recommended time step in fs based on the smallest atomic mass. Uses formula: sqrt(9 * Mi..." alt="" coords="1093,836,1305,876"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="134,525,192,594,286,688,343,737,406,782,474,820,545,849,614,868,685,880,757,887,829,890,965,886,1079,874,1080,879,965,891,829,895,757,893,684,885,613,873,543,855,472,825,403,786,340,741,282,692,188,598,130,529"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1app_1_1AppBackend.html#a051d6ec8c13592e4fbcf0cbe1802ab89" title="Gets the count of frames removed/skipped during loading/processing." alt="" coords="279,455,491,495"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="225,491,264,486,265,492,226,496"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1app_1_1AppBackend.html#ad27087d1f8785ca3c90e3d5355ecc66d" title="Gets the total number of atoms in the first frame." alt="" coords="279,519,491,559"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="226,517,265,522,264,527,225,522"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="279,329,491,369"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="150,484,336,374,339,379,152,489"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1app_1_1AppController.html#a0e979d8b65a1a250b9a689ddf2a1002d" title="Updates the UI with the recommended bond cutoffs from the backend." alt="" coords="816,929,1037,969"/>
+<area shape="poly" id="edge22_Node000001_Node000020" title=" " alt="" coords="119,527,123,609,130,666,143,727,162,790,190,851,227,905,249,929,275,950,309,971,345,988,421,1011,502,1022,583,1022,661,1015,735,1002,855,971,856,976,736,1007,662,1020,583,1027,501,1027,420,1016,343,993,306,976,272,954,246,933,223,909,185,854,157,792,138,729,125,667,118,610,114,527"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1app_1_1AppBackend.html#ae79775b57c54ef187ecc94d305354389" title="Sets a callback function for analysis progress updates." alt="" coords="279,900,491,940"/>
+<area shape="poly" id="edge27_Node000001_Node000022" title=" " alt="" coords="122,526,135,594,162,688,182,739,207,790,238,838,275,879,291,891,287,895,272,883,234,841,202,793,177,742,156,690,129,595,117,527"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1app_1_1InputValidator.html#a6ccd742d710e0bda9d65583fab62aa3c" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="273,608,496,648"/>
+<area shape="poly" id="edge28_Node000001_Node000023" title=" " alt="" coords="162,524,328,600,325,605,160,529"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="1259,833,1393,789,1394,794,1261,838"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="1399,900,1535,940"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="1285,873,1387,898,1385,903,1283,879"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1physics.html#a6127e65d4e092a920018272a68a695cd" title="Retrieves the atomic mass of a given chemical element." alt="" coords="1393,836,1542,876"/>
+<area shape="poly" id="edge7_Node000005_Node000007" title=" " alt="" coords="1306,853,1379,853,1379,859,1306,859"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="1621,836,1771,876"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="1542,853,1607,853,1607,859,1542,859"/>
+<area shape="rect" id="Node000012" href="$namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47" title="Determines the FileType from a given filename extension." alt="" coords="581,221,731,261"/>
+<area shape="poly" id="edge12_Node000011_Node000012" title=" " alt="" coords="469,327,495,315,509,305,518,294,528,283,543,272,566,261,569,266,545,277,531,287,522,298,512,309,497,320,471,332"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#aa46a2367e36b32e388984d69a95bfbbd" title="Finds a reader that supports the given file extension." alt="" coords="547,286,765,341"/>
+<area shape="poly" id="edge13_Node000011_Node000013" title=" " alt="" coords="491,333,533,327,534,332,491,338"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1readers_1_1ReaderFactory.html#a1d9048e4098aee797b7142e44d9e5378" title=" " alt="" coords="563,365,749,405"/>
+<area shape="poly" id="edge14_Node000011_Node000014" title=" " alt="" coords="491,361,550,369,550,374,491,366"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1readers_1_1BaseReader.html#abff3d39ae35b8c7b8fbdd6685336bfa9" title="Returns true if this reader supports trajectory files." alt="" coords="831,319,1022,359"/>
+<area shape="poly" id="edge15_Node000011_Node000015" title=" " alt="" coords="422,367,479,394,545,415,607,426,656,431,705,427,767,415,829,392,883,364,885,368,831,397,769,420,706,432,656,436,606,432,543,420,477,399,420,372"/>
+<area shape="rect" id="Node000016" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="581,93,731,133"/>
+<area shape="poly" id="edge16_Node000011_Node000016" title=" " alt="" coords="479,327,494,315,509,295,517,274,517,231,518,188,526,165,542,143,567,126,570,131,546,147,531,168,523,189,523,231,522,275,514,297,498,319,483,331"/>
+<area shape="rect" id="Node000018" href="$namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9" title="Reads a trajectory from a file." alt="" coords="581,157,731,197"/>
+<area shape="poly" id="edge18_Node000011_Node000018" title=" " alt="" coords="477,327,494,315,506,303,512,290,517,263,523,235,530,221,542,207,567,192,570,196,546,211,534,224,528,237,523,264,517,292,510,306,498,319,480,331"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff" title="Reads an atomic structure from a file." alt="" coords="825,93,1029,133"/>
+<area shape="poly" id="edge17_Node000016_Node000017" title=" " alt="" coords="731,111,811,111,811,116,731,116"/>
+<area shape="poly" id="edge19_Node000018_Node000015" title=" " alt="" coords="732,192,769,207,807,230,842,256,899,307,895,311,838,260,804,234,767,212,730,197"/>
+<area shape="poly" id="edge20_Node000018_Node000017" title=" " alt="" coords="730,157,828,134,829,139,732,162"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1readers_1_1BaseReader.html#a4e2ee1a39ed194246c9afb17d28b492b" title="Reads a trajectory from a file." alt="" coords="822,157,1031,197"/>
+<area shape="poly" id="edge21_Node000018_Node000019" title=" " alt="" coords="731,175,808,175,808,180,731,180"/>
+<area shape="poly" id="edge23_Node000020_Node000002" title=" " alt="" coords="945,927,1003,873,1042,845,1084,822,1132,807,1198,794,1347,775,1348,780,1199,800,1133,812,1086,826,1045,849,1006,877,948,931"/>
+<area shape="poly" id="edge24_Node000020_Node000006" title=" " alt="" coords="1038,954,1170,956,1313,949,1385,937,1386,943,1314,955,1170,962,1037,959"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1app_1_1AppBackend.html#a072d8d734ff541e32a59c99d618d136c" title="Calculates recommended bond cutoffs based on the first pair density minimum." alt="" coords="1085,900,1313,940"/>
+<area shape="poly" id="edge25_Node000020_Node000021" title=" " alt="" coords="1037,935,1071,931,1072,936,1038,940"/>
+<area shape="poly" id="edge26_Node000021_Node000006" title=" " alt="" coords="1314,917,1385,917,1385,923,1314,923"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1app_1_1InputValidator.html#ac6f349330516b04bd7a70a5f12e6ca0b" title="Generates and updates the equivalent CLI command in the UI." alt="" coords="545,480,767,520"/>
+<area shape="poly" id="edge29_Node000023_Node000024" title=" " alt="" coords="428,606,494,568,518,548,543,530,558,523,560,527,545,534,521,553,498,573,431,610"/>
+<area shape="rect" id="Node000027" href="$classcorrelation_1_1app_1_1InputValidator.html#a7fb2a5750474930f70779041c7794960" title=" " alt="" coords="545,736,767,776"/>
+<area shape="poly" id="edge35_Node000023_Node000027" title=" " alt="" coords="415,646,474,684,545,722,564,729,562,734,543,726,471,688,412,650"/>
+<area shape="rect" id="Node000028" href="$classcorrelation_1_1app_1_1InputValidator.html#a72fa2056f7107bd5c11e624af4883f45" title=" " alt="" coords="545,800,767,840"/>
+<area shape="poly" id="edge36_Node000023_Node000028" title=" " alt="" coords="403,647,460,715,500,753,545,786,558,792,555,797,543,790,497,757,456,719,399,650"/>
+<area shape="rect" id="Node000029" href="$classcorrelation_1_1app_1_1InputValidator.html#ab614a67e0f41fdd6e087ead5a866d543" title=" " alt="" coords="545,544,767,584"/>
+<area shape="poly" id="edge37_Node000023_Node000029" title=" " alt="" coords="470,605,557,585,558,590,471,611"/>
+<area shape="rect" id="Node000030" href="$classcorrelation_1_1app_1_1InputValidator.html#a2ce7b47c3ecb43f1e9e1cd2c5583e063" title=" " alt="" coords="544,608,768,648"/>
+<area shape="poly" id="edge38_Node000023_Node000030" title=" " alt="" coords="496,625,530,625,530,631,496,631"/>
+<area shape="rect" id="Node000031" href="$classcorrelation_1_1app_1_1InputValidator.html#ab9cf1d03c18b5d2fe89b9a494319b6cb" title=" " alt="" coords="545,672,767,712"/>
+<area shape="poly" id="edge39_Node000023_Node000031" title=" " alt="" coords="471,645,558,666,557,671,470,651"/>
+<area shape="rect" id="Node000025" href="$classcorrelation_1_1app_1_1AppController.html#aa5b046789fca9e3a2efce67ef89109ba" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="816,480,1037,520"/>
+<area shape="poly" id="edge30_Node000024_Node000025" title=" " alt="" coords="767,497,802,497,802,503,767,503"/>
+<area shape="poly" id="edge34_Node000025_Node000003" title=" " alt="" coords="951,478,1161,308,1164,312,955,482"/>
+<area shape="rect" id="Node000026" href="$classcorrelation_1_1app_1_1AppController.html#a12fb48d5f1b926e23ef49c3759c69ab1" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="1089,721,1310,761"/>
+<area shape="poly" id="edge31_Node000025_Node000026" title=" " alt="" coords="952,518,1167,710,1164,714,949,522"/>
+<area shape="poly" id="edge32_Node000026_Node000002" title=" " alt="" coords="1310,749,1348,753,1347,758,1310,754"/>
+<area shape="poly" id="edge33_Node000026_Node000006" title=" " alt="" coords="1235,759,1275,787,1315,822,1330,840,1338,856,1347,871,1363,886,1387,899,1385,904,1360,890,1343,875,1334,859,1325,843,1311,826,1271,792,1232,764"/>
+</map>

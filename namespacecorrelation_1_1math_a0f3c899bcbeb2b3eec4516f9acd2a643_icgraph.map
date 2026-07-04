@@ -1,0 +1,26 @@
+<map id="correlation::math::autocorrelate" name="correlation::math::autocorrelate">
+<area shape="rect" id="Node000001" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="1539,69,1681,109"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a9e794d57ea1ff9e4dd42e1efeeb7f258" title="Convenience overload — allocates its own workspace." alt="" coords="1293,5,1435,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1525,69,1490,60,1435,46,1436,41,1491,55,1526,64"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a595d35684f898ee8ee3441030af186d2" title="Calculates the Mean Squared Displacement (MSD)." alt="" coords="1239,69,1489,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1525,92,1489,92,1489,87,1525,87"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a1000913e170b1d002b61cc362c9af788" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="1237,133,1491,173"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="1526,115,1491,124,1445,136,1444,131,1490,119,1525,110"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#a4748a9c3652968fc374e89dfb3fdb659" title="Core MSD calculation returning named histograms." alt="" coords="983,69,1177,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1225,92,1177,92,1177,87,1225,87"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1MSDCalculator.html#a76c9c5a8c262e5770d5958d55dcedced" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="665,69,923,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="969,92,923,92,923,87,969,87"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#a9e11c5231c31cee449f2e1f6e28ba204" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="695,164,893,204"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="1224,164,893,181,893,176,1223,158"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#aac5531eedc15619d8e66cba6b1874aa2" title="Calculates the Normalized Velocity Autocorrelation Function. Divides the VACF by its initial value (a..." alt="" coords="971,187,1189,242"/>
+<area shape="poly" id="edge11_Node000006_Node000012" title=" " alt="" coords="1258,179,1190,194,1189,188,1256,174"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#aa950883b3e7966d9a08315910f40ea49" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,128,617,168"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="681,174,617,166,618,161,682,168"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a00952804939fe6812befa744a46d9547" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,193,571,247"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="682,200,571,213,570,208,681,194"/>
+<area shape="rect" id="Node000010" href="$analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,207,308,233"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="389,223,308,223,308,217,389,217"/>
+<area shape="rect" id="Node000011" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,207,156,233"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="190,223,156,223,156,217,190,217"/>
+<area shape="poly" id="edge12_Node000012_Node000007" title=" " alt="" coords="956,204,893,197,893,192,957,199"/>
+</map>

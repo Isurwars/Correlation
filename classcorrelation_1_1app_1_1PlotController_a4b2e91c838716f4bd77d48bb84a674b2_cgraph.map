@@ -1,0 +1,16 @@
+<map id="correlation::app::PlotController::requestPlotUpdate" name="correlation::app::PlotController::requestPlotUpdate">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,133,227,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PlotController.html#ab04f2e3acbe0b71a60716f3a8aa28ffa" title=" " alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,131,202,93,274,55,292,47,294,52,276,60,205,98,147,136"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PlotController.html#a33c1a932b0c201ba069ff85fe894c2de" title=" " alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="226,133,317,111,319,116,228,138"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a494c4576ad42837ab54785ff568fc907" title="Returns the Ashcroft&#45;Langreth weights from the last completed analysis." alt="" coords="279,133,491,173"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="227,151,266,151,266,156,227,156"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a6bc5b4f2df87eead46a11810817bdd61" title="Returns a pointer to a specific histogram from the last analysis." alt="" coords="279,197,491,237"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="202,171,288,192,287,197,200,176"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1PlotController.html#a0d93f69ea53b74d01a0ce055d04a56ab" title=" " alt="" coords="275,261,496,301"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="147,171,205,209,276,247,294,254,292,259,274,252,202,214,144,176"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1PlotController.html#ad3092a812ddf0a1480f9dd6f41866b37" title=" " alt="" coords="275,325,496,365"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="134,172,191,240,231,278,276,311,288,317,285,322,273,316,228,283,187,244,130,175"/>
+<area shape="poly" id="edge3_Node000003_Node000001" title=" " alt="" coords="275,109,184,132,183,127,274,104"/>
+</map>

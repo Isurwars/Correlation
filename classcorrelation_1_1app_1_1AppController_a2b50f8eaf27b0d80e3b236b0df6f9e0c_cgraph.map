@@ -1,7 +1,0 @@
-<map id="correlation::app::AppController::handleSavePlot" name="correlation::app::AppController::handleSavePlot">
-<area shape="rect" id="Node000001" title="Handles the &quot;Save Plot&quot; signal from the UI. Opens a save file dialog to export the currently selected..." alt="" coords="5,37,227,77"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193" title="Renders multiple histograms overlaid on a single plot." alt="" coords="277,5,452,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,40,263,36,264,41,227,46"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1plotters.html#a5306f3b1f4524595c3bbdb77ae4c3280" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="275,69,455,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,69,261,73,261,79,227,74"/>
-</map>

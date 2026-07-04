@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['writerfactory_0',['WriterFactory',['../classcorrelation_1_1writers_1_1WriterFactory.html',1,'correlation::writers']]]
+  ['trajectory_0',['Trajectory',['../classcorrelation_1_1core_1_1Trajectory.html',1,'correlation::core']]],
+  ['trajectoryanalyzer_1',['TrajectoryAnalyzer',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html',1,'correlation::analysis']]]
 ];

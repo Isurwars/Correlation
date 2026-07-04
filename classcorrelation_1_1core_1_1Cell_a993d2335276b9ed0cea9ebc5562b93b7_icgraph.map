@@ -1,23 +1,30 @@
 <map id="correlation::core::Cell::setEnergy" name="correlation::core::Cell::setEnergy">
-<area shape="rect" id="Node000001" title="Sets the energy of the cell frame." alt="" coords="804,87,940,127"/>
-<area shape="rect" id="Node000002" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="610,5,689,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="827,82,755,46,688,27,690,22,757,41,830,78"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="543,55,756,95"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="790,98,756,93,757,88,791,93"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="575,119,724,159"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="790,122,725,131,724,126,789,116"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="560,183,739,223"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="828,137,757,174,725,186,723,181,755,169,826,132"/>
-<area shape="rect" id="Node000003" href="$module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="298,5,449,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="597,21,449,21,449,15,597,15"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="272,55,475,95"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="529,78,475,78,475,73,529,73"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,55,204,95"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="258,78,204,78,204,73,258,73"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="274,119,473,159"/>
-<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="561,142,473,142,473,137,561,137"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="255,183,492,223"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="546,206,492,206,492,201,546,201"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="252,247,495,287"/>
-<area shape="poly" id="edge10_Node000009_Node000011" title=" " alt="" coords="550,229,461,250,459,245,548,224"/>
+<area shape="rect" id="Node000001" title="Sets the energy of the cell frame." alt="" coords="852,119,988,159"/>
+<area shape="rect" id="Node000002" href="$core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="636,5,715,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="889,111,850,76,803,46,758,31,715,23,715,18,759,25,805,41,853,72,893,107"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a345d8b2fb74d1d0045f3986025d4af70" title=" " alt="" coords="552,55,799,95"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="838,119,803,110,757,98,759,93,805,105,839,114"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aeb70a80035b433f9855697615ef46f21" title=" " alt="" coords="547,119,804,159"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="838,142,804,142,804,137,838,137"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1ArcReader.html#a362f2562f3add1349b02a75d16310f25" title=" " alt="" coords="591,183,759,223"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="839,165,805,174,759,186,757,181,803,169,838,159"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="569,247,782,287"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="892,172,853,206,805,238,777,250,775,245,803,233,850,202,888,168"/>
+<area shape="rect" id="Node000003" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="322,5,473,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="622,21,473,21,473,15,622,15"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="308,71,487,111"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="538,86,487,89,487,84,538,81"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,23,245,63"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="294,76,240,66,241,61,295,71"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,87,248,127"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="294,100,248,103,248,97,294,95"/>
+<area shape="poly" id="edge8_Node000008_Node000005" title=" " alt="" coords="545,120,486,109,487,104,546,114"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1ArcReader.html#a03099e029a3ace0197fd9c045dda3ac5" title="Low&#45;level parser for the specific file format." alt="" coords="323,183,472,223"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="577,206,472,206,472,201,577,201"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="27,183,226,223"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="309,206,226,206,226,201,309,201"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="296,247,499,287"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="555,270,499,270,499,265,555,265"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="27,247,226,287"/>
+<area shape="poly" id="edge14_Node000013_Node000014" title=" " alt="" coords="282,270,226,270,226,265,282,265"/>
 </map>

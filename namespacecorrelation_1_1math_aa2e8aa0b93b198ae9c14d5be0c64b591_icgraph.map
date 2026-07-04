@@ -1,0 +1,15 @@
+<map id="correlation::math::simd_dot" name="correlation::math::simd_dot">
+<area shape="rect" id="Node000001" title="Computes the dot product of two double arrays (AVX2 version)." alt="" coords="875,73,1017,113"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="861,83,826,78,827,73,862,78"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5" title="Computes a sinc&#45;weighted integral over a range (AVX2 version)." alt="" coords="660,105,803,145"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="862,109,803,117,803,112,861,103"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
+<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
+<area shape="rect" id="Node000006" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>

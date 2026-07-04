@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -84,6 +84,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="classcorrelation_1_1readers_1_1ArcReader-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::readers::ArcReader Class Reference</div></div>
 </div><!--header-->
@@ -125,10 +126,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab6cebb6e4508ad3f13cf1898c449c041" id="r_ab6cebb6e4508ad3f13cf1898c449c041"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#ab6cebb6e4508ad3f13cf1898c449c041">isTrajectory</a> () const override</td></tr>
 <tr class="memdesc:ab6cebb6e4508ad3f13cf1898c449c041"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this reader supports trajectory files.  <br /></td></tr>
 <tr class="separator:ab6cebb6e4508ad3f13cf1898c449c041"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a6b476a9def5ad13c04a326a78be10b" id="r_a3a6b476a9def5ad13c04a326a78be10b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#a3a6b476a9def5ad13c04a326a78be10b">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr) override</td></tr>
+<tr class="memitem:a3a6b476a9def5ad13c04a326a78be10b" id="r_a3a6b476a9def5ad13c04a326a78be10b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#a3a6b476a9def5ad13c04a326a78be10b">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr) override</td></tr>
 <tr class="memdesc:a3a6b476a9def5ad13c04a326a78be10b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
 <tr class="separator:a3a6b476a9def5ad13c04a326a78be10b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaecc127e68886cc95c820aedcc91b961" id="r_aaecc127e68886cc95c820aedcc91b961"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr) override</td></tr>
+<tr class="memitem:aaecc127e68886cc95c820aedcc91b961" id="r_aaecc127e68886cc95c820aedcc91b961"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr) override</td></tr>
 <tr class="memdesc:aaecc127e68886cc95c820aedcc91b961"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
 <tr class="separator:aaecc127e68886cc95c820aedcc91b961"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1readers_1_1BaseReader"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1readers_1_1BaseReader')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">correlation::readers::BaseReader</a></td></tr>
@@ -137,9 +138,16 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a473facbf80bfea0154430fa2e12b552a" id="r_a473facbf80bfea0154430fa2e12b552a"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a">read</a> (const std::string &amp;file_name, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
-<tr class="memdesc:a473facbf80bfea0154430fa2e12b552a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Low-level parser for the specific file format.  <br /></td></tr>
-<tr class="separator:a473facbf80bfea0154430fa2e12b552a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03099e029a3ace0197fd9c045dda3ac5" id="r_a03099e029a3ace0197fd9c045dda3ac5"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#a03099e029a3ace0197fd9c045dda3ac5">read</a> (const std::string &amp;file_name, const std::function&lt; void(float, const std::string &amp;)&gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)</td></tr>
+<tr class="memdesc:a03099e029a3ace0197fd9c045dda3ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Low-level parser for the specific file format.  <br /></td></tr>
+<tr class="separator:a03099e029a3ace0197fd9c045dda3ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:ac208ecbabc6463ebf08dd78eb6ec0e34" id="r_ac208ecbabc6463ebf08dd78eb6ec0e34"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#ac208ecbabc6463ebf08dd78eb6ec0e34">updateProgress</a> (std::streampos current_pos, std::streampos <a class="el" href="OutmolReader_8cpp.html#a3d954a047a53683d88d6865d04bd6f98">file_size</a>, std::streampos &amp;<a class="el" href="OutmolReader_8cpp.html#ace64c15e7a862fd4f77077a2ce0e4035">last_progress_pos</a>, size_t <a class="el" href="OutmolReader_8cpp.html#aa236e51044c4d1279227653f3743615a">update_interval</a>, const std::function&lt; void(float, const std::string &amp;)&gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>)</td></tr>
+<tr class="separator:ac208ecbabc6463ebf08dd78eb6ec0e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a362f2562f3add1349b02a75d16310f25" id="r_a362f2562f3add1349b02a75d16310f25"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1ArcReader.html#a362f2562f3add1349b02a75d16310f25">parseLine</a> (const std::string &amp;line, <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;<a class="el" href="OnetepDatReader_8cpp.html#a6d0d231b16beb25d6e1f478a96c5317c">tempCell</a>, std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a0564b34b992f61e06f7b1fa86dd1fa54">frames</a>)</td></tr>
+<tr class="separator:a362f2562f3add1349b02a75d16310f25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reads an ARC file and returns a vector of <a class="el" href="classcorrelation_1_1core_1_1Cell.html" title="Represents the simulation cell (periodic box).">correlation::core::Cell</a> objects. </p>
@@ -234,8 +242,103 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a473facbf80bfea0154430fa2e12b552a" name="a473facbf80bfea0154430fa2e12b552a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a473facbf80bfea0154430fa2e12b552a">&#9670;&#160;</a></span>read()</h2>
+<a id="a362f2562f3add1349b02a75d16310f25" name="a362f2562f3add1349b02a75d16310f25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a362f2562f3add1349b02a75d16310f25">&#9670;&#160;</a></span>parseLine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::ArcReader::parseLine </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>line</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;&#160;</td>
+          <td class="paramname"><em>tempCell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>frames</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_cgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_cgraph">
+<area shape="rect" title=" " alt="" coords="5,107,173,147"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="250,11,386,51"/>
+<area shape="poly" title=" " alt="" coords="127,104,220,60,240,53,242,58,222,65,130,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="250,75,386,115"/>
+<area shape="poly" title=" " alt="" coords="173,112,236,103,236,109,174,118"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="250,139,386,179"/>
+<area shape="poly" title=" " alt="" coords="174,136,236,145,236,150,173,141"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="221,204,415,244"/>
+<area shape="poly" title=" " alt="" coords="130,145,222,188,244,197,242,202,220,193,128,149"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="463,5,661,45"/>
+<area shape="poly" title=" " alt="" coords="386,27,448,25,448,30,387,32"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="751,5,887,45"/>
+<area shape="poly" title=" " alt="" coords="662,23,737,23,737,28,662,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="490,143,634,183"/>
+<area shape="poly" title=" " alt="" coords="398,201,476,181,477,187,399,207"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="494,207,630,247"/>
+<area shape="poly" title=" " alt="" coords="415,222,480,223,480,228,415,228"/>
+<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="491,271,633,311"/>
+<area shape="poly" title=" " alt="" coords="392,241,478,265,477,270,391,247"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="993,80,1135,120"/>
+<area shape="poly" title=" " alt="" coords="605,140,654,121,709,105,779,95,851,91,979,91,979,97,851,96,780,101,710,111,656,126,607,145"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="747,144,890,184"/>
+<area shape="poly" title=" " alt="" coords="634,160,733,161,733,166,634,166"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="709,209,928,263"/>
+<area shape="poly" title=" " alt="" coords="633,180,710,202,709,207,632,185"/>
+<area shape="poly" title=" " alt="" coords="1018,80,1016,70,1023,61,1039,55,1064,53,1093,56,1108,63,1106,68,1091,61,1064,59,1040,61,1026,65,1021,71,1023,79"/>
+<area shape="poly" title=" " alt="" coords="890,143,979,119,980,125,891,148"/>
+<area shape="poly" title=" " alt="" coords="773,144,770,134,778,125,794,119,819,117,847,120,863,127,860,132,846,125,819,123,795,125,781,129,775,135,778,143"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="983,205,1145,230"/>
+<area shape="poly" title=" " alt="" coords="928,225,969,222,969,227,928,230"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a22d977f8c2db20e7a6994c26c1eb182b" title="Computes the vector norm (length)." alt="" coords="976,278,1152,303"/>
+<area shape="poly" title=" " alt="" coords="929,258,993,272,992,277,928,263"/>
+<area shape="poly" title=" " alt="" coords="1024,206,1016,196,1020,186,1037,180,1064,178,1099,182,1109,187,1112,192,1108,195,1105,191,1097,187,1064,183,1038,185,1024,190,1021,196,1028,203"/>
+<area shape="poly" title=" " alt="" coords="1024,280,1016,270,1020,260,1037,254,1064,251,1099,255,1109,260,1112,266,1108,269,1105,264,1097,260,1064,257,1038,259,1024,264,1021,269,1028,276"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_icgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_a362f2562f3add1349b02a75d16310f25_icgraph">
+<area shape="rect" title=" " alt="" coords="449,5,617,45"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a03099e029a3ace0197fd9c045dda3ac5" title="Low&#45;level parser for the specific file format." alt="" coords="252,5,401,45"/>
+<area shape="poly" title=" " alt="" coords="435,28,402,28,402,23,435,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" title=" " alt="" coords="238,28,204,28,204,23,238,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a03099e029a3ace0197fd9c045dda3ac5" name="a03099e029a3ace0197fd9c045dda3ac5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03099e029a3ace0197fd9c045dda3ac5">&#9670;&#160;</a></span>read()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +355,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::function&lt; void(float, const std::string &amp;)&gt;&#160;</td>
+          <td class="paramtype">const std::function&lt; void(float, const std::string &amp;)&gt; &amp;&#160;</td>
           <td class="paramname"><em>progress_callback</em> = <code>nullptr</code>&#160;</td>
         </tr>
         <tr>
@@ -280,49 +383,53 @@ Static Public Member Functions</h2></td></tr>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_cgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_cgraph">
-<area shape="rect" title="Low&#45;level parser for the specific file format." alt="" coords="5,107,155,147"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="231,11,367,51"/>
-<area shape="poly" title=" " alt="" coords="114,104,202,60,220,53,222,58,204,65,117,109"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="231,75,367,115"/>
-<area shape="poly" title=" " alt="" coords="154,113,218,104,218,109,155,118"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="231,139,367,179"/>
-<area shape="poly" title=" " alt="" coords="155,135,218,144,218,149,154,140"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="203,204,396,244"/>
-<area shape="poly" title=" " alt="" coords="117,144,204,188,225,197,223,202,202,193,115,149"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="444,5,643,45"/>
-<area shape="poly" title=" " alt="" coords="368,27,430,25,430,30,368,32"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="732,5,868,45"/>
-<area shape="poly" title=" " alt="" coords="643,23,718,23,718,28,643,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="471,143,615,183"/>
-<area shape="poly" title=" " alt="" coords="379,201,457,181,459,187,380,207"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="475,207,611,247"/>
-<area shape="poly" title=" " alt="" coords="396,222,462,223,462,228,396,228"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="472,271,615,311"/>
-<area shape="poly" title=" " alt="" coords="374,241,459,265,458,270,372,247"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="974,80,1117,120"/>
-<area shape="poly" title=" " alt="" coords="586,140,635,121,690,105,761,95,833,91,960,91,960,97,833,96,761,101,691,111,637,126,588,145"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="729,144,871,184"/>
-<area shape="poly" title=" " alt="" coords="615,160,715,161,715,166,615,166"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="691,209,909,263"/>
-<area shape="poly" title=" " alt="" coords="615,180,691,202,690,207,613,185"/>
-<area shape="poly" title=" " alt="" coords="1000,80,997,70,1004,61,1021,55,1045,53,1074,56,1089,63,1087,68,1072,61,1045,59,1022,61,1007,65,1002,71,1005,79"/>
-<area shape="poly" title=" " alt="" coords="871,143,960,119,962,125,872,148"/>
-<area shape="poly" title=" " alt="" coords="754,144,752,134,759,125,775,119,800,117,829,120,844,127,842,132,827,125,800,123,776,125,762,129,757,135,759,143"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="964,205,1127,230"/>
-<area shape="poly" title=" " alt="" coords="909,225,950,222,950,227,910,230"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="957,278,1133,303"/>
-<area shape="poly" title=" " alt="" coords="910,258,974,272,973,277,909,263"/>
-<area shape="poly" title=" " alt="" coords="1006,206,997,196,1001,186,1018,180,1045,178,1080,182,1090,187,1094,192,1089,195,1086,191,1079,187,1045,183,1019,185,1005,190,1002,196,1009,203"/>
-<area shape="poly" title=" " alt="" coords="1006,280,997,270,1001,260,1018,254,1045,251,1080,255,1090,260,1094,266,1089,269,1086,264,1079,260,1045,257,1019,259,1005,264,1002,269,1009,276"/>
+<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_cgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_cgraph">
+<area shape="rect" title="Low&#45;level parser for the specific file format." alt="" coords="5,139,155,179"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a362f2562f3add1349b02a75d16310f25" title=" " alt="" coords="222,107,390,147"/>
+<area shape="poly" title=" " alt="" coords="155,145,208,138,209,143,155,151"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#ac208ecbabc6463ebf08dd78eb6ec0e34" title=" " alt="" coords="203,171,409,211"/>
+<area shape="poly" title=" " alt="" coords="155,167,189,171,188,177,155,172"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="486,11,622,51"/>
+<area shape="poly" title=" " alt="" coords="351,104,456,60,476,53,478,58,458,65,353,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="486,75,622,115"/>
+<area shape="poly" title=" " alt="" coords="390,113,472,103,473,108,390,119"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="486,139,622,179"/>
+<area shape="poly" title=" " alt="" coords="390,135,473,146,472,151,390,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="457,204,651,244"/>
+<area shape="poly" title=" " alt="" coords="381,144,411,156,435,172,459,188,476,196,474,201,456,193,432,177,408,161,379,149"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="699,5,897,45"/>
+<area shape="poly" title=" " alt="" coords="622,27,684,25,684,30,623,32"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="987,5,1123,45"/>
+<area shape="poly" title=" " alt="" coords="898,23,973,23,973,28,898,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="726,143,870,183"/>
+<area shape="poly" title=" " alt="" coords="634,201,712,181,713,187,635,207"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="730,207,866,247"/>
+<area shape="poly" title=" " alt="" coords="651,222,716,223,716,228,651,228"/>
+<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="727,271,869,311"/>
+<area shape="poly" title=" " alt="" coords="628,241,714,265,713,270,627,247"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="1229,80,1371,120"/>
+<area shape="poly" title=" " alt="" coords="841,140,890,121,945,105,1015,95,1087,91,1215,91,1215,97,1087,96,1016,101,946,111,892,126,843,145"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="983,144,1126,184"/>
+<area shape="poly" title=" " alt="" coords="870,160,969,161,969,166,870,166"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="945,209,1164,263"/>
+<area shape="poly" title=" " alt="" coords="869,180,946,202,945,207,868,185"/>
+<area shape="poly" title=" " alt="" coords="1254,80,1252,70,1259,61,1275,55,1300,53,1329,56,1344,63,1342,68,1327,61,1300,59,1276,61,1262,65,1257,71,1259,79"/>
+<area shape="poly" title=" " alt="" coords="1126,143,1215,119,1216,125,1127,148"/>
+<area shape="poly" title=" " alt="" coords="1009,144,1006,134,1014,125,1030,119,1055,117,1083,120,1099,127,1096,132,1082,125,1055,123,1031,125,1017,129,1011,135,1014,143"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="1219,205,1381,230"/>
+<area shape="poly" title=" " alt="" coords="1164,225,1205,222,1205,227,1164,230"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a22d977f8c2db20e7a6994c26c1eb182b" title="Computes the vector norm (length)." alt="" coords="1212,278,1388,303"/>
+<area shape="poly" title=" " alt="" coords="1165,258,1229,272,1228,277,1164,263"/>
+<area shape="poly" title=" " alt="" coords="1260,206,1252,196,1256,186,1273,180,1300,178,1335,182,1345,187,1348,192,1344,195,1341,191,1333,187,1300,183,1274,185,1260,190,1257,196,1264,203"/>
+<area shape="poly" title=" " alt="" coords="1260,280,1252,270,1256,260,1273,254,1300,251,1335,255,1345,260,1348,266,1344,269,1341,264,1333,260,1300,257,1274,259,1260,264,1257,269,1264,276"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_icgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_a473facbf80bfea0154430fa2e12b552a_icgraph">
+<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_icgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_a03099e029a3ace0197fd9c045dda3ac5_icgraph">
 <area shape="rect" title="Low&#45;level parser for the specific file format." alt="" coords="252,5,401,45"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="5,5,204,45"/>
 <area shape="poly" title=" " alt="" coords="238,28,204,28,204,23,238,23"/>
@@ -429,42 +536,112 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_aaecc127e68886cc95c820aedcc91b961_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_aaecc127e68886cc95c820aedcc91b961_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1ArcReader_aaecc127e68886cc95c820aedcc91b961_cgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_aaecc127e68886cc95c820aedcc91b961_cgraph">
-<area shape="rect" title="Reads a trajectory from a file." alt="" coords="5,107,204,147"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="252,107,401,147"/>
-<area shape="poly" title=" " alt="" coords="204,124,238,124,238,129,204,129"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="478,11,614,51"/>
-<area shape="poly" title=" " alt="" coords="361,104,448,60,466,53,468,58,450,65,364,109"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="478,75,614,115"/>
-<area shape="poly" title=" " alt="" coords="401,113,464,104,465,109,402,118"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="478,139,614,179"/>
-<area shape="poly" title=" " alt="" coords="402,135,465,144,464,149,401,140"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="449,204,643,244"/>
-<area shape="poly" title=" " alt="" coords="364,144,450,188,471,197,469,202,448,193,362,149"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="691,5,889,45"/>
-<area shape="poly" title=" " alt="" coords="614,27,676,25,676,30,615,32"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="979,5,1115,45"/>
-<area shape="poly" title=" " alt="" coords="890,23,965,23,965,28,890,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="718,143,862,183"/>
-<area shape="poly" title=" " alt="" coords="626,201,704,181,705,187,627,207"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="722,207,858,247"/>
-<area shape="poly" title=" " alt="" coords="643,222,708,223,708,228,643,228"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="719,271,861,311"/>
-<area shape="poly" title=" " alt="" coords="620,241,706,265,705,270,619,247"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="1221,80,1363,120"/>
-<area shape="poly" title=" " alt="" coords="833,140,882,121,937,105,1007,95,1079,91,1207,91,1207,97,1079,96,1008,101,938,111,884,126,835,145"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="975,144,1118,184"/>
-<area shape="poly" title=" " alt="" coords="862,160,961,161,961,166,862,166"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="937,209,1156,263"/>
-<area shape="poly" title=" " alt="" coords="861,180,938,202,937,207,860,185"/>
-<area shape="poly" title=" " alt="" coords="1246,80,1244,70,1251,61,1267,55,1292,53,1321,56,1336,63,1334,68,1319,61,1292,59,1268,61,1254,65,1249,71,1251,79"/>
-<area shape="poly" title=" " alt="" coords="1118,143,1207,119,1208,125,1119,148"/>
-<area shape="poly" title=" " alt="" coords="1001,144,998,134,1006,125,1022,119,1047,117,1075,120,1091,127,1088,132,1074,125,1047,123,1023,125,1009,129,1003,135,1006,143"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="1211,205,1373,230"/>
-<area shape="poly" title=" " alt="" coords="1156,225,1197,222,1197,227,1156,230"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="1204,278,1380,303"/>
-<area shape="poly" title=" " alt="" coords="1157,258,1221,272,1220,277,1156,263"/>
-<area shape="poly" title=" " alt="" coords="1252,206,1244,196,1248,186,1265,180,1292,178,1327,182,1337,187,1340,192,1336,195,1333,191,1325,187,1292,183,1266,185,1252,190,1249,196,1256,203"/>
-<area shape="poly" title=" " alt="" coords="1252,280,1244,270,1248,260,1265,254,1292,251,1327,255,1337,260,1340,266,1336,269,1333,264,1325,260,1292,257,1266,259,1252,264,1249,269,1256,276"/>
+<area shape="rect" title="Reads a trajectory from a file." alt="" coords="5,139,204,179"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a03099e029a3ace0197fd9c045dda3ac5" title="Low&#45;level parser for the specific file format." alt="" coords="252,139,401,179"/>
+<area shape="poly" title=" " alt="" coords="204,156,238,156,238,161,204,161"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a362f2562f3add1349b02a75d16310f25" title=" " alt="" coords="469,107,637,147"/>
+<area shape="poly" title=" " alt="" coords="401,145,455,138,455,143,402,151"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#ac208ecbabc6463ebf08dd78eb6ec0e34" title=" " alt="" coords="449,171,656,211"/>
+<area shape="poly" title=" " alt="" coords="402,167,436,171,435,177,401,172"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="733,11,869,51"/>
+<area shape="poly" title=" " alt="" coords="598,104,703,60,723,53,725,58,705,65,600,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a61cfef47fc93cceb3face54d294eddd6" title="Checks whether the cell contains no atoms." alt="" coords="733,75,869,115"/>
+<area shape="poly" title=" " alt="" coords="636,113,719,103,719,108,637,119"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="733,139,869,179"/>
+<area shape="poly" title=" " alt="" coords="637,135,719,146,719,151,636,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a2527c6c2c5d0a559745e942e518f430a" title="Sets the lattice parameters and updates lattice vectors." alt="" coords="704,204,897,244"/>
+<area shape="poly" title=" " alt="" coords="628,144,657,156,682,172,705,188,723,196,721,201,703,193,679,177,655,161,626,149"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="945,5,1144,45"/>
+<area shape="poly" title=" " alt="" coords="869,27,931,25,931,30,869,32"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1233,5,1369,45"/>
+<area shape="poly" title=" " alt="" coords="1144,23,1220,23,1220,28,1144,28"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a0b96c93c0df7f37981174c75b1c1d419" title="Internal helper to update lattice vectors and recompute volume/inverse." alt="" coords="973,143,1117,183"/>
+<area shape="poly" title=" " alt="" coords="880,201,959,181,960,187,882,207"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="977,207,1113,247"/>
+<area shape="poly" title=" " alt="" coords="897,222,963,223,963,228,897,228"/>
+<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="973,271,1116,311"/>
+<area shape="poly" title=" " alt="" coords="875,241,961,265,959,270,874,247"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="1475,80,1618,120"/>
+<area shape="poly" title=" " alt="" coords="1087,140,1136,121,1191,105,1262,95,1334,91,1462,91,1462,97,1334,96,1263,101,1193,111,1138,126,1089,145"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="1230,144,1373,184"/>
+<area shape="poly" title=" " alt="" coords="1117,160,1216,161,1216,166,1117,166"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="1192,209,1411,263"/>
+<area shape="poly" title=" " alt="" coords="1116,180,1193,202,1191,207,1115,185"/>
+<area shape="poly" title=" " alt="" coords="1501,80,1498,70,1506,61,1522,55,1547,53,1575,56,1591,63,1588,68,1574,61,1547,59,1523,61,1509,65,1503,71,1506,79"/>
+<area shape="poly" title=" " alt="" coords="1372,143,1462,119,1463,125,1374,148"/>
+<area shape="poly" title=" " alt="" coords="1256,144,1253,134,1260,125,1277,119,1301,117,1330,120,1345,127,1343,132,1328,125,1301,123,1278,125,1263,129,1258,135,1261,143"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="1465,205,1628,230"/>
+<area shape="poly" title=" " alt="" coords="1411,225,1451,222,1452,227,1411,230"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#a22d977f8c2db20e7a6994c26c1eb182b" title="Computes the vector norm (length)." alt="" coords="1459,278,1635,303"/>
+<area shape="poly" title=" " alt="" coords="1411,258,1476,272,1474,277,1410,263"/>
+<area shape="poly" title=" " alt="" coords="1507,206,1498,196,1503,186,1519,180,1547,178,1581,182,1591,187,1595,192,1590,195,1588,191,1580,187,1547,183,1520,185,1506,190,1504,196,1511,203"/>
+<area shape="poly" title=" " alt="" coords="1507,280,1498,270,1503,260,1519,254,1547,251,1581,255,1591,260,1595,266,1590,269,1588,264,1580,260,1547,257,1520,259,1506,264,1504,269,1511,276"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="ac208ecbabc6463ebf08dd78eb6ec0e34" name="ac208ecbabc6463ebf08dd78eb6ec0e34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac208ecbabc6463ebf08dd78eb6ec0e34">&#9670;&#160;</a></span>updateProgress()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::ArcReader::updateProgress </td>
+          <td>(</td>
+          <td class="paramtype">std::streampos&#160;</td>
+          <td class="paramname"><em>current_pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::streampos&#160;</td>
+          <td class="paramname"><em>file_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::streampos &amp;&#160;</td>
+          <td class="paramname"><em>last_progress_pos</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>update_interval</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(float, const std::string &amp;)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>progress_callback</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1ArcReader_ac208ecbabc6463ebf08dd78eb6ec0e34_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1ArcReader_ac208ecbabc6463ebf08dd78eb6ec0e34_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1ArcReader_ac208ecbabc6463ebf08dd78eb6ec0e34_icgraph" id="aclasscorrelation_1_1readers_1_1ArcReader_ac208ecbabc6463ebf08dd78eb6ec0e34_icgraph">
+<area shape="rect" title=" " alt="" coords="449,5,656,45"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#a03099e029a3ace0197fd9c045dda3ac5" title="Low&#45;level parser for the specific file format." alt="" coords="252,5,401,45"/>
+<area shape="poly" title=" " alt="" coords="435,28,402,28,402,23,435,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" title=" " alt="" coords="238,28,204,28,204,23,238,23"/>
 </map>
 </div>
 

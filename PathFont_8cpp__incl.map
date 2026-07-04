@@ -1,0 +1,17 @@
+<map id="src/plotters/PathFont.cpp" name="src/plotters/PathFont.cpp">
+<area shape="rect" id="Node000001" title="High&#45;fidelity Roboto vector font implementation details." alt="" coords="206,5,389,31"/>
+<area shape="rect" id="Node000002" href="$PathFont_8hpp.html" title="High&#45;fidelity Roboto vector font for SVG path rendering." alt="" coords="80,79,240,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="276,33,196,75,193,70,274,28"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="264,79,331,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="300,31,300,65,295,65,295,31"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="355,79,415,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="313,29,362,68,359,72,310,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,72,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="142,106,71,147,69,143,139,102"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="96,152,147,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="156,106,136,141,132,139,151,103"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="171,152,229,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="169,103,189,139,184,141,164,106"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="254,152,317,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="181,102,254,143,252,147,179,106"/>
+</map>

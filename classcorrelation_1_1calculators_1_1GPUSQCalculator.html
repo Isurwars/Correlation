@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -136,18 +136,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6cd4ba29cf1b6cb26e613c383c16f3af" id="r_a6cd4ba29cf1b6cb26e613c383c16f3af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1GPUSQCalculator.html#a6cd4ba29cf1b6cb26e613c383c16f3af">isTrajectoryCalculator</a> () const override</td></tr>
 <tr class="memdesc:a6cd4ba29cf1b6cb26e613c383c16f3af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this calculator runs on the whole trajectory (e.g. VACF).  <br /></td></tr>
 <tr class="separator:a6cd4ba29cf1b6cb26e613c383c16f3af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9d2c66c8d69f74d1302497ee88f05f53" id="r_a9d2c66c8d69f74d1302497ee88f05f53"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1GPUSQCalculator.html#a9d2c66c8d69f74d1302497ee88f05f53">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
-<tr class="memdesc:a9d2c66c8d69f74d1302497ee88f05f53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
-<tr class="separator:a9d2c66c8d69f74d1302497ee88f05f53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa079b422d654aeeedf5d2a1dd95f594b" id="r_aa079b422d654aeeedf5d2a1dd95f594b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1GPUSQCalculator.html#aa079b422d654aeeedf5d2a1dd95f594b">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
+<tr class="memdesc:aa079b422d654aeeedf5d2a1dd95f594b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
+<tr class="separator:aa079b422d654aeeedf5d2a1dd95f594b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad56d52006906c3e9f2bbd999209341a9" id="r_ad56d52006906c3e9f2bbd999209341a9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1GPUSQCalculator.html#ad56d52006906c3e9f2bbd999209341a9">hasGPU</a> () const noexcept</td></tr>
 <tr class="memdesc:ad56d52006906c3e9f2bbd999209341a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true when a usable CUDA device was found at construction.  <br /></td></tr>
 <tr class="separator:ad56d52006906c3e9f2bbd999209341a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html">correlation::calculators::BaseCalculator</a></td></tr>
 <tr class="memitem:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_af9ca6046d093eb10559a9f9aa353fb9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c">~BaseCalculator</a> ()=default</td></tr>
 <tr class="separator:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a75298b5153fcbd2ae1763c3bdbe39f82"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a75298b5153fcbd2ae1763c3bdbe39f82">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
-<tr class="memdesc:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
-<tr class="separator:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a88fc48d6aedbf64bf5c9578fca09ed3d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a88fc48d6aedbf64bf5c9578fca09ed3d">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
+<tr class="memdesc:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
+<tr class="separator:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -162,7 +162,7 @@ Private Attributes</h2></td></tr>
 </ul>
 <p>Runtime behaviour:</p><ul>
 <li>On construction the class probes <code>cudaGetDeviceCount()</code>.</li>
-<li>If no device is found, <code><a class="el" href="classcorrelation_1_1calculators_1_1GPUSQCalculator.html#a9d2c66c8d69f74d1302497ee88f05f53" title="Calculate per-frame properties. Called concurrently on different DistributionFunctions objects....">calculateFrame()</a></code> forwards to the CPU <a class="el" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html" title="Computes the static structure factor S(Q) using plane wave summation over reciprocal lattice vectors ...">StructureFactorCalculator</a>. </li>
+<li>If no device is found, <code><a class="el" href="classcorrelation_1_1calculators_1_1GPUSQCalculator.html#aa079b422d654aeeedf5d2a1dd95f594b" title="Calculate per-frame properties. Called concurrently on different DistributionFunctions objects....">calculateFrame()</a></code> forwards to the CPU <a class="el" href="classcorrelation_1_1calculators_1_1StructureFactorCalculator.html" title="Computes the static structure factor S(Q) using plane wave summation over reciprocal lattice vectors ...">StructureFactorCalculator</a>. </li>
 </ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad26e7efb2ce3b98115b2f49942392abe" name="ad26e7efb2ce3b98115b2f49942392abe"></a>
@@ -183,8 +183,8 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9d2c66c8d69f74d1302497ee88f05f53" name="a9d2c66c8d69f74d1302497ee88f05f53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d2c66c8d69f74d1302497ee88f05f53">&#9670;&#160;</a></span>calculateFrame()</h2>
+<a id="aa079b422d654aeeedf5d2a1dd95f594b" name="aa079b422d654aeeedf5d2a1dd95f594b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa079b422d654aeeedf5d2a1dd95f594b">&#9670;&#160;</a></span>calculateFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -196,7 +196,7 @@ Private Attributes</h2></td></tr>
           <td class="memname">void correlation::calculators::GPUSQCalculator::calculateFrame </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -220,13 +220,13 @@ Private Attributes</h2></td></tr>
 <p>Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object to store the results. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object to store the results. </td></tr>
     <tr><td class="paramname">settings</td><td>The analysis settings and parameters. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a9e825afb4f3b6cdfc183be18f7e08220">correlation::calculators::BaseCalculator</a>.</p>
+<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#ac4c24a0e6512e3d8a928f1a2618ef53f">correlation::calculators::BaseCalculator</a>.</p>
 
 </div>
 </div>

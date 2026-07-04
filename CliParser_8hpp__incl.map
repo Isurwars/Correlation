@@ -1,19 +1,23 @@
 <map id="include/cli/CliParser.hpp" name="include/cli/CliParser.hpp">
-<area shape="rect" id="Node000001" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="350,5,526,31"/>
-<area shape="rect" id="Node000002" href="$Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="292,79,451,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="429,33,393,70,390,67,425,29"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="475,79,534,104"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="451,29,486,67,483,70,447,33"/>
+<area shape="rect" id="Node000001" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="457,5,633,31"/>
+<area shape="rect" id="Node000002" href="$Smoothing_8hpp.html" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="335,79,493,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="525,33,448,74,446,70,522,28"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="518,79,571,104"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="547,31,547,65,542,65,542,31"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="595,79,654,104"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="559,29,603,68,600,72,556,33"/>
 <area shape="rect" id="Node000003" href="$Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="5,152,159,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="325,107,143,151,141,146,324,101"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="361,107,150,152,148,146,360,101"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="183,152,269,177"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="349,106,263,148,261,144,347,102"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="385,107,270,149,269,144,383,102"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="293,152,356,177"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="366,106,342,142,338,139,361,103"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="381,152,455,177"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="381,103,405,139,401,142,377,106"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="480,152,567,177"/>
-<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="397,102,487,144,485,149,395,106"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="591,152,653,177"/>
-<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="412,101,578,148,577,153,411,107"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="401,106,352,145,348,141,398,102"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="381,152,447,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="417,104,417,138,411,138,411,104"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="471,152,546,177"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="431,102,484,141,481,146,428,106"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="571,152,657,177"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="447,102,569,145,567,150,445,107"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="681,152,744,177"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="466,101,669,149,667,154,465,107"/>
 </map>

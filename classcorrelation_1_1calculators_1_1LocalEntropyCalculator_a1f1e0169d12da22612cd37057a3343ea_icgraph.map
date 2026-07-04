@@ -1,0 +1,5 @@
+<map id="correlation::calculators::LocalEntropyCalculator::calculate" name="correlation::calculators::LocalEntropyCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes the Local Entropic Fingerprint for all atoms in the cell." alt="" coords="233,5,413,60"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html#ae04ff79281302013d1488c20037cafa5" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,185,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="219,35,185,35,185,30,219,30"/>
+</map>

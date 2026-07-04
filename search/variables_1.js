@@ -1,9 +1,24 @@
 var searchData=
 [
-  ['backend_5f_0',['backend_',['../classcorrelation_1_1app_1_1AppController.html#aaf2af461904bbe111fbea201861db1ae',1,'correlation::app::AppController']]],
-  ['bins_1',['bins',['../structcorrelation_1_1analysis_1_1Histogram.html#afd1aceb7530767a3f918e5e4da367c87',1,'correlation::analysis::Histogram']]],
-  ['bohr_5fto_5fangstrom_2',['bohr_to_angstrom',['../namespacecorrelation_1_1math.html#a5b35e5ee4926e62c5fa3ab3da50f73ce',1,'correlation::math']]],
-  ['bond_5fcutoffs_5f_3',['bond_cutoffs_',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#aa34f0a34982e3a74a5a9c883f7a2d86f',1,'correlation::analysis::TrajectoryAnalyzer']]],
-  ['bond_5fcutoffs_5fsq_4',['bond_cutoffs_sq',['../structcorrelation_1_1app_1_1ProgramOptions.html#aacf55709078905ed3471a368c93bdac4',1,'correlation::app::ProgramOptions']]],
-  ['bond_5fcutoffs_5fsq_5f_5',['bond_cutoffs_sq_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1df28ec9cdd38c45b9fed6b350e666ba',1,'correlation::analysis::DistributionFunctions::bond_cutoffs_sq_'],['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a29a927f50dd6a638f75a3a760c47613e',1,'correlation::analysis::StructureAnalyzer::bond_cutoffs_sq_'],['../classcorrelation_1_1core_1_1Trajectory.html#aecf333648c3b570a958ec04e94cec2bf',1,'correlation::core::Trajectory::bond_cutoffs_sq_']]]
+  ['b_0',['b',['../PdbReader_8cpp.html#a1510a66dacf9cf3586de5fc89ae2a073',1,'PdbReader.cpp']]],
+  ['b1_1',['b1',['../StructureFactorCalculator_8cpp.html#ae5e27ac4fbba0132e8df52d4baa5949f',1,'StructureFactorCalculator.cpp']]],
+  ['b2_2',['b2',['../StructureFactorCalculator_8cpp.html#a94a584092476a780818a101df4a7f290',1,'StructureFactorCalculator.cpp']]],
+  ['b3_3',['b3',['../StructureFactorCalculator_8cpp.html#a17fd9333b336210b605575aa84046333',1,'StructureFactorCalculator.cpp']]],
+  ['backend_5f_4',['backend_',['../classcorrelation_1_1app_1_1AppController.html#aaf2af461904bbe111fbea201861db1ae',1,'correlation::app::AppController::backend_'],['../classcorrelation_1_1app_1_1FileIOHandler.html#ab35c50518c37942a49f67b7b049809ab',1,'correlation::app::FileIOHandler::backend_'],['../classcorrelation_1_1app_1_1InputValidator.html#a436b560b3bdd82820a97b1804ebfbc41',1,'correlation::app::InputValidator::backend_'],['../classcorrelation_1_1app_1_1PlotController.html#a9783d8b0ed220fd25bb84eca63246444',1,'correlation::app::PlotController::backend_'],['../classcorrelation_1_1app_1_1PresetController.html#a243e9222dee8e37ddf74ce08b58d6c2f',1,'correlation::app::PresetController::backend_'],['../classcorrelation_1_1app_1_1AnalysisRunner.html#afc0ab426a3d51bef25fedcacdf44330b',1,'correlation::app::AnalysisRunner::backend_']]],
+  ['bg_5',['bg',['../structcorrelation_1_1plotters_1_1detail_1_1BlendParams.html#ab527f25b81bd51f4748ea7d0035df010',1,'correlation::plotters::detail::BlendParams']]],
+  ['bg_5fcol_6',['bg_col',['../structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#ae4b8687bfe64cd3c77d8085466f532bc',1,'correlation::plotters::detail::PdfHistogramRenderer::bg_col'],['../structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a730cf4bf9138c62b7bbdc2fcec41fe48',1,'correlation::plotters::detail::PdfComparisonRenderer::bg_col']]],
+  ['bin_5fds_5fname_7',['bin_ds_name',['../HDF5Writer_8cpp.html#a59335e378afcf34d0531a1143fa8ee63',1,'HDF5Writer.cpp']]],
+  ['bin_5funit_8',['bin_unit',['../HDF5Writer_8cpp.html#a779cca2fd455d1fbda43b079567cbadb',1,'HDF5Writer.cpp']]],
+  ['bin_5fwidth_9',['bin_width',['../PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19',1,'bin_width:&#160;PADCalculator.cpp'],['../RDFCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19',1,'bin_width:&#160;RDFCalculator.cpp'],['../structcorrelation_1_1math_1_1KernelGenerationParams.html#a5a7fb2a5de54f9fa6fb86e230dd14a74',1,'correlation::math::KernelGenerationParams::bin_width'],['../structcorrelation_1_1calculators_1_1VoronoiCalculator_1_1BinRange.html#a4cf01a955662c24bf9a1391cbb3ebab2',1,'correlation::calculators::VoronoiCalculator::BinRange::bin_width']]],
+  ['bins_10',['bins',['../structcorrelation_1_1analysis_1_1Histogram.html#afd1aceb7530767a3f918e5e4da367c87',1,'correlation::analysis::Histogram']]],
+  ['bins_5fq_11',['bins_Q',['../SteinhardtCalculator_8cpp.html#a7c5b36964d8482b4eb488a4a66cce7d8',1,'SteinhardtCalculator.cpp']]],
+  ['bins_5fw_12',['bins_W',['../SteinhardtCalculator_8cpp.html#a8c57f4226f382ef83adee7713241d5e3',1,'SteinhardtCalculator.cpp']]],
+  ['bohr_5fto_5fangstrom_13',['bohr_to_angstrom',['../namespacecorrelation_1_1math.html#a5b35e5ee4926e62c5fa3ab3da50f73ce',1,'correlation::math']]],
+  ['bond_5fcount_14',['bond_count',['../CNACalculator_8cpp.html#af0c2bbd8a2ed8f561edc3cf34c2ec28d',1,'CNACalculator.cpp']]],
+  ['bond_5fcutoffs_5f_15',['bond_cutoffs_',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#aa34f0a34982e3a74a5a9c883f7a2d86f',1,'correlation::analysis::TrajectoryAnalyzer']]],
+  ['bond_5fcutoffs_5fsq_16',['bond_cutoffs_sq',['../structcorrelation_1_1app_1_1ProgramOptions.html#aacf55709078905ed3471a368c93bdac4',1,'correlation::app::ProgramOptions']]],
+  ['bond_5fcutoffs_5fsq_5f_17',['bond_cutoffs_sq_',['../classcorrelation_1_1core_1_1Trajectory.html#aecf333648c3b570a958ec04e94cec2bf',1,'correlation::core::Trajectory::bond_cutoffs_sq_'],['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a29a927f50dd6a638f75a3a760c47613e',1,'correlation::analysis::StructureAnalyzer::bond_cutoffs_sq_'],['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1df28ec9cdd38c45b9fed6b350e666ba',1,'correlation::analysis::DistributionFunctions::bond_cutoffs_sq_']]],
+  ['bonds_18',['bonds',['../DistanceCalculator_8cpp.html#a2a4eeacc7787b30dd05071d0d4c2aaf4',1,'DistanceCalculator.cpp']]],
+  ['brace_5flevel_19',['brace_level',['../PresetManager_8cpp.html#ae61a822aff3d9755d04fa469a13417ec',1,'PresetManager.cpp']]],
+  ['bracket_5flevel_20',['bracket_level',['../PresetManager_8cpp.html#a43d0539b32140ea4167065993118396a',1,'PresetManager.cpp']]]
 ];

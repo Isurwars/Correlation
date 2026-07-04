@@ -5,5 +5,7 @@ var searchData=
   ['vaspreader_2ecpp_2',['VaspReader.cpp',['../VaspReader_8cpp.html',1,'']]],
   ['vaspreader_2ehpp_3',['VaspReader.hpp',['../VaspReader_8hpp.html',1,'']]],
   ['vdoscalculator_2ecpp_4',['VDOSCalculator.cpp',['../VDOSCalculator_8cpp.html',1,'']]],
-  ['vdoscalculator_2ehpp_5',['VDOSCalculator.hpp',['../VDOSCalculator_8hpp.html',1,'']]]
+  ['vdoscalculator_2ehpp_5',['VDOSCalculator.hpp',['../VDOSCalculator_8hpp.html',1,'']]],
+  ['voronoicalculator_2ecpp_6',['VoronoiCalculator.cpp',['../VoronoiCalculator_8cpp.html',1,'']]],
+  ['voronoicalculator_2ehpp_7',['VoronoiCalculator.hpp',['../VoronoiCalculator_8hpp.html',1,'']]]
 ];

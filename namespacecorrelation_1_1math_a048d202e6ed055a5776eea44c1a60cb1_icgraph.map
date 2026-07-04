@@ -1,17 +1,12 @@
 <map id="correlation::math::factorial" name="correlation::math::factorial">
-<area shape="rect" id="Node000001" title="Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64&#45;bit integer,..." alt="" coords="880,65,1023,105"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="675,65,818,105"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="866,88,818,88,818,83,866,83"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="452,5,604,45"/>
-<area shape="poly" id="edge6_Node000001_Node000003" title=" " alt="" coords="870,64,832,56,712,40,604,31,605,26,713,35,832,51,871,59"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#affe3a0caf3687a8ff17d987fe6c46a72" title="Computes the Wigner 3&#45;j symbol using the Racah formula." alt="" coords="661,131,832,186"/>
-<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="883,112,824,134,823,129,881,107"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="662,65,601,48,602,43,663,60"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a1af966279d10a10a96582b6ad7fe1fea" title="Computes the complex spherical harmonic ." alt="" coords="443,70,613,125"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="662,93,614,95,613,90,661,87"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="224,103,395,158"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="430,115,395,120,395,115,429,110"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,103,176,158"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="210,133,176,133,176,128,210,128"/>
-<area shape="poly" id="edge8_Node000007_Node000005" title=" " alt="" coords="647,155,395,139,395,133,648,150"/>
+<area shape="rect" id="Node000001" title="Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64&#45;bit integer,..." alt="" coords="443,63,585,103"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a6509986c83712bf7e4e07fa6d5d5cd4f" title="Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17." alt="" coords="238,63,381,103"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="429,85,381,85,381,80,429,80"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a31b7c55b212b4e4023e9fee6085645bb" title="Vectorized version of sph_legendre. Computes the polynomial for a range of angles." alt="" coords="15,5,167,45"/>
+<area shape="poly" id="edge4_Node000001_Node000003" title=" " alt="" coords="433,62,394,53,275,38,167,30,167,25,275,33,395,48,434,57"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a136604d4e82c4038f54e63c12d506546" title="Computes the Wigner 3&#45;j symbol using the Racah formula." alt="" coords="224,127,395,182"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="444,110,388,130,386,125,443,105"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="224,63,166,48,168,43,226,58"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#ae7b9c6e3a0add59671202036270238a6" title="Computes the complex spherical harmonic ." alt="" coords="5,70,176,125"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="224,91,176,94,176,89,224,86"/>
 </map>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -91,9 +91,9 @@ $(function() {
 <p>Trajectory data structure for time-series atomistic simulations.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="Cell_8hpp_source.html">core/Cell.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="LinearAlgebra_8hpp_source.html">math/LinearAlgebra.hpp</a>&quot;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -101,41 +101,42 @@ Include dependency graph for Trajectory.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Trajectory_8hpp__incl.png" border="0" usemap="#ainclude_2core_2Trajectory_8hpp" alt=""/></div>
 <map name="ainclude_2core_2Trajectory_8hpp" id="ainclude_2core_2Trajectory_8hpp">
-<area shape="rect" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="570,5,765,31"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="498,79,605,104"/>
-<area shape="poly" title=" " alt="" coords="650,33,583,74,581,69,647,28"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="73,225,251,251"/>
-<area shape="poly" title=" " alt="" coords="617,33,548,51,461,78,367,112,275,154,227,186,187,218,183,214,224,181,273,150,365,107,459,73,546,46,616,28"/>
-<area shape="rect" title=" " alt="" coords="605,152,679,177"/>
-<area shape="poly" title=" " alt="" coords="668,32,649,139,644,138,663,31"/>
-<area shape="rect" title=" " alt="" coords="704,152,767,177"/>
-<area shape="poly" title=" " alt="" coords="675,30,727,138,722,141,670,32"/>
-<area shape="rect" title=" " alt="" coords="731,79,817,104"/>
-<area shape="poly" title=" " alt="" coords="686,28,747,69,744,73,683,33"/>
-<area shape="rect" title=" " alt="" coords="842,79,919,104"/>
-<area shape="poly" title=" " alt="" coords="702,28,834,72,832,77,701,33"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="350,152,467,177"/>
-<area shape="poly" title=" " alt="" coords="530,106,445,148,443,143,527,102"/>
-<area shape="poly" title=" " alt="" coords="502,107,424,127,339,154,261,188,196,221,194,216,259,183,337,150,423,122,500,101"/>
-<area shape="rect" title=" " alt="" coords="431,299,487,324"/>
-<area shape="poly" title=" " alt="" coords="557,104,562,132,565,170,562,212,548,252,528,277,502,295,499,290,524,273,544,249,557,211,560,170,557,132,552,105"/>
-<area shape="rect" title=" " alt="" coords="475,225,534,251"/>
-<area shape="poly" title=" " alt="" coords="550,105,515,213,510,211,545,104"/>
-<area shape="poly" title=" " alt="" coords="568,102,618,141,615,145,564,106"/>
-<area shape="poly" title=" " alt="" coords="582,102,693,144,691,149,580,107"/>
-<area shape="poly" title=" " alt="" coords="370,180,216,224,214,219,368,175"/>
-<area shape="rect" title=" " alt="" coords="366,225,451,251"/>
-<area shape="poly" title=" " alt="" coords="411,178,411,212,406,212,406,178"/>
-<area shape="rect" title=" " alt="" coords="275,225,342,251"/>
-<area shape="poly" title=" " alt="" coords="394,180,338,219,335,215,391,175"/>
-<area shape="poly" title=" " alt="" coords="426,175,479,215,476,219,423,180"/>
-<area shape="poly" title=" " alt="" coords="210,248,418,298,417,303,209,253"/>
-<area shape="rect" title=" " alt="" coords="232,299,295,324"/>
-<area shape="poly" title=" " alt="" coords="180,248,237,288,234,293,177,253"/>
-<area shape="rect" title=" " alt="" coords="5,299,92,324"/>
-<area shape="poly" title=" " alt="" coords="145,253,80,294,77,289,142,248"/>
-<area shape="rect" title=" " alt="" coords="116,299,208,324"/>
-<area shape="poly" title=" " alt="" coords="165,251,165,285,159,285,159,251"/>
+<area shape="rect" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="488,5,683,31"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="351,79,457,104"/>
+<area shape="poly" title=" " alt="" coords="557,33,447,76,445,71,555,28"/>
+<area shape="rect" title=" " alt="" coords="449,152,524,177"/>
+<area shape="poly" title=" " alt="" coords="579,33,505,142,500,139,575,30"/>
+<area shape="rect" title=" " alt="" coords="549,152,611,177"/>
+<area shape="poly" title=" " alt="" coords="585,32,575,79,574,109,578,138,572,139,569,110,569,78,579,30"/>
+<area shape="rect" title=" " alt="" coords="583,79,670,104"/>
+<area shape="poly" title=" " alt="" coords="594,30,615,65,611,68,590,32"/>
+<area shape="rect" title=" " alt="" coords="695,79,772,104"/>
+<area shape="poly" title=" " alt="" coords="610,28,698,70,696,75,608,33"/>
+<area shape="rect" title=" " alt="" coords="796,79,860,104"/>
+<area shape="poly" title=" " alt="" coords="625,28,783,74,782,79,624,33"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="257,152,375,177"/>
+<area shape="poly" title=" " alt="" coords="392,106,343,145,339,141,388,102"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="71,225,249,251"/>
+<area shape="poly" title=" " alt="" coords="359,107,304,126,247,154,209,185,179,217,176,213,206,181,244,150,302,121,358,102"/>
+<area shape="rect" title=" " alt="" coords="5,299,61,324"/>
+<area shape="poly" title=" " alt="" coords="351,100,284,112,205,135,165,151,126,172,91,197,61,227,45,255,38,285,33,284,40,253,57,224,88,193,124,167,163,146,203,130,283,107,350,95"/>
+<area shape="rect" title=" " alt="" coords="473,225,532,251"/>
+<area shape="poly" title=" " alt="" coords="409,104,420,138,440,176,457,197,477,215,474,219,454,201,435,179,415,140,404,105"/>
+<area shape="poly" title=" " alt="" coords="419,102,464,141,461,145,416,106"/>
+<area shape="poly" title=" " alt="" coords="433,102,539,144,537,149,431,106"/>
+<area shape="poly" title=" " alt="" coords="292,180,199,222,197,217,290,175"/>
+<area shape="rect" title=" " alt="" coords="273,225,359,251"/>
+<area shape="poly" title=" " alt="" coords="319,178,319,212,313,212,313,178"/>
+<area shape="rect" title=" " alt="" coords="383,225,449,251"/>
+<area shape="poly" title=" " alt="" coords="334,175,390,215,387,219,331,180"/>
+<area shape="poly" title=" " alt="" coords="347,175,461,218,459,223,345,180"/>
+<area shape="poly" title=" " alt="" coords="141,253,67,294,65,289,138,248"/>
+<area shape="rect" title=" " alt="" coords="86,299,149,324"/>
+<area shape="poly" title=" " alt="" coords="155,252,133,288,129,286,151,250"/>
+<area shape="rect" title=" " alt="" coords="173,299,259,324"/>
+<area shape="poly" title=" " alt="" coords="171,249,201,286,196,289,167,253"/>
+<area shape="rect" title=" " alt="" coords="283,299,375,324"/>
+<area shape="poly" title=" " alt="" coords="188,248,290,291,288,296,186,253"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -143,152 +144,154 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="Trajectory_8hpp__dep__incl.png" border="0" usemap="#ainclude_2core_2Trajectory_8hppdep" alt=""/></div>
 <map name="ainclude_2core_2Trajectory_8hppdep" id="ainclude_2core_2Trajectory_8hppdep">
-<area shape="rect" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="4251,5,4445,31"/>
-<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="1695,79,1902,119"/>
-<area shape="poly" title=" " alt="" coords="4237,25,1902,97,1902,92,4237,20"/>
-<area shape="rect" href="AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="26,174,235,199"/>
-<area shape="poly" title=" " alt="" coords="4237,22,3470,26,2324,35,1218,52,811,65,667,73,571,81,454,101,339,127,167,176,165,171,338,122,453,96,570,76,666,68,811,60,1218,47,2324,29,3470,20,4237,17"/>
-<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="2369,167,2519,207"/>
-<area shape="poly" title=" " alt="" coords="4237,29,3909,50,3505,81,2939,135,2520,180,2519,174,2939,130,3505,76,3909,45,4237,23"/>
-<area shape="rect" href="DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="1152,343,1331,383"/>
-<area shape="poly" title=" " alt="" coords="4237,21,3822,21,3193,28,2448,46,2061,61,1683,81,1438,92,1248,98,1157,106,1059,119,950,139,822,169,774,187,727,209,685,219,650,222,619,231,605,240,591,256,584,275,585,284,591,293,618,306,669,318,821,337,997,349,1152,356,1151,361,997,355,820,342,668,324,616,311,587,297,580,286,578,275,587,253,602,236,617,226,649,217,684,214,726,204,772,182,820,164,949,134,1059,113,1156,100,1247,93,1438,86,1682,76,2061,56,2447,40,3193,22,3822,16,4237,16"/>
-<area shape="rect" href="MSDCalculator_8hpp.html" title="Mean Squared Displacement (MSD) calculator." alt="" coords="3496,255,3645,295"/>
-<area shape="poly" title=" " alt="" coords="4237,24,4069,30,3880,41,3718,57,3663,68,3632,81,3614,99,3600,120,3582,169,3574,217,3573,255,3567,255,3569,216,3577,168,3596,118,3610,96,3629,76,3661,63,3718,52,3880,36,4069,25,4237,19"/>
-<area shape="rect" href="VACFCalculator_8hpp.html" title="Velocity autocorrelation function (VACF) calculator." alt="" coords="3670,255,3823,295"/>
-<area shape="poly" title=" " alt="" coords="4237,23,4072,28,3888,38,3733,55,3680,67,3652,81,3640,101,3638,124,3644,147,3655,172,3690,217,3726,253,3722,257,3686,221,3651,174,3639,149,3633,124,3635,99,3649,77,3678,62,3732,50,3888,33,4071,23,4236,18"/>
-<area shape="rect" href="analysis__bindings_8cpp.html" title="Pybind11 bindings for correlation::analysis types." alt="" coords="259,167,418,207"/>
-<area shape="poly" title=" " alt="" coords="4237,22,3508,26,2430,36,1391,54,1009,66,784,81,677,99,571,122,399,169,398,164,570,117,676,94,784,76,1009,61,1391,48,2430,31,3508,21,4237,17"/>
-<area shape="rect" href="DynamicsAnalyzer_8hpp.html" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="3663,79,3859,119"/>
-<area shape="poly" title=" " alt="" coords="4237,35,3879,81,3860,84,3859,79,3878,76,4237,30"/>
-<area shape="rect" href="TrajectoryAnalyzer_8hpp.html" title="correlation::core::Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="137,79,332,119"/>
-<area shape="poly" title=" " alt="" coords="4237,22,3668,22,2755,28,1651,46,1076,61,512,81,332,92,332,87,512,76,1076,56,1651,41,2755,23,3668,17,4237,16"/>
-<area shape="rect" href="ArcReader_8hpp.html" title="Reader for BIOVIA/Accelrys ARC trajectory files." alt="" coords="3741,174,3961,199"/>
-<area shape="poly" title=" " alt="" coords="4237,25,4177,31,4111,41,4045,58,3981,81,3944,102,3910,128,3862,176,3859,172,3907,124,3941,98,3979,76,4043,53,4110,36,4176,25,4237,19"/>
-<area shape="rect" href="ArcReader_8cpp.html" title="Implementation of the ARC file format reader." alt="" coords="3847,262,4038,287"/>
-<area shape="poly" title=" " alt="" coords="4237,30,4057,49,3975,64,3917,81,3903,90,3895,100,3886,110,3872,121,3850,131,3830,135,3792,137,3759,143,3745,152,3730,168,3723,187,3730,205,3752,222,3789,237,3879,259,3877,265,3788,242,3750,226,3726,208,3717,187,3726,165,3741,148,3758,138,3792,132,3829,130,3849,126,3869,116,3882,106,3891,96,3900,86,3915,76,3973,59,4056,44,4236,25"/>
-<area shape="rect" href="BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="4386,86,4617,111"/>
-<area shape="poly" title=" " alt="" coords="4384,35,4480,83,4477,88,4381,39"/>
-<area shape="rect" href="CarReader_8hpp.html" title="Reader for BIOVIA/Accelrys CAR structure files." alt="" coords="4036,174,4257,199"/>
-<area shape="poly" title=" " alt="" coords="4325,42,4162,176,4159,172,4322,38"/>
-<area shape="rect" href="CarReader_8cpp.html" title="Implementation of the CAR file format reader." alt="" coords="4063,262,4255,287"/>
-<area shape="poly" title=" " alt="" coords="4256,36,4195,53,4131,80,4101,97,4072,117,4047,141,4026,168,4019,187,4026,205,4042,224,4062,239,4108,260,4105,264,4059,244,4038,228,4022,208,4014,187,4022,165,4043,137,4069,113,4098,92,4129,75,4193,48,4254,31"/>
-<area shape="rect" href="CastepMdReader_8hpp.html" title="Reader for CASTEP molecular dynamics trajectory files." alt="" coords="4333,167,4523,207"/>
-<area shape="poly" title=" " alt="" coords="4354,44,4361,80,4376,117,4392,143,4411,165,4407,168,4388,146,4371,120,4356,81,4349,45"/>
-<area shape="rect" href="CastepMdReader_8cpp.html" title="Implementation of the CASTEP MD trajectory reader." alt="" coords="4300,262,4535,287"/>
-<area shape="poly" title=" " alt="" coords="4338,44,4324,78,4313,119,4311,164,4314,185,4322,205,4335,223,4352,238,4388,260,4386,264,4348,242,4331,227,4318,208,4309,187,4305,164,4308,118,4319,76,4333,42"/>
-<area shape="rect" href="LammpsDumpReader_8hpp.html" title="Reader for LAMMPS dump trajectory files." alt="" coords="4548,167,4769,207"/>
-<area shape="poly" title=" " alt="" coords="4459,28,4560,47,4601,60,4630,77,4645,97,4655,122,4661,166,4656,167,4650,123,4641,100,4626,81,4599,65,4558,52,4458,34"/>
-<area shape="rect" href="OnetepDatReader_8hpp.html" title="Reader for ONETEP .dat structure files." alt="" coords="5067,167,5263,207"/>
-<area shape="poly" title=" " alt="" coords="4459,24,4585,42,4653,57,4718,76,4739,86,4754,96,4769,107,4789,116,5067,166,5066,171,4787,121,4766,111,4751,101,4736,91,4716,81,4651,62,4584,47,4459,29"/>
-<area shape="rect" href="OnetepDatReader_8cpp.html" title="Implementation of the ONETEP .dat file reader." alt="" coords="5113,262,5353,287"/>
-<area shape="poly" title=" " alt="" coords="4459,17,4531,22,4611,33,4694,50,4773,76,4790,86,4800,97,4811,107,4826,116,4869,126,4926,129,5060,126,5128,126,5191,130,5242,142,5262,152,5278,165,5285,177,5287,191,5280,218,5264,243,5247,263,5243,260,5260,240,5275,216,5282,190,5280,179,5274,168,5259,156,5240,147,5190,135,5128,131,5060,131,4926,134,4868,131,4824,121,4807,112,4797,101,4786,90,4771,81,4692,55,4610,38,4531,27,4459,22"/>
-<area shape="rect" href="OutmolReader_8hpp.html" title="Reader for CASTEP .outmol trajectory files." alt="" coords="5338,174,5585,199"/>
-<area shape="poly" title=" " alt="" coords="4459,17,4541,22,4634,32,4732,49,4826,76,4846,86,4859,97,4872,107,4890,116,4953,135,5007,147,5055,153,5101,155,5198,156,5320,164,5378,171,5377,177,5320,169,5197,161,5101,160,5055,158,5006,152,4951,141,4888,121,4869,112,4855,101,4843,90,4824,81,4730,54,4634,37,4541,27,4459,22"/>
-<area shape="rect" href="OutmolReader_8cpp.html" title="Implementation of the CASTEP .outmol file reader." alt="" coords="5445,262,5664,287"/>
-<area shape="poly" title=" " alt="" coords="4459,23,4689,42,4799,57,4877,76,4895,86,4906,97,4918,107,4934,116,4980,123,5059,126,5272,129,5383,132,5482,137,5558,147,5583,155,5599,165,5607,177,5609,191,5601,218,5585,244,5568,264,5564,260,5581,240,5597,216,5604,190,5602,179,5595,169,5581,160,5556,153,5482,142,5383,137,5272,134,5059,132,4979,128,4932,121,4914,112,4903,101,4891,90,4875,81,4798,62,4689,47,4459,28"/>
-<area shape="rect" href="XdatcarReader_8hpp.html" title="Reader for VASP XDATCAR trajectory files with lazy loading." alt="" coords="4794,174,5043,199"/>
-<area shape="poly" title=" " alt="" coords="4459,30,4557,48,4659,76,4700,95,4738,116,4816,147,4885,171,4883,177,4815,152,4736,121,4697,100,4658,81,4556,53,4458,35"/>
-<area shape="rect" href="FileReader_8hpp.html" title="Unified file reading interface for structure and trajectory files." alt="" coords="4945,86,5167,111"/>
-<area shape="poly" title=" " alt="" coords="4459,27,4676,48,4927,76,4981,83,4980,89,4926,81,4675,53,4459,32"/>
-<area shape="rect" href="core__bindings_8cpp.html" title=" " alt="" coords="5192,86,5413,111"/>
-<area shape="poly" title=" " alt="" coords="4459,22,4783,41,4981,57,5180,76,5235,83,5234,89,5180,81,4981,62,4783,46,4459,27"/>
-<area shape="rect" href="io__bindings_8cpp.html" title=" " alt="" coords="5437,86,5643,111"/>
-<area shape="poly" title=" " alt="" coords="4459,19,4884,35,5154,52,5425,76,5478,83,5477,89,5425,81,5153,57,4884,40,4459,24"/>
-<area shape="rect" href="Trajectory_8cpp.html" title="Implementation of the trajectory data container." alt="" coords="5667,86,5834,111"/>
-<area shape="poly" title=" " alt="" coords="4459,16,4679,18,4976,27,5314,45,5486,58,5655,76,5700,83,5699,89,5654,81,5486,64,5313,50,4976,32,4679,24,4459,22"/>
-<area shape="rect" href="CellReader_8cpp.html" title="Implementation of the CASTEP CELL file reader." alt="" coords="5859,86,6053,111"/>
-<area shape="poly" title=" " alt="" coords="4459,16,4708,18,5052,26,5447,44,5649,58,5847,76,5898,83,5897,89,5846,81,5649,63,5447,49,5052,31,4708,23,4459,21"/>
-<area shape="rect" href="CifReader_8cpp.html" title="Implementation of the CIF file format reader." alt="" coords="6078,86,6266,111"/>
-<area shape="poly" title=" " alt="" coords="4460,18,5269,37,5729,54,5920,64,6065,76,6116,83,6115,89,6065,81,5920,70,5728,59,5268,42,4459,24"/>
-<area shape="rect" href="VaspReader_8cpp.html" title="Implementation of the VASP POSCAR/CONTCAR file reader." alt="" coords="6290,86,6491,111"/>
-<area shape="poly" title=" " alt="" coords="4459,18,5369,36,5894,53,6113,64,6279,76,6332,83,6331,89,6278,81,6112,69,5894,58,5368,41,4459,23"/>
-<area shape="poly" title=" " alt="" coords="1682,103,1423,107,1067,117,660,136,451,151,247,169,193,177,193,171,246,164,451,146,659,131,1067,111,1423,101,1682,98"/>
-<area shape="rect" href="AngleCalculator_8hpp.html" title="Calculator for angular distribution functions." alt="" coords="3145,255,3301,295"/>
-<area shape="poly" title=" " alt="" coords="1916,99,2086,104,2303,115,2543,134,2784,164,2889,183,2992,207,3161,252,3160,257,2991,212,2888,188,2783,169,2543,139,2302,120,2086,109,1915,104"/>
-<area shape="poly" title=" " alt="" coords="1916,108,2122,131,2356,164,2369,166,2368,171,2355,169,2121,136,1915,114"/>
-<area shape="rect" href="CNCalculator_8hpp.html" title="Coordination number (CN) calculator." alt="" coords="1255,255,1399,295"/>
-<area shape="poly" title=" " alt="" coords="1736,126,1379,257,1377,252,1734,121"/>
-<area shape="poly" title=" " alt="" coords="1682,104,1477,112,1358,122,1238,136,1124,156,1023,182,980,197,944,215,914,235,893,256,885,275,893,293,909,306,933,318,999,335,1077,347,1152,354,1151,360,1076,353,998,341,931,323,906,311,888,296,880,275,888,253,911,231,941,210,978,193,1022,177,1123,150,1237,131,1358,117,1477,107,1681,98"/>
-<area shape="rect" href="DADCalculator_8hpp.html" title="Dihedral angle distribution (DAD) calculator." alt="" coords="2803,255,2951,295"/>
-<area shape="poly" title=" " alt="" coords="1916,97,2056,100,2229,110,2417,130,2511,145,2603,164,2670,183,2735,206,2840,252,2838,257,2733,211,2668,188,2602,169,2510,151,2416,136,2228,115,2056,105,1916,102"/>
-<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="1423,255,1598,295"/>
-<area shape="poly" title=" " alt="" coords="1757,128,1543,257,1540,252,1754,124"/>
-<area shape="rect" href="DistanceCalculator_8hpp.html" title="Pairwise distance calculator." alt="" coords="1623,255,1799,295"/>
-<area shape="poly" title=" " alt="" coords="1763,130,1746,147,1732,168,1723,190,1717,213,1713,255,1708,254,1712,212,1717,188,1727,165,1742,144,1759,126"/>
-<area shape="rect" href="GPUSQCalculator_8hpp.html" title="GPU&#45;accelerated structure factor S(Q) calculator with CPU fallback." alt="" coords="1823,255,1988,295"/>
-<area shape="poly" title=" " alt="" coords="1785,132,1775,169,1776,188,1782,205,1794,220,1808,233,1842,252,1839,257,1805,237,1790,224,1778,208,1771,189,1770,168,1780,130"/>
-<area shape="poly" title=" " alt="" coords="1915,98,2125,103,2402,113,2714,133,3030,164,3159,183,3287,207,3496,252,3495,258,3286,212,3158,188,3029,169,2714,138,2402,119,2124,108,1915,104"/>
-<area shape="rect" href="PADCalculator_8hpp.html" title="Plane angle distribution (PAD) calculator." alt="" coords="2975,255,3121,295"/>
-<area shape="poly" title=" " alt="" coords="1916,98,2069,103,2262,114,2473,133,2684,164,2771,183,2857,207,2997,252,2995,257,2856,212,2770,188,2683,169,2473,139,2261,119,2069,108,1915,104"/>
-<area shape="rect" href="RDCalculator_8hpp.html" title="Reduced distribution function calculator." alt="" coords="2012,255,2156,295"/>
-<area shape="poly" title=" " alt="" coords="1803,132,1811,170,1820,189,1832,204,1897,225,2012,254,2011,259,1896,230,1829,209,1815,192,1806,172,1797,133"/>
-<area shape="rect" href="RDFCalculator_8hpp.html" title="Radial distribution function (RDF) calculator." alt="" coords="3325,255,3472,295"/>
-<area shape="poly" title=" " alt="" coords="1916,99,2104,104,2350,114,2624,134,2900,164,3019,183,3136,207,3328,252,3327,257,3135,212,3018,188,2899,169,2624,139,2349,120,2104,109,1915,104"/>
-<area shape="rect" href="SDFCalculator_8hpp.html" title="Spatial Distribution Function (SDF) calculator." alt="" coords="2181,255,2326,295"/>
-<area shape="poly" title=" " alt="" coords="1815,130,1840,170,1856,189,1876,204,1915,225,1950,238,1983,243,2015,245,2083,244,2123,246,2168,252,2181,254,2180,260,2167,257,2122,251,2083,249,2015,250,1982,249,1949,243,1913,230,1873,209,1853,193,1835,173,1810,133"/>
-<area shape="rect" href="SteinhardtCalculator_8hpp.html" title="Steinhardt bond&#45;order parameter calculator." alt="" coords="2351,255,2537,295"/>
-<area shape="poly" title=" " alt="" coords="1916,100,2089,105,2282,117,2445,136,2501,149,2532,165,2540,177,2541,190,2529,215,2506,238,2479,256,2476,252,2503,234,2525,212,2536,189,2535,179,2529,169,2500,154,2445,141,2281,122,2089,111,1916,105"/>
-<area shape="rect" href="StructureFactorCalculator_8hpp.html" title="Structure factor S(Q) calculator." alt="" coords="2562,255,2779,295"/>
-<area shape="poly" title=" " alt="" coords="1915,99,2077,103,2262,114,2434,134,2503,147,2556,164,2588,183,2617,206,2658,252,2655,256,2613,210,2585,187,2553,169,2502,152,2433,139,2262,119,2077,109,1915,104"/>
-<area shape="poly" title=" " alt="" coords="1915,98,2146,102,2457,112,2811,132,2991,146,3168,164,3308,183,3446,207,3670,253,3669,258,3445,212,3307,188,3168,169,2991,151,2811,137,2457,117,2146,107,1915,103"/>
-<area shape="rect" href="VDOSCalculator_8hpp.html" title="Vibrational density of states (VDOS) calculator." alt="" coords="903,255,1059,295"/>
-<area shape="poly" title=" " alt="" coords="1682,117,1534,139,1374,169,1192,214,1043,257,1041,252,1191,209,1373,164,1533,134,1681,112"/>
-<area shape="rect" href="XRDCalculator_8hpp.html" title="X&#45;ray diffraction (XRD) pattern calculator." alt="" coords="1084,255,1231,295"/>
-<area shape="poly" title=" " alt="" coords="1701,124,1517,169,1354,215,1217,257,1216,252,1352,210,1515,164,1700,119"/>
-<area shape="rect" href="SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="1887,174,2108,199"/>
-<area shape="poly" title=" " alt="" coords="1856,122,1972,172,1970,176,1854,127"/>
-<area shape="rect" href="ArrowWriter_8hpp.html" title="Writer for Apache Arrow/Parquet columnar output format." alt="" coords="601,262,828,287"/>
-<area shape="poly" title=" " alt="" coords="1682,104,1488,109,1258,121,1041,140,953,153,886,169,734,264,731,260,884,164,952,148,1041,134,1258,115,1488,104,1681,99"/>
-<area shape="rect" href="BaseWriter_8hpp.html" title="Abstract base class for all file format writers." alt="" coords="493,174,715,199"/>
-<area shape="poly" title=" " alt="" coords="1681,107,1263,128,999,146,733,169,676,177,675,171,733,164,998,140,1262,122,1681,102"/>
-<area shape="rect" href="CSVWriter_8hpp.html" title="Writer for CSV tabular output format." alt="" coords="63,262,278,287"/>
-<area shape="poly" title=" " alt="" coords="1682,105,1382,111,1010,124,673,143,553,155,482,169,467,178,457,188,446,198,430,209,385,228,337,244,248,264,247,259,336,239,383,223,428,204,443,194,453,184,464,173,480,164,552,150,673,137,1010,118,1382,106,1681,99"/>
-<area shape="rect" href="HDF5Writer_8hpp.html" title="Writer for HDF5 hierarchical data format." alt="" coords="302,262,527,287"/>
-<area shape="poly" title=" " alt="" coords="1682,106,1476,113,1227,126,991,144,894,156,821,169,794,178,774,188,754,199,727,209,601,242,487,265,486,259,600,237,726,204,752,194,772,183,792,173,819,164,893,150,991,139,1227,120,1475,108,1682,100"/>
-<area shape="rect" href="FileWriter_8hpp.html" title="Unified file writing interface for analysis output." alt="" coords="2133,174,2345,199"/>
-<area shape="poly" title=" " alt="" coords="1909,119,2180,171,2179,177,1908,124"/>
-<area shape="poly" title=" " alt="" coords="1681,103,1452,106,1143,116,792,136,613,151,438,169,418,172,418,167,437,164,612,146,791,131,1142,111,1452,101,1681,98"/>
-<area shape="poly" title=" " alt="" coords="2533,191,2802,213,2967,230,3132,252,3145,254,3144,259,3131,257,2966,235,2801,218,2533,196"/>
-<area shape="poly" title=" " alt="" coords="2355,209,2211,224,2089,231,1880,232,1673,234,1553,241,1411,257,1399,259,1398,254,1410,252,1552,236,1673,228,1880,227,2088,226,2211,219,2354,204"/>
-<area shape="poly" title=" " alt="" coords="2533,202,2791,252,2804,255,2802,260,2790,257,2532,207"/>
-<area shape="poly" title=" " alt="" coords="2355,209,2242,222,2145,230,1981,235,1818,239,1723,245,1611,257,1599,259,1598,254,1610,252,1722,240,1817,234,1981,229,2145,224,2241,217,2354,204"/>
-<area shape="poly" title=" " alt="" coords="2355,209,2201,227,2081,234,1962,241,1811,257,1799,259,1798,254,1810,252,1961,236,2081,229,2201,222,2354,204"/>
-<area shape="poly" title=" " alt="" coords="2355,209,2176,234,2000,257,1989,259,1988,254,1999,252,2175,229,2355,204"/>
-<area shape="poly" title=" " alt="" coords="2533,187,2708,191,2945,202,3213,222,3484,252,3496,254,3495,259,3484,257,3213,227,2945,208,2708,197,2533,192"/>
-<area shape="poly" title=" " alt="" coords="2533,194,2731,218,2963,252,2975,254,2974,260,2962,257,2730,223,2533,200"/>
-<area shape="poly" title=" " alt="" coords="2356,212,2157,259,2156,254,2355,206"/>
-<area shape="poly" title=" " alt="" coords="2533,188,2876,207,3093,226,3312,252,3325,254,3324,259,3311,257,3093,231,2875,212,2533,194"/>
-<area shape="poly" title=" " alt="" coords="2391,215,2296,257,2294,252,2388,210"/>
-<area shape="poly" title=" " alt="" coords="2447,221,2447,254,2441,254,2441,221"/>
-<area shape="poly" title=" " alt="" coords="2507,209,2622,252,2620,257,2506,214"/>
-<area shape="poly" title=" " alt="" coords="2533,186,2735,189,3014,199,3334,219,3497,233,3658,252,3670,254,3669,259,3657,257,3497,239,3333,224,3014,204,2735,194,2533,191"/>
-<area shape="poly" title=" " alt="" coords="2355,209,2160,228,1994,236,1847,237,1711,234,1575,230,1430,231,1265,239,1072,257,1060,259,1059,254,1072,252,1265,233,1430,226,1575,225,1711,228,1848,231,1994,231,2159,223,2354,204"/>
-<area shape="poly" title=" " alt="" coords="2355,209,2186,226,2042,234,1915,235,1796,232,1678,230,1552,232,1410,240,1243,257,1231,259,1230,254,1242,252,1410,234,1552,226,1678,225,1796,227,1915,229,2041,228,2185,221,2354,204"/>
-<area shape="poly" title=" " alt="" coords="1300,306,1262,344,1258,341,1296,303"/>
-<area shape="poly" title=" " alt="" coords="2790,297,2650,310,2470,322,2049,341,1331,362,1330,357,2049,336,2470,317,2649,305,2789,292"/>
-<area shape="poly" title=" " alt="" coords="2962,297,2805,312,2603,324,2130,344,1664,356,1331,363,1331,357,1664,351,2130,338,2603,319,2804,306,2961,292"/>
-<area shape="poly" title=" " alt="" coords="3312,297,3121,314,2874,328,2293,347,1726,358,1331,363,1331,358,1726,353,2292,342,2874,322,3120,308,3311,292"/>
-<area shape="poly" title=" " alt="" coords="3656,297,3431,316,3139,330,2451,350,1784,360,1331,364,1331,358,1784,355,2451,345,3139,325,3431,310,3656,292"/>
-<area shape="poly" title=" " alt="" coords="1052,297,1185,340,1183,345,1051,302"/>
-<area shape="poly" title=" " alt="" coords="1187,303,1225,341,1221,344,1183,306"/>
-<area shape="poly" title=" " alt="" coords="631,206,701,260,698,264,628,210"/>
-<area shape="poly" title=" " alt="" coords="533,205,229,265,228,259,532,199"/>
-<area shape="poly" title=" " alt="" coords="567,208,441,264,439,259,565,203"/>
-<area shape="poly" title=" " alt="" coords="203,130,147,176,143,171,199,126"/>
-<area shape="poly" title=" " alt="" coords="124,109,93,117,64,129,37,146,15,168,9,183,9,201,20,241,39,276,52,293,76,303,113,313,224,329,369,341,537,349,882,358,1152,359,1152,364,882,363,536,355,369,346,223,334,112,318,74,308,49,297,35,279,16,243,3,202,4,182,11,165,34,142,61,124,91,112,123,104"/>
-<area shape="poly" title=" " alt="" coords="270,126,317,164,314,169,267,130"/>
-<area shape="poly" title=" " alt="" coords="3875,207,3932,260,3928,263,3871,211"/>
-<area shape="poly" title=" " alt="" coords="4401,116,3938,177,3937,171,4401,111"/>
-<area shape="poly" title=" " alt="" coords="4441,117,4194,177,4193,171,4440,112"/>
-<area shape="poly" title=" " alt="" coords="4484,124,4446,168,4442,164,4480,120"/>
-<area shape="poly" title=" " alt="" coords="4536,116,4625,164,4623,169,4533,120"/>
-<area shape="poly" title=" " alt="" coords="4622,110,4826,134,5056,164,5067,166,5066,171,5055,169,4825,139,4622,115"/>
-<area shape="poly" title=" " alt="" coords="4631,108,5276,164,5351,171,5351,177,5276,169,4630,113"/>
-<area shape="poly" title=" " alt="" coords="4571,112,4864,171,4862,177,4570,117"/>
-<area shape="poly" title=" " alt="" coords="4153,212,4159,261,4154,262,4147,213"/>
-<area shape="poly" title=" " alt="" coords="4426,221,4421,262,4416,261,4421,220"/>
-<area shape="poly" title=" " alt="" coords="5191,216,5226,260,5222,263,5187,219"/>
-<area shape="poly" title=" " alt="" coords="5486,207,5543,259,5540,263,5482,211"/>
+<area shape="rect" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="3985,5,4179,31"/>
+<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="1932,79,2139,119"/>
+<area shape="poly" title=" " alt="" coords="3971,26,2139,96,2139,91,3971,21"/>
+<area shape="rect" href="AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="803,174,1012,199"/>
+<area shape="poly" title=" " alt="" coords="3971,22,3273,26,2270,35,1778,42,1359,52,1062,65,975,73,938,81,922,101,913,127,909,174,904,174,907,126,917,99,935,76,974,68,1062,60,1359,47,1778,37,2270,29,3273,20,3971,17"/>
+<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="2288,167,2439,207"/>
+<area shape="poly" title=" " alt="" coords="3970,28,3643,49,3241,81,2785,132,2439,177,2438,172,2785,127,3240,76,3643,43,3970,23"/>
+<area shape="rect" href="DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="1713,343,1891,383"/>
+<area shape="poly" title=" " alt="" coords="3971,23,2486,39,1576,56,1195,68,907,81,832,83,758,81,616,66,482,48,359,36,303,35,249,41,200,52,154,72,113,101,76,140,43,191,15,256,8,276,9,284,14,293,38,303,89,313,254,328,483,340,752,348,1306,357,1712,359,1712,364,1306,362,752,354,483,346,253,334,88,318,37,308,11,297,4,286,3,276,10,254,38,189,71,137,109,97,152,67,198,47,248,35,302,30,359,30,483,42,616,61,758,75,832,78,907,76,1195,63,1576,51,2486,34,3971,17"/>
+<area shape="rect" href="MSDCalculator_8hpp.html" title="Mean Squared Displacement (MSD) calculator." alt="" coords="3979,255,4129,295"/>
+<area shape="poly" title=" " alt="" coords="3971,22,3783,25,3567,34,3467,41,3382,51,3319,65,3299,72,3286,81,3266,107,3260,128,3265,143,3281,156,3339,179,3419,204,3498,228,3567,240,3629,245,3688,245,3811,241,3883,243,3966,252,3980,254,3979,259,3966,257,3882,248,3811,246,3688,250,3629,250,3567,246,3497,233,3417,209,3338,184,3279,161,3261,147,3254,128,3261,105,3283,77,3296,68,3318,59,3381,46,3467,36,3567,28,3782,20,3971,17"/>
+<area shape="rect" href="VACFCalculator_8hpp.html" title="Velocity autocorrelation function (VACF) calculator." alt="" coords="45,255,199,295"/>
+<area shape="poly" title=" " alt="" coords="3971,24,2953,42,2357,60,2108,70,1919,81,1816,87,1727,88,1576,88,1504,93,1429,107,1347,131,1253,169,1239,178,1231,189,1222,200,1207,209,1164,223,1114,234,995,248,859,254,714,254,430,250,309,251,212,257,199,259,198,254,211,252,309,245,430,244,714,249,859,248,995,243,1113,229,1163,218,1205,204,1218,196,1227,185,1236,174,1250,164,1345,126,1428,101,1503,88,1575,82,1727,82,1816,81,1919,76,2108,65,2357,54,2953,37,3971,18"/>
+<area shape="rect" href="analysis__bindings_8cpp.html" title="Pybind11 bindings for correlation::analysis types." alt="" coords="1036,167,1195,207"/>
+<area shape="poly" title=" " alt="" coords="3971,22,3342,23,2448,30,2007,37,1627,48,1348,62,1261,71,1215,81,1187,99,1163,122,1128,168,1124,165,1159,118,1184,94,1213,76,1260,66,1348,57,1626,42,2007,32,2448,25,3342,18,3971,17"/>
+<area shape="rect" href="DynamicsAnalyzer_8hpp.html" title="Static methods for dynamics properties (VACF, VDOS, MSD)." alt="" coords="3297,79,3493,119"/>
+<area shape="poly" title=" " alt="" coords="3971,32,3759,53,3513,81,3494,84,3493,79,3512,76,3758,47,3971,26"/>
+<area shape="rect" href="TrajectoryAnalyzer_8hpp.html" title="correlation::core::Trajectory&#45;level analysis coordination (averaging, frame iteration)." alt="" coords="949,79,1143,119"/>
+<area shape="poly" title=" " alt="" coords="3971,22,3415,25,2603,33,1773,51,1426,64,1163,81,1144,83,1143,78,1163,76,1426,59,1773,46,2603,28,3415,20,3971,17"/>
+<area shape="rect" href="ArcReader_8hpp.html" title="Reader for BIOVIA/Accelrys ARC trajectory files." alt="" coords="3475,174,3695,199"/>
+<area shape="poly" title=" " alt="" coords="3972,25,3911,31,3845,41,3779,58,3715,81,3678,102,3644,128,3597,176,3593,172,3641,124,3675,98,3713,76,3777,53,3844,36,3910,25,3971,19"/>
+<area shape="rect" href="ArcReader_8cpp.html" title="Implementation of the ARC file format reader." alt="" coords="4153,262,4344,287"/>
+<area shape="poly" title=" " alt="" coords="3971,28,3816,45,3731,60,3648,81,3569,103,3494,128,3467,144,3451,161,3448,170,3449,180,3464,205,3478,214,3503,222,3579,234,3680,241,3793,245,4010,248,4141,252,4190,259,4189,265,4140,257,4010,254,3792,251,3679,246,3579,239,3502,227,3476,219,3460,209,3444,182,3443,170,3446,158,3464,139,3492,123,3567,98,3647,76,3730,55,3816,40,3971,22"/>
+<area shape="rect" href="BaseReader_8hpp.html" title="Abstract base class for all file format readers." alt="" coords="4120,86,4351,111"/>
+<area shape="poly" title=" " alt="" coords="4118,35,4214,83,4211,88,4116,39"/>
+<area shape="rect" href="CarReader_8hpp.html" title="Reader for BIOVIA/Accelrys CAR structure files." alt="" coords="3770,174,3991,199"/>
+<area shape="poly" title=" " alt="" coords="4059,42,3896,176,3893,172,4056,38"/>
+<area shape="rect" href="CarReader_8cpp.html" title="Implementation of the CAR file format reader." alt="" coords="4369,262,4561,287"/>
+<area shape="poly" title=" " alt="" coords="4006,36,3906,61,3854,78,3807,98,3770,121,3747,147,3743,160,3743,174,3748,189,3760,205,3772,213,3794,220,3861,231,3950,239,4049,243,4240,248,4356,252,4404,259,4403,265,4355,257,4240,253,4049,249,3949,244,3861,236,3793,225,3770,218,3756,209,3743,192,3737,175,3737,159,3743,144,3767,117,3805,94,3852,73,3904,56,4005,31"/>
+<area shape="rect" href="CastepMdReader_8hpp.html" title="Reader for CASTEP molecular dynamics trajectory files." alt="" coords="4067,167,4257,207"/>
+<area shape="poly" title=" " alt="" coords="4088,44,4096,80,4110,117,4126,143,4145,165,4141,168,4122,146,4105,120,4090,81,4083,45"/>
+<area shape="rect" href="CastepMdReader_8cpp.html" title="Implementation of the CASTEP MD trajectory reader." alt="" coords="4585,262,4819,287"/>
+<area shape="poly" title=" " alt="" coords="4071,44,4054,79,4040,123,4037,145,4038,167,4044,187,4056,205,4067,212,4086,218,4144,229,4306,241,4573,252,4628,259,4627,265,4572,257,4306,247,4143,234,4084,223,4064,217,4052,209,4039,189,4033,168,4032,145,4035,122,4049,77,4066,41"/>
+<area shape="rect" href="LammpsDumpReader_8hpp.html" title="Reader for LAMMPS dump trajectory files." alt="" coords="4282,167,4503,207"/>
+<area shape="poly" title=" " alt="" coords="4193,28,4294,47,4336,60,4364,77,4379,97,4389,122,4395,166,4390,167,4384,123,4375,100,4360,81,4333,65,4293,52,4192,34"/>
+<area shape="rect" href="OnetepDatReader_8hpp.html" title="Reader for ONETEP .dat structure files." alt="" coords="4801,167,4997,207"/>
+<area shape="poly" title=" " alt="" coords="4194,24,4319,42,4387,57,4452,76,4473,86,4488,96,4503,107,4523,116,4801,166,4800,171,4521,121,4500,111,4485,101,4471,91,4450,81,4385,62,4318,47,4193,29"/>
+<area shape="rect" href="OnetepDatReader_8cpp.html" title="Implementation of the ONETEP .dat file reader." alt="" coords="4891,262,5131,287"/>
+<area shape="poly" title=" " alt="" coords="4193,17,4265,22,4345,33,4428,50,4507,76,4524,86,4534,97,4545,107,4560,116,4603,126,4660,129,4794,126,4862,126,4924,130,4976,142,4996,152,5012,165,5024,189,5027,216,5024,242,5018,262,5013,261,5018,241,5022,216,5019,190,5008,168,4993,157,4974,147,4924,136,4862,131,4794,131,4660,134,4602,131,4558,121,4542,112,4531,101,4520,90,4505,81,4426,55,4344,38,4265,27,4193,22"/>
+<area shape="rect" href="OutmolReader_8hpp.html" title="Reader for CASTEP .outmol trajectory files." alt="" coords="5072,174,5319,199"/>
+<area shape="poly" title=" " alt="" coords="4193,17,4275,22,4368,32,4466,49,4560,76,4580,86,4593,97,4606,107,4624,116,4687,135,4741,147,4789,153,4835,155,4932,156,5054,164,5112,171,5111,177,5054,169,4931,161,4835,160,4789,158,4740,152,4685,141,4622,121,4603,112,4590,101,4577,90,4558,81,4465,54,4368,37,4275,27,4193,22"/>
+<area shape="rect" href="OutmolReader_8cpp.html" title="Implementation of the CASTEP .outmol file reader." alt="" coords="5189,262,5407,287"/>
+<area shape="poly" title=" " alt="" coords="4193,23,4424,42,4533,57,4611,76,4629,86,4640,97,4652,107,4668,116,4714,123,4793,126,5007,129,5118,132,5216,137,5292,147,5317,155,5333,165,5341,177,5343,190,5338,217,5325,243,5310,263,5306,260,5320,240,5333,216,5338,190,5336,179,5329,169,5315,160,5291,153,5216,142,5117,137,5006,134,4793,132,4713,128,4666,121,4648,112,4637,101,4625,90,4609,81,4532,62,4423,47,4193,28"/>
+<area shape="rect" href="XdatcarReader_8hpp.html" title="Reader for VASP XDATCAR trajectory files with lazy loading." alt="" coords="4528,174,4777,199"/>
+<area shape="poly" title=" " alt="" coords="4193,30,4291,48,4394,76,4434,95,4472,116,4551,147,4619,171,4617,177,4549,152,4470,121,4431,100,4392,81,4290,53,4192,35"/>
+<area shape="rect" href="FileReader_8hpp.html" title="Unified file reading interface for structure and trajectory files." alt="" coords="4679,86,4901,111"/>
+<area shape="poly" title=" " alt="" coords="4193,27,4410,48,4661,76,4715,83,4714,89,4660,81,4409,53,4193,32"/>
+<area shape="rect" href="core__bindings_8cpp.html" title=" " alt="" coords="4926,86,5147,111"/>
+<area shape="poly" title=" " alt="" coords="4193,22,4517,41,4715,57,4914,76,4969,83,4968,89,4914,81,4715,62,4517,46,4193,27"/>
+<area shape="rect" href="io__bindings_8cpp.html" title=" " alt="" coords="5171,86,5377,111"/>
+<area shape="poly" title=" " alt="" coords="4193,19,4618,35,4888,52,5160,76,5212,83,5211,89,5159,81,4887,57,4618,40,4193,24"/>
+<area shape="rect" href="Trajectory_8cpp.html" title="Implementation of the trajectory data container." alt="" coords="5401,86,5568,111"/>
+<area shape="poly" title=" " alt="" coords="4193,16,4413,18,4710,27,5048,45,5220,58,5389,76,5434,83,5433,89,5388,81,5220,64,5047,50,4710,32,4413,24,4193,22"/>
+<area shape="rect" href="CellReader_8cpp.html" title="Implementation of the CASTEP CELL file reader." alt="" coords="5593,86,5787,111"/>
+<area shape="poly" title=" " alt="" coords="4193,16,4442,18,4786,26,5181,44,5383,58,5581,76,5632,83,5631,89,5580,81,5383,63,5181,49,4786,31,4442,23,4193,21"/>
+<area shape="rect" href="CifReader_8cpp.html" title="Implementation of the CIF file format reader." alt="" coords="5812,86,6000,111"/>
+<area shape="poly" title=" " alt="" coords="4194,18,5003,37,5463,54,5654,64,5800,76,5850,83,5849,89,5799,81,5654,70,5463,59,5002,42,4194,24"/>
+<area shape="rect" href="VaspReader_8cpp.html" title="Implementation of the VASP POSCAR/CONTCAR file reader." alt="" coords="6024,86,6225,111"/>
+<area shape="poly" title=" " alt="" coords="4193,18,5103,36,5628,53,5847,64,6013,76,6066,83,6065,89,6012,81,5846,69,5628,58,5102,41,4193,23"/>
+<area shape="poly" title=" " alt="" coords="1918,107,1521,127,1273,145,1024,169,971,177,971,171,1023,164,1272,140,1521,122,1918,101"/>
+<area shape="rect" href="AngleCalculator_8hpp.html" title="Calculator for angular distribution functions." alt="" coords="3799,255,3955,295"/>
+<area shape="poly" title=" " alt="" coords="2152,99,2377,105,2652,116,2915,135,3023,148,3105,164,3131,173,3149,184,3166,195,3191,204,3279,224,3355,235,3422,239,3486,239,3618,238,3696,242,3786,252,3799,254,3798,259,3786,257,3695,247,3618,244,3486,245,3422,245,3354,240,3278,229,3189,209,3164,200,3146,189,3128,178,3104,169,3022,154,2914,141,2651,122,2377,110,2152,104"/>
+<area shape="poly" title=" " alt="" coords="2121,120,2292,164,2291,169,2120,125"/>
+<area shape="rect" href="CNCalculator_8hpp.html" title="Coordination number (CN) calculator." alt="" coords="3289,255,3433,295"/>
+<area shape="poly" title=" " alt="" coords="2153,103,2456,125,2639,142,2821,164,3277,252,3289,255,3288,260,3276,257,2820,169,2638,147,2456,130,2153,109"/>
+<area shape="poly" title=" " alt="" coords="1918,106,1855,113,1786,124,1716,143,1650,169,1637,178,1629,189,1620,200,1606,209,1575,217,1528,221,1397,224,1044,218,860,216,696,219,628,224,572,232,531,243,506,257,500,266,498,275,500,284,506,293,523,300,557,307,671,320,1017,339,1409,351,1713,357,1712,363,1409,357,1017,345,670,325,556,312,521,305,503,297,495,286,493,275,495,263,503,253,529,238,571,227,628,219,696,214,860,210,1044,212,1397,219,1528,216,1574,211,1604,204,1617,196,1625,186,1633,174,1647,164,1714,138,1785,119,1854,107,1918,101"/>
+<area shape="rect" href="ChiralityCalculator_8hpp.html" title="Chiral order parameter (COP) calculator." alt="" coords="688,255,863,295"/>
+<area shape="poly" title=" " alt="" coords="1919,118,1835,138,1751,169,1737,179,1727,189,1716,200,1700,209,1622,229,1524,241,1411,247,1291,249,1056,250,955,251,874,257,863,259,863,254,874,252,955,246,1056,244,1291,244,1411,242,1523,236,1621,224,1698,204,1713,196,1723,186,1733,175,1749,164,1833,133,1918,113"/>
+<area shape="rect" href="DADCalculator_8hpp.html" title="Dihedral angle distribution (DAD) calculator." alt="" coords="3457,255,3605,295"/>
+<area shape="poly" title=" " alt="" coords="2153,99,2310,104,2507,115,2724,134,2941,164,2983,173,3014,183,3087,204,3187,221,3265,230,3344,237,3445,252,3458,254,3457,260,3444,257,3344,243,3265,235,3186,226,3085,209,3013,188,2981,178,2940,169,2723,139,2507,120,2309,109,2153,104"/>
+<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="887,255,1061,295"/>
+<area shape="poly" title=" " alt="" coords="1925,125,1862,143,1802,169,1787,179,1778,190,1767,200,1751,209,1687,226,1606,237,1415,247,1223,249,1140,252,1074,257,1062,259,1061,254,1074,252,1140,247,1223,244,1415,241,1606,232,1686,221,1749,204,1764,196,1774,186,1784,175,1799,164,1861,138,1923,120"/>
+<area shape="rect" href="DistanceCalculator_8hpp.html" title="Pairwise distance calculator." alt="" coords="1086,255,1262,295"/>
+<area shape="poly" title=" " alt="" coords="1956,125,1904,145,1853,169,1838,179,1828,190,1818,200,1802,209,1726,235,1659,249,1600,254,1543,254,1424,248,1355,250,1274,257,1263,259,1262,254,1274,252,1354,244,1424,243,1543,249,1599,249,1659,244,1724,230,1800,204,1815,196,1825,186,1835,175,1850,164,1902,140,1954,120"/>
+<area shape="rect" href="GPUSQCalculator_8hpp.html" title="GPU&#45;accelerated structure factor S(Q) calculator with CPU fallback." alt="" coords="1286,255,1451,295"/>
+<area shape="poly" title=" " alt="" coords="1981,127,1903,169,1879,190,1869,200,1852,209,1796,229,1748,241,1703,247,1662,248,1574,248,1523,250,1464,257,1452,259,1451,254,1463,252,1522,245,1574,242,1661,243,1703,241,1747,236,1795,224,1850,204,1865,196,1876,186,1900,164,1978,122"/>
+<area shape="rect" href="HyperuniformityCalculator_8hpp.html" title="Calculator for local number variance and hyperuniformity index." alt="" coords="1475,255,1702,295"/>
+<area shape="poly" title=" " alt="" coords="2003,129,1903,209,1867,222,1817,235,1703,257,1702,252,1816,229,1866,217,1901,204,2000,125"/>
+<area shape="rect" href="LocalEntropyCalculator_8hpp.html" title="Local Entropic Fingerprint order parameter calculator." alt="" coords="1726,255,1929,295"/>
+<area shape="poly" title=" " alt="" coords="2019,132,1991,171,1954,209,1915,236,1875,257,1872,252,1912,231,1951,205,1987,167,2014,129"/>
+<area shape="poly" title=" " alt="" coords="2152,98,2390,102,2682,112,2964,132,3079,146,3167,164,3189,173,3205,184,3220,195,3241,204,3348,230,3440,243,3522,247,3600,245,3761,238,3856,241,3966,252,3980,254,3979,259,3966,257,3855,246,3761,244,3600,250,3522,252,3440,248,3347,235,3240,209,3217,200,3202,189,3187,178,3165,169,3078,151,2963,137,2682,117,2390,107,2152,103"/>
+<area shape="rect" href="PADCalculator_8hpp.html" title="Plane angle distribution (PAD) calculator." alt="" coords="3629,255,3775,295"/>
+<area shape="poly" title=" " alt="" coords="2153,101,2616,122,2858,140,2957,151,3033,164,3064,173,3086,184,3109,195,3139,204,3210,219,3271,227,3376,234,3482,237,3617,252,3629,254,3629,259,3616,257,3482,243,3376,239,3271,233,3209,224,3137,209,3107,200,3084,189,3062,178,3032,169,2956,157,2857,145,2615,127,2152,106"/>
+<area shape="rect" href="RDCalculator_8hpp.html" title="Reduced distribution function calculator." alt="" coords="1953,255,2097,295"/>
+<area shape="poly" title=" " alt="" coords="2036,133,2028,255,2023,254,2031,132"/>
+<area shape="rect" href="RDFCalculator_8hpp.html" title="Radial distribution function (RDF) calculator." alt="" coords="517,255,663,295"/>
+<area shape="poly" title=" " alt="" coords="1919,112,1810,132,1754,148,1700,169,1686,179,1676,189,1666,200,1650,209,1607,222,1558,232,1441,245,1308,250,1166,251,889,248,771,250,676,257,664,259,663,254,675,252,770,245,889,243,1166,246,1308,245,1441,240,1557,227,1606,217,1648,204,1663,196,1672,186,1682,175,1698,164,1752,143,1809,127,1918,107"/>
+<area shape="rect" href="SDFCalculator_8hpp.html" title="Spatial Distribution Function (SDF) calculator." alt="" coords="2121,255,2267,295"/>
+<area shape="poly" title=" " alt="" coords="2064,127,2179,253,2175,256,2060,131"/>
+<area shape="rect" href="SteinhardtCalculator_8hpp.html" title="Steinhardt bond&#45;order parameter calculator." alt="" coords="2291,255,2478,295"/>
+<area shape="poly" title=" " alt="" coords="2086,122,2348,252,2345,257,2084,127"/>
+<area shape="rect" href="StructureFactorCalculator_8hpp.html" title="Structure factor S(Q) calculator." alt="" coords="2503,255,2720,295"/>
+<area shape="poly" title=" " alt="" coords="2153,103,2222,110,2297,122,2376,140,2451,164,2492,184,2531,207,2591,252,2588,257,2528,212,2489,188,2449,169,2374,145,2296,127,2221,116,2152,108"/>
+<area shape="poly" title=" " alt="" coords="1918,105,1762,111,1584,123,1420,142,1353,154,1303,169,1288,178,1279,189,1268,200,1252,209,1207,223,1154,233,1030,247,888,252,736,253,440,249,313,250,212,257,199,259,198,254,211,252,313,245,440,244,736,247,887,247,1029,242,1153,228,1206,218,1250,204,1265,196,1275,185,1285,174,1301,164,1352,149,1419,136,1584,118,1762,106,1918,100"/>
+<area shape="rect" href="VDOSCalculator_8hpp.html" title="Vibrational density of states (VDOS) calculator." alt="" coords="2937,255,3093,295"/>
+<area shape="poly" title=" " alt="" coords="2153,107,2359,129,2593,164,2790,208,2952,252,2951,257,2789,213,2592,169,2358,134,2152,112"/>
+<area shape="rect" href="VoronoiCalculator_8hpp.html" title="Voronoi Tessellation order parameter and metric calculator." alt="" coords="2745,255,2913,295"/>
+<area shape="poly" title=" " alt="" coords="2153,108,2321,129,2415,145,2507,164,2658,208,2782,252,2780,257,2657,213,2505,169,2414,150,2320,135,2152,113"/>
+<area shape="rect" href="XRDCalculator_8hpp.html" title="X&#45;ray diffraction (XRD) pattern calculator." alt="" coords="3118,255,3265,295"/>
+<area shape="poly" title=" " alt="" coords="2152,105,2404,127,2552,143,2700,164,2929,208,3118,252,3117,257,2928,213,2699,169,2552,149,2404,132,2152,110"/>
+<area shape="rect" href="PdfPlotter_8hpp.html" title="PDF generator for distribution function histograms using pdfgen." alt="" coords="223,262,442,287"/>
+<area shape="poly" title=" " alt="" coords="1918,107,1775,115,1614,127,1466,145,1406,156,1360,169,1344,178,1333,189,1321,200,1303,209,1223,228,1122,240,1007,246,885,249,646,250,543,252,461,257,403,265,403,259,460,252,543,247,646,245,885,244,1007,241,1122,235,1222,223,1301,204,1318,195,1329,185,1341,174,1358,164,1404,151,1465,140,1614,122,1775,109,1918,102"/>
+<area shape="rect" href="SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="1371,174,1593,199"/>
+<area shape="poly" title=" " alt="" coords="1919,121,1556,177,1555,171,1918,115"/>
+<area shape="poly" title=" " alt="" coords="1919,111,1622,136,1265,169,1195,177,1194,172,1264,164,1621,130,1918,106"/>
+<area shape="poly" title=" " alt="" coords="2453,188,3123,210,3506,229,3665,240,3786,252,3799,254,3798,259,3786,257,3665,245,3506,235,3123,216,2452,193"/>
+<area shape="poly" title=" " alt="" coords="2452,188,2608,194,2813,205,3044,224,3277,252,3289,254,3288,259,3276,257,3044,229,2813,210,2608,199,2452,193"/>
+<area shape="poly" title=" " alt="" coords="2274,193,1573,216,1169,235,1001,246,874,257,863,259,863,253,874,252,1001,240,1169,230,1572,211,2274,188"/>
+<area shape="poly" title=" " alt="" coords="2453,186,2634,191,2881,201,3162,221,3445,252,3458,254,3457,259,3444,257,3161,226,2881,207,2634,196,2452,192"/>
+<area shape="poly" title=" " alt="" coords="2274,194,1667,218,1325,237,1074,257,1062,259,1061,254,1074,252,1324,232,1667,213,2274,188"/>
+<area shape="poly" title=" " alt="" coords="2274,195,1762,221,1480,239,1274,257,1263,259,1262,254,1274,252,1480,234,1762,216,2274,189"/>
+<area shape="poly" title=" " alt="" coords="2274,194,1919,213,1692,231,1464,257,1452,259,1451,254,1463,252,1691,226,1918,208,2274,188"/>
+<area shape="poly" title=" " alt="" coords="2274,199,2022,223,1714,257,1702,259,1702,254,1714,252,2022,217,2274,193"/>
+<area shape="poly" title=" " alt="" coords="2275,204,1941,257,1930,259,1929,254,1940,252,2274,199"/>
+<area shape="poly" title=" " alt="" coords="2452,187,3207,208,3646,227,3828,239,3966,252,3980,254,3979,259,3966,257,3828,244,3645,232,3207,213,2452,192"/>
+<area shape="poly" title=" " alt="" coords="2452,188,3043,212,3375,230,3617,252,3629,254,3629,259,3616,257,3374,236,3043,217,2452,194"/>
+<area shape="poly" title=" " alt="" coords="2277,213,2098,258,2096,253,2275,207"/>
+<area shape="poly" title=" " alt="" coords="2274,193,1412,221,946,240,676,257,664,259,663,254,675,252,946,235,1412,216,2274,188"/>
+<area shape="poly" title=" " alt="" coords="2315,215,2232,257,2230,252,2313,210"/>
+<area shape="poly" title=" " alt="" coords="2374,220,2382,254,2377,255,2369,221"/>
+<area shape="poly" title=" " alt="" coords="2432,209,2558,252,2556,257,2430,214"/>
+<area shape="poly" title=" " alt="" coords="2274,193,1134,224,522,244,212,257,199,259,198,254,211,252,522,238,1134,219,2274,188"/>
+<area shape="poly" title=" " alt="" coords="2453,194,2668,217,2925,252,2938,254,2937,259,2924,257,2668,222,2452,199"/>
+<area shape="poly" title=" " alt="" coords="2453,201,2732,252,2745,254,2744,260,2731,257,2452,206"/>
+<area shape="poly" title=" " alt="" coords="2453,190,2743,211,2924,228,3105,252,3118,254,3117,259,3104,257,2923,234,2743,216,2452,195"/>
+<area shape="poly" title=" " alt="" coords="3275,297,3142,310,2973,322,2575,341,1891,362,1891,357,2575,336,2973,317,3142,305,3274,292"/>
+<area shape="poly" title=" " alt="" coords="3444,297,3295,311,3104,323,2654,342,1891,362,1891,357,2654,337,3103,318,3294,306,3444,292"/>
+<area shape="poly" title=" " alt="" coords="3615,297,3449,312,3236,325,2734,345,2241,357,1891,363,1891,357,2241,352,2734,339,3236,320,3449,307,3615,292"/>
+<area shape="poly" title=" " alt="" coords="677,292,826,310,978,324,1271,344,1526,354,1712,358,1712,363,1526,360,1271,349,977,330,826,315,676,297"/>
+<area shape="poly" title=" " alt="" coords="212,292,357,305,541,317,974,336,1712,357,1712,362,974,341,541,322,356,310,212,297"/>
+<area shape="poly" title=" " alt="" coords="2924,297,2624,329,2332,348,2077,359,1892,363,1891,358,2077,353,2331,343,2624,323,2924,292"/>
+<area shape="poly" title=" " alt="" coords="3105,297,2928,317,2749,333,2403,353,2105,362,1892,364,1892,359,2105,357,2403,348,2749,328,2928,312,3104,292"/>
+<area shape="poly" title=" " alt="" coords="1398,204,1353,209,1102,228,907,233,711,239,461,257,403,265,403,259,460,252,711,233,907,228,1102,222,1352,204,1397,199"/>
+<area shape="poly" title=" " alt="" coords="1005,128,927,176,924,172,1003,124"/>
+<area shape="poly" title=" " alt="" coords="935,107,654,123,489,137,328,156,186,181,128,196,80,213,45,231,25,250,21,260,21,270,34,293,58,303,108,312,270,328,497,340,762,348,1309,357,1712,359,1712,364,1309,362,762,353,497,345,270,333,107,318,56,308,31,297,16,271,16,259,20,247,42,226,78,208,126,191,185,176,327,151,489,132,654,117,935,101"/>
+<area shape="poly" title=" " alt="" coords="1072,128,1102,165,1098,168,1068,131"/>
+<area shape="poly" title=" " alt="" coords="3674,199,3714,204,3928,227,4141,252,4187,259,4186,265,4140,257,3927,232,3714,209,3673,204"/>
+<area shape="poly" title=" " alt="" coords="4135,116,3672,177,3671,171,4135,111"/>
+<area shape="poly" title=" " alt="" coords="4175,117,3928,177,3927,171,4174,112"/>
+<area shape="poly" title=" " alt="" coords="4218,124,4180,168,4176,164,4214,120"/>
+<area shape="poly" title=" " alt="" coords="4270,116,4359,164,4357,169,4267,120"/>
+<area shape="poly" title=" " alt="" coords="4357,110,4560,134,4790,164,4801,166,4801,171,4790,169,4559,139,4356,115"/>
+<area shape="poly" title=" " alt="" coords="4365,108,5010,164,5085,171,5085,177,5010,169,4364,113"/>
+<area shape="poly" title=" " alt="" coords="4305,112,4598,171,4597,177,4304,117"/>
+<area shape="poly" title=" " alt="" coords="3973,199,4010,204,4356,252,4400,259,4399,265,4355,257,4010,209,3972,204"/>
+<area shape="poly" title=" " alt="" coords="4271,204,4626,259,4625,265,4270,209"/>
+<area shape="poly" title=" " alt="" coords="4937,213,4997,259,4994,264,4933,217"/>
+<area shape="poly" title=" " alt="" coords="5222,206,5285,259,5282,264,5218,210"/>
 </map>
 </div>
 </div>

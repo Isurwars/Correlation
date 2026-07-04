@@ -1,0 +1,11 @@
+<map id="correlation::writers::FileWriter::writeSummaryFile" name="correlation::writers::FileWriter::writeSummaryFile">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,131,225,171"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#acf410dfc1dfa001ceda6f0cdb5166ee0" title="Gets the Deborah number." alt="" coords="296,5,464,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="152,129,272,69,287,63,289,68,274,74,154,134"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a1f238238a5ddad1acd3e95a4408a5075" title="Gets the self&#45;diffusion coefficient computed from Mean Squared Displacement (MSD)." alt="" coords="275,84,485,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="225,132,261,127,262,132,226,137"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac54c99e87f29ca619370e521f546a260" title="Gets the self&#45;diffusion coefficient computed from Velocity Autocorrelation Function (VACF)." alt="" coords="273,163,487,217"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="226,165,260,170,259,175,225,170"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a66f6a22f9700f76d47cf3bd7810cbb95" title="Gets the relaxation time computed from normalized VACF." alt="" coords="296,241,464,296"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="156,169,274,226,292,234,290,239,272,231,154,174"/>
+</map>

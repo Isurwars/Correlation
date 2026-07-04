@@ -1,0 +1,9 @@
+<map id="correlation::math::detail::fillCosine" name="correlation::math::detail::fillCosine">
+<area shape="rect" id="Node000001" title=" " alt="" coords="577,5,720,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a51751dd087f23dc0d2a61d5ba27beed9" title="Generates a smoothing kernel." alt="" coords="387,5,529,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="564,28,529,28,529,23,564,23"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#ad6f22710a15116e0c00612abfaf914b5" title="Applies kernel smoothing to a data series." alt="" coords="196,5,339,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="373,28,339,28,339,23,373,23"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#ad21dd36ce174c7794b8cb2c198849786" title="Compatibility overload: derives bin_width from the grid and delegates." alt="" coords="5,5,148,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="183,28,148,28,148,23,183,23"/>
+</map>

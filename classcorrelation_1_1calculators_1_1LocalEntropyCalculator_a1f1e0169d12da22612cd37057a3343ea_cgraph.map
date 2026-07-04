@@ -1,0 +1,7 @@
+<map id="correlation::calculators::LocalEntropyCalculator::calculate" name="correlation::calculators::LocalEntropyCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes the Local Entropic Fingerprint for all atoms in the cell." alt="" coords="5,30,185,85"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="233,5,369,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="185,41,219,35,220,41,186,46"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="233,69,369,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="186,69,220,74,219,79,185,74"/>
+</map>

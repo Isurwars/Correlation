@@ -1,0 +1,16 @@
+<map id="correlation::app::PlotController::updateTableData" name="correlation::app::PlotController::updateTableData">
+<area shape="rect" id="Node000001" title=" " alt="" coords="813,69,1035,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PlotController.html#a4b2e91c838716f4bd77d48bb84a674b2" title=" " alt="" coords="544,69,765,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="799,92,766,92,766,87,799,87"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PlotController.html#a33c1a932b0c201ba069ff85fe894c2de" title=" " alt="" coords="275,5,496,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="530,71,439,48,440,43,531,66"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1PlotController.html#a2ceada0a36461918e3621ed7af7a0569" title=" " alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="530,92,496,92,496,87,530,87"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1PlotController.html#ac90ed7ae2b43b2aa172bc04b2cc62970" title="Handles plot resized callback from UI." alt="" coords="275,133,496,173"/>
+<area shape="poly" id="edge5_Node000002_Node000005" title=" " alt="" coords="557,115,471,136,469,131,556,110"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1PlotController.html#af7f05ac80c8caca8a72e6f7b9b542263" title="Timer callback for periodic plot updates." alt="" coords="275,197,496,237"/>
+<area shape="poly" id="edge6_Node000002_Node000006" title=" " alt="" coords="616,119,561,154,497,188,466,200,464,195,495,183,558,150,613,115"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="510,43,601,67,599,72,509,48"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1PlotController.html#a96c1e9c974318895cf32b864c34eea09" title=" " alt="" coords="5,197,227,237"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="261,220,227,220,227,215,261,215"/>
+</map>

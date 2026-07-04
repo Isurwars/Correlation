@@ -1,0 +1,17 @@
+<map id="correlation::math::autocorrelate" name="correlation::math::autocorrelate">
+<area shape="rect" id="Node000001" title="Convenience overload — allocates its own workspace." alt="" coords="5,61,148,101"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a0f3c899bcbeb2b3eec4516f9acd2a643" title="Computes the autocorrelation of a 1D real sequence using FFT." alt="" coords="196,61,339,101"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,79,183,79,183,84,148,84"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#af4b46526a1ffe1c38188bae87c34a99e" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="396,29,539,69"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="338,67,381,60,382,66,339,73"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a13ddbfff3eb1f186243a00bac5ccadf8" title="Finds the next &quot;good&quot; FFT size &gt;= target." alt="" coords="387,93,548,133"/>
+<area shape="poly" id="edge7_Node000002_Node000006" title=" " alt="" coords="339,90,373,96,373,101,338,95"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="596,29,739,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="539,47,582,47,582,52,539,52"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="631,30,629,20,635,11,648,5,667,3,690,6,702,13,699,17,688,11,667,8,649,10,639,15,635,21,637,28"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="787,29,929,69"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="739,47,773,47,773,52,739,52"/>
+<area shape="poly" id="edge5_Node000005_Node000005" title=" " alt="" coords="822,30,820,20,826,11,839,5,858,3,880,6,893,13,890,17,879,11,858,8,840,10,829,15,825,21,827,28"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a9fab196f3961705514a0ef08724f302b" title="Helper to check if a size is a product of small prime factors (2, 3, 5). Highly optimized for FFTW3 a..." alt="" coords="596,93,739,133"/>
+<area shape="poly" id="edge8_Node000006_Node000007" title=" " alt="" coords="548,111,582,111,582,116,548,116"/>
+</map>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,6 +82,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">SpecialFunctions.hpp File Reference</div></div>
@@ -90,23 +91,26 @@ $(function() {
 
 <p>Implementation of specialized mathematical functions (factorials, Legendre polynomials).  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="SIMDConfig_8hpp_source.html">math/SIMDConfig.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Constants_8hpp_source.html">math/Constants.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="SIMDConfig_8hpp_source.html">math/SIMDConfig.hpp</a>&quot;</code><br />
+<code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
-<code>#include &lt;numbers&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for SpecialFunctions.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="SpecialFunctions_8hpp__incl.png" border="0" usemap="#ainclude_2math_2SpecialFunctions_8hpp" alt=""/></div>
 <map name="ainclude_2math_2SpecialFunctions_8hpp" id="ainclude_2math_2SpecialFunctions_8hpp">
-<area shape="rect" title="Implementation of specialized mathematical functions (factorials, Legendre polynomials)." alt="" coords="100,5,348,31"/>
-<area shape="rect" href="SIMDConfig_8hpp.html" title="Configuration macros for SIMD instruction sets and compiler specifics." alt="" coords="5,79,168,104"/>
-<area shape="poly" title=" " alt="" coords="203,33,122,75,120,70,201,28"/>
-<area shape="rect" title=" " alt="" coords="193,79,255,104"/>
-<area shape="poly" title=" " alt="" coords="227,31,227,65,221,65,221,31"/>
-<area shape="rect" title=" " alt="" coords="279,79,358,104"/>
-<area shape="poly" title=" " alt="" coords="241,29,294,68,291,72,238,33"/>
-<area shape="rect" title=" " alt="" coords="37,152,136,177"/>
-<area shape="poly" title=" " alt="" coords="89,104,89,138,84,138,84,104"/>
+<area shape="rect" title="Implementation of specialized mathematical functions (factorials, Legendre polynomials)." alt="" coords="207,5,455,31"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="5,79,159,104"/>
+<area shape="poly" title=" " alt="" coords="292,33,136,77,135,72,291,28"/>
+<area shape="rect" href="SIMDConfig_8hpp.html" title="Configuration macros for SIMD instruction sets and compiler specifics." alt="" coords="183,79,346,104"/>
+<area shape="poly" title=" " alt="" coords="322,33,287,70,283,67,318,29"/>
+<area shape="rect" title=" " alt="" coords="370,79,426,104"/>
+<area shape="poly" title=" " alt="" coords="344,29,380,67,376,70,340,33"/>
+<area shape="rect" title=" " alt="" coords="451,79,513,104"/>
+<area shape="poly" title=" " alt="" coords="357,28,446,70,444,75,354,33"/>
+<area shape="rect" title=" " alt="" coords="215,152,314,177"/>
+<area shape="poly" title=" " alt="" coords="267,104,267,138,262,138,262,104"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -122,6 +126,12 @@ This graph shows which files directly or indirectly include this file:</div>
 </div>
 <p><a href="SpecialFunctions_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1math_1_1LegendreParams.html">correlation::math::LegendreParams</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameters for Legendre polynomial evaluation (degree and order).  <a href="structcorrelation_1_1math_1_1LegendreParams.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
@@ -135,12 +145,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a048d202e6ed055a5776eea44c1a60cb1" id="r_a048d202e6ed055a5776eea44c1a60cb1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a048d202e6ed055a5776eea44c1a60cb1">correlation::math::factorial</a> (int n)</td></tr>
 <tr class="memdesc:a048d202e6ed055a5776eea44c1a60cb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inline helper for factorials up to 20. Beyond 20, the values exceed the capacity of a 64-bit integer, so we return doubles for consistency.  <br /></td></tr>
 <tr class="separator:a048d202e6ed055a5776eea44c1a60cb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae71520e0e2cd815380fd11fb6a0b33be" id="r_ae71520e0e2cd815380fd11fb6a0b33be"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#ae71520e0e2cd815380fd11fb6a0b33be">correlation::math::sph_legendre</a> (int l, int m, double theta)</td></tr>
-<tr class="memdesc:ae71520e0e2cd815380fd11fb6a0b33be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17.  <br /></td></tr>
-<tr class="separator:ae71520e0e2cd815380fd11fb6a0b33be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46d62a6e3be1d1baa291e4425011ebbd" id="r_a46d62a6e3be1d1baa291e4425011ebbd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a46d62a6e3be1d1baa291e4425011ebbd">correlation::math::sph_legendre_batch</a> (int l, int m, const double *theta, double *results, size_t count)</td></tr>
-<tr class="memdesc:a46d62a6e3be1d1baa291e4425011ebbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vectorized version of sph_legendre. Computes the polynomial for a range of angles.  <br /></td></tr>
-<tr class="separator:a46d62a6e3be1d1baa291e4425011ebbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6509986c83712bf7e4e07fa6d5d5cd4f" id="r_a6509986c83712bf7e4e07fa6d5d5cd4f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a6509986c83712bf7e4e07fa6d5d5cd4f">correlation::math::sph_legendre</a> (<a class="el" href="structcorrelation_1_1math_1_1LegendreParams.html">LegendreParams</a> params, double theta)</td></tr>
+<tr class="memdesc:a6509986c83712bf7e4e07fa6d5d5cd4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the spherical associated Legendre polynomial corresponding to std::sph_legendre from C++17.  <br /></td></tr>
+<tr class="separator:a6509986c83712bf7e4e07fa6d5d5cd4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31b7c55b212b4e4023e9fee6085645bb" id="r_a31b7c55b212b4e4023e9fee6085645bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a31b7c55b212b4e4023e9fee6085645bb">correlation::math::sph_legendre_batch</a> (<a class="el" href="structcorrelation_1_1math_1_1LegendreParams.html">LegendreParams</a> params, const double *theta, double *results, size_t <a class="el" href="StructureFactorCalculator_8cpp.html#a76d971a3c552bc58ba9f0d5fceae9806">count</a>)</td></tr>
+<tr class="memdesc:a31b7c55b212b4e4023e9fee6085645bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Vectorized version of sph_legendre. Computes the polynomial for a range of angles.  <br /></td></tr>
+<tr class="separator:a31b7c55b212b4e4023e9fee6085645bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implementation of specialized mathematical functions (factorials, Legendre polynomials). </p>

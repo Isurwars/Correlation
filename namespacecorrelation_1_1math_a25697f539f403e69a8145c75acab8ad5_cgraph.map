@@ -1,0 +1,5 @@
+<map id="correlation::math::sinc_integral" name="correlation::math::sinc_integral">
+<area shape="rect" id="Node000001" title="Computes a sinc&#45;weighted integral over a range (AVX2 version)." alt="" coords="5,5,148,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#aa2e8aa0b93b198ae9c14d5be0c64b591" title="Computes the dot product of two double arrays (AVX2 version)." alt="" coords="196,5,339,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,23,183,23,183,28,148,28"/>
+</map>

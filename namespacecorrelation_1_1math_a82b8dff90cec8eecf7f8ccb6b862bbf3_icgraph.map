@@ -1,8 +1,0 @@
-<map id="correlation::math::norm_sq" name="correlation::math::norm_sq">
-<area shape="rect" id="Node000001" title="Computes the squared vector norm (length)." alt="" coords="555,29,697,69"/>
-<area shape="poly" id="edge3_Node000001_Node000001" title=" " alt="" coords="664,18,650,11,626,8,605,10,592,15,587,21,590,28,585,30,582,20,589,10,604,5,626,3,652,6,666,13"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,29,507,69"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="541,52,507,52,507,47,541,47"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,29,252,69"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="286,52,252,52,252,47,286,47"/>
-</map>

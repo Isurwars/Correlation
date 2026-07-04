@@ -1,0 +1,24 @@
+<map id="correlation::app::AppController::AppController" name="correlation::app::AppController::AppController">
+<area shape="rect" id="Node000001" title="Constructs the AppController." alt="" coords="5,127,227,167"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a0973b2f58346ba60fb99525c07934d3a" title="Cancels the currently running analysis." alt="" coords="279,5,491,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,124,204,89,274,55,293,47,295,52,276,60,207,94,150,129"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a5f70447d88ea63953a28f43d43580012" title="Populates the UI with options from the backend." alt="" coords="275,69,496,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="210,124,277,110,278,115,211,129"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#af2c6a3c805e421fe121f5c67db8608c6" title="Updates active group flags in the UI based on active calculators." alt="" coords="544,120,765,160"/>
+<area shape="poly" id="edge13_Node000001_Node000005" title=" " alt="" coords="227,143,530,139,530,144,227,148"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1app_1_1AppController.html#a754bb66e6e7de7fe1e74e8019ad31eff" title="Populates the UI calculator groups from CalculatorFactory." alt="" coords="544,184,765,224"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="227,156,530,188,530,193,227,161"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1app_1_1AppBackend.html#a4c3f04637868e14736a18077965af842" title="Updates the enabled state of a single calculator." alt="" coords="279,235,491,275"/>
+<area shape="poly" id="edge12_Node000001_Node000009" title=" " alt="" coords="161,164,276,214,313,228,311,233,274,218,159,169"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppBackend.html#a389c5114967f1724ff5b5c381a77ec6d" title="Gets the current program options." alt="" coords="829,63,1041,103"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="496,85,815,81,815,87,496,91"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="493,107,535,115,534,120,492,112"/>
+<area shape="poly" id="edge7_Node000005_Node000004" title=" " alt="" coords="753,117,823,103,824,108,754,123"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="813,127,1057,167"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="766,140,800,141,800,146,765,145"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="833,191,1038,231"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="736,157,843,185,841,190,734,163"/>
+<area shape="poly" id="edge11_Node000008_Node000004" title=" " alt="" coords="742,181,764,170,779,156,787,142,796,127,812,113,823,106,825,111,815,117,800,130,792,145,783,160,767,174,744,186"/>
+<area shape="poly" id="edge9_Node000008_Node000006" title=" " alt="" coords="753,181,823,167,824,172,754,187"/>
+<area shape="poly" id="edge10_Node000008_Node000007" title=" " alt="" coords="766,204,819,205,819,211,765,209"/>
+</map>

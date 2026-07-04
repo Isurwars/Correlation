@@ -1,0 +1,7 @@
+<map id="correlation::calculators::CalculatorFactory::registerTypeSafe" name="correlation::calculators::CalculatorFactory::registerTypeSafe">
+<area shape="rect" id="Node000001" title="Exception&#45;safe template helper for static auto&#45;registration." alt="" coords="5,37,264,77"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="343,5,548,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="264,41,329,35,329,40,265,47"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a3e63fe5e5c21baad49ca295fdd49b36e" title="Registers a new calculator." alt="" coords="312,69,579,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="265,68,299,72,298,77,264,73"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="include/app/PlotController.hpp" name="include/app/PlotController.hpp">
+<area shape="rect" id="Node000001" title="Plotting and SVG rendering management." alt="" coords="215,5,433,31"/>
+<area shape="rect" id="Node000002" href="$AnalysisRunner_8cpp.html" title="Implementation of AnalysisRunner." alt="" coords="5,79,205,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="277,37,142,81,140,76,275,32"/>
+<area shape="rect" id="Node000003" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="230,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="327,44,327,79,321,79,321,44"/>
+<area shape="rect" id="Node000004" href="$PlotController_8cpp.html" title="Implementation of PlotController." alt="" coords="442,79,630,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="372,32,503,76,501,81,370,37"/>
+</map>

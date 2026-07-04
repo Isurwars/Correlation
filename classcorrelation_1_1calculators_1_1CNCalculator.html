@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -134,15 +134,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5a8701d6e05a27d2e69700cbba4c59c1" id="r_a5a8701d6e05a27d2e69700cbba4c59c1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a5a8701d6e05a27d2e69700cbba4c59c1">isTrajectoryCalculator</a> () const override</td></tr>
 <tr class="memdesc:a5a8701d6e05a27d2e69700cbba4c59c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this calculator runs on the whole trajectory (e.g. VACF).  <br /></td></tr>
 <tr class="separator:a5a8701d6e05a27d2e69700cbba4c59c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ac797fe84b06910c842cd213639cf2e" id="r_a3ac797fe84b06910c842cd213639cf2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
-<tr class="memdesc:a3ac797fe84b06910c842cd213639cf2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
-<tr class="separator:a3ac797fe84b06910c842cd213639cf2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7a5dd8acfa4f02324f61b15bfd4d716" id="r_ad7a5dd8acfa4f02324f61b15bfd4d716"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ad7a5dd8acfa4f02324f61b15bfd4d716">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
+<tr class="memdesc:ad7a5dd8acfa4f02324f61b15bfd4d716"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
+<tr class="separator:ad7a5dd8acfa4f02324f61b15bfd4d716"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html">correlation::calculators::BaseCalculator</a></td></tr>
 <tr class="memitem:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_af9ca6046d093eb10559a9f9aa353fb9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c">~BaseCalculator</a> ()=default</td></tr>
 <tr class="separator:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a75298b5153fcbd2ae1763c3bdbe39f82"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a75298b5153fcbd2ae1763c3bdbe39f82">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
-<tr class="memdesc:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
-<tr class="separator:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a88fc48d6aedbf64bf5c9578fca09ed3d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a88fc48d6aedbf64bf5c9578fca09ed3d">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
+<tr class="memdesc:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
+<tr class="separator:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -201,13 +201,11 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1calculators_1_1CNCalculator_ac1c754f3ba9ec8a3de69cf56ba15c38f_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1CNCalculator_ac1c754f3ba9ec8a3de69cf56ba15c38f_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1calculators_1_1CNCalculator_ac1c754f3ba9ec8a3de69cf56ba15c38f_cgraph" id="aclasscorrelation_1_1calculators_1_1CNCalculator_ac1c754f3ba9ec8a3de69cf56ba15c38f_cgraph">
-<area shape="rect" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="5,69,188,109"/>
+<area shape="rect" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="5,41,188,81"/>
 <area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="245,5,381,45"/>
-<area shape="poly" title=" " alt="" coords="164,67,232,47,233,52,166,72"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="245,69,381,109"/>
-<area shape="poly" title=" " alt="" coords="188,87,231,87,231,92,188,92"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="236,134,391,189"/>
-<area shape="poly" title=" " alt="" coords="158,107,224,129,222,134,157,112"/>
+<area shape="poly" title=" " alt="" coords="188,44,231,36,232,42,189,49"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="236,70,391,125"/>
+<area shape="poly" title=" " alt="" coords="189,74,223,80,222,85,188,79"/>
 </map>
 </div>
 <div class="dynheader">
@@ -218,19 +216,19 @@ Here is the caller graph for this function:</div>
 <area shape="rect" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="628,49,811,89"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="356,5,580,60"/>
 <area shape="poly" title=" " alt="" coords="614,56,580,51,581,46,615,51"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,85,579,125"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1CNCalculator.html#ad7a5dd8acfa4f02324f61b15bfd4d716" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="357,85,579,125"/>
 <area shape="poly" title=" " alt="" coords="615,86,580,91,579,86,614,81"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,20,308,45"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,20,308,45"/>
 <area shape="poly" title=" " alt="" coords="342,35,308,35,308,30,342,30"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,20,156,45"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,20,156,45"/>
 <area shape="poly" title=" " alt="" coords="190,35,156,35,156,30,190,30"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a3ac797fe84b06910c842cd213639cf2e" name="a3ac797fe84b06910c842cd213639cf2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ac797fe84b06910c842cd213639cf2e">&#9670;&#160;</a></span>calculateFrame()</h2>
+<a id="ad7a5dd8acfa4f02324f61b15bfd4d716" name="ad7a5dd8acfa4f02324f61b15bfd4d716"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7a5dd8acfa4f02324f61b15bfd4d716">&#9670;&#160;</a></span>calculateFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -242,7 +240,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::calculators::CNCalculator::calculateFrame </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -266,18 +264,18 @@ Here is the caller graph for this function:</div>
 <p>Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object to store the results. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object to store the results. </td></tr>
     <tr><td class="paramname">settings</td><td>The analysis settings and parameters. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a9e825afb4f3b6cdfc183be18f7e08220">correlation::calculators::BaseCalculator</a>.</p>
+<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#ac4c24a0e6512e3d8a928f1a2618ef53f">correlation::calculators::BaseCalculator</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1calculators_1_1CNCalculator_a3ac797fe84b06910c842cd213639cf2e_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1CNCalculator_a3ac797fe84b06910c842cd213639cf2e_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1calculators_1_1CNCalculator_a3ac797fe84b06910c842cd213639cf2e_cgraph" id="aclasscorrelation_1_1calculators_1_1CNCalculator_a3ac797fe84b06910c842cd213639cf2e_cgraph">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1CNCalculator_ad7a5dd8acfa4f02324f61b15bfd4d716_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1CNCalculator_ad7a5dd8acfa4f02324f61b15bfd4d716_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1CNCalculator_ad7a5dd8acfa4f02324f61b15bfd4d716_cgraph" id="aclasscorrelation_1_1calculators_1_1CNCalculator_ad7a5dd8acfa4f02324f61b15bfd4d716_cgraph">
 <area shape="rect" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,117,228,157"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="291,5,459,60"/>
 <area shape="poly" title=" " alt="" coords="166,114,293,63,295,68,168,119"/>
@@ -287,12 +285,10 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="228,148,263,152,262,157,228,153"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="291,213,459,268"/>
 <area shape="poly" title=" " alt="" coords="168,154,295,206,293,211,166,159"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="532,21,668,61"/>
-<area shape="poly" title=" " alt="" coords="446,82,518,61,520,66,447,87"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="532,85,668,125"/>
-<area shape="poly" title=" " alt="" coords="467,102,518,102,518,107,467,107"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="523,149,677,204"/>
-<area shape="poly" title=" " alt="" coords="439,122,510,145,509,150,438,127"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="532,49,668,89"/>
+<area shape="poly" title=" " alt="" coords="467,87,518,79,519,84,467,93"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="523,113,677,168"/>
+<area shape="poly" title=" " alt="" coords="467,117,510,124,509,129,467,122"/>
 </map>
 </div>
 

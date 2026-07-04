@@ -1,0 +1,9 @@
+<map id="correlation::readers::CastepMdReader::parseEnergyLine" name="correlation::readers::CastepMdReader::parseEnergyLine">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,69,263,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a94029c0f6ebca70a3bba04d924b34dd5" title="Gets the energy of the cell frame." alt="" coords="332,5,468,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="217,67,318,42,319,47,219,72"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a60bb2a688d635f437854d3f2779efa70" title="Gets the lattice parameters (a, b, c, alpha, beta, gamma)." alt="" coords="311,69,489,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="263,87,297,87,297,92,263,92"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="332,133,468,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="219,107,319,131,318,136,217,112"/>
+</map>

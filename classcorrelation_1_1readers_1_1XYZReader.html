@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -131,10 +131,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5772a05f69239e807d7e4467cb57a7ee" id="r_a5772a05f69239e807d7e4467cb57a7ee"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a5772a05f69239e807d7e4467cb57a7ee">isTrajectory</a> () const override</td></tr>
 <tr class="memdesc:a5772a05f69239e807d7e4467cb57a7ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this reader supports trajectory files.  <br /></td></tr>
 <tr class="separator:a5772a05f69239e807d7e4467cb57a7ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e5be781f24365de70e167056a2fdc13" id="r_a8e5be781f24365de70e167056a2fdc13"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr) override</td></tr>
+<tr class="memitem:a8e5be781f24365de70e167056a2fdc13" id="r_a8e5be781f24365de70e167056a2fdc13"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr) override</td></tr>
 <tr class="memdesc:a8e5be781f24365de70e167056a2fdc13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
 <tr class="separator:a8e5be781f24365de70e167056a2fdc13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf5861d03b87b7bac297cd9e1348955f" id="r_adf5861d03b87b7bac297cd9e1348955f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr) override</td></tr>
+<tr class="memitem:adf5861d03b87b7bac297cd9e1348955f" id="r_adf5861d03b87b7bac297cd9e1348955f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr) override</td></tr>
 <tr class="memdesc:adf5861d03b87b7bac297cd9e1348955f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
 <tr class="separator:adf5861d03b87b7bac297cd9e1348955f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1readers_1_1BaseReader"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1readers_1_1BaseReader')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html">correlation::readers::BaseReader</a></td></tr>
@@ -143,10 +143,18 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
 Static Private Member Functions</h2></td></tr>
+<tr class="memitem:af248169b23a186e17926f6c79d69c07d" id="r_af248169b23a186e17926f6c79d69c07d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#af248169b23a186e17926f6c79d69c07d">parseLattice</a> (const std::string &amp;comment, <a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;<a class="el" href="LammpsDumpReader_8cpp.html#a8f64897c7ccc5c13f276d1d07c4e7095">data</a>)</td></tr>
+<tr class="separator:af248169b23a186e17926f6c79d69c07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37ac42ea507742c81d9c1ce48ac7b81f" id="r_a37ac42ea507742c81d9c1ce48ac7b81f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a37ac42ea507742c81d9c1ce48ac7b81f">parseEnergy</a> (const std::string &amp;comment, <a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;<a class="el" href="LammpsDumpReader_8cpp.html#a8f64897c7ccc5c13f276d1d07c4e7095">data</a>)</td></tr>
+<tr class="separator:a37ac42ea507742c81d9c1ce48ac7b81f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26dd66cef2e74fea2421d62915532aa9" id="r_a26dd66cef2e74fea2421d62915532aa9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9">parseProperties</a> (const std::string &amp;comment, <a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;<a class="el" href="LammpsDumpReader_8cpp.html#a8f64897c7ccc5c13f276d1d07c4e7095">data</a>)</td></tr>
+<tr class="separator:a26dd66cef2e74fea2421d62915532aa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" id="r_a051b37e5ef7c99ef1f6d1a9f4a8d5ef1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1">parsePropertiesParts</a> (const std::vector&lt; std::string &gt; &amp;parts, <a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;<a class="el" href="LammpsDumpReader_8cpp.html#a8f64897c7ccc5c13f276d1d07c4e7095">data</a>)</td></tr>
+<tr class="separator:a051b37e5ef7c99ef1f6d1a9f4a8d5ef1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af476d84bd78c0cd236c730a28bb4d851" id="r_af476d84bd78c0cd236c730a28bb4d851"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851">parseCommentLine</a> (const std::string &amp;comment)</td></tr>
 <tr class="memdesc:af476d84bd78c0cd236c730a28bb4d851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses an Extended XYZ comment line for properties, lattice and energy.  <br /></td></tr>
 <tr class="separator:af476d84bd78c0cd236c730a28bb4d851"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a095edf38c284261e459b1cfcf5b4a608" id="r_a095edf38c284261e459b1cfcf5b4a608"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608">parseXYZFrame</a> (const char *data, size_t size)</td></tr>
+<tr class="memitem:a095edf38c284261e459b1cfcf5b4a608" id="r_a095edf38c284261e459b1cfcf5b4a608"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608">parseXYZFrame</a> (const char *<a class="el" href="LammpsDumpReader_8cpp.html#a8f64897c7ccc5c13f276d1d07c4e7095">data</a>, size_t <a class="el" href="LammpsDumpReader_8cpp.html#a854352f53b148adc24983a58a1866d66">size</a>)</td></tr>
 <tr class="separator:a095edf38c284261e459b1cfcf5b4a608"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -277,6 +285,22 @@ Static Private Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> struct containing parsed info. </dd></dl>
 <div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_af476d84bd78c0cd236c730a28bb4d851_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_af476d84bd78c0cd236c730a28bb4d851_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1XYZReader_af476d84bd78c0cd236c730a28bb4d851_cgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_af476d84bd78c0cd236c730a28bb4d851_cgraph">
+<area shape="rect" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="5,69,243,109"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a37ac42ea507742c81d9c1ce48ac7b81f" title=" " alt="" coords="301,5,492,45"/>
+<area shape="poly" title=" " alt="" coords="209,67,297,46,299,51,211,72"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af248169b23a186e17926f6c79d69c07d" title=" " alt="" coords="301,69,492,109"/>
+<area shape="poly" title=" " alt="" coords="243,87,288,87,288,92,243,92"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9" title=" " alt="" coords="291,133,503,173"/>
+<area shape="poly" title=" " alt="" coords="211,107,299,128,297,133,209,112"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" title=" " alt="" coords="551,126,763,181"/>
+<area shape="poly" title=" " alt="" coords="503,151,537,151,537,156,503,156"/>
+</map>
+</div>
+<div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_af476d84bd78c0cd236c730a28bb4d851_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_af476d84bd78c0cd236c730a28bb4d851_icgraph" alt=""/></div>
@@ -288,6 +312,226 @@ Here is the caller graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="489,28,455,28,455,23,489,23"/>
 <area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,5,204,45"/>
 <area shape="poly" title=" " alt="" coords="239,28,204,28,204,23,239,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a37ac42ea507742c81d9c1ce48ac7b81f" name="a37ac42ea507742c81d9c1ce48ac7b81f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37ac42ea507742c81d9c1ce48ac7b81f">&#9670;&#160;</a></span>parseEnergy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::XYZReader::parseEnergy </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>comment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_a37ac42ea507742c81d9c1ce48ac7b81f_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_a37ac42ea507742c81d9c1ce48ac7b81f_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1XYZReader_a37ac42ea507742c81d9c1ce48ac7b81f_icgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_a37ac42ea507742c81d9c1ce48ac7b81f_icgraph">
+<area shape="rect" title=" " alt="" coords="1049,5,1240,45"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,5,1001,45"/>
+<area shape="poly" title=" " alt="" coords="1036,28,1002,28,1002,23,1036,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,5,716,45"/>
+<area shape="poly" title=" " alt="" coords="750,28,716,28,716,23,750,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,5,455,45"/>
+<area shape="poly" title=" " alt="" coords="489,28,455,28,455,23,489,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" title=" " alt="" coords="239,28,204,28,204,23,239,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="af248169b23a186e17926f6c79d69c07d" name="af248169b23a186e17926f6c79d69c07d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af248169b23a186e17926f6c79d69c07d">&#9670;&#160;</a></span>parseLattice()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::XYZReader::parseLattice </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>comment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_af248169b23a186e17926f6c79d69c07d_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_af248169b23a186e17926f6c79d69c07d_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1XYZReader_af248169b23a186e17926f6c79d69c07d_icgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_af248169b23a186e17926f6c79d69c07d_icgraph">
+<area shape="rect" title=" " alt="" coords="1049,5,1240,45"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,5,1001,45"/>
+<area shape="poly" title=" " alt="" coords="1036,28,1002,28,1002,23,1036,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,5,716,45"/>
+<area shape="poly" title=" " alt="" coords="750,28,716,28,716,23,750,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,5,455,45"/>
+<area shape="poly" title=" " alt="" coords="489,28,455,28,455,23,489,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" title=" " alt="" coords="239,28,204,28,204,23,239,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a26dd66cef2e74fea2421d62915532aa9" name="a26dd66cef2e74fea2421d62915532aa9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26dd66cef2e74fea2421d62915532aa9">&#9670;&#160;</a></span>parseProperties()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::XYZReader::parseProperties </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>comment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_cgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_cgraph">
+<area shape="rect" title=" " alt="" coords="5,13,217,53"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" title=" " alt="" coords="265,5,477,60"/>
+<area shape="poly" title=" " alt="" coords="217,30,252,30,252,35,217,35"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_icgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_a26dd66cef2e74fea2421d62915532aa9_icgraph">
+<area shape="rect" title=" " alt="" coords="1049,5,1261,45"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,5,1001,45"/>
+<area shape="poly" title=" " alt="" coords="1036,28,1002,28,1002,23,1036,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,5,716,45"/>
+<area shape="poly" title=" " alt="" coords="750,28,716,28,716,23,750,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,5,455,45"/>
+<area shape="poly" title=" " alt="" coords="489,28,455,28,455,23,489,23"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" title=" " alt="" coords="239,28,204,28,204,23,239,23"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" name="a051b37e5ef7c99ef1f6d1a9f4a8d5ef1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1">&#9670;&#160;</a></span>parsePropertiesParts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void correlation::readers::XYZReader::parsePropertiesParts </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
+          <td class="paramname"><em>parts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1readers_1_1XYZReader_1_1CommentData.html">CommentData</a> &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_a051b37e5ef7c99ef1f6d1a9f4a8d5ef1_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_a051b37e5ef7c99ef1f6d1a9f4a8d5ef1_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1readers_1_1XYZReader_a051b37e5ef7c99ef1f6d1a9f4a8d5ef1_icgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_a051b37e5ef7c99ef1f6d1a9f4a8d5ef1_icgraph">
+<area shape="rect" title=" " alt="" coords="1309,5,1521,60"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9" title=" " alt="" coords="1049,13,1261,53"/>
+<area shape="poly" title=" " alt="" coords="1296,35,1262,35,1262,30,1296,30"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,13,1001,53"/>
+<area shape="poly" title=" " alt="" coords="1036,35,1002,35,1002,30,1036,30"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,13,716,53"/>
+<area shape="poly" title=" " alt="" coords="750,35,716,35,716,30,750,30"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,13,455,53"/>
+<area shape="poly" title=" " alt="" coords="489,35,455,35,455,30,489,30"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,13,204,53"/>
+<area shape="poly" title=" " alt="" coords="239,35,204,35,204,30,239,30"/>
 </map>
 </div>
 
@@ -331,17 +575,25 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_a095edf38c284261e459b1cfcf5b4a608_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_a095edf38c284261e459b1cfcf5b4a608_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1XYZReader_a095edf38c284261e459b1cfcf5b4a608_cgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_a095edf38c284261e459b1cfcf5b4a608_cgraph">
-<area shape="rect" title=" " alt="" coords="5,69,219,109"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="317,5,453,45"/>
-<area shape="poly" title=" " alt="" coords="198,67,303,42,304,47,199,72"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="267,69,504,109"/>
-<area shape="poly" title=" " alt="" coords="219,87,253,87,253,92,219,92"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="317,133,453,173"/>
-<area shape="poly" title=" " alt="" coords="199,107,304,132,303,137,198,112"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="552,5,751,45"/>
-<area shape="poly" title=" " alt="" coords="453,23,538,23,538,28,453,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="799,5,935,45"/>
-<area shape="poly" title=" " alt="" coords="751,23,785,23,785,28,751,28"/>
+<area shape="rect" title=" " alt="" coords="5,117,219,157"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="317,21,453,61"/>
+<area shape="poly" title=" " alt="" coords="169,115,314,63,315,69,171,120"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="267,117,504,157"/>
+<area shape="poly" title=" " alt="" coords="219,135,253,135,253,140,219,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="317,181,453,221"/>
+<area shape="poly" title=" " alt="" coords="199,155,304,180,303,185,198,160"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="559,5,757,45"/>
+<area shape="poly" title=" " alt="" coords="453,35,545,29,545,35,454,40"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="850,5,986,45"/>
+<area shape="poly" title=" " alt="" coords="757,23,836,23,836,28,757,28"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a37ac42ea507742c81d9c1ce48ac7b81f" title=" " alt="" coords="563,69,753,109"/>
+<area shape="poly" title=" " alt="" coords="499,115,548,106,549,111,500,120"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af248169b23a186e17926f6c79d69c07d" title=" " alt="" coords="563,133,753,173"/>
+<area shape="poly" title=" " alt="" coords="504,142,549,144,549,150,504,147"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9" title=" " alt="" coords="552,197,764,237"/>
+<area shape="poly" title=" " alt="" coords="463,155,505,167,553,183,578,191,576,196,551,188,503,172,462,160"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" title=" " alt="" coords="812,190,1024,245"/>
+<area shape="poly" title=" " alt="" coords="764,215,798,215,798,220,764,220"/>
 </map>
 </div>
 <div class="dynheader">
@@ -409,21 +661,29 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_a8e5be781f24365de70e167056a2fdc13_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_a8e5be781f24365de70e167056a2fdc13_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1XYZReader_a8e5be781f24365de70e167056a2fdc13_cgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_a8e5be781f24365de70e167056a2fdc13_cgraph">
-<area shape="rect" title="Reads an atomic structure from a file." alt="" coords="5,69,204,109"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,69,455,109"/>
-<area shape="poly" title=" " alt="" coords="204,87,239,87,239,92,204,92"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,69,716,109"/>
-<area shape="poly" title=" " alt="" coords="455,87,489,87,489,92,455,92"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="815,5,951,45"/>
-<area shape="poly" title=" " alt="" coords="695,67,800,42,802,47,696,72"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,69,1001,109"/>
-<area shape="poly" title=" " alt="" coords="716,87,750,87,750,92,716,92"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="815,133,951,173"/>
-<area shape="poly" title=" " alt="" coords="696,107,802,132,800,137,695,112"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="1049,5,1248,45"/>
-<area shape="poly" title=" " alt="" coords="951,23,1036,23,1036,28,951,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1296,5,1432,45"/>
-<area shape="poly" title=" " alt="" coords="1248,23,1282,23,1282,28,1248,28"/>
+<area shape="rect" title="Reads an atomic structure from a file." alt="" coords="5,117,204,157"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,117,455,157"/>
+<area shape="poly" title=" " alt="" coords="204,135,239,135,239,140,204,140"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,117,716,157"/>
+<area shape="poly" title=" " alt="" coords="455,135,489,135,489,140,455,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="815,21,951,61"/>
+<area shape="poly" title=" " alt="" coords="667,115,811,63,813,69,668,120"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,117,1001,157"/>
+<area shape="poly" title=" " alt="" coords="716,135,750,135,750,140,716,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="815,181,951,221"/>
+<area shape="poly" title=" " alt="" coords="696,155,802,180,800,185,695,160"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="1056,5,1255,45"/>
+<area shape="poly" title=" " alt="" coords="951,35,1042,29,1042,35,951,40"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1347,5,1483,45"/>
+<area shape="poly" title=" " alt="" coords="1255,23,1333,23,1333,28,1255,28"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a37ac42ea507742c81d9c1ce48ac7b81f" title=" " alt="" coords="1060,69,1251,109"/>
+<area shape="poly" title=" " alt="" coords="996,115,1046,106,1047,111,997,120"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af248169b23a186e17926f6c79d69c07d" title=" " alt="" coords="1060,133,1251,173"/>
+<area shape="poly" title=" " alt="" coords="1002,142,1047,144,1046,150,1001,147"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9" title=" " alt="" coords="1049,197,1261,237"/>
+<area shape="poly" title=" " alt="" coords="961,155,1002,167,1050,183,1075,191,1073,196,1049,188,1001,172,959,160"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" title=" " alt="" coords="1309,190,1521,245"/>
+<area shape="poly" title=" " alt="" coords="1261,215,1296,215,1296,220,1261,220"/>
 </map>
 </div>
 
@@ -479,19 +739,27 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1XYZReader_adf5861d03b87b7bac297cd9e1348955f_cgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1XYZReader_adf5861d03b87b7bac297cd9e1348955f_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1XYZReader_adf5861d03b87b7bac297cd9e1348955f_cgraph" id="aclasscorrelation_1_1readers_1_1XYZReader_adf5861d03b87b7bac297cd9e1348955f_cgraph">
-<area shape="rect" title="Reads a trajectory from a file." alt="" coords="5,69,208,109"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="256,69,469,109"/>
-<area shape="poly" title=" " alt="" coords="208,87,242,87,242,92,208,92"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="568,5,704,45"/>
-<area shape="poly" title=" " alt="" coords="448,67,554,42,555,47,450,72"/>
-<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="517,69,755,109"/>
-<area shape="poly" title=" " alt="" coords="469,87,504,87,504,92,469,92"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="568,133,704,173"/>
-<area shape="poly" title=" " alt="" coords="450,107,555,132,554,137,448,112"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="803,5,1001,45"/>
-<area shape="poly" title=" " alt="" coords="704,23,789,23,789,28,704,28"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1049,5,1185,45"/>
-<area shape="poly" title=" " alt="" coords="1002,23,1036,23,1036,28,1002,28"/>
+<area shape="rect" title="Reads a trajectory from a file." alt="" coords="5,117,208,157"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="256,117,469,157"/>
+<area shape="poly" title=" " alt="" coords="208,135,242,135,242,140,208,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="568,21,704,61"/>
+<area shape="poly" title=" " alt="" coords="420,115,564,63,566,69,422,120"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="517,117,755,157"/>
+<area shape="poly" title=" " alt="" coords="469,135,504,135,504,140,469,140"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a993d2335276b9ed0cea9ebc5562b93b7" title="Sets the energy of the cell frame." alt="" coords="568,181,704,221"/>
+<area shape="poly" title=" " alt="" coords="450,155,555,180,554,185,448,160"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a4045db844cd637c155d4ffb5f0f19629" title="Registers an element symbol and returns its ID." alt="" coords="809,5,1008,45"/>
+<area shape="poly" title=" " alt="" coords="704,35,795,29,796,35,704,40"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#aa3178ae144a063305d68b60ca28b21ec" title="Finds the Element properties for a given element symbol." alt="" coords="1101,5,1237,45"/>
+<area shape="poly" title=" " alt="" coords="1008,23,1087,23,1087,28,1008,28"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a37ac42ea507742c81d9c1ce48ac7b81f" title=" " alt="" coords="813,69,1004,109"/>
+<area shape="poly" title=" " alt="" coords="749,115,799,106,800,111,750,120"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#af248169b23a186e17926f6c79d69c07d" title=" " alt="" coords="813,133,1004,173"/>
+<area shape="poly" title=" " alt="" coords="755,142,800,144,800,150,755,147"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9" title=" " alt="" coords="803,197,1015,237"/>
+<area shape="poly" title=" " alt="" coords="714,155,755,167,803,183,828,191,827,196,802,188,754,172,713,160"/>
+<area shape="rect" href="classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" title=" " alt="" coords="1063,190,1275,245"/>
+<area shape="poly" title=" " alt="" coords="1015,215,1049,215,1049,220,1015,220"/>
 </map>
 </div>
 <div class="dynheader">

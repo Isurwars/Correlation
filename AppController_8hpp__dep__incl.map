@@ -1,7 +1,15 @@
 <map id="include/app/AppController.hpp" name="include/app/AppController.hpp">
-<area shape="rect" id="Node000001" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="76,5,293,31"/>
-<area shape="rect" id="Node000002" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,79,193,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="162,41,115,80,112,76,159,37"/>
-<area shape="rect" id="Node000003" href="$main_8cpp.html" title="Application entry point." alt="" coords="217,79,323,104"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="210,37,258,76,254,80,207,41"/>
+<area shape="rect" id="Node000001" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="534,5,751,31"/>
+<area shape="rect" id="Node000002" href="$AnalysisRunner_8cpp.html" title="Implementation of AnalysisRunner." alt="" coords="5,79,205,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="543,35,192,81,192,76,543,30"/>
+<area shape="rect" id="Node000003" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="230,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="579,36,376,81,375,76,578,31"/>
+<area shape="rect" id="Node000004" href="$FileIOHandler_8cpp.html" title="Implementation of FileIOHandler." alt="" coords="443,79,629,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="616,40,555,81,552,76,613,36"/>
+<area shape="rect" id="Node000005" href="$InputValidator_8cpp.html" title="Implementation of InputValidator." alt="" coords="654,79,845,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="672,36,733,76,730,81,670,40"/>
+<area shape="rect" id="Node000006" href="$PresetController_8cpp.html" title="Implementation of PresetController." alt="" coords="869,79,1073,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="709,31,918,76,917,81,708,36"/>
+<area shape="rect" id="Node000007" href="$main_8cpp.html" title="Application entry point." alt="" coords="1097,79,1202,104"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="750,30,1086,76,1097,78,1096,83,1085,81,749,35"/>
 </map>

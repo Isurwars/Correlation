@@ -1,0 +1,17 @@
+<map id="correlation::math::KernelSmoothing" name="correlation::math::KernelSmoothing">
+<area shape="rect" id="Node000001" title="Applies kernel smoothing to a data series." alt="" coords="5,165,148,205"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a51751dd087f23dc0d2a61d5ba27beed9" title="Generates a smoothing kernel." alt="" coords="196,165,339,205"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,183,183,183,183,188,148,188"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math_1_1detail.html#a3a5577352e8b31e36d53c3db494eee41" title=" " alt="" coords="402,5,545,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="280,164,323,110,353,81,385,55,395,49,398,54,388,60,356,85,327,114,284,167"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math_1_1detail.html#a7940119997ebcfd3309b6e50992d4609" title=" " alt="" coords="402,69,545,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="301,163,386,119,401,112,404,117,388,124,304,168"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math_1_1detail.html#a991636d87e801eb88c88bf36a273b248" title=" " alt="" coords="402,133,545,173"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="339,172,388,164,389,169,340,177"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math_1_1detail.html#a98b763c7b30a7035a8223afeba57275b" title=" " alt="" coords="387,197,560,237"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="340,194,374,199,373,204,339,199"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math_1_1detail.html#aaec32721985fe45bc68349674fa9164c" title=" " alt="" coords="402,261,545,301"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="304,203,388,247,404,254,401,259,386,252,301,208"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math_1_1detail.html#a12bdf5873a7757e395d2e87b3a342a18" title=" " alt="" coords="402,325,545,365"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="284,204,327,257,356,286,388,311,398,317,395,321,385,316,353,290,323,260,280,207"/>
+</map>

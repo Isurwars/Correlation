@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['neighbor_0',['Neighbor',['../structcorrelation_1_1core_1_1Neighbor.html',1,'correlation::core']]],
-  ['neighborgraph_1',['NeighborGraph',['../classcorrelation_1_1core_1_1NeighborGraph.html',1,'correlation::core']]],
-  ['nicescale_2',['NiceScale',['../structcorrelation_1_1plotters_1_1detail_1_1NiceScale.html',1,'correlation::plotters::detail']]]
+  ['lammpsdumpreader_0',['LammpsDumpReader',['../classcorrelation_1_1readers_1_1LammpsDumpReader.html',1,'correlation::readers']]],
+  ['legendreparams_1',['LegendreParams',['../structcorrelation_1_1math_1_1LegendreParams.html',1,'correlation::math']]],
+  ['localentropycalculator_2',['LocalEntropyCalculator',['../classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html',1,'correlation::calculators']]]
 ];

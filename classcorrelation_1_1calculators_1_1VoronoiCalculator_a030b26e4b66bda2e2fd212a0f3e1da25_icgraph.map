@@ -1,0 +1,5 @@
+<map id="correlation::calculators::VoronoiCalculator::calculate" name="correlation::calculators::VoronoiCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes Voronoi tessellation and extracts metric histograms." alt="" coords="307,5,519,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,259,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="293,28,259,28,259,23,293,23"/>
+</map>

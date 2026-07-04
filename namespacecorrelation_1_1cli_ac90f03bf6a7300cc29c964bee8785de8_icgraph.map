@@ -1,7 +1,9 @@
 <map id="correlation::cli::printUsage" name="correlation::cli::printUsage">
-<area shape="rect" id="Node000001" title="Prints the usage / help message to stderr." alt="" coords="344,5,539,31"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1cli.html#a6fa2076ebb6b3be66236df716cf65616" title="Parses the command&#45;line arguments into a CliOptions struct." alt="" coords="108,5,296,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="330,21,296,21,296,15,330,15"/>
-<area shape="rect" id="Node000003" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,5,60,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+<area shape="rect" id="Node000001" title="Prints the usage / help message to stderr." alt="" coords="477,31,672,56"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1cli.html#ab79405b541ef2cd21f34816a7beed49e" title="Parses the command&#45;line arguments into a CliOptions struct." alt="" coords="241,31,429,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="464,46,429,46,429,41,464,41"/>
+<area shape="rect" id="Node000003" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="72,5,127,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="227,34,127,24,127,18,228,29"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1cli.html#a6fa2076ebb6b3be66236df716cf65616" title=" " alt="" coords="5,55,193,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="228,57,194,60,193,55,228,52"/>
 </map>

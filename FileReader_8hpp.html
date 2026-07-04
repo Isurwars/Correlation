@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -93,6 +93,7 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="Cell_8hpp_source.html">core/Cell.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Trajectory_8hpp_source.html">core/Trajectory.hpp</a>&quot;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -100,46 +101,48 @@ Include dependency graph for FileReader.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="FileReader_8hpp__incl.png" border="0" usemap="#ainclude_2readers_2FileReader_8hpp" alt=""/></div>
 <map name="ainclude_2readers_2FileReader_8hpp" id="ainclude_2readers_2FileReader_8hpp">
-<area shape="rect" title="Unified file reading interface for structure and trajectory files." alt="" coords="165,5,388,31"/>
-<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="153,152,259,177"/>
-<area shape="poly" title=" " alt="" coords="273,32,220,141,215,138,269,30"/>
-<area shape="rect" title=" " alt="" coords="21,299,79,324"/>
-<area shape="poly" title=" " alt="" coords="258,33,214,61,157,104,101,160,77,192,58,226,50,256,50,285,44,285,45,255,53,224,73,189,97,157,154,100,211,57,255,29"/>
-<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="275,79,419,104"/>
-<area shape="poly" title=" " alt="" coords="290,29,328,67,325,71,287,33"/>
-<area shape="rect" title=" " alt="" coords="537,152,624,177"/>
-<area shape="poly" title=" " alt="" coords="312,28,369,49,433,76,497,110,552,142,549,147,495,115,430,81,367,54,310,33"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="87,225,205,251"/>
-<area shape="poly" title=" " alt="" coords="198,179,167,217,163,213,194,176"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="303,299,482,324"/>
-<area shape="poly" title=" " alt="" coords="214,176,236,211,269,249,306,273,345,291,343,296,304,278,266,253,232,215,210,179"/>
-<area shape="rect" title=" " alt="" coords="69,372,125,397"/>
-<area shape="poly" title=" " alt="" coords="156,180,106,198,80,211,57,227,27,259,11,299,8,312,11,323,31,347,58,365,55,369,28,351,6,325,3,312,6,298,23,256,54,223,77,207,103,193,155,175"/>
-<area shape="poly" title=" " alt="" coords="158,180,115,198,95,211,78,227,62,255,55,285,50,284,57,253,73,224,92,207,113,193,156,175"/>
-<area shape="rect" title=" " alt="" coords="279,225,354,251"/>
-<area shape="poly" title=" " alt="" coords="225,175,288,215,286,220,222,180"/>
-<area shape="rect" title=" " alt="" coords="379,225,441,251"/>
-<area shape="poly" title=" " alt="" coords="240,175,367,219,365,224,238,180"/>
-<area shape="poly" title=" " alt="" coords="186,248,340,292,339,297,185,253"/>
-<area shape="rect" title=" " alt="" coords="103,299,189,324"/>
-<area shape="poly" title=" " alt="" coords="149,251,149,285,143,285,143,251"/>
-<area shape="rect" title=" " alt="" coords="213,299,279,324"/>
-<area shape="poly" title=" " alt="" coords="164,249,220,288,217,293,161,253"/>
-<area shape="poly" title=" " alt="" coords="132,253,79,292,75,288,129,249"/>
-<area shape="poly" title=" " alt="" coords="346,327,139,376,138,371,345,321"/>
-<area shape="rect" title=" " alt="" coords="263,372,325,397"/>
-<area shape="poly" title=" " alt="" coords="378,326,323,366,320,362,375,322"/>
-<area shape="rect" title=" " alt="" coords="349,372,436,397"/>
-<area shape="poly" title=" " alt="" coords="395,324,395,358,390,358,390,324"/>
-<area shape="rect" title=" " alt="" coords="460,372,552,397"/>
-<area shape="poly" title=" " alt="" coords="412,322,478,362,475,367,410,326"/>
-<area shape="poly" title=" " alt="" coords="326,106,242,148,240,143,324,102"/>
-<area shape="poly" title=" " alt="" coords="404,102,444,120,462,133,476,151,482,174,478,202,456,252,440,274,421,292,417,288,436,270,452,249,473,200,477,174,472,153,458,137,441,124,402,107"/>
-<area shape="poly" title=" " alt="" coords="346,105,331,153,322,212,317,211,326,151,341,104"/>
-<area shape="poly" title=" " alt="" coords="352,104,361,137,375,176,396,212,391,215,370,178,356,139,347,105"/>
-<area shape="poly" title=" " alt="" coords="386,101,531,145,529,151,384,107"/>
-<area shape="rect" title=" " alt="" coords="385,152,462,177"/>
-<area shape="poly" title=" " alt="" coords="361,102,403,141,399,144,358,106"/>
+<area shape="rect" title="Unified file reading interface for structure and trajectory files." alt="" coords="363,5,586,31"/>
+<area shape="rect" href="Cell_8hpp.html" title="Simulation cell structure with periodic boundary conditions." alt="" coords="243,152,349,177"/>
+<area shape="poly" title=" " alt="" coords="458,33,392,81,320,145,316,141,389,77,455,29"/>
+<area shape="rect" title=" " alt="" coords="5,299,72,324"/>
+<area shape="poly" title=" " alt="" coords="452,33,357,81,293,115,232,154,137,228,63,291,59,287,133,224,229,150,291,111,355,76,450,28"/>
+<area shape="rect" title=" " alt="" coords="459,299,517,324"/>
+<area shape="poly" title=" " alt="" coords="552,28,608,43,667,67,723,102,746,125,766,151,775,168,777,185,775,200,767,214,742,239,705,260,661,276,615,290,532,306,531,301,614,284,660,271,703,255,739,235,763,211,770,198,772,185,770,170,762,153,742,128,719,106,665,72,606,48,550,33"/>
+<area shape="rect" href="Trajectory_8hpp.html" title="Trajectory data structure for time&#45;series atomistic simulations." alt="" coords="403,79,547,104"/>
+<area shape="poly" title=" " alt="" coords="477,31,477,65,472,65,472,31"/>
+<area shape="rect" title=" " alt="" coords="665,152,751,177"/>
+<area shape="poly" title=" " alt="" coords="495,29,679,142,676,147,492,33"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="197,225,315,251"/>
+<area shape="poly" title=" " alt="" coords="292,179,272,215,267,212,287,176"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="147,299,325,324"/>
+<area shape="poly" title=" " alt="" coords="253,180,216,198,200,211,188,227,184,242,188,258,212,288,208,291,183,260,178,242,183,224,197,207,214,193,251,175"/>
+<area shape="rect" title=" " alt="" coords="81,372,137,397"/>
+<area shape="poly" title=" " alt="" coords="261,180,218,199,178,227,153,258,135,293,116,359,111,357,130,292,149,255,174,223,216,194,258,175"/>
+<area shape="poly" title=" " alt="" coords="307,176,337,210,379,249,414,272,450,290,448,295,412,276,376,253,333,214,303,179"/>
+<area shape="rect" title=" " alt="" coords="389,225,464,251"/>
+<area shape="poly" title=" " alt="" coords="318,175,395,216,392,221,316,180"/>
+<area shape="rect" title=" " alt="" coords="489,225,551,251"/>
+<area shape="poly" title=" " alt="" coords="333,175,476,220,475,225,331,180"/>
+<area shape="poly" title=" " alt="" coords="255,252,245,286,240,285,250,250"/>
+<area shape="rect" title=" " alt="" coords="349,299,435,324"/>
+<area shape="poly" title=" " alt="" coords="279,248,359,290,357,295,277,253"/>
+<area shape="poly" title=" " alt="" coords="222,253,86,297,84,292,220,248"/>
+<area shape="poly" title=" " alt="" coords="294,248,446,294,445,300,292,253"/>
+<area shape="poly" title=" " alt="" coords="217,326,143,367,141,363,214,322"/>
+<area shape="rect" title=" " alt="" coords="162,372,225,397"/>
+<area shape="poly" title=" " alt="" coords="231,326,209,362,205,359,227,323"/>
+<area shape="rect" title=" " alt="" coords="249,372,335,397"/>
+<area shape="poly" title=" " alt="" coords="247,323,277,360,272,363,243,326"/>
+<area shape="rect" title=" " alt="" coords="359,372,451,397"/>
+<area shape="poly" title=" " alt="" coords="264,322,366,364,364,369,262,326"/>
+<area shape="poly" title=" " alt="" coords="447,107,339,149,337,144,445,102"/>
+<area shape="poly" title=" " alt="" coords="473,105,456,153,437,213,432,211,451,151,468,104"/>
+<area shape="poly" title=" " alt="" coords="472,105,462,138,461,158,465,176,478,197,495,215,491,219,474,201,460,178,456,158,457,137,467,103"/>
+<area shape="poly" title=" " alt="" coords="513,101,658,145,657,151,511,107"/>
+<area shape="rect" title=" " alt="" coords="475,152,552,177"/>
+<area shape="poly" title=" " alt="" coords="483,103,503,139,498,141,479,106"/>
+<area shape="rect" title=" " alt="" coords="576,152,640,177"/>
+<area shape="poly" title=" " alt="" coords="497,102,575,143,573,148,495,106"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -166,38 +169,38 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a4e5071db3eb56c211c63140e5af27b67" id="r_a4e5071db3eb56c211c63140e5af27b67"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">correlation::readers::FileType</a> { <br />
-&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67ae9989db5dabeea617f40c8dbfd07f5fb">correlation::readers::Car</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a1a66ab62bfc858b7bcf9e01aa9cd1841">correlation::readers::Cell</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a9d52b9b8108e3786b33e1e9e675c3f4f">correlation::readers::Cif</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aec14c590047ce90146a3c926ba49263a">correlation::readers::OnetepDat</a>
+<tr class="memitem:a141a05487c31034b468a971473931230" id="r_a141a05487c31034b468a971473931230"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230">correlation::readers::FileType</a> : std::uint8_t { <br />
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230ae9989db5dabeea617f40c8dbfd07f5fb">correlation::readers::Car</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a1a66ab62bfc858b7bcf9e01aa9cd1841">correlation::readers::Cell</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a9d52b9b8108e3786b33e1e9e675c3f4f">correlation::readers::Cif</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230aec14c590047ce90146a3c926ba49263a">correlation::readers::OnetepDat</a>
 , <br />
-&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a2b73f91683611c489560a1d163e37902">correlation::readers::Arc</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67abd5b2d46be9431970d83ded5908f9843">correlation::readers::LammpsDump</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a601887ab6b21e76937dfc449a5b39fec">correlation::readers::CastepMd</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a294d1f3b523e5fa5136dbe81f4f83110">correlation::readers::Outmol</a>
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a2b73f91683611c489560a1d163e37902">correlation::readers::Arc</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230abd5b2d46be9431970d83ded5908f9843">correlation::readers::LammpsDump</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a601887ab6b21e76937dfc449a5b39fec">correlation::readers::CastepMd</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a294d1f3b523e5fa5136dbe81f4f83110">correlation::readers::Outmol</a>
 , <br />
-&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aa9e4f25c2775231296b2055ef94b2316">correlation::readers::Vasp</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a10b6b1dc43cc89033808b2d7e059a1af">correlation::readers::Xdatcar</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67ad9183ec3a202aba648730b9cd822fddb">correlation::readers::Gromacs</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67ab693cea68a050d89a00c376652df1c5e">correlation::readers::Pdb</a>
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230aa9e4f25c2775231296b2055ef94b2316">correlation::readers::Vasp</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a10b6b1dc43cc89033808b2d7e059a1af">correlation::readers::Xdatcar</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230ad9183ec3a202aba648730b9cd822fddb">correlation::readers::Gromacs</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230ab693cea68a050d89a00c376652df1c5e">correlation::readers::Pdb</a>
 , <br />
-&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67aab0d1d0c4c5ece0ff7bc519024361424">correlation::readers::Xyz</a>
-, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67a88183b946cc5f0e8c96b2e66e1c74a7e">correlation::readers::Unknown</a>
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230aab0d1d0c4c5ece0ff7bc519024361424">correlation::readers::Xyz</a>
+, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230a88183b946cc5f0e8c96b2e66e1c74a7e">correlation::readers::Unknown</a>
 <br />
  }</td></tr>
-<tr class="memdesc:a4e5071db3eb56c211c63140e5af27b67"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type-safe enum to specify the format of a structure or trajectory file.  <a href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">More...</a><br /></td></tr>
-<tr class="separator:a4e5071db3eb56c211c63140e5af27b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a141a05487c31034b468a971473931230"><td class="mdescLeft">&#160;</td><td class="mdescRight">A type-safe enum to specify the format of a structure or trajectory file.  <a href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230">More...</a><br /></td></tr>
+<tr class="separator:a141a05487c31034b468a971473931230"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9c44227489fe8986833f74d86cfeeb21" id="r_a9c44227489fe8986833f74d86cfeeb21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21">correlation::readers::readStructure</a> (const std::string &amp;filename, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
+<tr class="memitem:a9c44227489fe8986833f74d86cfeeb21" id="r_a9c44227489fe8986833f74d86cfeeb21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21">correlation::readers::readStructure</a> (const std::string &amp;filename, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)</td></tr>
 <tr class="memdesc:a9c44227489fe8986833f74d86cfeeb21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
 <tr class="separator:a9c44227489fe8986833f74d86cfeeb21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad2cf3ae14984397ae70f5449478e95e8" id="r_ad2cf3ae14984397ae70f5449478e95e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8">correlation::readers::readTrajectory</a> (const std::string &amp;filename, <a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">FileType</a> type, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)</td></tr>
-<tr class="memdesc:ad2cf3ae14984397ae70f5449478e95e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
-<tr class="separator:ad2cf3ae14984397ae70f5449478e95e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2142722689ee5c94bfe3fde42a7c3b47" id="r_a2142722689ee5c94bfe3fde42a7c3b47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1readers.html#a4e5071db3eb56c211c63140e5af27b67">FileType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47">correlation::readers::determineFileType</a> (const std::string &amp;filename)</td></tr>
+<tr class="memitem:aec0366af2c850ff173195ed74cac8de9" id="r_aec0366af2c850ff173195ed74cac8de9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9">correlation::readers::readTrajectory</a> (const std::string &amp;filename, <a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230">FileType</a> type, const std::function&lt; void(float, const std::string &amp;)&gt; &amp;<a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)</td></tr>
+<tr class="memdesc:aec0366af2c850ff173195ed74cac8de9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
+<tr class="separator:aec0366af2c850ff173195ed74cac8de9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2142722689ee5c94bfe3fde42a7c3b47" id="r_a2142722689ee5c94bfe3fde42a7c3b47"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1readers.html#a141a05487c31034b468a971473931230">FileType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1readers.html#a2142722689ee5c94bfe3fde42a7c3b47">correlation::readers::determineFileType</a> (const std::string &amp;filename)</td></tr>
 <tr class="memdesc:a2142722689ee5c94bfe3fde42a7c3b47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines the FileType from a given filename extension.  <br /></td></tr>
 <tr class="separator:a2142722689ee5c94bfe3fde42a7c3b47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>

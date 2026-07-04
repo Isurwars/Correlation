@@ -1,0 +1,9 @@
+<map id="correlation::app::AppBackend::runTrajectoryCalculators" name="correlation::app::AppBackend::runTrajectoryCalculators">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,69,217,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="265,5,509,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,67,287,46,288,51,199,72"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="285,69,490,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="218,87,271,87,271,92,218,92"/>
+<area shape="rect" id="Node000004" href="$structcorrelation_1_1analysis_1_1AnalysisSettings.html#ae53b91ac4928ba8a0c4e4e56680b8dc9" title="Helper to check if a specific calculator is enabled." alt="" coords="288,133,487,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="199,107,288,128,287,133,198,112"/>
+</map>

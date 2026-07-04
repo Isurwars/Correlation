@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Correlation: Correlation: 2026 Roadmap</title>
+<title>Correlation: Correlation: Roadmap to 4.0.0</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -77,124 +77,142 @@ $(function() {
 
 </div><!-- top -->
 <div><div class="header">
-  <div class="headertitle"><div class="title">Correlation: 2026 Roadmap</div></div>
+  <div class="headertitle"><div class="title">Correlation: Roadmap to 4.0.0</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="correlation-2026-roadmap"></a><em>Working Plan for the Rest of 2026</em></p>
-<p>This document outlines the strategic direction and working plan for <code>Correlation</code> during the remainder of 2026. Following the successful release of version <code>3.0</code>, the focus shifts toward expanding the scientific capabilities of the engine, migrating core performance structures to support multi-vendor GPU environments, and integrating with modern machine learning (ML) frameworks.</p>
+<div class="textblock"><p><a class="anchor" id="correlation-roadmap-to-400"></a><em>Consolidated Strategic Plan, Completed Milestones (v3.4.x &amp; v3.5.x), and Future Pipeline</em></p>
+<p>This document outlines the strategic direction and development roadmap for <code>Correlation</code> as we advance toward the milestone <b>4.0.0</b> release. Following the successes of the 3.x series, the roadmap focuses on solidifying core performance structures, expanding scientific format support, introducing machine learning (ML) potential descriptors, and delivering a multi-vendor GPU execution model.</p>
 <hr  />
-<h1><a class="anchor" id="autotoc_md-core-themes-for-2026"></a>
-🎯 Core Themes for 2026</h1>
+<h1><a class="anchor" id="autotoc_md-strategic-themes"></a>
+🎯 Strategic Themes</h1>
 <div class="fragment"><div class="line">graph TD</div>
-<div class="line">    A[Correlation 2026 Vision] --&gt; B[1. Core &amp; Multi-Vendor GPU]</div>
-<div class="line">    A --&gt; C[2. ML &amp; Electronic Structure]</div>
-<div class="line">    A --&gt; D[3. Widespread Format Support]</div>
-<div class="line">    A --&gt; E[4. Python Publishing &amp; CI/CD]</div>
-<div class="line">    A --&gt; F[5. GUI &amp; WASM Experience]</div>
+<div class="line">    classDef completed fill:#2ec4b6,stroke:#011627,stroke-width:2px,color:#fdfffc;</div>
+<div class="line">    classDef planned fill:#3a86c8,stroke:#011627,stroke-width:2px,color:#fdfffc;</div>
+<div class="line">    classDef core fill:#ff9f1c,stroke:#011627,stroke-width:2px,color:#fdfffc;</div>
 <div class="line"> </div>
-<div class="line">    B --&gt; B1[Migrate CUDA to SYCL/oneAPI]</div>
-<div class="line">    B --&gt; B2[Accelerate RDF, Steinhardt]</div>
+<div class="line">    A[&quot;Correlation 4.0.0 Vision&quot;]:::core --&gt; B[&quot;1. Core &amp; Multi-Vendor GPU&quot;]:::planned</div>
+<div class="line">    A --&gt; C[&quot;2. ML &amp; Electronic Structure&quot;]:::planned</div>
+<div class="line">    A --&gt; D[&quot;3. Widespread Format Support&quot;]:::planned</div>
+<div class="line">    A --&gt; E[&quot;4. Python Publishing &amp; CI&quot;]:::planned</div>
+<div class="line">    A --&gt; F[&quot;5. GUI &amp; WASM Experience&quot;]:::planned</div>
+<div class="line"> </div>
+<div class="line">    B --&gt; B1[&quot;Completed: TBB, Wigner-3j Cache, SIMD Distance&quot;]:::completed</div>
+<div class="line">    B --&gt; B2[&quot;Planned: SYCL/oneAPI, Single-Precision Path&quot;]:::planned</div>
 <div class="line">    </div>
-<div class="line">    C --&gt; C1[Integrate ML Potentials MACE/CHGNet]</div>
-<div class="line">    C --&gt; C2[Analyze ML Electronic Structure]</div>
+<div class="line">    C --&gt; C1[&quot;Planned: MACE/CHGNet/GAP Trajectories&quot;]:::planned</div>
+<div class="line">    C --&gt; C2[&quot;Planned: SOAP Descriptors in C++ Core&quot;]:::planned</div>
 <div class="line">    </div>
-<div class="line">    D --&gt; D1[ORCA, GPAW, ABINIT, DFTB+]</div>
-<div class="line">    D --&gt; D2[Automatic Sniffer Enhancements]</div>
+<div class="line">    D --&gt; D1[&quot;Completed: Modular Reader Helpers&quot;]:::completed</div>
+<div class="line">    D --&gt; D2[&quot;Planned: ORCA, GPAW, ABINIT, DFTB+&quot;]:::planned</div>
 <div class="line"> </div>
-<div class="line">    E --&gt; E1[cibuildwheel CI/CD Pipeline]</div>
-<div class="line">    E --&gt; E2[Zero-Copy ASE/Pymatgen Views]</div>
+<div class="line">    E --&gt; E1[&quot;Completed: Lazy Frame Trajectory Indexing&quot;]:::completed</div>
+<div class="line">    E --&gt; E2[&quot;Planned: cibuildwheel PyPI Pipeline, ASE/Pymatgen Views&quot;]:::planned</div>
 <div class="line"> </div>
-<div class="line">    F --&gt; F1[GUI Plot Overlay &amp; Comparison]</div>
-<div class="line">    F --&gt; F2[Standalone WASM Web App]</div>
+<div class="line">    F --&gt; F1[&quot;Completed: Redesigned Dashboard, Native PDF, Hover Guides&quot;]:::completed</div>
+<div class="line">    F --&gt; F2[&quot;Planned: GUI Overlay Comparison, Hosted WASM App&quot;]:::planned</div>
 </div><!-- fragment --><hr  />
+<h1><a class="anchor" id="autotoc_md-completed-milestones-v34x--v35x"></a>
+🏆 Completed Milestones (v3.4.x &amp; v3.5.x)</h1>
+<p>Recent iterations have addressed critical bottlenecks highlighted in the project analysis, moving several experimental optimizations directly into the stable production core.</p>
+<h2><a class="anchor" id="v35x-performance--core-enhancements"></a>
+v3.5.x Performance &amp; Core Enhancements</h2>
+<ul>
+<li><b>Wigner 3-j Symbol Caching:</b> Eliminated expensive recursive factorial evaluations in <code>SteinhardtCalculator</code> by precomputing and caching Wigner 3-j lookups, accelerating $W_6$ parameter calculations by approximately 100x.</li>
+<li><b>Intel OneTBB Parallelization:</b> Parallelized computationally heavy loops in <code>CNACalculator</code> (migrating from recursive DFS to stack-based iterative loops) and <code>SteinhardtCalculator</code> using thread-local accumulation (<code>tbb::enumerable_thread_specific</code>) and parallel reductions.</li>
+<li><b>SIMD Distance Optimization:</b> Re-engineered distance evaluations using flat cell lists and pre-allocated thread-local buffers to optimize SIMD vectorization.</li>
+<li><b>Configurable FFT Backends:</b> Replaced the hand-coded Cooley-Tukey FFT with configurable support for <b>FFTW3</b> and <b>Intel MKL</b>, featuring dynamic plan caching to speed up dynamics calculations (VACF, MSD, VDOS).</li>
+<li><b>Native PDF &amp; Roboto Vector Rendering:</b> Added a high-fidelity vector drawing generator to export publication-ready PDF plots natively, integrating normalized Roboto font glyph paths.</li>
+<li><b>Robustness &amp; Fuzzing:</b> Integrated automated <code>libFuzzer</code> harnesses for all trajectory readers (CIF, GROMACS, CP2K, etc.) to enforce strict security and parsing stability in the CI/CD pipeline.</li>
+<li><b>C++17 Compatibility:</b> Refactored C++20 range algorithms to C++17 equivalents to maximize cross-platform compiler support.</li>
+</ul>
+<h2><a class="anchor" id="v34x-python--gui-streamlining"></a>
+v3.4.x Python &amp; GUI Streamlining</h2>
+<ul>
+<li><b>Trajectory Lazy Indexing:</b> Implemented lazy frame indexing (<code>__getitem__</code>, <code>__len__</code>, negative indices) on Python trajectory bindings to prevent RAM exhaustion when working with large data files.</li>
+<li><b>Extension-Based Saving:</b> Re-engineered GUI save dialogs to automatically configure output formats (CSV, HDF5, or Parquet) based on the user-selected file extension.</li>
+<li><b>GUI Dashboard Consolidation:</b> Streamlined the Slint UI into a modern 3-column dashboard, moving settings into auto-expanded tabs and highlighting parameter bounds.</li>
+</ul>
+<hr  />
 <h1><a class="anchor" id="autotoc_md-track-1-core--multi-vendor-gpu-acceleration"></a>
 🚀 Track 1: Core &amp; Multi-Vendor GPU Acceleration</h1>
-<p>To ensure maximum accessibility and performance across high-performance computing (HPC) centers and consumer hardware, the GPU acceleration engine will be migrated from NVIDIA-only CUDA to a unified, multi-vendor programming model.</p>
-<h2><a class="anchor" id="autotoc_md11-migration-from-cuda-to-cross-platform-gpu-apis"></a>
-1.1 Migration from CUDA to Cross-Platform GPU APIs</h2>
+<p>To ensure high-performance execution across high-performance computing (HPC) centers and consumer workstations, the engine is migrating from NVIDIA-only CUDA to a unified, multi-vendor programming model.</p>
+<h2><a class="anchor" id="autotoc_md11-cuda-migration-to-cross-platform-gpu-apis"></a>
+1.1 CUDA Migration to Cross-Platform GPU APIs</h2>
 <ul>
 <li><b>Objective:</b> Replace CUDA-specific code with a vendor-neutral API such as <b>SYCL (oneAPI)</b>, <b>Kokkos</b>, or <b>Vulkan/WebGPU</b>.</li>
-<li><b>Target Platforms:</b> Support NVIDIA, AMD (ATI), and Intel GPUs seamlessly.</li>
-<li><b>Fallback Guarantee:</b> Maintain and harden the robust automatic CPU fallback pathway when no compatible GPU driver or runtime is present.</li>
+<li><b>Target Hardware:</b> Support NVIDIA, AMD, and Intel GPUs.</li>
+<li><b>CPU Fallback:</b> Hardened thread-safe CPU fallbacks using TBB and SIMD.</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md12-expanding-gpu-acceleration-coverage"></a>
-1.2 Expanding GPU Acceleration Coverage</h2>
+<h2><a class="anchor" id="autotoc_md12-single-precision-float-compilation-path"></a>
+1.2 Single-Precision (&lt;tt&gt;float&lt;/tt&gt;) Compilation Path</h2>
 <ul>
-<li><b>Target Calculators:</b> Port performance-critical radial distribution functions (RDF) and computationally expensive Steinhardt bond-orientational parameters ($Q_4, Q_6$) to the new unified GPU backend.</li>
-<li><b>Benchmarking:</b> Integrate GPU benchmarks into the automated suite to measure performance scaling across hardware generations.</li>
+<li><b>Objective:</b> Address GPU throughput throttling on consumer cards (which often run double precision at 1:32 or 1:64 speed) and double CPU SIMD vector lane capacity.</li>
+<li><b>Implementation:</b> Template all calculator classes (using a type alias <code>real_t</code> via a <code>USE_SINGLE_PRECISION</code> compile option) to support compiling in single-precision, enabling hardware Special Function Units (SFUs) for trigonometric functions.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md13-expanding-gpu-acceleration-coverage"></a>
+1.3 Expanding GPU Acceleration Coverage</h2>
+<ul>
+<li><b>GPU RDF Distance Binning:</b> Construct a 3D cell grid on the GPU and perform parallel bin sorting (via Thrust or custom radix sort) to accelerate $O(N^2)$ pairwise distance calculations.</li>
+<li><b>GPU XRD/Debye Calculations:</b> Port the Debye scattering intensity calculation to the unified GPU backend to accelerate structural diffraction evaluations.</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md-track-2-machine-learning-ml-potentials--electronic-structure"></a>
-🔬 Track 2: Machine Learning (ML) Potentials &amp; Electronic Structure</h1>
-<p>The rise of machine learning in molecular simulations requires <code>Correlation</code> to bridge the gap between traditional atomistic analyses and modern ML-driven structural representations.</p>
-<h2><a class="anchor" id="autotoc_md21-machine-learning-interatomic-potentials-mlips"></a>
-2.1 Machine Learning Interatomic Potentials (MLIPs)</h2>
+<h1><a class="anchor" id="autotoc_md-track-2-machine-learning-ml-potentials--descriptors"></a>
+🔬 Track 2: Machine Learning (ML) Potentials &amp; Descriptors</h1>
+<p>As molecular simulations transition to machine learning interatomic potentials (MLIPs), <code>Correlation</code> must bridge the gap between traditional structural analysis and ML representations.</p>
+<h2><a class="anchor" id="autotoc_md21-trajectory-parsing-for-ml-potentials"></a>
+2.1 Trajectory Parsing for ML Potentials</h2>
 <ul>
-<li><b>Objective:</b> Support structures and descriptor data generated by state-of-the-art ML potentials of 2026.</li>
-<li><b>Key Targets:</b><ul>
-<li>Parse and analyze trajectories produced by <b>MACE</b>, <b>CHGNet</b>, <b>GAP</b>, and <b>NequIP</b>.</li>
-<li>Compute and project structural analysis metrics (e.g., coordinate distribution, coordination number) onto ML-derived local atomic environments.</li>
-<li>Implement calculations for local geometric descriptors (such as Smooth Overlap of Atomic Positions - SOAP) directly inside the C++ core.</li>
+<li><b>Objective:</b> Support coordinates and descriptor data generated by modern ML potentials.</li>
+<li><b>Key Targets:</b> Parse and analyze trajectory outputs produced by <b>MACE</b>, <b>CHGNet</b>, <b>GAP</b>, and <b>NequIP</b>.</li>
 </ul>
-</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md22-machine-learning-electronic-structure-integration"></a>
-2.2 Machine Learning Electronic Structure Integration</h2>
+<h2><a class="anchor" id="autotoc_md22-soap-descriptors-in-c-core"></a>
+2.2 SOAP Descriptors in C++ Core</h2>
 <ul>
-<li><b>Objective:</b> Parse and visualize electronic properties predicted by machine learning models or hybrid ML/DFT workflows.</li>
-<li><b>Key Features:</b><ul>
-<li>Support for ML-predicted electronic density of states (e.g., charge densities, electrostatic potentials).</li>
-<li>Direct structural-electronic correlations (e.g., mapping band gaps or local Fermi levels to coordination environments or Steinhardt parameters).</li>
+<li><b>Objective:</b> Implement <b>Smooth Overlap of Atomic Positions (SOAP)</b> local geometric descriptors directly inside the C++ core to provide high-speed local environment encoding without requiring external Python environments.</li>
 </ul>
-</li>
+<h2><a class="anchor" id="autotoc_md23-structural-electronic-correlation"></a>
+2.3 Structural-Electronic Correlation</h2>
+<ul>
+<li><b>Objective:</b> Correlate ML-predicted electronic properties (e.g., charge densities, local Fermi levels, electrostatic potentials) with geometric structures (coordination environments, Steinhardt parameters, CNA classifications).</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md-track-3-widespread-material-simulation-software-support"></a>
-📂 Track 3: Widespread Material Simulation Software Support</h1>
-<p>We aim to support the most widely used material simulation software packages of 2026. This requires extending our parser suite and building a robust, structure-agnostic reader pipeline.</p>
-<h2><a class="anchor" id="autotoc_md31-new-parser-integrations"></a>
-3.1 New Parser Integrations</h2>
-<p>We will add native readers for the following tools:</p><ul>
+<h1><a class="anchor" id="autotoc_md-track-3-material-simulation-software-support"></a>
+📂 Track 3: Material Simulation Software Support</h1>
+<p>We aim to support the most widely used material simulation software packages by extending our parser suite and building a robust, structure-agnostic reader pipeline.</p>
+<h2><a class="anchor" id="autotoc_md31-new-native-reader-integrations"></a>
+3.1 New Native Reader Integrations</h2>
+<ul>
 <li><b>ORCA:</b> Parse output logs (<code>.out</code>), orbital properties, and geometry optimization steps.</li>
 <li><b>GPAW:</b> Support grid-based and projector-augmented wave trajectories (<code>.gpw</code>).</li>
 <li><b>ABINIT:</b> Read output files and netCDF structure formats.</li>
-<li><b>DFTB+:</b> Parse <code>.out</code> files and coordinate files (<code>.gen</code>).</li>
+<li><b>DFTB+:</b> Parse output files and coordinate files (<code>.gen</code>).</li>
 </ul>
-<h2><a class="anchor" id="autotoc_md32-enhanced-parser-suite--meta-data-sniffing"></a>
-3.2 Enhanced Parser Suite &amp; Meta-Data Sniffing</h2>
+<h2><a class="anchor" id="autotoc_md32-enhanced-metadata-sniffing"></a>
+3.2 Enhanced Metadata Sniffing</h2>
 <ul>
-<li><b>Software Targets:</b> Extend existing parsers for <b>VASP</b>, <b>GROMACS</b>, <b>LAMMPS</b>, <b>Quantum ESPRESSO</b>, and <b>CP2K</b> to extract additional context (charge states, dipole moments, local forces, and energies).</li>
-<li><b>Reader Factory Sniffing:</b> Improve content-based sniffing in <code>ReaderFactory</code> to handle files without extensions, resolving conflicts between generic <code>.in</code> and <code>.out</code> extensions.</li>
+<li><b>Software Targets:</b> Extend existing VASP, GROMACS, LAMMPS, Quantum ESPRESSO, and CP2K readers to extract charge states, local forces, and energies.</li>
+<li><b>Reader Factory Sniffing:</b> Improve content-based sniffing in <code>ReaderFactory</code> to handle files without extensions, resolving conflicts between generic <code>.in</code> and <code>.out</code> file types.</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md-track-4-python-ecosystem--cicd-release-automation"></a>
-🐍 Track 4: Python Ecosystem &amp; CI/CD Release Automation</h1>
-<p>Python bindings make <code>Correlation</code> scriptable. In late 2026, we will focus on packaging, publication automation, and seamless library integration.</p>
-<h2><a class="anchor" id="autotoc_md41-pypi-automated-release-pipelines-cicd"></a>
-4.1 PyPI Automated Release Pipelines (CI/CD)</h2>
+<h1><a class="anchor" id="autotoc_md-track-4-python-ecosystem--ci-automation"></a>
+🐍 Track 4: Python Ecosystem &amp; CI Automation</h1>
+<p>Python bindings make <code>Correlation</code> scriptable. In the lead-up to 4.0.0, the focus shifts to automated packaging and seamless library integration.</p>
+<h2><a class="anchor" id="autotoc_md41-pypi-automated-release-pipelines"></a>
+4.1 PyPI Automated Release Pipelines</h2>
 <ul>
-<li><b>Objective:</b> Create a automated GitHub Actions workflow to publish pre-compiled Python wheels to PyPI.</li>
-<li><b>Implementation:</b><ul>
-<li>Configure <code>cibuildwheel</code> to automatically build binary wheels across Linux, macOS, and Windows.</li>
-<li>Deliver support for multiple Python versions (3.9 through 3.12+).</li>
-<li>Enable automatic publishing on GitHub releases/tags.</li>
+<li><b>Objective:</b> Set up a GitHub Actions workflow utilizing <code>cibuildwheel</code> to distribute pre-compiled binary wheels on PyPI.</li>
+<li><b>Scope:</b> Provide native pre-compiled wheels across Linux, macOS, and Windows for Python versions 3.9 through 3.12+.</li>
 </ul>
-</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md42-material-science-library-integrations"></a>
-4.2 Material Science Library Integrations</h2>
+<h2><a class="anchor" id="autotoc_md42-materials-science-library-integrations"></a>
+4.2 Materials Science Library Integrations</h2>
 <ul>
-<li><b>Objective:</b> Provide direct interoperability with Python's scientific ecosystem.</li>
-<li><b>Interoperability Targets:</b><ul>
-<li><b>ASE (Atomic Simulation Environment):</b> Fast zero-copy conversion between C++ <code>Cell</code>/<code>Trajectory</code> buffers and <code>ase.Atoms</code> objects.</li>
-<li><b>Pymatgen:</b> Expose utilities to easily instantiate <code>Correlation</code> calculators using <code>pymatgen.core.Structure</code> structures.</li>
-<li><b>Documentation:</b> Provide high-quality Jupyter Notebook tutorials illustrating analysis pipelines, plotting, and custom pipeline workflows.</li>
-</ul>
-</li>
+<li><b>ASE Interoperability:</b> Provide fast zero-copy conversion between C++ <code>Cell</code>/<code>Trajectory</code> buffers and <code>ase.Atoms</code> objects.</li>
+<li><b>Pymatgen Interoperability:</b> Expose helper utilities to instantiate C++ calculators directly using <code>pymatgen.core.Structure</code> instances.</li>
+<li><b>Jupyter Notebook Suite:</b> Provide high-quality Jupyter Notebook tutorials illustrating analysis pipelines, plotting, and custom workflows.</li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="️-track-5-gui--web-assembly-wasm-experience"></a>
-🖥️ Track 5: GUI &amp; Web Assembly (WASM) Experience</h1>
+<h1><a class="anchor" id="️-track-5-gui--webassembly-wasm-experience"></a>
+🖥️ Track 5: GUI &amp; WebAssembly (WASM) Experience</h1>
 <p>Improving the end-user workflow remains a high priority, particularly for researchers who prefer visual or browser-based tools.</p>
 <h2><a class="anchor" id="autotoc_md51-analysis-comparison-overlay-gui"></a>
 5.1 Analysis Comparison Overlay (GUI)</h2>
@@ -203,7 +221,7 @@ $(function() {
 <li><b>Key Features:</b><ul>
 <li>Compare distribution curves ($g(r)$, $S(Q)$, etc.) from different frames, temperatures, or trajectory files.</li>
 <li>Dynamic difference plots ($Y_{Diff} = Y_1 - Y_2$) with custom styling.</li>
-<li>Export comparison plots directly as SVG/PNG images.</li>
+<li>Export comparison plots directly as SVG/PDF/PNG images.</li>
 </ul>
 </li>
 </ul>
@@ -212,35 +230,55 @@ $(function() {
 <ul>
 <li><b>Objective:</b> Deploy a client-side version of the C++ engine to the web via WebAssembly (<code>-DBUILD_WASM=ON</code>).</li>
 <li><b>Implementation:</b><ul>
-<li>Set up a web interface hosted on GitHub Pages.</li>
+<li>Host a client-side static web application on GitHub Pages.</li>
 <li>Allow users to upload coordinates (e.g. <code>POSCAR</code>, <code>.xyz</code>, <code>.pdb</code>) and calculate properties (RDF, PAD) completely client-side in the browser.</li>
-<li>Minimize WASM bundle size and leverage multithreading via Web Workers where browser-supported.</li>
+<li>Optimize WebAssembly footprint utilizing <b>WASM SIMD128</b> intrinsics and multi-threaded Web Workers.</li>
 </ul>
 </li>
 </ul>
 <hr  />
-<h1><a class="anchor" id="autotoc_md-timeline--milestones-2026"></a>
-📅 Timeline &amp; Milestones (2026)</h1>
+<h1><a class="anchor" id="autotoc_md-numerical-precision--stability-pipeline"></a>
+📐 Numerical Precision &amp; Stability Pipeline</h1>
+<p>To prevent floating-point drift, cancellations, and rounding accumulation in large physics simulations, the following precision protocols will be integrated:</p>
+<h2><a class="anchor" id="autotoc_md61-double-precision-accumulation-for-unwrapped-trajectories"></a>
+6.1 Double-Precision Accumulation for Unwrapped Trajectories</h2>
+<ul>
+<li><b>Problem:</b> In mean squared displacement (MSD) calculations, accumulating coordinates frame-by-frame leads to cumulative rounding errors over long simulations.</li>
+<li><b>Solution:</b> Maintain unwrapped coordinates using <b>double-precision accumulation</b> (or Kahan compensated summation) even when the trajectory positions are compiled in single precision.</li>
+</ul>
+<h2><a class="anchor" id="autotoc_md62-compensated-summation-for-large-debyexrd-integrations"></a>
+6.2 Compensated Summation for Large Debye/XRD Integrations</h2>
+<ul>
+<li><b>Problem:</b> Summing thousands of small contributions into a single accumulator in Debye scattering and XRD calculations truncates lower-order bits.</li>
+<li><b>Solution:</b> Implement <b>Kahan compensated summation</b> or recursive <b>pairwise summation</b> (using divide-and-conquer TBB reductions) to preserve floating-point accuracy.</li>
+</ul>
+<hr  />
+<h1><a class="anchor" id="autotoc_md-timeline--milestones-to-400"></a>
+📅 Timeline &amp; Milestones to 4.0.0</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadLeft">Milestone / Quarter   </th><th class="markdownTableHeadLeft">Focus Area   </th><th class="markdownTableHeadLeft">Deliverables    </th></tr>
+<th class="markdownTableHeadLeft">Milestone / Version   </th><th class="markdownTableHeadLeft">Target Date   </th><th class="markdownTableHeadLeft">Focus Area   </th><th class="markdownTableHeadLeft">Key Deliverables    </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyLeft"><b>Q2 - Q3 2026</b> (June - August)   </td><td class="markdownTableBodyLeft"><b>Python CI &amp; GUI Comparison</b>   </td><td class="markdownTableBodyLeft">• PyPI release pipeline via <code>cibuildwheel</code> <br  />
- • Overlay &amp; Comparison panel in the Slint GUI <br  />
- • Jupyter Notebook tutorial suite    </td></tr>
+<td class="markdownTableBodyLeft"><b>v3.6.0</b>   </td><td class="markdownTableBodyLeft"><b>Q3 2026</b>   </td><td class="markdownTableBodyLeft"><b>Python Wheels &amp; GUI Overlay</b>   </td><td class="markdownTableBodyLeft">• PyPI release pipeline via <code>cibuildwheel</code><br  />
+• Slint GUI Comparison &amp; Overlay Panel<br  />
+• Jupyter Notebook tutorial suite    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyLeft"><b>Q3 - Q4 2026</b> (Sept - Oct)   </td><td class="markdownTableBodyLeft"><b>GPU Migration &amp; Format Expansion</b>   </td><td class="markdownTableBodyLeft">• Migrate CUDA to cross-platform GPU APIs (SYCL/oneAPI) <br  />
- • Add ORCA, GPAW, ABINIT, and DFTB+ readers <br  />
- • Zero-copy ASE &amp; Pymatgen views    </td></tr>
+<td class="markdownTableBodyLeft"><b>v3.7.0</b>   </td><td class="markdownTableBodyLeft"><b>Q3 - Q4 2026</b>   </td><td class="markdownTableBodyLeft"><b>GPU Migration &amp; Precision</b>   </td><td class="markdownTableBodyLeft">• SYCL/oneAPI multi-vendor GPU migration<br  />
+• Single-precision (<code>real_t</code>) compile path<br  />
+• Kahan/Compensated summation integration    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyLeft"><b>Q4 2026</b> (Nov - Dec)   </td><td class="markdownTableBodyLeft"><b>ML Potentials &amp; WASM Release</b>   </td><td class="markdownTableBodyLeft">• Integrate MACE, CHGNet, and electronic structure ML models <br  />
- • Deploy the hosted WASM web application <br  />
- • Expand GPU support to RDF and Steinhardt   </td></tr>
+<td class="markdownTableBodyLeft"><b>v3.8.0</b>   </td><td class="markdownTableBodyLeft"><b>Q4 2026</b>   </td><td class="markdownTableBodyLeft"><b>ML Potentials &amp; Format Expansion</b>   </td><td class="markdownTableBodyLeft">• MACE, CHGNet, GAP trajectory readers<br  />
+• Native C++ SOAP descriptors<br  />
+• ORCA, GPAW, ABINIT, and DFTB+ readers    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyLeft"><b>v4.0.0</b>   </td><td class="markdownTableBodyLeft"><b>Q1 2027</b>   </td><td class="markdownTableBodyLeft"><b>WASM App &amp; GPU expansion</b>   </td><td class="markdownTableBodyLeft">• Public hosted WASM Web App (SIMD128 + Workers)<br  />
+• GPU-accelerated RDF binning &amp; XRD<br  />
+• Stable 4.0.0 API release   </td></tr>
 </table>
 <hr  />
 <h1><a class="anchor" id="autotoc_md-long-term-vision-2027"></a>
 📈 Long-Term Vision (2027+)</h1>
-<p>Looking beyond 2026, the roadmap lays the foundation for:</p><ol type="1">
+<p>Looking beyond 4.0.0, the roadmap lays the foundation for:</p><ol type="1">
 <li><b>Interactive 3D Structure Viewer</b> integrated directly into the GUI.</li>
 <li><b>Real-time Simulation Monitoring</b> by streaming trajectories over IPC/TCP sockets.</li>
 <li><b>Advanced Topological Analysis</b> such as Persistent Homology (PH) and machine learning classification of disordered networks. </li>

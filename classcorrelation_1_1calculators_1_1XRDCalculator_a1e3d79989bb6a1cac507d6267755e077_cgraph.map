@@ -1,0 +1,24 @@
+<map id="correlation::calculators::XRDCalculator::calculate" name="correlation::calculators::XRDCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="5,179,196,219"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="601,5,737,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,177,134,147,163,113,200,79,243,52,286,35,331,23,424,10,512,8,588,12,587,17,512,13,424,15,332,28,288,41,245,57,203,83,167,116,138,151,117,180"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#ae27d325d09bfb34c8731daf5ce987e17" title=" " alt="" coords="244,67,533,107"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="130,176,182,145,243,116,267,108,269,113,245,121,184,150,133,181"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a30c395dbc7ac727f6ea3a45db1d01497" title=" " alt="" coords="273,131,505,186"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="196,183,258,174,259,179,197,188"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a95a057ce17c44e8b594e0bd474242a51" title=" " alt="" coords="273,210,505,265"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="197,209,259,217,258,223,196,214"/>
+<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1math.html#aa2e8aa0b93b198ae9c14d5be0c64b591" title="Computes the dot product of two double arrays (AVX2 version)." alt="" coords="317,289,460,329"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="134,217,185,247,245,275,304,292,303,297,243,280,182,251,131,221"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="321,353,457,393"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="118,217,169,278,205,311,245,339,276,352,308,361,306,366,274,357,243,344,202,316,166,282,114,221"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="480,64,587,40,588,46,482,69"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="601,69,737,109"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="534,85,588,86,588,91,533,91"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="601,133,737,173"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="482,104,534,116,589,130,588,135,533,121,481,109"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="581,217,757,257"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="505,235,567,235,567,240,505,240"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="805,217,955,257"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="758,235,792,235,792,240,758,240"/>
+</map>

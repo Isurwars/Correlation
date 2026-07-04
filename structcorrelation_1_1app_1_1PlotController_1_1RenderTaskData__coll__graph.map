@@ -1,0 +1,5 @@
+<map id="correlation::app::PlotController::RenderTaskData" name="correlation::app::PlotController::RenderTaskData">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,108,227,148"/>
+<area shape="rect" id="Node000002" href="$structcorrelation_1_1analysis_1_1Histogram.html" title="Container for a single calculated distribution function." alt="" coords="39,5,193,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,59,119,108,113,108,113,59"/>
+</map>

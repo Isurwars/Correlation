@@ -1,16 +1,14 @@
 <map id="correlation::readers::BaseReader::readStructure" name="correlation::readers::BaseReader::readStructure">
-<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="1001,37,1205,77"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,5,953,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="987,43,954,39,954,33,988,38"/>
-<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,69,953,109"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="988,76,954,81,954,76,987,71"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,37,756,77"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="791,40,757,45,756,40,790,35"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,8,496,48"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="530,47,496,43,497,38,531,41"/>
-<area shape="rect" id="Node000006" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,73,413,98"/>
-<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="531,73,413,85,412,80,530,67"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,8,227,48"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="261,31,227,31,227,25,261,25"/>
-<area shape="poly" id="edge7_Node000007_Node000003" title=" " alt="" coords="790,80,756,75,757,70,791,74"/>
+<area shape="rect" id="Node000001" title="Reads an atomic structure from a file." alt="" coords="731,37,935,77"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="533,5,683,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="716,43,683,39,684,33,717,38"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9" title="Reads a trajectory from a file." alt="" coords="533,69,683,109"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="717,76,684,81,683,76,716,71"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="273,37,485,77"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="520,40,486,45,485,40,519,35"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,8,225,48"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="260,47,225,43,226,38,260,41"/>
+<area shape="rect" id="Node000005" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,73,143,98"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="260,73,143,85,143,80,259,67"/>
+<area shape="poly" id="edge6_Node000006_Node000003" title=" " alt="" coords="519,80,485,75,486,70,520,74"/>
 </map>

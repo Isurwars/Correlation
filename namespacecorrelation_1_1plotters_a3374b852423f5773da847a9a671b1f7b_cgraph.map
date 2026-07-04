@@ -1,0 +1,43 @@
+<map id="correlation::plotters::renderHistogramAsPdf" name="correlation::plotters::renderHistogramAsPdf">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,341,183,381"/>
+<area shape="rect" id="Node000002" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#aa9ffe388c1c873bf45f1ada02fe40f76" title=" " alt="" coords="231,5,453,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,340,112,288,137,218,176,144,200,109,229,77,244,65,247,69,232,81,205,112,180,147,142,221,117,290,102,341"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1plotters_1_1detail.html#a80c0172bb9a12b8670107f561732e9f2" title=" " alt="" coords="527,111,698,151"/>
+<area shape="poly" id="edge25_Node000001_Node000004" title=" " alt="" coords="97,340,111,292,136,231,153,199,175,169,200,143,229,121,266,104,306,92,347,86,388,85,467,91,536,105,535,110,466,97,388,90,347,92,307,98,268,109,232,126,203,147,179,173,158,202,141,233,116,294,102,341"/>
+<area shape="rect" id="Node000006" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#acec54b6ae89a0bc90fbbd42a94b3f625" title=" " alt="" coords="231,293,453,348"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="182,344,217,338,217,343,183,349"/>
+<area shape="rect" id="Node000007" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#abdaace24772d9c55a905123289c5578c" title=" " alt="" coords="231,529,453,584"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="110,379,158,446,193,483,232,516,239,520,236,525,229,520,189,487,154,450,106,383"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1plotters_1_1detail.html#a7de8bd122deb0d35127b5e3b1cd16e56" title=" " alt="" coords="535,465,690,505"/>
+<area shape="poly" id="edge18_Node000001_Node000008" title=" " alt="" coords="102,380,116,427,141,488,158,519,179,548,204,574,232,594,290,622,316,628,341,630,367,628,393,621,452,594,469,580,476,562,484,542,500,523,522,508,525,513,503,527,488,545,481,564,473,583,455,599,395,626,368,633,341,635,315,633,288,627,229,599,200,578,175,551,154,521,136,490,111,429,97,382"/>
+<area shape="rect" id="Node000011" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a50ebc70950a22d6a44be009dc463f40b" title=" " alt="" coords="231,451,453,505"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="128,379,176,408,232,437,246,443,243,448,230,442,173,412,125,383"/>
+<area shape="rect" id="Node000012" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#ae591cd58e8bf2c18dc75c2738c855684" title=" " alt="" coords="231,136,453,191"/>
+<area shape="poly" id="edge15_Node000001_Node000012" title=" " alt="" coords="105,339,154,272,189,233,229,200,236,195,239,200,232,204,193,237,158,275,110,342"/>
+<area shape="rect" id="Node000013" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a382902ae876b7f9a25a6c00ebd35d21d" title=" " alt="" coords="231,215,453,269"/>
+<area shape="poly" id="edge19_Node000001_Node000013" title=" " alt="" coords="125,338,173,309,230,280,246,272,249,277,232,284,176,314,128,343"/>
+<area shape="rect" id="Node000014" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a47ae6ff520504df3df933ed505510454" title=" " alt="" coords="231,372,453,427"/>
+<area shape="poly" id="edge22_Node000001_Node000014" title=" " alt="" coords="183,372,217,377,217,382,182,377"/>
+<area shape="rect" id="Node000015" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#ae108f84d894c5fa3dd4a364a866b1048" title=" " alt="" coords="231,660,453,715"/>
+<area shape="poly" id="edge26_Node000001_Node000015" title=" " alt="" coords="102,380,117,431,142,500,180,574,205,608,232,639,248,651,244,655,229,643,201,611,176,576,137,502,112,433,97,382"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1plotters_1_1detail.html#a3e3bbe5616c580e937f603f75aaec796" title=" " alt="" coords="537,13,688,53"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="453,30,523,30,523,35,453,35"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="419,58,545,104,543,109,417,63"/>
+<area shape="rect" id="Node000005" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a174b7e5b13737a1619c5ccae16b7ca9d" title=" " alt="" coords="501,293,724,348"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="382,58,455,121,529,205,586,280,582,284,524,208,451,125,379,62"/>
+<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="453,318,488,318,488,323,453,323"/>
+<area shape="poly" id="edge11_Node000007_Node000005" title=" " alt="" coords="434,527,452,516,468,501,478,486,499,451,577,357,581,360,504,454,482,489,472,504,455,520,437,531"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="445,527,523,506,524,511,446,532"/>
+<area shape="rect" id="Node000010" href="$namespacecorrelation_1_1plotters_1_1detail.html#aca30c16cdd4646b76e950d9dcaa611b0" title=" " alt="" coords="523,537,702,577"/>
+<area shape="poly" id="edge10_Node000007_Node000010" title=" " alt="" coords="453,554,509,554,509,559,453,559"/>
+<area shape="rect" id="Node000009" href="$namespacecorrelation_1_1plotters_1_1detail.html#a140f8ba344d4b1c83e55d467fcaa903b" title=" " alt="" coords="772,465,947,505"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="690,482,758,482,758,487,690,487"/>
+<area shape="poly" id="edge14_Node000011_Node000005" title=" " alt="" coords="429,448,452,437,515,397,569,355,572,359,518,401,455,442,431,453"/>
+<area shape="poly" id="edge13_Node000011_Node000008" title=" " alt="" coords="454,478,522,480,522,485,453,483"/>
+<area shape="poly" id="edge16_Node000012_Node000004" title=" " alt="" coords="453,148,513,140,514,146,454,153"/>
+<area shape="poly" id="edge17_Node000012_Node000005" title=" " alt="" coords="431,188,455,200,518,240,572,282,569,286,515,244,452,204,429,193"/>
+<area shape="poly" id="edge20_Node000013_Node000004" title=" " alt="" coords="420,212,452,200,555,155,557,160,454,204,422,217"/>
+<area shape="poly" id="edge21_Node000013_Node000005" title=" " alt="" coords="437,267,506,287,504,292,436,272"/>
+<area shape="poly" id="edge24_Node000014_Node000005" title=" " alt="" coords="436,369,504,349,506,355,437,374"/>
+<area shape="poly" id="edge23_Node000014_Node000008" title=" " alt="" coords="430,424,536,458,535,463,428,429"/>
+</map>

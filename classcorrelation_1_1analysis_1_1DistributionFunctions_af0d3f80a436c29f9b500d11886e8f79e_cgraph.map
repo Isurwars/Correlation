@@ -1,22 +1,7 @@
 <map id="correlation::analysis::DistributionFunctions::computeMean" name="correlation::analysis::DistributionFunctions::computeMean">
-<area shape="rect" id="Node000001" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="5,224,173,278"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a6e6d51bb39a5243a927667bcba3084fc" title="Factory method to create a StructureAnalyzer for a specific frame." alt="" coords="266,57,421,112"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,222,160,175,220,129,252,112,255,117,223,133,163,179,117,225"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Trajectory.html#af476c81cab098b33af8f78e00f17c0c0" title="Gets a copy of a frame at a specific index." alt="" coords="513,15,668,55"/>
-<area shape="poly" id="edge7_Node000001_Node000003" title=" " alt="" coords="96,222,112,180,137,130,173,81,195,59,220,42,253,26,289,15,363,4,435,5,500,12,499,18,435,10,363,9,290,20,255,31,223,47,198,64,177,84,142,133,117,182,101,224"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Trajectory.html#a56f05d920d802eb38e7634cd5c119bb1" title="Gets the total number of frames in the trajectory." alt="" coords="716,72,909,112"/>
-<area shape="poly" id="edge8_Node000001_Node000004" title=" " alt="" coords="128,221,171,196,220,174,312,152,439,132,702,100,702,106,440,137,313,157,222,179,174,201,131,226"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="266,188,421,242"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="173,237,252,225,253,230,174,242"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="221,267,465,307"/>
-<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="174,260,208,265,207,270,173,266"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="266,332,421,386"/>
-<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="140,276,222,317,253,329,252,334,220,321,138,281"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="241,411,446,451"/>
-<area shape="poly" id="edge10_Node000001_Node000008" title=" " alt="" coords="110,277,156,338,187,370,223,397,234,403,232,408,220,401,184,374,152,341,105,280"/>
-<area shape="rect" id="Node000009" href="$structcorrelation_1_1analysis_1_1AnalysisSettings.html#a5dc28db04de709700172839f2e3fc3b7" title="Helper to check if a specific calculator is enabled." alt="" coords="244,475,443,515"/>
-<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="102,277,119,319,145,368,179,419,200,441,223,461,233,467,230,472,220,465,196,445,175,422,140,371,114,321,97,279"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="420,66,499,50,500,56,421,72"/>
-<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="421,83,702,88,702,93,421,88"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="669,52,722,66,721,71,667,58"/>
+<area shape="rect" id="Node000001" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="5,45,173,100"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="221,5,376,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="173,54,207,47,208,53,174,59"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="221,84,376,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="174,86,208,92,207,97,173,91"/>
 </map>

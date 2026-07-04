@@ -1,9 +1,0 @@
-<map id="correlation::math::computeFFT" name="correlation::math::computeFFT">
-<area shape="rect" id="Node000001" title="Simple Radix&#45;2 Cooley&#45;Tukey FFT implementation with bit&#45;reversal optimization." alt="" coords="5,29,148,69"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="196,29,339,69"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,47,183,47,183,52,148,52"/>
-<area shape="poly" id="edge4_Node000002_Node000002" title=" " alt="" coords="231,30,229,20,235,11,248,5,267,3,290,6,302,13,299,17,288,11,267,8,249,10,239,15,235,21,237,28"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="387,29,529,69"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="339,47,373,47,373,52,339,52"/>
-<area shape="poly" id="edge3_Node000003_Node000003" title=" " alt="" coords="422,30,420,20,426,11,439,5,458,3,480,6,493,13,490,17,479,11,458,8,440,10,429,15,425,21,427,28"/>
-</map>

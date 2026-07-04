@@ -1,0 +1,5 @@
+<map id="correlation::math::findNextGoodFFTSize" name="correlation::math::findNextGoodFFTSize">
+<area shape="rect" id="Node000001" title="Finds the next &quot;good&quot; FFT size &gt;= target." alt="" coords="5,5,167,45"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1math.html#a9fab196f3961705514a0ef08724f302b" title="Helper to check if a size is a product of small prime factors (2, 3, 5). Highly optimized for FFTW3 a..." alt="" coords="215,5,357,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="167,23,201,23,201,28,167,28"/>
+</map>

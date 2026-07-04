@@ -1,0 +1,20 @@
+<map id="correlation::app::PlotController::PlotController" name="correlation::app::PlotController::PlotController">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,133,227,173"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PlotController.html#af7f05ac80c8caca8a72e6f7b9b542263" title="Timer callback for periodic plot updates." alt="" coords="275,133,496,173"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,151,261,151,261,156,227,156"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PlotController.html#a4b2e91c838716f4bd77d48bb84a674b2" title=" " alt="" coords="544,133,765,173"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="496,151,530,151,530,156,496,156"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1PlotController.html#ab04f2e3acbe0b71a60716f3a8aa28ffa" title=" " alt="" coords="813,5,1035,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="682,131,741,93,812,55,831,47,833,52,814,60,743,98,685,136"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1PlotController.html#a33c1a932b0c201ba069ff85fe894c2de" title=" " alt="" coords="813,69,1035,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="765,133,856,111,857,116,766,138"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppBackend.html#a494c4576ad42837ab54785ff568fc907" title="Returns the Ashcroft&#45;Langreth weights from the last completed analysis." alt="" coords="818,133,1030,173"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="766,151,804,151,804,156,766,156"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppBackend.html#a6bc5b4f2df87eead46a11810817bdd61" title="Returns a pointer to a specific histogram from the last analysis." alt="" coords="818,197,1030,237"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="740,171,827,192,825,197,739,176"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1app_1_1PlotController.html#a0d93f69ea53b74d01a0ce055d04a56ab" title=" " alt="" coords="813,261,1035,301"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="685,171,743,209,814,247,833,254,831,259,812,252,741,214,682,176"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1app_1_1PlotController.html#ad3092a812ddf0a1480f9dd6f41866b37" title=" " alt="" coords="813,325,1035,365"/>
+<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="673,172,730,240,770,278,815,311,827,317,824,322,812,316,766,283,726,244,668,175"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="814,109,723,132,722,127,813,104"/>
+</map>

@@ -1,0 +1,15 @@
+<map id="correlation::calculators::SteinhardtCalculator::calculateFrame" name="correlation::calculators::SteinhardtCalculator::calculateFrame">
+<area shape="rect" id="Node000001" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,120,176,175"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="239,5,407,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="134,118,223,69,235,63,237,68,225,74,137,122"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="238,84,409,139"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="176,131,224,124,225,129,177,137"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="224,163,423,203"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="177,158,211,163,210,168,176,163"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="239,228,407,283"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="144,172,225,213,241,220,239,225,223,218,142,177"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="480,55,616,95"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="409,95,466,86,467,91,410,100"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="471,120,625,175"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="410,122,457,130,456,135,409,128"/>
+</map>

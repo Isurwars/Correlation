@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -134,15 +134,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a44e639cd237a08b9835ddea81709d9a0" id="r_a44e639cd237a08b9835ddea81709d9a0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a44e639cd237a08b9835ddea81709d9a0">isTrajectoryCalculator</a> () const override</td></tr>
 <tr class="memdesc:a44e639cd237a08b9835ddea81709d9a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this calculator runs on the whole trajectory (e.g. VACF).  <br /></td></tr>
 <tr class="separator:a44e639cd237a08b9835ddea81709d9a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6ad89edb2277260d9bd18929e63bdc3" id="r_ae6ad89edb2277260d9bd18929e63bdc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
-<tr class="memdesc:ae6ad89edb2277260d9bd18929e63bdc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
-<tr class="separator:ae6ad89edb2277260d9bd18929e63bdc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87d6d815927afc68c1728ef3b2b83780" id="r_a87d6d815927afc68c1728ef3b2b83780"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a87d6d815927afc68c1728ef3b2b83780">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
+<tr class="memdesc:a87d6d815927afc68c1728ef3b2b83780"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
+<tr class="separator:a87d6d815927afc68c1728ef3b2b83780"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html">correlation::calculators::BaseCalculator</a></td></tr>
 <tr class="memitem:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_af9ca6046d093eb10559a9f9aa353fb9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c">~BaseCalculator</a> ()=default</td></tr>
 <tr class="separator:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e825afb4f3b6cdfc183be18f7e08220 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a9e825afb4f3b6cdfc183be18f7e08220"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a9e825afb4f3b6cdfc183be18f7e08220">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
-<tr class="memdesc:a9e825afb4f3b6cdfc183be18f7e08220 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
-<tr class="separator:a9e825afb4f3b6cdfc183be18f7e08220 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4c24a0e6512e3d8a928f1a2618ef53f inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_ac4c24a0e6512e3d8a928f1a2618ef53f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#ac4c24a0e6512e3d8a928f1a2618ef53f">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
+<tr class="memdesc:ac4c24a0e6512e3d8a928f1a2618ef53f inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
+<tr class="separator:ac4c24a0e6512e3d8a928f1a2618ef53f inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -191,7 +191,7 @@ Here is the call graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_cgraph" id="aclasscorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_cgraph">
 <area shape="rect" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="5,5,205,45"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="253,5,509,45"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#ac1f021d5004f0a608f3644b6460f309b" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="253,5,509,45"/>
 <area shape="poly" title=" " alt="" coords="205,23,239,23,239,28,205,28"/>
 </map>
 </div>
@@ -201,21 +201,21 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_icgraph" id="aclasscorrelation_1_1calculators_1_1VDOSCalculator_a6890f7a2df90c538a7d5de0723f70658_icgraph">
 <area shape="rect" title="Computes the Vibrational Density of States (VDOS)." alt="" coords="668,41,868,81"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#ae6ad89edb2277260d9bd18929e63bdc3" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,5,620,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1VDOSCalculator.html#a87d6d815927afc68c1728ef3b2b83780" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,5,620,45"/>
 <area shape="poly" title=" " alt="" coords="654,49,620,45,621,40,655,44"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a25122c9d2298582a94578327073ff835" title="Calculates the Vibrational Density of States (VDOS) from the VACF. Requires calculateVACF to be calle..." alt="" coords="404,70,572,125"/>
 <area shape="poly" title=" " alt="" coords="655,79,573,89,572,84,654,73"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
 <area shape="poly" title=" " alt="" coords="390,100,308,100,308,95,390,95"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,85,156,110"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
 <area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="ae6ad89edb2277260d9bd18929e63bdc3" name="ae6ad89edb2277260d9bd18929e63bdc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6ad89edb2277260d9bd18929e63bdc3">&#9670;&#160;</a></span>calculateTrajectory()</h2>
+<a id="a87d6d815927afc68c1728ef3b2b83780" name="a87d6d815927afc68c1728ef3b2b83780"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87d6d815927afc68c1728ef3b2b83780">&#9670;&#160;</a></span>calculateTrajectory()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,7 +227,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::calculators::VDOSCalculator::calculateTrajectory </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -257,19 +257,19 @@ Here is the caller graph for this function:</div>
 <p>Calculate multi-frame properties or post-processing. Called once after all frames are accumulated. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions container to store trajectory-wide results. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions container to store trajectory-wide results. </td></tr>
     <tr><td class="paramname">traj</td><td>The complete trajectory data. </td></tr>
     <tr><td class="paramname">settings</td><td>The analysis settings and parameters. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a75298b5153fcbd2ae1763c3bdbe39f82">correlation::calculators::BaseCalculator</a>.</p>
+<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a88fc48d6aedbf64bf5c9578fca09ed3d">correlation::calculators::BaseCalculator</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1calculators_1_1VDOSCalculator_ae6ad89edb2277260d9bd18929e63bdc3_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1VDOSCalculator_ae6ad89edb2277260d9bd18929e63bdc3_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1calculators_1_1VDOSCalculator_ae6ad89edb2277260d9bd18929e63bdc3_cgraph" id="aclasscorrelation_1_1calculators_1_1VDOSCalculator_ae6ad89edb2277260d9bd18929e63bdc3_cgraph">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1VDOSCalculator_a87d6d815927afc68c1728ef3b2b83780_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1VDOSCalculator_a87d6d815927afc68c1728ef3b2b83780_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1VDOSCalculator_a87d6d815927afc68c1728ef3b2b83780_cgraph" id="aclasscorrelation_1_1calculators_1_1VDOSCalculator_a87d6d815927afc68c1728ef3b2b83780_cgraph">
 <area shape="rect" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="5,121,269,161"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="333,5,501,60"/>
 <area shape="poly" title=" " alt="" coords="189,118,332,63,334,68,191,123"/>
@@ -279,7 +279,7 @@ Here is the call graph for this function:</div>
 <area shape="poly" title=" " alt="" coords="270,155,320,162,319,167,269,160"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="333,228,501,283"/>
 <area shape="poly" title=" " alt="" coords="187,158,318,213,336,220,334,225,316,218,185,163"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a3320aac4b5903294dfe9f6d77e1eddc8" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="565,85,821,125"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#ac1f021d5004f0a608f3644b6460f309b" title="Calculates the Vibrational Density of States (VDOS) from the VACF." alt="" coords="565,85,821,125"/>
 <area shape="poly" title=" " alt="" coords="517,102,551,102,551,107,517,107"/>
 </map>
 </div>

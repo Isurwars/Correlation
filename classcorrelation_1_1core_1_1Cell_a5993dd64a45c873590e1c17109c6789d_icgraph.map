@@ -1,58 +1,79 @@
 <map id="correlation::core::Cell::atoms" name="correlation::core::Cell::atoms">
-<area shape="rect" id="Node000001" title="Gets the list of atoms in the cell." alt="" coords="917,587,1053,627"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="665,77,855,117"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="977,573,965,505,943,414,911,314,891,264,867,217,848,189,826,162,784,120,787,116,830,159,852,186,872,215,896,262,916,312,948,413,970,504,982,572"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="669,228,851,268"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="979,573,971,511,953,433,938,392,919,352,896,315,868,282,850,269,853,265,871,278,900,311,924,349,943,390,958,431,976,510,985,573"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="657,292,863,332"/>
-<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="976,574,964,523,944,462,912,399,892,371,868,346,851,334,854,330,871,342,896,368,917,397,949,460,970,522,981,573"/>
-<area shape="rect" id="Node000012" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="675,357,845,411"/>
-<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="969,575,930,500,902,461,868,426,844,411,847,407,871,422,906,457,935,498,974,573"/>
-<area shape="rect" id="Node000014" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="665,436,855,476"/>
-<area shape="poly" id="edge14_Node000001_Node000014" title=" " alt="" coords="959,577,920,532,895,510,868,490,844,478,846,474,871,486,898,505,924,528,964,574"/>
-<area shape="rect" id="Node000017" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a64de3368fda90127540d707ee651daef" title="Calculates weights for partial distributions based on concentrations." alt="" coords="663,501,857,555"/>
-<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="913,585,838,558,840,553,915,580"/>
-<area shape="rect" id="Node000019" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#aa0f65212fe180726679cb6b7c475cddc" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="663,579,857,634"/>
-<area shape="poly" id="edge20_Node000001_Node000019" title=" " alt="" coords="904,609,858,609,858,604,904,604"/>
-<area shape="rect" id="Node000020" href="$classcorrelation_1_1calculators_1_1AngleCalculator.html#a5c77c5193fa151fcc9cf14ebc27aa6d6" title="Computes and populates the bond angles tensor." alt="" coords="661,659,859,699"/>
-<area shape="poly" id="edge21_Node000001_Node000020" title=" " alt="" coords="913,634,870,648,828,661,826,656,869,643,911,629"/>
-<area shape="rect" id="Node000021" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="652,723,868,763"/>
-<area shape="poly" id="edge22_Node000001_Node000021" title=" " alt="" coords="960,639,920,677,871,713,845,725,843,720,868,708,917,673,956,635"/>
-<area shape="rect" id="Node000022" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="651,787,869,827"/>
-<area shape="poly" id="edge23_Node000001_Node000022" title=" " alt="" coords="972,641,933,710,905,746,871,777,850,789,847,784,868,773,901,742,929,707,968,638"/>
-<area shape="rect" id="Node000023" href="$classcorrelation_1_1app_1_1AppBackend.html#aa55f9d25bb211811daf844218a4e2cce" title="Gets the atom counts for the current structure." alt="" coords="654,851,866,891"/>
-<area shape="poly" id="edge24_Node000001_Node000023" title=" " alt="" coords="979,641,966,686,944,740,913,794,893,819,871,841,853,853,850,848,868,837,889,815,908,791,939,738,961,684,974,640"/>
-<area shape="rect" id="Node000024" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="217,563,295,589"/>
-<area shape="poly" id="edge25_Node000001_Node000024" title=" " alt="" coords="985,641,978,700,960,774,945,811,926,847,901,879,871,905,842,922,815,933,789,938,764,938,711,927,650,905,582,875,517,835,457,790,403,742,316,652,265,591,269,587,320,649,407,738,460,786,520,831,584,870,652,900,713,922,764,933,789,933,813,928,839,917,868,901,897,875,921,844,940,809,955,772,973,699,980,640"/>
-<area shape="rect" id="Node000025" href="$classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="667,965,853,1005"/>
-<area shape="poly" id="edge27_Node000001_Node000025" title=" " alt="" coords="985,641,977,705,958,787,943,830,924,873,901,913,871,949,845,967,842,963,868,945,896,910,920,870,938,828,953,786,971,704,979,640"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="363,5,595,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="667,76,558,48,559,43,669,71"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="395,70,563,125"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="651,100,564,100,564,95,651,95"/>
-<area shape="rect" id="Node000005" href="$analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,339,308,365"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="384,121,358,138,336,161,317,188,288,246,271,300,262,340,257,339,266,299,284,244,312,185,331,158,354,134,381,116"/>
-<area shape="rect" id="Node000006" href="$module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,539,156,565"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="237,377,95,541,91,537,233,374"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="367,149,591,203"/>
-<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="668,227,586,206,587,201,669,222"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#a3ac797fe84b06910c842cd213639cf2e" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="368,228,591,268"/>
-<area shape="poly" id="edge9_Node000007_Node000009" title=" " alt="" coords="655,251,591,251,591,245,655,245"/>
-<area shape="poly" id="edge8_Node000008_Node000005" title=" " alt="" coords="366,212,358,218,326,248,299,282,266,340,261,338,295,279,322,244,354,214,363,208"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,292,603,332"/>
-<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="643,315,603,315,603,309,643,309"/>
-<area shape="rect" id="Node000013" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a58b6f685b5c9580dce2e18a5bd023f2b" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="394,357,565,411"/>
-<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="661,387,565,387,565,381,661,381"/>
-<area shape="rect" id="Node000015" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#aa74badf80124c489637ee432d514b621" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="364,436,595,476"/>
-<area shape="poly" id="edge15_Node000014_Node000015" title=" " alt="" coords="651,459,595,459,595,453,651,453"/>
-<area shape="rect" id="Node000016" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="395,501,563,555"/>
-<area shape="poly" id="edge16_Node000014_Node000016" title=" " alt="" coords="669,482,564,509,563,504,667,477"/>
-<area shape="poly" id="edge17_Node000016_Node000005" title=" " alt="" coords="381,506,354,490,322,460,295,425,261,366,266,364,299,422,326,456,358,486,384,501"/>
-<area shape="rect" id="Node000018" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a67e45acdc51ce9964993e1e96e8ce041" title="Constructs a DistributionFunctions object." alt="" coords="395,579,563,634"/>
-<area shape="poly" id="edge19_Node000017_Node000018" title=" " alt="" coords="650,561,564,586,563,581,649,556"/>
-<area shape="poly" id="edge26_Node000024_Node000006" title=" " alt="" coords="203,571,156,565,157,560,203,566"/>
-<area shape="rect" id="Node000026" href="$classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="400,965,559,1005"/>
-<area shape="poly" id="edge28_Node000025_Node000026" title=" " alt="" coords="653,988,559,988,559,983,653,983"/>
-<area shape="rect" id="Node000027" href="$classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="401,1029,558,1069"/>
-<area shape="poly" id="edge29_Node000025_Node000027" title=" " alt="" coords="659,1011,559,1034,558,1029,657,1006"/>
+<area shape="rect" id="Node000001" title="Gets the list of atoms in the cell." alt="" coords="1291,677,1427,717"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#aa31a344c893ef452816fb53b87f877c5" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="1012,31,1183,85"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1352,663,1340,545,1317,386,1302,305,1284,231,1264,170,1241,128,1214,103,1182,84,1184,80,1217,98,1245,124,1269,168,1289,230,1307,304,1323,385,1345,544,1357,662"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#ac1c754f3ba9ec8a3de69cf56ba15c38f" title="High&#45;performance computation of the Coordination Number (CN)." alt="" coords="1006,138,1189,178"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="1352,663,1340,556,1318,414,1303,343,1285,279,1264,227,1241,192,1216,175,1188,165,1190,160,1219,170,1245,188,1269,224,1290,277,1308,342,1323,413,1345,555,1357,663"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="994,202,1201,242"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1351,663,1336,568,1313,446,1298,385,1281,330,1262,286,1241,256,1222,242,1200,232,1202,228,1225,237,1245,252,1266,283,1286,328,1303,383,1318,445,1342,567,1356,663"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#aca5aaee5e8ddc102044dc254e1726583" title="High&#45;performance computation of Steinhardt parameters (Q4, Q6, W6)." alt="" coords="1012,267,1183,321"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="1354,663,1348,594,1331,506,1317,460,1297,415,1272,373,1241,336,1214,317,1182,305,1184,300,1216,312,1244,332,1277,370,1302,412,1322,458,1336,505,1354,594,1359,662"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a25e6464196a8cbc4eb3f012e1ab22f58" title="Calculates the J(r), g(r), and G(r) histograms for the given cell and pair distances." alt="" coords="1002,346,1193,386"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="1352,663,1343,605,1324,534,1309,497,1291,461,1268,428,1241,400,1218,385,1192,376,1194,371,1220,380,1244,396,1272,425,1295,459,1314,495,1329,532,1348,604,1357,662"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html#a1f1e0169d12da22612cd37057a3343ea" title="Computes the Local Entropic Fingerprint for all atoms in the cell." alt="" coords="1007,411,1187,465"/>
+<area shape="poly" id="edge16_Node000001_Node000016" title=" " alt="" coords="1347,664,1333,621,1311,571,1281,521,1262,498,1241,479,1215,463,1187,452,1188,447,1218,458,1244,475,1266,495,1285,518,1316,569,1338,619,1352,662"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a030b26e4b66bda2e2fd212a0f3e1da25" title="Computes Voronoi tessellation and extracts metric histograms." alt="" coords="675,901,887,941"/>
+<area shape="poly" id="edge18_Node000001_Node000018" title=" " alt="" coords="1277,704,1097,720,1012,734,953,752,903,785,858,826,823,868,798,902,793,899,819,864,855,823,899,781,951,748,1011,729,1097,715,1277,698"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#a4c0bd41a712da3f10d003219f83873fb" title="Computes σ²_N(R) and χ_H(R) histograms." alt="" coords="996,489,1199,544"/>
+<area shape="poly" id="edge20_Node000001_Node000020" title=" " alt="" coords="1337,666,1298,610,1271,582,1241,558,1198,537,1200,532,1244,553,1275,578,1302,607,1342,663"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a64de3368fda90127540d707ee651daef" title="Calculates weights for partial distributions based on concentrations." alt="" coords="1000,568,1195,623"/>
+<area shape="poly" id="edge22_Node000001_Node000022" title=" " alt="" coords="1311,672,1242,638,1194,621,1196,616,1244,633,1314,667"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#ae27d325d09bfb34c8731daf5ce987e17" title=" " alt="" coords="953,647,1242,687"/>
+<area shape="poly" id="edge24_Node000001_Node000024" title=" " alt="" coords="1277,690,1242,686,1243,681,1277,685"/>
+<area shape="rect" id="Node000028" href="$classcorrelation_1_1calculators_1_1StructureFactorCalculator.html#a989c3207175972327ef2e8636bea471c" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="1000,763,1195,817"/>
+<area shape="poly" id="edge29_Node000001_Node000028" title=" " alt="" coords="1299,724,1244,746,1187,765,1186,760,1242,741,1297,719"/>
+<area shape="rect" id="Node000029" href="$classcorrelation_1_1calculators_1_1AngleCalculator.html#a5c77c5193fa151fcc9cf14ebc27aa6d6" title="Computes and populates the bond angles tensor." alt="" coords="998,842,1197,882"/>
+<area shape="poly" id="edge30_Node000001_Node000029" title=" " alt="" coords="1341,730,1301,782,1274,809,1244,831,1198,851,1196,846,1241,826,1271,805,1297,779,1336,726"/>
+<area shape="rect" id="Node000030" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="989,906,1205,946"/>
+<area shape="poly" id="edge31_Node000001_Node000030" title=" " alt="" coords="1350,731,1335,770,1313,815,1283,859,1244,896,1207,915,1204,910,1241,892,1279,856,1308,812,1330,768,1345,729"/>
+<area shape="rect" id="Node000031" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="988,970,1207,1010"/>
+<area shape="poly" id="edge32_Node000001_Node000031" title=" " alt="" coords="1355,731,1344,782,1323,844,1291,907,1270,935,1244,960,1208,980,1206,975,1241,956,1266,932,1286,904,1318,842,1339,780,1350,729"/>
+<area shape="rect" id="Node000032" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#ab6e70976c64686155d7eb632436c4d3e" title="Build the Voronoi tessellation and extract per&#45;atom cell data." alt="" coords="952,1034,1243,1074"/>
+<area shape="poly" id="edge33_Node000001_Node000032" title=" " alt="" coords="1358,731,1351,793,1333,873,1318,914,1299,954,1274,992,1244,1024,1228,1036,1225,1032,1241,1020,1270,988,1294,952,1313,912,1328,871,1346,793,1353,730"/>
+<area shape="rect" id="Node000033" href="$classcorrelation_1_1app_1_1AppBackend.html#aa55f9d25bb211811daf844218a4e2cce" title="Gets the atom counts for the current structure." alt="" coords="991,1098,1203,1138"/>
+<area shape="poly" id="edge35_Node000001_Node000033" title=" " alt="" coords="1361,731,1357,805,1341,901,1327,952,1307,1002,1279,1048,1244,1088,1226,1102,1205,1111,1203,1106,1223,1097,1241,1084,1275,1045,1302,999,1322,950,1336,900,1352,804,1355,730"/>
+<area shape="rect" id="Node000034" href="$core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="217,831,295,856"/>
+<area shape="poly" id="edge36_Node000001_Node000034" title=" " alt="" coords="1357,730,1345,829,1322,957,1307,1020,1290,1077,1269,1122,1244,1152,1200,1178,1148,1193,1090,1199,1026,1197,959,1188,889,1174,747,1132,612,1081,494,1029,405,984,355,955,325,932,299,905,263,858,268,854,303,901,329,928,357,950,407,979,497,1024,614,1076,749,1127,890,1169,960,1183,1026,1192,1089,1193,1147,1187,1198,1173,1241,1148,1264,1119,1285,1075,1302,1019,1317,956,1339,828,1351,730"/>
+<area shape="rect" id="Node000035" href="$classcorrelation_1_1core_1_1Trajectory.html#afce0d994df53bdce4c61657891cbf09d" title="Internal helper to validate that a new frame matches the trajectory topology." alt="" coords="1004,1213,1191,1253"/>
+<area shape="poly" id="edge38_Node000001_Node000035" title=" " alt="" coords="1357,731,1344,836,1321,975,1306,1045,1289,1108,1268,1160,1245,1196,1220,1214,1192,1226,1190,1221,1217,1210,1241,1192,1263,1158,1284,1106,1301,1044,1316,974,1339,835,1351,730"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="695,5,866,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="998,53,866,42,867,37,999,47"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#adec432ed4e9477116a0a6c89fc3d9fd5" title="Calculates the Coordination Number (CN) distribution. Requires that neighbors have been computed." alt="" coords="371,247,595,301"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="992,156,918,157,833,161,744,172,658,190,588,217,528,249,526,244,586,212,657,185,744,166,833,156,917,151,992,151"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1calculators_1_1CNCalculator.html#ad7a5dd8acfa4f02324f61b15bfd4d716" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="669,85,892,125"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="992,143,892,126,893,121,993,138"/>
+<area shape="rect" id="Node000006" href="$analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,577,308,603"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="449,314,404,366,358,426,304,512,266,578,262,576,299,509,354,423,400,363,445,310"/>
+<area shape="rect" id="Node000007" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,807,156,832"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="239,615,94,808,90,805,235,612"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1HBondCalculator.html#a06a2b86934553f1b4b0555f358299b1d" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="657,199,904,239"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="980,224,904,223,905,218,980,218"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1calculators_1_1SteinhardtCalculator.html#a23cbce6a55837fabb17371aa3c6b01e8" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="695,264,866,319"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="998,296,866,295,866,289,998,291"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1calculators_1_1RDFCalculator.html#a2b62f85b00bec286c7fe76a54256ebbb" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="665,394,896,434"/>
+<area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="989,385,897,399,896,394,988,380"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#abb3c6c8a1e5290cf8afde7f26e17d24e" title="Calculates the radial distribution function g(r)" alt="" coords="399,437,567,492"/>
+<area shape="poly" id="edge14_Node000013_Node000015" title=" " alt="" coords="988,361,914,359,831,361,743,369,658,385,589,409,530,440,527,435,587,404,657,379,743,364,830,356,914,354,988,355"/>
+<area shape="poly" id="edge15_Node000015_Node000006" title=" " alt="" coords="421,501,282,579,279,575,419,497"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1calculators_1_1LocalEntropyCalculator.html#ae04ff79281302013d1488c20037cafa5" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="691,459,871,513"/>
+<area shape="poly" id="edge17_Node000016_Node000017" title=" " alt="" coords="994,456,871,475,871,470,994,451"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,901,609,941"/>
+<area shape="poly" id="edge19_Node000018_Node000019" title=" " alt="" coords="661,923,610,923,610,918,661,918"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#aba2b7cd0e9c38092b26458b1043c0252" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="679,537,882,592"/>
+<area shape="poly" id="edge21_Node000020_Node000021" title=" " alt="" coords="983,537,883,552,882,547,982,531"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a67e45acdc51ce9964993e1e96e8ce041" title="Constructs a DistributionFunctions object." alt="" coords="697,616,865,671"/>
+<area shape="poly" id="edge23_Node000022_Node000023" title=" " alt="" coords="987,615,865,633,865,628,986,609"/>
+<area shape="rect" id="Node000025" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="685,695,876,735"/>
+<area shape="poly" id="edge25_Node000024_Node000025" title=" " alt="" coords="952,692,877,704,876,698,951,687"/>
+<area shape="rect" id="Node000026" href="$classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="367,623,599,663"/>
+<area shape="poly" id="edge26_Node000025_Node000026" title=" " alt="" coords="683,695,566,666,567,661,685,689"/>
+<area shape="rect" id="Node000027" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="399,688,567,743"/>
+<area shape="poly" id="edge27_Node000025_Node000027" title=" " alt="" coords="672,718,567,718,567,713,672,713"/>
+<area shape="poly" id="edge28_Node000027_Node000006" title=" " alt="" coords="385,692,355,678,304,641,267,605,271,601,307,636,357,673,387,687"/>
+<area shape="poly" id="edge34_Node000032_Node000018" title=" " alt="" coords="974,1033,951,1024,871,984,808,943,811,939,874,980,953,1020,976,1028"/>
+<area shape="poly" id="edge37_Node000034_Node000007" title=" " alt="" coords="203,839,156,832,157,827,203,833"/>
+<area shape="rect" id="Node000036" href="$classcorrelation_1_1core_1_1Trajectory.html#a5f1bd62dd79028a2eb11ef87a85c3387" title="Appends a new frame to the trajectory." alt="" coords="701,1277,860,1317"/>
+<area shape="poly" id="edge39_Node000035_Node000036" title=" " alt="" coords="991,1257,861,1283,860,1278,990,1252"/>
+<area shape="rect" id="Node000037" href="$classcorrelation_1_1core_1_1Trajectory.html#ae4c251ca52c96c76c516cf90e17b3f9b" title="Constructs a trajectory from a vector of frames." alt="" coords="702,1213,859,1253"/>
+<area shape="poly" id="edge40_Node000035_Node000037" title=" " alt="" coords="990,1235,860,1235,860,1230,990,1230"/>
 </map>

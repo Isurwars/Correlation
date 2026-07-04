@@ -1,0 +1,9 @@
+<map id="correlation::plotters::detail::PdfComparisonRenderer::drawLegend" name="correlation::plotters::detail::PdfComparisonRenderer::drawLegend">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,34,239,89"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1plotters_1_1detail.html#a7de8bd122deb0d35127b5e3b1cd16e56" title=" " alt="" coords="326,5,481,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,44,312,34,313,40,239,49"/>
+<area shape="rect" id="Node000004" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a300ea4629951711127da38ccfe123e8f" title=" " alt="" coords="287,70,520,125"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="239,74,273,78,273,83,238,79"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1plotters_1_1detail.html#a140f8ba344d4b1c83e55d467fcaa903b" title=" " alt="" coords="568,5,743,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="481,23,554,23,554,28,481,28"/>
+</map>

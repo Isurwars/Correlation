@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -134,15 +134,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aaead0add021418be0f6a338b3785c230" id="r_aaead0add021418be0f6a338b3785c230"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1AngleCalculator.html#aaead0add021418be0f6a338b3785c230">isTrajectoryCalculator</a> () const override</td></tr>
 <tr class="memdesc:aaead0add021418be0f6a338b3785c230"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this calculator runs on the whole trajectory (e.g. VACF).  <br /></td></tr>
 <tr class="separator:aaead0add021418be0f6a338b3785c230"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae17d4d61123c135ede98617217d828c4" id="r_ae17d4d61123c135ede98617217d828c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1AngleCalculator.html#ae17d4d61123c135ede98617217d828c4">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
-<tr class="memdesc:ae17d4d61123c135ede98617217d828c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
-<tr class="separator:ae17d4d61123c135ede98617217d828c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5db8d0d7e3fc7758c9e7acc9d3e7498" id="r_af5db8d0d7e3fc7758c9e7acc9d3e7498"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1AngleCalculator.html#af5db8d0d7e3fc7758c9e7acc9d3e7498">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
+<tr class="memdesc:af5db8d0d7e3fc7758c9e7acc9d3e7498"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
+<tr class="separator:af5db8d0d7e3fc7758c9e7acc9d3e7498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html">correlation::calculators::BaseCalculator</a></td></tr>
 <tr class="memitem:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_af9ca6046d093eb10559a9f9aa353fb9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c">~BaseCalculator</a> ()=default</td></tr>
 <tr class="separator:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a75298b5153fcbd2ae1763c3bdbe39f82"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a75298b5153fcbd2ae1763c3bdbe39f82">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
-<tr class="memdesc:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
-<tr class="separator:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a88fc48d6aedbf64bf5c9578fca09ed3d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a88fc48d6aedbf64bf5c9578fca09ed3d">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
+<tr class="memdesc:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
+<tr class="separator:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -155,8 +155,8 @@ Static Public Member Functions</h2></td></tr>
 <p>This calculator iterates over every central atom and finds all unique combinations of its neighbors. It calculates the bond angle formed by the triad (Neighbor1 - Central_Atom - Neighbor2) taking into account periodic boundary conditions.</p>
 <p>The computation is accelerated using Intel TBB (<code>tbb::parallel_for</code>) with thread-local storage (<code>tbb::enumerable_thread_specific</code>) to avoid locks when writing to the output tensor. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae17d4d61123c135ede98617217d828c4" name="ae17d4d61123c135ede98617217d828c4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae17d4d61123c135ede98617217d828c4">&#9670;&#160;</a></span>calculateFrame()</h2>
+<a id="af5db8d0d7e3fc7758c9e7acc9d3e7498" name="af5db8d0d7e3fc7758c9e7acc9d3e7498"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5db8d0d7e3fc7758c9e7acc9d3e7498">&#9670;&#160;</a></span>calculateFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -168,7 +168,7 @@ Static Public Member Functions</h2></td></tr>
           <td class="memname">void correlation::calculators::AngleCalculator::calculateFrame </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -192,13 +192,13 @@ Static Public Member Functions</h2></td></tr>
 <p>Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object to store the results. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object to store the results. </td></tr>
     <tr><td class="paramname">settings</td><td>The analysis settings and parameters. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a9e825afb4f3b6cdfc183be18f7e08220">correlation::calculators::BaseCalculator</a>.</p>
+<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#ac4c24a0e6512e3d8a928f1a2618ef53f">correlation::calculators::BaseCalculator</a>.</p>
 
 </div>
 </div>
@@ -256,15 +256,11 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1calculators_1_1AngleCalculator_a5c77c5193fa151fcc9cf14ebc27aa6d6_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1AngleCalculator_a5c77c5193fa151fcc9cf14ebc27aa6d6_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1calculators_1_1AngleCalculator_a5c77c5193fa151fcc9cf14ebc27aa6d6_cgraph" id="aclasscorrelation_1_1calculators_1_1AngleCalculator_a5c77c5193fa151fcc9cf14ebc27aa6d6_cgraph">
-<area shape="rect" title="Computes and populates the bond angles tensor." alt="" coords="5,101,204,141"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="291,5,427,45"/>
-<area shape="poly" title=" " alt="" coords="147,99,251,55,277,46,279,51,253,60,149,104"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a28d84fe6ef64fdc47a1f9cc211aa2f5e" title="Computes dot products between a reference vector and a block of vectors." alt="" coords="288,69,431,109"/>
-<area shape="poly" title=" " alt="" coords="204,106,274,97,274,103,204,112"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="291,133,427,173"/>
-<area shape="poly" title=" " alt="" coords="204,131,278,140,277,146,204,136"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4" title="Retrieves the neighbor list for a specific atom." alt="" coords="252,197,467,237"/>
-<area shape="poly" title=" " alt="" coords="149,139,253,183,275,191,273,196,251,188,147,144"/>
+<area shape="rect" title="Computes and populates the bond angles tensor." alt="" coords="5,37,204,77"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="252,5,388,45"/>
+<area shape="poly" title=" " alt="" coords="204,40,238,35,239,40,205,45"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="252,69,388,109"/>
+<area shape="poly" title=" " alt="" coords="205,69,239,75,238,80,204,75"/>
 </map>
 </div>
 

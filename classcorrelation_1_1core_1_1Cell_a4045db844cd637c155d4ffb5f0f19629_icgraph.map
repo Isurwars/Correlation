@@ -1,72 +1,48 @@
 <map id="correlation::core::Cell::getOrRegisterElement" name="correlation::core::Cell::getOrRegisterElement">
-<area shape="rect" id="Node000001" title="Registers an element symbol and returns its ID." alt="" coords="1127,454,1325,494"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="943,454,1079,494"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1113,477,1079,477,1079,471,1113,471"/>
-<area shape="rect" id="Node000003" href="$core__bindings_8cpp.html#a8b57c30b48d2aeb968a602bac23c387d" title=" " alt="" coords="728,5,807,31"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1002,441,988,348,965,228,950,169,933,116,914,73,893,44,874,31,852,23,807,18,807,13,853,18,876,26,897,40,918,70,938,114,955,167,970,227,994,347,1008,440"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#a3292e26a67ee6c43e994bc9bbe1f29f3" title="Parses a single LAMMPS dump frame from a memory region." alt="" coords="640,55,895,109"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="1006,441,999,374,981,289,966,244,947,201,923,160,893,124,877,112,881,107,897,120,927,157,952,198,971,243,986,288,1004,373,1011,440"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1GromacsReader.html#ae1e63c0a25b1ffe38ba83e4c728cd5ee" title="Parses a single GROMACS .gro frame from a memory region." alt="" coords="646,134,889,174"/>
-<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="1003,441,993,385,973,317,959,281,941,247,919,216,893,188,876,176,879,172,896,184,923,212,946,244,964,279,979,315,998,384,1008,440"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="661,198,874,238"/>
-<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="999,441,985,398,964,346,933,295,915,272,893,252,873,240,876,235,896,248,918,268,938,292,969,344,990,396,1004,440"/>
-<area shape="rect" id="Node000014" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="693,262,842,302"/>
-<area shape="poly" id="edge13_Node000002_Node000014" title=" " alt="" coords="992,443,953,378,926,344,893,316,868,303,841,294,843,289,871,298,896,312,930,340,958,375,997,440"/>
-<area shape="rect" id="Node000016" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="693,326,842,366"/>
-<area shape="poly" id="edge15_Node000002_Node000016" title=" " alt="" coords="979,446,940,411,893,380,842,361,844,356,896,376,944,407,983,442"/>
-<area shape="rect" id="Node000018" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="693,390,842,430"/>
-<area shape="poly" id="edge17_Node000002_Node000018" title=" " alt="" coords="928,454,894,445,841,431,843,426,895,439,930,449"/>
-<area shape="rect" id="Node000020" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html#aad3b6ab1d02ceab192411b2e91ebec67" title="Low&#45;level parser for the specific file format." alt="" coords="676,454,859,494"/>
-<area shape="poly" id="edge19_Node000002_Node000020" title=" " alt="" coords="929,477,859,477,859,471,929,471"/>
-<area shape="rect" id="Node000022" href="$classcorrelation_1_1readers_1_1ArcReader.html#a473facbf80bfea0154430fa2e12b552a" title="Low&#45;level parser for the specific file format." alt="" coords="693,518,842,558"/>
-<area shape="poly" id="edge21_Node000002_Node000022" title=" " alt="" coords="930,499,895,509,843,522,841,517,894,503,928,494"/>
-<area shape="rect" id="Node000024" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#aa65b940a9e9d6a62d44fedebb37d303d" title="Low&#45;level parser for the specific file format." alt="" coords="678,582,857,622"/>
-<area shape="poly" id="edge23_Node000002_Node000024" title=" " alt="" coords="983,506,944,541,896,572,858,587,856,583,893,568,940,537,979,502"/>
-<area shape="rect" id="Node000027" href="$classcorrelation_1_1readers_1_1OutmolReader.html#ab4a4c73e3ffee54e44cb1e9947dc0565" title="Low&#45;level parser for the specific file format." alt="" coords="687,710,848,750"/>
-<area shape="poly" id="edge26_Node000002_Node000027" title=" " alt="" coords="993,507,952,569,897,636,848,678,802,712,799,708,845,674,893,632,947,566,988,504"/>
-<area shape="rect" id="Node000030" href="$classcorrelation_1_1readers_1_1PdbReader.html#ac4472deee4c13869348a362653c45782" title="Reads an atomic structure from a file." alt="" coords="669,777,865,817"/>
-<area shape="poly" id="edge29_Node000002_Node000030" title=" " alt="" coords="1008,508,998,564,978,633,945,703,923,736,896,764,867,782,864,778,893,760,919,732,941,701,973,631,993,563,1003,507"/>
-<area shape="rect" id="Node000031" href="$classcorrelation_1_1readers_1_1PdbReader.html#aef9379f81d1ab2713d1de1086fe1682a" title="Reads a trajectory from a file." alt="" coords="355,838,557,878"/>
-<area shape="poly" id="edge33_Node000002_Node000031" title=" " alt="" coords="1013,508,1008,578,993,666,978,713,958,757,931,797,896,831,871,844,837,854,749,865,650,868,557,867,557,861,650,863,749,860,836,849,869,839,893,827,927,793,953,754,973,711,987,665,1003,577,1007,508"/>
-<area shape="rect" id="Node000032" href="$classcorrelation_1_1readers_1_1CP2KReader.html#a05c4f02af2c2b6e1ce04d2a474886e47" title="Reads a trajectory from a file." alt="" coords="662,899,873,939"/>
-<area shape="poly" id="edge31_Node000002_Node000032" title=" " alt="" coords="1012,508,1008,583,992,681,977,734,957,785,930,834,897,877,880,891,862,902,859,897,877,887,893,873,926,831,952,783,972,732,986,680,1002,582,1007,508"/>
-<area shape="rect" id="Node000034" href="$classcorrelation_1_1readers_1_1QEReader.html#add0cfec3e37137ace6b8e3c7477c1af3" title="Reads a trajectory from a file." alt="" coords="670,963,865,1003"/>
-<area shape="poly" id="edge34_Node000002_Node000034" title=" " alt="" coords="1008,508,995,610,972,743,957,809,940,870,919,919,897,953,866,973,863,969,893,949,915,917,935,868,952,808,967,742,990,609,1003,507"/>
-<area shape="rect" id="Node000004" href="$module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="381,5,531,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="714,21,532,21,532,15,714,15"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="320,62,592,102"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="626,85,592,85,592,79,626,79"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="5,62,272,102"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="306,85,272,85,272,79,306,79"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="339,134,573,174"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="632,157,574,157,574,151,632,151"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="23,134,254,174"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="325,157,254,157,254,151,325,151"/>
-<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="355,198,557,238"/>
-<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="647,221,558,221,558,215,647,215"/>
-<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="39,198,238,238"/>
-<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="341,221,238,221,238,215,341,215"/>
-<area shape="rect" id="Node000015" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="359,262,553,302"/>
-<area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="679,285,554,285,554,279,679,279"/>
-<area shape="rect" id="Node000017" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="357,326,555,366"/>
-<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="679,349,555,349,555,343,679,343"/>
-<area shape="rect" id="Node000019" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="361,390,551,430"/>
-<area shape="poly" id="edge18_Node000018_Node000019" title=" " alt="" coords="679,413,551,413,551,407,679,407"/>
-<area shape="rect" id="Node000021" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html#a991b0fbbfe639adafbd5d12e02e7eced" title="Reads an atomic structure from a file." alt="" coords="335,454,577,494"/>
-<area shape="poly" id="edge20_Node000020_Node000021" title=" " alt="" coords="662,477,577,477,577,471,662,471"/>
-<area shape="rect" id="Node000023" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="357,518,555,558"/>
-<area shape="poly" id="edge22_Node000022_Node000023" title=" " alt="" coords="679,541,555,541,555,535,679,535"/>
-<area shape="rect" id="Node000025" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="337,582,575,622"/>
-<area shape="poly" id="edge24_Node000024_Node000025" title=" " alt="" coords="665,605,575,605,575,599,665,599"/>
-<area shape="rect" id="Node000026" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="335,646,577,686"/>
-<area shape="poly" id="edge25_Node000024_Node000026" title=" " alt="" coords="665,626,555,649,554,643,664,620"/>
-<area shape="rect" id="Node000028" href="$classcorrelation_1_1readers_1_1OutmolReader.html#ad7a731fcdc2534a0a327f6c82deeb440" title="Reads an atomic structure from a file." alt="" coords="346,710,566,750"/>
-<area shape="poly" id="edge27_Node000027_Node000028" title=" " alt="" coords="673,733,566,733,566,727,673,727"/>
-<area shape="rect" id="Node000029" href="$classcorrelation_1_1readers_1_1OutmolReader.html#afea061c8da62eb2f21dfa0cb81b14877" title="Reads a trajectory from a file." alt="" coords="343,774,569,814"/>
-<area shape="poly" id="edge28_Node000027_Node000029" title=" " alt="" coords="674,752,555,777,554,771,672,747"/>
-<area shape="poly" id="edge30_Node000030_Node000031" title=" " alt="" coords="657,821,558,841,556,836,655,816"/>
-<area shape="rect" id="Node000033" href="$classcorrelation_1_1readers_1_1CP2KReader.html#aa0ba6808879dcc99033b5a4e9087b3c4" title="Reads an atomic structure from a file." alt="" coords="353,902,559,942"/>
-<area shape="poly" id="edge32_Node000032_Node000033" title=" " alt="" coords="649,923,559,924,559,918,649,918"/>
-<area shape="rect" id="Node000035" href="$classcorrelation_1_1readers_1_1QEReader.html#ae6278db688852f6ca6b9f9f6eeb037b1" title="Reads an atomic structure from a file." alt="" coords="361,966,551,1006"/>
-<area shape="poly" id="edge35_Node000034_Node000035" title=" " alt="" coords="656,987,551,988,551,983,656,982"/>
+<area shape="rect" id="Node000001" title="Registers an element symbol and returns its ID." alt="" coords="1057,261,1256,301"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a7d93aad147fb82f4fda011a787b9ec34" title="Adds a new atom to the cell. The atom&#39;s element type is automatically registered if it&#39;s the first me..." alt="" coords="873,261,1009,301"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1043,284,1010,284,1010,279,1043,279"/>
+<area shape="rect" id="Node000003" href="$core__bindings_8cpp.html#a9cf4275b2e66ca60c8cf194112bbea96" title=" " alt="" coords="663,19,741,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="930,249,917,205,895,153,865,102,846,79,824,59,805,48,784,41,741,34,742,29,785,36,807,43,827,55,849,75,869,99,900,151,922,203,935,247"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a345d8b2fb74d1d0045f3986025d4af70" title=" " alt="" coords="579,69,825,109"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="923,250,884,185,856,152,824,124,802,112,805,107,827,119,860,148,888,182,928,247"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1GromacsReader.html#ae1e63c0a25b1ffe38ba83e4c728cd5ee" title="Parses a single GROMACS .gro frame from a memory region." alt="" coords="581,133,823,173"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="910,253,871,219,824,188,796,176,799,171,827,183,874,214,913,249"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1readers_1_1ArcReader.html#a362f2562f3add1349b02a75d16310f25" title=" " alt="" coords="618,197,786,237"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="859,261,825,252,780,240,782,235,826,247,861,256"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="595,261,809,301"/>
+<area shape="poly" id="edge14_Node000002_Node000015" title=" " alt="" coords="859,284,809,284,809,279,859,279"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1readers_1_1CarReader.html#a968958d2ba034d61ef696129f8e01da6" title="Low&#45;level parser for the specific file format." alt="" coords="627,325,777,365"/>
+<area shape="poly" id="edge17_Node000002_Node000018" title=" " alt="" coords="861,306,826,316,778,329,776,324,825,311,859,301"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="627,389,777,429"/>
+<area shape="poly" id="edge19_Node000002_Node000020" title=" " alt="" coords="913,314,874,348,827,380,778,398,776,393,824,375,871,344,910,310"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1readers_1_1PdbReader.html#ac4472deee4c13869348a362653c45782" title="Reads an atomic structure from a file." alt="" coords="604,453,800,493"/>
+<area shape="poly" id="edge21_Node000002_Node000022" title=" " alt="" coords="928,315,888,381,860,415,827,444,801,457,799,452,824,439,856,411,884,378,923,313"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1readers_1_1PdbReader.html#aef9379f81d1ab2713d1de1086fe1682a" title="Reads a trajectory from a file." alt="" coords="313,481,514,521"/>
+<area shape="poly" id="edge23_Node000002_Node000023" title=" " alt="" coords="937,315,925,361,904,415,872,467,851,489,827,508,784,528,738,541,691,548,644,549,553,540,478,524,479,519,554,535,644,544,691,543,737,536,782,523,824,503,847,485,868,464,899,412,920,360,932,314"/>
+<area shape="rect" id="Node000004" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="338,19,489,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="648,35,489,35,489,29,648,29"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a52dc92d805330b19f3e7ac65e3ec732b" title="Low&#45;level parser for the specific file format." alt="" coords="324,69,503,109"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="565,92,503,92,503,87,565,87"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a9a510e0fd1702256311f35154ff88bfb" title="Reads an atomic structure from a file." alt="" coords="8,5,245,45"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="310,69,217,48,218,43,311,64"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CastepMdReader.html#a81c47a3e4725ca4fc61565113c69c5c8" title="Reads a trajectory from a file." alt="" coords="5,69,248,109"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="310,92,248,92,248,87,310,87"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a1645fe36619042b7c96b26802e04b779" title="Reads a trajectory from a file." alt="" coords="296,133,531,173"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="567,156,531,156,531,151,567,151"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1GromacsReader.html#a32dffa094d2d9281558a409e0f416fee" title="Reads an atomic structure from a file." alt="" coords="11,133,242,173"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="282,156,242,156,242,151,282,151"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1readers_1_1ArcReader.html#a03099e029a3ace0197fd9c045dda3ac5" title="Low&#45;level parser for the specific file format." alt="" coords="339,197,488,237"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="604,220,488,220,488,215,604,215"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1readers_1_1ArcReader.html#aaecc127e68886cc95c820aedcc91b961" title="Reads a trajectory from a file." alt="" coords="27,197,226,237"/>
+<area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="325,220,226,220,226,215,325,215"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="312,261,515,301"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="581,284,515,284,515,279,581,279"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="27,261,226,301"/>
+<area shape="poly" id="edge16_Node000016_Node000017" title=" " alt="" coords="298,284,226,284,226,279,298,279"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1readers_1_1CarReader.html#aabfb6f402b2682d180a662f971e30d53" title="Reads an atomic structure from a file." alt="" coords="316,325,511,365"/>
+<area shape="poly" id="edge18_Node000018_Node000019" title=" " alt="" coords="613,348,511,348,511,343,613,343"/>
+<area shape="rect" id="Node000021" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="318,389,509,429"/>
+<area shape="poly" id="edge20_Node000020_Node000021" title=" " alt="" coords="614,412,509,412,509,407,614,407"/>
+<area shape="poly" id="edge22_Node000022_Node000023" title=" " alt="" coords="591,487,515,494,514,489,590,481"/>
 </map>

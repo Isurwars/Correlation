@@ -1,0 +1,10 @@
+<map id="correlation::app::InputValidator" name="correlation::app::InputValidator">
+<area shape="rect" id="Node000001" title="Handles UI input validation and equivalent CLI command generation." alt="" coords="5,284,228,309"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="11,108,223,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="115,147,111,182,110,221,117,284,112,284,105,221,105,182,109,147"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html" title="Controller class for the application." alt="" coords="185,196,406,221"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="154,137,272,193,270,198,152,142"/>
+<area shape="rect" id="Node000003" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="23,5,210,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="119,59,119,108,114,108,114,59"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="260,230,142,286,140,281,258,225"/>
+</map>

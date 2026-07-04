@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -134,15 +134,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a121295fe61ca7b321c607505112924bb" id="r_a121295fe61ca7b321c607505112924bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a121295fe61ca7b321c607505112924bb">isTrajectoryCalculator</a> () const override</td></tr>
 <tr class="memdesc:a121295fe61ca7b321c607505112924bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this calculator runs on the whole trajectory (e.g. VACF).  <br /></td></tr>
 <tr class="separator:a121295fe61ca7b321c607505112924bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ff8f831ecd3d5214805d53ade97acc2" id="r_a3ff8f831ecd3d5214805d53ade97acc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
-<tr class="memdesc:a3ff8f831ecd3d5214805d53ade97acc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
-<tr class="separator:a3ff8f831ecd3d5214805d53ade97acc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06a2b86934553f1b4b0555f358299b1d" id="r_a06a2b86934553f1b4b0555f358299b1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a06a2b86934553f1b4b0555f358299b1d">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
+<tr class="memdesc:a06a2b86934553f1b4b0555f358299b1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
+<tr class="separator:a06a2b86934553f1b4b0555f358299b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html">correlation::calculators::BaseCalculator</a></td></tr>
 <tr class="memitem:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_af9ca6046d093eb10559a9f9aa353fb9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c">~BaseCalculator</a> ()=default</td></tr>
 <tr class="separator:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a75298b5153fcbd2ae1763c3bdbe39f82"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a75298b5153fcbd2ae1763c3bdbe39f82">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
-<tr class="memdesc:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
-<tr class="separator:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a88fc48d6aedbf64bf5c9578fca09ed3d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a88fc48d6aedbf64bf5c9578fca09ed3d">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
+<tr class="memdesc:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
+<tr class="separator:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -201,30 +201,13 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_cgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_cgraph" id="aclasscorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_cgraph">
-<area shape="rect" title="Performs Hydrogen Bond analysis." alt="" coords="5,227,212,267"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="271,69,407,109"/>
-<area shape="poly" title=" " alt="" coords="128,225,184,173,259,119,269,113,272,118,261,124,188,178,132,229"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="271,133,407,173"/>
-<area shape="poly" title=" " alt="" coords="158,224,275,176,277,181,160,229"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7c080d69380ebd16ae111a97701a88bd" title="Applies the minimum image convention to a distance vector." alt="" coords="260,197,419,237"/>
-<area shape="poly" title=" " alt="" coords="212,231,246,226,247,232,213,236"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="657,138,833,163"/>
-<area shape="poly" title=" " alt="" coords="213,263,300,273,400,277,506,270,558,260,608,247,642,232,672,213,721,171,724,175,675,217,644,237,610,252,559,266,507,275,400,282,299,278,212,268"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="262,313,417,367"/>
-<area shape="poly" title=" " alt="" coords="160,264,260,305,258,310,158,269"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a82b8dff90cec8eecf7f8ccb6b862bbf3" title="Computes the squared vector norm (length)." alt="" coords="268,416,411,456"/>
-<area shape="poly" title=" " alt="" coords="133,265,190,317,262,378,299,406,296,410,258,382,187,321,129,269"/>
-<area shape="rect" href="namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="470,5,606,45"/>
-<area shape="poly" title=" " alt="" coords="402,195,417,183,429,168,436,152,440,121,445,89,452,72,465,56,469,52,472,56,469,59,457,75,450,91,446,122,441,154,433,170,421,187,405,199"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="467,69,609,109"/>
-<area shape="poly" title=" " alt="" coords="398,195,417,183,432,168,440,152,449,136,465,119,472,114,475,119,468,123,454,139,445,155,436,171,420,187,401,199"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="467,133,609,173"/>
-<area shape="poly" title=" " alt="" coords="401,195,462,175,463,180,403,200"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="467,197,609,237"/>
-<area shape="poly" title=" " alt="" coords="419,215,453,215,453,220,419,220"/>
-<area shape="poly" title=" " alt="" coords="587,43,611,55,669,92,718,128,715,132,666,97,608,60,585,48"/>
-<area shape="poly" title=" " alt="" coords="712,140,704,130,708,120,722,114,745,111,774,115,785,124,782,128,772,120,745,117,723,119,712,123,710,129,716,136"/>
-<area shape="poly" title=" " alt="" coords="302,416,300,406,306,397,319,391,339,389,363,392,375,400,373,404,361,397,339,395,320,397,309,401,305,407,307,415"/>
+<area shape="rect" title="Performs Hydrogen Bond analysis." alt="" coords="5,69,212,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="269,5,405,45"/>
+<area shape="poly" title=" " alt="" coords="180,67,256,45,257,50,182,72"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="269,69,405,109"/>
+<area shape="poly" title=" " alt="" coords="212,87,255,87,255,92,212,92"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="260,134,415,189"/>
+<area shape="poly" title=" " alt="" coords="174,107,248,130,246,136,172,112"/>
 </map>
 </div>
 <div class="dynheader">
@@ -233,15 +216,15 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_icgraph" id="aclasscorrelation_1_1calculators_1_1HBondCalculator_adb52416574f7a922fb391a02fb94b389_icgraph">
 <area shape="rect" title="Performs Hydrogen Bond analysis." alt="" coords="300,5,507,45"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a3ff8f831ecd3d5214805d53ade97acc2" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,252,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#a06a2b86934553f1b4b0555f358299b1d" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,5,252,45"/>
 <area shape="poly" title=" " alt="" coords="286,28,252,28,252,23,286,23"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a3ff8f831ecd3d5214805d53ade97acc2" name="a3ff8f831ecd3d5214805d53ade97acc2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ff8f831ecd3d5214805d53ade97acc2">&#9670;&#160;</a></span>calculateFrame()</h2>
+<a id="a06a2b86934553f1b4b0555f358299b1d" name="a06a2b86934553f1b4b0555f358299b1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06a2b86934553f1b4b0555f358299b1d">&#9670;&#160;</a></span>calculateFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -253,7 +236,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::calculators::HBondCalculator::calculateFrame </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -277,50 +260,33 @@ Here is the caller graph for this function:</div>
 <p>Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object to store the results. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object to store the results. </td></tr>
     <tr><td class="paramname">settings</td><td>The analysis settings and parameters. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a9e825afb4f3b6cdfc183be18f7e08220">correlation::calculators::BaseCalculator</a>.</p>
+<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#ac4c24a0e6512e3d8a928f1a2618ef53f">correlation::calculators::BaseCalculator</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1calculators_1_1HBondCalculator_a3ff8f831ecd3d5214805d53ade97acc2_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1HBondCalculator_a3ff8f831ecd3d5214805d53ade97acc2_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1calculators_1_1HBondCalculator_a3ff8f831ecd3d5214805d53ade97acc2_cgraph" id="aclasscorrelation_1_1calculators_1_1HBondCalculator_a3ff8f831ecd3d5214805d53ade97acc2_cgraph">
-<area shape="rect" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,259,252,299"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="319,147,487,202"/>
-<area shape="poly" title=" " alt="" coords="181,256,316,205,318,210,183,261"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,227,507,267"/>
-<area shape="poly" title=" " alt="" coords="252,262,286,258,287,263,252,267"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="304,291,503,331"/>
-<area shape="poly" title=" " alt="" coords="252,290,291,295,290,300,252,296"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="319,355,487,410"/>
-<area shape="poly" title=" " alt="" coords="183,296,318,348,316,353,181,301"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="566,69,702,109"/>
-<area shape="poly" title=" " alt="" coords="485,224,505,211,522,190,529,167,535,143,553,120,558,115,562,119,557,123,540,146,534,169,527,192,508,215,488,229"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="566,133,702,173"/>
-<area shape="poly" title=" " alt="" coords="472,224,506,211,553,183,567,176,570,181,556,188,508,216,474,229"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a7c080d69380ebd16ae111a97701a88bd" title="Applies the minimum image convention to a distance vector." alt="" coords="555,197,713,237"/>
-<area shape="poly" title=" " alt="" coords="507,231,541,226,541,232,508,236"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="952,138,1128,163"/>
-<area shape="poly" title=" " alt="" coords="507,263,594,273,695,277,801,270,853,260,903,247,936,232,967,213,1015,171,1019,175,970,217,939,237,905,252,854,266,801,275,695,282,594,278,507,268"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="557,313,711,367"/>
-<area shape="poly" title=" " alt="" coords="475,264,508,276,569,304,567,309,506,281,473,269"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a82b8dff90cec8eecf7f8ccb6b862bbf3" title="Computes the squared vector norm (length)." alt="" coords="563,416,705,456"/>
-<area shape="poly" title=" " alt="" coords="491,264,508,277,528,302,535,327,541,352,557,378,588,406,584,410,553,382,537,354,530,328,523,304,505,281,488,269"/>
-<area shape="rect" href="namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="765,5,901,45"/>
-<area shape="poly" title=" " alt="" coords="697,195,711,183,724,168,730,152,735,121,740,89,747,72,759,56,763,52,767,56,763,59,751,75,745,91,740,122,735,154,728,170,715,187,700,199"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="761,69,904,109"/>
-<area shape="poly" title=" " alt="" coords="693,195,712,183,727,168,735,152,744,136,760,119,766,114,769,119,763,123,748,139,740,155,731,171,715,187,696,199"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="761,133,904,173"/>
-<area shape="poly" title=" " alt="" coords="696,195,756,175,758,180,698,200"/>
-<area shape="rect" href="classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="761,197,904,237"/>
-<area shape="poly" title=" " alt="" coords="713,215,748,215,748,220,713,220"/>
-<area shape="poly" title=" " alt="" coords="882,43,905,55,964,92,1013,128,1010,132,961,97,903,60,880,48"/>
-<area shape="poly" title=" " alt="" coords="1006,140,999,130,1003,120,1017,114,1040,111,1069,115,1080,124,1077,128,1066,120,1040,117,1018,119,1007,123,1004,129,1010,136"/>
-<area shape="poly" title=" " alt="" coords="597,416,595,406,600,397,614,391,634,389,657,392,670,400,667,404,656,397,634,395,615,397,604,401,600,407,602,415"/>
+<div class="center"><img src="classcorrelation_1_1calculators_1_1HBondCalculator_a06a2b86934553f1b4b0555f358299b1d_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1HBondCalculator_a06a2b86934553f1b4b0555f358299b1d_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1HBondCalculator_a06a2b86934553f1b4b0555f358299b1d_cgraph" id="aclasscorrelation_1_1calculators_1_1HBondCalculator_a06a2b86934553f1b4b0555f358299b1d_cgraph">
+<area shape="rect" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,117,252,157"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="319,5,487,60"/>
+<area shape="poly" title=" " alt="" coords="181,114,316,63,318,68,183,119"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1HBondCalculator.html#adb52416574f7a922fb391a02fb94b389" title="Performs Hydrogen Bond analysis." alt="" coords="300,85,507,125"/>
+<area shape="poly" title=" " alt="" coords="252,120,286,116,287,121,252,125"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="304,149,503,189"/>
+<area shape="poly" title=" " alt="" coords="252,148,291,153,290,158,252,154"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ab3ba12c9ee0794c5d9ef4eaf1e336e73" title="Returns the structure analyzer providing neighbor information." alt="" coords="319,213,487,268"/>
+<area shape="poly" title=" " alt="" coords="183,154,318,206,316,211,181,159"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="564,21,700,61"/>
+<area shape="poly" title=" " alt="" coords="475,82,550,61,552,66,476,87"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="564,85,700,125"/>
+<area shape="poly" title=" " alt="" coords="507,102,550,102,550,107,507,107"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="555,149,709,204"/>
+<area shape="poly" title=" " alt="" coords="470,122,507,134,543,145,541,150,506,139,468,127"/>
 </map>
 </div>
 

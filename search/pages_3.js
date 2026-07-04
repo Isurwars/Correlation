@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['roadmap_0',['Correlation: 2026 Roadmap',['../md_docs_2RoadMap.html',1,'']]]
+  ['of_20conduct_0',['&lt;strong&gt;Correlation&lt;/strong&gt; Code of Conduct',['../md_docs_2CODE__OF__CONDUCT.html',1,'']]]
 ];

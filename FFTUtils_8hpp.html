@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -90,30 +90,24 @@ $(function() {
 
 <p>Fast Fourier Transform (FFT) and autocorrelation utilities.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="Constants_8hpp_source.html">math/Constants.hpp</a>&quot;</code><br />
-<code>#include &lt;algorithm&gt;</code><br />
-<code>#include &lt;cmath&gt;</code><br />
-<code>#include &lt;complex&gt;</code><br />
+<div class="textblock"><code>#include &lt;complex&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &quot;<a class="el" href="Constants_8hpp_source.html">math/Constants.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for FFTUtils.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="FFTUtils_8hpp__incl.png" border="0" usemap="#ainclude_2math_2FFTUtils_8hpp" alt=""/></div>
 <map name="ainclude_2math_2FFTUtils_8hpp" id="ainclude_2math_2FFTUtils_8hpp">
-<area shape="rect" title="Fast Fourier Transform (FFT) and autocorrelation utilities." alt="" coords="275,5,467,31"/>
-<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="5,79,159,104"/>
-<area shape="poly" title=" " alt="" coords="325,33,143,78,141,73,324,28"/>
-<area shape="rect" title=" " alt="" coords="183,79,269,104"/>
-<area shape="poly" title=" " alt="" coords="349,33,263,75,261,70,347,28"/>
-<area shape="rect" title=" " alt="" coords="293,79,356,104"/>
-<area shape="poly" title=" " alt="" coords="366,32,342,69,338,66,361,30"/>
-<area shape="rect" title=" " alt="" coords="380,79,459,104"/>
-<area shape="poly" title=" " alt="" coords="381,30,406,66,402,69,377,33"/>
-<area shape="rect" title=" " alt="" coords="483,79,569,104"/>
-<area shape="poly" title=" " alt="" coords="397,28,489,70,487,75,395,33"/>
-<area shape="rect" title=" " alt="" coords="593,79,656,104"/>
-<area shape="poly" title=" " alt="" coords="413,28,581,75,579,80,411,33"/>
+<area shape="rect" title="Fast Fourier Transform (FFT) and autocorrelation utilities." alt="" coords="105,5,297,31"/>
+<area shape="rect" title=" " alt="" coords="5,79,84,104"/>
+<area shape="poly" title=" " alt="" coords="177,33,84,75,82,70,175,28"/>
+<area shape="rect" title=" " alt="" coords="108,79,195,104"/>
+<area shape="poly" title=" " alt="" coords="195,33,169,69,165,66,190,29"/>
+<area shape="rect" title=" " alt="" coords="219,79,281,104"/>
+<area shape="poly" title=" " alt="" coords="211,29,236,66,232,69,207,33"/>
+<area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="305,79,459,104"/>
+<area shape="poly" title=" " alt="" coords="231,28,341,71,339,76,229,33"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -139,15 +133,21 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a955480276101c30388756894db1b77f5" id="r_a955480276101c30388756894db1b77f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a955480276101c30388756894db1b77f5">correlation::math::computeFFT</a> (std::vector&lt; std::complex&lt; double &gt; &gt; &amp;a, bool <a class="el" href="namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5">invert</a>)</td></tr>
-<tr class="memdesc:a955480276101c30388756894db1b77f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal optimization.  <br /></td></tr>
-<tr class="separator:a955480276101c30388756894db1b77f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bed74c49c11efa5d275e0172d2f8c2d" id="r_a1bed74c49c11efa5d275e0172d2f8c2d"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a1bed74c49c11efa5d275e0172d2f8c2d">correlation::math::autocorrelate</a> (const std::vector&lt; double &gt; &amp;x, std::vector&lt; std::complex&lt; double &gt; &gt; &amp;workspace)</td></tr>
-<tr class="memdesc:a1bed74c49c11efa5d275e0172d2f8c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the autocorrelation of a 1D real sequence using FFT.  <br /></td></tr>
-<tr class="separator:a1bed74c49c11efa5d275e0172d2f8c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0baae262699dfc4e20867c3c24d90410" id="r_a0baae262699dfc4e20867c3c24d90410"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a0baae262699dfc4e20867c3c24d90410">correlation::math::autocorrelate</a> (const std::vector&lt; double &gt; &amp;x)</td></tr>
-<tr class="memdesc:a0baae262699dfc4e20867c3c24d90410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience overload — allocates its own workspace.  <br /></td></tr>
-<tr class="separator:a0baae262699dfc4e20867c3c24d90410"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fab196f3961705514a0ef08724f302b" id="r_a9fab196f3961705514a0ef08724f302b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a9fab196f3961705514a0ef08724f302b">correlation::math::isGoodFFTSize</a> (size_t n)</td></tr>
+<tr class="memdesc:a9fab196f3961705514a0ef08724f302b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to check if a size is a product of small prime factors (2, 3, 5). Highly optimized for FFTW3 and MKL.  <br /></td></tr>
+<tr class="separator:a9fab196f3961705514a0ef08724f302b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13ddbfff3eb1f186243a00bac5ccadf8" id="r_a13ddbfff3eb1f186243a00bac5ccadf8"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a13ddbfff3eb1f186243a00bac5ccadf8">correlation::math::findNextGoodFFTSize</a> (size_t target)</td></tr>
+<tr class="memdesc:a13ddbfff3eb1f186243a00bac5ccadf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the next "good" FFT size &gt;= target.  <br /></td></tr>
+<tr class="separator:a13ddbfff3eb1f186243a00bac5ccadf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4b46526a1ffe1c38188bae87c34a99e" id="r_af4b46526a1ffe1c38188bae87c34a99e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#af4b46526a1ffe1c38188bae87c34a99e">correlation::math::computeFFT</a> (std::vector&lt; std::complex&lt; double &gt; &gt; &amp;<a class="el" href="LammpsDumpReader_8cpp.html#a8f64897c7ccc5c13f276d1d07c4e7095">data</a>, bool <a class="el" href="namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a">invert</a>)</td></tr>
+<tr class="memdesc:af4b46526a1ffe1c38188bae87c34a99e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple Radix-2 Cooley-Tukey FFT implementation with bit-reversal optimization.  <br /></td></tr>
+<tr class="separator:af4b46526a1ffe1c38188bae87c34a99e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f3c899bcbeb2b3eec4516f9acd2a643" id="r_a0f3c899bcbeb2b3eec4516f9acd2a643"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a0f3c899bcbeb2b3eec4516f9acd2a643">correlation::math::autocorrelate</a> (const std::vector&lt; double &gt; &amp;signal, std::vector&lt; std::complex&lt; double &gt; &gt; &amp;workspace)</td></tr>
+<tr class="memdesc:a0f3c899bcbeb2b3eec4516f9acd2a643"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the autocorrelation of a 1D real sequence using FFT.  <br /></td></tr>
+<tr class="separator:a0f3c899bcbeb2b3eec4516f9acd2a643"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e794d57ea1ff9e4dd42e1efeeb7f258" id="r_a9e794d57ea1ff9e4dd42e1efeeb7f258"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a9e794d57ea1ff9e4dd42e1efeeb7f258">correlation::math::autocorrelate</a> (const std::vector&lt; double &gt; &amp;signal)</td></tr>
+<tr class="memdesc:a9e794d57ea1ff9e4dd42e1efeeb7f258"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience overload — allocates its own workspace.  <br /></td></tr>
+<tr class="separator:a9e794d57ea1ff9e4dd42e1efeeb7f258"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Fast Fourier Transform (FFT) and autocorrelation utilities. </p>

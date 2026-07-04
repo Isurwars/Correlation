@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['x_0',['x',['../structcorrelation_1_1math_1_1PositionBlock.html#ad0f3b0777a1e062f210c4cd7a851845a',1,'correlation::math::PositionBlock']]],
+  ['x_0',['x',['../structcorrelation_1_1math_1_1PositionBlock.html#ad0f3b0777a1e062f210c4cd7a851845a',1,'correlation::math::PositionBlock::x'],['../structcorrelation_1_1math_1_1Point3.html#a5c9d4bb0d8a10ac95c3355cd79dd3409',1,'correlation::math::Point3::x'],['../structcorrelation_1_1plotters_1_1detail_1_1PdfPoint.html#a0865de50c40a7d8f98a25efdd2322ca9',1,'correlation::plotters::detail::PdfPoint::x'],['../DistanceCalculator_8cpp.html#a17636ed1c8d0cf72b44f6806d6694b1a',1,'x:&#160;DistanceCalculator.cpp'],['../StructureFactorCalculator_8cpp.html#a17636ed1c8d0cf72b44f6806d6694b1a',1,'x:&#160;StructureFactorCalculator.cpp'],['../PdbReader_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10',1,'x:&#160;PdbReader.cpp']]],
   ['x_5flabel_1',['x_label',['../structcorrelation_1_1analysis_1_1Histogram.html#a108c9addc036b657086ecf70eee5120b',1,'correlation::analysis::Histogram']]],
-  ['x_5funit_2',['x_unit',['../structcorrelation_1_1analysis_1_1Histogram.html#a28eff56f0ac33fe1603358db33beef8a',1,'correlation::analysis::Histogram']]]
+  ['x_5funit_2',['x_unit',['../structcorrelation_1_1analysis_1_1Histogram.html#a28eff56f0ac33fe1603358db33beef8a',1,'correlation::analysis::Histogram']]],
+  ['xscale_3',['xscale',['../structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#ae01a2b6577ea05b71d2bee556e1c0289',1,'correlation::plotters::detail::PdfHistogramRenderer::xScale'],['../structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a79955be49fbb83896540f6db703532ca',1,'correlation::plotters::detail::PdfComparisonRenderer::xScale']]]
 ];

@@ -1,0 +1,10 @@
+<map id="correlation::app::PresetController" name="correlation::app::PresetController">
+<area shape="rect" id="Node000001" title="Manages parameter presets and material type configurations." alt="" coords="25,284,198,324"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html" title="The main backend class for the application." alt="" coords="5,108,217,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="110,147,105,196,106,243,111,283,105,284,100,244,99,196,105,146"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html" title="Controller class for the application." alt="" coords="179,196,401,221"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="149,137,267,193,265,198,146,142"/>
+<area shape="rect" id="Node000003" href="$structcorrelation_1_1app_1_1ProgramOptions.html" title="Encapsulates all configurable options for the application." alt="" coords="18,5,205,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="114,59,114,108,109,108,109,59"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="257,230,149,286,146,282,255,225"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="correlation::readers::XYZReader::parseLattice" name="correlation::readers::XYZReader::parseLattice">
+<area shape="rect" id="Node000001" title=" " alt="" coords="1049,5,1240,45"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1XYZReader.html#af476d84bd78c0cd236c730a28bb4d851" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="764,5,1001,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1036,28,1002,28,1002,23,1036,23"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1XYZReader.html#a095edf38c284261e459b1cfcf5b4a608" title=" " alt="" coords="503,5,716,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="750,28,716,28,716,23,750,23"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1XYZReader.html#adf5861d03b87b7bac297cd9e1348955f" title="Reads a trajectory from a file." alt="" coords="252,5,455,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="489,28,455,28,455,23,489,23"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1XYZReader.html#a8e5be781f24365de70e167056a2fdc13" title="Reads an atomic structure from a file." alt="" coords="5,5,204,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="239,28,204,28,204,23,239,23"/>
+</map>

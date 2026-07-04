@@ -1,0 +1,5 @@
+<map id="correlation::calculators::HyperuniformityCalculator" name="correlation::calculators::HyperuniformityCalculator">
+<area shape="rect" id="Node000001" title="Computes the local number variance σ²_N(R) and hyperuniformity index χ_H(R) by sampling random observ..." alt="" coords="5,93,208,133"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html" title="Base class for all analysis calculators." alt="" coords="21,5,192,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,59,109,93,104,93,104,59"/>
+</map>

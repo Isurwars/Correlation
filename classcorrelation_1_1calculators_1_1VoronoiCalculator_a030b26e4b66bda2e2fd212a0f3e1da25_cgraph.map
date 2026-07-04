@@ -1,0 +1,22 @@
+<map id="correlation::calculators::VoronoiCalculator::calculate" name="correlation::calculators::VoronoiCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes Voronoi tessellation and extracts metric histograms." alt="" coords="5,159,217,199"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="633,5,769,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="127,157,183,100,221,71,264,48,310,33,357,22,452,10,543,8,620,13,620,18,543,14,453,15,358,27,311,38,266,53,224,75,186,104,131,160"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a76f2eb8a72c3e896cf0929cd92719457" title="Build the signature frequency map and return sorted signatures + description." alt="" coords="273,63,548,103"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="154,156,206,134,265,112,295,103,296,109,266,117,208,139,156,161"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#ab6e70976c64686155d7eb632436c4d3e" title="Build the Voronoi tessellation and extract per&#45;atom cell data." alt="" coords="265,127,556,167"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="217,165,251,161,252,166,218,170"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="343,191,479,231"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="218,187,329,199,329,205,217,193"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a031a887f5609b0eb233d88e796dac8b6" title="Create an initialized histogram with bins and empty partials." alt="" coords="282,255,539,295"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="156,196,208,219,266,240,296,249,295,254,265,245,206,224,154,201"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#acb14bdb9b40f2256cd5de628465cb2a9" title="Populate histogram bins from per&#45;atom numeric data." alt="" coords="271,319,550,359"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="133,197,189,251,226,280,267,304,283,312,281,316,264,309,223,285,185,255,129,201"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="531,124,555,112,570,99,578,85,587,70,602,55,620,45,622,50,606,59,591,73,583,88,574,103,557,117,533,129"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a9653492ad86b15295063a359961cc07a" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="604,69,799,109"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="512,124,590,109,591,114,513,129"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="629,133,773,173"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="556,147,615,149,615,154,556,153"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="633,197,769,237"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="506,164,557,176,620,193,619,198,555,181,504,169"/>
+</map>

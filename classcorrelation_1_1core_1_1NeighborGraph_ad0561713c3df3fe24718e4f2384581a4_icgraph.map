@@ -1,7 +1,15 @@
 <map id="correlation::core::NeighborGraph::getNeighbors" name="correlation::core::NeighborGraph::getNeighbors">
-<area shape="rect" id="Node000001" title="Retrieves the neighbor list for a specific atom." alt="" coords="269,37,484,77"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1AngleCalculator.html#a5c77c5193fa151fcc9cf14ebc27aa6d6" title="Computes and populates the bond angles tensor." alt="" coords="14,5,213,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="255,45,213,40,213,35,256,40"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="5,69,221,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="256,75,222,79,221,74,256,69"/>
+<area shape="rect" id="Node000001" title="Retrieves the neighbor list for a specific atom." alt="" coords="768,69,983,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1CNACalculator.html#a0e53ff6176e3c761fd5810611bd07cee" title="Performs CNA on a single cell." alt="" coords="517,5,707,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="779,69,694,48,695,43,780,63"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1DihedralCalculator.html#aafda1994d482ac753267409db980e440" title="Computes and populates the dihedral angles tensor." alt="" coords="504,69,720,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="755,92,720,92,720,87,755,87"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#a36725fa25cdc01b4febb6b5dff33b2e0" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="507,134,717,189"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="789,116,713,137,712,131,788,110"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1CNACalculator.html#a33fd116c876c72a5f6a1d9ed157b8014" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="224,5,456,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="503,28,456,28,456,23,503,23"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#aa31a344c893ef452816fb53b87f877c5" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="255,134,425,189"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="494,164,426,164,426,159,494,159"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,134,176,189"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="241,164,176,164,176,159,241,159"/>
 </map>

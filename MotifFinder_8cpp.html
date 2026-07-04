@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -91,7 +91,7 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="MotifFinder_8hpp_source.html">calculators/MotifFinder.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
-<code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;iterator&gt;</code><br />
 <code>#include &lt;map&gt;</code><br />
 <code>#include &lt;tbb/blocked_range.h&gt;</code><br />
@@ -103,47 +103,48 @@ Include dependency graph for MotifFinder.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="MotifFinder_8cpp__incl.png" border="0" usemap="#asrc_2calculators_2MotifFinder_8cpp" alt=""/></div>
 <map name="asrc_2calculators_2MotifFinder_8cpp" id="asrc_2calculators_2MotifFinder_8cpp">
-<area shape="rect" title="Implementation of ring and structural motif search." alt="" coords="269,5,489,31"/>
-<area shape="rect" href="MotifFinder_8hpp.html" title="Ring and structural motif finder using neighbour graph search." alt="" coords="143,86,342,111"/>
-<area shape="poly" title=" " alt="" coords="360,33,276,81,273,77,357,29"/>
-<area shape="rect" title=" " alt="" coords="79,387,142,412"/>
-<area shape="poly" title=" " alt="" coords="269,24,181,36,137,47,97,62,61,82,33,108,15,139,8,178,8,254,12,298,33,337,54,360,78,377,75,382,50,364,28,340,7,300,3,254,3,178,10,138,29,104,58,78,94,57,136,42,180,31,268,19"/>
-<area shape="rect" title=" " alt="" coords="43,313,128,339"/>
-<area shape="poly" title=" " alt="" coords="270,33,176,52,138,65,114,81,97,105,85,134,77,164,74,194,75,253,82,300,77,300,70,254,69,194,72,163,79,132,92,103,110,77,135,60,174,47,269,28"/>
-<area shape="rect" title=" " alt="" coords="123,240,186,265"/>
-<area shape="poly" title=" " alt="" coords="280,33,191,52,156,65,134,80,124,97,119,115,120,155,130,194,144,227,139,229,125,196,115,156,114,115,119,95,130,77,153,60,189,47,279,28"/>
-<area shape="rect" title=" " alt="" coords="400,167,451,192"/>
-<area shape="poly" title=" " alt="" coords="384,30,408,118,419,153,414,154,403,119,379,32"/>
-<area shape="rect" title=" " alt="" coords="417,86,487,111"/>
-<area shape="poly" title=" " alt="" coords="391,29,434,74,430,77,388,33"/>
-<area shape="rect" title=" " alt="" coords="511,86,665,111"/>
-<area shape="poly" title=" " alt="" coords="410,28,546,79,544,84,408,33"/>
-<area shape="rect" title=" " alt="" coords="689,79,863,119"/>
-<area shape="poly" title=" " alt="" coords="437,28,676,75,675,80,436,33"/>
-<area shape="rect" title=" " alt="" coords="887,86,1019,111"/>
-<area shape="poly" title=" " alt="" coords="489,26,671,46,876,76,897,80,896,86,876,81,670,51,489,31"/>
-<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="195,167,375,192"/>
-<area shape="poly" title=" " alt="" coords="251,110,275,153,270,156,247,113"/>
-<area shape="poly" title=" " alt="" coords="232,113,209,137,186,168,172,198,163,228,158,226,167,196,182,165,205,134,228,110"/>
-<area shape="poly" title=" " alt="" coords="270,109,388,159,386,164,268,114"/>
-<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="211,240,328,265"/>
-<area shape="poly" title=" " alt="" coords="285,193,277,227,272,226,280,192"/>
-<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="325,313,504,339"/>
-<area shape="poly" title=" " alt="" coords="298,191,342,238,398,301,394,305,338,242,294,194"/>
-<area shape="poly" title=" " alt="" coords="266,194,189,236,187,231,263,190"/>
-<area shape="poly" title=" " alt="" coords="294,263,380,305,378,310,292,268"/>
-<area shape="poly" title=" " alt="" coords="241,268,129,311,127,306,239,263"/>
-<area shape="rect" title=" " alt="" coords="235,313,301,339"/>
-<area shape="poly" title=" " alt="" coords="272,266,271,300,266,300,266,266"/>
-<area shape="rect" title=" " alt="" coords="152,313,211,339"/>
-<area shape="poly" title=" " alt="" coords="257,267,208,307,205,302,254,263"/>
-<area shape="rect" title=" " alt="" coords="387,387,443,412"/>
-<area shape="poly" title=" " alt="" coords="417,339,417,373,412,373,412,339"/>
-<area shape="poly" title=" " alt="" coords="366,341,156,390,155,385,365,336"/>
-<area shape="rect" title=" " alt="" coords="467,387,554,412"/>
-<area shape="poly" title=" " alt="" coords="432,337,485,376,482,380,429,341"/>
-<area shape="rect" title=" " alt="" coords="270,387,362,412"/>
-<area shape="poly" title=" " alt="" coords="400,341,345,381,342,376,397,337"/>
+<area shape="rect" title="Implementation of ring and structural motif search." alt="" coords="322,5,542,31"/>
+<area shape="rect" href="MotifFinder_8hpp.html" title="Ring and structural motif finder using neighbour graph search." alt="" coords="174,86,373,111"/>
+<area shape="poly" title=" " alt="" coords="410,33,310,82,307,78,408,28"/>
+<area shape="rect" title=" " alt="" coords="5,313,91,339"/>
+<area shape="poly" title=" " alt="" coords="322,29,258,36,194,47,140,62,120,71,106,81,86,105,71,132,60,162,53,193,47,252,48,299,43,299,42,252,48,192,55,161,66,130,81,102,102,77,118,66,139,57,193,42,257,31,322,24"/>
+<area shape="rect" title=" " alt="" coords="117,240,179,265"/>
+<area shape="poly" title=" " alt="" coords="322,33,215,51,171,65,142,81,120,105,109,130,108,158,115,191,133,228,128,230,109,193,102,158,104,129,115,103,138,77,169,60,214,46,321,27"/>
+<area shape="rect" title=" " alt="" coords="124,167,175,192"/>
+<area shape="poly" title=" " alt="" coords="323,33,227,52,189,65,165,81,154,97,149,115,148,153,143,153,144,114,150,94,161,77,187,60,226,47,322,28"/>
+<area shape="rect" title=" " alt="" coords="397,86,467,111"/>
+<area shape="poly" title=" " alt="" coords="435,31,435,72,429,72,429,31"/>
+<area shape="rect" title=" " alt="" coords="491,86,562,111"/>
+<area shape="poly" title=" " alt="" coords="448,29,504,75,500,79,444,33"/>
+<area shape="rect" title=" " alt="" coords="586,86,739,111"/>
+<area shape="poly" title=" " alt="" coords="466,28,617,79,615,84,465,33"/>
+<area shape="rect" title=" " alt="" coords="763,79,938,119"/>
+<area shape="poly" title=" " alt="" coords="494,28,750,76,749,81,493,33"/>
+<area shape="rect" title=" " alt="" coords="962,86,1094,111"/>
+<area shape="poly" title=" " alt="" coords="543,25,734,45,951,76,972,80,971,85,950,81,733,50,542,31"/>
+<area shape="rect" href="NeighborGraph_8hpp.html" title="Neighbor graph representation of atomic bonds and adjacency." alt="" coords="250,167,430,192"/>
+<area shape="poly" title=" " alt="" coords="285,110,323,155,319,158,281,113"/>
+<area shape="poly" title=" " alt="" coords="266,113,168,231,164,228,262,110"/>
+<area shape="poly" title=" " alt="" coords="256,114,181,161,178,157,254,109"/>
+<area shape="rect" href="Atom_8hpp.html" title="Atom data structure and AtomID type definitions." alt="" coords="204,240,321,265"/>
+<area shape="poly" title=" " alt="" coords="329,194,287,232,284,229,326,190"/>
+<area shape="rect" href="LinearAlgebra_8hpp.html" title="Lightweight 3D vector and matrix classes for geometric calculations." alt="" coords="295,313,473,339"/>
+<area shape="poly" title=" " alt="" coords="346,192,379,299,374,301,341,193"/>
+<area shape="poly" title=" " alt="" coords="310,195,193,237,191,232,308,190"/>
+<area shape="poly" title=" " alt="" coords="284,263,354,304,351,309,281,268"/>
+<area shape="poly" title=" " alt="" coords="229,268,97,311,95,306,227,263"/>
+<area shape="rect" title=" " alt="" coords="204,313,271,339"/>
+<area shape="poly" title=" " alt="" coords="261,267,248,301,243,300,256,265"/>
+<area shape="rect" title=" " alt="" coords="121,313,180,339"/>
+<area shape="poly" title=" " alt="" coords="246,268,182,308,179,303,243,263"/>
+<area shape="rect" title=" " alt="" coords="223,387,279,412"/>
+<area shape="poly" title=" " alt="" coords="364,341,286,382,283,378,361,336"/>
+<area shape="rect" title=" " alt="" coords="303,387,366,412"/>
+<area shape="poly" title=" " alt="" coords="378,341,353,377,348,374,374,337"/>
+<area shape="rect" title=" " alt="" coords="390,387,477,412"/>
+<area shape="poly" title=" " alt="" coords="394,337,420,374,415,377,390,341"/>
+<area shape="rect" title=" " alt="" coords="501,387,593,412"/>
+<area shape="poly" title=" " alt="" coords="411,336,509,379,506,383,409,341"/>
 </map>
 </div>
 </div><table class="memberdecls">
@@ -215,6 +216,34 @@ Namespaces</h2></td></tr>
 
 </div>
 </div>
+<a id="adb571e31d203fab351b35ee7a635379e" name="adb571e31d203fab351b35ee7a635379e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb571e31d203fab351b35ee7a635379e">&#9670;&#160;</a></span>max_check_dist</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int max_check_dist</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af4728438dee601cb2554d9bf18d78a43" name="af4728438dee601cb2554d9bf18d78a43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4728438dee601cb2554d9bf18d78a43">&#9670;&#160;</a></span>max_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t max_size</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a3676b64b5b58b36cb866e14bbb77f0b5" name="a3676b64b5b58b36cb866e14bbb77f0b5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3676b64b5b58b36cb866e14bbb77f0b5">&#9670;&#160;</a></span>parents</h2>
 
@@ -251,6 +280,48 @@ Namespaces</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt;size_t&gt; q_king</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afddab2242fe2c4ea3ab922b764303639" name="afddab2242fe2c4ea3ab922b764303639"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afddab2242fe2c4ea3ab922b764303639">&#9670;&#160;</a></span>root</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t root</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a52a8a99bfbb1c17e94e3a9f816d8f5ee" name="a52a8a99bfbb1c17e94e3a9f816d8f5ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52a8a99bfbb1c17e94e3a9f816d8f5ee">&#9670;&#160;</a></span>start</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t start</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3905024f9428d155cf3afb30ffec6e7a" name="a3905024f9428d155cf3afb30ffec6e7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3905024f9428d155cf3afb30ffec6e7a">&#9670;&#160;</a></span>start_node</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t start_node</td>
         </tr>
       </table>
 </div><div class="memdoc">

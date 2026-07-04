@@ -1,0 +1,68 @@
+<map id="correlation::app::AnalysisRunner::handleRunAnalysis" name="correlation::app::AnalysisRunner::handleRunAnalysis">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,344,205,384"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a111a41dcc96828ad27c959700b29180f" title="Returns the names of all histograms available from the last analysis." alt="" coords="253,5,479,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="108,343,122,286,149,209,168,167,191,126,219,88,252,55,258,50,261,55,255,59,223,92,195,129,172,169,153,211,127,288,113,344"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a2acea29929cfae44080b8631ad2bd8a1" title="Returns the InputValidator instance." alt="" coords="255,69,477,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="111,343,128,297,157,236,198,173,223,144,252,119,259,114,262,118,255,123,227,148,203,177,162,239,133,299,116,345"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a602c8a13494a52723718a4ad5c8225a6" title="Returns the PlotController instance." alt="" coords="255,133,477,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="116,342,169,269,208,227,252,190,275,177,278,181,255,194,211,230,173,272,121,346"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppController.html#aa5b046789fca9e3a2efce67ef89109ba" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="810,156,1031,196"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="144,342,338,245,445,197,526,169,595,159,665,154,796,158,796,163,666,159,596,164,527,175,447,202,340,250,146,346"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1app_1_1AppBackend.html#a37a73d33331432f9c6d60a96c9839060" title="Runs the analysis based on the current options and loaded trajectory." alt="" coords="260,568,472,608"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="132,382,333,557,330,561,128,386"/>
+<area shape="rect" id="Node000024" href="$classcorrelation_1_1app_1_1AppBackend.html#a49feaf6f5d7faafa44f176bf8d8df0fe" title="Sets the program options." alt="" coords="260,632,472,672"/>
+<area shape="poly" id="edge23_Node000001_Node000024" title=" " alt="" coords="115,383,132,431,160,495,201,561,226,592,255,618,262,623,259,627,252,622,222,595,197,564,155,497,127,433,110,385"/>
+<area shape="rect" id="Node000025" href="$classcorrelation_1_1app_1_1AppBackend.html#ae79775b57c54ef187ecc94d305354389" title="Sets a callback function for analysis progress updates." alt="" coords="260,696,472,736"/>
+<area shape="poly" id="edge24_Node000001_Node000025" title=" " alt="" coords="113,384,126,443,152,523,171,566,194,609,222,648,255,682,261,687,258,691,252,686,218,651,189,611,166,569,147,525,121,444,107,385"/>
+<area shape="rect" id="Node000026" href="$classcorrelation_1_1app_1_1AnalysisRunner.html#a6a108d5dbbdf868b2e8d29d2f65a6df4" title=" " alt="" coords="273,760,459,800"/>
+<area shape="poly" id="edge25_Node000001_Node000026" title=" " alt="" coords="111,384,120,453,144,551,162,603,187,655,217,704,255,746,262,752,259,756,251,750,213,707,182,658,157,605,138,552,115,454,106,385"/>
+<area shape="rect" id="Node000027" href="$classcorrelation_1_1app_1_1InputValidator.html#a6ccd742d710e0bda9d65583fab62aa3c" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="255,344,477,384"/>
+<area shape="poly" id="edge26_Node000001_Node000027" title=" " alt="" coords="206,361,241,361,241,367,206,367"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AppController.html#a12fb48d5f1b926e23ef49c3759c69ab1" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="1091,124,1312,164"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1031,161,1077,155,1078,161,1032,166"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1app_1_1AppBackend.html#a7a8c9ba96b855efa52cc530ef156a4ab" title="Gets the total number of frames in the trajectory." alt="" coords="1095,188,1307,228"/>
+<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="1032,186,1082,192,1082,197,1031,191"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="1360,92,1572,132"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="1312,128,1346,124,1347,129,1313,133"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="1398,156,1534,196"/>
+<area shape="poly" id="edge7_Node000006_Node000008" title=" " alt="" coords="1313,155,1384,163,1384,169,1312,160"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1app_1_1AppBackend.html#a2905b64f775f001afafeda2852fa1f4b" title=" " alt="" coords="532,568,745,608"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="472,585,518,585,518,591,472,591"/>
+<area shape="rect" id="Node000015" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#af0d3f80a436c29f9b500d11886e8f79e" title="Computes the mean distribution functions over a trajectory. Uses parallel execution to speed up calcu..." alt="" coords="555,633,723,687"/>
+<area shape="poly" id="edge14_Node000010_Node000015" title=" " alt="" coords="443,605,542,632,541,637,442,611"/>
+<area shape="rect" id="Node000018" href="$classcorrelation_1_1app_1_1AppBackend.html#a321d8a4e47dcdce6624d3bdc7654150e" title=" " alt="" coords="533,751,745,791"/>
+<area shape="poly" id="edge17_Node000010_Node000018" title=" " alt="" coords="460,606,480,618,498,637,507,657,514,676,529,697,557,721,587,741,584,746,553,725,525,700,509,679,502,659,494,640,477,622,457,610"/>
+<area shape="rect" id="Node000022" href="$classcorrelation_1_1app_1_1AppBackend.html#a1a155ac2561878d8da5d6141870cb479" title=" " alt="" coords="533,815,745,855"/>
+<area shape="poly" id="edge21_Node000010_Node000022" title=" " alt="" coords="465,606,481,618,498,641,505,665,507,688,505,711,505,757,513,779,529,801,532,804,529,808,525,804,508,781,500,758,500,711,502,688,500,666,493,644,477,622,462,610"/>
+<area shape="rect" id="Node000023" href="$classcorrelation_1_1app_1_1AppBackend.html#a87e011009fe19529865b51322ba1557d" title=" " alt="" coords="533,879,745,919"/>
+<area shape="poly" id="edge22_Node000010_Node000023" title=" " alt="" coords="466,606,481,618,502,650,510,681,510,713,505,744,501,774,501,805,508,835,529,865,532,868,528,872,525,868,504,837,495,805,496,774,500,743,504,712,505,682,497,652,477,622,463,610"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a9df03a3f349d9c78c3c96568daf58fb6" title="Computes the self&#45;diffusion coefficient D from MSD using linear regression on the second half of the ..." alt="" coords="812,377,1029,431"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="732,566,749,554,761,541,767,527,772,499,777,470,784,455,797,441,801,437,804,441,801,445,789,458,782,472,777,500,772,529,765,544,752,558,735,570"/>
+<area shape="rect" id="Node000013" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a7ef9fc3bec2884a6aafd366f6f2f22da" title="Computes the self&#45;diffusion coefficient D from VACF using Green&#45;Kubo integration (trapezoidal rule)." alt="" coords="812,455,1029,510"/>
+<area shape="poly" id="edge12_Node000011_Node000013" title=" " alt="" coords="721,565,749,554,773,537,797,519,810,513,813,518,800,524,776,541,752,558,723,570"/>
+<area shape="rect" id="Node000014" href="$classcorrelation_1_1analysis_1_1DynamicsAnalyzer.html#a227fecb7b9ac843cea23e27a2085c619" title="Computes the relaxation time tau from the normalized VACF using trapezoidal integration." alt="" coords="812,534,1029,589"/>
+<area shape="poly" id="edge13_Node000011_Node000014" title=" " alt="" coords="745,575,798,570,799,576,746,581"/>
+<area shape="rect" id="Node000016" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#af1c80425949c79a73fb59c5e19df3bd8" title=" " alt="" coords="843,613,998,667"/>
+<area shape="poly" id="edge15_Node000015_Node000016" title=" " alt="" coords="722,651,829,644,830,649,723,657"/>
+<area shape="rect" id="Node000017" href="$classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#a671a72147f916092c5c099c70b073d60" title=" " alt="" coords="843,691,998,746"/>
+<area shape="poly" id="edge16_Node000015_Node000017" title=" " alt="" coords="723,675,830,697,829,702,722,680"/>
+<area shape="rect" id="Node000019" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4a5b6ed4a5e01851496c5b9cae77138a" title="Returns all registered calculators." alt="" coords="799,771,1043,811"/>
+<area shape="poly" id="edge18_Node000018_Node000019" title=" " alt="" coords="745,776,785,778,785,784,745,781"/>
+<area shape="rect" id="Node000020" href="$classcorrelation_1_1calculators_1_1CalculatorFactory.html#a4e72a11e51b28e5615fda1bef7ee1959" title=" " alt="" coords="818,835,1023,875"/>
+<area shape="poly" id="edge19_Node000018_Node000020" title=" " alt="" coords="714,788,752,800,800,820,826,828,824,833,798,825,750,805,713,793"/>
+<area shape="rect" id="Node000021" href="$structcorrelation_1_1analysis_1_1AnalysisSettings.html#ae53b91ac4928ba8a0c4e4e56680b8dc9" title="Helper to check if a specific calculator is enabled." alt="" coords="821,899,1020,939"/>
+<area shape="poly" id="edge20_Node000018_Node000021" title=" " alt="" coords="733,789,752,801,770,822,777,844,784,865,800,885,811,892,808,896,797,889,779,868,772,846,765,825,749,805,730,793"/>
+<area shape="rect" id="Node000028" href="$classcorrelation_1_1app_1_1InputValidator.html#ac6f349330516b04bd7a70a5f12e6ca0b" title="Generates and updates the equivalent CLI command in the UI." alt="" coords="527,184,750,224"/>
+<area shape="poly" id="edge27_Node000027_Node000028" title=" " alt="" coords="385,342,445,288,484,259,525,234,540,227,543,231,528,238,487,263,448,292,389,346"/>
+<area shape="rect" id="Node000029" href="$classcorrelation_1_1app_1_1InputValidator.html#a7fb2a5750474930f70779041c7794960" title=" " alt="" coords="527,248,750,288"/>
+<area shape="poly" id="edge29_Node000027_Node000029" title=" " alt="" coords="413,342,526,297,550,290,552,295,528,303,415,346"/>
+<area shape="rect" id="Node000030" href="$classcorrelation_1_1app_1_1InputValidator.html#a72fa2056f7107bd5c11e624af4883f45" title=" " alt="" coords="527,312,750,352"/>
+<area shape="poly" id="edge30_Node000027_Node000030" title=" " alt="" coords="477,348,513,344,514,349,478,354"/>
+<area shape="rect" id="Node000031" href="$classcorrelation_1_1app_1_1InputValidator.html#ab614a67e0f41fdd6e087ead5a866d543" title=" " alt="" coords="527,376,750,416"/>
+<area shape="poly" id="edge31_Node000027_Node000031" title=" " alt="" coords="478,374,514,379,513,384,477,380"/>
+<area shape="rect" id="Node000032" href="$classcorrelation_1_1app_1_1InputValidator.html#a2ce7b47c3ecb43f1e9e1cd2c5583e063" title=" " alt="" coords="527,440,751,480"/>
+<area shape="poly" id="edge32_Node000027_Node000032" title=" " alt="" coords="415,382,528,425,552,433,550,438,526,431,413,386"/>
+<area shape="rect" id="Node000033" href="$classcorrelation_1_1app_1_1InputValidator.html#ab9cf1d03c18b5d2fe89b9a494319b6cb" title=" " alt="" coords="527,504,750,544"/>
+<area shape="poly" id="edge33_Node000027_Node000033" title=" " alt="" coords="389,382,448,436,487,465,528,490,543,497,540,501,525,494,484,469,445,440,385,386"/>
+<area shape="poly" id="edge28_Node000028_Node000005" title=" " alt="" coords="750,190,796,186,797,191,751,196"/>
+</map>

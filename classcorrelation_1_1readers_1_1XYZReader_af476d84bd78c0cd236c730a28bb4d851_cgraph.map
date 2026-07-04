@@ -1,0 +1,11 @@
+<map id="correlation::readers::XYZReader::parseCommentLine" name="correlation::readers::XYZReader::parseCommentLine">
+<area shape="rect" id="Node000001" title="Parses an Extended XYZ comment line for properties, lattice and energy." alt="" coords="5,69,243,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1readers_1_1XYZReader.html#a37ac42ea507742c81d9c1ce48ac7b81f" title=" " alt="" coords="301,5,492,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,67,297,46,299,51,211,72"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1XYZReader.html#af248169b23a186e17926f6c79d69c07d" title=" " alt="" coords="301,69,492,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="243,87,288,87,288,92,243,92"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1XYZReader.html#a26dd66cef2e74fea2421d62915532aa9" title=" " alt="" coords="291,133,503,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="211,107,299,128,297,133,209,112"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1XYZReader.html#a051b37e5ef7c99ef1f6d1a9f4a8d5ef1" title=" " alt="" coords="551,126,763,181"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="503,151,537,151,537,156,503,156"/>
+</map>

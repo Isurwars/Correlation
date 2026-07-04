@@ -1,0 +1,7 @@
+<map id="include/app/AnalysisRunner.hpp" name="include/app/AnalysisRunner.hpp">
+<area shape="rect" id="Node000001" title="Analysis execution logic." alt="" coords="100,5,329,31"/>
+<area shape="rect" id="Node000002" href="$AnalysisRunner_8cpp.html" title="Implementation of AnalysisRunner." alt="" coords="5,79,205,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="187,40,125,81,122,76,184,36"/>
+<area shape="rect" id="Node000003" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="230,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="245,36,308,76,305,81,242,40"/>
+</map>

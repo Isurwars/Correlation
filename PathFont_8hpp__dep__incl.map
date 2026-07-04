@@ -1,12 +1,24 @@
 <map id="include/plotters/PathFont.hpp" name="include/plotters/PathFont.hpp">
-<area shape="rect" id="Node000001" title="High&#45;fidelity Roboto vector font for SVG path rendering." alt="" coords="67,5,278,31"/>
-<area shape="rect" id="Node000002" href="$SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="62,79,283,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="175,44,175,79,170,79,170,44"/>
-<area shape="rect" id="Node000003" href="$AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="137,152,355,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="196,112,236,150,232,154,193,116"/>
-<area shape="rect" id="Node000004" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="5,225,193,251"/>
-<area shape="poly" id="edge5_Node000002_Node000004" title=" " alt="" coords="154,116,127,153,112,192,104,226,99,225,107,191,122,151,150,113"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="212,186,124,228,122,223,209,181"/>
-<area shape="rect" id="Node000005" href="$main_8cpp.html" title="Application entry point." alt="" coords="217,225,323,251"/>
-<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="257,189,269,224,264,226,252,191"/>
+<area shape="rect" id="Node000001" title="High&#45;fidelity Roboto vector font for SVG path rendering." alt="" coords="763,5,973,31"/>
+<area shape="rect" id="Node000002" href="$SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="327,86,548,111"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="792,36,501,89,500,83,791,30"/>
+<area shape="rect" id="Node000008" href="$PathFont_8cpp.html" title="High&#45;fidelity Roboto vector font implementation details." alt="" coords="573,86,755,111"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="827,38,695,88,693,83,825,33"/>
+<area shape="rect" id="Node000009" href="$RobotoData__ASCII__1_8cpp.html" title="Roboto font basic ASCII glyph data (Part 1: &#39; &#39; to &#39;L&#39;)." alt="" coords="780,79,956,119"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="871,44,871,79,865,79,865,44"/>
+<area shape="rect" id="Node000010" href="$RobotoData__ASCII__2_8cpp.html" title="Roboto font basic ASCII glyph data (Part 2: &#39;M&#39; to &#39;~&#39;)." alt="" coords="980,79,1156,119"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="911,33,1021,76,1019,81,909,38"/>
+<area shape="rect" id="Node000011" href="$RobotoData__Extended_8cpp.html" title="Roboto font extended Unicode glyph data." alt="" coords="1180,79,1356,119"/>
+<area shape="poly" id="edge11_Node000001_Node000011" title=" " alt="" coords="940,31,1180,78,1179,83,939,36"/>
+<area shape="rect" id="Node000003" href="$PlotController_8hpp.html" title="Plotting and SVG rendering management." alt="" coords="207,167,425,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="409,121,335,169,333,164,406,117"/>
+<area shape="rect" id="Node000007" href="$PdfPlotter_8hpp.html" title="PDF generator for distribution function histograms using pdfgen." alt="" coords="449,167,668,192"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="469,117,542,164,539,169,466,121"/>
+<area shape="rect" id="Node000004" href="$AnalysisRunner_8cpp.html" title="Implementation of AnalysisRunner." alt="" coords="5,240,205,265"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="270,199,140,242,139,237,269,194"/>
+<area shape="rect" id="Node000005" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="230,240,418,265"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="321,205,325,240,320,240,316,206"/>
+<area shape="rect" id="Node000006" href="$PlotController_8cpp.html" title="Implementation of PlotController." alt="" coords="457,240,645,265"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="367,193,513,237,512,242,366,198"/>
+<area shape="poly" id="edge7_Node000007_Node000006" title=" " alt="" coords="558,206,555,240,549,240,553,205"/>
 </map>

@@ -1,0 +1,11 @@
+<map id="correlation::calculators::VACFCalculator::calculate" name="correlation::calculators::VACFCalculator::calculate">
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the Velocity Autocorrelation Function (VACF)." alt="" coords="665,41,863,81"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1VACFCalculator.html#aa950883b3e7966d9a08315910f40ea49" title="Calculate multi&#45;frame properties or post&#45;processing. Called once after all frames are accumulated." alt="" coords="356,5,617,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="651,49,617,45,618,40,652,44"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1analysis_1_1DistributionFunctions.html#a00952804939fe6812befa744a46d9547" title="Calculates the Velocity Autocorrelation Function (VACF)." alt="" coords="403,70,571,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="652,79,571,89,570,84,651,73"/>
+<area shape="rect" id="Node000004" href="$analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="389,100,308,100,308,95,389,95"/>
+<area shape="rect" id="Node000005" href="$module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>

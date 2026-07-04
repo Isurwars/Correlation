@@ -1,11 +1,9 @@
 <map id="correlation::writers::FileWriter::write" name="correlation::writers::FileWriter::write">
-<area shape="rect" id="Node000001" title="Writes the available histograms using specified formats." alt="" coords="804,35,949,75"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="544,35,756,75"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="790,57,756,57,756,52,790,52"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#ad3ab83f0b42103f77f0c70afb56883b8" title="Handles the &quot;Write Files&quot; signal from the UI. Opens a save file dialog to select the output location." alt="" coords="275,5,496,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
-<area shape="rect" id="Node000005" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+<area shape="rect" id="Node000001" title="Writes the available histograms using specified formats." alt="" coords="533,35,679,75"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#af5242b523afbc783517c443d7cd6ad2c" title="Writes the analysis results to files (CSV, HDF5) as specified in options." alt="" coords="273,35,485,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="520,57,485,57,485,52,520,52"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1FileIOHandler.html#a48cb7a5f9df20f8881d7be190a89e0a5" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" id="Node000004" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
 </map>

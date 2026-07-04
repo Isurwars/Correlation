@@ -1,5 +1,0 @@
-<map id="correlation::plotters::LabeledHistogram" name="correlation::plotters::LabeledHistogram">
-<area shape="rect" id="Node000001" title="A labeled histogram for comparison rendering." alt="" coords="7,108,158,148"/>
-<area shape="rect" id="Node000002" href="$structcorrelation_1_1analysis_1_1Histogram.html" title="Container for a single calculated distribution function." alt="" coords="5,5,160,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,59,85,108,80,108,80,59"/>
-</map>

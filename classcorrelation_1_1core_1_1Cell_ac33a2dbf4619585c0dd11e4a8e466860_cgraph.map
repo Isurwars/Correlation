@@ -8,18 +8,18 @@
 <area shape="poly" id="edge13_Node000002_Node000009" title=" " alt="" coords="383,175,421,175,421,180,383,180"/>
 <area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="431,221,574,261"/>
 <area shape="poly" id="edge14_Node000002_Node000010" title=" " alt="" coords="355,195,422,215,421,220,354,200"/>
-<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a4cd8887c96b810da33fa258d2547c81b" title="Computes the determinant of a 3x3 matrix." alt="" coords="906,29,1049,69"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#aab6b4d8796044879ef3ce0d38d17a55e" title="Computes the determinant of a 3x3 matrix." alt="" coords="906,29,1049,69"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="536,91,576,71,622,55,692,43,764,37,892,39,892,44,764,42,693,48,623,60,578,76,538,96"/>
-<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a6ac299f423349e05d79bcdaec8681ef5" title="Computes the inverse of a 3x3 matrix." alt="" coords="661,93,803,133"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a716afa03e45c870fb50b099f9b00b47a" title="Computes the inverse of a 3x3 matrix." alt="" coords="661,93,803,133"/>
 <area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="575,111,647,111,647,116,575,116"/>
 <area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#ae513d80c6cfe7396ea528ed11f6ebc7b" title="Internal helper to synchronize scalar parameters with vector matrix." alt="" coords="623,158,841,213"/>
 <area shape="poly" id="edge8_Node000003_Node000006" title=" " alt="" coords="568,131,633,151,631,156,566,136"/>
 <area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="932,30,929,20,936,10,953,5,977,3,1006,6,1021,13,1019,18,1004,11,977,8,954,10,939,15,934,21,937,28"/>
 <area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="803,92,892,69,894,74,804,97"/>
 <area shape="poly" id="edge7_Node000005_Node000005" title=" " alt="" coords="689,94,687,84,693,74,709,69,732,67,759,70,773,77,771,82,757,75,732,72,710,74,697,79,692,85,694,92"/>
-<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a23c2c110ad37d65a2ac58b13e0a23afa" title="Computes the dot product of two vectors." alt="" coords="896,154,1059,179"/>
+<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="896,154,1059,179"/>
 <area shape="poly" id="edge9_Node000006_Node000007" title=" " alt="" coords="841,174,882,171,882,177,842,180"/>
-<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="889,227,1065,253"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a22d977f8c2db20e7a6994c26c1eb182b" title="Computes the vector norm (length)." alt="" coords="889,227,1065,253"/>
 <area shape="poly" id="edge11_Node000006_Node000008" title=" " alt="" coords="842,207,906,222,905,227,841,212"/>
 <area shape="poly" id="edge10_Node000007_Node000007" title=" " alt="" coords="938,156,929,146,933,136,950,130,977,127,1012,131,1022,136,1026,142,1021,145,1018,140,1011,136,977,133,951,135,937,140,934,145,941,152"/>
 <area shape="poly" id="edge12_Node000008_Node000008" title=" " alt="" coords="938,229,929,219,933,209,950,203,977,201,1012,205,1022,209,1026,215,1021,218,1018,213,1011,210,977,206,951,208,937,213,934,218,941,225"/>

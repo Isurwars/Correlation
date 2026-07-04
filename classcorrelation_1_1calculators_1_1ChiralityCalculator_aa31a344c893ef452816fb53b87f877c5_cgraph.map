@@ -1,0 +1,19 @@
+<map id="correlation::calculators::ChiralityCalculator::calculate" name="correlation::calculators::ChiralityCalculator::calculate">
+<area shape="rect" id="Node000001" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="5,133,176,187"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="261,68,397,108"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,132,248,110,249,115,177,137"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#a36725fa25cdc01b4febb6b5dff33b2e0" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="224,133,433,187"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="176,157,210,157,210,163,176,163"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="261,212,397,252"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="177,183,249,205,248,210,176,188"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#af4a6542661edaf9e8c2ef1c2f445b328" title="Computes the cross product of two 3D vectors." alt="" coords="517,29,660,69"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="407,130,432,118,455,98,480,79,503,69,505,74,483,84,459,102,435,122,410,135"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1math.html#a01585e3d81ab91f36d62eca1bc2667c6" title="Computes the dot product of two vectors." alt="" coords="507,118,670,143"/>
+<area shape="poly" id="edge5_Node000003_Node000005" title=" " alt="" coords="433,146,494,139,494,144,434,151"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1NeighborGraph.html#ad0561713c3df3fe24718e4f2384581a4" title="Retrieves the neighbor list for a specific atom." alt="" coords="481,168,696,208"/>
+<area shape="poly" id="edge7_Node000003_Node000006" title=" " alt="" coords="434,169,468,172,467,178,433,174"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1analysis_1_1StructureAnalyzer.html#a4ab4212c09057309ac9951db2e5f09f5" title="Gets the corresponding neighbor graph capturing topological connections." alt="" coords="511,233,666,287"/>
+<area shape="poly" id="edge8_Node000003_Node000007" title=" " alt="" coords="403,185,434,198,482,218,502,225,500,230,480,222,432,202,401,190"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="541,30,538,20,546,10,563,5,589,3,619,6,635,13,633,18,617,11,589,8,564,10,548,15,543,21,546,28"/>
+<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="547,120,538,110,542,100,560,93,589,91,625,95,635,100,639,106,635,109,632,104,624,100,589,97,561,99,546,104,543,109,551,116"/>
+</map>

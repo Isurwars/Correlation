@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -82,6 +82,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
@@ -94,6 +95,7 @@ $(function() {
 <div class="textblock"><code>#include &quot;<a class="el" href="Constants_8hpp_source.html">math/Constants.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;numeric&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
@@ -102,19 +104,21 @@ Include dependency graph for Smoothing.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Smoothing_8hpp__incl.png" border="0" usemap="#ainclude_2math_2Smoothing_8hpp" alt=""/></div>
 <map name="ainclude_2math_2Smoothing_8hpp" id="ainclude_2math_2Smoothing_8hpp">
-<area shape="rect" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="267,5,476,31"/>
+<area shape="rect" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="309,5,519,31"/>
 <area shape="rect" href="Constants_8hpp.html" title="Mathematical and physical constants for the Correlation tool." alt="" coords="5,79,159,104"/>
-<area shape="poly" title=" " alt="" coords="325,33,143,78,141,73,324,28"/>
+<area shape="poly" title=" " alt="" coords="361,33,150,78,148,73,360,28"/>
 <area shape="rect" title=" " alt="" coords="183,79,269,104"/>
-<area shape="poly" title=" " alt="" coords="349,33,263,75,261,70,347,28"/>
+<area shape="poly" title=" " alt="" coords="385,33,270,76,269,71,383,28"/>
 <area shape="rect" title=" " alt="" coords="293,79,356,104"/>
-<area shape="poly" title=" " alt="" coords="366,32,342,69,338,66,361,30"/>
-<area shape="rect" title=" " alt="" coords="381,79,455,104"/>
-<area shape="poly" title=" " alt="" coords="381,30,405,66,401,69,377,32"/>
-<area shape="rect" title=" " alt="" coords="480,79,567,104"/>
-<area shape="poly" title=" " alt="" coords="397,28,487,70,485,75,395,33"/>
-<area shape="rect" title=" " alt="" coords="591,79,653,104"/>
-<area shape="poly" title=" " alt="" coords="412,28,578,75,577,80,411,33"/>
+<area shape="poly" title=" " alt="" coords="401,33,352,72,348,68,398,29"/>
+<area shape="rect" title=" " alt="" coords="381,79,447,104"/>
+<area shape="poly" title=" " alt="" coords="417,31,417,65,411,65,411,31"/>
+<area shape="rect" title=" " alt="" coords="471,79,546,104"/>
+<area shape="poly" title=" " alt="" coords="431,29,484,68,481,72,428,33"/>
+<area shape="rect" title=" " alt="" coords="571,79,657,104"/>
+<area shape="poly" title=" " alt="" coords="447,28,569,71,567,76,445,33"/>
+<area shape="rect" title=" " alt="" coords="681,79,744,104"/>
+<area shape="poly" title=" " alt="" coords="466,28,669,76,667,81,465,33"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -122,162 +126,161 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="Smoothing_8hpp__dep__incl.png" border="0" usemap="#ainclude_2math_2Smoothing_8hppdep" alt=""/></div>
 <map name="ainclude_2math_2Smoothing_8hppdep" id="ainclude_2math_2Smoothing_8hppdep">
-<area shape="rect" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="2063,5,2273,31"/>
-<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="3438,79,3645,119"/>
-<area shape="poly" title=" " alt="" coords="2287,23,3438,89,3438,94,2286,29"/>
-<area shape="rect" href="AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="286,174,495,199"/>
-<area shape="poly" title=" " alt="" coords="2049,23,1759,28,1388,39,1025,56,875,67,760,81,662,102,566,128,422,177,420,171,565,123,661,97,760,76,874,62,1024,51,1387,33,1759,23,2049,18"/>
-<area shape="rect" href="DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="1871,343,2049,383"/>
-<area shape="poly" title=" " alt="" coords="2049,26,1733,40,1338,67,1150,87,988,110,868,137,828,152,805,168,794,188,793,207,800,225,813,243,847,274,876,292,933,308,1033,320,1314,340,1624,352,1870,357,1870,363,1624,357,1314,345,1033,326,932,313,874,297,844,278,809,247,795,228,787,207,788,186,801,165,826,148,866,132,987,104,1150,81,1338,62,1732,35,2049,21"/>
-<area shape="rect" href="analysis__bindings_8cpp.html" title="Pybind11 bindings for correlation::analysis types." alt="" coords="5781,167,5939,207"/>
-<area shape="poly" title=" " alt="" coords="2286,17,2621,21,3047,30,3435,48,3574,60,3624,68,3657,76,3673,86,3684,97,3694,108,3709,116,3764,129,3849,139,4088,152,4392,158,4730,160,5375,157,5617,158,5762,164,5781,166,5780,172,5761,169,5617,164,5375,162,4730,165,4392,164,4088,158,3848,144,3764,134,3707,121,3690,112,3680,101,3670,90,3655,81,3623,73,3574,66,3434,53,3047,36,2621,26,2286,23"/>
-<area shape="rect" href="CliParser_8hpp.html" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="101,86,277,111"/>
-<area shape="poly" title=" " alt="" coords="2050,26,1407,47,541,81,278,95,277,90,541,76,1407,42,2050,20"/>
-<area shape="rect" href="math__bindings_8cpp.html" title="Pybind11 bindings for correlation::math types." alt="" coords="3720,86,3947,111"/>
-<area shape="poly" title=" " alt="" coords="2286,17,2542,21,2893,30,3295,47,3702,76,3763,83,3762,89,3701,81,3294,52,2893,35,2542,26,2286,22"/>
-<area shape="poly" title=" " alt="" coords="3424,103,2846,107,2003,117,1141,137,781,152,508,169,452,177,452,171,508,164,780,146,1141,132,2002,112,2846,102,3424,98"/>
-<area shape="rect" href="AngleCalculator_8hpp.html" title="Calculator for angular distribution functions." alt="" coords="4406,255,4562,295"/>
-<area shape="poly" title=" " alt="" coords="3659,115,3664,116,3751,124,3825,127,3951,128,4076,135,4149,146,4234,164,4295,183,4355,206,4451,252,4448,257,4353,211,4294,188,4233,169,4148,151,4076,140,3951,134,3825,133,3751,129,3664,121,3658,121"/>
-<area shape="rect" href="AngleCalculator_8cpp.html" title="Implementation of angular distribution calculations." alt="" coords="4641,350,4890,375"/>
-<area shape="poly" title=" " alt="" coords="3658,117,3764,122,3892,122,4184,119,4332,120,4471,126,4592,140,4644,151,4688,164,4726,179,4756,195,4780,218,4801,254,4806,281,4801,308,4789,332,4777,351,4772,348,4784,330,4796,306,4801,281,4796,256,4776,222,4753,200,4724,184,4686,169,4642,156,4591,146,4471,132,4332,126,4184,124,3892,128,3764,127,3658,122"/>
-<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="2779,167,2930,207"/>
-<area shape="poly" title=" " alt="" coords="3425,117,2931,179,2930,173,3424,112"/>
-<area shape="rect" href="CNCalculator_8hpp.html" title="Coordination number (CN) calculator." alt="" coords="2151,255,2295,295"/>
-<area shape="poly" title=" " alt="" coords="3424,109,3126,131,2946,148,2767,169,2637,189,2536,208,2307,257,2296,260,2294,254,2306,252,2535,203,2636,184,2766,164,2946,142,3125,125,3424,104"/>
-<area shape="poly" title=" " alt="" coords="3424,102,2962,102,2315,109,1978,117,1663,129,1392,146,1187,169,1037,211,890,257,882,275,884,284,890,293,903,299,930,305,1021,316,1298,335,1616,348,1871,356,1870,362,1615,354,1297,340,1020,321,929,310,901,304,886,297,879,286,877,275,886,253,1035,206,1186,164,1391,141,1663,124,1978,112,2315,104,2962,97,3424,97"/>
-<area shape="rect" href="calculator__bindings_8cpp.html" title="Pybind11 bindings for correlation::calculators types." alt="" coords="3157,343,3325,383"/>
-<area shape="poly" title=" " alt="" coords="3620,120,3699,151,3738,170,3773,191,3800,215,3816,240,3819,254,3818,268,3812,282,3801,297,3620,321,3326,355,3325,349,3619,316,3799,292,3808,280,3813,267,3814,254,3811,242,3796,218,3769,195,3735,174,3697,156,3618,125"/>
-<area shape="rect" href="PADCalculator_8cpp.html" title="Implementation of the plane angle distribution calculator." alt="" coords="3422,350,3661,375"/>
-<area shape="poly" title=" " alt="" coords="3654,119,3778,145,3824,156,3846,165,3867,198,3873,231,3867,263,3846,296,3817,317,3772,332,3718,344,3661,353,3661,348,3717,339,3771,327,3815,312,3842,293,3862,261,3868,231,3862,200,3842,169,3823,161,3777,150,3653,124"/>
-<area shape="rect" href="StructureFactorCalculator_8cpp.html" title="Implementation of structure factor S(Q) calculations." alt="" coords="3933,343,4112,383"/>
-<area shape="poly" title=" " alt="" coords="3659,117,3738,125,3810,126,3877,125,3938,127,3995,136,4048,157,4074,174,4098,195,4122,221,4145,253,4152,275,4145,296,4133,312,4118,325,4085,345,4082,340,4115,321,4129,308,4140,293,4147,275,4140,256,4118,224,4094,199,4070,178,4046,162,3994,141,3938,132,3877,130,3810,131,3738,130,3658,122"/>
-<area shape="rect" href="DADCalculator_8hpp.html" title="Dihedral angle distribution (DAD) calculator." alt="" coords="2866,255,3014,295"/>
-<area shape="poly" title=" " alt="" coords="3464,125,3006,257,3004,252,3463,120"/>
-<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="4207,255,4382,295"/>
-<area shape="poly" title=" " alt="" coords="3659,115,3664,116,3780,122,3930,127,4078,138,4140,148,4189,164,4219,183,4246,207,4284,253,4280,256,4242,210,4216,187,4187,169,4139,154,4077,143,3930,132,3780,128,3664,121,3658,121"/>
-<area shape="rect" href="DihedralCalculator_8cpp.html" title="Implementation of dihedral angle geometry." alt="" coords="4442,343,4617,383"/>
-<area shape="poly" title=" " alt="" coords="3659,117,3777,122,3924,121,4088,119,4259,121,4425,131,4502,140,4574,153,4638,170,4695,192,4741,219,4777,253,4786,275,4777,296,4756,308,4718,321,4617,346,4616,340,4716,316,4754,303,4773,293,4780,275,4772,256,4738,224,4693,197,4637,175,4573,158,4501,145,4424,136,4259,126,4088,125,3924,127,3777,127,3658,122"/>
-<area shape="rect" href="DistanceCalculator_8hpp.html" title="Pairwise distance calculator." alt="" coords="4587,255,4763,295"/>
-<area shape="poly" title=" " alt="" coords="3659,115,3664,116,3846,130,3988,133,4130,139,4212,149,4310,164,4397,183,4484,207,4624,252,4623,257,4482,212,4396,188,4309,169,4212,154,4129,145,3988,138,3845,135,3664,121,3658,121"/>
-<area shape="rect" href="DistanceCalculator_8cpp.html" title="Implementation of pairwise distance calculations." alt="" coords="4914,343,5091,383"/>
-<area shape="poly" title=" " alt="" coords="3658,117,3769,122,3905,122,4214,119,4370,119,4517,126,4645,140,4699,150,4746,164,4799,194,4866,243,4983,341,4980,345,4863,247,4796,198,4744,169,4698,156,4644,145,4516,131,4370,125,4214,124,3905,128,3769,127,3658,122"/>
-<area shape="rect" href="GPUSQCalculator_8hpp.html" title="GPU&#45;accelerated structure factor S(Q) calculator with CPU fallback." alt="" coords="3279,255,3444,295"/>
-<area shape="poly" title=" " alt="" coords="3514,130,3383,256,3379,253,3510,126"/>
-<area shape="rect" href="MSDCalculator_8hpp.html" title="Mean Squared Displacement (MSD) calculator." alt="" coords="3639,255,3788,295"/>
-<area shape="poly" title=" " alt="" coords="3572,127,3697,253,3693,256,3568,131"/>
-<area shape="rect" href="PADCalculator_8hpp.html" title="Plane angle distribution (PAD) calculator." alt="" coords="3469,255,3614,295"/>
-<area shape="poly" title=" " alt="" coords="3544,132,3544,254,3539,254,3539,132"/>
-<area shape="rect" href="RDCalculator_8hpp.html" title="Reduced distribution function calculator." alt="" coords="900,255,1044,295"/>
-<area shape="poly" title=" " alt="" coords="3424,103,2993,105,2399,114,2091,122,1803,134,1555,149,1367,169,1272,187,1178,211,1026,257,1025,252,1177,206,1271,182,1366,164,1554,144,1802,128,2091,117,2399,109,2993,100,3424,97"/>
-<area shape="rect" href="RDFCalculator_8hpp.html" title="Radial distribution function (RDF) calculator." alt="" coords="1799,255,1945,295"/>
-<area shape="poly" title=" " alt="" coords="3424,102,3215,104,2938,113,2627,134,2469,149,2314,169,2208,188,2104,211,1934,257,1933,252,2103,206,2207,183,2313,164,2468,144,2627,128,2938,108,3215,99,3424,97"/>
-<area shape="rect" href="SDFCalculator_8hpp.html" title="Spatial Distribution Function (SDF) calculator." alt="" coords="1069,255,1214,295"/>
-<area shape="poly" title=" " alt="" coords="3424,103,3027,107,2488,117,1949,137,1725,152,1555,169,1456,187,1358,211,1198,257,1197,252,1356,206,1455,182,1554,164,1724,146,1948,132,2487,112,3027,102,3424,98"/>
-<area shape="rect" href="SteinhardtCalculator_8hpp.html" title="Steinhardt bond&#45;order parameter calculator." alt="" coords="1239,255,1425,295"/>
-<area shape="poly" title=" " alt="" coords="3424,104,3061,109,2575,120,2093,139,1893,153,1742,169,1643,187,1547,211,1389,257,1387,252,1545,206,1642,182,1741,164,1893,148,2093,134,2575,114,3061,103,3424,98"/>
-<area shape="rect" href="StructureFactorCalculator_8hpp.html" title="Structure factor S(Q) calculator." alt="" coords="3914,255,4131,295"/>
-<area shape="poly" title=" " alt="" coords="3659,117,3805,142,3896,164,3930,184,3961,208,4008,253,4004,256,3957,212,3927,188,3894,169,3803,148,3658,122"/>
-<area shape="rect" href="VACFCalculator_8hpp.html" title="Velocity autocorrelation function (VACF) calculator." alt="" coords="1621,255,1774,295"/>
-<area shape="poly" title=" " alt="" coords="3424,105,2753,125,2383,144,2230,156,2114,169,2014,188,1916,211,1756,257,1754,252,1914,206,2013,183,2113,164,2230,151,2383,139,2752,120,3424,100"/>
-<area shape="rect" href="VDOSCalculator_8hpp.html" title="Vibrational density of states (VDOS) calculator." alt="" coords="1970,255,2126,295"/>
-<area shape="poly" title=" " alt="" coords="3424,105,3250,110,3027,121,2779,141,2531,169,2417,189,2303,212,2118,257,2116,252,2302,207,2416,183,2530,164,2779,135,3027,116,3250,105,3424,99"/>
-<area shape="rect" href="XRDCalculator_8hpp.html" title="X&#45;ray diffraction (XRD) pattern calculator." alt="" coords="1449,255,1596,295"/>
-<area shape="poly" title=" " alt="" coords="3424,104,3095,110,2662,122,2236,141,2059,154,1924,169,1828,188,1733,211,1578,257,1577,252,1732,206,1827,182,1924,164,2058,149,2235,136,2662,117,3095,105,3424,99"/>
-<area shape="rect" href="SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="520,174,741,199"/>
-<area shape="poly" title=" " alt="" coords="3424,102,2997,103,2352,110,1587,130,1191,147,803,169,722,177,722,171,802,164,1191,142,1587,125,2351,105,2997,97,3424,97"/>
-<area shape="rect" href="ArrowWriter_8hpp.html" title="Writer for Apache Arrow/Parquet columnar output format." alt="" coords="4939,262,5165,287"/>
-<area shape="poly" title=" " alt="" coords="3659,115,3664,116,3901,122,4295,127,4688,138,4834,148,4886,156,4921,164,4961,185,4996,211,5044,260,5041,264,4992,215,4958,189,4919,169,4885,161,4834,154,4688,143,4295,132,3900,127,3664,121,3658,121"/>
-<area shape="rect" href="BaseWriter_8hpp.html" title="Abstract base class for all file format writers." alt="" coords="5192,174,5413,199"/>
-<area shape="poly" title=" " alt="" coords="3659,116,3664,116,3886,133,4073,142,4393,146,4713,146,4901,152,5123,164,5205,171,5205,177,5122,169,4901,157,4713,152,4393,151,4073,148,3885,139,3664,121,3658,121"/>
-<area shape="rect" href="CSVWriter_8hpp.html" title="Writer for CSV tabular output format." alt="" coords="5490,262,5705,287"/>
-<area shape="poly" title=" " alt="" coords="3659,116,3664,116,3788,121,3995,123,4547,125,4837,129,5099,135,5304,147,5377,154,5426,164,5475,184,5521,211,5586,260,5583,264,5518,215,5473,189,5425,169,5376,160,5304,152,5098,141,4837,134,4547,131,3995,128,3788,126,3664,121,3658,121"/>
-<area shape="rect" href="writer__bindings_8cpp.html" title="Pybind11 bindings for correlation::writers types." alt="" coords="5526,343,5669,383"/>
-<area shape="poly" title=" " alt="" coords="3658,117,3841,126,4065,129,4580,125,4843,125,5091,129,5309,141,5403,151,5484,164,5558,174,5618,182,5645,190,5671,203,5696,224,5720,253,5727,274,5720,296,5708,312,5693,325,5660,345,5657,340,5690,321,5704,308,5715,293,5722,274,5715,256,5692,227,5668,208,5643,195,5617,187,5557,179,5484,169,5403,156,5309,147,5091,135,4843,130,4580,131,4065,134,3841,132,3658,122"/>
-<area shape="rect" href="HDF5Writer_8hpp.html" title="Writer for HDF5 hierarchical data format." alt="" coords="5190,262,5415,287"/>
-<area shape="poly" title=" " alt="" coords="3659,115,3664,116,3863,130,4032,132,4181,129,4320,123,4458,119,4607,122,4774,135,4971,164,5060,184,5147,211,5277,259,5275,264,5145,216,5059,190,4970,169,4774,141,4606,127,4458,124,4320,128,4181,134,4032,138,3863,135,3664,121,3658,121"/>
-<area shape="rect" href="FileWriter_8hpp.html" title="Unified file writing interface for analysis output." alt="" coords="815,174,1027,199"/>
-<area shape="poly" title=" " alt="" coords="3424,104,2938,110,2251,123,1556,142,1265,155,1046,169,987,177,986,171,1045,164,1265,149,1555,137,2251,117,2938,105,3424,99"/>
-<area shape="poly" title=" " alt="" coords="3659,116,3664,116,3983,137,4253,144,4491,141,4713,134,4935,127,5173,127,5443,137,5762,164,5781,166,5780,172,5761,169,5443,143,5173,132,4935,133,4713,139,4491,146,4253,149,3983,143,3664,121,3658,121"/>
-<area shape="rect" href="AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="337,350,554,375"/>
-<area shape="poly" title=" " alt="" coords="451,202,488,222,505,236,518,253,524,268,523,282,510,310,488,334,465,352,461,348,484,330,506,307,518,281,518,269,514,256,501,240,485,226,448,207"/>
-<area shape="rect" href="main_8cpp.html" title="Application entry point." alt="" coords="466,431,571,456"/>
-<area shape="poly" title=" " alt="" coords="455,201,500,221,522,235,541,253,564,284,576,314,577,346,568,384,553,411,534,432,530,429,548,408,563,382,572,345,571,315,559,287,537,256,519,240,498,226,453,206"/>
-<area shape="rect" href="PresetManager_8hpp.html" title=" " alt="" coords="277,262,504,287"/>
-<area shape="poly" title=" " alt="" coords="393,213,393,261,388,261,388,213"/>
-<area shape="rect" href="AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="722,350,902,375"/>
-<area shape="poly" title=" " alt="" coords="452,200,529,223,612,252,716,303,794,347,792,352,714,307,610,257,527,228,450,205"/>
-<area shape="rect" href="main__cli_8cpp.html" title="Headless CLI entry point for Correlation." alt="" coords="165,350,312,375"/>
-<area shape="poly" title=" " alt="" coords="340,207,301,227,283,240,267,256,254,280,246,306,241,350,236,349,241,305,249,278,263,253,279,236,298,222,337,202"/>
-<area shape="poly" title=" " alt="" coords="468,384,510,429,506,432,464,387"/>
-<area shape="poly" title=" " alt="" coords="408,297,440,348,435,351,403,300"/>
-<area shape="rect" href="StructureAnalyzer_8cpp.html" title="Implementation of structural analysis and neighbor search." alt="" coords="4172,350,4417,375"/>
-<area shape="poly" title=" " alt="" coords="4431,303,4321,352,4319,348,4429,298"/>
-<area shape="poly" title=" " alt="" coords="4559,296,4729,347,4727,353,4558,301"/>
-<area shape="poly" title=" " alt="" coords="2944,187,3669,209,4087,228,4262,239,4394,252,4406,254,4406,259,4393,257,4261,245,4087,233,3669,214,2944,193"/>
-<area shape="rect" href="CNACalculator_8hpp.html" title="Common Neighbor Analysis (CNA) calculator." alt="" coords="2695,255,2841,295"/>
-<area shape="poly" title=" " alt="" coords="2828,218,2789,256,2785,253,2824,215"/>
-<area shape="poly" title=" " alt="" coords="2766,199,2556,222,2307,257,2295,259,2294,254,2306,252,2555,216,2765,193"/>
-<area shape="rect" href="CalculatorFactory_8hpp.html" title="Factory for instantiating analysis calculator objects." alt="" coords="3039,255,3204,295"/>
-<area shape="poly" title=" " alt="" coords="2927,208,3064,252,3062,257,2925,213"/>
-<area shape="poly" title=" " alt="" coords="2944,191,3021,198,3101,211,3171,228,3198,240,3218,253,3233,273,3241,298,3245,342,3240,343,3236,299,3228,276,3214,257,3196,244,3170,233,3100,216,3020,204,2943,196"/>
-<area shape="rect" href="ClusterCalculator_8hpp.html" title="Calculator for cluster analysis using Union&#45;Find on the neighbor graph." alt="" coords="2319,255,2484,295"/>
-<area shape="poly" title=" " alt="" coords="2766,207,2496,257,2485,260,2484,254,2496,252,2765,202"/>
-<area shape="poly" title=" " alt="" coords="2885,215,2923,253,2919,256,2881,218"/>
-<area shape="poly" title=" " alt="" coords="2944,188,3454,208,3796,226,4143,252,4207,259,4207,264,4142,257,3795,232,3454,213,2944,193"/>
-<area shape="poly" title=" " alt="" coords="2944,187,3753,209,4227,228,4424,239,4574,252,4587,254,4586,259,4573,257,4424,245,4226,233,3753,214,2944,192"/>
-<area shape="poly" title=" " alt="" coords="2944,199,3260,252,3279,255,3278,261,3260,257,2943,205"/>
-<area shape="rect" href="HBondCalculator_8hpp.html" title="Hydrogen Bond Analysis calculator." alt="" coords="2508,255,2671,295"/>
-<area shape="poly" title=" " alt="" coords="2784,213,2648,257,2647,252,2783,208"/>
-<area shape="poly" title=" " alt="" coords="2944,189,3247,210,3436,228,3626,252,3639,254,3638,259,3625,257,3435,233,3247,215,2944,195"/>
-<area shape="poly" title=" " alt="" coords="2944,192,3176,215,3316,232,3456,252,3469,254,3468,259,3456,257,3316,237,3176,220,2943,198"/>
-<area shape="poly" title=" " alt="" coords="2766,192,2413,198,1919,210,1421,229,1213,242,1056,257,1045,259,1044,254,1056,252,1213,237,1421,224,1919,205,2413,193,2766,186"/>
-<area shape="poly" title=" " alt="" coords="2766,193,2411,211,2185,230,1958,257,1946,259,1945,254,1957,252,2185,225,2411,206,2765,188"/>
-<area shape="poly" title=" " alt="" coords="2765,192,1998,212,1553,232,1367,244,1227,257,1215,259,1214,254,1226,252,1367,238,1553,226,1998,207,2765,187"/>
-<area shape="poly" title=" " alt="" coords="2766,191,2534,194,2205,204,1824,224,1629,238,1438,257,1426,259,1425,253,1437,252,1629,233,1824,218,2205,198,2534,189,2766,186"/>
-<area shape="poly" title=" " alt="" coords="2944,191,3800,252,3914,261,3914,267,3800,257,2944,197"/>
-<area shape="poly" title=" " alt="" coords="2765,192,2586,197,2342,208,2066,227,1787,257,1775,259,1774,254,1786,252,2066,222,2342,202,2585,191,2765,187"/>
-<area shape="poly" title=" " alt="" coords="2766,196,2486,217,2313,235,2139,257,2126,259,2126,254,2138,252,2312,229,2485,212,2765,190"/>
-<area shape="poly" title=" " alt="" coords="2765,190,2559,193,2271,202,1942,222,1773,238,1608,257,1596,259,1596,254,1608,252,1773,232,1942,217,2271,197,2559,188,2765,185"/>
-<area shape="poly" title=" " alt="" coords="2153,301,2018,345,2017,340,2151,296"/>
-<area shape="rect" href="CNCalculator_8cpp.html" title="Implementation of the coordination number calculator." alt="" coords="2337,350,2567,375"/>
-<area shape="poly" title=" " alt="" coords="2287,297,2422,347,2421,352,2285,302"/>
-<area shape="poly" title=" " alt="" coords="3025,297,2873,307,2634,317,2007,336,902,362,902,357,2006,331,2634,311,2872,301,3025,292"/>
-<area shape="poly" title=" " alt="" coords="3025,297,2899,307,2755,314,2425,321,2054,321,1664,318,1276,316,909,317,585,326,445,334,324,345,283,353,282,347,324,340,445,329,585,321,909,312,1276,311,1664,313,2054,316,2425,316,2755,309,2899,302,3024,292"/>
-<area shape="poly" title=" " alt="" coords="3025,297,2572,329,2050,359,2049,354,2571,324,3025,292"/>
-<area shape="poly" title=" " alt="" coords="3026,297,3026,297,2781,330,2568,353,2567,348,2780,325,3025,292,3025,292"/>
-<area shape="poly" title=" " alt="" coords="3161,301,3216,340,3213,345,3158,305"/>
-<area shape="rect" href="DADCalculator_8cpp.html" title="Implementation of the dihedral angle distribution calculator." alt="" coords="2855,350,3097,375"/>
-<area shape="poly" title=" " alt="" coords="3079,304,2997,352,2994,348,3076,299"/>
-<area shape="poly" title=" " alt="" coords="3218,293,3486,347,3485,353,3217,298"/>
-<area shape="poly" title=" " alt="" coords="3218,286,3267,292,3637,328,3933,352,3933,357,3637,333,3266,297,3218,292"/>
-<area shape="poly" title=" " alt="" coords="2852,297,2679,315,2456,333,2050,359,2049,354,2456,327,2679,310,2852,292"/>
-<area shape="poly" title=" " alt="" coords="2956,307,2973,349,2969,351,2951,309"/>
-<area shape="poly" title=" " alt="" coords="4297,309,4297,350,4292,350,4292,309"/>
-<area shape="poly" title=" " alt="" coords="4360,297,4479,340,4477,345,4358,302"/>
-<area shape="poly" title=" " alt="" coords="4579,300,4346,353,4345,347,4578,295"/>
-<area shape="poly" title=" " alt="" coords="4760,296,4932,340,4930,345,4759,301"/>
-<area shape="poly" title=" " alt="" coords="3455,297,3283,317,3137,329,3009,334,2889,337,2641,337,2324,345,2050,359,2049,354,2324,340,2641,332,2889,331,3008,329,3137,323,3283,311,3455,292"/>
-<area shape="poly" title=" " alt="" coords="3544,309,3544,350,3539,350,3539,309"/>
-<area shape="poly" title=" " alt="" coords="1903,303,1942,341,1939,344,1900,306"/>
-<area shape="poly" title=" " alt="" coords="4025,309,4025,342,4020,342,4020,309"/>
-<area shape="poly" title=" " alt="" coords="1769,296,1903,340,1902,345,1767,301"/>
-<area shape="poly" title=" " alt="" coords="2020,306,1981,344,1978,341,2017,303"/>
-<area shape="poly" title=" " alt="" coords="1610,292,1871,342,1870,348,1609,298"/>
-<area shape="poly" title=" " alt="" coords="616,212,583,253,540,297,501,328,465,352,462,348,498,324,537,293,579,249,612,209"/>
-<area shape="poly" title=" " alt="" coords="5257,207,5087,264,5085,259,5255,201"/>
-<area shape="poly" title=" " alt="" coords="5356,201,5558,259,5557,264,5355,206"/>
-<area shape="poly" title=" " alt="" coords="5340,203,5428,252,5479,292,5561,340,5558,345,5476,297,5425,257,5337,208"/>
-<area shape="poly" title=" " alt="" coords="5305,213,5305,261,5300,261,5300,213"/>
-<area shape="poly" title=" " alt="" coords="5600,301,5600,342,5595,342,5595,301"/>
-<area shape="poly" title=" " alt="" coords="893,209,868,230,846,256,834,281,825,307,816,350,811,349,820,305,829,279,842,253,864,226,890,205"/>
-<area shape="poly" title=" " alt="" coords="197,124,239,349,234,350,191,125"/>
-<area shape="rect" href="CliParser_8cpp.html" title="Implementation of the command&#45;line argument parser." alt="" coords="5,174,152,199"/>
-<area shape="poly" title=" " alt="" coords="165,122,95,176,92,172,162,118"/>
+<area shape="rect" title="Kernel&#45;based smoothing algorithms for analysis data." alt="" coords="4405,5,4614,31"/>
+<area shape="rect" href="DistributionFunctions_8hpp.html" title="Manager for distribution function calculations (RDF, PAD, S(Q), etc.)." alt="" coords="4335,79,4542,119"/>
+<area shape="poly" title=" " alt="" coords="4492,43,4458,80,4454,77,4488,39"/>
+<area shape="rect" href="AppBackend_8hpp.html" title="Application backend interface between the UI and analysis engine." alt="" coords="969,174,1178,199"/>
+<area shape="poly" title=" " alt="" coords="4391,22,3855,25,3084,34,2301,52,1974,65,1727,81,1554,102,1385,128,1127,177,1126,171,1384,123,1553,96,1726,76,1974,60,2301,46,3084,29,3855,20,4391,17"/>
+<area shape="rect" href="DistributionFunctions_8cpp.html" title="Implementation of distribution function calculations." alt="" coords="4000,343,4179,383"/>
+<area shape="poly" title=" " alt="" coords="4391,24,3777,37,2922,64,2504,83,2145,107,2001,121,1888,136,1809,152,1785,160,1771,168,1761,190,1755,225,1757,263,1763,279,1772,292,1798,299,1861,306,2077,319,2742,338,3479,351,4000,358,4000,363,3479,357,2742,344,2076,324,1860,312,1797,305,1769,297,1758,282,1752,264,1750,224,1756,188,1767,165,1782,155,1807,147,1887,130,2001,116,2145,102,2503,78,2922,58,3777,31,4391,19"/>
+<area shape="rect" href="analysis__bindings_8cpp.html" title="Pybind11 bindings for correlation::analysis types." alt="" coords="7179,167,7338,207"/>
+<area shape="poly" title=" " alt="" coords="4529,40,4569,85,4590,105,4606,116,4654,126,4747,134,5040,145,5434,152,5879,156,6720,158,7015,160,7160,164,7179,166,7179,172,7160,169,7015,165,6720,164,5879,161,5434,158,5039,151,4747,139,4654,131,4604,121,4587,109,4566,89,4525,43"/>
+<area shape="rect" href="CliParser_8hpp.html" title="Command&#45;line argument parsing for correlation&#45;cli." alt="" coords="4617,86,4793,111"/>
+<area shape="poly" title=" " alt="" coords="4551,33,4678,84,4676,88,4549,38"/>
+<area shape="rect" href="math__bindings_8cpp.html" title="Pybind11 bindings for correlation::math types." alt="" coords="4817,86,5044,111"/>
+<area shape="poly" title=" " alt="" coords="4584,30,4870,83,4869,89,4583,36"/>
+<area shape="poly" title=" " alt="" coords="4322,106,1769,169,1178,185,1178,180,1769,164,4321,100"/>
+<area shape="rect" href="AngleCalculator_8hpp.html" title="Calculator for angular distribution functions." alt="" coords="5855,255,6011,295"/>
+<area shape="poly" title=" " alt="" coords="4556,115,4561,116,4802,121,5203,123,5413,126,5603,133,5750,145,5803,154,5837,164,5866,183,5891,206,5925,253,5921,256,5887,210,5863,187,5835,169,5801,159,5750,151,5602,139,5413,131,5203,128,4802,126,4561,121,4556,121"/>
+<area shape="rect" href="AngleCalculator_8cpp.html" title="Implementation of angular distribution calculations." alt="" coords="5811,350,6061,375"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4558,116,4687,123,4848,123,5223,119,5415,119,5596,124,5755,139,5823,150,5881,164,5928,178,5966,192,5997,215,6025,253,6032,275,6025,296,6013,314,5997,330,5963,352,5960,348,5993,326,6009,311,6020,294,6026,275,6020,256,5993,218,5963,197,5926,183,5879,169,5821,155,5754,144,5596,130,5415,124,5223,124,4848,129,4687,128,4557,121,4555,121"/>
+<area shape="rect" href="BaseCalculator_8hpp.html" title="Abstract base class for all analysis calculators." alt="" coords="4166,167,4317,207"/>
+<area shape="poly" title=" " alt="" coords="4384,127,4286,169,4283,164,4382,122"/>
+<area shape="rect" href="CNCalculator_8hpp.html" title="Coordination number (CN) calculator." alt="" coords="4187,255,4331,295"/>
+<area shape="poly" title=" " alt="" coords="4411,131,4330,209,4280,257,4276,253,4326,205,4407,127"/>
+<area shape="poly" title=" " alt="" coords="4321,104,3875,110,3276,123,2718,142,2515,155,2395,169,2368,178,2348,188,2328,199,2301,209,2264,217,2229,219,2169,214,2142,214,2116,219,2091,232,2066,256,2058,275,2060,284,2066,293,2094,304,2151,315,2342,332,2606,345,2914,353,3545,359,4000,359,4000,364,3545,365,2914,358,2605,350,2341,338,2151,320,2092,310,2062,297,2055,286,2052,275,2062,253,2088,228,2114,214,2141,209,2169,209,2230,213,2263,212,2299,204,2326,194,2346,183,2366,173,2394,164,2514,150,2718,137,3276,118,3875,105,4321,99"/>
+<area shape="rect" href="ChiralityCalculator_8hpp.html" title="Chiral order parameter (COP) calculator." alt="" coords="2257,255,2431,295"/>
+<area shape="poly" title=" " alt="" coords="4321,105,3988,111,3549,124,3115,143,2936,155,2799,169,2690,188,2583,211,2408,257,2406,252,2582,206,2689,182,2798,164,2935,150,3115,138,3549,119,3988,106,4321,99"/>
+<area shape="rect" href="DADCalculator_8hpp.html" title="Dihedral angle distribution (DAD) calculator." alt="" coords="4739,255,4887,295"/>
+<area shape="poly" title=" " alt="" coords="4493,122,4774,252,4771,257,4490,127"/>
+<area shape="rect" href="DihedralCalculator_8hpp.html" title="Dihedral angle geometry utilities." alt="" coords="6087,255,6262,295"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4562,116,4668,120,4846,121,5320,121,5568,124,5791,131,5966,143,6028,153,6069,164,6100,182,6127,206,6165,253,6161,256,6123,210,6097,187,6067,169,6027,158,5966,149,5791,136,5568,129,5320,126,4845,126,4668,125,4561,121,4556,121"/>
+<area shape="rect" href="DihedralCalculator_8cpp.html" title="Implementation of dihedral angle geometry." alt="" coords="6150,343,6325,383"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4558,116,4709,124,4899,124,5339,118,5565,117,5778,123,5965,137,6045,149,6114,164,6166,177,6208,190,6244,212,6276,253,6282,277,6278,302,6268,325,6255,344,6251,341,6263,322,6273,300,6277,277,6271,256,6240,216,6206,195,6165,182,6113,169,6044,154,5964,142,5778,128,5565,123,5339,123,4899,130,4709,129,4557,121,4555,121"/>
+<area shape="rect" href="DistanceCalculator_8hpp.html" title="Pairwise distance calculator." alt="" coords="5089,255,5265,295"/>
+<area shape="poly" title=" " alt="" coords="4536,119,4733,164,5101,252,5100,257,4731,169,4535,124"/>
+<area shape="rect" href="DistanceCalculator_8cpp.html" title="Implementation of pairwise distance calculations." alt="" coords="5095,343,5273,383"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4558,116,4647,123,4762,127,5028,137,5161,149,5282,170,5335,185,5381,204,5419,226,5449,253,5458,275,5449,296,5426,309,5383,322,5273,347,5272,342,5382,317,5424,304,5445,293,5452,275,5444,256,5416,230,5379,208,5333,190,5281,175,5161,154,5028,142,4762,133,4647,129,4557,121,4555,121"/>
+<area shape="rect" href="GPUSQCalculator_8hpp.html" title="GPU&#45;accelerated structure factor S(Q) calculator with CPU fallback." alt="" coords="2456,255,2621,295"/>
+<area shape="poly" title=" " alt="" coords="4321,106,3651,127,3282,146,3129,157,3012,169,2899,188,2788,211,2605,257,2604,252,2787,206,2898,183,3012,164,3128,152,3281,141,3651,122,4321,100"/>
+<area shape="rect" href="HyperuniformityCalculator_8hpp.html" title="Calculator for local number variance and hyperuniformity index." alt="" coords="2645,255,2872,295"/>
+<area shape="poly" title=" " alt="" coords="4321,102,4114,105,3840,115,3532,135,3375,150,3222,169,3111,188,3002,212,2824,257,2823,252,3001,206,3110,183,3221,164,3374,145,3531,130,3840,110,4114,100,4321,97"/>
+<area shape="rect" href="LocalEntropyCalculator_8hpp.html" title="Local Entropic Fingerprint order parameter calculator." alt="" coords="2896,255,3099,295"/>
+<area shape="poly" title=" " alt="" coords="4322,103,4144,107,3915,117,3661,137,3533,151,3407,169,3309,188,3213,212,3056,257,3054,252,3212,207,3308,183,3406,164,3532,146,3661,132,3915,112,4144,102,4321,98"/>
+<area shape="rect" href="MSDCalculator_8hpp.html" title="Mean Squared Displacement (MSD) calculator." alt="" coords="3123,255,3272,295"/>
+<area shape="poly" title=" " alt="" coords="4322,105,4173,110,3988,121,3785,140,3583,169,3491,188,3401,212,3253,257,3251,252,3399,207,3490,183,3582,164,3785,135,3988,116,4173,105,4321,99"/>
+<area shape="rect" href="PADCalculator_8hpp.html" title="Plane angle distribution (PAD) calculator." alt="" coords="5290,255,5435,295"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4831,164,5278,252,5290,255,5289,260,5277,257,4830,169,4555,122"/>
+<area shape="rect" href="PADCalculator_8cpp.html" title="Implementation of the plane angle distribution calculator." alt="" coords="5318,350,5557,375"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4558,116,4634,121,4729,124,4951,126,5065,129,5172,136,5265,147,5339,164,5384,179,5419,193,5447,216,5473,254,5479,280,5473,307,5462,332,5449,351,5445,348,5457,329,5468,306,5474,280,5468,256,5443,220,5416,198,5382,184,5338,169,5264,152,5171,141,5064,135,4951,132,4729,129,4634,127,4557,121,4555,121"/>
+<area shape="rect" href="RDCalculator_8hpp.html" title="Reduced distribution function calculator." alt="" coords="3296,255,3440,295"/>
+<area shape="poly" title=" " alt="" coords="4322,107,4056,127,3899,145,3743,169,3654,189,3566,212,3423,257,3421,252,3565,207,3653,184,3742,164,3898,139,4055,121,4321,102"/>
+<area shape="rect" href="RDFCalculator_8hpp.html" title="Radial distribution function (RDF) calculator." alt="" coords="4016,255,4163,295"/>
+<area shape="poly" title=" " alt="" coords="4322,109,4279,117,4236,129,4193,146,4155,169,4135,188,4119,211,4098,255,4093,253,4114,208,4131,185,4152,165,4191,141,4234,124,4278,112,4321,104"/>
+<area shape="rect" href="SDFCalculator_8hpp.html" title="Spatial Distribution Function (SDF) calculator." alt="" coords="3465,255,3610,295"/>
+<area shape="poly" title=" " alt="" coords="4322,111,4123,133,4010,149,3898,169,3813,189,3729,213,3591,257,3589,252,3728,208,3812,184,3897,164,4009,144,4122,127,4321,106"/>
+<area shape="rect" href="SteinhardtCalculator_8hpp.html" title="Steinhardt bond&#45;order parameter calculator." alt="" coords="3635,255,3821,295"/>
+<area shape="poly" title=" " alt="" coords="4322,116,4180,137,4027,169,3887,213,3773,257,3771,252,3885,208,4026,164,4179,132,4321,111"/>
+<area shape="rect" href="StructureFactorCalculator_8hpp.html" title="Structure factor S(Q) calculator." alt="" coords="5562,255,5779,295"/>
+<area shape="poly" title=" " alt="" coords="4556,115,4562,116,4658,121,4778,122,5057,118,5200,120,5334,126,5451,140,5501,151,5544,164,5579,182,5610,206,5657,253,5653,256,5607,210,5576,187,5542,169,5500,156,5451,145,5334,131,5200,125,5057,124,4778,127,4657,126,4561,121,4556,121"/>
+<area shape="rect" href="StructureFactorCalculator_8cpp.html" title="Implementation of structure factor S(Q) calculations." alt="" coords="5595,343,5773,383"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4558,116,4659,123,4784,126,5077,129,5369,137,5494,148,5594,164,5657,176,5708,186,5731,195,5753,208,5773,227,5793,253,5800,274,5793,296,5768,325,5736,345,5733,340,5764,321,5788,293,5795,274,5788,256,5769,230,5749,212,5729,200,5707,191,5656,181,5593,169,5494,153,5369,143,5077,134,4784,131,4658,128,4557,121,4555,121"/>
+<area shape="rect" href="VACFCalculator_8hpp.html" title="Velocity autocorrelation function (VACF) calculator." alt="" coords="4911,255,5065,295"/>
+<area shape="poly" title=" " alt="" coords="4512,120,4929,252,4928,257,4510,125"/>
+<area shape="rect" href="VDOSCalculator_8hpp.html" title="Vibrational density of states (VDOS) calculator." alt="" coords="2077,255,2233,295"/>
+<area shape="poly" title=" " alt="" coords="4321,104,3951,109,3452,121,2956,140,2750,153,2594,169,2488,188,2384,211,2215,257,2214,252,2383,206,2487,182,2593,164,2749,148,2956,135,3452,115,3950,104,4321,98"/>
+<area shape="rect" href="VoronoiCalculator_8hpp.html" title="Voronoi Tessellation order parameter and metric calculator." alt="" coords="4355,255,4523,295"/>
+<area shape="poly" title=" " alt="" coords="4441,132,4441,254,4436,254,4436,132"/>
+<area shape="rect" href="XRDCalculator_8hpp.html" title="X&#45;ray diffraction (XRD) pattern calculator." alt="" coords="3845,255,3992,295"/>
+<area shape="poly" title=" " alt="" coords="4322,118,4220,138,4116,169,4068,189,4022,213,3948,257,3945,252,4019,208,4066,184,4114,164,4219,133,4321,113"/>
+<area shape="rect" href="calculator__bindings_8cpp.html" title="Pybind11 bindings for correlation::calculators types." alt="" coords="4547,255,4715,295"/>
+<area shape="poly" title=" " alt="" coords="4472,126,4612,252,4608,256,4468,130"/>
+<area shape="rect" href="PdfPlotter_8hpp.html" title="PDF generator for distribution function histograms using pdfgen." alt="" coords="1783,262,2001,287"/>
+<area shape="poly" title=" " alt="" coords="4321,102,3858,104,3230,112,2920,120,2646,132,2434,148,2359,158,2310,169,2293,178,2282,188,2271,199,2253,209,2134,235,1963,265,1962,259,2133,230,2251,204,2267,195,2279,184,2290,173,2308,164,2358,153,2433,143,2645,127,2920,115,3230,107,3857,99,4321,97"/>
+<area shape="rect" href="SvgPlotter_8hpp.html" title="Scientifically precise SVG generator for distribution function histograms." alt="" coords="2019,174,2240,199"/>
+<area shape="poly" title=" " alt="" coords="4321,105,3295,126,2697,145,2448,157,2259,169,2198,177,2198,171,2258,164,2448,151,2697,140,3295,121,4321,99"/>
+<area shape="rect" href="ArrowWriter_8hpp.html" title="Writer for Apache Arrow/Parquet columnar output format." alt="" coords="6337,262,6564,287"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4562,116,4685,120,4892,121,5444,121,5733,124,5994,130,6199,143,6271,153,6320,164,6359,184,6395,211,6443,260,6439,264,6391,215,6356,189,6318,169,6270,158,6198,149,5994,136,5733,129,5444,126,4892,127,4685,126,4561,121,4556,121"/>
+<area shape="rect" href="BaseWriter_8hpp.html" title="Abstract base class for all file format writers." alt="" coords="6591,174,6812,199"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4562,116,4859,138,5112,148,5334,150,5541,148,5970,144,6223,149,6522,164,6605,171,6605,177,6521,169,6223,154,5970,149,5541,153,5334,155,5111,153,4859,143,4561,121,4556,121"/>
+<area shape="rect" href="CSVWriter_8hpp.html" title="Writer for CSV tabular output format." alt="" coords="6889,262,7103,287"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4561,116,4721,121,4987,123,5696,121,6068,123,6404,129,6668,142,6762,152,6825,164,6874,184,6920,211,6985,260,6981,264,6917,215,6872,189,6823,169,6761,157,6668,148,6404,135,6068,128,5696,127,4987,128,4721,127,4561,121,4556,121"/>
+<area shape="rect" href="writer__bindings_8cpp.html" title="Pybind11 bindings for correlation::writers types." alt="" coords="6925,343,7067,383"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4558,116,4784,127,5067,129,5723,120,6061,118,6379,121,6660,136,6780,148,6884,164,6957,174,7018,182,7045,190,7070,203,7094,224,7118,253,7126,274,7118,296,7106,312,7092,325,7058,345,7056,340,7088,321,7102,308,7114,293,7121,274,7114,256,7091,228,7067,208,7043,195,7017,187,6957,179,6884,169,6780,153,6659,141,6379,127,6061,123,5723,126,5067,134,4784,132,4557,121,4555,121"/>
+<area shape="rect" href="HDF5Writer_8hpp.html" title="Writer for HDF5 hierarchical data format." alt="" coords="6589,262,6814,287"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4562,116,4738,126,4957,129,5467,128,5729,129,5976,133,6194,144,6288,153,6370,164,6459,184,6546,211,6676,259,6674,264,6544,216,6458,189,6369,169,6288,158,6194,149,5976,138,5729,134,5467,133,4957,134,4738,131,4561,121,4556,121"/>
+<area shape="rect" href="FileWriter_8hpp.html" title="Unified file writing interface for analysis output." alt="" coords="1782,174,1994,199"/>
+<area shape="poly" title=" " alt="" coords="4322,104,3847,110,3178,123,2502,142,2220,155,2007,169,1951,177,1950,171,2006,164,2220,149,2502,137,3178,117,3847,105,4322,99"/>
+<area shape="poly" title=" " alt="" coords="4556,116,4562,116,4768,131,4956,141,5291,148,5586,143,5861,132,6136,123,6431,120,6592,124,6766,132,6954,145,7160,164,7179,166,7179,172,7160,169,6954,150,6765,137,6592,129,6431,126,6136,128,5861,138,5586,148,5291,153,4956,147,4767,137,4561,121,4556,121"/>
+<area shape="rect" href="AnalysisRunner_8hpp.html" title="Analysis execution logic." alt="" coords="5,262,235,287"/>
+<area shape="poly" title=" " alt="" coords="955,198,635,221,247,257,192,265,191,259,246,252,634,215,954,192"/>
+<area shape="rect" href="AppController_8hpp.html" title="High&#45;level application controller orchestrating analysis workflows." alt="" coords="259,262,477,287"/>
+<area shape="poly" title=" " alt="" coords="955,203,738,227,490,257,440,265,439,259,489,252,738,221,955,198"/>
+<area shape="rect" href="FileIOHandler_8hpp.html" title="Handles file operations and native file dialogs." alt="" coords="501,262,717,287"/>
+<area shape="poly" title=" " alt="" coords="998,205,672,265,671,259,997,199"/>
+<area shape="rect" href="InputValidator_8hpp.html" title="Input validation and CLI command generation logic." alt="" coords="741,262,960,287"/>
+<area shape="poly" title=" " alt="" coords="1031,207,882,264,880,259,1029,202"/>
+<area shape="rect" href="PlotController_8hpp.html" title="Plotting and SVG rendering management." alt="" coords="1490,262,1707,287"/>
+<area shape="poly" title=" " alt="" coords="1157,199,1529,259,1528,265,1157,204"/>
+<area shape="rect" href="PresetController_8hpp.html" title="Preset management logic." alt="" coords="957,350,1190,375"/>
+<area shape="poly" title=" " alt="" coords="1054,211,1037,232,1025,256,1021,275,1025,294,1042,325,1063,348,1059,352,1038,328,1020,296,1016,275,1020,254,1033,229,1049,208"/>
+<area shape="rect" href="PresetManager_8hpp.html" title=" " alt="" coords="1035,262,1261,287"/>
+<area shape="poly" title=" " alt="" coords="1094,208,1140,260,1136,263,1090,212"/>
+<area shape="rect" href="AppBackend_8cpp.html" title="Implementation of the application backend." alt="" coords="1286,262,1466,287"/>
+<area shape="poly" title=" " alt="" coords="1128,201,1336,259,1335,264,1126,206"/>
+<area shape="poly" title=" " alt="" coords="1131,300,1086,351,1082,348,1127,296"/>
+<area shape="poly" title=" " alt="" coords="5937,308,5938,349,5933,350,5932,309"/>
+<area shape="poly" title=" " alt="" coords="4330,186,4581,191,4942,203,5362,222,5791,252,5855,259,5855,264,5790,257,5362,227,4942,208,4581,197,4330,192"/>
+<area shape="poly" title=" " alt="" coords="4250,220,4257,254,4252,255,4245,221"/>
+<area shape="poly" title=" " alt="" coords="4153,192,3307,213,2809,232,2601,244,2444,257,2432,259,2431,254,2444,252,2601,239,2809,227,3307,208,4152,187"/>
+<area shape="poly" title=" " alt="" coords="4331,196,4514,219,4727,252,4740,254,4739,260,4726,257,4513,224,4330,201"/>
+<area shape="poly" title=" " alt="" coords="4331,186,4614,190,5032,201,5522,220,6023,252,6087,259,6087,264,6022,257,5521,226,5031,206,4614,195,4330,191"/>
+<area shape="poly" title=" " alt="" coords="4331,189,4659,210,4867,228,5076,252,5089,254,5089,259,5076,257,4867,234,4659,216,4330,195"/>
+<area shape="poly" title=" " alt="" coords="4152,193,3395,214,2955,233,2772,245,2634,257,2622,259,2621,254,2633,252,2772,239,2955,228,3395,209,4152,187"/>
+<area shape="poly" title=" " alt="" coords="4152,192,3929,197,3615,208,3253,228,2884,257,2872,259,2872,253,2884,252,3252,222,3615,203,3929,192,4152,187"/>
+<area shape="poly" title=" " alt="" coords="4152,193,3704,211,3409,230,3111,257,3100,259,3099,253,3110,252,3409,224,3704,206,4152,187"/>
+<area shape="poly" title=" " alt="" coords="4152,193,3990,198,3773,210,3530,229,3284,257,3273,259,3272,254,3284,252,3529,224,3773,205,3989,193,4152,187"/>
+<area shape="poly" title=" " alt="" coords="4331,187,4506,191,4741,202,5008,222,5278,252,5290,254,5289,259,5277,257,5008,227,4741,208,4506,197,4331,192"/>
+<area shape="poly" title=" " alt="" coords="4152,194,3842,214,3647,232,3452,257,3441,259,3440,254,3452,252,3647,227,3841,209,4152,189"/>
+<area shape="poly" title=" " alt="" coords="4197,216,4124,257,4121,252,4195,211"/>
+<area shape="poly" title=" " alt="" coords="4153,197,3913,219,3768,236,3623,257,3611,259,3610,254,3622,252,3767,231,3912,214,4152,192"/>
+<area shape="poly" title=" " alt="" coords="4153,205,3834,257,3822,259,3821,254,3833,252,4152,200"/>
+<area shape="poly" title=" " alt="" coords="4331,189,4807,213,5447,252,5562,261,5562,266,5446,257,4807,219,4331,195"/>
+<area shape="poly" title=" " alt="" coords="4331,191,4587,213,4743,231,4899,252,4912,254,4911,259,4898,257,4742,236,4586,219,4330,197"/>
+<area shape="poly" title=" " alt="" coords="4152,192,3765,197,3213,209,2654,228,2421,242,2244,257,2233,259,2233,254,2244,252,2420,236,2654,223,3213,204,3765,192,4152,186"/>
+<area shape="poly" title=" " alt="" coords="4298,210,4397,252,4394,257,4296,215"/>
+<area shape="poly" title=" " alt="" coords="4158,213,3990,257,3989,252,4157,208"/>
+<area shape="poly" title=" " alt="" coords="4331,205,4547,252,4546,258,4329,210"/>
+<area shape="poly" title=" " alt="" coords="4211,303,4128,345,4125,340,4208,298"/>
+<area shape="poly" title=" " alt="" coords="4726,297,4572,319,4422,336,4179,358,4179,352,4421,331,4571,314,4725,292"/>
+<area shape="poly" title=" " alt="" coords="6199,304,6226,341,6221,344,6195,308"/>
+<area shape="poly" title=" " alt="" coords="5183,308,5185,342,5180,343,5177,308"/>
+<area shape="poly" title=" " alt="" coords="5276,297,5118,316,4957,331,4645,351,4375,361,4179,364,4179,358,4374,355,4645,346,4956,326,5117,311,5276,292"/>
+<area shape="poly" title=" " alt="" coords="5390,304,5429,348,5425,351,5386,307"/>
+<area shape="poly" title=" " alt="" coords="4092,309,4092,342,4087,342,4087,309"/>
+<area shape="poly" title=" " alt="" coords="5678,308,5684,342,5678,343,5673,309"/>
+<area shape="poly" title=" " alt="" coords="4898,297,4693,322,4493,341,4179,360,4179,355,4492,335,4692,317,4897,292"/>
+<area shape="poly" title=" " alt="" coords="2247,292,2415,307,2632,320,3143,339,3644,351,4000,357,4000,363,3644,357,3143,344,2632,325,2415,312,2246,297"/>
+<area shape="poly" title=" " alt="" coords="3970,298,4053,340,4051,345,3967,303"/>
+<area shape="poly" title=" " alt="" coords="2045,204,1670,265,1669,259,2044,199"/>
+<area shape="poly" title=" " alt="" coords="2085,207,1925,264,1923,259,2083,202"/>
+<area shape="poly" title=" " alt="" coords="6655,207,6485,264,6483,259,6653,201"/>
+<area shape="poly" title=" " alt="" coords="6755,201,6957,259,6956,264,6753,206"/>
+<area shape="poly" title=" " alt="" coords="6739,203,6828,252,6879,292,6961,340,6958,345,6876,297,6825,257,6737,208"/>
+<area shape="poly" title=" " alt="" coords="6704,213,6704,261,6699,261,6699,213"/>
+<area shape="poly" title=" " alt="" coords="6999,301,6999,342,6993,342,6993,301"/>
+<area shape="poly" title=" " alt="" coords="1802,204,1478,257,1437,265,1436,259,1477,252,1801,199"/>
 </map>
 </div>
 </div>
 <p><a href="Smoothing_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">correlation::math::KernelGenerationParams</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameters for kernel generation.  <a href="structcorrelation_1_1math_1_1KernelGenerationParams.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacecorrelation" id="r_namespacecorrelation"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation.html">correlation</a></td></tr>
@@ -285,27 +288,47 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacecorrelation_1_1math" id="r_namespacecorrelation_1_1math"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html">correlation::math</a></td></tr>
 <tr class="memdesc:namespacecorrelation_1_1math"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines universal mathematical and physical constants. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacecorrelation_1_1math_1_1detail" id="r_namespacecorrelation_1_1math_1_1detail"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html">correlation::math::detail</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:aff7fd51650599d29426c566b7767a923" id="r_aff7fd51650599d29426c566b7767a923"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a> { <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::Gaussian</a>
-, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923ac44447baeeae4f8eaa468d6abdacd98f">correlation::math::Bump</a>
-, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923a087b1aad0b071f3a371fb1813ad49263">correlation::math::Triweight</a>
+<tr class="memitem:a1305077c49ed697cb2cb9ae70ab87412" id="r_a1305077c49ed697cb2cb9ae70ab87412"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a> : std::uint8_t { <br />
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::Gaussian</a>
+, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412ac44447baeeae4f8eaa468d6abdacd98f">correlation::math::Bump</a>
+, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412a087b1aad0b071f3a371fb1813ad49263">correlation::math::Triweight</a>
+, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412aa391dbab69197b56d5d3fdcc70ece331">correlation::math::Epanechnikov</a>
+, <br />
+&#160;&#160;<a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412a46ff06ae696616afdf3a695efd3db84c">correlation::math::Cosine</a>
+, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412a34c7fa090dd25dfd55eeb1df0003cd40">correlation::math::Biweight</a>
+<br />
  }</td></tr>
-<tr class="memdesc:aff7fd51650599d29426c566b7767a923"><td class="mdescLeft">&#160;</td><td class="mdescRight">Selection of kernel types for smoothing.  <a href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">More...</a><br /></td></tr>
-<tr class="separator:aff7fd51650599d29426c566b7767a923"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memdesc:a1305077c49ed697cb2cb9ae70ab87412"><td class="mdescLeft">&#160;</td><td class="mdescRight">Selection of kernel types for smoothing.  <a href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">More...</a><br /></td></tr>
+<tr class="separator:a1305077c49ed697cb2cb9ae70ab87412"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a81adde9262c240cbcaea361a1029830f" id="r_a81adde9262c240cbcaea361a1029830f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a81adde9262c240cbcaea361a1029830f">correlation::math::generateKernel</a> (size_t size, double dx, double sigma, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">KernelType</a> type)</td></tr>
-<tr class="memdesc:a81adde9262c240cbcaea361a1029830f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a smoothing kernel.  <br /></td></tr>
-<tr class="separator:a81adde9262c240cbcaea361a1029830f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add502e8ebbd89ad601ce9aafe2271646" id="r_add502e8ebbd89ad601ce9aafe2271646"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#add502e8ebbd89ad601ce9aafe2271646">correlation::math::KernelSmoothing</a> (double dx, const std::vector&lt; double &gt; &amp;y, double sigma, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">KernelType</a> type)</td></tr>
-<tr class="memdesc:add502e8ebbd89ad601ce9aafe2271646"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies kernel smoothing to a data series.  <br /></td></tr>
-<tr class="separator:add502e8ebbd89ad601ce9aafe2271646"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afea4c44f2d02d37fb0d2c9ed8fe1925b" id="r_afea4c44f2d02d37fb0d2c9ed8fe1925b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#afea4c44f2d02d37fb0d2c9ed8fe1925b">correlation::math::KernelSmoothing</a> (const std::vector&lt; double &gt; &amp;r, const std::vector&lt; double &gt; &amp;y, double sigma, <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">KernelType</a> type)</td></tr>
-<tr class="memdesc:afea4c44f2d02d37fb0d2c9ed8fe1925b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compatibility overload: derives <code>dx</code> from the grid and delegates.  <br /></td></tr>
-<tr class="separator:afea4c44f2d02d37fb0d2c9ed8fe1925b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaec32721985fe45bc68349674fa9164c" id="r_aaec32721985fe45bc68349674fa9164c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html#aaec32721985fe45bc68349674fa9164c">correlation::math::detail::fillGaussian</a> (std::vector&lt; double &gt; &amp;kernel, const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params, double center)</td></tr>
+<tr class="separator:aaec32721985fe45bc68349674fa9164c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12bdf5873a7757e395d2e87b3a342a18" id="r_a12bdf5873a7757e395d2e87b3a342a18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html#a12bdf5873a7757e395d2e87b3a342a18">correlation::math::detail::fillTriweight</a> (std::vector&lt; double &gt; &amp;kernel, const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params, double center)</td></tr>
+<tr class="separator:a12bdf5873a7757e395d2e87b3a342a18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7940119997ebcfd3309b6e50992d4609" id="r_a7940119997ebcfd3309b6e50992d4609"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html#a7940119997ebcfd3309b6e50992d4609">correlation::math::detail::fillBump</a> (std::vector&lt; double &gt; &amp;kernel, const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params, double center)</td></tr>
+<tr class="separator:a7940119997ebcfd3309b6e50992d4609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98b763c7b30a7035a8223afeba57275b" id="r_a98b763c7b30a7035a8223afeba57275b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html#a98b763c7b30a7035a8223afeba57275b">correlation::math::detail::fillEpanechnikov</a> (std::vector&lt; double &gt; &amp;kernel, const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params, double center)</td></tr>
+<tr class="separator:a98b763c7b30a7035a8223afeba57275b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a991636d87e801eb88c88bf36a273b248" id="r_a991636d87e801eb88c88bf36a273b248"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html#a991636d87e801eb88c88bf36a273b248">correlation::math::detail::fillCosine</a> (std::vector&lt; double &gt; &amp;kernel, const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params, double center)</td></tr>
+<tr class="separator:a991636d87e801eb88c88bf36a273b248"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a5577352e8b31e36d53c3db494eee41" id="r_a3a5577352e8b31e36d53c3db494eee41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math_1_1detail.html#a3a5577352e8b31e36d53c3db494eee41">correlation::math::detail::fillBiweight</a> (std::vector&lt; double &gt; &amp;kernel, const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params, double center)</td></tr>
+<tr class="separator:a3a5577352e8b31e36d53c3db494eee41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51751dd087f23dc0d2a61d5ba27beed9" id="r_a51751dd087f23dc0d2a61d5ba27beed9"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#a51751dd087f23dc0d2a61d5ba27beed9">correlation::math::generateKernel</a> (const <a class="el" href="structcorrelation_1_1math_1_1KernelGenerationParams.html">KernelGenerationParams</a> &amp;params)</td></tr>
+<tr class="memdesc:a51751dd087f23dc0d2a61d5ba27beed9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a smoothing kernel.  <br /></td></tr>
+<tr class="separator:a51751dd087f23dc0d2a61d5ba27beed9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6f22710a15116e0c00612abfaf914b5" id="r_ad6f22710a15116e0c00612abfaf914b5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#ad6f22710a15116e0c00612abfaf914b5">correlation::math::KernelSmoothing</a> (double <a class="el" href="PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19">bin_width</a>, const std::vector&lt; double &gt; &amp;y_values, double <a class="el" href="LocalEntropyCalculator_8cpp.html#a4ef930be9d7ab47d59cc0668d0d1fac8">sigma</a>, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">KernelType</a> type)</td></tr>
+<tr class="memdesc:ad6f22710a15116e0c00612abfaf914b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies kernel smoothing to a data series.  <br /></td></tr>
+<tr class="separator:ad6f22710a15116e0c00612abfaf914b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad21dd36ce174c7794b8cb2c198849786" id="r_ad21dd36ce174c7794b8cb2c198849786"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1math.html#ad21dd36ce174c7794b8cb2c198849786">correlation::math::KernelSmoothing</a> (const std::vector&lt; double &gt; &amp;r_values, const std::vector&lt; double &gt; &amp;y_values, double <a class="el" href="LocalEntropyCalculator_8cpp.html#a4ef930be9d7ab47d59cc0668d0d1fac8">sigma</a>, <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">KernelType</a> type)</td></tr>
+<tr class="memdesc:ad21dd36ce174c7794b8cb2c198849786"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compatibility overload: derives <code>bin_width</code> from the grid and delegates.  <br /></td></tr>
+<tr class="separator:ad21dd36ce174c7794b8cb2c198849786"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Kernel-based smoothing algorithms for analysis data. </p>

@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -144,10 +144,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abff3d39ae35b8c7b8fbdd6685336bfa9" id="r_abff3d39ae35b8c7b8fbdd6685336bfa9"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html#abff3d39ae35b8c7b8fbdd6685336bfa9">isTrajectory</a> () const =0</td></tr>
 <tr class="memdesc:abff3d39ae35b8c7b8fbdd6685336bfa9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if this reader supports trajectory files.  <br /></td></tr>
 <tr class="separator:abff3d39ae35b8c7b8fbdd6685336bfa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8fdb04d713561e0cb8adc23e011415ff" id="r_a8fdb04d713561e0cb8adc23e011415ff"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)=0</td></tr>
+<tr class="memitem:a8fdb04d713561e0cb8adc23e011415ff" id="r_a8fdb04d713561e0cb8adc23e011415ff"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html#a8fdb04d713561e0cb8adc23e011415ff">readStructure</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)=0</td></tr>
 <tr class="memdesc:a8fdb04d713561e0cb8adc23e011415ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an atomic structure from a file.  <br /></td></tr>
 <tr class="separator:a8fdb04d713561e0cb8adc23e011415ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e2ee1a39ed194246c9afb17d28b492b" id="r_a4e2ee1a39ed194246c9afb17d28b492b"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html#a4e2ee1a39ed194246c9afb17d28b492b">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; progress_callback=nullptr)=0</td></tr>
+<tr class="memitem:a4e2ee1a39ed194246c9afb17d28b492b" id="r_a4e2ee1a39ed194246c9afb17d28b492b"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1readers_1_1BaseReader.html#a4e2ee1a39ed194246c9afb17d28b492b">readTrajectory</a> (const std::string &amp;filename, std::function&lt; void(float, const std::string &amp;)&gt; <a class="el" href="OutmolReader_8cpp.html#a60b26c398df6dc5732e9db069be59a74">progress_callback</a>=nullptr)=0</td></tr>
 <tr class="memdesc:a4e2ee1a39ed194246c9afb17d28b492b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a trajectory from a file.  <br /></td></tr>
 <tr class="separator:a4e2ee1a39ed194246c9afb17d28b492b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -272,18 +272,16 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1BaseReader_abff3d39ae35b8c7b8fbdd6685336bfa9_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1BaseReader_abff3d39ae35b8c7b8fbdd6685336bfa9_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1BaseReader_abff3d39ae35b8c7b8fbdd6685336bfa9_icgraph" id="aclasscorrelation_1_1readers_1_1BaseReader_abff3d39ae35b8c7b8fbdd6685336bfa9_icgraph">
-<area shape="rect" title="Returns true if this reader supports trajectory files." alt="" coords="1001,35,1192,75"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,35,756,75"/>
-<area shape="poly" title=" " alt="" coords="987,54,953,53,804,53,756,54,756,49,804,48,953,48,988,49"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,63,953,103"/>
-<area shape="poly" title=" " alt="" coords="988,71,954,76,953,70,987,66"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,5,496,45"/>
-<area shape="poly" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
-<area shape="poly" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
-<area shape="poly" title=" " alt="" coords="790,75,756,70,757,65,791,69"/>
+<area shape="rect" title="Returns true if this reader supports trajectory files." alt="" coords="731,35,921,75"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="273,35,485,75"/>
+<area shape="poly" title=" " alt="" coords="717,54,683,53,533,53,485,54,485,49,533,48,683,48,717,49"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9" title="Reads a trajectory from a file." alt="" coords="533,63,683,103"/>
+<area shape="poly" title=" " alt="" coords="717,71,683,76,683,70,716,66"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
+<area shape="poly" title=" " alt="" coords="520,75,485,70,486,65,520,69"/>
 </map>
 </div>
 
@@ -339,20 +337,18 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1BaseReader_a8fdb04d713561e0cb8adc23e011415ff_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1BaseReader_a8fdb04d713561e0cb8adc23e011415ff_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1BaseReader_a8fdb04d713561e0cb8adc23e011415ff_icgraph" id="aclasscorrelation_1_1readers_1_1BaseReader_a8fdb04d713561e0cb8adc23e011415ff_icgraph">
-<area shape="rect" title="Reads an atomic structure from a file." alt="" coords="1001,37,1205,77"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="804,5,953,45"/>
-<area shape="poly" title=" " alt="" coords="987,43,954,39,954,33,988,38"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,69,953,109"/>
-<area shape="poly" title=" " alt="" coords="988,76,954,81,954,76,987,71"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,37,756,77"/>
-<area shape="poly" title=" " alt="" coords="791,40,757,45,756,40,790,35"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,8,496,48"/>
-<area shape="poly" title=" " alt="" coords="530,47,496,43,497,38,531,41"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,73,413,98"/>
-<area shape="poly" title=" " alt="" coords="531,73,413,85,412,80,530,67"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,8,227,48"/>
-<area shape="poly" title=" " alt="" coords="261,31,227,31,227,25,261,25"/>
-<area shape="poly" title=" " alt="" coords="790,80,756,75,757,70,791,74"/>
+<area shape="rect" title="Reads an atomic structure from a file." alt="" coords="731,37,935,77"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#a9c44227489fe8986833f74d86cfeeb21" title="Reads an atomic structure from a file." alt="" coords="533,5,683,45"/>
+<area shape="poly" title=" " alt="" coords="716,43,683,39,684,33,717,38"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9" title="Reads a trajectory from a file." alt="" coords="533,69,683,109"/>
+<area shape="poly" title=" " alt="" coords="717,76,684,81,683,76,716,71"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="273,37,485,77"/>
+<area shape="poly" title=" " alt="" coords="520,40,486,45,485,40,519,35"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,8,225,48"/>
+<area shape="poly" title=" " alt="" coords="260,47,225,43,226,38,260,41"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,73,143,98"/>
+<area shape="poly" title=" " alt="" coords="260,73,143,85,143,80,259,67"/>
+<area shape="poly" title=" " alt="" coords="519,80,485,75,486,70,520,74"/>
 </map>
 </div>
 
@@ -408,17 +404,15 @@ Here is the caller graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classcorrelation_1_1readers_1_1BaseReader_a4e2ee1a39ed194246c9afb17d28b492b_icgraph.png" border="0" usemap="#aclasscorrelation_1_1readers_1_1BaseReader_a4e2ee1a39ed194246c9afb17d28b492b_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1readers_1_1BaseReader_a4e2ee1a39ed194246c9afb17d28b492b_icgraph" id="aclasscorrelation_1_1readers_1_1BaseReader_a4e2ee1a39ed194246c9afb17d28b492b_icgraph">
-<area shape="rect" title="Reads a trajectory from a file." alt="" coords="1001,35,1211,75"/>
-<area shape="rect" href="namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,35,953,75"/>
-<area shape="poly" title=" " alt="" coords="987,57,954,57,954,52,987,52"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,35,756,75"/>
-<area shape="poly" title=" " alt="" coords="791,57,756,57,756,52,791,52"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,5,496,45"/>
-<area shape="poly" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
-<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
-<area shape="poly" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
+<area shape="rect" title="Reads a trajectory from a file." alt="" coords="731,35,940,75"/>
+<area shape="rect" href="namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9" title="Reads a trajectory from a file." alt="" coords="533,35,683,75"/>
+<area shape="poly" title=" " alt="" coords="717,57,683,57,683,52,717,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="273,35,485,75"/>
+<area shape="poly" title=" " alt="" coords="520,57,486,57,486,52,520,52"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" href="main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
 </map>
 </div>
 

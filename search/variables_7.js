@@ -1,14 +1,22 @@
 var searchData=
 [
-  ['has_5fdihedral_5fbin_0',['has_dihedral_bin',['../structcorrelation_1_1cli_1_1CliOptions.html#a426326062115c95cd675d3370b9638d5',1,'correlation::cli::CliOptions']]],
-  ['has_5fgpu_5f_1',['has_gpu_',['../classcorrelation_1_1calculators_1_1GPUSQCalculator.html#a945fe2985aecf0d4bad875021c4da315',1,'correlation::calculators::GPUSQCalculator']]],
-  ['hbar_5fev_5fps_2',['hbar_ev_ps',['../namespacecorrelation_1_1math.html#a63fd531d3f6e42aae3e0a09fa75403b6',1,'correlation::math']]],
-  ['hdf5_3',['hdf5',['../structcorrelation_1_1cli_1_1CliOptions.html#a06e4920c5a245ccaa44a5df771f16f16',1,'correlation::cli::CliOptions']]],
-  ['height_4',['height',['../structcorrelation_1_1plotters_1_1PlotConfig.html#a3dc4746017564b167f3b984f2e5d74af',1,'correlation::plotters::PlotConfig']]],
-  ['hist_5',['hist',['../structcorrelation_1_1plotters_1_1LabeledHistogram.html#adc0cb27f67f6d360d3ac163c02e23962',1,'correlation::plotters::LabeledHistogram']]],
-  ['histogram_5fmutex_5f_6',['histogram_mutex_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a217510c993732320f086b65476b1f6e3',1,'correlation::analysis::DistributionFunctions']]],
-  ['histograms_7',['histograms',['../structcorrelation_1_1app_1_1AppController_1_1PinnedRun.html#ada570b34cdbbcc53670c6978d44ddc70',1,'correlation::app::AppController::PinnedRun']]],
-  ['histograms_5f_8',['histograms_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#aa5b6a30a2e7ede948aa7434ec5e1e69d',1,'correlation::analysis::DistributionFunctions']]],
-  ['hover_9',['hover',['../structcorrelation_1_1app_1_1AppController_1_1RenderTaskData.html#a36c3f033da3c055c507f34c83118ff96',1,'correlation::app::AppController::RenderTaskData']]],
-  ['hover_5ftimer_5f_10',['hover_timer_',['../classcorrelation_1_1app_1_1AppController.html#a41c15dc6eb683f81982d7405ce0de424',1,'correlation::app::AppController']]]
+  ['h_0',['h',['../StructureFactorCalculator_8cpp.html#a16611451551e3d15916bae723c3f59f7',1,'StructureFactorCalculator.cpp']]],
+  ['h_5fone_1',['h_one',['../OutmolReader_8cpp.html#ac5187d710fa469f7b715b10bd501409d',1,'OutmolReader.cpp']]],
+  ['h_5fthree_2',['h_three',['../OutmolReader_8cpp.html#a1d5198930b6b8d4d765d707252e1c465',1,'OutmolReader.cpp']]],
+  ['h_5ftwo_3',['h_two',['../OutmolReader_8cpp.html#ad8fe6c955ab62d7332dee8986df4b82e',1,'OutmolReader.cpp']]],
+  ['has_5fbox_4',['has_box',['../QEReader_8cpp.html#a6e95ed5ce888cdd7c0acb1990141aa0d',1,'has_box:&#160;QEReader.cpp'],['../CP2KReader_8cpp.html#a6e95ed5ce888cdd7c0acb1990141aa0d',1,'has_box:&#160;CP2KReader.cpp']]],
+  ['has_5fdihedral_5fbin_5',['has_dihedral_bin',['../structcorrelation_1_1cli_1_1CliOptions.html#a426326062115c95cd675d3370b9638d5',1,'correlation::cli::CliOptions']]],
+  ['has_5fgpu_5f_6',['has_gpu_',['../classcorrelation_1_1calculators_1_1GPUSQCalculator.html#a945fe2985aecf0d4bad875021c4da315',1,'correlation::calculators::GPUSQCalculator']]],
+  ['hbar_5fev_5fps_7',['hbar_ev_ps',['../namespacecorrelation_1_1math.html#a63fd531d3f6e42aae3e0a09fa75403b6',1,'correlation::math']]],
+  ['hdf5_8',['hdf5',['../structcorrelation_1_1cli_1_1CliOptions.html#a06e4920c5a245ccaa44a5df771f16f16',1,'correlation::cli::CliOptions']]],
+  ['height_9',['height',['../structcorrelation_1_1app_1_1PlotSize.html#ae511f13e91cf1fd4165ceee9193e444c',1,'correlation::app::PlotSize']]],
+  ['hist_10',['hist',['../structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a6c9433884b1ecc1b07ae2b183399af7c',1,'correlation::plotters::detail::PdfHistogramRenderer']]],
+  ['histogram_5fmutex_5f_11',['histogram_mutex_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a217510c993732320f086b65476b1f6e3',1,'correlation::analysis::DistributionFunctions']]],
+  ['histograms_12',['histograms',['../structcorrelation_1_1app_1_1PlotController_1_1PinnedRun.html#a8a140b5f808b2f9f91a680507a02b1a8',1,'correlation::app::PlotController::PinnedRun']]],
+  ['histograms_5f_13',['histograms_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#aa5b6a30a2e7ede948aa7434ec5e1e69d',1,'correlation::analysis::DistributionFunctions']]],
+  ['hmax_14',['hmax',['../StructureFactorCalculator_8cpp.html#a05d274df4eb450be6cbaff8264c69750',1,'StructureFactorCalculator.cpp']]],
+  ['hover_15',['hover',['../structcorrelation_1_1app_1_1PlotController_1_1RenderTaskData.html#a53d22307868b3f8a5581848089337105',1,'correlation::app::PlotController::RenderTaskData']]],
+  ['hover_5ftimer_5f_16',['hover_timer_',['../classcorrelation_1_1app_1_1PlotController.html#a68908bed6fb16436513a7bb56f8e6152',1,'correlation::app::PlotController']]],
+  ['hyper_5fsamples_17',['hyper_samples',['../structcorrelation_1_1cli_1_1CliOptions.html#a0dd69940c09ac1dac730193bf1bc5bc6',1,'correlation::cli::CliOptions::hyper_samples'],['../structcorrelation_1_1app_1_1ProgramOptions.html#a47e4323b98b692f02e6a9ac9bb9e47ab',1,'correlation::app::ProgramOptions::hyper_samples']]],
+  ['hyperuniformity_5fsamples_18',['hyperuniformity_samples',['../structcorrelation_1_1analysis_1_1AnalysisSettings.html#a2c9352d7eaa809efd7020005e34db2c4',1,'correlation::analysis::AnalysisSettings']]]
 ];

@@ -1,34 +1,27 @@
 <map id="correlation::calculators::DistanceCalculator::compute" name="correlation::calculators::DistanceCalculator::compute">
-<area shape="rect" id="Node000001" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,368,224,408"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1NeighborGraph.html#a282c951c1f8aad540e00add2e2e54297" title="Adds a directed edge between two atoms." alt="" coords="272,5,511,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,367,132,308,161,226,182,182,206,138,236,98,270,62,288,50,291,54,274,66,240,101,211,141,186,184,166,228,138,310,123,369"/>
-<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#a78ffcf479fa4b63059443e901b70b5d1" title="Computes the vector norm (length)." alt="" coords="749,42,925,67"/>
-<area shape="poly" id="edge13_Node000001_Node000004" title=" " alt="" coords="118,367,133,313,163,240,183,202,207,166,237,133,271,106,296,97,339,88,461,74,735,56,736,62,461,80,339,94,297,102,273,110,240,137,212,169,187,205,167,243,139,314,123,368"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="323,120,459,160"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="122,367,143,325,175,272,218,217,243,192,271,170,309,151,311,156,273,174,247,196,222,220,180,275,148,328,127,369"/>
-<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#a9eca03a5de0ee5364e13bb74bf54b1f7" title="Computes the squared distances from a reference point to a block of positions." alt="" coords="316,184,467,224"/>
-<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="129,366,186,301,226,265,271,234,302,220,304,224,273,238,229,269,190,305,133,370"/>
-<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a5427bb96a0d06a0210bd7c82cc445576" title="Computes the cross product of two 3D vectors." alt="" coords="320,272,463,312"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="160,365,271,321,306,311,307,316,273,327,162,370"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="323,336,459,376"/>
-<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="224,373,309,363,310,368,225,378"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1core_1_1Cell.html#a9653492ad86b15295063a359961cc07a" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="294,400,489,440"/>
-<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="225,398,281,405,280,410,224,403"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="319,464,463,504"/>
-<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="162,406,273,449,307,460,305,465,271,455,160,411"/>
-<area shape="rect" id="Node000012" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="323,528,459,568"/>
-<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="137,406,195,460,233,489,273,514,311,529,309,534,271,518,230,493,191,464,133,410"/>
-<area shape="rect" id="Node000013" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="320,592,463,632"/>
-<area shape="poly" id="edge15_Node000001_Node000013" title=" " alt="" coords="129,407,151,444,183,490,225,538,273,578,308,594,306,599,271,582,221,541,179,494,147,447,124,410"/>
-<area shape="rect" id="Node000014" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="320,656,463,696"/>
-<area shape="poly" id="edge16_Node000001_Node000014" title=" " alt="" coords="125,407,143,456,174,519,217,586,244,616,274,642,308,660,306,664,270,646,240,620,213,589,169,522,138,458,120,409"/>
-<area shape="rect" id="Node000015" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="320,720,463,760"/>
-<area shape="poly" id="edge17_Node000001_Node000015" title=" " alt="" coords="122,407,137,466,165,547,186,591,210,633,239,672,274,706,308,725,306,730,270,710,235,676,206,636,181,593,160,549,132,468,117,409"/>
-<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1core.html#af1df3bf44bf2580badefdf75f92e47ca" title="Calculates the Euclidean distance between two atoms." alt="" coords="562,5,698,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="511,23,549,23,549,28,511,28"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="699,32,736,38,735,43,698,38"/>
-<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="804,44,796,34,800,24,814,18,837,15,866,19,877,28,874,32,864,24,837,21,815,23,804,27,802,33,808,40"/>
-<area shape="rect" id="Node000007" href="$namespacecorrelation_1_1math.html#ab842d14e564d6f04f4d12762fb0c650a" title="Computes the squared distance between two 3D points." alt="" coords="559,184,701,224"/>
-<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="467,201,545,201,545,207,467,207"/>
-<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="347,272,344,262,352,253,367,247,391,245,419,248,434,255,432,260,418,253,391,251,368,253,355,257,350,263,352,271"/>
+<area shape="rect" id="Node000001" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="5,349,224,389"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1core_1_1NeighborGraph.html#a4948d9efb651fcab7a6e3e205c826c0b" title="Adds a directed edge between two atoms." alt="" coords="272,5,511,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,348,133,290,162,211,182,169,207,127,236,89,270,55,277,50,280,55,274,59,240,92,211,130,187,171,167,213,138,292,123,350"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="323,69,459,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="120,348,139,301,171,239,214,174,241,145,271,119,309,100,311,105,273,124,244,149,218,178,175,242,144,303,125,350"/>
+<area shape="rect" id="Node000004" href="$namespacecorrelation_1_1math.html#af4a6542661edaf9e8c2ef1c2f445b328" title="Computes the cross product of two 3D vectors." alt="" coords="320,157,463,197"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="128,348,185,279,225,240,271,207,305,192,308,196,273,212,228,244,189,282,132,351"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="323,221,459,261"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="142,347,200,309,271,271,309,257,311,262,273,276,202,313,145,351"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a9653492ad86b15295063a359961cc07a" title="Gets the inverse lattice vectors as a 3x3 matrix. Useful for converting Cartesian coordinates to frac..." alt="" coords="294,285,489,325"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="201,347,291,326,292,331,203,352"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1core_1_1Cell.html#a036c2032f5e94bb23c694e1d7198c401" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="319,349,463,389"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="224,367,306,367,306,372,224,372"/>
+<area shape="rect" id="Node000008" href="$namespacecorrelation_1_1math.html#a22d977f8c2db20e7a6994c26c1eb182b" title="Computes the vector norm (length)." alt="" coords="303,438,479,463"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="184,387,335,432,334,437,183,392"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="323,488,459,528"/>
+<area shape="poly" id="edge10_Node000001_Node000009" title=" " alt="" coords="142,387,200,430,273,472,311,487,309,492,271,477,197,434,139,392"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1math_1_1Vector3.html#ae092eea7daa51754a2e252e660824674" title=" " alt="" coords="320,552,463,592"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="131,388,187,462,227,503,273,538,308,554,306,558,271,542,224,507,183,465,127,391"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1math_1_1Vector3.html#ae5f5e85c133f2db00ac9509004dc949b" title=" " alt="" coords="320,616,463,656"/>
+<area shape="poly" id="edge12_Node000001_Node000011" title=" " alt="" coords="126,388,146,433,177,491,220,551,245,578,273,602,308,619,305,624,271,606,242,582,216,554,173,494,141,435,121,391"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1math_1_1Vector3.html#ad1a73dd371752e485b646c6eb4f5a612" title=" " alt="" coords="320,680,463,720"/>
+<area shape="poly" id="edge13_Node000001_Node000012" title=" " alt="" coords="123,389,139,444,168,520,188,560,213,599,241,635,274,666,308,685,306,689,270,670,237,638,208,602,184,562,163,522,134,446,118,390"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="341,158,337,148,346,138,364,133,391,131,423,133,440,141,438,146,422,139,391,136,365,138,348,143,343,149,346,156"/>
+<area shape="poly" id="edge9_Node000008_Node000008" title=" " alt="" coords="347,440,337,430,342,420,361,413,391,411,431,415,441,420,445,426,441,429,438,424,429,421,391,417,362,419,346,424,343,429,351,436"/>
 </map>

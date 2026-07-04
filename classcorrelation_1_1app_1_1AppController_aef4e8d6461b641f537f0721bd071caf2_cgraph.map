@@ -1,5 +1,0 @@
-<map id="correlation::app::AppController::requestPlotUpdate" name="correlation::app::AppController::requestPlotUpdate">
-<area shape="rect" id="Node000001" title="Requests a plot update, throttling redraws to every 200ms unless immediate is true." alt="" coords="5,5,227,45"/>
-<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193" title="Renders multiple histograms overlaid on a single plot." alt="" coords="275,5,449,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="227,23,261,23,261,28,227,28"/>
-</map>

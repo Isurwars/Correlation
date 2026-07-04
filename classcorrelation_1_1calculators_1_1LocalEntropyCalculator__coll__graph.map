@@ -1,0 +1,5 @@
+<map id="correlation::calculators::LocalEntropyCalculator" name="correlation::calculators::LocalEntropyCalculator">
+<area shape="rect" id="Node000001" title="Computes the Local Entropic Fingerprint (LEF) for all atoms." alt="" coords="5,93,185,133"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1BaseCalculator.html" title="Base class for all analysis calculators." alt="" coords="10,5,181,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,59,98,93,93,93,93,59"/>
+</map>

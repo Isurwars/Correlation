@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['📈_20long_20term_20vision_202027_0',['📈 Long-Term Vision (2027+)',['../md_docs_2RoadMap.html#autotoc_md-long-term-vision-2027',1,'']]]
+  ['🐍_20track_204_3a_20python_20ecosystem_20ci_20automation_0',['🐍 Track 4: Python Ecosystem &amp; CI Automation',['../md_docs_2RoadMap.html#autotoc_md-track-4-python-ecosystem--ci-automation',1,'']]]
 ];

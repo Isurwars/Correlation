@@ -1,0 +1,25 @@
+<map id="correlation::app::InputValidator::validateInputs" name="correlation::app::InputValidator::validateInputs">
+<area shape="rect" id="Node000001" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="5,229,228,269"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1InputValidator.html#ac6f349330516b04bd7a70a5f12e6ca0b" title="Generates and updates the equivalent CLI command in the UI." alt="" coords="277,69,499,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="136,227,195,174,233,144,275,119,290,112,292,117,277,124,236,149,198,178,139,231"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1app_1_1InputValidator.html#a7fb2a5750474930f70779041c7794960" title=" " alt="" coords="277,133,499,173"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="163,227,275,183,299,175,301,180,277,188,165,232"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1app_1_1InputValidator.html#a72fa2056f7107bd5c11e624af4883f45" title=" " alt="" coords="277,197,499,237"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="228,234,262,229,263,235,228,239"/>
+<area shape="rect" id="Node000010" href="$classcorrelation_1_1app_1_1InputValidator.html#ab614a67e0f41fdd6e087ead5a866d543" title=" " alt="" coords="277,261,499,301"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="228,260,263,264,262,269,228,265"/>
+<area shape="rect" id="Node000011" href="$classcorrelation_1_1app_1_1InputValidator.html#a2ce7b47c3ecb43f1e9e1cd2c5583e063" title=" " alt="" coords="276,325,500,365"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="165,267,277,311,301,319,299,324,275,316,163,272"/>
+<area shape="rect" id="Node000012" href="$classcorrelation_1_1app_1_1InputValidator.html#ab9cf1d03c18b5d2fe89b9a494319b6cb" title=" " alt="" coords="277,389,499,429"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="139,268,198,321,236,350,277,375,292,382,290,387,275,380,233,354,195,325,136,272"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#aa5b046789fca9e3a2efce67ef89109ba" title="Retrieves the current user&#45;selected options from the UI." alt="" coords="548,69,769,109"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="499,87,534,87,534,92,499,92"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a12fb48d5f1b926e23ef49c3759c69ab1" title="Parses and retrieves the user&#45;modified bond cutoffs from the UI." alt="" coords="817,37,1039,77"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="769,74,803,69,804,75,770,79"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1app_1_1AppBackend.html#a7a8c9ba96b855efa52cc530ef156a4ab" title="Gets the total number of frames in the trajectory." alt="" coords="822,101,1034,141"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="770,100,809,104,808,110,769,105"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1AppBackend.html#a6fd7fc511f98d13f2dbea8196aa4ad89" title="Gets a pointer to the current cell (first frame of trajectory)." alt="" coords="1087,5,1299,45"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1039,41,1073,37,1073,42,1039,47"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="1125,69,1261,109"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="1039,68,1111,77,1110,82,1039,73"/>
+</map>

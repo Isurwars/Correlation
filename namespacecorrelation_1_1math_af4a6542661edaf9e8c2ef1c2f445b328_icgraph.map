@@ -1,0 +1,14 @@
+<map id="correlation::math::cross" name="correlation::math::cross">
+<area shape="rect" id="Node000001" title="Computes the cross product of two 3D vectors." alt="" coords="709,77,852,117"/>
+<area shape="poly" id="edge6_Node000001_Node000001" title=" " alt="" coords="819,66,806,59,781,56,759,58,746,63,741,69,743,76,738,78,736,68,743,58,758,53,781,51,807,54,822,61"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="443,5,661,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="708,75,661,60,622,48,623,43,662,55,709,70"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#a36725fa25cdc01b4febb6b5dff33b2e0" title="Computes the Chiral Order Parameter for a single atom." alt="" coords="447,70,657,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="696,100,657,100,657,95,696,95"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1math.html#afd84be9c89c5167f445ff4d20a3ef486" title="Computes the cross product of two 3D vectors." alt="" coords="481,149,623,189"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="707,124,662,139,620,152,618,147,661,133,705,119"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#aa31a344c893ef452816fb53b87f877c5" title="Computes the Chiral Order Parameter distribution for all atoms in the cell." alt="" coords="224,70,395,125"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="434,100,395,100,395,95,434,95"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1ChiralityCalculator.html#ab8e85349165b20fc43c641d2e2a2f9af" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,70,176,125"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="210,100,176,100,176,95,210,95"/>
+</map>

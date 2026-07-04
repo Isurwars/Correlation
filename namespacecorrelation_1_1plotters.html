@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -96,17 +96,10 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1ComparisonQuery.html">ComparisonQuery</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1Glyph.html">Glyph</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single vector character glyph.  <a href="structcorrelation_1_1plotters_1_1Glyph.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">HoverInfo</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Information about the mouse hover position.  <a href="structcorrelation_1_1plotters_1_1HoverInfo.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1LabeledHistogram.html">LabeledHistogram</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A labeled histogram for comparison rendering.  <a href="structcorrelation_1_1plotters_1_1LabeledHistogram.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Theme and layout configuration for the plot.  <a href="structcorrelation_1_1plotters_1_1PlotConfig.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1plotters_1_1Roboto.html">Roboto</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">High-fidelity <a class="el" href="classcorrelation_1_1plotters_1_1Roboto.html" title="High-fidelity Roboto vector font implementation.">Roboto</a> vector font implementation.  <a href="classcorrelation_1_1plotters_1_1Roboto.html#details">More...</a><br /></td></tr>
@@ -114,19 +107,14 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a22e9b10780b2911bfa294d8125b53893" id="r_a22e9b10780b2911bfa294d8125b53893"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#a22e9b10780b2911bfa294d8125b53893">renderTextAsPath</a> (const std::string &amp;text, double x, double y, double size, const std::string &amp;anchor, const std::string &amp;color, bool use_native_text=false)</td></tr>
-<tr class="memdesc:a22e9b10780b2911bfa294d8125b53893"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders text as a filled SVG path using the <a class="el" href="classcorrelation_1_1plotters_1_1Roboto.html" title="High-fidelity Roboto vector font implementation.">Roboto</a> outline font. Uses evenodd fill-rule to render the font's inner holes properly.  <br /></td></tr>
-<tr class="separator:a22e9b10780b2911bfa294d8125b53893"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5306f3b1f4524595c3bbdb77ae4c3280" id="r_a5306f3b1f4524595c3bbdb77ae4c3280"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#a5306f3b1f4524595c3bbdb77ae4c3280">renderHistogramAsSvg</a> (const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;hist, const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;config={}, const <a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">HoverInfo</a> &amp;hover={}, const std::map&lt; std::string, double &gt; &amp;weights={})</td></tr>
-<tr class="memdesc:a5306f3b1f4524595c3bbdb77ae4c3280"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders a <code>Histogram</code> as a self-contained SVG string.  <br /></td></tr>
-<tr class="separator:a5306f3b1f4524595c3bbdb77ae4c3280"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a817bdf6e142aa01b64e6f3dbf1113193" id="r_a817bdf6e142aa01b64e6f3dbf1113193"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#a817bdf6e142aa01b64e6f3dbf1113193">renderComparisonSvg</a> (const std::vector&lt; <a class="el" href="structcorrelation_1_1plotters_1_1LabeledHistogram.html">LabeledHistogram</a> &gt; &amp;datasets, const std::string &amp;partial_key=&quot;Total&quot;, const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;config={}, const <a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">HoverInfo</a> &amp;hover={})</td></tr>
-<tr class="memdesc:a817bdf6e142aa01b64e6f3dbf1113193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Renders multiple histograms overlaid on a single plot.  <br /></td></tr>
-<tr class="separator:a817bdf6e142aa01b64e6f3dbf1113193"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3374b852423f5773da847a9a671b1f7b" id="r_a3374b852423f5773da847a9a671b1f7b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#a3374b852423f5773da847a9a671b1f7b">renderHistogramAsPdf</a> (const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;hist, const std::string &amp;filepath, const PlotConfig &amp;config)</td></tr>
+<tr class="separator:a3374b852423f5773da847a9a671b1f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5aee13b96f117e8765fb45288787514" id="r_ad5aee13b96f117e8765fb45288787514"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecorrelation_1_1plotters.html#ad5aee13b96f117e8765fb45288787514">renderComparisonPdf</a> (const std::vector&lt; LabeledHistogram &gt; &amp;datasets, const <a class="el" href="structcorrelation_1_1plotters_1_1ComparisonQuery.html">ComparisonQuery</a> &amp;query, const PlotConfig &amp;config)</td></tr>
+<tr class="separator:ad5aee13b96f117e8765fb45288787514"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a817bdf6e142aa01b64e6f3dbf1113193" name="a817bdf6e142aa01b64e6f3dbf1113193"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a817bdf6e142aa01b64e6f3dbf1113193">&#9670;&#160;</a></span>renderComparisonSvg()</h2>
+<a id="ad5aee13b96f117e8765fb45288787514" name="ad5aee13b96f117e8765fb45288787514"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5aee13b96f117e8765fb45288787514">&#9670;&#160;</a></span>renderComparisonPdf()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -135,28 +123,22 @@ Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string correlation::plotters::renderComparisonSvg </td>
+          <td class="memname">void correlation::plotters::renderComparisonPdf </td>
           <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="structcorrelation_1_1plotters_1_1LabeledHistogram.html">LabeledHistogram</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::vector&lt; LabeledHistogram &gt; &amp;&#160;</td>
           <td class="paramname"><em>datasets</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>partial_key</em> = <code>&quot;Total&quot;</code>, </td>
+          <td class="paramtype">const <a class="el" href="structcorrelation_1_1plotters_1_1ComparisonQuery.html">ComparisonQuery</a> &amp;&#160;</td>
+          <td class="paramname"><em>query</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;&#160;</td>
-          <td class="paramname"><em>config</em> = <code>{}</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">HoverInfo</a> &amp;&#160;</td>
-          <td class="paramname"><em>hover</em> = <code>{}</code>&#160;</td>
+          <td class="paramtype">const PlotConfig &amp;&#160;</td>
+          <td class="paramname"><em>config</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -170,42 +152,66 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Renders multiple histograms overlaid on a single plot. </p>
-<p>Each entry in <code>datasets</code> provides a display label and a pointer to the Histogram data. The first dataset defines the axes and labels; subsequent datasets are drawn on the same grid with distinct colors.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">datasets</td><td>Vector of labeled histogram pointers. </td></tr>
-    <tr><td class="paramname">partial_key</td><td>Which partial to plot (e.g. "Total", "Si-O"). </td></tr>
-    <tr><td class="paramname">config</td><td>Optional plot configuration (theme, size, etc.). </td></tr>
-    <tr><td class="paramname">hover</td><td>Optional hover interaction info. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A complete SVG document as <code>std::string</code>. </dd></dl>
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_cgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_cgraph" alt=""/></div>
+<map name="anamespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_cgraph" id="anamespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_cgraph">
+<area shape="rect" title=" " alt="" coords="5,301,176,341"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a8a3ec39fb1d30870a53b5cf932bb0f4a" title=" " alt="" coords="224,5,457,60"/>
+<area shape="poly" title=" " alt="" coords="95,300,111,255,137,196,174,133,197,103,222,77,239,65,242,69,226,81,201,107,178,136,142,198,116,257,100,301"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a80c0172bb9a12b8670107f561732e9f2" title=" " alt="" coords="537,111,707,151"/>
+<area shape="poly" title=" " alt="" coords="96,299,112,259,137,209,174,159,197,138,223,121,262,104,303,93,346,87,388,86,471,92,542,105,541,111,470,97,388,91,346,93,304,98,264,109,225,126,200,142,178,163,142,212,116,261,101,301"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a8fc0500b11bab27df9dcec15d88b00eb" title=" " alt="" coords="224,451,457,505"/>
+<area shape="poly" title=" " alt="" coords="112,339,160,388,192,414,225,437,235,442,232,447,223,442,188,418,157,392,108,343"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a7de8bd122deb0d35127b5e3b1cd16e56" title=" " alt="" coords="545,386,699,426"/>
+<area shape="poly" title=" " alt="" coords="101,340,116,380,142,430,178,478,200,499,225,516,287,543,314,550,341,552,367,550,394,543,456,516,473,501,480,483,487,463,504,444,531,428,534,432,507,448,492,466,485,485,477,504,459,520,396,548,368,555,341,557,313,555,285,548,223,520,197,503,174,482,137,433,112,382,96,342"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a96e6e488dada01fa27e598a706f7392a" title=" " alt="" coords="224,372,457,427"/>
+<area shape="poly" title=" " alt="" coords="156,338,241,365,239,370,154,343"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a489d35b4d1991f8e63f91549f6cf2a35" title=" " alt="" coords="224,136,457,191"/>
+<area shape="poly" title=" " alt="" coords="108,298,157,249,188,223,223,200,232,194,235,199,225,204,192,227,160,253,112,302"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a8e50a92f0dbd621377108b2b75a40d99" title=" " alt="" coords="224,215,457,269"/>
+<area shape="poly" title=" " alt="" coords="154,298,239,271,241,276,156,303"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#abbc779b56428640d39f8268454064403" title=" " alt="" coords="224,293,457,348"/>
+<area shape="poly" title=" " alt="" coords="176,318,210,318,210,323,176,323"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#af8cbd14a8375798a6ea858195f6db245" title=" " alt="" coords="224,581,457,636"/>
+<area shape="poly" title=" " alt="" coords="100,340,116,385,142,443,178,505,201,534,226,560,242,572,239,577,222,564,197,538,174,508,137,446,111,387,95,342"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a3e3bbe5616c580e937f603f75aaec796" title=" " alt="" coords="547,13,697,53"/>
+<area shape="poly" title=" " alt="" coords="457,30,533,30,533,35,457,35"/>
+<area shape="poly" title=" " alt="" coords="420,58,552,104,551,109,418,63"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a300ea4629951711127da38ccfe123e8f" title=" " alt="" coords="505,255,739,309"/>
+<area shape="poly" title=" " alt="" coords="381,58,459,121,586,243,582,246,456,125,377,62"/>
+<area shape="poly" title=" " alt="" coords="438,448,456,437,472,422,481,407,489,391,503,372,569,315,572,320,507,376,494,394,485,410,476,425,459,441,441,453"/>
+<area shape="poly" title=" " alt="" coords="447,448,530,427,532,432,449,453"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#aca30c16cdd4646b76e950d9dcaa611b0" title=" " alt="" coords="533,458,711,498"/>
+<area shape="poly" title=" " alt="" coords="457,475,519,475,519,481,457,481"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a140f8ba344d4b1c83e55d467fcaa903b" title=" " alt="" coords="787,386,961,426"/>
+<area shape="poly" title=" " alt="" coords="699,403,773,403,773,409,699,409"/>
+<area shape="poly" title=" " alt="" coords="427,369,456,358,555,313,557,318,458,363,429,374"/>
+<area shape="poly" title=" " alt="" coords="457,399,531,401,531,407,457,405"/>
+<area shape="poly" title=" " alt="" coords="457,147,522,140,523,145,458,153"/>
+<area shape="poly" title=" " alt="" coords="429,188,458,200,558,246,556,251,456,204,427,193"/>
+<area shape="poly" title=" " alt="" coords="423,212,456,200,563,155,565,159,458,204,424,217"/>
+<area shape="poly" title=" " alt="" coords="458,256,492,261,491,266,457,261"/>
+<area shape="poly" title=" " alt="" coords="457,302,491,297,492,303,458,307"/>
+<area shape="poly" title=" " alt="" coords="432,345,543,379,542,385,431,351"/>
+</map>
+</div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="namespacecorrelation_1_1plotters_a817bdf6e142aa01b64e6f3dbf1113193_icgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_a817bdf6e142aa01b64e6f3dbf1113193_icgraph" alt=""/></div>
-<map name="anamespacecorrelation_1_1plotters_a817bdf6e142aa01b64e6f3dbf1113193_icgraph" id="anamespacecorrelation_1_1plotters_a817bdf6e142aa01b64e6f3dbf1113193_icgraph">
-<area shape="rect" title="Renders multiple histograms overlaid on a single plot." alt="" coords="813,35,988,75"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2b50f8eaf27b0d80e3b236b0df6f9e0c" title="Handles the &quot;Save Plot&quot; signal from the UI. Opens a save file dialog to export the currently selected..." alt="" coords="275,5,496,45"/>
-<area shape="poly" title=" " alt="" coords="799,52,496,34,496,29,799,46"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#aef4e8d6461b641f537f0721bd071caf2" title="Requests a plot update, throttling redraws to every 200ms unless immediate is true." alt="" coords="544,63,765,103"/>
-<area shape="poly" title=" " alt="" coords="800,69,766,73,765,67,799,63"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,63,227,103"/>
-<area shape="poly" title=" " alt="" coords="278,51,211,65,210,60,277,46"/>
-<area shape="poly" title=" " alt="" coords="530,85,227,85,227,80,530,80"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a645af3d5f62fc7132821d906d5ab4a67" title="Handles the &quot;Run Analysis&quot; signal from the UI. Starts the analysis in a separate thread." alt="" coords="275,120,496,160"/>
-<area shape="poly" title=" " alt="" coords="547,108,480,123,479,117,546,103"/>
-<area shape="poly" title=" " alt="" coords="277,120,210,105,211,100,278,114"/>
+<div class="center"><img src="namespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_icgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_icgraph" alt=""/></div>
+<map name="anamespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_icgraph" id="anamespacecorrelation_1_1plotters_ad5aee13b96f117e8765fb45288787514_icgraph">
+<area shape="rect" title=" " alt="" coords="275,5,445,45"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1PlotController.html#a5a58cdaea0b4de574a393bd2d95b1a9f" title=" " alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a5306f3b1f4524595c3bbdb77ae4c3280" name="a5306f3b1f4524595c3bbdb77ae4c3280"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5306f3b1f4524595c3bbdb77ae4c3280">&#9670;&#160;</a></span>renderHistogramAsSvg()</h2>
+<a id="a3374b852423f5773da847a9a671b1f7b" name="a3374b852423f5773da847a9a671b1f7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3374b852423f5773da847a9a671b1f7b">&#9670;&#160;</a></span>renderHistogramAsPdf()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,7 +220,7 @@ Here is the caller graph for this function:</div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string correlation::plotters::renderHistogramAsSvg </td>
+          <td class="memname">void correlation::plotters::renderHistogramAsPdf </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;&#160;</td>
           <td class="paramname"><em>hist</em>, </td>
@@ -222,20 +228,14 @@ Here is the caller graph for this function:</div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structcorrelation_1_1plotters_1_1PlotConfig.html">PlotConfig</a> &amp;&#160;</td>
-          <td class="paramname"><em>config</em> = <code>{}</code>, </td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filepath</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structcorrelation_1_1plotters_1_1HoverInfo.html">HoverInfo</a> &amp;&#160;</td>
-          <td class="paramname"><em>hover</em> = <code>{}</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::map&lt; std::string, double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>weights</em> = <code>{}</code>&#160;</td>
+          <td class="paramtype">const PlotConfig &amp;&#160;</td>
+          <td class="paramname"><em>config</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -249,110 +249,62 @@ Here is the caller graph for this function:</div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Renders a <code>Histogram</code> as a self-contained SVG string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">hist</td><td>The Histogram to render. </td></tr>
-    <tr><td class="paramname">config</td><td>Optional plot configuration (theme, size, etc.). </td></tr>
-    <tr><td class="paramname">hover</td><td>Optional hover interaction info. </td></tr>
-    <tr><td class="paramname">weights</td><td>Optional weights for each partial component to prioritize rendering. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A complete SVG document as <code>std::string</code>. </dd></dl>
-<div class="dynheader">
-Here is the caller graph for this function:</div>
-<div class="dyncontent">
-<div class="center"><img src="namespacecorrelation_1_1plotters_a5306f3b1f4524595c3bbdb77ae4c3280_icgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_a5306f3b1f4524595c3bbdb77ae4c3280_icgraph" alt=""/></div>
-<map name="anamespacecorrelation_1_1plotters_a5306f3b1f4524595c3bbdb77ae4c3280_icgraph" id="anamespacecorrelation_1_1plotters_a5306f3b1f4524595c3bbdb77ae4c3280_icgraph">
-<area shape="rect" title="Renders a Histogram as a self&#45;contained SVG string." alt="" coords="544,5,724,45"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a2b50f8eaf27b0d80e3b236b0df6f9e0c" title="Handles the &quot;Save Plot&quot; signal from the UI. Opens a save file dialog to export the currently selected..." alt="" coords="275,5,496,45"/>
-<area shape="poly" title=" " alt="" coords="530,28,496,28,496,23,530,23"/>
-<area shape="rect" href="classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
-</map>
-</div>
-
-</div>
-</div>
-<a id="a22e9b10780b2911bfa294d8125b53893" name="a22e9b10780b2911bfa294d8125b53893"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22e9b10780b2911bfa294d8125b53893">&#9670;&#160;</a></span>renderTextAsPath()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string correlation::plotters::renderTextAsPath </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>text</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>x</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>y</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>anchor</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>color</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>use_native_text</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Renders text as a filled SVG path using the <a class="el" href="classcorrelation_1_1plotters_1_1Roboto.html" title="High-fidelity Roboto vector font implementation.">Roboto</a> outline font. Uses evenodd fill-rule to render the font's inner holes properly. </p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="namespacecorrelation_1_1plotters_a22e9b10780b2911bfa294d8125b53893_cgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_a22e9b10780b2911bfa294d8125b53893_cgraph" alt=""/></div>
-<map name="anamespacecorrelation_1_1plotters_a22e9b10780b2911bfa294d8125b53893_cgraph" id="anamespacecorrelation_1_1plotters_a22e9b10780b2911bfa294d8125b53893_cgraph">
-<area shape="rect" title="Renders text as a filled SVG path using the Roboto outline font. Uses evenodd fill&#45;rule to render the..." alt="" coords="5,37,156,77"/>
-<area shape="rect" href="classcorrelation_1_1plotters_1_1Roboto.html#a0ab8dedc99fe3fafec5e67faf75d3a13" title=" " alt="" coords="204,5,355,45"/>
-<area shape="poly" title=" " alt="" coords="156,43,190,37,191,42,157,48"/>
-<area shape="rect" href="classcorrelation_1_1plotters_1_1Roboto.html#ae7072310ee64216b0b4584beda1ab847" title="Renders a string of text as SVG path data." alt="" coords="204,69,355,109"/>
-<area shape="poly" title=" " alt="" coords="157,67,191,72,190,78,156,72"/>
-<area shape="rect" href="classcorrelation_1_1plotters_1_1Roboto.html#a63ce4c36515d77f50ec72399cee6c1d8" title="Converts a UTF&#45;8 encoded string to a vector of Unicode code points." alt="" coords="403,69,580,109"/>
-<area shape="poly" title=" " alt="" coords="355,87,389,87,389,92,355,92"/>
+<div class="center"><img src="namespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_cgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_cgraph" alt=""/></div>
+<map name="anamespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_cgraph" id="anamespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_cgraph">
+<area shape="rect" title=" " alt="" coords="5,341,183,381"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#aa9ffe388c1c873bf45f1ada02fe40f76" title=" " alt="" coords="231,5,453,60"/>
+<area shape="poly" title=" " alt="" coords="97,340,112,288,137,218,176,144,200,109,229,77,244,65,247,69,232,81,205,112,180,147,142,221,117,290,102,341"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a80c0172bb9a12b8670107f561732e9f2" title=" " alt="" coords="527,111,698,151"/>
+<area shape="poly" title=" " alt="" coords="97,340,111,292,136,231,153,199,175,169,200,143,229,121,266,104,306,92,347,86,388,85,467,91,536,105,535,110,466,97,388,90,347,92,307,98,268,109,232,126,203,147,179,173,158,202,141,233,116,294,102,341"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#acec54b6ae89a0bc90fbbd42a94b3f625" title=" " alt="" coords="231,293,453,348"/>
+<area shape="poly" title=" " alt="" coords="182,344,217,338,217,343,183,349"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#abdaace24772d9c55a905123289c5578c" title=" " alt="" coords="231,529,453,584"/>
+<area shape="poly" title=" " alt="" coords="110,379,158,446,193,483,232,516,239,520,236,525,229,520,189,487,154,450,106,383"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a7de8bd122deb0d35127b5e3b1cd16e56" title=" " alt="" coords="535,465,690,505"/>
+<area shape="poly" title=" " alt="" coords="102,380,116,427,141,488,158,519,179,548,204,574,232,594,290,622,316,628,341,630,367,628,393,621,452,594,469,580,476,562,484,542,500,523,522,508,525,513,503,527,488,545,481,564,473,583,455,599,395,626,368,633,341,635,315,633,288,627,229,599,200,578,175,551,154,521,136,490,111,429,97,382"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a50ebc70950a22d6a44be009dc463f40b" title=" " alt="" coords="231,451,453,505"/>
+<area shape="poly" title=" " alt="" coords="128,379,176,408,232,437,246,443,243,448,230,442,173,412,125,383"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#ae591cd58e8bf2c18dc75c2738c855684" title=" " alt="" coords="231,136,453,191"/>
+<area shape="poly" title=" " alt="" coords="105,339,154,272,189,233,229,200,236,195,239,200,232,204,193,237,158,275,110,342"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a382902ae876b7f9a25a6c00ebd35d21d" title=" " alt="" coords="231,215,453,269"/>
+<area shape="poly" title=" " alt="" coords="125,338,173,309,230,280,246,272,249,277,232,284,176,314,128,343"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a47ae6ff520504df3df933ed505510454" title=" " alt="" coords="231,372,453,427"/>
+<area shape="poly" title=" " alt="" coords="183,372,217,377,217,382,182,377"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#ae108f84d894c5fa3dd4a364a866b1048" title=" " alt="" coords="231,660,453,715"/>
+<area shape="poly" title=" " alt="" coords="102,380,117,431,142,500,180,574,205,608,232,639,248,651,244,655,229,643,201,611,176,576,137,502,112,433,97,382"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a3e3bbe5616c580e937f603f75aaec796" title=" " alt="" coords="537,13,688,53"/>
+<area shape="poly" title=" " alt="" coords="453,30,523,30,523,35,453,35"/>
+<area shape="poly" title=" " alt="" coords="419,58,545,104,543,109,417,63"/>
+<area shape="rect" href="structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#a174b7e5b13737a1619c5ccae16b7ca9d" title=" " alt="" coords="501,293,724,348"/>
+<area shape="poly" title=" " alt="" coords="382,58,455,121,529,205,586,280,582,284,524,208,451,125,379,62"/>
+<area shape="poly" title=" " alt="" coords="453,318,488,318,488,323,453,323"/>
+<area shape="poly" title=" " alt="" coords="434,527,452,516,468,501,478,486,499,451,577,357,581,360,504,454,482,489,472,504,455,520,437,531"/>
+<area shape="poly" title=" " alt="" coords="445,527,523,506,524,511,446,532"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#aca30c16cdd4646b76e950d9dcaa611b0" title=" " alt="" coords="523,537,702,577"/>
+<area shape="poly" title=" " alt="" coords="453,554,509,554,509,559,453,559"/>
+<area shape="rect" href="namespacecorrelation_1_1plotters_1_1detail.html#a140f8ba344d4b1c83e55d467fcaa903b" title=" " alt="" coords="772,465,947,505"/>
+<area shape="poly" title=" " alt="" coords="690,482,758,482,758,487,690,487"/>
+<area shape="poly" title=" " alt="" coords="429,448,452,437,515,397,569,355,572,359,518,401,455,442,431,453"/>
+<area shape="poly" title=" " alt="" coords="454,478,522,480,522,485,453,483"/>
+<area shape="poly" title=" " alt="" coords="453,148,513,140,514,146,454,153"/>
+<area shape="poly" title=" " alt="" coords="431,188,455,200,518,240,572,282,569,286,515,244,452,204,429,193"/>
+<area shape="poly" title=" " alt="" coords="420,212,452,200,555,155,557,160,454,204,422,217"/>
+<area shape="poly" title=" " alt="" coords="437,267,506,287,504,292,436,272"/>
+<area shape="poly" title=" " alt="" coords="436,369,504,349,506,355,437,374"/>
+<area shape="poly" title=" " alt="" coords="430,424,536,458,535,463,428,429"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="namespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_icgraph.png" border="0" usemap="#anamespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_icgraph" alt=""/></div>
+<map name="anamespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_icgraph" id="anamespacecorrelation_1_1plotters_a3374b852423f5773da847a9a671b1f7b_icgraph">
+<area shape="rect" title=" " alt="" coords="275,5,452,45"/>
+<area shape="rect" href="classcorrelation_1_1app_1_1PlotController.html#a5a58cdaea0b4de574a393bd2d95b1a9f" title=" " alt="" coords="5,5,227,45"/>
+<area shape="poly" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
 </map>
 </div>
 

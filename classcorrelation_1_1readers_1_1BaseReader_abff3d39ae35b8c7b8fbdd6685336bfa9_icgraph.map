@@ -1,14 +1,12 @@
 <map id="correlation::readers::BaseReader::isTrajectory" name="correlation::readers::BaseReader::isTrajectory">
-<area shape="rect" id="Node000001" title="Returns true if this reader supports trajectory files." alt="" coords="1001,35,1192,75"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="544,35,756,75"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="987,54,953,53,804,53,756,54,756,49,804,48,953,48,988,49"/>
-<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1readers.html#ad2cf3ae14984397ae70f5449478e95e8" title="Reads a trajectory from a file." alt="" coords="804,63,953,103"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="988,71,954,76,953,70,987,66"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AppController.html#a110aeff3a50624ecb5edbf81c4c7f56a" title="Handles the &quot;Browse File&quot; signal from the UI. Opens an open file dialog to select the input trajector..." alt="" coords="275,5,496,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="530,44,496,40,497,35,531,39"/>
-<area shape="rect" id="Node000005" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="358,70,413,95"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="531,70,413,83,412,77,530,65"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a8e7ffb29943a88266be239d85cec95a6" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="261,28,227,28,227,23,261,23"/>
-<area shape="poly" id="edge6_Node000006_Node000002" title=" " alt="" coords="790,75,756,70,757,65,791,69"/>
+<area shape="rect" id="Node000001" title="Returns true if this reader supports trajectory files." alt="" coords="731,35,921,75"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppBackend.html#a005adbbaa7c23a3b7adf988905614b8b" title="Loads a file from a given path." alt="" coords="273,35,485,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="717,54,683,53,533,53,485,54,485,49,533,48,683,48,717,49"/>
+<area shape="rect" id="Node000005" href="$namespacecorrelation_1_1readers.html#aec0366af2c850ff173195ed74cac8de9" title="Reads a trajectory from a file." alt="" coords="533,63,683,103"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="717,71,683,76,683,70,716,66"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" id="Node000004" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="520,75,485,70,486,65,520,69"/>
 </map>

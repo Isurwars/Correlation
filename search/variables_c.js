@@ -1,11 +1,19 @@
 var searchData=
 [
-  ['name_0',['name',['../structcorrelation_1_1app_1_1Preset.html#a44bdc92cc7cc6dbe4737e5b7a18b7eca',1,'correlation::app::Preset']]],
-  ['name_5fmap_5f_1',['name_map_',['../classcorrelation_1_1writers_1_1WriterFactory.html#a6fef6da01b0b6d481e14f0e56e57bc15',1,'correlation::writers::WriterFactory']]],
-  ['needs_5fredraw_5f_2',['needs_redraw_',['../classcorrelation_1_1app_1_1AppController.html#a2b8a9eabe2452d7f8a3b89d3d8ae8ff1',1,'correlation::app::AppController']]],
-  ['neighbor_5fcutoff_5f_3',['neighbor_cutoff_',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#abbb7432462de4dbd78a2290099c8f4c2',1,'correlation::analysis::TrajectoryAnalyzer']]],
-  ['neighbor_5fgraph_5f_4',['neighbor_graph_',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#ad8f5663dc50cbd1fa79edbea66923cba',1,'correlation::analysis::StructureAnalyzer']]],
-  ['neighbor_5flist_5flocal_5',['neighbor_list_local',['../structcorrelation_1_1calculators_1_1ThreadLocalDistances.html#a5a5da9fa462432221a8a819dd9b3a647',1,'correlation::calculators::ThreadLocalDistances']]],
-  ['neighbors_5fowned_5f_6',['neighbors_owned_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a45e7366fd0f1cbf02ce5feee0367264c',1,'correlation::analysis::DistributionFunctions']]],
-  ['neighbors_5fref_5f_7',['neighbors_ref_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7a3f1edfc8f4c2d90720a3ce88257210',1,'correlation::analysis::DistributionFunctions']]]
+  ['n_5fa_0',['N_A',['../StructureFactorCalculator_8cpp.html#a83cef350b591030802ab95dc3fb29e63',1,'StructureFactorCalculator.cpp']]],
+  ['n_5fb_1',['N_B',['../StructureFactorCalculator_8cpp.html#a6bdea4a8eb518c9e816245679cd7e1a1',1,'StructureFactorCalculator.cpp']]],
+  ['name_2',['name',['../structcorrelation_1_1app_1_1Preset.html#a44bdc92cc7cc6dbe4737e5b7a18b7eca',1,'correlation::app::Preset']]],
+  ['name_5fmap_5f_3',['name_map_',['../classcorrelation_1_1writers_1_1WriterFactory.html#a6fef6da01b0b6d481e14f0e56e57bc15',1,'correlation::writers::WriterFactory']]],
+  ['nb_5fdist_4',['nb_dist',['../AngleCalculator_8cpp.html#ae5791b70f0a91b5337340cf953ba6652',1,'AngleCalculator.cpp']]],
+  ['nb_5fx_5',['nb_x',['../AngleCalculator_8cpp.html#ac406684115d48b20c195cca8c6a8ff65',1,'AngleCalculator.cpp']]],
+  ['nb_5fy_6',['nb_y',['../AngleCalculator_8cpp.html#a238f304a0e1d7852f6c71f5789b908dd',1,'AngleCalculator.cpp']]],
+  ['nb_5fz_7',['nb_z',['../AngleCalculator_8cpp.html#a5846d1a13446255a869a5853ce51b952',1,'AngleCalculator.cpp']]],
+  ['needs_5fredraw_5f_8',['needs_redraw_',['../classcorrelation_1_1app_1_1PlotController.html#a91702527fadc43e2b317e80ab5e2f3e1',1,'correlation::app::PlotController']]],
+  ['neighbor_5fcutoff_5f_9',['neighbor_cutoff_',['../classcorrelation_1_1analysis_1_1TrajectoryAnalyzer.html#abbb7432462de4dbd78a2290099c8f4c2',1,'correlation::analysis::TrajectoryAnalyzer']]],
+  ['neighbor_5fgraph_5f_10',['neighbor_graph_',['../classcorrelation_1_1analysis_1_1StructureAnalyzer.html#ad8f5663dc50cbd1fa79edbea66923cba',1,'correlation::analysis::StructureAnalyzer']]],
+  ['neighbors_5fowned_5f_11',['neighbors_owned_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a45e7366fd0f1cbf02ce5feee0367264c',1,'correlation::analysis::DistributionFunctions']]],
+  ['neighbors_5fref_5f_12',['neighbors_ref_',['../classcorrelation_1_1analysis_1_1DistributionFunctions.html#a7a3f1edfc8f4c2d90720a3ce88257210',1,'correlation::analysis::DistributionFunctions']]],
+  ['num_5fbins_13',['num_bins',['../structcorrelation_1_1calculators_1_1VoronoiCalculator_1_1BinRange.html#ae7e8ed92a80d232d989212aa02d45ae2',1,'correlation::calculators::VoronoiCalculator::BinRange::num_bins'],['../PADCalculator_8cpp.html#a66e86ae3a5cac9751297a261117933ce',1,'num_bins:&#160;PADCalculator.cpp'],['../RDFCalculator_8cpp.html#a66e86ae3a5cac9751297a261117933ce',1,'num_bins:&#160;RDFCalculator.cpp'],['../StructureFactorCalculator_8cpp.html#a66e86ae3a5cac9751297a261117933ce',1,'num_bins:&#160;StructureFactorCalculator.cpp']]],
+  ['num_5felements_14',['num_elements',['../DistanceCalculator_8cpp.html#a345dae9fac250d61f5d7f3ff1a305318',1,'DistanceCalculator.cpp']]],
+  ['num_5fsamples_15',['num_samples',['../structcorrelation_1_1calculators_1_1HyperuniformityParams.html#a144f6bb73776bd1f912946593a65c841',1,'correlation::calculators::HyperuniformityParams']]]
 ];

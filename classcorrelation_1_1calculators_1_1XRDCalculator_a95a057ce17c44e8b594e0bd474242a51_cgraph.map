@@ -1,0 +1,7 @@
+<map id="correlation::calculators::XRDCalculator::getAtomicFormFactor" name="correlation::calculators::XRDCalculator::getAtomicFormFactor">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,237,60"/>
+<area shape="rect" id="Node000002" href="$namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="285,13,461,53"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="237,30,272,30,272,35,237,35"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="509,13,659,53"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="462,30,496,30,496,35,462,35"/>
+</map>

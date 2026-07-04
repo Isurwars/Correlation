@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -117,9 +117,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d643e304deb9c72ab87778d997c5aac" id="r_a0d643e304deb9c72ab87778d997c5aac"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html#a0d643e304deb9c72ab87778d997c5aac">getExtensions</a> () const =0</td></tr>
 <tr class="memdesc:a0d643e304deb9c72ab87778d997c5aac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a list of supported file extensions (e.g., {".h5"}, {".csv"}).  <br /></td></tr>
 <tr class="separator:a0d643e304deb9c72ab87778d997c5aac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64c6c65cb34429222206bc2cce187359" id="r_a64c6c65cb34429222206bc2cce187359"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html#a64c6c65cb34429222206bc2cce187359">write</a> (const std::string &amp;base_path, const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, bool smoothing) const =0</td></tr>
-<tr class="memdesc:a64c6c65cb34429222206bc2cce187359"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the distribution function data to file(s).  <br /></td></tr>
-<tr class="separator:a64c6c65cb34429222206bc2cce187359"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abadf28dd7a6c7b1ef1e15a2baf173654" id="r_abadf28dd7a6c7b1ef1e15a2baf173654"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1writers_1_1BaseWriter.html#abadf28dd7a6c7b1ef1e15a2baf173654">write</a> (const std::string &amp;base_path, const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, bool smoothing) const =0</td></tr>
+<tr class="memdesc:abadf28dd7a6c7b1ef1e15a2baf173654"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the distribution function data to <a class="el" href="QEReader_8cpp.html#a29e2cea7ce1c30255ab366abaca90df2">file(s)</a>.  <br /></td></tr>
+<tr class="separator:abadf28dd7a6c7b1ef1e15a2baf173654"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base class for all file writers. </p>
@@ -183,9 +183,9 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1writers_1_1BaseWriter_a0d643e304deb9c72ab87778d997c5aac_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1BaseWriter_a0d643e304deb9c72ab87778d997c5aac_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1writers_1_1BaseWriter_a0d643e304deb9c72ab87778d997c5aac_icgraph" id="aclasscorrelation_1_1writers_1_1BaseWriter_a0d643e304deb9c72ab87778d997c5aac_icgraph">
 <area shape="rect" title="Returns a list of supported file extensions (e.g., {&quot;.h5&quot;}, {&quot;.csv&quot;})." alt="" coords="347,5,549,45"/>
-<area shape="rect" href="writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="204,13,299,38"/>
+<area shape="rect" href="writer__bindings_8cpp.html#a6c7de34af4a67d96dd3d5459d0b0d5ef" title=" " alt="" coords="204,13,299,38"/>
 <area shape="poly" title=" " alt="" coords="333,28,299,28,299,23,333,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,157,28,157,23,190,23"/>
 </map>
 </div>
@@ -225,17 +225,17 @@ Here is the caller graph for this function:</div>
 <div class="center"><img src="classcorrelation_1_1writers_1_1BaseWriter_af5de228b72759c84c4c54536c1749d7e_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1BaseWriter_af5de228b72759c84c4c54536c1749d7e_icgraph" alt=""/></div>
 <map name="aclasscorrelation_1_1writers_1_1BaseWriter_af5de228b72759c84c4c54536c1749d7e_icgraph" id="aclasscorrelation_1_1writers_1_1BaseWriter_af5de228b72759c84c4c54536c1749d7e_icgraph">
 <area shape="rect" title="Returns the display name of the format (e.g., &quot;HDF5&quot;, &quot;CSV&quot;)." alt="" coords="347,5,517,45"/>
-<area shape="rect" href="writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="204,13,299,38"/>
+<area shape="rect" href="writer__bindings_8cpp.html#a6c7de34af4a67d96dd3d5459d0b0d5ef" title=" " alt="" coords="204,13,299,38"/>
 <area shape="poly" title=" " alt="" coords="333,28,299,28,299,23,333,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,157,28,157,23,190,23"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="a64c6c65cb34429222206bc2cce187359" name="a64c6c65cb34429222206bc2cce187359"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64c6c65cb34429222206bc2cce187359">&#9670;&#160;</a></span>write()</h2>
+<a id="abadf28dd7a6c7b1ef1e15a2baf173654" name="abadf28dd7a6c7b1ef1e15a2baf173654"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abadf28dd7a6c7b1ef1e15a2baf173654">&#9670;&#160;</a></span>write()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -253,7 +253,7 @@ Here is the caller graph for this function:</div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -274,26 +274,26 @@ Here is the caller graph for this function:</div>
 </table>
 </div><div class="memdoc">
 
-<p>Writes the distribution function data to file(s). </p>
+<p>Writes the distribution function data to <a class="el" href="QEReader_8cpp.html#a29e2cea7ce1c30255ab366abaca90df2">file(s)</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">base_path</td><td>The base name for the output files. </td></tr>
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object containing the data. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object containing the data. </td></tr>
     <tr><td class="paramname">smoothing</td><td>Whether to include smoothed data. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classcorrelation_1_1writers_1_1ArrowWriter.html#a069491824a51623607fd90f8ff01debd">correlation::writers::ArrowWriter</a>, <a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#ab2dbd3d98ea8fcd7389e4e15b88f1ede">correlation::writers::CSVWriter</a>, and <a class="el" href="classcorrelation_1_1writers_1_1HDF5Writer.html#a40c5c2f2ba55025a63c88e17cd628289">correlation::writers::HDF5Writer</a>.</p>
+<p>Implemented in <a class="el" href="classcorrelation_1_1writers_1_1ArrowWriter.html#a20161428811efbdb3675ce4bc73aada0">correlation::writers::ArrowWriter</a>, <a class="el" href="classcorrelation_1_1writers_1_1CSVWriter.html#a6dbd5f2e379e173516eb88c7dfb909a4">correlation::writers::CSVWriter</a>, and <a class="el" href="classcorrelation_1_1writers_1_1HDF5Writer.html#a6bd641791d58f96cf1335e143a03a27b">correlation::writers::HDF5Writer</a>.</p>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1writers_1_1BaseWriter_a64c6c65cb34429222206bc2cce187359_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1BaseWriter_a64c6c65cb34429222206bc2cce187359_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1writers_1_1BaseWriter_a64c6c65cb34429222206bc2cce187359_icgraph" id="aclasscorrelation_1_1writers_1_1BaseWriter_a64c6c65cb34429222206bc2cce187359_icgraph">
+<div class="center"><img src="classcorrelation_1_1writers_1_1BaseWriter_abadf28dd7a6c7b1ef1e15a2baf173654_icgraph.png" border="0" usemap="#aclasscorrelation_1_1writers_1_1BaseWriter_abadf28dd7a6c7b1ef1e15a2baf173654_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1writers_1_1BaseWriter_abadf28dd7a6c7b1ef1e15a2baf173654_icgraph" id="aclasscorrelation_1_1writers_1_1BaseWriter_abadf28dd7a6c7b1ef1e15a2baf173654_icgraph">
 <area shape="rect" title="Writes the distribution function data to file(s)." alt="" coords="347,5,492,45"/>
-<area shape="rect" href="writer__bindings_8cpp.html#ae19879c56321849297d8ace9e07bd9e8" title=" " alt="" coords="204,13,299,38"/>
+<area shape="rect" href="writer__bindings_8cpp.html#a6c7de34af4a67d96dd3d5459d0b0d5ef" title=" " alt="" coords="204,13,299,38"/>
 <area shape="poly" title=" " alt="" coords="333,28,299,28,299,23,333,23"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,13,156,38"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,13,156,38"/>
 <area shape="poly" title=" " alt="" coords="190,28,157,28,157,23,190,23"/>
 </map>
 </div>

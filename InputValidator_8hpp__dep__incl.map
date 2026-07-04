@@ -1,0 +1,13 @@
+<map id="include/app/InputValidator.hpp" name="include/app/InputValidator.hpp">
+<area shape="rect" id="Node000001" title="Input validation and CLI command generation logic." alt="" coords="427,5,645,31"/>
+<area shape="rect" id="Node000002" href="$AnalysisRunner_8cpp.html" title="Implementation of AnalysisRunner." alt="" coords="5,79,205,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="454,36,175,81,174,76,453,30"/>
+<area shape="rect" id="Node000003" href="$AppController_8cpp.html" title="Implementation of the application controller." alt="" coords="230,79,418,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="490,37,359,81,357,76,488,32"/>
+<area shape="rect" id="Node000004" href="$FileIOHandler_8cpp.html" title="Implementation of FileIOHandler." alt="" coords="443,79,629,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="539,44,539,79,533,79,533,44"/>
+<area shape="rect" id="Node000005" href="$InputValidator_8cpp.html" title="Implementation of InputValidator." alt="" coords="654,79,845,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="584,32,716,76,714,81,582,37"/>
+<area shape="rect" id="Node000006" href="$PresetController_8cpp.html" title="Implementation of PresetController." alt="" coords="869,79,1073,104"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="619,30,901,76,900,81,619,35"/>
+</map>

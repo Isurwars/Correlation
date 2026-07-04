@@ -1,0 +1,14 @@
+<map id="correlation::plotters::detail::fmtScientificPdf" name="correlation::plotters::detail::fmtScientificPdf">
+<area shape="rect" id="Node000001" title=" " alt="" coords="781,53,960,93"/>
+<area shape="rect" id="Node000002" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfHistogramRenderer.html#abdaace24772d9c55a905123289c5578c" title=" " alt="" coords="505,5,728,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="767,59,728,53,729,48,768,54"/>
+<area shape="rect" id="Node000005" href="$structcorrelation_1_1plotters_1_1detail_1_1PdfComparisonRenderer.html#a8fc0500b11bab27df9dcec15d88b00eb" title=" " alt="" coords="500,84,733,139"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="768,91,734,96,733,91,767,86"/>
+<area shape="rect" id="Node000003" href="$namespacecorrelation_1_1plotters.html#a3374b852423f5773da847a9a671b1f7b" title=" " alt="" coords="275,17,452,57"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="492,37,452,38,452,33,492,32"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1PlotController.html#a5a58cdaea0b4de574a393bd2d95b1a9f" title=" " alt="" coords="5,53,227,93"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="261,54,227,59,227,54,260,49"/>
+<area shape="rect" id="Node000006" href="$namespacecorrelation_1_1plotters.html#ad5aee13b96f117e8765fb45288787514" title=" " alt="" coords="278,85,449,125"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="486,111,449,110,449,104,487,105"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="264,95,226,90,227,84,265,89"/>
+</map>

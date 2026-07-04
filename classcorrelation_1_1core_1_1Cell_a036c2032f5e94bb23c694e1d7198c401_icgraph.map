@@ -1,23 +1,19 @@
 <map id="correlation::core::Cell::latticeVectors" name="correlation::core::Cell::latticeVectors">
-<area shape="rect" id="Node000001" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="943,149,1087,189"/>
-<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="658,5,877,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="987,141,946,98,921,77,893,60,867,48,869,43,896,55,924,73,949,94,991,137"/>
-<area shape="rect" id="Node000003" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#a3292e26a67ee6c43e994bc9bbe1f29f3" title="Parses a single LAMMPS dump frame from a memory region." alt="" coords="640,70,895,125"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="931,148,861,127,862,122,933,143"/>
-<area shape="rect" id="Node000006" href="$classcorrelation_1_1readers_1_1CellReader.html#abe4c335ed53452ea03adbc9d6b666fdf" title="Low&#45;level parser for the specific file format." alt="" coords="693,149,842,189"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="929,172,842,172,842,167,929,167"/>
-<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="693,213,842,253"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="930,195,895,204,843,217,841,212,894,199,929,190"/>
-<area shape="rect" id="Node000010" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html#aad3b6ab1d02ceab192411b2e91ebec67" title="Low&#45;level parser for the specific file format." alt="" coords="676,277,859,317"/>
-<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="986,201,945,236,896,268,860,282,858,277,893,263,942,232,982,197"/>
-<area shape="rect" id="Node000004" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abbff4bbeb8d27998aa7527b8b5ced2e1" title="Reads a trajectory from a file." alt="" coords="320,77,592,117"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="626,100,592,100,592,95,626,95"/>
-<area shape="rect" id="Node000005" href="$classcorrelation_1_1readers_1_1LammpsDumpReader.html#abd779f6b96184946e1bf665a32abe9c3" title="Reads an atomic structure from a file." alt="" coords="5,77,272,117"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="306,100,272,100,272,95,306,95"/>
-<area shape="rect" id="Node000007" href="$classcorrelation_1_1readers_1_1CellReader.html#a7cc72274c4f2883c4d2a6ad6bdd66d6f" title="Reads an atomic structure from a file." alt="" coords="357,149,555,189"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="679,172,555,172,555,167,679,167"/>
-<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="361,213,551,253"/>
-<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="679,236,551,236,551,231,679,231"/>
-<area shape="rect" id="Node000011" href="$classcorrelation_1_1readers_1_1OnetepDatReader.html#a991b0fbbfe639adafbd5d12e02e7eced" title="Reads an atomic structure from a file." alt="" coords="335,277,577,317"/>
-<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="662,300,577,300,577,295,662,295"/>
+<area shape="rect" id="Node000001" title="Gets the lattice vectors as a 3x3 matrix." alt="" coords="905,117,1049,157"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#a4c0bd41a712da3f10d003219f83873fb" title="Computes σ²_N(R) and χ_H(R) histograms." alt="" coords="611,5,813,60"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="930,112,856,75,813,60,814,55,858,70,933,107"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1calculators_1_1DistanceCalculator.html#ac09ae9a38748434aeec239c9987c7174" title="High&#45;performance computation of the distance tensor and neighbor graph." alt="" coords="603,85,821,125"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="891,129,821,121,822,115,892,124"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#ab6e70976c64686155d7eb632436c4d3e" title="Build the Voronoi tessellation and extract per&#45;atom cell data." alt="" coords="567,149,857,189"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="892,150,858,154,857,148,891,144"/>
+<area shape="rect" id="Node000008" href="$classcorrelation_1_1readers_1_1CifReader.html#ad9d09b2a3c705864b17f8acb66c93e25" title="Low&#45;level parser for the specific file format." alt="" coords="637,213,787,253"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="934,166,898,186,858,203,788,223,786,218,856,198,895,181,932,161"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1calculators_1_1HyperuniformityCalculator.html#aba2b7cd0e9c38092b26458b1043c0252" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="311,5,514,60"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="597,35,514,35,514,30,597,30"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a030b26e4b66bda2e2fd212a0f3e1da25" title="Computes Voronoi tessellation and extracts metric histograms." alt="" coords="307,149,519,189"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="553,171,519,171,519,166,553,166"/>
+<area shape="rect" id="Node000007" href="$classcorrelation_1_1calculators_1_1VoronoiCalculator.html#a868a91a338fa3a19ca276a0acd53a46a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,149,259,189"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="293,171,259,171,259,166,293,166"/>
+<area shape="rect" id="Node000009" href="$classcorrelation_1_1readers_1_1CifReader.html#a1b050fe9040ae85a5f10a9649700f830" title="Reads an atomic structure from a file." alt="" coords="317,213,508,253"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="624,235,508,235,508,230,624,230"/>
 </map>

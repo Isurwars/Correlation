@@ -1,0 +1,14 @@
+<map id="correlation::app::PresetController::handleDeletePreset" name="correlation::app::PresetController::handleDeletePreset">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,39,228,79"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1PresetController.html#ac8e3e894df303952b757b9ec7611f6dd" title=" " alt="" coords="276,8,480,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="228,43,262,39,263,44,228,48"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1PresetManager.html#af7bac09769d4f262d3f2fdcbbb04f9f5" title="Deletes a saved preset by name." alt="" coords="528,69,701,109"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="229,63,514,81,514,86,228,68"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PresetManager.html#a52facd6422021ed43b06213fb3a3e6c1" title="Loads all saved presets from the presets directory." alt="" coords="528,5,701,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="480,24,514,24,514,29,480,30"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1PresetManager.html#a246863a61a4ae2e50be9f4a1a288fec3" title="Deserializes a Preset object from a JSON string." alt="" coords="760,5,933,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="701,23,746,23,746,28,701,28"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1PresetManager.html#af7e5ef56ac5c6990918b2521133a05f1" title="Gets the folder path where user presets are saved (~/.correlation/presets/)." alt="" coords="749,69,944,109"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="689,43,761,63,760,68,687,48"/>
+<area shape="poly" id="edge6_Node000006_Node000005" title=" " alt="" coords="701,87,736,87,736,92,701,92"/>
+</map>

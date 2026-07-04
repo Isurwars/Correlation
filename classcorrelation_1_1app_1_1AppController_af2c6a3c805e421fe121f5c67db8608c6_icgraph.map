@@ -1,0 +1,11 @@
+<map id="correlation::app::AppController::updateActiveGroupFlags" name="correlation::app::AppController::updateActiveGroupFlags">
+<area shape="rect" id="Node000001" title="Updates active group flags in the UI based on active calculators." alt="" coords="544,49,765,89"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1AppController.html#aa6292344891200d7a7873d72eb9ea533" title="Constructs the AppController." alt="" coords="5,5,227,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="555,49,496,40,356,29,227,27,227,21,356,24,496,35,556,44"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1PresetController.html#a300d31326ee109b2a3deaa2e347a7f3d" title=" " alt="" coords="11,81,221,121"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="558,95,496,104,353,111,222,110,222,104,353,106,496,99,557,89"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1AppController.html#a5f70447d88ea63953a28f43d43580012" title="Populates the UI with options from the backend." alt="" coords="275,49,496,89"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="530,72,496,72,496,67,530,67"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="261,52,227,46,227,41,262,46"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="261,87,222,91,221,86,260,81"/>
+</map>

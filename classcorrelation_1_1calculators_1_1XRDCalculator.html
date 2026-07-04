@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -84,6 +84,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pri-static-methods">Static Private Member Functions</a> &#124;
 <a href="classcorrelation_1_1calculators_1_1XRDCalculator-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">correlation::calculators::XRDCalculator Class Reference</div></div>
 </div><!--header-->
@@ -134,27 +135,36 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a663ba55d7ec1cd0d82a4f5ef4230a5bf" id="r_a663ba55d7ec1cd0d82a4f5ef4230a5bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a663ba55d7ec1cd0d82a4f5ef4230a5bf">isTrajectoryCalculator</a> () const override</td></tr>
 <tr class="memdesc:a663ba55d7ec1cd0d82a4f5ef4230a5bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this calculator runs on the whole trajectory (e.g. VACF).  <br /></td></tr>
 <tr class="separator:a663ba55d7ec1cd0d82a4f5ef4230a5bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa52811ff0ca4cf9ab86fb3de4927f32a" id="r_aa52811ff0ca4cf9ab86fb3de4927f32a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
-<tr class="memdesc:aa52811ff0ca4cf9ab86fb3de4927f32a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
-<tr class="separator:aa52811ff0ca4cf9ab86fb3de4927f32a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28caf8084d91dbb40436dcd506cbf229" id="r_a28caf8084d91dbb40436dcd506cbf229"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229">calculateFrame</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const override</td></tr>
+<tr class="memdesc:a28caf8084d91dbb40436dcd506cbf229"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const).  <br /></td></tr>
+<tr class="separator:a28caf8084d91dbb40436dcd506cbf229"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html">correlation::calculators::BaseCalculator</a></td></tr>
 <tr class="memitem:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_af9ca6046d093eb10559a9f9aa353fb9c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#af9ca6046d093eb10559a9f9aa353fb9c">~BaseCalculator</a> ()=default</td></tr>
 <tr class="separator:af9ca6046d093eb10559a9f9aa353fb9c inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a75298b5153fcbd2ae1763c3bdbe39f82"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a75298b5153fcbd2ae1763c3bdbe39f82">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;df, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
-<tr class="memdesc:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
-<tr class="separator:a75298b5153fcbd2ae1763c3bdbe39f82 inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator" id="r_a88fc48d6aedbf64bf5c9578fca09ed3d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a88fc48d6aedbf64bf5c9578fca09ed3d">calculateTrajectory</a> (<a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;dists, const <a class="el" href="classcorrelation_1_1core_1_1Trajectory.html">correlation::core::Trajectory</a> &amp;traj, const <a class="el" href="structcorrelation_1_1analysis_1_1AnalysisSettings.html">correlation::analysis::AnalysisSettings</a> &amp;settings) const</td></tr>
+<tr class="memdesc:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate multi-frame properties or post-processing. Called once after all frames are accumulated.  <br /></td></tr>
+<tr class="separator:a88fc48d6aedbf64bf5c9578fca09ed3d inherit pub_methods_classcorrelation_1_1calculators_1_1BaseCalculator"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a39535a730c2b0ccfe613b4b2ce0696b4" id="r_a39535a730c2b0ccfe613b4b2ce0696b4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4">calculate</a> (const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;g_r_hist, const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;cell, const std::map&lt; std::string, double &gt; &amp;ashcroft_weights, double lambda, double theta_min, double theta_max, double bin_width)</td></tr>
-<tr class="memdesc:a39535a730c2b0ccfe613b4b2ce0696b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">High-performance computation of the X-Ray Diffraction (XRD) pattern.  <br /></td></tr>
-<tr class="separator:a39535a730c2b0ccfe613b4b2ce0696b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e3d79989bb6a1cac507d6267755e077" id="r_a1e3d79989bb6a1cac507d6267755e077"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077">calculate</a> (const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;g_r_hist, const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;cell, const std::map&lt; std::string, double &gt; &amp;ashcroft_weights, <a class="el" href="structcorrelation_1_1calculators_1_1Wavelength.html">Wavelength</a> lambda, <a class="el" href="structcorrelation_1_1calculators_1_1MinTheta.html">MinTheta</a> theta_min, <a class="el" href="structcorrelation_1_1calculators_1_1MaxTheta.html">MaxTheta</a> theta_max, <a class="el" href="structcorrelation_1_1calculators_1_1BinWidth.html">BinWidth</a> <a class="el" href="PADCalculator_8cpp.html#a7bbef19bdccb872cd8df7ee9a8b1fe19">bin_width</a>)</td></tr>
+<tr class="memdesc:a1e3d79989bb6a1cac507d6267755e077"><td class="mdescLeft">&#160;</td><td class="mdescRight">High-performance computation of the X-Ray Diffraction (XRD) pattern.  <br /></td></tr>
+<tr class="separator:a1e3d79989bb6a1cac507d6267755e077"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-static-methods" name="pri-static-methods"></a>
+Static Private Member Functions</h2></td></tr>
+<tr class="memitem:a95a057ce17c44e8b594e0bd474242a51" id="r_a95a057ce17c44e8b594e0bd474242a51"><td class="memItemLeft" align="right" valign="top">static double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a95a057ce17c44e8b594e0bd474242a51">getAtomicFormFactor</a> (const std::string &amp;<a class="el" href="StructureFactorCalculator_8cpp.html#a53d0a1e0ab09c43aece255c56ecd509d">symbol</a>, double q_value)</td></tr>
+<tr class="separator:a95a057ce17c44e8b594e0bd474242a51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae27d325d09bfb34c8731daf5ce987e17" id="r_ae27d325d09bfb34c8731daf5ce987e17"><td class="memItemLeft" align="right" valign="top">static std::map&lt; std::string, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#ae27d325d09bfb34c8731daf5ce987e17">calculateConcentrations</a> (const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;cell)</td></tr>
+<tr class="separator:ae27d325d09bfb34c8731daf5ce987e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30c395dbc7ac727f6ea3a45db1d01497" id="r_a30c395dbc7ac727f6ea3a45db1d01497"><td class="memItemLeft" align="right" valign="top">static std::map&lt; std::string, std::vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a30c395dbc7ac727f6ea3a45db1d01497">calculatePartialIntegrands</a> (const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;g_r_hist, const std::map&lt; std::string, double &gt; &amp;ashcroft_weights, double delta_r)</td></tr>
+<tr class="separator:a30c395dbc7ac727f6ea3a45db1d01497"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Computes the X-Ray Diffraction (XRD) pattern from g(r). </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a39535a730c2b0ccfe613b4b2ce0696b4" name="a39535a730c2b0ccfe613b4b2ce0696b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39535a730c2b0ccfe613b4b2ce0696b4">&#9670;&#160;</a></span>calculate()</h2>
+<a id="a1e3d79989bb6a1cac507d6267755e077" name="a1e3d79989bb6a1cac507d6267755e077"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e3d79989bb6a1cac507d6267755e077">&#9670;&#160;</a></span>calculate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -183,25 +193,25 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1calculators_1_1Wavelength.html">Wavelength</a>&#160;</td>
           <td class="paramname"><em>lambda</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1calculators_1_1MinTheta.html">MinTheta</a>&#160;</td>
           <td class="paramname"><em>theta_min</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1calculators_1_1MaxTheta.html">MaxTheta</a>&#160;</td>
           <td class="paramname"><em>theta_max</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype"><a class="el" href="structcorrelation_1_1calculators_1_1BinWidth.html">BinWidth</a>&#160;</td>
           <td class="paramname"><em>bin_width</em>&#160;</td>
         </tr>
         <tr>
@@ -234,46 +244,111 @@ Static Public Member Functions</h2></td></tr>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_cgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_cgraph">
-<area shape="rect" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="5,165,196,205"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="264,5,400,45"/>
-<area shape="poly" title=" " alt="" coords="118,163,171,110,205,81,243,55,254,49,256,54,245,60,209,85,174,114,122,167"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="264,69,400,109"/>
-<area shape="poly" title=" " alt="" coords="143,163,243,119,261,112,263,117,245,124,146,168"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="264,133,400,173"/>
-<area shape="poly" title=" " alt="" coords="196,169,250,162,250,167,197,175"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="244,197,420,237"/>
-<area shape="poly" title=" " alt="" coords="197,196,231,201,230,206,196,201"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5" title="Computes a sinc&#45;weighted integral over a range (AVX2 version)." alt="" coords="261,261,403,301"/>
-<area shape="poly" title=" " alt="" coords="146,203,245,247,263,254,261,259,243,252,143,208"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="264,325,400,365"/>
-<area shape="poly" title=" " alt="" coords="122,204,174,257,209,285,245,311,256,317,254,322,243,316,205,290,171,260,118,208"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="468,197,617,237"/>
-<area shape="poly" title=" " alt="" coords="420,215,454,215,454,220,420,220"/>
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_cgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_cgraph">
+<area shape="rect" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="5,179,196,219"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="601,5,737,45"/>
+<area shape="poly" title=" " alt="" coords="113,177,134,147,163,113,200,79,243,52,286,35,331,23,424,10,512,8,588,12,587,17,512,13,424,15,332,28,288,41,245,57,203,83,167,116,138,151,117,180"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#ae27d325d09bfb34c8731daf5ce987e17" title=" " alt="" coords="244,67,533,107"/>
+<area shape="poly" title=" " alt="" coords="130,176,182,145,243,116,267,108,269,113,245,121,184,150,133,181"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a30c395dbc7ac727f6ea3a45db1d01497" title=" " alt="" coords="273,131,505,186"/>
+<area shape="poly" title=" " alt="" coords="196,183,258,174,259,179,197,188"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a95a057ce17c44e8b594e0bd474242a51" title=" " alt="" coords="273,210,505,265"/>
+<area shape="poly" title=" " alt="" coords="197,209,259,217,258,223,196,214"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aa2e8aa0b93b198ae9c14d5be0c64b591" title="Computes the dot product of two double arrays (AVX2 version)." alt="" coords="317,289,460,329"/>
+<area shape="poly" title=" " alt="" coords="134,217,185,247,245,275,304,292,303,297,243,280,182,251,131,221"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="321,353,457,393"/>
+<area shape="poly" title=" " alt="" coords="118,217,169,278,205,311,245,339,276,352,308,361,306,366,274,357,243,344,202,316,166,282,114,221"/>
+<area shape="poly" title=" " alt="" coords="480,64,587,40,588,46,482,69"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="601,69,737,109"/>
+<area shape="poly" title=" " alt="" coords="534,85,588,86,588,91,533,91"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="601,133,737,173"/>
+<area shape="poly" title=" " alt="" coords="482,104,534,116,589,130,588,135,533,121,481,109"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="581,217,757,257"/>
+<area shape="poly" title=" " alt="" coords="505,235,567,235,567,240,505,240"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="805,217,955,257"/>
+<area shape="poly" title=" " alt="" coords="758,235,792,235,792,240,758,240"/>
 </map>
 </div>
 <div class="dynheader">
 Here is the caller graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_icgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_icgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a39535a730c2b0ccfe613b4b2ce0696b4_icgraph">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_icgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a1e3d79989bb6a1cac507d6267755e077_icgraph">
 <area shape="rect" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#aa52811ff0ca4cf9ab86fb3de4927f32a" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
 <area shape="poly" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
 <area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
 <area shape="poly" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
-<area shape="rect" href="analysis__bindings_8cpp.html#a8af930c9d1fbee2f3ba7bf208e294886" title=" " alt="" coords="204,85,308,110"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
 <area shape="poly" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
-<area shape="rect" href="module_8cpp.html#a0f04883c6a64793bd4fe63102a616eab" title=" " alt="" coords="5,85,156,110"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
 <area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
 </map>
 </div>
 
 </div>
 </div>
-<a id="aa52811ff0ca4cf9ab86fb3de4927f32a" name="aa52811ff0ca4cf9ab86fb3de4927f32a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa52811ff0ca4cf9ab86fb3de4927f32a">&#9670;&#160;</a></span>calculateFrame()</h2>
+<a id="ae27d325d09bfb34c8731daf5ce987e17" name="ae27d325d09bfb34c8731daf5ce987e17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae27d325d09bfb34c8731daf5ce987e17">&#9670;&#160;</a></span>calculateConcentrations()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt; std::string, double &gt; correlation::calculators::XRDCalculator::calculateConcentrations </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classcorrelation_1_1core_1_1Cell.html">correlation::core::Cell</a> &amp;&#160;</td>
+          <td class="paramname"><em>cell</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_cgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_cgraph">
+<area shape="rect" title=" " alt="" coords="5,69,295,109"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="343,5,479,45"/>
+<area shape="poly" title=" " alt="" coords="232,67,329,43,330,48,233,72"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="343,69,479,109"/>
+<area shape="poly" title=" " alt="" coords="295,87,329,87,329,92,295,92"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="343,133,479,173"/>
+<area shape="poly" title=" " alt="" coords="233,107,330,131,329,136,232,112"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_icgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_ae27d325d09bfb34c8731daf5ce987e17_icgraph">
+<area shape="rect" title=" " alt="" coords="875,41,1164,81"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
+<area shape="poly" title=" " alt="" coords="861,64,827,64,827,59,861,59"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a28caf8084d91dbb40436dcd506cbf229" name="a28caf8084d91dbb40436dcd506cbf229"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28caf8084d91dbb40436dcd506cbf229">&#9670;&#160;</a></span>calculateFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -285,7 +360,7 @@ Here is the caller graph for this function:</div>
           <td class="memname">void correlation::calculators::XRDCalculator::calculateFrame </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html">correlation::analysis::DistributionFunctions</a> &amp;&#160;</td>
-          <td class="paramname"><em>df</em>, </td>
+          <td class="paramname"><em>dists</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -309,45 +384,178 @@ Here is the caller graph for this function:</div>
 <p>Calculate per-frame properties. Called concurrently on different DistributionFunctions objects. Must be thread-safe (const). </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">df</td><td>The DistributionFunctions object to store the results. </td></tr>
+    <tr><td class="paramname">dists</td><td>The DistributionFunctions object to store the results. </td></tr>
     <tr><td class="paramname">settings</td><td>The analysis settings and parameters. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#a9e825afb4f3b6cdfc183be18f7e08220">correlation::calculators::BaseCalculator</a>.</p>
+<p>Reimplemented from <a class="el" href="classcorrelation_1_1calculators_1_1BaseCalculator.html#ac4c24a0e6512e3d8a928f1a2618ef53f">correlation::calculators::BaseCalculator</a>.</p>
 <div class="dynheader">
 Here is the call graph for this function:</div>
 <div class="dyncontent">
-<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_aa52811ff0ca4cf9ab86fb3de4927f32a_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_aa52811ff0ca4cf9ab86fb3de4927f32a_cgraph" alt=""/></div>
-<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_aa52811ff0ca4cf9ab86fb3de4927f32a_cgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_aa52811ff0ca4cf9ab86fb3de4927f32a_cgraph">
-<area shape="rect" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,265,237,305"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="301,86,469,141"/>
-<area shape="poly" title=" " alt="" coords="141,263,203,209,242,179,284,151,296,144,298,149,287,156,245,183,206,213,145,267"/>
-<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a39535a730c2b0ccfe613b4b2ce0696b4" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="289,165,480,205"/>
-<area shape="poly" title=" " alt="" coords="167,263,284,215,306,207,307,212,286,220,169,268"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="285,229,484,269"/>
-<area shape="poly" title=" " alt="" coords="237,267,272,262,272,267,238,272"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="301,294,469,349"/>
-<area shape="poly" title=" " alt="" coords="238,299,287,305,287,311,237,304"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="301,373,469,427"/>
-<area shape="poly" title=" " alt="" coords="165,303,286,359,301,365,299,370,284,364,163,308"/>
-<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="301,451,469,506"/>
-<area shape="poly" title=" " alt="" coords="141,304,202,368,242,405,287,438,295,442,292,447,284,442,239,409,198,372,137,307"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="552,5,688,45"/>
-<area shape="poly" title=" " alt="" coords="463,163,482,150,499,127,506,104,512,80,530,55,539,49,542,53,534,59,517,82,511,106,504,130,486,154,465,167"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="552,69,688,109"/>
-<area shape="poly" title=" " alt="" coords="451,163,483,150,507,135,531,119,546,112,548,117,533,124,509,139,485,154,453,168"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="552,133,688,173"/>
-<area shape="poly" title=" " alt="" coords="480,170,538,162,539,167,481,175"/>
-<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="532,197,708,237"/>
-<area shape="poly" title=" " alt="" coords="481,196,519,201,518,206,480,201"/>
-<area shape="rect" href="namespacecorrelation_1_1math.html#a25697f539f403e69a8145c75acab8ad5" title="Computes a sinc&#45;weighted integral over a range (AVX2 version)." alt="" coords="549,261,691,301"/>
-<area shape="poly" title=" " alt="" coords="457,203,485,215,510,231,533,247,547,254,545,259,531,252,507,235,483,220,454,208"/>
-<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="552,325,688,365"/>
-<area shape="poly" title=" " alt="" coords="468,203,486,215,504,240,511,264,517,288,534,311,542,318,539,322,530,315,512,290,506,266,499,242,482,219,465,208"/>
-<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="756,197,905,237"/>
-<area shape="poly" title=" " alt="" coords="708,215,742,215,742,220,708,220"/>
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a28caf8084d91dbb40436dcd506cbf229_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a28caf8084d91dbb40436dcd506cbf229_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a28caf8084d91dbb40436dcd506cbf229_cgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a28caf8084d91dbb40436dcd506cbf229_cgraph">
+<area shape="rect" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="5,287,237,327"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a384e1c482383124902de3016e1e8e8ee" title="Manually add a histogram to the collection." alt="" coords="301,108,469,163"/>
+<area shape="poly" title=" " alt="" coords="141,285,203,231,242,201,284,173,296,167,298,171,287,178,245,205,206,235,145,289"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="289,187,480,227"/>
+<area shape="poly" title=" " alt="" coords="167,285,284,237,306,229,307,234,286,242,169,290"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a0469afdf0190fc0e851dee1bb8895b56" title="Access the underlying simulation cell." alt="" coords="285,251,484,291"/>
+<area shape="poly" title=" " alt="" coords="237,289,272,284,272,290,238,294"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a60eb8e42379f6bbd98f334da0a95dcb1" title="Access all calculated histograms." alt="" coords="301,316,469,371"/>
+<area shape="poly" title=" " alt="" coords="238,321,287,328,287,333,237,326"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a998c1e396109bba5440a8704a4896e7f" title="Gets the Ashcroft&#45;Langreth weights used for S(Q) partials." alt="" coords="301,395,469,449"/>
+<area shape="poly" title=" " alt="" coords="165,325,286,381,301,387,299,392,284,386,163,330"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#ac5747ed2aeffcf06aaf596b69f330c74" title="Access a specific calculated histogram by name." alt="" coords="301,473,469,528"/>
+<area shape="poly" title=" " alt="" coords="141,326,202,391,242,427,287,460,295,465,292,469,284,464,239,431,198,394,137,329"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a613536c235bab5a212c77e2112d1da23" title="Gets the total number of atoms in the cell." alt="" coords="889,14,1025,54"/>
+<area shape="poly" title=" " alt="" coords="464,185,482,172,493,159,499,145,504,116,509,88,517,74,530,61,571,38,615,21,660,11,707,5,797,5,876,14,875,19,797,10,707,10,661,16,616,26,573,43,534,66,521,77,514,90,509,117,505,147,498,162,486,176,467,189"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#ae27d325d09bfb34c8731daf5ce987e17" title=" " alt="" coords="532,75,821,115"/>
+<area shape="poly" title=" " alt="" coords="456,185,483,172,497,160,506,149,515,137,531,125,545,118,548,123,533,130,519,140,510,152,500,164,485,176,458,190"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a30c395dbc7ac727f6ea3a45db1d01497" title=" " alt="" coords="561,140,793,195"/>
+<area shape="poly" title=" " alt="" coords="480,192,546,183,547,188,481,197"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a95a057ce17c44e8b594e0bd474242a51" title=" " alt="" coords="561,219,793,273"/>
+<area shape="poly" title=" " alt="" coords="481,217,547,226,546,232,480,223"/>
+<area shape="rect" href="namespacecorrelation_1_1math.html#aa2e8aa0b93b198ae9c14d5be0c64b591" title="Computes the dot product of two double arrays (AVX2 version)." alt="" coords="605,298,748,338"/>
+<area shape="poly" title=" " alt="" coords="461,225,485,237,500,249,510,262,519,273,533,284,562,296,593,305,591,310,560,301,531,288,515,277,506,265,497,253,483,242,459,230"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a07a13fac9b0f177d2bdf264e7ee774a1" title="Gets the volume of the simulation cell." alt="" coords="609,362,745,402"/>
+<area shape="poly" title=" " alt="" coords="469,225,486,238,498,252,505,266,510,295,515,323,522,336,534,348,563,365,596,375,594,380,561,370,530,352,518,339,510,324,505,296,500,268,494,255,482,241,466,230"/>
+<area shape="poly" title=" " alt="" coords="768,73,875,49,876,54,770,78"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a5993dd64a45c873590e1c17109c6789d" title="Gets the list of atoms in the cell." alt="" coords="889,78,1025,118"/>
+<area shape="poly" title=" " alt="" coords="822,94,876,95,876,100,821,100"/>
+<area shape="rect" href="classcorrelation_1_1core_1_1Cell.html#a8999f1a795c00c09639a3239a6db1933" title="Gets the list of unique chemical elements in the cell." alt="" coords="889,142,1025,182"/>
+<area shape="poly" title=" " alt="" coords="770,113,822,125,877,139,876,144,821,130,769,118"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="869,226,1045,266"/>
+<area shape="poly" title=" " alt="" coords="793,243,855,243,855,249,793,249"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="1093,226,1243,266"/>
+<area shape="poly" title=" " alt="" coords="1046,243,1080,243,1080,249,1046,249"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a30c395dbc7ac727f6ea3a45db1d01497" name="a30c395dbc7ac727f6ea3a45db1d01497"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30c395dbc7ac727f6ea3a45db1d01497">&#9670;&#160;</a></span>calculatePartialIntegrands()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt; std::string, std::vector&lt; double &gt; &gt; correlation::calculators::XRDCalculator::calculatePartialIntegrands </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structcorrelation_1_1analysis_1_1Histogram.html">correlation::analysis::Histogram</a> &amp;&#160;</td>
+          <td class="paramname"><em>g_r_hist</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::map&lt; std::string, double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>ashcroft_weights</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta_r</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a30c395dbc7ac727f6ea3a45db1d01497_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a30c395dbc7ac727f6ea3a45db1d01497_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a30c395dbc7ac727f6ea3a45db1d01497_icgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a30c395dbc7ac727f6ea3a45db1d01497_icgraph">
+<area shape="rect" title=" " alt="" coords="875,34,1107,89"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
+<area shape="poly" title=" " alt="" coords="861,64,827,64,827,59,861,59"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
+</map>
+</div>
+
+</div>
+</div>
+<a id="a95a057ce17c44e8b594e0bd474242a51" name="a95a057ce17c44e8b594e0bd474242a51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95a057ce17c44e8b594e0bd474242a51">&#9670;&#160;</a></span>getAtomicFormFactor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double correlation::calculators::XRDCalculator::getAtomicFormFactor </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>symbol</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>q_value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_cgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_cgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_cgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_cgraph">
+<area shape="rect" title=" " alt="" coords="5,5,237,60"/>
+<area shape="rect" href="namespacecorrelation_1_1physics.html#a68d1900b6ffab59eb66b35dfef5a2ba4" title="Retrieves the atomic form factors for a given chemical element." alt="" coords="285,13,461,53"/>
+<area shape="poly" title=" " alt="" coords="237,30,272,30,272,35,237,35"/>
+<area shape="rect" href="namespacecorrelation_1_1physics_1_1detail.html#af01dc53ba2ea611483d06b9a35eeaa6d" title="Searches for an element by its symbol in the static database." alt="" coords="509,13,659,53"/>
+<area shape="poly" title=" " alt="" coords="462,30,496,30,496,35,462,35"/>
+</map>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classcorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_icgraph.png" border="0" usemap="#aclasscorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_icgraph" alt=""/></div>
+<map name="aclasscorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_icgraph" id="aclasscorrelation_1_1calculators_1_1XRDCalculator_a95a057ce17c44e8b594e0bd474242a51_icgraph">
+<area shape="rect" title=" " alt="" coords="875,34,1107,89"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a1e3d79989bb6a1cac507d6267755e077" title="High&#45;performance computation of the X&#45;Ray Diffraction (XRD) pattern." alt="" coords="636,41,827,81"/>
+<area shape="poly" title=" " alt="" coords="861,64,827,64,827,59,861,59"/>
+<area shape="rect" href="classcorrelation_1_1calculators_1_1XRDCalculator.html#a28caf8084d91dbb40436dcd506cbf229" title="Calculate per&#45;frame properties. Called concurrently on different DistributionFunctions objects...." alt="" coords="356,5,588,45"/>
+<area shape="poly" title=" " alt="" coords="622,49,588,44,589,39,623,44"/>
+<area shape="rect" href="classcorrelation_1_1analysis_1_1DistributionFunctions.html#a3921182bd9359630a3f66f288019f29e" title="Calculates the XRD pattern." alt="" coords="388,70,556,125"/>
+<area shape="poly" title=" " alt="" coords="623,79,557,88,556,83,622,74"/>
+<area shape="rect" href="analysis__bindings_8cpp.html#a495a8f8500015e798fa5b1d5c9475698" title=" " alt="" coords="204,85,308,110"/>
+<area shape="poly" title=" " alt="" coords="374,100,308,100,308,95,374,95"/>
+<area shape="rect" href="module_8cpp.html#a6892c1fed0481c400e0b87e642089ded" title=" " alt="" coords="5,85,156,110"/>
+<area shape="poly" title=" " alt="" coords="190,100,156,100,156,95,190,95"/>
 </map>
 </div>
 

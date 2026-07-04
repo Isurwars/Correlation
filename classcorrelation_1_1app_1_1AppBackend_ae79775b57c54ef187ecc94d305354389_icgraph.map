@@ -1,0 +1,9 @@
+<map id="correlation::app::AppBackend::setProgressCallback" name="correlation::app::AppBackend::setProgressCallback">
+<area shape="rect" id="Node000001" title="Sets a callback function for analysis progress updates." alt="" coords="273,69,485,109"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="282,69,198,48,199,43,284,63"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1AnalysisRunner.html#a80974f9ff0cf9cc11759b3975f7182c4" title=" " alt="" coords="15,69,215,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="260,92,216,92,216,87,260,87"/>
+<area shape="rect" id="Node000004" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,134,143,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="274,115,144,143,143,138,273,110"/>
+</map>

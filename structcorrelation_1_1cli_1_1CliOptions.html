@@ -28,7 +28,7 @@ MathJax.Hub.Config({
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Correlation<span id="projectnumber">&#160;3.4.1</span>
+   <div id="projectname">Correlation<span id="projectnumber">&#160;3.6.0</span>
    </div>
    <div id="projectbrief">An Analysis Tool for Liquids and for Amorphous Solids</div>
   </td>
@@ -137,7 +137,13 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a47e1f63bd926bdcbf4ff0968ce05b6b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe7120e4392f5ce9a365ac5e2ad5733d" id="r_afe7120e4392f5ce9a365ac5e2ad5733d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#afe7120e4392f5ce9a365ac5e2ad5733d">smoothing_sigma</a> = 0.1</td></tr>
 <tr class="separator:afe7120e4392f5ce9a365ac5e2ad5733d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdab59c54be19a99f791f8b58637c140" id="r_afdab59c54be19a99f791f8b58637c140"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#afdab59c54be19a99f791f8b58637c140">smoothing_kernel</a> = <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></td></tr>
+<tr class="memitem:a7b72cfbe2551a392b5ee3358ef11ece3" id="r_a7b72cfbe2551a392b5ee3358ef11ece3"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#a7b72cfbe2551a392b5ee3358ef11ece3">lef_cutoff</a> = 5.0</td></tr>
+<tr class="separator:a7b72cfbe2551a392b5ee3358ef11ece3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99ad4dd5f950ee34e56d3d96aa8543ec" id="r_a99ad4dd5f950ee34e56d3d96aa8543ec"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#a99ad4dd5f950ee34e56d3d96aa8543ec">lef_sigma</a> = 0.2</td></tr>
+<tr class="separator:a99ad4dd5f950ee34e56d3d96aa8543ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dd69940c09ac1dac730193bf1bc5bc6" id="r_a0dd69940c09ac1dac730193bf1bc5bc6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#a0dd69940c09ac1dac730193bf1bc5bc6">hyper_samples</a> = 10000</td></tr>
+<tr class="separator:a0dd69940c09ac1dac730193bf1bc5bc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdab59c54be19a99f791f8b58637c140" id="r_afdab59c54be19a99f791f8b58637c140"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#afdab59c54be19a99f791f8b58637c140">smoothing_kernel</a> = <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></td></tr>
 <tr class="separator:afdab59c54be19a99f791f8b58637c140"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a418228b2d67a2c697e9e74d4d00621d3" id="r_a418228b2d67a2c697e9e74d4d00621d3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcorrelation_1_1cli_1_1CliOptions.html#a418228b2d67a2c697e9e74d4d00621d3">material_type</a> = 0</td></tr>
 <tr class="separator:a418228b2d67a2c697e9e74d4d00621d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -233,6 +239,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a0dd69940c09ac1dac730193bf1bc5bc6" name="a0dd69940c09ac1dac730193bf1bc5bc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0dd69940c09ac1dac730193bf1bc5bc6">&#9670;&#160;</a></span>hyper_samples</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int correlation::cli::CliOptions::hyper_samples = 10000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa705573a7346414d241afe84c171d9b1" name="aa705573a7346414d241afe84c171d9b1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa705573a7346414d241afe84c171d9b1">&#9670;&#160;</a></span>input_file</h2>
 
@@ -241,6 +261,34 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::string correlation::cli::CliOptions::input_file</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7b72cfbe2551a392b5ee3358ef11ece3" name="a7b72cfbe2551a392b5ee3358ef11ece3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b72cfbe2551a392b5ee3358ef11ece3">&#9670;&#160;</a></span>lef_cutoff</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double correlation::cli::CliOptions::lef_cutoff = 5.0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a99ad4dd5f950ee34e56d3d96aa8543ec" name="a99ad4dd5f950ee34e56d3d96aa8543ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99ad4dd5f950ee34e56d3d96aa8543ec">&#9670;&#160;</a></span>lef_sigma</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double correlation::cli::CliOptions::lef_sigma = 0.2</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -464,7 +512,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923">correlation::math::KernelType</a> correlation::cli::CliOptions::smoothing_kernel = <a class="el" href="namespacecorrelation_1_1math.html#aff7fd51650599d29426c566b7767a923afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></td>
+          <td class="memname"><a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412">correlation::math::KernelType</a> correlation::cli::CliOptions::smoothing_kernel = <a class="el" href="namespacecorrelation_1_1math.html#a1305077c49ed697cb2cb9ae70ab87412afedf7ba6075fb5526a7ace0b9385528d">correlation::math::KernelType::Gaussian</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

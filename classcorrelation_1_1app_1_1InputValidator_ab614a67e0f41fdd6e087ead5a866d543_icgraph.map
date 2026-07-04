@@ -1,0 +1,13 @@
+<map id="correlation::app::InputValidator::validateFrames" name="correlation::app::InputValidator::validateFrames">
+<area shape="rect" id="Node000001" title=" " alt="" coords="547,105,769,145"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1InputValidator.html#a6ccd742d710e0bda9d65583fab62aa3c" title="Validates all numeric input fields and pushes error states to the UI." alt="" coords="276,105,499,145"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="533,128,499,128,499,123,533,123"/>
+<area shape="rect" id="Node000003" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="7,5,227,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="330,102,227,60,191,48,193,43,229,55,332,97"/>
+<area shape="rect" id="Node000004" href="$classcorrelation_1_1app_1_1PresetController.html#a300d31326ee109b2a3deaa2e347a7f3d" title=" " alt="" coords="11,69,222,109"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="262,111,222,106,222,101,263,106"/>
+<area shape="rect" id="Node000005" href="$classcorrelation_1_1app_1_1PresetController.html#a39a53c583afe5351088104896b846fb9" title=" " alt="" coords="5,134,228,189"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="263,145,229,149,228,144,262,139"/>
+<area shape="rect" id="Node000006" href="$classcorrelation_1_1app_1_1AnalysisRunner.html#a80974f9ff0cf9cc11759b3975f7182c4" title=" " alt="" coords="17,213,217,253"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="337,154,229,202,190,216,189,211,227,198,335,149"/>
+</map>

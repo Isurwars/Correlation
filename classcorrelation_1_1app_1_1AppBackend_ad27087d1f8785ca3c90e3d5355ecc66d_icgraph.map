@@ -1,0 +1,7 @@
+<map id="correlation::app::AppBackend::getTotalAtomCount" name="correlation::app::AppBackend::getTotalAtomCount">
+<area shape="rect" id="Node000001" title="Gets the total number of atoms in the first frame." alt="" coords="273,35,485,75"/>
+<area shape="rect" id="Node000002" href="$classcorrelation_1_1app_1_1FileIOHandler.html#af8124c059d0cb98f1bc21b2996608999" title=" " alt="" coords="5,5,225,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="260,44,225,40,226,35,260,39"/>
+<area shape="rect" id="Node000003" href="$main__cli_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="88,70,143,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="260,70,143,82,143,77,259,65"/>
+</map>
