@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <utility>
+#include <utility> // IWYU pragma: keep
 
 #if defined(CORRELATION_USE_HIP)
 #include <hip/hip_runtime.h>
@@ -26,11 +26,12 @@ using hipError_t = cudaError_t;
 #define hipMemcpyDeviceToHost cudaMemcpyDeviceToHost
 #define hipDeviceSynchronize cudaDeviceSynchronize
 
+#if defined(__CUDACC__)
 // Portable kernel launch function
 template <typename K, typename... Args>
-inline void hipLaunchKernelGGL(K kernel, dim3 grid, dim3 block, size_t shared, cudaStream_t stream, Args&&... args) {
-    kernel<<<grid, block, shared, stream>>>(std::forward<Args>(args)...);
+inline void hipLaunchKernelGGL(K kernel, dim3 grid, dim3 block, size_t shared, cudaStream_t stream, Args &&...args) {
+  kernel<<<grid, block, shared, stream>>>(std::forward<Args>(args)...);
 }
-
 #endif
 
+#endif

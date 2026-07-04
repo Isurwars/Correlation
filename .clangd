@@ -12,3 +12,8 @@ CompileFlags:
     - "-std=c++11"
     - "-std=c++14"
     - "-std=c++17"
+    - "-forward-unknown-to-host-compiler"
+    - "--forward-unknown-to-host-compiler"
+    - "--generate-code*"
+    - "-gencode*"
+    - "-Xcompiler*"
