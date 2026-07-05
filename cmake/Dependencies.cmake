@@ -479,23 +479,25 @@ set(VORO_BUILD_EXAMPLES OFF CACHE BOOL "Disable voro++ examples" FORCE)
 set(VORO_BUILD_CMD_LINE OFF CACHE BOOL "Disable voro++ command line" FORCE)
 set(VORO_ENABLE_DOXYGEN OFF CACHE BOOL "Disable voro++ doxygen" FORCE)
 
-# voro++ does not export symbols and cannot be built as a DLL under MSVC.
-# We build it statically on Windows, but let it build as a shared library on macOS/Linux.
-if(WIN32)
-  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
-endif()
+# We build voro++ statically on all platforms to avoid polluting the installation directory
+# and causing conflicting files (e.g. installing voro++.1 man page or headers).
+set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
 
 FetchContent_Declare(
   voro
   GIT_REPOSITORY https://github.com/chr1shr/voro.git
   GIT_TAG        b0dac575a47af0f90b5b100e6dc199a493c7cb83
 )
-FetchContent_MakeAvailable(voro)
 
-if(WIN32)
-  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+# Use manual population to apply EXCLUDE_FROM_ALL to prevent install rules from running
+FetchContent_GetProperties(voro)
+if(NOT voro_POPULATED)
+  FetchContent_Populate(voro)
+  add_subdirectory(${voro_SOURCE_DIR} ${voro_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
+
+set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
 
 # Ensure voro++ is built with position-independent code (PIC) since it might be linked into shared libraries/modules
 if(TARGET voro++)

@@ -14,6 +14,7 @@ sha256sums=('SKIP') # To be updated by the workflow
 prepare() {
   cmake -B build -S "Correlation-${pkgver}" \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
     -DBUILD_WITH_HDF5=ON \
     -DBUILD_WITH_ARROW=ON \
     -G Ninja
