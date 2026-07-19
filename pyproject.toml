@@ -43,8 +43,14 @@ skip = "pp* *musllinux*"
 manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
 
+# Global repair command using our custom repair_wheel.py script
+repair-wheel-command = "python python/repair_wheel.py {wheel} {dest_dir}"
+
+[tool.cibuildwheel.linux]
+before-all = "dnf install -y gcc-toolset-13-gcc-c++"
+environment = { CC="/opt/rh/gcc-toolset-13/root/usr/bin/gcc", CXX="/opt/rh/gcc-toolset-13/root/usr/bin/g++" }
+
 [tool.cibuildwheel.windows]
 # Delvewheel is required to vendor the compiled tbb.dll inside the Windows wheel
 before-build = "pip install delvewheel"
-repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
 
