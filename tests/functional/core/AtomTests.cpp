@@ -26,7 +26,7 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
   // C-H bond length is approx 1.09 Angstroms
   const Element element_h{.symbol = "H", .id = {1}};
   const double bond_len = 1.09;
-  const double factor = bond_len / std::sqrt(3.0);
+  const double factor = bond_len / std::numbers::sqrt3;
 
   Atom h_1(element_h, {factor, factor, factor}, 1);
   Atom h_2(element_h, {-factor, -factor, factor}, 2);
@@ -77,13 +77,33 @@ TEST_F(AtomFunctionalTests, VerifyDynamicAttributeModifications) {
   EXPECT_EQ(atom.element_id(), 8);
   EXPECT_EQ(atom.id(), 101);
 
-  EXPECT_DOUBLE_EQ(atom.position().x(), 1.5);
-  EXPECT_DOUBLE_EQ(atom.position().y(), 2.5);
-  EXPECT_DOUBLE_EQ(atom.position().z(), 3.5);
+  EXPECT_NEAR(atom.position().x(), 1.5, 1e-6);
+  EXPECT_NEAR(atom.position().y(), 2.5, 1e-6);
+  EXPECT_NEAR(atom.position().z(), 3.5, 1e-6);
 
-  EXPECT_DOUBLE_EQ(atom.velocity().x(), 0.1);
-  EXPECT_DOUBLE_EQ(atom.velocity().y(), -0.2);
-  EXPECT_DOUBLE_EQ(atom.velocity().z(), 0.5);
+  EXPECT_NEAR(atom.velocity().x(), 0.1, 1e-6);
+  EXPECT_NEAR(atom.velocity().y(), -0.2, 1e-6);
+  EXPECT_NEAR(atom.velocity().z(), 0.5, 1e-6);
+}
+
+TEST_F(AtomFunctionalTests, VerifyAngleCollinearAndOverlapping) {
+  const Element element_c{.symbol = "C", .id = {6}};
+  const Element element_h{.symbol = "H", .id = {1}};
+
+  Atom center(element_c, {0.0, 0.0, 0.0}, 0);
+
+  // Collinear
+  Atom atom_a(element_h, {1.0, 0.0, 0.0}, 1);
+  Atom atom_b(element_h, {-1.0, 0.0, 0.0}, 2);
+
+  EXPECT_NEAR(angle(center, atom_a, atom_b), correlation::math::pi, 1e-6);
+
+  // Overlapping outer atom with center
+  Atom overlapping(element_h, {0.0, 0.0, 0.0}, 3);
+  EXPECT_NEAR(angle(center, overlapping, atom_b), 0.0, 1e-6);
+
+  // Overlapping center atom itself
+  EXPECT_NEAR(angle(center, atom_a, center), 0.0, 1e-6);
 }
 
 } // namespace

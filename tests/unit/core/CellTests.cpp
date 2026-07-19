@@ -59,7 +59,7 @@ TEST_F(CellTests, NonOrthogonalVolumeIsCorrect) {
   const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g + 2 * cos_a * cos_b * cos_g;
   const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
 
-  EXPECT_NEAR(cell.volume(), expected_volume, 1e-9);
+  EXPECT_NEAR(cell.volume(), expected_volume, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 TEST_F(CellTests, RuleOfFiveWorksCorrectly) {
@@ -72,7 +72,7 @@ TEST_F(CellTests, RuleOfFiveWorksCorrectly) {
   Cell const cell_copy(cell);
   EXPECT_EQ(cell_copy.volume(), cell.volume());
   EXPECT_EQ(cell_copy.atomCount(), cell.atomCount());
-  EXPECT_DOUBLE_EQ(cell_copy.getEnergy(), 1.23);
+  EXPECT_NEAR(cell_copy.getEnergy(), 1.23, correlation::is_single_precision ? 1e-6 : 1e-9);
 
   // Copy Assignment
   Cell cell_assigned{};
@@ -93,10 +93,10 @@ TEST_F(CellTests, MoveSemanticsLeavesMovedFromStateEmpty) {
 TEST_F(CellTests, AccessorsWorkCorrectly) {
   Cell cell{};
   cell.setLatticeParameters({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  EXPECT_NEAR(cell.volume(), 1000.0, 1e-9);
+  EXPECT_NEAR(cell.volume(), 1000.0, correlation::is_single_precision ? 1e-5 : 1e-9);
 
   cell.setEnergy(-13.6);
-  EXPECT_DOUBLE_EQ(cell.getEnergy(), -13.6);
+  EXPECT_NEAR(cell.getEnergy(), -13.6, correlation::is_single_precision ? 1e-6 : 1e-9);
 }
 
 // --- Unitary Tests: Limit Cases (Lattice) ---
@@ -115,9 +115,9 @@ TEST_F(CellTests, WrapPositionsCorrectlyMapsAtoms) {
   cell.addAtom("H", {12.0, -3.0, 25.0});
   cell.wrapPositions();
   const auto &pos = cell.atoms().front().position();
-  EXPECT_NEAR(pos.x(), 2.0, 1e-9);
-  EXPECT_NEAR(pos.y(), 7.0, 1e-9);
-  EXPECT_NEAR(pos.z(), 5.0, 1e-9);
+  EXPECT_NEAR(pos.x(), 2.0, correlation::is_single_precision ? 1e-5 : 1e-9);
+  EXPECT_NEAR(pos.y(), 7.0, correlation::is_single_precision ? 1e-5 : 1e-9);
+  EXPECT_NEAR(pos.z(), 5.0, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 TEST_F(CellTests, WrapPositionsHandlesLargeDisplacements) {
@@ -125,30 +125,30 @@ TEST_F(CellTests, WrapPositionsHandlesLargeDisplacements) {
   cell.addAtom("H", {1002.5, -997.5, 0.0});
   cell.wrapPositions();
   const auto &pos = cell.atoms().front().position();
-  EXPECT_NEAR(pos.x(), 2.5, 1e-9);
-  EXPECT_NEAR(pos.y(), 2.5, 1e-9);
+  EXPECT_NEAR(pos.x(), 2.5, correlation::is_single_precision ? 1e-3 : 1e-9);
+  EXPECT_NEAR(pos.y(), 2.5, correlation::is_single_precision ? 1e-3 : 1e-9);
 }
 
 TEST_F(CellTests, MinimumImageCalculatesShortestVector) {
   Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   auto image = cell.minimumImage({7.0, -8.0, 2.0});
-  EXPECT_NEAR(image.x(), -3.0, 1e-9);
-  EXPECT_NEAR(image.y(), 2.0, 1e-9);
-  EXPECT_NEAR(image.z(), 2.0, 1e-9);
+  EXPECT_NEAR(image.x(), -3.0, correlation::is_single_precision ? 1e-5 : 1e-9);
+  EXPECT_NEAR(image.y(), 2.0, correlation::is_single_precision ? 1e-5 : 1e-9);
+  EXPECT_NEAR(image.z(), 2.0, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 TEST_F(CellTests, MinimumImageHandlesDistancesLargerThanBox) {
   Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
   auto image = cell.minimumImage({15.0, 0.0, 0.0});
-  EXPECT_NEAR(std::abs(image.x()), 5.0, 1e-9);
+  EXPECT_NEAR(std::abs(image.x()), 5.0, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 TEST_F(CellTests, InverseLatticeVectorsAreCorrect) {
   const Cell cell({{2.0, 4.0, 5.0, 90.0, 90.0, 90.0}});
   const auto &inv = cell.inverseLatticeVectors();
-  EXPECT_NEAR(inv[0][0], 0.5, 1e-9);
-  EXPECT_NEAR(inv[1][1], 0.25, 1e-9);
-  EXPECT_NEAR(inv[2][2], 0.2, 1e-9);
+  EXPECT_NEAR(inv[0][0], 0.5, correlation::is_single_precision ? 1e-5 : 1e-9);
+  EXPECT_NEAR(inv[1][1], 0.25, correlation::is_single_precision ? 1e-5 : 1e-9);
+  EXPECT_NEAR(inv[2][2], 0.2, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 // --- Unitary Tests: Element Management ---
@@ -247,19 +247,19 @@ TEST_F(CellTests, ExtremelySmallCell) {
   // Note: Cell::updateLattice rejects volume <= 1e-9, so 0.01^3 = 1e-6 is valid
   const std::array<double, 6> params = {0.01, 0.01, 0.01, 90.0, 90.0, 90.0};
   Cell cell(params);
-  EXPECT_NEAR(cell.volume(), 1e-6, 1e-12);
+  EXPECT_NEAR(cell.volume(), 1e-6, correlation::is_single_precision ? 1e-10 : 1e-12);
 
   cell.addAtom("H", {0.005, 0.005, 0.005});
   cell.wrapPositions();
   const auto &pos = cell.atoms().front().position();
-  EXPECT_NEAR(pos.x(), 0.005, 1e-12);
+  EXPECT_NEAR(pos.x(), 0.005, correlation::is_single_precision ? 1e-9 : 1e-12);
 }
 
 TEST_F(CellTests, ExtremelyLargeCell) {
   // Very large cell — should not overflow
   const std::array<double, 6> params = {1e6, 1e6, 1e6, 90.0, 90.0, 90.0};
   Cell cell(params);
-  EXPECT_NEAR(cell.volume(), 1e18, 1e9);
+  EXPECT_NEAR(cell.volume(), 1e18, correlation::is_single_precision ? 1.5e11 : 1e9);
 
   cell.addAtom("H", {5e5, 5e5, 5e5});
   auto image = cell.minimumImage({3e5, 0.0, 0.0});

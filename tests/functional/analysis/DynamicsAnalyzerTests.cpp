@@ -49,7 +49,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   ASSERT_EQ(frames[0].atomCount(), traj.getFrames()[0].atomCount());
 
   // Check if we have some non-zero velocities (it's liquid Bi, particles move)
-  double max_v_sq = 0.0;
+  correlation::real_t max_v_sq = 0.0;
   for (const auto &atom : frames[10].atoms()) { // Check some intermediate frame
     auto velocity = atom.velocity();
     max_v_sq = std::max(max_v_sq, correlation::math::dot(velocity, velocity));

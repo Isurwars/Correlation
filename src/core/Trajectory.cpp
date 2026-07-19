@@ -232,9 +232,9 @@ void Trajectory::calculateVelocities() {
 
     // Minimum-image displacement: delegates to Cell::minimumImage() which
     // correctly handles both orthogonal and triclinic cells.
-    auto displacement = [&](const math::Vector3<double> &target_pos,
-                            const math::Vector3<double> &source_pos) -> math::Vector3<double> {
-      const math::Vector3<double> delta_r = target_pos - source_pos;
+    auto displacement = [&](const math::Vector3<real_t> &target_pos,
+                            const math::Vector3<real_t> &source_pos) -> math::Vector3<real_t> {
+      const math::Vector3<real_t> delta_r = target_pos - source_pos;
       return use_pbc ? frames_[frame_idx].minimumImage(delta_r) : delta_r;
     };
     if (frame_idx == 0) {

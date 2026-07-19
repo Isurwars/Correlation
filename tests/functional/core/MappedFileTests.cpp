@@ -111,5 +111,11 @@ TEST_F(MappedFileFunctionalTests, VerifyEmptyFileDoesNotCrash) {
   });
 }
 
+TEST_F(MappedFileFunctionalTests, VerifyThrowsOnNonExistentFile) {
+  std::string non_existent_path = test_dir_ + "/does_not_exist.txt";
+  EXPECT_THROW({
+    MappedFile mapped_file(non_existent_path);
+  }, std::runtime_error);
+}
 } // namespace
 } // namespace correlation::testing

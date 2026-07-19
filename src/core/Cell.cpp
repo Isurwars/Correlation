@@ -17,54 +17,50 @@
 namespace correlation::core {
 
 
-Cell::Cell(const math::Vector3<double> &vec_a, const math::Vector3<double> &vec_b, const math::Vector3<double> &vec_c) {
-  updateLattice(math::Matrix3<double>(vec_a, vec_b, vec_c));
+Cell::Cell(const math::Vector3<real_t> &vec_a, const math::Vector3<real_t> &vec_b, const math::Vector3<real_t> &vec_c) {
+  updateLattice(math::Matrix3<real_t>(vec_a, vec_b, vec_c));
 }
 
 Cell::Cell(const std::array<double, 6> &params) { setLatticeParameters(params); }
 
-
-
-
-
 void Cell::setLatticeParameters(std::array<double, 6> params) {
   lattice_parameters_ = params;
-  const double len_a = params[0];
-  const double len_b = params[1];
-  const double len_c = params[2];
-  const double alpha = params[3] * math::deg_to_rad;
-  const double beta = params[4] * math::deg_to_rad;
-  const double gamma = params[5] * math::deg_to_rad;
+  const real_t len_a = static_cast<real_t>(params[0]);
+  const real_t len_b = static_cast<real_t>(params[1]);
+  const real_t len_c = static_cast<real_t>(params[2]);
+  const real_t alpha = static_cast<real_t>(params[3]) * math::deg_to_rad;
+  const real_t beta = static_cast<real_t>(params[4]) * math::deg_to_rad;
+  const real_t gamma = static_cast<real_t>(params[5]) * math::deg_to_rad;
 
-  if (len_a <= 0 || len_b <= 0 || len_c <= 0) {
+  if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a <= 0 || len_b <= 0 || len_c <= 0) {
     throw std::invalid_argument("Lattice parameters a, b, c must be positive.");
   }
 
-  if (params[3] <= 0 || params[3] >= 180 || params[4] <= 0 || params[4] >= 180 || params[5] <= 0 || params[5] >= 180) {
+  if (std::isnan(params[3]) || std::isnan(params[4]) || std::isnan(params[5]) ||
+      params[3] <= 0 || params[3] >= 180 || params[4] <= 0 || params[4] >= 180 || params[5] <= 0 || params[5] >= 180) {
     throw std::invalid_argument("Lattice angles must be between 0 and 180 degrees.");
   }
 
-  const double cos_g = std::cos(gamma);
-  const double sin_g = std::sin(gamma);
+  const real_t cos_g = std::cos(gamma);
+  const real_t sin_g = std::sin(gamma);
 
-  // Standard conversion from lattice parameters (lengths and angles) to lattice
-  // vectors. We align 'len_a' with the x-axis, and 'len_b' in the xy-plane.
-  math::Vector3<double> const v_a = {len_a, 0.0, 0.0};
-  math::Vector3<double> const v_b = {len_b * cos_g, len_b * sin_g, 0.0};
-  math::Vector3<double> v_c = {
+  math::Vector3<real_t> const v_a = {len_a, 0.0, 0.0};
+  math::Vector3<real_t> const v_b = {len_b * cos_g, len_b * sin_g, 0.0};
+  math::Vector3<real_t> v_c = {
       len_c * std::cos(beta), len_c * (std::cos(alpha) - std::cos(beta) * cos_g) / sin_g,
-      0.0 // z-component is calculated from volume
+      0.0
   };
-  // Re-calculate z-component of v_c from volume to ensure orthogonality
-  const double volume =
+  const real_t volume =
       len_a * len_b * len_c *
       std::sqrt(1.0 - std::pow(std::cos(alpha), 2) - std::pow(std::cos(beta), 2) - std::pow(std::cos(gamma), 2) +
                 2.0 * std::cos(alpha) * std::cos(beta) * std::cos(gamma));
   v_c.z() = volume / (len_a * len_b * sin_g);
-  updateLattice(math::Matrix3<double>(v_a, v_b, v_c));
+  updateLattice(math::Matrix3<real_t>(v_a, v_b, v_c));
 }
 
-void Cell::updateLattice(const math::Matrix3<double> &new_lattice) {
+
+
+void Cell::updateLattice(const math::Matrix3<real_t> &new_lattice) {
   lattice_vectors_ = new_lattice;
   volume_ = math::determinant(lattice_vectors_);
   if (std::isnan(volume_) || volume_ <= 1e-9) {
@@ -83,16 +79,23 @@ void Cell::updateLatticeParametersFromVectors() {
   const double len_b = math::norm(b_vec);
   const double len_c = math::norm(c_vec);
 
-  if (len_a < 1e-9 || len_b < 1e-9 || len_c < 1e-9) {
-    // Handle case of zero-length vectors, though updateLattice would likely
-    // throw first.
+  if (std::isnan(len_a) || std::isnan(len_b) || std::isnan(len_c) || len_a < 1e-9 || len_b < 1e-9 || len_c < 1e-9) {
     lattice_parameters_ = {0, 0, 0, 0, 0, 0};
     return;
   }
 
-  const double alpha_rad = std::acos(std::clamp(math::dot(b_vec, c_vec) / (len_b * len_c), -1.0, 1.0));
-  const double beta_rad = std::acos(std::clamp(math::dot(a_vec, c_vec) / (len_a * len_c), -1.0, 1.0));
-  const double gamma_rad = std::acos(std::clamp(math::dot(a_vec, b_vec) / (len_a * len_b), -1.0, 1.0));
+  const double cos_alpha = math::dot(b_vec, c_vec) / (len_b * len_c);
+  const double cos_beta = math::dot(a_vec, c_vec) / (len_a * len_c);
+  const double cos_gamma = math::dot(a_vec, b_vec) / (len_a * len_b);
+
+  if (std::isnan(cos_alpha) || std::isnan(cos_beta) || std::isnan(cos_gamma)) {
+    lattice_parameters_ = {0, 0, 0, 0, 0, 0};
+    return;
+  }
+
+  const double alpha_rad = std::acos(std::clamp(cos_alpha, -1.0, 1.0));
+  const double beta_rad = std::acos(std::clamp(cos_beta, -1.0, 1.0));
+  const double gamma_rad = std::acos(std::clamp(cos_gamma, -1.0, 1.0));
 
   lattice_parameters_ = {
       len_a, len_b, len_c, alpha_rad * math::rad_to_deg, beta_rad * math::rad_to_deg, gamma_rad * math::rad_to_deg};
@@ -118,7 +121,7 @@ ElementID Cell::getOrRegisterElement(const std::string &symbol) {
   return new_id;
 }
 
-Atom &Cell::addAtom(const std::string &symbol, const math::Vector3<double> &position) {
+Atom &Cell::addAtom(const std::string &symbol, const math::Vector3<real_t> &position) {
   ElementID element_id = getOrRegisterElement(symbol);
   auto element_it = std::find_if(elements_.begin(), elements_.end(), [&](const Element &elem) { return elem.id.value == element_id.value; });
 
@@ -127,9 +130,9 @@ Atom &Cell::addAtom(const std::string &symbol, const math::Vector3<double> &posi
   return atoms_.back();
 }
 
-math::Vector3<double> Cell::minimumImage(const math::Vector3<double> &distance) const {
+math::Vector3<real_t> Cell::minimumImage(const math::Vector3<real_t> &distance) const {
   // Convert Cartesian distance to fractional coordinates
-  math::Vector3<double> frac_dist = inverse_lattice_vectors_ * distance;
+  math::Vector3<real_t> frac_dist = inverse_lattice_vectors_ * distance;
 
   // Apply minimum image convention: shift to [-0.5, 0.5)
   frac_dist.x() -= std::round(frac_dist.x());
@@ -142,7 +145,7 @@ math::Vector3<double> Cell::minimumImage(const math::Vector3<double> &distance) 
 
 void Cell::wrapPositions() {
   for (Atom &atom : atoms_) {
-    math::Vector3<double> frac_pos = inverse_lattice_vectors_ * atom.position();
+    math::Vector3<real_t> frac_pos = inverse_lattice_vectors_ * atom.position();
     frac_pos.x() -= std::floor(frac_pos.x());
     frac_pos.y() -= std::floor(frac_pos.y());
     frac_pos.z() -= std::floor(frac_pos.z());

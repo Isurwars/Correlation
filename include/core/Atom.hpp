@@ -9,6 +9,7 @@
 #pragma once
 
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 
 #include <algorithm>
 #include <cstdint>
@@ -32,7 +33,7 @@ struct ElementID {
    * @param other The other ID to compare against.
    * @return True if values are equal.
    */
-  constexpr bool operator==(const ElementID other) const { return value == other.value; };
+  constexpr bool operator==(const ElementID&) const = default;
 };
 
 /**
@@ -67,7 +68,7 @@ public:
    * @param pos The position vector of the atom.
    * @param atom_id The unique ID of the atom.
    */
-  explicit Atom(Element element, const math::Vector3<double> &pos, AtomID atom_id) noexcept
+  explicit Atom(Element element, const math::Vector3<real_t> &pos, AtomID atom_id) noexcept
       : element_(std::move(element)), position_(pos), id_(atom_id) {}
 
   ///@}
@@ -91,25 +92,25 @@ public:
    * @brief Gets the position of the atom.
    * @return A const reference to the position vector.
    */
-  [[nodiscard]] const math::Vector3<double> &position() const noexcept { return position_; }
+  [[nodiscard]] const math::Vector3<real_t> &position() const noexcept { return position_; }
 
   /**
    * @brief Sets the position of the atom.
    * @param pos The new position vector.
    */
-  void setPosition(const math::Vector3<double> &pos) { position_ = pos; }
+  void setPosition(const math::Vector3<real_t> &pos) { position_ = pos; }
 
   /**
    * @brief Gets the velocity of the atom.
    * @return A const reference to the velocity vector.
    */
-  [[nodiscard]] const math::Vector3<double> &velocity() const noexcept { return velocity_; }
+  [[nodiscard]] const math::Vector3<real_t> &velocity() const noexcept { return velocity_; }
 
   /**
    * @brief Sets the velocity of the atom.
    * @param vel The new velocity vector.
    */
-  void setVelocity(const math::Vector3<double> &vel) { velocity_ = vel; }
+  void setVelocity(const math::Vector3<real_t> &vel) { velocity_ = vel; }
 
   /**
    * @brief Gets the element type of the atom.
@@ -133,8 +134,8 @@ public:
 
 private:
   AtomID id_{0};                   ///< Unique identification number.
-  math::Vector3<double> position_; ///< Cartesian coordinates in Angstroms.
-  math::Vector3<double> velocity_; ///< Velocity in Angstroms/fs.
+  math::Vector3<real_t> position_; ///< Cartesian coordinates in Angstroms.
+  math::Vector3<real_t> velocity_; ///< Velocity in Angstroms/fs.
   Element element_;                ///< Chemical element properties.
 };
 
@@ -144,7 +145,7 @@ private:
  * @param atom_b The second atom.
  * @return The straight-line distance between atoms (not accounting for PBC).
  */
-[[nodiscard]] inline double distance(const Atom &atom_a, const Atom &atom_b) noexcept {
+[[nodiscard]] inline real_t distance(const Atom &atom_a, const Atom &atom_b) noexcept {
   return math::norm(atom_a.position() - atom_b.position());
 }
 
@@ -155,21 +156,22 @@ private:
  * @param atom_b The other outer atom.
  * @return The angle in radians, or 0.0 if vectors are collinear or zero.
  */
-[[nodiscard]] inline double angle(const Atom &center, const Atom &atom_a, const Atom &atom_b) noexcept {
-  const math::Vector3<double> vec_A = atom_a.position() - center.position();
-  const math::Vector3<double> vec_B = atom_b.position() - center.position();
+[[nodiscard]] inline real_t angle(const Atom &center, const Atom &atom_a, const Atom &atom_b) noexcept {
+  const math::Vector3<real_t> vec_A = atom_a.position() - center.position();
+  const math::Vector3<real_t> vec_B = atom_b.position() - center.position();
 
-  const double norm_sq_A = math::dot(vec_A, vec_A);
-  const double norm_sq_B = math::dot(vec_B, vec_B);
+  const real_t norm_sq_A = math::dot(vec_A, vec_A);
+  const real_t norm_sq_B = math::dot(vec_B, vec_B);
 
-  if (norm_sq_A == 0.0 || norm_sq_B == 0.0) {
+  // Guard against near-zero norms to prevent division by zero or NaN underflows
+  if (norm_sq_A < 1e-12 || norm_sq_B < 1e-12) {
     return 0.0;
   }
 
-  double cos_theta = math::dot(vec_A, vec_B) / std::sqrt(norm_sq_A * norm_sq_B);
+  real_t cos_theta = math::dot(vec_A, vec_B) / std::sqrt(norm_sq_A * norm_sq_B);
 
   // Clamp for numerical stability
-  cos_theta = std::clamp(cos_theta, -1.0, 1.0);
+  cos_theta = std::clamp(cos_theta, static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
 
   return std::acos(cos_theta);
 }

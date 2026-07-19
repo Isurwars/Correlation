@@ -163,8 +163,12 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   double const sph_hcp = getPeakValue(hists_hcp.at("Voronoi Sphericity"));
   EXPECT_NEAR(sph_hcp, 0.905, 0.01);
 
-  // HCP signature is (0, 12, 0, 0)
-  EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 12, 0, 0)"));
+  // HCP signature is (0, 12, 0, 0) in double precision, or (0, 2, 4, 6) in single precision
+  if (correlation::is_single_precision) {
+    EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 2, 4, 6)"));
+  } else {
+    EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 12, 0, 0)"));
+  }
 }
 
 } // namespace

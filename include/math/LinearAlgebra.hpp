@@ -42,6 +42,14 @@ public:
    */
   constexpr Vector3(T x_val, T y_val, T z_val) noexcept : data_{x_val, y_val, z_val} {}
 
+  template <typename U>
+  constexpr Vector3(U x_val, U y_val, U z_val) noexcept
+      : data_{static_cast<T>(x_val), static_cast<T>(y_val), static_cast<T>(z_val)} {}
+
+  template <typename U>
+  constexpr Vector3(const Vector3<U> &other) noexcept
+      : data_{static_cast<T>(other.x()), static_cast<T>(other.y()), static_cast<T>(other.z())} {}
+
   /**
    * @brief Array-based constructor.
    * @param arr Standard array containing {x, y, z}.
@@ -268,6 +276,10 @@ public:
    */
   constexpr Matrix3(const Vector3<T> &c_zero, const Vector3<T> &c_one, const Vector3<T> &c_two) noexcept
       : data_{c_zero, c_one, c_two} {}
+
+  template <typename U>
+  constexpr Matrix3(const Matrix3<U> &other) noexcept
+      : data_{Vector3<T>(other[0]), Vector3<T>(other[1]), Vector3<T>(other[2])} {}
   /**
    * @brief Access column vector by index.
    * @param col_idx Column index (0, 1, or 2).
@@ -778,11 +790,12 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3
  * @param vector 3D vector.
  * @return Transformed vector matrix * vector.
  */
-template <typename T> [[nodiscard]] constexpr Vector3<T> operator*(const Matrix3<T> &matrix, const Vector3<T> &vector) noexcept {
-  return Vector3<T>(
-      std::fma(vector.z(), matrix[2].x(), std::fma(vector.y(), matrix[1].x(), vector.x() * matrix[0].x())),
-      std::fma(vector.z(), matrix[2].y(), std::fma(vector.y(), matrix[1].y(), vector.x() * matrix[0].y())),
-      std::fma(vector.z(), matrix[2].z(), std::fma(vector.y(), matrix[1].z(), vector.x() * matrix[0].z()))
+template <typename T, typename U> [[nodiscard]] constexpr auto operator*(const Matrix3<T> &matrix, const Vector3<U> &vector) noexcept {
+  using CommonT = std::common_type_t<T, U>;
+  return Vector3<CommonT>(
+      std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].x()), std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].x()), static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].x()))),
+      std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].y()), std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].y()), static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].y()))),
+      std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].z()), std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].z()), static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].z())))
   );
 }
 

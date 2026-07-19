@@ -263,10 +263,10 @@ std::vector<double> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
     const auto &prev_atoms = frames[traj_frame_prev].atoms();
 
     for (size_t atom_idx = 0; atom_idx < num_atoms; ++atom_idx) {
-      const math::Vector3<double> delta_r = curr_atoms[atom_idx].position() - prev_atoms[atom_idx].position();
+      const math::Vector3<real_t> delta_r = curr_atoms[atom_idx].position() - prev_atoms[atom_idx].position();
 
       // Apply minimum image convention for correct unwrapping across PBC.
-      const math::Vector3<double> min_delta_r = use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
+      const math::Vector3<real_t> min_delta_r = use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
 
       // Kahan compensated summation component-wise
       const math::Vector3<double> prev_unwrapped = unwrapped[atom_idx][frame_idx - 1];

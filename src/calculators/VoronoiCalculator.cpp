@@ -71,10 +71,13 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
   }
 
   // Map atom positions to aligned Cartesian coordinates via fractional coordinates
-  const auto &inv_lattice = cell.inverseLatticeVectors();
+  // Perform the wrapping and aligned position calculations in double precision
+  math::Matrix3<double> const lattice_d(lattice);
+  math::Matrix3<double> const inv_lattice_d = math::invert(lattice_d);
   std::vector<std::array<double, 3>> aligned_positions(num_atoms);
   for (size_t i = 0; i < num_atoms; ++i) {
-    auto frac = inv_lattice * atoms[i].position();
+    math::Vector3<double> const pos_d(atoms[i].position());
+    auto frac = inv_lattice_d * pos_d;
     // Wrap to [0, 1) fundamental domain
     frac.x() -= std::floor(frac.x());
     frac.y() -= std::floor(frac.y());
@@ -131,11 +134,21 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
 
     std::vector<int> orders;
     voro_cell.face_orders(orders);
+    std::vector<double> areas;
+    voro_cell.face_areas(areas);
+
     int n_3 = 0;
     int n_4 = 0;
     int n_5 = 0;
     int n_6 = 0;
-    for (int order : orders) {
+    int significant_faces = 0;
+
+    for (size_t i = 0; i < orders.size(); ++i) {
+      if (i < areas.size() && areas[i] < 1e-4) {
+        continue;
+      }
+      significant_faces++;
+      int const order = orders[i];
       if (order == 3) {
         ++n_3;
       } else if (order == 4) {
@@ -149,7 +162,7 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
 
     data.volumes[pid] = vol;
     data.sphericities[pid] = sphericity;
-    data.coordination_numbers[pid] = voro_cell.number_of_faces();
+    data.coordination_numbers[pid] = significant_faces;
     data.signatures[pid] = std::format("({}, {}, {}, {})", n_3, n_4, n_5, n_6);
   }
 

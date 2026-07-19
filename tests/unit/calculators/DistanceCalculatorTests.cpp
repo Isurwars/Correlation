@@ -40,7 +40,7 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   // Assert: Check distances
   // Si (index 0, type 0), O (index 1, type 1)
   ASSERT_EQ(out_distances[0][1].size(), 1);
-  EXPECT_DOUBLE_EQ(out_distances[0][1][0], 1.5);
+  EXPECT_NEAR(out_distances[0][1][0], 1.5, correlation::is_single_precision ? 1e-5 : 1e-9);
 
   // Assert: Check neighbor graph connections
   EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
@@ -49,7 +49,7 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   const auto &neighbors = out_graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
   EXPECT_EQ(neighbors[0].index, 1);
-  EXPECT_DOUBLE_EQ(neighbors[0].distance, 1.5);
+  EXPECT_NEAR(neighbors[0].distance, 1.5, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 // --- Extreme / Edge-Case Tests ---
@@ -72,7 +72,7 @@ TEST(DistanceCalculatorTests, DistanceAcrossPeriodicBoundary) {
 
   // Should find one pair at distance 1.0
   ASSERT_GE(out_distances[0][0].size(), 1);
-  EXPECT_NEAR(out_distances[0][0][0], 1.0, 1e-9);
+  EXPECT_NEAR(out_distances[0][0][0], 1.0, correlation::is_single_precision ? 1e-6 : 1e-9);
 
   // Neighbor graph should reflect the bond
   EXPECT_TRUE(out_graph.areConnected(AtomIndex{0}, AtomIndex{1}));
