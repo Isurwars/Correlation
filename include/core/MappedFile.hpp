@@ -83,17 +83,22 @@ public:
       throw std::runtime_error("MappedFile: file exceeds 4 GiB trajectory limit: " + path);
     }
 
-    mapping_ = CreateFileMappingA(file_handle_, nullptr, PAGE_READONLY, 0, 0, nullptr);
-    if (mapping_ == nullptr) {
-      CloseHandle(file_handle_);
-      throw std::runtime_error("MappedFile: CreateFileMapping failed: " + path);
-    }
+    if (size_ == 0) {
+      mapping_ = nullptr;
+      data_ = nullptr;
+    } else {
+      mapping_ = CreateFileMappingA(file_handle_, nullptr, PAGE_READONLY, 0, 0, nullptr);
+      if (mapping_ == nullptr) {
+        CloseHandle(file_handle_);
+        throw std::runtime_error("MappedFile: CreateFileMapping failed: " + path);
+      }
 
-    data_ = MapViewOfFile(mapping_, FILE_MAP_READ, 0, 0, 0);
-    if (data_ == nullptr) {
-      CloseHandle(mapping_);
-      CloseHandle(file_handle_);
-      throw std::runtime_error("MappedFile: MapViewOfFile failed: " + path);
+      data_ = MapViewOfFile(mapping_, FILE_MAP_READ, 0, 0, 0);
+      if (data_ == nullptr) {
+        CloseHandle(mapping_);
+        CloseHandle(file_handle_);
+        throw std::runtime_error("MappedFile: MapViewOfFile failed: " + path);
+      }
     }
 #else
     if (fd_ < 0) {
@@ -112,11 +117,15 @@ public:
       throw std::runtime_error("MappedFile: file exceeds 4 GiB trajectory limit: " + path);
     }
 
-    data_ = ::mmap(nullptr, size_, PROT_READ, MAP_PRIVATE, fd_, 0);
-    if (data_ == MAP_FAILED) {
+    if (size_ == 0) {
       data_ = nullptr;
-      ::close(fd_);
-      throw std::runtime_error("MappedFile: mmap failed: " + path);
+    } else {
+      data_ = ::mmap(nullptr, size_, PROT_READ, MAP_PRIVATE, fd_, 0);
+      if (data_ == MAP_FAILED) {
+        data_ = nullptr;
+        ::close(fd_);
+        throw std::runtime_error("MappedFile: mmap failed: " + path);
+      }
     }
 #endif
   }

@@ -66,6 +66,7 @@ add_executable(correlation_unit_tests
     unit/plotters/PdfPlotterTests.cpp
     unit/utils/SIMDUtilsTests.cpp
     unit/math/LinearAlgebraTests.cpp
+    unit/math/PrecisionTests.cpp
     unit/math/SpecialFunctionsTests.cpp
     unit/math/SmoothingTests.cpp
     unit/math/FFTUtilsTests.cpp

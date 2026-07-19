@@ -99,5 +99,17 @@ TEST_F(MappedFileFunctionalTests, VerifyPostCreationAppendsAreNotMapped) {
   EXPECT_EQ(current_content, content_a_);
 }
 
+TEST_F(MappedFileFunctionalTests, VerifyEmptyFileDoesNotCrash) {
+  std::string empty_file_path = test_dir_ + "/empty.txt";
+  std::ofstream out(empty_file_path);
+  out.close();
+
+  EXPECT_NO_THROW({
+    MappedFile mapped_file(empty_file_path);
+    EXPECT_EQ(mapped_file.size(), 0);
+    EXPECT_EQ(mapped_file.data(), nullptr);
+  });
+}
+
 } // namespace
 } // namespace correlation::testing
