@@ -26,11 +26,11 @@ void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
                                  const correlation::core::Cell &cell,
                                  size_t num_bins) {
   const auto &elements = cell.elements();
-  std::vector<real_t> any_any_dist(num_bins, 0.0);
+  std::vector<real_t> any_any_dist(num_bins, real_t{0});
 
   for (const auto &elem : elements) {
     const std::string element_any_key = elem.symbol + "-Any";
-    std::vector<real_t> element_any_dist(num_bins, 0.0);
+    std::vector<real_t> element_any_dist(num_bins, real_t{0});
     bool found_any = false;
 
     for (const auto &[key, dist_vector] : cn_histogram.partials) {
@@ -108,11 +108,16 @@ correlation::analysis::Histogram CNCalculator::calculate(const correlation::core
 
   cn_histogram.bins.resize(num_bins);
   // NOLINTNEXTLINE(modernize-use-ranges)
-  std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), 0.0);
+  std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), static_cast<real_t>(0));
 
   for (auto &[key, dist_vector] : partial_dists) {
     dist_vector.resize(num_bins, 0);
-    cn_histogram.partials[key].assign(dist_vector.begin(), dist_vector.end());
+    auto &target_vec = cn_histogram.partials[key];
+    target_vec.clear();
+    target_vec.reserve(num_bins);
+    for (int val : dist_vector) {
+      target_vec.push_back(static_cast<real_t>(val));
+    }
   }
 
   populateCombinationPartials(cn_histogram, cell, num_bins);

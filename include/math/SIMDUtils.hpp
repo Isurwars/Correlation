@@ -158,9 +158,34 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
   return acc;
 }
 
+inline float simd_dot(const float *CORRELATION_RESTRICT a, const float *CORRELATION_RESTRICT b,
+                      std::size_t count) noexcept {
+  __m512 vacc = _mm512_setzero_ps();
+  std::size_t j = 0;
+  for (; j + 16 <= count; j += 16) {
+    __m512 va = _mm512_loadu_ps(a + j);
+    __m512 vb = _mm512_loadu_ps(b + j);
+    vacc = _mm512_fmadd_ps(va, vb, vacc);
+  }
+  float acc = _mm512_reduce_add_ps(vacc);
+  for (; j < count; ++j) {
+    acc += a[j] * b[j];
+  }
+  return acc;
+}
+
 inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integrand,
                             const double *CORRELATION_RESTRICT rbins, double *CORRELATION_RESTRICT sinqr_scratch,
                             std::size_t count) noexcept {
+  for (std::size_t j = 0; j < count; ++j) {
+    sinqr_scratch[j] = std::sin(Q * rbins[j]);
+  }
+  return simd_dot(integrand, sinqr_scratch, count);
+}
+
+inline float sinc_integral(float Q, const float *CORRELATION_RESTRICT integrand,
+                           const float *CORRELATION_RESTRICT rbins, float *CORRELATION_RESTRICT sinqr_scratch,
+                           std::size_t count) noexcept {
   for (std::size_t j = 0; j < count; ++j) {
     sinqr_scratch[j] = std::sin(Q * rbins[j]);
   }
@@ -286,6 +311,15 @@ inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integra
   return simd_dot(integrand, sinqr_scratch, count);
 }
 
+inline float sinc_integral(float Q, const float *CORRELATION_RESTRICT integrand,
+                           const float *CORRELATION_RESTRICT rbins, float *CORRELATION_RESTRICT sinqr_scratch,
+                           std::size_t count) noexcept {
+  for (std::size_t j = 0; j < count; ++j) {
+    sinqr_scratch[j] = std::sin(Q * rbins[j]);
+  }
+  return simd_dot(integrand, sinqr_scratch, count);
+}
+
 #else // Scalar fallback
 
 inline void compute_dsq_block(real_t ax, real_t ay, real_t az, const PositionBlock &block,
@@ -317,6 +351,15 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
   return acc;
 }
 
+inline float simd_dot(const float *CORRELATION_RESTRICT a, const float *CORRELATION_RESTRICT b,
+                      std::size_t count) noexcept {
+  float acc = 0.0f;
+  for (std::size_t j = 0; j < count; ++j) {
+    acc += a[j] * b[j];
+  }
+  return acc;
+}
+
 /**
  * @brief Computes a sinc-weighted integral over a range (Scalar fallback).
  *
@@ -330,6 +373,15 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
 inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integrand,
                             const double *CORRELATION_RESTRICT rbins, double *CORRELATION_RESTRICT sinqr_scratch,
                             std::size_t count) noexcept {
+  for (std::size_t j = 0; j < count; ++j) {
+    sinqr_scratch[j] = std::sin(Q * rbins[j]);
+  }
+  return simd_dot(integrand, sinqr_scratch, count);
+}
+
+inline float sinc_integral(float Q, const float *CORRELATION_RESTRICT integrand,
+                           const float *CORRELATION_RESTRICT rbins, float *CORRELATION_RESTRICT sinqr_scratch,
+                           std::size_t count) noexcept {
   for (std::size_t j = 0; j < count; ++j) {
     sinqr_scratch[j] = std::sin(Q * rbins[j]);
   }
