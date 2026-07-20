@@ -48,7 +48,7 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   int significant_faces = 0;
 
   for (size_t i = 0; i < orders.size(); ++i) {
-    if (i < areas.size() && areas[i] < 1e-3) {
+    if (i < areas.size() && areas[i] < 0.01) {
       continue;
     }
     significant_faces++;

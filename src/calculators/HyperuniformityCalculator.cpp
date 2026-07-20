@@ -105,6 +105,8 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
   const auto &lattice = cell.latticeVectors();
 
+  std::vector<real_t> dsq_all(num_atoms);
+
   for (size_t sample_idx = 0; sample_idx < num_samples; ++sample_idx) {
     // Generate a random point in fractional coordinates, then convert to Cartesian
     const auto f_x = static_cast<real_t>(dist(rng));
@@ -116,7 +118,6 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
     // Count atoms within each window radius
     // First compute all minimum-image squared distances
-    std::vector<real_t> dsq_all(num_atoms);
     for (size_t i = 0; i < num_atoms; ++i) {
       math::Vector3<real_t> const diff = positions[i] - sample_point;
       math::Vector3<real_t> const mic = cell.minimumImage(diff);
@@ -175,7 +176,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
     const double mean_N = sum_N[k] / n_samples;
     const double mean_N2 = sum_N2[k] / n_samples;
     const double raw_var = mean_N2 - mean_N * mean_N;
-    const auto variance = static_cast<real_t>(std::max(0.0, raw_var));
+    const auto variance = (raw_var > 1e-12) ? static_cast<real_t>(raw_var) : static_cast<real_t>(0.0);
 
     sigma2_total[k] = variance;
     chi_total[k] = (mean_N > 0.0) ? static_cast<real_t>(variance / mean_N) : static_cast<real_t>(0.0);
