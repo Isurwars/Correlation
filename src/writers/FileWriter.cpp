@@ -52,10 +52,10 @@ void FileWriter::writeSummaryFile(const std::string &base_path) const {
     summary_file << "Calculated Dynamic Properties:\n";
     summary_file << "------------------------------\n";
 
-    double d_msd = df_->getDiffusionCoefficientMSD();
-    double d_vacf = df_->getDiffusionCoefficientVACF();
-    double tau = df_->getRelaxationTime();
-    double deb = df_->getDeborahNumber();
+    real_t d_msd = df_->getDiffusionCoefficientMSD();
+    real_t d_vacf = df_->getDiffusionCoefficientVACF();
+    real_t tau = df_->getRelaxationTime();
+    real_t deb = df_->getDeborahNumber();
 
     summary_file << "Self-diffusion coefficient (from MSD): ";
     if (d_msd > 0.0) {

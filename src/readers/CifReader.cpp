@@ -6,10 +6,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 #include "readers/CifReader.hpp"
+
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 #include "math/LinearAlgebra.hpp"
 #include "readers/ReaderFactory.hpp"
+#include <math.h>
 
 #include <cctype>
 #include <cmath>
@@ -44,11 +46,11 @@ namespace {
 
 // --- Helper Struct for CIF Symmetry Operations ---
 struct SymmetryOp {
-  correlation::math::Matrix3<double> rotation{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-  correlation::math::Vector3<double> translation{0, 0, 0};
+  correlation::math::Matrix3<real_t> rotation{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+  correlation::math::Vector3<real_t> translation{0, 0, 0};
 
   // Applies the operation: new_pos = rotation * old_pos + translation
-  [[nodiscard]] correlation::math::Vector3<double> apply(const correlation::math::Vector3<double> &pos) const {
+  [[nodiscard]] correlation::math::Vector3<real_t> apply(const correlation::math::Vector3<real_t> &pos) const {
     return rotation * pos + translation;
   }
 };
@@ -75,7 +77,7 @@ std::string cleanCifValue(std::string str) {
 void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &sym_op) {
   std::erase_if(comp_str, ::isspace);
 
-  double sign = 1.0;
+  real_t sign = 1.0;
   size_t current_pos = 0;
 
   while (current_pos < comp_str.length()) {
@@ -101,11 +103,11 @@ void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &sym_op) {
     // Check for translation part
     else if (isdigit(comp_str[current_pos]) != 0) {
       size_t next_pos = 0;
-      double const num = std::stod(comp_str.substr(current_pos), &next_pos);
+      real_t const num = static_cast<real_t>(std::stod(comp_str.substr(current_pos), &next_pos));
       current_pos += next_pos;
       if (current_pos < comp_str.length() && comp_str[current_pos] == '/') {
         current_pos++; // Skip '/'
-        double const den = std::stod(comp_str.substr(current_pos), &next_pos);
+        real_t const den = static_cast<real_t>(std::stod(comp_str.substr(current_pos), &next_pos));
         current_pos += next_pos;
         sym_op.translation[row] += sign * (num / den);
       } else {
@@ -122,7 +124,7 @@ void parseSymmetryComponent(std::string comp_str, int row, SymmetryOp &sym_op) {
 SymmetryOp parseSymmetryString(const std::string &op_str) {
   SymmetryOp sym_op;
   // Set rotation to zero initially
-  sym_op.rotation = correlation::math::Matrix3<double>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
+  sym_op.rotation = correlation::math::Matrix3<real_t>({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
   std::stringstream str_stream(op_str);
   std::string component;
   int row = 0;
@@ -194,7 +196,7 @@ std::vector<std::string> tokenizeCifLine(const std::string &line) {
 
 struct AsymmetricAtom {
   std::string symbol;
-  correlation::math::Vector3<double> frac_pos;
+  correlation::math::Vector3<real_t> frac_pos;
 };
 
 enum class ParseState : std::uint8_t { GLOBAL, LOOP_HEADER, LOOP_DATA };
@@ -225,10 +227,10 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
       std::string element = cleanCifValue(tokens.at(header_map.at("_atom_site_type_symbol")));
       std::erase_if(element, ::isdigit);
 
-      correlation::math::Vector3<double> const pos = {
-          std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x")))),
-          std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y")))),
-          std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z"))))};
+      correlation::math::Vector3<real_t> const pos = {
+          static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x"))))),
+          static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y"))))),
+          static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z")))))};
       asymmetric_atoms.push_back({.symbol = element, .frac_pos = pos});
     } catch (const std::out_of_range &oor) {
       throw std::runtime_error("CIF Error: Missing required atom site data "
@@ -299,31 +301,33 @@ void parseCifFile(std::ifstream &file, std::map<std::string, std::string> &cif_d
 
 void setupLatticeParameters(correlation::core::Cell &cell, const std::map<std::string, std::string> &cif_data) {
   try {
-    std::array<double, 6> const params = {
-        std::stod(cif_data.at("_cell_length_a")),   std::stod(cif_data.at("_cell_length_b")),
-        std::stod(cif_data.at("_cell_length_c")),   std::stod(cif_data.at("_cell_angle_alpha")),
-        std::stod(cif_data.at("_cell_angle_beta")), std::stod(cif_data.at("_cell_angle_gamma"))};
+    std::array<real_t, 6> const params = {static_cast<real_t>(std::stod(cif_data.at("_cell_length_a"))),
+                                          static_cast<real_t>(std::stod(cif_data.at("_cell_length_b"))),
+                                          static_cast<real_t>(std::stod(cif_data.at("_cell_length_c"))),
+                                          static_cast<real_t>(std::stod(cif_data.at("_cell_angle_alpha"))),
+                                          static_cast<real_t>(std::stod(cif_data.at("_cell_angle_beta"))),
+                                          static_cast<real_t>(std::stod(cif_data.at("_cell_angle_gamma")))};
     cell.setLatticeParameters(params);
   } catch (const std::exception &e) {
     throw std::runtime_error("CIF Error: Missing or invalid cell parameters: " + std::string(e.what()));
   }
 }
 
-bool isDuplicateAtom(const correlation::math::Vector3<double> &pos1, const correlation::math::Vector3<double> &pos2,
-                     double tolerance) {
-  correlation::math::Vector3<double> diff = pos1 - pos2;
+bool isDuplicateAtom(const correlation::math::Vector3<real_t> &pos1, const correlation::math::Vector3<real_t> &pos2,
+                     real_t tolerance) {
+  correlation::math::Vector3<real_t> diff = pos1 - pos2;
   // Account for periodic boundary wrapping
-  diff.x() = std::fmod(diff.x(), 1.0);
+  diff.x() = static_cast<real_t>(std::fmod(diff.x(), 1.0));
   if (std::abs(diff.x()) > 0.5) {
-    diff.x() -= std::copysign(1.0, diff.x());
+    diff.x() -= static_cast<real_t>(std::copysign(1.0, diff.x()));
   }
-  diff.y() = std::fmod(diff.y(), 1.0);
+  diff.y() = static_cast<real_t>(std::fmod(diff.y(), 1.0));
   if (std::abs(diff.y()) > 0.5) {
-    diff.y() -= std::copysign(1.0, diff.y());
+    diff.y() -= static_cast<real_t>(std::copysign(1.0, diff.y()));
   }
-  diff.z() = std::fmod(diff.z(), 1.0);
+  diff.z() = static_cast<real_t>(std::fmod(diff.z(), 1.0));
   if (std::abs(diff.z()) > 0.5) {
-    diff.z() -= std::copysign(1.0, diff.z());
+    diff.z() -= static_cast<real_t>(std::copysign(1.0, diff.z()));
   }
   return correlation::math::norm(diff) < tolerance;
 }
@@ -335,15 +339,15 @@ std::vector<AsymmetricAtom> generateSymmetryAtoms(const std::vector<AsymmetricAt
   }
 
   std::vector<AsymmetricAtom> final_atoms;
-  const double tolerance = 1e-4;
+  const real_t tolerance = 1e-4;
 
   for (const auto &atom : asymmetric_atoms) {
     for (const auto &sym_op : symmetry_ops) {
-      correlation::math::Vector3<double> frac_pos = sym_op.apply(atom.frac_pos);
+      correlation::math::Vector3<real_t> frac_pos = sym_op.apply(atom.frac_pos);
 
       // Normalize fractional coordinates to be within [0-epsilon, 1-epsilon)
-      auto normalizeCoord = [](double val) {
-        double res = std::fmod(val, 1.0);
+      auto normalizeCoord = [](real_t val) -> real_t {
+        auto res = static_cast<real_t>(std::fmod(val, 1.0));
         if (res < 0) {
           res += 1.0;
         }

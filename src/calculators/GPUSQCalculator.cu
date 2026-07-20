@@ -280,9 +280,9 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   s_q_hist.description = "Structure Factor S(Q) — GPU accelerated";
   s_q_hist.file_suffix = "_S_gpu";
   for (size_t q_idx = 0; q_idx < num_q_bins; ++q_idx) {
-    s_q_hist.bins[q_idx] = (static_cast<double>(q_idx) + 0.5) * q_bin_width;
+    s_q_hist.bins[q_idx] = static_cast<real_t>((static_cast<double>(q_idx) + 0.5) * q_bin_width);
   }
-  s_q_hist.partials["Total"] = std::move(total_sq);
+  s_q_hist.partials["Total"] = std::vector<real_t>(total_sq.begin(), total_sq.end());
 
   dists.addHistogram("S_q_gpu", std::move(s_q_hist));
 }

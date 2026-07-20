@@ -16,9 +16,9 @@ namespace {
 
 class LocalEntropyCalculatorTests : public ::testing::Test {
 protected:
-  static double getPeakEntropy(const Histogram &hist) {
+  static real_t getPeakEntropy(const Histogram &hist) {
     const auto &vals = hist.partials.at("Total");
-    double max_val = -1.0;
+    real_t max_val = -1.0;
     size_t max_bin = 0;
     for (size_t i = 0; i < vals.size(); ++i) {
       if (vals[i] > max_val) {
@@ -38,13 +38,13 @@ TEST_F(LocalEntropyCalculatorTests, SimpleCubic) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 3; ++k) {
         cell_sc.addAtom("Ar",
-                        {static_cast<double>(i * 4.0), static_cast<double>(j * 4.0), static_cast<double>(k * 4.0)});
+                        {static_cast<real_t>(i * 4.0), static_cast<real_t>(j * 4.0), static_cast<real_t>(k * 4.0)});
       }
     }
   }
   StructureAnalyzer const analyzer_sc(cell_sc, 6.5, {{6.5 * 6.5}}, false);
   auto hist_sc = correlation::calculators::LocalEntropyCalculator::calculate(cell_sc, &analyzer_sc, 6.0, 0.2);
-  double const entropy_sc = getPeakEntropy(hist_sc);
+  real_t const entropy_sc = getPeakEntropy(hist_sc);
   EXPECT_NEAR(entropy_sc, -6.15, 1e-4);
 }
 
@@ -56,14 +56,14 @@ TEST_F(LocalEntropyCalculatorTests, BodyCenteredCubic) {
     for (int j = 0; j < 2; ++j) {
       for (int k = 0; k < 2; ++k) {
         cell_bcc.addAtom("Ar",
-                         {static_cast<double>(i * 5.0), static_cast<double>(j * 5.0), static_cast<double>(k * 5.0)});
+                         {static_cast<real_t>(i * 5.0), static_cast<real_t>(j * 5.0), static_cast<real_t>(k * 5.0)});
         cell_bcc.addAtom("Ar", {i * 5.0 + 2.5, j * 5.0 + 2.5, k * 5.0 + 2.5});
       }
     }
   }
   StructureAnalyzer const analyzer_bcc(cell_bcc, 6.5, {{6.5 * 6.5}}, false);
   auto hist_bcc = correlation::calculators::LocalEntropyCalculator::calculate(cell_bcc, &analyzer_bcc, 6.0, 0.2);
-  double const entropy_bcc = getPeakEntropy(hist_bcc);
+  real_t const entropy_bcc = getPeakEntropy(hist_bcc);
   EXPECT_NEAR(entropy_bcc, -5.95, 1e-4);
 }
 
@@ -83,7 +83,7 @@ TEST_F(LocalEntropyCalculatorTests, FaceCenteredCubic) {
   }
   StructureAnalyzer const analyzer_fcc(cell_fcc, 6.5, {{6.5 * 6.5}}, false);
   auto hist_fcc = correlation::calculators::LocalEntropyCalculator::calculate(cell_fcc, &analyzer_fcc, 6.0, 0.2);
-  double const entropy_fcc = getPeakEntropy(hist_fcc);
+  real_t const entropy_fcc = getPeakEntropy(hist_fcc);
   EXPECT_NEAR(entropy_fcc, -8.95, 1e-4);
 }
 
@@ -95,12 +95,12 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
   std::mt19937 gen(42); // deterministic seed for reproducibility
   std::uniform_real_distribution<double> dis(0.0, 12.0);
   for (int i = 0; i < 30; ++i) {
-    cell_rand.addAtom("Ar", {dis(gen), dis(gen), dis(gen)});
+    cell_rand.addAtom("Ar", {static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen))});
   }
   StructureAnalyzer const analyzer_rand(cell_rand, 6.5, {{6.5 * 6.5}}, false);
   auto hist_rand = correlation::calculators::LocalEntropyCalculator::calculate(cell_rand, &analyzer_rand, 6.0, 0.2);
-  double const entropy_rand = getPeakEntropy(hist_rand);
-  EXPECT_NEAR(entropy_rand, -2.05, 1e-4);
+  real_t const entropy_rand = getPeakEntropy(hist_rand);
+  EXPECT_NEAR(entropy_rand, -2.05, correlation::is_single_precision ? 0.5 : 1e-4);
 }
 
 } // namespace

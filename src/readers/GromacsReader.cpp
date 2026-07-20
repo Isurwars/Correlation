@@ -196,11 +196,11 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
       symbol = symbol.substr(0, 1);
     }
 
-    double const pos_x = std::stod(line.substr(20, 8)) * 10.0; // nm to A
-    double const pos_y = std::stod(line.substr(28, 8)) * 10.0;
-    double const pos_z = std::stod(line.substr(36, 8)) * 10.0;
+    auto const pos_x = static_cast<real_t>(std::stod(line.substr(20, 8))) * 10.0; // nm to A
+    auto const pos_y = static_cast<real_t>(std::stod(line.substr(28, 8))) * 10.0;
+    auto const pos_z = static_cast<real_t>(std::stod(line.substr(36, 8))) * 10.0;
 
-    cell.addAtom(symbol, correlation::math::Vector3<double>(pos_x, pos_y, pos_z));
+    cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
   }
 
   // Last line: Box vectors (v1x v2y v3z v1y v1z v2x v2z v3x v3y)
@@ -208,12 +208,13 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
   if (offset < size) {
     line = nextLine();
     std::stringstream str_stream(line);
-    double box_x = 0.0;
-    double box_y = 0.0;
-    double box_z = 0.0;
+    real_t box_x = 0.0;
+    real_t box_y = 0.0;
+    real_t box_z = 0.0;
     if (str_stream >> box_x >> box_y >> box_z) {
-      // GROMACS uses nm; convert to Angstroms. Assume orthogonal box.
-      cell.setLatticeParameters({box_x * 10.0, box_y * 10.0, box_z * 10.0, 90.0, 90.0, 90.0});
+      cell.setLatticeParameters({static_cast<real_t>(box_x * 10.0), static_cast<real_t>(box_y * 10.0),
+                                 static_cast<real_t>(box_z * 10.0), static_cast<real_t>(90.0),
+                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
     }
   }
 

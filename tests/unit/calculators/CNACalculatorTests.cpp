@@ -53,7 +53,7 @@ TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
   cell.addAtom("Al", {2.0, 0.0, 2.0});
   cell.addAtom("Al", {0.0, 2.0, 2.0});
 
-  double const cutoff = 3.0;
+  real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
@@ -73,12 +73,12 @@ TEST(CNACalculatorTests, TotalPartialSumsToOne) {
   cell.addAtom("Cu", {2.0, 0.0, 2.0});
   cell.addAtom("Cu", {0.0, 2.0, 2.0});
 
-  double const cutoff = 3.0;
+  real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.contains("Total"));
-  double const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
+  real_t const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
   EXPECT_NEAR(sum, 1.0, 1e-12);
 }
 
@@ -88,7 +88,7 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {2.0, 2.0, 0.0});
 
-  double const cutoff = 3.0;
+  real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
@@ -107,17 +107,17 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
 /// non-empty results. This is a structural integration test verifying that
 /// the calculator runs correctly on a realistic periodic FCC system.
 TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
-  double const vec_a = 4.0;
-  double const lattice_size = 2.0 * vec_a; // 2×2×2 supercell
+  real_t const vec_a = 4.0;
+  real_t const lattice_size = 2.0 * vec_a; // 2×2×2 supercell
   correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
 
   // Generate 2×2×2 FCC supercell (4 basis atoms × 8 unit cells = 32 atoms)
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
-        double const o_x = ix * vec_a;
-        double const o_y = iy * vec_a;
-        double const o_z = iz * vec_a;
+        real_t const o_x = ix * vec_a;
+        real_t const o_y = iy * vec_a;
+        real_t const o_z = iz * vec_a;
         cell.addAtom("Al", {o_x, o_y, o_z});
         cell.addAtom("Al", {o_x + vec_a / 2, o_y + vec_a / 2, o_z});
         cell.addAtom("Al", {o_x + vec_a / 2, o_y, o_z + vec_a / 2});
@@ -127,7 +127,7 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   }
 
   // 1st NN distance = a/sqrt(2) ≈ 2.83; cutoff between 1st and 2nd NN
-  double const cutoff = 3.2;
+  real_t const cutoff = 3.2;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
@@ -138,7 +138,7 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   EXPECT_TRUE(hist.partials.count("1421")) << "FCC should produce CNA index 1421.";
 
   // The Total partial should sum to 1.0
-  double const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
+  real_t const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
   EXPECT_NEAR(sum, 1.0, 1e-12);
 }
 
@@ -147,16 +147,16 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
 /// With a cutoff that captures both shells (14 neighbors per atom), the
 /// resulting CNA indices depend on the full neighbor topology.
 TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
-  double const vec_a = 3.0;
-  double const lattice_size = 3.0 * vec_a;
+  real_t const vec_a = 3.0;
+  real_t const lattice_size = 3.0 * vec_a;
   correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
 
   for (int ix = 0; ix < 3; ++ix) {
     for (int iy = 0; iy < 3; ++iy) {
       for (int iz = 0; iz < 3; ++iz) {
-        double const o_x = ix * vec_a;
-        double const o_y = iy * vec_a;
-        double const o_z = iz * vec_a;
+        real_t const o_x = ix * vec_a;
+        real_t const o_y = iy * vec_a;
+        real_t const o_z = iz * vec_a;
         cell.addAtom("Fe", {o_x, o_y, o_z});
         cell.addAtom("Fe", {o_x + vec_a / 2, o_y + vec_a / 2, o_z + vec_a / 2});
       }
@@ -164,7 +164,7 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   }
 
   // Include both 1st NN (a*sqrt(3)/2 ≈ 2.598) and 2nd NN (a = 3.0)
-  double const cutoff = 3.1;
+  real_t const cutoff = 3.1;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
@@ -176,7 +176,7 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   }
 
   // Total should sum to 1.0
-  double const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
+  real_t const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
   EXPECT_NEAR(sum, 1.0, 1e-12);
 }
 
@@ -190,7 +190,7 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
   cell.addAtom("Ar", {10.0, 10.0, 10.0});
   cell.addAtom("Ar", {12.0, 10.0, 10.0}); // 2 Å apart
 
-  double const cutoff = 3.0;
+  real_t const cutoff = 3.0;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, true);
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
@@ -207,15 +207,15 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
 
 /// Running CNA twice on the same structure should produce identical results.
 TEST(CNACalculatorTests, DeterministicResults) {
-  double const vec_a = 4.0;
-  double const lattice_size = 2.0 * vec_a;
+  real_t const vec_a = 4.0;
+  real_t const lattice_size = 2.0 * vec_a;
   correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
-        double const o_x = ix * vec_a;
-        double const o_y = iy * vec_a;
-        double const o_z = iz * vec_a;
+        real_t const o_x = ix * vec_a;
+        real_t const o_y = iy * vec_a;
+        real_t const o_z = iz * vec_a;
         cell.addAtom("Cu", {o_x, o_y, o_z});
         cell.addAtom("Cu", {o_x + vec_a / 2, o_y + vec_a / 2, o_z});
         cell.addAtom("Cu", {o_x + vec_a / 2, o_y, o_z + vec_a / 2});
@@ -224,7 +224,7 @@ TEST(CNACalculatorTests, DeterministicResults) {
     }
   }
 
-  double const cutoff = 3.2;
+  real_t const cutoff = 3.2;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
 
   auto hist1 = CNACalculator::calculate(cell, &analyzer);
@@ -250,14 +250,14 @@ TEST(CNACalculatorTests, DeterministicResults) {
 /// other through multiple images. Verifies CNA doesn't crash on this edge case
 /// and still produces consistent histograms.
 TEST(CNACalculatorTests, TinyPeriodicCell_DoesNotCrash) {
-  double const vec_a = 4.0;
+  real_t const vec_a = 4.0;
   correlation::core::Cell cell({vec_a, vec_a, vec_a, 90.0, 90.0, 90.0});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {vec_a / 2, vec_a / 2, 0.0});
   cell.addAtom("Cu", {vec_a / 2, 0.0, vec_a / 2});
   cell.addAtom("Cu", {0.0, vec_a / 2, vec_a / 2});
 
-  double const cutoff = 3.2;
+  real_t const cutoff = 3.2;
   analysis::StructureAnalyzer const analyzer(cell, cutoff, {{cutoff * cutoff}}, false);
 
   ASSERT_NO_THROW({

@@ -25,7 +25,7 @@ namespace correlation::calculators {
  */
 struct HyperuniformityParams {
   size_t num_samples;  ///< Number of random sample points.
-  double r_bin_width;  ///< Bin width for R values (Å).
+  real_t r_bin_width;  ///< Bin width for R values (Å).
 };
 
 /**

@@ -19,7 +19,7 @@ class CellFunctionalTests : public ::testing::Test {};
 
 TEST_F(CellFunctionalTests, BuildBCCLatticeAndVerifyDensity) {
   // Iron (Fe) has a BCC structure with a lattice parameter of ~2.866 Angstroms
-  const double lattice_parameter = 2.866;
+  const real_t lattice_parameter = 2.866;
   Cell cell({{lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0}});
 
   // BCC basis: (0,0,0) and (0.5, 0.5, 0.5) in fractional coordinates
@@ -37,7 +37,7 @@ TEST_F(CellFunctionalTests, BuildBCCLatticeAndVerifyDensity) {
 
 TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   // Aluminum (Al) has an FCC structure with a lattice parameter of ~4.046 Angstroms
-  const double lattice_parameter = 4.046;
+  const real_t lattice_parameter = 4.046;
   Cell cell({{lattice_parameter, lattice_parameter, lattice_parameter, 90.0, 90.0, 90.0}});
 
   // FCC basis
@@ -49,7 +49,7 @@ TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
   EXPECT_EQ(cell.atomCount(), 4);
 
   // In FCC, the nearest neighbor distance is a/sqrt(2)
-  const double expected_nn = lattice_parameter / std::numbers::sqrt2;
+  const auto expected_nn = static_cast<real_t>(lattice_parameter / std::numbers::sqrt2);
 
   // Calculate distance between atom 0 and 1
   auto dist_vec = cell.atoms()[1].position() - cell.atoms()[0].position();
@@ -64,8 +64,8 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
 
   // O at origin, H atoms at typical distance/angle
   // OH distance ~ 0.96 A, HOH angle ~ 104.5
-  const double oh_dist = 0.9584;
-  const double hoh_angle_rad = 104.45 * (correlation::math::pi / 180.0);
+  const real_t oh_dist = 0.9584;
+  const real_t hoh_angle_rad = 104.45 * (correlation::math::pi / 180.0);
 
   cell.addAtom("O", {10.0, 10.0, 10.0});
   cell.addAtom("H", {10.0 + oh_dist, 10.0, 10.0});
@@ -82,9 +82,9 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
 
   // Verify that the internal geometry (bond length/angle) is preserved
   const auto &atoms = cell.atoms();
-  double const distance_1_2 = distance(atoms[0], atoms[1]);
-  double const distance_1_3 = distance(atoms[0], atoms[2]);
-  double const angle_1_2_3 = angle(atoms[0], atoms[1], atoms[2]);
+  real_t const distance_1_2 = distance(atoms[0], atoms[1]);
+  real_t const distance_1_3 = distance(atoms[0], atoms[2]);
+  real_t const angle_1_2_3 = angle(atoms[0], atoms[1], atoms[2]);
 
   // Use minimum image for distance if they were wrapped differently
   auto image_1 = cell.minimumImage(atoms[1].position() - atoms[0].position());
@@ -96,11 +96,11 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // Angle function doesn't use PBC, so we must be careful.
   // If we wrap them, they might be on opposite sides of the box.
   // We should calculate angle using minimum image vectors.
-  double const cos_theta =
+  real_t const cos_theta =
       correlation::math::dot(image_1, image_2) / (correlation::math::norm(image_1) * correlation::math::norm(image_2));
-  double const calc_angle = std::acos(std::clamp(cos_theta, -1.0, 1.0));
+  real_t const calc_angle = std::acos(std::clamp(cos_theta, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
 
-  EXPECT_NEAR(calc_angle, hoh_angle_rad, 1e-6);
+  EXPECT_NEAR(calc_angle, hoh_angle_rad, correlation::is_single_precision ? 1e-4 : 1e-6);
 }
 
 TEST_F(CellFunctionalTests, VerifyLatticeParameterGuards) {
@@ -114,7 +114,7 @@ TEST_F(CellFunctionalTests, VerifyLatticeParameterGuards) {
   EXPECT_THROW(Cell({{10.0, 10.0, 10.0, 90.0, 90.0, -10.0}}), std::invalid_argument);
 
   // 3. NaN values
-  const double nan_val = std::numeric_limits<double>::quiet_NaN();
+  const real_t nan_val = std::numeric_limits<real_t>::quiet_NaN();
   EXPECT_THROW(Cell({{nan_val, 10.0, 10.0, 90.0, 90.0, 90.0}}), std::invalid_argument);
   EXPECT_THROW(Cell({{10.0, 10.0, 10.0, nan_val, 90.0, 90.0}}), std::invalid_argument);
 }

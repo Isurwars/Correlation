@@ -52,7 +52,7 @@ public:
    *               - params[4]: beta (angle between a and c in degrees)
    *               - params[5]: gamma (angle between a and b in degrees)
    */
-  explicit Cell(const std::array<double, 6> &params);
+  explicit Cell(const std::array<real_t, 6> &params);
 
   /**
    * @brief Move constructor.
@@ -94,11 +94,11 @@ public:
   // Lattice Parameters
   /**
    * @brief Gets the lattice parameters (a, b, c, alpha, beta, gamma).
-   * @return Array of 6 doubles containing the parameters.
+   * @return Array of 6 real_t containing the parameters.
    */
-  [[nodiscard]] const std::array<double, 6> &lattice_parameters() const { return lattice_parameters_; }
+  [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const { return lattice_parameters_; }
 
-  void setLatticeParameters(std::array<double, 6>);
+  void setLatticeParameters(std::array<real_t, 6>);
 
   // Lattice Vectors
   /**
@@ -228,7 +228,7 @@ public:
 
   math::Matrix3<real_t> lattice_vectors_;         ///< Basis vectors of the box.
   math::Matrix3<real_t> inverse_lattice_vectors_; ///< Inverse matrix for fractional mapping.
-  std::array<double, 6> lattice_parameters_{};    ///< {a, b, c, alpha, beta, gamma}.
+  std::array<real_t, 6> lattice_parameters_{};    ///< {a, b, c, alpha, beta, gamma}.
   real_t volume_{0.0};                            ///< Cached volume in Angstroms^3.
   real_t energy_{0.0};                            ///< Potential energy of this specific coordinate set.
   std::vector<Atom> atoms_;                       ///< Collection of atoms in the cell.

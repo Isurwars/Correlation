@@ -45,8 +45,8 @@ public:
   calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors);
 
   struct SphericalAngles {
-    double theta;
-    double phi;
+    real_t theta;
+    real_t phi;
   };
 
   /**
@@ -57,7 +57,7 @@ public:
    * @param angles Structure containing the theta and phi angles.
    * @return The complex value of the spherical harmonic.
    */
-  static std::complex<double> sphericalHarmonic(int degree, int order, SphericalAngles angles);
+  static std::complex<real_t> sphericalHarmonic(int degree, int order, SphericalAngles angles);
 
   /**
    * @brief Computes the Wigner 3-j symbol using the Racah formula.
@@ -66,7 +66,7 @@ public:
    * @param m_one, m_two, m_three Magnetic projections.
    * @return The scalar value of the 3-j symbol.
    */
-  static double wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three);
+  static real_t wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three);
 };
 
 } // namespace correlation::calculators

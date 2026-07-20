@@ -19,7 +19,7 @@ using namespace correlation::core;
 namespace {
 class TrajectoryTests : public ::testing::Test {
 public:
-  static Cell createSimpleFrame(double pos_x, double pos_y, double pos_z) {
+  static Cell createSimpleFrame(real_t pos_x, real_t pos_y, real_t pos_z) {
     Cell frame({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
     frame.addAtom("H", {pos_x, pos_y, pos_z});
     return frame;

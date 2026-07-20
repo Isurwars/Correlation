@@ -23,33 +23,33 @@ namespace correlation::app {
  * @brief Default values and messages for the application.
  */
 struct AppDefaults {
-  static constexpr double R_MAX = 20.0;          ///< Default max radius for RDF (Angstrom).
-  static constexpr double R_BIN_WIDTH = 0.02;    ///< Default bin width for RDF (Angstrom).
-  static constexpr double Q_MAX = 20.0;          ///< Default max q for S(Q) (Angstrom^-1).
-  static constexpr double Q_BIN_WIDTH = 0.02;    ///< Default bin width for S(Q) (Angstrom^-1).
-  static constexpr double R_INT_MAX = 10.0;      ///< Default max radius for integration (Angstrom).
-  static constexpr double ANGLE_BIN_WIDTH = 1.0; ///< Default bin width for ADF (Degrees).
-  static constexpr double SMOOTHING_SIGMA = 0.1; ///< Default Gaussian smoothing sigma.
-  static constexpr double LEF_CUTOFF = 5.0;      ///< Default cutoff for local entropy.
-  static constexpr double LEF_SIGMA = 0.2;       ///< Default Gaussian sigma for local entropy.
+  static constexpr real_t R_MAX = 20.0;          ///< Default max radius for RDF (Angstrom).
+  static constexpr real_t R_BIN_WIDTH = 0.02;    ///< Default bin width for RDF (Angstrom).
+  static constexpr real_t Q_MAX = 20.0;          ///< Default max q for S(Q) (Angstrom^-1).
+  static constexpr real_t Q_BIN_WIDTH = 0.02;    ///< Default bin width for S(Q) (Angstrom^-1).
+  static constexpr real_t R_INT_MAX = 10.0;      ///< Default max radius for integration (Angstrom).
+  static constexpr real_t ANGLE_BIN_WIDTH = 1.0; ///< Default bin width for ADF (Degrees).
+  static constexpr real_t SMOOTHING_SIGMA = 0.1; ///< Default Gaussian smoothing sigma.
+  static constexpr real_t LEF_CUTOFF = 5.0;      ///< Default cutoff for local entropy.
+  static constexpr real_t LEF_SIGMA = 0.2;       ///< Default Gaussian sigma for local entropy.
 
   // Crystalline Defaults (1 order of magnitude smaller)
-  static constexpr double R_BIN_WIDTH_CRYSTAL = 0.002;
-  static constexpr double Q_BIN_WIDTH_CRYSTAL = 0.002;
-  static constexpr double ANGLE_BIN_WIDTH_CRYSTAL = 0.1;
-  static constexpr double SMOOTHING_SIGMA_CRYSTAL = 0.01;
+  static constexpr real_t R_BIN_WIDTH_CRYSTAL = 0.002;
+  static constexpr real_t Q_BIN_WIDTH_CRYSTAL = 0.002;
+  static constexpr real_t ANGLE_BIN_WIDTH_CRYSTAL = 0.1;
+  static constexpr real_t SMOOTHING_SIGMA_CRYSTAL = 0.01;
 
   // Liquid Defaults (broad/diffuse features)
-  static constexpr double R_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr double Q_BIN_WIDTH_LIQUID = 0.05;
-  static constexpr double ANGLE_BIN_WIDTH_LIQUID = 2.0;
-  static constexpr double SMOOTHING_SIGMA_LIQUID = 0.15;
+  static constexpr real_t R_BIN_WIDTH_LIQUID = 0.05;
+  static constexpr real_t Q_BIN_WIDTH_LIQUID = 0.05;
+  static constexpr real_t ANGLE_BIN_WIDTH_LIQUID = 2.0;
+  static constexpr real_t SMOOTHING_SIGMA_LIQUID = 0.15;
 
   /** @brief Default smoothing kernel. */
   static constexpr decltype(correlation::math::KernelType::Gaussian) SMOOTHING_KERNEL =
       correlation::math::KernelType::Gaussian;
 
-  static constexpr double TIME_STEP = 1.0; ///< Default time step (fs).
+  static constexpr real_t TIME_STEP = 1.0; ///< Default time step (fs).
 
   // --- Status Messages ---
   static constexpr const char *MSG_RUNNING_ANALYSIS = "Running Analysis...";      ///< Status: Computation in progress.
@@ -76,31 +76,31 @@ struct ProgramOptions {
   bool use_hdf5 = false;                                    ///< Enable HDF5 output format.
   bool use_csv = true;                                      ///< Enable CSV output format.
   bool use_parquet = false;                                 ///< Enable Parquet output format.
-  double r_max = AppDefaults::R_MAX;                        ///< Max distance for RDF calculation.
-  double r_bin_width = AppDefaults::R_BIN_WIDTH;            ///< Step size for RDF histogram.
-  double q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).
-  double q_bin_width = AppDefaults::Q_BIN_WIDTH;            ///< Step size for S(Q) histogram.
-  double r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
-  double angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
-  double dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
+  real_t r_max = AppDefaults::R_MAX;                        ///< Max distance for RDF calculation.
+  real_t r_bin_width = AppDefaults::R_BIN_WIDTH;            ///< Step size for RDF histogram.
+  real_t q_max = AppDefaults::Q_MAX;                        ///< Max momentum transfer for S(Q).
+  real_t q_bin_width = AppDefaults::Q_BIN_WIDTH;            ///< Step size for S(Q) histogram.
+  real_t r_int_max = AppDefaults::R_INT_MAX;                ///< Upper limit for g(r) integration.
+  real_t angle_bin_width = AppDefaults::ANGLE_BIN_WIDTH;    ///< Step size for ADF.
+  real_t dihedral_bin_width = AppDefaults::ANGLE_BIN_WIDTH; ///< Step size for dihedral analysis.
   size_t max_ring_size = 8;                                 ///< Maximum ring size for topological analysis.
 
   /** @brief Map of calculator ID to its enabled state. */
   std::map<std::string, bool> active_calculators;
 
-  double smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;                          ///< Sigma for Gaussian kernel.
-  double lef_cutoff = AppDefaults::LEF_CUTOFF;                                    ///< Cutoff radius for local entropy.
-  double lef_sigma = AppDefaults::LEF_SIGMA;                                      ///< Gaussian standard deviation for local entropy.
+  real_t smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;                          ///< Sigma for Gaussian kernel.
+  real_t lef_cutoff = AppDefaults::LEF_CUTOFF;                                    ///< Cutoff radius for local entropy.
+  real_t lef_sigma = AppDefaults::LEF_SIGMA;                                      ///< Gaussian standard deviation for local entropy.
   size_t hyper_samples = 10000;                                                   ///< Number of random samples for hyperuniformity.
   correlation::math::KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL; ///< Smoothing kernel type.
   int min_frame = 0;                                                              ///< Starting frame index.
   int max_frame = -1;                                                             ///< Ending frame index (-1 for all).
-  double time_step = AppDefaults::TIME_STEP;                                      ///< Simulation time step in fs.
+  real_t time_step = AppDefaults::TIME_STEP;                                      ///< Simulation time step in fs.
 
   int material_type = 0; ///< Material type (0: Amorphous, 1: Liquid, 2: Crystalline).
 
   /** @brief Bond cutoffs for S(Q) calculations. */
-  std::vector<std::vector<double>> bond_cutoffs_sq;
+  std::vector<std::vector<real_t>> bond_cutoffs_sq;
 };
 
 /**
@@ -221,21 +221,21 @@ public:
    * @brief Gets the time step of the trajectory.
    * @return Time step in femtoseconds.
    */
-  [[nodiscard]] double getTimeStep() const;
+  [[nodiscard]] real_t getTimeStep() const;
 
   /**
    * @brief Calculates a recommended time step in fs based on the smallest
    * atomic mass. Uses formula: sqrt(9 * Minimal_mass / 5)
    * @return Recommended time step in femtoseconds.
    */
-  [[nodiscard]] double getRecommendedTimeStep() const;
+  [[nodiscard]] real_t getRecommendedTimeStep() const;
 
   /**
    * @brief Calculates recommended bond cutoffs based on the first pair density
    * minimum.
    * @return A matrix of cutoffs where entry [i][j] is the cutoff for pair i-j.
    */
-  [[nodiscard]] std::vector<std::vector<double>> getRecommendedBondCutoffs() const;
+  [[nodiscard]] std::vector<std::vector<real_t>> getRecommendedBondCutoffs() const;
 
   /**
    * @brief Gets the bond cutoff for a specific pair of element types.
@@ -243,13 +243,13 @@ public:
    * @param type2 Index of the second element type.
    * @return The cutoff distance.
    */
-  [[nodiscard]] double getBondCutoff(size_t type1, size_t type2) const;
+  [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const;
 
   /**
    * @brief Sets the bond cutoffs to be used in analysis.
    * @param cutoffs Matrix of cutoffs.
    */
-  void setBondCutoffs(const std::vector<std::vector<double>> &cutoffs);
+  void setBondCutoffs(const std::vector<std::vector<real_t>> &cutoffs);
 
   /**
    * @brief Returns the names of all histograms available from the last
@@ -271,7 +271,7 @@ public:
    * @brief Returns the Ashcroft-Langreth weights from the last completed analysis.
    * @return A map of element pair strings to weight values.
    */
-  [[nodiscard]] std::map<std::string, double> getAshcroftWeights() const;
+  [[nodiscard]] std::map<std::string, real_t> getAshcroftWeights() const;
 
   /**
    * @brief Returns all histograms from the last analysis.

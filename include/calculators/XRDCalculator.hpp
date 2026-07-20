@@ -16,19 +16,19 @@
 namespace correlation::calculators {
 
 struct Wavelength {
-  double value;
+  real_t value;
 };
 
 struct MinTheta {
-  double value;
+  real_t value;
 };
 
 struct MaxTheta {
-  double value;
+  real_t value;
 };
 
 struct BinWidth {
-  double value;
+  real_t value;
 };
 
 /**
@@ -62,18 +62,18 @@ public:
    */
   static correlation::analysis::Histogram calculate(const correlation::analysis::Histogram &g_r_hist,
                                                     const correlation::core::Cell &cell,
-                                                    const std::map<std::string, double> &ashcroft_weights,
+                                                    const std::map<std::string, real_t> &ashcroft_weights,
                                                     Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
                                                     BinWidth bin_width);
 
 private:
-  static double getAtomicFormFactor(const std::string &symbol, double q_value);
+  static real_t getAtomicFormFactor(const std::string &symbol, real_t q_value);
 
-  static std::map<std::string, double> calculateConcentrations(const correlation::core::Cell &cell);
+  static std::map<std::string, real_t> calculateConcentrations(const correlation::core::Cell &cell);
 
-  static std::map<std::string, std::vector<double>>
+  static std::map<std::string, std::vector<real_t>>
   calculatePartialIntegrands(const correlation::analysis::Histogram &g_r_hist,
-                             const std::map<std::string, double> &ashcroft_weights, double delta_r);
+                             const std::map<std::string, real_t> &ashcroft_weights, real_t delta_r);
 };
 
 } // namespace correlation::calculators

@@ -26,11 +26,11 @@ void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
                                  const correlation::core::Cell &cell,
                                  size_t num_bins) {
   const auto &elements = cell.elements();
-  std::vector<double> any_any_dist(num_bins, 0.0);
+  std::vector<real_t> any_any_dist(num_bins, 0.0);
 
   for (const auto &elem : elements) {
     const std::string element_any_key = elem.symbol + "-Any";
-    std::vector<double> element_any_dist(num_bins, 0.0);
+    std::vector<real_t> element_any_dist(num_bins, 0.0);
     bool found_any = false;
 
     for (const auto &[key, dist_vector] : cn_histogram.partials) {

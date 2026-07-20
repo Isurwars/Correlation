@@ -20,8 +20,8 @@
 
 namespace correlation::analysis {
 
-StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double cutoff,
-                                     const std::vector<std::vector<double>> &bond_cutoffs_sq,
+StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, real_t cutoff,
+                                     const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
                                      bool ignore_periodic_self_interactions)
     // Use the member initializer list for all members for correctness and
     // efficiency.
@@ -33,23 +33,23 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double
 
   // Ensure cutoff covers the largest bond distance
   const auto &elements = cell.elements();
-  double max_bond_dist = 0.0;
+  real_t max_bond_dist = 0.0;
   max_bond_dist = tbb::parallel_reduce(
-      tbb::blocked_range<size_t>(0, elements.size()), 0.0,
-      [&](const tbb::blocked_range<size_t> &range, double init) {
+      tbb::blocked_range<size_t>(0, elements.size()), static_cast<real_t>(0.0),
+      [&](const tbb::blocked_range<size_t> &range, real_t init) {
         for (size_t i = range.begin(); i != range.end(); ++i) {
           for (size_t j = i; j < elements.size(); ++j) {
             // Find element indices in the cutoff matrix
             // Assuming bond_cutoffs_sq indices match element indices in frame
             // This assumption holds if trajectory validation works.
             if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
-              init = std::max(init, std::sqrt(bond_cutoffs_sq[i][j]));
+              init = std::max(init, static_cast<real_t>(std::sqrt(bond_cutoffs_sq[i][j])));
             }
           }
         }
         return init;
       },
-      [](double lhs, double rhs) { return std::max(lhs, rhs); });
+      [](real_t lhs, real_t rhs) { return std::max(lhs, rhs); });
   if (cutoff < max_bond_dist) {
     cutoff = max_bond_dist;
     cutoff_sq_ = cutoff * cutoff;
@@ -61,16 +61,16 @@ StructureAnalyzer::StructureAnalyzer(const correlation::core::Cell &cell, double
 
   // Initialize the tensors and bond list with the correct dimensions
   const size_t num_elements = cell.elements().size();
-  distance_tensor_.resize(num_elements, std::vector<std::vector<double>>(num_elements));
+  distance_tensor_.resize(num_elements, std::vector<std::vector<real_t>>(num_elements));
   angle_tensor_.resize(num_elements,
-                       std::vector<std::vector<std::vector<double>>>(
-                           num_elements, std::vector<std::vector<double>>(num_elements, std::vector<double>())));
+                       std::vector<std::vector<std::vector<real_t>>>(
+                           num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>())));
 
   dihedral_tensor_.resize(
       num_elements,
-      std::vector<std::vector<std::vector<std::vector<double>>>>(
-          num_elements, std::vector<std::vector<std::vector<double>>>(
-                            num_elements, std::vector<std::vector<double>>(num_elements, std::vector<double>()))));
+      std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+          num_elements, std::vector<std::vector<std::vector<real_t>>>(
+                            num_elements, std::vector<std::vector<real_t>>(num_elements, std::vector<real_t>()))));
 
   neighbor_graph_ = correlation::core::NeighborGraph(cell.atomCount());
 

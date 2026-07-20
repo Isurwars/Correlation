@@ -58,7 +58,7 @@ public:
    */
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-            const std::map<std::string, double> &ashcroft_weights, double r_max, double r_bin_width);
+            const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width);
 };
 
 } // namespace correlation::calculators

@@ -152,7 +152,7 @@ std::string parseStringValue(const std::string &json, const std::string &key) {
   return unescaped;
 }
 
-double parseDoubleValue(const std::string &json, const std::string &key, double fallback) {
+real_t parseDoubleValue(const std::string &json, const std::string &key, real_t fallback) {
   size_t pos = findRootKey(json, key);
   if (pos == std::string::npos) {
     return fallback;

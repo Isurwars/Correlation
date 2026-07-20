@@ -30,16 +30,16 @@ class TrajectoryAnalyzer;
  * @brief Configuration settings for distribution function analysis.
  */
 struct AnalysisSettings {
-  double r_max = 20.0;             ///< Maximum radius for RDF calculations (Angstroms).
-  double r_bin_width = 0.02;       ///< Bin width for radial distributions (Angstroms).
-  double q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
-  double q_bin_width = 0.02;       ///< Bin width for S(Q) (Angstroms^-1).
-  double r_int_max = 10.0;         ///< Cutoff for integration-based properties.
-  double angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
-  double dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
+  real_t r_max = 20.0;             ///< Maximum radius for RDF calculations (Angstroms).
+  real_t r_bin_width = 0.02;       ///< Bin width for radial distributions (Angstroms).
+  real_t q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  real_t q_bin_width = 0.02;       ///< Bin width for S(Q) (Angstroms^-1).
+  real_t r_int_max = 10.0;         ///< Cutoff for integration-based properties.
+  real_t angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
   size_t max_ring_size = 8;        ///< Maximum size of rings to search for.
-  double lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
-  double lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
+  real_t lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
@@ -60,7 +60,7 @@ struct AnalysisSettings {
   }
 
   bool smoothing = true;        ///< Whether to apply post-processing smoothing.
-  double smoothing_sigma = 0.1; ///< Gaussian smoothing standard deviation.
+  real_t smoothing_sigma = 0.1; ///< Gaussian smoothing standard deviation.
   correlation::math::KernelType smoothing_kernel =
       correlation::math::KernelType::Gaussian; ///< The kernel to use for smoothing.
 
@@ -72,7 +72,7 @@ struct AnalysisSettings {
  * @brief Container for a single calculated distribution function.
  */
 struct Histogram {
-  std::vector<double> bins; ///< The x-axis values (radii, angles, etc.).
+  std::vector<real_t> bins; ///< The x-axis values (radii, angles, etc.).
   std::string title;        ///< Descriptive title for the plot.
   std::string x_label;      ///< Label for the x-axis.
   std::string y_label;      ///< Label for the y-axis.
@@ -82,10 +82,10 @@ struct Histogram {
   std::string file_suffix;  ///< Default suffix for saving this histogram to disk.
 
   /// Maps a partial key (e.g., "Si-O" or "Total") to its histogram values.
-  std::map<std::string, std::vector<double>> partials;
+  std::map<std::string, std::vector<real_t>> partials;
 
   /// Maps a partial key to its smoothed histogram values.
-  std::map<std::string, std::vector<double>> smoothed_partials;
+  std::map<std::string, std::vector<real_t>> smoothed_partials;
 
   int compute_count = 1; ///< Number of frames/contributions accumulated in this histogram.
 };
@@ -116,8 +116,8 @@ public:
    * computed).
    * @param bond_cutoffs Optional bond cutoffs for neighbor calculations.
    */
-  explicit DistributionFunctions(const correlation::core::Cell &cell, double cutoff = 0.0,
-                                 const std::vector<std::vector<double>> &bond_cutoffs = {});
+  explicit DistributionFunctions(const correlation::core::Cell &cell, real_t cutoff = 0.0,
+                                 const std::vector<std::vector<real_t>> &bond_cutoffs = {});
 
   /**
    * @brief Move constructor.
@@ -176,7 +176,7 @@ public:
    * @brief Gets the Ashcroft-Langreth weights used for S(Q) partials.
    * @return A map of element pair strings to weight values.
    */
-  const std::map<std::string, double> &getAshcroftWeights() const { return ashcroft_weights_; }
+  const std::map<std::string, real_t> &getAshcroftWeights() const { return ashcroft_weights_; }
 
   /**
    * @brief Manually add a histogram to the collection.
@@ -201,49 +201,49 @@ public:
    * @brief Gets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
    * @return The diffusion coefficient in Å²/fs.
    */
-  double getDiffusionCoefficientMSD() const noexcept;
+  [[nodiscard]] real_t getDiffusionCoefficientMSD() const noexcept;
 
   /**
    * @brief Sets the self-diffusion coefficient computed from Mean Squared Displacement (MSD).
    * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
-  void setDiffusionCoefficientMSD(double diff_coeff) noexcept;
+  void setDiffusionCoefficientMSD(real_t diff_coeff) noexcept;
 
   /**
    * @brief Gets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
    * @return The diffusion coefficient in Å²/fs.
    */
-  double getDiffusionCoefficientVACF() const noexcept;
+  [[nodiscard]] real_t getDiffusionCoefficientVACF() const noexcept;
 
   /**
    * @brief Sets the self-diffusion coefficient computed from Velocity Autocorrelation Function (VACF).
    * @param diff_coeff The new diffusion coefficient value in Å²/fs.
    */
-  void setDiffusionCoefficientVACF(double diff_coeff) noexcept;
+  void setDiffusionCoefficientVACF(real_t diff_coeff) noexcept;
 
   /**
    * @brief Gets the relaxation time computed from normalized VACF.
    * @return The relaxation time in fs.
    */
-  double getRelaxationTime() const noexcept;
+  [[nodiscard]] real_t getRelaxationTime() const noexcept;
 
   /**
    * @brief Sets the relaxation time computed from normalized VACF.
    * @param relax_time The new relaxation time value in fs.
    */
-  void setRelaxationTime(double relax_time) noexcept;
+  void setRelaxationTime(real_t relax_time) noexcept;
 
   /**
    * @brief Gets the Deborah number.
    * @return The Deborah number.
    */
-  double getDeborahNumber() const noexcept;
+  [[nodiscard]] real_t getDeborahNumber() const noexcept;
 
   /**
    * @brief Sets the Deborah number.
    * @param deborah_num The new Deborah number value.
    */
-  void setDeborahNumber(double deborah_num) noexcept;
+  void setDeborahNumber(real_t deborah_num) noexcept;
 
   ///@}
 
@@ -262,19 +262,19 @@ public:
    * @throws std::invalid_argument if parameters are invalid
    * @throws std::logic_error if cell volume is invalid
    */
-  void calculateRDF(double r_max = 20.0, double bin_width = 0.05);
+  void calculateRDF(real_t r_max = 20.0, real_t bin_width = 0.05);
 
   /**
    * @brief Calculates the Plane Angle Distribution (PAD).
    * @param bin_width Width of angular bins in degrees.
    */
-  void calculatePAD(double bin_width = 1.0);
+  void calculatePAD(real_t bin_width = 1.0);
 
   /**
    * @brief Calculates the Dihedral Angle Distribution (DAD).
    * @param bin_width Width of angular bins in degrees.
    */
-  void calculateDAD(double bin_width = 1.0);
+  void calculateDAD(real_t bin_width = 1.0);
 
   /**
    * @brief Calculates the Velocity Autocorrelation Function (VACF).
@@ -300,7 +300,7 @@ public:
    * @param theta_max Maximum 2-theta angle.
    * @param bin_width Bin width for 2-theta.
    */
-  void calculateXRD(double lambda = 1.5406, double theta_min = 5.0, double theta_max = 90.0, double bin_width = 1.0);
+  void calculateXRD(real_t lambda = 1.5406, real_t theta_min = 5.0, real_t theta_max = 90.0, real_t bin_width = 1.0);
 
   /**
    * @brief Smooths a specific histogram.
@@ -308,7 +308,7 @@ public:
    * @param sigma Smoothing width.
    * @param kernel The smoothing kernel type.
    */
-  void smooth(const std::string &name, double sigma,
+  void smooth(const std::string &name, real_t sigma,
               correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
 
   /**
@@ -316,7 +316,7 @@ public:
    * @param sigma Smoothing width.
    * @param kernel The smoothing kernel type.
    */
-  void smoothAll(double sigma, correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
+  void smoothAll(real_t sigma, correlation::math::KernelType kernel = correlation::math::KernelType::Gaussian);
 
   /**
    * @brief Uses an external StructureAnalyzer for neighborhood/bond info.
@@ -347,7 +347,7 @@ public:
    *        Used for normalizing averaged distributions.
    * @param factor The scaling factor.
    */
-  void scale(double factor);
+  void scale(real_t factor);
 
   /**
    * @brief Computes the mean distribution functions over a trajectory.
@@ -370,7 +370,7 @@ private:
   static std::unique_ptr<DistributionFunctions>
   processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
                      size_t frame_idx, const AnalysisSettings &settings,
-                     const std::vector<std::vector<double>> &bond_cutoffs);
+                     const std::vector<std::vector<real_t>> &bond_cutoffs);
 
   static void normalizeHistograms(DistributionFunctions &dist_funcs);
 
@@ -378,7 +378,7 @@ private:
    * @brief Ensures neighbors are computed for the given cutoff.
    * @param r_max Cutoff radius.
    */
-  void ensureNeighborsComputed(double r_max);
+  void ensureNeighborsComputed(real_t r_max);
 
   /**
    * @brief Generates a unique string key for a pair of element types.
@@ -404,17 +404,17 @@ private:
   correlation::core::Cell cell_;                       ///< Reference to the cell being analyzed.
   const StructureAnalyzer *neighbors_ref_{nullptr};    ///< Pointer to external neighbor info.
   std::unique_ptr<StructureAnalyzer> neighbors_owned_; ///< Owned neighbor info.
-  double current_cutoff_{-1.0};                        ///< Last cutoff used for neighbor searching.
-  std::vector<std::vector<double>> bond_cutoffs_sq_;   ///< Cached squared bond cutoffs.
+  real_t current_cutoff_{-1.0};                        ///< Last cutoff used for neighbor searching.
+  std::vector<std::vector<real_t>> bond_cutoffs_sq_;   ///< Cached squared bond cutoffs.
 
   std::map<std::string, Histogram> histograms_;    ///< Storage for all analysis results.
-  std::map<std::string, double> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
+  std::map<std::string, real_t> ashcroft_weights_; ///< Scalar weights for S(Q) calculations.
   mutable std::mutex histogram_mutex_;             ///< Protects concurrent access to histograms_.
 
-  double diffusion_coefficient_msd_{0.0};  ///< Self-diffusion coefficient from MSD (Å²/fs).
-  double diffusion_coefficient_vacf_{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
-  double relaxation_time_{0.0};            ///< Relaxation time (fs).
-  double deborah_number_{0.0};             ///< Deborah number.
+  real_t diffusion_coefficient_msd_{0.0};  ///< Self-diffusion coefficient from MSD (Å²/fs).
+  real_t diffusion_coefficient_vacf_{0.0}; ///< Self-diffusion coefficient from VACF (Å²/fs).
+  real_t relaxation_time_{0.0};            ///< Relaxation time (fs).
+  real_t deborah_number_{0.0};             ///< Deborah number.
 };
 
 } // namespace correlation::analysis

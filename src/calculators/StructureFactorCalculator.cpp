@@ -171,7 +171,7 @@ void buildTypeBlocks(const std::vector<correlation::core::Atom> &atoms, std::vec
 }
 
 std::vector<PartialInfo> buildPartialsInfo(const std::vector<TypeBlock> &type_blocks,
-                                           const std::map<std::string, double> &ashcroft_weights) {
+                                           const std::map<std::string, real_t> &ashcroft_weights) {
   std::vector<PartialInfo> partials_info;
   for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
     for (size_t tj = ti; tj < type_blocks.size(); ++tj) {
@@ -463,7 +463,7 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
     }
   }
 
-  s_q_hist.partials["Total"] = std::move(total_sq);
+  s_q_hist.partials["Total"] = std::vector<real_t>(total_sq.begin(), total_sq.end());
   dists.addHistogram("S_q", std::move(s_q_hist));
 }
 

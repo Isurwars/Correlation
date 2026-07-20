@@ -149,8 +149,8 @@ CommonNeighborAdjacency buildCommonNeighborAdjacency(
  * @brief Helper to build the final CNA histogram from counted configurations.
  */
 correlation::analysis::Histogram buildCNAHistogram(
-    const std::map<std::string, double> &cna_counts,
-    double total_pairs) {
+    const std::map<std::string, real_t> &cna_counts,
+    real_t total_pairs) {
   correlation::analysis::Histogram hist;
   hist.x_label = "CNA Index";
   hist.title = "Common Neighbor Analysis";
@@ -171,16 +171,16 @@ correlation::analysis::Histogram buildCNAHistogram(
 
     hist.bins.resize(n_bins);
     for (size_t idx = 0; idx < n_bins; ++idx) {
-      hist.bins[idx] = static_cast<double>(idx);
+      hist.bins[idx] = static_cast<real_t>(idx);
     }
 
     for (size_t idx = 0; idx < n_bins; ++idx) {
-      std::vector<double> values(n_bins, 0.0);
+      std::vector<real_t> values(n_bins, 0.0);
       values[idx] = cna_counts.at(keys[idx]) / total_pairs;
       hist.partials[keys[idx]] = std::move(values);
     }
 
-    std::vector<double> total(n_bins, 0.0);
+    std::vector<real_t> total(n_bins, 0.0);
     for (size_t idx = 0; idx < n_bins; ++idx) {
       total[idx] = cna_counts.at(keys[idx]) / total_pairs;
     }
@@ -206,8 +206,8 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
   const size_t num_atoms = cell.atomCount();
 
   struct ThreadLocalCNA {
-    std::map<std::string, double> counts;
-    double total_pairs = 0.0;
+    std::map<std::string, real_t> counts;
+    real_t total_pairs = 0.0;
   };
 
   tbb::enumerable_thread_specific<ThreadLocalCNA> ets;
@@ -244,8 +244,8 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
   });
 
   // Reduce thread-local results
-  std::map<std::string, double> cna_counts;
-  double total_pairs = 0.0;
+  std::map<std::string, real_t> cna_counts;
+  real_t total_pairs = 0.0;
   for (const auto &local : ets) {
     for (const auto &[key, val] : local.counts) {
       cna_counts[key] += val;

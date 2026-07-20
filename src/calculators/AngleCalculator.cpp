@@ -8,6 +8,7 @@
 
 #include "calculators/AngleCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
+#include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"
 
 #include <algorithm>
@@ -71,8 +72,8 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
         continue;
       }
 
-      double const cos_theta = std::clamp(scratch.dots[m_idx] / (dist1 * dist2), -1.0, 1.0);
-      double const angle_rad = std::acos(cos_theta);
+      const real_t cos_theta = static_cast<real_t>(std::clamp(scratch.dots[m_idx] / (dist1 * dist2), -1.0, 1.0));
+      const real_t angle_rad = std::acos(cos_theta);
 
       local_tensor[type1][type_central][type2].push_back(angle_rad);
       if (type1 != type2) {
@@ -120,8 +121,8 @@ void AngleCalculator::compute(const correlation::core::Cell &cell, const correla
 
   // Thread-local AngleTensor accumulator
   tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
-    return AngleTensor(num_elements, std::vector<std::vector<std::vector<double>>>(
-                                         num_elements, std::vector<std::vector<double>>(num_elements)));
+    return AngleTensor(num_elements, std::vector<std::vector<std::vector<real_t>>>(
+                                         num_elements, std::vector<std::vector<real_t>>(num_elements)));
   });
 
   // Thread-local SoA scratch: pre-built per central atom and reused across

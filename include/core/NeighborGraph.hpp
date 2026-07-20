@@ -24,8 +24,8 @@ struct AtomIndex {
  */
 struct Neighbor {
   AtomID index{0};            ///< Index of the neighbor in the atom list
-  double distance{0.0};       ///< Distance to the neighbor
-  math::Vector3<double> r_ij; ///< Vector from central atom to neighbor
+  real_t distance{0.0};       ///< Distance to the neighbor
+  math::Vector3<real_t> r_ij; ///< Vector from central atom to neighbor
 };
 
 /**
@@ -55,7 +55,7 @@ public:
    * @param distance Separation distance (Angstrom).
    * @param r_ij Relative position vector (target - source).
    */
-  void addDirectedEdge(size_t source, size_t target, double distance, const math::Vector3<double> &r_ij); // NOLINT(bugprone-easily-swappable-parameters)
+  void addDirectedEdge(size_t source, size_t target, real_t distance, const math::Vector3<real_t> &r_ij); // NOLINT(bugprone-easily-swappable-parameters)
 
   /**
    * @brief Retrieves the neighbor list for a specific atom.

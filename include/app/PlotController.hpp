@@ -64,7 +64,7 @@ private:
     std::vector<std::pair<std::string, correlation::analysis::Histogram>> comparison_hists;
     correlation::plotters::PlotConfig config;
     correlation::plotters::HoverInfo hover;
-    std::map<std::string, double> ashcroft_weights;
+    std::map<std::string, real_t> ashcroft_weights;
   };
 
   std::atomic<bool> is_rendering_{false};

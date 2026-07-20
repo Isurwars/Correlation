@@ -39,7 +39,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
     return results;
   }
 
-  std::vector<double> raw_msd =
+  std::vector<real_t> raw_msd =
       correlation::analysis::DynamicsAnalyzer::calculateMSD(traj, max_correlation_frames, start_frame, end_frame);
 
   if (raw_msd.empty()) {
@@ -47,7 +47,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   }
 
   const size_t num_frames = raw_msd.size();
-  const double time_step = traj.getTimeStep();
+  const real_t time_step = traj.getTimeStep();
 
   // --- MSD histogram: bins = time (fs), partials["Total"] = MSD (Å²) ---
   correlation::analysis::Histogram msd_hist;
@@ -60,7 +60,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   msd_hist.file_suffix = "_MSD";
   msd_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    msd_hist.bins[i] = static_cast<double>(i) * time_step;
+    msd_hist.bins[i] = static_cast<real_t>(i) * time_step;
   }
   msd_hist.partials["Total"] = raw_msd;
   results["MSD"] = std::move(msd_hist);
@@ -76,9 +76,9 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   deff_hist.description = "Running Diffusion Coefficient D(t) = MSD(t) / (6t)";
   deff_hist.file_suffix = "_MSD";
   deff_hist.bins = results["MSD"].bins; // Same time axis
-  std::vector<double> d_eff(num_frames, 0.0);
+  std::vector<real_t> d_eff(num_frames, 0.0);
   for (size_t i = 1; i < num_frames; ++i) {
-    const double time = static_cast<double>(i) * time_step;
+    const real_t time = static_cast<real_t>(i) * time_step;
     if (time > 0.0) {
       d_eff[i] = raw_msd[i] / (6.0 * time);
     }

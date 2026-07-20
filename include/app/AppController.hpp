@@ -69,7 +69,7 @@ public:
    * @brief Parses and retrieves the user-modified bond cutoffs from the UI.
    * @return A nested vector representing the bond cutoff matrix.
    */
-  std::vector<std::vector<double>> getBondCutoffs();
+  std::vector<std::vector<real_t>> getBondCutoffs();
   /**
    * @brief Populates the UI calculator groups from CalculatorFactory.
    */

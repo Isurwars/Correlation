@@ -30,7 +30,7 @@ TEST_F(CellTests, DefaultConstructorInitializesEmpty) {
 }
 
 TEST_F(CellTests, ParameterConstructorSetsCorrectVolume) {
-  const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
+  const std::array<real_t, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
   const Cell cell(params);
   EXPECT_NEAR(cell.volume(), 64.0, 1e-9);
 }
@@ -49,21 +49,21 @@ TEST_F(CellTests, VectorConstructorCalculatesParameters) {
 }
 
 TEST_F(CellTests, NonOrthogonalVolumeIsCorrect) {
-  const std::array<double, 6> params = {5.0, 6.0, 7.0, 80.0, 90.0, 100.0};
+  const std::array<real_t, 6> params = {5.0, 6.0, 7.0, 80.0, 90.0, 100.0};
   const Cell cell(params);
 
   // Expected volume calculation
-  const double cos_a = std::cos(80.0 * correlation::math::deg_to_rad);
-  const double cos_b = std::cos(90.0 * correlation::math::deg_to_rad);
-  const double cos_g = std::cos(100.0 * correlation::math::deg_to_rad);
-  const double vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g + 2 * cos_a * cos_b * cos_g;
-  const double expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
+  const real_t cos_a = std::cos(80.0 * correlation::math::deg_to_rad);
+  const real_t cos_b = std::cos(90.0 * correlation::math::deg_to_rad);
+  const real_t cos_g = std::cos(100.0 * correlation::math::deg_to_rad);
+  const real_t vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g + 2 * cos_a * cos_b * cos_g;
+  const real_t expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
 
   EXPECT_NEAR(cell.volume(), expected_volume, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
 
 TEST_F(CellTests, RuleOfFiveWorksCorrectly) {
-  const std::array<double, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
+  const std::array<real_t, 6> params = {4.0, 4.0, 4.0, 90.0, 90.0, 90.0};
   Cell cell(params);
   cell.addAtom("H", {0.5, 0.5, 0.5});
   cell.setEnergy(1.23);
@@ -194,10 +194,10 @@ TEST_F(CellTests, MinimumImageHandlesInfiniteAndNaNDistance) {
   Cell const cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
 
   // Checking that passing Inf or NaN distances doesn't crash but propagates or returns predictably
-  auto mi_nan = cell.minimumImage({std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0});
+  auto mi_nan = cell.minimumImage({std::numeric_limits<real_t>::quiet_NaN(), 0.0, 0.0});
   EXPECT_TRUE(std::isnan(mi_nan.x()));
 
-  auto mi_inf = cell.minimumImage({std::numeric_limits<double>::infinity(), 0.0, 0.0});
+  auto mi_inf = cell.minimumImage({std::numeric_limits<real_t>::infinity(), 0.0, 0.0});
   EXPECT_TRUE(std::isnan(mi_inf.x())); // std::round(inf) yields nan/indefinite, which makes x() NaN
 }
 
@@ -228,11 +228,11 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
 
   // Distance vector that spans more than half the cell in some direction
   auto image = cell.minimumImage({4.0, 4.0, 4.0});
-  double const image_length = correlation::math::norm(image);
+  real_t const image_length = correlation::math::norm(image);
 
   // The minimum image vector must be shorter than or equal to half the max box extent
   // For a cell with a=5, the maximum half-diagonal is bounded
-  double const half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
+  real_t const half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
   EXPECT_LE(image_length, half_diagonal + 1e-6);
 
   // The zero vector should map to zero
@@ -245,7 +245,7 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
 TEST_F(CellTests, ExtremelySmallCell) {
   // Very small cell — should not cause underflow or precision issues
   // Note: Cell::updateLattice rejects volume <= 1e-9, so 0.01^3 = 1e-6 is valid
-  const std::array<double, 6> params = {0.01, 0.01, 0.01, 90.0, 90.0, 90.0};
+  const std::array<real_t, 6> params = {0.01, 0.01, 0.01, 90.0, 90.0, 90.0};
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e-6, correlation::is_single_precision ? 1e-10 : 1e-12);
 
@@ -257,7 +257,7 @@ TEST_F(CellTests, ExtremelySmallCell) {
 
 TEST_F(CellTests, ExtremelyLargeCell) {
   // Very large cell — should not overflow
-  const std::array<double, 6> params = {1e6, 1e6, 1e6, 90.0, 90.0, 90.0};
+  const std::array<real_t, 6> params = {1e6, 1e6, 1e6, 90.0, 90.0, 90.0};
   Cell cell(params);
   EXPECT_NEAR(cell.volume(), 1e18, correlation::is_single_precision ? 1.5e11 : 1e9);
 
@@ -271,7 +271,7 @@ TEST_F(CellTests, HighAtomCount) {
   Cell cell({{100.0, 100.0, 100.0, 90.0, 90.0, 90.0}});
   const size_t N_ATOMS = 10000;
   for (size_t i = 0; i < N_ATOMS; ++i) {
-    double const pos = static_cast<double>(i) * 0.01;
+    real_t const pos = static_cast<real_t>(i) * 0.01;
     cell.addAtom("H", {pos, pos, pos});
   }
   EXPECT_EQ(cell.atomCount(), N_ATOMS);

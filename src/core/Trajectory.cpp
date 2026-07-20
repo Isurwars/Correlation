@@ -17,11 +17,9 @@
 
 namespace correlation::core {
 
-
-
 Trajectory::Trajectory() : time_step_(1.0) {}
 
-Trajectory::Trajectory(std::vector<Cell> frames, double time_step) : frames_(std::move(frames)), time_step_(time_step) {
+Trajectory::Trajectory(std::vector<Cell> frames, real_t time_step) : frames_(std::move(frames)), time_step_(time_step) {
   // Validate all frames against the first one
   if (!frames_.empty()) {
     for (size_t i = 1; i < frames_.size(); ++i) {
@@ -32,15 +30,13 @@ Trajectory::Trajectory(std::vector<Cell> frames, double time_step) : frames_(std
 }
 
 Trajectory::Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets, FrameParser parser,
-                       double time_step)
+                       real_t time_step)
     : mapped_file_(std::move(mapped_file)), frame_offsets_(std::move(frame_offsets)), parser_(std::move(parser)),
       time_step_(time_step) {
   if (getFrameCount() > 0) {
     precomputeBondCutoffs();
   }
 }
-
-
 
 std::vector<Cell> &Trajectory::getFrames() {
   ensureMaterialized();
@@ -100,7 +96,7 @@ void Trajectory::ensureMaterialized() const {
   }
 }
 
-double Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
+real_t Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
   if (bond_cutoffs_sq_.empty()) {
     precomputeBondCutoffs();
   }
@@ -112,9 +108,7 @@ double Trajectory::getBondCutoffSQ(size_t type1, size_t type2) const {
   return bond_cutoffs_sq_[type1][type2];
 }
 
-double Trajectory::getBondCutoff(size_t type1, size_t type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
-
-
+real_t Trajectory::getBondCutoff(size_t type1, size_t type2) const { return std::sqrt(getBondCutoffSQ(type1, type2)); }
 
 void Trajectory::addFrame(const Cell &frame) {
   ensureMaterialized();
@@ -139,22 +133,22 @@ void Trajectory::precomputeBondCutoffs() const {
   Cell const first_frame = getFrame(0);
   const auto &elements = first_frame.elements();
   const size_t num_elements = elements.size();
-  bond_cutoffs_sq_.resize(num_elements, std::vector<double>(num_elements));
+  bond_cutoffs_sq_.resize(num_elements, std::vector<real_t>(num_elements));
 
-  auto safeGetRadius = [](const std::string &symbol) -> double {
+  auto safeGetRadius = [](const std::string &symbol) -> real_t {
     try {
-      return physics::getCovalentRadius(symbol);
+      return static_cast<real_t>(physics::getCovalentRadius(symbol));
     } catch (const std::out_of_range &) {
-      return 1.5; // Default covalent radius for unknown elements
+      return static_cast<real_t>(1.5); // Default covalent radius for unknown elements
     }
   };
 
   for (size_t i = 0; i < num_elements; ++i) {
-    const double radius_A = safeGetRadius(elements[i].symbol);
+    const real_t radius_A = safeGetRadius(elements[i].symbol);
     for (size_t j = i; j < num_elements; ++j) {
-      const double radius_B = safeGetRadius(elements[j].symbol);
-      const double max_bond_dist = (radius_A + radius_B) * 1.3;
-      const double max_bond_dist_sq = max_bond_dist * max_bond_dist;
+      const real_t radius_B = safeGetRadius(elements[j].symbol);
+      const real_t max_bond_dist = (radius_A + radius_B) * static_cast<real_t>(1.3);
+      const real_t max_bond_dist_sq = max_bond_dist * max_bond_dist;
       bond_cutoffs_sq_[i][j] = max_bond_dist_sq;
       bond_cutoffs_sq_[j][i] = max_bond_dist_sq;
     }
@@ -175,7 +169,7 @@ void Trajectory::removeDuplicatedFrames() {
   unique_frames.reserve(frames_.size());
   unique_frames.push_back(frames_[0]);
 
-  const double epsilon = 1e-5; // Tolerance for position comparison
+  const real_t epsilon = static_cast<real_t>(1e-5); // Tolerance for position comparison
 
   for (size_t i = 1; i < frames_.size(); ++i) {
     const auto &current_frame = frames_[i];
@@ -255,13 +249,12 @@ void Trajectory::calculateVelocities() {
         // v(t) = (r(t+1) - r(t-1)) / (2 * dt)
         const auto &pos_next = frames_[frame_idx + 1].atoms()[atom_idx].position();
         const auto &pos_prev = frames_[frame_idx - 1].atoms()[atom_idx].position();
-        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos_next, pos_prev) / (2.0 * time_step_));
+        frames_[frame_idx].atoms()[atom_idx].setVelocity(displacement(pos_next, pos_prev) /
+                                                         (static_cast<real_t>(2.0) * time_step_));
       }
     }
   }
 }
-
-
 
 void Trajectory::validateFrame(const Cell &new_frame) const {
   if (getFrameCount() == 0) {

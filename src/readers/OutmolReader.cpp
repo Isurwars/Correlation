@@ -34,9 +34,9 @@ struct OutmolParser {
   std::function<void(float, const std::string &)> progress_callback;
   std::vector<correlation::core::Cell> frames;
 
-  std::array<double, 3> h_one = {0.0, 0.0, 0.0};
-  std::array<double, 3> h_two = {0.0, 0.0, 0.0};
-  std::array<double, 3> h_three = {0.0, 0.0, 0.0};
+  std::array<real_t, 3> h_one = {0.0, 0.0, 0.0};
+  std::array<real_t, 3> h_two = {0.0, 0.0, 0.0};
+  std::array<real_t, 3> h_three = {0.0, 0.0, 0.0};
   bool cell_parsed = false;
 
   std::streampos file_size = 0;
@@ -105,9 +105,9 @@ struct OutmolParser {
       str_stream.clear();
       str_stream.str(line);
       std::string symbol;
-      double pos_x = 0.0;
-      double pos_y = 0.0;
-      double pos_z = 0.0;
+      real_t pos_x = 0.0;
+      real_t pos_y = 0.0;
+      real_t pos_z = 0.0;
       if (str_stream >> symbol >> pos_x >> pos_y >> pos_z) {
         tempCell.addAtom(symbol,
                          {pos_x * correlation::math::bohr_to_angstrom, pos_y * correlation::math::bohr_to_angstrom,
@@ -133,9 +133,9 @@ struct OutmolParser {
       str_stream.str(line);
       std::string data_block;
       std::string symbol;
-      double pos_x = 0.0;
-      double pos_y = 0.0;
-      double pos_z = 0.0;
+      real_t pos_x = 0.0;
+      real_t pos_y = 0.0;
+      real_t pos_z = 0.0;
       if (str_stream >> data_block >> symbol >> pos_x >> pos_y >> pos_z) {
         if (data_block == "df") {
           tempCell.addAtom(symbol,

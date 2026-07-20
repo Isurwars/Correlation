@@ -97,7 +97,7 @@ struct ThreadLocalDistances {
    * @param config The configuration parameters.
    */
   explicit ThreadLocalDistances(ThreadLocalConfig config)
-      : distance_tensor_local(config.num_elements, std::vector<std::vector<double>>(config.num_elements)) {
+      : distance_tensor_local(config.num_elements, std::vector<std::vector<real_t>>(config.num_elements)) {
     // Pre-reserve capacities to avoid resizing checks in hot loops
     soa_x.reserve(1024);
     soa_y.reserve(1024);
@@ -124,8 +124,9 @@ struct ThreadLocalDistances {
   /**
    * @brief Computes SIMD pairwise distances and updates local structures.
    */
-  void computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms, const SoACoordinates &coords,
-                        double cutoff_sq, const std::vector<std::vector<double>> &bond_cutoffs_sq);
+  void computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
+                        const SoACoordinates &coords, double cutoff_sq,
+                        const std::vector<std::vector<real_t>> &bond_cutoffs_sq);
 };
 
 void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinates &coords,
@@ -173,8 +174,8 @@ void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinat
 
 void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const correlation::math::Vector3<double> &disp,
                                                     int n_bin_idx, const FlatCellList &cell_list, bool zero_disp,
-                                                    const SoACoordinates &coords, bool ignore_periodic_self_interactions,
-                                                    size_t &c_count) {
+                                                    const SoACoordinates &coords,
+                                                    bool ignore_periodic_self_interactions, size_t &c_count) {
 
   size_t const start = cell_list.offsets[n_bin_idx];
   size_t const end = cell_list.offsets[n_bin_idx + 1];
@@ -213,7 +214,7 @@ void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const corre
 
 void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
                                             const SoACoordinates &coords, double cutoff_sq,
-                                            const std::vector<std::vector<double>> &bond_cutoffs_sq) {
+                                            const std::vector<std::vector<real_t>> &bond_cutoffs_sq) {
 
   size_t const c_count = candidate_count;
   if (c_count > 0) {
@@ -233,7 +234,7 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
       }
 
       size_t const j_idx = candidate_j[k];
-      double const dist = std::sqrt(d_sq);
+      auto const dist = static_cast<real_t>(std::sqrt(d_sq));
       int const type_B = atoms[j_idx].element_id();
 
       distance_tensor_local[type_A][type_B].push_back(dist);
@@ -271,8 +272,8 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
 }
 } // namespace
 
-void DistanceCalculator::compute(const correlation::core::Cell &cell, double cutoff_sq,
-                                 const std::vector<std::vector<double>> &bond_cutoffs_sq,
+void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cutoff_sq,
+                                 const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
                                  bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
                                  correlation::core::NeighborGraph &out_graph) {
 
@@ -282,7 +283,8 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, double cut
 
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
   if (gpu::has_gpu_device()) {
-    gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, ignore_periodic_self_interactions, out_distances, out_graph);
+    gpu::compute_distances_gpu(cell, cutoff_sq, bond_cutoffs_sq, ignore_periodic_self_interactions, out_distances,
+                               out_graph);
     return;
   }
 #endif
@@ -361,16 +363,9 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, double cut
   SearchGridConfig grid_config{
       .K_x = K_x, .K_y = K_y, .K_z = K_z, .max_dx = max_dx, .max_dy = max_dy, .max_dz = max_dz};
 
-  SoACoordinates coords{
-      .x = wrapped_x.data(),
-      .y = wrapped_y.data(),
-      .z = wrapped_z.data()
-  };
+  SoACoordinates coords{.x = wrapped_x.data(), .y = wrapped_y.data(), .z = wrapped_z.data()};
 
-  FlatCellList cell_list{
-      .offsets = bin_offsets.data(),
-      .indices = bin_indices.data()
-  };
+  FlatCellList cell_list{.offsets = bin_offsets.data(), .indices = bin_indices.data()};
 
   tbb::enumerable_thread_specific<ThreadLocalDistances> ets(
       ThreadLocalConfig{.num_elements = num_elements, .atom_count = atom_count});
@@ -378,7 +373,8 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, double cut
   tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
     ThreadLocalDistances &local_results = ets.local();
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      local_results.collectCandidates(i, coords, atom_bin, cell_list, lattice, grid_config, ignore_periodic_self_interactions);
+      local_results.collectCandidates(i, coords, atom_bin, cell_list, lattice, grid_config,
+                                      ignore_periodic_self_interactions);
       local_results.computeDistances(i, atoms, coords, cutoff_sq, bond_cutoffs_sq);
     }
   });

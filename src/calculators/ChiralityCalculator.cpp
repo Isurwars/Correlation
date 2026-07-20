@@ -28,12 +28,12 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<ChiralityCalculator>("ChiralityCalculator");
 
 struct BinningConfig {
-  double min_val;
-  double max_val;
-  double d_val;
+  real_t min_val;
+  real_t max_val;
+  real_t d_val;
 };
 
-void initHistogramMap(std::map<std::string, std::vector<double>> &partials,
+void initHistogramMap(std::map<std::string, std::vector<real_t>> &partials,
                       const std::vector<std::string> &element_symbols, size_t bins) {
   for (const auto &sym : element_symbols) {
     partials[sym].assign(bins, 0.0);
@@ -41,7 +41,7 @@ void initHistogramMap(std::map<std::string, std::vector<double>> &partials,
   partials["Total"].assign(bins, 0.0);
 }
 
-void addValueToHistogram(std::map<std::string, std::vector<double>> &partials, const std::string &symbol, double val,
+void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials, const std::string &symbol, real_t val,
                          BinningConfig config, size_t bins) {
   if (val >= config.min_val && val <= config.max_val) {
     auto bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
@@ -53,8 +53,8 @@ void addValueToHistogram(std::map<std::string, std::vector<double>> &partials, c
   }
 }
 
-void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
-                            const std::map<std::string, std::vector<double>> &src) {
+void accumulateHistogramMap(std::map<std::string, std::vector<real_t>> &dest,
+                            const std::map<std::string, std::vector<real_t>> &src) {
   for (const auto &[key, vec] : src) {
     auto &dest_vec = dest[key];
     for (size_t bin_idx = 0; bin_idx < vec.size(); ++bin_idx) {
@@ -63,7 +63,7 @@ void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
   }
 }
 
-void normalizeHistogramMap(std::map<std::string, std::vector<double>> &partials, double factor) {
+void normalizeHistogramMap(std::map<std::string, std::vector<real_t>> &partials, real_t factor) {
   if (factor <= 0.0) {
     return;
   }
@@ -75,7 +75,7 @@ void normalizeHistogramMap(std::map<std::string, std::vector<double>> &partials,
 }
 
 void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
-                             const std::map<std::string, std::vector<double>> &partials) {
+                             const std::map<std::string, std::vector<real_t>> &partials) {
   for (const auto &[key, vec] : partials) {
     hist.partials[key] = vec;
   }
@@ -87,7 +87,7 @@ void ChiralityCalculator::calculateFrame(correlation::analysis::DistributionFunc
   dists.addHistogram("COP", calculate(dists.cell(), dists.neighbors()));
 }
 
-double ChiralityCalculator::computeSingleAtomChirality(size_t atom_idx, const correlation::core::Cell & /*cell*/,
+real_t ChiralityCalculator::computeSingleAtomChirality(size_t atom_idx, const correlation::core::Cell & /*cell*/,
                                                        const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
     return 0.0;
@@ -119,16 +119,16 @@ double ChiralityCalculator::computeSingleAtomChirality(size_t atom_idx, const co
   const auto &r_2 = valid_neighbors[1].r_ij;
   const auto &r_3 = valid_neighbors[2].r_ij;
 
-  double const d_1 = valid_neighbors[0].distance;
-  double const d_2 = valid_neighbors[1].distance;
-  double const d_3 = valid_neighbors[2].distance;
+  real_t const d_1 = valid_neighbors[0].distance;
+  real_t const d_2 = valid_neighbors[1].distance;
+  real_t const d_3 = valid_neighbors[2].distance;
 
   if (d_1 <= 0.0 || d_2 <= 0.0 || d_3 <= 0.0) {
     return 0.0;
   }
 
   // Calculate scalar triple product: (r1 x r2) . r3
-  double const triple_product = correlation::math::dot(correlation::math::cross(r_1, r_2), r_3);
+  real_t const triple_product = correlation::math::dot(correlation::math::cross(r_1, r_2), r_3);
 
   // Normalize by lengths of the vectors
   return triple_product / (d_1 * d_2 * d_3);
@@ -145,7 +145,7 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
   size_t const num_atoms = atoms.size();
 
   // Compute local chirality for all atoms
-  std::vector<double> chiralities(num_atoms, 0.0);
+  std::vector<real_t> chiralities(num_atoms, 0.0);
   tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
       chiralities[i] = computeSingleAtomChirality(i, cell, neighbors);
@@ -154,9 +154,9 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
 
   // Setup histogram configuration
   size_t const bins = 100;
-  double const min_val = -1.0;
-  double const max_val = 1.0;
-  double const d_val = (max_val - min_val) / static_cast<double>(bins);
+  real_t const min_val = -1.0;
+  real_t const max_val = 1.0;
+  real_t const d_val = (max_val - min_val) / static_cast<real_t>(bins);
 
   correlation::analysis::Histogram hist;
   hist.title = "Chiral Order Parameter Distribution";
@@ -168,7 +168,7 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
   hist.file_suffix = "_cop";
   hist.bins.resize(bins);
   for (size_t i = 0; i < bins; ++i) {
-    hist.bins[i] = min_val + (static_cast<double>(i) + 0.5) * d_val;
+    hist.bins[i] = min_val + (static_cast<real_t>(i) + 0.5) * d_val;
   }
 
   // Pre-size thread-local maps for element symbols
@@ -178,8 +178,8 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
   }
 
   struct ThreadLocalHist {
-    std::map<std::string, std::vector<double>> partials;
-    double num_atoms_f = 0.0;
+    std::map<std::string, std::vector<real_t>> partials;
+    real_t num_atoms_f = 0.0;
   };
 
   tbb::enumerable_thread_specific<ThreadLocalHist> ets([&]() {
@@ -199,9 +199,9 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
   });
 
   // Reduce thread-local histograms
-  std::map<std::string, std::vector<double>> partials;
+  std::map<std::string, std::vector<real_t>> partials;
   initHistogramMap(partials, element_symbols, bins);
-  double total_atoms_f = 0.0;
+  real_t total_atoms_f = 0.0;
 
   for (const auto &local_hist : ets) {
     accumulateHistogramMap(partials, local_hist.partials);

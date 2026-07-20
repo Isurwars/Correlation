@@ -144,7 +144,7 @@ TEST_F(CliEndToEndTests, DefaultExecutesAllCalculators) {
   // Radial files should exist
   EXPECT_TRUE(std::filesystem::exists(out_base + "_g.csv"));
   EXPECT_TRUE(std::filesystem::exists(out_base + "_J.csv"));
-  EXPECT_TRUE(std::filesystem::exists(out_base + "_G_reduced.csv"));
+  EXPECT_TRUE(std::filesystem::exists(out_base + "_G.csv"));
 
   // Structural/rings files should also exist because they are enabled by default
   EXPECT_TRUE(std::filesystem::exists(out_base + "_CN.csv"));

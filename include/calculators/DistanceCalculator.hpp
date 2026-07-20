@@ -18,7 +18,7 @@
 namespace correlation::calculators {
 
 /** @brief Type definition for a distance tensor [e1][e2][pair_index]. */
-using DistanceTensor = std::vector<std::vector<std::vector<double>>>;
+using DistanceTensor = std::vector<std::vector<std::vector<real_t>>>;
 
 /**
  * @class DistanceCalculator
@@ -47,8 +47,8 @@ public:
    * @param out_distances Tensor to be populated with pairwise distances.
    * @param out_graph Graph object to be populated with adjacency data.
    */
-  static void compute(const correlation::core::Cell &cell, double cutoff_sq,
-                      const std::vector<std::vector<double>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
+  static void compute(const correlation::core::Cell &cell, real_t cutoff_sq,
+                      const std::vector<std::vector<real_t>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
                       DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph);
 };
 

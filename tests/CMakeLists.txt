@@ -180,6 +180,7 @@ if(BUILD_GUI)
 endif()
 
 foreach(tgt IN LISTS TEST_TARGETS)
+    target_include_directories(${tgt} PRIVATE ${CMAKE_SOURCE_DIR}/include)
     target_compile_definitions(${tgt} PRIVATE _USE_MATH_DEFINES)
     if(MSVC)
         target_compile_options(${tgt} PRIVATE /FI "${CMAKE_CURRENT_SOURCE_DIR}/PrecisionTestHelper.hpp")

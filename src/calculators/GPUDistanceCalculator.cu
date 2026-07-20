@@ -197,12 +197,12 @@ __global__ void distance_kernel(GPUAtomData atoms, GPUBinData bins, GPULattice l
   }
 }
 
-std::vector<double> flatten_bond_cutoffs(const std::vector<std::vector<double>> &bond_cutoffs_sq, size_t num_elements) {
+std::vector<double> flatten_bond_cutoffs(const std::vector<std::vector<real_t>> &bond_cutoffs_sq, size_t num_elements) {
   std::vector<double> flat_cutoffs(num_elements * num_elements, 0.0);
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       if (i < bond_cutoffs_sq.size() && j < bond_cutoffs_sq[i].size()) {
-        flat_cutoffs[i * num_elements + j] = bond_cutoffs_sq[i][j];
+        flat_cutoffs[i * num_elements + j] = static_cast<double>(bond_cutoffs_sq[i][j]);
       }
     }
   }
@@ -239,8 +239,8 @@ bool has_gpu_device() {
   return (err == hipSuccess && device_count > 0);
 }
 
-void compute_distances_gpu(const correlation::core::Cell &cell, double cutoff_sq,
-                           const std::vector<std::vector<double>> &bond_cutoffs_sq,
+void compute_distances_gpu(const correlation::core::Cell &cell, real_t cutoff_sq,
+                           const std::vector<std::vector<real_t>> &bond_cutoffs_sq,
                            bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
                            correlation::core::NeighborGraph &out_graph) {
   const auto &atoms = cell.atoms();

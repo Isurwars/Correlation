@@ -69,7 +69,7 @@ CastepMdReader::read(const std::string &file_name,
 
   // Temporary storage for building the current cell
   correlation::core::Cell tempCell;
-  double current_energy = 0.0;
+  real_t current_energy = 0.0;
   bool cell_has_atoms = false;
 
   while (std::getline(myfile, line)) {
@@ -111,15 +111,15 @@ void CastepMdReader::updateProgress(std::streampos current_pos, std::streampos f
   }
 }
 
-void CastepMdReader::parseEnergyLine(const std::string &line, double &current_energy, correlation::core::Cell &tempCell,
+void CastepMdReader::parseEnergyLine(const std::string &line, real_t &current_energy, correlation::core::Cell &tempCell,
                                      bool &cell_has_atoms, std::vector<correlation::core::Cell> &frames) {
   // For CASTEP MD, the frame usually starts with time (single float on a
   // line without tag) We skip it and read E. If we have atoms in tempCell,
   // it means this is a new frame starting
   if (cell_has_atoms) {
     // Save lattice parameters and energy
-    std::array<double, 6> const last_lattice = tempCell.lattice_parameters();
-    double const last_energy = tempCell.getEnergy();
+    std::array<real_t, 6> const last_lattice = tempCell.lattice_parameters();
+    real_t const last_energy = tempCell.getEnergy();
 
     frames.push_back(std::move(tempCell));
 
@@ -140,9 +140,9 @@ void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &
                                       correlation::core::Cell &tempCell) {
   // Lattice vectors h are given row by row in Bohr
   // The first <-- h is row 1
-  std::array<double, 3> lattice_vector_1{};
-  std::array<double, 3> lattice_vector_2{};
-  std::array<double, 3> lattice_vector_3{};
+  std::array<real_t, 3> lattice_vector_1{};
+  std::array<real_t, 3> lattice_vector_2{};
+  std::array<real_t, 3> lattice_vector_3{};
   std::stringstream line_stream(line);
   line_stream >> lattice_vector_1[0] >> lattice_vector_1[1] >> lattice_vector_1[2];
 
@@ -175,18 +175,18 @@ void CastepMdReader::parseLatticeLine(std::ifstream &myfile, const std::string &
                                      {lattice_vector_3[0], lattice_vector_3[1], lattice_vector_3[2]});
 }
 
-void CastepMdReader::parseAtomLine(const std::string &line, double current_energy, correlation::core::Cell &tempCell,
+void CastepMdReader::parseAtomLine(const std::string &line, real_t current_energy, correlation::core::Cell &tempCell,
                                    bool &cell_has_atoms) {
   // Positions R are given in Bohr
   // Format: Symbol ID x y z <-- R
   std::stringstream line_stream(line);
   std::string symbol;
   int atom_id = 0;
-  double coord_x = 0.0;
-  double coord_y = 0.0;
-  double coord_z = 0.0;
+  real_t coord_x = 0.0;
+  real_t coord_y = 0.0;
+  real_t coord_z = 0.0;
   if (line_stream >> symbol >> atom_id >> coord_x >> coord_y >> coord_z) {
-    tempCell.addAtom(symbol, correlation::math::Vector3<double>(coord_x * correlation::math::bohr_to_angstrom,
+    tempCell.addAtom(symbol, correlation::math::Vector3<real_t>(coord_x * correlation::math::bohr_to_angstrom,
                                                                 coord_y * correlation::math::bohr_to_angstrom,
                                                                 coord_z * correlation::math::bohr_to_angstrom));
     tempCell.setEnergy(current_energy); // Assign energy once per atom or frame

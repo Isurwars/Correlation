@@ -9,6 +9,7 @@
 #pragma once
 
 #include "math/Constants.hpp"
+#include "math/Precision.hpp"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -29,27 +30,27 @@ enum class KernelType : std::uint8_t { Gaussian, Bump, Triweight, Epanechnikov, 
  */
 struct KernelGenerationParams {
   size_t size;
-  double bin_width;
-  double sigma;
+  real_t bin_width;
+  real_t sigma;
   KernelType type;
 };
 namespace detail {
 
-inline void fillGaussian(std::vector<double> &kernel, const KernelGenerationParams &params, double center) {
-  const double prefactor = 1.0 / (std::sqrt(correlation::math::two_pi) * params.sigma);
-  const double exp_coeff = -1.0 / (2.0 * params.sigma * params.sigma);
+inline void fillGaussian(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+  const real_t prefactor = 1.0 / (std::sqrt(correlation::math::two_pi) * params.sigma);
+  const real_t exp_coeff = -1.0 / (2.0 * params.sigma * params.sigma);
   for (size_t i = 0; i < params.size; ++i) {
-    const double distance = (static_cast<double>(i) - center) * params.bin_width;
+    const real_t distance = (static_cast<real_t>(i) - center) * params.bin_width;
     kernel[i] = prefactor * std::exp(exp_coeff * distance * distance);
   }
 }
 
-inline void fillTriweight(std::vector<double> &kernel, const KernelGenerationParams &params, double center) {
-  constexpr double factor = 35.0 / 32.0;
+inline void fillTriweight(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+  constexpr real_t factor = 35.0 / 32.0;
   for (size_t i = 0; i < params.size; ++i) {
-    const double norm_dist = ((static_cast<double>(i) - center) * params.bin_width) / params.sigma;
+    const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
-      const double norm_dist_sq = norm_dist * norm_dist;
+      const real_t norm_dist_sq = norm_dist * norm_dist;
       kernel[i] = factor * std::pow(1.0 - norm_dist_sq, 3);
     } else {
       kernel[i] = 0.0;
@@ -57,11 +58,11 @@ inline void fillTriweight(std::vector<double> &kernel, const KernelGenerationPar
   }
 }
 
-inline void fillBump(std::vector<double> &kernel, const KernelGenerationParams &params, double center) {
+inline void fillBump(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
   for (size_t i = 0; i < params.size; ++i) {
-    const double norm_dist = ((static_cast<double>(i) - center) * params.bin_width) / params.sigma;
+    const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) < 1.0) {
-      const double norm_dist_sq = norm_dist * norm_dist;
+      const real_t norm_dist_sq = norm_dist * norm_dist;
       kernel[i] = std::exp(-1.0 / (1.0 - norm_dist_sq));
     } else {
       kernel[i] = 0.0;
@@ -69,10 +70,10 @@ inline void fillBump(std::vector<double> &kernel, const KernelGenerationParams &
   }
 }
 
-inline void fillEpanechnikov(std::vector<double> &kernel, const KernelGenerationParams &params, double center) {
-  constexpr double factor = 3.0 / 4.0;
+inline void fillEpanechnikov(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+  constexpr real_t factor = 3.0 / 4.0;
   for (size_t i = 0; i < params.size; ++i) {
-    const double norm_dist = ((static_cast<double>(i) - center) * params.bin_width) / params.sigma;
+    const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
       kernel[i] = factor * (1.0 - norm_dist * norm_dist);
     } else {
@@ -81,10 +82,10 @@ inline void fillEpanechnikov(std::vector<double> &kernel, const KernelGeneration
   }
 }
 
-inline void fillCosine(std::vector<double> &kernel, const KernelGenerationParams &params, double center) {
-  const double cos_factor = correlation::math::pi / 4.0;
+inline void fillCosine(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+  const real_t cos_factor = correlation::math::pi / 4.0;
   for (size_t i = 0; i < params.size; ++i) {
-    const double norm_dist = ((static_cast<double>(i) - center) * params.bin_width) / params.sigma;
+    const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
       kernel[i] = cos_factor * std::cos(correlation::math::pi * norm_dist / 2.0);
     } else {
@@ -93,12 +94,12 @@ inline void fillCosine(std::vector<double> &kernel, const KernelGenerationParams
   }
 }
 
-inline void fillBiweight(std::vector<double> &kernel, const KernelGenerationParams &params, double center) {
-  constexpr double factor = 15.0 / 16.0;
+inline void fillBiweight(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
+  constexpr real_t factor = 15.0 / 16.0;
   for (size_t i = 0; i < params.size; ++i) {
-    const double norm_dist = ((static_cast<double>(i) - center) * params.bin_width) / params.sigma;
+    const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
-      const double norm_dist_sq = norm_dist * norm_dist;
+      const real_t norm_dist_sq = norm_dist * norm_dist;
       kernel[i] = factor * (1.0 - norm_dist_sq) * (1.0 - norm_dist_sq);
     } else {
       kernel[i] = 0.0;
@@ -113,10 +114,10 @@ inline void fillBiweight(std::vector<double> &kernel, const KernelGenerationPara
  * @param params The parameters for kernel generation.
  * @return A vector containing the normalized kernel.
  */
-[[nodiscard]] inline std::vector<double> generateKernel(const KernelGenerationParams &params) {
+[[nodiscard]] inline std::vector<real_t> generateKernel(const KernelGenerationParams &params) {
   const size_t size = params.size;
-  std::vector<double> kernel(size);
-  const double center = static_cast<double>(size - 1) / 2.0;
+  std::vector<real_t> kernel(size);
+  const real_t center = static_cast<real_t>(size - 1) / 2.0;
 
   switch (params.type) {
   case KernelType::Gaussian:
@@ -142,9 +143,9 @@ inline void fillBiweight(std::vector<double> &kernel, const KernelGenerationPara
   }
 
   // Normalize the discrete kernel to ensure the sum of its elements is 1.
-  const double sum = std::accumulate(kernel.begin(), kernel.end(), 0.0);
+  const real_t sum = std::accumulate(kernel.begin(), kernel.end(), 0.0);
   if (sum > 1e-9) {
-    for (double &val : kernel) {
+    for (real_t &val : kernel) {
       val /= sum;
     }
   }
@@ -165,7 +166,7 @@ inline void fillBiweight(std::vector<double> &kernel, const KernelGenerationPara
  * @param type  Kernel type to use.
  * @return A vector containing the smoothed data (same length as `y_values`).
  */
-inline std::vector<double> KernelSmoothing(double bin_width, const std::vector<double> &y_values, double sigma,
+inline std::vector<real_t> KernelSmoothing(real_t bin_width, const std::vector<real_t> &y_values, real_t sigma,
                                            KernelType type) {
   if (y_values.empty()) {
     return {};
@@ -196,7 +197,7 @@ inline std::vector<double> KernelSmoothing(double bin_width, const std::vector<d
   // Pass the original physical sigma (in distance units) to the kernel
   // generator.
   const auto kernel = generateKernel({kernel_size, bin_width, sigma, type});
-  std::vector<double> smoothed(num_points, 0.0);
+  std::vector<real_t> smoothed(num_points, 0.0);
 
   // Phase 1 – left boundary (bins 0 .. kernel_radius-1): needs index clamping.
   for (size_t i = 0; i < std::min(kernel_radius, num_points); ++i) {
@@ -213,8 +214,8 @@ inline std::vector<double> KernelSmoothing(double bin_width, const std::vector<d
   // GCC/Clang at -O2 using whatever SIMD width the TU was compiled with.
   if (num_points > 2 * kernel_radius) {
     for (size_t i = kernel_radius; i < num_points - kernel_radius; ++i) {
-      const double *src = y_values.data() + (i - kernel_radius);
-      double sum = 0.0;
+      const real_t *src = y_values.data() + (i - kernel_radius);
+      real_t sum = 0.0;
       for (size_t j = 0; j < kernel_size; ++j) {
         sum += src[j] * kernel[j];
       }
@@ -248,12 +249,12 @@ inline std::vector<double> KernelSmoothing(double bin_width, const std::vector<d
  * @param type Kernel type to use.
  * @return A vector containing the smoothed data.
  */
-inline std::vector<double> KernelSmoothing(const std::vector<double> &r_values, const std::vector<double> &y_values,
-                                           double sigma, KernelType type) {
+inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &r_values, const std::vector<real_t> &y_values,
+                                           real_t sigma, KernelType type) {
   if (r_values.size() != y_values.size() || r_values.size() < 2) {
     return {};
   }
-  const double bin_width = r_values[1] - r_values[0];
+  const real_t bin_width = r_values[1] - r_values[0];
   return KernelSmoothing(bin_width, y_values, sigma, type);
 }
 

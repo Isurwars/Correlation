@@ -39,7 +39,7 @@ public:
    * @return A vector containing the VACF values for lag times 0 to
    * max_correlation_frames.
    */
-  static std::vector<double> calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+  static std::vector<real_t> calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
                                            StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
@@ -52,7 +52,7 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector containing the normalized VACF values.
    */
-  static std::vector<double> calculateNormalizedVACF(const correlation::core::Trajectory &traj,
+  static std::vector<real_t> calculateNormalizedVACF(const correlation::core::Trajectory &traj,
                                                      MaxFrames max_correlation_frames, StartFrame start_frame = {0},
                                                      EndFrame end_frame = {static_cast<size_t>(-1)});
 
@@ -74,7 +74,7 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector of MSD values indexed by lag (in Å²).
    */
-  static std::vector<double> calculateMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+  static std::vector<real_t> calculateMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
                                           StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
@@ -90,8 +90,8 @@ public:
    * @param time_step The time step between frames (in femtoseconds).
    * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
    */
-  static std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
-  calculateVDOS(const std::vector<double> &vacf, double time_step);
+  static std::tuple<std::vector<real_t>, std::vector<real_t>, std::vector<real_t>>
+  calculateVDOS(const std::vector<real_t> &vacf, real_t time_step);
 
   /**
    * @brief Computes the self-diffusion coefficient D from MSD using linear regression on the second half of the time
@@ -100,7 +100,7 @@ public:
    * @param msd The MSD values.
    * @return The diffusion coefficient in Å²/fs.
    */
-  static double computeDiffusionCoefficientMSD(const std::vector<double> &time, const std::vector<double> &msd);
+  static real_t computeDiffusionCoefficientMSD(const std::vector<real_t> &time, const std::vector<real_t> &msd);
 
   /**
    * @brief Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule).
@@ -108,7 +108,7 @@ public:
    * @param vacf The VACF values.
    * @return The diffusion coefficient in Å²/fs.
    */
-  static double computeDiffusionCoefficientVACF(const std::vector<double> &time, const std::vector<double> &vacf);
+  static real_t computeDiffusionCoefficientVACF(const std::vector<real_t> &time, const std::vector<real_t> &vacf);
 
   /**
    * @brief Computes the relaxation time tau from the normalized VACF using trapezoidal integration.
@@ -116,7 +116,7 @@ public:
    * @param normalized_vacf The normalized VACF values.
    * @return The relaxation time in fs.
    */
-  static double computeRelaxationTime(const std::vector<double> &time, const std::vector<double> &normalized_vacf);
+  static real_t computeRelaxationTime(const std::vector<real_t> &time, const std::vector<real_t> &normalized_vacf);
 
   ///@}
 };

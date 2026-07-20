@@ -47,7 +47,7 @@ public:
 };
 
 // Helper to sum a partial histogram
-double sumHistogram(const std::vector<double> &hist) { return std::accumulate(hist.begin(), hist.end(), 0.0); }
+real_t sumHistogram(const std::vector<real_t> &hist) { return std::accumulate(hist.begin(), hist.end(), static_cast<real_t>(0.0)); }
 
 class PADTests : public ::testing::Test {
 protected:

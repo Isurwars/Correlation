@@ -65,7 +65,7 @@ TEST_F(RDFTests, MoveAssignmentWorks) {
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfSource.calculateRDF(5.0, 0.1);
 
-  DistributionFunctions dfDest(cell_, 0.0, std::vector<std::vector<double>>{});
+  DistributionFunctions dfDest(cell_, 0.0, std::vector<std::vector<real_t>>{});
   dfDest = std::move(dfSource);
 
   EXPECT_NO_THROW(dfDest.getHistogram("g_r"));

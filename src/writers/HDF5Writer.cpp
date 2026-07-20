@@ -38,7 +38,7 @@ struct DatasetWriteQuery {
 };
 
 void writeColumnDataset(HighFive::Group &group, size_t col, const std::string &col_name,
-                        const std::vector<double> &col_data, const DatasetWriteQuery &query) {
+                        const std::vector<float> &col_data, const DatasetWriteQuery &query) {
   // Add prefix
   std::stringstream str_stream;
   str_stream << std::setw(2) << std::setfill('0') << col << "_" << col_name;
@@ -152,16 +152,18 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
     std::replace(col_name.begin(), col_name.end(), '/', '_');
     std::replace(col_name.begin(), col_name.end(), ' ', '_');
 
-    std::vector<double> col_data(n_rows);
+    std::vector<float> col_data(n_rows);
     if (col == 0) {
-      col_data = hist.bins;
+      col_data.assign(hist.bins.begin(), hist.bins.end());
     } else if (col <= raw_keys.size()) {
-      col_data = hist.partials.at(raw_keys[col - 1]);
+      const auto &src = hist.partials.at(raw_keys[col - 1]);
+      col_data.assign(src.begin(), src.end());
     } else {
       std::string original_key = smoothed_keys[col - 1 - raw_keys.size()];
       // remove "_smoothed" suffix for lookup
       original_key = original_key.substr(0, original_key.size() - 9);
-      col_data = hist.smoothed_partials.at(original_key);
+      const auto &src = hist.smoothed_partials.at(original_key);
+      col_data.assign(src.begin(), src.end());
     }
 
     writeColumnDataset(group, col, col_name, col_data, query);

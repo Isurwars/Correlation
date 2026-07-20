@@ -85,23 +85,23 @@ struct LammpsFrameParser {
     std::string line = nextLine(); // "ITEM: BOX BOUNDS ..."
     const bool triclinic = (line.contains("xy"));
 
-    double xlo = 0.0;
-    double xhi = 0.0;
-    double ylo = 0.0;
-    double yhi = 0.0;
-    double zlo = 0.0;
-    double zhi = 0.0;
-    double x_y = 0.0;
-    double x_z = 0.0;
-    double y_z = 0.0;
+    real_t xlo = 0.0;
+    real_t xhi = 0.0;
+    real_t ylo = 0.0;
+    real_t yhi = 0.0;
+    real_t zlo = 0.0;
+    real_t zhi = 0.0;
+    real_t x_y = 0.0;
+    real_t x_z = 0.0;
+    real_t y_z = 0.0;
 
     if (triclinic) {
       std::stringstream(nextLine()) >> xlo >> xhi >> x_y;
       std::stringstream(nextLine()) >> ylo >> yhi >> x_z;
       std::stringstream(nextLine()) >> zlo >> zhi >> y_z;
-      const double l_x = xhi - xlo;
-      const double l_y = yhi - ylo;
-      const double l_z = zhi - zlo;
+      const real_t l_x = xhi - xlo;
+      const real_t l_y = yhi - ylo;
+      const real_t l_z = zhi - zlo;
       return correlation::core::Cell({l_x, 0.0, 0.0}, {x_y, l_y, 0.0}, {x_z, y_z, l_z});
     }
     std::stringstream(nextLine()) >> xlo >> xhi;
@@ -186,9 +186,9 @@ struct LammpsFrameParser {
         continue;
       }
 
-      double frac_x = std::stod(fields[layout.col_x]);
-      double frac_y = std::stod(fields[layout.col_y]);
-      double frac_z = std::stod(fields[layout.col_z]);
+      real_t frac_x = static_cast<real_t>(std::stod(fields[layout.col_x]));
+      real_t frac_y = static_cast<real_t>(std::stod(fields[layout.col_y]));
+      real_t frac_z = static_cast<real_t>(std::stod(fields[layout.col_z]));
 
       // Determine element symbol.
       std::string element_symbol;
@@ -202,7 +202,7 @@ struct LammpsFrameParser {
       }
 
       // Convert scaled (fractional) coordinates to Cartesian if needed.
-      correlation::math::Vector3<double> pos;
+      correlation::math::Vector3<real_t> pos;
       if (layout.scaled_coords) {
         pos = {frac_x * lattice_vector[0][0] + frac_y * lattice_vector[1][0] + frac_z * lattice_vector[2][0],
                frac_x * lattice_vector[0][1] + frac_y * lattice_vector[1][1] + frac_z * lattice_vector[2][1],

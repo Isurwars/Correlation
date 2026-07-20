@@ -92,7 +92,7 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   // Identify root sizes
   std::vector<size_t> root_sizes(n_atoms, 0);
   for (size_t i = 0; i < n_atoms; ++i) {
-    // We only count sizes for actual roots to avoid double counting
+    // We only count sizes for actual roots to avoid real_t counting
     if (union_find.find(i) == i) {
       root_sizes[i] = union_find.getSize(i);
     }
@@ -112,7 +112,7 @@ void ClusterCalculator::calculateFrame(correlation::analysis::DistributionFuncti
   correlation::analysis::Histogram hist;
   hist.bins.resize(max_size);
   for (size_t i = 0; i < max_size; ++i) {
-    hist.bins[i] = static_cast<double>(i + 1);
+    hist.bins[i] = static_cast<real_t>(i + 1);
   }
   hist.title = "Cluster Size Distribution";
   hist.x_label = "Cluster Size";

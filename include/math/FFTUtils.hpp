@@ -250,8 +250,9 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  *                  loops) to avoid repeated heap allocation.
  * @return Autocorrelation array of length n.
  */
-inline std::vector<double> autocorrelate(const std::vector<double> &signal,
-                                         std::vector<std::complex<double>> &workspace) {
+template <typename T = double>
+inline std::vector<T> autocorrelate(const std::vector<T> &signal,
+                                    std::vector<std::complex<T>> &workspace) {
   const size_t size = signal.size();
   if (size == 0) {
     return {};
@@ -260,25 +261,32 @@ inline std::vector<double> autocorrelate(const std::vector<double> &signal,
   size_t len = findNextGoodFFTSize(2 * size - 1);
 
   // Reuse caller-supplied workspace; only reallocates when length grows.
-  workspace.assign(len, {0.0, 0.0});
+  workspace.assign(len, {static_cast<T>(0.0), static_cast<T>(0.0)});
   for (size_t i = 0; i < size; ++i) {
-    workspace[i] = {signal[i], 0.0};
+    workspace[i] = {signal[i], static_cast<T>(0.0)};
   }
 
-  computeFFT(workspace, false);
+  // Convert to std::vector<std::complex<double>> for FFT computation
+  std::vector<std::complex<double>> double_ws(len);
+  for (size_t i = 0; i < len; ++i) {
+    double_ws[i] = {static_cast<double>(workspace[i].real()), static_cast<double>(workspace[i].imag())};
+  }
+
+  computeFFT(double_ws, false);
 
   // In-place |X[k]|² — no intermediate vector needed.
   for (size_t i = 0; i < len; ++i) {
-    const double real_part = workspace[i].real();
-    const double imag_part = workspace[i].imag();
-    workspace[i] = {real_part * real_part + imag_part * imag_part, 0.0};
+    const double real_part = double_ws[i].real();
+    const double imag_part = double_ws[i].imag();
+    double_ws[i] = {real_part * real_part + imag_part * imag_part, 0.0};
   }
 
-  computeFFT(workspace, true);
+  computeFFT(double_ws, true);
 
-  std::vector<double> result(size);
+  std::vector<T> result(size);
   for (size_t i = 0; i < size; ++i) {
-    result[i] = workspace[i].real();
+    result[i] = static_cast<T>(double_ws[i].real());
+    workspace[i] = {static_cast<T>(double_ws[i].real()), static_cast<T>(double_ws[i].imag())};
   }
   return result;
 }
@@ -291,7 +299,8 @@ inline std::vector<double> autocorrelate(const std::vector<double> &signal,
  * @param signal Input signal vector.
  * @return The autocorrelation vector.
  */
-inline std::vector<double> autocorrelate(const std::vector<double> &signal) {
+template <typename T = double>
+inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
   std::vector<std::complex<double>> workspace;
   return autocorrelate(signal, workspace);
 }

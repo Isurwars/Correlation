@@ -130,7 +130,7 @@ namespace {
  * @brief Safely converts a Slint SharedString to a numeric type with a default
  * fallback.
  *
- * @tparam T The numeric type to return (e.g., float, double).
+ * @tparam T The numeric type to return (e.g., float, real_t).
  * @param str The Slint string to parse.
  * @param default_value The value to return if parsing fails.
  * @return The parsed value or default_value on error.
@@ -139,7 +139,7 @@ template <typename T> T safe_parse(const slint::SharedString &str, T default_val
   try {
     if constexpr (std::is_same_v<T, float>) {
       return std::stof(str.data());
-    } else if constexpr (std::is_same_v<T, double>) {
+    } else if constexpr (std::is_same_v<T, real_t>) {
       return std::stod(str.data());
     } else {
       return default_value;
@@ -313,9 +313,9 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.dihedral_bin_width = safe_parse(window_.get_analysis_options().dihedral_bin_width,
                                       opt.dihedral_bin_width); // NOLINT(bugprone-narrowing-conversions)
   opt.max_ring_size = static_cast<size_t>(
-      safe_parse(window_.get_analysis_options().max_ring_size, static_cast<double>(opt.max_ring_size)));
+      safe_parse(window_.get_analysis_options().max_ring_size, static_cast<real_t>(opt.max_ring_size)));
   opt.hyper_samples = static_cast<size_t>(
-      safe_parse(window_.get_analysis_options().hyper_samples, static_cast<double>(opt.hyper_samples)));
+      safe_parse(window_.get_analysis_options().hyper_samples, static_cast<real_t>(opt.hyper_samples)));
 
   // Collect active_calculators from the UI model
   auto groups = window_.get_calculator_groups();
@@ -389,7 +389,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs();
   size_t num_elements = cutoffs.size();
-  opt.bond_cutoffs_sq.resize(num_elements, std::vector<double>(num_elements));
+  opt.bond_cutoffs_sq.resize(num_elements, std::vector<real_t>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       opt.bond_cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
@@ -414,20 +414,20 @@ void AppController::setBondCutoffs() {
   window_.set_bond_cutoffs(slint_cutoffs);
 }
 
-std::vector<std::vector<double>> AppController::getBondCutoffs() {
+std::vector<std::vector<real_t>> AppController::getBondCutoffs() {
   auto slint_cutoffs = window_.get_bond_cutoffs();
   if (backend_.cell() == nullptr) {
     return {};
   }
   auto elements = backend_.cell()->elements();
   size_t num_elements = elements.size();
-  std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements, 0.0));
+  std::vector<std::vector<real_t>> cutoffs(num_elements, std::vector<real_t>(num_elements, 0.0));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
     auto item = slint_cutoffs->row_data(k).value();
     std::string symbol1 = item.element1.data();
     std::string symbol2 = item.element2.data();
-    double dist = std::stod(item.distance.data());
+    real_t dist = std::stod(item.distance.data());
 
     int idx1 = -1;
     int idx2 = -1;

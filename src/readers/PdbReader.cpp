@@ -22,23 +22,23 @@ namespace {
 const bool registered = ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
 
 struct PdbCrystParams {
-  double a = 0.0;
-  double b = 0.0;
-  double c = 0.0;
+  real_t a = 0.0;
+  real_t b = 0.0;
+  real_t c = 0.0;
 };
 
 struct PdbAtomData {
   std::string symbol;
-  double x = 0.0;
-  double y = 0.0;
-  double z = 0.0;
+  real_t x = 0.0;
+  real_t y = 0.0;
+  real_t z = 0.0;
 };
 
 std::optional<PdbCrystParams> parsePdbCrystLine(const std::string &line) {
   try {
-    double const param_a = std::stod(line.substr(6, 9));
-    double const param_b = std::stod(line.substr(15, 9));
-    double const param_c = std::stod(line.substr(24, 9));
+    real_t const param_a = static_cast<real_t>(std::stod(line.substr(6, 9)));
+    real_t const param_b = static_cast<real_t>(std::stod(line.substr(15, 9)));
+    real_t const param_c = static_cast<real_t>(std::stod(line.substr(24, 9)));
     return PdbCrystParams{.a = param_a, .b = param_b, .c = param_c};
   } catch (...) {
     return std::nullopt;
@@ -75,9 +75,9 @@ std::optional<PdbAtomData> parsePdbAtomLine(const std::string &line) {
       }
     }
 
-    double const frac_x = std::stod(line.substr(30, 8));
-    double const frac_y = std::stod(line.substr(38, 8));
-    double const frac_z = std::stod(line.substr(46, 8));
+    real_t const frac_x = static_cast<real_t>(std::stod(line.substr(30, 8)));
+    real_t const frac_y = static_cast<real_t>(std::stod(line.substr(38, 8)));
+    real_t const frac_z = static_cast<real_t>(std::stod(line.substr(46, 8)));
     return PdbAtomData{.symbol = symbol, .x = frac_x, .y = frac_y, .z = frac_z};
   } catch (...) {
     return std::nullopt;
@@ -105,7 +105,7 @@ correlation::core::Cell PdbReader::readStructure(const std::string &filename,
       }
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
       if (auto atom = parsePdbAtomLine(line)) {
-        cell.addAtom(atom->symbol, correlation::math::Vector3<double>(atom->x, atom->y, atom->z));
+        cell.addAtom(atom->symbol, correlation::math::Vector3<real_t>(atom->x, atom->y, atom->z));
       }
     } else if (line.starts_with("ENDMDL") || line.starts_with("END")) {
       break;
@@ -131,9 +131,9 @@ PdbReader::readTrajectory(const std::string &filename,
   correlation::core::Cell current_cell;
   bool in_model = false;
   bool has_box = false;
-  double param_a = 0.0;
-  double param_b = 0.0;
-  double param_c = 0.0;
+  real_t param_a = 0.0;
+  real_t param_b = 0.0;
+  real_t param_c = 0.0;
 
   while (std::getline(file, line)) {
     if (line.starts_with("CRYST1")) {
@@ -151,7 +151,7 @@ PdbReader::readTrajectory(const std::string &filename,
       in_model = true;
     } else if (line.starts_with("ATOM") || line.starts_with("HETATM")) {
       if (auto atom = parsePdbAtomLine(line)) {
-        current_cell.addAtom(atom->symbol, correlation::math::Vector3<double>(atom->x, atom->y, atom->z));
+        current_cell.addAtom(atom->symbol, correlation::math::Vector3<real_t>(atom->x, atom->y, atom->z));
       }
     } else if (line.starts_with("ENDMDL")) {
       frames.push_back(std::move(current_cell));

@@ -37,14 +37,14 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
     return results;
   }
 
-  std::vector<double> const raw_vacf =
+  std::vector<real_t> const raw_vacf =
       correlation::analysis::DynamicsAnalyzer::calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (raw_vacf.empty()) {
     return results;
   }
 
   size_t const num_frames = raw_vacf.size();
-  double const time_step = traj.getTimeStep();
+  real_t const time_step = traj.getTimeStep();
 
   correlation::analysis::Histogram vacf_hist;
   vacf_hist.x_label = "t";
@@ -56,13 +56,13 @@ VACFCalculator::calculate(const correlation::core::Trajectory &traj,
   vacf_hist.file_suffix = "_VACF";
   vacf_hist.bins.resize(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    vacf_hist.bins[i] = static_cast<double>(i) * time_step;
+    vacf_hist.bins[i] = static_cast<real_t>(i) * time_step;
   }
 
   vacf_hist.partials["Total"] = raw_vacf;
   results["VACF"] = std::move(vacf_hist);
 
-  std::vector<double> const norm_vacf = correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(
+  std::vector<real_t> const norm_vacf = correlation::analysis::DynamicsAnalyzer::calculateNormalizedVACF(
       traj, max_correlation_frames, start_frame, end_frame);
   if (!norm_vacf.empty()) {
     correlation::analysis::Histogram norm_vacf_hist;

@@ -32,8 +32,8 @@ class TrajectoryAnalyzer {
 public:
   /** @name Constructors */
   ///@{
-  TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, double neighbor_cutoff,
-                     const std::vector<std::vector<double>> &bond_cutoffs, StartFrame start_frame = {0},
+  TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
+                     const std::vector<std::vector<real_t>> &bond_cutoffs, StartFrame start_frame = {0},
                      EndFrame end_frame = {static_cast<size_t>(-1)}, bool ignore_periodic_self_interactions = true,
                      const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
@@ -54,11 +54,11 @@ public:
   [[nodiscard]] size_t getStartFrame() const { return start_frame_; }
 
   /** @return Time step extracted from the trajectory data. */
-  [[nodiscard]] double getTimeStep() const { return time_step_; }
+  [[nodiscard]] real_t getTimeStep() const { return time_step_; }
   /** @return The global neighbor cutoff radius. */
-  [[nodiscard]] double getNeighborCutoff() const { return neighbor_cutoff_; }
+  [[nodiscard]] real_t getNeighborCutoff() const { return neighbor_cutoff_; }
   /** @return The bond cutoffs used for topological analysis. */
-  [[nodiscard]] const std::vector<std::vector<double>> &getBondCutoffsSQ() const { return bond_cutoffs_; }
+  [[nodiscard]] const std::vector<std::vector<real_t>> &getBondCutoffsSQ() const { return bond_cutoffs_; }
   /** @return True if periodic self-interactions are being ignored. */
   [[nodiscard]] bool getIgnorePeriodicSelfInteractions() const { return ignore_periodic_self_interactions_; }
 
@@ -68,9 +68,9 @@ private:
   correlation::core::Trajectory *trajectory_;     ///< Pointer to the source trajectory.
   size_t start_frame_;                            ///< Analysis window start.
   size_t effective_end_;                          ///< Analysis window end (exclusive).
-  double time_step_;                              ///< Time step between frames.
-  double neighbor_cutoff_;                        ///< Neighbor search radius.
-  std::vector<std::vector<double>> bond_cutoffs_; ///< Squared bond cutoffs per pair.
+  real_t time_step_;                              ///< Time step between frames.
+  real_t neighbor_cutoff_;                        ///< Neighbor search radius.
+  std::vector<std::vector<real_t>> bond_cutoffs_; ///< Squared bond cutoffs per pair.
   bool ignore_periodic_self_interactions_;        ///< Interaction guard flag.
 };
 

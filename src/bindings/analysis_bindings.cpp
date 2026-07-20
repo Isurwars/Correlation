@@ -99,18 +99,18 @@ void init_analysis(py::module_ &mod) {
                      "Dict mapping partial key to smoothed y-values.")
       .def(
           "get_bins_numpy",
-          [](const Histogram &hist) -> py::array_t<double> {
-            return py::array_t<double>(static_cast<py::ssize_t>(hist.bins.size()), hist.bins.data());
+          [](const Histogram &hist) -> py::array_t<real_t> {
+            return py::array_t<real_t>(static_cast<py::ssize_t>(hist.bins.size()), hist.bins.data());
           },
           "Return x-axis bins as a NumPy array (copy).")
       .def(
           "get_partial_numpy",
-          [](const Histogram &hist, const std::string &key) -> py::array_t<double> {
+          [](const Histogram &hist, const std::string &key) -> py::array_t<real_t> {
             auto iter = hist.partials.find(key);
             if (iter == hist.partials.end()) {
               throw std::runtime_error("Partial key not found: " + key);
             }
-            return py::array_t<double>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
+            return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
           },
           py::arg("key"),
           "Return a specific partial distribution as a NumPy array.\n\n"
@@ -119,12 +119,12 @@ void init_analysis(py::module_ &mod) {
           "    Partial key (e.g. 'Si-O' or 'Total').")
       .def(
           "get_smoothed_partial_numpy",
-          [](const Histogram &hist, const std::string &key) -> py::array_t<double> {
+          [](const Histogram &hist, const std::string &key) -> py::array_t<real_t> {
             auto iter = hist.smoothed_partials.find(key);
             if (iter == hist.smoothed_partials.end()) {
               throw std::runtime_error("Smoothed partial key not found: " + key);
             }
-            return py::array_t<double>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
+            return py::array_t<real_t>(static_cast<py::ssize_t>(iter->second.size()), iter->second.data());
           },
           py::arg("key"), "Return a specific smoothed partial distribution as a NumPy array.");
 
@@ -136,7 +136,7 @@ void init_analysis(py::module_ &mod) {
                                 "for a single simulation cell (frame).\n\n"
                                 "The tensors are indexed by element type: distances[e1][e2][pair_idx],\n"
                                 "angles[center][e1][e2][angle_idx], dihedrals[e1][e2][e3][e4][idx].")
-      .def(py::init<Cell &, double, const std::vector<std::vector<double>> &, bool>(), py::arg("cell"),
+      .def(py::init<Cell &, real_t, const std::vector<std::vector<real_t>> &, bool>(), py::arg("cell"),
            py::arg("cutoff"), py::arg("bond_cutoffs_sq"), py::arg("ignore_periodic_self_interactions") = true,
            "Construct and immediately compute all pair data.\n\n"
            "Parameters\n----------\n"
@@ -161,8 +161,8 @@ void init_analysis(py::module_ &mod) {
   py::class_<TrajectoryAnalyzer>(mod, "TrajectoryAnalyzer",
                                  "Orchestrates structural analysis across multiple frames of a trajectory.\n\n"
                                  "Provides per-frame StructureAnalyzer factories and trajectory metadata.")
-      .def(py::init([](Trajectory &trajectory, double neighbor_cutoff,
-                       const std::vector<std::vector<double>> &bond_cutoffs, size_t start_frame, long long end_frame,
+      .def(py::init([](Trajectory &trajectory, real_t neighbor_cutoff,
+                       const std::vector<std::vector<real_t>> &bond_cutoffs, size_t start_frame, long long end_frame,
                        bool ignore_periodic_self_interactions,
                        const std::function<void(float, const std::string &)> &progress_callback) {
              return std::make_unique<TrajectoryAnalyzer>(
@@ -211,8 +211,8 @@ void init_analysis(py::module_ &mod) {
                                     "   The DistributionFunctions holds an internal reference to the Cell\n"
                                     "   passed at construction. The Cell (and owning Trajectory) must remain\n"
                                     "   alive for the lifetime of this object.")
-      .def(py::init<Cell &, double, const std::vector<std::vector<double>> &>(), py::arg("cell"),
-           py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = std::vector<std::vector<double>>{},
+      .def(py::init<Cell &, real_t, const std::vector<std::vector<real_t>> &>(), py::arg("cell"),
+           py::arg("cutoff") = 0.0, py::arg("bond_cutoffs") = std::vector<std::vector<real_t>>{},
            "Construct a DistributionFunctions for a single Cell.\n\n"
            "Parameters\n----------\n"
            "cell : Cell\n"
@@ -241,7 +241,7 @@ void init_analysis(py::module_ &mod) {
            "Return a list of names for all currently available histograms.")
       .def(
           "get_ashcroft_weights",
-          [](const DistributionFunctions &dists) -> const std::map<std::string, double> & {
+          [](const DistributionFunctions &dists) -> const std::map<std::string, real_t> & {
             return dists.getAshcroftWeights();
           },
           py::return_value_policy::reference_internal, "Return the Ashcroft-Langreth weights used for S(Q) partials.")
@@ -297,7 +297,7 @@ void init_analysis(py::module_ &mod) {
       // Smoothing
       .def(
           "smooth",
-          [](DistributionFunctions &dists, const std::string &name, double sigma, KernelType kernel) {
+          [](DistributionFunctions &dists, const std::string &name, real_t sigma, KernelType kernel) {
             dists.smooth(name, sigma, kernel);
           },
           py::arg("name"), py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
@@ -308,7 +308,7 @@ void init_analysis(py::module_ &mod) {
           "kernel : KernelType\n    Smoothing kernel. Default Gaussian.")
       .def(
           "smooth_all",
-          [](DistributionFunctions &dists, double sigma, KernelType kernel) { dists.smoothAll(sigma, kernel); },
+          [](DistributionFunctions &dists, real_t sigma, KernelType kernel) { dists.smoothAll(sigma, kernel); },
           py::arg("sigma"), py::arg("kernel") = KernelType::Gaussian,
           "Smooth all available histograms.\n\n"
           "sigma : float\n    Kernel bandwidth.\n"

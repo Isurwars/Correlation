@@ -33,7 +33,7 @@ template <typename T> T safe_parse(const slint::SharedString &str, T default_val
   try {
     if constexpr (std::is_same_v<T, float>) {
       return std::stof(str.data());
-    } else if constexpr (std::is_same_v<T, double>) {
+    } else if constexpr (std::is_same_v<T, real_t>) {
       return std::stod(str.data());
     } else {
       return default_value;
@@ -85,8 +85,8 @@ correlation::plotters::PlotConfig PlotController::buildPlotConfigFromUI() {
   } else {
     config.preset_size = correlation::plotters::PlotConfig::PresetSize::Default;
     if (last_plot_width_ > 1.0F && last_plot_height_ > 1.0F) {
-      config.width = static_cast<double>(last_plot_width_);
-      config.height = static_cast<double>(last_plot_height_);
+      config.width = static_cast<real_t>(last_plot_width_);
+      config.height = static_cast<real_t>(last_plot_height_);
     }
   }
 
@@ -150,28 +150,28 @@ void PlotController::populatePlotList() {
   // Update dynamic properties
   const auto *distribution_functions = backend_.getDistributionFunctions();
   if (distribution_functions != nullptr) {
-    double msd = distribution_functions->getDiffusionCoefficientMSD();
+    real_t msd = distribution_functions->getDiffusionCoefficientMSD();
     if (msd > 0.0) {
       window_.set_diff_msd(slint::SharedString(std::format("{:.6f} Å²/fs", msd)));
     } else {
       window_.set_diff_msd("");
     }
 
-    double vacf = distribution_functions->getDiffusionCoefficientVACF();
+    real_t vacf = distribution_functions->getDiffusionCoefficientVACF();
     if (vacf > 0.0) {
       window_.set_diff_vacf(slint::SharedString(std::format("{:.6f} Å²/fs", vacf)));
     } else {
       window_.set_diff_vacf("");
     }
 
-    double tau = distribution_functions->getRelaxationTime();
+    real_t tau = distribution_functions->getRelaxationTime();
     if (tau > 0.0) {
       window_.set_relaxation_time(slint::SharedString(std::format("{:.4f} fs", tau)));
     } else {
       window_.set_relaxation_time("");
     }
 
-    double deb = distribution_functions->getDeborahNumber();
+    real_t deb = distribution_functions->getDeborahNumber();
     if (deb > 0.0) {
       window_.set_deborah_number(slint::SharedString(std::format("{:.4f}", deb)));
     } else {
@@ -312,7 +312,7 @@ void PlotController::updateTableData(const correlation::analysis::Histogram *his
 
     // Other columns: partial values
     for (const auto &key : keys) {
-      double val = 0.0;
+      real_t val = 0.0;
       auto iterator = partials.find(key);
       if (iterator != partials.end() && i < iterator->second.size()) {
         val = iterator->second[i];

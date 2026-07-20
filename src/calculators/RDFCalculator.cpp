@@ -72,19 +72,19 @@ void accumulateRawCounts(const correlation::core::Cell &cell, const correlation:
       // DistanceTensor. We multiply by 2 to account for both A_1 -> A_2 and A_2
       // -> A_1 interactions.
       if (i == j) {
-        correlation::math::scale_bins(partial_hist.data(), 2.0, settings.num_bins);
+        correlation::math::scale_bins(partial_hist.data(), static_cast<real_t>(2.0), settings.num_bins);
       }
     }
   }
 }
 
 struct RDFNormalizationSettings {
-  double volume;
-  double bin_width;
+  real_t volume;
+  real_t bin_width;
   size_t num_bins;
 };
 
-void normalizeDistributions(const correlation::core::Cell &cell, const std::map<std::string, double> &element_counts,
+void normalizeDistributions(const correlation::core::Cell &cell, const std::map<std::string, real_t> &element_counts,
                             RDFNormalizationSettings settings, const correlation::analysis::Histogram &H_r,
                             correlation::analysis::Histogram &g_r, correlation::analysis::Histogram &G_r,
                             correlation::analysis::Histogram &J_r) {
@@ -99,8 +99,8 @@ void normalizeDistributions(const correlation::core::Cell &cell, const std::map<
       const std::string &sym_i = elements[i].symbol;
       const std::string &sym_j = elements[j].symbol;
 
-      const double N_i = element_counts.at(sym_i);
-      const double N_j = element_counts.at(sym_j);
+      const real_t N_i = element_counts.at(sym_i);
+      const real_t N_j = element_counts.at(sym_j);
 
       const auto &H_ij = H_r.partials.at(key);
 
@@ -112,11 +112,11 @@ void normalizeDistributions(const correlation::core::Cell &cell, const std::map<
       // Second Pass: Normalize the raw counts H(r) into target distribution
       // functions. g(r) normalization constant: V / (4 * pi * dr * N_i * N_j).
       // The r^2 term is applied per-bin inside the SIMD kernel.
-      const double g_norm_constant = settings.volume / (correlation::math::four_pi * settings.bin_width * N_i * N_j);
-      const double rho_j = N_j / settings.volume;
-      const double inv_Ni_dr = 1.0 / (N_i * settings.bin_width);
-      const double inv_Nj_dr = 1.0 / (N_j * settings.bin_width);
-      const double pi4_rho_j = correlation::math::four_pi * rho_j;
+      const real_t g_norm_constant = settings.volume / (correlation::math::four_pi * settings.bin_width * N_i * N_j);
+      const real_t rho_j = N_j / settings.volume;
+      const real_t inv_Ni_dr = 1.0 / (N_i * settings.bin_width);
+      const real_t inv_Nj_dr = 1.0 / (N_j * settings.bin_width);
+      const real_t pi4_rho_j = correlation::math::four_pi * rho_j;
 
       correlation::math::normalize_rdf_bins(
           H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr, pi4_rho_j, g_r.partials[key].data(),
@@ -126,11 +126,11 @@ void normalizeDistributions(const correlation::core::Cell &cell, const std::map<
 }
 
 struct RDFWeightingSettings {
-  double rho_0;
+  real_t rho_0;
   size_t num_bins;
 };
 
-void weightPartials(const correlation::core::Cell &cell, const std::map<std::string, double> &ashcroft_weights,
+void weightPartials(const correlation::core::Cell &cell, const std::map<std::string, real_t> &ashcroft_weights,
                     RDFWeightingSettings settings, correlation::analysis::Histogram &g_r,
                     correlation::analysis::Histogram &G_r) {
   const auto &elements = cell.elements();
@@ -139,7 +139,7 @@ void weightPartials(const correlation::core::Cell &cell, const std::map<std::str
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = i; j < num_elements; ++j) {
       std::string const key = getPartialKey(cell, i, j);
-      double const weight = ashcroft_weights.at(key);
+      real_t const weight = ashcroft_weights.at(key);
 
       // 1. Weight g_r partial: g_ij_weighted(r) = w_ij * g_ij(r)
       auto &g_part = g_r.partials.at(key);
@@ -152,7 +152,7 @@ void weightPartials(const correlation::core::Cell &cell, const std::map<std::str
       // Thus, G_ij_weighted(r) = 4 * pi * rho_0 * r * (g_part[k] - weight)
       auto &G_part = G_r.partials.at(key);
       for (size_t k = 0; k < settings.num_bins; ++k) {
-        const double r_k = g_r.bins[k];
+        const real_t r_k = g_r.bins[k];
         if (r_k < 1e-9) {
           G_part[k] = 0.0;
         } else {
@@ -175,7 +175,7 @@ void RDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 
 std::map<std::string, correlation::analysis::Histogram>
 RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors,
-                         const std::map<std::string, double> &ashcroft_weights, double r_max, double r_bin_width) {
+                         const std::map<std::string, real_t> &ashcroft_weights, real_t r_max, real_t r_bin_width) {
   if (r_bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive, got: " + std::to_string(r_bin_width));
   }
@@ -190,20 +190,20 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
 
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
-  const auto num_atoms = static_cast<double>(cell.atomCount());
+  const auto num_atoms = static_cast<real_t>(cell.atomCount());
   if (num_atoms == 0.0) {
     return {};
   }
 
-  std::map<std::string, double> element_counts;
+  std::map<std::string, real_t> element_counts;
   for (const auto &atom : cell.atoms()) {
     element_counts[atom.element().symbol]++;
   }
 
   const auto num_bins = static_cast<size_t>(std::floor(r_max / r_bin_width));
-  const double Vol = cell.volume();
-  const double d_r = r_bin_width;
-  const double rho_0 = num_atoms / Vol;
+  const real_t Vol = static_cast<real_t>(cell.volume());
+  const real_t d_r = r_bin_width;
+  const real_t rho_0 = num_atoms / Vol;
 
   correlation::analysis::Histogram H_r;
   correlation::analysis::Histogram g_r;
@@ -218,24 +218,24 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   H_r.y_label = "H(r)";
   H_r.x_unit = "Å";
   H_r.y_unit = "counts";
-  H_r.description = "Distance Histogram";
+  H_r.description = "Radial Distribution Function";
   H_r.file_suffix = "_H";
 
   g_r.x_label = "r";
-  g_r.title = "g(r) — Pair Distribution";
+  g_r.title = "g(r) — Radial Distribution Function";
   g_r.y_label = "g(r)";
   g_r.x_unit = "Å";
-  g_r.y_unit = "Å⁻¹";
-  g_r.description = "Pair Distribution Function";
+  g_r.y_unit = "dimensionless";
+  g_r.description = "Radial Distribution Function";
   g_r.file_suffix = "_g";
 
   G_r.x_label = "r";
-  G_r.title = "G(r) — Reduced Pair Distribution";
+  G_r.title = "G(r) — Reduced Pair Distribution Function";
   G_r.y_label = "G(r)";
   G_r.x_unit = "Å";
-  G_r.y_unit = "Å⁻¹";
-  G_r.description = "Reduced Pair Distribution Function";
-  G_r.file_suffix = "_G_reduced";
+  G_r.y_unit = "Å⁻²";
+  G_r.description = "Radial Distribution Function";
+  G_r.file_suffix = "_G";
 
   J_r.x_label = "r";
   J_r.title = "J(r) — Reduced Pair Distribution";
@@ -246,14 +246,14 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   J_r.file_suffix = "_J";
 
   for (size_t i = 0; i < num_bins; ++i) {
-    const double r_i = (static_cast<double>(i) + 0.5) * r_bin_width;
+    const real_t r_i = static_cast<real_t>((static_cast<double>(i) + 0.5) * r_bin_width);
     H_r.bins[i] = r_i;
     g_r.bins[i] = r_i;
     G_r.bins[i] = r_i;
     J_r.bins[i] = r_i;
   }
 
-  accumulateRawCounts(cell, neighbors, {.r_max = r_max, .r_bin_width = r_bin_width, .num_bins = num_bins}, H_r);
+  accumulateRawCounts(cell, neighbors, {.r_max = static_cast<double>(r_max), .r_bin_width = static_cast<double>(r_bin_width), .num_bins = num_bins}, H_r);
 
   normalizeDistributions(cell, element_counts, {.volume = Vol, .bin_width = d_r, .num_bins = num_bins}, H_r, g_r, G_r,
                          J_r);
@@ -265,7 +265,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
       continue;
     }
 
-    double const weight = ashcroft_weights.at(key);
+    real_t const weight = ashcroft_weights.at(key);
 
     for (size_t k = 0; k < num_bins; ++k) {
       total_g[k] += g_partial[k] * weight;
@@ -278,7 +278,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   total_G.assign(num_bins, 0.0);
 
   for (size_t k = 0; k < num_bins; ++k) {
-    const double r_k = g_r.bins[k];
+    const real_t r_k = g_r.bins[k];
     if (r_k < 1e-9) {
       continue;
     }

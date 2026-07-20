@@ -34,11 +34,11 @@ private:
 TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
   // Arrange: Create an 8-atom conventional unit cell of Silicon.
   // The diamond lattice structure is a robust test for neighbor finding.
-  const double lattice_const = 5.43; // Angstroms
+  const real_t lattice_const = 5.43; // Angstroms
   correlation::core::Cell si_cell({lattice_const, lattice_const, lattice_const, 90.0, 90.0, 90.0});
 
   // Fractional coordinates for the 8 atoms in a diamond cubic cell
-  std::vector<correlation::math::Vector3<double>> const fractional_coords = {
+  std::vector<correlation::math::Vector3<real_t>> const fractional_coords = {
       {0.0, 0.0, 0.0},    {0.5, 0.5, 0.0},    {0.5, 0.0, 0.5},    {0.0, 0.5, 0.5},
       {0.25, 0.25, 0.25}, {0.75, 0.75, 0.25}, {0.75, 0.25, 0.75}, {0.25, 0.75, 0.75}};
 
@@ -57,7 +57,7 @@ TEST_F(StructureAnalyzerTests, FindsCorrectNeighborsForSilicon) {
 
   // Assert
   ASSERT_EQ(neighborGraph.nodeCount(), 8);
-  const double expected_distance = 2.3512; // More precise value
+  const real_t expected_distance = 2.3512; // More precise value
 
   // Every Si atom in a diamond lattice must have exactly 4 nearest neighbors.
   for (size_t i = 0; i < neighborGraph.nodeCount(); ++i) {
@@ -119,9 +119,9 @@ TEST_F(StructureAnalyzerTests, DistancesTensorIsCorrect) {
 TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   // Arrange: Create a single water molecule with a known bond angle.
   correlation::core::Cell water_cell({20.0, 20.0, 20.0, 90.0, 90.0, 90.0});
-  const double bond_length = 0.957;    // Angstroms
-  const double bond_angle_deg = 104.5; // Degrees
-  const double bond_angle_rad = bond_angle_deg * correlation::math::deg_to_rad;
+  const real_t bond_length = 0.957;    // Angstroms
+  const real_t bond_angle_deg = 104.5; // Degrees
+  const real_t bond_angle_rad = bond_angle_deg * correlation::math::deg_to_rad;
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});
   water_cell.addAtom("H", {10.0 + bond_length, 10.0, 10.0});
@@ -158,10 +158,10 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAngleWithPBC) {
   // (0.5, 3.5, 0.5) -> PBC vector B->C is (0.0, -1.0, 0.0). The resulting angle
   // A-B-C must be 90 degrees (pi/2 radians).
 
-  const double side_length = 10.0;
-  const double cutoff = 2.0;
+  const real_t side_length = 10.0;
+  const real_t cutoff = 2.0;
   // Calculate pi/2 explicitly using acos(-1.0) = pi.
-  const double expected_angle_rad = std::acos(-1.0) / 2.0;
+  const real_t expected_angle_rad = std::acos(-1.0) / 2.0;
 
   correlation::core::Cell pbc_cell({side_length, side_length, side_length, 90.0, 90.0, 90.0});
 
@@ -329,8 +329,8 @@ TEST_F(StructureAnalyzerTests, TriangleMoleculeConnectivity) {
   // Covalent radius Ar = 0.96 -> Bond cutoff = 1.92 * 1.2 = 2.304.
   // Distance 2.0 < 2.304, so they should be connected.
 
-  const double distance = 2.0;
-  const double height_triangle = std::sqrt(distance * distance - (distance / 2) * (distance / 2)); // sqrt(3)
+  const real_t distance = 2.0;
+  const real_t height_triangle = std::sqrt(distance * distance - (distance / 2) * (distance / 2)); // sqrt(3)
 
   cell.addAtom("Ar", {5.0, 5.0, 5.0});                                  // A
   cell.addAtom("Ar", {5.0 + distance, 5.0, 5.0});                       // B

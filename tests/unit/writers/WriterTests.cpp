@@ -6,6 +6,7 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
+#include "math/Precision.hpp"
 #include "readers/FileReader.hpp"
 #include "writers/FileWriter.hpp"
 
@@ -23,7 +24,7 @@
 namespace {
 
 // Helper to find the index of the maximum value in a given range.
-size_t find_peak_idx(const std::vector<double> &vec, size_t start, size_t end) {
+size_t find_peak_idx(const std::vector<correlation::real_t> &vec, size_t start, size_t end) {
   auto const iterator = std::max_element(vec.begin() + static_cast<std::ptrdiff_t>(start),
                                          vec.begin() + static_cast<std::ptrdiff_t>(end));
   return static_cast<size_t>(std::distance(vec.begin(), iterator));
@@ -59,7 +60,7 @@ protected:
     // Clean up all generated files.
     std::vector<std::string> const files_to_remove = {"test_si_g.csv",
                                                       "test_si_J.csv",
-                                                      "test_si_G_reduced.csv",
+                                                      "test_si_G.csv",
                                                       "test_si_PAD.csv",
                                                       "test_si_DAD.csv",
                                                       "test_si_RD.csv",
@@ -68,7 +69,7 @@ protected:
                                                       "test_si_CN.csv",
                                                       "test_si_g_smoothed.csv",
                                                       "test_si_J_smoothed.csv",
-                                                      "test_si_G_reduced_smoothed.csv",
+                                                      "test_si_G_smoothed.csv",
                                                       "test_si_PAD_smoothed.csv",
                                                       "test_si.h5",
                                                       "test_vacf.h5",
@@ -82,7 +83,7 @@ protected:
                                                       "test_vacf_vdos_VDOS.csv",
                                                       "test_si_g.parquet",
                                                       "test_si_J.parquet",
-                                                      "test_si_G_reduced.parquet",
+                                                      "test_si_G.parquet",
                                                       "test_si_PAD.parquet",
                                                       "test_si_summary.txt",
                                                       "test_vacf_new_summary.txt",
@@ -116,8 +117,8 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   correlation::analysis::DistributionFunctions dists(si_cell, 20.0, trajectory.getBondCutoffsSQ());
 
   // Act
-  const double rdf_bin = 0.05;
-  const double pad_bin = 1.0;
+  const real_t rdf_bin = 0.05;
+  const real_t pad_bin = 1.0;
   dists.calculateRDF(20.0, rdf_bin);
   dists.calculatePAD(pad_bin);
   dists.smoothAll(0.1);
@@ -157,7 +158,7 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Assert: Part 3 - Check that all expected files were created
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.csv"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.csv"));
+  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G.csv"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.csv"));
 }
 

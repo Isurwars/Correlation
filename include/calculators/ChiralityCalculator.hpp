@@ -43,7 +43,7 @@ public:
    * @param neighbors Structural analyzer containing the neighbor graph.
    * @return The normalized scalar triple product chirality value.
    */
-  static double computeSingleAtomChirality(size_t atom_idx,
+  static real_t computeSingleAtomChirality(size_t atom_idx,
                                            const correlation::core::Cell &cell,
                                            const correlation::analysis::StructureAnalyzer *neighbors);
 

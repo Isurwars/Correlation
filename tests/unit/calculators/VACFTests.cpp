@@ -71,8 +71,8 @@ TEST_F(VACFTests, CalculateVACF_WithFrameRange) {
 
   for (int i = 0; i < 10; ++i) {
     correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
-    cell.addAtom("Ar", {static_cast<double>(i), 0.0, 0.0});
-    cell.addAtom("Ar", {-static_cast<double>(i), 0.0, 0.0});
+    cell.addAtom("Ar", {static_cast<real_t>(i), 0.0, 0.0});
+    cell.addAtom("Ar", {-static_cast<real_t>(i), 0.0, 0.0});
     tRange.addFrame(cell);
   }
   tRange.calculateVelocities();
@@ -117,9 +117,9 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
   // r(7) = 2.71875
   // r(8) = 2.734375
 
-  std::vector<double> positions = {0.0, 1.0, 1.75, 2.25, 2.5, 2.625, 2.6875, 2.71875, 2.734375};
+  std::vector<real_t> positions = {0.0, 1.0, 1.75, 2.25, 2.5, 2.625, 2.6875, 2.71875, 2.734375};
 
-  for (double pos : positions) {
+  for (real_t pos : positions) {
     correlation::core::Cell cell({10, 10, 10, 90, 90, 90});
     cell.addAtom("Ar", {pos, 0.0, 0.0});
     cell.addAtom("Ar", {-pos, 0.0, 0.0}); // To balance COM
@@ -149,12 +149,12 @@ TEST_F(VACFTests, CalculateVACF_GasLike) {
 }
 
 TEST_F(VACFTests, ComputeDiffusionCoefficientVACF_and_RelaxationTime) {
-  std::vector<double> time = {0.0, 1.0, 2.0};
-  std::vector<double> vacf = {3.0, 3.0, 3.0};
-  std::vector<double> norm_vacf = {1.0, 1.0, 1.0};
+  std::vector<real_t> time = {0.0, 1.0, 2.0};
+  std::vector<real_t> vacf = {3.0, 3.0, 3.0};
+  std::vector<real_t> norm_vacf = {1.0, 1.0, 1.0};
 
-  double vacf_diffusion = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
-  double relaxation_time = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
+  real_t vacf_diffusion = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
+  real_t relaxation_time = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
 
   EXPECT_NEAR(vacf_diffusion, 2.0, 1e-6);
   EXPECT_NEAR(relaxation_time, 2.0, 1e-6);
@@ -186,30 +186,30 @@ TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
 
 TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {
   // Test mismatched size / empty inputs
-  std::vector<double> time_empty = {};
-  std::vector<double> vacf_empty = {};
+  std::vector<real_t> time_empty = {};
+  std::vector<real_t> vacf_empty = {};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_empty, vacf_empty), 0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_empty, vacf_empty), 0.0);
 
-  std::vector<double> time_small = {0.0};
-  std::vector<double> vacf_small = {1.0};
+  std::vector<real_t> time_small = {0.0};
+  std::vector<real_t> vacf_small = {1.0};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_small, vacf_small), 0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_small, vacf_small), 0.0);
 
-  std::vector<double> time_mismatch = {0.0, 1.0};
-  std::vector<double> vacf_mismatch = {1.0, 1.0, 1.0};
+  std::vector<real_t> time_mismatch = {0.0, 1.0};
+  std::vector<real_t> vacf_mismatch = {1.0, 1.0, 1.0};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_mismatch, vacf_mismatch), 0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_mismatch, vacf_mismatch), 0.0);
 
   // Test non-increasing time values (dt <= 0)
-  std::vector<double> time_non_inc = {0.0, 0.0, 1.0};
-  std::vector<double> vacf_valid = {1.0, 1.0, 1.0};
+  std::vector<real_t> time_non_inc = {0.0, 0.0, 1.0};
+  std::vector<real_t> vacf_valid = {1.0, 1.0, 1.0};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_non_inc, vacf_valid), 0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_non_inc, vacf_valid), 0.0);
 
   // Test negative result handling (Green-Kubo integral < 0)
-  std::vector<double> time_valid = {0.0, 1.0, 2.0};
-  std::vector<double> vacf_neg = {-5.0, -10.0, -5.0};
+  std::vector<real_t> time_valid = {0.0, 1.0, 2.0};
+  std::vector<real_t> vacf_neg = {-5.0, -10.0, -5.0};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(time_valid, vacf_neg), 0.0);
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeRelaxationTime(time_valid, vacf_neg), 0.0);
 }

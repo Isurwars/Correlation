@@ -19,9 +19,9 @@ namespace {
 class ChiralityCalculatorTests : public ::testing::Test {
 protected:
   // Helper to extract the peak bin index for a histogram
-  static double getPeakValue(const Histogram &hist) {
+  static real_t getPeakValue(const Histogram &hist) {
     const auto &vals = hist.partials.at("Total");
-    double max_val = -1.0;
+    real_t max_val = -1.0;
     size_t max_bin = 0;
     for (size_t i = 0; i < vals.size(); ++i) {
       if (vals[i] > max_val) {
@@ -42,7 +42,7 @@ TEST_F(ChiralityCalculatorTests, AchiralCoplanarMotif) {
   cell.addAtom("Ar", {3.8, 3.8, 5.0}); // Neighbor 3: r3 = (-1.2, -1.2, 0), d = 1.697
 
   StructureAnalyzer const analyzer(cell, 2.5, {{2.5 * 2.5}}, false);
-  double const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
+  real_t const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
   EXPECT_NEAR(chi, 0.0, 1e-7);
 }
@@ -56,7 +56,7 @@ TEST_F(ChiralityCalculatorTests, ChiralRightHandedMotif) {
   cell.addAtom("Ar", {5.0, 5.0, 6.2}); // Neighbor 3: r3 = (0, 0, 1.2), d = 1.2
 
   StructureAnalyzer const analyzer(cell, 2.5, {{2.5 * 2.5}}, false);
-  double const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
+  real_t const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
   EXPECT_NEAR(chi, 1.0, 1e-7);
 }
@@ -70,7 +70,7 @@ TEST_F(ChiralityCalculatorTests, ChiralLeftHandedMotif) {
   cell.addAtom("Ar", {5.0, 5.0, 3.8}); // Neighbor 3: r3 = (0, 0, -1.2), d = 1.2
 
   StructureAnalyzer const analyzer(cell, 2.5, {{2.5 * 2.5}}, false);
-  double const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
+  real_t const chi = correlation::calculators::ChiralityCalculator::computeSingleAtomChirality(0, cell, &analyzer);
 
   EXPECT_NEAR(chi, -1.0, 1e-7);
 }
@@ -94,7 +94,7 @@ TEST_F(ChiralityCalculatorTests, HistogramDistribution) {
   // Only atom 0 has 3 neighbors (chirality = 1.0).
   // The other 3 atoms have only 1 neighbor (chirality = 0.0).
   // Thus, the probability distribution should have non-zero contributions at 0.0 and 1.0.
-  double sum = 0.0;
+  real_t sum = 0.0;
   for (const auto &val : hist.partials.at("Total")) {
     sum += val;
   }

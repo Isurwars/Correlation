@@ -5,6 +5,7 @@
 
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "math/Constants.hpp"
+#include "math/Precision.hpp"
 
 #include <algorithm>
 #include <gtest/gtest.h>
@@ -19,8 +20,8 @@ TEST(vDoSTests, VDOSIsNonZeroAtZeroFrequencyForConstantVACF) {
   // frequency weighting), a constant VACF should result in a significant peak
   // at f=0 (DC component).
 
-  std::vector<double> vacf(100, 1.0); // Constant VACF
-  double time_step = 1.0;
+  std::vector<real_t> vacf(100, 1.0); // Constant VACF
+  real_t time_step = 1.0;
 
   auto [frequencies, intensities, unused] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
@@ -39,27 +40,27 @@ TEST(vDoSTests, PerfectSolidShowsSinglePeak) {
   // The resulting VDOS (real part) should have a single maximum at that
   // specific frequency.
 
-  double time_step = 1.0; // 1 fs
+  real_t time_step = 1.0; // 1 fs
   size_t num_frames = 2000;
-  std::vector<double> vacf(num_frames);
+  std::vector<real_t> vacf(num_frames);
 
   // Frequency of the pure cosine wave in THz
-  double target_nu_thz = 25.0;
+  real_t target_nu_thz = 25.0;
 
   for (size_t i = 0; i < num_frames; ++i) {
-    double t_fs = static_cast<double>(i) * time_step;
+    real_t t_fs = static_cast<real_t>(i) * time_step;
     // 0.001 converts fs to ps for THz frequency
-    vacf[i] = std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001);
+    vacf[i] = static_cast<real_t>(std::cos(2.0 * correlation::math::pi * target_nu_thz * t_fs * 0.001));
   }
 
   auto [frequencies, intensities_real, intensities_imag] = DynamicsAnalyzer::calculateVDOS(vacf, time_step);
 
   // Find the maximum intensity in the real part
-  auto max_it = std::max_element(intensities_real.begin(), intensities_real.end());
+  auto max_it = std::ranges::max_element(intensities_real);
   size_t max_idx = std::distance(intensities_real.begin(), max_it);
 
   // Delta nu is the frequency resolution
-  double d_nu = frequencies[1] - frequencies[0];
+  real_t d_nu = frequencies[1] - frequencies[0];
 
   // Check if the maximum frequency matches the target frequency within an
   // acceptable resolution margin
@@ -76,17 +77,17 @@ TEST(vDoSTests, IdealGasShowsImaginaryPeak) {
   // translates to a VDOS where the real part peaks at 0 THz and the imaginary
   // part peaks at frequency nu = a / 2pi.
 
-  double time_step = 1.0; // 1 fs
+  real_t time_step = 1.0; // 1 fs
   size_t num_frames = 2000;
-  std::vector<double> vacf(num_frames);
+  std::vector<real_t> vacf(num_frames);
 
   // We choose an exponential decay coefficient 'a' such that the imaginary peak
   // is at 10.0 THz.
-  double target_nu_peak = 10.0;
-  double vec_a = 2.0 * correlation::math::pi * target_nu_peak; // a in THz (ps^-1)
+  real_t target_nu_peak = 10.0;
+  auto vec_a = static_cast<real_t>(2.0 * correlation::math::pi * target_nu_peak); // a in THz (ps^-1)
 
   for (size_t i = 0; i < num_frames; ++i) {
-    double t_ps = static_cast<double>(i) * time_step * 0.001; // fs to ps
+    auto t_ps = static_cast<real_t>(static_cast<real_t>(i) * time_step * 0.001); // fs to ps
     vacf[i] = std::exp(-vec_a * t_ps);
   }
 
@@ -96,14 +97,14 @@ TEST(vDoSTests, IdealGasShowsImaginaryPeak) {
   auto max_real_it = std::ranges::max_element(intensities_real);
   size_t max_real_idx = std::distance(intensities_real.begin(), max_real_it);
 
-  EXPECT_EQ(frequencies[max_real_idx], 0.0) << "The real VDOS for an exponential decay should have its maximum at 0 "
-                                               "THz.";
+  EXPECT_NEAR(frequencies[max_real_idx], 0.0, correlation::is_single_precision ? 0.3 : 1e-6)
+      << "The real VDOS for an exponential decay should have its maximum at 0 THz.";
 
   // 2. The Imaginary part should peak at target_nu_peak
   auto max_imag_it = std::ranges::max_element(intensities_imag);
   size_t max_imag_idx = std::distance(intensities_imag.begin(), max_imag_it);
 
-  double d_nu = frequencies[1] - frequencies[0];
+  real_t d_nu = frequencies[1] - frequencies[0];
 
   EXPECT_NEAR(frequencies[max_imag_idx], target_nu_peak, 2.0 * d_nu)
       << "The imaginary VDOS peak " << frequencies[max_imag_idx]

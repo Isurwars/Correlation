@@ -15,35 +15,35 @@ namespace {
 
 class SteinhardtCalculatorTests : public ::testing::Test {
 protected:
-  static void checkOutputs(const std::map<std::string, Histogram> &hists, double expected_Q4, double expected_Q6,
-                           double expected_W6_hat) {
+  static void checkOutputs(const std::map<std::string, Histogram> &hists, real_t expected_Q4, real_t expected_Q6,
+                           real_t expected_W6_hat) {
     const auto &hist_Q4 = hists.at("Q4").partials.at("Total");
     const auto &hist_Q6 = hists.at("Q6").partials.at("Total");
     const auto &hist_W6 = hists.at("W6_hat").partials.at("Total");
 
-    double q4_val = 0;
-    double q6_val = 0;
-    double w6_val = 0;
+    real_t q4_val = 0;
+    real_t q6_val = 0;
+    real_t w6_val = 0;
 
     // Find the non-zero bins
     size_t const q4_bins = 100;
-    double const d_Q = 1.0 / q4_bins;
+    real_t const d_Q = 1.0 / q4_bins;
     size_t const w6_bins = 100;
-    double const W_min = -0.2;
-    double const W_max = 0.2;
-    double const d_W = (W_max - W_min) / w6_bins;
+    real_t const W_min = -0.2;
+    real_t const W_max = 0.2;
+    real_t const d_W = (W_max - W_min) / w6_bins;
 
     for (size_t bin = 0; bin < q4_bins; ++bin) {
       if (hist_Q4[bin] > 0) {
-        q4_val = (static_cast<double>(bin) + 0.5) * d_Q;
+        q4_val = static_cast<real_t>(static_cast<real_t>(bin) + 0.5) * d_Q;
       }
       if (hist_Q6[bin] > 0) {
-        q6_val = (static_cast<double>(bin) + 0.5) * d_Q;
+        q6_val = static_cast<real_t>(static_cast<real_t>(bin) + 0.5) * d_Q;
       }
     }
     for (size_t bin = 0; bin < w6_bins; ++bin) {
       if (hist_W6[bin] > 0) {
-        w6_val = W_min + (static_cast<double>(bin) + 0.5) * d_W;
+        w6_val = static_cast<real_t>(W_min + (static_cast<real_t>(bin) + 0.5) * d_W);
       }
     }
 
@@ -94,9 +94,9 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
-  double const phi = std::numbers::phi;
-  double const scale = 1.0 / std::sqrt(1.0 + phi * phi); // Normalize dist to 1.0
-  double const phi_scale = phi * scale;
+  real_t const phi = std::numbers::phi;
+  real_t const scale = static_cast<real_t>(1.0 / std::sqrt(1.0 + phi * phi)); // Normalize dist to 1.0
+  real_t const phi_scale = phi * scale;
 
   cell.addAtom("Ar", {5.0, 5.0 + scale, 5.0 + phi_scale});
   cell.addAtom("Ar", {5.0, 5.0 + scale, 5.0 - phi_scale});
@@ -152,7 +152,7 @@ TEST_F(SteinhardtCalculatorTests, EmptySystemOrNoNeighborsFillsPartialsWithZeros
 
     // Check that all bins in Total are exactly 0
     const auto &total = hist.partials.at("Total");
-    for (double const val : total) {
+    for (real_t const val : total) {
       EXPECT_DOUBLE_EQ(val, 0.0);
     }
   }
@@ -164,37 +164,41 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
   // L = 0, M = 0: Y_0^0 = 0.5 * sqrt(1/pi) ~ 0.28209479
   {
     auto val = SteinhardtCalculator::sphericalHarmonic(0, 0, {.theta = 0.5, .phi = 0.2});
-    EXPECT_NEAR(val.real(), 0.28209479177, 1e-8);
-    EXPECT_NEAR(val.imag(), 0.0, 1e-8);
+    EXPECT_NEAR(val.real(), 0.28209479177, correlation::is_single_precision ? 1e-5 : 1e-8);
+    EXPECT_NEAR(val.imag(), 0.0, correlation::is_single_precision ? 1e-5 : 1e-8);
   }
 
   // L = 1, M = 0: Y_1^0 = 0.5 * sqrt(3/pi) * cos(theta) ~ 0.4886025 * cos(theta)
   {
-    double const theta = 1.0;
-    auto val = SteinhardtCalculator::sphericalHarmonic(1, 0, {.theta = theta, .phi = 0.5});
-    EXPECT_NEAR(val.real(), 0.4886025119 * std::cos(theta), 1e-8);
-    EXPECT_NEAR(val.imag(), 0.0, 1e-8);
+    real_t const theta = 1.0;
+    auto val = SteinhardtCalculator::sphericalHarmonic(1, 0, {.theta = static_cast<real_t>(theta), .phi = 0.5F});
+    EXPECT_NEAR(val.real(), 0.4886025119 * std::cos(theta), 1e-5);
+    EXPECT_NEAR(val.imag(), 0.0, 1e-5);
   }
 
   // L = 1, M = 1: Y_1^1 = 0.5 * sqrt(3/(2*pi)) * sin(theta) * e^(i*phi) ~ 0.345494149 * sin(theta) * e^(i*phi)
   // (Condon-Shortley phase is cancelled)
   {
-    double const theta = 0.8;
-    double const phi = 0.6;
-    auto val = SteinhardtCalculator::sphericalHarmonic(1, 1, {.theta = theta, .phi = phi});
-    std::complex<double> expected = 0.345494149 * std::sin(theta) * std::polar(1.0, phi);
-    EXPECT_NEAR(val.real(), expected.real(), 1e-8);
-    EXPECT_NEAR(val.imag(), expected.imag(), 1e-8);
+    real_t const theta = 0.8;
+    real_t const phi = 0.6;
+    auto val = SteinhardtCalculator::sphericalHarmonic(
+        1, 1, {.theta = static_cast<real_t>(theta), .phi = static_cast<real_t>(phi)});
+    std::complex<real_t> expected =
+        static_cast<real_t>(0.345494149) * std::sin(theta) * std::polar(static_cast<real_t>(1.0), phi);
+    EXPECT_NEAR(val.real(), expected.real(), 1e-5);
+    EXPECT_NEAR(val.imag(), expected.imag(), 1e-5);
   }
 
   // L = 1, M = -1: Y_1^-1 = - (Y_1^1)*
   {
-    double const theta = 0.8;
-    double const phi = 0.6;
-    auto val = SteinhardtCalculator::sphericalHarmonic(1, -1, {.theta = theta, .phi = phi});
-    std::complex<double> expected = -std::conj(0.345494149 * std::sin(theta) * std::polar(1.0, phi));
-    EXPECT_NEAR(val.real(), expected.real(), 1e-8);
-    EXPECT_NEAR(val.imag(), expected.imag(), 1e-8);
+    real_t const theta = 0.8;
+    real_t const phi = 0.6;
+    auto val = SteinhardtCalculator::sphericalHarmonic(
+        1, -1, {.theta = static_cast<real_t>(theta), .phi = static_cast<real_t>(phi)});
+    std::complex<real_t> expected =
+        -std::conj(static_cast<real_t>(0.345494149) * std::sin(theta) * std::polar(static_cast<real_t>(1.0), phi));
+    EXPECT_NEAR(val.real(), expected.real(), 1e-5);
+    EXPECT_NEAR(val.imag(), expected.imag(), 1e-5);
   }
 }
 
@@ -212,10 +216,12 @@ TEST_F(SteinhardtCalculatorTests, Wigner3j) {
 
   // Known analytical values
   // 3j(1, 1, 0, 0, 0, 0) = -1/sqrt(3) ~ -0.57735027
-  EXPECT_NEAR(SteinhardtCalculator::wigner3j(1, 1, 0, 0, 0, 0), -1.0 / std::sqrt(3.0), 1e-8);
+  EXPECT_NEAR(SteinhardtCalculator::wigner3j(1, 1, 0, 0, 0, 0), -1.0 / std::sqrt(3.0),
+              correlation::is_single_precision ? 1e-5 : 1e-8);
 
   // 3j(2, 2, 2, 0, 0, 0) = -sqrt(2/35) ~ -0.23904572
-  EXPECT_NEAR(SteinhardtCalculator::wigner3j(2, 2, 2, 0, 0, 0), -std::sqrt(2.0 / 35.0), 1e-8);
+  EXPECT_NEAR(SteinhardtCalculator::wigner3j(2, 2, 2, 0, 0, 0), -std::sqrt(2.0 / 35.0),
+              correlation::is_single_precision ? 1e-5 : 1e-8);
 
   // 3j(2, 2, 1, 1, -1, 0) = -1/sqrt(30) ~ -0.18257419
   EXPECT_NEAR(SteinhardtCalculator::wigner3j(2, 2, 1, 1, -1, 0), -1.0 / std::sqrt(30.0), 1e-8);

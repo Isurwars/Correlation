@@ -72,25 +72,25 @@ size_t AppBackend::getRemovedFrameCount() const {
   return trajectory_->getRemovedFrameCount();
 }
 
-double AppBackend::getTimeStep() const {
+real_t AppBackend::getTimeStep() const {
   if (!trajectory_) {
     return 1.0;
   }
   return trajectory_->getTimeStep();
 }
 
-double AppBackend::getRecommendedTimeStep() const {
+real_t AppBackend::getRecommendedTimeStep() const {
   const correlation::core::Cell *current_cell = cell();
   if ((current_cell == nullptr) || current_cell->elements().empty()) {
     return AppDefaults::TIME_STEP;
   }
 
-  double min_mass = std::numeric_limits<double>::max();
+  real_t min_mass = std::numeric_limits<real_t>::max();
   bool found = false;
 
   for (const auto &element : current_cell->elements()) {
     try {
-      double const mass = correlation::physics::getAtomicMass(element.symbol);
+      real_t const mass = correlation::physics::getAtomicMass(element.symbol);
       if (mass < min_mass) {
         min_mass = mass;
         found = true;
@@ -108,7 +108,7 @@ double AppBackend::getRecommendedTimeStep() const {
   return AppDefaults::TIME_STEP;
 }
 
-std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
+std::vector<std::vector<real_t>> AppBackend::getRecommendedBondCutoffs() const {
   if (!trajectory_ || trajectory_->getFrameCount() == 0) {
     return {};
   }
@@ -118,7 +118,7 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
 
   const correlation::core::Cell &current_cell = trajectory_->firstFrame();
   const size_t num_elements = current_cell.elements().size();
-  std::vector<std::vector<double>> cutoffs(num_elements, std::vector<double>(num_elements));
+  std::vector<std::vector<real_t>> cutoffs(num_elements, std::vector<real_t>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       // getBondCutoff uses indices.
@@ -128,14 +128,14 @@ std::vector<std::vector<double>> AppBackend::getRecommendedBondCutoffs() const {
   return cutoffs;
 }
 
-double AppBackend::getBondCutoff(size_t type1, size_t type2) const {
+real_t AppBackend::getBondCutoff(size_t type1, size_t type2) const {
   if (!trajectory_) {
     return 0.0;
   }
   return trajectory_->getBondCutoff(type1, type2);
 }
 
-void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs) {
+void AppBackend::setBondCutoffs(const std::vector<std::vector<real_t>> &cutoffs) {
   if (!trajectory_) {
     return;
   }
@@ -145,7 +145,7 @@ void AppBackend::setBondCutoffs(const std::vector<std::vector<double>> &cutoffs)
     return;
   }
   const size_t num_elements = trajectory_->firstFrame().elements().size();
-  std::vector<std::vector<double>> cutoffs_sq(num_elements, std::vector<double>(num_elements));
+  std::vector<std::vector<real_t>> cutoffs_sq(num_elements, std::vector<real_t>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
       cutoffs_sq[i][j] = cutoffs[i][j] * cutoffs[i][j];
@@ -173,8 +173,8 @@ const correlation::analysis::Histogram *AppBackend::getHistogram(const std::stri
   }
 }
 
-std::map<std::string, double> AppBackend::getAshcroftWeights() const {
-  return df_ ? df_->getAshcroftWeights() : std::map<std::string, double>{};
+std::map<std::string, real_t> AppBackend::getAshcroftWeights() const {
+  return df_ ? df_->getAshcroftWeights() : std::map<std::string, real_t>{};
 }
 
 
@@ -351,7 +351,7 @@ void AppBackend::calculateDynamicProperties() {
     const auto &hist = it_msd->second;
     auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
-      double const d_msd =
+      real_t const d_msd =
           correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(hist.bins, it_total->second);
       df_->setDiffusionCoefficientMSD(d_msd);
     }
@@ -362,7 +362,7 @@ void AppBackend::calculateDynamicProperties() {
     const auto &hist = it_vacf->second;
     auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
-      double const d_vacf =
+      real_t const d_vacf =
           correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientVACF(hist.bins, it_total->second);
       df_->setDiffusionCoefficientVACF(d_vacf);
     }
@@ -373,9 +373,9 @@ void AppBackend::calculateDynamicProperties() {
     const auto &hist = it_norm->second;
     auto it_total = hist.partials.find("Total");
     if (it_total != hist.partials.end()) {
-      double const tau = correlation::analysis::DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
+      real_t const tau = correlation::analysis::DynamicsAnalyzer::computeRelaxationTime(hist.bins, it_total->second);
       df_->setRelaxationTime(tau);
-      double deborah = 0.0;
+      real_t deborah = 0.0;
       if (!hist.bins.empty() && hist.bins.back() > 0.0) {
         deborah = tau / hist.bins.back();
       }

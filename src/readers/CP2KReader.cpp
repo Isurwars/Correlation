@@ -69,9 +69,9 @@ void processCp2kLine(const std::string &line, std::vector<correlation::core::Cel
     std::string token;
     iss >> token;
     if (token == "ABC") {
-      double param_a = 0.0;
-      double param_b = 0.0;
-      double param_c = 0.0;
+      real_t param_a = 0.0;
+      real_t param_b = 0.0;
+      real_t param_c = 0.0;
       if (iss >> param_a >> param_b >> param_c) {
         current_cell.setLatticeParameters({param_a, param_b, param_c, 90.0, 90.0, 90.0});
         state.has_box = true;
@@ -80,11 +80,11 @@ void processCp2kLine(const std::string &line, std::vector<correlation::core::Cel
   } else if (state.parsing_coords) {
     std::istringstream iss(line); // Original line for case sensitivity in symbols
     std::string symbol;
-    double pos_x = 0.0;
-    double pos_y = 0.0;
-    double pos_z = 0.0;
+    real_t pos_x = 0.0;
+    real_t pos_y = 0.0;
+    real_t pos_z = 0.0;
     if (iss >> symbol >> pos_x >> pos_y >> pos_z) {
-      current_cell.addAtom(symbol, correlation::math::Vector3<double>(pos_x, pos_y, pos_z));
+      current_cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
     }
   }
 }

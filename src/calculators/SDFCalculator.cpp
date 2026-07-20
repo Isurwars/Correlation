@@ -26,13 +26,13 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   const auto &cell = dists.cell();
   // SDF is a 3D grid and requires a coarser resolution than 1D radial distributions.
   // We enforce a minimum grid spacing of 0.5 Å to prevent memory explosion.
-  const double d_x = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
+  const real_t d_x = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
-  double const l_x = cell.lattice_parameters()[0];
-  double const l_y = cell.lattice_parameters()[1];
-  double const l_z = cell.lattice_parameters()[2];
+  real_t const l_x = cell.lattice_parameters()[0];
+  real_t const l_y = cell.lattice_parameters()[1];
+  real_t const l_z = cell.lattice_parameters()[2];
 
   if (l_x <= 0 || l_y <= 0 || l_z <= 0) {
     return;
@@ -65,7 +65,7 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   // description string.
 
   // Voxel volume = total cell volume / number of voxels (correct for triclinic).
-  const double d_V = cell.volume() / static_cast<double>(total_bins);
+  const real_t d_V = cell.volume() / static_cast<real_t>(total_bins);
   const auto &inv_lv = cell.inverseLatticeVectors();
 
   for (const auto &atom : cell.atoms()) {
@@ -77,13 +77,13 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     // Convert Cartesian → fractional coordinates (correct for non-orthogonal cells)
     auto frac = inv_lv * atom.position();
     // Wrap to [0, 1) fractional
-    double const f_x = frac.x() - std::floor(frac.x());
-    double const f_y = frac.y() - std::floor(frac.y());
-    double const f_z = frac.z() - std::floor(frac.z());
+    real_t const f_x = frac.x() - std::floor(frac.x());
+    real_t const f_y = frac.y() - std::floor(frac.y());
+    real_t const f_z = frac.z() - std::floor(frac.z());
 
-    size_t const i_x = static_cast<size_t>(f_x * static_cast<double>(n_x)) % n_x;
-    size_t const i_y = static_cast<size_t>(f_y * static_cast<double>(n_y)) % n_y;
-    size_t const i_z = static_cast<size_t>(f_z * static_cast<double>(n_z)) % n_z;
+    size_t const i_x = static_cast<size_t>(f_x * static_cast<real_t>(n_x)) % n_x;
+    size_t const i_y = static_cast<size_t>(f_y * static_cast<real_t>(n_y)) % n_y;
+    size_t const i_z = static_cast<size_t>(f_z * static_cast<real_t>(n_z)) % n_z;
 
     size_t const idx = i_x * (n_y * n_z) + i_y * n_z + i_z;
     sdf_hist.partials[sym][idx] += 1.0 / d_V; // Density contribution per frame

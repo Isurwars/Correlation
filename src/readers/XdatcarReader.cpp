@@ -55,7 +55,7 @@ inline std::string extractLine(const char *data, size_t pos, size_t lineEnd) {
  *        individual frames without re-reading the header.
  */
 struct XdatcarHeader {
-  std::array<std::array<double, 3>, 3> lattice = {}; ///< Scaled lattice vectors.
+  std::array<std::array<real_t, 3>, 3> lattice = {}; ///< Scaled lattice vectors.
   std::vector<std::string> species;                  ///< Element symbols.
   std::vector<int> atom_counts;                      ///< Count per species.
   int total_atoms{0};                                ///< Sum of atom_counts.
@@ -85,7 +85,7 @@ struct XdatcarParser {
 
     // Line 2: Scaling factor
     std::string line = nextLine();
-    double const scaling_factor = std::stod(line);
+    real_t const scaling_factor = static_cast<real_t>(std::stod(line));
 
     // Lines 3-5: Lattice vectors
     for (int i = 0; i < 3; ++i) {
@@ -164,7 +164,7 @@ struct XdatcarParser {
   }
 
 private:
-  static void applyScaling(const std::shared_ptr<XdatcarHeader> &header, double scaling_factor) {
+  static void applyScaling(const std::shared_ptr<XdatcarHeader> &header, real_t scaling_factor) {
     if (scaling_factor > 0.0) {
       for (auto &row : header->lattice) {
         for (int j = 0; j < 3; ++j) {
@@ -172,16 +172,16 @@ private:
         }
       }
     } else if (scaling_factor < 0.0) {
-      double const target_volume = std::abs(scaling_factor);
+      real_t const target_volume = std::abs(scaling_factor);
       const auto &lattice_vecs = header->lattice;
-      double const current_volume =
+      real_t const current_volume =
           std::abs(lattice_vecs.at(0).at(0) * (lattice_vecs.at(1).at(1) * lattice_vecs.at(2).at(2) -
                                                lattice_vecs.at(1).at(2) * lattice_vecs.at(2).at(1)) -
                    lattice_vecs.at(0).at(1) * (lattice_vecs.at(1).at(0) * lattice_vecs.at(2).at(2) -
                                                lattice_vecs.at(1).at(2) * lattice_vecs.at(2).at(0)) +
                    lattice_vecs.at(0).at(2) * (lattice_vecs.at(1).at(0) * lattice_vecs.at(2).at(1) -
                                                lattice_vecs.at(1).at(1) * lattice_vecs.at(2).at(0)));
-      double const scale = std::cbrt(target_volume / current_volume);
+      real_t const scale = std::cbrt(target_volume / current_volume);
       for (auto &row : header->lattice) {
         for (int j = 0; j < 3; ++j) {
           row.at(j) *= scale;
@@ -252,14 +252,14 @@ correlation::core::Cell parseXdatcarFrame(const std::shared_ptr<XdatcarHeader> &
     }
     std::string const line = nextLn();
     std::istringstream iss(line);
-    double pos_x = 0.0;
-    double pos_y = 0.0;
-    double pos_z = 0.0;
+    real_t pos_x = 0.0;
+    real_t pos_y = 0.0;
+    real_t pos_z = 0.0;
     if (!(iss >> pos_x >> pos_y >> pos_z)) {
       break;
     }
     // Convert fractional coordinates to Cartesian: pos = x*a + y*b + z*c
-    correlation::math::Vector3<double> const pos = {
+    correlation::math::Vector3<real_t> const pos = {
         lattice_vecs.at(0).at(0) * pos_x + lattice_vecs.at(1).at(0) * pos_y + lattice_vecs.at(2).at(0) * pos_z,
         lattice_vecs.at(0).at(1) * pos_x + lattice_vecs.at(1).at(1) * pos_y + lattice_vecs.at(2).at(1) * pos_z,
         lattice_vecs.at(0).at(2) * pos_x + lattice_vecs.at(1).at(2) * pos_y + lattice_vecs.at(2).at(2) * pos_z};

@@ -24,14 +24,14 @@ TEST(DistanceCalculatorTests, ComputesPairwiseDistancesAndNeighborGraph) {
   cell.addAtom("O", {1.5, 0.0, 0.0});
 
   // Setup inputs
-  double const cutoff_sq = 4.0; // Cutoff distance = 2.0
-  std::vector<std::vector<double>> const bond_cutoffs_sq = {
+  real_t const cutoff_sq = 4.0; // Cutoff distance = 2.0
+  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {
       {4.0, 4.0}, // Si-Si, Si-O
       {4.0, 4.0}  // O-Si, O-O
   };
 
   size_t const num_elements = cell.elements().size();
-  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   NeighborGraph out_graph(2);
 
   // Act
@@ -61,11 +61,11 @@ TEST(DistanceCalculatorTests, DistanceAcrossPeriodicBoundary) {
   cell.addAtom("Si", {9.5, 5.0, 5.0}); // Near right edge
   // PBC distance = 1.0 (not 9.0)
 
-  double const cutoff_sq = 4.0; // cutoff = 2.0
-  std::vector<std::vector<double>> const bond_cutoffs_sq = {{4.0}};
+  real_t const cutoff_sq = 4.0; // cutoff = 2.0
+  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{4.0}};
 
   size_t const num_elements = cell.elements().size();
-  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   NeighborGraph out_graph(2);
 
   DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs_sq, true, out_distances, out_graph);
@@ -83,11 +83,11 @@ TEST(DistanceCalculatorTests, SingleAtomProducesNoDistances) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
 
-  double const cutoff_sq = 25.0;
-  std::vector<std::vector<double>> const bond_cutoffs_sq = {{25.0}};
+  real_t const cutoff_sq = 25.0;
+  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{25.0}};
 
   size_t const num_elements = cell.elements().size();
-  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   NeighborGraph out_graph(1);
 
   // With ignore_periodic_self_interactions = true, a single atom has no pairs
@@ -103,11 +103,11 @@ TEST(DistanceCalculatorTests, NonOrthogonalCell) {
   cell.addAtom("Ar", {0.0, 0.0, 0.0});
   cell.addAtom("Ar", {2.5, 0.0, 0.0});
 
-  double const cutoff_sq = 9.0; // cutoff = 3.0
-  std::vector<std::vector<double>> const bond_cutoffs_sq = {{9.0}};
+  real_t const cutoff_sq = 9.0; // cutoff = 3.0
+  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{9.0}};
 
   size_t const num_elements = cell.elements().size();
-  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   NeighborGraph out_graph(2);
 
   DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs_sq, true, out_distances, out_graph);
@@ -115,7 +115,7 @@ TEST(DistanceCalculatorTests, NonOrthogonalCell) {
   // Should find at least one pair
   EXPECT_GE(out_distances[0][0].size(), 1);
   // The computed distance should be the actual shortest distance under PBC
-  for (double const distance : out_distances[0][0]) {
+  for (real_t const distance : out_distances[0][0]) {
     EXPECT_GT(distance, 0.0);
     EXPECT_LE(distance, 3.0); // Within cutoff
   }
@@ -127,11 +127,11 @@ TEST(DistanceCalculatorTests, AtomsOutsideCutoff) {
   cell.addAtom("O", {4.0, 0.0, 0.0}); // Distance = 4.0
 
   // Cutoff = 2.0, so this pair should NOT be found
-  double const cutoff_sq = 4.0;
-  std::vector<std::vector<double>> const bond_cutoffs_sq = {{4.0, 4.0}, {4.0, 4.0}};
+  real_t const cutoff_sq = 4.0;
+  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{4.0, 4.0}, {4.0, 4.0}};
 
   size_t const num_elements = cell.elements().size();
-  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   NeighborGraph out_graph(2);
 
   DistanceCalculator::compute(cell, cutoff_sq, bond_cutoffs_sq, true, out_distances, out_graph);
@@ -146,9 +146,9 @@ TEST(DistanceCalculatorTests, ThrowsOnInvalidCutoff) {
   Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
-  std::vector<std::vector<double>> const bond_cutoffs_sq = {{4.0}};
+  std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{4.0}};
   size_t const num_elements = cell.elements().size();
-  DistanceTensor out_distances(num_elements, std::vector<std::vector<double>>(num_elements));
+  DistanceTensor out_distances(num_elements, std::vector<std::vector<real_t>>(num_elements));
   NeighborGraph out_graph(1);
 
   EXPECT_THROW(DistanceCalculator::compute(cell, -1.0, bond_cutoffs_sq, true, out_distances, out_graph),

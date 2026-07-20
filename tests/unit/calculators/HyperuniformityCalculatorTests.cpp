@@ -31,15 +31,16 @@ struct CreateRandomCellParams {
  * with spacing `a` (lattice constant). The number of atoms per axis
  * is n = L / a.
  */
-correlation::core::Cell createSCLattice(double box_length, int atoms_per_axis) {
-  double const lattice_constant = box_length / static_cast<double>(atoms_per_axis);
-  correlation::core::Cell cell({box_length, box_length, box_length, 90.0, 90.0, 90.0});
+correlation::core::Cell createSCLattice(real_t box_length, int atoms_per_axis) {
+  real_t const lattice_constant = box_length / static_cast<real_t>(atoms_per_axis);
+  correlation::core::Cell cell({box_length, box_length, box_length, static_cast<real_t>(90.0),
+                                static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   for (int ix = 0; ix < atoms_per_axis; ++ix) {
     for (int iy = 0; iy < atoms_per_axis; ++iy) {
       for (int iz = 0; iz < atoms_per_axis; ++iz) {
-        double x_pos = (static_cast<double>(ix) + 0.5) * lattice_constant;
-        double y_pos = (static_cast<double>(iy) + 0.5) * lattice_constant;
-        double z_pos = (static_cast<double>(iz) + 0.5) * lattice_constant;
+        real_t x_pos = (static_cast<real_t>(ix) + static_cast<real_t>(0.5)) * lattice_constant;
+        real_t y_pos = (static_cast<real_t>(iy) + static_cast<real_t>(0.5)) * lattice_constant;
+        real_t z_pos = (static_cast<real_t>(iz) + static_cast<real_t>(0.5)) * lattice_constant;
         cell.addAtom("Ar", {x_pos, y_pos, z_pos});
       }
     }
@@ -53,9 +54,11 @@ correlation::core::Cell createSCLattice(double box_length, int atoms_per_axis) {
  * Uses a fixed seed for reproducibility.
  */
 correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
-  correlation::core::Cell cell({params.box_length, params.box_length, params.box_length, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell({static_cast<real_t>(params.box_length), static_cast<real_t>(params.box_length),
+                                static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
+                                static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c)
-  std::uniform_real_distribution<double> dist(0.0, params.box_length);
+  std::uniform_real_distribution<real_t> dist(0.0, static_cast<real_t>(params.box_length));
   for (size_t i = 0; i < params.num_atoms; ++i) {
     cell.addAtom("Ar", {dist(rng), dist(rng), dist(rng)});
   }

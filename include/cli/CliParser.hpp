@@ -26,12 +26,12 @@ namespace correlation::cli {
 struct CliOptions {
   std::string input_file;
   std::string output_base;
-  double r_max = 20.0;
-  double r_bin_width = 0.02;
-  double q_max = 20.0;
-  double q_bin_width = 0.02;
-  double angle_bin_width = 1.0;
-  double dihedral_bin_width = 1.0;
+  real_t r_max = 20.0;
+  real_t r_bin_width = 0.02;
+  real_t q_max = 20.0;
+  real_t q_bin_width = 0.02;
+  real_t angle_bin_width = 1.0;
+  real_t dihedral_bin_width = 1.0;
   bool has_dihedral_bin = false;
   int min_frame = 0;
   int max_frame = -1;
@@ -41,12 +41,12 @@ struct CliOptions {
   bool smoothing = true;
   bool quiet = false;
   std::string disable_groups; // comma-separated list of groups to disable
-  double time_step = 1.0;
-  double r_int_max = 10.0;
+  real_t time_step = 1.0;
+  real_t r_int_max = 10.0;
   int max_ring_size = 8;
-  double smoothing_sigma = 0.1;
-  double lef_cutoff = 5.0;
-  double lef_sigma = 0.2;
+  real_t smoothing_sigma = 0.1;
+  real_t lef_cutoff = 5.0;
+  real_t lef_sigma = 0.2;
   int hyper_samples = 10000;
   correlation::math::KernelType smoothing_kernel = correlation::math::KernelType::Gaussian;
   int material_type = 0;

@@ -22,8 +22,8 @@ void init_core(py::module_ &mod) {
       .def(py::init<>())
       .def_property(
           "position", [](const Atom &atom) { return atom.position().array(); },
-          [](Atom &atom, const std::array<double, 3> &pos) {
-            atom.setPosition(correlation::math::Vector3<double>(pos));
+          [](Atom &atom, const std::array<real_t, 3> &pos) {
+            atom.setPosition(correlation::math::Vector3<real_t>(pos));
           })
       .def_property("id", &Atom::id, &Atom::setID)
       .def_property("element", &Atom::element, &Atom::setElement);
@@ -32,8 +32,8 @@ void init_core(py::module_ &mod) {
       .def(py::init<>())
       .def(
           "add_atom",
-          [](Cell &cell, const std::string &symbol, const std::array<double, 3> &pos) -> Atom & {
-            return cell.addAtom(symbol, correlation::math::Vector3<double>(pos));
+          [](Cell &cell, const std::string &symbol, const std::array<real_t, 3> &pos) -> Atom & {
+            return cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos));
           },
           py::return_value_policy::reference)
       .def("get_volume", &Cell::volume)
@@ -43,13 +43,13 @@ void init_core(py::module_ &mod) {
           py::return_value_policy::reference_internal)
       .def(
           "get_positions",
-          [](const Cell &cell) -> py::array_t<double> {
+          [](const Cell &cell) -> py::array_t<real_t> {
             py::module_ warnings = py::module_::import("warnings");
             warnings.attr("warn")("get_positions() is deprecated, use the zero-copy .positions property instead.",
                                   warnings.attr("DeprecationWarning"));
             const auto &atoms = cell.atoms();
             const size_t num_atoms = atoms.size();
-            py::array_t<double> arr({static_cast<py::ssize_t>(num_atoms), py::ssize_t(3)});
+            py::array_t<real_t> arr({static_cast<py::ssize_t>(num_atoms), py::ssize_t(3)});
             auto buf = arr.mutable_unchecked<2>();
             for (size_t i = 0; i < num_atoms; ++i) {
               const auto &position = atoms[i].position();
@@ -62,40 +62,40 @@ void init_core(py::module_ &mod) {
           "Deprecated: Return all atom positions as a NumPy array. Use .positions instead.")
       .def_property_readonly(
           "positions",
-          [](py::object &obj) -> py::array_t<double> {
+          [](py::object &obj) -> py::array_t<real_t> {
             const auto &cell = obj.cast<const Cell &>();
             const auto &atoms = cell.atoms();
             if (atoms.empty()) {
-              return py::array_t<double>();
+              return py::array_t<real_t>();
             }
 
             ssize_t stride_row = sizeof(Atom);
-            ssize_t stride_col = sizeof(double);
+            ssize_t stride_col = sizeof(real_t);
             ssize_t rows = static_cast<ssize_t>(atoms.size());
             ssize_t cols = 3;
 
-            const double *ptr = atoms[0].position().begin();
+            const real_t *ptr = atoms[0].position().begin();
 
-            return py::array_t<double>({rows, cols}, {stride_row, stride_col}, ptr, obj);
+            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
           },
           "Zero-copy access to atom positions as a (N, 3) NumPy array.")
       .def_property_readonly(
           "velocities",
-          [](py::object &obj) -> py::array_t<double> {
+          [](py::object &obj) -> py::array_t<real_t> {
             const auto &cell = obj.cast<const Cell &>();
             const auto &atoms = cell.atoms();
             if (atoms.empty()) {
-              return py::array_t<double>();
+              return py::array_t<real_t>();
             }
 
             ssize_t stride_row = sizeof(Atom);
-            ssize_t stride_col = sizeof(double);
+            ssize_t stride_col = sizeof(real_t);
             ssize_t rows = static_cast<ssize_t>(atoms.size());
             ssize_t cols = 3;
 
-            const double *ptr = atoms[0].velocity().begin();
+            const real_t *ptr = atoms[0].velocity().begin();
 
-            return py::array_t<double>({rows, cols}, {stride_row, stride_col}, ptr, obj);
+            return py::array_t<real_t>({rows, cols}, {stride_row, stride_col}, ptr, obj);
           },
           "Zero-copy access to atom velocities as a (N, 3) NumPy array.")
       .def(
@@ -113,9 +113,9 @@ void init_core(py::module_ &mod) {
           "Return element type IDs for all atoms as a NumPy array of shape (N,).")
       .def(
           "get_lattice_parameters",
-          [](const Cell &cell) -> py::array_t<double> {
+          [](const Cell &cell) -> py::array_t<real_t> {
             const auto &lattice_parameters = cell.lattice_parameters();
-            py::array_t<double> arr(6);
+            py::array_t<real_t> arr(6);
             auto buf = arr.mutable_unchecked<1>();
             for (int i = 0; i < 6; ++i) {
               buf(i) = lattice_parameters.at(i);

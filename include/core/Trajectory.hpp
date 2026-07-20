@@ -39,7 +39,7 @@ public:
    * @param frames Vector of Cell objects representing simulation snapshots.
    * @param time_step The time interval between consecutive frames.
    */
-  Trajectory(std::vector<Cell> frames, double time_step);
+  Trajectory(std::vector<Cell> frames, real_t time_step);
 
   using FrameParser = std::function<Cell(const char *data, size_t size)>;
 
@@ -51,7 +51,7 @@ public:
    * @param time_step The time interval between consecutive frames.
    */
   Trajectory(std::shared_ptr<MappedFile> mapped_file, std::vector<size_t> frame_offsets, FrameParser parser,
-             double time_step);
+             real_t time_step);
 
   /**
    * @brief Appends a new frame to the trajectory.
@@ -100,13 +100,13 @@ public:
    * @brief Gets the time step between frames.
    * @return The time step in simulation units.
    */
-  [[nodiscard]] double getTimeStep() const { return time_step_; }
+  [[nodiscard]] real_t getTimeStep() const { return time_step_; }
 
   /**
    * @brief Sets the time step between frames.
    * @param time_step The new time step value.
    */
-  void setTimeStep(double time_step) { time_step_ = time_step; }
+  void setTimeStep(real_t time_step) { time_step_ = time_step; }
 
   /**
    * @brief Gets a linear bond cutoff distance for two given element types.
@@ -114,7 +114,7 @@ public:
    * @param type2 ID of the second element type.
    * @return The linear bond cutoff distance.
    */
-  [[nodiscard]] double getBondCutoff(size_t type1, size_t type2) const;
+  [[nodiscard]] real_t getBondCutoff(size_t type1, size_t type2) const;
 
   /**
    * @brief Gets a squared bond cutoff distance for two given element types.
@@ -122,13 +122,13 @@ public:
    * @param type2 ID of the second element type.
    * @return The squared bond cutoff distance.
    */
-  [[nodiscard]] double getBondCutoffSQ(size_t type1, size_t type2) const;
+  [[nodiscard]] real_t getBondCutoffSQ(size_t type1, size_t type2) const;
 
   /**
    * @brief Sets the squared bond cutoffs for neighbor searching.
    * @param cutoffs Matrix of squared distance cutoffs [type1][type2].
    */
-  void setBondCutoffsSQ(const std::vector<std::vector<double>> &cutoffs) { bond_cutoffs_sq_ = cutoffs; }
+  void setBondCutoffsSQ(const std::vector<std::vector<real_t>> &cutoffs) { bond_cutoffs_sq_ = cutoffs; }
 
   /**
    * @brief Removes consecutive duplicated frames from the trajectory.
@@ -157,7 +157,7 @@ public:
    * @brief Gets the matrix of squared bond cutoffs for element pairs.
    * @return The squared bond cutoff matrix.
    */
-  [[nodiscard]] const std::vector<std::vector<double>> &getBondCutoffsSQ() const { return bond_cutoffs_sq_; }
+  [[nodiscard]] const std::vector<std::vector<real_t>> &getBondCutoffsSQ() const { return bond_cutoffs_sq_; }
 
   /**
    * @brief Returns the number of frames removed during deduplication.
@@ -185,9 +185,9 @@ private:
 
   mutable std::vector<Cell> frames_; ///< Collection of simulation snapshots.
   mutable std::optional<Cell> first_frame_;
-  mutable std::vector<std::vector<double>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
+  mutable std::vector<std::vector<real_t>> bond_cutoffs_sq_; ///< Cached squared bond cutoffs.
   // velocities_ removed
-  double time_step_;               ///< Time between snapshots.
+  real_t time_step_;               ///< Time between snapshots.
   size_t removed_frames_count_{0}; ///< Counter for deduplicated frames.
 
   std::shared_ptr<MappedFile> mapped_file_;

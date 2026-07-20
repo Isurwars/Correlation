@@ -54,16 +54,16 @@ public:
 private:
   /// Describes the binning range for a histogram.
   struct BinRange {
-    double bin_width;
+    real_t bin_width;
     size_t num_bins;
-    double range_min;
-    double range_max;
+    real_t range_min;
+    real_t range_max;
   };
 
   /// Data extracted from a single Voronoi cell for each atom.
   struct CellData {
-    std::vector<double> volumes;
-    std::vector<double> sphericities;
+    std::vector<real_t> volumes;
+    std::vector<real_t> sphericities;
     std::vector<int> coordination_numbers;
     std::vector<std::string> signatures;
   };
@@ -80,13 +80,13 @@ private:
   makeHistogram(const std::string &title, const std::string &x_label,
                 const std::string &y_label, const std::string &x_unit,
                 const std::string &y_unit, const std::string &description,
-                const std::string &file_suffix, const std::vector<double> &bins,
+                const std::string &file_suffix, const std::vector<real_t> &bins,
                 const std::vector<std::string> &element_symbols);
 
   /// Populate histogram bins from per-atom numeric data.
   static void populateHistogram(correlation::analysis::Histogram &hist,
                                 const BinRange &range,
-                                const std::vector<double> &values,
+                                const std::vector<real_t> &values,
                                 const std::vector<correlation::core::Atom> &atoms);
 };
 

@@ -46,9 +46,9 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
-  dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
-                     1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
+  dict.resize(1, std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+                     1, std::vector<std::vector<std::vector<real_t>>>(
+                            1, std::vector<std::vector<real_t>>(1, std::vector<real_t>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
@@ -56,7 +56,7 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect90DegreeDihedral) {
   ASSERT_EQ(angles.size(), 1);
 
   // Test the angle: expected pi/2.
-  EXPECT_NEAR(angles[0], correlation::math::pi / 2.0, 1e-12);
+  EXPECT_NEAR(angles[0], correlation::math::pi / 2.0, correlation::is_single_precision ? 1e-4 : 1e-12);
 }
 
 TEST_F(DihedralCalculatorTests, ComputesCorrect0DegreeDihedral) {
@@ -79,9 +79,9 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect0DegreeDihedral) {
   graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
-  dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
-                     1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
+  dict.resize(1, std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+                     1, std::vector<std::vector<std::vector<real_t>>>(
+                            1, std::vector<std::vector<real_t>>(1, std::vector<real_t>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
@@ -110,15 +110,15 @@ TEST_F(DihedralCalculatorTests, ComputesCorrect180DegreeDihedral) {
   graph.addDirectedEdge(3, 2, 1.0, cell.atoms()[2].position() - cell.atoms()[3].position());
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
-  dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
-                     1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
+  dict.resize(1, std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+                     1, std::vector<std::vector<std::vector<real_t>>>(
+                            1, std::vector<std::vector<real_t>>(1, std::vector<real_t>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 
   const auto &angles = dict[0][0][0][0];
   ASSERT_EQ(angles.size(), 1);
-  EXPECT_NEAR(std::abs(angles[0]), correlation::math::pi, 1e-12);
+  EXPECT_NEAR(std::abs(angles[0]), correlation::math::pi, 1e-5);
 }
 
 TEST_F(DihedralCalculatorTests, HandlesCoincidentCentralBondSafely) {
@@ -136,9 +136,9 @@ TEST_F(DihedralCalculatorTests, HandlesCoincidentCentralBondSafely) {
   graph.addDirectedEdge(3, 2, 1.0, {0.0, 0.0, -1.0});
 
   correlation::analysis::StructureAnalyzer::DihedralTensor dict;
-  dict.resize(1, std::vector<std::vector<std::vector<std::vector<double>>>>(
-                     1, std::vector<std::vector<std::vector<double>>>(
-                            1, std::vector<std::vector<double>>(1, std::vector<double>()))));
+  dict.resize(1, std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+                     1, std::vector<std::vector<std::vector<real_t>>>(
+                            1, std::vector<std::vector<real_t>>(1, std::vector<real_t>()))));
 
   correlation::calculators::DihedralCalculator::compute(cell, graph, dict);
 

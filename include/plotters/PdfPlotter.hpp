@@ -169,7 +169,7 @@ struct PdfHistogramRenderer {
 
   detail::NiceScale xScale;
   detail::NiceScale yScale;
-  std::map<std::string, std::vector<double>> partials;
+  std::map<std::string, std::vector<real_t>> partials;
 
   PdfHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg, pdf_doc *pdf_doc_ptr,
                        struct pdf_object *pdf_page)
@@ -201,9 +201,9 @@ struct PdfHistogramRenderer {
     partials = hist->smoothed_partials.empty() ? hist->partials : hist->smoothed_partials;
 
     for (const auto &[key, vals] : partials) {
-      for (double val : vals) {
-        max_y = std::max(max_y, val);
-        min_y = std::min(min_y, val);
+      for (real_t val : vals) {
+        max_y = std::max(max_y, static_cast<double>(val));
+        min_y = std::min(min_y, static_cast<double>(val));
       }
     }
 
@@ -451,12 +451,12 @@ struct PdfComparisonRenderer {
       const auto &x_values = dataset.hist->bins;
       const auto &y_values = iterator->second;
       if (!x_values.empty()) {
-        raw_x_min = std::min(raw_x_min, x_values.front());
-        raw_x_max = std::max(raw_x_max, x_values.back());
+        raw_x_min = std::min(raw_x_min, static_cast<double>(x_values.front()));
+        raw_x_max = std::max(raw_x_max, static_cast<double>(x_values.back()));
       }
-      for (double y_value : y_values) {
-        raw_y_max = std::max(raw_y_max, y_value);
-        raw_y_min = std::min(raw_y_min, y_value);
+      for (real_t y_value : y_values) {
+        raw_y_max = std::max(raw_y_max, static_cast<double>(y_value));
+        raw_y_min = std::min(raw_y_min, static_cast<double>(y_value));
       }
     }
 

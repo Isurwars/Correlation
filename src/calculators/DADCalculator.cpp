@@ -44,10 +44,10 @@ correlation::analysis::Histogram initializeHistogram(size_t num_bins, double the
  * @brief Helper to process and bin a vector of dihedral angles.
  */
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void processDihedralAngles(const std::vector<double> &angles_rad, std::vector<double> &partial_hist, double bin_width,
-                           size_t num_bins, double theta_min, double theta_max) {
+void processDihedralAngles(const std::vector<real_t> &angles_rad, std::vector<real_t> &partial_hist, real_t bin_width,
+                           size_t num_bins, real_t theta_min, real_t theta_max) {
   for (const auto &angle_rad : angles_rad) {
-    double angle_deg = angle_rad * correlation::math::rad_to_deg;
+    real_t angle_deg = angle_rad * correlation::math::rad_to_deg;
 
     // clamp angle into [-180, 180]
     while (angle_deg <= -180.0) {
@@ -75,10 +75,10 @@ void processDihedralAngles(const std::vector<double> &angles_rad, std::vector<do
  * @brief Helper to sum partial histograms and normalize them.
  */
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void normalizeAndScale(correlation::analysis::Histogram &f_dihedral, size_t num_bins, double bin_width) {
+void normalizeAndScale(correlation::analysis::Histogram &f_dihedral, size_t num_bins, real_t bin_width) {
   auto &total_f = f_dihedral.partials["Total"];
   total_f.assign(num_bins, 0.0);
-  double total_counts = 0;
+  real_t total_counts = 0;
 
   for (const auto &[key, partial] : f_dihedral.partials) {
     if (key != "Total") {
@@ -90,9 +90,11 @@ void normalizeAndScale(correlation::analysis::Histogram &f_dihedral, size_t num_
   }
 
   if (total_counts >= 1.0) {
-    const double normalization_factor = 1.0 / (total_counts * bin_width);
+    const real_t normalization_factor = 1.0 / (total_counts * bin_width);
     for (auto &[key, partial] : f_dihedral.partials) {
-      correlation::math::scale_bins(partial.data(), normalization_factor, num_bins);
+      for (auto &val : partial) {
+        val *= normalization_factor;
+      }
     }
   }
 }
@@ -105,7 +107,7 @@ void DADCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 
 correlation::analysis::Histogram DADCalculator::calculate(const correlation::core::Cell &cell,
                                                           const correlation::analysis::StructureAnalyzer *neighbors,
-                                                          double bin_width) {
+                                                          real_t bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }

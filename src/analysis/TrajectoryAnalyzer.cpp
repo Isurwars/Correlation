@@ -12,8 +12,8 @@
 namespace correlation::analysis {
 
 
-TrajectoryAnalyzer::TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, double neighbor_cutoff,
-                                       const std::vector<std::vector<double>> &bond_cutoffs, StartFrame start_frame,
+TrajectoryAnalyzer::TrajectoryAnalyzer(correlation::core::Trajectory &trajectory, real_t neighbor_cutoff,
+                                       const std::vector<std::vector<real_t>> &bond_cutoffs, StartFrame start_frame,
                                        EndFrame end_frame, bool ignore_periodic_self_interactions,
                                        const std::function<void(float, const std::string &)> &progress_callback)
     : trajectory_(&trajectory), time_step_(trajectory.getTimeStep()), neighbor_cutoff_(neighbor_cutoff),

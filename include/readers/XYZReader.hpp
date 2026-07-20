@@ -38,8 +38,8 @@ public:
 
 private:
   struct CommentData {
-    std::optional<std::array<double, 9>> lattice;
-    std::optional<double> energy;
+    std::optional<std::array<real_t, 9>> lattice;
+    std::optional<real_t> energy;
     int species_col = 0;
     int pos_x_col = 1;
     int pos_y_col = 2;

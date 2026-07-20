@@ -36,7 +36,7 @@ TEST_F(NeighborGraphTests, ParameterConstructorInitializesNodeCount) {
 
 TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
   NeighborGraph graph(5);
-  Vector3<double> r_ij{1.0, 2.0, 3.0};
+  Vector3<real_t> r_ij{1.0, 2.0, 3.0};
   graph.addDirectedEdge(0, 1, 3.74, r_ij);
 
   EXPECT_TRUE(graph.areConnected(AtomIndex{0}, AtomIndex{1}));
@@ -53,7 +53,7 @@ TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
 
 TEST_F(NeighborGraphTests, OutOfBoundsEdgeAdditionDoesNotCrash) {
   NeighborGraph graph(3);
-  Vector3<double> r_ij{0.0, 0.0, 0.0};
+  Vector3<real_t> r_ij{0.0, 0.0, 0.0};
 
   // from index >= size is safely ignored (returns immediately)
   EXPECT_NO_THROW(graph.addDirectedEdge(3, 1, 1.0, r_ij));
@@ -83,7 +83,7 @@ TEST_F(NeighborGraphTests, OutOfBoundsGetNeighborsReturnsEmpty) {
 
 TEST_F(NeighborGraphTests, OutOfBoundsAreConnectedReturnsFalse) {
   NeighborGraph graph(3);
-  Vector3<double> r_ij{0.0, 0.0, 0.0};
+  Vector3<real_t> r_ij{0.0, 0.0, 0.0};
   graph.addDirectedEdge(0, 1, 1.0, r_ij);
 
   EXPECT_FALSE(graph.areConnected(AtomIndex{3}, AtomIndex{1}));
@@ -93,7 +93,7 @@ TEST_F(NeighborGraphTests, OutOfBoundsAreConnectedReturnsFalse) {
 
 TEST_F(NeighborGraphTests, DenseAdjacencyMatrixMapping) {
   NeighborGraph graph(3);
-  Vector3<double> r_ij{0.0, 0.0, 0.0};
+  Vector3<real_t> r_ij{0.0, 0.0, 0.0};
   graph.addDirectedEdge(0, 1, 1.0, r_ij);
   graph.addDirectedEdge(1, 2, 1.0, r_ij);
   graph.addDirectedEdge(2, 0, 1.0, r_ij);
@@ -121,7 +121,7 @@ TEST_F(NeighborGraphTests, DenseAdjacencyMatrixMapping) {
 
 TEST_F(NeighborGraphTests, SelfLoopIsAllowed) {
   NeighborGraph graph(3);
-  Vector3<double> r_ij{0.0, 0.0, 0.0};
+  Vector3<real_t> r_ij{0.0, 0.0, 0.0};
 
   // Self-loop: atom 0 -> atom 0
   graph.addDirectedEdge(0, 0, 0.0, r_ij);
@@ -138,8 +138,8 @@ TEST_F(NeighborGraphTests, SelfLoopIsAllowed) {
 
 TEST_F(NeighborGraphTests, DuplicateEdgesAreBothStored) {
   NeighborGraph graph(3);
-  Vector3<double> r_ij1{1.0, 0.0, 0.0};
-  Vector3<double> r_ij2{2.0, 0.0, 0.0};
+  Vector3<real_t> r_ij1{1.0, 0.0, 0.0};
+  Vector3<real_t> r_ij2{2.0, 0.0, 0.0};
 
   // Add same edge (0 -> 1) twice with different distances
   graph.addDirectedEdge(0, 1, 1.5, r_ij1);
@@ -161,7 +161,7 @@ TEST_F(NeighborGraphTests, LargeGraphPerformance) {
   // Stress test: large fully-connected graph should not crash
   const size_t num_nodes = 500;
   NeighborGraph graph(num_nodes);
-  Vector3<double> r_ij{1.0, 0.0, 0.0};
+  Vector3<real_t> r_ij{1.0, 0.0, 0.0};
 
   // Connect every pair (i,j) where i < j as a directed edge i -> j
   for (size_t i = 0; i < num_nodes; ++i) {

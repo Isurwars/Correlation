@@ -22,11 +22,11 @@ TEST(MSDCalculatorTests, ComputesCorrectMSDAndDeff) {
   std::vector<Cell> frames;
   for (int i = 0; i < 5; ++i) {
     Cell cell({10.0, 0.0, 0.0}, {0.0, 10.0, 0.0}, {0.0, 0.0, 10.0});
-    cell.addAtom("Si", {static_cast<double>(i), 0.0, 0.0});
+    cell.addAtom("Si", {static_cast<real_t>(i), 0.0, 0.0});
     frames.push_back(std::move(cell));
   }
 
-  double time_step = 1.0; // 1 fs
+  real_t time_step = 1.0; // 1 fs
   Trajectory traj(std::move(frames), time_step);
 
   // Act
@@ -84,8 +84,8 @@ TEST(MSDCalculatorTests, MultiAtomAveraging) {
   std::vector<Cell> frames;
   for (int i = 0; i < 4; ++i) {
     Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
-    cell.addAtom("Si", {static_cast<double>(i), 5.0, 5.0}); // Moves +x
-    cell.addAtom("Si", {5.0, static_cast<double>(i), 5.0}); // Moves +y
+    cell.addAtom("Si", {static_cast<real_t>(i), 5.0, 5.0}); // Moves +x
+    cell.addAtom("Si", {5.0, static_cast<real_t>(i), 5.0}); // Moves +y
     frames.push_back(std::move(cell));
   }
 
@@ -108,7 +108,7 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
   std::vector<Cell> frames;
   for (int i = 0; i < 10; ++i) {
     Cell cell({20.0, 0.0, 0.0}, {0.0, 20.0, 0.0}, {0.0, 0.0, 20.0});
-    cell.addAtom("Si", {static_cast<double>(i), 0.0, 0.0});
+    cell.addAtom("Si", {static_cast<real_t>(i), 0.0, 0.0});
     frames.push_back(std::move(cell));
   }
 
@@ -128,27 +128,27 @@ TEST(MSDCalculatorTests, FrameRangeSubset) {
 TEST(MSDCalculatorTests, ComputeDiffusionCoefficientMSD) {
   // Create a linear MSD trajectory: MSD(t) = 6.0 * t
   // Slope is 6.0, so D should be 1.0
-  std::vector<double> const time = {0.0, 1.0, 2.0, 3.0, 4.0};
-  std::vector<double> const msd = {0.0, 6.0, 12.0, 18.0, 24.0};
+  std::vector<real_t> const time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  std::vector<real_t> const msd = {0.0, 6.0, 12.0, 18.0, 24.0};
 
-  double const diffusion_coefficient =
+  real_t const diffusion_coefficient =
       correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
   EXPECT_NEAR(diffusion_coefficient, 1.0, 1e-6);
 }
 
 TEST(MSDCalculatorTests, DynamicsAnalyzerMSDNonPhysicalInputs) {
   // Mismatched size / empty inputs
-  std::vector<double> time_empty = {};
-  std::vector<double> msd_empty = {};
+  std::vector<real_t> time_empty = {};
+  std::vector<real_t> msd_empty = {};
   EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time_empty, msd_empty), 0.0);
 
-  std::vector<double> time_small = {0.0};
-  std::vector<double> msd_small = {0.0};
+  std::vector<real_t> time_small = {0.0};
+  std::vector<real_t> msd_small = {0.0};
   EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time_small, msd_small), 0.0);
 
   // Negative slope (non-physical diffusion)
-  std::vector<double> time = {0.0, 1.0, 2.0, 3.0, 4.0};
-  std::vector<double> msd_neg_slope = {24.0, 18.0, 12.0, 6.0, 0.0};
+  std::vector<real_t> time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  std::vector<real_t> msd_neg_slope = {24.0, 18.0, 12.0, 6.0, 0.0};
   EXPECT_DOUBLE_EQ(correlation::analysis::DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg_slope), 0.0);
 }
 

@@ -110,8 +110,8 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
       continue;
     }
 
-    double const theta = std::acos(std::clamp(r_ij.z() / distance, -1.0, 1.0));
-    double const phi = std::atan2(r_ij.y(), r_ij.x());
+    real_t const theta = static_cast<real_t>(std::acos(std::clamp(r_ij.z() / distance, -1.0, 1.0)));
+    real_t const phi = std::atan2(r_ij.y(), r_ij.x());
 
     for (int m_val = -4; m_val <= 4; ++m_val) {
       q4m[m_val + 4] += SteinhardtCalculator::sphericalHarmonic(4, m_val, {.theta = theta, .phi = phi});
@@ -197,7 +197,7 @@ void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
 void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
                              const std::map<std::string, std::vector<double>> &partials) {
   for (const auto &[key, vec] : partials) {
-    hist.partials[key] = vec;
+    hist.partials[key] = std::vector<real_t>(vec.begin(), vec.end());
   }
 }
 
@@ -279,22 +279,22 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
 }
 } // namespace
 
-std::complex<double> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
+std::complex<real_t> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
   if (order >= 0) {
-    double const P_lm = correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta);
-    return P_lm * std::polar(1.0, order * angles.phi);
+    real_t const P_lm = static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta));
+    return P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(order) * angles.phi);
   } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
   int const abs_m = -order;
-  double const P_lm = correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta);
-  std::complex<double> const Y_l_m = P_lm * std::polar(1.0, abs_m * angles.phi);
-  std::complex<double> Y_l_minus_m = std::conj(Y_l_m);
+  real_t const P_lm = static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta));
+  std::complex<real_t> const Y_l_m = P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(abs_m) * angles.phi);
+  std::complex<real_t> Y_l_minus_m = std::conj(Y_l_m);
   if (abs_m % 2 != 0) {
     Y_l_minus_m = -Y_l_minus_m;
   }
   return Y_l_minus_m;
 }
 
-double SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three) {
+real_t SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three) {
   if (m_one + m_two + m_three != 0) {
     return 0.0;
   }

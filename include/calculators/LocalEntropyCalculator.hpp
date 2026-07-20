@@ -47,7 +47,7 @@ public:
   static correlation::analysis::Histogram
   calculate(const correlation::core::Cell &cell,
             const correlation::analysis::StructureAnalyzer *neighbors,
-            double cutoff, double sigma);
+            real_t cutoff, real_t sigma);
 };
 
 } // namespace correlation::calculators

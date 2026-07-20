@@ -29,7 +29,7 @@ namespace {
 // NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
 const bool registered = WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>());
 
-std::vector<std::string> getSortedKeys(const std::map<std::string, std::vector<double>> &map) {
+std::vector<std::string> getSortedKeys(const std::map<std::string, std::vector<real_t>> &map) {
   std::vector<std::string> keys;
   keys.reserve(map.size());
   for (const auto &elem : map) {
@@ -39,11 +39,13 @@ std::vector<std::string> getSortedKeys(const std::map<std::string, std::vector<d
   return keys;
 }
 
-void addDoubleColumn(const std::string &name, const std::vector<double> &values, arrow::FieldVector &fields,
-                     std::vector<std::shared_ptr<arrow::Array>> &arrays) {
-  fields.push_back(arrow::field(name, arrow::float64()));
-  arrow::DoubleBuilder builder;
-  PARQUET_THROW_NOT_OK(builder.AppendValues(values));
+void addFloatColumn(const std::string &name, const std::vector<real_t> &values, arrow::FieldVector &fields,
+                    std::vector<std::shared_ptr<arrow::Array>> &arrays) {
+  fields.push_back(arrow::field(name, arrow::float32()));
+  arrow::FloatBuilder builder;
+  // Convert real_t values to float for output
+  std::vector<float> float_values(values.begin(), values.end());
+  PARQUET_THROW_NOT_OK(builder.AppendValues(float_values));
   std::shared_ptr<arrow::Array> array;
   PARQUET_THROW_NOT_OK(builder.Finish(&array));
   arrays.push_back(array);
@@ -97,16 +99,16 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename, const cor
   std::vector<std::shared_ptr<arrow::Array>> arrays;
 
   // 1. Bin Column
-  addDoubleColumn(dim_label, hist.bins, fields, arrays);
+  addFloatColumn(dim_label, hist.bins, fields, arrays);
 
   // 2. Raw Data Columns
   for (const auto &key : raw_keys) {
-    addDoubleColumn(key, hist.partials.at(key), fields, arrays);
+    addFloatColumn(key, hist.partials.at(key), fields, arrays);
   }
 
   // 3. Smoothed Data Columns
   for (const auto &key : smoothed_keys) {
-    addDoubleColumn(key + "_smoothed", hist.smoothed_partials.at(key), fields, arrays);
+    addFloatColumn(key + "_smoothed", hist.smoothed_partials.at(key), fields, arrays);
   }
 
   auto schema = arrow::schema(fields);

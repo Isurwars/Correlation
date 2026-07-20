@@ -96,7 +96,7 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   }
 
   if (first_token == "PBC") {
-    std::array<double, 6> lattice_params{};
+    std::array<real_t, 6> lattice_params{};
     if (line_stream >> lattice_params[0] >> lattice_params[1] >> lattice_params[2] >> lattice_params[3] >>
         lattice_params[4] >> lattice_params[5]) {
       tempCell.setLatticeParameters(lattice_params);
@@ -105,7 +105,7 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   }
 
   if (first_token == "PBC=OFF") {
-    const std::array<double, 6> lattice_params = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
+    const std::array<real_t, 6> lattice_params = {100.0, 100.0, 100.0, 90.0, 90.0, 90.0};
     tempCell.setLatticeParameters(lattice_params);
     return;
   }
@@ -117,7 +117,7 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   // Check if it is a single token line (Energy)
   std::string second_token;
   if (!(line_stream >> second_token)) {
-    double energy = 0.0;
+    real_t energy = 0.0;
     std::istringstream parse_stream(first_token);
     if (parse_stream >> energy) {
       tempCell.setEnergy(energy);
@@ -135,9 +135,9 @@ void ArcReader::parseLine(const std::string &line, correlation::core::Cell &temp
   std::string dummy_token_6;
   std::string dummy_token_7;
   std::string element;
-  double coord_x = 0.0;
-  double coord_y = 0.0;
-  double coord_z = 0.0;
+  real_t coord_x = 0.0;
+  real_t coord_y = 0.0;
+  real_t coord_z = 0.0;
 
   if (line_stream >> dummy_token_1 >> coord_x >> coord_y >> coord_z >> dummy_token_5 >> dummy_token_6 >>
       dummy_token_7 >> element) {

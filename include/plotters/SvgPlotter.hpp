@@ -330,7 +330,7 @@ struct SvgHistogramRenderer {
   const correlation::analysis::Histogram *hist = nullptr;
   const PlotConfig *config = nullptr;
   const HoverInfo *hover = nullptr;
-  const std::map<std::string, double> *weights = nullptr;
+  const std::map<std::string, real_t> *weights = nullptr;
 
   std::string title;
   std::string x_label;
@@ -343,8 +343,8 @@ struct SvgHistogramRenderer {
   double py0 = 0.0;
   double py1 = 0.0;
 
-  std::map<std::string, std::vector<double>> partials;
-  const std::vector<double> *xs = nullptr;
+  std::map<std::string, std::vector<real_t>> partials;
+  const std::vector<real_t> *xs = nullptr;
 
   detail::NiceScale xScale;
   detail::NiceScale yScale;
@@ -352,7 +352,7 @@ struct SvgHistogramRenderer {
   std::ostringstream svg;
 
   SvgHistogramRenderer(const correlation::analysis::Histogram &histogram, const PlotConfig &cfg, const HoverInfo &hov,
-                       const std::map<std::string, double> &component_weights)
+                       const std::map<std::string, real_t> &component_weights)
       : hist(&histogram), config(&cfg), hover(&hov), weights(&component_weights), xs(&histogram.bins) {
     initializeLayoutAndLabels();
     filterPartials();
@@ -868,12 +868,12 @@ struct SvgComparisonRenderer {
       const auto &x_values = dataset.hist->bins;
       const auto &y_values = iterator->second;
       if (!x_values.empty()) {
-        raw_x_min = std::min(raw_x_min, x_values.front());
-        raw_x_max = std::max(raw_x_max, x_values.back());
+        raw_x_min = std::min(raw_x_min, static_cast<double>(x_values.front()));
+        raw_x_max = std::max(raw_x_max, static_cast<double>(x_values.back()));
       }
-      for (double y_value : y_values) {
-        raw_y_max = std::max(raw_y_max, y_value);
-        raw_y_min = std::min(raw_y_min, y_value);
+      for (real_t y_value : y_values) {
+        raw_y_max = std::max(raw_y_max, static_cast<double>(y_value));
+        raw_y_min = std::min(raw_y_min, static_cast<double>(y_value));
       }
     }
   }
@@ -1296,7 +1296,7 @@ inline std::string renderTextAsPath(const std::string &text, double x_pos, doubl
  */
 inline std::string renderHistogramAsSvg(const correlation::analysis::Histogram &hist, const PlotConfig &config = {},
                                         const HoverInfo &hover = {},
-                                        const std::map<std::string, double> &weights = {}) {
+                                        const std::map<std::string, real_t> &weights = {}) {
   detail::SvgHistogramRenderer renderer(hist, config, hover, weights);
   if (renderer.hasNoData()) {
     return renderer.renderNoData();

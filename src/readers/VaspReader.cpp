@@ -46,7 +46,7 @@ struct VaspParser {
     if (!std::getline(*file, line)) {
       throw std::runtime_error("POSCAR: unexpected end of file (scaling factor).");
     }
-    double const scaling_factor = std::stod(line);
+    real_t const scaling_factor = static_cast<real_t>(std::stod(line));
 
     // Lines 3-5: Lattice vectors
     auto lattice = parseLatticeVectors();
@@ -71,8 +71,8 @@ struct VaspParser {
   }
 
 private:
-  std::array<std::array<double, 3>, 3> parseLatticeVectors() const {
-    std::array<std::array<double, 3>, 3> lattice_vectors = {};
+  std::array<std::array<real_t, 3>, 3> parseLatticeVectors() const {
+    std::array<std::array<real_t, 3>, 3> lattice_vectors = {};
     std::string line;
     for (int i = 0; i < 3; ++i) {
       if (!std::getline(*file, line)) {
@@ -86,25 +86,25 @@ private:
     return lattice_vectors;
   }
 
-  static void applyScalingFactor(std::array<std::array<double, 3>, 3> &lattice_vectors, double scaling_factor) {
+  static void applyScalingFactor(std::array<std::array<real_t, 3>, 3> &lattice_vectors, real_t scaling_factor) {
     if (scaling_factor > 0.0) {
       for (auto &row : lattice_vectors) {
-        for (double &val : row) {
+        for (real_t &val : row) {
           val *= scaling_factor;
         }
       }
     } else if (scaling_factor < 0.0) {
-      double const target_volume = std::abs(scaling_factor);
-      double const current_volume =
+      real_t const target_volume = std::abs(scaling_factor);
+      real_t const current_volume =
           std::abs(lattice_vectors.at(0).at(0) * (lattice_vectors.at(1).at(1) * lattice_vectors.at(2).at(2) -
                                                   lattice_vectors.at(1).at(2) * lattice_vectors.at(2).at(1)) -
                    lattice_vectors.at(0).at(1) * (lattice_vectors.at(1).at(0) * lattice_vectors.at(2).at(2) -
                                                   lattice_vectors.at(1).at(2) * lattice_vectors.at(2).at(0)) +
                    lattice_vectors.at(0).at(2) * (lattice_vectors.at(1).at(0) * lattice_vectors.at(2).at(1) -
                                                   lattice_vectors.at(1).at(1) * lattice_vectors.at(2).at(0)));
-      double const scale = std::cbrt(target_volume / current_volume);
+      real_t const scale = std::cbrt(target_volume / current_volume);
       for (auto &row : lattice_vectors) {
-        for (double &val : row) {
+        for (real_t &val : row) {
           val *= scale;
         }
       }
@@ -224,14 +224,14 @@ private:
       }
 
       std::istringstream iss(line);
-      double pos_x = 0.0;
-      double pos_y = 0.0;
-      double pos_z = 0.0;
+      real_t pos_x = 0.0;
+      real_t pos_y = 0.0;
+      real_t pos_z = 0.0;
       if (!(iss >> pos_x >> pos_y >> pos_z)) {
         throw std::runtime_error("POSCAR: failed to parse atom coordinates on atom " + std::to_string(i + 1) + ".");
       }
 
-      correlation::math::Vector3<double> pos;
+      correlation::math::Vector3<real_t> pos;
       if (is_direct) {
         pos = {pos_x * lattice_vectors[0][0] + pos_y * lattice_vectors[1][0] + pos_z * lattice_vectors[2][0],
                pos_x * lattice_vectors[0][1] + pos_y * lattice_vectors[1][1] + pos_z * lattice_vectors[2][1],

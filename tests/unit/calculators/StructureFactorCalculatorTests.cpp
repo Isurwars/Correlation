@@ -6,6 +6,7 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/StructureFactorCalculator.hpp"
 #include "core/Cell.hpp"
+#include "math/Precision.hpp"
 
 #include <gtest/gtest.h>
 
@@ -21,14 +22,16 @@ protected:
 // reflections. The first peak for a simple cubic lattice is at Q = 2*pi/a.
 TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   // Build a 2x2x2 simple cubic supercell with lattice constant a=3.0 Å
-  const double vec_a = 3.0;
-  correlation::core::Cell cell(std::array<double, 6>{2 * vec_a, 2 * vec_a, 2 * vec_a, 90.0, 90.0, 90.0});
+  const real_t vec_a = 3.0;
+  correlation::core::Cell cell(std::array<real_t, 6>{static_cast<real_t>(2 * vec_a), static_cast<real_t>(2 * vec_a),
+                                                     static_cast<real_t>(2 * vec_a), 90.0, 90.0, 90.0});
 
   // 8 atoms at corners of a 2x2x2 supercell
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
-        cell.addAtom("Si", {ix * vec_a, iy * vec_a, iz * vec_a});
+        cell.addAtom(
+            "Si", {static_cast<real_t>(ix) * vec_a, static_cast<real_t>(iy) * vec_a, static_cast<real_t>(iz) * vec_a});
       }
     }
   }
@@ -50,7 +53,7 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
   double peak_sq = 0.0;
   for (size_t i = 0; i < hist.bins.size(); ++i) {
     if (hist.bins[i] >= 1.8 && hist.bins[i] <= 2.4) {
-      peak_sq = std::max(peak_sq, hist.partials.at("Total")[i]);
+      peak_sq = std::max(peak_sq, static_cast<double>(hist.partials.at("Total")[i]));
     }
   }
   // At a Bragg peak, S(Q) should be much greater than 1
@@ -59,7 +62,7 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
 
 // For a single atom, S(Q) = 1 for all Q.
 TEST_F(StructureFactorCalculatorTests, SingleAtomGivesOne) {
-  correlation::core::Cell cell(std::array<double, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
+  correlation::core::Cell cell(std::array<real_t, 6>{10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Si", {0.0, 0.0, 0.0});
 
   DistributionFunctions dists(cell);

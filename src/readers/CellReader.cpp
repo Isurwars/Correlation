@@ -45,7 +45,7 @@ void toLower(std::string &str) {
 }
 
 void parseLatticeCart(std::stringstream &line_stream, int &lattice_row_count,
-                      std::array<std::array<double, 3>, 3> &lat_vec, correlation::core::Cell &tempCell) {
+                      std::array<std::array<real_t, 3>, 3> &lat_vec, correlation::core::Cell &tempCell) {
   if (lattice_row_count >= 3) {
     return;
   }
@@ -62,7 +62,7 @@ void parseLatticeCart(std::stringstream &line_stream, int &lattice_row_count,
   }
 }
 
-void parseLatticeAbc(std::stringstream &line_stream, int &lattice_row_count, std::array<double, 6> &lat,
+void parseLatticeAbc(std::stringstream &line_stream, int &lattice_row_count, std::array<real_t, 6> &lat,
                      correlation::core::Cell &tempCell) {
   if (lattice_row_count >= 2) {
     return;
@@ -80,9 +80,9 @@ void parseLatticeAbc(std::stringstream &line_stream, int &lattice_row_count, std
 
 void parsePositionsAbs(std::stringstream &line_stream, correlation::core::Cell &tempCell) {
   std::string element;
-  double coord_x = 0.0;
-  double coord_y = 0.0;
-  double coord_z = 0.0;
+  real_t coord_x = 0.0;
+  real_t coord_y = 0.0;
+  real_t coord_z = 0.0;
   line_stream.clear();
   line_stream.seekg(0);
   if (line_stream >> element >> coord_x >> coord_y >> coord_z) {
@@ -92,15 +92,15 @@ void parsePositionsAbs(std::stringstream &line_stream, correlation::core::Cell &
 
 void parsePositionsFrac(std::stringstream &line_stream, correlation::core::Cell &tempCell, bool &frac_flag) {
   std::string element;
-  double coord_x = 0.0;
-  double coord_y = 0.0;
-  double coord_z = 0.0;
+  real_t coord_x = 0.0;
+  real_t coord_y = 0.0;
+  real_t coord_z = 0.0;
   line_stream.clear();
   line_stream.seekg(0);
   if (line_stream >> element >> coord_x >> coord_y >> coord_z) {
     frac_flag = true;
     const auto &lattice_vectors = tempCell.latticeVectors();
-    correlation::math::Vector3<double> const pos = {
+    correlation::math::Vector3<real_t> const pos = {
         coord_x * lattice_vectors[0].x() + coord_y * lattice_vectors[1].x() + coord_z * lattice_vectors[2].x(),
         coord_x * lattice_vectors[0].y() + coord_y * lattice_vectors[1].y() + coord_z * lattice_vectors[2].y(),
         coord_x * lattice_vectors[0].z() + coord_y * lattice_vectors[1].z() + coord_z * lattice_vectors[2].z()};
@@ -121,8 +121,8 @@ correlation::core::Cell CellReader::read(const std::string &file_name) {
   std::string current_block_type;
   std::string line;
   int lattice_row_count = 0;
-  std::array<double, 6> lat = {0, 0, 0, 0, 0, 0};
-  std::array<std::array<double, 3>, 3> lattice_matrix = {};
+  std::array<real_t, 6> lat = {0, 0, 0, 0, 0, 0};
+  std::array<std::array<real_t, 3>, 3> lattice_matrix = {};
 
   while (std::getline(myfile, line)) {
     /* Read line by line */

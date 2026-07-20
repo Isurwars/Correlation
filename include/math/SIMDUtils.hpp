@@ -198,6 +198,15 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
   return acc;
 }
 
+inline float simd_dot(const float *CORRELATION_RESTRICT a, const float *CORRELATION_RESTRICT b,
+                      std::size_t count) noexcept {
+  float sum = 0.0f;
+  for (std::size_t j = 0; j < count; ++j) {
+    sum += a[j] * b[j];
+  }
+  return sum;
+}
+
 /**
  * @brief Computes a sinc-weighted integral over a range (AVX2 version).
  *
@@ -478,8 +487,24 @@ inline void normalize_rdf_bins(const double *CORRELATION_RESTRICT H, const doubl
     Jinv_out[k] = H[k] * inv_Nj_dr;
   }
 }
-
 #endif
+
+template <typename T>
+inline void normalize_rdf_bins(const T *CORRELATION_RESTRICT H, const T *CORRELATION_RESTRICT rbins, T g_norm,
+                               T inv_Ni_dr, T inv_Nj_dr, T pi4_rho_j, T *g_out, T *G_out, T *J_out, T *Jinv_out,
+                               std::size_t count) noexcept {
+  std::size_t k = 1;
+  for (; k < count; ++k) {
+    const T r = rbins[k];
+    if (r < static_cast<T>(1e-9))
+      continue;
+    const T g = H[k] * g_norm / (r * r);
+    g_out[k] = g;
+    G_out[k] = pi4_rho_j * r * (g - static_cast<T>(1.0));
+    J_out[k] = H[k] * inv_Ni_dr;
+    Jinv_out[k] = H[k] * inv_Nj_dr;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // scale_bins
@@ -516,6 +541,11 @@ inline void scale_bins(double *arr, double s, std::size_t count) noexcept {
     arr[k] *= s;
 }
 #endif
+
+template <typename T> inline void scale_bins(T *arr, T s, std::size_t count) noexcept {
+  for (std::size_t k = 0; k < count; ++k)
+    arr[k] *= s;
+}
 
 // ---------------------------------------------------------------------------
 // dot_block

@@ -33,11 +33,11 @@ protected:
 
 TEST_F(DADTests, BasicCalculation) {
   // Cutoff must be > 1.0 to find the bonds (dist is 1.0 each)
-  double const r_cut = 1.5;
-  std::vector<std::vector<double>> const bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
+  real_t const r_cut = 1.5;
+  std::vector<std::vector<real_t>> const bond_cutoffs(1, std::vector<real_t>(1, r_cut * r_cut));
   StructureAnalyzer const analyzer(cell_, r_cut, bond_cutoffs, true);
 
-  double const bin_width = 10.0;
+  real_t const bin_width = 10.0;
   Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell_, &analyzer, bin_width);
 
   // We only expect one type of dihedral for C-C-C-C.
@@ -50,7 +50,7 @@ TEST_F(DADTests, BasicCalculation) {
   // which is identical). Did DADCalculator put it in the correct bin? We can
   // just verify that total sum is > 0, actually since we normalized, sum over
   // bin * width ~ 1 or total_counts is 2.
-  double sum = 0.0;
+  real_t sum = 0.0;
   for (auto val : partial) {
     sum += val;
   }
@@ -62,8 +62,8 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   correlation::core::Cell cell_iso;
   cell_iso.setLatticeParameters({30.0, 30.0, 30.0, 90.0, 90.0, 90.0});
   cell_iso.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  double phi = std::numbers::phi;
-  std::vector<std::vector<double>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+  real_t const phi = std::numbers::phi;
+  std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
                                                      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
                                                      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
@@ -71,11 +71,11 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
     cell_iso.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
   }
 
-  double const r_cut = 2.5;
-  std::vector<std::vector<double>> const bond_cutoffs(1, std::vector<double>(1, r_cut * r_cut));
+  real_t const r_cut = 2.5;
+  std::vector<std::vector<real_t>> const bond_cutoffs(1, std::vector<real_t>(1, r_cut * r_cut));
   StructureAnalyzer const analyzer(cell_iso, r_cut, bond_cutoffs, true);
 
-  double const bin_width = 1.0;
+  real_t const bin_width = 1.0;
   Histogram f_dihedral = correlation::calculators::DADCalculator::calculate(cell_iso, &analyzer, bin_width);
 
   ASSERT_FALSE(f_dihedral.partials.empty());

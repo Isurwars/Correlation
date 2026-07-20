@@ -58,7 +58,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
 
   // 4. Calculate VACF
   int const max_lag = 50; // Calculate for 50 frames lag
-  std::vector<double> vacf = DynamicsAnalyzer::calculateVACF(traj, correlation::analysis::MaxFrames{max_lag});
+  std::vector<real_t> vacf = DynamicsAnalyzer::calculateVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(vacf.size(), max_lag + 1);
 
@@ -66,7 +66,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVACFFromExampletraj) {
   EXPECT_GT(vacf[0], 0.0);
 
   // 5. Calculate Normalized VACF
-  std::vector<double> norm_vacf =
+  std::vector<real_t> norm_vacf =
       DynamicsAnalyzer::calculateNormalizedVACF(traj, correlation::analysis::MaxFrames{max_lag});
 
   ASSERT_EQ(norm_vacf.size(), max_lag + 1);
@@ -78,13 +78,13 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   // v(t) = cos(2 * pi * f0 * t)
   // VDOS should show a peak at f0
 
-  double const time_step = 1.0;   // 1 fs
-  double const frequency = 10.0;  // 10 THz frequency
+  real_t const time_step = 1.0;   // 1 fs
+  real_t const frequency = 10.0;  // 10 THz frequency
   size_t const num_frames = 1000; // 1 ps total time
 
-  std::vector<double> vacf(num_frames);
+  std::vector<real_t> vacf(num_frames);
   for (size_t i = 0; i < num_frames; ++i) {
-    double const time = static_cast<double>(i) * time_step;
+    real_t const time = static_cast<real_t>(i) * time_step;
     vacf[i] = std::cos(2.0 * correlation::math::pi * frequency * time * 0.001);
   }
 
@@ -98,7 +98,7 @@ TEST(DynamicsAnalyzerTests, CalculatesVDOSCorrectly) {
   // 3. Find peak in real part
   auto max_it = std::ranges::max_element(intensities_real);
   size_t const peak_idx = std::distance(intensities_real.begin(), max_it);
-  double const peak_freq = frequencies[peak_idx];
+  real_t const peak_freq = frequencies[peak_idx];
 
   // 4. Verify peak location
   EXPECT_NEAR(peak_freq, frequency, 0.5) << "VDOS Peak should be near the source frequency";
@@ -135,7 +135,7 @@ TEST(DynamicsAnalyzerTests, CalculatesMSDCorrectly) {
 }
 
 TEST(DynamicsAnalyzerTests, ComputesDiffusionCoefficientMSD) {
-  std::vector<double> time = {0.0, 1.0, 2.0, 3.0, 4.0};
+  std::vector<real_t> time = {0.0, 1.0, 2.0, 3.0, 4.0};
   // Fit is done on the second half of the data.
   // time.size() / 2 = 2.
   // Second half indices are: 2, 3, 4.
@@ -144,14 +144,14 @@ TEST(DynamicsAnalyzerTests, ComputesDiffusionCoefficientMSD) {
   // If D = 0.5, slope should be 6 * 0.5 = 3.0.
   // So msd = 3.0 * time.
   // msd values: 6.0, 9.0, 12.0.
-  std::vector<double> msd = {0.0, 3.0, 6.0, 9.0, 12.0};
+  std::vector<real_t> msd = {0.0, 3.0, 6.0, 9.0, 12.0};
 
-  double d_coef = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
+  real_t d_coef = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd);
   EXPECT_NEAR(d_coef, 0.5, 1e-6);
 
   // Negative slope test should return 0.0
-  std::vector<double> msd_neg = {0.0, -3.0, -6.0, -9.0, -12.0};
-  double d_coef_neg = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg);
+  std::vector<real_t> msd_neg = {0.0, -3.0, -6.0, -9.0, -12.0};
+  real_t d_coef_neg = DynamicsAnalyzer::computeDiffusionCoefficientMSD(time, msd_neg);
   EXPECT_DOUBLE_EQ(d_coef_neg, 0.0);
 
   // Under minimum required points (needs at least 2 points in second half)
@@ -167,14 +167,14 @@ TEST(DynamicsAnalyzerTests, ComputesDiffusionCoefficientVACF) {
   // Step 2: 0.5 * (1.0 + 1.0) * 1.0 = 1.0
   // Total integral = 2.0.
   // D = 2.0 / 3.0 ≈ 0.666667.
-  std::vector<double> time = {0.0, 1.0, 2.0};
-  std::vector<double> vacf = {1.0, 1.0, 1.0};
+  std::vector<real_t> time = {0.0, 1.0, 2.0};
+  std::vector<real_t> vacf = {1.0, 1.0, 1.0};
 
-  double d_coef = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
+  real_t d_coef = DynamicsAnalyzer::computeDiffusionCoefficientVACF(time, vacf);
   EXPECT_NEAR(d_coef, 2.0 / 3.0, 1e-6);
 
   // Time step <= 0.0 should return 0.0
-  std::vector<double> invalid_time = {0.0, 0.0, 1.0};
+  std::vector<real_t> invalid_time = {0.0, 0.0, 1.0};
   EXPECT_DOUBLE_EQ(DynamicsAnalyzer::computeDiffusionCoefficientVACF(invalid_time, vacf), 0.0);
 
   // Mismatched sizes or empty vectors should return 0.0
@@ -190,10 +190,10 @@ TEST(DynamicsAnalyzerTests, ComputesRelaxationTime) {
   // Step 1: 0.5 * (1.0 + 0.5) * 1.0 = 0.75
   // Step 2: 0.5 * (0.5 + 0.0) * 1.0 = 0.25
   // Total = 1.0.
-  std::vector<double> time = {0.0, 1.0, 2.0};
-  std::vector<double> norm_vacf = {1.0, 0.5, 0.0};
+  std::vector<real_t> time = {0.0, 1.0, 2.0};
+  std::vector<real_t> norm_vacf = {1.0, 0.5, 0.0};
 
-  double tau = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
+  real_t tau = DynamicsAnalyzer::computeRelaxationTime(time, norm_vacf);
   EXPECT_NEAR(tau, 1.0, 1e-6);
 
   // Mismatched sizes or empty vectors should return 0.0

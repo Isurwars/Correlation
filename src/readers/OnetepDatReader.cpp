@@ -39,8 +39,8 @@ struct OnetepDatParser {
   bool frac_flag = false;
   std::string current_block_type;
   int lattice_row_count = 0;
-  std::array<double, 6> lat = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-  std::array<std::array<double, 3>, 3> v = {};
+  std::array<real_t, 6> lat = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  std::array<std::array<real_t, 3>, 3> v = {};
 
   static void cleanLine(std::string &line) {
     // Strip comments
@@ -115,9 +115,9 @@ struct OnetepDatParser {
 
   void parsePositionsAbs(const std::string &line, std::stringstream &line_stream) {
     std::string element;
-    double pos_x = 0.0;
-    double pos_y = 0.0;
-    double pos_z = 0.0;
+    real_t pos_x = 0.0;
+    real_t pos_y = 0.0;
+    real_t pos_z = 0.0;
     line_stream.clear();
     line_stream.seekg(0);
     std::string first_val;
@@ -137,14 +137,14 @@ struct OnetepDatParser {
 
   void parsePositionsFrac(const std::string &line) {
     std::string element;
-    double frac_x = 0.0;
-    double frac_y = 0.0;
-    double frac_z = 0.0;
+    real_t frac_x = 0.0;
+    real_t frac_y = 0.0;
+    real_t frac_z = 0.0;
     frac_flag = true;
     std::istringstream str_stream(line);
     if (str_stream >> element >> frac_x >> frac_y >> frac_z) {
       const auto &lattice_vectors = tempCell.latticeVectors();
-      correlation::math::Vector3<double> pos = {
+      correlation::math::Vector3<real_t> pos = {
           frac_x * lattice_vectors[0][0] + frac_y * lattice_vectors[1][0] + frac_z * lattice_vectors[2][0],
           frac_x * lattice_vectors[0][1] + frac_y * lattice_vectors[1][1] + frac_z * lattice_vectors[2][1],
           frac_x * lattice_vectors[0][2] + frac_y * lattice_vectors[1][2] + frac_z * lattice_vectors[2][2]};

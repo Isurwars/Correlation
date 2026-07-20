@@ -15,9 +15,9 @@ namespace {
 class VoronoiCalculatorTests : public ::testing::Test {
 protected:
   // Helper to extract the peak bin index for a histogram
-  static double getPeakValue(const Histogram &hist) {
+  static real_t getPeakValue(const Histogram &hist) {
     const auto &vals = hist.partials.at("Total");
-    double max_val = -1.0;
+    real_t max_val = -1.0;
     size_t max_bin = 0;
     for (size_t i = 0; i < vals.size(); ++i) {
       if (vals[i] > max_val) {
@@ -37,7 +37,7 @@ TEST_F(VoronoiCalculatorTests, SimpleCubic) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 3; ++k) {
         cell_sc.addAtom("Ar",
-                        {static_cast<double>(i * 4.0), static_cast<double>(j * 4.0), static_cast<double>(k * 4.0)});
+                        {static_cast<real_t>(i * 4.0), static_cast<real_t>(j * 4.0), static_cast<real_t>(k * 4.0)});
       }
     }
   }
@@ -45,15 +45,15 @@ TEST_F(VoronoiCalculatorTests, SimpleCubic) {
   auto hists_sc = correlation::calculators::VoronoiCalculator::calculate(cell_sc);
 
   // Theoretical SC cell volume = 4.0^3 = 64.0 A^3
-  double const vol_sc = getPeakValue(hists_sc.at("Voronoi Volume"));
+  real_t const vol_sc = getPeakValue(hists_sc.at("Voronoi Volume"));
   EXPECT_NEAR(vol_sc, 64.0, 0.5);
 
   // SC has coordination number of 6 (6 faces)
-  double const cn_sc = getPeakValue(hists_sc.at("Voronoi Coordination Number"));
+  real_t const cn_sc = getPeakValue(hists_sc.at("Voronoi Coordination Number"));
   EXPECT_NEAR(cn_sc, 6.0, 1e-4);
 
   // SC sphericity Psi = (pi^(1/3) * (6 * 64)^(2/3)) / 96 = pi^(1/3) * 6^(2/3) / 6 approx 0.806
-  double const sph_sc = getPeakValue(hists_sc.at("Voronoi Sphericity"));
+  real_t const sph_sc = getPeakValue(hists_sc.at("Voronoi Sphericity"));
   EXPECT_NEAR(sph_sc, 0.806, 0.01);
 
   // SC polyhedral signature is (0, 6, 0, 0)
@@ -68,7 +68,7 @@ TEST_F(VoronoiCalculatorTests, BodyCenteredCubic) {
     for (int j = 0; j < 2; ++j) {
       for (int k = 0; k < 2; ++k) {
         cell_bcc.addAtom("Ar",
-                         {static_cast<double>(i * 5.0), static_cast<double>(j * 5.0), static_cast<double>(k * 5.0)});
+                         {static_cast<real_t>(i * 5.0), static_cast<real_t>(j * 5.0), static_cast<real_t>(k * 5.0)});
         cell_bcc.addAtom("Ar", {i * 5.0 + 2.5, j * 5.0 + 2.5, k * 5.0 + 2.5});
       }
     }
@@ -77,15 +77,15 @@ TEST_F(VoronoiCalculatorTests, BodyCenteredCubic) {
   auto hists_bcc = correlation::calculators::VoronoiCalculator::calculate(cell_bcc);
 
   // Theoretical BCC cell volume = 1000 / 16 = 62.5 A^3
-  double const vol_bcc = getPeakValue(hists_bcc.at("Voronoi Volume"));
+  real_t const vol_bcc = getPeakValue(hists_bcc.at("Voronoi Volume"));
   EXPECT_NEAR(vol_bcc, 62.5, 0.5);
 
   // BCC has coordination number of 14 (14 faces: 8 nearest + 6 next-nearest)
-  double const cn_bcc = getPeakValue(hists_bcc.at("Voronoi Coordination Number"));
+  real_t const cn_bcc = getPeakValue(hists_bcc.at("Voronoi Coordination Number"));
   EXPECT_NEAR(cn_bcc, 14.0, 1e-4);
 
   // BCC sphericity Psi approx 0.905
-  double const sph_bcc = getPeakValue(hists_bcc.at("Voronoi Sphericity"));
+  real_t const sph_bcc = getPeakValue(hists_bcc.at("Voronoi Sphericity"));
   EXPECT_NEAR(sph_bcc, 0.905, 0.01);
 
   // BCC signature is (0, 6, 0, 8)
@@ -110,15 +110,15 @@ TEST_F(VoronoiCalculatorTests, FaceCenteredCubic) {
   auto hists_fcc = correlation::calculators::VoronoiCalculator::calculate(cell_fcc);
 
   // Theoretical FCC cell volume = 1000 / 32 = 31.25 A^3
-  double const vol_fcc = getPeakValue(hists_fcc.at("Voronoi Volume"));
+  real_t const vol_fcc = getPeakValue(hists_fcc.at("Voronoi Volume"));
   EXPECT_NEAR(vol_fcc, 31.25, 0.5);
 
   // FCC has coordination number of 12 (12 faces)
-  double const cn_fcc = getPeakValue(hists_fcc.at("Voronoi Coordination Number"));
+  real_t const cn_fcc = getPeakValue(hists_fcc.at("Voronoi Coordination Number"));
   EXPECT_NEAR(cn_fcc, 12.0, 1e-4);
 
   // FCC sphericity Psi approx 0.905
-  double const sph_fcc = getPeakValue(hists_fcc.at("Voronoi Sphericity"));
+  real_t const sph_fcc = getPeakValue(hists_fcc.at("Voronoi Sphericity"));
   EXPECT_NEAR(sph_fcc, 0.905, 0.01);
 
   // FCC signature is (0, 12, 0, 0)
@@ -132,16 +132,16 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 2; ++k) {
-        double fx1 = (static_cast<double>(i) + 0.0) / 3.0;
-        double fy1 = (static_cast<double>(j) + 0.0) / 3.0;
-        double fz1 = (static_cast<double>(k) + 0.0) / 2.0;
+        real_t fx1 = (static_cast<real_t>(i) + 0.0) / 3.0;
+        real_t fy1 = (static_cast<real_t>(j) + 0.0) / 3.0;
+        real_t fz1 = (static_cast<real_t>(k) + 0.0) / 2.0;
 
-        double fx2 = (static_cast<double>(i) + 1.0 / 3.0) / 3.0;
-        double fy2 = (static_cast<double>(j) + 2.0 / 3.0) / 3.0;
-        double fz2 = (static_cast<double>(k) + 0.5) / 2.0;
+        real_t fx2 = (static_cast<real_t>(i) + 1.0 / 3.0) / 3.0;
+        real_t fy2 = (static_cast<real_t>(j) + 2.0 / 3.0) / 3.0;
+        real_t fz2 = (static_cast<real_t>(k) + 0.5) / 2.0;
 
-        auto pos1 = cell_hcp.latticeVectors() * correlation::math::Vector3<double>(fx1, fy1, fz1);
-        auto pos2 = cell_hcp.latticeVectors() * correlation::math::Vector3<double>(fx2, fy2, fz2);
+        auto pos1 = cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx1, fy1, fz1);
+        auto pos2 = cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx2, fy2, fz2);
 
         cell_hcp.addAtom("Ar", pos1);
         cell_hcp.addAtom("Ar", pos2);
@@ -152,18 +152,18 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   auto hists_hcp = correlation::calculators::VoronoiCalculator::calculate(cell_hcp);
 
   // Theoretical HCP cell volume = volume / 36 approx 19.0914 A^3
-  double const vol_hcp = getPeakValue(hists_hcp.at("Voronoi Volume"));
+  real_t const vol_hcp = getPeakValue(hists_hcp.at("Voronoi Volume"));
   EXPECT_NEAR(vol_hcp, cell_hcp.volume() / 36.0, 0.5);
 
   // HCP has coordination number of 12 (12 faces)
-  double const cn_hcp = getPeakValue(hists_hcp.at("Voronoi Coordination Number"));
+  real_t const cn_hcp = getPeakValue(hists_hcp.at("Voronoi Coordination Number"));
   EXPECT_NEAR(cn_hcp, 12.0, 1e-4);
 
   // HCP sphericity Psi approx 0.905
-  double const sph_hcp = getPeakValue(hists_hcp.at("Voronoi Sphericity"));
+  real_t const sph_hcp = getPeakValue(hists_hcp.at("Voronoi Sphericity"));
   EXPECT_NEAR(sph_hcp, 0.905, 0.01);
 
-  // HCP signature is (0, 12, 0, 0) in double precision, or (0, 2, 4, 6) in single precision
+  // HCP signature is (0, 12, 0, 0) in real_t precision, or (0, 2, 4, 6) in single precision
   if (correlation::is_single_precision) {
     EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 2, 4, 6)"));
   } else {

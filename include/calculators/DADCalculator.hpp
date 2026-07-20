@@ -42,7 +42,7 @@ public:
    */
   static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
                                                     const correlation::analysis::StructureAnalyzer *neighbors,
-                                                    double bin_width);
+                                                    real_t bin_width);
 };
 
 } // namespace correlation::calculators

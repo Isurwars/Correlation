@@ -28,24 +28,24 @@ namespace {
  * @brief Bundled displacement vectors for calculating a dihedral angle.
  */
 struct DihedralVectors {
-  correlation::math::Vector3<double> r_ba;
-  correlation::math::Vector3<double> r_bc;
-  correlation::math::Vector3<double> r_cd;
+  correlation::math::Vector3<real_t> r_ba;
+  correlation::math::Vector3<real_t> r_bc;
+  correlation::math::Vector3<real_t> r_cd;
 };
 
 /**
  * @brief Helper to calculate a dihedral angle from displacement vectors.
  */
-std::optional<double> calculateDihedralAngle(const DihedralVectors &vectors) {
-  correlation::math::Vector3<double> const vec_b1 = -1.0 * vectors.r_ba;
-  correlation::math::Vector3<double> const vec_b2 = vectors.r_bc;
-  correlation::math::Vector3<double> const vec_b3 = vectors.r_cd;
+std::optional<real_t> calculateDihedralAngle(const DihedralVectors &vectors) {
+  correlation::math::Vector3<real_t> const vec_b1 = -1.0 * vectors.r_ba;
+  correlation::math::Vector3<real_t> const vec_b2 = vectors.r_bc;
+  correlation::math::Vector3<real_t> const vec_b3 = vectors.r_cd;
 
-  correlation::math::Vector3<double> normal_n1 = correlation::math::cross(vec_b1, vec_b2);
-  correlation::math::Vector3<double> normal_n2 = correlation::math::cross(vec_b2, vec_b3);
+  correlation::math::Vector3<real_t> normal_n1 = correlation::math::cross(vec_b1, vec_b2);
+  correlation::math::Vector3<real_t> normal_n2 = correlation::math::cross(vec_b2, vec_b3);
 
-  double const n1_norm = correlation::math::norm(normal_n1);
-  double const n2_norm = correlation::math::norm(normal_n2);
+  real_t const n1_norm = correlation::math::norm(normal_n1);
+  real_t const n2_norm = correlation::math::norm(normal_n2);
 
   if (n1_norm < 1e-8 || n2_norm < 1e-8) {
     return std::nullopt; // Collinear atoms, dihedral undefined.
@@ -54,15 +54,15 @@ std::optional<double> calculateDihedralAngle(const DihedralVectors &vectors) {
   normal_n1 = correlation::math::normalize(normal_n1);
   normal_n2 = correlation::math::normalize(normal_n2);
 
-  double const b2_norm = correlation::math::norm(vec_b2);
+  real_t const b2_norm = correlation::math::norm(vec_b2);
   if (b2_norm < 1e-8) {
     return std::nullopt; // Coincident central bond, dihedral undefined.
   }
-  correlation::math::Vector3<double> const b2_hat = vec_b2 / b2_norm;
-  correlation::math::Vector3<double> const vec_m = correlation::math::cross(normal_n1, b2_hat);
+  correlation::math::Vector3<real_t> const b2_hat = vec_b2 / b2_norm;
+  correlation::math::Vector3<real_t> const vec_m = correlation::math::cross(normal_n1, b2_hat);
 
-  double const dot_x = correlation::math::dot(normal_n1, normal_n2);
-  double const dot_y = correlation::math::dot(vec_m, normal_n2);
+  real_t const dot_x = correlation::math::dot(normal_n1, normal_n2);
+  real_t const dot_y = correlation::math::dot(vec_m, normal_n2);
 
   return std::atan2(dot_y, dot_x);
 }
@@ -79,7 +79,7 @@ void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlatio
 
   const int type_b = atoms[idx_b].element_id();
   const int type_c = atoms[idx_c].element_id();
-  const correlation::math::Vector3<double> &r_bc = neighbor_c.r_ij;
+  const correlation::math::Vector3<real_t> &r_bc = neighbor_c.r_ij;
 
   for (const auto &neighbor_a : neighbors_b) {
     size_t const idx_a = neighbor_a.index;
@@ -88,7 +88,7 @@ void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlatio
     }
 
     const int type_a = atoms[idx_a].element_id();
-    const correlation::math::Vector3<double> &r_ba = neighbor_a.r_ij;
+    const correlation::math::Vector3<real_t> &r_ba = neighbor_a.r_ij;
 
     for (const auto &neighbor_d : neighbors_c) {
       size_t const idx_d = neighbor_d.index;
@@ -97,13 +97,13 @@ void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlatio
       }
 
       const int type_d = atoms[idx_d].element_id();
-      const correlation::math::Vector3<double> &r_cd = neighbor_d.r_ij;
+      const correlation::math::Vector3<real_t> &r_cd = neighbor_d.r_ij;
 
       auto const dihedral_angle_opt = calculateDihedralAngle({.r_ba = r_ba, .r_bc = r_bc, .r_cd = r_cd});
       if (!dihedral_angle_opt.has_value()) {
         continue;
       }
-      double const dihedral_angle = dihedral_angle_opt.value();
+      real_t const dihedral_angle = dihedral_angle_opt.value();
 
       local_tensor[type_a][type_b][type_c][type_d].push_back(dihedral_angle);
 
@@ -147,9 +147,9 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell, const corr
   // Initialize thread-local storage
   tbb::enumerable_thread_specific<correlation::analysis::StructureAnalyzer::DihedralTensor> ets([&]() {
     return correlation::analysis::StructureAnalyzer::DihedralTensor(
-        num_elements, std::vector<std::vector<std::vector<std::vector<double>>>>(
-                          num_elements, std::vector<std::vector<std::vector<double>>>(
-                                            num_elements, std::vector<std::vector<double>>(num_elements))));
+        num_elements, std::vector<std::vector<std::vector<std::vector<real_t>>>>(
+                          num_elements, std::vector<std::vector<std::vector<real_t>>>(
+                                            num_elements, std::vector<std::vector<real_t>>(num_elements))));
   });
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &blocked_range) {
@@ -166,7 +166,7 @@ void DihedralCalculator::compute(const correlation::core::Cell &cell, const corr
       for (const auto &neighbor_c : neighbors_b) {
         size_t const idx_c = neighbor_c.index;
 
-        // To prevent double counting the identical bond B-C as C-B,
+        // To prevent real_t counting the identical bond B-C as C-B,
         // we enforce an ordering constraint: B < C
         if (idx_b >= idx_c) {
           continue;

@@ -180,9 +180,9 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
 
   if (comm_data.lattice) {
     const auto &lattice_vecs = *comm_data.lattice;
-    correlation::math::Vector3<double> const param_a(lattice_vecs[0], lattice_vecs[1], lattice_vecs[2]);
-    correlation::math::Vector3<double> const param_b(lattice_vecs[3], lattice_vecs[4], lattice_vecs[5]);
-    correlation::math::Vector3<double> const param_c(lattice_vecs[6], lattice_vecs[7], lattice_vecs[8]);
+    correlation::math::Vector3<real_t> const param_a(lattice_vecs[0], lattice_vecs[1], lattice_vecs[2]);
+    correlation::math::Vector3<real_t> const param_b(lattice_vecs[3], lattice_vecs[4], lattice_vecs[5]);
+    correlation::math::Vector3<real_t> const param_c(lattice_vecs[6], lattice_vecs[7], lattice_vecs[8]);
     cell = correlation::core::Cell(param_a, param_b, param_c);
   }
 
@@ -212,10 +212,10 @@ correlation::core::Cell XYZReader::parseXYZFrame(const char *data, size_t size) 
 
     std::string const symbol = tokens[comm_data.species_col];
     try {
-      double const pos_x = std::stod(tokens[comm_data.pos_x_col]);
-      double const pos_y = std::stod(tokens[comm_data.pos_y_col]);
-      double const pos_z = std::stod(tokens[comm_data.pos_z_col]);
-      cell.addAtom(symbol, correlation::math::Vector3<double>(pos_x, pos_y, pos_z));
+      real_t const pos_x = static_cast<real_t>(std::stod(tokens[comm_data.pos_x_col]));
+      real_t const pos_y = static_cast<real_t>(std::stod(tokens[comm_data.pos_y_col]));
+      real_t const pos_z = static_cast<real_t>(std::stod(tokens[comm_data.pos_z_col]));
+      cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
     } catch (...) {
       throw std::runtime_error("Invalid XYZ file: invalid coordinates: " + line);
     }
@@ -233,7 +233,7 @@ void XYZReader::parseLattice(const std::string &comment, CommentData &data) {
     if (end != std::string::npos) {
       std::string const values = comment.substr(start, end - start);
       std::istringstream iss(values);
-      std::array<double, 9> lattice{};
+      std::array<real_t, 9> lattice{};
       bool flag = true;
       for (int lat_idx = 0; lat_idx < 9; ++lat_idx) {
         if (!(iss >> lattice.at(lat_idx))) {
@@ -264,7 +264,7 @@ void XYZReader::parseEnergy(const std::string &comment, CommentData &data) {
         }
         std::string const val_str = comment.substr(start, end == std::string::npos ? std::string::npos : end - start);
         try {
-          data.energy = std::stod(val_str);
+          data.energy = static_cast<real_t>(std::stod(val_str));
           break;
         } catch (const std::exception &err) {
           std::cerr << "Warning: Failed to parse energy value '" << val_str << "' in comment line: " << err.what()

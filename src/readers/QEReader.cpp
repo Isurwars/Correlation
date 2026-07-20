@@ -33,7 +33,7 @@ struct QETrajectoryParser {
   QETrajectoryParser(std::ifstream &file) : file(&file) {}
 
   void parseCellParameters() {
-    std::array<std::array<double, 3>, 3> lat_vec = {};
+    std::array<std::array<real_t, 3>, 3> lat_vec = {};
     std::string line;
     for (auto &row : lat_vec) {
       if (std::getline(*file, line)) {
@@ -41,7 +41,7 @@ struct QETrajectoryParser {
         iss >> row.at(0) >> row.at(1) >> row.at(2);
       }
     }
-    current_cell.updateLattice(correlation::math::Matrix3<double>(
+    current_cell.updateLattice(correlation::math::Matrix3<real_t>(
         {lat_vec.at(0)[0], lat_vec.at(0)[1], lat_vec.at(0)[2]}, {lat_vec.at(1)[0], lat_vec.at(1)[1], lat_vec.at(1)[2]},
         {lat_vec.at(2)[0], lat_vec.at(2)[1], lat_vec.at(2)[2]}));
     has_box = true;
@@ -62,11 +62,11 @@ struct QETrajectoryParser {
   void parseAtomLine(const std::string &line) {
     std::istringstream iss(line);
     std::string symbol;
-    double pos_x = 0.0;
-    double pos_y = 0.0;
-    double pos_z = 0.0;
+    real_t pos_x = 0.0;
+    real_t pos_y = 0.0;
+    real_t pos_z = 0.0;
     if (iss >> symbol >> pos_x >> pos_y >> pos_z) {
-      current_cell.addAtom(symbol, correlation::math::Vector3<double>(pos_x, pos_y, pos_z));
+      current_cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
     } else {
       parsing_atoms = false;
     }

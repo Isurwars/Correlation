@@ -49,16 +49,16 @@ TEST(SDFCalculatorTests, MultiAtomSDFHasNonzeroDensity) {
 
   // With 2 atoms, the total SDF should have non-zero values somewhere
   const auto &total = hist.partials.at("Total");
-  double sum = 0.0;
-  for (double const val : total) {
+  real_t sum = 0.0;
+  for (real_t const val : total) {
     sum += val;
   }
   EXPECT_GT(sum, 0.0) << "SDF with 2 atoms should have non-zero density";
 
   // Per-element partial should also have values
   const auto &ar_partial = hist.partials.at("Ar");
-  double ar_sum = 0.0;
-  for (double const val : ar_partial) {
+  real_t ar_sum = 0.0;
+  for (real_t const val : ar_partial) {
     ar_sum += val;
   }
   EXPECT_GT(ar_sum, 0.0) << "Ar partial SDF should have non-zero density";

@@ -38,7 +38,7 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
     throw std::logic_error("VACF data is too short for VDOS calculation.");
   }
 
-  double const time_step = vacf_hist.bins[1] - vacf_hist.bins[0];
+  real_t const time_step = vacf_hist.bins[1] - vacf_hist.bins[0];
 
   auto [frequencies, intensities_real, intensities_imag] =
       correlation::analysis::DynamicsAnalyzer::calculateVDOS(vacf_data, time_step);
@@ -46,10 +46,10 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
   size_t const num_points = frequencies.size();
   size_t const total_points = 2 * num_points - 1;
 
-  std::vector<double> combined_frequencies;
-  std::vector<double> combined_frequencies_cmInv;
-  std::vector<double> combined_frequencies_meV;
-  std::vector<double> combined_intensities;
+  std::vector<real_t> combined_frequencies;
+  std::vector<real_t> combined_frequencies_cmInv;
+  std::vector<real_t> combined_frequencies_meV;
+  std::vector<real_t> combined_intensities;
   combined_frequencies.reserve(total_points);
   combined_frequencies_cmInv.reserve(total_points);
   combined_frequencies_meV.reserve(total_points);

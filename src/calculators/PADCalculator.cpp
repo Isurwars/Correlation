@@ -22,15 +22,15 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<PADCalculator>("PADCalculator");
 
 struct PADSettings {
-  double bin_width;
+  real_t bin_width;
   size_t num_bins;
-  double theta_cut;
+  real_t theta_cut;
 };
 
-void populateTripletHistogram(const std::vector<double> &angles, PADSettings settings,
-                              std::vector<double> &partial_hist) {
+void populateTripletHistogram(const std::vector<real_t> &angles, PADSettings settings,
+                              std::vector<real_t> &partial_hist) {
   for (const auto &angle_rad : angles) {
-    double const angle_deg = angle_rad * correlation::math::rad_to_deg;
+    real_t const angle_deg = angle_rad * correlation::math::rad_to_deg;
 
     if (angle_deg <= settings.theta_cut + 1e-5) {
       auto bin = static_cast<size_t>(angle_deg / settings.bin_width);
@@ -54,7 +54,7 @@ void PADCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 
 correlation::analysis::Histogram PADCalculator::calculate(const correlation::core::Cell &cell,
                                                           const correlation::analysis::StructureAnalyzer *neighbors,
-                                                          double bin_width) {
+                                                          real_t bin_width) {
   if (bin_width <= 0) {
     throw std::invalid_argument("Bin width must be positive");
   }
@@ -62,7 +62,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
     throw std::logic_error("Cannot calculate BAD/PAD. Neighbor list has not been computed.");
   }
 
-  const double theta_cut = 180.0;
+  const real_t theta_cut = 180.0;
 
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();
@@ -82,7 +82,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
   f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
-    f_theta.bins[i] = (static_cast<double>(i) + 0.5) * bin_width;
+    f_theta.bins[i] = static_cast<real_t>((static_cast<double>(i) + 0.5) * bin_width);
   }
 
   for (size_t i = 0; i < num_elements; ++i) {
@@ -100,7 +100,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
 
   auto &total_f = f_theta.partials["Total"];
   total_f.assign(num_bins, 0.0);
-  double total_counts = 0;
+  real_t total_counts = 0;
 
   for (const auto &[key, partial] : f_theta.partials) {
     if (key != "Total") {
@@ -115,9 +115,11 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
     return f_theta;
   }
 
-  const double normalization_factor = 1.0 / (total_counts * bin_width);
+  const real_t normalization_factor = 1.0 / (total_counts * bin_width);
   for (auto &[key, partial] : f_theta.partials) {
-    correlation::math::scale_bins(partial.data(), normalization_factor, num_bins);
+    for (auto &val : partial) {
+      val *= normalization_factor;
+    }
   }
   return f_theta;
 }

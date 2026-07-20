@@ -15,8 +15,8 @@ namespace correlation::core {
 
 NeighborGraph::NeighborGraph(size_t node_count) : adj_list_(node_count) {}
 
-void NeighborGraph::addDirectedEdge(size_t source, size_t target, double distance,
-                                    const math::Vector3<double> &r_ij) { // NOLINT(bugprone-easily-swappable-parameters)
+void NeighborGraph::addDirectedEdge(size_t source, size_t target, real_t distance,
+                                    const math::Vector3<real_t> &r_ij) { // NOLINT(bugprone-easily-swappable-parameters)
   if (source >= adj_list_.size()) {
     return;
   }

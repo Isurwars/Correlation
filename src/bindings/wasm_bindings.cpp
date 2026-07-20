@@ -110,7 +110,7 @@ EMSCRIPTEN_BINDINGS(correlation_wasm) {
 
   // ---- DistributionFunctions ----
   class_<DistributionFunctions>("DistributionFunctions")
-      .constructor<Cell &, double, const std::vector<std::vector<double>> &>()
+      .constructor<Cell &, real_t, const std::vector<std::vector<real_t>> &>()
       .function("calculateRDF", &DistributionFunctions::calculateRDF)
       .function("calculatePAD", &DistributionFunctions::calculatePAD)
       .function("getHistogram",

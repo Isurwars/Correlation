@@ -27,7 +27,7 @@ TEST_F(AtomTests, DefaultConstructorInitializesCorrectly) {
 
 TEST_F(AtomTests, ParameterizedConstructorSetsProperties) {
   const Element element = {"O", {1}};
-  const correlation::math::Vector3<double> expected_pos = {1.0, 2.5, -3.0};
+  const correlation::math::Vector3<real_t> expected_pos = {1.0, 2.5, -3.0};
   const AtomID expected_id = 123;
 
   const Atom atom(element, expected_pos, expected_id);
@@ -43,7 +43,7 @@ TEST_F(AtomTests, ParameterizedConstructorSetsProperties) {
 TEST_F(AtomTests, AccessorsModifyStateCorrectly) {
   Atom atom;
   const Element new_element = {"Fe", {26}};
-  const correlation::math::Vector3<double> new_pos = {1.0, 2.0, 3.0};
+  const correlation::math::Vector3<real_t> new_pos = {1.0, 2.0, 3.0};
 
   atom.setID(42);
   atom.setElement(new_element);
@@ -110,9 +110,9 @@ TEST_F(AtomTests, AngleFunctionClampsFloatingPointInaccuracies) {
 
 TEST_F(AtomTests, DistanceHandlesLargeCoordinates) {
   const Element element = {"H", {0}};
-  const double large = correlation::is_single_precision ? 1e4 : 1e10;
+  const real_t large = correlation::is_single_precision ? 1e4 : 1e10;
   const Atom atom1(element, {large, large, large}, 0);
-  const Atom atom2(element, {large + 3.0, large + 4.0, large}, 1);
+  const Atom atom2(element, {static_cast<real_t>(large + 3.0), static_cast<real_t>(large + 4.0), large}, 1);
 
   EXPECT_NEAR(distance(atom1, atom2), 5.0, correlation::is_single_precision ? 1e-3 : 1e-7);
 }
@@ -142,18 +142,18 @@ TEST_F(AtomTests, DistanceBetweenIdenticalAtomsIsZero) {
 
 TEST_F(AtomTests, DistanceHandlesSubnormalCoordinates) {
   const Element element = {"H", {0}};
-  const double subnormal = 1e-308;
+  const real_t subnormal = 1e-308;
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
   const Atom atom2(element, {subnormal, subnormal, subnormal}, 1);
-  double dist = distance(atom1, atom2);
+  real_t dist = distance(atom1, atom2);
   EXPECT_TRUE(dist == 0.0 || std::abs(dist - std::sqrt(3.0) * subnormal) < 1e-310);
 }
 
 TEST_F(AtomTests, DistanceHandlesInfinityAndNaN) {
   const Element element = {"H", {0}};
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
-  const Atom atom_inf(element, {std::numeric_limits<double>::infinity(), 0.0, 0.0}, 1);
-  const Atom atom_nan(element, {std::numeric_limits<double>::quiet_NaN(), 0.0, 0.0}, 2);
+  const Atom atom_inf(element, {std::numeric_limits<real_t>::infinity(), 0.0, 0.0}, 1);
+  const Atom atom_nan(element, {std::numeric_limits<real_t>::quiet_NaN(), 0.0, 0.0}, 2);
 
   EXPECT_TRUE(std::isinf(distance(atom1, atom_inf)));
   EXPECT_TRUE(std::isnan(distance(atom1, atom_nan)));
@@ -162,7 +162,7 @@ TEST_F(AtomTests, DistanceHandlesInfinityAndNaN) {
 TEST_F(AtomTests, AngleFunctionHandlesNaNCoordinates) {
   const Element element = {.symbol = "C", .id = {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
-  const Atom atom_a(element, {std::numeric_limits<double>::quiet_NaN(), 1.0, 1.0}, 1);
+  const Atom atom_a(element, {std::numeric_limits<real_t>::quiet_NaN(), 1.0, 1.0}, 1);
   const Atom atom_b(element, {1.0, 1.0, 1.0}, 2);
 
   // Since NaN coordinate makes dot/norm_sq NaN or invalid, we expect standard clamp/acos behavior or nan
