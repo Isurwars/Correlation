@@ -2,19 +2,37 @@
 trigger: always_on
 ---
 
-# Rule: C++ Code Style and Structure Guide
+# Rule: C++ Code Style, Structure, and ECC Skill Standards
 *Activation Mode: Glob (`src/**/*.{hpp,cpp,cxx,h,cc}`)*
 
 ## 1. Static Analysis & Formatting (Clang-Tidy & Clang-Format)
 - **Strict Compliance:** All generated, modified, or refactored C++ code must strictly comply with the workspace `.clang-tidy` and `.clang-format` specifications.
 - **Verification Gate:** Before declaring a coding task finished, you must run `clang-tidy` on the modified files using the project compile commands database. Fix any warnings or errors automatically before presenting the code to the user.
+- **Compilation Hygiene:** Code modifications must compile cleanly under strict warning parameters (`-Wall -Wextra -Werror`). Avoid all implicit narrowings or type conversions that risk data loss.
 
-## 2. Doxygen Documentation Standard
+## 2. Safety & Resource Management (ECC Standards)
+- **RAII Mandate:** Enforce Resource Acquisition Is Initialization strictly for all resources, file descriptors, and lifetime management.
+- **Smart Pointers:** 
+  - Prefer `std::unique_ptr` by default for single ownership structures.
+  - Use `std::shared_ptr` exclusively when shared runtime ownership is explicitly required.
+  - **Strictly Banned:** Manual memory management via raw `new` or `delete` keywords.
+- **Memory Boundaries:** Do not use raw C-style arrays. Utilize modern safe container wrappers such as `std::vector` or `std::array`.
+- **Header Guards:** Always use `#pragma once` as the standard file header safety guard.
+
+## 3. Modern C++ Architecture
+- **Language Target:** Align implementations with C++20 or C++23 specifications.
+- **Const Correctness:** Enforce aggressive `const` and `constexpr` optimization. Mark variables, parameters, and member functions as `const` unless state mutation is actively required by the logic.
+- **Type Safety Primitives:** Use modern types for safe conditional management and robust error paths:
+  - `std::optional` for handling optional/nullable values.
+  - `std::variant` or `std::expected` for safe, typed error handling over raw status flags or error codes.
+
+## 4. Doxygen Documentation Standard
 Every class, struct, enum, and public/protected function must include valid Doxygen blocks directly above the declaration in the header (`.hpp`) file. 
 - Use the `/** ... */` block style.
 - Explicitly document all parameters (`@param[in,out]`), return values (`@return`), and potential exceptions (`@throws`).
 
 ### Example:
+```cpp
 /**
  * @brief Computes the structural correlation function.
  * @param[in] data Vector containing the raw atomistic simulation coordinates.
@@ -22,17 +40,3 @@ Every class, struct, enum, and public/protected function must include valid Doxy
  * @return A structural distribution profile.
  */
 DistributionProfile computeCorrelation(const std::vector<double>& data, double cutoff);
-
-## 3. Strict Signature Ordering (HPP vs CPP Alignment)
-To maintain code scannability, the ordering of function parameters, local variable declarations, and initializer lists must follow a strict structural pattern between declaration and definition.
-
-### Initializer Lists
-In the `.cpp` constructors, initialize member variables in the exact order they are declared in the `.hpp` class definition to avoid compiler initialization order warnings.
-
-### Parameter and Variable Ordering Template
-When implementing or modifying functions, maintain the following logical grouping for input, processing, and output variables:
-
-1. **Inputs First (Read-Only):** `const T&` or primitive inputs passed by value.
-2. **In/Out Parameters:** References or pointers modified by the function.
-3. **State/Iterators:** Local loop indices, flags, and structural tracking variables.
-4. **Output/Return Cache:** The final variable holding the return value, declared right before the core logic block.
