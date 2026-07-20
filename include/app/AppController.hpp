@@ -15,6 +15,7 @@
 #include <memory>
 
 class AppControllerTests;
+class AppWindow;
 
 namespace correlation::app {
 

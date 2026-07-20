@@ -18,7 +18,7 @@ PresetController::PresetController(AppWindow &window, AppBackend &backend, AppCo
     : window_(window), backend_(backend), controller_(controller) {}
 
 void PresetController::handleLoadPreset(int index) {
-  if (index < 0 || index >= static_cast<int>(presets_.size())) {
+  if (index < 0 || static_cast<size_t>(index) >= presets_.size()) {
     return;
   }
 
@@ -27,8 +27,8 @@ void PresetController::handleLoadPreset(int index) {
   // Update backend options
   ProgramOptions current_opts = backend_.options();
   // Keep input_file and output_file_base
-  std::string input = current_opts.input_file;
-  std::string output = current_opts.output_file_base;
+  const std::string input = current_opts.input_file;
+  const std::string output = current_opts.output_file_base;
   current_opts = preset.options;
   current_opts.input_file = input;
   current_opts.output_file_base = output;
@@ -38,7 +38,7 @@ void PresetController::handleLoadPreset(int index) {
   controller_.handleOptionstoUI();
   controller_.populateCalculatorGroups();
   controller_.updateActiveGroupFlags();
-  controller_.getInputValidator()->validateInputs();
+  static_cast<void>(controller_.getInputValidator()->validateInputs());
   controller_.getInputValidator()->updateCliCommand();
 
   window_.set_analysis_status_text(slint::SharedString(std::string("Loaded preset: ") + preset.name));
@@ -61,11 +61,11 @@ void PresetController::handleSavePreset(const std::string &name) {
 }
 
 void PresetController::handleDeletePreset(int index) {
-  if (index < 0 || index >= static_cast<int>(presets_.size())) {
+  if (index < 0 || static_cast<size_t>(index) >= presets_.size()) {
     return;
   }
 
-  std::string name = presets_[index].name;
+  const std::string name = presets_[index].name;
   PresetManager::remove(name);
 
   window_.set_analysis_status_text(slint::SharedString(std::string("Deleted preset: ") + name));
@@ -169,7 +169,7 @@ void PresetController::handleMaterialTypeChanged(int type) {
   }
 
   // Force re-validation and update the CLI equivalent
-  controller_.getInputValidator()->validateInputs();
+  static_cast<void>(controller_.getInputValidator()->validateInputs());
 }
 
 } // namespace correlation::app

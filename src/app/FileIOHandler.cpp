@@ -28,16 +28,16 @@ void FileIOHandler::handleWriteFiles() {
   std::array<nfdfilteritem_t, 3> filterList = {{{.name = "Comma Separated Values", .spec = "csv"},
                                                 {.name = "Hierarchical Data Format", .spec = "h5,hdf5"},
                                                 {.name = "Apache Parquet", .spec = "parquet"}}};
-  nfdfiltersize_t filterCount = filterList.size();
+  const nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;
-  nfdresult_t result = NFD_SaveDialogU8(&outPath, filterList.data(), filterCount, nullptr, nullptr);
+  const nfdresult_t result = NFD_SaveDialogU8(&outPath, filterList.data(), filterCount, nullptr, nullptr);
 
   if (result == NFD_OKAY) {
     std::filesystem::path file_path_obj(outPath);
     NFD_FreePathU8(outPath);
 
-    std::string ext = file_path_obj.extension().string();
+    const std::string ext = file_path_obj.extension().string();
 
     bool use_csv = false;
     bool use_hdf5 = false;
@@ -75,7 +75,7 @@ void FileIOHandler::handleWriteFiles() {
     opts.use_parquet = use_parquet;
     backend_.setOptions(opts);
 
-    std::string err = backend_.write_files();
+    const std::string err = backend_.write_files();
     if (err.empty()) {
       window_.set_analysis_status_text(slint::SharedString(AppDefaults::MSG_FILES_WRITTEN));
     } else {
@@ -102,13 +102,13 @@ void FileIOHandler::handleBrowseFile() {
        {.name = "DMol3 Outmol", .spec = "outmol"},
        {.name = "VASP POSCAR/CONTCAR", .spec = "poscar,contcar,vasp"},
        {.name = "VASP XDATCAR", .spec = "xdatcar"}}};
-  nfdfiltersize_t filterCount = filterList.size();
+  const nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;
-  nfdresult_t result = NFD_OpenDialogU8(&outPath, filterList.data(), filterCount, nullptr);
+  const nfdresult_t result = NFD_OpenDialogU8(&outPath, filterList.data(), filterCount, nullptr);
 
   if (result == NFD_OKAY) {
-    std::string filepath(outPath);
+    const std::string filepath(outPath);
     NFD_FreePathU8(outPath);
 
     window_.set_in_file_text(slint::SharedString(filepath));
@@ -152,7 +152,7 @@ void FileIOHandler::handleBrowseFile() {
           auto atom_counts_map = backend_.getAtomCounts();
           auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
           for (const auto &[symbol, count] : atom_counts_map) {
-            slint_atom_counts->push_back({slint::SharedString(symbol), count});
+            slint_atom_counts->push_back({.symbol = slint::SharedString(symbol), .count = count});
           }
           window_.set_atom_counts(slint_atom_counts);
 
@@ -180,12 +180,12 @@ void FileIOHandler::handleBrowseFile() {
             opts.max_frame = slint::SharedString(std::to_string(backend_.getFrameCount()));
             window_.set_analysis_options(opts);
           }
-          controller_.getInputValidator()->validateInputs();
+          static_cast<void>(controller_.getInputValidator()->validateInputs());
         }
       });
     });
   } else if (result == NFD_CANCEL) {
-    std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
+    const std::string message = AppDefaults::MSG_FILE_SELECTION_CANCELLED;
     window_.set_file_status_text(slint::SharedString(message));
     window_.set_timer_running(false);
     window_.set_text_opacity(false);

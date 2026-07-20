@@ -24,6 +24,8 @@ namespace correlation::analysis {
  */
 class DynamicsAnalyzer {
 public:
+  DynamicsAnalyzer() = delete;
+
   /** @name Calculation Methods */
   ///@{
   /**
@@ -39,8 +41,9 @@ public:
    * @return A vector containing the VACF values for lag times 0 to
    * max_correlation_frames.
    */
-  static std::vector<real_t> calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
-                                           StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
+  [[nodiscard]] static std::vector<real_t>
+  calculateVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+                StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Normalized Velocity Autocorrelation Function.
@@ -52,9 +55,9 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector containing the normalized VACF values.
    */
-  static std::vector<real_t> calculateNormalizedVACF(const correlation::core::Trajectory &traj,
-                                                     MaxFrames max_correlation_frames, StartFrame start_frame = {0},
-                                                     EndFrame end_frame = {static_cast<size_t>(-1)});
+  [[nodiscard]] static std::vector<real_t>
+  calculateNormalizedVACF(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+                          StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Mean Squared Displacement (MSD).
@@ -74,8 +77,9 @@ public:
    * @param end_frame One-past-last frame to include (default: all frames).
    * @return A vector of MSD values indexed by lag (in Å²).
    */
-  static std::vector<real_t> calculateMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
-                                          StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
+  [[nodiscard]] static std::vector<real_t>
+  calculateMSD(const correlation::core::Trajectory &traj, MaxFrames max_correlation_frames,
+               StartFrame start_frame = {0}, EndFrame end_frame = {static_cast<size_t>(-1)});
 
   /**
    * @brief Calculates the Vibrational Density of States (VDOS) from the VACF.
@@ -90,7 +94,7 @@ public:
    * @param time_step The time step between frames (in femtoseconds).
    * @return A tuple: {frequencies (THz), real_intensities, imag_intensities}.
    */
-  static std::tuple<std::vector<real_t>, std::vector<real_t>, std::vector<real_t>>
+  [[nodiscard]] static std::tuple<std::vector<real_t>, std::vector<real_t>, std::vector<real_t>>
   calculateVDOS(const std::vector<real_t> &vacf, real_t time_step);
 
   /**
@@ -100,7 +104,8 @@ public:
    * @param msd The MSD values.
    * @return The diffusion coefficient in Å²/fs.
    */
-  static real_t computeDiffusionCoefficientMSD(const std::vector<real_t> &time, const std::vector<real_t> &msd);
+  [[nodiscard]] static real_t computeDiffusionCoefficientMSD(const std::vector<real_t> &time,
+                                                             const std::vector<real_t> &msd);
 
   /**
    * @brief Computes the self-diffusion coefficient D from VACF using Green-Kubo integration (trapezoidal rule).
@@ -108,7 +113,8 @@ public:
    * @param vacf The VACF values.
    * @return The diffusion coefficient in Å²/fs.
    */
-  static real_t computeDiffusionCoefficientVACF(const std::vector<real_t> &time, const std::vector<real_t> &vacf);
+  [[nodiscard]] static real_t computeDiffusionCoefficientVACF(const std::vector<real_t> &time,
+                                                              const std::vector<real_t> &vacf);
 
   /**
    * @brief Computes the relaxation time tau from the normalized VACF using trapezoidal integration.
@@ -116,7 +122,8 @@ public:
    * @param normalized_vacf The normalized VACF values.
    * @return The relaxation time in fs.
    */
-  static real_t computeRelaxationTime(const std::vector<real_t> &time, const std::vector<real_t> &normalized_vacf);
+  [[nodiscard]] static real_t computeRelaxationTime(const std::vector<real_t> &time,
+                                                    const std::vector<real_t> &normalized_vacf);
 
   ///@}
 };

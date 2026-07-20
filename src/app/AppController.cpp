@@ -11,6 +11,7 @@
 #include <Windows.h>
 #endif
 
+#include "AppWindow.h"
 #include "app/AnalysisRunner.hpp"
 #include "app/AppController.hpp"
 
@@ -31,9 +32,7 @@
 
 namespace correlation::app {
 
-
-
-AppController::AppController(AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
+AppController::AppController(::AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
 #if defined(__linux__)
   // Prevent GTK3 from hanging for 25 seconds if xdg-desktop-portal is missing or failing
   setenv("GTK_USE_PORTAL", "0", 0);
@@ -73,7 +72,7 @@ AppController::AppController(AppWindow &window, AppBackend &backend) : window_(w
   window_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
-  window_.on_validate_inputs([this]() { input_validator_->validateInputs(); });
+  window_.on_validate_inputs([this]() { static_cast<void>(input_validator_->validateInputs()); });
   window_.on_copy_cli_command([this]() { input_validator_->handleCopyCliCommand(); });
 
   // Handle calculator toggle: update backend options and refresh the UI model
@@ -109,9 +108,8 @@ AppController::AppController(AppWindow &window, AppBackend &backend) : window_(w
   window_.on_material_type_changed([this](int type) { preset_controller_->handleMaterialTypeChanged(type); });
 
   // Handle plot resized callback from UI
-  window_.on_plot_resized([this](float width, float height) {
-    plot_controller_->handlePlotResized({.width = width, .height = height});
-  });
+  window_.on_plot_resized(
+      [this](float width, float height) { plot_controller_->handlePlotResized({.width = width, .height = height}); });
 
   // Initial load of preset list
   preset_controller_->refreshPresetList();
@@ -121,8 +119,6 @@ AppController::~AppController() {
   // Quit Native File Dialog
   NFD_Quit();
 }
-
-
 
 // Safe conversion helper
 namespace {
@@ -368,7 +364,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
 
   try {
     std::string max_s = window_.get_analysis_options().max_frame.data();
-    std::string max_s_lower = to_lower(max_s);
+    const std::string max_s_lower = to_lower(max_s);
 
     if (max_s_lower == "end" || max_s.empty()) {
       opt.max_frame = -1;
@@ -388,7 +384,7 @@ ProgramOptions AppController::handleOptionsfromUI() {
 
   // Handle Bond Cutoffs
   auto cutoffs = getBondCutoffs();
-  size_t num_elements = cutoffs.size();
+  const size_t num_elements = cutoffs.size();
   opt.bond_cutoffs_sq.resize(num_elements, std::vector<real_t>(num_elements));
   for (size_t i = 0; i < num_elements; ++i) {
     for (size_t j = 0; j < num_elements; ++j) {
@@ -420,14 +416,18 @@ std::vector<std::vector<real_t>> AppController::getBondCutoffs() {
     return {};
   }
   auto elements = backend_.cell()->elements();
-  size_t num_elements = elements.size();
+  const size_t num_elements = elements.size();
   std::vector<std::vector<real_t>> cutoffs(num_elements, std::vector<real_t>(num_elements, 0.0));
 
   for (size_t k = 0; k < slint_cutoffs->row_count(); ++k) {
-    auto item = slint_cutoffs->row_data(k).value();
-    std::string symbol1 = item.element1.data();
-    std::string symbol2 = item.element2.data();
-    real_t dist = std::stod(item.distance.data());
+    auto maybe_item = slint_cutoffs->row_data(k);
+    if (!maybe_item.has_value()) {
+      continue;
+    }
+    const auto item = maybe_item.value();
+    const std::string symbol1 = item.element1.data();
+    const std::string symbol2 = item.element2.data();
+    const real_t dist = static_cast<real_t>(std::stod(item.distance.data()));
 
     int idx1 = -1;
     int idx2 = -1;

@@ -3,6 +3,9 @@
 # -----------------------------------------------------------
 include(FetchContent)
 
+# Enforce CMake policy version minimum to 3.10 for external dependencies
+set(CMAKE_POLICY_VERSION_MINIMUM 3.10 CACHE STRING "" FORCE)
+
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Force shared libraries")
 
 # Save original BUILD_TESTING cache state if it exists
@@ -280,7 +283,7 @@ if(BUILD_WITH_ARROW)
 
     # Arrow pulls in rapidjson which has a broken CMake < 3.5 minimum version check for CMake 4.0+.
     # We enforce a policy version minimum before making it available to avoid errors.
-    set(CMAKE_POLICY_VERSION_MINIMUM 3.5 CACHE STRING "" FORCE)
+    set(CMAKE_POLICY_VERSION_MINIMUM 3.10 CACHE STRING "" FORCE)
 
     FetchContent_MakeAvailable(arrow)
 
@@ -488,14 +491,9 @@ FetchContent_Declare(
   voro
   GIT_REPOSITORY https://github.com/chr1shr/voro.git
   GIT_TAG        b0dac575a47af0f90b5b100e6dc199a493c7cb83
+  EXCLUDE_FROM_ALL
 )
-
-# Use manual population to apply EXCLUDE_FROM_ALL to prevent install rules from running
-FetchContent_GetProperties(voro)
-if(NOT voro_POPULATED)
-  FetchContent_Populate(voro)
-  add_subdirectory(${voro_SOURCE_DIR} ${voro_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+FetchContent_MakeAvailable(voro)
 
 set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
 

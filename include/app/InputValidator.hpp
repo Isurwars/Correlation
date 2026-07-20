@@ -33,7 +33,7 @@ public:
    * @brief Validates all numeric input fields and pushes error states to the UI.
    * @return true if all inputs are valid, false otherwise.
    */
-  bool validateInputs();
+  [[nodiscard]] bool validateInputs();
 
   /**
    * @brief Generates and updates the equivalent CLI command in the UI.
@@ -46,11 +46,11 @@ public:
   void handleCopyCliCommand();
 
 private:
-  bool validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val);
-  bool validateAngularAndRings(AppErrors &errs);
-  bool validateOtherAnalysisOptions(AppErrors &errs);
-  bool validateFrames(AppErrors &errs);
-  bool validateExportConfig(AppErrors &errs);
+  [[nodiscard]] bool validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val);
+  [[nodiscard]] bool validateAngularAndRings(AppErrors &errs);
+  [[nodiscard]] bool validateOtherAnalysisOptions(AppErrors &errs);
+  [[nodiscard]] bool validateFrames(AppErrors &errs);
+  [[nodiscard]] bool validateExportConfig(AppErrors &errs);
 
   AppWindow *window_;
   AppBackend *backend_;
