@@ -28,7 +28,7 @@ void AngleCalculator::calculateFrame(correlation::analysis::DistributionFunction
 namespace {
 
 struct AngleScratch {
-  std::vector<double> nb_x, nb_y, nb_z, nb_dist, dots;
+  std::vector<real_t> nb_x, nb_y, nb_z, nb_dist, dots;
   void ensure(size_t neighbor_count) {
     if (nb_x.size() < neighbor_count) {
       nb_x.resize(neighbor_count);
@@ -52,7 +52,7 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
                                  scratch.nb_z.data() + j_idx + 1, scratch.dots.data(), k_count);
 
     const int type1 = atoms[neighbors[j_idx].index].element_id();
-    const double dist1 = scratch.nb_dist[j_idx];
+    const real_t dist1 = scratch.nb_dist[j_idx];
     if (dist1 < 1e-6) {
       continue;
     }
@@ -62,7 +62,7 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
 
     for (size_t m_idx = 0; m_idx < k_count; ++m_idx) {
       const size_t k_idx = j_idx + 1 + m_idx;
-      const double dist2 = scratch.nb_dist[k_idx];
+      const real_t dist2 = scratch.nb_dist[k_idx];
       if (dist2 < 1e-6) {
         continue;
       }
@@ -72,7 +72,7 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
         continue;
       }
 
-      const real_t cos_theta = static_cast<real_t>(std::clamp(scratch.dots[m_idx] / (dist1 * dist2), -1.0, 1.0));
+      const real_t cos_theta = std::clamp(scratch.dots[m_idx] / (dist1 * dist2), static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
       const real_t angle_rad = std::acos(cos_theta);
 
       local_tensor[type1][type_central][type2].push_back(angle_rad);

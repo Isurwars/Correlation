@@ -39,9 +39,9 @@ struct SearchGridConfig {
  * @brief Structure of Arrays (SoA) view of wrapped Cartesian positions to prevent parameter swapping.
  */
 struct SoACoordinates {
-  const double *x;
-  const double *y;
-  const double *z;
+  const real_t *x;
+  const real_t *y;
+  const real_t *z;
 };
 
 /**
@@ -60,8 +60,8 @@ struct FlatCellList {
 struct ThreadLocalBond {
   size_t from;
   size_t to;
-  double distance;
-  correlation::math::Vector3<double> r_ij;
+  real_t distance;
+  correlation::math::Vector3<real_t> r_ij;
 };
 
 /**
@@ -85,10 +85,10 @@ struct ThreadLocalDistances {
   std::vector<ThreadLocalBond> bonds;   ///< Local flat bond/neighbor lists.
 
   // Per-thread SoA scratch buffers (reused and pre-reserved to avoid allocations)
-  std::vector<double> soa_x;       ///< Scratch for x-coordinates.
-  std::vector<double> soa_y;       ///< Scratch for y-coordinates.
-  std::vector<double> soa_z;       ///< Scratch for z-coordinates.
-  std::vector<double> dsq_scratch; ///< Scratch for squared distance results.
+  std::vector<real_t> soa_x;       ///< Scratch for x-coordinates.
+  std::vector<real_t> soa_y;       ///< Scratch for y-coordinates.
+  std::vector<real_t> soa_z;       ///< Scratch for z-coordinates.
+  std::vector<real_t> dsq_scratch; ///< Scratch for squared distance results.
   std::vector<size_t> candidate_j; ///< Scratch for candidate indices.
   size_t candidate_count = 0;      ///< Count of candidates populated in scratch buffers.
 
@@ -111,13 +111,13 @@ struct ThreadLocalDistances {
    * @brief Gathers candidate atoms from neighboring bins.
    */
   void collectCandidates(size_t atom_idx, const SoACoordinates &coords, const std::vector<int> &atom_bin,
-                         const FlatCellList &cell_list, const correlation::math::Matrix3<double> &lattice,
+                         const FlatCellList &cell_list, const correlation::math::Matrix3<real_t> &lattice,
                          SearchGridConfig grid_config, bool ignore_periodic_self_interactions);
 
   /**
    * @brief Gathers candidate atoms from a specific bin.
    */
-  void collectCandidatesFromBin(size_t atom_idx, const correlation::math::Vector3<double> &disp, int n_bin_idx,
+  void collectCandidatesFromBin(size_t atom_idx, const correlation::math::Vector3<real_t> &disp, int n_bin_idx,
                                 const FlatCellList &cell_list, bool zero_disp, const SoACoordinates &coords,
                                 bool ignore_periodic_self_interactions, size_t &c_count);
 
@@ -125,13 +125,13 @@ struct ThreadLocalDistances {
    * @brief Computes SIMD pairwise distances and updates local structures.
    */
   void computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
-                        const SoACoordinates &coords, double cutoff_sq,
+                        const SoACoordinates &coords, real_t cutoff_sq,
                         const std::vector<std::vector<real_t>> &bond_cutoffs_sq);
 };
 
 void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinates &coords,
                                              const std::vector<int> &atom_bin, const FlatCellList &cell_list,
-                                             const correlation::math::Matrix3<double> &lattice,
+                                             const correlation::math::Matrix3<real_t> &lattice,
                                              SearchGridConfig grid_config, bool ignore_periodic_self_interactions) {
 
   size_t c_count = 0;
@@ -157,10 +157,10 @@ void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinat
         int n_bin_idx = wrap_x * (grid_config.K_y * grid_config.K_z) + wrap_y * grid_config.K_z + wrap_z;
 
         // Use FMA for precise displacement coordinate calculation
-        double disp_x = std::fma(shift_z, lattice[2].x(), std::fma(shift_y, lattice[1].x(), shift_x * lattice[0].x()));
-        double disp_y = std::fma(shift_z, lattice[2].y(), std::fma(shift_y, lattice[1].y(), shift_x * lattice[0].y()));
-        double disp_z = std::fma(shift_z, lattice[2].z(), std::fma(shift_y, lattice[1].z(), shift_x * lattice[0].z()));
-        correlation::math::Vector3<double> disp = {disp_x, disp_y, disp_z};
+        real_t disp_x = std::fma(static_cast<real_t>(shift_z), lattice[2].x(), std::fma(static_cast<real_t>(shift_y), lattice[1].x(), static_cast<real_t>(shift_x) * lattice[0].x()));
+        real_t disp_y = std::fma(static_cast<real_t>(shift_z), lattice[2].y(), std::fma(static_cast<real_t>(shift_y), lattice[1].y(), static_cast<real_t>(shift_x) * lattice[0].y()));
+        real_t disp_z = std::fma(static_cast<real_t>(shift_z), lattice[2].z(), std::fma(static_cast<real_t>(shift_y), lattice[1].z(), static_cast<real_t>(shift_x) * lattice[0].z()));
+        correlation::math::Vector3<real_t> disp = {disp_x, disp_y, disp_z};
 
         bool zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
 
@@ -172,7 +172,7 @@ void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinat
   candidate_count = c_count;
 }
 
-void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const correlation::math::Vector3<double> &disp,
+void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const correlation::math::Vector3<real_t> &disp,
                                                     int n_bin_idx, const FlatCellList &cell_list, bool zero_disp,
                                                     const SoACoordinates &coords,
                                                     bool ignore_periodic_self_interactions, size_t &c_count) {
@@ -192,9 +192,9 @@ void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const corre
       continue;
     }
 
-    double const shifted_x = coords.x[j_idx] + disp.x();
-    double const shifted_y = coords.y[j_idx] + disp.y();
-    double const shifted_z = coords.z[j_idx] + disp.z();
+    real_t const shifted_x = coords.x[j_idx] + disp.x();
+    real_t const shifted_y = coords.y[j_idx] + disp.y();
+    real_t const shifted_z = coords.z[j_idx] + disp.z();
 
     if (soa_x.size() <= c_count) {
       soa_x.push_back(shifted_x);
@@ -213,22 +213,22 @@ void ThreadLocalDistances::collectCandidatesFromBin(size_t atom_idx, const corre
 }
 
 void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<correlation::core::Atom> &atoms,
-                                            const SoACoordinates &coords, double cutoff_sq,
+                                            const SoACoordinates &coords, real_t cutoff_sq,
                                             const std::vector<std::vector<real_t>> &bond_cutoffs_sq) {
 
   size_t const c_count = candidate_count;
   if (c_count > 0) {
     const auto &atom_A = atoms[atom_idx];
     const int type_A = atom_A.element_id();
-    const double a_x = coords.x[atom_idx];
-    const double a_y = coords.y[atom_idx];
-    const double a_z = coords.z[atom_idx];
+    const real_t a_x = coords.x[atom_idx];
+    const real_t a_y = coords.y[atom_idx];
+    const real_t a_z = coords.z[atom_idx];
 
     correlation::math::PositionBlock block{.x = soa_x.data(), .y = soa_y.data(), .z = soa_z.data(), .count = c_count};
     correlation::math::compute_dsq_block(a_x, a_y, a_z, block, dsq_scratch.data());
 
     for (size_t k = 0; k < c_count; ++k) {
-      double const d_sq = dsq_scratch[k];
+      real_t const d_sq = dsq_scratch[k];
       if (d_sq >= cutoff_sq) {
         continue;
       }
@@ -242,7 +242,7 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
         distance_tensor_local[type_B][type_A].push_back(dist);
       }
 
-      double max_bond_dist_sq = 0.0;
+      real_t max_bond_dist_sq = 0.0;
       if (static_cast<size_t>(type_A) < bond_cutoffs_sq.size() &&
           static_cast<size_t>(type_B) < bond_cutoffs_sq[type_A].size()) {
         max_bond_dist_sq = bond_cutoffs_sq[type_A][type_B];
@@ -250,18 +250,18 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
 
       if (d_sq <= max_bond_dist_sq) {
         // Recover displacement vector coordinates precisely to minimize rounding/cancellation errors
-        double const disp_x = soa_x[k] - coords.x[j_idx];
-        double const disp_y = soa_y[k] - coords.y[j_idx];
-        double const disp_z = soa_z[k] - coords.z[j_idx];
+        real_t const disp_x = soa_x[k] - coords.x[j_idx];
+        real_t const disp_y = soa_y[k] - coords.y[j_idx];
+        real_t const disp_z = soa_z[k] - coords.z[j_idx];
 
-        double const r_x = (coords.x[j_idx] - a_x) + disp_x;
-        double const r_y = (coords.y[j_idx] - a_y) + disp_y;
-        double const r_z = (coords.z[j_idx] - a_z) + disp_z;
+        real_t const r_x = (coords.x[j_idx] - a_x) + disp_x;
+        real_t const r_y = (coords.y[j_idx] - a_y) + disp_y;
+        real_t const r_z = (coords.z[j_idx] - a_z) + disp_z;
 
         // Recompute consistent distance directly from the exact relative vector
-        double const precise_dist = std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
+        real_t const precise_dist = std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
 
-        correlation::math::Vector3<double> r_ij = {r_x, r_y, r_z};
+        correlation::math::Vector3<real_t> r_ij = {r_x, r_y, r_z};
         bonds.push_back({.from = atom_idx, .to = j_idx, .distance = precise_dist, .r_ij = r_ij});
         if (atom_idx != j_idx) {
           bonds.push_back({.from = j_idx, .to = atom_idx, .distance = precise_dist, .r_ij = -1.0 * r_ij});
@@ -295,16 +295,16 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
   const auto &lattice = cell.latticeVectors();
 
   // New Cell-List logic
-  math::Vector3<double> lattice_a = lattice[0];
-  math::Vector3<double> lattice_b = lattice[1];
-  math::Vector3<double> lattice_c = lattice[2];
+  math::Vector3<real_t> lattice_a = lattice[0];
+  math::Vector3<real_t> lattice_b = lattice[1];
+  math::Vector3<real_t> lattice_c = lattice[2];
 
-  double vol = cell.volume();
-  double width_x = vol / correlation::math::norm(correlation::math::cross(lattice_b, lattice_c));
-  double width_y = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_c));
-  double width_z = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_b));
+  real_t vol = cell.volume();
+  real_t width_x = vol / correlation::math::norm(correlation::math::cross(lattice_b, lattice_c));
+  real_t width_y = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_c));
+  real_t width_z = vol / correlation::math::norm(correlation::math::cross(lattice_a, lattice_b));
 
-  double cutoff = std::sqrt(cutoff_sq);
+  real_t cutoff = std::sqrt(cutoff_sq);
 
   int K_x = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
   int K_y = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
@@ -322,15 +322,15 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
   std::vector<size_t> bin_counts(num_bins, 0);
   std::vector<int> atom_bin(atom_count);
 
-  std::vector<double> wrapped_x(atom_count);
-  std::vector<double> wrapped_y(atom_count);
-  std::vector<double> wrapped_z(atom_count);
+  std::vector<real_t> wrapped_x(atom_count);
+  std::vector<real_t> wrapped_y(atom_count);
+  std::vector<real_t> wrapped_z(atom_count);
 
   for (size_t i = 0; i < atom_count; ++i) {
-    correlation::math::Vector3<double> frac = cell.inverseLatticeVectors() * atoms[i].position();
-    double f_x = frac.x() - std::floor(frac.x());
-    double f_y = frac.y() - std::floor(frac.y());
-    double f_z = frac.z() - std::floor(frac.z());
+    correlation::math::Vector3<real_t> frac = cell.inverseLatticeVectors() * atoms[i].position();
+    real_t f_x = frac.x() - std::floor(frac.x());
+    real_t f_y = frac.y() - std::floor(frac.y());
+    real_t f_z = frac.z() - std::floor(frac.z());
 
     // Use std::fma for extremely precise coordinate mapping
     wrapped_x[i] = std::fma(f_z, lattice[2].x(), std::fma(f_y, lattice[1].x(), f_x * lattice[0].x()));

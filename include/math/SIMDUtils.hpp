@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "math/Precision.hpp"
 #include "math/SIMDConfig.hpp"
 #include <cmath>
 #include <cstddef>
@@ -23,9 +24,9 @@ namespace correlation::math {
  * @brief Represents a Structure of Arrays (SoA) block of atom positions for SIMD processing.
  */
 struct PositionBlock {
-  double *x;         ///< Array of x-coordinates.
-  double *y;         ///< Array of y-coordinates.
-  double *z;         ///< Array of z-coordinates.
+  real_t *x;         ///< Array of x-coordinates.
+  real_t *y;         ///< Array of y-coordinates.
+  real_t *z;         ///< Array of z-coordinates.
   std::size_t count; ///< Number of atoms in this block.
 };
 
@@ -40,9 +41,9 @@ struct PositionBlock {
  * exclusively for parameter grouping in low-level SIMD utility functions.
  */
 struct Point3 {
-  double x; ///< X-coordinate.
-  double y; ///< Y-coordinate.
-  double z; ///< Z-coordinate.
+  real_t x; ///< X-coordinate.
+  real_t y; ///< Y-coordinate.
+  real_t z; ///< Z-coordinate.
 };
 
 /**
@@ -52,10 +53,10 @@ struct Point3 {
  * @param point_b The second point.
  * @return The scalar squared distance.
  */
-inline double dist_sq_scalar(Point3 point_a, Point3 point_b) noexcept {
-  const double dist_x = point_b.x - point_a.x;
-  const double dist_y = point_b.y - point_a.y;
-  const double dist_z = point_b.z - point_a.z;
+inline real_t dist_sq_scalar(Point3 point_a, Point3 point_b) noexcept {
+  const real_t dist_x = point_b.x - point_a.x;
+  const real_t dist_y = point_b.y - point_a.y;
+  const real_t dist_z = point_b.z - point_a.z;
   return dist_x * dist_x + dist_y * dist_y + dist_z * dist_z;
 }
 
@@ -73,6 +74,34 @@ inline double dist_sq_scalar(Point3 point_a, Point3 point_b) noexcept {
  * @param out_dsq Destination array for the computed squared distances.
  */
 #if defined(CORRELATION_SIMD_AVX512)
+
+#if defined(CORRELATION_USE_SINGLE_PRECISION) && CORRELATION_USE_SINGLE_PRECISION
+
+inline void compute_dsq_block(float ax, float ay, float az, const PositionBlock &block,
+                              float *CORRELATION_RESTRICT out_dsq) noexcept {
+  const __m512 va_x = _mm512_set1_ps(ax);
+  const __m512 va_y = _mm512_set1_ps(ay);
+  const __m512 va_z = _mm512_set1_ps(az);
+
+  std::size_t k = 0;
+  for (; k + 16 <= block.count; k += 16) {
+    __m512 dx = _mm512_sub_ps(_mm512_loadu_ps(block.x + k), va_x);
+    __m512 dy = _mm512_sub_ps(_mm512_loadu_ps(block.y + k), va_y);
+    __m512 dz = _mm512_sub_ps(_mm512_loadu_ps(block.z + k), va_z);
+    __m512 dsq = _mm512_fmadd_ps(dx, dx, _mm512_fmadd_ps(dy, dy, _mm512_mul_ps(dz, dz)));
+    _mm512_storeu_ps(out_dsq + k, dsq);
+  }
+  if (k < block.count) {
+    __mmask16 mask = static_cast<__mmask16>((1u << (block.count - k)) - 1u);
+    __m512 dx = _mm512_sub_ps(_mm512_maskz_loadu_ps(mask, block.x + k), va_x);
+    __m512 dy = _mm512_sub_ps(_mm512_maskz_loadu_ps(mask, block.y + k), va_y);
+    __m512 dz = _mm512_sub_ps(_mm512_maskz_loadu_ps(mask, block.z + k), va_z);
+    __m512 dsq = _mm512_fmadd_ps(dx, dx, _mm512_fmadd_ps(dy, dy, _mm512_mul_ps(dz, dz)));
+    _mm512_mask_storeu_ps(out_dsq + k, mask, dsq);
+  }
+}
+
+#else // double precision
 
 inline void compute_dsq_block(double ax, double ay, double az, const PositionBlock &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
@@ -97,6 +126,8 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
     _mm512_mask_storeu_pd(out_dsq + k, mask, dsq);
   }
 }
+
+#endif // CORRELATION_USE_SINGLE_PRECISION
 
 /**
  * @brief Computes the dot product of two double arrays (AVX-512 version).
@@ -138,6 +169,33 @@ inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integra
 
 #elif defined(CORRELATION_SIMD_AVX2)
 
+#if defined(CORRELATION_USE_SINGLE_PRECISION) && CORRELATION_USE_SINGLE_PRECISION
+
+inline void compute_dsq_block(float ax, float ay, float az, const PositionBlock &block,
+                              float *CORRELATION_RESTRICT out_dsq) noexcept {
+  const __m256 va_x = _mm256_set1_ps(ax);
+  const __m256 va_y = _mm256_set1_ps(ay);
+  const __m256 va_z = _mm256_set1_ps(az);
+
+  std::size_t k = 0;
+  for (; k + 8 <= block.count; k += 8) {
+    __m256 dx = _mm256_sub_ps(_mm256_loadu_ps(block.x + k), va_x);
+    __m256 dy = _mm256_sub_ps(_mm256_loadu_ps(block.y + k), va_y);
+    __m256 dz = _mm256_sub_ps(_mm256_loadu_ps(block.z + k), va_z);
+#if defined(__FMA__)
+    __m256 dsq = _mm256_fmadd_ps(dx, dx, _mm256_fmadd_ps(dy, dy, _mm256_mul_ps(dz, dz)));
+#else
+    __m256 dsq = _mm256_add_ps(_mm256_mul_ps(dx, dx), _mm256_add_ps(_mm256_mul_ps(dy, dy), _mm256_mul_ps(dz, dz)));
+#endif
+    _mm256_storeu_ps(out_dsq + k, dsq);
+  }
+  for (; k < block.count; ++k) {
+    out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
+  }
+}
+
+#else // double precision
+
 inline void compute_dsq_block(double ax, double ay, double az, const PositionBlock &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   const __m256d va_x = _mm256_set1_pd(ax);
@@ -160,6 +218,8 @@ inline void compute_dsq_block(double ax, double ay, double az, const PositionBlo
     out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
   }
 }
+
+#endif // CORRELATION_USE_SINGLE_PRECISION
 
 /**
  * @brief Computes the dot product of two double arrays (AVX2 version).
@@ -228,8 +288,8 @@ inline double sinc_integral(double Q, const double *CORRELATION_RESTRICT integra
 
 #else // Scalar fallback
 
-inline void compute_dsq_block(double ax, double ay, double az, const PositionBlock &block,
-                              double *CORRELATION_RESTRICT out_dsq) noexcept {
+inline void compute_dsq_block(real_t ax, real_t ay, real_t az, const PositionBlock &block,
+                              real_t *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t k = 0; k < block.count; ++k) {
     out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
   }
@@ -580,6 +640,22 @@ inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELAT
   for (; k < count; ++k)
     out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
 }
+inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
+                      const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
+                      float *CORRELATION_RESTRICT out, std::size_t count) noexcept {
+  const __m512 vv1x = _mm512_set1_ps(v1x);
+  const __m512 vv1y = _mm512_set1_ps(v1y);
+  const __m512 vv1z = _mm512_set1_ps(v1z);
+  std::size_t k = 0;
+  for (; k + 16 <= count; k += 16) {
+    __m512 d =
+        _mm512_fmadd_ps(vv1x, _mm512_loadu_ps(v2x + k),
+                        _mm512_fmadd_ps(vv1y, _mm512_loadu_ps(v2y + k), _mm512_mul_ps(vv1z, _mm512_loadu_ps(v2z + k))));
+    _mm512_storeu_ps(out + k, d);
+  }
+  for (; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+}
 #elif defined(CORRELATION_SIMD_AVX2)
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
                       const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
@@ -603,10 +679,38 @@ inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELAT
   for (; k < count; ++k)
     out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
 }
+inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
+                      const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
+                      float *CORRELATION_RESTRICT out, std::size_t count) noexcept {
+  const __m256 vv1x = _mm256_set1_ps(v1x);
+  const __m256 vv1y = _mm256_set1_ps(v1y);
+  const __m256 vv1z = _mm256_set1_ps(v1z);
+  std::size_t k = 0;
+  for (; k + 8 <= count; k += 8) {
+#if defined(__FMA__)
+    __m256 d =
+        _mm256_fmadd_ps(vv1x, _mm256_loadu_ps(v2x + k),
+                        _mm256_fmadd_ps(vv1y, _mm256_loadu_ps(v2y + k), _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + k))));
+#else
+    __m256 d = _mm256_add_ps(
+        _mm256_mul_ps(vv1x, _mm256_loadu_ps(v2x + k)),
+        _mm256_add_ps(_mm256_mul_ps(vv1y, _mm256_loadu_ps(v2y + k)), _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + k))));
+#endif
+    _mm256_storeu_ps(out + k, d);
+  }
+  for (; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+}
 #else
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
                       const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
                       double *CORRELATION_RESTRICT out, std::size_t count) noexcept {
+  for (std::size_t k = 0; k < count; ++k)
+    out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
+}
+inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
+                      const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
+                      float *CORRELATION_RESTRICT out, std::size_t count) noexcept {
   for (std::size_t k = 0; k < count; ++k)
     out[k] = v1x * v2x[k] + v1y * v2y[k] + v1z * v2z[k];
 }
@@ -629,8 +733,8 @@ inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELAT
  */
 template <typename AtomRange>
 inline std::size_t fill_position_block(const AtomRange &atoms, std::size_t begin, std::size_t end,
-                                       std::vector<double> &xs, std::vector<double> &ys,
-                                       std::vector<double> &zs) noexcept {
+                                       std::vector<real_t> &xs, std::vector<real_t> &ys,
+                                       std::vector<real_t> &zs) noexcept {
   const std::size_t count = end - begin;
   xs.resize(count);
   ys.resize(count);

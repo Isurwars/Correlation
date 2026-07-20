@@ -40,8 +40,8 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, size_t typ
 const bool registered = CalculatorFactory::registerTypeSafe<RDFCalculator>("RDFCalculator");
 
 struct RDFSettings {
-  double r_max;
-  double r_bin_width;
+  real_t r_max;
+  real_t r_bin_width;
   size_t num_bins;
 };
 
@@ -183,8 +183,8 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     throw std::invalid_argument("Cutoff radius must be positive, got: " + std::to_string(r_max));
   }
 
-  const double volume = cell.volume();
-  if (volume <= std::numeric_limits<double>::epsilon()) {
+  const real_t volume = cell.volume();
+  if (volume <= std::numeric_limits<real_t>::epsilon()) {
     throw std::logic_error("Cell volume must be positive, got: " + std::to_string(volume));
   }
 
@@ -246,14 +246,14 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
   J_r.file_suffix = "_J";
 
   for (size_t i = 0; i < num_bins; ++i) {
-    const real_t r_i = static_cast<real_t>((static_cast<double>(i) + 0.5) * r_bin_width);
+    const real_t r_i = (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * r_bin_width;
     H_r.bins[i] = r_i;
     g_r.bins[i] = r_i;
     G_r.bins[i] = r_i;
     J_r.bins[i] = r_i;
   }
 
-  accumulateRawCounts(cell, neighbors, {.r_max = static_cast<double>(r_max), .r_bin_width = static_cast<double>(r_bin_width), .num_bins = num_bins}, H_r);
+  accumulateRawCounts(cell, neighbors, {.r_max = r_max, .r_bin_width = r_bin_width, .num_bins = num_bins}, H_r);
 
   normalizeDistributions(cell, element_counts, {.volume = Vol, .bin_width = d_r, .num_bins = num_bins}, H_r, g_r, G_r,
                          J_r);
