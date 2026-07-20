@@ -5,6 +5,7 @@
 
 #include "calculators/VoronoiCalculator.hpp"
 #include "core/Cell.hpp"
+#include "math/Precision.hpp"
 
 #include <gtest/gtest.h>
 #include <vector>
@@ -132,13 +133,13 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   for (int i = 0; i < 3; ++i) {
     for (int j = 0; j < 3; ++j) {
       for (int k = 0; k < 2; ++k) {
-        real_t fx1 = (static_cast<real_t>(i) + 0.0) / 3.0;
-        real_t fy1 = (static_cast<real_t>(j) + 0.0) / 3.0;
-        real_t fz1 = (static_cast<real_t>(k) + 0.0) / 2.0;
+        real_t const fx1 = static_cast<real_t>((static_cast<real_t>(i) + 0.0) / 3.0);
+        real_t const fy1 = static_cast<real_t>((static_cast<real_t>(j) + 0.0) / 3.0);
+        real_t const fz1 = static_cast<real_t>((static_cast<real_t>(k) + 0.0) / 2.0);
 
-        real_t fx2 = (static_cast<real_t>(i) + 1.0 / 3.0) / 3.0;
-        real_t fy2 = (static_cast<real_t>(j) + 2.0 / 3.0) / 3.0;
-        real_t fz2 = (static_cast<real_t>(k) + 0.5) / 2.0;
+        real_t const fx2 = static_cast<real_t>((static_cast<real_t>(i) + 1.0 / 3.0) / 3.0);
+        real_t const fy2 = static_cast<real_t>((static_cast<real_t>(j) + 2.0 / 3.0) / 3.0);
+        real_t const fz2 = static_cast<real_t>((static_cast<real_t>(k) + 0.5) / 2.0);
 
         auto pos1 = cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx1, fy1, fz1);
         auto pos2 = cell_hcp.latticeVectors() * correlation::math::Vector3<real_t>(fx2, fy2, fz2);

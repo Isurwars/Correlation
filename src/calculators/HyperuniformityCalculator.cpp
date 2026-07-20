@@ -9,6 +9,7 @@
 #include "calculators/HyperuniformityCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -56,7 +57,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
   // Half the minimum box length is the maximum window radius
   const real_t l_min = std::min({l_x, l_y, l_z});
-  const real_t r_max = l_min / 2.0;
+  const auto r_max = static_cast<real_t>(l_min / 2.0);
   constexpr real_t r_min = 2.0; // Minimum window radius in Angstroms
 
   if (r_max <= r_min) {
@@ -71,13 +72,13 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   // Pre-compute bin radii
   std::vector<real_t> radii(num_bins);
   for (size_t k = 0; k < num_bins; ++k) {
-    radii[k] = r_min + (static_cast<real_t>(k) + 0.5) * r_bin_width;
+    radii[k] = static_cast<real_t>(r_min + (static_cast<real_t>(k) + 0.5) * r_bin_width);
   }
 
   // Squared radii for distance comparison
   std::vector<real_t> radii_sq(num_bins);
   for (size_t k = 0; k < num_bins; ++k) {
-    real_t r_edge = r_min + static_cast<real_t>(k + 1) * r_bin_width;
+    const real_t r_edge = r_min + static_cast<real_t>(k + 1) * r_bin_width;
     radii_sq[k] = r_edge * r_edge;
   }
 
@@ -98,10 +99,8 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   std::vector<real_t> sum_N(num_bins, 0.0);
   std::vector<real_t> sum_N2(num_bins, 0.0);
 
-  // Seed generated once per process from std::random_device — same across frames
-  // within a run, but different between program executions.
-  static const auto seed = std::random_device{}();
-  std::mt19937_64 rng(seed);
+  // Deterministic seed for reproducible calculations across runs
+  std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c, bugprone-random-generator-seed)
   std::uniform_real_distribution<real_t> dist(0.0, 1.0);
 
   const auto &lattice = cell.latticeVectors();
