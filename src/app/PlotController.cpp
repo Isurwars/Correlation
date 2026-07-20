@@ -7,6 +7,7 @@
  */
 
 #include "app/PlotController.hpp"
+#include "AppWindow.h"
 #include "plotters/PdfPlotter.hpp"
 #include <nfd.h>
 
@@ -44,7 +45,7 @@ template <typename T> T safe_parse(const slint::SharedString &str, T default_val
 }
 } // namespace
 
-PlotController::PlotController(AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
+PlotController::PlotController(::AppWindow &window, AppBackend &backend) : window_(window), backend_(backend) {
   update_timer_.start(slint::TimerMode::Repeated, std::chrono::milliseconds(1000), [this]() { handleUpdateTimer(); });
 }
 

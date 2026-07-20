@@ -291,7 +291,7 @@ void AppController::updateActiveGroupFlags() {
 ProgramOptions AppController::handleOptionsfromUI() {
   ProgramOptions opt;
   const std::string input_path_str = window_.get_in_file_text().data();
-  std::filesystem::path full_path(input_path_str);
+  const std::filesystem::path full_path(input_path_str);
   std::filesystem::path output_path = full_path.parent_path() / full_path.stem();
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
@@ -314,11 +314,19 @@ ProgramOptions AppController::handleOptionsfromUI() {
       safe_parse(window_.get_analysis_options().hyper_samples, static_cast<real_t>(opt.hyper_samples)));
 
   // Collect active_calculators from the UI model
-  auto groups = window_.get_calculator_groups();
+  const auto groups = window_.get_calculator_groups();
   for (size_t gi = 0; gi < groups->row_count(); ++gi) {
-    auto group = groups->row_data(gi).value();
+    const auto maybe_group = groups->row_data(gi);
+    if (!maybe_group.has_value()) {
+      continue;
+    }
+    const auto &group = maybe_group.value();
     for (size_t ci = 0; ci < group.calculators->row_count(); ++ci) {
-      auto calc = group.calculators->row_data(ci).value();
+      const auto maybe_calc = group.calculators->row_data(ci);
+      if (!maybe_calc.has_value()) {
+        continue;
+      }
+      const auto &calc = maybe_calc.value();
       opt.active_calculators[std::string(calc.id.data())] = calc.enabled;
     }
   }
@@ -333,23 +341,21 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.lef_sigma = safe_parse(window_.get_analysis_options().lef_sigma,
                              opt.lef_sigma); // NOLINT(bugprone-narrowing-conversions)
 
-  // Frame Selection Logic:
-  // - "Start" maps to 0
-  // - "End" maps to the last frame index (or -1 for max_frame to indicate
-  // 'all')
+  // Parse Frame Selection
+  // - Handles string presets "start" and "end" case-insensitively.
   // - Numeric values are 1-based in UI, converted to 0-based for backend.
 
   // Helper lambda for case-insensitive comparison
   auto to_lower = [](const std::string &str) -> std::string {
     std::string data = str;
-    std::transform(data.begin(), data.end(), data.begin(), [](unsigned char chr) { return std::tolower(chr); });
+    std::ranges::transform(data, data.begin(), [](unsigned char chr) { return static_cast<char>(std::tolower(chr)); });
     return data;
   };
 
   // Frame Selection
   try {
-    std::string min_s = window_.get_analysis_options().min_frame.data();
-    std::string min_s_lower = to_lower(min_s);
+    const std::string min_s = window_.get_analysis_options().min_frame.data();
+    const std::string min_s_lower = to_lower(min_s);
 
     if (min_s_lower == "start") {
       opt.min_frame = 0;
@@ -424,7 +430,7 @@ std::vector<std::vector<real_t>> AppController::getBondCutoffs() {
     if (!maybe_item.has_value()) {
       continue;
     }
-    const auto item = maybe_item.value();
+    const auto &item = maybe_item.value();
     const std::string symbol1 = item.element1.data();
     const std::string symbol2 = item.element2.data();
     const real_t dist = static_cast<real_t>(std::stod(item.distance.data()));

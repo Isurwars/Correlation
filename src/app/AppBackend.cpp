@@ -23,10 +23,7 @@
 
 namespace correlation::app {
 
-
 AppBackend::AppBackend() = default;
-
-
 
 std::map<std::string, int> AppBackend::getAtomCounts() const {
   std::map<std::string, int> counts;
@@ -176,8 +173,6 @@ const correlation::analysis::Histogram *AppBackend::getHistogram(const std::stri
 std::map<std::string, real_t> AppBackend::getAshcroftWeights() const {
   return df_ ? df_->getAshcroftWeights() : std::map<std::string, real_t>{};
 }
-
-
 
 std::string AppBackend::load_file(const std::string &path) {
   std::string display_path = path;

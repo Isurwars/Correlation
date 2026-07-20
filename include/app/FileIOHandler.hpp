@@ -8,9 +8,10 @@
 
 #pragma once
 
-#include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include <thread>
+
+class AppWindow;
 
 namespace correlation::app {
 
@@ -22,14 +23,31 @@ class AppController;
  */
 class FileIOHandler {
 public:
-  FileIOHandler(AppWindow &window, AppBackend &backend, AppController &controller);
+  /**
+   * @brief Constructs the FileIOHandler.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] backend Reference to the application backend.
+   * @param[in,out] controller Reference to the main AppController.
+   */
+  FileIOHandler(::AppWindow &window, AppBackend &backend, AppController &controller);
+
+  /**
+   * @brief Destructor. Ensures background load thread is joined.
+   */
   ~FileIOHandler();
 
+  /**
+   * @brief Displays file open dialog and triggers background loading of selected structure/trajectory file.
+   */
   void handleBrowseFile();
+
+  /**
+   * @brief Displays file save dialog and exports active structural data.
+   */
   void handleWriteFiles();
 
 private:
-  AppWindow &window_;
+  ::AppWindow &window_;
   AppBackend &backend_;
   AppController &controller_;
 

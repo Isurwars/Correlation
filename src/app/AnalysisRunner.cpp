@@ -7,6 +7,7 @@
  */
 
 #include "app/AnalysisRunner.hpp"
+#include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PlotController.hpp"
@@ -14,7 +15,7 @@
 
 namespace correlation::app {
 
-AnalysisRunner::AnalysisRunner(AppWindow &window, AppBackend &backend, AppController &controller)
+AnalysisRunner::AnalysisRunner(::AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(window), backend_(backend), controller_(controller) {}
 
 AnalysisRunner::~AnalysisRunner() {

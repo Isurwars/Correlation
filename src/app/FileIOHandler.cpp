@@ -7,15 +7,16 @@
  */
 
 #include "app/FileIOHandler.hpp"
+#include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
-#include <nfd.h>
 #include <filesystem>
 #include <format>
+#include <nfd.h>
 
 namespace correlation::app {
 
-FileIOHandler::FileIOHandler(AppWindow &window, AppBackend &backend, AppController &controller)
+FileIOHandler::FileIOHandler(::AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(window), backend_(backend), controller_(controller) {}
 
 FileIOHandler::~FileIOHandler() {

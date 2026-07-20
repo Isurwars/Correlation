@@ -7,6 +7,7 @@
  */
 
 #include "app/PresetController.hpp"
+#include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "app/PresetManager.hpp"
@@ -14,7 +15,7 @@
 
 namespace correlation::app {
 
-PresetController::PresetController(AppWindow &window, AppBackend &backend, AppController &controller)
+PresetController::PresetController(::AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(window), backend_(backend), controller_(controller) {}
 
 void PresetController::handleLoadPreset(int index) {

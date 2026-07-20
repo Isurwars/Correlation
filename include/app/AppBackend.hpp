@@ -88,10 +88,10 @@ struct ProgramOptions {
   /** @brief Map of calculator ID to its enabled state. */
   std::map<std::string, bool> active_calculators;
 
-  real_t smoothing_sigma = AppDefaults::SMOOTHING_SIGMA;                          ///< Sigma for Gaussian kernel.
-  real_t lef_cutoff = AppDefaults::LEF_CUTOFF;                                    ///< Cutoff radius for local entropy.
-  real_t lef_sigma = AppDefaults::LEF_SIGMA;                                      ///< Gaussian standard deviation for local entropy.
-  size_t hyper_samples = 10000;                                                   ///< Number of random samples for hyperuniformity.
+  real_t smoothing_sigma = AppDefaults::SMOOTHING_SIGMA; ///< Sigma for Gaussian kernel.
+  real_t lef_cutoff = AppDefaults::LEF_CUTOFF;           ///< Cutoff radius for local entropy.
+  real_t lef_sigma = AppDefaults::LEF_SIGMA;             ///< Gaussian standard deviation for local entropy.
+  size_t hyper_samples = 10000;                          ///< Number of random samples for hyperuniformity.
   correlation::math::KernelType smoothing_kernel = AppDefaults::SMOOTHING_KERNEL; ///< Smoothing kernel type.
   int min_frame = 0;                                                              ///< Starting frame index.
   int max_frame = -1;                                                             ///< Ending frame index (-1 for all).
@@ -286,7 +286,7 @@ public:
    * @brief Returns the DistributionFunctions results.
    * @return Pointer to the active DistributionFunctions container.
    */
-  [[nodiscard]] const correlation::analysis::DistributionFunctions* getDistributionFunctions() const {
+  [[nodiscard]] const correlation::analysis::DistributionFunctions *getDistributionFunctions() const {
     return df_.get();
   }
 
@@ -322,8 +322,8 @@ private:
   void analysis_thread_func();
 
   std::string validateOptions() const;
-  void setupTrajectorySettings(size_t& start_f);
-  void runTrajectoryCalculators(const correlation::analysis::AnalysisSettings& settings);
+  void setupTrajectorySettings(size_t &start_f);
+  void runTrajectoryCalculators(const correlation::analysis::AnalysisSettings &settings);
   void calculateDynamicProperties();
 
   // --- Private Data Members ---

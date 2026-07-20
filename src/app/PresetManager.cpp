@@ -393,8 +393,7 @@ std::string PresetManager::toJson(const Preset &preset) {
       preset.options.use_parquet ? "true" : "false", preset.options.r_max, preset.options.r_bin_width,
       preset.options.q_max, preset.options.q_bin_width, preset.options.r_int_max, preset.options.angle_bin_width,
       preset.options.dihedral_bin_width, preset.options.max_ring_size, preset.options.hyper_samples,
-      preset.options.smoothing_sigma,
-      preset.options.lef_cutoff, preset.options.lef_sigma,
+      preset.options.smoothing_sigma, preset.options.lef_cutoff, preset.options.lef_sigma,
       static_cast<int>(preset.options.smoothing_kernel), preset.options.min_frame, preset.options.max_frame,
       preset.options.time_step, preset.options.material_type, active_calcs_json);
 }

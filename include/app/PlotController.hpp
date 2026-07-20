@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include "plotters/SvgPlotter.hpp"
+#include <slint.h>
 
 #include <atomic>
 #include <chrono>
@@ -19,6 +19,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+class AppWindow;
 
 namespace correlation::app {
 
@@ -33,28 +35,68 @@ struct PlotSize {
  */
 class PlotController {
 public:
-  PlotController(AppWindow &window, AppBackend &backend);
+  /**
+   * @brief Constructs the PlotController.
+   * @param[in,out] window Reference to the UI window.
+   * @param[in,out] backend Reference to the application backend.
+   */
+  PlotController(::AppWindow &window, AppBackend &backend);
+
+  /**
+   * @brief Destructor. Joins render worker thread before destruction.
+   */
   ~PlotController();
 
+  /**
+   * @brief Populates available plot names into the UI dropdown list.
+   */
   void populatePlotList();
+
+  /**
+   * @brief Handles mouse movement and hover tooltip calculation on the plot canvas.
+   * @param[in] mouse_x Mouse X coordinate on canvas.
+   * @param[in] mouse_y Mouse Y coordinate on canvas.
+   * @param[in] hover Flag indicating active mouse hover state.
+   * @param[in] width Canvas layout width.
+   * @param[in] height Canvas layout height.
+   */
   void handleMouseMove(float mouse_x, float mouse_y, bool hover, float width, float height);
+
+  /**
+   * @brief Schedules or immediately triggers a plot redraw for the specified plot index.
+   * @param[in] index Target plot selection index.
+   * @param[in] immediate If true, skips debounce timer and updates immediately.
+   */
   void requestPlotUpdate(int index, bool immediate = false);
+
+  /**
+   * @brief Handles saving the current plot to file (SVG/PDF).
+   */
   void handleSavePlot();
+
+  /**
+   * @brief Pins the current analysis run for comparison overlay.
+   */
   void handlePinRun();
+
+  /**
+   * @brief Clears all pinned comparison overlay runs.
+   */
   void handleClearPinnedRuns();
 
   /**
-   * @brief Handles plot resized callback from UI
+   * @brief Handles plot resized callback from UI layout changes.
+   * @param[in] size New plot container dimensions.
    */
   void handlePlotResized(PlotSize size);
 
   /**
-   * @brief Timer callback for periodic plot updates
+   * @brief Timer callback for periodic plot rendering updates.
    */
   void handleUpdateTimer();
 
 private:
-  AppWindow &window_;
+  ::AppWindow &window_;
   AppBackend &backend_;
 
   std::thread render_thread_;

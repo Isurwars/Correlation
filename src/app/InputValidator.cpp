@@ -11,6 +11,7 @@
 #include <Windows.h>
 #endif
 
+#include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
 #include "calculators/CalculatorFactory.hpp"
@@ -171,7 +172,7 @@ std::string getDisabledGroupsArg(const ProgramOptions &opt) {
 
 } // namespace
 
-InputValidator::InputValidator(AppWindow &window, AppBackend &backend, AppController &controller)
+InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller)
     : window_(&window), backend_(&backend), controller_(&controller) {}
 
 bool InputValidator::validateRadialAndScattering(AppErrors &errs, float &r_max_val, float &q_max_val) {
