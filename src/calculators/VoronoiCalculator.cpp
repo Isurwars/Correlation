@@ -175,9 +175,9 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
     real_t const vol = static_cast<real_t>(voro_cell.volume());
     real_t const area = static_cast<real_t>(voro_cell.surface_area());
     real_t const sphericity =
-        (area > 1e-9)
+        (area > static_cast<real_t>(1e-9))
             ? static_cast<real_t>(std::pow(correlation::math::pi, 1.0 / 3.0) * std::pow(6.0 * vol, 2.0 / 3.0)) / area
-            : 0.0;
+            : static_cast<real_t>(0.0);
 
     auto [significant_faces, signature] = processCellTopology(voro_cell);
 
