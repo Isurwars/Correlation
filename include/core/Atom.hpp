@@ -48,7 +48,7 @@ struct Element {
    * @param other The other element to compare against.
    * @return True if symbols are identical.
    */
-  constexpr bool operator==(const Element &other) const { return symbol == other.symbol; };
+  constexpr bool operator==(const Element &other) const { return symbol == other.symbol; }
 };
 
 /**

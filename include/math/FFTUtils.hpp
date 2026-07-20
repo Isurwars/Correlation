@@ -301,7 +301,7 @@ inline std::vector<T> autocorrelate(const std::vector<T> &signal,
  */
 template <typename T = double>
 inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
-  std::vector<std::complex<double>> workspace;
+  std::vector<std::complex<T>> workspace;
   return autocorrelate(signal, workspace);
 }
 

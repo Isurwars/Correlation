@@ -20,7 +20,12 @@ namespace correlation::writers {
  */
 class BaseWriter {
 public:
+  BaseWriter() = default;
   virtual ~BaseWriter() = default;
+  BaseWriter(const BaseWriter &) = delete;
+  BaseWriter &operator=(const BaseWriter &) = delete;
+  BaseWriter(BaseWriter &&) = delete;
+  BaseWriter &operator=(BaseWriter &&) = delete;
 
   /**
    * @brief Returns the display name of the format (e.g., "HDF5", "CSV").

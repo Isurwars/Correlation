@@ -22,7 +22,12 @@ namespace correlation::readers {
  */
 class BaseReader {
 public:
+  BaseReader() = default;
   virtual ~BaseReader() = default;
+  BaseReader(const BaseReader &) = delete;
+  BaseReader &operator=(const BaseReader &) = delete;
+  BaseReader(BaseReader &&) = delete;
+  BaseReader &operator=(BaseReader &&) = delete;
 
   /**
    * @brief Returns the display name of the format.

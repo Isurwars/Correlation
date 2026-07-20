@@ -8,11 +8,6 @@
 
 #pragma once
 
-/**
- * @file SIMDConfig.hpp
- * @brief Configuration macros for SIMD instruction sets and compiler specifics.
- */
-
 // ---------------------------------------------------------------------------
 // SIMD level detection
 // ---------------------------------------------------------------------------

@@ -22,7 +22,7 @@ Cell::Cell(const math::Vector3<real_t> &vec_a, const math::Vector3<real_t> &vec_
 
 Cell::Cell(const std::array<real_t, 6> &params) { setLatticeParameters(params); }
 
-void Cell::setLatticeParameters(std::array<real_t, 6> params) {
+void Cell::setLatticeParameters(const std::array<real_t, 6> &params) {
   lattice_parameters_ = params;
   const real_t len_a = params[0];
   const real_t len_b = params[1];

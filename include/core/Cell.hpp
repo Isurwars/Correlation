@@ -98,7 +98,7 @@ public:
    */
   [[nodiscard]] const std::array<real_t, 6> &lattice_parameters() const { return lattice_parameters_; }
 
-  void setLatticeParameters(std::array<real_t, 6>);
+  void setLatticeParameters(const std::array<real_t, 6> &params);
 
   // Lattice Vectors
   /**

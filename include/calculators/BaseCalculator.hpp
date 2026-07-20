@@ -20,7 +20,12 @@ namespace correlation::calculators {
  */
 class BaseCalculator {
 public:
+  BaseCalculator() = default;
   virtual ~BaseCalculator() = default;
+  BaseCalculator(const BaseCalculator &) = delete;
+  BaseCalculator &operator=(const BaseCalculator &) = delete;
+  BaseCalculator(BaseCalculator &&) = delete;
+  BaseCalculator &operator=(BaseCalculator &&) = delete;
 
   /**
    * @brief Returns the unique identifier/name of the calculator.
