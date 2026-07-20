@@ -7,11 +7,12 @@
  */
 
 #include "calculators/VoronoiCalculator.hpp"
-#include "calculators/CalculatorFactory.hpp"
-#include "math/Constants.hpp"
 #include "c_loops.hh"
+#include "calculators/CalculatorFactory.hpp"
 #include "cell.hh"
 #include "container_prd.hh"
+#include "math/Constants.hpp"
+#include "math/Precision.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -28,6 +29,50 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("VoronoiCalculator");
+
+/**
+ * @brief Evaluates face topology and polyhedral signature of a single Voronoi cell.
+ * @param[in] voro_cell Computed voronoi cell object.
+ * @return Pair containing the count of significant faces and the polyhedral signature string.
+ */
+std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
+  std::vector<int> orders;
+  voro_cell.face_orders(orders);
+  std::vector<double> areas;
+  voro_cell.face_areas(areas);
+
+  int n_3 = 0;
+  int n_4 = 0;
+  int n_5 = 0;
+  int n_6 = 0;
+  int significant_faces = 0;
+
+  for (size_t i = 0; i < orders.size(); ++i) {
+    if (i < areas.size() && areas[i] < 1e-3) {
+      continue;
+    }
+    significant_faces++;
+    int const order = orders[i];
+    switch (order) {
+    case 3:
+      ++n_3;
+      break;
+    case 4:
+      ++n_4;
+      break;
+    case 5:
+      ++n_5;
+      break;
+    case 6:
+      ++n_6;
+      break;
+    default:
+      break;
+    }
+  }
+
+  return {significant_faces, std::format("({}, {}, {}, {})", n_3, n_4, n_5, n_6)};
+}
 } // namespace
 
 void VoronoiCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
@@ -90,7 +135,7 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
   }
 
   // Dynamic grid estimator (aim for ~6 particles per grid block)
-  real_t const optimal_block_vol = 6.0 / (static_cast<real_t>(num_atoms) / volume);
+  real_t const optimal_block_vol = static_cast<real_t>(6.0 / (static_cast<real_t>(num_atoms) / volume));
   real_t const block_side = std::max(static_cast<real_t>(1.0), std::cbrt(optimal_block_vol));
   int const nx_ = std::max(1, static_cast<int>(std::round(bx_ / block_side)));
   int const ny_ = std::max(1, static_cast<int>(std::round(by_ / block_side)));
@@ -127,43 +172,19 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
       continue;
     }
 
-    real_t const vol = voro_cell.volume();
-    real_t const area = voro_cell.surface_area();
+    real_t const vol = static_cast<real_t>(voro_cell.volume());
+    real_t const area = static_cast<real_t>(voro_cell.surface_area());
     real_t const sphericity =
-        (area > 1e-9) ? (std::pow(correlation::math::pi, 1.0 / 3.0) * std::pow(6.0 * vol, 2.0 / 3.0)) / area : 0.0;
+        (area > 1e-9)
+            ? static_cast<real_t>(std::pow(correlation::math::pi, 1.0 / 3.0) * std::pow(6.0 * vol, 2.0 / 3.0)) / area
+            : 0.0;
 
-    std::vector<int> orders;
-    voro_cell.face_orders(orders);
-    std::vector<double> areas;
-    voro_cell.face_areas(areas);
-
-    int n_3 = 0;
-    int n_4 = 0;
-    int n_5 = 0;
-    int n_6 = 0;
-    int significant_faces = 0;
-
-    for (size_t i = 0; i < orders.size(); ++i) {
-      if (i < areas.size() && areas[i] < 1e-4) {
-        continue;
-      }
-      significant_faces++;
-      int const order = orders[i];
-      if (order == 3) {
-        ++n_3;
-      } else if (order == 4) {
-        ++n_4;
-      } else if (order == 5) {
-        ++n_5;
-      } else if (order == 6) {
-        ++n_6;
-      }
-    }
+    auto [significant_faces, signature] = processCellTopology(voro_cell);
 
     data.volumes[pid] = vol;
     data.sphericities[pid] = sphericity;
     data.coordination_numbers[pid] = significant_faces;
-    data.signatures[pid] = std::format("({}, {}, {}, {})", n_3, n_4, n_5, n_6);
+    data.signatures[pid] = std::move(signature);
   }
 
   return data;
@@ -271,13 +292,13 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   if (max_vol <= 0.0) {
     max_vol = 100.0;
   }
-  real_t const max_vol_range = max_vol * 1.2;
+  real_t const max_vol_range = static_cast<real_t>(max_vol * 1.2);
   size_t const vol_bins = 100;
   real_t const vol_d = max_vol_range / static_cast<real_t>(vol_bins);
 
   std::vector<real_t> vol_bin_centers(vol_bins);
   for (size_t i = 0; i < vol_bins; ++i) {
-    vol_bin_centers[i] = (static_cast<real_t>(i) + 0.5) * vol_d;
+    vol_bin_centers[i] = static_cast<real_t>(static_cast<real_t>(i) + 0.5) * vol_d;
   }
   results["Voronoi Volume"] =
       makeHistogram("Voronoi Cell Volume Distribution", "Volume", "Probability Density", "Å³", "probability",
@@ -289,7 +310,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
 
   std::vector<real_t> sph_bin_centers(sph_bins);
   for (size_t i = 0; i < sph_bins; ++i) {
-    sph_bin_centers[i] = (static_cast<real_t>(i) + 0.5) * sph_d;
+    sph_bin_centers[i] = static_cast<real_t>(static_cast<real_t>(i) + 0.5) * sph_d;
   }
   results["Voronoi Sphericity"] = makeHistogram(
       "Voronoi Cell Sphericity Distribution", "Sphericity", "Probability Density", "dimensionless", "probability",
@@ -325,8 +346,8 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   // Coordination numbers — convert to real_t for the shared helper
   std::vector<real_t> cn_as_double;
   cn_as_double.reserve(data.coordination_numbers.size());
-  for (int cn : data.coordination_numbers) {
-    cn_as_double.push_back(static_cast<real_t>(cn));
+  for (int cn_i : data.coordination_numbers) {
+    cn_as_double.push_back(static_cast<real_t>(cn_i));
   }
   populateHistogram(
       results["Voronoi Coordination Number"],
@@ -350,7 +371,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   }
 
   // 5. Normalize histograms
-  real_t const factor = 1.0 / static_cast<real_t>(num_atoms);
+  real_t const factor = static_cast<real_t>(1.0 / static_cast<real_t>(num_atoms));
   for (auto &[name, hist] : results) {
     for (auto &[key, vec] : hist.partials) {
       for (auto &val : vec) {

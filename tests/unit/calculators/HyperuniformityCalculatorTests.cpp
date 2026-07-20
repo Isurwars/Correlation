@@ -58,9 +58,10 @@ correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
                                 static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c)
-  std::uniform_real_distribution<real_t> dist(0.0, static_cast<real_t>(params.box_length));
+  std::uniform_real_distribution<double> dist(0.0, params.box_length);
   for (size_t i = 0; i < params.num_atoms; ++i) {
-    cell.addAtom("Ar", {dist(rng), dist(rng), dist(rng)});
+    cell.addAtom("Ar",
+                 {static_cast<real_t>(dist(rng)), static_cast<real_t>(dist(rng)), static_cast<real_t>(dist(rng))});
   }
   return cell;
 }

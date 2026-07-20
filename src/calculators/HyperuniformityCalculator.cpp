@@ -95,21 +95,21 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
     positions.push_back(atom.position());
   }
 
-  // Accumulators: sum of N(R) and sum of N²(R) for each bin
-  std::vector<real_t> sum_N(num_bins, 0.0);
-  std::vector<real_t> sum_N2(num_bins, 0.0);
+  // Accumulators: sum of N(R) and sum of N²(R) for each bin (use double to avoid float precision loss)
+  std::vector<double> sum_N(num_bins, 0.0);
+  std::vector<double> sum_N2(num_bins, 0.0);
 
   // Deterministic seed for reproducible calculations across runs
   std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c, bugprone-random-generator-seed)
-  std::uniform_real_distribution<real_t> dist(0.0, 1.0);
+  std::uniform_real_distribution<double> dist(0.0, 1.0);
 
   const auto &lattice = cell.latticeVectors();
 
   for (size_t sample_idx = 0; sample_idx < num_samples; ++sample_idx) {
     // Generate a random point in fractional coordinates, then convert to Cartesian
-    const real_t f_x = dist(rng);
-    const real_t f_y = dist(rng);
-    const real_t f_z = dist(rng);
+    const auto f_x = static_cast<real_t>(dist(rng));
+    const auto f_y = static_cast<real_t>(dist(rng));
+    const auto f_z = static_cast<real_t>(dist(rng));
 
     math::Vector3<real_t> const frac(f_x, f_y, f_z);
     math::Vector3<real_t> const sample_point = lattice * frac;
@@ -134,14 +134,14 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
         ++count;
         ++atom_idx;
       }
-      auto const n_k = static_cast<real_t>(count);
+      auto const n_k = static_cast<double>(count);
       sum_N[k] += n_k;
       sum_N2[k] += n_k * n_k;
     }
   }
 
   // Compute statistics
-  const auto n_samples = static_cast<real_t>(num_samples);
+  const auto n_samples = static_cast<double>(num_samples);
 
   // σ²_N(R) histogram
   correlation::analysis::Histogram sigma2_hist;
@@ -172,12 +172,13 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   chi_total.resize(num_bins);
 
   for (size_t k = 0; k < num_bins; ++k) {
-    const real_t mean_N = sum_N[k] / n_samples;
-    const real_t mean_N2 = sum_N2[k] / n_samples;
-    const real_t variance = mean_N2 - mean_N * mean_N;
+    const double mean_N = sum_N[k] / n_samples;
+    const double mean_N2 = sum_N2[k] / n_samples;
+    const double raw_var = mean_N2 - mean_N * mean_N;
+    const auto variance = static_cast<real_t>(std::max(0.0, raw_var));
 
     sigma2_total[k] = variance;
-    chi_total[k] = (mean_N > 0.0) ? variance / mean_N : 0.0;
+    chi_total[k] = (mean_N > 0.0) ? static_cast<real_t>(variance / mean_N) : static_cast<real_t>(0.0);
   }
 
   std::map<std::string, correlation::analysis::Histogram> results;
