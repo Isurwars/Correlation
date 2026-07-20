@@ -26,7 +26,7 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
   // C-H bond length is approx 1.09 Angstroms
   const Element element_h{.symbol = "H", .id = {1}};
   const double bond_len = 1.09;
-  const double factor = bond_len / std::numbers::sqrt3;
+  const double factor = bond_len / std::sqrt(3.0);
 
   Atom h_1(element_h, {factor, factor, factor}, 1);
   Atom h_2(element_h, {-factor, -factor, factor}, 2);

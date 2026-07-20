@@ -389,7 +389,7 @@ DistributionFunctions::processSingleFrame(correlation::core::Trajectory &traject
   }
 
   correlation::core::Cell frame = trajectory.getFrame(frame_idx);
-  auto frame_df = std::make_unique<DistributionFunctions>(frame, 0.0, bond_cutoffs);
+  auto frame_df = std::make_unique<DistributionFunctions>(frame, static_cast<real_t>(0.0), bond_cutoffs);
   frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
 
   // Dispatch all active frame-based calculators from the factory

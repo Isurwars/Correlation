@@ -10,6 +10,7 @@
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 #include "math/SpecialFunctions.hpp"
 #include <algorithm>
 #include <array>
@@ -111,7 +112,7 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
     }
 
     real_t const theta = static_cast<real_t>(std::acos(std::clamp(r_ij.z() / distance, -1.0, 1.0)));
-    real_t const phi = std::atan2(r_ij.y(), r_ij.x());
+    real_t const phi = static_cast<real_t>(std::atan2(r_ij.y(), r_ij.x()));
 
     for (int m_val = -4; m_val <= 4; ++m_val) {
       q4m[m_val + 4] += SteinhardtCalculator::sphericalHarmonic(4, m_val, {.theta = theta, .phi = phi});
@@ -197,7 +198,12 @@ void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
 void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
                              const std::map<std::string, std::vector<double>> &partials) {
   for (const auto &[key, vec] : partials) {
-    hist.partials[key] = std::vector<real_t>(vec.begin(), vec.end());
+    std::vector<real_t> converted;
+    converted.reserve(vec.size());
+    for (double val : vec) {
+      converted.push_back(static_cast<real_t>(val));
+    }
+    hist.partials[key] = std::move(converted);
   }
 }
 
@@ -281,12 +287,15 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
 
 std::complex<real_t> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
   if (order >= 0) {
-    real_t const P_lm = static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta));
+    real_t const P_lm =
+        static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta));
     return P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(order) * angles.phi);
   } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
   int const abs_m = -order;
-  real_t const P_lm = static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta));
-  std::complex<real_t> const Y_l_m = P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(abs_m) * angles.phi);
+  real_t const P_lm =
+      static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta));
+  std::complex<real_t> const Y_l_m =
+      P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(abs_m) * angles.phi);
   std::complex<real_t> Y_l_minus_m = std::conj(Y_l_m);
   if (abs_m % 2 != 0) {
     Y_l_minus_m = -Y_l_minus_m;
@@ -305,30 +314,31 @@ real_t SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_o
     return 0.0;
   }
 
-  double delta = correlation::math::factorial(j_one + j_two - j_three) *
-                 correlation::math::factorial(j_one - j_two + j_three) *
-                 correlation::math::factorial(-j_one + j_two + j_three) /
-                 correlation::math::factorial(j_one + j_two + j_three + 1);
+  real_t delta = static_cast<real_t>(correlation::math::factorial(j_one + j_two - j_three) *
+                                     correlation::math::factorial(j_one - j_two + j_three) *
+                                     correlation::math::factorial(-j_one + j_two + j_three) /
+                                     correlation::math::factorial(j_one + j_two + j_three + 1));
   delta = std::sqrt(delta);
 
-  double comp = correlation::math::factorial(j_one - m_one) * correlation::math::factorial(j_one + m_one) *
-                correlation::math::factorial(j_two - m_two) * correlation::math::factorial(j_two + m_two) *
-                correlation::math::factorial(j_three - m_three) * correlation::math::factorial(j_three + m_three);
+  real_t comp = static_cast<real_t>(
+      correlation::math::factorial(j_one - m_one) * correlation::math::factorial(j_one + m_one) *
+      correlation::math::factorial(j_two - m_two) * correlation::math::factorial(j_two + m_two) *
+      correlation::math::factorial(j_three - m_three) * correlation::math::factorial(j_three + m_three));
   comp = std::sqrt(comp);
 
-  double const phase1 = ((j_one - j_two - m_three) % 2 != 0) ? -1.0 : 1.0;
+  real_t const phase1 = ((j_one - j_two - m_three) % 2 != 0) ? -1.0 : 1.0;
 
   int const k_min = std::max({0, j_two - j_three - m_one, j_one - j_three + m_two});
   int const k_max = std::min({j_one + j_two - j_three, j_one - m_one, j_two + m_two});
 
-  double sum = 0.0;
+  real_t sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
-    double const k_phase = (k % 2 != 0) ? -1.0 : 1.0;
-    double const denom = correlation::math::factorial(k) * correlation::math::factorial(j_one + j_two - j_three - k) *
-                         correlation::math::factorial(j_one - m_one - k) *
-                         correlation::math::factorial(j_two + m_two - k) *
-                         correlation::math::factorial(j_three - j_two + m_one + k) *
-                         correlation::math::factorial(j_three - j_one - m_two + k);
+    real_t const k_phase = (k % 2 != 0) ? -1.0 : 1.0;
+    real_t const denom = static_cast<real_t>(
+        correlation::math::factorial(k) * correlation::math::factorial(j_one + j_two - j_three - k) *
+        correlation::math::factorial(j_one - m_one - k) * correlation::math::factorial(j_two + m_two - k) *
+        correlation::math::factorial(j_three - j_two + m_one + k) *
+        correlation::math::factorial(j_three - j_one - m_two + k));
     sum += k_phase / denom;
   }
 
@@ -361,8 +371,8 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   params.Q6.resize(num_atoms, 0.0);
   params.W6_hat.resize(num_atoms, 0.0);
 
-  double const global_Q4_factor = std::sqrt(correlation::math::four_pi / 9.0);
-  double const global_Q6_factor = std::sqrt(correlation::math::four_pi / 13.0);
+  real_t const global_Q4_factor = static_cast<real_t>(std::sqrt(correlation::math::four_pi / 9.0));
+  real_t const global_Q6_factor = static_cast<real_t>(std::sqrt(correlation::math::four_pi / 13.0));
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
@@ -376,13 +386,13 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
 
   // 2. Initialize Histograms
   size_t const bins_Q = 100;
-  double const Q_max = 1.0;
-  double const d_q = Q_max / bins_Q;
+  real_t const Q_max = 1.0;
+  real_t const d_q = Q_max / bins_Q;
 
   size_t const bins_W = 100;
-  double const W_min = -0.2;
-  double const W_max = 0.2;
-  double const d_w = (W_max - W_min) / bins_W;
+  real_t const W_min = -0.2;
+  real_t const W_max = 0.2;
+  real_t const d_w = (W_max - W_min) / bins_W;
 
   correlation::analysis::Histogram hist_Q4;
   hist_Q4.x_label = "Q4";
@@ -394,7 +404,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_Q4.file_suffix = "_Q4";
   hist_Q4.bins.resize(bins_Q);
   for (size_t bin_idx = 0; bin_idx < bins_Q; ++bin_idx) {
-    hist_Q4.bins[bin_idx] = (static_cast<double>(bin_idx) + 0.5) * d_q;
+    hist_Q4.bins[bin_idx] = static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_q);
   }
 
   correlation::analysis::Histogram hist_Q6;
@@ -407,7 +417,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_Q6.file_suffix = "_Q6";
   hist_Q6.bins.resize(bins_Q);
   for (size_t bin_idx = 0; bin_idx < bins_Q; ++bin_idx) {
-    hist_Q6.bins[bin_idx] = (static_cast<double>(bin_idx) + 0.5) * d_q;
+    hist_Q6.bins[bin_idx] = static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_q);
   }
 
   correlation::analysis::Histogram hist_W6;
@@ -420,7 +430,7 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   hist_W6.file_suffix = "_W6_hat";
   hist_W6.bins.resize(bins_W);
   for (size_t bin_idx = 0; bin_idx < bins_W; ++bin_idx) {
-    hist_W6.bins[bin_idx] = W_min + (static_cast<double>(bin_idx) + 0.5) * d_w;
+    hist_W6.bins[bin_idx] = W_min + static_cast<real_t>(static_cast<real_t>(bin_idx) + 0.5 * d_w);
   }
 
   // 3. Populate Histograms

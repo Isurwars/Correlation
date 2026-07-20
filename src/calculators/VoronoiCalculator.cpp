@@ -300,7 +300,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   size_t const cn_bins = std::max(25, max_cn + 2);
 
   std::vector<real_t> cn_bin_values(cn_bins);
-  std::iota(cn_bin_values.begin(), cn_bin_values.end(), 0.0);
+  std::iota(cn_bin_values.begin(), cn_bin_values.end(), static_cast<real_t>(0.0));
   results["Voronoi Coordination Number"] = makeHistogram(
       "Voronoi Coordination Number Distribution", "Coordination Number", "Probability", "faces", "probability",
       "Probability distribution of Voronoi cell face counts.", "_vcn", cn_bin_values, element_symbols);
@@ -309,7 +309,7 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   size_t const sig_bins = std::max(size_t{1}, sorted_sigs.size());
 
   std::vector<real_t> sig_bin_values(sig_bins);
-  std::iota(sig_bin_values.begin(), sig_bin_values.end(), 0.0);
+  std::iota(sig_bin_values.begin(), sig_bin_values.end(), static_cast<real_t>(0.0));
   results["Voronoi Signatures"] =
       makeHistogram("Voronoi Polyhedral Signatures", "Signature Index", "Probability", "index", "probability", sig_desc,
                     "_vsig", sig_bin_values, element_symbols);
@@ -323,7 +323,11 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
                     cell.atoms());
 
   // Coordination numbers — convert to real_t for the shared helper
-  std::vector<real_t> cn_as_double(data.coordination_numbers.begin(), data.coordination_numbers.end());
+  std::vector<real_t> cn_as_double;
+  cn_as_double.reserve(data.coordination_numbers.size());
+  for (int cn : data.coordination_numbers) {
+    cn_as_double.push_back(static_cast<real_t>(cn));
+  }
   populateHistogram(
       results["Voronoi Coordination Number"],
       {.bin_width = 1.0, .num_bins = cn_bins, .range_min = 0.0, .range_max = static_cast<real_t>(cn_bins)},

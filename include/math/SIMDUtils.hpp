@@ -196,51 +196,54 @@ inline float sinc_integral(float Q, const float *CORRELATION_RESTRICT integrand,
 
 #if defined(CORRELATION_USE_SINGLE_PRECISION) && CORRELATION_USE_SINGLE_PRECISION
 
-inline void compute_dsq_block(float ax, float ay, float az, const PositionBlock &block,
+inline void compute_dsq_block(float a_x, float a_y, float a_z, const PositionBlock &block,
                               float *CORRELATION_RESTRICT out_dsq) noexcept {
-  const __m256 va_x = _mm256_set1_ps(ax);
-  const __m256 va_y = _mm256_set1_ps(ay);
-  const __m256 va_z = _mm256_set1_ps(az);
+  const __m256 va_x = _mm256_set1_ps(a_x);
+  const __m256 va_y = _mm256_set1_ps(a_y);
+  const __m256 va_z = _mm256_set1_ps(a_z);
 
-  std::size_t k = 0;
-  for (; k + 8 <= block.count; k += 8) {
-    __m256 dx = _mm256_sub_ps(_mm256_loadu_ps(block.x + k), va_x);
-    __m256 dy = _mm256_sub_ps(_mm256_loadu_ps(block.y + k), va_y);
-    __m256 dz = _mm256_sub_ps(_mm256_loadu_ps(block.z + k), va_z);
+  std::size_t idx = 0;
+  for (; idx + 8 <= block.count; idx += 8) {
+    __m256 const d_x = _mm256_sub_ps(_mm256_loadu_ps(block.x + idx), va_x);
+    __m256 const d_y = _mm256_sub_ps(_mm256_loadu_ps(block.y + idx), va_y);
+    __m256 const d_z = _mm256_sub_ps(_mm256_loadu_ps(block.z + idx), va_z);
 #if defined(__FMA__)
-    __m256 dsq = _mm256_fmadd_ps(dx, dx, _mm256_fmadd_ps(dy, dy, _mm256_mul_ps(dz, dz)));
+    __m256 const dsq = _mm256_fmadd_ps(d_x, d_x, _mm256_fmadd_ps(d_y, d_y, _mm256_mul_ps(d_z, d_z)));
 #else
-    __m256 dsq = _mm256_add_ps(_mm256_mul_ps(dx, dx), _mm256_add_ps(_mm256_mul_ps(dy, dy), _mm256_mul_ps(dz, dz)));
+    __m256 dsq =
+        _mm256_add_ps(_mm256_mul_ps(d_x, d_x), _mm256_add_ps(_mm256_mul_ps(d_y, d_y), _mm256_mul_ps(d_z, d_z)));
 #endif
-    _mm256_storeu_ps(out_dsq + k, dsq);
+    _mm256_storeu_ps(out_dsq + idx, dsq);
   }
-  for (; k < block.count; ++k) {
-    out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
+  for (; idx < block.count; ++idx) {
+    out_dsq[idx] =
+        dist_sq_scalar({.x = a_x, .y = a_y, .z = a_z}, {.x = block.x[idx], .y = block.y[idx], .z = block.z[idx]});
   }
 }
 
 #else // double precision
 
-inline void compute_dsq_block(double ax, double ay, double az, const PositionBlock &block,
+inline void compute_dsq_block(double a_x, double a_y, double a_z, const PositionBlock &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
-  const __m256d va_x = _mm256_set1_pd(ax);
-  const __m256d va_y = _mm256_set1_pd(ay);
-  const __m256d va_z = _mm256_set1_pd(az);
+  const __m256d va_x = _mm256_set1_pd(a_x);
+  const __m256d va_y = _mm256_set1_pd(a_y);
+  const __m256d va_z = _mm256_set1_pd(a_z);
 
   std::size_t k = 0;
   for (; k + 4 <= block.count; k += 4) {
-    __m256d dx = _mm256_sub_pd(_mm256_loadu_pd(block.x + k), va_x);
-    __m256d dy = _mm256_sub_pd(_mm256_loadu_pd(block.y + k), va_y);
-    __m256d dz = _mm256_sub_pd(_mm256_loadu_pd(block.z + k), va_z);
+    __m256d d_x = _mm256_sub_pd(_mm256_loadu_pd(block.x + k), va_x);
+    __m256d d_y = _mm256_sub_pd(_mm256_loadu_pd(block.y + k), va_y);
+    __m256d d_z = _mm256_sub_pd(_mm256_loadu_pd(block.z + k), va_z);
 #if defined(__FMA__)
-    __m256d dsq = _mm256_fmadd_pd(dx, dx, _mm256_fmadd_pd(dy, dy, _mm256_mul_pd(dz, dz)));
+    __m256d dsq = _mm256_fmadd_pd(d_x, d_x, _mm256_fmadd_pd(d_y, d_y, _mm256_mul_pd(d_z, d_z)));
 #else
-    __m256d dsq = _mm256_add_pd(_mm256_mul_pd(dx, dx), _mm256_add_pd(_mm256_mul_pd(dy, dy), _mm256_mul_pd(dz, dz)));
+    __m256d dsq =
+        _mm256_add_pd(_mm256_mul_pd(d_x, d_x), _mm256_add_pd(_mm256_mul_pd(d_y, d_y), _mm256_mul_pd(d_z, d_z)));
 #endif
     _mm256_storeu_pd(out_dsq + k, dsq);
   }
   for (; k < block.count; ++k) {
-    out_dsq[k] = dist_sq_scalar({ax, ay, az}, {block.x[k], block.y[k], block.z[k]});
+    out_dsq[k] = dist_sq_scalar({.x = a_x, .y = a_y, .z = a_z}, {.x = block.x[k], .y = block.y[k], .z = block.z[k]});
   }
 }
 
@@ -259,26 +262,26 @@ inline double simd_dot(const double *CORRELATION_RESTRICT a, const double *CORRE
   __m256d vacc = _mm256_setzero_pd();
   std::size_t j = 0;
   for (; j + 4 <= count; j += 4) {
-    __m256d va = _mm256_loadu_pd(a + j);
-    __m256d vb = _mm256_loadu_pd(b + j);
+    __m256d vec_a = _mm256_loadu_pd(a + j);
+    __m256d vec_b = _mm256_loadu_pd(b + j);
 #if defined(__FMA__)
-    vacc = _mm256_fmadd_pd(va, vb, vacc);
+    vacc = _mm256_fmadd_pd(vec_a, vec_b, vacc);
 #else
-    vacc = _mm256_add_pd(vacc, _mm256_mul_pd(va, vb));
+    vacc = _mm256_add_pd(vacc, _mm256_mul_pd(vec_a, vec_b));
 #endif
   }
-  __m128d lo = _mm256_castpd256_pd128(vacc);
-  __m128d hi = _mm256_extractf128_pd(vacc, 1);
-  __m128d sum2 = _mm_add_pd(lo, hi);
+  __m128d low = _mm256_castpd256_pd128(vacc);
+  __m128d high = _mm256_extractf128_pd(vacc, 1);
+  __m128d sum2 = _mm_add_pd(low, high);
   __m128d sum1 = _mm_hadd_pd(sum2, sum2);
   double acc = _mm_cvtsd_f64(sum1);
-  double c = 0.0;
+  double carry = 0.0;
   for (; j < count; ++j) {
     double val = a[j] * b[j];
-    double y = val - c;
-    double t = acc + y;
-    c = (t - acc) - y;
-    acc = t;
+    double y = val - carry;
+    double temp_sum = acc + y;
+    carry = (temp_sum - acc) - y;
+    acc = temp_sum;
   }
   return acc;
 }
@@ -878,6 +881,37 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double
   }
 }
 
+inline void miller_phase_sum(const float *CORRELATION_RESTRICT c1, const float *CORRELATION_RESTRICT s1,
+                             const float *CORRELATION_RESTRICT c2, const float *CORRELATION_RESTRICT s2,
+                             const float *CORRELATION_RESTRICT c3, const float *CORRELATION_RESTRICT s3,
+                             std::size_t count, float &c_sum, float &s_sum) noexcept {
+  __m512 vc_sum = _mm512_setzero_ps();
+  __m512 vs_sum = _mm512_setzero_ps();
+  std::size_t i = 0;
+  for (; i + 16 <= count; i += 16) {
+    __m512 vc1 = _mm512_loadu_ps(c1 + i);
+    __m512 vs1 = _mm512_loadu_ps(s1 + i);
+    __m512 vc2 = _mm512_loadu_ps(c2 + i);
+    __m512 vs2 = _mm512_loadu_ps(s2 + i);
+    __m512 vc3 = _mm512_loadu_ps(c3 + i);
+    __m512 vs3 = _mm512_loadu_ps(s3 + i);
+    __m512 vc12 = _mm512_fmsub_ps(vc1, vc2, _mm512_mul_ps(vs1, vs2));
+    __m512 vs12 = _mm512_fmadd_ps(vs1, vc2, _mm512_mul_ps(vc1, vs2));
+    __m512 vc123 = _mm512_fmsub_ps(vc12, vc3, _mm512_mul_ps(vs12, vs3));
+    __m512 vs123 = _mm512_fmadd_ps(vs12, vc3, _mm512_mul_ps(vc12, vs3));
+    vc_sum = _mm512_add_ps(vc_sum, vc123);
+    vs_sum = _mm512_add_ps(vs_sum, vs123);
+  }
+  c_sum = _mm512_reduce_add_ps(vc_sum);
+  s_sum = _mm512_reduce_add_ps(vs_sum);
+  for (; i < count; ++i) {
+    float c12 = c1[i] * c2[i] - s1[i] * s2[i];
+    float s12 = s1[i] * c2[i] + c1[i] * s2[i];
+    c_sum += c12 * c3[i] - s12 * s3[i];
+    s_sum += s12 * c3[i] + c12 * s3[i];
+  }
+}
+
 #elif defined(CORRELATION_SIMD_AVX2)
 
 /**
@@ -939,6 +973,48 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double
   }
 }
 
+inline void miller_phase_sum(const float *CORRELATION_RESTRICT c1, const float *CORRELATION_RESTRICT s1,
+                             const float *CORRELATION_RESTRICT c2, const float *CORRELATION_RESTRICT s2,
+                             const float *CORRELATION_RESTRICT c3, const float *CORRELATION_RESTRICT s3,
+                             std::size_t count, float &c_sum, float &s_sum) noexcept {
+  __m256 vc_sum = _mm256_setzero_ps();
+  __m256 vs_sum = _mm256_setzero_ps();
+  std::size_t i = 0;
+  for (; i + 8 <= count; i += 8) {
+    __m256 vc1 = _mm256_loadu_ps(c1 + i);
+    __m256 vs1 = _mm256_loadu_ps(s1 + i);
+    __m256 vc2 = _mm256_loadu_ps(c2 + i);
+    __m256 vs2 = _mm256_loadu_ps(s2 + i);
+    __m256 vc3 = _mm256_loadu_ps(c3 + i);
+    __m256 vs3 = _mm256_loadu_ps(s3 + i);
+#if defined(__FMA__)
+    __m256 vc12 = _mm256_fmsub_ps(vc1, vc2, _mm256_mul_ps(vs1, vs2));
+    __m256 vs12 = _mm256_fmadd_ps(vs1, vc2, _mm256_mul_ps(vc1, vs2));
+    __m256 vc123 = _mm256_fmsub_ps(vc12, vc3, _mm256_mul_ps(vs12, vs3));
+    __m256 vs123 = _mm256_fmadd_ps(vs12, vc3, _mm256_mul_ps(vc12, vs3));
+#else
+    __m256 vc12 = _mm256_sub_ps(_mm256_mul_ps(vc1, vc2), _mm256_mul_ps(vs1, vs2));
+    __m256 vs12 = _mm256_add_ps(_mm256_mul_ps(vs1, vc2), _mm256_mul_ps(vc1, vs2));
+    __m256 vc123 = _mm256_sub_ps(_mm256_mul_ps(vc12, vc3), _mm256_mul_ps(vs12, vs3));
+    __m256 vs123 = _mm256_add_ps(_mm256_mul_ps(vs12, vc3), _mm256_mul_ps(vc12, vs3));
+#endif
+    vc_sum = _mm256_add_ps(vc_sum, vc123);
+    vs_sum = _mm256_add_ps(vs_sum, vs123);
+  }
+  alignas(32) float c_buf[8];
+  alignas(32) float s_buf[8];
+  _mm256_storeu_ps(c_buf, vc_sum);
+  _mm256_storeu_ps(s_buf, vs_sum);
+  c_sum = c_buf[0] + c_buf[1] + c_buf[2] + c_buf[3] + c_buf[4] + c_buf[5] + c_buf[6] + c_buf[7];
+  s_sum = s_buf[0] + s_buf[1] + s_buf[2] + s_buf[3] + s_buf[4] + s_buf[5] + s_buf[6] + s_buf[7];
+  for (; i < count; ++i) {
+    float c12 = c1[i] * c2[i] - s1[i] * s2[i];
+    float s12 = s1[i] * c2[i] + c1[i] * s2[i];
+    c_sum += c12 * c3[i] - s12 * s3[i];
+    s_sum += s12 * c3[i] + c12 * s3[i];
+  }
+}
+
 #else
 
 /**
@@ -963,6 +1039,20 @@ inline void miller_phase_sum(const double *CORRELATION_RESTRICT c1, const double
   for (std::size_t i = 0; i < count; ++i) {
     double c12 = c1[i] * c2[i] - s1[i] * s2[i];
     double s12 = s1[i] * c2[i] + c1[i] * s2[i];
+    c_sum += c12 * c3[i] - s12 * s3[i];
+    s_sum += s12 * c3[i] + c12 * s3[i];
+  }
+}
+
+inline void miller_phase_sum(const float *CORRELATION_RESTRICT c1, const float *CORRELATION_RESTRICT s1,
+                             const float *CORRELATION_RESTRICT c2, const float *CORRELATION_RESTRICT s2,
+                             const float *CORRELATION_RESTRICT c3, const float *CORRELATION_RESTRICT s3,
+                             std::size_t count, float &c_sum, float &s_sum) noexcept {
+  c_sum = 0.0f;
+  s_sum = 0.0f;
+  for (std::size_t i = 0; i < count; ++i) {
+    float c12 = c1[i] * c2[i] - s1[i] * s2[i];
+    float s12 = s1[i] * c2[i] + c1[i] * s2[i];
     c_sum += c12 * c3[i] - s12 * s3[i];
     s_sum += s12 * c3[i] + c12 * s3[i];
   }
