@@ -127,6 +127,15 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
     frac.x() -= std::floor(frac.x());
     frac.y() -= std::floor(frac.y());
     frac.z() -= std::floor(frac.z());
+    if (frac.x() >= 1.0 - 1e-11 || frac.x() < 0.0) {
+      frac.x() = 0.0;
+    }
+    if (frac.y() >= 1.0 - 1e-11 || frac.y() < 0.0) {
+      frac.y() = 0.0;
+    }
+    if (frac.z() >= 1.0 - 1e-11 || frac.z() < 0.0) {
+      frac.z() = 0.0;
+    }
 
     real_t const ax_ = frac.x() * bx_ + frac.y() * bxy + frac.z() * bxz;
     real_t const ay_ = frac.y() * by_ + frac.z() * byz;

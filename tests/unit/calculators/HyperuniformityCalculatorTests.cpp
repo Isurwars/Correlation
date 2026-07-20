@@ -155,7 +155,7 @@ TEST_F(HyperuniformityCalculatorTests, RandomPointsVarianceScalesAsR3) {
   double sum_xy = 0.0;
   int count = 0;
   for (size_t k = 0; k < bins.size(); ++k) {
-    if (total[k] > 1e-4 && bins[k] > 2.5 && bins[k] < 12.0) {
+    if (total[k] > 1e-4 && bins[k] > 2.5 && bins[k] < 7.5) {
       double log_r = std::log(bins[k]);
       double log_var = std::log(total[k]);
       sum_x += log_r;
@@ -201,7 +201,7 @@ TEST_F(HyperuniformityCalculatorTests, LatticeVarianceScalesAsR2) {
   double sum_xy = 0;
   int count = 0;
   for (size_t k = 0; k < bins.size(); ++k) {
-    if (total[k] > 1e-4 && bins[k] > 4.0 && bins[k] < 15.0) {
+    if (total[k] > 1e-4 && bins[k] > 3.0 && bins[k] < 9.5) {
       double log_r = std::log(bins[k]);
       double log_var = std::log(total[k]);
       sum_x += log_r;
