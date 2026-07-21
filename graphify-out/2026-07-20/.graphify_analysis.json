@@ -4632,8 +4632,41 @@
       "why": "inferred connection - not explicitly stated in source; connects across different repos/directories; bridges separate communities; peripheral node `parseDumpFrame` unexpectedly reaches hub `LammpsDumpReader::readTrajectory()`"
     }
   ],
-  "tokens": {
-    "input": 7525,
-    "output": 2344
-  }
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `Cell` connect `Cell` to `ChiralityCalculator.cpp`, `Atom`, `KernelGenerationParams`, `XYZReader`, `LinearAlgebra.hpp`, `vector`, `AppBackend`, `DistributionFunctions`, `DistributionFunctions.cpp`, `ThreadLocalDistances`, `AppBackend.cpp`, `TEST_F`, `CastepMdReader`, `CifReader.cpp`, `TEST_F`, `TEST_F`, `TEST`, `TEST_F`, `Trajectory`, `NeighborGraph`, `OutmolParser`, `XdatcarHeader`, `Onetep File Parser`, `Histogram Metadata`, `TEST`, `VASP XDATCAR Reader`, `TEST_F`, `TEST_F`, `VaspParser`, `TEST`, `GromacsReader`, `RDFCalculator.cpp`, `TEST_F`, `PYBIND11_MODULE`, `TEST`, `TEST_F`, `TEST_F`, `progress_callback`, `Trajectory.cpp`, `Constants.hpp`, `TEST`, `StructureAnalyzer`, `LocalEntropyCalculator.cpp`, `TEST`, `Cell.cpp`, `GPUSQCalculator.cu`, `QETrajectoryParser`, `CNCalculator`, `TEST_F`, `TEST_F`, `VoronoiCalculator`, `CNACalculator.cpp`, `TEST_F`, `StructureFactorCalculator.cpp`, `CellReader.cpp`, `XRDCalculator::calculate`, `.atomCount`, `TEST_F`, `GPUDistanceCalculator.cu`, `HBondCalculator.cpp`, `LammpsFrameParser`, `DihedralCalculatorTests`, `DihedralCalculator`, `TEST_F`, `SteinhardtCalculator.cpp`, `GromacsReader.cpp`, `TEST_F`, `addFrame`, `PADCalculator.cpp`, `ArcReader.cpp`, `TEST_F`, `wasm_bindings.cpp`, `readTrajectory`, `XRDCalculator.cpp`, `LammpsDumpReader::readTrajectory`, `HyperuniformityCalculatorTests.cpp`, `HyperuniformityCalculator::calculate`, `MockReader`, `TrajectoryTests.cpp`, `File Reader Tests`, `TEST`?",
+      "why": "High betweenness centrality (0.253) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `DistributionFunctions` connect `DistributionFunctions` to `VDOSCalculator`, `ChiralityCalculator.cpp`, `KernelGenerationParams`, `vector`, `AppBackend`, `CSVWriter`, `DistributionFunctions.cpp`, `UnionFind`, `ThreadLocalDistances`, `PADCalculator.cpp`, `wasm_bindings.cpp`, `TEST_F`, `AnalysisSettings`, `XRDCalculator.cpp`, `TEST_F`, `HyperuniformityCalculatorTests.cpp`, `Trajectory`, `ArrowWriter`, `HDF5Writer`, `Cell`, `Histogram Metadata`, `TEST`, `FileWriter::write`, `PYBIND11_MODULE`, `TEST_F`, `CSVWriter.cpp`, `StructureAnalyzer`, `GPUSQCalculator.cu`, `CNCalculator`, `TEST_F`, `TEST`, `CNACalculator.cpp`, `ArrowWriter.cpp`, `BaseCalculator`, `SteinhardtCalculator`, `DatasetWriteQuery`, `PdfPlotter.hpp`, `PyBaseCalculator`, `StructureFactorCalculator.cpp`, `GPUSQCalculator`, `HBondCalculator.cpp`, `DADCalculator`, `DihedralCalculator`, `LocalEntropyCalculator`, `PADCalculator`, `RDCalculator`?",
+      "why": "High betweenness centrality (0.212) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `Trajectory` connect `Trajectory` to `TrajectoryAnalyzer`, `GromacsReader.cpp`, `XYZReader`, `addFrame`, `vector`, `AppBackend`, `DistributionFunctions`, `DistributionFunctions.cpp`, `ArcReader.cpp`, `AppBackend.cpp`, `TEST_F`, `wasm_bindings.cpp`, `CastepMdReader`, `readTrajectory`, `CifReader.cpp`, `TEST_F`, `LammpsDumpReader::readTrajectory`, `TEST_F`, `OutmolParser`, `XdatcarHeader`, `Onetep File Parser`, `Cell`, `MockReader`, `VASP XDATCAR Reader`, `TEST_F`, `VaspParser`, `TEST`, `TrajectoryTests.cpp`, `GromacsReader`, `PYBIND11_MODULE`, `TEST_F`, `progress_callback`, `Trajectory.cpp`, `Constants.hpp`, `TEST`, `string`, `QETrajectoryParser`, `PhysicalData.hpp`, `TEST_F`, `TEST_F`, `BaseCalculator`, `PyBaseCalculator`, `CellReader.cpp`, `TEST_F`, `.atomCount`, `TEST_F`?",
+      "why": "High betweenness centrality (0.110) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 29 inferred relationships involving `Cell` (e.g. with `CP2KReader::readTrajectory()` and `readTrajectory()`) actually correct?",
+      "why": "`Cell` has 29 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 4 inferred relationships involving `DistributionFunctions` (e.g. with `TEST_F()` and `TEST_F()`) actually correct?",
+      "why": "`DistributionFunctions` has 4 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 7 inferred relationships involving `Trajectory` (e.g. with `TEST()` and `TEST_F()`) actually correct?",
+      "why": "`Trajectory` has 7 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `value`, `value`, `value` to the rest of the system?",
+      "why": "749 weakly-connected nodes found - possible documentation gaps or missing edges."
+    }
+  ]
 }
