@@ -75,4 +75,11 @@ TEST(CalculatorFactoryTests, LookupNonExistentReturnsNullptr) {
   EXPECT_EQ(retrieved, nullptr);
 }
 
+TEST(CalculatorFactoryTests, EmptyNameLookupReturnsNullptr) {
+  auto &factory = CalculatorFactory::instance();
+  const BaseCalculator *retrieved = factory.getCalculator("");
+  EXPECT_EQ(retrieved, nullptr);
+}
+
 } // namespace correlation::testing
+

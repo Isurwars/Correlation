@@ -85,4 +85,18 @@ TEST_F(MappedFileTests, EnforceSizeLimitCheck) {
   EXPECT_EQ(file.size(), file_content_.size());
 }
 
+TEST_F(MappedFileTests, EmptyFileHandling) {
+  std::string const empty_file_path = test_dir_ + "/empty_test.txt";
+  std::ofstream out(empty_file_path);
+  out.close();
+
+  // Mapping an empty file should either succeed with size 0 or throw runtime_error
+  try {
+    MappedFile file(empty_file_path, false);
+    EXPECT_EQ(file.size(), 0);
+  } catch (const std::runtime_error &) {
+    SUCCEED();
+  }
+}
+
 } // namespace correlation::testing

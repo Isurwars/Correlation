@@ -26,7 +26,7 @@ TEST_F(AtomTests, DefaultConstructorInitializesCorrectly) {
 }
 
 TEST_F(AtomTests, ParameterizedConstructorSetsProperties) {
-  const Element element = {"O", {1}};
+  const Element element = {.symbol = "O", .id = {1}};
   const correlation::math::Vector3<real_t> expected_pos = {1.0, 2.5, -3.0};
   const AtomID expected_id = 123;
 
@@ -42,7 +42,7 @@ TEST_F(AtomTests, ParameterizedConstructorSetsProperties) {
 
 TEST_F(AtomTests, AccessorsModifyStateCorrectly) {
   Atom atom;
-  const Element new_element = {"Fe", {26}};
+  const Element new_element = {.symbol = "Fe", .id = {26}};
   const correlation::math::Vector3<real_t> new_pos = {1.0, 2.0, 3.0};
 
   atom.setID(42);
@@ -61,7 +61,7 @@ TEST_F(AtomTests, AccessorsModifyStateCorrectly) {
 // --- Unitary Tests: Geometric Functions ---
 
 TEST_F(AtomTests, DistanceFunctionCalculatesCorrectly) {
-  const Element element = {"H", {0}};
+  const Element element = {.symbol = "H", .id = {0}};
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
   const Atom atom2(element, {3.0, 4.0, 0.0}, 1);
 
@@ -69,18 +69,19 @@ TEST_F(AtomTests, DistanceFunctionCalculatesCorrectly) {
 }
 
 TEST_F(AtomTests, AngleFunctionCalculatesNinetyDegrees) {
-  const Element element = {"C", {0}};
+  const Element element = {.symbol = "C", .id = {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
   const Atom neighbor_a(element, {1.0, 0.0, 0.0}, 1);
   const Atom neighbor_b(element, {0.0, 1.0, 0.0}, 2);
 
-  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi / 2.0, correlation::is_single_precision ? 1e-6 : 1e-9);
+  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi / 2.0,
+              correlation::is_single_precision ? 1e-6 : 1e-9);
 }
 
 // --- Limit Cases ---
 
 TEST_F(AtomTests, AngleFunctionHandlesCoincidentAtoms) {
-  const Element element = {"C", {0}};
+  const Element element = {.symbol = "C", .id = {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
   const Atom neighbor_a(element, {0.0, 0.0, 0.0}, 1);
 
@@ -89,16 +90,17 @@ TEST_F(AtomTests, AngleFunctionHandlesCoincidentAtoms) {
 }
 
 TEST_F(AtomTests, AngleFunctionHandlesCollinearAtoms) {
-  const Element element = {"O", {0}};
+  const Element element = {.symbol = "O", .id = {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
   const Atom neighbor_a(element, {1.0, 0.0, 0.0}, 1);
   const Atom neighbor_b(element, {-1.0, 0.0, 0.0}, 2); // 180 degrees
 
-  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi, correlation::is_single_precision ? 1e-6 : 1e-9);
+  EXPECT_NEAR(angle(center, neighbor_a, neighbor_b), correlation::math::pi,
+              correlation::is_single_precision ? 1e-6 : 1e-9);
 }
 
 TEST_F(AtomTests, AngleFunctionClampsFloatingPointInaccuracies) {
-  const Element element = {"O", {0}};
+  const Element element = {.symbol = "O", .id = {0}};
   const Atom center(element, {0.0, 0.0, 0.0}, 0);
 
   // Vectors that are slightly offset due to precision but logically collinear
@@ -109,7 +111,7 @@ TEST_F(AtomTests, AngleFunctionClampsFloatingPointInaccuracies) {
 }
 
 TEST_F(AtomTests, DistanceHandlesLargeCoordinates) {
-  const Element element = {"H", {0}};
+  const Element element = {.symbol = "H", .id = {0}};
   const real_t large = correlation::is_single_precision ? 1e4 : 1e10;
   const Atom atom1(element, {large, large, large}, 0);
   const Atom atom2(element, {static_cast<real_t>(large + 3.0), static_cast<real_t>(large + 4.0), large}, 1);
@@ -118,7 +120,7 @@ TEST_F(AtomTests, DistanceHandlesLargeCoordinates) {
 }
 
 TEST_F(AtomTests, HandlesEmptyElementSymbol) {
-  const Element element = {"", {-1}};
+  const Element element = {.symbol = "", .id = {-1}};
   const Atom atom(element, {0.0, 0.0, 0.0}, 0);
 
   EXPECT_EQ(atom.element().symbol, "");
@@ -135,13 +137,13 @@ TEST_F(AtomTests, ElementIDEqualityWorks) {
 }
 
 TEST_F(AtomTests, DistanceBetweenIdenticalAtomsIsZero) {
-  const Element element = {"H", {0}};
+  const Element element = {.symbol = "H", .id = {0}};
   const Atom atom(element, {1.2, -3.4, 5.6}, 1);
   EXPECT_DOUBLE_EQ(distance(atom, atom), 0.0);
 }
 
 TEST_F(AtomTests, DistanceHandlesSubnormalCoordinates) {
-  const Element element = {"H", {0}};
+  const Element element = {.symbol = "H", .id = {0}};
   const real_t subnormal = 1e-308;
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
   const Atom atom2(element, {subnormal, subnormal, subnormal}, 1);
@@ -150,7 +152,7 @@ TEST_F(AtomTests, DistanceHandlesSubnormalCoordinates) {
 }
 
 TEST_F(AtomTests, DistanceHandlesInfinityAndNaN) {
-  const Element element = {"H", {0}};
+  const Element element = {.symbol = "H", .id = {0}};
   const Atom atom1(element, {0.0, 0.0, 0.0}, 0);
   const Atom atom_inf(element, {std::numeric_limits<real_t>::infinity(), 0.0, 0.0}, 1);
   const Atom atom_nan(element, {std::numeric_limits<real_t>::quiet_NaN(), 0.0, 0.0}, 2);
@@ -177,6 +179,48 @@ TEST_F(AtomTests, HandlesLongAndSpecialElementSymbols) {
   EXPECT_EQ(atom.element().symbol, "Uun-110_LongSymbolTest!@#");
   EXPECT_EQ(atom.element_id(), 110);
   EXPECT_EQ(atom.id(), 999999);
+}
+
+TEST_F(AtomTests, VelocityAccessorsWork) {
+  Atom atom;
+  const correlation::math::Vector3<real_t> vel{0.5, -1.2, 3.4};
+  atom.setVelocity(vel);
+
+  EXPECT_NEAR(atom.velocity().x(), 0.5, 1e-9);
+  EXPECT_NEAR(atom.velocity().y(), -1.2, 1e-9);
+  EXPECT_NEAR(atom.velocity().z(), 3.4, 1e-9);
+}
+
+TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
+  const Element element = {.symbol = "Si", .id = {14}};
+  const correlation::math::Vector3<real_t> pos = {1.0, 2.0, 3.0};
+  const correlation::math::Vector3<real_t> vel = {0.1, 0.2, 0.3};
+  Atom original(element, pos, 42);
+  original.setVelocity(vel);
+
+  // Copy construction
+  Atom copy_constructed(original);
+  EXPECT_EQ(copy_constructed.id(), 42);
+  EXPECT_EQ(copy_constructed.element().symbol, "Si");
+  EXPECT_NEAR(copy_constructed.position().x(), 1.0, 1e-9);
+  EXPECT_NEAR(copy_constructed.velocity().x(), 0.1, 1e-9);
+
+  // Copy assignment
+  Atom copy_assigned;
+  copy_assigned = original;
+  EXPECT_EQ(copy_assigned.id(), 42);
+  EXPECT_EQ(copy_assigned.element().symbol, "Si");
+
+  // Move construction
+  Atom move_constructed(std::move(copy_constructed));
+  EXPECT_EQ(move_constructed.id(), 42);
+  EXPECT_EQ(move_constructed.element().symbol, "Si");
+
+  // Move assignment
+  Atom move_assigned;
+  move_assigned = std::move(copy_assigned);
+  EXPECT_EQ(move_assigned.id(), 42);
+  EXPECT_EQ(move_assigned.element().symbol, "Si");
 }
 
 } // namespace correlation::testing

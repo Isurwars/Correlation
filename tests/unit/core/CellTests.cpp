@@ -6,6 +6,7 @@
 #include "core/Cell.hpp"
 #include "math/Constants.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 
 #include <cmath>
 #include <gtest/gtest.h>
@@ -53,11 +54,13 @@ TEST_F(CellTests, NonOrthogonalVolumeIsCorrect) {
   const Cell cell(params);
 
   // Expected volume calculation
-  const real_t cos_a = std::cos(80.0 * correlation::math::deg_to_rad);
-  const real_t cos_b = std::cos(90.0 * correlation::math::deg_to_rad);
-  const real_t cos_g = std::cos(100.0 * correlation::math::deg_to_rad);
-  const real_t vol_sqrt = 1.0 - cos_a * cos_a - cos_b * cos_b - cos_g * cos_g + 2 * cos_a * cos_b * cos_g;
-  const real_t expected_volume = 5.0 * 6.0 * 7.0 * std::sqrt(vol_sqrt);
+  const real_t cos_a = static_cast<real_t>(std::cos(80.0 * correlation::math::deg_to_rad));
+  const real_t cos_b = static_cast<real_t>(std::cos(90.0 * correlation::math::deg_to_rad));
+  const real_t cos_g = static_cast<real_t>(std::cos(100.0 * correlation::math::deg_to_rad));
+  const real_t vol_sqrt = static_cast<real_t>(1.0) - (cos_a * cos_a) - (cos_b * cos_b) - (cos_g * cos_g) +
+                          static_cast<real_t>(2.0) * (cos_a * cos_b * cos_g);
+  const real_t expected_volume =
+      static_cast<real_t>(5.0) * static_cast<real_t>(6.0) * static_cast<real_t>(7.0) * std::sqrt(vol_sqrt);
 
   EXPECT_NEAR(cell.volume(), expected_volume, correlation::is_single_precision ? 1e-5 : 1e-9);
 }
@@ -232,7 +235,9 @@ TEST_F(CellTests, TriclinicCellMinimumImage) {
 
   // The minimum image vector must be shorter than or equal to half the max box extent
   // For a cell with a=5, the maximum half-diagonal is bounded
-  real_t const half_diagonal = 0.5 * std::sqrt(5.0 * 5.0 * 3); // conservative upper bound
+  real_t const half_diagonal =
+      static_cast<real_t>(0.5) * std::sqrt(static_cast<real_t>(5.0) * static_cast<real_t>(5.0) *
+                                           static_cast<real_t>(3)); // conservative upper bound
   EXPECT_LE(image_length, half_diagonal + 1e-6);
 
   // The zero vector should map to zero
@@ -271,7 +276,7 @@ TEST_F(CellTests, HighAtomCount) {
   Cell cell({{100.0, 100.0, 100.0, 90.0, 90.0, 90.0}});
   const size_t N_ATOMS = 10000;
   for (size_t i = 0; i < N_ATOMS; ++i) {
-    real_t const pos = static_cast<real_t>(i) * 0.01;
+    real_t const pos = static_cast<real_t>(i) * static_cast<real_t>(0.01);
     cell.addAtom("H", {pos, pos, pos});
   }
   EXPECT_EQ(cell.atomCount(), N_ATOMS);
@@ -287,6 +292,28 @@ TEST_F(CellTests, AcosNumericalNoiseClamping) {
   EXPECT_FALSE(std::isnan(params[3]));
   EXPECT_FALSE(std::isnan(params[4]));
   EXPECT_FALSE(std::isnan(params[5]));
+}
+
+TEST_F(CellTests, FractionalCartesianRoundTripPrecision) {
+  const std::array<real_t, 6> params = {12.0, 15.0, 18.0, 85.0, 95.0, 70.0};
+  const Cell cell(params);
+  const auto &lat = cell.latticeVectors();
+  const auto &inv = cell.inverseLatticeVectors();
+
+  // Test several fractional points (s_x, s_y, s_z) in [0, 1)
+  const std::vector<correlation::math::Vector3<real_t>> test_fracs = {
+      {0.1, 0.2, 0.3}, {0.0, 0.0, 0.0}, {0.99, 0.5, 0.25}, {0.333, 0.666, 0.123}};
+
+  for (const auto &orig_frac : test_fracs) {
+    // r = lattice * s
+    const correlation::math::Vector3<real_t> cart = lat * orig_frac;
+    // s_calc = inv_lattice * r
+    const correlation::math::Vector3<real_t> calc_frac = inv * cart;
+
+    EXPECT_NEAR(calc_frac.x(), orig_frac.x(), correlation::is_single_precision ? 1e-5 : 1e-9);
+    EXPECT_NEAR(calc_frac.y(), orig_frac.y(), correlation::is_single_precision ? 1e-5 : 1e-9);
+    EXPECT_NEAR(calc_frac.z(), orig_frac.z(), correlation::is_single_precision ? 1e-5 : 1e-9);
+  }
 }
 
 } // namespace correlation::testing
