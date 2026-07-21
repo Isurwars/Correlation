@@ -58,6 +58,7 @@ TEST_F(VoronoiCalculatorTests, SimpleCubic) {
   EXPECT_NEAR(sph_sc, 0.806, 0.01);
 
   // SC polyhedral signature is (0, 6, 0, 0)
+  std::cout << "SC DESCRIPTION:\n" << hists_sc.at("Voronoi Signatures").description << '\n';
   EXPECT_TRUE(hists_sc.at("Voronoi Signatures").description.contains("(0, 6, 0, 0)"));
 }
 
@@ -164,12 +165,8 @@ TEST_F(VoronoiCalculatorTests, HexagonalClosePacked) {
   real_t const sph_hcp = getPeakValue(hists_hcp.at("Voronoi Sphericity"));
   EXPECT_NEAR(sph_hcp, 0.905, 0.01);
 
-  // HCP signature is (0, 12, 0, 0) in real_t precision, or (0, 2, 4, 6) in single precision
-  if (correlation::is_single_precision) {
-    EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 2, 4, 6)"));
-  } else {
-    EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 12, 0, 0)"));
-  }
+  // HCP signature is (0, 12, 0, 0)
+  EXPECT_TRUE(hists_hcp.at("Voronoi Signatures").description.contains("(0, 12, 0, 0)"));
 }
 
 } // namespace

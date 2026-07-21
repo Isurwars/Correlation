@@ -36,10 +36,14 @@ const bool registered = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("
  * @return Pair containing the count of significant faces and the polyhedral signature string.
  */
 std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
-  std::vector<int> orders;
-  voro_cell.face_orders(orders);
   std::vector<double> face_areas_double;
   voro_cell.face_areas(face_areas_double);
+
+  std::vector<int> face_verts;
+  voro_cell.face_vertices(face_verts);
+
+  std::vector<double> pts;
+  voro_cell.vertices(pts);
 
   int n_3 = 0;
   int n_4 = 0;
@@ -47,13 +51,38 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   int n_6 = 0;
   int significant_faces = 0;
 
-  for (size_t i = 0; i < orders.size(); ++i) {
-    if (i < face_areas_double.size() && static_cast<real_t>(face_areas_double[i]) < static_cast<real_t>(0.01)) {
+  constexpr double min_face_area = 0.01;
+  constexpr double min_edge_len_sq = 1e-6; // 1e-3 A edge length threshold
+
+  size_t v_idx = 0;
+  size_t face_i = 0;
+  while (v_idx < face_verts.size()) {
+    int const num_face_vertices = face_verts[v_idx];
+    double const area = (face_i < face_areas_double.size()) ? face_areas_double[face_i] : 0.0;
+    face_i++;
+
+    if (area < min_face_area) {
+      v_idx += num_face_vertices + 1;
       continue;
     }
+
     significant_faces++;
-    int const order = orders[i];
-    switch (order) {
+
+    // Count non-parasitic edges
+    int parasitic_edges = 0;
+    for (int edge_idx = 0; edge_idx < num_face_vertices; ++edge_idx) {
+      auto const vert_idx1 = static_cast<size_t>(face_verts[v_idx + 1 + edge_idx]);
+      auto const vert_idx2 = static_cast<size_t>(face_verts[v_idx + 1 + ((edge_idx + 1) % num_face_vertices)]);
+      double const dist_x = pts[3 * vert_idx1] - pts[3 * vert_idx2];
+      double const dist_y = pts[3 * vert_idx1 + 1] - pts[3 * vert_idx2 + 1];
+      double const dist_z = pts[3 * vert_idx1 + 2] - pts[3 * vert_idx2 + 2];
+      if (dist_x * dist_x + dist_y * dist_y + dist_z * dist_z < min_edge_len_sq) {
+        parasitic_edges++;
+      }
+    }
+
+    int const clean_order = num_face_vertices - parasitic_edges;
+    switch (clean_order) {
     case 3:
       ++n_3;
       break;
@@ -69,6 +98,8 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
     default:
       break;
     }
+
+    v_idx += num_face_vertices + 1;
   }
 
   return {significant_faces, std::format("({}, {}, {}, {})", n_3, n_4, n_5, n_6)};
@@ -127,14 +158,15 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
     frac.x() -= std::floor(frac.x());
     frac.y() -= std::floor(frac.y());
     frac.z() -= std::floor(frac.z());
-    if (frac.x() >= 1.0 - 1e-11 || frac.x() < 0.0) {
-      frac.x() = 0.0;
+    constexpr real_t eps = static_cast<real_t>(1e-5);
+    if (frac.x() >= static_cast<real_t>(1.0) - eps || frac.x() < eps) {
+      frac.x() = static_cast<real_t>(0.0);
     }
-    if (frac.y() >= 1.0 - 1e-11 || frac.y() < 0.0) {
-      frac.y() = 0.0;
+    if (frac.y() >= static_cast<real_t>(1.0) - eps || frac.y() < eps) {
+      frac.y() = static_cast<real_t>(0.0);
     }
-    if (frac.z() >= 1.0 - 1e-11 || frac.z() < 0.0) {
-      frac.z() = 0.0;
+    if (frac.z() >= static_cast<real_t>(1.0) - eps || frac.z() < eps) {
+      frac.z() = static_cast<real_t>(0.0);
     }
 
     real_t const ax_ = frac.x() * bx_ + frac.y() * bxy + frac.z() * bxz;
@@ -150,12 +182,13 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
   int const ny_ = std::max(1, static_cast<int>(std::round(by_ / block_side)));
   int const nz_ = std::max(1, static_cast<int>(std::round(bz_ / block_side)));
 
-  // Setup periodic container
+  // Setup periodic container and particle order tracker
   voro::container_periodic con(bx_, bxy, by_, bxz, byz, bz_, nx_, ny_, nz_, 8);
+  voro::particle_order order(static_cast<int>(num_atoms));
 
   // Put atoms into container
   for (size_t i = 0; i < num_atoms; ++i) {
-    con.put(static_cast<int>(i), aligned_positions[i][0], aligned_positions[i][1], aligned_positions[i][2]);
+    con.put(order, static_cast<int>(i), aligned_positions[i][0], aligned_positions[i][1], aligned_positions[i][2]);
   }
 
   // Compute Voronoi cells
@@ -166,7 +199,7 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
   data.signatures.assign(num_atoms, "");
 
   voro::voronoicell voro_cell;
-  voro::c_loop_all_periodic voro_loop(con);
+  voro::c_loop_order_periodic voro_loop(con, order);
   if (!voro_loop.start()) {
     return data;
   }
@@ -212,7 +245,12 @@ VoronoiCalculator::buildSignatureMap(const std::vector<std::string> &signatures)
   }
 
   std::vector<std::pair<std::string, int>> sorted(counts.begin(), counts.end());
-  std::ranges::sort(sorted, [](const auto &frst, const auto &secnd) { return frst.second > secnd.second; });
+  std::ranges::sort(sorted, [](const auto &frst, const auto &secnd) {
+    if (frst.second != secnd.second) {
+      return frst.second > secnd.second;
+    }
+    return frst.first < secnd.first;
+  });
 
   std::string desc = "Polyhedral signature frequencies:\n";
   for (size_t i = 0; i < sorted.size(); ++i) {
@@ -360,8 +398,8 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   }
   populateHistogram(
       results["Voronoi Coordination Number"],
-      {.bin_width = 1.0, .num_bins = cn_bins, .range_min = 0.0, .range_max = static_cast<real_t>(cn_bins)},
-      cn_as_real, cell.atoms());
+      {.bin_width = 1.0, .num_bins = cn_bins, .range_min = 0.0, .range_max = static_cast<real_t>(cn_bins)}, cn_as_real,
+      cell.atoms());
 
   // Signatures — unique lookup logic, kept inline
   auto &sig_hist = results["Voronoi Signatures"];
