@@ -25,10 +25,10 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<HyperuniformityCalculator>("HyperuniformityCalculator");
 
 /**
- * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
+ * @brief Portable 53-bit uniform generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
  */
-[[nodiscard]] double generate_canonical_portable(std::mt19937_64 &rng) noexcept {
-  return static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0);
+[[nodiscard]] real_t generate_canonical_portable(std::mt19937_64 &rng) noexcept {
+  return static_cast<real_t>(static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0));
 }
 } // namespace
 
@@ -64,8 +64,8 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
   // Half the minimum box length is the maximum window radius
   const real_t l_min = std::min({l_x, l_y, l_z});
-  const auto r_max = static_cast<real_t>(l_min / 2.0);
-  constexpr real_t r_min = 2.0; // Minimum window radius in Angstroms
+  const auto r_max = static_cast<real_t>(l_min / static_cast<real_t>(2.0));
+  constexpr real_t r_min = static_cast<real_t>(2.0); // Minimum window radius in Angstroms
 
   if (r_max <= r_min) {
     return {}; // Box too small for meaningful hyperuniformity analysis
@@ -79,7 +79,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   // Pre-compute bin radii
   std::vector<real_t> radii(num_bins);
   for (size_t k = 0; k < num_bins; ++k) {
-    radii[k] = static_cast<real_t>(r_min + (static_cast<real_t>(k) + 0.5) * r_bin_width);
+    radii[k] = static_cast<real_t>(r_min + (static_cast<real_t>(k) + static_cast<real_t>(0.5)) * r_bin_width);
   }
 
   // Squared radii for distance comparison
@@ -102,9 +102,9 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
     positions.push_back(atom.position());
   }
 
-  // Accumulators: sum of N(R) and sum of N²(R) for each bin (use double to avoid float precision loss)
-  std::vector<double> sum_N(num_bins, 0.0);
-  std::vector<double> sum_N2(num_bins, 0.0);
+  // Accumulators: sum of N(R) and sum of N²(R) for each bin
+  std::vector<real_t> sum_N(num_bins, static_cast<real_t>(0.0));
+  std::vector<real_t> sum_N2(num_bins, static_cast<real_t>(0.0));
 
   // Deterministic seed for reproducible calculations across runs
   std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c, bugprone-random-generator-seed)
@@ -115,9 +115,9 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
   for (size_t sample_idx = 0; sample_idx < num_samples; ++sample_idx) {
     // Generate a random point in fractional coordinates, then convert to Cartesian
-    const auto f_x = static_cast<real_t>(generate_canonical_portable(rng));
-    const auto f_y = static_cast<real_t>(generate_canonical_portable(rng));
-    const auto f_z = static_cast<real_t>(generate_canonical_portable(rng));
+    const auto f_x = generate_canonical_portable(rng);
+    const auto f_y = generate_canonical_portable(rng);
+    const auto f_z = generate_canonical_portable(rng);
 
     math::Vector3<real_t> const frac(f_x, f_y, f_z);
     math::Vector3<real_t> const sample_point = lattice * frac;
@@ -141,14 +141,14 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
         ++count;
         ++atom_idx;
       }
-      auto const n_k = static_cast<double>(count);
+      auto const n_k = static_cast<real_t>(count);
       sum_N[k] += n_k;
       sum_N2[k] += n_k * n_k;
     }
   }
 
   // Compute statistics
-  const auto n_samples = static_cast<double>(num_samples);
+  const auto n_samples = static_cast<real_t>(num_samples);
 
   // σ²_N(R) histogram
   correlation::analysis::Histogram sigma2_hist;
@@ -179,13 +179,14 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   chi_total.resize(num_bins);
 
   for (size_t k = 0; k < num_bins; ++k) {
-    const double mean_N = sum_N[k] / n_samples;
-    const double mean_N2 = sum_N2[k] / n_samples;
-    const double raw_var = mean_N2 - mean_N * mean_N;
-    const auto variance = (raw_var > 1e-12) ? static_cast<real_t>(raw_var) : static_cast<real_t>(0.0);
+    const real_t mean_N = sum_N[k] / n_samples;
+    const real_t mean_N2 = sum_N2[k] / n_samples;
+    const real_t raw_var = mean_N2 - mean_N * mean_N;
+    const auto variance =
+        (raw_var > static_cast<real_t>(1e-12)) ? raw_var : static_cast<real_t>(0.0);
 
     sigma2_total[k] = variance;
-    chi_total[k] = (mean_N > 0.0) ? static_cast<real_t>(variance / mean_N) : static_cast<real_t>(0.0);
+    chi_total[k] = (mean_N > static_cast<real_t>(0.0)) ? (variance / mean_N) : static_cast<real_t>(0.0);
   }
 
   std::map<std::string, correlation::analysis::Histogram> results;

@@ -38,8 +38,8 @@ const bool registered = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("
 std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   std::vector<int> orders;
   voro_cell.face_orders(orders);
-  std::vector<double> areas;
-  voro_cell.face_areas(areas);
+  std::vector<double> face_areas_double;
+  voro_cell.face_areas(face_areas_double);
 
   int n_3 = 0;
   int n_4 = 0;
@@ -48,7 +48,7 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   int significant_faces = 0;
 
   for (size_t i = 0; i < orders.size(); ++i) {
-    if (i < areas.size() && areas[i] < 0.01) {
+    if (i < face_areas_double.size() && static_cast<real_t>(face_areas_double[i]) < static_cast<real_t>(0.01)) {
       continue;
     }
     significant_faces++;
@@ -353,15 +353,15 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
                     cell.atoms());
 
   // Coordination numbers — convert to real_t for the shared helper
-  std::vector<real_t> cn_as_double;
-  cn_as_double.reserve(data.coordination_numbers.size());
+  std::vector<real_t> cn_as_real;
+  cn_as_real.reserve(data.coordination_numbers.size());
   for (int cn_i : data.coordination_numbers) {
-    cn_as_double.push_back(static_cast<real_t>(cn_i));
+    cn_as_real.push_back(static_cast<real_t>(cn_i));
   }
   populateHistogram(
       results["Voronoi Coordination Number"],
       {.bin_width = 1.0, .num_bins = cn_bins, .range_min = 0.0, .range_max = static_cast<real_t>(cn_bins)},
-      cn_as_double, cell.atoms());
+      cn_as_real, cell.atoms());
 
   // Signatures — unique lookup logic, kept inline
   auto &sig_hist = results["Voronoi Signatures"];

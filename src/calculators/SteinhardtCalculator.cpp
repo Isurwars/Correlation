@@ -29,34 +29,34 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<SteinhardtCalculator>("SteinhardtCalculator");
 
 struct SteinhardtParams {
-  std::vector<double> Q4;
-  std::vector<double> Q6;
-  std::vector<double> W6_hat;
+  std::vector<real_t> Q4;
+  std::vector<real_t> Q6;
+  std::vector<real_t> W6_hat;
 };
 
 struct SingleAtomSteinhardt {
-  double Q4;
-  double Q6;
-  double W6_hat;
+  real_t Q4;
+  real_t Q6;
+  real_t W6_hat;
 };
 
 struct GlobalSteinhardtFactors {
-  double global_Q4_factor;
-  double global_Q6_factor;
+  real_t global_Q4_factor;
+  real_t global_Q6_factor;
 };
 
 struct HistogramConfigs {
   size_t bins_Q;
-  double Q_max;
-  double dQ;
+  real_t Q_max;
+  real_t dQ;
   size_t bins_W;
-  double W_min;
-  double W_max;
-  double dW;
+  real_t W_min;
+  real_t W_max;
+  real_t dW;
 };
 
 struct Wigner6Table {
-  std::array<std::array<double, 13>, 13> table{};
+  std::array<std::array<real_t, 13>, 13> table{};
   Wigner6Table() {
     for (int m_one = -6; m_one <= 6; ++m_one) {
       for (int m_two = -6; m_two <= 6; ++m_two) {
@@ -64,28 +64,28 @@ struct Wigner6Table {
         if (m_three >= -6 && m_three <= 6) {
           table.at(m_one + 6).at(m_two + 6) = SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
         } else {
-          table.at(m_one + 6).at(m_two + 6) = 0.0;
+          table.at(m_one + 6).at(m_two + 6) = static_cast<real_t>(0.0);
         }
       }
     }
   }
 };
 
-double computeW6(const std::vector<std::complex<double>> &q6m) {
+real_t computeW6(const std::vector<std::complex<real_t>> &q6m) {
   static const Wigner6Table wigner6;
-  double w6_val = 0.0;
+  real_t w6_val = static_cast<real_t>(0.0);
   for (int m_one = -6; m_one <= 6; ++m_one) {
     for (int m_two = -6; m_two <= 6; ++m_two) {
       int const m_three = -(m_one + m_two);
       if (m_three < -6 || m_three > 6) {
         continue;
       }
-      double const w3j = wigner6.table.at(m_one + 6).at(m_two + 6);
-      if (w3j == 0.0) {
+      real_t const w3j = wigner6.table.at(m_one + 6).at(m_two + 6);
+      if (w3j == static_cast<real_t>(0.0)) {
         continue;
       }
 
-      std::complex<double> const prod = q6m[m_one + 6] * q6m[m_two + 6] * q6m[m_three + 6];
+      std::complex<real_t> const prod = q6m[m_one + 6] * q6m[m_two + 6] * q6m[m_three + 6];
       w6_val += w3j * prod.real();
     }
   }
@@ -98,21 +98,21 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
   const auto &atom_neighbors = neighbor_graph.getNeighbors(atom_idx);
   size_t const num_neighbors = atom_neighbors.size();
   if (num_neighbors < 2) {
-    return {.Q4 = 0.0, .Q6 = 0.0, .W6_hat = 0.0};
+    return {.Q4 = static_cast<real_t>(0.0), .Q6 = static_cast<real_t>(0.0), .W6_hat = static_cast<real_t>(0.0)};
   }
 
-  std::vector<std::complex<double>> q4m(9, 0.0);
-  std::vector<std::complex<double>> q6m(13, 0.0);
+  std::vector<std::complex<real_t>> q4m(9, static_cast<real_t>(0.0));
+  std::vector<std::complex<real_t>> q6m(13, static_cast<real_t>(0.0));
 
   for (const auto &neighbor : atom_neighbors) {
-    correlation::math::Vector3<double> r_ij = neighbor.r_ij;
-    double const distance = neighbor.distance;
-    if (distance == 0) {
+    correlation::math::Vector3<real_t> r_ij = neighbor.r_ij;
+    real_t const distance = neighbor.distance;
+    if (distance == static_cast<real_t>(0.0)) {
       continue;
     }
 
-    real_t const theta = static_cast<real_t>(std::acos(std::clamp(r_ij.z() / distance, -1.0, 1.0)));
-    real_t const phi = static_cast<real_t>(std::atan2(r_ij.y(), r_ij.x()));
+    real_t const theta = std::acos(std::clamp(r_ij.z() / distance, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
+    real_t const phi = std::atan2(r_ij.y(), r_ij.x());
 
     for (int m_val = -4; m_val <= 4; ++m_val) {
       q4m[m_val + 4] += SteinhardtCalculator::sphericalHarmonic(4, m_val, {.theta = theta, .phi = phi});
@@ -123,36 +123,36 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
   }
 
   for (int m_val = -4; m_val <= 4; ++m_val) {
-    q4m[m_val + 4] /= static_cast<double>(num_neighbors);
+    q4m[m_val + 4] /= static_cast<real_t>(num_neighbors);
   }
   for (int m_val = -6; m_val <= 6; ++m_val) {
-    q6m[m_val + 6] /= static_cast<double>(num_neighbors);
+    q6m[m_val + 6] /= static_cast<real_t>(num_neighbors);
   }
 
-  double sum_sq_4 = 0.0;
+  real_t sum_sq_4 = static_cast<real_t>(0.0);
   for (int m_val = -4; m_val <= 4; ++m_val) {
     sum_sq_4 += std::norm(q4m[m_val + 4]);
   }
-  double const Q4_val = factors.global_Q4_factor * std::sqrt(sum_sq_4);
+  real_t const Q4_val = factors.global_Q4_factor * std::sqrt(sum_sq_4);
 
-  double sum_sq_6 = 0.0;
+  real_t sum_sq_6 = static_cast<real_t>(0.0);
   for (int m_val = -6; m_val <= 6; ++m_val) {
     sum_sq_6 += std::norm(q6m[m_val + 6]);
   }
-  double const Q6_val = factors.global_Q6_factor * std::sqrt(sum_sq_6);
+  real_t const Q6_val = factors.global_Q6_factor * std::sqrt(sum_sq_6);
 
-  double const w6_val = computeW6(q6m);
+  real_t const w6_val = computeW6(q6m);
 
-  double W6_hat_val = 0.0;
-  if (sum_sq_6 > 1e-12) {
-    W6_hat_val = w6_val / std::pow(sum_sq_6, 1.5);
+  real_t W6_hat_val = static_cast<real_t>(0.0);
+  if (sum_sq_6 > static_cast<real_t>(1e-12)) {
+    W6_hat_val = w6_val / std::pow(sum_sq_6, static_cast<real_t>(1.5));
   }
 
   return {.Q4 = Q4_val, .Q6 = Q6_val, .W6_hat = W6_hat_val};
 }
 
-void normalizeHistogramMap(std::map<std::string, std::vector<double>> &partials, double factor) {
-  if (factor <= 0.0) {
+void normalizeHistogramMap(std::map<std::string, std::vector<real_t>> &partials, real_t factor) {
+  if (factor <= static_cast<real_t>(0.0)) {
     return;
   }
   for (auto &[key, vec] : partials) {
@@ -163,33 +163,33 @@ void normalizeHistogramMap(std::map<std::string, std::vector<double>> &partials,
 }
 
 struct BinningConfig {
-  double min_val;
-  double max_val;
-  double d_val;
+  real_t min_val;
+  real_t max_val;
+  real_t d_val;
 };
 
-void addValueToHistogram(std::map<std::string, std::vector<double>> &partials, const std::string &symbol, double val,
+void addValueToHistogram(std::map<std::string, std::vector<real_t>> &partials, const std::string &symbol, real_t val,
                          BinningConfig config) {
   if (val >= config.min_val && val < config.max_val) {
     auto const bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
     auto &symbol_vec = partials[symbol];
     if (bin_idx < symbol_vec.size()) {
-      symbol_vec[bin_idx] += 1.0;
-      partials["Total"][bin_idx] += 1.0;
+      symbol_vec[bin_idx] += static_cast<real_t>(1.0);
+      partials["Total"][bin_idx] += static_cast<real_t>(1.0);
     }
   }
 }
 
-void initHistogramMap(std::map<std::string, std::vector<double>> &partials,
+void initHistogramMap(std::map<std::string, std::vector<real_t>> &partials,
                       const std::vector<std::string> &element_symbols, size_t bins) {
   for (const auto &sym : element_symbols) {
-    partials[sym].assign(bins, 0.0);
+    partials[sym].assign(bins, static_cast<real_t>(0.0));
   }
-  partials["Total"].assign(bins, 0.0);
+  partials["Total"].assign(bins, static_cast<real_t>(0.0));
 }
 
-void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
-                            const std::map<std::string, std::vector<double>> &src) {
+void accumulateHistogramMap(std::map<std::string, std::vector<real_t>> &dest,
+                            const std::map<std::string, std::vector<real_t>> &src) {
   for (const auto &[key, vec] : src) {
     auto &dest_vec = dest[key];
     for (size_t bin_idx = 0; bin_idx < vec.size(); ++bin_idx) {
@@ -199,14 +199,9 @@ void accumulateHistogramMap(std::map<std::string, std::vector<double>> &dest,
 }
 
 void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
-                             const std::map<std::string, std::vector<double>> &partials) {
+                             const std::map<std::string, std::vector<real_t>> &partials) {
   for (const auto &[key, vec] : partials) {
-    std::vector<real_t> converted;
-    converted.reserve(vec.size());
-    for (double val : vec) {
-      converted.push_back(static_cast<real_t>(val));
-    }
-    hist.partials[key] = std::move(converted);
+    hist.partials[key] = vec;
   }
 }
 
@@ -225,10 +220,10 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
   }
 
   struct ThreadLocalHist {
-    std::map<std::string, std::vector<double>> partials_Q4;
-    std::map<std::string, std::vector<double>> partials_Q6;
-    std::map<std::string, std::vector<double>> partials_W6;
-    double num_atoms_f = 0.0;
+    std::map<std::string, std::vector<real_t>> partials_Q4;
+    std::map<std::string, std::vector<real_t>> partials_Q6;
+    std::map<std::string, std::vector<real_t>> partials_W6;
+    real_t num_atoms_f = static_cast<real_t>(0.0);
   };
 
   tbb::enumerable_thread_specific<ThreadLocalHist> ets([&]() {
@@ -247,28 +242,28 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
         continue;
       }
 
-      local.num_atoms_f += 1.0;
+      local.num_atoms_f += static_cast<real_t>(1.0);
       const std::string &symbol = atoms[i].element().symbol;
 
       addValueToHistogram(local.partials_Q4, symbol, params.Q4[i],
-                          {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
+                          {.min_val = static_cast<real_t>(0.0), .max_val = configs.Q_max, .d_val = configs.dQ});
       addValueToHistogram(local.partials_Q6, symbol, params.Q6[i],
-                          {.min_val = 0.0, .max_val = configs.Q_max, .d_val = configs.dQ});
+                          {.min_val = static_cast<real_t>(0.0), .max_val = configs.Q_max, .d_val = configs.dQ});
       addValueToHistogram(local.partials_W6, symbol, params.W6_hat[i],
                           {.min_val = configs.W_min, .max_val = configs.W_max, .d_val = configs.dW});
     }
   });
 
   // Reduce thread-local histograms
-  std::map<std::string, std::vector<double>> partials_Q4;
-  std::map<std::string, std::vector<double>> partials_Q6;
-  std::map<std::string, std::vector<double>> partials_W6;
+  std::map<std::string, std::vector<real_t>> partials_Q4;
+  std::map<std::string, std::vector<real_t>> partials_Q6;
+  std::map<std::string, std::vector<real_t>> partials_W6;
 
   initHistogramMap(partials_Q4, element_symbols, configs.bins_Q);
   initHistogramMap(partials_Q6, element_symbols, configs.bins_Q);
   initHistogramMap(partials_W6, element_symbols, configs.bins_W);
 
-  double num_atoms_f = 0.0;
+  real_t num_atoms_f = static_cast<real_t>(0.0);
   for (const auto &local : ets) {
     num_atoms_f += local.num_atoms_f;
     accumulateHistogramMap(partials_Q4, local.partials_Q4);
@@ -276,7 +271,7 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
     accumulateHistogramMap(partials_W6, local.partials_W6);
   }
 
-  if (num_atoms_f > 0) {
+  if (num_atoms_f > static_cast<real_t>(0.0)) {
     normalizeHistogramMap(partials_Q4, num_atoms_f * configs.dQ);
     normalizeHistogramMap(partials_Q6, num_atoms_f * configs.dQ);
     normalizeHistogramMap(partials_W6, num_atoms_f * configs.dW);
@@ -290,13 +285,11 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
 
 std::complex<real_t> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
   if (order >= 0) {
-    real_t const P_lm =
-        static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta));
+    real_t const P_lm = correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta);
     return P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(order) * angles.phi);
   } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
   int const abs_m = -order;
-  real_t const P_lm =
-      static_cast<real_t>(correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta));
+  real_t const P_lm = correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta);
   std::complex<real_t> const Y_l_m =
       P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(abs_m) * angles.phi);
   std::complex<real_t> Y_l_minus_m = std::conj(Y_l_m);

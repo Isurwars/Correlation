@@ -10,7 +10,7 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
-#include "math/SIMDUtils.hpp"
+#include "math/Precision.hpp"
 
 #include <stdexcept>
 
@@ -30,7 +30,7 @@ struct PADSettings {
 void populateTripletHistogram(const std::vector<real_t> &angles, PADSettings settings,
                               std::vector<real_t> &partial_hist) {
   for (const auto &angle_rad : angles) {
-    real_t const angle_deg = angle_rad * correlation::math::rad_to_deg;
+    auto const angle_deg = static_cast<real_t>(angle_rad * correlation::math::rad_to_deg);
 
     if (angle_deg <= settings.theta_cut + 1e-5) {
       auto bin = static_cast<size_t>(angle_deg / settings.bin_width);
@@ -82,7 +82,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
   f_theta.file_suffix = "_PAD";
   f_theta.bins.resize(num_bins);
   for (size_t i = 0; i < num_bins; ++i) {
-    f_theta.bins[i] = static_cast<real_t>((static_cast<double>(i) + 0.5) * bin_width);
+    f_theta.bins[i] = (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * bin_width;
   }
 
   for (size_t i = 0; i < num_elements; ++i) {
@@ -115,7 +115,7 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
     return f_theta;
   }
 
-  const real_t normalization_factor = 1.0 / (total_counts * bin_width);
+  const real_t normalization_factor = static_cast<real_t>(1.0 / (total_counts * bin_width));
   for (auto &[key, partial] : f_theta.partials) {
     for (auto &val : partial) {
       val *= normalization_factor;

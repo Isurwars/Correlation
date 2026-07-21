@@ -9,7 +9,6 @@
 #include "calculators/DADCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
-#include "math/SIMDUtils.hpp"
 
 #include <stdexcept>
 
@@ -24,7 +23,7 @@ const bool registered = CalculatorFactory::registerTypeSafe<DADCalculator>("DADC
  * @brief Helper to initialize the Dihedral-Angle Distribution histogram.
  */
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-correlation::analysis::Histogram initializeHistogram(size_t num_bins, double theta_min, double bin_width) {
+correlation::analysis::Histogram initializeHistogram(size_t num_bins, real_t theta_min, real_t bin_width) {
   correlation::analysis::Histogram f_dihedral;
   f_dihedral.x_label = "φ";
   f_dihedral.title = "Dihedral-Angle Distribution";
@@ -35,7 +34,7 @@ correlation::analysis::Histogram initializeHistogram(size_t num_bins, double the
   f_dihedral.file_suffix = "_DAD";
   f_dihedral.bins.resize(num_bins);
   for (size_t idx = 0; idx < num_bins; ++idx) {
-    f_dihedral.bins[idx] = theta_min + (static_cast<double>(idx) + 0.5) * bin_width;
+    f_dihedral.bins[idx] = theta_min + (static_cast<real_t>(idx) + static_cast<real_t>(0.5)) * bin_width;
   }
   return f_dihedral;
 }
@@ -47,14 +46,14 @@ correlation::analysis::Histogram initializeHistogram(size_t num_bins, double the
 void processDihedralAngles(const std::vector<real_t> &angles_rad, std::vector<real_t> &partial_hist, real_t bin_width,
                            size_t num_bins, real_t theta_min, real_t theta_max) {
   for (const auto &angle_rad : angles_rad) {
-    real_t angle_deg = angle_rad * correlation::math::rad_to_deg;
+    real_t angle_deg = angle_rad * static_cast<real_t>(correlation::math::rad_to_deg);
 
     // clamp angle into [-180, 180]
-    while (angle_deg <= -180.0) {
-      angle_deg += 360.0;
+    while (angle_deg <= static_cast<real_t>(-180.0)) {
+      angle_deg += static_cast<real_t>(360.0);
     }
-    while (angle_deg > 180.0) {
-      angle_deg -= 360.0;
+    while (angle_deg > static_cast<real_t>(180.0)) {
+      angle_deg -= static_cast<real_t>(360.0);
     }
 
     if (angle_deg >= theta_min && angle_deg <= theta_max) {
@@ -77,8 +76,8 @@ void processDihedralAngles(const std::vector<real_t> &angles_rad, std::vector<re
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void normalizeAndScale(correlation::analysis::Histogram &f_dihedral, size_t num_bins, real_t bin_width) {
   auto &total_f = f_dihedral.partials["Total"];
-  total_f.assign(num_bins, 0.0);
-  real_t total_counts = 0;
+  total_f.assign(num_bins, static_cast<real_t>(0.0));
+  real_t total_counts = static_cast<real_t>(0.0);
 
   for (const auto &[key, partial] : f_dihedral.partials) {
     if (key != "Total") {
@@ -89,8 +88,8 @@ void normalizeAndScale(correlation::analysis::Histogram &f_dihedral, size_t num_
     }
   }
 
-  if (total_counts >= 1.0) {
-    const real_t normalization_factor = 1.0 / (total_counts * bin_width);
+  if (total_counts >= static_cast<real_t>(1.0)) {
+    const real_t normalization_factor = static_cast<real_t>(1.0) / (total_counts * bin_width);
     for (auto &[key, partial] : f_dihedral.partials) {
       for (auto &val : partial) {
         val *= normalization_factor;
@@ -116,9 +115,9 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
   }
 
   // Dihedral angles are from -180 to 180 degrees.
-  const double theta_min = -180.0;
-  const double theta_max = 180.0;
-  const double theta_range = theta_max - theta_min;
+  const real_t theta_min = static_cast<real_t>(-180.0);
+  const real_t theta_max = static_cast<real_t>(180.0);
+  const real_t theta_range = theta_max - theta_min;
 
   const auto &elements = cell.elements();
   const size_t num_elements = elements.size();

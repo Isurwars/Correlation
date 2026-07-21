@@ -9,6 +9,7 @@
 #pragma once
 
 #include "math/Constants.hpp"
+#include "math/Precision.hpp"
 #include "math/SIMDConfig.hpp"
 #include <array>
 #include <cmath>
@@ -18,7 +19,7 @@ namespace correlation::math {
 /**
  * @brief Inline helper for factorials up to 20.
  * Beyond 20, the values exceed the capacity of a 64-bit integer,
- * so we return doubles for consistency.
+ * so we return real_t for consistency.
  *
  * @param n the number to compute factorial for.
  * @return The factorial of n.
@@ -51,7 +52,7 @@ inline double factorial(int n) {
   if (n <= 20) {
     return fact.at(static_cast<size_t>(n));
   }
-  return std::tgamma(n + 1.0);
+  return std::tgamma(static_cast<double>(n) + 1.0);
 }
 
 /**
@@ -72,40 +73,41 @@ struct LegendreParams {
  * @param theta The colatitudinal angle in radians.
  * @return The evaluated spherical Legendre polynomial.
  */
-inline double sph_legendre(LegendreParams params, double theta) {
+inline real_t sph_legendre(LegendreParams params, real_t theta) {
   const int degree = params.degree;
   const int order = params.order;
   if (order < 0 || order > degree) {
-    return 0.0;
+    return static_cast<real_t>(0.0);
   }
 
-  double cos_theta = std::cos(theta);
+  real_t const cos_theta = std::cos(theta);
 
   // Compute P_m^m(x)
-  double p_mm = 1.0;
+  real_t p_mm = static_cast<real_t>(1.0);
   if (order > 0) {
-    double somx2 = std::sqrt((1.0 - cos_theta) * (1.0 + cos_theta));
-    double fact = 1.0;
+    real_t const somx2 = std::sqrt((static_cast<real_t>(1.0) - cos_theta) * (static_cast<real_t>(1.0) + cos_theta));
+    real_t fact = static_cast<real_t>(1.0);
     for (int i = 1; i <= order; ++i) {
       p_mm *= -fact * somx2;
-      fact += 2.0;
+      fact += static_cast<real_t>(2.0);
     }
   }
 
-  double p_lm = p_mm;
+  real_t p_lm = p_mm;
 
   if (degree != order) {
     // Compute P_{m+1}^m(x)
-    double p_mp1m = cos_theta * (2 * order + 1) * p_mm;
+    real_t const p_mp1m = cos_theta * static_cast<real_t>(2 * order + 1) * p_mm;
     p_lm = p_mp1m;
 
     if (degree > order + 1) {
       // Compute P_l^m(x) using recurrence relation
-      double p_ll_2 = p_mm;   // P_{l-2}^m
-      double p_ll_1 = p_mp1m; // P_{l-1}^m
+      real_t p_ll_2 = p_mm;   // P_{l-2}^m
+      real_t p_ll_1 = p_mp1m; // P_{l-1}^m
 
       for (int ll = order + 2; ll <= degree; ++ll) {
-        p_lm = (cos_theta * (2 * ll - 1) * p_ll_1 - (ll + order - 1) * p_ll_2) / (ll - order);
+        p_lm = (cos_theta * static_cast<real_t>(2 * ll - 1) * p_ll_1 - static_cast<real_t>(ll + order - 1) * p_ll_2) /
+               static_cast<real_t>(ll - order);
         p_ll_2 = p_ll_1;
         p_ll_1 = p_lm;
       }
@@ -113,8 +115,10 @@ inline double sph_legendre(LegendreParams params, double theta) {
   }
 
   // Normalization factor
-  double norm = std::sqrt((2.0 * degree + 1.0) / (4.0 * correlation::math::pi) * factorial(degree - order) /
-                          factorial(degree + order));
+  real_t norm = static_cast<real_t>(
+      std::sqrt((static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
+                (static_cast<real_t>(4.0) * static_cast<real_t>(correlation::math::pi)) * factorial(degree - order) /
+                factorial(degree + order)));
 
   // Cancel Condon-Shortley phase to match std::sph_legendre
   if (order % 2 != 0) {
@@ -133,25 +137,27 @@ inline double sph_legendre(LegendreParams params, double theta) {
  * @param results Output array where computed polynomials will be stored.
  * @param count Number of angles to process.
  */
-inline void sph_legendre_batch(LegendreParams params, const double *CORRELATION_RESTRICT theta,
-                               double *CORRELATION_RESTRICT results, size_t count) {
+inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_RESTRICT theta,
+                               real_t *CORRELATION_RESTRICT results, size_t count) {
   const int degree = params.degree;
   const int order = params.order;
   if (order < 0 || order > degree) {
     for (size_t idx = 0; idx < count; ++idx) {
-      results[idx] = 0.0;
+      results[idx] = static_cast<real_t>(0.0);
     }
     return;
   }
 
   // Precompute normalization factor and Condon-Shortley phase
-  double norm = std::sqrt((2.0 * degree + 1.0) / (4.0 * correlation::math::pi) * factorial(degree - order) /
-                          factorial(degree + order));
+  real_t norm = static_cast<real_t>(
+      std::sqrt((static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
+                (static_cast<real_t>(4.0) * static_cast<real_t>(correlation::math::pi)) * factorial(degree - order) /
+                factorial(degree + order)));
   if (order % 2 != 0) {
     norm = -norm;
   }
 
-#if defined(CORRELATION_SIMD_AVX512)
+#if defined(CORRELATION_SIMD_AVX512) && defined(CORRELATION_USE_DOUBLE)
   size_t idx = 0;
   const __m512d vnorm = _mm512_set1_pd(norm);
   for (; idx + 8 <= count; idx += 8) {
@@ -199,7 +205,7 @@ inline void sph_legendre_batch(LegendreParams params, const double *CORRELATION_
   for (; idx < count; ++idx) {
     results[idx] = sph_legendre({.degree = degree, .order = order}, theta[idx]);
   }
-#elif defined(CORRELATION_SIMD_AVX2)
+#elif defined(CORRELATION_SIMD_AVX2) && defined(CORRELATION_USE_DOUBLE)
   size_t idx = 0;
   const __m256d vnorm = _mm256_set1_pd(norm);
   for (; idx + 4 <= count; idx += 4) {
