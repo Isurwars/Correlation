@@ -3,6 +3,9 @@ name: cpp-coding-standards
 description: C++ coding standards based on the C++ Core Guidelines (isocpp.github.io). Use when writing, reviewing, or refactoring C++ code to enforce modern, safe, and idiomatic practices.
 metadata:
   origin: ECC
+triggers:
+  - on_artifact_generation
+  - on_code_modification
 ---
 
 # C++ Coding Standards (C++ Core Guidelines)
