@@ -36,13 +36,12 @@ const bool registered = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("
  * @return Pair containing the count of significant faces and the polyhedral signature string.
  */
 std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
-  std::vector<double> face_areas_double;
+  thread_local std::vector<double> face_areas_double;
+  thread_local std::vector<int> face_verts;
+  thread_local std::vector<double> pts;
+
   voro_cell.face_areas(face_areas_double);
-
-  std::vector<int> face_verts;
   voro_cell.face_vertices(face_verts);
-
-  std::vector<double> pts;
   voro_cell.vertices(pts);
 
   int n_3 = 0;
@@ -158,14 +157,13 @@ VoronoiCalculator::CellData VoronoiCalculator::computeVoronoiCells(const correla
     frac.x() -= std::floor(frac.x());
     frac.y() -= std::floor(frac.y());
     frac.z() -= std::floor(frac.z());
-    constexpr real_t eps = static_cast<real_t>(1e-5);
-    if (frac.x() >= static_cast<real_t>(1.0) - eps || frac.x() < eps) {
+    if (frac.x() >= static_cast<real_t>(1.0) || frac.x() < static_cast<real_t>(0.0)) {
       frac.x() = static_cast<real_t>(0.0);
     }
-    if (frac.y() >= static_cast<real_t>(1.0) - eps || frac.y() < eps) {
+    if (frac.y() >= static_cast<real_t>(1.0) || frac.y() < static_cast<real_t>(0.0)) {
       frac.y() = static_cast<real_t>(0.0);
     }
-    if (frac.z() >= static_cast<real_t>(1.0) - eps || frac.z() < eps) {
+    if (frac.z() >= static_cast<real_t>(1.0) || frac.z() < static_cast<real_t>(0.0)) {
       frac.z() = static_cast<real_t>(0.0);
     }
 
