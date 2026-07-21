@@ -2,41 +2,50 @@
 trigger: always_on
 ---
 
-# Rule: C++ Code Style, Structure, and ECC Skill Standards
-*Activation Mode: Glob (`src/**/*.{hpp,cpp,cxx,h,cc}`)*
+# Rule: C++ Code Style, Memory Safety, and Modern Standards
 
-## 1. Static Analysis & Formatting (Clang-Tidy & Clang-Format)
-- **Strict Compliance:** All generated, modified, or refactored C++ code must strictly comply with the workspace `.clang-tidy` and `.clang-format` specifications.
-- **Verification Gate:** Before declaring a coding task finished, you must run `clang-tidy` on the modified files using the project compile commands database. Fix any warnings or errors automatically before presenting the code to the user.
-- **Compilation Hygiene:** Code modifications must compile cleanly under strict warning parameters (`-Wall -Wextra -Werror`). Avoid all implicit narrowings or type conversions that risk data loss.
+*Activation Mode: Glob (`**/*.{hpp,cpp,cxx,h,cc,c}`)*
 
-## 2. Safety & Resource Management (ECC Standards)
-- **RAII Mandate:** Enforce Resource Acquisition Is Initialization strictly for all resources, file descriptors, and lifetime management.
+## 1. Static Analysis & Formatting (Clang Tooling)
+- **Tooling Compliance:** All C++ code must strictly align with workspace `.clang-format` and `.clang-tidy` rules.
+- **Verification Gate:** Run `clang-tidy` against `compile_commands.json` on all modified files prior to task completion. Resolve all warnings and linter findings before presenting code.
+- **Strict Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
+- **Zero Narrowing:** Implicit narrowing conversions (e.g., `double` to `float`, `size_t` to `int`) are prohibited. Use `static_cast` or explicit conversions where appropriate.
+
+## 2. Resource & Memory Safety (RAII & Smart Pointers)
+- **RAII Mandate:** All resource lifetimes (memory, files, GPU buffers, threads) must be managed using RAII wrappers.
 - **Smart Pointers:** 
-  - Prefer `std::unique_ptr` by default for single ownership structures.
-  - Use `std::shared_ptr` exclusively when shared runtime ownership is explicitly required.
-  - **Strictly Banned:** Manual memory management via raw `new` or `delete` keywords.
-- **Memory Boundaries:** Do not use raw C-style arrays. Utilize modern safe container wrappers such as `std::vector` or `std::array`.
-- **Header Guards:** Always use `#pragma once` as the standard file header safety guard.
+  - Use `std::unique_ptr` by default for single ownership.
+  - Use `std::shared_ptr` / `std::weak_ptr` only when true shared runtime ownership is required.
+  - **Strictly Banned:** Raw `new` and `delete`. Use `std::make_unique` or `std::make_shared`.
+- **Safe Containers:** C-style arrays (`type arr[N]`) and pointer arithmetic are prohibited. Use `std::array`, `std::vector`, or `std::span` (for non-owning contiguous memory views).
+- **Header Guards:** Every header file must use `#pragma once` at the very top.
 
-## 3. Modern C++ Architecture
-- **Language Target:** Align implementations with C++20 or C++23 specifications.
-- **Const Correctness:** Enforce aggressive `const` and `constexpr` optimization. Mark variables, parameters, and member functions as `const` unless state mutation is actively required by the logic.
-- **Type Safety Primitives:** Use modern types for safe conditional management and robust error paths:
-  - `std::optional` for handling optional/nullable values.
-  - `std::variant` or `std::expected` for safe, typed error handling over raw status flags or error codes.
+## 3. Modern C++ Architecture (C++20/C++23)
+- **Const Correctness:** Apply `const` and `constexpr` aggressively. Mark variables, parameters, and member functions `const` unless mutation is required.
+- **Error Handling & Nullability:**
+  - Use `std::optional<T>` for optional values rather than sentinel values or nullptr.
+  - Use `std::expected<T, E>` or `std::variant` for typed error reporting rather than raw integer return codes.
+- **Move Semantics & Pass-by-Value:**
+  - Pass heavy types by `const T&` for read-only access.
+  - Pass by value and `std::move` when sinks take ownership.
+- **Explicit Conversions:** Mark all single-argument constructors and conversion operators as `explicit` to prevent implicit type coercions.
 
 ## 4. Doxygen Documentation Standard
-Every class, struct, enum, and public/protected function must include valid Doxygen blocks directly above the declaration in the header (`.hpp`) file. 
-- Use the `/** ... */` block style.
-- Explicitly document all parameters (`@param[in,out]`), return values (`@return`), and potential exceptions (`@throws`).
+- **Scope:** Every `class`, `struct`, `enum`, `concept`, and public/protected function in header files (`.hpp`) must include Doxygen blocks.
+- **Formatting:** Use block style `/** ... */`.
+- **Tag Directives:** Explicitly annotate `@param[in]`, `@param[out]`, `@param[in,out]`, `@return`, and `@throws`.
 
-### Example:
+### Example
 ```cpp
 /**
- * @brief Computes the structural correlation function.
- * @param[in] data Vector containing the raw atomistic simulation coordinates.
- * @param[in] cutoff Radius limit for the correlation calculations.
- * @return A structural distribution profile.
+ * @brief Computes the pair distribution function g(r) from simulation coordinates.
+ * @param[in] coordinates Atomistic positions in Cartesian space.
+ * @param[in] cutoff Radius limit for the correlation calculation.
+ * @return Distribution profile containing radius bins and g(r) amplitudes.
+ * @throws std::invalid_argument If cutoff is non-positive.
  */
-DistributionProfile computeCorrelation(const std::vector<double>& data, double cutoff);
+[[nodiscard]] DistributionProfile computeCorrelation(
+    std::span<const Vector3D> coordinates, 
+    double cutoff
+);

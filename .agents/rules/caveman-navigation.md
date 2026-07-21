@@ -2,14 +2,29 @@
 trigger: always_on
 ---
 
-# Rule: Caveman Navigation & Architecture Mapping
-*Activation Mode: Always On*
+# Rule: Caveman Navigation Protocol (Token-Efficient Codebase Discovery)
 
-## Core Constraint (Context Diet)
-- **Prohibited Action:** Opening source code files directly as a baseline discovery action is strictly prohibited. Do not conduct broad file searches or recursive grep queries across the workspace blindly.
-- **First-Action Enforce:** Every new conversational turn, distinct sub-task, or multi-file architectural analysis MUST begin by reading the structural layout database artifact located at:
-  `graphify-out/GRAPH_REPORT.md`
+*Activation Mode: Universal / Default Baseline*
 
-## Tool Sequence
-1. Consult `graphify-out/GRAPH_REPORT.md` and `graphify-out/graph.json` first to look up dependency links, file clusters, and component definitions.
-2. Target specific lines or isolated code components *only* after locating their precise coordinates in the graph report.
+## 1. Core Directives
+
+1. **Graphify First (Mandatory Starting Action):**
+   - Before opening, reading, or inspecting any source code files (`.cpp`, `.hpp`, `.h`, `CMakeLists.txt`), check `graphify-out/GRAPH_REPORT.md` or `graphify-out/graph.json`.
+   - Identify target modules, community clusters, and dependency paths from graph artifacts *before* taking any file-reading action.
+
+2. **Prohibited Baseline Actions:**
+   - **No Blind File Reads:** Opening source files directly for speculative discovery or exploration is strictly prohibited.
+   - **No Imports Grepping:** Do not grep `#include` directives or class definitions across the workspace to trace dependencies; use `graphify-out/` artifacts instead.
+
+3. **Fallback Protocol (When Graphify Artifacts are Missing/Stale):**
+   - If `graphify-out/GRAPH_REPORT.md` does not exist, run the repository's graphify generator command *first*, or fall back to high-level directory tree inspection (`ls -R` / `find`) before reading source content.
+
+4. **Targeted Inspection ("Context Diet"):**
+   - Treat context tokens as a strict budget. Open *only* the single, minimal set of files identified by the dependency graph required to fulfill the prompt.
+   - Do not pull in header files or upstream dependencies unless a compilation or type definition error explicitly demands it.
+
+## 2. Execution Workflow
+
+- **Step 1 (Map):** Consult `graphify-out/GRAPH_REPORT.md` to map the target node or cluster.
+- **Step 2 (Filter):** Select the exact file path(s) tied to the relevant node.
+- **Step 3 (Execute):** Perform the required analysis or edit on those specific target files only.
