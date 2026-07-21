@@ -12,26 +12,7 @@ trigger: always_on
 - **Strict Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
 - **Zero Narrowing:** Implicit narrowing conversions (e.g., `double` to `float`, `size_t` to `int`) are prohibited. Use `static_cast` or explicit conversions where appropriate.
 
-## 2. Resource & Memory Safety (RAII & Smart Pointers)
-- **RAII Mandate:** All resource lifetimes (memory, files, GPU buffers, threads) must be managed using RAII wrappers.
-- **Smart Pointers:** 
-  - Use `std::unique_ptr` by default for single ownership.
-  - Use `std::shared_ptr` / `std::weak_ptr` only when true shared runtime ownership is required.
-  - **Strictly Banned:** Raw `new` and `delete`. Use `std::make_unique` or `std::make_shared`.
-- **Safe Containers:** C-style arrays (`type arr[N]`) and pointer arithmetic are prohibited. Use `std::array`, `std::vector`, or `std::span` (for non-owning contiguous memory views).
-- **Header Guards:** Every header file must use `#pragma once` at the very top.
-
-## 3. Modern C++ Architecture (C++20/C++23)
-- **Const Correctness:** Apply `const` and `constexpr` aggressively. Mark variables, parameters, and member functions `const` unless mutation is required.
-- **Error Handling & Nullability:**
-  - Use `std::optional<T>` for optional values rather than sentinel values or nullptr.
-  - Use `std::expected<T, E>` or `std::variant` for typed error reporting rather than raw integer return codes.
-- **Move Semantics & Pass-by-Value:**
-  - Pass heavy types by `const T&` for read-only access.
-  - Pass by value and `std::move` when sinks take ownership.
-- **Explicit Conversions:** Mark all single-argument constructors and conversion operators as `explicit` to prevent implicit type coercions.
-
-## 4. Doxygen Documentation Standard
+## 2. Doxygen Documentation Standard
 - **Scope:** Every `class`, `struct`, `enum`, `concept`, and public/protected function in header files (`.hpp`) must include Doxygen blocks.
 - **Formatting:** Use block style `/** ... */`.
 - **Tag Directives:** Explicitly annotate `@param[in]`, `@param[out]`, `@param[in,out]`, `@return`, and `@throws`.
@@ -49,3 +30,8 @@ trigger: always_on
     std::span<const Vector3D> coordinates, 
     double cutoff
 );
+```
+
+## Reference
+
+- **See skill:** `cpp-coding-standards` for comprehensive C++ coding standards and guidelines (RAII, smart pointers, modern C++20/23 architecture, const correctness, move semantics, concurrency patterns).
