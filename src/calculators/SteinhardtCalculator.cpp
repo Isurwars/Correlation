@@ -172,8 +172,11 @@ void addValueToHistogram(std::map<std::string, std::vector<double>> &partials, c
                          BinningConfig config) {
   if (val >= config.min_val && val < config.max_val) {
     auto const bin_idx = static_cast<size_t>((val - config.min_val) / config.d_val);
-    partials[symbol][bin_idx] += 1.0;
-    partials["Total"][bin_idx] += 1.0;
+    auto &symbol_vec = partials[symbol];
+    if (bin_idx < symbol_vec.size()) {
+      symbol_vec[bin_idx] += 1.0;
+      partials["Total"][bin_idx] += 1.0;
+    }
   }
 }
 
