@@ -25,6 +25,58 @@ struct CreateRandomCellParams {
 };
 
 /**
+ * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
+ */
+[[nodiscard]] double generate_canonical_portable(std::mt19937_64 &rng) noexcept {
+  return static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0);
+}
+
+/**
+ * @brief Safely fits log(variance) vs log(R) using least squares with strict non-finite guards.
+ */
+template <typename T, typename U>
+[[nodiscard]] double fitSlope(const std::vector<T> &bins, const std::vector<U> &var, double r_min,
+                              double r_max, double var_threshold = 1e-4) {
+  double sum_x = 0.0;
+  double sum_y = 0.0;
+  double sum_xx = 0.0;
+  double sum_xy = 0.0;
+  int count = 0;
+
+  const size_t num_points = std::min(bins.size(), var.size());
+  for (size_t k = 0; k < num_points; ++k) {
+    const double r_val = static_cast<double>(bins[k]);
+    const double v_val = static_cast<double>(var[k]);
+
+    if (r_val > r_min && r_val < r_max && std::isfinite(v_val) && v_val > var_threshold) {
+      const double log_r = std::log(r_val);
+      const double log_var = std::log(v_val);
+
+      if (std::isfinite(log_r) && std::isfinite(log_var)) {
+        sum_x += log_r;
+        sum_y += log_var;
+        sum_xx += log_r * log_r;
+        sum_xy += log_r * log_var;
+        ++count;
+      }
+    }
+  }
+
+  if (count < 3) {
+    return -1.0;
+  }
+
+  const double count_d = static_cast<double>(count);
+  const double denom = count_d * sum_xx - sum_x * sum_x;
+  if (!std::isfinite(denom) || std::abs(denom) < 1e-12) {
+    return -1.0;
+  }
+
+  const double slope = (count_d * sum_xy - sum_x * sum_y) / denom;
+  return std::isfinite(slope) ? slope : -1.0;
+}
+
+/**
  * @brief Helper to create a simple cubic (SC) lattice cell.
  *
  * Creates a cubic box of side L with atoms placed on a regular grid
@@ -58,10 +110,11 @@ correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
                                 static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c)
-  std::uniform_real_distribution<double> dist(0.0, params.box_length);
   for (size_t i = 0; i < params.num_atoms; ++i) {
-    cell.addAtom("Ar",
-                 {static_cast<real_t>(dist(rng)), static_cast<real_t>(dist(rng)), static_cast<real_t>(dist(rng))});
+    const auto x_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
+    const auto y_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
+    const auto z_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
+    cell.addAtom("Ar", {x_pos, y_pos, z_pos});
   }
   return cell;
 }
@@ -108,7 +161,7 @@ TEST_F(HyperuniformityCalculatorTests, ProducesExpectedHistograms) {
   EXPECT_TRUE(chi_h.partials.contains("Total"));
 
   // Variance should be non-negative everywhere
-  for (double variance : sigma2.partials.at("Total")) {
+  for (const double variance : sigma2.partials.at("Total")) {
     EXPECT_GE(variance, -1e-9); // Allow tiny numerical errors
   }
 }
@@ -116,14 +169,14 @@ TEST_F(HyperuniformityCalculatorTests, ProducesExpectedHistograms) {
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnInvalidBinWidth) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {100, 0.0}), std::invalid_argument);
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {100, -1.0}), std::invalid_argument);
+  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = 0.0}), std::invalid_argument);
+  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = -1.0}), std::invalid_argument);
 }
 
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnZeroSamples) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {0, 0.5}), std::invalid_argument);
+  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 0, .r_bin_width = 0.5}), std::invalid_argument);
 }
 
 // =============================================================================
@@ -144,31 +197,9 @@ TEST_F(HyperuniformityCalculatorTests, RandomPointsVarianceScalesAsR3) {
 
   ASSERT_TRUE(results.contains("sigma2_N"));
   const auto &sigma2 = results.at("sigma2_N");
-  const auto &bins = sigma2.bins;
-  const auto &total = sigma2.partials.at("Total");
 
-  // Fit log(σ²) = slope * log(R) + intercept using least squares
-  // Only use bins where variance > 0 and R is in a reasonable range
-  double sum_x = 0.0;
-  double sum_y = 0.0;
-  double sum_xx = 0.0;
-  double sum_xy = 0.0;
-  int count = 0;
-  for (size_t k = 0; k < bins.size(); ++k) {
-    if (total[k] > 1e-4 && bins[k] > 2.5 && bins[k] < 7.5) {
-      double log_r = std::log(bins[k]);
-      double log_var = std::log(total[k]);
-      sum_x += log_r;
-      sum_y += log_var;
-      sum_xx += log_r * log_r;
-      sum_xy += log_r * log_var;
-      ++count;
-    }
-  }
-
-  ASSERT_GT(count, 3) << "Not enough data points for fitting";
-
-  double const slope = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
+  double const slope = fitSlope(sigma2.bins, sigma2.partials.at("Total"), 2.5, 7.5, 1e-4);
+  ASSERT_GT(slope, 0.0) << "Slope computation failed";
 
   // For Poisson points, slope should be ~3.0
   // Allow generous tolerance due to finite-size effects and random sampling
@@ -186,35 +217,13 @@ TEST_F(HyperuniformityCalculatorTests, RandomPointsVarianceScalesAsR3) {
 TEST_F(HyperuniformityCalculatorTests, LatticeVarianceScalesAsR2) {
   // Large SC lattice: 8³ = 512 atoms in 40 Å box
   auto cell = createSCLattice(40.0, 8);
-  auto results = HyperuniformityCalculator::calculate(cell, {5000, 0.5});
+  auto results = HyperuniformityCalculator::calculate(cell, {.num_samples = 5000, .r_bin_width = 0.5});
 
   ASSERT_TRUE(results.contains("sigma2_N"));
   const auto &sigma2 = results.at("sigma2_N");
-  const auto &bins = sigma2.bins;
-  const auto &total = sigma2.partials.at("Total");
 
-  // Fit log(σ²) = slope * log(R) + intercept
-  // Use intermediate R range to avoid boundary/commensurability artifacts
-  double sum_x = 0;
-  double sum_y = 0;
-  double sum_xx = 0;
-  double sum_xy = 0;
-  int count = 0;
-  for (size_t k = 0; k < bins.size(); ++k) {
-    if (total[k] > 1e-4 && bins[k] > 3.0 && bins[k] < 9.5) {
-      double log_r = std::log(bins[k]);
-      double log_var = std::log(total[k]);
-      sum_x += log_r;
-      sum_y += log_var;
-      sum_xx += log_r * log_r;
-      sum_xy += log_r * log_var;
-      ++count;
-    }
-  }
-
-  ASSERT_GT(count, 3) << "Not enough data points for fitting";
-
-  double const slope = (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
+  double const slope = fitSlope(sigma2.bins, sigma2.partials.at("Total"), 3.0, 9.5, 1e-4);
+  ASSERT_GT(slope, 0.0) << "Slope computation failed";
 
   // For a hyperuniform system, slope should be ~2.0
   // Allow generous tolerance for finite-size effects
@@ -237,34 +246,10 @@ TEST_F(HyperuniformityCalculatorTests, LatticeHasLowerSlopeThanRandom) {
   ASSERT_TRUE(lattice_results.contains("sigma2_N"));
   ASSERT_TRUE(random_results.contains("sigma2_N"));
 
-  // Compute slopes for both
-  auto compute_slope = [](const analysis::Histogram &sigma2) -> double {
-    double sum_x = 0;
-    double sum_y = 0;
-    double sum_xx = 0;
-    double sum_xy = 0;
-    int count = 0;
-    for (size_t k = 0; k < sigma2.bins.size(); ++k) {
-      double var = sigma2.partials.at("Total")[k];
-      double r_bin = sigma2.bins[k];
-      if (var > 0.0 && r_bin > 3.0 && r_bin < 12.0) {
-        double log_r_bin = std::log(r_bin);
-        double log_var = std::log(var);
-        sum_x += log_r_bin;
-        sum_y += log_var;
-        sum_xx += log_r_bin * log_r_bin;
-        sum_xy += log_r_bin * log_var;
-        ++count;
-      }
-    }
-    if (count < 3) {
-      return -1.0;
-    }
-    return (count * sum_xy - sum_x * sum_y) / (count * sum_xx - sum_x * sum_x);
-  };
-
-  double const lattice_slope = compute_slope(lattice_results.at("sigma2_N"));
-  double const random_slope = compute_slope(random_results.at("sigma2_N"));
+  double const lattice_slope =
+      fitSlope(lattice_results.at("sigma2_N").bins, lattice_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
+  double const random_slope =
+      fitSlope(random_results.at("sigma2_N").bins, random_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
 
   ASSERT_GT(lattice_slope, 0.0) << "Lattice slope computation failed";
   ASSERT_GT(random_slope, 0.0) << "Random slope computation failed";
@@ -280,7 +265,7 @@ TEST_F(HyperuniformityCalculatorTests, LatticeHasLowerSlopeThanRandom) {
 
 TEST_F(HyperuniformityCalculatorTests, HistogramMetadataIsCorrect) {
   auto cell = createSCLattice(20.0, 4);
-  auto results = HyperuniformityCalculator::calculate(cell, {100, 1.0});
+  auto results = HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = 1.0});
 
   ASSERT_TRUE(results.contains("sigma2_N"));
   ASSERT_TRUE(results.contains("chi_H"));
@@ -307,7 +292,7 @@ TEST_F(HyperuniformityCalculatorTests, HistogramMetadataIsCorrect) {
 // =============================================================================
 
 TEST_F(HyperuniformityCalculatorTests, CalculatorInterfaceIsCorrect) {
-  HyperuniformityCalculator calc;
+  const HyperuniformityCalculator calc;
   EXPECT_FALSE(calc.getName().empty());
   EXPECT_FALSE(calc.getShortName().empty());
   EXPECT_EQ(calc.getGroup(), "Advanced");

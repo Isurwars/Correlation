@@ -23,6 +23,13 @@ namespace {
 // Static registration of the calculator in the factory
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<HyperuniformityCalculator>("HyperuniformityCalculator");
+
+/**
+ * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
+ */
+[[nodiscard]] double generate_canonical_portable(std::mt19937_64 &rng) noexcept {
+  return static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0);
+}
 } // namespace
 
 void HyperuniformityCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
@@ -101,7 +108,6 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
   // Deterministic seed for reproducible calculations across runs
   std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c, bugprone-random-generator-seed)
-  std::uniform_real_distribution<double> dist(0.0, 1.0);
 
   const auto &lattice = cell.latticeVectors();
 
@@ -109,9 +115,9 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
 
   for (size_t sample_idx = 0; sample_idx < num_samples; ++sample_idx) {
     // Generate a random point in fractional coordinates, then convert to Cartesian
-    const auto f_x = static_cast<real_t>(dist(rng));
-    const auto f_y = static_cast<real_t>(dist(rng));
-    const auto f_z = static_cast<real_t>(dist(rng));
+    const auto f_x = static_cast<real_t>(generate_canonical_portable(rng));
+    const auto f_y = static_cast<real_t>(generate_canonical_portable(rng));
+    const auto f_z = static_cast<real_t>(generate_canonical_portable(rng));
 
     math::Vector3<real_t> const frac(f_x, f_y, f_z);
     math::Vector3<real_t> const sample_point = lattice * frac;
