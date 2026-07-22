@@ -28,17 +28,8 @@ namespace {
 // NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<SteinhardtCalculator>("SteinhardtCalculator");
 
-struct SteinhardtParams {
-  std::vector<real_t> Q4;
-  std::vector<real_t> Q6;
-  std::vector<real_t> W6_hat;
-};
-
-struct SingleAtomSteinhardt {
-  real_t Q4;
-  real_t Q6;
-  real_t W6_hat;
-};
+using SteinhardtParams = SteinhardtCalculator::SteinhardtParams;
+using SingleAtomSteinhardt = SteinhardtCalculator::SingleAtomSteinhardt;
 
 struct GlobalSteinhardtFactors {
   real_t global_Q4_factor;

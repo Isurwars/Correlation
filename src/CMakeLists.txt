@@ -56,6 +56,20 @@ add_library(calculators_obj OBJECT
     calculators/HyperuniformityCalculator.cpp
     calculators/MLIPCalculator.cpp
 )
+
+if(NOT (BUILD_WITH_CUDA OR BUILD_WITH_HIP))
+    set_source_files_properties(
+        calculators/GPUSQCalculator.cu
+        calculators/GPUDistanceCalculator.cu
+        calculators/GPUSteinhardtCalculator.cu
+        PROPERTIES LANGUAGE CXX
+    )
+    target_sources(calculators_obj PRIVATE
+        calculators/GPUSQCalculator.cu
+        calculators/GPUDistanceCalculator.cu
+        calculators/GPUSteinhardtCalculator.cu
+    )
+endif()
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
@@ -68,6 +82,7 @@ if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
     add_library(gpu_calculators_obj OBJECT
         calculators/GPUSQCalculator.cu
         calculators/GPUDistanceCalculator.cu
+        calculators/GPUSteinhardtCalculator.cu
     )
     target_include_directories(gpu_calculators_obj PRIVATE
         ${PROJECT_SOURCE_DIR}/include

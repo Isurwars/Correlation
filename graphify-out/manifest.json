@@ -215,9 +215,9 @@
     "semantic_hash": ""
   },
   "include/core/GPUPortability.hpp": {
-    "mtime": 1783194156.495179,
-    "ast_hash": "d57934bd67e8174dd3aa33f5d94789e9",
-    "semantic_hash": "d57934bd67e8174dd3aa33f5d94789e9"
+    "mtime": 1784751876.653128,
+    "ast_hash": "1e33c5925d56e7b605b65c7e87842eff",
+    "semantic_hash": ""
   },
   "include/core/MappedFile.hpp": {
     "mtime": 1784494664.6782699,
@@ -615,9 +615,9 @@
     "semantic_hash": "2736d407f5a1b6592f6e6a0e0927cf19"
   },
   "src/calculators/GPUSQCalculator.cu": {
-    "mtime": 1784510971.6857772,
-    "ast_hash": "92f6a106f8fd22e8be10767cc08a13c3",
-    "semantic_hash": "92f6a106f8fd22e8be10767cc08a13c3"
+    "mtime": 1784743367.2540526,
+    "ast_hash": "75f39685af51deb9ece6b0e78974b282",
+    "semantic_hash": ""
   },
   "src/calculators/HBondCalculator.cpp": {
     "mtime": 1784599796.1201103,
@@ -1140,18 +1140,18 @@
     "semantic_hash": "5e996d6fe1450128e0f4c00c708147fa"
   },
   "tests/unit/core/AtomTests.cpp": {
-    "mtime": 1784653998.1724622,
-    "ast_hash": "c54166a21dd26c614b4e89d2c2ab0221",
+    "mtime": 1784687587.0118885,
+    "ast_hash": "d51391865c96ff773dd0c3c764a68b0e",
     "semantic_hash": ""
   },
   "tests/unit/core/CellTests.cpp": {
-    "mtime": 1784654003.6840317,
-    "ast_hash": "fe5e43ed4cc4c085ace47fa878d6a4ea",
+    "mtime": 1784654421.982398,
+    "ast_hash": "1e6a1839ec9c5b4004d39bfe69818fc5",
     "semantic_hash": ""
   },
   "tests/unit/core/MappedFileTests.cpp": {
-    "mtime": 1784654013.0412428,
-    "ast_hash": "9d7992e1f74c518e24d9573485af2e23",
+    "mtime": 1784654222.7346613,
+    "ast_hash": "07bbfa9f9792b39cdd069a30b30f95bd",
     "semantic_hash": ""
   },
   "tests/unit/core/NeighborGraphTests.cpp": {
@@ -1360,9 +1360,9 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1784511792.391051,
-    "ast_hash": "b3e0e3635af3a659fe463467d6ea7c3d",
-    "semantic_hash": "b3e0e3635af3a659fe463467d6ea7c3d"
+    "mtime": 1784743475.9719374,
+    "ast_hash": "f1a6508dd1e931c2c0ff721ecaf9375a",
+    "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
     "mtime": 1779775879.76199,
@@ -1370,9 +1370,9 @@
     "semantic_hash": "ac2365e53a1df768172acaffee1cec51"
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1784511658.487431,
-    "ast_hash": "694f342a46417165e27564153f169b98",
-    "semantic_hash": "694f342a46417165e27564153f169b98"
+    "mtime": 1784743394.6410742,
+    "ast_hash": "21bfdd2670558bdc083aea0d7df75870",
+    "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
     "mtime": 1781452691.9306989,
@@ -1577,6 +1577,61 @@
   ".agents/skills/sanitizer-validator.md": {
     "mtime": 1784601993.4074867,
     "ast_hash": "4d8f39349c3d8219c2f34f15c935aa12",
+    "semantic_hash": ""
+  },
+  ".obsidian/app.json": {
+    "mtime": 1784690229.3447256,
+    "ast_hash": "99914b932bd37a50b983c5e7c90ae93b",
+    "semantic_hash": ""
+  },
+  ".obsidian/appearance.json": {
+    "mtime": 1784690229.3457258,
+    "ast_hash": "99914b932bd37a50b983c5e7c90ae93b",
+    "semantic_hash": ""
+  },
+  ".obsidian/core-plugins.json": {
+    "mtime": 1784690228.9137352,
+    "ast_hash": "7c877bea49eaeabb100563bd157b9051",
+    "semantic_hash": ""
+  },
+  ".obsidian/workspace.json": {
+    "mtime": 1784690492.51933,
+    "ast_hash": "6c0f4bc998ae2ccdc9ddcca4d2805873",
+    "semantic_hash": ""
+  },
+  "include/calculators/GPUSteinhardtCalculator.hpp": {
+    "mtime": 1784743342.0962358,
+    "ast_hash": "8df4d6d8c58fca23a1e74f98ff8730a5",
+    "semantic_hash": ""
+  },
+  "include/calculators/MLIPCalculator.hpp": {
+    "mtime": 1784688312.3543618,
+    "ast_hash": "f4ffa60a36cc1bf655edaedfa655b405",
+    "semantic_hash": ""
+  },
+  "include/mlip/MLIPInterface.hpp": {
+    "mtime": 1784688299.7383482,
+    "ast_hash": "b5103d9387f9ebd402fecc9c9bfb119b",
+    "semantic_hash": ""
+  },
+  "src/calculators/GPUSteinhardtCalculator.cu": {
+    "mtime": 1784752672.4696739,
+    "ast_hash": "b643e8c56a0db0e87116e41adb078932",
+    "semantic_hash": ""
+  },
+  "src/calculators/MLIPCalculator.cpp": {
+    "mtime": 1784688267.5675619,
+    "ast_hash": "7022cd818b32d9f630bf17a3a8227054",
+    "semantic_hash": ""
+  },
+  "tests/unit/calculators/GPUSteinhardtCalculatorTests.cpp": {
+    "mtime": 1784743540.3236883,
+    "ast_hash": "f90918b163b9ac2f47b7b9751b681dc6",
+    "semantic_hash": ""
+  },
+  "tests/unit/calculators/MLIPCalculatorTests.cpp": {
+    "mtime": 1784688258.5517285,
+    "ast_hash": "be5b64a997422755ce08558d0a6def7d",
     "semantic_hash": ""
   }
 }

@@ -44,9 +44,33 @@ public:
   static std::map<std::string, correlation::analysis::Histogram>
   calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors);
 
+  /**
+   * @struct SphericalAngles
+   * @brief Spherical polar coordinates (theta, phi) for angular calculations.
+   */
   struct SphericalAngles {
-    real_t theta;
-    real_t phi;
+    real_t theta{0.0};
+    real_t phi{0.0};
+  };
+
+  /**
+   * @struct SingleAtomSteinhardt
+   * @brief Holds calculated Steinhardt order parameters for an individual atom.
+   */
+  struct SingleAtomSteinhardt {
+    real_t Q4{0.0};     ///< Q4 bond-orientational order parameter.
+    real_t Q6{0.0};     ///< Q6 bond-orientational order parameter.
+    real_t W6_hat{0.0}; ///< Normalized W6 bond-orientational order parameter.
+  };
+
+  /**
+   * @struct SteinhardtParams
+   * @brief Per-atom arrays of Steinhardt order parameters across an atomic configuration frame.
+   */
+  struct SteinhardtParams {
+    std::vector<real_t> Q4;     ///< Per-atom Q4 values.
+    std::vector<real_t> Q6;     ///< Per-atom Q6 values.
+    std::vector<real_t> W6_hat; ///< Per-atom W6_hat values.
   };
 
   /**
