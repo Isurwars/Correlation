@@ -70,6 +70,11 @@ if(NOT (BUILD_WITH_CUDA OR BUILD_WITH_HIP))
         calculators/GPUSteinhardtCalculator.cu
     )
 endif()
+target_sources(calculators_obj PRIVATE
+    calculators/gpu/SYCLUtils.cpp
+    calculators/gpu/SYCLDistanceCalculator.cpp
+    calculators/gpu/SYCLSQCalculator.cpp
+)
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )

@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "math/Precision.hpp"
+
 #include <algorithm>
 #include <array>
 #include <stdexcept>
@@ -32,14 +34,14 @@ namespace detail {
  */
 struct ElementData {
   std::string_view symbol; ///< Chemical symbol (e.g., "Si").
-  double radius;           ///< Covalent radius in Angstroms.
-  double mass;             ///< Atomic mass in atomic mass units (Da).
+  real_t radius;           ///< Covalent radius in Angstroms.
+  real_t mass;             ///< Atomic mass in atomic mass units (Da).
 
   /**
    * @brief 9 coefficients (a1, b1, a2, b2, a3, b3, a4, b4, c) for the
    * Cromer-Mann equation used to calculate atomic form factors f(q).
    */
-  std::array<double, 9> form_factors;
+  std::array<real_t, 9> form_factors;
 };
 
 /**
@@ -57,7 +59,7 @@ constexpr const ElementData *find(std::string_view symbol) noexcept;
  * @return The covalent radius in Angstroms.
  * @throws std::out_of_range if the element symbol is not found in the database.
  */
-inline double getCovalentRadius(std::string_view symbol) {
+inline real_t getCovalentRadius(std::string_view symbol) {
   const auto *data = detail::find(symbol);
   if (data == nullptr) {
     throw std::out_of_range(std::string("Covalent radius not found for element: ") + std::string(symbol));
@@ -72,7 +74,7 @@ inline double getCovalentRadius(std::string_view symbol) {
  * @return The atomic mass in atomic mass units (Da or g/mol).
  * @throws std::out_of_range if the element symbol is not found in the database.
  */
-inline double getAtomicMass(std::string_view symbol) {
+inline real_t getAtomicMass(std::string_view symbol) {
   const auto *data = detail::find(symbol);
   if (data == nullptr) {
     throw std::out_of_range(std::string("Atomic mass not found for element: ") + std::string(symbol));
@@ -90,7 +92,7 @@ inline double getAtomicMass(std::string_view symbol) {
  * @return A 9-element array containing the form factor coefficients.
  * @throws std::out_of_range if the element symbol is not found in the database.
  */
-inline const std::array<double, 9> &getAtomicFormFactors(std::string_view symbol) {
+inline const std::array<real_t, 9> &getAtomicFormFactors(std::string_view symbol) {
   const auto *data = detail::find(symbol);
   if (data == nullptr) {
     throw std::out_of_range(std::string("Atomic form factor not found for element: ") + std::string(symbol));

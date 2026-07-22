@@ -97,7 +97,7 @@ TEST(vDoSTests, IdealGasShowsImaginaryPeak) {
   auto max_real_it = std::ranges::max_element(intensities_real);
   size_t max_real_idx = std::distance(intensities_real.begin(), max_real_it);
 
-  EXPECT_NEAR(frequencies[max_real_idx], 0.0, correlation::is_single_precision ? 0.3 : 1e-6)
+  EXPECT_NEAR(frequencies[max_real_idx], 0.0, correlation::is_single_precision ? 0.5 : 1e-6)
       << "The real VDOS for an exponential decay should have its maximum at 0 THz.";
 
   // 2. The Imaginary part should peak at target_nu_peak

@@ -152,4 +152,17 @@ TEST_F(PrecisionTests, AccumulationPrecisionLoss) {
   EXPECT_TRUE(std::abs(sum_float - static_cast<float>(sum_expected)) > 1e-4F);
 }
 
+TEST_F(PrecisionTests, KahanAccumulatorPreservesPrecision) {
+  correlation::KahanAccumulator<float> kahan_sum{.sum = 1.0F, .compensation = 0.0F};
+  constexpr float delta = 1e-7F;
+  constexpr int n_iter = 1000000;
+
+  for (int i = 0; i < n_iter; ++i) {
+    kahan_sum.add(delta);
+  }
+
+  float const sum_expected = static_cast<float>(1.0 + n_iter * static_cast<double>(delta));
+  EXPECT_NEAR(kahan_sum.value(), sum_expected, 1e-6F);
+}
+
 } // namespace correlation::testing

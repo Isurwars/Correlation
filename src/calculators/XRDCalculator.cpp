@@ -114,11 +114,11 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
         continue;
       }
 
-      auto intensity_Q = real_t{0.0};
+      correlation::KahanAccumulator<real_t> intensity_Q;
 
       for (const auto &[sym, concentration] : concentrations) {
         auto const form_factor = getAtomicFormFactor(sym, q_value);
-        intensity_Q += static_cast<real_t>(concentration) * form_factor * form_factor;
+        intensity_Q.add(static_cast<real_t>(concentration) * form_factor * form_factor);
       }
 
       // Precompute sinqr once per theta step (angle bin)
@@ -134,11 +134,11 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
         real_t const form_factor_1 = getAtomicFormFactor(partial_xrd.sym1, q_value);
         real_t const form_factor_2 = getAtomicFormFactor(partial_xrd.sym2, q_value);
 
-        intensity_Q += static_cast<real_t>(form_factor_1 * form_factor_2 *
-                                           (correlation::math::four_pi * total_rho / q_value) * integral);
+        intensity_Q.add(static_cast<real_t>(form_factor_1 * form_factor_2 *
+                                            (correlation::math::four_pi * total_rho / q_value) * integral));
       }
 
-      intensities[i] = intensity_Q;
+      intensities[i] = intensity_Q.value();
     }
   });
 

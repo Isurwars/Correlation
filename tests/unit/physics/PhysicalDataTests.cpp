@@ -12,9 +12,9 @@ using namespace correlation::physics;
 
 TEST(PhysicalDataTests, GetCovalentRadiusCorrectly) {
   // Test valid elements
-  EXPECT_DOUBLE_EQ(getCovalentRadius("C"), 0.75);
-  EXPECT_DOUBLE_EQ(getCovalentRadius("Si"), 1.16);
-  EXPECT_DOUBLE_EQ(getCovalentRadius("O"), 0.63);
+  EXPECT_NEAR(getCovalentRadius("C"), 0.75, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getCovalentRadius("Si"), 1.16, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getCovalentRadius("O"), 0.63, correlation::is_single_precision ? 1e-4 : 1e-6);
 
   // Test invalid element throws
   EXPECT_THROW(getCovalentRadius("Xx"), std::out_of_range);
@@ -22,9 +22,9 @@ TEST(PhysicalDataTests, GetCovalentRadiusCorrectly) {
 
 TEST(PhysicalDataTests, GetAtomicMassCorrectly) {
   // Test valid elements
-  EXPECT_DOUBLE_EQ(getAtomicMass("H"), 1.008);
-  EXPECT_DOUBLE_EQ(getAtomicMass("Si"), 28.085);
-  EXPECT_DOUBLE_EQ(getAtomicMass("O"), 15.999);
+  EXPECT_NEAR(getAtomicMass("H"), 1.008, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getAtomicMass("Si"), 28.085, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getAtomicMass("O"), 15.999, correlation::is_single_precision ? 1e-4 : 1e-6);
 
   // Test invalid element throws
   EXPECT_THROW(getAtomicMass("Xx"), std::out_of_range);
@@ -34,8 +34,8 @@ TEST(PhysicalDataTests, GetAtomicFormFactorsCorrectly) {
   // Test valid element (Silicon)
   // Silicon: {5.275329, 2.631338, 3.191038, 33.730728, 1.511514, 0.081119, 1.356849, 86.288643, 0.145073}
   auto silicon_ff = getAtomicFormFactors("Si");
-  EXPECT_DOUBLE_EQ(silicon_ff[0], 5.275329);
-  EXPECT_DOUBLE_EQ(silicon_ff[8], 0.145073);
+  EXPECT_NEAR(silicon_ff[0], 5.275329, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(silicon_ff[8], 0.145073, correlation::is_single_precision ? 1e-4 : 1e-6);
 
   // Test invalid element throws
   EXPECT_THROW(getAtomicFormFactors("Xx"), std::out_of_range);

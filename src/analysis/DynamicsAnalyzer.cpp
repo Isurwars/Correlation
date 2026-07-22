@@ -9,6 +9,7 @@
 #include "math/Constants.hpp"
 #include "math/FFTUtils.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 #include "physics/PhysicalData.hpp"
 
 #include <algorithm>
@@ -34,7 +35,7 @@ std::pair<real_t, real_t> integrate_vdos_frequency(real_t theta, const std::vect
       real_t const term_real = val * std::cos(arg);
 
       if (frame_idx == 0 || frame_idx == num_frames - 1) {
-        integral_real += 0.5 * term_real;
+        integral_real += static_cast<real_t>(0.5) * term_real;
       } else {
         integral_real += term_real;
       }
@@ -46,9 +47,11 @@ std::pair<real_t, real_t> integrate_vdos_frequency(real_t theta, const std::vect
     real_t const sin_theta = std::sin(theta);
     real_t const cos_theta = std::cos(theta);
 
-    real_t const alpha = 1.0 / theta + sin_theta * cos_theta / theta2 - 2.0 * sin_theta * sin_theta / theta3;
-    real_t const beta = 2.0 * ((1.0 + cos_theta * cos_theta) / theta2 - 2.0 * sin_theta * cos_theta / theta3);
-    real_t const gamma = 4.0 * (sin_theta / theta3 - cos_theta / theta2);
+    real_t const alpha = static_cast<real_t>(1.0) / theta + sin_theta * cos_theta / theta2 -
+                         static_cast<real_t>(2.0) * sin_theta * sin_theta / theta3;
+    real_t const beta = static_cast<real_t>(2.0) * ((static_cast<real_t>(1.0) + cos_theta * cos_theta) / theta2 -
+                                                    static_cast<real_t>(2.0) * sin_theta * cos_theta / theta3);
+    real_t const gamma = static_cast<real_t>(4.0) * (sin_theta / theta3 - cos_theta / theta2);
 
     size_t two_N = (num_frames % 2 == 0) ? num_frames - 2 : num_frames - 1;
     two_N = std::max<size_t>(two_N, 0);
@@ -74,11 +77,13 @@ std::pair<real_t, real_t> integrate_vdos_frequency(real_t theta, const std::vect
       sum_even_sin += windowed_vacf[frame_idx] * std::sin(arg);
     }
 
-    real_t const even_cos_trapz = sum_even_cos + 0.5 * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N));
-    real_t const even_sin_trapz = sum_even_sin + 0.5 * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N));
+    real_t const even_cos_trapz =
+        static_cast<real_t>(sum_even_cos + static_cast<real_t>(0.5) * (f_0 * std::cos(0.0) + f_2N * std::cos(arg_2N)));
+    real_t const even_sin_trapz =
+        static_cast<real_t>(sum_even_sin + static_cast<real_t>(0.5) * (f_0 * std::sin(0.0) + f_2N * std::sin(arg_2N)));
 
     real_t const bound_cos = f_2N * std::sin(arg_2N);
-    real_t const bound_sin = f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N);
+    real_t const bound_sin = static_cast<real_t>(f_0 * std::cos(0.0) - f_2N * std::cos(arg_2N));
 
     integral_real = time_step * (alpha * bound_cos + beta * even_cos_trapz + gamma * sum_odd_cos);
     integral_imag = time_step * (alpha * bound_sin + beta * even_sin_trapz + gamma * sum_odd_sin);
@@ -90,15 +95,14 @@ std::pair<real_t, real_t> integrate_vdos_frequency(real_t theta, const std::vect
       real_t const arg1 = theta * static_cast<real_t>(num_frames - 2);
       real_t const arg2 = theta * static_cast<real_t>(num_frames - 1);
 
-      integral_real += 0.5 * time_step * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
-      integral_imag += 0.5 * time_step * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
+      integral_real += static_cast<real_t>(0.5) * time_step * (val1 * std::cos(arg1) + val2 * std::cos(arg2));
+      integral_imag += static_cast<real_t>(0.5) * time_step * (val1 * std::sin(arg1) + val2 * std::sin(arg2));
     }
   }
 
   return {integral_real, integral_imag};
 }
 } // namespace
-
 
 std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Trajectory &traj,
                                                     MaxFrames max_correlation_frames_arg, StartFrame start_frame_arg,
@@ -205,7 +209,7 @@ std::vector<real_t> DynamicsAnalyzer::calculateVACF(const correlation::core::Tra
   // Normalize by number of time origins and number of atoms
   for (int lag = 0; lag <= max_correlation_frames; ++lag) {
     if (counts[lag] > 0) {
-      vacf[lag] /= (counts[lag] * static_cast<real_t>(num_atoms));
+      vacf[lag] /= (static_cast<real_t>(counts[lag]) * static_cast<real_t>(num_atoms));
     }
   }
 
@@ -250,7 +254,9 @@ std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
   std::vector<std::vector<correlation::math::Vector3<real_t>>> unwrapped(
       num_atoms, std::vector<correlation::math::Vector3<real_t>>(num_frames, {0.0, 0.0, 0.0}));
 
-  std::vector<correlation::math::Vector3<real_t>> compensation(num_atoms, {0.0, 0.0, 0.0});
+  std::vector<correlation::KahanAccumulator<real_t>> kahan_x(num_atoms);
+  std::vector<correlation::KahanAccumulator<real_t>> kahan_y(num_atoms);
+  std::vector<correlation::KahanAccumulator<real_t>> kahan_z(num_atoms);
 
   for (size_t frame_idx = 1; frame_idx < num_frames; ++frame_idx) {
     const size_t traj_frame = start_frame + frame_idx;
@@ -268,22 +274,12 @@ std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
       // Apply minimum image convention for correct unwrapping across PBC.
       const math::Vector3<real_t> min_delta_r = use_pbc ? frames[traj_frame].minimumImage(delta_r) : delta_r;
 
-      // Kahan compensated summation component-wise
-      const math::Vector3<real_t> prev_unwrapped = unwrapped[atom_idx][frame_idx - 1];
+      kahan_x[atom_idx].add(min_delta_r.x());
+      kahan_y[atom_idx].add(min_delta_r.y());
+      kahan_z[atom_idx].add(min_delta_r.z());
 
-      real_t const y_x = min_delta_r.x() - compensation[atom_idx].x();
-      real_t const t_x = prev_unwrapped.x() + y_x;
-      compensation[atom_idx].x() = (t_x - prev_unwrapped.x()) - y_x;
-
-      real_t const y_y = min_delta_r.y() - compensation[atom_idx].y();
-      real_t const t_y = prev_unwrapped.y() + y_y;
-      compensation[atom_idx].y() = (t_y - prev_unwrapped.y()) - y_y;
-
-      real_t const y_z = min_delta_r.z() - compensation[atom_idx].z();
-      real_t const t_z = prev_unwrapped.z() + y_z;
-      compensation[atom_idx].z() = (t_z - prev_unwrapped.z()) - y_z;
-
-      unwrapped[atom_idx][frame_idx] = {t_x, t_y, t_z};
+      unwrapped[atom_idx][frame_idx] = {kahan_x[atom_idx].value(), kahan_y[atom_idx].value(),
+                                        kahan_z[atom_idx].value()};
     }
   }
 
@@ -326,14 +322,14 @@ std::vector<real_t> DynamicsAnalyzer::calculateMSD(const correlation::core::Traj
     auto S2_z = correlation::math::autocorrelate(pos_z, workspace);
 
     std::vector<real_t> sum_S1(max_correlation_frames + 1, 0.0);
-    sum_S1[0] = 2.0 * std::accumulate(r_sq.begin(), r_sq.end(), 0.0);
+    sum_S1[0] = static_cast<real_t>(static_cast<real_t>(2.0) * std::accumulate(r_sq.begin(), r_sq.end(), 0.0));
     for (int lag_idx = 1; lag_idx <= max_correlation_frames; ++lag_idx) {
       sum_S1[lag_idx] = sum_S1[lag_idx - 1] - r_sq[lag_idx - 1] - r_sq[num_frames - lag_idx];
     }
 
     for (int lag = 1; lag <= max_correlation_frames; ++lag) {
       real_t const sum_S2 = S2_x[lag] + S2_y[lag] + S2_z[lag];
-      local_msd[lag] += (sum_S1[lag] - 2.0 * sum_S2);
+      local_msd[lag] += (sum_S1[lag] - static_cast<real_t>(2.0) * sum_S2);
     }
   });
 
@@ -361,7 +357,7 @@ std::vector<real_t> DynamicsAnalyzer::calculateNormalizedVACF(const correlation:
                                                               EndFrame end_frame) {
   std::vector<real_t> vacf = calculateVACF(traj, max_correlation_frames, start_frame, end_frame);
   if (!vacf.empty() && vacf[0] != 0.0) {
-    real_t const normalization_factor = 1.0 / vacf[0];
+    real_t const normalization_factor = static_cast<real_t>(1.0) / vacf[0];
     for (real_t &val : vacf) {
       val *= normalization_factor;
     }
@@ -384,7 +380,7 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
   // ~3000 cm^-1 time_step is in fs. 1 fs = 10^-15 s. 1 THz = 10^12 Hz. Nyquist freq in
   // THz = 1 / (2 * time_step * 10^-15) * 10^-12 = 1000 / (2 * time_step)
 
-  real_t nyquist_thz = 1000.0 / (2.0 * time_step);
+  real_t nyquist_thz = static_cast<real_t>(1000.0) / (static_cast<real_t>(2.0) * time_step);
 
   // Number of frequency points. Let's make it high resolution.
   size_t const num_freq_points = 2000;
@@ -398,10 +394,10 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
   std::vector<real_t> windowed_vacf(num_frames);
   // Define standard deviation for the Gaussian window (e.g., stopping at 3
   // sigma at t_max)
-  real_t const sigma = t_max >= 1e-6 ? t_max / 3.0 : 1.0;
+  real_t const sigma = t_max >= 1e-6 ? t_max / static_cast<real_t>(3.0) : static_cast<real_t>(1.0);
   for (size_t frame_idx = 0; frame_idx < num_frames; ++frame_idx) {
     real_t const time_val = static_cast<real_t>(frame_idx) * time_step;
-    real_t const window = std::exp(-0.5 * std::pow(time_val / sigma, 2.0));
+    real_t const window = std::exp(-static_cast<real_t>(0.5) * std::pow(time_val / sigma, static_cast<real_t>(2.0)));
     windowed_vacf[frame_idx] = vacf[frame_idx] * window;
   }
 
@@ -414,11 +410,13 @@ DynamicsAnalyzer::calculateVDOS(const std::vector<real_t> &vacf, real_t time_ste
 
     // $\omega = 2 * \pi * \nu * 0.001$ (to handle THz to fs
     // scale)
-    real_t const theta = correlation::math::two_pi * freq_val * time_step * 0.001;
+    real_t const theta = correlation::math::two_pi * freq_val * time_step * static_cast<real_t>(0.001);
 
     auto [integral_real, integral_imag] = integrate_vdos_frequency(theta, windowed_vacf, time_step);
 
-    real_t const damping = std::exp(-0.5 * std::pow(freq_val / (0.5 * nyquist_thz), 2.0));
+    real_t const damping =
+        std::exp(-static_cast<real_t>(0.5) *
+                 std::pow(freq_val / (static_cast<real_t>(0.5) * nyquist_thz), static_cast<real_t>(2.0)));
     intensities_real[freq_idx] = integral_real * damping;
     intensities_imag[freq_idx] = integral_imag * damping;
   });
@@ -462,7 +460,7 @@ real_t DynamicsAnalyzer::computeDiffusionCoefficientMSD(const std::vector<real_t
     return 0.0; // Self-diffusion coefficient cannot be negative
   }
   // D = slope / 6.0
-  return slope / 6.0;
+  return slope / static_cast<real_t>(6.0);
 }
 
 real_t DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<real_t> &time,
@@ -476,13 +474,13 @@ real_t DynamicsAnalyzer::computeDiffusionCoefficientVACF(const std::vector<real_
     if (dt_step <= 0.0) {
       return 0.0; // Time must be strictly increasing
     }
-    integral += 0.5 * (vacf[time_idx] + vacf[time_idx + 1]) * dt_step;
+    integral += static_cast<real_t>(0.5) * (vacf[time_idx] + vacf[time_idx + 1]) * dt_step;
   }
   if (integral < 0.0) {
     return 0.0; // Self-diffusion coefficient cannot be negative
   }
   // Green-Kubo: D = 1/3 * integral
-  return integral / 3.0;
+  return integral / static_cast<real_t>(3.0);
 }
 
 real_t DynamicsAnalyzer::computeRelaxationTime(const std::vector<real_t> &time,
@@ -496,7 +494,7 @@ real_t DynamicsAnalyzer::computeRelaxationTime(const std::vector<real_t> &time,
     if (dt_step <= 0.0) {
       return 0.0; // Time must be strictly increasing
     }
-    integral += 0.5 * (normalized_vacf[time_idx] + normalized_vacf[time_idx + 1]) * dt_step;
+    integral += static_cast<real_t>(0.5) * (normalized_vacf[time_idx] + normalized_vacf[time_idx + 1]) * dt_step;
   }
   if (integral < 0.0) {
     return 0.0; // Relaxation time must be non-negative
