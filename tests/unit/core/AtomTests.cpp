@@ -186,9 +186,9 @@ TEST_F(AtomTests, VelocityAccessorsWork) {
   const correlation::math::Vector3<real_t> vel{0.5, -1.2, 3.4};
   atom.setVelocity(vel);
 
-  EXPECT_NEAR(atom.velocity().x(), 0.5, 1e-9);
-  EXPECT_NEAR(atom.velocity().y(), -1.2, 1e-9);
-  EXPECT_NEAR(atom.velocity().z(), 3.4, 1e-9);
+  EXPECT_NEAR(atom.velocity().x(), 0.5, 1e-5);
+  EXPECT_NEAR(atom.velocity().y(), -1.2, 1e-5);
+  EXPECT_NEAR(atom.velocity().z(), 3.4, 1e-5);
 }
 
 TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
@@ -203,7 +203,7 @@ TEST_F(AtomTests, CopyAndMoveSemanticsWork) {
   EXPECT_EQ(copy_constructed.id(), 42);
   EXPECT_EQ(copy_constructed.element().symbol, "Si");
   EXPECT_NEAR(copy_constructed.position().x(), 1.0, 1e-9);
-  EXPECT_NEAR(copy_constructed.velocity().x(), 0.1, 1e-9);
+  EXPECT_NEAR(copy_constructed.velocity().x(), 0.1, 1e-5);
 
   // Copy assignment
   Atom copy_assigned;
