@@ -54,6 +54,7 @@ add_library(calculators_obj OBJECT
     calculators/LocalEntropyCalculator.cpp
     calculators/VoronoiCalculator.cpp
     calculators/HyperuniformityCalculator.cpp
+    calculators/MLIPCalculator.cpp
 )
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include

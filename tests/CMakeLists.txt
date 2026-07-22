@@ -54,6 +54,7 @@ add_executable(correlation_unit_tests
     unit/calculators/VoronoiCalculatorTests.cpp
     unit/calculators/ChiralityCalculatorTests.cpp
     unit/calculators/HyperuniformityCalculatorTests.cpp
+    unit/calculators/MLIPCalculatorTests.cpp
     unit/physics/PhysicalDataTests.cpp
     unit/calculators/AngleCalculatorTests.cpp
     unit/calculators/CNCalculatorTests.cpp
