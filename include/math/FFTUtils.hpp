@@ -250,7 +250,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  *                  loops) to avoid repeated heap allocation.
  * @return Autocorrelation array of length n.
  */
-template <typename T = double>
+template <typename T = real_t>
 inline std::vector<T> autocorrelate(const std::vector<T> &signal,
                                     std::vector<std::complex<T>> &workspace) {
   const size_t size = signal.size();
@@ -299,7 +299,7 @@ inline std::vector<T> autocorrelate(const std::vector<T> &signal,
  * @param signal Input signal vector.
  * @return The autocorrelation vector.
  */
-template <typename T = double>
+template <typename T = real_t>
 inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
   std::vector<std::complex<T>> workspace;
   return autocorrelate(signal, workspace);

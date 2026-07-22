@@ -14,6 +14,7 @@
 #pragma once
 
 #include "analysis/DistributionFunctions.hpp"
+#include "math/Precision.hpp"
 #include "plotters/PathFont.hpp"
 
 #include <algorithm>
@@ -192,10 +193,10 @@ struct DataRange {
  * @brief Logic for generating "nice" human-readable tick intervals.
  */
 struct NiceScale {
-  double min = 0.0;          ///< Starting tick value.
-  double max = 0.0;          ///< Ending tick value.
-  double spacing = 0.0;      ///< Calculated distance between ticks.
-  std::vector<double> ticks; ///< Generated tick locations.
+  real_t min = static_cast<real_t>(0.0);     ///< Starting tick value.
+  real_t max = static_cast<real_t>(0.0);     ///< Ending tick value.
+  real_t spacing = static_cast<real_t>(0.0); ///< Calculated distance between ticks.
+  std::vector<real_t> ticks;                 ///< Generated tick locations.
 
   NiceScale() = default;
 
@@ -205,23 +206,23 @@ struct NiceScale {
    * @param max_ticks Target number of ticks.
    */
   explicit NiceScale(const DataRange &range, int max_ticks = 6) {
-    double actual_min = range.min;
-    double actual_max = range.max;
+    real_t actual_min = range.min;
+    real_t actual_max = range.max;
     if (std::abs(actual_max - actual_min) < 1e-12) {
-      min = actual_min - 0.5;
-      max = actual_min + 0.5;
-      spacing = 0.1;
+      min = actual_min - static_cast<real_t>(0.5);
+      max = actual_min + static_cast<real_t>(0.5);
+      spacing = static_cast<real_t>(0.1);
     } else {
-      double range_val = niceNum(actual_max - actual_min, false);
+      real_t range_val = niceNum(actual_max - actual_min, false);
       spacing = niceNum(range_val / (max_ticks - 1), true);
       min = std::floor(actual_min / spacing) * spacing;
       max = std::ceil(actual_max / spacing) * spacing;
     }
 
-    double range_span = max - min;
+    real_t range_span = max - min;
     int num_ticks = static_cast<int>(std::round(range_span / spacing)) + 1;
     for (int idx = 0; idx < num_ticks; ++idx) {
-      double value = min + idx * spacing;
+      real_t value = min + static_cast<real_t>(idx) * spacing;
       ticks.push_back(value);
     }
   }
@@ -525,7 +526,7 @@ struct SvgHistogramRenderer {
   }
 
   void drawEmphasisLines() {
-    std::vector<double> emphasis_values;
+    std::vector<real_t> emphasis_values;
     if (title.contains("g(r)")) {
       emphasis_values.push_back(1.0);
     } else if (title.contains("G(r)")) {

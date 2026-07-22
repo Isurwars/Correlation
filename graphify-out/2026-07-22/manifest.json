@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "include/core/GPUPortability.hpp": {
-    "mtime": 1784751876.653128,
-    "ast_hash": "1e33c5925d56e7b605b65c7e87842eff",
+    "mtime": 1784758000.0090234,
+    "ast_hash": "a48b0187f8e1192332985106c08c6d9d",
     "semantic_hash": ""
   },
   "include/core/MappedFile.hpp": {
@@ -240,8 +240,8 @@
     "semantic_hash": ""
   },
   "include/math/FFTUtils.hpp": {
-    "mtime": 1784581421.4772246,
-    "ast_hash": "30caabbaf4bbc56da568153933ac54e6",
+    "mtime": 1784761060.2089286,
+    "ast_hash": "c470a8ef84290b829f91bf9867aba646",
     "semantic_hash": ""
   },
   "include/math/LinearAlgebra.hpp": {
@@ -615,8 +615,8 @@
     "semantic_hash": ""
   },
   "src/calculators/GPUSQCalculator.cu": {
-    "mtime": 1784753784.096046,
-    "ast_hash": "71f197595079d697b9de167fcb55da68",
+    "mtime": 1784758041.2693276,
+    "ast_hash": "b9da25901e934a9660ff02fe383b4e4e",
     "semantic_hash": ""
   },
   "src/calculators/HBondCalculator.cpp": {
@@ -1370,8 +1370,8 @@
     "semantic_hash": "ac2365e53a1df768172acaffee1cec51"
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1784756625.850239,
-    "ast_hash": "c46d7c64a930ab93ae0186b50134adb4",
+    "mtime": 1784761101.3814564,
+    "ast_hash": "29efdbc1d76f815292781402ac865cd0",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {

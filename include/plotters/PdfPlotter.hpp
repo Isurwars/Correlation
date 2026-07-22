@@ -254,7 +254,7 @@ struct PdfHistogramRenderer {
   }
 
   void drawEmphasisLines() const {
-    std::vector<double> emphasis_values;
+    std::vector<real_t> emphasis_values;
     std::string title_str = hist->title;
     if (title_str.contains("g(r)")) {
       emphasis_values.push_back(1.0);
