@@ -1640,8 +1640,8 @@
     "semantic_hash": ""
   },
   "include/calculators/gpu/SYCLSQCalculator.hpp": {
-    "mtime": 1784757723.7446861,
-    "ast_hash": "f8d445eaaf2d610438b64a95ef3c7de1",
+    "mtime": 1784757794.8874846,
+    "ast_hash": "a5cdeeba46093933fb6a84d58cb90806",
     "semantic_hash": ""
   },
   "include/calculators/gpu/SYCLUtils.hpp": {
@@ -1655,8 +1655,8 @@
     "semantic_hash": ""
   },
   "src/calculators/gpu/SYCLSQCalculator.cpp": {
-    "mtime": 1784757744.5975866,
-    "ast_hash": "0a231985f0618f9cd584727d2c3f888e",
+    "mtime": 1784757805.3583078,
+    "ast_hash": "ad9ccf24a7f849a59b80341fbcde9e59",
     "semantic_hash": ""
   },
   "src/calculators/gpu/SYCLUtils.cpp": {
@@ -1675,8 +1675,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/SYCLCalculatorTests.cpp": {
-    "mtime": 1784756665.3267653,
-    "ast_hash": "9077713613bc1581d1e79bdc2f8ad3f5",
+    "mtime": 1784757814.880147,
+    "ast_hash": "c529fec54f3d13a42c78c5a131184dea",
     "semantic_hash": ""
   }
 }

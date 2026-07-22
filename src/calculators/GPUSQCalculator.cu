@@ -51,14 +51,32 @@ template <typename T> struct DeviceResults {
   T *__restrict__ rho_sin;
 };
 
-template <typename T> __device__ inline void gpu_sincos(T val, T *sin_val, T *cos_val);
+template <typename T> __device__ __host__ inline void gpu_sincos(T val, T *sin_val, T *cos_val);
 
-template <> __device__ inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
-  sincosf(val, sin_val, cos_val);
+template <> __device__ __host__ inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
+#if defined(__CUDA_ARCH__)
+  __sincosf(val, sin_val, cos_val);
+#elif defined(__HIP_DEVICE_COMPILE__)
+  ::sincosf(val, sin_val, cos_val);
+#elif defined(_GNU_SOURCE) || defined(__USE_GNU)
+  ::sincosf(val, sin_val, cos_val);
+#else
+  *sin_val = std::sin(val);
+  *cos_val = std::cos(val);
+#endif
 }
 
-template <> __device__ inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
-  sincos(val, sin_val, cos_val);
+template <> __device__ __host__ inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
+#if defined(__CUDA_ARCH__)
+  __sincos(val, sin_val, cos_val);
+#elif defined(__HIP_DEVICE_COMPILE__)
+  ::sincos(val, sin_val, cos_val);
+#elif defined(_GNU_SOURCE) || defined(__USE_GNU)
+  ::sincos(val, sin_val, cos_val);
+#else
+  *sin_val = std::sin(val);
+  *cos_val = std::cos(val);
+#endif
 }
 
 template <typename T> QVectorsData<T> generateQVectors(const correlation::core::Cell &cell, T q_max) {

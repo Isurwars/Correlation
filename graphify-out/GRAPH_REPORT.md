@@ -1,7 +1,7 @@
 # Graph Report - Correlation  (2026-07-22)
 
 ## Corpus Check
-- 299 files · ~5,130,133 words
+- 299 files · ~5,130,185 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f417d34d`
+- Built from commit: `b1727388`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -765,8 +765,8 @@ Cohesion: 0.17
 Nodes (10): LoadAllSorting, MalformedJsonHandling, MissingKeysFallback, PresetNameSanitization, RoundTripSerialization, SaveAndLoadAll, SerializationWithSpecialCharacters, testing::Test (+2 more)
 
 ### Community 110 - "StructureFactorCalculator.cpp"
-Cohesion: 0.11
-Nodes (34): LocalAccumulatorTuple, buildPartialsInfo(), combineAccumulators(), computeReciprocalBasis(), enumerable_thread_specific, map, real_t, string (+26 more)
+Cohesion: 0.13
+Nodes (31): LocalAccumulatorTuple, buildPartialsInfo(), buildTypeBlocks(), combineAccumulators(), computeReciprocalBasis(), CoordinateArrays, x, y (+23 more)
 
 ### Community 111 - "CellReader.cpp"
 Cohesion: 0.31
@@ -1193,8 +1193,8 @@ Cohesion: 0.47
 Nodes (3): string, vector, MockWriter
 
 ### Community 267 - "CarReader.cpp"
-Cohesion: 0.60
-Nodes (5): buildTypeBlocks(), CoordinateArrays, x, y, z
+Cohesion: 0.25
+Nodes (8): PartialInfo, is_identical, key, N_A, N_B, typeA_idx, typeB_idx, weight
 
 ### Community 269 - "FileReaderTests"
 Cohesion: 0.38
