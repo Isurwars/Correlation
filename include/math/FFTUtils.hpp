@@ -217,9 +217,9 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
     }
   }
 
-  // Cooley-Tukey with precomputed twiddle basics
+  constexpr double double_two_pi = 6.283185307179586476925286766559005768;
   for (size_t len = 2; len <= size; len <<= 1) {
-    double angle = correlation::math::two_pi / static_cast<double>(len) * (invert ? -1 : 1);
+    double angle = double_two_pi / static_cast<double>(len) * (invert ? -1 : 1);
     std::complex<double> wlen(std::cos(angle), std::sin(angle));
     for (size_t i = 0; i < size; i += len) {
       std::complex<double> twiddle(1.0, 0.0);
