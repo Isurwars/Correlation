@@ -344,8 +344,8 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
   hipFree(d_q6);
 
   size_t const bins_Q = 100;
-  double const Q_max = 1.0;
-  double const d_q = Q_max / static_cast<double>(bins_Q);
+  T const Q_max = static_cast<T>(1.0);
+  T const d_q = Q_max / static_cast<T>(bins_Q);
 
   correlation::analysis::Histogram hist_Q4;
   hist_Q4.x_label = "Q4";
@@ -370,20 +370,20 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
   std::vector<real_t> q6_bins(bins_Q, static_cast<real_t>(0.0));
 
   for (size_t bin_idx = 0; bin_idx < bins_Q; ++bin_idx) {
-    *(hist_Q4.bins.data() + bin_idx) = static_cast<real_t>((static_cast<double>(bin_idx) + 0.5) * d_q);
-    *(hist_Q6.bins.data() + bin_idx) = static_cast<real_t>((static_cast<double>(bin_idx) + 0.5) * d_q);
+    *(hist_Q4.bins.data() + bin_idx) = static_cast<real_t>((static_cast<T>(bin_idx) + static_cast<T>(0.5)) * d_q);
+    *(hist_Q6.bins.data() + bin_idx) = static_cast<real_t>((static_cast<T>(bin_idx) + static_cast<T>(0.5)) * d_q);
   }
 
   for (size_t i = 0; i < num_atoms; ++i) {
-    double const q4_val = static_cast<double>(*(h_q4.data() + i));
-    double const q6_val = static_cast<double>(*(h_q6.data() + i));
-    if (q4_val >= 0.0 && q4_val < Q_max) {
+    T const q4_val = *(h_q4.data() + i);
+    T const q6_val = *(h_q6.data() + i);
+    if (q4_val >= static_cast<T>(0.0) && q4_val < Q_max) {
       auto bin = static_cast<size_t>(q4_val / d_q);
       if (bin < bins_Q) {
         *(q4_bins.data() + bin) += static_cast<real_t>(1.0);
       }
     }
-    if (q6_val >= 0.0 && q6_val < Q_max) {
+    if (q6_val >= static_cast<T>(0.0) && q6_val < Q_max) {
       auto bin = static_cast<size_t>(q6_val / d_q);
       if (bin < bins_Q) {
         *(q6_bins.data() + bin) += static_cast<real_t>(1.0);
