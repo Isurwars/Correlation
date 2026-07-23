@@ -5,15 +5,20 @@
 
 #include <array>
 #include <cstdio>
-#include <cstdlib>
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <sstream>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #ifdef _WIN32
-#define popen _popen
-#define pclose _pclose
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <unistd.h>
 #endif
 
 namespace {
@@ -47,39 +52,171 @@ std::string getTestDataDir() {
 // Run a shell command and return its exit code.
 int runCli(const std::string &args) {
 #ifdef _WIN32
-  std::string cmd = std::string(CLI_BIN) + " " + args + " 2>nul";
-#else
-  std::string const cmd = std::string(CLI_BIN) + " " + args + " 2>/dev/null";
-#endif
-  // NOLINTNEXTLINE(cert-env33-c)
-  int const status = std::system(cmd.c_str());
+  std::string cmd = std::string(CLI_BIN) + " " + args;
 
-#ifdef _WIN32
-  return status;
-#else
-  return WEXITSTATUS(status);
+  STARTUPINFOA si = {sizeof(STARTUPINFOA)};
+  PROCESS_INFORMATION pi = {};
+
+  si.dwFlags = STARTF_USESTDHANDLES;
+  si.hStdError = nullptr;
+
+  if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi) == 0) {
+    return -1;
+  }
+
+  WaitForSingleObject(pi.hProcess, INFINITE);
+  DWORD exitCode = 0;
+  GetExitCodeProcess(pi.hProcess, &exitCode);
+
+  CloseHandle(pi.hProcess);
+  CloseHandle(pi.hThread);
+  return static_cast<int>(exitCode);
+
+#else // POSIX (Linux / macOS)
+  pid_t const pid = fork();
+  if (pid == 0) {
+    // Child Process: Redirect stderr to /dev/null safely without shell invocation
+    int const dev_null = open("/dev/null", O_WRONLY, 0);
+    if (dev_null != -1) {
+      dup2(dev_null, STDERR_FILENO);
+      close(dev_null);
+    }
+
+    std::vector<std::string> tokens;
+    tokens.emplace_back(CLI_BIN);
+
+    std::istringstream iss(args);
+    std::string token;
+    while (iss >> token) {
+      tokens.push_back(token);
+    }
+
+    std::vector<char *> argv;
+    argv.reserve(tokens.size() + 1);
+    for (auto &tokenRef : tokens) {
+      argv.push_back(tokenRef.data());
+    }
+    argv.push_back(nullptr);
+
+    execv(std::string(CLI_BIN).c_str(), argv.data());
+    _exit(127); // Exit child if execv fails
+  }
+
+  if (pid > 0) {
+    int status = 0;
+    waitpid(pid, &status, 0);
+    return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+  }
+
+  return -1;
 #endif
 }
 
 // Run a shell command and capture its stdout.
 std::string runCliCapture(const std::string &args) {
 #ifdef _WIN32
-  std::string cmd = std::string(CLI_BIN) + " " + args + " 2>nul";
-#else
-  std::string const cmd = std::string(CLI_BIN) + " " + args + " 2>/dev/null";
-#endif
-  std::array<char, 512> buffer{};
-  std::string result;
-  // NOLINTNEXTLINE(cert-env33-c)
-  FILE *pipe = popen(cmd.c_str(), "r");
-  if (pipe == nullptr) {
+  std::string cmd = std::string(CLI_BIN) + " " + args;
+
+  SECURITY_ATTRIBUTES saAttr{};
+  saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+  saAttr.bInheritHandle = TRUE;
+
+  HANDLE hReadPipe = nullptr;
+  HANDLE hWritePipe = nullptr;
+  if (CreatePipe(&hReadPipe, &hWritePipe, &saAttr, 0) == 0) {
     return "";
   }
-  while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe) != nullptr) {
-    result += buffer.data();
+  SetHandleInformation(hReadPipe, HANDLE_INHERIT, 0);
+
+  STARTUPINFOA si{};
+  si.cb = sizeof(STARTUPINFOA);
+  si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW;
+  si.hStdOutput = hWritePipe;
+  si.hStdError = nullptr;
+  si.wShowWindow = SW_HIDE;
+
+  PROCESS_INFORMATION pi{};
+  if (CreateProcessA(nullptr, cmd.data(), nullptr, nullptr, TRUE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi) == 0) {
+    CloseHandle(hReadPipe);
+    CloseHandle(hWritePipe);
+    return "";
   }
-  pclose(pipe);
+
+  CloseHandle(hWritePipe);
+
+  std::string result;
+  std::array<char, 512> buffer{};
+  DWORD bytesRead = 0;
+
+  while (ReadFile(hReadPipe, buffer.data(), static_cast<DWORD>(buffer.size()), &bytesRead, nullptr) != 0 &&
+         bytesRead > 0) {
+    result.append(buffer.data(), bytesRead);
+  }
+
+  CloseHandle(hReadPipe);
+  CloseHandle(pi.hProcess);
+  CloseHandle(pi.hThread);
   return result;
+
+#else // POSIX (Linux / macOS)
+  std::array<int, 2> pipefd{};
+  if (pipe(pipefd.data()) == -1) {
+    return "";
+  }
+
+  pid_t const pid = fork();
+  if (pid == -1) {
+    close(pipefd[0]);
+    close(pipefd[1]);
+    return "";
+  }
+
+  if (pid == 0) {
+    dup2(pipefd[1], STDOUT_FILENO);
+    close(pipefd[0]);
+    close(pipefd[1]);
+
+    int const dev_null = open("/dev/null", O_WRONLY, 0);
+    if (dev_null != -1) {
+      dup2(dev_null, STDERR_FILENO);
+      close(dev_null);
+    }
+
+    std::vector<std::string> tokens;
+    tokens.emplace_back(CLI_BIN);
+
+    std::istringstream iss(args);
+    std::string token;
+    while (iss >> token) {
+      tokens.push_back(token);
+    }
+
+    std::vector<char *> argv;
+    argv.reserve(tokens.size() + 1);
+    for (auto &tokenRef : tokens) {
+      argv.push_back(tokenRef.data());
+    }
+    argv.push_back(nullptr);
+
+    execv(std::string(CLI_BIN).c_str(), argv.data());
+    _exit(127);
+  }
+
+  close(pipefd[1]);
+
+  std::string result;
+  std::array<char, 512> buffer{};
+  ssize_t bytesRead = 0;
+
+  while ((bytesRead = read(pipefd[0], buffer.data(), buffer.size())) > 0) {
+    result.append(buffer.data(), static_cast<size_t>(bytesRead));
+  }
+
+  close(pipefd[0]);
+  int status = 0;
+  waitpid(pid, &status, 0);
+  return result;
+#endif
 }
 
 class CliEndToEndTests : public ::testing::Test {

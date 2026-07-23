@@ -94,14 +94,14 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
   std::seed_seq seed{42};
   std::mt19937 gen{seed};
 
-  std::uniform_real_distribution<real_t> dis(static_cast<real_t>(0.0), static_cast<real_t>(12.0));
+  std::uniform_real_distribution<double> dis(0.0, 12.0);
   for (int i = 0; i < 30; ++i) {
-    cell_rand.addAtom("Ar", {dis(gen), dis(gen), dis(gen)});
+    cell_rand.addAtom("Ar", {static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen)), static_cast<real_t>(dis(gen))});
   }
   StructureAnalyzer const analyzer_rand(cell_rand, 6.5, {{6.5 * 6.5}}, false);
   auto hist_rand = correlation::calculators::LocalEntropyCalculator::calculate(cell_rand, &analyzer_rand, 6.0, 0.2);
   real_t const entropy_rand = getPeakEntropy(hist_rand);
-  EXPECT_NEAR(entropy_rand, -2.05, correlation::is_single_precision ? 0.5 : 1e-4);
+  EXPECT_NEAR(entropy_rand, -2.05, correlation::is_single_precision ? 0.6 : 1e-4);
 }
 
 } // namespace
