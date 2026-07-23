@@ -105,7 +105,6 @@ correlation::analysis::Histogram CNCalculator::calculate(const correlation::core
   cn_histogram.file_suffix = "_CN";
 
   cn_histogram.bins.resize(num_bins);
-  // NOLINTNEXTLINE(modernize-use-ranges)
   std::iota(cn_histogram.bins.begin(), cn_histogram.bins.end(), static_cast<real_t>(0));
 
   for (auto &[key, dist_vector] : partial_dists) {

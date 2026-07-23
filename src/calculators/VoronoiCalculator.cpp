@@ -27,7 +27,6 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<VoronoiCalculator>("VoronoiCalculator");
 
 /**
@@ -57,7 +56,8 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   size_t face_i = 0;
   while (v_idx < face_verts.size()) {
     int const num_face_vertices = face_verts[v_idx];
-    real_t const area = (face_i < face_areas_double.size()) ? static_cast<real_t>(face_areas_double[face_i]) : static_cast<real_t>(0.0);
+    real_t const area =
+        (face_i < face_areas_double.size()) ? static_cast<real_t>(face_areas_double[face_i]) : static_cast<real_t>(0.0);
     face_i++;
 
     if (area < min_face_area) {

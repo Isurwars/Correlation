@@ -20,7 +20,7 @@
 namespace correlation::calculators {
 
 namespace {
-// NOLINTNEXTLINE(cert-err58-cpp)
+
 const bool registered = CalculatorFactory::registerTypeSafe<GPUSteinhardtCalculator>("GPUSteinhardtCalculator");
 
 template <typename T> struct GPUPoint {

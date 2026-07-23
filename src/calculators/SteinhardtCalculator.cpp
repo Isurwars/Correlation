@@ -25,7 +25,6 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<SteinhardtCalculator>("SteinhardtCalculator");
 
 using SteinhardtParams = SteinhardtCalculator::SteinhardtParams;
@@ -102,7 +101,8 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
       continue;
     }
 
-    real_t const theta = std::acos(std::clamp(r_ij.z() / distance, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
+    real_t const theta =
+        std::acos(std::clamp(r_ij.z() / distance, static_cast<real_t>(-1.0), static_cast<real_t>(1.0)));
     real_t const phi = std::atan2(r_ij.y(), r_ij.x());
 
     for (int m_val = -4; m_val <= 4; ++m_val) {
@@ -301,16 +301,15 @@ real_t SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_o
     return 0.0;
   }
 
-  real_t delta = static_cast<real_t>(correlation::math::factorial(j_one + j_two - j_three) *
-                                     correlation::math::factorial(j_one - j_two + j_three) *
-                                     correlation::math::factorial(-j_one + j_two + j_three) /
-                                     correlation::math::factorial(j_one + j_two + j_three + 1));
+  real_t delta =
+      (correlation::math::factorial(j_one + j_two - j_three) * correlation::math::factorial(j_one - j_two + j_three) *
+       correlation::math::factorial(-j_one + j_two + j_three) /
+       correlation::math::factorial(j_one + j_two + j_three + 1));
   delta = std::sqrt(delta);
 
-  real_t comp = static_cast<real_t>(
-      correlation::math::factorial(j_one - m_one) * correlation::math::factorial(j_one + m_one) *
-      correlation::math::factorial(j_two - m_two) * correlation::math::factorial(j_two + m_two) *
-      correlation::math::factorial(j_three - m_three) * correlation::math::factorial(j_three + m_three));
+  real_t comp = (correlation::math::factorial(j_one - m_one) * correlation::math::factorial(j_one + m_one) *
+                 correlation::math::factorial(j_two - m_two) * correlation::math::factorial(j_two + m_two) *
+                 correlation::math::factorial(j_three - m_three) * correlation::math::factorial(j_three + m_three));
   comp = std::sqrt(comp);
 
   real_t const phase1 = ((j_one - j_two - m_three) % 2 != 0) ? -1.0 : 1.0;
@@ -321,11 +320,11 @@ real_t SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_o
   real_t sum = 0.0;
   for (int k = k_min; k <= k_max; ++k) {
     real_t const k_phase = (k % 2 != 0) ? -1.0 : 1.0;
-    real_t const denom = static_cast<real_t>(
-        correlation::math::factorial(k) * correlation::math::factorial(j_one + j_two - j_three - k) *
-        correlation::math::factorial(j_one - m_one - k) * correlation::math::factorial(j_two + m_two - k) *
-        correlation::math::factorial(j_three - j_two + m_one + k) *
-        correlation::math::factorial(j_three - j_one - m_two + k));
+    real_t const denom =
+        (correlation::math::factorial(k) * correlation::math::factorial(j_one + j_two - j_three - k) *
+         correlation::math::factorial(j_one - m_one - k) * correlation::math::factorial(j_two + m_two - k) *
+         correlation::math::factorial(j_three - j_two + m_one + k) *
+         correlation::math::factorial(j_three - j_one - m_two + k));
     sum += k_phase / denom;
   }
 

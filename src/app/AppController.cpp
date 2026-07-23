@@ -296,18 +296,13 @@ ProgramOptions AppController::handleOptionsfromUI() {
   opt.input_file = input_path_str;
   opt.output_file_base = output_path.make_preferred().string();
   opt.smoothing = true;
-  opt.r_max = safe_parse(window_.get_analysis_options().r_max, opt.r_max); // NOLINT(bugprone-narrowing-conversions)
-  opt.r_bin_width =
-      safe_parse(window_.get_analysis_options().r_bin_width, opt.r_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.q_max = safe_parse(window_.get_analysis_options().q_max, opt.q_max);     // NOLINT(bugprone-narrowing-conversions)
-  opt.q_bin_width =
-      safe_parse(window_.get_analysis_options().q_bin_width, opt.q_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.r_int_max =
-      safe_parse(window_.get_analysis_options().r_int_max, opt.r_int_max); // NOLINT(bugprone-narrowing-conversions)
-  opt.angle_bin_width = safe_parse(window_.get_analysis_options().angle_bin_width,
-                                   opt.angle_bin_width); // NOLINT(bugprone-narrowing-conversions)
-  opt.dihedral_bin_width = safe_parse(window_.get_analysis_options().dihedral_bin_width,
-                                      opt.dihedral_bin_width); // NOLINT(bugprone-narrowing-conversions)
+  opt.r_max = safe_parse(window_.get_analysis_options().r_max, opt.r_max);
+  opt.r_bin_width = safe_parse(window_.get_analysis_options().r_bin_width, opt.r_bin_width);
+  opt.q_max = safe_parse(window_.get_analysis_options().q_max, opt.q_max);
+  opt.q_bin_width = safe_parse(window_.get_analysis_options().q_bin_width, opt.q_bin_width);
+  opt.r_int_max = safe_parse(window_.get_analysis_options().r_int_max, opt.r_int_max);
+  opt.angle_bin_width = safe_parse(window_.get_analysis_options().angle_bin_width, opt.angle_bin_width);
+  opt.dihedral_bin_width = safe_parse(window_.get_analysis_options().dihedral_bin_width, opt.dihedral_bin_width);
   opt.max_ring_size = static_cast<size_t>(
       safe_parse(window_.get_analysis_options().max_ring_size, static_cast<real_t>(opt.max_ring_size)));
   opt.hyper_samples = static_cast<size_t>(
@@ -331,15 +326,11 @@ ProgramOptions AppController::handleOptionsfromUI() {
     }
   }
 
-  opt.smoothing_sigma = safe_parse(window_.get_analysis_options().smoothing_sigma,
-                                   opt.smoothing_sigma); // NOLINT(bugprone-narrowing-conversions)
+  opt.smoothing_sigma = safe_parse(window_.get_analysis_options().smoothing_sigma, opt.smoothing_sigma);
   opt.smoothing_kernel = static_cast<correlation::math::KernelType>(window_.get_analysis_options().smoothing_kernel);
   opt.material_type = window_.get_analysis_options().material_type;
-
-  opt.lef_cutoff = safe_parse(window_.get_analysis_options().lef_cutoff,
-                              opt.lef_cutoff); // NOLINT(bugprone-narrowing-conversions)
-  opt.lef_sigma = safe_parse(window_.get_analysis_options().lef_sigma,
-                             opt.lef_sigma); // NOLINT(bugprone-narrowing-conversions)
+  opt.lef_cutoff = safe_parse(window_.get_analysis_options().lef_cutoff, opt.lef_cutoff);
+  opt.lef_sigma = safe_parse(window_.get_analysis_options().lef_sigma, opt.lef_sigma);
 
   // Parse Frame Selection
   // - Handles string presets "start" and "end" case-insensitively.
