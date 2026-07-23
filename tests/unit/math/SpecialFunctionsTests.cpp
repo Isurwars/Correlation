@@ -18,19 +18,19 @@ class SpecialFunctionsTests : public ::testing::Test {};
 
 TEST_F(SpecialFunctionsTests, FactorialCorrectness) {
   // Negative bounds
-  EXPECT_DOUBLE_EQ(factorial(-1), 0.0);
-  EXPECT_DOUBLE_EQ(factorial(-5), 0.0);
+  EXPECT_NEAR(static_cast<double>(factorial(-1)), 0.0, 1e-5);
+  EXPECT_NEAR(static_cast<double>(factorial(-5)), 0.0, 1e-5);
 
   // Table values
-  EXPECT_DOUBLE_EQ(factorial(0), 1.0);
-  EXPECT_DOUBLE_EQ(factorial(1), 1.0);
-  EXPECT_DOUBLE_EQ(factorial(2), 2.0);
-  EXPECT_DOUBLE_EQ(factorial(5), 120.0);
-  EXPECT_DOUBLE_EQ(factorial(10), 3628800.0);
-  EXPECT_DOUBLE_EQ(factorial(20), 2432902008176640000.0);
+  EXPECT_NEAR(static_cast<double>(factorial(0)), 1.0, 1e-5);
+  EXPECT_NEAR(static_cast<double>(factorial(1)), 1.0, 1e-5);
+  EXPECT_NEAR(static_cast<double>(factorial(2)), 2.0, 1e-5);
+  EXPECT_NEAR(static_cast<double>(factorial(5)), 120.0, 1e-5);
+  EXPECT_NEAR(static_cast<double>(factorial(10)), 3628800.0, 1.0);
+  EXPECT_NEAR(static_cast<double>(factorial(20)), 2.432902e18, 1e13);
 
   // Gamma fallback for n > 20
-  EXPECT_NEAR(factorial(21), 5.109094217170944e19, 1e10);
+  EXPECT_NEAR(static_cast<double>(factorial(21)), 5.109094e19, 1e14);
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBoundaryCases) {

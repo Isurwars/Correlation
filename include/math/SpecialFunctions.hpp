@@ -24,35 +24,35 @@ namespace correlation::math {
  * @param n the number to compute factorial for.
  * @return The factorial of n.
  */
-inline double factorial(int n) {
-  static const std::array<double, 21> fact = {1.0,
-                                              1.0,
-                                              2.0,
-                                              6.0,
-                                              24.0,
-                                              120.0,
-                                              720.0,
-                                              5040.0,
-                                              40320.0,
-                                              362880.0,
-                                              3628800.0,
-                                              39916800.0,
-                                              479001600.0,
-                                              6227020800.0,
-                                              87178291200.0,
-                                              1307674368000.0,
-                                              20922789888000.0,
-                                              355687428096000.0,
-                                              6402373705728000.0,
-                                              121645100408832000.0,
-                                              2432902008176640000.0};
+inline real_t factorial(int n) {
+  static const std::array<real_t, 21> fact = {static_cast<real_t>(1.0),
+                                              static_cast<real_t>(1.0),
+                                              static_cast<real_t>(2.0),
+                                              static_cast<real_t>(6.0),
+                                              static_cast<real_t>(24.0),
+                                              static_cast<real_t>(120.0),
+                                              static_cast<real_t>(720.0),
+                                              static_cast<real_t>(5040.0),
+                                              static_cast<real_t>(40320.0),
+                                              static_cast<real_t>(362880.0),
+                                              static_cast<real_t>(3628800.0),
+                                              static_cast<real_t>(39916800.0),
+                                              static_cast<real_t>(479001600.0),
+                                              static_cast<real_t>(6227020800.0),
+                                              static_cast<real_t>(87178291200.0),
+                                              static_cast<real_t>(1307674368000.0),
+                                              static_cast<real_t>(20922789888000.0),
+                                              static_cast<real_t>(355687428096000.0),
+                                              static_cast<real_t>(6402373705728000.0),
+                                              static_cast<real_t>(121645100408832000.0),
+                                              static_cast<real_t>(2432902008176640000.0)};
   if (n < 0) {
-    return 0.0;
+    return static_cast<real_t>(0.0);
   }
   if (n <= 20) {
     return fact.at(static_cast<size_t>(n));
   }
-  return std::tgamma(static_cast<double>(n) + 1.0);
+  return static_cast<real_t>(std::tgamma(static_cast<double>(n) + 1.0));
 }
 
 /**

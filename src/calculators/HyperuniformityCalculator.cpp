@@ -28,7 +28,7 @@ const bool registered = CalculatorFactory::registerTypeSafe<HyperuniformityCalcu
  * @brief Portable 53-bit uniform generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
  */
 [[nodiscard]] real_t generate_canonical_portable(std::mt19937_64 &rng) noexcept {
-  return static_cast<real_t>(static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0));
+  return static_cast<real_t>(rng() >> 11) * static_cast<real_t>(1.0 / 9007199254740992.0);
 }
 } // namespace
 

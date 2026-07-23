@@ -195,7 +195,8 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  * @param data The input/output vector of complex numbers. Modifies in-place.
  * @param invert If true, performs an inverse FFT and scales the result by 1/N.
  */
-inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
+template <typename T = double>
+inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
   size_t size = data.size();
   if (size == 0) {
     return;
@@ -219,13 +220,13 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
 
   constexpr double double_two_pi = 6.283185307179586476925286766559005768;
   for (size_t len = 2; len <= size; len <<= 1) {
-    double angle = double_two_pi / static_cast<double>(len) * (invert ? -1 : 1);
-    std::complex<double> wlen(std::cos(angle), std::sin(angle));
+    T angle = static_cast<T>(double_two_pi / static_cast<double>(len) * (invert ? -1 : 1));
+    std::complex<T> wlen(std::cos(angle), std::sin(angle));
     for (size_t i = 0; i < size; i += len) {
-      std::complex<double> twiddle(1.0, 0.0);
+      std::complex<T> twiddle(static_cast<T>(1.0), static_cast<T>(0.0));
       for (size_t j = 0; j < len / 2; j++) {
-        std::complex<double> even_val = data[i + j];
-        std::complex<double> odd_val = data[i + j + len / 2] * twiddle;
+        std::complex<T> even_val = data[i + j];
+        std::complex<T> odd_val = data[i + j + len / 2] * twiddle;
         data[i + j] = even_val + odd_val;
         data[i + j + len / 2] = even_val - odd_val;
         twiddle *= wlen;
@@ -235,7 +236,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
 
   if (invert) {
     for (auto &val : data) {
-      val /= static_cast<double>(size);
+      val /= static_cast<T>(size);
     }
   }
 }
@@ -248,12 +249,12 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  * @param workspace Reusable scratch buffer. Resized automatically when needed.
  *                  Pass the same buffer across repeated calls (e.g. per-atom
  *                  loops) to avoid repeated heap allocation.
- * @return Autocorrelation array of length n.
+ * @return          Autocorrelation sequence of length N equal to signal.size().
  */
 template <typename T = real_t>
 inline std::vector<T> autocorrelate(const std::vector<T> &signal,
-                                    std::vector<std::complex<T>> &workspace) {
-  const size_t size = signal.size();
+                                   std::vector<std::complex<T>> &workspace) {
+  size_t size = signal.size();
   if (size == 0) {
     return {};
   }
@@ -266,7 +267,7 @@ inline std::vector<T> autocorrelate(const std::vector<T> &signal,
     workspace[i] = {signal[i], static_cast<T>(0.0)};
   }
 
-  // Convert to std::vector<std::complex<double>> for FFT computation
+  // Convert to std::vector<std::complex<double>> for external FFT library computation
   std::vector<std::complex<double>> double_ws(len);
   for (size_t i = 0; i < len; ++i) {
     double_ws[i] = {static_cast<double>(workspace[i].real()), static_cast<double>(workspace[i].imag())};
