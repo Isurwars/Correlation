@@ -13,6 +13,7 @@
 #include <vector>
 
 #if defined(CORRELATION_USE_FFTW3)
+#include <bit>
 #include <fftw3.h>
 #include <mutex>
 #include <unordered_map>
@@ -97,6 +98,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
   auto &plans = invert ? cache.backward_plans : cache.forward_plans;
   auto iterator = plans.find(size);
   fftw_plan plan = nullptr;
+  auto *fftw_data = std::bit_cast<fftw_complex *>(data.data());
 
   if (iterator != plans.end()) {
     plan = iterator->second;
@@ -104,21 +106,15 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
     static std::mutex planner_mutex;
     std::lock_guard<std::mutex> lock(planner_mutex);
 
-    plan = fftw_plan_dft_1d(
-        static_cast<int>(size),
-        reinterpret_cast<fftw_complex *>(data.data()), // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-        reinterpret_cast<fftw_complex *>(data.data()), // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-        invert ? FFTW_BACKWARD : FFTW_FORWARD, FFTW_ESTIMATE);
+    plan = fftw_plan_dft_1d(static_cast<int>(size), fftw_data, fftw_data, invert ? FFTW_BACKWARD : FFTW_FORWARD,
+                            FFTW_ESTIMATE);
     if (plan == nullptr) {
       throw std::runtime_error("Failed to create FFTW plan for size " + std::to_string(size));
     }
     plans[size] = plan;
   }
 
-  fftw_execute_dft(
-      plan,
-      reinterpret_cast<fftw_complex *>(data.data()),  // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
-      reinterpret_cast<fftw_complex *>(data.data())); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+  fftw_execute_dft(plan, fftw_data, fftw_data);
 
   if (invert) {
     double scale = 1.0 / static_cast<double>(size);
@@ -195,8 +191,7 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
  * @param data The input/output vector of complex numbers. Modifies in-place.
  * @param invert If true, performs an inverse FFT and scales the result by 1/N.
  */
-template <typename T = double>
-inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
+template <typename T = double> inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
   size_t size = data.size();
   if (size == 0) {
     return;
@@ -252,8 +247,7 @@ inline void computeFFT(std::vector<std::complex<T>> &data, bool invert) {
  * @return          Autocorrelation sequence of length N equal to signal.size().
  */
 template <typename T = real_t>
-inline std::vector<T> autocorrelate(const std::vector<T> &signal,
-                                   std::vector<std::complex<T>> &workspace) {
+inline std::vector<T> autocorrelate(const std::vector<T> &signal, std::vector<std::complex<T>> &workspace) {
   size_t size = signal.size();
   if (size == 0) {
     return {};
@@ -300,8 +294,7 @@ inline std::vector<T> autocorrelate(const std::vector<T> &signal,
  * @param signal Input signal vector.
  * @return The autocorrelation vector.
  */
-template <typename T = real_t>
-inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
+template <typename T = real_t> inline std::vector<T> autocorrelate(const std::vector<T> &signal) {
   std::vector<std::complex<T>> workspace;
   return autocorrelate(signal, workspace);
 }

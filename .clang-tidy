@@ -60,3 +60,5 @@ CheckOptions:
     value: 'true'
   - key:   misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
     value: 'true'
+  - key:   readability-identifier-length.IgnoredVariableNames
+    value: 'pi'
