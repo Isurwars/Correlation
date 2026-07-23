@@ -9,6 +9,7 @@
 #include "calculators/DistanceCalculator.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"
 
 #if defined(CORRELATION_USE_CUDA) || defined(CORRELATION_USE_HIP)
@@ -157,9 +158,15 @@ void ThreadLocalDistances::collectCandidates(size_t atom_idx, const SoACoordinat
         int n_bin_idx = wrap_x * (grid_config.K_y * grid_config.K_z) + wrap_y * grid_config.K_z + wrap_z;
 
         // Use FMA for precise displacement coordinate calculation
-        real_t disp_x = std::fma(static_cast<real_t>(shift_z), lattice[2].x(), std::fma(static_cast<real_t>(shift_y), lattice[1].x(), static_cast<real_t>(shift_x) * lattice[0].x()));
-        real_t disp_y = std::fma(static_cast<real_t>(shift_z), lattice[2].y(), std::fma(static_cast<real_t>(shift_y), lattice[1].y(), static_cast<real_t>(shift_x) * lattice[0].y()));
-        real_t disp_z = std::fma(static_cast<real_t>(shift_z), lattice[2].z(), std::fma(static_cast<real_t>(shift_y), lattice[1].z(), static_cast<real_t>(shift_x) * lattice[0].z()));
+        real_t disp_x = std::fma(
+            static_cast<real_t>(shift_z), lattice[2].x(),
+            std::fma(static_cast<real_t>(shift_y), lattice[1].x(), static_cast<real_t>(shift_x) * lattice[0].x()));
+        real_t disp_y = std::fma(
+            static_cast<real_t>(shift_z), lattice[2].y(),
+            std::fma(static_cast<real_t>(shift_y), lattice[1].y(), static_cast<real_t>(shift_x) * lattice[0].y()));
+        real_t disp_z = std::fma(
+            static_cast<real_t>(shift_z), lattice[2].z(),
+            std::fma(static_cast<real_t>(shift_y), lattice[1].z(), static_cast<real_t>(shift_x) * lattice[0].z()));
         correlation::math::Vector3<real_t> disp = {disp_x, disp_y, disp_z};
 
         bool zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
@@ -337,9 +344,9 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
     wrapped_y[i] = std::fma(f_z, lattice[2].y(), std::fma(f_y, lattice[1].y(), f_x * lattice[0].y()));
     wrapped_z[i] = std::fma(f_z, lattice[2].z(), std::fma(f_y, lattice[1].z(), f_x * lattice[0].z()));
 
-    int c_x = std::clamp(static_cast<int>(std::floor(f_x * K_x)), 0, K_x - 1);
-    int c_y = std::clamp(static_cast<int>(std::floor(f_y * K_y)), 0, K_y - 1);
-    int c_z = std::clamp(static_cast<int>(std::floor(f_z * K_z)), 0, K_z - 1);
+    int c_x = std::clamp(static_cast<int>(std::floor(f_x * static_cast<real_t>(K_x))), 0, K_x - 1);
+    int c_y = std::clamp(static_cast<int>(std::floor(f_y * static_cast<real_t>(K_y))), 0, K_y - 1);
+    int c_z = std::clamp(static_cast<int>(std::floor(f_z * static_cast<real_t>(K_z))), 0, K_z - 1);
 
     int bin_idx = c_x * (K_y * K_z) + c_y * K_z + c_z;
     atom_bin[i] = bin_idx;

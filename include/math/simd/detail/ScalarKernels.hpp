@@ -53,6 +53,24 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
   return acc;
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
+                      const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
+                      double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+  for (std::size_t idx = 0; idx < count; ++idx) {
+    out_dot[idx] = v1x * v2x[idx] + v1y * v2y[idx] + v1z * v2z[idx];
+  }
+}
+
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
+                      const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
+                      float *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+  for (std::size_t idx = 0; idx < count; ++idx) {
+    out_dot[idx] = v1x * v2x[idx] + v1y * v2y[idx] + v1z * v2z[idx];
+  }
+}
+
 inline double sinc_integral(const SincIntegralParams<double> &params) noexcept {
   for (std::size_t idx = 0; idx < params.count; ++idx) {
     params.sinqr_scratch[idx] = std::sin(params.q_magnitude * params.radial_bins[idx]);

@@ -9,6 +9,7 @@
 #include "calculators/LocalEntropyCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
+#include "math/Precision.hpp"
 
 #include <cmath>
 #include <map>
@@ -53,7 +54,8 @@ real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &
   real_t integral = 0.0;
 
   // Gaussian prefactor: 1 / sqrt(2 * pi * sigma^2)
-  real_t const gaussian_prefactor = 1.0 / (sigma * std::sqrt(2.0 * correlation::math::pi));
+  real_t const gaussian_prefactor =
+      static_cast<real_t>(1.0) / (sigma * std::sqrt(static_cast<real_t>(2.0) * correlation::math::pi));
 
   for (size_t step = 1; step <= num_steps; ++step) {
     real_t const r_val = static_cast<real_t>(step) * dr_val;
@@ -70,15 +72,15 @@ real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &
       // Gaussian kernel with periodic boundary corrections at r=0
       real_t const diff = r_val - r_ij;
       real_t const sum_r = r_val + r_ij;
-      real_t const term1 = std::exp(-(diff * diff) / (2.0 * sigma * sigma));
-      real_t const term2 = std::exp(-(sum_r * sum_r) / (2.0 * sigma * sigma));
+      real_t const term1 = static_cast<real_t>(std::exp(-(diff * diff) / (2.0 * sigma * sigma)));
+      real_t const term2 = static_cast<real_t>(std::exp(-(sum_r * sum_r) / (2.0 * sigma * sigma)));
       g_val += term1 + term2;
     }
 
     g_val *= gaussian_prefactor;
 
     // Normalization: 4 * pi * density * r^2
-    real_t const norm = 4.0 * correlation::math::pi * density * r_val * r_val;
+    real_t const norm = static_cast<real_t>(4.0) * correlation::math::pi * density * r_val * r_val;
     if (norm > 0.0) {
       g_val /= norm;
     } else {
@@ -87,7 +89,7 @@ real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &
 
     real_t integrand = 0.0;
     if (g_val > 1e-10) {
-      integrand = (g_val * std::log(g_val) - g_val + 1.0) * r_val * r_val;
+      integrand = (g_val * std::log(g_val) - g_val + static_cast<real_t>(1.0)) * r_val * r_val;
     } else {
       integrand = r_val * r_val;
     }
@@ -95,12 +97,12 @@ real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &
     // Trapezoidal rule integration
     real_t weight = dr_val;
     if (step == num_steps) {
-      weight = 0.5 * dr_val;
+      weight = static_cast<real_t>(0.5) * dr_val;
     }
     integral += integrand * weight;
   }
 
-  return -2.0 * correlation::math::pi * density * integral;
+  return static_cast<real_t>(-2.0) * correlation::math::pi * density * integral;
 }
 
 struct BinningConfig {
@@ -197,7 +199,7 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
   hist.file_suffix = "_lef";
   hist.bins.resize(bins);
   for (size_t i = 0; i < bins; ++i) {
-    hist.bins[i] = min_val + (static_cast<real_t>(i) + 0.5) * d_val;
+    hist.bins[i] = min_val + (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * d_val;
   }
 
   // Pre-size thread-local maps for element symbols

@@ -8,7 +8,11 @@
 
 #pragma once
 
-#include "math/SIMDConfig.hpp"
+#include "math/SIMDConfig.hpp"             // IWYU pragma: export
+#include "math/simd/SIMDDistance.hpp"      // IWYU pragma: export
+#include "math/simd/SIMDNormalization.hpp" // IWYU pragma: export
+#include "math/simd/SIMDScattering.hpp"    // IWYU pragma: export
+#include "math/simd/SIMDTypes.hpp"         // IWYU pragma: export
 
 namespace correlation::math {
 

@@ -120,6 +120,56 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
   return acc;
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
+                      const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
+                      double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+  const __m256d vv1x = _mm256_set1_pd(v1x);
+  const __m256d vv1y = _mm256_set1_pd(v1y);
+  const __m256d vv1z = _mm256_set1_pd(v1z);
+  std::size_t idx = 0;
+  for (; idx + 4 <= count; idx += 4) {
+#ifdef __FMA__
+    const __m256d d_res = _mm256_fmadd_pd(
+        vv1x, _mm256_loadu_pd(v2x + idx),
+        _mm256_fmadd_pd(vv1y, _mm256_loadu_pd(v2y + idx), _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + idx))));
+#else
+    const __m256d d_res = _mm256_add_pd(_mm256_mul_pd(vv1x, _mm256_loadu_pd(v2x + idx)),
+                                        _mm256_add_pd(_mm256_mul_pd(vv1y, _mm256_loadu_pd(v2y + idx)),
+                                                      _mm256_mul_pd(vv1z, _mm256_loadu_pd(v2z + idx))));
+#endif
+    _mm256_storeu_pd(out_dot + idx, d_res);
+  }
+  for (; idx < count; ++idx) {
+    out_dot[idx] = v1x * v2x[idx] + v1y * v2y[idx] + v1z * v2z[idx];
+  }
+}
+
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
+                      const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
+                      float *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
+  const __m256 vv1x = _mm256_set1_ps(v1x);
+  const __m256 vv1y = _mm256_set1_ps(v1y);
+  const __m256 vv1z = _mm256_set1_ps(v1z);
+  std::size_t idx = 0;
+  for (; idx + 8 <= count; idx += 8) {
+#ifdef __FMA__
+    const __m256 d_res = _mm256_fmadd_ps(
+        vv1x, _mm256_loadu_ps(v2x + idx),
+        _mm256_fmadd_ps(vv1y, _mm256_loadu_ps(v2y + idx), _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + idx))));
+#else
+    const __m256 d_res = _mm256_add_ps(_mm256_mul_ps(vv1x, _mm256_loadu_ps(v2x + idx)),
+                                       _mm256_add_ps(_mm256_mul_ps(vv1y, _mm256_loadu_ps(v2y + idx)),
+                                                     _mm256_mul_ps(vv1z, _mm256_loadu_ps(v2z + idx))));
+#endif
+    _mm256_storeu_ps(out_dot + idx, d_res);
+  }
+  for (; idx < count; ++idx) {
+    out_dot[idx] = v1x * v2x[idx] + v1y * v2y[idx] + v1z * v2z[idx];
+  }
+}
+
 inline double sinc_integral(const SincIntegralParams<double> &params) noexcept {
   for (std::size_t idx = 0; idx < params.count; ++idx) {
     params.sinqr_scratch[idx] = std::sin(params.q_magnitude * params.radial_bins[idx]);

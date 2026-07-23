@@ -9,6 +9,7 @@
 #include "calculators/MSDCalculator.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Precision.hpp"
 
 namespace correlation::calculators {
 
@@ -80,7 +81,7 @@ MSDCalculator::calculate(const correlation::core::Trajectory &traj,
   for (size_t i = 1; i < num_frames; ++i) {
     const real_t time = static_cast<real_t>(i) * time_step;
     if (time > 0.0) {
-      d_eff[i] = raw_msd[i] / (6.0 * time);
+      d_eff[i] = raw_msd[i] / (static_cast<real_t>(6.0) * time);
     }
   }
   deff_hist.partials["Total"] = d_eff;
