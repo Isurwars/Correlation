@@ -9,6 +9,7 @@
 #include "calculators/RDFCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/Constants.hpp"
+#include "math/Precision.hpp"
 #include "math/SIMDUtils.hpp"
 
 #include <cmath>
@@ -114,13 +115,24 @@ void normalizeDistributions(const correlation::core::Cell &cell, const std::map<
       // The r^2 term is applied per-bin inside the SIMD kernel.
       const real_t g_norm_constant = settings.volume / (correlation::math::four_pi * settings.bin_width * N_i * N_j);
       const real_t rho_j = N_j / settings.volume;
-      const real_t inv_Ni_dr = 1.0 / (N_i * settings.bin_width);
-      const real_t inv_Nj_dr = 1.0 / (N_j * settings.bin_width);
+      const real_t inv_Ni_dr = static_cast<real_t>(1.0) / (N_i * settings.bin_width);
+      const real_t inv_Nj_dr = static_cast<real_t>(1.0) / (N_j * settings.bin_width);
       const real_t pi4_rho_j = correlation::math::four_pi * rho_j;
 
-      correlation::math::normalize_rdf_bins(
-          H_ij.data(), g_r.bins.data(), g_norm_constant, inv_Ni_dr, inv_Nj_dr, pi4_rho_j, g_r.partials[key].data(),
-          G_r.partials[key].data(), J_r.partials[key].data(), J_r.partials[inversekey].data(), settings.num_bins);
+      correlation::math::RDFNormalizationParams<real_t> params{
+          .hist_data = H_ij.data(),
+          .radial_bins = g_r.bins.data(),
+          .g_norm = g_norm_constant,
+          .inv_Ni_dr = inv_Ni_dr,
+          .inv_Nj_dr = inv_Nj_dr,
+          .pi4_rho_j = pi4_rho_j,
+          .g_out = g_r.partials[key].data(),
+          .G_out = G_r.partials[key].data(),
+          .J_out = J_r.partials[key].data(),
+          .Jinv_out = J_r.partials[inversekey].data(),
+          .count = settings.num_bins,
+      };
+      correlation::math::normalize_rdf_bins(params);
     }
   }
 }
@@ -284,7 +296,7 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     }
 
     total_J[k] = correlation::math::four_pi * r_k * r_k * rho_0 * total_g[k];
-    total_G[k] = correlation::math::four_pi * rho_0 * r_k * (total_g[k] - 1.0);
+    total_G[k] = correlation::math::four_pi * rho_0 * r_k * (total_g[k] - static_cast<real_t>(1.0));
   }
 
   weightPartials(cell, ashcroft_weights, {.rho_0 = rho_0, .num_bins = num_bins}, g_r, G_r);

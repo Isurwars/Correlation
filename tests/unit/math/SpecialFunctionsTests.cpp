@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <gtest/gtest.h>
+#include <numbers>
 #include <vector>
 
 namespace correlation::testing {
@@ -57,13 +58,10 @@ TEST_F(SpecialFunctionsTests, SphLegendreAnalyticValues) {
 }
 
 TEST_F(SpecialFunctionsTests, SphLegendreBatchEquivalence) {
-  std::vector<real_t> angles = {static_cast<real_t>(0.0),
-                                static_cast<real_t>(0.2),
-                                static_cast<real_t>(0.5),
-                                static_cast<real_t>(M_PI / 2.0),
-                                static_cast<real_t>(2.1),
-                                static_cast<real_t>(M_PI - 0.1),
-                                static_cast<real_t>(M_PI)};
+  std::vector<real_t> angles = {static_cast<real_t>(0.0), static_cast<real_t>(0.2),
+                                static_cast<real_t>(0.5), static_cast<real_t>(M_PI / 2.0),
+                                static_cast<real_t>(2.1), static_cast<real_t>(M_PI - 0.1),
+                                std::numbers::pi_v<float>};
   size_t const count = angles.size();
   std::vector<real_t> batch_results(count);
 

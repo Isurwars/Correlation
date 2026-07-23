@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "include/math/SIMDUtils.hpp": {
-    "mtime": 1784761795.465899,
-    "ast_hash": "e1b42717f5b1b70b3e9109b9191b7bd0",
+    "mtime": 1784783356.4063747,
+    "ast_hash": "d2c130ecb6501a3fa0849ba5aba0832d",
     "semantic_hash": ""
   },
   "include/math/Smoothing.hpp": {
@@ -655,8 +655,8 @@
     "semantic_hash": "a9f2e1b218685063a3f2a2147856c700"
   },
   "src/calculators/RDFCalculator.cpp": {
-    "mtime": 1784573502.1589959,
-    "ast_hash": "58de126339982154ed37122ec8992b7c",
+    "mtime": 1784780854.3697462,
+    "ast_hash": "2c95bd981f78763674f2aa0220a3ac61",
     "semantic_hash": ""
   },
   "src/calculators/SDFCalculator.cpp": {
@@ -670,8 +670,8 @@
     "semantic_hash": ""
   },
   "src/calculators/StructureFactorCalculator.cpp": {
-    "mtime": 1784576661.9014218,
-    "ast_hash": "51d3f02405b33612bb54fd7f76e03076",
+    "mtime": 1784783116.3066738,
+    "ast_hash": "02568c3aa796515496b3e1f295c8ed5b",
     "semantic_hash": ""
   },
   "src/calculators/VACFCalculator.cpp": {
@@ -1185,8 +1185,8 @@
     "semantic_hash": ""
   },
   "tests/unit/math/SpecialFunctionsTests.cpp": {
-    "mtime": 1784770059.692158,
-    "ast_hash": "f2d6193b2c5df6e0d19d6178263e252c",
+    "mtime": 1784781454.2875242,
+    "ast_hash": "06f873a1e467df2cad2f67ef8a04edf1",
     "semantic_hash": ""
   },
   "tests/unit/physics/PhysicalDataTests.cpp": {
@@ -1290,8 +1290,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/SIMDUtilsTests.cpp": {
-    "mtime": 1784599796.1205618,
-    "ast_hash": "c5cd728af531bd9141336c6695765e7f",
+    "mtime": 1784783360.9593108,
+    "ast_hash": "74875fc0bc22cf431e591e03e7c51475",
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterFactoryTests.cpp": {

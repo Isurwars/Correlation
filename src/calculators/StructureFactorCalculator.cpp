@@ -271,16 +271,17 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
   for (size_t ti = 0; ti < type_blocks.size(); ++ti) {
     const size_t off = type_blocks[ti].offset;
     const size_t cnt = type_blocks[ti].count;
-    real_t c_sum = static_cast<real_t>(0.0);
-    real_t s_sum = static_cast<real_t>(0.0);
-    correlation::math::miller_phase_sum(phases.E1_cos + (q_vec.h + basis.hmax) * num_atoms + off,
-                                        phases.E1_sin + (q_vec.h + basis.hmax) * num_atoms + off,
-                                        phases.E2_cos + (q_vec.k + basis.kmax) * num_atoms + off,
-                                        phases.E2_sin + (q_vec.k + basis.kmax) * num_atoms + off,
-                                        phases.E3_cos + (q_vec.l + basis.lmax) * num_atoms + off,
-                                        phases.E3_sin + (q_vec.l + basis.lmax) * num_atoms + off, cnt, c_sum, s_sum);
-    type_cos[ti] = c_sum;
-    type_sin[ti] = s_sum;
+    const auto result = correlation::math::miller_phase_sum(
+        correlation::math::MillerPhaseSumParams<real_t>{
+            .cos1 = phases.E1_cos + (q_vec.h + basis.hmax) * num_atoms + off,
+            .sin1 = phases.E1_sin + (q_vec.h + basis.hmax) * num_atoms + off,
+            .cos2 = phases.E2_cos + (q_vec.k + basis.kmax) * num_atoms + off,
+            .sin2 = phases.E2_sin + (q_vec.k + basis.kmax) * num_atoms + off,
+            .cos3 = phases.E3_cos + (q_vec.l + basis.lmax) * num_atoms + off,
+            .sin3 = phases.E3_sin + (q_vec.l + basis.lmax) * num_atoms + off,
+            .count = cnt});
+    type_cos[ti] = result.cos_sum;
+    type_sin[ti] = result.sin_sum;
   }
 
   // Accumulate total S(Q) via the full sum |rho(q)|^2 / N.
