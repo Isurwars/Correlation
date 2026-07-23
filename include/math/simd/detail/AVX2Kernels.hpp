@@ -12,9 +12,9 @@
 
 #if defined(CORRELATION_SIMD_AVX2) && !defined(CORRELATION_SIMD_AVX512)
 
-#include <immintrin.h>
 #include <array>
 #include <cmath>
+#include <immintrin.h>
 
 namespace correlation::math::detail::avx2 {
 
@@ -120,7 +120,6 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
   return acc;
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
                       const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
                       double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
@@ -145,7 +144,6 @@ inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELAT
   }
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
                       const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
                       float *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
@@ -324,31 +322,36 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
   }
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-inline void scale_bins(double *arr, double scale_factor, std::size_t count) noexcept {
-  const __m256d v_scale = _mm256_set1_pd(scale_factor);
+template <typename T> struct ScaleBinsParams {
+  T *arr{nullptr};
+  T scale_factor{static_cast<T>(1.0)};
+  std::size_t count{0};
+};
+
+inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
+  const __m256d v_scale = _mm256_set1_pd(params.scale_factor);
   std::size_t idx = 0;
-  for (; idx + 4 <= count; idx += 4) {
-    _mm256_storeu_pd(arr + idx, _mm256_mul_pd(_mm256_loadu_pd(arr + idx), v_scale));
+  for (; idx + 4 <= params.count; idx += 4) {
+    _mm256_storeu_pd(params.arr + idx, _mm256_mul_pd(_mm256_loadu_pd(params.arr + idx), v_scale));
   }
-  for (; idx < count; ++idx) {
-    arr[idx] *= scale_factor;
+  for (; idx < params.count; ++idx) {
+    params.arr[idx] *= params.scale_factor;
   }
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-inline void scale_bins(float *arr, float scale_factor, std::size_t count) noexcept {
-  const __m256 v_scale = _mm256_set1_ps(scale_factor);
+inline void scale_bins(const ScaleBinsParams<float> &params) noexcept {
+  const __m256 v_scale = _mm256_set1_ps(params.scale_factor);
   std::size_t idx = 0;
-  for (; idx + 8 <= count; idx += 8) {
-    _mm256_storeu_ps(arr + idx, _mm256_mul_ps(_mm256_loadu_ps(arr + idx), v_scale));
+  for (; idx + 8 <= params.count; idx += 8) {
+    _mm256_storeu_ps(params.arr + idx, _mm256_mul_ps(_mm256_loadu_ps(params.arr + idx), v_scale));
   }
-  for (; idx < count; ++idx) {
-    arr[idx] *= scale_factor;
+  for (; idx < params.count; ++idx) {
+    params.arr[idx] *= params.scale_factor;
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<double> &params, MillerPhaseSumResult<double> &result) noexcept {
+inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
+                             MillerPhaseSumResult<double> &result) noexcept {
   __m256d vc_sum = _mm256_setzero_pd();
   __m256d vs_sum = _mm256_setzero_pd();
   std::size_t idx = 0;

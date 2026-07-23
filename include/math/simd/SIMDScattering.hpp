@@ -37,7 +37,6 @@ inline T simd_dot(const T *CORRELATION_RESTRICT input_a, const T *CORRELATION_RE
  * @brief Computes dot products between a reference vector and a block of target vectors.
  * @tparam T Floating-point precision (float or double).
  */
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 template <typename T>
 inline void dot_block(T v1x, T v1y, T v1z, const T *CORRELATION_RESTRICT v2x, const T *CORRELATION_RESTRICT v2y,
                       const T *CORRELATION_RESTRICT v2z, T *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
