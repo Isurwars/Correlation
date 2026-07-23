@@ -299,7 +299,7 @@ public:
    * @return The element value.
    */
   [[nodiscard]] constexpr T operator()(std::size_t row_idx, std::size_t col_idx) const noexcept {
-    return data_.at(col_idx).at(row_idx);
+    return data_.at(col_idx)[row_idx];
   }
 
   /**
@@ -308,7 +308,7 @@ public:
    * @param col_idx Column index.
    * @return Reference to the element.
    */
-  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept { return data_.at(col_idx).at(row_idx); }
+  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept { return data_.at(col_idx)[row_idx]; }
 
   /**
    * @brief Converts the matrix to a nested std::array.
