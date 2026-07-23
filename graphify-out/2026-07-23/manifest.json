@@ -245,8 +245,8 @@
     "semantic_hash": ""
   },
   "include/math/LinearAlgebra.hpp": {
-    "mtime": 1784785562.6260579,
-    "ast_hash": "bf5b4b91df1c68e1a27eff4dfaa24437",
+    "mtime": 1784786254.5707066,
+    "ast_hash": "f8b981f1b7e0d45cdfa5e5e8bf12ddbf",
     "semantic_hash": ""
   },
   "include/math/Precision.hpp": {
@@ -1685,18 +1685,18 @@
     "semantic_hash": ""
   },
   "include/math/simd/SIMDDistance.hpp": {
-    "mtime": 1784784323.2935174,
-    "ast_hash": "a2a97f15b873487b6aa73ca509f73156",
+    "mtime": 1784789117.8906403,
+    "ast_hash": "f47b3e65f71faaad1a6417ccf74205a7",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDNormalization.hpp": {
-    "mtime": 1784784311.051413,
-    "ast_hash": "1e8b82d9f4c13e027ba89e3d69ef3e9e",
+    "mtime": 1784789104.8710444,
+    "ast_hash": "7a69123d7316b870cad094d58ec2ded4",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDScattering.hpp": {
-    "mtime": 1784784473.5270362,
-    "ast_hash": "40effaf40f6012be4ad9a94a5a627301",
+    "mtime": 1784789110.365034,
+    "ast_hash": "161a9e7037dc4636a3ce6af083dcd88d",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDTypes.hpp": {
@@ -1720,8 +1720,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1784785269.3468993,
-    "ast_hash": "fd33abe5014df8f69198584d8fa016a6",
+    "mtime": 1784789148.0930386,
+    "ast_hash": "54a67a6da5624810f7d92ecb96dcfac6",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
