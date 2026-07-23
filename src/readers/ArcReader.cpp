@@ -15,7 +15,6 @@
 #include <cstring>
 #include <fstream>
 #include <functional>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -23,8 +22,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<ArcReader>());
+const bool registered = ReaderFactory::registerTypeSafe<ArcReader>("ArcReader");
 
 correlation::core::Cell
 ArcReader::readStructure(const std::string & /*filename*/,

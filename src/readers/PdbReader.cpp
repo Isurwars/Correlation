@@ -18,8 +18,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = ReaderFactory::instance().registerReader(std::make_unique<PdbReader>());
+const bool registered = ReaderFactory::registerTypeSafe<PdbReader>("PdbReader");
 
 struct PdbCrystParams {
   real_t a = 0.0;

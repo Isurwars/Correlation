@@ -35,9 +35,7 @@ std::string getInversePartialKey(const correlation::core::Cell &cell, size_t typ
   return elements[type1].symbol + "-" + elements[type2].symbol;
 }
 
-// Static registration
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<RDFCalculator>("RDFCalculator");
 
 struct RDFSettings {

@@ -8,15 +8,16 @@
 
 #include "calculators/SDFCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Precision.hpp"
 
 #include <cmath>
+#include <linux/stat.h>
 #include <vector>
 
 namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<SDFCalculator>("SDFCalculator");
 } // namespace
 
@@ -26,7 +27,7 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
   const auto &cell = dists.cell();
   // SDF is a 3D grid and requires a coarser resolution than 1D radial distributions.
   // We enforce a minimum grid spacing of 0.5 Å to prevent memory explosion.
-  const real_t d_x = std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5);
+  const real_t d_x = static_cast<real_t>(std::max(settings.r_bin_width > 0.0 ? settings.r_bin_width : 0.5, 0.5));
 
   // For a general implementation, we build a 3D grid based on the cell
   // dimensions
@@ -86,13 +87,13 @@ void SDFCalculator::calculateFrame(correlation::analysis::DistributionFunctions 
     size_t const i_z = static_cast<size_t>(f_z * static_cast<real_t>(n_z)) % n_z;
 
     size_t const idx = i_x * (n_y * n_z) + i_y * n_z + i_z;
-    sdf_hist.partials[sym][idx] += 1.0 / d_V; // Density contribution per frame
+    sdf_hist.partials[sym][idx] += static_cast<real_t>(1.0) / d_V; // Density contribution per frame
 
     // Also accumulate to total
     if (!sdf_hist.partials.contains("Total")) {
       sdf_hist.partials["Total"].assign(total_bins, 0.0);
     }
-    sdf_hist.partials["Total"][idx] += 1.0 / d_V;
+    sdf_hist.partials["Total"][idx] += static_cast<real_t>(1.0) / d_V;
   }
 
   if (!sdf_hist.partials.contains("Total")) {

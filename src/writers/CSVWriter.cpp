@@ -14,7 +14,6 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
-#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -22,8 +21,7 @@
 namespace correlation::writers {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-static const bool registered = WriterFactory::instance().registerWriter(std::make_unique<CSVWriter>());
+const bool registered = WriterFactory::registerTypeSafe<CSVWriter>("CSVWriter");
 
 void CSVWriter::writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
                              bool /*write_smoothed*/) {

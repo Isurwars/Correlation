@@ -10,6 +10,7 @@
 
 #include "BaseWriter.hpp"
 
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -31,6 +32,26 @@ public:
    * @return true if registration was successful.
    */
   bool registerWriter(std::unique_ptr<BaseWriter> writer);
+
+  /**
+   * @brief Exception-safe template helper for static auto-registration.
+   * @tparam T The specific Writer class type to instantiate.
+   * @param name The human-readable name of the writer (for error logging).
+   * @return true if registration succeeded, false if an exception occurred.
+   */
+  template <typename T> static bool registerTypeSafe(const char *name) noexcept {
+    try {
+      return instance().registerWriter(std::make_unique<T>());
+    } catch (const std::exception &e) {
+      std::cerr << "[FATAL] Failed to statically register writer '" << (name != nullptr ? name : "unknown")
+                << "': " << e.what() << '\n';
+      return false;
+    } catch (...) {
+      std::cerr << "[FATAL] Failed to statically register writer '" << (name != nullptr ? name : "unknown")
+                << "' due to an unknown exception." << '\n';
+      return false;
+    }
+  }
 
   /**
    * @brief Finds a writer that supports the given file extension.

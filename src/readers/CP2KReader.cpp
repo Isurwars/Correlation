@@ -19,8 +19,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CP2KReader>());
+const bool registered = ReaderFactory::registerTypeSafe<CP2KReader>("CP2KReader");
 
 correlation::core::Cell CP2KReader::readStructure(const std::string &filename,
                                                   std::function<void(float, const std::string &)> progress_callback) {

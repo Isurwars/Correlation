@@ -22,8 +22,7 @@ namespace correlation::readers {
 
 namespace {
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = ReaderFactory::instance().registerReader(std::make_unique<XYZReader>());
+const bool registered = ReaderFactory::registerTypeSafe<XYZReader>("XYZReader");
 
 struct XYZParser {
   const char *data = nullptr;

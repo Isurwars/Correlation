@@ -20,8 +20,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = ReaderFactory::instance().registerReader(std::make_unique<QEReader>());
+const bool registered = ReaderFactory::registerTypeSafe<QEReader>("QEReader");
 
 struct QETrajectoryParser {
   std::ifstream *file = nullptr;

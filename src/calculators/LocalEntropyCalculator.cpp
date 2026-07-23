@@ -25,7 +25,6 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<LocalEntropyCalculator>("LocalEntropyCalculator");
 
 struct LocalEntropyParams {

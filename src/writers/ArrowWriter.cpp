@@ -26,8 +26,7 @@ namespace correlation::writers {
 namespace {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = WriterFactory::instance().registerWriter(std::make_unique<ArrowWriter>());
+const bool registered = WriterFactory::registerTypeSafe<ArrowWriter>("ArrowWriter");
 
 std::vector<std::string> getSortedKeys(const std::map<std::string, std::vector<real_t>> &map) {
   std::vector<std::string> keys;

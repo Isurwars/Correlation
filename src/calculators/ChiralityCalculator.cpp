@@ -9,6 +9,7 @@
 #include "calculators/ChiralityCalculator.hpp"
 #include "calculators/CalculatorFactory.hpp"
 #include "math/LinearAlgebra.hpp"
+#include "math/Precision.hpp"
 
 #include <algorithm>
 #include <map>
@@ -24,7 +25,6 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<ChiralityCalculator>("ChiralityCalculator");
 
 struct BinningConfig {
@@ -168,7 +168,7 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
   hist.file_suffix = "_cop";
   hist.bins.resize(bins);
   for (size_t i = 0; i < bins; ++i) {
-    hist.bins[i] = min_val + (static_cast<real_t>(i) + 0.5) * d_val;
+    hist.bins[i] = min_val + (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * d_val;
   }
 
   // Pre-size thread-local maps for element symbols

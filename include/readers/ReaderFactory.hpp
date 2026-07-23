@@ -10,6 +10,7 @@
 
 #include "BaseReader.hpp"
 
+#include <iostream>
 #include <map>
 #include <memory>
 #include <string>
@@ -44,6 +45,26 @@ public:
    * @return true if registration was successful.
    */
   bool registerReader(std::unique_ptr<BaseReader> reader);
+
+  /**
+   * @brief Exception-safe template helper for static auto-registration.
+   * @tparam T The specific Reader class type to instantiate.
+   * @param name The human-readable name of the reader (for error logging).
+   * @return true if registration succeeded, false if an exception occurred.
+   */
+  template <typename T> static bool registerTypeSafe(const char *name) noexcept {
+    try {
+      return instance().registerReader(std::make_unique<T>());
+    } catch (const std::exception &e) {
+      std::cerr << "[FATAL] Failed to statically register reader '" << (name != nullptr ? name : "unknown")
+                << "': " << e.what() << '\n';
+      return false;
+    } catch (...) {
+      std::cerr << "[FATAL] Failed to statically register reader '" << (name != nullptr ? name : "unknown")
+                << "' due to an unknown exception." << '\n';
+      return false;
+    }
+  }
 
   /**
    * @brief Finds a reader that supports the given file extension.

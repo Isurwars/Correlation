@@ -19,7 +19,6 @@
 #include <fstream>
 #include <functional>
 #include <map>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <vector>
@@ -27,8 +26,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CifReader>());
+const bool registered = ReaderFactory::registerTypeSafe<CifReader>("CifReader");
 
 correlation::core::Cell
 CifReader::readStructure(const std::string &filename,

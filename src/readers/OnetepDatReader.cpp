@@ -17,7 +17,6 @@
 #include <cstring>
 #include <fstream>
 #include <functional>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 
@@ -26,8 +25,7 @@ namespace correlation::readers {
 namespace {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = ReaderFactory::instance().registerReader(std::make_unique<OnetepDatReader>());
+const bool registered = ReaderFactory::registerTypeSafe<OnetepDatReader>("OnetepDatReader");
 
 void toLower(std::string &str) {
   std::transform(str.begin(), str.end(), str.begin(), [](unsigned char chr) { return std::tolower(chr); });

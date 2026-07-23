@@ -17,7 +17,6 @@
 #include <cstring>
 #include <fstream>
 #include <functional>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -25,8 +24,7 @@
 namespace correlation::readers {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CastepMdReader>());
+const bool registered = ReaderFactory::registerTypeSafe<CastepMdReader>("CastepMdReader");
 
 correlation::core::Cell
 CastepMdReader::readStructure(const std::string &filename,

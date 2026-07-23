@@ -17,15 +17,13 @@
 #include <cstring>
 #include <fstream>
 #include <functional>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 
 namespace correlation::readers {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-static const bool registered = ReaderFactory::instance().registerReader(std::make_unique<CellReader>());
+const bool registered = ReaderFactory::registerTypeSafe<CellReader>("CellReader");
 
 correlation::core::Cell
 CellReader::readStructure(const std::string &filename,

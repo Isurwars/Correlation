@@ -13,7 +13,6 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
-#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -26,8 +25,7 @@ namespace correlation::writers {
 namespace {
 
 // Automatic registration
-// NOLINTNEXTLINE(cert-err58-cpp, bugprone-throwing-static-initialization)
-const bool registered = WriterFactory::instance().registerWriter(std::make_unique<HDF5Writer>());
+const bool registered = WriterFactory::registerTypeSafe<HDF5Writer>("HDF5Writer");
 
 struct DatasetWriteQuery {
   std::string dim_label;
