@@ -66,11 +66,13 @@ void printUsage(const char *program);
  * @param opts [out] Filled on success.
  * @return true if parsing succeeded, false on error (message already printed).
  */
-bool parseArgs(std::span<char *> argv, CliOptions &opts);
+bool parseArgs(std::span<const char *const> argv, CliOptions &opts);
 
-// NOLINTNEXTLINE(modernize-avoid-c-arrays,cppcoreguidelines-avoid-c-arrays)
-inline bool parseArgs(int argc, char *argv[], CliOptions &opts) {
-  return parseArgs(std::span<char *>(argv, argc), opts);
+/**
+ * @brief C-style entry point overload forwarding to the span interface.
+ */
+inline bool parseArgs(int argc, const char *const *argv, CliOptions &opts) {
+  return parseArgs(std::span(argv, static_cast<std::size_t>(argc)), opts);
 }
 
 } // namespace correlation::cli
