@@ -11,7 +11,7 @@
 #include "math/Precision.hpp"
 
 #include <cmath>
-#include <linux/stat.h>
+#include <sys/stat.h>
 #include <vector>
 
 namespace correlation::calculators {
