@@ -63,18 +63,14 @@ public:
    * @param idx Index of the component.
    * @return The value at index i.
    */
-  [[nodiscard]] constexpr T operator[](std::size_t idx) const noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  [[nodiscard]] constexpr T operator[](std::size_t idx) const noexcept { return data_.at(idx); }
 
   /**
    * @brief Access mutable component by index (0, 1, or 2).
    * @param idx Index of the component.
    * @return Reference to the value at index i.
    */
-  constexpr T &operator[](std::size_t idx) noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  constexpr T &operator[](std::size_t idx) noexcept { return data_.at(idx); }
 
   /** @return The X-component. */
   [[nodiscard]] constexpr T x() const noexcept { return data_[0]; }
@@ -94,18 +90,14 @@ public:
    * @param idx Index.
    * @return Reference to component.
    */
-  constexpr T &operator()(std::size_t idx) noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  constexpr T &operator()(std::size_t idx) noexcept { return data_.at(idx); }
 
   /**
    * @brief Access component by index (alternative syntax).
    * @param idx Index.
    * @return Component value.
    */
-  [[nodiscard]] constexpr T operator()(std::size_t idx) const noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  [[nodiscard]] constexpr T operator()(std::size_t idx) const noexcept { return data_.at(idx); }
 
   /**
    * @brief Checks if the vector is a zero vector.
@@ -291,18 +283,14 @@ public:
    * @param col_idx Column index (0, 1, or 2).
    * @return Constant reference to the column vector.
    */
-  [[nodiscard]] constexpr const Vector3<T> &operator[](std::size_t col_idx) const noexcept {
-    return data_[col_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  [[nodiscard]] constexpr const Vector3<T> &operator[](std::size_t col_idx) const noexcept { return data_.at(col_idx); }
 
   /**
    * @brief Access mutable column vector by index.
    * @param col_idx Column index (0, 1, or 2).
    * @return Reference to the column vector.
    */
-  constexpr Vector3<T> &operator[](std::size_t col_idx) noexcept {
-    return data_[col_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  constexpr Vector3<T> &operator[](std::size_t col_idx) noexcept { return data_.at(col_idx); }
 
   /**
    * @brief Access element by row and column.
@@ -311,7 +299,7 @@ public:
    * @return The element value.
    */
   [[nodiscard]] constexpr T operator()(std::size_t row_idx, std::size_t col_idx) const noexcept {
-    return data_[col_idx][row_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+    return data_.at(col_idx).at(row_idx);
   }
 
   /**
@@ -320,9 +308,7 @@ public:
    * @param col_idx Column index.
    * @return Reference to the element.
    */
-  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept {
-    return data_[col_idx][row_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept { return data_.at(col_idx).at(row_idx); }
 
   /**
    * @brief Converts the matrix to a nested std::array.
