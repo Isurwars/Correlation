@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "math/Precision.hpp"
 #include <array>
 #include <cmath>
 #include <stdexcept>
@@ -1036,5 +1037,9 @@ template <typename Scalar, typename T>
 {
   return vec * static_cast<T>(scalar);
 }
+
+/// Precision-configurable aliases for 3D vectors and 3x3 matrices.
+using Vector3R = Vector3<real_t>;
+using Matrix3R = Matrix3<real_t>;
 
 } // namespace correlation::math

@@ -50,8 +50,8 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   int n_6 = 0;
   int significant_faces = 0;
 
-  constexpr double min_face_area = 0.01;
-  constexpr double min_edge_len_sq = 1e-6; // 1e-3 A edge length threshold
+  constexpr real_t min_face_area = static_cast<real_t>(0.01);
+  constexpr real_t min_edge_len_sq = static_cast<real_t>(1e-6); // 1e-3 A edge length threshold
 
   size_t v_idx = 0;
   size_t face_i = 0;
