@@ -245,8 +245,8 @@
     "semantic_hash": ""
   },
   "include/math/LinearAlgebra.hpp": {
-    "mtime": 1784770316.1585777,
-    "ast_hash": "67297013aa12c8fad1d81c7c0821d828",
+    "mtime": 1784785331.4925597,
+    "ast_hash": "52c579e6a43d6b80deb8ebed45cd7323",
     "semantic_hash": ""
   },
   "include/math/Precision.hpp": {
@@ -260,8 +260,8 @@
     "semantic_hash": ""
   },
   "include/math/SIMDUtils.hpp": {
-    "mtime": 1784783293.9467704,
-    "ast_hash": "0ccb224ae831c3c12a9869b5df9ff52b",
+    "mtime": 1784784791.4485638,
+    "ast_hash": "05d025c4008049ca0894950017681f92",
     "semantic_hash": ""
   },
   "include/math/Smoothing.hpp": {
@@ -290,8 +290,8 @@
     "semantic_hash": ""
   },
   "include/plotters/SvgPlotter.hpp": {
-    "mtime": 1784761460.6168642,
-    "ast_hash": "2785d6e9994134ed770b160fb0afc171",
+    "mtime": 1784785297.4482508,
+    "ast_hash": "9c71b54abe9a0929e638c745c3ac6ec8",
     "semantic_hash": ""
   },
   "include/plotters/pdfgen.h": {
@@ -605,8 +605,8 @@
     "semantic_hash": "afbf99fb985099cd0b899afab6e90958"
   },
   "src/calculators/DistanceCalculator.cpp": {
-    "mtime": 1784573429.8730059,
-    "ast_hash": "c6a1ff299a6b84cac8cb3db7b38e9d56",
+    "mtime": 1784784858.1544507,
+    "ast_hash": "ebfee021a58869bc1ce4c599baab6d8e",
     "semantic_hash": ""
   },
   "src/calculators/GPUDistanceCalculator.cu": {
@@ -630,14 +630,14 @@
     "semantic_hash": ""
   },
   "src/calculators/LocalEntropyCalculator.cpp": {
-    "mtime": 1784507365.6040268,
-    "ast_hash": "d5227981fa471cc6991e3e72db807676",
-    "semantic_hash": "d5227981fa471cc6991e3e72db807676"
+    "mtime": 1784784943.3690784,
+    "ast_hash": "31cd75529488a8170c1b1d407e62d5bc",
+    "semantic_hash": ""
   },
   "src/calculators/MSDCalculator.cpp": {
-    "mtime": 1784507365.6026235,
-    "ast_hash": "2837c50e047d868a67b8a12bb0992955",
-    "semantic_hash": "2837c50e047d868a67b8a12bb0992955"
+    "mtime": 1784784959.601687,
+    "ast_hash": "d0edad961cba629ca011f3eaaf8d3819",
+    "semantic_hash": ""
   },
   "src/calculators/MotifFinder.cpp": {
     "mtime": 1784507365.6019492,
@@ -1169,11 +1169,6 @@
     "ast_hash": "cd0e4955469c10a5800ef690e1e39c97",
     "semantic_hash": "cd0e4955469c10a5800ef690e1e39c97"
   },
-  "tests/unit/math/LinearAlgebraTests.cpp": {
-    "mtime": 1782796157.91396,
-    "ast_hash": "36fdd91b4958f79643e5dc0234f7a1d2",
-    "semantic_hash": "36fdd91b4958f79643e5dc0234f7a1d2"
-  },
   "tests/unit/math/PrecisionTests.cpp": {
     "mtime": 1784756832.8012476,
     "ast_hash": "9b33653a90eb4697e1019b181154293a",
@@ -1290,8 +1285,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/SIMDUtilsTests.cpp": {
-    "mtime": 1784783247.9078834,
-    "ast_hash": "e7b9ac0babe46a37d233e8211b9f251b",
+    "mtime": 1784783539.7717738,
+    "ast_hash": "a66a50dd31aecee9fcc5bc11e6b4017b",
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterFactoryTests.cpp": {
@@ -1370,8 +1365,8 @@
     "semantic_hash": "ac2365e53a1df768172acaffee1cec51"
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1784761101.3814564,
-    "ast_hash": "29efdbc1d76f815292781402ac865cd0",
+    "mtime": 1784785375.0276878,
+    "ast_hash": "b6edd9e812c474b32a8442747ea069a5",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1682,6 +1677,71 @@
   ".agents/skills/test-and-tea-loop/SKILL.md": {
     "mtime": 1784769727.3182428,
     "ast_hash": "63dc74e9ae5dfb24ac9a1c9f9ae155f3",
+    "semantic_hash": ""
+  },
+  "include/math/detail/Vector3SIMD.hpp": {
+    "mtime": 1784785321.7557564,
+    "ast_hash": "084c22eeee4069451ac978ac27a07b35",
+    "semantic_hash": ""
+  },
+  "include/math/simd/SIMDDistance.hpp": {
+    "mtime": 1784784323.2935174,
+    "ast_hash": "a2a97f15b873487b6aa73ca509f73156",
+    "semantic_hash": ""
+  },
+  "include/math/simd/SIMDNormalization.hpp": {
+    "mtime": 1784784311.051413,
+    "ast_hash": "1e8b82d9f4c13e027ba89e3d69ef3e9e",
+    "semantic_hash": ""
+  },
+  "include/math/simd/SIMDScattering.hpp": {
+    "mtime": 1784784473.5270362,
+    "ast_hash": "40effaf40f6012be4ad9a94a5a627301",
+    "semantic_hash": ""
+  },
+  "include/math/simd/SIMDTypes.hpp": {
+    "mtime": 1784784171.0055387,
+    "ast_hash": "7f1b597354cbf8e83f63fecfe725e3bd",
+    "semantic_hash": ""
+  },
+  "include/math/simd/detail/AVX2Kernels.hpp": {
+    "mtime": 1784784464.2591746,
+    "ast_hash": "bb7db667b2d9a8e46402bd87d6c0312a",
+    "semantic_hash": ""
+  },
+  "include/math/simd/detail/AVX512Kernels.hpp": {
+    "mtime": 1784784469.0741026,
+    "ast_hash": "ccd9f0b544144b075fbb39ba1437ec65",
+    "semantic_hash": ""
+  },
+  "include/math/simd/detail/ScalarKernels.hpp": {
+    "mtime": 1784784459.2202497,
+    "ast_hash": "9fb8f090cf19affb1ca37dc8cc8109eb",
+    "semantic_hash": ""
+  },
+  "include/plotters/PlotTypes.hpp": {
+    "mtime": 1784785269.3468993,
+    "ast_hash": "fd33abe5014df8f69198584d8fa016a6",
+    "semantic_hash": ""
+  },
+  "include/plotters/SvgComparisonRenderer.hpp": {
+    "mtime": 1784785293.0143414,
+    "ast_hash": "ffd9478eb8363a19bfbc05f2522f2628",
+    "semantic_hash": ""
+  },
+  "include/plotters/SvgHistogramRenderer.hpp": {
+    "mtime": 1784785282.0775654,
+    "ast_hash": "f45f0aa85df36fe1d4c40b243641d2ac",
+    "semantic_hash": ""
+  },
+  "tests/unit/math/Matrix3Tests.cpp": {
+    "mtime": 1784785371.4077582,
+    "ast_hash": "4eed280ebf2246edb2e003bff16d4353",
+    "semantic_hash": ""
+  },
+  "tests/unit/math/Vector3Tests.cpp": {
+    "mtime": 1784785362.6819339,
+    "ast_hash": "9b3738b73a097de51f44b390b10815b8",
     "semantic_hash": ""
   }
 }

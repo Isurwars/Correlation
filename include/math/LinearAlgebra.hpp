@@ -9,6 +9,7 @@
 #pragma once
 
 #include "math/Precision.hpp"
+#include "math/SIMDConfig.hpp"
 #include <array>
 #include <cmath>
 #include <stdexcept>
@@ -62,14 +63,18 @@ public:
    * @param idx Index of the component.
    * @return The value at index i.
    */
-  [[nodiscard]] constexpr T operator[](std::size_t idx) const noexcept { return data_[idx]; }
+  [[nodiscard]] constexpr T operator[](std::size_t idx) const noexcept {
+    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Access mutable component by index (0, 1, or 2).
    * @param idx Index of the component.
    * @return Reference to the value at index i.
    */
-  constexpr T &operator[](std::size_t idx) noexcept { return data_[idx]; }
+  constexpr T &operator[](std::size_t idx) noexcept {
+    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /** @return The X-component. */
   [[nodiscard]] constexpr T x() const noexcept { return data_[0]; }
@@ -89,14 +94,18 @@ public:
    * @param idx Index.
    * @return Reference to component.
    */
-  constexpr T &operator()(std::size_t idx) noexcept { return data_[idx]; }
+  constexpr T &operator()(std::size_t idx) noexcept {
+    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Access component by index (alternative syntax).
    * @param idx Index.
    * @return Component value.
    */
-  [[nodiscard]] constexpr T operator()(std::size_t idx) const noexcept { return data_[idx]; }
+  [[nodiscard]] constexpr T operator()(std::size_t idx) const noexcept {
+    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Checks if the vector is a zero vector.
@@ -135,9 +144,7 @@ public:
    * @brief Unary negation.
    * @return A new vector with all components negated.
    */
-  [[nodiscard]] constexpr Vector3 operator-() const noexcept {
-    return {-data_[0], -data_[1], -data_[2]};
-  }
+  [[nodiscard]] constexpr Vector3 operator-() const noexcept { return {-data_[0], -data_[1], -data_[2]}; }
 
   /**
    * @brief Scalar multiplication.
@@ -235,9 +242,7 @@ public:
    * @param rhs The vector to compare with.
    * @return True if any component differs.
    */
-  [[nodiscard]] constexpr bool operator!=(const Vector3 &rhs) const noexcept {
-    return !(*this == rhs);
-  }
+  [[nodiscard]] constexpr bool operator!=(const Vector3 &rhs) const noexcept { return !(*this == rhs); }
 
 private:
   std::array<T, 3> data_; ///< Underlying vector components.
@@ -286,14 +291,18 @@ public:
    * @param col_idx Column index (0, 1, or 2).
    * @return Constant reference to the column vector.
    */
-  [[nodiscard]] constexpr const Vector3<T> &operator[](std::size_t col_idx) const noexcept { return data_[col_idx]; }
+  [[nodiscard]] constexpr const Vector3<T> &operator[](std::size_t col_idx) const noexcept {
+    return data_[col_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Access mutable column vector by index.
    * @param col_idx Column index (0, 1, or 2).
    * @return Reference to the column vector.
    */
-  constexpr Vector3<T> &operator[](std::size_t col_idx) noexcept { return data_[col_idx]; }
+  constexpr Vector3<T> &operator[](std::size_t col_idx) noexcept {
+    return data_[col_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Access element by row and column.
@@ -301,7 +310,9 @@ public:
    * @param col_idx Column index.
    * @return The element value.
    */
-  [[nodiscard]] constexpr T operator()(std::size_t row_idx, std::size_t col_idx) const noexcept { return data_[col_idx][row_idx]; }
+  [[nodiscard]] constexpr T operator()(std::size_t row_idx, std::size_t col_idx) const noexcept {
+    return data_[col_idx][row_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Access mutable element by row and column.
@@ -309,7 +320,9 @@ public:
    * @param col_idx Column index.
    * @return Reference to the element.
    */
-  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept { return data_[col_idx][row_idx]; }
+  constexpr T &operator()(std::size_t row_idx, std::size_t col_idx) noexcept {
+    return data_[col_idx][row_idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
+  }
 
   /**
    * @brief Converts the matrix to a nested std::array.
@@ -417,446 +430,17 @@ public:
    * @param rhs The matrix to compare with.
    * @return True if any element differs.
    */
-  [[nodiscard]] constexpr bool operator!=(const Matrix3 &rhs) const noexcept {
-    return !(*this == rhs);
-  }
+  [[nodiscard]] constexpr bool operator!=(const Matrix3 &rhs) const noexcept { return !(*this == rhs); }
 
 private:
   std::array<Vector3<T>, 3> data_; ///< Column vectors of the matrix.
 };
 
 // -----------------------------------------------------------------------------
-//  Specializations for Double (SIMD Optimized)
+//  Specializations for Double and Float (SIMD Optimized)
 // -----------------------------------------------------------------------------
 
-#if defined(CORRELATION_SIMD_AVX2) || defined(CORRELATION_SIMD_AVX512)
-
-/**
- * @brief SIMD-optimized specialization of Vector3 for double.
- */
-template <> class CORRELATION_ALIGN(32) Vector3<double> {
-public:
-  using value_type = double; ///< Double scalar type.
-
-  /** @brief Default constructor. Initializes to zero and ensures 32-byte alignment. */
-  Vector3() noexcept { _mm256_store_pd(data_, _mm256_setzero_pd()); }
-
-  /**
-   * @brief Parameterized constructor.
-   * @param x_val X-component.
-   * @param y_val Y-component.
-   * @param z_val Z-component.
-   */
-  Vector3(double x_val, double y_val, double z_val) noexcept {
-    CORRELATION_ALIGN(32) double temp[4] = {x_val, y_val, z_val, 0.0};
-    _mm256_store_pd(data_, _mm256_load_pd(temp));
-  }
-
-  /**
-   * @brief Array-based constructor.
-   * @param arr Input array {x, y, z}.
-   */
-  explicit Vector3(const std::array<double, 3> &arr) noexcept {
-    CORRELATION_ALIGN(32) double temp[4] = {arr[0], arr[1], arr[2], 0.0};
-    _mm256_store_pd(data_, _mm256_load_pd(temp));
-  }
-
-  /**
-   * @brief Access component by index.
-   * @param idx Index (0, 1, or 2).
-   * @return Component value.
-   */
-  [[nodiscard]] double operator[](std::size_t idx) const noexcept { return data_[idx]; }
-
-  /**
-   * @brief Access mutable component by index.
-   * @param idx Index (0, 1, or 2).
-   * @return Reference to component.
-   */
-  double &operator[](std::size_t idx) noexcept { return data_[idx]; }
-
-  /** @return X-component. */
-  [[nodiscard]] double x() const noexcept { return data_[0]; }
-  /** @return Reference to X-component. */
-  double &x() noexcept { return data_[0]; }
-  /** @return Y-component. */
-  [[nodiscard]] double y() const noexcept { return data_[1]; }
-  /** @return Reference to Y-component. */
-  double &y() noexcept { return data_[1]; }
-  /** @return Z-component. */
-  [[nodiscard]] double z() const noexcept { return data_[2]; }
-  /** @return Reference to Z-component. */
-  double &z() noexcept { return data_[2]; }
-
-  /**
-   * @brief Access component by index.
-   * @param idx Index (0, 1, or 2).
-   * @return Reference to component.
-   */
-  double &operator()(std::size_t idx) noexcept { return data_[idx]; }
-
-  /** @return True if x, y, and z are all 0.0. */
-  [[nodiscard]] bool empty() const noexcept { return data_[0] == 0.0 && data_[1] == 0.0 && data_[2] == 0.0; }
-
-  // Arithmetic with SIMD
-  /**
-   * @brief SIMD-accelerated vector addition.
-   * @param rhs Vector to add.
-   * @return Sum vector.
-   */
-  [[nodiscard]] Vector3 operator+(const Vector3 &rhs) const noexcept {
-    Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_add_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
-    return res;
-  }
-
-  /**
-   * @brief SIMD-accelerated vector subtraction.
-   * @param rhs Vector to subtract.
-   * @return Difference vector.
-   */
-  [[nodiscard]] Vector3 operator-(const Vector3 &rhs) const noexcept {
-    Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_sub_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
-    return res;
-  }
-
-  /**
-   * @brief SIMD-accelerated unary negation.
-   * @return Negated vector.
-   */
-  [[nodiscard]] Vector3 operator-() const noexcept {
-    Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_sub_pd(_mm256_setzero_pd(), _mm256_load_pd(data_)));
-    return res;
-  }
-
-  /**
-   * @brief SIMD-accelerated scalar multiplication.
-   * @param scalar Scalar factor.
-   * @return Scaled vector.
-   */
-  [[nodiscard]] Vector3 operator*(double scalar) const noexcept {
-    Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_mul_pd(_mm256_load_pd(data_), _mm256_set1_pd(scalar)));
-    return res;
-  }
-
-  /**
-   * @brief SIMD-accelerated scalar division.
-   * @param scalar Scalar divisor.
-   * @return Vector scaled by 1/scalar.
-   */
-  [[nodiscard]] Vector3 operator/(double scalar) const noexcept {
-    Vector3 res;
-    _mm256_store_pd(res.data_, _mm256_div_pd(_mm256_load_pd(data_), _mm256_set1_pd(scalar)));
-    return res;
-  }
-
-  /**
-   * @brief SIMD-accelerated in-place addition.
-   * @param rhs Vector to add.
-   * @return Reference to this vector.
-   */
-  Vector3 &operator+=(const Vector3 &rhs) noexcept {
-    _mm256_store_pd(data_, _mm256_add_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
-    return *this;
-  }
-
-  /**
-   * @brief SIMD-accelerated in-place subtraction.
-   * @param rhs Vector to subtract.
-   * @return Reference to this vector.
-   */
-  Vector3 &operator-=(const Vector3 &rhs) noexcept {
-    _mm256_store_pd(data_, _mm256_sub_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_)));
-    return *this;
-  }
-
-  /**
-   * @brief SIMD-accelerated in-place scalar multiplication.
-   * @param scalar Scalar factor.
-   * @return Reference to this vector.
-   */
-  Vector3 &operator*=(double scalar) noexcept {
-    _mm256_store_pd(data_, _mm256_mul_pd(_mm256_load_pd(data_), _mm256_set1_pd(scalar)));
-    return *this;
-  }
-
-  /**
-   * @brief SIMD-accelerated in-place scalar division.
-   * @param scalar Scalar divisor.
-   * @return Reference to this vector.
-   */
-  Vector3 &operator/=(double scalar) noexcept {
-    _mm256_store_pd(data_, _mm256_div_pd(_mm256_load_pd(data_), _mm256_set1_pd(scalar)));
-    return *this;
-  }
-
-  /**
-   * @brief SIMD-accelerated dot product.
-   * @param rhs Vector to multiply with.
-   * @return Scalar result.
-   */
-  [[nodiscard]] double operator*(const Vector3 &rhs) const noexcept {
-    __m256d mult = _mm256_mul_pd(_mm256_load_pd(data_), _mm256_load_pd(rhs.data_));
-    // Since 4th component is 0, we can sum all 4.
-    __m128d lo = _mm256_castpd256_pd128(mult);
-    __m128d hi = _mm256_extractf128_pd(mult, 1);
-    __m128d res = _mm_add_pd(lo, hi);
-    res = _mm_hadd_pd(res, res);
-    return _mm_cvtsd_f64(res);
-  }
-
-  /**
-   * @brief Converts the vector to a std::array.
-   * @return Array containing {x, y, z}.
-   */
-  [[nodiscard]] std::array<double, 3> array() const noexcept { return {data_[0], data_[1], data_[2]}; }
-
-  /**
-   * @brief Equality comparison.
-   * @param rhs The vector to compare with.
-   * @return True if all components are exactly equal.
-   */
-  [[nodiscard]] bool operator==(const Vector3 &rhs) const noexcept {
-    return data_[0] == rhs.data_[0] && data_[1] == rhs.data_[1] && data_[2] == rhs.data_[2];
-  }
-
-  /**
-   * @brief Inequality comparison.
-   * @param rhs The vector to compare with.
-   * @return True if any component differs.
-   */
-  [[nodiscard]] bool operator!=(const Vector3 &rhs) const noexcept {
-    return !(*this == rhs);
-  }
-
-  /** @return Constant pointer to the beginning of the SIMD-aligned data. */
-  const double *begin() const noexcept { return data_; }
-  /** @return Constant pointer to the end of the data. */
-  const double *end() const noexcept { return data_ + 3; }
-  /** @return Mutable pointer to the beginning of the SIMD-aligned data. */
-  double *begin() noexcept { return data_; }
-  /** @return Mutable pointer to the end of the data. */
-  double *end() noexcept { return data_ + 3; }
-
-private:
-  CORRELATION_ALIGN(32) double data_[4]; ///< Padded to 4 doubles for 256-bit SIMD alignment.
-};
-
-#endif // SIMD Specialized Vector3<double>
-
-// -----------------------------------------------------------------------------
-//  SIMD-optimized specialization for Vector3<float>
-// -----------------------------------------------------------------------------
-
-#if defined(CORRELATION_SIMD_AVX2) || defined(CORRELATION_SIMD_AVX512)
-
-/**
- * @brief SIMD-optimized specialization of Vector3 for float.
- *
- * Uses 128-bit SSE registers (4 floats, 3 used + 1 padding) for aligned
- * storage and operations. This provides 2x throughput over the double
- * specialization for single-precision builds.
- */
-template <> class CORRELATION_ALIGN(16) Vector3<float> {
-public:
-  using value_type = float; ///< Float scalar type.
-
-  /** @brief Default constructor. Initializes to zero and ensures 16-byte alignment. */
-  Vector3() noexcept { _mm_store_ps(data_, _mm_setzero_ps()); }
-
-  /**
-   * @brief Parameterized constructor.
-   * @param x_val X-component.
-   * @param y_val Y-component.
-   * @param z_val Z-component.
-   */
-  Vector3(float x_val, float y_val, float z_val) noexcept {
-    CORRELATION_ALIGN(16) float temp[4] = {x_val, y_val, z_val, 0.0f};
-    _mm_store_ps(data_, _mm_load_ps(temp));
-  }
-
-  /**
-   * @brief Array-based constructor.
-   * @param arr Input array {x, y, z}.
-   */
-  explicit Vector3(const std::array<float, 3> &arr) noexcept {
-    CORRELATION_ALIGN(16) float temp[4] = {arr[0], arr[1], arr[2], 0.0f};
-    _mm_store_ps(data_, _mm_load_ps(temp));
-  }
-
-  /**
-   * @brief Converting constructor from Vector3<double>.
-   */
-  explicit Vector3(const Vector3<double> &other) noexcept {
-    data_[0] = static_cast<float>(other.x());
-    data_[1] = static_cast<float>(other.y());
-    data_[2] = static_cast<float>(other.z());
-    data_[3] = 0.0f;
-  }
-
-  /**
-   * @brief Access component by index.
-   * @param idx Index (0, 1, or 2).
-   * @return Component value.
-   */
-  [[nodiscard]] float operator[](std::size_t idx) const noexcept { return data_[idx]; }
-
-  /**
-   * @brief Mutable access component by index.
-   * @param idx Index (0, 1, or 2).
-   * @return Reference to component value.
-   */
-  float &operator[](std::size_t idx) noexcept { return data_[idx]; }
-
-  /** @return The X-component. */
-  [[nodiscard]] float x() const noexcept { return data_[0]; }
-  /** @return Reference to the X-component. */
-  float &x() noexcept { return data_[0]; }
-  /** @return The Y-component. */
-  [[nodiscard]] float y() const noexcept { return data_[1]; }
-  /** @return Reference to the Y-component. */
-  float &y() noexcept { return data_[1]; }
-  /** @return The Z-component. */
-  [[nodiscard]] float z() const noexcept { return data_[2]; }
-  /** @return Reference to the Z-component. */
-  float &z() noexcept { return data_[2]; }
-
-  /**
-   * @brief Access component by index (alternative syntax).
-   * @param idx Index.
-   * @return Reference to component.
-   */
-  float &operator()(std::size_t idx) noexcept { return data_[idx]; }
-
-  /**
-   * @brief Vector addition.
-   * @param rhs The vector to add.
-   * @return A new vector representing the sum.
-   */
-  [[nodiscard]] Vector3 operator+(const Vector3 &rhs) const noexcept {
-    Vector3 result;
-    __m128 a = _mm_load_ps(data_);
-    __m128 b = _mm_load_ps(rhs.data_);
-    _mm_store_ps(result.data_, _mm_add_ps(a, b));
-    return result;
-  }
-
-  /**
-   * @brief Vector subtraction.
-   * @param rhs The vector to subtract.
-   * @return A new vector representing the difference.
-   */
-  [[nodiscard]] Vector3 operator-(const Vector3 &rhs) const noexcept {
-    Vector3 result;
-    __m128 a = _mm_load_ps(data_);
-    __m128 b = _mm_load_ps(rhs.data_);
-    _mm_store_ps(result.data_, _mm_sub_ps(a, b));
-    return result;
-  }
-
-  /**
-   * @brief Unary negation.
-   * @return A new vector with all components negated.
-   */
-  [[nodiscard]] Vector3 operator-() const noexcept {
-    Vector3 result;
-    __m128 a = _mm_load_ps(data_);
-    _mm_store_ps(result.data_, _mm_sub_ps(_mm_setzero_ps(), a));
-    return result;
-  }
-
-  /**
-   * @brief Scalar multiplication.
-   * @param scalar The scalar factor.
-   * @return A new vector scaled by scalar.
-   */
-  [[nodiscard]] Vector3 operator*(float scalar) const noexcept {
-    Vector3 result;
-    __m128 a = _mm_load_ps(data_);
-    __m128 s = _mm_set1_ps(scalar);
-    _mm_store_ps(result.data_, _mm_mul_ps(a, s));
-    return result;
-  }
-
-  /**
-   * @brief Scalar division.
-   * @param scalar The scalar divisor.
-   * @return A new vector scaled by 1/scalar.
-   */
-  [[nodiscard]] Vector3 operator/(float scalar) const noexcept {
-    Vector3 result;
-    __m128 a = _mm_load_ps(data_);
-    __m128 s = _mm_set1_ps(scalar);
-    _mm_store_ps(result.data_, _mm_div_ps(a, s));
-    return result;
-  }
-
-  /** @brief In-place addition. */
-  Vector3 &operator+=(const Vector3 &rhs) noexcept {
-    _mm_store_ps(data_, _mm_add_ps(_mm_load_ps(data_), _mm_load_ps(rhs.data_)));
-    return *this;
-  }
-
-  /** @brief In-place subtraction. */
-  Vector3 &operator-=(const Vector3 &rhs) noexcept {
-    _mm_store_ps(data_, _mm_sub_ps(_mm_load_ps(data_), _mm_load_ps(rhs.data_)));
-    return *this;
-  }
-
-  /** @brief In-place scalar multiplication. */
-  Vector3 &operator*=(float scalar) noexcept {
-    _mm_store_ps(data_, _mm_mul_ps(_mm_load_ps(data_), _mm_set1_ps(scalar)));
-    return *this;
-  }
-
-  /** @brief In-place scalar division. */
-  Vector3 &operator/=(float scalar) noexcept {
-    _mm_store_ps(data_, _mm_div_ps(_mm_load_ps(data_), _mm_set1_ps(scalar)));
-    return *this;
-  }
-
-  /**
-   * @brief Dot product.
-   * @param rhs The vector to dot with.
-   * @return The scalar dot product.
-   */
-  [[nodiscard]] float operator*(const Vector3 &rhs) const noexcept {
-    return data_[0] * rhs.data_[0] + data_[1] * rhs.data_[1] + data_[2] * rhs.data_[2];
-  }
-
-  /** @return Array containing {x, y, z}. */
-  [[nodiscard]] std::array<float, 3> array() const noexcept { return {data_[0], data_[1], data_[2]}; }
-
-  /** @brief Checks if the vector is a zero vector. */
-  [[nodiscard]] bool empty() const noexcept { return data_[0] == 0.0f && data_[1] == 0.0f && data_[2] == 0.0f; }
-
-  /** @brief Equality comparison. */
-  [[nodiscard]] bool operator==(const Vector3 &rhs) const noexcept {
-    return data_[0] == rhs[0] && data_[1] == rhs[1] && data_[2] == rhs[2];
-  }
-
-  /** @brief Inequality comparison. */
-  [[nodiscard]] bool operator!=(const Vector3 &rhs) const noexcept {
-    return !(*this == rhs);
-  }
-
-  /** @return Pointer to the beginning of the data. */
-  const float *begin() const noexcept { return data_; }
-  /** @return Pointer past the end of the data. */
-  const float *end() const noexcept { return data_ + 3; }
-  /** @return Mutable pointer to the beginning of the data. */
-  float *begin() noexcept { return data_; }
-  /** @return Mutable pointer to the end of the data. */
-  float *end() noexcept { return data_ + 3; }
-
-private:
-  CORRELATION_ALIGN(16) float data_[4]; ///< Padded to 4 floats for 128-bit SSE alignment.
-};
-
-#endif // SIMD Specialized Vector3<float>
+#include "math/detail/Vector3SIMD.hpp" // IWYU pragma: export
 
 // -----------------------------------------------------------------------------
 //  Free Functions
@@ -880,7 +464,8 @@ template <typename T> [[nodiscard]] constexpr T dot(const Vector3<T> &vec_a, con
  * @param vec_b The second vector.
  * @return A new Vector3 representing the cross product vec_a x vec_b.
  */
-template <typename T> [[nodiscard]] constexpr Vector3<T> cross(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
+template <typename T>
+[[nodiscard]] constexpr Vector3<T> cross(const Vector3<T> &vec_a, const Vector3<T> &vec_b) noexcept {
   return {vec_a[1] * vec_b[2] - vec_a[2] * vec_b[1], vec_a[2] * vec_b[0] - vec_a[0] * vec_b[2],
           vec_a[0] * vec_b[1] - vec_a[1] * vec_b[0]};
 }
@@ -915,7 +500,9 @@ template <typename T> [[nodiscard]] constexpr T norm_sq(const Vector3<T> &vec_a)
  * @param vec_a The vector.
  * @return The length of the vector.
  */
-template <typename T> [[nodiscard]] constexpr T norm(const Vector3<T> &vec_a) noexcept { return std::sqrt(vec_a * vec_a); }
+template <typename T> [[nodiscard]] constexpr T norm(const Vector3<T> &vec_a) noexcept {
+  return std::sqrt(vec_a * vec_a);
+}
 
 /**
  * @brief Computes the distance between two vectors.
@@ -970,16 +557,16 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> invert(const Matrix3<T>
   const T inv = T{1} / det;
 
   const Vector3<T> c_zero{matrix[1][1] * matrix[2][2] - matrix[1][2] * matrix[2][1],
-                    matrix[0][2] * matrix[2][1] - matrix[0][1] * matrix[2][2],
-                    matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1]};
+                          matrix[0][2] * matrix[2][1] - matrix[0][1] * matrix[2][2],
+                          matrix[0][1] * matrix[1][2] - matrix[0][2] * matrix[1][1]};
 
   const Vector3<T> c_one{matrix[1][2] * matrix[2][0] - matrix[1][0] * matrix[2][2],
-                   matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0],
-                   matrix[0][2] * matrix[1][0] - matrix[0][0] * matrix[1][2]};
+                         matrix[0][0] * matrix[2][2] - matrix[0][2] * matrix[2][0],
+                         matrix[0][2] * matrix[1][0] - matrix[0][0] * matrix[1][2]};
 
   const Vector3<T> c_two{matrix[1][0] * matrix[2][1] - matrix[1][1] * matrix[2][0],
-                   matrix[0][1] * matrix[2][0] - matrix[0][0] * matrix[2][1],
-                   matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]};
+                         matrix[0][1] * matrix[2][0] - matrix[0][0] * matrix[2][1],
+                         matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]};
 
   return Matrix3<T>(c_zero * inv, c_one * inv, c_two * inv);
 }
@@ -1002,15 +589,19 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3
  * @param vector 3D vector.
  * @return Transformed vector matrix * vector.
  */
-template <typename T, typename U> [[nodiscard]] constexpr auto operator*(const Matrix3<T> &matrix, const Vector3<U> &vector) noexcept {
+template <typename T, typename U>
+[[nodiscard]] constexpr auto operator*(const Matrix3<T> &matrix, const Vector3<U> &vector) noexcept {
   using CommonT = std::common_type_t<T, U>;
-  return Vector3<CommonT>(
-      std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].x()), std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].x()), static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].x()))),
-      std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].y()), std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].y()), static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].y()))),
-      std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].z()), std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].z()), static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].z())))
-  );
+  return Vector3<CommonT>(std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].x()),
+                                   std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].x()),
+                                            static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].x()))),
+                          std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].y()),
+                                   std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].y()),
+                                            static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].y()))),
+                          std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].z()),
+                                   std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].z()),
+                                            static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].z()))));
 }
-
 
 /**
  * @brief Matrix-matrix multiplication.
@@ -1019,7 +610,8 @@ template <typename T, typename U> [[nodiscard]] constexpr auto operator*(const M
  * @param mat_b Right matrix.
  * @return Resulting matrix product mat_a * mat_b.
  */
-template <typename T> [[nodiscard]] constexpr Matrix3<T> operator*(const Matrix3<T> &mat_a, const Matrix3<T> &mat_b) noexcept {
+template <typename T>
+[[nodiscard]] constexpr Matrix3<T> operator*(const Matrix3<T> &mat_a, const Matrix3<T> &mat_b) noexcept {
   return Matrix3<T>(mat_a * mat_b[0], mat_a * mat_b[1], mat_a * mat_b[2]);
 }
 

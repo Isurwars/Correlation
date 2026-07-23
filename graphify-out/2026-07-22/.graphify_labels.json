@@ -251,12 +251,17 @@
   "249": "Rule: Caveman Navigation Protocol (Token-Efficient Codebase Discovery)",
   "250": "PositionBlockT",
   "251": "CliParserTests",
+  "252": "ReciprocalBasis",
   "253": "real_t",
   "254": "FileReaderTests",
   "256": "GPUSteinhardtCalculator.cu",
+  "257": "ArcReader.cpp",
   "258": "MLIPInterface",
+  "260": "ClusterCalculator",
   "262": "CalculatorFactory",
+  "264": "PrecomputedPhases",
   "265": "MLIPOutput",
+  "266": "ThreadAccumulators",
   "272": "app.json",
   "274": "SYCLUtils.hpp"
 }

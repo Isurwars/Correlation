@@ -153,7 +153,7 @@ TEST_F(PrecisionTests, AccumulationPrecisionLoss) {
 }
 
 TEST_F(PrecisionTests, KahanAccumulatorPreservesPrecision) {
-  correlation::KahanAccumulator<float> kahan_sum{.sum = 1.0F, .compensation = 0.0F};
+  KahanAccumulator<float> kahan_sum{.sum = 1.0F, .compensation = 0.0F};
   constexpr float delta = 1e-7F;
   constexpr int n_iter = 1000000;
 

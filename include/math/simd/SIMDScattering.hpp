@@ -10,6 +10,8 @@
 
 #include "math/simd/SIMDTypes.hpp"
 #include "math/simd/detail/AVX2Kernels.hpp"
+#include "math/simd/detail/AVX512Kernels.hpp" // IWYU pragma: export
+#include "math/simd/detail/ScalarKernels.hpp" // IWYU pragma: export
 
 #include <cmath>
 
@@ -38,8 +40,7 @@ inline T simd_dot(const T *CORRELATION_RESTRICT input_a, const T *CORRELATION_RE
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 template <typename T>
 inline void dot_block(T v1x, T v1y, T v1z, const T *CORRELATION_RESTRICT v2x, const T *CORRELATION_RESTRICT v2y,
-                      const T *CORRELATION_RESTRICT v2z, T *CORRELATION_RESTRICT out_dot,
-                      std::size_t count) noexcept {
+                      const T *CORRELATION_RESTRICT v2z, T *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
 #ifdef CORRELATION_SIMD_AVX512
   detail::avx512::dot_block(v1x, v1y, v1z, v2x, v2y, v2z, out_dot, count);
 #elif defined(CORRELATION_SIMD_AVX2)

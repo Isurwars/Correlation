@@ -10,6 +10,8 @@
 
 #include "math/simd/SIMDTypes.hpp"
 #include "math/simd/detail/AVX2Kernels.hpp"
+#include "math/simd/detail/AVX512Kernels.hpp" // IWYU pragma: export
+#include "math/simd/detail/ScalarKernels.hpp" // IWYU pragma: export
 
 namespace correlation::math {
 

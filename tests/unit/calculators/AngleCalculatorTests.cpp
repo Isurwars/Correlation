@@ -48,7 +48,7 @@ TEST(AngleCalculatorTests, ComputesCorrect90DegreeAngle) {
   // Angle formed by H1(type 1) - O(type 0) - H2(type 1) should be pi / 2 (90 degrees)
   // Indices: [type1][type_central][type2] -> [1][0][1]
   ASSERT_EQ(out_angles[1][0][1].size(), 1);
-  EXPECT_NEAR(out_angles[1][0][1][0], correlation::math::pi / 2.0, 1e-6);
+  EXPECT_NEAR(out_angles[1][0][1][0], pi / 2.0, 1e-6);
 }
 
 // --- Extreme / Edge-Case Tests ---
@@ -71,7 +71,7 @@ TEST(AngleCalculatorTests, ComputesCorrect180DegreeAngle) {
   AngleCalculator::compute(cell, graph, out_angles);
 
   ASSERT_EQ(out_angles[1][0][1].size(), 1);
-  EXPECT_NEAR(out_angles[1][0][1][0], correlation::math::pi, 1e-6);
+  EXPECT_NEAR(out_angles[1][0][1][0], pi, 1e-6);
 }
 
 TEST(AngleCalculatorTests, ComputesCorrect60DegreeAngle) {
@@ -93,7 +93,7 @@ TEST(AngleCalculatorTests, ComputesCorrect60DegreeAngle) {
 
   // C-C-C angle should be 60 degrees = pi/3
   ASSERT_EQ(out_angles[0][0][0].size(), 1);
-  EXPECT_NEAR(out_angles[0][0][0][0], correlation::math::pi / 3.0, 1e-6);
+  EXPECT_NEAR(out_angles[0][0][0][0], pi / 3.0, 1e-6);
 }
 
 TEST(AngleCalculatorTests, SingleNeighborProducesNoAngles) {

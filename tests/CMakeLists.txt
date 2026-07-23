@@ -70,7 +70,8 @@ add_executable(correlation_unit_tests
     unit/plotters/SvgPlotterTests.cpp
     unit/plotters/PdfPlotterTests.cpp
     unit/utils/SIMDUtilsTests.cpp
-    unit/math/LinearAlgebraTests.cpp
+    unit/math/Vector3Tests.cpp
+    unit/math/Matrix3Tests.cpp
     unit/math/PrecisionTests.cpp
     unit/math/SpecialFunctionsTests.cpp
     unit/math/SmoothingTests.cpp

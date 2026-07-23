@@ -38,7 +38,7 @@ namespace detail {
 
 inline void fillGaussian(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
   const real_t prefactor =
-      static_cast<real_t>(1.0) / static_cast<real_t>(std::sqrt(correlation::math::two_pi) * params.sigma);
+      static_cast<real_t>(1.0) / static_cast<real_t>(std::sqrt(two_pi) * params.sigma);
   const real_t exp_coeff = static_cast<real_t>(-1.0) / (static_cast<real_t>(2.0) * params.sigma * params.sigma);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t distance = (static_cast<real_t>(i) - center) * params.bin_width;
@@ -84,12 +84,12 @@ inline void fillEpanechnikov(std::vector<real_t> &kernel, const KernelGeneration
 }
 
 inline void fillCosine(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
-  const real_t cos_factor = correlation::math::pi / static_cast<real_t>(4.0);
+  const real_t cos_factor = pi / static_cast<real_t>(4.0);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
       kernel[i] =
-          static_cast<real_t>(cos_factor * std::cos(correlation::math::pi * norm_dist / static_cast<real_t>(2.0)));
+          static_cast<real_t>(cos_factor * std::cos(pi * norm_dist / static_cast<real_t>(2.0)));
     } else {
       kernel[i] = 0.0;
     }
