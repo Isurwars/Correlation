@@ -595,8 +595,8 @@
     "semantic_hash": ""
   },
   "src/calculators/DADCalculator.cpp": {
-    "mtime": 1784790483.871669,
-    "ast_hash": "f2291a73555177e1ca31195aeda46074",
+    "mtime": 1784848198.7274547,
+    "ast_hash": "ae56acebcaaa880c8153fa6cde1a3c4c",
     "semantic_hash": ""
   },
   "src/calculators/DihedralCalculator.cpp": {
@@ -625,8 +625,8 @@
     "semantic_hash": ""
   },
   "src/calculators/HyperuniformityCalculator.cpp": {
-    "mtime": 1784790065.550467,
-    "ast_hash": "38f952f411e4b53bb7586412091d6704",
+    "mtime": 1784847836.065072,
+    "ast_hash": "046e2ccd7b95950d2d187d850b08e2b6",
     "semantic_hash": ""
   },
   "src/calculators/LocalEntropyCalculator.cpp": {
@@ -680,8 +680,8 @@
     "semantic_hash": ""
   },
   "src/calculators/VDOSCalculator.cpp": {
-    "mtime": 1784833479.06521,
-    "ast_hash": "3234f93984577bb9e77a71e28bf1f33e",
+    "mtime": 1784847807.8591907,
+    "ast_hash": "9da6c587e4327714b9735694cf6c8fd7",
     "semantic_hash": ""
   },
   "src/calculators/VoronoiCalculator.cpp": {
@@ -860,7 +860,7 @@
     "semantic_hash": "2953f414bcc1cd4462b2dd08511748d0"
   },
   "tests/PrecisionTestHelper.hpp": {
-    "mtime": 1784847307.8683443,
+    "mtime": 1784847474.0791457,
     "ast_hash": "be2c810bba593e720bfd7077430e5a0b",
     "semantic_hash": ""
   },

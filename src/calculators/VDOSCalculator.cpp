@@ -90,7 +90,6 @@ correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::an
   return vdos_hist;
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 correlation::analysis::Histogram VDOSCalculator::calculate(const correlation::analysis::Histogram &vacf_hist,
                                                            real_t max_imag_freq, real_t max_real_freq) {
   return calculate(vacf_hist, VDOSParams{.max_imag_freq = max_imag_freq, .max_real_freq = max_real_freq});

@@ -276,8 +276,5 @@
   "274": "SYCLUtils.hpp",
   "275": "GPUAtomData",
   "276": "CSVWriter.cpp",
-  "277": "hipGetDeviceCount",
-  "278": "StructureFactorCalculator",
-  "279": "TrajectoryAnalyzer::TrajectoryAnalyzer",
-  "280": "BlendParams"
+  "277": "hipGetDeviceCount"
 }

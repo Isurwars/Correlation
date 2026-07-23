@@ -24,7 +24,8 @@ namespace {
 const bool registered = CalculatorFactory::registerTypeSafe<HyperuniformityCalculator>("HyperuniformityCalculator");
 
 /**
- * @brief Portable 53-bit uniform generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
+ * @brief Portable 53-bit uniform generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across
+ * compilers and platforms.
  */
 [[nodiscard]] real_t generate_canonical_portable(std::mt19937_64 &rng) noexcept {
   return static_cast<real_t>(rng() >> 11) * static_cast<real_t>(1.0 / 9007199254740992.0);
@@ -106,7 +107,8 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
   std::vector<real_t> sum_N2(num_bins, static_cast<real_t>(0.0));
 
   // Deterministic seed for reproducible calculations across runs
-  std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c, bugprone-random-generator-seed)
+  std::seed_seq seed{12345};
+  std::mt19937_64 rng(seed);
 
   const auto &lattice = cell.latticeVectors();
 
@@ -181,8 +183,7 @@ HyperuniformityCalculator::calculate(const correlation::core::Cell &cell, const 
     const real_t mean_N = sum_N[k] / n_samples;
     const real_t mean_N2 = sum_N2[k] / n_samples;
     const real_t raw_var = mean_N2 - mean_N * mean_N;
-    const auto variance =
-        (raw_var > static_cast<real_t>(1e-12)) ? raw_var : static_cast<real_t>(0.0);
+    const auto variance = (raw_var > static_cast<real_t>(1e-12)) ? raw_var : static_cast<real_t>(0.0);
 
     sigma2_total[k] = variance;
     chi_total[k] = (mean_N > static_cast<real_t>(0.0)) ? (variance / mean_N) : static_cast<real_t>(0.0);

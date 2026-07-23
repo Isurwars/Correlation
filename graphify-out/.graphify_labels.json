@@ -276,5 +276,14 @@
   "274": "SYCLUtils.hpp",
   "275": "GPUAtomData",
   "276": "CSVWriter.cpp",
-  "277": "hipGetDeviceCount"
+  "277": "hipGetDeviceCount",
+  "278": "TEST",
+  "279": "VaspReaderTests",
+  "280": "TEST",
+  "281": "computeSingleAtomSteinhardt",
+  "282": "CarReader.cpp",
+  "283": "Constants.hpp",
+  "284": "ReaderExtensionQuery",
+  "285": "StructureAnalyzer::StructureAnalyzer",
+  "286": "PlotController::PlotController"
 }
