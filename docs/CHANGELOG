@@ -50,7 +50,6 @@ All notable changes to this project will be documented in this file.
 - **Broader Compiler Compatibility**: Replaced C++20 ranges algorithms with C++17-compatible standard library equivalents.
 
 ### Fixed
-- **FFT Reinterpret Cast Warnings**: Silenced C++ Core Guidelines `reinterpret_cast` warnings in `FFTUtils.hpp` using explicit `NOLINT` annotations.
 - **Linkage Warning Suppression**: Wrapped `FFTUtilsTests` in an anonymous namespace to prevent external symbol export.
 - **Path Normalization**: Corrected character escape sequence issues during path normalization.
 

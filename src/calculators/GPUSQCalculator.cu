@@ -34,25 +34,25 @@ template <typename T> struct QVectorsData {
 };
 
 template <typename T> struct DeviceAtoms {
-  const T *__restrict__ x;
-  const T *__restrict__ y;
-  const T *__restrict__ z;
+  const T *CORRELATION_RESTRICT x;
+  const T *CORRELATION_RESTRICT y;
+  const T *CORRELATION_RESTRICT z;
 };
 
 template <typename T> struct DeviceQVectors {
-  const T *__restrict__ qx;
-  const T *__restrict__ qy;
-  const T *__restrict__ qz;
+  const T *CORRELATION_RESTRICT qx;
+  const T *CORRELATION_RESTRICT qy;
+  const T *CORRELATION_RESTRICT qz;
 };
 
 template <typename T> struct DeviceResults {
-  T *__restrict__ rho_cos;
-  T *__restrict__ rho_sin;
+  T *CORRELATION_RESTRICT rho_cos;
+  T *CORRELATION_RESTRICT rho_sin;
 };
 
-template <typename T> __device__ __host__ inline void gpu_sincos(T val, T *sin_val, T *cos_val);
+template <typename T> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos(T val, T *sin_val, T *cos_val);
 
-template <> __device__ __host__ inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
+template <> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
 #if defined(__CUDA_ARCH__)
   __sincosf(val, sin_val, cos_val);
 #elif defined(__HIP_DEVICE_COMPILE__)
@@ -65,7 +65,7 @@ template <> __device__ __host__ inline void gpu_sincos<float>(float val, float *
 #endif
 }
 
-template <> __device__ __host__ inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
+template <> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
 #if defined(__CUDA_ARCH__)
   __sincos(val, sin_val, cos_val);
 #elif defined(__HIP_DEVICE_COMPILE__)
@@ -153,7 +153,7 @@ std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_
 // CUDA kernel: compute rho_cos and rho_sin for a batch of q-vectors.
 // -------------------------------------------------------------------------
 template <typename T>
-__global__ void sq_kernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVectors<T> q_vecs, int num_q,
+CORRELATION_GLOBAL void sq_kernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVectors<T> q_vecs, int num_q,
                           DeviceResults<T> results) {
   int q_i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (q_i >= num_q) {

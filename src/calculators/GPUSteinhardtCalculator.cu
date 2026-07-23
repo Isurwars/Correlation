@@ -55,19 +55,19 @@ template <typename T> struct SteinhardtResult {
 };
 
 struct NeighborGraphPointers {
-  const int *__restrict__ offsets;
-  const int *__restrict__ indices;
+  const int *CORRELATION_RESTRICT offsets;
+  const int *CORRELATION_RESTRICT indices;
 };
 
 template <typename T> struct SteinhardtOutputPointers {
-  T *__restrict__ q4_out;
-  T *__restrict__ q6_out;
+  T *CORRELATION_RESTRICT q4_out;
+  T *CORRELATION_RESTRICT q6_out;
 };
 
 // -------------------------------------------------------------------------
 // Device helper: spherical harmonic Y_l^m for l=4 and l=6 (templated on T)
 // -------------------------------------------------------------------------
-template <typename T> __device__ void compute_y4m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
+template <typename T> CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
   T const costheta = input.costheta;
   T const phi = input.phi;
   T *real_y = output.real_y;
@@ -107,7 +107,7 @@ template <typename T> __device__ void compute_y4m(SphericalHarmonicInput<T> inpu
   }
 }
 
-template <typename T> __device__ void compute_y6m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
+template <typename T> CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
   T const costheta = input.costheta;
   T const phi = input.phi;
   T *real_y = output.real_y;
@@ -162,7 +162,7 @@ template <typename T> __device__ void compute_y6m(SphericalHarmonicInput<T> inpu
 // CUDA Kernel: compute Steinhardt parameters Q4 and Q6 per atom
 // -------------------------------------------------------------------------
 template <typename T>
-__global__ void steinhardt_kernel(GPUPoint<T> const *__restrict__ atoms, NeighborGraphPointers graph, int num_atoms,
+CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRICT atoms, NeighborGraphPointers graph, int num_atoms,
                                   SteinhardtOutputPointers<T> outputs) {
 
   int atom_idx = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);

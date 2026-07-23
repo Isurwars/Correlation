@@ -215,12 +215,12 @@
     "semantic_hash": ""
   },
   "include/core/GPUPortability.hpp": {
-    "mtime": 1784758000.0090234,
-    "ast_hash": "a48b0187f8e1192332985106c08c6d9d",
+    "mtime": 1784835591.6926525,
+    "ast_hash": "37ca8e242262570e8585cf3343e15307",
     "semantic_hash": ""
   },
   "include/core/MappedFile.hpp": {
-    "mtime": 1784494664.6782699,
+    "mtime": 1784835976.7404346,
     "ast_hash": "b57504b5f03c1591b837232c33ae9058",
     "semantic_hash": "b57504b5f03c1591b837232c33ae9058"
   },
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "include/math/SIMDConfig.hpp": {
-    "mtime": 1784581432.2070875,
-    "ast_hash": "10df3dad21d0d26db2488a57359e819d",
+    "mtime": 1784835574.4849753,
+    "ast_hash": "e1804d774f2b66a906b3eb150290cceb",
     "semantic_hash": ""
   },
   "include/math/SIMDUtils.hpp": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
-    "mtime": 1784587432.9520955,
-    "ast_hash": "6f7fbec75dc5c263230485e0d84180d0",
+    "mtime": 1784833243.330075,
+    "ast_hash": "f329721c0234b9c0bf847bb5644a7039",
     "semantic_hash": ""
   },
   "src/app/FileIOHandler.cpp": {
@@ -575,14 +575,14 @@
     "semantic_hash": ""
   },
   "src/calculators/CNCalculator.cpp": {
-    "mtime": 1784790453.129025,
-    "ast_hash": "9064531adf4e0970c93c5d115b344a70",
+    "mtime": 1784833195.7545786,
+    "ast_hash": "e436e6614434c1c00b986ea91ca9f514",
     "semantic_hash": ""
   },
   "src/calculators/CalculatorFactory.cpp": {
-    "mtime": 1784507365.6010437,
-    "ast_hash": "2251935eaf3b1c2969607155dd354f38",
-    "semantic_hash": "2251935eaf3b1c2969607155dd354f38"
+    "mtime": 1784833380.791444,
+    "ast_hash": "679225787ca2cdf5e22ee133efcd380d",
+    "semantic_hash": ""
   },
   "src/calculators/ChiralityCalculator.cpp": {
     "mtime": 1784790109.9133961,
@@ -610,13 +610,13 @@
     "semantic_hash": ""
   },
   "src/calculators/GPUDistanceCalculator.cu": {
-    "mtime": 1784774065.0371706,
-    "ast_hash": "20916ee876eedcc08954eb604a0122e3",
+    "mtime": 1784834924.6791892,
+    "ast_hash": "e123dc2da987c86d657d466a18b3a4d4",
     "semantic_hash": ""
   },
   "src/calculators/GPUSQCalculator.cu": {
-    "mtime": 1784774070.3670077,
-    "ast_hash": "1b045520cd9827bc5eb7c3271c863280",
+    "mtime": 1784834943.3318374,
+    "ast_hash": "054d74366a90e8e0bb14e60e9d90ad23",
     "semantic_hash": ""
   },
   "src/calculators/HBondCalculator.cpp": {
@@ -630,7 +630,7 @@
     "semantic_hash": ""
   },
   "src/calculators/LocalEntropyCalculator.cpp": {
-    "mtime": 1784790024.011892,
+    "mtime": 1784833367.2527356,
     "ast_hash": "e1baa0a99440d159635b3d29f000250c",
     "semantic_hash": ""
   },
@@ -665,13 +665,13 @@
     "semantic_hash": ""
   },
   "src/calculators/SteinhardtCalculator.cpp": {
-    "mtime": 1784753035.1835797,
-    "ast_hash": "d685797092f177f7d60c8ae37de39cb9",
+    "mtime": 1784833436.657251,
+    "ast_hash": "0d0d81528aec389d48e654fb3a20b855",
     "semantic_hash": ""
   },
   "src/calculators/StructureFactorCalculator.cpp": {
-    "mtime": 1784783116.3066738,
-    "ast_hash": "02568c3aa796515496b3e1f295c8ed5b",
+    "mtime": 1784833473.2108734,
+    "ast_hash": "2a8cac6e07617c6c9c34edaa9a48aede",
     "semantic_hash": ""
   },
   "src/calculators/VACFCalculator.cpp": {
@@ -680,18 +680,18 @@
     "semantic_hash": ""
   },
   "src/calculators/VDOSCalculator.cpp": {
-    "mtime": 1784599796.1205618,
-    "ast_hash": "9eef3b252e4a3f23534f008a4615beb8",
+    "mtime": 1784833479.06521,
+    "ast_hash": "3234f93984577bb9e77a71e28bf1f33e",
     "semantic_hash": ""
   },
   "src/calculators/VoronoiCalculator.cpp": {
-    "mtime": 1784771324.897482,
-    "ast_hash": "a04332c2858e0a8a62d15d660efdffd7",
+    "mtime": 1784833500.8371782,
+    "ast_hash": "bfb41df35364217297fa4a911edf93d0",
     "semantic_hash": ""
   },
   "src/calculators/XRDCalculator.cpp": {
-    "mtime": 1784756453.6584885,
-    "ast_hash": "849536dfc7c9405deabe2be4b1171bf1",
+    "mtime": 1784833493.0775328,
+    "ast_hash": "6e7dc141196c4f6c6f560918bd5ce083",
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
@@ -1355,8 +1355,8 @@
     "semantic_hash": "fa5794c577c54fcf0888468db60e0c22"
   },
   "src/CMakeLists.txt": {
-    "mtime": 1784756613.972209,
-    "ast_hash": "16e124800378154ef6d571d1ad841f66",
+    "mtime": 1784836025.292525,
+    "ast_hash": "6463a7a367fb6698bba3672a8d6ea082",
     "semantic_hash": ""
   },
   "src/bindings/CMakeLists.txt": {
@@ -1365,8 +1365,8 @@
     "semantic_hash": "ac2365e53a1df768172acaffee1cec51"
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1784785375.0276878,
-    "ast_hash": "b6edd9e812c474b32a8442747ea069a5",
+    "mtime": 1784835963.1846886,
+    "ast_hash": "e3246b73067ef2f12c1aefb86bb24493",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1585,8 +1585,8 @@
     "semantic_hash": ""
   },
   "src/calculators/GPUSteinhardtCalculator.cu": {
-    "mtime": 1784771441.1548924,
-    "ast_hash": "1efe7d3e7b6407bb1003ff5df11745d0",
+    "mtime": 1784834915.6293597,
+    "ast_hash": "81ae5487cad4e9290b5f6d3b0c7c5b85",
     "semantic_hash": ""
   },
   "src/calculators/MLIPCalculator.cpp": {
@@ -1742,6 +1742,11 @@
   "tests/unit/math/Vector3Tests.cpp": {
     "mtime": 1784785362.6819339,
     "ast_hash": "9b3738b73a097de51f44b390b10815b8",
+    "semantic_hash": ""
+  },
+  "include/core/CompilerPortability.hpp": {
+    "mtime": 1784835377.979663,
+    "ast_hash": "0001d92fd96d2e790b343210109058c6",
     "semantic_hash": ""
   }
 }

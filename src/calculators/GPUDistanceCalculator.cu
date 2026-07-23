@@ -56,29 +56,29 @@ struct GPUPosition {
 
 template <typename T>
 struct GPUAtomData {
-  const T *__restrict__ wrapped_x;
-  const T *__restrict__ wrapped_y;
-  const T *__restrict__ wrapped_z;
-  const int *__restrict__ element_ids;
-  const int *__restrict__ atom_bin;
+  const T *CORRELATION_RESTRICT wrapped_x;
+  const T *CORRELATION_RESTRICT wrapped_y;
+  const T *CORRELATION_RESTRICT wrapped_z;
+  const int *CORRELATION_RESTRICT element_ids;
+  const int *CORRELATION_RESTRICT atom_bin;
 };
 
 struct GPUBinData {
-  const unsigned long long *__restrict__ offsets;
-  const unsigned long long *__restrict__ indices;
+  const unsigned long long *CORRELATION_RESTRICT offsets;
+  const unsigned long long *CORRELATION_RESTRICT indices;
 };
 
-__device__ __forceinline__ void wrap_coordinate(int bin, int k_val, int &wrap, int &shift) {
+CORRELATION_DEVICE CORRELATION_FORCEINLINE void wrap_coordinate(int bin, int k_val, int &wrap, int &shift) {
   shift = (bin >= 0) ? (bin / k_val) : ((bin - k_val + 1) / k_val);
   wrap = bin - shift * k_val;
 }
 
 template <bool WriteMode, typename T>
-__device__ __forceinline__ void
+CORRELATION_DEVICE CORRELATION_FORCEINLINE void
 process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp, int n_bin_idx, GPUAtomData<T> atoms,
-            bool zero_disp, GPUBinData bins, T cutoff_sq, const T *__restrict__ bond_cutoffs_sq,
+            bool zero_disp, GPUBinData bins, T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq,
             int num_elements, unsigned long long *distance_counter, bool ignore_periodic_self_interactions,
-            unsigned long long *bond_counter, GPUDistance<T> *__restrict__ distances, GPUBond<T> *__restrict__ bonds) {
+            unsigned long long *bond_counter, GPUDistance<T> *CORRELATION_RESTRICT distances, GPUBond<T> *CORRELATION_RESTRICT bonds) {
 
   unsigned long long start = bins.offsets[n_bin_idx];
   unsigned long long end = bins.offsets[n_bin_idx + 1];
@@ -145,11 +145,11 @@ process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp,
 }
 
 template <bool WriteMode, typename T>
-__global__ void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, GPULattice<T> lattice, GPUSearchGrid grid,
-                                T cutoff_sq, const T *__restrict__ bond_cutoffs_sq, int num_elements,
+CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, GPULattice<T> lattice, GPUSearchGrid grid,
+                                T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq, int num_elements,
                                 bool ignore_periodic_self_interactions, int num_atoms,
                                 unsigned long long *distance_counter, unsigned long long *bond_counter,
-                                GPUDistance<T> *__restrict__ distances, GPUBond<T> *__restrict__ bonds) {
+                                GPUDistance<T> *CORRELATION_RESTRICT distances, GPUBond<T> *CORRELATION_RESTRICT bonds) {
 
   int i_val = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (i_val >= num_atoms) {

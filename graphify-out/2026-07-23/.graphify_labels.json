@@ -257,7 +257,7 @@
   "255": "TEST_F",
   "256": "GPUSteinhardtCalculator.cu",
   "257": "ArcReader.cpp",
-  "258": "MLIPInterface",
+  "258": "GPULattice",
   "259": "Element",
   "260": "ClusterCalculator",
   "261": "XRDCalculator.cpp",
@@ -267,11 +267,14 @@
   "265": "MLIPOutput",
   "266": "ThreadAccumulators",
   "267": "MockReader",
-  "268": "FileReaderTests",
+  "268": "HyperuniformityCalculatorTests.cpp",
   "269": "PrecomputedPhases",
   "270": "ThreadAccumulators",
-  "271": "dim3",
+  "271": "TEST",
   "272": "app.json",
-  "273": "precomputePhases",
-  "274": "SYCLUtils.hpp"
+  "273": "FileReaderTests",
+  "274": "SYCLUtils.hpp",
+  "275": "GPUAtomData",
+  "276": "CSVWriter.cpp",
+  "277": "hipGetDeviceCount"
 }

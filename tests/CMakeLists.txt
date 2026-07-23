@@ -92,6 +92,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
+add_dependencies(correlation_unit_tests readers_obj writers_obj calculators_obj)
 # (Definitions and discovery are configured at the end of the file in a loop)
 
 #-----------------------------------------------------------
@@ -116,6 +117,7 @@ target_link_libraries(correlation_functional_tests PRIVATE
     GTest::gtest
     GTest::gtest_main
 )
+add_dependencies(correlation_functional_tests readers_obj writers_obj calculators_obj)
 
 #-----------------------------------------------------------
 # 2b. CLI End-to-End Tests (subprocess-based)
@@ -165,6 +167,7 @@ if(BUILD_GUI)
         Slint::Slint
         nfd
     )
+    add_dependencies(correlation_gui_tests readers_obj writers_obj calculators_obj)
 
     # Link platform-specific deps required by a statically-built Slint
     link_slint_platform_deps(correlation_gui_tests)

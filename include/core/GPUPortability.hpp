@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "core/CompilerPortability.hpp" // IWYU pragma: export
 #include <cstddef>
 #include <utility> // IWYU pragma: keep
 
@@ -40,26 +41,36 @@ inline void hipLaunchKernelGGL(K kernel, dim3 grid, dim3 block, std::size_t shar
 
 using hipError_t = int;
 constexpr int hipSuccess = 0;
+
 inline hipError_t hipGetDeviceCount(int *count) {
   if (count != nullptr) {
     *count = 0;
   }
   return hipSuccess;
 }
+
 template <typename T> inline hipError_t hipMalloc(T **ptr, [[maybe_unused]] std::size_t size) {
   if (ptr) {
     *ptr = nullptr;
   }
   return 0;
 }
+
 inline hipError_t hipFree([[maybe_unused]] void *ptr) { return 0; }
-// NOLINTBEGIN(bugprone-easily-swappable-parameters)
-inline hipError_t hipMemcpy([[maybe_unused]] void *dst, [[maybe_unused]] const void *src,
-                            [[maybe_unused]] std::size_t count,
-                            [[maybe_unused]] int kind) noexcept {
-  return 0;
+
+struct MemcpyParams {
+  void *dst{nullptr};
+  const void *src{nullptr};
+  std::size_t count{0};
+  int kind{0};
+};
+
+inline hipError_t hipMemcpy([[maybe_unused]] MemcpyParams params) noexcept { return 0; }
+
+inline hipError_t hipMemcpy(void *dst, const void *src, std::size_t count, int kind) noexcept {
+  return hipMemcpy(MemcpyParams{.dst = dst, .src = src, .count = count, .kind = kind});
 }
-// NOLINTEND(bugprone-easily-swappable-parameters)
+
 constexpr int hipMemcpyHostToDevice = 0;
 constexpr int hipMemcpyDeviceToHost = 0;
 inline hipError_t hipDeviceSynchronize() { return 0; }
@@ -74,32 +85,14 @@ template <typename T, typename U> inline T atomicAdd(T *addr, U val) {
 }
 
 struct dim3 {
-  unsigned int x{1}, y{1}, z{1};
-  constexpr dim3(unsigned int x_dim = 1, unsigned int y_dim = 1, unsigned int z_dim = 1) noexcept  // NOLINT(bugprone-easily-swappable-parameters)
-      : x(x_dim), y(y_dim), z(z_dim) {}
+  unsigned int x{1};
+  unsigned int y{1};
+  unsigned int z{1};
 };
 
-inline constexpr dim3 threadIdx{0, 0, 0};
-inline constexpr dim3 blockIdx{0, 0, 0};
-inline constexpr dim3 blockDim{1, 1, 1};
-
-// NOLINTBEGIN(bugprone-reserved-identifier, cert-dcl37-c, cert-dcl51-cpp)
-#ifndef __device__
-#define __device__
-#endif
-#ifndef __host__
-#define __host__
-#endif
-#ifndef __global__
-#define __global__
-#endif
-#ifndef __restrict__
-#define __restrict__
-#endif
-#ifndef __forceinline__
-#define __forceinline__ inline
-#endif
-// NOLINTEND(bugprone-reserved-identifier, cert-dcl37-c, cert-dcl51-cpp)
+inline constexpr dim3 threadIdx{.x = 0, .y = 0, .z = 0};
+inline constexpr dim3 blockIdx{.x = 0, .y = 0, .z = 0};
+inline constexpr dim3 blockDim{.x = 1, .y = 1, .z = 1};
 
 #define hipLaunchKernelGGL(kernel, grid, block, shared, stream, ...)
 

@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "core/CompilerPortability.hpp" // IWYU pragma: export
+
 // ---------------------------------------------------------------------------
 // SIMD level detection
 // ---------------------------------------------------------------------------
@@ -30,26 +32,4 @@
 #else
 /** @brief Number of 64-bit float elements per SIMD register. */
 #define CORRELATION_SIMD_WIDTH 1
-#endif
-
-// ---------------------------------------------------------------------------
-// Portable restrict keyword
-// ---------------------------------------------------------------------------
-/** @brief Portable restrict keyword macro for aliasing optimizations. */
-#if defined(_MSC_VER)
-#define CORRELATION_RESTRICT __restrict
-#elif defined(__GNUC__) || defined(__clang__)
-#define CORRELATION_RESTRICT __restrict__
-#else
-#define CORRELATION_RESTRICT
-#endif
-
-// ---------------------------------------------------------------------------
-// Alignment macro
-// ---------------------------------------------------------------------------
-/** @brief Portable alignment macro for stack and heap variables. */
-#if defined(_MSC_VER)
-#define CORRELATION_ALIGN(n) __declspec(align(n))
-#else
-#define CORRELATION_ALIGN(n) __attribute__((aligned(n)))
 #endif

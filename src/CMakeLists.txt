@@ -154,6 +154,11 @@ add_library(correlation_lib STATIC
     $<$<OR:$<BOOL:${BUILD_WITH_CUDA}>,$<BOOL:${BUILD_WITH_HIP}>>:$<TARGET_OBJECTS:gpu_calculators_obj>>
 )
 
+target_link_libraries(correlation_lib PRIVATE readers_obj calculators_obj writers_obj)
+if(BUILD_WITH_CUDA OR BUILD_WITH_HIP)
+    target_link_libraries(correlation_lib PRIVATE gpu_calculators_obj)
+endif()
+
 # Include directories
 target_include_directories(correlation_lib PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -219,8 +224,7 @@ if(BUILD_GUI)
         list(APPEND CORRELATION_LIBS Imm32 Comctl32 dwrite propsys opengl32 dwmapi uxtheme)
     endif()
 
-    # We link readers_obj directly to ensure static registration
-    target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS} readers_obj writers_obj calculators_obj)
+    target_link_libraries(correlation PRIVATE ${CORRELATION_LIBS})
 
     # Link platform-specific deps required by a statically-built Slint
     # Must come AFTER Slint::Slint so fontconfig/frameworks follow the

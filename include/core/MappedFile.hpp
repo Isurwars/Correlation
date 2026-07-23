@@ -64,7 +64,7 @@ public:
       : file_handle_(CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
                                  FILE_ATTRIBUTE_NORMAL, nullptr))
 #else
-      : fd_(::open(path.c_str(), O_RDONLY)) // NOLINT(cppcoreguidelines-pro-type-vararg)
+      : fd_(::open(path.c_str(), O_RDONLY, 0))
 #endif
   {
 #ifdef _WIN32
