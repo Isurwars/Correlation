@@ -89,7 +89,7 @@ TEST_F(XdatcarReaderTests, PositionsDifferBetweenFrames) {
   auto pos0 = frame0.atoms()[0].position();
   auto pos1 = frame1.atoms()[0].position();
 
-  double dist_sq = (pos0[0] - pos1[0]) * (pos0[0] - pos1[0]) + (pos0[1] - pos1[1]) * (pos0[1] - pos1[1]) +
+  real_t dist_sq = (pos0[0] - pos1[0]) * (pos0[0] - pos1[0]) + (pos0[1] - pos1[1]) * (pos0[1] - pos1[1]) +
                    (pos0[2] - pos1[2]) * (pos0[2] - pos1[2]);
   EXPECT_GT(dist_sq, 1e-12);
 }

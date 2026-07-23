@@ -120,7 +120,7 @@ TEST_F(FileReaderTests, ReadCifFileCorrectly) {
     if (atom.element().symbol == "Na" && correlation::math::norm(atom.position()) < 1e-4) {
       na_origin_found = true;
     }
-    correlation::math::Vector3<double> expected_cl_pos = {2.82, 2.82, 2.82};
+    correlation::math::Vector3R expected_cl_pos = {2.82, 2.82, 2.82};
     if (atom.element().symbol == "Cl" && correlation::math::norm(atom.position() - expected_cl_pos) < 1e-4) {
       cl_center_found = true;
     }

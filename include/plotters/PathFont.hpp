@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "math/Precision.hpp"
 #include <cstdint>
 #include <map>
 #include <string>
@@ -23,9 +24,9 @@ namespace correlation::plotters {
  * of strokes defined as a series of (x,y) point pairs.
  */
 struct Glyph {
-  double left{0.0};                                            ///< Left side bearing.
-  double right{0.0};                                           ///< Right side bearing.
-  std::vector<std::vector<std::pair<double, double>>> strokes; ///< Vector paths for the character.
+  real_t left{static_cast<real_t>(0.0)};                                            ///< Left side bearing.
+  real_t right{static_cast<real_t>(0.0)};                                           ///< Right side bearing.
+  std::vector<std::vector<std::pair<real_t, real_t>>> strokes; ///< Vector paths for the character.
 };
 
 /**
@@ -47,7 +48,7 @@ public:
    * @return A string containing SVG path instructions (M/L/Z commands).
    */
   // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-  std::string render(const std::string &text, double start_x, double start_y, double font_size, const std::string &anchor = "start");
+  std::string render(const std::string &text, real_t start_x, real_t start_y, real_t font_size, const std::string &anchor = "start");
 
 private:
   std::map<uint32_t, Glyph> glyphs_; ///< Local storage for character glyph data.
@@ -55,8 +56,8 @@ private:
   Roboto();
 
   // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-  void add(uint32_t code_point, double left_bearing, double right_bearing,
-           std::vector<std::vector<std::pair<double, double>>> stroke_paths);
+  void add(uint32_t code_point, real_t left_bearing, real_t right_bearing,
+           std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths);
 
   static std::vector<uint32_t> utf8ToUnicode(const std::string &utf8_string);
 

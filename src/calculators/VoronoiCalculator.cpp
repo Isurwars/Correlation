@@ -57,7 +57,7 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
   size_t face_i = 0;
   while (v_idx < face_verts.size()) {
     int const num_face_vertices = face_verts[v_idx];
-    double const area = (face_i < face_areas_double.size()) ? face_areas_double[face_i] : 0.0;
+    real_t const area = (face_i < face_areas_double.size()) ? static_cast<real_t>(face_areas_double[face_i]) : static_cast<real_t>(0.0);
     face_i++;
 
     if (area < min_face_area) {
@@ -72,9 +72,9 @@ std::pair<int, std::string> processCellTopology(voro::voronoicell &voro_cell) {
     for (int edge_idx = 0; edge_idx < num_face_vertices; ++edge_idx) {
       auto const vert_idx1 = static_cast<size_t>(face_verts[v_idx + 1 + edge_idx]);
       auto const vert_idx2 = static_cast<size_t>(face_verts[v_idx + 1 + ((edge_idx + 1) % num_face_vertices)]);
-      double const dist_x = pts[3 * vert_idx1] - pts[3 * vert_idx2];
-      double const dist_y = pts[3 * vert_idx1 + 1] - pts[3 * vert_idx2 + 1];
-      double const dist_z = pts[3 * vert_idx1 + 2] - pts[3 * vert_idx2 + 2];
+      real_t const dist_x = static_cast<real_t>(pts[3 * vert_idx1] - pts[3 * vert_idx2]);
+      real_t const dist_y = static_cast<real_t>(pts[3 * vert_idx1 + 1] - pts[3 * vert_idx2 + 1]);
+      real_t const dist_z = static_cast<real_t>(pts[3 * vert_idx1 + 2] - pts[3 * vert_idx2 + 2]);
       if (dist_x * dist_x + dist_y * dist_y + dist_z * dist_z < min_edge_len_sq) {
         parasitic_edges++;
       }

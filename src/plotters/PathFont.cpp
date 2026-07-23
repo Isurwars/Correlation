@@ -23,8 +23,8 @@ Roboto::Roboto() {
   registerExtended();
 }
 
-void Roboto::add(const uint32_t code_point, const double left_bearing, const double right_bearing,
-                 std::vector<std::vector<std::pair<double, double>>> stroke_paths) {
+void Roboto::add(const uint32_t code_point, const real_t left_bearing, const real_t right_bearing,
+                 std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths) {
   glyphs_[code_point] = Glyph{
     .left = left_bearing,
     .right = right_bearing,
@@ -33,20 +33,20 @@ void Roboto::add(const uint32_t code_point, const double left_bearing, const dou
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-std::string Roboto::render(const std::string &text, const double start_x, const double start_y, const double font_size, const std::string &anchor) {
-  const double scale = font_size; // Glyphs are normalized to EM square of size 1.0
+std::string Roboto::render(const std::string &text, const real_t start_x, const real_t start_y, const real_t font_size, const std::string &anchor) {
+  const real_t scale = font_size; // Glyphs are normalized to EM square of size 1.0
   const std::vector<uint32_t> codes = utf8ToUnicode(text);
 
-  double total_width = 0.0;
+  real_t total_width = static_cast<real_t>(0.0);
   for (const uint32_t code_point : codes) {
     if (glyphs_.contains(code_point)) {
       total_width += (glyphs_.at(code_point).right - glyphs_.at(code_point).left) * scale;
     }
   }
 
-  double cur_x = start_x;
+  real_t cur_x = start_x;
   if (anchor == "middle") {
-    cur_x -= total_width / 2.0;
+    cur_x -= total_width / static_cast<real_t>(2.0);
   } else if (anchor == "end") {
     cur_x -= total_width;
   }
@@ -55,11 +55,11 @@ std::string Roboto::render(const std::string &text, const double start_x, const 
   for (const uint32_t code_point : codes) {
     if (glyphs_.contains(code_point)) {
       const auto &glyph = glyphs_.at(code_point);
-      const double offset_x = cur_x; // since left is 0.0, offset_x is just cur_x
+      const real_t offset_x = cur_x; // since left is 0.0, offset_x is just cur_x
       for (const auto &stroke : glyph.strokes) {
         for (size_t idx = 0; idx < stroke.size(); ++idx) {
-          const double point_x = offset_x + stroke[idx].first * scale;
-          const double point_y = start_y - stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
+          const real_t point_x = offset_x + stroke[idx].first * scale;
+          const real_t point_y = start_y - stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
           if (idx == 0) {
             path_data += std::format("M {:.2f} {:.2f} ", point_x, point_y);
           } else {
