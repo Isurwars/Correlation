@@ -22,7 +22,6 @@ struct HBondCriteria {
 };
 
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<HBondCalculator>("HBondCalculator");
 
 bool isElectronegative(const std::string &symbol) {
@@ -64,9 +63,8 @@ void checkAcceptorsForHydrogen(const correlation::core::Cell &cell, size_t donor
     if (d_da_sq < criteria.R_cut_sq && d_da_sq >= static_cast<real_t>(1e-12)) {
       real_t dot_val = v_dh * v_da;
       real_t cos_alpha = dot_val / (norm_dh * std::sqrt(d_da_sq));
-      real_t alpha =
-          std::acos(std::max(static_cast<real_t>(-1.0), std::min(static_cast<real_t>(1.0), cos_alpha))) *
-          static_cast<real_t>(correlation::math::rad_to_deg);
+      real_t alpha = std::acos(std::max(static_cast<real_t>(-1.0), std::min(static_cast<real_t>(1.0), cos_alpha))) *
+                     static_cast<real_t>(correlation::math::rad_to_deg);
 
       if (alpha < criteria.Alpha_cut) {
         hbond_counts[donor_idx]++;
@@ -153,7 +151,8 @@ correlation::analysis::Histogram HBondCalculator::calculate(const correlation::c
 
   for (int idx = 0; idx <= max_hb; ++idx) {
     hist.bins.push_back(static_cast<real_t>(idx));
-    real_t freq = (num_en_atoms > 0) ? (distribution[idx] / static_cast<real_t>(num_en_atoms)) : static_cast<real_t>(0.0);
+    real_t freq =
+        (num_en_atoms > 0) ? (distribution[idx] / static_cast<real_t>(num_en_atoms)) : static_cast<real_t>(0.0);
     hist.partials["Total"].push_back(freq);
   }
 

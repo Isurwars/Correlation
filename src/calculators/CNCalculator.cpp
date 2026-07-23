@@ -16,14 +16,12 @@ namespace correlation::calculators {
 
 namespace {
 // Static registration of the calculator in the factory
-// NOLINTNEXTLINE(cert-err58-cpp)
 const bool registered = CalculatorFactory::registerTypeSafe<CNCalculator>("CNCalculator");
 
 /**
  * @brief Helper to compute the "Any" and "Total" partial distributions for the histogram.
  */
-void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
-                                 const correlation::core::Cell &cell,
+void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram, const correlation::core::Cell &cell,
                                  size_t num_bins) {
   const auto &elements = cell.elements();
   std::vector<real_t> any_any_dist(num_bins, real_t{0});
@@ -56,7 +54,7 @@ void populateCombinationPartials(correlation::analysis::Histogram &cn_histogram,
 } // namespace
 
 void CNCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
-                                   const correlation::analysis::AnalysisSettings & /*settings*/) const {
+                                  const correlation::analysis::AnalysisSettings & /*settings*/) const {
   dists.addHistogram("CN", calculate(dists.cell(), dists.neighbors()));
 }
 
