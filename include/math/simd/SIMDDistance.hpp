@@ -54,12 +54,4 @@ inline std::size_t fill_position_block(const FillPositionBlockParams<AtomRange, 
   return count;
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-template <typename AtomRange, typename T = real_t>
-inline std::size_t fill_position_block(const AtomRange &atoms, std::size_t begin_idx, std::size_t end_idx,
-                                       std::vector<T> &x_s, std::vector<T> &y_s, std::vector<T> &z_s) noexcept {
-  return fill_position_block(FillPositionBlockParams<AtomRange, T>{
-      .atoms = &atoms, .begin_idx = begin_idx, .end_idx = end_idx, .x_s = &x_s, .y_s = &y_s, .z_s = &z_s});
-}
-
 } // namespace correlation::math
