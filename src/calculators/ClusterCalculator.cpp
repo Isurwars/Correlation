@@ -23,7 +23,9 @@ const bool registered = CalculatorFactory::registerTypeSafe<ClusterCalculator>("
 // Disjoint-Set (Union-Find) data structure for identifying connected components
 class UnionFind {
 public:
-  explicit UnionFind(size_t num_nodes) : parent(num_nodes), sz(num_nodes, 1) { std::ranges::iota(parent, 0); }
+  explicit UnionFind(size_t num_nodes) : parent(num_nodes), sz(num_nodes, 1) {
+    std::iota(parent.begin(), parent.end(), 0);
+  }
 
   size_t find(size_t node) {
     size_t root = node;
