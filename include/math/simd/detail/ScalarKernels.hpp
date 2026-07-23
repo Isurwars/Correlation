@@ -53,7 +53,6 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
   return acc;
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELATION_RESTRICT v2x,
                       const double *CORRELATION_RESTRICT v2y, const double *CORRELATION_RESTRICT v2z,
                       double *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
@@ -62,7 +61,6 @@ inline void dot_block(double v1x, double v1y, double v1z, const double *CORRELAT
   }
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 inline void dot_block(float v1x, float v1y, float v1z, const float *CORRELATION_RESTRICT v2x,
                       const float *CORRELATION_RESTRICT v2y, const float *CORRELATION_RESTRICT v2z,
                       float *CORRELATION_RESTRICT out_dot, std::size_t count) noexcept {
@@ -169,21 +167,26 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
   }
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-inline void scale_bins(double *arr, double scale_factor, std::size_t count) noexcept {
-  for (std::size_t idx = 0; idx < count; ++idx) {
-    arr[idx] *= scale_factor;
+template <typename T> struct ScaleBinsParams {
+  T *arr{nullptr};
+  T scale_factor{static_cast<T>(1.0)};
+  std::size_t count{0};
+};
+
+inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
+  for (std::size_t idx = 0; idx < params.count; ++idx) {
+    params.arr[idx] *= params.scale_factor;
   }
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-inline void scale_bins(float *arr, float scale_factor, std::size_t count) noexcept {
-  for (std::size_t idx = 0; idx < count; ++idx) {
-    arr[idx] *= scale_factor;
+inline void scale_bins(const ScaleBinsParams<float> &params) noexcept {
+  for (std::size_t idx = 0; idx < params.count; ++idx) {
+    params.arr[idx] *= params.scale_factor;
   }
 }
 
-inline void miller_phase_sum(const MillerPhaseSumParams<double> &params, MillerPhaseSumResult<double> &result) noexcept {
+inline void miller_phase_sum(const MillerPhaseSumParams<double> &params,
+                             MillerPhaseSumResult<double> &result) noexcept {
   result.cos_sum = 0.0;
   result.sin_sum = 0.0;
   for (std::size_t idx = 0; idx < params.count; ++idx) {
