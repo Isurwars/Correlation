@@ -28,7 +28,8 @@ public:
   void write(const uint8_t *data, size_t size) const {
     std::ofstream file(path_, std::ios::binary | std::ios::trunc);
     if (file.is_open()) {
-      file.write(reinterpret_cast<const char *>(data), static_cast<std::streamsize>(size)); // NOLINT
+      const auto *char_data = std::bit_cast<const char *>(data);
+      file.write(char_data, static_cast<std::streamsize>(size));
     }
   }
 

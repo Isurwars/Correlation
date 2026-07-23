@@ -25,7 +25,8 @@ struct CreateRandomCellParams {
 };
 
 /**
- * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible random sampling across compilers and platforms.
+ * @brief Portable 53-bit uniform double generator in [0, 1) to guarantee bit-for-bit reproducible random sampling
+ * across compilers and platforms.
  */
 [[nodiscard]] double generate_canonical_portable(std::mt19937_64 &rng) noexcept {
   return static_cast<double>(rng() >> 11) * (1.0 / 9007199254740992.0);
@@ -35,8 +36,8 @@ struct CreateRandomCellParams {
  * @brief Safely fits log(variance) vs log(R) using least squares with strict non-finite guards.
  */
 template <typename T, typename U>
-[[nodiscard]] double fitSlope(const std::vector<T> &bins, const std::vector<U> &var, double r_min,
-                              double r_max, double var_threshold = 1e-4) {
+[[nodiscard]] double fitSlope(const std::vector<T> &bins, const std::vector<U> &var, double r_min, double r_max,
+                              double var_threshold = 1e-4) {
   double sum_x = 0.0;
   double sum_y = 0.0;
   double sum_xx = 0.0;
@@ -109,7 +110,8 @@ correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
   correlation::core::Cell cell({static_cast<real_t>(params.box_length), static_cast<real_t>(params.box_length),
                                 static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
-  std::mt19937_64 rng(12345); // NOLINT(cert-msc51-cpp, cert-msc32-c)
+  std::seed_seq seed{12345};
+  std::mt19937_64 rng(seed); // NOLINT(cert-msc51-cpp, cert-msc32-c)
   for (size_t i = 0; i < params.num_atoms; ++i) {
     const auto x_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
     const auto y_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
@@ -169,14 +171,17 @@ TEST_F(HyperuniformityCalculatorTests, ProducesExpectedHistograms) {
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnInvalidBinWidth) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = 0.0}), std::invalid_argument);
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = -1.0}), std::invalid_argument);
+  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = 0.0}),
+               std::invalid_argument);
+  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 100, .r_bin_width = -1.0}),
+               std::invalid_argument);
 }
 
 TEST_F(HyperuniformityCalculatorTests, ThrowsOnZeroSamples) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {5.0, 5.0, 5.0});
-  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 0, .r_bin_width = 0.5}), std::invalid_argument);
+  EXPECT_THROW(HyperuniformityCalculator::calculate(cell, {.num_samples = 0, .r_bin_width = 0.5}),
+               std::invalid_argument);
 }
 
 // =============================================================================
@@ -246,8 +251,8 @@ TEST_F(HyperuniformityCalculatorTests, LatticeHasLowerSlopeThanRandom) {
   ASSERT_TRUE(lattice_results.contains("sigma2_N"));
   ASSERT_TRUE(random_results.contains("sigma2_N"));
 
-  double const lattice_slope =
-      fitSlope(lattice_results.at("sigma2_N").bins, lattice_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
+  double const lattice_slope = fitSlope(lattice_results.at("sigma2_N").bins,
+                                        lattice_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
   double const random_slope =
       fitSlope(random_results.at("sigma2_N").bins, random_results.at("sigma2_N").partials.at("Total"), 3.0, 12.0, 1e-4);
 

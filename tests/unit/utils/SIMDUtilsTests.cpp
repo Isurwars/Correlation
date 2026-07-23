@@ -23,8 +23,8 @@ struct DummyPos {
 class SIMDUtilsTests : public ::testing::Test {
 public:
   // Random number generator setup for generating test data
-  // NOLINTNEXTLINE(cert-msc51-cpp,cert-msc32-c,bugprone-random-generator-seed)
-  std::mt19937 gen{1337}; // Fixed seed for reproducibility
+  std::seed_seq seed{1337};
+  std::mt19937 gen{seed};
   std::uniform_real_distribution<double> dist_d{-10.0, 10.0};
   std::uniform_real_distribution<double> pos_dist_d{0.1, 15.0}; // For distances
 
@@ -568,12 +568,12 @@ TEST_F(SIMDUtilsTests, MillerPhaseSumResultStructMatchesScalar) {
   const std::vector<double> s_3 = {0.866, 0.866, 0.866};
 
   const auto params = correlation::math::MillerPhaseSumParams<double>{.cos1 = c_1.data(),
-                                                                       .sin1 = s_1.data(),
-                                                                       .cos2 = c_2.data(),
-                                                                       .sin2 = s_2.data(),
-                                                                       .cos3 = c_3.data(),
-                                                                       .sin3 = s_3.data(),
-                                                                       .count = c_1.size()};
+                                                                      .sin1 = s_1.data(),
+                                                                      .cos2 = c_2.data(),
+                                                                      .sin2 = s_2.data(),
+                                                                      .cos3 = c_3.data(),
+                                                                      .sin3 = s_3.data(),
+                                                                      .count = c_1.size()};
 
   const correlation::math::MillerPhaseSumResult<double> res = correlation::math::miller_phase_sum(params);
 

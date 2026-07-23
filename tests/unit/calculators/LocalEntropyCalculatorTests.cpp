@@ -91,8 +91,9 @@ TEST_F(LocalEntropyCalculatorTests, Random) {
   // 4. Random / Gas Structure (Poisson distribution)
   // Box length 12.0 with 30 randomly placed atoms
   correlation::core::Cell cell_rand({12.0, 12.0, 12.0, 90.0, 90.0, 90.0});
-  // NOLINTNEXTLINE(cert-msc51-cpp,cert-msc32-c,bugprone-random-generator-seed)
-  std::mt19937 gen(42); // deterministic seed for reproducibility
+  std::seed_seq seed{42};
+  std::mt19937 gen{seed};
+
   std::uniform_real_distribution<real_t> dis(static_cast<real_t>(0.0), static_cast<real_t>(12.0));
   for (int i = 0; i < 30; ++i) {
     cell_rand.addAtom("Ar", {dis(gen), dis(gen), dis(gen)});

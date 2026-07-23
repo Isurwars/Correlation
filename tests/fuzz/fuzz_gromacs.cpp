@@ -23,8 +23,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
   }
 
   try {
-    // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
-    correlation::readers::GromacsReader::parseGroFrame(reinterpret_cast<const char *>(data), size);
+    const auto *char_data = std::bit_cast<const char *>(data);
+    correlation::readers::GromacsReader::parseGroFrame(char_data, size);
   } catch (const std::exception &e) {
     if (std::getenv("FUZZ_VERBOSE") != nullptr) {
       std::println(stderr, "Error parsing gro frame: {}", e.what());

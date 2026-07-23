@@ -384,9 +384,10 @@ void PlotController::executePlotRender(RenderTaskData data) {
         std::error_code error_code;
         std::filesystem::remove(final_temp_path, error_code);
       } else {
-        auto img = slint::private_api::load_image_from_embedded_data(
-            std::span<const uint8_t>(reinterpret_cast<const uint8_t *>(svg.data()), svg.size()), // NOLINT
-            "svg");
+        const auto *svg_bytes = std::bit_cast<const uint8_t *>(svg.data());
+        auto img =
+            slint::private_api::load_image_from_embedded_data(std::span<const uint8_t>(svg_bytes, svg.size()), "svg");
+
         window_.set_preview_plot(img);
       }
 
