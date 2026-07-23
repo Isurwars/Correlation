@@ -395,8 +395,10 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
       }
     }
     for (const auto &bond : local_results.bonds) {
-      out_graph.addDirectedEdge({static_cast<correlation::core::AtomID>(bond.from),
-                                 static_cast<correlation::core::AtomID>(bond.to), bond.distance, bond.r_ij});
+      out_graph.addDirectedEdge({.source = static_cast<correlation::core::AtomID>(bond.from),
+                                 .target = static_cast<correlation::core::AtomID>(bond.to),
+                                 .distance = bond.distance,
+                                 .r_ij = bond.r_ij});
     }
   }
 }
