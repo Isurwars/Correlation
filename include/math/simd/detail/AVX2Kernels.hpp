@@ -322,11 +322,7 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
   }
 }
 
-template <typename T> struct ScaleBinsParams {
-  T *arr{nullptr};
-  T scale_factor{static_cast<T>(1.0)};
-  std::size_t count{0};
-};
+
 
 inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
   const __m256d v_scale = _mm256_set1_pd(params.scale_factor);

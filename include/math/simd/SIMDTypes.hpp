@@ -82,6 +82,16 @@ template <typename T> struct RDFNormalizationParams {
 };
 
 /**
+ * @brief Parameter container for scale_bins kernel invocations.
+ * @tparam T Floating-point precision (float or double).
+ */
+template <typename T> struct ScaleBinsParams {
+  T *arr{nullptr};
+  T scale_factor{static_cast<T>(1.0)};
+  std::size_t count{0};
+};
+
+/**
  * @brief Parameter container for miller_phase_sum kernel invocations.
  * @tparam T Floating-point precision (float or double).
  */

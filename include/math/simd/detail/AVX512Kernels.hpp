@@ -284,25 +284,25 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
   }
 }
 
-inline void scale_bins(double *arr, double scale_factor, std::size_t count) noexcept {
-  const __m512d vs = _mm512_set1_pd(scale_factor);
+inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
+  const __m512d vs = _mm512_set1_pd(params.scale_factor);
   std::size_t idx = 0;
-  for (; idx + 8 <= count; idx += 8) {
-    _mm512_storeu_pd(arr + idx, _mm512_mul_pd(_mm512_loadu_pd(arr + idx), vs));
+  for (; idx + 8 <= params.count; idx += 8) {
+    _mm512_storeu_pd(params.arr + idx, _mm512_mul_pd(_mm512_loadu_pd(params.arr + idx), vs));
   }
-  for (; idx < count; ++idx) {
-    arr[idx] *= scale_factor;
+  for (; idx < params.count; ++idx) {
+    params.arr[idx] *= params.scale_factor;
   }
 }
 
-inline void scale_bins(float *arr, float scale_factor, std::size_t count) noexcept {
-  const __m512 vs = _mm512_set1_ps(scale_factor);
+inline void scale_bins(const ScaleBinsParams<float> &params) noexcept {
+  const __m512 vs = _mm512_set1_ps(params.scale_factor);
   std::size_t idx = 0;
-  for (; idx + 16 <= count; idx += 16) {
-    _mm512_storeu_ps(arr + idx, _mm512_mul_ps(_mm512_loadu_ps(arr + idx), vs));
+  for (; idx + 16 <= params.count; idx += 16) {
+    _mm512_storeu_ps(params.arr + idx, _mm512_mul_ps(_mm512_loadu_ps(params.arr + idx), vs));
   }
-  for (; idx < count; ++idx) {
-    arr[idx] *= scale_factor;
+  for (; idx < params.count; ++idx) {
+    params.arr[idx] *= params.scale_factor;
   }
 }
 

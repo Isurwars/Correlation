@@ -70,17 +70,25 @@ template <typename T> inline void normalize_rdf_bins(const RDFNormalizationParam
 }
 
 /**
+ * @brief Scales an array by a constant factor in-place using ScaleBinsParams container.
+ * @tparam T Floating-point precision (float or double).
+ */
+template <typename T> inline void scale_bins(const ScaleBinsParams<T> &params) noexcept {
+#ifdef CORRELATION_SIMD_AVX512
+  detail::avx512::scale_bins(params);
+#elif defined(CORRELATION_SIMD_AVX2)
+  detail::avx2::scale_bins(params);
+#else
+  detail::scalar::scale_bins(params);
+#endif
+}
+
+/**
  * @brief Scales an array by a constant factor in-place.
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T> inline void scale_bins(T *arr, T scale_factor, std::size_t count) noexcept {
-#ifdef CORRELATION_SIMD_AVX512
-  detail::avx512::scale_bins(arr, scale_factor, count);
-#elif defined(CORRELATION_SIMD_AVX2)
-  detail::avx2::scale_bins(arr, scale_factor, count);
-#else
-  detail::scalar::scale_bins(arr, scale_factor, count);
-#endif
+  scale_bins(ScaleBinsParams<T>{.arr = arr, .scale_factor = scale_factor, .count = count});
 }
 
 } // namespace correlation::math
