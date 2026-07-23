@@ -15,8 +15,11 @@
 
 namespace correlation::core {
 
+/**
+ * @brief Strong type wrapper representing an atom index.
+ */
 struct AtomIndex {
-  size_t id;
+  size_t id; ///< Internal 0-based atom index.
 };
 
 /**
@@ -26,6 +29,16 @@ struct Neighbor {
   AtomID index{0};            ///< Index of the neighbor in the atom list
   real_t distance{0.0};       ///< Distance to the neighbor
   math::Vector3<real_t> r_ij; ///< Vector from central atom to neighbor
+};
+
+/**
+ * @brief Represents a directed edge connecting two atoms in the graph.
+ */
+struct Edge {
+  AtomID source{};            ///< Index of the source atom
+  AtomID target{};            ///< Index of the target atom
+  real_t distance{};          ///< Separation distance (Angstrom)
+  math::Vector3<real_t> r_ij; ///< Relative position vector from source to target
 };
 
 /**
@@ -49,13 +62,20 @@ public:
 
   /**
    * @brief Adds a directed edge between two atoms.
-   *
+   * @param edge The directed edge details containing source, target, distance, and vector.
+   */
+  void addDirectedEdge(const Edge &edge);
+
+  /**
+   * @brief Adds a directed edge between two atoms using individual parameters.
    * @param source Index of the source atom.
    * @param target Index of the target atom.
    * @param distance Separation distance (Angstrom).
-   * @param r_ij Relative position vector (target - source).
+   * @param r_ij Relative position vector from source to target.
    */
-  void addDirectedEdge(size_t source, size_t target, real_t distance, const math::Vector3<real_t> &r_ij); // NOLINT(bugprone-easily-swappable-parameters)
+  void addDirectedEdge(AtomID source, AtomID target, real_t distance, const math::Vector3<real_t> &r_ij) {
+    addDirectedEdge(Edge{.source = source, .target = target, .distance = distance, .r_ij = r_ij});
+  }
 
   /**
    * @brief Retrieves the neighbor list for a specific atom.

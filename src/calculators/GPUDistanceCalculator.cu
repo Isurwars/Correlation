@@ -227,12 +227,16 @@ void unpack_gpu_results(const std::vector<GPUDistance<T>> &host_distances,
   }
 
   for (const auto &bond : host_bonds) {
-    out_graph.addDirectedEdge(bond.from, bond.to, static_cast<real_t>(bond.distance),
+    out_graph.addDirectedEdge(static_cast<core::AtomID>(bond.from),
+                             static_cast<core::AtomID>(bond.to),
+                             static_cast<real_t>(bond.distance),
                              correlation::math::Vector3<real_t>(static_cast<real_t>(bond.r_x),
                                                                 static_cast<real_t>(bond.r_y),
                                                                 static_cast<real_t>(bond.r_z)));
     if (bond.from != bond.to) {
-      out_graph.addDirectedEdge(bond.to, bond.from, static_cast<real_t>(bond.distance),
+      out_graph.addDirectedEdge(static_cast<core::AtomID>(bond.to),
+                               static_cast<core::AtomID>(bond.from),
+                               static_cast<real_t>(bond.distance),
                                correlation::math::Vector3<real_t>(-static_cast<real_t>(bond.r_x),
                                                                   -static_cast<real_t>(bond.r_y),
                                                                   -static_cast<real_t>(bond.r_z)));

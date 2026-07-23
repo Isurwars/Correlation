@@ -7,7 +7,6 @@
  */
 
 #include "core/NeighborGraph.hpp"
-#include "math/LinearAlgebra.hpp"
 
 #include <algorithm>
 
@@ -15,12 +14,11 @@ namespace correlation::core {
 
 NeighborGraph::NeighborGraph(size_t node_count) : adj_list_(node_count) {}
 
-void NeighborGraph::addDirectedEdge(size_t source, size_t target, real_t distance,
-                                    const math::Vector3<real_t> &r_ij) { // NOLINT(bugprone-easily-swappable-parameters)
-  if (source >= adj_list_.size()) {
+void NeighborGraph::addDirectedEdge(const Edge &edge) {
+  if (edge.source >= adj_list_.size()) {
     return;
   }
-  adj_list_[source].push_back({.index = static_cast<AtomID>(target), .distance = distance, .r_ij = r_ij});
+  adj_list_[edge.source].push_back({.index = edge.target, .distance = edge.distance, .r_ij = edge.r_ij});
 }
 
 const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) const {
