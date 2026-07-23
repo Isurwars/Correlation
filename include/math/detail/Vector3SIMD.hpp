@@ -55,43 +55,37 @@ public:
    * @param idx Index (0, 1, or 2).
    * @return Component value.
    */
-  [[nodiscard]] double operator[](std::size_t idx) const noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  [[nodiscard]] double operator[](std::size_t idx) const noexcept { return data_.at(idx); }
 
   /**
    * @brief Access mutable component by index.
    * @param idx Index (0, 1, or 2).
    * @return Reference to component.
    */
-  double &operator[](std::size_t idx) noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  double &operator[](std::size_t idx) noexcept { return data_.at(idx); }
 
   /** @return X-component. */
-  [[nodiscard]] double x() const noexcept { return data_[0]; }
+  [[nodiscard]] double x() const noexcept { return data_.at(0); }
   /** @return Reference to X-component. */
-  double &x() noexcept { return data_[0]; }
+  double &x() noexcept { return data_.at(0); }
   /** @return Y-component. */
-  [[nodiscard]] double y() const noexcept { return data_[1]; }
+  [[nodiscard]] double y() const noexcept { return data_.at(1); }
   /** @return Reference to Y-component. */
-  double &y() noexcept { return data_[1]; }
+  double &y() noexcept { return data_.at(1); }
   /** @return Z-component. */
-  [[nodiscard]] double z() const noexcept { return data_[2]; }
+  [[nodiscard]] double z() const noexcept { return data_.at(2); }
   /** @return Reference to Z-component. */
-  double &z() noexcept { return data_[2]; }
+  double &z() noexcept { return data_.at(2); }
 
   /**
    * @brief Access component by index.
    * @param idx Index (0, 1, or 2).
    * @return Reference to component.
    */
-  double &operator()(std::size_t idx) noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  double &operator()(std::size_t idx) noexcept { return data_.at(idx); }
 
   /** @return True if x, y, and z are all 0.0. */
-  [[nodiscard]] bool empty() const noexcept { return data_[0] == 0.0 && data_[1] == 0.0 && data_[2] == 0.0; }
+  [[nodiscard]] bool empty() const noexcept { return data_.at(0) == 0.0 && data_.at(1) == 0.0 && data_.at(2) == 0.0; }
 
   // Arithmetic with SIMD
   /**
@@ -282,40 +276,34 @@ public:
    * @param idx Index (0, 1, or 2).
    * @return Component value.
    */
-  [[nodiscard]] float operator[](std::size_t idx) const noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  [[nodiscard]] float operator[](std::size_t idx) const noexcept { return data_.at(idx); }
 
   /**
    * @brief Mutable access component by index.
    * @param idx Index (0, 1, or 2).
    * @return Reference to component value.
    */
-  float &operator[](std::size_t idx) noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  float &operator[](std::size_t idx) noexcept { return data_.at(idx); }
 
   /** @return The X-component. */
-  [[nodiscard]] float x() const noexcept { return data_[0]; }
+  [[nodiscard]] float x() const noexcept { return data_.at(0); }
   /** @return Reference to the X-component. */
-  float &x() noexcept { return data_[0]; }
+  float &x() noexcept { return data_.at(0); }
   /** @return The Y-component. */
-  [[nodiscard]] float y() const noexcept { return data_[1]; }
+  [[nodiscard]] float y() const noexcept { return data_.at(1); }
   /** @return Reference to the Y-component. */
-  float &y() noexcept { return data_[1]; }
+  float &y() noexcept { return data_.at(1); }
   /** @return The Z-component. */
-  [[nodiscard]] float z() const noexcept { return data_[2]; }
+  [[nodiscard]] float z() const noexcept { return data_.at(2); }
   /** @return Reference to the Z-component. */
-  float &z() noexcept { return data_[2]; }
+  float &z() noexcept { return data_.at(2); }
 
   /**
    * @brief Access component by index (alternative syntax).
    * @param idx Index.
    * @return Reference to component.
    */
-  float &operator()(std::size_t idx) noexcept {
-    return data_[idx]; // NOLINT(cppcoreguidelines-pro-bounds-constant-array-index)
-  }
+  float &operator()(std::size_t idx) noexcept { return data_.at(idx); }
 
   /**
    * @brief Vector addition.
