@@ -1,12 +1,6 @@
 ---
 name: test-and-tea-loop
-description: Self-correcting build-test loop that compiles, diagnoses failures, fixes source code, and re-verifies until all tests pass. Triggered on artifact generation or code modification.
-triggers:
-  - on_artifact_generation
-  - on_code_modification
-capabilities:
-  - terminal_execution
-  - filesystem_read_write
+description: Self-correcting build-test loop that compiles, diagnoses failures, fixes source code, and re-verifies until all tests pass.
 ---
 
 # Test-and-Tea Loop
@@ -31,4 +25,4 @@ Execute the compilation command in the local environment terminal. If the build 
 Once the build compiles successfully with 0 warnings/errors:
 1. **Execute Binaries**: Run the compiled test binary (e.g., `./build/bin/run_tests`).
 2. **Evaluate Test Assertions**: If any tests fail, treat the test output logs as a failure condition. Modify the source code (not the tests, unless the test logic itself is fundamentally broken or outdated) to fix the logical bug.
-3. **Final Polish**: Re-verify the build one last time, run `clang-format` if the `lint-and-validate` skill is present, and present the final success state to the user.
+3. **Final Polish**: Re-verify the build one last time, run `clang-format` if available, and present the final success state.

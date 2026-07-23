@@ -1,14 +1,9 @@
 /**
  * @file SvgPlotter.hpp
- * @brief Scientifically precise SVG generator for distribution function
- * histograms.
+ * @brief Zero-dependency SVG plotter for liquid and amorphous data.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
- *
- * @details
- * Produces a self-contained SVG string from a `Histogram` object with
- * "nice" tick intervals, scientific notation, and colorblind-safe palettes.
  */
 
 #pragma once
@@ -20,6 +15,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <format>
 #include <map>
@@ -43,18 +39,18 @@ struct PlotConfig {
     Dark   ///< Modern dark theme for UI integration (e.g., Catppuccin-esque).
   };
 
-  Theme theme = Theme::Light; ///< Current theme selection.
-  double width = 1200.0;      ///< SVG canvas width (px).
-  double height = 900.0;      ///< SVG canvas height (px).
-  bool show_grid = true;      ///< Whether to render background grid lines.
-  bool show_markers = false;  ///< Whether to render data point markers (dots).
-  bool fill_area = false;     ///< Whether to render matching gradient fills under the curves.
+  Theme theme = Theme::Light;                 ///< Current theme selection.
+  real_t width = static_cast<real_t>(1200.0); ///< SVG canvas width (px).
+  real_t height = static_cast<real_t>(900.0); ///< SVG canvas height (px).
+  bool show_grid = true;                      ///< Whether to render background grid lines.
+  bool show_markers = false;                  ///< Whether to render data point markers (dots).
+  bool fill_area = false;                     ///< Whether to render matching gradient fills under the curves.
 
   // Publication settings
-  double font_scale = 1.0;      ///< Multiplier for all font sizes
-  double line_width = 3.0;      ///< Data line stroke width
-  bool show_legend = true;      ///< Toggle legend visibility
-  bool use_native_text = false; ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
+  real_t font_scale = static_cast<real_t>(1.0); ///< Multiplier for all font sizes
+  real_t line_width = static_cast<real_t>(3.0); ///< Data line stroke width
+  bool show_legend = true;                      ///< Toggle legend visibility
+  bool use_native_text = false;                 ///< Use standard SVG &lt;text&gt; elements instead of Hershey paths.
 
   /** @brief Color palette selections */
   enum class Palette : std::uint8_t {
@@ -68,27 +64,27 @@ struct PlotConfig {
   enum class PresetSize : std::uint8_t { Default, SingleColumn, DoubleColumn, Presentation };
   PresetSize preset_size = PresetSize::Default;
 
-  double effective_width() const {
+  real_t effective_width() const {
     switch (preset_size) {
     case PresetSize::SingleColumn:
-      return 1050.0;
+      return static_cast<real_t>(1050.0);
     case PresetSize::DoubleColumn:
-      return 2100.0;
+      return static_cast<real_t>(2100.0);
     case PresetSize::Presentation:
-      return 3000.0;
+      return static_cast<real_t>(3000.0);
     default:
       return width;
     }
   }
 
-  double effective_height() const {
+  real_t effective_height() const {
     switch (preset_size) {
     case PresetSize::SingleColumn:
-      return 788.0;
+      return static_cast<real_t>(788.0);
     case PresetSize::DoubleColumn:
-      return 1575.0;
+      return static_cast<real_t>(1575.0);
     case PresetSize::Presentation:
-      return 2250.0;
+      return static_cast<real_t>(2250.0);
     default:
       return height;
     }
@@ -109,15 +105,15 @@ struct PlotConfig {
  */
 struct HoverInfo {
   bool active = false;
-  double mouse_x = -1.0;
-  double mouse_y = -1.0;
-  double widget_width = 0.0;
-  double widget_height = 0.0;
+  real_t mouse_x = static_cast<real_t>(-1.0);
+  real_t mouse_y = static_cast<real_t>(-1.0);
+  real_t widget_width = static_cast<real_t>(0.0);
+  real_t widget_height = static_cast<real_t>(0.0);
 };
 
 enum class TextAnchor : std::uint8_t { Start, Middle, End };
 
-inline std::string renderTextAsPath(const std::string &text, double x_pos, double y_pos, double size, TextAnchor anchor,
+inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_t y_pos, real_t size, TextAnchor anchor,
                                     const std::string &color, bool use_native_text);
 
 // ============================================================================
@@ -177,16 +173,16 @@ inline std::string color(std::size_t index, PlotConfig::Palette pal) {
  * @param svg_max Target SVG end coordinate.
  * @return The mapped SVG coordinate.
  */
-inline double mapValue(double value, double data_min, double data_max, double svg_min, double svg_max) {
-  if (std::abs(data_max - data_min) < 1e-15) {
-    return (svg_min + svg_max) / 2.0;
+inline real_t mapValue(real_t value, real_t data_min, real_t data_max, real_t svg_min, real_t svg_max) {
+  if (std::abs(data_max - data_min) < static_cast<real_t>(1e-15)) {
+    return (svg_min + svg_max) / static_cast<real_t>(2.0);
   }
   return svg_min + (value - data_min) / (data_max - data_min) * (svg_max - svg_min);
 }
 
 struct DataRange {
-  double min = 0.0;
-  double max = 0.0;
+  real_t min = static_cast<real_t>(0.0);
+  real_t max = static_cast<real_t>(0.0);
 };
 
 /**
@@ -208,13 +204,13 @@ struct NiceScale {
   explicit NiceScale(const DataRange &range, int max_ticks = 6) {
     real_t actual_min = range.min;
     real_t actual_max = range.max;
-    if (std::abs(actual_max - actual_min) < 1e-12) {
+    if (std::abs(actual_max - actual_min) < static_cast<real_t>(1e-12)) {
       min = actual_min - static_cast<real_t>(0.5);
       max = actual_min + static_cast<real_t>(0.5);
       spacing = static_cast<real_t>(0.1);
     } else {
       real_t range_val = niceNum(actual_max - actual_min, false);
-      spacing = niceNum(range_val / (max_ticks - 1), true);
+      spacing = niceNum(range_val / static_cast<real_t>(max_ticks - 1), true);
       min = std::floor(actual_min / spacing) * spacing;
       max = std::ceil(actual_max / spacing) * spacing;
     }
@@ -234,33 +230,33 @@ private:
    * @param round Whether to perform aggressive rounding.
    * @return The rounded "nice" value.
    */
-  static double niceNum(double range, bool round) {
-    double exponent = std::floor(std::log10(range));
-    double fraction = range / std::pow(10.0, exponent);
-    double nice_fraction = 0.0;
+  static real_t niceNum(real_t range, bool round) {
+    real_t exponent = std::floor(std::log10(range));
+    real_t fraction = range / std::pow(static_cast<real_t>(10.0), exponent);
+    real_t nice_fraction = static_cast<real_t>(0.0);
 
     if (round) {
-      if (fraction < 1.5) {
-        nice_fraction = 1.0;
-      } else if (fraction < 3.0) {
-        nice_fraction = 2.0;
-      } else if (fraction < 7.0) {
-        nice_fraction = 5.0;
+      if (fraction < static_cast<real_t>(1.5)) {
+        nice_fraction = static_cast<real_t>(1.0);
+      } else if (fraction < static_cast<real_t>(3.0)) {
+        nice_fraction = static_cast<real_t>(2.0);
+      } else if (fraction < static_cast<real_t>(7.0)) {
+        nice_fraction = static_cast<real_t>(5.0);
       } else {
-        nice_fraction = 10.0;
+        nice_fraction = static_cast<real_t>(10.0);
       }
     } else {
-      if (fraction <= 1.0) {
-        nice_fraction = 1.0;
-      } else if (fraction <= 2.0) {
-        nice_fraction = 2.0;
-      } else if (fraction <= 5.0) {
-        nice_fraction = 5.0;
+      if (fraction <= static_cast<real_t>(1.0)) {
+        nice_fraction = static_cast<real_t>(1.0);
+      } else if (fraction <= static_cast<real_t>(2.0)) {
+        nice_fraction = static_cast<real_t>(2.0);
+      } else if (fraction <= static_cast<real_t>(5.0)) {
+        nice_fraction = static_cast<real_t>(5.0);
       } else {
-        nice_fraction = 10.0;
+        nice_fraction = static_cast<real_t>(10.0);
       }
     }
-    return nice_fraction * std::pow(10.0, exponent);
+    return nice_fraction * std::pow(static_cast<real_t>(10.0), exponent);
   }
 };
 
@@ -273,16 +269,16 @@ private:
  * @param value The number to format.
  * @return A UTF-8 string ready for SVG path rendering.
  */
-inline std::string fmtScientific(double value) {
-  double abs_value = std::abs(value);
-  if (abs_value < 1e-12) {
+inline std::string fmtScientific(real_t value) {
+  real_t abs_value = std::abs(value);
+  if (abs_value < static_cast<real_t>(1e-12)) {
     return "0";
   }
 
   // Use scientific notation for very small/large values
-  if (abs_value < 0.001 || abs_value >= 10000.0) {
+  if (abs_value < static_cast<real_t>(0.001) || abs_value >= static_cast<real_t>(10000.0)) {
     int exponent = static_cast<int>(std::floor(std::log10(abs_value)));
-    double fraction = value / std::pow(10.0, exponent);
+    real_t fraction = value / std::pow(static_cast<real_t>(10.0), static_cast<real_t>(exponent));
     std::string res = std::format("{:.1f}×10", fraction);
     std::string exp_s = std::to_string(exponent);
     for (char chr : exp_s) {
@@ -337,12 +333,12 @@ struct SvgHistogramRenderer {
   std::string x_label;
   std::string y_label;
 
-  double kW = 0.0;
-  double kH = 0.0;
-  double px0 = 0.0;
-  double px1 = 0.0;
-  double py0 = 0.0;
-  double py1 = 0.0;
+  real_t kW = static_cast<real_t>(0.0);
+  real_t kH = static_cast<real_t>(0.0);
+  real_t px0 = static_cast<real_t>(0.0);
+  real_t px1 = static_cast<real_t>(0.0);
+  real_t py0 = static_cast<real_t>(0.0);
+  real_t py1 = static_cast<real_t>(0.0);
 
   std::map<std::string, std::vector<real_t>> partials;
   const std::vector<real_t> *xs = nullptr;
@@ -377,10 +373,10 @@ struct SvgHistogramRenderer {
 
     kW = config->effective_width();
     kH = config->effective_height();
-    const double kLeft = 100.0;
-    const double kRight = 40.0;
-    const double kTop = 50.0;
-    const double kBot = 90.0;
+    const real_t kLeft = static_cast<real_t>(100.0);
+    const real_t kRight = static_cast<real_t>(40.0);
+    const real_t kTop = static_cast<real_t>(50.0);
+    const real_t kBot = static_cast<real_t>(90.0);
 
     px0 = kLeft;
     px1 = kW - kRight;
@@ -395,19 +391,19 @@ struct SvgHistogramRenderer {
       partials["Total"] = total_it->second;
     }
 
-    std::vector<std::pair<std::string, double>> candidates;
+    std::vector<std::pair<std::string, real_t>> candidates;
     for (const auto &[key, value] : raw_partials) {
       if (key == "Total" || key.starts_with("Frequency_")) {
         continue;
       }
-      double score = 0.0;
+      real_t score = static_cast<real_t>(0.0);
       if (weights != nullptr && !weights->empty()) {
         auto wit = weights->find(key);
         if (wit != weights->end()) {
           score = wit->second;
         }
       } else {
-        for (double val : value) {
+        for (real_t val : value) {
           score += std::abs(val);
         }
       }
@@ -434,10 +430,13 @@ struct SvgHistogramRenderer {
           "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
           "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
           "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No data available</text></svg>",
-          kW, kH, config->bg_color(), kW / 2.0, kH / 2.0 + 8.0, 24.0 * config->font_scale, config->text_color());
+          kW, kH, config->bg_color(), kW / static_cast<real_t>(2.0),
+          kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0), static_cast<real_t>(24.0) * config->font_scale,
+          config->text_color());
     }
-    std::string no_data_path =
-        Roboto::instance().render("No data available", kW / 2.0, kH / 2.0 + 8.0, 24 * config->font_scale, "middle");
+    std::string no_data_path = Roboto::instance().render("No data available", kW / static_cast<real_t>(2.0),
+                                                         kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+                                                         static_cast<real_t>(24.0) * config->font_scale, "middle");
     return std::format(
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
@@ -449,17 +448,17 @@ struct SvgHistogramRenderer {
     if (xs == nullptr || xs->empty()) {
       return;
     }
-    double raw_x_min = xs->front();
-    double raw_x_max = xs->back();
-    double raw_y_min = 0.0;
-    double raw_y_max = 0.0;
+    real_t raw_x_min = xs->front();
+    real_t raw_x_max = xs->back();
+    real_t raw_y_min = static_cast<real_t>(0.0);
+    real_t raw_y_max = static_cast<real_t>(0.0);
     for (const auto &[key, value] : partials) {
-      for (double val : value) {
+      for (real_t val : value) {
         raw_y_max = std::max(raw_y_max, val);
         raw_y_min = std::min(raw_y_min, val);
       }
     }
-    double y_padding = (raw_y_max - raw_y_min) * 0.05;
+    real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
     raw_y_max += y_padding;
 
     xScale = detail::NiceScale(detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11);
@@ -492,8 +491,8 @@ struct SvgHistogramRenderer {
 
   void drawGridAndAxes() {
     svg << "  <!-- Grid & Ticks -->\n";
-    for (double y_val : yScale.ticks) {
-      double spy = mapValue(y_val, yScale.min, yScale.max, py1, py0);
+    for (real_t y_val : yScale.ticks) {
+      real_t spy = mapValue(y_val, yScale.min, yScale.max, py1, py0);
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
@@ -501,13 +500,14 @@ struct SvgHistogramRenderer {
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         px0 - 8.0, spy, px0, spy, config->axis_color());
-      svg << renderTextAsPath(fmtScientific(y_val), px0 - 15.0, spy + 7.0, 20.0 * config->font_scale, TextAnchor::End,
-                              config->text_color(), config->use_native_text);
+                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axis_color());
+      svg << renderTextAsPath(fmtScientific(y_val), px0 - static_cast<real_t>(15.0), spy + static_cast<real_t>(7.0),
+                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::End, config->text_color(),
+                              config->use_native_text);
     }
 
-    for (double x_val : xScale.ticks) {
-      double spx = mapValue(x_val, xScale.min, xScale.max, px0, px1);
+    for (real_t x_val : xScale.ticks) {
+      real_t spx = mapValue(x_val, xScale.min, xScale.max, px0, px1);
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
@@ -515,9 +515,10 @@ struct SvgHistogramRenderer {
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         spx, py1, spx, py1 + 8.0, config->axis_color());
-      svg << renderTextAsPath(fmtScientific(x_val), spx, py1 + 25.0, 20.0 * config->font_scale, TextAnchor::Middle,
-                              config->text_color(), config->use_native_text);
+                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axis_color());
+      svg << renderTextAsPath(fmtScientific(x_val), spx, py1 + static_cast<real_t>(25.0),
+                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
+                              config->use_native_text);
     }
 
     svg << std::format("  <rect x=\"{:.1f}\" y=\"{:.1f}\" width=\"{:.1f}\" height=\"{:.1f}\" "
@@ -528,18 +529,20 @@ struct SvgHistogramRenderer {
   void drawEmphasisLines() {
     std::vector<real_t> emphasis_values;
     if (title.contains("g(r)")) {
-      emphasis_values.push_back(1.0);
+      emphasis_values.push_back(static_cast<real_t>(1.0));
     } else if (title.contains("G(r)")) {
-      emphasis_values.push_back(0.0);
+      emphasis_values.push_back(static_cast<real_t>(0.0));
     } else if (title.contains("S(Q)") || title.contains("S(q)")) {
-      emphasis_values.push_back(0.0);
-      emphasis_values.push_back(1.0);
+      emphasis_values.push_back(static_cast<real_t>(0.0));
+      emphasis_values.push_back(static_cast<real_t>(1.0));
     }
 
-    for (double focus_y : emphasis_values) {
+    for (real_t focus_y : emphasis_values) {
       if (focus_y >= yScale.min && focus_y <= yScale.max) {
-        double spy = mapValue(focus_y, yScale.min, yScale.max, py1, py0);
-        std::string extra = (std::abs(focus_y - 1.0) < 1e-6) ? " stroke-dasharray=\"5,5\"" : "";
+        real_t spy = mapValue(focus_y, yScale.min, yScale.max, py1, py0);
+        std::string extra = (std::abs(focus_y - static_cast<real_t>(1.0)) < static_cast<real_t>(1e-6))
+                                ? " stroke-dasharray=\"5,5\""
+                                : "";
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"1.8\"{}/>\n",
                            px0, spy, px1, spy, config->axis_color(), extra);
@@ -557,15 +560,15 @@ struct SvgHistogramRenderer {
       std::size_t num_points = std::min(xs->size(), value.size());
       if (num_points > 1) {
         svg << std::format("  <polygon fill=\"url(#{})\" stroke=\"none\" points=\"", grad_id);
-        double sx_start = mapValue(xs->at(0), xScale.min, xScale.max, px0, px1);
+        real_t sx_start = mapValue(xs->at(0), xScale.min, xScale.max, px0, px1);
         svg << std::format("{:.2f},{:.2f} ", sx_start, py1);
         for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-          double screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-          double screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-          double sy_clamped = std::min(screen_y, py1);
+          real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
+          real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
+          real_t sy_clamped = std::min(screen_y, py1);
           svg << std::format("{:.2f},{:.2f} ", screen_x, sy_clamped);
         }
-        double sx_end = mapValue(xs->at(num_points - 1), xScale.min, xScale.max, px0, px1);
+        real_t sx_end = mapValue(xs->at(num_points - 1), xScale.min, xScale.max, px0, px1);
         svg << std::format("{:.2f},{:.2f}", sx_end, py1);
         svg << "\" />\n";
       }
@@ -586,8 +589,8 @@ struct SvgHistogramRenderer {
           config->line_width);
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-        double screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-        double screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
+        real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
+        real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
         svg << std::format("{:.2f},{:.2f} ", screen_x, screen_y);
       }
       svg << "\" />\n";
@@ -605,8 +608,8 @@ struct SvgHistogramRenderer {
       const std::string col = color(marker_ci++, config->palette);
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-        double screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-        double screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
+        real_t screen_x = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
+        real_t screen_y = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
         svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"none\"/>\n", screen_x,
                            screen_y, col);
       }
@@ -617,24 +620,29 @@ struct SvgHistogramRenderer {
     if (!config->show_legend) {
       return;
     }
-    double legend_x = px1 - 15.0;
-    double legend_y = py0 + 25.0;
+    real_t legend_x = px1 - static_cast<real_t>(15.0);
+    real_t legend_y = py0 + static_cast<real_t>(25.0);
     for (const auto &iter : std::views::reverse(legend)) {
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
-                         legend_x - 40.0, legend_y, legend_x - 10.0, legend_y, iter.second);
-      svg << renderTextAsPath(iter.first, legend_x - 45.0, legend_y + 6.0, 18.0 * config->font_scale, TextAnchor::End,
-                              config->text_color(), config->use_native_text);
-      legend_y += 28.0;
+                         legend_x - static_cast<real_t>(40.0), legend_y, legend_x - static_cast<real_t>(10.0), legend_y,
+                         iter.second);
+      svg << renderTextAsPath(iter.first, legend_x - static_cast<real_t>(45.0), legend_y + static_cast<real_t>(6.0),
+                              static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End, config->text_color(),
+                              config->use_native_text);
+      legend_y += static_cast<real_t>(28.0);
     }
   }
 
   void drawTitlesAndLabels() {
-    svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config->font_scale, TextAnchor::Middle,
-                            config->text_color(), config->use_native_text);
+    svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0), py1 + static_cast<real_t>(75.0),
+                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
+                            config->use_native_text);
 
-    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
-    svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config->font_scale, TextAnchor::Middle, config->text_color(),
+    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", static_cast<real_t>(40.0),
+                       (py0 + py1) / static_cast<real_t>(2.0));
+    svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
+                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
                             config->use_native_text);
     svg << "  </g>\n";
   }
@@ -644,17 +652,17 @@ struct SvgHistogramRenderer {
     std::string key;
   };
 
-  NearestPoint findNearestPoint(double mouse_sx, double mouse_sy) const {
-    double min_dist_sq = 1e30;
+  NearestPoint findNearestPoint(real_t mouse_sx, real_t mouse_sy) const {
+    real_t min_dist_sq = static_cast<real_t>(1e30);
     NearestPoint best;
     for (const auto &[key, value] : partials) {
       std::size_t num_points = std::min(xs->size(), value.size());
       for (std::size_t point_idx = 0; point_idx < num_points; ++point_idx) {
-        double sx_i = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
-        double sy_i = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
-        double dx_i = sx_i - mouse_sx;
-        double dy_i = sy_i - mouse_sy;
-        double dist_sq = dx_i * dx_i + dy_i * dy_i;
+        real_t sx_i = mapValue(xs->at(point_idx), xScale.min, xScale.max, px0, px1);
+        real_t sy_i = mapValue(value.at(point_idx), yScale.min, yScale.max, py1, py0);
+        real_t dx_i = sx_i - mouse_sx;
+        real_t dy_i = sy_i - mouse_sy;
+        real_t dist_sq = dx_i * dx_i + dy_i * dy_i;
         if (dist_sq < min_dist_sq) {
           min_dist_sq = dist_sq;
           best.index = point_idx;
@@ -666,23 +674,28 @@ struct SvgHistogramRenderer {
   }
 
   struct TooltipPosition {
-    double sx_data;
-    double snapped_sy_data;
-    double target_x;
+    real_t sx_data;
+    real_t snapped_sy_data;
+    real_t target_x;
   };
 
   void drawTooltipBox(const TooltipPosition &pos, const std::string &best_key,
-                      const std::vector<std::tuple<std::string, double, std::string>> &hover_values) {
+                      const std::vector<std::tuple<std::string, real_t, std::string>> &hover_values) {
     if (hover_values.empty()) {
       return;
     }
-    double tooltip_w = 200.0;
-    double tooltip_h = 35.0 + 22.0 * static_cast<double>(hover_values.size());
+    real_t tooltip_w = static_cast<real_t>(200.0);
+    real_t tooltip_h = static_cast<real_t>(35.0) + static_cast<real_t>(22.0) * static_cast<real_t>(hover_values.size());
 
     // Tooltip position (flip sides depending on cursor location)
-    double tooltip_x = (pos.sx_data < kW / 2.0) ? pos.sx_data + 15.0 : pos.sx_data - tooltip_w - 15.0;
-    double tooltip_y = (pos.snapped_sy_data >= 0.0) ? pos.snapped_sy_data - tooltip_h / 2.0 : py0 + 15.0;
-    tooltip_y = std::max(py0 + 8.0, std::min(py1 - tooltip_h - 8.0, tooltip_y));
+    real_t tooltip_x = (pos.sx_data < kW / static_cast<real_t>(2.0))
+                           ? pos.sx_data + static_cast<real_t>(15.0)
+                           : pos.sx_data - tooltip_w - static_cast<real_t>(15.0);
+    real_t tooltip_y = (pos.snapped_sy_data >= static_cast<real_t>(0.0))
+                           ? pos.snapped_sy_data - tooltip_h / static_cast<real_t>(2.0)
+                           : py0 + static_cast<real_t>(15.0);
+    tooltip_y =
+        std::max(py0 + static_cast<real_t>(8.0), std::min(py1 - tooltip_h - static_cast<real_t>(8.0), tooltip_y));
 
     std::string card_bg = (config->theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
     std::string card_border = (config->theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
@@ -703,46 +716,48 @@ struct SvgHistogramRenderer {
       header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), pos.target_x);
     }
 
-    svg << renderTextAsPath(header_txt, tooltip_x + 12.0, tooltip_y + 20.0, 14.0 * config->font_scale,
-                            TextAnchor::Start, fg_color, config->use_native_text);
+    svg << renderTextAsPath(header_txt, tooltip_x + static_cast<real_t>(12.0), tooltip_y + static_cast<real_t>(20.0),
+                            static_cast<real_t>(14.0) * config->font_scale, TextAnchor::Start, fg_color,
+                            config->use_native_text);
 
-    double cur_y = tooltip_y + 42.0;
+    real_t cur_y = tooltip_y + static_cast<real_t>(42.0);
     for (const auto &[name, val, col] : hover_values) {
       // Color swatch dot
-      svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n", tooltip_x + 18.0, cur_y - 4.0,
-                         col);
+      svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
+                         tooltip_x + static_cast<real_t>(18.0), cur_y - static_cast<real_t>(4.0), col);
       // Label and value
       std::string line_txt = std::format("{}: {:.4f}", name, val);
       if (name == best_key) {
         line_txt += " (nearest)";
       }
-      svg << renderTextAsPath(line_txt, tooltip_x + 30.0, cur_y, 13.0 * config->font_scale, TextAnchor::Start, fg_color,
+      svg << renderTextAsPath(line_txt, tooltip_x + static_cast<real_t>(30.0), cur_y,
+                              static_cast<real_t>(13.0) * config->font_scale, TextAnchor::Start, fg_color,
                               config->use_native_text);
-      cur_y += 22.0;
+      cur_y += static_cast<real_t>(22.0);
     }
   }
 
   void drawHoverTooltip() {
-    if (hover == nullptr || !hover->active || hover->widget_width <= 0.0 || hover->widget_height <= 0.0 ||
-        xs == nullptr) {
+    if (hover == nullptr || !hover->active || hover->widget_width <= static_cast<real_t>(0.0) ||
+        hover->widget_height <= static_cast<real_t>(0.0) || xs == nullptr) {
       return;
     }
-    double svg_aspect = kW / kH;
-    double widget_aspect = hover->widget_width / hover->widget_height;
-    double scale = 1.0;
-    double offset_x = 0.0;
-    double offset_y = 0.0;
+    real_t svg_aspect = kW / kH;
+    real_t widget_aspect = hover->widget_width / hover->widget_height;
+    real_t scale = static_cast<real_t>(1.0);
+    real_t offset_x = static_cast<real_t>(0.0);
+    real_t offset_y = static_cast<real_t>(0.0);
 
     if (widget_aspect > svg_aspect) {
       scale = hover->widget_height / kH;
-      offset_x = (hover->widget_width - kW * scale) / 2.0;
+      offset_x = (hover->widget_width - kW * scale) / static_cast<real_t>(2.0);
     } else {
       scale = hover->widget_width / kW;
-      offset_y = (hover->widget_height - kH * scale) / 2.0;
+      offset_y = (hover->widget_height - kH * scale) / static_cast<real_t>(2.0);
     }
 
-    double mouse_sx = (hover->mouse_x - offset_x) / scale;
-    double mouse_sy = (hover->mouse_y - offset_y) / scale;
+    real_t mouse_sx = (hover->mouse_x - offset_x) / scale;
+    real_t mouse_sy = (hover->mouse_y - offset_y) / scale;
 
     if (mouse_sx < px0 || mouse_sx > px1 || mouse_sy < py0 || mouse_sy > py1) {
       return;
@@ -751,8 +766,8 @@ struct SvgHistogramRenderer {
     NearestPoint best = findNearestPoint(mouse_sx, mouse_sy);
 
     std::size_t idx = best.index;
-    double target_x = xs->at(idx);
-    double sx_data = mapValue(target_x, xScale.min, xScale.max, px0, px1);
+    real_t target_x = xs->at(idx);
+    real_t sx_data = mapValue(target_x, xScale.min, xScale.max, px0, px1);
 
     // Draw vertical guide line
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
@@ -760,14 +775,14 @@ struct SvgHistogramRenderer {
                        sx_data, py0, sx_data, py1, config->axis_color());
 
     // Collect values and draw markers on curves
-    std::vector<std::tuple<std::string, double, std::string>> hover_values; // name, value, color
+    std::vector<std::tuple<std::string, real_t, std::string>> hover_values; // name, value, color
     std::size_t color_idx = 0;
-    double snapped_sy_data = -1.0;
+    real_t snapped_sy_data = static_cast<real_t>(-1.0);
     for (const auto &[key, value] : partials) {
       if (idx < value.size()) {
         const std::string col = color(color_idx++, config->palette);
-        double y_val = value.at(idx);
-        double sy_data = mapValue(y_val, yScale.min, yScale.max, py1, py0);
+        real_t y_val = value.at(idx);
+        real_t sy_data = mapValue(y_val, yScale.min, yScale.max, py1, py0);
 
         if (key == best.key) {
           snapped_sy_data = sy_data;
@@ -804,17 +819,17 @@ struct SvgComparisonRenderer {
   const PlotConfig *config = nullptr;
   const HoverInfo *hover = nullptr;
 
-  double kWidth = 0.0;
-  double kHeight = 0.0;
-  double px0 = 0.0;
-  double px1 = 0.0;
-  double py0 = 0.0;
-  double py1 = 0.0;
+  real_t kWidth = static_cast<real_t>(0.0);
+  real_t kHeight = static_cast<real_t>(0.0);
+  real_t px0 = static_cast<real_t>(0.0);
+  real_t px1 = static_cast<real_t>(0.0);
+  real_t py0 = static_cast<real_t>(0.0);
+  real_t py1 = static_cast<real_t>(0.0);
 
-  double raw_x_min = 1e30;
-  double raw_x_max = -1e30;
-  double raw_y_min = 0.0;
-  double raw_y_max = -1e30;
+  real_t raw_x_min = static_cast<real_t>(1e30);
+  real_t raw_x_max = static_cast<real_t>(-1e30);
+  real_t raw_y_min = static_cast<real_t>(0.0);
+  real_t raw_y_max = static_cast<real_t>(-1e30);
 
   detail::NiceScale xScale;
   detail::NiceScale yScale;
@@ -847,10 +862,10 @@ struct SvgComparisonRenderer {
 
     kWidth = config->effective_width();
     kHeight = config->effective_height();
-    const double kLeft = 100.0;
-    const double kRight = 40.0;
-    const double kTop = 50.0;
-    const double kBot = 90.0;
+    const real_t kLeft = static_cast<real_t>(100.0);
+    const real_t kRight = static_cast<real_t>(40.0);
+    const real_t kTop = static_cast<real_t>(50.0);
+    const real_t kBot = static_cast<real_t>(90.0);
 
     px0 = kLeft;
     px1 = kWidth - kRight;
@@ -869,12 +884,12 @@ struct SvgComparisonRenderer {
       const auto &x_values = dataset.hist->bins;
       const auto &y_values = iterator->second;
       if (!x_values.empty()) {
-        raw_x_min = std::min(raw_x_min, static_cast<double>(x_values.front()));
-        raw_x_max = std::max(raw_x_max, static_cast<double>(x_values.back()));
+        raw_x_min = std::min(raw_x_min, x_values.front());
+        raw_x_max = std::max(raw_x_max, x_values.back());
       }
       for (real_t y_value : y_values) {
-        raw_y_max = std::max(raw_y_max, static_cast<double>(y_value));
-        raw_y_min = std::min(raw_y_min, static_cast<double>(y_value));
+        raw_y_max = std::max(raw_y_max, y_value);
+        raw_y_min = std::min(raw_y_min, y_value);
       }
     }
   }
@@ -887,11 +902,13 @@ struct SvgComparisonRenderer {
           "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
           "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
           "<text x=\"{3:.1f}\" y=\"{4:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{5:.1f}\" text-anchor=\"middle\" fill=\"{6}\">No comparison data</text></svg>",
-          kWidth, kHeight, config->bg_color(), kWidth / 2.0, kHeight / 2.0 + 8.0, 24.0 * config->font_scale,
+          kWidth, kHeight, config->bg_color(), kWidth / static_cast<real_t>(2.0),
+          kHeight / static_cast<real_t>(2.0) + static_cast<real_t>(8.0), static_cast<real_t>(24.0) * config->font_scale,
           config->text_color());
     }
-    std::string no_data_path = Roboto::instance().render("No comparison data", kWidth / 2.0, kHeight / 2.0 + 8.0,
-                                                         24 * config->font_scale, "middle");
+    std::string no_data_path = Roboto::instance().render("No comparison data", kWidth / static_cast<real_t>(2.0),
+                                                         kHeight / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+                                                         static_cast<real_t>(24.0) * config->font_scale, "middle");
     return std::format(
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
@@ -900,7 +917,7 @@ struct SvgComparisonRenderer {
   }
 
   void computeScales() {
-    double y_padding = (raw_y_max - raw_y_min) * 0.05;
+    real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
     raw_y_max += y_padding;
 
     xScale = detail::NiceScale(detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11);
@@ -933,8 +950,8 @@ struct SvgComparisonRenderer {
   }
 
   void drawGridAndAxes() {
-    for (double y_value : yScale.ticks) {
-      double spy = detail::mapValue(y_value, yScale.min, yScale.max, py1, py0);
+    for (real_t y_value : yScale.ticks) {
+      real_t spy = detail::mapValue(y_value, yScale.min, yScale.max, py1, py0);
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
@@ -942,13 +959,14 @@ struct SvgComparisonRenderer {
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         px0 - 8.0, spy, px0, spy, config->axis_color());
-      svg << renderTextAsPath(detail::fmtScientific(y_value), px0 - 15.0, spy + 7.0, 20.0 * config->font_scale,
+                         px0 - static_cast<real_t>(8.0), spy, px0, spy, config->axis_color());
+      svg << renderTextAsPath(detail::fmtScientific(y_value), px0 - static_cast<real_t>(15.0),
+                              spy + static_cast<real_t>(7.0), static_cast<real_t>(20.0) * config->font_scale,
                               TextAnchor::End, config->text_color(), config->use_native_text);
     }
 
-    for (double x_value : xScale.ticks) {
-      double spx = detail::mapValue(x_value, xScale.min, xScale.max, px0, px1);
+    for (real_t x_value : xScale.ticks) {
+      real_t spx = detail::mapValue(x_value, xScale.min, xScale.max, px0, px1);
       if (config->show_grid) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"0.8\" stroke-dasharray=\"3,3\"/>\n",
@@ -956,9 +974,10 @@ struct SvgComparisonRenderer {
       }
       svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                          "stroke=\"{}\" stroke-width=\"1.5\"/>\n",
-                         spx, py1, spx, py1 + 8.0, config->axis_color());
-      svg << renderTextAsPath(detail::fmtScientific(x_value), spx, py1 + 25.0, 20.0 * config->font_scale,
-                              TextAnchor::Middle, config->text_color(), config->use_native_text);
+                         spx, py1, spx, py1 + static_cast<real_t>(8.0), config->axis_color());
+      svg << renderTextAsPath(detail::fmtScientific(x_value), spx, py1 + static_cast<real_t>(25.0),
+                              static_cast<real_t>(20.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
+                              config->use_native_text);
     }
 
     // Axis border
@@ -981,15 +1000,15 @@ struct SvgComparisonRenderer {
           std::size_t n_points = std::min(x_values.size(), y_values.size());
           if (n_points > 1) {
             svg << std::format("  <polygon fill=\"url(#{})\" stroke=\"none\" points=\"", grad_id);
-            double sp_x_start = detail::mapValue(x_values[0], xScale.min, xScale.max, px0, px1);
+            real_t sp_x_start = detail::mapValue(x_values[0], xScale.min, xScale.max, px0, px1);
             svg << std::format("{:.2f},{:.2f} ", sp_x_start, py1);
             for (std::size_t i = 0; i < n_points; ++i) {
-              double sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-              double sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
-              double sp_y_clamped = std::min(sp_y, py1);
+              real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
+              real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+              real_t sp_y_clamped = std::min(sp_y, py1);
               svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y_clamped);
             }
-            double sp_x_end = detail::mapValue(x_values[n_points - 1], xScale.min, xScale.max, px0, px1);
+            real_t sp_x_end = detail::mapValue(x_values[n_points - 1], xScale.min, xScale.max, px0, px1);
             svg << std::format("{:.2f},{:.2f}", sp_x_end, py1);
             svg << "\" />\n";
           }
@@ -1018,8 +1037,8 @@ struct SvgComparisonRenderer {
           config->line_width);
       std::size_t n_points = std::min(x_values.size(), y_values.size());
       for (std::size_t i = 0; i < n_points; ++i) {
-        double sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-        double sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+        real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
+        real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
         svg << std::format("{:.2f},{:.2f} ", sp_x, sp_y);
       }
       svg << "\" />\n";
@@ -1040,8 +1059,8 @@ struct SvgComparisonRenderer {
           const std::string col = detail::color(marker_color_idx++, config->palette);
           std::size_t n_points = std::min(x_values.size(), y_values.size());
           for (std::size_t i = 0; i < n_points; ++i) {
-            double sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-            double sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+            real_t sp_x = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
+            real_t sp_y = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
             svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"3.5\" fill=\"{}\" stroke=\"none\"/>\n", sp_x,
                                sp_y, col);
           }
@@ -1054,27 +1073,32 @@ struct SvgComparisonRenderer {
 
   void drawLegend() {
     if (config->show_legend) {
-      double legend_x = px1 - 15.0;
-      double legend_y = py0 + 25.0;
+      real_t legend_x = px1 - static_cast<real_t>(15.0);
+      real_t legend_y = py0 + static_cast<real_t>(25.0);
       for (auto [label, color] : std::views::reverse(legend)) {
         svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                            "stroke=\"{}\" stroke-width=\"4.0\"/>\n",
-                           legend_x - 40.0, legend_y, legend_x - 10.0, legend_y, color);
-        svg << renderTextAsPath(label, legend_x - 45.0, legend_y + 6.0, 18.0 * config->font_scale, TextAnchor::End,
-                                config->text_color(), config->use_native_text);
-        legend_y += 28.0;
+                           legend_x - static_cast<real_t>(40.0), legend_y, legend_x - static_cast<real_t>(10.0),
+                           legend_y, color);
+        svg << renderTextAsPath(label, legend_x - static_cast<real_t>(45.0), legend_y + static_cast<real_t>(6.0),
+                                static_cast<real_t>(18.0) * config->font_scale, TextAnchor::End, config->text_color(),
+                                config->use_native_text);
+        legend_y += static_cast<real_t>(28.0);
       }
     }
   }
 
   void drawTitlesAndLabels() {
     // X-axis label
-    svg << renderTextAsPath(x_label, (px0 + px1) / 2.0, py1 + 75.0, 28.0 * config->font_scale, TextAnchor::Middle,
-                            config->text_color(), config->use_native_text);
+    svg << renderTextAsPath(x_label, (px0 + px1) / static_cast<real_t>(2.0), py1 + static_cast<real_t>(75.0),
+                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
+                            config->use_native_text);
 
     // Y-axis label (rotated)
-    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", 40.0, (py0 + py1) / 2.0);
-    svg << renderTextAsPath(y_label, 0.0, 0.0, 28.0 * config->font_scale, TextAnchor::Middle, config->text_color(),
+    svg << std::format("  <g transform=\"translate({:.1f}, {:.1f}) rotate(-90)\">\n", static_cast<real_t>(40.0),
+                       (py0 + py1) / static_cast<real_t>(2.0));
+    svg << renderTextAsPath(y_label, static_cast<real_t>(0.0), static_cast<real_t>(0.0),
+                            static_cast<real_t>(28.0) * config->font_scale, TextAnchor::Middle, config->text_color(),
                             config->use_native_text);
     svg << "  </g>\n";
   }
@@ -1084,8 +1108,8 @@ struct SvgComparisonRenderer {
     std::string label;
   };
 
-  NearestPoint findNearestPoint(double sp_x, double sp_y) const {
-    double min_dist_sq = 1e30;
+  NearestPoint findNearestPoint(real_t sp_x, real_t sp_y) const {
+    real_t min_dist_sq = static_cast<real_t>(1e30);
     NearestPoint best;
 
     for (const auto &dataset : *datasets) {
@@ -1099,11 +1123,11 @@ struct SvgComparisonRenderer {
       const auto &y_values = pit->second;
       std::size_t n_points = std::min(x_values.size(), y_values.size());
       for (std::size_t i = 0; i < n_points; ++i) {
-        double sp_x_i = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
-        double sp_y_i = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
-        double dx_i = sp_x_i - sp_x;
-        double dy_i = sp_y_i - sp_y;
-        double dist_sq = dx_i * dx_i + dy_i * dy_i;
+        real_t sp_x_i = detail::mapValue(x_values[i], xScale.min, xScale.max, px0, px1);
+        real_t sp_y_i = detail::mapValue(y_values[i], yScale.min, yScale.max, py1, py0);
+        real_t dx_i = sp_x_i - sp_x;
+        real_t dy_i = sp_y_i - sp_y;
+        real_t dist_sq = dx_i * dx_i + dy_i * dy_i;
         if (dist_sq < min_dist_sq) {
           min_dist_sq = dist_sq;
           best.index = i;
@@ -1114,10 +1138,10 @@ struct SvgComparisonRenderer {
     return best;
   }
 
-  std::vector<std::tuple<std::string, double, std::string>>
-  collectHoverValuesAndDrawMarkers(std::size_t idx, const std::string &best_label, double sx_data,
-                                   double &snapped_sy_data) {
-    std::vector<std::tuple<std::string, double, std::string>> hover_values;
+  std::vector<std::tuple<std::string, real_t, std::string>>
+  collectHoverValuesAndDrawMarkers(std::size_t idx, const std::string &best_label, real_t sx_data,
+                                   real_t &snapped_sy_data) {
+    std::vector<std::tuple<std::string, real_t, std::string>> hover_values;
     std::size_t color_idx = 0;
     for (const auto &dataset : *datasets) {
       const auto &partials =
@@ -1125,8 +1149,8 @@ struct SvgComparisonRenderer {
       auto pit = partials.find(*partial_key);
       if (pit != partials.end() && idx < pit->second.size()) {
         const std::string col = detail::color(color_idx++, config->palette);
-        double y_val = pit->second[idx];
-        double sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
+        real_t y_val = pit->second[idx];
+        real_t sy_data = detail::mapValue(y_val, yScale.min, yScale.max, py1, py0);
 
         if (dataset.label == best_label) {
           snapped_sy_data = sy_data;
@@ -1146,22 +1170,27 @@ struct SvgComparisonRenderer {
   }
 
   struct TooltipPosition {
-    double sx_data = 0.0;
-    double snapped_sy_data = 0.0;
-    double target_x = 0.0;
+    real_t sx_data = static_cast<real_t>(0.0);
+    real_t snapped_sy_data = static_cast<real_t>(0.0);
+    real_t target_x = static_cast<real_t>(0.0);
   };
 
   void drawTooltipBox(const TooltipPosition &pos, const std::string &best_label,
-                      const std::vector<std::tuple<std::string, double, std::string>> &hover_values) {
+                      const std::vector<std::tuple<std::string, real_t, std::string>> &hover_values) {
     if (hover_values.empty()) {
       return;
     }
-    double tooltip_w = 200.0;
-    double tooltip_h = 35.0 + 22.0 * static_cast<double>(hover_values.size());
+    real_t tooltip_w = static_cast<real_t>(200.0);
+    real_t tooltip_h = static_cast<real_t>(35.0) + static_cast<real_t>(22.0) * static_cast<real_t>(hover_values.size());
 
-    double tooltip_x = (pos.sx_data < kWidth / 2.0) ? pos.sx_data + 15.0 : pos.sx_data - tooltip_w - 15.0;
-    double tooltip_y = (pos.snapped_sy_data >= 0.0) ? pos.snapped_sy_data - tooltip_h / 2.0 : py0 + 15.0;
-    tooltip_y = std::max(py0 + 8.0, std::min(py1 - tooltip_h - 8.0, tooltip_y));
+    real_t tooltip_x = (pos.sx_data < kWidth / static_cast<real_t>(2.0))
+                           ? pos.sx_data + static_cast<real_t>(15.0)
+                           : pos.sx_data - tooltip_w - static_cast<real_t>(15.0);
+    real_t tooltip_y = (pos.snapped_sy_data >= static_cast<real_t>(0.0))
+                           ? pos.snapped_sy_data - tooltip_h / static_cast<real_t>(2.0)
+                           : py0 + static_cast<real_t>(15.0);
+    tooltip_y =
+        std::max(py0 + static_cast<real_t>(8.0), std::min(py1 - tooltip_h - static_cast<real_t>(8.0), tooltip_y));
 
     std::string card_bg = (config->theme == PlotConfig::Theme::Light) ? "#FFFFFF" : "#181825";
     std::string card_border = (config->theme == PlotConfig::Theme::Light) ? "#dddddd" : "#45475a";
@@ -1182,43 +1211,46 @@ struct SvgComparisonRenderer {
       header_txt = std::format("{} = {:.4f}", x_label.substr(0, paren), pos.target_x);
     }
 
-    svg << renderTextAsPath(header_txt, tooltip_x + 12.0, tooltip_y + 24.0, 14.0 * config->font_scale,
-                            TextAnchor::Start, fg_color, config->use_native_text);
+    svg << renderTextAsPath(header_txt, tooltip_x + static_cast<real_t>(12.0), tooltip_y + static_cast<real_t>(24.0),
+                            static_cast<real_t>(14.0) * config->font_scale, TextAnchor::Start, fg_color,
+                            config->use_native_text);
 
-    double cur_y = tooltip_y + 46.0;
+    real_t cur_y = tooltip_y + static_cast<real_t>(46.0);
     for (const auto &[name, val, col] : hover_values) {
-      svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n", tooltip_x + 18.0, cur_y - 5.0,
-                         col);
+      svg << std::format("  <circle cx=\"{:.1f}\" cy=\"{:.1f}\" r=\"5\" fill=\"{}\"/>\n",
+                         tooltip_x + static_cast<real_t>(18.0), cur_y - static_cast<real_t>(5.0), col);
       std::string line_txt = std::format("{}: {:.4f}", name, val);
       if (name == best_label) {
         line_txt += " (nearest)";
       }
-      svg << renderTextAsPath(line_txt, tooltip_x + 30.0, cur_y, 13.0 * config->font_scale, TextAnchor::Start, fg_color,
+      svg << renderTextAsPath(line_txt, tooltip_x + static_cast<real_t>(30.0), cur_y,
+                              static_cast<real_t>(13.0) * config->font_scale, TextAnchor::Start, fg_color,
                               config->use_native_text);
-      cur_y += 22.0;
+      cur_y += static_cast<real_t>(22.0);
     }
   }
 
   void drawHoverTooltip() {
-    if (!hover->active || hover->widget_width <= 0.0 || hover->widget_height <= 0.0) {
+    if (!hover->active || hover->widget_width <= static_cast<real_t>(0.0) ||
+        hover->widget_height <= static_cast<real_t>(0.0)) {
       return;
     }
-    double svg_aspect = kWidth / kHeight;
-    double widget_aspect = hover->widget_width / hover->widget_height;
-    double scale = 1.0;
-    double offset_x = 0.0;
-    double offset_y = 0.0;
+    real_t svg_aspect = kWidth / kHeight;
+    real_t widget_aspect = hover->widget_width / hover->widget_height;
+    real_t scale = static_cast<real_t>(1.0);
+    real_t offset_x = static_cast<real_t>(0.0);
+    real_t offset_y = static_cast<real_t>(0.0);
 
     if (widget_aspect > svg_aspect) {
       scale = hover->widget_height / kHeight;
-      offset_x = (hover->widget_width - kWidth * scale) / 2.0;
+      offset_x = (hover->widget_width - kWidth * scale) / static_cast<real_t>(2.0);
     } else {
       scale = hover->widget_width / kWidth;
-      offset_y = (hover->widget_height - kHeight * scale) / 2.0;
+      offset_y = (hover->widget_height - kHeight * scale) / static_cast<real_t>(2.0);
     }
 
-    double sp_x = (hover->mouse_x - offset_x) / scale;
-    double sp_y = (hover->mouse_y - offset_y) / scale;
+    real_t sp_x = (hover->mouse_x - offset_x) / scale;
+    real_t sp_y = (hover->mouse_y - offset_y) / scale;
 
     if (sp_x < px0 || sp_x > px1 || sp_y < py0 || sp_y > py1) {
       return;
@@ -1231,15 +1263,15 @@ struct SvgComparisonRenderer {
       return;
     }
 
-    double target_x = x_bins[best_idx];
-    double sx_data = detail::mapValue(target_x, xScale.min, xScale.max, px0, px1);
+    real_t target_x = x_bins[best_idx];
+    real_t sx_data = detail::mapValue(target_x, xScale.min, xScale.max, px0, px1);
 
     // Draw vertical guide line
     svg << std::format("  <line x1=\"{:.1f}\" y1=\"{:.1f}\" x2=\"{:.1f}\" y2=\"{:.1f}\" "
                        "stroke=\"{}\" stroke-width=\"1.5\" stroke-dasharray=\"4,4\"/>\n",
                        sx_data, py0, sx_data, py1, config->axis_color());
 
-    double snapped_sy_data = -1.0;
+    real_t snapped_sy_data = static_cast<real_t>(-1.0);
     auto hover_values = collectHoverValuesAndDrawMarkers(best_idx, best_label, sx_data, snapped_sy_data);
 
     // Draw horizontal guide line to the snapped data point of the closest dataset
@@ -1268,7 +1300,7 @@ struct SvgComparisonRenderer {
  * @brief Renders text as a filled SVG path using the Roboto outline font.
  * Uses evenodd fill-rule to render the font's inner holes properly.
  */
-inline std::string renderTextAsPath(const std::string &text, double x_pos, double y_pos, double size, TextAnchor anchor,
+inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_t y_pos, real_t size, TextAnchor anchor,
                                     const std::string &color, bool use_native_text = false) {
   std::string anchor_str = "start";
   if (anchor == TextAnchor::Middle) {
@@ -1282,7 +1314,8 @@ inline std::string renderTextAsPath(const std::string &text, double x_pos, doubl
         "  <text x=\"{:.1f}\" y=\"{:.1f}\" font-family=\"'Outfit', 'Plus Jakarta Sans', 'Inter', 'Roboto', 'Helvetica Neue', sans-serif\" font-size=\"{:.1f}\" text-anchor=\"{}\" fill=\"{}\">{}</text>\n",
         x_pos, y_pos, size, anchor_str, color, text);
   }
-  std::string path_d = Roboto::instance().render(text, x_pos, y_pos, size, anchor_str);
+  std::string path_d = Roboto::instance().render(text, static_cast<double>(x_pos), static_cast<double>(y_pos),
+                                                 static_cast<double>(size), anchor_str);
   return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n", path_d, color);
 }
 

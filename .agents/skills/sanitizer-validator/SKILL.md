@@ -1,15 +1,6 @@
 ---
 name: sanitizer-validator
 description: Instruments the C++ build with LLVM/GCC sanitizers to trap, diagnose, and fix memory leaks, undefined behavior, and race conditions at runtime.
-triggers:
-  - post_compilation
-  - pre_test_execution
-capabilities:
-  - terminal_execution
-  - filesystem_read_write
-  - flag_injection
-dependencies:
-  - test-and-tea-loop
 ---
 
 # Sanitizer Validator

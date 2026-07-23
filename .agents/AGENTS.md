@@ -9,7 +9,7 @@
 2. **Context Economy (Caveman Discovery):**
    - Never perform blind exploratory file reads or wide `grep` queries.
    - Always consult `graphify-out/GRAPH_REPORT.md` or `graphify-out/graph.json` first to identify exact file paths and module clusters.
-   - See `rules/caveman-navigation.md` for the full protocol.
+   - See [caveman-navigation](file:///home/isurwars/Projects/Correlation/.agents/rules/caveman-navigation.md) for the full protocol.
 3. **Execution Guardrails:**
    - Never commit or edit generated build directories (`build/`, `graphify-out/`, `CMakeCache.txt`).
    - Validate modifications against `clang-format` and `clang-tidy` rules before task completion.
@@ -26,21 +26,21 @@
 - **Modern C++20 Standards:** Leverage concepts, ranges, spans, and `constexpr` optimization. Avoid raw allocations (`new`/`delete`); mandate RAII wrappers.
 - **Parallel Computing (OpenMP):** Ensure loops computing pair/radial distribution data maintain cache-locality, avoid false sharing, and mark loop indexes as thread-private.
 - **Interatomic Potentials:** Maintain uniform interfaces for ML potentials (MACE, ORB-v3). Use abstract contiguous matrix wrappers for coordinate processing.
-- **See skill:** `cpp-coding-standards` for the comprehensive C++ Core Guidelines reference.
-- **See rule:** `code-style-guide` for clang-tidy compliance, Doxygen standards, and static analysis gates.
+- **See skill:** [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for the comprehensive C++ Core Guidelines reference.
+- **See rule:** [code-style-guide](file:///home/isurwars/Projects/Correlation/.agents/rules/code-style-guide.md) for clang-tidy compliance, Doxygen standards, and static analysis gates.
 
 ## 5. Communication Style
 - Zero conversational fluff. Drop introductory descriptions or post-generation explanations.
 - Use `// ...` placeholders extensively. Never print untouched structural logic or boilerplate code blocks.
 - Prefer tables for multi-variable comparisons. Bold the primary technical anchor word in every bullet point.
 - Use strict **[File:Line] -> [Error Type] -> [Fix Action]** format for diagnostics.
-- See `skills/caveman-communication` for the full token economy protocol.
+- See [caveman-communication](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman-communication/SKILL.md) for the full token economy protocol.
 
 ## 6. Delegation & Skill Invocation
-- **C++ Refactoring / Code Generation:** Activate `skills/cpp-coding-standards` for RAII, modern C++20/23 type safety, and memory-locality guidelines.
-- **Verification & Build:** Run project validation using CMake/CTest targets before declaring features complete. Invoke `skills/test-and-tea-loop` for automated build-diagnose-fix cycles.
-- **Runtime Safety:** Use `skills/sanitizer-validator` to instrument builds with ASan/TSan/UBSan when investigating memory or concurrency bugs.
-- **Graph Sync:** After modifying source files, invoke `skills/graphify-maintenance` to regenerate dependency graphs.
+- **C++ Refactoring / Code Generation:** Activate [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for RAII, modern C++20/23 type safety, and memory-locality guidelines.
+- **Verification & Build:** Run project validation using CMake/CTest targets before declaring features complete. Invoke [test-and-tea-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/test-and-tea-loop/SKILL.md) for automated build-diagnose-fix cycles.
+- **Runtime Safety:** Use [sanitizer-validator](file:///home/isurwars/Projects/Correlation/.agents/skills/sanitizer-validator/SKILL.md) to instrument builds with ASan/TSan/UBSan when investigating memory or concurrency bugs.
+- **Graph Sync:** After modifying source files, invoke [graphify-maintenance](file:///home/isurwars/Projects/Correlation/.agents/skills/graphify-maintenance/SKILL.md) to regenerate dependency graphs.
 
 ## 7. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.

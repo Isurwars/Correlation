@@ -1,12 +1,6 @@
 ---
 name: caveman-communication
 description: Enforces hyper-dense communication protocols and strict token economy constraints. Eliminates conversational filler, meta-commentary, and redundant explanations.
-metadata:
-  origin: ECC
-triggers:
-  - on_artifact_generation
-  - on_code_modification
-  - pre_response_generation
 ---
 
 # Caveman Communication & Token Economy Protocol

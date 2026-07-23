@@ -11,6 +11,8 @@
 #include "math/Precision.hpp"
 #include "math/SIMDConfig.hpp"
 
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <vector>
@@ -556,8 +558,8 @@ inline float simd_dot(const float *CORRELATION_RESTRICT input_a, const float *CO
     vacc = _mm256_add_ps(vacc, _mm256_mul_ps(vec_a, vec_b));
 #endif
   }
-  alignas(32) float float_buf[8];
-  _mm256_storeu_ps(float_buf, vacc);
+  alignas(32) std::array<float, 8> float_buf{};
+  _mm256_storeu_ps(float_buf.data(), vacc);
   float acc = float_buf[0] + float_buf[1] + float_buf[2] + float_buf[3] + float_buf[4] + float_buf[5] + float_buf[6] +
               float_buf[7];
   for (; idx < count; ++idx) {
@@ -666,8 +668,8 @@ inline float debye_sum(float q_magnitude, const float *CORRELATION_RESTRICT dist
   for (; idx + 8 <= count; idx += 8) {
     vacc = _mm256_add_ps(vacc, _mm256_loadu_ps(scratch + idx));
   }
-  alignas(32) float float_buf[8];
-  _mm256_storeu_ps(float_buf, vacc);
+  alignas(32) std::array<float, 8> float_buf{};
+  _mm256_storeu_ps(float_buf.data(), vacc);
   float acc = float_buf[0] + float_buf[1] + float_buf[2] + float_buf[3] + float_buf[4] + float_buf[5] + float_buf[6] +
               float_buf[7];
   for (; idx < count; ++idx) {
@@ -1454,10 +1456,10 @@ inline void miller_phase_sum(const float *CORRELATION_RESTRICT cos1, const float
     vc_sum = _mm256_add_ps(vc_sum, vc123);
     vs_sum = _mm256_add_ps(vs_sum, vs123);
   }
-  alignas(32) float c_buf[8];
-  alignas(32) float s_buf[8];
-  _mm256_storeu_ps(c_buf, vc_sum);
-  _mm256_storeu_ps(s_buf, vs_sum);
+  alignas(32) std::array<float, 8> c_buf{};
+  alignas(32) std::array<float, 8> s_buf{};
+  _mm256_storeu_ps(c_buf.data(), vc_sum);
+  _mm256_storeu_ps(s_buf.data(), vs_sum);
   cos_sum = c_buf[0] + c_buf[1] + c_buf[2] + c_buf[3] + c_buf[4] + c_buf[5] + c_buf[6] + c_buf[7];
   sin_sum = s_buf[0] + s_buf[1] + s_buf[2] + s_buf[3] + s_buf[4] + s_buf[5] + s_buf[6] + s_buf[7];
   for (; idx < count; ++idx) {

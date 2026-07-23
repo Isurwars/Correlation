@@ -1,7 +1,3 @@
----
-trigger: always_on
----
-
 # Rule: C++ Code Style, Memory Safety, and Modern Standards
 
 *Activation Mode: Glob (`**/*.{hpp,cpp,cxx,h,cc,c}`)*
@@ -34,4 +30,4 @@ trigger: always_on
 
 ## Reference
 
-- **See skill:** `cpp-coding-standards` for comprehensive C++ coding standards and guidelines (RAII, smart pointers, modern C++20/23 architecture, const correctness, move semantics, concurrency patterns).
+- **See skill:** [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for comprehensive C++ coding standards and guidelines (RAII, smart pointers, modern C++20/23 architecture, const correctness, move semantics, concurrency patterns).

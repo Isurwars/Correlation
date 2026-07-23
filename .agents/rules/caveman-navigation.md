@@ -1,7 +1,3 @@
----
-trigger: always_on
----
-
 # Rule: Caveman Navigation Protocol (Token-Efficient Codebase Discovery)
 
 *Activation Mode: Universal / Default Baseline*
@@ -17,7 +13,7 @@ trigger: always_on
    - **No Imports Grepping:** Do not grep `#include` directives or class definitions across the workspace to trace dependencies; use `graphify-out/` artifacts instead.
 
 3. **Fallback Protocol (When Graphify Artifacts are Missing/Stale):**
-   - If `graphify-out/GRAPH_REPORT.md` does not exist, run the repository's graphify generator command *first*, or fall back to high-level directory tree inspection (`ls -R` / `find`) before reading source content.
+   - If `graphify-out/GRAPH_REPORT.md` does not exist, run `graphify update .` *first* if available, or fall back to high-level directory tree inspection (`ls -R` / `find`) before reading source content.
 
 4. **Targeted Inspection ("Context Diet"):**
    - Treat context tokens as a strict budget. Open *only* the single, minimal set of files identified by the dependency graph required to fulfill the prompt.

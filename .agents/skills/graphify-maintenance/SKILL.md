@@ -1,12 +1,6 @@
 ---
 name: graphify-maintenance
 description: Automates Graphify knowledge graph regeneration to eliminate graph drift and context mismatches.
-triggers:
-  - on_code_modification
-  - on_artifact_generation
-capabilities:
-  - terminal_execution
-  - filesystem_read_write
 ---
 
 # Graphify Automation & Sync Protocol
@@ -29,6 +23,6 @@ Verify that the underlying file system artifacts are fresh:
 - Verify that `graphify-out/GRAPH_REPORT.md` is populated with correct, updated structural nodes.
 
 ## 3. Handling Update Failures
-- If the tool command returns a non-zero exit status, intercept the stderr logs.
-- Temporarily fallback to high-level system directory tree inspection (`find .` or `ls -R`).
-- Raise an immediate diagnostic alert to the developer interface to prevent execution loops over broken schema references.
+- If `graphify` command is missing or returns a non-zero exit status, intercept the logs.
+- Fall back to directory tree inspection (`find .` or `ls -R`).
+- Raise a diagnostic alert if schema references are broken.
