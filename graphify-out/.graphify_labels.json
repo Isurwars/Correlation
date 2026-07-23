@@ -278,5 +278,6 @@
   "276": "CSVWriter.cpp",
   "277": "hipGetDeviceCount",
   "278": "StructureFactorCalculator",
-  "279": "TrajectoryAnalyzer::TrajectoryAnalyzer"
+  "279": "TrajectoryAnalyzer::TrajectoryAnalyzer",
+  "280": "BlendParams"
 }

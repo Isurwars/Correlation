@@ -475,7 +475,7 @@
     "semantic_hash": ""
   },
   "src/app/InputValidator.cpp": {
-    "mtime": 1784587202.979376,
+    "mtime": 1784839485.2415175,
     "ast_hash": "b1af70ccfc61f4aa44be24f60e621f3f",
     "semantic_hash": ""
   },
@@ -1685,38 +1685,38 @@
     "semantic_hash": ""
   },
   "include/math/simd/SIMDDistance.hpp": {
-    "mtime": 1784838073.7221742,
-    "ast_hash": "f47b3e65f71faaad1a6417ccf74205a7",
+    "mtime": 1784838435.4457386,
+    "ast_hash": "39539733fd39192e45c9b61d435bd7bb",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDNormalization.hpp": {
-    "mtime": 1784789104.8710444,
-    "ast_hash": "7a69123d7316b870cad094d58ec2ded4",
+    "mtime": 1784844852.7574067,
+    "ast_hash": "303800dc3201d98964a27a4f05fb54ec",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDScattering.hpp": {
-    "mtime": 1784789110.365034,
-    "ast_hash": "161a9e7037dc4636a3ce6af083dcd88d",
+    "mtime": 1784838576.441043,
+    "ast_hash": "27675e4fd406f2f190d154b045c26ac5",
     "semantic_hash": ""
   },
   "include/math/simd/SIMDTypes.hpp": {
-    "mtime": 1784784171.0055387,
-    "ast_hash": "7f1b597354cbf8e83f63fecfe725e3bd",
+    "mtime": 1784844791.12856,
+    "ast_hash": "fc6d225cb70f14939247fa3b3c6b954f",
     "semantic_hash": ""
   },
   "include/math/simd/detail/AVX2Kernels.hpp": {
-    "mtime": 1784784464.2591746,
-    "ast_hash": "bb7db667b2d9a8e46402bd87d6c0312a",
+    "mtime": 1784844830.5718217,
+    "ast_hash": "95c54ce2f69cea7afbc31019f516a2fe",
     "semantic_hash": ""
   },
   "include/math/simd/detail/AVX512Kernels.hpp": {
-    "mtime": 1784784469.0741026,
-    "ast_hash": "ccd9f0b544144b075fbb39ba1437ec65",
+    "mtime": 1784844842.4026003,
+    "ast_hash": "4af7485bb2fb54c7e119504f5f5a814d",
     "semantic_hash": ""
   },
   "include/math/simd/detail/ScalarKernels.hpp": {
-    "mtime": 1784784459.2202497,
-    "ast_hash": "9fb8f090cf19affb1ca37dc8cc8109eb",
+    "mtime": 1784844819.538028,
+    "ast_hash": "2d1cab10d453b4596b23403001034fb0",
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
