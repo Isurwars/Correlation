@@ -187,8 +187,9 @@ bool validateOptions(const CliOptions &opts) {
   }
   return true;
 }
+} // namespace
 
-bool parseArgs(std::span<char *> argv, CliOptions &opts) {
+bool parseArgs(std::span<const char *const> argv, CliOptions &opts) {
   CLI::App app{"Correlation — Structural Analysis Tool (CLI Mode)"};
 
   // Disable Windows-style options (like /opt) so that absolute paths starting
@@ -309,6 +310,5 @@ bool parseArgs(std::span<char *> argv, CliOptions &opts) {
 
   return true;
 }
-} // namespace
 
 } // namespace correlation::cli

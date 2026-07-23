@@ -18,13 +18,12 @@
 #include <algorithm>
 #include <iostream>
 #include <set>
-#include <span>
 #include <sstream>
 #include <string>
 
 int main(int argc, char *argv[]) {
   correlation::cli::CliOptions cli;
-  if (!correlation::cli::parseArgs(std::span<char *>(argv, argc), cli)) {
+  if (!correlation::cli::parseArgs(argc, argv, cli)) {
     return 1;
   }
 
