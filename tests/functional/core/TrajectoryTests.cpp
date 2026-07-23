@@ -17,8 +17,8 @@ using namespace correlation::core;
 namespace {
 class TrajectoryFunctionalTests : public ::testing::Test {
 protected:
-  static Cell createSingleAtomCell(const std::string &element, const math::Vector3<double> &pos) {
-    Cell cell({{10.0, 10.0, 10.0, 90.0, 90.0, 90.0}});
+  static Cell createSingleAtomCell(const std::string &element, const math::Vector3R &pos) {
+    Cell cell({{static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)}});
     cell.addAtom(element, pos);
     return cell;
   }
@@ -30,7 +30,7 @@ TEST_F(TrajectoryFunctionalTests, VerifyPBCDiffusionVelocityCalculation) {
   // Frame 0: pos = 9.5
   // Frame 1: pos = 1.5 (crossing the right boundary)
   // Frame 2: pos = 3.0
-  const double time_step = 0.5; // fs
+  const real_t time_step = static_cast<real_t>(0.5); // fs
   std::vector<Cell> frames;
   frames.push_back(createSingleAtomCell("H", {9.5, 5.0, 5.0}));
   frames.push_back(createSingleAtomCell("H", {1.5, 5.0, 5.0}));

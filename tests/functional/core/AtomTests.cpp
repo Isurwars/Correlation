@@ -25,8 +25,8 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
   // Four Hydrogen atoms at the vertices of the tetrahedron
   // C-H bond length is approx 1.09 Angstroms
   const Element element_h{.symbol = "H", .id = {1}};
-  const double bond_len = 1.09;
-  const double factor = bond_len / std::sqrt(3.0);
+  const real_t bond_len = static_cast<real_t>(1.09);
+  const real_t factor = bond_len / std::sqrt(static_cast<real_t>(3.0));
 
   Atom h_1(element_h, {factor, factor, factor}, 1);
   Atom h_2(element_h, {-factor, -factor, factor}, 2);
@@ -34,21 +34,21 @@ TEST_F(AtomFunctionalTests, VerifyMethaneTetrahedralGeometry) {
   Atom h_4(element_h, {factor, -factor, -factor}, 4);
 
   // Verify bond distances from Carbon to each Hydrogen
-  EXPECT_NEAR(distance(carbon, h_1), bond_len, 1e-6);
-  EXPECT_NEAR(distance(carbon, h_2), bond_len, 1e-6);
-  EXPECT_NEAR(distance(carbon, h_3), bond_len, 1e-6);
-  EXPECT_NEAR(distance(carbon, h_4), bond_len, 1e-6);
+  EXPECT_NEAR(distance(carbon, h_1), bond_len, 1e-4);
+  EXPECT_NEAR(distance(carbon, h_2), bond_len, 1e-4);
+  EXPECT_NEAR(distance(carbon, h_3), bond_len, 1e-4);
+  EXPECT_NEAR(distance(carbon, h_4), bond_len, 1e-4);
 
   // Verify tetrahedral angle: acos(-1/3) which is ~ 109.47 degrees (1.910633 radians)
-  const double expected_angle_rad = std::acos(-1.0 / 3.0);
-  const double expected_angle_deg = 109.4712;
+  const real_t expected_angle_rad = std::acos(static_cast<real_t>(-1.0 / 3.0));
+  const real_t expected_angle_deg = static_cast<real_t>(109.4712);
 
-  double const angle_1_c_2 = angle(carbon, h_1, h_2);
-  double const angle_1_c_3 = angle(carbon, h_1, h_3);
-  double const angle_1_c_4 = angle(carbon, h_1, h_4);
-  double const angle_2_c_3 = angle(carbon, h_2, h_3);
-  double const angle_2_c_4 = angle(carbon, h_2, h_4);
-  double const angle_3_c_4 = angle(carbon, h_3, h_4);
+  real_t const angle_1_c_2 = angle(carbon, h_1, h_2);
+  real_t const angle_1_c_3 = angle(carbon, h_1, h_3);
+  real_t const angle_1_c_4 = angle(carbon, h_1, h_4);
+  real_t const angle_2_c_3 = angle(carbon, h_2, h_3);
+  real_t const angle_2_c_4 = angle(carbon, h_2, h_4);
+  real_t const angle_3_c_4 = angle(carbon, h_3, h_4);
 
   EXPECT_NEAR(angle_1_c_2, expected_angle_rad, 1e-6);
   EXPECT_NEAR(angle_1_c_3, expected_angle_rad, 1e-6);

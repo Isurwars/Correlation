@@ -86,10 +86,10 @@ TEST_F(AppBackendTests, RecommendedTimeStepWithNoCellReturnsDefault) {
   correlation::app::AppBackend const backend;
 
   // Act
-  double const time_step = backend.getRecommendedTimeStep();
+  real_t const time_step = backend.getRecommendedTimeStep();
 
   // Assert
-  EXPECT_DOUBLE_EQ(time_step, correlation::app::AppDefaults::TIME_STEP);
+  EXPECT_NEAR(time_step, correlation::app::AppDefaults::TIME_STEP, 1e-4);
 }
 
 TEST_F(AppBackendTests, LoadValidXYZFile) {
@@ -132,7 +132,7 @@ TEST_F(AppBackendTests, LoadValidCarFileAndRunAnalysisAndWriteFiles) {
   EXPECT_EQ(cell->atomCount(), 2);
 
   // Act & Assert 2: Recommended values
-  double const rec_time_step = backend.getRecommendedTimeStep();
+  real_t const rec_time_step = backend.getRecommendedTimeStep();
   EXPECT_NEAR(rec_time_step, 1.3470, 1e-3);
 
   auto const cutoffs = backend.getRecommendedBondCutoffs();

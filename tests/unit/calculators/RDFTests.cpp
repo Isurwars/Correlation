@@ -120,7 +120,7 @@ TEST_F(RDFTests, CalculateRDF) {
   // High precision peak location
   auto max_it = std::max_element(total.begin(), total.end());
   size_t const peak_idx = std::distance(total.begin(), max_it);
-  double const peak_r = hist.bins[peak_idx];
+  real_t const peak_r = hist.bins[peak_idx];
 
   // Bin size is 0.001. Bin containing 1.50 is index 1500 (center 1.5005) or
   // 1499 (1.4995)
@@ -210,16 +210,16 @@ TEST_F(RDFTests, AddAndScale) {
   // Should be back to original magnitude
   // We check peak value
   auto max_it = std::ranges::max_element(h1_scaled);
-  double const peak = *max_it;
+  real_t const peak = *max_it;
 
   // Single frame RDF peak value depends on volume and density, but it's
   // consistent. Let's compare with a fresh one
   DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
   dfRef.calculateRDF(5.0, 0.1);
-  double const refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
+  real_t const refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
                                            dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
 
-  EXPECT_NEAR(peak, refPeak, 1e-6);
+  EXPECT_NEAR(peak, refPeak, 1e-4);
 }
 
 TEST_F(RDFTests, ComputeMean) {

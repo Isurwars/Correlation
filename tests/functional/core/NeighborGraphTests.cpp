@@ -25,21 +25,25 @@ TEST_F(NeighborGraphFunctionalTests, VerifySimpleCubicTopology) {
   const size_t node_count = 8;
   NeighborGraph graph(node_count);
 
-  const double lattice_a = 3.0; // 3.0 Angstroms
-  
+  const real_t lattice_a = static_cast<real_t>(3.0); // 3.0 Angstroms
+
   // Define coordinate mapping for convenience
-  std::vector<Vector3<double>> coords = {
-    {0.0, 0.0, 0.0}, {lattice_a, 0.0, 0.0}, {0.0, lattice_a, 0.0}, {0.0, 0.0, lattice_a},
-    {lattice_a, lattice_a, 0.0}, {lattice_a, 0.0, lattice_a}, {0.0, lattice_a, lattice_a}, {lattice_a, lattice_a, lattice_a}
-  };
+  std::vector<Vector3R> coords = {{static_cast<real_t>(0.0), static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
+                                  {lattice_a, static_cast<real_t>(0.0), static_cast<real_t>(0.0)},
+                                  {static_cast<real_t>(0.0), lattice_a, static_cast<real_t>(0.0)},
+                                  {static_cast<real_t>(0.0), static_cast<real_t>(0.0), lattice_a},
+                                  {lattice_a, lattice_a, static_cast<real_t>(0.0)},
+                                  {lattice_a, static_cast<real_t>(0.0), lattice_a},
+                                  {static_cast<real_t>(0.0), lattice_a, lattice_a},
+                                  {lattice_a, lattice_a, lattice_a}};
 
   // Add directed edges for every adjacent pair along grid lines (Simple Cubic nearest neighbors)
   // For SC, every node has neighbors at distance lattice_a
-  auto addSymmetricEdge = [&](size_t i, size_t j) {
-    Vector3<double> r_ij = coords[j] - coords[i];
-    Vector3<double> r_ji = coords[i] - coords[j];
-    graph.addDirectedEdge(i, j, lattice_a, r_ij);
-    graph.addDirectedEdge(j, i, lattice_a, r_ji);
+  auto addSymmetricEdge = [&](size_t i_idx, size_t j_idx) {
+    Vector3R const r_ij = coords[j_idx] - coords[i_idx];
+    Vector3R const r_ji = coords[i_idx] - coords[j_idx];
+    graph.addDirectedEdge(i_idx, j_idx, lattice_a, r_ij);
+    graph.addDirectedEdge(j_idx, i_idx, lattice_a, r_ji);
   };
 
   // Edges along X
@@ -71,7 +75,7 @@ TEST_F(NeighborGraphFunctionalTests, VerifySimpleCubicTopology) {
   // Get neighbors of node 0
   const auto &neighbors_0 = graph.getNeighbors(0);
   ASSERT_EQ(neighbors_0.size(), 3);
-  
+
   for (const auto &neigh : neighbors_0) {
     EXPECT_DOUBLE_EQ(neigh.distance, lattice_a);
     // Relative vector norm should match distance
@@ -100,7 +104,7 @@ TEST_F(NeighborGraphFunctionalTests, VerifySelfInteractionsAndParallelEdges) {
 
   // Add self-loop to atom 0
   graph.addDirectedEdge(0, 0, 0.0, zero);
-  
+
   // Add multiple parallel directed bonds between atom 1 and 2 (e.g. multi-path PBC image bonds)
   graph.addDirectedEdge(1, 2, 1.5, vec);
   graph.addDirectedEdge(1, 2, 4.5, vec * 3.0);

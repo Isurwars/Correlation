@@ -118,7 +118,7 @@ TEST_F(RDTests, CelluloseRingDistribution) {
   auto &partial = f_motif.partials.at("Rings");
   EXPECT_EQ(partial.size(), max_ring_size - 2);
 
-  double sum_rings = 0.0;
+  real_t sum_rings = static_cast<real_t>(0.0);
   for (size_t i = 0; i < partial.size(); ++i) {
     if (i == 3) { // Bin 3 corresponds to ring size 6 (since bins start at 3)
       EXPECT_NEAR(partial[i], 1.0, 1e-6) << "Ring size 6 should have all the counts.";

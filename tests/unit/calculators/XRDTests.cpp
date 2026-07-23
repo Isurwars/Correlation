@@ -119,10 +119,10 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
   EXPECT_FALSE(hist.bins.empty());
 
   const auto &total_intensity = hist.partials.at("Total");
-  double max_intensity = 0.0;
-  double max_theta = 0.0;
+  real_t max_intensity = static_cast<real_t>(0.0);
+  real_t max_theta = static_cast<real_t>(0.0);
   for (size_t i = 0; i < total_intensity.size(); ++i) {
-    if (hist.bins[i] > 15.0 && total_intensity[i] > max_intensity) {
+    if (hist.bins[i] > static_cast<real_t>(15.0) && total_intensity[i] > max_intensity) {
       max_intensity = total_intensity[i];
       max_theta = hist.bins[i];
     }

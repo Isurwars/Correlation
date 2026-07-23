@@ -50,10 +50,10 @@ TEST_F(StructureFactorCalculatorTests, CalculatesSimpleCubicBraggPeak) {
 
   // The first Bragg peak for a SC lattice at a=3 is at Q = 2*pi/3 ≈ 2.094
   // Å^{-1} Find the max S(Q) value in the range [1.8, 2.4]
-  double peak_sq = 0.0;
+  real_t peak_sq = static_cast<real_t>(0.0);
   for (size_t i = 0; i < hist.bins.size(); ++i) {
-    if (hist.bins[i] >= 1.8 && hist.bins[i] <= 2.4) {
-      peak_sq = std::max(peak_sq, static_cast<double>(hist.partials.at("Total")[i]));
+    if (hist.bins[i] >= static_cast<real_t>(1.8) && hist.bins[i] <= static_cast<real_t>(2.4)) {
+      peak_sq = std::max(peak_sq, hist.partials.at("Total")[i]);
     }
   }
   // At a Bragg peak, S(Q) should be much greater than 1
@@ -108,12 +108,12 @@ TEST_F(StructureFactorCalculatorTests, DimerProducesValidSQ) {
   // For a homonuclear dimer of 2 atoms at distance d=1.5 A, S(Q) = 1 +
   // sin(Q*d)/(Q*d)
   for (size_t i = 0; i < hist.bins.size(); ++i) {
-    double q_val = hist.bins[i];
-    double expected_sq = 1.0;
-    if (q_val > 1e-6) {
-      expected_sq += std::sin(q_val * 1.5) / (q_val * 1.5);
+    real_t q_val = hist.bins[i];
+    real_t expected_sq = static_cast<real_t>(1.0);
+    if (q_val > static_cast<real_t>(1e-6)) {
+      expected_sq += std::sin(q_val * static_cast<real_t>(1.5)) / (q_val * static_cast<real_t>(1.5));
     } else {
-      expected_sq = 2.0;
+      expected_sq = static_cast<real_t>(2.0);
     }
 
     // Check if the partials correctly accumulate

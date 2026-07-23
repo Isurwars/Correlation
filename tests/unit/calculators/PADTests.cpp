@@ -73,7 +73,7 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
   correlation::core::Cell water({10, 10, 10, 90, 90, 90});
   water.addAtom("O", {5, 5, 5});
   water.addAtom("H", {6, 5, 5});
-  double const angRad = 104.5 * correlation::math::deg_to_rad;
+  real_t const angRad = static_cast<real_t>(104.5) * correlation::math::deg_to_rad;
   water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
 
   updateTrajectory(water);
@@ -85,7 +85,7 @@ TEST_F(PADTests_AngleReproduction, CalculatePAD) {
 
   auto max_it = std::max_element(hoh.begin(), hoh.end());
   size_t const idx = std::distance(hoh.begin(), max_it);
-  double const angle = hist.bins[idx];
+  real_t const angle = hist.bins[idx];
   // 104.5 angle with 0.001 bins could land in 104.4995 or 104.5005 due to
   // precision
   EXPECT_NEAR(angle, 104.5, 0.001);
@@ -112,7 +112,7 @@ TEST_F(PADTests_AngleReproduction, MissingAnglesWhenCutoffIsTooSmall) {
     for (const auto &t_1 : angles) {
       for (const auto &t_2 : t_1) {
         for (const auto &t_3 : t_2) {
-          for (double const angle : t_3) {
+          for (real_t const angle : t_3) {
             if (std::abs(angle * 180.0 / correlation::math::pi - 90.0) < 1.0) {
               found = true;
             }

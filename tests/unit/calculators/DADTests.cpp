@@ -82,14 +82,14 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
 
   // DAD expects multiple angles due to Center-Vertex and Vertex-Vertex chains
-  std::vector<double> const expected_angles = {0.0, 31.7, 36.0, 63.4, 72.0, 100.0, 108.0, 138.19, 144.0, 180.0};
+  std::vector<real_t> const expected_angles = {static_cast<real_t>(0.0), static_cast<real_t>(31.7), static_cast<real_t>(36.0), static_cast<real_t>(63.4), static_cast<real_t>(72.0), static_cast<real_t>(100.0), static_cast<real_t>(108.0), static_cast<real_t>(138.19), static_cast<real_t>(144.0), static_cast<real_t>(180.0)};
 
-  for (double const target : expected_angles) {
+  for (real_t const target : expected_angles) {
     bool found = false;
     for (size_t i = 0; i < partial.size(); ++i) {
-      if (partial[i] > 1e-4) {
-        double const angle = std::abs(f_dihedral.bins[i]);
-        if (std::abs(angle - target) < 2.0) { // Tolerance considering binning
+      if (partial[i] > static_cast<real_t>(1e-4)) {
+        real_t const angle = std::abs(f_dihedral.bins[i]);
+        if (std::abs(angle - target) < static_cast<real_t>(2.0)) { // Tolerance considering binning
           found = true;
           break;
         }
