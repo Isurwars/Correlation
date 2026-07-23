@@ -220,22 +220,22 @@ void unpack_gpu_results(const std::vector<GPUDistance<T>> &host_distances,
   for (const auto &dist : host_distances) {
     const int type_A = element_ids[dist.from];
     const int type_B = element_ids[dist.to];
-    out_distances[type_A][type_B].push_back(static_cast<double>(dist.distance));
+    out_distances[type_A][type_B].push_back(static_cast<real_t>(dist.distance));
     if (dist.from != dist.to && type_A != type_B) {
-      out_distances[type_B][type_A].push_back(static_cast<double>(dist.distance));
+      out_distances[type_B][type_A].push_back(static_cast<real_t>(dist.distance));
     }
   }
 
   for (const auto &bond : host_bonds) {
-    out_graph.addDirectedEdge(bond.from, bond.to, static_cast<double>(bond.distance),
-                             correlation::math::Vector3<double>(static_cast<double>(bond.r_x),
-                                                                static_cast<double>(bond.r_y),
-                                                                static_cast<double>(bond.r_z)));
+    out_graph.addDirectedEdge(bond.from, bond.to, static_cast<real_t>(bond.distance),
+                             correlation::math::Vector3<real_t>(static_cast<real_t>(bond.r_x),
+                                                                static_cast<real_t>(bond.r_y),
+                                                                static_cast<real_t>(bond.r_z)));
     if (bond.from != bond.to) {
-      out_graph.addDirectedEdge(bond.to, bond.from, static_cast<double>(bond.distance),
-                               correlation::math::Vector3<double>(-static_cast<double>(bond.r_x),
-                                                                  -static_cast<double>(bond.r_y),
-                                                                  -static_cast<double>(bond.r_z)));
+      out_graph.addDirectedEdge(bond.to, bond.from, static_cast<real_t>(bond.distance),
+                               correlation::math::Vector3<real_t>(-static_cast<real_t>(bond.r_x),
+                                                                  -static_cast<real_t>(bond.r_y),
+                                                                  -static_cast<real_t>(bond.r_z)));
     }
   }
 }
@@ -261,12 +261,12 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
   const size_t num_elements = cell.elements().size();
   const auto &lattice = cell.latticeVectors();
 
-  double vol = cell.volume();
-  double width_x = vol / correlation::math::norm(correlation::math::cross(lattice[1], lattice[2]));
-  double width_y = vol / correlation::math::norm(correlation::math::cross(lattice[0], lattice[2]));
-  double width_z = vol / correlation::math::norm(correlation::math::cross(lattice[0], lattice[1]));
+  T vol = static_cast<T>(cell.volume());
+  T width_x = vol / static_cast<T>(correlation::math::norm(correlation::math::cross(lattice[1], lattice[2])));
+  T width_y = vol / static_cast<T>(correlation::math::norm(correlation::math::cross(lattice[0], lattice[2])));
+  T width_z = vol / static_cast<T>(correlation::math::norm(correlation::math::cross(lattice[0], lattice[1])));
 
-  double cutoff = std::sqrt(static_cast<double>(cutoff_sq));
+  T cutoff = std::sqrt(cutoff_sq);
 
   int K_x = std::max(1, static_cast<int>(std::floor(width_x / cutoff)));
   int K_y = std::max(1, static_cast<int>(std::floor(width_y / cutoff)));
@@ -290,10 +290,10 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
   std::vector<int> element_ids(atom_count);
 
   for (size_t i = 0; i < atom_count; ++i) {
-    correlation::math::Vector3<double> frac = cell.inverseLatticeVectors() * atoms[i].position();
-    double f_x = frac.x() - std::floor(frac.x());
-    double f_y = frac.y() - std::floor(frac.y());
-    double f_z = frac.z() - std::floor(frac.z());
+    correlation::math::Vector3<real_t> frac = cell.inverseLatticeVectors() * atoms[i].position();
+    T f_x = static_cast<T>(frac.x() - std::floor(frac.x()));
+    T f_y = static_cast<T>(frac.y() - std::floor(frac.y()));
+    T f_z = static_cast<T>(frac.z() - std::floor(frac.z()));
 
     wrapped_x[i] = static_cast<T>(std::fma(f_z, lattice[2].x(), std::fma(f_y, lattice[1].x(), f_x * lattice[0].x())));
     wrapped_y[i] = static_cast<T>(std::fma(f_z, lattice[2].y(), std::fma(f_y, lattice[1].y(), f_x * lattice[0].y())));

@@ -610,13 +610,13 @@
     "semantic_hash": ""
   },
   "src/calculators/GPUDistanceCalculator.cu": {
-    "mtime": 1784753529.576966,
-    "ast_hash": "4dffe412ed4c2c0fd589de89ff73616c",
+    "mtime": 1784774065.0371706,
+    "ast_hash": "20916ee876eedcc08954eb604a0122e3",
     "semantic_hash": ""
   },
   "src/calculators/GPUSQCalculator.cu": {
-    "mtime": 1784758041.2693276,
-    "ast_hash": "b9da25901e934a9660ff02fe383b4e4e",
+    "mtime": 1784774070.3670077,
+    "ast_hash": "1b045520cd9827bc5eb7c3271c863280",
     "semantic_hash": ""
   },
   "src/calculators/HBondCalculator.cpp": {

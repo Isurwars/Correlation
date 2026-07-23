@@ -297,7 +297,7 @@ void GPUSQCalculator::calculateFrame(correlation::analysis::DistributionFunction
   hist.bins.resize(num_q_bins);
 
   for (size_t i = 0; i < num_q_bins; ++i) {
-    hist.bins[i] = static_cast<real_t>((static_cast<double>(i) + 0.5) * static_cast<double>(q_bin_width));
+    hist.bins[i] = (static_cast<real_t>(i) + static_cast<real_t>(0.5)) * q_bin_width;
   }
 
   hist.partials["Total"] = s_q;
