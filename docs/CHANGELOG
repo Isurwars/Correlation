@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.7.0] - 2026-07-24
+
+### Added
+- **Multi-Vendor GPU Acceleration Framework**: Implemented SYCL-based GPU acceleration for distance, $S(Q)$, and Steinhardt parameter calculators (`GPUDistanceCalculator`, `GPUSQCalculator`, `GPUSteinhardtCalculator`) with runtime fallback and device detection.
+- **GPU Portability Abstraction Layer**: Added `GPUPortability` layer featuring unified HIP and CUDA compatibility wrappers for high-throughput pairwise distance calculations.
+- **Machine Learning Interatomic Potentials (MLIP)**: Integrated `MLIPCalculator` and `MLIPInterface` for machine learning interatomic potential calculations.
+- **Modular SIMD Acceleration Framework**: Introduced modular SIMD acceleration with AVX2, AVX512, and scalar fallbacks, including vectorized `dot_block` kernels and templatized SIMD data structures (`Vector3SIMD`).
+- **Configurable Floating-Point Precision**: Replaced hardcoded double precision with `real_t` type aliases across all core calculators, readers, plotters, and test suites, enabling runtime/compile-time single or double precision builds via `USE_SINGLE_PRECISION`.
+- **Cross-Platform PyPI Wheel Automation**: Added `repair_wheel.py` helper script to automate oneTBB dependency vendoring and rpath patching for Python wheel builds.
+
+### Changed & Refactored
+- **Parameter Struct Standardization**: Refactored `DADCalculator`, `VDOSCalculator`, `ScaleBins`, and `RDFCalculator` call interfaces to use dedicated parameter structures (`ScaleBinsParams`, `VDOSParams`, `RDFNormalizationParams`) for type-safe dispatch.
+- **Graph Edge Representation**: Introduced unified `Edge` structure and overloaded `addDirectedEdge` in `DistanceCalculator` for cleaner AST and graph edge insertion.
+- **Codebase Modernization & Linter Compliance**: Replaced `reinterpret_cast` with C++20 `std::bit_cast`, standardized PRNG seeding in tests, and eliminated all `NOLINT`/`NOLINTNEXTLINE` inline suppressions across source files and documentation.
+- **Project-Wide Formatting**: Applied uniform `clang-format` styling across the entire project codebase.
+- **Packaging & Build System**: Enforced static builds for `voro++`, standardized installation prefixes, and updated `.desktop` entry paths.
+
+### Performance & Optimization
+- **Voronoi Topology Optimization**: Accelerated `VoronoiCalculator` by caching thread-local buffers, filtering parasitic edges in Voronoi signatures, and optimizing particle ordering in periodic boundary containers.
+- **Bounds-Checked Operator Efficiency**: Replaced unchecked raw array indexing with bounds-safe `.at()` calls in mathematical structures, while keeping direct array indexing in performance-critical `Matrix3` operator kernels.
+- **Bit-Canonical Sampling**: Implemented portable bit-canonical random sampling and modularized linear slope fitting in analysis modules.
+
+### Fixed
+- **Voronoi Coordinate Normalization**: Corrected floating-point normalization and hyperuniformity fitting bounds for Voronoi coordinate calculations.
+- **Cross-Platform Stat Header**: Corrected header paths for filesystem `stat` structure to ensure cross-platform header compatibility.
+- **Precision Test Assertions**: Migrated floating-point test assertions to custom `IsRealEq` matchers for reliable multi-precision test validation.
+
 ## [3.6.0] - 2026-07-03
 
 ### Added

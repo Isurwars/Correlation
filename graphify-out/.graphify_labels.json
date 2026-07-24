@@ -283,5 +283,6 @@
   "281": "QVector",
   "282": "CarReader.cpp",
   "283": "precomputePhases",
+  "284": "BlendParams",
   "286": "PlotController::PlotController"
 }
