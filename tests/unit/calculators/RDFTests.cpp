@@ -52,7 +52,7 @@ TEST_F(RDFTests, DefaultConstructorWorks) {
 TEST_F(RDFTests, MoveConstructorWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dfSource.calculateRDF(5.0, 0.1);
+  dfSource.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
 
   DistributionFunctions const dfDest(std::move(dfSource));
 
@@ -63,7 +63,7 @@ TEST_F(RDFTests, MoveConstructorWorks) {
 TEST_F(RDFTests, MoveAssignmentWorks) {
   updateTrajectory();
   DistributionFunctions dfSource(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dfSource.calculateRDF(5.0, 0.1);
+  dfSource.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
 
   DistributionFunctions dfDest(cell_, 0.0, std::vector<std::vector<real_t>>{});
   dfDest = std::move(dfSource);
@@ -71,7 +71,6 @@ TEST_F(RDFTests, MoveAssignmentWorks) {
   EXPECT_NO_THROW(dfDest.getHistogram("g_r"));
   EXPECT_EQ(dfDest.cell().atomCount(), 2);
 }
-
 
 TEST_F(RDFTests, AccessorsWork) {
   updateTrajectory();
@@ -85,7 +84,7 @@ TEST_F(RDFTests, AccessorsWork) {
   EXPECT_TRUE(histNames.empty());
 
   // Calculate something
-  dists.calculateRDF(5.0, 0.1);
+  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
   histNames = dists.getAvailableHistograms();
   EXPECT_FALSE(histNames.empty());
   EXPECT_NE(std::find(histNames.begin(), histNames.end(), "g_r"), histNames.end());
@@ -102,18 +101,17 @@ TEST_F(RDFTests, AccessorsWork) {
   EXPECT_TRUE(allHists.count("G_r"));
 }
 
-
 TEST_F(RDFTests, CalculateRDF) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Invalid parameters
-  EXPECT_THROW(dists.calculateRDF(5.0, 0.0),
-               std::invalid_argument);                               // Zero bin width
-  EXPECT_THROW(dists.calculateRDF(0.0, 0.1), std::invalid_argument); // Zero r_max
+  EXPECT_THROW(dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.0}),
+               std::invalid_argument);                                                         // Zero bin width
+  EXPECT_THROW(dists.calculateRDF({.r_max = 0.0, .r_bin_width = 0.1}), std::invalid_argument); // Zero r_max
 
   // Valid calculation with tight bins for numerical accuracy
-  dists.calculateRDF(5.0, 0.001);
+  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.001});
   const auto &hist = dists.getHistogram("g_r");
   const auto &total = hist.partials.at("Ar-Ar");
 
@@ -157,7 +155,7 @@ TEST_F(RDFTests, CalculateCoordinationNumber) {
 TEST_F(RDFTests, Smoothing) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dists.calculateRDF(5.0, 0.1);
+  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
 
   // Checks "smooth" single
   ASSERT_NO_THROW(dists.smooth("g_r", 0.2));
@@ -181,19 +179,18 @@ TEST_F(RDFTests, SetStructureAnalyzer) {
   // Should depend on analyzer for RDF
   dists.setStructureAnalyzer(&analyzer);
 
-  dists.calculateRDF(5.0, 0.1);
+  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
   EXPECT_NO_THROW(dists.getHistogram("g_r"));
   EXPECT_FALSE(dists.getHistogram("g_r").partials.empty());
 }
 
-
 TEST_F(RDFTests, AddAndScale) {
   updateTrajectory();
   DistributionFunctions df1(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  df1.calculateRDF(5.0, 0.1);
+  df1.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
 
   DistributionFunctions df2(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  df2.calculateRDF(5.0, 0.1);
+  df2.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
 
   // Add
   df1.add(df2);
@@ -215,7 +212,7 @@ TEST_F(RDFTests, AddAndScale) {
   // Single frame RDF peak value depends on volume and density, but it's
   // consistent. Let's compare with a fresh one
   DistributionFunctions dfRef(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dfRef.calculateRDF(5.0, 0.1);
+  dfRef.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
   real_t const refPeak = *std::max_element(dfRef.getHistogram("g_r").partials.at("Ar-Ar").begin(),
                                            dfRef.getHistogram("g_r").partials.at("Ar-Ar").end());
 
@@ -258,8 +255,8 @@ TEST_F(RDFTests, HandlesMissingPartialInAdd) {
   DistributionFunctions df1(c_1, 5.0, t_1.getBondCutoffsSQ());
   DistributionFunctions df2(c_2, 5.0, t_2.getBondCutoffsSQ());
 
-  df1.calculateRDF(5.0, 0.1);
-  df2.calculateRDF(5.0, 0.1);
+  df1.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
+  df2.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
 
   // df1 initially only has Ar-Ar (plus Total)
   const auto &g_r_df1_before = df1.getHistogram("g_r");
@@ -302,7 +299,7 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
   EXPECT_NEAR(weights.at("Ar-Xe"), expected_w_ArXe, 1e-6);
 
   // 2. Verify RDF total is the sum of weighted partials
-  dists.calculateRDF(5.0, 0.1);
+  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.1});
   const auto &g_r = dists.getHistogram("g_r");
   const auto &G_r = dists.getHistogram("G_r");
 

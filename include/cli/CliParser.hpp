@@ -24,34 +24,34 @@ namespace correlation::cli {
  * @brief All options that can be set via the command line.
  */
 struct CliOptions {
-  std::string input_file;
-  std::string output_base;
-  real_t r_max = 20.0;
-  real_t r_bin_width = 0.02;
-  real_t q_max = 20.0;
-  real_t q_bin_width = 0.02;
-  real_t angle_bin_width = 1.0;
-  real_t dihedral_bin_width = 1.0;
-  bool has_dihedral_bin = false;
-  int min_frame = 0;
-  int max_frame = -1;
-  bool csv = true;
-  bool hdf5 = false;
-  bool parquet = false;
-  bool smoothing = true;
-  bool quiet = false;
-  std::string disable_groups; // comma-separated list of groups to disable
-  real_t time_step = 1.0;
-  real_t r_int_max = 10.0;
-  int max_ring_size = 8;
-  real_t smoothing_sigma = 0.1;
-  real_t lef_cutoff = 5.0;
-  real_t lef_sigma = 0.2;
-  int hyper_samples = 10000;
-  correlation::math::KernelType smoothing_kernel = correlation::math::KernelType::Gaussian;
-  int material_type = 0;
-  bool show_version = false;
-  bool show_help = false;
+  std::string input_file;          ///< Input file path (e.g. trajectory or structure file).
+  std::string output_base;         ///< Output file base name / stem.
+  real_t r_max = 20.0;             ///< Maximum radius for RDF calculations (Å).
+  real_t r_bin_width = 0.02;       ///< Bin width for radial distributions (Å).
+  real_t q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Å^-1).
+  real_t q_bin_width = 0.02;       ///< Bin width for S(Q) (Å^-1).
+  real_t angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
+  bool has_dihedral_bin = false;   ///< Flag indicating if dihedral bin width was explicitly passed.
+  int min_frame = 0;               ///< Starting frame index for trajectory processing.
+  int max_frame = -1;              ///< Ending frame index for trajectory processing (-1 for all).
+  bool csv = true;                 ///< Flag to enable CSV output format.
+  bool hdf5 = false;               ///< Flag to enable HDF5 output format.
+  bool parquet = false;            ///< Flag to enable Parquet output format.
+  bool smoothing = true;           ///< Flag to enable post-processing curve smoothing.
+  bool quiet = false;              ///< Suppress non-error console output.
+  std::string disable_groups;      ///< Comma-separated list of analysis groups to disable.
+  real_t time_step = 1.0;          ///< Time step between trajectory frames (fs).
+  real_t r_int_max = 10.0;         ///< Cutoff radius for integral properties (Å).
+  int max_ring_size = 8;           ///< Maximum ring size for primitive ring statistics.
+  real_t smoothing_sigma = 0.1;    ///< Gaussian smoothing standard deviation.
+  real_t lef_cutoff = 5.0;         ///< Cutoff radius for Local Entropic Fingerprint (Å).
+  real_t lef_sigma = 0.2;          ///< Standard deviation for LEF Gaussian kernel (Å).
+  int hyper_samples = 10000;       ///< Sample count for hyperuniformity number variance.
+  correlation::math::KernelType smoothing_kernel = correlation::math::KernelType::Gaussian; ///< Kernel function.
+  int material_type = 0;     ///< Material type preset index.
+  bool show_version = false; ///< Flag indicating if version info was requested.
+  bool show_help = false;    ///< Flag indicating if help usage was requested.
 };
 
 /**

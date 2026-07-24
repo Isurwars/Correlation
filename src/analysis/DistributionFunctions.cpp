@@ -228,7 +228,8 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma, correl
   std::vector<std::vector<real_t>> results(entries.size());
   tbb::parallel_for(tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      results[i] = correlation::math::KernelSmoothing(bin_dx, *entries[i].second, min_sigma, kernel);
+      results[i] = correlation::math::KernelSmoothing(*entries[i].second,
+                                                      {.bin_width = bin_dx, .sigma = min_sigma, .type = kernel});
     }
   });
 
@@ -248,7 +249,9 @@ void DistributionFunctions::calculateCoordinationNumber() {
   histograms_["CN"] = correlation::calculators::CNCalculator::calculate(cell_, neighbors());
 }
 
-void DistributionFunctions::calculateRDF(real_t r_max, real_t r_bin_width) {
+void DistributionFunctions::calculateRDF(RDFParams params) {
+  real_t const r_max = params.r_max;
+  real_t const r_bin_width = params.r_bin_width;
   if (r_max <= 0.0) {
     throw std::invalid_argument("r_max must be strictly positive");
   }
@@ -301,7 +304,11 @@ void DistributionFunctions::calculateVDOS() {
   histograms_["VDOS"] = correlation::calculators::VDOSCalculator::calculate(histograms_.at("VACF"));
 }
 
-void DistributionFunctions::calculateXRD(real_t lambda, real_t theta_min, real_t theta_max, real_t bin_width) {
+void DistributionFunctions::calculateXRD(XRDParams params) {
+  real_t const lambda = params.lambda;
+  real_t const theta_min = params.theta_min;
+  real_t const theta_max = params.theta_max;
+  real_t const bin_width = params.bin_width;
   if (lambda <= 0.0) {
     throw std::invalid_argument("lambda must be strictly positive");
   }

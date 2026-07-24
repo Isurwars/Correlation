@@ -23,6 +23,10 @@
 namespace correlation::plotters {
 namespace detail {
 
+/**
+ * @struct SvgComparisonRenderer
+ * @brief Internal state and rendering logic for multi-dataset comparison SVG generation.
+ */
 struct SvgComparisonRenderer {
   const std::vector<LabeledHistogram> *datasets = nullptr;
   const std::string *partial_key = nullptr;
@@ -117,12 +121,12 @@ struct SvgComparisonRenderer {
           kHeight / static_cast<real_t>(2.0) + static_cast<real_t>(8.0), static_cast<real_t>(24.0) * config->font_scale,
           config->text_color());
     }
-    std::string no_data_path =
-        Roboto::instance().render(TextRenderParameters{.text = "No comparison data",
-                                                        .start_x = kWidth / static_cast<real_t>(2.0),
-                                                        .start_y = kHeight / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-                                                        .font_size = static_cast<real_t>(24.0) * config->font_scale,
-                                                        .anchor = "middle"});
+    std::string no_data_path = Roboto::instance().render(
+        TextRenderParameters{.text = "No comparison data",
+                             .start_x = kWidth / static_cast<real_t>(2.0),
+                             .start_y = kHeight / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+                             .font_size = static_cast<real_t>(24.0) * config->font_scale,
+                             .anchor = "middle"});
     return std::format(
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
@@ -313,9 +317,13 @@ struct SvgComparisonRenderer {
     svg << "  </g>\n";
   }
 
+  /**
+   * @struct NearestPoint
+   * @brief Holds index and dataset label for the nearest hover point.
+   */
   struct NearestPoint {
-    std::size_t index = 0;
-    std::string label;
+    std::size_t index = 0; ///< Bin index of nearest point.
+    std::string label;     ///< Dataset label of nearest point.
   };
 
   NearestPoint findNearestPoint(real_t sp_x, real_t sp_y) const {
@@ -378,10 +386,14 @@ struct SvgComparisonRenderer {
     return hover_values;
   }
 
+  /**
+   * @struct TooltipPosition
+   * @brief Hover coordinates and target data value for tooltip rendering.
+   */
   struct TooltipPosition {
-    real_t sx_data = static_cast<real_t>(0.0);
-    real_t snapped_sy_data = static_cast<real_t>(0.0);
-    real_t target_x = static_cast<real_t>(0.0);
+    real_t sx_data = static_cast<real_t>(0.0);         ///< SVG canvas X position.
+    real_t snapped_sy_data = static_cast<real_t>(0.0); ///< SVG canvas Y position of target point.
+    real_t target_x = static_cast<real_t>(0.0);         ///< Data value along x-axis.
   };
 
   void drawTooltipBox(const TooltipPosition &pos, const std::string &best_label,

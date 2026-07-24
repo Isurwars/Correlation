@@ -29,16 +29,24 @@ enum class KernelType : std::uint8_t { Gaussian, Bump, Triweight, Epanechnikov, 
  * @brief Parameters for kernel generation.
  */
 struct KernelGenerationParams {
-  size_t size;
-  real_t bin_width;
-  real_t sigma;
-  KernelType type;
+  size_t size;      ///< Discrete kernel array length (odd integer).
+  real_t bin_width; ///< Bin width of the underlying data.
+  real_t sigma;     ///< Physical kernel standard deviation / bandwidth.
+  KernelType type;  ///< Mathematical kernel function type.
+};
+
+/**
+ * @brief Options bundling for data series kernel smoothing.
+ */
+struct KernelSmoothingParams {
+  real_t bin_width = 0.0;                 ///< Uniform bin width of the data (e.g., Δr in Å).
+  real_t sigma = 0.1;                     ///< Kernel bandwidth standard deviation.
+  KernelType type = KernelType::Gaussian; ///< Kernel function selection.
 };
 namespace detail {
 
 inline void fillGaussian(std::vector<real_t> &kernel, const KernelGenerationParams &params, real_t center) {
-  const real_t prefactor =
-      static_cast<real_t>(1.0) / static_cast<real_t>(std::sqrt(two_pi) * params.sigma);
+  const real_t prefactor = static_cast<real_t>(1.0) / static_cast<real_t>(std::sqrt(two_pi) * params.sigma);
   const real_t exp_coeff = static_cast<real_t>(-1.0) / (static_cast<real_t>(2.0) * params.sigma * params.sigma);
   for (size_t i = 0; i < params.size; ++i) {
     const real_t distance = (static_cast<real_t>(i) - center) * params.bin_width;
@@ -88,8 +96,7 @@ inline void fillCosine(std::vector<real_t> &kernel, const KernelGenerationParams
   for (size_t i = 0; i < params.size; ++i) {
     const real_t norm_dist = ((static_cast<real_t>(i) - center) * params.bin_width) / params.sigma;
     if (std::abs(norm_dist) <= 1.0) {
-      kernel[i] =
-          static_cast<real_t>(cos_factor * std::cos(pi * norm_dist / static_cast<real_t>(2.0)));
+      kernel[i] = static_cast<real_t>(cos_factor * std::cos(pi * norm_dist / static_cast<real_t>(2.0)));
     } else {
       kernel[i] = 0.0;
     }
@@ -158,18 +165,17 @@ inline void fillBiweight(std::vector<real_t> &kernel, const KernelGenerationPara
  * @brief Applies kernel smoothing to a data series.
  *
  * This function convolves the chosen kernel with `y_values` to produce a smoothed
- * version. The bin width `bin_width` fully characterises the sampling grid; the full
- * grid vector is not required and is not accepted to keep the interface lean.
+ * version. The bin width in `params` characterises the sampling grid.
  *
- * @param bin_width    Uniform bin width of the data (e.g., Δr in Å).
- * @param y_values     The dependent variable values to be smoothed.
- * @param sigma Kernel bandwidth (standard deviation for Gaussian), in the
- *              same physical units as `bin_width`.
- * @param type  Kernel type to use.
+ * @param y_values The dependent variable values to be smoothed.
+ * @param params   Kernel smoothing configuration parameters.
  * @return A vector containing the smoothed data (same length as `y_values`).
  */
-inline std::vector<real_t> KernelSmoothing(real_t bin_width, const std::vector<real_t> &y_values, real_t sigma,
-                                           KernelType type) {
+inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &y_values, KernelSmoothingParams params) {
+  real_t const bin_width = params.bin_width;
+  real_t const sigma = params.sigma;
+  KernelType const type = params.type;
+
   if (y_values.empty()) {
     return {};
   }
@@ -240,24 +246,20 @@ inline std::vector<real_t> KernelSmoothing(real_t bin_width, const std::vector<r
 }
 
 /**
- * @brief Compatibility overload: derives `bin_width` from the grid and delegates.
- *
- * Prefer the `(bin_width, y_values, sigma, type)` overload when the bin width is already
- * known to avoid recomputing it.
+ * @brief Grid overload: derives `bin_width` from the independent variable grid.
  *
  * @param r_values The independent variable grid (e.g., radial distances).
  * @param y_values The dependent variable values to be smoothed.
- * @param sigma Kernel bandwidth.
- * @param type Kernel type to use.
+ * @param params   Kernel smoothing configuration parameters.
  * @return A vector containing the smoothed data.
  */
 inline std::vector<real_t> KernelSmoothing(const std::vector<real_t> &r_values, const std::vector<real_t> &y_values,
-                                           real_t sigma, KernelType type) {
+                                           KernelSmoothingParams params) {
   if (r_values.size() != y_values.size() || r_values.size() < 2) {
     return {};
   }
-  const real_t bin_width = r_values[1] - r_values[0];
-  return KernelSmoothing(bin_width, y_values, sigma, type);
+  params.bin_width = r_values[1] - r_values[0];
+  return KernelSmoothing(y_values, params);
 }
 
 } // namespace correlation::math

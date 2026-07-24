@@ -105,7 +105,15 @@ struct HoverInfo {
   real_t widget_height = static_cast<real_t>(0.0);
 };
 
-enum class TextAnchor : std::uint8_t { Start, Middle, End };
+/**
+ * @enum TextAnchor
+ * @brief Horizontal alignment / anchor options for SVG text rendering.
+ */
+enum class TextAnchor : std::uint8_t {
+  Start,  ///< Left-aligned / start-anchored text.
+  Middle, ///< Center-aligned / middle-anchored text.
+  End     ///< Right-aligned / end-anchored text.
+};
 
 /**
  * @brief A labeled histogram for comparison rendering.
@@ -192,9 +200,13 @@ inline real_t mapValue(real_t value, real_t data_min, real_t data_max, real_t sv
   return svg_min + (value - data_min) / (data_max - data_min) * (svg_max - svg_min);
 }
 
+/**
+ * @struct DataRange
+ * @brief Represents the minimum and maximum scalar bounds of a dataset.
+ */
 struct DataRange {
-  real_t min = static_cast<real_t>(0.0);
-  real_t max = static_cast<real_t>(0.0);
+  real_t min = static_cast<real_t>(0.0); ///< Minimum value in data space.
+  real_t max = static_cast<real_t>(0.0); ///< Maximum value in data space.
 };
 
 /**

@@ -14,6 +14,14 @@
 namespace correlation::calculators {
 
 /**
+ * @brief Parameters for the Local Entropic Fingerprint (LEF) calculation.
+ */
+struct LocalEntropyParams {
+  real_t cutoff = 5.0; ///< Integration cutoff radius Rc in Angstroms.
+  real_t sigma = 0.2;  ///< Gaussian kernel standard deviation in Angstroms.
+};
+
+/**
  * @class LocalEntropyCalculator
  * @brief Computes the Local Entropic Fingerprint (LEF) for all atoms.
  *
@@ -40,14 +48,12 @@ public:
    *
    * @param cell The periodic cell.
    * @param neighbors Structural analyzer containing the neighbor graph.
-   * @param cutoff The integration cutoff radius Rc.
-   * @param sigma The Gaussian kernel standard deviation.
+   * @param params Integration cutoff and Gaussian smoothing parameters.
    * @return A histogram of local entropy values.
    */
-  static correlation::analysis::Histogram
-  calculate(const correlation::core::Cell &cell,
-            const correlation::analysis::StructureAnalyzer *neighbors,
-            real_t cutoff, real_t sigma);
+  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
+                                                    const correlation::analysis::StructureAnalyzer *neighbors,
+                                                    LocalEntropyParams params);
 };
 
 } // namespace correlation::calculators

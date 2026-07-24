@@ -48,24 +48,29 @@ public:
    * @return A map of histogram names to their respective Histogram data.
    */
   static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell,
-            const correlation::analysis::StructureAnalyzer *neighbors = nullptr);
+  calculate(const correlation::core::Cell &cell, const correlation::analysis::StructureAnalyzer *neighbors = nullptr);
 
 private:
-  /// Describes the binning range for a histogram.
+  /**
+   * @struct BinRange
+   * @brief Describes the binning range for a Voronoi metric histogram.
+   */
   struct BinRange {
-    real_t bin_width;
-    size_t num_bins;
-    real_t range_min;
-    real_t range_max;
+    real_t bin_width{0.0}; ///< Width of individual histogram bins.
+    size_t num_bins{0};    ///< Total number of histogram bins.
+    real_t range_min{0.0}; ///< Lower bound of histogram range.
+    real_t range_max{0.0}; ///< Upper bound of histogram range.
   };
 
-  /// Data extracted from a single Voronoi cell for each atom.
+  /**
+   * @struct CellData
+   * @brief Aggregated metric data extracted from all Voronoi cells in a configuration.
+   */
   struct CellData {
-    std::vector<real_t> volumes;
-    std::vector<real_t> sphericities;
-    std::vector<int> coordination_numbers;
-    std::vector<std::string> signatures;
+    std::vector<real_t> volumes;           ///< Per-atom Voronoi cell volumes (Angstrom^3).
+    std::vector<real_t> sphericities;      ///< Per-atom cell sphericities (dimensionless).
+    std::vector<int> coordination_numbers; ///< Per-atom Voronoi face coordination counts.
+    std::vector<std::string> signatures;   ///< Per-atom polyhedral index signatures <n3,n4,n5,n6>.
   };
 
   /// Build the Voronoi tessellation and extract per-atom cell data.
@@ -76,18 +81,15 @@ private:
   buildSignatureMap(const std::vector<std::string> &signatures);
 
   /// Create an initialized histogram with bins and empty partials.
-  static correlation::analysis::Histogram
-  makeHistogram(const std::string &title, const std::string &x_label,
-                const std::string &y_label, const std::string &x_unit,
-                const std::string &y_unit, const std::string &description,
-                const std::string &file_suffix, const std::vector<real_t> &bins,
-                const std::vector<std::string> &element_symbols);
+  static correlation::analysis::Histogram makeHistogram(const std::string &title, const std::string &x_label,
+                                                        const std::string &y_label, const std::string &x_unit,
+                                                        const std::string &y_unit, const std::string &description,
+                                                        const std::string &file_suffix, const std::vector<real_t> &bins,
+                                                        const std::vector<std::string> &element_symbols);
 
   /// Populate histogram bins from per-atom numeric data.
-  static void populateHistogram(correlation::analysis::Histogram &hist,
-                                const BinRange &range,
-                                const std::vector<real_t> &values,
-                                const std::vector<correlation::core::Atom> &atoms);
+  static void populateHistogram(correlation::analysis::Histogram &hist, const BinRange &range,
+                                const std::vector<real_t> &values, const std::vector<correlation::core::Atom> &atoms);
 };
 
 } // namespace correlation::calculators

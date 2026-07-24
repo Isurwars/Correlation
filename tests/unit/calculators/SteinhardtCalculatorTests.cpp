@@ -206,25 +206,35 @@ TEST_F(SteinhardtCalculatorTests, Wigner3j) {
   using correlation::calculators::SteinhardtCalculator;
 
   // Invalid selection where magnetic projections do not sum to 0
-  EXPECT_DOUBLE_EQ(SteinhardtCalculator::wigner3j(1, 1, 1, 0, 0, 1), 0.0);
+  EXPECT_DOUBLE_EQ(
+      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 1, .m_one = 0, .m_two = 0, .m_three = 1}),
+      0.0);
 
   // Invalid selection violating triangle inequality
-  EXPECT_DOUBLE_EQ(SteinhardtCalculator::wigner3j(1, 1, 3, 0, 0, 0), 0.0);
+  EXPECT_DOUBLE_EQ(
+      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 3, .m_one = 0, .m_two = 0, .m_three = 0}),
+      0.0);
 
   // Invalid selection with magnetic projection larger than angular momentum
-  EXPECT_DOUBLE_EQ(SteinhardtCalculator::wigner3j(1, 1, 1, 2, 0, -2), 0.0);
+  EXPECT_DOUBLE_EQ(
+      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 1, .m_one = 2, .m_two = 0, .m_three = -2}),
+      0.0);
 
   // Known analytical values
   // 3j(1, 1, 0, 0, 0, 0) = -1/sqrt(3) ~ -0.57735027
-  EXPECT_NEAR(SteinhardtCalculator::wigner3j(1, 1, 0, 0, 0, 0), -1.0 / std::sqrt(3.0),
-              correlation::is_single_precision ? 1e-5 : 1e-8);
+  EXPECT_NEAR(
+      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 0, .m_one = 0, .m_two = 0, .m_three = 0}),
+      -1.0 / std::sqrt(3.0), correlation::is_single_precision ? 1e-5 : 1e-8);
 
   // 3j(2, 2, 2, 0, 0, 0) = -sqrt(2/35) ~ -0.23904572
-  EXPECT_NEAR(SteinhardtCalculator::wigner3j(2, 2, 2, 0, 0, 0), -std::sqrt(2.0 / 35.0),
-              correlation::is_single_precision ? 1e-5 : 1e-8);
+  EXPECT_NEAR(
+      SteinhardtCalculator::wigner3j({.j_one = 2, .j_two = 2, .j_three = 2, .m_one = 0, .m_two = 0, .m_three = 0}),
+      -std::sqrt(2.0 / 35.0), correlation::is_single_precision ? 1e-5 : 1e-8);
 
   // 3j(2, 2, 1, 1, -1, 0) = -1/sqrt(30) ~ -0.18257419
-  EXPECT_NEAR(SteinhardtCalculator::wigner3j(2, 2, 1, 1, -1, 0), -1.0 / std::sqrt(30.0), 1e-8);
+  EXPECT_NEAR(
+      SteinhardtCalculator::wigner3j({.j_one = 2, .j_two = 2, .j_three = 1, .m_one = 1, .m_two = -1, .m_three = 0}),
+      -1.0 / std::sqrt(30.0), 1e-8);
 }
 
 } // namespace

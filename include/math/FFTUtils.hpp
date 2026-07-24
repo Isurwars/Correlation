@@ -67,9 +67,13 @@ inline size_t findNextGoodFFTSize(size_t target) {
 
 #if defined(CORRELATION_USE_FFTW3)
 
+/**
+ * @struct FFTWPlanCache
+ * @brief Thread-local cache for reusing FFTW execution plans across transform sizes.
+ */
 struct FFTWPlanCache {
-  std::unordered_map<size_t, fftw_plan> forward_plans;
-  std::unordered_map<size_t, fftw_plan> backward_plans;
+  std::unordered_map<size_t, fftw_plan> forward_plans;  ///< Cached forward 1D FFTW plans.
+  std::unordered_map<size_t, fftw_plan> backward_plans; ///< Cached backward 1D FFTW plans.
 
   // Rule of Five: Delete copy and move operations to prevent double-destruction of fftw_plans
   FFTWPlanCache() = default;
@@ -126,9 +130,13 @@ inline void computeFFT(std::vector<std::complex<double>> &data, bool invert) {
 
 #elif defined(CORRELATION_USE_MKL)
 
+/**
+ * @struct MKLDescriptorCache
+ * @brief Thread-local cache for reusing Intel MKL DFTI descriptors across transform sizes.
+ */
 struct MKLDescriptorCache {
-  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE> forward_handles;
-  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE> backward_handles;
+  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE> forward_handles;  ///< Cached MKL forward handles.
+  std::unordered_map<size_t, DFTI_DESCRIPTOR_HANDLE> backward_handles; ///< Cached MKL backward handles.
 
   ~MKLDescriptorCache() {
     for (auto &p : forward_handles) {

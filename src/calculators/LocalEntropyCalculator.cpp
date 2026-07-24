@@ -27,11 +27,6 @@ namespace {
 // Static registration of the calculator in the factory
 const bool registered = CalculatorFactory::registerTypeSafe<LocalEntropyCalculator>("LocalEntropyCalculator");
 
-struct LocalEntropyParams {
-  real_t cutoff;
-  real_t sigma;
-};
-
 real_t computeSingleAtomEntropy(size_t atom_idx, const correlation::core::Cell &cell,
                                 const correlation::analysis::StructureAnalyzer *neighbors,
                                 const LocalEntropyParams &params) {
@@ -159,14 +154,15 @@ void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
 
 void LocalEntropyCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                             const correlation::analysis::AnalysisSettings &settings) const {
-  auto hist = calculate(dists.cell(), dists.neighbors(), settings.lef_cutoff, settings.lef_sigma);
+  auto hist = calculate(dists.cell(), dists.neighbors(),
+                        LocalEntropyParams{.cutoff = settings.lef_cutoff, .sigma = settings.lef_sigma});
   dists.addHistogram("LEF", std::move(hist));
 }
 
 correlation::analysis::Histogram
 LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
-                                  const correlation::analysis::StructureAnalyzer *neighbors, real_t cutoff,
-                                  real_t sigma) {
+                                  const correlation::analysis::StructureAnalyzer *neighbors,
+                                  LocalEntropyParams params) {
   if (neighbors == nullptr) {
     throw std::logic_error("Cannot calculate Local Entropy. Neighbor list has not been computed.");
   }
@@ -178,7 +174,7 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
   std::vector<real_t> entropies(num_atoms, 0.0);
   tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      entropies[i] = computeSingleAtomEntropy(i, cell, neighbors, {.cutoff = cutoff, .sigma = sigma});
+      entropies[i] = computeSingleAtomEntropy(i, cell, neighbors, params);
     }
   });
 

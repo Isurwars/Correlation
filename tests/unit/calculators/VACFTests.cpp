@@ -220,10 +220,10 @@ TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
   DistributionFunctions dists(cell, 0.0, {{0.0}});
 
   // calculateRDF guards
-  EXPECT_THROW(dists.calculateRDF(-5.0, 0.05), std::invalid_argument);
-  EXPECT_THROW(dists.calculateRDF(20.0, -0.05), std::invalid_argument);
-  EXPECT_THROW(dists.calculateRDF(0.0, 0.05), std::invalid_argument);
-  EXPECT_THROW(dists.calculateRDF(20.0, 0.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF({.r_max = -5.0, .r_bin_width = 0.05}), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF({.r_max = 20.0, .r_bin_width = -0.05}), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF({.r_max = 0.0, .r_bin_width = 0.05}), std::invalid_argument);
+  EXPECT_THROW(dists.calculateRDF({.r_max = 20.0, .r_bin_width = 0.0}), std::invalid_argument);
 
   // calculatePAD guards
   EXPECT_THROW(dists.calculatePAD(-1.0), std::invalid_argument);
@@ -234,11 +234,16 @@ TEST_F(VACFTests, DistributionFunctionsNonPhysicalOptions) {
   EXPECT_THROW(dists.calculateDAD(0.0), std::invalid_argument);
 
   // calculateXRD guards
-  EXPECT_THROW(dists.calculateXRD(-1.0, 5.0, 90.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(dists.calculateXRD(1.54, -5.0, 90.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(dists.calculateXRD(1.54, 5.0, -90.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(dists.calculateXRD(1.54, 90.0, 5.0, 1.0), std::invalid_argument);
-  EXPECT_THROW(dists.calculateXRD(1.54, 5.0, 90.0, -1.0), std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD({.lambda = -1.0, .theta_min = 5.0, .theta_max = 90.0, .bin_width = 1.0}),
+               std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD({.lambda = 1.54, .theta_min = -5.0, .theta_max = 90.0, .bin_width = 1.0}),
+               std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD({.lambda = 1.54, .theta_min = 5.0, .theta_max = -90.0, .bin_width = 1.0}),
+               std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD({.lambda = 1.54, .theta_min = 90.0, .theta_max = 5.0, .bin_width = 1.0}),
+               std::invalid_argument);
+  EXPECT_THROW(dists.calculateXRD({.lambda = 1.54, .theta_min = 5.0, .theta_max = 90.0, .bin_width = -1.0}),
+               std::invalid_argument);
 }
 
 } // namespace correlation::analysis

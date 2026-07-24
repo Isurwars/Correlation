@@ -52,7 +52,8 @@ struct Wigner6Table {
       for (int m_two = -6; m_two <= 6; ++m_two) {
         int const m_three = -(m_one + m_two);
         if (m_three >= -6 && m_three <= 6) {
-          table.at(m_one + 6).at(m_two + 6) = SteinhardtCalculator::wigner3j(6, 6, 6, m_one, m_two, m_three);
+          table.at(m_one + 6).at(m_two + 6) = SteinhardtCalculator::wigner3j(
+              {.j_one = 6, .j_two = 6, .j_three = 6, .m_one = m_one, .m_two = m_two, .m_three = m_three});
         } else {
           table.at(m_one + 6).at(m_two + 6) = static_cast<real_t>(0.0);
         }
@@ -290,7 +291,14 @@ std::complex<real_t> SteinhardtCalculator::sphericalHarmonic(int degree, int ord
   return Y_l_minus_m;
 }
 
-real_t SteinhardtCalculator::wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three) {
+real_t SteinhardtCalculator::wigner3j(Wigner3jParams params) {
+  int const j_one = params.j_one;
+  int const j_two = params.j_two;
+  int const j_three = params.j_three;
+  int const m_one = params.m_one;
+  int const m_two = params.m_two;
+  int const m_three = params.m_three;
+
   if (m_one + m_two + m_three != 0) {
     return 0.0;
   }

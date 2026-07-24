@@ -84,13 +84,25 @@ public:
   static std::complex<real_t> sphericalHarmonic(int degree, int order, SphericalAngles angles);
 
   /**
+   * @struct Wigner3jParams
+   * @brief Bundles angular momentum indices for the Wigner 3-j symbol calculation.
+   */
+  struct Wigner3jParams {
+    int j_one{0};   ///< First angular momentum quantum number.
+    int j_two{0};   ///< Second angular momentum quantum number.
+    int j_three{0}; ///< Third angular momentum quantum number.
+    int m_one{0};   ///< First magnetic projection quantum number.
+    int m_two{0};   ///< Second magnetic projection quantum number.
+    int m_three{0}; ///< Third magnetic projection quantum number.
+  };
+
+  /**
    * @brief Computes the Wigner 3-j symbol using the Racah formula.
    *
-   * @param j_one, j_two, j_three Angular momenta.
-   * @param m_one, m_two, m_three Magnetic projections.
+   * @param params Wigner 3-j symbol quantum numbers.
    * @return The scalar value of the 3-j symbol.
    */
-  static real_t wigner3j(int j_one, int j_two, int j_three, int m_one, int m_two, int m_three);
+  static real_t wigner3j(Wigner3jParams params);
 };
 
 } // namespace correlation::calculators

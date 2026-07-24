@@ -15,20 +15,32 @@
 #include <string>
 namespace correlation::calculators {
 
+/**
+ * @brief Strong type wrapper for X-ray incident radiation wavelength in Angstroms.
+ */
 struct Wavelength {
-  real_t value;
+  real_t value; ///< Wavelength value in Angstroms (e.g. 1.5406 for Cu K-alpha).
 };
 
+/**
+ * @brief Strong type wrapper for minimum 2-theta angle in degrees.
+ */
 struct MinTheta {
-  real_t value;
+  real_t value; ///< Minimum 2-theta scattering angle in degrees.
 };
 
+/**
+ * @brief Strong type wrapper for maximum 2-theta angle in degrees.
+ */
 struct MaxTheta {
-  real_t value;
+  real_t value; ///< Maximum 2-theta scattering angle in degrees.
 };
 
+/**
+ * @brief Strong type wrapper for angular bin width in degrees.
+ */
 struct BinWidth {
-  real_t value;
+  real_t value; ///< Angular bin resolution in degrees.
 };
 
 /**

@@ -25,6 +25,10 @@
 namespace correlation::plotters {
 namespace detail {
 
+/**
+ * @struct SvgHistogramRenderer
+ * @brief Internal state and rendering logic for single-histogram SVG generation.
+ */
 struct SvgHistogramRenderer {
   const correlation::analysis::Histogram *hist = nullptr;
   const PlotConfig *config = nullptr;
@@ -137,12 +141,12 @@ struct SvgHistogramRenderer {
           kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0), static_cast<real_t>(24.0) * config->font_scale,
           config->text_color());
     }
-    std::string no_data_path =
-        Roboto::instance().render(TextRenderParameters{.text = "No data available",
-                                                        .start_x = kW / static_cast<real_t>(2.0),
-                                                        .start_y = kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-                                                        .font_size = static_cast<real_t>(24.0) * config->font_scale,
-                                                        .anchor = "middle"});
+    std::string no_data_path = Roboto::instance().render(
+        TextRenderParameters{.text = "No data available",
+                             .start_x = kW / static_cast<real_t>(2.0),
+                             .start_y = kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+                             .font_size = static_cast<real_t>(24.0) * config->font_scale,
+                             .anchor = "middle"});
     return std::format(
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
@@ -172,10 +176,9 @@ struct SvgHistogramRenderer {
   }
 
   void writeHeader() {
-    svg << std::format(
-        "<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" "
-        "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
-        kW, kH, kW, kH);
+    svg << std::format("<svg width='{:.0f}' height='{:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {} {}\" "
+                       "shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\">\n",
+                       kW, kH, kW, kH);
     svg << "  <defs>\n"
         << "    <filter id=\"tooltip-shadow\" x=\"-10%\" y=\"-10%\" width=\"120%\" height=\"120%\">\n"
         << "      <feDropShadow dx=\"2\" dy=\"4\" stdDeviation=\"4\" flood-color=\"#000000\" flood-opacity=\"0.15\"/>\n"
@@ -354,9 +357,13 @@ struct SvgHistogramRenderer {
     svg << "  </g>\n";
   }
 
+  /**
+   * @struct NearestPoint
+   * @brief Holds index and partial key for the nearest hover point in single-histogram rendering.
+   */
   struct NearestPoint {
-    std::size_t index = 0;
-    std::string key;
+    std::size_t index = 0; ///< Bin index of nearest data point.
+    std::string key;       ///< Partial key of nearest dataset line.
   };
 
   NearestPoint findNearestPoint(real_t mouse_sx, real_t mouse_sy) const {
@@ -380,10 +387,14 @@ struct SvgHistogramRenderer {
     return best;
   }
 
+  /**
+   * @struct TooltipPosition
+   * @brief Position coordinates and snapped data values for single-histogram tooltips.
+   */
   struct TooltipPosition {
-    real_t sx_data;
-    real_t snapped_sy_data;
-    real_t target_x;
+    real_t sx_data;         ///< Canvas X coordinate.
+    real_t snapped_sy_data; ///< Canvas Y coordinate of target point.
+    real_t target_x;        ///< Physical x-axis data coordinate.
   };
 
   void drawTooltipBox(const TooltipPosition &pos, const std::string &best_key,

@@ -27,19 +27,37 @@ namespace correlation::analysis {
 class TrajectoryAnalyzer;
 
 /**
+ * @brief Parameters for radial distribution function g(r) calculation.
+ */
+struct RDFParams {
+  real_t r_max = 20.0;       ///< Maximum radius to calculate up to (Angstroms).
+  real_t r_bin_width = 0.05; ///< Width of each bin in Angstroms.
+};
+
+/**
+ * @brief Parameters for X-Ray Diffraction (XRD) pattern calculation.
+ */
+struct XRDParams {
+  real_t lambda = 1.5406;  ///< X-ray wavelength in Angstroms.
+  real_t theta_min = 5.0;  ///< Minimum 2-theta angle in degrees.
+  real_t theta_max = 90.0; ///< Maximum 2-theta angle in degrees.
+  real_t bin_width = 1.0;  ///< Bin width for 2-theta in degrees.
+};
+
+/**
  * @brief Configuration settings for distribution function analysis.
  */
 struct AnalysisSettings {
-  real_t r_max = 20.0;             ///< Maximum radius for RDF calculations (Angstroms).
-  real_t r_bin_width = 0.02;       ///< Bin width for radial distributions (Angstroms).
-  real_t q_max = 20.0;             ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
-  real_t q_bin_width = 0.02;       ///< Bin width for S(Q) (Angstroms^-1).
-  real_t r_int_max = 10.0;         ///< Cutoff for integration-based properties.
-  real_t angle_bin_width = 1.0;    ///< Bin width for bond angle distributions (degrees).
-  real_t dihedral_bin_width = 1.0; ///< Bin width for dihedral distributions (degrees).
-  size_t max_ring_size = 8;        ///< Maximum size of rings to search for.
-  real_t lef_cutoff = 5.0;         ///< Cutoff radius for local entropy integration.
-  real_t lef_sigma = 0.2;          ///< Standard deviation for Gaussian smoothing in local entropy.
+  real_t r_max = 20.0;                    ///< Maximum radius for RDF calculations (Angstroms).
+  real_t r_bin_width = 0.02;              ///< Bin width for radial distributions (Angstroms).
+  real_t q_max = 20.0;                    ///< Maximum momentum transfer for S(Q) (Angstroms^-1).
+  real_t q_bin_width = 0.02;              ///< Bin width for S(Q) (Angstroms^-1).
+  real_t r_int_max = 10.0;                ///< Cutoff for integration-based properties.
+  real_t angle_bin_width = 1.0;           ///< Bin width for bond angle distributions (degrees).
+  real_t dihedral_bin_width = 1.0;        ///< Bin width for dihedral distributions (degrees).
+  size_t max_ring_size = 8;               ///< Maximum size of rings to search for.
+  real_t lef_cutoff = 5.0;                ///< Cutoff radius for local entropy integration.
+  real_t lef_sigma = 0.2;                 ///< Standard deviation for Gaussian smoothing in local entropy.
   size_t hyperuniformity_samples = 10000; ///< Number of random sample points for hyperuniformity.
 
   /// Maps calculator ID (e.g., "RDF", "SQ") to whether it is enabled.
@@ -257,12 +275,11 @@ public:
   void calculateCoordinationNumber();
   /**
    * @brief Calculates the radial distribution function g(r)
-   * @param r_max Maximum radius to calculate up to
-   * @param bin_width Width of each bin in Angstroms
+   * @param params RDF calculation parameters (r_max, r_bin_width).
    * @throws std::invalid_argument if parameters are invalid
    * @throws std::logic_error if cell volume is invalid
    */
-  void calculateRDF(real_t r_max = 20.0, real_t bin_width = 0.05);
+  void calculateRDF(RDFParams params = {});
 
   /**
    * @brief Calculates the Plane Angle Distribution (PAD).
@@ -295,12 +312,9 @@ public:
 
   /**
    * @brief Calculates the XRD pattern.
-   * @param lambda X-ray wavelength in Angstroms.
-   * @param theta_min Minimum 2-theta angle.
-   * @param theta_max Maximum 2-theta angle.
-   * @param bin_width Bin width for 2-theta.
+   * @param params XRD calculation parameters (lambda, theta_min, theta_max, bin_width).
    */
-  void calculateXRD(real_t lambda = 1.5406, real_t theta_min = 5.0, real_t theta_max = 90.0, real_t bin_width = 1.0);
+  void calculateXRD(XRDParams params = {});
 
   /**
    * @brief Smooths a specific histogram.
@@ -368,9 +382,8 @@ public:
 
 private:
   static std::unique_ptr<DistributionFunctions>
-  processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer,
-                     size_t frame_idx, const AnalysisSettings &settings,
-                     const std::vector<std::vector<real_t>> &bond_cutoffs);
+  processSingleFrame(correlation::core::Trajectory &trajectory, const TrajectoryAnalyzer &analyzer, size_t frame_idx,
+                     const AnalysisSettings &settings, const std::vector<std::vector<real_t>> &bond_cutoffs);
 
   static void normalizeHistograms(DistributionFunctions &dist_funcs);
 
