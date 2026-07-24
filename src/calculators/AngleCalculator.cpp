@@ -72,7 +72,8 @@ void computeTriadAngles(int type_central, const std::vector<correlation::core::A
         continue;
       }
 
-      const real_t cos_theta = std::clamp(scratch.dots[m_idx] / (dist1 * dist2), static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
+      const real_t cos_theta =
+          std::clamp(scratch.dots[m_idx] / (dist1 * dist2), static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
       const real_t angle_rad = std::acos(cos_theta);
 
       local_tensor[type1][type_central][type2].push_back(angle_rad);

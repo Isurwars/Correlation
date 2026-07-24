@@ -33,7 +33,7 @@ struct ElementID {
    * @param other The other ID to compare against.
    * @return True if values are equal.
    */
-  constexpr bool operator==(const ElementID&) const = default;
+  constexpr bool operator==(const ElementID &) const = default;
 };
 
 /**

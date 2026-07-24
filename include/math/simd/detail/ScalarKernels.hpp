@@ -17,16 +17,34 @@ namespace correlation::math::detail::scalar {
 inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const PositionBlockT<float> &block,
                               float *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t idx = 0; idx < block.count; ++idx) {
-    out_dsq[idx] = dist_sq_scalar<float>({.x = ref_x, .y = ref_y, .z = ref_z},
-                                         {.x = block.x[idx], .y = block.y[idx], .z = block.z[idx]});
+    out_dsq[idx] = dist_sq_scalar<float>(
+        {
+            .x = ref_x,
+            .y = ref_y,
+            .z = ref_z,
+        },
+        {
+            .x = block.x[idx],
+            .y = block.y[idx],
+            .z = block.z[idx],
+        });
   }
 }
 
 inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const PositionBlockT<double> &block,
                               double *CORRELATION_RESTRICT out_dsq) noexcept {
   for (std::size_t idx = 0; idx < block.count; ++idx) {
-    out_dsq[idx] = dist_sq_scalar<double>({.x = ref_x, .y = ref_y, .z = ref_z},
-                                          {.x = block.x[idx], .y = block.y[idx], .z = block.z[idx]});
+    out_dsq[idx] = dist_sq_scalar<double>(
+        {
+            .x = ref_x,
+            .y = ref_y,
+            .z = ref_z,
+        },
+        {
+            .x = block.x[idx],
+            .y = block.y[idx],
+            .z = block.z[idx],
+        });
   }
 }
 

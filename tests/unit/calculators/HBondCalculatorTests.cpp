@@ -371,7 +371,8 @@ TEST(HBondCalculatorTests, AcceptorOnly_NoHydrogens) {
 TEST(HBondCalculatorTests, BulkMetalNoHBonds) {
   // 4-atom FCC copper — no H, O, N, F, S atoms at all
   real_t const lattice_parameter = 3.6;
-  correlation::core::Cell cell({lattice_parameter, lattice_parameter, lattice_parameter, static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
+  correlation::core::Cell cell({lattice_parameter, lattice_parameter, lattice_parameter, static_cast<real_t>(90.0),
+                                static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   cell.addAtom("Cu", {0.0, 0.0, 0.0});
   cell.addAtom("Cu", {lattice_parameter / 2, lattice_parameter / 2, 0.0});
   cell.addAtom("Cu", {lattice_parameter / 2, 0.0, lattice_parameter / 2});

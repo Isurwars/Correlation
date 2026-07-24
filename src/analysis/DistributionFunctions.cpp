@@ -228,8 +228,11 @@ void DistributionFunctions::smooth(const std::string &name, real_t sigma, correl
   std::vector<std::vector<real_t>> results(entries.size());
   tbb::parallel_for(tbb::blocked_range<size_t>(0, entries.size()), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      results[i] = correlation::math::KernelSmoothing(*entries[i].second,
-                                                      {.bin_width = bin_dx, .sigma = min_sigma, .type = kernel});
+      results[i] = correlation::math::KernelSmoothing(*entries[i].second, {
+                                                                              .bin_width = bin_dx,
+                                                                              .sigma = min_sigma,
+                                                                              .type = kernel,
+                                                                          });
     }
   });
 

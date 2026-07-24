@@ -18,7 +18,11 @@ void NeighborGraph::addDirectedEdge(const Edge &edge) {
   if (edge.source >= adj_list_.size()) {
     return;
   }
-  adj_list_[edge.source].push_back({.index = edge.target, .distance = edge.distance, .r_ij = edge.r_ij});
+  adj_list_[edge.source].push_back({
+      .index = edge.target,
+      .distance = edge.distance,
+      .r_ij = edge.r_ij,
+  });
 }
 
 const std::vector<Neighbor> &NeighborGraph::getNeighbors(size_t atom_index) const {

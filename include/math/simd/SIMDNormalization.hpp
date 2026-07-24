@@ -35,11 +35,13 @@ template <typename T> inline T sinc_integral(const SincIntegralParams<T> &params
 inline double sinc_integral(double q_magnitude, const double *CORRELATION_RESTRICT integrand,
                             const double *CORRELATION_RESTRICT radial_bins, double *CORRELATION_RESTRICT sinqr_scratch,
                             std::size_t count) noexcept {
-  return sinc_integral(SincIntegralParams<double>{.q_magnitude = q_magnitude,
-                                                  .integrand = integrand,
-                                                  .radial_bins = radial_bins,
-                                                  .sinqr_scratch = sinqr_scratch,
-                                                  .count = count});
+  return sinc_integral(SincIntegralParams<double>{
+      .q_magnitude = q_magnitude,
+      .integrand = integrand,
+      .radial_bins = radial_bins,
+      .sinqr_scratch = sinqr_scratch,
+      .count = count,
+  });
 }
 
 /**
@@ -48,11 +50,13 @@ inline double sinc_integral(double q_magnitude, const double *CORRELATION_RESTRI
 inline float sinc_integral(float q_magnitude, const float *CORRELATION_RESTRICT integrand,
                            const float *CORRELATION_RESTRICT radial_bins, float *CORRELATION_RESTRICT sinqr_scratch,
                            std::size_t count) noexcept {
-  return sinc_integral(SincIntegralParams<float>{.q_magnitude = q_magnitude,
-                                                 .integrand = integrand,
-                                                 .radial_bins = radial_bins,
-                                                 .sinqr_scratch = sinqr_scratch,
-                                                 .count = count});
+  return sinc_integral(SincIntegralParams<float>{
+      .q_magnitude = q_magnitude,
+      .integrand = integrand,
+      .radial_bins = radial_bins,
+      .sinqr_scratch = sinqr_scratch,
+      .count = count,
+  });
 }
 
 /**
@@ -88,7 +92,11 @@ template <typename T> inline void scale_bins(const ScaleBinsParams<T> &params) n
  * @tparam T Floating-point precision (float or double).
  */
 template <typename T> inline void scale_bins(T *arr, T scale_factor, std::size_t count) noexcept {
-  scale_bins(ScaleBinsParams<T>{.arr = arr, .scale_factor = scale_factor, .count = count});
+  scale_bins(ScaleBinsParams<T>{
+      .arr = arr,
+      .scale_factor = scale_factor,
+      .count = count,
+  });
 }
 
 } // namespace correlation::math

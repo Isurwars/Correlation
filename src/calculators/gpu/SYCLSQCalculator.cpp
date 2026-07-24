@@ -11,8 +11,7 @@
 
 namespace correlation::calculators::sycl_gpu {
 
-correlation::analysis::Histogram compute_sq_sycl(const correlation::core::Cell &cell,
-                                                  const SYCLSQParams &params) {
+correlation::analysis::Histogram compute_sq_sycl(const correlation::core::Cell &cell, const SYCLSQParams &params) {
   correlation::analysis::DistributionFunctions dists(cell);
   correlation::analysis::AnalysisSettings settings;
   settings.q_max = params.q_max;

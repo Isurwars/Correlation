@@ -29,8 +29,7 @@ struct XYZParser {
   size_t total_size = 0;
   size_t offset = 0;
 
-  XYZParser(const char *data, size_t total_size)
-      : data(data), total_size(total_size) {}
+  XYZParser(const char *data, size_t total_size) : data(data), total_size(total_size) {}
 
   void skipBlankLines() {
     while (offset < total_size) {

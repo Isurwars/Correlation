@@ -135,7 +135,12 @@ std::vector<QVector> generateQVectors(const ReciprocalBasis &basis, real_t q_max
                            static_cast<real_t>(l_idx) * basis.b3.z;
         const real_t qmag_sq = q_x * q_x + q_y * q_y + q_z * q_z;
         if (qmag_sq <= q_max_sq) {
-          q_vectors.push_back({.h = h_idx, .k = k_idx, .l = l_idx, .qmag = std::sqrt(qmag_sq)});
+          q_vectors.push_back({
+              .h = h_idx,
+              .k = k_idx,
+              .l = l_idx,
+              .qmag = std::sqrt(qmag_sq),
+          });
         }
       }
     }
@@ -188,13 +193,15 @@ std::vector<PartialInfo> buildPartialsInfo(const std::vector<TypeBlock> &type_bl
       if (wit != ashcroft_weights.end()) {
         weight = wit->second;
       }
-      partials_info.push_back({.key = key,
-                               .typeA_idx = ti,
-                               .typeB_idx = tj,
-                               .N_A = tbA.count,
-                               .N_B = tbB.count,
-                               .is_identical = is_identical,
-                               .weight = weight});
+      partials_info.push_back({
+          .key = key,
+          .typeA_idx = ti,
+          .typeB_idx = tj,
+          .N_A = tbA.count,
+          .N_B = tbB.count,
+          .is_identical = is_identical,
+          .weight = weight,
+      });
     }
   }
   return partials_info;
@@ -277,7 +284,8 @@ inline void processSingleQVector(const QVector &q_vec, QBinning binning, size_t 
         .sin2 = phases.E2_sin + (q_vec.k + basis.kmax) * num_atoms + off,
         .cos3 = phases.E3_cos + (q_vec.l + basis.lmax) * num_atoms + off,
         .sin3 = phases.E3_sin + (q_vec.l + basis.lmax) * num_atoms + off,
-        .count = cnt});
+        .count = cnt,
+    });
     type_cos[ti] = result.cos_sum;
     type_sin[ti] = result.sin_sum;
   }
@@ -442,14 +450,41 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
   std::vector<real_t> E3_cos;
   std::vector<real_t> E3_sin;
 
-  precomputePhases(basis.hmax, basis.b1, num_atoms, {.x = x_s.data(), .y = y_s.data(), .z = z_s.data()},
-                   {.cos = &E1_cos, .sin = &E1_sin});
-  precomputePhases(basis.kmax, basis.b2, num_atoms, {.x = x_s.data(), .y = y_s.data(), .z = z_s.data()},
-                   {.cos = &E2_cos, .sin = &E2_sin});
-  precomputePhases(basis.lmax, basis.b3, num_atoms, {.x = x_s.data(), .y = y_s.data(), .z = z_s.data()},
-                   {.cos = &E3_cos, .sin = &E3_sin});
+  precomputePhases(basis.hmax, basis.b1, num_atoms,
+                   {
+                       .x = x_s.data(),
+                       .y = y_s.data(),
+                       .z = z_s.data(),
+                   },
+                   {
+                       .cos = &E1_cos,
+                       .sin = &E1_sin,
+                   });
+  precomputePhases(basis.kmax, basis.b2, num_atoms,
+                   {
+                       .x = x_s.data(),
+                       .y = y_s.data(),
+                       .z = z_s.data(),
+                   },
+                   {
+                       .cos = &E2_cos,
+                       .sin = &E2_sin,
+                   });
+  precomputePhases(basis.lmax, basis.b3, num_atoms,
+                   {
+                       .x = x_s.data(),
+                       .y = y_s.data(),
+                       .z = z_s.data(),
+                   },
+                   {
+                       .cos = &E3_cos,
+                       .sin = &E3_sin,
+                   });
 
-  QBinning const binning{.width = q_bin_width, .num_bins = num_q_bins};
+  QBinning const binning{
+      .width = q_bin_width,
+      .num_bins = num_q_bins,
+  };
   correlation::analysis::Histogram s_q_hist = createInitialHistogram(binning, partials_info);
 
   std::vector<real_t> sq_total_sum(num_q_bins, static_cast<real_t>(0.0));
@@ -475,18 +510,22 @@ void StructureFactorCalculator::calculateFrame(correlation::analysis::Distributi
 
     for (size_t qi = range.begin(); qi != range.end(); ++qi) {
       processSingleQVector(q_vectors[qi], binning, num_atoms, basis, type_blocks, partials_info,
-                           {.E1_cos = E1_cos.data(),
-                            .E1_sin = E1_sin.data(),
-                            .E2_cos = E2_cos.data(),
-                            .E2_sin = E2_sin.data(),
-                            .E3_cos = E3_cos.data(),
-                            .E3_sin = E3_sin.data()},
-                           {.total_sum = &local_total_sum,
-                            .total_count = &local_total_count,
-                            .partial_sums = &local_partial_sums,
-                            .partial_counts = &local_partial_counts,
-                            .c_total_sum = &local_c_total_sum,
-                            .c_partial_sums = &local_c_partial_sums});
+                           {
+                               .E1_cos = E1_cos.data(),
+                               .E1_sin = E1_sin.data(),
+                               .E2_cos = E2_cos.data(),
+                               .E2_sin = E2_sin.data(),
+                               .E3_cos = E3_cos.data(),
+                               .E3_sin = E3_sin.data(),
+                           },
+                           {
+                               .total_sum = &local_total_sum,
+                               .total_count = &local_total_count,
+                               .partial_sums = &local_partial_sums,
+                               .partial_counts = &local_partial_counts,
+                               .c_total_sum = &local_c_total_sum,
+                               .c_partial_sums = &local_c_partial_sums,
+                           });
     }
   });
 

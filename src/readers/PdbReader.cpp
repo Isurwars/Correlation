@@ -38,7 +38,11 @@ std::optional<PdbCrystParams> parsePdbCrystLine(const std::string &line) {
     real_t const param_a = static_cast<real_t>(std::stod(line.substr(6, 9)));
     real_t const param_b = static_cast<real_t>(std::stod(line.substr(15, 9)));
     real_t const param_c = static_cast<real_t>(std::stod(line.substr(24, 9)));
-    return PdbCrystParams{.a = param_a, .b = param_b, .c = param_c};
+    return PdbCrystParams{
+        .a = param_a,
+        .b = param_b,
+        .c = param_c,
+    };
   } catch (...) {
     return std::nullopt;
   }
@@ -77,7 +81,12 @@ std::optional<PdbAtomData> parsePdbAtomLine(const std::string &line) {
     real_t const frac_x = static_cast<real_t>(std::stod(line.substr(30, 8)));
     real_t const frac_y = static_cast<real_t>(std::stod(line.substr(38, 8)));
     real_t const frac_z = static_cast<real_t>(std::stod(line.substr(46, 8)));
-    return PdbAtomData{.symbol = symbol, .x = frac_x, .y = frac_y, .z = frac_z};
+    return PdbAtomData{
+        .symbol = symbol,
+        .x = frac_x,
+        .y = frac_y,
+        .z = frac_z,
+    };
   } catch (...) {
     return std::nullopt;
   }

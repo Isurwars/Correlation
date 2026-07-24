@@ -149,8 +149,11 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
   }
 
   const auto num_bins = static_cast<size_t>((theta_range / bin_width) + 1);
-  correlation::analysis::Histogram f_dihedral =
-      initializeHistogram({.num_bins = num_bins, .theta_min = theta_min, .bin_width = bin_width});
+  correlation::analysis::Histogram f_dihedral = initializeHistogram({
+      .num_bins = num_bins,
+      .theta_min = theta_min,
+      .bin_width = bin_width,
+  });
 
   for (size_t idx_a = 0; idx_a < num_elements; ++idx_a) {
     for (size_t idx_b = 0; idx_b < num_elements; ++idx_b) {
@@ -170,21 +173,25 @@ correlation::analysis::Histogram DADCalculator::calculate(const correlation::cor
             partial_hist.assign(num_bins, 0.0);
           }
 
-          processDihedralAngles({.angles_rad = angles_rad,
-                                 .partial_hist = &partial_hist,
-                                 .bin_width = bin_width,
-                                 .num_bins = num_bins,
-                                 .theta_min = theta_min,
-                                 .theta_max = theta_max});
+          processDihedralAngles({
+              .angles_rad = angles_rad,
+              .partial_hist = &partial_hist,
+              .bin_width = bin_width,
+              .num_bins = num_bins,
+              .theta_min = theta_min,
+              .theta_max = theta_max,
+          });
         }
       }
     }
   }
 
-  normalizeAndScale({.partials = &f_dihedral.partials,
-                     .total_f = &f_dihedral.partials["Total"],
-                     .num_bins = num_bins,
-                     .bin_width = bin_width});
+  normalizeAndScale({
+      .partials = &f_dihedral.partials,
+      .total_f = &f_dihedral.partials["Total"],
+      .num_bins = num_bins,
+      .bin_width = bin_width,
+  });
   return f_dihedral;
 }
 

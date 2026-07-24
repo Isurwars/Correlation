@@ -65,16 +65,34 @@ TEST_F(AppControllerTests, HandlesBondCutoffsCorrectly) {
 
   // Set up elements in UI that match the elements in loaded cell (Pd, Si)
   auto atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
-  atom_counts->push_back({.symbol = "Pd", .count = 80});
-  atom_counts->push_back({.symbol = "Si", .count = 20});
+  atom_counts->push_back({
+      .symbol = "Pd",
+      .count = 80,
+  });
+  atom_counts->push_back({
+      .symbol = "Si",
+      .count = 20,
+  });
   window->set_atom_counts(atom_counts);
 
   // Set up cutoffs: Pd-Pd, Pd-Si, Si-Si
   // In upper-triangular order: Pd-Pd, Pd-Si, Si-Si
   auto cutoffs = std::make_shared<slint::VectorModel<BondCutoff>>();
-  cutoffs->push_back({.element1 = "Pd", .element2 = "Pd", .distance = "2.80"});
-  cutoffs->push_back({.element1 = "Pd", .element2 = "Si", .distance = "3.10"});
-  cutoffs->push_back({.element1 = "Si", .element2 = "Si", .distance = "2.50"});
+  cutoffs->push_back({
+      .element1 = "Pd",
+      .element2 = "Pd",
+      .distance = "2.80",
+  });
+  cutoffs->push_back({
+      .element1 = "Pd",
+      .element2 = "Si",
+      .distance = "3.10",
+  });
+  cutoffs->push_back({
+      .element1 = "Si",
+      .element2 = "Si",
+      .distance = "2.50",
+  });
   window->set_bond_cutoffs(cutoffs);
 
   // Act
@@ -269,4 +287,3 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   auto rows = window->get_table_rows();
   ASSERT_GT(rows->row_count(), 0);
 }
-

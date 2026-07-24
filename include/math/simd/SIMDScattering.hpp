@@ -132,7 +132,14 @@ inline void miller_phase_sum(const T *CORRELATION_RESTRICT cos1, const T *CORREL
                              MillerPhaseSumResult<T> &result) noexcept {
   miller_phase_sum(
       MillerPhaseSumParams<T>{
-          .cos1 = cos1, .sin1 = sin1, .cos2 = cos2, .sin2 = sin2, .cos3 = cos3, .sin3 = sin3, .count = count},
+          .cos1 = cos1,
+          .sin1 = sin1,
+          .cos2 = cos2,
+          .sin2 = sin2,
+          .cos3 = cos3,
+          .sin3 = sin3,
+          .count = count,
+      },
       result);
 }
 

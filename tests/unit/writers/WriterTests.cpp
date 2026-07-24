@@ -119,7 +119,10 @@ TEST_F(FileWriterTests, CalculatesAndWritesSiliconDistributions) {
   // Act
   const real_t rdf_bin = 0.05;
   const real_t pad_bin = 1.0;
-  dists.calculateRDF({.r_max = 20.0, .r_bin_width = rdf_bin});
+  dists.calculateRDF({
+      .r_max = 20.0,
+      .r_bin_width = rdf_bin,
+  });
   dists.calculatePAD(pad_bin);
   dists.smoothAll(0.1);
 

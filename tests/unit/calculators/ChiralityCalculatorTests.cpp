@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include "calculators/ChiralityCalculator.hpp"
 #include "analysis/StructureAnalyzer.hpp"
+#include "calculators/ChiralityCalculator.hpp"
 #include "core/Cell.hpp"
 
 #include <gtest/gtest.h>

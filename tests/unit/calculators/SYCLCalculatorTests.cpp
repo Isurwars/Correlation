@@ -32,8 +32,8 @@ TEST(SYCLCalculatorTests, ComputesDistancesViaSYCLFallback) {
   real_t const cutoff_sq = 4.0;
   std::vector<std::vector<real_t>> const bond_cutoffs_sq = {{2.25, 2.25}, {2.25, 2.25}};
 
-  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs_sq, false,
-                                                             out_distances, out_graph);
+  correlation::calculators::sycl_gpu::compute_distances_sycl(cell, cutoff_sq, bond_cutoffs_sq, false, out_distances,
+                                                             out_graph);
 
   EXPECT_FALSE(out_distances.empty());
 }
@@ -43,7 +43,11 @@ TEST(SYCLCalculatorTests, ComputesSQViaSYCLFallback) {
   cell.addAtom("Si", {0.0, 0.0, 0.0});
   cell.addAtom("Si", {1.0, 0.0, 0.0});
 
-  auto s_q_hist = correlation::calculators::sycl_gpu::compute_sq_sycl(cell, {.q_min = 0.5, .q_max = 10.0, .q_bin_width = 0.1});
+  auto s_q_hist = correlation::calculators::sycl_gpu::compute_sq_sycl(cell, {
+                                                                                .q_min = 0.5,
+                                                                                .q_max = 10.0,
+                                                                                .q_bin_width = 0.1,
+                                                                            });
   EXPECT_FALSE(s_q_hist.bins.empty());
 }
 

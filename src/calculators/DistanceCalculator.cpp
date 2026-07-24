@@ -231,7 +231,12 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
     const real_t a_y = coords.y[atom_idx];
     const real_t a_z = coords.z[atom_idx];
 
-    correlation::math::PositionBlock block{.x = soa_x.data(), .y = soa_y.data(), .z = soa_z.data(), .count = c_count};
+    correlation::math::PositionBlock block{
+        .x = soa_x.data(),
+        .y = soa_y.data(),
+        .z = soa_z.data(),
+        .count = c_count,
+    };
     correlation::math::compute_dsq_block(a_x, a_y, a_z, block, dsq_scratch.data());
 
     for (size_t k = 0; k < c_count; ++k) {
@@ -269,9 +274,19 @@ void ThreadLocalDistances::computeDistances(size_t atom_idx, const std::vector<c
         real_t const precise_dist = std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
 
         correlation::math::Vector3<real_t> r_ij = {r_x, r_y, r_z};
-        bonds.push_back({.from = atom_idx, .to = j_idx, .distance = precise_dist, .r_ij = r_ij});
+        bonds.push_back({
+            .from = atom_idx,
+            .to = j_idx,
+            .distance = precise_dist,
+            .r_ij = r_ij,
+        });
         if (atom_idx != j_idx) {
-          bonds.push_back({.from = j_idx, .to = atom_idx, .distance = precise_dist, .r_ij = -1.0 * r_ij});
+          bonds.push_back({
+              .from = j_idx,
+              .to = atom_idx,
+              .distance = precise_dist,
+              .r_ij = -1.0 * r_ij,
+          });
         }
       }
     }
@@ -368,14 +383,29 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
   }
 
   SearchGridConfig grid_config{
-      .K_x = K_x, .K_y = K_y, .K_z = K_z, .max_dx = max_dx, .max_dy = max_dy, .max_dz = max_dz};
+      .K_x = K_x,
+      .K_y = K_y,
+      .K_z = K_z,
+      .max_dx = max_dx,
+      .max_dy = max_dy,
+      .max_dz = max_dz,
+  };
 
-  SoACoordinates coords{.x = wrapped_x.data(), .y = wrapped_y.data(), .z = wrapped_z.data()};
+  SoACoordinates coords{
+      .x = wrapped_x.data(),
+      .y = wrapped_y.data(),
+      .z = wrapped_z.data(),
+  };
 
-  FlatCellList cell_list{.offsets = bin_offsets.data(), .indices = bin_indices.data()};
+  FlatCellList cell_list{
+      .offsets = bin_offsets.data(),
+      .indices = bin_indices.data(),
+  };
 
-  tbb::enumerable_thread_specific<ThreadLocalDistances> ets(
-      ThreadLocalConfig{.num_elements = num_elements, .atom_count = atom_count});
+  tbb::enumerable_thread_specific<ThreadLocalDistances> ets(ThreadLocalConfig{
+      .num_elements = num_elements,
+      .atom_count = atom_count,
+  });
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, atom_count), [&](const tbb::blocked_range<size_t> &range) {
     ThreadLocalDistances &local_results = ets.local();
@@ -395,10 +425,12 @@ void DistanceCalculator::compute(const correlation::core::Cell &cell, real_t cut
       }
     }
     for (const auto &bond : local_results.bonds) {
-      out_graph.addDirectedEdge({.source = static_cast<correlation::core::AtomID>(bond.from),
-                                 .target = static_cast<correlation::core::AtomID>(bond.to),
-                                 .distance = bond.distance,
-                                 .r_ij = bond.r_ij});
+      out_graph.addDirectedEdge({
+          .source = static_cast<correlation::core::AtomID>(bond.from),
+          .target = static_cast<correlation::core::AtomID>(bond.to),
+          .distance = bond.distance,
+          .r_ij = bond.r_ij,
+      });
     }
   }
 }

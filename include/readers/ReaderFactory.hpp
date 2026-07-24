@@ -27,8 +27,7 @@ struct ReaderExtensionQuery {
 
   ReaderExtensionQuery(const char *ext) : extension(ext) {}
   ReaderExtensionQuery(std::string ext) : extension(std::move(ext)) {}
-  ReaderExtensionQuery(std::string ext, std::string file)
-      : extension(std::move(ext)), filename(std::move(file)) {}
+  ReaderExtensionQuery(std::string ext, std::string file) : extension(std::move(ext)), filename(std::move(file)) {}
 };
 
 /**

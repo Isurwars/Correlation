@@ -40,10 +40,18 @@ TEST_F(XRDTests, CalculateXRD) {
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Needs RDF first
-  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.05});
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.05,
+  });
 
   // Calling calculateXRD
-  dists.calculateXRD({.lambda = 1.5406, .theta_min = 5.0, .theta_max = 90.0, .bin_width = 0.5});
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 5.0,
+      .theta_max = 90.0,
+      .bin_width = 0.5,
+  });
 
   EXPECT_NO_THROW(dists.getHistogram("XRD"));
   const auto &hist = dists.getHistogram("XRD");
@@ -59,7 +67,12 @@ TEST_F(XRDTests, CalculateXRD_ThrowsIfNoRDF) {
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Calling calculateXRD before calculateRDF should throw
-  EXPECT_THROW(dists.calculateXRD({.lambda = 1.5406, .theta_min = 5.0, .theta_max = 90.0, .bin_width = 0.5}),
+  EXPECT_THROW(dists.calculateXRD({
+                   .lambda = 1.5406,
+                   .theta_min = 5.0,
+                   .theta_max = 90.0,
+                   .bin_width = 0.5,
+               }),
                std::logic_error);
 }
 
@@ -67,12 +80,25 @@ TEST_F(XRDTests, CalculateXRD_InvalidBinWidth) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
-  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.05});
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.05,
+  });
 
   // Calling calculateXRD with invalid bin width should throw
-  EXPECT_THROW(dists.calculateXRD({.lambda = 1.5406, .theta_min = 5.0, .theta_max = 90.0, .bin_width = 0.0}),
+  EXPECT_THROW(dists.calculateXRD({
+                   .lambda = 1.5406,
+                   .theta_min = 5.0,
+                   .theta_max = 90.0,
+                   .bin_width = 0.0,
+               }),
                std::invalid_argument);
-  EXPECT_THROW(dists.calculateXRD({.lambda = 1.5406, .theta_min = 5.0, .theta_max = 90.0, .bin_width = -0.5}),
+  EXPECT_THROW(dists.calculateXRD({
+                   .lambda = 1.5406,
+                   .theta_min = 5.0,
+                   .theta_max = 90.0,
+                   .bin_width = -0.5,
+               }),
                std::invalid_argument);
 }
 
@@ -81,10 +107,18 @@ TEST_F(XRDTests, CalculateXRD_IntensityIsZeroAtThetaZero) {
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
 
   // Needs RDF first
-  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.05});
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.05,
+  });
 
   // Calling calculateXRD with range starting at 0.0
-  dists.calculateXRD({.lambda = 1.5406, .theta_min = 0.0, .theta_max = 10.0, .bin_width = 0.5});
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 0.0,
+      .theta_max = 10.0,
+      .bin_width = 0.5,
+  });
 
   EXPECT_NO_THROW(dists.getHistogram("XRD"));
   const auto &hist = dists.getHistogram("XRD");
@@ -112,10 +146,18 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
   traj.precomputeBondCutoffs();
 
   DistributionFunctions dists(cubic_cell, 4.5, traj.getBondCutoffsSQ());
-  dists.calculateRDF({.r_max = 4.5, .r_bin_width = 0.05});
+  dists.calculateRDF({
+      .r_max = 4.5,
+      .r_bin_width = 0.05,
+  });
 
   // Calculate XRD for Cu K-alpha
-  dists.calculateXRD({.lambda = 1.5406, .theta_min = 10.0, .theta_max = 90.0, .bin_width = 0.1});
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 10.0,
+      .theta_max = 90.0,
+      .bin_width = 0.1,
+  });
 
   EXPECT_NO_THROW(dists.getHistogram("XRD"));
   const auto &hist = dists.getHistogram("XRD");
@@ -145,11 +187,24 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
 TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
   updateTrajectory();
   DistributionFunctions dists(cell_, 5.0, trajectory_.getBondCutoffsSQ());
-  dists.calculateRDF({.r_max = 5.0, .r_bin_width = 0.05});
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.05,
+  });
 
-  EXPECT_THROW(dists.calculateXRD({.lambda = 0.0, .theta_min = 5.0, .theta_max = 90.0, .bin_width = 0.5}),
+  EXPECT_THROW(dists.calculateXRD({
+                   .lambda = 0.0,
+                   .theta_min = 5.0,
+                   .theta_max = 90.0,
+                   .bin_width = 0.5,
+               }),
                std::invalid_argument);
-  EXPECT_THROW(dists.calculateXRD({.lambda = -1.0, .theta_min = 5.0, .theta_max = 90.0, .bin_width = 0.5}),
+  EXPECT_THROW(dists.calculateXRD({
+                   .lambda = -1.0,
+                   .theta_min = 5.0,
+                   .theta_max = 90.0,
+                   .bin_width = 0.5,
+               }),
                std::invalid_argument);
 
   Histogram empty_gr;

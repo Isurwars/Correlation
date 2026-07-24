@@ -141,12 +141,13 @@ struct SvgHistogramRenderer {
           kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0), static_cast<real_t>(24.0) * config->font_scale,
           config->text_color());
     }
-    std::string no_data_path = Roboto::instance().render(
-        TextRenderParameters{.text = "No data available",
-                             .start_x = kW / static_cast<real_t>(2.0),
-                             .start_y = kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
-                             .font_size = static_cast<real_t>(24.0) * config->font_scale,
-                             .anchor = "middle"});
+    std::string no_data_path = Roboto::instance().render(TextRenderParameters{
+        .text = "No data available",
+        .start_x = kW / static_cast<real_t>(2.0),
+        .start_y = kH / static_cast<real_t>(2.0) + static_cast<real_t>(8.0),
+        .font_size = static_cast<real_t>(24.0) * config->font_scale,
+        .anchor = "middle",
+    });
     return std::format(
         "<svg width='{0:.0f}' height='{1:.0f}' xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {0:.0f} {1:.0f}\">"
         "<rect width=\"100%\" height=\"100%\" fill=\"{2}\"/>"
@@ -171,8 +172,18 @@ struct SvgHistogramRenderer {
     real_t y_padding = (raw_y_max - raw_y_min) * static_cast<real_t>(0.05);
     raw_y_max += y_padding;
 
-    xScale = detail::NiceScale(detail::DataRange{.min = raw_x_min, .max = raw_x_max}, 11);
-    yScale = detail::NiceScale(detail::DataRange{.min = raw_y_min, .max = raw_y_max}, 8);
+    xScale = detail::NiceScale(
+        detail::DataRange{
+            .min = raw_x_min,
+            .max = raw_x_max,
+        },
+        11);
+    yScale = detail::NiceScale(
+        detail::DataRange{
+            .min = raw_y_min,
+            .max = raw_y_max,
+        },
+        8);
   }
 
   void writeHeader() {

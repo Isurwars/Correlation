@@ -38,8 +38,17 @@ inline void compute_dsq_block(float ref_x, float ref_y, float ref_z, const Posit
     _mm256_storeu_ps(out_dsq + idx, dsq);
   }
   for (; idx < block.count; ++idx) {
-    out_dsq[idx] = dist_sq_scalar<float>({.x = ref_x, .y = ref_y, .z = ref_z},
-                                         {.x = block.x[idx], .y = block.y[idx], .z = block.z[idx]});
+    out_dsq[idx] = dist_sq_scalar<float>(
+        {
+            .x = ref_x,
+            .y = ref_y,
+            .z = ref_z,
+        },
+        {
+            .x = block.x[idx],
+            .y = block.y[idx],
+            .z = block.z[idx],
+        });
   }
 }
 
@@ -63,8 +72,17 @@ inline void compute_dsq_block(double ref_x, double ref_y, double ref_z, const Po
     _mm256_storeu_pd(out_dsq + idx, dsq);
   }
   for (; idx < block.count; ++idx) {
-    out_dsq[idx] = dist_sq_scalar<double>({.x = ref_x, .y = ref_y, .z = ref_z},
-                                          {.x = block.x[idx], .y = block.y[idx], .z = block.z[idx]});
+    out_dsq[idx] = dist_sq_scalar<double>(
+        {
+            .x = ref_x,
+            .y = ref_y,
+            .z = ref_z,
+        },
+        {
+            .x = block.x[idx],
+            .y = block.y[idx],
+            .z = block.z[idx],
+        });
   }
 }
 
@@ -321,8 +339,6 @@ inline void normalize_rdf_bins(const RDFNormalizationParams<float> &params) noex
     params.Jinv_out[idx] = params.hist_data[idx] * params.inv_Nj_dr;
   }
 }
-
-
 
 inline void scale_bins(const ScaleBinsParams<double> &params) noexcept {
   const __m256d v_scale = _mm256_set1_pd(params.scale_factor);

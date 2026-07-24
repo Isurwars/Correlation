@@ -68,7 +68,12 @@ struct MemcpyParams {
 inline hipError_t hipMemcpy([[maybe_unused]] MemcpyParams params) noexcept { return 0; }
 
 inline hipError_t hipMemcpy(void *dst, const void *src, std::size_t count, int kind) noexcept {
-  return hipMemcpy(MemcpyParams{.dst = dst, .src = src, .count = count, .kind = kind});
+  return hipMemcpy(MemcpyParams{
+      .dst = dst,
+      .src = src,
+      .count = count,
+      .kind = kind,
+  });
 }
 
 constexpr int hipMemcpyHostToDevice = 0;
@@ -90,9 +95,21 @@ struct dim3 {
   unsigned int z{1};
 };
 
-inline constexpr dim3 threadIdx{.x = 0, .y = 0, .z = 0};
-inline constexpr dim3 blockIdx{.x = 0, .y = 0, .z = 0};
-inline constexpr dim3 blockDim{.x = 1, .y = 1, .z = 1};
+inline constexpr dim3 threadIdx{
+    .x = 0,
+    .y = 0,
+    .z = 0,
+};
+inline constexpr dim3 blockIdx{
+    .x = 0,
+    .y = 0,
+    .z = 0,
+};
+inline constexpr dim3 blockDim{
+    .x = 1,
+    .y = 1,
+    .z = 1,
+};
 
 #define hipLaunchKernelGGL(kernel, grid, block, shared, stream, ...)
 

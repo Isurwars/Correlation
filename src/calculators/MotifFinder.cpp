@@ -78,7 +78,10 @@ void get_paths(BFSScratch::PathEndpoints endpoints, const std::vector<std::vecto
   };
 
   std::vector<StackFrame> stack;
-  stack.push_back({.node = endpoints.start, .parent_idx = 0});
+  stack.push_back({
+      .node = endpoints.start,
+      .parent_idx = 0,
+  });
   current_path.push_back(static_cast<correlation::core::AtomID>(endpoints.start));
 
   while (!stack.empty()) {
@@ -97,7 +100,10 @@ void get_paths(BFSScratch::PathEndpoints endpoints, const std::vector<std::vecto
       size_t parent_node = node_parents[frame.parent_idx];
       frame.parent_idx++;
 
-      stack.push_back({.node = parent_node, .parent_idx = 0});
+      stack.push_back({
+          .node = parent_node,
+          .parent_idx = 0,
+      });
       current_path.push_back(static_cast<correlation::core::AtomID>(parent_node));
     } else {
       stack.pop_back();
@@ -152,8 +158,12 @@ bool isKingRing(const correlation::core::NeighborGraph &graph, const std::vector
   for (size_t i = 0; i < size; ++i) {
     size_t const start_node = cycle[i];
 
-    runKingBFS(graph, {.start_node = start_node, .max_check_dist = static_cast<int>(size / 2)}, dist_king, q_king,
-               visited_nodes);
+    runKingBFS(graph,
+               {
+                   .start_node = start_node,
+                   .max_check_dist = static_cast<int>(size / 2),
+               },
+               dist_king, q_king, visited_nodes);
 
     bool is_king = true;
     for (size_t j = 0; j < size; ++j) {
@@ -262,8 +272,18 @@ void processCrossEdge(const correlation::core::NeighborGraph &graph, const std::
   cur_u.reserve(settings.max_size);
   cur_v.reserve(settings.max_size);
 
-  get_paths({.start = first_node, .root = settings.root}, bsc.parents, cur_u, paths_u);
-  get_paths({.start = second_node, .root = settings.root}, bsc.parents, cur_v, paths_v);
+  get_paths(
+      {
+          .start = first_node,
+          .root = settings.root,
+      },
+      bsc.parents, cur_u, paths_u);
+  get_paths(
+      {
+          .start = second_node,
+          .root = settings.root,
+      },
+      bsc.parents, cur_v, paths_v);
 
   for (const auto &path_u : paths_u) {
     for (const auto &path_v : paths_v) {
@@ -347,7 +367,12 @@ std::vector<std::vector<correlation::core::AtomID>> getAllShortestRings(const co
       [&](const tbb::blocked_range<size_t> &range) {
         BFSScratch &bsc = ets.local();
         for (size_t root = range.begin(); root != range.end(); ++root) {
-          process_root(graph, {.root = root, .max_size = max_size}, bsc);
+          process_root(graph,
+                       {
+                           .root = root,
+                           .max_size = max_size,
+                       },
+                       bsc);
         }
       },
       tbb::auto_partitioner{});

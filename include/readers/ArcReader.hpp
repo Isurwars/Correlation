@@ -42,11 +42,12 @@ public:
    * @return A vector of parsed frames.
    */
   static std::vector<correlation::core::Cell>
-  read(const std::string &file_name, const std::function<void(float, const std::string &)> &progress_callback = nullptr);
+  read(const std::string &file_name,
+       const std::function<void(float, const std::string &)> &progress_callback = nullptr);
 
 private:
-  static void updateProgress(std::streampos current_pos, std::streampos file_size,
-                             std::streampos &last_progress_pos, size_t update_interval,
+  static void updateProgress(std::streampos current_pos, std::streampos file_size, std::streampos &last_progress_pos,
+                             size_t update_interval,
                              const std::function<void(float, const std::string &)> &progress_callback);
 
   static void parseLine(const std::string &line, correlation::core::Cell &tempCell,

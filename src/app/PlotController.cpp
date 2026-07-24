@@ -423,8 +423,14 @@ void PlotController::handleSavePlot() {
   std::string default_dir = def_path.parent_path().string();
   std::string default_name = def_path.filename().string();
 
-  std::array<nfdfilteritem_t, 2> filterList = {
-      {{.name = "SVG Image", .spec = "svg"}, {.name = "PDF Document", .spec = "pdf"}}};
+  std::array<nfdfilteritem_t, 2> filterList = {{{
+                                                    .name = "SVG Image",
+                                                    .spec = "svg",
+                                                },
+                                                {
+                                                    .name = "PDF Document",
+                                                    .spec = "pdf",
+                                                }}};
   nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;

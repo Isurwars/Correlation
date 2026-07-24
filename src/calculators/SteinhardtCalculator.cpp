@@ -52,8 +52,14 @@ struct Wigner6Table {
       for (int m_two = -6; m_two <= 6; ++m_two) {
         int const m_three = -(m_one + m_two);
         if (m_three >= -6 && m_three <= 6) {
-          table.at(m_one + 6).at(m_two + 6) = SteinhardtCalculator::wigner3j(
-              {.j_one = 6, .j_two = 6, .j_three = 6, .m_one = m_one, .m_two = m_two, .m_three = m_three});
+          table.at(m_one + 6).at(m_two + 6) = SteinhardtCalculator::wigner3j({
+              .j_one = 6,
+              .j_two = 6,
+              .j_three = 6,
+              .m_one = m_one,
+              .m_two = m_two,
+              .m_three = m_three,
+          });
         } else {
           table.at(m_one + 6).at(m_two + 6) = static_cast<real_t>(0.0);
         }
@@ -89,7 +95,11 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
   const auto &atom_neighbors = neighbor_graph.getNeighbors(atom_idx);
   size_t const num_neighbors = atom_neighbors.size();
   if (num_neighbors < 2) {
-    return {.Q4 = static_cast<real_t>(0.0), .Q6 = static_cast<real_t>(0.0), .W6_hat = static_cast<real_t>(0.0)};
+    return {
+        .Q4 = static_cast<real_t>(0.0),
+        .Q6 = static_cast<real_t>(0.0),
+        .W6_hat = static_cast<real_t>(0.0),
+    };
   }
 
   std::vector<std::complex<real_t>> q4m(9, static_cast<real_t>(0.0));
@@ -107,10 +117,18 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
     real_t const phi = std::atan2(r_ij.y(), r_ij.x());
 
     for (int m_val = -4; m_val <= 4; ++m_val) {
-      q4m[m_val + 4] += SteinhardtCalculator::sphericalHarmonic(4, m_val, {.theta = theta, .phi = phi});
+      q4m[m_val + 4] += SteinhardtCalculator::sphericalHarmonic(4, m_val,
+                                                                {
+                                                                    .theta = theta,
+                                                                    .phi = phi,
+                                                                });
     }
     for (int m_val = -6; m_val <= 6; ++m_val) {
-      q6m[m_val + 6] += SteinhardtCalculator::sphericalHarmonic(6, m_val, {.theta = theta, .phi = phi});
+      q6m[m_val + 6] += SteinhardtCalculator::sphericalHarmonic(6, m_val,
+                                                                {
+                                                                    .theta = theta,
+                                                                    .phi = phi,
+                                                                });
     }
   }
 
@@ -140,7 +158,11 @@ SingleAtomSteinhardt computeSingleAtomSteinhardt(size_t atom_idx,
     W6_hat_val = w6_val / std::pow(sum_sq_6, static_cast<real_t>(1.5));
   }
 
-  return {.Q4 = Q4_val, .Q6 = Q6_val, .W6_hat = W6_hat_val};
+  return {
+      .Q4 = Q4_val,
+      .Q6 = Q6_val,
+      .W6_hat = W6_hat_val,
+  };
 }
 
 void normalizeHistogramMap(std::map<std::string, std::vector<real_t>> &partials, real_t factor) {
@@ -238,11 +260,23 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
       const std::string &symbol = atoms[i].element().symbol;
 
       addValueToHistogram(local.partials_Q4, symbol, params.Q4[i],
-                          {.min_val = static_cast<real_t>(0.0), .max_val = configs.Q_max, .d_val = configs.dQ});
+                          {
+                              .min_val = static_cast<real_t>(0.0),
+                              .max_val = configs.Q_max,
+                              .d_val = configs.dQ,
+                          });
       addValueToHistogram(local.partials_Q6, symbol, params.Q6[i],
-                          {.min_val = static_cast<real_t>(0.0), .max_val = configs.Q_max, .d_val = configs.dQ});
+                          {
+                              .min_val = static_cast<real_t>(0.0),
+                              .max_val = configs.Q_max,
+                              .d_val = configs.dQ,
+                          });
       addValueToHistogram(local.partials_W6, symbol, params.W6_hat[i],
-                          {.min_val = configs.W_min, .max_val = configs.W_max, .d_val = configs.dW});
+                          {
+                              .min_val = configs.W_min,
+                              .max_val = configs.W_max,
+                              .d_val = configs.dW,
+                          });
     }
   });
 
@@ -277,11 +311,21 @@ void populateHistograms(const correlation::core::Cell &cell, const correlation::
 
 std::complex<real_t> SteinhardtCalculator::sphericalHarmonic(int degree, int order, SphericalAngles angles) {
   if (order >= 0) {
-    real_t const P_lm = correlation::math::sph_legendre({.degree = degree, .order = order}, angles.theta);
+    real_t const P_lm = correlation::math::sph_legendre(
+        {
+            .degree = degree,
+            .order = order,
+        },
+        angles.theta);
     return P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(order) * angles.phi);
   } // For negative m: Y_l^{-m} = (-1)^m (Y_l^m)*
   int const abs_m = -order;
-  real_t const P_lm = correlation::math::sph_legendre({.degree = degree, .order = abs_m}, angles.theta);
+  real_t const P_lm = correlation::math::sph_legendre(
+      {
+          .degree = degree,
+          .order = abs_m,
+      },
+      angles.theta);
   std::complex<real_t> const Y_l_m =
       P_lm * std::polar(static_cast<real_t>(1.0), static_cast<real_t>(abs_m) * angles.phi);
   std::complex<real_t> Y_l_minus_m = std::conj(Y_l_m);
@@ -370,8 +414,11 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
 
   tbb::parallel_for(tbb::blocked_range<size_t>(0, num_atoms), [&](const tbb::blocked_range<size_t> &range) {
     for (size_t i = range.begin(); i != range.end(); ++i) {
-      auto const res = computeSingleAtomSteinhardt(
-          i, neighbor_graph, {.global_Q4_factor = global_Q4_factor, .global_Q6_factor = global_Q6_factor});
+      auto const res = computeSingleAtomSteinhardt(i, neighbor_graph,
+                                                   {
+                                                       .global_Q4_factor = global_Q4_factor,
+                                                       .global_Q6_factor = global_Q6_factor,
+                                                   });
       params.Q4[i] = res.Q4;
       params.Q6[i] = res.Q6;
       params.W6_hat[i] = res.W6_hat;
@@ -428,10 +475,17 @@ SteinhardtCalculator::calculate(const correlation::core::Cell &cell,
   }
 
   // 3. Populate Histograms
-  populateHistograms(
-      cell, neighbors, params,
-      {.bins_Q = bins_Q, .Q_max = Q_max, .dQ = d_q, .bins_W = bins_W, .W_min = W_min, .W_max = W_max, .dW = d_w},
-      hist_Q4, hist_Q6, hist_W6);
+  populateHistograms(cell, neighbors, params,
+                     {
+                         .bins_Q = bins_Q,
+                         .Q_max = Q_max,
+                         .dQ = d_q,
+                         .bins_W = bins_W,
+                         .W_min = W_min,
+                         .W_max = W_max,
+                         .dW = d_w,
+                     },
+                     hist_Q4, hist_Q6, hist_W6);
 
   std::map<std::string, correlation::analysis::Histogram> hists;
   hists["Q4"] = std::move(hist_Q4);

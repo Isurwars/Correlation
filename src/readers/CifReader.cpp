@@ -229,7 +229,10 @@ void processLoopDataLine(const std::string &line, const std::vector<std::string>
           static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_x"))))),
           static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_y"))))),
           static_cast<real_t>(std::stod(cleanCifValue(tokens.at(header_map.at("_atom_site_fract_z")))))};
-      asymmetric_atoms.push_back({.symbol = element, .frac_pos = pos});
+      asymmetric_atoms.push_back({
+          .symbol = element,
+          .frac_pos = pos,
+      });
     } catch (const std::out_of_range &oor) {
       throw std::runtime_error("CIF Error: Missing required atom site data "
                                "(e.g., _atom_site_fract_x).");
@@ -364,7 +367,10 @@ std::vector<AsymmetricAtom> generateSymmetryAtoms(const std::vector<AsymmetricAt
         }
       }
       if (!exists) {
-        final_atoms.push_back({.symbol = atom.symbol, .frac_pos = frac_pos});
+        final_atoms.push_back({
+            .symbol = atom.symbol,
+            .frac_pos = frac_pos,
+        });
       }
     }
   }

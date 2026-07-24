@@ -114,7 +114,10 @@ ElementID Cell::getOrRegisterElement(const std::string &symbol) {
   }
   // Register the new element
   ElementID new_id{static_cast<int>(elements_.size())};
-  elements_.push_back({.symbol = symbol, .id = new_id});
+  elements_.push_back({
+      .symbol = symbol,
+      .id = new_id,
+  });
   return new_id;
 }
 

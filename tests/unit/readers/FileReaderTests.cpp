@@ -38,7 +38,6 @@ protected:
 };
 } // namespace
 
-
 TEST_F(FileReaderTests, ReadCarFileCorrectly) {
   std::string const path = data_dir_ + "car/test.car";
   correlation::readers::FileType type = correlation::readers::determineFileType(path);
@@ -274,19 +273,26 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
 
   // Check Frame 1
   const auto &file_1 = frames[0];
-  EXPECT_THAT(file_1.lattice_parameters()[0], correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
-  EXPECT_THAT(file_1.lattice_parameters()[1], correlation::testing::IsRealEq(11.0 * correlation::math::bohr_to_angstrom));
-  EXPECT_THAT(file_1.lattice_parameters()[2], correlation::testing::IsRealEq(12.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.lattice_parameters()[0],
+              correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.lattice_parameters()[1],
+              correlation::testing::IsRealEq(11.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.lattice_parameters()[2],
+              correlation::testing::IsRealEq(12.0 * correlation::math::bohr_to_angstrom));
   ASSERT_EQ(file_1.atomCount(), 2);
-  EXPECT_THAT(file_1.atoms()[0].position().x(), correlation::testing::IsRealEq(1.0 * correlation::math::bohr_to_angstrom));
-  EXPECT_THAT(file_1.atoms()[1].position().x(), correlation::testing::IsRealEq(4.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.atoms()[0].position().x(),
+              correlation::testing::IsRealEq(1.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.atoms()[1].position().x(),
+              correlation::testing::IsRealEq(4.0 * correlation::math::bohr_to_angstrom));
 
   EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(-31.8206146));
 
   // Check Frame 2
   const auto &file_2 = frames[1];
-  EXPECT_THAT(file_2.lattice_parameters()[0], correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
-  EXPECT_THAT(file_2.atoms()[0].position().x(), correlation::testing::IsRealEq(1.1 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_2.lattice_parameters()[0],
+              correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_2.atoms()[0].position().x(),
+              correlation::testing::IsRealEq(1.1 * correlation::math::bohr_to_angstrom));
 }
 
 TEST_F(FileReaderTests, ReadCelluloseExample) {

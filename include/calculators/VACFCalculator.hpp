@@ -31,7 +31,8 @@ public:
   bool isFrameCalculator() const override { return false; }
   bool isTrajectoryCalculator() const override { return true; }
 
-  void calculateTrajectory(correlation::analysis::DistributionFunctions &dists, const correlation::core::Trajectory &traj,
+  void calculateTrajectory(correlation::analysis::DistributionFunctions &dists,
+                           const correlation::core::Trajectory &traj,
                            const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
@@ -43,10 +44,9 @@ public:
    * @param end_frame Index of the last frame to include.
    * @return A map of histograms (VACF per element).
    */
-  static std::map<std::string, correlation::analysis::Histogram> calculate(const correlation::core::Trajectory &traj,
-                                                                           correlation::analysis::MaxFrames max_correlation_frames,
-                                                                           correlation::analysis::StartFrame start_frame,
-                                                                           correlation::analysis::EndFrame end_frame);
+  static std::map<std::string, correlation::analysis::Histogram>
+  calculate(const correlation::core::Trajectory &traj, correlation::analysis::MaxFrames max_correlation_frames,
+            correlation::analysis::StartFrame start_frame, correlation::analysis::EndFrame end_frame);
 };
 
 } // namespace correlation::calculators

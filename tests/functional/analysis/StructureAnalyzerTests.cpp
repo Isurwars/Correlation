@@ -411,4 +411,3 @@ TEST_F(StructureAnalyzerTests, HandlesEmptyCellGracefully) {
 
 } // namespace
 } // namespace correlation::analysis
-

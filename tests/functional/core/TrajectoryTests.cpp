@@ -18,7 +18,8 @@ namespace {
 class TrajectoryFunctionalTests : public ::testing::Test {
 protected:
   static Cell createSingleAtomCell(const std::string &element, const math::Vector3R &pos) {
-    Cell cell({{static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)}});
+    Cell cell({{static_cast<real_t>(10.0), static_cast<real_t>(10.0), static_cast<real_t>(10.0),
+                static_cast<real_t>(90.0), static_cast<real_t>(90.0), static_cast<real_t>(90.0)}});
     cell.addAtom(element, pos);
     return cell;
   }

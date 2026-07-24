@@ -115,10 +115,9 @@ inline real_t sph_legendre(LegendreParams params, real_t theta) {
   }
 
   // Normalization factor
-  real_t norm = static_cast<real_t>(
-      std::sqrt((static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-                (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
-                factorial(degree + order)));
+  real_t norm = static_cast<real_t>(std::sqrt(
+      (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
+      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) / factorial(degree + order)));
 
   // Cancel Condon-Shortley phase to match std::sph_legendre
   if (order % 2 != 0) {
@@ -149,10 +148,9 @@ inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_
   }
 
   // Precompute normalization factor and Condon-Shortley phase
-  real_t norm = static_cast<real_t>(
-      std::sqrt((static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
-                (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) /
-                factorial(degree + order)));
+  real_t norm = static_cast<real_t>(std::sqrt(
+      (static_cast<real_t>(2.0) * static_cast<real_t>(degree) + static_cast<real_t>(1.0)) /
+      (static_cast<real_t>(4.0) * static_cast<real_t>(pi)) * factorial(degree - order) / factorial(degree + order)));
   if (order % 2 != 0) {
     norm = -norm;
   }
@@ -203,7 +201,12 @@ inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_
     _mm512_storeu_pd(results + idx, vres);
   }
   for (; idx < count; ++idx) {
-    results[idx] = sph_legendre({.degree = degree, .order = order}, theta[idx]);
+    results[idx] = sph_legendre(
+        {
+            .degree = degree,
+            .order = order,
+        },
+        theta[idx]);
   }
 #elif defined(CORRELATION_SIMD_AVX2) && defined(CORRELATION_USE_DOUBLE)
   size_t idx = 0;
@@ -251,11 +254,21 @@ inline void sph_legendre_batch(LegendreParams params, const real_t *CORRELATION_
     _mm256_storeu_pd(results + idx, vres);
   }
   for (; idx < count; ++idx) {
-    results[idx] = sph_legendre({.degree = degree, .order = order}, theta[idx]);
+    results[idx] = sph_legendre(
+        {
+            .degree = degree,
+            .order = order,
+        },
+        theta[idx]);
   }
 #else
   for (size_t idx = 0; idx < count; ++idx) {
-    results[idx] = sph_legendre({.degree = degree, .order = order}, theta[idx]);
+    results[idx] = sph_legendre(
+        {
+            .degree = degree,
+            .order = order,
+        },
+        theta[idx]);
   }
 #endif
 }

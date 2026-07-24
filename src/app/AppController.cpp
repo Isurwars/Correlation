@@ -107,8 +107,12 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_material_type_changed([this](int type) { preset_controller_->handleMaterialTypeChanged(type); });
 
   // Handle plot resized callback from UI
-  window_.on_plot_resized(
-      [this](float width, float height) { plot_controller_->handlePlotResized({.width = width, .height = height}); });
+  window_.on_plot_resized([this](float width, float height) {
+    plot_controller_->handlePlotResized({
+        .width = width,
+        .height = height,
+    });
+  });
 
   // Initial load of preset list
   preset_controller_->refreshPresetList();
@@ -398,9 +402,11 @@ void AppController::setBondCutoffs() {
 
   for (size_t i = 0; i < elements.size(); ++i) {
     for (size_t j = i; j < elements.size(); ++j) {
-      slint_cutoffs->push_back({.element1 = slint::SharedString(elements[i].symbol),
-                                .element2 = slint::SharedString(elements[j].symbol),
-                                .distance = slint::SharedString(std::format("{:.2f}", recommended[i][j]))});
+      slint_cutoffs->push_back({
+          .element1 = slint::SharedString(elements[i].symbol),
+          .element2 = slint::SharedString(elements[j].symbol),
+          .distance = slint::SharedString(std::format("{:.2f}", recommended[i][j])),
+      });
     }
   }
   window_.set_bond_cutoffs(slint_cutoffs);

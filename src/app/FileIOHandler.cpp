@@ -26,9 +26,18 @@ FileIOHandler::~FileIOHandler() {
 }
 
 void FileIOHandler::handleWriteFiles() {
-  std::array<nfdfilteritem_t, 3> filterList = {{{.name = "Comma Separated Values", .spec = "csv"},
-                                                {.name = "Hierarchical Data Format", .spec = "h5,hdf5"},
-                                                {.name = "Apache Parquet", .spec = "parquet"}}};
+  std::array<nfdfilteritem_t, 3> filterList = {{{
+                                                    .name = "Comma Separated Values",
+                                                    .spec = "csv",
+                                                },
+                                                {
+                                                    .name = "Hierarchical Data Format",
+                                                    .spec = "h5,hdf5",
+                                                },
+                                                {
+                                                    .name = "Apache Parquet",
+                                                    .spec = "parquet",
+                                                }}};
   const nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;
@@ -93,16 +102,46 @@ void FileIOHandler::handleWriteFiles() {
 
 void FileIOHandler::handleBrowseFile() {
   std::array<nfdfilteritem_t, 10> filterList = {
-      {{.name = "Supported Structure Files", .spec = "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar"},
-       {.name = "Materials Studio CAR", .spec = "car"},
-       {.name = "Materials Studio ARC", .spec = "arc"},
-       {.name = "CASTEP CELL", .spec = "cell"},
-       {.name = "CASTEP MD", .spec = "md"},
-       {.name = "CIF files", .spec = "cif"},
-       {.name = "ONETEP DAT", .spec = "dat"},
-       {.name = "DMol3 Outmol", .spec = "outmol"},
-       {.name = "VASP POSCAR/CONTCAR", .spec = "poscar,contcar,vasp"},
-       {.name = "VASP XDATCAR", .spec = "xdatcar"}}};
+      {{
+           .name = "Supported Structure Files",
+           .spec = "arc,car,cell,cif,dat,md,outmol,poscar,contcar,vasp,xdatcar",
+       },
+       {
+           .name = "Materials Studio CAR",
+           .spec = "car",
+       },
+       {
+           .name = "Materials Studio ARC",
+           .spec = "arc",
+       },
+       {
+           .name = "CASTEP CELL",
+           .spec = "cell",
+       },
+       {
+           .name = "CASTEP MD",
+           .spec = "md",
+       },
+       {
+           .name = "CIF files",
+           .spec = "cif",
+       },
+       {
+           .name = "ONETEP DAT",
+           .spec = "dat",
+       },
+       {
+           .name = "DMol3 Outmol",
+           .spec = "outmol",
+       },
+       {
+           .name = "VASP POSCAR/CONTCAR",
+           .spec = "poscar,contcar,vasp",
+       },
+       {
+           .name = "VASP XDATCAR",
+           .spec = "xdatcar",
+       }}};
   const nfdfiltersize_t filterCount = filterList.size();
 
   nfdchar_t *outPath = nullptr;
@@ -153,7 +192,10 @@ void FileIOHandler::handleBrowseFile() {
           auto atom_counts_map = backend_.getAtomCounts();
           auto slint_atom_counts = std::make_shared<slint::VectorModel<AtomCount>>();
           for (const auto &[symbol, count] : atom_counts_map) {
-            slint_atom_counts->push_back({.symbol = slint::SharedString(symbol), .count = count});
+            slint_atom_counts->push_back({
+                .symbol = slint::SharedString(symbol),
+                .count = count,
+            });
           }
           window_.set_atom_counts(slint_atom_counts);
 

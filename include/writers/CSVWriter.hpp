@@ -49,7 +49,7 @@ public:
    * (e.g., "base_path_g_smoothed.csv").
    */
   static void writeAllCSVs(const std::string &base_path, const correlation::analysis::DistributionFunctions &dists,
-                    bool write_smoothed = false);
+                           bool write_smoothed = false);
 
 private:
   /**
@@ -58,8 +58,7 @@ private:
    * @param filename The full path of the file to write.
    * @param hist The Histogram data structure to write.
    */
-  static void writeHistogramToCSV(const std::string &filename,
-                                  const correlation::analysis::Histogram &hist);
+  static void writeHistogramToCSV(const std::string &filename, const correlation::analysis::Histogram &hist);
 };
 
 } // namespace correlation::writers

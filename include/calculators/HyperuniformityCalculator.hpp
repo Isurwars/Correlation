@@ -24,8 +24,8 @@ namespace correlation::calculators {
  * prevent accidental argument swapping (bugprone-easily-swappable-parameters).
  */
 struct HyperuniformityParams {
-  size_t num_samples;  ///< Number of random sample points.
-  real_t r_bin_width;  ///< Bin width for R values (Å).
+  size_t num_samples; ///< Number of random sample points.
+  real_t r_bin_width; ///< Bin width for R values (Å).
 };
 
 /**
@@ -48,9 +48,7 @@ public:
   std::string getName() const override { return "σ²_N(R), χ_H(R)"; }
   std::string getShortName() const override { return "Hyperuniformity"; }
   std::string getGroup() const override { return "Advanced"; }
-  std::string getDescription() const override {
-    return "Computes local number variance and hyperuniformity index.";
-  }
+  std::string getDescription() const override { return "Computes local number variance and hyperuniformity index."; }
 
   bool isFrameCalculator() const override { return true; }
   bool isTrajectoryCalculator() const override { return false; }
@@ -65,8 +63,8 @@ public:
    * @param params Sampling and binning parameters.
    * @return A map containing "sigma2_N" and "chi_H" histograms.
    */
-  static std::map<std::string, correlation::analysis::Histogram>
-  calculate(const correlation::core::Cell &cell, const HyperuniformityParams &params);
+  static std::map<std::string, correlation::analysis::Histogram> calculate(const correlation::core::Cell &cell,
+                                                                           const HyperuniformityParams &params);
 };
 
 } // namespace correlation::calculators

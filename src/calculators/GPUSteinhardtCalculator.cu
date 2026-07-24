@@ -67,7 +67,8 @@ template <typename T> struct SteinhardtOutputPointers {
 // -------------------------------------------------------------------------
 // Device helper: spherical harmonic Y_l^m for l=4 and l=6 (templated on T)
 // -------------------------------------------------------------------------
-template <typename T> CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
+template <typename T>
+CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
   T const costheta = input.costheta;
   T const phi = input.phi;
   T *real_y = output.real_y;
@@ -107,7 +108,8 @@ template <typename T> CORRELATION_DEVICE void compute_y4m(SphericalHarmonicInput
   }
 }
 
-template <typename T> CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
+template <typename T>
+CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput<T> input, SphericalHarmonicOutput<T> output) {
   T const costheta = input.costheta;
   T const phi = input.phi;
   T *real_y = output.real_y;
@@ -162,8 +164,8 @@ template <typename T> CORRELATION_DEVICE void compute_y6m(SphericalHarmonicInput
 // CUDA Kernel: compute Steinhardt parameters Q4 and Q6 per atom
 // -------------------------------------------------------------------------
 template <typename T>
-CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRICT atoms, NeighborGraphPointers graph, int num_atoms,
-                                  SteinhardtOutputPointers<T> outputs) {
+CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRICT atoms, NeighborGraphPointers graph,
+                                          int num_atoms, SteinhardtOutputPointers<T> outputs) {
 
   int atom_idx = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (atom_idx >= num_atoms) {
@@ -210,8 +212,24 @@ CORRELATION_GLOBAL void steinhardt_kernel(GPUPoint<T> const *CORRELATION_RESTRIC
     std::array<T, 13> y6_r{};
     std::array<T, 13> y6_i{};
 
-    compute_y4m<T>({.costheta = costheta, .phi = phi}, {.real_y = y4_r.data(), .imag_y = y4_i.data()});
-    compute_y6m<T>({.costheta = costheta, .phi = phi}, {.real_y = y6_r.data(), .imag_y = y6_i.data()});
+    compute_y4m<T>(
+        {
+            .costheta = costheta,
+            .phi = phi,
+        },
+        {
+            .real_y = y4_r.data(),
+            .imag_y = y4_i.data(),
+        });
+    compute_y6m<T>(
+        {
+            .costheta = costheta,
+            .phi = phi,
+        },
+        {
+            .real_y = y6_r.data(),
+            .imag_y = y6_i.data(),
+        });
 
     for (int m_idx = 0; m_idx < 9; ++m_idx) {
       *(q4_real.data() + m_idx) += *(y4_r.data() + m_idx);
@@ -286,9 +304,11 @@ void GPUSteinhardtCalculator::calculateFrame(correlation::analysis::Distribution
 
   std::vector<GPUPoint<T>> h_atoms(num_atoms);
   for (size_t i = 0; i < num_atoms; ++i) {
-    h_atoms[i] = GPUPoint<T>{.x = static_cast<T>(atoms[i].position().x()),
-                             .y = static_cast<T>(atoms[i].position().y()),
-                             .z = static_cast<T>(atoms[i].position().z())};
+    h_atoms[i] = GPUPoint<T>{
+        .x = static_cast<T>(atoms[i].position().x()),
+        .y = static_cast<T>(atoms[i].position().y()),
+        .z = static_cast<T>(atoms[i].position().z()),
+    };
   }
 
   std::vector<int> h_offsets(num_atoms + 1, 0);

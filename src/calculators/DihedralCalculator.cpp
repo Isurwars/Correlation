@@ -10,9 +10,9 @@
 #include "analysis/DistributionFunctions.hpp"
 #include "math/LinearAlgebra.hpp"
 
+#include <optional>
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/parallel_for.h>
-#include <optional>
 
 namespace correlation::calculators {
 
@@ -99,7 +99,11 @@ void findAndProcessDihedralsForPair(size_t idx_b, size_t idx_c, const correlatio
       const int type_d = atoms[idx_d].element_id();
       const correlation::math::Vector3<real_t> &r_cd = neighbor_d.r_ij;
 
-      auto const dihedral_angle_opt = calculateDihedralAngle({.r_ba = r_ba, .r_bc = r_bc, .r_cd = r_cd});
+      auto const dihedral_angle_opt = calculateDihedralAngle({
+          .r_ba = r_ba,
+          .r_bc = r_bc,
+          .r_cd = r_cd,
+      });
       if (!dihedral_angle_opt.has_value()) {
         continue;
       }

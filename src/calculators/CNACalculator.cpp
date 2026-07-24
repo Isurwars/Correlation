@@ -45,7 +45,11 @@ size_t dfsLongestPath(size_t start_node, const std::map<size_t, std::vector<size
 
   std::vector<StackFrame> stack;
   stack.reserve(12);
-  stack.push_back({.node = start_node, .neighbor_idx = 0, .max_child_len = 0});
+  stack.push_back({
+      .node = start_node,
+      .neighbor_idx = 0,
+      .max_child_len = 0,
+  });
 
   size_t final_best = 0;
 
@@ -70,7 +74,11 @@ size_t dfsLongestPath(size_t start_node, const std::map<size_t, std::vector<size
 
       if (!visited.contains(neighbor)) {
         visited.insert(neighbor);
-        stack.push_back({.node = neighbor, .neighbor_idx = 0, .max_child_len = 0});
+        stack.push_back({
+            .node = neighbor,
+            .neighbor_idx = 0,
+            .max_child_len = 0,
+        });
       }
     }
   }
@@ -99,8 +107,7 @@ size_t findLongestChain(const std::vector<size_t> &common_neighbors, const std::
  * @brief Helper to find the common neighbors between atom_i and atom_j.
  */
 std::vector<size_t> findCommonNeighbors(const std::set<size_t> &neighbors_set_i,
-                                        const correlation::core::NeighborGraph &neighbor_graph,
-                                        size_t atom_j) {
+                                        const correlation::core::NeighborGraph &neighbor_graph, size_t atom_j) {
   const auto &neighbors_j = neighbor_graph.getNeighbors(atom_j);
   std::vector<size_t> common_neighbors;
   for (const auto &neighbor : neighbors_j) {
@@ -119,9 +126,8 @@ struct CommonNeighborAdjacency {
 /**
  * @brief Helper to build the adjacency list and count the bonds between common neighbors.
  */
-CommonNeighborAdjacency buildCommonNeighborAdjacency(
-    const std::vector<size_t> &common_neighbors,
-    const correlation::core::NeighborGraph &neighbor_graph) {
+CommonNeighborAdjacency buildCommonNeighborAdjacency(const std::vector<size_t> &common_neighbors,
+                                                     const correlation::core::NeighborGraph &neighbor_graph) {
   size_t bond_count = 0;
   std::map<size_t, std::vector<size_t>> adjacency_list;
   size_t const n_common = common_neighbors.size();
@@ -141,15 +147,17 @@ CommonNeighborAdjacency buildCommonNeighborAdjacency(
       }
     }
   }
-  return {.bond_count = bond_count, .adjacency_list = std::move(adjacency_list)};
+  return {
+      .bond_count = bond_count,
+      .adjacency_list = std::move(adjacency_list),
+  };
 }
 
 /**
  * @brief Helper to build the final CNA histogram from counted configurations.
  */
-correlation::analysis::Histogram buildCNAHistogram(
-    const std::map<std::string, real_t> &cna_counts,
-    real_t total_pairs) {
+correlation::analysis::Histogram buildCNAHistogram(const std::map<std::string, real_t> &cna_counts,
+                                                   real_t total_pairs) {
   correlation::analysis::Histogram hist;
   hist.x_label = "CNA Index";
   hist.title = "Common Neighbor Analysis";
@@ -196,7 +204,7 @@ void CNACalculator::calculateFrame(correlation::analysis::DistributionFunctions 
 }
 
 correlation::analysis::Histogram CNACalculator::calculate(const correlation::core::Cell &cell,
-                                                           const correlation::analysis::StructureAnalyzer *neighbors) {
+                                                          const correlation::analysis::StructureAnalyzer *neighbors) {
   if (neighbors == nullptr) {
     return {};
   }
@@ -235,7 +243,8 @@ correlation::analysis::Histogram CNACalculator::calculate(const correlation::cor
           n_longest = findLongestChain(common_neighbors, common_adj);
         }
 
-        std::string const index = "1" + std::to_string(common_neighbors.size()) + std::to_string(n_bonds) + std::to_string(n_longest);
+        std::string const index =
+            "1" + std::to_string(common_neighbors.size()) + std::to_string(n_bonds) + std::to_string(n_longest);
         local.counts[index]++;
         local.total_pairs++;
       }

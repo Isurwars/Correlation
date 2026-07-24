@@ -92,7 +92,12 @@ correlation::analysis::Histogram PADCalculator::calculate(const correlation::cor
         partial_hist.assign(num_bins, 0.0);
 
         populateTripletHistogram(neighbors->angles()[j][i][k],
-                                 {.bin_width = bin_width, .num_bins = num_bins, .theta_cut = theta_cut}, partial_hist);
+                                 {
+                                     .bin_width = bin_width,
+                                     .num_bins = num_bins,
+                                     .theta_cut = theta_cut,
+                                 },
+                                 partial_hist);
       }
     }
   }

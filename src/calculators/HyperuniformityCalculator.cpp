@@ -34,8 +34,10 @@ const bool registered = CalculatorFactory::registerTypeSafe<HyperuniformityCalcu
 
 void HyperuniformityCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                                const correlation::analysis::AnalysisSettings &settings) const {
-  auto results =
-      calculate(dists.cell(), {.num_samples = settings.hyperuniformity_samples, .r_bin_width = settings.r_bin_width});
+  auto results = calculate(dists.cell(), {
+                                             .num_samples = settings.hyperuniformity_samples,
+                                             .r_bin_width = settings.r_bin_width,
+                                         });
   for (auto &[name, histogram] : results) {
     dists.addHistogram(name, std::move(histogram));
   }

@@ -18,15 +18,13 @@ namespace correlation::calculators::gpu {
 
 namespace {
 
-template <typename T>
-struct GPUDistance {
+template <typename T> struct GPUDistance {
   int from;
   int to;
   T distance;
 };
 
-template <typename T>
-struct GPUBond {
+template <typename T> struct GPUBond {
   int from;
   int to;
   T distance;
@@ -35,8 +33,7 @@ struct GPUBond {
   T r_z;
 };
 
-template <typename T>
-struct GPULattice {
+template <typename T> struct GPULattice {
   T v0_x, v0_y, v0_z;
   T v1_x, v1_y, v1_z;
   T v2_x, v2_y, v2_z;
@@ -47,15 +44,13 @@ struct GPUSearchGrid {
   int max_dx, max_dy, max_dz;
 };
 
-template <typename T>
-struct GPUPosition {
+template <typename T> struct GPUPosition {
   T x;
   T y;
   T z;
 };
 
-template <typename T>
-struct GPUAtomData {
+template <typename T> struct GPUAtomData {
   const T *CORRELATION_RESTRICT wrapped_x;
   const T *CORRELATION_RESTRICT wrapped_y;
   const T *CORRELATION_RESTRICT wrapped_z;
@@ -78,7 +73,8 @@ CORRELATION_DEVICE CORRELATION_FORCEINLINE void
 process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp, int n_bin_idx, GPUAtomData<T> atoms,
             bool zero_disp, GPUBinData bins, T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq,
             int num_elements, unsigned long long *distance_counter, bool ignore_periodic_self_interactions,
-            unsigned long long *bond_counter, GPUDistance<T> *CORRELATION_RESTRICT distances, GPUBond<T> *CORRELATION_RESTRICT bonds) {
+            unsigned long long *bond_counter, GPUDistance<T> *CORRELATION_RESTRICT distances,
+            GPUBond<T> *CORRELATION_RESTRICT bonds) {
 
   unsigned long long start = bins.offsets[n_bin_idx];
   unsigned long long end = bins.offsets[n_bin_idx + 1];
@@ -113,7 +109,11 @@ process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp,
 
     if (WriteMode) {
       unsigned long long idx = atomicAdd(distance_counter, 1ULL);
-      distances[idx] = GPUDistance<T>{.from = i_val, .to = j_val, .distance = dist};
+      distances[idx] = GPUDistance<T>{
+          .from = i_val,
+          .to = j_val,
+          .distance = dist,
+      };
     } else {
       atomicAdd(distance_counter, 1ULL);
     }
@@ -136,7 +136,14 @@ process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp,
 
       if (WriteMode) {
         unsigned long long idx = atomicAdd(bond_counter, 1ULL);
-        bonds[idx] = GPUBond<T>{.from = i_val, .to = j_val, .distance = precise_dist, .r_x = r_x, .r_y = r_y, .r_z = r_z};
+        bonds[idx] = GPUBond<T>{
+            .from = i_val,
+            .to = j_val,
+            .distance = precise_dist,
+            .r_x = r_x,
+            .r_y = r_y,
+            .r_z = r_z,
+        };
       } else {
         atomicAdd(bond_counter, 1ULL);
       }
@@ -145,11 +152,11 @@ process_bin(int i_val, GPUPosition<T> atom_pos, int type_A, GPUPosition<T> disp,
 }
 
 template <bool WriteMode, typename T>
-CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, GPULattice<T> lattice, GPUSearchGrid grid,
-                                T cutoff_sq, const T *CORRELATION_RESTRICT bond_cutoffs_sq, int num_elements,
-                                bool ignore_periodic_self_interactions, int num_atoms,
-                                unsigned long long *distance_counter, unsigned long long *bond_counter,
-                                GPUDistance<T> *CORRELATION_RESTRICT distances, GPUBond<T> *CORRELATION_RESTRICT bonds) {
+CORRELATION_GLOBAL void
+distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, GPULattice<T> lattice, GPUSearchGrid grid, T cutoff_sq,
+                const T *CORRELATION_RESTRICT bond_cutoffs_sq, int num_elements, bool ignore_periodic_self_interactions,
+                int num_atoms, unsigned long long *distance_counter, unsigned long long *bond_counter,
+                GPUDistance<T> *CORRELATION_RESTRICT distances, GPUBond<T> *CORRELATION_RESTRICT bonds) {
 
   int i_val = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (i_val >= num_atoms) {
@@ -183,16 +190,29 @@ CORRELATION_GLOBAL void distance_kernel(GPUAtomData<T> atoms, GPUBinData bins, G
 
         int n_bin_idx = wrap_x * (grid.K_y * grid.K_z) + wrap_y * grid.K_z + wrap_z;
 
-        T disp_x = static_cast<T>(shift_z) * lattice.v2_x + static_cast<T>(shift_y) * lattice.v1_x + static_cast<T>(shift_x) * lattice.v0_x;
-        T disp_y = static_cast<T>(shift_z) * lattice.v2_y + static_cast<T>(shift_y) * lattice.v1_y + static_cast<T>(shift_x) * lattice.v0_y;
-        T disp_z = static_cast<T>(shift_z) * lattice.v2_z + static_cast<T>(shift_y) * lattice.v1_z + static_cast<T>(shift_x) * lattice.v0_z;
+        T disp_x = static_cast<T>(shift_z) * lattice.v2_x + static_cast<T>(shift_y) * lattice.v1_x +
+                   static_cast<T>(shift_x) * lattice.v0_x;
+        T disp_y = static_cast<T>(shift_z) * lattice.v2_y + static_cast<T>(shift_y) * lattice.v1_y +
+                   static_cast<T>(shift_x) * lattice.v0_y;
+        T disp_z = static_cast<T>(shift_z) * lattice.v2_z + static_cast<T>(shift_y) * lattice.v1_z +
+                   static_cast<T>(shift_x) * lattice.v0_z;
 
         bool zero_disp = (shift_x == 0 && shift_y == 0 && shift_z == 0);
 
-        process_bin<WriteMode, T>(i_val, GPUPosition<T>{.x = a_x, .y = a_y, .z = a_z}, type_A,
-                                   GPUPosition<T>{.x = disp_x, .y = disp_y, .z = disp_z}, n_bin_idx, atoms, zero_disp, bins,
-                                   cutoff_sq, bond_cutoffs_sq, num_elements, distance_counter,
-                                   ignore_periodic_self_interactions, bond_counter, distances, bonds);
+        process_bin<WriteMode, T>(i_val,
+                                  GPUPosition<T>{
+                                      .x = a_x,
+                                      .y = a_y,
+                                      .z = a_z,
+                                  },
+                                  type_A,
+                                  GPUPosition<T>{
+                                      .x = disp_x,
+                                      .y = disp_y,
+                                      .z = disp_z,
+                                  },
+                                  n_bin_idx, atoms, zero_disp, bins, cutoff_sq, bond_cutoffs_sq, num_elements,
+                                  distance_counter, ignore_periodic_self_interactions, bond_counter, distances, bonds);
       }
     }
   }
@@ -212,10 +232,8 @@ std::vector<T> flatten_bond_cutoffs(const std::vector<std::vector<T>> &bond_cuto
 }
 
 template <typename T>
-void unpack_gpu_results(const std::vector<GPUDistance<T>> &host_distances,
-                        const std::vector<GPUBond<T>> &host_bonds,
-                        const std::vector<int> &element_ids,
-                        DistanceTensor &out_distances,
+void unpack_gpu_results(const std::vector<GPUDistance<T>> &host_distances, const std::vector<GPUBond<T>> &host_bonds,
+                        const std::vector<int> &element_ids, DistanceTensor &out_distances,
                         correlation::core::NeighborGraph &out_graph) {
   for (const auto &dist : host_distances) {
     const int type_A = element_ids[dist.from];
@@ -227,19 +245,15 @@ void unpack_gpu_results(const std::vector<GPUDistance<T>> &host_distances,
   }
 
   for (const auto &bond : host_bonds) {
-    out_graph.addDirectedEdge(static_cast<core::AtomID>(bond.from),
-                             static_cast<core::AtomID>(bond.to),
-                             static_cast<real_t>(bond.distance),
-                             correlation::math::Vector3<real_t>(static_cast<real_t>(bond.r_x),
-                                                                static_cast<real_t>(bond.r_y),
-                                                                static_cast<real_t>(bond.r_z)));
+    out_graph.addDirectedEdge(
+        static_cast<core::AtomID>(bond.from), static_cast<core::AtomID>(bond.to), static_cast<real_t>(bond.distance),
+        correlation::math::Vector3<real_t>(static_cast<real_t>(bond.r_x), static_cast<real_t>(bond.r_y),
+                                           static_cast<real_t>(bond.r_z)));
     if (bond.from != bond.to) {
-      out_graph.addDirectedEdge(static_cast<core::AtomID>(bond.to),
-                               static_cast<core::AtomID>(bond.from),
-                               static_cast<real_t>(bond.distance),
-                               correlation::math::Vector3<real_t>(-static_cast<real_t>(bond.r_x),
-                                                                  -static_cast<real_t>(bond.r_y),
-                                                                  -static_cast<real_t>(bond.r_z)));
+      out_graph.addDirectedEdge(
+          static_cast<core::AtomID>(bond.to), static_cast<core::AtomID>(bond.from), static_cast<real_t>(bond.distance),
+          correlation::math::Vector3<real_t>(-static_cast<real_t>(bond.r_x), -static_cast<real_t>(bond.r_y),
+                                             -static_cast<real_t>(bond.r_z)));
     }
   }
 }
@@ -254,9 +268,8 @@ bool has_gpu_device() {
 
 template <typename T>
 void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
-                           const std::vector<std::vector<T>> &bond_cutoffs_sq,
-                           bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
-                           correlation::core::NeighborGraph &out_graph) {
+                           const std::vector<std::vector<T>> &bond_cutoffs_sq, bool ignore_periodic_self_interactions,
+                           DistanceTensor &out_distances, correlation::core::NeighborGraph &out_graph) {
   const auto &atoms = cell.atoms();
   const size_t atom_count = atoms.size();
   if (atom_count == 0) {
@@ -363,9 +376,10 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
   hipMemcpy(d_distance_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
   hipMemcpy(d_bond_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
 
-  GPULattice<T> gpu_lattice{static_cast<T>(lattice[0].x()), static_cast<T>(lattice[0].y()), static_cast<T>(lattice[0].z()),
-                            static_cast<T>(lattice[1].x()), static_cast<T>(lattice[1].y()), static_cast<T>(lattice[1].z()),
-                            static_cast<T>(lattice[2].x()), static_cast<T>(lattice[2].y()), static_cast<T>(lattice[2].z())};
+  GPULattice<T> gpu_lattice{
+      static_cast<T>(lattice[0].x()), static_cast<T>(lattice[0].y()), static_cast<T>(lattice[0].z()),
+      static_cast<T>(lattice[1].x()), static_cast<T>(lattice[1].y()), static_cast<T>(lattice[1].z()),
+      static_cast<T>(lattice[2].x()), static_cast<T>(lattice[2].y()), static_cast<T>(lattice[2].z())};
   GPUSearchGrid gpu_grid{K_x, K_y, K_z, max_dx, max_dy, max_dz};
   GPUAtomData<T> gpu_atoms{d_wrapped_x, d_wrapped_y, d_wrapped_z, d_element_ids, d_atom_bin};
   GPUBinData gpu_bins{d_bin_offsets, d_bin_indices};
@@ -373,9 +387,10 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
   int block_size = 256;
   int grid_size = (static_cast<int>(atom_count) + block_size - 1) / block_size;
 
-  hipLaunchKernelGGL((distance_kernel<false, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice, gpu_grid,
-                     cutoff_sq, d_bond_cutoffs_sq, static_cast<int>(num_elements), ignore_periodic_self_interactions,
-                     static_cast<int>(atom_count), d_distance_counter, d_bond_counter, nullptr, nullptr);
+  hipLaunchKernelGGL((distance_kernel<false, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
+                     gpu_grid, cutoff_sq, d_bond_cutoffs_sq, static_cast<int>(num_elements),
+                     ignore_periodic_self_interactions, static_cast<int>(atom_count), d_distance_counter,
+                     d_bond_counter, nullptr, nullptr);
   hipDeviceSynchronize();
 
   unsigned long long h_distance_count = 0;
@@ -396,9 +411,10 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
   hipMemcpy(d_distance_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
   hipMemcpy(d_bond_counter, &zero_val, sizeof(unsigned long long), hipMemcpyHostToDevice);
 
-  hipLaunchKernelGGL((distance_kernel<true, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice, gpu_grid,
-                     cutoff_sq, d_bond_cutoffs_sq, static_cast<int>(num_elements), ignore_periodic_self_interactions,
-                     static_cast<int>(atom_count), d_distance_counter, d_bond_counter, d_distances, d_bonds);
+  hipLaunchKernelGGL((distance_kernel<true, T>), grid_size, block_size, 0, 0, gpu_atoms, gpu_bins, gpu_lattice,
+                     gpu_grid, cutoff_sq, d_bond_cutoffs_sq, static_cast<int>(num_elements),
+                     ignore_periodic_self_interactions, static_cast<int>(atom_count), d_distance_counter,
+                     d_bond_counter, d_distances, d_bonds);
   hipDeviceSynchronize();
 
   std::vector<GPUDistance<T>> host_distances(h_distance_count);
@@ -433,14 +449,12 @@ void compute_distances_gpu(const correlation::core::Cell &cell, T cutoff_sq,
 
 template void compute_distances_gpu<float>(const correlation::core::Cell &cell, float cutoff_sq,
                                            const std::vector<std::vector<float>> &bond_cutoffs_sq,
-                                           bool ignore_periodic_self_interactions,
-                                           DistanceTensor &out_distances,
+                                           bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
                                            correlation::core::NeighborGraph &out_graph);
 
 template void compute_distances_gpu<double>(const correlation::core::Cell &cell, double cutoff_sq,
                                             const std::vector<std::vector<double>> &bond_cutoffs_sq,
-                                            bool ignore_periodic_self_interactions,
-                                            DistanceTensor &out_distances,
+                                            bool ignore_periodic_self_interactions, DistanceTensor &out_distances,
                                             correlation::core::NeighborGraph &out_graph);
 
 } // namespace correlation::calculators::gpu

@@ -24,16 +24,21 @@ Roboto::Roboto() {
 }
 
 void Roboto::add(GlyphParameters const &params) {
-  glyphs_[params.code_point] =
-      Glyph{.left = params.left_bearing, .right = params.right_bearing, .strokes = params.stroke_paths};
+  glyphs_[params.code_point] = Glyph{
+      .left = params.left_bearing,
+      .right = params.right_bearing,
+      .strokes = params.stroke_paths,
+  };
 }
 
 void Roboto::add(const uint32_t code_point, const real_t left_bearing, const real_t right_bearing,
                  std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths) {
-  add(GlyphParameters{.code_point = code_point,
-                      .left_bearing = left_bearing,
-                      .right_bearing = right_bearing,
-                      .stroke_paths = std::move(stroke_paths)});
+  add(GlyphParameters{
+      .code_point = code_point,
+      .left_bearing = left_bearing,
+      .right_bearing = right_bearing,
+      .stroke_paths = std::move(stroke_paths),
+  });
 }
 
 std::string Roboto::render(TextRenderParameters const &params) {

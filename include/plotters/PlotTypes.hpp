@@ -142,8 +142,13 @@ inline std::string renderTextAsPath(const std::string &text, real_t x_pos, real_
         "sans-serif\" font-size=\"{:.1f}\" text-anchor=\"{}\" fill=\"{}\">{}</text>\n",
         x_pos, y_pos, size, anchor_str, color, text);
   }
-  std::string path_d = Roboto::instance().render(
-      TextRenderParameters{.text = text, .start_x = x_pos, .start_y = y_pos, .font_size = size, .anchor = anchor_str});
+  std::string path_d = Roboto::instance().render(TextRenderParameters{
+      .text = text,
+      .start_x = x_pos,
+      .start_y = y_pos,
+      .font_size = size,
+      .anchor = anchor_str,
+  });
   return std::format("  <path d=\"{}\" fill=\"{}\" fill-rule=\"evenodd\" stroke=\"none\"/>\n", path_d, color);
 }
 

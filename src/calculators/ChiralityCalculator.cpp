@@ -194,7 +194,12 @@ ChiralityCalculator::calculate(const correlation::core::Cell &cell,
       local.num_atoms_f += 1.0;
       const std::string &symbol = atoms[i].element().symbol;
       addValueToHistogram(local.partials, symbol, chiralities[i],
-                          {.min_val = min_val, .max_val = max_val, .d_val = d_val}, bins);
+                          {
+                              .min_val = min_val,
+                              .max_val = max_val,
+                              .d_val = d_val,
+                          },
+                          bins);
     }
   });
 

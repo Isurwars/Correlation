@@ -263,10 +263,21 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     J_r.bins[i] = r_i;
   }
 
-  accumulateRawCounts(cell, neighbors, {.r_max = r_max, .r_bin_width = r_bin_width, .num_bins = num_bins}, H_r);
+  accumulateRawCounts(cell, neighbors,
+                      {
+                          .r_max = r_max,
+                          .r_bin_width = r_bin_width,
+                          .num_bins = num_bins,
+                      },
+                      H_r);
 
-  normalizeDistributions(cell, element_counts, {.volume = Vol, .bin_width = d_r, .num_bins = num_bins}, H_r, g_r, G_r,
-                         J_r);
+  normalizeDistributions(cell, element_counts,
+                         {
+                             .volume = Vol,
+                             .bin_width = d_r,
+                             .num_bins = num_bins,
+                         },
+                         H_r, g_r, G_r, J_r);
 
   auto &total_g = g_r.partials["Total"];
   total_g.assign(num_bins, 0.0);
@@ -297,7 +308,12 @@ RDFCalculator::calculate(const correlation::core::Cell &cell, const correlation:
     total_G[k] = correlation::math::four_pi * rho_0 * r_k * (total_g[k] - static_cast<real_t>(1.0));
   }
 
-  weightPartials(cell, ashcroft_weights, {.rho_0 = rho_0, .num_bins = num_bins}, g_r, G_r);
+  weightPartials(cell, ashcroft_weights,
+                 {
+                     .rho_0 = rho_0,
+                     .num_bins = num_bins,
+                 },
+                 g_r, G_r);
 
   std::map<std::string, correlation::analysis::Histogram> results;
   results["J_r"] = std::move(J_r);

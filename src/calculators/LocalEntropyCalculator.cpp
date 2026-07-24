@@ -155,7 +155,10 @@ void copyPartialsToHistogram(correlation::analysis::Histogram &hist,
 void LocalEntropyCalculator::calculateFrame(correlation::analysis::DistributionFunctions &dists,
                                             const correlation::analysis::AnalysisSettings &settings) const {
   auto hist = calculate(dists.cell(), dists.neighbors(),
-                        LocalEntropyParams{.cutoff = settings.lef_cutoff, .sigma = settings.lef_sigma});
+                        LocalEntropyParams{
+                            .cutoff = settings.lef_cutoff,
+                            .sigma = settings.lef_sigma,
+                        });
   dists.addHistogram("LEF", std::move(hist));
 }
 
@@ -220,7 +223,11 @@ LocalEntropyCalculator::calculate(const correlation::core::Cell &cell,
       local.num_atoms_f += 1.0;
       const std::string &symbol = atoms[i].element().symbol;
       addValueToHistogram(local.partials, symbol, entropies[i],
-                          {.min_val = min_val, .max_val = max_val, .d_val = d_val});
+                          {
+                              .min_val = min_val,
+                              .max_val = max_val,
+                              .d_val = d_val,
+                          });
     }
   });
 

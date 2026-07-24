@@ -81,12 +81,13 @@ TEST_F(SIMDUtilsTests, SincIntegralMatchesScalar) {
       expected_acc += integrand[idx] * std::sin(q_value * rbins[idx]);
     }
 
-    const double actual_acc =
-        correlation::math::sinc_integral(correlation::math::SincIntegralParams<double>{.q_magnitude = q_value,
-                                                                                       .integrand = integrand.data(),
-                                                                                       .radial_bins = rbins.data(),
-                                                                                       .sinqr_scratch = scratch.data(),
-                                                                                       .count = size});
+    const double actual_acc = correlation::math::sinc_integral(correlation::math::SincIntegralParams<double>{
+        .q_magnitude = q_value,
+        .integrand = integrand.data(),
+        .radial_bins = rbins.data(),
+        .sinqr_scratch = scratch.data(),
+        .count = size,
+    });
 
     EXPECT_NEAR(actual_acc, expected_acc, 1e-5) << "Failed for size: " << size;
   }
@@ -106,12 +107,13 @@ TEST_F(SIMDUtilsTests, SincIntegralFloatMatchesScalar) {
       expected_acc += integrand[idx] * std::sin(q_value * rbins[idx]);
     }
 
-    const float actual_acc =
-        correlation::math::sinc_integral(correlation::math::SincIntegralParams<float>{.q_magnitude = q_value,
-                                                                                      .integrand = integrand.data(),
-                                                                                      .radial_bins = rbins.data(),
-                                                                                      .sinqr_scratch = scratch.data(),
-                                                                                      .count = size});
+    const float actual_acc = correlation::math::sinc_integral(correlation::math::SincIntegralParams<float>{
+        .q_magnitude = q_value,
+        .integrand = integrand.data(),
+        .radial_bins = rbins.data(),
+        .sinqr_scratch = scratch.data(),
+        .count = size,
+    });
 
     EXPECT_NEAR(actual_acc, expected_acc, 1e-3F) << "Float sinc_integral failed for size: " << size;
   }
@@ -172,14 +174,27 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockMatchesScalar) {
     std::vector<real_t> vec_bz = generateRandomData(size);
 
     const correlation::math::PositionBlock block{
-        .x = vec_bx.data(), .y = vec_by.data(), .z = vec_bz.data(), .count = size};
+        .x = vec_bx.data(),
+        .y = vec_by.data(),
+        .z = vec_bz.data(),
+        .count = size,
+    };
 
     std::vector<real_t> actual_dsq(size, static_cast<real_t>(-1.0));
 
     std::vector<real_t> expected_dsq(size);
     for (std::size_t idx = 0; idx < size; ++idx) {
-      expected_dsq[idx] = correlation::math::dist_sq_scalar({.x = vec_ax, .y = vec_ay, .z = vec_az},
-                                                            {.x = vec_bx[idx], .y = vec_by[idx], .z = vec_bz[idx]});
+      expected_dsq[idx] = correlation::math::dist_sq_scalar(
+          {
+              .x = vec_ax,
+              .y = vec_ay,
+              .z = vec_az,
+          },
+          {
+              .x = vec_bx[idx],
+              .y = vec_by[idx],
+              .z = vec_bz[idx],
+          });
     }
 
     correlation::math::compute_dsq_block(vec_ax, vec_ay, vec_az, block, actual_dsq.data());
@@ -203,13 +218,26 @@ TEST_F(SIMDUtilsTests, ComputeDsqBlockFloatMatchesScalar) {
     std::vector<float> vec_bz = generateRandomDataFloat(size);
 
     const correlation::math::PositionBlockT<float> block{
-        .x = vec_bx.data(), .y = vec_by.data(), .z = vec_bz.data(), .count = size};
+        .x = vec_bx.data(),
+        .y = vec_by.data(),
+        .z = vec_bz.data(),
+        .count = size,
+    };
 
     std::vector<float> actual_dsq(size, -1.0F);
     std::vector<float> expected_dsq(size);
     for (std::size_t idx = 0; idx < size; ++idx) {
       expected_dsq[idx] = correlation::math::dist_sq_scalar<float>(
-          {.x = vec_ax, .y = vec_ay, .z = vec_az}, {.x = vec_bx[idx], .y = vec_by[idx], .z = vec_bz[idx]});
+          {
+              .x = vec_ax,
+              .y = vec_ay,
+              .z = vec_az,
+          },
+          {
+              .x = vec_bx[idx],
+              .y = vec_by[idx],
+              .z = vec_bz[idx],
+          });
     }
 
     correlation::math::compute_dsq_block(vec_ax, vec_ay, vec_az, block, actual_dsq.data());
@@ -242,18 +270,19 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsMatchesScalar) {
     std::vector<double> actual_j(size, 0.0);
     std::vector<double> actual_jinv(size, 0.0);
 
-    correlation::math::normalize_rdf_bins(
-        correlation::math::RDFNormalizationParams<double>{.hist_data = vec_h.data(),
-                                                          .radial_bins = rbins.data(),
-                                                          .g_norm = g_norm,
-                                                          .inv_Ni_dr = inv_Ni_dr,
-                                                          .inv_Nj_dr = inv_Nj_dr,
-                                                          .pi4_rho_j = pi4_rho_j,
-                                                          .g_out = actual_g.data(),
-                                                          .G_out = actual_g_cap.data(),
-                                                          .J_out = actual_j.data(),
-                                                          .Jinv_out = actual_jinv.data(),
-                                                          .count = size});
+    correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<double>{
+        .hist_data = vec_h.data(),
+        .radial_bins = rbins.data(),
+        .g_norm = g_norm,
+        .inv_Ni_dr = inv_Ni_dr,
+        .inv_Nj_dr = inv_Nj_dr,
+        .pi4_rho_j = pi4_rho_j,
+        .g_out = actual_g.data(),
+        .G_out = actual_g_cap.data(),
+        .J_out = actual_j.data(),
+        .Jinv_out = actual_jinv.data(),
+        .count = size,
+    });
 
     for (std::size_t idx = 1; idx < size; ++idx) {
       const double r_val = rbins[idx];
@@ -292,18 +321,19 @@ TEST_F(SIMDUtilsTests, NormalizeRDFBinsFloatMatchesScalar) {
     std::vector<float> actual_j(size, 0.0F);
     std::vector<float> actual_jinv(size, 0.0F);
 
-    correlation::math::normalize_rdf_bins(
-        correlation::math::RDFNormalizationParams<float>{.hist_data = vec_h.data(),
-                                                         .radial_bins = rbins.data(),
-                                                         .g_norm = g_norm,
-                                                         .inv_Ni_dr = inv_Ni_dr,
-                                                         .inv_Nj_dr = inv_Nj_dr,
-                                                         .pi4_rho_j = pi4_rho_j,
-                                                         .g_out = actual_g.data(),
-                                                         .G_out = actual_g_cap.data(),
-                                                         .J_out = actual_j.data(),
-                                                         .Jinv_out = actual_jinv.data(),
-                                                         .count = size});
+    correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<float>{
+        .hist_data = vec_h.data(),
+        .radial_bins = rbins.data(),
+        .g_norm = g_norm,
+        .inv_Ni_dr = inv_Ni_dr,
+        .inv_Nj_dr = inv_Nj_dr,
+        .pi4_rho_j = pi4_rho_j,
+        .g_out = actual_g.data(),
+        .G_out = actual_g_cap.data(),
+        .J_out = actual_j.data(),
+        .Jinv_out = actual_jinv.data(),
+        .count = size,
+    });
 
     for (std::size_t idx = 1; idx < size; ++idx) {
       const float r_val = rbins[idx];
@@ -468,17 +498,19 @@ TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroDouble) {
   std::vector<double> J_out(size, 999.0);
   std::vector<double> Jinv_out(size, 999.0);
 
-  correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<double>{.hist_data = hist.data(),
-                                                                                          .radial_bins = rbins.data(),
-                                                                                          .g_norm = 1.0,
-                                                                                          .inv_Ni_dr = 0.5,
-                                                                                          .inv_Nj_dr = 0.5,
-                                                                                          .pi4_rho_j = 12.56,
-                                                                                          .g_out = g_out.data(),
-                                                                                          .G_out = G_out.data(),
-                                                                                          .J_out = J_out.data(),
-                                                                                          .Jinv_out = Jinv_out.data(),
-                                                                                          .count = size});
+  correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<double>{
+      .hist_data = hist.data(),
+      .radial_bins = rbins.data(),
+      .g_norm = 1.0,
+      .inv_Ni_dr = 0.5,
+      .inv_Nj_dr = 0.5,
+      .pi4_rho_j = 12.56,
+      .g_out = g_out.data(),
+      .G_out = G_out.data(),
+      .J_out = J_out.data(),
+      .Jinv_out = Jinv_out.data(),
+      .count = size,
+  });
 
   EXPECT_DOUBLE_EQ(g_out[0], 0.0);
   EXPECT_DOUBLE_EQ(G_out[0], 0.0);
@@ -500,17 +532,19 @@ TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroFloat) {
   std::vector<float> J_out(size, 999.0F);
   std::vector<float> Jinv_out(size, 999.0F);
 
-  correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<float>{.hist_data = hist.data(),
-                                                                                         .radial_bins = rbins.data(),
-                                                                                         .g_norm = 1.0F,
-                                                                                         .inv_Ni_dr = 0.5F,
-                                                                                         .inv_Nj_dr = 0.5F,
-                                                                                         .pi4_rho_j = 12.56F,
-                                                                                         .g_out = g_out.data(),
-                                                                                         .G_out = G_out.data(),
-                                                                                         .J_out = J_out.data(),
-                                                                                         .Jinv_out = Jinv_out.data(),
-                                                                                         .count = size});
+  correlation::math::normalize_rdf_bins(correlation::math::RDFNormalizationParams<float>{
+      .hist_data = hist.data(),
+      .radial_bins = rbins.data(),
+      .g_norm = 1.0F,
+      .inv_Ni_dr = 0.5F,
+      .inv_Nj_dr = 0.5F,
+      .pi4_rho_j = 12.56F,
+      .g_out = g_out.data(),
+      .G_out = G_out.data(),
+      .J_out = J_out.data(),
+      .Jinv_out = Jinv_out.data(),
+      .count = size,
+  });
 
   EXPECT_FLOAT_EQ(g_out[0], 0.0F);
   EXPECT_FLOAT_EQ(G_out[0], 0.0F);
@@ -537,14 +571,17 @@ TEST_F(SIMDUtilsTests, MillerPhaseSumParamsStructMatchesScalar) {
   const std::vector<double> s_3 = {0.866, 0.866, 0.866};
 
   correlation::math::MillerPhaseSumResult<double> res;
-  correlation::math::miller_phase_sum(correlation::math::MillerPhaseSumParams<double>{.cos1 = c_1.data(),
-                                                                                      .sin1 = s_1.data(),
-                                                                                      .cos2 = c_2.data(),
-                                                                                      .sin2 = s_2.data(),
-                                                                                      .cos3 = c_3.data(),
-                                                                                      .sin3 = s_3.data(),
-                                                                                      .count = c_1.size()},
-                                      res);
+  correlation::math::miller_phase_sum(
+      correlation::math::MillerPhaseSumParams<double>{
+          .cos1 = c_1.data(),
+          .sin1 = s_1.data(),
+          .cos2 = c_2.data(),
+          .sin2 = s_2.data(),
+          .cos3 = c_3.data(),
+          .sin3 = s_3.data(),
+          .count = c_1.size(),
+      },
+      res);
 
   double expected_cos = 0.0;
   double expected_sin = 0.0;
@@ -567,13 +604,15 @@ TEST_F(SIMDUtilsTests, MillerPhaseSumResultStructMatchesScalar) {
   const std::vector<double> c_3 = {0.5, 0.5, 0.5};
   const std::vector<double> s_3 = {0.866, 0.866, 0.866};
 
-  const auto params = correlation::math::MillerPhaseSumParams<double>{.cos1 = c_1.data(),
-                                                                      .sin1 = s_1.data(),
-                                                                      .cos2 = c_2.data(),
-                                                                      .sin2 = s_2.data(),
-                                                                      .cos3 = c_3.data(),
-                                                                      .sin3 = s_3.data(),
-                                                                      .count = c_1.size()};
+  const auto params = correlation::math::MillerPhaseSumParams<double>{
+      .cos1 = c_1.data(),
+      .sin1 = s_1.data(),
+      .cos2 = c_2.data(),
+      .sin2 = s_2.data(),
+      .cos3 = c_3.data(),
+      .sin3 = s_3.data(),
+      .count = c_1.size(),
+  };
 
   const correlation::math::MillerPhaseSumResult<double> res = correlation::math::miller_phase_sum(params);
 
@@ -591,16 +630,34 @@ TEST_F(SIMDUtilsTests, MillerPhaseSumResultStructMatchesScalar) {
 }
 
 TEST_F(SIMDUtilsTests, FillPositionBlockParamsStructWorks) {
-  const std::vector<DummyPos> dummy_atoms = {{.x_val = 1.0, .y_val = 2.0, .z_val = 3.0},
-                                             {.x_val = 4.0, .y_val = 5.0, .z_val = 6.0},
-                                             {.x_val = 7.0, .y_val = 8.0, .z_val = 9.0}};
+  const std::vector<DummyPos> dummy_atoms = {{
+                                                 .x_val = 1.0,
+                                                 .y_val = 2.0,
+                                                 .z_val = 3.0,
+                                             },
+                                             {
+                                                 .x_val = 4.0,
+                                                 .y_val = 5.0,
+                                                 .z_val = 6.0,
+                                             },
+                                             {
+                                                 .x_val = 7.0,
+                                                 .y_val = 8.0,
+                                                 .z_val = 9.0,
+                                             }};
   std::vector<double> x_s;
   std::vector<double> y_s;
   std::vector<double> z_s;
 
   const std::size_t count =
       correlation::math::fill_position_block(correlation::math::FillPositionBlockParams<std::vector<DummyPos>, double>{
-          .atoms = &dummy_atoms, .begin_idx = 0, .end_idx = dummy_atoms.size(), .x_s = &x_s, .y_s = &y_s, .z_s = &z_s});
+          .atoms = &dummy_atoms,
+          .begin_idx = 0,
+          .end_idx = dummy_atoms.size(),
+          .x_s = &x_s,
+          .y_s = &y_s,
+          .z_s = &z_s,
+      });
 
   EXPECT_EQ(count, 3);
   EXPECT_EQ(x_s.size(), 3);
@@ -618,14 +675,17 @@ TEST_F(SIMDUtilsTests, ComplexExpSumParamsStructMatchesScalar) {
   const float q_z = 1.5F;
 
   correlation::math::ComplexExpSumResult<float> result;
-  correlation::math::complex_exp_sum(correlation::math::ComplexExpSumParams<float>{.q_x = q_x,
-                                                                                   .q_y = q_y,
-                                                                                   .q_z = q_z,
-                                                                                   .x_s = x_s.data(),
-                                                                                   .y_s = y_s.data(),
-                                                                                   .z_s = z_s.data(),
-                                                                                   .count = x_s.size()},
-                                     result);
+  correlation::math::complex_exp_sum(
+      correlation::math::ComplexExpSumParams<float>{
+          .q_x = q_x,
+          .q_y = q_y,
+          .q_z = q_z,
+          .x_s = x_s.data(),
+          .y_s = y_s.data(),
+          .z_s = z_s.data(),
+          .count = x_s.size(),
+      },
+      result);
 
   float expected_cos = 0.0F;
   float expected_sin = 0.0F;

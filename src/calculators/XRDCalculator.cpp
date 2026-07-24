@@ -90,7 +90,13 @@ correlation::analysis::Histogram XRDCalculator::calculate(const correlation::ana
     size_t dash_pos = key.find('-');
     std::string sym1 = key.substr(0, dash_pos);
     std::string sym2 = key.substr(dash_pos + 1);
-    xrd_partials.push_back({.key = &key, .integrand = &integ, .weight = weight, .sym1 = sym1, .sym2 = sym2});
+    xrd_partials.push_back({
+        .key = &key,
+        .integrand = &integ,
+        .weight = weight,
+        .sym1 = sym1,
+        .sym2 = sym2,
+    });
   }
   const size_t num_xrd_partials = xrd_partials.size();
 

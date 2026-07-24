@@ -141,7 +141,7 @@ TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
 
   PlotConfig config;
   config.use_native_text = true;
-  
+
   // xScale maps [1.0, 3.0] to [100.0, 1160.0] (x=2.0 -> 630.0)
   // yScale maps [0.0, 10.5] to [810.0, 50.0] (y=1.0 -> 737.6)
   HoverInfo hover;
@@ -153,7 +153,7 @@ TEST(SvgPlotterTests, RendersWithHover2DNearestSnapping) {
 
   std::string svg = renderHistogramAsSvg(hist, config, hover);
   EXPECT_FALSE(svg.empty());
-  
+
   // Verify that "Si-O" is identified as the nearest curve
   EXPECT_NE(svg.find("Si-O: 1.0000 (nearest)"), std::string::npos);
 }
@@ -171,7 +171,7 @@ TEST(SvgPlotterTests, RendersShadedCurveCorrectly) {
   std::string svg = renderHistogramAsSvg(hist, config);
   std::cout << "--- GENERATED SVG ---\n" << svg << "\n---------------------\n";
   EXPECT_FALSE(svg.empty());
-  
+
   // Verify that linearGradient and polygon elements are in the SVG output
   EXPECT_NE(svg.find("<linearGradient id=\"area-grad-0\""), std::string::npos);
   EXPECT_NE(svg.find("<polygon fill=\"url(#area-grad-0)\""), std::string::npos);

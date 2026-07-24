@@ -111,7 +111,7 @@ correlation::analysis::Histogram HBondCalculator::calculate(const correlation::c
   // Geometric criteria
   const HBondCriteria criteria{
       .R_cut_sq = static_cast<real_t>(3.5 * 3.5), // Donor-Acceptor distance squared
-      .Alpha_cut = static_cast<real_t>(30.0)      // H-D...A angle
+      .Alpha_cut = static_cast<real_t>(30.0)      // H-D...A angle,
   };
 
   std::vector<int> hbond_counts(num_atoms, 0);

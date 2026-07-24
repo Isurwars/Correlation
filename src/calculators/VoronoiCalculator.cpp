@@ -382,11 +382,21 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
 
   // 4. Populate histograms
   populateHistogram(results["Voronoi Volume"],
-                    {.bin_width = vol_d, .num_bins = vol_bins, .range_min = 0.0, .range_max = max_vol_range},
+                    {
+                        .bin_width = vol_d,
+                        .num_bins = vol_bins,
+                        .range_min = 0.0,
+                        .range_max = max_vol_range,
+                    },
                     data.volumes, cell.atoms());
   populateHistogram(results["Voronoi Sphericity"],
-                    {.bin_width = sph_d, .num_bins = sph_bins, .range_min = 0.0, .range_max = 1.0}, data.sphericities,
-                    cell.atoms());
+                    {
+                        .bin_width = sph_d,
+                        .num_bins = sph_bins,
+                        .range_min = 0.0,
+                        .range_max = 1.0,
+                    },
+                    data.sphericities, cell.atoms());
 
   // Coordination numbers — convert to real_t for the shared helper
   std::vector<real_t> cn_as_real;
@@ -394,10 +404,14 @@ VoronoiCalculator::calculate(const correlation::core::Cell &cell,
   for (int cn_i : data.coordination_numbers) {
     cn_as_real.push_back(static_cast<real_t>(cn_i));
   }
-  populateHistogram(
-      results["Voronoi Coordination Number"],
-      {.bin_width = 1.0, .num_bins = cn_bins, .range_min = 0.0, .range_max = static_cast<real_t>(cn_bins)}, cn_as_real,
-      cell.atoms());
+  populateHistogram(results["Voronoi Coordination Number"],
+                    {
+                        .bin_width = 1.0,
+                        .num_bins = cn_bins,
+                        .range_min = 0.0,
+                        .range_max = static_cast<real_t>(cn_bins),
+                    },
+                    cn_as_real, cell.atoms());
 
   // Signatures — unique lookup logic, kept inline
   auto &sig_hist = results["Voronoi Signatures"];

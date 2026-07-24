@@ -82,4 +82,3 @@ TEST(CalculatorFactoryTests, EmptyNameLookupReturnsNullptr) {
 }
 
 } // namespace correlation::testing
-

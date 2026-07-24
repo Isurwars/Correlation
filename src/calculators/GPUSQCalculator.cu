@@ -52,7 +52,8 @@ template <typename T> struct DeviceResults {
 
 template <typename T> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos(T val, T *sin_val, T *cos_val);
 
-template <> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
+template <>
+CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<float>(float val, float *sin_val, float *cos_val) {
 #if defined(__CUDA_ARCH__)
   __sincosf(val, sin_val, cos_val);
 #elif defined(__HIP_DEVICE_COMPILE__)
@@ -65,7 +66,8 @@ template <> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<float>(fl
 #endif
 }
 
-template <> CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
+template <>
+CORRELATION_DEVICE CORRELATION_HOST inline void gpu_sincos<double>(double val, double *sin_val, double *cos_val) {
 #if defined(__CUDA_ARCH__)
   __sincos(val, sin_val, cos_val);
 #elif defined(__HIP_DEVICE_COMPILE__)
@@ -154,7 +156,7 @@ std::vector<real_t> averageBinnedSQ(const std::vector<T> &rho_cos, size_t num_q_
 // -------------------------------------------------------------------------
 template <typename T>
 CORRELATION_GLOBAL void sq_kernel(DeviceAtoms<T> atoms, int num_atoms, DeviceQVectors<T> q_vecs, int num_q,
-                          DeviceResults<T> results) {
+                                  DeviceResults<T> results) {
   int q_i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
   if (q_i >= num_q) {
     return;

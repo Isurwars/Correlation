@@ -82,7 +82,10 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
   auto &partial = f_dihedral.partials["Si-Si-Si-Si"];
 
   // DAD expects multiple angles due to Center-Vertex and Vertex-Vertex chains
-  std::vector<real_t> const expected_angles = {static_cast<real_t>(0.0), static_cast<real_t>(31.7), static_cast<real_t>(36.0), static_cast<real_t>(63.4), static_cast<real_t>(72.0), static_cast<real_t>(100.0), static_cast<real_t>(108.0), static_cast<real_t>(138.19), static_cast<real_t>(144.0), static_cast<real_t>(180.0)};
+  std::vector<real_t> const expected_angles = {
+      static_cast<real_t>(0.0),   static_cast<real_t>(31.7),  static_cast<real_t>(36.0),  static_cast<real_t>(63.4),
+      static_cast<real_t>(72.0),  static_cast<real_t>(100.0), static_cast<real_t>(108.0), static_cast<real_t>(138.19),
+      static_cast<real_t>(144.0), static_cast<real_t>(180.0)};
 
   for (real_t const target : expected_angles) {
     bool found = false;

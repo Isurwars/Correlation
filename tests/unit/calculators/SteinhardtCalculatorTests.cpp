@@ -163,7 +163,11 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
 
   // L = 0, M = 0: Y_0^0 = 0.5 * sqrt(1/pi) ~ 0.28209479
   {
-    auto val = SteinhardtCalculator::sphericalHarmonic(0, 0, {.theta = 0.5, .phi = 0.2});
+    auto val = SteinhardtCalculator::sphericalHarmonic(0, 0,
+                                                       {
+                                                           .theta = 0.5,
+                                                           .phi = 0.2,
+                                                       });
     EXPECT_NEAR(val.real(), 0.28209479177, correlation::is_single_precision ? 1e-5 : 1e-8);
     EXPECT_NEAR(val.imag(), 0.0, correlation::is_single_precision ? 1e-5 : 1e-8);
   }
@@ -171,7 +175,11 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
   // L = 1, M = 0: Y_1^0 = 0.5 * sqrt(3/pi) * cos(theta) ~ 0.4886025 * cos(theta)
   {
     real_t const theta = 1.0;
-    auto val = SteinhardtCalculator::sphericalHarmonic(1, 0, {.theta = static_cast<real_t>(theta), .phi = 0.5F});
+    auto val = SteinhardtCalculator::sphericalHarmonic(1, 0,
+                                                       {
+                                                           .theta = static_cast<real_t>(theta),
+                                                           .phi = 0.5F,
+                                                       });
     EXPECT_NEAR(val.real(), 0.4886025119 * std::cos(theta), 1e-5);
     EXPECT_NEAR(val.imag(), 0.0, 1e-5);
   }
@@ -181,8 +189,11 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
   {
     real_t const theta = 0.8;
     real_t const phi = 0.6;
-    auto val = SteinhardtCalculator::sphericalHarmonic(
-        1, 1, {.theta = static_cast<real_t>(theta), .phi = static_cast<real_t>(phi)});
+    auto val = SteinhardtCalculator::sphericalHarmonic(1, 1,
+                                                       {
+                                                           .theta = static_cast<real_t>(theta),
+                                                           .phi = static_cast<real_t>(phi),
+                                                       });
     std::complex<real_t> expected =
         static_cast<real_t>(0.345494149) * std::sin(theta) * std::polar(static_cast<real_t>(1.0), phi);
     EXPECT_NEAR(val.real(), expected.real(), 1e-5);
@@ -193,8 +204,11 @@ TEST_F(SteinhardtCalculatorTests, SphericalHarmonics) {
   {
     real_t const theta = 0.8;
     real_t const phi = 0.6;
-    auto val = SteinhardtCalculator::sphericalHarmonic(
-        1, -1, {.theta = static_cast<real_t>(theta), .phi = static_cast<real_t>(phi)});
+    auto val = SteinhardtCalculator::sphericalHarmonic(1, -1,
+                                                       {
+                                                           .theta = static_cast<real_t>(theta),
+                                                           .phi = static_cast<real_t>(phi),
+                                                       });
     std::complex<real_t> expected =
         -std::conj(static_cast<real_t>(0.345494149) * std::sin(theta) * std::polar(static_cast<real_t>(1.0), phi));
     EXPECT_NEAR(val.real(), expected.real(), 1e-5);
@@ -206,35 +220,71 @@ TEST_F(SteinhardtCalculatorTests, Wigner3j) {
   using correlation::calculators::SteinhardtCalculator;
 
   // Invalid selection where magnetic projections do not sum to 0
-  EXPECT_DOUBLE_EQ(
-      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 1, .m_one = 0, .m_two = 0, .m_three = 1}),
-      0.0);
+  EXPECT_DOUBLE_EQ(SteinhardtCalculator::wigner3j({
+                       .j_one = 1,
+                       .j_two = 1,
+                       .j_three = 1,
+                       .m_one = 0,
+                       .m_two = 0,
+                       .m_three = 1,
+                   }),
+                   0.0);
 
   // Invalid selection violating triangle inequality
-  EXPECT_DOUBLE_EQ(
-      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 3, .m_one = 0, .m_two = 0, .m_three = 0}),
-      0.0);
+  EXPECT_DOUBLE_EQ(SteinhardtCalculator::wigner3j({
+                       .j_one = 1,
+                       .j_two = 1,
+                       .j_three = 3,
+                       .m_one = 0,
+                       .m_two = 0,
+                       .m_three = 0,
+                   }),
+                   0.0);
 
   // Invalid selection with magnetic projection larger than angular momentum
-  EXPECT_DOUBLE_EQ(
-      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 1, .m_one = 2, .m_two = 0, .m_three = -2}),
-      0.0);
+  EXPECT_DOUBLE_EQ(SteinhardtCalculator::wigner3j({
+                       .j_one = 1,
+                       .j_two = 1,
+                       .j_three = 1,
+                       .m_one = 2,
+                       .m_two = 0,
+                       .m_three = -2,
+                   }),
+                   0.0);
 
   // Known analytical values
   // 3j(1, 1, 0, 0, 0, 0) = -1/sqrt(3) ~ -0.57735027
-  EXPECT_NEAR(
-      SteinhardtCalculator::wigner3j({.j_one = 1, .j_two = 1, .j_three = 0, .m_one = 0, .m_two = 0, .m_three = 0}),
-      -1.0 / std::sqrt(3.0), correlation::is_single_precision ? 1e-5 : 1e-8);
+  EXPECT_NEAR(SteinhardtCalculator::wigner3j({
+                  .j_one = 1,
+                  .j_two = 1,
+                  .j_three = 0,
+                  .m_one = 0,
+                  .m_two = 0,
+                  .m_three = 0,
+              }),
+              -1.0 / std::sqrt(3.0), correlation::is_single_precision ? 1e-5 : 1e-8);
 
   // 3j(2, 2, 2, 0, 0, 0) = -sqrt(2/35) ~ -0.23904572
-  EXPECT_NEAR(
-      SteinhardtCalculator::wigner3j({.j_one = 2, .j_two = 2, .j_three = 2, .m_one = 0, .m_two = 0, .m_three = 0}),
-      -std::sqrt(2.0 / 35.0), correlation::is_single_precision ? 1e-5 : 1e-8);
+  EXPECT_NEAR(SteinhardtCalculator::wigner3j({
+                  .j_one = 2,
+                  .j_two = 2,
+                  .j_three = 2,
+                  .m_one = 0,
+                  .m_two = 0,
+                  .m_three = 0,
+              }),
+              -std::sqrt(2.0 / 35.0), correlation::is_single_precision ? 1e-5 : 1e-8);
 
   // 3j(2, 2, 1, 1, -1, 0) = -1/sqrt(30) ~ -0.18257419
-  EXPECT_NEAR(
-      SteinhardtCalculator::wigner3j({.j_one = 2, .j_two = 2, .j_three = 1, .m_one = 1, .m_two = -1, .m_three = 0}),
-      -1.0 / std::sqrt(30.0), 1e-8);
+  EXPECT_NEAR(SteinhardtCalculator::wigner3j({
+                  .j_one = 2,
+                  .j_two = 2,
+                  .j_three = 1,
+                  .m_one = 1,
+                  .m_two = -1,
+                  .m_three = 0,
+              }),
+              -1.0 / std::sqrt(30.0), 1e-8);
 }
 
 } // namespace

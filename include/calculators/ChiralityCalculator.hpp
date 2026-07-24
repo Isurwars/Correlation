@@ -43,8 +43,7 @@ public:
    * @param neighbors Structural analyzer containing the neighbor graph.
    * @return The normalized scalar triple product chirality value.
    */
-  static real_t computeSingleAtomChirality(size_t atom_idx,
-                                           const correlation::core::Cell &cell,
+  static real_t computeSingleAtomChirality(size_t atom_idx, const correlation::core::Cell &cell,
                                            const correlation::analysis::StructureAnalyzer *neighbors);
 
   /**
@@ -54,9 +53,8 @@ public:
    * @param neighbors Structural analyzer containing the neighbor graph.
    * @return A histogram of chirality values in the range [-1.0, 1.0].
    */
-  static correlation::analysis::Histogram
-  calculate(const correlation::core::Cell &cell,
-            const correlation::analysis::StructureAnalyzer *neighbors);
+  static correlation::analysis::Histogram calculate(const correlation::core::Cell &cell,
+                                                    const correlation::analysis::StructureAnalyzer *neighbors);
 };
 
 } // namespace correlation::calculators
