@@ -126,7 +126,7 @@ std::string runCliCapture(const std::string &args) {
   if (CreatePipe(&hReadPipe, &hWritePipe, &saAttr, 0) == 0) {
     return "";
   }
-  SetHandleInformation(hReadPipe, HANDLE_INHERIT, 0);
+  SetHandleInformation(hReadPipe, HANDLE_FLAG_INHERIT, 0);
 
   STARTUPINFOA si{};
   si.cb = sizeof(STARTUPINFOA);

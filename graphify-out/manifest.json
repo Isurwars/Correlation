@@ -890,8 +890,8 @@
     "semantic_hash": "c2442c5396f4cc71feff86f8cc3e7a5f"
   },
   "tests/functional/cli/CliEndToEndTests.cpp": {
-    "mtime": 1784846329.7509553,
-    "ast_hash": "678719046197331cc254eaf9b9901def",
+    "mtime": 1784852507.3070865,
+    "ast_hash": "19a4a2cbf73fe247c512449555848311",
     "semantic_hash": ""
   },
   "tests/functional/core/AtomTests.cpp": {
