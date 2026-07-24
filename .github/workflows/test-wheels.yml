@@ -1,0 +1,54 @@
+name: Test Wheels
+
+on:
+  pull_request:
+    paths:
+      - 'python/**'
+      - 'pyproject.toml'
+      - 'CMakeLists.txt'
+      - 'cmake/**'
+      - 'include/**'
+      - 'src/**'
+      - '.github/workflows/test-wheels.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: test-wheels-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-wheels:
+    name: Build & Test Wheel (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.21.3
+
+      - name: Build and repair wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_CACHE_DIR: "~/.cache/cibuildwheel"
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_ARCHS_WINDOWS: "AMD64"
+          CIBW_BUILD: "cp39-* cp311-*"
+          CIBW_TEST_COMMAND: "python -c \"import correlation; print('Correlation version:', getattr(correlation, '__version__', 'ok'))\""
+
+      - name: Upload wheel artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
