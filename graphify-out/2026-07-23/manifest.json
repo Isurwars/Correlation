@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PathFont.hpp": {
-    "mtime": 1784849056.241599,
-    "ast_hash": "3d5f7416741a9095f1edc3bb0fa36d26",
+    "mtime": 1784852580.5029087,
+    "ast_hash": "7a8aa87e1babe1f6d280971e72d6ba33",
     "semantic_hash": ""
   },
   "include/plotters/PdfPlotter.hpp": {
@@ -725,8 +725,8 @@
     "semantic_hash": "8684e22fa3d3318d4a9b5cb9a81f7de8"
   },
   "src/plotters/PathFont.cpp": {
-    "mtime": 1784849054.8129642,
-    "ast_hash": "c7879cb04096937f3fa0192c81b84629",
+    "mtime": 1784852586.5908108,
+    "ast_hash": "878fcfa756a974e6522a70d757673a67",
     "semantic_hash": ""
   },
   "src/plotters/RobotoData_ASCII_1.cpp": {

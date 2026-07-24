@@ -73,7 +73,6 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
   window_.on_validate_inputs([this]() { static_cast<void>(input_validator_->validateInputs()); });
-  window_.on_copy_cli_command([this]() { input_validator_->handleCopyCliCommand(); });
 
   // Handle calculator toggle: update backend options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {

@@ -471,39 +471,4 @@ void InputValidator::updateCliCommand() {
   window_->set_cli_command(slint::SharedString(cmd));
 }
 
-void InputValidator::handleCopyCliCommand() {
-  std::string cmd = window_->get_cli_command().data();
-
-  // Platform-specific clipboard copy helper
-#if defined(__linux__)
-  // NOLINTNEXTLINE(cert-env33-c)
-  FILE *pipe = popen("xclip -selection clipboard", "w");
-  if (pipe != nullptr) {
-    (void)fwrite(cmd.c_str(), 1, cmd.size(), pipe);
-    pclose(pipe);
-  }
-#elif defined(_WIN32)
-  if (OpenClipboard(nullptr)) {
-    EmptyClipboard();
-    HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, cmd.size() + 1);
-    if (hGlob) {
-      void *pMem = GlobalLock(hGlob);
-      if (pMem) {
-        memcpy(pMem, cmd.c_str(), cmd.size() + 1);
-        GlobalUnlock(hGlob);
-        SetClipboardData(CF_TEXT, hGlob);
-      }
-    }
-    CloseClipboard();
-  }
-#elif defined(__APPLE__)
-  // NOLINTNEXTLINE(cert-env33-c)
-  FILE *pipe = popen("pbcopy", "w");
-  if (pipe != nullptr) {
-    (void)fwrite(cmd.c_str(), 1, cmd.size(), pipe);
-    pclose(pipe);
-  }
-#endif
-}
-
 } // namespace correlation::app
