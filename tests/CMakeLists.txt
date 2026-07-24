@@ -90,6 +90,7 @@ target_link_libraries(correlation_unit_tests PRIVATE
     calculators_obj
     cli_parser_obj
     GTest::gtest
+    GTest::gmock
     GTest::gtest_main
 )
 add_dependencies(correlation_unit_tests readers_obj writers_obj calculators_obj)
@@ -115,6 +116,7 @@ target_link_libraries(correlation_functional_tests PRIVATE
     writers_obj
     calculators_obj
     GTest::gtest
+    GTest::gmock
     GTest::gtest_main
 )
 add_dependencies(correlation_functional_tests readers_obj writers_obj calculators_obj)
@@ -128,6 +130,7 @@ add_executable(correlation_cli_e2e_tests
 
 target_link_libraries(correlation_cli_e2e_tests PRIVATE
     GTest::gtest
+    GTest::gmock
     GTest::gtest_main
 )
 
@@ -163,6 +166,7 @@ if(BUILD_GUI)
         writers_obj
         calculators_obj
         GTest::gtest
+        GTest::gmock
         GTest::gtest_main
         Slint::Slint
         nfd
