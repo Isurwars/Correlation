@@ -29,6 +29,7 @@
 - **Interatomic Potentials:** Maintain uniform interfaces for ML potentials (MACE, ORB-v3). Use abstract contiguous matrix wrappers for coordinate processing.
 - **See skill:** [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for the comprehensive C++ Core Guidelines reference.
 - **See rule:** [code-style-guide](file:///home/isurwars/Projects/Correlation/.agents/rules/code-style-guide.md) for clang-tidy compliance, Doxygen standards, and static analysis gates.
+- **See rule:** [cmake-architecture-rule](file:///home/isurwars/Projects/Correlation/.agents/rules/cmake-architecture-rule.md) for target-centric CMake design, compile commands export, and build safety.
 
 ## 5. Communication Style
 - Zero conversational fluff. Drop introductory descriptions or post-generation explanations.
@@ -39,6 +40,8 @@
 
 ## 6. Delegation & Skill Invocation
 - **C++ Refactoring / Code Generation:** Activate [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for RAII, modern C++20/23 type safety, and memory-locality guidelines.
+- **Performance & Benchmarking:** Activate [cpp-performance-benchmark](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-performance-benchmark/SKILL.md) for Google Benchmark, cache alignment (`alignas(64)`), and SIMD loop friendliness.
+- **Python Bindings:** Activate [pybind11-interop-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/pybind11-interop-standards/SKILL.md) for zero-copy NumPy buffers (`py::array_t`) and GIL releases (`py::gil_scoped_release`).
 - **Verification & Build:** Run project validation using CMake/CTest targets before declaring features complete. Invoke [test-and-tea-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/test-and-tea-loop/SKILL.md) for automated build-diagnose-fix cycles.
 - **Runtime Safety:** Use [sanitizer-validator](file:///home/isurwars/Projects/Correlation/.agents/skills/sanitizer-validator/SKILL.md) to instrument builds with ASan/TSan/UBSan when investigating memory or concurrency bugs.
 - **Graph Sync:** After modifying source files, invoke [graphify-maintenance](file:///home/isurwars/Projects/Correlation/.agents/skills/graphify-maintenance/SKILL.md) to regenerate dependency graphs.
