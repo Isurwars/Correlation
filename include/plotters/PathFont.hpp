@@ -42,6 +42,17 @@ struct TextRenderParameters {
 };
 
 /**
+ * @struct GlyphParameters
+ * @brief Parameters for registering a vector character glyph.
+ */
+struct GlyphParameters {
+  uint32_t code_point{0};
+  real_t left_bearing{static_cast<real_t>(0.0)};
+  real_t right_bearing{static_cast<real_t>(0.0)};
+  std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths;
+};
+
+/**
  * @brief High-fidelity Roboto vector font implementation.
  */
 class Roboto {
@@ -57,26 +68,12 @@ public:
    */
   std::string render(TextRenderParameters const &params);
 
-  /**
-   * @brief Renders a string of text as SVG path data.
-   *
-   * @param text The UTF-8 string to render.
-   * @param start_x The starting x-coordinate.
-   * @param start_y The starting y-coordinate (baseline).
-   * @param font_size The font size (height in pixels).
-   * @param anchor Text anchor: "start", "middle", or "end".
-   * @return A string containing SVG path instructions (M/L/Z commands).
-   */
-  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-  std::string render(const std::string &text, real_t start_x, real_t start_y, real_t font_size,
-                     const std::string &anchor = "start");
-
 private:
   std::map<uint32_t, Glyph> glyphs_; ///< Local storage for character glyph data.
 
   Roboto();
 
-  // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+  void add(GlyphParameters const &params);
   void add(uint32_t code_point, real_t left_bearing, real_t right_bearing,
            std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths);
 

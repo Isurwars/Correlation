@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PathFont.hpp": {
-    "mtime": 1784848713.1827865,
-    "ast_hash": "39aac4dcaeec877fbc7037cfd64fbeb9",
+    "mtime": 1784849056.241599,
+    "ast_hash": "3d5f7416741a9095f1edc3bb0fa36d26",
     "semantic_hash": ""
   },
   "include/plotters/PdfPlotter.hpp": {
@@ -725,8 +725,8 @@
     "semantic_hash": "8684e22fa3d3318d4a9b5cb9a81f7de8"
   },
   "src/plotters/PathFont.cpp": {
-    "mtime": 1784848978.194389,
-    "ast_hash": "ad3258ecb0f10a6ad0a8c523afa98a47",
+    "mtime": 1784849054.8129642,
+    "ast_hash": "c7879cb04096937f3fa0192c81b84629",
     "semantic_hash": ""
   },
   "src/plotters/RobotoData_ASCII_1.cpp": {
@@ -890,8 +890,8 @@
     "semantic_hash": "c2442c5396f4cc71feff86f8cc3e7a5f"
   },
   "tests/functional/cli/CliEndToEndTests.cpp": {
-    "mtime": 1784846329.7509553,
-    "ast_hash": "678719046197331cc254eaf9b9901def",
+    "mtime": 1784852507.3070865,
+    "ast_hash": "19a4a2cbf73fe247c512449555848311",
     "semantic_hash": ""
   },
   "tests/functional/core/AtomTests.cpp": {
@@ -1720,18 +1720,18 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1784789148.0930386,
-    "ast_hash": "54a67a6da5624810f7d92ecb96dcfac6",
+    "mtime": 1784849035.1820998,
+    "ast_hash": "3ae613e7254768d20bbe1d7203d8c69c",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
-    "mtime": 1784789162.165829,
-    "ast_hash": "5b66074cc615f296d292fde606b2b8be",
+    "mtime": 1784849043.7441533,
+    "ast_hash": "0e69df7c166155346d59f2e3d8afd643",
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1784785282.0775654,
-    "ast_hash": "f45f0aa85df36fe1d4c40b243641d2ac",
+    "mtime": 1784849039.4152272,
+    "ast_hash": "a0f8010a2b4f7a3d0bf21230c4b1aa87",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
