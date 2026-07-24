@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "include/core/Atom.hpp": {
-    "mtime": 1784868335.3964086,
-    "ast_hash": "59907beb605eb2d8122cc5028c3c1b22",
+    "mtime": 1784925671.9414113,
+    "ast_hash": "3614ddec293bbe93342a88008256584c",
     "semantic_hash": ""
   },
   "include/core/Cell.hpp": {
@@ -495,9 +495,9 @@
     "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.cpp": {
-    "mtime": 1784868326.1042535,
-    "ast_hash": "fbe3c502e422e882f3c3fca535199db4",
-    "semantic_hash": "fbe3c502e422e882f3c3fca535199db4"
+    "mtime": 1784926425.4445999,
+    "ast_hash": "b5e156d6dfbfbc309562e12c95866d06",
+    "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.hpp": {
     "mtime": 1782102636.1083758,
@@ -515,9 +515,9 @@
     "semantic_hash": "3a33c7333f4849de34c011caa485de09"
   },
   "src/bindings/core_bindings.cpp": {
-    "mtime": 1784868326.1042535,
-    "ast_hash": "17f155004c7ef6fd9705a0e426f847f2",
-    "semantic_hash": "17f155004c7ef6fd9705a0e426f847f2"
+    "mtime": 1784926378.5718355,
+    "ast_hash": "98548e2d5f869faf75772742a4fa0bdd",
+    "semantic_hash": ""
   },
   "src/bindings/core_bindings.hpp": {
     "mtime": 1782102655.9678836,
@@ -1295,8 +1295,8 @@
     "semantic_hash": "af6b29a2c82863a79c3e928922ea4b05"
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1784868334.9992101,
-    "ast_hash": "dd25bfa05851c53cf7386c4427dcbdaf",
+    "mtime": 1784926018.019321,
+    "ast_hash": "908ac5e2f48818f3f68ef7ac10e652e1",
     "semantic_hash": ""
   },
   "ui/wasm_app/app.js": {
@@ -1305,19 +1305,19 @@
     "semantic_hash": "03cfce243d78fe39cb1744b2b57aa178"
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1782344138.764053,
-    "ast_hash": "3b724afbaab851b59ab454e4e464b8a4",
-    "semantic_hash": "3b724afbaab851b59ab454e4e464b8a4"
+    "mtime": 1784926450.565583,
+    "ast_hash": "c3a779e8c41221db73983b66c82a0e39",
+    "semantic_hash": ""
   },
   ".github/workflows/docs.yml": {
-    "mtime": 1780539749.233534,
-    "ast_hash": "f961ae1770ae4f95aaf10558ca2c275a",
-    "semantic_hash": "f961ae1770ae4f95aaf10558ca2c275a"
+    "mtime": 1784926458.0804644,
+    "ast_hash": "eaf306319af1bd13155b6282f9dd4ec8",
+    "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1783167209.8529475,
-    "ast_hash": "320ad8b5782305ea2f616109a78e685e",
-    "semantic_hash": "320ad8b5782305ea2f616109a78e685e"
+    "mtime": 1784926475.4291904,
+    "ast_hash": "d5c8be8702dc4938dbabb53c5ab8a7f3",
+    "semantic_hash": ""
   },
   "CMakeLists.txt": {
     "mtime": 1784919745.7170396,

@@ -8,6 +8,7 @@
 #include <pybind11/stl.h>
 
 namespace py = pybind11;
+using correlation::real_t;
 using namespace correlation::core;
 
 void init_core(py::module_ &mod) {

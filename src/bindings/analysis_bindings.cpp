@@ -28,6 +28,7 @@
 #include <utility>
 
 namespace py = pybind11;
+using correlation::real_t;
 using namespace correlation::analysis;
 using namespace correlation::core;
 using namespace correlation::math;
@@ -254,11 +255,16 @@ void init_analysis(py::module_ &mod) {
       .def("get_deborah_number", &DistributionFunctions::getDeborahNumber, "Get the Deborah number.")
 
       // Calculations
-      .def("calculate_rdf", &DistributionFunctions::calculateRDF, py::arg("r_max") = 20.0, py::arg("bin_width") = 0.05,
-           "Calculate g(r), J(r), and G(r).\n\n"
-           "Parameters\n----------\n"
-           "r_max : float\n    Maximum radius (Å). Default 20.0.\n"
-           "bin_width : float\n    Histogram bin width (Å). Default 0.05.")
+      .def(
+          "calculate_rdf",
+          [](DistributionFunctions &dists, real_t r_max, real_t bin_width) {
+            dists.calculateRDF({.r_max = r_max, .r_bin_width = bin_width});
+          },
+          py::arg("r_max") = 20.0, py::arg("bin_width") = 0.05,
+          "Calculate g(r), J(r), and G(r).\n\n"
+          "Parameters\n----------\n"
+          "r_max : float\n    Maximum radius (Å). Default 20.0.\n"
+          "bin_width : float\n    Histogram bin width (Å). Default 0.05.")
       .def("calculate_pad", &DistributionFunctions::calculatePAD, py::arg("bin_width") = 1.0,
            "Calculate the Plane Angle Distribution (PAD).\n\n"
            "bin_width : float\n    Angular bin width (°). Default 1.0.")
@@ -282,14 +288,22 @@ void init_analysis(py::module_ &mod) {
       .def("calculate_vdos", &DistributionFunctions::calculateVDOS,
            "Calculate the Vibrational Density of States (VDOS) from the VACF.\n"
            "Requires calculate_vacf() to have been called first.")
-      .def("calculate_xrd", &DistributionFunctions::calculateXRD, py::arg("lambda") = 1.5406,
-           py::arg("theta_min") = 5.0, py::arg("theta_max") = 90.0, py::arg("bin_width") = 1.0,
-           "Calculate the X-Ray Diffraction (XRD) pattern.\n\n"
-           "Parameters\n----------\n"
-           "lambda : float\n    X-ray wavelength (Å). Default 1.5406 (Cu Kα).\n"
-           "theta_min : float\n    Minimum 2θ angle (°). Default 5.0.\n"
-           "theta_max : float\n    Maximum 2θ angle (°). Default 90.0.\n"
-           "bin_width : float\n    2θ bin width (°). Default 1.0.")
+      .def(
+          "calculate_xrd",
+          [](DistributionFunctions &dists, real_t wave_length, real_t theta_min, real_t theta_max, real_t bin_width) {
+            dists.calculateXRD(XRDParams{.lambda = wave_length,
+                                         .theta_min = theta_min,
+                                         .theta_max = theta_max,
+                                         .bin_width = bin_width});
+          },
+          py::arg("lambda") = 1.5406, py::arg("theta_min") = 5.0, py::arg("theta_max") = 90.0,
+          py::arg("bin_width") = 1.0,
+          "Calculate the X-Ray Diffraction (XRD) pattern.\n\n"
+          "Parameters\n----------\n"
+          "lambda : float\n    X-ray wavelength (Å). Default 1.5406 (Cu Kα).\n"
+          "theta_min : float\n    Minimum 2θ angle (°). Default 5.0.\n"
+          "theta_max : float\n    Maximum 2θ angle (°). Default 90.0.\n"
+          "bin_width : float\n    2θ bin width (°). Default 1.0.")
       .def("calculate_cn", &DistributionFunctions::calculateCoordinationNumber,
            "Calculate the Coordination Number (CN) distribution.\n"
            "Requires neighbors to have been computed (non-zero cutoff).")

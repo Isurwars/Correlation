@@ -14,6 +14,10 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     name: Build on ${{ matrix.os }}
@@ -71,11 +75,15 @@ jobs:
             cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
               -DCMAKE_OSX_SYSROOT="$SDKROOT" \
               -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+              -DBUILD_WITH_HDF5=ON \
+              -DBUILD_WITH_ARROW=ON
           else
             cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja \
               -DCMAKE_C_COMPILER_LAUNCHER=sccache \
-              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+              -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+              -DBUILD_WITH_HDF5=ON \
+              -DBUILD_WITH_ARROW=ON
           fi
 
       - name: Configure CMake (Windows)
@@ -83,7 +91,9 @@ jobs:
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -G Ninja `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache `
+            -DBUILD_WITH_HDF5=ON `
+            -DBUILD_WITH_ARROW=ON
 
       - name: Build
         run: cmake --build build --config Release --parallel

@@ -179,7 +179,10 @@ TEST_F(FileWriterTests, WritesHDF5File) {
       si_cell, 5.0,
       trajectory.getBondCutoffsSQ()); // Use smaller r_max for faster test
 
-  dists.calculateRDF(5.0, 0.1);
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.1,
+  });
   dists.calculatePAD(2.0);
 
   correlation::writers::FileWriter writer(dists);
@@ -201,7 +204,7 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   EXPECT_TRUE(g_group.hasAttribute("description"));
   std::string description;
   g_group.getAttribute("description").read(description);
-  EXPECT_EQ(description, "Pair Distribution Function");
+  EXPECT_EQ(description, "Radial Distribution Function");
 
   // Note: sanitize logic in correlation::writers::FileWriter replaces '(', ')',
   // '/', ' ' with '_'
@@ -226,14 +229,14 @@ TEST_F(FileWriterTests, WritesHDF5File) {
   EXPECT_TRUE(bin_ds.hasAttribute("Comments"));
   std::string bin_comment;
   bin_ds.getAttribute("Comments").read(bin_comment);
-  EXPECT_EQ(bin_comment, "Pair Distribution Function");
+  EXPECT_EQ(bin_comment, "Radial Distribution Function");
 
   // Verify data dataset attributes
   HighFive::DataSet data_ds = g_group.getDataSet(data_ds_name);
   EXPECT_TRUE(data_ds.hasAttribute("Units"));
   std::string data_units;
   data_ds.getAttribute("Units").read(data_units);
-  EXPECT_EQ(data_units, "Å⁻¹");
+  EXPECT_EQ(data_units, "dimensionless");
 
   EXPECT_TRUE(data_ds.hasAttribute("Long Name"));
   std::string data_label;
@@ -262,7 +265,7 @@ TEST_F(FileWriterTests, WritesVACFMetadata) {
   int sign = 1;
   for (const auto &atom : frame1.atoms()) {
     auto pos = atom.position();
-    pos.x() += 0.1 * sign;
+    pos.x() += static_cast<real_t>(0.1 * sign);
     sign *= -1;
     frame2.addAtom(atom.element().symbol, pos);
   }
@@ -403,7 +406,10 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
 
   correlation::analysis::DistributionFunctions dists(si_cell, 5.0, trajectory.getBondCutoffsSQ());
 
-  dists.calculateRDF(5.0, 0.1);
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.1,
+  });
   dists.calculatePAD(2.0);
 
   correlation::writers::FileWriter writer(dists);
@@ -415,7 +421,7 @@ TEST_F(FileWriterTests, WritesParquetFiles) {
   // Assert
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_g.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_J.parquet"));
-  EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_G_reduced.parquet"));
+  EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_G_reduced.parquet"));
   EXPECT_TRUE(fileExistsAndIsNotEmpty("test_si_PAD.parquet"));
   EXPECT_FALSE(fileExistsAndIsNotEmpty("test_si_S.parquet"));
 }

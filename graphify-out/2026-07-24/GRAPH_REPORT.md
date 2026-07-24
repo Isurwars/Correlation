@@ -1,16 +1,16 @@
-# Graph Report - Correlation  (2026-07-23)
+# Graph Report - Correlation  (2026-07-24)
 
 ## Corpus Check
-- 313 files · ~5,128,817 words
+- 313 files · ~5,129,325 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4233 nodes · 7667 edges · 285 communities (244 shown, 41 thin omitted)
+- 4233 nodes · 7667 edges · 286 communities (245 shown, 41 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 621 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d8d425d9`
+- Built from commit: `83e67457`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -290,6 +290,7 @@
 - QVector
 - CarReader.cpp
 - precomputePhases
+- BlendParams
 - PlotController::PlotController
 
 ## God Nodes (most connected - your core abstractions)
@@ -335,11 +336,11 @@
 - **Core Analysis Architecture** — src_readers_obj, src_calculators_obj, src_writers_obj, src_correlation_lib [EXTRACTED 1.00]
 - **Structural Distribution Functions** — concept_pdf, concept_pad, concept_rdf [EXTRACTED 1.00]
 
-## Communities (285 total, 41 thin omitted)
+## Communities (286 total, 41 thin omitted)
 
 ### Community 0 - "PDF Generation Utilities"
-Cohesion: 0.10
-Nodes (41): FILE, flexarray_append(), flexarray_clear(), flexarray_get(), flexarray_get_bin(), flexarray_get_bin_offset(), flexarray_get_bin_size(), flexarray_set() (+33 more)
+Cohesion: 0.12
+Nodes (34): FILE, flexarray_append(), flexarray_clear(), flexarray_get(), flexarray_get_bin(), flexarray_get_bin_offset(), flexarray_get_bin_size(), flexarray_set() (+26 more)
 
 ### Community 1 - "CLI Option Validation Tests"
 Cohesion: 0.03
@@ -498,8 +499,8 @@ Cohesion: 0.12
 Nodes (24): CalculateSDF, calculateFrame, setLatticeParameters, MultiAtomSDFHasNonzeroDensity, SDFCalculatorTests, progress_callback, function, optional (+16 more)
 
 ### Community 40 - "PDF Comparison Renderer"
-Cohesion: 0.06
-Nodes (49): blendColor(), BlendParams, bg, fg, ComparisonQuery, filepath, key, drawPdfText() (+41 more)
+Cohesion: 0.07
+Nodes (46): blendColor(), ComparisonQuery, filepath, key, drawPdfText(), fmtScientificPdf(), pair, real_t (+38 more)
 
 ### Community 41 - "Histogram Metadata"
 Cohesion: 0.14
@@ -678,8 +679,8 @@ Cohesion: 0.13
 Nodes (20): ensureMaterialized, getBondCutoffSQ, getFrame, parser_, precomputeBondCutoffs, removeDuplicatedFrames, validateFrame, FrameParser (+12 more)
 
 ### Community 85 - "CNCalculator"
-Cohesion: 0.19
-Nodes (25): find_128_encoding(), find_39_encoding(), find_font_widths(), find_word_break(), pdf_add_barcode(), pdf_add_barcode_128a(), pdf_add_barcode_39(), pdf_add_barcode_ean13() (+17 more)
+Cohesion: 0.25
+Nodes (21): find_font_widths(), find_word_break(), pdf_add_barcode(), pdf_add_barcode_ean13(), pdf_add_barcode_ean8(), pdf_add_barcode_upca(), pdf_add_barcode_upce(), pdf_add_text() (+13 more)
 
 ### Community 86 - "TEST_F"
 Cohesion: 0.07
@@ -1030,8 +1031,8 @@ Cohesion: 0.25
 Nodes (8): normalize_rdf_bins(), RDFNormalizationParams, CORRELATION_RESTRICT, count, g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j
 
 ### Community 174 - "pdf_add_image_data"
-Cohesion: 0.17
-Nodes (13): determine_image_format(), dgets(), get_file(), parse_bmp_header(), parse_jpeg_header(), parse_png_header(), parse_ppm_header(), pdf_add_bmp_data() (+5 more)
+Cohesion: 0.09
+Nodes (26): determine_image_format(), dgets(), find_128_encoding(), find_39_encoding(), get_file(), parse_bmp_header(), parse_jpeg_header(), parse_png_header() (+18 more)
 
 ### Community 175 - "AnalysisRunner.cpp"
 Cohesion: 0.38
@@ -1082,8 +1083,8 @@ Cohesion: 0.16
 Nodes (15): handleOptionstoUI, populateCalculatorGroups, updateActiveGroupFlags, AppController::AppController(), AppController::getBondCutoffs(), AppController::handleOptionsfromUI(), AppController::handleOptionstoUI(), AppController::populateCalculatorGroups() (+7 more)
 
 ### Community 187 - "pdf_set_font_ttf_file"
-Cohesion: 0.35
-Nodes (11): pdf_set_font_ttf(), pdf_set_font_ttf_file(), pdf_ttf_text_point_width(), ttf_be16(), ttf_be32(), ttf_bes16(), ttf_cmap_subtable_lookup(), ttf_extract_name() (+3 more)
+Cohesion: 0.42
+Nodes (9): pdf_set_font_ttf(), pdf_set_font_ttf_file(), ttf_be16(), ttf_be32(), ttf_bes16(), ttf_cmap_subtable_lookup(), ttf_extract_name(), ttf_find_cmap_subtable() (+1 more)
 
 ### Community 188 - "app.js"
 Cohesion: 0.47
@@ -1272,6 +1273,10 @@ Nodes (31): BasicUsage, CreateAnalyzerOutOfBoundsReturnsNullptr, computeMean, at
 ### Community 283 - "precomputePhases"
 Cohesion: 0.83
 Nodes (4): PhaseArrays, cos, sin, precomputePhases()
+
+### Community 284 - "BlendParams"
+Cohesion: 0.67
+Nodes (3): BlendParams, bg, fg
 
 ### Community 286 - "PlotController::PlotController"
 Cohesion: 0.67
