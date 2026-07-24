@@ -578,15 +578,15 @@ template <typename T> [[nodiscard]] constexpr Matrix3<T> transpose(const Matrix3
 template <typename T, typename U>
 [[nodiscard]] constexpr auto operator*(const Matrix3<T> &matrix, const Vector3<U> &vector) noexcept {
   using CommonT = std::common_type_t<T, U>;
-  return Vector3<CommonT>(std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].x()),
-                                   std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].x()),
-                                            static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].x()))),
-                          std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].y()),
-                                   std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].y()),
-                                            static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].y()))),
-                          std::fma(static_cast<CommonT>(vector.z()), static_cast<CommonT>(matrix[2].z()),
-                                   std::fma(static_cast<CommonT>(vector.y()), static_cast<CommonT>(matrix[1].z()),
-                                            static_cast<CommonT>(vector.x()) * static_cast<CommonT>(matrix[0].z()))));
+  const auto v_x = static_cast<CommonT>(vector.x());
+  const auto v_y = static_cast<CommonT>(vector.y());
+  const auto v_z = static_cast<CommonT>(vector.z());
+  return Vector3<CommonT>(v_x * static_cast<CommonT>(matrix[0].x()) + v_y * static_cast<CommonT>(matrix[1].x()) +
+                              v_z * static_cast<CommonT>(matrix[2].x()),
+                          v_x * static_cast<CommonT>(matrix[0].y()) + v_y * static_cast<CommonT>(matrix[1].y()) +
+                              v_z * static_cast<CommonT>(matrix[2].y()),
+                          v_x * static_cast<CommonT>(matrix[0].z()) + v_y * static_cast<CommonT>(matrix[1].z()) +
+                              v_z * static_cast<CommonT>(matrix[2].z()));
 }
 
 /**

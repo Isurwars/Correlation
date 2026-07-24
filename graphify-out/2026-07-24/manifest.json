@@ -430,9 +430,9 @@
     "semantic_hash": "7a013f5fadf4fcdc64802d12a255d87a"
   },
   "python/repair_wheel.py": {
-    "mtime": 1784433765.8875055,
-    "ast_hash": "313d7e825b5ec3eec04771e5eeec1949",
-    "semantic_hash": "313d7e825b5ec3eec04771e5eeec1949"
+    "mtime": 1784930776.6529338,
+    "ast_hash": "d8cca29306cb69cc74a8c4dac33a4192",
+    "semantic_hash": ""
   },
   "src/analysis/DistributionFunctions.cpp": {
     "mtime": 1784868334.278439,
@@ -495,9 +495,9 @@
     "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.cpp": {
-    "mtime": 1784868326.1042535,
-    "ast_hash": "fbe3c502e422e882f3c3fca535199db4",
-    "semantic_hash": "fbe3c502e422e882f3c3fca535199db4"
+    "mtime": 1784926425.4445999,
+    "ast_hash": "b5e156d6dfbfbc309562e12c95866d06",
+    "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.hpp": {
     "mtime": 1782102636.1083758,
@@ -515,9 +515,9 @@
     "semantic_hash": "3a33c7333f4849de34c011caa485de09"
   },
   "src/bindings/core_bindings.cpp": {
-    "mtime": 1784868326.1042535,
-    "ast_hash": "17f155004c7ef6fd9705a0e426f847f2",
-    "semantic_hash": "17f155004c7ef6fd9705a0e426f847f2"
+    "mtime": 1784926378.5718355,
+    "ast_hash": "98548e2d5f869faf75772742a4fa0bdd",
+    "semantic_hash": ""
   },
   "src/bindings/core_bindings.hpp": {
     "mtime": 1782102655.9678836,
@@ -1305,18 +1305,18 @@
     "semantic_hash": "03cfce243d78fe39cb1744b2b57aa178"
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1784926097.8382344,
-    "ast_hash": "242785bdb87f3a811218262a3c39483f",
+    "mtime": 1784926450.565583,
+    "ast_hash": "c3a779e8c41221db73983b66c82a0e39",
     "semantic_hash": ""
   },
   ".github/workflows/docs.yml": {
-    "mtime": 1780539749.233534,
-    "ast_hash": "f961ae1770ae4f95aaf10558ca2c275a",
-    "semantic_hash": "f961ae1770ae4f95aaf10558ca2c275a"
+    "mtime": 1784926458.0804644,
+    "ast_hash": "eaf306319af1bd13155b6282f9dd4ec8",
+    "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1784925693.7680287,
-    "ast_hash": "e91b391b3d2c42241d425ea35bdd629b",
+    "mtime": 1784926475.4291904,
+    "ast_hash": "d5c8be8702dc4938dbabb53c5ab8a7f3",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
@@ -1340,9 +1340,9 @@
     "semantic_hash": "0337a6dc16454780d94461856b602fd3"
   },
   "docs/RoadMap.md": {
-    "mtime": 1782348289.9754589,
-    "ast_hash": "356548e567217b927856ef45356c7fc3",
-    "semantic_hash": "356548e567217b927856ef45356c7fc3"
+    "mtime": 1784926928.808108,
+    "ast_hash": "f36eba1b9816e405db1d84d3a1e04c2b",
+    "semantic_hash": ""
   },
   "examples/Cellulose/Cellulose.md": {
     "mtime": 1775774268.3948555,
@@ -1525,8 +1525,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1784867051.5070436,
-    "ast_hash": "e0dbf8ff07d6e3934b4af2042f063204",
+    "mtime": 1784928415.5382464,
+    "ast_hash": "076bd6e46355d5d2bd7f45176d2b75bb",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1747,6 +1747,21 @@
   "include/core/CompilerPortability.hpp": {
     "mtime": 1784835377.979663,
     "ast_hash": "0001d92fd96d2e790b343210109058c6",
+    "semantic_hash": ""
+  },
+  ".agents/rules/cmake-architecture-rule.md": {
+    "mtime": 1784928391.9856224,
+    "ast_hash": "5c105af86d9cc719b528b021d2a22d89",
+    "semantic_hash": ""
+  },
+  ".agents/skills/cpp-performance-benchmark/SKILL.md": {
+    "mtime": 1784928397.268538,
+    "ast_hash": "96f309ca8ca5d5e08df74e1ddcc4a172",
+    "semantic_hash": ""
+  },
+  ".agents/skills/pybind11-interop-standards/SKILL.md": {
+    "mtime": 1784928402.3154576,
+    "ast_hash": "53d3be8c336bfa2322e298d8bdaff15f",
     "semantic_hash": ""
   }
 }

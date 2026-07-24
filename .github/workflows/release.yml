@@ -388,8 +388,11 @@ jobs:
           CIBW_ARCHS_LINUX: "x86_64 aarch64"
           # Only build 64-bit wheels on Windows, skipping the buggy win32 target entirely
           CIBW_ARCHS_WINDOWS: "AMD64"
-          # Prevents the oneTBB compilation crash and enables std::format / std::to_chars for C++20 on older macOS runtimes
-          MACOSX_DEPLOYMENT_TARGET: "13.3"
+          # Pass deployment target AND C++ standard directly into cibuildwheel build environments
+          CIBW_ENVIRONMENT_MACOS: >
+            MACOSX_DEPLOYMENT_TARGET="13.3"
+            CXXFLAGS="-std=c++23"
+            CFLAGS="-std=c23"
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4

@@ -22,18 +22,18 @@ def main():
     print(f"Destination: {dest_dir}")
 
     if sys.platform == "win32":
-        # Find tbb.dll recursively under the build directory
-        tbb_dlls = glob.glob("build/**/tbb.dll", recursive=True)
+        # Find tbb DLLs recursively under the build directory (e.g. tbb12.dll, tbbmalloc.dll)
+        tbb_dlls = glob.glob("build/**/*tbb*.dll", recursive=True)
         if not tbb_dlls:
-            print("Warning: tbb.dll not found in build directory. Check if it was built statically or not yet compiled.", file=sys.stderr)
-            tbb_dir = ""
+            print("Warning: tbb DLLs not found in build directory. Check if built statically or not yet compiled.", file=sys.stderr)
+            tbb_dirs = []
         else:
-            tbb_dir = os.path.dirname(os.path.abspath(tbb_dlls[0]))
-            print(f"Found tbb.dll in: {tbb_dir}")
+            tbb_dirs = sorted(list({os.path.dirname(os.path.abspath(f)) for f in tbb_dlls}))
+            print(f"Found tbb DLL directories: {tbb_dirs}")
 
         cmd = ["delvewheel", "repair"]
-        if tbb_dir:
-            cmd.extend(["--add-path", tbb_dir])
+        for d in tbb_dirs:
+            cmd.extend(["--add-path", d])
         cmd.extend(["-w", dest_dir, wheel])
         
         print(f"Running: {' '.join(cmd)}")
@@ -61,9 +61,24 @@ def main():
 
     else:
         # Linux (auditwheel)
+        tbb_sos = glob.glob("build/**/libtbb*.so*", recursive=True)
+        if not tbb_sos:
+            print("Warning: libtbb.so not found in build directory.", file=sys.stderr)
+            tbb_dir = ""
+        else:
+            tbb_dirs = sorted(list({os.path.dirname(os.path.abspath(f)) for f in tbb_sos}))
+            tbb_dir = ":".join(tbb_dirs)
+            print(f"Found libtbb shared libraries in: {tbb_dir}")
+
+        env = os.environ.copy()
+        if tbb_dir:
+            current_ld = env.get("LD_LIBRARY_PATH", "")
+            env["LD_LIBRARY_PATH"] = f"{tbb_dir}:{current_ld}" if current_ld else tbb_dir
+            print(f"Setting LD_LIBRARY_PATH={env['LD_LIBRARY_PATH']}")
+
         cmd = ["auditwheel", "repair", "-w", dest_dir, wheel]
         print(f"Running: {' '.join(cmd)}")
-        subprocess.run(cmd, check=True)
+        subprocess.run(cmd, env=env, check=True)
 
 if __name__ == "__main__":
     main()
