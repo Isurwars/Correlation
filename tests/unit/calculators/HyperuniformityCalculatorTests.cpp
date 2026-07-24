@@ -111,7 +111,7 @@ correlation::core::Cell createRandomCell(CreateRandomCellParams params) {
                                 static_cast<real_t>(params.box_length), static_cast<real_t>(90.0),
                                 static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
   std::seed_seq seed{12345};
-  std::mt19937_64 rng(seed); // NOLINT(cert-msc51-cpp, cert-msc32-c)
+  std::mt19937_64 rng(seed);
   for (size_t i = 0; i < params.num_atoms; ++i) {
     const auto x_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);
     const auto y_pos = static_cast<real_t>(generate_canonical_portable(rng) * params.box_length);

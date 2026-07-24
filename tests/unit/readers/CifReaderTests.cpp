@@ -40,8 +40,8 @@ TEST(CifReaderTests, ReadsStructureWithSymmetryAndUncertainty) {
   CifReader reader;
   auto cell = reader.readStructure(data_dir + "clean.cif");
 
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[0], 5.64);
-  EXPECT_DOUBLE_EQ(cell.lattice_parameters()[3], 90.0);
+  EXPECT_THAT(cell.lattice_parameters()[0], correlation::testing::IsRealEq(5.64));
+  EXPECT_THAT(cell.lattice_parameters()[3], correlation::testing::IsRealEq(90.0));
 
   // Na 0.0 0.0 0.0 with symmetry:
   // (x, y, z) -> 0.0 0.0 0.0

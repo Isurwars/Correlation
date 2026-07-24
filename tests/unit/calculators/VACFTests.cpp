@@ -178,10 +178,10 @@ TEST_F(VACFTests, DistributionFunctionsDynamicProperties) {
   dists.setDeborahNumber(0.12);
 
   // Verify updated values
-  EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientMSD(), 1.23);
-  EXPECT_DOUBLE_EQ(dists.getDiffusionCoefficientVACF(), 4.56);
-  EXPECT_DOUBLE_EQ(dists.getRelaxationTime(), 7.89);
-  EXPECT_DOUBLE_EQ(dists.getDeborahNumber(), 0.12);
+  EXPECT_THAT(dists.getDiffusionCoefficientMSD(), correlation::testing::IsRealEq(1.23));
+  EXPECT_THAT(dists.getDiffusionCoefficientVACF(), correlation::testing::IsRealEq(4.56));
+  EXPECT_THAT(dists.getRelaxationTime(), correlation::testing::IsRealEq(7.89));
+  EXPECT_THAT(dists.getDeborahNumber(), correlation::testing::IsRealEq(0.12));
 }
 
 TEST_F(VACFTests, DynamicsAnalyzerNonPhysicalInputs) {

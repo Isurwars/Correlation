@@ -56,13 +56,13 @@ TEST_F(XYZReaderTests, ReadExtendedXYZ) {
   EXPECT_EQ(cell.atoms()[0].element().symbol, "C");
 
   // Check energy
-  EXPECT_DOUBLE_EQ(cell.getEnergy(), -15.2);
+  EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-15.2));
 
   // Check lattice
   auto params = cell.lattice_parameters();
-  EXPECT_DOUBLE_EQ(params[0], 10.0);
-  EXPECT_DOUBLE_EQ(params[1], 10.0);
-  EXPECT_DOUBLE_EQ(params[2], 10.0);
+  EXPECT_THAT(params[0], correlation::testing::IsRealEq(10.0));
+  EXPECT_THAT(params[1], correlation::testing::IsRealEq(10.0));
+  EXPECT_THAT(params[2], correlation::testing::IsRealEq(10.0));
 }
 
 TEST_F(XYZReaderTests, ReadExtendedXYZCustomColumns) {
@@ -76,8 +76,8 @@ TEST_F(XYZReaderTests, ReadExtendedXYZCustomColumns) {
   EXPECT_EQ(cell.atoms()[1].element().symbol, "O");
 
   // Check energy
-  EXPECT_DOUBLE_EQ(cell.getEnergy(), -10.0);
+  EXPECT_THAT(cell.getEnergy(), correlation::testing::IsRealEq(-10.0));
 
   // Pos should be in cols 1,2,3
-  EXPECT_DOUBLE_EQ(cell.atoms()[1].position().x(), 1.2);
+  EXPECT_THAT(cell.atoms()[1].position().x(), correlation::testing::IsRealEq(1.2));
 }

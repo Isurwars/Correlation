@@ -51,25 +51,25 @@ TEST_F(GromacsReaderTests, ReadMultiFrameTrajectory) {
 
   auto pos1 = frame1.atoms()[0].position();
   // GROMACS is in nm, we convert to Angstroms (* 10)
-  EXPECT_DOUBLE_EQ(pos1.x(), 1.0);
-  EXPECT_DOUBLE_EQ(pos1.y(), 2.0);
-  EXPECT_DOUBLE_EQ(pos1.z(), 3.0);
+  EXPECT_THAT(pos1.x(), correlation::testing::IsRealEq(1.0));
+  EXPECT_THAT(pos1.y(), correlation::testing::IsRealEq(2.0));
+  EXPECT_THAT(pos1.z(), correlation::testing::IsRealEq(3.0));
 
   auto lat1 = frame1.lattice_parameters();
-  EXPECT_DOUBLE_EQ(lat1[0], 10.0);
-  EXPECT_DOUBLE_EQ(lat1[1], 20.0);
-  EXPECT_DOUBLE_EQ(lat1[2], 30.0);
+  EXPECT_THAT(lat1[0], correlation::testing::IsRealEq(10.0));
+  EXPECT_THAT(lat1[1], correlation::testing::IsRealEq(20.0));
+  EXPECT_THAT(lat1[2], correlation::testing::IsRealEq(30.0));
 
   // Frame 2
   auto frame2 = traj.getFrame(1);
   EXPECT_EQ(frame2.atomCount(), 3);
   auto pos2 = frame2.atoms()[0].position();
-  EXPECT_DOUBLE_EQ(pos2.x(), 1.1);
-  EXPECT_DOUBLE_EQ(pos2.y(), 2.1);
-  EXPECT_DOUBLE_EQ(pos2.z(), 3.1);
+  EXPECT_THAT(pos2.x(), correlation::testing::IsRealEq(1.1));
+  EXPECT_THAT(pos2.y(), correlation::testing::IsRealEq(2.1));
+  EXPECT_THAT(pos2.z(), correlation::testing::IsRealEq(3.1));
 
   auto lat2 = frame2.lattice_parameters();
-  EXPECT_DOUBLE_EQ(lat2[0], 11.0);
+  EXPECT_THAT(lat2[0], correlation::testing::IsRealEq(11.0));
 }
 
 TEST_F(GromacsReaderTests, ReadStructureReturnsLastFrame) {
@@ -79,5 +79,5 @@ TEST_F(GromacsReaderTests, ReadStructureReturnsLastFrame) {
   EXPECT_EQ(cell.atomCount(), 3);
   auto pos = cell.atoms()[0].position();
   // Should be Frame 2
-  EXPECT_DOUBLE_EQ(pos.x(), 1.1);
+  EXPECT_THAT(pos.x(), correlation::testing::IsRealEq(1.1));
 }

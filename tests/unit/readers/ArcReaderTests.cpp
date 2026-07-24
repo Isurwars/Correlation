@@ -45,15 +45,15 @@ TEST(ArcReaderTests, ReadsTrajectory) {
   // Frame 1 check
   const auto &frame_1 = traj.getFrame(0);
   EXPECT_EQ(frame_1.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(frame_1.lattice_parameters()[0], 10.0);
-  EXPECT_DOUBLE_EQ(frame_1.getEnergy(), -12.345);
+  EXPECT_THAT(frame_1.lattice_parameters()[0], correlation::testing::IsRealEq(10.0));
+  EXPECT_THAT(frame_1.getEnergy(), correlation::testing::IsRealEq(-12.345));
   EXPECT_EQ(frame_1.atoms()[0].element().symbol, "C");
 
   // Frame 2 check
   const auto &frame_2 = traj.getFrame(1);
   EXPECT_EQ(frame_2.atomCount(), 1);
-  EXPECT_DOUBLE_EQ(frame_2.lattice_parameters()[0], 100.0); // PBC=OFF sets 100.0
-  EXPECT_DOUBLE_EQ(frame_2.getEnergy(), 42.0);
+  EXPECT_THAT(frame_2.lattice_parameters()[0], correlation::testing::IsRealEq(100.0)); // PBC=OFF sets 100.0
+  EXPECT_THAT(frame_2.getEnergy(), correlation::testing::IsRealEq(42.0));
   EXPECT_EQ(frame_2.atoms()[0].element().symbol, "C");
 }
 

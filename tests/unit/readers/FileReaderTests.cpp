@@ -75,26 +75,26 @@ TEST_F(FileReaderTests, ReadCellFileCorrectly) {
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
-  EXPECT_DOUBLE_EQ(params[0], 15.0);  // a
-  EXPECT_DOUBLE_EQ(params[1], 15.0);  // b
-  EXPECT_DOUBLE_EQ(params[2], 20.0);  // c
-  EXPECT_DOUBLE_EQ(params[3], 90.0);  // alpha
-  EXPECT_DOUBLE_EQ(params[4], 90.0);  // beta
-  EXPECT_DOUBLE_EQ(params[5], 120.0); // gamma
+  EXPECT_THAT(params[0], correlation::testing::IsRealEq(15.0));  // a
+  EXPECT_THAT(params[1], correlation::testing::IsRealEq(15.0));  // b
+  EXPECT_THAT(params[2], correlation::testing::IsRealEq(20.0));  // c
+  EXPECT_THAT(params[3], correlation::testing::IsRealEq(90.0));  // alpha
+  EXPECT_THAT(params[4], correlation::testing::IsRealEq(90.0));  // beta
+  EXPECT_THAT(params[5], correlation::testing::IsRealEq(120.0)); // gamma
 
   // Assert: Check atoms
   const auto &atoms = result_cell.atoms();
   ASSERT_EQ(atoms.size(), 2);
 
   EXPECT_EQ(atoms[0].element().symbol, "C");
-  EXPECT_DOUBLE_EQ(atoms[0].position().x(), 1.1);
-  EXPECT_DOUBLE_EQ(atoms[0].position().y(), 2.2);
-  EXPECT_DOUBLE_EQ(atoms[0].position().z(), 3.3);
+  EXPECT_THAT(atoms[0].position().x(), correlation::testing::IsRealEq(1.1));
+  EXPECT_THAT(atoms[0].position().y(), correlation::testing::IsRealEq(2.2));
+  EXPECT_THAT(atoms[0].position().z(), correlation::testing::IsRealEq(3.3));
 
   EXPECT_EQ(atoms[1].element().symbol, "O");
-  EXPECT_DOUBLE_EQ(atoms[1].position().x(), 4.4);
-  EXPECT_DOUBLE_EQ(atoms[1].position().y(), 5.5);
-  EXPECT_DOUBLE_EQ(atoms[1].position().z(), 6.6);
+  EXPECT_THAT(atoms[1].position().x(), correlation::testing::IsRealEq(4.4));
+  EXPECT_THAT(atoms[1].position().y(), correlation::testing::IsRealEq(5.5));
+  EXPECT_THAT(atoms[1].position().z(), correlation::testing::IsRealEq(6.6));
 }
 
 TEST_F(FileReaderTests, ReadCifFileCorrectly) {
@@ -104,10 +104,10 @@ TEST_F(FileReaderTests, ReadCifFileCorrectly) {
 
   // Assert: Check lattice parameters
   const auto &params = result_cell.lattice_parameters();
-  EXPECT_DOUBLE_EQ(params[0], 5.64); // a
-  EXPECT_DOUBLE_EQ(params[1], 5.64); // b
-  EXPECT_DOUBLE_EQ(params[2], 5.64); // c
-  EXPECT_DOUBLE_EQ(params[5], 90.0); // gamma
+  EXPECT_THAT(params[0], correlation::testing::IsRealEq(5.64)); // a
+  EXPECT_THAT(params[1], correlation::testing::IsRealEq(5.64)); // b
+  EXPECT_THAT(params[2], correlation::testing::IsRealEq(5.64)); // c
+  EXPECT_THAT(params[5], correlation::testing::IsRealEq(90.0)); // gamma
 
   // Assert: Check total atom count (2 unique atoms * 1 symm ops = 2 atoms)
   const auto &atoms = result_cell.atoms();
@@ -274,19 +274,19 @@ TEST_F(FileReaderTests, ReadCastepMdCorrectly) {
 
   // Check Frame 1
   const auto &file_1 = frames[0];
-  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[1], 11.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(file_1.lattice_parameters()[2], 12.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_THAT(file_1.lattice_parameters()[0], correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.lattice_parameters()[1], correlation::testing::IsRealEq(11.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.lattice_parameters()[2], correlation::testing::IsRealEq(12.0 * correlation::math::bohr_to_angstrom));
   ASSERT_EQ(file_1.atomCount(), 2);
-  EXPECT_DOUBLE_EQ(file_1.atoms()[0].position().x(), 1.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(file_1.atoms()[1].position().x(), 4.0 * correlation::math::bohr_to_angstrom);
+  EXPECT_THAT(file_1.atoms()[0].position().x(), correlation::testing::IsRealEq(1.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_1.atoms()[1].position().x(), correlation::testing::IsRealEq(4.0 * correlation::math::bohr_to_angstrom));
 
-  EXPECT_DOUBLE_EQ(file_1.getEnergy(), -31.8206146);
+  EXPECT_THAT(file_1.getEnergy(), correlation::testing::IsRealEq(-31.8206146));
 
   // Check Frame 2
   const auto &file_2 = frames[1];
-  EXPECT_DOUBLE_EQ(file_2.lattice_parameters()[0], 10.0 * correlation::math::bohr_to_angstrom);
-  EXPECT_DOUBLE_EQ(file_2.atoms()[0].position().x(), 1.1 * correlation::math::bohr_to_angstrom);
+  EXPECT_THAT(file_2.lattice_parameters()[0], correlation::testing::IsRealEq(10.0 * correlation::math::bohr_to_angstrom));
+  EXPECT_THAT(file_2.atoms()[0].position().x(), correlation::testing::IsRealEq(1.1 * correlation::math::bohr_to_angstrom));
 }
 
 TEST_F(FileReaderTests, ReadCelluloseExample) {

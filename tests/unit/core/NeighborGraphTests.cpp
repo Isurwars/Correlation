@@ -45,10 +45,10 @@ TEST_F(NeighborGraphTests, AddDirectedEdgeAndGetNeighbors) {
   const auto &neighbors = graph.getNeighbors(0);
   ASSERT_EQ(neighbors.size(), 1);
   EXPECT_EQ(neighbors[0].index, 1);
-  EXPECT_DOUBLE_EQ(neighbors[0].distance, 3.74);
-  EXPECT_DOUBLE_EQ(neighbors[0].r_ij.x(), r_ij.x());
-  EXPECT_DOUBLE_EQ(neighbors[0].r_ij.y(), r_ij.y());
-  EXPECT_DOUBLE_EQ(neighbors[0].r_ij.z(), r_ij.z());
+  EXPECT_THAT(neighbors[0].distance, ::correlation::testing::IsRealEq(3.74));
+  EXPECT_THAT(neighbors[0].r_ij.x(), ::correlation::testing::IsRealEq(r_ij.x()));
+  EXPECT_THAT(neighbors[0].r_ij.y(), ::correlation::testing::IsRealEq(r_ij.y()));
+  EXPECT_THAT(neighbors[0].r_ij.z(), ::correlation::testing::IsRealEq(r_ij.z()));
 }
 
 TEST_F(NeighborGraphTests, OutOfBoundsEdgeAdditionDoesNotCrash) {

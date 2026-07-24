@@ -44,12 +44,12 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
 
   EXPECT_EQ(opts.input_file, "input.poscar");
   EXPECT_EQ(opts.output_base, "input"); // stem of input.poscar
-  EXPECT_DOUBLE_EQ(opts.r_max, 20.0);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.02);
-  EXPECT_DOUBLE_EQ(opts.q_max, 20.0);
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.02);
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 1.0);
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 1.0);
+  EXPECT_THAT(opts.r_max, correlation::testing::IsRealEq(20.0));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.02));
+  EXPECT_THAT(opts.q_max, correlation::testing::IsRealEq(20.0));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.02));
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(1.0));
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(1.0));
   EXPECT_FALSE(opts.has_dihedral_bin);
   EXPECT_EQ(opts.min_frame, 0);
   EXPECT_EQ(opts.max_frame, -1);
@@ -59,10 +59,10 @@ TEST_F(CliParserTests, DefaultsWithInputFileOnly) {
   EXPECT_TRUE(opts.smoothing);
   EXPECT_FALSE(opts.quiet);
   EXPECT_TRUE(opts.disable_groups.empty());
-  EXPECT_DOUBLE_EQ(opts.time_step, 1.0);
-  EXPECT_DOUBLE_EQ(opts.r_int_max, 10.0);
+  EXPECT_THAT(opts.time_step, correlation::testing::IsRealEq(1.0));
+  EXPECT_THAT(opts.r_int_max, correlation::testing::IsRealEq(10.0));
   EXPECT_EQ(opts.max_ring_size, 8);
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.1);
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.1));
   EXPECT_EQ(opts.smoothing_kernel, correlation::math::KernelType::Gaussian);
   EXPECT_FALSE(opts.show_version);
   EXPECT_FALSE(opts.show_help);
@@ -133,7 +133,7 @@ TEST_F(CliParserTests, RMaxOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.r_max, 35.5);
+  EXPECT_THAT(opts.r_max, correlation::testing::IsRealEq(35.5));
 }
 
 TEST_F(CliParserTests, RBinOption) {
@@ -141,7 +141,7 @@ TEST_F(CliParserTests, RBinOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.05);
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
 }
 
 TEST_F(CliParserTests, QMaxOption) {
@@ -149,7 +149,7 @@ TEST_F(CliParserTests, QMaxOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.q_max, 30.0);
+  EXPECT_THAT(opts.q_max, correlation::testing::IsRealEq(30.0));
 }
 
 TEST_F(CliParserTests, QBinOption) {
@@ -157,7 +157,7 @@ TEST_F(CliParserTests, QBinOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.1);
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.1));
 }
 
 TEST_F(CliParserTests, AngleBinOption) {
@@ -165,7 +165,7 @@ TEST_F(CliParserTests, AngleBinOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 2.0);
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(2.0));
 }
 
 TEST_F(CliParserTests, DihedralBinOption) {
@@ -173,7 +173,7 @@ TEST_F(CliParserTests, DihedralBinOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 3.0);
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(3.0));
   EXPECT_TRUE(opts.has_dihedral_bin);
 }
 
@@ -184,7 +184,7 @@ TEST_F(CliParserTests, DihedralBinDefaultsToCopyOfAngleBin) {
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_FALSE(opts.has_dihedral_bin);
   // Default dihedral_bin_width equals the default angle_bin_width
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, opts.angle_bin_width);
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(opts.angle_bin_width));
 }
 
 TEST_F(CliParserTests, TimeStepOption) {
@@ -192,7 +192,7 @@ TEST_F(CliParserTests, TimeStepOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.time_step, 0.5);
+  EXPECT_THAT(opts.time_step, correlation::testing::IsRealEq(0.5));
 }
 
 TEST_F(CliParserTests, RIntMaxOption) {
@@ -200,7 +200,7 @@ TEST_F(CliParserTests, RIntMaxOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.r_int_max, 15.0);
+  EXPECT_THAT(opts.r_int_max, correlation::testing::IsRealEq(15.0));
 }
 
 TEST_F(CliParserTests, MaxRingSizeOption) {
@@ -216,7 +216,7 @@ TEST_F(CliParserTests, SmoothingSigmaOption) {
   correlation::cli::CliOptions opts;
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.5);
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.5));
 }
 
 // ===== Frame options =====
@@ -440,9 +440,9 @@ TEST_F(CliParserTests, MultipleOptionsCombined) {
 
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.input_file, "sim.xyz");
-  EXPECT_DOUBLE_EQ(opts.r_max, 30.0);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.05);
-  EXPECT_DOUBLE_EQ(opts.q_max, 25.0);
+  EXPECT_THAT(opts.r_max, correlation::testing::IsRealEq(30.0));
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(opts.q_max, correlation::testing::IsRealEq(25.0));
   EXPECT_FALSE(opts.csv);
   EXPECT_TRUE(opts.hdf5);
   EXPECT_TRUE(opts.quiet);
@@ -604,11 +604,11 @@ TEST_F(CliParserTests, LiquidMaterialDefaults) {
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 1);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.05);
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.05);
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 2.0);
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 2.0);
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.15);
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.05));
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(2.0));
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(2.0));
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.15));
 }
 
 TEST_F(CliParserTests, CrystallineMaterialDefaults) {
@@ -616,11 +616,11 @@ TEST_F(CliParserTests, CrystallineMaterialDefaults) {
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 2);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.002);
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.002);
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 0.1);
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 0.1);
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.01);
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.002));
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.002));
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.1));
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.1));
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.01));
 }
 
 TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
@@ -629,9 +629,9 @@ TEST_F(CliParserTests, MaterialDefaultsWithOverrides) {
   correlation::cli::CliOptions opts;
   ASSERT_TRUE(correlation::cli::parseArgs(args.argc(), args.data(), opts));
   EXPECT_EQ(opts.material_type, 2);
-  EXPECT_DOUBLE_EQ(opts.r_bin_width, 0.01);       // Overridden
-  EXPECT_DOUBLE_EQ(opts.q_bin_width, 0.002);      // Crystal default
-  EXPECT_DOUBLE_EQ(opts.angle_bin_width, 0.1);    // Crystal default
-  EXPECT_DOUBLE_EQ(opts.dihedral_bin_width, 0.1); // Crystal default
-  EXPECT_DOUBLE_EQ(opts.smoothing_sigma, 0.05);   // Overridden
+  EXPECT_THAT(opts.r_bin_width, correlation::testing::IsRealEq(0.01));       // Overridden
+  EXPECT_THAT(opts.q_bin_width, correlation::testing::IsRealEq(0.002));      // Crystal default
+  EXPECT_THAT(opts.angle_bin_width, correlation::testing::IsRealEq(0.1));    // Crystal default
+  EXPECT_THAT(opts.dihedral_bin_width, correlation::testing::IsRealEq(0.1)); // Crystal default
+  EXPECT_THAT(opts.smoothing_sigma, correlation::testing::IsRealEq(0.05));   // Overridden
 }
