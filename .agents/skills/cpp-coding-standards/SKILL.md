@@ -15,6 +15,7 @@ This skill enforces high-performance, modern C++ (C++20) coding standards across
 4. **Parameter Passing (F.16, F.20):** Pass cheap types by value, large objects by `const&`, and sink parameters by value (with `std::move`). Return structs instead of using output parameters.
 5. **Class Design (C.20, C.21, C.35, C.46):** Enforce Rule of Zero or Rule of Five. Mark single-argument constructors `explicit`. Base class destructors must be public virtual or protected non-virtual.
 6. **Concurrency & OpenMP Safety (CP.2, CP.20, CP.44):** Loop variables in OpenMP constructs must be thread-private. Use `std::scoped_lock` for multi-mutex locking and always name lock guards.
+7. **Zero Suppression Policy:** Strictly prohibit `NOLINT`, `NOLINTNEXTLINE`, `NOLINTBEGIN`, and inline suppression comments. Resolve all linter diagnostics structurally.
 
 ## Extended Reference
 
