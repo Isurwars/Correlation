@@ -1,16 +1,16 @@
 # Graph Report - Correlation  (2026-07-23)
 
 ## Corpus Check
-- 313 files · ~5,127,503 words
+- 313 files · ~5,127,672 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4187 nodes · 7612 edges · 278 communities (238 shown, 40 thin omitted)
-- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 621 edges (avg confidence: 0.8)
+- 4213 nodes · 7642 edges · 276 communities (236 shown, 40 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 622 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7626ffc6`
+- Built from commit: `633cc8ed`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -198,7 +198,6 @@
 - TrajectoryTests.cpp
 - File Reader Tests
 - TEST
-- FileWriter::write
 - computeW6
 - FileIOHandler.cpp
 - atoms_
@@ -267,28 +266,27 @@
 - GPUSteinhardtCalculator.cu
 - ArcReader.cpp
 - GPULattice
-- Element
+- VoronoiCalculator::populateHistogram
 - ClusterCalculator
 - XRDCalculator.cpp
 - CalculatorFactory
 - addFrame
 - MLIPOutput
 - ThreadAccumulators
-- MockReader
-- HyperuniformityCalculatorTests.cpp
 - PrecomputedPhases
 - ThreadAccumulators
-- TEST
 - FileReaderTests
-- GPUAtomData
 - CSVWriter.cpp
 - hipGetDeviceCount
+- computeSingleAtomSteinhardt
+- CarReader.cpp
+- PlotController::PlotController
 
 ## God Nodes (most connected - your core abstractions)
 1. `Cell` - 238 edges
 2. `DistributionFunctions` - 162 edges
 3. `Trajectory` - 125 edges
-4. `Histogram` - 72 edges
+4. `Histogram` - 71 edges
 5. `TEST_F()` - 71 edges
 6. `AppBackend` - 65 edges
 7. `AnalysisSettings` - 55 edges
@@ -327,7 +325,7 @@
 - **Core Analysis Architecture** — src_readers_obj, src_calculators_obj, src_writers_obj, src_correlation_lib [EXTRACTED 1.00]
 - **Structural Distribution Functions** — concept_pdf, concept_pad, concept_rdf [EXTRACTED 1.00]
 
-## Communities (278 total, 40 thin omitted)
+## Communities (276 total, 40 thin omitted)
 
 ### Community 0 - "PDF Generation Utilities"
 Cohesion: 0.05
@@ -347,31 +345,31 @@ Nodes (51): AppController, AppWindow, vector, PresetController, handleDeletePres
 
 ### Community 4 - "TrajectoryAnalyzer"
 Cohesion: 0.05
-Nodes (56): AutocorrelateEmptyReturnsEmpty, AutocorrelateMatchesMathematicalDefinition, AutocorrelateReusesWorkspaceCorrectly, ComputeFFTHandlesEmptyInput, ComputeFFTHandlesNonPowerOfTwo, ComputeFFTHandlesPowerOfTwoAndInvert, ComputeFFTSizeOne, ComputeFFTThrowsOnNonPowerOfTwo (+48 more)
+Nodes (58): AutocorrelateEmptyReturnsEmpty, AutocorrelateMatchesMathematicalDefinition, AutocorrelateReusesWorkspaceCorrectly, ComputeFFTHandlesEmptyInput, ComputeFFTHandlesNonPowerOfTwo, ComputeFFTHandlesPowerOfTwoAndInvert, ComputeFFTSizeOne, ComputeFFTThrowsOnNonPowerOfTwo (+50 more)
 
 ### Community 5 - "Atom"
 Cohesion: 0.06
-Nodes (31): AddFrameAddsFrameToTrajectory, AddFrameThrowsOnAtomCountMismatch, AddFrameThrowsOnAtomOrderMismatch, AddFrameThrowsOnElementCountMismatch, AddFrameThrowsOnElementMismatch, CalculateVelocitiesComputesCorrectVelocities, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory, CalculateVelocitiesHandlesPBC (+23 more)
+Nodes (33): AddFrameAddsFrameToTrajectory, AddFrameThrowsOnAtomCountMismatch, AddFrameThrowsOnAtomOrderMismatch, AddFrameThrowsOnElementCountMismatch, AddFrameThrowsOnElementMismatch, CalculateVelocitiesComputesCorrectVelocities, CalculateVelocitiesDoesNotCrashOnEmptyTrajectory, CalculateVelocitiesHandlesPBC (+25 more)
 
 ### Community 6 - "KernelGenerationParams"
 Cohesion: 0.20
 Nodes (23): CompatibilityOverloadDerivesBinWidth, GenerateKernelNormalizesAndCalculatesCorrectly, fillBiweight(), fillBump(), fillCosine(), fillEpanechnikov(), fillGaussian(), fillTriweight() (+15 more)
 
 ### Community 7 - "XYZReader"
-Cohesion: 0.06
-Nodes (36): CommentData, string, vector, XYZReader, parseCommentLine, parseEnergy, parseLattice, parseProperties (+28 more)
+Cohesion: 0.07
+Nodes (34): CommentData, string, vector, XYZReader, parseCommentLine, parseEnergy, parseLattice, parseProperties (+26 more)
 
 ### Community 8 - "LinearAlgebra.hpp"
-Cohesion: 0.16
-Nodes (17): array(), cross(), distance(), dot(), size_t, T, U, Matrix3 (+9 more)
+Cohesion: 0.15
+Nodes (19): array(), cross(), determinant(), distance(), dot(), size_t, T, U (+11 more)
 
 ### Community 9 - "vector"
-Cohesion: 0.08
-Nodes (10): atomic, map, string, vector, TrajectoryAnalyzer, tuple, writeHistogramToCSV, string (+2 more)
+Cohesion: 0.07
+Nodes (20): atomic, mutex, string, vector, TrajectoryAnalyzer, FrameParser, mutex, optional (+12 more)
 
 ### Community 10 - "AppBackend"
-Cohesion: 0.09
-Nodes (24): AppBackend, analysis_thread_func, calculateDynamicProperties, cancel_flag_, df_, getBondCutoff, getRemovedFrameCount, getTimeStep (+16 more)
+Cohesion: 0.07
+Nodes (38): AppBackend, analysis_thread_func, cancel_flag_, df_, getAshcroftWeights, getAtomCounts, getAvailableHistogramNames, getBondCutoff (+30 more)
 
 ### Community 11 - "SIMDUtils.hpp"
 Cohesion: 0.07
@@ -382,8 +380,8 @@ Cohesion: 0.08
 Nodes (41): Cellulose Example Data, Carbon Atoms (C), Hydrogen Atoms (H), Oxygen Atoms (O), Carbon 1, Cellulose Molecular Structure, Atomic Coordinates (R), Energy (E) (+33 more)
 
 ### Community 13 - "DistributionFunctions"
-Cohesion: 0.05
-Nodes (38): CalculateVACF_and_VDOS, CalculateVACF_GasLike, CalculateVACF_WithFrameRange, ComputeDiffusionCoefficientVACF_and_RelaxationTime, DistributionFunctionsDynamicProperties, DistributionFunctionsNonPhysicalOptions, DynamicsAnalyzerNonPhysicalInputs, DistributionFunctions (+30 more)
+Cohesion: 0.06
+Nodes (24): DistributionFunctions, ashcroft_weights_, bond_cutoffs_sq_, current_cutoff_, deborah_number_, diffusion_coefficient_msd_, diffusion_coefficient_vacf_, getInversePartialKey (+16 more)
 
 ### Community 14 - "DistributionFunctions.cpp"
 Cohesion: 0.08
@@ -395,7 +393,7 @@ Nodes (39): DistanceTensor, real_t, vector, Vector3, DistanceCalculator::compute
 
 ### Community 16 - "CliOptions"
 Cohesion: 0.06
-Nodes (32): CliOptions, angle_bin_width, csv, dihedral_bin_width, disable_groups, has_dihedral_bin, hdf5, hyper_samples (+24 more)
+Nodes (39): App, CliOptions, angle_bin_width, csv, dihedral_bin_width, disable_groups, has_dihedral_bin, hdf5 (+31 more)
 
 ### Community 17 - "PlotController"
 Cohesion: 0.05
@@ -410,20 +408,20 @@ Cohesion: 0.10
 Nodes (21): DeterminantAndInversion, InvertRoundTripGeneral, Matrix3AdditionSubtraction, Matrix3ArrayConversion, Matrix3ConstructorsAndAccessors, Matrix3Equality, Matrix3ExtremeValues, Matrix3Identity (+13 more)
 
 ### Community 20 - "AppBackend.cpp"
-Cohesion: 0.13
-Nodes (15): write, AppBackend::getAshcroftWeights(), AppBackend::getAvailableHistogramNames(), AppBackend::getBondCutoff(), AppBackend::getHistogram(), AppBackend::getRecommendedBondCutoffs(), AppBackend::getTimeStep(), AppBackend::load_file() (+7 more)
+Cohesion: 0.10
+Nodes (21): calculateDynamicProperties, progress_callback_, runTrajectoryCalculators, setupTrajectorySettings, write, AppBackend::getAshcroftWeights(), AppBackend::getAtomCounts(), AppBackend::getAvailableHistogramNames() (+13 more)
 
 ### Community 21 - "TEST_F"
 Cohesion: 0.13
 Nodes (15): string, vector, LammpsDumpReader, parseDumpFrame, readStructure, readTrajectory, LammpsDumpReaderTests, ReadsTrajectoryOrtho (+7 more)
 
 ### Community 22 - "CastepMdReader"
-Cohesion: 0.36
-Nodes (9): ArcReader::parseLine(), ArcReader::read(), ArcReader::readStructure(), ArcReader::readTrajectory(), ArcReader::updateProgress(), function, streampos, string (+1 more)
+Cohesion: 0.11
+Nodes (17): Random, HyperuniformityCalculator::calculateFrame(), mt19937_64, real_t, createRandomCell(), CreateRandomCellParams, box_length, num_atoms (+9 more)
 
 ### Community 23 - "AnalysisSettings"
-Cohesion: 0.07
-Nodes (26): AnalysisSettings, active_calculators, angle_bin_width, cancel_flag, dihedral_bin_width, hyperuniformity_samples, lef_cutoff, lef_sigma (+18 more)
+Cohesion: 0.06
+Nodes (30): AnalysisSettings, active_calculators, angle_bin_width, cancel_flag, dihedral_bin_width, hyperuniformity_samples, lef_cutoff, lef_sigma (+22 more)
 
 ### Community 24 - "AppDefaults"
 Cohesion: 0.06
@@ -434,12 +432,12 @@ Cohesion: 0.17
 Nodes (31): ParseState, AsymmetricAtom, frac_pos, symbol, CifReader::read(), CifReader::readStructure(), CifReader::readTrajectory(), cleanCifValue() (+23 more)
 
 ### Community 26 - "TEST_F"
-Cohesion: 0.05
-Nodes (42): CellData, mutex, Cell, energy_, getOrRegisterElement, lattice_parameters_, real_t, vector (+34 more)
+Cohesion: 0.22
+Nodes (9): ComputesDistancesViaSYCLFallback, ComputesSQViaSYCLFallback, DeviceDetectionDoesNotCrash, elements_, getFrame, Trajectory::precomputeBondCutoffs(), Trajectory::validateFrame(), SYCLCalculatorTests (+1 more)
 
 ### Community 27 - "FFTUtils.hpp"
-Cohesion: 0.19
-Nodes (21): DistributionFunctions::calculateAshcroftWeights(), accumulateRawCounts(), map, real_t, string, getInversePartialKey(), getPartialKey(), normalizeDistributions() (+13 more)
+Cohesion: 0.17
+Nodes (22): DistributionFunctions::calculateAshcroftWeights(), accumulateRawCounts(), map, real_t, string, getInversePartialKey(), getPartialKey(), normalizeDistributions() (+14 more)
 
 ### Community 28 - "TEST_F"
 Cohesion: 0.08
@@ -458,24 +456,24 @@ Cohesion: 0.07
 Nodes (27): PdfComparisonRenderer, axis_col, bg_col, canvas_height, canvas_width, config, datasets, grid_col (+19 more)
 
 ### Community 32 - "NeighborGraph"
-Cohesion: 0.12
-Nodes (18): DoublePrecisionDistanceComputation, FloatPrecisionDistanceComputation, GPUDistanceCalculatorTests, HasGPUDeviceCheck, vector, NeighborGraph, adj_list_, areConnected (+10 more)
+Cohesion: 0.15
+Nodes (13): DoublePrecisionDistanceComputation, FloatPrecisionDistanceComputation, GPUDistanceCalculatorTests, HasGPUDeviceCheck, areConnected, getDenseAdjacencyMatrix, nodeCount, testing::Test (+5 more)
 
 ### Community 33 - "ProgramOptions"
 Cohesion: 0.07
 Nodes (29): KernelType, map, vector, ProgramOptions, active_calculators, angle_bin_width, bond_cutoffs_sq, dihedral_bin_width (+21 more)
 
 ### Community 34 - "OutmolParser"
-Cohesion: 0.10
-Nodes (21): function, ifstream, real_t, streampos, string, stringstream, vector, OutmolParser (+13 more)
+Cohesion: 0.13
+Nodes (14): real_t, streampos, stringstream, OutmolParser, cell_parsed, file_size, frames, h_one (+6 more)
 
 ### Community 35 - "XdatcarHeader"
-Cohesion: 0.14
-Nodes (13): CalculateXRD, CalculateXRD_IntensityIsZeroAtThetaZero, CalculateXRD_InvalidBinWidth, CalculateXRD_InvalidInputsThrow, CalculateXRD_ThrowsIfNoRDF, CalculateXRDCubicCell, calculateRDF, calculateXRD (+5 more)
+Cohesion: 0.22
+Nodes (9): BuildBCCLatticeAndVerifyDensity, BuildFCCLatticeAndVerifyPBCDistances, minimumImage, wrapPositions, CellFunctionalTests, testing::Test, TEST_F(), VerifyLatticeParameterGuards (+1 more)
 
 ### Community 36 - "fuzz_utils.hpp"
 Cohesion: 0.11
-Nodes (18): readTrajectory, readStructure, readTrajectory, readTrajectory, readTrajectory, readStructure, PresetManager::presetsDirectory(), LLVMFuzzerTestOneInput() (+10 more)
+Nodes (18): readStructure, readTrajectory, readTrajectory, readTrajectory, readStructure, readStructure, PresetManager::presetsDirectory(), LLVMFuzzerTestOneInput() (+10 more)
 
 ### Community 37 - "BFSScratch"
 Cohesion: 0.14
@@ -495,7 +493,7 @@ Nodes (24): blendColor(), BlendParams, bg, fg, ComparisonQuery, filepath, key, d
 
 ### Community 41 - "Histogram Metadata"
 Cohesion: 0.12
-Nodes (21): correlation_wasm, Histogram, bins, compute_count, description, file_suffix, partials, smoothed_partials (+13 more)
+Nodes (20): correlation_wasm, Histogram, bins, compute_count, description, file_suffix, partials, smoothed_partials (+12 more)
 
 ### Community 42 - "PDF Histogram Renderer"
 Cohesion: 0.08
@@ -514,11 +512,11 @@ Cohesion: 0.13
 Nodes (16): FrameAtomCountConsistent, string, vector, XdatcarReader, readStructure, readTrajectory, LatticeConsistentAcrossFrames, ParseThreeFrameTrajectory (+8 more)
 
 ### Community 46 - "Main App Controller"
-Cohesion: 0.08
-Nodes (32): AnalysisRunner, AppController, analysis_runner_, file_io_handler_, getBondCutoffs, handleOptionsfromUI, handleOptionstoUI, input_validator_ (+24 more)
+Cohesion: 0.14
+Nodes (17): AnalysisRunner, AppController, analysis_runner_, file_io_handler_, getBondCutoffs, handleOptionsfromUI, input_validator_, plot_controller_ (+9 more)
 
 ### Community 47 - "TEST_F"
-Cohesion: 0.10
+Cohesion: 0.11
 Nodes (17): string, vector, PdbReader, readStructure, readTrajectory, ReadFallbackElements, ReadSingleStructure, ReadTrajectoryFrames (+9 more)
 
 ### Community 48 - "TEST_F"
@@ -526,12 +524,12 @@ Cohesion: 0.11
 Nodes (19): string, vector, VaspReader, read, readTrajectory, ParseCartesianCoordinates, ParseMultiSpecies, ParseSelectiveDynamics (+11 more)
 
 ### Community 49 - "VaspParser"
-Cohesion: 0.22
-Nodes (7): lattice_vectors_, ifstream, pair, real_t, vector, VaspParser, file
+Cohesion: 0.18
+Nodes (11): function, ifstream, pair, real_t, string, vector, VaspParser, file (+3 more)
 
 ### Community 50 - "Roboto"
-Cohesion: 0.10
-Nodes (24): Glyph, left, right, strokes, map, pair, real_t, vector (+16 more)
+Cohesion: 0.08
+Nodes (31): Glyph, left, right, strokes, map, pair, real_t, string (+23 more)
 
 ### Community 51 - "renderComparisonSvg"
 Cohesion: 0.17
@@ -566,8 +564,8 @@ Cohesion: 0.32
 Nodes (12): CellReader::read(), CellReader::readStructure(), CellReader::readTrajectory(), function, real_t, string, stringstream, parseLatticeAbc() (+4 more)
 
 ### Community 59 - "SvgComparisonRenderer"
-Cohesion: 0.12
-Nodes (17): getAshcroftWeights, getAtomCounts, getAvailableHistogramNames, getHistogram, getRecommendedBondCutoffs, getRecommendedTimeStep, LoadInvalidFileThrowsException, LoadValidCarFileAndRunAnalysisAndWriteFiles (+9 more)
+Cohesion: 0.22
+Nodes (6): AtomIndex, id, vector, NeighborGraph::addDirectedEdge(), NeighborGraph::areConnected(), NeighborGraph::getDenseAdjacencyMatrix()
 
 ### Community 60 - "TEST"
 Cohesion: 0.10
@@ -575,11 +573,11 @@ Nodes (17): AtomsOutsideCutoff, ComputesPairwiseDistancesAndNeighborGraph, Dista
 
 ### Community 61 - "TEST_F"
 Cohesion: 0.06
-Nodes (39): CastepMdReaderTests, CastepMdReader, parseAtomLine, parseEnergyLine, parseLatticeLine, read, readStructure, updateProgress (+31 more)
+Nodes (41): CastepMdReaderTests, lattice_parameters_, CastepMdReader, parseAtomLine, parseEnergyLine, parseLatticeLine, read, readStructure (+33 more)
 
 ### Community 62 - "TEST_F"
-Cohesion: 0.12
-Nodes (16): CalculatesAndWritesSiliconDistributions, calculatePAD, calculateVACF, calculateVDOS, smoothAll, real_t, string, testing::Test (+8 more)
+Cohesion: 0.04
+Nodes (55): BasicUsage, CalculatesAndWritesSiliconDistributions, CalculateVACF_and_VDOS, CalculateVACF_GasLike, CalculateVACF_WithFrameRange, CalculateXRD, CalculateXRD_IntensityIsZeroAtThetaZero, CalculateXRD_InvalidBinWidth (+47 more)
 
 ### Community 63 - "TEST"
 Cohesion: 0.15
@@ -590,12 +588,12 @@ Cohesion: 0.13
 Nodes (15): CellReaderTests, CellReader, read, readStructure, readTrajectory, string, vector, ReadsStructureLatticeAbc (+7 more)
 
 ### Community 65 - "PlotController.cpp"
-Cohesion: 0.15
-Nodes (22): executeSavePlot, handleUpdateTimer, requestPlotUpdate, RenderTaskData, AppWindow, SharedString, string, T (+14 more)
+Cohesion: 0.18
+Nodes (19): executeSavePlot, requestPlotUpdate, RenderTaskData, SharedString, string, T, getComparisonKey(), PlotController::buildPlotConfigFromUI() (+11 more)
 
 ### Community 66 - "progress_callback"
-Cohesion: 0.06
-Nodes (34): AccessorsWork, AddAndScale, BasicUsage, CalculateCoordinationNumber, CalculateRDF, ComputeMean, CreateAnalyzerOutOfBoundsReturnsNullptr, DefaultConstructorWorks (+26 more)
+Cohesion: 0.07
+Nodes (27): AccessorsWork, AddAndScale, CalculateCoordinationNumber, CalculateRDF, ComputeMean, DefaultConstructorWorks, HandlesMissingPartialInAdd, add (+19 more)
 
 ### Community 67 - "Trajectory.cpp"
 Cohesion: 0.20
@@ -606,8 +604,8 @@ Cohesion: 0.08
 Nodes (24): HoverInfo, active, mouse_x, mouse_y, widget_height, widget_width, real_t, string (+16 more)
 
 ### Community 69 - "TEST"
-Cohesion: 0.22
-Nodes (14): ColumnLayout, function, string, extractLine(), findLineEnd(), LammpsDumpReader::parseDumpFrame(), LammpsDumpReader::readStructure(), LammpsDumpReader::readTrajectory() (+6 more)
+Cohesion: 0.38
+Nodes (6): ColumnLayout, LammpsDumpReader::parseDumpFrame(), LammpsFrameParser, lineEnd, offset, size
 
 ### Community 70 - "TEST"
 Cohesion: 0.13
@@ -619,15 +617,15 @@ Nodes (15): string, vector, OutmolReader, read, readStructure, readTrajectory, O
 
 ### Community 72 - "TEST"
 Cohesion: 0.14
-Nodes (14): ArcReaderTests, ArcReader, parseLine, read, readStructure, updateProgress, string, vector (+6 more)
+Nodes (15): ArcReaderTests, ArcReader, parseLine, read, readStructure, readTrajectory, updateProgress, string (+7 more)
 
 ### Community 73 - "Constants.hpp"
 Cohesion: 0.17
 Nodes (9): DataRange, max, min, vector, NiceScale, max, min, spacing (+1 more)
 
 ### Community 74 - "TEST"
-Cohesion: 0.16
-Nodes (13): CifReaderTests, CifReader, read, readStructure, readTrajectory, string, vector, ReadsStructureWithSymmetryAndUncertainty (+5 more)
+Cohesion: 0.14
+Nodes (14): CifReaderTests, CifReader, read, readStructure, readTrajectory, string, vector, ReadsStructureWithSymmetryAndUncertainty (+6 more)
 
 ### Community 75 - "TEST"
 Cohesion: 0.14
@@ -642,8 +640,8 @@ Cohesion: 0.07
 Nodes (34): color(), fmtScientific(), size_t, mapValue(), map, NearestPoint, ostringstream, pair (+26 more)
 
 ### Community 78 - "StructureAnalyzer"
-Cohesion: 0.05
-Nodes (31): CelluloseRingDistribution, ComputeMotif, AngleTensor, DihedralTensor, DistanceTensor, real_t, vector, StructureAnalyzer (+23 more)
+Cohesion: 0.04
+Nodes (35): CelluloseRingDistribution, ComputeMotif, AngleTensor, DihedralTensor, DistanceTensor, real_t, vector, StructureAnalyzer (+27 more)
 
 ### Community 79 - "LocalEntropyCalculator.cpp"
 Cohesion: 0.27
@@ -666,8 +664,8 @@ Cohesion: 0.15
 Nodes (20): averageBinnedSQ(), CORRELATION_HOST(), CORRELATION_DEVICE, CORRELATION_GLOBAL, real_t, T, vector, DeviceAtoms (+12 more)
 
 ### Community 84 - "QETrajectoryParser"
-Cohesion: 0.27
-Nodes (8): ensureMaterialized, parser_, validateFrame, Trajectory::addFrame(), Trajectory::calculateVelocities(), Trajectory::ensureMaterialized(), Trajectory::getFrame(), Trajectory::removeDuplicatedFrames()
+Cohesion: 0.14
+Nodes (18): ensureMaterialized, getBondCutoffSQ, parser_, precomputeBondCutoffs, removeDuplicatedFrames, validateFrame, FrameParser, real_t (+10 more)
 
 ### Community 85 - "CNCalculator"
 Cohesion: 0.14
@@ -686,8 +684,8 @@ Cohesion: 0.15
 Nodes (13): BaseReader, getExtensions, getName, isTrajectory, readStructure, readTrajectory, string, unique_ptr (+5 more)
 
 ### Community 89 - "CP2KReader"
-Cohesion: 0.31
-Nodes (7): CP2KReaderTests, data_dir_, ReadsSingleFrame, string, testing::Test, getTestDataDir(), TEST_F()
+Cohesion: 0.27
+Nodes (8): readStructure, CP2KReaderTests, data_dir_, ReadsSingleFrame, string, testing::Test, getTestDataDir(), TEST_F()
 
 ### Community 90 - "MappedFileFunctionalTests"
 Cohesion: 0.12
@@ -726,8 +724,8 @@ Cohesion: 0.24
 Nodes (15): set, buildCNAHistogram(), buildCommonNeighborAdjacency(), CNACalculator::calculate(), CNACalculator::calculateFrame(), CommonNeighborAdjacency, adjacency_list, bond_count (+7 more)
 
 ### Community 99 - "TEST_F"
-Cohesion: 0.15
-Nodes (13): DetectsSingleSquare, DetectsSingleTriangle, EmptyGraphReturnsNoRings, MotifFinder, extractCycles, findRings, IsolatedNodesReturnsNoRings, MaxRingSizeExcludesLargerRings (+5 more)
+Cohesion: 0.25
+Nodes (9): DetectsSingleSquare, DetectsSingleTriangle, EmptyGraphReturnsNoRings, MotifFinder, extractCycles, findRings, IsolatedNodesReturnsNoRings, MaxRingSizeExcludesLargerRings (+1 more)
 
 ### Community 100 - "ArrowWriter.cpp"
 Cohesion: 0.26
@@ -762,8 +760,8 @@ Cohesion: 0.08
 Nodes (19): CalculateSF_EmptyCellThrows, CalculateSF_InvalidInputsThrow, CalculatesSimpleCubicBraggPeak, DimerProducesValidSQ, HomonuclearClusterPartialsPresent, real_t, SYCLSQParams, q_bin_width (+11 more)
 
 ### Community 108 - "NiceScale"
-Cohesion: 0.25
-Nodes (8): size_t, MillerPhaseSumParams, CORRELATION_RESTRICT, count, SincIntegralParams, CORRELATION_RESTRICT, count, q_magnitude
+Cohesion: 0.36
+Nodes (8): function, string, extractLine(), findLineEnd(), LammpsDumpReader::readStructure(), LammpsDumpReader::readTrajectory(), data, skipLineEnding()
 
 ### Community 109 - "TEST_F"
 Cohesion: 0.17
@@ -794,16 +792,16 @@ Cohesion: 0.26
 Nodes (10): Cp2kParserState, has_box, parsing_cell, parsing_coords, CP2KReader::readStructure(), CP2KReader::readTrajectory(), function, string (+2 more)
 
 ### Community 116 - "TEST_F"
-Cohesion: 0.15
-Nodes (13): testing::Test, Vector3, PrecisionTests, d_x1, d_x2, d_y1, d_y2, d_z1 (+5 more)
+Cohesion: 0.09
+Nodes (22): AccumulationPrecisionLoss, KahanAccumulatorPreservesPrecision, Matrix3Determinant, Matrix3Inversion, testing::Test, Vector3, PrecisionTests, d_x1 (+14 more)
 
 ### Community 117 - "WriterFactory"
 Cohesion: 0.15
 Nodes (12): map, string, unique_ptr, vector, registerTypeSafe(), WriterFactory, extension_map_, getWriter (+4 more)
 
 ### Community 118 - "GPUDistanceCalculator.cu"
-Cohesion: 0.44
-Nodes (8): function, string, extractLine(), findLineEnd(), parseXdatcarFrame(), skipLineEnding(), XdatcarReader::readStructure(), XdatcarReader::readTrajectory()
+Cohesion: 0.33
+Nodes (7): function, ifstream, string, vector, OutmolReader::read(), OutmolReader::readStructure(), OutmolReader::readTrajectory()
 
 ### Community 119 - "HBondCalculator.cpp"
 Cohesion: 0.26
@@ -846,8 +844,8 @@ Cohesion: 0.27
 Nodes (4): string, VDOSCalculator, calculate, calculateTrajectory
 
 ### Community 129 - "XRDCalculator"
-Cohesion: 0.16
-Nodes (13): ComputesDistancesViaSYCLFallback, ComputesSQViaSYCLFallback, DeviceDetectionDoesNotCrash, getFrameCount, atoms_, elements_, getFrame, AppBackend::getAtomCounts() (+5 more)
+Cohesion: 0.06
+Nodes (26): CellData, GPUSQCalculatorTests, calculateFrame, Cell, energy_, getOrRegisterElement, real_t, vector (+18 more)
 
 ### Community 130 - "BaseWriter"
 Cohesion: 0.24
@@ -862,8 +860,8 @@ Cohesion: 0.24
 Nodes (8): RendersComparisonPdfCorrectly, RendersEmptyHistogramAsPdfGracefully, RendersValidHistogramAsPdfCorrectly, string, testing::Test, PdfPlotterTests, temp_pdf_path, TEST_F()
 
 ### Community 133 - "SteinhardtCalculator.cpp"
-Cohesion: 0.26
-Nodes (19): SphericalAngles, accumulateHistogramMap(), addValueToHistogram(), computeW6(), copyPartialsToHistogram(), complex, map, real_t (+11 more)
+Cohesion: 0.30
+Nodes (17): SphericalAngles, accumulateHistogramMap(), addValueToHistogram(), computeW6(), copyPartialsToHistogram(), complex, map, real_t (+9 more)
 
 ### Community 134 - "GromacsReader.cpp"
 Cohesion: 0.40
@@ -886,8 +884,8 @@ Cohesion: 0.27
 Nodes (4): string, RDFCalculator, calculate, calculateFrame
 
 ### Community 139 - "compute_distances_gpu"
-Cohesion: 0.15
-Nodes (10): string, SteinhardtCalculator, calculateFrame, sphericalHarmonic, wigner3j, SingleAtomSteinhardt, computeSingleAtomSteinhardt(), GlobalSteinhardtFactors (+2 more)
+Cohesion: 0.21
+Nodes (6): string, SteinhardtCalculator, calculateFrame, wigner3j, Wigner6Table, table
 
 ### Community 140 - "renderTextAsPath"
 Cohesion: 0.38
@@ -902,8 +900,8 @@ Cohesion: 0.20
 Nodes (10): Python Bindings (_correlation), Calculators Library, Correlation CLI, Correlation GUI, Correlation Core Library, Readers Library, Writers Library, Fuzz Tests (+2 more)
 
 ### Community 143 - "UnionFind"
-Cohesion: 0.22
-Nodes (10): getBondCutoffSQ, precomputeBondCutoffs, removeDuplicatedFrames, FrameParser, real_t, shared_ptr, vector, Trajectory::getBondCutoff() (+2 more)
+Cohesion: 0.25
+Nodes (8): size_t, MillerPhaseSumParams, CORRELATION_RESTRICT, count, SincIntegralParams, CORRELATION_RESTRICT, count, q_magnitude
 
 ### Community 144 - "GPULattice"
 Cohesion: 0.25
@@ -954,32 +952,32 @@ Cohesion: 0.25
 Nodes (4): DummyPos, x_val, y_val, z_val
 
 ### Community 156 - "LammpsDumpReader::readTrajectory"
-Cohesion: 0.22
-Nodes (9): HexagonalClosePacked, volume_, BodyCenteredCubic, FaceCenteredCubic, real_t, SimpleCubic, testing::Test, TEST_F() (+1 more)
+Cohesion: 0.20
+Nodes (10): HexagonalClosePacked, lattice_vectors_, volume_, BodyCenteredCubic, FaceCenteredCubic, real_t, SimpleCubic, testing::Test (+2 more)
 
 ### Community 157 - "HyperuniformityCalculatorTests.cpp"
-Cohesion: 0.08
-Nodes (20): CalculateWithMockORBv3Model, FallbackExecutionWithoutModel, string, MLIPCalculator, calculate, calculateFrame, real_t, vector (+12 more)
+Cohesion: 0.16
+Nodes (9): CalculateWithMockORBv3Model, FallbackExecutionWithoutModel, string, MLIPCalculator, calculate, calculateFrame, MLIPCalculatorTests, DiscoveryInCalculatorFactory (+1 more)
 
 ### Community 158 - "VoronoiCalculator::populateHistogram"
 Cohesion: 0.21
 Nodes (4): module_, string, init_calculators(), PyBaseCalculator
 
 ### Community 159 - "FileIOHandler"
-Cohesion: 0.36
-Nodes (7): AnalysisRunner, analysis_thread_, handleRunAnalysis, updateProgress, AppController, AppWindow, thread
+Cohesion: 0.17
+Nodes (14): AnalysisRunner, analysis_thread_, handleRunAnalysis, updateProgress, AppController, AppWindow, thread, AppController (+6 more)
 
 ### Community 160 - "CalculatorFactory"
 Cohesion: 0.25
 Nodes (8): DoublePrecisionEvaluation, FloatPrecisionEvaluation, GPUSteinhardtCalculatorTests, addHistogram, calculate, DiscoveryInCalculatorFactory, FallbackOrGPUExecution, TEST()
 
 ### Community 161 - "HyperuniformityCalculator::calculate"
-Cohesion: 0.08
-Nodes (16): real_t, HyperuniformityParams, num_samples, r_bin_width, map, mt19937_64, real_t, string (+8 more)
+Cohesion: 0.20
+Nodes (10): real_t, HyperuniformityParams, num_samples, r_bin_width, map, mt19937_64, real_t, string (+2 more)
 
 ### Community 162 - "SDFCalculator"
-Cohesion: 0.24
-Nodes (9): real_t, shared_ptr, vector, XdatcarHeader, atom_counts, atom_species, lattice, species (+1 more)
+Cohesion: 0.15
+Nodes (22): function, real_t, shared_ptr, string, vector, extractLine(), findLineEnd(), parseXdatcarFrame() (+14 more)
 
 ### Community 163 - "MappedFile.hpp"
 Cohesion: 0.25
@@ -994,8 +992,8 @@ Cohesion: 0.36
 Nodes (4): HDF5Writer, writeHDF, string, vector
 
 ### Community 166 - "HistogramConfigs"
-Cohesion: 0.46
-Nodes (7): real_t, vector, DADCalculator::calculate(), DADCalculator::calculateFrame(), initializeHistogram(), normalizeAndScale(), processDihedralAngles()
+Cohesion: 0.11
+Nodes (26): map, real_t, span, string, vector, DADCalculator::calculate(), DADCalculator::calculateFrame(), DihedralProcessParameters (+18 more)
 
 ### Community 167 - "PartialInfo"
 Cohesion: 0.31
@@ -1006,8 +1004,8 @@ Cohesion: 0.22
 Nodes (8): AchiralCoplanarMotif, ChiralLeftHandedMotif, ChiralRightHandedMotif, HistogramDistribution, ChiralityCalculatorTests, real_t, testing::Test, TEST_F()
 
 ### Community 169 - "NeighborGraph.cpp"
-Cohesion: 0.11
-Nodes (19): AtomIndex, id, Edge, distance, r_ij, source, target, AtomID (+11 more)
+Cohesion: 0.21
+Nodes (13): Edge, distance, r_ij, source, target, AtomID, real_t, Vector3 (+5 more)
 
 ### Community 170 - "MappedFileTests"
 Cohesion: 0.33
@@ -1026,8 +1024,8 @@ Cohesion: 0.29
 Nodes (7): RDFNormalizationParams, CORRELATION_RESTRICT, count, g_norm, inv_Ni_dr, inv_Nj_dr, pi4_rho_j
 
 ### Community 174 - "HoverInfo"
-Cohesion: 0.22
-Nodes (9): BuildBCCLatticeAndVerifyDensity, BuildFCCLatticeAndVerifyPBCDistances, minimumImage, wrapPositions, CellFunctionalTests, testing::Test, TEST_F(), VerifyLatticeParameterGuards (+1 more)
+Cohesion: 0.33
+Nodes (3): CP2KReader, string, vector
 
 ### Community 175 - "AnalysisRunner.cpp"
 Cohesion: 0.38
@@ -1061,10 +1059,6 @@ Nodes (9): compute_dsq_block(), debye_sum(), dot_block(), MillerPhaseSumResult, 
 Cohesion: 0.33
 Nodes (5): Execution Pipeline, Phase 1: Sanitizer Flag Injection, Phase 2: Runtime Execution & Trap Capture, Phase 3: Root-Cause Remediation & Resolution Loop, Sanitizer Validator
 
-### Community 183 - "FileWriter::write"
-Cohesion: 0.32
-Nodes (7): AppController, AppWindow, FileIOHandler, handleBrowseFile, handleWriteFiles, load_thread_, thread
-
 ### Community 184 - "computeW6"
 Cohesion: 0.24
 Nodes (4): GPUSteinhardtCalculator, calculateFrame, has_gpu_, string
@@ -1074,12 +1068,12 @@ Cohesion: 0.47
 Nodes (3): AppController, AppWindow, FileIOHandler::FileIOHandler()
 
 ### Community 186 - "atoms_"
-Cohesion: 0.18
-Nodes (11): AccumulationPrecisionLoss, determinant(), invert(), KahanAccumulatorPreservesPrecision, Matrix3Determinant, Matrix3Inversion, TEST_F(), Vector3AdditionAndSubtraction (+3 more)
+Cohesion: 0.16
+Nodes (15): handleOptionstoUI, populateCalculatorGroups, updateActiveGroupFlags, AppController::AppController(), AppController::getBondCutoffs(), AppController::handleOptionsfromUI(), AppController::handleOptionstoUI(), AppController::populateCalculatorGroups() (+7 more)
 
 ### Community 187 - "CarReader.cpp"
-Cohesion: 0.27
-Nodes (10): BinRange, pair, real_t, string, vector, processCellTopology(), VoronoiCalculator::buildSignatureMap(), VoronoiCalculator::makeHistogram() (+2 more)
+Cohesion: 0.33
+Nodes (3): real_t, testing::Test, TrajectoryTests
 
 ### Community 188 - "app.js"
 Cohesion: 0.47
@@ -1138,16 +1132,16 @@ Cohesion: 0.10
 Nodes (21): AccessorsModifyStateCorrectly, AngleFunctionCalculatesNinetyDegrees, AngleFunctionClampsFloatingPointInaccuracies, AngleFunctionHandlesCoincidentAtoms, AngleFunctionHandlesCollinearAtoms, AngleFunctionHandlesNaNCoordinates, CopyAndMoveSemanticsWork, DistanceBetweenIdenticalAtomsIsZero (+13 more)
 
 ### Community 248 - "Constants.hpp"
-Cohesion: 0.33
-Nodes (5): GPUSQCalculatorTests, calculateFrame, DiscoveryInCalculatorFactory, FallbackOrGPUExecution, TEST()
+Cohesion: 0.18
+Nodes (10): calculateVelocities, getFrameCount, string, testing::Test, TEST_F(), TrajectoryFunctionalTests, Vector3R, VerifyDeduplicationStatTracking (+2 more)
 
 ### Community 249 - "Rule: Caveman Navigation Protocol (Token-Efficient Codebase Discovery)"
 Cohesion: 0.50
 Nodes (3): 1. Core Directives, 2. Execution Workflow, Rule: Caveman Navigation Protocol (Token-Efficient Codebase Discovery)
 
 ### Community 250 - "PositionBlockT"
-Cohesion: 0.53
-Nodes (5): function, string, VaspReader::read(), VaspReader::readStructure(), VaspReader::readTrajectory()
+Cohesion: 0.47
+Nodes (4): string, testing::Test, FileReaderTests, data_dir_
 
 ### Community 252 - "ReciprocalBasis"
 Cohesion: 0.18
@@ -1170,16 +1164,16 @@ Cohesion: 0.10
 Nodes (33): compute_y4m(), compute_y6m(), CORRELATION_DEVICE, CORRELATION_GLOBAL, T, GPUPoint, x, y (+25 more)
 
 ### Community 257 - "ArcReader.cpp"
-Cohesion: 0.33
-Nodes (5): XdatcarParser, data, lineEnd, offset, total_size
+Cohesion: 0.40
+Nodes (5): string, testing::Test, getTestDataDir(), XdatcarReaderTests, data_dir_
 
 ### Community 258 - "GPULattice"
 Cohesion: 0.20
 Nodes (10): GPULattice, v0_x, v0_y, v0_z, v1_x, v1_y, v1_z, v2_x (+2 more)
 
-### Community 259 - "Element"
-Cohesion: 0.31
-Nodes (7): App, parseArgs(), span, applyMaterialDefaults(), parseArgs(), printUsage(), validateOptions()
+### Community 259 - "VoronoiCalculator::populateHistogram"
+Cohesion: 0.27
+Nodes (10): BinRange, pair, real_t, string, vector, processCellTopology(), VoronoiCalculator::buildSignatureMap(), VoronoiCalculator::makeHistogram() (+2 more)
 
 ### Community 260 - "ClusterCalculator"
 Cohesion: 0.16
@@ -1198,20 +1192,12 @@ Cohesion: 0.31
 Nodes (5): ArrowWriter, writeAllParquet, writeHistogramToParquet, string, vector
 
 ### Community 265 - "MLIPOutput"
-Cohesion: 0.22
+Cohesion: 0.20
 Nodes (5): MLIPInterface, evaluate, getModelName, MLIPCalculator::calculate(), MLIPCalculator::calculateFrame()
 
 ### Community 266 - "ThreadAccumulators"
 Cohesion: 0.15
 Nodes (11): Element, id, symbol, ElementID, value, string, findElement, Cell::findElement() (+3 more)
-
-### Community 267 - "MockReader"
-Cohesion: 0.33
-Nodes (3): real_t, testing::Test, TrajectoryTests
-
-### Community 268 - "HyperuniformityCalculatorTests.cpp"
-Cohesion: 0.13
-Nodes (16): Random, mt19937_64, real_t, createRandomCell(), CreateRandomCellParams, box_length, num_atoms, createSCLattice() (+8 more)
 
 ### Community 269 - "PrecomputedPhases"
 Cohesion: 0.29
@@ -1221,40 +1207,44 @@ Nodes (7): PrecomputedPhases, E1_cos, E1_sin, E2_cos, E2_sin, E3_cos, E3_sin
 Cohesion: 0.29
 Nodes (7): ThreadAccumulators, c_partial_sums, c_total_sum, partial_counts, partial_sums, total_count, total_sum
 
-### Community 271 - "TEST"
-Cohesion: 0.29
-Nodes (4): CP2KReader, readStructure, string, vector
-
 ### Community 273 - "FileReaderTests"
 Cohesion: 0.33
 Nodes (6): scale_bins(), scale_bins(), ScaleBinsParams, arr, count, scale_factor
 
-### Community 275 - "GPUAtomData"
-Cohesion: 0.47
-Nodes (4): string, testing::Test, FileReaderTests, data_dir_
-
 ### Community 276 - "CSVWriter.cpp"
-Cohesion: 0.40
-Nodes (5): string, testing::Test, getTestDataDir(), XdatcarReaderTests, data_dir_
+Cohesion: 0.14
+Nodes (12): atoms_, real_t, vector, Vector3, MLIPOutput, forces, per_atom_energy, stress (+4 more)
 
 ### Community 277 - "hipGetDeviceCount"
 Cohesion: 0.50
 Nodes (4): hipGetDeviceCount(), has_gpu_device(), GPUSQCalculator::GPUSQCalculator(), GPUSteinhardtCalculator::GPUSteinhardtCalculator()
 
+### Community 281 - "computeSingleAtomSteinhardt"
+Cohesion: 0.33
+Nodes (6): sphericalHarmonic, SingleAtomSteinhardt, computeSingleAtomSteinhardt(), GlobalSteinhardtFactors, global_Q4_factor, global_Q6_factor
+
+### Community 282 - "CarReader.cpp"
+Cohesion: 0.53
+Nodes (5): CarReader::read(), CarReader::readStructure(), CarReader::readTrajectory(), function, string
+
+### Community 286 - "PlotController::PlotController"
+Cohesion: 0.67
+Nodes (3): handleUpdateTimer, AppWindow, PlotController::PlotController()
+
 ## Knowledge Gaps
-- **853 isolated node(s):** `value`, `value`, `value`, `TrajectoryAnalyzer`, `r_max` (+848 more)
+- **870 isolated node(s):** `value`, `value`, `value`, `TrajectoryAnalyzer`, `r_max` (+865 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **40 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Cell` connect `TEST_F` to `ChiralityCalculator.cpp`, `Atom`, `XYZReader`, `LinearAlgebra.hpp`, `vector`, `DistributionFunctions`, `DistributionFunctions.cpp`, `ThreadLocalDistances`, `CastepMdReader`, `CifReader.cpp`, `FFTUtils.hpp`, `TEST_F`, `TEST`, `TEST_F`, `NeighborGraph`, `OutmolParser`, `XdatcarHeader`, `Onetep File Parser`, `Cell`, `Histogram Metadata`, `TEST`, `TEST_F`, `VaspParser`, `TEST`, `TEST_F`, `renderComparisonPdf`, `TEST`, `TEST_F`, `TEST_F`, `progress_callback`, `TEST`, `TEST`, `StructureAnalyzer`, `LocalEntropyCalculator.cpp`, `TEST`, `Cell.cpp`, `GPUSQCalculator.cu`, `QETrajectoryParser`, `VoronoiCalculator`, `CNACalculator.cpp`, `TEST_F`, `SteinhardtCalculator`, `PyBaseCalculator`, `AppController.cpp`, `StructureFactorCalculator.cpp`, `TEST_F`, `XRDCalculator::calculate`, `.atomCount`, `GPUDistanceCalculator.cu`, `HBondCalculator.cpp`, `LammpsFrameParser`, `DihedralCalculatorTests`, `XRDCalculator`, `TEST_F`, `SteinhardtCalculator.cpp`, `GromacsReader.cpp`, `addFrame`, `GPULattice`, `PADCalculator.cpp`, `TEST_F`, `readTrajectory`, `computeSingleAtomSteinhardt`, `LammpsDumpReader::readTrajectory`, `HyperuniformityCalculatorTests.cpp`, `CalculatorFactory`, `HyperuniformityCalculator::calculate`, `HistogramConfigs`, `precomputePhases`, `TEST_F`, `HoverInfo`, `Constants.hpp`, `PositionBlockT`, `ClusterCalculator`, `XRDCalculator.cpp`, `MLIPOutput`, `ThreadAccumulators`, `MockReader`, `HyperuniformityCalculatorTests.cpp`?**
-  _High betweenness centrality (0.238) - this node is a cross-community bridge._
-- **Why does `DistributionFunctions` connect `DistributionFunctions` to `ChiralityCalculator.cpp`, `addFrame`, `addFrame`, `vector`, `AppBackend`, `MLIPOutput`, `HyperuniformityCalculatorTests.cpp`, `CSVWriter`, `DistributionFunctions.cpp`, `ThreadLocalDistances`, `PADCalculator.cpp`, `ArcReader.cpp`, `TEST_F`, `AnalysisSettings`, `computeSingleAtomSteinhardt`, `TEST_F`, `TEST_F`, `VoronoiCalculator::populateHistogram`, `CalculatorFactory`, `HyperuniformityCalculator::calculate`, `NeighborGraph`, `XdatcarHeader`, `HDF5Writer`, `HistogramConfigs`, `PartialInfo`, `PDF Comparison Renderer`, `Histogram Metadata`, `PYBIND11_MODULE`, `TEST_F`, `progress_callback`, `StructureAnalyzer`, `TEST`, `Constants.hpp`, `CNACalculator.cpp`, `BaseCalculator`, `SteinhardtCalculator`, `DatasetWriteQuery`, `HBondCalculator.cpp`, `LammpsFrameParser`, `TEST_F`?**
-  _High betweenness centrality (0.221) - this node is a cross-community bridge._
-- **Why does `AppBackend` connect `AppBackend` to `XRDCalculator`, `PresetManager.cpp`, `vector`, `DistributionFunctions`, `PlotController`, `InputValidator.cpp`, `AppBackend.cpp`, `TEST_F`, `FileIOHandler`, `ProgramOptions`, `Main App Controller`, `AnalysisRunner.cpp`, `FileWriter::write`, `FileIOHandler.cpp`, `SvgComparisonRenderer`, `main.cpp`, `PlotController.cpp`, `progress_callback`, `TEST_F`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
+- **Why does `Cell` connect `XRDCalculator` to `ChiralityCalculator.cpp`, `Atom`, `XYZReader`, `LinearAlgebra.hpp`, `vector`, `AppBackend`, `DistributionFunctions`, `DistributionFunctions.cpp`, `ThreadLocalDistances`, `CastepMdReader`, `AnalysisSettings`, `CifReader.cpp`, `TEST_F`, `FFTUtils.hpp`, `TEST_F`, `TEST`, `TEST_F`, `NeighborGraph`, `OutmolParser`, `XdatcarHeader`, `Onetep File Parser`, `Cell`, `Histogram Metadata`, `TEST`, `TEST_F`, `TEST_F`, `VaspParser`, `TEST`, `TEST_F`, `renderComparisonPdf`, `TEST`, `TEST_F`, `TEST_F`, `progress_callback`, `TEST`, `TEST`, `StructureAnalyzer`, `LocalEntropyCalculator.cpp`, `TEST`, `Cell.cpp`, `GPUSQCalculator.cu`, `QETrajectoryParser`, `VoronoiCalculator`, `CNACalculator.cpp`, `SteinhardtCalculator`, `PyBaseCalculator`, `AppController.cpp`, `NiceScale`, `StructureFactorCalculator.cpp`, `TEST_F`, `XRDCalculator::calculate`, `.atomCount`, `GPUDistanceCalculator.cu`, `HBondCalculator.cpp`, `LammpsFrameParser`, `DihedralCalculatorTests`, `TEST_F`, `SteinhardtCalculator.cpp`, `GromacsReader.cpp`, `addFrame`, `GPULattice`, `PADCalculator.cpp`, `TEST_F`, `readTrajectory`, `computeSingleAtomSteinhardt`, `LammpsDumpReader::readTrajectory`, `HyperuniformityCalculatorTests.cpp`, `CalculatorFactory`, `HyperuniformityCalculator::calculate`, `SDFCalculator`, `HistogramConfigs`, `precomputePhases`, `TEST_F`, `CarReader.cpp`, `Constants.hpp`, `ClusterCalculator`, `XRDCalculator.cpp`, `MLIPOutput`, `ThreadAccumulators`, `CSVWriter.cpp`, `CarReader.cpp`?**
+  _High betweenness centrality (0.235) - this node is a cross-community bridge._
+- **Why does `DistributionFunctions` connect `DistributionFunctions` to `XRDCalculator`, `ChiralityCalculator.cpp`, `addFrame`, `addFrame`, `vector`, `AppBackend`, `MLIPOutput`, `CSVWriter`, `DistributionFunctions.cpp`, `ThreadLocalDistances`, `PADCalculator.cpp`, `ArcReader.cpp`, `TEST_F`, `CastepMdReader`, `AnalysisSettings`, `computeSingleAtomSteinhardt`, `FFTUtils.hpp`, `TEST_F`, `VoronoiCalculator::populateHistogram`, `CalculatorFactory`, `HDF5Writer`, `HistogramConfigs`, `PartialInfo`, `PDF Comparison Renderer`, `Histogram Metadata`, `PYBIND11_MODULE`, `TEST_F`, `progress_callback`, `StructureAnalyzer`, `TEST`, `CNACalculator.cpp`, `BaseCalculator`, `SteinhardtCalculator`, `DatasetWriteQuery`, `HBondCalculator.cpp`, `LammpsFrameParser`, `TEST_F`?**
+  _High betweenness centrality (0.203) - this node is a cross-community bridge._
+- **Why does `AppBackend` connect `AppBackend` to `ProgramOptions`, `progress_callback`, `PresetManager.cpp`, `main.cpp`, `vector`, `DistributionFunctions`, `Main App Controller`, `AnalysisRunner.cpp`, `PlotController`, `InputValidator.cpp`, `AppBackend.cpp`, `TEST_F`, `FileIOHandler.cpp`, `atoms_`, `PlotController::PlotController`, `FileIOHandler`?**
+  _High betweenness centrality (0.085) - this node is a cross-community bridge._
 - **Are the 34 inferred relationships involving `Cell` (e.g. with `CP2KReader::readTrajectory()` and `readTrajectory()`) actually correct?**
   _`Cell` has 34 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 6 inferred relationships involving `DistributionFunctions` (e.g. with `TEST()` and `TEST()`) actually correct?**
@@ -1262,4 +1252,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 7 inferred relationships involving `Trajectory` (e.g. with `TEST()` and `TEST_F()`) actually correct?**
   _`Trajectory` has 7 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `value`, `value`, `value` to the rest of the system?**
-  _853 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _870 weakly-connected nodes found - possible documentation gaps or missing edges._

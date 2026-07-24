@@ -25,17 +25,12 @@ Roboto::Roboto() {
 
 void Roboto::add(const uint32_t code_point, const real_t left_bearing, const real_t right_bearing,
                  std::vector<std::vector<std::pair<real_t, real_t>>> stroke_paths) {
-  glyphs_[code_point] = Glyph{
-    .left = left_bearing,
-    .right = right_bearing,
-    .strokes = std::move(stroke_paths)
-  };
+  glyphs_[code_point] = Glyph{.left = left_bearing, .right = right_bearing, .strokes = std::move(stroke_paths)};
 }
 
-// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-std::string Roboto::render(const std::string &text, const real_t start_x, const real_t start_y, const real_t font_size, const std::string &anchor) {
-  const real_t scale = font_size; // Glyphs are normalized to EM square of size 1.0
-  const std::vector<uint32_t> codes = utf8ToUnicode(text);
+std::string Roboto::render(TextRenderParameters const &params) {
+  const real_t scale = params.font_size; // Glyphs are normalized to EM square of size 1.0
+  const std::vector<uint32_t> codes = utf8ToUnicode(params.text);
 
   real_t total_width = static_cast<real_t>(0.0);
   for (const uint32_t code_point : codes) {
@@ -44,10 +39,10 @@ std::string Roboto::render(const std::string &text, const real_t start_x, const 
     }
   }
 
-  real_t cur_x = start_x;
-  if (anchor == "middle") {
+  real_t cur_x = params.start_x;
+  if (params.anchor == "middle") {
     cur_x -= total_width / static_cast<real_t>(2.0);
-  } else if (anchor == "end") {
+  } else if (params.anchor == "end") {
     cur_x -= total_width;
   }
 
@@ -59,7 +54,8 @@ std::string Roboto::render(const std::string &text, const real_t start_x, const 
       for (const auto &stroke : glyph.strokes) {
         for (size_t idx = 0; idx < stroke.size(); ++idx) {
           const real_t point_x = offset_x + stroke[idx].first * scale;
-          const real_t point_y = start_y - stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
+          const real_t point_y =
+              params.start_y - stroke[idx].second * scale; // Flip Y direction (TTF Y is up, SVG Y is down)
           if (idx == 0) {
             path_data += std::format("M {:.2f} {:.2f} ", point_x, point_y);
           } else {
@@ -93,7 +89,8 @@ std::vector<uint32_t> Roboto::utf8ToUnicode(const std::string &utf8_string) {
       }
     } else if ((byte_val & 0xF0) == 0xE0) {
       if (index + 2 < utf8_string.length()) {
-        const uint32_t code_point = ((byte_val & 0x0F) << 12) | ((utf8_string[index + 1] & 0x3F) << 6) | (utf8_string[index + 2] & 0x3F);
+        const uint32_t code_point =
+            ((byte_val & 0x0F) << 12) | ((utf8_string[index + 1] & 0x3F) << 6) | (utf8_string[index + 2] & 0x3F);
         unicode_points.push_back(code_point);
         index += 3;
       } else {

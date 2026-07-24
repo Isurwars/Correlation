@@ -24,9 +24,21 @@ namespace correlation::plotters {
  * of strokes defined as a series of (x,y) point pairs.
  */
 struct Glyph {
-  real_t left{static_cast<real_t>(0.0)};                                            ///< Left side bearing.
-  real_t right{static_cast<real_t>(0.0)};                                           ///< Right side bearing.
+  real_t left{static_cast<real_t>(0.0)};                       ///< Left side bearing.
+  real_t right{static_cast<real_t>(0.0)};                      ///< Right side bearing.
   std::vector<std::vector<std::pair<real_t, real_t>>> strokes; ///< Vector paths for the character.
+};
+
+/**
+ * @struct TextRenderParameters
+ * @brief Parameters for vector text rendering.
+ */
+struct TextRenderParameters {
+  std::string text;
+  real_t start_x{static_cast<real_t>(0.0)};
+  real_t start_y{static_cast<real_t>(0.0)};
+  real_t font_size{static_cast<real_t>(12.0)};
+  std::string anchor{"start"};
 };
 
 /**
@@ -36,6 +48,14 @@ class Roboto {
 public:
   /** @return Singleton instance of the Roboto font. */
   static Roboto &instance();
+
+  /**
+   * @brief Renders a string of text as SVG path data using parameters struct.
+   *
+   * @param params Rendering options including text, coordinates, font size, and text anchor.
+   * @return A string containing SVG path instructions (M/L/Z commands).
+   */
+  std::string render(TextRenderParameters const &params);
 
   /**
    * @brief Renders a string of text as SVG path data.
@@ -48,7 +68,8 @@ public:
    * @return A string containing SVG path instructions (M/L/Z commands).
    */
   // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-  std::string render(const std::string &text, real_t start_x, real_t start_y, real_t font_size, const std::string &anchor = "start");
+  std::string render(const std::string &text, real_t start_x, real_t start_y, real_t font_size,
+                     const std::string &anchor = "start");
 
 private:
   std::map<uint32_t, Glyph> glyphs_; ///< Local storage for character glyph data.

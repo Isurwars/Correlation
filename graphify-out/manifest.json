@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "include/plotters/PathFont.hpp": {
-    "mtime": 1784771352.4220998,
-    "ast_hash": "4b652575826f0a8482cd7cc19443ddbc",
+    "mtime": 1784849056.241599,
+    "ast_hash": "3d5f7416741a9095f1edc3bb0fa36d26",
     "semantic_hash": ""
   },
   "include/plotters/PdfPlotter.hpp": {
@@ -595,8 +595,8 @@
     "semantic_hash": ""
   },
   "src/calculators/DADCalculator.cpp": {
-    "mtime": 1784848198.7274547,
-    "ast_hash": "ae56acebcaaa880c8153fa6cde1a3c4c",
+    "mtime": 1784848257.5403106,
+    "ast_hash": "a6ab97182b2cc779499b08b1f9ceeab0",
     "semantic_hash": ""
   },
   "src/calculators/DihedralCalculator.cpp": {
@@ -725,8 +725,8 @@
     "semantic_hash": "8684e22fa3d3318d4a9b5cb9a81f7de8"
   },
   "src/plotters/PathFont.cpp": {
-    "mtime": 1784771339.0632849,
-    "ast_hash": "886dfe5f93e487a91f45165a9dafdb22",
+    "mtime": 1784849054.8129642,
+    "ast_hash": "c7879cb04096937f3fa0192c81b84629",
     "semantic_hash": ""
   },
   "src/plotters/RobotoData_ASCII_1.cpp": {
@@ -1720,18 +1720,18 @@
     "semantic_hash": ""
   },
   "include/plotters/PlotTypes.hpp": {
-    "mtime": 1784789148.0930386,
-    "ast_hash": "54a67a6da5624810f7d92ecb96dcfac6",
+    "mtime": 1784849035.1820998,
+    "ast_hash": "3ae613e7254768d20bbe1d7203d8c69c",
     "semantic_hash": ""
   },
   "include/plotters/SvgComparisonRenderer.hpp": {
-    "mtime": 1784789162.165829,
-    "ast_hash": "5b66074cc615f296d292fde606b2b8be",
+    "mtime": 1784849043.7441533,
+    "ast_hash": "0e69df7c166155346d59f2e3d8afd643",
     "semantic_hash": ""
   },
   "include/plotters/SvgHistogramRenderer.hpp": {
-    "mtime": 1784785282.0775654,
-    "ast_hash": "f45f0aa85df36fe1d4c40b243641d2ac",
+    "mtime": 1784849039.4152272,
+    "ast_hash": "a0f8010a2b4f7a3d0bf21230c4b1aa87",
     "semantic_hash": ""
   },
   "tests/unit/math/Matrix3Tests.cpp": {
