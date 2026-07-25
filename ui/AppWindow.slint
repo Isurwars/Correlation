@@ -354,8 +354,8 @@ export component AppWindow inherits Window {
     default-font-size: MaterialTypography.body_small.font_size;
     default-font-weight: MaterialTypography.body_small.font_weight;
     default-font-family: "Outfit";
-    min-width: 1050px;
-    min-height: 725px;
+    //min-width: 1050px;
+    //min-height: 725px;
     preferred-width: 1180px;
     preferred-height: 795px;
 
@@ -366,7 +366,9 @@ export component AppWindow inherits Window {
             // 1. Left column: Operations & CLI command
             Vertical {
             padding: 0;
-            width: 260px;
+            min-width: 200px;
+            preferred-width: 260px;
+            max-width: 260px;
             horizontal-stretch: 0;
             spacing: MaterialStyleMetrics.spacing_8;
 
@@ -413,8 +415,11 @@ export component AppWindow inherits Window {
 
         // 2. Middle column: Options Tabbed Card (Setup, Trajectory, Parameters, Export)
         options_card := OptionsCard {
-            width: 340px;
+            min-width: 220px;
+            preferred-width: 260px;
+            max-width: 260px;
             horizontal-stretch: 0;
+            enabled: root.file_loaded;
             file_loaded: root.file_loaded;
             has_radial_active: root.has_radial_active;
             has_angular_active: root.has_angular_active;
@@ -423,32 +428,8 @@ export component AppWindow inherits Window {
             material_type <=> root.material_type;
             bond_cutoffs <=> root.bond_cutoffs;
             atom_counts: root.atom_counts;
-            r_max <=> root.r_max;
-            r_bin_width <=> root.r_bin_width;
-            r_max_error: root.r_max_error;
-            r_bin_error: root.r_bin_error;
-            angle_bin_width <=> root.angle_bin_width;
-            dihedral_bin_width <=> root.dihedral_bin_width;
-            angle_bin_error: root.angle_bin_error;
-            dihedral_bin_error: root.dihedral_bin_error;
-            q_max <=> root.q_max;
-            q_bin_width <=> root.q_bin_width;
-            r_int_max <=> root.r_int_max;
-            q_max_error: root.q_max_error;
-            q_bin_error: root.q_bin_error;
-            r_int_max_error: root.r_int_max_error;
-            max_ring_size <=> root.max_ring_size;
-            max_ring_error: root.max_ring_error;
-            smoothing <=> root.smoothing;
-            smoothing_sigma <=> root.smoothing_sigma;
-            smoothing_kernel <=> root.smoothing_kernel;
-            smoothing_sigma_error: root.smoothing_sigma_error;
-            lef_cutoff <=> root.lef_cutoff;
-            lef_sigma <=> root.lef_sigma;
-            lef_cutoff_error: root.lef_cutoff_error;
-            lef_sigma_error: root.lef_sigma_error;
-            hyper_samples <=> root.hyper_samples;
-            hyper_samples_error: root.hyper_samples_error;
+            analysis_options <=> root.analysis_options;
+            app_errors: root.app_errors;
             calculator_groups: root.calculator_groups;
             total_calculator_count: root.total_calculator_count;
             toggle_calculator(id, enabled) => {
@@ -468,6 +449,7 @@ export component AppWindow inherits Window {
                 animate opacity { duration: 150ms; }
 
                 preview_card := PreviewCard {
+                    enabled: root.analysis_done;
                     vertical-stretch: 1;
                     horizontal-stretch: 1;
                     preview_plot <=> root.preview_plot;
@@ -512,12 +494,6 @@ export component AppWindow inherits Window {
                         root.plot_resized(w, h);
                     }
                 }
-            }
-
-            // Block interactions if not analysis_done
-                if !root.analysis_done: TouchArea {
-                width: 100%;
-                height: 100%;
             }
         }
     }

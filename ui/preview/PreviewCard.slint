@@ -39,6 +39,7 @@ import { TableRow } from "../Types.slint";
 /// - `preview_plot`: The current generated plot image.
 // ============================================================================
 export component PreviewCard inherits FilledCard {
+    in property <bool> enabled: true;
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
