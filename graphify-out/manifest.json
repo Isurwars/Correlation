@@ -1525,8 +1525,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1784928415.5382464,
-    "ast_hash": "076bd6e46355d5d2bd7f45176d2b75bb",
+    "mtime": 1784937703.6583261,
+    "ast_hash": "24377d48593a7dd1218b4912b637a329",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1762,6 +1762,31 @@
   ".agents/skills/pybind11-interop-standards/SKILL.md": {
     "mtime": 1784928402.3154576,
     "ast_hash": "53d3be8c336bfa2322e298d8bdaff15f",
+    "semantic_hash": ""
+  },
+  ".agents/rules/slint-ui-standards.md": {
+    "mtime": 1784937688.1005464,
+    "ast_hash": "f03446e7706ee2ddabc3ac472c33c442",
+    "semantic_hash": ""
+  },
+  ".agents/skills/slint-component-architect/SKILL.md": {
+    "mtime": 1784937692.1539042,
+    "ast_hash": "3e9dc2cd35262adf21040d4598598021",
+    "semantic_hash": ""
+  },
+  ".agents/skills/slint-cpp-binding-generator/SKILL.md": {
+    "mtime": 1784937695.92971,
+    "ast_hash": "a095ac6b6d927af368225f2342d14564",
+    "semantic_hash": ""
+  },
+  ".agents/skills/slint-live-preview-loop/SKILL.md": {
+    "mtime": 1784937699.4835312,
+    "ast_hash": "c97c55f74c05be126f4306c117b8a284",
+    "semantic_hash": ""
+  },
+  ".github/workflows/test-wheels.yml": {
+    "mtime": 1784931937.92874,
+    "ast_hash": "6f784fc6a5ff41a8279390739d7a3a83",
     "semantic_hash": ""
   }
 }

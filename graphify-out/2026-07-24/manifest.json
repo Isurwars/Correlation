@@ -245,8 +245,8 @@
     "semantic_hash": ""
   },
   "include/math/LinearAlgebra.hpp": {
-    "mtime": 1784868326.1033664,
-    "ast_hash": "f7000c86df372a44ee6533080b10b590",
+    "mtime": 1784931859.107715,
+    "ast_hash": "2f95dff4367e98ac426f73d413fb661d",
     "semantic_hash": ""
   },
   "include/math/Precision.hpp": {
@@ -1315,8 +1315,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1784926475.4291904,
-    "ast_hash": "d5c8be8702dc4938dbabb53c5ab8a7f3",
+    "mtime": 1784931400.3247066,
+    "ast_hash": "dc4daee8ba73f08bf9a9f865f6ae7c44",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {

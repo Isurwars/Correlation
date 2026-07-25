@@ -1,11 +1,11 @@
 # Graph Report - Correlation  (2026-07-24)
 
 ## Corpus Check
-- 316 files · ~5,130,484 words
+- 316 files · ~5,130,521 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 4248 nodes · 7679 edges · 277 communities (234 shown, 43 thin omitted)
+- 4248 nodes · 7679 edges · 276 communities (234 shown, 42 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 621 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -133,7 +133,6 @@
 - .atomCount
 - TEST_F
 - WriterFactory
-- GPUDistanceCalculator.cu
 - HBondCalculator.cpp
 - LammpsFrameParser
 - DihedralCalculatorTests
@@ -327,7 +326,7 @@
 - **Core Analysis Architecture** — src_readers_obj, src_calculators_obj, src_writers_obj, src_correlation_lib [EXTRACTED 1.00]
 - **Structural Distribution Functions** — concept_pdf, concept_pad, concept_rdf [EXTRACTED 1.00]
 
-## Communities (277 total, 43 thin omitted)
+## Communities (276 total, 42 thin omitted)
 
 ### Community 0 - "PDF Generation Utilities"
 Cohesion: 0.07
@@ -366,8 +365,8 @@ Cohesion: 0.15
 Nodes (19): array(), cross(), determinant(), distance(), dot(), size_t, T, U (+11 more)
 
 ### Community 9 - "vector"
-Cohesion: 0.08
-Nodes (7): atomic, map, string, vector, optional, tuple, SDFCalculator::calculateFrame()
+Cohesion: 0.07
+Nodes (9): atomic, map, string, vector, optional, tuple, SDFCalculator::calculateFrame(), real_t (+1 more)
 
 ### Community 10 - "AppBackend"
 Cohesion: 0.07
@@ -579,7 +578,7 @@ Nodes (29): CastepMdReaderTests, lattice_parameters_, CastepMdReader, parseAtomL
 
 ### Community 62 - "TEST_F"
 Cohesion: 0.04
-Nodes (65): AccessorsWork, AddAndScale, CalculateCoordinationNumber, CalculateRDF, CalculateVACF_and_VDOS, CalculateVACF_GasLike, CalculateVACF_WithFrameRange, ComputeDiffusionCoefficientVACF_and_RelaxationTime (+57 more)
+Nodes (62): CalculatesAndWritesSiliconDistributions, CalculateVACF_and_VDOS, CalculateVACF_GasLike, CalculateVACF_WithFrameRange, ComputeDiffusionCoefficientVACF_and_RelaxationTime, DistributionFunctionsDynamicProperties, DistributionFunctionsNonPhysicalOptions, DynamicsAnalyzerNonPhysicalInputs (+54 more)
 
 ### Community 63 - "TEST"
 Cohesion: 0.13
@@ -718,8 +717,8 @@ Cohesion: 0.10
 Nodes (22): BinRange, CellData, string, VoronoiCalculator, buildSignatureMap, calculate, calculateFrame, computeVoronoiCells (+14 more)
 
 ### Community 97 - "BaseReader"
-Cohesion: 0.12
-Nodes (16): CalculatesAndWritesSiliconDistributions, calculatePAD, calculateVACF, calculateVDOS, smoothAll, real_t, string, testing::Test (+8 more)
+Cohesion: 0.08
+Nodes (23): AccessorsWork, AddAndScale, CalculateCoordinationNumber, CalculateRDF, ComputeMean, DefaultConstructorWorks, HandlesMissingPartialInAdd, add (+15 more)
 
 ### Community 98 - "CNACalculator.cpp"
 Cohesion: 0.24
@@ -866,8 +865,8 @@ Cohesion: 0.40
 Nodes (10): function, string, extractLine(), findLineEnd(), GromacsReader::parseGroFrame(), GromacsReader::readStructure(), GromacsReader::readTrajectory(), scanNextFrame() (+2 more)
 
 ### Community 135 - "TEST_F"
-Cohesion: 0.24
-Nodes (10): debye_sum(), dot_block(), size_t, normalize_rdf_bins(), simd_dot(), sinc_integral(), SincIntegralParams, CORRELATION_RESTRICT (+2 more)
+Cohesion: 0.31
+Nodes (8): debye_sum(), dot_block(), MillerPhaseSumResult, size_t, miller_phase_sum(), normalize_rdf_bins(), simd_dot(), sinc_integral()
 
 ### Community 136 - "addFrame"
 Cohesion: 0.19
@@ -899,7 +898,7 @@ Nodes (10): Python Bindings (_correlation), Calculators Library, Correlation CLI
 
 ### Community 143 - "UnionFind"
 Cohesion: 0.20
-Nodes (10): MillerPhaseSumResult, miller_phase_sum(), MillerPhaseSumResult, miller_phase_sum(), MillerPhaseSumResult, miller_phase_sum(), size_t, MillerPhaseSumParams (+2 more)
+Nodes (10): MillerPhaseSumResult, miller_phase_sum(), size_t, MillerPhaseSumParams, CORRELATION_RESTRICT, count, SincIntegralParams, CORRELATION_RESTRICT (+2 more)
 
 ### Community 144 - "GPULattice"
 Cohesion: 0.14
@@ -926,8 +925,8 @@ Cohesion: 0.56
 Nodes (8): FileType, function, string, determineFileType(), findReaderForFile(), findReaderForType(), readStructure(), readTrajectory()
 
 ### Community 150 - "ClusterCalculator"
-Cohesion: 0.43
-Nodes (6): debye_sum(), dot_block(), size_t, normalize_rdf_bins(), simd_dot(), sinc_integral()
+Cohesion: 0.31
+Nodes (8): debye_sum(), dot_block(), MillerPhaseSumResult, size_t, miller_phase_sum(), normalize_rdf_bins(), simd_dot(), sinc_integral()
 
 ### Community 152 - "ArgBuilder"
 Cohesion: 0.28
@@ -1219,7 +1218,7 @@ Nodes (5): QVector, h, k, l, qmag
 
 ### Community 282 - "CarReader.cpp"
 Cohesion: 0.05
-Nodes (40): BasicUsage, CreateAnalyzerOutOfBoundsReturnsNullptr, mutex, TrajectoryAnalyzer, TrajectoryAnalyzer, FrameParser, mutex, real_t (+32 more)
+Nodes (36): BasicUsage, CreateAnalyzerOutOfBoundsReturnsNullptr, mutex, TrajectoryAnalyzer, TrajectoryAnalyzer, FrameParser, mutex, real_t (+28 more)
 
 ### Community 283 - "precomputePhases"
 Cohesion: 0.83
@@ -1232,7 +1231,7 @@ Nodes (3): handleUpdateTimer, AppWindow, PlotController::PlotController()
 ## Knowledge Gaps
 - **893 isolated node(s):** `value`, `value`, `value`, `TrajectoryAnalyzer`, `r_max` (+888 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **43 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **42 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
