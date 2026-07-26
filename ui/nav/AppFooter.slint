@@ -1,0 +1,28 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+
+import { MaterialPalette, MaterialTypography } from "../material/material.slint";
+
+export component AppFooter inherits Rectangle {
+    in property <string> status_text: "";
+    in property <float> progress: 0.0;
+    in property <bool> analysis_running: false;
+    height: 24px;
+    background: MaterialPalette.surface_container_lowest;
+
+    HorizontalLayout {
+        padding-left: 12px;
+        padding-right: 12px;
+        alignment: space-between;
+
+        Text {
+            text: root.status_text;
+            font-size: MaterialTypography.body_small.font_size;
+            color: MaterialPalette.on_surface_variant;
+            vertical-alignment: center;
+            accessible-role: text;
+            accessible-label: "Footer Status";
+        }
+    }
+}

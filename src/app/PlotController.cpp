@@ -191,7 +191,7 @@ void PlotController::populatePlotList() {
 void PlotController::handleMouseMove(float mouse_x, float mouse_y, bool hover, float width, float height) {
   bool actual_hover = hover;
 
-  if (std::abs(mouse_x - last_mouse_x_) < 1e-2F && std::abs(mouse_y - last_mouse_y_) < 1e-2F &&
+  if (std::abs(mouse_x - last_mouse_x_) < 0.5F && std::abs(mouse_y - last_mouse_y_) < 0.5F &&
       actual_hover == mouse_hover_ && std::abs(width - last_plot_width_) < 1e-2F &&
       std::abs(height - last_plot_height_) < 1e-2F) {
     return;

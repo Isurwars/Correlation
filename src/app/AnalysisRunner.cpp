@@ -50,9 +50,14 @@ void AnalysisRunner::handleRunAnalysis() {
   // Set the progress callback
   backend_.setProgressCallback([this](float progress, const std::string &msg) { updateProgress(progress, msg); });
 
-  // run analysis in a separate thread
+  // Run analysis in a separate thread asynchronously without blocking GUI event loop
   if (analysis_thread_.joinable()) {
-    analysis_thread_.join();
+    std::thread old_thread = std::move(analysis_thread_);
+    std::thread([t = std::move(old_thread)]() mutable {
+      if (t.joinable()) {
+        t.join();
+      }
+    }).detach();
   }
 
   analysis_thread_ = std::thread([this]() {
