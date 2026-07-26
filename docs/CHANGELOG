@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.7.2] - 2026-07-26
+
+### Fixed
+- **Native File Dialog Linkage**: Enforced static library compilation (`BUILD_SHARED_LIBS=OFF`) for `nativefiledialog-extended` (`nfd`) on Linux to resolve runtime `libnfd.so.1` shared library loading errors.
+
 ## [3.7.0] - 2026-07-24
 
 ### Added
