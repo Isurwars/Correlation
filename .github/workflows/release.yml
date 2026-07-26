@@ -392,10 +392,7 @@ jobs:
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET="13.3"
             CXXFLAGS="-std=c++23"
-            CFLAGS="-std=c2x"
-          # Windows: Passes build directories to PATH so delvewheel finds tbb12.dll
-          CIBW_ENVIRONMENT_WINDOWS: >
-            PATH="$PATH;$GITHUB_WORKSPACE\\build\\bin;$GITHUB_WORKSPACE\\build\\_deps\\onetbb-build\\bin\\Release;$GITHUB_WORKSPACE\\build\\_deps\\onetbb-build\\bin\\Debug"
+            CFLAGS="-std=c23"
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4
