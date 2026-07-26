@@ -215,8 +215,8 @@ if(BUILD_GUI)
         add_executable(correlation ${CORRELATION_SOURCES})
     endif()
 
-    # Link correlation_lib to correlation
-    set(CORRELATION_LIBS correlation_lib Slint::Slint nfd)
+    # Link correlation_lib, readers_obj, writers_obj, and calculators_obj to correlation GUI target
+    set(CORRELATION_LIBS correlation_lib readers_obj writers_obj calculators_obj Slint::Slint nfd)
 
     target_link_libraries(correlation PRIVATE correlation_simd_options)
 

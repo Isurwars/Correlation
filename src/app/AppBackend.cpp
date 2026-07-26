@@ -9,6 +9,7 @@
 #include "app/AppBackend.hpp"
 #include "analysis/DynamicsAnalyzer.hpp"
 #include "calculators/CalculatorFactory.hpp"
+#include "math/Precision.hpp"
 #include "physics/PhysicalData.hpp"
 #include "readers/FileReader.hpp"
 #include "readers/ReaderFactory.hpp"
@@ -99,7 +100,7 @@ real_t AppBackend::getRecommendedTimeStep() const {
   }
 
   if (found && min_mass > 0.0) {
-    return std::sqrt(9.0 * min_mass / 5.0);
+    return static_cast<real_t>(std::sqrt(9.0 * min_mass / 5.0));
   }
 
   return AppDefaults::TIME_STEP;
