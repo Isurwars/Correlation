@@ -523,6 +523,9 @@ set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared librari
 # Ensure voro++ is built with position-independent code (PIC) since it might be linked into shared libraries/modules
 if(TARGET voro++)
   set_target_properties(voro++ PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU|AppleClang")
+    target_compile_options(voro++ PRIVATE -Wno-deprecated-declarations)
+  endif()
 endif()
 
 # Restore original BUILD_TESTING cache state

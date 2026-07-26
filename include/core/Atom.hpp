@@ -168,12 +168,14 @@ private:
     return 0.0;
   }
 
-  real_t cos_theta = math::dot(vec_A, vec_B) / std::sqrt(norm_sq_A * norm_sq_B);
+  using std::acos;
+  using std::sqrt;
+  real_t cos_theta = math::dot(vec_A, vec_B) / sqrt(norm_sq_A * norm_sq_B);
 
   // Clamp for numerical stability
   cos_theta = std::clamp(cos_theta, static_cast<real_t>(-1.0), static_cast<real_t>(1.0));
 
-  return std::acos(cos_theta);
+  return acos(cos_theta);
 }
 
 } // namespace correlation::core

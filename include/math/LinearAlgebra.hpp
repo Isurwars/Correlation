@@ -487,7 +487,8 @@ template <typename T> [[nodiscard]] constexpr T norm_sq(const Vector3<T> &vec_a)
  * @return The length of the vector.
  */
 template <typename T> [[nodiscard]] constexpr T norm(const Vector3<T> &vec_a) noexcept {
-  return std::sqrt(vec_a * vec_a);
+  using std::sqrt;
+  return sqrt(vec_a * vec_a);
 }
 
 /**
