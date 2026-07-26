@@ -68,7 +68,9 @@ TEST_F(DADTests, IcosahedronAnglesDAD) {
                                                      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &vertex : vertices) {
-    cell_iso.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
+    cell_iso.addAtom("Si", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + vertex[0],
+                                                              static_cast<real_t>(10.0) + vertex[1],
+                                                              static_cast<real_t>(10.0) + vertex[2]));
   }
 
   real_t const r_cut = 2.5;

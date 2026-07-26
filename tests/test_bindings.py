@@ -5,7 +5,10 @@ Run from the build directory after building the correlation_py target:
     cmake --build . --target correlation_py -j$(nproc)
     python test.py
 """
-import _correlation as correlation
+try:
+    import correlation
+except ImportError:
+    import _correlation as correlation
 import sys
 import os
 
@@ -47,8 +50,8 @@ try:
     assert pos.shape == (2, 3), "Positions shape mismatch"
     
     # Modify numpy array in-place and verify zero-copy behavior
-    pos[0, 0] = 9.9
-    assert cell.atoms[0].position[0] == 9.9, "Zero-copy modification failed!"
+    pos[0, 0] = 9.5
+    assert abs(cell.atoms[0].position[0] - 9.5) < 1e-4, "Zero-copy modification failed!"
     print("  Zero-copy positions verified.")
     
     # Verify velocities

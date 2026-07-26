@@ -70,10 +70,10 @@ void init_core(py::module_ &mod) {
               return py::array_t<real_t>();
             }
 
-            ssize_t stride_row = sizeof(Atom);
-            ssize_t stride_col = sizeof(real_t);
-            ssize_t rows = static_cast<ssize_t>(atoms.size());
-            ssize_t cols = 3;
+            py::ssize_t stride_row = sizeof(Atom);
+            py::ssize_t stride_col = sizeof(real_t);
+            py::ssize_t rows = static_cast<py::ssize_t>(atoms.size());
+            py::ssize_t cols = 3;
 
             const real_t *ptr = atoms[0].position().begin();
 
@@ -89,10 +89,10 @@ void init_core(py::module_ &mod) {
               return py::array_t<real_t>();
             }
 
-            ssize_t stride_row = sizeof(Atom);
-            ssize_t stride_col = sizeof(real_t);
-            ssize_t rows = static_cast<ssize_t>(atoms.size());
-            ssize_t cols = 3;
+            py::ssize_t stride_row = sizeof(Atom);
+            py::ssize_t stride_col = sizeof(real_t);
+            py::ssize_t rows = static_cast<py::ssize_t>(atoms.size());
+            py::ssize_t cols = 3;
 
             const real_t *ptr = atoms[0].velocity().begin();
 

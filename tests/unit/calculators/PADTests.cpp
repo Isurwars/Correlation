@@ -10,6 +10,7 @@
 #include "core/Trajectory.hpp"
 
 #include "math/Constants.hpp"
+#include "math/Precision.hpp"
 #include <algorithm>
 #include <cmath>
 #include <gtest/gtest.h>
@@ -187,16 +188,18 @@ TEST_F(PADTests_AngleReproduction, SiTetrahedron_4Atoms) {
 }
 
 TEST_F(PADTests_AngleReproduction, Icosahedron_13Atoms) {
-  cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
+  real_t const base_coord = static_cast<real_t>(10.0);
+  cell_.addAtom("Si", {base_coord, base_coord, base_coord}); // Center
 
-  double phi = std::numbers::phi;
+  real_t const phi = static_cast<real_t>(std::numbers::phi);
   // Vertices of icosahedron (edge length 2) relative to center
-  std::vector<std::vector<double>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+  std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
                                                      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
                                                      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &vertex : vertices) {
-    cell_.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
+    cell_.addAtom("Si", correlation::math::Vector3<real_t>(base_coord + vertex[0], base_coord + vertex[1],
+                                                           base_coord + vertex[2]));
   }
   updateTrajectory();
 
@@ -409,14 +412,18 @@ TEST_F(PADTests, TetrahedralAngle) {
   // Si at center
   // 4 Neighbors at tetrahedral positions.
   // For simplicity, just check one angle 109.47
-  cell_.addAtom("Si", {10.0, 10.0, 10.0});
+  real_t const base_coord = static_cast<real_t>(10.0);
+  cell_.addAtom("Si", {base_coord, base_coord, base_coord});
   // Vector 1: (1,1,1) normalized
   // Vector 2: (1,-1,-1) normalized
   // Dot product = (1-1-1)/3 = -1/3. acos(-1/3) = 109.47 deg
 
-  double const lattice_constant = std::numbers::inv_sqrt3;
-  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 + lattice_constant, 10.0 + lattice_constant});
-  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 - lattice_constant, 10.0 - lattice_constant});
+  real_t const lattice_constant = static_cast<real_t>(std::numbers::inv_sqrt3);
+
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord + lattice_constant,
+                                                        base_coord + lattice_constant));
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord - lattice_constant,
+                                                        base_coord - lattice_constant));
   updateTrajectory();
 
   DistributionFunctions dists(cell_, 1.5,
@@ -468,15 +475,19 @@ TEST_F(PADTests, FullNormalizationCheck) {
   // 1 Si, 4 O neighbors (tetrahedron)
   // 4 neighbors -> 4*3/2 = 6 angles.
   // All 6 angles are 109.47
-
-  cell_.addAtom("Si", {10.0, 10.0, 10.0});
-  double const lattice_constant = std::numbers::inv_sqrt3;
+  real_t const base_coord = static_cast<real_t>(10.0);
+  cell_.addAtom("Si", {base_coord, base_coord, base_coord});
+  real_t const lattice_constant = static_cast<real_t>(std::numbers::inv_sqrt3);
 
   // Tetrahedral vertices
-  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 + lattice_constant, 10.0 + lattice_constant});
-  cell_.addAtom("O", {10.0 + lattice_constant, 10.0 - lattice_constant, 10.0 - lattice_constant});
-  cell_.addAtom("O", {10.0 - lattice_constant, 10.0 + lattice_constant, 10.0 - lattice_constant});
-  cell_.addAtom("O", {10.0 - lattice_constant, 10.0 - lattice_constant, 10.0 + lattice_constant});
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord + lattice_constant,
+                                                        base_coord + lattice_constant));
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord + lattice_constant, base_coord - lattice_constant,
+                                                        base_coord - lattice_constant));
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord - lattice_constant, base_coord + lattice_constant,
+                                                        base_coord - lattice_constant));
+  cell_.addAtom("O", correlation::math::Vector3<real_t>(base_coord - lattice_constant, base_coord - lattice_constant,
+                                                        base_coord + lattice_constant));
   updateTrajectory();
 
   // Custom bond cutoffs to avoid O-O bonds (distance ~1.63) which would create
@@ -515,13 +526,15 @@ TEST_F(PADTests, FullNormalizationCheck) {
 
 TEST_F(PADTests, IcosahedronAnglesPAD) {
   cell_.addAtom("Si", {10.0, 10.0, 10.0}); // Center
-  double phi = std::numbers::phi;
-  std::vector<std::vector<double>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
+  real_t phi = static_cast<real_t>(std::numbers::phi);
+  std::vector<std::vector<real_t>> const vertices = {{0, 1, phi}, {0, 1, -phi}, {0, -1, phi}, {0, -1, -phi},
                                                      {1, phi, 0}, {1, -phi, 0}, {-1, phi, 0}, {-1, -phi, 0},
                                                      {phi, 0, 1}, {phi, 0, -1}, {-phi, 0, 1}, {-phi, 0, -1}};
 
   for (const auto &vertex : vertices) {
-    cell_.addAtom("Si", {10.0 + vertex[0], 10.0 + vertex[1], 10.0 + vertex[2]});
+    cell_.addAtom("Si", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + vertex[0],
+                                                           static_cast<real_t>(10.0) + vertex[1],
+                                                           static_cast<real_t>(10.0) + vertex[2]));
   }
   updateTrajectory();
 

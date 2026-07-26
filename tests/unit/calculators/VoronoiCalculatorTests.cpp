@@ -70,8 +70,11 @@ TEST_F(VoronoiCalculatorTests, BodyCenteredCubic) {
     for (int j = 0; j < 2; ++j) {
       for (int k = 0; k < 2; ++k) {
         cell_bcc.addAtom("Ar",
-                         {static_cast<real_t>(i * 5.0), static_cast<real_t>(j * 5.0), static_cast<real_t>(k * 5.0)});
-        cell_bcc.addAtom("Ar", {i * 5.0 + 2.5, j * 5.0 + 2.5, k * 5.0 + 2.5});
+                         correlation::math::Vector3<real_t>(static_cast<real_t>(i * 5.0), static_cast<real_t>(j * 5.0),
+                                                            static_cast<real_t>(k * 5.0)));
+        cell_bcc.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 5.0 + 2.5),
+                                                                  static_cast<real_t>(j * 5.0 + 2.5),
+                                                                  static_cast<real_t>(k * 5.0 + 2.5)));
       }
     }
   }
@@ -101,10 +104,18 @@ TEST_F(VoronoiCalculatorTests, FaceCenteredCubic) {
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
       for (int k = 0; k < 2; ++k) {
-        cell_fcc.addAtom("Ar", {i * 5.0, j * 5.0, k * 5.0});
-        cell_fcc.addAtom("Ar", {i * 5.0 + 2.5, j * 5.0 + 2.5, k * 5.0});
-        cell_fcc.addAtom("Ar", {i * 5.0 + 2.5, j * 5.0, k * 5.0 + 2.5});
-        cell_fcc.addAtom("Ar", {i * 5.0, j * 5.0 + 2.5, k * 5.0 + 2.5});
+        cell_fcc.addAtom("Ar",
+                         correlation::math::Vector3<real_t>(static_cast<real_t>(i * 5.0), static_cast<real_t>(j * 5.0),
+                                                            static_cast<real_t>(k * 5.0)));
+        cell_fcc.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 5.0 + 2.5),
+                                                                  static_cast<real_t>(j * 5.0 + 2.5),
+                                                                  static_cast<real_t>(k * 5.0)));
+        cell_fcc.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 5.0 + 2.5),
+                                                                  static_cast<real_t>(j * 5.0),
+                                                                  static_cast<real_t>(k * 5.0 + 2.5)));
+        cell_fcc.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 5.0),
+                                                                  static_cast<real_t>(j * 5.0 + 2.5),
+                                                                  static_cast<real_t>(k * 5.0 + 2.5)));
       }
     }
   }

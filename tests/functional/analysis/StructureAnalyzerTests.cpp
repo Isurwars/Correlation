@@ -124,9 +124,11 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAnglesForWater) {
   const real_t bond_angle_rad = bond_angle_deg * correlation::math::deg_to_rad;
 
   water_cell.addAtom("O", {10.0, 10.0, 10.0});
-  water_cell.addAtom("H", {10.0 + bond_length, 10.0, 10.0});
-  water_cell.addAtom(
-      "H", {10.0 + bond_length * std::cos(bond_angle_rad), 10.0 + bond_length * std::sin(bond_angle_rad), 10.0});
+  water_cell.addAtom("H",
+                     {static_cast<real_t>(10.0 + bond_length), static_cast<real_t>(10.0), static_cast<real_t>(10.0)});
+  water_cell.addAtom("H",
+                     {static_cast<real_t>(10.0 + bond_length * std::cos(bond_angle_rad)),
+                      static_cast<real_t>(10.0 + bond_length * std::sin(bond_angle_rad)), static_cast<real_t>(10.0)});
   updateTrajectory(water_cell);
 
   // Act: Calculate neighbors and angles.
@@ -160,8 +162,7 @@ TEST_F(StructureAnalyzerTests, CalculatesCorrectAngleWithPBC) {
 
   const real_t side_length = 10.0;
   const real_t cutoff = 2.0;
-  // Calculate pi/2 explicitly using acos(-1.0) = pi.
-  const real_t expected_angle_rad = std::acos(-1.0) / 2.0;
+  const real_t expected_angle_rad = correlation::math::pi / 2.0;
 
   correlation::core::Cell pbc_cell({side_length, side_length, side_length, 90.0, 90.0, 90.0});
 
@@ -332,9 +333,12 @@ TEST_F(StructureAnalyzerTests, TriangleMoleculeConnectivity) {
   const real_t distance = 2.0;
   const real_t height_triangle = std::sqrt(distance * distance - (distance / 2) * (distance / 2)); // sqrt(3)
 
-  cell.addAtom("Ar", {5.0, 5.0, 5.0});                                  // A
-  cell.addAtom("Ar", {5.0 + distance, 5.0, 5.0});                       // B
-  cell.addAtom("Ar", {5.0 + distance / 2, 5.0 + height_triangle, 5.0}); // C
+  cell.addAtom("Ar", {5.0, 5.0, 5.0}); // A
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + distance, static_cast<real_t>(5.0),
+                                                        static_cast<real_t>(5.0))); // B
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + distance / static_cast<real_t>(2.0),
+                                                        static_cast<real_t>(5.0) + height_triangle,
+                                                        static_cast<real_t>(5.0))); // C
   updateTrajectory(cell);
 
   // Act

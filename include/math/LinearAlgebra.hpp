@@ -422,11 +422,15 @@ private:
   std::array<Vector3<T>, 3> data_; ///< Column vectors of the matrix.
 };
 
+} // namespace correlation::math
+
 // -----------------------------------------------------------------------------
 //  Specializations for Double and Float (SIMD Optimized)
 // -----------------------------------------------------------------------------
 
 #include "math/detail/Vector3SIMD.hpp" // IWYU pragma: export
+
+namespace correlation::math {
 
 // -----------------------------------------------------------------------------
 //  Free Functions

@@ -136,7 +136,9 @@ TEST_F(XRDTests, CalculateXRDCubicCell) {
   for (int i = 0; i < 2; ++i) {
     for (int j = 0; j < 2; ++j) {
       for (int k = 0; k < 2; ++k) {
-        cubic_cell.addAtom("Ar", {i * 3.0, j * 3.0, k * 3.0});
+        cubic_cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(i * 3.0),
+                                                                    static_cast<real_t>(j * 3.0),
+                                                                    static_cast<real_t>(k * 3.0)));
       }
     }
   }

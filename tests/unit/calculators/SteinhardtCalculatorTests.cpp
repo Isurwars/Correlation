@@ -98,20 +98,36 @@ TEST_F(SteinhardtCalculatorTests, Icosahedral) {
   real_t const scale = static_cast<real_t>(1.0 / std::sqrt(1.0 + phi * phi)); // Normalize dist to 1.0
   real_t const phi_scale = phi * scale;
 
-  cell.addAtom("Ar", {5.0, 5.0 + scale, 5.0 + phi_scale});
-  cell.addAtom("Ar", {5.0, 5.0 + scale, 5.0 - phi_scale});
-  cell.addAtom("Ar", {5.0, 5.0 - scale, 5.0 + phi_scale});
-  cell.addAtom("Ar", {5.0, 5.0 - scale, 5.0 - phi_scale});
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) + scale,
+                                                        static_cast<real_t>(5.0) + phi_scale));
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) + scale,
+                                                        static_cast<real_t>(5.0) - phi_scale));
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) - scale,
+                                                        static_cast<real_t>(5.0) + phi_scale));
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) - scale,
+                                                        static_cast<real_t>(5.0) - phi_scale));
 
-  cell.addAtom("Ar", {5.0 + scale, 5.0 + phi_scale, 5.0});
-  cell.addAtom("Ar", {5.0 + scale, 5.0 - phi_scale, 5.0});
-  cell.addAtom("Ar", {5.0 - scale, 5.0 + phi_scale, 5.0});
-  cell.addAtom("Ar", {5.0 - scale, 5.0 - phi_scale, 5.0});
+  cell.addAtom("Ar",
+               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + scale,
+                                                  static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0)));
+  cell.addAtom("Ar",
+               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + scale,
+                                                  static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0)));
+  cell.addAtom("Ar",
+               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - scale,
+                                                  static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0)));
+  cell.addAtom("Ar",
+               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - scale,
+                                                  static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0)));
 
-  cell.addAtom("Ar", {5.0 + phi_scale, 5.0, 5.0 + scale});
-  cell.addAtom("Ar", {5.0 + phi_scale, 5.0, 5.0 - scale});
-  cell.addAtom("Ar", {5.0 - phi_scale, 5.0, 5.0 + scale});
-  cell.addAtom("Ar", {5.0 - phi_scale, 5.0, 5.0 - scale});
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0),
+                                                        static_cast<real_t>(5.0) + scale));
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0),
+                                                        static_cast<real_t>(5.0) - scale));
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0),
+                                                        static_cast<real_t>(5.0) + scale));
+  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0),
+                                                        static_cast<real_t>(5.0) - scale));
 
   // Edge length is ~1.05. Using cutoff 1.02 ensures surface atoms only see
   // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from

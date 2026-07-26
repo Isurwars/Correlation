@@ -99,8 +99,8 @@ TEST_F(NeighborGraphFunctionalTests, VerifySimpleCubicTopology) {
 
 TEST_F(NeighborGraphFunctionalTests, VerifySelfInteractionsAndParallelEdges) {
   NeighborGraph graph(3);
-  Vector3<double> zero{0.0, 0.0, 0.0};
-  Vector3<double> vec{1.5, 0.0, 0.0};
+  Vector3<real_t> zero{0.0, 0.0, 0.0};
+  Vector3<real_t> vec{static_cast<real_t>(1.5), 0.0, 0.0};
 
   // Add self-loop to atom 0
   graph.addDirectedEdge(0, 0, 0.0, zero);

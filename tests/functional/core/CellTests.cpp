@@ -24,7 +24,9 @@ TEST_F(CellFunctionalTests, BuildBCCLatticeAndVerifyDensity) {
 
   // BCC basis: (0,0,0) and (0.5, 0.5, 0.5) in fractional coordinates
   cell.addAtom("Fe", {0.0, 0.0, 0.0});
-  cell.addAtom("Fe", {lattice_parameter * 0.5, lattice_parameter * 0.5, lattice_parameter * 0.5});
+  cell.addAtom("Fe", correlation::math::Vector3<real_t>(lattice_parameter * static_cast<real_t>(0.5),
+                                                        lattice_parameter * static_cast<real_t>(0.5),
+                                                        lattice_parameter * static_cast<real_t>(0.5)));
 
   EXPECT_EQ(cell.atomCount(), 2);
   EXPECT_NEAR(cell.volume(), std::pow(lattice_parameter, 3), correlation::is_single_precision ? 1e-5 : 1e-6);
@@ -42,9 +44,12 @@ TEST_F(CellFunctionalTests, BuildFCCLatticeAndVerifyPBCDistances) {
 
   // FCC basis
   cell.addAtom("Al", {0.0, 0.0, 0.0});
-  cell.addAtom("Al", {0.0, lattice_parameter * 0.5, lattice_parameter * 0.5});
-  cell.addAtom("Al", {lattice_parameter * 0.5, 0.0, lattice_parameter * 0.5});
-  cell.addAtom("Al", {lattice_parameter * 0.5, lattice_parameter * 0.5, 0.0});
+  cell.addAtom("Al", correlation::math::Vector3<real_t>(0.0, lattice_parameter * static_cast<real_t>(0.5),
+                                                        lattice_parameter * static_cast<real_t>(0.5)));
+  cell.addAtom("Al", correlation::math::Vector3<real_t>(lattice_parameter * static_cast<real_t>(0.5), 0.0,
+                                                        lattice_parameter * static_cast<real_t>(0.5)));
+  cell.addAtom("Al", correlation::math::Vector3<real_t>(lattice_parameter * static_cast<real_t>(0.5),
+                                                        lattice_parameter * static_cast<real_t>(0.5), 0.0));
 
   EXPECT_EQ(cell.atomCount(), 4);
 
@@ -65,11 +70,14 @@ TEST_F(CellFunctionalTests, VerifyWaterMoleculePBCStability) {
   // O at origin, H atoms at typical distance/angle
   // OH distance ~ 0.96 A, HOH angle ~ 104.5
   const real_t oh_dist = 0.9584;
-  const real_t hoh_angle_rad = 104.45 * (correlation::math::pi / 180.0);
+  const real_t hoh_angle_rad = static_cast<real_t>(104.45 * (correlation::math::pi / 180.0));
 
   cell.addAtom("O", {10.0, 10.0, 10.0});
-  cell.addAtom("H", {10.0 + oh_dist, 10.0, 10.0});
-  cell.addAtom("H", {10.0 + oh_dist * std::cos(hoh_angle_rad), 10.0 + oh_dist * std::sin(hoh_angle_rad), 10.0});
+  cell.addAtom("H", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + oh_dist, static_cast<real_t>(10.0),
+                                                       static_cast<real_t>(10.0)));
+  cell.addAtom("H", correlation::math::Vector3<real_t>(static_cast<real_t>(10.0) + oh_dist * std::cos(hoh_angle_rad),
+                                                       static_cast<real_t>(10.0) + oh_dist * std::sin(hoh_angle_rad),
+                                                       static_cast<real_t>(10.0)));
 
   // Now move the molecule across the boundary
   for (auto &atom : const_cast<std::vector<Atom> &>(cell.atoms())) {
