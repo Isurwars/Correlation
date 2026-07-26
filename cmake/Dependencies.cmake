@@ -386,12 +386,21 @@ if(BUILD_GUI)
   message(STATUS "Downloading nativefiledialog-extended from GitHub...")
   set(NFD_BUILD_TESTS OFF CACHE BOOL "Disable NFD tests" FORCE)
 
+  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Force shared libraries" FORCE)
+
   FetchContent_Declare(
     nfd
     GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git
     GIT_TAG        v1.2.1
   )
   FetchContent_MakeAvailable(nfd)
+
+  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Force shared libraries" FORCE)
+
+  if(TARGET nfd)
+    set_target_properties(nfd PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  endif()
 endif()
 
 # 10. FFT Library Configuration
