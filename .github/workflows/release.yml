@@ -388,11 +388,14 @@ jobs:
           CIBW_ARCHS_LINUX: "x86_64 aarch64"
           # Only build 64-bit wheels on Windows, skipping the buggy win32 target entirely
           CIBW_ARCHS_WINDOWS: "AMD64"
-          # Pass deployment target AND C++ standard directly into cibuildwheel build environments
+          # macOS: Fixes LLVM libc++ __enable_if_t resolution and enables std::format / std::to_chars
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET="13.3"
             CXXFLAGS="-std=c++23"
-            CFLAGS="-std=c23"
+            CFLAGS="-std=c2x"
+          # Windows: Passes build directories to PATH so delvewheel finds tbb12.dll
+          CIBW_ENVIRONMENT_WINDOWS: >
+            PATH="$PATH;$GITHUB_WORKSPACE\\build\\bin;$GITHUB_WORKSPACE\\build\\_deps\\onetbb-build\\bin\\Release;$GITHUB_WORKSPACE\\build\\_deps\\onetbb-build\\bin\\Debug"
 
       - name: Upload wheel artifacts
         uses: actions/upload-artifact@v4
