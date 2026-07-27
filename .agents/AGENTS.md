@@ -30,8 +30,9 @@
 - **See skill:** [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for the comprehensive C++ Core Guidelines reference.
 - **See rule:** [code-style-guide](file:///home/isurwars/Projects/Correlation/.agents/rules/code-style-guide.md) for clang-tidy compliance, Doxygen standards, and static analysis gates.
 - **See rule:** [cmake-architecture-rule](file:///home/isurwars/Projects/Correlation/.agents/rules/cmake-architecture-rule.md) for target-centric CMake design, compile commands export, and build safety.
-- **See rule:** [slint-ui-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/slint-ui-standards.md) for Slint UI/UX design tokens, responsive layouts, thread safety, and CMake linkage.
-- **See rule:** [slint-ui-architecture-rule](file:///home/isurwars/Projects/Correlation/.agents/rules/slint-ui-architecture-rule.md) for Slint MVVM architecture, declarative UI design, thread safety, and C++ interop standards.
+- **See rule:** [git-workflow](file:///home/isurwars/Projects/Correlation/.agents/rules/git-workflow.md) for trunk-based development and Conventional Commits.
+- **See rule:** [testing-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/testing-standards.md) for Google Test standards and verification targets.
+- **See rule:** [slint-standards](file:///home/isurwars/Projects/Correlation/.agents/rules/slint-standards.md) for Slint UI MVVM architecture, design tokens, thread safety, and CMake linkage.
 
 ## 5. Communication Style
 - Zero conversational fluff. Drop introductory descriptions or post-generation explanations.
@@ -41,12 +42,17 @@
 - See [caveman-communication](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman-communication/SKILL.md) for the full token economy protocol.
 
 ## 6. Delegation & Skill Invocation
-- **C++ Refactoring / Code Generation:** Activate [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for RAII, modern C++20/23 type safety, and memory-locality guidelines.
+- **C++ Refactoring / Code Generation:** Activate [cpp-coding-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-coding-standards/SKILL.md) for RAII, modern C++20 type safety, and memory-locality guidelines.
 - **Performance & Benchmarking:** Activate [cpp-performance-benchmark](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-performance-benchmark/SKILL.md) for Google Benchmark, cache alignment (`alignas(64)`), and SIMD loop friendliness.
+- **Error Diagnosis:** Activate [cpp-error-diagnosis](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-error-diagnosis/SKILL.md) for structured compiler, linker, and sanitizer error parsing.
+- **Git Commit Generation:** Activate [git-commit-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/git-commit-standards/SKILL.md) for Conventional Commits formatting and scope mapping.
 - **Python Bindings:** Activate [pybind11-interop-standards](file:///home/isurwars/Projects/Correlation/.agents/skills/pybind11-interop-standards/SKILL.md) for zero-copy NumPy buffers (`py::array_t`) and GIL releases (`py::gil_scoped_release`).
-- **Slint UI & UX Design:** Activate [slint-component-architect](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-component-architect/SKILL.md) for modular components and UI design tokens, [slint-cpp-binding-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-cpp-binding-generator/SKILL.md) for C++20 thread-safe bindings, and [slint-live-preview-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-live-preview-loop/SKILL.md) for hot reloading.
-- **Slint Declarative UI:** Activate [slint-ui-development](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-ui-development/SKILL.md) for declarative `.slint` layouts, Material styling, property bindings, animations, and visual verification.
-- **Slint C++ Interop:** Activate [slint-cpp-interop](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-cpp-interop/SKILL.md) for C++ controller integration, thread-safe `slint::invoke_from_event_loop()`, dynamic vector models, and plot/image rendering.
+- **Slint UI & UX Design:** Activate [slint-component-architect](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-component-architect/SKILL.md) for modular components and design tokens, [slint-material-design-system](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-material-design-system/SKILL.md) for Material 3 palettes, components, and typography, [slint-ui-development](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-ui-development/SKILL.md) for declarative `.slint` layouts, and [slint-live-preview-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-live-preview-loop/SKILL.md) for hot reloading.
+- **Slint C++ Interop:** Activate [slint-cpp-integration](file:///home/isurwars/Projects/Correlation/.agents/skills/slint-cpp-integration/SKILL.md) for C++ controller integration, thread-safe `slint::invoke_from_event_loop()`, dynamic vector models, and plot/image rendering.
+- **C++ Concurrency & Safety:** Activate [cpp-concurrency-patterns](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-concurrency-patterns/SKILL.md) for OpenMP/TBB loop safety, `std::scoped_lock`, and cache line alignment (`alignas(64)`).
+- **Memory Profiling:** Activate [cpp-memory-profiler](file:///home/isurwars/Projects/Correlation/.agents/skills/cpp-memory-profiler/SKILL.md) for Heaptrack and Valgrind Memcheck memory leak analysis.
+- **Documentation & Changelogs:** Activate [doxygen-doc-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/doxygen-doc-generator/SKILL.md) for header documentation and [changelog-generator](file:///home/isurwars/Projects/Correlation/.agents/skills/changelog-generator/SKILL.md) for automated release notes.
+- **Release Packaging:** Activate [release-packaging](file:///home/isurwars/Projects/Correlation/.agents/skills/release-packaging/SKILL.md) for building Linux release artifacts (AppImage, DEB, RPM).
 - **Verification & Build:** Run project validation using CMake/CTest targets before declaring features complete. Invoke [test-and-tea-loop](file:///home/isurwars/Projects/Correlation/.agents/skills/test-and-tea-loop/SKILL.md) for automated build-diagnose-fix cycles.
 - **Runtime Safety:** Use [sanitizer-validator](file:///home/isurwars/Projects/Correlation/.agents/skills/sanitizer-validator/SKILL.md) to instrument builds with ASan/TSan/UBSan when investigating memory or concurrency bugs.
 - **Graph Sync:** After modifying source files, invoke [graphify-maintenance](file:///home/isurwars/Projects/Correlation/.agents/skills/graphify-maintenance/SKILL.md) to regenerate dependency graphs.
@@ -54,5 +60,5 @@
 ## 7. Verification & Quality Gates
 1. **Compilation:** Code must compile cleanly with `-Wall -Wextra -Wpedantic -Werror`.
 2. **Static Analysis:** Run `clang-tidy` against `compile_commands.json` on all modified files. Zero `NOLINT` suppressions permitted.
-3. **Testing:** Execute `cmake --build build --target correlation_tests` and verify all tests pass.
+3. **Testing:** Execute `cmake --build build --target correlation_unit_tests` (or applicable target) and verify all tests pass.
 4. **Documentation:** Verify Doxygen blocks on all public/protected interfaces in header files.

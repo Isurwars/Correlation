@@ -1525,8 +1525,8 @@
     "semantic_hash": "d33dd3a82cfd7f01825b5c82a23dee17"
   },
   ".agents/AGENTS.md": {
-    "mtime": 1785044369.3598232,
-    "ast_hash": "74dcc0bb15ac0e19eabe9b836b1cded4",
+    "mtime": 1785128003.1111023,
+    "ast_hash": "4d0dd9d1bdc05b8bf8a57b86abdb2711",
     "semantic_hash": ""
   },
   ".agents/rules/caveman-navigation.md": {
@@ -1665,8 +1665,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/graphify-maintenance/SKILL.md": {
-    "mtime": 1784769720.2303483,
-    "ast_hash": "fd9d99ced6955a18c37c486f296f3569",
+    "mtime": 1785127138.506836,
+    "ast_hash": "ad9c251e2ec09e713949b370090d5d74",
     "semantic_hash": ""
   },
   ".agents/skills/sanitizer-validator/SKILL.md": {
@@ -1675,8 +1675,8 @@
     "semantic_hash": ""
   },
   ".agents/skills/test-and-tea-loop/SKILL.md": {
-    "mtime": 1784769727.3182428,
-    "ast_hash": "63dc74e9ae5dfb24ac9a1c9f9ae155f3",
+    "mtime": 1785116663.743312,
+    "ast_hash": "085108d3e73e97d94ae14321caee1137",
     "semantic_hash": ""
   },
   "include/math/detail/Vector3SIMD.hpp": {
@@ -1764,24 +1764,14 @@
     "ast_hash": "53d3be8c336bfa2322e298d8bdaff15f",
     "semantic_hash": ""
   },
-  ".agents/rules/slint-ui-standards.md": {
-    "mtime": 1785044239.707138,
-    "ast_hash": "f03446e7706ee2ddabc3ac472c33c442",
-    "semantic_hash": ""
-  },
   ".agents/skills/slint-component-architect/SKILL.md": {
     "mtime": 1785044239.708435,
     "ast_hash": "3e9dc2cd35262adf21040d4598598021",
     "semantic_hash": ""
   },
-  ".agents/skills/slint-cpp-binding-generator/SKILL.md": {
-    "mtime": 1785044239.708435,
-    "ast_hash": "a095ac6b6d927af368225f2342d14564",
-    "semantic_hash": ""
-  },
   ".agents/skills/slint-live-preview-loop/SKILL.md": {
-    "mtime": 1785044239.708435,
-    "ast_hash": "c97c55f74c05be126f4306c117b8a284",
+    "mtime": 1785127145.4867458,
+    "ast_hash": "c1520a8f7b79ec43526b7da5c957a63d",
     "semantic_hash": ""
   },
   ".github/workflows/test-wheels.yml": {
@@ -1789,19 +1779,69 @@
     "ast_hash": "5f24a658463463b97824256b6f0918a4",
     "semantic_hash": ""
   },
-  ".agents/rules/slint-ui-architecture-rule.md": {
-    "mtime": 1785044305.0499697,
-    "ast_hash": "5a15d9ea4e9f3005257d24a4a0e2325f",
-    "semantic_hash": ""
-  },
-  ".agents/skills/slint-cpp-interop/SKILL.md": {
-    "mtime": 1785044305.0499697,
-    "ast_hash": "da739f5a90d73908ee55726b030bf59c",
-    "semantic_hash": ""
-  },
   ".agents/skills/slint-ui-development/SKILL.md": {
     "mtime": 1785044305.0499697,
     "ast_hash": "bfa631f1d762a28e2c539044b5e7e3cb",
+    "semantic_hash": ""
+  },
+  ".agents/rules/git-workflow.md": {
+    "mtime": 1785116482.8465242,
+    "ast_hash": "be5804c9e20c29620e6dbd52c4668938",
+    "semantic_hash": ""
+  },
+  ".agents/rules/slint-standards.md": {
+    "mtime": 1785116531.4719293,
+    "ast_hash": "e544e993544fd81d69f6d1e42fa618ca",
+    "semantic_hash": ""
+  },
+  ".agents/rules/testing-standards.md": {
+    "mtime": 1785116499.0503252,
+    "ast_hash": "b25ffbd932788e266e89f07c3a9f747b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/cpp-error-diagnosis/SKILL.md": {
+    "mtime": 1785116581.4133248,
+    "ast_hash": "fc1758d4bf1be5138d11b643d766a9c7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/git-commit-standards/SKILL.md": {
+    "mtime": 1785116557.2206168,
+    "ast_hash": "f0d51eac8b3c9421770c3309dd1bb9fc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/release-packaging/SKILL.md": {
+    "mtime": 1785116603.4240606,
+    "ast_hash": "0adb257a9007748c9a881bf7a3ff4daf",
+    "semantic_hash": ""
+  },
+  ".agents/skills/slint-cpp-integration/SKILL.md": {
+    "mtime": 1785116635.8114178,
+    "ast_hash": "aafc76a2e9da7b7bba24df68735ec1c3",
+    "semantic_hash": ""
+  },
+  ".agents/skills/slint-material-design-system/SKILL.md": {
+    "mtime": 1785127856.744398,
+    "ast_hash": "cbe599d8397635f8ef98d9c45c9a459e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/changelog-generator/SKILL.md": {
+    "mtime": 1785127983.5054116,
+    "ast_hash": "07760a654f1a651971f041040a12e3b7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/cpp-concurrency-patterns/SKILL.md": {
+    "mtime": 1785127993.4702544,
+    "ast_hash": "669c012e1d31379c9691e3c56e280f53",
+    "semantic_hash": ""
+  },
+  ".agents/skills/cpp-memory-profiler/SKILL.md": {
+    "mtime": 1785127997.6351888,
+    "ast_hash": "f359965b7461505eab8047884194db42",
+    "semantic_hash": ""
+  },
+  ".agents/skills/doxygen-doc-generator/SKILL.md": {
+    "mtime": 1785127988.0673397,
+    "ast_hash": "1e71e0f79098bffca254b5bbc51147ea",
     "semantic_hash": ""
   }
 }
