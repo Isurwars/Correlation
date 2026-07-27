@@ -31,7 +31,7 @@ export component ScrollBar {
             y: root.horizontal ? (parent.height - self.height) / 2 : root.offset + (root.track-size - thumb.height) * (-root.value / root.maximum);
             border-radius: (root.horizontal ? self.height : self.width) / 2;
             background: MaterialPalette.on_background;
-            opacity: hide_timer.running || touch_area.has_hover || touch_area.pressed ? root.state_opacity : 0;
+            opacity: (root.policy == ScrollBarPolicy.always_on && root.maximum > 0) || hide_timer.running || touch_area.has_hover || touch_area.pressed ? root.state_opacity : 0;
 
             animate opacity { duration: 150ms; }
         }

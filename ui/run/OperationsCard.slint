@@ -107,6 +107,8 @@ export component OperationsCard inherits FilledCard {
                 }
                 Rectangle { horizontal-stretch: 1; }
                 theme_toggle := IconButton {
+                    accessible-role: button;
+                    accessible-label: "Toggle Color Scheme";
                     icon: Palette.color-scheme == ColorScheme.dark ? Icons.light_mode : Icons.dark_mode;
                     clicked => {
                         Palette.color-scheme = Palette.color-scheme == ColorScheme.dark ? ColorScheme.light : ColorScheme.dark;
@@ -114,6 +116,8 @@ export component OperationsCard inherits FilledCard {
                 }
             }
             load_area := TouchArea {
+                accessible-role: button;
+                accessible-label: "Load structure or trajectory file";
                 min-height: 40px;
                 FilledButton {
                     enabled: root.load_enabled;
@@ -207,6 +211,8 @@ export component OperationsCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_8;
 
             run_area := TouchArea {
+                accessible-role: button;
+                accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
                 FilledButton {
                     width: 100%;
                     text: root.analysis_running ? "Cancel Analysis" : 
@@ -253,6 +259,8 @@ export component OperationsCard inherits FilledCard {
             }
 
             save_area := TouchArea {
+                accessible-role: button;
+                accessible-label: "Save Analysis Results";
                 FilledButton {
                     width: 100%;
                     text: "Save Results";

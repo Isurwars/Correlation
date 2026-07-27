@@ -21,8 +21,8 @@ export component DropDownMenu {
 
     callback selected(index: int);
 
-    property <length> item_height: MaterialStyleMetrics.size_56;
-    property <int> max_displayed_items: 6;
+    property <length> item_height: MaterialStyleMetrics.size_40;
+    property <int> max_displayed_items: 8;
     property <string> text <=> text_field.text;
 
     min_width: text_field.min_width - MaterialStyleMetrics.size_40;
@@ -99,6 +99,7 @@ export component DropDownMenu {
                 background: MaterialPalette.surface_container;
 
                 ScrollView {
+                    vertical_scrollbar_policy: ScrollBarPolicy.always_on;
                     VerticalLayout {
                         menu_inner := MenuInner {
                             current_index: root.current_index;

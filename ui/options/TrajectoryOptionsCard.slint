@@ -66,6 +66,8 @@ export component TrajectoryOptionsCard inherits FilledCard {
 
         // Time Step input
         time_step_area := TouchArea {
+            accessible-role: text-input;
+            accessible-label: "Time Step in femtoseconds";
             Horizontal {
                 TextField {
                     label: "Time Step (fs)";
@@ -92,6 +94,8 @@ export component TrajectoryOptionsCard inherits FilledCard {
                 spacing: MaterialStyleMetrics.spacing_8;
 
                 start_frame_area := TouchArea {
+                    accessible-role: text-input;
+                    accessible-label: "Start Frame";
                     horizontal-stretch: 1;
                     TextField {
                         enabled: root.file_loaded && root.num_frames > 1;
@@ -104,6 +108,8 @@ export component TrajectoryOptionsCard inherits FilledCard {
                 }
 
                 end_frame_area := TouchArea {
+                    accessible-role: text-input;
+                    accessible-label: "End Frame";
                     horizontal-stretch: 1;
                     TextField {
                         enabled: root.file_loaded && root.num_frames > 1;
