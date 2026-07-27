@@ -210,17 +210,22 @@ export component OperationsCard inherits FilledCard {
         Vertical {
             spacing: MaterialStyleMetrics.spacing_8;
 
+            if root.has_validation_errors && !root.analysis_running : MaterialText {
+                text: "⚠ Fix validation errors before running";
+                color: MaterialPalette.error;
+                wrap: word-wrap;
+                horizontal-alignment: center;
+            }
+
             run_area := TouchArea {
                 accessible-role: button;
                 accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
                 FilledButton {
                     width: 100%;
-                    text: root.analysis_running ? "Cancel Analysis" : 
-                          root.has_validation_errors ? "Fix Errors" : "Run Analysis";
-                    enabled: root.file_loaded && !root.has_validation_errors;
-                    background: root.analysis_running ? MaterialPalette.error :
-                                root.has_validation_errors ? MaterialPalette.error : MaterialPalette.run;
-                    text_color: root.has_validation_errors ? MaterialPalette.on_error : MaterialPalette.on_run;
+                    text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
+                    enabled: root.analysis_running || (root.file_loaded && !root.has_validation_errors);
+                    background: root.analysis_running ? MaterialPalette.error : MaterialPalette.run;
+                    text_color: root.analysis_running ? MaterialPalette.on_error : MaterialPalette.on_run;
                     clicked => {
                         if (root.analysis_running) {
                             root.cancel_analysis();

@@ -364,7 +364,18 @@ export component AppWindow inherits Window {
     // ============================================================================
     // Main UI structure
     // ============================================================================
+    VerticalLayout {
+        padding: 0;
+        spacing: 0;
+
+        AppHeader {
+            title_text: "Correlation";
+            status_text: root.file_loaded ? root.file_status_text : "";
+            file_loaded: root.file_loaded;
+        }
+
         Horizontal {
+            vertical-stretch: 1;
             // 1. Left column: Operations & CLI command
             Vertical {
             padding: 0;
@@ -413,6 +424,14 @@ export component AppWindow inherits Window {
                 max_frame_error: root.max_frame_error;
                 opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
             }
+
+            CliCommandCard {
+                visible: root.cli_command != "";
+                height: root.cli_command != "" ? self.preferred-height : 0px;
+                animate height { duration: 250ms; easing: ease-in-out; }
+                cli_command: root.cli_command;
+                copy_command => { root.copy_cli_command(); }
+            }
         }
 
         // 2. Middle column: Options Tabbed Card (Setup, Trajectory, Parameters, Export)
@@ -437,6 +456,11 @@ export component AppWindow inherits Window {
             toggle_calculator(id, enabled) => {
                 root.toggle_calculator(id, enabled);
             }
+            preset_items: root.preset_items;
+            selected_preset <=> root.selected_preset;
+            load_preset(idx) => { root.load_preset(idx); }
+            save_preset(name) => { root.save_preset(name); }
+            delete_preset(idx) => { root.delete_preset(idx); }
         }
 
         // 3. Right column: Visual Preview Card (stretches to fill remaining space)
@@ -497,6 +521,15 @@ export component AppWindow inherits Window {
                     }
                 }
             }
+        }
+    }
+
+        AppFooter {
+            status_text: root.analysis_running ? root.analysis_status_text :
+                         root.analysis_done ? "Analysis complete — results ready" :
+                         root.file_loaded ? root.file_status_text : "Ready";
+            progress: root.progress;
+            analysis_running: root.analysis_running;
         }
     }
 

@@ -12,7 +12,9 @@ import {
     Horizontal,
     TabItem,
     ScrollView,
+    MenuItem,
 } from "../material/material.slint";
+import { PresetManagerCard } from "PresetManagerCard.slint";
 import { MaterialTypeCard } from "MaterialTypeCard.slint";
 import { BondCutoffsCard } from "BondCutoffsCard.slint";
 import { RDFOptionsCard } from "RDFOptionsCard.slint";
@@ -74,7 +76,15 @@ export component OptionsCard inherits FilledCard {
 
     in-out property <int> active_tab: 0;
 
+    // Preset management
+    in property <[MenuItem]> preset_items: [];
+    in-out property <int> selected_preset: -1;
+    callback load_preset(int);
+    callback save_preset(string);
+    callback delete_preset(int);
+
     out property <string> hovered_tooltip_text: 
+        preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_tooltip_text :
         (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
@@ -85,6 +95,7 @@ export component OptionsCard inherits FilledCard {
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
+        preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_x :
         (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
@@ -95,6 +106,7 @@ export component OptionsCard inherits FilledCard {
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x : 0px;
 
     out property <length> hovered_y:
+        preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_y :
         (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
@@ -105,6 +117,7 @@ export component OptionsCard inherits FilledCard {
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y : 0px;
 
     out property <length> hovered_width:
+        preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_width :
         (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
@@ -115,6 +128,7 @@ export component OptionsCard inherits FilledCard {
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width : 0px;
 
     out property <length> hovered_height:
+        preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_height :
         (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
@@ -128,6 +142,16 @@ export component OptionsCard inherits FilledCard {
         width: 100%;
         height: 100%;
         padding: 0;
+
+        // Preset Manager (collapsible, always visible above tabs)
+        preset_manager := PresetManagerCard {
+            enabled: root.file_loaded;
+            preset_items: root.preset_items;
+            selected_preset <=> root.selected_preset;
+            load_preset(idx) => { root.load_preset(idx); }
+            save_preset(name) => { root.save_preset(name); }
+            delete_preset(idx) => { root.delete_preset(idx); }
+        }
 
         // TAB NAVIGATION BAR (3 tabs)
         Horizontal {
