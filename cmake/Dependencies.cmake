@@ -31,6 +31,7 @@ else()
     GIT_TAG v2023.0.0  
   )
   set(TBB_TEST OFF CACHE BOOL "Disable TBB tests" FORCE)
+  set(TBB_INSTALL OFF CACHE BOOL "Suppress TBB install rules" FORCE)
   FetchContent_MakeAvailable(TBB)
 endif()
 
