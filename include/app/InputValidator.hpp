@@ -1,6 +1,6 @@
 /**
  * @file InputValidator.hpp
- * @brief Input validation and CLI command generation logic.
+ * @brief Input validation logic.
  * @copyright Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
  * @par License
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "AppWindow.h"
 #include "app/AppBackend.hpp"
 
 class AppWindow;
@@ -18,7 +19,7 @@ class AppController; // Forward declaration
 
 /**
  * @class InputValidator
- * @brief Handles UI input validation and equivalent CLI command generation.
+ * @brief Handles UI input validation.
  */
 class InputValidator {
 public:
@@ -35,16 +36,6 @@ public:
    * @return true if all inputs are valid, false otherwise.
    */
   [[nodiscard]] bool validateInputs();
-
-  /**
-   * @brief Generates and updates the equivalent CLI command in the UI.
-   */
-  void updateCliCommand();
-
-  /**
-   * @brief Copies the equivalent CLI command to the system clipboard.
-   */
-  void handleCopyCliCommand();
 
 private:
   /**

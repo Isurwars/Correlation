@@ -132,44 +132,6 @@ bool validate_max_frame_input(const std::string &frame_s, int total_frames, int 
   return true;
 }
 
-std::string getDisabledGroupsArg(const ProgramOptions &opt) {
-  std::map<std::string, std::vector<const correlation::calculators::BaseCalculator *>> groups_map;
-  const auto &calculators = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
-  for (const auto &calc : calculators) {
-    groups_map[calc->getGroup()].push_back(calc.get());
-  }
-
-  std::vector<std::string> disabled_groups;
-  for (const auto &[grp_name, grp_calcs] : groups_map) {
-    bool all_disabled = true;
-    for (const auto *calc : grp_calcs) {
-      auto calc_it = opt.active_calculators.find(calc->getName());
-      if (calc_it != opt.active_calculators.end() && calc_it->second) {
-        all_disabled = false;
-        break;
-      }
-    }
-    if (all_disabled) {
-      std::string grp_lower = grp_name;
-      std::ranges::transform(grp_lower, grp_lower.begin(), ::tolower);
-      disabled_groups.push_back(grp_lower);
-    }
-  }
-
-  if (disabled_groups.empty()) {
-    return "";
-  }
-
-  std::string disabled_list;
-  for (const auto &grp : disabled_groups) {
-    if (!disabled_list.empty()) {
-      disabled_list += ",";
-    }
-    disabled_list += grp;
-  }
-  return " --disable-groups " + disabled_list;
-}
-
 } // namespace
 
 InputValidator::InputValidator(::AppWindow &window, AppBackend &backend, AppController &controller)
@@ -386,89 +348,10 @@ bool InputValidator::validateInputs() {
 
   window_->set_app_errors(errs);
   window_->set_has_validation_errors(!valid);
-  updateCliCommand();
+
   return valid;
 }
 
-void InputValidator::updateCliCommand() {
-  ProgramOptions opt = controller_->handleOptionsfromUI();
 
-  std::string cmd = "correlation-cli";
-
-  if (!opt.input_file.empty()) {
-    cmd += " \"" + opt.input_file + "\"";
-  } else {
-    cmd += " <input_file>";
-  }
-
-  cmd += " --r-max " + std::string(window_->get_analysis_options().r_max.data());
-  cmd += " --r-bin " + std::string(window_->get_analysis_options().r_bin_width.data());
-
-  if (window_->get_has_scattering_active()) {
-    cmd += " --q-max " + std::string(window_->get_analysis_options().q_max.data());
-    cmd += " --q-bin " + std::string(window_->get_analysis_options().q_bin_width.data());
-    cmd += " --r-int-max " + std::string(window_->get_analysis_options().r_int_max.data());
-  }
-
-  if (window_->get_has_angular_active()) {
-    cmd += " --angle-bin " + std::string(window_->get_analysis_options().angle_bin_width.data());
-    cmd += " --dihedral-bin " + std::string(window_->get_analysis_options().dihedral_bin_width.data());
-  }
-
-  if (window_->get_has_rings_active()) {
-    cmd += " --max-ring-size " + std::string(window_->get_analysis_options().max_ring_size.data());
-  }
-
-  if (window_->get_num_frames() > 1) {
-    cmd += " --time-step " + std::string(window_->get_analysis_options().time_step.data());
-    cmd += " --min-frame " + std::string(window_->get_analysis_options().min_frame.data());
-    cmd += " --max-frame " + std::string(window_->get_analysis_options().max_frame.data());
-  }
-
-  if (opt.smoothing) {
-    cmd += " --smoothing-sigma " + std::string(window_->get_analysis_options().smoothing_sigma.data());
-    std::string kernel_str = "gaussian";
-    if (opt.smoothing_kernel == correlation::math::KernelType::Bump) {
-      kernel_str = "bump";
-    } else if (opt.smoothing_kernel == correlation::math::KernelType::Triweight) {
-      kernel_str = "triweight";
-    } else if (opt.smoothing_kernel == correlation::math::KernelType::Epanechnikov) {
-      kernel_str = "epanechnikov";
-    } else if (opt.smoothing_kernel == correlation::math::KernelType::Cosine) {
-      kernel_str = "cosine";
-    } else if (opt.smoothing_kernel == correlation::math::KernelType::Biweight) {
-      kernel_str = "biweight";
-    }
-    cmd += " --smoothing-kernel " + kernel_str;
-  } else {
-    cmd += " --no-smoothing";
-  }
-
-  cmd += " --lef-cutoff " + std::string(window_->get_analysis_options().lef_cutoff.data());
-  cmd += " --lef-sigma " + std::string(window_->get_analysis_options().lef_sigma.data());
-  cmd += " --hyper-samples " + std::string(window_->get_analysis_options().hyper_samples.data());
-
-  cmd += getDisabledGroupsArg(opt);
-
-  if (opt.use_csv) {
-    cmd += " --csv";
-  } else {
-    cmd += " --no-csv";
-  }
-
-  if (opt.use_hdf5) {
-    cmd += " --hdf5";
-  } else {
-    cmd += " --no-hdf5";
-  }
-
-  if (opt.use_parquet) {
-    cmd += " --parquet";
-  } else {
-    cmd += " --no-parquet";
-  }
-
-  window_->set_cli_command(slint::SharedString(cmd));
-}
 
 } // namespace correlation::app

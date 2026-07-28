@@ -33,7 +33,6 @@ import { AppHeader } from "nav/AppHeader.slint";
 import { AppFooter } from "nav/AppFooter.slint";
 import { OperationsCard } from "run/OperationsCard.slint";
 import { TrajectoryOptionsCard } from "options/TrajectoryOptionsCard.slint";
-import { CliCommandCard } from "run/CliCommandCard.slint";
 import { OptionsCard } from "options/OptionsCard.slint";
 import { PreviewCard } from "preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
@@ -173,7 +172,6 @@ export component AppWindow inherits Window {
 
     // Global: any validation error prevents running analysis
     in-out property <bool> has_validation_errors: false;
-    in-out property <string> cli_command: "";
 
     // Presets properties
     in property <[MenuItem]> preset_items: [];
@@ -216,7 +214,6 @@ export component AppWindow inherits Window {
     callback pin_run();
     callback clear_pinned_runs();
     callback validate_inputs();
-    callback copy_cli_command();
     callback mouse_move(length, length, bool, length, length);
     callback plot_resized(length, length);
 
@@ -425,13 +422,6 @@ export component AppWindow inherits Window {
                 opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
             }
 
-            CliCommandCard {
-                visible: root.cli_command != "";
-                height: root.cli_command != "" ? self.preferred-height : 0px;
-                animate height { duration: 250ms; easing: ease-in-out; }
-                cli_command: root.cli_command;
-                copy_command => { root.copy_cli_command(); }
-            }
         }
 
         // 2. Middle column: Options Tabbed Card (Setup, Trajectory, Parameters, Export)

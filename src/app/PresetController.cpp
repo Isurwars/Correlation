@@ -40,7 +40,6 @@ void PresetController::handleLoadPreset(int index) {
   controller_.populateCalculatorGroups();
   controller_.updateActiveGroupFlags();
   static_cast<void>(controller_.getInputValidator()->validateInputs());
-  controller_.getInputValidator()->updateCliCommand();
 
   window_.set_analysis_status_text(slint::SharedString(std::string("Loaded preset: ") + preset.name));
 }

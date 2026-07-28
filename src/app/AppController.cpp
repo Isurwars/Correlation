@@ -79,7 +79,6 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
     backend_.setCalculatorActive(std::string(calc_id.data()), enabled);
     populateCalculatorGroups();
     updateActiveGroupFlags();
-    input_validator_->updateCliCommand();
   });
 
   // Handle plot selection: generate SVG and push to UI
@@ -253,7 +252,6 @@ void AppController::handleOptionstoUI() {
     window_.set_analysis_options(opts);
   }
   updateActiveGroupFlags();
-  input_validator_->updateCliCommand();
 };
 
 void AppController::updateActiveGroupFlags() {
