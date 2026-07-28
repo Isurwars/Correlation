@@ -30,6 +30,7 @@ option(BUILD_WITH_HDF5 "Build with HDF5 support" OFF)
 option(BUILD_WITH_ARROW "Build with Arrow/Parquet support" OFF)
 option(BUILD_FUZZ_TESTS "Build libFuzzer fuzz testing targets (requires Clang)" OFF)
 option(USE_SINGLE_PRECISION "Compile the core using single-precision floats instead of doubles" ON)
+option(ENABLE_FIXUP_BUNDLE "Enable BundleUtilities fixup_bundle on macOS for standalone binaries" ON)
 
 if(USE_SINGLE_PRECISION)
     add_compile_definitions(CORRELATION_USE_SINGLE_PRECISION=1)
@@ -186,16 +187,28 @@ if (NOT WIN32)
         endif()
     endif()
 
-    if (APPLE)
+    if (APPLE AND ENABLE_FIXUP_BUNDLE AND NOT BUILD_PYTHON_BINDINGS)
         # On macOS, fixup the bundle (embed dynamic libraries like TBB, HDF5, etc.)
         # BundleUtilities requires absolute paths; resolve CMAKE_INSTALL_PREFIX
         # in case the user passes a relative --prefix to cmake --install.
         # Force all dynamic libraries to be placed directly in the same bin/ folder
         # as the executables using gp_item_default_embedded_path_override.
 
+        # Recursively find all directories under _deps containing .dylib files (e.g. oneTBB compiler output dirs)
+        file(GLOB_RECURSE _mac_dylibs "${PROJECT_BINARY_DIR}/_deps/*.dylib")
+        set(_mac_extra_dirs "")
+        foreach(_dylib IN LISTS _mac_dylibs)
+            get_filename_component(_dylib_dir "${_dylib}" DIRECTORY)
+            list(APPEND _mac_extra_dirs "${_dylib_dir}")
+        endforeach()
+        if(_mac_extra_dirs)
+            list(REMOVE_DUPLICATES _mac_extra_dirs)
+        endif()
+
         # Define the exact workspace directories where our compiled shared dependencies live
         set(MAC_DEPENDENCY_DIRS
             "${PROJECT_BINARY_DIR}/src"
+            "${PROJECT_BINARY_DIR}/lib"
             "${PROJECT_BINARY_DIR}/_deps/nfd-build/src"
             "${PROJECT_BINARY_DIR}/_deps/arrow-build/release"
             "${PROJECT_BINARY_DIR}/_deps/arrow-build/release/cpp/src/arrow"
@@ -208,6 +221,7 @@ if (NOT WIN32)
             "${PROJECT_BINARY_DIR}/_deps/tbb-build/src"
             "${PROJECT_BINARY_DIR}/_deps/tbb-build/src/tbb"
             "${PROJECT_BINARY_DIR}/_deps/tbb-build/src/tbbmalloc"
+            ${_mac_extra_dirs}
             "/opt/homebrew/lib"
             "/usr/local/lib"
         )

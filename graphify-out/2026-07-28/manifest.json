@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "include/app/InputValidator.hpp": {
-    "mtime": 1785202246.2722077,
-    "ast_hash": "4a3ce7e16f63334039d5c6416f5ce47d",
+    "mtime": 1784587170.662854,
+    "ast_hash": "609b3a4579ad73a2572807efb8db773d",
     "semantic_hash": ""
   },
   "include/app/PlotController.hpp": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
-    "mtime": 1785201993.3256457,
-    "ast_hash": "fc6526275260cb67830da1bb0718fa80",
+    "mtime": 1785028700.6528847,
+    "ast_hash": "44a16b91d7b961fcbdddaa55b25da803",
     "semantic_hash": ""
   },
   "src/app/FileIOHandler.cpp": {
@@ -475,8 +475,8 @@
     "semantic_hash": ""
   },
   "src/app/InputValidator.cpp": {
-    "mtime": 1785201975.2369068,
-    "ast_hash": "14412db05914dbbcc662cbfc771ce722",
+    "mtime": 1784868326.1042535,
+    "ast_hash": "a6b14c6741e41a90f63a3e3b90ebe9bd",
     "semantic_hash": ""
   },
   "src/app/PlotController.cpp": {
@@ -485,8 +485,8 @@
     "semantic_hash": ""
   },
   "src/app/PresetController.cpp": {
-    "mtime": 1785201994.984622,
-    "ast_hash": "40075e6cb4b0a564f06bed5752e4816b",
+    "mtime": 1784868326.1042535,
+    "ast_hash": "c4ea29df8bf0133aeb2654905fb3e09e",
     "semantic_hash": ""
   },
   "src/app/PresetManager.cpp": {
@@ -1000,8 +1000,8 @@
     "semantic_hash": ""
   },
   "tests/test_bindings.py": {
-    "mtime": 1785203210.0419736,
-    "ast_hash": "b63e8b7408750220654061e8629f3516",
+    "mtime": 1785048977.1154647,
+    "ast_hash": "075a0445605a1667d278d7bf9f2f6501",
     "semantic_hash": ""
   },
   "tests/unit/app/AppBackendTests.cpp": {
@@ -1320,8 +1320,8 @@
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1785267561.9858758,
-    "ast_hash": "87ef0c00fcf343eff867ea43e3a93641",
+    "mtime": 1785044372.745516,
+    "ast_hash": "56359631fd3f3be7b185da6a31c463bd",
     "semantic_hash": ""
   },
   "README.md": {

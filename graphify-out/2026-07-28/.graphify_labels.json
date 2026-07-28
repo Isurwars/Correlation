@@ -272,12 +272,16 @@
   "270": "Rule: Slint UI Architecture, Styling, and C++ Integration Standards",
   "271": "Slint Live Preview & Verification Loop",
   "272": "app.json",
+  "273": "TEST",
   "274": "SYCLUtils.hpp",
   "275": "TEST",
   "276": "SincIntegralParams",
   "277": "Doxygen Documentation Generator Skill",
   "278": "MockReader",
   "279": "CP2KReader",
+  "280": "GPUBond",
+  "281": "PrecomputedPhases",
+  "282": "CarReader.cpp",
   "283": "Rule: Testing Standards & Coverage",
   "284": "SIMDTypes.hpp",
   "285": "TrajectoryTests",
@@ -285,5 +289,6 @@
   "287": "FileReaderTests",
   "289": "Git Commit Standards Skill",
   "292": "BinningConfig",
+  "293": "CellTests",
   "294": "CliParserTests"
 }
