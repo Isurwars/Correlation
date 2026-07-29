@@ -14,13 +14,11 @@
 #include "AppWindow.h"
 #include "app/AppController.hpp"
 #include "app/InputValidator.hpp"
-#include "calculators/CalculatorFactory.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <format>
 #include <string>
-#include <vector>
 
 namespace correlation::app {
 
@@ -355,7 +353,8 @@ bool InputValidator::validateInputs() {
   if (current_errs.r_max_error != errs.r_max_error || current_errs.r_bin_error != errs.r_bin_error ||
       current_errs.q_max_error != errs.q_max_error || current_errs.q_bin_error != errs.q_bin_error ||
       current_errs.r_int_max_error != errs.r_int_max_error || current_errs.angle_bin_error != errs.angle_bin_error ||
-      current_errs.dihedral_bin_error != errs.dihedral_bin_error || current_errs.max_ring_error != errs.max_ring_error ||
+      current_errs.dihedral_bin_error != errs.dihedral_bin_error ||
+      current_errs.max_ring_error != errs.max_ring_error ||
       current_errs.smoothing_sigma_error != errs.smoothing_sigma_error ||
       current_errs.time_step_error != errs.time_step_error || current_errs.min_frame_error != errs.min_frame_error ||
       current_errs.max_frame_error != errs.max_frame_error ||
@@ -367,7 +366,5 @@ bool InputValidator::validateInputs() {
 
   return valid;
 }
-
-
 
 } // namespace correlation::app

@@ -12,6 +12,50 @@
 #include <Windows.h>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
+
+namespace {
+void setupWindowsDebugEnvironment() {
+  // Ensure Rust/Slint outputs detailed backtraces on panics
+  const char *existing_backtrace = std::getenv("RUST_BACKTRACE");
+  if (existing_backtrace == nullptr || std::string(existing_backtrace)[0] == '\0') {
+    _putenv_s("RUST_BACKTRACE", "full");
+  }
+
+  // Attach to parent console if launched from terminal (CMD/PowerShell)
+  if (AttachConsole(ATTACH_PARENT_PROCESS) != 0) {
+    FILE *dummy_file = nullptr;
+    freopen_s(&dummy_file, "CONOUT$", "w", stdout);
+    freopen_s(&dummy_file, "CONOUT$", "w", stderr);
+    freopen_s(&dummy_file, "CONIN$", "r", stdin);
+  } else {
+    // If launched from GUI Explorer without a console, mirror stderr to a launch debug log file
+    std::error_code ec;
+    auto temp_dir = std::filesystem::temp_directory_path(ec);
+    if (!ec) {
+      auto log_path = temp_dir / "correlation_debug_launch.log";
+      FILE *log_file = nullptr;
+      if (freopen_s(&log_file, log_path.string().c_str(), "w", stderr) == 0) {
+        std::cerr << "=== Correlation Debug Launch Log ===\n";
+      }
+    }
+  }
+
+  // Set top-level unhandled exception filter
+  SetUnhandledExceptionFilter([](EXCEPTION_POINTERS *info) -> LONG {
+    char msg[512];
+    std::snprintf(msg, sizeof(msg),
+                  "Unhandled Windows Exception 0x%08X at Address %p.\nLog written to temp directory.",
+                  static_cast<unsigned int>(info->ExceptionRecord->ExceptionCode),
+                  info->ExceptionRecord->ExceptionAddress);
+    std::cerr << "FATAL: " << msg << "\n";
+    std::cerr.flush();
+    MessageBoxA(nullptr, msg, "Correlation - Unhandled Crash", MB_ICONERROR | MB_OK);
+    return EXCEPTION_EXECUTE_HANDLER;
+  });
+}
+} // namespace
 #endif
 
 #include "AppWindow.h"
@@ -22,6 +66,27 @@
 #include <iostream>
 
 namespace {
+
+/**
+ * @brief Custom terminate handler to log uncaught exceptions or panics.
+ */
+void handleTerminate() {
+  std::cerr << "FATAL: std::terminate called due to unhandled exception or panic.\n";
+  if (auto exc_ptr = std::current_exception()) {
+    try {
+      std::rethrow_exception(exc_ptr);
+    } catch (const std::exception &e) {
+      std::cerr << "Exception detail: " << e.what() << "\n";
+#ifdef _WIN32
+      MessageBoxA(nullptr, e.what(), "Correlation - Uncaught Exception", MB_ICONERROR | MB_OK);
+#endif
+    } catch (...) {
+      std::cerr << "Unknown exception type caught during terminate.\n";
+    }
+  }
+  std::cerr.flush();
+  std::abort();
+}
 
 /**
  * @brief Attempts to create the Slint AppWindow with fallback to software rendering.
@@ -61,15 +126,10 @@ slint::ComponentHandle<AppWindow> createAppWindow() {
  * @return Exit code (0 for success, 1 on fatal error).
  */
 int main() {
-#ifdef _WIN32
-  // Attach to parent console if launched from terminal (CMD/PowerShell)
-  if (AttachConsole(ATTACH_PARENT_PROCESS) != 0) {
-    FILE *dummy_file = nullptr;
-    freopen_s(&dummy_file, "CONOUT$", "w", stdout);
-    freopen_s(&dummy_file, "CONOUT$", "w", stderr);
-    freopen_s(&dummy_file, "CONIN$", "r", stdin);
-  }
+  std::set_terminate(handleTerminate);
 
+#ifdef _WIN32
+  setupWindowsDebugEnvironment();
   // Load the icon from the application's resource file
   LoadIcon(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDI_ICON1));
 #endif

@@ -72,17 +72,22 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_cancel_analysis([this]() { backend_.cancel_analysis(); });
   window_.on_browse_file([this]() { file_io_handler_->handleBrowseFile(); });
   window_.on_write_files([this]() { file_io_handler_->handleWriteFiles(); });
-  window_.on_validate_inputs([this]() { static_cast<void>(input_validator_->validateInputs()); });
+  window_.on_validate_inputs(
+      [this]() { slint::invoke_from_event_loop([this]() { static_cast<void>(input_validator_->validateInputs()); }); });
 
   // Handle calculator toggle: update backend options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
-    backend_.setCalculatorActive(std::string(calc_id.data()), enabled);
-    populateCalculatorGroups();
-    updateActiveGroupFlags();
+    slint::invoke_from_event_loop([this, idx = std::string(calc_id.data()), enabled]() {
+      backend_.setCalculatorActive(idx, enabled);
+      populateCalculatorGroups();
+      updateActiveGroupFlags();
+    });
   });
 
   // Handle plot selection: generate SVG and push to UI
-  window_.on_select_plot([this](int index) { plot_controller_->requestPlotUpdate(index, true); });
+  window_.on_select_plot([this](int index) {
+    slint::invoke_from_event_loop([this, index]() { plot_controller_->requestPlotUpdate(index, true); });
+  });
 
   // Handle mouse move on preview plot
   window_.on_mouse_move([this](float mouse_x, float mouse_y, bool hover, float width, float height) {
@@ -99,11 +104,19 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
   window_.on_clear_pinned_runs([this]() { plot_controller_->handleClearPinnedRuns(); });
 
   // Handle preset load, save, delete requests
-  window_.on_load_preset([this](int index) { preset_controller_->handleLoadPreset(index); });
-  window_.on_save_preset(
-      [this](const slint::SharedString &name) { preset_controller_->handleSavePreset(std::string(name.data())); });
-  window_.on_delete_preset([this](int index) { preset_controller_->handleDeletePreset(index); });
-  window_.on_material_type_changed([this](int type) { preset_controller_->handleMaterialTypeChanged(type); });
+  window_.on_load_preset([this](int index) {
+    slint::invoke_from_event_loop([this, index]() { preset_controller_->handleLoadPreset(index); });
+  });
+  window_.on_save_preset([this](const slint::SharedString &name) {
+    slint::invoke_from_event_loop(
+        [this, sname = std::string(name.data())]() { preset_controller_->handleSavePreset(sname); });
+  });
+  window_.on_delete_preset([this](int index) {
+    slint::invoke_from_event_loop([this, index]() { preset_controller_->handleDeletePreset(index); });
+  });
+  window_.on_material_type_changed([this](int type) {
+    slint::invoke_from_event_loop([this, type]() { preset_controller_->handleMaterialTypeChanged(type); });
+  });
 
   // Handle plot resized callback from UI
   window_.on_plot_resized([this](float width, float height) {

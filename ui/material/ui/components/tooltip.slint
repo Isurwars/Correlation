@@ -16,8 +16,11 @@ export component ToolTip {
     in property <length> parent_width;
     in property <length> parent_height;
 
-    x: max(8px, min(root.parent_width - self.width - 8px, root.hovered_x + (root.hovered_width - self.width) / 2));
-    y: (root.hovered_y + root.hovered_height + self.height + 6px > root.parent_height) ? (root.hovered_y - self.height - 6px) : (root.hovered_y + root.hovered_height + 6px);
+    property <length> pref_w: background_layer.preferred_width;
+    property <length> pref_h: background_layer.preferred_height;
+
+    x: max(8px, min(root.parent_width - root.pref_w - 8px, root.hovered_x + (root.hovered_width - root.pref_w) / 2));
+    y: (root.hovered_y + root.hovered_height + root.pref_h + 6px > root.parent_height) ? (root.hovered_y - root.pref_h - 6px) : (root.hovered_y + root.hovered_height + 6px);
 
     z: 10000;
 
