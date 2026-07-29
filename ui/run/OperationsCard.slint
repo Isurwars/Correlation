@@ -20,6 +20,8 @@ import {
 } from "../material/material.slint";
 import { Palette } from "std-widgets.slint";
 import { AtomCount } from "../Types.slint";
+import { MaterialTypeCard } from "../options/MaterialTypeCard.slint";
+import { TrajectoryOptionsCard } from "../options/TrajectoryOptionsCard.slint";
 
 // ============================================================================
 // OperationsCard Component
@@ -40,6 +42,15 @@ export component OperationsCard inherits FilledCard {
     in property <int> removed_frames_count;
     in property <[AtomCount]> atom_counts;
 
+    // Material & Trajectory Setup Options
+    in-out property <int> material_type: 0;
+    in-out property <string> time_step: "1.0";
+    in property <string> time_step_error: "";
+    in-out property <string> min_frame: "1";
+    in-out property <string> max_frame: "End";
+    in property <string> min_frame_error: "";
+    in property <string> max_frame_error: "";
+
     // Analysis Execution
     in property <bool> analysis_running;
     in property <bool> analysis_done;
@@ -51,35 +62,45 @@ export component OperationsCard inherits FilledCard {
 
     out property <string> hovered_tooltip_text:
         load_area.has-hover ? "Load a structure or trajectory file" :
-        atoms_layout.has-hover ? "Total number of atoms found in a single frame.\n\n🔬 Physics: Larger systems reduce finite-size effects in correlation functions. For reliable RDF, systems with >200 atoms are recommended. For ring statistics, >500 atoms is preferred." : 
-        frames_layout.has-hover ? "Number of structural frames parsed from the file.\n\n🔬 Physics: More frames improve statistical averaging for distribution functions. For converged g(r) in a liquid, typically 100+ frames are recommended." : 
+        atoms_layout.has-hover ? "Total number of atoms found in a single frame.\n\n🔬 Physics: Larger systems reduce finite-size effects in correlation functions. For reliable RDF, systems with >200 atoms are recommended. For ring statistics, >500 atoms is preferred." :
+        frames_layout.has-hover ? "Number of structural frames parsed from the file.\n\n🔬 Physics: More frames improve statistical averaging for distribution functions. For converged g(r) in a liquid, typically 100+ frames are recommended." :
         removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data.\n\n⚠️ If this number is large relative to total frames, check the input file for formatting issues or incomplete trajectory data." :
-        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : "";
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_tooltip_text :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text :
+        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : ""));
 
     out property <length> hovered_x:
         load_area.has-hover ? load_area.absolute-position.x :
         atoms_layout.has-hover ? atoms_layout.absolute-position.x :
         frames_layout.has-hover ? frames_layout.absolute-position.x :
         removed_layout.has-hover ? removed_layout.absolute-position.x :
-        run_area.has-hover ? run_area.absolute-position.x : 0px;
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_x :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
+        run_area.has-hover ? run_area.absolute-position.x : 0px));
     out property <length> hovered_y:
         load_area.has-hover ? load_area.absolute-position.y :
         atoms_layout.has-hover ? atoms_layout.absolute-position.y :
         frames_layout.has-hover ? frames_layout.absolute-position.y :
         removed_layout.has-hover ? removed_layout.absolute-position.y :
-        run_area.has-hover ? run_area.absolute-position.y : 0px;
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_y :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
+        run_area.has-hover ? run_area.absolute-position.y : 0px));
     out property <length> hovered_width:
         load_area.has-hover ? load_area.width :
         atoms_layout.has-hover ? atoms_layout.width :
         frames_layout.has-hover ? frames_layout.width :
         removed_layout.has-hover ? removed_layout.width :
-        run_area.has-hover ? run_area.width : 0px;
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_width :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_width :
+        run_area.has-hover ? run_area.width : 0px));
     out property <length> hovered_height:
         load_area.has-hover ? load_area.height :
         atoms_layout.has-hover ? atoms_layout.height :
         frames_layout.has-hover ? frames_layout.height :
         removed_layout.has-hover ? removed_layout.height :
-        run_area.has-hover ? run_area.height : 0px;
+        (material_card.hovered_tooltip_text != "" ? material_card.hovered_height :
+        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_height :
+        run_area.has-hover ? run_area.height : 0px));
 
     in-out property <bool> atoms_expanded: false;
     property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
@@ -99,7 +120,11 @@ export component OperationsCard inherits FilledCard {
                     color: MaterialPalette.on_surface_variant;
                     vertical-alignment: center;
                 }
-                Rectangle { horizontal-stretch: 1; }
+
+                Rectangle {
+                    horizontal-stretch: 1;
+                }
+
                 theme_toggle := IconButton {
                     accessible-role: button;
                     accessible-label: "Toggle Color Scheme";
@@ -109,6 +134,7 @@ export component OperationsCard inherits FilledCard {
                     }
                 }
             }
+
             load_area := TouchArea {
                 accessible-role: button;
                 accessible-label: "Load structure or trajectory file";
@@ -128,7 +154,7 @@ export component OperationsCard inherits FilledCard {
         // --- File Status/Info ---
         Vertical {
             spacing: MaterialStyleMetrics.spacing_4;
-            
+
             MaterialText {
                 text: root.file_loaded ? root.file_status_text : "No file loaded.";
                 horizontal-stretch: 1;
@@ -193,6 +219,24 @@ export component OperationsCard inherits FilledCard {
             }
         }
 
+        // --- Setup Options (Material & Trajectory) ---
+        material_card := MaterialTypeCard {
+            file_loaded: root.file_loaded;
+            material_type <=> root.material_type;
+        }
+
+        trajectory_card := TrajectoryOptionsCard {
+            file_loaded: root.file_loaded;
+            num_frames: root.num_frames;
+            time_step <=> root.time_step;
+            time_step_error: root.time_step_error;
+            min_frame <=> root.min_frame;
+            max_frame <=> root.max_frame;
+            min_frame_error: root.min_frame_error;
+            max_frame_error: root.max_frame_error;
+            opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
+        }
+
         // Spacer/Divider
         Rectangle {
             height: 1px;
@@ -204,7 +248,7 @@ export component OperationsCard inherits FilledCard {
         Vertical {
             spacing: MaterialStyleMetrics.spacing_8;
 
-            if root.has_validation_errors && !root.analysis_running : MaterialText {
+            if root.has_validation_errors && !root.analysis_running: MaterialText {
                 text: "⚠ Fix validation errors before running";
                 color: MaterialPalette.error;
                 wrap: word-wrap;
@@ -251,9 +295,13 @@ export component OperationsCard inherits FilledCard {
                     horizontal-stretch: 1;
                     wrap: word-wrap;
                 }
+
                 LinearProgressIndicator {
                     progress: root.progress;
-                    animate progress { duration: 200ms; easing: ease-out; }
+                    animate progress {
+                        duration: 200ms;
+                        easing: ease-out;
+                    }
                 }
             }
         }

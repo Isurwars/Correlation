@@ -314,9 +314,7 @@ export component AppWindow inherits Window {
 
     /// hovered_tooltip_text: Dynamically update based on the currently
     ///   hovered component.
-    property <string> sidebar_tooltip: 
-        operations_card.hovered_tooltip_text != "" ? operations_card.hovered_tooltip_text :
-        (analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : "");
+    property <string> sidebar_tooltip: operations_card.hovered_tooltip_text;
 
     property <string> options_hovered_tooltip: options_card.hovered_tooltip_text;
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
@@ -326,25 +324,21 @@ export component AppWindow inherits Window {
 
     property <length> hovered_x:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_x :
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
         options_hovered_tooltip != "" ? options_card.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_y :
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
         options_hovered_tooltip != "" ? options_card.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_width :
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_width :
         options_hovered_tooltip != "" ? options_card.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_height :
-        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_height :
         options_hovered_tooltip != "" ? options_card.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
@@ -372,144 +366,147 @@ export component AppWindow inherits Window {
         }
 
         Horizontal {
+            spacing: MaterialStyleMetrics.spacing_8;
             vertical-stretch: 1;
+
             // 1. Left column: Operations & CLI command
             Vertical {
-            padding: 0;
-            min-width: 200px;
-            preferred-width: 260px;
-            horizontal-stretch: 0;
-            spacing: MaterialStyleMetrics.spacing_8;
+                padding: 0;
+                width: 260px;
+                horizontal-stretch: 0;
+                spacing: MaterialStyleMetrics.spacing_8;
 
-            operations_card := OperationsCard {
-                load_enabled: !root.timer_running;
-                browse_file => {
-                    root.browse_file();
-                }
-                file_status_text <=> root.file_status_text;
-                file_loaded: root.file_loaded;
-                num_frames: root.num_frames;
-                total_atoms: root.total_atoms;
-                removed_frames_count: root.removed_frames_count;
-                atom_counts: root.atom_counts;
+                operations_card := OperationsCard {
+                    load_enabled: !root.timer_running;
+                    browse_file => {
+                        root.browse_file();
+                    }
+                    file_status_text <=> root.file_status_text;
+                    file_loaded: root.file_loaded;
+                    num_frames: root.num_frames;
+                    total_atoms: root.total_atoms;
+                    removed_frames_count: root.removed_frames_count;
+                    atom_counts: root.atom_counts;
 
-                analysis_running: root.analysis_running;
-                analysis_done: root.analysis_done;
-                progress: root.progress;
-                analysis_status_text: root.analysis_status_text;
-                has_validation_errors: root.has_validation_errors;
-                run_analysis => {
-                    root.run_analysis();
-                }
-                cancel_analysis => {
-                    root.cancel_analysis();
+                    material_type <=> root.material_type;
+                    time_step <=> root.analysis_options.time_step;
+                    time_step_error: root.app_errors.time_step_error;
+                    min_frame <=> root.analysis_options.min_frame;
+                    max_frame <=> root.analysis_options.max_frame;
+                    min_frame_error: root.app_errors.min_frame_error;
+                    max_frame_error: root.app_errors.max_frame_error;
+
+                    analysis_running: root.analysis_running;
+                    analysis_done: root.analysis_done;
+                    progress: root.progress;
+                    analysis_status_text: root.analysis_status_text;
+                    has_validation_errors: root.has_validation_errors;
+                    run_analysis => {
+                        root.run_analysis();
+                    }
+                    cancel_analysis => {
+                        root.cancel_analysis();
+                    }
                 }
             }
 
-            analyses_card := AnalysesSelectionCard {
+            // 2. Middle column: Options Tabbed Card (Common, Advanced, Analyses)
+            options_card := OptionsCard {
+                width: 260px;
+                horizontal-stretch: 0;
+                enabled: root.file_loaded;
                 file_loaded: root.file_loaded;
                 calculator_groups: root.calculator_groups;
                 total_calculator_count: root.total_calculator_count;
                 toggle_calculator(id, enabled) => {
                     root.toggle_calculator(id, enabled);
                 }
+                has_radial_active: root.has_radial_active;
+                has_angular_active: root.has_angular_active;
+                has_scattering_active: root.has_scattering_active;
+                has_rings_active: root.has_rings_active;
+                bond_cutoffs <=> root.bond_cutoffs;
+                atom_counts: root.atom_counts;
+                analysis_options <=> root.analysis_options;
+                app_errors: root.app_errors;
+                num_frames: root.num_frames;
+                preset_items: root.preset_items;
+                selected_preset <=> root.selected_preset;
+                load_preset(idx) => { root.load_preset(idx); }
+                save_preset(name) => { root.save_preset(name); }
+                delete_preset(idx) => { root.delete_preset(idx); }
             }
 
-        }
-
-        // 2. Middle column: Options Tabbed Card (Setup, Trajectory, Parameters, Export)
-        options_card := OptionsCard {
-            min-width: 220px;
-            preferred-width: 260px;
-            horizontal-stretch: 0;
-            enabled: root.file_loaded;
-            file_loaded: root.file_loaded;
-            has_radial_active: root.has_radial_active;
-            has_angular_active: root.has_angular_active;
-            has_scattering_active: root.has_scattering_active;
-            has_rings_active: root.has_rings_active;
-            material_type <=> root.material_type;
-            bond_cutoffs <=> root.bond_cutoffs;
-            atom_counts: root.atom_counts;
-            analysis_options <=> root.analysis_options;
-            app_errors: root.app_errors;
-            num_frames: root.num_frames;
-            preset_items: root.preset_items;
-            selected_preset <=> root.selected_preset;
-            load_preset(idx) => { root.load_preset(idx); }
-            save_preset(name) => { root.save_preset(name); }
-            delete_preset(idx) => { root.delete_preset(idx); }
-        }
-
-        // 3. Right column: Visual Preview Card (stretches to fill remaining space)
+            // 3. Right column: Visual Preview Card (stretches to fill remaining space)
             Rectangle {
-            horizontal-stretch: 1;
+                horizontal-stretch: 1;
+                min-width: 400px;
 
-            Vertical {
-                width: 100%;
-                height: 100%;
-                padding: 0;
-                opacity: root.analysis_done ? 1.0 : 0.45;
-                animate opacity { duration: 150ms; }
+                Vertical {
+                    width: 100%;
+                    height: 100%;
+                    padding: 0;
+                    opacity: root.analysis_done ? 1.0 : 0.45;
+                    animate opacity { duration: 150ms; }
 
-                preview_card := PreviewCard {
-                    enabled: root.analysis_done;
-                    analysis_done: root.analysis_done;
-                    vertical-stretch: 1;
-                    horizontal-stretch: 1;
-                    preview_plot <=> root.preview_plot;
-                    plot_items <=> root.plot_items;
-                    selected_plot_index <=> root.selected_plot_index;
-                    pinned_runs_count: root.pinned_runs_count;
+                    preview_card := PreviewCard {
+                        enabled: root.analysis_done;
+                        analysis_done: root.analysis_done;
+                        vertical-stretch: 1;
+                        horizontal-stretch: 1;
+                        preview_plot <=> root.preview_plot;
+                        plot_items <=> root.plot_items;
+                        selected_plot_index <=> root.selected_plot_index;
+                        pinned_runs_count: root.pinned_runs_count;
 
-                    table_headers: root.table_headers;
-                    table_rows: root.table_rows;
-                    diff_msd: root.diff_msd;
-                    diff_vacf: root.diff_vacf;
-                    relaxation_time: root.relaxation_time;
-                    deborah_number: root.deborah_number;
+                        table_headers: root.table_headers;
+                        table_rows: root.table_rows;
+                        diff_msd: root.diff_msd;
+                        diff_vacf: root.diff_vacf;
+                        relaxation_time: root.relaxation_time;
+                        deborah_number: root.deborah_number;
 
-                    export_size_preset <=> root.export_size_preset;
-                    export_palette <=> root.export_palette;
-                    export_font_scale <=> root.export_font_scale;
-                    export_line_width <=> root.export_line_width;
-                    export_show_legend <=> root.export_show_legend;
-                    export_show_grid <=> root.export_show_grid;
-                    export_show_markers <=> root.export_show_markers;
-                    export_fill_area <=> root.export_fill_area;
-                    export_font_scale_error: root.export_font_scale_error;
-                    export_line_width_error: root.export_line_width_error;
+                        export_size_preset <=> root.export_size_preset;
+                        export_palette <=> root.export_palette;
+                        export_font_scale <=> root.export_font_scale;
+                        export_line_width <=> root.export_line_width;
+                        export_show_legend <=> root.export_show_legend;
+                        export_show_grid <=> root.export_show_grid;
+                        export_show_markers <=> root.export_show_markers;
+                        export_fill_area <=> root.export_fill_area;
+                        export_font_scale_error: root.export_font_scale_error;
+                        export_line_width_error: root.export_line_width_error;
 
-                    plot_selected(idx) => {
-                        root.select_plot(idx);
-                    }
-                    save_plot => {
-                        root.save_plot();
-                    }
-                    write_files => {
-                        root.write_files();
-                    }
-                    pin_run => {
-                        root.pin_run();
-                    }
-                    clear_pinned_runs => {
-                        root.clear_pinned_runs();
-                    }
-                    mouse_move(mx, my, hover, w, h) => {
-                        root.mouse_move(mx, my, hover, w, h);
-                    }
-                    plot_resized(w, h) => {
-                        root.plot_resized(w, h);
+                        plot_selected(idx) => {
+                            root.select_plot(idx);
+                        }
+                        save_plot => {
+                            root.save_plot();
+                        }
+                        write_files => {
+                            root.write_files();
+                        }
+                        pin_run => {
+                            root.pin_run();
+                        }
+                        clear_pinned_runs => {
+                            root.clear_pinned_runs();
+                        }
+                        mouse_move(mx, my, hover, w, h) => {
+                            root.mouse_move(mx, my, hover, w, h);
+                        }
+                        plot_resized(w, h) => {
+                            root.plot_resized(w, h);
+                        }
                     }
                 }
             }
         }
-    }
 
         AppFooter {
             status_text: root.analysis_running ? root.analysis_status_text :
-                         root.analysis_done ? "Analysis complete — results ready" :
-                         root.file_loaded ? root.file_status_text : "Ready";
+                root.analysis_done ? "Analysis complete — results ready" :
+                root.file_loaded ? root.file_status_text : "Ready";
             progress: root.progress;
             analysis_running: root.analysis_running;
         }

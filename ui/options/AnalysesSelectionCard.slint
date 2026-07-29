@@ -45,7 +45,7 @@ export component AnalysesSelectionCard inherits FilledCard {
                 alignment: start;
 
                 for group[gi] in root.calculator_groups: Vertical {
-                    property <bool> group_expanded: true;
+                    property <bool> group_expanded: false;
                     spacing: MaterialStyleMetrics.spacing_2;
 
                     if gi > 0: Rectangle {

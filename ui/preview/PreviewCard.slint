@@ -360,6 +360,7 @@ export component PreviewCard inherits FilledCard {
                                 padding-right: 8px;
                                 spacing: 8px;
                                 for header_text in root.table_headers: Vertical {
+                                    horizontal-stretch: 1;
                                     alignment: center;
                                     MaterialText {
                                         text: header_text;
@@ -391,6 +392,7 @@ export component PreviewCard inherits FilledCard {
                                             padding-right: 8px;
                                             spacing: 8px;
                                             for val in row.values: Vertical {
+                                                horizontal-stretch: 1;
                                                 alignment: center;
                                                 MaterialText {
                                                     text: val;

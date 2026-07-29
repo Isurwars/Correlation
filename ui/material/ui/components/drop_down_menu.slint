@@ -22,6 +22,7 @@ export component DropDownMenu {
     callback selected(index: int);
 
     property <length> item_height: MaterialStyleMetrics.size_40;
+    property <length> menu_padding: MaterialStyleMetrics.padding_8 * 2;
     property <int> max_displayed_items: 8;
     out property <string> text: (root.current_index >= 0 && root.current_index < root.items.length) ? root.items[root.current_index].text : "";
 
@@ -92,7 +93,7 @@ export component DropDownMenu {
 
             Rectangle {
                 width: root.width;
-                height: min(max(root.item_height, items.length * root.item_height), root.max_displayed_items * root.item_height);
+                height: min(max(root.item_height + root.menu_padding, items.length * root.item_height + root.menu_padding), root.max_displayed_items * root.item_height + root.menu_padding);
                 background: MaterialPalette.surface_container;
 
                 ScrollView {
