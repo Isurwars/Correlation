@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.7.3] - 2026-07-29
+
+### Fixed
+- **Slint Property Recursion Panic**: Resolved runtime `internal\core\properties.rs:583:9` panics caused by reactive evaluation loops during preset changes, window resizes, and parameter validation.
+- **Atomic Option Synchronization**: Consolidated multi-stage option setting in `PresetController` to a single atomic `set_analysis_options` invocation.
+- **Event-Loop Canvas Resize**: Wrapped plot preview update requests in `slint::invoke_from_event_loop()` to decouple geometry calculations from rendering dispatch.
+- **Validation Dirty-State Checking**: Added value delta guards in `InputValidator` and `PreviewCard` to suppress redundant reactive property evaluations.
+
 ## [3.7.2] - 2026-07-26
 
 ### Fixed

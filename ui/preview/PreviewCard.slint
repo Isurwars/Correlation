@@ -200,10 +200,14 @@ export component PreviewCard inherits FilledCard {
                 visible: self.width > 0.1px && self.height > 0.1px;
 
                 changed width => {
-                    root.plot_resized(self.width, self.height);
+                    if (self.width > 1px && self.height > 1px) {
+                        root.plot_resized(self.width, self.height);
+                    }
                 }
                 changed height => {
-                    root.plot_resized(self.width, self.height);
+                    if (self.width > 1px && self.height > 1px) {
+                        root.plot_resized(self.width, self.height);
+                    }
                 }
 
                 // Empty State when no analysis has been run yet

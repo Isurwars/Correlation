@@ -56,11 +56,16 @@ PlotController::~PlotController() {
 }
 
 void PlotController::handlePlotResized(PlotSize size) {
+  if (std::abs(size.width - last_plot_width_) < 1.0F && std::abs(size.height - last_plot_height_) < 1.0F) {
+    return;
+  }
   last_plot_width_ = size.width;
   last_plot_height_ = size.height;
   int current_idx = window_.get_selected_plot_index();
   if (current_idx >= 0) {
-    requestPlotUpdate(current_idx, true);
+    slint::invoke_from_event_loop([this, current_idx] {
+      requestPlotUpdate(current_idx, true);
+    });
   }
 }
 

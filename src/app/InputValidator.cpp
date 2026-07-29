@@ -346,8 +346,24 @@ bool InputValidator::validateInputs() {
     valid = false;
   }
 
-  window_->set_app_errors(errs);
-  window_->set_has_validation_errors(!valid);
+  bool has_errors = !valid;
+  if (window_->get_has_validation_errors() != has_errors) {
+    window_->set_has_validation_errors(has_errors);
+  }
+
+  auto current_errs = window_->get_app_errors();
+  if (current_errs.r_max_error != errs.r_max_error || current_errs.r_bin_error != errs.r_bin_error ||
+      current_errs.q_max_error != errs.q_max_error || current_errs.q_bin_error != errs.q_bin_error ||
+      current_errs.r_int_max_error != errs.r_int_max_error || current_errs.angle_bin_error != errs.angle_bin_error ||
+      current_errs.dihedral_bin_error != errs.dihedral_bin_error || current_errs.max_ring_error != errs.max_ring_error ||
+      current_errs.smoothing_sigma_error != errs.smoothing_sigma_error ||
+      current_errs.time_step_error != errs.time_step_error || current_errs.min_frame_error != errs.min_frame_error ||
+      current_errs.max_frame_error != errs.max_frame_error ||
+      current_errs.export_font_scale_error != errs.export_font_scale_error ||
+      current_errs.export_line_width_error != errs.export_line_width_error ||
+      current_errs.lef_cutoff_error != errs.lef_cutoff_error || current_errs.lef_sigma_error != errs.lef_sigma_error) {
+    window_->set_app_errors(errs);
+  }
 
   return valid;
 }

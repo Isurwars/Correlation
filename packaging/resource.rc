@@ -20,12 +20,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName",      "Isaías Rodríguez"
             VALUE "FileDescription",  "Correlation - Analysis tool for liquid and amorphous solid structures"
-            VALUE "FileVersion",      "3.7.2.0"
+            VALUE "FileVersion",      "3.7.3.0"
             VALUE "InternalName",     "correlation"
             VALUE "LegalCopyright",   "Copyright (C) 2013-2026 Isaías Rodríguez"
             VALUE "OriginalFilename", "correlation.exe"
             VALUE "ProductName",      "Correlation"
-            VALUE "ProductVersion",   "3.7.2.0"
+            VALUE "ProductVersion",   "3.7.3.0"
         END
     END
     BLOCK "VarFileInfo"

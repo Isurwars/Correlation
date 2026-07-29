@@ -88,85 +88,30 @@ void PresetController::refreshPresetList() {
 }
 
 void PresetController::handleMaterialTypeChanged(int type) {
+  auto opts = window_.get_analysis_options();
+  opts.material_type = type;
+
   if (type == 2) { // Crystalline
-    {
-      auto opts = window_.get_analysis_options();
-      opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
-      window_.set_analysis_options(opts);
-    }
+    opts.r_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::R_BIN_WIDTH_CRYSTAL));
+    opts.q_bin_width = slint::SharedString(std::format("{:.3f}", AppDefaults::Q_BIN_WIDTH_CRYSTAL));
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_CRYSTAL));
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_CRYSTAL));
   } else if (type == 1) { // Liquid
-    {
-      auto opts = window_.get_analysis_options();
-      opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
-      window_.set_analysis_options(opts);
-    }
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH_LIQUID));
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH_LIQUID));
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH_LIQUID));
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA_LIQUID));
   } else if (type == 0) { // Amorphous (0)
-    {
-      auto opts = window_.get_analysis_options();
-      opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
-      window_.set_analysis_options(opts);
-    }
-    {
-      auto opts = window_.get_analysis_options();
-      opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
-      window_.set_analysis_options(opts);
-    }
+    opts.r_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::R_BIN_WIDTH));
+    opts.q_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::Q_BIN_WIDTH));
+    opts.angle_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    opts.dihedral_bin_width = slint::SharedString(std::format("{:.2f}", AppDefaults::ANGLE_BIN_WIDTH));
+    opts.smoothing_sigma = slint::SharedString(std::format("{:.2f}", AppDefaults::SMOOTHING_SIGMA));
   }
+
+  window_.set_analysis_options(opts);
 
   // Force re-validation and update the CLI equivalent
   static_cast<void>(controller_.getInputValidator()->validateInputs());
