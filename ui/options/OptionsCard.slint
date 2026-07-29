@@ -23,8 +23,8 @@ import { SQOptionsCard } from "SQOptionsCard.slint";
 import { RingsOptionsCard } from "RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
 import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
-import { AnalysesSelectionCard } from "AnalysesSelectionCard.slint";
-import { AtomCount, BondCutoff, CalculatorGroup, AnalysisOptions, AppErrors } from "../Types.slint";
+import { TrajectoryOptionsCard } from "TrajectoryOptionsCard.slint";
+import { AtomCount, BondCutoff, AnalysisOptions, AppErrors } from "../Types.slint";
 
 export component OptionsCard inherits FilledCard {
     in property <bool> enabled: true;
@@ -38,8 +38,14 @@ export component OptionsCard inherits FilledCard {
     in-out property <[BondCutoff]> bond_cutoffs: [];
     in property <[AtomCount]> atom_counts: [];
 
+    in property <int> num_frames: 0;
+
     in-out property <AnalysisOptions> analysis_options;
     in-out property <AppErrors> app_errors;
+
+    property <string> time_step <=> analysis_options.time_step;
+    property <string> min_frame <=> analysis_options.min_frame;
+    property <string> max_frame <=> analysis_options.max_frame;
 
     property <string> r_max <=> analysis_options.r_max;
     property <string> r_bin_width <=> analysis_options.r_bin_width;
@@ -56,6 +62,10 @@ export component OptionsCard inherits FilledCard {
     property <string> lef_sigma <=> analysis_options.lef_sigma;
     property <string> hyper_samples <=> analysis_options.hyper_samples;
 
+    property <string> time_step_error <=> app_errors.time_step_error;
+    property <string> min_frame_error <=> app_errors.min_frame_error;
+    property <string> max_frame_error <=> app_errors.max_frame_error;
+
     property <string> r_max_error <=> app_errors.r_max_error;
     property <string> r_bin_error <=> app_errors.r_bin_error;
     property <string> angle_bin_error <=> app_errors.angle_bin_error;
@@ -69,11 +79,6 @@ export component OptionsCard inherits FilledCard {
     property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
     property <string> hyper_samples_error <=> app_errors.hyper_samples_error;
 
-    in property <[CalculatorGroup]> calculator_groups: [];
-    in property <int> total_calculator_count: 0;
-
-    callback toggle_calculator(string, bool);
-
     in-out property <int> active_tab: 0;
 
     // Preset management
@@ -85,55 +90,55 @@ export component OptionsCard inherits FilledCard {
 
     out property <string> hovered_tooltip_text: 
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_tooltip_text :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
         (root.active_tab == 1 && advanced_card.hovered_tooltip_text != "") ? advanced_card.hovered_tooltip_text :
+        (root.active_tab == 0 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_tooltip_text :
         (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_tooltip_text :
         (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_tooltip_text :
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_x :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
         (root.active_tab == 1 && advanced_card.hovered_tooltip_text != "") ? advanced_card.hovered_x :
+        (root.active_tab == 0 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_x :
         (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_x :
         (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_x :
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_x : 0px;
 
     out property <length> hovered_y:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_y :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
         (root.active_tab == 1 && advanced_card.hovered_tooltip_text != "") ? advanced_card.hovered_y :
+        (root.active_tab == 0 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_y :
         (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_y :
         (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_y :
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_y : 0px;
 
     out property <length> hovered_width:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_width :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
         (root.active_tab == 1 && advanced_card.hovered_tooltip_text != "") ? advanced_card.hovered_width :
+        (root.active_tab == 0 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_width :
         (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_width :
         (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_width :
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_width : 0px;
 
     out property <length> hovered_height:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_height :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
         (root.active_tab == 1 && advanced_card.hovered_tooltip_text != "") ? advanced_card.hovered_height :
+        (root.active_tab == 0 && trajectory_card.hovered_tooltip_text != "") ? trajectory_card.hovered_height :
         (root.active_tab == 0 && material_card.hovered_tooltip_text != "") ? material_card.hovered_height :
         (root.active_tab == 0 && rdf_card.hovered_tooltip_text != "") ? rdf_card.hovered_height :
         (root.active_tab == 0 && angle_card.hovered_tooltip_text != "") ? angle_card.hovered_height : 0px;
@@ -170,12 +175,6 @@ export component OptionsCard inherits FilledCard {
                 active: root.active_tab == 1;
                 clicked => { root.active_tab = 1; }
             }
-
-            TabItem {
-                text: "Analyses";
-                active: root.active_tab == 2;
-                clicked => { root.active_tab = 2; }
-            }
         }
 
         ScrollView {
@@ -184,7 +183,21 @@ export component OptionsCard inherits FilledCard {
                 padding: 0;
                 spacing: MaterialStyleMetrics.spacing_4;
 
-                // Common Tab Options (Material Type, Bond Cutoffs, RDF, Angular)
+                // Common Tab Options (Trajectory, Material Type, Bond Cutoffs, RDF, Angular)
+                trajectory_card := TrajectoryOptionsCard {
+                    file_loaded: root.file_loaded;
+                    num_frames: root.num_frames;
+                    time_step <=> root.time_step;
+                    time_step_error: root.time_step_error;
+                    min_frame <=> root.min_frame;
+                    max_frame <=> root.max_frame;
+                    min_frame_error: root.min_frame_error;
+                    max_frame_error: root.max_frame_error;
+                    opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
+                    visible: root.active_tab == 0;
+                    height: root.active_tab == 0 ? self.preferred-height : 0px;
+                }
+
                 material_card := MaterialTypeCard {
                     file_loaded: root.file_loaded;
                     material_type <=> root.material_type;
@@ -261,17 +274,6 @@ export component OptionsCard inherits FilledCard {
                     hyper_samples_error: root.hyper_samples_error;
                     visible: root.active_tab == 1;
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
-                }
-
-                // Distribution Tab Options (Calculator Selections)
-                analyses_card := AnalysesSelectionCard {
-                    file_loaded: root.file_loaded;
-                    calculator_groups: root.calculator_groups;
-                    total_calculator_count: root.total_calculator_count;
-                    toggle_calculator(id, enabled) => {
-                        root.toggle_calculator(id, enabled);
-                    }
-                    visible: root.active_tab == 2;
                 }
             }
         }

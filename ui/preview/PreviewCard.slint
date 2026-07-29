@@ -40,6 +40,7 @@ import { TableRow } from "../Types.slint";
 // ============================================================================
 export component PreviewCard inherits FilledCard {
     in property <bool> enabled: true;
+    in property <bool> analysis_done: false;
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
     in-out property <int> selected_plot_index: -1;
@@ -69,6 +70,7 @@ export component PreviewCard inherits FilledCard {
 
     callback plot_selected(int);
     callback save_plot();
+    callback write_files();
     callback pin_run();
     callback clear_pinned_runs();
     callback mouse_move(length, length, bool, length, length);
@@ -76,19 +78,25 @@ export component PreviewCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : export_settings.hovered_tooltip_text != "" ? export_settings.hovered_tooltip_text : "";
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : 
+        save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." :
+        export_settings.hovered_tooltip_text != "" ? export_settings.hovered_tooltip_text : "";
 
     out property <length> hovered_x:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.x :
+        save_results_area.has-hover ? save_results_area.absolute-position.x :
         export_settings.hovered_tooltip_text != "" ? export_settings.hovered_x : 0px;
     out property <length> hovered_y:
         plot_dropdown_area.has-hover ? plot_dropdown_area.absolute-position.y :
+        save_results_area.has-hover ? save_results_area.absolute-position.y :
         export_settings.hovered_tooltip_text != "" ? export_settings.hovered_y : 0px;
     out property <length> hovered_width:
         plot_dropdown_area.has-hover ? plot_dropdown_area.width :
+        save_results_area.has-hover ? save_results_area.width :
         export_settings.hovered_tooltip_text != "" ? export_settings.hovered_width : 0px;
     out property <length> hovered_height:
         plot_dropdown_area.has-hover ? plot_dropdown_area.height :
+        save_results_area.has-hover ? save_results_area.height :
         export_settings.hovered_tooltip_text != "" ? export_settings.hovered_height : 0px;
 
     Vertical {
@@ -135,13 +143,29 @@ export component PreviewCard inherits FilledCard {
                 }
             }
 
-            // Save Button
+            // Save Plot Button
             FilledButton {
                 text: "Save Plot";
                 icon: Icons.save;
                 enabled: root.selected_plot_index >= 0;
                 clicked => {
                     root.save_plot();
+                }
+            }
+
+            // Save Results Button
+            save_results_area := TouchArea {
+                accessible-role: button;
+                accessible-label: "Save Analysis Results";
+                FilledButton {
+                    width: 100%;
+                    text: "Save Results";
+                    enabled: root.analysis_done;
+                    background: MaterialPalette.primary;
+                    text_color: MaterialPalette.on_primary;
+                    clicked => {
+                        root.write_files();
+                    }
                 }
             }
         }
@@ -182,8 +206,24 @@ export component PreviewCard inherits FilledCard {
                     root.plot_resized(self.width, self.height);
                 }
 
-                // Placeholder text when no image is available
-                if root.selected_plot_index < 0: Vertical {
+                // Empty State when no analysis has been run yet
+                if !root.analysis_done: Vertical {
+                    padding: MaterialStyleMetrics.spacing_8;
+                    spacing: MaterialStyleMetrics.spacing_8;
+                    alignment: center;
+                    
+                    MaterialText {
+                        text: "Load a trajectory and click Run Analysis to view results here.";
+                        color: MaterialPalette.on_surface_variant;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        wrap: word-wrap;
+                        style: MaterialTypography.title_medium;
+                    }
+                }
+
+                // Placeholder text when analysis is done but no plot selected
+                if root.analysis_done && root.selected_plot_index < 0: Vertical {
                     padding: MaterialStyleMetrics.spacing_8;
                     MaterialText {
                         text: "Select a plot from the dropdown above.";

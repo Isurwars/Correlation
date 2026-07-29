@@ -32,7 +32,7 @@ import {
 import { AppHeader } from "nav/AppHeader.slint";
 import { AppFooter } from "nav/AppFooter.slint";
 import { OperationsCard } from "run/OperationsCard.slint";
-import { TrajectoryOptionsCard } from "options/TrajectoryOptionsCard.slint";
+import { AnalysesSelectionCard } from "options/AnalysesSelectionCard.slint";
 import { OptionsCard } from "options/OptionsCard.slint";
 import { PreviewCard } from "preview/PreviewCard.slint";
 import { AppToolTips } from "AppToolTips.slint";
@@ -316,7 +316,7 @@ export component AppWindow inherits Window {
     ///   hovered component.
     property <string> sidebar_tooltip: 
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_tooltip_text :
-        (trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_tooltip_text : "");
+        (analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_calculator_description : "");
 
     property <string> options_hovered_tooltip: options_card.hovered_tooltip_text;
     property <string> preview_hovered_tooltip: preview_card.hovered_tooltip_text;
@@ -326,25 +326,25 @@ export component AppWindow inherits Window {
 
     property <length> hovered_x:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_x :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_x :
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_x :
         options_hovered_tooltip != "" ? options_card.hovered_x :
         preview_hovered_tooltip != "" ? preview_card.hovered_x : 0px;
 
     property <length> hovered_y:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_y :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_y :
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_y :
         options_hovered_tooltip != "" ? options_card.hovered_y :
         preview_hovered_tooltip != "" ? preview_card.hovered_y : 0px;
 
     property <length> hovered_width:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_width :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_width :
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_width :
         options_hovered_tooltip != "" ? options_card.hovered_width :
         preview_hovered_tooltip != "" ? preview_card.hovered_width : 0px;
 
     property <length> hovered_height:
         operations_card.hovered_tooltip_text != "" ? operations_card.hovered_height :
-        trajectory_card.hovered_tooltip_text != "" ? trajectory_card.hovered_height :
+        analyses_card.hovered_calculator_description != "" ? analyses_card.hovered_height :
         options_hovered_tooltip != "" ? options_card.hovered_height :
         preview_hovered_tooltip != "" ? preview_card.hovered_height : 0px;
 
@@ -378,7 +378,6 @@ export component AppWindow inherits Window {
             padding: 0;
             min-width: 200px;
             preferred-width: 260px;
-            max-width: 260px;
             horizontal-stretch: 0;
             spacing: MaterialStyleMetrics.spacing_8;
 
@@ -405,21 +404,15 @@ export component AppWindow inherits Window {
                 cancel_analysis => {
                     root.cancel_analysis();
                 }
-                write_files => {
-                    root.write_files();
-                }
             }
 
-            trajectory_card := TrajectoryOptionsCard {
+            analyses_card := AnalysesSelectionCard {
                 file_loaded: root.file_loaded;
-                num_frames: root.num_frames;
-                time_step <=> root.time_step;
-                time_step_error: root.time_step_error;
-                min_frame <=> root.min_frame;
-                max_frame <=> root.max_frame;
-                min_frame_error: root.min_frame_error;
-                max_frame_error: root.max_frame_error;
-                opacity: (root.file_loaded && root.num_frames > 1) ? 1.0 : 0.5;
+                calculator_groups: root.calculator_groups;
+                total_calculator_count: root.total_calculator_count;
+                toggle_calculator(id, enabled) => {
+                    root.toggle_calculator(id, enabled);
+                }
             }
 
         }
@@ -428,7 +421,6 @@ export component AppWindow inherits Window {
         options_card := OptionsCard {
             min-width: 220px;
             preferred-width: 260px;
-            max-width: 260px;
             horizontal-stretch: 0;
             enabled: root.file_loaded;
             file_loaded: root.file_loaded;
@@ -441,11 +433,7 @@ export component AppWindow inherits Window {
             atom_counts: root.atom_counts;
             analysis_options <=> root.analysis_options;
             app_errors: root.app_errors;
-            calculator_groups: root.calculator_groups;
-            total_calculator_count: root.total_calculator_count;
-            toggle_calculator(id, enabled) => {
-                root.toggle_calculator(id, enabled);
-            }
+            num_frames: root.num_frames;
             preset_items: root.preset_items;
             selected_preset <=> root.selected_preset;
             load_preset(idx) => { root.load_preset(idx); }
@@ -466,6 +454,7 @@ export component AppWindow inherits Window {
 
                 preview_card := PreviewCard {
                     enabled: root.analysis_done;
+                    analysis_done: root.analysis_done;
                     vertical-stretch: 1;
                     horizontal-stretch: 1;
                     preview_plot <=> root.preview_plot;
@@ -496,6 +485,9 @@ export component AppWindow inherits Window {
                     }
                     save_plot => {
                         root.save_plot();
+                    }
+                    write_files => {
+                        root.write_files();
                     }
                     pin_run => {
                         root.pin_run();

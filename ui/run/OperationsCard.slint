@@ -48,44 +48,38 @@ export component OperationsCard inherits FilledCard {
     in property <bool> has_validation_errors;
     callback run_analysis();
     callback cancel_analysis();
-    callback write_files();
 
     out property <string> hovered_tooltip_text:
         load_area.has-hover ? "Load a structure or trajectory file" :
         atoms_layout.has-hover ? "Total number of atoms found in a single frame.\n\n🔬 Physics: Larger systems reduce finite-size effects in correlation functions. For reliable RDF, systems with >200 atoms are recommended. For ring statistics, >500 atoms is preferred." : 
         frames_layout.has-hover ? "Number of structural frames parsed from the file.\n\n🔬 Physics: More frames improve statistical averaging for distribution functions. For converged g(r) in a liquid, typically 100+ frames are recommended." : 
         removed_layout.has-hover ? "Number of frames skipped due to parsing errors or missing structural data.\n\n⚠️ If this number is large relative to total frames, check the input file for formatting issues or incomplete trajectory data." :
-        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." :
-        save_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." : "";
+        run_area.has-hover ? "Run all selected analyses on the loaded trajectory.\n\n🔬 This computes distribution functions (RDF, S(Q), PAD, etc.) across the selected frame range, averaging over all frames. Results appear in the Preview panel and can be saved afterward." : "";
 
     out property <length> hovered_x:
         load_area.has-hover ? load_area.absolute-position.x :
         atoms_layout.has-hover ? atoms_layout.absolute-position.x :
         frames_layout.has-hover ? frames_layout.absolute-position.x :
         removed_layout.has-hover ? removed_layout.absolute-position.x :
-        run_area.has-hover ? run_area.absolute-position.x :
-        save_area.has-hover ? save_area.absolute-position.x : 0px;
+        run_area.has-hover ? run_area.absolute-position.x : 0px;
     out property <length> hovered_y:
         load_area.has-hover ? load_area.absolute-position.y :
         atoms_layout.has-hover ? atoms_layout.absolute-position.y :
         frames_layout.has-hover ? frames_layout.absolute-position.y :
         removed_layout.has-hover ? removed_layout.absolute-position.y :
-        run_area.has-hover ? run_area.absolute-position.y :
-        save_area.has-hover ? save_area.absolute-position.y : 0px;
+        run_area.has-hover ? run_area.absolute-position.y : 0px;
     out property <length> hovered_width:
         load_area.has-hover ? load_area.width :
         atoms_layout.has-hover ? atoms_layout.width :
         frames_layout.has-hover ? frames_layout.width :
         removed_layout.has-hover ? removed_layout.width :
-        run_area.has-hover ? run_area.width :
-        save_area.has-hover ? save_area.width : 0px;
+        run_area.has-hover ? run_area.width : 0px;
     out property <length> hovered_height:
         load_area.has-hover ? load_area.height :
         atoms_layout.has-hover ? atoms_layout.height :
         frames_layout.has-hover ? frames_layout.height :
         removed_layout.has-hover ? removed_layout.height :
-        run_area.has-hover ? run_area.height :
-        save_area.has-hover ? save_area.height : 0px;
+        run_area.has-hover ? run_area.height : 0px;
 
     in-out property <bool> atoms_expanded: false;
     property <length> atoms_height: atoms_expanded ? root.atom_counts.length * 36px : 0px;
@@ -260,21 +254,6 @@ export component OperationsCard inherits FilledCard {
                 LinearProgressIndicator {
                     progress: root.progress;
                     animate progress { duration: 200ms; easing: ease-out; }
-                }
-            }
-
-            save_area := TouchArea {
-                accessible-role: button;
-                accessible-label: "Save Analysis Results";
-                FilledButton {
-                    width: 100%;
-                    text: "Save Results";
-                    enabled: root.analysis_done && !root.analysis_running;
-                    background: MaterialPalette.primary;
-                    text_color: MaterialPalette.on_primary;
-                    clicked => {
-                        root.write_files();
-                    }
                 }
             }
         }
