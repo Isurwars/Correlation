@@ -23,7 +23,7 @@ export component DropDownMenu {
 
     property <length> item_height: MaterialStyleMetrics.size_40;
     property <int> max_displayed_items: 8;
-    property <string> text <=> text_field.text;
+    out property <string> text: (root.current_index >= 0 && root.current_index < root.items.length) ? root.items[root.current_index].text : "";
 
     min_width: text_field.min_width - MaterialStyleMetrics.size_40;
     preferred_width: text_field.preferred_width - MaterialStyleMetrics.size_38;
@@ -33,18 +33,15 @@ export component DropDownMenu {
     accessible-role: combobox;
     accessible_enabled: root.enabled;
     accessible_expandable: true;
-    accessible_value <=> text_field.text;
+    accessible_value: root.text;
     accessible_action_expand => {
         menu.show();
-    }
-
-    init => {
-        root.update_text(root.current_index);
     }
 
     text_field := TextField {
         width: 100%;
         height: 100%;
+        text: root.text;
         trailing_icon: Icons.arrow_drop_down;
         read_only: true;
     }
@@ -116,33 +113,8 @@ export component DropDownMenu {
     }
 
     function update_selection(index: int) {
-        root.update_text(index);
         root.current_index = index;
         menu.close();
         root.selected(index);
-    }
-
-    function update_text(index: int) {
-        if index < 0 || index >= root.items.length {
-            text_field.text = "";
-            return;
-        }
-        text_field.text = root.items[index].text;
-    }
-
-    changed current_index => {
-        root.update_text(root.current_index);
-    }
-
-    changed items => {
-        root.update_text(root.current_index);
-    }
-
-    changed visible => {
-        root.update_text(root.current_index);
-    }
-
-    changed enabled => {
-        root.update_text(root.current_index);
     }
 }

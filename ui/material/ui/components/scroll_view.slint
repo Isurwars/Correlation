@@ -53,8 +53,7 @@ export component ScrollBar {
             if (self.enabled && self.pressed) {
                 root.value = -max(0px, min(root.maximum, self.pressed-value + (
                     root.horizontal ? (touch-area.mouse-x - touch-area.pressed-x) * (root.maximum / (root.track-size - thumb.width))
-                               : (touch-area.mouse-y - touch-area.pressed-y) * (root.maximum / (root.track-size - thumb.height))
-                )));
+                    : (touch-area.mouse-y - touch-area.pressed-y) * (root.maximum / (root.track-size - thumb.height)))));
             }
         }
 
@@ -66,7 +65,6 @@ export component ScrollBar {
                 root.value = max(-root.maximum, min(0px, root.value + event.delta-y));
                 return accept;
             }
-
             reject
         }
 
@@ -99,10 +97,10 @@ export component ScrollBar {
     }
 
     states [
-        pressed when touch_area.pressed : {
+        pressed when touch_area.pressed: {
             root.state_opacity: 80%;
         }
-        hover when root.has_hover : {
+        hover when root.has_hover: {
             root.state_opacity: 70%;
         }
     ]
@@ -151,8 +149,8 @@ export component ScrollView {
         width: root.visible ? root.scroll_bar_size : 0;
         height: root.vertical_scrollbar_policy != ScrollBarPolicy.always_off ? parent.height - horizontal_bar.height : parent.height;
         horizontal: false;
-        maximum:  flickable.viewport_height - flickable.height;
-        page-size:  flickable.height;
+        maximum: flickable.viewport_height - flickable.height;
+        page-size: flickable.height;
     }
 
     horizontal_bar := ScrollBar {
@@ -162,7 +160,7 @@ export component ScrollView {
         x: 0;
         y: flickable.height + root.scroll_bar_padding;
         horizontal: true;
-        maximum:  flickable.viewport_width - flickable.width;
-        page_size:  flickable.width;
+        maximum: flickable.viewport_width - flickable.width;
+        page_size: flickable.width;
     }
 }

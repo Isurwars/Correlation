@@ -78,7 +78,7 @@ export component PreviewCard inherits FilledCard {
 
     // Hover state for tooltip
     out property <string> hovered_tooltip_text:
-        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." : 
+        plot_dropdown_area.has-hover ? "Select a distribution function to preview.\n\n💡 Tip: Use 'Pin Run' to save the current results, then adjust parameters and re-run. Pinned runs overlay on the plot for direct visual comparison — great for seeing how parameter changes affect your results." :
         save_results_area.has-hover ? "Export analysis results to files in the selected formats (CSV, HDF5, Parquet).\n\n💡 Tip: Results are written to the same directory as the input file. The output base name matches the input file name." :
         export_settings.hovered_tooltip_text != "" ? export_settings.hovered_tooltip_text : "";
 
@@ -105,7 +105,7 @@ export component PreviewCard inherits FilledCard {
         // Header and Tabs row
         Horizontal {
             alignment: center;
-            
+
             // Tab Buttons
             Horizontal {
                 spacing: 8px;
@@ -114,6 +114,7 @@ export component PreviewCard inherits FilledCard {
                     active: root.active_tab == 0;
                     clicked => { root.active_tab = 0; }
                 }
+
                 TabItem {
                     text: "Data & Stats";
                     active: root.active_tab == 1;
@@ -126,7 +127,7 @@ export component PreviewCard inherits FilledCard {
         Horizontal {
             spacing: MaterialStyleMetrics.spacing_8;
             height: MaterialStyleMetrics.size_40;
-            
+
             plot_dropdown_area := TouchArea {
                 horizontal-stretch: 1;
                 DropDownMenu {
@@ -179,6 +180,7 @@ export component PreviewCard inherits FilledCard {
                 color: MaterialPalette.on_surface_variant;
                 vertical-alignment: center;
             }
+
             FilledButton {
                 text: "Clear Pinned";
                 clicked => { root.clear_pinned_runs(); }
@@ -199,23 +201,12 @@ export component PreviewCard inherits FilledCard {
                 clip: self.width > 1px && self.height > 1px;
                 visible: self.width > 0.1px && self.height > 0.1px;
 
-                changed width => {
-                    if (self.width > 1px && self.height > 1px) {
-                        root.plot_resized(self.width, self.height);
-                    }
-                }
-                changed height => {
-                    if (self.width > 1px && self.height > 1px) {
-                        root.plot_resized(self.width, self.height);
-                    }
-                }
-
                 // Empty State when no analysis has been run yet
                 if !root.analysis_done: Vertical {
                     padding: MaterialStyleMetrics.spacing_8;
                     spacing: MaterialStyleMetrics.spacing_8;
                     alignment: center;
-                    
+
                     MaterialText {
                         text: "Load a trajectory and click Run Analysis to view results here.";
                         color: MaterialPalette.on_surface_variant;
@@ -283,7 +274,7 @@ export component PreviewCard inherits FilledCard {
             spacing: MaterialStyleMetrics.spacing_12;
 
             // Calculated Dynamic Properties
-            if (root.diff_msd != "" || root.diff_vacf != "" || root.relaxation_time != "" || root.deborah_number != "") : Vertical {
+            if (root.diff_msd != "" || root.diff_vacf != "" || root.relaxation_time != "" || root.deborah_number != ""): Vertical {
                 spacing: MaterialStyleMetrics.spacing_4;
 
                 MaterialText {
@@ -302,19 +293,19 @@ export component PreviewCard inherits FilledCard {
                         padding: MaterialStyleMetrics.spacing_8;
                         spacing: MaterialStyleMetrics.spacing_8;
 
-                        if root.diff_msd != "" : InfoRow {
+                        if root.diff_msd != "": InfoRow {
                             label: "Self-diffusion coefficient (from MSD)";
                             value: root.diff_msd;
                         }
-                        if root.diff_vacf != "" : InfoRow {
+                        if root.diff_vacf != "": InfoRow {
                             label: "Self-diffusion coefficient (from VACF)";
                             value: root.diff_vacf;
                         }
-                        if root.relaxation_time != "" : InfoRow {
+                        if root.relaxation_time != "": InfoRow {
                             label: "Relaxation time (from VACF)";
                             value: root.relaxation_time;
                         }
-                        if root.deborah_number != "" : InfoRow {
+                        if root.deborah_number != "": InfoRow {
                             label: "Deborah number";
                             value: root.deborah_number;
                         }
@@ -333,7 +324,7 @@ export component PreviewCard inherits FilledCard {
                     color: MaterialPalette.on_surface;
                 }
 
-                if root.table_rows.length == 0 : Rectangle {
+                if root.table_rows.length == 0: Rectangle {
                     vertical-stretch: 1;
                     background: MaterialPalette.surface;
                     border-radius: MaterialStyleMetrics.border_radius_2;
@@ -348,7 +339,7 @@ export component PreviewCard inherits FilledCard {
                     }
                 }
 
-                if root.table_rows.length > 0 : Rectangle {
+                if root.table_rows.length > 0: Rectangle {
                     vertical-stretch: 1;
                     background: MaterialPalette.surface;
                     border-radius: MaterialStyleMetrics.border_radius_2;
@@ -363,12 +354,12 @@ export component PreviewCard inherits FilledCard {
                         Rectangle {
                             background: MaterialPalette.surface_container_high;
                             height: 36px;
-                            
+
                             HorizontalLayout {
                                 padding-left: 8px;
                                 padding-right: 8px;
                                 spacing: 8px;
-                                for header_text in root.table_headers : Vertical {
+                                for header_text in root.table_headers: Vertical {
                                     alignment: center;
                                     MaterialText {
                                         text: header_text;
@@ -391,7 +382,7 @@ export component PreviewCard inherits FilledCard {
                             viewport-height: root.table_rows.length * 32px;
 
                             VerticalLayout {
-                                for row[row_idx] in root.table_rows : Rectangle {
+                                for row[row_idx] in root.table_rows: Rectangle {
                                     height: 32px;
 
                                     VerticalLayout {
@@ -399,7 +390,7 @@ export component PreviewCard inherits FilledCard {
                                             padding-left: 8px;
                                             padding-right: 8px;
                                             spacing: 8px;
-                                            for val in row.values : Vertical {
+                                            for val in row.values: Vertical {
                                                 alignment: center;
                                                 MaterialText {
                                                     text: val;
@@ -424,4 +415,3 @@ export component PreviewCard inherits FilledCard {
         }
     }
 }
-

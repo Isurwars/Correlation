@@ -25,15 +25,15 @@ component MatrixCell {
     container := Rectangle {
         width: 100%;
         height: 100%;
-        background: root.read_only ? MaterialPalette.surface_container_low : 
-                    root.is_diagonal ? MaterialPalette.secondary_container.with_alpha(50%) : 
-                    MaterialPalette.surface_container_highest;
+        background: root.read_only ? MaterialPalette.surface_container_low :
+            root.is_diagonal ? MaterialPalette.secondary_container.with_alpha(50%) :
+            MaterialPalette.surface_container_highest;
         border-radius: MaterialStyleMetrics.border_radius_4;
         border-width: root.has_focus ? 2px : 1px;
-        border-color: root.has_focus ? MaterialPalette.primary : 
-                      root.read_only ? MaterialPalette.outline_variant.with_alpha(30%) : 
-                      root.is_diagonal ? MaterialPalette.secondary : 
-                      MaterialPalette.outline_variant;
+        border-color: root.has_focus ? MaterialPalette.primary :
+            root.read_only ? MaterialPalette.outline_variant.with_alpha(30%) :
+            root.is_diagonal ? MaterialPalette.secondary :
+            MaterialPalette.outline_variant;
 
         input := TextInput {
             x: 4px;
@@ -44,9 +44,9 @@ component MatrixCell {
             vertical-alignment: center;
             horizontal-alignment: center;
             single-line: true;
-            color: root.read_only ? MaterialPalette.on_surface.with_alpha(50%) : 
-                   root.enabled ? MaterialPalette.on_surface : 
-                   MaterialPalette.on_surface.with_alpha(38%);
+            color: root.read_only ? MaterialPalette.on_surface.with_alpha(50%) :
+                root.enabled ? MaterialPalette.on_surface :
+                MaterialPalette.on_surface.with_alpha(38%);
             text <=> root.text;
             enabled: root.enabled;
             read-only: root.read_only;
@@ -61,7 +61,7 @@ component MatrixCell {
 export component Matrix {
     in property <[AtomCount]> headers;
     in property <bool> enabled: true;
-    
+
     // Callbacks to read and write cell data (reading must be pure/side-effect free)
     pure callback cell_value(int, int) -> string;
     callback cell_edited(int, int, string);
@@ -81,7 +81,7 @@ export component Matrix {
         height: 100%;
         vertical_scrollbar_policy: ScrollBarPolicy.always_off;
         horizontal_scrollbar_policy: ScrollBarPolicy.as_needed;
-        
+
         viewport-width: matrix_layout.preferred-width;
         viewport-height: matrix_layout.preferred-height;
 
@@ -96,6 +96,7 @@ export component Matrix {
                     width: root.header_width;
                     height: root.header_height;
                 }
+
                 for col[j] in root.headers: Rectangle {
                     width: root.cell_width;
                     height: root.header_height;
@@ -123,6 +124,7 @@ export component Matrix {
                         style: MaterialTypography.label_medium;
                     }
                 }
+
                 for col[j] in root.headers: MatrixCell {
                     property <bool> is_diag: i == j;
                     property <bool> is_lower: i > j;
