@@ -77,11 +77,9 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
 
   // Handle calculator toggle: update backend options and refresh the UI model
   window_.on_toggle_calculator([this](const slint::SharedString &calc_id, bool enabled) {
-    slint::invoke_from_event_loop([this, idx = std::string(calc_id.data()), enabled]() {
-      backend_.setCalculatorActive(idx, enabled);
-      populateCalculatorGroups();
-      updateActiveGroupFlags();
-    });
+    backend_.setCalculatorActive(std::string(calc_id.data()), enabled);
+    populateCalculatorGroups();
+    updateActiveGroupFlags();
   });
 
   // Handle plot selection: generate SVG and push to UI

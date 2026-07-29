@@ -6,14 +6,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#include <cstdio>
+#include <cstdlib>
+#include <exception>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+
 #ifdef _WIN32
 #define NOMINMAX
 #define IDI_ICON1 101
 #include <Windows.h>
-#include <cstdio>
-#include <cstdlib>
-#include <filesystem>
-#include <fstream>
 
 namespace {
 void setupWindowsDebugEnvironment() {
@@ -45,8 +48,7 @@ void setupWindowsDebugEnvironment() {
   // Set top-level unhandled exception filter
   SetUnhandledExceptionFilter([](EXCEPTION_POINTERS *info) -> LONG {
     char msg[512];
-    std::snprintf(msg, sizeof(msg),
-                  "Unhandled Windows Exception 0x%08X at Address %p.\nLog written to temp directory.",
+    std::snprintf(msg, sizeof(msg), "Unhandled Windows Exception 0x%08X at Address %p.\nLog written to temp directory.",
                   static_cast<unsigned int>(info->ExceptionRecord->ExceptionCode),
                   info->ExceptionRecord->ExceptionAddress);
     std::cerr << "FATAL: " << msg << "\n";
@@ -61,9 +63,6 @@ void setupWindowsDebugEnvironment() {
 #include "AppWindow.h"
 #include "app/AppBackend.hpp"
 #include "app/AppController.hpp"
-
-#include <exception>
-#include <iostream>
 
 namespace {
 
@@ -150,8 +149,8 @@ int main() {
   } catch (...) {
     std::cerr << "An unknown fatal error occurred during application startup.\n";
 #ifdef _WIN32
-    MessageBoxA(nullptr, "An unknown fatal error occurred during application startup.",
-                "Correlation - Startup Error", MB_ICONERROR | MB_OK);
+    MessageBoxA(nullptr, "An unknown fatal error occurred during application startup.", "Correlation - Startup Error",
+                MB_ICONERROR | MB_OK);
 #endif
     return 1;
   }
@@ -160,5 +159,3 @@ int main() {
 #if _WIN32
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) { return main(); }
 #endif
-
-
