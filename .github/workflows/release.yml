@@ -164,6 +164,12 @@ jobs:
       - name: Build correlation
         run: cmake --build build --config Release --parallel
 
+      - name: Run Test Suite & GUI Smoke Tests
+        shell: pwsh
+        run: |
+          Set-Location build
+          ctest -C Release --output-on-failure -E PythonBindings
+
       - name: Pre-Package Diagnostics
         shell: bash
         run: |

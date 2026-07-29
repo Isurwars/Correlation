@@ -291,3 +291,16 @@ TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {
   auto rows = window->get_table_rows();
   ASSERT_GT(rows->row_count(), 0);
 }
+
+TEST_F(AppControllerTests, GuiLaunchAndEventLoopSmokeTest) {
+  auto window = AppWindow::create();
+  correlation::app::AppBackend backend;
+  correlation::app::AppController controller(*window, backend);
+
+  slint::Timer quit_timer;
+  quit_timer.start(slint::TimerMode::SingleShot, std::chrono::milliseconds(50), []() {
+    slint::quit_event_loop();
+  });
+
+  EXPECT_NO_THROW(window->run());
+}
