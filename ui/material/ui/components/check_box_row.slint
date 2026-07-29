@@ -26,9 +26,6 @@ export component CheckBoxRow inherits TouchArea {
             height: 24px;
             enabled: root.enabled;
             check_state: root.check_state;
-            checked_state_changed(s) => {
-                root.checked_state_changed(s == CheckState.checked);
-            }
         }
 
         MaterialText {

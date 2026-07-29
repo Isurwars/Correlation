@@ -75,16 +75,13 @@ export component CheckBox {
         }
     }
 
-    changed check_state => {
-        root.checked_state_changed(root.check_state);
-    }
-
     public function toggle() {
         if !root.tristate {
             root.check_state = root.check_state != CheckState.checked ? CheckState.checked : CheckState.unchecked;
-            return;
+        } else {
+            root.check_state = root.check_state == CheckState.checked ? CheckState.partially_checked : root.check_state == CheckState.partially_checked ? CheckState.unchecked : CheckState.checked;
         }
-        root.check_state = root.check_state == CheckState.checked ? CheckState.partially_checked : root.check_state == CheckState.partially_checked ? CheckState.unchecked : CheckState.checked;
+        root.checked_state_changed(root.check_state);
     }
 
     public function set_check_state(check_state: CheckState) {
@@ -92,6 +89,7 @@ export component CheckBox {
             root.tristate = true;
         }
         root.check_state = check_state;
+        root.checked_state_changed(root.check_state);
     }
 
     states [

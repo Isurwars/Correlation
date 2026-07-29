@@ -240,10 +240,14 @@ TEST_F(AppControllerTests, HandlesCalculatorToggleSignal) {
   window->invoke_toggle_calculator("g(r), J(r), G(r)", false);
 
   // Verify backend active state has been changed
-  EXPECT_FALSE(backend.options().active_calculators.at("g(r), J(r), G(r)"));
+  const auto active_calcs = backend.options().active_calculators;
+  ASSERT_TRUE(active_calcs.contains("g(r), J(r), G(r)"));
+  EXPECT_FALSE(active_calcs.at("g(r), J(r), G(r)"));
 
   window->invoke_toggle_calculator("g(r), J(r), G(r)", true);
-  EXPECT_TRUE(backend.options().active_calculators.at("g(r), J(r), G(r)"));
+  const auto active_calcs_updated = backend.options().active_calculators;
+  ASSERT_TRUE(active_calcs_updated.contains("g(r), J(r), G(r)"));
+  EXPECT_TRUE(active_calcs_updated.at("g(r), J(r), G(r)"));
 }
 
 TEST_F(AppControllerTests, PopulatesTableAndDynamicProperties) {

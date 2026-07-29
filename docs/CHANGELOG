@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.7.4] - 2026-07-29
+
+### Fixed
+- **Slint Property Binding Recursion Panic**: Resolved runtime Rust panic (`internal\core\properties.rs:583:9: Recursion detected`) by removing `changed check_state =>` reactive property binding callback emissions in `CheckBox` and dispatching `checked_state_changed` strictly on interactive toggle operations.
+- **Synchronous UI Signal Execution**: Reverted `slint::invoke_from_event_loop` wrapping in `AppController`'s `on_toggle_calculator` handler to guarantee synchronous update of `backend_.options().active_calculators` upon signal dispatch.
+- **Slint CheckBoxRow Event Deduplication**: Removed nested `checked_state_changed` callback delegation on child `CheckBox` within `CheckBoxRow` to prevent double-toggle signal invocation when clicking checkbox elements.
+- **MSVC Build Header Inclusions**: Restructured standard library header includes in `src/main.cpp` prior to `#ifdef _WIN32` `setupWindowsDebugEnvironment()` block, resolving missing `std::cerr` declaration under MSVC (C2039/C2065).
+
 ## [3.7.3] - 2026-07-29
 
 ### Fixed
