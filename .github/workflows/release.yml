@@ -352,22 +352,24 @@ jobs:
           git push
 
   build-wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} (${{ matrix.cibw_archs }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            cibw_archs: "x86_64"
+          - os: ubuntu-24.04-arm
+            cibw_archs: "aarch64"
+          - os: windows-latest
+            cibw_archs: "AMD64"
+          - os: macos-latest
+            cibw_archs: "x86_64 arm64 universal2"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
-      - name: Set up QEMU
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: all
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -381,19 +383,14 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/cibuildwheel
-          key: cibw-${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: cibw-${{ runner.os }}-
+          key: cibw-${{ runner.os }}-${{ matrix.cibw_archs }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: cibw-${{ runner.os }}-${{ matrix.cibw_archs }}-
 
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
           CIBW_CACHE_DIR: "~/.cache/cibuildwheel"
-          # On macOS, build universal2 and native arm64/x86_64 slices
-          CIBW_ARCHS_MACOS: "x86_64 arm64 universal2"
-          # Build x86_64 and aarch64 on Linux
-          CIBW_ARCHS_LINUX: "x86_64 aarch64"
-          # Only build 64-bit wheels on Windows, skipping the buggy win32 target entirely
-          CIBW_ARCHS_WINDOWS: "AMD64"
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
           # macOS: Fixes LLVM libc++ __enable_if_t resolution and enables std::format / std::to_chars
           CIBW_ENVIRONMENT_MACOS: >
             MACOSX_DEPLOYMENT_TARGET="13.3"

@@ -38,6 +38,9 @@ build-dir = "build/{wheel_tag}"
 # Build only Python 3.9 through 3.12+ (CPython)
 build = "cp39-* cp310-* cp311-* cp312-* cp313-*"
 skip = "pp* *musllinux*"
+test-skip = "*_universal2 *-macosx_x86_64"
+test-requires = "numpy pytest"
+test-command = "python {project}/tests/test_bindings.py"
 
 # Ensure we use manylinux_2_28 for C++23 compiler compatibility
 manylinux-x86_64-image = "manylinux_2_28"
