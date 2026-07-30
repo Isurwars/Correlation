@@ -146,6 +146,7 @@ export component PreviewCard inherits FilledCard {
 
             // Save Plot Button
             FilledButton {
+                height: 100%;
                 text: "Save Plot";
                 icon: Icons.save;
                 enabled: root.selected_plot_index >= 0;
@@ -158,8 +159,10 @@ export component PreviewCard inherits FilledCard {
             save_results_area := TouchArea {
                 accessible-role: button;
                 accessible-label: "Save Analysis Results";
+                height: 100%;
                 FilledButton {
                     width: 100%;
+                    height: 100%;
                     text: "Save Results";
                     enabled: root.analysis_done;
                     background: MaterialPalette.primary;
@@ -182,6 +185,7 @@ export component PreviewCard inherits FilledCard {
             }
 
             FilledButton {
+                height: 100%;
                 text: "Clear Pinned";
                 clicked => { root.clear_pinned_runs(); }
             }

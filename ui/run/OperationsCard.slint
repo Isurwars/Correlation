@@ -138,10 +138,10 @@ export component OperationsCard inherits FilledCard {
             load_area := TouchArea {
                 accessible-role: button;
                 accessible-label: "Load structure or trajectory file";
-                min-height: 40px;
+                height: MaterialStyleMetrics.size_40;
                 FilledButton {
                     enabled: root.load_enabled;
-                    height: 40px;
+                    height: 100%;
                     width: 100%;
                     text: "Load file";
                     clicked => {
@@ -258,8 +258,10 @@ export component OperationsCard inherits FilledCard {
             run_area := TouchArea {
                 accessible-role: button;
                 accessible-label: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
+                height: MaterialStyleMetrics.size_40;
                 FilledButton {
                     width: 100%;
+                    height: 100%;
                     text: root.analysis_running ? "Cancel Analysis" : "Run Analysis";
                     enabled: root.analysis_running || (root.file_loaded && !root.has_validation_errors);
                     background: root.analysis_running ? MaterialPalette.error : MaterialPalette.run;
