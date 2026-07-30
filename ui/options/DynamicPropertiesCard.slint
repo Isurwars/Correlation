@@ -1,0 +1,65 @@
+// Correlation - Liquid and Amorphous Solid Analysis Tool
+// Copyright © 2013-2026 Isaías Rodríguez (isurwars@gmail.com)
+// SPDX-License-Identifier: AGPL-3.0-only
+// Full license: https://github.com/Isurwars/Correlation/blob/main/LICENSE
+
+import {
+    MaterialStyleMetrics,
+    MaterialPalette,
+    MaterialTypography,
+    MaterialText,
+    FilledCard,
+    InfoRow,
+    Vertical,
+} from "../material/material.slint";
+
+export component DynamicPropertiesCard inherits FilledCard {
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+
+    out property <bool> has_properties: root.diff_msd != "" || root.diff_vacf != "" || root.relaxation_time != "" || root.deborah_number != "";
+
+    visible: root.has_properties;
+    height: root.has_properties ? self.preferred-height : 0px;
+
+    Vertical {
+        spacing: MaterialStyleMetrics.spacing_8;
+
+        MaterialText {
+            text: "Calculated Dynamic Properties";
+            style: MaterialTypography.title_small;
+            color: MaterialPalette.on_surface;
+        }
+
+        Rectangle {
+            background: MaterialPalette.surface_container_low;
+            border-radius: MaterialStyleMetrics.border_radius_2;
+            border-width: 1px;
+            border-color: MaterialPalette.outline_variant;
+
+            Vertical {
+                padding: MaterialStyleMetrics.spacing_8;
+                spacing: MaterialStyleMetrics.spacing_8;
+
+                if root.diff_msd != "": InfoRow {
+                    label: "Self-diffusion (MSD):";
+                    value: root.diff_msd;
+                }
+                if root.diff_vacf != "": InfoRow {
+                    label: "Self-diffusion (VACF):";
+                    value: root.diff_vacf;
+                }
+                if root.relaxation_time != "": InfoRow {
+                    label: "Relaxation time:";
+                    value: root.relaxation_time;
+                }
+                if root.deborah_number != "": InfoRow {
+                    label: "Deborah number:";
+                    value: root.deborah_number;
+                }
+            }
+        }
+    }
+}

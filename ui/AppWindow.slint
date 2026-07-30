@@ -309,6 +309,11 @@ export component AppWindow inherits Window {
     changed is_dark => {
         root.select_plot(root.selected_plot_index);
     }
+    changed analysis_done => {
+        if root.analysis_done {
+            options_card.active_tab = 2;
+        }
+    }
 
 
 
@@ -410,7 +415,7 @@ export component AppWindow inherits Window {
                 }
             }
 
-            // 2. Middle column: Options Tabbed Card (Common, Advanced, Analyses)
+            // 2. Middle column: Options Tabbed Card (Common, Advanced, Plot, Analyses)
             options_card := OptionsCard {
                 width: 260px;
                 horizontal-stretch: 0;
@@ -432,6 +437,23 @@ export component AppWindow inherits Window {
                 num_frames: root.num_frames;
                 preset_items: root.preset_items;
                 selected_preset <=> root.selected_preset;
+
+                diff_msd: root.diff_msd;
+                diff_vacf: root.diff_vacf;
+                relaxation_time: root.relaxation_time;
+                deborah_number: root.deborah_number;
+
+                export_size_preset <=> root.export_size_preset;
+                export_palette <=> root.export_palette;
+                export_font_scale <=> root.export_font_scale;
+                export_line_width <=> root.export_line_width;
+                export_show_legend <=> root.export_show_legend;
+                export_show_grid <=> root.export_show_grid;
+                export_show_markers <=> root.export_show_markers;
+                export_fill_area <=> root.export_fill_area;
+                export_font_scale_error: root.export_font_scale_error;
+                export_line_width_error: root.export_line_width_error;
+
                 load_preset(idx) => { root.load_preset(idx); }
                 save_preset(name) => { root.save_preset(name); }
                 delete_preset(idx) => { root.delete_preset(idx); }
@@ -461,21 +483,6 @@ export component AppWindow inherits Window {
 
                         table_headers: root.table_headers;
                         table_rows: root.table_rows;
-                        diff_msd: root.diff_msd;
-                        diff_vacf: root.diff_vacf;
-                        relaxation_time: root.relaxation_time;
-                        deborah_number: root.deborah_number;
-
-                        export_size_preset <=> root.export_size_preset;
-                        export_palette <=> root.export_palette;
-                        export_font_scale <=> root.export_font_scale;
-                        export_line_width <=> root.export_line_width;
-                        export_show_legend <=> root.export_show_legend;
-                        export_show_grid <=> root.export_show_grid;
-                        export_show_markers <=> root.export_show_markers;
-                        export_fill_area <=> root.export_fill_area;
-                        export_font_scale_error: root.export_font_scale_error;
-                        export_line_width_error: root.export_line_width_error;
 
                         plot_selected(idx) => {
                             root.select_plot(idx);

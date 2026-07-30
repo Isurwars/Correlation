@@ -21,9 +21,15 @@ def main():
     print(f"Repairing wheel: {wheel}")
     print(f"Destination: {dest_dir}")
 
+    wheel_name = os.path.basename(wheel).lower()
+
     if sys.platform == "win32":
-        # Find tbb DLLs recursively under the build directory (e.g. tbb12.dll, tbbmalloc.dll)
+        # Find tbb DLLs recursively under the build directory matching target arch
         tbb_dlls = glob.glob("build/**/*tbb*.dll", recursive=True)
+        matching = [f for f in tbb_dlls if ("amd64" in f.lower() or "x64" in f.lower() or "win64" in f.lower())] if "amd64" in wheel_name else tbb_dlls
+        if matching:
+            tbb_dlls = matching
+
         if not tbb_dlls:
             print("Warning: tbb DLLs not found in build directory. Check if built statically or not yet compiled.", file=sys.stderr)
             tbb_dirs = []
@@ -40,8 +46,18 @@ def main():
         subprocess.run(cmd, check=True)
 
     elif sys.platform == "darwin":
-        # Find libtbb.dylib recursively under the build directory
+        # Find libtbb.dylib recursively under the build directory matching target arch
         tbb_dylibs = glob.glob("build/**/libtbb*.dylib", recursive=True)
+        if "arm64" in wheel_name:
+            matching = [f for f in tbb_dylibs if "arm64" in f]
+        elif "x86_64" in wheel_name:
+            matching = [f for f in tbb_dylibs if "x86_64" in f]
+        else:
+            matching = []
+
+        if matching:
+            tbb_dylibs = matching
+
         if not tbb_dylibs:
             print("Warning: libtbb.dylib not found in build directory.", file=sys.stderr)
             tbb_dir = ""
@@ -62,6 +78,16 @@ def main():
     else:
         # Linux (auditwheel)
         tbb_sos = glob.glob("build/**/libtbb*.so*", recursive=True)
+        if "aarch64" in wheel_name:
+            matching = [f for f in tbb_sos if "aarch64" in f]
+        elif "x86_64" in wheel_name:
+            matching = [f for f in tbb_sos if "x86_64" in f]
+        else:
+            matching = []
+
+        if matching:
+            tbb_sos = matching
+
         if not tbb_sos:
             print("Warning: libtbb.so not found in build directory.", file=sys.stderr)
             tbb_dir = ""

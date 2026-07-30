@@ -291,10 +291,8 @@ void init_analysis(py::module_ &mod) {
       .def(
           "calculate_xrd",
           [](DistributionFunctions &dists, real_t wave_length, real_t theta_min, real_t theta_max, real_t bin_width) {
-            dists.calculateXRD(XRDParams{.lambda = wave_length,
-                                         .theta_min = theta_min,
-                                         .theta_max = theta_max,
-                                         .bin_width = bin_width});
+            dists.calculateXRD(XRDParams{
+                .lambda = wave_length, .theta_min = theta_min, .theta_max = theta_max, .bin_width = bin_width});
           },
           py::arg("lambda") = 1.5406, py::arg("theta_min") = 5.0, py::arg("theta_max") = 90.0,
           py::arg("bin_width") = 1.0,

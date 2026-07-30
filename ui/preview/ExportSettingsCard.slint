@@ -101,104 +101,85 @@ export component ExportSettingsCard inherits FilledCard {
             color: MaterialPalette.on_surface_variant;
         }
 
-        Vertical {
+        VerticalLayout {
             padding: MaterialStyleMetrics.spacing_4;
             spacing: MaterialStyleMetrics.spacing_12;
 
-            // Size and Palette
-            HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_16;
-
-                size_area := TouchArea {
-                    horizontal-stretch: 1;
-                    DropDownMenu {
-                        width: 100%;
-                        label: "Preset Size";
-                        enabled: root.enabled;
-                        items: root.size_items;
-                        current_index <=> root.export_size_preset;
-                    }
-                }
-
-                palette_area := TouchArea {
-                    horizontal-stretch: 1;
-                    DropDownMenu {
-                        width: 100%;
-                        label: "Color Palette";
-                        enabled: root.enabled;
-                        items: root.palette_items;
-                        current_index <=> root.export_palette;
-                    }
+            size_area := TouchArea {
+                DropDownMenu {
+                    width: 100%;
+                    label: "Preset Size";
+                    enabled: root.enabled;
+                    items: root.size_items;
+                    current_index <=> root.export_size_preset;
                 }
             }
 
-            // Font scale, Line width, and Toggles
-            HorizontalLayout {
-                spacing: MaterialStyleMetrics.spacing_16;
-
-                font_area := TouchArea {
-                    horizontal-stretch: 1;
-                    TextField {
-                        width: 100%;
-                        label: "Font Scale";
-                        enabled: root.enabled;
-                        text <=> root.export_font_scale;
-                        has_error: root.export_font_scale_error != "";
-                        supporting_text: root.export_font_scale_error;
-                    }
+            palette_area := TouchArea {
+                DropDownMenu {
+                    width: 100%;
+                    label: "Color Palette";
+                    enabled: root.enabled;
+                    items: root.palette_items;
+                    current_index <=> root.export_palette;
                 }
+            }
 
-                line_area := TouchArea {
-                    horizontal-stretch: 1;
-                    TextField {
-                        width: 100%;
-                        label: "Line Width (px)";
-                        enabled: root.enabled;
-                        text <=> root.export_line_width;
-                        has_error: root.export_line_width_error != "";
-                        supporting_text: root.export_line_width_error;
-                    }
+            font_area := TouchArea {
+                TextField {
+                    width: 100%;
+                    label: "Font Scale";
+                    enabled: root.enabled;
+                    text <=> root.export_font_scale;
+                    has_error: root.export_font_scale_error != "";
+                    supporting_text: root.export_font_scale_error;
                 }
+            }
 
-                VerticalLayout {
-                    spacing: 2px;
-                    alignment: center;
+            line_area := TouchArea {
+                TextField {
+                    width: 100%;
+                    label: "Line Width (px)";
+                    enabled: root.enabled;
+                    text <=> root.export_line_width;
+                    has_error: root.export_line_width_error != "";
+                    supporting_text: root.export_line_width_error;
+                }
+            }
 
-                    grid_area := CheckBoxRow {
-                        text: "Show Grid";
-                        enabled: root.enabled;
-                        check_state_bool: root.export_show_grid;
-                        checked_state_changed(s) => {
-                            root.export_show_grid = s;
-                        }
-                    }
+            grid_area := CheckBoxRow {
+                text: "Show Grid";
+                enabled: root.enabled;
+                check_state_bool: root.export_show_grid;
+                checked_state_changed(s) => {
+                    root.export_show_grid = s;
+                }
+            }
 
-                    legend_area := CheckBoxRow {
-                        text: "Show Legend";
-                        enabled: root.enabled;
-                        check_state_bool: root.export_show_legend;
-                        checked_state_changed(s) => {
-                            root.export_show_legend = s;
-                        }
-                    }
+            legend_area := CheckBoxRow {
+                text: "Show Legend";
+                enabled: root.enabled;
+                check_state_bool: root.export_show_legend;
+                checked_state_changed(s) => {
+                    root.export_show_legend = s;
+                }
+            }
 
-                    markers_area := CheckBoxRow {
-                        text: "Show Markers";
-                        enabled: root.enabled;
-                        check_state_bool: root.export_show_markers;
-                        checked_state_changed(s) => {
-                            root.export_show_markers = s;
-                        }
-                    }
+            markers_area := CheckBoxRow {
+                text: "Show Markers";
+                enabled: root.enabled;
+                check_state_bool: root.export_show_markers;
+                checked_state_changed(s) => {
+                    root.export_show_markers = s;
+                }
+            }
 
-                    fill_area_checkbox_area := CheckBoxRow {
-                        text: "Shade Curves";
-                        enabled: root.enabled;
-                        check_state_bool: root.export_fill_area;
-                        checked_state_changed(s) => {
-                            root.export_fill_area = s;
-                        }
-                    }
+            fill_area_checkbox_area := CheckBoxRow {
+                text: "Shade Curves";
+                enabled: root.enabled;
+                check_state_bool: root.export_fill_area;
+                checked_state_changed(s) => {
+                    root.export_fill_area = s;
                 }
             }
         }

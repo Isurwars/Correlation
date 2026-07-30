@@ -15,6 +15,7 @@ import {
     MenuItem,
 } from "../material/material.slint";
 import { PresetManagerCard } from "PresetManagerCard.slint";
+import { DynamicPropertiesCard } from "DynamicPropertiesCard.slint";
 import { BondCutoffsCard } from "BondCutoffsCard.slint";
 import { RDFOptionsCard } from "RDFOptionsCard.slint";
 import { BondAngleOptionsCard } from "BondAngleOptionsCard.slint";
@@ -23,6 +24,7 @@ import { RingsOptionsCard } from "RingsOptionsCard.slint";
 import { SmoothingOptionsCard } from "SmoothingOptionsCard.slint";
 import { AdvancedOptionsCard } from "AdvancedOptionsCard.slint";
 import { AnalysesSelectionCard } from "AnalysesSelectionCard.slint";
+import { ExportSettingsCard } from "../preview/ExportSettingsCard.slint";
 import {
     AtomCount,
     BondCutoff,
@@ -88,6 +90,25 @@ export component OptionsCard inherits FilledCard {
     property <string> lef_sigma_error <=> app_errors.lef_sigma_error;
     property <string> hyper_samples_error <=> app_errors.hyper_samples_error;
 
+    // Dynamic Properties
+    in property <string> diff_msd: "";
+    in property <string> diff_vacf: "";
+    in property <string> relaxation_time: "";
+    in property <string> deborah_number: "";
+
+    // Export Settings
+    in-out property <int> export_size_preset: 0;
+    in-out property <int> export_palette: 0;
+    in-out property <string> export_font_scale: "1.0";
+    in-out property <string> export_line_width: "3.0";
+    in-out property <bool> export_show_legend: true;
+    in-out property <bool> export_show_grid: true;
+    in-out property <bool> export_show_markers: false;
+    in-out property <bool> export_fill_area: false;
+
+    in property <string> export_font_scale_error: "";
+    in property <string> export_line_width_error: "";
+
     in-out property <int> active_tab: 0;
 
     // Preset management
@@ -99,7 +120,8 @@ export component OptionsCard inherits FilledCard {
 
     out property <string> hovered_tooltip_text: 
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_tooltip_text :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
+        (root.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_calculator_description :
+        (root.active_tab == 2 && export_settings.hovered_tooltip_text != "") ? export_settings.hovered_tooltip_text :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_tooltip_text :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_tooltip_text :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_tooltip_text :
@@ -109,7 +131,8 @@ export component OptionsCard inherits FilledCard {
 
     out property <length> hovered_x:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_x :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
+        (root.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_x :
+        (root.active_tab == 2 && export_settings.hovered_tooltip_text != "") ? export_settings.hovered_x :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_x :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_x :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_x :
@@ -119,7 +142,8 @@ export component OptionsCard inherits FilledCard {
 
     out property <length> hovered_y:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_y :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
+        (root.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_y :
+        (root.active_tab == 2 && export_settings.hovered_tooltip_text != "") ? export_settings.hovered_y :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_y :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_y :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_y :
@@ -129,7 +153,8 @@ export component OptionsCard inherits FilledCard {
 
     out property <length> hovered_width:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_width :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
+        (root.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_width :
+        (root.active_tab == 2 && export_settings.hovered_tooltip_text != "") ? export_settings.hovered_width :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_width :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_width :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_width :
@@ -139,7 +164,8 @@ export component OptionsCard inherits FilledCard {
 
     out property <length> hovered_height:
         preset_manager.hovered_tooltip_text != "" ? preset_manager.hovered_height :
-        (root.active_tab == 2 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
+        (root.active_tab == 3 && analyses_card.hovered_calculator_description != "") ? analyses_card.hovered_height :
+        (root.active_tab == 2 && export_settings.hovered_tooltip_text != "") ? export_settings.hovered_height :
         (root.active_tab == 1 && sq_card.hovered_tooltip_text != "") ? sq_card.hovered_height :
         (root.active_tab == 1 && rings_card.hovered_tooltip_text != "") ? rings_card.hovered_height :
         (root.active_tab == 1 && smoothing_card.hovered_tooltip_text != "") ? smoothing_card.hovered_height :
@@ -152,6 +178,14 @@ export component OptionsCard inherits FilledCard {
         height: 100%;
         padding: 0;
 
+        // Dynamic Physical Properties (always visible above options when calculated)
+        DynamicPropertiesCard {
+            diff_msd: root.diff_msd;
+            diff_vacf: root.diff_vacf;
+            relaxation_time: root.relaxation_time;
+            deborah_number: root.deborah_number;
+        }
+
         // Preset Manager (collapsible, always visible above tabs)
         preset_manager := PresetManagerCard {
             enabled: root.file_loaded;
@@ -162,11 +196,11 @@ export component OptionsCard inherits FilledCard {
             delete_preset(idx) => { root.delete_preset(idx); }
         }
 
-        // TAB NAVIGATION BAR (3 tabs: Common, Advanced, Analyses)
+        // TAB NAVIGATION BAR (4 tabs: Common, Advanced, Plot, Analyses)
         Horizontal {
-            height: 40px;
-            spacing: 4px;
-            padding-bottom: 4px;
+            height: MaterialStyleMetrics.size_40;
+            spacing: MaterialStyleMetrics.spacing_4;
+            padding-bottom: MaterialStyleMetrics.spacing_4;
 
             TabItem {
                 text: "Common";
@@ -181,9 +215,15 @@ export component OptionsCard inherits FilledCard {
             }
 
             TabItem {
-                text: "Analyses";
+                text: "Plot";
                 active: root.active_tab == 2;
                 clicked => { root.active_tab = 2; }
+            }
+
+            TabItem {
+                text: "Analyses";
+                active: root.active_tab == 3;
+                clicked => { root.active_tab = 3; }
             }
         }
 
@@ -265,6 +305,23 @@ export component OptionsCard inherits FilledCard {
                     height: root.active_tab == 1 ? self.preferred-height : 0px;
                 }
 
+                // Plot Tab Options (Publication Export Settings)
+                export_settings := ExportSettingsCard {
+                    visible: root.active_tab == 2;
+                    height: root.active_tab == 2 ? self.preferred-height : 0px;
+                    enabled: root.file_loaded;
+                    export_size_preset <=> root.export_size_preset;
+                    export_palette <=> root.export_palette;
+                    export_font_scale <=> root.export_font_scale;
+                    export_line_width <=> root.export_line_width;
+                    export_show_legend <=> root.export_show_legend;
+                    export_show_grid <=> root.export_show_grid;
+                    export_show_markers <=> root.export_show_markers;
+                    export_fill_area <=> root.export_fill_area;
+                    export_font_scale_error: root.export_font_scale_error;
+                    export_line_width_error: root.export_line_width_error;
+                }
+
                 // Analyses Tab Options
                 analyses_card := AnalysesSelectionCard {
                     file_loaded: root.file_loaded;
@@ -273,8 +330,8 @@ export component OptionsCard inherits FilledCard {
                     toggle_calculator(id, enabled) => {
                         root.toggle_calculator(id, enabled);
                     }
-                    visible: root.active_tab == 2;
-                    height: root.active_tab == 2 ? self.preferred-height : 0px;
+                    visible: root.active_tab == 3;
+                    height: root.active_tab == 3 ? self.preferred-height : 0px;
                 }
             }
         }
