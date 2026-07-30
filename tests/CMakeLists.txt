@@ -67,8 +67,10 @@ add_executable(correlation_unit_tests
     unit/calculators/CalculatorFactoryTests.cpp
     unit/readers/ReaderFactoryTests.cpp
     unit/writers/WriterFactoryTests.cpp
+    unit/writers/ArrowWriterTests.cpp
     unit/plotters/SvgPlotterTests.cpp
     unit/plotters/PdfPlotterTests.cpp
+    unit/plotters/PathFontTests.cpp
     unit/utils/SIMDUtilsTests.cpp
     unit/math/Vector3Tests.cpp
     unit/math/Matrix3Tests.cpp
@@ -76,6 +78,7 @@ add_executable(correlation_unit_tests
     unit/math/SpecialFunctionsTests.cpp
     unit/math/SmoothingTests.cpp
     unit/math/FFTUtilsTests.cpp
+    unit/math/ConstantsTests.cpp
     unit/app/AppBackendTests.cpp
     unit/app/PresetManagerTests.cpp
     unit/cli/CliParserTests.cpp

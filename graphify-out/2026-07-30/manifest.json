@@ -30,7 +30,7 @@
     "semantic_hash": ""
   },
   "include/app/AppBackend.hpp": {
-    "mtime": 1784587240.076473,
+    "mtime": 1785384529.2369852,
     "ast_hash": "4386dbfd6bdeef871eb25260576b93af",
     "semantic_hash": ""
   },
@@ -195,12 +195,12 @@
     "semantic_hash": ""
   },
   "include/calculators/XRDCalculator.hpp": {
-    "mtime": 1784868326.100183,
-    "ast_hash": "7508c2942386467948f7c995e2288367",
+    "mtime": 1785371869.1698184,
+    "ast_hash": "710dfdaebd17734fe2366a42ba3bb184",
     "semantic_hash": ""
   },
   "include/cli/CliParser.hpp": {
-    "mtime": 1784868002.246606,
+    "mtime": 1785384529.2251396,
     "ast_hash": "e37d95b8ad991a1f46bb010b4fb3df7c",
     "semantic_hash": ""
   },
@@ -420,8 +420,8 @@
     "semantic_hash": ""
   },
   "pyproject.toml": {
-    "mtime": 1785044372.745763,
-    "ast_hash": "930efa6bf52d9defc6e51dd6fee89028",
+    "mtime": 1785377801.53543,
+    "ast_hash": "fe57e93e572c28920a06fdcf18ebe800",
     "semantic_hash": ""
   },
   "python/correlation/__init__.py": {
@@ -430,13 +430,13 @@
     "semantic_hash": "7a013f5fadf4fcdc64802d12a255d87a"
   },
   "python/repair_wheel.py": {
-    "mtime": 1785044239.728554,
-    "ast_hash": "d8cca29306cb69cc74a8c4dac33a4192",
+    "mtime": 1785380667.649675,
+    "ast_hash": "386eca6d93b59ab8ef4ee5aec7a67e00",
     "semantic_hash": ""
   },
   "src/analysis/DistributionFunctions.cpp": {
-    "mtime": 1784868334.278439,
-    "ast_hash": "9b4c8426f168ddfa1356db453cfaf74c",
+    "mtime": 1785371869.170766,
+    "ast_hash": "38db54000689431b733f70d8cf7ce436",
     "semantic_hash": ""
   },
   "src/analysis/DynamicsAnalyzer.cpp": {
@@ -465,8 +465,8 @@
     "semantic_hash": ""
   },
   "src/app/AppController.cpp": {
-    "mtime": 1785201993.3256457,
-    "ast_hash": "fc6526275260cb67830da1bb0718fa80",
+    "mtime": 1785360067.9499233,
+    "ast_hash": "7c29b7ae961dbb336004f15c716f8619",
     "semantic_hash": ""
   },
   "src/app/FileIOHandler.cpp": {
@@ -475,18 +475,18 @@
     "semantic_hash": ""
   },
   "src/app/InputValidator.cpp": {
-    "mtime": 1785201975.2369068,
-    "ast_hash": "14412db05914dbbcc662cbfc771ce722",
+    "mtime": 1785354197.7418401,
+    "ast_hash": "10f34f970664b3e361cf83a3b8e16c14",
     "semantic_hash": ""
   },
   "src/app/PlotController.cpp": {
-    "mtime": 1785049365.2226164,
-    "ast_hash": "ca18c0e21536e93ce86f56f8b54b3575",
+    "mtime": 1785352454.6536705,
+    "ast_hash": "1e2948cd3d2062f1e738e5c9a493dee9",
     "semantic_hash": ""
   },
   "src/app/PresetController.cpp": {
-    "mtime": 1785201994.984622,
-    "ast_hash": "40075e6cb4b0a564f06bed5752e4816b",
+    "mtime": 1785384529.2251396,
+    "ast_hash": "169fffb7c5c7a78b2a8f5f503a6544ae",
     "semantic_hash": ""
   },
   "src/app/PresetManager.cpp": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.cpp": {
-    "mtime": 1784926425.4445999,
-    "ast_hash": "b5e156d6dfbfbc309562e12c95866d06",
+    "mtime": 1785384529.2706482,
+    "ast_hash": "582a3db1fdaf05792ab8c3f3751a231a",
     "semantic_hash": ""
   },
   "src/bindings/analysis_bindings.hpp": {
@@ -690,18 +690,18 @@
     "semantic_hash": ""
   },
   "src/calculators/XRDCalculator.cpp": {
-    "mtime": 1784868334.6524184,
-    "ast_hash": "33bbbfbe6aebbc621d242a86445bae8f",
+    "mtime": 1785371869.170766,
+    "ast_hash": "4c20693458de4fe45446025491ed2f2b",
     "semantic_hash": ""
   },
   "src/cli/CliParser.cpp": {
-    "mtime": 1784868326.1052535,
+    "mtime": 1785384529.2369852,
     "ast_hash": "e31392d5fd4c4966d9ba12f5a51d73ae",
     "semantic_hash": ""
   },
   "src/cli/main_cli.cpp": {
-    "mtime": 1785044372.745763,
-    "ast_hash": "5f50e966fbfc23ab755643c3f8684331",
+    "mtime": 1785371869.1721528,
+    "ast_hash": "f06a81d214b7986852f9a159d67203fb",
     "semantic_hash": ""
   },
   "src/core/Cell.cpp": {
@@ -720,9 +720,9 @@
     "semantic_hash": "2b0e05f50dd48fc06704c55b128a3fa5"
   },
   "src/main.cpp": {
-    "mtime": 1781982166.433938,
-    "ast_hash": "8684e22fa3d3318d4a9b5cb9a81f7de8",
-    "semantic_hash": "8684e22fa3d3318d4a9b5cb9a81f7de8"
+    "mtime": 1785360100.6728349,
+    "ast_hash": "c157f6887a2c452ab3cdc46600f93e6b",
+    "semantic_hash": ""
   },
   "src/plotters/PathFont.cpp": {
     "mtime": 1784868334.497911,
@@ -835,8 +835,8 @@
     "semantic_hash": ""
   },
   "src/writers/ArrowWriter.cpp": {
-    "mtime": 1784868326.1072536,
-    "ast_hash": "eeba9654d70af01a98906862ba099cf6",
+    "mtime": 1785426176.4758053,
+    "ast_hash": "02b06951ec680c24d4c8828ae2bfb6f5",
     "semantic_hash": ""
   },
   "src/writers/CSVWriter.cpp": {
@@ -880,8 +880,8 @@
     "semantic_hash": "9795f758ab0839b395bfea78969751e3"
   },
   "tests/functional/app/AppControllerTests.cpp": {
-    "mtime": 1784868334.8373456,
-    "ast_hash": "fd5619c206a1b37d9dc8b3036a78bc59",
+    "mtime": 1785362751.599215,
+    "ast_hash": "b25bea0eb5a3550fe27e9a0680492631",
     "semantic_hash": ""
   },
   "tests/functional/app/SlintSvgIntegrationTests.cpp": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/XRDTests.cpp": {
-    "mtime": 1785048509.150276,
-    "ast_hash": "397b0b347093b3a5b8be30e8c0baac3e",
+    "mtime": 1785371869.1721528,
+    "ast_hash": "3de865d2d7a0711cb4ad9d22f42c7eee",
     "semantic_hash": ""
   },
   "tests/unit/calculators/vDoSTests.cpp": {
@@ -1135,7 +1135,7 @@
     "semantic_hash": ""
   },
   "tests/unit/cli/CliParserTests.cpp": {
-    "mtime": 1784868326.1092534,
+    "mtime": 1785384529.2451463,
     "ast_hash": "730ea9bae05acd1a43dae80032ef310a",
     "semantic_hash": ""
   },
@@ -1185,8 +1185,8 @@
     "semantic_hash": ""
   },
   "tests/unit/physics/PhysicalDataTests.cpp": {
-    "mtime": 1784757184.114837,
-    "ast_hash": "9059370d75713e3788e717143e00a79d",
+    "mtime": 1785425929.087248,
+    "ast_hash": "bbcccf228bb729175573d8dd4ac68a29",
     "semantic_hash": ""
   },
   "tests/unit/plotters/PdfPlotterTests.cpp": {
@@ -1315,18 +1315,18 @@
     "semantic_hash": ""
   },
   ".github/workflows/release.yml": {
-    "mtime": 1785044305.0499697,
-    "ast_hash": "daad417b801ded41d9a43b3a6a67c916",
+    "mtime": 1785377805.7583587,
+    "ast_hash": "5d0f0e9a2505ad27c542202452a434c8",
     "semantic_hash": ""
   },
   "CMakeLists.txt": {
-    "mtime": 1785267561.9858758,
-    "ast_hash": "87ef0c00fcf343eff867ea43e3a93641",
+    "mtime": 1785371869.1680386,
+    "ast_hash": "69f3c9548867acbaeb9d8cd749817f07",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1785044372.745516,
-    "ast_hash": "07ba499a14cd94a588924c9ed7ef5b38",
+    "mtime": 1785371869.168409,
+    "ast_hash": "44394984e606738301df25a5e01ffb9f",
     "semantic_hash": ""
   },
   "docs/CODE_OF_CONDUCT.md": {
@@ -1365,8 +1365,8 @@
     "semantic_hash": "ac2365e53a1df768172acaffee1cec51"
   },
   "tests/CMakeLists.txt": {
-    "mtime": 1784864583.4051147,
-    "ast_hash": "20a42418a2cc69d7c7d5c64d2160c8d0",
+    "mtime": 1785425937.6510944,
+    "ast_hash": "51fc691764a5c4c2f47534696fbd706e",
     "semantic_hash": ""
   },
   "tests/fuzz/CMakeLists.txt": {
@@ -1775,8 +1775,8 @@
     "semantic_hash": ""
   },
   ".github/workflows/test-wheels.yml": {
-    "mtime": 1785048958.2777488,
-    "ast_hash": "5f24a658463463b97824256b6f0918a4",
+    "mtime": 1785377810.3692813,
+    "ast_hash": "cf586437ff443e5b47bcd2cc1ce2e1a1",
     "semantic_hash": ""
   },
   ".agents/skills/slint-ui-development/SKILL.md": {
@@ -1842,6 +1842,21 @@
   ".agents/skills/doxygen-doc-generator/SKILL.md": {
     "mtime": 1785127988.0673397,
     "ast_hash": "1e71e0f79098bffca254b5bbc51147ea",
+    "semantic_hash": ""
+  },
+  "tests/unit/math/ConstantsTests.cpp": {
+    "mtime": 1785425915.6204898,
+    "ast_hash": "16efcd7b3c25963dc5e030c4c4c51723",
+    "semantic_hash": ""
+  },
+  "tests/unit/plotters/PathFontTests.cpp": {
+    "mtime": 1785425919.3794224,
+    "ast_hash": "fabaee8b53c1193d651192eedb079ed8",
+    "semantic_hash": ""
+  },
+  "tests/unit/writers/ArrowWriterTests.cpp": {
+    "mtime": 1785426193.2455041,
+    "ast_hash": "4402111641257dcd170c5f634ab2523f",
     "semantic_hash": ""
   }
 }

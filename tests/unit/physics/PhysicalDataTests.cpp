@@ -15,9 +15,15 @@ TEST(PhysicalDataTests, GetCovalentRadiusCorrectly) {
   EXPECT_NEAR(getCovalentRadius("C"), 0.75, correlation::is_single_precision ? 1e-4 : 1e-6);
   EXPECT_NEAR(getCovalentRadius("Si"), 1.16, correlation::is_single_precision ? 1e-4 : 1e-6);
   EXPECT_NEAR(getCovalentRadius("O"), 0.63, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getCovalentRadius("H"), 0.32, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getCovalentRadius("U"), 1.70, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getCovalentRadius("Ac"), 1.86, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getCovalentRadius("Zr"), 1.54, correlation::is_single_precision ? 1e-4 : 1e-6);
 
   // Test invalid element throws
   EXPECT_THROW(getCovalentRadius("Xx"), std::out_of_range);
+  EXPECT_THROW(getCovalentRadius("c"), std::out_of_range); // Case sensitivity
+  EXPECT_THROW(getCovalentRadius(""), std::out_of_range);
 }
 
 TEST(PhysicalDataTests, GetAtomicMassCorrectly) {
@@ -25,20 +31,27 @@ TEST(PhysicalDataTests, GetAtomicMassCorrectly) {
   EXPECT_NEAR(getAtomicMass("H"), 1.008, correlation::is_single_precision ? 1e-4 : 1e-6);
   EXPECT_NEAR(getAtomicMass("Si"), 28.085, correlation::is_single_precision ? 1e-4 : 1e-6);
   EXPECT_NEAR(getAtomicMass("O"), 15.999, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getAtomicMass("Au"), 196.97, correlation::is_single_precision ? 1e-4 : 1e-6);
+  EXPECT_NEAR(getAtomicMass("U"), 238.03, correlation::is_single_precision ? 1e-4 : 1e-6);
 
   // Test invalid element throws
   EXPECT_THROW(getAtomicMass("Xx"), std::out_of_range);
+  EXPECT_THROW(getAtomicMass("si"), std::out_of_range);
 }
 
 TEST(PhysicalDataTests, GetAtomicFormFactorsCorrectly) {
   // Test valid element (Silicon)
-  // Silicon: {5.275329, 2.631338, 3.191038, 33.730728, 1.511514, 0.081119, 1.356849, 86.288643, 0.145073}
   auto silicon_ff = getAtomicFormFactors("Si");
   EXPECT_NEAR(silicon_ff[0], 5.275329, correlation::is_single_precision ? 1e-4 : 1e-6);
   EXPECT_NEAR(silicon_ff[8], 0.145073, correlation::is_single_precision ? 1e-4 : 1e-6);
 
+  // Test Hydrogen form factors
+  auto h_ff = getAtomicFormFactors("H");
+  EXPECT_EQ(h_ff.size(), 9U);
+
   // Test invalid element throws
   EXPECT_THROW(getAtomicFormFactors("Xx"), std::out_of_range);
+  EXPECT_THROW(getAtomicFormFactors("InvalidElement"), std::out_of_range);
 }
 
 } // namespace correlation::testing

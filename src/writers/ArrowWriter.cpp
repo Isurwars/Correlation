@@ -42,9 +42,8 @@ void addFloatColumn(const std::string &name, const std::vector<real_t> &values, 
                     std::vector<std::shared_ptr<arrow::Array>> &arrays) {
   fields.push_back(arrow::field(name, arrow::float32()));
   arrow::FloatBuilder builder;
-  // Convert real_t values to float for output
   std::vector<float> float_values(values.begin(), values.end());
-  PARQUET_THROW_NOT_OK(builder.AppendValues(float_values));
+  PARQUET_THROW_NOT_OK(builder.AppendValues(float_values.data(), static_cast<int64_t>(float_values.size())));
   std::shared_ptr<arrow::Array> array;
   PARQUET_THROW_NOT_OK(builder.Finish(&array));
   arrays.push_back(array);
@@ -54,12 +53,11 @@ void writeTableToParquet(const std::string &filename, const std::shared_ptr<arro
   std::shared_ptr<arrow::io::FileOutputStream> outfile;
   PARQUET_ASSIGN_OR_THROW(outfile, arrow::io::FileOutputStream::Open(filename));
 
-  // Writer properties
-  std::shared_ptr<parquet::WriterProperties> props =
-      parquet::WriterProperties::Builder().compression(parquet::Compression::UNCOMPRESSED)->build();
+  std::shared_ptr<parquet::WriterProperties> props = parquet::WriterProperties::Builder().build();
 
   PARQUET_THROW_NOT_OK(
       parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 1024LL * 1024LL, props));
+  PARQUET_THROW_NOT_OK(outfile->Close());
 }
 
 } // namespace
@@ -86,18 +84,21 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename, const cor
     return;
   }
 
-  // Get sorted keys for both raw and smoothed data
+  // Extract metadata matching CSV header standard
+  std::string bin_unit = hist.x_unit.empty() ? "arbitrary units" : hist.x_unit;
+  std::string data_unit = hist.y_unit.empty() ? "arbitrary units" : hist.y_unit;
+  std::string description = hist.description.empty() ? "Data export" : hist.description;
+  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
+
+  // Get sorted keys for raw and smoothed data
   std::vector<std::string> raw_keys = getSortedKeys(hist.partials);
   std::vector<std::string> smoothed_keys = getSortedKeys(hist.smoothed_partials);
 
-  // Get metadata if available
-  std::string dim_label = hist.x_label.empty() ? "x" : hist.x_label;
-
-  // --- Build Arrow Schema and Data Arrays ---
+  // Build Arrow Schema and Data Columns
   arrow::FieldVector fields;
   std::vector<std::shared_ptr<arrow::Array>> arrays;
 
-  // 1. Bin Column
+  // 1. Coordinate / Bin Column
   addFloatColumn(dim_label, hist.bins, fields, arrays);
 
   // 2. Raw Data Columns
@@ -110,11 +111,21 @@ void ArrowWriter::writeHistogramToParquet(const std::string &filename, const cor
     addFloatColumn(key + "_smoothed", hist.smoothed_partials.at(key), fields, arrays);
   }
 
-  auto schema = arrow::schema(fields);
-  int64_t num_rows = static_cast<int64_t>(hist.bins.size());
-  auto table = arrow::Table::Make(schema, arrays, num_rows);
+  // Attach CSV-aligned header metadata to schema
+  auto metadata = arrow::key_value_metadata(
+      {"dim_label", "bin_unit", "data_unit", "description"},
+      {dim_label, bin_unit, data_unit, description});
+  auto schema = arrow::schema(fields, metadata);
 
-  // --- Write to Parquet File ---
+  int64_t num_rows = static_cast<int64_t>(hist.bins.size());
+  std::vector<std::shared_ptr<arrow::ChunkedArray>> chunked_arrays;
+  chunked_arrays.reserve(arrays.size());
+  for (const auto &arr : arrays) {
+    chunked_arrays.push_back(std::make_shared<arrow::ChunkedArray>(arr));
+  }
+  auto table = arrow::Table::Make(schema, chunked_arrays, num_rows);
+
+  // Write to Parquet File using default properties
   writeTableToParquet(filename, table);
 }
 
