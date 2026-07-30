@@ -9,7 +9,6 @@
 #include "math/Constants.hpp"
 
 #include <gtest/gtest.h>
-#include <cmath>
 
 namespace correlation::math::testing {
 

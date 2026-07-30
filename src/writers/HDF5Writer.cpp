@@ -10,7 +10,6 @@
 #include "writers/WriterFactory.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -63,9 +62,9 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
     const auto &values = hist.partials.at(key);
     std::vector<float> float_values(values.begin(), values.end());
 
-    HighFive::DataSet ds = group.createDataSet(key, float_values);
-    ds.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
-    ds.createAttribute<std::string>("label", HighFive::DataSpace::From(key)).write(key);
+    HighFive::DataSet dataset = group.createDataSet(key, float_values);
+    dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
+    dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(key)).write(key);
   }
 
   // 3. Write Smoothed Partial Datasets
@@ -81,9 +80,9 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
     std::vector<float> float_values(values.begin(), values.end());
     std::string smoothed_name = key + "_smoothed";
 
-    HighFive::DataSet ds = group.createDataSet(smoothed_name, float_values);
-    ds.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
-    ds.createAttribute<std::string>("label", HighFive::DataSpace::From(smoothed_name)).write(smoothed_name);
+    HighFive::DataSet dataset = group.createDataSet(smoothed_name, float_values);
+    dataset.createAttribute<std::string>("units", HighFive::DataSpace::From(data_unit)).write(data_unit);
+    dataset.createAttribute<std::string>("label", HighFive::DataSpace::From(smoothed_name)).write(smoothed_name);
   }
 }
 
