@@ -402,12 +402,15 @@ DistributionFunctions::processSingleFrame(correlation::core::Trajectory &traject
   auto frame_df = std::make_unique<DistributionFunctions>(frame, static_cast<real_t>(0.0), bond_cutoffs);
   frame_df->setStructureAnalyzerOwned(analyzer.createAnalyzer(frame_idx));
 
-  // Dispatch all active frame-based calculators from the factory
+  // Dispatch independent frame-based calculators from the factory
   const auto &factory_calcs = ::correlation::calculators::CalculatorFactory::instance().getCalculators();
   tbb::task_group calc_group;
   for (const auto &calc : factory_calcs) {
     if (!calc->isFrameCalculator()) {
       continue;
+    }
+    if (calc->getName() == "XRD" || calc->getShortName() == "XRD") {
+      continue; // Run XRD after base calculators finish so g_r is available
     }
     if (!settings.isActive(calc->getName()) && !settings.isActive(calc->getShortName())) {
       continue;
@@ -415,6 +418,12 @@ DistributionFunctions::processSingleFrame(correlation::core::Trajectory &traject
     calc_group.run([&calc, df_ptr = frame_df.get(), &settings]() { calc->calculateFrame(*df_ptr, settings); });
   }
   calc_group.wait();
+
+  // Run dependent frame calculators (e.g. XRD) after g_r is computed
+  const auto *xrd_calc = ::correlation::calculators::CalculatorFactory::instance().getCalculator("XRD");
+  if (xrd_calc != nullptr && (settings.isActive(xrd_calc->getName()) || settings.isActive(xrd_calc->getShortName()))) {
+    xrd_calc->calculateFrame(*frame_df, settings);
+  }
 
   return frame_df;
 }

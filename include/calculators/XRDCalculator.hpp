@@ -9,10 +9,13 @@
 #pragma once
 
 #include "BaseCalculator.hpp"
+
 #include "analysis/DistributionFunctions.hpp"
+#include "math/Precision.hpp"
 
 #include <map>
 #include <string>
+
 namespace correlation::calculators {
 
 /**
@@ -61,7 +64,7 @@ public:
                       const correlation::analysis::AnalysisSettings &settings) const override;
 
   /**
-   * @brief High-performance computation of the X-Ray Diffraction (XRD) pattern.
+   * @brief High-performance computation of the X-Ray Diffraction (XRD) pattern from g(r).
    *
    * @param g_r_hist Input Radial Distribution Function g(r).
    * @param cell The periodic cell.
@@ -78,9 +81,33 @@ public:
                                                     Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
                                                     BinWidth bin_width);
 
-private:
+  /**
+   * @brief Direct reciprocal-space calculation of XRD pattern from partial structure factors S(Q).
+   *
+   * @param s_q_hist Input Structure Factor histogram S(Q).
+   * @param cell The periodic cell.
+   * @param ashcroft_weights Composition-dependent scattering weights.
+   * @param lambda X-ray wavelength (Angstrom).
+   * @param theta_min Minimum 2-theta angle (degrees).
+   * @param theta_max Maximum 2-theta angle (degrees).
+   * @param bin_width Angular resolution (degrees).
+   * @return A histogram representing intensity vs 2-theta.
+   */
+  static correlation::analysis::Histogram calculateFromSq(const correlation::analysis::Histogram &s_q_hist,
+                                                          const correlation::core::Cell &cell,
+                                                          const std::map<std::string, real_t> &ashcroft_weights,
+                                                          Wavelength lambda, MinTheta theta_min, MaxTheta theta_max,
+                                                          BinWidth bin_width);
+
+  /**
+   * @brief Calculate the atomic form factor f(Q) for a given element symbol and scattering vector Q.
+   * @param symbol Element symbol (e.g. "Ar").
+   * @param q_value Magnitude of scattering vector Q in 1/Angstrom.
+   * @return Atomic form factor value.
+   */
   static real_t getAtomicFormFactor(const std::string &symbol, real_t q_value);
 
+private:
   static std::map<std::string, real_t> calculateConcentrations(const correlation::core::Cell &cell);
 
   static std::map<std::string, std::vector<real_t>>

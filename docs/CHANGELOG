@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.8.0] - 2026-07-29
+
+### Added
+- **Reciprocal-Space $S(Q)$-Based XRD Calculation**: Added `XRDCalculator::calculateFromSq` to compute X-Ray Diffraction patterns directly from partial structure factors $S_{ij}(Q)$ using Cromer-Mann 9-parameter atomic scattering form factors $f_i(Q)$, eliminating real-space $r_{\text{max}}$ truncation ripples.
+- **Dual-Path XRD Dispatch**: Updated `XRDCalculator::calculateFrame` to prioritize $S(Q)$-based reciprocal-space calculation when $S(Q)$ is available in `DistributionFunctions`, falling back to real-space $g(r)$ integration if $S(Q)$ is absent.
+
+### Changed & Refactored
+- **XRD Angular Range & Bin Defaults**: Updated default 2-theta scattering limits to $10^\circ \text{ to } 140^\circ$ (`MinTheta{10.0}`, `MaxTheta{140.0}`) with $0.05^\circ$ angular bin resolution (`BinWidth{0.05}`).
+- **UI Operations & Trajectory Layout**: Migrated `TrajectoryOptionsCard` and `MaterialTypeCard` into the primary operations sidebar (Column 1) for a streamlined file-load-to-run workflow.
+- **UI Options Reorganization**: Restructured middle column tabs to **1. Common**, **2. Advanced**, and **3. Analyses**.
+- **Material Preset Dropdown Height**: Fixed container height calculation in `drop_down_menu.slint` to display all material presets without vertical clipping.
+
 ## [3.7.4] - 2026-07-29
 
 ### Fixed

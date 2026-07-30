@@ -12,7 +12,7 @@
 #include <vector>
 
 namespace correlation::analysis {
-namespace {
+
 // Test fixture for XRD tests.
 class XRDTests : public ::testing::Test {
 protected:
@@ -33,7 +33,6 @@ public:
   correlation::core::Cell cell_;
   correlation::core::Trajectory trajectory_;
 };
-} // namespace
 
 TEST_F(XRDTests, CalculateXRD) {
   updateTrajectory();
@@ -215,6 +214,32 @@ TEST_F(XRDTests, CalculateXRD_InvalidInputsThrow) {
                    correlation::calculators::MinTheta{5.0}, correlation::calculators::MaxTheta{90.0},
                    correlation::calculators::BinWidth{0.5}),
                std::invalid_argument);
+}
+
+TEST_F(XRDTests, CalculateFromSq) {
+  updateTrajectory();
+
+  Histogram s_q_hist;
+  s_q_hist.x_label = "Q";
+  s_q_hist.y_label = "S(Q)";
+  s_q_hist.bins = {0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
+  s_q_hist.partials["Ar-Ar"] = std::vector<real_t>(10, 1.0);
+
+  std::map<std::string, real_t> ashcroft_weights = {{"Ar-Ar", 1.0}};
+
+  EXPECT_NO_THROW(correlation::calculators::XRDCalculator::calculateFromSq(
+      s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
+      correlation::calculators::MinTheta{10.0}, correlation::calculators::MaxTheta{90.0},
+      correlation::calculators::BinWidth{0.5}));
+
+  auto xrd_hist = correlation::calculators::XRDCalculator::calculateFromSq(
+      s_q_hist, cell_, ashcroft_weights, correlation::calculators::Wavelength{1.5406},
+      correlation::calculators::MinTheta{10.0}, correlation::calculators::MaxTheta{90.0},
+      correlation::calculators::BinWidth{0.5});
+
+  EXPECT_FALSE(xrd_hist.bins.empty());
+  EXPECT_TRUE(xrd_hist.partials.contains("Total"));
+  EXPECT_EQ(xrd_hist.partials.at("Total").size(), xrd_hist.bins.size());
 }
 
 } // namespace correlation::analysis
