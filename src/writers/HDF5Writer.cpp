@@ -28,10 +28,10 @@ void writeHistogramToGroup(HighFive::File &file, const std::string &name,
                            const correlation::analysis::Histogram &hist) {
   // Sanitize group name
   std::string group_name = name;
-  std::replace(group_name.begin(), group_name.end(), '(', '_');
-  group_name.erase(std::remove(group_name.begin(), group_name.end(), ')'), group_name.end());
-  std::replace(group_name.begin(), group_name.end(), '/', '_');
-  std::replace(group_name.begin(), group_name.end(), ' ', '_');
+  std::ranges::replace(group_name, '(', '_');
+  std::ranges::replace(group_name, ')', '_');
+  std::ranges::replace(group_name, '/', '_');
+  std::ranges::replace(group_name, ' ', '_');
 
   HighFive::Group group = file.createGroup(group_name);
 
