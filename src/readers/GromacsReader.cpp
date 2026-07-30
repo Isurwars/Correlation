@@ -10,6 +10,7 @@
 #include "readers/GromacsReader.hpp"
 
 #include "core/MappedFile.hpp"
+#include "math/Precision.hpp"
 #include "readers/ReaderFactory.hpp"
 #include <math.h>
 
@@ -190,14 +191,14 @@ correlation::core::Cell GromacsReader::parseGroFrame(const char *data, size_t si
         break;
       }
     }
-    // Common GROMACS fixes
+    // Normalize GROMACS solvent atom symbols (OW -> O, HW -> H)
     if (symbol == "OW" || symbol == "HW") {
       symbol = symbol.substr(0, 1);
     }
 
-    auto const pos_x = static_cast<real_t>(std::stod(line.substr(20, 8))) * 10.0; // nm to A
-    auto const pos_y = static_cast<real_t>(std::stod(line.substr(28, 8))) * 10.0;
-    auto const pos_z = static_cast<real_t>(std::stod(line.substr(36, 8))) * 10.0;
+    auto const pos_x = static_cast<real_t>(std::stod(line.substr(20, 8))) * static_cast<real_t>(10.0); // nm to A
+    auto const pos_y = static_cast<real_t>(std::stod(line.substr(28, 8))) * static_cast<real_t>(10.0);
+    auto const pos_z = static_cast<real_t>(std::stod(line.substr(36, 8))) * static_cast<real_t>(10.0);
 
     cell.addAtom(symbol, correlation::math::Vector3<real_t>(pos_x, pos_y, pos_z));
   }

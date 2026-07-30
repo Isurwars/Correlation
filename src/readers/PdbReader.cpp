@@ -63,7 +63,7 @@ std::optional<PdbAtomData> parsePdbAtomLine(const std::string &line) {
       atom_name.erase(0, atom_name.find_first_not_of(' '));
       atom_name.erase(atom_name.find_last_not_of(' ') + 1);
 
-      // Common PDB fixes (e.g. 1H -> H)
+      // Normalize PDB atom names (e.g., strip leading numbers like 1H -> H)
       std::string parsed_name = atom_name;
       if (parsed_name.length() > 1 && (std::isdigit(parsed_name[0]) != 0)) {
         parsed_name = parsed_name.substr(1);

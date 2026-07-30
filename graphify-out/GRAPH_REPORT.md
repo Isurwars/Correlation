@@ -1,7 +1,7 @@
 # Graph Report - Correlation  (2026-07-30)
 
 ## Corpus Check
-- 334 files · ~5,137,484 words
+- 334 files · ~5,137,483 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `53e2200d`
+- Built from commit: `884db4d3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -385,8 +385,8 @@ Cohesion: 0.06
 Nodes (43): AppBackend, analysis_thread_func, calculateDynamicProperties, cancel_flag_, df_, getAshcroftWeights, getAtomCounts, getAvailableHistogramNames (+35 more)
 
 ### Community 11 - "SIMDUtils.hpp"
-Cohesion: 0.06
-Nodes (31): TextAnchor, renderTextAsPath(), NearestPoint, ostringstream, pair, real_t, size_t, string (+23 more)
+Cohesion: 0.07
+Nodes (32): TextAnchor, renderTextAsPath(), NearestPoint, ostringstream, pair, real_t, size_t, string (+24 more)
 
 ### Community 12 - "Cellulose Example Data"
 Cohesion: 0.08
@@ -613,8 +613,8 @@ Cohesion: 0.20
 Nodes (15): FactorialCorrectness, factorial(), real_t, LegendreParams, degree, order, sph_legendre(), sph_legendre_batch() (+7 more)
 
 ### Community 68 - "PlotConfig"
-Cohesion: 0.10
-Nodes (18): fmtScientific(), real_t, string, PlotConfig, fill_area, font_scale, height, line_width (+10 more)
+Cohesion: 0.11
+Nodes (16): string, PlotConfig, fill_area, font_scale, height, line_width, palette, preset_size (+8 more)
 
 ### Community 69 - "TEST"
 Cohesion: 0.12
@@ -645,12 +645,12 @@ Cohesion: 0.14
 Nodes (12): ComputeDiffusionCoefficientMSD, ComputesCorrectMSDAndDeff, DynamicsAnalyzerMSDNonPhysicalInputs, FrameRangeSubset, string, MSDCalculator, calculate, calculateTrajectory (+4 more)
 
 ### Community 76 - "GPUBond"
-Cohesion: 0.27
-Nodes (20): find_font_widths(), find_word_break(), pdf_add_barcode(), pdf_add_barcode_ean13(), pdf_add_barcode_ean8(), pdf_add_barcode_upca(), pdf_add_barcode_upce(), pdf_add_text() (+12 more)
+Cohesion: 0.25
+Nodes (21): find_font_widths(), find_word_break(), pdf_add_barcode(), pdf_add_barcode_ean13(), pdf_add_barcode_ean8(), pdf_add_barcode_upca(), pdf_add_barcode_upce(), pdf_add_text() (+13 more)
 
 ### Community 77 - "string"
 Cohesion: 0.07
-Nodes (33): color(), size_t, mapValue(), map, NearestPoint, ostringstream, pair, real_t (+25 more)
+Nodes (34): color(), fmtScientific(), size_t, mapValue(), map, NearestPoint, ostringstream, pair (+26 more)
 
 ### Community 78 - "StructureAnalyzer"
 Cohesion: 0.04
@@ -665,8 +665,8 @@ Cohesion: 0.15
 Nodes (11): AngleCalculatorTests, ComputesCorrect180DegreeAngle, ComputesCorrect60DegreeAngle, ComputesCorrect90DegreeAngle, AngleCalculator, calculateFrame, compute, string (+3 more)
 
 ### Community 81 - "Cell.cpp"
-Cohesion: 0.17
-Nodes (11): HoverInfo, active, mouse_x, mouse_y, widget_height, widget_width, LabeledHistogram, hist (+3 more)
+Cohesion: 0.29
+Nodes (7): HoverInfo, active, mouse_x, mouse_y, widget_height, widget_width, PlotController::isPlotCacheHit()
 
 ### Community 82 - "QEReader"
 Cohesion: 0.24
@@ -981,8 +981,8 @@ Cohesion: 0.17
 Nodes (13): findElement, updateLattice, updateLatticeParametersFromVectors, Cell::Cell(), Cell::findElement(), Cell::getOrRegisterElement(), Cell::minimumImage(), Cell::setLatticeParameters() (+5 more)
 
 ### Community 160 - "CalculatorFactory"
-Cohesion: 0.20
-Nodes (6): vector, NiceScale, max, min, spacing, ticks
+Cohesion: 0.14
+Nodes (10): DataRange, max, min, real_t, vector, NiceScale, max, min (+2 more)
 
 ### Community 161 - "TEST_F"
 Cohesion: 0.33
@@ -1034,7 +1034,7 @@ Nodes (7): RDFNormalizationParams, CORRELATION_RESTRICT, count, g_norm, inv_Ni_d
 
 ### Community 174 - "pdf_add_image_data"
 Cohesion: 0.08
-Nodes (36): determine_image_format(), dgets(), find_128_encoding(), find_39_encoding(), get_file(), parse_bmp_header(), parse_jpeg_header(), parse_png_header() (+28 more)
+Nodes (35): determine_image_format(), dgets(), find_128_encoding(), find_39_encoding(), get_file(), parse_bmp_header(), parse_jpeg_header(), parse_png_header() (+27 more)
 
 ### Community 175 - "AnalysisRunner.cpp"
 Cohesion: 0.38
@@ -1194,7 +1194,7 @@ Nodes (3): CP2KReader, string, vector
 
 ### Community 261 - "MappedFile.hpp"
 Cohesion: 0.36
-Nodes (4): DataRange, max, min, tuple
+Nodes (4): LabeledHistogram, hist, label, tuple
 
 ### Community 262 - "CalculatorFactory"
 Cohesion: 0.24

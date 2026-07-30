@@ -835,8 +835,8 @@
     "semantic_hash": ""
   },
   "src/writers/ArrowWriter.cpp": {
-    "mtime": 1785426176.4758053,
-    "ast_hash": "02b06951ec680c24d4c8828ae2bfb6f5",
+    "mtime": 1785426333.6179807,
+    "ast_hash": "b9882757810214d0e193b01bc739bd15",
     "semantic_hash": ""
   },
   "src/writers/CSVWriter.cpp": {
@@ -850,8 +850,8 @@
     "semantic_hash": "48a2da367c56f462c41e374617d27936"
   },
   "src/writers/HDF5Writer.cpp": {
-    "mtime": 1784868326.1081579,
-    "ast_hash": "a80e82727019ed7bb5ad56543416d0b8",
+    "mtime": 1785426338.836887,
+    "ast_hash": "fc56880ae97e5f50a8d3c6b7ebcdb373",
     "semantic_hash": ""
   },
   "src/writers/WriterFactory.cpp": {
@@ -1295,8 +1295,8 @@
     "semantic_hash": "af6b29a2c82863a79c3e928922ea4b05"
   },
   "tests/unit/writers/WriterTests.cpp": {
-    "mtime": 1784926018.019321,
-    "ast_hash": "908ac5e2f48818f3f68ef7ac10e652e1",
+    "mtime": 1785426369.7213316,
+    "ast_hash": "49272f549052a9d53392fd3002c3dac4",
     "semantic_hash": ""
   },
   "ui/wasm_app/app.js": {

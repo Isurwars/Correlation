@@ -482,7 +482,7 @@ TEST_F(SIMDUtilsTests, KahanSummationPrecision) {
 }
 
 // -----------------------------------------------------------------------------
-// Test: normalize_rdf_bins Bin 0 Initialization Bug Fix
+// Test: normalize_rdf_bins Bin 0 Initialization
 // -----------------------------------------------------------------------------
 TEST_F(SIMDUtilsTests, NormalizeRdfBinsZeroInitializesBinZeroDouble) {
   constexpr std::size_t size = 16;

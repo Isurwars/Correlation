@@ -6,6 +6,7 @@
 #include "analysis/StructureAnalyzer.hpp"
 #include "calculators/CNACalculator.hpp"
 #include "core/Cell.hpp"
+#include "math/Precision.hpp"
 
 #include <gtest/gtest.h>
 
@@ -44,7 +45,7 @@ TEST(CNACalculatorTests, SingleIsolatedAtomReturnsEmptyHistogram) {
 // ============================================================================
 
 /// All partial vectors must have the same size as the bins vector.
-/// This was the crash bug fixed earlier — ensure it never regresses.
+/// Regression test ensuring CNA histogram dimensions remain consistent.
 TEST(CNACalculatorTests, HistogramDimensionsAreConsistent) {
   // FCC conventional cell (4 atoms in a cube)
   correlation::core::Cell cell({4.0, 4.0, 4.0, 90.0, 90.0, 90.0});
@@ -78,8 +79,9 @@ TEST(CNACalculatorTests, TotalPartialSumsToOne) {
   auto hist = CNACalculator::calculate(cell, &analyzer);
 
   ASSERT_TRUE(hist.partials.contains("Total"));
-  real_t const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
-  EXPECT_NEAR(sum, 1.0, 1e-12);
+  real_t const sum = static_cast<real_t>(
+      std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), static_cast<real_t>(0.0)));
+  EXPECT_NEAR(sum, static_cast<real_t>(1.0), static_cast<real_t>(1e-12));
 }
 
 /// Histogram metadata is correctly populated.
@@ -108,16 +110,16 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
 /// the calculator runs correctly on a realistic periodic FCC system.
 TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   real_t const vec_a = 4.0;
-  real_t const lattice_size = 2.0 * vec_a; // 2×2×2 supercell
+  real_t const lattice_size = static_cast<real_t>(2.0) * vec_a; // 2×2×2 supercell
   correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
 
   // Generate 2×2×2 FCC supercell (4 basis atoms × 8 unit cells = 32 atoms)
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
-        real_t const o_x = ix * vec_a;
-        real_t const o_y = iy * vec_a;
-        real_t const o_z = iz * vec_a;
+        real_t const o_x = static_cast<real_t>(ix) * vec_a;
+        real_t const o_y = static_cast<real_t>(iy) * vec_a;
+        real_t const o_z = static_cast<real_t>(iz) * vec_a;
         cell.addAtom("Al", {o_x, o_y, o_z});
         cell.addAtom("Al", {o_x + vec_a / 2, o_y + vec_a / 2, o_z});
         cell.addAtom("Al", {o_x + vec_a / 2, o_y, o_z + vec_a / 2});
@@ -138,8 +140,9 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   EXPECT_TRUE(hist.partials.count("1421")) << "FCC should produce CNA index 1421.";
 
   // The Total partial should sum to 1.0
-  real_t const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
-  EXPECT_NEAR(sum, 1.0, 1e-12);
+  real_t const sum =
+      static_cast<real_t>(std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0));
+  EXPECT_NEAR(sum, static_cast<real_t>(1.0), static_cast<real_t>(1e-12));
 }
 
 /// BCC 3×3×3 supercell (54 atoms) including both 1st and 2nd NN shells.
@@ -147,16 +150,16 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
 /// With a cutoff that captures both shells (14 neighbors per atom), the
 /// resulting CNA indices depend on the full neighbor topology.
 TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
-  real_t const vec_a = 3.0;
-  real_t const lattice_size = 3.0 * vec_a;
+  real_t const vec_a = static_cast<real_t>(3.0);
+  real_t const lattice_size = static_cast<real_t>(3.0) * vec_a;
   correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
 
   for (int ix = 0; ix < 3; ++ix) {
     for (int iy = 0; iy < 3; ++iy) {
       for (int iz = 0; iz < 3; ++iz) {
-        real_t const o_x = ix * vec_a;
-        real_t const o_y = iy * vec_a;
-        real_t const o_z = iz * vec_a;
+        real_t const o_x = static_cast<real_t>(ix) * vec_a;
+        real_t const o_y = static_cast<real_t>(iy) * vec_a;
+        real_t const o_z = static_cast<real_t>(iz) * vec_a;
         cell.addAtom("Fe", {o_x, o_y, o_z});
         cell.addAtom("Fe", {o_x + vec_a / 2, o_y + vec_a / 2, o_z + vec_a / 2});
       }
@@ -176,8 +179,9 @@ TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   }
 
   // Total should sum to 1.0
-  real_t const sum = std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0);
-  EXPECT_NEAR(sum, 1.0, 1e-12);
+  real_t const sum =
+      static_cast<real_t>(std::accumulate(hist.partials.at("Total").begin(), hist.partials.at("Total").end(), 0.0));
+  EXPECT_NEAR(sum, static_cast<real_t>(1.0), static_cast<real_t>(1e-12));
 }
 
 // ============================================================================
@@ -208,14 +212,14 @@ TEST(CNACalculatorTests, TwoAtomsNoCommonNeighbors) {
 /// Running CNA twice on the same structure should produce identical results.
 TEST(CNACalculatorTests, DeterministicResults) {
   real_t const vec_a = 4.0;
-  real_t const lattice_size = 2.0 * vec_a;
+  real_t const lattice_size = static_cast<real_t>(2.0) * vec_a;
   correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
   for (int ix = 0; ix < 2; ++ix) {
     for (int iy = 0; iy < 2; ++iy) {
       for (int iz = 0; iz < 2; ++iz) {
-        real_t const o_x = ix * vec_a;
-        real_t const o_y = iy * vec_a;
-        real_t const o_z = iz * vec_a;
+        real_t const o_x = static_cast<real_t>(ix) * vec_a;
+        real_t const o_y = static_cast<real_t>(iy) * vec_a;
+        real_t const o_z = static_cast<real_t>(iz) * vec_a;
         cell.addAtom("Cu", {o_x, o_y, o_z});
         cell.addAtom("Cu", {o_x + vec_a / 2, o_y + vec_a / 2, o_z});
         cell.addAtom("Cu", {o_x + vec_a / 2, o_y, o_z + vec_a / 2});
