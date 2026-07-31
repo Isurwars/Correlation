@@ -785,8 +785,8 @@
     "semantic_hash": "507cd08bbd32afc09179e64e1d1a4699"
   },
   "src/readers/GromacsReader.cpp": {
-    "mtime": 1784868326.1072536,
-    "ast_hash": "d9e0f74be7aeb921c6b59158cc1836f6",
+    "mtime": 1785455241.2718902,
+    "ast_hash": "315d97427d1ac4d6852aa9d893500769",
     "semantic_hash": ""
   },
   "src/readers/LammpsDumpReader.cpp": {
@@ -805,8 +805,8 @@
     "semantic_hash": ""
   },
   "src/readers/PdbReader.cpp": {
-    "mtime": 1784868334.763152,
-    "ast_hash": "18e371d5bbc861e765da8f470064843f",
+    "mtime": 1785455238.063006,
+    "ast_hash": "4ab83e8fa71e3102c1d297b3907685bb",
     "semantic_hash": ""
   },
   "src/readers/QEReader.cpp": {
@@ -850,8 +850,8 @@
     "semantic_hash": "48a2da367c56f462c41e374617d27936"
   },
   "src/writers/HDF5Writer.cpp": {
-    "mtime": 1785426338.836887,
-    "ast_hash": "fc56880ae97e5f50a8d3c6b7ebcdb373",
+    "mtime": 1785435227.1169627,
+    "ast_hash": "e664e283927f17c13136ec6f4db4b7d5",
     "semantic_hash": ""
   },
   "src/writers/WriterFactory.cpp": {
@@ -1020,9 +1020,9 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/CNACalculatorTests.cpp": {
-    "mtime": 1784511461.9609895,
-    "ast_hash": "23af867df388064532b0b165a0eabc3e",
-    "semantic_hash": "23af867df388064532b0b165a0eabc3e"
+    "mtime": 1785455248.6796396,
+    "ast_hash": "fc602c365242b95ede6e1ec30ed7fe08",
+    "semantic_hash": ""
   },
   "tests/unit/calculators/CNCalculatorTests.cpp": {
     "mtime": 1784511218.5631003,
@@ -1285,8 +1285,8 @@
     "semantic_hash": ""
   },
   "tests/unit/utils/SIMDUtilsTests.cpp": {
-    "mtime": 1784868334.9699624,
-    "ast_hash": "aa42494207e9903f798426cd6a8ead7a",
+    "mtime": 1785455245.5017443,
+    "ast_hash": "6e5a3eeb13d32bf575201b9de5d985ad",
     "semantic_hash": ""
   },
   "tests/unit/writers/WriterFactoryTests.cpp": {
@@ -1845,8 +1845,8 @@
     "semantic_hash": ""
   },
   "tests/unit/math/ConstantsTests.cpp": {
-    "mtime": 1785425915.6204898,
-    "ast_hash": "16efcd7b3c25963dc5e030c4c4c51723",
+    "mtime": 1785435116.5741124,
+    "ast_hash": "47c4e71042c97801c91de37c5e07f9e3",
     "semantic_hash": ""
   },
   "tests/unit/plotters/PathFontTests.cpp": {

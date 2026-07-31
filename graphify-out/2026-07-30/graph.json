@@ -13813,8 +13813,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_plotters_plottypes_hpp_real_t",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "real_t"
     },
     {
@@ -13967,8 +13967,8 @@
       "source_location": "L61",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotconfig_effective_width",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": ".effective_width()"
     },
     {
@@ -13978,8 +13978,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "include_plotters_plottypes_plotconfig_effective_height",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": ".effective_height()"
     },
     {
@@ -14110,8 +14110,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram",
-      "community": 81,
-      "community_name": "Cell.cpp",
+      "community": 261,
+      "community_name": "MappedFile.hpp",
       "norm_label": "labeledhistogram"
     },
     {
@@ -14121,8 +14121,8 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram_label",
-      "community": 81,
-      "community_name": "Cell.cpp",
+      "community": 261,
+      "community_name": "MappedFile.hpp",
       "norm_label": "label"
     },
     {
@@ -14132,8 +14132,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "include_plotters_plottypes_labeledhistogram_hist",
-      "community": 81,
-      "community_name": "Cell.cpp",
+      "community": 261,
+      "community_name": "MappedFile.hpp",
       "norm_label": "hist"
     },
     {
@@ -14198,8 +14198,8 @@
       "source_location": "L212",
       "_origin": "ast",
       "id": "include_plotters_plottypes_datarange",
-      "community": 261,
-      "community_name": "MappedFile.hpp",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "datarange"
     },
     {
@@ -14209,8 +14209,8 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "include_plotters_plottypes_datarange_min",
-      "community": 261,
-      "community_name": "MappedFile.hpp",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "min"
     },
     {
@@ -14220,8 +14220,8 @@
       "source_location": "L214",
       "_origin": "ast",
       "id": "include_plotters_plottypes_datarange_max",
-      "community": 261,
-      "community_name": "MappedFile.hpp",
+      "community": 160,
+      "community_name": "CalculatorFactory",
       "norm_label": "max"
     },
     {
@@ -14319,8 +14319,8 @@
       "source_location": "L295",
       "_origin": "ast",
       "id": "include_plotters_plottypes_fmtscientific",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 77,
+      "community_name": "string",
       "norm_label": "fmtscientific()"
     },
     {
@@ -14352,8 +14352,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "include_plotters_svgcomparisonrenderer_hpp_vector",
-      "community": 81,
-      "community_name": "Cell.cpp",
+      "community": 11,
+      "community_name": "SIMDUtils.hpp",
       "norm_label": "vector"
     },
     {
@@ -14627,8 +14627,8 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "include_plotters_svgcomparisonrenderer_svgcomparisonrenderer_svgcomparisonrenderer",
-      "community": 81,
-      "community_name": "Cell.cpp",
+      "community": 11,
+      "community_name": "SIMDUtils.hpp",
       "norm_label": ".svgcomparisonrenderer()"
     },
     {
@@ -15232,8 +15232,8 @@
       "source_location": "L213",
       "_origin": "ast",
       "id": "include_plotters_svghistogramrenderer_svghistogramrenderer_drawgridandaxes",
-      "community": 68,
-      "community_name": "PlotConfig",
+      "community": 77,
+      "community_name": "string",
       "norm_label": ".drawgridandaxes()"
     },
     {
@@ -27489,8 +27489,8 @@
       "source_location": "L362",
       "_origin": "ast",
       "id": "src_plotters_pdfgen_ttf_hmtx_advance",
-      "community": 174,
-      "community_name": "pdf_add_image_data",
+      "community": 76,
+      "community_name": "GPUBond",
       "norm_label": "ttf_hmtx_advance()"
     },
     {
@@ -32403,7 +32403,7 @@
       "label": "writeHistogramToGroup()",
       "file_type": "code",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L28",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_writehistogramtogroup",
       "community": 104,
@@ -32436,7 +32436,7 @@
       "label": "HDF5Writer::writeHDF()",
       "file_type": "code",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L92",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "src_writers_hdf5writer_hdf5writer_writehdf",
       "community": 104,
@@ -40576,7 +40576,7 @@
       "label": "TEST()",
       "file_type": "code",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L16",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "tests_unit_math_constantstests_test",
       "community": 112,
@@ -50332,7 +50332,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer",
@@ -51040,7 +51040,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer",
@@ -52155,7 +52155,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -52876,7 +52876,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer",
@@ -54999,7 +54999,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L92",
+      "source_location": "L91",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -123344,7 +123344,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L92",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer",
@@ -123355,7 +123355,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer",
@@ -123367,7 +123367,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L100",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer_hdf5writer_writehdf",
@@ -123378,7 +123378,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -123390,7 +123390,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L28",
+      "source_location": "L27",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -123403,7 +123403,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/writers/HDF5Writer.cpp",
-      "source_location": "L92",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_writers_hdf5writer_hdf5writer_writehdf",
@@ -132748,7 +132748,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
       "source": "tests_unit_math_constantstests",
@@ -132759,7 +132759,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -132771,7 +132771,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -132783,7 +132783,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -132795,7 +132795,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L31",
+      "source_location": "L30",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -132807,7 +132807,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "tests/unit/math/ConstantsTests.cpp",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0,
       "context": "parameter_type",
       "_origin": "ast",
@@ -141246,5 +141246,5 @@
       "confidence_score": 1.0
     }
   ],
-  "built_at_commit": "53e2200d75309eac779002ce51b8346375e8c1a6"
+  "built_at_commit": "884db4d399d08a0d262a387c38f1c06cd9156bb6"
 }

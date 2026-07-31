@@ -6,6 +6,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+#ifdef CORRELATION_USE_ARROW
+
 #include "writers/ArrowWriter.hpp"
 #include "analysis/DistributionFunctions.hpp"
 #include "core/Cell.hpp"
@@ -50,3 +52,6 @@ TEST(ArrowWriterTests, WriteAllParquetCreatesOutputFile) {
 }
 
 } // namespace correlation::writers::testing
+
+#endif
+

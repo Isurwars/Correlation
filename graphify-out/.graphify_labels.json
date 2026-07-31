@@ -287,5 +287,11 @@
   "285": "CSVWriter::writeAllCSVs",
   "286": "PlotController::PlotController",
   "287": "CliParserTests",
-  "289": "Git Commit Standards Skill"
+  "288": "CalculatorFactory",
+  "289": "Git Commit Standards Skill",
+  "290": "MappedFile.hpp",
+  "291": "MappedFileTests",
+  "292": "CarReader.cpp",
+  "293": "XdatcarReaderTests",
+  "294": "TrajectoryAnalyzer::TrajectoryAnalyzer"
 }

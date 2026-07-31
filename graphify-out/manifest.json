@@ -785,8 +785,8 @@
     "semantic_hash": "507cd08bbd32afc09179e64e1d1a4699"
   },
   "src/readers/GromacsReader.cpp": {
-    "mtime": 1785455241.2718902,
-    "ast_hash": "315d97427d1ac4d6852aa9d893500769",
+    "mtime": 1785455396.550161,
+    "ast_hash": "b3b38bf62b7040c1756e933e68e26bc5",
     "semantic_hash": ""
   },
   "src/readers/LammpsDumpReader.cpp": {
@@ -1020,8 +1020,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/CNACalculatorTests.cpp": {
-    "mtime": 1785455248.6796396,
-    "ast_hash": "fc602c365242b95ede6e1ec30ed7fe08",
+    "mtime": 1785455544.4825168,
+    "ast_hash": "34b3c8d802bdcf114b0c537757e1d003",
     "semantic_hash": ""
   },
   "tests/unit/calculators/CNCalculatorTests.cpp": {
@@ -1855,8 +1855,8 @@
     "semantic_hash": ""
   },
   "tests/unit/writers/ArrowWriterTests.cpp": {
-    "mtime": 1785426193.2455041,
-    "ast_hash": "4402111641257dcd170c5f634ab2523f",
+    "mtime": 1785473540.2744393,
+    "ast_hash": "17098a6e89f4691a4660f4e530a1a9ed",
     "semantic_hash": ""
   }
 }
