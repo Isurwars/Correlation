@@ -8,7 +8,11 @@
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
+#include <cmath>
 #include <gtest/gtest.h>
+#include <numbers>
 #include <vector>
 
 namespace correlation::analysis {
@@ -26,6 +30,12 @@ protected:
   void updateTrajectory() {
     trajectory_ = correlation::core::Trajectory();
     trajectory_.addFrame(cell_);
+    trajectory_.precomputeBondCutoffs();
+  }
+
+  void updateTrajectory(const correlation::core::Cell &cell) {
+    trajectory_ = correlation::core::Trajectory();
+    trajectory_.addFrame(cell);
     trajectory_.precomputeBondCutoffs();
   }
 
@@ -240,6 +250,150 @@ TEST_F(XRDTests, CalculateFromSq) {
   EXPECT_FALSE(xrd_hist.bins.empty());
   EXPECT_TRUE(xrd_hist.partials.contains("Total"));
   EXPECT_EQ(xrd_hist.partials.at("Total").size(), xrd_hist.bins.size());
+}
+
+TEST_F(XRDTests, FCC_Copper_XRD) {
+  real_t const a = 3.615;
+  auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 3, 3, 3);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 8.0,
+      .r_bin_width = 0.02,
+  });
+
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 10.0,
+      .theta_max = 90.0,
+      .bin_width = 0.1,
+  });
+
+  const auto &hist = dists.getHistogram("XRD");
+  const auto &total_intensity = hist.partials.at("Total");
+
+  real_t max_intensity = 0.0;
+  real_t max_theta = 0.0;
+  for (size_t i = 0; i < total_intensity.size(); ++i) {
+    if (hist.bins[i] >= 40.0 && hist.bins[i] <= 46.0) {
+      if (total_intensity[i] > max_intensity) {
+        max_intensity = total_intensity[i];
+        max_theta = hist.bins[i];
+      }
+    }
+  }
+
+  EXPECT_GT(max_intensity, 0.0);
+  EXPECT_NEAR(max_theta, 43.3, 1.5);
+}
+
+TEST_F(XRDTests, BCC_Iron_XRD) {
+  real_t const a = 2.866;
+  auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 7.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 7.0,
+      .r_bin_width = 0.02,
+  });
+
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 10.0,
+      .theta_max = 90.0,
+      .bin_width = 0.1,
+  });
+
+  const auto &hist = dists.getHistogram("XRD");
+  const auto &total_intensity = hist.partials.at("Total");
+
+  real_t max_intensity = 0.0;
+  real_t max_theta = 0.0;
+  for (size_t i = 0; i < total_intensity.size(); ++i) {
+    if (hist.bins[i] >= 41.0 && hist.bins[i] <= 47.0) {
+      if (total_intensity[i] > max_intensity) {
+        max_intensity = total_intensity[i];
+        max_theta = hist.bins[i];
+      }
+    }
+  }
+
+  EXPECT_GT(max_intensity, 0.0);
+  EXPECT_NEAR(max_theta, 44.7, 1.5);
+}
+
+TEST_F(XRDTests, Diamond_Silicon_XRD) {
+  real_t const a = 5.431;
+  auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 8.0,
+      .r_bin_width = 0.02,
+  });
+
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 10.0,
+      .theta_max = 90.0,
+      .bin_width = 0.1,
+  });
+
+  const auto &hist = dists.getHistogram("XRD");
+  const auto &total_intensity = hist.partials.at("Total");
+
+  real_t max_intensity = 0.0;
+  real_t max_theta = 0.0;
+  for (size_t i = 0; i < total_intensity.size(); ++i) {
+    if (hist.bins[i] >= 26.0 && hist.bins[i] <= 31.0) {
+      if (total_intensity[i] > max_intensity) {
+        max_intensity = total_intensity[i];
+        max_theta = hist.bins[i];
+      }
+    }
+  }
+
+  EXPECT_GT(max_intensity, 0.0);
+  EXPECT_NEAR(max_theta, 28.4, 1.5);
+}
+
+TEST_F(XRDTests, NaCl_RockSalt_XRD) {
+  real_t const a = 5.64;
+  auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 8.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 8.0,
+      .r_bin_width = 0.02,
+  });
+
+  dists.calculateXRD({
+      .lambda = 1.5406,
+      .theta_min = 10.0,
+      .theta_max = 90.0,
+      .bin_width = 0.1,
+  });
+
+  const auto &hist = dists.getHistogram("XRD");
+  const auto &total_intensity = hist.partials.at("Total");
+
+  real_t max_intensity = 0.0;
+  real_t max_theta = 0.0;
+  for (size_t i = 0; i < total_intensity.size(); ++i) {
+    if (hist.bins[i] >= 29.0 && hist.bins[i] <= 34.0) {
+      if (total_intensity[i] > max_intensity) {
+        max_intensity = total_intensity[i];
+        max_theta = hist.bins[i];
+      }
+    }
+  }
+
+  EXPECT_GT(max_intensity, 0.0);
+  EXPECT_NEAR(max_theta, 31.7, 1.5);
 }
 
 } // namespace correlation::analysis

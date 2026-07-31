@@ -8,9 +8,13 @@
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
 #include <algorithm>
+#include <cmath>
 #include <gtest/gtest.h>
 #include <iterator>
+#include <numbers>
 #include <vector>
 
 namespace correlation::analysis {
@@ -364,5 +368,131 @@ TEST_F(RDFTests, VerifyAshcroftWeightsAreCorrect) {
     double const sum_G_partials = G_ArAr[i] + G_XeXe[i] + G_ArXe[i];
     EXPECT_NEAR(G_Total[i], sum_G_partials, 1e-6);
   }
+}
+
+TEST_F(RDFTests, FCC_Copper_RDF) {
+  real_t const a = 3.615;
+  auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 2, 2, 2);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.01,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  const auto &cu_cu = hist.partials.at("Cu-Cu");
+
+  real_t max_val1 = 0;
+  real_t peak_r1 = 0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.0 && hist.bins[i] <= 3.0) {
+      if (cu_cu[i] > max_val1) {
+        max_val1 = cu_cu[i];
+        peak_r1 = hist.bins[i];
+      }
+    }
+  }
+  EXPECT_NEAR(peak_r1, a / std::numbers::sqrt2, 0.02);
+  EXPECT_GT(max_val1, 1.0);
+}
+
+TEST_F(RDFTests, BCC_Iron_RDF) {
+  real_t const a = 2.866;
+  auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 4.5, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 4.5,
+      .r_bin_width = 0.01,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  const auto &fe_fe = hist.partials.at("Fe-Fe");
+
+  real_t max_val1 = 0;
+  real_t peak_r1 = 0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.0 && hist.bins[i] <= 2.7) {
+      if (fe_fe[i] > max_val1) {
+        max_val1 = fe_fe[i];
+        peak_r1 = hist.bins[i];
+      }
+    }
+  }
+  EXPECT_NEAR(peak_r1, a * std::sqrt(3.0) / 2.0, 0.02);
+  EXPECT_GT(max_val1, 1.0);
+}
+
+TEST_F(RDFTests, Diamond_Silicon_RDF) {
+  real_t const a = 5.431;
+  auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.01,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  const auto &si_si = hist.partials.at("Si-Si");
+
+  real_t max_val1 = 0;
+  real_t peak_r1 = 0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.0 && hist.bins[i] <= 2.6) {
+      if (si_si[i] > max_val1) {
+        max_val1 = si_si[i];
+        peak_r1 = hist.bins[i];
+      }
+    }
+  }
+  EXPECT_NEAR(peak_r1, a * std::sqrt(3.0) / 4.0, 0.02);
+  EXPECT_GT(max_val1, 1.0);
+}
+
+TEST_F(RDFTests, NaCl_RockSalt_RDF) {
+  real_t const a = 5.64;
+  auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
+  updateTrajectory(cell);
+
+  DistributionFunctions dists(cell, 5.0, trajectory_.getBondCutoffsSQ());
+  dists.calculateRDF({
+      .r_max = 5.0,
+      .r_bin_width = 0.01,
+  });
+
+  const auto &hist = dists.getHistogram("g_r");
+  const auto &nacl = hist.partials.at("Na-Cl");
+  const auto &nana = hist.partials.at("Na-Na");
+
+  real_t max_nacl = 0;
+  real_t peak_nacl = 0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.5 && hist.bins[i] <= 3.2) {
+      if (nacl[i] > max_nacl) {
+        max_nacl = nacl[i];
+        peak_nacl = hist.bins[i];
+      }
+    }
+  }
+  EXPECT_NEAR(peak_nacl, a / 2.0, 0.02);
+  EXPECT_GT(max_nacl, 1.0);
+
+  real_t max_nana = 0;
+  real_t peak_nana = 0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 3.6 && hist.bins[i] <= 4.4) {
+      if (nana[i] > max_nana) {
+        max_nana = nana[i];
+        peak_nana = hist.bins[i];
+      }
+    }
+  }
+  EXPECT_NEAR(peak_nana, a / std::numbers::sqrt2, 0.02);
+  EXPECT_GT(max_nana, 1.0);
 }
 } // namespace correlation::analysis

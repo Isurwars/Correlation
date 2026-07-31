@@ -8,7 +8,11 @@
 #include "core/Cell.hpp"
 #include "math/Precision.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
+#include <cmath>
 #include <gtest/gtest.h>
+#include <numbers>
 
 namespace correlation::analysis {
 namespace {
@@ -198,5 +202,107 @@ TEST_F(StructureFactorCalculatorTests, CalculateSF_InvalidInputsThrow) {
 TEST_F(StructureFactorCalculatorTests, CalculateSF_EmptyCellThrows) {
   correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
   EXPECT_THROW(DistributionFunctions dists(cell), std::invalid_argument);
+}
+
+TEST_F(StructureFactorCalculatorTests, FCC_Copper_SQ) {
+  real_t const a = 3.615;
+  auto cell = correlation::testing::crystals::createFCCCell(a, "Cu", 2, 2, 2);
+
+  DistributionFunctions dists(cell);
+  correlation::calculators::StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 6.0;
+  settings.q_bin_width = 0.05;
+
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
+  const auto &sq_total = hist.partials.at("Total");
+
+  // FCC (111) peak at Q = 2*pi/a * sqrt(3) ~ 3.01 A^-1
+  real_t peak_sq = 0.0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.8 && hist.bins[i] <= 3.2) {
+      peak_sq = std::max(peak_sq, sq_total[i]);
+    }
+  }
+  EXPECT_GT(peak_sq, 2.0);
+}
+
+TEST_F(StructureFactorCalculatorTests, BCC_Iron_SQ) {
+  real_t const a = 2.866;
+  auto cell = correlation::testing::crystals::createBCCCell(a, "Fe", 3, 3, 3);
+
+  DistributionFunctions dists(cell);
+  correlation::calculators::StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 6.0;
+  settings.q_bin_width = 0.05;
+
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
+  const auto &sq_total = hist.partials.at("Total");
+
+  // BCC (110) peak at Q = 2*pi/a * sqrt(2) ~ 3.10 A^-1
+  real_t peak_sq = 0.0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.9 && hist.bins[i] <= 3.3) {
+      peak_sq = std::max(peak_sq, sq_total[i]);
+    }
+  }
+  EXPECT_GT(peak_sq, 2.0);
+}
+
+TEST_F(StructureFactorCalculatorTests, Diamond_Silicon_SQ) {
+  real_t const a = 5.431;
+  auto cell = correlation::testing::crystals::createDiamondCell(a, "Si", 2, 2, 2);
+
+  DistributionFunctions dists(cell);
+  correlation::calculators::StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 5.0;
+  settings.q_bin_width = 0.05;
+
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
+  const auto &sq_total = hist.partials.at("Total");
+
+  // Diamond (111) peak at Q = 2*pi/a * sqrt(3) ~ 2.00 A^-1
+  real_t peak_sq = 0.0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 1.8 && hist.bins[i] <= 2.2) {
+      peak_sq = std::max(peak_sq, sq_total[i]);
+    }
+  }
+  EXPECT_GT(peak_sq, 2.0);
+}
+
+TEST_F(StructureFactorCalculatorTests, NaCl_RockSalt_SQ) {
+  real_t const a = 5.64;
+  auto cell = correlation::testing::crystals::createNaClCell(a, "Na", "Cl", 2, 2, 2);
+
+  DistributionFunctions dists(cell);
+  correlation::calculators::StructureFactorCalculator calc;
+  AnalysisSettings settings;
+  settings.q_max = 5.0;
+  settings.q_bin_width = 0.05;
+
+  calc.calculateFrame(dists, settings);
+  const auto &hist = dists.getHistogram("S_q");
+
+  EXPECT_TRUE(hist.partials.count("Na-Na"));
+  EXPECT_TRUE(hist.partials.count("Cl-Cl"));
+  EXPECT_TRUE(hist.partials.count("Cl-Na") || hist.partials.count("Na-Cl"));
+  EXPECT_TRUE(hist.partials.count("Total"));
+
+  const auto &sq_total = hist.partials.at("Total");
+
+  // NaCl (200) peak at Q = 2*pi/a * sqrt(4) ~ 2.23 A^-1
+  real_t peak_sq = 0.0;
+  for (size_t i = 0; i < hist.bins.size(); ++i) {
+    if (hist.bins[i] >= 2.05 && hist.bins[i] <= 2.4) {
+      peak_sq = std::max(peak_sq, sq_total[i]);
+    }
+  }
+  EXPECT_GT(peak_sq, 1.5);
 }
 } // namespace correlation::analysis
