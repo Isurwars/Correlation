@@ -7,6 +7,8 @@
 #include "calculators/CNCalculator.hpp"
 #include "core/Cell.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
 #include <gtest/gtest.h>
 #include <vector>
 
@@ -39,16 +41,16 @@ TEST(CNCalculatorTests, CalculatesCorrectCoordinationNumbers) {
 
   // Assert
   // Bin index 1 corresponds to coordination number 1
-  ASSERT_TRUE(hist.partials.find("C-H") != hist.partials.end());
+  ASSERT_TRUE(hist.partials.contains("C-H"));
   EXPECT_DOUBLE_EQ(hist.partials.at("C-H")[1], 1.0);
 
-  ASSERT_TRUE(hist.partials.find("H-C") != hist.partials.end());
+  ASSERT_TRUE(hist.partials.contains("H-C"));
   EXPECT_DOUBLE_EQ(hist.partials.at("H-C")[1], 1.0);
 
-  ASSERT_TRUE(hist.partials.find("C-Any") != hist.partials.end());
+  ASSERT_TRUE(hist.partials.contains("C-Any"));
   EXPECT_DOUBLE_EQ(hist.partials.at("C-Any")[1], 1.0);
 
-  ASSERT_TRUE(hist.partials.find("Any-Any") != hist.partials.end());
+  ASSERT_TRUE(hist.partials.contains("Any-Any"));
   EXPECT_DOUBLE_EQ(hist.partials.at("Any-Any")[1], 2.0); // 1 C + 1 H = 2 atoms with CN=1
 }
 
@@ -68,22 +70,18 @@ TEST(CNCalculatorTests, IsolatedAtomHasZeroCoordination) {
   // With no neighbors, the CN calculator doesn't create an "Ar-Ar" key at all
   // (it only creates keys for atoms that HAVE neighbors of a given type).
   // But "Any-Any" is always created and should be all zeros for an isolated atom.
-  ASSERT_TRUE(hist.partials.find("Any-Any") != hist.partials.end());
+  ASSERT_TRUE(hist.partials.contains("Any-Any"));
   const auto &any_any = hist.partials.at("Any-Any");
   real_t total = 0.0;
-  for (real_t const v : any_any) {
-    total += v;
+  for (real_t const &value : any_any) {
+    total += value;
   }
   EXPECT_DOUBLE_EQ(total, 0.0) << "Isolated atom should contribute no CN counts";
 }
 
 TEST(CNCalculatorTests, HighCoordinationFCC) {
   // FCC unit cell: each atom has 12 nearest neighbors
-  Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Cu", {0.0, 0.0, 0.0});
-  cell.addAtom("Cu", {0.5, 0.5, 0.0});
-  cell.addAtom("Cu", {0.5, 0.0, 0.5});
-  cell.addAtom("Cu", {0.0, 0.5, 0.5});
+  auto cell = correlation::testing::crystals::createFCCCell(1.0, "Cu", 1, 1, 1);
 
   // FCC nearest-neighbor distance = a/sqrt(2) ≈ 0.707
   // Use cutoff slightly above that
@@ -95,7 +93,7 @@ TEST(CNCalculatorTests, HighCoordinationFCC) {
   auto hist = CNCalculator::calculate(cell, &analyzer);
 
   // In FCC, each atom should have CN=12
-  ASSERT_TRUE(hist.partials.find("Cu-Cu") != hist.partials.end());
+  ASSERT_TRUE(hist.partials.contains("Cu-Cu"));
   const auto &cu_cn = hist.partials.at("Cu-Cu");
   ASSERT_GT(cu_cn.size(), 12);
   // All 4 atoms should have CN=12

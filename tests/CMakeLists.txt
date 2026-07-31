@@ -44,6 +44,7 @@ add_executable(correlation_unit_tests
     unit/calculators/vDoSTests.cpp
     unit/calculators/DADTests.cpp
     unit/calculators/RDTests.cpp
+    unit/calculators/RingCellTests.cpp
     unit/calculators/StructureFactorCalculatorTests.cpp
     unit/calculators/SteinhardtCalculatorTests.cpp
     unit/calculators/CNACalculatorTests.cpp

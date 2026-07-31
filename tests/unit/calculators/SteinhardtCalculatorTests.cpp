@@ -7,8 +7,9 @@
 #include "calculators/SteinhardtCalculator.hpp"
 #include "core/Cell.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
 #include <gtest/gtest.h>
-#include <numbers>
 
 namespace correlation::analysis {
 namespace {
@@ -54,7 +55,9 @@ protected:
 };
 
 TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
-  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
+  auto cell = correlation::testing::crystals::createSimpleCubicCell(1.0, "Ar", 1, 1, 1);
+  // Shift atom to center (0.5, 0.5, 0.5) for exact fixture parity
+  cell = correlation::core::Cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
   cell.addAtom("Ar", {0.5, 0.5, 0.5});
 
   // ignore_periodic_self_interactions = false
@@ -65,9 +68,7 @@ TEST_F(SteinhardtCalculatorTests, SimpleCubic) {
 }
 
 TEST_F(SteinhardtCalculatorTests, BCC) {
-  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {0.0, 0.0, 0.0});
-  cell.addAtom("Ar", {0.5, 0.5, 0.5});
+  auto cell = correlation::testing::crystals::createBCCCell(1.0, "Ar", 1, 1, 1);
 
   StructureAnalyzer const analyzer(cell, 1.1, {{1.1 * 1.1}},
                                    false); // dist = sqrt(0.75) ~ 0.866 and 1.0
@@ -77,11 +78,7 @@ TEST_F(SteinhardtCalculatorTests, BCC) {
 }
 
 TEST_F(SteinhardtCalculatorTests, FCC) {
-  correlation::core::Cell cell({1.0, 1.0, 1.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {0.0, 0.0, 0.0});
-  cell.addAtom("Ar", {0.5, 0.5, 0.0});
-  cell.addAtom("Ar", {0.5, 0.0, 0.5});
-  cell.addAtom("Ar", {0.0, 0.5, 0.5});
+  auto cell = correlation::testing::crystals::createFCCCell(1.0, "Ar", 1, 1, 1);
 
   StructureAnalyzer const analyzer(cell, 0.8, {{0.8 * 0.8}},
                                    false); // dist = sqrt(0.5) ~ 0.707
@@ -91,43 +88,8 @@ TEST_F(SteinhardtCalculatorTests, FCC) {
 }
 
 TEST_F(SteinhardtCalculatorTests, Icosahedral) {
-  correlation::core::Cell cell({10.0, 10.0, 10.0, 90.0, 90.0, 90.0});
-  cell.addAtom("Ar", {5.0, 5.0, 5.0});
-
-  real_t const phi = std::numbers::phi;
-  real_t const scale = static_cast<real_t>(1.0 / std::sqrt(1.0 + phi * phi)); // Normalize dist to 1.0
-  real_t const phi_scale = phi * scale;
-
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) + scale,
-                                                        static_cast<real_t>(5.0) + phi_scale));
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) + scale,
-                                                        static_cast<real_t>(5.0) - phi_scale));
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) - scale,
-                                                        static_cast<real_t>(5.0) + phi_scale));
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0), static_cast<real_t>(5.0) - scale,
-                                                        static_cast<real_t>(5.0) - phi_scale));
-
-  cell.addAtom("Ar",
-               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + scale,
-                                                  static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0)));
-  cell.addAtom("Ar",
-               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + scale,
-                                                  static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0)));
-  cell.addAtom("Ar",
-               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - scale,
-                                                  static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0)));
-  cell.addAtom("Ar",
-               correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - scale,
-                                                  static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0)));
-
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0),
-                                                        static_cast<real_t>(5.0) + scale));
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) + phi_scale, static_cast<real_t>(5.0),
-                                                        static_cast<real_t>(5.0) - scale));
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0),
-                                                        static_cast<real_t>(5.0) + scale));
-  cell.addAtom("Ar", correlation::math::Vector3<real_t>(static_cast<real_t>(5.0) - phi_scale, static_cast<real_t>(5.0),
-                                                        static_cast<real_t>(5.0) - scale));
+  auto cell = correlation::testing::crystals::createIcosahedralClusterCell(
+      {.center_elem = "Ar", .shell_elem = "Ar", .r_bond = 1.0, .box_size = 10.0});
 
   // Edge length is ~1.05. Using cutoff 1.02 ensures surface atoms only see
   // center. Thus they will have 1 neighbor, Ql=1.0, and be excluded from

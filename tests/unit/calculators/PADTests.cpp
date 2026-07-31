@@ -9,6 +9,8 @@
 #include "core/Cell.hpp"
 #include "core/Trajectory.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
 #include "math/Constants.hpp"
 #include "math/Precision.hpp"
 #include <algorithm>
@@ -72,12 +74,8 @@ public:
 } // namespace
 
 TEST_F(PADTests_AngleReproduction, CalculatePAD) {
-  // Water molecule angle 104.5ish
-  correlation::core::Cell water({10, 10, 10, 90, 90, 90});
-  water.addAtom("O", {5, 5, 5});
-  water.addAtom("H", {6, 5, 5});
-  real_t const angRad = static_cast<real_t>(104.5) * correlation::math::deg_to_rad;
-  water.addAtom("H", {5 + std::cos(angRad), 5 + std::sin(angRad), 5.0});
+  auto water = correlation::testing::crystals::createWaterMoleculeCell(
+      {.O_pos = {5.0, 5.0, 5.0}, .r_OH = 1.0, .angle_HOH_deg = 104.5, .box_size = 10.0});
 
   updateTrajectory(water);
   DistributionFunctions dists(water, 2.0, trajectory_.getBondCutoffsSQ());

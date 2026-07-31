@@ -8,6 +8,8 @@
 #include "core/Cell.hpp"
 #include "math/Precision.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
 #include <gtest/gtest.h>
 
 namespace correlation::calculators {
@@ -110,23 +112,7 @@ TEST(CNACalculatorTests, HistogramMetadataIsPopulated) {
 /// the calculator runs correctly on a realistic periodic FCC system.
 TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
   real_t const vec_a = 4.0;
-  real_t const lattice_size = static_cast<real_t>(2.0) * vec_a; // 2×2×2 supercell
-  correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
-
-  // Generate 2×2×2 FCC supercell (4 basis atoms × 8 unit cells = 32 atoms)
-  for (int ix = 0; ix < 2; ++ix) {
-    for (int iy = 0; iy < 2; ++iy) {
-      for (int iz = 0; iz < 2; ++iz) {
-        real_t const o_x = static_cast<real_t>(ix) * vec_a;
-        real_t const o_y = static_cast<real_t>(iy) * vec_a;
-        real_t const o_z = static_cast<real_t>(iz) * vec_a;
-        cell.addAtom("Al", {o_x, o_y, o_z});
-        cell.addAtom("Al", {o_x + vec_a / 2, o_y + vec_a / 2, o_z});
-        cell.addAtom("Al", {o_x + vec_a / 2, o_y, o_z + vec_a / 2});
-        cell.addAtom("Al", {o_x, o_y + vec_a / 2, o_z + vec_a / 2});
-      }
-    }
-  }
+  auto cell = correlation::testing::crystals::createFCCCell(vec_a, "Al", 2, 2, 2);
 
   // 1st NN distance = a/sqrt(2) ≈ 2.83; cutoff between 1st and 2nd NN
   real_t const cutoff = 3.2;
@@ -151,20 +137,7 @@ TEST(CNACalculatorTests, FCC_Supercell_ProducesNonEmptyResult) {
 /// resulting CNA indices depend on the full neighbor topology.
 TEST(CNACalculatorTests, BCC_Supercell_ProducesOutput) {
   real_t const vec_a = static_cast<real_t>(3.0);
-  real_t const lattice_size = static_cast<real_t>(3.0) * vec_a;
-  correlation::core::Cell cell({lattice_size, lattice_size, lattice_size, 90.0, 90.0, 90.0});
-
-  for (int ix = 0; ix < 3; ++ix) {
-    for (int iy = 0; iy < 3; ++iy) {
-      for (int iz = 0; iz < 3; ++iz) {
-        real_t const o_x = static_cast<real_t>(ix) * vec_a;
-        real_t const o_y = static_cast<real_t>(iy) * vec_a;
-        real_t const o_z = static_cast<real_t>(iz) * vec_a;
-        cell.addAtom("Fe", {o_x, o_y, o_z});
-        cell.addAtom("Fe", {o_x + vec_a / 2, o_y + vec_a / 2, o_z + vec_a / 2});
-      }
-    }
-  }
+  auto cell = correlation::testing::crystals::createBCCCell(vec_a, "Fe", 3, 3, 3);
 
   // Include both 1st NN (a*sqrt(3)/2 ≈ 2.598) and 2nd NN (a = 3.0)
   real_t const cutoff = 3.1;

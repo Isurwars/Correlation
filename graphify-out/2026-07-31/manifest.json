@@ -1090,8 +1090,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDFTests.cpp": {
-    "mtime": 1784868334.9266522,
-    "ast_hash": "80c4c3819bd4a72f480610cf5f69b950",
+    "mtime": 1785516943.7052433,
+    "ast_hash": "f58d700c0326c408df73321c1be41a45",
     "semantic_hash": ""
   },
   "tests/unit/calculators/RDTests.cpp": {
@@ -1110,8 +1110,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/StructureFactorCalculatorTests.cpp": {
-    "mtime": 1784868326.1082535,
-    "ast_hash": "3bd62611af41e62fe35615cc6e543bca",
+    "mtime": 1785517009.2370815,
+    "ast_hash": "13b3dff86280cd68157d305cac56db6c",
     "semantic_hash": ""
   },
   "tests/unit/calculators/VACFTests.cpp": {
@@ -1125,8 +1125,8 @@
     "semantic_hash": ""
   },
   "tests/unit/calculators/XRDTests.cpp": {
-    "mtime": 1785371869.1721528,
-    "ast_hash": "3de865d2d7a0711cb4ad9d22f42c7eee",
+    "mtime": 1785516969.7300851,
+    "ast_hash": "b1c8d02347abbd44f856f6cf71c72cbd",
     "semantic_hash": ""
   },
   "tests/unit/calculators/vDoSTests.cpp": {
@@ -1857,6 +1857,11 @@
   "tests/unit/writers/ArrowWriterTests.cpp": {
     "mtime": 1785473540.2744393,
     "ast_hash": "17098a6e89f4691a4660f4e530a1a9ed",
+    "semantic_hash": ""
+  },
+  "tests/CrystalTestHelper.hpp": {
+    "mtime": 1785516961.406133,
+    "ast_hash": "e00459781e644f9aee06b3511c6fbebf",
     "semantic_hash": ""
   }
 }

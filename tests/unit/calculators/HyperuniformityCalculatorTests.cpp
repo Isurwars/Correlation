@@ -7,6 +7,8 @@
 #include "calculators/HyperuniformityCalculator.hpp"
 #include "core/Cell.hpp"
 
+#include "../../CrystalTestHelper.hpp"
+
 #include <cmath>
 #include <gtest/gtest.h>
 #include <random>
@@ -86,19 +88,8 @@ template <typename T, typename U>
  */
 correlation::core::Cell createSCLattice(real_t box_length, int atoms_per_axis) {
   real_t const lattice_constant = box_length / static_cast<real_t>(atoms_per_axis);
-  correlation::core::Cell cell({box_length, box_length, box_length, static_cast<real_t>(90.0),
-                                static_cast<real_t>(90.0), static_cast<real_t>(90.0)});
-  for (int ix = 0; ix < atoms_per_axis; ++ix) {
-    for (int iy = 0; iy < atoms_per_axis; ++iy) {
-      for (int iz = 0; iz < atoms_per_axis; ++iz) {
-        real_t x_pos = (static_cast<real_t>(ix) + static_cast<real_t>(0.5)) * lattice_constant;
-        real_t y_pos = (static_cast<real_t>(iy) + static_cast<real_t>(0.5)) * lattice_constant;
-        real_t z_pos = (static_cast<real_t>(iz) + static_cast<real_t>(0.5)) * lattice_constant;
-        cell.addAtom("Ar", {x_pos, y_pos, z_pos});
-      }
-    }
-  }
-  return cell;
+  return correlation::testing::crystals::createSimpleCubicCell(lattice_constant, "Ar", atoms_per_axis, atoms_per_axis,
+                                                               atoms_per_axis);
 }
 
 /**
