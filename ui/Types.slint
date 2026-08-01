@@ -93,3 +93,22 @@ export struct TableRow {
     values: [string],
 }
 
+export struct CurveToggleItem {
+    id: int,
+    label: string,
+    color_hex: string,
+    visible: bool,
+    is_partial: bool,
+    is_pinned: bool,
+}
+
+export struct ComparisonCurveData {
+    id: int,
+    label: string,
+    color_hex: string,
+    dash_style: int,
+    visible: bool,
+    file_path: string,
+}
+
+

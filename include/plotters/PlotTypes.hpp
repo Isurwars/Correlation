@@ -39,6 +39,7 @@ struct PlotConfig {
   bool show_grid = true;                      ///< Whether to render background grid lines.
   bool show_markers = false;                  ///< Whether to render data point markers (dots).
   bool fill_area = false;                     ///< Whether to render matching gradient fills under the curves.
+  bool show_difference_curve = false;         ///< Toggle overlaid absolute difference curve Y_diff = Y_ref - Y_target.
 
   // Publication settings
   real_t font_scale = static_cast<real_t>(1.0); ///< Multiplier for all font sizes
@@ -116,12 +117,52 @@ enum class TextAnchor : std::uint8_t {
 };
 
 /**
+ * @brief Custom rendering style for individual comparison curves.
+ */
+struct CurveStyle {
+  std::string color_hex;      ///< Custom hex color string (e.g. "#E63946"). Empty uses default palette.
+  float stroke_width = 2.0f;  ///< Stroke line thickness in px.
+  int dash_style = 0;         ///< Dash pattern style (0: Solid, 1: Dashed, 2: Dotted).
+  bool visible = true;        ///< Visibility toggle flag.
+};
+
+/**
  * @brief A labeled histogram for comparison rendering.
  */
 struct LabeledHistogram {
   std::string label;                            ///< Run / dataset label.
   const correlation::analysis::Histogram *hist; ///< Pointer to histogram data.
+  CurveStyle style{};                           ///< Per-curve custom style settings.
+  bool is_difference = false;                   ///< Flag indicating if this is an overlaid difference curve.
 };
+
+/**
+ * @brief Samples a 1D dataset y(x) at point x using linear interpolation with boundary clamping to [x_min, x_max].
+ */
+inline real_t sampleHistogramClamped(const std::vector<real_t> &x_bins, const std::vector<real_t> &y_vals, real_t x) {
+  if (x_bins.empty() || y_vals.empty()) {
+    return static_cast<real_t>(0.0);
+  }
+  if (x <= x_bins.front()) {
+    return y_vals.front();
+  }
+  if (x >= x_bins.back()) {
+    return y_vals.back();
+  }
+  auto it = std::lower_bound(x_bins.begin(), x_bins.end(), x);
+  std::size_t idx = std::distance(x_bins.begin(), it);
+  if (idx == 0) {
+    return y_vals[0];
+  }
+  real_t x0 = x_bins[idx - 1];
+  real_t x1 = x_bins[idx];
+  real_t y0 = y_vals[idx - 1];
+  real_t y1 = y_vals[idx];
+  if (std::abs(x1 - x0) < static_cast<real_t>(1e-12)) {
+    return y0;
+  }
+  return y0 + (x - x0) / (x1 - x0) * (y1 - y0);
+}
 
 /**
  * @brief Renders text as a filled SVG path using the Roboto outline font.

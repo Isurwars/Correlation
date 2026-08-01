@@ -27,6 +27,8 @@ import {
     AppErrors,
     ExportConfig,
     TableRow,
+    CurveToggleItem,
+    ComparisonCurveData,
 } from "Types.slint";
 
 import { AppHeader } from "nav/AppHeader.slint";
@@ -46,6 +48,8 @@ export {
     AppErrors,
     ExportConfig,
     TableRow,
+    CurveToggleItem,
+    ComparisonCurveData,
 }
 
 // ============================================================================
@@ -189,6 +193,7 @@ export component AppWindow inherits Window {
 
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
+    in property <[CurveToggleItem]> curve_toggle_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
     out property <bool> is_dark: Palette.color_scheme == ColorScheme.dark;
@@ -209,6 +214,7 @@ export component AppWindow inherits Window {
     callback cancel_analysis();
     callback write_files();
     callback select_plot(int);
+    callback toggle_curve_visibility(int, bool);
     callback toggle_calculator(string, bool);
     callback save_plot();
     callback pin_run();
@@ -478,6 +484,7 @@ export component AppWindow inherits Window {
                         horizontal-stretch: 1;
                         preview_plot <=> root.preview_plot;
                         plot_items <=> root.plot_items;
+                        curve_toggle_items: root.curve_toggle_items;
                         selected_plot_index <=> root.selected_plot_index;
                         pinned_runs_count: root.pinned_runs_count;
 
@@ -486,6 +493,9 @@ export component AppWindow inherits Window {
 
                         plot_selected(idx) => {
                             root.select_plot(idx);
+                        }
+                        toggle_curve_visibility(id, vis) => {
+                            root.toggle_curve_visibility(id, vis);
                         }
                         save_plot => {
                             root.save_plot();

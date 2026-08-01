@@ -264,10 +264,11 @@ void PlotController::requestPlotUpdate(int index, bool immediate) {
   data.hover = hover;
   data.ashcroft_weights = backend_.getAshcroftWeights();
 
+  data.comparison_hists.push_back({.label = "Current", .hist = &data.active_hist});
   for (const auto &pinned_run : pinned_runs_) {
     auto hist_it = pinned_run.histograms.find(name);
     if (hist_it != pinned_run.histograms.end()) {
-      data.comparison_hists.emplace_back(pinned_run.label, hist_it->second);
+      data.comparison_hists.push_back({.label = pinned_run.label, .hist = &hist_it->second});
     }
   }
 
@@ -348,25 +349,20 @@ bool PlotController::isPlotCacheHit(int index, const correlation::plotters::Plot
 }
 
 void PlotController::executePlotRender(RenderTaskData data) {
-  render_thread_ = std::thread([this, data]() {
+  render_thread_ = std::thread([this, data = std::move(data)]() mutable {
+    data.config.show_difference_curve = show_difference_curve_;
     std::string svg;
-    if (data.comparison_hists.empty()) {
+    if (data.comparison_hists.size() <= 1) {
       svg =
           correlation::plotters::renderHistogramAsSvg(data.active_hist, data.config, data.hover, data.ashcroft_weights);
     } else {
-      std::vector<correlation::plotters::LabeledHistogram> datasets;
-      datasets.push_back({"Current", &data.active_hist});
-      for (const auto &pair : data.comparison_hists) {
-        datasets.push_back({pair.first, &pair.second});
-      }
-
       std::string key = "Total";
       const auto &partials =
           data.active_hist.smoothed_partials.empty() ? data.active_hist.partials : data.active_hist.smoothed_partials;
       if (!partials.empty() && !partials.contains(key)) {
         key = partials.begin()->first;
       }
-      svg = correlation::plotters::renderComparisonSvg(datasets, key, data.config, data.hover);
+      svg = correlation::plotters::renderComparisonSvg(data.comparison_hists, key, data.config, data.hover);
     }
 
     static std::atomic<uint64_t> file_counter{0};
@@ -531,6 +527,27 @@ void PlotController::handleClearPinnedRuns() {
   slint::invoke_from_event_loop([this]() {
     window_.set_pinned_runs_count(0);
 
+    int current_idx = window_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      requestPlotUpdate(current_idx, true);
+    }
+  });
+}
+
+void PlotController::handleToggleCurveVisibility(int id, bool visible) {
+  (void)id;
+  (void)visible;
+  slint::invoke_from_event_loop([this]() {
+    int current_idx = window_.get_selected_plot_index();
+    if (current_idx >= 0) {
+      requestPlotUpdate(current_idx, true);
+    }
+  });
+}
+
+void PlotController::handleToggleDifferencePlot(bool show_difference) {
+  show_difference_curve_ = show_difference;
+  slint::invoke_from_event_loop([this]() {
     int current_idx = window_.get_selected_plot_index();
     if (current_idx >= 0) {
       requestPlotUpdate(current_idx, true);

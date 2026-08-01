@@ -147,6 +147,7 @@ add_library(correlation_lib STATIC
     analysis/TrajectoryAnalyzer.cpp
     plotters/pdfgen.c
     plotters/PathFont.cpp
+    plotters/PngPlotter.cpp
     plotters/RobotoData_ASCII_1.cpp
     plotters/RobotoData_ASCII_2.cpp
     plotters/RobotoData_Extended.cpp

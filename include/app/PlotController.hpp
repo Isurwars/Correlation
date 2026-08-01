@@ -95,6 +95,19 @@ public:
    */
   void handleUpdateTimer();
 
+  /**
+   * @brief Handles toggling curve visibility from the Slint preview checklist.
+   * @param[in] id Curve identifier index.
+   * @param[in] visible Target visibility state.
+   */
+  void handleToggleCurveVisibility(int id, bool visible);
+
+  /**
+   * @brief Handles toggling overlaid absolute difference curve Y_diff rendering.
+   * @param[in] show_difference Target visibility state for Y_diff.
+   */
+  void handleToggleDifferencePlot(bool show_difference);
+
 private:
   ::AppWindow &window_;
   AppBackend &backend_;
@@ -103,7 +116,7 @@ private:
 
   struct RenderTaskData {
     correlation::analysis::Histogram active_hist;
-    std::vector<std::pair<std::string, correlation::analysis::Histogram>> comparison_hists;
+    std::vector<correlation::plotters::LabeledHistogram> comparison_hists;
     correlation::plotters::PlotConfig config;
     correlation::plotters::HoverInfo hover;
     std::map<std::string, real_t> ashcroft_weights;
@@ -111,6 +124,9 @@ private:
 
   std::atomic<bool> is_rendering_{false};
   std::atomic<bool> render_pending_{false};
+  bool has_pending_task_{false};
+  RenderTaskData pending_task_data_;
+  std::mutex pending_task_mutex_;
 
   std::vector<std::string> available_plot_keys_;
 
@@ -119,6 +135,9 @@ private:
     std::map<std::string, correlation::analysis::Histogram> histograms;
   };
   std::vector<PinnedRun> pinned_runs_;
+
+  std::map<std::string, bool> curve_visibility_map_;
+  bool show_difference_curve_{false};
 
   float last_mouse_x_ = -1.0F;
   float last_mouse_y_ = -1.0F;

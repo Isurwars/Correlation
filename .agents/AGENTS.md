@@ -39,6 +39,7 @@
 - Use `// ...` placeholders extensively. Never print untouched structural logic or boilerplate code blocks.
 - Prefer tables for multi-variable comparisons. Bold the primary technical anchor word in every bullet point.
 - Use strict **[File:Line] -> [Error Type] -> [Fix Action]** format for diagnostics.
+- **See rule:** [picky-interrogation-protocol](file:///home/isurwars/Projects/Correlation/.agents/rules/picky-interrogation-protocol.md) for senior developer interaction, picky requirement extraction, and architectural recommendations.
 - See [caveman-communication](file:///home/isurwars/Projects/Correlation/.agents/skills/caveman-communication/SKILL.md) for the full token economy protocol.
 
 ## 6. Delegation & Skill Invocation

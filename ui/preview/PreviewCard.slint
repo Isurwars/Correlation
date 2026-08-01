@@ -15,7 +15,7 @@ import {
     TabItem,
 } from "../material/material.slint";
 import { ExportSettingsCard } from "ExportSettingsCard.slint";
-import { TableRow } from "../Types.slint";
+import { TableRow, CurveToggleItem } from "../Types.slint";
 
 // ============================================================================
 
@@ -43,6 +43,7 @@ export component PreviewCard inherits FilledCard {
     in property <bool> analysis_done: false;
     in property <image> preview_plot;
     in property <[MenuItem]> plot_items: [];
+    in property <[CurveToggleItem]> curve_toggle_items: [];
     in-out property <int> selected_plot_index: -1;
     in property <int> pinned_runs_count: 0;
 
@@ -53,6 +54,7 @@ export component PreviewCard inherits FilledCard {
     property <int> active_tab: 0;
 
     callback plot_selected(int);
+    callback toggle_curve_visibility(int, bool);
     callback save_plot();
     callback write_files();
     callback pin_run();
@@ -141,6 +143,48 @@ export component PreviewCard inherits FilledCard {
                 height: 100%;
                 text: "Clear Pinned";
                 clicked => { root.clear_pinned_runs(); }
+            }
+        }
+
+        // Curve Visibility Checklist
+        if root.curve_toggle_items.length > 0: Rectangle {
+            background: MaterialPalette.surface_container_low;
+            border-radius: MaterialStyleMetrics.border_radius_2;
+            height: 36px;
+
+            ScrollView {
+                viewport-width: root.curve_toggle_items.length * 120px;
+                viewport-height: 28px;
+
+                HorizontalLayout {
+                    padding: 4px;
+                    spacing: 8px;
+                    alignment: start;
+                    for item in root.curve_toggle_items: TouchArea {
+                        width: 110px;
+                        height: 28px;
+                        clicked => { root.toggle_curve_visibility(item.id, !item.visible); }
+
+                        HorizontalLayout {
+                            spacing: 4px;
+                            alignment: center;
+
+                            Rectangle {
+                                width: 12px;
+                                height: 12px;
+                                border-radius: 6px;
+                                background: item.visible ? MaterialPalette.primary : MaterialPalette.outline;
+                            }
+
+                            MaterialText {
+                                text: item.label;
+                                style: MaterialTypography.label_medium;
+                                color: item.visible ? MaterialPalette.on_surface : MaterialPalette.on_surface_variant;
+                                overflow: elide;
+                            }
+                        }
+                    }
+                }
             }
         }
 

@@ -297,6 +297,5 @@
   "295": "XRDTests",
   "296": "SIMDTypes.hpp",
   "297": "ScaleBinsParams",
-  "298": "CarReader.cpp",
-  "299": "HDF5Writer.cpp"
+  "298": "CarReader.cpp"
 }

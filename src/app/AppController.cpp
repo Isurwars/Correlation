@@ -87,6 +87,11 @@ AppController::AppController(::AppWindow &window, AppBackend &backend) : window_
     slint::invoke_from_event_loop([this, index]() { plot_controller_->requestPlotUpdate(index, true); });
   });
 
+  // Handle curve visibility toggle from PreviewCard checklist
+  window_.on_toggle_curve_visibility([this](int id, bool visible) {
+    plot_controller_->handleToggleCurveVisibility(id, visible);
+  });
+
   // Handle mouse move on preview plot
   window_.on_mouse_move([this](float mouse_x, float mouse_y, bool hover, float width, float height) {
     plot_controller_->handleMouseMove(mouse_x, mouse_y, hover, width, height);
