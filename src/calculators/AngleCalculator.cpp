@@ -120,6 +120,11 @@ void AngleCalculator::compute(const correlation::core::Cell &cell, const correla
   const size_t atom_count = atoms.size();
   const size_t num_elements = cell.elements().size();
 
+  if (out_angles.size() < num_elements) {
+    out_angles = AngleTensor(num_elements, std::vector<std::vector<std::vector<real_t>>>(
+                                               num_elements, std::vector<std::vector<real_t>>(num_elements)));
+  }
+
   // Thread-local AngleTensor accumulator
   tbb::enumerable_thread_specific<AngleTensor> ets([&]() {
     return AngleTensor(num_elements, std::vector<std::vector<std::vector<real_t>>>(

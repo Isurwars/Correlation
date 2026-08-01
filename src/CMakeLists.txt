@@ -73,7 +73,9 @@ endif()
 target_sources(calculators_obj PRIVATE
     calculators/gpu/SYCLUtils.cpp
     calculators/gpu/SYCLDistanceCalculator.cpp
+    calculators/gpu/SYCLAngleCalculator.cpp
     calculators/gpu/SYCLSQCalculator.cpp
+    calculators/gpu/SYCLXRDCalculator.cpp
 )
 target_include_directories(calculators_obj PRIVATE
     ${PROJECT_SOURCE_DIR}/include
